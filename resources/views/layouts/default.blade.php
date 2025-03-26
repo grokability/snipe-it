@@ -722,6 +722,11 @@ dir="{{ Helper::determineLanguageDirection() }}">
                                                 {{ trans('general.locations') }}
                                             </a>
                                         </li>
+                                        <li>
+                                            <a href="{{ route('locations.deleted-and-closed') }}" {{ (Request::is('locations/deleted-and-closed') ? ' class="active"' : '') }}>
+                                                {{ trans('general.deleted_and_closed_locations') }}
+                                            </a>
+                                      </li>
                                     @endcan
 
                                     @can('view', \App\Models\Company::class)

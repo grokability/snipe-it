@@ -18,7 +18,7 @@
   <div class="col-md-12">
     <div class="box box-default">
       <div class="box-body">
-          @include('partials.locations-bulk-actions')
+          <!-- @include('partials.locations-bulk-actions') -->
 
           <table
                   data-columns="{{ \App\Presenters\LocationPresenter::dataTableLayout() }}"

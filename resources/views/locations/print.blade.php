@@ -1,180 +1,309 @@
 <!doctype html>
 <html lang="en">
+
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>{{ trans('general.assigned_to', array('name' => $location->present()->fullName())) }} </title>
-    <style>
-        body {
-            font-family: "Arial, Helvetica", sans-serif;
+    <style type="text/css">
+        .button {
+            position: relative;
+            margin-top: 5px;
+            background-color: #0066af;;
+            border: 2px;
+            font-size: 18px;
+            color: #FFFFFF;
+            padding: 20px;
+            width: 100px;
+            text-align: center;
+            text-decoration: none;
+            overflow: hidden;
+            cursor: pointer;
+            }
+        page[size="A4"] {
+        background: white;
+	width: 21cm;
+        height: 29.7cm;
+        display: block;
+	margin: 0 auto;
+        margin-bottom: 0.5cm;
+        box-shadow: 0 0 0.5cm rgba(0,0,0,0.5);
         }
-        table.inventory {
-            border: solid #000;
-            border-width: 1px 1px 1px 1px;
+        @media print {
+            .noPrint{
+                display: none;
+            }
+            body, page[size="A4"] {
+            margin: auto;
+            box-shadow: 0;
+        }
+        }
+        input {
             width: 100%;
+            border: none;
+            padding: 0px;
+            float: left;
+            border-color: transparent;
+            font-family: "Calibri", Arial, sans-serif;
+            font-size: 11pt;
+        }
+            .print-logo {
+            display: inline;
+            position: relative;
+            margin-left: auto;
+            margin-right: auto;
+            height: 80%;
+            float: left;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .tg {
+            border-collapse: collapse;
+            border-spacing: 0;
+            font-size: 11pt;
         }
 
-        @page {
-            size: A4;
-        }
-        table.inventory th, table.inventory td {
-            border: solid #000;
-            border-width: 0 1px 1px 0;
-            padding: 3px;
-            font-size: 12px;
-        }
-
-        .print-logo {
-            max-height: 40px;
+        .tg td {
+            border-color: black;
+            border-style: solid;
+            border-width: 1px;
+            overflow: hidden;
+            padding: 5px 10px;
+            word-break: normal;
         }
 
+        .tg th {
+            border-color: black;
+            border-style: transparent;
+            border-width: 1px;
+            font-weight: normal;
+            overflow: hidden;
+            padding: 5px 10px;
+            word-break: normal;
+        }
+
+        .tg .tg-lboi {
+            text-align: left;
+            vertical-align: middle
+        }
+
+        .tg .tg-xogg {
+            text-align: left;
+            vertical-align: middle
+        }
+
+        .tg .tg-levo {
+            text-align: left;
+            vertical-align: top
+        }
+
+        .tg .tg-vhtn {
+            text-align: center;
+            vertical-align: middle
+        }
+
+        .tg .tg-81u1 {
+            text-align: left;
+            vertical-align: middle
+        }
+
+        .tg .tg-centar {
+            text-align: center;
+            vertical-align: middle
+        }
+        .address{
+            position: relative;
+            width: 200px;
+            float: right;
+            text-align: left;
+            display: inline-block;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        body{
+            width: 760px;
+            font-family: "Calibri", Arial, sans-serif;
+        }
+        #header{
+            height: 100px;
+            width: 760px;
+            border: 10px;
+        }
     </style>
-</head>
-<body>
-
-@if ($snipeSettings->logo_print_assets=='1')
-    @if ($snipeSettings->brand == '3')
-
-        <h3>
-        @if ($snipeSettings->logo!='')
-            <img class="print-logo" src="{{ config('app.url') }}/uploads/{{ $snipeSettings->logo }}">
-        @endif
-        {{ $snipeSettings->site_name }}
-        </h3>
-    @elseif ($snipeSettings->brand == '2')
-        @if ($snipeSettings->logo!='')
-            <img class="print-logo" src="{{ config('app.url') }}/uploads/{{ $snipeSettings->logo }}">
-        @endif
-    @else
-      <h3>{{ $snipeSettings->site_name }}</h3>
-    @endif
-@endif
-
-<h2>{{ trans('general.assigned_to', array('name' => $location->present()->fullName())) }}</h2>
-    @if ($parent)
-        {{ $parent->present()->fullName() }}
-    @endif
-
-@if ($manager)
-    <b>{{ trans('general.manager') }}</b> {{ $manager->present()->fullName() }}<br>
-@endif
-<b>{{ trans('general.date') }}</b>  {{ \App\Helpers\Helper::getFormattedDateObject(now(), 'datetime', false) }}<br><br>
-
-@if ($users->count() > 0)
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     @php
-        $counter = 1;
+            $pun_naziv = $location->present()->fullName();
+            $broj_rn = $location->present()->zip;
+            $datum_kreiranja = $location->present()->created_at;
+            $email_regex = "/[a-z0-9_\-\+\.]+@[a-z0-9\-]+\.([a-z]{2,4})(?:\.[a-z]{2})?/i";
+            if (preg_match("/\d{7}/",$pun_naziv,$sifra_lista)){
+
+            $sifra = $sifra_lista[0];
+		}
+		else{
+		$sifra = "";
+		}
+            $ime_filijale = (string)str_replace($sifra,' ',$pun_naziv);
+
+            $ostali_podaci = $location->present()->address2;
+	    if (preg_match($email_regex, $ostali_podaci, $email_lista)){
+            $email = $email_lista[0];
+	    }
+	    else{
+	    $email = "";
+		}
+	    $telefoni = (string)str_replace($email,' ',$ostali_podaci);
     @endphp
-    <table class="inventory">
-        <thead>
-        <tr>
-            <th colspan="6">{{ trans('general.users') }}</th>
-        </tr>
-        </thead>
-        <thead>
+    <title>{{ $broj_rn }} - {{ $ime_filijale }} </title>
+</head>
+
+<div id="radniNalog">
+<body>
+    <div id="header">
+    @if ($snipeSettings->logo_print_assets=='1')
+        @if ($snipeSettings->brand == '3')
+            @if ($snipeSettings->logo!='')
+                    <img class="print-logo" src="{{ url('/') }}/uploads/{{ $snipeSettings->logo }}">
+            @endif
+            <p class="address">{{ $snipeSettings->site_name }},{{ $snipeSettings->footer_text }}</p>
+            @elseif ($snipeSettings->brand == '2')
+                @if ($snipeSettings->logo!='')
+                    <img class="print-logo" src="{{ url('/') }}/uploads/{{ $snipeSettings->logo }}">
+                @endif
+            @else
+            <p class="address">{{ $snipeSettings->site_name }},{{ $snipeSettings->footer_text }}</p>
+        @endif
+    @endif
+    </div>
+    <table class="tg" style="undefined;table-layout: fixed; width: 740px">
+        <colgroup>
+            <col style="width: 105px">
+            <col style="width: 108px">
+            <col style="width: 85px">
+            <col style="width: 85px">
+            <col style="width: 135px">
+            <col style="width: 60px">
+            <col style="width: 80px">
+        </colgroup>
+        <tbody>
             <tr>
-            <th style="width: 5px;"></th>
-            <th style="width: 25%;">{{ trans('general.company') }}</th>
-            <th style="width: 25%;">{{ trans('admin/locations/table.user_name') }}</th>
-            <th style="width: 10%;">{{ trans('general.employee_number') }}</th>
-	        <th style="width: 20%;">{{ trans('admin/locations/table.department') }}</th>
-		    <th style="width: 20%;">{{ trans('admin/locations/table.location') }}</th>
+                <td class="tg-xogg">RADNI NALOG BR</td>
+                <td class="tg-xogg">{{ $location->present()->zip }}</td>
+                <td colspan="2"></td>
+                <td>Datum kreiranja</td>
+                <td class="tg-xogg" colspan="2">{{ \App\Helpers\Helper::getFormattedDateObject(($datum_kreiranja),'date', false) }}</td>
             </tr>
-        </thead>
-    @foreach ($users as $user)
-
-        <tr>
-        <td>{{ $counter }}</td>
-        <td>{{ (($user) && ($user->company)) ? $user->company->name : '' }}</td>
-        <td>{{ ($user)  ? $user->first_name .' '. $user->last_name : '' }}</td>
-        <td>{{ ($user)  ? $user->employee_num : '' }}</td>
-        <td>{{ (($user) && ($user->department)) ? $user->department->name : '' }}</td>
-        <td>{{ (($user) && ($user->location)) ? $user->location->name : '' }}</td>
-        </tr>
-            @php
-                $counter++
-            @endphp
-    @endforeach
-    </table>
-@endif
-
-
-
-@if ($assets->count() > 0)
-    <br><br>
-    <table class="inventory">
-        <thead>
-        <tr>
-            <th colspan="10">{{ trans('general.assets') }}</th>
-        </tr>
-        </thead>
-        <thead>
             <tr>
-            <th style="width: 20px;"></th>
-            <th style="width: 10%;">{{ trans('admin/locations/table.asset_tag') }}</th>
-            <th style="width: 10%;">{{ trans('admin/locations/table.asset_name') }}</th>
-            <th style="width: 10%;">{{ trans('admin/locations/table.asset_category') }}</th>
-	        <th style="width: 10%;">{{ trans('admin/locations/table.asset_manufacturer') }}</th>
-            <th style="width: 15%;">{{ trans('admin/locations/table.asset_model') }}</th>
-            <th style="width: 15%;">{{ trans('admin/locations/table.asset_serial') }}</th>
-            <th style="width: 10%;">{{ trans('admin/locations/table.asset_location') }}</th>
-            <th style="width: 10%;">{{ trans('admin/locations/table.asset_checked_out') }}</th>
-            <th style="width: 10%;">{{ trans('admin/locations/table.asset_expected_checkin') }}</th>
+            @if ($parent)
+                <td class="tg-xogg">Zastupnik</td>
+                <td class="tg-xogg">Šifra</td>
+                <td class="tg-xogg">{{ $parent->present()->address2}}</td>
+                <td class="tg-xogg">Naziv</td>
+                <td class="tg-xogg">{{ $parent->present()->fullName() }}</td>
+                <td class="tg-xogg">Mesto</td>
+                <td class="tg-xogg">{{ $parent->present()->city }}</td>
             </tr>
-        </thead>
-		@php
-        	$counter = 1;
-    	@endphp
-    	
-    	@foreach ($assets as $asset)
+            @endif
+            <tr>
+                <td class="tg-81u1">Filijala</td>
+                <td class="tg-81u1">Šifra</td>
+                <td class="tg-81u1">{{ $sifra }}</td>
+                <td class="tg-81u1">Naziv</td>
+                <td class="tg-81u1" colspan="3">{{ $ime_filijale }}</td>
+            </tr>
+            <tr>
+                <td class="tg-81u1">Adresa</td>
+                <td class="tg-81u1" colspan="3">{{ $location->present()->address }}</td>
+                <td class="tg-81u1">Mesto:</td>
+                <td class="tg-81u1" colspan="2">{{ $location->present()->city }}</td>
+            </tr>
+            <tr>
+                <td class="tg-81u1">e-mail Filijale</td>
+		<td class="tg-81u1" colspan="3">{{ $email }}</td>
+		<td class="tg-81u1" colspan="3">Tel: {{ $location->present()->phone ?: $telefoni }}</td>
+            </tr>
+            <tr>
+                <td class="tg-vhtn" colspan="7">Spisak izdate opreme</td>
+            </tr>
+
+
+            <tr>
+                <td class="tg-81u1">Redni broj</td>
+                <td class="tg-81u1">Tip</td>
+                <td class="tg-81u1" colspan="2">Model</td>
+                <td class="tg-81u1" colspan="2">Serijski broj</td>
+                <td class="tg-81u1" colspan="1">Datum</td>
+            </tr>
+            @if ($assets->count() > 0)
             @php
-                if($snipeSettings->show_archived_in_list != 1 && $asset->assetstatus?->archived == 1){
-                    continue;
-                }
+            $counter = 1;
             @endphp
-        <tr>
-        <td>{{ $counter }}</td>
-        <td>{{ $asset->asset_tag }}</td>
-        <td>{{ $asset->name }}</td>
-        <td>{{ (($asset->model) && ($asset->model->category)) ? $asset->model->category->name : '' }}</td>
-        <td>{{ (($asset->model) && ($asset->model->manufacturer)) ? $asset->model->manufacturer->name : '' }}</td>
-        <td>{{ ($asset->model) ? $asset->model->name : '' }}</td>
-        <td>{{ $asset->serial }}</td>
-        <td>{{ $asset->location->name }}</td>
-        <td>{{ \App\Helpers\Helper::getFormattedDateObject( $asset->last_checkout, 'datetime', false) }}</td>
-        <td>{{ \App\Helpers\Helper::getFormattedDateObject( $asset->expected_checkin, 'datetime', false) }}</td>
-        </tr>
+
+            @foreach ($assets as $asset)
             @php
-                $counter++
+            if($snipeSettings->show_archived_in_list != 1 && $asset->assetstatus->archived == 1){
+            continue;
+            }
             @endphp
-    @endforeach
+            <tr>
+                <td class="tg-centar">{{ $counter }}</td>
+                <td class="tg-centar">{{($asset->model->category) ? $asset->model->category->name : ''}}
+                </td>
+                <td class="tg-centar" colspan="2">{{($asset->model->manufacturer) ? $asset->model->manufacturer->name : ''}} {{($asset->model) ? $asset->model->model_number : ''}}</td>
+                <td class="tg-centar" colspan="2">{{ $asset->serial }}</td>
+                <td class="tg-centar" colspan="1">{{ \App\Helpers\Helper::getFormattedDateObject( $asset->last_checkout,
+                    'date', false) }}</td>
+            </tr>
+            @php
+                $counter++;
+            @endphp
+            @endforeach
+            @endif
+            <tr>
+                <td class="tg-levo" colspan="7">Napomena : {{ $location->present()->state }}</td>
+            </tr>
+            @for ($i = 0; $i < 5; $i++)
+            <tr>
+            <td colspan="7">
+                <input type="text"></input>
+            </td>
+            </tr>
+            @endfor
+            <tr>
+                <td class="tg-centar" colspan="1">Radni nalog</td>
+                <td class="tg-centar" colspan="2">Ime Prezime</td>
+                <td class="tg-centar" colspan="1">Datum štampe</td>
+                <td class="tg-centar" colspan="3">Potpis</td>
+            <tr>
+            <tr>
+                <td class="tg-centar" colspan="1">Odobrio</td>
+                <td class="tg-levo" colspan="2">Dragan Vasović</td>
+                <td class="tg-centar" colspan="1">{{ \App\Helpers\Helper::getFormattedDateObject(now(),'date', false) }}</td>
+                <td class="tg-levo" colspan="3"></td>
+            </tr>
+            <tr>
+                <td class="tg-centar" colspan="1">Izdao</td>
+                <td class="tg-levo" colspan="2">Dubravka Bjekić Vasović</td>
+                <td class="tg-centar" colspan="1">{{ \App\Helpers\Helper::getFormattedDateObject(now(),'date', false) }}</td>
+                <td class="tg-levo" colspan="3"></td>
+            <tr>
+                <td class="tg-centar" colspan="1">Pripremio</td>
+                <td class="tg-levo" colspan="2">
+                <input type="text" placeholder="Ime"></input>
+                </td>
+                <td class="tg-centar" colspan="1">{{ \App\Helpers\Helper::getFormattedDateObject(now(),'date', false) }}</td>
+                <td class="tg-levo" colspan="3"></td>
+            </tr>
+            </tr>
+            <tr>
+                <td class="tg-centar" colspan="1">Menadžer</td>
+                @if ($manager)
+                    <td class="tg-levo" colspan="2">{{ $manager->present()->fullName() }}</td>
+                @else
+                    <td class="tg-levo" colspan="2"></td>
+                @endif
+                <td class="tg-centar" colspan="1"></td>
+                <td class="tg-levo" colspan="3"></td>
+            </tr>
+            </tr>
+        </tbody>
     </table>
-@endif
-
-<br>
-<br>
-<br>
-<table>
-    <tr>
-        <td>{{ trans('admin/locations/table.signed_by_asset_auditor') }}</td>
-        <td><br>------------------------------------------------------ &nbsp;&nbsp;&nbsp;<br></td>
-        <td>{{ trans('admin/locations/table.date') }}</td>
-        <td><br>------------------------------ &nbsp;&nbsp;&nbsp;<br></td>
-    </tr>
-
-    <tr>
-        <td>{{ trans('admin/locations/table.signed_by_finance_auditor') }}</td>
-        <td><br>------------------------------------------------------ &nbsp;&nbsp;&nbsp;<br></td>
-        <td>{{ trans('admin/locations/table.date') }}</td>
-        <td><br>------------------------------ &nbsp;&nbsp;&nbsp;<br></td>
-    </tr>
-
-    <tr>
-        <td>{{ trans('admin/locations/table.signed_by_location_manager') }}</td>
-        <td><br>------------------------------------------------------ &nbsp;&nbsp;&nbsp;<br></td>
-        <td>{{ trans('admin/locations/table.date') }}</td>
-        <td><br>------------------------------ &nbsp;&nbsp;&nbsp;<br></td>
-    </tr>
-</table>
-
-
-</body>
-</html>
+    </div>
+    <div class="noPrint"><button class="button" onclick="window.print()">Štampa</button></div>

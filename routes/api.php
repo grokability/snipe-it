@@ -714,6 +714,13 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'throttle:api']], functi
         */
         Route::group(['prefix' => 'locations'], function () {
 
+            Route::get('deleted-and-closed',
+            [
+            Api\LocationsController::class,
+            'deletedAndClosed'
+            ]
+            )->name('api.locations.deletedAndClosed');
+
             Route::get('selectlist',
                 [
                     Api\LocationsController::class, 

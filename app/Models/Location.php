@@ -29,7 +29,7 @@ class Location extends SnipeModel
         'address'       => 'max:191|nullable',
         'address2'      => 'max:191|nullable',
         'city'          => 'max:191|nullable',
-        'state'         => 'min:2|max:191|nullable',
+        'state'         => 'min:2|max:255|nullable',
         'country'       => 'min:2|max:191|nullable',
         'zip'           => 'max:10|nullable',
         'manager_id'    => 'exists:users,id|nullable',
@@ -73,6 +73,7 @@ class Location extends SnipeModel
         'manager_id',
         'image',
         'notes',
+        'created_at',
     ];
     protected $hidden = ['user_id'];
 
@@ -83,7 +84,7 @@ class Location extends SnipeModel
      *
      * @var array
      */
-    protected $searchableAttributes = ['name', 'address', 'city', 'state', 'zip', 'created_at', 'ldap_ou', 'phone', 'fax', 'notes'];
+    protected $searchableAttributes = ['name', 'address', 'city', 'state', 'zip', 'created_at', 'ldap_ou', 'phone', 'fax','currency', 'notes'];
 
     /**
      * The relations and their attributes that should be included when searching the model.
@@ -325,5 +326,13 @@ class Location extends SnipeModel
     public function scopeOrderManager($query, $order)
     {
         return $query->leftJoin('users as location_user', 'locations.manager_id', '=', 'location_user.id')->orderBy('location_user.first_name', $order)->orderBy('location_user.last_name', $order);
+    }
+    public function uploads()
+    {
+        return $this->hasMany(\App\Models\Actionlog::class, 'item_id')
+            ->where('item_type', self::class)
+            ->where('action_type', '=', 'uploaded')
+            ->whereNotNull('filename')
+            ->orderBy('created_at', 'desc');
     }
 }

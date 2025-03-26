@@ -87,7 +87,7 @@ return [
     'created_by'            => 'Kreirao',
     'record_created' 		=> 'Zapis kreiran',
     'updated_at' 			=> 'Ažurirano',
-    'currency'  			=> '$', // this is deprecated
+    'currency'  			=> 'Tip Lokacije', // this is deprecated
     'currency_text'  		=> 'Valuta', //
     'current'  				=> 'Current',
     'current_password'      => 'Trenutna lozinka',
@@ -101,6 +101,7 @@ return [
     'debug_warning'         => 'Upozorenje!',
     'debug_warning_text'    => 'This application is running in production mode with debugging enabled. This can expose sensitive data if your application is accessible to the outside world. Disable debug mode by setting the <code>APP_DEBUG</code> value in your <code>.env</code> file to <code>false</code>.',
     'delete'  				=> 'Izbrisati',
+    'deleted_and_closed_locations' => 'Obrisane i zatvorene lokacije',
     'delete_confirm'  		=> 'Jeste li sigurni da želite izbrisati :item?',
     'delete_confirm_no_undo' => 'Da li zaista, želite da obrišete :item? Ovo nije moguće poništiti.',
     'deleted'  				=> 'Izbrisano',

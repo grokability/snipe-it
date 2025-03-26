@@ -35,7 +35,13 @@ class LocationsController extends Controller
         // Show the page
         return view('locations/index');
     }
-
+    public function deletedAndClosed(): View
+    {
+        $this->authorize('view', Location::class);
+    
+        // Prikaz stranice sa podacima
+        return view('locations/deleted_and_closed');
+    }
     /**
      * Returns a form view used to create a new location.
      *
@@ -391,5 +397,100 @@ class LocationsController extends Controller
                 ['object_type' => trans('general.locations')]
             ));
 
+    }
+    public function print_contract($locationId, string $contractType)
+    {
+	    \PhpOffice\PhpWord\Settings::setOutputEscapingEnabled(true);
+	    $this->authorize('update', Location::class);
+        switch ($contractType) {
+            case "1": $filename = 'private_uploads/eula-pdfs/ugovor.docx'; $tip_ugovora = "Ugovor o reversu 2023 v9";
+            break;
+            case "2": $filename = 'private_uploads/eula-pdfs/anex.docx'; $tip_ugovora = "Aneks ugovora";
+            break;
+            case "3": $filename = 'private_uploads/eula-pdfs/raskid.docx'; $tip_ugovora = "Raskid reversa";
+            break;
+            case "4": $filename = 'private_uploads/eula-pdfs/aneks2017.docx'; $tip_ugovora = "Aneks ugovora 2017";
+	        break;
+        }
+        if ($location = Location::where('id', $locationId)->first()) {
+        
+            $basePath = Storage::disk('local')->path('');
+            
+            $path = $basePath . DIRECTORY_SEPARATOR . $filename;
+            
+
+            $contract_template = new \PhpOffice\PhpWord\TemplateProcessor($path);
+
+            $parent = Location::where('id', $location->parent_id)->first();
+            $parent_name = $parent->name ?? "Ime Zastupnika";
+            $parent_city = $parent->city ?? "Grad Zastupnika";
+            if ($parent){
+                $parent_manager = User::where('id', $parent->manager_id)->first();
+                $director = $parent_manager->full_name ?? "Direktor";
+                $parent_information = array(
+                    'parent_name' => $parent->state ?? "Ime Zastupnika",
+                    'parent_city' => $parent->city ?? "Grad Zastupnika",
+                    'parent_address' => $parent->address ?? "Adresa Zastupnika",
+                    'parent_mb' => $parent->ldap_ou ?? "Maticni Broj",
+                    'parent_pib' => $parent->phone ?? "PIB",
+                    'parent_manager' => $parent->fax ?? "Direktor");
+            }
+            else{
+                return redirect()->back()->with('error','Nije postavljen zastupnik lokacije');
+            }
+            
+            $assets = Asset::where('assigned_to', $locationId)->where('assigned_type', Location::class)->with('model', 'model.category')->get();
+
+            $pun_naziv = $location->name;
+            $datum_kreiranja = $location->created_at ? $location->created_at->format('d.m.Y') : 'DATUM';
+
+            if (preg_match("/\d{7}/",$pun_naziv,$sifra_lista)){
+            $oj = $sifra_lista[0];
+		    }
+		    else{
+		    $oj = "";
+		    }
+            if ($location->fax){
+                $location_cn = '(' . $location->fax . ')';
+            }
+            else{
+                $location_cn = '';
+            }
+            $location_information = array(
+                'location_address' => $location->address ? : 'ADRESA',
+                'location_city' => $location->city ? : 'GRAD',
+                'location_oj' => $location->ldap_ou ? : $oj,
+                'location_cn' => $location_cn,
+                'register_num' => $location->currency ? : 'BROJ-UGOVORA'
+            );
+            
+            $asset_list = array();
+            $asset_counter = 1;
+            foreach ($assets as $key => $asset){
+
+                $asset_list[$key] = array(
+                'id' => $asset_counter,
+                'category' => ($asset->model) && ($asset->model->category) ? $asset->model->category->name : '',
+                'manufacturer' => (($asset->model) && ($asset->model->manufacturer)) ? $asset->model->manufacturer->name : '',
+                'model_nr' => ($asset->model) ? $asset->model->model_number : '',
+                'serial_number' => $asset->serial,
+                'price' => $asset->purchase_cost
+                );
+                $asset_counter++;
+            }
+            $contract_template->cloneRowAndSetValues('category', $asset_list);
+            $contract_template->setValues($parent_information);
+            $contract_template->setValues($location_information);
+            $outputPath = storage_path('app/output.docx');
+            $contract_template->saveAs($outputPath);
+    
+            // Download the generated DOCX file
+            $out_filename = $location->name . " " . $tip_ugovora . ".docx";
+            return response()->download($outputPath, $out_filename)->deleteFileAfterSend(true);
+           
+
+        }
+
+        return redirect()->route('locations.index')->with('error', trans('admin/locations/message.does_not_exist'));
     }
 }

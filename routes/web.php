@@ -66,7 +66,27 @@ Route::group(['middleware' => 'auth'], function () {
             'bulkedit',
             [LocationsController::class, 'postBulkDeleteStore']
         )->name('locations.bulkdelete.store');
+        
+        Route::post('{locationId}/upload',
+            [LocationFilesController::class, 'store']
+        )->name('upload/location');
+        
+        Route::delete(
+            '{locationId}/deletefile/{fileId}',
+            [
+                LocationFilesController::class, 
+                'destroy'
+            ]
+        )->name('locationfile.destroy');
 
+        Route::get(
+            '{locationId}/showfile/{fileId}',
+            [
+                LocationFilesController::class, 
+                'show'
+            ]
+        )->name('show/locationfile');
+        
         Route::post(
             '{location}/restore',
             [LocationsController::class, 'postRestore']
@@ -86,7 +106,19 @@ Route::group(['middleware' => 'auth'], function () {
             '{locationId}/printallassigned',
             [LocationsController::class, 'print_all_assigned']
         )->name('locations.print_all_assigned');
-
+        
+        Route::get(
+            '{locationId}/contract/{contractType}', 
+            [LocationsController::class,'print_contract']
+        )->name('locations.contract');
+        
+        Route::get(
+        'deleted-and-closed', 
+        [
+            LocationsController::class, 'deletedAndClosed'
+        ]
+        )->name('locations.deleted-and-closed');
+        
     });
 
     Route::resource('locations', LocationsController::class, [
