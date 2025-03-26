@@ -1,1 +1,0 @@
-Za Scan to Network: -1) DHCP opseg 20-254. -2) IP adrese racunara 88.11 i 88.12. -3) User za skeniranje, (scan, skener2024)
