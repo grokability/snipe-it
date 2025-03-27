@@ -182,6 +182,14 @@ dir="{{ Helper::determineLanguageDirection() }}">
                                     </a>
                                 </li>
                             @endcan
+                            @can('view', \App\Models\Location::class)
+                                <li aria-hidden="true"{!! (Request::is('locations*') ? ' class="active"' : '') !!}>
+                                    <a href="{{ route('locations.index') }}" {{$snipeSettings->shortcuts_enabled == 1 ? "accesskey=6" : ''}} tabindex="-1" data-tooltip="true" data-placement="bottom" data-title="{{ trans('general.locations') }}">
+                                        <i class="fa-solid fa-location-dot"></i>
+                                        <span class="sr-only">{{ trans('general.locations') }}</span>
+                                    </a>
+                                </li>
+                            @endcan
 
                             @can('index', \App\Models\Asset::class)
                                 <li>
@@ -264,7 +272,6 @@ dir="{{ Helper::determineLanguageDirection() }}">
                                     </ul>
                                 </li>
                             @endcan
-
                             @can('admin')
                                 @if ($snipeSettings->show_alerts_in_menu=='1')
                                     <!-- Tasks: style can be found in dropdown.less -->

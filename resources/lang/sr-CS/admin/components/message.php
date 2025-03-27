@@ -17,15 +17,13 @@ return array(
     'delete' => array(
         'confirm'   => 'Da li ste sigurni da želite izbrisati ovu komponentu?',
         'error'   => 'Došlo je do problema s brisanjem komponente. Molim pokušaj te ponovo.',
-        'success' => 'Komponenta je uspješno izbrisana.',
-        'error_qty'   => 'Neke komponente ovog tipa su još uvek zadužene. Razdužite ih i pokušajte ponovo.',
+        'success' => 'Komponenta je uspješno izbrisana.'
     ),
 
      'checkout' => array(
         'error'   		=> 'Component was not checked out, please try again',
         'success' 		=> 'Component checked out successfully.',
-        'user_does_not_exist' => 'Korisnik nevažeći. Molim pokušaj te ponovo.',
-        'unavailable'      => 'Nema dovoljno preostalih komponenti: :remaining preostalo, :requested zatraženo ',
+        'user_does_not_exist' => 'Korisnik nevažeći. Molim pokušaj te ponovo.'
     ),
 
     'checkin' => array(

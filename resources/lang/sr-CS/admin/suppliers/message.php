@@ -2,7 +2,6 @@
 
 return array(
 
-    'deleted' => 'Obrisani dobavljač',
     'does_not_exist' => 'Dobavljač ne postoji.',
 
 

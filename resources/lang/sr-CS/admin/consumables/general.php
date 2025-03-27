@@ -8,5 +8,4 @@ return array(
     'remaining' 			            => 'Preostalo',
     'total' 			                => 'Ukupno',
     'update'                            => 'Ažuriraj potrošni materijal',
-    'inventory_warning'                 => 'Stanje ove potrošne robe je ispod minimalne količine od :min_count',
 );

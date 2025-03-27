@@ -31,9 +31,10 @@ class Location extends SnipeModel
         'city'          => 'max:191|nullable',
         'state'         => 'min:2|max:255|nullable',
         'country'       => 'min:2|max:191|nullable',
-        'zip'           => 'max:10|nullable',
+        'zip'           => 'max:255|nullable',
         'manager_id'    => 'exists:users,id|nullable',
         'parent_id'     => 'nullable|exists:locations,id|non_circular:locations,id',
+        'currency'      => 'max:255|nullable',
     ];
 
     protected $casts = [

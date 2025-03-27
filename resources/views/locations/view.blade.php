@@ -40,7 +40,7 @@
 
                 @can('view', \App\Models\Asset::class)
                     @if ($location->assets()->AssetsForShow()->count() > 0)
-                        <li>
+                        <li class="active">
                             <a href="#assets" data-toggle="tab" data-tooltip="true"
                                 title="{{ trans('admin/locations/message.current_location') }}">
                                 <i class="fa-solid fa-house-laptop" style="font-size: 17px" aria-hidden="true"></i>
@@ -185,7 +185,7 @@
 
 
             <div class="tab-content">
-                <div class="tab-pane active" id="users">
+                <div class="tab-pane" id="users">
                     <h2 class="box-title">{{ trans('general.users') }}</h2>
                     <div class="table table-responsive">
                         @include('partials.users-bulk-actions')
@@ -206,7 +206,7 @@
                     </div><!-- /.table-responsive -->
                 </div><!-- /.tab-pane -->
 
-                <div class="tab-pane" id="assets">
+                <div class="tab-pane active" id="assets">
                     <h2 class="box-title">{{ trans('admin/locations/message.current_location') }}</h2>
 
                     <div class="table table-responsive">

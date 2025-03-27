@@ -13,10 +13,5 @@ return [
         'user_state' => 'Pokrajina korisnika',
         'user_country' => 'Država korisnika',
         'user_zip' => 'Poštanski broj korisnika'
-    ],
-    'open_saved_template' => 'Otvori sačuvani šablon',
-    'save_template' =>  'Sačuvaj šablon',
-    'select_a_template' => 'Izaberi šablon',
-    'template_name' => 'Naziv šablona',
-    'update_template' => 'Izmeni šablon',
+    ]
 ];

@@ -6,6 +6,6 @@ return array(
     'title'     => 'Firma',
     'phone'     => 'Telefon kompanije',
     'update'    => 'Ažuriraj firmu',
-    'name'      => 'Nayiv firme',
+    'name'      => 'Naziv firme',
     'id'        => 'ID',
 );

@@ -47,5 +47,4 @@ return [
     'kit_deleted'                       => 'Komplet je uspešno izbrisan',
     'kit_model_updated'                 => 'Model je uspešno ažuriran',
     'kit_model_detached'                => 'Model je uspešno odvojen',
-    'model_already_attached'            => 'Model je već povezan sa kompletom',
 ];

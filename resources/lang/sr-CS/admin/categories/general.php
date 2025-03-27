@@ -8,8 +8,6 @@ return array(
     'clone'                             => 'Kloniraj kategoriju',
     'create'  							=> 'Kreiraj kategoriju',
     'edit'                              => 'Uredi kategoriju',
-    'email_will_be_sent_due_to_global_eula' => 'E-poruka će biti poslata korisniku jer se koristi globalna EULA.',
-    'email_will_be_sent_due_to_category_eula' => 'E-poruka će biti poslata korisniku jer je EULA podešena za ovu kategoriju.',
     'eula_text'							=> 'Category EULA',
     'eula_text_help'					=> 'Ovo polje vam omogućava da prilagodite svoje EULA-e za određene vrste sredstava. Ako imate samo jedan EULA za svu vašu imovinu, sredstva, možete označiti donji box kako biste koristili primarnu, podrazumevanu (default) postavku.',
     'name'                              => 'Naziv kategorije',

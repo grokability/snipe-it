@@ -3,7 +3,7 @@
 return array(
 
     'does_not_exist' => 'Licenca ne postoji ili vi nemate dozvolu da je vidite.',
-    'user_does_not_exist' => 'Korisnik ne postoji ili vi nemate ovlašćenja da ga vidite.',
+    'user_does_not_exist' => 'Korisnik ne postoji.',
     'asset_does_not_exist' 	=> 'Imovina koju pokušavate povezati s ovom licencom ne postoji.',
     'owner_doesnt_match_asset' => 'Imovina koju pokušavate povezati s ovom licencom nije u vlasništvu osobe koja je odabrana u padajućem meniju.',
     'assoc_users'	 => 'This license is currently checked out to a user and cannot be deleted. Please check the license in first, and then try deleting again. ',
@@ -44,13 +44,10 @@ return array(
         'error'   => 'Došlo je do problema prilikom provere licence. Molim pokušajte ponovo.',
         'success' => 'Licenca je uspešno proverena',
         'not_enough_seats' => 'Nema dovoljno dostupnih licenci za zaduživanje',
-        'mismatch' => 'Dostavljeno mesto licence se ne poklapa sa licencom',
-        'unavailable' => 'Ovo mesto nije dostupno za zaduživanje.',
     ),
 
     'checkin' => array(
         'error'   => 'Došlo je do problema prilikom provere licence. Molim pokušajte ponovo.',
-        'not_reassignable' => 'Licenca nije premestiva',
         'success' => 'Licenca je uspešno proverena'
     ),
 

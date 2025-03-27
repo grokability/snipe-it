@@ -26,7 +26,7 @@
         {{ trans('admin/locations/table.currency') }}
     </label>
     <div class="col-md-7">
-        <input class="form-control" style="width:100px" type="text" name="currency" aria-label="currency" id="currency" value="{{ old('currency', $item->currency) }}"{!!  (Helper::checkIfRequired($item, 'currency')) ? ' required' : '' !!} maxlength="3" />
+        <input class="form-control" style="width:100px" type="text" name="currency" aria-label="currency" id="currency" value="{{ old('currency', $item->currency) }}"{!!  (Helper::checkIfRequired($item, 'currency')) ? ' required' : '' !!} maxlength="255" />
         @error('currency')
         <span class="alert-msg">
             <x-icon type="x" />
