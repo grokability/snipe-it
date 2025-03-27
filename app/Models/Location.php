@@ -6,6 +6,7 @@ use App\Http\Traits\UniqueUndeletedTrait;
 use App\Models\Asset;
 use App\Models\SnipeModel;
 use App\Models\Traits\Searchable;
+use App\Models\LocationStatus;
 use App\Models\User;
 use App\Presenters\Presentable;
 use Illuminate\Support\Facades\DB;
@@ -75,6 +76,7 @@ class Location extends SnipeModel
         'image',
         'notes',
         'created_at',
+        'status_id',
     ];
     protected $hidden = ['user_id'];
 
@@ -85,7 +87,7 @@ class Location extends SnipeModel
      *
      * @var array
      */
-    protected $searchableAttributes = ['name', 'address', 'city', 'state', 'zip', 'created_at', 'ldap_ou', 'phone', 'fax','currency', 'notes'];
+    protected $searchableAttributes = ['name', 'address', 'city', 'state', 'zip', 'created_at', 'ldap_ou', 'phone', 'fax','currency', 'notes','status_id'];
 
     /**
      * The relations and their attributes that should be included when searching the model.
@@ -94,6 +96,7 @@ class Location extends SnipeModel
      */
     protected $searchableRelations = [
       'parent' => ['name'],
+      'status' => ['name'],
     ];
 
 
@@ -130,6 +133,17 @@ class Location extends SnipeModel
         return $this->hasMany(\App\Models\User::class, 'location_id');
     }
 
+    /**
+     * Find assets with this location as their location_id
+     *
+     * @author N. Grgic <nemanja.grgicps@gmail.com>
+     * @since [v8.0.4]
+     * @return \Illuminate\Database\Eloquent\Relations\Relation
+     */
+    public function status()
+    {
+        return $this->belongsTo(LocationStatus::class);
+    }
     /**
      * Find assets with this location as their location_id
      *

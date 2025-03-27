@@ -54,9 +54,10 @@ class LocationsController extends Controller
             'users_count',
             'zip',
             'notes',
+            'status_id',
             ];
 
-        $locations = Location::with('parent', 'manager', 'children')->select([
+        $locations = Location::with('parent', 'manager', 'children','status')->select([
             'locations.id',
             'locations.name',
             'locations.address',
@@ -75,6 +76,7 @@ class LocationsController extends Controller
             'locations.ldap_ou',
             'locations.currency',
             'locations.notes',
+            'status_id',
         ])
             ->withCount('assignedAssets as assigned_assets_count')
             ->withCount('assets as assets_count')
@@ -84,8 +86,10 @@ class LocationsController extends Controller
             ->withCount('children as children_count')
             ->withCount('users as users_count')
             ->whereNull('locations.deleted_at')
-            ->whereRaw("TRIM(locations.name) NOT LIKE '%ZATVORENO%'")
-            ;
+            ->whereHas('status', function ($query) {
+                // Izbegavamo status koji sadrži "ZATVORENO" u imenu
+                $query->where('name', 'NOT LIKE', '%ZATVORENO%');
+            });
 
         if ($request->filled('search')) {
             $locations = $locations->TextSearch($request->input('search'));
@@ -120,6 +124,15 @@ class LocationsController extends Controller
         }
         if ($request->filled('parent_id')) {
             $locations->where('locations.parent_id', '=', $request->input('parent_id'));
+        }
+        if ($request->filled('status_id')) {
+            $locations->where('locations.status_id', '=', $request->input('status_id'));
+        }
+        
+        if ($request->filled('status_name')) {
+            $locations->whereHas('status', function ($query) use ($request) {
+                $query->where('name', '=', $request->input('status_name'));
+            });
         }
 
         // Make sure the offset and limit are actually integers and do not exceed system limits
@@ -174,9 +187,10 @@ class LocationsController extends Controller
               'rtd_assets_count',
               'currency',
               'ldap_ou',
+              'status_id',
               ];
   
-          $locations = Location::withTrashed('parent', 'manager', 'children')->select([
+          $locations = Location::withTrashed('parent', 'manager', 'children', 'status')->select([
               'locations.id',
               'locations.name',
               'locations.address',
@@ -194,6 +208,7 @@ class LocationsController extends Controller
               'locations.image',
               'locations.ldap_ou',
               'locations.currency',
+              'status_id',
           ])->withCount('assignedAssets as assigned_assets_count')
               ->withCount('assets as assets_count')
               ->withCount('rtd_assets as rtd_assets_count')

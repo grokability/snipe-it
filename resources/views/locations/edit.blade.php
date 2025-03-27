@@ -16,7 +16,23 @@
 
 <!-- Manager-->
 @include ('partials.forms.edit.user-select', ['translated_name' => trans('admin/users/table.manager'), 'fieldname' => 'manager_id'])
-
+<!-- Status-->
+<div class="form-group">
+    <label for="status_id" class="col-md-3 control-label">{{ trans('admin/locations/table.status') }}</label>
+    <div class="col-md-7">
+        <select name="status_id" id="status_id" class="form-control">
+            <option value="" disabled {{ is_null($item->status_id) ? 'selected' : '' }}>Odaberite status</option>
+            @foreach($statuses as $status)
+        @if($status->name != 'Obrisana') <!-- Isključite status 'Obrisana' -->
+            <option value="{{ $status->id }}"
+                    @if($status->id == old('status_id', $item->status_id)) selected @endif>
+                {{ $status->name }}
+            </option>
+        @endif
+    @endforeach
+        </select>
+    </div>
+</div>
 @include ('partials.forms.edit.phone')
 @include ('partials.forms.edit.fax')
 

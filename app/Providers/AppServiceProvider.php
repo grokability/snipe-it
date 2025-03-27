@@ -10,6 +10,7 @@ use App\Models\License;
 use App\Models\User;
 use App\Models\Setting;
 use App\Models\SnipeSCIMConfig;
+use App\Models\Location;
 use App\Observers\AccessoryObserver;
 use App\Observers\AssetObserver;
 use App\Observers\UserObserver;
@@ -17,6 +18,7 @@ use App\Observers\ComponentObserver;
 use App\Observers\ConsumableObserver;
 use App\Observers\LicenseObserver;
 use App\Observers\SettingObserver;
+use App\Observers\LocationObserver;
 use Illuminate\Routing\UrlGenerator;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
@@ -73,6 +75,7 @@ class AppServiceProvider extends ServiceProvider
         Consumable::observe(ConsumableObserver::class);
         License::observe(LicenseObserver::class);
         Setting::observe(SettingObserver::class);
+        Location::observe(LocationObserver::class);
     }
 
     /**

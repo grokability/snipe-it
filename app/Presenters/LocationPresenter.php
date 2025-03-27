@@ -93,7 +93,17 @@ class LocationPresenter extends Presenter
                 'titleTooltip' =>  trans('general.accessories_assigned'),
                 'visible' => true,
                 'class' => 'css-accessory-alt',
-            ], [
+            ],
+            [
+                'field' => 'status',
+                'searchable' => true,
+                'sortable' => true,
+                'switchable' => true,
+                'title' => trans('general.status'),
+                'titleTooltip' => trans('general.status'),
+                'visible' => true,
+            ],
+            [
                 'field' => 'users_count',
                 'searchable' => false,
                 'sortable' => true,

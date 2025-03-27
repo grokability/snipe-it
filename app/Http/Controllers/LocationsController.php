@@ -7,6 +7,7 @@ use App\Models\Actionlog;
 use App\Models\Asset;
 use App\Models\Location;
 use App\Models\User;
+use App\Models\LocationStatus;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -52,9 +53,10 @@ class LocationsController extends Controller
     public function create() : View
     {
         $this->authorize('create', Location::class);
-
+        $statuses = LocationStatus::all();
         return view('locations/edit')
-            ->with('item', new Location);
+            ->with('item', new Location)
+            ->with('statuses', $statuses);
     }
 
     /**
@@ -85,6 +87,7 @@ class LocationsController extends Controller
         $location->phone = request('phone');
         $location->fax = request('fax');
         $location->notes = $request->input('notes');
+        $location->status_id = $request->input('status_id', 1);
 
         $location = $request->handleImages($location);
 
@@ -106,7 +109,16 @@ class LocationsController extends Controller
     public function edit(Location $location) : View | RedirectResponse
     {
         $this->authorize('update', Location::class);
-        return view('locations/edit')->with('item', $location);
+        
+        if (is_null($location = Location::find($location->id))) {
+            return redirect()->route('locations.index')->with('error', trans('admin/locations/message.does_not_exist'));
+        }
+    
+        $statuses = LocationStatus::all();  // Dohvati sve statuse iz baze
+    
+        return view('locations.edit')
+            ->with('item', $location)
+            ->with('statuses', $statuses);  // Prosledi statuse u view
     }
 
     /**
@@ -118,33 +130,57 @@ class LocationsController extends Controller
      * @param int $locationId
      * @since [v1.0]
      */
-    public function update(ImageUploadRequest $request, Location $location) : RedirectResponse
-    {
-        $this->authorize('update', Location::class);
 
-        $location->name = $request->input('name');
-        $location->parent_id = $request->input('parent_id', null);
-        $location->currency = $request->input('currency', '$');
-        $location->address = $request->input('address');
-        $location->address2 = $request->input('address2');
-        $location->city = $request->input('city');
-        $location->state = $request->input('state');
-        $location->country = $request->input('country');
-        $location->zip = $request->input('zip');
-        $location->phone = request('phone');
-        $location->fax = request('fax');
-        $location->ldap_ou = $request->input('ldap_ou');
-        $location->manager_id = $request->input('manager_id');
-        $location->notes = $request->input('notes');
+     public function update(ImageUploadRequest $request, Location $location) : RedirectResponse
+     {
+         $this->authorize('update', Location::class);
+ 
+         $location->name = $request->input('name');
+         $location->parent_id = $request->input('parent_id', null);
+         $location->currency = $request->input('currency', '$');
+         $location->address = $request->input('address');
+         $location->address2 = $request->input('address2');
+         $location->city = $request->input('city');
+         $location->state = $request->input('state');
+         $location->country = $request->input('country');
+         $location->zip = $request->input('zip');
+         $location->phone = request('phone');
+         $location->fax = request('fax');
+         $location->ldap_ou = $request->input('ldap_ou');
+         $location->manager_id = $request->input('manager_id');
+         $location->notes = $request->input('notes');
+         $location->status_id = $request->input('status_id');
+ 
+         $location = $request->handleImages($location);
+         $oldStatus = $location->status ? $location->status->name : 'N/A';
+         if ($location->save()) {
+             return redirect()->route('locations.index')->with('success', trans('admin/locations/message.update.success'));
+         }
+ 
+         return redirect()->back()->withInput()->withInput()->withErrors($location->getErrors());
+     }
 
-        $location = $request->handleImages($location);
-
-        if ($location->save()) {
-            return redirect()->route('locations.index')->with('success', trans('admin/locations/message.update.success'));
-        }
-
-        return redirect()->back()->withInput()->withInput()->withErrors($location->getErrors());
-    }
+     public function updateStatus(Request $request, Location $location)
+     {
+         // Validacija statusa
+         $request->validate([
+             'status_id' => 'required|exists:location_statuses,id',
+         ]);
+     
+         // Čuvanje starog statusa za logovanje
+         $oldStatus = $location->status->name;
+     
+         // Ažuriranje statusa lokacije
+         $location->status_id = $request->input('status_id');
+         $location->save();
+     
+         // Zapisivanje promene u log
+         $newStatus = $location->status->name;
+         Log::info("Status lokacije '{$location->name}' promenjen sa '{$oldStatus}' na '{$newStatus}'.");
+     
+         // Redirekcija nazad sa porukom o uspehu
+         return redirect()->back()->with('success', 'Status lokacije je uspešno promenjen.');
+     }
 
     /**
      * Validates and deletes selected location.
@@ -159,7 +195,6 @@ class LocationsController extends Controller
         if (is_null($location = Location::find($locationId))) {
             return redirect()->to(route('locations.index'))->with('error', trans('admin/locations/message.does_not_exist'));
         }
-
         if ($location->users()->count() > 0) {
             return redirect()->to(route('locations.index'))->with('error', trans('admin/locations/message.assoc_users'));
         } elseif ($location->children()->count() > 0) {
@@ -177,6 +212,14 @@ class LocationsController extends Controller
                 Log::error($e);
             }
         }
+        // Pre nego što obrišete lokaciju, postavite status na "Obrisana"
+        $status = LocationStatus::where('name', 'Obrisana')->first();
+        
+        if ($status) {
+            $this->status_id = $status->id;
+            $this->save();
+        }
+
         $location->delete();
 
         return redirect()->to(route('locations.index'))->with('success', trans('admin/locations/message.delete.success'));

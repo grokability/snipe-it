@@ -67,6 +67,11 @@ Route::group(['middleware' => 'auth'], function () {
             [LocationsController::class, 'postBulkDeleteStore']
         )->name('locations.bulkdelete.store');
         
+        Route::patch(
+            '/locations/{location}/update-status', 
+            [LocationsController::class, 'updateStatus']
+        )->name('locations.updateStatus');
+
         Route::post('{locationId}/upload',
             [LocationFilesController::class, 'store']
         )->name('upload/location');
