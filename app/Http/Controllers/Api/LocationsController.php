@@ -189,6 +189,7 @@ class LocationsController extends Controller
               'currency',
               'ldap_ou',
               'status_id',
+              'type_id',
               ];
   
           $locations = Location::with('parent', 'manager', 'children', 'status')->select([
@@ -216,8 +217,8 @@ class LocationsController extends Controller
               ->withCount('rtd_assets as rtd_assets_count')
               ->withCount('children as children_count')
               ->withCount('users as users_count')
-              ->where('status_id','=','2')
-              ->where('type_id','=','1');
+              ->where('locations.status_id','=','2')
+              ->where('locations.type_id','=','1');
   
           if ($request->filled('search')) {
               $locations = $locations->TextSearch($request->input('search'));
@@ -744,6 +745,7 @@ class LocationsController extends Controller
             'currency',
             'ldap_ou',
             'status_id',
+            'type_id',
         ];
     
         // Dohvatanje obrisanih lokacija (soft delete)
