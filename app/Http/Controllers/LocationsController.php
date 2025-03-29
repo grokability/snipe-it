@@ -128,7 +128,7 @@ class LocationsController extends Controller
         $statuses = LocationStatus::all();  // Dohvati sve statuse iz baze
         $types = LocationType::all();
         return view('locations/edit')
-            ->with('item', new Location)
+            ->with('item', $location)
             ->with('statuses', $statuses)
             ->with('types', $types);
     }
