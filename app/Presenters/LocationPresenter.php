@@ -45,7 +45,7 @@ class LocationPresenter extends Presenter
             ],
  [
                 'field' => 'parent',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,
                 'title' => trans('admin/locations/table.parent'),
