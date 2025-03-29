@@ -714,12 +714,6 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'throttle:api']], functi
         */
         Route::group(['prefix' => 'locations'], function () {
 
-            Route::get('deleted-and-closed',
-            [
-            Api\LocationsController::class,
-            'deletedAndClosed'
-            ]
-            )->name('api.locations.deletedAndClosed');
 
             Route::get('selectlist',
                 [
@@ -735,7 +729,21 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'throttle:api']], functi
                     'getDataViewUsers'
                 ]
             )->name('api.locations.viewusers');
+            // Closed locations
+            Route::get('closedIndex',
+            [
+                Api\LocationsController::class, 
+                'closedIndex'
+            ]
+             )->name('api.locations.closedIndex');
+            
+            // Deleted locations
 
+            Route::get('deletedIndex', 
+            [
+                Api\LocationsController::class, 
+                'deletedIndex'
+            ])->name('api.locations.deletedIndex');
 
             // Get list of assets with a default location
             Route::get('{location}/assets',

@@ -18,7 +18,7 @@
 @include ('partials.forms.edit.user-select', ['translated_name' => trans('admin/users/table.manager'), 'fieldname' => 'manager_id'])
 <!-- Status-->
 <div class="form-group">
-    <label for="status_id" class="col-md-3 control-label">{{ trans('admin/locations/table.status') }}</label>
+    <label for="status_id" class="col-md-3 control-label">{{ trans('general.status') }}</label>
     <div class="col-md-7">
         <select name="status_id" id="status_id" class="form-control">
             <option value="" disabled {{ is_null($item->status_id) ? 'selected' : '' }}>Odaberite status</option>

@@ -23,7 +23,7 @@
 
           <table
               data-columns="{{ \App\Presenters\LocationPresenter::dataTableLayout() }}"
-              data-cookie-id-table="locationTableDeleted"
+              data-cookie-id-table="locationTableClosed"
               data-click-to-select="true"
               data-pagination="true"
               data-id-table="locationTableDeleted"
@@ -38,9 +38,9 @@
               data-show-export="true"
               data-show-refresh="true"
               data-sort-order="asc"
-              id="locationTableDeleted"
+              id="locationTableClosed"
               class="table table-striped snipe-table"
-              data-url="{{ route('api.locations.deletedAndClosed') }}"
+              data-url="{{ route('api.locations.closedIndex') }}"
               data-export-options='{
                   "fileName": "export-locations-{{ date('Y-m-d') }}",
                   "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]

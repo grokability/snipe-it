@@ -116,13 +116,14 @@ Route::group(['middleware' => 'auth'], function () {
             '{locationId}/contract/{contractType}', 
             [LocationsController::class,'print_contract']
         )->name('locations.contract');
-        
-        Route::get(
-        'deleted-and-closed', 
-        [
-            LocationsController::class, 'deletedAndClosed'
-        ]
-        )->name('locations.deleted-and-closed');
+
+        Route::get('closedIndex',
+        [LocationsController::class, 'closedIndex']
+    )->name('locations.closedIndex');
+    
+            Route::get('deletedIndex',
+        [LocationsController::class, 'deletedIndex']
+    )->name('locations.deletedIndex');
         
     });
 

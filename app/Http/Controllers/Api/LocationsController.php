@@ -163,7 +163,7 @@ class LocationsController extends Controller
         return (new LocationsTransformer)->transformLocations($locations, $total);
     }
 
-    public function deletedAndClosed(Request $request)
+    public function closedIndex(Request $request)
     {
           $this->authorize('view', Location::class);
           $allowed_columns = [
@@ -190,7 +190,7 @@ class LocationsController extends Controller
               'status_id',
               ];
   
-          $locations = Location::withTrashed('parent', 'manager', 'children', 'status')->select([
+          $locations = Location::with('parent', 'manager', 'children', 'status')->select([
               'locations.id',
               'locations.name',
               'locations.address',
@@ -214,12 +214,7 @@ class LocationsController extends Controller
               ->withCount('rtd_assets as rtd_assets_count')
               ->withCount('children as children_count')
               ->withCount('users as users_count')
-          ->where(function ($query) {
-              // Lokacije koje su obrisane (tj. imaju popunjen 'deleted_at')
-              $query->whereNotNull('locations.deleted_at')
-                    // Lokacije koje su zatvorene (ime po�inje sa '%ZATVORENO')
-                    ->orWhereRaw("locations.name LIKE 'ZATVORENO%'");
-          });
+              ->where('status_id','=','2');
   
           if ($request->filled('search')) {
               $locations = $locations->TextSearch($request->input('search'));
@@ -255,6 +250,15 @@ class LocationsController extends Controller
           if ($request->filled('parent_id')) {
               $locations->where('locations.parent_id', '=', $request->input('parent_id'));
           }
+          if ($request->filled('status_id')) {
+            $locations->where('locations.status_id', '=', $request->input('status_id'));
+        }
+        
+        if ($request->filled('status_name')) {
+            $locations->whereHas('status', function ($query) use ($request) {
+                $query->where('name', '=', $request->input('status_name'));
+            });
+        }
   
           // Make sure the offset and limit are actually integers and do not exceed system limits
           $offset = ($request->input('offset') > $locations->count()) ? $locations->count() : app('api_offset_value');
@@ -284,7 +288,134 @@ class LocationsController extends Controller
           return (new LocationsTransformer)->transformLocations($locations, $total);
               
     }
-
+    public function deletedIndex(Request $request)
+    {
+        $this->authorize('view', Location::class);
+    
+        $allowed_columns = [
+            'id',
+            'name',
+            'address',
+            'address2',
+            'city',
+            'state',
+            'country',
+            'zip',
+            'created_at',
+            'updated_at',
+            'manager_id',
+            'image',
+            'assigned_assets_count',
+            'users_count',
+            'assets_count',
+            'assigned_assets_count',
+            'assets_count',
+            'rtd_assets_count',
+            'currency',
+            'ldap_ou',
+            'status_id',
+        ];
+    
+        // Dohvatanje obrisanih lokacija (soft delete)
+        $locations = Location::onlyTrashed()
+            ->with('parent', 'manager', 'children', 'status')
+            ->select([
+                'locations.id',
+                'locations.name',
+                'locations.address',
+                'locations.address2',
+                'locations.city',
+                'locations.state',
+                'locations.zip',
+                'locations.phone',
+                'locations.fax',
+                'locations.country',
+                'locations.parent_id',
+                'locations.manager_id',
+                'locations.created_at',
+                'locations.updated_at',
+                'locations.image',
+                'locations.ldap_ou',
+                'locations.currency',
+                'status_id',
+            ])
+            ->withCount('assignedAssets as assigned_assets_count')
+            ->withCount('assets as assets_count')
+            ->withCount('rtd_assets as rtd_assets_count')
+            ->withCount('children as children_count')
+            ->withCount('users as users_count');
+    
+        // Pretraga i filtriranje, slično kao za closed
+        if ($request->filled('search')) {
+            $locations = $locations->TextSearch($request->input('search'));
+        }
+    
+        if ($request->filled('name')) {
+            $locations->where('locations.name', '=', $request->input('name'));
+        }
+    
+        if ($request->filled('address')) {
+            $locations->where('locations.address', '=', $request->input('address'));
+        }
+    
+        if ($request->filled('address2')) {
+            $locations->where('locations.address2', '=', $request->input('address2'));
+        }
+    
+        if ($request->filled('city')) {
+            $locations->where('locations.city', '=', $request->input('city'));
+        }
+    
+        if ($request->filled('zip')) {
+            $locations->where('locations.zip', '=', $request->input('zip'));
+        }
+    
+        if ($request->filled('country')) {
+            $locations->where('locations.country', '=', $request->input('country'));
+        }
+    
+        if ($request->filled('manager_id')) {
+            $locations->where('locations.manager_id', '=', $request->input('manager_id'));
+        }
+    
+        if ($request->filled('parent_id')) {
+            $locations->where('locations.parent_id', '=', $request->input('parent_id'));
+        }
+    
+        if ($request->filled('status_id')) {
+            $locations->where('locations.status_id', '=', $request->input('status_id'));
+        }
+    
+        if ($request->filled('status_name')) {
+            $locations->whereHas('status', function ($query) use ($request) {
+                $query->where('name', '=', $request->input('status_name'));
+            });
+        }
+    
+        // Make sure the offset and limit are integers
+        $offset = ($request->input('offset') > $locations->count()) ? $locations->count() : app('api_offset_value');
+        $limit = app('api_limit_value');
+    
+        $order = $request->input('order') === 'asc' ? 'asc' : 'desc';
+        $sort = in_array($request->input('sort'), $allowed_columns) ? $request->input('sort') : 'created_at';
+    
+        switch ($request->input('sort')) {
+            case 'parent':
+                $locations->OrderParent($order);
+                break;
+            case 'manager':
+                $locations->OrderManager($order);
+                break;
+            default:
+                $locations->orderBy($sort, $order);
+                break;
+        }
+    
+        $total = $locations->count();
+        $locations = $locations->skip($offset)->take($limit)->get();
+    
+        return (new LocationsTransformer)->transformLocations($locations, $total);
+    }
     /**
      * Store a newly created resource in storage.
      *

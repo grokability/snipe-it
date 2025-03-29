@@ -36,12 +36,19 @@ class LocationsController extends Controller
         // Show the page
         return view('locations/index');
     }
-    public function deletedAndClosed(): View
+    public function closedIndex(): View
     {
         $this->authorize('view', Location::class);
     
         // Prikaz stranice sa podacima
-        return view('locations/deleted_and_closed');
+        return view('locations/closed');
+    }
+    public function deletedIndex(): View
+    {
+        $this->authorize('view', Location::class);
+    
+        // Prikaz stranice sa obrisanim lokacijama
+        return view('locations/deleted');
     }
     /**
      * Returns a form view used to create a new location.

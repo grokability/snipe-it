@@ -600,6 +600,51 @@ dir="{{ Helper::determineLanguageDirection() }}">
                                 </ul>
                             </li>
                         @endcan
+                        <!-- Locations -->
+                        @can('view', \App\Models\Location::class)
+                            <li id="menu-locations" class="treeview {!! (Request::is('locations*') ? ' active' : '') !!}">
+                                <a href="#">
+                                    <x-icon type="map" class="fa-fw fa-solid fa-location-dot" /> <!-- Ikonica mape -->
+                                    <span>{{ trans('general.locations') }}</span>
+                                    <x-icon type="angle-left" class="pull-right fa-fw"/> <!-- Strelica -->
+                                </a>
+
+                                <ul class="treeview-menu">
+                                    <li {!! (Request::routeIs('locations.index') ? ' class="active"' : '') !!}>
+                                        <a href="{{ route('locations.index') }}">
+                                            <x-icon type="map-marker" class="fa-fw" />
+                                            {{ trans('general.locations') }}
+                                        </a>
+                                    </li>
+
+                                    <li {!! (Request::routeIs('locations.closedIndex') ? ' class="active"' : '') !!}>
+                                        <a href="{{ route('locations.closedIndex') }}">
+                                            <x-icon type="times-circle" class="fa-fw" />
+                                            {{ trans('general.closed_locations') }}
+                                        </a>
+                                    </li>
+
+                                    @can('create', \App\Models\Location::class)
+                                        <li {!! (Request::routeIs('locations.create') ? ' class="active"' : '') !!}>
+                                            <a href="{{ route('locations.create') }}">
+                                                <x-icon type="plus-circle" class="fa-fw" />
+                                                {{ trans('general.create') }}
+                                            </a>
+                                        </li>
+                                    @endcan
+                                    @can('create', \App\Models\Location::class)
+                                        <li {!! (Request::is('locations.deletedIndex') ? ' class="active"' : '') !!}>
+                                        <a href="{{ route('locations.deletedIndex') }}">
+                                            {{ trans('general.deleted') }}
+                                        </a>
+                                    </li>
+                                    @endcan
+                                </ul>
+                            </li>
+                        @endcan
+
+
+
                         @can('view', \App\Models\License::class)
                             <li{!! (Request::is('licenses*') ? ' class="active"' : '') !!}>
                                 <a href="{{ route('licenses.index') }}">
@@ -721,19 +766,6 @@ dir="{{ Helper::determineLanguageDirection() }}">
                                                 {{ trans('general.departments') }}
                                             </a>
                                         </li>
-                                    @endcan
-
-                                    @can('view', \App\Models\Location::class)
-                                        <li>
-                                            <a href="{{ route('locations.index') }}" {{ (Request::is('/locations') ? ' class="active"' : '') }}>
-                                                {{ trans('general.locations') }}
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="{{ route('locations.deleted-and-closed') }}" {{ (Request::is('locations/deleted-and-closed') ? ' class="active"' : '') }}>
-                                                {{ trans('general.deleted_and_closed_locations') }}
-                                            </a>
-                                      </li>
                                     @endcan
 
                                     @can('view', \App\Models\Company::class)
