@@ -14,6 +14,7 @@ use App\Http\Controllers\GroupsController;
 use App\Http\Controllers\HealthController;
 use App\Http\Controllers\LabelsController;
 use App\Http\Controllers\LocationsController;
+use App\Http\Controllers\LocationFilesController;
 use App\Http\Controllers\ManufacturersController;
 use App\Http\Controllers\ModalController;
 use App\Http\Controllers\NotesController;

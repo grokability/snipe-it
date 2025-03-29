@@ -722,6 +722,13 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'throttle:api']], functi
                 ]
             )->name('api.locations.selectlist');
 
+            Route::get('selectFilteredList/selectlist', 
+                [
+                    Api\LocationsController::class, 
+                'selectFilteredList'
+                ]
+            )->name('api.locations.selectFilteredList');
+
             // Users within a location
             Route::get('{location}/users',
                 [

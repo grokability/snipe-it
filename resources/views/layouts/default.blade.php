@@ -618,26 +618,22 @@ dir="{{ Helper::determineLanguageDirection() }}">
                                     </li>
                                     <li {!! (Request::routeIs('locations.parentIndex') ? ' class="active"' : '') !!}>
                                         <a href="{{ route('locations.parentIndex') }}">
-                                            <x-icon type="times-circle" class="fa-fw" />
                                             {{ trans('general.parent') }}
                                         </a>
                                     </li>
                                     <li {!! (Request::routeIs('locations.closedIndex') ? ' class="active"' : '') !!}>
                                         <a href="{{ route('locations.closedIndex') }}">
-                                            <x-icon type="times-circle" class="fa-fw" />
                                             {{ trans('general.closed_locations') }}
                                         </a>
                                     </li>
                                     <li {!! (Request::routeIs('locations.storagedIndex') ? ' class="active"' : '') !!}>
                                         <a href="{{ route('locations.storageIndex') }}">
-                                            <x-icon type="times-circle" class="fa-fw" />
                                             {{ trans('general.storage_unit') }}
                                         </a>
                                     </li>
 
                                     <li {!! (Request::routeIs('locations.officeIndex') ? ' class="active"' : '') !!}>
                                         <a href="{{ route('locations.officeIndex') }}">
-                                            <x-icon type="times-circle" class="fa-fw" />
                                             {{ trans('general.office_location') }}
                                         </a>
                                     </li>
@@ -645,7 +641,6 @@ dir="{{ Helper::determineLanguageDirection() }}">
                                     @can('create', \App\Models\Location::class)
                                         <li {!! (Request::routeIs('locations.create') ? ' class="active"' : '') !!}>
                                             <a href="{{ route('locations.create') }}">
-                                                <x-icon type="plus-circle" class="fa-fw" />
                                                 {{ trans('general.create') }}
                                             </a>
                                         </li>

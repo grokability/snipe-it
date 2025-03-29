@@ -152,10 +152,12 @@ class LocationsController extends Controller
     
         $statuses = LocationStatus::all();  // Dohvati sve statuse iz baze
         $types = LocationType::all();
+        $parents = Location::where('type_id', '=', 2)->get();
         return view('locations/edit')
             ->with('item', $location)
             ->with('statuses', $statuses)
-            ->with('types', $types);
+            ->with('types', $types)
+            ->with('parents',$parents);
     }
 
     /**
@@ -171,7 +173,8 @@ class LocationsController extends Controller
      public function update(ImageUploadRequest $request, Location $location) : RedirectResponse
      {
          $this->authorize('update', Location::class);
- 
+         $oldStatus = $location->status_id;
+
          $location->name = $request->input('name');
          $location->parent_id = $request->input('parent_id', null);
          $location->currency = $request->input('currency', '$');
@@ -188,9 +191,12 @@ class LocationsController extends Controller
          $location->notes = $request->input('notes');
          $location->status_id = $request->input('status_id');
          $location->type_id = $request->input('type_id');
- 
+        
+         if ($location->status_id == 2 && $oldStatus != 2) { // assuming '2' is ID for closed status
+            $location->name = 'ZATVORENO ' . $request->input('name');
+            $location->notes = 'Zatvoreno: ' . now()->format('d.m.Y') . $request->input('notes');
+        }
          $location = $request->handleImages($location);
-         $oldStatus = $location->status ? $location->status->name : 'N/A';
          if ($location->save()) {
              return redirect()->route('locations.index')->with('success', trans('admin/locations/message.update.success'));
          }
@@ -198,24 +204,26 @@ class LocationsController extends Controller
          return redirect()->back()->withInput()->withInput()->withErrors($location->getErrors());
      }
 
-     public function updateStatus(Request $request, Location $location)
+     public function updateStatus(ImageUploadRequest $request, Location $location)
      {
          // Validacija statusa
          $request->validate([
              'status_id' => 'required|exists:location_statuses,id',
          ]);
-     
-         // Čuvanje starog statusa za logovanje
-         $oldStatus = $location->status->name;
-     
          // Ažuriranje statusa lokacije
+             // Ažuriranje statusa lokacije
+            $status = LocationStatus::find($request->input('status_id'));
+
+            if ($status && $status->name === 'Zatvorena lokacija') {
+                // Dodajemo "ZATVORENO" na početak imena lokacije
+                $location->name = 'ZATVORENO ' . $location->name;
+
+        // Dodajemo datum zatvaranja u notes
+        $location->notes = 'Zatvoreno: ' . now()->toDateString(); // koristiš trenutni datum
+    }
+
          $location->status_id = $request->input('status_id');
          $location->save();
-     
-         // Zapisivanje promene u log
-         $newStatus = $location->status->name;
-         Log::info("Status lokacije '{$location->name}' promenjen sa '{$oldStatus}' na '{$newStatus}'.");
-     
          // Redirekcija nazad sa porukom o uspehu
          return redirect()->back()->with('success', 'Status lokacije je uspešno promenjen.');
      }
@@ -254,8 +262,9 @@ class LocationsController extends Controller
         $status = LocationStatus::where('name', 'Obrisana')->first();
         
         if ($status) {
-            $this->status_id = $status->id;
-            $this->save();
+            // Postavljanje statusa na lokaciju
+            $location->status_id = $status->id;
+            $location->save(); // Spremi promene na lokaciji
         }
 
         $location->delete();

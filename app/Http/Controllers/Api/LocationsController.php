@@ -349,8 +349,8 @@ class LocationsController extends Controller
               'locations.image',
               'locations.ldap_ou',
               'locations.currency',
-              'status_id',
-              'type_id',
+              'locations.status_id',
+              'locations.type_id',
           ])->withCount('assignedAssets as assigned_assets_count')
               ->withCount('assets as assets_count')
               ->withCount('rtd_assets as rtd_assets_count')
@@ -1075,4 +1075,46 @@ class LocationsController extends Controller
 
         return (new SelectlistTransformer)->transformSelectlist($paginated_results);
     }
+
+    public function selectFilteredList(Request $request) : array
+{
+    $this->authorize('view.selectlists');
+
+    // Selektovanje lokacija koje nemaju type_id = 1
+    $locations = Location::select(['locations.id', 'locations.name', 'locations.parent_id', 'locations.image'])
+        ->where('locations.type_id', '!=', 1);  // Filtriranje po type_id
+
+    $page = $request->filled('page') ? $request->input('page') : 1;
+
+    if ($request->filled('search')) {
+        $locations->where('locations.name', 'LIKE', '%'.$request->input('search').'%');
+    }
+
+    $locations = $locations->orderBy('name', 'ASC')->get();
+
+    $locations_with_children = [];
+    foreach ($locations as $location) {
+        if (!array_key_exists($location->parent_id, $locations_with_children)) {
+            $locations_with_children[$location->parent_id] = [];
+        }
+        $locations_with_children[$location->parent_id][] = $location;
+    }
+
+    if ($request->filled('search')) {
+        $locations_formatted = $locations;
+    } else {
+        $location_options = Location::indenter($locations_with_children);
+        $locations_formatted = new Collection($location_options);
+    }
+
+    $paginated_results = new LengthAwarePaginator(
+        $locations_formatted->forPage($page, 500), 
+        $locations_formatted->count(), 
+        500, 
+        $page, 
+        []
+    );
+
+    return (new SelectlistTransformer)->transformSelectlist($paginated_results);
+}
 }
