@@ -84,6 +84,7 @@ return [
     'record_created' 		=> 'Zapis kreiran',
     'updated_at' 			=> 'Ažurirano',
     'currency'  			=> '$', // this is deprecated
+    'parent'               => 'Zastupnici',
     'current'  				=> 'Current',
     'current_password'      => 'Trenutna lozinka',
     'customize_report'      => 'Prilagodi izveštaj',
@@ -260,6 +261,7 @@ return [
     'signature'             => 'Potpis',
     'signed_off_by'         => 'Potpisao',
     'skin'       			=> 'Izgledi',
+    'storage_unit'          => 'Magacin',
     'webhook_msg_note'        => 'Obaveštenje će biti poslato putem veb zakačke',
     'webhook_test_msg'        => 'Oh hai! Looks like your :app integration with Snipe-IT is working!',
     'some_features_disabled' => 'DEMO MOD: Neke funkcije su onemogućene za ovu instalaciju.',
@@ -374,6 +376,7 @@ return [
     'notification_success'  => 'Uspeh:',
     'notification_warning'   => 'Upozorenje:',
     'notification_info'      => 'Informacija:',
+    'office_location'       => 'Kancelarije',
     'asset_information'     => 'Informacije o imovini',
     'model_name'            => 'Naziv modela:',
     'asset_name'            => 'Naziv imovine:',

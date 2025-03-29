@@ -33,15 +33,17 @@ class LocationPresenter extends Presenter
                 'title' => trans('admin/locations/table.name'),
                 'visible' => true,
                 'formatter' => 'locationsLinkFormatter',
-            ], [
-                'field' => 'image',
-                'searchable' => false,
+            ], 
+            [
+                'field' => 'type',
+                'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,
-                'title' => trans('general.image'),
+                'title' => trans('general.type'),
+                'titleTooltip' => trans('general.type'),
                 'visible' => true,
-                'formatter' => 'imageFormatter',
-            ], [
+            ],
+ [
                 'field' => 'parent',
                 'searchable' => false,
                 'sortable' => true,
@@ -49,6 +51,15 @@ class LocationPresenter extends Presenter
                 'title' => trans('admin/locations/table.parent'),
                 'visible' => true,
                 'formatter' => 'locationsLinkObjFormatter',
+            ],
+            [
+                'field' => 'status',
+                'searchable' => true,
+                'sortable' => true,
+                'switchable' => true,
+                'title' => trans('general.status'),
+                'titleTooltip' => trans('general.status'),
+                'visible' => true,
             ], [
                 'field' => 'assets_count',
                 'searchable' => false,
@@ -75,6 +86,15 @@ class LocationPresenter extends Presenter
                 'titleTooltip' =>  trans('admin/locations/message.assigned_assets'),
                 'visible' => true,
                 'class' => 'css-house-laptop',
+            ],
+            [
+                'field' => 'image',
+                'searchable' => false,
+                'sortable' => true,
+                'switchable' => true,
+                'title' => trans('general.image'),
+                'visible' => true,
+                'formatter' => 'imageFormatter',
             ], [
                 'field' => 'accessories_count',
                 'searchable' => false,
@@ -93,15 +113,6 @@ class LocationPresenter extends Presenter
                 'titleTooltip' =>  trans('general.accessories_assigned'),
                 'visible' => true,
                 'class' => 'css-accessory-alt',
-            ],
-            [
-                'field' => 'status',
-                'searchable' => true,
-                'sortable' => true,
-                'switchable' => true,
-                'title' => trans('general.status'),
-                'titleTooltip' => trans('general.status'),
-                'visible' => true,
             ],
             [
                 'field' => 'users_count',

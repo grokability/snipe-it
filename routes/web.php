@@ -120,7 +120,19 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('closedIndex',
         [LocationsController::class, 'closedIndex']
     )->name('locations.closedIndex');
+
+    Route::get('storageIndex',
+    [LocationsController::class, 'storageIndex']
+    )->name('locations.storageIndex');
+
+    Route::get('officeIndex',
+    [LocationsController::class, 'officeIndex']
+    )->name('locations.officeIndex');
     
+    Route::get('parentIndex',
+    [LocationsController::class, 'parentIndex']
+    )->name('locations.parentIndex');
+
             Route::get('deletedIndex',
         [LocationsController::class, 'deletedIndex']
     )->name('locations.deletedIndex');

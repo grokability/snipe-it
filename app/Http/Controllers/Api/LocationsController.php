@@ -88,10 +88,8 @@ class LocationsController extends Controller
             ->withCount('children as children_count')
             ->withCount('users as users_count')
             ->whereNull('locations.deleted_at')
-            ->whereHas('status', function ($query) {
-                // Izbegavamo status koji sadrži "ZATVORENO" u imenu
-                $query->where('name', 'NOT LIKE', '%ZATVORENO%');
-            });
+            ->where('locations.type_id', '=', 1)
+            ->where('locations.status_id','=',1);
 
         if ($request->filled('search')) {
             $locations = $locations->TextSearch($request->input('search'));
@@ -211,12 +209,14 @@ class LocationsController extends Controller
               'locations.ldap_ou',
               'locations.currency',
               'status_id',
+              'type_id',
           ])->withCount('assignedAssets as assigned_assets_count')
               ->withCount('assets as assets_count')
               ->withCount('rtd_assets as rtd_assets_count')
               ->withCount('children as children_count')
               ->withCount('users as users_count')
-              ->where('status_id','=','2');
+              ->where('status_id','=','2')
+              ->where('type_id','=','1');
   
           if ($request->filled('search')) {
               $locations = $locations->TextSearch($request->input('search'));
@@ -259,6 +259,433 @@ class LocationsController extends Controller
         if ($request->filled('status_name')) {
             $locations->whereHas('status', function ($query) use ($request) {
                 $query->where('name', '=', $request->input('status_name'));
+            });
+        }
+
+        if ($request->filled('type_id')) {
+            $locations->where('locations.type_id', '=', $request->input('type_id'));
+        }
+        
+        if ($request->filled('type_name')) {
+            $locations->whereHas('type', function ($query) use ($request) {
+                $query->where('name', '=', $request->input('type_name'));
+            });
+        }
+  
+          // Make sure the offset and limit are actually integers and do not exceed system limits
+          $offset = ($request->input('offset') > $locations->count()) ? $locations->count() : app('api_offset_value');
+          $limit = app('api_limit_value');
+  
+          $order = $request->input('order') === 'asc' ? 'asc' : 'desc';
+          $sort = in_array($request->input('sort'), $allowed_columns) ? $request->input('sort') : 'created_at';
+  
+  
+  
+          switch ($request->input('sort')) {
+              case 'parent':
+                  $locations->OrderParent($order);
+                  break;
+              case 'manager':
+                  $locations->OrderManager($order);
+                  break;
+              default:
+                  $locations->orderBy($sort, $order);
+                  break;
+          }
+  
+  
+          $total = $locations->count();
+          $locations = $locations->skip($offset)->take($limit)->get();
+  
+          return (new LocationsTransformer)->transformLocations($locations, $total);
+              
+    }
+
+    public function storageIndex(Request $request)
+    {
+          $this->authorize('view', Location::class);
+          $allowed_columns = [
+              'id',
+              'name',
+              'address',
+              'address2',
+              'city',
+              'state',
+              'country',
+              'zip',
+              'created_at',
+              'updated_at',
+              'manager_id',
+              'image',
+              'assigned_assets_count',
+              'users_count',
+              'assets_count',
+              'assigned_assets_count',
+              'assets_count',
+              'rtd_assets_count',
+              'currency',
+              'ldap_ou',
+              'status_id',
+              'type_id',
+              ];
+  
+          $locations = Location::with('parent', 'manager', 'children', 'status')->select([
+              'locations.id',
+              'locations.name',
+              'locations.address',
+              'locations.address2',
+              'locations.city',
+              'locations.state',
+              'locations.zip',
+              'locations.phone',
+              'locations.fax',
+              'locations.country',
+              'locations.parent_id',
+              'locations.manager_id',
+              'locations.created_at',
+              'locations.updated_at',
+              'locations.image',
+              'locations.ldap_ou',
+              'locations.currency',
+              'status_id',
+              'type_id',
+          ])->withCount('assignedAssets as assigned_assets_count')
+              ->withCount('assets as assets_count')
+              ->withCount('rtd_assets as rtd_assets_count')
+              ->withCount('children as children_count')
+              ->withCount('users as users_count')
+              ->where('locations.type_id', '=', 3)
+              ->where('locations.status_id','=',1);
+  
+          if ($request->filled('search')) {
+              $locations = $locations->TextSearch($request->input('search'));
+          }
+  
+          if ($request->filled('name')) {
+              $locations->where('locations.name', '=', $request->input('name'));
+          }
+  
+          if ($request->filled('address')) {
+              $locations->where('locations.address', '=', $request->input('address'));
+          }
+  
+          if ($request->filled('address2')) {
+              $locations->where('locations.address2', '=', $request->input('address2'));
+          }
+  
+          if ($request->filled('city')) {
+              $locations->where('locations.city', '=', $request->input('city'));
+          }
+  
+          if ($request->filled('zip')) {
+              $locations->where('locations.zip', '=', $request->input('zip'));
+          }
+  
+          if ($request->filled('country')) {
+              $locations->where('locations.country', '=', $request->input('country'));
+          }
+  
+          if ($request->filled('manager_id')) {
+              $locations->where('locations.manager_id', '=', $request->input('manager_id'));
+          }
+          if ($request->filled('parent_id')) {
+              $locations->where('locations.parent_id', '=', $request->input('parent_id'));
+          }
+          if ($request->filled('status_id')) {
+            $locations->where('locations.status_id', '=', $request->input('status_id'));
+        }
+        
+        if ($request->filled('status_name')) {
+            $locations->whereHas('status', function ($query) use ($request) {
+                $query->where('name', '=', $request->input('status_name'));
+            });
+        }
+
+        if ($request->filled('type_id')) {
+            $locations->where('locations.type_id', '=', $request->input('type_id'));
+        }
+        
+        if ($request->filled('type_name')) {
+            $locations->whereHas('type', function ($query) use ($request) {
+                $query->where('name', '=', $request->input('type_name'));
+            });
+        }
+  
+          // Make sure the offset and limit are actually integers and do not exceed system limits
+          $offset = ($request->input('offset') > $locations->count()) ? $locations->count() : app('api_offset_value');
+          $limit = app('api_limit_value');
+  
+          $order = $request->input('order') === 'asc' ? 'asc' : 'desc';
+          $sort = in_array($request->input('sort'), $allowed_columns) ? $request->input('sort') : 'created_at';
+  
+  
+  
+          switch ($request->input('sort')) {
+              case 'parent':
+                  $locations->OrderParent($order);
+                  break;
+              case 'manager':
+                  $locations->OrderManager($order);
+                  break;
+              default:
+                  $locations->orderBy($sort, $order);
+                  break;
+          }
+  
+  
+          $total = $locations->count();
+          $locations = $locations->skip($offset)->take($limit)->get();
+  
+          return (new LocationsTransformer)->transformLocations($locations, $total);
+              
+    }
+
+    public function parentIndex(Request $request)
+    {
+          $this->authorize('view', Location::class);
+          $allowed_columns = [
+              'id',
+              'name',
+              'address',
+              'address2',
+              'city',
+              'state',
+              'country',
+              'zip',
+              'created_at',
+              'updated_at',
+              'manager_id',
+              'image',
+              'assigned_assets_count',
+              'users_count',
+              'assets_count',
+              'assigned_assets_count',
+              'assets_count',
+              'rtd_assets_count',
+              'currency',
+              'ldap_ou',
+              'status_id',
+              'type_id',
+              ];
+  
+          $locations = Location::with('parent', 'manager', 'children', 'status')->select([
+              'locations.id',
+              'locations.name',
+              'locations.address',
+              'locations.address2',
+              'locations.city',
+              'locations.state',
+              'locations.zip',
+              'locations.phone',
+              'locations.fax',
+              'locations.country',
+              'locations.parent_id',
+              'locations.manager_id',
+              'locations.created_at',
+              'locations.updated_at',
+              'locations.image',
+              'locations.ldap_ou',
+              'locations.currency',
+              'status_id',
+              'type_id',
+          ])->withCount('assignedAssets as assigned_assets_count')
+              ->withCount('assets as assets_count')
+              ->withCount('rtd_assets as rtd_assets_count')
+              ->withCount('children as children_count')
+              ->withCount('users as users_count')
+              ->where('locations.type_id', '=', 2)
+              ->where('locations.status_id','=',1);
+  
+          if ($request->filled('search')) {
+              $locations = $locations->TextSearch($request->input('search'));
+          }
+  
+          if ($request->filled('name')) {
+              $locations->where('locations.name', '=', $request->input('name'));
+          }
+  
+          if ($request->filled('address')) {
+              $locations->where('locations.address', '=', $request->input('address'));
+          }
+  
+          if ($request->filled('address2')) {
+              $locations->where('locations.address2', '=', $request->input('address2'));
+          }
+  
+          if ($request->filled('city')) {
+              $locations->where('locations.city', '=', $request->input('city'));
+          }
+  
+          if ($request->filled('zip')) {
+              $locations->where('locations.zip', '=', $request->input('zip'));
+          }
+  
+          if ($request->filled('country')) {
+              $locations->where('locations.country', '=', $request->input('country'));
+          }
+  
+          if ($request->filled('manager_id')) {
+              $locations->where('locations.manager_id', '=', $request->input('manager_id'));
+          }
+          if ($request->filled('parent_id')) {
+              $locations->where('locations.parent_id', '=', $request->input('parent_id'));
+          }
+          if ($request->filled('status_id')) {
+            $locations->where('locations.status_id', '=', $request->input('status_id'));
+        }
+        
+        if ($request->filled('status_name')) {
+            $locations->whereHas('status', function ($query) use ($request) {
+                $query->where('name', '=', $request->input('status_name'));
+            });
+        }
+
+        if ($request->filled('type_id')) {
+            $locations->where('locations.type_id', '=', $request->input('type_id'));
+        }
+        
+        if ($request->filled('type_name')) {
+            $locations->whereHas('type', function ($query) use ($request) {
+                $query->where('name', '=', $request->input('type_name'));
+            });
+        }
+  
+          // Make sure the offset and limit are actually integers and do not exceed system limits
+          $offset = ($request->input('offset') > $locations->count()) ? $locations->count() : app('api_offset_value');
+          $limit = app('api_limit_value');
+  
+          $order = $request->input('order') === 'asc' ? 'asc' : 'desc';
+          $sort = in_array($request->input('sort'), $allowed_columns) ? $request->input('sort') : 'created_at';
+  
+  
+  
+          switch ($request->input('sort')) {
+              case 'parent':
+                  $locations->OrderParent($order);
+                  break;
+              case 'manager':
+                  $locations->OrderManager($order);
+                  break;
+              default:
+                  $locations->orderBy($sort, $order);
+                  break;
+          }
+  
+  
+          $total = $locations->count();
+          $locations = $locations->skip($offset)->take($limit)->get();
+  
+          return (new LocationsTransformer)->transformLocations($locations, $total);
+              
+    }
+
+    public function officeIndex(Request $request)
+    {
+          $this->authorize('view', Location::class);
+          $allowed_columns = [
+              'id',
+              'name',
+              'address',
+              'address2',
+              'city',
+              'state',
+              'country',
+              'zip',
+              'created_at',
+              'updated_at',
+              'manager_id',
+              'image',
+              'assigned_assets_count',
+              'users_count',
+              'assets_count',
+              'assigned_assets_count',
+              'assets_count',
+              'rtd_assets_count',
+              'currency',
+              'ldap_ou',
+              'status_id',
+              'type_id',
+              ];
+  
+          $locations = Location::with('parent', 'manager', 'children', 'status')->select([
+              'locations.id',
+              'locations.name',
+              'locations.address',
+              'locations.address2',
+              'locations.city',
+              'locations.state',
+              'locations.zip',
+              'locations.phone',
+              'locations.fax',
+              'locations.country',
+              'locations.parent_id',
+              'locations.manager_id',
+              'locations.created_at',
+              'locations.updated_at',
+              'locations.image',
+              'locations.ldap_ou',
+              'locations.currency',
+              'status_id',
+              'type_id',
+          ])->withCount('assignedAssets as assigned_assets_count')
+              ->withCount('assets as assets_count')
+              ->withCount('rtd_assets as rtd_assets_count')
+              ->withCount('children as children_count')
+              ->withCount('users as users_count')
+              ->where('locations.type_id', '=', 4)
+              ->where('locations.status_id','=',1);
+  
+          if ($request->filled('search')) {
+              $locations = $locations->TextSearch($request->input('search'));
+          }
+  
+          if ($request->filled('name')) {
+              $locations->where('locations.name', '=', $request->input('name'));
+          }
+  
+          if ($request->filled('address')) {
+              $locations->where('locations.address', '=', $request->input('address'));
+          }
+  
+          if ($request->filled('address2')) {
+              $locations->where('locations.address2', '=', $request->input('address2'));
+          }
+  
+          if ($request->filled('city')) {
+              $locations->where('locations.city', '=', $request->input('city'));
+          }
+  
+          if ($request->filled('zip')) {
+              $locations->where('locations.zip', '=', $request->input('zip'));
+          }
+  
+          if ($request->filled('country')) {
+              $locations->where('locations.country', '=', $request->input('country'));
+          }
+  
+          if ($request->filled('manager_id')) {
+              $locations->where('locations.manager_id', '=', $request->input('manager_id'));
+          }
+          if ($request->filled('parent_id')) {
+              $locations->where('locations.parent_id', '=', $request->input('parent_id'));
+          }
+          if ($request->filled('status_id')) {
+            $locations->where('locations.status_id', '=', $request->input('status_id'));
+        }
+        
+        if ($request->filled('status_name')) {
+            $locations->whereHas('status', function ($query) use ($request) {
+                $query->where('name', '=', $request->input('status_name'));
+            });
+        }
+
+        if ($request->filled('type_id')) {
+            $locations->where('locations.type_id', '=', $request->input('type_id'));
+        }
+        
+        if ($request->filled('type_name')) {
+            $locations->whereHas('type', function ($query) use ($request) {
+                $query->where('name', '=', $request->input('type_name'));
             });
         }
   

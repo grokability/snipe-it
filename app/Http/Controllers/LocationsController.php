@@ -35,21 +35,46 @@ class LocationsController extends Controller
         // Grab all the locations
         $this->authorize('view', Location::class);
         // Show the page
-        return view('locations/index');
+        return view('locations/index',['route' => route('api.locations.index')]);
     }
+
+    public function parentIndex() : View
+    {
+        // Grab all the locations
+        $this->authorize('view', Location::class);
+        // Show the page
+        return view('locations/index',['route' => route('api.locations.parentIndex')]);
+    }
+
     public function closedIndex(): View
     {
         $this->authorize('view', Location::class);
     
         // Prikaz stranice sa podacima
-        return view('locations/closed');
+        return view('locations/index',['route' => route('api.locations.closedIndex')]);
     }
     public function deletedIndex(): View
     {
         $this->authorize('view', Location::class);
     
         // Prikaz stranice sa obrisanim lokacijama
-        return view('locations/deleted');
+        return view('locations/index',['route' => route('api.locations.deletedIndex')]);;
+    }
+
+    public function storageIndex(): View
+    {
+        $this->authorize('view', Location::class);
+    
+        // Prikaz stranice sa obrisanim lokacijama
+        return view('locations/index',['route' => route('api.locations.storageIndex')]);
+    }
+
+    public function officeIndex(): View
+    {
+        $this->authorize('view', Location::class);
+    
+        // Prikaz stranice sa obrisanim lokacijama
+        return view('locations/index',['route' => route('api.locations.officeIndex')]);
     }
     /**
      * Returns a form view used to create a new location.

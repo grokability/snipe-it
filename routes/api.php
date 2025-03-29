@@ -736,6 +736,27 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'throttle:api']], functi
                 'closedIndex'
             ]
              )->name('api.locations.closedIndex');
+
+             Route::get('storageIndex',
+             [
+                 Api\LocationsController::class, 
+                 'storageIndex'
+             ]
+              )->name('api.locations.storageIndex');
+
+            Route::get('officeIndex',
+              [
+                  Api\LocationsController::class, 
+                  'officeIndex'
+              ]
+               )->name('api.locations.officeIndex');
+
+               Route::get('parentIndex',
+               [
+                   Api\LocationsController::class, 
+                   'parentIndex'
+               ]
+                )->name('api.locations.parentIndex');
             
             // Deleted locations
 

@@ -38,7 +38,7 @@
                   data-sort-order="asc"
                   id="locationTable"
                   class="table table-striped snipe-table"
-                  data-url="{{ route('api.locations.index') }}"
+                  data-url="{{ $route }}"
                   data-export-options='{
               "fileName": "export-locations-{{ date('Y-m-d') }}",
               "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
