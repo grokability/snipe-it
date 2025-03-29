@@ -56,6 +56,7 @@ class LocationsController extends Controller
             'notes',
             'status_id',
             'type_id',
+            'parent_id',
             ];
 
         $locations = Location::with('parent', 'manager', 'children','status','type')->select([
@@ -77,8 +78,8 @@ class LocationsController extends Controller
             'locations.ldap_ou',
             'locations.currency',
             'locations.notes',
-            'status_id',
-            'type_id',
+            'locations.status_id',
+            'locations.type_id',
         ])
             ->withCount('assignedAssets as assigned_assets_count')
             ->withCount('assets as assets_count')
@@ -208,8 +209,8 @@ class LocationsController extends Controller
               'locations.image',
               'locations.ldap_ou',
               'locations.currency',
-              'status_id',
-              'type_id',
+              'locations.status_id',
+              'locations.type_id',
           ])->withCount('assignedAssets as assigned_assets_count')
               ->withCount('assets as assets_count')
               ->withCount('rtd_assets as rtd_assets_count')
@@ -486,8 +487,8 @@ class LocationsController extends Controller
               'locations.image',
               'locations.ldap_ou',
               'locations.currency',
-              'status_id',
-              'type_id',
+              'locations.status_id',
+              'locations.type_id',
           ])->withCount('assignedAssets as assigned_assets_count')
               ->withCount('assets as assets_count')
               ->withCount('rtd_assets as rtd_assets_count')
@@ -625,8 +626,8 @@ class LocationsController extends Controller
               'locations.image',
               'locations.ldap_ou',
               'locations.currency',
-              'status_id',
-              'type_id',
+              'locations.status_id',
+              'locations.type_id',
           ])->withCount('assignedAssets as assigned_assets_count')
               ->withCount('assets as assets_count')
               ->withCount('rtd_assets as rtd_assets_count')
@@ -766,7 +767,8 @@ class LocationsController extends Controller
                 'locations.image',
                 'locations.ldap_ou',
                 'locations.currency',
-                'status_id',
+                'locations.status_id',
+                'locations.type_id',
             ])
             ->withCount('assignedAssets as assigned_assets_count')
             ->withCount('assets as assets_count')

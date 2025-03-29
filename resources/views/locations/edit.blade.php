@@ -13,6 +13,7 @@
 
 <!-- parent -->
 @include ('partials.forms.edit.location-select', ['translated_name' => trans('admin/locations/table.parent'), 'fieldname' => 'parent_id'])
+
 <div class="form-group">
     <label for="type_id" class="col-md-3 control-label">{{ trans('general.type') }}</label>
     <div class="col-md-7">
