@@ -77,6 +77,7 @@ class Location extends SnipeModel
         'notes',
         'created_at',
         'status_id',
+        'type_id'
     ];
     protected $hidden = ['user_id'];
 
@@ -87,7 +88,7 @@ class Location extends SnipeModel
      *
      * @var array
      */
-    protected $searchableAttributes = ['name', 'address', 'city', 'state', 'zip', 'created_at', 'ldap_ou', 'phone', 'fax','currency', 'notes','status_id'];
+    protected $searchableAttributes = ['name', 'address', 'city', 'state', 'zip', 'created_at', 'ldap_ou', 'phone', 'fax','currency', 'notes','status_id','type_id'];
 
     /**
      * The relations and their attributes that should be included when searching the model.
@@ -97,6 +98,7 @@ class Location extends SnipeModel
     protected $searchableRelations = [
       'parent' => ['name'],
       'status' => ['name'],
+      'type' => ['name'],
     ];
 
 
@@ -143,6 +145,10 @@ class Location extends SnipeModel
     public function status()
     {
         return $this->belongsTo(LocationStatus::class);
+    }
+        public function type()
+    {
+        return $this->belongsTo(LocationType::class);
     }
     /**
      * Find assets with this location as their location_id

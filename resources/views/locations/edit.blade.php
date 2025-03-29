@@ -13,6 +13,20 @@
 
 <!-- parent -->
 @include ('partials.forms.edit.location-select', ['translated_name' => trans('admin/locations/table.parent'), 'fieldname' => 'parent_id'])
+<div class="form-group">
+    <label for="type_id" class="col-md-3 control-label">{{ trans('general.type') }}</label>
+    <div class="col-md-7">
+        <select name="type_id" id="type_id" class="form-control">
+            <option value="" disabled {{ is_null($item->type_id) ? 'selected' : '' }}>Odaberite tip lokacije</option>
+            @foreach($types as $type)
+         <option value="{{ $type->id }}"
+                    @if($type->id == old('type_id', $item->type_id)) selected @endif>
+                {{ $type->name }}
+            </option>
+    @endforeach
+        </select>
+    </div>
+</div>
 
 <!-- Manager-->
 @include ('partials.forms.edit.user-select', ['translated_name' => trans('admin/users/table.manager'), 'fieldname' => 'manager_id'])
@@ -24,7 +38,7 @@
             <option value="" disabled {{ is_null($item->status_id) ? 'selected' : '' }}>Odaberite status</option>
             @foreach($statuses as $status)
         @if($status->name != 'Obrisana') <!-- Isključite status 'Obrisana' -->
-            <option value="{{ $status->id }}"
+         <option value="{{ $status->id }}"
                     @if($status->id == old('status_id', $item->status_id)) selected @endif>
                 {{ $status->name }}
             </option>

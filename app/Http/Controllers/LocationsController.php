@@ -6,6 +6,7 @@ use App\Http\Requests\ImageUploadRequest;
 use App\Models\Actionlog;
 use App\Models\Asset;
 use App\Models\Location;
+use App\Models\LocationType;
 use App\Models\User;
 use App\Models\LocationStatus;
 use Illuminate\Support\Facades\Storage;
@@ -61,9 +62,11 @@ class LocationsController extends Controller
     {
         $this->authorize('create', Location::class);
         $statuses = LocationStatus::all();
+        $types = LocationType::all();
         return view('locations/edit')
             ->with('item', new Location)
-            ->with('statuses', $statuses);
+            ->with('statuses', $statuses)
+            ->with('types', $types);
     }
 
     /**
@@ -95,6 +98,7 @@ class LocationsController extends Controller
         $location->fax = request('fax');
         $location->notes = $request->input('notes');
         $location->status_id = $request->input('status_id', 1);
+        $location->type_id = $request->input('location_type_id',1);
 
         $location = $request->handleImages($location);
 
@@ -122,10 +126,11 @@ class LocationsController extends Controller
         }
     
         $statuses = LocationStatus::all();  // Dohvati sve statuse iz baze
-    
-        return view('locations.edit')
-            ->with('item', $location)
-            ->with('statuses', $statuses);  // Prosledi statuse u view
+        $types = LocationType::all();
+        return view('locations/edit')
+            ->with('item', new Location)
+            ->with('statuses', $statuses)
+            ->with('types', $types);
     }
 
     /**
@@ -157,6 +162,7 @@ class LocationsController extends Controller
          $location->manager_id = $request->input('manager_id');
          $location->notes = $request->input('notes');
          $location->status_id = $request->input('status_id');
+         $location->type_id = $request->input('type_id');
  
          $location = $request->handleImages($location);
          $oldStatus = $location->status ? $location->status->name : 'N/A';

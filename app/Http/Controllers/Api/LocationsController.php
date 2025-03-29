@@ -55,9 +55,10 @@ class LocationsController extends Controller
             'zip',
             'notes',
             'status_id',
+            'type_id',
             ];
 
-        $locations = Location::with('parent', 'manager', 'children','status')->select([
+        $locations = Location::with('parent', 'manager', 'children','status','type')->select([
             'locations.id',
             'locations.name',
             'locations.address',
@@ -77,6 +78,7 @@ class LocationsController extends Controller
             'locations.currency',
             'locations.notes',
             'status_id',
+            'type_id',
         ])
             ->withCount('assignedAssets as assigned_assets_count')
             ->withCount('assets as assets_count')

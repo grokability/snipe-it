@@ -643,8 +643,6 @@ dir="{{ Helper::determineLanguageDirection() }}">
                             </li>
                         @endcan
 
-
-
                         @can('view', \App\Models\License::class)
                             <li{!! (Request::is('licenses*') ? ' class="active"' : '') !!}>
                                 <a href="{{ route('licenses.index') }}">
