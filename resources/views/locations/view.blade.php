@@ -157,7 +157,9 @@
                             <span class="hidden-lg hidden-md">
                                 <i class="fas fa-map-marker-alt fa-2x"></i></span>
                             <span class="hidden-xs hidden-sm">Lista filijala
-                                {!! ($location->children->count() > 0) ? '<badge class="badge badge-secondary">' . number_format($location->children->count()) . '</badge>' : '' !!}
+                            {!! ($location->children->where('status', '!=', 'closed')->count() > 0) ? 
+    '<badge class="badge badge-secondary">' . number_format($location->children->where('status_id', '!=', '2')->count()) . '</badge>' 
+    : '' !!}
                         </a>
                     </li>
                 @endif
