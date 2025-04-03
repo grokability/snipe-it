@@ -64,14 +64,23 @@ class ActionlogsTransformer
         if (($actionlog->log_meta) && ($actionlog->log_meta!='')) {
             $meta_array = json_decode($actionlog->log_meta);
 
+            if ($meta_array === null && json_last_error() !== JSON_ERROR_NONE) {
+                \Log::error('JSON decode error in action log ID: ' . $actionlog->id, [
+                    'error' => json_last_error_msg(),
+                    'log_meta' => $actionlog->log_meta
+                ]);
+            }
+
             $clean_meta = [];
 
             if ($meta_array) {
 
                 foreach ($meta_array as $fieldname => $fieldata) {
 
-                    $clean_meta[$fieldname]['old'] = $this->clean_field($fieldata->old);
-                    $clean_meta[$fieldname]['new'] = $this->clean_field($fieldata->new);
+                    $clean_meta[$fieldname]['old'] = isset($fieldata->old) ? $this->clean_field($fieldata->old) : null;
+                    $clean_meta[$fieldname]['new'] = isset($fieldata->new) ? $this->clean_field($fieldata->new) : null;
+                    
+
 
                     // this is a custom field
                     if (str_starts_with($fieldname, '_snipeit_')) {

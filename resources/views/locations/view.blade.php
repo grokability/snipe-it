@@ -163,6 +163,15 @@
                         </a>
                     </li>
                 @endif
+                @can('update', \App\Models\Location::class)
+          <li class="pull-right">
+              <a href="#" data-toggle="modal" data-target="#uploadFileModal">
+              <span class="hidden-xs"><i class="fas fa-paperclip" aria-hidden="true"></i></span>
+              <span class="hidden-lg hidden-md hidden-xl"><i class="fas fa-paperclip fa-2x" aria-hidden="true"></i></span>
+              <span class="hidden-xs hidden-sm">{{ trans('button.upload') }}</span>
+              </a>
+          </li>
+        @endcan
                 <li>
                     <a href="#files" data-toggle="tab">
                         <span class="hidden-lg hidden-md">

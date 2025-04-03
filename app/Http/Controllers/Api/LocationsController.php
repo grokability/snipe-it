@@ -89,8 +89,11 @@ class LocationsController extends Controller
             ->withCount('children as children_count')
             ->withCount('users as users_count')
             ->whereNull('locations.deleted_at')
-            ->where('locations.type_id', '=', 1)
-            ->where('locations.status_id','=',1);
+            ->where('locations.status_id', '=', '1')
+            ->where(function($query) {
+                $query->where('locations.type_id', '=', '1')
+                      ->orWhere('locations.type_id', '=', '5');
+            });
 
         if ($request->filled('search')) {
             $locations = $locations->TextSearch($request->input('search'));
@@ -218,7 +221,10 @@ class LocationsController extends Controller
               ->withCount('children as children_count')
               ->withCount('users as users_count')
               ->where('locations.status_id','=','2')
-              ->where('locations.type_id','=','1');
+              ->where(function($query) {
+                $query->where('locations.type_id', '=', '1')
+                      ->orWhere('locations.type_id', '=', '5');
+            });
   
           if ($request->filled('search')) {
               $locations = $locations->TextSearch($request->input('search'));

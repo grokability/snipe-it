@@ -71,7 +71,7 @@ class LocationFilesController extends Controller
                 $logAction = new Actionlog();
                 $logAction->item_id = $location->id;
                 $logAction->item_type = Location::class;
-                $logAction->user_id = Auth::id();
+                $logAction->created_by = Auth::id();
                 $logAction->note = $request->input('notes');
                 $logAction->target_id = null;
                 $logAction->created_at = date("Y-m-d H:i:s");
