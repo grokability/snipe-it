@@ -7,6 +7,7 @@ use App\Models\Actionlog;
 use App\Models\Asset;
 use App\Models\Location;
 use App\Models\LocationType;
+use App\Models\AccessoryCheckout;
 use App\Models\User;
 use App\Models\LocationStatus;
 use Illuminate\Support\Facades\Storage;
@@ -305,7 +306,12 @@ class LocationsController extends Controller
             $manager = User::where('id', $location->manager_id)->first();
             $users = User::where('location_id', $id)->with('company', 'department', 'location')->get();
             $assets = Asset::where('assigned_to', $id)->where('assigned_type', Location::class)->with('model', 'model.category')->get();
-            return view('locations/print')->with('assets', $assets)->with('users', $users)->with('location', $location)->with('parent', $parent)->with('manager', $manager);
+            // **New:** Retrieve all accessories assigned to this location.
+            // Using the AccessoryCheckout model which logs accessory checkouts.
+            // Filter by assigned_to = $id and assigned_type = Location::class (polymorphic assignment to Location).
+            // Eager-load the related Accessory and the User who created the checkout (assigned it), for performance.
+            $accessories = AccessoryCheckout::where('assigned_to', $id)->where('assigned_type', Location::class)->with(['accessory'])->get();
+            return view('locations/print')->with('assets', $assets)->with('users', $users)->with('location', $location)->with('parent', $parent)->with('manager', $manager)->with('accessories',$accessories);
 
         }
 
@@ -338,9 +344,13 @@ class LocationsController extends Controller
         // unset these values
         $location->id = null;
         $location->image = null;
+        $types = LocationType::all();
+        $statuses = LocationStatus::all();
 
         return view('locations/edit')
-            ->with('item', $location);
+            ->with('item', $location)
+            ->with('types',$types)
+            ->with('statuses',$statuses);
     }
 
 
@@ -386,7 +396,8 @@ class LocationsController extends Controller
             $manager = User::where('id', $location->manager_id)->first();
             $users = User::where('location_id', $id)->with('company', 'department', 'location')->get();
             $assets = Asset::where('location_id', $id)->with('model', 'model.category')->get();
-            return view('locations/print')->with('assets', $assets)->with('users', $users)->with('location', $location)->with('parent', $parent)->with('manager', $manager);
+            $accessories = AccessoryCheckout::where('assigned_to', $id)->where('assigned_type', Location::class)->with(['accessory'])->get();
+            return view('locations/print')->with('assets', $assets)->with('users', $users)->with('location', $location)->with('parent', $parent)->with('manager', $manager)->with('accessories',$accessories);
 
         }
         return redirect()->route('locations.index')->with('error', trans('admin/locations/message.does_not_exist'));
@@ -505,18 +516,11 @@ class LocationsController extends Controller
         if ($location = Location::where('id', $locationId)->first()) {
         
             $basePath = Storage::disk('local')->path('');
-            
             $path = $basePath . DIRECTORY_SEPARATOR . $filename;
-            
-
             $contract_template = new \PhpOffice\PhpWord\TemplateProcessor($path);
 
             $parent = Location::where('id', $location->parent_id)->first();
-            $parent_name = $parent->name ?? "Ime Zastupnika";
-            $parent_city = $parent->city ?? "Grad Zastupnika";
             if ($parent){
-                $parent_manager = User::where('id', $parent->manager_id)->first();
-                $director = $parent_manager->full_name ?? "Direktor";
                 $parent_information = array(
                     'parent_name' => $parent->state ?? "Ime Zastupnika",
                     'parent_city' => $parent->city ?? "Grad Zastupnika",
@@ -530,16 +534,48 @@ class LocationsController extends Controller
             }
             
             $assets = Asset::where('assigned_to', $locationId)->where('assigned_type', Location::class)->with('model', 'model.category')->get();
+            $asset_list = [];
+            $asset_counter = 1;
+            foreach ($assets as $asset) {
+                $asset_list[] = [
+                    'id'            => $asset_counter,
+                    'category'      => ($asset->model && $asset->model->category) ? $asset->model->category->name : '',
+                    'manufacturer'  => ($asset->model && $asset->model->manufacturer) ? $asset->model->manufacturer->name : '',
+                    'model_nr'      => ($asset->model) ? $asset->model->model_number : '',
+                    'serial_number' => $asset->serial,
+                    'price'         => $asset->purchase_cost,
+                    'item_type'     => 'Asset' // Optionally flag type if needed
+                ];
+                $asset_counter++;
+            }
 
+            // **New:** Retrieve accessories assigned to this location from the accessories_checkout table.
+            $accessories = AccessoryCheckout::where('assigned_to', $locationId)->where('assigned_type', Location::class)->with(['accessory', 'accessory.category', 'accessory.manufacturer'])->get();
+
+            // Build accessory list array (using similar keys as for assets)
+            $accessory_list = [];
+            $accessory_counter = 1;
+            foreach ($accessories as $accessoryEntry) {
+            $accessory_list[] = [
+                'id'            => 'A' . $accessory_counter, // Prefix with A to distinguish if needed
+                'category'      => isset($accessoryEntry->accessory->category) ? $accessoryEntry->accessory->category->name : '',
+                'manufacturer'  => isset($accessoryEntry->accessory->manufacturer) ? $accessoryEntry->accessory->manufacturer->name : '',
+                'model_nr'      => isset($accessoryEntry->accessory) ? $accessoryEntry->accessory->model_number : '',
+                'serial_number' => isset($accessoryEntry->accessory) ? $accessoryEntry->accessory->serial : '',
+                'price'         => isset($accessoryEntry->accessory->purchase_cost) ? $accessoryEntry->accessory->purchase_cost : '',
+                'item_type'     => 'Accessory'
+            ];
+            $accessory_counter++;
+            }
+            $combined_list = array_merge($asset_list, $accessory_list);
             $pun_naziv = $location->name;
-            $datum_kreiranja = $location->created_at ? $location->created_at->format('d.m.Y') : 'DATUM';
-
             if (preg_match("/\d{7}/",$pun_naziv,$sifra_lista)){
             $oj = $sifra_lista[0];
 		    }
 		    else{
 		    $oj = "";
 		    }
+            
             if ($location->fax){
                 $location_cn = '(' . $location->fax . ')';
             }
@@ -551,24 +587,11 @@ class LocationsController extends Controller
                 'location_city' => $location->city ? : 'GRAD',
                 'location_oj' => $location->ldap_ou ? : $oj,
                 'location_cn' => $location_cn,
-                'register_num' => $location->currency ? : 'BROJ-UGOVORA'
+                'register_num' => $location->currency ? : 'BROJ-UGOVORA',
+                'datum_kreiranja' => $location->created_at ? $location->created_at->format('d.m.Y') : 'DATUM',
             );
-            
-            $asset_list = array();
-            $asset_counter = 1;
-            foreach ($assets as $key => $asset){
-
-                $asset_list[$key] = array(
-                'id' => $asset_counter,
-                'category' => ($asset->model) && ($asset->model->category) ? $asset->model->category->name : '',
-                'manufacturer' => (($asset->model) && ($asset->model->manufacturer)) ? $asset->model->manufacturer->name : '',
-                'model_nr' => ($asset->model) ? $asset->model->model_number : '',
-                'serial_number' => $asset->serial,
-                'price' => $asset->purchase_cost
-                );
-                $asset_counter++;
-            }
-            $contract_template->cloneRowAndSetValues('category', $asset_list);
+        
+            $contract_template->cloneRowAndSetValues('category', $combined_list);
             $contract_template->setValues($parent_information);
             $contract_template->setValues($location_information);
             $outputPath = storage_path('app/output.docx');

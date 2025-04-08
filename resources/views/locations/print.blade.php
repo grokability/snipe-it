@@ -252,8 +252,32 @@
                     'date', false) }}</td>
             </tr>
             @php
-                $counter++;
+            $counter++;
             @endphp
+            @endforeach
+            @foreach($accessories as $accessoryEntry)
+            <tr>
+                <!-- Counter -->
+                <td class="tg-centar">{{ $counter }}</td>
+                <!-- Category (if the accessory has a category through its relationship) -->
+                <td class="tg-centar">
+                    {{ isset($accessoryEntry->accessory->category) ? $accessoryEntry->accessory->category->name : '' }}
+                </td>
+                <!-- Manufacturer and Model Number -->
+                <td class="tg-centar" colspan="2">
+                    {{ isset($accessoryEntry->accessory->manufacturer) ? $accessoryEntry->accessory->manufacturer->name : '' }}
+                    {{ isset($accessoryEntry->accessory) ? $accessoryEntry->accessory->model_number : '' }}
+                </td>
+                <!-- Serial -->
+                <td class="tg-centar" colspan="2">
+                    {{ optional($accessoryEntry->accessory)->serial ?: '/' }}
+                </td>
+                <!-- Checkout Date (using the created_at date of the checkout record) -->
+                <td class="tg-centar" colspan="1">
+                    {{ \App\Helpers\Helper::getFormattedDateObject($accessoryEntry->created_at, 'date', false) }}
+                </td>
+            </tr>
+            @php $counter++; @endphp
             @endforeach
             @endif
             <tr>
