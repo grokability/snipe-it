@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Assets;
 use App\Events\CheckoutableCheckedIn;
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Assets\AssetsController;
 use App\Http\Requests\AssetCheckinRequest;
 use App\Http\Traits\MigratesLegacyAssetLocations;
 use App\Models\Asset;
@@ -89,6 +90,13 @@ class AssetCheckinController extends Controller
 
         $this->authorize('checkin', $asset);
 
+        if($request->filled('audit_on_checkinout') == "1") {
+            $this->authorize('audit', Asset::class);
+        }
+
+        if ($asset->assignedType() == Asset::USER) {
+            $user = $asset->assignedTo;
+        }
         session()->put('checkedInFrom', $asset->assignedTo->id);
         session()->put('checkout_to_type', match ($asset->assigned_type) {
             'App\Models\User' => 'user',

@@ -194,7 +194,8 @@
                             </div>
                         </div>
 
-                        <!-- Log an audit checkbox -->
+                        @can("audit")
+                                        <!-- Log an audit checkbox -->
                         <div class="form-group">
                             <div class="col-sm-3 control-label" >
                                 <label>
@@ -210,6 +211,7 @@
                             </div>
                         </div>
                         <!-- /.form-group -->
+                        @endcan
 
                                         <!-- Note -->
                                         <div class="form-group {{ $errors->has('note') ? 'error' : '' }}">

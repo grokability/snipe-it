@@ -81,6 +81,10 @@ class AssetCheckoutController extends Controller
 
             $admin = auth()->user();
 
+            if($request->filled('audit_on_checkinout') == "1") {
+                $this->authorize('audit', Asset::class);
+            }
+
             $target = $this->determineCheckoutTarget();
 
             $asset = $this->updateAssetLocation($asset, $target);

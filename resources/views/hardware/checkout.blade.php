@@ -161,6 +161,8 @@
 
 
 
+
+                        @can("audit",$asset)
                         <!-- Log an audit checkbox -->
                         <div class="form-group">
                             <div class="col-sm-3 control-label" >
@@ -177,6 +179,7 @@
                             </div>
                         </div>
                         <!-- /.form-group -->
+                        @endcan
 
                         @if ($asset->requireAcceptance() || $asset->getEula() || ($snipeSettings->webhook_endpoint!=''))
                             <div class="form-group notification-callout">
