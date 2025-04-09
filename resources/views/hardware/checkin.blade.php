@@ -106,11 +106,11 @@
                                         <div class="form-group">
                                             <div class="col-md-9 col-md-offset-3">
                                                 <label class="form-control">
-                                                    <input name="update_default_location" type="radio" value="1" checked="checked" aria-label="update_default_location" />
+                                                    {{ Form::radio('update_default_location', '1', old('update_default_location'), ['checked'=> 'checked', 'aria-label'=>'update_default_location']) }}
                                                     {{ trans('admin/hardware/form.asset_location') }}
                                                 </label>
                                                 <label class="form-control">
-                                                    <input name="update_default_location" type="radio" value="0" aria-label="update_default_location" />
+                                                    {{ Form::radio('update_default_location', '0', old('update_default_location'), ['aria-label'=>'update_default_location']) }}
                                                     {{ trans('admin/hardware/form.asset_location_update_default_current') }}
                                                 </label>
                                             </div>
@@ -118,12 +118,12 @@
 
                                         <!-- Checkout/Checkin Date -->
                                         <div class="form-group{{ $errors->has('checkin_at') ? ' has-error' : '' }}">
-                                            <label for="checkin_at" class="col-sm-3 col-xs-12 col-sm-12 control-label">
+                                            <label for="checkin_at" class="col-sm-3 control-label">
                                                 {{ trans('admin/hardware/form.checkin_date') }}
                                             </label>
 
-                                            <div class="col-md-8 col-xs-12 col-sm-12">
-                                                <div class="input-group col-xl-5 col-lg-5 col-md-7 col-sm-9 col-xs-12 required">
+                                            <div class="col-md-8">
+                                                <div class="input-group col-md-5 required">
                                                     <div class="input-group date" data-provide="datepicker"
                                                          data-date-format="yyyy-mm-dd" data-autoclose="true">
                                                         <input type="text" class="form-control"
@@ -193,6 +193,24 @@
                                 {!! $errors->first('note', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
                             </div>
                         </div>
+
+                        <!-- Log an audit checkbox -->
+                        <div class="form-group">
+                            <div class="col-sm-3 control-label" >
+                                <label>
+                                    {{ trans('admin/settings/general.audit_on_checkinout') }}
+                                </label>
+                            </div>
+                            <div class="col-md-8">
+                                <label class="form-control">
+                                    <input type="checkbox" value="1" name="audit_on_checkinout" {{ (old('audit_on_checkinout')) == '1' ? ' checked="checked"' : '' }} aria-label="audit_on_checkinout">
+                                    {{ trans('general.yes') }}
+                                </label>
+                                <p class="help-block">{{ trans('admin/settings/general.audit_on_checkinout_help_text')  . " " .  trans('general.checkin') . "." }}</p>
+                            </div>
+                        </div>
+                        <!-- /.form-group -->
+
                                         <!-- Note -->
                                         <div class="form-group {{ $errors->has('note') ? 'error' : '' }}">
                                             <label for="note" class="col-md-3 control-label">

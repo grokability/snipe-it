@@ -161,22 +161,22 @@
 
 
 
-
-                        @can('audit', \App\Models\Asset::class)
                         <!-- Log an audit checkbox -->
                         <div class="form-group">
-                            <div class="col-sm-3 control-label" ></div>
+                            <div class="col-sm-3 control-label" >
+                                <label>
+                                    {{ trans('admin/settings/general.audit_on_checkinout') }}
+                                </label>
+                            </div>
                             <div class="col-md-8">
                                 <label class="form-control">
-                                    <input type="checkbox" value="1" name="log_audit" {{ (old('log_audit')) == '1' ? ' checked="checked"' : '' }} aria-label="log_audit" id="auditcheckbox" onclick="auditCheckbox()">
-                                    {{ trans('admin/settings/general.log_audit') }}
-                                    <p id="audittext" style="display:none">Checkbox is CHECKED!</p>
+                                    <input type="checkbox" value="1" name="audit_on_checkinout" {{ (old('audit_on_checkinout')) == '1' ? ' checked="checked"' : '' }} aria-label="audit_on_checkinout">
+                                    {{ trans('general.yes') }}
                                 </label>
-                                <p class="help-block">{{ trans('admin/settings/general.log_audit_help_text')  . " " .  trans('general.checkout') . "." }}</p>
+                                <p class="help-block">{{ trans('admin/settings/general.audit_on_checkinout_help_text')  . " " .  trans('general.checkout') . "." }}</p>
                             </div>
                         </div>
                         <!-- /.form-group -->
-                        @endcan
 
                         @if ($asset->requireAcceptance() || $asset->getEula() || ($snipeSettings->webhook_endpoint!=''))
                             <div class="form-group notification-callout">
@@ -239,63 +239,4 @@
 
 @section('moar_scripts')
     @include('partials/assets-assigned')
-
-    <script> //testing script
-        function auditCheckbox() {
-            // Get the checkbox
-            var checkBox = document.getElementById("auditcheckbox");
-            // Get the output text
-            var text = document.getElementById("audittext");
-
-            // If the checkbox is checked, display the fields
-            if (checkBox.checked == true){
-                text.style.display = "block";
-            } else {
-                text.style.display = "none";
-            }
-    </script>
-
-    <script>
-        // Only display the audit fields if the checkbox is selected
-        $(".format").change(function(){
-        $(this).find("option:selected").each(function(){
-        if ($('.format').prop("selectedIndex") == 1) {
-        $("#custom_regex").show();
-        } else{
-        $("#custom_regex").hide();
-        }
-        });
-        }).change();
-    </script>
-
-    <script>
-        $(document).ready(function() {
-            $("#optional_info").on("click", function () {
-                $('#optional_details').fadeToggle(100);
-                $('#optional_info_icon').toggleClass('checkbox);
-                var optional_info_open = $('#optional_info_icon').hasClass('checkbox');
-                document.cookie = "optional_info_open=" + optional_info_open + '; path=/';
-            });
-            var all_cookies = document.cookie.split(';')
-            for (var i in all_cookies) {
-                var trimmed_cookie = all_cookies[i].trim(' ')
-                if (trimmed_cookie.startsWith('optional_info_open=')) {
-                    elems = all_cookies[i].split('=', 2)
-                    if (elems[1] == 'true') {
-                        $('#optional_info').trigger('click');
-                    }
-                }
-            }
-        });
-
-    <script>
-        //        $('#checkout_at').datepicker({
-        //            clearBtn: true,
-        //            todayHighlight: true,
-        //            endDate: '0d',
-        //            format: 'yyyy-mm-dd'
-        //        });
-
-
-    </script>
 @stop
