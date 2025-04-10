@@ -194,20 +194,16 @@
                             </div>
                         </div>
 
-                        @can("audit")
-                                        <!-- Log an audit checkbox -->
+                        @can('audit', \App\Models\Asset::class)
+                        <!-- Log an audit checkbox -->
                         <div class="form-group">
-                            <div class="col-sm-3 control-label" >
-                                <label>
-                                    {{ trans('admin/settings/general.audit_on_checkinout') }}
-                                </label>
-                            </div>
+                            <div class="col-sm-3 control-label" ></div>
                             <div class="col-md-8">
                                 <label class="form-control">
-                                    <input type="checkbox" value="1" name="audit_on_checkinout" {{ (old('audit_on_checkinout')) == '1' ? ' checked="checked"' : '' }} aria-label="audit_on_checkinout">
-                                    {{ trans('general.yes') }}
+                                    <input type="checkbox" value="1" name="log_audit" {{ (old('log_audit')) == '1' ? ' checked="checked"' : '' }} aria-label="log_audit">
+                                    {{ trans('admin/settings/general.log_audit') }}
                                 </label>
-                                <p class="help-block">{{ trans('admin/settings/general.audit_on_checkinout_help_text')  . " " .  trans('general.checkin') . "." }}</p>
+                                <p class="help-block">{{ trans('admin/settings/general.log_audit_help_text')  . " " .  trans('general.checkin') . "." }}</p>
                             </div>
                         </div>
                         <!-- /.form-group -->
