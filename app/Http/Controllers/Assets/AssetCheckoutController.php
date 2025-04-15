@@ -45,7 +45,7 @@ class AssetCheckoutController extends Controller
             return redirect()->route('hardware.edit', $asset)->withErrors($asset->getErrors());
         }
 
-        
+
         if ($asset->availableForCheckout()) {
             return view('hardware/checkout', compact('asset'))
                 ->with('statusLabel_list', Helper::deployableStatusLabelList())
@@ -81,8 +81,10 @@ class AssetCheckoutController extends Controller
 
             $admin = auth()->user();
 
-            if($request->filled('audit_on_checkinout') == "1") {
-                $this->authorize('audit', Asset::class);
+            if(Gate::allows('audit',$asset)) {
+                if ($request->filled('log_audit') == "1") {
+                    $this->authorize('audit', Asset::class);
+                }
             }
 
             $target = $this->determineCheckoutTarget();
