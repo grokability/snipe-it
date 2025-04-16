@@ -231,6 +231,7 @@
                                </div>
                            </div>
 
+
                     <!-- login text -->
                     <div class="form-group {{ $errors->has('login_note') ? 'error' : '' }}">
                         <div class="col-md-3">
