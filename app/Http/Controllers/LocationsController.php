@@ -77,6 +77,7 @@ class LocationsController extends Controller
         // Prikaz stranice sa obrisanim lokacijama
         return view('locations/index',['route' => route('api.locations.officeIndex')]);
     }
+
     /**
      * Returns a form view used to create a new location.
      *
@@ -296,6 +297,41 @@ class LocationsController extends Controller
         }
 
         return redirect()->route('locations.index')->with('error', trans('admin/locations/message.does_not_exist'));
+    }
+
+   /**
+     * Prikazuje audit stranicu za lokaciju, sa kombinovanom listom opreme i dodataka.
+     *
+     * @param  int  $id
+     * @return View|RedirectResponse
+     */
+    public function audit(int $id): View|RedirectResponse
+    {
+        // Preuzimanje lokacije pomoću find()
+        $location = Location::find($id);
+
+        if (!$location) {
+            return redirect()
+                ->route('locations.index')
+                ->with('error', trans('admin/locations/message.does_not_exist'));
+        }
+        if ($location = Location::where('id', $id)->first()) {
+            // $status = 
+            $parent = Location::where('id', $location->parent_id)->first();
+            $auditUser = auth()->user();
+            $manager = User::where('id', $location->manager_id)->first();
+            $users = User::where('location_id', $id)->with('company', 'department', 'location')->get();
+            $assets = Asset::where('assigned_to', $id)->where('assigned_type', Location::class)->with('model', 'model.category',)->with('assetstatus')->get();
+
+            // **New:** Retrieve all accessories assigned to this location.
+            // Using the AccessoryCheckout model which logs accessory checkouts.
+            // Filter by assigned_to = $id and assigned_type = Location::class (polymorphic assignment to Location).
+            // Eager-load the related Accessory and the U
+            // ser who created the checkout (assigned it), for performance.
+            $accessories = AccessoryCheckout::where('assigned_to', $id)->where('assigned_type', Location::class)->with(['accessory'])->get();
+            return view('locations.audit', compact('assets', 'location', 'auditUser'));
+        }
+
     }
 
     public function print_assigned($id) : View | RedirectResponse

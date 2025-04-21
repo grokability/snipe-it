@@ -118,6 +118,11 @@ Route::group(['middleware' => 'auth'], function () {
             [LocationsController::class,'print_contract']
         )->name('locations.contract');
 
+        Route::get(
+            '{locationId}/audit', 
+            [LocationsController::class,'audit']
+        )->name('locations.audit');
+
         Route::get('closedIndex',
         [LocationsController::class, 'closedIndex']
     )->name('locations.closedIndex');
@@ -134,10 +139,10 @@ Route::group(['middleware' => 'auth'], function () {
     [LocationsController::class, 'parentIndex']
     )->name('locations.parentIndex');
 
-            Route::get('deletedIndex',
-        [LocationsController::class, 'deletedIndex']
+    Route::get('deletedIndex',
+    [LocationsController::class, 'deletedIndex']
     )->name('locations.deletedIndex');
-        
+
     });
 
     Route::resource('locations', LocationsController::class, [

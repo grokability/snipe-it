@@ -43,6 +43,7 @@ storage/debugbar/
 storage/dumps/*
 storage/laravel-backups
 storage/logs/*
+storage/private_uploads/*
 storage/private_uploads/users/*
 tests/_data/scenarios
 tests/_output/*

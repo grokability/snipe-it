@@ -805,6 +805,7 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'throttle:api']], functi
         ['names' => [
                 'index' => 'api.locations.index',
                 'show' => 'api.locations.show',
+                'audit' => 'api.locations.audit',
                 'update' => 'api.locations.update',
                 'store' => 'api.locations.store',
                 'destroy' => 'api.locations.destroy',
