@@ -118,10 +118,13 @@ Route::group(['middleware' => 'auth'], function () {
             [LocationsController::class,'print_contract']
         )->name('locations.contract');
 
-        Route::get(
-            '{locationId}/audit', 
-            [LocationsController::class,'audit']
-        )->name('locations.audit');
+        // Route::get(
+        //     '{locationId}/audit', 
+        //     [LocationsController::class,'audit']
+        // )->name('locations.audit');
+
+        Route::get ('{location}/audit', [LocationsController::class,'audit'])->name('locations.audit.form');
+        Route::post('{location}/audit', [LocationsController::class,'storeAudit'])->name('locations.audit.store');
 
         Route::get('closedIndex',
         [LocationsController::class, 'closedIndex']

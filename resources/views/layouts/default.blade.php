@@ -631,13 +631,13 @@ dir="{{ Helper::determineLanguageDirection() }}">
                                             {{ trans('general.storage_unit') }}
                                         </a>
                                     </li>
-
+                                    @can('update', \App\Models\Location::class)
                                     <li {!! (Request::routeIs('locations.officeIndex') ? ' class="active"' : '') !!}>
                                         <a href="{{ route('locations.officeIndex') }}">
                                             {{ trans('general.office_location') }}
                                         </a>
                                     </li>
-
+                                    @endcan
                                     @can('create', \App\Models\Location::class)
                                         <li {!! (Request::routeIs('locations.create') ? ' class="active"' : '') !!}>
                                             <a href="{{ route('locations.create') }}">

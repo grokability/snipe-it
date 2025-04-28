@@ -7,6 +7,9 @@ use App\Models\Actionlog;
 use App\Models\Asset;
 use App\Models\Location;
 use App\Models\LocationType;
+use App\Models\LocationAudit;
+use App\Mail\LocationAuditMail;
+use Illuminate\Support\Facades\Mail;
 use App\Models\AccessoryCheckout;
 use App\Models\User;
 use App\Models\LocationStatus;
@@ -302,36 +305,68 @@ class LocationsController extends Controller
    /**
      * Prikazuje audit stranicu za lokaciju, sa kombinovanom listom opreme i dodataka.
      *
-     * @param  int  $id
+     * @param  Location $location
      * @return View|RedirectResponse
      */
-    public function audit(int $id): View|RedirectResponse
+    public function audit(Location $location): View|RedirectResponse
     {
-        // Preuzimanje lokacije pomoću find()
-        $location = Location::find($id);
-
+        $this->authorize('view', $location);
         if (!$location) {
             return redirect()
                 ->route('locations.index')
                 ->with('error', trans('admin/locations/message.does_not_exist'));
         }
-        if ($location = Location::where('id', $id)->first()) {
+        else {
             // $status = 
-            $parent = Location::where('id', $location->parent_id)->first();
+            $parent = $location->parent;
             $auditUser = auth()->user();
-            $manager = User::where('id', $location->manager_id)->first();
-            $users = User::where('location_id', $id)->with('company', 'department', 'location')->get();
-            $assets = Asset::where('assigned_to', $id)->where('assigned_type', Location::class)->with('model', 'model.category',)->with('assetstatus')->get();
-
-            // **New:** Retrieve all accessories assigned to this location.
-            // Using the AccessoryCheckout model which logs accessory checkouts.
-            // Filter by assigned_to = $id and assigned_type = Location::class (polymorphic assignment to Location).
-            // Eager-load the related Accessory and the U
-            // ser who created the checkout (assigned it), for performance.
-            $accessories = AccessoryCheckout::where('assigned_to', $id)->where('assigned_type', Location::class)->with(['accessory'])->get();
+            $manager = $location->manager;
+            $users =$location->users; 
+            $assets = $location->assets
+            ->sortBy('asset_tag');
+            $accessories = $location->accessories
+            ->sortBy('accessory_id');
             return view('locations.audit', compact('assets', 'location', 'auditUser'));
         }
 
+    }
+
+    public function storeAudit(Request $request, Location $location)
+    {
+        $this->authorize('update', $location);
+    
+        $validated = $request->validate([
+            'assets'        => 'array',    // checkboxes, key = asset_id
+            'notes'         => 'nullable|string|max:5000',
+        ]);
+    
+        DB::transaction(function () use ($location, $validated, &$audit) {
+            $audit = LocationAudit::create([
+                'location_id' => $location->id,
+                'user_id'     => auth()->id(),
+                'notes'       => $validated['notes'] ?? null,
+            ]);
+    
+            // Build pivot rows.  Missing checkbox → treat as *absent*.
+            $allAssetIds = Asset::where('assigned_to',$location->id)
+                                ->where('assigned_type', Location::class)
+                                ->pluck('id');
+    
+            foreach ($allAssetIds as $aid) {
+                $audit->assets()->attach($aid, [
+                    'present' => in_array($aid, $validated['assets'] ?? [])
+                ]);
+            }
+        });
+    
+        // Fire off e‑mail (simplest form)
+        Mail::to($location->email ?? config('mail.from.address'))   // fallback
+            ->cc(auth()->user()->email)
+            ->send(new LocationAuditMail($audit));
+    
+        return redirect()
+            ->route('locations.show', $location)
+            ->with('success', __('Audit saved & e‑mail sent.'));
     }
 
     public function print_assigned($id) : View | RedirectResponse
