@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Users\Ui;
 
+use App\Models\CheckoutAcceptance;
 use App\Models\User;
 use Tests\TestCase;
 
@@ -20,18 +21,34 @@ class RestoreUserTest extends TestCase
     {
         $nonTrashedUser = User::factory()->create();
 
-        $this->actingAs(User::factory()->deleteUsers()->create())
+        $this->actingAs(User::factory()->superuser()->create())
             ->post(route('users.restore.store', ['userId' => $nonTrashedUser->id]))
-            ->assertSessionHas('error');
+            ->assertSessionHas('error', trans('general.not_deleted', ['item_type' => trans('general.user')]));
     }
 
     public function test_can_restore_user()
     {
-        $this->markTestIncomplete();
+        $user = User::factory()->trashed()->create();
+
+        $this->actingAs(User::factory()->superuser()->create())
+            ->post(route('users.restore.store', ['userId' => $user->id]));
+
+        $this->assertFalse($user->fresh()->trashed());
     }
 
     public function test_restoring_user_does_not_restore_pending_checkout_acceptances()
     {
-        $this->markTestIncomplete();
+        $checkoutAcceptance = CheckoutAcceptance::factory()->pending()->create();
+
+        $user = $checkoutAcceptance->assignedTo;
+
+        $user->delete();
+
+        $this->actingAs(User::factory()->superuser()->create())
+            ->post(route('users.restore.store', ['userId' => $user->id]));
+
+        $this->assertFalse($user->fresh()->trashed());
+
+        $this->assertTrue($checkoutAcceptance->fresh()->trashed());
     }
 }
