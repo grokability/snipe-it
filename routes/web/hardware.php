@@ -34,6 +34,9 @@ Route::group(
                 ->push(trans('general.bulkaudit'), route('asset.import-history'))
             );
 
+        Route::post('bulkaudit', [AssetsController::class, 'postBulkAudit'])
+            ->name('assets.bulkaudit.store');
+
         Route::get('quickscancheckin', [AssetsController::class, 'quickScanCheckin'])
             ->name('hardware/quickscancheckin')
             ->breadcrumbs(fn (Trail $trail) =>

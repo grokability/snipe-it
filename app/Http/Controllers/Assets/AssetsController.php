@@ -916,23 +916,14 @@ class AssetsController extends Controller
     {
 
         $this->authorize('audit', Asset::class);
-
         session()->put('redirect_option', $request->get('redirect_option'));
         session()->put('other_redirect', 'audit');
-
-
         $originalValues = $asset->getRawOriginal();
-
         $asset->next_audit_date = $request->input('next_audit_date');
         $asset->last_audit_date = date('Y-m-d H:i:s');
-
-        // Check to see if they checked the box to update the physical location,
-        // not just note it in the audit notes
         if ($request->input('update_location') == '1') {
             $asset->location_id = $request->input('location_id');
         }
-
-        // Update custom fields in the database
         if (($asset->model) && ($asset->model->fieldset)) {
             foreach ($asset->model->fieldset->fields as $field) {
                 if (($field->display_audit=='1') && ($request->has($field->db_column))) {
@@ -954,51 +945,38 @@ class AssetsController extends Controller
                 }
             }
         }
-
-        // Invoke the validation to see if the audit will complete successfully
         $asset->setRules($asset->getRules() + $asset->customFieldValidationRules());
-
-        // Validate the rest of the data before we turn off the event dispatcher
         if ($asset->isInvalid()) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'status' => 'error',
+                    'messages' => $asset->getErrors()->all()
+                ], 422);
+            }
             return redirect()->back()->withInput()->withErrors($asset->getErrors());
         }
-
-        /**
-         * Even though we do a save() further down, we don't want to log this as a "normal" asset update,
-         * which would trigger the Asset Observer and would log an asset *update* log entry (because the
-         * de-normed fields like next_audit_date on the asset itself will change on save()) *in addition* to
-         * the audit log entry we're creating through this controller.
-         *
-         * To prevent this double-logging (one for update and one for audit), we skip the observer and bypass
-         * that de-normed update log entry by using unsetEventDispatcher(), BUT invoking unsetEventDispatcher()
-         * will bypass normal model-level validation that's usually handled at the observer )
-         *
-         * We handle validation on the save() by checking if the asset is valid via the ->isValid() method,
-         * which manually invokes Watson Validating to make sure the asset's model is valid.
-         *
-         * @see \App\Observers\AssetObserver::updating()
-         * @see \App\Models\Asset::save()
-         */
-
         $asset->unsetEventDispatcher();
-
-
-        /**
-         * Invoke Watson Validating to check the asset itself and check to make sure it saved correctly.
-         * We have to invoke this manually because of the unsetEventDispatcher() above.)
-         */
         if ($asset->isValid() && $asset->save()) {
-
             $file_name = null;
-            // Create the image (if one was chosen.)
             if ($request->hasFile('image')) {
                 $file_name = $request->handleFile('private_uploads/audits/', 'audit-'.$asset->id, $request->file('image'));
             }
-
             $asset->logAudit($request->input('note'), $request->input('location_id'), $file_name, $originalValues);
+            if ($request->ajax()) {
+                return response()->json([
+                    'status' => 'success',
+                    'messages' => trans('admin/hardware/message.audit.success'),
+                    'asset_tag' => $asset->asset_tag
+                ]);
+            }
             return redirect()->to(Helper::getRedirectOption($request, $asset->id, 'Assets'))->with('success', trans('admin/hardware/message.audit.success'));
         }
-
+        if ($request->ajax()) {
+            return response()->json([
+                'status' => 'error',
+                'messages' => $asset->getErrors()->all()
+            ], 500);
+        }
         return redirect()->back()->withInput()->withErrors($asset->getErrors());
     }
 
@@ -1014,5 +992,44 @@ class AssetsController extends Controller
         $requestedItems = $requestedItems->orderBy('created_at', 'desc')->get();
 
         return view('hardware/requested', compact('requestedItems'));
+    }
+
+    /**
+     * Bulk audit assets by asset_id (from quickscan multi-select)
+     */
+    public function postBulkAudit(Request $request)
+    {
+        $this->authorize('audit', Asset::class);
+        $asset_ids = $request->input('asset_tag', []); // asset_tag[] là mảng asset_id từ form
+        $next_audit_date = $request->input('next_audit_date');
+        $note = $request->input('note');
+        $location_id = $request->input('location_id');
+        $update_location = $request->input('update_location');
+        $success = [];
+        $errors = [];
+
+        foreach ($asset_ids as $id) {
+            $asset = Asset::find($id);
+            if (!$asset) {
+                $errors[] = trans('admin/hardware/message.does_not_exist_var', ['asset_tag' => $id]);
+                continue;
+            }
+            $asset->last_audit_date = now();
+            if ($next_audit_date) {
+                $asset->next_audit_date = $next_audit_date;
+            }
+            if ($update_location && $location_id) {
+                $asset->location_id = $location_id;
+            }
+            if ($note) {
+                $asset->notes = trim(($asset->notes ?? '') . "\n" . $note);
+            }
+            $asset->save();
+            $success[] = $asset->asset_tag;
+        }
+        return redirect()->back()->with([
+            'success' => $success,
+            'errors' => $errors
+        ]);
     }
 }
