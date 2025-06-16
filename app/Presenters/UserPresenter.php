@@ -207,6 +207,15 @@ class UserPresenter extends Presenter
                 'formatter' => 'departmentsLinkObjFormatter',
             ],
             [
+                'field' => 'department_manager',
+                'searchable' => true,
+                'sortable' => true,
+                'switchable' => true,
+                'title' => trans('admin/users/general.department_manager'),
+                'visible' => true,
+                'formatter' => 'usersLinkObjFormatter',
+            ],
+            [
                 'field' => 'location',
                 'searchable' => true,
                 'sortable' => true,

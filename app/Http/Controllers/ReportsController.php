@@ -184,7 +184,7 @@ class ReportsController extends Controller
                 $currency = e(Setting::getSettings()->default_currency);
             }
 
-            $row[] = $asset->purchase_date;
+            $row[] = Helper::getFormattedDateObject($asset->purchase_date, 'date', false);
             $row[] = $currency.Helper::formatCurrencyOutput($asset->purchase_cost);
             $row[] = $currency.Helper::formatCurrencyOutput($asset->getDepreciatedValue());
             $row[] = $currency.Helper::formatCurrencyOutput(($asset->purchase_cost - $asset->getDepreciatedValue()));

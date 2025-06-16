@@ -10,7 +10,7 @@
                 name="{{ $fieldname }}"
                 style="width: 100%"
                 id="{{ (isset($select_id)) ? $select_id : 'assigned_asset_select' }}"
-                {{ (isset($multiple)) ? ' multiple' : '' }}
+                {{ ((isset($multiple)) && ($multiple === true)) ? ' multiple' : '' }}
                 {!! (!empty($asset_status_type)) ? ' data-asset-status-type="' . $asset_status_type . '"' : '' !!}
                 {!! (!empty($company_id)) ? ' data-company-id="' .$company_id.'"'  : '' !!}
                 {{  ((isset($required) && ($required =='true'))) ?  ' required' : '' }}

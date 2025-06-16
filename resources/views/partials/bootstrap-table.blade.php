@@ -386,15 +386,21 @@
             if ((row.available_actions) && (row.available_actions.delete === true)) {
 
                 // use the asset tag if no name is provided
-                var name_for_box = row.name
-                if (row.name=='') {
+
+                if (row.name) {
+                    var name_for_box = row.name
+                } else if (row.title) {
+                    var name_for_box = row.title
+                } else if (row.asset_tag) {
                     var name_for_box = row.asset_tag
                 }
+
+
                 
                 actions += '<a href="{{ config('app.url') }}/' + dest + '/' + row.id + '" '
                     + ' class="actions btn btn-danger btn-sm delete-asset" data-tooltip="true"  '
                     + ' data-toggle="modal" '
-                    + ' data-content="{{ trans('general.sure_to_delete') }} ' + name_for_box + '?" '
+                    + ' data-content="{{ trans('general.sure_to_delete') }}: ' + name_for_box + '?" '
                     + ' data-title="{{  trans('general.delete') }}" onClick="return false;">'
                     + '<x-icon type="delete" /><span class="sr-only">{{ trans('general.delete') }}</span></a>&nbsp;';
             } else {

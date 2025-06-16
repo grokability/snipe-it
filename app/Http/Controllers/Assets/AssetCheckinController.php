@@ -96,7 +96,6 @@ class AssetCheckinController extends Controller
         });
 
         $asset->expected_checkin = null;
-        $asset->last_checkin = now();
         $asset->assignedTo()->disassociate($asset);
         $asset->accepted = null;
         $asset->name = $request->get('name');
@@ -123,11 +122,14 @@ class AssetCheckinController extends Controller
 
         $originalValues = $asset->getRawOriginal();
 
+        // Handle last checkin date
         $checkin_at = date('Y-m-d H:i:s');
         if (($request->filled('checkin_at')) && ($request->get('checkin_at') != date('Y-m-d'))) {
             $originalValues['action_date'] = $checkin_at;
             $checkin_at = $request->get('checkin_at');
+
         }
+        $asset->last_checkin = $checkin_at;
 
         $asset->licenseseats->each(function (LicenseSeat $seat) {
             $seat->update(['assigned_to' => null]);

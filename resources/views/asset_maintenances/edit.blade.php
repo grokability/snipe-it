@@ -32,13 +32,14 @@
     {{ csrf_field() }}
 
     <div class="box box-default">
-      <div class="box-header with-border">
-        <h2 class="box-title">
-          @if ($item)
-          {{ $item->name }}
-          @endif
-        </h2>
-      </div><!-- /.box-header -->
+
+        @if ($item->id)
+          <div class="box-header with-border">
+            <h2 class="box-title">
+              {{ $item->title }}
+            </h2>
+          </div><!-- /.box-header -->
+        @endif
 
       <div class="box-body">
 
@@ -53,17 +54,63 @@
           </div>
         </div>
 
+        <!-- This is a new maintenance -->
+        @if (!$item->id)
 
 
-        @include ('partials.forms.edit.asset-select', [
-          'translated_name' => trans('general.assets'),
-          'fieldname' => 'selected_assets[]',
-          'multiple' => true,
-          'required' => true,
-          'select_id' => 'assigned_assets_select',
-          'asset_selector_div_id' => 'assets_to_checkout_div',
-          'asset_ids' => old('selected_assets')
-        ])
+          @include ('partials.forms.edit.asset-select', [
+            'translated_name' => trans('general.assets'),
+            'fieldname' => 'selected_assets[]',
+            'multiple' => true,
+            'required' => true,
+            'select_id' => 'assigned_assets_select',
+            'asset_selector_div_id' => 'assets_for_maintenance_div',
+            'asset_ids' => $item->id ? $item->asset()->pluck('id')->toArray() : old('selected_assets'),
+            'asset_id' => $item->id ? $item->asset()->pluck('id')->toArray() : null
+          ])
+        @else
+
+          @if ($item->asset->company)
+            <div class="form-group">
+              <label for="company" class="control-label col-md-3">
+                {{ trans('general.company') }}
+              </label>
+
+              <div class="col-md-9">
+                <p class="form-control-static">
+                  {{  $item->asset->company->name }}
+                </p>
+              </div>
+            </div>
+          @endif
+
+            <div class="form-group">
+              <label for="asset" class="control-label col-md-3">
+                {{ trans('general.asset') }}
+              </label>
+
+              <div class="col-md-9">
+                <p class="form-control-static">
+                  {{ $item->asset ? $item->asset->present()->fullName : '' }}
+                </p>
+              </div>
+            </div>
+
+            @if ($item->asset->location)
+              <div class="form-group">
+                <label for="location" class="control-label col-md-3">
+                  {{ trans('general.location') }}
+                </label>
+
+                <div class="col-md-9">
+                  <p class="form-control-static">
+                    {{ $item->asset->location->name }}
+                  </p>
+                </div>
+              </div>
+            @endif
+
+        @endif
 
 
         @include ('partials.forms.edit.maintenance_type')
@@ -72,9 +119,11 @@
 
         <!-- Start Date -->
         <div class="form-group {{ $errors->has('start_date') ? ' has-error' : '' }}">
-          <label for="start_date" class="col-md-3 control-label">{{ trans('admin/asset_maintenances/form.start_date') }}</label>
+          <label for="start_date" class="col-md-3 control-label">
+            {{ trans('admin/asset_maintenances/form.start_date') }}
+          </label>
 
-          <div class="input-group col-md-3">
+          <div class="col-md-4">
             <x-input.datepicker
                     name="start_date"
                     :value="old('start_date', $item->start_date)"
@@ -91,10 +140,10 @@
         <div class="form-group {{ $errors->has('completion_date') ? ' has-error' : '' }}">
           <label for="start_date" class="col-md-3 control-label">{{ trans('admin/asset_maintenances/form.completion_date') }}</label>
 
-          <div class="input-group col-md-3">
+          <div class="input-group col-md-4">
             <x-input.datepicker
                     name="completion_date"
-                    :value="old('start_date', $item->start_date)"
+                    :value="old('start_date', $item->completion_date)"
                     placeholder="{{ trans('general.select_date') }}"
                     required="Helper::checkIfRequired($item, 'completion_date')"
             />

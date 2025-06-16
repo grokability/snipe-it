@@ -189,6 +189,17 @@
                     </div>
                   @endif
 
+                  <!-- total -->
+                  @if ($consumable->qty)
+                    <div class="row">
+                      <div class="col-md-3">
+                        {{ trans('admin/components/general.total') }}
+                      </div>
+                      <div class="col-md-9">
+                        {{ $consumable->qty }}
+                      </div>
+                    </div>
+                  @endif
 
                   <!-- remaining -->
                   @if ($consumable->numRemaining())

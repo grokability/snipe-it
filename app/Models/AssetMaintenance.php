@@ -31,7 +31,7 @@ class AssetMaintenance extends Model implements ICompanyableChild
         'title'                  => 'required|max:100',
         'is_warranty'            => 'boolean',
         'start_date'             => 'required|date_format:Y-m-d',
-        'completion_date'        => 'date_format:Y-m-d|nullable',
+        'completion_date'        => 'date_format:Y-m-d|nullable|after_or_equal:start_date',
         'notes'                  => 'string|nullable',
         'cost'                   => 'numeric|nullable',
     ];
@@ -166,6 +166,7 @@ class AssetMaintenance extends Model implements ICompanyableChild
         return $this->belongsTo(\App\Models\Asset::class, 'asset_id')
                     ->withTrashed();
     }
+    
 
     /**
      * Get the admin who created the maintenance

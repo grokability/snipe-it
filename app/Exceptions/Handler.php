@@ -145,6 +145,8 @@ class Handler extends ExceptionHandler
                 $route = 'licenses.index';
             } elseif ($route === 'customfields.index') {
                 $route = 'fields.index';
+            } elseif ($route === 'customfieldsets.index') {
+                $route = 'fields.index';
             }
 
             return redirect()

@@ -100,13 +100,13 @@ chown -R docker:root /var/www/html/storage/framework/cache
 # Fix php settings
 if [ -v "PHP_UPLOAD_LIMIT" ]
 then
-  PHP_INI_FILE=$(find /etc/php/*/apache2/php.ini)
-  if [ -e $PHP_INI_FILE ]
-  then
-    echo "Changing upload limit to ${PHP_UPLOAD_LIMIT}M in ${PHP_INI_FILE}"
-    sed -i "s/^upload_max_filesize.*/upload_max_filesize = ${PHP_UPLOAD_LIMIT}M/" $PHP_INI_FILE
-    sed -i "s/^post_max_size.*/post_max_size = ${PHP_UPLOAD_LIMIT}M/" $PHP_INI_FILE
-  fi
+    find /etc/php -type f -name php.ini | while IFS= read -r ini; do
+        echo "Changing upload limit to ${PHP_UPLOAD_LIMIT}M in $ini"
+        sed -i \
+            -e "s/^;\? *upload_max_filesize *=.*/upload_max_filesize = ${PHP_UPLOAD_LIMIT}M/" \
+            -e "s/^;\? *post_max_size *=.*/post_max_size = ${PHP_UPLOAD_LIMIT}M/" \
+            "$ini"
+    done
 fi
 
 # If the Oauth DB files are not present copy the vendor files over to the db migrations

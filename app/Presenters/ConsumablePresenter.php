@@ -72,14 +72,6 @@ class ConsumablePresenter extends Presenter
                 'searchable' => true,
                 'sortable' => true,
                 'title' => trans('admin/consumables/general.item_no'),
-            ],  [
-                'field' => 'min_amt',
-                'searchable' => false,
-                'sortable' => true,
-                'title' => trans('general.min_amt'),
-                'visible' => true,
-                'formatter' => 'minAmtFormatter',
-                'class' => 'text-right text-padding-number-cell',
             ], [
                 'field' => 'qty',
                 'searchable' => false,
@@ -96,6 +88,14 @@ class ConsumablePresenter extends Presenter
                 'visible' => true,
                 'class' => 'text-right text-padding-number-cell',
                 'footerFormatter' => 'qtySumFormatter',
+            ], [
+                'field' => 'min_amt',
+                'searchable' => false,
+                'sortable' => true,
+                'title' => trans('general.min_amt'),
+                'visible' => true,
+                'formatter' => 'minAmtFormatter',
+                'class' => 'text-right text-padding-number-cell',
             ], [
                 'field' => 'location',
                 'searchable' => true,
