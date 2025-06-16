@@ -27,15 +27,19 @@
                     <div class="box-body">
                     {{csrf_field()}}
 
-                    <!-- Next Audit -->
+                    <!-- Asset Multi-Select by Asset Tag -->
                         <div class="form-group {{ $errors->has('asset_tag') ? 'error' : '' }}">
                             <label for="asset_tag" class="col-md-3 control-label" id="audit_tag">{{ trans('general.asset_tag') }}</label>
                             <div class="col-md-9">
-                                <div class="input-group date col-md-11 required" data-date-format="yyyy-mm-dd">
-                                    <input type="text" class="form-control" name="asset_tag" id="asset_tag" required value="{{ old('asset_tag') }}">
-
-                                </div>
-                                {!! $errors->first('asset_tag', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
+                                @include('partials.forms.edit.asset-select', [
+                                    'translated_name' => trans('general.asset_tag'),
+                                    'fieldname' => 'asset_tag[]',
+                                    'multiple' => true,
+                                    'required' => true,
+                                    'select_id' => 'asset_tag',
+                                    'asset_selector_div_id' => 'asset_tag_selector',
+                                    'asset_ids' => old('asset_tag')
+                                ])
                             </div>
                         </div>
 
@@ -131,84 +135,68 @@
 
 @section('moar_scripts')
     <script nonce="{{ csrf_token() }}">
-
         $("#audit-form").submit(function (event) {
             $('#audited-div').show();
             $('#audit-loader').show();
-
             event.preventDefault();
 
-            var form = $("#audit-form").get(0);
-            var formData = $('#audit-form').serializeArray();
-            var asset_tag = $('#asset_tag').val();
+            var asset_ids = $('#asset_tag').val();
+            if (!Array.isArray(asset_ids)) {
+                asset_ids = [asset_ids];
+            }
+            var location_id = $('#location_id').val();
+            var update_location = $('input[name="update_location"]').is(':checked') ? 1 : 0;
+            var next_audit_date = $('#next_audit_date').val();
+            var note = $('#note').val();
+            var csrf_token = $('meta[name="csrf-token"]').attr('content');
 
-            $.ajax({
-                url: "{{ route('api.asset.audit.legacy') }}",
-                type : 'POST',
-                headers: {
-                    "X-Requested-With": 'XMLHttpRequest',
-                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
-                },
-                dataType : 'json',
-                data : formData,
-                success : function (data) {
+            var total = asset_ids.length;
+            var audited = 0;
+            var failed = 0;
+            $('#audit-counter').html(0);
+            $('#audited tbody').empty();
 
-                    if (data.status == 'success') {
-                        $('#audited tbody').prepend("<tr class='success'><td>" + data.payload.asset_tag + "</td><td>" + data.messages + "</td><td><i class='fas fa-check text-success' style='font-size:18px;'></i></td></tr>");
-
-                        @if ($user->enable_sounds)
-                        var audio = new Audio('{{ config('app.url') }}/sounds/success.mp3');
-                        audio.play()
-                        @endif
-
-                        incrementOnSuccess();
-                    } else {
-                        handleAuditFail(data, asset_tag);
+            function auditAsset(asset_id, idx) {
+                $.ajax({
+                    url: '/hardware/' + asset_id + '/audit',
+                    type: 'POST',
+                    headers: {
+                        "X-Requested-With": 'XMLHttpRequest',
+                        "X-CSRF-TOKEN": csrf_token
+                    },
+                    dataType: 'json',
+                    data: {
+                        location_id: location_id,
+                        update_location: update_location,
+                        next_audit_date: next_audit_date,
+                        note: note
+                    },
+                    success: function (data) {
+                        var msg = data.messages || 'Success';
+                        $('#audited tbody').prepend("<tr class='success'><td>" + asset_id + "</td><td>" + msg + "</td><td><i class='fas fa-check text-success' style='font-size:18px;'></i></td></tr>");
+                        audited++;
+                        $('#audit-counter').html(audited);
+                    },
+                    error: function (xhr) {
+                        var msg = 'Error';
+                        if (xhr.responseJSON && xhr.responseJSON.messages) {
+                            msg = xhr.responseJSON.messages;
+                        }
+                        $('#audited tbody').prepend("<tr class='danger'><td>" + asset_id + "</td><td>" + msg + "</td><td><i class='fas fa-times text-danger' style='font-size:18px;'></i></td></tr>");
+                        failed++;
+                    },
+                    complete: function () {
+                        if (audited + failed === total) {
+                            $('#audit-loader').hide();
+                        }
                     }
-                    $('input#asset_tag').val('');
-                },
-                error: function (data) {
-                    handleAuditFail(data, asset_tag);
-                },
-                complete: function() {
-                    $('#audit-loader').hide();
-                }
+                });
+            }
 
+            asset_ids.forEach(function(asset_id, idx) {
+                auditAsset(asset_id, idx);
             });
-
-            return false;
         });
-
-        function handleAuditFail (data, asset_tag) {
-            @if ($user->enable_sounds)
-            var audio = new Audio('{{ config('app.url') }}/sounds/error.mp3');
-            audio.play()
-            @endif
-
-
-            if ((!asset_tag) && (data.payload)  && (data.payload.asset_tag)) {
-                asset_tag = data.payload.asset_tag;
-            }
-
-            asset_tag = jQuery('<span>' + asset_tag + '</span>').text();
-
-            let messages = "";
-
-            // Loop through the error messages
-            if ((data.messages)  && (data.messages)) {
-                for (let x in data.messages) {
-                    messages += data.messages[x];
-                }
-            }
-
-            $('#audited tbody').prepend("<tr class='danger'><td>" + asset_tag + "</td><td>" + messages + "</td><td><i class='fas fa-times text-danger' style='font-size:18px;'></i></td></tr>");
-        }
-
-        function incrementOnSuccess() {
-            var x = parseInt($('#audit-counter').html());
-            y = x + 1;
-            $('#audit-counter').html(y);
-        }
 
         $("#audit_tag").focus();
 
