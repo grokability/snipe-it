@@ -144,6 +144,9 @@ class AssetsController extends Controller
                 'supplier'
             ); // it might be tempting to add 'assetlog' here, but don't. It blows up update-heavy users.
 
+        if ($request->input('include_child_assets') === 'true') {
+            $assets->with(['assignedAssets.assignedTo']);
+        }
 
         if ($filter_non_deprecable_assets) {
             $non_deprecable_models = AssetModel::select('id')->whereNotNull('depreciation_id')->get();
@@ -435,6 +438,16 @@ class AssetsController extends Controller
 
         $total = $assets->count();
         $assets = $assets->skip($offset)->take($limit)->get();
+
+        if ($request->input('include_child_assets') === 'true') {
+            // Each asset might have a collection of assignedAssets on it.
+            // We need to move those up to the top level so the transformer runs on them.
+            foreach ($assets as $asset) {
+                if ($asset->assignedAssets->count()) {
+                    $assets = $assets->merge($asset->assignedAssets);
+                }
+            }
+        }
 
 
         /**

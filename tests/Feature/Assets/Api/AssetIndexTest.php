@@ -171,4 +171,37 @@ class AssetIndexTest extends TestCase
             ->assertResponseDoesNotContainInRows($assetA, 'asset_tag')
             ->assertResponseContainsInRows($assetB, 'asset_tag');
     }
+
+    public function testCanIncludeChildAssetsForGivenUser()
+    {
+        $user = User::factory()->create();
+
+        $parentAsset = Asset::factory()->assignedToUser($user)->create(['asset_tag' => 'parent-asset-tag']);
+        $childAsset = Asset::factory()->assignedToAsset($parentAsset)->create(['asset_tag' => 'child-asset-tag']);
+        Asset::factory()->assignedToAsset($childAsset)->create(['asset_tag' => 'grandchild-asset-tag']);
+
+        $this->actingAsForApi(User::factory()->superuser()->create())
+            ->getJson(
+                route('api.assets.index', [
+                    'sort' => 'name',
+                    'order' => 'asc',
+                    'offset' => '0',
+                    'limit' => '20',
+                    'assigned_to' => $user->id,
+                    'assigned_type' => 'App\Models\User',
+                    'include_child_assets' => 'true',
+                ]))
+            ->assertOk()
+            ->assertJsonStructure([
+                'total',
+                'rows',
+            ])
+            ->assertJson(function (AssertableJson $json) {
+                return $json->has('rows', 3)
+                    ->where('rows.0.asset_tag', 'parent-asset-tag')
+                    ->where('rows.1.asset_tag', 'child-asset-tag')
+                    ->where('rows.1.asset_tag', 'grandchild-asset-tag')
+                    ->etc();
+            });
+    }
 }

@@ -166,6 +166,21 @@ class Settings
             'ldap_basedn' => 'CN=Users,DC=ad,DC=example,Dc=com'
         ]);
     }
+
+    public function enableShowingAssignedAssets(): Settings
+    {
+        return $this->update([
+            'show_assigned_assets' => 1,
+        ]);
+    }
+
+    public function disableShowingAssignedAssets(): Settings
+    {
+        return $this->update([
+            'show_assigned_assets' => 0,
+        ]);
+    }
+
     public function setEula($text = 'Default EULA text')
     {
         return $this->update(['default_eula_text' => $text]);

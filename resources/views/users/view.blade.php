@@ -829,7 +829,11 @@
                     data-bulk-form-id="#assetsBulkForm"
                     id="userAssetsListingTable"
                     class="table table-striped snipe-table"
-                    data-url="{{ route('api.assets.index',['assigned_to' => e($user->id), 'assigned_type' => 'App\Models\User']) }}"
+                    data-url="{{ route('api.assets.index', [
+                        'assigned_to' => e($user->id),
+                        'assigned_type' => 'App\Models\User',
+                        'include_child_assets' => $snipeSettings->show_assigned_assets ? 'true' : 'false',
+                    ]) }}"
                     data-export-options='{
                 "fileName": "export-{{ str_slug($user->present()->fullName()) }}-assets-{{ date('Y-m-d') }}",
                 "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]

@@ -9,11 +9,12 @@
 ## {{ $assets->count() }} {{ trans('general.assets') }}
 
 <table width="100%">
-    <tr><th align="left">{{ trans('mail.name') }} </th><th align="left">{{ trans('mail.asset_tag') }}</th><th align="left">{{ trans('admin/hardware/table.serial') }}</th><th align="left">{{ trans('general.category') }}</th> <th></th> </tr>
+    <tr><th align="left">#</th><th align="left">{{ trans('mail.name') }} </th><th align="left">{{ trans('mail.asset_tag') }}</th><th align="left">{{ trans('admin/hardware/table.serial') }}</th><th align="left">{{ trans('general.category') }}</th> <th></th> </tr>
 
 
 @foreach($assets as $asset)
 <tr>
+    <td>{{ $loop->iteration }}</td>
     <td>{{ $asset->present()->name }}</td>
     <td> {{ $asset->asset_tag }} </td>
     <td> {{ $asset->serial }} </td>
@@ -24,6 +25,22 @@
     </td>
     @endif
 </tr>
+@if ($show_assigned_assets && $asset->assignedAssets->count())
+@foreach($asset->assignedAssets as $assignedAsset)
+<tr>
+    <td>{{ $loop->parent->iteration }}.{{ $loop->iteration }}</td>
+    <td>{{ $assignedAsset->present()->name }}</td>
+    <td> {{ $assignedAsset->asset_tag }} </td>
+    <td> {{ $assignedAsset->serial }} </td>
+    <td> {{ $assignedAsset->model->category->name }}</td>
+    @if (($snipeSettings->show_images_in_email =='1') && $assignedAsset->getImageUrl())
+        <td>
+            <img src="{{ asset($assignedAsset->getImageUrl()) }}" alt="Asset" style="max-width: 64px;">
+        </td>
+    @endif
+</tr>
+@endforeach
+@endif
 @endforeach
 </table>
 @endif

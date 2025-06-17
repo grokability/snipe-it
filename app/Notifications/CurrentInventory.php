@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Models\Setting;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -38,12 +39,20 @@ class CurrentInventory extends Notification
      */
     public function toMail()
     {
+        $this->user->load([
+            'assets.assignedAssets',
+            'accessories',
+            'licenses',
+            'consumables',
+        ]);
+
         $message = (new MailMessage)->markdown('notifications.markdown.user-inventory',
             [
                 'assets'  => $this->user->assets,
                 'accessories'  => $this->user->accessories,
                 'licenses'  => $this->user->licenses,
                 'consumables'  => $this->user->consumables,
+                'show_assigned_assets' => Setting::getSettings()->show_assigned_assets,
             ])
             ->subject(trans('mail.inventory_report'));
 

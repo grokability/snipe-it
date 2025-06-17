@@ -312,12 +312,11 @@ class AssetFactory extends Factory
         });
     }
 
-    public function assignedToAsset()
+    public function assignedToAsset(Asset $asset = null)
     {
-        return $this->state(function () {
+        return $this->state(function () use ($asset) {
             return [
-                'model_id' => 1,
-                'assigned_to' => Asset::factory(),
+                'assigned_to' => $asset->id ?? Asset::factory(),
                 'assigned_type' => Asset::class,
             ];
         });

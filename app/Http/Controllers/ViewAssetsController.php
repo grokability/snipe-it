@@ -41,6 +41,14 @@ class ViewAssetsController extends Controller
             'licenses',
         )->find(auth()->id());
 
+        if (Setting::getSettings()->show_assigned_assets) {
+            $user->load([
+                'assets.assignedAssets',
+                'assets.assignedAssets.model',
+                'assets.assignedAssets.model.fieldset.fields',
+            ]);
+        }
+
         $field_array = array();
 
         // Loop through all the custom fields that are applied to any model the user has assigned
@@ -55,6 +63,20 @@ class ViewAssetsController extends Controller
                         $field_array[$field->db_column] = $field->name;
                     }
                     
+                }
+            }
+
+            foreach ($asset->assignedAssets as $assignedAsset) {
+                // Make sure the model has a custom fieldset before trying to loop through the associated fields
+                if ($assignedAsset->model->fieldset) {
+
+                    foreach ($assignedAsset->model->fieldset->fields as $field) {
+                        // check and make sure they're allowed to see the value of the custom field
+                        if ($field->display_in_user_view == '1') {
+                            $field_array[$field->db_column] = $field->name;
+                        }
+
+                    }
                 }
             }
 

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Users\Ui;
 
+use App\Models\Asset;
 use App\Models\Company;
 use App\Models\User;
 use Tests\TestCase;
@@ -37,5 +38,37 @@ class PrintUserInventoryTest extends TestCase
         $this->actingAs($actor)
             ->get(route('users.print', $user))
             ->assertStatus(302);
+    }
+
+    public function testPrintingUserInventoryDoesNotIncludeChildAssetsWhenDisabled()
+    {
+        $this->settings->disableShowingAssignedAssets();
+
+        $actor = User::factory()->viewUsers()->create();
+        $user = User::factory()->create();
+
+        $parentAsset = Asset::factory()->assignedToUser($user)->create(['asset_tag' => 'parent-asset-tag']);
+        Asset::factory()->assignedToAsset($parentAsset)->create(['asset_tag' => 'child-asset-tag']);
+
+        $this->actingAs($actor)
+            ->get(route('users.print', $user->id))
+            ->assertSeeText('parent-asset-tag')
+            ->assertDontSeeText('child-asset-tag');
+    }
+
+    public function testPrintingUserInventoryIncludesChildAssetsWhenEnabled()
+    {
+        $this->settings->enableShowingAssignedAssets();
+
+        $actor = User::factory()->viewUsers()->create();
+        $user = User::factory()->create();
+
+        $parentAsset = Asset::factory()->assignedToUser($user)->create(['asset_tag' => 'parent-asset-tag']);
+        Asset::factory()->assignedToAsset($parentAsset)->create(['asset_tag' => 'child-asset-tag']);
+
+        $this->actingAs($actor)
+            ->get(route('users.print', $user->id))
+            ->assertSeeText('parent-asset-tag')
+            ->assertSeeText('child-asset-tag');
     }
 }
