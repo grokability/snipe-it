@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Users\Api;
 
+use App\Models\CheckoutAcceptance;
 use App\Models\Company;
 use App\Models\User;
 use Tests\TestCase;
@@ -96,6 +97,17 @@ class RestoreUserTest extends TestCase
 
     public function testRestoringUserDoesNotRestorePendingCheckoutAcceptances()
     {
-        $this->markTestIncomplete();
+        $checkoutAcceptance = CheckoutAcceptance::factory()->pending()->create();
+
+        $user = $checkoutAcceptance->assignedTo;
+
+        $user->delete();
+
+        $this->assertTrue($user->trashed());
+        $this->assertTrue($checkoutAcceptance->fresh()->trashed());
+
+        $user->restore();
+
+        $this->assertTrue($checkoutAcceptance->fresh()->trashed());
     }
 }
