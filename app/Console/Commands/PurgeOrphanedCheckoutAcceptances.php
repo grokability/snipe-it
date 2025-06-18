@@ -46,10 +46,7 @@ class PurgeOrphanedCheckoutAcceptances extends Command
             ];
         }));
 
-        if (
-            !$this->option('force')
-            && !$this->confirm('Do you wish to permanently delete these ' . $orphanedAcceptances->count() . ' orphaned checkout acceptances?')
-        ) {
+        if (!$this->option('force') && !$this->confirm('Do you wish to permanently delete these ' . $orphanedAcceptances->count() . ' orphaned checkout acceptances?')) {
             $this->info('Aborting.');
 
             return 0;
