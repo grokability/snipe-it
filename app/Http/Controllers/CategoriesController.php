@@ -145,7 +145,7 @@ class CategoriesController extends Controller
     {
         $this->authorize('delete', Category::class);
         // Check if the category exists
-        if (is_null($category = Category::findOrFail($categoryId))) {
+        if (is_null($category = Category::withCount('assets as assets_count', 'accessories as accessories_count', 'consumables as consumables_count', 'components as components_count', 'licenses as licenses_count', 'models as models_count')->findOrFail($categoryId))) {
             return redirect()->route('categories.index')->with('error', trans('admin/categories/message.not_found'));
         }
 
@@ -155,7 +155,6 @@ class CategoriesController extends Controller
 
         Storage::disk('public')->delete('categories'.'/'.$category->image);
         $category->delete();
-        // Redirect to the locations management page
         return redirect()->route('categories.index')->with('success', trans('admin/categories/message.delete.success'));
     }
 

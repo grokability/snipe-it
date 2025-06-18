@@ -10,10 +10,10 @@ name: Codacy Security Scan
 
 on:
   push:
-    branches: [ master ]
+    branches: [ develop ]
   pull_request:
     # The branches below must be a subset of the branches above
-    branches: [ master ]
+    branches: [ develop ]
   schedule:
     - cron: '36 23 * * 3'
 
@@ -22,11 +22,11 @@ permissions:
 
 jobs:
   codacy-security-scan:
-    # Ensure schedule job never runs on forked repos. It's only executed for 'snipe/snipe-it'
+    # Ensure schedule job never runs on forked repos. It's only executed for 'grokability/snipe-it'
     permissions:
       contents: read  # for actions/checkout to fetch code
       security-events: write  # for github/codeql-action/upload-sarif to upload SARIF results
-    if: (github.repository == 'snipe/snipe-it') || ((github.repository != 'snipe/snipe-it') && (github.event_name != 'schedule'))
+    if: (github.repository == 'grokability/snipe-it') || ((github.repository != 'grokability/snipe-it') && (github.event_name != 'schedule'))
     name: Codacy Security Scan
     runs-on: ubuntu-latest
     steps:

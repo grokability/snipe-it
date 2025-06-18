@@ -137,6 +137,10 @@ class BulkDeleteAssetsTest extends TestCase
                 'item_type' => Asset::class,
             ]
         );
+
+        $asset->refresh();
+        $this->assertNull($asset->assigned_to);
+        $this->assertNull($asset->assigned_type);
     }
 
     public function testActionLogCreatedUponBulkRestore()
@@ -167,6 +171,7 @@ class BulkDeleteAssetsTest extends TestCase
         $asset = Asset::factory()->create([
             'id' => 5,
             'assigned_to' => $user->id,
+            'assigned_type' => User::class,
             'asset_tag' => '12345',
         ]);
 

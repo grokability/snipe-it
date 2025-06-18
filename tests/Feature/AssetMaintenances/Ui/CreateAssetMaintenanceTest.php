@@ -16,6 +16,7 @@ class CreateAssetMaintenanceTest extends TestCase
             ->assertOk();
     }
 
+
     public function testCanCreateAssetMaintenance()
     {
         $actor = User::factory()->superuser()->create();
@@ -27,7 +28,7 @@ class CreateAssetMaintenanceTest extends TestCase
             ->followingRedirects()
             ->post(route('maintenances.store'), [
                 'title' => 'Test Maintenance',
-                'asset_id' => $asset->id,
+                'selected_assets' => [$asset->id],
                 'supplier_id' => $supplier->id,
                 'asset_maintenance_type' => 'Maintenance',
                 'start_date' => '2021-01-01',

@@ -1,7 +1,4 @@
-@extends('layouts/default', [
-    'helpText' => trans('admin/statuslabels/table.info') ,
-    'helpPosition' => 'right',
-])
+@extends('layouts/default')
 
 {{-- Page title --}}
 @section('title')
@@ -28,6 +25,8 @@
                     data-pagination="true"
                     data-id-table="statuslabelsTable"
                     data-search="true"
+                    data-search-highlight="true"
+                    data-show-print="true"
                     data-show-footer="false"
                     data-side-pagination="server"
                     data-show-columns="true"
@@ -50,6 +49,13 @@
   <!-- side address column -->
   <div class="col-md-3">
     <h2>{{ trans('admin/statuslabels/table.about') }}</h2>
+
+      <div class="box">
+          <div class="box-body">
+              <p>{!!  trans('admin/statuslabels/table.info') !!}</p>
+          </div>
+      </div>
+
 
       <div class="box box-success">
           <div class="box-body">
@@ -125,7 +131,7 @@
 
           var typename_lower = trans;
           var typename = typename_lower.charAt(0).toUpperCase() + typename_lower.slice(1);
-          return '<i class="fa ' + icon_style + ' text-' + text_color + '"></i> ' + typename;
+          return '<nobr><i class="fa ' + icon_style + ' text-' + text_color + '"></i> ' + typename + '</nobr>';
 
 
       }

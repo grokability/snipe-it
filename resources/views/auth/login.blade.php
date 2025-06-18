@@ -54,7 +54,8 @@
                                     <!-- CSRF Token -->
 
 
-                                    <fieldset>
+                                    <fieldset name="login" aria-label="login">
+                                        <legend></legend>
 
                                         <div class="form-group{{ $errors->has('username') ? ' has-error' : '' }}">
                                             <label for="username">
@@ -74,7 +75,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label class="form-control">
-                                                <input name="remember" type="checkbox" value="1"> {{ trans('auth/general.remember_me')  }}
+                                                <input name="remember" type="checkbox" value="1" id="remember"> {{ trans('auth/general.remember_me')  }}
                                             </label>
                                         </div>
                                     </fieldset>
@@ -94,7 +95,9 @@
                             @if (config('app.require_saml'))
                                 <a class="btn btn-primary btn-block" href="{{ route('saml.login')  }}">{{ trans('auth/general.saml_login')  }}</a>
                             @else
-                                <button class="btn btn-primary btn-block">{{ trans('auth/general.login')  }}</button>
+                                <button class="btn btn-primary btn-block" type="submit" id="submit">
+                                    {{ trans('auth/general.login')  }}
+                                </button>
                             @endif
 
                             @if ($snipeSettings->custom_forgot_pass_url)

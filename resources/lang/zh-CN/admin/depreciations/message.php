@@ -3,7 +3,7 @@
 return array(
 
     'does_not_exist' => '折旧类不存在',
-    'assoc_users'	 => '此折旧类型至少有一个相关资产与其牵连，请删除牵连的资产，然后重试。',
+    'assoc_users'	 => '此折旧当前与一个或多个型号相关联，无法删除。 请删除型号，然后再次尝试删除。',
 
 
     'create' => array(

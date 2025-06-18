@@ -130,15 +130,26 @@
                         <!-- Audit Image -->
                         @include ('partials.forms.edit.image-upload', ['help_text' => trans('general.audit_images_help')])
 
+                        <!-- Custom fields -->
+                        @include("models/custom_fields_form", [
+                                'model' => $asset->model,
+                                'show_custom_fields_type' => 'audit'
+                        ])
+
 
                     </div> <!--/.box-body-->
-                    <div class="box-footer">
-                        <a class="btn btn-link" href="{{ URL::previous() }}"> {{ trans('button.cancel') }}</a>
-                        <button type="submit" class="btn btn-success pull-right{{ (!$asset->model ? ' disabled' : '') }}"{!! (!$asset->model ? ' data-tooltip="true" title="'.trans('admin/hardware/general.model_invalid_fix').'" disabled' : '') !!}>
-                            <x-icon type="checkmark" />
-                            {{ trans('general.audit') }}
-                        </button>
-                    </div>
+
+                    <x-redirect_submit_options
+                            index_route="hardware.index"
+                            :button_label="trans('general.audit')"
+                            :disabled_select="!$asset->model"
+                            :options="[
+                                'index' => trans('admin/hardware/form.redirect_to_all', ['type' => trans('general.assets')]),
+                                'item' => trans('admin/hardware/form.redirect_to_type', ['type' => trans('general.asset')]),
+                                'other_redirect' => trans('general.audit_due')
+                               ]"
+                    />
+
                 </form>
             </div>
         </div> <!--/.col-md-7-->

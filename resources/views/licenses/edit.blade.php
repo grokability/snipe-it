@@ -34,7 +34,7 @@
     <div class="form-group {{ $errors->has('serial') ? ' has-error' : '' }}">
         <label for="serial" class="col-md-3 control-label">{{ trans('admin/licenses/form.license_key') }}</label>
         <div class="col-md-7">
-            <textarea class="form-control" type="text" name="serial" id="serial"{{  (Helper::checkIfRequired($item, 'serial')) ? ' required' : '' }}>{{ old('serial', $item->serial) }}</textarea>
+            <textarea class="form-control" type="text" name="serial" id="serial" rows="5"{{  (Helper::checkIfRequired($item, 'serial')) ? ' required' : '' }}>{{ old('serial', $item->serial) }}</textarea>
             {!! $errors->first('serial', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
         </div>
     </div>
@@ -78,7 +78,7 @@
 @include ('partials.forms.edit.supplier-select', ['translated_name' => trans('general.supplier'), 'fieldname' => 'supplier_id'])
 @include ('partials.forms.edit.order_number')
 @include ('partials.forms.edit.purchase_cost')
-@include ('partials.forms.edit.purchase_date')
+@include ('partials.forms.edit.datepicker', ['translated_name' => trans('general.purchase_date'),'fieldname' => 'purchase_date'])
 
 <!-- Expiration Date -->
 <div class="form-group {{ $errors->has('expiration_date') ? ' has-error' : '' }}">

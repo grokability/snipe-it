@@ -22,7 +22,7 @@ return array(
     'managed_locations'     => 'Administrere plasseringer',
     'managed_users'         => 'Administrerte brukere',
     'name' 					=> 'Navn',
-    'nogroup'               => 'Ingen grupper er opprettet ennå. For å legge til en, besøk: ',
+    'nogroup'               => 'Ingen grupper er opprettet ennå. For å legge til en, besøk:',
     'notes'                 => 'Notater',
     'password_confirm' 		=> 'Bekreft passord',
     'password' 				=> 'Passord',

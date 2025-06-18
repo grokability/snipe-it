@@ -15,6 +15,6 @@ return array(
 
     'failed' => '此憑證與我們的紀錄不符',
     'password' => '輸入的密碼不正確',
-    'throttle' => '登入嘗試次數過多，請在 :seconds 秒後重試',
+    'throttle' => 'Too many login attempts. Please try again in :minutes minute(s).',
 
 );

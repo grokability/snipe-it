@@ -20,6 +20,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Passport\HasApiTokens;
 use Watson\Validating\ValidatingTrait;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class User extends SnipeModel implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, HasLocalePreference
 {
@@ -94,7 +95,7 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
         'locale'                  => 'max:10|nullable',
         'website'                 => 'url|nullable|max:191',
         'manager_id'              => 'nullable|exists:users,id|cant_manage_self',
-        'location_id'             => 'exists:locations,id|nullable',
+        'location_id'             => 'exists:locations,id|nullable|fmcs_location',
         'start_date'              => 'nullable|date_format:Y-m-d',
         'end_date'                => 'nullable|date_format:Y-m-d|after_or_equal:start_date',
         'autoassign_licenses'     => 'boolean',
@@ -114,16 +115,21 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
      * @var array
      */
     protected $searchableAttributes = [
-        'first_name',
-        'last_name',
+        'address',
+        'city',
+        'country',
         'email',
-        'username',
+        'employee_num',
+        'first_name',
+        'jobtitle',
+        'last_name',
+        'locale',
         'notes',
         'phone',
-        'jobtitle',
-        'employee_num',
+        'state',
+        'username',
         'website',
-        'locale',
+        'zip',
     ];
 
     /**
@@ -132,15 +138,32 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
      * @var array
      */
     protected $searchableRelations = [
-        'userloc'    => ['name'],
+        'userloc'    => ['name', 'address', 'address2', 'city', 'state', 'zip'],
         'department' => ['name'],
         'groups'     => ['name'],
         'company'    => ['name'],
         'manager'    => ['first_name', 'last_name', 'username'],
     ];
 
+
+    /**
+     * This sets the name property on the user. It's not a real field in the database
+     * (since we use first_name and last_name), but the Laravel mailable method
+     * uses this to determine the name of the user to send emails to.
+     *
+     * We only have to do this on the User model and no other models because other
+     * first-class objects have a name field.
+     * @return void
+     */
+
+    public $name;
+
     protected static function booted(): void
     {
+        static::retrieved(function($user){
+            $user->name = $user->getFullNameAttribute();
+        });
+
         static::deleted(function (User $user) {
             $user->pendingCheckoutAcceptances()->delete();
         });
@@ -286,6 +309,7 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
         return $this->activated == 1;
     }
 
+
     /**
      * Returns the full name attribute
      *
@@ -297,7 +321,7 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
     {
         $setting = Setting::getSettings();
 
-        if ($setting->name_display_format=='last_first') {
+        if ($setting?->name_display_format == 'last_first') {
             return ($this->last_name) ? $this->last_name.' '.$this->first_name : $this->first_name;
         }
         return $this->last_name ? $this->first_name.' '.$this->last_name : $this->first_name;
@@ -534,6 +558,25 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
     }
 
     /**
+     * Establishes the user -> eula relationship
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\Relation
+     * @since [v8.1.16]
+     * @author [Godfrey Martinez] [<gmartinez@grokability.com>]
+ */
+    public function eulas()
+    {
+        return $this->hasMany(Actionlog::class, 'target_id')
+            ->with('item')
+            ->select(['id', 'target_id', 'target_type', 'action_type', 'filename', 'accept_signature', 'created_at', 'note', 'item_id', 'item_type'])
+            ->where('target_type', self::class)
+            ->where('action_type', 'accepted')
+            ->whereNotNull('filename')
+            ->whereNotNull('accept_signature')
+            ->orderBy('created_at', 'desc');
+    }
+
+    /**
      * Establishes the user -> requested assets relationship
      *
      * @author A. Gianotto <snipe@snipe.net>
@@ -634,6 +677,8 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
                 $username = str_slug($first_name).'_'.str_slug($last_name);
             } elseif ($format == 'firstname') {
                 $username = str_slug($first_name);
+            } elseif ($format == 'lastname') {
+                $username = str_slug($last_name);
             } elseif ($format == 'firstinitial.lastname') {
                 $username = str_slug(substr($first_name, 0, 1).'.'.str_slug($last_name));
             } elseif ($format == 'lastname_firstinitial') {
@@ -726,10 +771,36 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
     }
 
 
-
+    /**
+     * Decode JSON permissions into array
+     *
+     * @author A. Gianotto <snipe@snipe.net>
+     * @since [v1.0]
+     * @return array | \stdClass
+     */
     public function decodePermissions()
     {
-        return json_decode($this->permissions, true);
+        // If the permissions are an array, convert it to JSON
+        if (is_array($this->permissions)) {
+            $this->permissions = json_encode($this->permissions);
+        }
+
+        $permissions = json_decode($this->permissions ?? '{}', JSON_OBJECT_AS_ARRAY);
+
+        // Otherwise, loop through the permissions and cast the values as integers
+        if ((is_array($permissions)) && ($permissions)) {
+            foreach ($permissions as $permission => $value) {
+
+                if (!is_integer($permission)) {
+                    $permissions[$permission] = (int) $value;
+                } else {
+                    \Log::info('Weird data here - skipping it');
+                    unset($permissions[$permission]);
+                }
+            }
+            return $permissions ?: new \stdClass;
+        }
+        return new \stdClass;
     }
 
     /**
@@ -854,10 +925,22 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
         return $query->leftJoin('companies as companies_user', 'users.company_id', '=', 'companies_user.id')->orderBy('companies_user.name', $order);
     }
 
-    public function preferredLocale()
+
+
+
+    /**
+     * Get the preferred locale for the user.
+     *
+     * This uses the HasLocalePreference contract to determine the user's preferred locale,
+     * used by Laravel's mail system to determine the locale for sending emails.
+     * https://laravel.com/docs/11.x/mail#user-preferred-locales
+     *
+     */
+    public function preferredLocale(): string
     {
-        return $this->locale;
+        return $this->locale ?? Setting::getSettings()->locale ?? config('app.locale');
     }
+
     public function getUserTotalCost(){
         $asset_cost= 0;
         $license_cost= 0;
@@ -898,5 +981,75 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
 
 
 
+    }
+
+    /**
+     * Get all direct and indirect subordinates for this user.
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getAllSubordinates()
+    {
+        $subordinates = collect();
+        $this->fetchSubordinatesRecursive($this, $subordinates);
+        return $subordinates->unique('id');
+    }
+
+    /**
+     * Get all direct and indirect subordinates for this user, including self.
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getAllSubordinatesIncludingSelf()
+    {
+        $subordinates = collect([$this]);
+        $this->fetchSubordinatesRecursive($this, $subordinates);
+        return $subordinates->unique('id');
+    }
+
+    /**
+     * Recursive helper function to fetch subordinates.
+     *
+     * @param User $manager
+     * @param \Illuminate\Support\Collection $subs
+     */
+    protected function fetchSubordinatesRecursive(User $manager, \Illuminate\Support\Collection &$subs)
+    {
+        // Eager load 'managesUsers' to prevent N+1 queries in recursion
+        $directSubordinates = $manager->managesUsers()->with('managesUsers')->get();
+
+        foreach ($directSubordinates as $directSubordinate) {
+            // Add subordinate if not already in the collection
+            if (!$subs->contains('id', $directSubordinate->id)) {
+                 $subs->push($directSubordinate);
+                 // Recursive call for this subordinate's subordinates
+                 $this->fetchSubordinatesRecursive($directSubordinate, $subs);
+            }
+        }
+    }
+
+    /**
+     * Check if the current user is a direct or indirect manager of the given user.
+     *
+     * @param User $userToCheck
+     * @return bool
+     */
+    public function isManagerOf(User $userToCheck): bool
+    {
+        // Optimization: If it's the same user, they are not their own manager
+        if ($this->id === $userToCheck->id) {
+            return false;
+        }
+
+        // Eager load manager relationship to potentially reduce queries in the loop
+        $manager = $userToCheck->load('manager')->manager;
+        while ($manager) {
+            if ($manager->id === $this->id) {
+                return true;
+            }
+            // Move up the hierarchy (load relationship if not already loaded)
+            $manager = $manager->load('manager')->manager;
+        }
+        return false;
     }
 }

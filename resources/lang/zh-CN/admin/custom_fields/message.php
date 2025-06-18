@@ -4,7 +4,7 @@ return array(
 
     'field' => array(
         'invalid'   => '字段不存在',
-        'already_added'   => '已经新增字段',
+        'already_added'   => '字段已存在',
         'none_selected'   => '未选择字段',
 
         'create' => array(

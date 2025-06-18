@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use AllowDynamicProperties;
 use App\Models\Setting;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Channels\SlackWebhookChannel;
@@ -12,7 +13,7 @@ use Illuminate\Support\Str;
 use NotificationChannels\MicrosoftTeams\MicrosoftTeamsChannel;
 use NotificationChannels\MicrosoftTeams\MicrosoftTeamsMessage;
 
-class AuditNotification extends Notification
+#[AllowDynamicProperties] class AuditNotification extends Notification
 {
     use Queueable;
     /**

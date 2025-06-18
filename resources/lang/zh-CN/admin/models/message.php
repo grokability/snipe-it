@@ -3,16 +3,16 @@
 return array(
 
     'deleted' => '已删除资产型号',
-    'does_not_exist' => '模板不存在',
+    'does_not_exist' => '型号不存在。',
     'no_association' => '警告！此物品的资产型号无效或丢失！',
     'no_association_fix' => '这将以怪异且可怕的方式破坏一切。立即编辑此资产并为其指定一个型号。',
-    'assoc_users'	 => '本模板下目前还有相关的资产，不能被删除，请删除资产以后，再重试。',
+    'assoc_users'	 => '本型号下目前还有相关的资产，不能被删除，请删除资产以后，再重试。 ',
     'invalid_category_type' => '此类别必须是一个资产类别。',
 
     'create' => array(
-        'error'   => '模板没有被创建，请重试。',
-        'success' => '模板创建成功。',
-        'duplicate_set' => '资产名称、制造商和编号都相同的其它资产模板已存在。',
+        'error'   => '型号没有被创建，请重试。',
+        'success' => '型号创建成功。',
+        'duplicate_set' => '资产名称、制造商和编号都相同的资产型号已存在。',
     ),
 
     'update' => array(

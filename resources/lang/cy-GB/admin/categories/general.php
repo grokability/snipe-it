@@ -21,5 +21,9 @@ return array(
     'use_default_eula'					=> 'Defnyddio\'r <a href="#" data-toggle="modal" data-target="#eulaModal">prif CTDT diofyn</a> yn lle.',
     'use_default_eula_disabled'			=> '<del>Defnyddio\'r CTDT diofyn yn lle\'r un presennol.</del>Nid oes prif CTDT diofyn wedi gosod. Ychwanegwch yn ynj gosodiadau os gwelwch yn dda.',
     'use_default_eula_column'			=> 'Use default EULA',
+    'import_require_acceptance'         => 'Require Acceptance',
+    'import_checkin_email'              => 'Send Checkin Email',
+    'import_eula_text'                  => 'EULA text',
+    'import_category_type'              => 'Category Type',
 
 );

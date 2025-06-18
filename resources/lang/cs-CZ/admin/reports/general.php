@@ -4,6 +4,7 @@ return [
     'info'   => 'Zvolte možnosti zprávy o majetku.',
     'deleted_user' => 'Odstraněný uživatel',
     'send_reminder' => 'Poslat připomínku',
+    'cannot_send_reminder' => 'User has been deleted or does not have an email address so cannot receive a reminder',
     'reminder_sent' => 'Připomínka odeslána',
     'acceptance_deleted' => 'Žádost o přijetí byla smazána',
     'acceptance_request' => 'Žádost o přijetí',

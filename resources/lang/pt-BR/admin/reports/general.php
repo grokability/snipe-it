@@ -4,6 +4,7 @@ return [
     'info'   => 'Selecione as opções que você quer para o seu relatório de ativos.',
     'deleted_user' => 'Usuário excluído',
     'send_reminder' => 'Enviar lembrete',
+    'cannot_send_reminder' => 'User has been deleted or does not have an email address so cannot receive a reminder',
     'reminder_sent' => 'Lembrete enviado',
     'acceptance_deleted' => 'Pedido de aceitação excluído',
     'acceptance_request' => 'Solicitação de aceitação',
@@ -18,5 +19,5 @@ return [
     'save_template' =>  'Save Template',
     'select_a_template' => 'Select a Template',
     'template_name' => 'Template Name',
-    'update_template' => 'Update Template',
+    'update_template' => 'Atualizar Template',
 ];

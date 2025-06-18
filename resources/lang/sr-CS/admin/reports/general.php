@@ -4,6 +4,7 @@ return [
     'info'   => 'Odaberite željene opcije za izveštaj o imovini.',
     'deleted_user' => 'Izbrisan korisnika',
     'send_reminder' => 'Pošalji podsetnik',
+    'cannot_send_reminder' => 'Korisnik je obrisan ili nema navedenu adresu e-pošte pa ne može da dobije potsetnik',
     'reminder_sent' => 'Podsetnik je poslat',
     'acceptance_deleted' => 'Zahtev za prihvatanje je izbrisan',
     'acceptance_request' => 'Zahtev za prihvatanje',

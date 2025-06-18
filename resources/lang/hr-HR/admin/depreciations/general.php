@@ -13,4 +13,8 @@ return [
     'no_depreciations_warning'               => '<strong>Upozorenje</strong>
                       Trenutno nemate postavljene stope amortizacije za svoju imovinu.
                       Molimo vas da postavite barem jednu stopu amortizacije kako bi mogli vidjeti izvještaj o amortizaciji.',
+    'depreciation_method'                   => 'Izvješće o amortizaciji',
+    'linear_depreciation'                   => 'Linear (Default)',
+    'half_1'                                => 'Half-year convention, always applied',
+    'half_2'                                => 'Half-year convention, applied with condition',
 ];

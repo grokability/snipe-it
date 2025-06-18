@@ -25,6 +25,16 @@ class Label implements View
      */
     protected $data;
 
+
+    /**
+     * TCPDF output destination.
+     * "I" - inline by default.
+     * See TCPDF's Output method for details.
+     *
+     * @var string
+     */
+    private string $destination = 'I';
+
     public function __construct() {
         $this->data = new Collection();
     }
@@ -139,6 +149,11 @@ class Label implements View
                             case 'plain_serial_number': 
                                 $barcode2DTarget = $asset->serial; 
                                 break;
+                            case 'location':
+                                $barcode2DTarget = $asset->location_id
+                                    ? route('locations.show', $asset->location_id)
+                                    : null;
+                                break;
                             case 'hardware_id':
                             default:
                                 $barcode2DTarget = route('hardware.show', $asset);
@@ -181,16 +196,34 @@ class Label implements View
                                 // We'll set the label to an empty string since we
                                 // injected the label into the value field above.
                                 $previous['label'] = '';
-
                                 return $previous;
                             });
 
                         return $toAdd ? $myFields->push($toAdd) : $myFields;
                     }, new Collection());
 
-                $assetData->put('fields', $fields->take($template->getSupportFields()));
+                $emptyRowsCount = $settings->label2_empty_row_count;
+                if($emptyRowsCount) {
+                    // Create empty rows
+                    $emptyRows = collect(range(1, $emptyRowsCount))->map(function () {
+                        return [
+                            'label' => '',
+                            'value' => '',
+                            'dataSource' => null,
+                        ];
+                    });
 
-                return $assetData;
+                    // Prepend empty rows to the existing fields
+                    $fieldsWithEmpty = $emptyRows->merge($fields);
+
+                    $assetData->put('fields', $fieldsWithEmpty->take($template->getSupportFields()));
+                    return $assetData;
+                }
+               else{
+                   $assetData->put('fields', $fields->take($template->getSupportFields()));
+                   return $assetData;
+               }
+
             });
         
         if ($template instanceof Sheet) {
@@ -199,7 +232,7 @@ class Label implements View
         $template->writeAll($pdf, $data);
 
         $filename = $assets->count() > 1 ? 'assets.pdf' : $assets->first()->asset_tag.'.pdf';
-        $pdf->Output($filename, 'I');
+        $pdf->Output($filename, $this->destination);
     }
 
     /**

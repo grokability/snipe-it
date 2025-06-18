@@ -53,4 +53,5 @@ return [
     'next_save_user' => 'Étape suivante : Enregistrer l\'utilisateur',
     'all_assigned_list_generation' => 'Généré le :',
     'email_user_creds_on_create' => 'Envoyer à cet·te utilisateur·trice ses informations d\'identification par e-mail ?',
+    'department_manager' => 'Department Manager',
 ];

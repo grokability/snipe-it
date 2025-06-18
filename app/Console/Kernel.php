@@ -19,7 +19,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        if(Setting::getSettings()->alerts_enabled === 1) {
+        if(Setting::getSettings()?->alerts_enabled === 1) {
             $schedule->command('snipeit:inventory-alerts')->daily();
             $schedule->command('snipeit:expiring-alerts')->daily();
             $schedule->command('snipeit:expected-checkin')->daily();

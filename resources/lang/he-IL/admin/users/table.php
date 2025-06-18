@@ -22,7 +22,7 @@ return array(
     'managed_locations'     => 'מיקומים מנוהלים',
     'managed_users'         => 'Managed Users',
     'name' 					=> 'שֵׁם',
-    'nogroup'               => 'No groups have been created yet. To add one, visit: ',
+    'nogroup'               => 'No groups have been created yet. To add one, visit:',
     'notes'                 => 'הערות',
     'password_confirm' 		=> 'אשר סיסמה',
     'password' 				=> 'סיסמה',

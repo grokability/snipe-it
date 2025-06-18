@@ -21,5 +21,9 @@ return array(
     'use_default_eula'					=> 'Kasuta hoopis <a href="#" data-toggle="modal" data-target="#eulaModal">peamist vaikimisi EULA-t</a>.',
     'use_default_eula_disabled'			=> '<del>Kasuta hoopis peamist vaikimisi EULAt.</del> Peamine vaikumisi EULA puudub. Lisa see seadete alt.',
     'use_default_eula_column'			=> 'Kasuta vaikimisi EULA',
+    'import_require_acceptance'         => 'Require Acceptance',
+    'import_checkin_email'              => 'Send Checkin Email',
+    'import_eula_text'                  => 'EULA text',
+    'import_category_type'              => 'Category Type',
 
 );

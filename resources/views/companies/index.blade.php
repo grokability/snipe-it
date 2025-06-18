@@ -22,6 +22,8 @@
               data-pagination="true"
               data-id-table="companiesTable"
               data-search="true"
+              data-search-highlight="true"
+              data-show-print="true"
               data-side-pagination="server"
               data-show-columns="true"
               data-show-export="true"

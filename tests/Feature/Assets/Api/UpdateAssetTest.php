@@ -423,6 +423,86 @@ class UpdateAssetTest extends TestCase
         $this->assertEquals($asset->assigned_type, 'App\Models\User');
     }
 
+    public function testCheckoutToUserWithAssignedToAndAssignedType()
+    {
+        $asset = Asset::factory()->create();
+        $user = User::factory()->editAssets()->create();
+        $assigned_user = User::factory()->create();
+
+        $response = $this->actingAsForApi($user)
+            ->patchJson(route('api.assets.update', $asset->id), [
+                'assigned_to' => $assigned_user->id,
+                'assigned_type' => User::class
+            ])
+            ->assertOk()
+            ->assertStatusMessageIs('success')
+            ->json();
+
+        $asset->refresh();
+        $this->assertEquals($assigned_user->id, $asset->assigned_to);
+        $this->assertEquals($asset->assigned_type, 'App\Models\User');
+    }
+
+    public function testCheckoutToUserWithAssignedToWithoutAssignedType()
+    {
+        $asset = Asset::factory()->create();
+        $user = User::factory()->editAssets()->create();
+        $assigned_user = User::factory()->create();
+
+        $response = $this->actingAsForApi($user)
+            ->patchJson(route('api.assets.update', $asset->id), [
+                'assigned_to' => $assigned_user->id,
+//                'assigned_type' => User::class //deliberately omit assigned_type
+            ])
+            ->assertOk()
+            ->assertStatusMessageIs('error');
+
+        $asset->refresh();
+        $this->assertNotEquals($assigned_user->id, $asset->assigned_to);
+        $this->assertNotEquals($asset->assigned_type, 'App\Models\User');
+        $this->assertNotNull($response->json('messages.assigned_type'));
+    }
+
+    public function testCheckoutToUserWithAssignedToWithBadAssignedType()
+    {
+        $asset = Asset::factory()->create();
+        $user = User::factory()->editAssets()->create();
+        $assigned_user = User::factory()->create();
+
+        $response = $this->actingAsForApi($user)
+            ->patchJson(route('api.assets.update', $asset->id), [
+                'assigned_to'   => $assigned_user->id,
+                'assigned_type' => 'more_deliberate_nonsense' //deliberately bad assigned_type
+            ])
+            ->assertOk()
+            ->assertStatusMessageIs('error');
+
+        $asset->refresh();
+        $this->assertNotEquals($assigned_user->id, $asset->assigned_to);
+        $this->assertNotEquals($asset->assigned_type, 'App\Models\User');
+        $this->assertNotNull($response->json('messages.assigned_type'));
+    }
+
+    public function testCheckoutToUserWithoutAssignedToWithAssignedType()
+    {
+        $asset = Asset::factory()->create();
+        $user = User::factory()->editAssets()->create();
+        $assigned_user = User::factory()->create();
+
+        $response = $this->actingAsForApi($user)
+            ->patchJson(route('api.assets.update', $asset->id), [
+                //'assigned_to'   => $assigned_user->id, // deliberately omit assigned_to
+                'assigned_type' => User::class
+            ])
+            ->assertOk()
+            ->assertStatusMessageIs('error');
+
+        $asset->refresh();
+        $this->assertNotEquals($assigned_user->id, $asset->assigned_to);
+        $this->assertNotEquals($asset->assigned_type, 'App\Models\User');
+        $this->assertNotNull($response->json('messages.assigned_to'));
+    }
+
     public function testCheckoutToDeletedUserFailsOnAssetUpdate()
     {
         $asset = Asset::factory()->create();

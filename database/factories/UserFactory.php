@@ -295,6 +295,11 @@ class UserFactory extends Factory
         return $this->appendPermission(['companies.delete' => '1']);
     }
 
+    public function editCompanies()
+    {
+        return $this->appendPermission(['companies.edit' => '1']);
+    }
+
     public function viewUsers()
     {
         return $this->appendPermission(['users.view' => '1']);
@@ -379,6 +384,12 @@ class UserFactory extends Factory
     {
         return $this->appendPermission(['suppliers.delete' => '1']);
     }
+
+    public function auditAssets()
+    {
+        return $this->appendPermission(['assets.audit' => '1']);
+    }
+
 
     private function appendPermission(array $permission)
     {

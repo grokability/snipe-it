@@ -22,7 +22,7 @@ return array(
     'managed_locations'     => 'Керовані розташування',
     'managed_users'         => 'Керовані користувачі',
     'name' 					=> 'Назва',
-    'nogroup'               => 'Жодного користувача користувача ще не було створено. Для додавання відвідувань, ',
+    'nogroup'               => 'No groups have been created yet. To add one, visit:',
     'notes'                 => 'Нотатки',
     'password_confirm' 		=> 'Підтвердьте пароль',
     'password' 				=> 'Пароль',

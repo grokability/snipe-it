@@ -77,7 +77,7 @@ trait Searchable
                 /**
                  * Making sure to only search in date columns if the search term consists of characters that can make up a MySQL timestamp!
                  *
-                 * @see https://github.com/snipe/snipe-it/issues/4590
+                 * @see https://github.com/grokability/snipe-it/issues/4590
                  */
                 if (! preg_match('/^[0-9 :-]++$/', $term) && in_array($column, $this->getDates())) {
                     continue;
@@ -164,7 +164,7 @@ trait Searchable
                     }
                 }
                 // I put this here because I only want to add the concat one time in the end of the user relation search
-                if($relation == 'user') {
+                if(($relation == 'adminuser') || ($relation == 'user')) {
                     $query->orWhereRaw(
                             $this->buildMultipleColumnSearch([
                                 'users.first_name',

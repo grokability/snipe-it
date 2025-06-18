@@ -90,6 +90,9 @@
                                 </div>
                             </div>
 
+                            @include ('partials.forms.edit.minimum_quantity')
+
+
                             <!-- requestable -->
                                 <div class="form-group{{ $errors->has('requestable') ? ' has-error' : '' }}">
                                     <div class="col-md-7 col-md-offset-3">

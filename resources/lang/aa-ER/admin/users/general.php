@@ -53,4 +53,5 @@ return [
     'next_save_user' => 'crwdns11361:0crwdne11361:0',
     'all_assigned_list_generation' => 'crwdns11415:0crwdne11415:0',
     'email_user_creds_on_create' => 'crwdns11517:0crwdne11517:0',
+    'department_manager' => 'crwdns13408:0crwdne13408:0',
 ];

@@ -6,8 +6,6 @@ return array(
     'account_not_found'      => 'Lietotājvārds vai parole nav pareiza.',
     'account_not_activated'  => 'Šis lietotāja konts nav aktivizēts.',
     'account_suspended'      => 'Šī lietotāja konta darbība ir apturēta.',
-    'account_banned'         => 'Šis lietotāja konts ir aizliegts.',
-    'throttle'               => 'Too many failed login attempts. Please try again in :minutes minutes.',
 
     'two_factor' => array(
         'already_enrolled'      => 'Your device is already enrolled.',

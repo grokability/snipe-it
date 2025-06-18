@@ -49,6 +49,7 @@ class Consumable extends SnipeModel
         'qty'         => 'required|integer|min:0|max:99999',
         'category_id' => 'required|integer',
         'company_id'  => 'integer|nullable',
+        'location_id' => 'exists:locations,id|nullable|fmcs_location',
         'min_amt'     => 'integer|min:0|max:99999|nullable',
         'purchase_cost'   => 'numeric|nullable|gte:0|max:9999999999999',
         'purchase_date'   => 'date_format:Y-m-d|nullable',
@@ -75,6 +76,7 @@ class Consumable extends SnipeModel
         'item_no',
         'location_id',
         'manufacturer_id',
+        'supplier_id',
         'name',
         'order_number',
         'model_number',
@@ -282,7 +284,7 @@ class Consumable extends SnipeModel
      */
     public function checkin_email()
     {
-        return $this->category->checkin_email;
+        return $this->category?->checkin_email;
     }
 
     /**

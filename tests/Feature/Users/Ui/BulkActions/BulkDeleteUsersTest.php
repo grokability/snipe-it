@@ -146,11 +146,10 @@ class BulkDeleteUsersTest extends TestCase
         $this->assertTrue($userB->fresh()->consumables->isNotEmpty());
         $this->assertTrue($userC->fresh()->consumables->isEmpty());
 
-        // These assertions check against a bug where the wrong value from
-        // consumables_users was being populated in action_logs.item_id.
-        $this->assertActionLogCheckInEntryFor($userA, $consumableA);
-        $this->assertActionLogCheckInEntryFor($userA, $consumableB);
-        $this->assertActionLogCheckInEntryFor($userC, $consumableA);
+        // Consumable checkin should not be logged.
+        $this->assertNoActionLogCheckInEntryFor($userA, $consumableA);
+        $this->assertNoActionLogCheckInEntryFor($userA, $consumableB);
+        $this->assertNoActionLogCheckInEntryFor($userC, $consumableA);
     }
 
     public function test_license_seats_can_be_bulk_checked_in()
@@ -249,6 +248,18 @@ class BulkDeleteUsersTest extends TestCase
     private function assertActionLogCheckInEntryFor(User $user, Model $model): void
     {
         $this->assertDatabaseHas('action_logs', [
+            'action_type' => 'checkin from',
+            'target_id' => $user->id,
+            'target_type' => User::class,
+            'note' => 'Bulk checkin items',
+            'item_type' => get_class($model),
+            'item_id' => $model->id,
+        ]);
+    }
+
+    private function assertNoActionLogCheckInEntryFor(User $user, Model $model): void
+    {
+        $this->assertDatabaseMissing('action_logs', [
             'action_type' => 'checkin from',
             'target_id' => $user->id,
             'target_type' => User::class,

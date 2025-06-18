@@ -837,7 +837,7 @@
                                 <label for="custom_forgot_pass_url">{{ trans('admin/settings/general.custom_forgot_pass_url') }}</label>
                             </div>
                             <div class="col-md-8">
-                                <input class="form-control" placeholder="{{ trans('general.example') .'https://my.ldapserver-forgotpass.com' }}" name="custom_forgot_pass_url" type="text" id="custom_forgot_pass_url" value="{{ old('custom_forgot_pass_url', $setting->custom_forgot_pass_url) }}">
+                                <input class="form-control" placeholder="{{ trans('general.example') .'https://my.ldapserver-forgotpass.com' }}" name="custom_forgot_pass_url" type="url" id="custom_forgot_pass_url" value="{{ old('custom_forgot_pass_url', $setting->custom_forgot_pass_url) }}">
                                 <p class="help-block">{{ trans('admin/settings/general.custom_forgot_pass_url_help') }}</p>
                                 @error('custom_forgot_pass_url')
                                     <span class="alert-msg">

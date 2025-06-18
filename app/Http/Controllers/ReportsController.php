@@ -186,7 +186,7 @@ class ReportsController extends Controller
                 $currency = e(Setting::getSettings()->default_currency);
             }
 
-            $row[] = $asset->purchase_date;
+            $row[] = Helper::getFormattedDateObject($asset->purchase_date, 'date', false);
             $row[] = $currency.Helper::formatCurrencyOutput($asset->purchase_cost);
             $row[] = $currency.Helper::formatCurrencyOutput($asset->getDepreciatedValue());
             $row[] = $currency.Helper::formatCurrencyOutput(($asset->purchase_cost - $asset->getDepreciatedValue()));
@@ -245,7 +245,7 @@ class ReportsController extends Controller
 
             $header = [
                 trans('general.date'),
-                trans('general.admin'),
+                trans('general.created_by'),
                 trans('general.action'),
                 trans('general.type'),
                 trans('general.item'),
@@ -487,12 +487,23 @@ class ReportsController extends Controller
                 $header[] = trans('admin/hardware/table.purchase_date');
             }
 
-            if (($request->filled('purchase_cost')) || ($request->filled('depreciation'))) {
+            if ($request->filled('purchase_cost')) {
                 $header[] = trans('admin/hardware/table.purchase_cost');
             }
 
             if ($request->filled('eol')) {
                 $header[] = trans('admin/hardware/table.eol');
+            }
+
+            if ($request->filled('warranty')) {
+                $header[] = trans('admin/hardware/form.warranty');
+                $header[] = trans('admin/hardware/form.warranty_expires');
+            }
+
+            if ($request->filled('depreciation')) {
+                $header[] = trans('admin/hardware/table.book_value');
+                $header[] = trans('admin/hardware/table.diff');
+                $header[] = trans('admin/hardware/form.fully_depreciated');
             }
 
             if ($request->filled('order')) {
@@ -579,17 +590,6 @@ class ReportsController extends Controller
 
             if ($request->filled('status')) {
                 $header[] = trans('general.status');
-            }
-
-            if ($request->filled('warranty')) {
-                $header[] = trans('admin/hardware/form.warranty');
-                $header[] = trans('admin/hardware/form.warranty_expires');
-            }
-
-            if ($request->filled('depreciation')) {
-                $header[] = trans('admin/hardware/table.book_value');
-                $header[] = trans('admin/hardware/table.diff');
-                $header[] = trans('admin/hardware/form.fully_depreciated');
             }
 
             if ($request->filled('checkout_date')) {
@@ -739,6 +739,11 @@ class ReportsController extends Controller
             if (($request->filled('next_audit_start')) && ($request->filled('next_audit_end'))) {
                 $assets->whereBetween('assets.next_audit_date', [$request->input('next_audit_start'), $request->input('next_audit_end')]);
             }
+
+            if (($request->filled('last_updated_start')) && ($request->filled('last_updated_end'))) {
+                $assets->whereBetween('assets.updated_at', [$request->input('last_updated_start'), $request->input('last_updated_end')]);
+            }
+
             if ($request->filled('exclude_archived')) {
                 $assets->notArchived();
             }
@@ -805,6 +810,19 @@ class ReportsController extends Controller
 
                     if ($request->filled('eol')) {
                         $row[] = ($asset->purchase_date != '') ? $asset->asset_eol_date : '';
+                    }
+
+                    if ($request->filled('warranty')) {
+                        $row[] = ($asset->warranty_months) ? $asset->warranty_months : '';
+                        $row[] = $asset->present()->warranty_expires();
+                    }
+
+                    if ($request->filled('depreciation')) {
+                        $depreciation = $asset->getDepreciatedValue();
+                        $diff = ($asset->purchase_cost - $depreciation);
+                        $row[] = Helper::formatCurrencyOutput($depreciation);
+                        $row[] = Helper::formatCurrencyOutput($diff);
+                        $row[] = (($asset->depreciation) && ($asset->depreciated_date())) ? $asset->depreciated_date()->format('Y-m-d') : '';
                     }
 
                     if ($request->filled('order')) {
@@ -938,19 +956,6 @@ class ReportsController extends Controller
 
                     if ($request->filled('status')) {
                         $row[] = ($asset->assetstatus) ? $asset->assetstatus->name.' ('.$asset->present()->statusMeta.')' : '';
-                    }
-
-                    if ($request->filled('warranty')) {
-                        $row[] = ($asset->warranty_months) ? $asset->warranty_months : '';
-                        $row[] = $asset->present()->warranty_expires();
-                    }
-
-                    if ($request->filled('depreciation')) {
-                            $depreciation = $asset->getDepreciatedValue();
-                            $diff = ($asset->purchase_cost - $depreciation);
-                        $row[] = Helper::formatCurrencyOutput($depreciation);
-                        $row[] = Helper::formatCurrencyOutput($diff);
-                        $row[] = (($asset->depreciation) && ($asset->depreciated_date())) ? $asset->depreciated_date()->format('Y-m-d') : '';
                     }
 
                     if ($request->filled('checkout_date')) {

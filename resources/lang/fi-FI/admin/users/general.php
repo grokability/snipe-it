@@ -53,4 +53,5 @@ return [
     'next_save_user' => 'Seuraava: Tallenna Käyttäjä',
     'all_assigned_list_generation' => 'Luotu:',
     'email_user_creds_on_create' => 'Lähetä tälle käyttäjälle käyttäjätunnukset?',
+    'department_manager' => 'Department Manager',
 ];

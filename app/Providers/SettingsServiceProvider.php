@@ -65,6 +65,10 @@ class SettingsServiceProvider extends ServiceProvider
             return 'assets/';
         });
 
+        \App::singleton('audits_upload_path', function () {
+            return 'audits/';
+        });
+
         \App::singleton('accessories_upload_path', function () {
             return 'public/uploads/accessories/';
         });

@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Manage',
     'field'		                => 'שדה',
     'about_fieldsets_title'		=> 'אודות שדות',
-    'about_fieldsets_text'		=> 'Fieldsets allow you to create groups of custom fields that are frequently re-used for specific asset model types.',
+    'about_fieldsets_text'		=> 'Fieldsets מאפשרים לך ליצור קבוצות של שדות מותאמים אישית המשמשים לעתים קרובות לשימוש עבור סוגים ספציפיים של דגמי נכסים.',
     'custom_format'             => 'Custom Regex format...',
     'encrypt_field'      	        => 'הצפן את הערך של שדה זה במסד הנתונים',
     'encrypt_field_help'      => 'אזהרה: הצפנת שדה הופכת אותו לבלתי ניתן לחיפוש.',
@@ -59,5 +59,12 @@ return [
     'encrypted_options' => 'This field is encrypted, so some display options will not be available.',
     'display_checkin' => 'Display in checkin forms',
     'display_checkout' => 'Display in checkout forms',
-
+    'display_audit' => 'Display in audit forms',
+    'types' => [
+        'text' => 'Text Box',
+        'listbox' => 'List Box',
+        'textarea' => 'Textarea (multi-line)',
+        'checkbox' => 'Checkbox',
+        'radio' => 'Radio Buttons',
+    ],
 ];

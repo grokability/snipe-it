@@ -6,8 +6,6 @@ return array(
     'account_not_found'      => '使用者或密碼錯誤',
     'account_not_activated'  => '使用者尚未啟用',
     'account_suspended'      => '使用者已被停用',
-    'account_banned'         => '使用者已被禁用',
-    'throttle'               => '登入失敗次數太多。請 :minutes 分鐘後再試。',
 
     'two_factor' => array(
         'already_enrolled'      => '您的設備已經註冊',

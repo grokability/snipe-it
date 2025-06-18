@@ -53,4 +53,5 @@ return [
     'next_save_user' => 'Nästa: Spara användare',
     'all_assigned_list_generation' => 'Skapad:',
     'email_user_creds_on_create' => 'E-posta den här användaren sina inloggningsuppgifter?',
+    'department_manager' => 'Department Manager',
 ];

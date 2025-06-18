@@ -1,7 +1,7 @@
 /**
   * bootstrap-table - An extended table to integration with some of the most widely used CSS frameworks. (Supports Bootstrap, Semantic UI, Bulma, Material Design, Foundation)
   *
-  * @version v1.24.0
+  * @version v1.24.1
   * @homepage https://bootstrap-table.com
   * @author wenzhixin <wenzhixin2010@gmail.com> (http://wenzhixin.net.cn/)
   * @license MIT

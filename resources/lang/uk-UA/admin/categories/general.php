@@ -21,5 +21,9 @@ return array(
     'use_default_eula'					=> 'Використовувати <a href="#" data-toggle="modal" data-target="#eulaModal">основну EULA</a>.',
     'use_default_eula_disabled'			=> '<del>Натомість використовуйте основну ліцензійну угоду за умовчанням.</del> Основна ліцензійна угода за умовчанням не встановлена. Додайте її в налаштуваннях.',
     'use_default_eula_column'			=> 'Використовувати типові EULA',
+    'import_require_acceptance'         => 'Require Acceptance',
+    'import_checkin_email'              => 'Send Checkin Email',
+    'import_eula_text'                  => 'EULA text',
+    'import_category_type'              => 'Category Type',
 
 );

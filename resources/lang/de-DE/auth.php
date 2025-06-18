@@ -15,6 +15,6 @@ return array(
 
     'failed' => 'Diese Anmeldeinformationen entsprechen nicht unseren Angaben.',
     'password' => 'Das angegebene Passwort ist ungültig.',
-    'throttle' => 'Zu viele fehlgeschlagene Anmeldeversuche. Bitte versuchen Sie es erneut in :seconds Sekunden.',
+    'throttle' => 'Zu viele Anmeldeversuche. Bitte versuchen Sie es in :minutes Minute(n) erneut.',
 
 );

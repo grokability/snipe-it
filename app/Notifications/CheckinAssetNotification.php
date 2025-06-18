@@ -83,6 +83,15 @@ class CheckinAssetNotification extends Notification
             trans('general.location') => ($item->location) ? $item->location->name : '',
         ];
 
+        if ($item->location) {
+            $fields[trans('general.location')] = $item->location->name;
+        }
+
+        if ($item->company) {
+            $fields[trans('general.company')] = $item->company->name;
+        }
+
+
         return (new SlackMessage)
             ->content(':arrow_down: :computer: '.trans('mail.Asset_Checkin_Notification'))
             ->from($botname)

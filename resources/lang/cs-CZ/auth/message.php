@@ -6,8 +6,6 @@ return array(
     'account_not_found'      => 'Neexistující uživatel nebo chybné heslo!',
     'account_not_activated'  => 'Uživatelský účet není aktivován.',
     'account_suspended'      => 'Uživatelský účet je pozastaven.',
-    'account_banned'         => 'Uživatelský účet je zablokován.',
-    'throttle'               => 'Příliš mnoho neúspěšných pokusů o přihlášení. Zkuste to prosím znovu za :minutes minut.',
 
     'two_factor' => array(
         'already_enrolled'      => 'Vaše zařízení je již zapsáno.',

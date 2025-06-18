@@ -56,6 +56,8 @@
                                         data-pagination="true"
                                         data-id-table="requestableAssetsListingTable"
                                         data-search="true"
+                                        data-search-highlight="true"
+                                        data-show-print="true"
                                         data-side-pagination="server"
                                         data-show-columns="true"
                                         data-show-export="false"
@@ -106,6 +108,9 @@
                                         data-toolbar="#toolbar"
                                         class="table table-striped snipe-table"
                                         id="table"
+                                        data-search="true"
+                                        data-search-highlight="true"
+                                        data-show-print="true"
                                         data-advanced-search="true"
                                         data-id-table="advancedTable"
                                         data-cookie-id-table="requestableAssets">

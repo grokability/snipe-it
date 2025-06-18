@@ -4,6 +4,7 @@ use App\Http\Controllers\AssetModelsController;
 use App\Http\Controllers\AssetModelsFilesController;
 use App\Http\Controllers\BulkAssetModelsController;
 use Illuminate\Support\Facades\Route;
+use Tabuna\Breadcrumbs\Trail;
 
 // Asset Model Management
 
@@ -28,7 +29,10 @@ Route::group(['prefix' => 'models', 'middleware' => ['auth']], function () {
             AssetModelsController::class, 
             'getClone'
         ]
-    )->name('models.clone.create')->withTrashed();
+    )->name('models.clone.create')->withTrashed()
+        ->breadcrumbs(fn (Trail $trail) =>
+        $trail->parent('models.index')
+            ->push(trans('admin/models/table.clone'), route('models.index')));
 
     Route::post(
         '{model}/clone',

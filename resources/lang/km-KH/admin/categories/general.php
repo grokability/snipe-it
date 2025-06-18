@@ -21,5 +21,9 @@ return array(
     'use_default_eula'					=> 'ប្រើ <a href="#" data-toggle="modal" data-target="#eulaModal">លំនាំដើមចម្បង EULA</a> ជំនួសវិញ។',
     'use_default_eula_disabled'			=> '<del>ប្រើ EULA លំនាំដើមចម្បងជំនួសវិញ។</del> គ្មាន EULA លំនាំដើមចម្បងត្រូវបានកំណត់ទេ។ សូមបន្ថែមមួយនៅក្នុងការកំណត់។',
     'use_default_eula_column'			=> 'ប្រើ EULA លំនាំដើម',
+    'import_require_acceptance'         => 'Require Acceptance',
+    'import_checkin_email'              => 'Send Checkin Email',
+    'import_eula_text'                  => 'EULA text',
+    'import_category_type'              => 'Category Type',
 
 );

@@ -15,6 +15,6 @@ return array(
 
     'failed' => 'این مدارک با سوابق ما مطابقت ندارد.',
     'password' => 'رمز ورود ارائه شده نادرست است.',
-    'throttle' => 'دفعات تلاش شما برای ورود بیش از حد مجاز است. لطفا پس از :seconds ثانیه مجددا تلاش فرمایید.',
+    'throttle' => 'Too many login attempts. Please try again in :minutes minute(s).',
 
 );

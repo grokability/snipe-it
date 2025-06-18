@@ -35,10 +35,14 @@ class Importer extends Component
     public $accessories_fields;
     public $assets_fields;
     public $users_fields;
+    public $assetmodels_fields;
+    public $suppliers_fields;
     public $licenses_fields;
     public $locations_fields;
     public $consumables_fields;
     public $components_fields;
+    public $manufacturers_fields;
+    public $categories_fields;
     public $aliases_fields;
 
     protected $rules = [
@@ -85,9 +89,6 @@ class Importer extends Component
             case 'component':
                 $results = $this->components_fields;
                 break;
-            case 'consumable':
-                $results = $this->consumables_fields;
-                break;
             case 'license':
                 $results = $this->licenses_fields;
                 break;
@@ -97,8 +98,14 @@ class Importer extends Component
             case 'location':
                 $results = $this->locations_fields;
                 break;
-            case 'user':
-                $results = $this->users_fields;
+            case 'supplier':
+                $results = $this->suppliers_fields;
+                break;
+            case 'manufacturer':
+                $results = $this->manufacturers_fields;
+                break;
+            case 'category':
+                $results = $this->categories_fields;
                 break;
             default:
                 $results = [];
@@ -128,7 +135,7 @@ class Importer extends Component
                     //yes, this key *is* valid. Continue on to the next field.
                     continue;
                 } else {
-                    //no, this key is *INVALID* for this import type. Better set it to null
+                    //no, this key is *INVALID* for this import type. Better set it to null,
                     // and we'll hope that the $aliases_fields or something else picks it up.
                     $this->field_map[$i] = null; // fingers crossed! But it's not likely, tbh.
                 } // TODO - strictly speaking, this isn't necessary here I don't think.
@@ -149,7 +156,7 @@ class Importer extends Component
                         // in "Accessories"!)
                         if (array_key_exists($key, $this->columnOptions[$type])) {
                             $this->field_map[$i] = $key;
-                            continue 3; // bust out of both of these loops; as well as the surrounding one - e.g. move on to the next header
+                            continue 3; // bust out of both of these loops and the surrounding one - e.g. move on to the next header
                         }
                     }
                 }
@@ -171,49 +178,53 @@ class Importer extends Component
             'license'       =>    trans('general.licenses'),
             'location'      =>   trans('general.locations'),
             'user'          =>       trans('general.users'),
+            'supplier'      =>       trans('general.suppliers'),
+            'manufacturer'  =>       trans('general.manufacturers'),
+            'category'      =>       trans('general.categories'),
         ];
 
         /**
          * These are the item-type specific columns
          */
         $this->accessories_fields = [
+            'category' => trans('general.category'),
             'company' => trans('general.company'),
-            'location' => trans('general.location'),
-            'quantity' => trans('general.qty'),
             'item_name' => trans('general.item_name_var', ['item' => trans('general.accessory')]),
+            'location' => trans('general.location'),
+            'manufacturer' => trans('general.manufacturer'),
+            'min_amt' => trans('mail.min_QTY'),
             'model_number' => trans('general.model_no'),
             'notes' => trans('general.notes'),
-            'category' => trans('general.category'),
-            'supplier' => trans('general.supplier'),
-            'min_amt' => trans('mail.min_QTY'),
+            'order_number' => trans('general.order_number'),
             'purchase_cost' => trans('general.purchase_cost'),
             'purchase_date' => trans('general.purchase_date'),
-            'manufacturer' => trans('general.manufacturer'),
-            'order_number' => trans('general.order_number'),
+            'quantity' => trans('general.qty'),
+            'supplier' => trans('general.supplier'),
         ];
 
         $this->assets_fields = [
-            'company' => trans('general.company'),
-            'location' => trans('general.location'),
-            'item_name' => trans('general.item_name_var', ['item' => trans('general.asset')]),
-            'asset_tag' => trans('general.asset_tag'),
+            'id' => trans('general.id'),
+            'asset_eol_date' => trans('admin/hardware/form.eol_date'),
             'asset_model' => trans('general.model_name'),
+            'asset_notes' => trans('general.item_notes', ['item' => trans('admin/hardware/general.asset')]),
+            'asset_tag' => trans('general.asset_tag'),
             'byod' => trans('general.byod'),
-            'model_number' => trans('general.model_no'),
-            'status' => trans('general.status'),
-            'warranty_months' => trans('admin/hardware/form.warranty'),
             'category' => trans('general.category'),
-            'requestable' => trans('admin/hardware/general.requestable'),
-            'serial' => trans('general.serial_number'),
-            'supplier' => trans('general.supplier'),
+            'company' => trans('general.company'),
+            'image' => trans('general.importer.image_filename'),
+            'item_name' => trans('general.item_name_var', ['item' => trans('general.asset')]),
+            'location' => trans('general.location'),
+            'manufacturer' => trans('general.manufacturer'),
+            'model_notes' => trans('general.item_notes', ['item' => trans('admin/hardware/form.model')]),
+            'model_number' => trans('general.model_no'),
+            'order_number' => trans('general.order_number'),
             'purchase_cost' => trans('general.purchase_cost'),
             'purchase_date' => trans('general.purchase_date'),
-            'asset_notes' => trans('general.item_notes', ['item' => trans('admin/hardware/general.asset')]),
-            'model_notes' => trans('general.item_notes', ['item' => trans('admin/hardware/form.model')]),
-            'manufacturer' => trans('general.manufacturer'),
-            'order_number' => trans('general.order_number'),
-            'image' => trans('general.importer.image_filename'),
-            'asset_eol_date' => trans('admin/hardware/form.eol_date'),
+            'requestable' => trans('admin/hardware/general.requestable'),
+            'serial' => trans('general.serial_number'),
+            'status' => trans('general.status'),
+            'supplier' => trans('general.supplier'),
+            'warranty_months' => trans('admin/hardware/form.warranty'),
             /**
              * Checkout fields:
              * Assets can be checked out to other assets, people, or locations, but we currently
@@ -238,122 +249,164 @@ class Importer extends Component
         ];
 
         $this->consumables_fields = [
+            'category' => trans('general.category'),
+            'checkout_class' => trans('general.importer.checkout_type'),
             'company' => trans('general.company'),
-            'location' => trans('general.location'),
-            'quantity' => trans('general.qty'),
             'item_name' => trans('general.item_name_var', ['item' => trans('general.consumable')]),
+            'item_no' => trans('admin/consumables/general.item_no'),
+            'location' => trans('general.location'),
+            'manufacturer' => trans('general.manufacturer'),
+            'min_amt' => trans('general.min_amt'),
             'model_number' => trans('general.model_no'),
             'notes' => trans('general.notes'),
-            'min_amt' => trans('mail.min_QTY'),
-            'category' => trans('general.category'),
+            'order_number' => trans('general.order_number'),
             'purchase_cost' => trans('general.purchase_cost'),
             'purchase_date' => trans('general.purchase_date'),
-            'checkout_class' => trans('general.importer.checkout_type'),
+            'quantity' => trans('general.qty'),
             'supplier' => trans('general.supplier'),
-            'manufacturer' => trans('general.manufacturer'),
-            'order_number' => trans('general.order_number'),
-            'item_no' => trans('admin/consumables/general.item_no'),
         ];
 
         $this->components_fields = [
+            'category' => trans('general.category'),
             'company' => trans('general.company'),
-            'location' => trans('general.location'),
-            'quantity' => trans('general.qty'),
             'item_name' => trans('general.item_name_var', ['item' => trans('general.component')]),
+            'location' => trans('general.location'),
+            'manufacturer' => trans('general.manufacturer'),
+            'min_amt' => trans('mail.min_QTY'),
             'model_number' => trans('general.model_no'),
             'notes' => trans('general.notes'),
-            'category' => trans('general.category'),
-            'supplier' => trans('general.supplier'),
-            'min_amt' => trans('mail.min_QTY'),
+            'order_number' => trans('general.order_number'),
             'purchase_cost' => trans('general.purchase_cost'),
             'purchase_date' => trans('general.purchase_date'),
-            'manufacturer' => trans('general.manufacturer'),
-            'order_number' => trans('general.order_number'),
+            'quantity' => trans('general.qty'),
             'serial' => trans('general.serial_number'),
+            'supplier' => trans('general.supplier'),
         ];
 
         $this->licenses_fields = [
-            'company' => trans('general.company'),
-            'location' => trans('general.location'),
-            'item_name' => trans('general.item_name_var', ['item' => trans('general.license')]),
             'asset_tag' => trans('general.importer.checked_out_to_tag'),
+            'category' => trans('general.category'),
+            'checkout_class' => trans('general.importer.checkout_type'),
+            'company' => trans('general.company'),
+            'email' => trans('general.importer.checked_out_to_email'),
             'expiration_date' => trans('admin/licenses/form.expiration'),
             'full_name' => trans('general.importer.checked_out_to_fullname'),
+            'item_name' => trans('general.item_name_var', ['item' => trans('general.license')]),
             'license_email' => trans('admin/licenses/form.to_email'),
             'license_name' => trans('admin/licenses/form.to_name'),
-            'purchase_order' => trans('admin/licenses/form.purchase_order'),
-            'order_number' => trans('general.order_number'),
-            'reassignable' => trans('admin/licenses/form.reassignable'),
-            'seats' => trans('admin/licenses/form.seats'),
+            'location' => trans('general.location'),
+            'maintained' => trans('admin/licenses/form.maintained'),
+            'manufacturer' => trans('general.manufacturer'),
+            'min_amt' => trans('general.min_amt'),
             'notes' => trans('general.notes'),
-            'category' => trans('general.category'),
-            'supplier' => trans('general.supplier'),
+            'order_number' => trans('general.order_number'),
             'purchase_cost' => trans('general.purchase_cost'),
             'purchase_date' => trans('general.purchase_date'),
-            'maintained' => trans('admin/licenses/form.maintained'),
-            'checkout_class' => trans('general.importer.checkout_type'),
+            'purchase_order' => trans('admin/licenses/form.purchase_order'),
+            'reassignable' => trans('admin/licenses/form.reassignable'),
+            'seats' => trans('admin/licenses/form.seats'),
             'serial' => trans('general.license_serial'),
-            'email' => trans('general.importer.checked_out_to_email'),
+            'supplier' => trans('general.supplier'),
+            'termination_date' => trans('admin/licenses/form.termination_date'),
             'username' => trans('general.importer.checked_out_to_username'),
-            'manufacturer' => trans('general.manufacturer'),
         ];
 
         $this->users_fields = [
             'id' => trans('general.id'),
-            'company' => trans('general.company'),
-            'location' => trans('general.location'),
-            'department' => trans('general.department'),
-            'first_name' => trans('general.first_name'),
-            'last_name' => trans('general.last_name'),
-            'notes' => trans('general.notes'),
-            'username' => trans('admin/users/table.username'),
-            'jobtitle' => trans('admin/users/table.title'),
-            'phone_number' => trans('admin/users/table.phone'),
-            'manager_first_name' => trans('general.importer.manager_first_name'),
-            'manager_last_name' => trans('general.importer.manager_last_name'),
             'activated' => trans('general.activated'),
             'address' => trans('general.address'),
-            'city' => trans('general.city'),
-            'state' => trans('general.state'),
-            'country' => trans('general.country'),
-            'zip' => trans('general.zip'),
-            'vip' => trans('general.importer.vip'),
-            'remote' => trans('admin/users/general.remote'),
-            'email' => trans('admin/users/table.email'),
-            'website' => trans('general.website'),
             'avatar' => trans('general.image'),
-            'gravatar' => trans('general.importer.gravatar'),
-            'start_date' => trans('general.start_date'),
-            'end_date' => trans('general.end_date'),
+            'city' => trans('general.city'),
+            'company' => trans('general.company'),
+            'country' => trans('general.country'),
+            'department' => trans('general.department'),
+            'email' => trans('admin/users/table.email'),
             'employee_num' => trans('general.employee_number'),
+            'end_date' => trans('general.end_date'),
+            'first_name' => trans('general.first_name'),
+            'gravatar' => trans('general.importer.gravatar'),
+            'jobtitle' => trans('admin/users/table.title'),
+            'last_name' => trans('general.last_name'),
+            'location' => trans('general.location'),
+            'manager_first_name' => trans('general.importer.manager_first_name'),
+            'manager_last_name' => trans('general.importer.manager_last_name'),
+            'notes' => trans('general.notes'),
+            'phone_number' => trans('admin/users/table.phone'),
+            'remote' => trans('admin/users/general.remote'),
+            'start_date' => trans('general.start_date'),
+            'state' => trans('general.state'),
+            'username' => trans('admin/users/table.username'),
+            'vip' => trans('general.importer.vip'),
+            'website' => trans('general.website'),
+            'zip' => trans('general.zip'),
         ];
 
         $this->locations_fields = [
             'id' => trans('general.id'),
-            'name' => trans('general.item_name_var', ['item' => trans('general.location')]),
+            'name' => trans('general.name'),
             'address' => trans('general.address'),
             'address2' => trans('general.importer.address2'),
             'city' => trans('general.city'),
-            'state' => trans('general.state'),
             'country' => trans('general.country'),
-            'zip' => trans('general.zip'),
             'currency' => trans('general.importer.currency'),
             'ldap_ou' => trans('admin/locations/table.ldap_ou'),
-            'manager_username' => trans('general.importer.manager_username'),
             'manager' => trans('general.importer.manager_full_name'),
-            'parent_location' => trans('admin/locations/table.parent'),
+            'manager_username' => trans('general.importer.manager_username'),
             'notes' => trans('general.notes'),
+            'parent_location' => trans('admin/locations/table.parent'),
+            'state' => trans('general.state'),
+            'zip' => trans('general.zip'),
         ];
 
+        $this->suppliers_fields = [
+            'id' => trans('general.id'),
+            'name' => trans('general.name'),
+            'address' => trans('general.address'),
+            'address2' => trans('general.importer.address2'),
+            'city' => trans('general.city'),
+            'notes' => trans('general.notes'),
+            'state' => trans('general.state'),
+            'zip' => trans('general.zip'),
+            'phone' => trans('general.phone'),
+            'fax' => trans('general.fax'),
+            'url' => trans('general.url'),
+            'contact' => trans('general.contact'),
+            'email' => trans('general.email'),
+        ];
+
+        $this->manufacturers_fields = [
+            'id' => trans('general.id'),
+            'name' => trans('general.name'),
+            'notes' => trans('general.notes'),
+            'support_phone' =>  trans('admin/manufacturers/table.support_phone'),
+            'support_url' =>  trans('admin/manufacturers/table.support_url'),
+            'support_email' =>  trans('admin/manufacturers/table.support_email'),
+            'warranty_lookup_url' =>  trans('admin/manufacturers/table.warranty_lookup_url'),
+            'url' =>  trans('general.url'),
+        ];
+
+        $this->categories_fields = [
+            'id' => trans('general.id'),
+            'name' => trans('general.name'),
+            'notes' => trans('general.notes'),
+            'category_type' => trans('admin/categories/general.import_category_type'),
+            'eula_text' => trans('admin/categories/general.import_eula_text'),
+            'use_default_eula' => trans('admin/categories/general.use_default_eula_column'),
+            'require_acceptance' => trans('admin/categories/general.import_require_acceptance'),
+            'checkin_email' => trans('admin/categories/general.import_checkin_email'),
+        ];
+
+
+
         $this->assetmodels_fields  = [
-            'item_name' => trans('general.item_name_var', ['item' => trans('general.asset_model')]),
             'category' => trans('general.category'),
+            'eol' => trans('general.eol'),
+            'fieldset' => trans('admin/models/general.fieldset'),
+            'item_name' => trans('general.item_name_var', ['item' => trans('general.asset_model')]),
             'manufacturer' => trans('general.manufacturer'),
+            'min_amt' => trans('mail.min_QTY'),
             'model_number' => trans('general.model_no'),
             'notes' => trans('general.item_notes', ['item' => trans('admin/hardware/form.model')]),
-            'min_amt' => trans('mail.min_QTY'),
-            'fieldset' => trans('admin/models/general.fieldset'),
-            'eol' => trans('general.eol'),
             'requestable' => trans('admin/models/general.requestable'),
 
         ];
@@ -369,6 +422,8 @@ class Importer extends Component
                     'consumable name',
                     'component name',
                     'name',
+                    'supplier name',
+                    'location name',
                 ],
             'item_no' => [
                 'item number',

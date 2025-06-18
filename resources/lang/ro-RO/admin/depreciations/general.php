@@ -13,4 +13,8 @@ return [
     'no_depreciations_warning'               => '<strong>Avertisment: </strong>
                       Nu aveți în prezent nici o depreciere configurată.
                       Te rugam sa setezi cel putin o depreciere pentru a vedea raportul deprecierii.',
+    'depreciation_method'                   => 'Raport depreciere',
+    'linear_depreciation'                   => 'Linear (Default)',
+    'half_1'                                => 'Half-year convention, always applied',
+    'half_2'                                => 'Half-year convention, applied with condition',
 ];

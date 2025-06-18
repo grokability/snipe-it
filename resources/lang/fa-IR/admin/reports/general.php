@@ -4,6 +4,7 @@ return [
     'info'   => 'گزینه ای را که برای گزارش دارایی خود میخواهید انتخاب کنید .',
     'deleted_user' => 'حذف کاربر',
     'send_reminder' => 'ارسال يادآوری',
+    'cannot_send_reminder' => 'User has been deleted or does not have an email address so cannot receive a reminder',
     'reminder_sent' => 'یادآوری ارسال شد
 ',
     'acceptance_deleted' => 'درخواست پذیرش حذف شد

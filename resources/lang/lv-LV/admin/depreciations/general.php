@@ -13,4 +13,8 @@ return [
     'no_depreciations_warning'               => '<strong>Uzmanību: </strong>
                       Šobrīd nav iestatīts neviens nolietojums.
                       Lūdzu iestatiet vismaz vienu nolietojumu, lai redzētu nolietojuma atskaiti.',
+    'depreciation_method'                   => 'Amortizācijas atskaite',
+    'linear_depreciation'                   => 'Linear (Default)',
+    'half_1'                                => 'Half-year convention, always applied',
+    'half_2'                                => 'Half-year convention, applied with condition',
 ];

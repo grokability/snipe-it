@@ -6,8 +6,6 @@ return array(
     'account_not_found'      => 'Magaca isticmaale ama erayga sirta ah waa khalad.',
     'account_not_activated'  => 'Koontada isticmaalahan lama hawlgelin.',
     'account_suspended'      => 'Koontada isticmaalahan waa la hakiyay.',
-    'account_banned'         => 'Koontadan isticmaale waa mamnuuc.',
-    'throttle'               => 'Iskudayo badan oo gelitaan ah ayaa fashilmay. Fadlan isku day markale :daqiiqado daqiiqo gudahood.',
 
     'two_factor' => array(
         'already_enrolled'      => 'Qalabkaaga mar horeba wuu diiwaan gashan yahay.',

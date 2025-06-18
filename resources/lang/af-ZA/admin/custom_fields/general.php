@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Manage',
     'field'		                => 'veld',
     'about_fieldsets_title'		=> 'Oor Fieldsets',
-    'about_fieldsets_text'		=> 'Fieldsets allow you to create groups of custom fields that are frequently re-used for specific asset model types.',
+    'about_fieldsets_text'		=> 'Veldstelle stel jou in staat om groepe van persoonlike velde te skep wat gereeld hergebruik word vir spesifieke tipe bates.',
     'custom_format'             => 'Custom Regex format...',
     'encrypt_field'      	        => 'Enkripteer die waarde van hierdie veld in die databasis',
     'encrypt_field_help'      => 'WAARSKUWING: Om \'n veld te enkripteer, maak dit onondersoekbaar.',
@@ -59,5 +59,12 @@ return [
     'encrypted_options' => 'This field is encrypted, so some display options will not be available.',
     'display_checkin' => 'Display in checkin forms',
     'display_checkout' => 'Display in checkout forms',
-
+    'display_audit' => 'Display in audit forms',
+    'types' => [
+        'text' => 'Text Box',
+        'listbox' => 'List Box',
+        'textarea' => 'Textarea (multi-line)',
+        'checkbox' => 'Checkbox',
+        'radio' => 'Radio Buttons',
+    ],
 ];

@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Gestire',
     'field'		                => 'Campo',
     'about_fieldsets_title'		=> 'Fileldsets',
-    'about_fieldsets_text'		=> 'I set di campi consentono di creare gruppi di campi personalizzati che vengono spesso riutilizzati per tipi di modelli di asset specifici.',
+    'about_fieldsets_text'		=> 'I set di campi consentono di creare gruppi di campi personalizzati che vengono riutilizzati frequentemente per tipi di modelli di asset specifici.',
     'custom_format'             => 'Formato Regex personalizzato...',
     'encrypt_field'      	        => 'Crittografare il valore di questo campo nel database',
     'encrypt_field_help'      => 'ATTENZIONE: Se il campo viene crittografato non sarà possibile cercarlo.',
@@ -59,5 +59,12 @@ return [
     'encrypted_options' => 'Questo campo è criptato, quindi alcune opzioni di visualizzazione non saranno disponibili.',
     'display_checkin' => 'Mostra nei moduli di check-in',
     'display_checkout' => 'Mostra nei moduli di assegnazione',
-
+    'display_audit' => 'Mostra nei moduli di revisione',
+    'types' => [
+        'text' => 'Casella di testo',
+        'listbox' => 'Casella elenco',
+        'textarea' => 'Area di testo (multi-riga)',
+        'checkbox' => 'Casella di spunta',
+        'radio' => 'Pulsanti di opzione',
+    ],
 ];

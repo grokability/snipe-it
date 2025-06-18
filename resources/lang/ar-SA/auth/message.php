@@ -6,8 +6,6 @@ return array(
     'account_not_found'      => 'اسم المستخدم أو كلمة المرور غير صحيحة.',
     'account_not_activated'  => 'لم يتم تنشيط حساب هذا المستخدم.',
     'account_suspended'      => 'تم تعليق حساب المستخدم هذا.',
-    'account_banned'         => 'تم حظر حساب المستخدم هذا.',
-    'throttle'               => 'هناك عدد كبير جدا من محاولات تسجيل الدخول الفاشلة. يرجى المحاولة مرة أخرى خلال :minutes دقيقة.',
 
     'two_factor' => array(
         'already_enrolled'      => 'جهازك مسجل مسبقا.',

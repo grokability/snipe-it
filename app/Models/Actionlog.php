@@ -57,7 +57,9 @@ class Actionlog extends SnipeModel
         'user_agent',
         'item_type',
         'target_type',
-        'action_source'
+        'action_source',
+        'created_at',
+        'action_date',
     ];
 
     /**
@@ -67,9 +69,27 @@ class Actionlog extends SnipeModel
      */
     protected $searchableRelations = [
         'company'     => ['name'],
-        'adminuser'   => ['first_name','last_name','username', 'email'],
-        'user'        => ['first_name','last_name','username', 'email'],
-        'assets'      => ['asset_tag','name', 'serial'],
+        'adminuser'   => ['first_name','last_name','username', 'email', 'employee_num'],
+        'user'        => ['first_name','last_name','username', 'email', 'employee_num'],
+        'assets'      => ['asset_tag','name', 'serial', 'order_number', 'notes', 'purchase_date'],
+        'assets.model'              => ['name', 'model_number', 'eol', 'notes'],
+        'assets.model.category'     => ['name', 'notes'],
+        'assets.model.manufacturer' => ['name', 'notes'],
+        'licenses'    => ['name', 'serial', 'notes', 'order_number', 'license_email', 'license_name', 'purchase_order', 'purchase_date'],
+        'licenses.category'     => ['name', 'notes'],
+        'licenses.supplier'     => ['name'],
+        'consumables'    => ['name', 'notes', 'order_number', 'model_number', 'item_no', 'purchase_date'],
+        'consumables.category'     => ['name', 'notes'],
+        'consumables.location'     => ['name', 'notes'],
+        'consumables.supplier'     => ['name', 'notes'],
+        'components'     => ['name', 'notes', 'purchase_date'],
+        'components.category'     => ['name', 'notes'],
+        'components.location'     => ['name', 'notes'],
+        'components.supplier'     => ['name', 'notes'],
+        'accessories'     => ['name', 'purchase_date'],
+        'accessories.category'     => ['name'],
+        'accessories.location'     => ['name', 'notes'],
+        'accessories.supplier'     => ['name', 'notes'],
     ];
 
     /**
@@ -93,7 +113,13 @@ class Actionlog extends SnipeModel
             } elseif (auth()->user() && auth()->user()->company) {
                 $actionlog->company_id = auth()->user()->company_id;
             }
+
+            if ($actionlog->action_date == '') {
+                $actionlog->action_date = Carbon::now();
+            }
+
         });
+
     }
 
 
@@ -132,6 +158,54 @@ class Actionlog extends SnipeModel
     public function assets()
     {
         return $this->hasMany(\App\Models\Asset::class, 'id', 'item_id');
+    }
+
+    /**
+     * Establishes the actionlog -> license relationship
+     *
+     * @author [A. Gianotto] [<snipe@snipe.net>]
+     * @since [v3.0]
+     * @return \Illuminate\Database\Eloquent\Relations\Relation
+     */
+    public function licenses()
+    {
+        return $this->hasMany(\App\Models\License::class, 'id', 'item_id');
+    }
+
+    /**
+     * Establishes the actionlog -> consumable relationship
+     *
+     * @author [A. Gianotto] [<snipe@snipe.net>]
+     * @since [v3.0]
+     * @return \Illuminate\Database\Eloquent\Relations\Relation
+     */
+    public function consumables()
+    {
+        return $this->hasMany(\App\Models\Consumable::class, 'id', 'item_id');
+    }
+
+    /**
+     * Establishes the actionlog -> consumable relationship
+     *
+     * @author [A. Gianotto] [<snipe@snipe.net>]
+     * @since [v3.0]
+     * @return \Illuminate\Database\Eloquent\Relations\Relation
+     */
+    public function accessories()
+    {
+        return $this->hasMany(\App\Models\Accessory::class, 'id', 'item_id');
+    }
+
+    /**
+     * Establishes the actionlog -> components relationship
+     *
+     * @author [A. Gianotto] [<snipe@snipe.net>]
+     * @since [v3.0]
+     * @return \Illuminate\Database\Eloquent\Relations\Relation
+     */
+    public function components()
+    {
+        return $this->hasMany(\App\Models\Component::class, 'id', 'item_id');
     }
 
     /**

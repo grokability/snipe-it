@@ -6,8 +6,6 @@ return array(
     'account_not_found'      => '사용자 명이나 비밀번호가 틀렸습니다.',
     'account_not_activated'  => '이 사용자는 비활성 계정입니다.',
     'account_suspended'      => '이 사용자는 보류 계정입니다.',
-    'account_banned'         => '이 사용자는 금지 계정입니다.',
-    'throttle'               => 'Too many failed login attempts. Please try again in :minutes minutes.',
 
     'two_factor' => array(
         'already_enrolled'      => 'Your device is already enrolled.',

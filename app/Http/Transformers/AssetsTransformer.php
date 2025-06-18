@@ -80,6 +80,7 @@ class AssetsTransformer
             'qr' => ($setting->qr_code=='1') ? config('app.url').'/uploads/barcodes/qr-'.str_slug($asset->asset_tag).'-'.str_slug($asset->id).'.png' : null,
             'alt_barcode' => ($setting->alt_barcode_enabled=='1') ? config('app.url').'/uploads/barcodes/'.str_slug($setting->alt_barcode).'-'.str_slug($asset->asset_tag).'.png' : null,
             'assigned_to' => $this->transformAssignedTo($asset),
+            'jobtitle' => $asset->assigned ? e($asset->assigned->jobtitle) : null,
             'warranty_months' =>  ($asset->warranty_months > 0) ? e($asset->warranty_months.' '.trans('admin/hardware/form.months')) : null,
             'warranty_expires' => ($asset->warranty_months > 0) ? Helper::getFormattedDateObject($asset->warranty_expires, 'date') : null,
             'created_by' => ($asset->adminuser) ? [
@@ -155,6 +156,7 @@ class AssetsTransformer
             'clone'         => Gate::allows('create', Asset::class) ? true : false,
             'restore'       => ($asset->deleted_at!='' && Gate::allows('create', Asset::class)) ? true : false,
             'update'        => ($asset->deleted_at=='' && Gate::allows('update', Asset::class)) ? true : false,
+            'audit'        => Gate::allows('audit', Asset::class) ? true : false,
             'delete'        => ($asset->deleted_at=='' && $asset->assigned_to =='' && Gate::allows('delete', Asset::class) && ($asset->deleted_at == '')) ? true : false,
         ];      
 
@@ -302,30 +304,32 @@ class AssetsTransformer
 
     public function transformCheckedoutAccessory(AccessoryCheckout $accessory_checkout)
     {
+        if ($accessory_checkout->accessory) {
+            $array = [
+                'id' => $accessory_checkout->id,
+                'accessory' => [
+                    'id' => $accessory_checkout->accessory->id,
+                    'name' => $accessory_checkout->accessory->name,
+                ],
+                'assigned_to' => $accessory_checkout->assigned_to,
+                'image' => ($accessory_checkout->accessory->image) ? Storage::disk('public')->url('accessories/' . e($accessory_checkout->accessory->image)) : null,
+                'note' => $accessory_checkout->note ? e($accessory_checkout->note) : null,
+                'created_by' => $accessory_checkout->adminuser ? [
+                    'id' => (int)$accessory_checkout->adminuser->id,
+                    'name' => e($accessory_checkout->adminuser->present()->fullName),
+                ] : null,
+                'created_at' => Helper::getFormattedDateObject($accessory_checkout->created_at, 'datetime'),
+                'deleted_at' => Helper::getFormattedDateObject($accessory_checkout->deleted_at, 'datetime'),
+            ];
 
-        $array = [
-            'id' => $accessory_checkout->id,
-            'accessory' => [
-                'id' => $accessory_checkout->accessory->id,
-                'name' => $accessory_checkout->accessory->name,
-            ],
-            'assigned_to' => $accessory_checkout->assigned_to,
-            'image' => ($accessory_checkout->accessory->image) ? Storage::disk('public')->url('accessories/'.e($accessory_checkout->accessory->image)) : null,
-            'note' => $accessory_checkout->note ? e($accessory_checkout->note) : null,
-            'created_by' => $accessory_checkout->adminuser ? [
-                'id' => (int) $accessory_checkout->adminuser->id,
-                'name'=> e($accessory_checkout->adminuser->present()->fullName),
-            ]: null,
-            'created_at' => Helper::getFormattedDateObject($accessory_checkout->created_at, 'datetime'),
-        ];
+            $permissions_array['available_actions'] = [
+                'checkout' => false,
+                'checkin' => Gate::allows('checkin', Accessory::class),
+            ];
 
-        $permissions_array['available_actions'] = [
-            'checkout' => false,
-            'checkin' => Gate::allows('checkin', Accessory::class),
-        ];
-
-        $array += $permissions_array;
-        return $array;
+            $array += $permissions_array;
+            return $array;
+        }
     }
 
 }

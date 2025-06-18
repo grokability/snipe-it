@@ -9,6 +9,7 @@ return [
     'bulk_checkin'              => 'Bulk Checkin',
     'checkin'  					=> 'Checka in tillgång',
     'checkout'  				=> 'Checka ut tillgång',
+    'clear'                     => 'Clear',
     'clone'  					=> 'Kopiera tillgång',
     'deployable'  				=> 'Tillgänglig',
     'deleted'  					=> 'Denna tillgång har tagits bort.',
@@ -27,8 +28,7 @@ return [
     'undeployable_tooltip'  	=> 'Denna tillgång har en statusetikett som är otillgänglig och som inte kan checkas ut just nu.',
     'view'  					=> 'Visa tillgång',
     'csv_error' => 'Fel i CSV-fil:',
-    'import_text' => '<p>Ladda upp en CSV som innehåller tillgångshistorik. Tillgångarna och användarna MÅSTE redan finnas i systemet, annars kommer de att hoppas över. Matchande tillgångar för historikimport sker mot tillgångstaggen. Vi kommer att försöka hitta en matchande användare baserat på användarens namn du anger, och kriterierna du väljer nedan. Om du inte väljer några kriterier nedan, det kommer helt enkelt att försöka matcha på användarnamnet format du konfigurerade i <code>Admin &gt; Allmänna inställningar</code>.</p><p>Fält som ingår i CSV måste matcha rubrikerna: <strong>Asset Tag, Namn, Checkout Date, Checkin Date</strong>. Eventuella ytterligare fält kommer att ignoreras. </p><p>Checkin Datum: tomt eller framtida checkin datum kommer att checka ut objekt till associerad användare. Exklusive kolumnen Checkin Date kommer att skapa ett checkin datum med dagens datum.</p>
-    ',
+    'import_text' => '<p>Upload a CSV that contains asset history. The assets and users MUST already exist in the system, or they will be skipped. Matching assets for history import happens against the asset tag. We will try to find a matching user based on the user\'s name you provide, and the criteria you select below. If you do not select any criteria below, it will simply try to match on the username format you configured in the <code>Admin &gt; General Settings</code>.</p><p>Fields included in the CSV must match the headers: <strong>Asset Tag, Name, Checkout Date, Checkin Date</strong>. Any additional fields will be ignored. </p><p>Checkin Date: blank or future checkin dates will checkout items to associated user.  Excluding the Checkin Date column will create a checkin date with todays date.</p>    ',
     'csv_import_match_f-l' => 'Försök att matcha användare med <strong>fornamn.lastname</strong> (<code>jane.smith</code>) format',
     'csv_import_match_initial_last' => 'Försök att matcha användare med <strong>förnamn</strong> (<code>jsmith</code>) format',
     'csv_import_match_first' => 'Försök att matcha användare med <strong>förnamn</strong> (<code>jane</code>) format',

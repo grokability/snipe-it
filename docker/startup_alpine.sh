@@ -79,13 +79,18 @@ done
 chown -R apache:root /var/lib/snipeit/data/*
 chown -R apache:root /var/lib/snipeit/dumps
 chown -R apache:root /var/lib/snipeit/keys
+chown -R apache:root /var/www/html/storage/framework/cache
 
 # Fix php settings
 if [ ! -z "${PHP_UPLOAD_LIMIT}" ]
 then
-    echo "Changing upload limit to ${PHP_UPLOAD_LIMIT}"
-    sed -i "s/^upload_max_filesize.*/upload_max_filesize = ${PHP_UPLOAD_LIMIT}M/" /etc/php*/php.ini
-    sed -i "s/^post_max_size.*/post_max_size = ${PHP_UPLOAD_LIMIT}M/" /etc/php*/php.ini
+    find /etc -type f -name php.ini | while IFS= read -r ini; do
+        echo "Changing upload limit to ${PHP_UPLOAD_LIMIT}M in $ini"
+        sed -i \
+            -e "s/^;\? *upload_max_filesize *=.*/upload_max_filesize = ${PHP_UPLOAD_LIMIT}M/" \
+            -e "s/^;\? *post_max_size *=.*/post_max_size = ${PHP_UPLOAD_LIMIT}M/" \
+            "$ini"
+    done
 fi
 
 # If the Oauth DB files are not present copy the vendor files over to the db migrations

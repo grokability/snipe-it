@@ -49,8 +49,34 @@ use Carbon\Carbon;
               </div>
             </div> <!-- /row -->
 
+            @if ($assetMaintenance->asset->model)
+              <div class="row">
+                <div class="col-md-3">
+                  {{ trans('general.asset_model') }}
+                </div>
+                <div class="col-md-9">
+                  <a href="{{ route('models.show', $assetMaintenance->asset->model_id) }}">
+                    {{ $assetMaintenance->asset->model->name }}
+                  </a>
+                </div>
+              </div> <!-- /row -->
+            @endif
+
+            @if ($assetMaintenance->asset->company)
+              <div class="row">
+                <div class="col-md-3">
+                  {{ trans('general.company') }}
+                </div>
+                <div class="col-md-9">
+                  <a href="{{ route('companies.show', $assetMaintenance->asset->company_id) }}">
+                    {{ $assetMaintenance->asset->company->name }}
+                  </a>
+                </div>
+              </div> <!-- /row -->
+            @endif
 
 
+            @if ($assetMaintenance->supplier)
             <div class="row">
               <div class="col-md-3">
                 {{ trans('general.supplier') }}
@@ -61,6 +87,7 @@ use Carbon\Carbon;
                 </a>
               </div>
             </div> <!-- /row -->
+            @endif
 
             <div class="row">
               <div class="col-md-3">
@@ -99,7 +126,7 @@ use Carbon\Carbon;
                 {{ trans('admin/asset_maintenances/form.cost') }}
               </div>
               <div class="col-md-9">
-                {{ trans( 'general.currency' ) . Helper::formatCurrencyOutput($assetMaintenance->cost) }}
+                {{ \App\Models\Setting::getSettings()->default_currency .' '. Helper::formatCurrencyOutput($assetMaintenance->cost) }}
               </div>
             </div> <!-- /row -->
             @endif

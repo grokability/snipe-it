@@ -57,7 +57,14 @@ return [
     'show_in_requestable_list_short' => 'Mostrar na lista de ativos solicitáveis',
     'show_in_requestable_list' => 'Mostrar valor na lista de ativos solicitáveis. Campos criptografados não serão exibidos',
     'encrypted_options' => 'Este campo está criptografado, então algumas opções de exibição não estarão disponíveis.',
-    'display_checkin' => 'Display in checkin forms',
-    'display_checkout' => 'Display in checkout forms',
-
+    'display_checkin' => 'Exibir em formulários de entrada',
+    'display_checkout' => 'Exibir em formulários de saída',
+    'display_audit' => 'Display in audit forms',
+    'types' => [
+        'text' => 'Text Box',
+        'listbox' => 'List Box',
+        'textarea' => 'Textarea (multi-line)',
+        'checkbox' => 'Checkbox',
+        'radio' => 'Radio Buttons',
+    ],
 ];

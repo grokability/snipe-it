@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Uredi',
     'field'		                => 'Polje',
     'about_fieldsets_title'		=> 'O grupi polja',
-    'about_fieldsets_text'		=> 'Skupovi polja vam omogućavaju da kreirate grupe prilagođenih polja koja se često ponovo koriste za određene tipove modela sredstava.',
+    'about_fieldsets_text'		=> 'Skupovi polja vam omogućavaju da kreirate grupe prilagođenih polja koja se često ponovo koriste za određene tipove modela imovine.',
     'custom_format'             => 'Prilagodljivi Regex format...',
     'encrypt_field'      	        => 'Enkriptujte vrednost polja u bazi podataka',
     'encrypt_field_help'      => 'UPUZORENJE: Nije moguće pretraživati enkriptovana polja.',
@@ -59,5 +59,12 @@ return [
     'encrypted_options' => 'Ovo polje je enkriptovano, zato neke opcije prikaza neće biti dostupne.',
     'display_checkin' => 'Prikaži u formularima razduživanja',
     'display_checkout' => 'Prikaži u formularima zaduživanja',
-
+    'display_audit' => 'Prikaži u formularu revizije',
+    'types' => [
+        'text' => 'Tekstualno polje',
+        'listbox' => 'Polje spiska',
+        'textarea' => 'Tekstualna oblast (više redova)',
+        'checkbox' => 'Polje za potvrdu',
+        'radio' => 'Dugmići izbora',
+    ],
 ];

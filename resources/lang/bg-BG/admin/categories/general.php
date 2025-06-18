@@ -21,5 +21,9 @@ return array(
     'use_default_eula'					=> 'Използване на <a href="#" data-toggle="modal" data-target="#eulaModal">EULA по подразбиране</a>.',
     'use_default_eula_disabled'			=> '<del>Използване на EULA по подразбиране</del> Няма EULA по подразбиране. Добавете я в Настройки.',
     'use_default_eula_column'			=> 'Използвай общия лицензионен договор',
+    'import_require_acceptance'         => 'Require Acceptance',
+    'import_checkin_email'              => 'Send Checkin Email',
+    'import_eula_text'                  => 'EULA text',
+    'import_category_type'              => 'Category Type',
 
 );

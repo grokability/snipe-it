@@ -22,6 +22,7 @@ class AssetPresenter extends Presenter
                 'field' => 'checkbox',
                 'checkbox' => true,
                 'titleTooltip' => trans('general.select_all_none'),
+                'printIgnore' => true,
             ], [
                 'field' => 'id',
                 'searchable' => false,
@@ -108,6 +109,12 @@ class AssetPresenter extends Presenter
                 'title' => trans('general.employee_number'),
                 'visible' => false,
                 'formatter' => 'employeeNumFormatter',
+            ],[
+                'field' => 'jobtitle',
+                'searchable' => true,
+                'sortable' => true,
+                'title' => trans('admin/users/table.title'),
+                'visible' => false,
             ], [
                 'field' => 'location',
                 'searchable' => true,
@@ -298,6 +305,7 @@ class AssetPresenter extends Presenter
                 'sortable' => true,
                 'visible' => false,
                 'title' => trans('general.byod'),
+                'class' => 'byod',
                 'formatter' => 'trueFalseFormatter',
 
             ],
@@ -339,6 +347,7 @@ class AssetPresenter extends Presenter
             'title' => trans('general.checkin').'/'.trans('general.checkout'),
             'visible' => true,
             'formatter' => 'hardwareInOutFormatter',
+            'printIgnore' => true,
         ];
 
         $layout[] = [
@@ -348,6 +357,7 @@ class AssetPresenter extends Presenter
             'switchable' => false,
             'title' => trans('table.actions'),
             'formatter' => 'hardwareActionsFormatter',
+            'printIgnore' => true,
         ];
 
         return json_encode($layout);
@@ -415,6 +425,7 @@ class AssetPresenter extends Presenter
                 'switchable' => false,
                 'title' => trans('table.actions'),
                 'formatter' => 'accessoriesInOutFormatter',
+                'printIgnore' => true,
             ],
         ];
 
@@ -555,7 +566,7 @@ class AssetPresenter extends Presenter
      */
     public function statusMeta()
     {
-        if ($this->model->assigned) {
+        if ($this->model->assigned_to) {
             return 'deployed';
         }
 

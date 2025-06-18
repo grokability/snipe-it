@@ -22,7 +22,7 @@ return array(
     'managed_locations'     => 'Yönetilen Mekanlar',
     'managed_users'         => 'Yönetilen Kullanıcılar',
     'name' 					=> 'Adı',
-    'nogroup'               => 'Henüz hiçbir grup oluşturulmadı. Bir tane eklemek için şu adresi ziyaret edin:',
+    'nogroup'               => 'No groups have been created yet. To add one, visit:',
     'notes'                 => 'Notlar',
     'password_confirm' 		=> 'Şifreyi Doğrula',
     'password' 				=> 'Şifre',

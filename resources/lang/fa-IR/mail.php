@@ -75,6 +75,8 @@ return [
     'min_QTY' => 'حداقل QTY',
     'name' => 'نام',
     'new_item_checked' => 'یک آیتم جدید تحت نام شما چک شده است، جزئیات زیر است.',
+    'new_item_checked_with_acceptance' => 'A new item has been checked out under your name that requires acceptance, details are below.',
+    'recent_item_checked' => 'An item was recently checked out under your name that requires acceptance, details are below.',
     'notes' => 'نت ها',
     'password' => 'رمز عبور',
     'password_reset' => 'تنظیم مجدد رمز عبور',
@@ -97,7 +99,7 @@ return [
     'upcoming-audits' => 'دارایی :count وجود دارد که در روزهای :threshold برای حسابرسی ارائه می شود.',
     'user' => 'کاربر',
     'username' => 'نام کاربری',
-    'unaccepted_asset_reminder' => 'You have Unaccepted Assets.',
+    'unaccepted_asset_reminder' => 'Reminder: You have Unaccepted Assets.',
     'welcome' => 'خوش آمدید نام',
     'welcome_to' => 'به وب سایت خوش آمدید',
     'your_assets' => 'دارایی های خود را مشاهده کنید

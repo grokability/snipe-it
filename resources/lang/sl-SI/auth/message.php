@@ -6,8 +6,6 @@ return array(
     'account_not_found'      => 'Uporabniško ime ali geslo ni pravilno.',
     'account_not_activated'  => 'Ta uporabniški račun ni aktiviran.',
     'account_suspended'      => 'Ta uporabniški račun je onemogočen.',
-    'account_banned'         => 'Ta uporabniški račun je onemogočen.',
-    'throttle'               => 'Preveč neuspešnih prijav. Prosim poskusi ponovno čez :minutes minut.',
 
     'two_factor' => array(
         'already_enrolled'      => 'Tvoja naprava je že vpisana.',

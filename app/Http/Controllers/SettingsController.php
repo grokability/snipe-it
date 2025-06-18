@@ -14,6 +14,7 @@ use App\Http\Requests\StoreLabelSettings;
 use App\Http\Requests\StoreSecuritySettings;
 use App\Models\CustomField;
 use App\Models\Group;
+use App\Models\Labels\Label as LabelModel;
 use App\Models\Setting;
 use App\Models\Asset;
 use App\Models\User;
@@ -290,7 +291,6 @@ class SettingsController extends Controller
     public function getSettings() : View
     {
         $setting = Setting::getSettings();
-
         return view('settings/general', compact('setting'));
     }
 
@@ -314,7 +314,23 @@ class SettingsController extends Controller
             $setting->modellist_displays = implode(',', $request->input('show_in_model_list'));
         }
 
+        $old_locations_fmcs = $setting->scope_locations_fmcs;
         $setting->full_multiple_companies_support = $request->input('full_multiple_companies_support', '0');
+        $setting->scope_locations_fmcs = $request->input('scope_locations_fmcs', '0');
+
+        // Backward compatibility for locations makes no sense without FullMultipleCompanySupport
+        if (!$setting->full_multiple_companies_support) {
+            $setting->scope_locations_fmcs = '0';
+        }
+
+        // check for inconsistencies when activating scoped locations
+        if ($old_locations_fmcs == '0' && $setting->scope_locations_fmcs == '1') {
+            $mismatched = Helper::test_locations_fmcs(false);
+            if (count($mismatched) != 0) {
+                return redirect()->back()->withInput()->with('error', trans_choice('admin/settings/message.location_scoping.mismatch', count($mismatched)).' '.trans('admin/settings/message.location_scoping.not_saved'));
+            }
+        }
+
         $setting->unique_serial = $request->input('unique_serial', '0');
         $setting->shortcuts_enabled = $request->input('shortcuts_enabled', '0');
         $setting->show_images_in_email = $request->input('show_images_in_email', '0');
@@ -336,6 +352,7 @@ class SettingsController extends Controller
         $setting->dash_chart_type = $request->input('dash_chart_type');
         $setting->profile_edit = $request->input('profile_edit', 0);
         $setting->require_checkinout_notes = $request->input('require_checkinout_notes', 0);
+        $setting->manager_view_enabled = $request->input('manager_view_enabled', 0);
 
 
         if ($request->input('per_page') != '') {
@@ -428,12 +445,20 @@ class SettingsController extends Controller
                 $setting->label_logo = null;
             }
 
+            // Acceptance PDF upload
+            $setting = $request->handleImages($setting, 600, 'acceptance_pdf_logo', '', 'acceptance_pdf_logo');
+            if ('1' == $request->input('clear_acceptance_pdf_logo')) {
+                $setting = $request->deleteExistingImage($setting, '', 'acceptance_pdf_logo');
+                $setting->acceptance_pdf_logo = null;
+            }
+
             // Favicon upload
             $setting = $request->handleImages($setting, 100, 'favicon', '', 'favicon');
             if ('1' == $request->input('clear_favicon')) {
                 $setting = $request->deleteExistingImage($setting, '', 'favicon');
                 $setting->favicon = null;
             }
+
 
             // Default avatar upload
             $setting = $request->handleImages($setting, 500, 'default_avatar', 'avatars', 'default_avatar');
@@ -626,6 +651,7 @@ class SettingsController extends Controller
 
         $setting->alert_email = $alert_email;
         $setting->admin_cc_email = $admin_cc_email;
+        $setting->admin_cc_always = $request->validated('admin_cc_always');
         $setting->alerts_enabled = $request->input('alerts_enabled', '0');
         $setting->alert_interval = $request->input('alert_interval');
         $setting->alert_threshold = $request->input('alert_threshold');
@@ -748,6 +774,7 @@ class SettingsController extends Controller
         $setting->label2_2d_type = $request->input('label2_2d_type');
         $setting->label2_2d_target = $request->input('label2_2d_target');
         $setting->label2_fields = $request->input('label2_fields');
+        $setting->label2_empty_row_count = $request->input('label2_empty_row_count');
         $setting->labels_per_page = $request->input('labels_per_page');
         $setting->labels_width = $request->input('labels_width');
         $setting->labels_height = $request->input('labels_height');

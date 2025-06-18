@@ -31,6 +31,7 @@ return [
         'numeric' => 'Pole :attribute musí obsahovať hodnotu medzi :min a :max.',
         'string' => 'Pole :attribute musí obsahovať hodnotu medzi :min a :max znamkmi.',
     ],
+    'valid_regex' => 'The regular expression is invalid.',
     'boolean' => 'Pole :attribút musí obsahovať hodnoty pravda alebo nepravda.',
     'can' => 'Pole :attribute obsahuje nepovolenú hodnotu.',
     'confirmed' => 'Pole :attribute nesedí s overením.',
@@ -172,6 +173,7 @@ return [
     'url' => 'Pole :attribute musí obsahovať správnu URL adresu.',
     'ulid' => 'Pole :attribute musí obsahovať platný ULID.',
     'uuid' => 'Pole :attribute musí obsahovať platný ULID.',
+    'fmcs_location' => 'Full multiple company support and location scoping is enabled in the Admin Settings, and the selected location and selected company are not compatible.',
 
 
     /*
@@ -185,9 +187,13 @@ return [
     |
     */
 
+    'email_array'      => 'Neplatná jedna alebo viacero emailových adries.',
+    'checkboxes'           => ':attribute obsahuje neplatné možnosti.',
+    'radio_buttons'        => ':attribute je neplatný.',
+    
     'custom' => [
         'alpha_space' => 'Pole :attribute obsahuje nepovolený znak.',
-        'email_array'      => 'Neplatná jedna alebo viacero emailových adries.',
+
         'hashed_pass'      => 'Vaše aktuálne heslo je nesprávne',
         'dumbpwd'          => 'Heslo je príliš bežné.',
         'statuslabel_type' => 'Musíte zvoliť platný typ stavového štítku',
@@ -204,8 +210,6 @@ return [
         'expected_checkin.date_format'  =>  'Pole :attribute musí obsahovať platný dátum vo formáte YYYY-MM-DD',
         'start_date.date_format'        =>  'Pole :attribute musí obsahovať platný dátum vo formáte YYYY-MM-DD',
         'end_date.date_format'          =>  'Pole :attribute musí obsahovať platný dátum vo formáte YYYY-MM-DD',
-        'checkboxes'           => ':attribute obsahuje neplatné možnosti.',
-        'radio_buttons'        => ':attribute je neplatný.',
         'invalid_value_in_field' => 'Neplatná hodnota zahrnutá v tomto poli',
 
         'ldap_username_field' => [

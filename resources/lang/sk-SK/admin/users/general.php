@@ -53,4 +53,5 @@ return [
     'next_save_user' => 'Ďalej: Uložiť používateľa',
     'all_assigned_list_generation' => 'Generované dňa:',
     'email_user_creds_on_create' => 'Zaslať tomuto používateľovi prihlasovacie údaje mailom?',
+    'department_manager' => 'Department Manager',
 ];

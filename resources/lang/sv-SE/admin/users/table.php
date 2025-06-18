@@ -22,7 +22,7 @@ return array(
     'managed_locations'     => 'Hanterade platser',
     'managed_users'         => 'Hanterade användare',
     'name' 					=> 'Namn',
-    'nogroup'               => 'Inga grupper har skapats ännu. För att lägga till en, navigera till: ',
+    'nogroup'               => 'Inga grupper har skapats ännu. För att lägga till en, navigera till:',
     'notes'                 => 'Anteckningar',
     'password_confirm' 		=> 'Bekräfta lösenord',
     'password' 				=> 'Lösenord',

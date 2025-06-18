@@ -11,7 +11,7 @@
                 {{ csrf_field() }}
                 <div class="alert alert-danger" id="modal_error_msg" style="display:none">
                 </div>
-               @include('modals.partials.name')
+                @include('modals.partials.name', ['required' => 'true'])
                 <input type="hidden" name='category_type' id="modal-category_type" value="{{ request('category_type') }}" />
             </form>
         </div>

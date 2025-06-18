@@ -21,5 +21,9 @@ return array(
     'use_default_eula'					=> 'Em vez disso, use o <a href="#" data-toggle="modal" data-target="#eulaModal">EULA padrão primário</a>.',
     'use_default_eula_disabled'			=> '<del>Em vez disso, use o EULA padrão primário.</del> Nenhum EULA padrão primário foi definido. Adicione um nas Configurações.',
     'use_default_eula_column'			=> 'Usar padrão EULA',
+    'import_require_acceptance'         => 'Require Acceptance',
+    'import_checkin_email'              => 'Send Checkin Email',
+    'import_eula_text'                  => 'EULA text',
+    'import_category_type'              => 'Category Type',
 
 );

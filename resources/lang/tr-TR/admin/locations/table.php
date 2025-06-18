@@ -39,4 +39,5 @@ return [
     'signed_by_finance_auditor' => 'İmzalayan (Maliye Denetçisi):',
     'signed_by_location_manager' => 'İmzalayan (Mekan Sorumlusu):',
     'signed_by'                 => 'İmzalayan:',
+    'clone'  					=> 'Clone Location',
 ];

@@ -13,6 +13,13 @@ trait CompanyableTrait
      */
     public static function bootCompanyableTrait()
     {
-        static::addGlobalScope(new CompanyableScope);
+        // In Version 7.0 and before locations weren't scoped by companies, so add a check for the backward compatibility setting
+        if (__CLASS__ != 'App\Models\Location') {
+            static::addGlobalScope(new CompanyableScope);
+        } else {
+            if (Setting::getSettings()->scope_locations_fmcs == 1) {
+                static::addGlobalScope(new CompanyableScope);
+            }
+        }
     }
 }

@@ -128,6 +128,8 @@
 
                                             data-pagination="true"
                                             data-search="true"
+                                            data-search-highlight="true"
+                                            data-show-print="true"
                                             data-show-footer="true"
                                             data-side-pagination="server"
                                             data-show-columns="true"

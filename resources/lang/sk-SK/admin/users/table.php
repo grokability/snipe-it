@@ -22,7 +22,7 @@ return array(
     'managed_locations'     => 'Spravované lokality',
     'managed_users'         => 'Manažovaní používatelia',
     'name' 					=> 'Názov',
-    'nogroup'               => 'Zatiaľ neboli vytvorené žiadne skupiny. K pridaniu prvej navštívte: ',
+    'nogroup'               => 'Zatiaľ neboli vytvorené žiadne skupiny. K pridaniu prvej navštívte:',
     'notes'                 => 'Poznámky',
     'password_confirm' 		=> 'Potvrdiť heslo',
     'password' 				=> 'Heslo',

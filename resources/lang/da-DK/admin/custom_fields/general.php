@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Administrer',
     'field'		                => 'Felt',
     'about_fieldsets_title'		=> 'Om Feltsæt',
-    'about_fieldsets_text'		=> 'Feltsæt giver dig mulighed for at oprette grupper af brugerdefinerede felter, der ofte genbruges til specifikke asset-modeltyper.',
+    'about_fieldsets_text'		=> 'Fieldsets giver dig mulighed for at oprette grupper af brugerdefinerede felter, der ofte bruges igen til specifikke aktivmodeltyper.',
     'custom_format'             => 'Tilpasset Regex format...',
     'encrypt_field'      	        => 'Kryptere værdien af dette felt i databasen',
     'encrypt_field_help'      => 'Advarsel: Kryptere et felt gør det uransagelige.',
@@ -59,5 +59,12 @@ return [
     'encrypted_options' => 'Dette felt er krypteret, så nogle visningsindstillinger vil ikke være tilgængelige.',
     'display_checkin' => 'Display in checkin forms',
     'display_checkout' => 'Display in checkout forms',
-
+    'display_audit' => 'Display in audit forms',
+    'types' => [
+        'text' => 'Text Box',
+        'listbox' => 'List Box',
+        'textarea' => 'Textarea (multi-line)',
+        'checkbox' => 'Checkbox',
+        'radio' => 'Radio Buttons',
+    ],
 ];

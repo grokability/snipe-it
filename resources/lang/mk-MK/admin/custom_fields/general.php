@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Управувај',
     'field'		                => 'Поле',
     'about_fieldsets_title'		=> 'За Fieldsets',
-    'about_fieldsets_text'		=> 'Fildsets ви овозможуваат да создавате групи на прилагодени полиња што често се повторно користат за специфични типови на модели на средства.',
+    'about_fieldsets_text'		=> 'Fieldsets ви дозволуваат да креирате групи на сопствени полиња кои често се повторно употребувани за одредени типови на модели на средства.',
     'custom_format'             => 'Прилагоден Regex формат...',
     'encrypt_field'      	        => 'Енкриптирајте ја вредноста на ова поле во базата на податоци',
     'encrypt_field_help'      => 'ПРЕДУПРЕДУВАЊЕ: Шифрирањето на поле прави полето да не може да се пребарува.',
@@ -59,5 +59,12 @@ return [
     'encrypted_options' => 'Ова поле е енкриптирано, некои опции за приказ нема да бидат достапни.',
     'display_checkin' => 'Display in checkin forms',
     'display_checkout' => 'Display in checkout forms',
-
+    'display_audit' => 'Display in audit forms',
+    'types' => [
+        'text' => 'Text Box',
+        'listbox' => 'List Box',
+        'textarea' => 'Textarea (multi-line)',
+        'checkbox' => 'Checkbox',
+        'radio' => 'Radio Buttons',
+    ],
 ];

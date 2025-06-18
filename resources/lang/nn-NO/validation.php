@@ -31,6 +31,7 @@ return [
         'numeric' => 'The :attribute field must be between :min and :max.',
         'string' => 'The :attribute field must be between :min and :max characters.',
     ],
+    'valid_regex' => 'The regular expression is invalid.',
     'boolean' => 'Attributtfeltet må være sant eller falskt.',
     'can' => 'The :attribute field contains an unauthorized value.',
     'confirmed' => 'The :attribute field confirmation does not match.',
@@ -172,6 +173,7 @@ return [
     'url' => 'The :attribute field must be a valid URL.',
     'ulid' => 'The :attribute field must be a valid ULID.',
     'uuid' => 'The :attribute field must be a valid UUID.',
+    'fmcs_location' => 'Full multiple company support and location scoping is enabled in the Admin Settings, and the selected location and selected company are not compatible.',
 
 
     /*
@@ -185,9 +187,13 @@ return [
     |
     */
 
+    'email_array'      => 'En eller flere e-postadresser er ugyldige.',
+    'checkboxes'           => ':attribute inneholder ugyldige valg.',
+    'radio_buttons'        => ':attribute er ugyldig.',
+    
     'custom' => [
         'alpha_space' => 'Attributtfeltet inneholder et tegn som ikke er tillatt.',
-        'email_array'      => 'En eller flere e-postadresser er ugyldige.',
+
         'hashed_pass'      => 'Gjeldende passord er feil',
         'dumbpwd'          => 'Passordet er for vanlig.',
         'statuslabel_type' => 'Du må velge en gyldig statusetikett-type',
@@ -204,8 +210,6 @@ return [
         'expected_checkin.date_format'  =>  ':attribute må være en gyldig dato i YYYY-MM-DD format',
         'start_date.date_format'        =>  ':attribute må være en gyldig dato i YYYY-MM-DD format',
         'end_date.date_format'          =>  ':attribute må være en gyldig dato i YYYY-MM-DD format',
-        'checkboxes'           => ':attribute inneholder ugyldige valg.',
-        'radio_buttons'        => ':attribute er ugyldig.',
         'invalid_value_in_field' => 'Ugyldig verdi inkludert i dette feltet',
 
         'ldap_username_field' => [

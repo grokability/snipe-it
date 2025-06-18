@@ -55,7 +55,7 @@ class L7162_B extends L7162
                 $pdf, $record->get('logo'),
                 $pa->x1, $pa->y1,
                 self::LOGO_MAX_WIDTH, $usableHeight,
-                'L', 'T', 300, true, false, 0.1
+                'L', 'T', 300, true, false, 0
             );
             $currentX += $logoSize[0] + self::LOGO_MARGIN;
             $usableWidth -= $logoSize[0] + self::LOGO_MARGIN;

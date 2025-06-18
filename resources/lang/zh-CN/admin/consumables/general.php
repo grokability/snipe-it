@@ -1,7 +1,7 @@
 <?php
 
 return array(
-    'checkout'                          => '领取耗材给使用者',
+    'checkout'                          => '签出耗材给使用者',
     'consumable_name'                   => '耗材名称',
     'create'                            => '创建耗材',
     'item_no'                           => '项目编号',

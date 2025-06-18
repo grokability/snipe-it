@@ -39,4 +39,5 @@ return [
     'signed_by_finance_auditor' => 'Semnat de (auditor financiar):',
     'signed_by_location_manager' => 'Semnat de (Location Manager):',
     'signed_by'                 => 'Semnat Oprit:',
+    'clone'  					=> 'Clone Location',
 ];

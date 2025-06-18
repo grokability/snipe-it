@@ -21,5 +21,9 @@ return array(
     'use_default_eula'					=> 'பதிலாக <a href="#" data-toggle="modal" data-target="#eulaModal">primary இயல்புநிலை EULA</a> ஐப் பயன்படுத்துக.',
     'use_default_eula_disabled'			=> '<del> முதன்மை இயல்புநிலை EULA ஐப் பயன்படுத்தவும் .</del> முதன்மை இயல்புநிலை EULA அமைக்கப்படவில்லை. அமைப்புகளில் ஒன்றைச் சேர்க்கவும்.',
     'use_default_eula_column'			=> 'இயல்புநிலை EULAஐப் பயன்படுத்தவும்',
+    'import_require_acceptance'         => 'Require Acceptance',
+    'import_checkin_email'              => 'Send Checkin Email',
+    'import_eula_text'                  => 'EULA text',
+    'import_category_type'              => 'Category Type',
 
 );

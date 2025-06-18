@@ -53,4 +53,5 @@ return [
     'next_save_user' => 'Další: Uložení uživatele',
     'all_assigned_list_generation' => 'Vytvořeno:',
     'email_user_creds_on_create' => 'Poslat tomuto uživateli e-mail s jejich pověřením?',
+    'department_manager' => 'Department Manager',
 ];

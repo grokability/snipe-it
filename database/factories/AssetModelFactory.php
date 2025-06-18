@@ -448,4 +448,13 @@ class AssetModelFactory extends Factory
             ];
         });
     }
+
+    public function doesNotRequireAcceptance()
+    {
+        return $this->state(function () {
+            return [
+                'category_id' => Category::factory()->doesNotRequireAcceptance(),
+            ];
+        });
+    }
 }

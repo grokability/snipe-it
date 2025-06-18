@@ -105,6 +105,7 @@ class AssetModelsTransformer
         $array = [
             'id' => (int) $file->id,
             'filename' => e($file->filename),
+            'note' => $file->note,
             'url' => route('show/modelfile', [$assetmodel->id, $file->id]),
             'created_by' => ($file->adminuser) ? [
                 'id' => (int) $file->adminuser->id,

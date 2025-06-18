@@ -1,6 +1,7 @@
 <?php
 
     return [
+        'select_type'            => 'Select Maintenance Type',
         'asset_maintenance_type' => 'Typ údržby majetku',
         'title'                  => 'Názov',
         'start_date'             => 'Dátum začiatku',

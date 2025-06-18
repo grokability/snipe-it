@@ -4,6 +4,7 @@ return [
     'info'   => 'Selecione as opções que pretende para o seu relatório de artigos.',
     'deleted_user' => 'Utilizador apagado',
     'send_reminder' => 'Enviar Lembrete',
+    'cannot_send_reminder' => 'User has been deleted or does not have an email address so cannot receive a reminder',
     'reminder_sent' => 'Lembrete enviado',
     'acceptance_deleted' => 'Pedido de aceitação apagado',
     'acceptance_request' => 'Aceitar Pedido',

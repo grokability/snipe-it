@@ -74,7 +74,7 @@ class CheckoutAssetMail extends Mailable
     {
         $this->item->load('assetstatus');
         $eula = method_exists($this->item, 'getEula') ? $this->item->getEula() : '';
-        $req_accept = method_exists($this->item, 'requireAcceptance') ? $this->item->requireAcceptance() : 0;
+        $req_accept = $this->requiresAcceptance();
         $fields = [];
 
         // Check if the item has custom fields associated with it
@@ -98,6 +98,7 @@ class CheckoutAssetMail extends Mailable
                 'accept_url'    => $accept_url,
                 'last_checkout' => $this->last_checkout,
                 'expected_checkin'  => $this->expected_checkin,
+                'introduction_line' => $this->introductionLine(),
             ],
         );
     }
@@ -119,5 +120,28 @@ class CheckoutAssetMail extends Mailable
         }
 
         return trans('mail.unaccepted_asset_reminder');
+    }
+
+    private function introductionLine(): string
+    {
+        if ($this->firstTimeSending && $this->requiresAcceptance()) {
+            return trans('mail.new_item_checked_with_acceptance');
+        }
+
+        if ($this->firstTimeSending && !$this->requiresAcceptance()) {
+            return trans('mail.new_item_checked');
+        }
+
+        if (!$this->firstTimeSending && $this->requiresAcceptance()) {
+            return trans('mail.recent_item_checked');
+        }
+
+        // we shouldn't get here but let's send a default message just in case
+        return trans('new_item_checked');
+    }
+
+    private function requiresAcceptance(): int|bool
+    {
+        return method_exists($this->item, 'requireAcceptance') ? $this->item->requireAcceptance() : 0;
     }
 }

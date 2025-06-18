@@ -15,6 +15,6 @@ return array(
 
     'failed' => 'Te dane logowania nie pasują do naszych wpisów.',
     'password' => 'Podane hasło jest nieprawidłowe.',
-    'throttle' => 'Zbyt wiele nieudanych prób logowania. Spróbuj ponownie za :seconds sekund.',
+    'throttle' => 'Too many login attempts. Please try again in :minutes minute(s).',
 
 );

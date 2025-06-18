@@ -6,8 +6,6 @@ return array(
     'account_not_found'      => 'שם המשתמש או הסיסמה שגויים.',
     'account_not_activated'  => 'חשבון משתמש זה אינו מופעל.',
     'account_suspended'      => 'חשבון המשתמש הזה מושעה.',
-    'account_banned'         => 'חשבון משתמש זה מוחרם.',
-    'throttle'               => 'Too many failed login attempts. Please try again in :minutes minutes.',
 
     'two_factor' => array(
         'already_enrolled'      => 'Your device is already enrolled.',

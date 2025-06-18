@@ -18,7 +18,7 @@ return array(
         'confirm'   => 'Tem a certeza que deseja excluir este componente?',
         'error'   => 'Existe um problema ao excluir o componente. Por favor tente de novo.',
         'success' => 'O componente foi excluído com sucesso.',
-        'error_qty'   => 'Some components of this type are still checked out. Please check them in and try again.',
+        'error_qty'   => 'Alguns componentes deste tipo ainda estão registrados. Por favor, verifique-os e tente novamente.',
     ),
 
      'checkout' => array(

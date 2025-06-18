@@ -63,14 +63,14 @@ Route::group(
                 ->push(trans_choice('general.checkin_due_days', Setting::getSettings()->due_checkin_days, ['days' => Setting::getSettings()->due_checkin_days]), route('assets.audit.due'))
             );
         
-        Route::get('audit/{asset}', [AssetsController::class, 'audit'])
+        Route::get('{asset}/audit', [AssetsController::class, 'audit'])
             ->name('asset.audit.create')
             ->breadcrumbs(fn (Trail $trail, Asset $asset) =>
             $trail->parent('hardware.show', $asset)
                 ->push(trans('general.audit'))
             );
 
-        Route::post('audit/{asset}',
+        Route::post('{asset}/audit',
             [AssetsController::class, 'auditStore']
         )->name('asset.audit.store');
 

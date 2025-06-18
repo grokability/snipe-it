@@ -53,7 +53,7 @@ class ProfileController extends Controller
         $user->enable_confetti = $request->input('enable_confetti', false);
 
         if (! config('app.lock_passwords')) {
-            $user->locale = $request->input('locale', 'en-US');
+            $user->locale = $request->input('locale');
         }
 
         if ((Gate::allows('self.two_factor')) && ((Setting::getSettings()->two_factor_enabled == '1') && (! config('app.lock_passwords')))) {
@@ -136,7 +136,7 @@ class ProfileController extends Controller
             }
 
             // This checks to make sure that the user's password isn't the same as their username,
-            // email address, first name or last name (see https://github.com/snipe/snipe-it/issues/8661)
+            // email address, first name or last name (see https://github.com/grokability/snipe-it/issues/8661)
             // While this is handled via SaveUserRequest form request in other places, we have to do this manually
             // here because we don't have the username, etc form fields available in the profile password change
             // form.

@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Hallitse',
     'field'		                => 'Kenttä',
     'about_fieldsets_title'		=> 'Tietoja kenttäsarjoista',
-    'about_fieldsets_text'		=> 'Kenttäkokoelma mahdollistaa kokoelmien muodostamisen mukautetuista kentistä joita käytetään usein tiettyjen laitemallien kanssa.',
+    'about_fieldsets_text'		=> 'Kentäsarjoilla voit luoda ryhmiä mukautetuista kentistä, joita tarvitaan tietyillä laitemalleilla.',
     'custom_format'             => 'Mukautettu regex-formaatti...',
     'encrypt_field'      	        => 'Salaa tämän kentän arvo tietokannassa',
     'encrypt_field_help'      => 'VAROITUS: Kentän salaaminen estää kentän arvolla hakemisen.',
@@ -59,5 +59,12 @@ return [
     'encrypted_options' => 'Tämä kenttä on salattu, joten jotkin näyttöasetukset eivät ole käytettävissä.',
     'display_checkin' => 'Display in checkin forms',
     'display_checkout' => 'Display in checkout forms',
-
+    'display_audit' => 'Display in audit forms',
+    'types' => [
+        'text' => 'Text Box',
+        'listbox' => 'List Box',
+        'textarea' => 'Textarea (multi-line)',
+        'checkbox' => 'Checkbox',
+        'radio' => 'Radio Buttons',
+    ],
 ];

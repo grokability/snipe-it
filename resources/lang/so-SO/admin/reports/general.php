@@ -4,6 +4,7 @@ return [
     'info'   => 'Dooro xulashooyinka aad rabto warbixinta hantidaada.',
     'deleted_user' => 'Isticmaale la tirtiray',
     'send_reminder' => 'Soo dir xasuusin',
+    'cannot_send_reminder' => 'User has been deleted or does not have an email address so cannot receive a reminder',
     'reminder_sent' => 'Xusuusin la diray',
     'acceptance_deleted' => 'Codsiga aqbalaadda waa la tirtiray',
     'acceptance_request' => 'Codsiga aqbalida',

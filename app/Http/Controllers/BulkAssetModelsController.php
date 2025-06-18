@@ -71,19 +71,27 @@ class BulkAssetModelsController extends Controller
         if (($request->filled('manufacturer_id') && ($request->input('manufacturer_id') != 'NC'))) {
             $update_array['manufacturer_id'] = $request->input('manufacturer_id');
         }
+        
         if (($request->filled('category_id') && ($request->input('category_id') != 'NC'))) {
             $update_array['category_id'] = $request->input('category_id');
         }
+
         if ($request->input('fieldset_id') != 'NC') {
             $update_array['fieldset_id'] = $request->input('fieldset_id');
         }
+
         if ($request->input('depreciation_id') != 'NC') {
             $update_array['depreciation_id'] = $request->input('depreciation_id');
         }
 
-        if ($request->filled('requestable') != '') {
+        if ($request->input('requestable') != '') {
             $update_array['requestable'] = $request->input('requestable');
         }
+
+        if ($request->filled('min_amt')) {
+            $update_array['min_amt'] = $request->input('min_amt');
+        }
+
 
 
         if (count($update_array) > 0) {

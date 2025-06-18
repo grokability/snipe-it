@@ -4,6 +4,7 @@ return [
     'info'   => 'Selecteer de opties die je wilt voor je assetrapport.',
     'deleted_user' => 'Verwijderde gebruiker',
     'send_reminder' => 'Stuur herinnering',
+    'cannot_send_reminder' => 'User has been deleted or does not have an email address so cannot receive a reminder',
     'reminder_sent' => 'Herinnering verzonden',
     'acceptance_deleted' => 'Aanvaardingsverzoek verwijderd',
     'acceptance_request' => 'Aanvaarding verzoek',

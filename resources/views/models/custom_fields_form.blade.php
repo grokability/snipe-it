@@ -1,16 +1,23 @@
-@if (($model) && ($model->fieldset))
-  @foreach($model->fieldset->fields AS $field)
-      @if (
-    ((!isset($show_display_checkin_fields))
-        || (($field->display_checkin == '1')
-        && ($show_display_checkin_fields =='true'))) &&
-         ((!isset($show_display_checkout_fields))
-        || (($field->display_checkout == '1')
-        && ($show_display_checkout_fields =='true')))
-        )
+@if (($model) && ($model->fieldset) && $model->fieldset->displayAnyFieldsInForm($show_custom_fields_type ?? ''))
+    <div class="col-md-12 col-sm-12">
+
+    <fieldset name="custom-fields" class="bottom-padded">
+        <legend class="highlight">
+            {{ trans('admin/custom_fields/general.custom_fields') }}
+        </legend>
+
+  @foreach($model->fieldset->fields as $field)
+    @if (!isset($show_custom_fields_type) || ($field->displayFieldInCurrentForm($show_custom_fields_type)))
+
 
     <div class="form-group{{ $errors->has($field->db_column_name()) ? ' has-error' : '' }}">
-      <label for="{{ $field->db_column_name() }}" class="col-md-3 control-label">{{ $field->name }} </label>
+
+
+      <label for="{{ $field->db_column_name() }}" class="col-md-3 control-label">
+          {{ $field->name }}
+
+      </label>
+
       <div class="col-md-7 col-sm-12">
 
           @if ($field->element!='text')
@@ -94,17 +101,12 @@
         </div>
         @endif
 
-
     </div>
-    @endif
+            @endif
   @endforeach
+    </fieldset>
+    </div>
 @endif
 
 
-<script nonce="{{ csrf_token() }}">
-    // We have to re-call the tooltip since this is pulled in after the DOM has loaded
-    $('[data-tooltip="true"]').tooltip({
-        container: 'body',
-        animation: true,
-    });
-</script>
+

@@ -53,4 +53,5 @@ return [
     'next_save_user' => 'Следва: Запазване на потребител',
     'all_assigned_list_generation' => 'Генерирано на:',
     'email_user_creds_on_create' => 'Да се изпрати ли е-майл с паролата на потребителя?',
+    'department_manager' => 'Department Manager',
 ];

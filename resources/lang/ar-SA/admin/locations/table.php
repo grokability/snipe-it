@@ -39,4 +39,5 @@ return [
     'signed_by_finance_auditor' => 'موقعة من قبل (مراجع الحسابات المالي):',
     'signed_by_location_manager' => 'توقيع بواسطة (مدير الموقع):',
     'signed_by'                 => 'تم توقيعه من قبل:',
+    'clone'  					=> 'Clone Location',
 ];

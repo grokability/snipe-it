@@ -1,6 +1,7 @@
 <?php
 
     return [
+        'select_type'            => 'Select Maintenance Type',
         'asset_maintenance_type' => 'Eszköz karbantartásának típusa',
         'title'                  => 'Elnevezés',
         'start_date'             => 'Kezdő dátum',

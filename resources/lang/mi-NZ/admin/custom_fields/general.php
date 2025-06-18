@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Manage',
     'field'		                => 'Āpure',
     'about_fieldsets_title'		=> 'Mō Ngā Āpure',
-    'about_fieldsets_text'		=> 'Fieldsets allow you to create groups of custom fields that are frequently re-used for specific asset model types.',
+    'about_fieldsets_text'		=> 'Ka taea e nga maraahi ki a koe te hanga i nga roopu o nga mahinga ritenga e whakamahia ana mo nga momo waahanga motuhake.',
     'custom_format'             => 'Custom Regex format...',
     'encrypt_field'      	        => 'Whakamunahia te uara o tenei mara i roto i te pātengi raraunga',
     'encrypt_field_help'      => 'WARNING: Ko te whakamunatanga o te mara kaore e kitea.',
@@ -59,5 +59,12 @@ return [
     'encrypted_options' => 'This field is encrypted, so some display options will not be available.',
     'display_checkin' => 'Display in checkin forms',
     'display_checkout' => 'Display in checkout forms',
-
+    'display_audit' => 'Display in audit forms',
+    'types' => [
+        'text' => 'Text Box',
+        'listbox' => 'List Box',
+        'textarea' => 'Textarea (multi-line)',
+        'checkbox' => 'Checkbox',
+        'radio' => 'Radio Buttons',
+    ],
 ];

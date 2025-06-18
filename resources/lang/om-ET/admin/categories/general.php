@@ -21,5 +21,9 @@ return array(
     'use_default_eula'					=> 'Ulaagaalee <a href="#" data-toggle="modal" data-target="#eulaModal">durii sirrii</a> itti fayyadami.',
     'use_default_eula_disabled'			=> '<del>Ulaagaalee duraa sirrii itti fayyadami.</del> EULA duraa sirrii tokko hin qophaa\'in. Mee kaayyoo keessatti tokko dabaladhu.',
     'use_default_eula_column'			=> 'Use default EULA',
+    'import_require_acceptance'         => 'Require Acceptance',
+    'import_checkin_email'              => 'Send Checkin Email',
+    'import_eula_text'                  => 'EULA text',
+    'import_category_type'              => 'Category Type',
 
 );

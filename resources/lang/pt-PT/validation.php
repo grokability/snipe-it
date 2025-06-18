@@ -31,6 +31,7 @@ return [
         'numeric' => 'The :attribute field must be between :min and :max.',
         'string' => 'The :attribute field must be between :min and :max characters.',
     ],
+    'valid_regex' => 'The regular expression is invalid.',
     'boolean' => 'O campo: atributo deve ser verdadeiro ou falso.',
     'can' => 'The :attribute field contains an unauthorized value.',
     'confirmed' => 'The :attribute field confirmation does not match.',
@@ -172,6 +173,7 @@ return [
     'url' => 'The :attribute field must be a valid URL.',
     'ulid' => 'The :attribute field must be a valid ULID.',
     'uuid' => 'The :attribute field must be a valid UUID.',
+    'fmcs_location' => 'Full multiple company support and location scoping is enabled in the Admin Settings, and the selected location and selected company are not compatible.',
 
 
     /*
@@ -185,9 +187,13 @@ return [
     |
     */
 
+    'email_array'      => 'Um ou mais endereços de e-mail são inválidos.',
+    'checkboxes'           => ':attribute contém opções inválidas.',
+    'radio_buttons'        => ':attribute é inválido.',
+    
     'custom' => [
         'alpha_space' => 'O campo: atributo contém um caractere que não é permitido.',
-        'email_array'      => 'Um ou mais endereços de e-mail são inválidos.',
+
         'hashed_pass'      => 'Sua senha atual está incorreta',
         'dumbpwd'          => 'Essa senha é muito comum.',
         'statuslabel_type' => 'Você deve selecionar um tipo de etiqueta de status válido',
@@ -204,8 +210,6 @@ return [
         'expected_checkin.date_format'  =>  'O :attribute deve ser uma data válida em formato YYYY-MM-DD',
         'start_date.date_format'        =>  'O :attribute deve ser uma data válida em formato YYYY-MM-DD',
         'end_date.date_format'          =>  'O :attribute deve ser uma data válida em formato YYYY-MM-DD',
-        'checkboxes'           => ':attribute contém opções inválidas.',
-        'radio_buttons'        => ':attribute é inválido.',
         'invalid_value_in_field' => 'Valor inválido incluído neste campo',
 
         'ldap_username_field' => [

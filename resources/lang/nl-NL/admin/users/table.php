@@ -22,7 +22,7 @@ return array(
     'managed_locations'     => 'Beheerde locaties',
     'managed_users'         => 'Beheerde gebruikers',
     'name' 					=> 'Naam',
-    'nogroup'               => 'Er zijn nog geen groepen aangemaakt. Om er een toe te voegen, bezoek: ',
+    'nogroup'               => 'Er zijn nog geen groepen aangemaakt. Om er een toe te voegen, bezoek:',
     'notes'                 => 'Notities',
     'password_confirm' 		=> 'Bevestig uw wachtwoord',
     'password' 				=> 'Wachtwoord',

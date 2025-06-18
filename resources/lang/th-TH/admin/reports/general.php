@@ -4,6 +4,7 @@ return [
     'info'   => 'เลือกออฟชั่นสำหรับรายงานสินทรัพย์ที่คุณต้องการ',
     'deleted_user' => 'Deleted user',
     'send_reminder' => 'Send reminder',
+    'cannot_send_reminder' => 'User has been deleted or does not have an email address so cannot receive a reminder',
     'reminder_sent' => 'Reminder sent',
     'acceptance_deleted' => 'Acceptance request deleted',
     'acceptance_request' => 'Acceptance request',

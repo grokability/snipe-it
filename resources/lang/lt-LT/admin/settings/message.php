@@ -37,7 +37,7 @@ return [
         'authentication_success' => 'Naudotojas sėkmingai atpažintas naudojant LDAP!'
     ],
     'labels' => [
-        'null_template' => 'Label template not found. Please select a template.',
+        'null_template' => 'Etiketės šablonas nerastas. Pasirinkite šabloną.',
         ],
     'webhook' => [
         'sending' => ':app siunčiamas bandomasis pranešimas...',
@@ -49,6 +49,11 @@ return [
         'error_redirect' => 'KLAIDA: 301/302 :endpoint rodo peradresavimą. Saugumo sumetimais peradresavimų nevykdome. Naudokite tikrąjį galinį tašką.',
         'error_misc' => 'Kažkas ne taip. :( ',
         'webhook_fail' => ' „Webhook“ pranešimas nepavyko: patikrinkite ar URL vis dar galioja.',
-        'webhook_channel_not_found' => ' „webhook“ kanalas nerastas.'
-    ]
+        'webhook_channel_not_found' => ' „webhook“ kanalas nerastas.',
+        'ms_teams_deprecation' => 'The selected Microsoft Teams webhook URL will be deprecated Dec 31st, 2025. Please use a workflow URL. Microsoft\'s documentation on creating a workflow can be found <a href="https://support.microsoft.com/en-us/office/create-incoming-webhooks-with-workflows-for-microsoft-teams-8ae491c7-0394-4861-ba59-055e33f75498" target="_blank"> here.</a>',
+    ],
+    'location_scoping' => [
+        'not_saved' => 'Your settings were not saved.',
+        'mismatch' => 'There is 1 item in the database that need your attention before you can enable location scoping.|There are :count items in the database that need your attention before you can enable location scoping.',
+    ],
 ];

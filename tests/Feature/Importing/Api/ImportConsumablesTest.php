@@ -83,7 +83,7 @@ class ImportConsumablesTest extends ImportDataTestCase implements TestsPermissio
         $this->assertEquals($row['category'], $newConsumable->category->name);
         $this->assertEquals($row['location'], $newConsumable->location->name);
         $this->assertEquals($row['companyName'], $newConsumable->company->name);
-        $this->assertNull($newConsumable->supplier_id);
+        $this->assertNotNull($newConsumable->supplier_id);
         $this->assertFalse($newConsumable->requestable);
         $this->assertNull($newConsumable->image);
         $this->assertEquals($row['orderNumber'], $newConsumable->order_number);
@@ -233,7 +233,7 @@ class ImportConsumablesTest extends ImportDataTestCase implements TestsPermissio
         $this->assertEquals($row['purchaseDate'], $updatedConsumable->purchase_date->toDateString());
         $this->assertEquals($row['purchaseCost'], $updatedConsumable->purchase_cost);
 
-        $this->assertEquals($consumable->supplier_id, $updatedConsumable->supplier_id);
+        $this->assertEquals($row['supplier'], $updatedConsumable->supplier->name);
         $this->assertEquals($consumable->requestable, $updatedConsumable->requestable);
         $this->assertEquals($consumable->min_amt, $updatedConsumable->min_amt);
         $this->assertEquals($consumable->model_number, $updatedConsumable->model_number);
@@ -265,6 +265,8 @@ class ImportConsumablesTest extends ImportDataTestCase implements TestsPermissio
 
         $this->actingAsForApi(User::factory()->superuser()->create());
 
+
+        // This mapping is incorrect on purpose
         $this->importFileResponse([
             'import' => $import->id,
             'column-mappings' => [
@@ -290,7 +292,7 @@ class ImportConsumablesTest extends ImportDataTestCase implements TestsPermissio
         $this->assertEquals($row['purchaseDate'], $newConsumable->company->name);
         $this->assertEquals($row['companyName'], $newConsumable->qty);
         $this->assertEquals($row['quantity'], $newConsumable->name);
-        $this->assertNull($newConsumable->supplier_id);
+        $this->assertNotNull($newConsumable->supplier_id);
         $this->assertFalse($newConsumable->requestable);
         $this->assertNull($newConsumable->image);
         $this->assertEquals($row['orderNumber'], $newConsumable->order_number);

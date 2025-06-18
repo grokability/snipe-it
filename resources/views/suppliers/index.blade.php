@@ -21,10 +21,13 @@
     <div class="box box-default">
       <div class="box-body">
         <table
+            data-columns="{{ \App\Presenters\SupplierPresenter::dataTableLayout() }}"
             data-cookie-id-table="suppliersTable"
             data-pagination="true"
             data-id-table="suppliersTable"
             data-search="true"
+            data-search-highlight="true"
+            data-show-print="true"
             data-side-pagination="server"
             data-show-columns="true"
             data-show-fullscreen="true"
@@ -38,25 +41,6 @@
             "fileName": "export-suppliers-{{ date('Y-m-d') }}",
             "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
             }'>
-        <thead>
-          <tr>
-            <th data-sortable="true" data-field="id" data-visible="false">{{ trans('admin/suppliers/table.id') }}</th>
-            <th data-formatter="imageFormatter" data-sortable="true" data-field="image" data-visible="false"  data-searchable="false">{{ trans('general.image') }}</th>
-            <th data-sortable="true" data-field="name" data-formatter="suppliersLinkFormatter">{{ trans('admin/suppliers/table.name') }}</th>
-            <th data-sortable="true" data-field="address">{{ trans('admin/suppliers/table.address') }}</th>
-            <th data-searchable="true" data-sortable="true" data-field="contact">{{ trans('admin/suppliers/table.contact') }}</th>
-            <th data-searchable="true" data-sortable="true" data-field="email" data-formatter="emailFormatter">{{ trans('admin/suppliers/table.email') }}</th>
-            <th data-searchable="true" data-sortable="true" data-field="phone" data-formatter="phoneFormatter">{{ trans('admin/suppliers/table.phone') }}</th>
-            <th data-searchable="true" data-sortable="true" data-field="fax" data-visible="false">{{ trans('admin/suppliers/table.fax') }}</th>
-            <th data-sortable="true" data-field="url" data-visible="false" data-formatter="externalLinkFormatter">{{ trans('general.url') }}</th>
-            <th data-searchable="false" data-sortable="true" data-field="assets_count">{{ trans('admin/suppliers/table.assets') }}</th>
-            <th data-searchable="false" data-sortable="true" data-field="accessories_count">{{ trans('general.accessories') }}</th>
-            <th data-searchable="false" data-sortable="true" data-field="licenses_count">{{ trans('admin/suppliers/table.licenses') }}</th>
-            <th data-searchable="false" data-sortable="true" data-field="components_count">{{ trans('general.components') }}</th>
-            <th data-searchable="false" data-sortable="true" data-field="consumables_count">{{ trans('general.consumables') }}</th>
-            <th data-switchable="false" data-formatter="suppliersActionsFormatter" data-searchable="false" data-sortable="false" data-field="actions">{{ trans('table.actions') }}</th>
-          </tr>
-        </thead>
       </table>
     </div>
   </div>

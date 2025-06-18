@@ -57,7 +57,14 @@ return [
     'show_in_requestable_list_short' => 'Talep edilebilir varlıklar listesinde göster',
     'show_in_requestable_list' => 'Değeri talep edilebilir varlıklar listesinde gösterin. Şifreli alanlar gösterilmeyecek',
     'encrypted_options' => 'Bu alan şifrelendiğinden bazı görüntüleme seçenekleri kullanılamayacaktır.',
-    'display_checkin' => 'Display in checkin forms',
-    'display_checkout' => 'Display in checkout forms',
-
+    'display_checkin' => 'Teslimat formlarında görüntüle',
+    'display_checkout' => 'Çıkış formlarında görüntüle',
+    'display_audit' => 'Denetim formlarında görüntüle',
+    'types' => [
+        'text' => 'Text Box',
+        'listbox' => 'List Box',
+        'textarea' => 'Textarea (multi-line)',
+        'checkbox' => 'Checkbox',
+        'radio' => 'Radio Buttons',
+    ],
 ];

@@ -24,7 +24,7 @@ class GroupsTransformer
         $array = [
             'id' => (int) $group->id,
             'name' => e($group->name),
-            'permissions' => json_decode($group->permissions),
+            'permissions' => $group->decodePermissions(),
             'users_count' => (int) $group->users_count,
             'notes' => Helper::parseEscapedMarkedownInline($group->notes),
             'created_by' => ($group->adminuser) ? [

@@ -3,7 +3,7 @@
 return [
 
     'does_not_exist' => 'Label Status tidak wujud.',
-    'deleted_label' => 'Deleted Status Label',
+    'deleted_label' => 'Label Status Dipadam',
     'assoc_assets'	 => 'Label Status ini kini dikaitkan dengan sekurang-kurangnya satu Aset dan tidak boleh dipadamkan. Sila kemas kini aset anda untuk tidak merujuk lagi status ini dan cuba lagi.',
 
     'create' => [

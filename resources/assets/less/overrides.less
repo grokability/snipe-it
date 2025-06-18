@@ -731,7 +731,7 @@ h4 {
  Instead, we use CSS to add the icon into the table header, which leaves the column selector
  "title" text as-is and hides the icon.
 
- See https://github.com/snipe/snipe-it/issues/7989
+ See https://github.com/grokability/snipe-it/issues/7989
  */
 th.css-accessory > .th-inner,
 th.css-accessory-alt > .th-inner,
@@ -886,7 +886,7 @@ th.css-history > .th-inner::before {
   height: 34px;
 }
 
-.form-group.has-error label {
+.form-group.has-error label, .form-group.has-error .help-block {
   color: #a94442;
 }
 
@@ -1173,5 +1173,46 @@ td.text-right.text-padding-number-cell {
 th.text-right.text-padding-number-footer-cell {
   padding-right: 20px !important;
   white-space: nowrap;
+}
+
+code.single-line {
+  white-space: pre-wrap;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+  max-width: 400px;
+}
+
+p.monospace, span.monospace {
+  font-family: monospace, monospace;
+}
+
+legend.highlight {
+  background: repeating-linear-gradient(
+          45deg,
+          #222d32,
+          #222d32 10px,
+          #444 10px,
+          #444 11px
+  );
+
+  color: #fff;
+  font-size: 18px;
+  padding: 6px 6px 6px 10px;
+}
+
+legend.highlight a {
+  color: #fff;
+  cursor: pointer;
+}
+
+fieldset.bottom-padded {
+  padding-bottom: 20px;
+}
+
+caption.tableCaption {
+  font-size: 18px;
+  padding-left: 8px;
 }
 

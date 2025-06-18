@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Accessory;
+use App\Models\Asset;
 use App\Models\Category;
 use App\Models\Location;
 use App\Models\Manufacturer;
@@ -168,6 +169,32 @@ class AccessoryFactory extends Factory
                     'assigned_type' => User::class,
                 ]);
             }
+        });
+    }
+
+    public function checkedOutToAsset(Asset $asset = null)
+    {
+        return $this->afterCreating(function (Accessory $accessory) use ($asset) {
+            $accessory->checkouts()->create([
+                'accessory_id' => $accessory->id,
+                'created_at' => Carbon::now(),
+                'created_by' => 1,
+                'assigned_to' => $asset->id ?? Asset::factory()->create()->id,
+                'assigned_type' => Asset::class,
+            ]);
+        });
+    }
+
+    public function checkedOutToLocation(Location $location = null)
+    {
+        return $this->afterCreating(function (Accessory $accessory) use ($location) {
+            $accessory->checkouts()->create([
+                'accessory_id' => $accessory->id,
+                'created_at' => Carbon::now(),
+                'created_by' => 1,
+                'assigned_to' => $location->id ?? Location::factory()->create()->id,
+                'assigned_type' => Location::class,
+            ]);
         });
     }
 }

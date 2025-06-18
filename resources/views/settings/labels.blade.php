@@ -301,13 +301,39 @@
                                     <x-input.select
                                         name="label2_2d_target"
                                         id="label2_2d_target"
-                                        :options="['hardware_id'=>'/hardware/{id} ('.trans('admin/settings/general.default').')', 'ht_tag'=>'/ht/{asset_tag}']"
+                                        :options="['hardware_id'=>'/hardware/{id} ('.trans('admin/settings/general.default').')',
+                                                   'ht_tag'=>'/ht/{asset_tag}',
+                                                   'location' => '/location/{location_id}',
+                                                   ]"
                                         :selected="old('label2_2d_target', $setting->label2_2d_target)"
                                         class="col-md-4"
                                         aria-label="label2_2d_target"
                                     />
                                     {!! $errors->first('label2_2d_target', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
                                     <p class="help-block">{{ trans('admin/settings/general.label2_2d_target_help') }}</p>
+                                </div>
+                            </div>
+                            <!-- Field offset -->
+                            <div class="form-group{{ $errors->has('label2_empty_row_count') ? ' has-error' : '' }}">
+                                <div class="col-md-3 text-right">
+                                    <label for="label2_empty_row_count" class="control-label">{{ trans('admin/settings/general.empty_row_count') }}</label>
+                                </div>
+                                <div class="col-md-9 col-xl-2 col-lg-2">
+                                        <input
+                                                class="form-control"
+                                                aria-label="Empty Row Count"
+                                                name="label2_empty_row_count"
+                                                type="number"
+                                                id="label2_empty_row_count"
+                                                min="0"
+                                                max="5"
+                                                value="{{ old('label2_empty_row_count', $setting->label2_empty_row_count) }}"
+                                        >
+                                </div>
+
+                                <div class="col-md-9 col-md-offset-3">
+                                    <p class="help-block">{!! trans('admin/settings/general.empty_row_count_help') !!}</p>
+                                    {!! $errors->first('label2_empty_row_count', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
                                 </div>
                             </div>
                             <div class="col-md-9 col-md-offset-3" style="margin-bottom: 10px;">
@@ -400,15 +426,13 @@
                                         <input class="form-control" aria-label="labels_width" name="labels_width" type="text" value="{{ old('labels_width', $setting->labels_width) }}" id="labels_width">
                                         <div class="input-group-addon">{{ trans('admin/settings/general.width_w') }}</div>
                                     </div>
+                                    {!! $errors->first('labels_width', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
                                 </div>
                                 <div class="col-md-3">
                                     <div class="input-group">
                                         <input class="form-control" aria-label="labels_height" name="labels_height" type="text" value="{{ old('labels_height', $setting->labels_height) }}">
                                         <div class="input-group-addon">{{ trans('admin/settings/general.height_h') }}</div>
                                     </div>
-                                </div>
-                                <div class="col-md-9 col-md-offset-3">
-                                    {!! $errors->first('labels_width', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
                                     {!! $errors->first('labels_height', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
                                 </div>
                             </div>
@@ -459,10 +483,6 @@
                                         <div class="input-group-addon">{{ trans('admin/settings/general.left') }}</div>
                                     </div>
 
-                                </div>
-                                <div class="col-md-9 col-md-offset-3">
-                                    {!! $errors->first('labels_width', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
-                                    {!! $errors->first('labels_height', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
                                 </div>
                             </div>
 

@@ -6,8 +6,6 @@ return array(
     'account_not_found'      => 'บัญชีผู้ใช้งาน หรือรหัสผ่าน ไม่ถูกต้อง',
     'account_not_activated'  => 'ชื่อผู้ใช้นี้ยังไม่ได้ทำการเปิดใช้งาน',
     'account_suspended'      => 'บัญชีผู้ใช้นี้ถูกระงับการใช้งาน',
-    'account_banned'         => 'บัญชีผู้ใช้นี้ถูกห้ามใช้งาน',
-    'throttle'               => 'Too many failed login attempts. Please try again in :minutes minutes.',
 
     'two_factor' => array(
         'already_enrolled'      => 'Your device is already enrolled.',

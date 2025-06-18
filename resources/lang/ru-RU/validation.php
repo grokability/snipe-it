@@ -31,6 +31,7 @@ return [
         'numeric' => 'Поле :attribute должно быть между :min и :max.',
         'string' => 'Поле :attribute должно содержать от :min до :max символов.',
     ],
+    'valid_regex' => 'The regular expression is invalid.',
     'boolean' => 'Поле :attribute должно быть true или false.',
     'can' => 'Поле :attribute содержит недопустимое значение.',
     'confirmed' => 'Подтверждение поля :attribute не совпадает.',
@@ -172,6 +173,7 @@ return [
     'url' => 'Поле :attribute должно быть действительным URL-адресом.',
     'ulid' => 'Поле :attribute должно быть корректным значением UUID.',
     'uuid' => 'Поле :attribute должно быть корректным значением UUID.',
+    'fmcs_location' => 'Full multiple company support and location scoping is enabled in the Admin Settings, and the selected location and selected company are not compatible.',
 
 
     /*
@@ -185,9 +187,13 @@ return [
     |
     */
 
+    'email_array'      => 'Один или несколько адресов эл. почты являются недействительным.',
+    'checkboxes'           => ':attribute содержит недопустимые параметры.',
+    'radio_buttons'        => ':attribute не верно.',
+    
     'custom' => [
         'alpha_space' => 'Поле атрибута: содержит символ, который не разрешен.',
-        'email_array'      => 'Один или несколько адресов электронной почты недействительны.',
+
         'hashed_pass'      => 'Ваш текущий пароль неверен',
         'dumbpwd'          => 'Этот пароль слишком распространен.',
         'statuslabel_type' => 'Вы должны выбрать допустимый тип метки статуса',
@@ -204,8 +210,6 @@ return [
         'expected_checkin.date_format'  =>  ':attribute должен быть допустимой датой в формате YYYY-MM-DD',
         'start_date.date_format'        =>  ':attribute должен быть допустимой датой в формате YYYY-MM-DD',
         'end_date.date_format'          =>  ':attribute должен быть допустимой датой в формате YYYY-MM-DD',
-        'checkboxes'           => ':attribute содержит недопустимые параметры.',
-        'radio_buttons'        => ':attribute не верно.',
         'invalid_value_in_field' => 'Недопустимое значение в этом поле',
 
         'ldap_username_field' => [

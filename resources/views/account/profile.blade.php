@@ -49,7 +49,7 @@
           <div class="col-md-7">
 
             @if (!config('app.lock_passwords'))
-              {!! Form::locales('locale', old('locale', $user->locale), 'select2') !!}
+              <x-input.locale-select name="locale" :selected="old('locale', $user->locale)"/>
               {!! $errors->first('locale', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
             @else
               <p class="help-block">{{ trans('general.feature_disabled') }}</p>
@@ -65,7 +65,7 @@
             {{ trans('general.skin') }}
           </label>
           <div class="col-md-8">
-            {!! Form::user_skin('skin', old('skin', $user->skin), 'select2') !!}
+            <x-input.skin name="skin" :selected="old('skin', $user->skin)" :include-blank-option="true"/>
             {!! $errors->first('skin', '<span class="alert-msg">:message</span>') !!}
           </div>
         </div>

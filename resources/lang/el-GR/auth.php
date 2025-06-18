@@ -15,6 +15,6 @@ return array(
 
     'failed' => 'Αυτά τα διαπιστευτήρια δεν ταιριάζουν με τα αρχεία μας.',
     'password' => 'Ο παρεχόμενος κωδικός πρόσβασης είναι εσφαλμένος.',
-    'throttle' => 'Πάρα πολλές προσπάθειες σύνδεσης. Παρακαλώ δοκιμάστε ξανά σε :seconds δευτερόλεπτα.',
+    'throttle' => 'Too many login attempts. Please try again in :minutes minute(s).',
 
 );

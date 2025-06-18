@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Manage',
     'field'		                => 'Inkambu',
     'about_fieldsets_title'		=> 'Mayelana nama-Fieldsets',
-    'about_fieldsets_text'		=> 'Fieldsets allow you to create groups of custom fields that are frequently re-used for specific asset model types.',
+    'about_fieldsets_text'		=> 'Ama-Fieldsets akuvumela ukuthi udale amaqembu wenkambiso yenkambiso evame ukusetshenziselwa kabusha asetshenziselwa izinhlobo ezithile zemodeli yefa.',
     'custom_format'             => 'Custom Regex format...',
     'encrypt_field'      	        => 'Bhala ukubaluleka kwalensimu ku-database',
     'encrypt_field_help'      => 'ISEXWAYISO: Ukubethela insimu kungenza kungabhekeki.',
@@ -59,5 +59,12 @@ return [
     'encrypted_options' => 'This field is encrypted, so some display options will not be available.',
     'display_checkin' => 'Display in checkin forms',
     'display_checkout' => 'Display in checkout forms',
-
+    'display_audit' => 'Display in audit forms',
+    'types' => [
+        'text' => 'Text Box',
+        'listbox' => 'List Box',
+        'textarea' => 'Textarea (multi-line)',
+        'checkbox' => 'Checkbox',
+        'radio' => 'Radio Buttons',
+    ],
 ];

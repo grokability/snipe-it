@@ -21,6 +21,7 @@ class AccessoryPresenter extends Presenter
                 'switchable' => true,
                 'title' => trans('general.id'),
                 'visible' => false,
+                'printIgnore' => true,
             ], [
                 'field' => 'image',
                 'searchable' => false,
@@ -172,6 +173,7 @@ class AccessoryPresenter extends Presenter
                 'switchable' => false,
                 'title' => trans('table.actions'),
                 'formatter' => 'accessoriesActionsFormatter',
+                'printIgnore' => true,
             ],
         ];
 
@@ -229,7 +231,7 @@ class AccessoryPresenter extends Presenter
                 'field' => 'created_by',
                 'searchable' => false,
                 'sortable' => false,
-                'title' => trans('general.admin'),
+                'title' => trans('general.created_by'),
                 'visible' => false,
                 'formatter' => 'usersLinkObjFormatter',
             ],
@@ -240,6 +242,7 @@ class AccessoryPresenter extends Presenter
                 'switchable' => false,
                 'title' => trans('table.actions'),
                 'formatter' => 'accessoriesInOutFormatter',
+                'printIgnore' => true,
             ],
         ];
 

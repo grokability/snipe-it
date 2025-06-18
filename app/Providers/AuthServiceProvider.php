@@ -169,6 +169,15 @@ class AuthServiceProvider extends ServiceProvider
         });
 
         // -----------------------------------------
+        // Activity
+        // -----------------------------------------
+        Gate::define('activity.view', function ($user) {
+            if (($user->hasAccess('reports.view')) || ($user->hasAccess('admin'))) {
+                return true;
+            }
+        });
+
+        // -----------------------------------------
         // Self
         // -----------------------------------------
         Gate::define('self.two_factor', function ($user) {

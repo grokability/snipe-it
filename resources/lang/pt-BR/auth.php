@@ -15,6 +15,6 @@ return array(
 
     'failed' => 'Credenciais inválidas.',
     'password' => 'A senha fornecida está incorreta.',
-    'throttle' => 'Tentativas de login excedidas. Por favor, tente de novo em :seconds segundos.',
+    'throttle' => 'Too many login attempts. Please try again in :minutes minute(s).',
 
 );

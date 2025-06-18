@@ -2,12 +2,12 @@
 
 return array(
 
-    'deleted' => 'Deleted asset model',
+    'deleted' => 'Model aset yang dipadam',
     'does_not_exist' => 'Model tidak wujud.',
-    'no_association' => 'WARNING! The asset model for this item is invalid or missing!',
-    'no_association_fix' => 'This will break things in weird and horrible ways. Edit this asset now to assign it a model.',
+    'no_association' => 'AMARAN! Model aset untuk item ini tidak sah atau tiada!',
+    'no_association_fix' => 'Ini akan menyebabkan masalah yang pelik dan teruk. Sila sunting aset ini sekarang untuk menetapkan model kepadanya.',
     'assoc_users'	 => 'Model ini sekarang disekutukan dengan sekurang2nya satu atau lebih harta dan tidak boleh dihapuskan. Sila kemaskini harta, dan kemudian cuba lagi. ',
-    'invalid_category_type' => 'This category must be an asset category.',
+    'invalid_category_type' => 'Kategori ini mesti merupakan kategori aset.',
 
     'create' => array(
         'error'   => 'Model gagal dicipta, sila cuba lagi.',
@@ -33,14 +33,14 @@ return array(
 
     'bulkedit' => array(
         'error'   		=> 'Tiada medan berubah, jadi tiada apa yang dikemas kini.',
-        'success' 		=> 'Model successfully updated. |:model_count models successfully updated.',
-        'warn'          => 'You are about to update the properties of the following model:|You are about to edit the properties of the following :model_count models:',
+        'success' 		=> 'Model berjaya dikemas kini. |:model_count model berjaya dikemas kini.',
+        'warn'          => 'Anda akan mengemas kini sifat model berikut: | Anda akan menyunting sifat :model_count model berikut:',
 
     ),
 
     'bulkdelete' => array(
         'error'   		    => 'Tiada model dipilih, jadi tiada apa yang dipadamkan.',
-        'success' 		    => 'Model deleted!|:success_count models deleted!',
+        'success' 		    => 'Model dipadam! | :success_count model dipadam!',
         'success_partial' 	=> ':success_count model(s) telah dipadamkan, namun :fail_count tidak dapat dipadamkan kerana mereka masih mempunyai aset yang dikaitkan dengannya.'
     ),
 

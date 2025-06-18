@@ -53,4 +53,5 @@ return [
     'next_save_user' => 'Sledeće: Sačuvaj korisnika',
     'all_assigned_list_generation' => 'Generisano:',
     'email_user_creds_on_create' => 'Poslati ovom korisniku e-poruku sa njegovim kredencijalima?',
+    'department_manager' => 'Rukovodilac odeljenja',
 ];

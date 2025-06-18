@@ -189,6 +189,17 @@
                     </div>
                   @endif
 
+                  <!-- total -->
+                  @if ($consumable->qty)
+                    <div class="row">
+                      <div class="col-md-3">
+                        {{ trans('admin/components/general.total') }}
+                      </div>
+                      <div class="col-md-9">
+                        {{ $consumable->qty }}
+                      </div>
+                    </div>
+                  @endif
 
                   <!-- remaining -->
                   @if ($consumable->numRemaining())
@@ -292,8 +303,10 @@
                       </div>
                       <div class="col-md-9">
 
-                        <span class="js-copy">{{ $consumable->item_no  }}</span>
-                        <i class="fa-regular fa-clipboard js-copy-link" data-clipboard-target=".js-copy" aria-hidden="true" data-tooltip="true" data-placement="top" title="{{ trans('general.copy_to_clipboard') }}">
+                        <span class="js-copy-item_no">{{ $consumable->item_no  }}</span>
+                        <i class="fa-regular fa-clipboard js-copy-link" data-clipboard-target=".js-copy-item_no"
+                           aria-hidden="true" data-tooltip="true" data-placement="top"
+                           title="{{ trans('general.copy_to_clipboard') }}">
                           <span class="sr-only">{{ trans('general.copy_to_clipboard') }}</span>
                         </i>
 
@@ -308,8 +321,10 @@
                       </div>
                       <div class="col-md-9">
 
-                        <span class="js-copy">{{ $consumable->model_number  }}</span>
-                        <i class="fa-regular fa-clipboard js-copy-link" data-clipboard-target=".js-copy" aria-hidden="true" data-tooltip="true" data-placement="top" title="{{ trans('general.copy_to_clipboard') }}">
+                        <span class="js-copy-model_no">{{ $consumable->model_number  }}</span>
+                        <i class="fa-regular fa-clipboard js-copy-link" data-clipboard-target=".js-copy-model_no"
+                           aria-hidden="true" data-tooltip="true" data-placement="top"
+                           title="{{ trans('general.copy_to_clipboard') }}">
                           <span class="sr-only">{{ trans('general.copy_to_clipboard') }}</span>
                         </i>
 
@@ -325,6 +340,22 @@
                       </div>
                       <div class="col-md-9">
                         {{ \App\Helpers\Helper::getFormattedDateObject($consumable->purchase_date, 'datetime', false) }}
+                      </div>
+                    </div>
+                  @endif
+
+                  @if ($consumable->adminuser)
+                    <!-- created at -->
+                    <div class="row">
+                      <div class="col-md-3">
+                        {{ trans('general.created_by') }}
+                      </div>
+                      <div class="col-md-9">
+                        @if ($consumable->adminuser->deleted_at == '')
+                          <a href="{{ route('users.show', ['user' => $consumable->adminuser]) }}">{{ $consumable->adminuser->present()->fullName }}</a>
+                        @else
+                          <del>{{ $consumable->adminuser->present()->fullName }}</del>
+                        @endif
                       </div>
                     </div>
                   @endif
@@ -349,24 +380,6 @@
                       </div>
                       <div class="col-md-9">
                         {{ \App\Helpers\Helper::getFormattedDateObject($consumable->updated_at, 'datetime')['formatted']}}
-                      </div>
-                    </div>
-                  @endif
-
-                  @if ($consumable->admin)
-                    <!-- created at -->
-                    <div class="row">
-                      <div class="col-md-3">
-                        {{ trans('general.created_by') }}
-                      </div>
-                      <div class="col-md-9">
-
-                          @if ($consumable->admin->deleted_at == '')
-                            <a href="{{ route('users.show', ['user' => $consumable->admin]) }}">{{ $consumable->admin->present()->fullName }}</a>
-                          @else
-                            <del>{{ $consumable->admin->present()->fullName }}</del>
-                          @endif
-
                       </div>
                     </div>
                   @endif
@@ -397,6 +410,7 @@
                     data-pagination="true"
                     data-id-table="consumablesCheckedoutTable"
                     data-search="false"
+                    data-show-print="true"
                     data-side-pagination="server"
                     data-show-columns="true"
                     data-show-export="true"
@@ -419,7 +433,7 @@
                   {{ trans('general.date') }}
                 </th>
                 <th data-searchable="false" data-sortable="false" data-field="note">{{ trans('general.notes') }}</th>
-                <th data-searchable="false" data-sortable="false" data-field="admin">{{ trans('general.admin') }}</th>
+                <th data-searchable="false" data-sortable="false" data-field="admin">{{ trans('general.created_by') }}</th>
               </tr>
               </thead>
             </table>
@@ -446,11 +460,14 @@
             <div class="table-responsive">
 
               <table
+                      data-columns="{{ \App\Presenters\HistoryPresenter::dataTableLayout() }}"
                       class="table table-striped snipe-table"
                       id="consumableHistory"
                       data-pagination="true"
                       data-id-table="consumableHistory"
                       data-search="true"
+                      data-search-highlight="true"
+                      data-show-print="true"
                       data-side-pagination="server"
                       data-show-columns="true"
                       data-show-fullscreen="true"
@@ -464,26 +481,8 @@
                        }'
 
                       data-url="{{ route('api.activity.index', ['item_id' => $consumable->id, 'item_type' => 'consumable']) }}"
-                      data-cookie-id-table="assetHistory"
+                      data-cookie-id-table="consumableHistory"
                       data-cookie="true">
-                <thead>
-                <tr>
-                  <th data-visible="true" data-field="icon" style="width: 40px;" class="hidden-xs" data-formatter="iconFormatter">{{ trans('admin/hardware/table.icon') }}</th>
-                  <th data-visible="true" data-field="action_date" data-sortable="true" data-formatter="dateDisplayFormatter">{{ trans('general.date') }}</th>
-                  <th data-visible="true" data-field="admin" data-formatter="usersLinkObjFormatter">{{ trans('general.admin') }}</th>
-                  <th data-visible="true" data-field="action_type">{{ trans('general.action') }}</th>
-                  <th class="col-sm-2" data-field="file" data-visible="false" data-formatter="fileUploadNameFormatter">{{ trans('general.file_name') }}</th>
-                  <th data-visible="true" data-field="item" data-formatter="polymorphicItemFormatter">{{ trans('general.item') }}</th>
-                  <th data-visible="true" data-field="target" data-formatter="polymorphicItemFormatter">{{ trans('general.target') }}</th>
-                  <th data-field="note">{{ trans('general.notes') }}</th>
-                  <th data-field="signature_file" data-visible="false"  data-formatter="imageFormatter">{{ trans('general.signature') }}</th>
-                  <th data-visible="false" data-field="file" data-visible="false"  data-formatter="fileUploadFormatter">{{ trans('general.download') }}</th>
-                  <th data-field="log_meta" data-visible="true" data-formatter="changeLogFormatter">{{ trans('admin/hardware/table.changed')}}</th>
-                  <th data-field="remote_ip" data-visible="false" data-sortable="true">{{ trans('admin/settings/general.login_ip') }}</th>
-                  <th data-field="user_agent" data-visible="false" data-sortable="true">{{ trans('admin/settings/general.login_user_agent') }}</th>
-                  <th data-field="action_source" data-visible="false" data-sortable="true">{{ trans('general.action_source') }}</th>
-                </tr>
-                </thead>
               </table>
             </div>
           </div><!-- /.tab-pane -->

@@ -6,8 +6,6 @@ return array(
     'account_not_found'      => 'Notandanafnið eða lykilorðið er rangt.',
     'account_not_activated'  => 'Þessi notendareikningur er ekki virkur.',
     'account_suspended'      => 'Þessum notandareikningi er lokað.',
-    'account_banned'         => 'Þessi notendareikningur er bannaður.',
-    'throttle'               => 'Of margar misheppnaðar innskráningartilraunir. Vinsamlegast reyndu aftur eftir :minutes mínútur.',
 
     'two_factor' => array(
         'already_enrolled'      => 'Tækið þitt er þegar skráð.',

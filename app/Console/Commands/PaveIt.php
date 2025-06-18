@@ -51,8 +51,7 @@ class PaveIt extends Command
         }
 
         // List all the tables in the database so we don't have to worry about missing some as the app grows
-        $tables = DB::connection()->getDoctrineSchemaManager()->listTableNames();
-
+        $tables = Schema::getTables();
         $except_tables = [
             'oauth_access_tokens',
             'oauth_clients',
@@ -74,7 +73,8 @@ class PaveIt extends Command
             }
         }
 
-        foreach ($tables as $table) {
+        foreach ($tables as $table_obj) {
+            $table = $table_obj['name'];
             if (in_array($table, $except_tables)) {
                 $this->info($table. ' is SKIPPED.');
             } else {

@@ -22,13 +22,15 @@
                 <div class="box-body">
                     <div class="row">
                         <div class="col-md-12">
-                            <div class="table table-responsive">
+
 
                                 <table
                                     data-columns="{{  \App\Presenters\UserPresenter::dataTableLayout() }}"
                                     data-cookie-id-table="groupsUsersTable"
                                     data-pagination="true"
                                     data-search="true"
+                                    data-search-highlight="true"
+                                    data-show-print="true"
                                     data-side-pagination="server"
                                     data-show-columns="true"
                                     data-show-export="true"
@@ -41,7 +43,7 @@
                                         "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
                                         }'>
                                 </table>
-                            </div>
+
                         </div>
                     </div>
                 </div>

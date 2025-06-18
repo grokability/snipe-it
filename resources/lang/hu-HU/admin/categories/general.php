@@ -21,5 +21,9 @@ return array(
     'use_default_eula'					=> 'Használja inkább az <a href="#" data-toggle="modal" data-target="#eulaModal">alapértelmezett EULA</a>-t.',
     'use_default_eula_disabled'			=> '<del>Használja inkább az alapértelmezett EULA-t.</del> Nincs alapértelmezett EULA beállítva. Kérem adjon hozzá egyet a Beállításokban.',
     'use_default_eula_column'			=> 'Alapértelmezett végfelhasználói engedély használata',
+    'import_require_acceptance'         => 'Require Acceptance',
+    'import_checkin_email'              => 'Send Checkin Email',
+    'import_eula_text'                  => 'EULA text',
+    'import_category_type'              => 'Category Type',
 
 );

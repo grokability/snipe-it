@@ -55,7 +55,7 @@ class AccessoriesTransformer
             'checkout' => Gate::allows('checkout', Accessory::class),
             'checkin' =>  false,
             'update' => Gate::allows('update', Accessory::class),
-            'delete' => Gate::allows('delete', Accessory::class),
+            'delete' => $accessory->checkouts_count === 0 && Gate::allows('delete', Accessory::class),
             'clone' => Gate::allows('create', Accessory::class),
             
         ];
@@ -94,6 +94,10 @@ class AccessoriesTransformer
 
     public function transformAssignedTo($accessoryCheckout)
     {
+        if (is_null($accessoryCheckout->assigned)) {
+            return null;
+        }
+
         if ($accessoryCheckout->checkedOutToUser()) {
             return (new UsersTransformer)->transformUserCompact($accessoryCheckout->assigned);
         } elseif ($accessoryCheckout->checkedOutToLocation()) {

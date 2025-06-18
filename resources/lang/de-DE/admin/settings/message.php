@@ -49,6 +49,11 @@ return [
         'error_redirect' => 'FEHLER: 301/302 :endpoint gibt eine Umleitung zurück. Aus Sicherheitsgründen folgen wir keinen Umleitungen. Bitte verwenden Sie den aktuellen Endpunkt.',
         'error_misc' => 'Etwas ist schiefgelaufen. :( ',
         'webhook_fail' => ' Webhook-Benachrichtigung fehlgeschlagen: Überprüfen Sie, ob die URL noch gültig ist.',
-        'webhook_channel_not_found' => ' Webhook-Channel nicht gefunden.'
-    ]
+        'webhook_channel_not_found' => ' Webhook-Channel nicht gefunden.',
+        'ms_teams_deprecation' => 'Die ausgewählte Microsoft Teams-Webhook-URL wird zum 31. Dezember 2025 eingestellt. Bitte verwenden Sie stattdessen eine Workflow-URL. Die Dokumentation von Microsoft zur Erstellung eines Workflows finden Sie <a href="https://support.microsoft.com/en-us/office/create-incoming-webhooks-with-workflows-for-microsoft-teams-8ae491c7-0394-4861-ba59-055e33f75498" target="_blank">hier.</a>',
+    ],
+    'location_scoping' => [
+        'not_saved' => 'Ihre Einstellungen wurden nicht gespeichert.',
+        'mismatch' => 'Es gibt 1 Element in der Datenbank, das Ihre Aufmerksamkeit benötigt, bevor Sie die Standortbereicherung aktivieren können. Es gibt :count Elemente in der Datenbank, die Ihre Aufmerksamkeit benötigen, bevor Sie die Standortbereicherung aktivieren können.',
+    ],
 ];

@@ -49,6 +49,11 @@ return [
         'error_redirect' => 'CHBA: 301/302 :endpoint vrátil presmerovanie. Z bezpečnostných dôvodov nenasledujeme presmerovania. Prosím použite správny koncový bod.',
         'error_misc' => 'Niečo sa pokazilo. :( ',
         'webhook_fail' => ' webhook notifikácia zlyhala: Overte správnosť zadanej URL adresy.',
-        'webhook_channel_not_found' => ' kanál webhooku nebol nájdený.'
-    ]
+        'webhook_channel_not_found' => ' kanál webhooku nebol nájdený.',
+        'ms_teams_deprecation' => 'The selected Microsoft Teams webhook URL will be deprecated Dec 31st, 2025. Please use a workflow URL. Microsoft\'s documentation on creating a workflow can be found <a href="https://support.microsoft.com/en-us/office/create-incoming-webhooks-with-workflows-for-microsoft-teams-8ae491c7-0394-4861-ba59-055e33f75498" target="_blank"> here.</a>',
+    ],
+    'location_scoping' => [
+        'not_saved' => 'Your settings were not saved.',
+        'mismatch' => 'There is 1 item in the database that need your attention before you can enable location scoping.|There are :count items in the database that need your attention before you can enable location scoping.',
+    ],
 ];

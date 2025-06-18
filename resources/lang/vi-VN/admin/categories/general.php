@@ -21,5 +21,9 @@ return array(
     'use_default_eula'					=> 'Sử dụng <a href="#" data-toggle="modal" data-target="#eulaModal">giá trị EULA mặc đinh</a> để thay vào.',
     'use_default_eula_disabled'			=> '<del>Sử dụng giá trị EULA mặc định để thay thế.</del> No primary default EULA is set. Please add one in Settings.',
     'use_default_eula_column'			=> 'Sử dụng EULA mặc định',
+    'import_require_acceptance'         => 'Require Acceptance',
+    'import_checkin_email'              => 'Send Checkin Email',
+    'import_eula_text'                  => 'EULA text',
+    'import_category_type'              => 'Category Type',
 
 );

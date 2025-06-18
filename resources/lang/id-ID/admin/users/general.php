@@ -53,4 +53,5 @@ return [
     'next_save_user' => 'Selanjutnya: Simpan Pengguna',
     'all_assigned_list_generation' => 'Dihasilkan pada:',
     'email_user_creds_on_create' => 'Kirim kredensial pengguna ini melalui email?',
+    'department_manager' => 'Department Manager',
 ];

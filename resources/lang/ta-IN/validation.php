@@ -31,6 +31,7 @@ return [
         'numeric' => 'The :attribute field must be between :min and :max.',
         'string' => 'The :attribute field must be between :min and :max characters.',
     ],
+    'valid_regex' => 'The regular expression is invalid.',
     'boolean' => 'கற்பனை புலம் உண்மையாகவோ தவறாகவோ இருக்க வேண்டும்.',
     'can' => 'The :attribute field contains an unauthorized value.',
     'confirmed' => 'The :attribute field confirmation does not match.',
@@ -172,6 +173,7 @@ return [
     'url' => 'The :attribute field must be a valid URL.',
     'ulid' => 'The :attribute field must be a valid ULID.',
     'uuid' => 'The :attribute field must be a valid UUID.',
+    'fmcs_location' => 'Full multiple company support and location scoping is enabled in the Admin Settings, and the selected location and selected company are not compatible.',
 
 
     /*
@@ -185,9 +187,13 @@ return [
     |
     */
 
+    'email_array'      => 'ஒன்று அல்லது அதற்கு மேற்பட்ட மின்னஞ்சல் முகவரிகள் தவறானவை.',
+    'checkboxes'           => ':attribute contains invalid options.',
+    'radio_buttons'        => ':attribute is invalid.',
+    
     'custom' => [
         'alpha_space' => 'பண்புக்கூறு துறையில் அனுமதிக்கப்படாத ஒரு பாத்திரம் உள்ளது.',
-        'email_array'      => 'ஒன்று அல்லது அதற்கு மேற்பட்ட மின்னஞ்சல் முகவரிகள் தவறானவை.',
+
         'hashed_pass'      => 'உங்கள் தற்போதைய கடவுச்சொல் தவறானது',
         'dumbpwd'          => 'அந்த கடவுச்சொல் மிகவும் பொதுவானது.',
         'statuslabel_type' => 'செல்லுபடியாகும் நிலை லேபிள் வகை தேர்ந்தெடுக்க வேண்டும்',
@@ -204,8 +210,6 @@ return [
         'expected_checkin.date_format'  =>  'The :attribute must be a valid date in YYYY-MM-DD format',
         'start_date.date_format'        =>  'The :attribute must be a valid date in YYYY-MM-DD format',
         'end_date.date_format'          =>  'The :attribute must be a valid date in YYYY-MM-DD format',
-        'checkboxes'           => ':attribute contains invalid options.',
-        'radio_buttons'        => ':attribute is invalid.',
         'invalid_value_in_field' => 'Invalid value included in this field',
 
         'ldap_username_field' => [

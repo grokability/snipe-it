@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Manage',
     'field'		                => 'Field',
     'about_fieldsets_title'		=> 'About Fieldsets',
-    'about_fieldsets_text'		=> 'Fieldsets allow you to create groups of custom fields that are frequently re-used for specific asset model types.',
+    'about_fieldsets_text'		=> 'Fieldsets allow you to create groups of custom fields that are frequently re-used used for specific asset model types.',
     'custom_format'             => 'Custom Regex format...',
     'encrypt_field'      	        => 'Encrypt the value of this field in the database',
     'encrypt_field_help'      => 'WARNING: Encrypting a field makes it unsearchable.',
@@ -59,5 +59,12 @@ return [
     'encrypted_options' => 'This field is encrypted, so some display options will not be available.',
     'display_checkin' => 'Display in checkin forms',
     'display_checkout' => 'Display in checkout forms',
-
+    'display_audit' => 'Display in audit forms',
+    'types' => [
+        'text' => 'Text Box',
+        'listbox' => 'List Box',
+        'textarea' => 'Textarea (multi-line)',
+        'checkbox' => 'Checkbox',
+        'radio' => 'Radio Buttons',
+    ],
 ];

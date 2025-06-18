@@ -70,27 +70,38 @@ class TZe_24mm_D extends TZe_24mm
         }
 
         foreach ($record->get('fields') as $field) {
-            // Write label and value on the same line
-            // Calculate label width with proportional character spacing
-            $labelWidth = $pdf->GetStringWidth($field['label'], 'freemono', '', self::LABEL_SIZE);
-            $charCount = strlen($field['label']);
-            $spacingPerChar = 0.5;
-            $totalSpacing = $charCount * $spacingPerChar;
-            $adjustedWidth = $labelWidth + $totalSpacing;
+            if (!empty($field['label']) && $field['label'] !== "\u{200B}") {
+                // Write label and value on the same line
+                // Calculate label width with proportional character spacing
+                $labelWidth = $pdf->GetStringWidth($field['label'], 'freemono', '', self::LABEL_SIZE);
+                $charCount = strlen($field['label']);
+                $spacingPerChar = 0.5;
+                $totalSpacing = $charCount * $spacingPerChar;
+                $adjustedWidth = $labelWidth + $totalSpacing;
 
-            static::writeText(
-                $pdf, $field['label'],
-                $currentX, $currentY,
-                'freemono', 'B', self::LABEL_SIZE, 'L',
-                $adjustedWidth, self::LABEL_SIZE, true, 0, $spacingPerChar
-            );
+                static::writeText(
+                    $pdf, $field['label'],
+                    $currentX, $currentY,
+                    'freemono', 'B', self::LABEL_SIZE, 'L',
+                    $adjustedWidth, self::LABEL_SIZE, true, 0, $spacingPerChar
+                );
 
-            static::writeText(
-                $pdf, $field['value'],
-                $currentX + $adjustedWidth + 2, $currentY,
-                'freemono', 'B', self::FIELD_SIZE, 'L',
-                $usableWidth - $adjustedWidth - 2, self::FIELD_SIZE, true, 0, 0.3
-            );
+                static::writeText(
+                    $pdf, $field['value'],
+                    $currentX + $adjustedWidth + 2, $currentY,
+                    'freemono', 'B', self::FIELD_SIZE, 'L',
+                    $usableWidth - $adjustedWidth - 2, self::FIELD_SIZE, true, 0, 0.3
+                );
+            } else {
+
+                // Label is empty, so write value only.
+                static::writeText(
+                    $pdf, $field['value'],
+                    $currentX, $currentY, // No offset
+                    'freemono', 'B', self::FIELD_SIZE, 'L',
+                    $usableWidth, self::FIELD_SIZE, true, 0, 0.3
+                );
+            }
 
             $currentY += max(self::LABEL_SIZE, self::FIELD_SIZE) + self::FIELD_MARGIN;
         }

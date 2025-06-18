@@ -191,7 +191,7 @@
 
 
 
-                                                                @if (($typeOfImport != 'location' && $typeOfImport!= 'assetModel') && ($typeOfImport!=''))
+                                                                @if (($typeOfImport != 'location' && $typeOfImport!= 'assetModel' && $typeOfImport!= 'component' && $typeOfImport!= 'supplier') && $typeOfImport!= 'manufacturer' && $typeOfImport!= 'category' && ($typeOfImport!=''))
                                                                 <label class="form-control">
                                                                     <input type="checkbox" name="send_welcome" data-livewire-component="{{ $this->getId() }}" wire:model.live="send_welcome">
                                                                     {{ trans('general.send_welcome_email_to_users') }}

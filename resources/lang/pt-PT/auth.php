@@ -15,6 +15,6 @@ return array(
 
     'failed' => 'As credenciais indicadas não coincidem com as registadas no sistema.',
     'password' => 'A palavra-passe está incorreta.',
-    'throttle' => 'Muitas tentativas falhadas de login. Por favor, tente novamente no(s) próximo(s) :minutes minuto(s).',
+    'throttle' => 'Too many login attempts. Please try again in :minutes minute(s).',
 
 );

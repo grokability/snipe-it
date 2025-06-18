@@ -20,26 +20,25 @@ class EditAssetMaintenanceTest extends TestCase
     public function testCanUpdateAssetMaintenance()
     {
         $actor = User::factory()->superuser()->create();
-
-        $assetMaintenance = AssetMaintenance::factory()->create();
-
         $asset = Asset::factory()->create();
+        $assetMaintenance = AssetMaintenance::factory()->create(['asset_id' => $asset]);
         $supplier = Supplier::factory()->create();
 
         $this->actingAs($actor)
             ->followingRedirects()
-            ->put(route('maintenances.update', $assetMaintenance->id), [
+            ->put(route('maintenances.update', $assetMaintenance), [
                 'title' => 'Test Maintenance',
                 'asset_id' => $asset->id,
                 'supplier_id' => $supplier->id,
                 'asset_maintenance_type' => 'Maintenance',
                 'start_date' => '2021-01-01',
                 'completion_date' => '2021-01-10',
-                'is_warranty' => '1',
-                'cost' => '100.00',
+                'is_warranty' => 1,
+                'cost' => '100.99',
                 'notes' => 'A note',
             ])
             ->assertOk();
+
 
         $this->assertDatabaseHas('asset_maintenances', [
             'asset_id' => $asset->id,
@@ -51,7 +50,7 @@ class EditAssetMaintenanceTest extends TestCase
             'completion_date' => '2021-01-10',
             'asset_maintenance_time' => '9',
             'notes' => 'A note',
-            'cost' => '100.00',
+            'cost' => '100.99',
         ]);
     }
 

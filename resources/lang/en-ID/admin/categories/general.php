@@ -21,5 +21,9 @@ return array(
     'use_default_eula'					=> 'Gunakan <a href="#" data-toggle="modal" data-target="#eulaModal"> standar primer EULA </a> gantinya.',
     'use_default_eula_disabled'			=> '<del> Gunakan EULA standar utama sebagai gantinya. </ del> Tidak ada standar utama EULA diatur. Silakan menambahkan satu di Settings.',
     'use_default_eula_column'			=> 'Gunakan kebijakan bawaan',
+    'import_require_acceptance'         => 'Require Acceptance',
+    'import_checkin_email'              => 'Send Checkin Email',
+    'import_eula_text'                  => 'EULA text',
+    'import_category_type'              => 'Category Type',
 
 );

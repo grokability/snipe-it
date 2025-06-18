@@ -22,7 +22,7 @@ return array(
     'managed_locations'     => 'Lokasi Terurus',
     'managed_users'         => 'Managed Users',
     'name' 					=> 'Nama',
-    'nogroup'               => 'No groups have been created yet. To add one, visit: ',
+    'nogroup'               => 'No groups have been created yet. To add one, visit:',
     'notes'                 => 'Nota',
     'password_confirm' 		=> 'Sahkan kata laluan',
     'password' 				=> 'Kata Laluan',

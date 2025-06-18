@@ -140,5 +140,11 @@ if ((env('APP_ENV')=='production') && (env('ROLLBAR_TOKEN'))) {
 
 }
 
+if (env('LOG_DEPRECATIONS')=='true') {
+    $config['channels']['deprecations'] = [
+        'driver' => 'single',
+        'path' => storage_path('logs/deprecations.log')
+    ];
+}
 
 return $config;

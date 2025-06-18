@@ -57,12 +57,20 @@ class LocationsTransformer
                 'ldap_ou' =>  ($location->ldap_ou) ? e($location->ldap_ou) : null,
                 'notes' => Helper::parseEscapedMarkedownInline($location->notes),
                 'created_at' => Helper::getFormattedDateObject($location->created_at, 'datetime'),
+                'created_by' => $location->adminuser ? [
+                    'id' => (int) $location->adminuser->id,
+                    'name'=> e($location->adminuser->present()->fullName),
+                ]: null,
                 'updated_at' => Helper::getFormattedDateObject($location->updated_at, 'datetime'),
                 'parent' => ($location->parent) ? [
                     'id' => (int) $location->parent->id,
                     'name'=> e($location->parent->name),
                 ] : null,
                 'manager' => ($location->manager) ? (new UsersTransformer)->transformUser($location->manager) : null,
+                'company' => ($location->company) ? [
+                    'id' => (int) $location->company->id,
+                    'name'=> e($location->company->name)
+                ] : null,
 
                 'children' => $children_arr,
             ];
@@ -101,11 +109,8 @@ class LocationsTransformer
             $array = [
                 'id' => $accessory_checkout->id,
                 'assigned_to' => $accessory_checkout->assigned_to,
-                'accessory' => [
-                    'id' => $accessory_checkout->accessory->id,
-                    'name' => $accessory_checkout->accessory->name,
-                ],
-                'image' => ($accessory_checkout->accessory->image) ? Storage::disk('public')->url('accessories/'.e($accessory_checkout->accessory->image)) : null,
+                'accessory' => $this->transformAccessory($accessory_checkout->accessory),
+                'image' => ($accessory_checkout?->accessory?->image) ? Storage::disk('public')->url('accessories/' . e($accessory_checkout->accessory->image)) : null,
                 'note' => $accessory_checkout->note ? e($accessory_checkout->note) : null,
                 'created_by' => $accessory_checkout->adminuser ? [
                     'id' => (int) $accessory_checkout->adminuser->id,
@@ -152,5 +157,17 @@ class LocationsTransformer
 
             return $array;
         }
+    }
+
+    private function transformAccessory(?Accessory $accessory): ?array
+    {
+        if ($accessory) {
+            return [
+                'id' => $accessory->id,
+                'name' => $accessory->name,
+            ];
+        }
+
+        return null;
     }
 }

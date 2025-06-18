@@ -15,6 +15,6 @@ return array(
 
     'failed' => 'Sisestatud mandaadid ei ühti meie andmetega.',
     'password' => 'Sisestatud parool on vale.',
-    'throttle' => 'Liiga palju ebaõnnestunud sisselogimiskatseid. Palun proovi uuesti :seconds sekundi pärast.',
+    'throttle' => 'Too many login attempts. Please try again in :minutes minute(s).',
 
 );

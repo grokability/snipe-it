@@ -1,8 +1,9 @@
 <?php
 
     return [
-        'asset_maintenance_type' => 'Asset Maintenance Type',
-        'title'                  => 'Title',
+        'select_type'            => 'Select Maintenance Type',
+        'asset_maintenance_type' => 'የንብረት ጥገና አይነት',
+        'title'                  => 'መጠርያ',
         'start_date'             => 'Start Date',
         'completion_date'        => 'Completion Date',
         'cost'                   => 'Cost',

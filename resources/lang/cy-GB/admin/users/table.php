@@ -22,7 +22,7 @@ return array(
     'managed_locations'     => 'Lleoliadau a Reolir',
     'managed_users'         => 'Managed Users',
     'name' 					=> 'Enw',
-    'nogroup'               => 'No groups have been created yet. To add one, visit: ',
+    'nogroup'               => 'No groups have been created yet. To add one, visit:',
     'notes'                 => 'Nodiadau',
     'password_confirm' 		=> 'Cadarnhau\'r Cyfrinair',
     'password' 				=> 'Cyfrinair',

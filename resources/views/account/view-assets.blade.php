@@ -25,6 +25,31 @@
   </div>
 @endif
 
+{{-- Manager View Dropdown --}}
+@if (isset($settings) && $settings->manager_view_enabled && isset($subordinates) && $subordinates->count() > 1)
+  <div class="row hidden-print" style="margin-bottom: 15px;">
+    <div class="col-md-12">
+      <form method="GET" action="{{ route('view-assets') }}" class="pull-right" role="form">
+        <div class="form-group" style="margin-bottom: 0;">
+          <label for="user_id" class="control-label" style="margin-right: 10px;">
+            {{ trans('general.view_user_assets') }}:
+          </label>
+          <select name="user_id" id="user_id" class="form-control select2" onchange="this.form.submit()" style="width: 250px; display: inline-block;">
+            @foreach ($subordinates as $subordinate)
+              <option value="{{ $subordinate->id }}" {{ (int)$selectedUserId === (int)$subordinate->id ? ' selected' : '' }}>
+                {{ $subordinate->present()->fullName() }}
+                @if ($subordinate->id == auth()->id())
+                  ({{ trans('general.me') }})
+                @endif
+              </option>
+            @endforeach
+          </select>
+        </div>
+      </form>
+    </div>
+  </div>
+@endif
+
   <div class="row">
     <div class="col-md-12">
       <div class="nav-tabs-custom">
@@ -32,20 +57,23 @@
 
           <li class="active">
             <a href="#details" data-toggle="tab">
-            <span class="hidden-lg hidden-md">
-            <i class="fas fa-info-circle fa-2x"></i>
-            </span>
-              <span class="hidden-xs hidden-sm">{{ trans('admin/users/general.info') }}</span>
+              <span class="hidden-lg hidden-md" aria-hidden="true">
+              <i class="fas fa-info-circle fa-2x"></i>
+              </span>
+              <span class="hidden-xs hidden-sm">
+                {{ trans('admin/users/general.info') }}
+              </span>
             </a>
           </li>
 
           <li>
-            <a href="#asset" data-toggle="tab">
-            <span class="hidden-lg hidden-md">
-            <x-icon type="assets" class="fa-2x" />
-            </span>
-              <span class="hidden-xs hidden-sm">{{ trans('general.assets') }}
-                {!! ($user->assets()->AssetsForShow()->count() > 0 ) ? '<badge class="badge badge-secondary">'.number_format($user->assets()->AssetsForShow()->count()).'</badge>' : '' !!}
+            <a href="#assets" data-toggle="tab">
+              <span class="hidden-lg hidden-md" aria-hidden="true">
+                <x-icon type="assets" class="fa-2x" />
+              </span>
+              <span class="hidden-xs hidden-sm">
+                {{ trans('general.assets') }}
+                {!! ($user->assets()->AssetsForShow()->count() > 0 ) ? '<span class="badge badge-secondary">'.number_format($user->assets()->AssetsForShow()->count()).'</span>' : '' !!}
             </span>
             </a>
           </li>
@@ -56,7 +84,7 @@
             <i class="far fa-save fa-2x"></i>
             </span>
               <span class="hidden-xs hidden-sm">{{ trans('general.licenses') }}
-                {!! ($user->licenses->count() > 0 ) ? '<badge class="badge badge-secondary">'.number_format($user->licenses->count()).'</badge>' : '' !!}
+                {!! ($user->licenses->count() > 0 ) ? '<span class="badge badge-secondary">'.number_format($user->licenses->count()).'</span>' : '' !!}
             </span>
             </a>
           </li>
@@ -67,18 +95,29 @@
             <x-icon type="accessories" class="fa-2x" />
             </span>
               <span class="hidden-xs hidden-sm">{{ trans('general.accessories') }}
-                {!! ($user->accessories->count() > 0 ) ? '<badge class="badge badge-secondary">'.number_format($user->accessories->count()).'</badge>' : '' !!}
+                {!! ($user->accessories->count() > 0 ) ? '<span class="badge badge-secondary">'.number_format($user->accessories->count()).'</span>' : '' !!}
             </span>
             </a>
           </li>
 
           <li>
             <a href="#consumables" data-toggle="tab">
-            <span class="hidden-lg hidden-md">
-                <i class="fas fa-tint fa-2x"></i>
-            </span>
+            <span class="hidden-lg hidden-md" aria-hidden="true">
+                <x-icon type="consumables" class="fa-2x" />
+              </span>
               <span class="hidden-xs hidden-sm">{{ trans('general.consumables') }}
-                {!! ($user->consumables->count() > 0 ) ? '<badge class="badge badge-secondary">'.number_format($user->consumables->count()).'</badge>' : '' !!}
+                {!! ($user->consumables->count() > 0 ) ? '<span class="badge badge-secondary">'.number_format($user->consumables->count()).'</span>' : '' !!}
+            </span>
+            </a>
+          </li>
+
+          <li>
+            <a href="#eulas" data-toggle="tab">
+            <span class="hidden-lg hidden-md" aria-hidden="true">
+                <x-icon type="files" class="fa-2x" />
+              </span>
+              <span class="hidden-xs hidden-sm">{{ trans('general.eula') }}
+                {!! ($user->eulas->count() > 0 ) ? '<span class="badge badge-secondary">'.number_format($user->eulas->count()).'</span>' : '' !!}
             </span>
             </a>
           </li>
@@ -93,13 +132,8 @@
               <!-- Start button column -->
               <div class="col-md-3 col-xs-12 col-sm-push-9">
 
-
-
                 <div class="col-md-12 text-center">
-
-                </div>
-                <div class="col-md-12 text-center">
-                  <img src="{{ $user->present()->gravatar() }}"  class=" img-thumbnail hidden-print" style="margin-bottom: 20px;" alt="{{ $user->present()->fullName() }}">
+                  <img src="{{ $user->present()->gravatar() }}"  class=" img-thumbnail hidden-print" style="margin-bottom: 20px;" alt="{{ $user->present()->fullName() }}" alt="User avatar">
                 </div>
                 @can('self.profile')
                   <div class="col-md-12">
@@ -376,35 +410,34 @@
             </div> <!--/.row-->
           </div><!-- /.tab-pane -->
 
-          <div class="tab-pane" id="asset">
+          <div class="tab-pane" id="assets">
             <!-- checked out assets table -->
 
-
-            <div class="table table-responsive">
-              @if ($user->id)
-                <div class="box-header with-border">
-                </div><!-- /.box-header -->
-              @endif
-                <!-- checked out assets table -->
-                <div class="table-responsive">
-
-                  <table
-                          data-cookie="true"
-                          data-cookie-id-table="userAssets"
-                          data-pagination="true"
-                          data-id-table="userAssets"
-                          data-search="true"
-                          data-side-pagination="client"
-                          data-show-columns="true"
-                          data-show-export="true"
-                          data-show-footer="true"
-                          data-sort-order="asc"
-                          id="userAssets"
-                          class="table table-striped snipe-table"
-                          data-export-options='{
+            <table
+                  data-cookie-id-table="userAssignedAssets"
+                  data-toolbar="#userAssetToolbar"
+                  data-pagination="true"
+                  data-id-table="userAssets"
+                  data-search="true"
+                  data-search-highlight="true"
+                  data-show-print="true"
+                  data-side-pagination="client"
+                  data-show-columns="true"
+                  data-show-export="true"
+                  data-show-footer="true"
+                  data-sort-order="asc"
+                  id="userAssets"
+                  class="table table-striped snipe-table"
+                  data-show-fullscreen="true"
+                  data-export-options='{
                   "fileName": "my-assets-{{ date('Y-m-d') }}",
                   "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
                   }'>
+
+                    <caption id="userAssetToolbar" class="tableCaption">
+                      {{ trans('general.assets') }}
+                    </caption>
+
                     <thead>
                     <tr>
                       <th class="col-md-1">
@@ -468,9 +501,9 @@
                         <td>{{ $counter }}</td>
                         <td>
                           @if (($asset->image) && ($asset->image!=''))
-                            <img src="{{ Storage::disk('public')->url(app('assets_upload_path').e($asset->image)) }}" style="max-height: 30px; width: auto" class="img-responsive">
+                            <img src="{{ Storage::disk('public')->url(app('assets_upload_path').e($asset->image)) }}" style="max-height: 30px; width: auto" class="img-responsive" alt="">
                           @elseif (($asset->model) && ($asset->model->image!=''))
-                            <img src="{{ Storage::disk('public')->url(app('models_upload_path').e($asset->model->image)) }}" style="max-height: 30px; width: auto" class="img-responsive">
+                            <img src="{{ Storage::disk('public')->url(app('models_upload_path').e($asset->model->image)) }}" style="max-height: 30px; width: auto" class="img-responsive" alt="">
                           @endif
                         </td>
                         <td>
@@ -530,45 +563,54 @@
                     @endforeach
                     </tbody>
                   </table>
-                </div>
-                </div> <!-- .table-responsive-->
           </div><!-- /asset -->
           <div class="tab-pane" id="licenses">
 
-            <div class="table-responsive">
               <table
+                      data-toolbar="#userLicensesToolbar"
                       data-cookie-id-table="userLicenses"
                       data-pagination="true"
                       data-id-table="userLicenses"
                       data-search="true"
+                      data-search-highlight="true"
+                      data-show-print="true"
                       data-side-pagination="client"
                       data-show-columns="true"
                       data-show-export="true"
                       data-show-refresh="false"
                       data-sort-order="asc"
                       id="userLicenses"
+                      data-show-fullscreen="true"
                       class="table table-striped snipe-table"
                       data-export-options='{
                     "fileName": "my-licenses-{{ date('Y-m-d') }}",
                     "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
                     }'>
+
+                <caption id="userLicensesToolbar" class="tableCaption">
+                  {{ trans('general.licenses') }}
+                </caption>
+
                 <thead>
                 <tr>
-                  <th>{{ trans('general.name') }}</th>
-                  <th>{{ trans('admin/licenses/form.license_key') }}</th>
-                  <th>{{ trans('admin/licenses/form.to_name') }}</th>
-                  <th>{{ trans('admin/licenses/form.to_email') }}</th>
-                  <th>{{ trans('general.category') }}</th>
+                  <th class="col-md-2">{{ trans('general.name') }}</th>
+                  <th class="col-md-4">{{ trans('admin/licenses/form.license_key') }}</th>
+                  <th class="col-md-2">{{ trans('admin/licenses/form.to_name') }}</th>
+                  <th class="col-md-2">{{ trans('admin/licenses/form.to_email') }}</th>
+                  <th class="col-md-2">{{ trans('general.category') }}</th>
 
                 </tr>
                 </thead>
                 <tbody>
                 @foreach ($user->licenses as $license)
                   <tr>
-                    <td>{{ $license->name }}</td>
+                    <td>
+                      {{ $license->name }}
+                    </td>
                     <td>
                       @can('viewKeys', $license)
-                        {{ $license->serial }}
+                        <code class="single-line"><span class="js-copy-link" data-clipboard-target=".js-copy-key-{{ $license->id }}" aria-hidden="true" data-tooltip="true" data-placement="top" title="{{ trans('general.copy_to_clipboard') }}"><span class="js-copy-key-{{ $license->id }}">{{ $license->serial }}</span></span></code>
+
                       @else
                         ------------
                       @endcan
@@ -590,16 +632,17 @@
                 @endforeach
                 </tbody>
               </table>
-            </div> <!-- .table-responsive-->
           </div>
 
           <div class="tab-pane" id="accessories">
-            <div class="table-responsive">
               <table
+                      data-toolbar="#userAccessoryToolbar"
                       data-cookie-id-table="userAccessoryTable"
                       data-id-table="userAccessoryTable"
                       id="userAccessoryTable"
                       data-search="true"
+                      data-search-highlight="true"
+                      data-show-print="true"
                       data-pagination="true"
                       data-side-pagination="client"
                       data-show-columns="true"
@@ -614,6 +657,12 @@
                     "fileName": "export-accessory-{{ str_slug($user->username) }}-{{ date('Y-m-d') }}",
                     "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","delete","download","icon"]
                     }'>
+
+                <caption id="userAccessoryToolbar" class="tableCaption">
+                  {{ trans('general.accessories') }}
+                </caption>
+
+
                 <thead>
                 <tr>
                   <th class="col-md-5">{{ trans('general.name') }}</th>
@@ -641,16 +690,17 @@
                 @endforeach
                 </tbody>
               </table>
-            </div>
           </div><!-- /accessories-tab -->
 
           <div class="tab-pane" id="consumables">
-            <div class="table-responsive">
               <table
+                      data-toolbar="#userConsumableToolbar"
                       data-cookie-id-table="userConsumableTable"
                       data-id-table="userConsumableTable"
                       id="userConsumableTable"
                       data-search="true"
+                      data-search-highlight="true"
+                      data-show-print="true"
                       data-pagination="true"
                       data-side-pagination="client"
                       data-show-columns="true"
@@ -665,6 +715,11 @@
                     "fileName": "export-consumable-{{ str_slug($user->username) }}-{{ date('Y-m-d') }}",
                     "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","delete","download","icon"]
                     }'>
+
+                <caption id="userConsumableToolbar" class="tableCaption">
+                  {{ trans('general.consumables') }}
+                </caption>
+
                 <thead>
                 <tr>
                   <th class="col-md-3">{{ trans('general.name') }}</th>
@@ -690,9 +745,46 @@
                 @endforeach
                 </tbody>
               </table>
-            </div>
           </div><!-- /consumables-tab -->
+          <div class="tab-pane" id="eulas">
+            <table
+                    data-toolbar="#userEULAToolbar"
+                    data-cookie-id-table="userEULATable"
+                    data-id-table="userEULATable"
+                    id="userEULATable"
+                    data-search="true"
+                    data-pagination="true"
+                    data-side-pagination="client"
+                    data-show-columns="true"
+                    data-show-fullscreen="true"
+                    data-show-export="true"
+                    data-show-footer="true"
+                    data-show-refresh="false"
+                    data-sort-order="asc"
+                    data-sort-name="name"
+                    class="table table-striped snipe-table table-hover"
+                    data-url="{{route('api.user.eulas', $user->id)}}"
+                    data-export-options='{
+                    "fileName": "export-eula-{{ str_slug($user->username) }}-{{ date('Y-m-d') }}",
+                    "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","delete","purchasecost", "icon"]
+                    }'>
 
+              <caption id="userEulaToolbar" class="tableCaption">
+                {{ trans('general.eula_long') }}
+              </caption>
+
+              <thead>
+              <tr>
+                <th data-visible="true" data-field="icon" style="width: 40px;" class="hidden-xs" data-formatter="iconFormatter">{{ trans('admin/hardware/table.icon') }}</th>
+                <th data-visible="true" data-field="item.name">{{ trans('general.item') }}</th>
+                <th data-visible="true" data-field="created_at" data-sortable="true" data-formatter="dateDisplayFormatter">{{ trans('general.accepted_date') }}</th>
+                <th data-field="note">{{ trans('general.notes') }}</th>
+                <th data-field="signature_file" data-visible="false"  data-formatter="imageFormatter">{{ trans('general.signature') }}</th>
+                <th data-field="file" data-formatter="fileUploadFormatter">{{ trans('general.download') }}</th>
+              </tr>
+              </thead>
+            </table>
+          </div><!-- /eulas-tab -->
         </div><!-- /.tab-content -->
       </div><!-- nav-tabs-custom -->
     </div>

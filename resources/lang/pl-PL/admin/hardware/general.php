@@ -9,6 +9,7 @@ return [
     'bulk_checkin'              => 'Bulk Checkin',
     'checkin'  					=> 'Potwierdzanie zasobu/aktywa',
     'checkout'  				=> 'Przypisz zasób',
+    'clear'                     => 'Clear',
     'clone'  					=> 'Klonuj zasób',
     'deployable'  				=> 'Gotowe do wdrożenia',
     'deleted'  					=> 'Ten zasób został usunięty.',
@@ -27,8 +28,7 @@ return [
     'undeployable_tooltip'  	=> 'Ten zasób ma etykietę statusu, która nie może być uruchomiona i nie może zostać zablokowana w tym czasie.',
     'view'  					=> 'Wyświetl nabytki',
     'csv_error' => 'Wystąpił błąd w twoim pliku CSV:',
-    'import_text' => '<p>Prześlij plik CSV zawierający historię zasobów. Aktywa i użytkownicy MUSI już istnieć w systemie lub zostaną pominięci. Dopasowywanie zasobów do importu historii odbywa się z tagiem aktywów. Będziemy próbowali znaleźć pasującego użytkownika na podstawie podanej nazwy użytkownika i kryteriów, które wybrałeś poniżej. Jeśli nie wybierzesz kryteriów poniżej, spróbuje po prostu dopasować format nazwy użytkownika, który skonfigurowałeś w <code>Admin &gt; Ustawienia ogólne</code>.</p><p>Pola zawarte w CSV muszą odpowiadać nagłówkom: <strong>Tag, Nazwa, Data Zamówienia, Data Zamówienia,</strong>. Wszelkie dodatkowe pola zostaną zignorowane. </p><p>Data sprawdzenia: puste lub przyszłe daty zaznaczenia będą zamawiać elementy do powiązanego użytkownika. Wyłączenie kolumny Data wyboru utworzy datę wyboru z dzisiejszą datą.</p>
-    ',
+    'import_text' => '<p>Upload a CSV that contains asset history. The assets and users MUST already exist in the system, or they will be skipped. Matching assets for history import happens against the asset tag. We will try to find a matching user based on the user\'s name you provide, and the criteria you select below. If you do not select any criteria below, it will simply try to match on the username format you configured in the <code>Admin &gt; General Settings</code>.</p><p>Fields included in the CSV must match the headers: <strong>Asset Tag, Name, Checkout Date, Checkin Date</strong>. Any additional fields will be ignored. </p><p>Checkin Date: blank or future checkin dates will checkout items to associated user.  Excluding the Checkin Date column will create a checkin date with todays date.</p>    ',
     'csv_import_match_f-l' => 'Spróbuj dopasować użytkowników o formacie <strong>imie.Nazwisko</strong> (<code>jane.smith</code>)',
     'csv_import_match_initial_last' => 'Spróbuj dopasować użytkowników według formatu <strong>pierwsze imię</strong> (<code>jsmith</code>)',
     'csv_import_match_first' => 'Spróbuj dopasować użytkowników o formacie <strong>imienia</strong> (<code>jane</code>)',

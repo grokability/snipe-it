@@ -100,6 +100,14 @@ class Category extends SnipeModel
     public function isDeletable()
     {
 
+        // We have to check for models as well if the category type is asset
+        if ($this->category_type == 'asset') {
+            return Gate::allows('delete', $this)
+                && ($this->itemCount() == 0)
+                && ($this->models_count == 0)
+                && ($this->deleted_at == '');
+        }
+
         return Gate::allows('delete', $this)
                 && ($this->itemCount() == 0)
                 && ($this->deleted_at == '');

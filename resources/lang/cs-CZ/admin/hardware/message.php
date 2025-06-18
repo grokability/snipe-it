@@ -2,23 +2,28 @@
 
 return [
 
-    'undeployable' 		 => '<strong>Warning: </strong> This asset has been marked as currently undeployable. If this status has changed, please update the asset status.',
+    'undeployable' 		 => 'The following assets cannot be deployed and have been removed from checkout: :asset_tags',
     'does_not_exist' 	 => 'Majetek nenalezen.',
-    'does_not_exist_var' => 'Asset with tag :asset_tag not found.',
-    'no_tag' 	         => 'No asset tag provided.',
+    'does_not_exist_var' => 'Majetek se štítkem :asset_tag nebyl nalezen.',
+    'no_tag' 	         => 'Nebyl zadán žádný štítek',
     'does_not_exist_or_not_requestable' => 'Tento majetek neexistuje nebo jej nelze vyskladnit.',
     'assoc_users'	 	 => 'Majetek je předán svému uživateli a nelze jej odstranit. Před odstraněním jej nejprve převezměte. ',
-    'warning_audit_date_mismatch' 	=> 'This asset\'s next audit date (:next_audit_date) is before the last audit date (:last_audit_date). Please update the next audit date.',
-    'labels_generated'   => 'Labels were successfully generated.',
-    'error_generating_labels' => 'Error while generating labels.',
-    'no_assets_selected' => 'No assets selected.',
+    'warning_audit_date_mismatch' 	=> 'Příští datum auditu tohoto majetku (:next_audit_date) je před posledním datem auditu (:last_audit_date). Aktualizujte prosím následující datum auditu.',
+    'labels_generated'   => 'Popisky byly úspěšně vygenerovány.',
+    'error_generating_labels' => 'Chyba při generování popisků.',
+    'no_assets_selected' => 'Žadná zařízení vybrána.',
 
     'create' => [
         'error'   		=> 'Majetek se nepodařilo vytvořit, zkuste to prosím znovu.',
         'success' 		=> 'Majetek byl v pořádku vytvořen.',
-        'success_linked' => 'Asset with tag :tag was created successfully. <strong><a href=":link" style="color: white;">Click here to view</a></strong>.',
+        'success_linked' => 'Zařízení se štítkem :tag byl úspěšně vytvořen. <strong><a href=":link" style="color: white;">Klidni zde pro zobrazení</a></strong>.',
         'multi_success_linked' => 'Asset with tag :links was created successfully.|:count assets were created succesfully. :links.',
         'partial_failure' => 'An asset was unable to be created. Reason: :failures|:count assets were unable to be created. Reasons: :failures',
+        'target_not_found' => [
+            'user' => 'The assigned user could not be found.',
+            'asset' => 'The assigned asset could not be found.',
+            'location' => 'The assigned location could not be found.',
+        ],
     ],
 
     'update' => [
@@ -66,6 +71,7 @@ return [
         'file_already_deleted' => 'The file selected was already deleted',
         'header_row_has_malformed_characters' => 'Jeden nebo více sloupců obsahuje v záhlaví poškozené UTF-8 znaky',
         'content_row_has_malformed_characters' => 'Jedna nebo více hodnot v prvním řádku obsahu obsahuje poškozené UTF-8 znaky',
+        'transliterate_failure' => 'Transliteration from :encoding to UTF-8 failed due to invalid characters in input'
     ],
 
 
@@ -99,9 +105,10 @@ return [
     ],
 
     'requests' => [
-        'error'   		=> 'Majetek nebyl vyžádán, zkuste to prosím znovu',
-        'success' 		=> 'Vyžádání majetku proběhlo v pořádku.',
-        'canceled'      => 'Požadavek na výdej byl úspěšně zrušen',
+        'error'   		=> 'Request was not successful, please try again.',
+        'success' 		=> 'Request successfully submitted.',
+        'canceled'      => 'Request successfully canceled.',
+        'cancel'        => 'Zrušit tuto žádost o položku',
     ],
 
 ];

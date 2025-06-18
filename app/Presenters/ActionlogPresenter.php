@@ -102,6 +102,10 @@ class ActionlogPresenter extends Presenter
             return 'fas fa-sticky-note';
         }
 
+        if ($this->action_type == 'audit') {
+            return 'fas fa-clipboard-check';
+        }
+
         return 'fa-solid fa-rotate-right';
 
     }

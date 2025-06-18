@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Управление',
     'field'		                => 'Поле',
     'about_fieldsets_title'		=> 'Относно Fieldsets',
-    'about_fieldsets_text'		=> '"Група от полета" позволяват създаването на групи от персонализирани полета, които се използват и преизползват често за специфични типове модели на активи.',
+    'about_fieldsets_text'		=> 'Fieldsets позволяват създаването на групи от персонализирани полета, които се използват и преизползват често за специфични типове модели на активи.',
     'custom_format'             => 'Персонализиран формат...',
     'encrypt_field'      	        => 'Шифроване на стойността на това поле в базата данни',
     'encrypt_field_help'      => 'ВНИМАНИЕ: Шифроване на поле го прави невалидно за търсене.',
@@ -57,7 +57,14 @@ return [
     'show_in_requestable_list_short' => 'Покажи в списъка на изискуемите артикули',
     'show_in_requestable_list' => 'Покажи стойноста в списъка на изискуемите артикули. Криптираните полета няма да се покажат',
     'encrypted_options' => 'Това поле е криптирано, затова някой настройки няма да бъдат налични.',
-    'display_checkin' => 'Display in checkin forms',
-    'display_checkout' => 'Display in checkout forms',
-
+    'display_checkin' => 'Покажи в форма за вписване',
+    'display_checkout' => 'Покажи в форма за изписване',
+    'display_audit' => 'Покажи в форма за одит',
+    'types' => [
+        'text' => 'Text Box',
+        'listbox' => 'List Box',
+        'textarea' => 'Textarea (multi-line)',
+        'checkbox' => 'Checkbox',
+        'radio' => 'Radio Buttons',
+    ],
 ];

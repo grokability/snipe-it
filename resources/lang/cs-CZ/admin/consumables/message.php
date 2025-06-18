@@ -2,7 +2,7 @@
 
 return array(
 
-    'invalid_category_type' => 'The category must be a consumable category.',
+    'invalid_category_type' => 'Kategorie musí být typu spotřební materiál.',
     'does_not_exist' => 'Spotřební materiál nebyl nalezen.',
 
     'create' => array(

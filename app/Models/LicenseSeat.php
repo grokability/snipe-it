@@ -30,6 +30,7 @@ class LicenseSeat extends SnipeModel implements ICompanyableChild
     protected $fillable = [
         'assigned_to',
         'asset_id',
+        'notes',
     ];
 
     use Acceptable;

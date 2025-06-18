@@ -47,7 +47,7 @@ class OauthClients extends Component
     {
         // test for safety
         // ->delete must be of type Client - thus the model binding
-        if ($clientId->created_by == auth()->id()) {
+        if ($clientId->user_id == auth()->id()) {
             app(ClientRepository::class)->delete($clientId);
         } else {
             Log::warning('User ' . auth()->id() . ' attempted to delete client ' . $clientId->id . ' which belongs to user ' . $clientId->created_by);

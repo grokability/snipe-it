@@ -21,5 +21,9 @@ return array(
     'use_default_eula'					=> 'Usa <a href="#" data-toggle="modal" data-target="#eulaModal">l\'EULA predefinita</a> invece.',
     'use_default_eula_disabled'			=> '<del>Usa l\'EULA predefinita.</del> Nessuna EULA predefinita in uso. Per favore aggiungine una nelle Impostazioni.',
     'use_default_eula_column'			=> 'Usa l\'EULA predefinita',
+    'import_require_acceptance'         => 'Richiedere Accettazione',
+    'import_checkin_email'              => 'Invia email di check-in',
+    'import_eula_text'                  => 'Testo dell\'EULA',
+    'import_category_type'              => 'Tipo di categoria',
 
 );

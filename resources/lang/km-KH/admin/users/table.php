@@ -22,7 +22,7 @@ return array(
     'managed_locations'     => 'ទីតាំងគ្រប់គ្រង',
     'managed_users'         => 'អ្នកប្រើប្រាស់ដែលបានគ្រប់គ្រង',
     'name' 					=> 'ឈ្មោះ',
-    'nogroup'               => 'មិន​ទាន់​មាន​ក្រុម​ត្រូវ​បាន​បង្កើត​នៅ​ឡើយ​ទេ។ ដើម្បីបន្ថែមមួយ សូមចូលទៅកាន់៖ ',
+    'nogroup'               => 'No groups have been created yet. To add one, visit:',
     'notes'                 => 'កំណត់ចំណាំ',
     'password_confirm' 		=> 'បញ្ជាក់ពាក្យសម្ងាត់',
     'password' 				=> 'ពាក្យសម្ងាត់',

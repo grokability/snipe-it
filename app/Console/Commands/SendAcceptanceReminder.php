@@ -99,8 +99,11 @@ class SendAcceptanceReminder extends Command
         foreach ($no_email_list as $user) {
             $rows[] = [$user['id'], $user['name']];
         }
-        $this->info("The following users do not have an email address:");
-        $this->table($headers, $rows);
+
+        if (!empty($rows)) {
+            $this->info("The following users do not have an email address:");
+            $this->table($headers, $rows);
+        }
 
         return 0;
     }

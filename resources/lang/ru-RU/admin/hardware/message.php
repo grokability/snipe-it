@@ -2,23 +2,28 @@
 
 return [
 
-    'undeployable' 		 => '<strong>Внимание: </strong> Этот актив в настоящее время помечен как не подлежащий установке. Если этот статус изменился, пожалуйста обновите статус актива.',
+    'undeployable' 		 => 'The following assets cannot be deployed and have been removed from checkout: :asset_tags',
     'does_not_exist' 	 => 'Актив не существует.',
     'does_not_exist_var' => 'Актив с тегом :asset_tag не найден.',
     'no_tag' 	         => 'Тег актива не предоставлен.',
     'does_not_exist_or_not_requestable' => 'Этот актив не существует или не подлежит запросу.',
     'assoc_users'	 	 => 'Этот актив в настоящее время привязан к пользователю и не может быть удален. Пожалуйста сначала снимите привязку, и затем попробуйте удалить снова. ',
     'warning_audit_date_mismatch' 	=> 'Дата следующего аудита этого актива (:next_audit_date) не может быть раньше последней даты аудита (:last_audit_date). Пожалуйста, обновите следующую дату аудита.',
-    'labels_generated'   => 'Labels were successfully generated.',
-    'error_generating_labels' => 'Error while generating labels.',
-    'no_assets_selected' => 'No assets selected.',
+    'labels_generated'   => 'Этикетки успешно сгенерированы.',
+    'error_generating_labels' => 'Ошибка при создании этикеток.',
+    'no_assets_selected' => 'Активы не выбраны.',
 
     'create' => [
         'error'   		=> 'Актив не был создан, пожалуйста попробуйте снова. :(',
         'success' 		=> 'Актив успешно создан. :)',
         'success_linked' => 'Актив с тегом :tag успешно создан. <strong><a href=":link" style="color: white;">Нажмите для просмотра</a></strong>.',
-        'multi_success_linked' => 'Asset with tag :links was created successfully.|:count assets were created succesfully. :links.',
-        'partial_failure' => 'An asset was unable to be created. Reason: :failures|:count assets were unable to be created. Reasons: :failures',
+        'multi_success_linked' => 'Актив с номером :links успешно создан.|:count активов успешно созданы. :links.',
+        'partial_failure' => 'Актив не может быть создан. Причина: :failures|:count активов не могут быть созданы. Причины: :failures',
+        'target_not_found' => [
+            'user' => 'The assigned user could not be found.',
+            'asset' => 'The assigned asset could not be found.',
+            'location' => 'The assigned location could not be found.',
+        ],
     ],
 
     'update' => [
@@ -66,13 +71,14 @@ return [
         'file_already_deleted' => 'Выбранный файл уже удален',
         'header_row_has_malformed_characters' => 'Один или несколько атрибутов в строке заголовка содержат неправильно сформированные символы UTF-8',
         'content_row_has_malformed_characters' => 'Один или несколько атрибутов в первой строке содержимого содержат неправильно сформированные символы UTF-8',
+        'transliterate_failure' => 'Транслитерация из :encoding в UTF-8 не удалась из-за недопустимых символов во входных данных'
     ],
 
 
     'delete' => [
         'confirm'   	=> 'Вы уверены что хотите удалить этот актив?',
         'error'   		=> 'При удалении актива возникла проблема. Пожалуйста попробуйте снова.',
-        'assigned_to_error' => '{1}Asset Tag: :asset_tag is currently checked out. Check in this device before deletion.|[2,*]Asset Tags: :asset_tag are currently checked out. Check in these devices before deletion.',
+        'assigned_to_error' => '{1}Инвентарный номер: :asset_tag выдан в данный момент. Верните это устройство перед удалением. [2,*]Инвентарные номера: :asset_tag выданы в данный момент. Верните эти устройства перед удалением.',
         'nothing_updated'   => 'Ни один из активов не выбран, поэтому ничего не удалено.',
         'success' 		=> 'Актив был успешно удален.',
     ],
@@ -86,8 +92,8 @@ return [
     ],
 
     'multi-checkout' => [
-        'error'   => 'Asset was not checked out, please try again|Assets were not checked out, please try again',
-        'success' => 'Asset checked out successfully.|Assets checked out successfully.',
+        'error'   => 'Актив не был выдан, пожалуйста попробуйте снова|Активы не были выданы, пожалуйста попробуйте снова',
+        'success' => 'Актив успешно выдан.|Активы успешно выданы.',
     ],
 
     'checkin' => [
@@ -99,9 +105,10 @@ return [
     ],
 
     'requests' => [
-        'error'   		=> 'Актив не был запрошен, попробуйте ещё раз',
-        'success' 		=> 'Актив запрошен успешно.',
-        'canceled'      => 'Запрос актива успешно отменен',
+        'error'   		=> 'Request was not successful, please try again.',
+        'success' 		=> 'Request successfully submitted.',
+        'canceled'      => 'Request successfully canceled.',
+        'cancel'        => 'Отменить запрос предмета',
     ],
 
 ];

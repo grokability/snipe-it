@@ -38,6 +38,7 @@ class LabelsController extends Controller
         $exampleAsset->order_number = '12345';
         $exampleAsset->purchase_date = '2023-01-01';
         $exampleAsset->status_id = 1;
+        $exampleAsset->location_id = 1;
 
         $exampleAsset->company = new Company([
             'name' => trans('admin/labels/table.example_company'),

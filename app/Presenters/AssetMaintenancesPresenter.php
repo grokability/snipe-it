@@ -150,6 +150,7 @@ class AssetMaintenancesPresenter extends Presenter
                 'title' => trans('table.actions'),
                 'visible' => true,
                 'formatter' => 'maintenancesActionsFormatter',
+                'printIgnore' => true,
             ],
         ];
 

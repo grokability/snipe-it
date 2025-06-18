@@ -21,5 +21,9 @@ return array(
     'use_default_eula'					=> 'Наместо ова, користете <a href="#" data-toggle="modal" data-target="#eulaModal">стандардни Услови за користење</a>.',
     'use_default_eula_disabled'			=> '<del>Наместо ова, користете стандардни Услови за користење.</del> Не се внесени стандардни Услови за користење. Ве молиме внесете ги во Поставки.',
     'use_default_eula_column'			=> 'Користи основна EULA',
+    'import_require_acceptance'         => 'Require Acceptance',
+    'import_checkin_email'              => 'Send Checkin Email',
+    'import_eula_text'                  => 'EULA text',
+    'import_category_type'              => 'Category Type',
 
 );

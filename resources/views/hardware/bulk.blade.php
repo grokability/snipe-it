@@ -266,3 +266,16 @@
   </div> <!--/.col-md-8-->
 </div>
 @stop
+@section('moar_scripts')
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('.clear-radio').forEach(function (button) {
+        button.addEventListener('click', function () {
+          const name = this.dataset.targetName;
+          const radios = document.querySelectorAll('input[type="radio"][name="' + name + '"]');
+          radios.forEach(radio => radio.checked = false);
+        });
+      });
+    });
+  </script>
+@endsection

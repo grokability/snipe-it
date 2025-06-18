@@ -208,9 +208,12 @@ class AcceptanceController extends Controller
              */
             $branding_settings = SettingsController::getPDFBranding();
 
-            if (is_null($branding_settings->logo)){
-                $path_logo = "";
-            } else {
+            $path_logo = "";
+
+            // Check for the PDF logo path and use that, otherwise use the regular logo path
+            if (!is_null($branding_settings->acceptance_pdf_logo)) {
+                $path_logo = public_path() . '/uploads/' . $branding_settings->acceptance_pdf_logo;
+            } elseif (!is_null($branding_settings->logo)) {
                 $path_logo = public_path() . '/uploads/' . $branding_settings->logo;
             }
             

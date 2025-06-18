@@ -21,5 +21,9 @@ return array(
     'use_default_eula'					=> 'Tā vietā izmantojiet <a href="#" data-toggle="modal" data-target="#eulaModal">pirmo noklusējuma EULA</a>.',
     'use_default_eula_disabled'			=> '<del>Izmantojiet galveno noklusējuma EULA</del>. Netiek iestatīta galvenā noklusējuma EULA. Lūdzu, pievienojiet vienu pakalpojumā Iestatījumi.',
     'use_default_eula_column'			=> 'Lietot noklusēto EULA',
+    'import_require_acceptance'         => 'Require Acceptance',
+    'import_checkin_email'              => 'Send Checkin Email',
+    'import_eula_text'                  => 'EULA text',
+    'import_category_type'              => 'Category Type',
 
 );

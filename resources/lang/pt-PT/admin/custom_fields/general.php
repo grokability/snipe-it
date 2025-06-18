@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Gerir',
     'field'		                => 'Campo',
     'about_fieldsets_title'		=> 'Sobre conjuntos de campos',
-    'about_fieldsets_text'		=> 'Conjuntos de campos permitem criar grupos de campos personalizados que são frequentemente reutilizados para modelos de artigos específicos.',
+    'about_fieldsets_text'		=> 'Conjuntos de campos permitem criar grupos de campos personalizados que são frequentemente reutilizados para modelos de artigos especificos.',
     'custom_format'             => 'Formato Regex personalizado...',
     'encrypt_field'      	        => 'Encriptar valor deste campo na base de dados',
     'encrypt_field_help'      => 'AVISO: Criptografar um campo torna-o não pesquisável.',
@@ -60,5 +60,12 @@ return [
     'encrypted_options' => 'Este campo está criptografado, então algumas opções de exibição não estarão disponíveis.',
     'display_checkin' => 'Display in checkin forms',
     'display_checkout' => 'Display in checkout forms',
-
+    'display_audit' => 'Display in audit forms',
+    'types' => [
+        'text' => 'Text Box',
+        'listbox' => 'List Box',
+        'textarea' => 'Textarea (multi-line)',
+        'checkbox' => 'Checkbox',
+        'radio' => 'Radio Buttons',
+    ],
 ];

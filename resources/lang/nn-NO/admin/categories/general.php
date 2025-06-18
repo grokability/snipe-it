@@ -21,5 +21,9 @@ return array(
     'use_default_eula'					=> 'Bruk <a href="#" data-toggle="modal" data-target="#eulaModal">standard EULA</a> i stedet.',
     'use_default_eula_disabled'			=> '<del>Bruk standard EULA i stedet.</del> Ingen standard EULA er satt. Legg til en i Innstillinger.',
     'use_default_eula_column'			=> 'Bruk standard EULA',
+    'import_require_acceptance'         => 'Require Acceptance',
+    'import_checkin_email'              => 'Send Checkin Email',
+    'import_eula_text'                  => 'EULA text',
+    'import_category_type'              => 'Category Type',
 
 );

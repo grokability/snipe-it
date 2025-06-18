@@ -15,6 +15,6 @@ return array(
 
     'failed' => 'Ovi kredencijali se ne poklapaju sa našim podacima.',
     'password' => 'Unešena lozinka nije ispravna.',
-    'throttle' => 'Previše pokušaja prijave. Molim vas pokušajte ponovo za :seconds sekundi.',
+    'throttle' => 'Previše pokušaja prijave. Pokušajte ponovo za :minutes minuta.',
 
 );

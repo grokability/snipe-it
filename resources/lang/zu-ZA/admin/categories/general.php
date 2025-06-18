@@ -21,5 +21,9 @@ return array(
     'use_default_eula'					=> 'Sebenzisa okungu-<a href="#" data-toggle="modal" data-target="#eulaModal">kuzenzakalela okuzenzakalelayo ku-EULA</a> kunalokho.',
     'use_default_eula_disabled'			=> '<del>Sebenzisa i-EULA eyinhloko yokuzenzakalela esikhundleni.</del> Ayikho i-EULA eyimilayezo eyisisekelo esethiwe. Sicela ungeze eyodwa kuzilungiselelo.',
     'use_default_eula_column'			=> 'Use default EULA',
+    'import_require_acceptance'         => 'Require Acceptance',
+    'import_checkin_email'              => 'Send Checkin Email',
+    'import_eula_text'                  => 'EULA text',
+    'import_category_type'              => 'Category Type',
 
 );

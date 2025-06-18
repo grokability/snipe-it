@@ -39,4 +39,5 @@ return [
     'signed_by_finance_auditor' => 'Pasirašė (Finansų auditorius):',
     'signed_by_location_manager' => 'Pasirašė (Vietos valdytojas):',
     'signed_by'                 => 'Patvirtino:',
+    'clone'  					=> 'Clone Location',
 ];

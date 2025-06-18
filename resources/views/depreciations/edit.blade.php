@@ -17,7 +17,7 @@
     </label>
     <div class="col-md-7 col-sm-12">
         <div class="col-md-7" style="padding-left:0px">
-            <input class="form-control" type="text" name="months" id="months" value="{{ old('months', $item->months) }}" style="width: 80px;"{!!  (\App\Helpers\Helper::checkIfRequired($item, 'months')) ? ' required' : '' !!} />
+            <input class="form-control" type="number" min="0" max="3600" name="months" id="months" value="{{ old('months', $item->months) }}" style="width: 80px;"{!!  (\App\Helpers\Helper::checkIfRequired($item, 'months')) ? ' required' : '' !!} />
             {!! $errors->first('months', '<span class="alert-msg" aria-hidden="true"><i class="fa fa-times" aria-hidden="true"></i> :message</span>') !!}
         </div>
     </div>
@@ -29,7 +29,7 @@
         {{ trans('admin/depreciations/general.depreciation_min') }}
     </label>
     <div class="col-md-2" style="display: flex;">
-        <input class="form-control" name="depreciation_min" id="depreciation_min" value="{{ old('depreciation_min', $item->depreciation_min) }}" style="width: 80px; margin-right: 15px; display: inline-block;" />
+        <input class="form-control" name="depreciation_min" id="depreciation_min" required type="number" value="{{ old('depreciation_min', $item->depreciation_min) }}" style="width: 80px; margin-right: 15px; display: inline-block;" />
         <select class="form-control select2" name="depreciation_type" id="depreciation_type" data-minimum-results-for-search="Infinity" style="width: 150px; display: inline-block;">
             <option value="amount" {{ old('depreciation_type', $item->depreciation_type) == 'amount' ? 'selected' : '' }}>Amount</option>
             <option value="percent" {{ old('depreciation_type', $item->depreciation_type) == 'percent' ? 'selected' : '' }}>Percentage</option>

@@ -21,5 +21,9 @@ return array(
     'use_default_eula'					=> 'Použijte raději <a href="#" data-toggle="modal" data-target="#eulaModal">primární výchozí EULA</a>.',
     'use_default_eula_disabled'			=> '<del>Použijte raději primární výchozí EULA.</del> Nenalezena primární výchozí EULA. Přidejte ji v Nastaveních prosím.',
     'use_default_eula_column'			=> 'Použít výchozí EULA',
+    'import_require_acceptance'         => 'Vyžadovat přijetí',
+    'import_checkin_email'              => 'Odeslat e-mail o vrácení zařízení',
+    'import_eula_text'                  => 'Text EULA',
+    'import_category_type'              => 'Typ kategorie',
 
 );

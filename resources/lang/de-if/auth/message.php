@@ -6,8 +6,6 @@ return array(
     'account_not_found'      => 'Benutzername oder Passwort sind nicht korrekt.',
     'account_not_activated'  => 'Das Benutzerkonto ist nicht aktiviert.',
     'account_suspended'      => 'Dieses Benutzerkonto ist gesperrt.',
-    'account_banned'         => 'Dieses Benutzerkonto wurde ausgeschlossen.',
-    'throttle'               => 'Zu viele fehlgeschlagene Anmeldeversuche. Bitte versuche es in :minutes Minuten erneut.',
 
     'two_factor' => array(
         'already_enrolled'      => 'Dein Gerät ist bereits eingeschrieben.',

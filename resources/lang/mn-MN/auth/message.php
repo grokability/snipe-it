@@ -6,8 +6,6 @@ return array(
     'account_not_found'      => 'Хэрэглэгчийн нэр эсвэл нууц үг буруу байна.',
     'account_not_activated'  => 'Энэ хэрэглэгчийн бүртгэл идэвхжээгүй байна.',
     'account_suspended'      => 'Энэ хэрэглэгчийн бүртгэлийг түдгэлзүүлсэн байна.',
-    'account_banned'         => 'Энэ хэрэглэгчийн бүртгэлийг хориглосон байна.',
-    'throttle'               => 'Too many failed login attempts. Please try again in :minutes minutes.',
 
     'two_factor' => array(
         'already_enrolled'      => 'Your device is already enrolled.',

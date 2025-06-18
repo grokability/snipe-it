@@ -2,7 +2,7 @@
 
 return [
 
-    'undeployable' 		 => '<strong>Advertencia:</strong> Este activo actualmente está marcado como no utilizable. Si este estado ha cambiado, por favor, actualice el estado del activo.',
+    'undeployable' 		 => 'The following assets cannot be deployed and have been removed from checkout: :asset_tags',
     'does_not_exist' 	 => 'Equipo inexistente.',
     'does_not_exist_var' => 'Activo con placa :asset_tag no encontrado.',
     'no_tag' 	         => 'No se ha proporcionado ninguna placa de activo.',
@@ -19,6 +19,11 @@ return [
         'success_linked' => 'Activo con placa :tag creado con éxito. <strong><a href=":link" style="color: white;">Haga clic aquí para ver</a></strong>.',
         'multi_success_linked' => 'Activo con etiqueta :links fue creado exitosamente.|:count activos fueron creados correctamente. :links.',
         'partial_failure' => 'No se ha podido crear un activo: Motivo: :failures|No se pudieron crear :count activos. Motivos: :failures',
+        'target_not_found' => [
+            'user' => 'The assigned user could not be found.',
+            'asset' => 'The assigned asset could not be found.',
+            'location' => 'The assigned location could not be found.',
+        ],
     ],
 
     'update' => [
@@ -66,13 +71,14 @@ return [
         'file_already_deleted' => 'El archivo seleccionado ya fue eliminado',
         'header_row_has_malformed_characters' => 'Uno o más atributos de la fila de encabezado contiene caracteres UTF-8 mal formados',
         'content_row_has_malformed_characters' => 'Uno o más atributos en la primera fila contienen caracteres UTF-8 mal formados',
+        'transliterate_failure' => 'La transliteración de :encoding a UTF-8 falló debido a caracteres no válidos en la entrada'
     ],
 
 
     'delete' => [
         'confirm'   	=> '¿Está seguro de que desea eliminar este activo?',
         'error'   		=> 'Hubo un problema al eliminar el activo. Por favor, inténtelo de nuevo.',
-        'assigned_to_error' => '{1}Asset Tag: :asset_tag is currently checked out. Check in this device before deletion.|[2,*]Asset Tags: :asset_tag are currently checked out. Check in these devices before deletion.',
+        'assigned_to_error' => '{1}Tag de activos: :asset_tag está actualmente desprotegido. Compruebe este dispositivo antes de eliminarlo. [2,*]Etiquetas de activos: :asset_tag están desactivadas. Revisa estos dispositivos antes de eliminarlos.',
         'nothing_updated'   => 'No se seleccionaron los activos, por lo que no se eliminó nada.',
         'success' 		=> 'El activo se ha eliminado correctamente.',
     ],
@@ -99,9 +105,10 @@ return [
     ],
 
     'requests' => [
-        'error'   		=> 'El activo no pudo ser solicitado, por favor inténtelo de nuevo',
-        'success' 		=> 'Activo solicitado correctamente.',
-        'canceled'      => 'La solicitud de asignación fue cancelada de forma exitosa',
+        'error'   		=> 'Solicitud no exitosa, por favor inténtelo de nuevo.',
+        'success' 		=> 'Solicitud enviada con éxito.',
+        'canceled'      => 'Solicitud cancelada con éxito.',
+        'cancel'        => 'Cancelar solicitud para este elemento',
     ],
 
 ];

@@ -1,6 +1,7 @@
 <?php
 
     return [
+        'select_type'            => 'Select Maintenance Type',
         'asset_maintenance_type' => 'Nooca Dayactirka Hantida',
         'title'                  => 'Ciwaanka',
         'start_date'             => 'Taariikhda billowga',

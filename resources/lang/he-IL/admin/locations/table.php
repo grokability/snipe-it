@@ -39,4 +39,5 @@ return [
     'signed_by_finance_auditor' => 'אושר על ידי (מפקח הכספים):',
     'signed_by_location_manager' => 'אושר על ידי (מנהל המיקום):',
     'signed_by'                 => 'אושר על ידי:',
+    'clone'  					=> 'Clone Location',
 ];

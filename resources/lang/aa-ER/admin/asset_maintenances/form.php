@@ -1,6 +1,7 @@
 <?php
 
     return [
+        'select_type'            => 'crwdns13392:0crwdne13392:0',
         'asset_maintenance_type' => 'crwdns11333:0crwdne11333:0',
         'title'                  => 'crwdns1354:0crwdne1354:0',
         'start_date'             => 'crwdns11335:0crwdne11335:0',

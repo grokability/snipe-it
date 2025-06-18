@@ -53,4 +53,5 @@ return [
     'next_save_user' => 'Næste: Gem Bruger',
     'all_assigned_list_generation' => 'Genereret den:',
     'email_user_creds_on_create' => 'Email denne bruger deres legitimationsoplysninger?',
+    'department_manager' => 'Department Manager',
 ];

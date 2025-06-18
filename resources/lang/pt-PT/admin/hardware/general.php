@@ -9,6 +9,7 @@ return [
     'bulk_checkin'              => 'Bulk Checkin',
     'checkin'  					=> 'Devolver Ativo',
     'checkout'  				=> 'Ativo de compras',
+    'clear'                     => 'Clear',
     'clone'  					=> 'Clonar Ativo',
     'deployable'  				=> 'Implementável',
     'deleted'  					=> 'Este ativo foi excluído.',
@@ -27,8 +28,7 @@ return [
     'undeployable_tooltip'  	=> 'Este artigo possui uma etiqueta de estado que não é implantável e não pode ser entregue no momento.',
     'view'  					=> 'Ver Artigo',
     'csv_error' => 'Tem um erro no ficheiro CSV:',
-    'import_text' => '<p>Upload de um CSV que contém o histórico de ativos. Os ativos e usuários já existem no sistema, ou serão ignorados. Correspondência de mídias para o histórico de importação acontece com a tag de conteúdo. Tentaremos encontrar um usuário correspondente com base no nome de usuário que você fornece, e nos critérios que você selecionar abaixo. Se você não selecionar nenhum critério abaixo, ele simplesmente tentará combinar com o formato de nome de usuário configurado na <code>Administração &gt; Configurações Gerais</code>.</p><p>Campos incluídos no CSV devem corresponder aos cabeçalhos: <strong>Marcador de Ativo, Nome, Data de Finalização, Data de Entrada</strong>. Quaisquer campos adicionais serão ignorados. </p><p>Data de check-in: em branco ou em datas futuras de check-in fará check-in dos itens para o usuário associado. Excluindo a coluna Data de check-in criará uma data de check-in com a data de hoje.</p>
-    ',
+    'import_text' => '<p>Upload a CSV that contains asset history. The assets and users MUST already exist in the system, or they will be skipped. Matching assets for history import happens against the asset tag. We will try to find a matching user based on the user\'s name you provide, and the criteria you select below. If you do not select any criteria below, it will simply try to match on the username format you configured in the <code>Admin &gt; General Settings</code>.</p><p>Fields included in the CSV must match the headers: <strong>Asset Tag, Name, Checkout Date, Checkin Date</strong>. Any additional fields will be ignored. </p><p>Checkin Date: blank or future checkin dates will checkout items to associated user.  Excluding the Checkin Date column will create a checkin date with todays date.</p>    ',
     'csv_import_match_f-l' => 'Tente corresponder aos usuários por <strong>firstname.lastname</strong> (<code>jane.smith</code>) formato',
     'csv_import_match_initial_last' => 'Tente coincidir com os usuários do formato <strong>primeiro sobrenome</strong> (<code>jsmith</code>)',
     'csv_import_match_first' => 'Tente corresponder aos usuários pelo formato <strong>primeiro nome</strong> (<code>jane</code>)',

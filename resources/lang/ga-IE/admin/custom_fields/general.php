@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Manage',
     'field'		                => 'Gort',
     'about_fieldsets_title'		=> 'Maidir Fieldsets',
-    'about_fieldsets_text'		=> 'Fieldsets allow you to create groups of custom fields that are frequently re-used for specific asset model types.',
+    'about_fieldsets_text'		=> 'Ceadaíonn Fieldsets duit grúpaí de réimsí saincheaptha a chruthú a athúsáidtear go minic a úsáidtear le haghaidh cineálacha sonracha sócmhainne sonracha.',
     'custom_format'             => 'Custom Regex format...',
     'encrypt_field'      	        => 'Criptigh luach an réimse seo sa bhunachar sonraí',
     'encrypt_field_help'      => 'RABHADH: Ní chuireann sé clóscríobh ar réimse.',
@@ -59,5 +59,12 @@ return [
     'encrypted_options' => 'This field is encrypted, so some display options will not be available.',
     'display_checkin' => 'Display in checkin forms',
     'display_checkout' => 'Display in checkout forms',
-
+    'display_audit' => 'Display in audit forms',
+    'types' => [
+        'text' => 'Text Box',
+        'listbox' => 'List Box',
+        'textarea' => 'Textarea (multi-line)',
+        'checkbox' => 'Checkbox',
+        'radio' => 'Radio Buttons',
+    ],
 ];

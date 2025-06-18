@@ -1,14 +1,14 @@
 <?php
 
 return array(
-    'about'      	=> 'Справка по статусам активов',
+    'about'      	=> 'About Status Types',
     'archived'      	=> 'Архивные',
     'create'      	=> 'Создать статус актива',
     'color'      	=> 'Цвет диаграммы',
     'default_label' => 'Метка по умолчанию',
     'default_label_help' => 'Это нужно для того, чтобы ваши наиболее часто используемые статусы отображались первыми в выпадающем списке при создании/редактировании активов.',
     'deployable'      	=> 'Доступные',
-    'info'      	=> 'Статус активов необходим для отслеживания состояния активов. Активы могут быть утеряны, находится в сервисных центрах, в архиве либо быть готовыми к использованию.',
+    'info'      	=> 'Status label types are used to describe the various states your assets could be in. They may be out for repair, lost/stolen, etc. You can create new status labels for your deployable, pending and archived assets according to your own workflow. For more information, <a href="https://snipe-it.readme.io/docs/overview#status-labels" target="_blank">see the documentation <i class="fa fa-external-link"></i></a>.',
     'name'      	=> 'Название статуса',
     'pending'      	=> 'Ожидающие',
     'status_type'   => 'Тип статуса',

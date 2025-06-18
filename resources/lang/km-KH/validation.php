@@ -31,6 +31,7 @@ return [
         'numeric' => 'វាល :attribute ត្រូវតែស្ថិតនៅចន្លោះ :min និង :max។',
         'string' => 'វាល :attribute ត្រូវតែស្ថិតនៅចន្លោះ :min និង :max តួអក្សរ។',
     ],
+    'valid_regex' => 'The regular expression is invalid.',
     'boolean' => 'វាល :attribute ត្រូវតែពិត ឬមិនពិត។',
     'can' => 'វាល :attribute មានតម្លៃដែលមិនមានការអនុញ្ញាត។',
     'confirmed' => 'ការបញ្ជាក់វាល :attribute មិនត្រូវគ្នាទេ។',
@@ -172,6 +173,7 @@ return [
     'url' => 'វាល :attribute ត្រូវតែជា URL ត្រឹមត្រូវ។',
     'ulid' => 'វាល :attribute ត្រូវតែជា ULID ត្រឹមត្រូវ។',
     'uuid' => 'វាល :attribute ត្រូវតែជា UUID ត្រឹមត្រូវ។',
+    'fmcs_location' => 'Full multiple company support and location scoping is enabled in the Admin Settings, and the selected location and selected company are not compatible.',
 
 
     /*
@@ -185,9 +187,13 @@ return [
     |
     */
 
+    'email_array'      => 'អាសយដ្ឋានអ៊ីមែលមួយ ឬច្រើនមិនត្រឹមត្រូវទេ។',
+    'checkboxes'           => ':attribute contains invalid options.',
+    'radio_buttons'        => ':attribute is invalid.',
+    
     'custom' => [
         'alpha_space' => 'វាល :attribute មានតួអក្សរដែលមិនត្រូវបានអនុញ្ញាត។',
-        'email_array'      => 'អាសយដ្ឋានអ៊ីមែលមួយ ឬច្រើនមិនត្រឹមត្រូវទេ។',
+
         'hashed_pass'      => 'ពាក្យសម្ងាត់បច្ចុប្បន្នរបស់អ្នកមិនត្រឹមត្រូវទេ។',
         'dumbpwd'          => 'ពាក្យសម្ងាត់នោះជារឿងធម្មតាពេកហើយ។',
         'statuslabel_type' => 'អ្នកត្រូវតែជ្រើសរើសប្រភេទស្លាកស្ថានភាពត្រឹមត្រូវ។',
@@ -204,8 +210,6 @@ return [
         'expected_checkin.date_format'  =>  ':attribute ត្រូវតែជាកាលបរិច្ឆេទត្រឹមត្រូវក្នុងទម្រង់ YYYY-MM-DD',
         'start_date.date_format'        =>  ':attribute ត្រូវតែជាកាលបរិច្ឆេទត្រឹមត្រូវក្នុងទម្រង់ YYYY-MM-DD',
         'end_date.date_format'          =>  ':attribute ត្រូវតែជាកាលបរិច្ឆេទត្រឹមត្រូវក្នុងទម្រង់ YYYY-MM-DD',
-        'checkboxes'           => ':attribute contains invalid options.',
-        'radio_buttons'        => ':attribute is invalid.',
         'invalid_value_in_field' => 'Invalid value included in this field',
 
         'ldap_username_field' => [

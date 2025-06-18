@@ -6,8 +6,6 @@ return array(
     'account_not_found'      => 'Brukernavnet eller passordet er feil.',
     'account_not_activated'  => 'Denne brukerkontoen er ikke aktiv.',
     'account_suspended'      => 'Denne brukerkontoen er deaktivert.',
-    'account_banned'         => 'Denne brukerkontoen er forbudt.',
-    'throttle'               => 'For mange mislykkede påloggingsforsøk. Prøv igjen om :minutes minutter.',
 
     'two_factor' => array(
         'already_enrolled'      => 'Enheten din er allerede registrert.',

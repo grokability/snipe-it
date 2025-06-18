@@ -22,7 +22,7 @@ return array(
     'managed_locations'     => 'Valdomos vietos',
     'managed_users'         => 'Pavaldiniai',
     'name' 					=> 'Visas vardas',
-    'nogroup'               => 'Dar nesukurta jokia grupė. Norėdami sukurti grupę, apsilankykite: ',
+    'nogroup'               => 'Dar nesukurta jokia grupė. Norėdami sukurti grupę, apsilankykite:',
     'notes'                 => 'Pastabos',
     'password_confirm' 		=> 'Patvirtinti slaptažodį',
     'password' 				=> 'Slaptažodis',

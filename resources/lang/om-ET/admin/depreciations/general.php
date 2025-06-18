@@ -13,4 +13,8 @@ return [
     'no_depreciations_warning'               => '<strong>Warning: </strong>
                       You do not currently have any depreciations set up.
                       Please set up at least one depreciation to view the depreciation report.',
+    'depreciation_method'                   => 'Gabaasa Baay\'ina',
+    'linear_depreciation'                   => 'Linear (Default)',
+    'half_1'                                => 'Half-year convention, always applied',
+    'half_2'                                => 'Half-year convention, applied with condition',
 ];

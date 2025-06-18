@@ -6,8 +6,6 @@ return array(
     'account_not_found'      => 'Nama pengguna atau kata laluan tidak betul.',
     'account_not_activated'  => 'Akaun pengguna ini tidak aktif. ',
     'account_suspended'      => 'Akaun pengguna ini digantung.',
-    'account_banned'         => 'Akaun pengguna ini di sekat.',
-    'throttle'               => 'Too many failed login attempts. Please try again in :minutes minutes.',
 
     'two_factor' => array(
         'already_enrolled'      => 'Your device is already enrolled.',

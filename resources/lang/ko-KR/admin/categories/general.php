@@ -21,5 +21,9 @@ return array(
     'use_default_eula'					=> '대체  <a href="#" data-toggle="modal" data-target="#eulaModal">기본 사용권 계약서</a>를 사용합니다.',
     'use_default_eula_disabled'			=> '<del>대체 기본 사용권 계약서를 사용합니다.</del> 기본 사용권 계약서가 정의되지 않았습니다. 설정에서 하나를 추가해 주세요.',
     'use_default_eula_column'			=> '기본 EULA 사용',
+    'import_require_acceptance'         => 'Require Acceptance',
+    'import_checkin_email'              => 'Send Checkin Email',
+    'import_eula_text'                  => 'EULA text',
+    'import_category_type'              => 'Category Type',
 
 );

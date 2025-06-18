@@ -21,5 +21,9 @@ return array(
     'use_default_eula'					=> 'En su lugar, utilice el <a href="#" data-toggle="modal" data-target="#eulaModal">acuerdo de uso predeterminado</a>.',
     'use_default_eula_disabled'			=> '<del>En su lugar, utilice el acuerdo de uso predeterminado.</del> No se ha establecido el acuerdo de uso predeterminado. Por favor agregue uno en Configuración.',
     'use_default_eula_column'			=> 'Utilizar el acuerdo de uso predeterminado',
+    'import_require_acceptance'         => 'Require Acceptance',
+    'import_checkin_email'              => 'Send Checkin Email',
+    'import_eula_text'                  => 'EULA text',
+    'import_category_type'              => 'Category Type',
 
 );

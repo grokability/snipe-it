@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Helper;
 use App\Http\Requests\ImageUploadRequest;
 use App\Models\Actionlog;
 use App\Models\Asset;
+use App\Models\Company;
 use App\Models\Location;
+use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
@@ -63,6 +66,7 @@ class LocationsController extends Controller
     public function store(ImageUploadRequest $request) : RedirectResponse
     {
         $this->authorize('create', Location::class);
+        
         $location = new Location();
         $location->name = $request->input('name');
         $location->parent_id = $request->input('parent_id', null);
@@ -79,6 +83,18 @@ class LocationsController extends Controller
         $location->phone = request('phone');
         $location->fax = request('fax');
         $location->notes = $request->input('notes');
+        $location->company_id = Company::getIdForCurrentUser($request->input('company_id'));
+
+        // Only scope the location if the setting is enabled
+        if (Setting::getSettings()->scope_locations_fmcs) {
+            $location->company_id = Company::getIdForCurrentUser($request->input('company_id'));
+            // check if parent is set and has a different company
+            if ($location->parent_id && Location::find($location->parent_id)->company_id != $location->company_id) {
+                return redirect()->back()->withInput()->withInput()->with('error', 'different company than parent');
+            }                
+        } else {
+            $location->company_id = $request->input('company_id');
+        }
 
         $location = $request->handleImages($location);
 
@@ -131,6 +147,17 @@ class LocationsController extends Controller
         $location->manager_id = $request->input('manager_id');
         $location->notes = $request->input('notes');
 
+        // Only scope the location if the setting is enabled
+        if (Setting::getSettings()->scope_locations_fmcs) {
+            $location->company_id = Company::getIdForCurrentUser($request->input('company_id'));
+            // check if there are related objects with different company
+            if (Helper::test_locations_fmcs(false, $location->id, $location->company_id)) {
+                return redirect()->back()->withInput()->withInput()->with('error', 'error scoped locations');
+            }            
+        } else {
+            $location->company_id = $request->input('company_id');
+        }
+
         $location = $request->handleImages($location);
 
         if ($location->save()) {
@@ -150,6 +177,7 @@ class LocationsController extends Controller
     public function destroy($locationId) : RedirectResponse
     {
         $this->authorize('delete', Location::class);
+
         if (is_null($location = Location::find($locationId))) {
             return redirect()->to(route('locations.index'))->with('error', trans('admin/locations/message.does_not_exist'));
         }
@@ -186,6 +214,8 @@ class LocationsController extends Controller
      */
     public function show(Location $location) : View | RedirectResponse
     {
+        $this->authorize('view', Location::class);
+
         $location = Location::withCount('assignedAssets as assigned_assets_count')
             ->withCount('assets as assets_count')
             ->withCount('rtd_assets as rtd_assets_count')
@@ -203,20 +233,24 @@ class LocationsController extends Controller
 
     public function print_assigned($id) : View | RedirectResponse
     {
+        $this->authorize('view', Location::class);
 
         if ($location = Location::where('id', $id)->first()) {
             $parent = Location::where('id', $location->parent_id)->first();
             $manager = User::where('id', $location->manager_id)->first();
+            $company = Company::where('id', $location->company_id)->first();
             $users = User::where('location_id', $id)->with('company', 'department', 'location')->get();
             $assets = Asset::where('assigned_to', $id)->where('assigned_type', Location::class)->with('model', 'model.category')->get();
-            return view('locations/print')->with('assets', $assets)->with('users', $users)->with('location', $location)->with('parent', $parent)->with('manager', $manager);
-
+            return view('locations/print')
+                ->with('assets', $assets)
+                ->with('users',$users)
+                ->with('location', $location)
+                ->with('parent', $parent)
+                ->with('manager', $manager)
+                ->with('company', $company);
         }
 
         return redirect()->route('locations.index')->with('error', trans('admin/locations/message.does_not_exist'));
-
-
-
     }
 
 
@@ -285,13 +319,20 @@ class LocationsController extends Controller
     }
     public function print_all_assigned($id) : View | RedirectResponse
     {
+        $this->authorize('view', Location::class);
         if ($location = Location::where('id', $id)->first()) {
             $parent = Location::where('id', $location->parent_id)->first();
             $manager = User::where('id', $location->manager_id)->first();
+            $company = Company::where('id', $location->company_id)->first();
             $users = User::where('location_id', $id)->with('company', 'department', 'location')->get();
             $assets = Asset::where('location_id', $id)->with('model', 'model.category')->get();
-            return view('locations/print')->with('assets', $assets)->with('users', $users)->with('location', $location)->with('parent', $parent)->with('manager', $manager);
-
+            return view('locations/print')
+                ->with('assets', $assets)
+                ->with('users',$users)
+                ->with('location', $location)
+                ->with('parent', $parent)
+                ->with('manager', $manager)
+                ->with('company', $company);
         }
         return redirect()->route('locations.index')->with('error', trans('admin/locations/message.does_not_exist'));
     }
@@ -305,6 +346,8 @@ class LocationsController extends Controller
      */
     public function postBulkDelete(Request $request) : View | RedirectResponse
     {
+        $this->authorize('update', Location::class);
+
         $locations_raw_array = $request->input('ids');
 
         // Make sure some IDs have been selected
@@ -338,6 +381,8 @@ class LocationsController extends Controller
      */
     public function postBulkDeleteStore(Request $request) : RedirectResponse
     {
+        $this->authorize('delete', Location::class);
+
         $locations_raw_array = $request->input('ids');
 
         if ((is_array($locations_raw_array)) && (count($locations_raw_array) > 0)) {

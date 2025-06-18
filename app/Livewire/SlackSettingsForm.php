@@ -71,12 +71,12 @@ class SlackSettingsForm extends Component
 
         $this->setting = Setting::getSettings();
         $this->save_button = trans('general.save');
-        $this->webhook_selected = $this->setting->webhook_selected;
-        $this->webhook_name = $this->webhook_text[$this->setting->webhook_selected]["name"];
-        $this->webhook_icon = $this->webhook_text[$this->setting->webhook_selected]["icon"];
-        $this->webhook_placeholder = $this->webhook_text[$this->setting->webhook_selected]["placeholder"];
-        $this->webhook_link = $this->webhook_text[$this->setting->webhook_selected]["link"];
-        $this->webhook_test = $this->webhook_text[$this->setting->webhook_selected]["test"];
+        $this->webhook_selected = ($this->setting->webhook_selected !== '') ? $this->setting->webhook_selected : 'slack';
+        $this->webhook_name = $this->webhook_text[$this->setting->webhook_selected]["name"] ?? $this->webhook_text['slack']["name"];
+        $this->webhook_icon = $this->webhook_text[$this->setting->webhook_selected]["icon"] ?? $this->webhook_text['slack']["icon"];
+        $this->webhook_placeholder = $this->webhook_text[$this->setting->webhook_selected]["placeholder"] ?? $this->webhook_text['slack']["placeholder"];
+        $this->webhook_link = $this->webhook_text[$this->setting->webhook_selected]["link"] ?? $this->webhook_text['slack']["link"];
+        $this->webhook_test = $this->webhook_text[$this->setting->webhook_selected]["test"] ?? $this->webhook_text['slack']["test"];
         $this->webhook_endpoint = $this->setting->webhook_endpoint;
         $this->webhook_channel = $this->setting->webhook_channel;
         $this->webhook_botname = $this->setting->webhook_botname;
@@ -90,7 +90,7 @@ class SlackSettingsForm extends Component
             $this->isDisabled= '';
         }
         if($this->webhook_selected === 'microsoft' && $this->teams_webhook_deprecated) {
-            session()->flash('warning', 'The selected Microsoft Teams webhook URL will be deprecated Jan 31st, 2025. Please use a workflow URL. Microsofts Documentation on creating a workflow can be found <a href="https://support.microsoft.com/en-us/office/create-incoming-webhooks-with-workflows-for-microsoft-teams-8ae491c7-0394-4861-ba59-055e33f75498" target="_blank"> here.</a>');
+            session()->flash('warning', trans('admin/settings/message.webhook.ms_teams_deprecation'));
         }
     }
     public function updated($field) {

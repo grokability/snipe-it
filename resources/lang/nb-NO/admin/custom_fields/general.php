@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Administrer',
     'field'		                => 'Felt',
     'about_fieldsets_title'		=> 'Om Feltsett',
-    'about_fieldsets_text'		=> 'Feltsett lar deg opprette grupper av egendefinerte felt som kan gjenbrukes til bestemte modelltyper.',
+    'about_fieldsets_text'		=> 'Feltsett lar deg opprette grupper av egendefinerte felt som ofte gjenbrukes brukes til bestemte modelltyper.',
     'custom_format'             => 'Tilpasset Regex-format...',
     'encrypt_field'      	        => 'Kryptere verdien av dette feltet i databasen',
     'encrypt_field_help'      => 'ADVARSEL: Ved å kryptere et felt gjør du at det ikke kan søkes på.',
@@ -59,5 +59,12 @@ return [
     'encrypted_options' => 'Feltet er kryptert, så noen visningsalternativer er ikke tilgjengelig.',
     'display_checkin' => 'Display in checkin forms',
     'display_checkout' => 'Display in checkout forms',
-
+    'display_audit' => 'Display in audit forms',
+    'types' => [
+        'text' => 'Text Box',
+        'listbox' => 'List Box',
+        'textarea' => 'Textarea (multi-line)',
+        'checkbox' => 'Checkbox',
+        'radio' => 'Radio Buttons',
+    ],
 ];

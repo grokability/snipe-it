@@ -12,6 +12,6 @@ return array(
     'api_reference' => 'Please check the <a href="https://snipe-it.readme.io/reference" target="_blank">API reference</a> to find specific API endpoints and additional API documentation.',
     'profile_updated' => 'A fiók frissítése sikeres',
     'no_tokens' => 'You have not created any personal access tokens.',
-    'enable_sounds' => 'Enable sound effects',
+    'enable_sounds' => 'Hangeffektek engedélyezése',
     'enable_confetti' => 'Enable confetti effects',
 );

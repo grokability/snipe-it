@@ -21,5 +21,9 @@ return array(
     'use_default_eula'					=> 'Utilizați în schimb <a href="#" data-toggle="modal" data-target="#eulaModal"> implicit EULA</a>.',
     'use_default_eula_disabled'			=> '<del>Foloseste EULA general implicita.</del> EULA implicita nu a fost gasita. A se crea una in Setari.',
     'use_default_eula_column'			=> 'Folosește EULA implicită',
+    'import_require_acceptance'         => 'Require Acceptance',
+    'import_checkin_email'              => 'Send Checkin Email',
+    'import_eula_text'                  => 'EULA text',
+    'import_category_type'              => 'Category Type',
 
 );

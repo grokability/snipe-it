@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Manage',
     'field'		                => 'Padang',
     'about_fieldsets_title'		=> 'Mengenai Fieldsets',
-    'about_fieldsets_text'		=> 'Fieldsets allow you to create groups of custom fields that are frequently re-used for specific asset model types.',
+    'about_fieldsets_text'		=> 'Fieldsets membolehkan anda membuat kumpulan bidang tersuai yang sering digunakan semula digunakan untuk jenis model aset tertentu.',
     'custom_format'             => 'Custom Regex format...',
     'encrypt_field'      	        => 'Sulitkan nilai medan ini dalam pangkalan data',
     'encrypt_field_help'      => 'AMARAN: Menyulitkan medan menjadikannya tidak dapat ditemui.',
@@ -59,5 +59,12 @@ return [
     'encrypted_options' => 'This field is encrypted, so some display options will not be available.',
     'display_checkin' => 'Display in checkin forms',
     'display_checkout' => 'Display in checkout forms',
-
+    'display_audit' => 'Display in audit forms',
+    'types' => [
+        'text' => 'Text Box',
+        'listbox' => 'List Box',
+        'textarea' => 'Textarea (multi-line)',
+        'checkbox' => 'Checkbox',
+        'radio' => 'Radio Buttons',
+    ],
 ];

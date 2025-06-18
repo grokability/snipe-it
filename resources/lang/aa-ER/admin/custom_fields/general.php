@@ -5,7 +5,7 @@ return [
     'manage'                    => 'crwdns6501:0crwdne6501:0',
     'field'		                => 'crwdns1487:0crwdne1487:0',
     'about_fieldsets_title'		=> 'crwdns1488:0crwdne1488:0',
-    'about_fieldsets_text'		=> 'crwdns6503:0crwdne6503:0',
+    'about_fieldsets_text'		=> 'crwdns13248:0crwdne13248:0',
     'custom_format'             => 'crwdns6505:0crwdne6505:0',
     'encrypt_field'      	        => 'crwdns1792:0crwdne1792:0',
     'encrypt_field_help'      => 'crwdns1683:0crwdne1683:0',
@@ -59,5 +59,12 @@ return [
     'encrypted_options' => 'crwdns11864:0crwdne11864:0',
     'display_checkin' => 'crwdns12929:0crwdne12929:0',
     'display_checkout' => 'crwdns12931:0crwdne12931:0',
-
+    'display_audit' => 'crwdns13023:0crwdne13023:0',
+    'types' => [
+        'text' => 'crwdns13260:0crwdne13260:0',
+        'listbox' => 'crwdns13262:0crwdne13262:0',
+        'textarea' => 'crwdns13264:0crwdne13264:0',
+        'checkbox' => 'crwdns13266:0crwdne13266:0',
+        'radio' => 'crwdns13268:0crwdne13268:0',
+    ],
 ];

@@ -42,12 +42,15 @@
             @include('partials.users-bulk-actions')
 
             <table
+                    data-advanced-search="true"
                     data-click-to-select="true"
                     data-columns="{{ \App\Presenters\UserPresenter::dataTableLayout() }}"
                     data-cookie-id-table="usersTable"
                     data-pagination="true"
                     data-id-table="usersTable"
                     data-search="true"
+                    data-search-highlight="true"
+                    data-show-print="true"
                     data-side-pagination="server"
                     data-show-columns="true"
                     data-show-fullscreen="true"

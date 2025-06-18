@@ -21,5 +21,9 @@ return array(
     'use_default_eula'					=> 'Użyj <a href="#" data-toggle="modal" data-target="#eulaModal"> domyślnej EULA</a> zamiast tego.',
     'use_default_eula_disabled'			=> '<del>Użyj domyślnej EULA.</del> Brak domyślnej EULA. Proszę dodaj jedną w Ustawieniach.',
     'use_default_eula_column'			=> 'Użyj domyślnej EULA',
+    'import_require_acceptance'         => 'Require Acceptance',
+    'import_checkin_email'              => 'Send Checkin Email',
+    'import_eula_text'                  => 'EULA text',
+    'import_category_type'              => 'Category Type',
 
 );

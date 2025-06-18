@@ -22,7 +22,7 @@ return array(
     'managed_locations'     => 'Zarządzane lokalizacje',
     'managed_users'         => 'Zarządzani Użytkownicy',
     'name' 					=> 'Nazwa',
-    'nogroup'               => 'Nie utworzono jeszcze żadnych grup. Aby dodać jedną, odwiedź: ',
+    'nogroup'               => 'Nie utworzono jeszcze żadnych grup. Aby dodać jedną, odwiedź:',
     'notes'                 => 'Uwagi',
     'password_confirm' 		=> 'Potwierdź hasło',
     'password' 				=> 'Hasło',

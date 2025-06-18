@@ -43,8 +43,8 @@ class DefaultLabel extends RectangleSheet
 
         $this->textSize = Helper::convertUnit($settings->labels_fontsize, 'pt', 'in');
 
-        $this->labelWidth  = $settings->labels_width;
-        $this->labelHeight = $settings->labels_height;
+        $this->labelWidth = $this->setLabelWidth($settings);
+        $this->labelHeight = $this->setLabelHeight($settings);
 
         $this->labelSpacingH = $settings->labels_display_sgutter;
         $this->labelSpacingV = $settings->labels_display_bgutter;
@@ -181,6 +181,25 @@ class DefaultLabel extends RectangleSheet
         }
     }
 
-}
+    private function setLabelWidth(Setting $settings)
+    {
+        $labelWidth = $settings->labels_width;
 
-?>
+        if ($labelWidth == 0) {
+            $labelWidth = 0.1;
+        }
+
+        return $labelWidth;
+    }
+
+    private function setLabelHeight(?Setting $settings)
+    {
+        $labelHeight = $settings->labels_height;
+
+        if ($labelHeight == 0) {
+            $labelHeight = 0.1;
+        }
+
+        return $labelHeight;
+    }
+}

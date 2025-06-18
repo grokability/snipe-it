@@ -1,11 +1,12 @@
 <?php
 
     return [
+        'select_type'            => 'Select Maintenance Type',
         'asset_maintenance_type' => 'Вид обслуживания актива',
         'title'                  => 'Заголовок',
         'start_date'             => 'Дата начала',
         'completion_date'        => 'Дата завершения',
-        'cost'                   => 'Стоймость',
+        'cost'                   => 'Стоимость',
         'is_warranty'            => 'Расширенная гарантия',
         'asset_maintenance_time' => 'Время обслуживания (в днях)',
         'notes'                  => 'Примечания',

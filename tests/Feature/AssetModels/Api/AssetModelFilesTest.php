@@ -59,11 +59,24 @@ class AssetModelFilesTest extends TestCase
 	// Create a superuser to run this as
 	$user = User::factory()->superuser()->create();
 
-	//Upload a file
+	// Upload a file
 	$this->actingAsForApi($user)
             ->post(
                route('api.models.files.store', ['model_id' => $model[0]["id"]]), [
-		       'file' => [UploadedFile::fake()->create("test.jpg", 100)]
+		       'file' => [UploadedFile::fake()->create("test.jpg", 100)],
+	       ])
+            ->assertOk()
+            ->assertJsonStructure([
+                'status',
+                'messages',
+            ]);
+
+    // Upload a file with notes
+    $this->actingAsForApi($user)
+            ->post(
+                route('api.models.files.store', ['model_id' => $model[0]["id"]]), [
+                'file' => [UploadedFile::fake()->create("test.jpg", 100)],
+                'notes' => 'manual'
 	       ])
             ->assertOk()
             ->assertJsonStructure([
@@ -75,7 +88,26 @@ class AssetModelFilesTest extends TestCase
 	$result = $this->actingAsForApi($user)
             ->getJson(
 		    route('api.models.files.index', ['model_id' => $model[0]["id"]]))
-            ->assertOk();
+            ->assertOk()
+            ->assertJsonStructure([
+                'total',
+                'rows'=>[
+                    '*' => [
+                        'id',
+                        'filename',
+                        'url',
+                        'created_by',
+                        'created_at',
+                        'updated_at',
+                        'deleted_at',
+                        'note',
+                        'available_actions'
+                    ]
+                ]
+            ])
+            ->assertJsonPath('rows.0.note','')
+            ->assertJsonPath('rows.1.note','manual');
+
 
 
 	// Get the file

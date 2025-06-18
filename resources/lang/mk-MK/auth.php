@@ -15,6 +15,6 @@ return array(
 
     'failed' => 'Овие ингеренциите не одговараат на нашите записи.',
     'password' => 'Обезбедената лозинка е неточна.',
-    'throttle' => 'Премногу обиди за најавување. Ве молиме, обидете се повторно за :seconds секунди.',
+    'throttle' => 'Too many login attempts. Please try again in :minutes minute(s).',
 
 );

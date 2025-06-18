@@ -5,6 +5,7 @@ namespace Tests\Feature\Users\Ui;
 use App\Models\Asset;
 use App\Models\Company;
 use App\Models\User;
+use Error;
 use Tests\TestCase;
 
 class UpdateUserTest extends TestCase
@@ -14,6 +15,15 @@ class UpdateUserTest extends TestCase
         $this->actingAs(User::factory()->superuser()->create())
             ->get(route('users.edit', User::factory()->create()->id))
             ->assertOk();
+    }
+
+    public function testCannotViewEditPageForSoftDeletedUser()
+    {
+        $user = User::factory()->trashed()->create();
+
+        $this->actingAs(User::factory()->superuser()->create())
+            ->get(route('users.edit', $user->id))
+            ->assertRedirectToRoute('users.show', $user->id);
     }
 
     public function testUsersCanBeActivatedWithNumber()
@@ -160,5 +170,41 @@ class UpdateUserTest extends TestCase
         ]);
 
         $this->followRedirects($response)->assertSee('success');
+    }
+
+    /**
+     * This can occur if the user edit screen is open in one tab and
+     * the user is deleted in another before the edit form is submitted.
+     * @link https://app.shortcut.com/grokability/story/29166
+     */
+    public function testAttemptingToUpdateDeletedUserIsHandledGracefully()
+    {
+        [$companyA, $companyB] = Company::factory()->count(2)->create();
+        $user = User::factory()->for($companyA)->create();
+        Asset::factory()->assignedToUser($user)->create();
+
+        $id = $user->id;
+
+        $user->delete();
+
+        $response = $this->actingAs(User::factory()->editUsers()->create())
+            ->put(route('users.update', $id), [
+                'first_name' => 'test',
+                'username' => 'test',
+                'company_id' => $companyB->id,
+            ]);
+
+        $this->assertFalse($response->exceptions->contains(function ($exception) {
+            // Avoid hard 500
+            return $exception instanceof Error;
+        }));
+
+        // As of now, the user will be updated but not be restored
+        $this->assertDatabaseHas('users', [
+            'id' => $id,
+            'first_name' => 'test',
+            'username' => 'test',
+            'company_id' => $companyB->id,
+        ]);
     }
 }

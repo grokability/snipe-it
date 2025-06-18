@@ -9,7 +9,7 @@ return array(
     'create'  							=> 'Cipta Kategori',
     'edit'                              => 'Kemaskini Kategori',
     'email_will_be_sent_due_to_global_eula' => 'An email will be sent to the user because the global EULA is being used.',
-    'email_will_be_sent_due_to_category_eula' => 'An email will be sent to the user because a EULA is set for this category.',
+    'email_will_be_sent_due_to_category_eula' => 'E-mel akan dihantar kepada pengguna kerana EULA telah ditetapkan untuk kategori ini.',
     'eula_text'							=> 'Kategori EULA',
     'eula_text_help'					=> 'Bidang ini membolehkan anda menyesuaikan EULA anda untuk jenis aset tertentu. Jika anda hanya mempunyai satu EULA untuk semua aset anda, anda boleh menyemak kotak di bawah untuk menggunakan lalai utama.',
     'name'                              => 'Nama Kategori',
@@ -21,5 +21,9 @@ return array(
     'use_default_eula'					=> 'Gunakan <a href="#" data-toggle="modal" data-target="#eulaModal">pilihan utama lalai EULA</a> sebaliknya.',
     'use_default_eula_disabled'			=> '<del>Gunakan EULA lalai utama bukannya.</del> Tiada seting utama EULA ditetapkan. Sila tambah satu dalam Tetapan.',
     'use_default_eula_column'			=> 'Guna EULA lalai',
+    'import_require_acceptance'         => 'Require Acceptance',
+    'import_checkin_email'              => 'Send Checkin Email',
+    'import_eula_text'                  => 'EULA text',
+    'import_category_type'              => 'Category Type',
 
 );

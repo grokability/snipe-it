@@ -18,7 +18,7 @@ return array(
         'confirm'   => 'Sei sicuro di voler eliminare questo Componente?',
         'error'   => 'Si è verificato un problema durante l\'eliminazione del componente. Riprova.',
         'success' => 'Il componente è stato eliminato correttamente.',
-        'error_qty'   => 'Alcuni componenti di questo tipo sono ancora assegnati. Effettuane il check-in e riprova.',
+        'error_qty'   => 'Alcuni componenti di questo tipo sono ancora assegnati. Effettuane la Restituzione e riprova.',
     ),
 
      'checkout' => array(

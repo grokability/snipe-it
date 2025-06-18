@@ -6,8 +6,6 @@ return array(
     'account_not_found'      => 'Ang pangalan ng gumagamit o password ay hindi wasto.',
     'account_not_activated'  => 'Hindi napagana ang account ng user na ito.',
     'account_suspended'      => 'Ang account ng user na ito ay suspendido.',
-    'account_banned'         => 'Ang account ng user na ito ay nai-ban.',
-    'throttle'               => 'Too many failed login attempts. Please try again in :minutes minutes.',
 
     'two_factor' => array(
         'already_enrolled'      => 'Ang iyong device ay nakarehistro na.',

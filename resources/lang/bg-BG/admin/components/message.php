@@ -18,7 +18,7 @@ return array(
         'confirm'   => 'Сигурни ли сте, че желаете да изтриете този компонент?',
         'error'   => 'Възникна проблем при изтриването на компонента. Моля опитайте отново.',
         'success' => 'Компонентът бе изтрит успешно.',
-        'error_qty'   => 'Some components of this type are still checked out. Please check them in and try again.',
+        'error_qty'   => 'Някой компоненти от този тип са все още изписани. Моля проверете ги и пробвайте отново.',
     ),
 
      'checkout' => array(

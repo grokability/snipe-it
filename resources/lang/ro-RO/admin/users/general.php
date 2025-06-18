@@ -53,4 +53,5 @@ return [
     'next_save_user' => 'Următorul: Salvează Utilizatorul',
     'all_assigned_list_generation' => 'Generat pe:',
     'email_user_creds_on_create' => 'Trimite prin e-mail acest utilizator acreditările lor?',
+    'department_manager' => 'Department Manager',
 ];

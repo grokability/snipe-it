@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Zarządzaj',
     'field'		                => 'Pole',
     'about_fieldsets_title'		=> 'O zestawie pól',
-    'about_fieldsets_text'		=> 'Zestawy pól pozwalają na utworzenie grup własnych, niestandardowych pól, które są często wykorzystywane. Mogą być one wykorzystane i przypisane do modeli aktywów.',
+    'about_fieldsets_text'		=> 'Zestawy pól pozwalają tworzyć grupy pól niestandardowych, które często są używane dla specyficznych typów modeli.',
     'custom_format'             => 'Własny format...',
     'encrypt_field'      	        => 'Szyfruje wartość tego pola w bazie danych',
     'encrypt_field_help'      => 'UWAGA: Szyfrowanie pola spowoduje brak możliwości wyszukiwania go.',
@@ -59,5 +59,12 @@ return [
     'encrypted_options' => 'To pole jest zaszyfrowane, więc niektóre opcje wyświetlania nie będą dostępne.',
     'display_checkin' => 'Display in checkin forms',
     'display_checkout' => 'Display in checkout forms',
-
+    'display_audit' => 'Display in audit forms',
+    'types' => [
+        'text' => 'Text Box',
+        'listbox' => 'List Box',
+        'textarea' => 'Textarea (multi-line)',
+        'checkbox' => 'Checkbox',
+        'radio' => 'Radio Buttons',
+    ],
 ];

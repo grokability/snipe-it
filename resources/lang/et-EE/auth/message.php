@@ -6,8 +6,6 @@ return array(
     'account_not_found'      => 'Kasutajanimi või parool on vale.',
     'account_not_activated'  => 'See kasutajakonto pole aktiveeritud.',
     'account_suspended'      => 'See kasutajakonto on peatatud.',
-    'account_banned'         => 'See kasutajakonto on keelatud.',
-    'throttle'               => 'Liiga palju ebaõnnestunud sisselogimiskatseid. Palun proovi uuesti :minutes minuti pärast.',
 
     'two_factor' => array(
         'already_enrolled'      => 'Sinu seade on juba registreeritud.',

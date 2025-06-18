@@ -39,4 +39,5 @@ return [
     'signed_by_finance_auditor' => 'Потпишано од (Финансиски ревизор):',
     'signed_by_location_manager' => 'Потпишано од (Менаџер за локација):',
     'signed_by'                 => 'Потпишано од:',
+    'clone'  					=> 'Clone Location',
 ];

@@ -4,6 +4,7 @@ return [
     'info'   => 'Välj de alternativ du vill ha för din tillgångsrapport.',
     'deleted_user' => 'Raderad användare',
     'send_reminder' => 'Skicka påminnelse',
+    'cannot_send_reminder' => 'User has been deleted or does not have an email address so cannot receive a reminder',
     'reminder_sent' => 'Påminnelse har skickats',
     'acceptance_deleted' => 'Begäran om godkännande borttagen',
     'acceptance_request' => 'Begäran om godkännande',

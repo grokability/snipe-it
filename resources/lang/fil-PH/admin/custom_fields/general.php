@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Manage',
     'field'		                => 'Ang Field',
     'about_fieldsets_title'		=> 'Ang Tungkol sa Fieldsets',
-    'about_fieldsets_text'		=> 'Fieldsets allow you to create groups of custom fields that are frequently re-used for specific asset model types.',
+    'about_fieldsets_text'		=> 'Ang Fieldsets ay nagbibigay permiso sa iyo na magsagawa ng grupo ng kustom na mga fields na madalas na ginagamit muli para sa partikular na tipo ng modelo ng asset.',
     'custom_format'             => 'Custom Regex format...',
     'encrypt_field'      	        => 'I-encrypt ang balyu sa field na ito sa database',
     'encrypt_field_help'      => 'BABALA: Ang pag-encrypt ng field ay maaaring maging hindi na ito maisaliksik.',
@@ -59,5 +59,12 @@ return [
     'encrypted_options' => 'This field is encrypted, so some display options will not be available.',
     'display_checkin' => 'Display in checkin forms',
     'display_checkout' => 'Display in checkout forms',
-
+    'display_audit' => 'Display in audit forms',
+    'types' => [
+        'text' => 'Text Box',
+        'listbox' => 'List Box',
+        'textarea' => 'Textarea (multi-line)',
+        'checkbox' => 'Checkbox',
+        'radio' => 'Radio Buttons',
+    ],
 ];

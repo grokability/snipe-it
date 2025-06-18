@@ -13,4 +13,8 @@ return [
     'no_depreciations_warning'               => '<strong>Figyelmeztetés: </strong>
                       Jelenleg nincsenek értékcsökkenési leírások beállítva.
                       Kérjük, legalább egy értékcsökkenést állítson be az értékcsökkenési jelentés megtekintéséhez.',
+    'depreciation_method'                   => 'Értékcsökkenés riport',
+    'linear_depreciation'                   => 'Linear (Default)',
+    'half_1'                                => 'Half-year convention, always applied',
+    'half_2'                                => 'Half-year convention, applied with condition',
 ];

@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::group(['prefix' => 'v1', 'middleware' => ['api', 'throttle:api']], function () {
+Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], function () {
 
 
     Route::get('/', function () {
@@ -39,6 +39,9 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'throttle:api']], functi
                 'requestedAssets'
             ]
         )->name('api.assets.requested');
+
+        Route::post('request/{asset}', [Api\CheckoutRequest::class, 'store'])->name('api.assets.requests.store');
+        Route::post('request/{asset}/cancel', [Api\CheckoutRequest::class, 'destroy'])->name('api.assets.requests.destroy');
 
         Route::get('requestable/hardware',
             [
@@ -508,8 +511,17 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'throttle:api']], functi
         ->where(['action' => 'audit|audits|checkins', 'upcoming_status' => 'due|overdue|due-or-overdue']);
 
 
+        // Legacy URL for audit
+          Route::post('audit',
+              [
+                  Api\AssetsController::class,
+                  'audit'
+              ]
+          )->name('api.asset.audit.legacy');
 
-        Route::post('audit',
+
+          // Newer url for audit
+        Route::post('{asset}/audit',
         [
             Api\AssetsController::class, 
             'audit'
@@ -537,14 +549,14 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'throttle:api']], functi
           ]
         )->name('api.assets.restore');
 
-        Route::post('{asset_id}/files',
+        Route::post('{asset}/files',
           [
               Api\AssetFilesController::class,
               'store'
           ]
         )->name('api.assets.files.store');
 
-        Route::get('{asset_id}/files',
+        Route::get('{asset}/files',
           [
               Api\AssetFilesController::class,
               'list'
@@ -1082,6 +1094,14 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'throttle:api']], functi
                 ]
             )->name('api.users.me');
 
+            Route::get('{user}/eulas',
+                [
+                    Api\UsersController::class,
+                    'eulas'
+                ]
+            )->name('api.user.eulas');
+
+
             Route::get('list/{status?}',
             [
                 Api\UsersController::class, 
@@ -1312,7 +1332,11 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'throttle:api']], functi
             return response()->json(
                 [
                     'version' => config('version.app_version'),
-                ], 200);
+                    'build_version' => config('version.build_version'),
+                    'hash_version' => config('version.hash_version'),
+                    'full_version' => config('version.full_app_version')
+                ]
+            );
         }); // end version api routes
 
 

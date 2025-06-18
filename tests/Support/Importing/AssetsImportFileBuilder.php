@@ -40,6 +40,7 @@ class AssetsImportFileBuilder extends FileBuilder
     protected function getDictionary(): array
     {
         return [
+            'id'                  => 'ID',
             'assigneeFullName'    => 'Full Name',
             'assigneeEmail'       => 'Email',
             'assigneeUsername'    => 'Username',
@@ -69,6 +70,7 @@ class AssetsImportFileBuilder extends FileBuilder
         $faker = fake();
 
         return [
+            'asset_tag'           => Str::random(),
             'assigneeFullName'    => $faker->name,
             'assigneeEmail'       => $faker->email,
             'assigneeUsername'    => $faker->userName,

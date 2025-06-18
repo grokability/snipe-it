@@ -73,6 +73,8 @@
                 data-pagination="true"
                 data-id-table="assetsListingTable"
                 data-search="true"
+                data-search-highlight="true"
+                data-show-print="true"
                 data-search-text="{{ e(Session::get('search')) }}"
                 data-side-pagination="server"
                 data-show-columns="true"

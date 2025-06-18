@@ -2,7 +2,7 @@
 
 return [
 
-    'undeployable' 		 => '<strong>Upozorenje: </strong> Ova imovina je trenutno označena kao nezaduživa. Ukoliko je status drugačiji, molim vas ažurirajte status imovine.',
+    'undeployable' 		 => 'Sledeća imovina ne može biti razmeštena i uklonjena je sa spiska za zaduživanje: :asset_tags',
     'does_not_exist' 	 => 'Imovina ne postoji.',
     'does_not_exist_var' => 'Nije pronađena imovina za oznakom :asset_tag.',
     'no_tag' 	         => 'Nije navedena oznaka imovine.',
@@ -19,6 +19,11 @@ return [
         'success_linked' => 'Imovina sa oznakom :tag je uspešno napravljena. <strong><a href=":link" style="color: white;">Kliknite ovde za pregled</a></strong>.',
         'multi_success_linked' => 'Imovina sa oznakom :links je uspešno dodata.|:count imovine je uspešno dodato. :links.',
         'partial_failure' => 'Imovina nije mogla biti dodata. Razlog: :failures|:count imovine nisu mogle biti dodate. Razlozi: :failures',
+        'target_not_found' => [
+            'user' => 'Dodeljeni korisnik nije mogao biti pronađen.',
+            'asset' => 'Dodeljena imovina nije mogla biti pronađena.',
+            'location' => 'Dodeljena lokacija nije mogla biti pronađena.',
+        ],
     ],
 
     'update' => [
@@ -66,6 +71,7 @@ return [
         'file_already_deleted' => 'Izabrana datoteka je već obrisana',
         'header_row_has_malformed_characters' => 'Jedan ili više atributa u redu zaglavlja sadrži loše formatirane UTF-8 karaktere',
         'content_row_has_malformed_characters' => 'Jedan ili više atributa u prvom redu sadržaja sadrži loše formatirane UTF-8 karaktere',
+        'transliterate_failure' => 'Transliteracija iz :encoding u UTF8 nije uspela zbog neispravnih unetih karaktera'
     ],
 
 
@@ -99,9 +105,10 @@ return [
     ],
 
     'requests' => [
-        'error'   		=> 'Imovina nije zatražena, pokušajte ponovo',
-        'success' 		=> 'Imovina je uspešno zatražena.',
-        'canceled'      => 'Checkout request successfully canceled',
+        'error'   		=> 'Zahtev nije bio uspešan, pokušajte ponovo.',
+        'success' 		=> 'Zahtev je uspešno podnet.',
+        'canceled'      => 'Zahtev je uspešno poništen.',
+        'cancel'        => 'Otkažite zahtev za ovu stavku',
     ],
 
 ];

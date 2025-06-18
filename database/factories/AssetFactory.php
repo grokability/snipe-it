@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Asset;
 use App\Models\AssetModel;
+use App\Models\Category;
 use App\Models\CustomField;
 use App\Models\Location;
 use App\Models\Statuslabel;
@@ -333,6 +334,15 @@ class AssetFactory extends Factory
         });
     }
 
+    public function doesNotRequireAcceptance()
+    {
+        return $this->state(function () {
+            return [
+                'model_id' => AssetModel::factory()->doesNotRequireAcceptance(),
+            ];
+        });
+    }
+
     public function deleted()
     {
         return $this->state(function () {
@@ -347,12 +357,22 @@ class AssetFactory extends Factory
 
     public function requestable()
     {
-        return $this->state(['requestable' => true]);
+        $id = Statuslabel::factory()->create([
+            'archived'   => false,
+            'deployable' => true,
+            'pending'    => true,
+        ])->id;
+        return $this->state(['status_id' => $id, 'requestable' => true]);
     }
 
     public function nonrequestable()
     {
-        return $this->state(['requestable' => false]);
+        $id = Statuslabel::factory()->create([
+            'archived'   => true,
+            'deployable' => false,
+            'pending'    => false,
+        ])->id;
+        return $this->state(['status_id' => $id, 'requestable' => false]);
     }
 
     public function noPurchaseOrEolDate()

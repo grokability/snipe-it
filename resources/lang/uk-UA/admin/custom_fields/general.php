@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Керування',
     'field'		                => 'Поле',
     'about_fieldsets_title'		=> 'Про польові набори',
-    'about_fieldsets_text'		=> 'Поля дозволяють створювати групи настроюваних полів, які часто повторно використовуються для конкретних типів моделі активів.',
+    'about_fieldsets_text'		=> 'Поля дозволяють створювати групи настроюваних полів, які часто повторно використовуються для певних типів моделі активів.',
     'custom_format'             => 'Користувацький формат регулярного виразу...',
     'encrypt_field'      	        => 'Шифрувати значення цього поля в базі даних',
     'encrypt_field_help'      => 'УВАГА: Шифрування поля робить його непридатним для пошуку.',
@@ -57,7 +57,14 @@ return [
     'show_in_requestable_list_short' => 'Показати в списку активів',
     'show_in_requestable_list' => 'Показувати значення в списку активів, які запитуються. Зашифровані поля не будуть показані',
     'encrypted_options' => 'Це поле зашифроване, так що деякі параметри відображення не будуть доступні.',
-    'display_checkin' => 'Display in checkin forms',
-    'display_checkout' => 'Display in checkout forms',
-
+    'display_checkin' => 'Відображати в формах перевірки',
+    'display_checkout' => 'Відображати в формах перевірки',
+    'display_audit' => 'Відображати в формах перевірки',
+    'types' => [
+        'text' => 'Text Box',
+        'listbox' => 'List Box',
+        'textarea' => 'Textarea (multi-line)',
+        'checkbox' => 'Checkbox',
+        'radio' => 'Radio Buttons',
+    ],
 ];

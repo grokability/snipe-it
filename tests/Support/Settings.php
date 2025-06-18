@@ -46,6 +46,34 @@ class Settings
         ]);
     }
 
+    public function enableAdminCC(string $email = 'cc@example.co'): Settings
+    {
+        return $this->update([
+            'admin_cc_email' => $email,
+        ]);
+    }
+
+    public function disableAdminCC(): Settings
+    {
+        return $this->update([
+            'admin_cc_email' => null,
+        ]);
+    }
+
+    public function enableAdminCCAlways(): Settings
+    {
+        return $this->update([
+            'admin_cc_always' => 1,
+        ]);
+    }
+
+    public function disableAdminCCAlways(): Settings
+    {
+        return $this->update([
+            'admin_cc_always' => 0,
+        ]);
+    }
+
     public function enableMultipleFullCompanySupport(): Settings
     {
         return $this->update(['full_multiple_companies_support' => 1]);

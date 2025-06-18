@@ -53,4 +53,5 @@ return [
     'next_save_user' => 'Далее: Сохранить пользователя',
     'all_assigned_list_generation' => 'Создано:',
     'email_user_creds_on_create' => 'Отправить этому пользователю его данные по почте?',
+    'department_manager' => 'Department Manager',
 ];

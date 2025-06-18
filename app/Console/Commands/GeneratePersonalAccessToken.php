@@ -2,11 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\Helpers\Helper;
 use Illuminate\Console\Command;
 use App\Models\User;
 use Laravel\Passport\TokenRepository;
-use Illuminate\Contracts\Validation\Factory as ValidationFactory;
 use Illuminate\Support\Facades\DB;
 
 class GeneratePersonalAccessToken extends Command
@@ -43,9 +41,8 @@ class GeneratePersonalAccessToken extends Command
      *
      * @return void
      */
-    public function __construct(TokenRepository $tokenRepository, ValidationFactory $validation)
+    public function __construct(TokenRepository $tokenRepository)
     {
-        $this->validation = $validation;
         $this->tokenRepository = $tokenRepository;
         parent::__construct();
     }
@@ -76,7 +73,7 @@ class GeneratePersonalAccessToken extends Command
 
             } else {
 
-                $this->warn('Your API Token has been created. Be sure to copy this token now, as it will not be accessible again.');
+                $this->warn('Your API Token has been created. Be sure to copy this token now, as it WILL NOT be accessible again.');
 
                 if ($token = DB::table('oauth_access_tokens')->where('user_id', '=', $user->id)->where('name','=',$accessTokenName)->orderBy('created_at', 'desc')->first()) {
                     $this->info('API Token ID: '.$token->id);

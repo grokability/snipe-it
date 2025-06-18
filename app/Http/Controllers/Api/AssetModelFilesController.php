@@ -75,6 +75,11 @@ class AssetModelFilesController extends Controller
      */
     public function list($assetmodel_id) : JsonResponse | array
     {
+        // Start by checking if the asset being acted upon exists
+        if (! $assetModel = AssetModel::find($assetmodel_id)) {
+            return response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/models/message.does_not_exist')), 404);
+        }
+
             $assetmodel = AssetModel::with('uploads')->find($assetmodel_id);
             $this->authorize('view', $assetmodel);
             return (new AssetModelsTransformer)->transformAssetModelFiles($assetmodel, $assetmodel->uploads()->count());

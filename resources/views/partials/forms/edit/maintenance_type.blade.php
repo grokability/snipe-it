@@ -8,6 +8,8 @@
                       :options="$assetMaintenanceType"
                       :selected="old('asset_maintenance_type', $item->asset_maintenance_type)"
                       :required="Helper::checkIfRequired($item, 'asset_maintenance_type')"
+                      data-placeholder="{{ trans('admin/asset_maintenances/form.select_type')}}"
+                      includeEmpty="true"
                       style="width:100%;"
                       aria-label="asset_maintenance_type"
                   />

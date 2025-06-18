@@ -9,6 +9,7 @@ return [
     'bulk_checkin'              => 'Bulk Checkin',
     'checkin'  					=> 'Ingresar activo',
     'checkout'  				=> 'Asignar activo',
+    'clear'                     => 'Clear',
     'clone'  					=> 'Clonar activo',
     'deployable'  				=> 'Utilizable',
     'deleted'  					=> 'Este activo ha sido eliminado.',

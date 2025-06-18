@@ -31,6 +31,7 @@ return [
         'numeric' => 'Pole :attribute musi być pomiędzy :min a :max.',
         'string' => 'Pole :attribute musi zawierać się między :min a :max znaków.',
     ],
+    'valid_regex' => 'The regular expression is invalid.',
     'boolean' => 'Pole atrybutu: musi być prawdziwe lub fałszywe.',
     'can' => 'Pole :attribute zawiera nieautoryzowaną wartość.',
     'confirmed' => 'Potwierdzenie pola :attribute nie pasuje.',
@@ -172,6 +173,7 @@ return [
     'url' => 'Pole :attribute musi być prawidłowym adresem URL.',
     'ulid' => 'Pole :attribute musi być poprawnym ULID.',
     'uuid' => 'Pole :attribute musi być prawidłowym UUID.',
+    'fmcs_location' => 'Full multiple company support and location scoping is enabled in the Admin Settings, and the selected location and selected company are not compatible.',
 
 
     /*
@@ -185,9 +187,13 @@ return [
     |
     */
 
+    'email_array'      => 'Jeden lub więcej wprowadzonych adresów jest nieprawidłowy.',
+    'checkboxes'           => ':attribute zawiera nieprawidłowe opcje.',
+    'radio_buttons'        => ':attribute jest nieprawidłowy.',
+    
     'custom' => [
         'alpha_space' => 'Pole: attribute zawiera znak, który nie jest dozwolony.',
-        'email_array'      => 'Jeden lub więcej adresów e-mail jest nieprawidłowy.',
+
         'hashed_pass'      => 'Twoje bieżące hasło jest niepoprawne',
         'dumbpwd'          => 'To hasło jest zbyt powszechne.',
         'statuslabel_type' => 'Musisz wybrać odpowiedni typ etykiety statusu',
@@ -204,8 +210,6 @@ return [
         'expected_checkin.date_format'  =>  ':attribute musi być prawidłową datą w formacie YYYY-MM-DD',
         'start_date.date_format'        =>  ':attribute musi być prawidłową datą w formacie YYYY-MM-DD',
         'end_date.date_format'          =>  ':attribute musi być prawidłową datą w formacie YYYY-MM-DD',
-        'checkboxes'           => ':attribute zawiera nieprawidłowe opcje.',
-        'radio_buttons'        => ':attribute jest nieprawidłowy.',
         'invalid_value_in_field' => 'Nieprawidłowa wartość dołączona do tego pola',
 
         'ldap_username_field' => [

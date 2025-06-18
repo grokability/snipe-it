@@ -53,4 +53,5 @@ return [
     'next_save_user' => 'Naslednje: shrani uporabnika',
     'all_assigned_list_generation' => 'Ustvarjena na:',
     'email_user_creds_on_create' => 'Sporoči temu uporabniku poverilnice po E pošti?',
+    'department_manager' => 'Department Manager',
 ];

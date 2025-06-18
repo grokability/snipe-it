@@ -1,0 +1,240 @@
+{
+    "standard": "WCAG2AA",
+    "level": "error",
+    "defaults": {
+      "useIncognitoBrowserContext": false,
+      "timeout": 500000,
+      "wait": 5000,
+      "ignore" : [
+        "WCAG2AA.Principle1.Guideline1_4.1_4_3.G145.Fail",
+        "WCAG2AA.Principle1.Guideline1_4.1_4_3.G18.Fail"
+      ],
+
+      "viewport": {
+        "width": 1280,
+        "height": 1024
+      }
+    },
+    "urls": [
+        {
+          "__NOTE"  : "this should always be FIRST (if browser context is preserved)",
+          "url": "https://snipe-it.test/login",
+          "actions": [
+            "navigate to https://snipe-it.test/login",
+            "screen capture tests/pa11y/login.png",
+             "set field input[name='username'] to admin",
+             "set field input[name='password'] to password",
+             "click element button[type=submit]",
+             "wait for url to be https://snipe-it.test/",
+             "screen capture tests/pa11y/dashboard.png"
+          ]
+        },
+        {
+          "url"     : "https://snipe-it.test/admin",
+          "actions" : [
+            "navigate to https://snipe-it.test/admin",
+            "screen capture tests/pa11y/admin-settings.png"
+          ]
+        },
+        {
+          "url"     : "https://snipe-it.test/admin/branding",
+          "actions" : [
+            "navigate to https://snipe-it.test/admin/branding",
+            "screen capture tests/pa11y/admin-branding.png"
+          ]
+        },
+        {
+          "url"     : "https://snipe-it.test/admin/general",
+          "actions" : [
+            "navigate to https://snipe-it.test/admin/general",
+            "screen capture tests/pa11y/admin-general.png"
+          ]
+        },
+        {
+          "url"     : "https://snipe-it.test/hardware/create",
+          "actions" : [
+            "navigate to https://snipe-it.test/hardware/create",
+            "screen capture tests/pa11y/asset-create.png"
+          ]
+        },
+       {
+        "url"     : "https://snipe-it.test/hardware",
+        "actions" : [
+          "navigate to https://snipe-it.test/hardware",
+          "screen capture tests/pa11y/asset-list.png"
+        ]
+      },
+      {
+        "url"     : "https://snipe-it.test/hardware/1",
+        "actions" : [
+          "navigate to https://snipe-it.test/hardware/1",
+          "screen capture tests/pa11y/asset-detail.png"
+        ]
+      },
+      {
+        "url"     : "https://snipe-it.test/account/view-assets",
+        "actions" : [
+          "navigate to https://snipe-it.test/account/view-assets",
+          "screen capture tests/pa11y/profile.png"
+        ]
+      },
+      {
+        "url"     : "https://snipe-it.test/licences",
+        "actions" : [
+          "navigate to https://snipe-it.test/licenses",
+          "screen capture tests/pa11y/license-list.png"
+        ]
+      },
+      {
+        "url"     : "https://snipe-it.test/licences/create",
+        "actions" : [
+          "navigate to https://snipe-it.test/licenses/create",
+          "screen capture tests/pa11y/license-create.png"
+        ]
+      },
+      {
+        "url"     : "https://snipe-it.test/licences/1",
+        "actions" : [
+          "navigate to https://snipe-it.test/licenses/1",
+          "screen capture tests/pa11y/license-view.png"
+        ]
+      },
+      {
+        "url"     : "https://snipe-it.test/consumables",
+        "actions" : [
+          "navigate to https://snipe-it.test/consumables",
+          "screen capture tests/pa11y/consumable-list.png"
+        ]
+      },
+      {
+        "url"     : "https://snipe-it.test/consumables/create",
+        "actions" : [
+          "navigate to https://snipe-it.test/consumables/create",
+          "screen capture tests/pa11y/consumable-create.png"
+        ]
+      },
+      {
+        "url"     : "https://snipe-it.test/consumables/1",
+        "actions" : [
+          "navigate to https://snipe-it.test/consumables/1",
+          "screen capture tests/pa11y/consumable-view.png"
+        ]
+      },
+      {
+        "url"     : "https://snipe-it.test/accessories",
+        "actions" : [
+          "navigate to https://snipe-it.test/accessories",
+          "screen capture tests/pa11y/accessory-list.png"
+        ]
+      },
+      {
+        "url"     : "https://snipe-it.test/accessories/create",
+        "actions" : [
+          "navigate to https://snipe-it.test/accessories/create",
+          "screen capture tests/pa11y/accessory-create.png"
+        ]
+      },
+      {
+        "url"     : "https://snipe-it.test/accessories/1",
+        "actions" : [
+          "navigate to https://snipe-it.test/accessories/1",
+          "screen capture tests/pa11y/accessory-view.png"
+        ]
+      },
+      {
+        "url"     : "https://snipe-it.test/locations",
+        "actions" : [
+          "navigate to https://snipe-it.test/locations",
+          "screen capture tests/pa11y/location-list.png"
+        ]
+      },
+      {
+        "url"     : "https://snipe-it.test/locations/create",
+        "actions" : [
+          "navigate to https://snipe-it.test/locations/create",
+          "screen capture tests/pa11y/location-create.png"
+        ]
+      },
+      {
+        "url"     : "https://snipe-it.test/locations/1",
+        "actions" : [
+          "navigate to https://snipe-it.test/locations/1",
+          "screen capture tests/pa11y/location-view.png"
+        ]
+      },
+
+      {
+        "url"     : "https://snipe-it.test/models",
+        "actions" : [
+          "navigate to https://snipe-it.test/models",
+          "screen capture tests/pa11y/model-list.png"
+        ]
+      },
+      {
+        "url"     : "https://snipe-it.test/models/create",
+        "actions" : [
+          "navigate to https://snipe-it.test/models/create",
+          "screen capture tests/pa11y/model-create.png"
+        ]
+      },
+      {
+        "url"     : "https://snipe-it.test/models/1",
+        "actions" : [
+          "navigate to https://snipe-it.test/models/1",
+          "screen capture tests/pa11y/model-view.png"
+        ]
+      },
+
+      {
+        "url"     : "https://snipe-it.test/companies",
+        "actions" : [
+          "navigate to https://snipe-it.test/companies",
+          "screen capture tests/pa11y/company-list.png"
+        ]
+      },
+      {
+        "url"     : "https://snipe-it.test/companies/create",
+        "actions" : [
+          "navigate to https://snipe-it.test/companies/create",
+          "screen capture tests/pa11y/company-create.png"
+        ]
+      },
+      {
+        "url"     : "https://snipe-it.test/companies/1",
+        "actions" : [
+          "navigate to https://snipe-it.test/companies/1",
+          "screen capture tests/pa11y/company-view.png"
+        ]
+      },
+
+      {
+        "url"     : "https://snipe-it.test/departments",
+        "actions" : [
+          "navigate to https://snipe-it.test/departments",
+          "screen capture tests/pa11y/department-list.png"
+        ]
+      },
+      {
+        "url"     : "https://snipe-it.test/departments/create",
+        "actions" : [
+          "navigate to https://snipe-it.test/departments/create",
+          "screen capture tests/pa11y/department-create.png"
+        ]
+      },
+      {
+        "url"     : "https://snipe-it.test/departments/1",
+        "actions" : [
+          "navigate to https://snipe-it.test/departments/1",
+          "screen capture tests/pa11y/department-view.png"
+        ]
+      },
+
+      {
+        "url"     : "https://snipe-it.test/invalid-url",
+        "actions" : [
+          "navigate to https://snipe-it.test/invalid-url",
+          "screen capture tests/pa11y/404.png"
+        ]
+      }
+    ]
+}

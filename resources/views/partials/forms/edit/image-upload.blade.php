@@ -1,28 +1,29 @@
 <!-- Image stuff - kept in /resources/views/partials/forms/edit/image-upload.blade.php -->
 <!-- Image Delete -->
-@if (isset($item) && ($item->{($fieldname ?? 'image')}))
-    <div class="form-group{{ $errors->has('image_delete') ? ' has-error' : '' }}">
-        <div class="col-md-9 col-md-offset-3">
-            <label class="form-control">
-                <input type="checkbox" name="image_delete" value="1" @checked(old('image_delete')) aria-label="image_delete">
-                {{ trans('general.image_delete') }}
+@if (isset($image_path))
+    @if (isset($item) && ($item->{($fieldname ?? 'image')}))
+        <div class="form-group{{ $errors->has('image_delete') ? ' has-error' : '' }}">
+            <div class="col-md-9 col-md-offset-3">
+                <label class="form-control">
+                    <input type="checkbox" name="image_delete" value="1" @checked(old('image_delete')) aria-label="image_delete">
+                    {{ trans('general.image_delete') }}
+                    {!! $errors->first('image_delete', '<span class="alert-msg">:message</span>') !!}
+                </label>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-8 col-md-offset-3">
+                <img src="{{ Storage::disk('public')->url($image_path.e($item->{($fieldname ?? 'image')})) }}" class="img-responsive">
                 {!! $errors->first('image_delete', '<span class="alert-msg">:message</span>') !!}
-            </label>
+            </div>
         </div>
-    </div>
-    <div class="form-group">
-        <div class="col-md-9 col-md-offset-3">
-            <img src="{{ Storage::disk('public')->url($image_path.e($item->{($fieldname ?? 'image')})) }}" class="img-responsive">
-            {!! $errors->first('image_delete', '<span class="alert-msg">:message</span>') !!}
-        </div>
-    </div>
+    @endif
 @endif
-
 <!-- Image Upload and preview -->
 
 <div class="form-group {{ $errors->has((isset($fieldname) ? $fieldname : 'image')) ? 'has-error' : '' }}">
     <label class="col-md-3 control-label" for="{{ (isset($fieldname) ? $fieldname : 'image') }}">{{ trans('general.image_upload') }}</label>
-    <div class="col-md-9">
+    <div class="col-md-8">
 
         <input type="file" id="{{ (isset($fieldname) ? $fieldname : 'image') }}" name="{{ (isset($fieldname) ? $fieldname : 'image') }}" aria-label="{{ (isset($fieldname) ? $fieldname : 'image') }}" class="sr-only">
 

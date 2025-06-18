@@ -39,6 +39,8 @@
                 data-pagination="true"
                 data-id-table="unacceptedAssetsReport"
                 data-search="true"
+                data-search-highlight="true"
+                data-show-print="true"
                 data-side-pagination="client"
                 data-show-columns="true"
                 data-show-export="true"

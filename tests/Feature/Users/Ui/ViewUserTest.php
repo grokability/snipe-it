@@ -4,80 +4,38 @@ namespace Tests\Feature\Users\Ui;
 
 use App\Models\Company;
 use App\Models\User;
-use App\Notifications\CurrentInventory;
-use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
 class ViewUserTest extends TestCase
 {
-    public function testPermissionsForUserDetailPage()
+    public function testRequiresPermissionToViewUser()
     {
-        $this->settings->enableMultipleFullCompanySupport();
-
-        [$companyA, $companyB] = Company::factory()->count(2)->create();
-
-        $superuser = User::factory()->superuser()->create();
-        $user = User::factory()->for($companyB)->create();
-
-        $this->actingAs(User::factory()->editUsers()->for($companyA)->create())
-            ->get(route('users.show', $user))
-            ->assertStatus(302);
-
-        $this->actingAs($superuser)
-            ->get(route('users.show', $user))
-            ->assertOk()
-            ->assertStatus(200);
-    }
-
-    public function testPermissionsForPrintAllInventoryPage()
-    {
-        $this->settings->enableMultipleFullCompanySupport();
-
-        [$companyA, $companyB] = Company::factory()->count(2)->create();
-
-        $superuser = User::factory()->superuser()->create();
-        $user = User::factory()->for($companyB)->create();
-
-        $this->actingAs(User::factory()->viewUsers()->for($companyA)->create())
-            ->get(route('users.print', ['userId' => $user->id]))
-            ->assertStatus(302);
-
-        $this->actingAs(User::factory()->viewUsers()->for($companyB)->create())
-            ->get(route('users.print', ['userId' => $user->id]))
-            ->assertStatus(200);
-
-        $this->actingAs($superuser)
-            ->get(route('users.print', ['userId' => $user->id]))
-            ->assertOk()
-            ->assertStatus(200);
-    }
-
-    public function testUserWithoutCompanyPermissionsCannotSendInventory()
-    {
-
-        Notification::fake();
-
-        $this->settings->enableMultipleFullCompanySupport();
-
-        [$companyA, $companyB] = Company::factory()->count(2)->create();
-
-        $superuser = User::factory()->superuser()->create();
-        $user = User::factory()->for($companyB)->create();
-
-        $this->actingAs(User::factory()->viewUsers()->for($companyA)->create())
-            ->post(route('users.email', ['userId' => $user->id]))
+        $this->actingAs(User::factory()->create())
+            ->get(route('users.show', User::factory()->create()))
             ->assertStatus(403);
+    }
 
-        $this->actingAs(User::factory()->viewUsers()->for($companyB)->create())
-            ->post(route('users.email', ['userId' => $user->id]))
+    public function testCanViewUser()
+    {
+        $actor = User::factory()->viewUsers()->create();
+
+        $this->actingAs($actor)
+            ->get(route('users.show', User::factory()->create()))
+            ->assertOk()
+            ->assertStatus(200);
+    }
+
+    public function testCannotViewUserFromAnotherCompany()
+    {
+        $this->settings->enableMultipleFullCompanySupport();
+
+        [$companyA, $companyB] = Company::factory()->count(2)->create();
+
+        $actor = User::factory()->for($companyA)->viewUsers()->create();
+        $user = User::factory()->for($companyB)->create();
+
+        $this->actingAs($actor)
+            ->get(route('users.show', $user))
             ->assertStatus(302);
-
-        $this->actingAs($superuser)
-            ->post(route('users.email', ['userId' => $user->id]))
-            ->assertStatus(302);
-
-        Notification::assertSentTo(
-            [$user], CurrentInventory::class
-        );
     }
 }

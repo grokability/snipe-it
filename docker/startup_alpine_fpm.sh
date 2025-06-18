@@ -99,10 +99,7 @@ then
   cp -a /var/www/html/vendor/laravel/passport/database/migrations/* /var/www/html/database/migrations/
 fi
 
-# Create laravel log file
-touch /var/www/html/storage/logs/laravel.log
 # Add correct permissions for files and directories
-chown www-data:www-data /var/www/html/storage/logs/laravel.log
 chown -R www-data:www-data \
   /var/lib/snipeit/data \
   /var/lib/snipeit/dumps \
@@ -114,6 +111,11 @@ php artisan migrate --force
 php artisan config:clear
 php artisan config:cache
 
+# Create laravel log file
+touch /var/www/html/storage/logs/laravel.log
+# ensure it's owned by www:data in case it was created by root
+chown www-data:www-data /var/www/html/storage/logs/laravel.log
+
 echo [INFO docker entrypoint] End script execution
 
-exec "$@" 
+exec "$@"

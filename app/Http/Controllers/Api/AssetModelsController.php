@@ -85,6 +85,12 @@ class AssetModelsController extends Controller
             $assetmodels = $assetmodels->where('models.model_number', '=', $request->input('model_number'));
         }
 
+        if ($request->input('requestable') == 'true') {
+            $assetmodels = $assetmodels->where('models.requestable', '=', '1');
+        } elseif ($request->input('requestable') == 'false') {
+            $assetmodels = $assetmodels->where('models.requestable', '=', '0');
+        }        
+
         if ($request->filled('notes')) {
             $assetmodels = $assetmodels->where('models.notes', '=', $request->input('notes'));
         }

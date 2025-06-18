@@ -39,4 +39,5 @@ return [
     'signed_by_finance_auditor' => 'Podpísané (Finančný auditor):',
     'signed_by_location_manager' => 'Podpísané (Manažér lokality):',
     'signed_by'                 => 'Odpísal:',
+    'clone'  					=> 'Clone Location',
 ];

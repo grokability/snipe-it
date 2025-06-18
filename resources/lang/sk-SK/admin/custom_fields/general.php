@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Spravovať',
     'field'		                => 'Pole',
     'about_fieldsets_title'		=> 'O skupinách polí',
-    'about_fieldsets_text'		=> 'Skupina polí umožňuje vytvoriť skupinu vlastných polí ktoré sú často prepoužívané pre špecifické typy modelov majetku.',
+    'about_fieldsets_text'		=> 'Fieldsets allow you to create groups of custom fields that are frequently re-used used for specific asset model types.',
     'custom_format'             => 'Vlastný formát regexu...',
     'encrypt_field'      	        => 'Zašifrovať hodnotu tohto poľa v databáze',
     'encrypt_field_help'      => 'VAROVANIE: Šifrované pole bude nevyhľadateľné.',
@@ -59,5 +59,12 @@ return [
     'encrypted_options' => 'Toto pole je šifrované, takže niektoré možnosti zobrazenia nebudú k dispozícii.',
     'display_checkin' => 'Display in checkin forms',
     'display_checkout' => 'Display in checkout forms',
-
+    'display_audit' => 'Display in audit forms',
+    'types' => [
+        'text' => 'Text Box',
+        'listbox' => 'List Box',
+        'textarea' => 'Textarea (multi-line)',
+        'checkbox' => 'Checkbox',
+        'radio' => 'Radio Buttons',
+    ],
 ];

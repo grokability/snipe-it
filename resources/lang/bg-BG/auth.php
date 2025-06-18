@@ -15,6 +15,6 @@ return array(
 
     'failed' => 'Неуспешно удостоверяване на потребител.',
     'password' => 'Невалидна парола.',
-    'throttle' => 'Твърде много опити за логин. Моля, опитайте отново след :seconds секунди.',
+    'throttle' => 'Too many login attempts. Please try again in :minutes minute(s).',
 
 );

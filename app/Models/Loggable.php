@@ -89,24 +89,23 @@ trait Loggable
         $log->note = $note;
         $log->action_date = $action_date;
 
-        if (! $log->action_date) {
-            $log->action_date = date('Y-m-d H:i:s');
-        }
 
         $changed = [];
         $array_to_flip = array_keys($fields_array);
-        $array_to_flip = array_merge($array_to_flip, ['action_date','name','status_id','location_id','expected_checkin']);
+        $array_to_flip = array_merge($array_to_flip, ['name','status_id','location_id','expected_checkin']);
         $originalValues = array_intersect_key($originalValues, array_flip($array_to_flip));
 
 
         foreach ($originalValues as $key => $value) {
+            // TODO - action_date isn't a valid attribute of any first-class object, so we might want to remove this?
             if ($key == 'action_date' && $value != $action_date) {
                 $changed[$key]['old'] = $value;
                 $changed[$key]['new'] = is_string($action_date) ? $action_date : $action_date->format('Y-m-d H:i:s');
-            } elseif ($value != $this->getAttributes()[$key]) {
+            } elseif (array_key_exists($key, $this->getAttributes()) && $value != $this->getAttributes()[$key]) {
                 $changed[$key]['old'] = $value;
                 $changed[$key]['new'] = $this->getAttributes()[$key];
             }
+            // NOTE - if the attribute exists in $originalValues, but *not* in ->getAttributes(), it isn't added to $changed
         }
 
         if (!empty($changed)){
@@ -180,7 +179,7 @@ trait Loggable
         $log->note = $note;
         $log->action_date = $action_date;
 
-        if (! $log->action_date) {
+        if (!$action_date) {
             $log->action_date = date('Y-m-d H:i:s');
         }
 
@@ -191,7 +190,7 @@ trait Loggable
         $changed = [];
 
         $array_to_flip = array_keys($fields_array);
-        $array_to_flip = array_merge($array_to_flip, ['action_date','name','status_id','location_id','expected_checkin']);
+        $array_to_flip = array_merge($array_to_flip, ['name','status_id','location_id','expected_checkin']);
 
         $originalValues = array_intersect_key($originalValues, array_flip($array_to_flip));
 
@@ -220,9 +219,41 @@ trait Loggable
      * @since [v4.0]
      * @return \App\Models\Actionlog
      */
-    public function logAudit($note, $location_id, $filename = null)
+    public function logAudit($note, $location_id, $filename = null, $originalValues = [])
     {
+
         $log = new Actionlog;
+
+        if (static::class == Asset::class) {
+            if ($asset = Asset::find($log->item_id)) {
+                // add the custom fields that were changed
+                if ($asset->model->fieldset) {
+                    $fields_array = [];
+                    foreach ($asset->model->fieldset->fields as $field) {
+                        if ($field->display_audit == 1) {
+                            $fields_array[$field->db_column] = $asset->{$field->db_column};
+                        }
+                    }
+                }
+            }
+        }
+
+        $changed = [];
+
+        unset($originalValues['updated_at'], $originalValues['last_audit_date']);
+        foreach ($originalValues as $key => $value) {
+
+            if ($value != $this->getAttributes()[$key]) {
+                $changed[$key]['old'] = $value;
+                $changed[$key]['new'] = $this->getAttributes()[$key];
+            }
+        }
+
+        if (!empty($changed)){
+            $log->log_meta = json_encode($changed);
+        }
+
+
         $location = Location::find($location_id);
         if (static::class == LicenseSeat::class) {
             $log->item_type = License::class;
@@ -235,6 +266,7 @@ trait Loggable
         $log->note = $note;
         $log->created_by = auth()->id();
         $log->filename = $filename;
+        $log->action_date = date('Y-m-d H:i:s');
         $log->logaction('audit');
 
         $params = [
@@ -276,6 +308,7 @@ trait Loggable
             $log->item_id = $this->id;
         }
         $log->location_id = null;
+        $log->action_date = date('Y-m-d H:i:s');
         $log->note = $note;
         $log->created_by = $created_by;
         $log->logaction('create');
@@ -303,9 +336,30 @@ trait Loggable
         $log->note = $note;
         $log->target_id = null;
         $log->created_at = date('Y-m-d H:i:s');
+        $log->action_date = date('Y-m-d H:i:s');
         $log->filename = $filename;
         $log->logaction('uploaded');
 
         return $log;
+    }
+
+    /**
+     * Get latest signature from a specific user
+     *
+     * This just makes the print view a bit cleaner
+     * Returns the latest acceptance ActionLog that contains a signature
+     * from $user or null if there is none
+     *
+     * @param User $user
+     * @return null|Actionlog
+     **/
+    public function getLatestSignedAcceptance(User $user)
+    {
+        return $this->log->where('target_type', User::class)
+            ->where('target_id', $user->id)
+            ->where('action_type', 'accepted')
+            ->where('accept_signature', '!=', null)
+            ->sortByDesc('created_at')
+            ->first();
     }
 }

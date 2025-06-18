@@ -1,14 +1,14 @@
 <?php
 
 return array(
-    'about'      	=> 'درباره ی برچسب های وضعیت',
+    'about'      	=> 'About Status Types',
     'archived'      	=> 'آرشیو',
     'create'      	=> 'ساخت برچسب وضعیت',
     'color'      	=> 'رنگ نمودار',
     'default_label' => 'برچسب پیش‌فرض',
     'default_label_help' => 'این برای اطمینان از اینکه پرکاربردترین برچسب‌های وضعیت شما هنگام ایجاد/ویرایش دارایی‌ها در بالای کادر انتخاب ظاهر شوند استفاده می‌شود.',
     'deployable'      	=> 'گسترش',
-    'info'      	=> 'برچسب های وضعیت، برای توصیف وضعیت های مختلفی که دارایی های شما می توانند داشته باشند، استفاده می شود. آن ها می توانند برای تعمیر، گمشده/دزدیده شده و غیره باشند. شما می توانید برچسب های وضعیت جدیدی برای گسترش کار، انتظار و آرشیو دارایی ها بسازید.',
+    'info'      	=> 'Status label types are used to describe the various states your assets could be in. They may be out for repair, lost/stolen, etc. You can create new status labels for your deployable, pending and archived assets according to your own workflow. For more information, <a href="https://snipe-it.readme.io/docs/overview#status-labels" target="_blank">see the documentation <i class="fa fa-external-link"></i></a>.',
     'name'      	=> 'نام وضعیت',
     'pending'      	=> 'در حالت انتظار',
     'status_type'   => 'نوع وضعیت',

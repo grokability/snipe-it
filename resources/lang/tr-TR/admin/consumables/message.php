@@ -2,7 +2,7 @@
 
 return array(
 
-    'invalid_category_type' => 'The category must be a consumable category.',
+    'invalid_category_type' => 'Kategori, tüketilebilir bir kategori olmalıdır.',
     'does_not_exist' => 'Sarf malzemesi mevcut değil.',
 
     'create' => array(

@@ -53,4 +53,5 @@ return [
     'next_save_user' => 'Sonraki: Kullanıcıyı Kaydet',
     'all_assigned_list_generation' => 'Bu tarihinde oluşturuldu:',
     'email_user_creds_on_create' => 'Bu kullanıcıya kimlik bilgileri e-postayla gönderilsin mi?',
+    'department_manager' => 'Department Manager',
 ];

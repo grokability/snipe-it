@@ -21,5 +21,9 @@ return array(
     'use_default_eula'					=> 'crwdns1247:0crwdne1247:0',
     'use_default_eula_disabled'			=> 'crwdns1248:0crwdne1248:0',
     'use_default_eula_column'			=> 'crwdns6083:0crwdne6083:0',
+    'import_require_acceptance'         => 'crwdns13270:0crwdne13270:0',
+    'import_checkin_email'              => 'crwdns13272:0crwdne13272:0',
+    'import_eula_text'                  => 'crwdns13274:0crwdne13274:0',
+    'import_category_type'              => 'crwdns13276:0crwdne13276:0',
 
 );

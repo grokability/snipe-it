@@ -23,5 +23,9 @@ return array(
     'use_default_eula_disabled'			=> 'از پیشفرض اولیه EULA استفاده کنید.<del>هیچ پیشفرضی اولیه ای تنظیم نشده است</del>
 در تنظیمات اضافه کنید.',
     'use_default_eula_column'			=> 'استفاده توافق نامه پیشفرض',
+    'import_require_acceptance'         => 'Require Acceptance',
+    'import_checkin_email'              => 'Send Checkin Email',
+    'import_eula_text'                  => 'EULA text',
+    'import_category_type'              => 'Category Type',
 
 );

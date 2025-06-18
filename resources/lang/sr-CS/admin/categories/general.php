@@ -21,5 +21,9 @@ return array(
     'use_default_eula'					=> 'Umesto toga upotrebite <a href="#" data-toggle="modal" data-target="#eulaModal">primarnu, default postavku EULA</a>.',
     'use_default_eula_disabled'			=> '<del>Upotrebi primarnu default EULA.</del> Nije postavljena primarna default EULA. Dodajte jednu u Postavke.',
     'use_default_eula_column'			=> 'Koristi standardne korisničke privilegije',
+    'import_require_acceptance'         => 'Zahteva prihvatanje',
+    'import_checkin_email'              => 'Pošalji e-poruku razduživanja',
+    'import_eula_text'                  => 'EULA tekst',
+    'import_category_type'              => 'Vrsta kategorije',
 
 );

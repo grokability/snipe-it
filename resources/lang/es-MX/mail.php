@@ -66,6 +66,8 @@ return [
     'min_QTY' => 'Cantidad mínima',
     'name' => 'Nombre',
     'new_item_checked' => 'Un nuevo artículo ha sido asignado a su nombre, los detalles están a continuación.',
+    'new_item_checked_with_acceptance' => 'Un nuevo artículo ha sido asignado a su nombre, los detalles están a continuación.',
+    'recent_item_checked' => 'An item was recently checked out under your name that requires acceptance, details are below.',
     'notes' => 'Notas',
     'password' => 'Contraseña',
     'password_reset' => 'Reiniciar la contraseña',

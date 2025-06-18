@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Log;
 use \Illuminate\Contracts\View\View;
 use \Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Validator;
 
 class AssetCheckinController extends Controller
 {
@@ -41,7 +42,19 @@ class AssetCheckinController extends Controller
             return redirect()->route('hardware.show', $asset->id)->with('error', trans('admin/hardware/general.model_invalid_fix'));
         }
 
-        return view('hardware/checkin', compact('asset'))
+        // Invoke the validation to see if the audit will complete successfully
+        $asset->setRules($asset->getRules() + $asset->customFieldValidationRules());
+
+        if ($asset->isInvalid()) {
+            return redirect()->route('hardware.edit', $asset)->withErrors($asset->getErrors());
+        }
+
+        $target_option = match ($asset->assigned_type) {
+            'App\Models\Asset' => trans('admin/hardware/form.redirect_to_type', ['type' => trans('general.asset_previous')]),
+            'App\Models\Location' => trans('admin/hardware/form.redirect_to_type', ['type' => trans('general.location')]),
+            default => trans('admin/hardware/form.redirect_to_type', ['type' => trans('general.user')]),
+        };
+        return view('hardware/checkin', compact('asset', 'target_option'))
             ->with('item', $asset)
             ->with('statusLabel_list', Helper::statusLabelList())
             ->with('backto', $backto)
@@ -75,12 +88,14 @@ class AssetCheckinController extends Controller
 
         $this->authorize('checkin', $asset);
 
-        if ($asset->assignedType() == Asset::USER) {
-            $user = $asset->assignedTo;
-        }
+        session()->put('checkedInFrom', $asset->assignedTo->id);
+        session()->put('checkout_to_type', match ($asset->assigned_type) {
+            'App\Models\User' => 'user',
+            'App\Models\Location' => 'location',
+            'App\Models\Asset' => 'asset',
+        });
 
         $asset->expected_checkin = null;
-        $asset->last_checkin = now();
         $asset->assignedTo()->disassociate($asset);
         $asset->accepted = null;
         $asset->name = $request->get('name');
@@ -107,11 +122,14 @@ class AssetCheckinController extends Controller
 
         $originalValues = $asset->getRawOriginal();
 
+        // Handle last checkin date
         $checkin_at = date('Y-m-d H:i:s');
         if (($request->filled('checkin_at')) && ($request->get('checkin_at') != date('Y-m-d'))) {
             $originalValues['action_date'] = $checkin_at;
             $checkin_at = $request->get('checkin_at');
+
         }
+        $asset->last_checkin = $checkin_at;
 
         $asset->licenseseats->each(function (LicenseSeat $seat) {
             $seat->update(['assigned_to' => null]);

@@ -7,7 +7,7 @@ return [
     'checkin_and_delete'  	    => 'Checkin All / Delete User',
     'delete'  	                => '삭제',
     'edit'    	                => '편집',
-    'clone'    	                => 'Clone',
+    'clone'    	                => '복제',
     'restore' 	                => '복원',
     'remove'                    => '삭제',
     'request'                   => '요청',

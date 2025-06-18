@@ -20,7 +20,6 @@
                     <div class="row">
                         <div class="col-md-12">
 
-        @if ($requestedItems->count() > 0)
         <div class="table-responsive">
             <table
                     name="requestedAssets"
@@ -29,6 +28,8 @@
                     id="requestedAssets"
                     data-advanced-search="true"
                     data-search="true"
+                    data-search-highlight="true"
+                    data-show-print="true"
                     data-show-columns="true"
                     data-show-export="true"
                     data-pagination="true"
@@ -133,14 +134,7 @@
             </table>
         </div>
 
-        @else
-        <div class="col-md-12">
-            <div class="alert alert-info alert-block">
-                <i class="fas fa-info-circle"></i>
-                {{ trans('general.no_results') }}
-            </div>
-        </div>
-        @endif
+
                         </div>
                     </div>
                 </div>

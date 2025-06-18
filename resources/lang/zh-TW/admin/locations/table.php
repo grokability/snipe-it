@@ -39,4 +39,5 @@ return [
     'signed_by_finance_auditor' => '由財務稽核員簽署：',
     'signed_by_location_manager' => '由區域負責人簽署：',
     'signed_by'                 => '由以下人員簽署：',
+    'clone'  					=> 'Clone Location',
 ];

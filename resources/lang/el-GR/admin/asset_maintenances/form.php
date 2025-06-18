@@ -1,6 +1,7 @@
 <?php
 
     return [
+        'select_type'            => 'Select Maintenance Type',
         'asset_maintenance_type' => 'Είδος Συντήρησης Παγίου',
         'title'                  => 'Τίτλος',
         'start_date'             => 'Ημερομηνία Έναρξης',

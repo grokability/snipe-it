@@ -39,4 +39,5 @@ return [
     'signed_by_finance_auditor' => 'Godkendt af (finanskontrollant):',
     'signed_by_location_manager' => 'Godkendt af (Lokationsadministrator):',
     'signed_by'                 => 'Godkendt af:',
+    'clone'  					=> 'Clone Location',
 ];

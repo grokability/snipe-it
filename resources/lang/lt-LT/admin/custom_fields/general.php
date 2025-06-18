@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Tvarkyti',
     'field'		                => 'Laukas',
     'about_fieldsets_title'		=> 'Apie laukų grupes',
-    'about_fieldsets_text'		=> 'Laukų rinkiniai leidžia kurti pritaikytų laukų grupes, kurios dažnai naudojamos konkretiems turto modelių tipams.',
+    'about_fieldsets_text'		=> 'Laukų grupės leidžia jums sukurti grupes kurios dažnai naudojamos specifiniai įrangai.',
     'custom_format'             => 'Tinkintas Regex formatas...',
     'encrypt_field'      	        => 'Šifruoti šio lauko reikšmę duomenų bazėje',
     'encrypt_field_help'      => 'ĮSPĖJIMAS: Užšifravus lauką, jo nebebus galima ieškoti.',
@@ -57,7 +57,14 @@ return [
     'show_in_requestable_list_short' => 'Rodyti užsakomo turto sąraše',
     'show_in_requestable_list' => 'Rodyti reikšmę užsakomo turto sąraše. Šifruoti laukai nebus rodomi',
     'encrypted_options' => 'Šis laukas yra užšifruotas, todėl kai kurios rodymo parinktys nebus pasiekiamos.',
-    'display_checkin' => 'Display in checkin forms',
-    'display_checkout' => 'Display in checkout forms',
-
+    'display_checkin' => 'Rodyti paėmimo formose',
+    'display_checkout' => 'Rodyti išdavimo formose',
+    'display_audit' => 'Display in audit forms',
+    'types' => [
+        'text' => 'Text Box',
+        'listbox' => 'List Box',
+        'textarea' => 'Textarea (multi-line)',
+        'checkbox' => 'Checkbox',
+        'radio' => 'Radio Buttons',
+    ],
 ];

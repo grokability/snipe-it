@@ -1,20 +1,11 @@
-name,address,address2,city,state,country,zip,manager,manager username,currency
-Peace River,8 Brentwood Court,,Birendranagar,AB,CA,T8S,Danika Mostyn,dmostyn0,CAD
-Airdrie,14 Summer Ridge Court,306 Buhler Parkway,Poniatowa,AB,CA,T4B,Clementina Van Halen,cvan1,CAD
-Calgary,3 Fieldstone Drive,,Iwanai,AB,CA,,Harwilll Heffernan,hheffernan2,CAD
-High Prairie,1906 Weeping Birch Park,,Lopar,AB,CA,,Christian Pache,cpache3,CAD
-Sundre,20 Summer Ridge Court,,Burujul,AB,CA,,,,
-Athabasca,22 Browning Drive,424 Rieder Court,Itambacuri,AB,CA,,Alphonso Ashbridge,aashbridge5,CAD
-Drayton Valley,56064 Onsgard Center,,Bahía Honda,AB,CA,,,,
-Crossfield,0 Lighthouse Bay Place,,Bengras,AB,CA,,Vania Dufton,vdufton7,CAD
-Beaverlodge,6 Katie Terrace,,Zhajin,AB,CA,,Papageno Baldi,pbaldi8,CAD
-Grande Prairie,0 Ridgeview Parkway,,Yunxi,AB,CA,R3J,Selia Biggadike,sbiggadike9,CAD
-Sherwood Park,263 Aberg Alley,,El Paso,AB,CA,,,,
-Vegreville,9039 Shoshone Parkway,,Huazhou,AB,CA,,Georgy Eversfield,geversfieldb,CAD
-Rocky Mountain House,8617 Arapahoe Parkway,,Paraipaba,AB,CA,,Mara Gilfoyle,mgilfoylec,CAD
-Calmar,14 Green Ridge Circle,,Medveditskiy,AB,CA,S0G,Paulette Rylatt,prylattd,CAD
-Rocky Mountain House,517 Bowman Terrace,,Viana,AB,CA,,Neal Gabitis,ngabitise,CAD
-Pincher Creek,6054 Anzinger Hill,,Chlumec,AB,CA,,Bonnee Fowle,bfowlef,CAD
-Airdrie,8 Lien Drive,,Reims,AB,CA,,Kerry Aherne,kaherneg,CAD
-Camrose,4 Summit Parkway,,Xinqiao,AB,CA,T4V,Sherlock Stobbart,sstobbarth,CAD
-Lamont,12 Ilene Park,,Huangtang,AB,CA,N2E,Karlotta Pinckstone,kpinckstonei,CAD
+name,address,address2,city,state,country,zip,notes,phone,fax,currency
+Shizi,811 Algoma Center,1690,Shimen,,CN,,ipsum ac tellus semper interdum mauris ullamcorper purus sit amet nulla quisque arcu libero rutrum ac lobortis vel dapibus,280-997-3795,673-737-7438,CNY
+Takum,354 Sugar Way,88222,Old Shinyanga,,NG,,proin risus praesent lectus vestibulum quam sapien varius ut blandit non interdum in ante vestibulum ante,810-325-0609,746-868-1843,NGN
+Unaizah,56243 Lawn Drive,14,Irecê,,SA,,in blandit ultrices enim lorem ipsum dolor sit amet consectetuer adipiscing elit proin interdum mauris,841-568-9664,419-246-9966,SAR
+Pontarlier,80411 Lyons Alley,0,Colinas,Franche-Comté,FR,25304 CEDEX,enim in tempor turpis nec euismod scelerisque quam turpis adipiscing lorem vitae,927-638-2175,683-361-5521,EUR
+Inongo,377 Nancy Lane,236,Placencia,,CD,,nam dui proin leo odio porttitor id consequat in consequat ut nulla sed accumsan felis ut at dolor quis,278-277-8326,744-879-3383,CDF
+San Diego,294 Spohn Center,04,Yanmen,,CO,202038,quis orci eget orci vehicula condimentum curabitur in libero ut,255-785-7948,874-491-7898,COP
+Lewotola,22308 Oriole Way,505,Celso Ramos,,ID,,nam nulla integer pede justo lacinia eget tincidunt eget tempus vel pede morbi porttitor lorem id ligula suspendisse ornare,431-503-0615,960-849-7404,IDR
+Pieńsk,7 Maryland Junction,77656,Cela,,PL,59-930,ut blandit non interdum in ante vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae,723-739-7799,431-889-4342,PLN
+Mataguži,5 Mayfield Drive,0,Zhaogezhuang,,ME,,nulla neque libero convallis eget eleifend luctus ultricies eu nibh quisque id justo sit amet sapien dignissim vestibulum vestibulum,356-728-4662,689-866-7531,EUR
+Xixiang,2540 Rockefeller Place,2,Alegria,,CN,,vivamus metus arcu adipiscing molestie hendrerit at vulputate vitae nisl aenean lectus,388-760-0441,110-938-9032,CNY

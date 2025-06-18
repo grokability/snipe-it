@@ -3,6 +3,7 @@
 namespace Tests\Feature\Categories\Api;
 
 use App\Models\Asset;
+use App\Models\AssetModel;
 use App\Models\Category;
 use App\Models\User;
 use Tests\Concerns\TestsPermissionsRequirement;
@@ -21,10 +22,22 @@ class DeleteCategoriesTest extends TestCase implements TestsPermissionsRequireme
         $this->assertNotSoftDeleted($category);
     }
 
-    public function testCannotDeleteCategoryThatStillHasAssociatedItems()
+    public function testCannotDeleteCategoryThatStillHasAssociatedAssets()
     {
         $asset = Asset::factory()->create();
         $category = $asset->model->category;
+
+        $this->actingAsForApi(User::factory()->deleteCategories()->create())
+            ->deleteJson(route('api.categories.destroy', $category))
+            ->assertStatusMessageIs('error');
+
+        $this->assertNotSoftDeleted($category);
+    }
+
+    public function testCannotDeleteCategoryThatStillHasAssociatedModels()
+    {
+        $model = AssetModel::factory()->create();
+        $category = $model->category;
 
         $this->actingAsForApi(User::factory()->deleteCategories()->create())
             ->deleteJson(route('api.categories.destroy', $category))

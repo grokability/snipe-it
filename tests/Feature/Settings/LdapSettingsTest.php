@@ -51,8 +51,6 @@ class LdapSettingsTest extends TestCase
             ->assertSessionHasErrors([
                 'ldap_username_field',
                 'ldap_auth_filter_query',
-                'ldap_uname',
-                'ldap_pword',
                 'ldap_basedn',
                 'ldap_fname_field',
                 'ldap_server',

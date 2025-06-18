@@ -53,4 +53,5 @@ return [
     'next_save_user' => 'Xiga: Keydi Isticmaalaha',
     'all_assigned_list_generation' => 'Lagu soo saaray:',
     'email_user_creds_on_create' => 'Imayl u dir isticmaalahan aqoonsigiisa?',
+    'department_manager' => 'Department Manager',
 ];

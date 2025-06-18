@@ -39,4 +39,5 @@ return [
     'signed_by_finance_auditor' => 'Aláírta (Pénzügyi könyvvizsgáló):',
     'signed_by_location_manager' => 'Aláírva (Helykezelő):',
     'signed_by'                 => 'Aláírta:',
+    'clone'  					=> 'Clone Location',
 ];

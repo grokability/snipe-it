@@ -1,6 +1,7 @@
 <?php
 
     return [
+        'select_type'            => 'Select Maintenance Type',
         'asset_maintenance_type' => 'Object onderhoudstype',
         'title'                  => 'Titel',
         'start_date'             => 'Begindatum',

@@ -15,6 +15,7 @@
                 <div class="box-body">
 
                     <table
+                            data-show-print="true"
                             data-cookie-id-table="userRequests"
                             data-pagination="true"
                             data-id-table="userRequests"
