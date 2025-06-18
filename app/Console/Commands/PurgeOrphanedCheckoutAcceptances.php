@@ -12,7 +12,7 @@ class PurgeOrphanedCheckoutAcceptances extends Command
      *
      * @var string
      */
-    protected $signature = 'snipeit:purge-orphaned-checkout-acceptances';
+    protected $signature = 'snipeit:purge-orphaned-checkout-acceptances {--force}';
 
     /**
      * The console command description.
@@ -46,7 +46,10 @@ class PurgeOrphanedCheckoutAcceptances extends Command
             ];
         }));
 
-        if (!$this->confirm('Do you wish to permanently delete these ' . $orphanedAcceptances->count() . ' orphaned checkout acceptances?')) {
+        if (
+            !$this->option('force')
+            && !$this->confirm('Do you wish to permanently delete these ' . $orphanedAcceptances->count() . ' orphaned checkout acceptances?')
+        ) {
             $this->info('Aborting.');
 
             return 0;
