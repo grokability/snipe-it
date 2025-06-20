@@ -1,16 +1,16 @@
 <?php
 
 return array(
-    'component_name'                  => 'Numele componentei',
-    'checkin'                             => 'Verificați componenta',
-    'checkout'                             => 'Componenta de verificare',
-    'cost'				=> 'Costul de achiziție',
-    'create'                             => 'Creați o componentă',
-    'edit'                             => 'Editați componenta',
-    'date'					=> 'Data cumpărării',
-    'order'					=> 'Numar de ordine',
-    'remaining' 			             => 'Rămas',
-    'total' 			                 => 'Total',
-    'update'                            => 'Actualizați componenta',
-    'checkin_limit'            => 'Suma bifată trebuie să fie egală sau mai mică decât :assigned_qty'
+    'component_name'            => 'Nume Componentă',
+    'checkin'                   => 'Returnare Componentă',
+    'checkout'                  => 'Alocare Componentă',
+    'cost'                      => 'Cost Achiziție',
+    'create'                    => 'Creează Componentă',
+    'edit'                      => 'Editează Componenta',
+    'date'                      => 'Data Achiziției',
+    'order'                     => 'Număr Comandă',
+    'remaining'                 => 'Rămas',
+    'total'                     => 'Total',
+    'update'                    => 'Actualizează Componenta',
+    'checkin_limit'             => 'Cantitatea returnată trebuie să fie egală cu sau mai mică decât :assigned_qty'
 );

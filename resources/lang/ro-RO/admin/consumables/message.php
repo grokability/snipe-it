@@ -2,37 +2,36 @@
 
 return array(
 
-    'invalid_category_type' => 'The category must be a consumable category.',
-    'does_not_exist' => 'Consumul nu există.',
+    'invalid_category_type' => 'Categoria trebuie să fie o categorie de consumabile.',
+    'does_not_exist' => 'Consumabilul nu există.',
 
     'create' => array(
-        'error'   => 'Consumul nu a fost creat, încercați din nou.',
-        'success' => 'Consumul a fost creat cu succes.'
+        'error'   => 'Consumabilul nu a putut fi creat, te rog să încerci din nou.',
+        'success' => 'Consumabilul a fost creat cu succes.'
     ),
 
     'update' => array(
-        'error'   => 'Consumul nu a fost actualizat, încercați din nou',
-        'success' => 'Consumul a fost actualizat cu succes.'
+        'error'   => 'Consumabilul nu a putut fi actualizat, te rog să încerci din nou.',
+        'success' => 'Consumabilul a fost actualizat cu succes.'
     ),
 
     'delete' => array(
-        'confirm'   => 'Sigur doriți să ștergeți acest consumabil?',
-        'error'   => 'A apărut o problemă cu ștergerea consumabilelor. Vă rugăm să încercați din nou.',
-        'success' => 'Consumul a fost șters cu succes.'
+        'confirm'   => 'Ești sigur că vrei să ștergi acest consumabil?',
+        'error'   => 'A apărut o problemă la ștergerea consumabilului. Te rog să încerci din nou.',
+        'success' => 'Consumabilul a fost șters cu succes.'
     ),
 
-     'checkout' => array(
-        'error'   		=> 'Consumul nu a fost verificat, încercați din nou',
-        'success' 		=> 'Consumul a fost verificat cu succes.',
-        'user_does_not_exist' => 'Acest utilizator este nevalid. Vă rugăm să încercați din nou.',
-         'unavailable'      => 'Nu sunt destule consumabile pentru această comandă de comandă. Vă rugăm să verificaţi cantitatea rămasă. ',
+    'checkout' => array(
+        'error'         => 'Consumabilul nu a putut fi alocat, te rog să încerci din nou.',
+        'success'       => 'Consumabilul a fost alocat cu succes.',
+        'user_does_not_exist' => 'Utilizatorul este invalid. Te rog să încerci din nou.',
+        'unavailable'    => 'Nu există suficiente consumabile pentru această alocare. Te rog să verifici cantitatea rămasă.',
     ),
 
     'checkin' => array(
-        'error'   		=> 'Consumul nu a fost verificat, încercați din nou',
-        'success' 		=> 'Consumul a fost verificat cu succes.',
-        'user_does_not_exist' => 'Acest utilizator este nevalid. Vă rugăm să încercați din nou.'
+        'error'         => 'Consumabilul nu a putut fi preluat (check-in), te rog să încerci din nou.',
+        'success'       => 'Consumabilul a fost preluat (check-in) cu succes.',
+        'user_does_not_exist' => 'Utilizatorul este invalid. Te rog să încerci din nou.'
     )
-
 
 );

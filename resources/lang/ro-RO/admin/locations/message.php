@@ -2,34 +2,33 @@
 
 return array(
 
-    'does_not_exist' => 'Locatia nu exista.',
-    'assoc_users'    => 'This location is not currently deletable because it is the location of record for at least one asset or user, has assets assigned to it, or is the parent location of another location. Please update your records to no longer reference this location and try again ',
-    'assoc_assets'	 => 'Această locație este în prezent asociată cu cel puțin un material și nu poate fi ștearsă. Actualizați-vă activele astfel încât acestea să nu mai fie menționate și să încercați din nou.',
-    'assoc_child_loc'	 => 'Această locație este în prezent părinte pentru cel puțin o locație copil și nu poate fi ștearsă. Actualizați locațiile dvs. pentru a nu mai referi această locație și încercați din nou.',
-    'assigned_assets' => 'Atribuire Active',
+    'does_not_exist' => 'Locația nu există.',
+    'assoc_users'    => 'Această locație nu poate fi ștearsă în prezent deoarece este locația principală pentru cel puțin un activ sau utilizator, are active alocate sau este locația părinte a unei alte locații. Te rog să actualizezi înregistrările pentru a nu mai face referire la această locație și să încerci din nou.',
+    'assoc_assets'   => 'Această locație este asociată în prezent cu cel puțin un activ și nu poate fi ștearsă. Te rog să actualizezi activele pentru a nu mai face referire la această locație și să încerci din nou.',
+    'assoc_child_loc' => 'Această locație este în prezent părintele a cel puțin unei locații copil și nu poate fi ștearsă. Te rog să actualizezi locațiile pentru a nu mai face referire la această locație și să încerci din nou.',
+    'assigned_assets' => 'Active alocate',
     'current_location' => 'Locația curentă',
-    'open_map' => 'Open in :map_provider_icon Maps',
-
+    'open_map' => 'Deschide în :map_provider_icon Hărți',
 
     'create' => array(
-        'error'   => 'Locatia nu a fost creata, va rugam incercati iar.',
-        'success' => 'Locatia a fost creata.'
+        'error'   => 'Locația nu a fost creată, te rog să încerci din nou.',
+        'success' => 'Locația a fost creată cu succes.'
     ),
 
     'update' => array(
-        'error'   => 'Locatia nu a fost actualizata, va rugam incercati iar',
-        'success' => 'Locatia a fost actualizata.'
+        'error'   => 'Locația nu a fost actualizată, te rog să încerci din nou',
+        'success' => 'Locația a fost actualizată cu succes.'
     ),
 
     'restore' => array(
-        'error'   => 'Location was not restored, please try again',
-        'success' => 'Location restored successfully.'
+        'error'   => 'Locația nu a fost restaurată, te rog să încerci din nou',
+        'success' => 'Locația a fost restaurată cu succes.'
     ),
 
     'delete' => array(
-        'confirm'   	=> 'Sunteti sigur ca vreti sa stergeti aceasta locatie?',
-        'error'   => 'A aparut o problema la stergerea locatiei. Va rugam incercati iar.',
-        'success' => 'Locatia a fost stearsa.'
+        'confirm'   => 'Ești sigur că dorești să ștergi această locație?',
+        'error'   => 'A apărut o problemă la ștergerea locației. Te rog să încerci din nou.',
+        'success' => 'Locația a fost ștearsă cu succes.'
     )
 
 );

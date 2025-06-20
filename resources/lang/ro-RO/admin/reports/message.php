@@ -1,16 +1,16 @@
 <?php
 
 return [
-    'about_templates' => 'About Saved Templates',
-    'saving_templates_description' => 'Select your options, then enter the name of your template in the box above and click the \'Save Template\' button. Use the dropdown to select a previously saved template.',
-    'create'  => [
-        'success' => 'Template saved successfully',
+    'about_templates' => 'Despre șabloanele salvate',
+    'saving_templates_description' => 'Selectați opțiunile dorite, apoi introduceți numele șablonului în caseta de mai sus și faceți clic pe butonul „Salvați șablonul”. Utilizați meniul derulant pentru a selecta un șablon salvat anterior.',
+    'create' => [
+        'success' => 'Șablon salvat cu succes',
     ],
     'update' => [
-        'success' => 'Template updated successfully',
+        'success' => 'Șablon actualizat cu succes',
     ],
     'delete' => [
-        'success' => 'Template deleted',
-        'no_delete_permission' => 'Template does not exist or you do not have permission to delete it.',
+        'success' => 'Șablon șters',
+        'no_delete_permission' => 'Șablonul nu există sau nu aveți permisiunea de a-l șterge.',
     ],
 ];

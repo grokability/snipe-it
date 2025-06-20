@@ -1,15 +1,15 @@
 <?php
-
+   
     return [
-        'select_type'            => 'Select Maintenance Type',
+        'select_type'            => 'Selectează tipul de întreținere',
         'asset_maintenance_type' => 'Tip întreținere active',
         'title'                  => 'Titlu',
         'start_date'             => 'Data de început',
         'completion_date'        => 'Data finalizării',
-        'cost'                   => 'A costat',
-        'is_warranty'            => 'Îmbunătățirea garanției',
-        'asset_maintenance_time' => 'Timpul de întreținere a activelor (în zile)',
-        'notes'                  => 'notițe',
-        'update'                 => 'Actualizeaza Mentenanta Activelor',
-        'create'                 => 'Creați întreținerea activelor'
+        'cost'                   => 'Cost',
+        'is_warranty'            => 'Garanție',
+        'asset_maintenance_time' => 'Durata întreținerii activelor (în zile)',
+        'notes'                  => 'Note',
+        'update'                 => 'Actualizează',
+        'create'                 => 'Adaugă întreținere'
     ];

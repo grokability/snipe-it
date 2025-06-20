@@ -3,45 +3,45 @@
 return array(
 
     'deleted' => 'Model de activ șters',
-    'does_not_exist' => 'Modelul nu exista.',
-    'no_association' => 'AVERTISMENT! Modelul de activ pentru acest articol este invalid sau lipsește!',
-    'no_association_fix' => 'Acest lucru va strica lucrurile în moduri ciudate și oribile. Editează acest bun acum pentru a-l atribui un model.',
-    'assoc_users'	 => 'Acest model este momentan asociat cu cel putin unul sau mai multe active si nu poate fi sters. Va rugam sa stergeti activul si dupa incercati iar. ',
-    'invalid_category_type' => 'This category must be an asset category.',
+    'does_not_exist' => 'Modelul nu există.',
+    'no_association' => 'ATENȚIE! Modelul de activ pentru acest element este invalid sau lipsește!',
+    'no_association_fix' => 'Acest lucru va cauza probleme ciudate și oribile. Editează acest activ acum pentru a-i aloca un model.',
+    'assoc_users'    => 'Acest model este asociat în prezent cu unul sau mai multe active și nu poate fi șters. Te rog să ștergi activele, apoi să încerci din nou să ștergi modelul.',
+    'invalid_category_type' => 'Această categorie trebuie să fie o categorie de active.',
 
     'create' => array(
-        'error'   => 'Modelul nu a fost creat, incercati iar.',
-        'success' => 'Modelul a fost creat.',
-        'duplicate_set' => 'Un model de activ cu numele, producătorul și numărul modelului există deja.',
+        'error'   => 'Modelul nu a fost creat, te rog să încerci din nou.',
+        'success' => 'Modelul a fost creat cu succes.',
+        'duplicate_set' => 'Un model de activ cu același nume, producător și număr de model există deja.',
     ),
 
     'update' => array(
-        'error'   => 'Modelul nu a fost actualizat, va rugam incercati iar',
-        'success' => 'Modelul a fost actualizat.',
+        'error'   => 'Modelul nu a fost actualizat, te rog să încerci din nou',
+        'success' => 'Modelul a fost actualizat cu succes.'
     ),
 
     'delete' => array(
-        'confirm'   => 'Sunteti sigur ca doriti sa stergeti acest model de activ?',
-        'error'   => 'A aparut o problema la stergerea modelului. Incercati iar.',
-        'success' => 'Modelul a fost sters.'
+        'confirm'   => 'Ești sigur că dorești să ștergi acest model de activ?',
+        'error'   => 'A apărut o problemă la ștergerea modelului. Te rog să încerci din nou.',
+        'success' => 'Modelul a fost șters cu succes.'
     ),
 
     'restore' => array(
-        'error'   		=> 'Modelul nu a fost restabilit, încercați din nou',
-        'success' 		=> 'Modelul a fost restaurat cu succes.'
+        'error'         => 'Modelul nu a fost restaurat, te rog să încerci din nou',
+        'success'       => 'Modelul a fost restaurat cu succes.'
     ),
 
     'bulkedit' => array(
-        'error'   		=> 'Nu au fost modificate câmpuri, deci nimic nu a fost actualizat.',
-        'success' 		=> 'Modelul a fost actualizat cu succes. <unk> :model_count modele actualizate cu succes.',
-        'warn'          => 'Sunteți pe cale să actualizați proprietățile următorului model: Sunteți pe cale să editați proprietățile următoarelor modele :model_count:',
+        'error'         => 'Niciun câmp nu a fost modificat, deci nimic nu a fost actualizat.',
+        'success'       => 'Model actualizat cu succes. |:model_count modele actualizate cu succes.',
+        'warn'          => 'Ești pe cale să actualizezi proprietățile următorului model:|Ești pe cale să editezi proprietățile următoarelor :model_count modele:',
 
     ),
 
     'bulkdelete' => array(
-        'error'   		    => 'Nu au fost selectate câmpuri, deci nimic nu a fost actualizat.',
-        'success' 		    => 'Modelul a fost șters!<unk> :success_count modele șterse!',
-        'success_partial' 	=> 'Au fost șterse :success_count modele, cu toate acestea :fail_count nu au putut fi șterse deoarece au în continuare active asociate cu acestea.'
+        'error'           => 'Niciun model nu a fost selectat, deci nimic nu a fost șters.',
+        'success'         => 'Model șters!|:success_count modele șterse!',
+        'success_partial' => ':success_count model(e) au fost șterse, însă :fail_count nu au putut fi șterse deoarece încă au active asociate.'
     ),
 
 );

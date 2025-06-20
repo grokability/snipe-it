@@ -1,12 +1,12 @@
 <?php
 
 return array(
-    'checkout'                          => 'Verificați consumul pentru utilizator',
-    'consumable_name'                   => 'Nume consumabile',
-    'create'                            => 'Creați consumabile',
-    'item_no'                           => 'Numărul articolului',
-    'remaining' 			            => 'Rămas',
-    'total' 			                => 'Total',
-    'update'                            => 'Actualizați consumabilele',
-    'inventory_warning'                 => 'The inventory of this consumable is below the minimum amount of :min_count',
+    'checkout'            => 'Alocă consumabil',
+    'consumable_name'     => 'Nume consumabil',
+    'create'              => 'Creează consumabil',
+    'item_no'             => 'Nr. articol',
+    'remaining'           => 'Rămas',
+    'total'               => 'Total',
+    'update'              => 'Actualizează consumabilul',
+    'inventory_warning'   => 'Stocul acestui consumabil este sub cantitatea minimă de :min_count',
 );

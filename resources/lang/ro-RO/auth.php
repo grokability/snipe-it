@@ -13,8 +13,8 @@ return array(
     |
     */
 
-    'failed' => 'Aceste date de autentificare nu corespund înregistrărilor noastre.',
+    'failed' => 'Aceste credențiale nu corespund înregistrărilor noastre.',
     'password' => 'Parola furnizată este incorectă.',
-    'throttle' => 'Too many login attempts. Please try again in :minutes minute(s).',
+    'throttle' => 'Prea multe încercări de autentificare. Te rugăm să încerci din nou peste :minutes minut(e).',
 
 );

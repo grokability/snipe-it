@@ -4,6 +4,6 @@ return array(
 
     'id'         => 'ID',
     'name'       => 'Nume',
-    'users'      => '# de useri',
+    'users'      => '# de utilizatori',
 
 );

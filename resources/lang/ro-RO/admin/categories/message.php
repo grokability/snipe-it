@@ -12,14 +12,14 @@ return array(
     ),
 
     'update' => array(
-        'error'   => 'Categoria nu a fost actualizata, va rugam incercati iar',
+        'error'   => 'Categoria nu a fost actualizata, va rugam incercati din nou',
         'success' => 'Categoria a fost actualizata.',
         'cannot_change_category_type'   => 'Nu puteți schimba tipul categoriei odată ce a fost creat',
     ),
 
     'delete' => array(
         'confirm'   => 'Sunteti sigur ca vreti sa stergeti aceasta categorie?',
-        'error'   => 'A aparut o problema la stergerea categoriei. Va rugam incercati iar.',
+        'error'   => 'A aparut o problema la stergerea categoriei. Va rugam incercati din nou.',
         'success' => 'Categoria a fost stearsa.'
     )
 

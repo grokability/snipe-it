@@ -2,10 +2,10 @@
 
 return array(
 
-    'actions'	 	        => 'Actiuni',
-    'action' 		        => 'Actiune',
-    'by'      		        => 'Facut de',
-    'item' 			        => 'Articol',
-    'no_matching_records'   => 'No matching records found',
+    'actions'               => 'Acțiuni',
+    'action'                => 'Acțiune',
+    'by'                    => 'De către',
+    'item'                  => 'Obiect',
+    'no_matching_records'   => 'Nu s-au găsit înregistrări',
 
 );
