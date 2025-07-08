@@ -244,6 +244,13 @@
                  </label>
              </div>
 
+             <!-- Show on Print Assigned Page  -->
+             <div class="col-md-9 col-md-offset-3" id="display_on_print_assigned" style="padding-bottom: 10px;">
+                 <label class="form-control">
+                     <input type="checkbox" name="display_on_print_assigned" aria-label="display_on_print_assigned" value="1" {{ (old('display_on_print_assigned') || $field->display_on_print_assigned) ? ' checked="checked"' : '' }}>
+                     {{ trans('admin/custom_fields/general.display_on_print_assigned') }}
+                 </label>
+             </div>
 
              <!-- Show in View All Assets profile view  -->
               <div class="col-md-9 col-md-offset-3" id="display_in_user_view">
