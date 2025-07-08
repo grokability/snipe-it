@@ -153,14 +153,13 @@
               <th data-sortable="true" data-searchable="true">{{ trans('admin/custom_fields/general.help_text')}}</th>
               <th data-sortable="true" data-visible="false">{{ trans('admin/custom_fields/general.db_field') }}</th>
               <th data-sortable="true" data-searchable="true">{{ trans('admin/custom_fields/general.field_format') }}</th>
-              <th data-sortable="true" data-tooltip="{{ trans('admin/custom_fields/general.encrypted') }}"><i
-                        class="fa fa-lock" aria-hidden="true"></i>
-                <span class="hidden-xs hidden-sm hidden-md hidden-lg">{{ trans('admin/custom_fields/general.encrypted') }}</span>
+              <th data-sortable="true" data-tooltip="{{ trans('admin/custom_fields/general.encrypted') }}">
+                  <i class="fa fa-lock" aria-hidden="true"></i>
+                    <span class="hidden-xs hidden-sm hidden-md hidden-lg">{{ trans('admin/custom_fields/general.encrypted') }}</span>
               </th>
-              <th data-sortable="true" class="text-center"
-                  data-tooltip="{{ trans('admin/custom_fields/general.show_in_listview_short') }}"><i class="fa fa-list"
-                                                                                                      aria-hidden="true"></i>
-                <span class="hidden-xs hidden-sm hidden-md hidden-lg">{{ trans('admin/custom_fields/general.show_in_listview_short') }}</span>
+              <th data-sortable="true" class="text-center" data-tooltip="{{ trans('admin/custom_fields/general.show_in_listview_short') }}">
+                  <i class="fa fa-list" aria-hidden="true"></i>
+                    <span class="hidden-xs hidden-sm hidden-md hidden-lg">{{ trans('admin/custom_fields/general.show_in_listview_short') }}</span>
               </th>
               <th data-visible="false" data-sortable="true" class="text-center"
                   data-tooltip="{{ trans('admin/custom_fields/general.display_in_user_view_table') }}"><i
@@ -177,6 +176,12 @@
                   data-tooltip="{{ trans('admin/custom_fields/general.show_in_requestable_list_short') }}"><i
                         class="fa fa-laptop fa-fw" aria-hidden="true"><span
                           class="sr-only">{{ trans('admin/custom_fields/general.show_in_requestable_list_short') }}</span></i>
+              </th>
+
+              <th data-sortable="true" data-searchable="false" class="text-center"
+                  data-tooltip="{{ trans('admin/custom_fields/general.display_on_print_assigned') }}"><i
+                        class="fa fa-print fa-fw" aria-hidden="true"><span
+                          class="sr-only">{{ trans('admin/custom_fields/general.display_on_print_assigned') }}</span></i>
               </th>
 
               <th data-sortable="true" data-searchable="false" class="text-center"
@@ -235,6 +240,7 @@
               <td class="text-center">{!!  ($field->display_in_user_view=='1' ? '<i class="fa fa-check text-success"></i>' : '<i class="fa fa-times text-danger"></i>') !!}</td>
               <td class="text-center">{!! ($field->show_in_email=='1') ? '<i class="fas fa-check text-success" aria-hidden="true"><span class="sr-only">'.trans('general.yes').'</span></i>' : '<i class="fas fa-times text-danger" aria-hidden="true"><span class="sr-only">'.trans('general.no').'</span></i>'  !!}</td>
               <td class="text-center">{!! ($field->show_in_requestable_list=='1') ? '<i class="fas fa-check text-success" aria-hidden="true"><span class="sr-only">'.trans('general.yes').'</span></i>' : '<i class="fas fa-times text-danger" aria-hidden="true"><span class="sr-only">'.trans('general.no').'</span></i>'  !!}</td>
+              <td class="text-center">{!! ($field->display_on_print_assigned=='1') ? '<i class="fas fa-check text-success" aria-hidden="true"><span class="sr-only">'.trans('general.yes').'</span></i>' : '<i class="fas fa-times text-danger" aria-hidden="true"><span class="sr-only">'.trans('general.no').'</span></i>'  !!}</td>
               <td class="text-center">{!! ($field->is_unique=='1') ? '<i class="fas fa-check text-success" aria-hidden="true"><span class="sr-only">'.trans('general.yes').'</span></i>' : '<i class="fas fa-times text-danger" aria-hidden="true"><span class="sr-only">'.trans('general.no').'</span></i>'  !!}</td>
               <td class="text-center">{!! ($field->display_checkin=='1') ? '<i class="fas fa-check text-success" aria-hidden="true"><span class="sr-only">'.trans('general.yes').'</span></i>' : '<i class="fas fa-times text-danger" aria-hidden="true"><span class="sr-only">'.trans('general.no').'</span></i>'  !!}</td>
               <td class="text-center">{!! ($field->display_checkout=='1') ? '<i class="fas fa-check text-success" aria-hidden="true"><span class="sr-only">'.trans('general.yes').'</span></i>' : '<i class="fas fa-times text-danger" aria-hidden="true"><span class="sr-only">'.trans('general.no').'</span></i>'  !!}</td>
