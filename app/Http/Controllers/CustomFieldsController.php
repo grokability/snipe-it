@@ -107,7 +107,9 @@ class CustomFieldsController extends Controller
             "display_checkin" => $request->input("display_checkin", 0),
             "display_checkout" => $request->input("display_checkout", 0),
             "display_audit" => $request->input("display_audit", 0),
-            "created_by" => auth()->id()
+            "display_on_print_assigned" => $request->input('display_on_print_assigned', 0),
+
+        "created_by" => auth()->id()
         ]);
 
 
@@ -252,6 +254,8 @@ class CustomFieldsController extends Controller
         $field->display_checkin = $request->get("display_checkin", 0);
         $field->display_checkout = $request->get("display_checkout", 0);
         $field->display_audit = $request->get("display_audit", 0);
+        $field->display_on_print_assigned = $request->input('display_on_print_assigned', 0);
+
 
         if ($request->get('format') == 'CUSTOM REGEX') {
             $field->format = $request->get('custom_format');
