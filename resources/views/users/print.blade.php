@@ -112,7 +112,7 @@
             data-sort-name="created_at"
             data-show-columns-toggle-all="true"
             data-cookie-id-table="AssetsAssigned">
-            <thead>
+            <th>
                 <th data-field="asset_id" data-sortable="false" data-visible="true" data-switchable="false">#</th>
                 <th data-field="asset_image" data-sortable="true" data-visible="false" data-switchable="true">{{ trans('general.image') }}</th>
                 <th data-field="asset_tag" data-sortable="true" data-visible="true" data-switchable="false">{{ trans('admin/hardware/table.asset_tag') }}</th>
@@ -124,7 +124,7 @@
                 <th data-field="asset_serial" data-sortable="true" data-visible="true">{{ trans('admin/hardware/form.serial') }}</th>
                 <th data-field="asset_checkout_date" data-sortable="true" data-visible="true">{{ trans('admin/hardware/table.checkout_date') }}</th>
                 <th data-field="signature" data-sortable="false" data-visible="true">{{ trans('general.signature') }}</th>
-                <th data-field="custom" data-sortable="true" data-visible="true">{{ trans('general.custom') }}</th>
+                <th data-field="custom" data-sortable="true" data-visible="true">{{ trans('general.custom') }} header loop go here</th>
             </thead>
             <tbody>
             @foreach ($show_user->assets as $asset)
@@ -153,8 +153,12 @@
                         @endif
                     </td>
                     <td>
-                        {{ $asset->fetchCustomFields() }}
+data loop go here
                     </td>
+{{--                    wouldn't this actually search for the checked custom fields, build an array of those, and then add on columns as needed?--}}
+{{--                    probably a mess under the hood, but that seems the most streamlined way?--}}
+{{--                        wait, what if the custom field is encrypted--}}
+{{----}}
                 </tr>
                 @if ($settings->show_assigned_assets)
                     @php
