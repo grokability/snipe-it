@@ -83,6 +83,7 @@ class CustomField extends Model
         'display_checkin',
         'display_audit',
         'show_in_requestable_list',
+        'display_on_print_assigned',
     ];
 
     /**
