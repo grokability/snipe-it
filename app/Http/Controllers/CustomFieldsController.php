@@ -85,11 +85,13 @@ class CustomFieldsController extends Controller
 
         $show_in_email = $request->input("show_in_email", 0);
         $display_in_user_view = $request->input("display_in_user_view", 0);
+        $display_on_print_assigned = $request->input('display_on_print_assigned', 0);
 
         // Override the display settings if the field is encrypted
         if ($request->input("field_encrypted") == '1') {
             $show_in_email = '0';
             $display_in_user_view = '0';
+            $display_on_print_assigned = '0';
         }
         
         $field = new CustomField([
@@ -107,7 +109,7 @@ class CustomFieldsController extends Controller
             "display_checkin" => $request->input("display_checkin", 0),
             "display_checkout" => $request->input("display_checkout", 0),
             "display_audit" => $request->input("display_audit", 0),
-            "display_on_print_assigned" => $request->input('display_on_print_assigned', 0),
+            "display_on_print_assigned" => $display_on_print_assigned,
 
         "created_by" => auth()->id()
         ]);
@@ -233,11 +235,14 @@ class CustomFieldsController extends Controller
         $this->authorize('update', $field);
         $show_in_email = $request->get("show_in_email", 0);
         $display_in_user_view = $request->get("display_in_user_view", 0);
+        $display_on_print_assigned = $request->input('display_on_print_assigned', 0);
+
 
         // Override the display settings if the field is encrypted
         if ($request->get("field_encrypted") == '1') {
             $show_in_email = '0';
             $display_in_user_view = '0';
+            $display_on_print_assigned = '0';
         }
         
         $field->name          = trim($request->get("name"));
@@ -254,7 +259,8 @@ class CustomFieldsController extends Controller
         $field->display_checkin = $request->get("display_checkin", 0);
         $field->display_checkout = $request->get("display_checkout", 0);
         $field->display_audit = $request->get("display_audit", 0);
-        $field->display_on_print_assigned = $request->input('display_on_print_assigned', 0);
+        $field->display_on_print_assigned = $display_on_print_assigned;
+
 
 
         if ($request->get('format') == 'CUSTOM REGEX') {
