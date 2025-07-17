@@ -153,7 +153,8 @@ class AssetCheckinController extends Controller
         if ($asset->save()) {
 
             event(new CheckoutableCheckedIn($asset, $target, auth()->user(), $request->input('note'), $checkin_at, $originalValues));
-            return redirect()->to(Helper::getRedirectOption($request, $asset->id, 'Assets'))->with('success', trans('admin/hardware/message.checkin.success'));
+            return Helper::getRedirectOption($request, $asset->id, 'Assets')
+                ->with('success', trans('admin/hardware/message.checkin.success'));
         }
         // Redirect to the asset management page with error
         return redirect()->route('hardware.index')->with('error', trans('admin/hardware/message.checkin.error').$asset->getErrors());

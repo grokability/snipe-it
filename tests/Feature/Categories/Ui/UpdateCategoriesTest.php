@@ -43,21 +43,33 @@ class UpdateCategoriesTest extends TestCase
 
     public function testUserCanEditAssetCategory()
     {
-        $category = Category::factory()->forAssets()->create(['name' => 'Test Category']);
+        $category = Category::factory()->forAssets()->create([
+            'name' => 'Test Category',
+            'require_acceptance' => false,
+            'alert_on_response' => false,
+        ]);
+
         $this->assertTrue(Category::where('name', 'Test Category')->exists());
 
         $response = $this->actingAs(User::factory()->superuser()->create())
             ->put(route('categories.update', $category), [
                 'name' => 'Test Category Edited',
                 'notes' => 'Test Note Edited',
+                'require_acceptance' => '1',
+                'alert_on_response' => '1',
             ])
             ->assertStatus(302)
             ->assertSessionHasNoErrors()
             ->assertRedirect(route('categories.index'));
 
         $this->followRedirects($response)->assertSee('Success');
-        $this->assertTrue(Category::where('name', 'Test Category Edited')->where('notes', 'Test Note Edited')->exists());
 
+        $this->assertDatabaseHas('categories', [
+            'name' => 'Test Category Edited',
+            'notes' => 'Test Note Edited',
+            'require_acceptance' => 1,
+            'alert_on_response' => 1,
+        ]);
     }
 
     public function testUserCanChangeCategoryTypeIfNoAssetsAssociated()
@@ -102,5 +114,4 @@ class UpdateCategoriesTest extends TestCase
         $this->assertFalse(Category::where('name', 'Test Category Edited')->where('notes', 'Test Note Edited')->exists());
 
     }
-
 }

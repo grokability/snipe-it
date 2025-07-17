@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Eignaflokkar',
     'category_name'  					=> 'Heiti Vöruflokks',
     'checkin_email'                     => 'Senda tölvupóst til notenda til að skrá sig inn / út.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'Þessi notandi fær tölvupóst til að skrá sig inn/út.',
     'clone'                             => 'Afrita Vöruflokk',
     'create'  							=> 'Stofna vöruflokk',

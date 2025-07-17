@@ -64,6 +64,22 @@
         </div>
     </div>
 
+    @if ($requireAcceptance)
+        <div class="form-group">
+            <div class="col-md-9 col-md-offset-3">
+                <label class="form-control">
+                    <input
+                        type="checkbox"
+                        name="alert_on_response"
+                        value="1"
+                        wire:model="alertOnResponse"
+                    />
+                    {{ trans('admin/categories/general.email_to_initiator') }}
+                </label>
+            </div>
+        </div>
+    @endif
+
     <!-- Email on Checkin -->
     <div class="form-group">
         <div class="col-md-9 col-md-offset-3">

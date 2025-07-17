@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Tillgångskategorier',
     'category_name'  					=> 'Kategorinamn',
     'checkin_email'                     => 'Skicka e-post till användaren vid incheckning/utcheckning.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'Den här användaren kommer att få e-post vid incheckning/utcheckning.',
     'clone'                             => 'Kopiera kategori',
     'create'  							=> 'Skapa kategori',

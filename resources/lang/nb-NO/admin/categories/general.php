@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Kategorier',
     'category_name'  					=> 'Navn',
     'checkin_email'                     => 'Send epost til bruker ved innsjekking/utsjekking.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'Det vil bli sendt en e-post til bruker ved innsjekking/utsjekking.',
     'clone'                             => 'Klon kategori',
     'create'  							=> 'Opprett kategori',

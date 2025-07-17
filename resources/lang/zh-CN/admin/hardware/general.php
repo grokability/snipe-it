@@ -9,7 +9,7 @@ return [
     'bulk_checkin'              => '批量归还',
     'checkin'  					=> '归还资产',
     'checkout'  				=> '签出资产',
-    'clear'                     => 'Clear',
+    'clear'                     => '清空',
     'clone'  					=> '克隆资产',
     'deployable'  				=> '可部署',
     'deleted'  					=> '此资产已被删除。',

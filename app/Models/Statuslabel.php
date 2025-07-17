@@ -56,7 +56,7 @@ class Statuslabel extends SnipeModel
      * Establishes the status label -> assets relationship
      *
      * @author A. Gianotto <snipe@snipe.net>
-     * @since [v1.0]
+     * @since  [v1.0]
      * @return \Illuminate\Database\Eloquent\Relations\Relation
      */
     public function assets()
@@ -73,7 +73,7 @@ class Statuslabel extends SnipeModel
      * Gets the status label type
      *
      * @author A. Gianotto <snipe@snipe.net>
-     * @since [v1.0]
+     * @since  [v1.0]
      * @return string
      */
     public function getStatuslabelType()
@@ -97,8 +97,8 @@ class Statuslabel extends SnipeModel
     public function scopePending()
     {
         return $this->where('pending', '=', 1)
-                    ->where('archived', '=', 0)
-                    ->where('deployable', '=', 0);
+            ->where('archived', '=', 0)
+            ->where('deployable', '=', 0);
     }
 
     /**
@@ -141,7 +141,7 @@ class Statuslabel extends SnipeModel
      * Helper function to determine type attributes
      *
      * @author A. Gianotto <snipe@snipe.net>
-     * @since [v1.0]
+     * @since  [v1.0]
      * @return string
      */
     public static function getStatuslabelTypesForDB($type)

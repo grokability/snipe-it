@@ -157,6 +157,7 @@ return [
     'scope_locations_fmcs_support_text'  => 'Restrizione delle Sedi con Supporto Completo Multi Aziendale',
     'scope_locations_fmcs_support_help_text'  => 'Limita le Sedi alla propria azienda di appartenenza.',
     'scope_locations_fmcs_check_button' => 'Verifica Compatibilità',
+    'scope_locations_fmcs_test_needed' => 'Si prega di controllare la compatibilità prima di attivarlo',
     'scope_locations_fmcs_support_disabled_text'  => 'Questa opzione è disabilitata perché hai Sedi in conflitto impostate per :count o più elementi.',
     'show_in_model_list'   => 'Mostra in menu a discesa del modello',
     'optional'					=> 'facoltativo',
@@ -403,6 +404,9 @@ return [
     'due_checkin_days_help' => 'Quanti giorni prima della restituzione prevista di un Bene dovrebbe essere elencato nella pagina della "Restituzioni Previste"?',
     'no_groups' => 'Ancora non è stato creato alcun gruppo. Per aggiungerne uno vai a <code>Impostazioni Admin > Gruppi</code>.',
     'text' => 'Testo',
+    'manager_view' => 'Vista Manager',
+    'manager_view_enabled_text' => 'Abilita Vista Manager',
+    'manager_view_enabled_help' => 'Consenti ai manager di vedere gli elementi assegnati ai loro collaboratori diretti e indiretti nella loro vista account.',
 
     'username_formats' => [
         'username_format'		=> 'Formato nome utente',

@@ -160,6 +160,7 @@ return [
     'scope_locations_fmcs_support_text'  => 'Scope Locations with Full Multiple Companies Support',
     'scope_locations_fmcs_support_help_text'  => 'Restrict locations to their selected company.',
     'scope_locations_fmcs_check_button' => 'Check Compatibility',
+    'scope_locations_fmcs_test_needed' => 'Please Check Compatibility to enable this',
     'scope_locations_fmcs_support_disabled_text'  => 'This option is disabled because you have conflicting locations set for :count or more items.',
     'show_in_model_list'   => 'モデルのドロップダウンに表示',
     'optional'					=> 'オプション',
@@ -406,6 +407,9 @@ return [
     'due_checkin_days_help' => 'アセットの期待されるチェックインの何日前に、「チェックイン期限」ページにリストされるべきですか?',
     'no_groups' => 'No groups have been created yet. Visit <code>Admin Settings > Permission Groups</code> to add one.',
     'text' => 'Text',
+    'manager_view' => 'Manager View',
+    'manager_view_enabled_text' => 'Enable Manager View',
+    'manager_view_enabled_help' => 'Allow managers to view assigned items to their direct and indirect reports in their account view.',
 
     'username_formats' => [
         'username_format'		=> 'ユーザー名の書式',

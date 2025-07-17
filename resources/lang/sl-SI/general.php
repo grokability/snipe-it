@@ -226,11 +226,13 @@ return [
     'order_number'          => 'Številka naročila',
     'only_deleted'          => 'Only Deleted Assets',
     'page_menu'				=> 'Prikazuj elemente _MENU_',
+    'page_error'            => 'Could not determine previous page. Redirected to homepage.',
     'pagination_info'		=> 'Prikazuje _START_ za _END_ _TOTAL_ elementov',
     'pending'				=> 'V teku',
     'people'				=> 'Osebe',
     'per_page'				=> 'Rezultatov na stran',
     'previous'				=> 'Prejšnja',
+    'previous_page'			=> 'Previous Page',
     'processing'			=> 'Obdelovanje...',
     'profile'				=> 'Vaš profil',
     'purchase_cost'                              => 'Stroški nakupa',
@@ -252,7 +254,7 @@ return [
     'requested'				=> 'Zahtevano',
     'requested_date'        => 'Zahtevan datum',
     'requested_assets'      => 'Zahtevana sredstva',
-    'requested_assets_menu' => 'Zahtevana sredstva',
+    'requested_assets_menu' => 'Requested Items',
     'request_canceled'      => 'Zahteva je bila preklicana',
     'request_item'          => 'Request this item',
     'external_link_tooltip' => 'External link to',
@@ -312,7 +314,7 @@ return [
     'username'              => 'Uporabniško ime',
     'update'                => 'Posodobi',
     'updating_item' => 'Updating :item',
-    'upload_filetypes_help'      => 'Dovoljeni tipi datotek so png, gif, jpg, jpeg, doc, docx, pdf, xls, xlsx, txt, lic, xml, zip, rtf in rar. Dovoljena je največja velikost nalaganja :size.',
+    'upload_filetypes_help' => 'Allowed filetypes are: :allowed_filetypes. Max upload size allowed is :size.',
     'uploaded'              => 'Naloženo',
     'user'					=> 'Uporabnik',
     'accepted'			    => 'sprejeto',
@@ -322,8 +324,10 @@ return [
     'unaccepted_asset_report' => 'Nesprejeta sredstva',
     'users'                 => 'Uporabniki',
     'viewall'				=> 'Prikaži vse',
-    'viewassets'  			=> 'Ogled dodeljenih sredstev',
-    'viewassetsfor'         => 'View Assets for :name',
+    'viewassets'  			=> 'View Assigned Items',
+    'viewassetsfor'         => 'View Items for :name',
+    'view_user_assets'      => 'View Items Assigned to User',
+    'me'                    => 'Me',
     'website'               => 'Spletna stran',
     'welcome'				=> 'Dobrodošli, :ime',
     'years'					=> 'let',
@@ -513,6 +517,7 @@ return [
         'manager_last_name' => 'Manager Last Name',
         'manager_full_name' => 'Manager Full Name',
         'manager_username' => 'Manager Username',
+        'manager_employee_num' => 'Manager Employee Number',
         'checkout_type' => 'Checkout Type',
         'checkout_location' => 'Checkout to Location',
         'image_filename' => 'Image Filename',
@@ -637,5 +642,32 @@ return [
             'error' => 'Could not seed manufacturers. A manufacturer record already exists and seeding would overwrite it.|Could not seed manufacturers. :count manufacturer records already exist and seeding would overwrite them.',
         ],
     ],
+
+    'file_upload_status' => [
+
+        'upload' => [
+            'success' => 'File successfully uploaded |:count files successfully uploaded',
+            'error' => 'File upload failed |:count file uploads failed',
+        ],
+
+        'delete' => [
+            'success' => 'File successfully deleted |:count files successfully deleted',
+            'error' => 'File deletion failed |:count file deletions failed',
+        ],
+
+        'file_not_found' => 'The selected file was not found on server',
+        'invalid_id' => 'That file ID is invalid',
+        'invalid_object' => 'That object ID is invalid',
+        'nofiles' => 'No files were included for upload',
+        'confirm_delete' => 'Are you sure you want to delete this file?',
+    ],
+
+    'depreciation_options' => [
+        'amount' => 'Amount',
+        'percent' => 'Percentage',
+    ],
+
+    'months_plural' => '1 month|:count months',
+
 
 ];

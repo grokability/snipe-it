@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'دسته بندی های دارایی',
     'category_name'  					=> 'نام دسته بندی',
     'checkin_email'                     => 'ارسال ایمیل به کاربر در تحویل و استرداد.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'به این کاربر در تحویل و استرداد ایمیل ارسال خواهد شد.',
     'clone'                             => 'دسته بندی کلون',
     'create'  							=> 'ایجاد دسته جدید',

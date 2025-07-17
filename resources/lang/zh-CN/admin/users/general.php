@@ -53,5 +53,5 @@ return [
     'next_save_user' => '下一步：保存用户',
     'all_assigned_list_generation' => '生成于：',
     'email_user_creds_on_create' => '给此用户发电子邮件？',
-    'department_manager' => 'Department Manager',
+    'department_manager' => '部门经理',
 ];

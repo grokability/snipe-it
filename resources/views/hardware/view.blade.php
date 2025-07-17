@@ -399,15 +399,17 @@
                                             @if (isset($asset->expected_checkin))
                                                 <li>
                                                     <x-icon type="calendar" class="fa-fw" />
-                                                    {{ trans('admin/hardware/form.expected_checkin') }}: {{ Helper::getFormattedDateObject($asset->expected_checkin, 'date', false) }}
+                                                    {{ trans('general.expected_checkin') }}: {{ Helper::getFormattedDateObject($asset->expected_checkin, 'date', false) }}
                                                 </li>
                                             @endif
                                         </ul>
                                     </div>
                                 @endif
+                                @if (($snipeSettings->qr_code=='1') || $snipeSettings->label2_2d_type!='none')
                                     <div class="col-md-12 text-center" style="padding-top: 15px;">
                                         <img src="{{ config('app.url') }}/hardware/{{ $asset->id }}/qr_code" class="img-thumbnail" style="height: 150px; width: 150px; margin-right: 10px;" alt="QR code for {{ $asset->getDisplayNameAttribute() }}">
                                     </div>
+                                @endif
                                 <br><br>
                             </div>
 
@@ -901,9 +903,7 @@
                                                 </strong>
                                             </div>
                                             <div class="col-md-9">
-                                                {{ $asset->warranty_months }}
-                                                {{ trans('admin/hardware/form.months') }}
-
+                                                {{ trans_choice('general.months_plural', $asset->warranty_months) }}
                                                 @if (($asset->model) && ($asset->model->manufacturer) && ($asset->model->manufacturer->warranty_lookup_url!=''))
                                                     <a href="{{ $asset->present()->dynamicUrl($asset->model->manufacturer->warranty_lookup_url) }}" target="_blank">
                                                         <x-icon type="external-link" />
@@ -945,8 +945,7 @@
                                             </div>
                                             <div class="col-md-9">
                                                 {{ $asset->depreciation->name }}
-                                                ({{ $asset->depreciation->months }}
-                                                {{ trans('admin/hardware/form.months') }})
+                                                ({{ trans_choice('general.months_plural', $asset->depreciation->months) }})
                                             </div>
                                         </div>
                                         <div class="row">
@@ -1092,7 +1091,7 @@
                                         <div class="row">
                                             <div class="col-md-3">
                                                 <strong>
-                                                    {{ trans('admin/hardware/form.expected_checkin') }}
+                                                    {{ trans('general.expected_checkin') }}
                                                 </strong>
                                             </div>
                                             <div class="col-md-9">
@@ -1255,23 +1254,7 @@
                         <div class="row{{($asset->assignedAssets->count() > 0 ) ? '' : ' hidden-print'}}">
                             <div class="col-md-12">
 
-                                    <form
-                                        method="POST"
-                                        action="{{ route('hardware/bulkedit') }}"
-                                        accept-charset="UTF-8"
-                                        class="form-inline"
-                                        id="bulkForm"
-                                    >
-                                    @csrf
-                                    <div id="toolbar">
-                                        <label for="bulk_actions"><span class="sr-only">{{ trans('general.bulk_actions')}}</span></label>
-                                        <select name="bulk_actions" class="form-control select2" style="width: 150px;" aria-label="bulk_actions">
-                                            <option value="edit">{{ trans('button.edit') }}</option>
-                                            <option value="delete">{{ trans('button.delete')}}</option>
-                                            <option value="labels">{{ trans_choice('button.generate_labels', 2) }}</option>
-                                        </select>
-                                        <button class="btn btn-primary" id="{{ (isset($id_button)) ? $id_button : 'bulkAssetEditButton' }}" disabled>{{ trans('button.go') }}</button>
-                                    </div>
+                                @include('partials.asset-bulk-actions')
 
                                     <!-- checked out assets table -->
                                     <div class="table-responsive">
@@ -1279,18 +1262,12 @@
                                         <table
                                                 data-columns="{{ \App\Presenters\AssetPresenter::dataTableLayout() }}"
                                                 data-cookie-id-table="assetsTable"
-                                                data-pagination="true"
                                                 data-id-table="assetsTable"
-                                                data-search="true"
-                                                data-search-highlight="true"
-                                                data-show-print="true"
                                                 data-side-pagination="server"
-                                                data-show-columns="true"
-                                                data-show-fullscreen="true"
-                                                data-show-export="true"
-                                                data-show-refresh="true"
                                                 data-sort-order="asc"
+                                                data-toolbar="#assetsBulkEditToolbar"
                                                 data-bulk-button-id="#bulkAssetEditButton"
+                                                data-bulk-form-id="#assetsBulkForm"
                                                 id="assetsListingTable"
                                                 class="table table-striped snipe-table"
                                                 data-url="{{route('api.assets.index',['assigned_to' => $asset->id, 'assigned_type' => 'App\Models\Asset']) }}"
@@ -1300,9 +1277,6 @@
                               }'>
 
                                         </table>
-
-
-                                        </form>
                                     </div>
 
 
@@ -1323,17 +1297,9 @@
                         <table
                                 data-columns="{{ \App\Presenters\AssetPresenter::assignedAccessoriesDataTableLayout() }}"
                                 data-cookie-id-table="accessoriesAssignedListingTable"
-                                data-pagination="true"
                                 data-id-table="accessoriesAssignedListingTable"
-                                data-search="true"
-                                data-search-highlight="true"
-                                data-show-print="true"
                                 data-side-pagination="server"
-                                data-show-columns="true"
-                                data-show-export="true"
-                                data-show-refresh="true"
                                 data-sort-order="asc"
-                                data-click-to-select="true"
                                 id="accessoriesAssignedListingTable"
                                 class="table table-striped snipe-table"
                                 data-url="{{ route('api.assets.assigned_accessories', ['asset' => $asset]) }}"
@@ -1361,17 +1327,17 @@
                                         data-columns="{{ \App\Presenters\AssetMaintenancesPresenter::dataTableLayout() }}"
                                         class="table table-striped snipe-table"
                                         id="assetMaintenancesTable"
-                                        data-pagination="true"
+
                                         data-id-table="assetMaintenancesTable"
-                                        data-search="true"
-                                        data-search-highlight="true"
-                                        data-show-print="true"
+
+
+
                                         data-side-pagination="server"
                                         data-toolbar="#maintenance-toolbar"
-                                        data-show-columns="true"
-                                        data-show-fullscreen="true"
-                                        data-show-refresh="true"
-                                        data-show-export="true"
+
+
+
+
                                         data-export-options='{
                            "fileName": "export-{{ $asset->asset_tag }}-maintenances",
                            "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
@@ -1392,19 +1358,19 @@
                             <table
                                     class="table table-striped snipe-table"
                                     id="asseAuditHistory"
-                                    data-pagination="true"
+
                                     data-id-table="asseAuditHistory"
-                                    data-search="true"
-                                    data-search-highlight="true"
-                                    data-show-print="true"
-                                    data-show-print="true"
+
+
+
+
                                     data-side-pagination="server"
-                                    data-show-columns="true"
-                                    data-show-fullscreen="true"
-                                    data-show-refresh="true"
+
+
+
                                     data-sort-order="desc"
                                     data-sort-name="created_at"
-                                    data-show-export="true"
+
                                     data-export-options='{
                          "fileName": "export-asset-{{  $asset->id }}-audits",
                          "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
@@ -1441,18 +1407,18 @@
                                         data-columns="{{ \App\Presenters\HistoryPresenter::dataTableLayout() }}"
                                         class="table table-striped snipe-table"
                                         id="assetHistory"
-                                        data-pagination="true"
+
                                         data-id-table="assetHistory"
-                                        data-search="true"
-                                        data-search-highlight="true"
-                                        data-show-print="true"
+
+
+
                                         data-side-pagination="server"
-                                        data-show-columns="true"
-                                        data-show-fullscreen="true"
-                                        data-show-refresh="true"
+
+
+
                                         data-sort-order="desc"
                                         data-sort-name="created_at"
-                                        data-show-export="true"
+
                                         data-export-options='{
                          "fileName": "export-asset-{{  $asset->id }}-history",
                          "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]

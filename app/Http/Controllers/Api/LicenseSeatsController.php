@@ -29,6 +29,15 @@ class LicenseSeatsController extends Controller
             $seats = LicenseSeat::with('license', 'user', 'asset', 'user.department')
                 ->where('license_seats.license_id', $licenseId);
 
+            if ($request->input('status') == 'available') {
+                $seats->whereNull('license_seats.assigned_to');
+            }
+
+            if ($request->input('status') == 'assigned') {
+                $seats->ByAssigned();
+            }
+
+
             $order = $request->input('order') === 'asc' ? 'asc' : 'desc';
 
             if ($request->input('sort') == 'department') {

@@ -225,11 +225,13 @@ return [
     'order_number'          => 'Ang Numero ng Pagkakasunod-sunod',
     'only_deleted'          => 'Only Deleted Assets',
     'page_menu'				=> 'Ipinapakita_MENU_mga aytem',
+    'page_error'            => 'Could not determine previous page. Redirected to homepage.',
     'pagination_info'		=> 'Ipinapakita _SIMULA_ hanggang _HULI_ ng_KABUUANG_ mga aytem',
     'pending'				=> 'Hindi pa nasimulan',
     'people'				=> 'Mga Tao',
     'per_page'				=> 'Ang mga Resulta Bawat Pahina',
     'previous'				=> 'Ang Nakaraan',
+    'previous_page'			=> 'Previous Page',
     'processing'			=> 'Pinoproseso',
     'profile'				=> 'Ang iyong propayl',
     'purchase_cost'                              => 'Ang Halaga ng Pagbili',
@@ -251,7 +253,7 @@ return [
     'requested'				=> 'Ang Nirekwest',
     'requested_date'        => 'Requested Date',
     'requested_assets'      => 'Requested Assets',
-    'requested_assets_menu' => 'Requested Assets',
+    'requested_assets_menu' => 'Requested Items',
     'request_canceled'      => 'Ang mga Rekwest ay Nakansela',
     'request_item'          => 'Request this item',
     'external_link_tooltip' => 'External link to',
@@ -311,7 +313,7 @@ return [
     'username'              => 'Ang pangalan ng gumagamit',
     'update'                => 'I-update',
     'updating_item' => 'Updating :item',
-    'upload_filetypes_help'      => 'Allowed filetypes are png, gif, jpg, jpeg, doc, docx, pdf, xls, xlsx, txt, lic, xml, zip, rtf and rar. Max upload size allowed is :size.',
+    'upload_filetypes_help' => 'Allowed filetypes are: :allowed_filetypes. Max upload size allowed is :size.',
     'uploaded'              => 'Nai-upload',
     'user'					=> 'Ang gumagamit',
     'accepted'			    => 'tinanggap na',
@@ -321,8 +323,10 @@ return [
     'unaccepted_asset_report' => 'Hindi tinanggap na mga Asset',
     'users'                 => 'Ang mga gumagamit',
     'viewall'				=> 'View All',
-    'viewassets'  			=> 'Tingna ang mga Assets na Naka-assign',
-    'viewassetsfor'         => 'View Assets for :name',
+    'viewassets'  			=> 'View Assigned Items',
+    'viewassetsfor'         => 'View Items for :name',
+    'view_user_assets'      => 'View Items Assigned to User',
+    'me'                    => 'Me',
     'website'               => 'Ang Webiste',
     'welcome'				=> 'Maligayang pagdating, :name',
     'years'					=> 'mga taon',
@@ -512,6 +516,7 @@ return [
         'manager_last_name' => 'Manager Last Name',
         'manager_full_name' => 'Manager Full Name',
         'manager_username' => 'Manager Username',
+        'manager_employee_num' => 'Manager Employee Number',
         'checkout_type' => 'Checkout Type',
         'checkout_location' => 'Checkout to Location',
         'image_filename' => 'Image Filename',
@@ -636,5 +641,32 @@ return [
             'error' => 'Could not seed manufacturers. A manufacturer record already exists and seeding would overwrite it.|Could not seed manufacturers. :count manufacturer records already exist and seeding would overwrite them.',
         ],
     ],
+
+    'file_upload_status' => [
+
+        'upload' => [
+            'success' => 'File successfully uploaded |:count files successfully uploaded',
+            'error' => 'File upload failed |:count file uploads failed',
+        ],
+
+        'delete' => [
+            'success' => 'File successfully deleted |:count files successfully deleted',
+            'error' => 'File deletion failed |:count file deletions failed',
+        ],
+
+        'file_not_found' => 'The selected file was not found on server',
+        'invalid_id' => 'That file ID is invalid',
+        'invalid_object' => 'That object ID is invalid',
+        'nofiles' => 'No files were included for upload',
+        'confirm_delete' => 'Are you sure you want to delete this file?',
+    ],
+
+    'depreciation_options' => [
+        'amount' => 'Amount',
+        'percent' => 'Percentage',
+    ],
+
+    'months_plural' => '1 month|:count months',
+
 
 ];

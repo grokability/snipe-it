@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Izigaba zefa',
     'category_name'  					=> 'Igama lesigaba',
     'checkin_email'                     => 'Send email to user on checkin/checkout.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'This user will be sent an email on checkin/checkout.',
     'clone'                             => 'Isigaba se-clone',
     'create'  							=> 'Dala Isigaba',

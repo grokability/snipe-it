@@ -25,12 +25,12 @@
                 <table
                 data-cookie-id-table="kitModelsTable"
                 data-columns="{{ \App\Presenters\PredefinedKitPresenter::dataTableModels() }}"
-                data-pagination="true"
-                data-search="true"
+
+
                 data-side-pagination="server"
-                data-show-columns="true"
-                data-show-export="true"
-                data-show-refresh="true"
+
+
+
                 data-sort-order="asc"
                 data-sort-name="name"
                 id="kitModelsTable"
@@ -59,12 +59,12 @@
 {{--                    <table--}}
 {{--                    data-cookie-id-table="kitLicensesTable"--}}
 {{--                    data-columns="{{ \App\Presenters\PredefinedKitPresenter::dataTableLicenses() }}"--}}
-{{--                    data-pagination="true"--}}
-{{--                    data-search="true"--}}
+{{--                    --}}
+{{--                    --}}
 {{--                    data-side-pagination="server"--}}
-{{--                    data-show-columns="true"--}}
-{{--                    data-show-export="true"--}}
-{{--                    data-show-refresh="true"--}}
+{{--                    --}}
+{{--                    --}}
+{{--                    --}}
 {{--                    data-sort-order="asc"--}}
 {{--                    data-sort-name="name"--}}
 {{--                    id="kitLicensesTable"--}}
@@ -93,12 +93,12 @@
 {{--                    <table--}}
 {{--                    data-cookie-id-table="kitConsumablesTable"--}}
 {{--                    data-columns="{{ \App\Presenters\PredefinedKitPresenter::dataTableConsumables() }}"--}}
-{{--                    data-pagination="true"--}}
-{{--                    data-search="true"--}}
+{{--                    --}}
+{{--                    --}}
 {{--                    data-side-pagination="server"--}}
-{{--                    data-show-columns="true"--}}
-{{--                    data-show-export="true"--}}
-{{--                    data-show-refresh="true"--}}
+{{--                    --}}
+{{--                    --}}
+{{--                    --}}
 {{--                    data-sort-order="asc"--}}
 {{--                    data-sort-name="name"--}}
 {{--                    id="kitConsumablesTable"--}}
@@ -127,12 +127,12 @@
 {{--                    <table--}}
 {{--                    data-cookie-id-table="kitAccessoriesTable"--}}
 {{--                    data-columns="{{ \App\Presenters\PredefinedKitPresenter::dataTableAccessories() }}"--}}
-{{--                    data-pagination="true"--}}
-{{--                    data-search="true"--}}
+{{--                    --}}
+{{--                    --}}
 {{--                    data-side-pagination="server"--}}
-{{--                    data-show-columns="true"--}}
-{{--                    data-show-export="true"--}}
-{{--                    data-show-refresh="true"--}}
+{{--                    --}}
+{{--                    --}}
+{{--                    --}}
 {{--                    data-sort-order="asc"--}}
 {{--                    data-sort-name="name"--}}
 {{--                    id="kitAccessoriesTable"--}}

@@ -2,10 +2,10 @@
 
 return array(
 
-    'actions'	 	        => 'Actions',
-    'action' 		        => 'Action',
-    'by'      		        => 'By',
-    'item' 			        => 'Item',
-    'no_matching_records'   => 'No matching records found',
+    'actions'	 	        => 'ქმედებები',
+    'action' 		        => 'ქმედება',
+    'by'      		        => 'მიერ',
+    'item' 			        => 'ნივთი',
+    'no_matching_records'   => 'შესაბამისი ჩანაწერები ვერ მოიძებნა',
 
 );

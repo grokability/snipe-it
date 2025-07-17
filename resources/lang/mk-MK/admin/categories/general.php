@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Категории на основни средства',
     'category_name'  					=> 'Име на категорија',
     'checkin_email'                     => 'Испрати е-пошта до корисникот при позајмување/враќање.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'На корисникот ќе му биде испратена е-пошта при позајмување/враќање.',
     'clone'                             => 'Клонирај Категорија',
     'create'  							=> 'Креирај категорија',

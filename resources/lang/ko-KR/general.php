@@ -225,11 +225,13 @@ return [
     'order_number'          => '주문 번호',
     'only_deleted'          => 'Only Deleted Assets',
     'page_menu'				=> 'Showing _MENU_ items',
+    'page_error'            => 'Could not determine previous page. Redirected to homepage.',
     'pagination_info'		=> 'Showing _START_ to _END_ of _TOTAL_ items',
     'pending'				=> '대기중',
     'people'				=> '사용자',
     'per_page'				=> '페이지 당 결과',
     'previous'				=> '이전',
+    'previous_page'			=> 'Previous Page',
     'processing'			=> '처리중',
     'profile'				=> '프로필',
     'purchase_cost'                              => '구매 원가',
@@ -251,7 +253,7 @@ return [
     'requested'				=> '요청됨',
     'requested_date'        => 'Requested Date',
     'requested_assets'      => 'Requested Assets',
-    'requested_assets_menu' => 'Requested Assets',
+    'requested_assets_menu' => 'Requested Items',
     'request_canceled'      => '요청 취소',
     'request_item'          => 'Request this item',
     'external_link_tooltip' => 'External link to',
@@ -311,7 +313,7 @@ return [
     'username'              => '사용자명',
     'update'                => '갱신',
     'updating_item' => 'Updating :item',
-    'upload_filetypes_help'      => '허용된 파일 형식은 png, gif, jpg, jpeg, doc, docx, pdf, xls, txt, lic, zip, rar 입니다. 최대 업로드 크기는 :size 입니다.',
+    'upload_filetypes_help' => 'Allowed filetypes are: :allowed_filetypes. Max upload size allowed is :size.',
     'uploaded'              => '업로드됨',
     'user'					=> '사용자',
     'accepted'			    => '승인됨',
@@ -321,8 +323,10 @@ return [
     'unaccepted_asset_report' => '미승인 자산',
     'users'                 => '사용자',
     'viewall'				=> '전체 보기',
-    'viewassets'  			=> '사용중인 자산 보기',
-    'viewassetsfor'         => '자산 보기 :name',
+    'viewassets'  			=> 'View Assigned Items',
+    'viewassetsfor'         => 'View Items for :name',
+    'view_user_assets'      => 'View Items Assigned to User',
+    'me'                    => 'Me',
     'website'               => '웹사이트',
     'welcome'				=> '환영합니다, :name',
     'years'					=> '년',
@@ -512,6 +516,7 @@ return [
         'manager_last_name' => 'Manager Last Name',
         'manager_full_name' => 'Manager Full Name',
         'manager_username' => 'Manager Username',
+        'manager_employee_num' => 'Manager Employee Number',
         'checkout_type' => 'Checkout Type',
         'checkout_location' => 'Checkout to Location',
         'image_filename' => 'Image Filename',
@@ -636,5 +641,32 @@ return [
             'error' => 'Could not seed manufacturers. A manufacturer record already exists and seeding would overwrite it.|Could not seed manufacturers. :count manufacturer records already exist and seeding would overwrite them.',
         ],
     ],
+
+    'file_upload_status' => [
+
+        'upload' => [
+            'success' => 'File successfully uploaded |:count files successfully uploaded',
+            'error' => 'File upload failed |:count file uploads failed',
+        ],
+
+        'delete' => [
+            'success' => 'File successfully deleted |:count files successfully deleted',
+            'error' => 'File deletion failed |:count file deletions failed',
+        ],
+
+        'file_not_found' => 'The selected file was not found on server',
+        'invalid_id' => 'That file ID is invalid',
+        'invalid_object' => 'That object ID is invalid',
+        'nofiles' => 'No files were included for upload',
+        'confirm_delete' => 'Are you sure you want to delete this file?',
+    ],
+
+    'depreciation_options' => [
+        'amount' => 'Amount',
+        'percent' => 'Percentage',
+    ],
+
+    'months_plural' => '1 month|:count months',
+
 
 ];

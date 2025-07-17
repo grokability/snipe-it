@@ -225,11 +225,13 @@ return [
     'order_number'          => 'Lakkoofsa Ajaja',
     'only_deleted'          => 'Haqamtoota Qabeenya',
     'page_menu'				=> 'An*rfin ~ _MENU_ qotaa',
+    'page_error'            => 'Could not determine previous page. Redirected to homepage.',
     'pagination_info'		=> 'odeeffannoo fuulaa',
     'pending'				=> 'Harka qhoofaa',
     'people'				=> 'Naamusa',
     'per_page'				=> 'Muraa fuulaan ',
     'previous'				=> 'Guddina lammaffaa',
+    'previous_page'			=> 'Previous Page',
     'processing'			=> 'Hojiirra',
     'profile'				=> 'Gosi keewwatte',
     'purchase_cost'                              => 'Gatii itti bitame',
@@ -251,7 +253,7 @@ return [
     'requested'				=> 'Gaafatame',
     'requested_date'        => 'Guyyaa gaafatame',
     'requested_assets'      => 'Qabeenya gaafatame',
-    'requested_assets_menu' => 'Qabeenya gaafatame',
+    'requested_assets_menu' => 'Requested Items',
     'request_canceled'      => 'Gaaffiin Haqame',
     'request_item'          => 'Gaaffii dhiyeessi',
     'external_link_tooltip' => 'Gara geggeessituu alaatti',
@@ -311,7 +313,7 @@ return [
     'username'              => 'Username',
     'update'                => 'Update',
     'updating_item' => 'Updating :item',
-    'upload_filetypes_help'      => 'Allowed filetypes are png, gif, jpg, jpeg, doc, docx, pdf, xls, xlsx, txt, lic, xml, zip, rtf and rar. Max upload size allowed is :size.',
+    'upload_filetypes_help' => 'Allowed filetypes are: :allowed_filetypes. Max upload size allowed is :size.',
     'uploaded'              => 'Uploaded',
     'user'					=> 'Fayyadamaa',
     'accepted'			    => 'fudhatama argate',
@@ -321,8 +323,10 @@ return [
     'unaccepted_asset_report' => 'Qabeenyota fudhatama hin argatin',
     'users'                 => 'Fayyadamtoota',
     'viewall'				=> 'Hunda agarsiisi',
-    'viewassets'  			=> 'Qabeenyota ramadaman agarsiisi',
-    'viewassetsfor'         => 'Qabeenya :name agarsiisi',
+    'viewassets'  			=> 'View Assigned Items',
+    'viewassetsfor'         => 'View Items for :name',
+    'view_user_assets'      => 'View Items Assigned to User',
+    'me'                    => 'Me',
     'website'               => 'Marsariitii',
     'welcome'				=> 'Anaa Dhufu, :name',
     'years'					=> 'waggoota',
@@ -512,6 +516,7 @@ return [
         'manager_last_name' => 'Manager Last Name',
         'manager_full_name' => 'Manager Full Name',
         'manager_username' => 'Manager Username',
+        'manager_employee_num' => 'Manager Employee Number',
         'checkout_type' => 'Checkout Type',
         'checkout_location' => 'Checkout to Location',
         'image_filename' => 'Image Filename',
@@ -636,5 +641,32 @@ return [
             'error' => 'Could not seed manufacturers. A manufacturer record already exists and seeding would overwrite it.|Could not seed manufacturers. :count manufacturer records already exist and seeding would overwrite them.',
         ],
     ],
+
+    'file_upload_status' => [
+
+        'upload' => [
+            'success' => 'File successfully uploaded |:count files successfully uploaded',
+            'error' => 'File upload failed |:count file uploads failed',
+        ],
+
+        'delete' => [
+            'success' => 'File successfully deleted |:count files successfully deleted',
+            'error' => 'File deletion failed |:count file deletions failed',
+        ],
+
+        'file_not_found' => 'The selected file was not found on server',
+        'invalid_id' => 'That file ID is invalid',
+        'invalid_object' => 'That object ID is invalid',
+        'nofiles' => 'No files were included for upload',
+        'confirm_delete' => 'Are you sure you want to delete this file?',
+    ],
+
+    'depreciation_options' => [
+        'amount' => 'Amount',
+        'percent' => 'Percentage',
+    ],
+
+    'months_plural' => '1 month|:count months',
+
 
 ];

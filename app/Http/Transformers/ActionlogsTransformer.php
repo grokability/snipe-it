@@ -113,8 +113,8 @@ class ActionlogsTransformer
 
                                         // Display the changes if the user is an admin or superadmin
                                         if (Gate::allows('admin')) {
-                                            $clean_meta[$fieldname]['old'] = ($enc_old) ? unserialize($enc_old): '';
-                                            $clean_meta[$fieldname]['new'] = ($enc_new) ? unserialize($enc_new): '';
+                                            $clean_meta[$fieldname]['old'] = ($enc_old) ? unserialize($enc_old, ['allowed_classes' => false]) : '';
+                                            $clean_meta[$fieldname]['new'] = ($enc_new) ? unserialize($enc_new, ['allowed_classes' => false]) : '';
                                         }
 
                                     }
@@ -198,8 +198,8 @@ class ActionlogsTransformer
             'note'          => ($actionlog->note) ? Helper::parseEscapedMarkedownInline($actionlog->note): null,
             'signature_file'   => ($actionlog->accept_signature) ? route('log.signature.view', ['filename' => $actionlog->accept_signature ]) : null,
             'log_meta'          => ((isset($clean_meta)) && (is_array($clean_meta))) ? $clean_meta: null,
-            'remote_ip'          => ($actionlog->remote_ip) ??  null,
-            'user_agent'          => ($actionlog->user_agent) ??  null,
+            'remote_ip' => e($actionlog->remote_ip) ?? null,
+            'user_agent' => e($actionlog->user_agent) ?? null,
             'action_source'          => ($actionlog->action_source) ??  null,
             'action_date'   => ($actionlog->action_date) ? Helper::getFormattedDateObject($actionlog->action_date, 'datetime'): Helper::getFormattedDateObject($actionlog->created_at, 'datetime'),
         ];

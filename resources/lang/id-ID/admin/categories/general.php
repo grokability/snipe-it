@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Kategori Aset',
     'category_name'  					=> 'Nama Kategori',
     'checkin_email'                     => 'Kirim email ke pengguna saat check in / checkout.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'Pengguna ini akan dikirimi email saat check in / checkout.',
     'clone'                             => 'Kategori duplikat',
     'create'  							=> 'Buat kategori',

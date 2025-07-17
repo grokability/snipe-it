@@ -3,16 +3,16 @@
 return array(
 
     'assigned_to'   	=> 'Assigned To',
-    'checkout'   		=> 'In/Out',
+    'checkout'   		=> 'შიგნით/გარეთ',
     'deleted_at'        => 'Deleted at',
     'id'      			=> 'ID',
     'license_email'   	=> 'License Email',
     'license_name'   	=> 'Licensed To',
-    'purchase_date'   	=> 'Purchase Date',
-    'purchased'   		=> 'Purchased',
+    'purchase_date'   	=> 'შესყიდვის თარიღი',
+    'purchased'   		=> 'ნაყიდია',
     'seats'   			=> 'Seats',
     'hardware'   		=> 'Hardware',
-    'serial'   			=> 'Serial',
+    'serial'   			=> 'სერიული ნომერი',
     'title'      		=> 'License',
 
 );

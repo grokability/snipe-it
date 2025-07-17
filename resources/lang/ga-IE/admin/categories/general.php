@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Catagóirí Sócmhainne',
     'category_name'  					=> 'Ainm Chatagóir',
     'checkin_email'                     => 'Send email to user on checkin/checkout.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'This user will be sent an email on checkin/checkout.',
     'clone'                             => 'Catagóir Clón',
     'create'  							=> 'Cruthaigh Catagóir',

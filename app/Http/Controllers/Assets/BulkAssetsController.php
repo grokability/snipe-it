@@ -112,11 +112,47 @@ class BulkAssetsController extends Controller
         // This handles all of the pivot sorting below (versus the assets.* fields in the allowed_columns array)
         $column_sort = in_array($sort_override, $allowed_columns) ? $sort_override : 'assets.id';
 
-        $assets = Asset::with('assignedTo', 'location', 'model')
+        $query = Asset::with('assignedTo', 'location', 'model')
                 ->whereIn('assets.id', $asset_ids)
                 ->withTrashed();
 
-        $assets = $assets->get();
+
+        switch ($sort_override) {
+            case 'model':
+                $query->OrderModels($order);
+                break;
+            case 'model_number':
+                $query->OrderModelNumber($order);
+                break;
+            case 'category':
+                $query->OrderCategory($order);
+                break;
+            case 'manufacturer':
+                $query->OrderManufacturer($order);
+                break;
+            case 'company':
+                $query->OrderCompany($order);
+                break;
+            case 'location':
+                $query->OrderLocation($order);
+                break;
+            case 'rtd_location':
+                $query->OrderRtdLocation($order);
+                break;
+            case 'status_label':
+                $query->OrderStatus($order);
+                break;
+            case 'supplier':
+                $query->OrderSupplier($order);
+                break;
+            case 'assigned_to':
+                $query->OrderAssigned($order);
+                break;
+            default:
+                $query->orderBy($column_sort, $order);
+                break;
+        }
+        $assets = $query->get();
 
         if ($assets->isEmpty()) {
             Log::debug('No assets were found for the provided IDs', ['ids' => $asset_ids]);
@@ -169,40 +205,7 @@ class BulkAssetsController extends Controller
             }
         }
 
-        switch ($sort_override) {
-            case 'model':
-                $assets->OrderModels($order);
-                break;
-            case 'model_number':
-                $assets->OrderModelNumber($order);
-                break;
-            case 'category':
-                $assets->OrderCategory($order);
-                break;
-            case 'manufacturer':
-                $assets->OrderManufacturer($order);
-                break;
-            case 'company':
-                $assets->OrderCompany($order);
-                break;
-            case 'location':
-                $assets->OrderLocation($order);
-            case 'rtd_location':
-                $assets->OrderRtdLocation($order);
-                break;
-            case 'status_label':
-                $assets->OrderStatus($order);
-                break;
-            case 'supplier':
-                $assets->OrderSupplier($order);
-                break;
-            case 'assigned_to':
-                $assets->OrderAssigned($order);
-                break;
-            default:
-                $assets->orderBy($column_sort, $order);
-                break;
-        }
+
 
         return redirect()->back()->with('error', 'No action selected');
     }
@@ -281,6 +284,7 @@ class BulkAssetsController extends Controller
             || ($request->filled('null_expected_checkin_date'))
             || ($request->filled('null_next_audit_date'))
             || ($request->filled('null_asset_eol_date'))
+            || ($request->filled('null_notes'))
             || ($request->anyFilled($custom_field_columns))
             || ($request->anyFilled(array_keys($null_custom_fields_inputs)))
 
@@ -305,7 +309,8 @@ class BulkAssetsController extends Controller
                     ->conditionallyAddItem('supplier_id')
                     ->conditionallyAddItem('warranty_months')
                     ->conditionallyAddItem('next_audit_date')
-                    ->conditionallyAddItem('asset_eol_date');
+                    ->conditionallyAddItem('asset_eol_date')
+                    ->conditionallyAddItem('notes');
                     foreach ($custom_field_columns as $key => $custom_field_column) {
                         $this->conditionallyAddItem($custom_field_column); 
                    }
@@ -360,6 +365,10 @@ class BulkAssetsController extends Controller
                     if ($request->input('calc_eol')=='1') {
                         $this->update_array['eol_explicit'] = 0;
                     }
+                }
+
+                if ($request->input('null_notes')=='1') {
+                    $this->update_array['notes'] = null;
                 }
 
 

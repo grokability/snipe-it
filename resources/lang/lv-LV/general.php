@@ -225,11 +225,13 @@ return [
     'order_number'          => 'Pasūtījuma numurs',
     'only_deleted'          => 'Tikai Dzēsts Inventārs',
     'page_menu'				=> 'Rāda _MENU_ vienumus',
+    'page_error'            => 'Could not determine previous page. Redirected to homepage.',
     'pagination_info'		=> 'Rāda _START_ līdz _END_ no _TOTAL_ vienumiem',
     'pending'				=> 'Gaida',
     'people'				=> 'Cilvēki',
     'per_page'				=> 'Rezultāti lapā',
     'previous'				=> 'Iepriekšējā',
+    'previous_page'			=> 'Previous Page',
     'processing'			=> 'Apstrāde',
     'profile'				=> 'Tavs profils',
     'purchase_cost'                              => 'Iegādes izmaksas',
@@ -251,7 +253,7 @@ return [
     'requested'				=> 'Pieprasīts',
     'requested_date'        => 'Pieprasīšanas datums',
     'requested_assets'      => 'Pieprasītais inventārs',
-    'requested_assets_menu' => 'Pieprasītais inventārs',
+    'requested_assets_menu' => 'Requested Items',
     'request_canceled'      => 'Pieprasījums atcelts',
     'request_item'          => 'Pieprasīt šo lietu',
     'external_link_tooltip' => 'Ārējā saite',
@@ -311,7 +313,7 @@ return [
     'username'              => 'Lietotājvārds',
     'update'                => 'Atjaunināt',
     'updating_item' => 'Updating :item',
-    'upload_filetypes_help'      => 'Atļautie failu veidi ir: png, gif, jpg, jpeg, doc, docx, pdf, xls, xlsx, txt, lic, xml, zip, rtf un rar. Maks. augšupielādes izmērs ir: :size.',
+    'upload_filetypes_help' => 'Allowed filetypes are: :allowed_filetypes. Max upload size allowed is :size.',
     'uploaded'              => 'Augšupielādēts',
     'user'					=> 'Lietotājs',
     'accepted'			    => 'pieņemts',
@@ -321,8 +323,10 @@ return [
     'unaccepted_asset_report' => 'Nepieņemtie aktīvi',
     'users'                 => 'Lietotāji',
     'viewall'				=> 'Skatīt visus',
-    'viewassets'  			=> 'Apskatīt piešķirtos aktīvus',
-    'viewassetsfor'         => 'Skatīt :name inventāru',
+    'viewassets'  			=> 'View Assigned Items',
+    'viewassetsfor'         => 'View Items for :name',
+    'view_user_assets'      => 'View Items Assigned to User',
+    'me'                    => 'Me',
     'website'               => 'Tīmekļa vietne',
     'welcome'				=> 'Laipni lūdzam: vārds',
     'years'					=> 'gadiem',
@@ -512,6 +516,7 @@ return [
         'manager_last_name' => 'Vadītāja Uzvārds',
         'manager_full_name' => 'Vadītāja Vārds Uzvārds',
         'manager_username' => 'Vadītāja Lietotājs',
+        'manager_employee_num' => 'Manager Employee Number',
         'checkout_type' => 'Izsniegšanas veids',
         'checkout_location' => 'Checkout to Location',
         'image_filename' => 'Image Filename',
@@ -636,5 +641,32 @@ return [
             'error' => 'Could not seed manufacturers. A manufacturer record already exists and seeding would overwrite it.|Could not seed manufacturers. :count manufacturer records already exist and seeding would overwrite them.',
         ],
     ],
+
+    'file_upload_status' => [
+
+        'upload' => [
+            'success' => 'File successfully uploaded |:count files successfully uploaded',
+            'error' => 'File upload failed |:count file uploads failed',
+        ],
+
+        'delete' => [
+            'success' => 'File successfully deleted |:count files successfully deleted',
+            'error' => 'File deletion failed |:count file deletions failed',
+        ],
+
+        'file_not_found' => 'The selected file was not found on server',
+        'invalid_id' => 'That file ID is invalid',
+        'invalid_object' => 'That object ID is invalid',
+        'nofiles' => 'No files were included for upload',
+        'confirm_delete' => 'Are you sure you want to delete this file?',
+    ],
+
+    'depreciation_options' => [
+        'amount' => 'Amount',
+        'percent' => 'Percentage',
+    ],
+
+    'months_plural' => '1 month|:count months',
+
 
 ];

@@ -14,15 +14,8 @@
             <div class="box-body">
                     <table
                             data-cookie-id-table="licensesReport"
-                            data-pagination="true"
                             data-id-table="licensesReport"
-                            data-search="true"
-                            data-search-highlight="true"
-                            data-show-print="true"
                             data-side-pagination="client"
-                            data-show-columns="true"
-                            data-show-export="true"
-                            data-show-refresh="true"
                             data-sort-order="asc"
                             id="licensesReport"
                             class="table table-striped snipe-table"

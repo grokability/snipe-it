@@ -8,11 +8,11 @@ return [
     'accessory'				=> '配件',
     'accessory_report'		=> '配件报告',
     'action'                => '操作',
-    'action_date'			=> 'Action Date',
+    'action_date'			=> '操作日期',
     'activity_report'		=> '活动报告',
     'address'				=> '地址',
     'admin'					=> '管理员设置',
-    'admin_user'			=> 'Admin User',
+    'admin_user'			=> '管理员用户',
     'admin_tooltip'			=> '此用户拥有管理员权限',
     'superuser'				=> '超级用户',
     'superuser_tooltip'		=> '此用户拥有超级用户权限',
@@ -225,11 +225,13 @@ return [
     'order_number'          => '订单号',
     'only_deleted'          => '仅删除的资产',
     'page_menu'				=> '显示_MENU_项',
+    'page_error'            => '无法确定上一个页面。重定向到首页。',
     'pagination_info'		=> '显示从 _START_ 到 _END_ 总共 _TOTAL_ 项',
     'pending'				=> '待定',
     'people'				=> '组织成员',
     'per_page'				=> '每页搜索结果',
     'previous'				=> '前一页',
+    'previous_page'			=> '上一页',
     'processing'			=> '处理中',
     'profile'				=> '您的个人资料',
     'purchase_cost'                              => '采购价格',
@@ -251,7 +253,7 @@ return [
     'requested'				=> '已申请',
     'requested_date'        => '申领日期',
     'requested_assets'      => '已申领资产',
-    'requested_assets_menu' => '已申领资产',
+    'requested_assets_menu' => '被请求的物品',
     'request_canceled'      => '取消请求',
     'request_item'          => '申领此项',
     'external_link_tooltip' => '外部链接到',
@@ -289,8 +291,8 @@ return [
     'status_label'			=> '状态标签',
     'status'    			=> '状态',
     'accept_eula'           => '接受协议',
-    'eula'                  => 'EULAs',
-    'eula_long'             => 'End-User License Agreements',
+    'eula'                  => 'EULA（最终用户许可协议）',
+    'eula_long'             => '最终用户许可协议',
     'show_or_hide_eulas' => '显示/隐藏 最终用户许可协议EULAs',
     'supplier'              => '供应商',
     'suppliers'  			=> '供应商',
@@ -307,11 +309,11 @@ return [
     'type'  				=> '类型',
     'undeployable'			=> '无法被分配',
     'unknown_admin'			=> '未知管理员',
-    'unknown_user'          => 'Unknown User',
+    'unknown_user'          => '未知用户',
     'username'              => '用户名',
     'update'                => '更新',
     'updating_item' => '正在更新 :item',
-    'upload_filetypes_help'      => '允许的文件类型是 png, gif, jpg, jpeg, doc, doc, pdf, xls, xlsx, txt, lic, xml, zip, rtf 和 rar. 允许的最大上传大小是 :size.',
+    'upload_filetypes_help' => '允许的文件类型为：:allowed_fileTypes。允许的最大上传大小是 :size。',
     'uploaded'              => '已上传',
     'user'					=> '用户',
     'accepted'			    => '已接受',
@@ -321,8 +323,10 @@ return [
     'unaccepted_asset_report' => '未接受的资产',
     'users'                 => '用户',
     'viewall'				=> '查看全部',
-    'viewassets'  			=> '查看资产分配',
-    'viewassetsfor'         => '查看:name名下资产',
+    'viewassets'  			=> '查看已分配的物品',
+    'viewassetsfor'         => '查看:name名下物品',
+    'view_user_assets'      => '查看分配给用户的物品',
+    'me'                    => '我的',
     'website'               => '站点',
     'welcome'				=> '欢迎您，:name',
     'years'					=> '年',
@@ -512,6 +516,7 @@ return [
         'manager_last_name' => '管理者姓',
         'manager_full_name' => '管理者全名',
         'manager_username' => '管理者用户名',
+        'manager_employee_num' => '管理员员工号码',
         'checkout_type' => '借出类型',
         'checkout_location' => '借出到位置',
         'image_filename' => '图像文件名',
@@ -586,9 +591,9 @@ return [
     'user_managed_passwords_allow' => '允许用户管理自己的密码',
     'from' => '从',
     'by' => '经由',
-    'version' => 'Version',
-    'build' => 'build',
-    'footer_credit' => '<a target="_blank" href="https://snipeitapp.com" rel="noopener">Snipe-IT</a> is open source software, made with <i class="fa fa-heart" aria-hidden="true" style="color: #a94442; font-size: 10px" /></i><span class="sr-only">love</span> by <a href="https://bsky.app/profile/snipeitapp.com" rel="noopener">@snipeitapp.com</a>.',
+    'version' => '版本',
+    'build' => '版本号',
+    'footer_credit' => '<a target="_blank" href="https://snipeitapp.com" rel="noopener">Snipe-IT</a> 是开源软件，用 <i class="fa fa-heart" aria-hidden="true" style="color: #a94442; font-size: 10px" /></i><span class="sr-only">爱</span> 由 <a href="https://bsky.app/profile/snipeitapp.com" rel="noopener">@snipeitapp.com</a> 制作。',
 
 // Add form placeholders here
     'placeholders' => [
@@ -636,5 +641,32 @@ return [
             'error' => '制造商加载失败，当前系统中已存在一条制造商记录，执行此操作将覆盖现有数据。|制造商加载失败，当前系统中已存在:count条制造商记录，执行此操作将覆盖现有数据。',
         ],
     ],
+
+    'file_upload_status' => [
+
+        'upload' => [
+            'success' => '文件成功上传|:count 文件成功上传',
+            'error' => '文件上传失败 |:count 文件上传失败',
+        ],
+
+        'delete' => [
+            'success' => '文件成功删除 |:count 文件成功删除',
+            'error' => '文件删除失败 |:count 文件删除失败',
+        ],
+
+        'file_not_found' => '在服务器上找不到选定的文件',
+        'invalid_id' => '该文件 ID 无效',
+        'invalid_object' => '对象ID无效',
+        'nofiles' => '没有要上传的文件',
+        'confirm_delete' => '您确定要删除这个文件吗？',
+    ],
+
+    'depreciation_options' => [
+        'amount' => '数量',
+        'percent' => '百分比',
+    ],
+
+    'months_plural' => '1月|:count月',
+
 
 ];

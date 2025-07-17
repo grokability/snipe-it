@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Aktiver Kategorier',
     'category_name'  					=> 'Kategorinavn',
     'checkin_email'                     => 'Send e-mail til bruger ved tjek ind/ud.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'Denne bruger tilsendes en e-mail ved tjek ind/ud.',
     'clone'                             => 'Klon Kategori',
     'create'  							=> 'Opret kategori',

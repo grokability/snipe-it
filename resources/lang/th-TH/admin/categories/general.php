@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'หมวดหมู่ทรัพย์สิน',
     'category_name'  					=> 'ชื่อหมวดหมู่',
     'checkin_email'                     => 'ส่งอีเมลไปยังผู้ใช้เมื่อเช็คอิน / เช็คเอาต์',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'ผู้ใช้รายนี้จะได้รับอีเมลเกี่ยวกับเช็คอิน / เช็คเอาท์',
     'clone'                             => 'คัดลอกหมวดหมู่',
     'create'  							=> 'สร้างหมวดหมู่',

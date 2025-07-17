@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Traits\HasUploads;
 use App\Models\Traits\Searchable;
 use App\Presenters\Presentable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,7 +13,7 @@ use Watson\Validating\ValidatingTrait;
 /**
  * Model for Components.
  *
- * @version    v1.0
+ * @version v1.0
  */
 class Component extends SnipeModel
 {
@@ -20,6 +21,7 @@ class Component extends SnipeModel
 
     protected $presenter = \App\Presenters\ComponentPresenter::class;
     use CompanyableTrait;
+    use HasUploads;
     use Loggable, Presentable;
     use SoftDeletes;
     protected $casts = [
@@ -113,28 +115,13 @@ class Component extends SnipeModel
             && ($this->deleted_at == '');
     }
 
-    /**
-     * Establishes the components -> action logs -> uploads relationship
-     *
-     * @author A. Gianotto <snipe@snipe.net>
-     * @since [v6.1.13]
-     * @return \Illuminate\Database\Eloquent\Relations\Relation
-     */
-    public function uploads()
-    {
-        return $this->hasMany(\App\Models\Actionlog::class, 'item_id')
-            ->where('item_type', '=', self::class)
-            ->where('action_type', '=', 'uploaded')
-            ->whereNotNull('filename')
-            ->orderBy('created_at', 'desc');
-    }
 
 
     /**
      * Establishes the component -> location relationship
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
+     * @since  [v3.0]
      * @return \Illuminate\Database\Eloquent\Relations\Relation
      */
     public function location()
@@ -146,7 +133,7 @@ class Component extends SnipeModel
      * Establishes the component -> assets relationship
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
+     * @since  [v3.0]
      * @return \Illuminate\Database\Eloquent\Relations\Relation
      */
     public function assets()
@@ -160,7 +147,7 @@ class Component extends SnipeModel
      * @todo this is probably not needed - refactor
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
+     * @since  [v3.0]
      * @return \Illuminate\Database\Eloquent\Relations\Relation
      */
     public function adminuser()
@@ -172,7 +159,7 @@ class Component extends SnipeModel
      * Establishes the component -> company relationship
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
+     * @since  [v3.0]
      * @return \Illuminate\Database\Eloquent\Relations\Relation
      */
     public function company()
@@ -184,7 +171,7 @@ class Component extends SnipeModel
      * Establishes the component -> category relationship
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
+     * @since  [v3.0]
      * @return \Illuminate\Database\Eloquent\Relations\Relation
      */
     public function category()
@@ -196,7 +183,7 @@ class Component extends SnipeModel
      * Establishes the item -> supplier relationship
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v6.1.1]
+     * @since  [v6.1.1]
      * @return \Illuminate\Database\Eloquent\Relations\Relation
      */
     public function supplier()
@@ -209,7 +196,7 @@ class Component extends SnipeModel
      * Establishes the item -> manufacturer relationship
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
+     * @since  [v3.0]
      * @return \Illuminate\Database\Eloquent\Relations\Relation
      */
     public function manufacturer()
@@ -221,7 +208,7 @@ class Component extends SnipeModel
      * Establishes the component -> action logs relationship
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
+     * @since  [v3.0]
      * @return \Illuminate\Database\Eloquent\Relations\Relation
      */
     public function assetlog()
@@ -233,7 +220,7 @@ class Component extends SnipeModel
      * Check how many items within a component are checked out
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v5.0]
+     * @since  [v5.0]
      * @return int
      */
     public function numCheckedOut()
@@ -252,11 +239,12 @@ class Component extends SnipeModel
      *
      * This allows us to get the assets with assigned components without the company restriction
      */
-    public function uncontrainedAssets() {
+    public function uncontrainedAssets()
+    {
 
         return $this->belongsToMany(\App\Models\Asset::class, 'components_assets')
-                ->withPivot('id', 'assigned_qty', 'created_at', 'created_by', 'note')
-                ->withoutGlobalScope(new CompanyableScope);
+            ->withPivot('id', 'assigned_qty', 'created_at', 'created_by', 'note')
+            ->withoutGlobalScope(new CompanyableScope);
 
     }
 
@@ -265,7 +253,7 @@ class Component extends SnipeModel
      * Check how many items within a component are remaining
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
+     * @since  [v3.0]
      * @return int
      */
     public function numRemaining()
@@ -288,8 +276,8 @@ class Component extends SnipeModel
      * This simply checks that there is a value for quantity, and if there isn't, set it to 0.
      *
      * @author A. Gianotto <snipe@snipe.net>
-     * @since v6.3.4
-     * @param $value
+     * @since  v6.3.4
+     * @param  $value
      * @return void
      */
     public function setQtyAttribute($value)
@@ -307,8 +295,8 @@ class Component extends SnipeModel
     /**
      * Query builder scope to order on company
      *
-     * @param  \Illuminate\Database\Query\Builder  $query  Query builder instance
-     * @param  string                              $order       Order
+     * @param \Illuminate\Database\Query\Builder $query Query builder instance
+     * @param string                             $order Order
      *
      * @return \Illuminate\Database\Query\Builder          Modified query builder
      */
@@ -320,8 +308,8 @@ class Component extends SnipeModel
     /**
      * Query builder scope to order on company
      *
-     * @param  \Illuminate\Database\Query\Builder  $query  Query builder instance
-     * @param  string                              $order       Order
+     * @param \Illuminate\Database\Query\Builder $query Query builder instance
+     * @param string                             $order Order
      *
      * @return \Illuminate\Database\Query\Builder          Modified query builder
      */
@@ -333,8 +321,8 @@ class Component extends SnipeModel
     /**
      * Query builder scope to order on company
      *
-     * @param  \Illuminate\Database\Query\Builder  $query  Query builder instance
-     * @param  string                              $order       Order
+     * @param \Illuminate\Database\Query\Builder $query Query builder instance
+     * @param string                             $order Order
      *
      * @return \Illuminate\Database\Query\Builder          Modified query builder
      */
@@ -346,8 +334,8 @@ class Component extends SnipeModel
     /**
      * Query builder scope to order on supplier
      *
-     * @param  \Illuminate\Database\Query\Builder  $query  Query builder instance
-     * @param  text                              $order       Order
+     * @param \Illuminate\Database\Query\Builder $query Query builder instance
+     * @param text                               $order Order
      *
      * @return \Illuminate\Database\Query\Builder          Modified query builder
      */
@@ -359,8 +347,8 @@ class Component extends SnipeModel
     /**
      * Query builder scope to order on manufacturer
      *
-     * @param  \Illuminate\Database\Query\Builder  $query  Query builder instance
-     * @param  text                              $order       Order
+     * @param \Illuminate\Database\Query\Builder $query Query builder instance
+     * @param text                               $order Order
      *
      * @return \Illuminate\Database\Query\Builder          Modified query builder
      */

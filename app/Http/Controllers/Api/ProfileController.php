@@ -4,15 +4,19 @@ namespace App\Http\Controllers\Api;
 
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
+use App\Http\Transformers\ProfileTransformer;
 use App\Models\CheckoutRequest;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Passport\TokenRepository;
 use Illuminate\Contracts\Validation\Factory as ValidationFactory;
 use Illuminate\Support\Facades\Gate;
 use App\Models\CustomField;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class ProfileController extends Controller
 {
@@ -167,6 +171,22 @@ class ProfileController extends Controller
 
     }
 
+    /**
+     * Display the EULAs accepted by the user.
+     *
+     *  @param \App\Http\Transformers\ActionlogsTransformer $transformer
+     *  @return \Illuminate\Http\JsonResponse
+     *@since [v8.1.16]
+     * @author [Godfrey Martinez] [<gmartinez@grokability.com>]
+     */
+    public function eulas(ProfileTransformer $transformer)
+    {
+        // Only return this user's EULAs
+        $eulas = auth()->user()->eulas;
+        return response()->json(
+            $transformer->transformFiles($eulas, $eulas->count())
+        );
+    }
 
 
 }

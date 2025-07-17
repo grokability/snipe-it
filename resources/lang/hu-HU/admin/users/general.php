@@ -53,5 +53,5 @@ return [
     'next_save_user' => 'Következő: Felhasználó mentése',
     'all_assigned_list_generation' => 'Létrehozva:',
     'email_user_creds_on_create' => 'Elküldjük a felhasználónak a bejelentkezési adatait emailben?',
-    'department_manager' => 'Department Manager',
+    'department_manager' => 'Részleg menedzser',
 ];

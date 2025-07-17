@@ -225,11 +225,13 @@ return [
     'order_number'          => 'Захиалгын дугаар',
     'only_deleted'          => 'Only Deleted Assets',
     'page_menu'				=> '_MENU_ зүйлсийг харуулж байна',
+    'page_error'            => 'Could not determine previous page. Redirected to homepage.',
     'pagination_info'		=> '_TOTAL_ зүйлсийн _START_-ээс харна уу',
     'pending'				=> 'Хүлээгдэж байна',
     'people'				=> 'Хүмүүс',
     'per_page'				=> 'Нэг хуудасны үр дүн',
     'previous'				=> 'Өмнөх',
+    'previous_page'			=> 'Previous Page',
     'processing'			=> 'Боловсруулалт',
     'profile'				=> 'Таны профайл',
     'purchase_cost'                              => 'Худалдан авах зардал',
@@ -251,7 +253,7 @@ return [
     'requested'				=> 'Хүсэлт гаргасан',
     'requested_date'        => 'Requested Date',
     'requested_assets'      => 'Requested Assets',
-    'requested_assets_menu' => 'Requested Assets',
+    'requested_assets_menu' => 'Requested Items',
     'request_canceled'      => 'Хүсэлтийг цуцалсан',
     'request_item'          => 'Request this item',
     'external_link_tooltip' => 'External link to',
@@ -311,7 +313,7 @@ return [
     'username'              => 'Нэвтрэх нэр',
     'update'                => 'Шинэчлэх',
     'updating_item' => 'Updating :item',
-    'upload_filetypes_help'      => 'Allowed filetypes are png, gif, jpg, jpeg, doc, docx, pdf, xls, xlsx, txt, lic, xml, zip, rtf and rar. Max upload size allowed is :size.',
+    'upload_filetypes_help' => 'Allowed filetypes are: :allowed_filetypes. Max upload size allowed is :size.',
     'uploaded'              => 'Байршуулсан байна',
     'user'					=> 'Хэрэглэгч',
     'accepted'			    => 'хүлээн зөвшөөрсөн',
@@ -321,8 +323,10 @@ return [
     'unaccepted_asset_report' => 'Хүлээн зөвшөөрөөгүй хөрөнгө',
     'users'                 => 'Хэрэглэгчид',
     'viewall'				=> 'View All',
-    'viewassets'  			=> 'Хувьцаанд оруулсан хөрөнгө',
-    'viewassetsfor'         => 'View Assets for :name',
+    'viewassets'  			=> 'View Assigned Items',
+    'viewassetsfor'         => 'View Items for :name',
+    'view_user_assets'      => 'View Items Assigned to User',
+    'me'                    => 'Me',
     'website'               => 'Вэб хуудас',
     'welcome'				=> 'Тавтай морилно уу,: нэр',
     'years'					=> 'жил',
@@ -512,6 +516,7 @@ return [
         'manager_last_name' => 'Manager Last Name',
         'manager_full_name' => 'Manager Full Name',
         'manager_username' => 'Manager Username',
+        'manager_employee_num' => 'Manager Employee Number',
         'checkout_type' => 'Checkout Type',
         'checkout_location' => 'Checkout to Location',
         'image_filename' => 'Image Filename',
@@ -636,5 +641,32 @@ return [
             'error' => 'Could not seed manufacturers. A manufacturer record already exists and seeding would overwrite it.|Could not seed manufacturers. :count manufacturer records already exist and seeding would overwrite them.',
         ],
     ],
+
+    'file_upload_status' => [
+
+        'upload' => [
+            'success' => 'File successfully uploaded |:count files successfully uploaded',
+            'error' => 'File upload failed |:count file uploads failed',
+        ],
+
+        'delete' => [
+            'success' => 'File successfully deleted |:count files successfully deleted',
+            'error' => 'File deletion failed |:count file deletions failed',
+        ],
+
+        'file_not_found' => 'The selected file was not found on server',
+        'invalid_id' => 'That file ID is invalid',
+        'invalid_object' => 'That object ID is invalid',
+        'nofiles' => 'No files were included for upload',
+        'confirm_delete' => 'Are you sure you want to delete this file?',
+    ],
+
+    'depreciation_options' => [
+        'amount' => 'Amount',
+        'percent' => 'Percentage',
+    ],
+
+    'months_plural' => '1 month|:count months',
+
 
 ];

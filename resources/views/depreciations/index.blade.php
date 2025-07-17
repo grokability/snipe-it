@@ -22,15 +22,8 @@
           <table
                   data-columns="{{ \App\Presenters\DepreciationPresenter::dataTableLayout() }}"
                   data-cookie-id-table="depreciationsTable"
-                  data-pagination="true"
                   data-id-table="depreciationsTable"
-                  data-search="true"
-                  data-search-highlight="true"
-                  data-show-print="true"
                   data-side-pagination="server"
-                  data-show-columns="true"
-                  data-show-export="true"
-                  data-show-refresh="true"
                   data-sort-order="asc"
                   id="depreciationsTable"
                   class="table table-striped snipe-table"
@@ -47,7 +40,7 @@
 
   <!-- side address column -->
   <div class="col-md-3">
-    <h2>{{ trans('admin/depreciations/general.about_asset_depreciations') }}</h4>
+    <h2>{{ trans('admin/depreciations/general.about_asset_depreciations') }}</h2>
     <p>{{ trans('admin/depreciations/general.about_depreciations') }} </p>
   </div>
 

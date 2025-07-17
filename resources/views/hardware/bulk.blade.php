@@ -251,6 +251,17 @@
             </div>
           </div>
 
+          @include ('partials.forms.edit.notes')
+          <div class="form-group {{ $errors->has('null_notes') ? ' has-error' : '' }}">
+            <div class="col-md-8 col-md-offset-3">
+              <label class="form-control">
+                <input type="checkbox" name="null_notes" value="1">
+                {{ trans_choice('general.set_to_null', count($assets),['selection_count' => count($assets)]) }}
+              </label>
+            </div>
+          </div>
+
+
           @include("models/custom_fields_form_bulk_edit",["models" => $models])
 
           @foreach($assets as $asset)

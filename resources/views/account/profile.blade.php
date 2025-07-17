@@ -107,39 +107,44 @@
           </div>
         </div>
 
-        <!-- Gravatar Email -->
-        <div class="form-group {{ $errors->has('gravatar') ? ' has-error' : '' }}">
-          <label for="gravatar" class="col-md-3 control-label">{{ trans('general.gravatar_email') }}
-            <small>(Private)</small>
-          </label>
-          <div class="col-md-8">
-            <input class="form-control" type="text" name="gravatar" id="gravatar" value="{{ old('gravatar', $user->gravatar) }}" />
-            {!! $errors->first('gravatar', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
-            <p style="padding-top: 3px;">
-              <img src="//secure.gravatar.com/avatar/{{ md5(strtolower(trim($user->gravatar))) }}" width="30" height="30" alt="{{ $user->present()->fullName() }} avatar image">
-              {!! trans('general.gravatar_url') !!}
-            </p>
-          </div>
-        </div>
+
 
         <!-- Avatar -->
-
         @if (($user->avatar) && ($user->avatar!=''))
           <div class="form-group{{ $errors->has('image_delete') ? ' has-error' : '' }}">
             <div class="col-md-9 col-md-offset-3">
+              @if (!$user->isAvatarExternal())
               <label for="image_delete" class="form-control">
                 <input type="checkbox" name="image_delete" id="image_delete" value="1" @checked(old('image_delete')) aria-label="image_delete">
                 {{ trans('general.image_delete') }}
               </label>
               {!! $errors->first('image_delete', '<span class="alert-msg">:message</span>') !!}
+              @endif
             </div>
           </div>
           <div class="form-group">
             <div class="col-md-9 col-md-offset-3">
-              <img src="{{ Storage::disk('public')->url(app('users_upload_path').e($user->avatar)) }}" class="img-responsive">
+              <img src="{{ (($user->isAvatarExternal()) ? $user->avatar : Storage::disk('public')->url(app('users_upload_path').e($user->avatar))) }}" class="img-responsive">
               {!! $errors->first('image_delete', '<span class="alert-msg">:message</span>') !!}
             </div>
           </div>
+
+          @else
+          <!-- Gravatar Email -->
+          <div class="form-group {{ $errors->has('gravatar') ? ' has-error' : '' }}">
+            <label for="gravatar" class="col-md-3 control-label">{{ trans('general.gravatar_email') }}
+              <small>(Private)</small>
+            </label>
+            <div class="col-md-8">
+              <input class="form-control" type="text" name="gravatar" id="gravatar" value="{{ old('gravatar', $user->gravatar) }}" />
+              {!! $errors->first('gravatar', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
+              <p style="padding-top: 3px;">
+                <img src="//secure.gravatar.com/avatar/{{ md5(strtolower(trim($user->gravatar))) }}" width="30" height="30" alt="{{ $user->present()->fullName() }} avatar image">
+                {!! trans('general.gravatar_url') !!}
+              </p>
+            </div>
+          </div>
+
         @endif
 
 

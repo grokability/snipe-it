@@ -61,10 +61,10 @@ return [
     'display_checkout' => 'Отображать в формах выдачи',
     'display_audit' => 'Отображать в формах аудита',
     'types' => [
-        'text' => 'Text Box',
-        'listbox' => 'List Box',
-        'textarea' => 'Textarea (multi-line)',
-        'checkbox' => 'Checkbox',
-        'radio' => 'Radio Buttons',
+        'text' => 'Текстовое поле',
+        'listbox' => 'Список',
+        'textarea' => 'Многострочный текст',
+        'checkbox' => 'Флажок',
+        'radio' => 'Переключатель',
     ],
 ];

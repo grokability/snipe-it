@@ -106,16 +106,9 @@
 
             <table
                     data-cookie-id-table="componentsCheckedoutTable"
-                    data-pagination="true"
                     data-id-table="componentsCheckedoutTable"
-                    data-search="true"
-                    data-search-highlight="true"
-                    data-show-print="true"
                     data-side-pagination="server"
-                    data-show-columns="true"
-                    data-show-export="true"
                     data-show-footer="true"
-                    data-show-refresh="true"
                     data-sort-order="asc"
                     data-sort-name="name"
                     id="componentsCheckedoutTable"
@@ -156,21 +149,14 @@
                     data-columns="{{ \App\Presenters\HistoryPresenter::dataTableLayout() }}"
                     class="table table-striped snipe-table"
                     id="componentHistory"
-                    data-pagination="true"
                     data-id-table="componentHistory"
-                    data-search="true"
                     data-side-pagination="server"
-                    data-show-columns="true"
-                    data-show-fullscreen="true"
-                    data-show-refresh="true"
                     data-sort-order="desc"
                     data-sort-name="created_at"
-                    data-show-export="true"
                     data-export-options='{
                          "fileName": "export-component-{{  $component->id }}-history",
                          "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
                        }'
-
                     data-url="{{ route('api.activity.index', ['item_id' => $component->id, 'item_type' => 'component']) }}"
                     data-cookie-id-table="componentHistory"
                     data-cookie="true">

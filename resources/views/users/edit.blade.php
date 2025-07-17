@@ -250,26 +250,7 @@
                     {!! $errors->first('email', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
                   </div>
                 </div>
-
-
-                  <!-- Email user -->
-                  @if (!$user->id)
-                      <div class="form-group" id="email_user_row">
-
-                          <div class="col-md-8 col-md-offset-3">
-                              <label class="form-control form-control--disabled">
-
-                                  <input type="checkbox" name="email_user" value="1" id="email_user_checkbox" @checked(old('email_user')) aria-label="email_user">
-
-                                  {{ trans('admin/users/general.email_user_creds_on_create') }}
-                              </label>
-
-                              <p class="help-block"> {{ trans('admin/users/general.send_email_help') }}</p>
-
-                          </div>
-                      </div> <!--/form-group-->
-                  @endif
-
+                  
                   @include ('partials.forms.edit.image-upload', ['fieldname' => 'avatar', 'image_path' => app('users_upload_path')])
 
 
@@ -599,6 +580,7 @@
                   index_route="users.index"
                   :button_label="trans('general.save')"
                   :options="[
+                        'back' => trans('admin/hardware/form.redirect_to_type',['type' => trans('general.previous_page')]),
                         'index' => trans('admin/hardware/form.redirect_to_all', ['type' => 'users']),
                         'item' => trans('admin/hardware/form.redirect_to_type', ['type' => trans('general.user')]),
                         ]"
@@ -616,40 +598,7 @@
 $(document).ready(function() {
 
 
-    // If the "user can login" check box is checked, show them the ability to email the user credentials
-    $("#activated").change(function() {
-        if (this.checked) {
-            $("#email_user_row").show();
-        } else {
-            $("#email_user_row").hide();
-        }
-    });
 
-
-    // Set some defaults
-    $('#email_user_checkbox').prop("disabled", true);
-    $('#email_user_checkbox').prop("checked", false);
-    $("#email_user_checkbox").removeAttr('checked');
-
-    // If the email address is longer than 5 characters, enable the "send email" checkbox
-    $('#email').on('keyup',function(){
-        //event.preventDefault();
-
-        @if (!config('app.lock_passwords'))
-
-        if (this.value.length > 5){
-            console.log('email field is ' + this.value.length + ' - enable the checkbox');
-            $('#email_user_checkbox').prop("disabled", false);
-            $("#email_user_checkbox").parent().removeClass("form-control--disabled");
-        } else {
-            console.log('email field is ' + this.value.length + ' - DISABLE the checkbox');
-            $('#email_user_checkbox').prop("disabled", true);
-            $('#email_user_checkbox').prop("checked", false);
-            $("#email_user_checkbox").parent().addClass("form-control--disabled");
-        }
-
-        @endif
-    });
 
 
 	// Check/Uncheck all radio buttons in the group

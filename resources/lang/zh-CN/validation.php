@@ -31,7 +31,7 @@ return [
         'numeric' => ':attribute 字段必须在 :min 到 :max 之间。',
         'string' => ':attribute 字段必须在 :min 和 :max 字符之间。',
     ],
-    'valid_regex' => 'The regular expression is invalid.',
+    'valid_regex' => '正则表达式无效。',
     'boolean' => '：属性字段必须为true或false。',
     'can' => ':attribute 字段包含一个未授权的值。',
     'confirmed' => ':attribute 字段确认不匹配。',

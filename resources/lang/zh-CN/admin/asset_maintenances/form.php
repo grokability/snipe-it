@@ -1,7 +1,7 @@
 <?php
 
     return [
-        'select_type'            => 'Select Maintenance Type',
+        'select_type'            => '选择维护类型',
         'asset_maintenance_type' => '资产维护类型',
         'title'                  => '标题',
         'start_date'             => '开始日期',

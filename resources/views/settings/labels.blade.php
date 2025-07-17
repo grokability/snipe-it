@@ -68,18 +68,18 @@
 
                                 <div class="col-md-9 col-md-offset-3">
                                     <table
-                                        data-click-to-select="true"
+
                                         data-columns="{{ \App\Presenters\LabelPresenter::dataTableLayout() }}"
                                         data-cookie="true"
                                         data-cookie-id-table="label2TemplateTable"
                                         data-id-table="label2TemplateTable"
-                                        data-pagination="true"
-                                        data-search="true"
+
+
                                         data-select-item-name="label2_template"
                                         data-id-field="name"
-                                        data-show-columns="true"
-                                        data-show-fullscreen="true"
-                                        data-show-refresh="true"
+
+
+
                                         data-side-pagination="server"
                                         data-sort-name="name"
                                         data-sort-order="asc"

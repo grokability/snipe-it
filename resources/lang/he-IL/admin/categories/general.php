@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'קטגוריות נכסים',
     'category_name'  					=> 'שם קטגוריה',
     'checkin_email'                     => 'שלח דוא״ל למשתמש בעת הנפקה/החזרה.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'למשתמש זה ישלח דוא״ל בעת הנפקה/החזרה.',
     'clone'                             => 'קטגוריה שיבוט',
     'create'  							=> 'צור קטגוריה',

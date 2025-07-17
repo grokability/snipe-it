@@ -123,10 +123,12 @@ final class CompaniesController extends Controller
      */
     public function destroy($companyId) : RedirectResponse
     {
+
         if (is_null($company = Company::find($companyId))) {
             return redirect()->route('companies.index')
                 ->with('error', trans('admin/companies/message.not_found'));
         }
+
 
         $this->authorize('delete', $company);
         if (! $company->isDeletable()) {

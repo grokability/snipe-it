@@ -82,7 +82,7 @@ class ImportUsersTest extends ImportDataTestCase implements TestsPermissionsRequ
         $this->assertEquals($row['location'], $newUser->location->name);
         $this->assertEquals($row['phoneNumber'], $newUser->phone);
         $this->assertEquals($row['position'], $newUser->jobtitle);
-        $this->assertTrue(Hash::isHashed($newUser->password));
+        $this->assertFalse(Hash::isHashed($newUser->password));
         $this->assertEquals('', $newUser->website);
         $this->assertEquals('', $newUser->country);
         $this->assertEquals('', $newUser->address);
@@ -298,7 +298,7 @@ class ImportUsersTest extends ImportDataTestCase implements TestsPermissionsRequ
         $this->assertEquals($row['username'], $newUser->company->name);
         $this->assertEquals($row['firstName'], $newUser->location->name);
         $this->assertEquals($row['employeeNumber'], $newUser->phone);
-        $this->assertTrue(Hash::isHashed($newUser->password));
+        $this->assertFalse(Hash::isHashed($newUser->password));
         $this->assertEquals('', $newUser->website);
         $this->assertEquals('', $newUser->country);
         $this->assertEquals('', $newUser->address);

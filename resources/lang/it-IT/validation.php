@@ -31,7 +31,7 @@ return [
         'numeric' => 'Il campo :attribute deve essere tra :min e :max.',
         'string' => 'Il campo :attribute deve essere lungo tra :min e :max caratteri.',
     ],
-    'valid_regex' => 'The regular expression is invalid.',
+    'valid_regex' => 'L\'espressione regolare non è valida.',
     'boolean' => 'Il campo: attributo deve essere vero o falso.',
     'can' => 'Il campo :attribute contiene un valore non autorizzato.',
     'confirmed' => 'La conferma del campo :attribute non corrisponde.',

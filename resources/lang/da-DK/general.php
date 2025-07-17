@@ -225,11 +225,13 @@ return [
     'order_number'          => 'Ordrenummer',
     'only_deleted'          => 'Kun slettede aktiver',
     'page_menu'				=> 'Viser _MENU_ emner',
+    'page_error'            => 'Could not determine previous page. Redirected to homepage.',
     'pagination_info'		=> 'Viser _START_ til _END_ af _TOTAL_ emner',
     'pending'				=> 'Afventer',
     'people'				=> 'Personer',
     'per_page'				=> 'Resultater Per Side',
     'previous'				=> 'Forrige',
+    'previous_page'			=> 'Previous Page',
     'processing'			=> 'Behandler',
     'profile'				=> 'Din profil',
     'purchase_cost'                              => 'Købsomkostninger',
@@ -251,7 +253,7 @@ return [
     'requested'				=> 'Anmodet',
     'requested_date'        => 'Anmodningsdato',
     'requested_assets'      => 'Anmodede aktiver',
-    'requested_assets_menu' => 'Anmodede aktiver',
+    'requested_assets_menu' => 'Requested Items',
     'request_canceled'      => 'Anmodning Annulleret',
     'request_item'          => 'Request this item',
     'external_link_tooltip' => 'External link to',
@@ -311,7 +313,7 @@ return [
     'username'              => 'Brugernavn',
     'update'                => 'Opdatering',
     'updating_item' => 'Updating :item',
-    'upload_filetypes_help'      => 'Tilladte filtyper er png, gif, jpg, jpeg, doc, docx, pdf, xls, txt, lic, zip, og rar. Maksimalt tilladte uploadstørrelse er :size.',
+    'upload_filetypes_help' => 'Allowed filetypes are: :allowed_filetypes. Max upload size allowed is :size.',
     'uploaded'              => 'uploaded',
     'user'					=> 'Bruger',
     'accepted'			    => 'accepteret',
@@ -321,8 +323,10 @@ return [
     'unaccepted_asset_report' => 'Uaccepterede aktiver',
     'users'                 => 'Brugere',
     'viewall'				=> 'Vis alle',
-    'viewassets'  			=> 'Se Tildelte Aktiver',
-    'viewassetsfor'         => 'Se aktiver for :name',
+    'viewassets'  			=> 'View Assigned Items',
+    'viewassetsfor'         => 'View Items for :name',
+    'view_user_assets'      => 'View Items Assigned to User',
+    'me'                    => 'Me',
     'website'               => 'Hjemmeside',
     'welcome'				=> 'Velkommen, :name',
     'years'					=> 'år',
@@ -512,6 +516,7 @@ return [
         'manager_last_name' => 'Manager Efternavn',
         'manager_full_name' => 'Manager Fuldt Navn',
         'manager_username' => 'Administrer Brugernavn',
+        'manager_employee_num' => 'Manager Employee Number',
         'checkout_type' => 'Checkout Type',
         'checkout_location' => 'Checkout til placering',
         'image_filename' => 'Billede Filnavn',
@@ -636,5 +641,32 @@ return [
             'error' => 'Could not seed manufacturers. A manufacturer record already exists and seeding would overwrite it.|Could not seed manufacturers. :count manufacturer records already exist and seeding would overwrite them.',
         ],
     ],
+
+    'file_upload_status' => [
+
+        'upload' => [
+            'success' => 'File successfully uploaded |:count files successfully uploaded',
+            'error' => 'File upload failed |:count file uploads failed',
+        ],
+
+        'delete' => [
+            'success' => 'File successfully deleted |:count files successfully deleted',
+            'error' => 'File deletion failed |:count file deletions failed',
+        ],
+
+        'file_not_found' => 'The selected file was not found on server',
+        'invalid_id' => 'That file ID is invalid',
+        'invalid_object' => 'That object ID is invalid',
+        'nofiles' => 'No files were included for upload',
+        'confirm_delete' => 'Are you sure you want to delete this file?',
+    ],
+
+    'depreciation_options' => [
+        'amount' => 'Amount',
+        'percent' => 'Percentage',
+    ],
+
+    'months_plural' => '1 month|:count months',
+
 
 ];

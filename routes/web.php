@@ -376,7 +376,6 @@ Route::group(['prefix' => 'account', 'middleware' => ['auth']], function () {
         $trail->parent('home')
             ->push(trans('general.requested_assets_menu'), route('account.requested')));
 
-    // Profile
     Route::get(
         'requestable-assets', [ViewAssetsController::class, 'getRequestableIndex'])
         ->name('requestable-assets')
@@ -393,6 +392,16 @@ Route::group(['prefix' => 'account', 'middleware' => ['auth']], function () {
 
     Route::post('request/{itemType}/{itemId}/{cancel_by_admin?}/{requestingUser?}', [ViewAssetsController::class, 'getRequestItem'])
         ->name('account/request-item');
+
+    Route::get(
+        'display-sig/{filename}',
+        [ProfileController::class, 'displaySig']
+    )->name('profile.signature.view');
+    
+    Route::get(
+        'stored-eula-file/{filename}',
+        [ProfileController::class, 'getStoredEula']
+    )->name('profile.storedeula.download');
 
     // Account Dashboard
     Route::get('/', [ViewAssetsController::class, 'getIndex'])

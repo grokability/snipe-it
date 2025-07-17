@@ -82,6 +82,10 @@
 @foreach ($users as $show_user)
     <div id="start_of_user_section"> {{-- used for page breaks when printing --}}</div>
     <h3>
+        @if ($show_user->company)
+            <b>{{ trans('admin/companies/table.name') }}:</b> {{ $show_user->company->name }}</b>
+        <br>
+        @endif
         {{ trans('general.assigned_to', ['name' => $show_user->present()->fullName()]) }}
         {{ ($show_user->employee_num!='') ? ' (#'.$show_user->employee_num.') ' : '' }}
         {{ ($show_user->jobtitle!='' ? ' - '.$show_user->jobtitle : '') }}
@@ -112,7 +116,7 @@
             data-show-columns="true"
             data-sort-order="desc"
             data-sort-name="created_at"
-            data-show-columns-toggle-all="true"
+            data-show-columns="true"
             data-cookie-id-table="AssetsAssigned">
 
 
@@ -227,10 +231,9 @@
             data-search="false"
             data-side-pagination="client"
             data-sortable="true"
-            data-show-columns="true"
             data-sort-order="desc"
             data-sort-name="created_at"
-            data-show-columns-toggle-all="true"
+            data-show-columns="true"
             data-cookie-id-table="licensessAssigned">
             <thead>
             <tr>
@@ -290,10 +293,9 @@
             data-search="false"
             data-side-pagination="client"
             data-sortable="true"
-            data-show-columns="true"
             data-sort-order="desc"
             data-sort-name="created_at"
-            data-show-columns-toggle-all="true"
+            data-show-columns="true"
             data-cookie-id-table="accessoriesAssigned">
             <thead>
             <tr>
@@ -355,10 +357,9 @@
             data-search="false"
             data-side-pagination="client"
             data-sortable="true"
-            data-show-columns="true"
             data-sort-order="desc"
             data-sort-name="created_at"
-            data-show-columns-toggle-all="true"
+            data-show-columns="true"
             data-cookie-id-table="consumablesAssigned">
             <thead>
             <tr>
@@ -384,19 +385,19 @@
                         <td>
                         @if ($consumable->deleted_at!='')
                             <td>{{ ($consumable->manufacturer) ? $consumable->manufacturer->name : '' }}  {{ $consumable->name }} {{ $consumable->model_number }}</td>
-                            @else
-                                {{ ($consumable->manufacturer) ? $consumable->manufacturer->name : '' }}  {{ $consumable->name }} {{ $consumable->model_number }}
+                        @else
+                            {{ ($consumable->manufacturer) ? $consumable->manufacturer->name : '' }}  {{ $consumable->name }} {{ $consumable->model_number }}
+                        @endif
+                        </td>
+                        <td>{{ ($consumable->category) ? $consumable->category->name : ' invalid/deleted category' }} </td>
+                        <td>
+                            {{ Helper::getFormattedDateObject($consumable->pivot->created_at, 'datetime', false) }}
+                        </td>
+                        <td>
+                            @if ($consumable->getLatestSignedAcceptance($show_user))
+                                <img style="width:auto;height:100px;" src="{{ asset('/') }}display-sig/{{ $consumable->getLatestSignedAcceptance($show_user)->accept_signature }}">
                             @endif
-                            </td>
-                            <td>{{ ($consumable->category) ? $consumable->category->name : ' invalid/deleted category' }} </td>
-                            <td>
-                                {{ Helper::getFormattedDateObject($consumable->pivot->created_at, 'datetime', false) }}
-                            </td>
-                            <td>
-                                @if ($consumable->getLatestSignedAcceptance($show_user))
-                                    <img style="width:auto;height:100px;" src="{{ asset('/') }}display-sig/{{ $consumable->getLatestSignedAcceptance($show_user)->accept_signature }}">
-                                @endif
-                            </td>
+                        </td>
                     </tr>
                     @php
                         $ccounter++
@@ -523,7 +524,7 @@
                 }
             },
             formatLoadingMessage: function () {
-                return '<h2><i class="fas fa-spinner fa-spin" aria-hidden="true"></i> {{ trans('general.loading') }} </h4>';
+                return '<h2><i class="fas fa-spinner fa-spin" aria-hidden="true"></i> {{ trans('general.loading') }} </h2>';
             },
             icons: {
                 advancedSearchIcon: 'fas fa-search-plus',

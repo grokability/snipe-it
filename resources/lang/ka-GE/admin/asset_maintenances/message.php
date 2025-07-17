@@ -16,6 +16,6 @@
             'success' => 'Asset Maintenance edited successfully.',
         ],
         'asset_maintenance_incomplete' => 'Not Completed Yet',
-        'warranty'                     => 'Warranty',
+        'warranty'                     => 'გარანტია',
         'not_warranty'                 => 'Not Warranty',
     ];

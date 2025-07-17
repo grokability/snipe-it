@@ -15,6 +15,6 @@ return array(
 
     'failed' => 'Учетные данные не совпадают с нашими записями.',
     'password' => 'Неверный пароль',
-    'throttle' => 'Too many login attempts. Please try again in :minutes minute(s).',
+    'throttle' => 'Слишком много неудачных попыток входа. Пожалуйста, попробуйте через :minutes минут.',
 
 );

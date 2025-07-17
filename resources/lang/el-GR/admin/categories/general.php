@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Κατηγορίες στοιχείων παγίων',
     'category_name'  					=> 'Όνομα κατηγορίας',
     'checkin_email'                     => 'Αποστολή email στον χρήστη κατά την χρέωση/αποδέσμευση.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'Θα αποστέλεται email σε αυτόν τον χρήστη κατά την χρέωαη/αποδέσμευση.',
     'clone'                             => 'Αντιγραφή Κατηγορίας',
     'create'  							=> 'Δημιουργία Κατηγορίας',

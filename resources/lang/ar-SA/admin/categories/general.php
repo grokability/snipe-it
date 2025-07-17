@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'تصنيفات الأصول',
     'category_name'  					=> 'اسم التصنيف',
     'checkin_email'                     => 'إرسال رسالة إلكترونية للمستخدم عند الإدخال \\ الإخراج.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'سيتم إرسال رسالة إلكترونية إلى هذا المستخدم عند الإدخال \\ الإخراج.',
     'clone'                             => 'نسخ التصنيف',
     'create'  							=> 'إنشاء تصنيف',

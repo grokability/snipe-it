@@ -13,6 +13,7 @@ use App\Models\Setting;
 use App\Models\Statuslabel;
 use App\Models\License;
 use App\Models\Location;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Carbon\Carbon;
@@ -877,6 +878,48 @@ class Helper
     }
 
     /**
+     * Check if the file is a video, so we can show a preview
+     *
+     * @param File $file
+     * @return string | Boolean
+     * @author [B. Wetherington] [<bwetherington@grokability.com>]
+     * @since [v8.1.18]
+     */
+    public static function checkUploadIsVideo($file)
+    {
+        $finfo = @finfo_open(FILEINFO_MIME_TYPE); // return mime type ala mimetype extension
+        $filetype = @finfo_file($finfo, $file);
+        finfo_close($finfo);
+
+        if (($filetype == 'video/mp4') || ($filetype == 'video/quicktime') || ($filetype == 'video/mpeg') || ($filetype == 'video/ogg') || ($filetype == 'video/webm') || ($filetype == 'video/x-msvide')) {
+            return $filetype;
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if the file is audio, so we can show a preview
+     *
+     * @param File $file
+     * @return string | Boolean
+     * @author [A. Gianotto] [<snipe@snipe.net>]
+     * @since [v3.0]
+     */
+    public static function checkUploadIsAudio($file)
+    {
+        $finfo = @finfo_open(FILEINFO_MIME_TYPE); // return mime type ala mimetype extension
+        $filetype = @finfo_file($finfo, $file);
+        finfo_close($finfo);
+
+        if (($filetype == 'audio/mpeg') || ($filetype == 'audio/ogg')) {
+            return $filetype;
+        }
+
+        return false;
+    }
+
+    /**
      * Walks through the permissions in the permissions config file and determines if
      * permissions are granted based on a $selected_arr array.
      *
@@ -1170,6 +1213,15 @@ class Helper
             // Misc
             'pdf'   => 'far fa-file-pdf',
             'lic'   => 'far fa-save',
+
+            // video
+            'mov'   => 'fa-solid fa-video',
+            'mp4'   => 'fa-solid fa-video',
+
+            // audio
+            'ogg'   => 'fa-solid fa-file-audio',
+            'mp3'   => 'fa-solid fa-file-audio',
+            'wav'   => 'fa-solid fa-file-audio',
         ];
 
         if ($extension && array_key_exists($extension, $allowedExtensionMap)) {
@@ -1480,68 +1532,64 @@ class Helper
     }
 
 
-    static public function getRedirectOption($request, $id, $table, $item_id = null)
+    static public function getRedirectOption($request, $id, $table, $item_id = null) : RedirectResponse
     {
 
-        $redirect_option = Session::get('redirect_option');
-        $checkout_to_type = Session::get('checkout_to_type');
+        $redirect_option = Session::get('redirect_option') ?? $request->redirect_option;
+        $checkout_to_type = Session::get('checkout_to_type') ?? null;
         $checkedInFrom = Session::get('checkedInFrom');
         $other_redirect = Session::get('other_redirect');
+        $backUrl = Session::pull('back_url', route('home'));
+
+       // return to previous page
+        if ($redirect_option === 'back') {
+            if ($backUrl === route('home')) {
+                return redirect()->to($backUrl)
+                ->with('warning', trans('general.page_error'));
+             }
+
+            return redirect()->to($backUrl);
+        }
 
         // return to index
         if ($redirect_option == 'index') {
-            switch ($table) {
-                case "Assets":
-                    return route('hardware.index');
-                case "Users":
-                    return route('users.index');
-                case "Licenses":
-                    return route('licenses.index');
-                case "Accessories":
-                    return route('accessories.index');
-                case "Components":
-                    return route('components.index');
-                case "Consumables":
-                    return route('consumables.index');
-            }
+            return match ($table) {
+                'Assets' => redirect()->route('hardware.index'),
+                'Users' => redirect()->route('users.index'),
+                'Licenses' => redirect()->route('licenses.index'),
+                'Accessories' => redirect()->route('accessories.index'),
+                'Components' => redirect()->route('components.index'),
+                'Consumables' => redirect()->route('consumables.index'),
+            };
         }
 
         // return to thing being assigned
         if ($redirect_option == 'item') {
-            switch ($table) {
-                case "Assets":
-                    return route('hardware.show', $id ?? $item_id);
-                case "Users":
-                    return route('users.show', $id ?? $item_id);
-                case "Licenses":
-                    return route('licenses.show', $id ?? $item_id);
-                case "Accessories":
-                    return route('accessories.show', $id ?? $item_id);
-                case "Components":
-                    return route('components.show', $id ?? $item_id);
-                case "Consumables":
-                    return route('consumables.show', $id ?? $item_id);
-            }
+            return match ($table) {
+                'Assets'      => redirect()->route('hardware.show', $id ?? $item_id),
+                'Users'       => redirect()->route('users.show', $id ?? $item_id),
+                'Licenses'    => redirect()->route('licenses.show', $id ?? $item_id),
+                'Accessories' => redirect()->route('accessories.show', $id ?? $item_id),
+                'Components'  => redirect()->route('components.show', $id ?? $item_id),
+                'Consumables' => redirect()->route('consumables.show', $id ?? $item_id),
+            };
         }
 
         // return to assignment target
         if ($redirect_option == 'target') {
-            switch ($checkout_to_type) {
-                case 'user':
-                    return route('users.show', $request->assigned_user ?? $checkedInFrom);
-                case 'location':
-                    return route('locations.show', $request->assigned_location ?? $checkedInFrom);
-                case 'asset':
-                    return route('hardware.show', $request->assigned_asset ?? $checkedInFrom);
-            }
+            return match ($checkout_to_type) {
+                'user'     => redirect()->route('users.show', $request->assigned_user ?? $checkedInFrom),
+                'location' => redirect()->route('locations.show', $request->assigned_location ?? $checkedInFrom),
+                'asset'    => redirect()->route('hardware.show', $request->assigned_asset ?? $checkedInFrom),
+            };
         }
 
         // return to somewhere else
         if ($redirect_option == 'other_redirect') {
-            switch ($other_redirect) {
-                case 'audit':
-                    return route('assets.audit.due');
-            }
+            return match ($other_redirect) {
+                'audit' => redirect()->route('assets.audit.due'),
+                'model' => redirect()->route('models.show', $request->model_id),
+            };
 
         }
 

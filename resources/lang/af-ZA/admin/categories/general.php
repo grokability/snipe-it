@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Bate kategorieë',
     'category_name'  					=> 'Kategorie Naam',
     'checkin_email'                     => 'Stuur e-pos aan gebruiker by aanmelding/afmelding.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'Hierdie gebruiker sal \'n e-pos gestuur word by aanmelding/afmelding.',
     'clone'                             => 'Klone Kategorie',
     'create'  							=> 'Skep Kategorie',

@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Хөрөнгийн ангиллууд',
     'category_name'  					=> 'Ангиллын нэр',
     'checkin_email'                     => 'Авах/олгох үед хэрэглэгч үрүү имэйл илгээх.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'Авах/олгох үед энэ хэрэглэгч үрүү имэйл очих болно.',
     'clone'                             => 'Ангиллыг хуулж үүсгэх',
     'create'  							=> 'Ангилал үүсгэх',

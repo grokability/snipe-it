@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Aktīvu kategorijas',
     'category_name'  					=> 'Kategorijas nosaukums',
     'checkin_email'                     => 'Sūtiet e-pastu lietotājam kad tiek piešķirts / atgriezts aktīvs(i).',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'Šim lietotājam tiks nosūtīts e-pasts kad tiks izņemts / atgriezts aktīvs(i).',
     'clone'                             => 'Klona kategorija',
     'create'  							=> 'Izveidot kategoriju',

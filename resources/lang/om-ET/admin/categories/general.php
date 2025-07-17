@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Rimiddiiwwan Qabeenyaa',
     'category_name'  					=> 'Maqaa Rimiddii',
     'checkin_email'                     => 'Send email to user on checkin/checkout.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'This user will be sent an email on checkin/checkout.',
     'clone'                             => 'Clone Category',
     'create'  							=> 'Create Category',

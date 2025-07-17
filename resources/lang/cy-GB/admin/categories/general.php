@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Categoriau Asedau',
     'category_name'  					=> 'Enw categori',
     'checkin_email'                     => 'Gyrru ebost i defnyddiwr wrth nodi fewn/allan.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'Fe geith y defnyddiwr yma ebost wrth nodi i fewn/allan.',
     'clone'                             => 'Dyblygu Categori',
     'create'  							=> 'Creu Categori Newydd',

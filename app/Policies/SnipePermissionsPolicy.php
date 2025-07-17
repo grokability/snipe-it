@@ -53,7 +53,7 @@ abstract class SnipePermissionsPolicy
         }
 
         /**
-         * If we got here by $this→authorize('something', $actualModel) then we can continue on Il but if we got here
+         * If we got here by $this→authorize('something', $actualModel) then we can continue on, but if we got here
          * via $this→authorize('something', Model::class) then calling Company:: isCurrentUserHasAccess($item) gets weird.
          * Bail out here by returning "nothing" and allow the relevant method lower in this class to be called and handle authorization.
          */

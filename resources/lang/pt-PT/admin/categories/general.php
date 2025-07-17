@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Categorias de Equipamentos',
     'category_name'  					=> 'Nome da Categoria',
     'checkin_email'                     => 'Enviar e-mail para o utilizador em caso de checkin/checktout.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'Enviar e-mail para este utilizador em caso de checkin/checktout.',
     'clone'                             => 'Clonar Categoria',
     'create'  							=> 'Criar Categoria',

@@ -91,7 +91,8 @@ class ComponentsController extends Controller
         session()->put(['redirect_option' => $request->get('redirect_option')]);
 
         if ($component->save()) {
-            return redirect()->to(Helper::getRedirectOption($request, $component->id, 'Components'))->with('success', trans('admin/components/message.create.success'));
+            return Helper::getRedirectOption($request, $component->id, 'Components')
+                ->with('success', trans('admin/components/message.create.success'));
         }
 
         return redirect()->back()->withInput()->withErrors($component->getErrors());
@@ -111,6 +112,7 @@ class ComponentsController extends Controller
     {
 
             $this->authorize('update', $component);
+            session()->put('back_url', url()->previous());
             return view('components/edit')
                 ->with('item', $component)
                 ->with('category_type', 'component');
@@ -164,7 +166,8 @@ class ComponentsController extends Controller
         session()->put(['redirect_option' => $request->get('redirect_option')]);
 
         if ($component->save()) {
-            return redirect()->to(Helper::getRedirectOption($request, $component->id, 'Components'))->with('success', trans('admin/components/message.update.success'));
+            return Helper::getRedirectOption($request, $component->id, 'Components')
+                ->with('success', trans('admin/components/message.update.success'));
         }
 
         return redirect()->back()->withInput()->withErrors($component->getErrors());

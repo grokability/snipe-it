@@ -36,15 +36,8 @@
       <div class="box-body">
             <table
                 data-cookie-id-table="unacceptedAssetsReport"
-                data-pagination="true"
                 data-id-table="unacceptedAssetsReport"
-                data-search="true"
-                data-search-highlight="true"
-                data-show-print="true"
                 data-side-pagination="client"
-                data-show-columns="true"
-                data-show-export="true"
-                data-show-refresh="true"
                 data-sort-order="asc"
                 data-sort-name="created_at"
                 id="unacceptedAssetsReport"

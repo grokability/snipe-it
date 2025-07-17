@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Turto kategorijos',
     'category_name'  					=> 'Kategorijos pavadinimas',
     'checkin_email'                     => 'Siųsti el. laišką naudotojui, paimant/išduodant turtą.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'Šis naudotojas gaus el. laišką, paimant/išduodant turtą.',
     'clone'                             => 'Klonuoti kategoriją',
     'create'  							=> 'Sukurti kategoriją',

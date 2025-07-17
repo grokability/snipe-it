@@ -225,11 +225,13 @@ return [
     'order_number'          => '注文番号',
     'only_deleted'          => '削除された資産のみ',
     'page_menu'				=> 'メニューアイテムを表示',
+    'page_error'            => 'Could not determine previous page. Redirected to homepage.',
     'pagination_info'		=> '開始から終了までのアイテム合計を表示',
     'pending'				=> 'ペンディング',
     'people'				=> '人物',
     'per_page'				=> 'ページ単位の結果',
     'previous'				=> '前へ',
+    'previous_page'			=> 'Previous Page',
     'processing'			=> '処理中',
     'profile'				=> 'あなたのプロファイル',
     'purchase_cost'                              => '購入費用',
@@ -251,7 +253,7 @@ return [
     'requested'				=> '要求済',
     'requested_date'        => 'リクエスト日',
     'requested_assets'      => '要求された資産',
-    'requested_assets_menu' => '要求された資産',
+    'requested_assets_menu' => 'Requested Items',
     'request_canceled'      => 'リクエストキャンセル',
     'request_item'          => 'Request this item',
     'external_link_tooltip' => 'External link to',
@@ -311,7 +313,7 @@ return [
     'username'              => 'ユーザー名',
     'update'                => '更新',
     'updating_item' => ':item を更新中',
-    'upload_filetypes_help'      => '使用できるファイルは、png、gif、jpg、jpeg、doc、docx、pdf、xls、txt、lic、zip、およびrarです。許可される最大ファイルサイズは:sizeです。',
+    'upload_filetypes_help' => '許可されるファイル形式: :allowed_filetypes. 許可される最大アップロードサイズは :size です。',
     'uploaded'              => 'アップロード完了',
     'user'					=> '利用者',
     'accepted'			    => '承認済',
@@ -321,8 +323,10 @@ return [
     'unaccepted_asset_report' => '未許可資産',
     'users'                 => '利用者',
     'viewall'				=> 'すべて表示',
-    'viewassets'  			=> '割当済み資産を表示',
-    'viewassetsfor'         => ':name の資産を表示',
+    'viewassets'  			=> 'View Assigned Items',
+    'viewassetsfor'         => 'View Items for :name',
+    'view_user_assets'      => 'View Items Assigned to User',
+    'me'                    => 'Me',
     'website'               => 'ウェブサイト',
     'welcome'				=> 'ようこそ、 :name さん',
     'years'					=> '年',
@@ -512,6 +516,7 @@ return [
         'manager_last_name' => '管理者の姓',
         'manager_full_name' => 'マネージャーのフルネーム',
         'manager_username' => 'マネージャーのユーザーネーム',
+        'manager_employee_num' => 'Manager Employee Number',
         'checkout_type' => 'チェックアウトタイプ',
         'checkout_location' => '場所にチェックアウト',
         'image_filename' => '画像ファイル名',
@@ -636,5 +641,32 @@ return [
             'error' => 'Could not seed manufacturers. A manufacturer record already exists and seeding would overwrite it.|Could not seed manufacturers. :count manufacturer records already exist and seeding would overwrite them.',
         ],
     ],
+
+    'file_upload_status' => [
+
+        'upload' => [
+            'success' => 'File successfully uploaded |:count files successfully uploaded',
+            'error' => 'File upload failed |:count file uploads failed',
+        ],
+
+        'delete' => [
+            'success' => 'File successfully deleted |:count files successfully deleted',
+            'error' => 'File deletion failed |:count file deletions failed',
+        ],
+
+        'file_not_found' => 'The selected file was not found on server',
+        'invalid_id' => 'That file ID is invalid',
+        'invalid_object' => 'That object ID is invalid',
+        'nofiles' => 'No files were included for upload',
+        'confirm_delete' => 'Are you sure you want to delete this file?',
+    ],
+
+    'depreciation_options' => [
+        'amount' => 'Amount',
+        'percent' => 'Percentage',
+    ],
+
+    'months_plural' => '1 month|:count months',
+
 
 ];

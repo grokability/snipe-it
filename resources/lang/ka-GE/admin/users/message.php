@@ -65,7 +65,7 @@ return array(
         'error'   => 'File(s) not uploaded. Please try again.',
         'success' => 'File(s) successfully uploaded.',
         'nofiles' => 'You did not select any files for upload',
-        'invalidfiles' => 'One or more of your files is too large or is a filetype that is not allowed. Allowed filetypes are png, gif, jpg, doc, docx, pdf, and txt.',
+        'invalidfiles' => 'ერთი ან რამდენიმე ფაილი ძალიან დიდია ან მისი ფაილის ტიპი არ არის დაუშვებელი. დაუშვებელია მხოლოდ შემდეგი ტიპები: png, gif, jpg, doc, docx, pdf, და txt.',
     ),
 
     'inventorynotification' => array(

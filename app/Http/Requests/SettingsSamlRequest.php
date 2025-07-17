@@ -41,6 +41,7 @@ class SettingsSamlRequest extends FormRequest
     public function withValidator($validator)
     {
         $validator->after(function ($validator) {
+            $setting = Setting::getSettings();
             if ($this->input('saml_enabled') == '1') {
                 $idpMetadata = $this->input('saml_idp_metadata');
                 if (! empty($idpMetadata)) {
@@ -56,7 +57,7 @@ class SettingsSamlRequest extends FormRequest
                 }
             }
 
-            $was_custom_x509cert = strpos(Setting::getSettings()->saml_custom_settings, 'sp_x509cert') !== false;
+            $was_custom_x509cert = strpos($setting->saml_custom_settings, 'sp_x509cert') !== false;
 
             $custom_x509cert = '';
             $custom_privateKey = '';
@@ -126,10 +127,14 @@ class SettingsSamlRequest extends FormRequest
                     }
 
                     if (! (empty($x509cert) && empty($privateKey))) {
-                        $this->merge([
-                            'saml_sp_x509cert' => $x509cert,
-                            'saml_sp_privatekey' => $privateKey,
-                        ]);
+//                        $this->merge([
+//                            'saml_sp_x509cert' => $x509cert,
+//                            'saml_sp_privatekey' => $privateKey,
+//                        ]);
+                        $setting->saml_sp_x509cert = $x509cert;
+                        $setting->saml_sp_privatekey = $privateKey;
+                        $setting->save();
+
                     }
                 } else {
                     $validator->errors()->add('saml_integration', 'openssl.cnf is missing/invalid');
@@ -145,15 +150,21 @@ class SettingsSamlRequest extends FormRequest
                 }
 
                 if (! empty($x509certNew)) {
-                    $this->merge([
-                        'saml_sp_x509certNew' => $x509certNew,
-                    ]);
+//                    $this->merge([
+//                        'saml_sp_x509certNew' => $x509certNew,
+//                    ]);
+                    $setting->saml_sp_x509certNew = $x509certNew;
+                    $setting->save();
                 }
             } else {
-                $this->merge([
-                    'saml_sp_x509certNew' => '',
-                ]);
+//                $this->merge([
+//                    'saml_sp_x509certNew' => '',
+//                ]);
+                $setting->saml_sp_x509certNew = '';
+                $setting->save();
             }
+
+
         });
     }
 }

@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Catégories d\'actifs',
     'category_name'  					=> 'Nom de la catégorie',
     'checkin_email'                     => 'Envoyer un courriel à l\'utilisateur·trice lors de l\'association/dissociation.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'Un courriel sera envoyé à l\'utilisateur·trice lors de l\'association/dissociation.',
     'clone'                             => 'Cloner la catégorie',
     'create'  							=> 'Créer une catégorie',

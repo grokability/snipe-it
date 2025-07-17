@@ -8,11 +8,11 @@ return [
     'accessory'				=> 'Accessorio',
     'accessory_report'		=> 'Report Accessori',
     'action'                => 'Azione',
-    'action_date'			=> 'Action Date',
+    'action_date'			=> 'Data Azione',
     'activity_report'		=> 'Report delle attività',
     'address'				=> 'Indirizzo',
     'admin'					=> 'Impostazioni Admin',
-    'admin_user'			=> 'Admin User',
+    'admin_user'			=> 'Utente admin',
     'admin_tooltip'			=> 'L\'utente è un amministratore',
     'superuser'				=> 'Superuser',
     'superuser_tooltip'		=> 'L\'utente è un superuser',
@@ -225,11 +225,13 @@ return [
     'order_number'          => 'Numero d\'ordine',
     'only_deleted'          => 'Solo Beni Eliminati',
     'page_menu'				=> 'Visualizza _MENU_ articoli',
+    'page_error'            => 'Impossibile determinare la pagina precedente. Reindirizzato alla homepage.',
     'pagination_info'		=> 'Visualizza dal _START_ al _END_ di _TOTAL_ articoli',
     'pending'				=> 'In attesa',
     'people'				=> 'Utenti',
     'per_page'				=> 'Risultati per Pagina',
     'previous'				=> 'Precedente',
+    'previous_page'			=> 'Pagina Precedente',
     'processing'			=> 'In elaborazione',
     'profile'				=> 'Il tuo profilo',
     'purchase_cost'                              => 'Prezzo d\'acquisto',
@@ -251,7 +253,7 @@ return [
     'requested'				=> 'Richiesto',
     'requested_date'        => 'Data di richiesta',
     'requested_assets'      => 'Beni richiesti',
-    'requested_assets_menu' => 'Beni richiesti',
+    'requested_assets_menu' => 'Requested Items',
     'request_canceled'      => 'Richiesta annullata',
     'request_item'          => 'Richiedi questo articolo',
     'external_link_tooltip' => 'Collegamento esterno a',
@@ -311,7 +313,7 @@ return [
     'username'              => 'Nome utente',
     'update'                => 'Aggiorna',
     'updating_item' => 'Aggiornamento :item',
-    'upload_filetypes_help'      => 'I tipi di file permessi sono png, gif, jpg, jpeg, doc, docx, pdf, xls, xlsx, txt, lic, xml, zip, rtf e rar. La dimensione massima di upload è di :size.',
+    'upload_filetypes_help' => 'I tipi di file consentiti sono: :allowed_filetypes. La dimensione massima di upload consentita è :size.',
     'uploaded'              => 'Caricato',
     'user'					=> 'Utente',
     'accepted'			    => 'accettato',
@@ -321,8 +323,10 @@ return [
     'unaccepted_asset_report' => 'Beni non accettati',
     'users'                 => 'Utenti',
     'viewall'				=> 'Visualizza tutto',
-    'viewassets'  			=> 'Visualizza Beni Assegnati',
-    'viewassetsfor'         => 'Visualizza Beni per :name',
+    'viewassets'  			=> 'View Assigned Items',
+    'viewassetsfor'         => 'View Items for :name',
+    'view_user_assets'      => 'View Items Assigned to User',
+    'me'                    => 'Me',
     'website'               => 'Sito Web',
     'welcome'				=> 'Benvenuto, :name',
     'years'					=> 'anni',
@@ -512,6 +516,7 @@ return [
         'manager_last_name' => 'Cognome Manager',
         'manager_full_name' => 'Nome Cognome Manager',
         'manager_username' => 'Username del Manager',
+        'manager_employee_num' => 'Manager Employee Number',
         'checkout_type' => 'Tipo di Assegnazione',
         'checkout_location' => 'Assegnazione a Sede',
         'image_filename' => 'Nome File Immagine',
@@ -636,5 +641,32 @@ return [
             'error' => 'Impossibile inizializzare i produttori. Esiste già un record di un produttore e l\'inizializzazione lo sovrascriverebbe.|Impossibile inizializzare i produttori. :count record di produttori esistono già e l\'inizializzazione li sovrascriverebbe.',
         ],
     ],
+
+    'file_upload_status' => [
+
+        'upload' => [
+            'success' => 'File successfully uploaded |:count files successfully uploaded',
+            'error' => 'File upload failed |:count file uploads failed',
+        ],
+
+        'delete' => [
+            'success' => 'File successfully deleted |:count files successfully deleted',
+            'error' => 'File deletion failed |:count file deletions failed',
+        ],
+
+        'file_not_found' => 'The selected file was not found on server',
+        'invalid_id' => 'That file ID is invalid',
+        'invalid_object' => 'That object ID is invalid',
+        'nofiles' => 'No files were included for upload',
+        'confirm_delete' => 'Are you sure you want to delete this file?',
+    ],
+
+    'depreciation_options' => [
+        'amount' => 'Quantità',
+        'percent' => 'Percentuale',
+    ],
+
+    'months_plural' => '1 mese|:count mesi',
+
 
 ];

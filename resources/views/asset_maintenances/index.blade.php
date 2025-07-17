@@ -24,16 +24,16 @@
           <table
               data-columns="{{ \App\Presenters\AssetMaintenancesPresenter::dataTableLayout() }}"
               data-cookie-id-table="maintenancesTable"
-              data-pagination="true"
-              data-search-highlight="true"
-              data-search="true"
-              data-show-print="true"
+
+
+
+
               data-side-pagination="server"
-              data-show-columns="true"
-              data-show-fullscreen="true"
+
+
               data-show-footer="true"
-              data-show-export="true"
-              data-show-refresh="true"
+
+
               id="maintenancesTable"
               class="table table-striped snipe-table"
               data-url="{{route('api.maintenances.index') }}"

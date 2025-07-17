@@ -225,11 +225,13 @@ return [
     'order_number'          => 'Jumlah order',
     'only_deleted'          => 'Hanya Aset yang Dihapus',
     'page_menu'				=> 'Menampilkan item _MENU_',
+    'page_error'            => 'Could not determine previous page. Redirected to homepage.',
     'pagination_info'		=> 'Menampilkan hal_START_ to _END_ of _TOTAL_',
     'pending'				=> 'Ditunda',
     'people'				=> 'Orang',
     'per_page'				=> 'Hasil per halaman',
     'previous'				=> 'Sebelumnya',
+    'previous_page'			=> 'Previous Page',
     'processing'			=> 'Pengolahan',
     'profile'				=> 'Profil anda',
     'purchase_cost'                              => 'Biaya Pembelian',
@@ -251,7 +253,7 @@ return [
     'requested'				=> 'Diminta',
     'requested_date'        => 'Tanggal Permintaan',
     'requested_assets'      => 'Aset yang Diminta',
-    'requested_assets_menu' => 'Aset yang Diminta',
+    'requested_assets_menu' => 'Requested Items',
     'request_canceled'      => 'Permintaan Dibatalkan',
     'request_item'          => 'Perminta barang ini',
     'external_link_tooltip' => 'Tautan eksternal ke',
@@ -311,7 +313,7 @@ return [
     'username'              => 'Nama Pengguna',
     'update'                => 'Memperbarui',
     'updating_item' => 'Memperbarui :item',
-    'upload_filetypes_help'      => 'Jenis file yang diizinkan adalah png, gif, jpg, jpeg, doc, docx, pdf, xls, xlsx, txt, lic, xml, zip, rtf, dan rar. Ukuran unggahan maksimum yang diizinkan adalah :size.',
+    'upload_filetypes_help' => 'Allowed filetypes are: :allowed_filetypes. Max upload size allowed is :size.',
     'uploaded'              => 'Terunggah',
     'user'					=> 'Pengguna',
     'accepted'			    => 'diterima',
@@ -321,8 +323,10 @@ return [
     'unaccepted_asset_report' => 'Aset tidak diterima',
     'users'                 => 'Pengguna',
     'viewall'				=> 'Lihat Semua',
-    'viewassets'  			=> 'Tampilkan aset',
-    'viewassetsfor'         => 'Lihat Aset untuk :name',
+    'viewassets'  			=> 'View Assigned Items',
+    'viewassetsfor'         => 'View Items for :name',
+    'view_user_assets'      => 'View Items Assigned to User',
+    'me'                    => 'Me',
     'website'               => 'Situs Web',
     'welcome'				=> 'Selamat datang, :name',
     'years'					=> 'tahun',
@@ -512,6 +516,7 @@ return [
         'manager_last_name' => 'Nama Belakang Manajer',
         'manager_full_name' => 'Nama Lengkap Manajer',
         'manager_username' => 'Nama Pengguna Manajer',
+        'manager_employee_num' => 'Manager Employee Number',
         'checkout_type' => 'Tipe Keluar',
         'checkout_location' => 'Keluar-kan untuk lokasi di',
         'image_filename' => 'Nama berkas gambar',
@@ -636,5 +641,32 @@ return [
             'error' => 'Could not seed manufacturers. A manufacturer record already exists and seeding would overwrite it.|Could not seed manufacturers. :count manufacturer records already exist and seeding would overwrite them.',
         ],
     ],
+
+    'file_upload_status' => [
+
+        'upload' => [
+            'success' => 'File successfully uploaded |:count files successfully uploaded',
+            'error' => 'File upload failed |:count file uploads failed',
+        ],
+
+        'delete' => [
+            'success' => 'File successfully deleted |:count files successfully deleted',
+            'error' => 'File deletion failed |:count file deletions failed',
+        ],
+
+        'file_not_found' => 'The selected file was not found on server',
+        'invalid_id' => 'That file ID is invalid',
+        'invalid_object' => 'That object ID is invalid',
+        'nofiles' => 'No files were included for upload',
+        'confirm_delete' => 'Are you sure you want to delete this file?',
+    ],
+
+    'depreciation_options' => [
+        'amount' => 'Amount',
+        'percent' => 'Percentage',
+    ],
+
+    'months_plural' => '1 month|:count months',
+
 
 ];

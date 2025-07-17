@@ -157,6 +157,7 @@ return [
     'scope_locations_fmcs_support_text'  => 'crwdns13049:0crwdne13049:0',
     'scope_locations_fmcs_support_help_text'  => 'crwdns13188:0crwdne13188:0',
     'scope_locations_fmcs_check_button' => 'crwdns13234:0crwdne13234:0',
+    'scope_locations_fmcs_test_needed' => 'crwdns13444:0crwdne13444:0',
     'scope_locations_fmcs_support_disabled_text'  => 'crwdns13190:0crwdne13190:0',
     'show_in_model_list'   => 'crwdns1990:0crwdne1990:0',
     'optional'					=> 'crwdns1298:0crwdne1298:0',
@@ -403,6 +404,9 @@ return [
     'due_checkin_days_help' => 'crwdns12682:0crwdne12682:0',
     'no_groups' => 'crwdns12760:0crwdne12760:0',
     'text' => 'crwdns12975:0crwdne12975:0',
+    'manager_view' => 'crwdns13418:0crwdne13418:0',
+    'manager_view_enabled_text' => 'crwdns13420:0crwdne13420:0',
+    'manager_view_enabled_help' => 'crwdns13422:0crwdne13422:0',
 
     'username_formats' => [
         'username_format'		=> 'crwdns13090:0crwdne13090:0',

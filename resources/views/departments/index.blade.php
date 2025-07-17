@@ -18,16 +18,8 @@
                 <div class="box-body">
                         <table
                                 data-cookie-id-table="departmentsTable"
-                                data-pagination="true"
                                 data-id-table="departmentsTable"
-                                data-search="true"
-                                data-search-highlight="true"
-                                data-show-print="true"
                                 data-side-pagination="server"
-                                data-show-columns="true"
-                                data-show-fullscreen="true"
-                                data-show-export="true"
-                                data-show-refresh="true"
                                 data-sort-order="asc"
                                 id="departmentsTable"
                                 class="table table-striped snipe-table"

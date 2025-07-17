@@ -6,12 +6,30 @@ abstract class Sheet extends Label
 {
     protected int $indexOffset = 0;
 
-    public function getWidth()        { return $this->getPageWidth(); }
-    public function getHeight()       { return $this->getPageHeight(); }
-    public function getMarginTop()    { return $this->getPageMarginTop(); }
-    public function getMarginBottom() { return $this->getPageMarginBottom(); }
-    public function getMarginLeft()   { return $this->getPageMarginLeft(); }
-    public function getMarginRight()  { return $this->getPageMarginRight(); }
+    public function getWidth()
+    {
+        return $this->getPageWidth(); 
+    }
+    public function getHeight()
+    {
+        return $this->getPageHeight(); 
+    }
+    public function getMarginTop()
+    {
+        return $this->getPageMarginTop(); 
+    }
+    public function getMarginBottom()
+    {
+        return $this->getPageMarginBottom(); 
+    }
+    public function getMarginLeft()
+    {
+        return $this->getPageMarginLeft(); 
+    }
+    public function getMarginRight()
+    {
+        return $this->getPageMarginRight(); 
+    }
 
     /**
      * Returns the page width in getUnit() units
@@ -107,7 +125,7 @@ abstract class Sheet extends Label
     /**
      * Returns label position based on its index
      * 
-     * @param  int  $index
+     * @param int $index
      * 
      * @return array  [x,y]
      */
@@ -123,10 +141,11 @@ abstract class Sheet extends Label
     /**
      * Handle the data here. Override for multiple-per-page handling
      * 
-     * @param  TCPDF       $pdf   The TCPDF instance
-     * @param  Collection  $data  The data
+     * @param TCPDF      $pdf  The TCPDF instance
+     * @param Collection $data The data
      */
-    public function writeAll($pdf, $data) {
+    public function writeAll($pdf, $data)
+    {
         $prevPageNumber = -1;
         
         foreach ($data->toArray() as $recordIndex => $record) {
@@ -170,7 +189,8 @@ abstract class Sheet extends Label
      *
      * @return string
      */
-    public final function getLabelOrientation() {
+    public final function getLabelOrientation()
+    {
         return ($this->getLabelWidth() >= $this->getLabelHeight()) ? 'L' : 'P';
     }
 
@@ -179,7 +199,8 @@ abstract class Sheet extends Label
      *
      * @return object [ 'x1'=>0.00, 'y1'=>0.00, 'x2'=>0.00, 'y2'=>0.00, 'w'=>0.00, 'h'=>0.00 ]
      */
-    public final function getLabelPrintableArea() {
+    public final function getLabelPrintableArea()
+    {
         return (object)[
             'x1' => $this->getLabelMarginLeft(),
             'y1' => $this->getLabelMarginTop(),
@@ -195,15 +216,20 @@ abstract class Sheet extends Label
      * 
      * @return int
      */
-    public function getLabelIndexOffset() { return $this->indexOffset; }
+    public function getLabelIndexOffset()
+    {
+        return $this->indexOffset; 
+    }
 
     /**
      * Sets label index offset (skip positions)
      * 
-     * @param  int  $offset
-     * 
+     * @param int $offset
      */
-    public function setLabelIndexOffset(int $offset) { $this->indexOffset = $offset; }
+    public function setLabelIndexOffset(int $offset)
+    {
+        $this->indexOffset = $offset; 
+    }
 }
 
 ?>

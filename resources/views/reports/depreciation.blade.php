@@ -18,15 +18,8 @@
           @if (($depreciations) && ($depreciations->count() > 0))
                   <table
                         data-cookie-id-table="depreciationReport"
-                        data-pagination="true"
                         data-id-table="depreciationReport"
-                        data-search="true"
-                        data-search-highlight="true"
-                        data-show-print="true"
                         data-side-pagination="server"
-                        data-show-columns="true"
-                        data-show-export="true"
-                        data-show-refresh="true"
                         data-sort-order="desc"
                         data-sort-name="created_at"
                         data-show-footer="true"

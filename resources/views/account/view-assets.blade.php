@@ -416,19 +416,12 @@
             <table
                   data-cookie-id-table="userAssignedAssets"
                   data-toolbar="#userAssetToolbar"
-                  data-pagination="true"
                   data-id-table="userAssets"
-                  data-search="true"
-                  data-search-highlight="true"
-                  data-show-print="true"
                   data-side-pagination="client"
-                  data-show-columns="true"
-                  data-show-export="true"
                   data-show-footer="true"
                   data-sort-order="asc"
                   id="userAssets"
                   class="table table-striped snipe-table"
-                  data-show-fullscreen="true"
                   data-export-options='{
                   "fileName": "my-assets-{{ date('Y-m-d') }}",
                   "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
@@ -569,18 +562,11 @@
               <table
                       data-toolbar="#userLicensesToolbar"
                       data-cookie-id-table="userLicenses"
-                      data-pagination="true"
                       data-id-table="userLicenses"
-                      data-search="true"
-                      data-search-highlight="true"
-                      data-show-print="true"
                       data-side-pagination="client"
-                      data-show-columns="true"
-                      data-show-export="true"
                       data-show-refresh="false"
                       data-sort-order="asc"
                       id="userLicenses"
-                      data-show-fullscreen="true"
                       class="table table-striped snipe-table"
                       data-export-options='{
                     "fileName": "my-licenses-{{ date('Y-m-d') }}",
@@ -640,14 +626,7 @@
                       data-cookie-id-table="userAccessoryTable"
                       data-id-table="userAccessoryTable"
                       id="userAccessoryTable"
-                      data-search="true"
-                      data-search-highlight="true"
-                      data-show-print="true"
-                      data-pagination="true"
                       data-side-pagination="client"
-                      data-show-columns="true"
-                      data-show-fullscreen="true"
-                      data-show-export="true"
                       data-show-footer="true"
                       data-show-refresh="false"
                       data-sort-order="asc"
@@ -698,14 +677,7 @@
                       data-cookie-id-table="userConsumableTable"
                       data-id-table="userConsumableTable"
                       id="userConsumableTable"
-                      data-search="true"
-                      data-search-highlight="true"
-                      data-show-print="true"
-                      data-pagination="true"
                       data-side-pagination="client"
-                      data-show-columns="true"
-                      data-show-fullscreen="true"
-                      data-show-export="true"
                       data-show-footer="true"
                       data-show-refresh="false"
                       data-sort-order="asc"
@@ -752,18 +724,13 @@
                     data-cookie-id-table="userEULATable"
                     data-id-table="userEULATable"
                     id="userEULATable"
-                    data-search="true"
-                    data-pagination="true"
                     data-side-pagination="client"
-                    data-show-columns="true"
-                    data-show-fullscreen="true"
-                    data-show-export="true"
                     data-show-footer="true"
                     data-show-refresh="false"
                     data-sort-order="asc"
                     data-sort-name="name"
                     class="table table-striped snipe-table table-hover"
-                    data-url="{{route('api.user.eulas', $user->id)}}"
+                    data-url="{{ route('api.self.eulas') }}"
                     data-export-options='{
                     "fileName": "export-eula-{{ str_slug($user->username) }}-{{ date('Y-m-d') }}",
                     "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","delete","purchasecost", "icon"]
@@ -779,8 +746,7 @@
                 <th data-visible="true" data-field="item.name">{{ trans('general.item') }}</th>
                 <th data-visible="true" data-field="created_at" data-sortable="true" data-formatter="dateDisplayFormatter">{{ trans('general.accepted_date') }}</th>
                 <th data-field="note">{{ trans('general.notes') }}</th>
-                <th data-field="signature_file" data-visible="false"  data-formatter="imageFormatter">{{ trans('general.signature') }}</th>
-                <th data-field="file" data-formatter="fileUploadFormatter">{{ trans('general.download') }}</th>
+                <th data-field="url" data-formatter="downloadFormatter">{{ trans('general.download') }}</th>
               </tr>
               </thead>
             </table>

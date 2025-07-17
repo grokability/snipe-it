@@ -31,8 +31,8 @@
             <span class="hidden-lg hidden-md">
               <x-icon type="seats" class="fa-2x" />
               </span>
-              <span class="hidden-xs hidden-sm">{{ trans('admin/licenses/form.seats') }}</span>
-              <span class="badge badge-secondary">{{ number_format($license->availCount()->count()) }} / {{ number_format($license->seats) }}</span>
+              <span class="hidden-xs hidden-sm">{{ trans('general.assigned') }}</span>
+              <span class="badge badge-secondary">{{ number_format($license->assignedCount()->count()) }} / {{ number_format($license->seats) }}</span>
 
             </a>
         </li>
@@ -438,18 +438,12 @@
                         data-cookie-id-table="seatsTable"
                         data-id-table="seatsTable"
                         id="seatsTable"
-                        data-pagination="true"
                         data-search="false"
-                        data-show-print="true"
                         data-side-pagination="server"
-                        data-show-columns="true"
-                        data-show-fullscreen="true"
-                        data-show-export="true"
-                        data-show-refresh="true"
                         data-sort-order="asc"
                         data-sort-name="name"
                         class="table table-striped snipe-table"
-                        data-url="{{ route('api.licenses.seats.index', $license->id) }}"
+                        data-url="{{ route('api.licenses.seats.index', [$license->id, 'status' => 'assigned']) }}"
                         data-export-options='{
                         "fileName": "export-seats-{{ str_slug($license->name) }}-{{ date('Y-m-d') }}",
                         "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
@@ -485,15 +479,8 @@
                       data-cookie-id-table="licenseHistoryTable"
                       data-id-table="licenseHistoryTable"
                       id="licenseHistoryTable"
-                      data-pagination="true"
-                      data-show-columns="true"
                       data-side-pagination="server"
-                      data-show-refresh="true"
-                      data-show-export="true"
                       data-sort-order="desc"
-                      data-search="true"
-                      data-search-highlight="true"
-                      data-show-print="true"
                       data-export-options='{
                        "fileName": "export-{{ str_slug($license->name) }}-history-{{ date('Y-m-d') }}",
                        "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]

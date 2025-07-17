@@ -13,9 +13,9 @@ return array(
     |
     */
 
-    "password" => "Passwords must be six characters and match the confirmation.",
-    "user"     => "Username or email address is incorrect",
-    "token"    => 'This password reset token is invalid or expired, or does not match the username provided.',
-    'sent'	   => 'If a matching user with a valid email address exists in our system, a password recovery email has been sent.',
+    "password" => "პაროლი უნდა შედგებოდეს მინიმუმ ექვსი სიმბოლოსგან და უნდა ემთხვეოდეს დადასტურებისას.",
+    "user"     => "მომხმარებლის სახელი ან ელფოსტის მისამართი არასწორია.",
+    "token"    => 'პაროლის აღდგენის ტოკენი არასწორია, ვადაგასულია ან არ შეესაბამება მითითებულ მომხმარებლის სახელს.',
+    'sent'	   => 'თუ ჩვენს სისტემაში არსებობს შესაბამისი მომხმარებელი მოქმედი ელფოსტის მისამართით, პაროლის აღდგენის ბმული გაგზავნილია.',
 
 );

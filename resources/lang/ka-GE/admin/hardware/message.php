@@ -2,113 +2,113 @@
 
 return [
 
-    'undeployable' 		 => 'The following assets cannot be deployed and have been removed from checkout: :asset_tags',
-    'does_not_exist' 	 => 'Asset does not exist.',
-    'does_not_exist_var' => 'Asset with tag :asset_tag not found.',
-    'no_tag' 	         => 'No asset tag provided.',
-    'does_not_exist_or_not_requestable' => 'That asset does not exist or is not requestable.',
-    'assoc_users'	 	 => 'This asset is currently checked out to a user and cannot be deleted. Please check the asset in first, and then try deleting again. ',
-    'warning_audit_date_mismatch' 	=> 'This asset\'s next audit date (:next_audit_date) is before the last audit date (:last_audit_date). Please update the next audit date.',
-    'labels_generated'   => 'Labels were successfully generated.',
-    'error_generating_labels' => 'Error while generating labels.',
-    'no_assets_selected' => 'No assets selected.',
+    'undeployable' 		 => '<strong>გაფრთხილება: </strong> ეს ინვენტარი აღნიშნულია როგორც დაზიანებული. თუ სტატუსი შეიცვალა, გთხოვთ განაახლოთ ინვენტარის სტატუსი.',
+    'does_not_exist' 	 => 'ინვენტარი არ არსებობს.',
+    'does_not_exist_var' => 'ინვენტარი ნომრით :asset_tag ვერ მოიძებნა.',
+    'no_tag' 	         => 'ინვენტარის ნომერი არ არის მითითებული.',
+    'does_not_exist_or_not_requestable' => 'ინვენტარი არ არსებობს ან არ არის მოთხოვნადი.',
+    'assoc_users'	 	 => 'ეს ინვენტარი ამჟამად მინიჭებულია მომხმარებელზე და ვერ წაიშლება. გთხოვთ, ჯერ დააბრუნეთ იგი და შემდეგ სცადეთ წაშლა.',
+    'warning_audit_date_mismatch' 	=> 'ამ ინვენტარის მომდევნო აუდიტის თარიღი (:next_audit_date) ადრეულია ბოლო აუდიტის თარიღზე (:last_audit_date). გთხოვთ, განაახლეთ მომდევნო აუდიტის თარიღი.',
+    'labels_generated'   => 'ეტიკეტები წარმატებით გენერირდა.',
+    'error_generating_labels' => 'ეტიკეტების გენერირებისას მოხდა შეცდომა.',
+    'no_assets_selected' => 'არცერთი ინვენტარი არ არის მონიშნული.',
 
     'create' => [
-        'error'   		=> 'Asset was not created, please try again. :(',
-        'success' 		=> 'Asset created successfully. :)',
-        'success_linked' => 'Asset with tag :tag was created successfully. <strong><a href=":link" style="color: white;">Click here to view</a></strong>.',
-        'multi_success_linked' => 'Asset with tag :links was created successfully.|:count assets were created succesfully. :links.',
-        'partial_failure' => 'An asset was unable to be created. Reason: :failures|:count assets were unable to be created. Reasons: :failures',
+        'error'   		=> 'ინვენტარი ვერ შეიქმნა, გთხოვთ, სცადეთ თავიდან. :(',
+        'success' 		=> 'ინვენტარი წარმატებით შეიქმნა. :)',
+        'success_linked' => 'ინვენტარი ნომრით :tag წარმატებით შეიქმნა. <strong><a href=":link" style="color: white;">დასათვალიერებლად დააჭირეთ აქ</a></strong>.',
+        'multi_success_linked' => 'ინვენტარი ნომრით :links წარმატებით შეიქმნა.|:count ინვენტარი წარმატებით შეიქმნა. :links.',
+        'partial_failure' => 'ერთი ინვენტარის შექმნა ვერ მოხერხდა. მიზეზი: :failures|:count ინვენტარის შექმნა ვერ მოხერხდა. მიზეზები: :failures',
         'target_not_found' => [
-            'user' => 'The assigned user could not be found.',
-            'asset' => 'The assigned asset could not be found.',
-            'location' => 'The assigned location could not be found.',
+            'user' => 'მინიჭებული მომხმარებელი ვერ მოიძებნა.',
+            'asset' => 'მინიჭებული ინვენტარი ვერ მოიძებნა.',
+            'location' => 'მინიჭებული ადგილმდებარეობა ვერ მოიძებნა.',
         ],
     ],
 
     'update' => [
-        'error'   			=> 'Asset was not updated, please try again',
-        'success' 			=> 'Asset updated successfully.',
-        'encrypted_warning' => 'Asset updated successfully, but encrypted custom fields were not due to permissions',
-        'nothing_updated'	=>  'No fields were selected, so nothing was updated.',
-        'no_assets_selected'  =>  'No assets were selected, so nothing was updated.',
-        'assets_do_not_exist_or_are_invalid' => 'Selected assets cannot be updated.',
+        'error'   			=> 'ინვენტარი ვერ განახლდა, გთხოვთ, სცადეთ თავიდან.',
+        'success' 			=> 'ინვენტარი წარმატებით განახლდა.',
+        'encrypted_warning' => 'ინვენტარი წარმატებით განახლდა, თუმცა დაშიფრული პერსონალური ველები ვერ განახლდა გარკვეული უფლებების გამო.',
+        'nothing_updated'	=>  'ველი არ შევსებულა, შესაბამისად არაფერი განახლდა.',
+        'no_assets_selected'  =>  'ინვენტარი არ არის არჩეული, შესაბამისად არაფერი განახლდა.',
+        'assets_do_not_exist_or_are_invalid' => 'არჩეული ინვენტარი არ არსებობს ან არასწორია და ვერ განახლდება.',
     ],
 
     'restore' => [
-        'error'   		=> 'Asset was not restored, please try again',
-        'success' 		=> 'Asset restored successfully.',
-        'bulk_success' 		=> 'Asset restored successfully.',
-        'nothing_updated'   => 'No assets were selected, so nothing was restored.', 
+        'error'   		=> 'ინვენტარის აღდგენა ვერ ხერხდება, გთხოვთ, სცადეთ თავიდან.',
+        'success' 		=> 'ინვენტარის აღდგენა წარმატებით დასრულდა.',
+        'bulk_success' 		=> 'ინვენტარის აღდგენა წარმატებით დასრულდა.',
+        'nothing_updated'   => 'ინვენტარი არ არის არჩეული, შესაბამისად არაფერი აღდგა.', 
     ],
 
     'audit' => [
-        'error'   		=> 'Asset audit unsuccessful: :error ',
-        'success' 		=> 'Asset audit successfully logged.',
+        'error'   		=> 'ინვენტარის აუდიტი ვერ განხორციელდა: :error',
+        'success' 		=> 'ინვენტარის აუდიტის ლოგირება წარმატებით განხორციელდა.',
     ],
 
 
     'deletefile' => [
-        'error'   => 'File not deleted. Please try again.',
-        'success' => 'File successfully deleted.',
+        'error'   => 'ფაილი ვერ წაიშალა. გთხოვთ, ხელახლა სცადეთ.',
+        'success' => 'ფაილი წარმატებით წაიშალა.',
     ],
 
     'upload' => [
-        'error'   => 'File(s) not uploaded. Please try again.',
-        'success' => 'File(s) successfully uploaded.',
-        'nofiles' => 'You did not select any files for upload, or the file you are trying to upload is too large',
-        'invalidfiles' => 'One or more of your files is too large or is a filetype that is not allowed. Allowed filetypes are png, gif, jpg, doc, docx, pdf, and txt.',
+        'error'   => 'ფაილი(ები) ვერ აიტვირთა. გთხოვთ, სცადეთ თავიდან.',
+        'success' => 'ფაილი(ები) წარმატებით აიტვირთა.',
+        'nofiles' => 'თქვენ არ მიუთითეთ ფაილები ასატვირთად, ან ფაილი რომელსაც ცდილობთ ატვირთოთ, ძალიან დიდია.',
+        'invalidfiles' => 'ერთი ან რამდენიმე ფაილი ძალიან დიდია ან მისი ფაილის ტიპი არ არის დაუშვებელი. დაუშვებელია მხოლოდ შემდეგი ტიპები: png, gif, jpg, doc, docx, pdf, და txt.',
     ],
 
     'import' => [
-        'import_button'         => 'Process Import',
-        'error'                 => 'Some items did not import correctly.',
-        'errorDetail'           => 'The following Items were not imported because of errors.',
-        'success'               => 'Your file has been imported',
-        'file_delete_success'   => 'Your file has been been successfully deleted',
-        'file_delete_error'      => 'The file was unable to be deleted',
-        'file_missing' => 'The file selected is missing',
-        'file_already_deleted' => 'The file selected was already deleted',
-        'header_row_has_malformed_characters' => 'One or more attributes in the header row contain malformed UTF-8 characters',
-        'content_row_has_malformed_characters' => 'One or more attributes in the first row of content contain malformed UTF-8 characters',
-        'transliterate_failure' => 'Transliteration from :encoding to UTF-8 failed due to invalid characters in input'
+        'import_button'         => 'იმპორტის დამუშავება',
+        'error'                 => 'ზოგიერთი ელემენტის იმპორტირება სწორად ვერ განხორციელდა.',
+        'errorDetail'           => 'შემდეგი ელემენტების იმპორტირება ვერ მოხდა შეცდომების გამო.',
+        'success'               => 'თქვენი ფაილის იმპორტი წარმატებით განხორციელდა.',
+        'file_delete_success'   => 'თქვენი ფაილი წარმატებით წაიშალა.',
+        'file_delete_error'      => 'ფაილის წაშლა ვერ მოხერხდა.',
+        'file_missing' => 'არჩეული ფაილი არ არსებობს.',
+        'file_already_deleted' => 'არჩეული ფაილი უკვე წაშლილია.',
+        'header_row_has_malformed_characters' => 'სათაური შეიცავს ერთ ან მეტ არასწორ UTF-8 სიმბოლოს.',
+        'content_row_has_malformed_characters' => 'კონტენტი შეიცავს არასწორ UTF-8 სიმბოლოს.',
+        'transliterate_failure' => 'ტრანსლიტერაცია :encoding-დან UTF-8-ში ვერ მოხერხდა არასწორი სიმბოლოების გამო.'
     ],
 
 
     'delete' => [
-        'confirm'   	=> 'Are you sure you wish to delete this asset?',
-        'error'   		=> 'There was an issue deleting the asset. Please try again.',
-        'assigned_to_error' => '{1}Asset Tag: :asset_tag is currently checked out. Check in this device before deletion.|[2,*]Asset Tags: :asset_tag are currently checked out. Check in these devices before deletion.',
-        'nothing_updated'   => 'No assets were selected, so nothing was deleted.',
-        'success' 		=> 'The asset was deleted successfully.',
+        'confirm'   	=> 'დარწმუნებული ხართ, რომ გსურთ ეს ინვენტარი წაშალოთ?',
+        'error'   		=> 'ინვენტარის წაშლისას მოხდა შეცდომა. გთხოვთ, სცადოთ ხელახლა.',
+        'assigned_to_error' => '{1}ინვენტარის ნომერი: :asset_tag ამჟამად გაცემულია. წასაშლელად აუცილებელია ამ მოწყობილობის ჩაბარება.|[2,*]ინვენტარის ნომრები: :asset_tag ამჟამად გადაცემულია. წასაშლელად აუცილებელია ამ მოწყობილობების ჩაბარება.',
+        'nothing_updated'   => 'არანაირი ინვენტარი არ არის არჩეული, შესაბამისად არაფერი წაიშალა.',
+        'success' 		=> 'ინვენტარი წარმატებით წაიშალა.',
     ],
 
     'checkout' => [
-        'error'   		=> 'Asset was not checked out, please try again',
-        'success' 		=> 'Asset checked out successfully.',
-        'user_does_not_exist' => 'That user is invalid. Please try again.',
-        'not_available' => 'That asset is not available for checkout!',
-        'no_assets_selected' => 'You must select at least one asset from the list',
+        'error'   		=> 'ინვენტარის გაცემა ვერ ხერხდება, გთხოვთ სცადოთ თავიდან.',
+        'success' 		=> 'ინვენტარის გაცემა წარმატებით განხორციელდა.',
+        'user_does_not_exist' => 'მომხმარებელი არ არსებობს ან არავალიდურია. გთხოვთ ხელახლა სცადოთ.',
+        'not_available' => 'ეს ინვენტარი ამჟამად არ არის ხელმისაწვდომი გასაცემად!',
+        'no_assets_selected' => 'უნდა აირჩიოთ მინიმუმ ერთი ინვენტარი აღნიშნული სიიდან.',
     ],
 
     'multi-checkout' => [
-        'error'   => 'Asset was not checked out, please try again|Assets were not checked out, please try again',
-        'success' => 'Asset checked out successfully.|Assets checked out successfully.',
+        'error'   => 'ინვენტარის გაცემა ვერ ხერხდება, გთხოვთ სცადოთ თავიდან.',
+        'success' => 'ინვენტარის გაცემა წარმატებით განხორციელდა.',
     ],
 
     'checkin' => [
-        'error'   		=> 'Asset was not checked in, please try again',
-        'success' 		=> 'Asset checked in successfully.',
-        'user_does_not_exist' => 'That user is invalid. Please try again.',
-        'already_checked_in'  => 'That asset is already checked in.',
+        'error'   		=> 'ინვენტარი არ დაბრუნებულა, გთხოვთ სცადოთ თავიდან.',
+        'success' 		=> 'ინვენტარი გაცემა წარმატებით განხორციელდა.',
+        'user_does_not_exist' => 'მომხმარებელი არასწორია. გთხოვთ სცადოთ თავიდან.',
+        'already_checked_in'  => 'ეს ინვენტარი უკვე ჩაბარებულია.',
 
     ],
 
     'requests' => [
-        'error'   		=> 'Request was not successful, please try again.',
-        'success' 		=> 'Request successfully submitted.',
-        'canceled'      => 'Request successfully canceled.',
-        'cancel'        => 'Cancel this item request',
+        'error'   		=> 'მოთხოვნა არ შესრულდა, გთხოვთ სცადოთ თავიდან.',
+        'success' 		=> 'მოთხოვნა წარმატებით გაიგზავნა.',
+        'canceled'      => 'მოთხოვნა წარმატებით გაუქმდა.',
+        'cancel'        => 'მოთხოვნის გაუქმება',
     ],
 
 ];

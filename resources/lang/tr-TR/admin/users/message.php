@@ -46,7 +46,7 @@ return array(
         'import'    => 'Kullanıcılar içe aktarılırken bir sorun oluştu. Lütfen yeniden deneyin.',
         'asset_already_accepted' => 'Bu varlık zaten kabul etti.',
         'accept_or_decline' => 'Kullanıcı varlığı kabul veya red etmeli.',
-        'cannot_delete_yourself' => 'We would feel really bad if you deleted yourself, please reconsider.',
+        'cannot_delete_yourself' => 'Kendinizi silerseniz gerçekten çok üzülürüz, lütfen tekrar düşünün.',
         'incorrect_user_accepted' => 'Atamaya çalıştığınız varlık atanamadı.',
         'ldap_could_not_connect' => 'LDAP sunucusuna bağlanamadı. LDAP yapılandırma dosyası LDAP sunucusu yapılandırmanızda gözden geçirin. <br> LDAP sunucusundan Hata:',
         'ldap_could_not_bind' => 'LDAP sunucusuna bağlanamadı. LDAP yapılandırma dosyası LDAP sunucusu yapılandırmanızda gözden geçirin. <br> LDAP sunucusundan Hata: ',

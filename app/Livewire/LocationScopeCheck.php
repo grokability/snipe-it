@@ -10,15 +10,16 @@ class LocationScopeCheck extends Component
 {
     public $mismatched = [];
     public $setting;
+    public $is_tested = false;
 
     public function check_locations()
     {
         $this->mismatched = Helper::test_locations_fmcs(false);
+        $this->is_tested = true;
     }
 
     public function mount() {
         $this->setting = Setting::getSettings();
-        $this->mismatched = Helper::test_locations_fmcs(false);
     }
 
     public function render()

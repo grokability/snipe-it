@@ -2,7 +2,7 @@
 
 return array(
 
-    'asset'             => 'Asset',
+    'asset'             => 'ინვენტარი',
     'checkin'           => 'Checkin',
     'create'            => 'Create License',
     'expiration'        => 'Expiration Date',

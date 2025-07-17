@@ -227,24 +227,27 @@ class AssetsController extends Controller
             }
         }
 
-        session()->put(['redirect_option' => $request->get('redirect_option'), 'checkout_to_type' => $request->get('checkout_to_type')]);
+        session()->put(['redirect_option' => $request->get('redirect_option'),
+                       'checkout_to_type' => $request->get('checkout_to_type'),
+                       'other_redirect' =>  'model' ]);
+
 
 
         if ($successes) {
             if ($failures) {
                 //some succeeded, some failed
-                return redirect()->to(Helper::getRedirectOption($request, $asset->id, 'Assets')) //FIXME - not tested
+                return Helper::getRedirectOption($request, $asset->id, 'Assets') //FIXME - not tested
                 ->with('success-unescaped', trans_choice('admin/hardware/message.create.multi_success_linked', $successes, ['links' => join(", ", $successes)]))
                     ->with('warning', trans_choice('admin/hardware/message.create.partial_failure', $failures, ['failures' => join("; ", $failures)]));
             } else {
                 if (count($successes) == 1) {
                     //the most common case, keeping it so we don't have to make every use of that translation string be trans_choice'ed
                     //and re-translated
-                    return redirect()->to(Helper::getRedirectOption($request, $asset->id, 'Assets'))
+                    return Helper::getRedirectOption($request, $asset->id, 'Assets')
                         ->with('success-unescaped', trans('admin/hardware/message.create.success_linked', ['link' => route('hardware.show', $asset), 'id', 'tag' => e($asset->asset_tag)]));
                 } else {
                     //multi-success
-                    return redirect()->to(Helper::getRedirectOption($request, $asset->id, 'Assets'))
+                    return Helper::getRedirectOption($request, $asset->id, 'Assets')
                         ->with('success-unescaped', trans_choice('admin/hardware/message.create.multi_success_linked', $successes, ['links' => join(", ", $successes)]));
                 }
             }
@@ -265,6 +268,7 @@ class AssetsController extends Controller
     public function edit(Asset $asset) : View | RedirectResponse
     {
         $this->authorize($asset);
+        session()->put('back_url', url()->previous());
         return view('hardware/edit')
             ->with('item', $asset)
             ->with('statuslabel_list', Helper::statusLabelList())
@@ -427,11 +431,15 @@ class AssetsController extends Controller
                 }
             }
         }
+        session()->put([
+            'redirect_option' => $request->get('redirect_option'),
+            'checkout_to_type' => $request->get('checkout_to_type'),
+            'other_redirect' => $request->get('redirect_option') === 'other_redirect' ? 'model' : null,
+        ]);
 
-        session()->put(['redirect_option' => $request->get('redirect_option'), 'checkout_to_type' => $request->get('checkout_to_type')]);
 
         if ($asset->save()) {
-            return redirect()->to(Helper::getRedirectOption($request, $asset->id, 'Assets'))
+            return Helper::getRedirectOption($request, $asset->id, 'Assets')
                 ->with('success', trans('admin/hardware/message.update.success'));
         }
 
@@ -996,7 +1004,7 @@ class AssetsController extends Controller
             }
 
             $asset->logAudit($request->input('note'), $request->input('location_id'), $file_name, $originalValues);
-            return redirect()->to(Helper::getRedirectOption($request, $asset->id, 'Assets'))->with('success', trans('admin/hardware/message.audit.success'));
+            return Helper::getRedirectOption($request, $asset->id, 'Assets')->with('success', trans('admin/hardware/message.audit.success'));
         }
 
         return redirect()->back()->withInput()->withErrors($asset->getErrors());

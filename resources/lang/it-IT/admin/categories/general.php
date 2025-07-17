@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Categorie Beni',
     'category_name'  					=> 'Nome Categoria',
     'checkin_email'                     => 'Invia email all\'utente per la Restituzione o Assegnazione.',
+    'email_to_initiator'                => 'Ricevi un\'email quando l\'utente accetta o rifiuta l\'assegnazione.',
     'checkin_email_notification'        => 'A questo utente verrà inviata un\'email alla Restituzione o Assegnazione.',
     'clone'                             => 'Clona Categoria',
     'create'  							=> 'Crea Categoria',

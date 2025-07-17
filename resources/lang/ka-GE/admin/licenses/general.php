@@ -10,7 +10,7 @@ return array(
     'filetype_info'				=> 'Allowed filetypes are png, gif, jpg, jpeg, doc, docx, pdf, txt, zip, and rar.',
     'clone'  					=> 'Clone License',
     'history_for'  				=> 'History for ',
-    'in_out'  					=> 'In/Out',
+    'in_out'  					=> 'შიგნით/გარეთ',
     'info'  					=> 'License Info',
     'license_seats'  			=> 'License Seats',
     'seat'  					=> 'Seat',

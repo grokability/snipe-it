@@ -90,7 +90,8 @@ class ConsumablesController extends Controller
         session()->put(['redirect_option' => $request->get('redirect_option')]);
 
         if ($consumable->save()) {
-            return redirect()->to(Helper::getRedirectOption($request, $consumable->id, 'Consumables'))->with('success', trans('admin/consumables/message.create.success'));
+            return Helper::getRedirectOption($request, $consumable->id, 'Consumables')
+                ->with('success', trans('admin/consumables/message.create.success'));
         }
 
         return redirect()->back()->withInput()->withErrors($consumable->getErrors());
@@ -107,6 +108,7 @@ class ConsumablesController extends Controller
     public function edit(Consumable $consumable) : View | RedirectResponse
     {
             $this->authorize($consumable);
+            session()->put('back_url', url()->previous());
             return view('consumables/edit')
                 ->with('item', $consumable)
                 ->with('category_type', 'consumable');
@@ -160,7 +162,8 @@ class ConsumablesController extends Controller
         session()->put(['redirect_option' => $request->get('redirect_option')]);
 
         if ($consumable->save()) {
-            return redirect()->to(Helper::getRedirectOption($request, $consumable->id, 'Consumables'))->with('success', trans('admin/consumables/message.update.success'));
+            return Helper::getRedirectOption($request, $consumable->id, 'Consumables')
+                ->with('success', trans('admin/consumables/message.update.success'));
         }
 
         return redirect()->back()->withInput()->withErrors($consumable->getErrors());

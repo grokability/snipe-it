@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Vahendite kategooriad',
     'category_name'  					=> 'Kategooria nimi',
     'checkin_email'                     => 'Saada kasutajale e-kiri vara liikumise kohta.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'Kasutajale saadetakse e-kiri vara liikumise kohta.',
     'clone'                             => 'Klooni kategooria',
     'create'  							=> 'Uus kategooria',

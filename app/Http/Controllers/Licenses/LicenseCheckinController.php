@@ -86,7 +86,7 @@ class LicenseCheckinController extends Controller
         }
 
         if($licenseSeat->assigned_to != null){
-            $return_to = User::find($licenseSeat->assigned_to);
+            $return_to = User::withTrashed()->find($licenseSeat->assigned_to);
             session()->put('checkedInFrom', $return_to->id);
         } else {
             $return_to = Asset::find($licenseSeat->asset_id);
@@ -98,14 +98,17 @@ class LicenseCheckinController extends Controller
         $licenseSeat->notes = $request->input('notes');
 
         session()->put(['redirect_option' => $request->get('redirect_option')]);
-
+        if ($request->get('redirect_option') === 'target'){
+            session()->put(['checkout_to_type' => 'user']);
+        }
 
         // Was the asset updated?
         if ($licenseSeat->save()) {
             event(new CheckoutableCheckedIn($licenseSeat, $return_to, auth()->user(), $request->input('notes')));
 
 
-            return redirect()->to(Helper::getRedirectOption($request, $license->id, 'Licenses'))->with('success', trans('admin/licenses/message.checkin.success'));
+            return Helper::getRedirectOption($request, $license->id, 'Licenses')
+                ->with('success', trans('admin/licenses/message.checkin.success'));
         }
 
         // Redirect to the license page with error

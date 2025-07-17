@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Categoriile de active',
     'category_name'  					=> 'Nume categorii',
     'checkin_email'                     => 'Trimiteți e-mail utilizatorului la logare / iesire.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'Acest utilizator va fi trimis un e-mail la logare / iesire.',
     'clone'                             => 'Clona Categorie',
     'create'  							=> 'Categorie noua',

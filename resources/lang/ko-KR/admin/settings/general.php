@@ -157,6 +157,7 @@ return [
     'scope_locations_fmcs_support_text'  => 'Scope Locations with Full Multiple Companies Support',
     'scope_locations_fmcs_support_help_text'  => 'Restrict locations to their selected company.',
     'scope_locations_fmcs_check_button' => 'Check Compatibility',
+    'scope_locations_fmcs_test_needed' => 'Please Check Compatibility to enable this',
     'scope_locations_fmcs_support_disabled_text'  => 'This option is disabled because you have conflicting locations set for :count or more items.',
     'show_in_model_list'   => '모델 드롭다운에 표시',
     'optional'					=> '선택 사항',
@@ -403,6 +404,9 @@ return [
     'due_checkin_days_help' => 'How many days before the expected checkin of an asset should it be listed in the "Due for checkin" page?',
     'no_groups' => 'No groups have been created yet. Visit <code>Admin Settings > Permission Groups</code> to add one.',
     'text' => 'Text',
+    'manager_view' => 'Manager View',
+    'manager_view_enabled_text' => 'Enable Manager View',
+    'manager_view_enabled_help' => 'Allow managers to view assigned items to their direct and indirect reports in their account view.',
 
     'username_formats' => [
         'username_format'		=> '사용자명 형식',

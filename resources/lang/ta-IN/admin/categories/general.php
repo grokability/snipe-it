@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'சொத்து வகைகள்',
     'category_name'  					=> 'வகை பெயர்',
     'checkin_email'                     => 'ஒப்படைக்கும்/பெற்றுக்கொள்ளும் போது பயனருக்கு மின்னஞ்சல் அனுப்பவும்.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'இந்த பயனருக்கு ஒப்படைக்கும்/பெற்றுக்கொள்ளும் போது மின்னஞ்சல் அனுப்பப்படும்.',
     'clone'                             => 'குளோன் வகை',
     'create'  							=> 'பகுப்பு உருவாக்கவும்',

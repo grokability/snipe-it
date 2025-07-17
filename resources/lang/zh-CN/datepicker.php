@@ -13,8 +13,8 @@ return array(
     |
     */
 
-    'today' => 'Today',
-    'clear' => 'Clear',
+    'today' => '今天',
+    'clear' => '清空',
     'days' => [
         'sunday' => '星期日',
         'monday' => '星期一',

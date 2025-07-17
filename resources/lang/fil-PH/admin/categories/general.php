@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Ang mga Kategorya ng Asset',
     'category_name'  					=> 'Ang Pangalan ng Kategorya',
     'checkin_email'                     => 'Padalhan ng email yung user pag mag-checkin/checkout.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'Ang user ay papadalhan ng email sa checkin/checkout.',
     'clone'                             => 'Ang Kategrya ay I-clone',
     'create'  							=> 'Magsagawa ng Kategorya',

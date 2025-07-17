@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Laitekategoriat',
     'category_name'  					=> 'Kategorian nimi',
     'checkin_email'                     => 'Lähetä käyttäjälle sähköposti palautuksesta/luovutuksesta.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'Tälle käyttäjälle lähetetään sähköpostia palautuksesta/luovutuksesta.',
     'clone'                             => 'Monista kategoria',
     'create'  							=> 'Uusi kategoria',

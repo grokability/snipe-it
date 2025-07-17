@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> '資産カテゴリー',
     'category_name'  					=> 'カテゴリー名',
     'checkin_email'                     => 'チェックイン/チェックアウト時、ユーザーに電子メールを送信します。',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'このユーザーには、チェックイン/チェックアウト時にメールが送信されます。',
     'clone'                             => 'カテゴリを複製',
     'create'  							=> 'カテゴリーの作成',

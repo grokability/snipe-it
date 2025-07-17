@@ -9,7 +9,7 @@ return array(
     'api_base_url' => 'Základní adresa API je umístěna na:',
     'api_base_url_endpoint' => '/&lt;endpoint&gt;',
     'api_token_expiration_time' => 'API tokeny vyprší:',
-    'api_reference' => 'Please check the <a href="https://snipe-it.readme.io/reference" target="_blank">API reference</a> to find specific API endpoints and additional API documentation.',
+    'api_reference' => 'Podívejte se do <a href="https://snipe-it.readme.io/reference" target="_blank">dokumentace API</a>, kde najdete konkrétní API endpointy a další informace k integraci.',
     'profile_updated' => 'Účet úspěšně aktualizován',
     'no_tokens' => 'Nevytvořili jste žádné osobní přístupové tokeny.',
     'enable_sounds' => 'Povolit zvukové efekty',

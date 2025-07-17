@@ -157,6 +157,7 @@ return [
     'scope_locations_fmcs_support_text'  => 'Scope Locations with Full Multiple Companies Support',
     'scope_locations_fmcs_support_help_text'  => 'Restrict locations to their selected company.',
     'scope_locations_fmcs_check_button' => 'Check Compatibility',
+    'scope_locations_fmcs_test_needed' => 'Please Check Compatibility to enable this',
     'scope_locations_fmcs_support_disabled_text'  => 'This option is disabled because you have conflicting locations set for :count or more items.',
     'show_in_model_list'   => 'Zobraziť v robaľovacom menu modelu',
     'optional'					=> 'voliteľné',
@@ -403,6 +404,9 @@ return [
     'due_checkin_days_help' => 'Koľko dní pred očakávaným prevzatím majetku má byť zaradený do zoznamu "Čaká na prevzatie"?',
     'no_groups' => 'Žiadne skupiny ešte neboli vytvorené. Navštívte <code>Admin nastavenia > Skupiny oprávnení</code> pre pridanie.',
     'text' => 'Text',
+    'manager_view' => 'Manager View',
+    'manager_view_enabled_text' => 'Enable Manager View',
+    'manager_view_enabled_help' => 'Allow managers to view assigned items to their direct and indirect reports in their account view.',
 
     'username_formats' => [
         'username_format'		=> 'Formát používateľského mena',

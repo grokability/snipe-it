@@ -924,7 +924,7 @@ class SettingsController extends Controller
      * @since v5.0.0
      */
     public function postSamlSettings(SettingsSamlRequest $request) : RedirectResponse
-    {
+    {       
         if (is_null($setting = Setting::getSettings())) {
             return redirect()->to('admin')->with('error', trans('admin/settings/message.update.error'));
         }

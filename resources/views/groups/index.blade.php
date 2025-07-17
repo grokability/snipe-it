@@ -22,15 +22,7 @@
 
             <table
                 data-cookie-id-table="groupsTable"
-                data-pagination="true"
-                data-search="true"
-                data-search-highlight="true"
-                data-show-print="true"
                 data-side-pagination="server"
-                data-show-columns="true"
-                data-show-export="true"
-                data-show-refresh="true"
-                data-show-fullscreen="true"
                 data-sort-order="asc"
                 data-sort-name="name"
                 id="groupsTable"

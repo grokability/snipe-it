@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> '资产分类',
     'category_name'  					=> '分类名称',
     'checkin_email'                     => '在签入/签出时发送邮件给用户。',
+    'email_to_initiator'                => '用户接受或拒绝结帐时发送电子邮件给你。',
     'checkin_email_notification'        => '在签入/签出时该用户会收到一封邮件。',
     'clone'                             => '克隆分类',
     'create'  							=> '创建分类',

@@ -157,6 +157,7 @@ return [
     'scope_locations_fmcs_support_text'  => 'Scope Locations with Full Multiple Companies Support',
     'scope_locations_fmcs_support_help_text'  => 'Restrict locations to their selected company.',
     'scope_locations_fmcs_check_button' => 'Check Compatibility',
+    'scope_locations_fmcs_test_needed' => 'Please Check Compatibility to enable this',
     'scope_locations_fmcs_support_disabled_text'  => 'This option is disabled because you have conflicting locations set for :count or more items.',
     'show_in_model_list'   => 'Rodyti modelių išskleidžiamuosiuose meniu',
     'optional'					=> 'pasirinktinai',
@@ -403,6 +404,9 @@ return [
     'due_checkin_days_help' => 'Likus kiek dienų iki numatomo turto paėmimo, jis turėtų būti rodomas puslapyje „Laukia paėmimo“?',
     'no_groups' => 'Grupės dar nesukurtos. Apsilankykite <code>Administratoriaus nustatymai > Paskyros teisių grupės</code>, kad jų pridėtumėte.',
     'text' => 'Tekstas',
+    'manager_view' => 'Manager View',
+    'manager_view_enabled_text' => 'Enable Manager View',
+    'manager_view_enabled_help' => 'Allow managers to view assigned items to their direct and indirect reports in their account view.',
 
     'username_formats' => [
         'username_format'		=> 'Naudotojo vardo formatas',

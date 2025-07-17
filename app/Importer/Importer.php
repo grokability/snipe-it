@@ -88,6 +88,7 @@ abstract class Importer
         'department' => 'department',
         'manager_name' => 'manager full name',
         'manager_username' => 'manager username',
+        'manager_employee_num' => 'manager employee number',
         'min_amt' => 'minimum quantity',
         'remote' => 'remote',
         'vip' => 'vip',
@@ -132,7 +133,7 @@ abstract class Importer
         } else {
             $this->csv = Reader::createFromString($file);
         }
-        $this->tempPassword = substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 40);
+        $this->tempPassword = '*** NO PASSWORD - IMPORTED VIA CSV ***';
     }
 
     // Cached Values for import lookups

@@ -157,6 +157,7 @@ return [
     'scope_locations_fmcs_support_text'  => 'Scope Locations with Full Multiple Companies Support',
     'scope_locations_fmcs_support_help_text'  => 'Restrict locations to their selected company.',
     'scope_locations_fmcs_check_button' => 'Check Compatibility',
+    'scope_locations_fmcs_test_needed' => 'Please Check Compatibility to enable this',
     'scope_locations_fmcs_support_disabled_text'  => 'This option is disabled because you have conflicting locations set for :count or more items.',
     'show_in_model_list'   => 'Visa i rullgardin för modeller',
     'optional'					=> 'frivillig',
@@ -403,6 +404,9 @@ return [
     'due_checkin_days_help' => 'Hur många dagar innan den förväntade incheckningen av en tillgång ska den anges på sidan "Förfaller för incheckning"?',
     'no_groups' => 'Inga grupper har skapats än. Besök <code>Administratörsinställningar > Grupper</code> för att lägga till en.',
     'text' => 'Text',
+    'manager_view' => 'Manager View',
+    'manager_view_enabled_text' => 'Enable Manager View',
+    'manager_view_enabled_help' => 'Allow managers to view assigned items to their direct and indirect reports in their account view.',
 
     'username_formats' => [
         'username_format'		=> 'Användarnamnsformat',

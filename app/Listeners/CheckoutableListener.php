@@ -12,6 +12,7 @@ use App\Mail\CheckoutConsumableMail;
 use App\Mail\CheckoutLicenseMail;
 use App\Models\Accessory;
 use App\Models\Asset;
+use App\Models\Category;
 use App\Models\CheckoutAcceptance;
 use App\Models\Component;
 use App\Models\Consumable;
@@ -227,6 +228,7 @@ class CheckoutableListener
         if ($checkedOutToType != "App\Models\User") {
             return null;
         }
+
         if (!$event->checkoutable->requireAcceptance()) {
             return null;
         }
@@ -234,6 +236,13 @@ class CheckoutableListener
         $acceptance = new CheckoutAcceptance;
         $acceptance->checkoutable()->associate($event->checkoutable);
         $acceptance->assignedTo()->associate($event->checkedOutTo);
+
+        $category = $this->getCategoryFromCheckoutable($event->checkoutable);
+
+        if ($category?->alert_on_response) {
+            $acceptance->alert_on_response_id = auth()->id();
+        }
+        
         $acceptance->save();
 
         return $acceptance;
@@ -360,23 +369,6 @@ class CheckoutableListener
         return in_array(get_class($checkoutable), $this->skipNotificationsFor);
     }
 
-    private function shouldSendEmailNotifications(Model $checkoutable): bool
-    {
-        //runs a check if the category wants to send checkin/checkout emails to users
-        $category = match (true) {
-            $checkoutable instanceof Asset => $checkoutable->model->category,
-            $checkoutable instanceof Accessory,
-            $checkoutable instanceof Consumable => $checkoutable->category,
-            $checkoutable instanceof LicenseSeat => $checkoutable->license->category,
-            default => null,
-        };
-
-        if (!$category?->checkin_email) {
-            return false;
-        }
-        return true;
-    }
-
     private function shouldSendWebhookNotification(): bool
     {
         return Setting::getSettings() && Setting::getSettings()->webhook_endpoint;
@@ -470,5 +462,15 @@ class CheckoutableListener
         }
 
         return array($to, $cc);
+    }
+
+    private function getCategoryFromCheckoutable(Model $checkoutable): ?Category
+    {
+        return match (true) {
+            $checkoutable instanceof Asset => $checkoutable->model->category,
+            $checkoutable instanceof Accessory,
+                $checkoutable instanceof Consumable => $checkoutable->category,
+            $checkoutable instanceof LicenseSeat => $checkoutable->license->category,
+        };
     }
 }

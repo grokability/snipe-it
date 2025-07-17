@@ -407,15 +407,10 @@
 
             <table
                     data-cookie-id-table="consumablesCheckedoutTable"
-                    data-pagination="true"
                     data-id-table="consumablesCheckedoutTable"
                     data-search="false"
-                    data-show-print="true"
                     data-side-pagination="server"
-                    data-show-columns="true"
-                    data-show-export="true"
                     data-show-footer="true"
-                    data-show-refresh="true"
                     data-sort-order="asc"
                     data-sort-name="name"
                     id="consumablesCheckedoutTable"
@@ -428,7 +423,7 @@
               <thead>
               <tr>
                 <th data-searchable="false" data-sortable="false" data-field="avatar" data-formatter="imageFormatter">{{ trans('general.image') }}</th>
-                <th data-searchable="false" data-sortable="false" data-field="name" formatter="usersLinkFormatter">{{ trans('general.user') }}</th>
+                <th data-searchable="false" data-sortable="false" data-field="name" data-formatter="usersLinkFormatter">{{ trans('general.user') }}</th>
                 <th data-searchable="false" data-sortable="false" data-field="created_at" data-formatter="dateDisplayFormatter">
                   {{ trans('general.date') }}
                 </th>
@@ -463,18 +458,10 @@
                       data-columns="{{ \App\Presenters\HistoryPresenter::dataTableLayout() }}"
                       class="table table-striped snipe-table"
                       id="consumableHistory"
-                      data-pagination="true"
                       data-id-table="consumableHistory"
-                      data-search="true"
-                      data-search-highlight="true"
-                      data-show-print="true"
                       data-side-pagination="server"
-                      data-show-columns="true"
-                      data-show-fullscreen="true"
-                      data-show-refresh="true"
                       data-sort-order="desc"
                       data-sort-name="created_at"
-                      data-show-export="true"
                       data-export-options='{
                          "fileName": "export-consumable-{{  $consumable->id }}-history",
                          "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]

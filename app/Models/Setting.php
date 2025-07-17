@@ -25,6 +25,7 @@ class Setting extends Model
 
     /**
      * The cache property so that multiple invocations of this will only load the Settings record from disk only once
+     *
      * @var self
      */
     public static ?self $_cache = null;
@@ -306,7 +307,8 @@ class Setting extends Model
      */
     public static function getLdapSettings(): Collection
     {
-        $ldapSettings = self::select([
+        $ldapSettings = self::select(
+            [
             'ldap_enabled',
             'ldap_server',
             'ldap_uname',
@@ -337,7 +339,8 @@ class Setting extends Model
             'ldap_manager',
             'ldap_country',
             'ldap_location',
-            ])->first()->getAttributes();
+            ]
+        )->first()->getAttributes();
 
         return collect($ldapSettings);
     }

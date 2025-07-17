@@ -6,6 +6,7 @@
     'formAction' => (isset($item->id)) ? route('consumables.update', ['consumable' => $item->id]) : route('consumables.store'),
     'index_route' => 'consumables.index',
     'options' => [
+                'back' => trans('admin/hardware/form.redirect_to_type',['type' => trans('general.previous_page')]),
                 'index' => trans('admin/hardware/form.redirect_to_all', ['type' => 'consumables']),
                 'item' => trans('admin/hardware/form.redirect_to_type', ['type' => trans('general.consumable')]),
                ]

@@ -225,11 +225,13 @@ return [
     'order_number'          => 'Número de orden',
     'only_deleted'          => 'Solo activos eliminados',
     'page_menu'				=> 'Mostrando elementos de _MENU_',
+    'page_error'            => 'Could not determine previous page. Redirected to homepage.',
     'pagination_info'		=> 'Mostrando _START_ a _END_ de _TOTAL_ elementos',
     'pending'				=> 'Pendientes',
     'people'				=> 'Personas',
     'per_page'				=> 'Resultados por página',
     'previous'				=> 'Previo',
+    'previous_page'			=> 'Previous Page',
     'processing'			=> 'Procesando',
     'profile'				=> 'Perfil',
     'purchase_cost'                              => 'Precio de compra',
@@ -251,7 +253,7 @@ return [
     'requested'				=> 'Solicitado',
     'requested_date'        => 'Fecha de solicitud',
     'requested_assets'      => 'Activos solicitados',
-    'requested_assets_menu' => 'Activos solicitados',
+    'requested_assets_menu' => 'Requested Items',
     'request_canceled'      => 'Solicitud cancelada',
     'request_item'          => 'Solicitar este elemento',
     'external_link_tooltip' => 'Enlace externo a',
@@ -311,7 +313,7 @@ return [
     'username'              => 'Nombre de usuario',
     'update'                => 'Actualizar',
     'updating_item' => 'Actualizando :item',
-    'upload_filetypes_help'      => 'Los tipos de archivo permitidos son png, gif, jpg, jpeg, doc, docx, pdf, xls, xlsx, txt, lic, xml, zip, rtf y rar. El tamaño máximo permitido es :size.',
+    'upload_filetypes_help' => 'Allowed filetypes are: :allowed_filetypes. Max upload size allowed is :size.',
     'uploaded'              => 'Cargado',
     'user'					=> 'Usuario',
     'accepted'			    => 'aceptado',
@@ -321,8 +323,10 @@ return [
     'unaccepted_asset_report' => 'Activos no aceptados',
     'users'                 => 'Usuarios',
     'viewall'				=> 'Ver todos',
-    'viewassets'  			=> 'Ver activos asignados',
-    'viewassetsfor'         => 'Ver activos para :name',
+    'viewassets'  			=> 'View Assigned Items',
+    'viewassetsfor'         => 'View Items for :name',
+    'view_user_assets'      => 'View Items Assigned to User',
+    'me'                    => 'Me',
     'website'               => 'Sitio web',
     'welcome'				=> 'Bienvenido, :name',
     'years'					=> 'años',
@@ -512,6 +516,7 @@ return [
         'manager_last_name' => 'Apellido del supervisor',
         'manager_full_name' => 'Nombre completo del supervisor',
         'manager_username' => 'Nombre de usuario del supervisor',
+        'manager_employee_num' => 'Manager Employee Number',
         'checkout_type' => 'Tipo de asignación',
         'checkout_location' => 'Asignar a la ubicación',
         'image_filename' => 'Nombre del archivo de la imagen',
@@ -636,5 +641,32 @@ return [
             'error' => 'Could not seed manufacturers. A manufacturer record already exists and seeding would overwrite it.|Could not seed manufacturers. :count manufacturer records already exist and seeding would overwrite them.',
         ],
     ],
+
+    'file_upload_status' => [
+
+        'upload' => [
+            'success' => 'File successfully uploaded |:count files successfully uploaded',
+            'error' => 'File upload failed |:count file uploads failed',
+        ],
+
+        'delete' => [
+            'success' => 'File successfully deleted |:count files successfully deleted',
+            'error' => 'File deletion failed |:count file deletions failed',
+        ],
+
+        'file_not_found' => 'The selected file was not found on server',
+        'invalid_id' => 'That file ID is invalid',
+        'invalid_object' => 'That object ID is invalid',
+        'nofiles' => 'No files were included for upload',
+        'confirm_delete' => 'Are you sure you want to delete this file?',
+    ],
+
+    'depreciation_options' => [
+        'amount' => 'Amount',
+        'percent' => 'Percentage',
+    ],
+
+    'months_plural' => '1 month|:count months',
+
 
 ];

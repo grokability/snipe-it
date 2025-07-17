@@ -31,6 +31,7 @@
 </div>
 
 <livewire:category-edit-form
+    :alert-on-response="(bool) old('alert_on_response', $item->alert_on_response)"
     :default-eula-text="$snipeSettings->default_eula_text"
     :eula-text="old('eula_text', $item->eula_text)"
     :require-acceptance="(bool) old('require_acceptance', $item->require_acceptance)"

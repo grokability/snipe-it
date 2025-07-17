@@ -12,17 +12,9 @@
             data-cookie-id-table="{{ str_slug($object->name ?? $object->id) }}UploadsTable"
             data-id-table="{{ str_slug($object->name ?? $object->id) }}UploadsTable"
             id="{{ str_slug($object->name ?? $object->id) }}UploadsTable"
-            data-search="true"
-            data-search-highlight="true"
-            data-show-print="true"
-            data-pagination="true"
             data-side-pagination="client"
-            data-show-columns="true"
-            data-show-fullscreen="true"
-            data-show-export="true"
             data-show-footer="true"
             data-toolbar="#upload-toolbar"
-            data-show-refresh="true"
             data-sort-order="asc"
             data-sort-name="name"
             class="table table-striped snipe-table"
@@ -40,7 +32,7 @@
                 {{trans('general.file_type')}}
             </th>
             <th class="col-md-2" data-searchable="true" data-visible="true" data-field="image">
-                {{ trans('general.image') }}
+                {{ trans('general.preview') }}
             </th>
             <th class="col-md-2" data-searchable="true" data-visible="true" data-field="filename" data-sortable="true">
                 {{ trans('general.file_name') }}
@@ -81,9 +73,23 @@
 
                     @if (($file->filename) && (Storage::exists($filepath.$file->filename)))
                         @if (Helper::checkUploadIsImage($file->get_src(str_plural(strtolower(class_basename(get_class($object)))))))
-                            <a href="{{ route($showfile_routename, [$object->id, $file->id, 'inline' => 'true']) }}" data-toggle="lightbox" data-type="image">
-                                <img src="{{ route($showfile_routename, [$object->id, $file->id, 'inline' => 'true']) }}" class="img-thumbnail" style="max-width: 50px;">
+                            <a href="{{ route($showfile_routename, [$object->id, $file->id, 'inline' => 'true']) }}"
+                               data-toggle="lightbox" data-type="image">
+                                <img src="{{ route($showfile_routename, [$object->id, $file->id, 'inline' => 'true']) }}"
+                                     class="img-thumbnail" style="max-width: 50px;">
                             </a>
+                        @elseif (Helper::checkUploadIsVideo($file->get_src(str_plural(strtolower(class_basename(get_class($object)))))))
+                            <a href="{{ route($showfile_routename, [$object->id, $file->id, 'inline' => 'true']) }}"
+                               data-toggle="lightbox" data-type="video">
+                                <video style="max-width: 50px;">
+                                    <source src="{{ route($showfile_routename, [$object->id, $file->id, 'inline' => 'true']) }}">
+                                </video>
+                            </a>
+                        @elseif (Helper::checkUploadIsAudio($file->get_src(str_plural(strtolower(class_basename(get_class($object)))))))
+                            <audio controls>
+                                <source src="{{ route($showfile_routename, [$object->id, $file->id, 'inline' => 'true']) }}" type="audio/mp3">
+                                Your browser does not support the audio element.
+                            </audio>
                         @else
                             {{ trans('general.preview_not_available') }}
                         @endif

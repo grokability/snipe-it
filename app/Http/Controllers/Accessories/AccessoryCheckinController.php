@@ -78,7 +78,8 @@ class AccessoryCheckinController extends Controller
 
             session()->put(['redirect_option' => $request->get('redirect_option')]);
 
-            return redirect()->to(Helper::getRedirectOption($request, $accessory->id, 'Accessories'))->with('success', trans('admin/accessories/message.checkin.success'));
+            return Helper::getRedirectOption($request, $accessory->id, 'Accessories')
+                ->with('success', trans('admin/accessories/message.checkin.success'));
         }
         // Redirect to the accessory management page with error
         return redirect()->route('accessories.index')->with('error', trans('admin/accessories/message.checkin.error'));

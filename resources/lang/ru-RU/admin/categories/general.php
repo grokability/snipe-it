@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Категории активов',
     'category_name'  					=> 'Имя категории',
     'checkin_email'                     => 'Отправить email пользователю при выдаче или возврате.',
+    'email_to_initiator'                => 'Отправьте электронное письмо, когда пользователь подтвердит или отклонит заказ.',
     'checkin_email_notification'        => 'Этому пользователю будет отправлено электронное письмо о выдаче/возврате.',
     'clone'                             => 'Копировать категорию',
     'create'  							=> 'Создать категорию',
@@ -21,9 +22,9 @@ return array(
     'use_default_eula'					=> 'Использовать <a href="#" data-toggle="modal" data-target="#eulaModal">основное пользовательское соглашение по умолчанию</a>.',
     'use_default_eula_disabled'			=> '<del>Использовать основное пользовательское соглашение.</del> Не задано основное пользовательское соглашение. Добавьте его в Настройках.',
     'use_default_eula_column'			=> 'Использовать пользовательское соглашение по умолчанию',
-    'import_require_acceptance'         => 'Require Acceptance',
+    'import_require_acceptance'         => 'Требуют принятия',
     'import_checkin_email'              => 'Send Checkin Email',
     'import_eula_text'                  => 'EULA text',
-    'import_category_type'              => 'Category Type',
+    'import_category_type'              => 'Тип категории',
 
 );

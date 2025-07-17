@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Categorías de activos',
     'category_name'  					=> 'Nombre de la categoría',
     'checkin_email'                     => 'Enviar un correo electrónico al usuario al recibir/devolver.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'A este usuario se le enviará un correo electrónico al recibir/devolver.',
     'clone'                             => 'Clonar categoría',
     'create'  							=> 'Crear categoría',

@@ -13,23 +13,23 @@ return [
     |
     */
 
-    'more_info_title' => 'More Info',
+    'more_info_title' => 'დამატებითი ინფორმაცია',
 
-    'audit_help' => 'Checking this box will edit the asset record to reflect this new location. Leaving it unchecked will simply note the location in the audit log.<br><br>Note that if this asset is checked out, it will not change the location of the person, asset or location it is checked out to.',
+    'audit_help' => 'თუ მონიშნავთ ამ ველს, აქტივის ჩანაწერი განახლდება და ასახავს ახალ მდებარეობას. თუ არ მონიშნავთ, მდებარეობა დაფიქსირდება მხოლოდ აუდიტის ჟურნალში.<br><br>გაითვალისწინეთ: თუ აქტივი გაცემულია, ცვლილება არ შეეხება იმ პირის, აქტივის ან ლოკაციის მდებარეობას, ვისთანაც ის ამჟამად არის გაცემული.',
 
-    'assets' => 'Assets are items tracked by serial number or asset tag.  They tend to be higher value items where identifying a specific item matters.',
+    'assets' => 'ინვენტარი წარმოადგენს ობიექტებს, რომლებიც აღრიცხვიანდება სერიული ნომრით ან ინვენტარის ნომრის მეშვეობით. როგორც წესი, ესენია მაღალი ღირებულების მქონე ნივთები, რომელთა უნიკალური იდენტიფიკაცია მნიშვნელოვანია.',
 
-    'categories' => 'Categories help you organize your items. Some example categories might be &quot;Desktops&quot;, &quot;Laptops&quot;, &quot;Mobile Phones&quot;, &quot;Tablets&quot;, and so on, but you can use categories any way that makes sense for you.',
+    'categories' => 'კატეგორიები ხელს უწყობს ნივთების ორგანიზებას. მაგალითისთვის შეიძლება აღინიშნოს კატეგორიები, როგორიცაა "დესკტოპები", "ლეპტოპები", "მობილური ტელეფონები", "ტაბლეტები" და ა.შ. კატეგორიების გამოყენება შესაძლებელია თქვენი საჭიროების შესაბამისად.',
 
-    'accessories' => 'Accessories are anything you issue to users but that do not have a serial number (or you do not care about tracking them uniquely). For example, computer mice or keyboards.',
+    'accessories' => 'აქსესუარები მოიცავს იმ ნივთებს, რომლებიც გაიცემა მომხმარებლებზე, მაგრამ არ აქვთ სერიული ნომერი ან მათი უნიკალური აღრიცხვა არ არის მნიშვნელოვანი. მაგალითად, კომპიუტერის კლავიატურები.',
 
-    'companies'     => 'Companies can be used as a simple identifier field, or can be used to limit visibility of assets, users, etc if full company support is enabled in your Admin settings.',
+    'companies'     => 'კომპანიები შეიძლება გამოყენებულ იქნას როგორც მარტივი საიდენტიფიკაციო ველი, ან – სისტემის ადმინისტრირების პარამეტრებში სრული კომპანიის მხარდაჭერის ჩართვის შემთხვევაში – მომხმარებლებისა და აქტივების ხილვადობის განსაზღვრისთვის.',
 
-    'components'    => 'Components are items that are part of an asset, for example HDD, RAM, etc.',
+    'components'    => 'კომპონენტები არის ინვენტარის შემადგენელი ნაწილები, მაგალითად, მყარი დისკი, ოპერატიული მეხსიერება და სხვა.',
 
-    'consumables'   => 'Consumables are anything purchased that will be used up over time. For example, printer ink or copier paper.',
+    'consumables'   => 'სახარჯი მასალები წარმოადგენს ისეთ ნივთებს, რომლებიც დროთა განმავლობაში იხარჯება. მაგალითად, პრინტერის კარტრიჯი ან საკანცელარიო ქაღალდი.',
 
-    'depreciations' => 'You can set up asset depreciations to depreciate assets based on straight-line depreciation.',
+    'depreciations' => 'შეგიძლიათ დააყენოთ ინვენტარის ამორტიზაციის წესები, რომლებიც ითვალისწინებს სწორხაზოვან ამორტიზაციას.',
     
-    'empty_file'    => 'The importer detects that this file is empty.'
+    'empty_file'    => 'იმპორტერი აღმოაჩენს, რომ ატვირთული ფაილი ცარიელია.'
 ];

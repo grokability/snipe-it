@@ -6,6 +6,8 @@ use Livewire\Component;
 
 class CategoryEditForm extends Component
 {
+    public bool $alertOnResponse;
+
     public $defaultEulaText;
 
     public $eulaText;

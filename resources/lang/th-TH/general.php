@@ -225,11 +225,13 @@ return [
     'order_number'          => 'เลขที่ใบสั่งซื้อ',
     'only_deleted'          => 'Only Deleted Assets',
     'page_menu'				=> 'กำลังแสดง_MENU_รายการ',
+    'page_error'            => 'Could not determine previous page. Redirected to homepage.',
     'pagination_info'		=> 'กำลังแสดง_START_ถึง_END_จากทั้งหมด_TOTAL_รายการ',
     'pending'				=> 'กําลังดำเนินการ',
     'people'				=> 'ผู้คน',
     'per_page'				=> 'ผลการค้นหาต่อหน้า',
     'previous'				=> 'ก่อนหน้า',
+    'previous_page'			=> 'Previous Page',
     'processing'			=> 'กำลังดำเนินการ',
     'profile'				=> 'โปรไฟล์ของคุณ',
     'purchase_cost'                              => 'ซื้อต้นทุน',
@@ -251,7 +253,7 @@ return [
     'requested'				=> 'คำร้องขอ',
     'requested_date'        => 'วันที่ขอ',
     'requested_assets'      => 'Requested Assets',
-    'requested_assets_menu' => 'Requested Assets',
+    'requested_assets_menu' => 'Requested Items',
     'request_canceled'      => 'คำขอยกเลิกแล้ว',
     'request_item'          => 'Request this item',
     'external_link_tooltip' => 'External link to',
@@ -311,7 +313,7 @@ return [
     'username'              => 'ชื่อผู้ใช้งาน',
     'update'                => 'ปรับปรุง',
     'updating_item' => 'Updating :item',
-    'upload_filetypes_help'      => 'Allowed filetypes are png, gif, jpg, jpeg, doc, docx, pdf, xls, xlsx, txt, lic, xml, zip, rtf and rar. Max upload size allowed is :size.',
+    'upload_filetypes_help' => 'Allowed filetypes are: :allowed_filetypes. Max upload size allowed is :size.',
     'uploaded'              => 'อัพโหลด',
     'user'					=> 'ผู้ใช้',
     'accepted'			    => 'ยอมรับ',
@@ -321,8 +323,10 @@ return [
     'unaccepted_asset_report' => 'ไม่ยอมรับสินทรัพย์',
     'users'                 => 'ผู้ใช้',
     'viewall'				=> 'ดูทั้งหมด',
-    'viewassets'  			=> 'ดูทรัพย์สินที่มอบหมาย',
-    'viewassetsfor'         => 'ดูทรัพย์สินสำหรับ',
+    'viewassets'  			=> 'View Assigned Items',
+    'viewassetsfor'         => 'View Items for :name',
+    'view_user_assets'      => 'View Items Assigned to User',
+    'me'                    => 'Me',
     'website'               => 'เว็บไซต์',
     'welcome'				=> 'ยินดีต้อนรับ, :name',
     'years'					=> 'ปี',
@@ -512,6 +516,7 @@ return [
         'manager_last_name' => 'Manager Last Name',
         'manager_full_name' => 'Manager Full Name',
         'manager_username' => 'Manager Username',
+        'manager_employee_num' => 'Manager Employee Number',
         'checkout_type' => 'Checkout Type',
         'checkout_location' => 'Checkout to Location',
         'image_filename' => 'Image Filename',
@@ -636,5 +641,32 @@ return [
             'error' => 'Could not seed manufacturers. A manufacturer record already exists and seeding would overwrite it.|Could not seed manufacturers. :count manufacturer records already exist and seeding would overwrite them.',
         ],
     ],
+
+    'file_upload_status' => [
+
+        'upload' => [
+            'success' => 'File successfully uploaded |:count files successfully uploaded',
+            'error' => 'File upload failed |:count file uploads failed',
+        ],
+
+        'delete' => [
+            'success' => 'File successfully deleted |:count files successfully deleted',
+            'error' => 'File deletion failed |:count file deletions failed',
+        ],
+
+        'file_not_found' => 'The selected file was not found on server',
+        'invalid_id' => 'That file ID is invalid',
+        'invalid_object' => 'That object ID is invalid',
+        'nofiles' => 'No files were included for upload',
+        'confirm_delete' => 'Are you sure you want to delete this file?',
+    ],
+
+    'depreciation_options' => [
+        'amount' => 'Amount',
+        'percent' => 'Percentage',
+    ],
+
+    'months_plural' => '1 month|:count months',
+
 
 ];

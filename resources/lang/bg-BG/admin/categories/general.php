@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Категории на активи',
     'category_name'  					=> 'Име на категория',
     'checkin_email'                     => 'Изпращане на email до потребителя при вписване/изписване на активи.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'Указаният потребител ще получава e-mail при вписване/изписване на активи.',
     'clone'                             => 'Копиране на категория',
     'create'  							=> 'Създаване на категория',

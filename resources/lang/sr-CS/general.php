@@ -225,11 +225,13 @@ return [
     'order_number'          => 'Broj narudžbe',
     'only_deleted'          => 'Samo izbrisana sredstva',
     'page_menu'				=> 'Showing _MENU_ items',
+    'page_error'            => 'Nismo mogli da utvrdimo prethodnu stranicu. Preusmeravamo na početnu.',
     'pagination_info'		=> 'Showing _START_ to _END_ of _TOTAL_ items',
     'pending'				=> 'Na čekanju',
     'people'				=> 'Ljudi',
     'per_page'				=> 'Rezultati po stranici',
     'previous'				=> 'Prethodna',
+    'previous_page'			=> 'Prethodna stranica',
     'processing'			=> 'Obrađuje se',
     'profile'				=> 'Vaš profil',
     'purchase_cost'                              => 'Trošak nabavke',
@@ -251,7 +253,7 @@ return [
     'requested'				=> 'Tražena',
     'requested_date'        => 'Datum zatraživanja',
     'requested_assets'      => 'Zatražena imovina',
-    'requested_assets_menu' => 'Zatražena imovina',
+    'requested_assets_menu' => 'Zatražene stavke',
     'request_canceled'      => 'Zahtev je otkazan',
     'request_item'          => 'Zatraži ovu stavku',
     'external_link_tooltip' => 'Eksterna veza do',
@@ -311,7 +313,7 @@ return [
     'username'              => 'Korisničko ime',
     'update'                => 'Ažuriraj',
     'updating_item' => 'Izmena :item',
-    'upload_filetypes_help'      => 'Dozvoljeni tipovi datoteka su png, gif, jpg, jpeg, doc, docx, pdf, xls, xlsx, txt, lic, xml, zip, rtf i rar. Maksimalna veličina datoteke je :size.',
+    'upload_filetypes_help' => 'Dozvoljeni tipovi datoteka su: :allowed_filetypes. Maksimalna veličina datoteke je :size.',
     'uploaded'              => 'Uploaded',
     'user'					=> 'Korisnik',
     'accepted'			    => 'accepted',
@@ -321,8 +323,10 @@ return [
     'unaccepted_asset_report' => 'Neprihvaćene imovine',
     'users'                 => 'Korisnici',
     'viewall'				=> 'Prikaži svе',
-    'viewassets'  			=> 'Prikaz dodijeljene imovine',
-    'viewassetsfor'         => 'Prikaži imovinu korisnika :name',
+    'viewassets'  			=> 'Prikaži dodeljene stavke',
+    'viewassetsfor'         => 'Prikaži stavke od :name',
+    'view_user_assets'      => 'Prikaži stavke dodeljene korisniku',
+    'me'                    => 'Ja',
     'website'               => 'Website',
     'welcome'				=> 'Dobrodošli, :name',
     'years'					=> 'godine',
@@ -512,6 +516,7 @@ return [
         'manager_last_name' => 'Menadzer: Prezime',
         'manager_full_name' => 'Menadzer: Puno Ime',
         'manager_username' => 'Menadzer: Korisnicko ime',
+        'manager_employee_num' => 'Broj radnika rukovodioca',
         'checkout_type' => 'Tip Naplate',
         'checkout_location' => 'Zaduži lokaciju',
         'image_filename' => 'Ime datoteke slike',
@@ -636,5 +641,32 @@ return [
             'error' => 'Nije bilo moguće dodati proizvođače. Proizvođač već postoji i ovo bi ga prepisalo.|Nije bilo moguće dodati proizvođače. :count proizvođača već postoji i ovo bi ih prepisalo.',
         ],
     ],
+
+    'file_upload_status' => [
+
+        'upload' => [
+            'success' => 'Datoteka je uspešno postavljena |:count datoteka je uspešno postavljeno',
+            'error' => 'Nije uspelo postavljanje datoteke |Nije uspelo postavljanje :count datoteka',
+        ],
+
+        'delete' => [
+            'success' => 'Datoteka je uspešno obrisana |:count datoteka je uspešno obrisano',
+            'error' => 'Nije uspelo brisanje datoteke |Nije uspelo brisanje :count datoteka',
+        ],
+
+        'file_not_found' => 'Izabrana datoteka nije pronađena na serveru',
+        'invalid_id' => 'ID datoteke nije ispravan',
+        'invalid_object' => 'ID objekta nije ispravan',
+        'nofiles' => 'Nisu izabrane datoteke za postavljanje',
+        'confirm_delete' => 'Da li zaista želite da obrišete ovu datoteku?',
+    ],
+
+    'depreciation_options' => [
+        'amount' => 'Iznos',
+        'percent' => 'Procenat',
+    ],
+
+    'months_plural' => '1 mesec|:count meseci',
+
 
 ];

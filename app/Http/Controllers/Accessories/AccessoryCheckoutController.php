@@ -97,7 +97,7 @@ class AccessoryCheckoutController extends Controller
 
 
         // Redirect to the new accessory page
-        return redirect()->to(Helper::getRedirectOption($request, $accessory->id, 'Accessories'))
+        return Helper::getRedirectOption($request, $accessory->id, 'Accessories')
             ->with('success', trans('admin/accessories/message.checkout.success'));
     }
 }

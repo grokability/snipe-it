@@ -78,16 +78,8 @@
                                 <table
                                     data-columns="{{ \App\Presenters\AccessoryPresenter::assignedDataTableLayout() }}"
                                     data-cookie-id-table="checkoutsTable"
-                                    data-pagination="true"
                                     data-id-table="checkoutsTable"
-                                    data-search-highlight="true"
-                                    data-search="true"
-                                    data-show-print="true"
                                     data-side-pagination="server"
-                                    data-show-columns="true"
-                                    data-show-fullscreen="true"
-                                    data-show-export="true"
-                                    data-show-refresh="true"
                                     data-sort-order="asc"
                                     id="checkoutsTable"
                                     class="table table-striped snipe-table"
@@ -113,15 +105,8 @@
                                         data-cookie-id-table="AccessoryHistoryTable"
                                         data-id-table="AccessoryHistoryTable"
                                         id="AccessoryHistoryTable"
-                                        data-pagination="true"
-                                        data-show-columns="true"
                                         data-side-pagination="server"
-                                        data-show-refresh="true"
-                                        data-show-export="true"
                                         data-sort-order="desc"
-                                        data-search-highlight="true"
-                                        data-search="true"
-                                        data-show-print="true"
                                         data-export-options='{
                        "fileName": "export-{{ str_slug($accessory->name) }}-history-{{ date('Y-m-d') }}",
                        "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]

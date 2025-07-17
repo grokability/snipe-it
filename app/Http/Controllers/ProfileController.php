@@ -3,15 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ImageUploadRequest;
+use App\Http\Transformers\ProfileTransformer;
+use App\Models\Actionlog;
 use App\Models\Setting;
 use App\Models\User;
 use App\Notifications\CurrentInventory;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\RedirectResponse;
 use \Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+
 /**
  * This controller handles all actions related to User Profiles for
  * the Snipe-IT Asset Management application.
@@ -220,7 +226,7 @@ class ProfileController extends Controller
 
         if (!$user = User::find(auth()->id())) {
             return redirect()->back()
-                ->with('error', trans('admin/users/message.user_not_found', ['id' => $id]));
+                ->with('error', trans('admin/users/message.user_not_found', ['id' => auth()->id()]));
         }
         if (empty($user->email)) {
             return redirect()->back()->with('error', trans('admin/users/message.user_has_no_email'));
@@ -233,5 +239,29 @@ class ProfileController extends Controller
         }
 
         return redirect()->back()->with('success', trans('admin/users/general.user_notified'));
+    }
+
+
+
+    public function getStoredEula($filename) : Response | BinaryFileResponse | RedirectResponse
+    {
+
+        $logentry = Actionlog::where('filename', $filename)->first();
+
+        // Make sure the user has permission to view this file
+        if (auth()->id() != $logentry->target_id) {
+            return redirect()->route('account')->with('error', trans('general.generic_model_not_found', ['model' => 'file']));
+        }
+
+        if (config('filesystems.default') == 's3_private') {
+            return redirect()->away(Storage::disk('s3_private')->temporaryUrl('private_uploads/eula-pdfs/'.$filename, now()->addMinutes(5)));
+        }
+
+        if (Storage::exists('private_uploads/eula-pdfs/'.$filename)) {
+            return response()->download(config('app.private_uploads').'/eula-pdfs/'.$filename);
+        }
+
+        return redirect()->back()->with('error',  trans('general.file_does_not_exist'));
+
     }
 }

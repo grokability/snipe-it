@@ -83,7 +83,8 @@ class AccessoriesController extends Controller
         // Was the accessory created?
         if ($accessory->save()) {
             // Redirect to the new accessory  page
-            return redirect()->to(Helper::getRedirectOption($request, $accessory->id, 'Accessories'))->with('success', trans('admin/accessories/message.create.success'));
+            return Helper::getRedirectOption($request, $accessory->id, 'Accessories')
+                ->with('success', trans('admin/accessories/message.create.success'));
         }
 
         return redirect()->back()->withInput()->withErrors($accessory->getErrors());
@@ -167,7 +168,8 @@ class AccessoriesController extends Controller
             session()->put(['redirect_option' => $request->get('redirect_option')]);
 
             if ($accessory->save()) {
-                return redirect()->to(Helper::getRedirectOption($request, $accessory->id, 'Accessories'))->with('success', trans('admin/accessories/message.update.success'));
+                return Helper::getRedirectOption($request, $accessory->id, 'Accessories')
+                    ->with('success', trans('admin/accessories/message.update.success'));
             }
         } else {
             return redirect()->route('accessories.index')->with('error', trans('admin/accessories/message.does_not_exist'));

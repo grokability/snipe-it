@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'crwdns636:0crwdne636:0',
     'category_name'  					=> 'crwdns637:0crwdne637:0',
     'checkin_email'                     => 'crwdns2034:0crwdne2034:0',
+    'email_to_initiator'                => 'crwdns13442:0crwdne13442:0',
     'checkin_email_notification'        => 'crwdns2035:0crwdne2035:0',
     'clone'                             => 'crwdns1239:0crwdne1239:0',
     'create'  							=> 'crwdns638:0crwdne638:0',

@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Qaanadda Ra\'samaalka',
     'category_name'  					=> 'Magaca Qaanadda',
     'checkin_email'                     => 'U dir email isticmaalaha marka la galayo/baarayo.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'Isticmaalahan waxa loo soo diri doonaa email marka la hubinayo/baarayo.',
     'clone'                             => 'Qaanadda koobiyeynta',
     'create'  							=> 'Sameey Qaanad',

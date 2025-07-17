@@ -225,11 +225,13 @@ return [
     'order_number'          => 'Номер замовлення',
     'only_deleted'          => 'Тільки видалені активи',
     'page_menu'				=> 'Показати _елементи MENU_',
+    'page_error'            => 'Could not determine previous page. Redirected to homepage.',
     'pagination_info'		=> 'Показати _START_ до _END_ із _TOTAL_ елементів',
     'pending'				=> 'Очікуєтся',
     'people'				=> 'Люди',
     'per_page'				=> 'Результатів на стор',
     'previous'				=> 'Попередня',
+    'previous_page'			=> 'Previous Page',
     'processing'			=> 'В обробці',
     'profile'				=> 'Ваш профіль',
     'purchase_cost'                              => 'Вартість покупки',
@@ -251,7 +253,7 @@ return [
     'requested'				=> 'Запрошено користувачем',
     'requested_date'        => 'Дата запиту',
     'requested_assets'      => 'Запитані активи',
-    'requested_assets_menu' => 'Запитані активи',
+    'requested_assets_menu' => 'Requested Items',
     'request_canceled'      => 'Запит скасовано',
     'request_item'          => 'Запросити цю річ',
     'external_link_tooltip' => 'Зовнішнє посилання на',
@@ -311,7 +313,7 @@ return [
     'username'              => 'Ім\'я кристувача',
     'update'                => 'Оновлення',
     'updating_item' => 'Оновлення :item',
-    'upload_filetypes_help'      => 'Дозволені типи файлів - png, gif, jpg, jpeg, doc, docx, pdf, xls, xlsx, txt, lic, xml, xml, zip, rtf і rar. Максимальний розмір завантаження - :size.',
+    'upload_filetypes_help' => 'Allowed filetypes are: :allowed_filetypes. Max upload size allowed is :size.',
     'uploaded'              => 'Завантажено',
     'user'					=> 'Користувач',
     'accepted'			    => 'прийнято',
@@ -321,8 +323,10 @@ return [
     'unaccepted_asset_report' => 'Неприйняті активи',
     'users'                 => 'Користувачі',
     'viewall'				=> 'Переглянути все',
-    'viewassets'  			=> 'Показаті прив\'язані активи',
-    'viewassetsfor'         => 'Переглянути активи для :name',
+    'viewassets'  			=> 'View Assigned Items',
+    'viewassetsfor'         => 'View Items for :name',
+    'view_user_assets'      => 'View Items Assigned to User',
+    'me'                    => 'Me',
     'website'               => 'Веб-сайт',
     'welcome'				=> 'Ласкаво просимо, :name',
     'years'					=> 'років',
@@ -512,6 +516,7 @@ return [
         'manager_last_name' => 'Прізвище менеджера',
         'manager_full_name' => 'Ім\'я менеджера',
         'manager_username' => 'Ім\'я користувача менеджера',
+        'manager_employee_num' => 'Manager Employee Number',
         'checkout_type' => 'Тип процесу оформлення замовлення',
         'checkout_location' => 'Видати за розташуванням',
         'image_filename' => 'Назва файлу зображення',
@@ -636,5 +641,32 @@ return [
             'error' => 'Could not seed manufacturers. A manufacturer record already exists and seeding would overwrite it.|Could not seed manufacturers. :count manufacturer records already exist and seeding would overwrite them.',
         ],
     ],
+
+    'file_upload_status' => [
+
+        'upload' => [
+            'success' => 'File successfully uploaded |:count files successfully uploaded',
+            'error' => 'File upload failed |:count file uploads failed',
+        ],
+
+        'delete' => [
+            'success' => 'File successfully deleted |:count files successfully deleted',
+            'error' => 'File deletion failed |:count file deletions failed',
+        ],
+
+        'file_not_found' => 'The selected file was not found on server',
+        'invalid_id' => 'That file ID is invalid',
+        'invalid_object' => 'That object ID is invalid',
+        'nofiles' => 'No files were included for upload',
+        'confirm_delete' => 'Are you sure you want to delete this file?',
+    ],
+
+    'depreciation_options' => [
+        'amount' => 'Amount',
+        'percent' => 'Percentage',
+    ],
+
+    'months_plural' => '1 month|:count months',
+
 
 ];

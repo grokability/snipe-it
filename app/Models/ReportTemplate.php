@@ -39,16 +39,17 @@ class ReportTemplate extends Model
     protected static function booted()
     {
         // Scope to current user
-        static::addGlobalScope('current_user', function (Builder $builder) {
-            if (auth()->check()) {
-                $builder->where('created_by', auth()->id());
+        static::addGlobalScope(
+            'current_user', function (Builder $builder) {
+                if (auth()->check()) {
+                    $builder->where('created_by', auth()->id());
+                }
             }
-        });
+        );
     }
 
     /**
      * Establishes the report template -> creator relationship.
-     *
      */
     public function creator(): BelongsTo
     {
@@ -60,7 +61,6 @@ class ReportTemplate extends Model
      *
      * @param string $fieldName
      * @param string $fallbackValue The value to return if the report template is not saved yet.
-     *
      */
     public function checkmarkValue(string $fieldName, string $fallbackValue = '1'): string
     {
@@ -83,9 +83,8 @@ class ReportTemplate extends Model
      * Get the value of a radio field for the given field name.
      *
      * @param string $fieldName
-     * @param string $value The value to check against.
-     * @param bool $isDefault Whether the radio input being checked is the default.
-     *
+     * @param string $value     The value to check against.
+     * @param bool   $isDefault Whether the radio input being checked is the default.
      */
     public function radioValue(string $fieldName, string $value, bool $isDefault = false): bool
     {
@@ -109,11 +108,10 @@ class ReportTemplate extends Model
     /**
      * Get the value of a select field for the given field name.
      *
-     * @param string $fieldName
-     * @param string|null $model The Eloquent model to check against.
+     * @param string      $fieldName
+     * @param string|null $model     The Eloquent model to check against.
      *
      * @return mixed|null
-     *
      */
     public function selectValue(string $fieldName, string $model = null)
     {
@@ -146,11 +144,10 @@ class ReportTemplate extends Model
     /**
      * Get the values of a multi-select field for the given field name.
      *
-     * @param string $fieldName
-     * @param string|null $model The Eloquent model to check against.
+     * @param string      $fieldName
+     * @param string|null $model     The Eloquent model to check against.
      *
      * @return iterable
-     *
      */
     public function selectValues(string $fieldName, string $model = null): iterable
     {
@@ -178,8 +175,8 @@ class ReportTemplate extends Model
     /**
      * Get the value of a text field for the given field name.
      *
-     * @param  string  $fieldName
-     * @param  string|null  $fallbackValue
+     * @param string      $fieldName
+     * @param string|null $fallbackValue
      *
      * @return string
      */

@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Kategorie majetku',
     'category_name'  					=> 'Jméno kategorie',
     'checkin_email'                     => 'Při naskladnění/vyskladnění poslat uživateli e-mail.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'Tomuto uživateli bude poslán e-mail při naskladnění/vyskladnění.',
     'clone'                             => 'Klonovat Kategorii',
     'create'  							=> 'Vytvořit kategorii',

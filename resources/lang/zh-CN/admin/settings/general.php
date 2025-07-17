@@ -9,8 +9,8 @@ return [
     'ad_append_domain_help'     => '不要求用户输入“"username@domain.local"，他们只需输入“username”。',
     'admin_cc_email'            => '邮件抄送',
     'admin_cc_email_help'       => '将归还/签出邮件的副本发送到此地址。',
-    'admin_cc_always' => 'Always send copy upon checkin/checkout',
-    'admin_cc_when_acceptance_required' => 'Only send copy upon checkout if acceptance is required',
+    'admin_cc_always' => '签入/签出时总是发送副本',
+    'admin_cc_when_acceptance_required' => '仅在签出需要确认时才发送副本',
     'admin_settings'            => '管理员设置',
     'is_ad'				        => '这是AD域服务器',
     'alerts'                	=> '警报',
@@ -157,6 +157,7 @@ return [
     'scope_locations_fmcs_support_text'  => '支持多个分公司架构的位置范围限定',
     'scope_locations_fmcs_support_help_text'  => '将位置限制在所选公司内。',
     'scope_locations_fmcs_check_button' => '检查兼容性',
+    'scope_locations_fmcs_test_needed' => '请检查兼容性以启用此功能',
     'scope_locations_fmcs_support_disabled_text'  => '当前选项已禁用，原因是有至少:count个项目的位置存在冲突。',
     'show_in_model_list'   => '在型号下拉列表中显示',
     'optional'					=> '可选',
@@ -403,6 +404,9 @@ return [
     'due_checkin_days_help' => '资产应在预计归还多少天前列入“到期归还”页面中？',
     'no_groups' => '尚未创建任何群组。请访问<code>Admin Settings > Permission Groups</code>添加权限群组。',
     'text' => '文本',
+    'manager_view' => '管理者视图',
+    'manager_view_enabled_text' => '开启管理者视图',
+    'manager_view_enabled_help' => '允许管理者在其账户视图中查看分配给他们直接和间接报告的项目。',
 
     'username_formats' => [
         'username_format'		=> '用户名格式',
@@ -486,7 +490,7 @@ return [
         'php_overview'      => 'phpinfo, system, info',
         'purge'             => '永久删除',
         'security'          => '密码、密码、要求、双因素验证、双因素验证、共同密码、远程登录、注销、身份验证',
-        'notifications'     => 'alerts, email, notifications, audit, threshold, email alerts, cc',
+        'notifications'     => '警报、电子邮件、通知、审计门槛值、电子邮件提醒、抄送',
     ],
 
 ];

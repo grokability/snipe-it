@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Activacategorieën',
     'category_name'  					=> 'Categorienaam',
     'checkin_email'                     => 'Stuur een e-mail naar de gebruiker bij in- of uitchecken.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'Deze gebruiker ontvangt een e-mail bij het in- of uitchecken.',
     'clone'                             => 'Categorie dupliceren',
     'create'  							=> 'Categorie aanmaken',

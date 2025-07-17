@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Kategorije resursa',
     'category_name'  					=> 'Naziv kategorije',
     'checkin_email'                     => 'Send email to user on checkin/checkout.',
+    'email_to_initiator'                => 'Pošalji e-poruku sebi kada korisnik prihvati ili odbije zaduženje.',
     'checkin_email_notification'        => 'Korisniku će biti poslat email za checkin/checkout.',
     'clone'                             => 'Kloniraj kategoriju',
     'create'  							=> 'Kreiraj kategoriju',

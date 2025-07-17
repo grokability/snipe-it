@@ -225,11 +225,13 @@ return [
     'order_number'          => 'Bestellnummer',
     'only_deleted'          => 'Nur gelöschte Gegenstände',
     'page_menu'				=> 'Zeige _MENU_ Einträge',
+    'page_error'            => 'Could not determine previous page. Redirected to homepage.',
     'pagination_info'		=> 'Zeige _START_ bis _END_ von _TOTAL_ Einträgen',
     'pending'				=> 'Ausstehende',
     'people'				=> 'Benutzer',
     'per_page'				=> 'Ergebnisse pro Seite',
     'previous'				=> 'Vorherige',
+    'previous_page'			=> 'Previous Page',
     'processing'			=> 'Wird verarbeitet',
     'profile'				=> 'Ihr Profil',
     'purchase_cost'                              => 'Einkaufspreis',
@@ -251,7 +253,7 @@ return [
     'requested'				=> 'Angefordert',
     'requested_date'        => 'Angefordertes Datum',
     'requested_assets'      => 'Angeforderte Assets',
-    'requested_assets_menu' => 'Angeforderte Assets',
+    'requested_assets_menu' => 'Requested Items',
     'request_canceled'      => 'Anfrage abgebrochen',
     'request_item'          => 'Diesen Artikel anfordern',
     'external_link_tooltip' => 'Externer Link zu',
@@ -311,7 +313,7 @@ return [
     'username'              => 'Benutzername',
     'update'                => 'Aktualisieren',
     'updating_item' => ':item wird aktualisiert',
-    'upload_filetypes_help'      => 'Erlaubte Dateitypen sind png, gif, jpg, jpeg, doc, docx, pdf, xls, xlsx, txt, lic, xml, zip, rtf und rar. Maximale Uploadgröße beträgt :size.',
+    'upload_filetypes_help' => 'Allowed filetypes are: :allowed_filetypes. Max upload size allowed is :size.',
     'uploaded'              => 'Hochgeladen',
     'user'					=> 'Benutzer',
     'accepted'			    => 'angenommen',
@@ -321,8 +323,10 @@ return [
     'unaccepted_asset_report' => 'Nicht akzeptierte Assets',
     'users'                 => 'Benutzer',
     'viewall'				=> 'Alle anzeigen',
-    'viewassets'  			=> 'Zugewiesene Assets anzeigen',
-    'viewassetsfor'         => 'Assets von :name anzeigen',
+    'viewassets'  			=> 'View Assigned Items',
+    'viewassetsfor'         => 'View Items for :name',
+    'view_user_assets'      => 'View Items Assigned to User',
+    'me'                    => 'Ich',
     'website'               => 'Webseite',
     'welcome'				=> 'Willkommen, :name',
     'years'					=> 'Jahre',
@@ -512,6 +516,7 @@ return [
         'manager_last_name' => 'Vorgesetzter Nachname',
         'manager_full_name' => 'Vorgesetzter Voller Name',
         'manager_username' => 'Vorgesetzter Benutzername',
+        'manager_employee_num' => 'Manager Employee Number',
         'checkout_type' => 'Herausgabetyp',
         'checkout_location' => 'Herausgeben an Ort',
         'image_filename' => 'Bild Dateiname',
@@ -636,5 +641,32 @@ return [
             'error' => 'Hersteller konnten nicht vorgefüllt werden. Ein Herstellerrekord existiert bereits, und das Füllen würde ihn überschreiben. Konnte Hersteller nicht liefern. :count Herstelleraufzeichnungen existieren bereits, und Füllung würde sie überschreiben.',
         ],
     ],
+
+    'file_upload_status' => [
+
+        'upload' => [
+            'success' => 'File successfully uploaded |:count files successfully uploaded',
+            'error' => 'File upload failed |:count file uploads failed',
+        ],
+
+        'delete' => [
+            'success' => 'File successfully deleted |:count files successfully deleted',
+            'error' => 'File deletion failed |:count file deletions failed',
+        ],
+
+        'file_not_found' => 'The selected file was not found on server',
+        'invalid_id' => 'That file ID is invalid',
+        'invalid_object' => 'That object ID is invalid',
+        'nofiles' => 'No files were included for upload',
+        'confirm_delete' => 'Are you sure you want to delete this file?',
+    ],
+
+    'depreciation_options' => [
+        'amount' => 'Amount',
+        'percent' => 'Percentage',
+    ],
+
+    'months_plural' => '1 month|:count months',
+
 
 ];

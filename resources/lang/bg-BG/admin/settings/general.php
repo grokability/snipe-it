@@ -157,6 +157,7 @@ return [
     'scope_locations_fmcs_support_text'  => 'Подружка на множество местоположения и много фирми',
     'scope_locations_fmcs_support_help_text'  => 'Ограничи местоположенията до техните избрани фирми.',
     'scope_locations_fmcs_check_button' => 'Проверка за съвместимост',
+    'scope_locations_fmcs_test_needed' => 'Please Check Compatibility to enable this',
     'scope_locations_fmcs_support_disabled_text'  => 'Тази опция е забранена, защото имате конфликт на настройката на местоположение на :count или повече артикула.',
     'show_in_model_list'   => 'Показване в падащите менюта на моделите',
     'optional'					=> 'незадължително',
@@ -403,6 +404,9 @@ return [
     'due_checkin_days_help' => 'How many days before the expected checkin of an asset should it be listed in the "Due for checkin" page?',
     'no_groups' => 'No groups have been created yet. Visit <code>Admin Settings > Permission Groups</code> to add one.',
     'text' => 'Text',
+    'manager_view' => 'Manager View',
+    'manager_view_enabled_text' => 'Enable Manager View',
+    'manager_view_enabled_help' => 'Allow managers to view assigned items to their direct and indirect reports in their account view.',
 
     'username_formats' => [
         'username_format'		=> 'Формат на потребителско име',

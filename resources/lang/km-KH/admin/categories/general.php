@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'ប្រភេទ Asset',
     'category_name'  					=> 'ឈ្មោះប្រភេទ',
     'checkin_email'                     => 'ផ្ញើអ៊ីមែលទៅអ្នកប្រើប្រាស់នៅពេល Checkin/checkout',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'អ្នក​ប្រើ​នេះ​នឹង​ត្រូវ​បាន​ផ្ញើ​អ៊ីមែល​មួយ​នៅ​ពេល checkin/checkout',
     'clone'                             => 'ប្រភេទក្លូន',
     'create'  							=> 'បង្កើតប្រភេទ',

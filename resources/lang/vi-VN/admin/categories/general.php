@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Danh mục tài sản',
     'category_name'  					=> 'Tên hạng mục',
     'checkin_email'                     => 'Gửi email đến người dùng khi checkin/checkout.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'Người dùng này sẽ được gửi email khi checkin/checkout.',
     'clone'                             => 'Nhân đôi Danh mục',
     'create'  							=> 'Tạo hạng mục',

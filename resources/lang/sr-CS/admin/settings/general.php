@@ -157,6 +157,7 @@ return [
     'scope_locations_fmcs_support_text'  => 'Opseg lokacija sa punom podrškom višestruko kompanija',
     'scope_locations_fmcs_support_help_text'  => 'Ograniči lokacije prema izabranoj kompaniji.',
     'scope_locations_fmcs_check_button' => 'Proveri kompatibilnost',
+    'scope_locations_fmcs_test_needed' => 'Molim vas proverite kompatibilnost da bi ste ovo omogućili',
     'scope_locations_fmcs_support_disabled_text'  => 'Ova opcija je onemogućena jer imate neispravne lokacije podešene za :count ili više stavki.',
     'show_in_model_list'   => 'Prikaži u padajućim menijima modela',
     'optional'					=> 'opciono',
@@ -403,6 +404,9 @@ return [
     'due_checkin_days_help' => 'Koliko dana ranije pre očekivanog razduženja imovine bi trebalo biti navedena u stranici "Vreme je za razduživanje"?',
     'no_groups' => 'Još uvak nisu kreirane nikakve grupe. Poseti <code>Administrativna podešavanja > Grupe dozvola</code> da bi dodao neku.',
     'text' => 'Tekst',
+    'manager_view' => 'Menadžerov prikaz',
+    'manager_view_enabled_text' => 'Omogući menadžerov prikaz',
+    'manager_view_enabled_help' => 'Dozvoliti menadžerima da vide stavke zadužene njihovim podređenima na stranici naloga.',
 
     'username_formats' => [
         'username_format'		=> 'Format korisničkog imena',

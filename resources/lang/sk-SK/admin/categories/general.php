@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Kategórie majetku',
     'category_name'  					=> 'Názov kategórie',
     'checkin_email'                     => 'Poslať email používateľovi pri prevzatí / odovzdaní.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'Používateľovi bude odoslaný mail pri prevzatí / odovzdaní.',
     'clone'                             => 'Duplikovať kategóriu',
     'create'  							=> 'Vytvoriť kategóriu',

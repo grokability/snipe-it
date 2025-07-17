@@ -2,7 +2,7 @@
 
 return [
 
-    'undeployable' 		 => 'The following assets cannot be deployed and have been removed from checkout: :asset_tags',
+    'undeployable' 		 => '以下资源无法部署并且已经从签出中移除：:asset_tags',
     'does_not_exist' 	 => '资产不存在',
     'does_not_exist_var' => '找不到标签为 :asset_tag 的资产',
     'no_tag' 	         => '未提供资产标签。',
@@ -20,9 +20,9 @@ return [
         'multi_success_linked' => '带有标签 :links 的资产已成功创建。| :count 个资产已成功创建。 :links。',
         'partial_failure' => '无法创建资产。原因：:failures|:count 个资产无法创建。原因：:failures',
         'target_not_found' => [
-            'user' => 'The assigned user could not be found.',
-            'asset' => 'The assigned asset could not be found.',
-            'location' => 'The assigned location could not be found.',
+            'user' => '找不到被分配的用户。',
+            'asset' => '找不到被分配的资产。',
+            'location' => '找不到被分配的位置。',
         ],
     ],
 

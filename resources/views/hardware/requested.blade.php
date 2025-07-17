@@ -26,13 +26,6 @@
                     data-toolbar="#toolbar"
                     class="table table-striped snipe-table"
                     id="requestedAssets"
-                    data-advanced-search="true"
-                    data-search="true"
-                    data-search-highlight="true"
-                    data-show-print="true"
-                    data-show-columns="true"
-                    data-show-export="true"
-                    data-pagination="true"
                     data-id-table="requestedAssets"
                     data-cookie-id-table="requestedAssets"
                     data-export-options='{

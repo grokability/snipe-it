@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> '자산 분류',
     'category_name'  					=> '분류 명',
     'checkin_email'                     => '반입/반출 시 사용자에게 이메일을 보냅니다.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => '이 사용자는 반입 / 반출 시 이메일을 보냅니다.',
     'clone'                             => '분류 복제',
     'create'  							=> '분류 생성',

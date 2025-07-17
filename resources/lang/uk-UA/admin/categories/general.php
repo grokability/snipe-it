@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Категорії активів',
     'category_name'  					=> 'Назва категорії',
     'checkin_email'                     => 'Відправити email користувачеві по перевірці/перевірці.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'Цього користувача буде надіслано листа при перевірці.',
     'clone'                             => 'Клонувати категорію',
     'create'  							=> 'Створити категорію',
