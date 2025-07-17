@@ -106,108 +106,113 @@
         <table
             class="snipe-table table table-striped inventory"
             id="AssetsAssigned"
-            data-columns="{{ \App\Presenters\AssetPresenter::dataTableLayout() }}" {{--using this presenter removes the signature from the table--}}
+{{--            data-columns="{{ \App\Presenters\AssetPresenter::dataTableLayout() }}" --}}{{--using this presenter removes the signature from the table--}}
             data-pagination="false"
+            data-toolbar="#assets-toolbar"
+            data-search="false"
             data-id-table="AssetsAssigned"
-            data-search="true"
             data-side-pagination="client"
             data-sortable="true"
-            data-toolbar="#assets-toolbar"
             data-show-columns="true"
             data-sort-order="desc"
             data-sort-name="created_at"
             data-show-columns-toggle-all="true"
             data-cookie-id-table="AssetsAssigned"
-            data-url="{{ route('api.assets.index',['assigned_to' => $show_user->id, 'assigned_type' => 'App\Models\User']) }}">
+{{--            data-url="{{ route('api.assets.index',['assigned_to' => $show_user->id, 'assigned_type' => 'App\Models\User']) }}">--}}
 
 
-{{--        <thead>--}}
-{{--                <th data-field="asset_id" data-sortable="false" data-visible="true" data-switchable="false">#</th>--}}
-{{--                <th data-field="asset_image" data-sortable="true" data-visible="false" data-switchable="true">{{ trans('general.image') }}</th>--}}
-{{--                <th data-field="asset_tag" data-sortable="true" data-visible="true" data-switchable="false">{{ trans('admin/hardware/table.asset_tag') }}</th>--}}
-{{--                <th data-field="asset_name" data-sortable="true" data-visible="true">{{ trans('general.name') }}</th>--}}
-{{--                <th data-field="asset_category" data-sortable="true" data-visible="true">{{ trans('general.category') }}</th>--}}
-{{--                <th data-field="asset_model" data-sortable="true" data-visible="true">{{ trans('admin/hardware/form.model') }}</th>--}}
-{{--                <th data-field="rtd_location" data-sortable="true" data-visible="true">{{ trans('admin/hardware/form.default_location') }}</th>--}}
-{{--                <th data-field="asset_location" data-sortable="true" data-visible="false">{{ trans('general.location') }}</th>--}}
-{{--                <th data-field="asset_serial" data-sortable="true" data-visible="true">{{ trans('admin/hardware/form.serial') }}</th>--}}
-{{--                <th data-field="asset_checkout_date" data-sortable="true" data-visible="true">{{ trans('admin/hardware/table.checkout_date') }}</th>--}}
-{{--                <th data-field="signature" data-sortable="false" data-visible="true">{{ trans('general.signature') }}</th>--}}
+        <thead>
+                <th data-field="asset_id" data-sortable="false" data-visible="true" data-switchable="false">#</th>
+                <th data-field="asset_image" data-sortable="true" data-visible="false" data-switchable="true">{{ trans('general.image') }}</th>
+                <th data-field="asset_tag" data-sortable="true" data-visible="true" data-switchable="false">{{ trans('admin/hardware/table.asset_tag') }}</th>
+                <th data-field="asset_name" data-sortable="true" data-visible="true">{{ trans('general.name') }}</th>
+                <th data-field="asset_category" data-sortable="true" data-visible="true">{{ trans('general.category') }}</th>
+                <th data-field="asset_model" data-sortable="true" data-visible="true">{{ trans('admin/hardware/form.model') }}</th>
+                <th data-field="rtd_location" data-sortable="true" data-visible="true">{{ trans('admin/hardware/form.default_location') }}</th>
+                <th data-field="asset_location" data-sortable="true" data-visible="false">{{ trans('general.location') }}</th>
+                <th data-field="asset_serial" data-sortable="true" data-visible="true">{{ trans('admin/hardware/form.serial') }}</th>
+                <th data-field="asset_checkout_date" data-sortable="true" data-visible="true">{{ trans('admin/hardware/table.checkout_date') }}</th>
+                <th data-field="signature" data-sortable="false" data-visible="true">{{ trans('general.signature') }}</th>
 
-{{--                <th data-field="custom" data-sortable="true" data-visible="true">{{ trans('general.custom') }} header loop go here</th>--}}
-{{--            </thead>--}}
-{{--            <tbody>--}}
-{{--            @foreach ($show_user->assets as $asset)--}}
-{{--                @php--}}
-{{--                    if (($asset->model->category) && ($asset->model->category->getEula())) $eulas[] = $asset->model->category->getEula()--}}
-{{--                @endphp--}}
-{{--                <tr>--}}
-{{--                    <td>{{ $counter }}</td>--}}
-{{--                    <td>--}}
-{{--                        @if ($asset->getImageUrl())--}}
-{{--                            <img src="{{ $asset->getImageUrl() }}" class="thumbnail" style="max-height: 50px;">--}}
-{{--                        @endif--}}
-{{--                    </td>--}}
-{{--                    <td>{{ $asset->asset_tag }}</td>--}}
-{{--                    <td>{{ $asset->name }}</td>--}}
-{{--                    <td>{{ (($asset->model) && ($asset->model->category)) ? $asset->model->category->name : trans('general.invalid_category') }}</td>--}}
-{{--                    <td>{{ ($asset->model) ? $asset->model->name : trans('general.invalid_model') }}</td>--}}
-{{--                    <td>{{ ($asset->defaultLoc) ? $asset->defaultLoc->name : '' }}</td>--}}
-{{--                    <td>{{ ($asset->location) ? $asset->location->name : '' }}</td>--}}
-{{--                    <td>{{ $asset->serial }}</td>--}}
-{{--                    <td>--}}
-{{--                        {{ Helper::getFormattedDateObject($asset->last_checkout, 'datetime', false) }}</td>--}}
-{{--                    <td>--}}
-{{--                        @if ($asset->getLatestSignedAcceptance($show_user))--}}
-{{--                            <img style="width:auto;height:100px;" src="{{ asset('/') }}display-sig/{{ $asset->getLatestSignedAcceptance($show_user)->accept_signature }}">--}}
-{{--                        @endif--}}
-{{--                    </td>--}}
-{{--                    <td>--}}
-{{--                        data loop go here--}}
-{{--                    </td>--}}
-{{--                    --}}{{--                    wouldn't this actually search for the checked custom fields, build an array of those, and then add on columns as needed?--}}
-{{--                    --}}{{--                    probably a mess under the hood, but that seems the most streamlined way?--}}
-{{--                    --}}{{--                        wait, what if the custom field is encrypted--}}
-{{--                    --}}{{----}}
-{{--                </tr>--}}
-{{--                @if ($settings->show_assigned_assets)--}}
-{{--                    @php--}}
-{{--                        $assignedCounter = 1;--}}
-{{--                    @endphp--}}
-{{--                    @foreach ($asset->assignedAssets as $asset)--}}
-{{--                        <tr>--}}
-{{--                            <td>{{ $counter }}.{{ $assignedCounter }}</td>--}}
-{{--                            <td>--}}
-{{--                                @if ($asset->getImageUrl())--}}
-{{--                                    <img src="{{ $asset->getImageUrl() }}" class="thumbnail" style="max-height: 50px;">--}}
-{{--                                @endif--}}
-{{--                            </td>--}}
-{{--                            <td>{{ $asset->asset_tag }}</td>--}}
-{{--                            <td>{{ $asset->name }}</td>--}}
-{{--                            <td>{{ (($asset->model) && ($asset->model->category)) ? $asset->model->category->name : trans('general.invalid_category') }}</td>--}}
-{{--                            <td>{{ ($asset->model) ? $asset->model->name : trans('general.invalid_model') }}</td>--}}
-{{--                            <td>{{ ($asset->defaultLoc) ? $asset->defaultLoc->name : '' }}</td>--}}
-{{--                            <td>{{ ($asset->location) ? $asset->location->name : '' }}</td>--}}
-{{--                            <td>{{ $asset->serial }}</td>--}}
-{{--                            <td>--}}
-{{--                                {{ Helper::getFormattedDateObject($asset->last_checkout, 'datetime', false) }}--}}
-{{--                            </td>--}}
-{{--                            <td>--}}
-{{--                                @if ($asset->getLatestSignedAcceptance($show_user))--}}
-{{--                                    <img style="width:auto;height:100px;" src="{{ asset('/') }}display-sig/{{ $asset->getLatestSignedAcceptance($show_user)->accept_signature }}">--}}
-{{--                                @endif--}}
-{{--                            </td>--}}
-{{--                        </tr>--}}
-{{--                        @php--}}
-{{--                            $assignedCounter++--}}
-{{--                        @endphp--}}
-{{--                    @endforeach--}}
-{{--                @endif--}}
-{{--                @php--}}
-{{--                    $counter++--}}
-{{--                @endphp--}}
-{{--            @endforeach--}}
-{{--            </tbody>--}}
+
+                <th data-field="custom" data-sortable="true" data-visible="true">{{ trans('general.custom') }} header loop go here</th>
+            </thead>
+            <tbody>
+            @foreach ($show_user->assets as $asset)
+                @php
+                    if (($asset->model->category) && ($asset->model->category->getEula())) $eulas[] = $asset->model->category->getEula()
+                @endphp
+                <tr>
+                    <td>{{ $counter }}</td>
+                    <td>
+                        @if ($asset->getImageUrl())
+                            <img src="{{ $asset->getImageUrl() }}" class="thumbnail" style="max-height: 50px;">
+                        @endif
+                    </td>
+                    <td>{{ $asset->asset_tag }}</td>
+                    <td>{{ $asset->name }}</td>
+                    <td>{{ (($asset->model) && ($asset->model->category)) ? $asset->model->category->name : trans('general.invalid_category') }}</td>
+                    <td>{{ ($asset->model) ? $asset->model->name : trans('general.invalid_model') }}</td>
+                    <td>{{ ($asset->defaultLoc) ? $asset->defaultLoc->name : '' }}</td>
+                    <td>{{ ($asset->location) ? $asset->location->name : '' }}</td>
+                    <td>{{ $asset->serial }}</td>
+                    <td>
+                        {{ Helper::getFormattedDateObject($asset->last_checkout, 'datetime', false) }}</td>
+                    <td>
+                        @if ($asset->getLatestSignedAcceptance($show_user))
+                            <img style="width:auto;height:100px;" src="{{ asset('/') }}display-sig/{{ $asset->getLatestSignedAcceptance($show_user)->accept_signature }}">
+                        @endif
+                    </td>
+
+                    @foreach($asset->model->fieldset->fields as $fields)
+                        @dd($asset->model->fieldset->fields);
+                        {{-- weird that line 167 will pop a cant read property on null, but only when the dd is not there. --}}
+                    <td>
+                        {{ $fields }}
+                    </td>
+                    @endforeach
+{{--                                        wouldn't this actually search for the checked custom fields, build an array of those, and then add on columns as needed?--}}
+{{--                                        probably a mess under the hood, but that seems the most streamlined way?--}}
+
+                </tr>
+                @if ($settings->show_assigned_assets)
+                    @php
+                        $assignedCounter = 1;
+                    @endphp
+                    @foreach ($asset->assignedAssets as $asset)
+                        <tr>
+                            <td>{{ $counter }}.{{ $assignedCounter }}</td>
+                            <td>
+                                @if ($asset->getImageUrl())
+                                    <img src="{{ $asset->getImageUrl() }}" class="thumbnail" style="max-height: 50px;">
+                                @endif
+                            </td>
+                            <td>{{ $asset->asset_tag }}</td>
+                            <td>{{ $asset->name }}</td>
+                            <td>{{ (($asset->model) && ($asset->model->category)) ? $asset->model->category->name : trans('general.invalid_category') }}</td>
+                            <td>{{ ($asset->model) ? $asset->model->name : trans('general.invalid_model') }}</td>
+                            <td>{{ ($asset->defaultLoc) ? $asset->defaultLoc->name : '' }}</td>
+                            <td>{{ ($asset->location) ? $asset->location->name : '' }}</td>
+                            <td>{{ $asset->serial }}</td>
+                            <td>
+                                {{ Helper::getFormattedDateObject($asset->last_checkout, 'datetime', false) }}
+                            </td>
+                            <td>
+                                @if ($asset->getLatestSignedAcceptance($show_user))
+                                    <img style="width:auto;height:100px;" src="{{ asset('/') }}display-sig/{{ $asset->getLatestSignedAcceptance($show_user)->accept_signature }}">
+                                @endif
+                            </td>
+                        </tr>
+                        @php
+                            $assignedCounter++
+                        @endphp
+                    @endforeach
+                @endif
+                @php
+                    $counter++
+                @endphp
+            @endforeach
+            </tbody>
         </table>
     @endif
 
