@@ -117,7 +117,7 @@
 
 
         <thead>
-                <th data-field="asset_id" data-sortable="false" data-visible="true" data-switchable="false">#</th>
+                <th data-field="asset_id" data-sortable="true" data-visible="true" data-switchable="false">#</th>
                 <th data-field="asset_image" data-sortable="true" data-visible="false" data-switchable="true">{{ trans('general.image') }}</th>
                 <th data-field="asset_tag" data-sortable="true" data-visible="true" data-switchable="false">{{ trans('admin/hardware/table.asset_tag') }}</th>
                 <th data-field="asset_name" data-sortable="true" data-visible="true">{{ trans('general.name') }}</th>
@@ -129,7 +129,7 @@
                 <th data-field="asset_checkout_date" data-sortable="true" data-visible="true">{{ trans('admin/hardware/table.checkout_date') }}</th>
 
                 @foreach($printable_customfields as $customfield)
-                    <th data-field="custom" data-sortable="true" data-visible="true">
+                    <th data-sortable="true" data-visible="true">
                         {{$customfield->name}}
                     </th>
                 @endforeach
@@ -160,7 +160,7 @@
                         {{ Helper::getFormattedDateObject($asset->last_checkout, 'datetime', false) }}</td>
 
                     @foreach($printable_customfields as $customfield)
-                        <td data-field="custom" data-sortable="true" data-visible="true">
+                        <td>
                             {{ $asset->{$customfield->db_column} }}
                         </td>
                     @endforeach

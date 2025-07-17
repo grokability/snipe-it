@@ -624,7 +624,9 @@ class UsersController extends Controller
             return view('users.print')
                 ->with('users', [$user])
                 ->with('settings', Setting::getSettings())
-                ->with('printable_customfields', CustomField::all()->filter(fn($customfield) => $customfield->display_on_print_assigned));
+                ->with('printable_customfields', CustomField::all()->filter(function ($customfield) {
+                    return $customfield->display_on_print_assigned && $customfield->field_encrypted == 0;
+                }));
         }
 
         return redirect()->route('users.index')->with('error', trans('admin/users/message.user_not_found', compact('id')));
