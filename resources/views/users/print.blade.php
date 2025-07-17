@@ -98,9 +98,6 @@
             </h4>
         </div>
 
-{{--        @php--}}
-{{--            dd($show_user->id);--}}
-{{--        @endphp--}}
 
 
         <table
@@ -135,7 +132,7 @@
                 <th data-field="signature" data-sortable="false" data-visible="true">{{ trans('general.signature') }}</th>
 
 
-                <th data-field="custom" data-sortable="true" data-visible="true">{{ trans('general.custom') }} header loop go here</th>
+                <th data-field="custom" data-sortable="true" data-visible="true">{{ trans('general.custom') }}</th>
             </thead>
             <tbody>
             @foreach ($show_user->assets as $asset)
@@ -164,13 +161,19 @@
                         @endif
                     </td>
 
-                    @foreach($asset->model->fieldset->fields as $fields)
-                        @dd($asset->model->fieldset->fields);
-                        {{-- weird that line 167 will pop a cant read property on null, but only when the dd is not there. --}}
-                    <td>
-                        {{ $fields }}
-                    </td>
-                    @endforeach
+
+
+
+
+{{--                    @foreach($asset->model->fieldset->fields as $fields)--}}
+{{--                        @dd($asset->model->fieldset->fields);--}}
+{{--                        --}}{{-- weird that line 167 will pop a cant read property on null, but only when the dd is not there. --}}
+{{--                    <td>--}}
+{{--                        @if($fields->display_on_print_assigned=='1')--}}
+{{--                            $fields;--}}
+{{--                        @endif--}}
+{{--                    </td>--}}
+{{--                    @endforeach--}}
 {{--                                        wouldn't this actually search for the checked custom fields, build an array of those, and then add on columns as needed?--}}
 {{--                                        probably a mess under the hood, but that seems the most streamlined way?--}}
 
