@@ -103,7 +103,6 @@
         <table
             class="snipe-table table table-striped inventory"
             id="AssetsAssigned"
-{{--            data-columns="{{ \App\Presenters\AssetPresenter::dataTableLayout() }}" --}}{{--using this presenter removes the signature from the table--}}
             data-pagination="false"
             data-toolbar="#assets-toolbar"
             data-search="false"
@@ -114,8 +113,7 @@
             data-sort-order="desc"
             data-sort-name="created_at"
             data-show-columns-toggle-all="true"
-            data-cookie-id-table="AssetsAssigned"
-{{--            data-url="{{ route('api.assets.index',['assigned_to' => $show_user->id, 'assigned_type' => 'App\Models\User']) }}">--}}
+            data-cookie-id-table="AssetsAssigned">
 
 
         <thead>
@@ -129,11 +127,16 @@
                 <th data-field="asset_location" data-sortable="true" data-visible="false">{{ trans('general.location') }}</th>
                 <th data-field="asset_serial" data-sortable="true" data-visible="true">{{ trans('admin/hardware/form.serial') }}</th>
                 <th data-field="asset_checkout_date" data-sortable="true" data-visible="true">{{ trans('admin/hardware/table.checkout_date') }}</th>
+
+                @foreach($printable_customfields as $customfield)
+                    <th data-field="custom" data-sortable="true" data-visible="true">
+                        {{$customfield->name}}
+                    </th>
+                @endforeach
+
                 <th data-field="signature" data-sortable="false" data-visible="true">{{ trans('general.signature') }}</th>
 
-
-                <th data-field="custom" data-sortable="true" data-visible="true">{{ trans('general.custom') }}</th>
-            </thead>
+        </thead>
             <tbody>
             @foreach ($show_user->assets as $asset)
                 @php
@@ -155,27 +158,18 @@
                     <td>{{ $asset->serial }}</td>
                     <td>
                         {{ Helper::getFormattedDateObject($asset->last_checkout, 'datetime', false) }}</td>
+
+                    @foreach($printable_customfields as $customfield)
+                        <td data-field="custom" data-sortable="true" data-visible="true">
+                            {{ $asset->{$customfield->db_column} }}
+                        </td>
+                    @endforeach
+
                     <td>
                         @if ($asset->getLatestSignedAcceptance($show_user))
                             <img style="width:auto;height:100px;" src="{{ asset('/') }}display-sig/{{ $asset->getLatestSignedAcceptance($show_user)->accept_signature }}">
                         @endif
                     </td>
-
-
-
-
-
-{{--                    @foreach($asset->model->fieldset->fields as $fields)--}}
-{{--                        @dd($asset->model->fieldset->fields);--}}
-{{--                        --}}{{-- weird that line 167 will pop a cant read property on null, but only when the dd is not there. --}}
-{{--                    <td>--}}
-{{--                        @if($fields->display_on_print_assigned=='1')--}}
-{{--                            $fields;--}}
-{{--                        @endif--}}
-{{--                    </td>--}}
-{{--                    @endforeach--}}
-{{--                                        wouldn't this actually search for the checked custom fields, build an array of those, and then add on columns as needed?--}}
-{{--                                        probably a mess under the hood, but that seems the most streamlined way?--}}
 
                 </tr>
                 @if ($settings->show_assigned_assets)
