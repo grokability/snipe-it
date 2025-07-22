@@ -152,6 +152,7 @@ Route::group(
         Route::delete('{asset}/showfile/{fileId}/delete',
             [AssetFilesController::class, 'destroy']
         )->name('delete/assetfile')->withTrashed();
+        Route::get('hardware/bulkedit', [BulkAssetsController::class, 'bulkEditForm'])->name('hardware.bulkedit');
 
         Route::post(
             'bulkedit',

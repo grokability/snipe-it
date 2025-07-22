@@ -4,27 +4,6 @@
 */
 
 /**
- * Locale macro
- * Generates the dropdown menu of available languages
- */
-Form::macro('locales', function ($name = 'locale', $selected = null, $class = null, $id = null) {
-
-    $idclause = (!is_null($id)) ? $id : '';
-
-    $select = '<select name="'.$name.'" class="'.$class.'" style="width:100%"'.$idclause.' aria-label="'.$name.'" data-placeholder="'.trans('localizations.select_language').'">';
-    $select .= '<option value=""  role="option">'.trans('localizations.select_language').'</option>';
-
-    // Pull the autoglossonym array from the localizations translation file
-    foreach (trans('localizations.languages') as $abbr => $locale) {
-        $select .= '<option value="'.$abbr.'"'.(($selected == $abbr) ? ' selected="selected" role="option" aria-selected="true"' : ' aria-selected="false"').'>'.$locale.'</option> ';
-    }
-
-    $select .= '</select>';
-
-    return $select;
-});
-
-/**
  * Country macro
  * Generates the dropdown menu of countries for the profile form
  */
@@ -197,7 +176,7 @@ Form::macro('email_format', function ($name = 'email_format', $selected = null, 
         'filastname' => trans('admin/settings/general.email_formats.filastname_format'),
         'lastnamefirstinitial' => trans('admin/settings/general.email_formats.lastnamefirstinitial_format'),
         'firstname_lastname' => trans('admin/settings/general.email_formats.firstname_lastname_underscore_format'),
-        'firstinitial.lastname' => trans('admin/settings/general.email_formats.firstinitial.lastname'),
+        'firstinitial.lastname' => trans('admin/settings/general.email_formats.firstinitial_lastname'),
         'lastname_firstinitial' => trans('admin/settings/general.email_formats.lastname_firstinitial'),
         'lastname.firstinitial' => trans('admin/settings/general.email_formats.lastname_dot_firstinitial_format'),
         'firstnamelastname' => trans('admin/settings/general.email_formats.firstnamelastname'),
@@ -223,7 +202,7 @@ Form::macro('username_format', function ($name = 'username_format', $selected = 
         'filastname' => trans('admin/settings/general.username_formats.filastname_format'),
         'lastnamefirstinitial' => trans('admin/settings/general.username_formats.lastnamefirstinitial_format'),
         'firstname_lastname' => trans('admin/settings/general.username_formats.firstname_lastname_underscore_format'),
-        'firstinitial.lastname' => trans('admin/settings/general.username_formats.firstinitial.lastname'),
+        'firstinitial.lastname' => trans('admin/settings/general.username_formats.firstinitial_lastname'),
         'lastname_firstinitial' => trans('admin/settings/general.username_formats.lastname_firstinitial'),
         'lastname.firstinitial' => trans('admin/settings/general.username_formats.lastname_dot_firstinitial_format'),
         'firstnamelastname' => trans('admin/settings/general.username_formats.firstnamelastname'),
@@ -234,102 +213,6 @@ Form::macro('username_format', function ($name = 'username_format', $selected = 
     $select = '<select name="'.$name.'" class="'.$class.'" style="width: 100%" aria-label="'.$name.'">';
     foreach ($formats as $format => $label) {
         $select .= '<option value="'.$format.'"'.($selected == $format ? ' selected="selected" role="option" aria-selected="true"' : ' aria-selected="false"').'>'.$label.'</option> '."\n";
-    }
-
-    $select .= '</select>';
-
-    return $select;
-});
-
-Form::macro('two_factor_options', function ($name = 'two_factor_enabled', $selected = null, $class = null) {
-    $formats = [
-        '' => trans('admin/settings/general.two_factor_disabled'),
-        '1' => trans('admin/settings/general.two_factor_optional'),
-        '2' => trans('admin/settings/general.two_factor_required'),
-
-    ];
-
-    $select = '<select name="'.$name.'" class="'.$class.'" aria-label="'.$name.'">';
-    foreach ($formats as $format => $label) {
-        $select .= '<option value="'.$format.'"'.($selected == $format ? ' selected="selected" role="option" aria-selected="true"' : ' aria-selected="false"').'>'.$label.'</option> '."\n";
-    }
-
-    $select .= '</select>';
-
-    return $select;
-});
-
-Form::macro('customfield_elements', function ($name = 'customfield_elements', $selected = null, $class = null) {
-    $formats = [
-        'text' => 'Text Box',
-        'listbox' => 'List Box',
-        'textarea' => 'Textarea (multi-line) ',
-        'checkbox' => 'Checkbox',
-        'radio' => 'Radio Buttons',
-    ];
-
-    $select = '<select name="'.$name.'" class="'.$class.'" style="width: 100%" aria-label="'.$name.'">';
-    foreach ($formats as $format => $label) {
-        $select .= '<option value="'.$format.'"'.($selected == $format ? ' selected="selected" role="option" aria-selected="true"' : ' aria-selected="false"').'>'.$label.'</option> '."\n";
-    }
-
-    $select .= '</select>';
-
-    return $select;
-});
-
-Form::macro('skin', function ($name = 'skin', $selected = null, $class = null) {
-    $formats = [
-        'blue' => trans('general.skins.default_blue'),
-        'blue-dark' => trans('general.skins.blue_dark'),
-        'green' => trans('general.skins.green'),
-        'green-dark' => trans('general.skins.green_dark'),
-        'red' => trans('general.skins.red'),
-        'red-dark' => trans('general.skins.red_dark'),
-        'orange' => trans('general.skins.orange'),
-        'orange-dark' => trans('general.skins.orange_dark'),
-        'black' => trans('general.skins.black'),
-        'black-dark' => trans('general.skins.black_dark'),
-        'purple' => trans('general.skins.purple'),
-        'purple-dark' => trans('general.skins.purple_dark'),
-        'yellow' => trans('general.skins.yellow_dark'),
-        'yellow-dark' => trans('general.skins.yellow'),
-        'contrast' => trans('general.skins.high_contrast'),
-    ];
-
-    $select = '<select name="'.$name.'" class="'.$class.'" style="width: 250px" aria-label="'.$name.'">';
-    foreach ($formats as $format => $label) {
-        $select .= '<option value="'.$format.'"'.($selected == $format ? ' selected="selected" role="option" aria-selected="true"' : ' aria-selected="false"').'>'.$label.'</option> '."\n";
-    }
-
-    $select .= '</select>';
-
-    return $select;
-});
-
-Form::macro('user_skin', function ($name = 'skin', $selected = null, $class = null) {
-    $formats = [
-        '' => 'Site Default',
-        'blue' => trans('general.skins.default_blue'),
-        'blue-dark' => trans('general.skins.blue_dark'),
-        'green' => trans('general.skins.green'),
-        'green-dark' => trans('general.skins.green_dark'),
-        'red' => trans('general.skins.red'),
-        'red-dark' => trans('general.skins.red_dark'),
-        'orange' => trans('general.skins.orange'),
-        'orange-dark' => trans('general.skins.orange_dark'),
-        'black' => trans('general.skins.black'),
-        'black-dark' => trans('general.skins.black_dark'),
-        'purple' => trans('general.skins.purple'),
-        'purple-dark' => trans('general.skins.purple_dark'),
-        'yellow' => trans('general.skins.yellow_dark'),
-        'yellow-dark' => trans('general.skins.yellow'),
-        'contrast' => trans('general.skins.high_contrast'),
-    ];
-
-    $select = '<select name="'.$name.'" class="'.$class.'" style="width: 250px">';
-    foreach ($formats as $format => $label) {
-        $select .= '<option value="'.$format.'"'.($selected == $format ? ' selected="selected"' : '').'>'.$label.'</option> '."\n";
     }
 
     $select .= '</select>';

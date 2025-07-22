@@ -18,7 +18,7 @@ return array(
         'confirm'   => 'Bu bileşeni silmek istediğinizden emin misiniz?',
         'error'   => 'Bileşen silinirken sorun oluştu. Lütfen yeniden deneyin.',
         'success' => 'Bileşen başarıyla silindi.',
-        'error_qty'   => 'Some components of this type are still checked out. Please check them in and try again.',
+        'error_qty'   => 'Bu türden bazı bileşenler hala alınmış. Lütfen bunları teslim edin ve tekrar deneyin.',
     ),
 
      'checkout' => array(

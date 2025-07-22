@@ -6,8 +6,6 @@ return array(
     'account_not_found'      => 'Nome utente o password non corretto.',
     'account_not_activated'  => 'Questo account non è attivo.',
     'account_suspended'      => 'Questo account è sospeso.',
-    'account_banned'         => 'Questo account è bannato.',
-    'throttle'               => 'Troppi tentativi di login falliti. Per favore riprova entro :minutes minuti.',
 
     'two_factor' => array(
         'already_enrolled'      => 'Il tuo dispositivo è già registrato.',

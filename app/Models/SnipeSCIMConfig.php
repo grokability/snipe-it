@@ -64,7 +64,7 @@ class SnipeSCIMConfig extends \ArieTimmerman\Laravel\SCIMServer\SCIMConfig
             //eager loading
             'withRelations' => [],
             'map_unmapped' => false,
-//            'unmapped_namespace' => 'urn:ietf:params:scim:schemas:laravel:unmapped',
+            //            'unmapped_namespace' => 'urn:ietf:params:scim:schemas:laravel:unmapped',
             'description' => 'User Account',
 
             // Map a SCIM attribute to an attribute of the object.

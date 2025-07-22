@@ -13,4 +13,8 @@ return [
     'no_depreciations_warning'               => '<strong>Uwaga: </strong>
                       Obecnie nie masz żadnych skonfigurowanych amortyzacji.
                       Skonfiguruj co najmniej jedną amortyzację, aby wyświetlić raport.',
+    'depreciation_method'                   => 'Raport Amortyzacji',
+    'linear_depreciation'                   => 'Linear (Default)',
+    'half_1'                                => 'Half-year convention, always applied',
+    'half_2'                                => 'Half-year convention, applied with condition',
 ];

@@ -6,8 +6,6 @@ return array(
     'account_not_found'      => 'Numele de utilizator sau parola este incorecta.',
     'account_not_activated'  => 'Acest utilizator nu a fost activat.',
     'account_suspended'      => 'Acest utilizator este suspendat.',
-    'account_banned'         => 'Acest utilizator este banat.',
-    'throttle'               => 'Prea multe încercări de conectare nereușite. Vă rugăm să încercați din nou în :minute minute.',
 
     'two_factor' => array(
         'already_enrolled'      => 'Dispozitivul dumneavoastră este deja înscris.',

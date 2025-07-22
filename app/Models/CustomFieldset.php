@@ -20,6 +20,7 @@ class CustomFieldset extends Model
 
     /**
      * Validation rules
+     *
      * @var array
      */
     public $rules = [
@@ -39,7 +40,7 @@ class CustomFieldset extends Model
      * Establishes the fieldset -> field relationship
      *
      * @author [Brady Wetherington] [<uberbrady@gmail.com>]
-     * @since [v3.0]
+     * @since  [v3.0]
      * @return \Illuminate\Database\Eloquent\Relations\Relation
      */
     public function fields()
@@ -51,7 +52,7 @@ class CustomFieldset extends Model
      * Establishes the fieldset -> models relationship
      *
      * @author [Brady Wetherington] [<uberbrady@gmail.com>]
-     * @since [v3.0]
+     * @since  [v3.0]
      * @return \Illuminate\Database\Eloquent\Relations\Relation
      */
     public function models()
@@ -63,7 +64,7 @@ class CustomFieldset extends Model
      * Establishes the fieldset -> admin user relationship
      *
      * @author [Brady Wetherington] [<uberbrady@gmail.com>]
-     * @since [v3.0]
+     * @since  [v3.0]
      * @return \Illuminate\Database\Eloquent\Relations\Relation
      */
     public function user()
@@ -71,12 +72,31 @@ class CustomFieldset extends Model
         return $this->belongsTo(\App\Models\User::class); //WARNING - not all CustomFieldsets have a User!!
     }
 
+    public function displayAnyFieldsInForm($form_type = null)
+    {
+        if ($this->fields) {
+
+            switch ($form_type) {
+            case 'audit':
+                return $this->fields->where('display_audit', '1')->count() > 0;
+            case 'checkin':
+                return $this->fields->where('display_checkin', '1')->count() > 0;
+            case 'checkout':
+                return $this->fields->where('display_checkout', '1')->count() > 0;
+            default:
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /**
      * Determine the validation rules we should apply based on the
      * custom field format
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
+     * @since  [v3.0]
      * @return array
      */
     public function validation_rules()
@@ -85,8 +105,9 @@ class CustomFieldset extends Model
         foreach ($this->fields as $field) {
             $rule = [];
 
-            if (($field->field_encrypted != '1') ||
-                  (($field->field_encrypted == '1') && (Gate::allows('admin')))) {
+            if (($field->field_encrypted != '1') 
+                || (($field->field_encrypted == '1') && (Gate::allows('admin')))
+            ) {
                     $rule[] = ($field->pivot->required == '1') ? 'required' : 'nullable';
             }
 
@@ -94,7 +115,10 @@ class CustomFieldset extends Model
                     $rule[] = 'unique_undeleted';
             }
 
-            array_push($rule, $field->attributes['format']);
+            if ($field->attributes['format']!='') {
+                array_push($rule, $field->attributes['format']);
+            }
+
             $rules[$field->db_column_name()] = $rule;
 
 

@@ -3,7 +3,7 @@
 return array(
 
     'does_not_exist' => 'Lokasi tidak ada.',
-    'assoc_users'    => 'Lokasi ini saat ini tidak dapat dihapus karena merupakan lokasi catatan untuk minimal satu aset atau pengguna, memiliki aset yang ditetapkan pada lokasi tersebut, atau merupakan lokasi induk dari lokasi lain. Harap perbarui catatan Anda agar tidak lagi mereferensikan lokasi ini dan coba lagi. ',
+    'assoc_users'    => 'Lokasi ini saat ini tidak dapat dihapus karena merupakan lokasi catatan untuk minimal satu aset atau pengguna, memiliki aset yang ditetapkan pada lokasi tersebut, atau merupakan lokasi induk dari lokasi lain. Harap perbarui catatan Anda agar tidak lagi mereferensikan lokasi ini dan coba lagi ',
     'assoc_assets'	 => 'Lokasi saat ini dikaitkan dengan setidaknya oleh satu aset dan tidak dapat dihapus. Perbarui aset Anda yang tidak ada referensi dari lokasi ini dan coba lagi. ',
     'assoc_child_loc'	 => 'Lokasi saat ini digunakan oleh induk salah satu dari turunan lokasi dan tidak dapat di hapus. Mohon perbarui lokasi Anda ke yang tidak ada referensi dengan lokasi ini dan coba kembali. ',
     'assigned_assets' => 'Aset yang Ditetapkan',

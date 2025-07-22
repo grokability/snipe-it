@@ -6,8 +6,6 @@ return array(
     'account_not_found'      => 'Korisničko ime ili zaporka nisu točni.',
     'account_not_activated'  => 'Ovaj korisnički račun nije aktiviran.',
     'account_suspended'      => 'Ovaj je korisnički račun obustavljen.',
-    'account_banned'         => 'Ovaj je korisnički račun zabranjen.',
-    'throttle'               => 'Too many failed login attempts. Please try again in :minutes minutes.',
 
     'two_factor' => array(
         'already_enrolled'      => 'Your device is already enrolled.',
@@ -25,7 +23,7 @@ return array(
 
     'logout' => array(
         'error'   => 'There was a problem while trying to log you out, please try again.',
-        'success' => 'You have successfully logged out.',
+        'success' => 'Uspješno ste odjavljeni.',
     ),
 
     'signup' => array(

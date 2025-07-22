@@ -53,4 +53,5 @@ return [
     'next_save_user' => 'Volgende: Gebruiker opslaan',
     'all_assigned_list_generation' => 'Aangemaakt op:',
     'email_user_creds_on_create' => 'Deze gebruiker zijn inloggegevens e-mailen?',
+    'department_manager' => 'Department Manager',
 ];

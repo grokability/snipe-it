@@ -9,6 +9,7 @@ return [
     'bulk_checkin'              => 'Bulk Checkin',
     'checkin'  					=> 'Раздолжи основно средство',
     'checkout'  				=> 'Задолжи основно средство',
+    'clear'                     => 'Clear',
     'clone'  					=> 'Клонирај основно средство',
     'deployable'  				=> 'Распоредливи',
     'deleted'  					=> 'Ова основно средство е избришано.',
@@ -27,8 +28,7 @@ return [
     'undeployable_tooltip'  	=> 'Ова основно средство има статус на нераспоредливо и моментално не е можно да се задолжи.',
     'view'  					=> 'Преглед на основно средство',
     'csv_error' => 'Имате грешка во вашата CSV датотека:',
-    'import_text' => '<p>Прикачете CSV датотека што содржи историја на основното средство. Основните средства и корисниците МОРА да постојат во системот, или тие ќе бидат изоставени. Усогласувањето на средствата за увоз на историја се врши со ознаката на средството. Ќе се обидеме да најдеме соодветен корисник врз основа на името на корисникот што го давате и критериумите што ќе ги изберете подолу. Ако не изберете ниту еден критериум подолу, тој едноставно ќе се обиде да се совпадне со форматот на корисничкото име што го конфигуриравте во <code>Admin &gt; Општи подесувања</code>.</p><p>Полињата вклучени во CSV мора да одговараат на заглавија: <strong>Инвентарен број, Име, Датум на задолжување, Датум на раздолжување</strong>. Сите дополнителни полиња ќе бидат игнорирани. </p><p>Датум на раздолжување: празно или идни датуми за раздолжување ќе ги задолжат ставките на наведениот корисник.  Исклучувајќи ја колоната за датум на раздолжување ќе создаде датум за раздолжување со денешен датум.</p>
-    ',
+    'import_text' => '<p>Upload a CSV that contains asset history. The assets and users MUST already exist in the system, or they will be skipped. Matching assets for history import happens against the asset tag. We will try to find a matching user based on the user\'s name you provide, and the criteria you select below. If you do not select any criteria below, it will simply try to match on the username format you configured in the <code>Admin &gt; General Settings</code>.</p><p>Fields included in the CSV must match the headers: <strong>Asset Tag, Name, Checkout Date, Checkin Date</strong>. Any additional fields will be ignored. </p><p>Checkin Date: blank or future checkin dates will checkout items to associated user.  Excluding the Checkin Date column will create a checkin date with todays date.</p>    ',
     'csv_import_match_f-l' => 'Усогласи корисници по <strong>име.презиме</strong> (<code>jane.smith</code>) format',
     'csv_import_match_initial_last' => 'Усогласи корисници по <strong>прв иницијал од презимето</strong> (<code>jsmith</code>) format',
     'csv_import_match_first' => 'Усогласи корисници по <strong>име</strong> (<code>jane</code>) format',

@@ -8,5 +8,5 @@ return array(
     'remaining' 			            => 'Preostanek',
     'total' 			                => 'Skupaj',
     'update'                            => 'Posodobi potrošni material',
-    'inventory_warning'                 => 'The inventory of this consumable is below the minimum amount of :min_count',
+    'inventory_warning'                 => 'Zaloga tega potrošnega materiala je pod minimalno količino :min_count',
 );

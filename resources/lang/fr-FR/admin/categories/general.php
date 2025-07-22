@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Catégories d\'actifs',
     'category_name'  					=> 'Nom de la catégorie',
     'checkin_email'                     => 'Envoyer un courriel à l\'utilisateur·trice lors de l\'association/dissociation.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'Un courriel sera envoyé à l\'utilisateur·trice lors de l\'association/dissociation.',
     'clone'                             => 'Cloner la catégorie',
     'create'  							=> 'Créer une catégorie',
@@ -21,5 +22,9 @@ return array(
     'use_default_eula'					=> 'Utiliser la <a href="#" data-toggle="modal" data-target="#eulaModal">license primaire par défaut </a> à la place.',
     'use_default_eula_disabled'			=> '<del>Utilisez la licence par défaut à la place.</del> Aucune licence d\'utilisation par défaut trouvée. Ajoutez-en une dans la section "Préférences".',
     'use_default_eula_column'			=> 'Utilisez les CGU par défaut',
+    'import_require_acceptance'         => 'Require Acceptance',
+    'import_checkin_email'              => 'Send Checkin Email',
+    'import_eula_text'                  => 'EULA text',
+    'import_category_type'              => 'Category Type',
 
 );

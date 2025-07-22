@@ -2,7 +2,7 @@
 
 return [
 
-    'undeployable' 		 => '<strong>Warning: </strong> This asset has been marked as currently undeployable. If this status has changed, please update the asset status.',
+    'undeployable' 		 => 'The following assets cannot be deployed and have been removed from checkout: :asset_tags',
     'does_not_exist' 	 => 'الأصل غير موجود.',
     'does_not_exist_var' => 'Asset with tag :asset_tag not found.',
     'no_tag' 	         => 'No asset tag provided.',
@@ -19,6 +19,11 @@ return [
         'success_linked' => 'تم إنشاء الأصل مع العلامة :tag بنجاح. <strong><a href=":link" style="color: white;">انقر هنا لعرض</a></strong>.',
         'multi_success_linked' => 'Asset with tag :links was created successfully.|:count assets were created succesfully. :links.',
         'partial_failure' => 'An asset was unable to be created. Reason: :failures|:count assets were unable to be created. Reasons: :failures',
+        'target_not_found' => [
+            'user' => 'The assigned user could not be found.',
+            'asset' => 'The assigned asset could not be found.',
+            'location' => 'The assigned location could not be found.',
+        ],
     ],
 
     'update' => [
@@ -66,6 +71,7 @@ return [
         'file_already_deleted' => 'The file selected was already deleted',
         'header_row_has_malformed_characters' => 'واحدة أو أكثر من السمات في الصف الترويجي تحتوي على أحرف UTF-8 سيئة',
         'content_row_has_malformed_characters' => 'واحدة أو أكثر من السمات في الصف الأول من المحتوى تحتوي على أحرف UTF-8 سيئة',
+        'transliterate_failure' => 'Transliteration from :encoding to UTF-8 failed due to invalid characters in input'
     ],
 
 
@@ -99,9 +105,10 @@ return [
     ],
 
     'requests' => [
-        'error'   		=> 'لم يتم طلب الأصل، يرجى إعادة المحاولة',
-        'success' 		=> 'تم طلب الأصل بنجاح.',
-        'canceled'      => 'تم إلغاء طلب الاخراج بنجاح',
+        'error'   		=> 'Request was not successful, please try again.',
+        'success' 		=> 'Request successfully submitted.',
+        'canceled'      => 'Request successfully canceled.',
+        'cancel'        => 'إلغاء طلب هذا العنصر',
     ],
 
 ];

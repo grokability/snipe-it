@@ -31,8 +31,8 @@
             <span class="hidden-lg hidden-md">
               <x-icon type="seats" class="fa-2x" />
               </span>
-              <span class="hidden-xs hidden-sm">{{ trans('admin/licenses/form.seats') }}</span>
-              <span class="badge badge-secondary">{{ number_format($license->availCount()->count()) }} / {{ number_format($license->seats) }}</span>
+              <span class="hidden-xs hidden-sm">{{ trans('general.assigned') }}</span>
+              <span class="badge badge-secondary">{{ number_format($license->assignedCount()->count()) }} / {{ number_format($license->seats) }}</span>
 
             </a>
         </li>
@@ -438,17 +438,12 @@
                         data-cookie-id-table="seatsTable"
                         data-id-table="seatsTable"
                         id="seatsTable"
-                        data-pagination="true"
                         data-search="false"
                         data-side-pagination="server"
-                        data-show-columns="true"
-                        data-show-fullscreen="true"
-                        data-show-export="true"
-                        data-show-refresh="true"
                         data-sort-order="asc"
                         data-sort-name="name"
                         class="table table-striped snipe-table"
-                        data-url="{{ route('api.licenses.seats.index', $license->id) }}"
+                        data-url="{{ route('api.licenses.seats.index', [$license->id, 'status' => 'assigned']) }}"
                         data-export-options='{
                         "fileName": "export-seats-{{ str_slug($license->name) }}-{{ date('Y-m-d') }}",
                         "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
@@ -479,37 +474,18 @@
             <div class="col-md-12">
               <div class="table-responsive">
               <table
+                      data-columns="{{ \App\Presenters\HistoryPresenter::dataTableLayout() }}"
                       class="table table-striped snipe-table"
                       data-cookie-id-table="licenseHistoryTable"
                       data-id-table="licenseHistoryTable"
                       id="licenseHistoryTable"
-                      data-pagination="true"
-                      data-show-columns="true"
                       data-side-pagination="server"
-                      data-show-refresh="true"
-                      data-show-export="true"
                       data-sort-order="desc"
                       data-export-options='{
                        "fileName": "export-{{ str_slug($license->name) }}-history-{{ date('Y-m-d') }}",
                        "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
                      }'
                       data-url="{{ route('api.activity.index', ['item_id' => $license->id, 'item_type' => 'license']) }}">
-
-                <thead>
-                <tr>
-                  <th class="col-sm-2" data-visible="false" data-sortable="true" data-field="created_at" data-formatter="dateDisplayFormatter">{{ trans('general.record_created') }}</th>
-                  <th class="col-sm-2"data-visible="true" data-sortable="true" data-field="admin" data-formatter="usersLinkObjFormatter">{{ trans('general.created_by') }}</th>
-                  <th class="col-sm-2" data-sortable="true"  data-visible="true" data-field="action_type">{{ trans('general.action') }}</th>
-                  <th class="col-sm-2" data-field="file" data-visible="false" data-formatter="fileUploadNameFormatter">{{ trans('general.file_name') }}</th>
-                  <th class="col-sm-2" data-sortable="true"  data-visible="true" data-field="item" data-formatter="polymorphicItemFormatter">{{ trans('general.item') }}</th>
-                  <th class="col-sm-2" data-visible="true" data-field="target" data-formatter="polymorphicItemFormatter">{{ trans('general.target') }}</th>
-                  <th class="col-sm-2" data-sortable="true" data-visible="true" data-field="note">{{ trans('general.notes') }}</th>
-                  <th class="col-sm-2" data-visible="true" data-field="action_date" data-formatter="dateDisplayFormatter">{{ trans('general.date') }}</th>
-                  @if  ($snipeSettings->require_accept_signature=='1')
-                    <th class="col-md-3" data-field="signature_file" data-visible="false"  data-formatter="imageFormatter">{{ trans('general.signature') }}</th>
-                  @endif
-                </tr>
-                </thead>
               </table>
               </div>
             </div> <!-- /.col-md-12-->

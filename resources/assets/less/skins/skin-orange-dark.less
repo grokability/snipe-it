@@ -297,10 +297,6 @@ input[type=text], input[type=search] {
   background-color: var(--back-sub);
   color: var(--text-main);
 }
-.input-group, .input-group-addon {
-  background-color: var(--back-sub)!important;
-  color: var(--text-main);
-}
 #licensesTable>tbody>tr>td>nobr>a>i.fa {
   color: var(--text-main);
 }
@@ -389,7 +385,16 @@ input[type=text], input[type=search] {
   border-bottom: #000;
 }
 #customFieldsTable a[href*='/models'] {
-  color: var(--back-sub);
+  background-color: var(--back-sub-alt);
+  color: var(--link);
+}
+#customFieldsTable a[href*='/models']:hover {
+  background-color: var(--text-sub);
+  color: var(--button-hover);
+}
+#customFieldsTable a[href*='/models']:visited {
+  background-color: var(--background);
+  color: var(--visited-link);
 }
 #customFieldsTable a[href*='/fieldsets']{
   background-color: transparent;

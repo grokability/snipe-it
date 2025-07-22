@@ -15,6 +15,6 @@ return array(
 
     'failed' => 'Prihlasovacie údaje nezodpovedajú žiadnemu záznamu.',
     'password' => 'Zadané heslo je nesprávne.',
-    'throttle' => 'Priliš veľa pokusov o prihlásenie. Prosím skúste znovu o :seconds sekúnd.',
+    'throttle' => 'Too many login attempts. Please try again in :minutes minute(s).',
 
 );

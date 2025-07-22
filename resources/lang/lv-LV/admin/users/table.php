@@ -22,7 +22,7 @@ return array(
     'managed_locations'     => 'Pārvaldītās atrašanās vietas',
     'managed_users'         => 'Managed Users',
     'name' 					=> 'Nosaukums',
-    'nogroup'               => 'No groups have been created yet. To add one, visit: ',
+    'nogroup'               => 'No groups have been created yet. To add one, visit:',
     'notes'                 => 'Piezīmes',
     'password_confirm' 		=> 'apstipriniet paroli',
     'password' 				=> 'Parole',

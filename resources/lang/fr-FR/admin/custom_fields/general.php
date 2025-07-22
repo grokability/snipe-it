@@ -58,6 +58,13 @@ return [
     'show_in_requestable_list' => 'Afficher la valeur dans la liste des actifs demandables. Les champs chiffrés ne seront pas affichés',
     'encrypted_options' => 'Ce champ est chiffré, donc certaines options d\'affichage ne seront pas disponibles.',
     'display_checkin' => 'Display in checkin forms',
-    'display_checkout' => 'Display in checkout forms',
-
+    'display_checkout' => 'Afficher dans les formulaires de retrait (check-out)',
+    'display_audit' => 'Display in audit forms',
+    'types' => [
+        'text' => 'Text Box',
+        'listbox' => 'List Box',
+        'textarea' => 'Textarea (multi-line)',
+        'checkbox' => 'Checkbox',
+        'radio' => 'Radio Buttons',
+    ],
 ];

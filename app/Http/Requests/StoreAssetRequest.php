@@ -39,7 +39,6 @@ class StoreAssetRequest extends ImageUploadRequest
         $this->merge([
             'asset_tag' => $this->asset_tag ?? Asset::autoincrement_asset(),
             'company_id' => $idForCurrentUser,
-            'assigned_to' => $assigned_to ?? null,
         ]);
     }
 

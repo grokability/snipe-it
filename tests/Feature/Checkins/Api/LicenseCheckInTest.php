@@ -41,5 +41,6 @@ class LicenseCheckInTest extends TestCase {
         $this->assertNull($licenseSeat->asset_id);
 
         $this->assertEquals('Checking in the seat', $licenseSeat->notes);
+        $this->assertHasTheseActionLogs($license, ['add seats', 'create', 'checkin from']); //FIXME - bad order!
     }
 }

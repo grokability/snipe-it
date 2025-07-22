@@ -2,7 +2,7 @@
 
 return array(
 
-    'deleted' => 'Deleted supplier',
+    'deleted' => 'Izbrisan dobavitelj',
     'does_not_exist' => 'Dobavitelj ne obstaja.',
 
 

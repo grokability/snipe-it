@@ -22,7 +22,7 @@ return array(
     'managed_locations'     => 'Locații gestionate',
     'managed_users'         => 'Utilizatori gestionați',
     'name' 					=> 'Nume',
-    'nogroup'               => 'Nici un grup nu a fost creat încă. Pentru a adăuga unul, vizitaţi: ',
+    'nogroup'               => 'Nici un grup nu a fost creat încă. Pentru a adăuga unul, vizitaţi:',
     'notes'                 => 'notițe',
     'password_confirm' 		=> 'Confirma parola',
     'password' 				=> 'Parola',

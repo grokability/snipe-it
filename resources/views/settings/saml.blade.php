@@ -85,6 +85,7 @@
                                          <label for="saml_sp_x509cert">{{ trans('admin/settings/general.saml_sp_x509cert') }}</label>
                                             <x-input.textarea
                                                 name="saml_sp_x509cert"
+                                                id="saml_sp_x509cert"
                                                 :value="$setting->saml_sp_x509cert"
                                                 wrap="off"
                                                 readonly
@@ -113,6 +114,7 @@
                         <div class="col-md-9">
                             <x-input.textarea
                                 name="saml_idp_metadata"
+                                id="saml_idp_metadata"
                                 :value="old('saml_idp_metadata', $setting->saml_idp_metadata)"
                                 placeholder="https://example.com/idp/metadata"
                                 wrap="off"
@@ -218,7 +220,7 @@
             var fr = new FileReader();
 
             fr.onload = function(e) {
-                $('#saml_idp_metadata').text(e.target.result);
+                $('#saml_idp_metadata').val(e.target.result);
             } 
 
             fr.readAsText(this.files[0]);

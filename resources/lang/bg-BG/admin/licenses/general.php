@@ -14,7 +14,7 @@ return array(
     'info'  					=> 'Информация за лиценз',
     'license_seats'  			=> 'Потребителски лицензи',
     'seat'  					=> 'Потребителски лиценз',
-    'seat_count'  				=> 'Seat :count',
+    'seat_count'  				=> 'Брой места :count',
     'seats'  					=> 'Потребителски лицензи',
     'software_licenses'  		=> 'Софтуерни лицензи',
     'user'  					=> 'Потребител',
@@ -24,12 +24,12 @@ return array(
         [
             'checkin_all'           => [
                 'button'            => 'Връщане на всички бройки',
-                'modal'             => 'This action will checkin one seat. | This action will checkin all :checkedout_seats_count seats for this license.',
+                'modal'             => 'Това действие ще впише едно работно място. | Това действие ще впише всички  :checkedout_seats_count работни места от този лиценз.',
                 'enabled_tooltip'   => 'Вписване на всички бройки от този лиценз за потребителите и активите',
                 'disabled_tooltip'  => 'Това е забранено защото няма изписани бройки',
                 'disabled_tooltip_reassignable'  => 'Това е деактивирано, защото лиценза не може да се прехвърля',
                 'success'           => 'Лиценза е заведен успешно! | Всички лицензи са заведени успешно!',
-                'log_msg'           => 'Checked in via bulk license checkin in license GUI',
+                'log_msg'           => 'Вписване чрез групово лиценз вписване в GUI',
             ],
 
             'checkout_all'              => [

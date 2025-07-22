@@ -6,8 +6,6 @@ return array(
     'account_not_found'      => 'Nazwa użytkownika lub hasło jest niepoprawne.',
     'account_not_activated'  => 'Użytkownik jest nieaktywowany.',
     'account_suspended'      => 'Twoje konto zostało zawieszone.',
-    'account_banned'         => 'Twoje konto zostało zablokowane.',
-    'throttle'               => 'Zbyt wiele nieudanych prób logowania. Spróbuj ponownie za :minutes minut(y).',
 
     'two_factor' => array(
         'already_enrolled'      => 'Twoje urządzenie jest już zapisane.',

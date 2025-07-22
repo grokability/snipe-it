@@ -7,7 +7,6 @@ use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Models\Accessory;
 use App\Models\AccessoryCheckout;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use \Illuminate\Contracts\View\View;
@@ -30,9 +29,17 @@ class AccessoryCheckinController extends Controller
         }
 
         $accessory = Accessory::find($accessory_user->accessory_id);
+
+        //based on what the accessory is checked out to the target redirect option will be displayed accordingly.
+        $target_option = match ($accessory_user->assigned_type) {
+            'App\Models\Asset' => trans('admin/hardware/form.redirect_to_type', ['type' => trans('general.asset')]),
+            'App\Models\Location' => trans('admin/hardware/form.redirect_to_type', ['type' => trans('general.location')]),
+            default => trans('admin/hardware/form.redirect_to_type', ['type' => trans('general.user')]),
+        };
         $this->authorize('checkin', $accessory);
 
-        return view('accessories/checkin', compact('accessory'))->with('backto', $backto);
+        return view('accessories/checkin', compact('accessory', 'target_option'))->with('backto', $backto);
+
     }
 
     /**
@@ -51,8 +58,14 @@ class AccessoryCheckinController extends Controller
 
         $accessory = Accessory::find($accessory_checkout->accessory_id);
 
-        $this->authorize('checkin', $accessory);
+        session()->put('checkedInFrom', $accessory_checkout->assigned_to);
+        session()->put('checkout_to_type', match ($accessory_checkout->assigned_type) {
+            'App\Models\User' => 'user',
+            'App\Models\Location' => 'location',
+            'App\Models\Asset' => 'asset',
+        });
 
+        $this->authorize('checkin', $accessory);
         $checkin_hours = date('H:i:s');
         $checkin_at = date('Y-m-d H:i:s');
         if ($request->filled('checkin_at')) {
@@ -65,7 +78,8 @@ class AccessoryCheckinController extends Controller
 
             session()->put(['redirect_option' => $request->get('redirect_option')]);
 
-            return redirect()->to(Helper::getRedirectOption($request, $accessory->id, 'Accessories'))->with('success', trans('admin/accessories/message.checkin.success'));
+            return Helper::getRedirectOption($request, $accessory->id, 'Accessories')
+                ->with('success', trans('admin/accessories/message.checkin.success'));
         }
         // Redirect to the accessory management page with error
         return redirect()->route('accessories.index')->with('error', trans('admin/accessories/message.checkin.error'));

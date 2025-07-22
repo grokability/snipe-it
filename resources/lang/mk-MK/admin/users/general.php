@@ -53,4 +53,5 @@ return [
     'next_save_user' => 'Сними корисник',
     'all_assigned_list_generation' => 'Генерирано на:',
     'email_user_creds_on_create' => 'Да му се испрати креденцијалите на корисникот?',
+    'department_manager' => 'Department Manager',
 ];

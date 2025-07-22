@@ -20,8 +20,8 @@ permissions:
 
 jobs:
   docker:
-    # Ensure this job never runs on forked repos. It's only executed for 'snipe/snipe-it'
-    if: github.repository == 'snipe/snipe-it'
+    # Ensure this job never runs on forked repos. It's only executed for 'grokability/snipe-it'
+    if: github.repository == 'grokability/snipe-it'
     runs-on: ubuntu-latest
     env:
       # Define tags to use for Docker images based on Git tags/branches (for docker/metadata-action)
@@ -32,7 +32,7 @@ jobs:
         type=raw,value=latest,enable=${{ endsWith(github.ref, github.event.repository.default_branch) }},suffix=-alpine
         type=ref,event=branch,enable=${{ !endsWith(github.ref, github.event.repository.default_branch) }},suffix=-alpine
         type=ref,event=tag,suffix=-alpine
-        type=semver,pattern=v{{major}}-latest-alpine 
+        type=semver,pattern=v{{major}}-latest-alpine
       # Define default tag "flavor" for docker/metadata-action per
       # https://github.com/docker/metadata-action#flavor-input
       # We turn off 'latest' tag by default.

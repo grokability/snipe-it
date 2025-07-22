@@ -6,8 +6,6 @@ return array(
     'account_not_found'      => 'Igama lomsebenzisi noma iphasiwedi alilungile.',
     'account_not_activated'  => 'Le akhawunti yomsebenzisi ayisebenzi.',
     'account_suspended'      => 'Le akhawunti yomsebenzisi imiswe okwesikhashana.',
-    'account_banned'         => 'Le akhawunti yomsebenzisi ivaliwe.',
-    'throttle'               => 'Too many failed login attempts. Please try again in :minutes minutes.',
 
     'two_factor' => array(
         'already_enrolled'      => 'Your device is already enrolled.',

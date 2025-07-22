@@ -93,12 +93,20 @@ class CheckoutAssetNotification extends Notification
         $channel = ($this->settings->webhook_channel) ? $this->settings->webhook_channel : '';
 
         $fields = [
-            'To' => '<'.$target->present()->viewUrl().'|'.$target->present()->fullName().'>',
-            'By' => '<'.$admin->present()->viewUrl().'|'.$admin->present()->fullName().'>',
+            trans('general.to') => '<'.$target->present()->viewUrl().'|'.$target->present()->fullName().'>',
+            trans('general.by') => '<'.$admin->present()->viewUrl().'|'.$admin->present()->fullName().'>',
         ];
 
+        if ($item->location) {
+            $fields[trans('general.location')] = $item->location->name;
+        }
+
+        if ($item->company) {
+            $fields[trans('general.company')] = $item->company->name;
+        }
+
         if (($this->expected_checkin) && ($this->expected_checkin !== '')) {
-            $fields['Expected Checkin'] = $this->expected_checkin;
+            $fields[trans('general.expected_checkin')] = $this->expected_checkin;
         }
 
         return (new SlackMessage)

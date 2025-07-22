@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Κατηγορίες στοιχείων παγίων',
     'category_name'  					=> 'Όνομα κατηγορίας',
     'checkin_email'                     => 'Αποστολή email στον χρήστη κατά την χρέωση/αποδέσμευση.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'Θα αποστέλεται email σε αυτόν τον χρήστη κατά την χρέωαη/αποδέσμευση.',
     'clone'                             => 'Αντιγραφή Κατηγορίας',
     'create'  							=> 'Δημιουργία Κατηγορίας',
@@ -21,5 +22,9 @@ return array(
     'use_default_eula'					=> 'Χρησιμοποιήστε την προεπιλεγμένη <a href="#" data-toggle="modal" data-target="#eulaModal">primary EULA</a>.',
     'use_default_eula_disabled'			=> '<del>Χρησιμοποιήστε την αρχική προεπιλεγμένη άδεια EULA αντί.</del> Δεν έχει οριστεί αρχική προεπιλεγμένη ευχέρεια EULA. Προσθέστε μία από τις Ρυθμίσεις.',
     'use_default_eula_column'			=> 'Χρήση προεπιλογής EULA',
+    'import_require_acceptance'         => 'Require Acceptance',
+    'import_checkin_email'              => 'Send Checkin Email',
+    'import_eula_text'                  => 'EULA text',
+    'import_category_type'              => 'Category Type',
 
 );

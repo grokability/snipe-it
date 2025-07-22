@@ -31,8 +31,9 @@ return [
         'numeric' => 'The :attribute field must be between :min and :max.',
         'string' => 'The :attribute field must be between :min and :max characters.',
     ],
+    'valid_regex' => 'The regular expression is invalid.',
     'boolean' => 'The :attribute field must be true or false.',
-    'can' => 'The :attribute field contains an unauthorized value.',
+    'can' => 'The :attribute field contains an unauthorised value.',
     'confirmed' => 'The :attribute field confirmation does not match.',
     'contains' => 'The :attribute field is missing a required value.',
     'current_password' => 'The password is incorrect.',
@@ -68,7 +69,7 @@ return [
         'numeric' => 'The :attribute field must be greater than or equal to :value.',
         'string' => 'The :attribute field must be greater than or equal to :value characters.',
     ],
-    'hex_color' => 'The :attribute field must be a valid hexadecimal color.',
+    'hex_color' => 'The :attribute field must be a valid hexadecimal colour.',
     'image' => 'The :attribute field must be an image.',
     'import_field_empty'    => 'The value for :fieldname cannot be null.',
     'in' => 'The selected :attribute is invalid.',
@@ -165,13 +166,14 @@ return [
     'numbers'              => 'Password must contain at least one number.',
     'case_diff'            => 'Password must use mixed case.',
     'symbols'              => 'Password must contain symbols.',
-    'timezone' => 'The :attribute field must be a valid timezone.',
+    'timezone' => 'The :attribute field must be a valid time zone.',
     'unique' => 'The :attribute has already been taken.',
     'uploaded' => 'The :attribute failed to upload.',
     'uppercase' => 'The :attribute field must be uppercase.',
     'url' => 'The :attribute field must be a valid URL.',
     'ulid' => 'The :attribute field must be a valid ULID.',
     'uuid' => 'The :attribute field must be a valid UUID.',
+    'fmcs_location' => 'Full multiple company support and location scoping is enabled in the Admin Settings, and the selected location and selected company are not compatible.',
 
 
     /*
@@ -185,9 +187,13 @@ return [
     |
     */
 
+    'email_array'      => 'One or more email addresses is invalid.',
+    'checkboxes'           => ':attribute contains invalid options.',
+    'radio_buttons'        => ':attribute is invalid.',
+    
     'custom' => [
         'alpha_space' => 'The :attribute field contains a character that is not allowed.',
-        'email_array'      => 'One or more email addresses is invalid.',
+
         'hashed_pass'      => 'Your current password is incorrect',
         'dumbpwd'          => 'That password is too common.',
         'statuslabel_type' => 'You must select a valid status label type',
@@ -204,8 +210,6 @@ return [
         'expected_checkin.date_format'  =>  'The :attribute must be a valid date in YYYY-MM-DD format',
         'start_date.date_format'        =>  'The :attribute must be a valid date in YYYY-MM-DD format',
         'end_date.date_format'          =>  'The :attribute must be a valid date in YYYY-MM-DD format',
-        'checkboxes'           => ':attribute contains invalid options.',
-        'radio_buttons'        => ':attribute is invalid.',
         'invalid_value_in_field' => 'Invalid value included in this field',
 
         'ldap_username_field' => [

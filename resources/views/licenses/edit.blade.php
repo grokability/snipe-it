@@ -5,6 +5,7 @@
     'formAction' => ($item->id) ? route('licenses.update', ['license' => $item->id]) : route('licenses.store'),
      'index_route' => 'licenses.index',
     'options' => [
+                'back' => trans('admin/hardware/form.redirect_to_type',['type' => trans('general.previous_page')]),
                 'index' => trans('admin/hardware/form.redirect_to_all', ['type' => 'licenses']),
                 'item' => trans('admin/hardware/form.redirect_to_type', ['type' => trans('general.license')]),
                ]
@@ -78,7 +79,7 @@
 @include ('partials.forms.edit.supplier-select', ['translated_name' => trans('general.supplier'), 'fieldname' => 'supplier_id'])
 @include ('partials.forms.edit.order_number')
 @include ('partials.forms.edit.purchase_cost')
-@include ('partials.forms.edit.purchase_date')
+@include ('partials.forms.edit.datepicker', ['translated_name' => trans('general.purchase_date'),'fieldname' => 'purchase_date'])
 
 <!-- Expiration Date -->
 <div class="form-group {{ $errors->has('expiration_date') ? ' has-error' : '' }}">

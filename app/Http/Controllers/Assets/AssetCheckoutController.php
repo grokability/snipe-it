@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Session;
 use \Illuminate\Contracts\View\View;
 use \Illuminate\Http\RedirectResponse;
 use Gate;
+use Illuminate\Support\Facades\Validator;
 
 class AssetCheckoutController extends Controller
 {
@@ -37,6 +38,14 @@ class AssetCheckoutController extends Controller
                 ->with('error', trans('admin/hardware/general.model_invalid_fix'));
         }
 
+        // Invoke the validation to see if the audit will complete successfully
+        $asset->setRules($asset->getRules() + $asset->customFieldValidationRules());
+
+        if ($asset->isInvalid()) {
+            return redirect()->route('hardware.edit', $asset)->withErrors($asset->getErrors());
+        }
+
+        
         if ($asset->availableForCheckout()) {
             return view('hardware/checkout', compact('asset'))
                 ->with('statusLabel_list', Helper::deployableStatusLabelList())
@@ -115,12 +124,14 @@ class AssetCheckoutController extends Controller
             session()->put(['redirect_option' => $request->get('redirect_option'), 'checkout_to_type' => $request->get('checkout_to_type')]);
 
             if ($asset->checkOut($target, $admin, $checkout_at, $expected_checkin, $request->get('note'), $request->get('name'))) {
+
                 if(Gate::allows('audit',$asset)) {
                     if ($request->filled('log_audit') == "1") {
                         $asset->logAudit($request->input('note'), $request->input('location_id'));
                     }
                 }
                 return redirect()->to(Helper::getRedirectOption($request, $asset->id, 'Assets'))
+
                     ->with('success', trans('admin/hardware/message.checkout.success'));
             }
             // Redirect to the asset management page with error

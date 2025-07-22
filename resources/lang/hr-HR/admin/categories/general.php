@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Kategorije sredstava',
     'category_name'  					=> 'Naziv kategorije',
     'checkin_email'                     => 'Pošalji e-mail korisniku prilikom checkin/checkout-a.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'Ovom korisniku će biti poslan e-mail prilikom checkin/checkout-a.',
     'clone'                             => 'Klon kategorija',
     'create'  							=> 'Izradi kategoriju',
@@ -21,5 +22,9 @@ return array(
     'use_default_eula'					=> 'Umjesto toga upotrijebite <a href="#" data-toggle="modal" data-target="#eulaModal">primarnu postavku EULA</a>.',
     'use_default_eula_disabled'			=> '<del>Uporedi primarnu zadanu EULA.</del> Nije postavljena primarna zadana EULA. Dodajte jednu u Postavke.',
     'use_default_eula_column'			=> 'Use default EULA',
+    'import_require_acceptance'         => 'Require Acceptance',
+    'import_checkin_email'              => 'Send Checkin Email',
+    'import_eula_text'                  => 'EULA text',
+    'import_category_type'              => 'Category Type',
 
 );

@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Категорії активів',
     'category_name'  					=> 'Назва категорії',
     'checkin_email'                     => 'Відправити email користувачеві по перевірці/перевірці.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'Цього користувача буде надіслано листа при перевірці.',
     'clone'                             => 'Клонувати категорію',
     'create'  							=> 'Створити категорію',
@@ -21,5 +22,9 @@ return array(
     'use_default_eula'					=> 'Використовувати <a href="#" data-toggle="modal" data-target="#eulaModal">основну EULA</a>.',
     'use_default_eula_disabled'			=> '<del>Натомість використовуйте основну ліцензійну угоду за умовчанням.</del> Основна ліцензійна угода за умовчанням не встановлена. Додайте її в налаштуваннях.',
     'use_default_eula_column'			=> 'Використовувати типові EULA',
+    'import_require_acceptance'         => 'Require Acceptance',
+    'import_checkin_email'              => 'Send Checkin Email',
+    'import_eula_text'                  => 'EULA text',
+    'import_category_type'              => 'Category Type',
 
 );

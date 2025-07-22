@@ -24,10 +24,15 @@ class SuppliersController extends Controller
     public function index(Request $request): array
     {
         $this->authorize('view', Supplier::class);
-        $allowed_columns = ['
-            id',
+        $allowed_columns = [
+            'id',
             'name',
             'address',
+            'address2',
+            'city',
+            'state',
+            'country',
+            'zip',
             'phone',
             'contact',
             'fax',
@@ -39,20 +44,23 @@ class SuppliersController extends Controller
             'components_count',
             'consumables_count',
             'url',
+            'notes',
         ];
         
         $suppliers = Supplier::select(
-                ['id', 'name', 'address', 'address2', 'city', 'state', 'country', 'fax', 'phone', 'email', 'contact', 'created_at', 'updated_at', 'deleted_at', 'image', 'notes', 'url'])
+                ['id', 'name', 'address', 'address2', 'city', 'state', 'country', 'fax', 'phone', 'email', 'contact', 'created_at', 'created_by', 'updated_at', 'deleted_at', 'image', 'notes', 'url', 'zip'])
                     ->withCount('assets as assets_count')
                     ->withCount('licenses as licenses_count')
                     ->withCount('accessories as accessories_count')
                     ->withCount('components as components_count')
-                    ->withCount('consumables as consumables_count');
+                    ->withCount('consumables as consumables_count')
+                    ->with('adminuser');
 
 
         if ($request->filled('search')) {
-            $suppliers = $suppliers->TextSearch($request->input('search'));
+            $suppliers->TextSearch($request->input('search'));
         }
+
 
         if ($request->filled('name')) {
             $suppliers->where('name', '=', $request->input('name'));
@@ -100,7 +108,15 @@ class SuppliersController extends Controller
 
         $order = $request->input('order') === 'asc' ? 'asc' : 'desc';
         $sort = in_array($request->input('sort'), $allowed_columns) ? $request->input('sort') : 'created_at';
-        $suppliers->orderBy($sort, $order);
+
+        switch ($request->input('sort')) {
+            case 'created_by':
+                $suppliers->OrderByCreatedByName($order);
+                break;
+            default:
+                $suppliers->orderBy($sort, $order);
+                break;
+        }
 
         $total = $suppliers->count();
         $suppliers = $suppliers->skip($offset)->take($limit)->get();

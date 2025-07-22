@@ -1,0 +1,32 @@
+<?php
+
+return [
+
+    'asset_tag'   	=> 'ინვენტარის ნომერი',
+    'asset_model'       => 'მოდელი',
+    'assigned_to'   => 'მინიჭებული',
+    'book_value'  	=> 'მიმდინარე ღირებულება',
+    'change' 		=> 'შიგნით/გარეთ',
+    'checkout_date' => 'გაცემის თარიღი',
+    'checkoutto' 	=> 'გაცემულია',
+    'components_cost' => 'კომპონენტების საერთო ღირებულება',
+    'current_value' => 'მიმდინარე ღირებულება',
+    'diff' 			=> 'სხვაობა',
+    'dl_csv' 		=> 'CSV ჩამოტვირთვა',
+    'eol' 			=> 'მოქმედების ვადის ამოწურვა',
+    'id'      		=> 'ID',
+    'last_checkin_date' => 'ბოლო ჩაბარების თარიღი',
+    'location' 		=> 'ლოკაცია',
+    'purchase_cost'	=> 'ღირებულება',
+    'purchase_date'	=> 'ნაყიდია',
+    'serial'   		=> 'სერიული ნომერი',
+    'status'   		=> 'სტატუსი',
+    'title'      	=> 'ინვენტარი',
+    'image'		    => 'მოწყობილობის სურათი',
+    'days_without_acceptance' => 'დღეები მიღების გარეშე',
+    'monthly_depreciation' => 'თვიური ამორტიზაცია',
+    'requesting_user' => 'მოთხოვნის ავტორი',
+    'requested_date' => 'მოთხოვნის თარიღი',
+    'changed'       => 'შეიცვალა',
+    'icon' => 'აიკონი',
+];

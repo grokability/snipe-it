@@ -22,7 +22,7 @@ return array(
     'managed_locations'     => 'Vị trí Quản lý',
     'managed_users'         => 'Quản lý người dùng',
     'name' 					=> 'Tên',
-    'nogroup'               => 'No groups have been created yet. To add one, visit: ',
+    'nogroup'               => 'No groups have been created yet. To add one, visit:',
     'notes'                 => 'Ghi chú',
     'password_confirm' 		=> 'Xác nhận mật khẩu',
     'password' 				=> 'Mật khẩu',

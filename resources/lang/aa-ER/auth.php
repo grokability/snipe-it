@@ -15,6 +15,6 @@ return array(
 
     'failed' => 'crwdns6844:0crwdne6844:0',
     'password' => 'crwdns6846:0crwdne6846:0',
-    'throttle' => 'crwdns6848:0crwdne6848:0',
+    'throttle' => 'crwdns13001:0crwdne13001:0',
 
 );

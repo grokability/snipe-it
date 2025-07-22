@@ -13,4 +13,8 @@ return [
     'no_depreciations_warning'               => '<strong>ការព្រមាន៖ </strong>
                        បច្ចុប្បន្ន​នេះ អ្នក​មិន​មាន​ការ​កំណត់​ការ​រំលោះ​ទេ។
                        សូមរៀបចំការរំលោះយ៉ាងហោចណាស់មួយ ដើម្បីមើលរបាយការណ៍រំលោះ។',
+    'depreciation_method'                   => 'របាយការណ៍រំលោះ',
+    'linear_depreciation'                   => 'Linear (Default)',
+    'half_1'                                => 'Half-year convention, always applied',
+    'half_2'                                => 'Half-year convention, applied with condition',
 ];

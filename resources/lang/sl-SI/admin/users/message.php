@@ -6,7 +6,7 @@ return array(
     'declined'                  => 'To sredstev ste uspešno zavrnili.',
     'bulk_manager_warn'	        => 'Vaši uporabniki so bili uspešno posodobljeni, vendar vnos v upravitelju ni bil shranjen, ker je bil izbran upravitelj tudi na seznamu uporabnikov, ki ga je treba urediti, uporabniki pa morda niso njihovi lastniki. Prosimo, izberite svoje uporabnike, razen upravitelja.',
     'user_exists'               => 'Uporabnik že obstaja!',
-    'user_not_found'            => 'User does not exist or you do not have permission view them.',
+    'user_not_found'            => 'Uporabnik ne obstaja ali pa nimate dovoljenja za ogled.',
     'user_login_required'       => 'Polje za prijavo je obvezno',
     'user_has_no_assets_assigned' => 'Brez sredstev dodeljenih uporabniku.',
     'user_password_required'    => 'Geslo je obvezno.',
@@ -15,7 +15,7 @@ return array(
     'ldap_not_configured'        => 'Integracija LDAP za to namestitev ni bila konfigurirana.',
     'password_resets_sent'      => 'Izbranim aktiviranim uporabnikom z veljavnim e-poštnim računom je bila poslana povezava za ponastavitev gesla.',
     'password_reset_sent'       => 'Povezava za ponastavitev gesla je bila poslana na :email!',
-    'user_has_no_email'         => 'This user does not have an email address in their profile.',
+    'user_has_no_email'         => 'Ta uporabnik nima e-poštnega naslova v svojem profilu.',
     'log_record_not_found'        => 'A matching log record for this user could not be found.',
 
 

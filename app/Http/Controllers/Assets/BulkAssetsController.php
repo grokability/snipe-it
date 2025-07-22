@@ -52,9 +52,24 @@ class BulkAssetsController extends Controller
         }
 
         $asset_ids = $request->input('ids');
+
         if ($request->input('bulk_actions') === 'checkout') {
+            $status_check =$this->hasUndeployableStatus($asset_ids);
+            if($status_check && $status_check['status'] === true){
+
+                $asset_tags = implode(', ', array_column($status_check['tags'], 'asset_tag'));
+                $asset_ids = $status_check['asset_ids'];
+
+                session()->flash('warning', trans('admin/hardware/message.undeployable', ['asset_tags' => $asset_tags]));
+            }
+
             $request->session()->flashInput(['selected_assets' => $asset_ids]);
             return redirect()->route('hardware.bulkcheckout.show');
+        }
+
+        if ($request->input('bulk_actions') === 'maintenance') {
+            $request->session()->flashInput(['selected_assets' => $asset_ids]);
+            return redirect()->route('maintenances.create');
         }
 
         // Figure out where we need to send the user after the update is complete, and store that in the session
@@ -97,11 +112,47 @@ class BulkAssetsController extends Controller
         // This handles all of the pivot sorting below (versus the assets.* fields in the allowed_columns array)
         $column_sort = in_array($sort_override, $allowed_columns) ? $sort_override : 'assets.id';
 
-        $assets = Asset::with('assignedTo', 'location', 'model')
+        $query = Asset::with('assignedTo', 'location', 'model')
                 ->whereIn('assets.id', $asset_ids)
                 ->withTrashed();
 
-        $assets = $assets->get();
+
+        switch ($sort_override) {
+            case 'model':
+                $query->OrderModels($order);
+                break;
+            case 'model_number':
+                $query->OrderModelNumber($order);
+                break;
+            case 'category':
+                $query->OrderCategory($order);
+                break;
+            case 'manufacturer':
+                $query->OrderManufacturer($order);
+                break;
+            case 'company':
+                $query->OrderCompany($order);
+                break;
+            case 'location':
+                $query->OrderLocation($order);
+                break;
+            case 'rtd_location':
+                $query->OrderRtdLocation($order);
+                break;
+            case 'status_label':
+                $query->OrderStatus($order);
+                break;
+            case 'supplier':
+                $query->OrderSupplier($order);
+                break;
+            case 'assigned_to':
+                $query->OrderAssigned($order);
+                break;
+            default:
+                $query->orderBy($column_sort, $order);
+                break;
+        }
+        $assets = $query->get();
 
         if ($assets->isEmpty()) {
             Log::debug('No assets were found for the provided IDs', ['ids' => $asset_ids]);
@@ -110,6 +161,7 @@ class BulkAssetsController extends Controller
 
         $models = $assets->unique('model_id');
         $modelNames = [];
+
         foreach($models as $model) {
             $modelNames[] = $model->model->name;
         }
@@ -145,7 +197,6 @@ class BulkAssetsController extends Controller
 
                 case 'edit':
                     $this->authorize('update', Asset::class);
-
                     return view('hardware/bulk')
                         ->with('assets', $asset_ids)
                         ->with('statuslabel_list', Helper::statusLabelList())
@@ -154,40 +205,7 @@ class BulkAssetsController extends Controller
             }
         }
 
-        switch ($sort_override) {
-            case 'model':
-                $assets->OrderModels($order);
-                break;
-            case 'model_number':
-                $assets->OrderModelNumber($order);
-                break;
-            case 'category':
-                $assets->OrderCategory($order);
-                break;
-            case 'manufacturer':
-                $assets->OrderManufacturer($order);
-                break;
-            case 'company':
-                $assets->OrderCompany($order);
-                break;
-            case 'location':
-                $assets->OrderLocation($order);
-            case 'rtd_location':
-                $assets->OrderRtdLocation($order);
-                break;
-            case 'status_label':
-                $assets->OrderStatus($order);
-                break;
-            case 'supplier':
-                $assets->OrderSupplier($order);
-                break;
-            case 'assigned_to':
-                $assets->OrderAssigned($order);
-                break;
-            default:
-                $assets->orderBy($column_sort, $order);
-                break;
-        }
+
 
         return redirect()->back()->with('error', 'No action selected');
     }
@@ -206,13 +224,25 @@ class BulkAssetsController extends Controller
         $error_array = array();
 
         // Get the back url from the session and then destroy the session
-        $bulk_back_url = route('hardware.index');
 
-        if ($request->session()->has('bulk_back_url')) {
-            $bulk_back_url = $request->session()->pull('bulk_back_url');
-        }
+        $bulk_back_url = $request->session()->pull('bulk_back_url', url()->previous());
 
        $custom_field_columns = CustomField::all()->pluck('db_column')->toArray();
+
+        // find custom field input attributes that start with 'null_'
+        $null_custom_fields_inputs = array_filter($request->all(), function ($key) {
+            // filter out all keys that start with 'null_'
+            return (strpos($key, 'null_') === 0);
+        }, ARRAY_FILTER_USE_KEY);;
+        // remove 'null' from the keys
+        $custom_fields_to_null = [];
+        foreach ($null_custom_fields_inputs as $key => $value) {
+            $custom_fields_to_null[str_replace('null', '', $key)] = $value;
+        }
+
+
+
+
 
      
         if (! $request->filled('ids') || count($request->input('ids')) == 0) {
@@ -251,7 +281,9 @@ class BulkAssetsController extends Controller
             || ($request->filled('null_expected_checkin_date'))
             || ($request->filled('null_next_audit_date'))
             || ($request->filled('null_asset_eol_date'))
+            || ($request->filled('null_notes'))
             || ($request->anyFilled($custom_field_columns))
+            || ($request->anyFilled(array_keys($null_custom_fields_inputs)))
 
         ) {
             // Let's loop through those assets and build an update array
@@ -274,10 +306,14 @@ class BulkAssetsController extends Controller
                     ->conditionallyAddItem('supplier_id')
                     ->conditionallyAddItem('warranty_months')
                     ->conditionallyAddItem('next_audit_date')
-                    ->conditionallyAddItem('asset_eol_date');
+                    ->conditionallyAddItem('asset_eol_date')
+                    ->conditionallyAddItem('notes');
                     foreach ($custom_field_columns as $key => $custom_field_column) {
                         $this->conditionallyAddItem($custom_field_column); 
                    }
+                foreach ($custom_fields_to_null as $key => $custom_field_to_null) {
+                    $this->conditionallyAddItem($key);
+                }
 
                 if (!($asset->eol_explicit)) {
 					if ($request->filled('model_id')) {
@@ -328,6 +364,10 @@ class BulkAssetsController extends Controller
                     }
                 }
 
+                if ($request->input('null_notes')=='1') {
+                    $this->update_array['notes'] = null;
+                }
+
 
 
                 if ($request->filled('purchase_cost')) {
@@ -368,10 +408,12 @@ class BulkAssetsController extends Controller
                     // This could probably be added to a form request.
                     // If the asset isn't assigned, we don't care what the status is.
                     // Otherwise we need to make sure the status type is still a deployable one.
-                    if (
-                        ($asset->assigned_to == '')
-                        || ($updated_status->deployable == '1') && ($asset->assetstatus?->deployable == '1')
-                    ) {
+
+                    $unassigned = $asset->assigned_to == '';
+                    $deployable = $updated_status->deployable == '1' && $asset->assetstatus?->deployable == '1';
+                    $pending =  $updated_status->pending === 1;
+
+                    if ($unassigned || $deployable || $pending) {
                         $this->update_array['status_id'] = $updated_status->id;
                     }
 
@@ -423,12 +465,22 @@ class BulkAssetsController extends Controller
                 }
 
                 /**
+                 *
                  * Start all the custom fields shenanigans
                  */
 
                 // Does the model have a fieldset?
                 if ($asset->model->fieldset) {
                     foreach ($asset->model->fieldset->fields as $field) {
+
+                        // null custom fields
+                        if ($custom_fields_to_null) {
+                            foreach ($custom_fields_to_null as $key => $custom_field_to_null) {
+                                if ($field->db_column == $key) {
+                                    $this->update_array[$field->db_column] = null;
+                                }
+                            }
+                        }
 
                         if ((array_key_exists($field->db_column, $this->update_array)) && ($field->field_encrypted == '1')) {
                             if (Gate::allows('admin')) {
@@ -488,7 +540,13 @@ class BulkAssetsController extends Controller
             } // end asset foreach
 
             if ($has_errors > 0) {
-                return redirect($bulk_back_url)->with('bulk_asset_errors', $error_array);
+                session()->put('bulkedit_ids', $request->input('ids'));
+                session()->put('bulk_asset_errors',$error_array);
+
+                return redirect()
+                    ->route('hardware.bulkedit')
+                    ->with('bulk_asset_errors', $error_array)
+                    ->withInput();
             }
 
             return redirect($bulk_back_url)->with('success', trans('admin/hardware/message.update.success'));
@@ -562,7 +620,10 @@ class BulkAssetsController extends Controller
     public function showCheckout() : View
     {
         $this->authorize('checkout', Asset::class);
-        return view('hardware/bulk-checkout');
+
+        $do_not_change = ['' => trans('general.do_not_change')];
+        $status_label_list = $do_not_change + Helper::deployableStatusLabelList();
+        return view('hardware/bulk-checkout')->with('statusLabel_list', $status_label_list);
     }
 
     /**
@@ -594,19 +655,24 @@ class BulkAssetsController extends Controller
             }
             $checkout_at = date('Y-m-d H:i:s');
             if (($request->filled('checkout_at')) && ($request->get('checkout_at') != date('Y-m-d'))) {
-                $checkout_at = e($request->get('checkout_at'));
+                $checkout_at = $request->get('checkout_at');
             }
 
             $expected_checkin = '';
 
             if ($request->filled('expected_checkin')) {
-                $expected_checkin = e($request->get('expected_checkin'));
+                $expected_checkin = $request->get('expected_checkin');
             }
 
             $errors = [];
             DB::transaction(function () use ($target, $admin, $checkout_at, $expected_checkin, &$errors, $assets, $request) { //NOTE: $errors is passsed by reference!
                 foreach ($assets as $asset) {
                     $this->authorize('checkout', $asset);
+
+                    // See if there is a status label passed
+                    if ($request->filled('status_id')) {
+                        $asset->status_id = $request->get('status_id');
+                    }
 
                     $checkout_success = $asset->checkOut($target, $admin, $checkout_at, $expected_checkin, e($request->get('note')), $asset->name, null);
 
@@ -650,5 +716,55 @@ class BulkAssetsController extends Controller
             } 
             return redirect()->route('hardware.index')->with('success', trans('admin/hardware/message.restore.success'));
         }
+    }
+    public function hasUndeployableStatus (array $asset_ids)
+    {
+        $undeployable = Asset::whereIn('id', $asset_ids)
+            ->undeployable()
+            ->get();
+
+        $undeployableTags = $undeployable->map(function ($asset) {
+            return [
+                'id' => $asset->id,
+                'asset_tag' => $asset->asset_tag,
+            ];
+        })->toArray();
+
+        $undeployableIds = array_column($undeployableTags, 'id');
+        $filtered_ids = array_diff($asset_ids, $undeployableIds);
+
+         if($undeployable->isNotEmpty()) {
+             return ['status' => true, 'tags' => $undeployableTags, 'asset_ids' => $filtered_ids];
+         }
+        return false;
+    }
+
+    public function bulkEditForm(): View|RedirectResponse
+    {
+        $this->authorize('update', Asset::class);
+
+        $asset_ids = session()->pull('bulkedit_ids', []);
+
+        if (empty($asset_ids)) {
+            return redirect()->route('hardware.index')->with('error', trans('admin/hardware/message.update.no_assets_selected'));
+        }
+
+        $assets = Asset::with('model')->withTrashed()->whereIn('id', $asset_ids)->get();
+
+        if ($assets->isEmpty()) {
+            return redirect()->route('hardware.index')->with('error', trans('admin/hardware/message.update.assets_do_not_exist_or_are_invalid'));
+        }
+
+        $models = $assets->unique('model_id');
+        $modelNames = [];
+        foreach ($models as $model) {
+            $modelNames[] = $model->model->name;
+        }
+
+        return view('hardware/bulk')
+            ->with('assets', $asset_ids)
+            ->with('statuslabel_list', Helper::statusLabelList())
+            ->with('models', $models->pluck(['model']))
+            ->with('modelNames', $modelNames);
     }
 }

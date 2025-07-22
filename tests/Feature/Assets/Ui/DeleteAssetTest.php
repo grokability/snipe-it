@@ -48,6 +48,29 @@ class DeleteAssetTest extends TestCase
         ]);
     }
 
+    public function testActionLogsActionDateIsPopulatedWhenAssetDeleted()
+    {
+        $actor = User::factory()->deleteAssets()->create();
+
+        $asset = Asset::factory()->create();
+
+        $this->actingAs($actor)->delete(route('hardware.destroy', $asset));
+
+        $asset->refresh();
+
+        $this->assertDatabaseHas('action_logs', [
+            'action_date' => $asset->updated_at,
+            'created_at' => $asset->updated_at,
+            'created_by' => $actor->id,
+            'action_type' => 'delete',
+            'target_id' => null,
+            'target_type' => null,
+            'item_type' => Asset::class,
+            'item_id' => $asset->id,
+        ]);
+
+    }
+
     public function testAssetIsCheckedInWhenDeleted()
     {
         Event::fake();
@@ -64,6 +87,10 @@ class DeleteAssetTest extends TestCase
             $assignedUser->fresh()->assets->contains($asset),
             'Asset still assigned to user after deletion'
         );
+
+        $asset->refresh();
+        $this->assertNull($asset->assigned_to);
+        $this->assertNull($asset->assigned_type);
 
         Event::assertDispatched(CheckoutableCheckedIn::class);
     }

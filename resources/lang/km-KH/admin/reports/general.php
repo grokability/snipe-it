@@ -4,6 +4,7 @@ return [
     'info'   => 'ជ្រើសរើសជម្រើសដែលអ្នកចង់បានសម្រាប់របាយការណ៍ទ្រព្យសកម្មរបស់អ្នក។',
     'deleted_user' => 'អ្នកប្រើប្រាស់ដែលបានលុប',
     'send_reminder' => 'ផ្ញើការរំលឹក',
+    'cannot_send_reminder' => 'User has been deleted or does not have an email address so cannot receive a reminder',
     'reminder_sent' => 'បានផ្ញើការរំលឹក',
     'acceptance_deleted' => 'បានលុបសំណើទទួលយក',
     'acceptance_request' => 'សំណើទទួលយក',

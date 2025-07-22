@@ -1,6 +1,7 @@
 <?php
 
     return [
+        'select_type'            => 'Izaberite vrstu održavanja',
         'asset_maintenance_type' => 'Tip održavanja imovine',
         'title'                  => 'Naslov',
         'start_date'             => 'Datum početka',

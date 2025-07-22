@@ -22,7 +22,7 @@ return array(
     'managed_locations'     => 'Managed Locations',
     'managed_users'         => 'Managed Users',
     'name' 					=> 'Нэр',
-    'nogroup'               => 'No groups have been created yet. To add one, visit: ',
+    'nogroup'               => 'No groups have been created yet. To add one, visit:',
     'notes'                 => 'Тэмдэглэл',
     'password_confirm' 		=> 'Нууц үгээ батална уу',
     'password' 				=> 'Нууц үг',

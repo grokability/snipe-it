@@ -94,7 +94,7 @@
                         <div class="form-group {{ $errors->has('locale') ? 'has-error' : '' }}">
                             <label class="col-md-3 control-label" for="locale">{{ trans('general.language') }}</label>
                             <div class="col-md-8">
-                                {!! Form::locales('locale', old('locale', ''), 'select2') !!}
+                                <x-input.locale-select name="locale" :selected="old('locale', '')"/>
                                 {!! $errors->first('locale', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
                             </div>
                         </div>

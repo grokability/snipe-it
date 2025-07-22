@@ -114,6 +114,7 @@ class AssetsController extends Controller
             'byod',
             'asset_eol_date',
             'requestable',
+            'jobtitle',
         ];
 
         $filter = [];
@@ -298,9 +299,15 @@ class AssetsController extends Controller
         if ($request->input('requestable') == 'true') {
             $assets->where('assets.requestable', '=', '1');
         }
-
+        
         if ($request->filled('model_id')) {
-            $assets->InModelList([$request->input('model_id')]);
+            // If model_id is already an array, just use it as-is
+            if (is_array($request->input('model_id'))) {
+                $assets->InModelList($request->input('model_id'));
+            } else {
+                // Otherwise, turn it into an array
+                $assets->InModelList([$request->input('model_id')]);
+            }
         }
 
         if ($request->filled('category_id')) {
@@ -388,6 +395,9 @@ class AssetsController extends Controller
                 break;
             case 'assigned_to':
                 $assets->OrderAssigned($order);
+                break;
+            case 'jobtitle':
+                $assets->OrderByJobTitle($order);
                 break;
             case 'created_by':
                 $assets->OrderByCreatedByName($order);
@@ -568,7 +578,12 @@ class AssetsController extends Controller
             'assets.assigned_to',
             'assets.assigned_type',
             'assets.status_id',
-        ])->with('model', 'assetstatus', 'assignedTo')->NotArchived();
+        ])->with('model', 'assetstatus', 'assignedTo')
+            ->NotArchived();
+
+        if ((Setting::getSettings()->full_multiple_companies_support=='1') &&  ($request->filled('companyId'))) {
+            $assets->where('assets.company_id', $request->input('companyId'));
+        }
 
         if ($request->filled('assetStatusType') && $request->input('assetStatusType') === 'RTD') {
             $assets = $assets->RTD();
@@ -577,7 +592,6 @@ class AssetsController extends Controller
         if ($request->filled('search')) {
             $assets = $assets->AssignedSearch($request->input('search'));
         }
-
 
         $assets = $assets->paginate(50);
 
@@ -691,7 +705,9 @@ class AssetsController extends Controller
 
             return response()->json(Helper::formatStandardApiResponse('success', $asset, trans('admin/hardware/message.create.success')));
 
-            return response()->json(Helper::formatStandardApiResponse('success', (new AssetsTransformer)->transformAsset($asset), trans('admin/hardware/message.create.success')));
+            // below is what we want the _eventual_ return to look like - in a more standardized format.
+            // return response()->json(Helper::formatStandardApiResponse('success', (new AssetsTransformer)->transformAsset($asset), trans('admin/hardware/message.create.success')));
+
         }
 
         return response()->json(Helper::formatStandardApiResponse('error', null, $asset->getErrors()), 200);
@@ -1129,12 +1145,12 @@ class AssetsController extends Controller
                 }
             }
 
-            // Validate custom fields
-            Validator::make($asset->toArray(), $asset->customFieldValidationRules())->validate();
+            // Invoke the validation to see if the audit will complete successfully
+            $asset->setRules($asset->getRules() + $asset->customFieldValidationRules());
 
             // Validate the rest of the data before we turn off the event dispatcher
             if ($asset->isInvalid()) {
-                return response()->json(Helper::formatStandardApiResponse('error', null,  $asset->getErrors()));
+                return response()->json(Helper::formatStandardApiResponse('error', ['asset_tag' => $asset->asset_tag],  $asset->getErrors()));
             }
 
 

@@ -22,7 +22,7 @@ return array(
     'managed_locations'     => 'Sedi gestite',
     'managed_users'         => 'Utenti Gestiti',
     'name' 					=> 'Nome',
-    'nogroup'               => 'Non è stato ancora creato nessun gruppo. Per aggiungerne uno, vai al link: ',
+    'nogroup'               => 'Non è stato ancora creato nessun gruppo. Per aggiungerne uno, vai al link:',
     'notes'                 => 'Note',
     'password_confirm' 		=> 'Conferma password',
     'password' 				=> 'Password',

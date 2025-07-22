@@ -57,7 +57,14 @@ return [
     'show_in_requestable_list_short' => 'Покажи в списъка на изискуемите артикули',
     'show_in_requestable_list' => 'Покажи стойноста в списъка на изискуемите артикули. Криптираните полета няма да се покажат',
     'encrypted_options' => 'Това поле е криптирано, затова някой настройки няма да бъдат налични.',
-    'display_checkin' => 'Display in checkin forms',
-    'display_checkout' => 'Display in checkout forms',
-
+    'display_checkin' => 'Покажи в форма за вписване',
+    'display_checkout' => 'Покажи в форма за изписване',
+    'display_audit' => 'Покажи в форма за одит',
+    'types' => [
+        'text' => 'Text Box',
+        'listbox' => 'List Box',
+        'textarea' => 'Textarea (multi-line)',
+        'checkbox' => 'Checkbox',
+        'radio' => 'Radio Buttons',
+    ],
 ];

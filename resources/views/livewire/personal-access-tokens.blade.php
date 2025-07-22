@@ -104,6 +104,7 @@
                                        wire:keydown.enter="createToken(name)"
                                        wire:model="name"
                                        autofocus
+                                       required
                                 >
                             </div>
                         </div>

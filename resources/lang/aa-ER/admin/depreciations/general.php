@@ -11,4 +11,8 @@ return [
     'update'  					            => 'crwdns1800:0crwdne1800:0',
     'depreciation_min'                      => 'crwdns6071:0crwdne6071:0',
     'no_depreciations_warning'               => 'crwdns6533:0crwdne6533:0',
+    'depreciation_method'                   => 'crwdns13146:0crwdne13146:0',
+    'linear_depreciation'                   => 'crwdns12957:0crwdne12957:0',
+    'half_1'                                => 'crwdns12959:0crwdne12959:0',
+    'half_2'                                => 'crwdns12961:0crwdne12961:0',
 ];

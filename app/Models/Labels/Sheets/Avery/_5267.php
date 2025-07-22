@@ -31,7 +31,8 @@ abstract class _5267 extends RectangleSheet
     private float $labelWidth;
     private float $labelHeight;
 
-    public function __construct() {
+    public function __construct()
+    {
         $paperSize = static::fromFormat(self::PAPER_FORMAT, self::PAPER_ORIENTATION, $this->getUnit(), 2);
         $this->pageWidth = $paperSize->width;
         $this->pageHeight = $paperSize->height;
@@ -48,24 +49,63 @@ abstract class _5267 extends RectangleSheet
         $this->labelHeight = Helper::convertUnit(self::LABEL_H, 'pt', $this->getUnit());
     }
 
-    public function getPageWidth()  { return $this->pageWidth; }
-    public function getPageHeight() { return $this->pageHeight; }
+    public function getPageWidth()
+    {
+        return $this->pageWidth; 
+    }
+    public function getPageHeight()
+    {
+        return $this->pageHeight; 
+    }
 
-    public function getPageMarginTop()    { return $this->pageMarginTop; }
-    public function getPageMarginBottom() { return $this->pageMarginTop; }
-    public function getPageMarginLeft()   { return $this->pageMarginLeft; }
-    public function getPageMarginRight()  { return $this->pageMarginLeft; }
+    public function getPageMarginTop()
+    {
+        return $this->pageMarginTop; 
+    }
+    public function getPageMarginBottom()
+    {
+        return $this->pageMarginTop; 
+    }
+    public function getPageMarginLeft()
+    {
+        return $this->pageMarginLeft; 
+    }
+    public function getPageMarginRight()
+    {
+        return $this->pageMarginLeft; 
+    }
 
-    public function getColumns() { return 4; }
-    public function getRows()    { return 20; }
+    public function getColumns()
+    {
+        return 4; 
+    }
+    public function getRows()
+    {
+        return 20; 
+    }
 
-    public function getLabelColumnSpacing() { return $this->columnSpacing; }
-    public function getLabelRowSpacing()    { return $this->rowSpacing; }
+    public function getLabelColumnSpacing()
+    {
+        return $this->columnSpacing; 
+    }
+    public function getLabelRowSpacing()
+    {
+        return $this->rowSpacing; 
+    }
 
-    public function getLabelWidth()  { return $this->labelWidth; }
-    public function getLabelHeight() { return $this->labelHeight; }
+    public function getLabelWidth()
+    {
+        return $this->labelWidth; 
+    }
+    public function getLabelHeight()
+    {
+        return $this->labelHeight; 
+    }
 
-    public function getLabelBorder() { return 0; }
+    public function getLabelBorder()
+    {
+        return 0; 
+    }
 }
 
 ?>

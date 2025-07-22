@@ -101,7 +101,7 @@ class AssetsTransformer
             'checkout_counter' => (int) $asset->checkout_counter,
             'requests_counter' => (int) $asset->requests_counter,
             'user_can_checkout' => (bool) $asset->availableForCheckout(),
-            'book_value' => Helper::formatCurrencyOutput($asset->getLinearDepreciatedValue()),
+            'book_value' => Helper::formatCurrencyOutput($asset->getDepreciatedValue()),
         ];
 
 
@@ -155,6 +155,7 @@ class AssetsTransformer
             'clone'         => Gate::allows('create', Asset::class) ? true : false,
             'restore'       => ($asset->deleted_at!='' && Gate::allows('create', Asset::class)) ? true : false,
             'update'        => ($asset->deleted_at=='' && Gate::allows('update', Asset::class)) ? true : false,
+            'audit'        => Gate::allows('audit', Asset::class) ? true : false,
             'delete'        => ($asset->deleted_at=='' && $asset->assigned_to =='' && Gate::allows('delete', Asset::class) && ($asset->deleted_at == '')) ? true : false,
         ];      
 
@@ -202,6 +203,7 @@ class AssetsTransformer
                     'last_name'=> ($asset->assigned->last_name) ? e($asset->assigned->last_name) : null,
                     'email'=> ($asset->assigned->email) ? e($asset->assigned->email) : null,
                     'employee_number' =>  ($asset->assigned->employee_num) ? e($asset->assigned->employee_num) : null,
+                    'jobtitle' => $asset->assigned->jobtitle ? e($asset->assigned->jobtitle) : null,
                     'type' => 'user',
                 ] : null;
         }
@@ -302,30 +304,32 @@ class AssetsTransformer
 
     public function transformCheckedoutAccessory(AccessoryCheckout $accessory_checkout)
     {
+        if ($accessory_checkout->accessory) {
+            $array = [
+                'id' => $accessory_checkout->id,
+                'accessory' => [
+                    'id' => $accessory_checkout->accessory->id,
+                    'name' => $accessory_checkout->accessory->name,
+                ],
+                'assigned_to' => $accessory_checkout->assigned_to,
+                'image' => ($accessory_checkout->accessory->image) ? Storage::disk('public')->url('accessories/' . e($accessory_checkout->accessory->image)) : null,
+                'note' => $accessory_checkout->note ? e($accessory_checkout->note) : null,
+                'created_by' => $accessory_checkout->adminuser ? [
+                    'id' => (int)$accessory_checkout->adminuser->id,
+                    'name' => e($accessory_checkout->adminuser->present()->fullName),
+                ] : null,
+                'created_at' => Helper::getFormattedDateObject($accessory_checkout->created_at, 'datetime'),
+                'deleted_at' => Helper::getFormattedDateObject($accessory_checkout->deleted_at, 'datetime'),
+            ];
 
-        $array = [
-            'id' => $accessory_checkout->id,
-            'accessory' => [
-                'id' => $accessory_checkout->accessory->id,
-                'name' => $accessory_checkout->accessory->name,
-            ],
-            'assigned_to' => $accessory_checkout->assigned_to,
-            'image' => ($accessory_checkout->accessory->image) ? Storage::disk('public')->url('accessories/'.e($accessory_checkout->accessory->image)) : null,
-            'note' => $accessory_checkout->note ? e($accessory_checkout->note) : null,
-            'created_by' => $accessory_checkout->adminuser ? [
-                'id' => (int) $accessory_checkout->adminuser->id,
-                'name'=> e($accessory_checkout->adminuser->present()->fullName),
-            ]: null,
-            'created_at' => Helper::getFormattedDateObject($accessory_checkout->created_at, 'datetime'),
-        ];
+            $permissions_array['available_actions'] = [
+                'checkout' => false,
+                'checkin' => Gate::allows('checkin', Accessory::class),
+            ];
 
-        $permissions_array['available_actions'] = [
-            'checkout' => false,
-            'checkin' => Gate::allows('checkin', Accessory::class),
-        ];
-
-        $array += $permissions_array;
-        return $array;
+            $array += $permissions_array;
+            return $array;
+        }
     }
 
 }

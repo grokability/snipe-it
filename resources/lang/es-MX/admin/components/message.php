@@ -18,7 +18,7 @@ return array(
         'confirm'   => '¿Está seguro de que desea eliminar este componente?',
         'error'   => 'Hubo un problema eliminando el componente. Por favor, inténtelo de nuevo.',
         'success' => 'El componente fue borrado correctamente.',
-        'error_qty'   => 'Some components of this type are still checked out. Please check them in and try again.',
+        'error_qty'   => 'Algunos componentes de este tipo todavía están desactivados. Por favor, compruébalos e inténtalo de nuevo.',
     ),
 
      'checkout' => array(

@@ -22,7 +22,7 @@ return array(
     'managed_locations'     => '관리되는 위치',
     'managed_users'         => 'Managed Users',
     'name' 					=> '이름',
-    'nogroup'               => 'No groups have been created yet. To add one, visit: ',
+    'nogroup'               => 'No groups have been created yet. To add one, visit:',
     'notes'                 => '비고',
     'password_confirm' 		=> '비밀번호 확인',
     'password' 				=> '비밀번호',

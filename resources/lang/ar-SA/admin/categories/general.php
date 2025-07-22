@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'تصنيفات الأصول',
     'category_name'  					=> 'اسم التصنيف',
     'checkin_email'                     => 'إرسال رسالة إلكترونية للمستخدم عند الإدخال \\ الإخراج.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'سيتم إرسال رسالة إلكترونية إلى هذا المستخدم عند الإدخال \\ الإخراج.',
     'clone'                             => 'نسخ التصنيف',
     'create'  							=> 'إنشاء تصنيف',
@@ -21,5 +22,9 @@ return array(
     'use_default_eula'					=> 'قم باستعمال <a href="#" data-toggle="modal" data-target="#eulaModal">إتفاقية الترخيص الإفتراضية</a>.',
     'use_default_eula_disabled'			=> '<del>استخدام (اتفاقية ترخيص المستخدم) الافتراضية الأساسية بدلا من ذلك.</del> لم يتم تحديد (اتفاقية ترخيص المستخدم) الافتراضية الأساسية. الرجاء إضافتها من الإعدادات.',
     'use_default_eula_column'			=> 'استخدم EULA الافتراضي',
+    'import_require_acceptance'         => 'Require Acceptance',
+    'import_checkin_email'              => 'Send Checkin Email',
+    'import_eula_text'                  => 'EULA text',
+    'import_category_type'              => 'Category Type',
 
 );

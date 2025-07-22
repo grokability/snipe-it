@@ -4,7 +4,10 @@ namespace Tests\Feature\Locations\Ui;
 
 use App\Models\Location;
 use App\Models\User;
+use App\Models\Actionlog;
 use Tests\TestCase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 class UpdateLocationsTest extends TestCase
 {
@@ -74,6 +77,37 @@ class UpdateLocationsTest extends TestCase
         $this->assertFalse(Location::where('name', 'Test Location')->exists());
     }
 
+
+    public function testFileIsUploadedAndLogged()
+    {
+        $location = Location::factory()->create();
+        Storage::fake('local');
+        $file = UploadedFile::fake()->image('file.jpg', 100, 100)->size(100);
+
+        $this->actingAs(User::factory()->superuser()->create())
+            ->post(route('upload/locations', $location), [
+            'file' => [$file],
+            'notes' => 'Test Upload',
+        ])
+            ->assertStatus(302)
+            ->assertSessionHasNoErrors();
+
+
+        $location->refresh();
+
+        $logentry = Actionlog::where('item_type', Location::class)
+            ->where('item_id', $location->id)
+            ->where('action_type', 'uploaded')
+            ->first();
+
+        $this->assertTrue(Actionlog::where('item_type', Location:: class)->where('item_id', $location->id)->where('filename', $logentry->filename)->exists());
+
+
+        // Assert the file was stored...
+        // This doesn't work with the way we handle files :( Should try to fix this.
+        // Storage::disk('local')->assertExists($logentry->filename);
+
+    }
 
 
 }

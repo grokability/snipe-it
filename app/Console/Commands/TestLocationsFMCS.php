@@ -27,7 +27,7 @@ class TestLocationsFMCS extends Command
     public function handle()
     {
         $this->info('This script checks for company ID inconsistencies if Full Multiple Company Support with scoped locations will be used.');
-        $this->info('This could take few moments if have a very large dataset.');
+        $this->info('This could take a few moments if have a very large dataset.');
         $this->newLine();
 
         // if parameter location_id is set, only test this location

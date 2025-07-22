@@ -22,7 +22,7 @@ return array(
     'managed_locations'     => 'Managed Locations',
     'managed_users'         => 'Upravljani korisnici',
     'name' 					=> 'Ime',
-    'nogroup'               => 'Nijedna grupa još uvek nije napravljena. Da je dodate, posetite: ',
+    'nogroup'               => 'Nijedna grupa još uvek nije napravljena. Da je dodate, posetite:',
     'notes'                 => 'Zabeleške',
     'password_confirm' 		=> 'Potvrdi lozinku',
     'password' 				=> 'Lozinka',

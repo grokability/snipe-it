@@ -105,6 +105,7 @@ class StatusLabelPresenter extends Presenter
                 'switchable' => false,
                 'title' => trans('table.actions'),
                 'formatter' => 'statuslabelsActionsFormatter',
+                'printIgnore' => true,
             ],
         ];
 

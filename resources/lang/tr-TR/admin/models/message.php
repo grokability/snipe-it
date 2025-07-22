@@ -7,7 +7,7 @@ return array(
     'no_association' => 'UYARI! Bu öğeye ilişkin varlık modeli geçersiz veya eksik!',
     'no_association_fix' => 'Bu değişiklik bazı şeylerin garip ve tuhaf bir şekilde bozulmasına yol açabilir. Bu varlığı bir modelle ilişkilendirmek için düzeltin.',
     'assoc_users'	 => 'Model bir ya da daha çok demirbaş ile ilişkili ve silinemez. Lütfen demirbaşları silin ve tekrar deneyin. ',
-    'invalid_category_type' => 'This category must be an asset category.',
+    'invalid_category_type' => 'Kategori, bir varlık kategorisi olmak zorunda.',
 
     'create' => array(
         'error'   => 'Klasör oluşturulmadı, lütfen tekrar deneyin.',

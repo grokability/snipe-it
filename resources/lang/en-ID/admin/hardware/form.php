@@ -56,9 +56,10 @@ return [
     'asset_location_update_actual' => 'Update only actual location',
     'asset_not_deployable' => 'That asset status is not deployable. This asset cannot be checked out.',
     'asset_not_deployable_checkin' => 'That asset status is not deployable. Using this status label will checkin the asset.',
-    'asset_deployable' => 'That status is deployable. This asset can be checked out.',
-    'processing_spinner' => 'Processing... (This might take a bit of time on large files)',
-    'optional_infos'  => 'Optional Information',
+    'asset_deployable' => 'This asset can be checked out.',
+    'processing_spinner' => 'Memproses ( Hal ini mungkin memerlukan waktu untuk data yang besar)',
+    'processing' => 'Processing... ',
+    'optional_infos'  => 'Informasi Pilihan',
     'order_details'   => 'Order Related Information',
     'calc_eol'    => 'If nulling the EOL date, use automatic EOL calculation based on the purchase date and EOL rate.',
 ];

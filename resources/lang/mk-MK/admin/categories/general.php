@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Категории на основни средства',
     'category_name'  					=> 'Име на категорија',
     'checkin_email'                     => 'Испрати е-пошта до корисникот при позајмување/враќање.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'На корисникот ќе му биде испратена е-пошта при позајмување/враќање.',
     'clone'                             => 'Клонирај Категорија',
     'create'  							=> 'Креирај категорија',
@@ -21,5 +22,9 @@ return array(
     'use_default_eula'					=> 'Наместо ова, користете <a href="#" data-toggle="modal" data-target="#eulaModal">стандардни Услови за користење</a>.',
     'use_default_eula_disabled'			=> '<del>Наместо ова, користете стандардни Услови за користење.</del> Не се внесени стандардни Услови за користење. Ве молиме внесете ги во Поставки.',
     'use_default_eula_column'			=> 'Користи основна EULA',
+    'import_require_acceptance'         => 'Require Acceptance',
+    'import_checkin_email'              => 'Send Checkin Email',
+    'import_eula_text'                  => 'EULA text',
+    'import_category_type'              => 'Category Type',
 
 );

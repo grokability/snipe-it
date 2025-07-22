@@ -28,7 +28,7 @@ return array(
         'unavailable'   => 'A tartozékot nem lehet kiadni. Ellenőrizd a kiadható mennyiséget',
         'user_does_not_exist' => 'Érvénytelen felhasználó. Kérem, próbálja újra!',
          'checkout_qty' => array(
-            'lte'  => 'There is currently only one available accessory of this type, and you are trying to check out :checkout_qty. Please adjust the checkout quantity or the total stock of this accessory and try again.|There are :number_currently_remaining total available accessories, and you are trying to check out :checkout_qty. Please adjust the checkout quantity or the total stock of this accessory and try again.',
+            'lte'  => 'Jelenleg csak egy elérhető tartozék van ebből a típusból, Ön pedig :checkout_qty darabot próbál kiadni. Kérjük, módosítsa a kiadni kívánt mennyiséget, vagy növelje a tartozék készletét, majd próbálja újra.|Jelenleg :number_currently_remaining darab elérhető tartozék van ebből a típusból, Ön pedig :checkout_qty darabot próbál kiadni. Kérjük, módosítsa a kiadni kívánt mennyiséget, vagy növelje a tartozék készletét, majd próbálja újra.',
             ),
            
     ),

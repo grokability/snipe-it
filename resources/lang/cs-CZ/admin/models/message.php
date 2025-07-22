@@ -7,7 +7,7 @@ return array(
     'no_association' => 'VAROVÁNÍ! Model majetku pro tuto položku je neplatný, nebo chybí!',
     'no_association_fix' => 'Tento stav může způsobit nedozírné problémy. Přiřaďte dotyčnému majetku správný model.',
     'assoc_users'	 => 'Tento model je spojen s alespoň jedním majetkem a nemůže být smazán. Prosím smažte tyto majetky a pak to zkuste znovu. ',
-    'invalid_category_type' => 'This category must be an asset category.',
+    'invalid_category_type' => 'Tato kategorie musí být kategorií zařízení.',
 
     'create' => array(
         'error'   => 'Model nebyl vytvořen, zkuste to znovu.',

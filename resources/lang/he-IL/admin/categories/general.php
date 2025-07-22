@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'קטגוריות נכסים',
     'category_name'  					=> 'שם קטגוריה',
     'checkin_email'                     => 'שלח דוא״ל למשתמש בעת הנפקה/החזרה.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'למשתמש זה ישלח דוא״ל בעת הנפקה/החזרה.',
     'clone'                             => 'קטגוריה שיבוט',
     'create'  							=> 'צור קטגוריה',
@@ -21,5 +22,9 @@ return array(
     'use_default_eula'					=> 'במקום זאת, השתמש ב- <a href="#" data-toggle="modal" data-target="#eulaModal"> ברירת המחדל הראשית EULA</a>.',
     'use_default_eula_disabled'			=> '<del> השתמש ב- EULA ברירת המחדל הראשוני במקום. </del> לא נקבעה ברירת המחדל הראשית של הסכם הרישיון למשתמש קצה. הוסף אחד בהגדרות.',
     'use_default_eula_column'			=> 'השתמש בהסכם רישיון למשתמש קצה (EULA) ברירת המחדל',
+    'import_require_acceptance'         => 'Require Acceptance',
+    'import_checkin_email'              => 'Send Checkin Email',
+    'import_eula_text'                  => 'EULA text',
+    'import_category_type'              => 'Category Type',
 
 );

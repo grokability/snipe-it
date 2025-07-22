@@ -22,7 +22,7 @@ return array(
     'managed_locations'     => 'Láithreáin bhainistithe',
     'managed_users'         => 'Managed Users',
     'name' 					=> 'Ainm',
-    'nogroup'               => 'No groups have been created yet. To add one, visit: ',
+    'nogroup'               => 'No groups have been created yet. To add one, visit:',
     'notes'                 => 'Nótaí',
     'password_confirm' 		=> 'Deimhnigh Pasfhocal',
     'password' 				=> 'Pasfhocal',

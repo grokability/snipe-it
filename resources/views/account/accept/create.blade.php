@@ -43,7 +43,7 @@
             <div class="col-sm-12 col-sm-offset-1 col-md-10 col-md-offset-1">
                 <div class="panel box box-default">
                     <div class="box-body">
-                        <div class="col-md-12">
+                        <div class="col-md-12" style="padding-top: 20px;">
                         @if ($acceptance->checkoutable->getEula())
                             <div id="eula_div" style="padding-bottom: 20px">
                                 {!!  $acceptance->checkoutable->getEula() !!}
@@ -70,7 +70,7 @@
                                 <label id="note_label" for="note" style="text-align:center;" >{{trans('admin/settings/general.acceptance_note')}}</label>
                             </div>
                             <div class="col-md-12">
-                                <textarea id="note" name="note" rows="4" cols="50" value="note" style="width:100%" ></textarea>
+                                <textarea id="note" name="note" rows="4" value="note" class="form-control" style="width:100%"></textarea>
                             </div>
                         </div>
 
@@ -89,9 +89,23 @@
                             </div>
                         @endif
 
+                        @if (auth()->user()->email!='')
+                            <div class="col-md-12" style="padding-top: 20px; display: none;" id="showEmailBox">
+                                <label class="form-control">
+                                    <input type="checkbox" value="1" name="send_copy" id="send_copy" checked="checked" aria-label="send_copy">
+                                    {{ trans('mail.send_pdf_copy') }} ({{ auth()->user()->email }})
+                                </label>
+                            </div>
+                        @endif
+
                     </div> <!-- / box-body -->
-                    <div class="box-footer text-right">
-                        <button type="submit" class="btn btn-success" id="submit-button"><i class="fa fa-check icon-white" aria-hidden="true"></i> {{ trans('general.submit') }}</button>
+                    <div class="box-footer text-right" style="display: none;" id="showSubmit">
+                        <button type="submit" class="btn btn-success" id="submit-button">
+                            <i class="fa fa-check icon-white" aria-hidden="true" id="submitIcon"></i>
+                            <span id="buttonText">
+                                {{ trans('general.i_accept_item') }}
+                            </span>
+                        </button>
                     </div><!-- /.box-footer -->
                 </div> <!-- / box-default -->
             </div> <!-- / col -->
@@ -103,6 +117,8 @@
 @section('moar_scripts')
 
     <script nonce="{{ csrf_token() }}">
+
+        @if ($snipeSettings->require_accept_signature=='1')
 
         var wrapper = document.getElementById("signature-pad"),
             clearButton = wrapper.querySelector("[data-action=clear]"),
@@ -141,6 +157,32 @@
                 $('#signature_output').val(signaturePad.toDataURL());
             }
         });
+        @endif
+        
+        $('[name="asset_acceptance"]').on('change', function() {
+
+            if ($(this).is(':checked') && $(this).attr('id') == 'declined') {
+                $("#showEmailBox").hide();
+                $("#showSubmit").show();
+                $("#submit-button").removeClass("btn-success").addClass("btn-danger").show();
+                $("#submitIcon").removeClass("fa-check").addClass("fa-times");
+                $("#buttonText").text('{{ trans('general.i_decline_item') }}');
+                $("#note").prop('required', true);
+
+            } else if ($(this).is(':checked') && $(this).attr('id') == 'accepted') {
+                $("#showEmailBox").show();
+                $("#showSubmit").show();
+                $("#submit-button").removeClass("btn-danger").addClass("btn-success").show();
+                $("#submitIcon").removeClass("fa-check").addClass("fa-check");
+                $("#buttonText").text('{{ trans('general.i_accept_item') }}');
+                $("#note").prop('required', false);
+
+
+
+            }
+
+        });
+
 
 
     </script>

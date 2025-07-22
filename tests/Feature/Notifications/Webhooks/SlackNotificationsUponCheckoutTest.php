@@ -2,6 +2,10 @@
 
 namespace Tests\Feature\Notifications\Webhooks;
 
+use App\Models\AssetModel;
+use App\Models\Category;
+use App\Notifications\CheckoutComponentNotification;
+use Illuminate\Support\Facades\Mail;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use App\Events\CheckoutableCheckedOut;
@@ -28,12 +32,13 @@ class SlackNotificationsUponCheckoutTest extends TestCase
         parent::setUp();
 
         Notification::fake();
+        Mail::fake();
     }
 
     public static function assetCheckoutTargets(): array
     {
         return [
-            'Asset checked out to user' => [fn() => User::factory()->create()],
+            'Asset checked out to user' => [fn() => User::factory()->create(['email' => null])],
             'Asset checked out to asset' => [fn() => Asset::factory()->laptopMbp()->create()],
             'Asset checked out to location' => [fn() => Location::factory()->create()],
         ];
@@ -42,7 +47,7 @@ class SlackNotificationsUponCheckoutTest extends TestCase
     public static function licenseCheckoutTargets(): array
     {
         return [
-            'License checked out to user' => [fn() => User::factory()->create()],
+            'License checked out to user' => [fn() => User::factory()->create(['email' => null])],
             'License checked out to asset' => [fn() => Asset::factory()->laptopMbp()->create()],
         ];
     }
@@ -96,17 +101,60 @@ class SlackNotificationsUponCheckoutTest extends TestCase
 
         $this->assertNoSlackNotificationSent(CheckoutAssetNotification::class);
     }
+    #[DataProvider('assetCheckoutTargets')]
+    public function testComponentCheckoutSendsSlackNotificationWhenSettingEnabled($checkoutTarget)
+    {
+        $this->settings->enableSlackWebhook();
+        $component = Component::factory()->create([
+            'category_id' => Category::factory()->create([
+                'require_acceptance' => false,
+                'eula_text' => null,
+            ]),
+        ]);
+        $this->fireCheckOutEvent(
+            $component,
+            $checkoutTarget(),
+        );
 
-    public function testComponentCheckoutDoesNotSendSlackNotification()
+        $this->assertSlackNotificationSent(CheckoutComponentNotification::class);
+    }
+
+    #[DataProvider('assetCheckoutTargets')]
+    public function testComponentCheckoutDoesNotSendSlackNotificationWhenSettingDisabled($checkoutTarget)
+    {
+        $this->settings->disableSlackWebhook();
+        $component = Component::factory()->create([
+            'category_id' => Category::factory()->create([
+                'require_acceptance' => false,
+                'eula_text' => null,
+            ]),
+        ]);
+        $this->fireCheckOutEvent(
+            $component,
+            $checkoutTarget(),
+        );
+
+        $this->assertNoSlackNotificationSent(CheckoutComponentNotification::class);
+    }
+    public function testSlackNotificationIsStillSentWhenCategoryEmailIsNotSetToSendEmails()
     {
         $this->settings->enableSlackWebhook();
 
+        $category = Category::factory()->create([
+            'checkin_email' => false,
+            'eula_text' => null,
+            'require_acceptance' => false,
+            'use_default_eula' => false,
+        ]);
+        $assetModel = AssetModel::factory()->for($category)->create();
+        $asset = Asset::factory()->for($assetModel, 'model')->create();
+
         $this->fireCheckOutEvent(
-            Component::factory()->create(),
-            Asset::factory()->laptopMbp()->create(),
+            $asset,
+            User::factory()->create(),
         );
 
-        Notification::assertNothingSent();
+        $this->assertSlackNotificationSent(CheckoutAssetNotification::class);
     }
 
     public function testConsumableCheckoutSendsSlackNotificationWhenSettingEnabled()

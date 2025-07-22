@@ -15,7 +15,7 @@ return [
         'restore_confirm'       => 'Veritabanınızı :filename\'den geri yüklemek istediğinizden emin misiniz?'
     ],
     'restore' => [
-        'success'               => 'Your system backup has been restored. Please log in again.'
+        'success'               => 'Sistem yedeğiniz geri yüklendi. Lütfen tekrar giriş yapın.'
     ],
     'purge' => [
         'error'     => 'Temizleme sırasında bir hata oluştu. ',
@@ -37,7 +37,7 @@ return [
         'authentication_success' => 'LDAP kullanıcı kimliği başarıyla doğrulandı!'
     ],
     'labels' => [
-        'null_template' => 'Label template not found. Please select a template.',
+        'null_template' => 'Etiket şablonu bulunamadı. Lütfen bir şablon seçin.',
         ],
     'webhook' => [
         'sending' => ':app test mesajı gönderiliyor...',
@@ -48,7 +48,12 @@ return [
         'error' => 'Bir şeyler yanlış gitti. :app bu şekilde yanıt verdi: :error_message',
         'error_redirect' => 'HATA: 301/302: bağlantı başka bir yere yönlendiriyor. Güvenlik nedeniyle yönlendirmeleri takip etmiyoruz. Lütfen direk adresi kullanın.',
         'error_misc' => 'Bir şeyler yanlış gitti. :( ',
-        'webhook_fail' => ' webhook notification failed: Check to make sure the URL is still valid.',
-        'webhook_channel_not_found' => ' webhook channel not found.'
-    ]
+        'webhook_fail' => 'webhook bildirimi başarısız oldu: URL\'nin hala geçerli olduğundan emin olun.',
+        'webhook_channel_not_found' => 'webhook kanalı bulunamadı.',
+        'ms_teams_deprecation' => 'Seçilen Microsoft Teams webhook URL\'si 31 Aralık 2025\'te kullanımdan kaldırılacaktır. Lütfen bir iş akışı URL\'si kullanın. Microsoft\'un iş akışı oluşturmayla ilgili belgelerine <a href="https://support.microsoft.com/en-us/office/create-incoming-webhooks-with-workflows-for-microsoft-teams-8ae491c7-0394-4861-ba59-055e33f75498" target="_blank"> buradan ulaşabilirsiniz.</a>',
+    ],
+    'location_scoping' => [
+        'not_saved' => 'Ayarlarınız kaydedilemedi.',
+        'mismatch' => 'Konum kapsamını etkinleştirmeden önce veritabanında dikkat etmeniz gereken 1 öğe var.|Konum kapsamını etkinleştirmeden önce veritabanında dikkat etmeniz gereken :count öğe var.',
+    ],
 ];

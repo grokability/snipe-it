@@ -32368,7 +32368,8 @@ $(function () {
           var data = {
             search: params.term,
             page: params.page || 1,
-            assetStatusType: link.data("asset-status-type")
+            assetStatusType: link.data("asset-status-type"),
+            companyId: link.data("company-id")
           };
           return data;
         },

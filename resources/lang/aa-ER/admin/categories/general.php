@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'crwdns636:0crwdne636:0',
     'category_name'  					=> 'crwdns637:0crwdne637:0',
     'checkin_email'                     => 'crwdns2034:0crwdne2034:0',
+    'email_to_initiator'                => 'crwdns13442:0crwdne13442:0',
     'checkin_email_notification'        => 'crwdns2035:0crwdne2035:0',
     'clone'                             => 'crwdns1239:0crwdne1239:0',
     'create'  							=> 'crwdns638:0crwdne638:0',
@@ -21,5 +22,9 @@ return array(
     'use_default_eula'					=> 'crwdns1247:0crwdne1247:0',
     'use_default_eula_disabled'			=> 'crwdns1248:0crwdne1248:0',
     'use_default_eula_column'			=> 'crwdns6083:0crwdne6083:0',
+    'import_require_acceptance'         => 'crwdns13270:0crwdne13270:0',
+    'import_checkin_email'              => 'crwdns13272:0crwdne13272:0',
+    'import_eula_text'                  => 'crwdns13274:0crwdne13274:0',
+    'import_category_type'              => 'crwdns13276:0crwdne13276:0',
 
 );

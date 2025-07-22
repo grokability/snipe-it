@@ -34,7 +34,6 @@
 
             @if ($clients->count() > 0)
                     <table data-cookie-id-table="OAuthClientsTable"
-                           data-pagination="true"
                            data-id-table="OAuthClientsTable"
                            data-side-pagination="client"
                            data-sort-order="desc"
@@ -131,7 +130,6 @@
                         <div class="box-body">
                             <!-- Authorized Tokens -->
                             <table data-cookie-id-table="AuthorizedAppsTable"
-                                   data-pagination="true"
                                    data-id-table="AuthorizedAppsTable"
                                    data-toolbar="#AuthorizedAppsToolbar"
                                    data-side-pagination="client"
@@ -250,6 +248,7 @@
                                        class="form-control"
                                        wire:model="name"
                                        wire:keydown.enter="createClient"
+                                       required
                                        autofocus>
 
                                 <span class="help-block">
@@ -263,12 +262,13 @@
                             <label class="col-md-3 control-label" for="redirect">{{ trans('admin/settings/general.oauth_redirect_url') }}</label>
 
                             <div class="col-md-7">
-                                <input type="text"
+                                <input type="url"
                                        class="form-control"
                                        aria-label="redirect"
                                        name="redirect"
                                        wire:model="redirect"
                                        wire:keydown.enter="createClient"
+                                       required
                                 >
 
                                 <span class="help-block">

@@ -46,7 +46,7 @@
                                 <label for="site_name">{{ trans('admin/settings/general.default_language') }}</label>
                             </div>
                             <div class="col-md-5 col-xs-12">
-                                {!! Form::locales('locale', old('locale', $setting->locale), 'select2') !!}
+                                <x-input.locale-select name="locale" :selected="old('locale', $setting->locale)" />
 
                                 {!! $errors->first('locale', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
                             </div>

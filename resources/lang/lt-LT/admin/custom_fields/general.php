@@ -57,7 +57,14 @@ return [
     'show_in_requestable_list_short' => 'Rodyti užsakomo turto sąraše',
     'show_in_requestable_list' => 'Rodyti reikšmę užsakomo turto sąraše. Šifruoti laukai nebus rodomi',
     'encrypted_options' => 'Šis laukas yra užšifruotas, todėl kai kurios rodymo parinktys nebus pasiekiamos.',
-    'display_checkin' => 'Display in checkin forms',
-    'display_checkout' => 'Display in checkout forms',
-
+    'display_checkin' => 'Rodyti paėmimo formose',
+    'display_checkout' => 'Rodyti išdavimo formose',
+    'display_audit' => 'Rodyti audito formose',
+    'types' => [
+        'text' => 'Teksto laukas',
+        'listbox' => 'Sąrašo laukas',
+        'textarea' => 'Teksto sritis (kelių eilučių)',
+        'checkbox' => 'Žymimasis langelis',
+        'radio' => 'Akutės',
+    ],
 ];

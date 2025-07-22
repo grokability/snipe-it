@@ -169,6 +169,7 @@ class ComponentPresenter extends Presenter
             'title' => trans('general.checkin').'/'.trans('general.checkout'),
             'visible' => true,
             'formatter' => 'componentsInOutFormatter',
+            'printIgnore' => true,
         ];
 
         $layout[] = [
@@ -178,6 +179,7 @@ class ComponentPresenter extends Presenter
             'switchable' => false,
             'title' => trans('table.actions'),
             'formatter' => 'componentsActionsFormatter',
+            'printIgnore' => true,
         ];
 
         return json_encode($layout);

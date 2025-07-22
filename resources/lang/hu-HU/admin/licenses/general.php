@@ -47,6 +47,6 @@ return array(
             ],
     ],
 
-    'below_threshold' => 'There are only :remaining_count seats left for this license with a minimum quantity of :min_amt. You may want to consider purchasing more seats.',
+    'below_threshold' => 'Ehhez a licenchez már csak :remaining_count hely maradt, a minimálisan elvárt mennyiség pedig :min_amt. Érdemes lehet további helyeket vásárolni.',
     'below_threshold_short' => 'Ebből az elemből nincs meg a beállított minimum mennyiség.',
 );

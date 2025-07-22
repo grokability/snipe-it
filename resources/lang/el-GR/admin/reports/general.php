@@ -4,6 +4,7 @@ return [
     'info'   => 'Επιλέξτε τις επιλογές που θέλετε για την αναφορά των παγίων σας.',
     'deleted_user' => 'Διαγραφή χρήστη',
     'send_reminder' => 'Αποστολή υπενθύμισης',
+    'cannot_send_reminder' => 'User has been deleted or does not have an email address so cannot receive a reminder',
     'reminder_sent' => 'Υπενθύμιση εστάλη',
     'acceptance_deleted' => 'Η αίτηση αποδοχής διαγράφηκε',
     'acceptance_request' => 'Αίτημα αποδοχής',

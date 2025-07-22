@@ -51,16 +51,11 @@
                         <div class="col-md-12">
                                 <div class="table-responsive">
                                     <table
-                                        data-click-to-select="true"
                                         data-cookie-id-table="requestableAssetsListingTable"
-                                        data-pagination="true"
                                         data-id-table="requestableAssetsListingTable"
-                                        data-search="true"
                                         data-side-pagination="server"
-                                        data-show-columns="true"
                                         data-show-export="false"
                                         data-show-footer="false"
-                                        data-show-refresh="true"
                                         data-sort-order="asc"
                                         data-sort-name="name"
                                         data-toolbar="#assetsBulkEditToolbar"
@@ -106,7 +101,6 @@
                                         data-toolbar="#toolbar"
                                         class="table table-striped snipe-table"
                                         id="table"
-                                        data-advanced-search="true"
                                         data-id-table="advancedTable"
                                         data-cookie-id-table="requestableAssets">
                                 <thead>

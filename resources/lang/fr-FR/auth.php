@@ -15,6 +15,6 @@ return array(
 
     'failed' => 'Ces identifiants ne correspondent à aucun enregistrement.',
     'password' => 'Le mot de passe fourni est incorrect.',
-    'throttle' => 'Trop de tentatives de connexion. Veuillez réessayer à nouveau dans :seconds secondes.',
+    'throttle' => 'Too many login attempts. Please try again in :minutes minute(s).',
 
 );

@@ -1,14 +1,14 @@
 <?php
 
 return array(
-    'about'      	=> 'Despre etichete status',
+    'about'      	=> 'About Status Types',
     'archived'      	=> 'Arhivat',
     'create'      	=> 'Creeaza eticheta status',
     'color'      	=> 'Grafic Culoare',
     'default_label' => 'Etichetă implicită',
     'default_label_help' => 'Acest lucru este folosit pentru a vă asigura că cele mai utilizate etichete de stare apar în partea de sus a casetei de selectare atunci când creați/editați activele.',
     'deployable'      	=> 'Lansabil',
-    'info'      	=> 'Etichetele de status sunt folosite pentru a descrie diferite statusuri in care se pot afla activele. Ele pot fi trimise la reparat, pierdut/furat, etc. Poti crea noi etichete de status pentru active lansabile, in asteptare sau arhivate.',
+    'info'      	=> 'Status label types are used to describe the various states your assets could be in. They may be out for repair, lost/stolen, etc. You can create new status labels for your deployable, pending and archived assets according to your own workflow. For more information, <a href="https://snipe-it.readme.io/docs/overview#status-labels" target="_blank">see the documentation <i class="fa fa-external-link"></i></a>.',
     'name'      	=> 'Nume status',
     'pending'      	=> 'In asteptare',
     'status_type'   => 'Tip status',

@@ -15,6 +15,6 @@ return array(
 
     'failed' => 'លិខិតសម្គាល់ទាំងនេះមិនត្រូវគ្នានឹងកំណត់ត្រារបស់យើងទេ។',
     'password' => 'ពាក្យសម្ងាត់ដែលបានផ្តល់គឺមិនត្រឹមត្រូវទេ។',
-    'throttle' => 'ការព្យាយាមចូលច្រើនពេក។ សូមព្យាយាមម្តងទៀតក្នុងរយៈពេល : វិនាទីវិនាទី។',
+    'throttle' => 'Too many login attempts. Please try again in :minutes minute(s).',
 
 );

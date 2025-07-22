@@ -2,23 +2,28 @@
 
 return [
 
-    'undeployable' 		 => '<strong>Warning: </strong> This asset has been marked as currently undeployable. If this status has changed, please update the asset status.',
+    'undeployable' 		 => 'The following assets cannot be deployed and have been removed from checkout: :asset_tags',
     'does_not_exist' 	 => 'Активът не съществува.',
     'does_not_exist_var' => 'Активът с етике :asset_tag не е намерен.',
     'no_tag' 	         => 'Не е предоставен етикет на актив.',
     'does_not_exist_or_not_requestable' => 'Актива не съществува или не може да бъде предоставян.',
     'assoc_users'	 	 => 'Активът е изписан на потребител и не може да бъде изтрит. Моля впишете го обратно и след това опитайте да го изтриете отново.',
     'warning_audit_date_mismatch' 	=> 'Следващата дата на одит на този актив (:next_audit_date) е преди последната дата на одит (:last_audit_date). Моля, актуализирайте следващата дата на одита.',
-    'labels_generated'   => 'Labels were successfully generated.',
-    'error_generating_labels' => 'Error while generating labels.',
-    'no_assets_selected' => 'No assets selected.',
+    'labels_generated'   => 'Етиката е успешно генериран.',
+    'error_generating_labels' => 'Грешка при генериране на етикети.',
+    'no_assets_selected' => 'Няма избрани активи.',
 
     'create' => [
         'error'   		=> 'Активът не беше създаден. Моля опитайте отново.',
         'success' 		=> 'Активът създаден успешно.',
         'success_linked' => 'Артикул с етикет :tag беше създаден успешно. <strong><a href=":link" style="color: white;">Щракнете тук за да го видите</a></strong>.',
-        'multi_success_linked' => 'Asset with tag :links was created successfully.|:count assets were created succesfully. :links.',
-        'partial_failure' => 'An asset was unable to be created. Reason: :failures|:count assets were unable to be created. Reasons: :failures',
+        'multi_success_linked' => 'Актив с етикет :links беше създаден успешно.|:count активи бяха създадено успешно. :links.',
+        'partial_failure' => 'Грешка при създаване на актив. Съобщението за грешка е: :failures|:count актива не бяха създадени. Съобщението за грешка е: :failures',
+        'target_not_found' => [
+            'user' => 'The assigned user could not be found.',
+            'asset' => 'The assigned asset could not be found.',
+            'location' => 'The assigned location could not be found.',
+        ],
     ],
 
     'update' => [
@@ -56,23 +61,24 @@ return [
     ],
 
     'import' => [
-        'import_button'         => 'Process Import',
+        'import_button'         => 'Импортирай',
         'error'                 => 'Някои елементи не бяха въведени правилно.',
         'errorDetail'           => 'Следните елементи не бяха въведени поради грешки.',
         'success'               => 'Вашият файл беше въведен.',
         'file_delete_success'   => 'Вашият файл беше изтрит успешно.',
         'file_delete_error'      => 'Файлът не е в състояние да бъде изтрит',
         'file_missing' => 'Избраният файл липсва',
-        'file_already_deleted' => 'The file selected was already deleted',
+        'file_already_deleted' => 'Избрания файл беше вече изтрит',
         'header_row_has_malformed_characters' => 'Един или повече атрибути на заглавния ред съдържат неправилни UTF-8 символи',
         'content_row_has_malformed_characters' => 'Един или повече атрибути на заглавния ред съдържат неправилни UTF-8 символи',
+        'transliterate_failure' => 'Транслитерацията от :encoding към UTF-8 беше неуспешна, поради невалидни символи'
     ],
 
 
     'delete' => [
         'confirm'   	=> 'Сигурни ли сте, че желаете изтриване на актива?',
         'error'   		=> 'Проблем при изтриване на актива. Моля опитайте отново.',
-        'assigned_to_error' => '{1}Asset Tag: :asset_tag is currently checked out. Check in this device before deletion.|[2,*]Asset Tags: :asset_tag are currently checked out. Check in these devices before deletion.',
+        'assigned_to_error' => '{1}Актива: :asset_tag е изписан. Впишете го обратно преди изтриване.|[2,*] Активите :asset_tag са изписани. Впишете ги обратно преди изтриване.',
         'nothing_updated'   => 'Няма избрани активи, така че нищо не бе изтрито.',
         'success' 		=> 'Активът е изтрит успешно.',
     ],
@@ -86,8 +92,8 @@ return [
     ],
 
     'multi-checkout' => [
-        'error'   => 'Asset was not checked out, please try again|Assets were not checked out, please try again',
-        'success' => 'Asset checked out successfully.|Assets checked out successfully.',
+        'error'   => 'Актива не беше изписан, моля опитайте отново|Активите не бяха изписани, моля опитайте отново',
+        'success' => 'Актива е изписан успешно.|Активите са изписани успешно.',
     ],
 
     'checkin' => [
@@ -99,9 +105,10 @@ return [
     ],
 
     'requests' => [
-        'error'   		=> 'Активът не беше изискан. Моля опитайте отново.',
-        'success' 		=> 'Активът изискан успешно.',
-        'canceled'      => 'Заявка за отписване отказана успешно',
+        'error'   		=> 'Опитат беше неуспешен, моля опитайте отново.',
+        'success' 		=> 'Заявката е успешно подадена.',
+        'canceled'      => 'Заявката е отменена.',
+        'cancel'        => 'Отмени тази заявка за артикул',
     ],
 
 ];

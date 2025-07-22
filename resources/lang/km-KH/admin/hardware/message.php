@@ -2,7 +2,7 @@
 
 return [
 
-    'undeployable' 		 => '<strong>ការព្រមាន៖ </strong> ទ្រព្យសកម្មនេះត្រូវបានសម្គាល់ថាមិនអាចប្រើប្រាស់បាននាពេលបច្ចុប្បន្ន។ ប្រសិនបើស្ថានភាពនេះត្រូវបានផ្លាស់ប្តូរ សូមធ្វើបច្ចុប្បន្នភាពស្ថានភាពទ្រព្យសម្បត្តិ។',
+    'undeployable' 		 => 'The following assets cannot be deployed and have been removed from checkout: :asset_tags',
     'does_not_exist' 	 => 'ទ្រព្យសកម្មមិនមានទេ។',
     'does_not_exist_var' => 'ទ្រព្យសកម្មដែលមានស្លាក៖ asset_tag រកមិនឃើញទេ។',
     'no_tag' 	         => 'មិនមានស្លាកទ្រព្យសម្បត្តិត្រូវបានផ្តល់ឱ្យទេ។',
@@ -19,6 +19,11 @@ return [
         'success_linked' => 'ទ្រព្យសកម្មជាមួយស្លាក៖ ស្លាកត្រូវបានបង្កើតដោយជោគជ័យ។ <strong><a href=":link" style="color: white;">ចុចទីនេះដើម្បីមើល</a></strong>។',
         'multi_success_linked' => 'ទ្រព្យសកម្មជាមួយស្លាក៖ តំណត្រូវបានបង្កើតដោយជោគជ័យ។|: ទ្រព្យសម្បត្តិរាប់ត្រូវបានបង្កើតដោយជោគជ័យ។ ៖ តំណភ្ជាប់។',
         'partial_failure' => 'ទ្រព្យសកម្មមិនអាចបង្កើតបានទេ។ ហេតុផល៖ :failures|:រាប់ទ្រព្យសកម្មមិនអាចបង្កើតបានទេ។ មូលហេតុ៖៖ បរាជ័យ',
+        'target_not_found' => [
+            'user' => 'The assigned user could not be found.',
+            'asset' => 'The assigned asset could not be found.',
+            'location' => 'The assigned location could not be found.',
+        ],
     ],
 
     'update' => [
@@ -66,6 +71,7 @@ return [
         'file_already_deleted' => 'ឯកសារដែលបានជ្រើសរើសត្រូវបានលុបរួចហើយ',
         'header_row_has_malformed_characters' => 'គុណលក្ខណៈមួយ ឬច្រើននៅក្នុងជួរបឋមកថាមានតួអក្សរ UTF-8 ខុសទម្រង់',
         'content_row_has_malformed_characters' => 'គុណលក្ខណៈមួយ ឬច្រើននៅក្នុងជួរទីមួយនៃមាតិកាមានតួអក្សរ UTF-8 ខុសទម្រង់',
+        'transliterate_failure' => 'Transliteration from :encoding to UTF-8 failed due to invalid characters in input'
     ],
 
 
@@ -99,9 +105,10 @@ return [
     ],
 
     'requests' => [
-        'error'   		=> 'ទ្រព្យសកម្មមិនត្រូវបានស្នើសុំទេ, សូមព្យាយាមម្តងទៀត',
-        'success' 		=> 'ទ្រព្យសកម្មបានស្នើសុំដោយជោគជ័យ។',
-        'canceled'      => 'សំណើ Checkout ត្រូវបានលុបចោលដោយជោគជ័យ',
+        'error'   		=> 'Request was not successful, please try again.',
+        'success' 		=> 'Request successfully submitted.',
+        'canceled'      => 'Request successfully canceled.',
+        'cancel'        => 'បោះបង់ការស្នើសុំធាតុនេះ។',
     ],
 
 ];

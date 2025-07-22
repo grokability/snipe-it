@@ -39,4 +39,5 @@ return [
     'signed_by_finance_auditor' => 'Undirritað af (fulltrúa fjármáladeildar):',
     'signed_by_location_manager' => 'Undirritað af (fulltrúa forstöðumanns):',
     'signed_by'                 => 'Undirritað af By:',
+    'clone'  					=> 'Clone Location',
 ];

@@ -298,7 +298,6 @@ class BulkUsersController extends Controller
         $this->logItemCheckinAndDelete($assets, Asset::class);
         $this->logAccessoriesCheckin($accessoryUserRows);
         $this->logItemCheckinAndDelete($licenses, License::class);
-        $this->logConsumablesCheckin($consumableUserRows);
 
         Asset::whereIn('id', $assets->pluck('id'))->update([
             'status_id'     => e(request('status_id')),
@@ -359,20 +358,6 @@ class BulkUsersController extends Controller
             $logAction->item_id = $accessoryUserRow->accessory_id;
             $logAction->item_type = Accessory::class;
             $logAction->target_id = $accessoryUserRow->assigned_to;
-            $logAction->target_type = User::class;
-            $logAction->created_by = auth()->id();
-            $logAction->note = 'Bulk checkin items';
-            $logAction->logaction('checkin from');
-        }
-    }
-
-    private function logConsumablesCheckin(Collection $consumableUserRows): void
-    {
-        foreach ($consumableUserRows as $consumableUserRow) {
-            $logAction = new Actionlog();
-            $logAction->item_id = $consumableUserRow->consumable_id;
-            $logAction->item_type = Consumable::class;
-            $logAction->target_id = $consumableUserRow->assigned_to;
             $logAction->target_type = User::class;
             $logAction->created_by = auth()->id();
             $logAction->note = 'Bulk checkin items';

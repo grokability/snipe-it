@@ -57,7 +57,14 @@ return [
     'show_in_requestable_list_short' => 'Zobrazit v seznamu požadovaných položek',
     'show_in_requestable_list' => 'Zobrazit hodnotu v seznamu požadovaných aktiv. Šifrovaná pole nebudou zobrazena',
     'encrypted_options' => 'Toto pole je šifrované, takže některé možnosti zobrazení nebudou k dispozici.',
-    'display_checkin' => 'Display in checkin forms',
-    'display_checkout' => 'Display in checkout forms',
-
+    'display_checkin' => 'Zobrazit při vracení zařízení',
+    'display_checkout' => 'Zobrazit při výdeji zařízení',
+    'display_audit' => 'Zobrazit ve formulářích auditu',
+    'types' => [
+        'text' => 'Textové pole',
+        'listbox' => 'Seznam možností',
+        'textarea' => 'Textové pole (víceřádkové)',
+        'checkbox' => 'Zaškrtávací políčko',
+        'radio' => 'Přepínače',
+    ],
 ];

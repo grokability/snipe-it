@@ -53,4 +53,5 @@ return [
     'next_save_user' => 'បន្ទាប់៖ រក្សាទុកអ្នកប្រើប្រាស់',
     'all_assigned_list_generation' => 'បង្កើតនៅលើ៖',
     'email_user_creds_on_create' => 'ផ្ញើអ៊ីមែលទៅអ្នកប្រើប្រាស់នេះនូវអត្តសញ្ញាណប័ណ្ណរបស់ពួកគេ?',
+    'department_manager' => 'Department Manager',
 ];

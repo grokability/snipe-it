@@ -70,7 +70,7 @@ COPY --from=composer /usr/bin/composer /usr/local/bin
 ARG COMPOSER_ALLOW_SUPERUSER=1
 RUN set -eux; \
 # Download and extract snipeit tarball
-	curl -o snipeit.tar.gz -fL "https://github.com/snipe/snipe-it/archive/v$SNIPEIT_RELEASE.tar.gz"; \
+	curl -o snipeit.tar.gz -fL "https://github.com/grokability/snipe-it/archive/v$SNIPEIT_RELEASE.tar.gz"; \
 	tar -xzf snipeit.tar.gz --strip-components=1 -C /var/www/html/; \
 	rm snipeit.tar.gz; \
 # Install composer php dependencies

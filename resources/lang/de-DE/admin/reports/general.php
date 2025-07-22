@@ -4,6 +4,7 @@ return [
     'info'   => 'Wähle eine Option für deinen Asset Bericht.',
     'deleted_user' => 'Gelöschter Benutzer',
     'send_reminder' => 'Erinnerung senden',
+    'cannot_send_reminder' => 'Benutzer wurde gelöscht oder hat keine E-Mail-Adresse, daher kann keine Erinnerung empfangen',
     'reminder_sent' => 'Erinnerung gesendet',
     'acceptance_deleted' => 'Akzeptanzanfrage gelöscht',
     'acceptance_request' => 'Akzeptierungsanfrage',

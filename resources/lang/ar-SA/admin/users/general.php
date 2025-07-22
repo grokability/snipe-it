@@ -53,4 +53,5 @@ return [
     'next_save_user' => 'التالي : حفظ المستخدم',
     'all_assigned_list_generation' => 'تم إنشاؤها في:',
     'email_user_creds_on_create' => 'إرسال بيانات دخول هذا المستخدم بالبريد الإلكتروني؟',
+    'department_manager' => 'Department Manager',
 ];

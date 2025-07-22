@@ -22,7 +22,7 @@ return array(
     'managed_locations'     => '管理ロケーション',
     'managed_users'         => '管理ユーザー',
     'name' 					=> '名前',
-    'nogroup'               => 'まだグループが作成されていません．追加する場合は，次を参照してください: ',
+    'nogroup'               => 'まだグループが作成されていません．追加する場合は，次を参照してください:',
     'notes'                 => '備考',
     'password_confirm' 		=> 'パスワードを確認',
     'password' 				=> 'パスワード',

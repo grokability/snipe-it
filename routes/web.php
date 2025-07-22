@@ -52,54 +52,21 @@ Route::group(['middleware' => 'auth'], function () {
         [LabelsController::class, 'show']
     )->where('labelName', '.*')->name('labels.show');
 
-    /*
-     * Locations
-     */
-    Route::group(['prefix' => 'locations', 'middleware' => ['auth']], function () {
+    Route::get('/test-email', function () {
+        $mailable = new \App\Mail\CheckoutComponentMail(
 
-        Route::post(
-            'bulkdelete',
-            [LocationsController::class, 'postBulkDelete']
-        )->name('locations.bulkdelete.show');
-
-        Route::post(
-            'bulkedit',
-            [LocationsController::class, 'postBulkDeleteStore']
-        )->name('locations.bulkdelete.store');
-
-        Route::post(
-            '{location}/restore',
-            [LocationsController::class, 'postRestore']
-        )->name('locations.restore');
-
-
-        Route::get('{locationId}/clone',
-            [LocationsController::class, 'getClone']
-        )->name('clone/location');
-
-        Route::get(
-            '{locationId}/printassigned',
-            [LocationsController::class, 'print_assigned']
-        )->name('locations.print_assigned');
-
-        Route::get(
-            '{locationId}/printallassigned',
-            [LocationsController::class, 'print_all_assigned']
-        )->name('locations.print_all_assigned');
-
+        );
+        return $mailable->render(); // dumps HTML
     });
-
-    Route::resource('locations', LocationsController::class, [
-        'parameters' => ['location' => 'location_id'],
-    ]);
-
-
     /*
     * Manufacturers
     */
 
     Route::group(['prefix' => 'manufacturers', 'middleware' => ['auth']], function () {
         Route::post('{manufacturers_id}/restore', [ManufacturersController::class, 'restore'] )->name('restore/manufacturer');
+        Route::post('seed', [ManufacturersController::class, 'seed'] )->name('manufacturers.seed');
+
+
     });
 
     Route::resource('manufacturers', ManufacturersController::class);
@@ -414,7 +381,6 @@ Route::group(['prefix' => 'account', 'middleware' => ['auth']], function () {
         $trail->parent('home')
             ->push(trans('general.requested_assets_menu'), route('account.requested')));
 
-    // Profile
     Route::get(
         'requestable-assets', [ViewAssetsController::class, 'getRequestableIndex'])
         ->name('requestable-assets')
@@ -431,6 +397,16 @@ Route::group(['prefix' => 'account', 'middleware' => ['auth']], function () {
 
     Route::post('request/{itemType}/{itemId}/{cancel_by_admin?}/{requestingUser?}', [ViewAssetsController::class, 'getRequestItem'])
         ->name('account/request-item');
+
+    Route::get(
+        'display-sig/{filename}',
+        [ProfileController::class, 'displaySig']
+    )->name('profile.signature.view');
+    
+    Route::get(
+        'stored-eula-file/{filename}',
+        [ProfileController::class, 'getStoredEula']
+    )->name('profile.storedeula.download');
 
     // Account Dashboard
     Route::get('/', [ViewAssetsController::class, 'getIndex'])

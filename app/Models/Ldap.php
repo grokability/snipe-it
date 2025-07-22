@@ -31,7 +31,7 @@ class Ldap extends Model
      * Makes a connection to LDAP using the settings in Admin > Settings.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
+     * @since  [v3.0]
      * @return connection
      */
     public static function connectToLdap()
@@ -81,10 +81,10 @@ class Ldap extends Model
      * Binds/authenticates the user to LDAP, and returns their attributes.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
-     * @param $username
-     * @param $password
-     * @param bool|false $user
+     * @since  [v3.0]
+     * @param  $username
+     * @param  $password
+     * @param  bool|false $user
      * @return bool true    if the username and/or password provided are valid
      *              false   if the username and/or password provided are invalid
      *         array of ldap_attributes if $user is true
@@ -160,8 +160,8 @@ class Ldap extends Model
      * Here we also return a better error if the app key is donked.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
-     * @param bool|false $user
+     * @since  [v3.0]
+     * @param  bool|false $user
      * @return bool true    if the username and/or password provided are valid
      *              false   if the username and/or password provided are invalid
      */
@@ -169,37 +169,37 @@ class Ldap extends Model
     {
         $ldap_username = Setting::getSettings()->ldap_uname;
 
-		if ( $ldap_username ) {
-			// Lets return some nicer messages for users who donked their app key, and disable LDAP
-			try {
-				$ldap_pass = Crypt::decrypt(Setting::getSettings()->ldap_pword);
-			} catch (Exception $e) {
-				throw new Exception('Your app key has changed! Could not decrypt LDAP password using your current app key, so LDAP authentication has been disabled. Login with a local account, update the LDAP password and re-enable it in Admin > Settings.');
-			}
+        if ($ldap_username ) {
+            // Lets return some nicer messages for users who donked their app key, and disable LDAP
+            try {
+                $ldap_pass = Crypt::decrypt(Setting::getSettings()->ldap_pword);
+            } catch (Exception $e) {
+                throw new Exception('Your app key has changed! Could not decrypt LDAP password using your current app key, so LDAP authentication has been disabled. Login with a local account, update the LDAP password and re-enable it in Admin > Settings.');
+            }
 
-			if (! $ldapbind = @ldap_bind($connection, $ldap_username, $ldap_pass)) {
-				throw new Exception('Could not bind to LDAP: '.ldap_error($connection));
-			}
-			// TODO - this just "falls off the end" but the function states that it should return true or false
-			// unfortunately, one of the use cases for this function is wrong and *needs* for that failure mode to fire
-			// so I don't want to fix this right now.
-			// this method MODIFIES STATE on the passed-in $connection and just returns true or false (or, in this case, undefined)
-			// at the next refactor, this should be appropriately modified to be more consistent.
-		} else {
-			// LDAP should also work with anonymous bind (no dn, no password available)
-			if (! $ldapbind = @ldap_bind($connection )) {
-				throw new Exception('Could not bind to LDAP: '.ldap_error($connection));
-			}
-		}
-	}
+            if (! $ldapbind = @ldap_bind($connection, $ldap_username, $ldap_pass)) {
+                throw new Exception('Could not bind to LDAP: '.ldap_error($connection));
+            }
+            // TODO - this just "falls off the end" but the function states that it should return true or false
+            // unfortunately, one of the use cases for this function is wrong and *needs* for that failure mode to fire
+            // so I don't want to fix this right now.
+            // this method MODIFIES STATE on the passed-in $connection and just returns true or false (or, in this case, undefined)
+            // at the next refactor, this should be appropriately modified to be more consistent.
+        } else {
+            // LDAP should also work with anonymous bind (no dn, no password available)
+            if (! $ldapbind = @ldap_bind($connection)) {
+                throw new Exception('Could not bind to LDAP: '.ldap_error($connection));
+            }
+        }
+    }
 
     /**
      * Parse and map LDAP attributes based on settings
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
+     * @since  [v3.0]
      *
-     * @param $ldapatttibutes
+     * @param  $ldapatttibutes
      * @return array|bool
      */
     public static function parseAndMapLdapAttributes($ldapattributes)
@@ -238,8 +238,8 @@ class Ldap extends Model
      * Create user from LDAP attributes
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
-     * @param $ldapatttibutes
+     * @since  [v3.0]
+     * @param  $ldapatttibutes
      * @return User | bool
      */
     public static function createUserFromLdap($ldapatttibutes, $password)
@@ -279,11 +279,11 @@ class Ldap extends Model
      * Searches LDAP
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
-     * @param $base_dn
-     * @param $count
-     * @param $filter
-     * @param $attributes
+     * @since  [v3.0]
+     * @param  $base_dn
+     * @param  $count
+     * @param  $filter
+     * @param  $attributes
      * @return array|bool
      */
     public static function findLdapUsers($base_dn = null, $count = -1, $filter = null, $attributes = [])
@@ -331,7 +331,7 @@ class Ldap extends Model
             $errmsg = null;
             $referrals = null;
             $controls = [];
-            ldap_parse_result($ldapconn, $search_results, $errcode , $matcheddn , $errmsg , $referrals, $controls);
+            ldap_parse_result($ldapconn, $search_results, $errcode, $matcheddn, $errmsg, $referrals, $controls);
             if (isset($controls[LDAP_CONTROL_PAGEDRESULTS]['value']['cookie'])) {
                 // You need to pass the cookie from the last call to the next one
                 $cookie = $controls[LDAP_CONTROL_PAGEDRESULTS]['value']['cookie'];

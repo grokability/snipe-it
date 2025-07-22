@@ -16,7 +16,7 @@ class Depreciation extends SnipeModel
     // Declare the rules for the form validation
     protected $rules = [
         'name' => 'required|min:3|max:255|unique:depreciations,name',
-        'months' => 'required|max:3600|integer|gt:0',
+        'months' => 'required|max:3600|integer',
     ];
 
     /**
@@ -56,7 +56,7 @@ class Depreciation extends SnipeModel
      * Establishes the depreciation -> models relationship
      *
      * @author A. Gianotto <snipe@snipe.net>
-     * @since [v5.0]
+     * @since  [v5.0]
      * @return \Illuminate\Database\Eloquent\Relations\Relation
      */
     public function models()
@@ -68,7 +68,7 @@ class Depreciation extends SnipeModel
      * Establishes the depreciation -> licenses relationship
      *
      * @author A. Gianotto <snipe@snipe.net>
-     * @since [v5.0]
+     * @since  [v5.0]
      * @return \Illuminate\Database\Eloquent\Relations\Relation
      */
     public function licenses()
@@ -80,7 +80,7 @@ class Depreciation extends SnipeModel
      * Establishes the depreciation -> assets relationship
      *
      * @author A. Gianotto <snipe@snipe.net>
-     * @since [v5.0]
+     * @since  [v5.0]
      * @return \Illuminate\Database\Eloquent\Relations\Relation
      */
     public function assets()
@@ -92,7 +92,7 @@ class Depreciation extends SnipeModel
      * Get the user that created the depreciation
      *
      * @author A. Gianotto <snipe@snipe.net>
-     * @since [v7.0.13]
+     * @since  [v7.0.13]
      * @return \Illuminate\Database\Eloquent\Relations\Relation
      */
     public function adminuser()

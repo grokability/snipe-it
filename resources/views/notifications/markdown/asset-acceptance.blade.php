@@ -7,6 +7,9 @@
 |        |          |
 | ------------- | ------------- |
 | **{{ trans('mail.user') }}** | {{ $assigned_to }} |
+@if (isset($user->location))
+| **{{ trans('general.location') }}** | {{ $user->location->name }} |
+@endif
 @if (isset($accepted_date))
 | **{{ ucfirst(trans('general.accepted')) }}** | {{ $accepted_date }} |
 @endif

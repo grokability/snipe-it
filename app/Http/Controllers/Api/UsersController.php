@@ -6,6 +6,7 @@ use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SaveUserRequest;
 use App\Http\Transformers\AccessoriesTransformer;
+use App\Http\Transformers\ActionlogsTransformer;
 use App\Http\Transformers\AssetsTransformer;
 use App\Http\Transformers\ConsumablesTransformer;
 use App\Http\Transformers\LicensesTransformer;
@@ -22,6 +23,7 @@ use App\Notifications\CurrentInventory;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
@@ -80,7 +82,12 @@ class UsersController extends Controller
             'users.autoassign_licenses',
             'users.website',
 
-        ])->with('manager', 'groups', 'userloc', 'company', 'department', 'assets', 'licenses', 'accessories', 'consumables', 'createdBy', 'managesUsers', 'managedLocations')
+        ])->with('manager')
+            ->with('groups')
+            ->with('userloc')
+            ->with('company')
+            ->with('department')
+            ->with('createdBy')
             ->withCount([
                 'assets as assets_count' => function(Builder $query) {
                     $query->withoutTrashed();
@@ -206,11 +213,11 @@ class UsersController extends Controller
         }
 
         if ($request->filled('manages_users_count')) {
-            $users->has('manages_users_count', '=', $request->input('manages_users_count'));
+            $users->has('managesUsers', '=', $request->input('manages_users_count'));
         }
 
         if ($request->filled('manages_locations_count')) {
-            $users->has('manages_locations_count', '=', $request->input('manages_locations_count'));
+            $users->has('managedLocations', '=', $request->input('manages_locations_count'));
         }
 
         if ($request->filled('autoassign_licenses')) {
@@ -339,6 +346,7 @@ class UsersController extends Controller
             $users = $users->where(function ($query) use ($request) {
                 $query->SimpleNameSearch($request->get('search'))
                     ->orWhere('username', 'LIKE', '%'.$request->get('search').'%')
+                    ->orWhere('email', 'LIKE', '%'.$request->get('search').'%')
                     ->orWhere('employee_num', 'LIKE', '%'.$request->get('search').'%');
             });
         }
@@ -473,8 +481,25 @@ class UsersController extends Controller
                 return response()->json(Helper::formatStandardApiResponse('error', null, 'You cannot be your own manager'));
             }
 
-            if ($request->filled('password')) {
-                $user->password = bcrypt($request->input('password'));
+            // check for permissions related fields and pull them out if the current user cannot edit them
+            if (auth()->user()->can('canEditAuthFields', $user) && auth()->user()->can('editableOnDemo')) {
+
+                if ($request->filled('password')) {
+                    $user->password = bcrypt($request->input('password'));
+                }
+
+                if ($request->filled('username')) {
+                    $user->username = $request->input('username');
+                }
+
+                if ($request->filled('email')) {
+                    $user->email = $request->input('email');
+                }
+
+                if ($request->filled('activated')) {
+                    $user->activated = $request->input('activated');
+                }
+
             }
 
             // We need to use has()  instead of filled()
@@ -675,7 +700,6 @@ class UsersController extends Controller
         $this->authorize('view', License::class);
         
         if ($user = User::where('id', $id)->withTrashed()->first()) {
-            $this->authorize('update', $user);
             $licenses = $user->licenses()->get();
             return (new LicensesTransformer())->transformLicenses($licenses, $licenses->count());
         }
@@ -733,6 +757,25 @@ class UsersController extends Controller
     public function getCurrentUserInfo(Request $request) : array
     {
         return (new UsersTransformer)->transformUser($request->user());
+    }
+
+    /**
+     * Display the EULAs accepted by the user.
+     *
+     *  @param \App\Models\User $user
+     *  @param \App\Http\Transformers\ActionlogsTransformer $transformer
+     *  @return \Illuminate\Http\JsonResponse
+     *@since [v8.1.16]
+     * @author [Godfrey Martinez] [<gmartinez@grokability.com>]
+     */
+    public function eulas(User $user, ActionlogsTransformer $transformer)
+    {
+        $this->authorize('view', User::class);
+
+        $eulas = $user->eulas;
+        return response()->json(
+            $transformer->transformActionlogs($eulas, $eulas->count())
+        );
     }
 
     /**

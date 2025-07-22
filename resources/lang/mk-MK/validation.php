@@ -31,6 +31,7 @@ return [
         'numeric' => 'Полето :attribute мора да биде помеѓу :min и :max.',
         'string' => 'Полето :attribute мора да биде помеѓу :min и :max карактери.',
     ],
+    'valid_regex' => 'The regular expression is invalid.',
     'boolean' => 'Полето :attribute мора да биде точно или грешно.',
     'can' => 'Полето :attribute содржи неавторизирана вредност.',
     'confirmed' => 'Полето :attribute потврдата не соодветствува.',
@@ -172,6 +173,7 @@ return [
     'url' => 'Полето :attribute мора да биде валидна URL.',
     'ulid' => 'Полето :attribute мора да биде валидна ULID.',
     'uuid' => 'Полето :attribute мора да биде валидна UUID.',
+    'fmcs_location' => 'Full multiple company support and location scoping is enabled in the Admin Settings, and the selected location and selected company are not compatible.',
 
 
     /*
@@ -185,9 +187,13 @@ return [
     |
     */
 
+    'email_array'      => 'Една или повеќе е-пошти не се валидни.',
+    'checkboxes'           => ':attribute содржи невалидни опции.',
+    'radio_buttons'        => ':attribute не е валиден.',
+    
     'custom' => [
         'alpha_space' => 'Полето :attribute содржи знак што не е дозволен.',
-        'email_array'      => 'Една или повеќе е-пошти не се валидни.',
+
         'hashed_pass'      => 'Вашата тековна лозинка е неточна',
         'dumbpwd'          => 'Таа лозинка е премногу честа.',
         'statuslabel_type' => 'Мора да изберете валидна етикета за статус',
@@ -204,8 +210,6 @@ return [
         'expected_checkin.date_format'  =>  'Полето :attribute мора да биде валиден датум во YYYY-MM-DD формат',
         'start_date.date_format'        =>  'Полето :attribute мора да биде валиден датум во YYYY-MM-DD формат',
         'end_date.date_format'          =>  'Полето :attribute мора да биде валиден датум во YYYY-MM-DD fформат',
-        'checkboxes'           => ':attribute содржи невалидни опции.',
-        'radio_buttons'        => ':attribute не е валиден.',
         'invalid_value_in_field' => 'Невалидна вредност вклучена во полето',
 
         'ldap_username_field' => [

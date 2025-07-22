@@ -20,18 +20,12 @@
                     <div class="row">
                         <div class="col-md-12">
 
-        @if ($requestedItems->count() > 0)
         <div class="table-responsive">
             <table
                     name="requestedAssets"
                     data-toolbar="#toolbar"
                     class="table table-striped snipe-table"
                     id="requestedAssets"
-                    data-advanced-search="true"
-                    data-search="true"
-                    data-show-columns="true"
-                    data-show-export="true"
-                    data-pagination="true"
                     data-id-table="requestedAssets"
                     data-cookie-id-table="requestedAssets"
                     data-export-options='{
@@ -133,14 +127,7 @@
             </table>
         </div>
 
-        @else
-        <div class="col-md-12">
-            <div class="alert alert-info alert-block">
-                <i class="fas fa-info-circle"></i>
-                {{ trans('general.no_results') }}
-            </div>
-        </div>
-        @endif
+
                         </div>
                     </div>
                 </div>

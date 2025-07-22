@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Demirbaş Kategorileri',
     'category_name'  					=> 'Kategori Adı',
     'checkin_email'                     => 'Kullanıcıyı e-posta ile bilgilendir (iade etme / kullanıma alma).',
+    'email_to_initiator'                => 'Kullanıcı teslimatı kabul ettiğinde veya reddettiğinde e-posta alın.',
     'checkin_email_notification'        => 'Bu Kullanıcı iade etme/kullanıma alma üzerinde bir e-posta gönderilecektir.',
     'clone'                             => 'Kategoriyi Kopyala',
     'create'  							=> 'Kategori Oluştur',
@@ -21,5 +22,9 @@ return array(
     'use_default_eula'					=> '<a href="#" data-toggle="modal" data-target="#eulaModal">\'yı Varsayılan Sözleşme</a> yerine kullan.',
     'use_default_eula_disabled'			=> '<del>Varsayılan sözleşmeyi kullan</del> Varsayılan sözleşme tanımlı değil. Lütfen Ayarlar\'dan ekleyiniz.',
     'use_default_eula_column'			=> 'Varsayılan sözleşmeyi kullan',
+    'import_require_acceptance'         => 'Onay Gerektirir',
+    'import_checkin_email'              => 'Kontrol E-postası Gönder',
+    'import_eula_text'                  => 'Son Kullanıcı Lisans Sözleşmesi',
+    'import_category_type'              => 'Kategori Türü',
 
 );

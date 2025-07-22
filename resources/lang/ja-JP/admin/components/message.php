@@ -18,7 +18,7 @@ return array(
         'confirm'   => 'この構成部品を削除してもよろしいですか?',
         'error'   => '構成部品を削除する際に問題が発生しました。もう一度やり直して下さい。',
         'success' => '構成部品は削除されました。',
-        'error_qty'   => 'Some components of this type are still checked out. Please check them in and try again.',
+        'error_qty'   => 'このタイプの一部のコンポーネントはまだチェックアウトされています。チェックインしてもう一度お試しください。',
     ),
 
      'checkout' => array(

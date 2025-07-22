@@ -17,23 +17,59 @@ class L7162_B extends L7162
     private const FIELD_SIZE     =   4.20;
     private const FIELD_MARGIN   =   0.30;
 
-    public function getUnit() { return 'mm'; }
+    public function getUnit()
+    {
+        return 'mm'; 
+    }
 
-    public function getLabelMarginTop()    { return 1.0; }
-    public function getLabelMarginBottom() { return 0; }
-    public function getLabelMarginLeft()   { return 1.0; }
-    public function getLabelMarginRight()  { return 1.0; }
+    public function getLabelMarginTop()
+    {
+        return 1.0; 
+    }
+    public function getLabelMarginBottom()
+    {
+        return 0; 
+    }
+    public function getLabelMarginLeft()
+    {
+        return 1.0; 
+    }
+    public function getLabelMarginRight()
+    {
+        return 1.0; 
+    }
 
-    public function getSupportAssetTag()  { return true; }
-    public function getSupport1DBarcode() { return true; }
-    public function getSupport2DBarcode() { return false; }
-    public function getSupportFields()    { return 3; }
-    public function getSupportLogo()      { return true; }
-    public function getSupportTitle()     { return true; }
+    public function getSupportAssetTag()
+    {
+        return true; 
+    }
+    public function getSupport1DBarcode()
+    {
+        return true; 
+    }
+    public function getSupport2DBarcode()
+    {
+        return false; 
+    }
+    public function getSupportFields()
+    {
+        return 3; 
+    }
+    public function getSupportLogo()
+    {
+        return true; 
+    }
+    public function getSupportTitle()
+    {
+        return true; 
+    }
 
-    public function preparePDF($pdf) {}
+    public function preparePDF($pdf)
+    {
+    }
 
-    public function write($pdf, $record) {
+    public function write($pdf, $record)
+    {
         $pa = $this->getLabelPrintableArea();
 
         $usableWidth = $pa->w;
@@ -55,7 +91,7 @@ class L7162_B extends L7162
                 $pdf, $record->get('logo'),
                 $pa->x1, $pa->y1,
                 self::LOGO_MAX_WIDTH, $usableHeight,
-                'L', 'T', 300, true, false, 0.1
+                'L', 'T', 300, true, false, 0
             );
             $currentX += $logoSize[0] + self::LOGO_MARGIN;
             $usableWidth -= $logoSize[0] + self::LOGO_MARGIN;

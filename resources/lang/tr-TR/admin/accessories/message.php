@@ -28,7 +28,9 @@ return array(
         'unavailable'   => 'Bu ürün zimmetlenemez. Ürün sayısını kontrol edin.',
         'user_does_not_exist' => 'Bu kullanıcı geçersiz. Lütfen tekrar deneyin.',
          'checkout_qty' => array(
-            'lte'  => 'There is currently only one available accessory of this type, and you are trying to check out :checkout_qty. Please adjust the checkout quantity or the total stock of this accessory and try again.|There are :number_currently_remaining total available accessories, and you are trying to check out :checkout_qty. Please adjust the checkout quantity or the total stock of this accessory and try again.',
+            'lte'  => 'Şu anda bu türden yalnızca bir adet aksesuar mevcut ve siz :checkout_qty adet almaya çalışıyorsunuz. Lütfen alma miktarını veya bu aksesuarın toplam stokunu ayarlayıp tekrar deneyin.
+
+Toplamda :number_currently_remaining adet mevcut aksesuar var ve siz :checkout_qty adet almaya çalışıyorsunuz. Lütfen alma miktarını veya bu aksesuarın toplam stokunu ayarlayıp tekrar deneyin.',
             ),
            
     ),

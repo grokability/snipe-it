@@ -15,6 +15,6 @@ return array(
 
     'failed' => 'Diese Zugangsdaten stimmen nicht mit unseren Datensätzen überein.',
     'password' => 'Das angegebene Passwort ist ungültig.',
-    'throttle' => 'Zu viele fehlgeschlagene Anmeldeversuche. Bitte versuche es erneut in :seconds Sekunden.',
+    'throttle' => 'Zu viele fehlgeschlagene Anmeldeversuche. Bitte versuche es in :minutes Minute(n) erneut.',
 
 );

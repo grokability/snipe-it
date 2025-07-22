@@ -40,8 +40,9 @@ class AssetObserver
 
         // If the asset isn't being checked out or audited, log the update.
         // (Those other actions already create log entries.)
-	    if (($attributes['assigned_to'] == $attributesOriginal['assigned_to'])
-	    && ($same_checkout_counter) && ($same_checkin_counter)
+        if (array_key_exists('assigned_to', $attributes) && array_key_exists('assigned_to', $attributesOriginal)
+            && ($attributes['assigned_to'] == $attributesOriginal['assigned_to'])
+            && ($same_checkout_counter) && ($same_checkin_counter)
             && ((isset( $attributes['next_audit_date']) ? $attributes['next_audit_date'] : null) == (isset($attributesOriginal['next_audit_date']) ? $attributesOriginal['next_audit_date']: null))
             && ($attributes['last_checkout'] == $attributesOriginal['last_checkout']) && (!$restoring_or_deleting))
         {
@@ -61,6 +62,7 @@ class AssetObserver
             $logAction = new Actionlog();
             $logAction->item_type = Asset::class;
             $logAction->item_id = $asset->id;
+            $logAction->action_date = date('Y-m-d H:i:s');
             $logAction->created_at = date('Y-m-d H:i:s');
             $logAction->created_by = auth()->id();
             $logAction->log_meta = json_encode($changed);
@@ -107,6 +109,7 @@ class AssetObserver
         $logAction = new Actionlog();
         $logAction->item_type = Asset::class; // can we instead say $logAction->item = $asset ?
         $logAction->item_id = $asset->id;
+        $logAction->action_date = date('Y-m-d H:i:s');
         $logAction->created_at = date('Y-m-d H:i:s');
         $logAction->created_by = auth()->id();
         if($asset->imported) {
@@ -127,6 +130,7 @@ class AssetObserver
         $logAction->item_type = Asset::class;
         $logAction->item_id = $asset->id;
         $logAction->created_at = date('Y-m-d H:i:s');
+        $logAction->action_date = date('Y-m-d H:i:s');
         $logAction->created_by = auth()->id();
         $logAction->logaction('delete');
     }
@@ -142,6 +146,7 @@ class AssetObserver
         $logAction = new Actionlog();
         $logAction->item_type = Asset::class;
         $logAction->item_id = $asset->id;
+        $logAction->action_date = date('Y-m-d H:i:s');
         $logAction->created_at = date('Y-m-d H:i:s');
         $logAction->created_by = auth()->id();
         $logAction->logaction('restore');
@@ -158,7 +163,7 @@ class AssetObserver
      * is used in this observer, it doesn't actually exist yet and the migration will break unless we
      * use saveQuietly() in the migration which skips this observer.
      *
-     * @see https://github.com/snipe/snipe-it/issues/13723#issuecomment-1761315938
+     * @see https://github.com/grokability/snipe-it/issues/13723#issuecomment-1761315938
      */
     public function saving(Asset $asset)
     {

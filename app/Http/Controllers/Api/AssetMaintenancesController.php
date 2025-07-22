@@ -75,6 +75,7 @@ class AssetMaintenancesController extends Controller
                                 'serial',
                                 'created_by',
                                 'supplier',
+                                'location',
                                 'is_warranty',
                                 'status_label',
                             ];
@@ -97,6 +98,9 @@ class AssetMaintenancesController extends Controller
                 break;
             case 'serial':
                 $maintenances = $maintenances->OrderByAssetSerial($order);
+                break;
+            case 'location':
+                $maintenances = $maintenances->OrderLocationName($order);
                 break;
             case 'status_label':
                 $maintenances = $maintenances->OrderStatusName($order);

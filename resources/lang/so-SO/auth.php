@@ -15,6 +15,6 @@ return array(
 
     'failed' => 'Aqoonsigani kuma jiro diiwaankeenna.',
     'password' => 'Furaha sirta ah ee la bixiyay waa khalad.',
-    'throttle' => 'Isku dayo gelitaan oo badan ayaa dhacay. Fadlan isku day markale :seconds ilbiriqsi gudahood.',
+    'throttle' => 'Too many login attempts. Please try again in :minutes minute(s).',
 
 );

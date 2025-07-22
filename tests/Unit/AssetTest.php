@@ -1,9 +1,12 @@
 <?php
 namespace Tests\Unit;
 
+use App\Http\Controllers\Assets\BulkAssetsController;
 use App\Models\Asset;
 use App\Models\AssetModel;
 use App\Models\Category;
+use App\Models\Statuslabel;
+use App\Models\User;
 use Carbon\Carbon;
 use Tests\TestCase;
 use App\Models\Setting;
@@ -188,5 +191,101 @@ class AssetTest extends TestCase
         $this->assertEquals(Carbon::createFromDate(2017, 1, 1)->format('Y-m-d'), $asset->purchase_date->format('Y-m-d'));
         $this->assertEquals(Carbon::createFromDate(2019, 1, 1)->format('Y-m-d'), $asset->warranty_expires->format('Y-m-d'));
 
+    }
+
+    public function testAssignedTypeWithoutAssignTo()
+    {
+        $user = User::factory()->create();
+        $asset = Asset::factory()->create([
+            'assigned_to' => $user->id
+        ]);
+        $this->assertModelMissing($asset);
+    }
+
+    public function testGetImageUrlMethod()
+    {
+        $urlBase = config('filesystems.disks.public.url');
+
+        $category = Category::factory()->create(['image' => 'category-image.jpg']);
+        $model = AssetModel::factory()->for($category)->create(['image' => 'asset-model-image.jpg']);
+        $asset = Asset::factory()->for($model, 'model')->create(['image' => 'asset-image.jpg']);
+
+        $this->assertEquals(
+            "{$urlBase}/assets/asset-image.jpg",
+            $asset->getImageUrl()
+        );
+
+        $asset->update(['image' => null]);
+
+        $this->assertEquals(
+            "{$urlBase}/models/asset-model-image.jpg",
+            $asset->refresh()->getImageUrl()
+        );
+
+        $model->update(['image' => null]);
+
+        $this->assertEquals(
+            "{$urlBase}/categories/category-image.jpg",
+            $asset->refresh()->getImageUrl()
+        );
+
+        $category->image = null;
+        $category->save();
+
+        $this->assertFalse($asset->refresh()->getImageUrl());
+
+        // handles case where model does not exist
+        $asset->model_id = 9999999;
+        $asset->forceSave();
+
+        $this->assertFalse($asset->refresh()->getImageUrl());
+    }
+    public function testUndeployableStatusReturnsFalseifAssetIsDeployable()
+    {
+        $assets = Asset::factory()->count(3)->create();
+        $asset_ids = $assets->pluck('id')->toArray();
+
+        $bulk_assets = new BulkAssetsController();
+
+        $result = $bulk_assets->hasUndeployableStatus($asset_ids);
+
+        $this->assertFalse($result);
+    }
+    public function testUndeployableStatusReturnsTrueandTagsIfAssetIsUnDeployable()
+    {
+        $deployable = Asset::factory()->create();
+        $undeployableStatus = Statuslabel::factory()->create(['deployable' => 0]);
+        $undeployable = Asset::factory()->create(
+            [
+                'status_id' => $undeployableStatus->id
+            ]);
+
+        $bulk_assets = new BulkAssetsController();
+
+        $result = $bulk_assets->hasUndeployableStatus([$deployable->id, $undeployable->id]);
+
+        $this->assertIsArray($result);
+        $this->assertTrue($result['status']);
+        $this->assertEquals($undeployable->id, $result['tags'][0]['id']);
+        $this->assertEquals($undeployable->asset_tag, $result['tags'][0]['asset_tag']);
+    }
+
+    public function testUndeployableStatusCheckFiltersOutUndeployableIds()
+    {
+        $deployable = Asset::factory()->create();
+        $undeployableStatus = Statuslabel::factory()->create(['deployable' => 0]);
+        $undeployable = Asset::factory()->create(
+            [
+                'status_id' => $undeployableStatus->id
+            ]);
+
+        $bulk_assets = new BulkAssetsController();
+
+        $result = $bulk_assets->hasUndeployableStatus([$deployable->id, $undeployable->id]);
+
+        $undeployableIds = array_column($result['tags'], 'id');
+        $filtered = array_diff([$deployable->id, $undeployable->id], $undeployableIds);
+
+        $this->assertEquals([$deployable->id], array_values($filtered));
     }
 }

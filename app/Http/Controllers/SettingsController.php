@@ -14,6 +14,7 @@ use App\Http\Requests\StoreLabelSettings;
 use App\Http\Requests\StoreSecuritySettings;
 use App\Models\CustomField;
 use App\Models\Group;
+use App\Models\Labels\Label as LabelModel;
 use App\Models\Setting;
 use App\Models\Asset;
 use App\Models\User;
@@ -290,7 +291,6 @@ class SettingsController extends Controller
     public function getSettings() : View
     {
         $setting = Setting::getSettings();
-
         return view('settings/general', compact('setting'));
     }
 
@@ -352,6 +352,7 @@ class SettingsController extends Controller
         $setting->dash_chart_type = $request->input('dash_chart_type');
         $setting->profile_edit = $request->input('profile_edit', 0);
         $setting->require_checkinout_notes = $request->input('require_checkinout_notes', 0);
+        $setting->manager_view_enabled = $request->input('manager_view_enabled', 0);
 
 
         if ($request->input('per_page') != '') {
@@ -650,6 +651,7 @@ class SettingsController extends Controller
 
         $setting->alert_email = $alert_email;
         $setting->admin_cc_email = $admin_cc_email;
+        $setting->admin_cc_always = $request->validated('admin_cc_always');
         $setting->alerts_enabled = $request->input('alerts_enabled', '0');
         $setting->alert_interval = $request->input('alert_interval');
         $setting->alert_threshold = $request->input('alert_threshold');
@@ -772,6 +774,7 @@ class SettingsController extends Controller
         $setting->label2_2d_type = $request->input('label2_2d_type');
         $setting->label2_2d_target = $request->input('label2_2d_target');
         $setting->label2_fields = $request->input('label2_fields');
+        $setting->label2_empty_row_count = $request->input('label2_empty_row_count');
         $setting->labels_per_page = $request->input('labels_per_page');
         $setting->labels_width = $request->input('labels_width');
         $setting->labels_height = $request->input('labels_height');
@@ -921,7 +924,7 @@ class SettingsController extends Controller
      * @since v5.0.0
      */
     public function postSamlSettings(SettingsSamlRequest $request) : RedirectResponse
-    {
+    {       
         if (is_null($setting = Setting::getSettings())) {
             return redirect()->to('admin')->with('error', trans('admin/settings/message.update.error'));
         }

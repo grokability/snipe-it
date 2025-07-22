@@ -15,6 +15,6 @@ return array(
 
     'failed' => 'Vjerodajnice ne odgovaraju.',
     'password' => 'Upisana lozinka je pogrešna.',
-    'throttle' => 'Previše neuspješnih pokušaja prijave. Pokušajte ponovno za :sekunda sekunda.',
+    'throttle' => 'Too many login attempts. Please try again in :minutes minute(s).',
 
 );

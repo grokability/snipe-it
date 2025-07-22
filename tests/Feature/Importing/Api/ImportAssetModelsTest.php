@@ -132,8 +132,8 @@ class ImportAssetModelsTest extends ImportDataTestCase implements TestsPermissio
         $this->assertEquals($row['model_number'], $updatedAssetmodel->model_number);
 
         $this->assertEquals(
-            Arr::except($assetmodel->attributesToArray(), $updatedAttributes),
-            Arr::except($updatedAssetmodel->attributesToArray(), $updatedAttributes),
+            Arr::except($assetmodel->attributesToArray(), array_merge($updatedAttributes, $assetmodel->getDates())),
+            Arr::except($updatedAssetmodel->attributesToArray(), array_merge($updatedAttributes, $assetmodel->getDates())),
         );
     }
 

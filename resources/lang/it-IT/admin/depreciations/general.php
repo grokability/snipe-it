@@ -13,4 +13,8 @@ return [
     'no_depreciations_warning'               => '<strong>Attenzione: </strong>
                       Nessun deprezzamento impostato.
                       Si prega di impostare almeno un deprezzamento per visualizzarne il report.',
+    'depreciation_method'                   => 'Report Deprezzamento',
+    'linear_depreciation'                   => 'Lineare (default)',
+    'half_1'                                => 'Convenzione semestrale, sempre applicata',
+    'half_2'                                => 'Convenzione semestrale, applicata con condizione',
 ];

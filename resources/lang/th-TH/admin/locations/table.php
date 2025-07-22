@@ -39,4 +39,5 @@ return [
     'signed_by_finance_auditor' => 'ลงชื่อ (ผู้ตรวจการเงิน)',
     'signed_by_location_manager' => 'ลงชื่อ (หัวหน้าจุด)',
     'signed_by'                 => 'ลงชื่อออก',
+    'clone'  					=> 'Clone Location',
 ];

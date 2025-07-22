@@ -53,4 +53,5 @@ return [
     'next_save_user' => '下一步: 儲存使用者',
     'all_assigned_list_generation' => '產生於：',
     'email_user_creds_on_create' => '在建立時寄送此使用者他們的憑證嗎？',
+    'department_manager' => 'Department Manager',
 ];

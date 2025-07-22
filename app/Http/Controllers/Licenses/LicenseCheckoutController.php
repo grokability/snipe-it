@@ -89,7 +89,8 @@ class LicenseCheckoutController extends Controller
 
 
         if ($checkoutTarget) {
-            return redirect()->to(Helper::getRedirectOption($request, $license->id, 'Licenses'))->with('success', trans('admin/licenses/message.checkout.success'));
+            return Helper::getRedirectOption($request, $license->id, 'Licenses')
+                ->with('success', trans('admin/licenses/message.checkout.success'));
         }
 
 

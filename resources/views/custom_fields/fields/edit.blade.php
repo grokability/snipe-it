@@ -46,7 +46,7 @@
               {{ trans('admin/custom_fields/general.field_name') }}
             </label>
             <div class="col-md-8 required">
-                <input class="form-control" aria-label="name" name="name" type="text" value="{{ old('name', $field->name) }}">
+                <input class="form-control" aria-label="name" name="name" type="text" required value="{{ old('name', $field->name) }}">
                 {!! $errors->first('name', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
             </div>
           </div>
@@ -58,7 +58,19 @@
             </label>
             <div class="col-md-8 required">
 
-            {!! Form::customfield_elements('element', old('element', $field->element), 'field_element select2 form-control') !!}
+            <x-input.select
+                name="element"
+                :selected="old('element', $field->element)"
+                class="field_element"
+                style="width: 100%;"
+                :options="[
+                    'text' => trans('admin/custom_fields/general.types.text'),
+                    'listbox' => trans('admin/custom_fields/general.types.listbox'),
+                    'textarea' => trans('admin/custom_fields/general.types.textarea'),
+                    'checkbox' => trans('admin/custom_fields/general.types.checkbox'),
+                    'radio' => trans('admin/custom_fields/general.types.radio'),
+                ]"
+            />
             {!! $errors->first('element', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
 
             </div>

@@ -55,7 +55,7 @@
         "select2": "4.0.13",
         "sheetjs": "^2.0.0",
         "signature_pad": "^4.2.0",
-        "tableexport.jquery.plugin": "1.30.0",
+        "tableexport.jquery.plugin": "1.32.0",
         "tether": "^1.4.0",
         "webpack": "^5.98.0"
     }

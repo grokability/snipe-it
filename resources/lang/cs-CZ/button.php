@@ -7,7 +7,7 @@ return [
     'checkin_and_delete'  	    => 'Vrátit vše / Smazat uživatele',
     'delete'  	                => 'Smazat',
     'edit'    	                => 'Upravit',
-    'clone'    	                => 'Clone',
+    'clone'    	                => 'Klonovat',
     'restore' 	                => 'Obnovit',
     'remove'                    => 'Odebrat',
     'request'                   => 'Požadavek',
@@ -23,12 +23,12 @@ return [
     'append'                    => 'Připojit',
     'new'                       => 'Nový',
     'var' => [
-        'clone'     => 'Clone :item_type',
-        'edit'      => 'Edit :item_type',
-        'delete'    => 'Delete :item_type',
-        'restore'   => 'Restore :item_type',
-        'create'    => 'Create New :item_type',
-        'checkout'  => 'Checkout :item_type',
-        'checkin'   => 'Checkin :item_type',
+        'clone'     => 'Klonovat :item_type',
+        'edit'      => 'Upravit :item_type',
+        'delete'    => 'Odstranit :item',
+        'restore'   => 'Obnovit :item_type',
+        'create'    => 'Vytvořit nový :item_type',
+        'checkout'  => 'Přiřadit :item_type',
+        'checkin'   => 'Vrátit :item_type',
     ]
 ];

@@ -39,7 +39,18 @@
           </div>
           @endif
 
-          @if ($accessory->category)
+         @if ($accessory->company)
+             <!-- accessory name -->
+             <div class="form-group">
+                 <label class="col-sm-3 control-label">{{ trans('general.company') }}</label>
+                 <div class="col-md-6">
+                     <p class="form-control-static">{{ $accessory->company->name }}</p>
+                 </div>
+             </div>
+         @endif
+
+
+         @if ($accessory->category)
           <!-- accessory name -->
           <div class="form-group">
             <label class="col-sm-3 control-label">{{ trans('admin/accessories/general.accessory_category') }}</label>
@@ -71,7 +82,9 @@
              @include ('partials.forms.checkout-selector', ['user_select' => 'true','asset_select' => 'true', 'location_select' => 'true'])
              @include ('partials.forms.edit.user-select', ['translated_name' => trans('general.select_user'), 'fieldname' => 'assigned_user'])
              <!-- We have to pass unselect here so that we don't default to the asset that's being checked out. We want that asset to be pre-selected everywhere else. -->
-             @include ('partials.forms.edit.asset-select', ['translated_name' => trans('general.asset'), 'fieldname' => 'assigned_asset', 'unselect' => 'true', 'style' => 'display:none;'])
+
+             @include ('partials.forms.edit.asset-select', ['translated_name' => trans('general.select_asset'), 'fieldname' => 'assigned_asset', 'company_id' => $accessory->company_id, 'unselect' => 'true', 'style' => 'display:none;'])
+
              @include ('partials.forms.edit.location-select', ['translated_name' => trans('general.location'), 'fieldname' => 'assigned_location', 'style' => 'display:none;'])
 
 

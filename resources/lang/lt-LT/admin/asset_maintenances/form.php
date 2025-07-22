@@ -1,6 +1,7 @@
 <?php
 
     return [
+        'select_type'            => 'Pasirinkite aptarnavimo tipą',
         'asset_maintenance_type' => 'Turto aptarnavimo tipas',
         'title'                  => 'Antraštė',
         'start_date'             => 'Pradžios data',

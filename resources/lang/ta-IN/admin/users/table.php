@@ -22,7 +22,7 @@ return array(
     'managed_locations'     => 'நிர்வகிக்கப்பட்ட இடங்கள்',
     'managed_users'         => 'Managed Users',
     'name' 					=> 'பெயர்',
-    'nogroup'               => 'No groups have been created yet. To add one, visit: ',
+    'nogroup'               => 'No groups have been created yet. To add one, visit:',
     'notes'                 => 'குறிப்புக்கள்',
     'password_confirm' 		=> 'கடவுச்சொல்லை உறுதிப்படுத்துக',
     'password' 				=> 'கடவுச்சொல்',

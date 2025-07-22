@@ -40,7 +40,7 @@ class ConsumablesController extends Controller
         }
 
         if ($request->filled('company_id')) {
-            $consumables->where('company_id', '=', $request->input('company_id'));
+            $consumables->where('consumables.company_id', '=', $request->input('company_id'));
         }
 
         if ($request->filled('category_id')) {

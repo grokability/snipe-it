@@ -18,12 +18,8 @@
         <div class="table-responsive">
           <table
                   data-cookie-id-table="pendingAcceptances"
-                  data-pagination="true"
                   data-id-table="pendingAcceptances"
-                  data-search="true"
                   data-side-pagination="client"
-                  data-show-columns="true"
-                  data-show-export="true"
                   data-show-refresh="false"
                   data-sort-order="asc"
                   id="pendingAcceptances"

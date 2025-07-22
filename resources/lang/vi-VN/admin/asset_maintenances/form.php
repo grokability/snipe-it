@@ -1,6 +1,7 @@
 <?php
 
     return [
+        'select_type'            => 'Select Maintenance Type',
         'asset_maintenance_type' => 'Lại duy trì tài sản',
         'title'                  => 'Tiêu đề',
         'start_date'             => 'Ngày Bắt Đầu',

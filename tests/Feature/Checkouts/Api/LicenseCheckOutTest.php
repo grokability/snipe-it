@@ -37,5 +37,6 @@ class LicenseCheckOutTest extends TestCase {
 
         $this->assertEquals($targetUser->id, $licenseSeat->assigned_to);
         $this->assertEquals('Checking out the seat to a user', $licenseSeat->notes);
+        $this->assertHasTheseActionLogs($license, ['add seats', 'create', 'checkout']); //FIXME - backwards
     }
 }

@@ -44,13 +44,13 @@ return array(
         'error'   => 'Възникна проблем при изписването на лиценза. Моля, опитайте отново.',
         'success' => 'Лицензът е изписан',
         'not_enough_seats' => 'Няма достатъчно лицензи за изписване',
-        'mismatch' => 'The license seat provided does not match the license',
-        'unavailable' => 'This seat is not available for checkout.',
+        'mismatch' => 'Броя лицензни места не отговаря на броя лицензи',
+        'unavailable' => 'Този лиценз за работно място не е наличен за изписване.',
     ),
 
     'checkin' => array(
         'error'   => 'Възникна проблем при вписването на лиценза. Моля, опитайте отново.',
-        'not_reassignable' => 'License not reassignable',
+        'not_reassignable' => 'Лиценза не може да се прехвърля',
         'success' => 'Лицензът е вписан'
     ),
 

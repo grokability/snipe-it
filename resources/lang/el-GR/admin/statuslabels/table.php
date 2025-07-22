@@ -1,14 +1,14 @@
 <?php
 
 return array(
-    'about'      	=> 'Σχετικά με το καθεστώς ετικετών',
+    'about'      	=> 'About Status Types',
     'archived'      	=> 'Αρχειοθετημένα',
     'create'      	=> 'Δημιουργία ετικέτας κατάστασης',
     'color'      	=> 'Χρώμα Γραφήματος',
     'default_label' => 'Προεπιλεγμένη Ετικέτα',
     'default_label_help' => 'Αυτό χρησιμοποιείται για να εξασφαλίσει ότι οι ετικέτες κατάστασης που χρησιμοποιούνται πιο συχνά εμφανίζονται στην κορυφή του πλαισίου επιλογής κατά τη δημιουργία/επεξεργασία των περιουσιακών στοιχείων.',
     'deployable'      	=> 'Προς ανάπτυξη',
-    'info'      	=> 'Οι ετικέτες κατάστασης χρησιμοποιούνται για να περιγράψουν τις διάφορες καταστάσεις στις οποίες θα μπορούσαν να βρίσκονται τα περιουσιακά στοιχεία σας. Μπορεί να είναι έξω για επισκευή, απώλεια / κλοπή κ.λπ. Μπορείτε να δημιουργήσετε νέες ετικέτες κατάστασης για αναπτυσσόμενα, εκκρεμή και αρχειοθετημένα στοιχεία ενεργητικού.',
+    'info'      	=> 'Status label types are used to describe the various states your assets could be in. They may be out for repair, lost/stolen, etc. You can create new status labels for your deployable, pending and archived assets according to your own workflow. For more information, <a href="https://snipe-it.readme.io/docs/overview#status-labels" target="_blank">see the documentation <i class="fa fa-external-link"></i></a>.',
     'name'      	=> 'Όνομα κατάστασης',
     'pending'      	=> 'Εκκρεμεί',
     'status_type'   => 'Τύπος κατάστασης',

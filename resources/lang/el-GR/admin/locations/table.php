@@ -39,4 +39,5 @@ return [
     'signed_by_finance_auditor' => 'Υπογράφηκε Από (Ελεγκτή Χρηματοδότησης):',
     'signed_by_location_manager' => 'Υπογράφηκε Από (Location Manager):',
     'signed_by'                 => 'Υπεγράφη Από:',
+    'clone'  					=> 'Clone Location',
 ];

@@ -35,7 +35,7 @@ return [
     'create_field_title' => '新しいカスタムフィールドを作成',
     'value_encrypted'      	        => 'このフィールドの値は、データベースで暗号化されます。管理者ユーザーのみが復号化された値を表示することができます。',
     'show_in_email'     => 'このフィールドの値をユーザーに送信されたチェックアウトメールに含めますか？暗号化されたフィールドはメールに含めることはできません',
-    'show_in_email_short' => 'Include in emails',
+    'show_in_email_short' => '電子メールに含める',
     'help_text' => 'ヘルプ テキスト',
     'help_text_description' => 'このテキストは、資産の編集中にフォーム要素の下に表示されるオプションのテキストです。',
     'about_custom_fields_title' => 'カスタムフィールドについて',
@@ -57,7 +57,14 @@ return [
     'show_in_requestable_list_short' => '要求可能なアセットリストに表示',
     'show_in_requestable_list' => '要求可能なアセットリストに値を表示します。暗号化されたフィールドは表示されません',
     'encrypted_options' => 'このフィールドは暗号化されているため、いくつかの表示オプションは利用できません。',
-    'display_checkin' => 'Display in checkin forms',
-    'display_checkout' => 'Display in checkout forms',
-
+    'display_checkin' => 'チェックインフォームに表示',
+    'display_checkout' => 'チェックアウトフォームに表示',
+    'display_audit' => '監査フォームに表示',
+    'types' => [
+        'text' => 'Text Box',
+        'listbox' => 'List Box',
+        'textarea' => 'Textarea (multi-line)',
+        'checkbox' => 'Checkbox',
+        'radio' => 'Radio Buttons',
+    ],
 ];

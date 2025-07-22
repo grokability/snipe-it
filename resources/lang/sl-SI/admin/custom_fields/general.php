@@ -47,7 +47,7 @@ return [
     'db_field' => 'DB Field',
     'db_convert_warning' => 'WARNING. This field is in the custom fields table as <code>:db_column</code> but should be <code>:expected</code>.',
     'is_unique' => 'This value must be unique across all assets',
-    'unique' => 'Unique',
+    'unique' => 'Edinstven',
     'display_in_user_view' => 'Allow the checked out user to view these values in their View Assigned Assets page',
     'display_in_user_view_table' => 'Vidno uporabniku',
     'auto_add_to_fieldsets' => 'Automatically add this to every new fieldset',
@@ -59,5 +59,12 @@ return [
     'encrypted_options' => 'This field is encrypted, so some display options will not be available.',
     'display_checkin' => 'Display in checkin forms',
     'display_checkout' => 'Display in checkout forms',
-
+    'display_audit' => 'Display in audit forms',
+    'types' => [
+        'text' => 'Text Box',
+        'listbox' => 'List Box',
+        'textarea' => 'Textarea (multi-line)',
+        'checkbox' => 'Potrdilno polje',
+        'radio' => 'Radio gumbi',
+    ],
 ];

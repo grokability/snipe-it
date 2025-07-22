@@ -2,7 +2,7 @@
 
 return [
 
-    'undeployable' 		 => '<strong>警告: </strong> このアセットは現在デプロイ不可能としてマークされています。このステータスが変更された場合は、アセットのステータスを更新してください。',
+    'undeployable' 		 => 'The following assets cannot be deployed and have been removed from checkout: :asset_tags',
     'does_not_exist' 	 => '資産が存在しません。',
     'does_not_exist_var' => 'タグ:asset_tag を持つアセットが見つかりません。',
     'no_tag' 	         => 'アセットタグが提供されていません。',
@@ -19,6 +19,11 @@ return [
         'success_linked' => ':tag を持つアセットは正常に作成されました。 <strong><a href=":link" style="color: white;"></a></strong> を表示するにはここをクリックしてください。',
         'multi_success_linked' => 'タグ:links のアセットが正常に作成されました。|:count アセットが正常に作成されました。',
         'partial_failure' => 'An asset was unable to be created. Reason: :failures|:count assets were unable to be created. Reasons: :failures',
+        'target_not_found' => [
+            'user' => '割り当てられたユーザーが見つかりません。',
+            'asset' => '割り当てられた資産が見つかりません。',
+            'location' => '割り当てられた場所が見つかりません。',
+        ],
     ],
 
     'update' => [
@@ -38,7 +43,7 @@ return [
     ],
 
     'audit' => [
-        'error'   		=> 'Asset audit unsuccessful: :error ',
+        'error'   		=> '資産監査に失敗しました: :error ',
         'success' 		=> '資産の監査ログに記録しました。',
     ],
 
@@ -66,13 +71,14 @@ return [
         'file_already_deleted' => '選択したファイルは既に削除されています',
         'header_row_has_malformed_characters' => 'ヘッダー行の1つ以上の属性に不正な形式のUTF-8文字が含まれています',
         'content_row_has_malformed_characters' => 'コンテンツの最初の行の1つまたは複数の属性に不正な形式のUTF-8文字が含まれています',
+        'transliterate_failure' => ':encoding から UTF-8 への変換に失敗しました。入力中の無効な文字が原因です。'
     ],
 
 
     'delete' => [
         'confirm'   	=> 'この資産を削除してもよろしいですか？',
         'error'   		=> '資産を削除する際に問題が発生しました。もう一度やり直して下さい。',
-        'assigned_to_error' => '{1}Asset Tag: :asset_tag is currently checked out. Check in this device before deletion.|[2,*]Asset Tags: :asset_tag are currently checked out. Check in these devices before deletion.',
+        'assigned_to_error' => '{1}アセットタグ: :asset_tag は現在チェックアウトされています。削除する前にこのデバイスを確認してください。 [2,*]アセットタグ: :asset_tag は現在チェックアウトされています。削除する前にこれらのデバイスを確認してください。',
         'nothing_updated'   => '資産が選択されていないため、削除されませんでした。',
         'success' 		=> '資産は正常に削除されました。',
     ],
@@ -99,9 +105,10 @@ return [
     ],
 
     'requests' => [
-        'error'   		=> '資産は要求されませんでした。もう一度、やり直して下さい。',
-        'success' 		=> '資産の要求処理が成功しました。',
-        'canceled'      => 'チェックアウトリクエストが正常にキャンセルされました。',
+        'error'   		=> 'リクエストに失敗しました。もう一度やり直してください。',
+        'success' 		=> 'リクエストは正常に送信されました。',
+        'canceled'      => 'リクエストをキャンセルしました。',
+        'cancel'        => 'このアイテムのリクエストをキャンセル',
     ],
 
 ];

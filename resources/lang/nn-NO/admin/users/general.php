@@ -53,4 +53,5 @@ return [
     'next_save_user' => 'Neste: Lagre bruker',
     'all_assigned_list_generation' => 'Generert på:',
     'email_user_creds_on_create' => 'Send denne brukeren sin påloggingsinformasjon via e-post?',
+    'department_manager' => 'Department Manager',
 ];

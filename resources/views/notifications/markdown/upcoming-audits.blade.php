@@ -2,9 +2,21 @@
 
 ### {{ trans_choice('mail.upcoming-audits', $assets->count(), ['count' => $assets->count(), 'threshold' => $threshold]) }}
 
-@component('mail::table')
-| |{{ trans('mail.name') }}|{{ trans('general.last_audit') }}|{{ trans('general.next_audit_date') }}|{{ trans('mail.Days') }}|{{ trans('mail.supplier') }} | {{ trans('mail.assigned_to') }}|{{ trans('general.notes') }}
-|-|:------------- |:-------------|:---------|:---------|:---------|:---------|:---------|
+
+<table style="width:100%">
+<thead>
+<tr>
+    <th style="vertical-align: top"> </th>
+    <th style="vertical-align: top">{{ trans('mail.name') }}</th>
+    <th style="vertical-align: top">{{ trans('general.last_audit') }}</th>
+    <th style="vertical-align: top">{{ trans('general.next_audit_date') }}</th>
+    <th style="vertical-align: top">{{ trans('mail.Days') }}</th>
+    <th style="vertical-align: top">{{ trans('mail.supplier') }}</th>
+    <th style="vertical-align: top">{{ trans('mail.assigned_to') }}</th>
+    <th style="vertical-align: top">{{ trans('general.notes') }}</th>
+</tr>
+
+
 @foreach ($assets as $asset)
 @php
 $next_audit_date = Helper::getFormattedDateObject($asset->next_audit_date, 'date', false);
@@ -12,9 +24,20 @@ $last_audit_date = Helper::getFormattedDateObject($asset->last_audit_date, 'date
 $diff = (int) Carbon::parse(Carbon::now())->diffInDays($asset->next_audit_date, true);
 $icon = ($diff <= 7) ? '🚨' : (($diff <= 14) ? '⚠️' : ' ');
 @endphp
-|{{ $icon }}| [{{ $asset->present()->name }}]({{ route('hardware.show', $asset->id) }}) | {{ $last_audit_date }}| {{ $next_audit_date }} | {{ $diff }}  | {{ ($asset->supplier ? e($asset->supplier->name) : '') }}|{{ ($asset->assignedTo ? $asset->assignedTo->present()->name() : '') }}|{{ $asset->notes }}
+
+<tr>
+    <td style="vertical-align: top">{{ $icon }}</td>
+    <td style="vertical-align: top"><a href="{{ route('hardware.show', $asset->id) }}">{{ $asset->present()->name }}</a></td>
+    <td style="vertical-align: top">{{ $last_audit_date }}</td>
+    <td style="vertical-align: top">{{ $next_audit_date }}</td>
+    <td style="vertical-align: top">{{ $diff }}</td>
+    <td style="vertical-align: top">{{ ($asset->supplier ? e($asset->supplier->name) : '') }}</td>
+    <td style="vertical-align: top">{{ ($asset->assignedTo ? $asset->assignedTo->present()->name() : '') }}</td>
+    <td style="vertical-align: top">{!! nl2br(e($asset->notes)) !!}</td>
+</tr>
+
 @endforeach
-@endcomponent
+</table>
 
 
 @endcomponent

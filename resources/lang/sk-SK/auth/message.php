@@ -6,8 +6,6 @@ return array(
     'account_not_found'      => 'Používateľské meno alebo heslo je nesprávne.',
     'account_not_activated'  => 'Tento účet nie je aktivovaný.',
     'account_suspended'      => 'Tento účet bol pozastavený.',
-    'account_banned'         => 'Tento účet bol zablokovaný.',
-    'throttle'               => 'Príliš veľa nesprávnych pokusov. Prosím skúste znovu o :minutes minút.',
 
     'two_factor' => array(
         'already_enrolled'      => 'Vaše zariadenie bolo už bolo zapísané.',

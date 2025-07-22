@@ -70,8 +70,9 @@ return [
     'asset_location_update_actual' => 'Update only actual location',
     'asset_not_deployable' => 'این وضعیت دارایی قابل استقرار نیست. این دارایی قابل پذیرش نیست.',
     'asset_not_deployable_checkin' => 'That asset status is not deployable. Using this status label will checkin the asset.',
-    'asset_deployable' => 'این وضعیت دارایی قابل استقرار است. این دارایی قابل پذیرش است.',
+    'asset_deployable' => 'This asset can be checked out.',
     'processing_spinner' => 'Processing... (This might take a bit of time on large files)',
+    'processing' => 'در حال پردازش... ',
     'optional_infos'  => 'اطلاعات دلخواه
 ',
     'order_details'   => 'اطلاعات مربوط به سفارش

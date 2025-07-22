@@ -15,6 +15,6 @@ return array(
 
     'failed' => 'Kredensial atau data login ini tidak cocok dengan catatan kami.',
     'password' => 'Kata sandi yang diberikan salah.',
-    'throttle' => 'Terlalu banyak percobaan login. Harap coba lagi dalam :seconds detik.',
+    'throttle' => 'Too many login attempts. Please try again in :minutes minute(s).',
 
 );

@@ -3,7 +3,7 @@
 return array(
 
     'id'                        => 'ID',
-    'name'                      => 'Nome Dipartimento',
+    'name'                      => 'Nome Reparto',
     'manager'                   => 'Manager',
     'location'                  => 'Sede',
     'create'                    => 'Crea reparto',

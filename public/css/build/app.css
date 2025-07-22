@@ -312,6 +312,16 @@ a.accordion-header {
 a.logo.no-hover a:hover {
   background-color: transparent;
 }
+.index-block {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.index-block:hover {
+  overflow: visible;
+  white-space: normal;
+  height: auto;
+}
 input:required,
 select:required,
 textarea:required {
@@ -1027,7 +1037,7 @@ h4 {
  Instead, we use CSS to add the icon into the table header, which leaves the column selector
  "title" text as-is and hides the icon.
 
- See https://github.com/snipe/snipe-it/issues/7989
+ See https://github.com/grokability/snipe-it/issues/7989
  */
 th.css-accessory > .th-inner,
 th.css-accessory-alt > .th-inner,
@@ -1256,7 +1266,6 @@ label.form-control {
 }
 label.form-control--disabled {
   color: #959495;
-  pointer-events: none;
   cursor: not-allowed;
 }
 /** --------------------------------------- **/
@@ -1419,6 +1428,9 @@ input[type="radio"]:checked::before {
 .bootstrap-table .fixed-table-container .table tbody tr .card-view {
   display: table-row !important;
 }
+.form-control-static {
+  padding-top: 0px;
+}
 td.text-right.text-padding-number-cell {
   padding-right: 30px !important;
   white-space: nowrap;
@@ -1438,5 +1450,22 @@ code.single-line {
 p.monospace,
 span.monospace {
   font-family: monospace, monospace;
+}
+legend.highlight {
+  background: repeating-linear-gradient(45deg, #222d32, #222d32 10px, #444 10px, #444 11px);
+  color: #fff;
+  font-size: 18px;
+  padding: 6px 6px 6px 10px;
+}
+legend.highlight a {
+  color: #fff;
+  cursor: pointer;
+}
+fieldset.bottom-padded {
+  padding-bottom: 20px;
+}
+caption.tableCaption {
+  font-size: 18px;
+  padding-left: 8px;
 }
 

@@ -4,7 +4,7 @@ return [
 
     'select_language' => '选择一种语言',
     'languages' => [
-        'en-US'=> '中文',
+        'en-US'=> '英语（美国）',
         'en-GB'=> '英语（英国）',
         'am-ET' => 'Amharic',
         'af-ZA'=> '南非荷兰语',
@@ -40,8 +40,8 @@ return [
         'ms-MY'=> '马来文',
         'mi-NZ'=> 'Maori',
         'mn-MN'=> '蒙古语',
-        //'no-NO'=> 'Norwegian',
         'nb-NO'=> '挪威语 （博克马尔语）',
+        'om-ET' => '奥罗莫语(埃塞俄比亚)',
         //'nn-NO'=> 'Norwegian Nynorsk',
         'fa-IR'=> '波斯文',
         'pl-PL'=> '波兰语',

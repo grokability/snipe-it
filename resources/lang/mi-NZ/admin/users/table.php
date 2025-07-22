@@ -22,7 +22,7 @@ return array(
     'managed_locations'     => 'Ngā Tauwāhi Whakahaere',
     'managed_users'         => 'Managed Users',
     'name' 					=> 'Ingoa',
-    'nogroup'               => 'No groups have been created yet. To add one, visit: ',
+    'nogroup'               => 'No groups have been created yet. To add one, visit:',
     'notes'                 => 'Tuhipoka',
     'password_confirm' 		=> 'Whakaae Kupuhipa',
     'password' 				=> 'Kupuhipa',

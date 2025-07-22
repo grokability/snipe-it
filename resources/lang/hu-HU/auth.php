@@ -15,6 +15,6 @@ return array(
 
     'failed' => 'Ezek a hitelesítő adatok nem egyeznek a nyilvántartásunkkal.',
     'password' => 'A megadott jelszó helytelen.',
-    'throttle' => 'Túl sok bejelentkezési kísérlet. Kérjük, próbálkozzon újra :seconds másodperc múlva.',
+    'throttle' => 'Too many login attempts. Please try again in :minutes minute(s).',
 
 );

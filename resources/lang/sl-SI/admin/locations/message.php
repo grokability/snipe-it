@@ -3,7 +3,7 @@
 return array(
 
     'does_not_exist' => 'Lokacija ne obstaja.',
-    'assoc_users'    => 'Te lokacije trenutno ni mogoče izbrisati, ker je lokacija zapisa za vsaj eno sredstvo ali uporabnika, ker so ji dodeljena sredstva ali ker je starševska lokacija druge lokacije. Posodobite svoje zapise tako, da se na to lokacijo ne boste več sklicevali, in poskusite znova. ',
+    'assoc_users'    => 'Te lokacije trenutno ni mogoče izbrisati, ker je lokacija zapisa za vsaj eno sredstvo ali uporabnika, ker so ji dodeljena sredstva ali ker je starševska lokacija druge lokacije. Posodobite svoje zapise tako, da se na to lokacijo ne boste več sklicevali, in poskusite znova ',
     'assoc_assets'	 => 'Ta lokacija je trenutno povezana z vsaj enim sredstvom in je ni mogoče izbrisati. Prosimo, posodobite svoja sredstva, da ne bodo več vsebovali te lokacije in poskusite znova. ',
     'assoc_child_loc'	 => 'Ta lokacija je trenutno starš vsaj ene lokacije otroka in je ni mogoče izbrisati. Posodobite svoje lokacije, da ne bodo več vsebovale te lokacije in poskusite znova. ',
     'assigned_assets' => 'Dodeljena sredstva',

@@ -163,6 +163,7 @@ class ManufacturerPresenter extends Presenter
                 'title' => trans('table.actions'),
                 'visible' => true,
                 'formatter' => 'manufacturersActionsFormatter',
+                'printIgnore' => true,
             ],
         ];
 

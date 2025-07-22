@@ -15,6 +15,6 @@ return array(
 
     'failed' => 'Disse oplysninger passer ikke med de gemte.',
     'password' => 'Adgangskoden er forkert.',
-    'throttle' => 'For mange loginforsøg. Prøv igen om :seconds sekunder.',
+    'throttle' => 'Too many login attempts. Please try again in :minutes minute(s).',
 
 );

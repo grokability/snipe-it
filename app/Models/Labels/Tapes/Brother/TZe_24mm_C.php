@@ -15,18 +15,45 @@ class TZe_24mm_C extends TZe_24mm
     private const FIELD_SIZE     =   3.20;
     private const FIELD_MARGIN   =   0.15;
 
-    public function getUnit()  { return 'mm'; }
-    public function getWidth() { return 34.0; }
-    public function getSupportAssetTag()  { return true; }
-    public function getSupport1DBarcode() { return false; }
-    public function getSupport2DBarcode() { return true; }
-    public function getSupportFields()    { return 0; }
-    public function getSupportLogo()      { return true; }
-    public function getSupportTitle()     { return false; }
+    public function getUnit()
+    {
+        return 'mm'; 
+    }
+    public function getWidth()
+    {
+        return 34.0; 
+    }
+    public function getSupportAssetTag()
+    {
+        return true; 
+    }
+    public function getSupport1DBarcode()
+    {
+        return false; 
+    }
+    public function getSupport2DBarcode()
+    {
+        return true; 
+    }
+    public function getSupportFields()
+    {
+        return 0; 
+    }
+    public function getSupportLogo()
+    {
+        return true; 
+    }
+    public function getSupportTitle()
+    {
+        return false; 
+    }
 
-    public function preparePDF($pdf) {}
+    public function preparePDF($pdf)
+    {
+    }
 
-    public function write($pdf, $record) {
+    public function write($pdf, $record)
+    {
         $pa = $this->getPrintableArea();
 
         $currentX = $pa->x1;

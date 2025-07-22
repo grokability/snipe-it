@@ -4,6 +4,7 @@ return [
     'info'   => 'Velg de alternativene du ønsker skal inngå i rapporten.',
     'deleted_user' => 'Slettet bruker',
     'send_reminder' => 'Send påminnelse',
+    'cannot_send_reminder' => 'User has been deleted or does not have an email address so cannot receive a reminder',
     'reminder_sent' => 'Påminnelse sendt',
     'acceptance_deleted' => 'Aksepteringsforespørsel slettet',
     'acceptance_request' => 'Akseptanseforespørsel',

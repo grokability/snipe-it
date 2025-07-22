@@ -100,8 +100,8 @@ class ComponentCheckinController extends Controller
 
             session()->put(['redirect_option' => $request->get('redirect_option')]);
 
-            return redirect()->to(Helper::getRedirectOption($request, $component->id, 'Components'))->with('success',
-                trans('admin/components/message.checkin.success'));
+            return Helper::getRedirectOption($request, $component->id, 'Components')
+                ->with('success', trans('admin/components/message.checkin.success'));
         }
 
         return redirect()->route('components.index')->with('error', trans('admin/components/message.does_not_exist'));

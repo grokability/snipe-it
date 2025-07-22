@@ -14,23 +14,59 @@ class L7162_A extends L7162
     private const FIELD_SIZE     =   4.60;
     private const FIELD_MARGIN   =   0.30;
 
-    public function getUnit() { return 'mm'; }
+    public function getUnit()
+    {
+        return 'mm'; 
+    }
 
-    public function getLabelMarginTop()    { return 1.0; }
-    public function getLabelMarginBottom() { return 1.0; }
-    public function getLabelMarginLeft()   { return 1.0; }
-    public function getLabelMarginRight()  { return 1.0; }
+    public function getLabelMarginTop()
+    {
+        return 1.0; 
+    }
+    public function getLabelMarginBottom()
+    {
+        return 1.0; 
+    }
+    public function getLabelMarginLeft()
+    {
+        return 1.0; 
+    }
+    public function getLabelMarginRight()
+    {
+        return 1.0; 
+    }
 
-    public function getSupportAssetTag()  { return true; }
-    public function getSupport1DBarcode() { return false; }
-    public function getSupport2DBarcode() { return true; }
-    public function getSupportFields()    { return 4; }
-    public function getSupportLogo()      { return false; }
-    public function getSupportTitle()     { return true; }
+    public function getSupportAssetTag()
+    {
+        return true; 
+    }
+    public function getSupport1DBarcode()
+    {
+        return false; 
+    }
+    public function getSupport2DBarcode()
+    {
+        return true; 
+    }
+    public function getSupportFields()
+    {
+        return 4; 
+    }
+    public function getSupportLogo()
+    {
+        return false; 
+    }
+    public function getSupportTitle()
+    {
+        return true; 
+    }
 
-    public function preparePDF($pdf) {}
+    public function preparePDF($pdf)
+    {
+    }
 
-    public function write($pdf, $record) {
+    public function write($pdf, $record)
+    {
         $pa = $this->getLabelPrintableArea();
 
         $usableWidth = $pa->w;

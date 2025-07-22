@@ -40,4 +40,5 @@ return [
     'signed_by_finance_auditor' => 'امضاء توسط (ممیز مالی):',
     'signed_by_location_manager' => 'امضاء توسط (ممیز مکانی):',
     'signed_by'                 => 'امضاء اختتام توسط:',
+    'clone'  					=> 'Clone Location',
 ];

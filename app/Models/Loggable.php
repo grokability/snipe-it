@@ -15,8 +15,8 @@ trait Loggable
     public ?bool $imported = false;
 
     /**
-     * @author  Daniel Meltzer <dmeltzer.devel@gmail.com>
-     * @since [v3.4]
+     * @author Daniel Meltzer <dmeltzer.devel@gmail.com>
+     * @since  [v3.4]
      * @return \App\Models\Actionlog
      */
     public function log()
@@ -30,8 +30,8 @@ trait Loggable
     }
 
     /**
-     * @author  Daniel Meltzer <dmeltzer.devel@gmail.com>
-     * @since [v3.4]
+     * @author Daniel Meltzer <dmeltzer.devel@gmail.com>
+     * @since  [v3.4]
      * @return \App\Models\Actionlog
      */
     public function logCheckout($note, $target, $action_date = null, $originalValues = [])
@@ -89,27 +89,26 @@ trait Loggable
         $log->note = $note;
         $log->action_date = $action_date;
 
-        if (! $log->action_date) {
-            $log->action_date = date('Y-m-d H:i:s');
-        }
 
         $changed = [];
         $array_to_flip = array_keys($fields_array);
-        $array_to_flip = array_merge($array_to_flip, ['action_date','name','status_id','location_id','expected_checkin']);
+        $array_to_flip = array_merge($array_to_flip, ['name','status_id','location_id','expected_checkin']);
         $originalValues = array_intersect_key($originalValues, array_flip($array_to_flip));
 
 
         foreach ($originalValues as $key => $value) {
+            // TODO - action_date isn't a valid attribute of any first-class object, so we might want to remove this?
             if ($key == 'action_date' && $value != $action_date) {
                 $changed[$key]['old'] = $value;
                 $changed[$key]['new'] = is_string($action_date) ? $action_date : $action_date->format('Y-m-d H:i:s');
-            } elseif ($value != $this->getAttributes()[$key]) {
+            } elseif (array_key_exists($key, $this->getAttributes()) && $value != $this->getAttributes()[$key]) {
                 $changed[$key]['old'] = $value;
                 $changed[$key]['new'] = $this->getAttributes()[$key];
             }
+            // NOTE - if the attribute exists in $originalValues, but *not* in ->getAttributes(), it isn't added to $changed
         }
 
-        if (!empty($changed)){
+        if (!empty($changed)) {
             $log->log_meta = json_encode($changed);
         }
 
@@ -136,8 +135,8 @@ trait Loggable
     }
 
     /**
-     * @author  Daniel Meltzer <dmeltzer.devel@gmail.com>
-     * @since [v3.4]
+     * @author Daniel Meltzer <dmeltzer.devel@gmail.com>
+     * @since  [v3.4]
      * @return \App\Models\Actionlog
      */
     public function logCheckin($target, $note, $action_date = null, $originalValues = [])
@@ -146,7 +145,7 @@ trait Loggable
 
         $fields_array = [];
 
-        if($target != null){
+        if($target != null) {
             $log->target_type = get_class($target);
             $log->target_id = $target->id;
 
@@ -180,7 +179,7 @@ trait Loggable
         $log->note = $note;
         $log->action_date = $action_date;
 
-        if (! $log->action_date) {
+        if (!$action_date) {
             $log->action_date = date('Y-m-d H:i:s');
         }
 
@@ -191,7 +190,7 @@ trait Loggable
         $changed = [];
 
         $array_to_flip = array_keys($fields_array);
-        $array_to_flip = array_merge($array_to_flip, ['action_date','name','status_id','location_id','expected_checkin']);
+        $array_to_flip = array_merge($array_to_flip, ['name','status_id','location_id','expected_checkin']);
 
         $originalValues = array_intersect_key($originalValues, array_flip($array_to_flip));
 
@@ -206,7 +205,7 @@ trait Loggable
             }
         }
 
-        if (!empty($changed)){
+        if (!empty($changed)) {
             $log->log_meta = json_encode($changed);
         }
 
@@ -216,8 +215,8 @@ trait Loggable
     }
 
     /**
-     * @author  A. Gianotto <snipe@snipe.net>
-     * @since [v4.0]
+     * @author A. Gianotto <snipe@snipe.net>
+     * @since  [v4.0]
      * @return \App\Models\Actionlog
      */
     public function logAudit($note, $location_id, $filename = null, $originalValues = [])
@@ -250,7 +249,7 @@ trait Loggable
             }
         }
 
-        if (!empty($changed)){
+        if (!empty($changed)) {
             $log->log_meta = json_encode($changed);
         }
 
@@ -277,7 +276,7 @@ trait Loggable
             'location' => ($location) ? $location->name : '',
             'note' => $note,
         ];
-        if(Setting::getSettings()->webhook_selected === 'microsoft' && Str::contains(Setting::getSettings()->webhook_endpoint, 'workflows')){
+        if(Setting::getSettings()->webhook_selected === 'microsoft' && Str::contains(Setting::getSettings()->webhook_endpoint, 'workflows')) {
             $message = AuditNotification::toMicrosoftTeams($params);
             $notification = new TeamsNotification(Setting::getSettings()->webhook_endpoint);
             $notification->success()->sendMessage($message[0], $message[1]);
@@ -290,8 +289,8 @@ trait Loggable
     }
 
     /**
-     * @author  Daniel Meltzer <dmeltzer.devel@gmail.com>
-     * @since [v3.5]
+     * @author Daniel Meltzer <dmeltzer.devel@gmail.com>
+     * @since  [v3.5]
      * @return \App\Models\Actionlog
      */
     public function logCreate($note = null)
@@ -319,8 +318,8 @@ trait Loggable
     }
 
     /**
-     * @author  Daniel Meltzer <dmeltzer.devel@gmail.com>
-     * @since [v3.4]
+     * @author Daniel Meltzer <dmeltzer.devel@gmail.com>
+     * @since  [v3.4]
      * @return \App\Models\Actionlog
      */
     public function logUpload($filename, $note)
@@ -342,5 +341,25 @@ trait Loggable
         $log->logaction('uploaded');
 
         return $log;
+    }
+
+    /**
+     * Get latest signature from a specific user
+     *
+     * This just makes the print view a bit cleaner
+     * Returns the latest acceptance ActionLog that contains a signature
+     * from $user or null if there is none
+     *
+     * @param  User $user
+     * @return null|Actionlog
+     **/
+    public function getLatestSignedAcceptance(User $user)
+    {
+        return $this->log->where('target_type', User::class)
+            ->where('target_id', $user->id)
+            ->where('action_type', 'accepted')
+            ->where('accept_signature', '!=', null)
+            ->sortByDesc('created_at')
+            ->first();
     }
 }

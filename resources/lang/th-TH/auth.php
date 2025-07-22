@@ -15,6 +15,6 @@ return array(
 
     'failed' => 'ข้อมูลที่ใช้ในการยืนยันตัวตนไม่ถูกต้อง',
     'password' => 'รหัสผ่านนี้ไม่ถูกต้อง',
-    'throttle' => 'คุณได้พยายามเข้าระบบหลายครั้งเกินไป กรุณาลองใหม่ใน :seconds วินาทีข้างหน้า.',
+    'throttle' => 'Too many login attempts. Please try again in :minutes minute(s).',
 
 );

@@ -31,6 +31,7 @@ return [
         'numeric' => ':attribute 字段必须在 :min 到 :max 之间。',
         'string' => ':attribute 字段必须在 :min 和 :max 字符之间。',
     ],
+    'valid_regex' => '正则表达式无效。',
     'boolean' => '：属性字段必须为true或false。',
     'can' => ':attribute 字段包含一个未授权的值。',
     'confirmed' => ':attribute 字段确认不匹配。',
@@ -46,7 +47,7 @@ return [
     'digits' => ':attribute 字段必须是 :digits 数字',
     'digits_between' => ':attribute 字段必须介于 :min 到 :max 位数字之间。',
     'dimensions' => ':attribute 字段的图像尺寸无效。',
-    'distinct' => '：属性字段具有重复值。',
+    'distinct' => ':attribute 字段有一个重复的值。',
     'doesnt_end_with' => ':attribute 字段不能以下列之一结尾：:values 。',
     'doesnt_start_with' => ':attribute 字段不能以下列之一开始：:values 。',
     'email' => ':attribute 字段必须是一个有效的电子邮件地址。',
@@ -55,7 +56,7 @@ return [
     'exists' => '选择的 :attribute 无效',
     'extensions' => ':attribute 字段必须有以下扩展之一： :values 。',
     'file' => ':attribute 字段必须是一个文件。',
-    'filled' => '：属性字段必须有一个值。',
+    'filled' => ':attribute 必须有一个值。',
     'gt' => [
         'array' => ':attribute 字段必须超过 :value 项。',
         'file' => ':attribute 字段必须大于 :value kb。',
@@ -127,7 +128,7 @@ return [
     ],
     'percent'       => '当折旧类型为百分比时，折旧的最小值必须在0到100之间。',
 
-    'present' => '：属性字段必须存在。',
+    'present' => ':attribute 字段必填',
     'present_if' => '当 :other 为 :value 时，:attribute 字段必须存在。',
     'present_unless' => ':attribute 字段必须存在，除非 :other 是 :value 。',
     'present_with' => '当 :values 存在时，:attribute 字段必须存在。',
@@ -155,7 +156,7 @@ return [
         'string' => ':attribute 字段必须是 :size 个字符。',
     ],
     'starts_with' => ':attribute 字段必须以下列之一开始：:values 。',
-    'string'               => '：属性必须是字符串。',
+    'string'               => ':attribute 必须是字符串。',
     'two_column_unique_undeleted' => ':attribute 在 :table1 和 :table2 中必须是唯一的。 ',
     'unique_undeleted'     => ':attribute 属性必须唯一。',
     'non_circular'         => ':attribute 不能创建循环引用。',
@@ -167,11 +168,12 @@ return [
     'symbols'              => '密码必须包含符号。',
     'timezone' => ':attribute 字段必须是一个有效的时区。',
     'unique' => ':attribute 已经被采用',
-    'uploaded' => '：属性无法上传。',
+    'uploaded' => ':attribute 无法上传。',
     'uppercase' => ':attribute 字段必须是大写。',
     'url' => ':attribute 字段必须是一个有效的 URL。',
     'ulid' => ':attribute 字段必须是个有效的 ULID。',
     'uuid' => ':attribute 字段必须是一个有效的 UUID。',
+    'fmcs_location' => '管理设置中已启用完整的多公司支持及位置范围限定功能，但当前选择的位置与公司不兼容。',
 
 
     /*
@@ -185,9 +187,13 @@ return [
     |
     */
 
+    'email_array'      => '一个或多个电子邮件地址无效。',
+    'checkboxes'           => ':attribute 包含无效的选项。',
+    'radio_buttons'        => ':attribute 无效。',
+    
     'custom' => [
-        'alpha_space' => '：属性字段包含不允许的字符。',
-        'email_array'      => '一个或多个电子邮件地址无效。',
+        'alpha_space' => ':attribute 字段包含不允许的字符。',
+
         'hashed_pass'      => '您当前的密码不正确',
         'dumbpwd'          => '那个密码太常见了。',
         'statuslabel_type' => '您必须选择有效的状态标签类型',
@@ -204,8 +210,6 @@ return [
         'expected_checkin.date_format'  =>  ':attribute 必须是 YYYY-MM-DD 格式的有效日期',
         'start_date.date_format'        =>  ':attribute 必须是 YYYY-MM-DD 格式的有效日期',
         'end_date.date_format'          =>  ':attribute 必须是 YYYY-MM-DD 格式的有效日期',
-        'checkboxes'           => ':attribute 包含无效的选项。',
-        'radio_buttons'        => ':attribute 无效。',
         'invalid_value_in_field' => '此字段中包含的值无效',
 
         'ldap_username_field' => [

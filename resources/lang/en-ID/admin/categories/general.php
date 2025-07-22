@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Kategori Aset',
     'category_name'  					=> 'Nama Kategori',
     'checkin_email'                     => 'Kirim email ke pengguna saat checkin/checkout.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'Pengguna ini akan dikirimi email saat checkin/checkout.',
     'clone'                             => 'Salin Kategori',
     'create'  							=> 'Buat Kategori',
@@ -21,5 +22,9 @@ return array(
     'use_default_eula'					=> 'Gunakan <a href="#" data-toggle="modal" data-target="#eulaModal"> standar primer EULA </a> gantinya.',
     'use_default_eula_disabled'			=> '<del> Gunakan EULA standar utama sebagai gantinya. </ del> Tidak ada standar utama EULA diatur. Silakan menambahkan satu di Settings.',
     'use_default_eula_column'			=> 'Gunakan kebijakan bawaan',
+    'import_require_acceptance'         => 'Require Acceptance',
+    'import_checkin_email'              => 'Send Checkin Email',
+    'import_eula_text'                  => 'EULA text',
+    'import_category_type'              => 'Category Type',
 
 );

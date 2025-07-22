@@ -15,23 +15,59 @@ class _5520_B extends _5520
     private const FIELD_SIZE     =   0.150;
     private const FIELD_MARGIN   =   0.012;
 
-    public function getUnit() { return 'in'; }
+    public function getUnit()
+    {
+        return 'in'; 
+    }
 
-    public function getLabelMarginTop()    { return 0.06; }
-    public function getLabelMarginBottom() { return 0.06; }
-    public function getLabelMarginLeft()   { return 0.06; }
-    public function getLabelMarginRight()  { return 0.06; }
+    public function getLabelMarginTop()
+    {
+        return 0.06; 
+    }
+    public function getLabelMarginBottom()
+    {
+        return 0.06; 
+    }
+    public function getLabelMarginLeft()
+    {
+        return 0.06; 
+    }
+    public function getLabelMarginRight()
+    {
+        return 0.06; 
+    }
 
-    public function getSupportAssetTag()  { return false; }
-    public function getSupport1DBarcode() { return true; }
-    public function getSupport2DBarcode() { return false; }
-    public function getSupportFields()    { return 2; }
-    public function getSupportLogo()      { return false; }
-    public function getSupportTitle()     { return true; }
+    public function getSupportAssetTag()
+    {
+        return false; 
+    }
+    public function getSupport1DBarcode()
+    {
+        return true; 
+    }
+    public function getSupport2DBarcode()
+    {
+        return false; 
+    }
+    public function getSupportFields()
+    {
+        return 2; 
+    }
+    public function getSupportLogo()
+    {
+        return false; 
+    }
+    public function getSupportTitle()
+    {
+        return true; 
+    }
 
-    public function preparePDF($pdf) {}
+    public function preparePDF($pdf)
+    {
+    }
 
-    public function write($pdf, $record) {
+    public function write($pdf, $record)
+    {
         $pa = $this->getLabelPrintableArea();
 
         $currentX = $pa->x1;

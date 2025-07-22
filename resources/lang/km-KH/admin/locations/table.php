@@ -39,4 +39,5 @@ return [
     'signed_by_finance_auditor' => 'ចុះហត្ថលេខាដោយ (សវនករហិរញ្ញវត្ថុ)៖',
     'signed_by_location_manager' => 'ចុះហត្ថលេខាដោយ (អ្នកគ្រប់គ្រងទីតាំង)៖',
     'signed_by'                 => 'ចុះហត្ថលេខាបិទដោយ៖',
+    'clone'  					=> 'Clone Location',
 ];

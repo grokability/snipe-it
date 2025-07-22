@@ -1,6 +1,7 @@
 <?php
 
     return [
+        'select_type'            => '選擇維護類型',
         'asset_maintenance_type' => '資產維護類型',
         'title'                  => '標題',
         'start_date'             => '起始日期',

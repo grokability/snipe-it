@@ -249,6 +249,7 @@ class RestoreFromBackup extends Command
             'storage/private_uploads/consumables',
             'storage/private_uploads/eula-pdfs',
             'storage/private_uploads/imports',
+            'storage/private_uploads/locations',
             'storage/private_uploads/licenses',
             'storage/private_uploads/signatures',
             'storage/private_uploads/users',
@@ -328,9 +329,9 @@ class RestoreFromBackup extends Command
                     }
                 }
             }
-            $good_extensions = ['png', 'gif', 'jpg', 'svg', 'jpeg', 'doc', 'docx', 'pdf', 'txt',
-                                'zip', 'rar', 'xls', 'xlsx', 'lic', 'xml', 'rtf', 'webp', 'key', 'ico', 'avif'
-            ];
+
+            $good_extensions = config('filesystems.allowed_upload_extensions_array');
+
             foreach (array_merge($private_files, $public_files) as $file) {
                 $has_wildcard = (strpos($file, '*') !== false);
                 if ($has_wildcard) {

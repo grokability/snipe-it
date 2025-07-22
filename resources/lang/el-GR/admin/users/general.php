@@ -53,4 +53,5 @@ return [
     'next_save_user' => 'Επόμενο: Αποθήκευση Χρήστη',
     'all_assigned_list_generation' => 'Δημιουργήθηκε στις:',
     'email_user_creds_on_create' => 'Στείλτε email στο χρήστη τα διαπιστευτήριά τους?',
+    'department_manager' => 'Department Manager',
 ];

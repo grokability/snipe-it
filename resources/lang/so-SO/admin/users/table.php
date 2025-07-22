@@ -22,7 +22,7 @@ return array(
     'managed_locations'     => 'Goobaha la maamulay',
     'managed_users'         => 'Managed Users',
     'name' 					=> 'Magaca',
-    'nogroup'               => 'Weli kooxo lama abuurin Si aad mid ugu darto, booqo: ',
+    'nogroup'               => 'Weli kooxo lama abuurin Si aad mid ugu darto, booqo:',
     'notes'                 => 'Xusuusin',
     'password_confirm' 		=> 'Xaqiiji erayga sirta ah',
     'password' 				=> 'Password-ka',

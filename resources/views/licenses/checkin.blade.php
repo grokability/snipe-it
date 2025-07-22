@@ -72,6 +72,7 @@
                                 :options="[
                                 'index' => trans('admin/hardware/form.redirect_to_all', ['type' => trans('general.licenses')]),
                                 'item' => trans('admin/hardware/form.redirect_to_type', ['type' => trans('general.license')]),
+                                'target' => trans('admin/hardware/form.redirect_to_type', ['type' => trans('general.user')]),
                                ]"
                         />
                     </div> <!-- /.box-->

@@ -13,5 +13,5 @@ return array(
     'profile_updated' => 'Compte mis à jour avec succès',
     'no_tokens' => 'Vous n\'avez pas encore créé de jeton d\'accès personnel.',
     'enable_sounds' => 'Activer les effets sonores',
-    'enable_confetti' => 'Enable confetti effects',
+    'enable_confetti' => 'Effets confettis !',
 );

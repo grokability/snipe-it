@@ -87,7 +87,8 @@ class LocationsController extends Controller
             ->withCount('accessories as accessories_count')
             ->withCount('rtd_assets as rtd_assets_count')
             ->withCount('children as children_count')
-            ->withCount('users as users_count');
+            ->withCount('users as users_count')
+            ->with('adminuser');
 
         // Only scope locations if the setting is enabled
         if (Setting::getSettings()->scope_locations_fmcs) {
@@ -218,6 +219,7 @@ class LocationsController extends Controller
                 'locations.updated_at',
                 'locations.image',
                 'locations.currency',
+                'locations.company_id',
                 'locations.notes',
             ])
             ->withCount('assignedAssets as assigned_assets_count')

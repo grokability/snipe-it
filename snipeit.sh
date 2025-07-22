@@ -18,8 +18,11 @@
 #         Updated Snipe-IT Install Script            #
 #          Update created by Aaron Myers             #
 # Change log                                         #
+# * verify support for Ubuntu 24.04 -> 25.04         #
+# * add support for linux Mint 21 -> 22 inclusive    #
+# * add support for linux mint 22.1                  #
 # * add support for php8.2, awslinux2, alma 8/9      #
-# * fix rocky8/9 support
+# * fix rocky8/9 support                             #
 # * remove Fedora support because short timelines    #
 # * Added support for CentOS/Rocky 9                 #
 # * Fixed CentOS 7 repository for PHP 7.4            #
@@ -87,6 +90,7 @@ readonly APP_NAME="snipeit"
 readonly APP_PATH="/var/www/html/$APP_NAME"
 readonly APP_LOG="/var/log/snipeit-install.log"
 readonly COMPOSER_PATH="/home/$APP_USER"
+is_mint=false
 
 progress () {
   spin[0]="-"
@@ -175,11 +179,22 @@ create_user () {
 
   if [[ "$distro" == "Ubuntu" ]] || [[ "$distro" == "Debian" ]] || [[ "$distro" == "Raspbian" ]] ; then
     /usr/sbin/adduser --quiet --disabled-password --gecos 'Snipe-IT User' "$APP_USER"
-    su -c "/usr/sbin/usermod -a -G "$apache_group" "$APP_USER""
   else
-    adduser "$APP_USER"
-    usermod -a -G "$apache_group" "$APP_USER"
+    adduser -c "Snipe-IT User" "$APP_USER"
   fi
+
+  # Add the user to the apache group so the app can write to any files apache
+  # creates (eg, if apache process creates the log, but then a an app-user-owned
+  # cron also tries writing
+  usermod -a -G "$apache_group" "$APP_USER"
+
+  # Now do the reverse -- so apache can write to the log that the user may
+  # have created. This was actively a problem on new installs, hobbling
+  # imports
+  # redefining these variables just for clarity
+  apache_user="$apache_group"
+  app_group="$APP_USER"
+  usermod -a -G "$app_group" "$apache_user"
 }
 
 run_as_app_user () {
@@ -203,7 +218,7 @@ install_composer () {
   fi
 
   if [ "$EXPECTED_SIGNATURE" != "$ACTUAL_SIGNATURE" ]; then
-    >?&2 echo 'ERROR: Invalid composer installer signature'
+    >&2 echo 'ERROR: Invalid composer installer signature'
     exit 1
   fi
 
@@ -224,7 +239,7 @@ install_snipeit () {
   mysql -u root --execute="CREATE DATABASE snipeit;CREATE USER snipeit_dbuser@localhost IDENTIFIED BY '$mysqluserpw'; GRANT ALL PRIVILEGES ON snipeit.* TO snipeit_dbuser@localhost;"
 
   echo -e "\n\n* Cloning Snipe-IT from github to the web directory."
-  log "git clone https://github.com/snipe/snipe-it $APP_PATH" & pid=$!
+  log "git clone https://github.com/grokability/snipe-it $APP_PATH" & pid=$!
   progress
   pushd $APP_PATH
   git checkout master
@@ -347,6 +362,13 @@ case $distro in
     apache_group=www-data
     apachefile=/etc/apache2/sites-available/$APP_NAME.conf
     ;;
+  *linuxmint*)
+    echo "  The installer has detected $distro version $version codename $codename."
+    distro=Ubuntu
+    is_mint=true
+    apache_group=www-data
+    apachefile=/etc/apache2/sites-available/$APP_NAME.conf
+    ;;
   *raspbian*)
     echo "  The installer has detected $distro version $version codename $codename."
     distro=Raspbian
@@ -359,7 +381,7 @@ case $distro in
     apache_group=www-data
     apachefile=/etc/apache2/sites-available/$APP_NAME.conf
     ;;
-  *amzn*|*redhat*|*alma*|*rhel*|*rocky*)
+  *amzn*|*redhat*|*alma*|*rhel*|*rocky*|*centos*)
     echo "  The installer has detected $distro version $version."
     distro=Centos
     apache_group=apache
@@ -533,7 +555,7 @@ case $distro in
   ;;
   Ubuntu)
     if [ "${version//./}" -ge "2304" ]; then
-        # Install for Ubuntu 23.04 and 23.10
+        # Install for Ubuntu 23.04 and above
         set_fqdn
         set_dbpass
         tzone=$(cat /etc/timezone)
@@ -543,7 +565,58 @@ case $distro in
         progress
 
         echo "* Installing Apache httpd, PHP, MariaDB and other requirements."
-        PACKAGES="cron mariadb-server mariadb-client apache2 libapache2-mod-php php php-curl php-mysql php-gd php-ldap php-zip php-mbstring php-xml php-bcmath curl git unzip"
+        PACKAGES="cron mariadb-server mariadb-client apache2 libapache2-mod-php php php-curl php-mysql php-gd php-ldap php-zip php-mbstring php-xml php-bcmath curl git unzip wget"
+        install_packages
+
+        echo "* Configuring Apache."
+        create_virtualhost
+        log "phpenmod mcrypt"
+        log "phpenmod mbstring"
+        log "a2enmod rewrite"
+        log "a2ensite $APP_NAME.conf"
+        rename_default_vhost
+
+        set_hosts
+
+        echo "* Starting MariaDB."
+        log "systemctl start mariadb.service"
+
+        install_snipeit
+
+        echo "* Restarting Apache httpd."
+        log "systemctl restart apache2"
+
+        echo "* Clearing cache and setting final permissions."
+        chmod 777 -R $APP_PATH/storage/framework/cache/
+        log "run_as_app_user php $APP_PATH/artisan cache:clear"
+        chmod 775 -R $APP_PATH/storage/
+    elif [[ "${is_mint}" == "true" ]]; then
+        # Install for Linux Mint 21.2 - 22.1
+
+        if [[ "${version//.*/}" -eq "22" ]] ; then
+            ubuntu_codename=noble
+        elif [[ "${version//.*/}" -eq "21" ]]; then
+            ubuntu_codename=jammy
+        else
+            echo "Unsupported Linux Mint version. Version found: $version"
+            exit 1
+        fi
+
+        set_fqdn
+        set_dbpass
+        tzone=$(cat /etc/timezone)
+
+        echo "* Set up Ondrej PHP repository"
+        echo "# Odrej PHP repo for ability to choose non-distro PHP versions" > /etc/apt/sources.list.d/ppa_ondrej_php_$ubuntu_codename.list
+        echo "deb http://ppa.launchpad.net/ondrej/php/ubuntu $ubuntu_codename main" >> /etc/apt/sources.list.d/ppa_ondrej_php_$ubuntu_codename.list
+        sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 4F4EA0AAE5267A6C
+
+        echo -n "* Updating installed packages."
+        log "apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y upgrade" & pid=$!
+        progress
+
+        echo "* Installing Apache httpd, PHP, MariaDB and other requirements."
+        PACKAGES="cron mariadb-server mariadb-client apache2 libapache2-mod-php8.3 php8.3  php8.3-curl php8.3-mysql php8.3-gd php8.3-ldap php8.3-zip php8.3-mbstring php8.3-xml php8.3-bcmath php8.3-cli curl git unzip"
         install_packages
 
         echo "* Configuring Apache."

@@ -13,4 +13,8 @@ return [
     'no_depreciations_warning'               => '<strong>警告:</strong>
                       你目前沒有設定任何折舊。
                       請至少設定一次折舊，以查看折舊報告。',
+    'depreciation_method'                   => '折舊報告',
+    'linear_depreciation'                   => 'Linear (Default)',
+    'half_1'                                => 'Half-year convention, always applied',
+    'half_2'                                => 'Half-year convention, applied with condition',
 ];

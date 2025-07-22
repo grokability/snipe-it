@@ -22,7 +22,7 @@ return array(
     'managed_locations'     => 'Izindawo eziphethwe',
     'managed_users'         => 'Managed Users',
     'name' 					=> 'Igama',
-    'nogroup'               => 'No groups have been created yet. To add one, visit: ',
+    'nogroup'               => 'No groups have been created yet. To add one, visit:',
     'notes'                 => 'Amanothi',
     'password_confirm' 		=> 'Qinisekisa Iphasiwedi',
     'password' 				=> 'Iphasiwedi',

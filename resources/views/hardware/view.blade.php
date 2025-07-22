@@ -399,18 +399,17 @@
                                             @if (isset($asset->expected_checkin))
                                                 <li>
                                                     <x-icon type="calendar" class="fa-fw" />
-                                                    {{ trans('admin/hardware/form.expected_checkin') }}: {{ Helper::getFormattedDateObject($asset->expected_checkin, 'date', false) }}
+                                                    {{ trans('general.expected_checkin') }}: {{ Helper::getFormattedDateObject($asset->expected_checkin, 'date', false) }}
                                                 </li>
                                             @endif
                                         </ul>
                                     </div>
                                 @endif
-                                    @if  ($snipeSettings->qr_code=='1')
-                                        <div class="col-md-12 text-center" style="padding-top: 15px;">
-                                            <img src="{{ config('app.url') }}/hardware/{{ $asset->id }}/qr_code" class="img-thumbnail" style="height: 150px; width: 150px; margin-right: 10px;" alt="QR code for {{ $asset->getDisplayNameAttribute() }}">
-                                        </div>
-                                    @endif
-
+                                @if (($snipeSettings->qr_code=='1') || $snipeSettings->label2_2d_type!='none')
+                                    <div class="col-md-12 text-center" style="padding-top: 15px;">
+                                        <img src="{{ config('app.url') }}/hardware/{{ $asset->id }}/qr_code" class="img-thumbnail" style="height: 150px; width: 150px; margin-right: 10px;" alt="QR code for {{ $asset->getDisplayNameAttribute() }}">
+                                    </div>
+                                @endif
                                 <br><br>
                             </div>
 
@@ -702,7 +701,7 @@
                                     </div>
 
                                     <!-- byod -->
-                                    <div class="row">
+                                    <div class="row byod">
                                         <div class="col-md-3">
                                             <strong>{{ trans('general.byod') }}</strong>
                                         </div>
@@ -904,9 +903,7 @@
                                                 </strong>
                                             </div>
                                             <div class="col-md-9">
-                                                {{ $asset->warranty_months }}
-                                                {{ trans('admin/hardware/form.months') }}
-
+                                                {{ trans_choice('general.months_plural', $asset->warranty_months) }}
                                                 @if (($asset->model) && ($asset->model->manufacturer) && ($asset->model->manufacturer->warranty_lookup_url!=''))
                                                     <a href="{{ $asset->present()->dynamicUrl($asset->model->manufacturer->warranty_lookup_url) }}" target="_blank">
                                                         <x-icon type="external-link" />
@@ -948,8 +945,7 @@
                                             </div>
                                             <div class="col-md-9">
                                                 {{ $asset->depreciation->name }}
-                                                ({{ $asset->depreciation->months }}
-                                                {{ trans('admin/hardware/form.months') }})
+                                                ({{ trans_choice('general.months_plural', $asset->depreciation->months) }})
                                             </div>
                                         </div>
                                         <div class="row">
@@ -1095,7 +1091,7 @@
                                         <div class="row">
                                             <div class="col-md-3">
                                                 <strong>
-                                                    {{ trans('admin/hardware/form.expected_checkin') }}
+                                                    {{ trans('general.expected_checkin') }}
                                                 </strong>
                                             </div>
                                             <div class="col-md-9">
@@ -1164,7 +1160,6 @@
                         <div class="row{{($asset->licenses->count() > 0 ) ? '' : ' hidden-print'}}">
                             <div class="col-md-12">
                                 <!-- Licenses assets table -->
-                                @if ($asset->licenses->count() > 0)
                                     <table class="table">
                                         <thead>
                                         <tr>
@@ -1197,13 +1192,6 @@
                                         @endforeach
                                         </tbody>
                                     </table>
-                                @else
-
-                                    <div class="alert alert-info alert-block hidden-print">
-                                        <x-icon type="info-circle" />
-                                        {{ trans('general.no_results') }}
-                                    </div>
-                                @endif
                             </div><!-- /col -->
                         </div> <!-- row -->
                     </div> <!-- /.tab-pane software -->
@@ -1212,7 +1200,7 @@
                         <!-- checked out assets table -->
                         <div class="row{{($asset->components->count() > 0 ) ? '' : ' hidden-print'}}">
                             <div class="col-md-12">
-                                @if($asset->components->count() > 0)
+
                                     <table class="table table-striped">
                                         <thead>
                                         <th>{{ trans('general.name') }}</th>
@@ -1257,12 +1245,6 @@
                                         </tr>
                                         </tfoot>
                                     </table>
-                                @else
-                                    <div class="alert alert-info alert-block hidden-print">
-                                        <x-icon type="info-circle" />
-                                        {{ trans('general.no_results') }}
-                                    </div>
-                                @endif
                             </div>
                         </div>
                     </div> <!-- /.tab-pane components -->
@@ -1272,26 +1254,7 @@
                         <div class="row{{($asset->assignedAssets->count() > 0 ) ? '' : ' hidden-print'}}">
                             <div class="col-md-12">
 
-                                @if ($asset->assignedAssets->count() > 0)
-
-
-                                    <form
-                                        method="POST"
-                                        action="{{ route('hardware/bulkedit') }}"
-                                        accept-charset="UTF-8"
-                                        class="form-inline"
-                                        id="bulkForm"
-                                    >
-                                    @csrf
-                                    <div id="toolbar">
-                                        <label for="bulk_actions"><span class="sr-only">{{ trans('general.bulk_actions')}}</span></label>
-                                        <select name="bulk_actions" class="form-control select2" style="width: 150px;" aria-label="bulk_actions">
-                                            <option value="edit">{{ trans('button.edit') }}</option>
-                                            <option value="delete">{{ trans('button.delete')}}</option>
-                                            <option value="labels">{{ trans_choice('button.generate_labels', 2) }}</option>
-                                        </select>
-                                        <button class="btn btn-primary" id="{{ (isset($id_button)) ? $id_button : 'bulkAssetEditButton' }}" disabled>{{ trans('button.go') }}</button>
-                                    </div>
+                                @include('partials.asset-bulk-actions')
 
                                     <!-- checked out assets table -->
                                     <div class="table-responsive">
@@ -1299,16 +1262,12 @@
                                         <table
                                                 data-columns="{{ \App\Presenters\AssetPresenter::dataTableLayout() }}"
                                                 data-cookie-id-table="assetsTable"
-                                                data-pagination="true"
                                                 data-id-table="assetsTable"
-                                                data-search="true"
                                                 data-side-pagination="server"
-                                                data-show-columns="true"
-                                                data-show-fullscreen="true"
-                                                data-show-export="true"
-                                                data-show-refresh="true"
                                                 data-sort-order="asc"
+                                                data-toolbar="#assetsBulkEditToolbar"
                                                 data-bulk-button-id="#bulkAssetEditButton"
+                                                data-bulk-form-id="#assetsBulkForm"
                                                 id="assetsListingTable"
                                                 class="table table-striped snipe-table"
                                                 data-url="{{route('api.assets.index',['assigned_to' => $asset->id, 'assigned_type' => 'App\Models\Asset']) }}"
@@ -1318,18 +1277,7 @@
                               }'>
 
                                         </table>
-
-
-                                        </form>
                                     </div>
-
-                                @else
-
-                                    <div class="alert alert-info alert-block hidden-print">
-                                        <x-icon type="info-circle" />
-                                        {{ trans('general.no_results') }}
-                                    </div>
-                                @endif
 
 
                             </div><!-- /col -->
@@ -1349,15 +1297,9 @@
                         <table
                                 data-columns="{{ \App\Presenters\AssetPresenter::assignedAccessoriesDataTableLayout() }}"
                                 data-cookie-id-table="accessoriesAssignedListingTable"
-                                data-pagination="true"
                                 data-id-table="accessoriesAssignedListingTable"
-                                data-search="true"
                                 data-side-pagination="server"
-                                data-show-columns="true"
-                                data-show-export="true"
-                                data-show-refresh="true"
                                 data-sort-order="asc"
-                                data-click-to-select="true"
                                 id="accessoriesAssignedListingTable"
                                 class="table table-striped snipe-table"
                                 data-url="{{ route('api.assets.assigned_accessories', ['asset' => $asset]) }}"
@@ -1385,15 +1327,17 @@
                                         data-columns="{{ \App\Presenters\AssetMaintenancesPresenter::dataTableLayout() }}"
                                         class="table table-striped snipe-table"
                                         id="assetMaintenancesTable"
-                                        data-pagination="true"
+
                                         data-id-table="assetMaintenancesTable"
-                                        data-search="true"
+
+
+
                                         data-side-pagination="server"
                                         data-toolbar="#maintenance-toolbar"
-                                        data-show-columns="true"
-                                        data-show-fullscreen="true"
-                                        data-show-refresh="true"
-                                        data-show-export="true"
+
+
+
+
                                         data-export-options='{
                            "fileName": "export-{{ $asset->asset_tag }}-maintenances",
                            "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
@@ -1414,16 +1358,19 @@
                             <table
                                     class="table table-striped snipe-table"
                                     id="asseAuditHistory"
-                                    data-pagination="true"
+
                                     data-id-table="asseAuditHistory"
-                                    data-search="true"
+
+
+
+
                                     data-side-pagination="server"
-                                    data-show-columns="true"
-                                    data-show-fullscreen="true"
-                                    data-show-refresh="true"
+
+
+
                                     data-sort-order="desc"
                                     data-sort-name="created_at"
-                                    data-show-export="true"
+
                                     data-export-options='{
                          "fileName": "export-asset-{{  $asset->id }}-audits",
                          "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
@@ -1457,18 +1404,21 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <table
+                                        data-columns="{{ \App\Presenters\HistoryPresenter::dataTableLayout() }}"
                                         class="table table-striped snipe-table"
                                         id="assetHistory"
-                                        data-pagination="true"
+
                                         data-id-table="assetHistory"
-                                        data-search="true"
+
+
+
                                         data-side-pagination="server"
-                                        data-show-columns="true"
-                                        data-show-fullscreen="true"
-                                        data-show-refresh="true"
+
+
+
                                         data-sort-order="desc"
                                         data-sort-name="created_at"
-                                        data-show-export="true"
+
                                         data-export-options='{
                          "fileName": "export-asset-{{  $asset->id }}-history",
                          "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
@@ -1477,24 +1427,6 @@
                                         data-url="{{ route('api.activity.index', ['item_id' => $asset->id, 'item_type' => 'asset']) }}"
                                         data-cookie-id-table="assetHistory"
                                         data-cookie="true">
-                                    <thead>
-                                    <tr>
-                                        <th data-visible="true" data-field="icon" style="width: 40px;" class="hidden-xs" data-formatter="iconFormatter">{{ trans('admin/hardware/table.icon') }}</th>
-                                        <th data-visible="true" data-field="action_date" data-sortable="true" data-formatter="dateDisplayFormatter">{{ trans('general.date') }}</th>
-                                        <th data-visible="true" data-field="admin" data-formatter="usersLinkObjFormatter">{{ trans('general.created_by') }}</th>
-                                        <th data-visible="true" data-field="action_type">{{ trans('general.action') }}</th>
-                                        <th class="col-sm-2" data-field="file" data-visible="false" data-formatter="fileUploadNameFormatter">{{ trans('general.file_name') }}</th>
-                                        <th data-visible="true" data-field="item" data-formatter="polymorphicItemFormatter">{{ trans('general.item') }}</th>
-                                        <th data-visible="true" data-field="target" data-formatter="polymorphicItemFormatter">{{ trans('general.target') }}</th>
-                                        <th data-field="note">{{ trans('general.notes') }}</th>
-                                        <th data-field="signature_file" data-visible="false"  data-formatter="imageFormatter">{{ trans('general.signature') }}</th>
-                                        <th data-visible="false" data-field="file" data-visible="false"  data-formatter="fileUploadFormatter">{{ trans('general.download') }}</th>
-                                        <th data-field="log_meta" data-visible="true" data-formatter="changeLogFormatter">{{ trans('admin/hardware/table.changed')}}</th>
-                                        <th data-field="remote_ip" data-visible="false" data-sortable="true">{{ trans('admin/settings/general.login_ip') }}</th>
-                                        <th data-field="user_agent" data-visible="false" data-sortable="true">{{ trans('admin/settings/general.login_user_agent') }}</th>
-                                        <th data-field="action_source" data-visible="false" data-sortable="true">{{ trans('general.action_source') }}</th>
-                                    </tr>
-                                    </thead>
                                 </table>
                             </div>
                         </div> <!-- /.row -->

@@ -15,7 +15,7 @@ class UserCannotSwitchCompaniesIfItemsAssigned implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $user = User::find(request()->route('user')->id);
+        $user = request()->route('user');
 
         if (($value) && ($user->allAssignedCount() > 0) && (Setting::getSettings()->full_multiple_companies_support=='1')) {
 

@@ -234,6 +234,15 @@ class ImportController extends Controller
             case 'location':
                 $redirectTo = 'locations.index';
                 break;
+            case 'supplier':
+                $redirectTo = 'suppliers.index';
+                break;
+            case 'manufacturer':
+                $redirectTo = 'manufacturers.index';
+                break;
+            case 'category':
+                $redirectTo = 'categories.index';
+                break;
         }
 
         if ($errors) { //Failure

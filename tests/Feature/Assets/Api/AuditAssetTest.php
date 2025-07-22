@@ -71,7 +71,7 @@ class AuditAssetTest extends TestCase
                     ],
                 ])
             ->assertStatus(200);
-
+        $this->assertHasTheseActionLogs($asset, ['create', 'audit']);
     }
 
 

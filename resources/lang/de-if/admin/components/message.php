@@ -18,7 +18,7 @@ return array(
         'confirm'   => 'Bist du sicher, dass du diese Komponente löschen möchtest?',
         'error'   => 'Es gab ein Problem beim Löschen der Firma. Bitte versuche es erneut.',
         'success' => 'Die Komponente wurde erfolgreich gelöscht.',
-        'error_qty'   => 'Some components of this type are still checked out. Please check them in and try again.',
+        'error_qty'   => 'Einige Komponenten dieses Typs sind noch herausgegeben. Bitte nehmen Sie sie zurück und versuchen Sie es erneut.',
     ),
 
      'checkout' => array(

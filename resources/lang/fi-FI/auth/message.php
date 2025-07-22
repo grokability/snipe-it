@@ -6,8 +6,6 @@ return array(
     'account_not_found'      => 'Käyttäjänimi tai salasana on virheellinen.',
     'account_not_activated'  => 'Käyttäjätiliä ei ole aktivoitu.',
     'account_suspended'      => 'Käyttäjätili on jäädytetty.',
-    'account_banned'         => 'Käyttäjätili on estetty.',
-    'throttle'               => 'Liian monta kirjautumisyritystä. Yritä uudelleen :minutes minuutin kuluttua.',
 
     'two_factor' => array(
         'already_enrolled'      => 'Laitteesi on jo käytössä.',

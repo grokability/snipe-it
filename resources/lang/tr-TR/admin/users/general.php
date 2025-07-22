@@ -19,8 +19,8 @@ return [
     'print_assigned'    => 'Atananların Tümünü Yazdır',
     'email_assigned'    => 'Tüm Atananların E-posta Listesi',
     'user_notified'     => 'Kullanıcıya, atanmış nesnelerinin bir listesi e-posta ile gönderildi.',
-    'users_notified'    => 'The user has been emailed a list of their currently assigned items.|:count users have been emailed a list of their currently assigned items.',
-    'users_notified_warning' => ':count user has been emailed a list of their currently assigned items, however :no_email users did not have an email address so could not be emailed.|:count users have been emailed a list of their currently assigned items, however :no_email user(s) did not have an email address so could not be emailed.',
+    'users_notified'    => 'Kullanıcıya atanan öğelerin bir listesi e-posta ile gönderilmiştir.|:count kullanıcıya atanan öğelerin bir listesi e-posta ile gönderilmiştir.',
+    'users_notified_warning' => ':count kullanıcıya atanan öğelerin bir listesi e-posta ile gönderildi, ancak :no_email kullanıcısının e-posta adresi olmadığı için e-posta gönderilemedi.|:count kullanıcıya atanan öğelerin bir listesi e-posta ile gönderildi, ancak :no_email kullanıcısının e-posta adresi olmadığı için e-posta gönderilemedi',
     'auto_assign_label' => 'Uygun lisansları otomatik olarak atarken bu kullanıcıyı dahil edin',
     'auto_assign_help'  => 'Lisansların otomatik atanmasında bu kullanıcıyı atla',
     'software_user'     => 'Yazılıma :name için çıkış yapılmış',
@@ -53,4 +53,5 @@ return [
     'next_save_user' => 'Sonraki: Kullanıcıyı Kaydet',
     'all_assigned_list_generation' => 'Bu tarihinde oluşturuldu:',
     'email_user_creds_on_create' => 'Bu kullanıcıya kimlik bilgileri e-postayla gönderilsin mi?',
+    'department_manager' => 'Departman Yöneticisi',
 ];

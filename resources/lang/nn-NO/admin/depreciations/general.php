@@ -13,4 +13,8 @@ return [
     'no_depreciations_warning'               => '<strong>Advarsel:</strong>
                       Du har for øyeblikket ingen avskrivninger satt opp.
                       Vennligst sett opp minst én avskrivning for å se avskrivningsrapporten.',
+    'depreciation_method'                   => 'Avskrivningsrapport',
+    'linear_depreciation'                   => 'Linear (Default)',
+    'half_1'                                => 'Half-year convention, always applied',
+    'half_2'                                => 'Half-year convention, applied with condition',
 ];

@@ -13,4 +13,8 @@ return [
     'no_depreciations_warning'               => '<strong>Upozornění: </strong>
                       V současné době nemáte nastavené žádné odpisy.
                       Prosím nastavte alespoň jedno odpisování pro zobrazení zprávy o odpisu.',
+    'depreciation_method'                   => 'Report amortizace',
+    'linear_depreciation'                   => 'Lineární (Výchozí)',
+    'half_1'                                => 'Pololetní metoda, vždy použita',
+    'half_2'                                => 'Pololetní metoda, použita dle podmínek',
 ];

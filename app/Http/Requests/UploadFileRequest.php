@@ -6,6 +6,7 @@ use App\Http\Traits\ConvertsBase64ToFiles;
 use enshrined\svgSanitize\Sanitizer;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use \App\Helpers\Helper;
 
 class UploadFileRequest extends Request
 {
@@ -27,44 +28,76 @@ class UploadFileRequest extends Request
      */
     public function rules()
     {
-        $max_file_size = \App\Helpers\Helper::file_upload_max_size();
+        $max_file_size = Helper::file_upload_max_size();
 
         return [
-          'file.*' => 'required|mimes:png,gif,jpg,svg,jpeg,doc,docx,pdf,txt,zip,rar,xls,xlsx,lic,xml,rtf,json,webp,avif|max:'.$max_file_size,
+            'file.*' => 'required|mimes:'.config('filesystems.allowed_upload_extensions_for_validator').'|max:'.$max_file_size,
         ];
     }
 
     /**
      * Sanitizes (if needed) and Saves a file to the appropriate location
      * Returns the 'short' (storage-relative) filename
-     *
-     * TODO - this has a lot of similarities to UploadImageRequest's handleImage; is there
-     *        a way to merge them or extend one into the other?
      */
     public function handleFile(string $dirname, string $name_prefix, $file): string
     {
+
         $extension = $file->getClientOriginalExtension();
         $file_name = $name_prefix.'-'.str_random(8).'-'.str_slug(basename($file->getClientOriginalName(), '.'.$extension)).'.'.$file->guessExtension();
 
         // Check for SVG and sanitize it
         if ($file->getMimeType() === 'image/svg+xml') {
-            Log::debug('This is an SVG');
-            Log::debug($file_name);
-
-            $sanitizer = new Sanitizer();
-            $dirtySVG = file_get_contents($file->getRealPath());
-            $cleanSVG = $sanitizer->sanitize($dirtySVG);
-
-            try {
-                Storage::put($dirname.$file_name, $cleanSVG);
-            } catch (\Exception $e) {
-                Log::debug('Upload no workie :( ');
-                Log::debug($e);
-            }
-
+            $uploaded_file = $this->handleSVG($file);
         } else {
-            $put_results = Storage::put($dirname.$file_name, file_get_contents($file));
+            $uploaded_file = file_get_contents($file);
         }
+
+        try {
+            Storage::put($dirname.$file_name, $uploaded_file);
+        } catch (\Exception $e) {
+            Log::debug($e);
+        }
+
         return $file_name;
+    }
+
+    public function handleSVG($file)
+    {
+        $sanitizer = new Sanitizer();
+        $dirtySVG = file_get_contents($file->getRealPath());
+        return $sanitizer->sanitize($dirtySVG);
+    }
+
+
+    /**
+     * Get the validation error messages that apply to the request, but
+     * replace the attribute name with the name of the file that was attempted and failed
+     * to make it clearer to the user which file is the bad one.
+     *
+     * @return array
+     */
+    public function attributes(): array
+    {
+        $attributes = [];
+
+        if (($this->file) && (is_array($this->file))) {
+
+            for ($i = 0; $i < count($this->file); $i++) {
+
+                try {
+
+                    if ($this->file[$i]) {
+                        $attributes['file.'.$i] = $this->file[$i]->getClientOriginalName();
+                    }
+
+                } catch (\Exception $e) {
+                    $attributes['file.'.$i] = 'Invalid file';
+                }
+
+            }
+        }
+
+        return $attributes;
+
     }
 }

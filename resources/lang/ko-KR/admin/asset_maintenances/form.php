@@ -1,6 +1,7 @@
 <?php
 
     return [
+        'select_type'            => 'Select Maintenance Type',
         'asset_maintenance_type' => '자산 관리 유형',
         'title'                  => '제목',
         'start_date'             => '시작일',

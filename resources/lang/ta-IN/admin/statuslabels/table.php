@@ -1,14 +1,14 @@
 <?php
 
 return array(
-    'about'      	=> 'தகுதி லேபிள்களைப் பற்றி',
+    'about'      	=> 'About Status Types',
     'archived'      	=> 'காப்பகப்படுத்தியவை',
     'create'      	=> 'நிலை லேபிள் உருவாக்கவும்',
     'color'      	=> 'விளக்கப்படம் நிறம்',
     'default_label' => 'Default Label',
     'default_label_help' => 'This is used to ensure your most commonly used status labels appear at the top of the select box when creating/editing assets.',
     'deployable'      	=> 'அணியப்படுத்தக்',
-    'info'      	=> 'நிலைமை லேபிள்கள் உங்கள் சொத்துக்கள் இருக்கும் பல்வேறு மாநிலங்களை விவரிக்க பயன்படுத்தப்படுகின்றன. அவை சரிசெய்யப்பட்டு, இழந்த / திருடப்பட்டவையாக இருக்கலாம். நீங்கள் வரிசைப்படுத்தக்கூடிய, நிலுவையிலுள்ள மற்றும் காப்பகப்படுத்தப்பட்ட சொத்துகளுக்கான புதிய நிலை லேபிள்களை உருவாக்கலாம்.',
+    'info'      	=> 'Status label types are used to describe the various states your assets could be in. They may be out for repair, lost/stolen, etc. You can create new status labels for your deployable, pending and archived assets according to your own workflow. For more information, <a href="https://snipe-it.readme.io/docs/overview#status-labels" target="_blank">see the documentation <i class="fa fa-external-link"></i></a>.',
     'name'      	=> 'நிலைமை பெயர்',
     'pending'      	=> 'நிலுவையில்',
     'status_type'   => 'நிலை வகை',

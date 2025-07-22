@@ -227,7 +227,7 @@ class LoginController extends Controller
 
             $strip_prefixes = [
                 // IIS/AD
-                // https://github.com/snipe/snipe-it/pull/5862
+                // https://github.com/grokability/snipe-it/pull/5862
                 '\\',
 
                 // Google Cloud IAP
@@ -484,6 +484,7 @@ class LoginController extends Controller
         }
 
         $request->session()->regenerate(true);
+        $request->session()->forget('2fa_authed');
 
         if ($request->session()->has('password_hash_'.Auth::getDefaultDriver())){
             $request->session()->remove('password_hash_'.Auth::getDefaultDriver());

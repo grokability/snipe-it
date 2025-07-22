@@ -19,6 +19,7 @@ class StoreAssetModelRequest extends ImageUploadRequest
 
     public function prepareForValidation(): void
     {
+        parent::prepareForValidation();
 
         if ($this->category_id) {
             if ($category = Category::find($this->category_id)) {

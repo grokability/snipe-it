@@ -147,7 +147,7 @@
                     if (data.status == 'success') {
                         $('#checkedin tbody').prepend("<tr class='success'><td>" + data.payload.asset_tag + "</td><td>" + data.payload.model + "</td><td>" + data.payload.model_number + "</td><td>" + data.messages + "</td><td><i class='fas fa-check text-success'></i></td></tr>");
 
-                        @if ($user->enable_sounds)
+                        @if ($user?->enable_sounds)
                         var audio = new Audio('{{ config('app.url') }}/sounds/success.mp3');
                         audio.play()
                         @endif
@@ -172,7 +172,7 @@
 
         function handlecheckinFail (data) {
 
-            @if ($user->enable_sounds)
+            @if ($user?->enable_sounds)
             var audio = new Audio('{{ config('app.url') }}/sounds/error.mp3');
             audio.play()
             @endif

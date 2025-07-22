@@ -39,4 +39,5 @@ return [
     'signed_by_finance_auditor' => 'Được ký bởi (Quản lý tài chính):',
     'signed_by_location_manager' => 'Được ký bởi (Quản lý khu vực):',
     'signed_by'                 => 'Được ký bởi:',
+    'clone'  					=> 'Clone Location',
 ];

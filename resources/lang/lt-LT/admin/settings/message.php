@@ -37,7 +37,7 @@ return [
         'authentication_success' => 'Naudotojas sėkmingai atpažintas naudojant LDAP!'
     ],
     'labels' => [
-        'null_template' => 'Label template not found. Please select a template.',
+        'null_template' => 'Etiketės šablonas nerastas. Pasirinkite šabloną.',
         ],
     'webhook' => [
         'sending' => ':app siunčiamas bandomasis pranešimas...',
@@ -49,6 +49,11 @@ return [
         'error_redirect' => 'KLAIDA: 301/302 :endpoint rodo peradresavimą. Saugumo sumetimais peradresavimų nevykdome. Naudokite tikrąjį galinį tašką.',
         'error_misc' => 'Kažkas ne taip. :( ',
         'webhook_fail' => ' „Webhook“ pranešimas nepavyko: patikrinkite ar URL vis dar galioja.',
-        'webhook_channel_not_found' => ' „webhook“ kanalas nerastas.'
-    ]
+        'webhook_channel_not_found' => ' „webhook“ kanalas nerastas.',
+        'ms_teams_deprecation' => 'Pasirinktas „Microsoft Teams“ „webhook“ URL bus nebenaudojamas nuo 2025 m. gruodžio 31 d. Naudokite darbo eigos URL. „Microsoft“ dokumentaciją apie darbo eigos kūrimą galite rasti <a href="https://support.microsoft.com/en-us/office/create-incoming-webhooks-with-workflows-for-microsoft-teams-8ae491c7-0394-4861-ba59-055e33f75498" target="_blank">čia.</a>',
+    ],
+    'location_scoping' => [
+        'not_saved' => 'Jūsų nustatymai nebuvo išsaugoti.',
+        'mismatch' => 'Duomenų bazėje yra 1 elementas, į kurį reikia atkreipti dėmesį, prieš įjungiant vietų susiejimą.|Duomenų bazėje yra :count elementai (-ų), į kuriuos reikia atkreipti dėmesį, prieš įjungiant vietų susiejimą.',
+    ],
 ];

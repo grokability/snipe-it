@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Категории на активи',
     'category_name'  					=> 'Име на категория',
     'checkin_email'                     => 'Изпращане на email до потребителя при вписване/изписване на активи.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'Указаният потребител ще получава e-mail при вписване/изписване на активи.',
     'clone'                             => 'Копиране на категория',
     'create'  							=> 'Създаване на категория',
@@ -21,5 +22,9 @@ return array(
     'use_default_eula'					=> 'Използване на <a href="#" data-toggle="modal" data-target="#eulaModal">EULA по подразбиране</a>.',
     'use_default_eula_disabled'			=> '<del>Използване на EULA по подразбиране</del> Няма EULA по подразбиране. Добавете я в Настройки.',
     'use_default_eula_column'			=> 'Използвай общия лицензионен договор',
+    'import_require_acceptance'         => 'Require Acceptance',
+    'import_checkin_email'              => 'Send Checkin Email',
+    'import_eula_text'                  => 'EULA text',
+    'import_category_type'              => 'Category Type',
 
 );

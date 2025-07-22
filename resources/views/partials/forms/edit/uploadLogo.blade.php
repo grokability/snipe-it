@@ -25,21 +25,24 @@
         </p>
 
         @if (config('app.lock_passwords')===true)
-            <p class="text-warning"><i class="fas fa-lock"></i> {{ trans('general.feature_disabled') }}</p>
+            <p class="text-warning">
+                <x-icon type="locked" />
+                {{ trans('general.feature_disabled') }}</p>
         @endif
     </div>
 
     <div class="col-md-9 col-md-offset-3">
+
             @if (($setting->$logoVariable!='') && (Storage::disk('public')->exists(($logoPath ?? ''). $snipeSettings->$logoVariable)))
                 <div class="pull-left" style="padding-right: 20px;">
-                    <a href="{{ Storage::disk('public')->url(e(($logoPath ?? '').$snipeSettings->$logoVariable)) }}"{!! ($logoVariable!='favicon') ? ' data-toggle="lightbox"' : '' !!}>
-                        <img id="{{ $logoId }}-imagePreview" style="height: 80px; padding-bottom: 5px;" alt="" src="{{ Storage::disk('public')->url(e(($logoPath ?? ''). $snipeSettings->$logoVariable)) }}">
+                    <a href="{{ Storage::disk('public')->url(e(($logoPath ?? '').$snipeSettings->$logoVariable)) }}"{!! ($logoVariable!='favicon') ? ' data-toggle="lightbox"' : '' !!} title="Existing logo">
+                        <img style="height: 80px; padding-bottom: 5px;" alt="Current logo" src="{{ Storage::disk('public')->url(e(($logoPath ?? ''). $snipeSettings->$logoVariable)) }}">
                     </a>
                 </div>
             @endif
 
             <div id="{{ $logoId }}-previewContainer" style="display: none;">
-                <img id="{{ $logoId }}-imagePreview" style="height: 80px;">
+                <img id="{{ $logoId }}-imagePreview" style="height: 80px;" alt="Logo upload preview">
             </div>
 
 

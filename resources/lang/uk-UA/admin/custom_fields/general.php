@@ -57,7 +57,14 @@ return [
     'show_in_requestable_list_short' => 'Показати в списку активів',
     'show_in_requestable_list' => 'Показувати значення в списку активів, які запитуються. Зашифровані поля не будуть показані',
     'encrypted_options' => 'Це поле зашифроване, так що деякі параметри відображення не будуть доступні.',
-    'display_checkin' => 'Display in checkin forms',
-    'display_checkout' => 'Display in checkout forms',
-
+    'display_checkin' => 'Відображати в формах перевірки',
+    'display_checkout' => 'Відображати в формах перевірки',
+    'display_audit' => 'Відображати в формах перевірки',
+    'types' => [
+        'text' => 'Text Box',
+        'listbox' => 'List Box',
+        'textarea' => 'Textarea (multi-line)',
+        'checkbox' => 'Checkbox',
+        'radio' => 'Radio Buttons',
+    ],
 ];

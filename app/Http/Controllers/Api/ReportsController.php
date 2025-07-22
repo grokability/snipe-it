@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Transformers\ActionlogsTransformer;
 use App\Models\Actionlog;
+use App\Models\Company;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
@@ -18,9 +20,10 @@ class ReportsController extends Controller
      */
     public function index(Request $request) : JsonResponse | array
     {
-        $this->authorize('reports.view');
+        $this->authorize('activity.view');
 
         $actionlogs = Actionlog::with('item', 'user', 'adminuser', 'target', 'location');
+
 
         if ($request->filled('search')) {
             $actionlogs = $actionlogs->TextSearch(e($request->input('search')));

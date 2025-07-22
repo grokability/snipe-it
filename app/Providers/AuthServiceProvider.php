@@ -101,11 +101,19 @@ class AuthServiceProvider extends ServiceProvider
          * This is where we set the superadmin permission to allow superadmins to be able to do everything within the system.
          *
          */
-        Gate::before(function ($user) {
+        Gate::before(function ($user, $ability) {
+
+            // Disallow even superadmins to edit non-editable things when in demo mode.
+            // (We have to do this to prevent jerks from trying to break the demo by editing things they shouldn't.)
+            if (($ability == 'editableOnDemo') && (config('app.lock_passwords'))) {
+                return false;
+            }
             if ($user->isSuperUser()) {
                 return true;
             }
         });
+
+
 
 
         /**
@@ -114,6 +122,45 @@ class AuthServiceProvider extends ServiceProvider
          * These control general sections of the admin. These definitions are used in our blades via @can('blah) and also
          * use in our controllers to determine if a user has access to a certain area.
          */
+
+        Gate::define('canEditAuthFields', function ($user, $item) {
+
+            if ($item instanceof User) {
+
+                // if they can only edit users, deny them if the user is admin or superadmin
+                if (($user->hasAccess('users.edit')) && (!$user->isAdmin()) && (!$user->isAdmin())) {
+
+                    if ($item->isAdmin() || $item->isSuperUser()) {
+                        return false;
+                    }
+                    return true;
+                }
+
+                // if they are an admin, deny them only if the user is a superadmin
+                if ($user->hasAccess('admin')) {
+                    if ($item->isSuperUser()) {
+                        return false;
+                    }
+
+                    return true;
+                }
+
+                return false;
+            }
+
+            return false;
+        });
+
+
+        /**
+         * Define the demo mode gate so we have an easy way to use @can and Gate::allows()
+         */
+        Gate::define('editableOnDemo', function () {
+            if (config('app.lock_passwords')) {
+                return false;
+            }
+            return true;
+        });
 
         Gate::define('admin', function ($user) {
             if ($user->hasAccess('admin')) {
@@ -164,6 +211,15 @@ class AuthServiceProvider extends ServiceProvider
         // -----------------------------------------
         Gate::define('reports.view', function ($user) {
             if ($user->hasAccess('reports.view')) {
+                return true;
+            }
+        });
+
+        // -----------------------------------------
+        // Activity
+        // -----------------------------------------
+        Gate::define('activity.view', function ($user) {
+            if (($user->hasAccess('reports.view')) || ($user->hasAccess('admin'))) {
                 return true;
             }
         });
@@ -239,6 +295,7 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('self.profile', function ($user) {
             return $user->canEditProfile();
         });
+
 
     }
 }

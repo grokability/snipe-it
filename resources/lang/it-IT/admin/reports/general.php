@@ -4,6 +4,7 @@ return [
     'info'   => 'Selezionare le opzioni desiderate per il vostro report di beni.',
     'deleted_user' => 'Utente eliminato',
     'send_reminder' => 'Invia promemoria',
+    'cannot_send_reminder' => 'L\'utente è stato cancellato o non ha un indirizzo email, quindi non può ricevere un promemoria',
     'reminder_sent' => 'Promemoria spedito',
     'acceptance_deleted' => 'Richiesta di accettazione eliminata',
     'acceptance_request' => 'Richiesta di accettazione',

@@ -22,7 +22,7 @@ return array(
     'managed_locations'     => 'สถานที่ที่มีการจัดการ',
     'managed_users'         => 'Managed Users',
     'name' 					=> 'ชื่อ',
-    'nogroup'               => 'No groups have been created yet. To add one, visit: ',
+    'nogroup'               => 'No groups have been created yet. To add one, visit:',
     'notes'                 => 'หมายเหตุ',
     'password_confirm' 		=> 'ยืนยันรหัสผ่าน',
     'password' 				=> 'รหัสผ่าน',

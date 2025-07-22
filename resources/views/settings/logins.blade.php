@@ -16,13 +16,9 @@
 
                     <table
                             data-cookie-id-table="loginReport"
-                            data-pagination="true"
                             data-id-table="loginReport"
                             data-search="false"
                             data-side-pagination="server"
-                            data-show-columns="true"
-                            data-show-export="true"
-                            data-show-refresh="true"
                             data-sort-order="desc"
                             data-sort-name="created_at"
                             id="loginReport"

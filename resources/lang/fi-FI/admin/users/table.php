@@ -22,7 +22,7 @@ return array(
     'managed_locations'     => 'Esimiehenä sijainneissa',
     'managed_users'         => 'Hallinnoidut Käyttäjät',
     'name' 					=> 'Nimi',
-    'nogroup'               => 'Yhtään ryhmää ei ole vielä luotu. Lisätäksesi yhden, käy: ',
+    'nogroup'               => 'Yhtään ryhmää ei ole vielä luotu. Lisätäksesi yhden, käy:',
     'notes'                 => 'Muistiinpanot',
     'password_confirm' 		=> 'Vahvista salasana',
     'password' 				=> 'Salasana',

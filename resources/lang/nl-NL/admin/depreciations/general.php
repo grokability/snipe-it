@@ -13,4 +13,8 @@ return [
     'no_depreciations_warning'               => '<strong>Waarschuwing: </strong>
                       U heeft momenteel geen afschrijvingen ingesteld.
                       Stel ten minste één afschrijving in om het afschrijvingsrapport te bekijken.',
+    'depreciation_method'                   => 'Afschrijvingsrapport',
+    'linear_depreciation'                   => 'Linear (Default)',
+    'half_1'                                => 'Half-year convention, always applied',
+    'half_2'                                => 'Half-year convention, applied with condition',
 ];

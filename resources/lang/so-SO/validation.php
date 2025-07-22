@@ -31,6 +31,7 @@ return [
         'numeric' => 'The :attribute field must be between :min and :max.',
         'string' => 'The :attribute field must be between :min and :max characters.',
     ],
+    'valid_regex' => 'The regular expression is invalid.',
     'boolean' => 'The :attribute field must be true or false.',
     'can' => 'The :attribute field contains an unauthorized value.',
     'confirmed' => 'The :attribute field confirmation does not match.',
@@ -172,6 +173,7 @@ return [
     'url' => 'The :attribute field must be a valid URL.',
     'ulid' => 'The :attribute field must be a valid ULID.',
     'uuid' => 'The :attribute field must be a valid UUID.',
+    'fmcs_location' => 'Full multiple company support and location scoping is enabled in the Admin Settings, and the selected location and selected company are not compatible.',
 
 
     /*
@@ -185,9 +187,13 @@ return [
     |
     */
 
+    'email_array'      => 'Hal ama ka badan ciwaanka iimaylka waa mid aan shaqayn.',
+    'checkboxes'           => ':attribute contains invalid options.',
+    'radio_buttons'        => ':attribute is invalid.',
+    
     'custom' => [
         'alpha_space' => 'Goobta :attribute waxay ka kooban tahay xarfo aan la oggolayn.',
-        'email_array'      => 'Hal ama ka badan ciwaanka iimaylka waa mid aan shaqayn.',
+
         'hashed_pass'      => 'Eraygaaga hadda jira waa khalad',
         'dumbpwd'          => 'Furahaas aad buu u badan yahay.',
         'statuslabel_type' => 'Waa inaad doorataa nooca summada heerka ansax ah',
@@ -204,8 +210,6 @@ return [
         'expected_checkin.date_format'  =>  'Sumadda :astaanta waa iney ahaato taariikh saxan oo u qaabeysan hannaanka YYY-MM-DD',
         'start_date.date_format'        =>  'Sumadda :astaanta waa iney ahaato taariikh saxan oo u qaabeysan hannaanka YYY-MM-DD',
         'end_date.date_format'          =>  'Sumadda :astaanta waa iney ahaato taariikh saxan oo u qaabeysan YYY-MM-DD',
-        'checkboxes'           => ':attribute contains invalid options.',
-        'radio_buttons'        => ':attribute is invalid.',
         'invalid_value_in_field' => 'Invalid value included in this field',
 
         'ldap_username_field' => [

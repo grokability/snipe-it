@@ -3,7 +3,7 @@
 return array(
 
     'does_not_exist' => 'Lokalita neexistuje.',
-    'assoc_users'    => 'Túto lokalitu nie je možné odstrániť nakoľko je využívaná pri minimálne jednom majetku alebo užívateľovi, má priradené majetky alebo je nadradenou lokalitou inej lokality. Prosím upravte ostatné záznamy, aby nevyužívali túto lokalitu a skúste znovu. ',
+    'assoc_users'    => 'Túto lokalitu nie je možné odstrániť nakoľko je využívaná pri minimálne jednom majetku alebo užívateľovi, má priradené majetky alebo je nadradenou lokalitou inej lokality. Prosím upravte ostatné záznamy, aby nevyužívali túto lokalitu a skúste znovu ',
     'assoc_assets'	 => 'Táto lokalita je priradená minimálne jednému majetku, preto nemôže byť odstránená. Prosím odstráňte referenciu na túto lokalitu z príslušného majetku a skúste znovu. ',
     'assoc_child_loc'	 => 'Táto lokalita je nadradenou minimálne jednej podradenej lokalite, preto nemôže byť odstránená. Prosím odstráňte referenciu s príslušnej lokality a skúste znovu. ',
     'assigned_assets' => 'Priradené položky majetku',

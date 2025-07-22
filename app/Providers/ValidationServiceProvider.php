@@ -362,7 +362,7 @@ class ValidationServiceProvider extends ServiceProvider
                 $company_id = array_get($validator->getData(), 'company_id');
                 $location = Location::find($value);
 
-                if ($company_id != $location->company_id) {
+                if (($location) && ($company_id != $location->company_id)) {
                     return false;
                 }
             }

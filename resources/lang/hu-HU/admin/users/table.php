@@ -22,7 +22,7 @@ return array(
     'managed_locations'     => 'Kezelt helyek',
     'managed_users'         => 'Kezelt Felhasználók',
     'name' 					=> 'Név',
-    'nogroup'               => 'No groups have been created yet. To add one, visit: ',
+    'nogroup'               => 'No groups have been created yet. To add one, visit:',
     'notes'                 => 'Megjegyzések',
     'password_confirm' 		=> 'Jelszó megerősítése',
     'password' 				=> 'Jelszó',

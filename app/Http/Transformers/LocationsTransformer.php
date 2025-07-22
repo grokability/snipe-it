@@ -57,6 +57,10 @@ class LocationsTransformer
                 'ldap_ou' =>  ($location->ldap_ou) ? e($location->ldap_ou) : null,
                 'notes' => Helper::parseEscapedMarkedownInline($location->notes),
                 'created_at' => Helper::getFormattedDateObject($location->created_at, 'datetime'),
+                'created_by' => $location->adminuser ? [
+                    'id' => (int) $location->adminuser->id,
+                    'name'=> e($location->adminuser->present()->fullName),
+                ]: null,
                 'updated_at' => Helper::getFormattedDateObject($location->updated_at, 'datetime'),
                 'parent' => ($location->parent) ? [
                     'id' => (int) $location->parent->id,

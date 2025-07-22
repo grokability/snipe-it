@@ -22,7 +22,7 @@ return array(
     'managed_locations'     => 'Lokasi yang Dikelola',
     'managed_users'         => 'Pengguna yang Dikelola',
     'name' 					=> 'Nama',
-    'nogroup'               => 'Belum ada grup yang dibuat. Untuk menambahkan, kunjungi:',
+    'nogroup'               => 'No groups have been created yet. To add one, visit:',
     'notes'                 => 'Catatan',
     'password_confirm' 		=> 'Konfirmasikan Kata Sandi',
     'password' 				=> 'Kata sandi',

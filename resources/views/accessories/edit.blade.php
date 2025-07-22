@@ -22,7 +22,7 @@
 @include ('partials.forms.edit.location-select', ['translated_name' => trans('general.location'), 'fieldname' => 'location_id'])
 @include ('partials.forms.edit.model_number')
 @include ('partials.forms.edit.order_number')
-@include ('partials.forms.edit.purchase_date')
+@include ('partials.forms.edit.datepicker', ['translated_name' => trans('general.purchase_date'),'fieldname' => 'purchase_date'])
 @include ('partials.forms.edit.purchase_cost', ['currency_type' => $item->location->currency ?? null])
 @include ('partials.forms.edit.quantity')
 @include ('partials.forms.edit.minimum_quantity')

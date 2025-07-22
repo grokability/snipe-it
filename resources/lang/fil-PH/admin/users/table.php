@@ -22,7 +22,7 @@ return array(
     'managed_locations'     => 'Ang Pinamahalaang mga Lokasyon',
     'managed_users'         => 'Managed Users',
     'name' 					=> 'Pangalan',
-    'nogroup'               => 'No groups have been created yet. To add one, visit: ',
+    'nogroup'               => 'No groups have been created yet. To add one, visit:',
     'notes'                 => 'Ang mga Paalala',
     'password_confirm' 		=> 'I-komperma ang Password',
     'password' 				=> 'Ang Password',

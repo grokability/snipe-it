@@ -13,4 +13,8 @@ return [
     'no_depreciations_warning'               => '<strong>Warnung: </strong>
                       Du hast derzeit keine Abschreibungen eingerichtet.
                       Bitte richte mindestens eine Abschreibung ein, um den Abschreibungsbericht anzuzeigen.',
+    'depreciation_method'                   => 'Abschreibungsbericht',
+    'linear_depreciation'                   => 'Linear (Standard)',
+    'half_1'                                => 'Halbjahreskonvention, immer angewendet',
+    'half_2'                                => 'Halbjahreskonvention, mit Bedingung angewendet',
 ];

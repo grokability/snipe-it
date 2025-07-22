@@ -64,6 +64,24 @@ class CheckoutAcceptanceFactory extends Factory
         ]);
     }
 
+    public function withoutAlerting()
+    {
+        return $this->state(function () {
+            return [
+                'alert_on_response_id' => null,
+            ];
+        });
+    }
+
+    public function withAlertingTo(User $user)
+    {
+        return $this->state(function () use ($user) {
+            return [
+                'alert_on_response_id' => $user->id,
+            ];
+        });
+    }
+
     private function createdAssociatedActionLogEntry(CheckoutAcceptance $acceptance): void
     {
         $acceptance->checkoutable->assetlog()->create([

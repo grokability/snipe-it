@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Helpers\Helper;
 use App\Models\Traits\Acceptable;
+use App\Models\Traits\HasUploads;
 use App\Models\Traits\Searchable;
 use App\Presenters\Presentable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -29,6 +30,7 @@ class Consumable extends SnipeModel
     use Loggable, Presentable;
     use SoftDeletes;
     use Acceptable;
+    use HasUploads;
 
     protected $table = 'consumables';
     protected $casts = [
@@ -111,21 +113,6 @@ class Consumable extends SnipeModel
     ];
 
 
-    /**
-     * Establishes the components -> action logs -> uploads relationship
-     *
-     * @author A. Gianotto <snipe@snipe.net>
-     * @since [v6.1.13]
-     * @return \Illuminate\Database\Eloquent\Relations\Relation
-     */
-    public function uploads()
-    {
-        return $this->hasMany(Actionlog::class, 'item_id')
-            ->where('item_type', '=', self::class)
-            ->where('action_type', '=', 'uploaded')
-            ->whereNotNull('filename')
-            ->orderBy('created_at', 'desc');
-    }
 
 
     /**
@@ -138,7 +125,7 @@ class Consumable extends SnipeModel
      * @todo Update this comment once it's been implemented
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
+     * @since  [v3.0]
      * @return \Illuminate\Database\Eloquent\Relations\Relation
      */
     public function setRequestableAttribute($value)
@@ -153,7 +140,7 @@ class Consumable extends SnipeModel
      * Establishes the consumable -> admin user relationship
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
+     * @since  [v3.0]
      * @return \Illuminate\Database\Eloquent\Relations\Relation
      */
     public function adminuser()
@@ -165,7 +152,7 @@ class Consumable extends SnipeModel
      * Establishes the component -> assignments relationship
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
+     * @since  [v3.0]
      * @return \Illuminate\Database\Eloquent\Relations\Relation
      */
     public function consumableAssignments()
@@ -177,7 +164,7 @@ class Consumable extends SnipeModel
      * Establishes the component -> company relationship
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
+     * @since  [v3.0]
      * @return \Illuminate\Database\Eloquent\Relations\Relation
      */
     public function company()
@@ -189,7 +176,7 @@ class Consumable extends SnipeModel
      * Establishes the component -> manufacturer relationship
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
+     * @since  [v3.0]
      * @return \Illuminate\Database\Eloquent\Relations\Relation
      */
     public function manufacturer()
@@ -201,7 +188,7 @@ class Consumable extends SnipeModel
      * Establishes the component -> location relationship
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
+     * @since  [v3.0]
      * @return \Illuminate\Database\Eloquent\Relations\Relation
      */
     public function location()
@@ -213,7 +200,7 @@ class Consumable extends SnipeModel
      * Establishes the component -> category relationship
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
+     * @since  [v3.0]
      * @return \Illuminate\Database\Eloquent\Relations\Relation
      */
     public function category()
@@ -226,7 +213,7 @@ class Consumable extends SnipeModel
      * Establishes the component -> action logs relationship
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
+     * @since  [v3.0]
      * @return \Illuminate\Database\Eloquent\Relations\Relation
      */
     public function assetlog()
@@ -238,7 +225,7 @@ class Consumable extends SnipeModel
      * Gets the full image url for the consumable
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
+     * @since  [v3.0]
      * @return string | false
      */
     public function getImageUrl()
@@ -254,7 +241,7 @@ class Consumable extends SnipeModel
      * Establishes the component -> users relationship
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
+     * @since  [v3.0]
      */
     public function users() : Relation
     {
@@ -265,7 +252,7 @@ class Consumable extends SnipeModel
      * Establishes the item -> supplier relationship
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v6.1.1]
+     * @since  [v6.1.1]
      * @return \Illuminate\Database\Eloquent\Relations\Relation
      */
     public function supplier()
@@ -279,19 +266,19 @@ class Consumable extends SnipeModel
      * asset model category
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v4.0]
+     * @since  [v4.0]
      * @return bool
      */
     public function checkin_email()
     {
-        return $this->category->checkin_email;
+        return $this->category?->checkin_email;
     }
 
     /**
      * Determine whether this asset requires acceptance by the assigned user
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v4.0]
+     * @since  [v4.0]
      * @return bool
      */
     public function requireAcceptance()
@@ -304,7 +291,7 @@ class Consumable extends SnipeModel
      * checks for a settings level EULA
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v4.0]
+     * @since  [v4.0]
      * @return string | false
      */
     public function getEula()
@@ -322,7 +309,7 @@ class Consumable extends SnipeModel
      * Check how many items within a consumable are checked out
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v5.0]
+     * @since  [v5.0]
      * @return int
      */
     public function numCheckedOut()
@@ -334,7 +321,7 @@ class Consumable extends SnipeModel
      * Checks the number of available consumables
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v4.0]
+     * @since  [v4.0]
      * @return int
      */
     public function numRemaining()
@@ -360,8 +347,8 @@ class Consumable extends SnipeModel
      * This simply checks that there is a value for quantity, and if there isn't, set it to 0.
      *
      * @author A. Gianotto <snipe@snipe.net>
-     * @since v6.3.4
-     * @param $value
+     * @since  v6.3.4
+     * @param  $value
      * @return void
      */
     public function setQtyAttribute($value)
@@ -378,8 +365,8 @@ class Consumable extends SnipeModel
     /**
      * Query builder scope to order on company
      *
-     * @param  \Illuminate\Database\Query\Builder  $query  Query builder instance
-     * @param  string                              $order       Order
+     * @param \Illuminate\Database\Query\Builder $query Query builder instance
+     * @param string                             $order Order
      *
      * @return \Illuminate\Database\Query\Builder          Modified query builder
      */
@@ -391,8 +378,8 @@ class Consumable extends SnipeModel
     /**
      * Query builder scope to order on location
      *
-     * @param  \Illuminate\Database\Query\Builder  $query  Query builder instance
-     * @param  text                              $order       Order
+     * @param \Illuminate\Database\Query\Builder $query Query builder instance
+     * @param text                               $order Order
      *
      * @return \Illuminate\Database\Query\Builder          Modified query builder
      */
@@ -404,8 +391,8 @@ class Consumable extends SnipeModel
     /**
      * Query builder scope to order on manufacturer
      *
-     * @param  \Illuminate\Database\Query\Builder  $query  Query builder instance
-     * @param  string   $order       Order
+     * @param \Illuminate\Database\Query\Builder $query Query builder instance
+     * @param string                             $order Order
      *
      * @return \Illuminate\Database\Query\Builder          Modified query builder
      */
@@ -417,8 +404,8 @@ class Consumable extends SnipeModel
     /**
      * Query builder scope to order on company
      *
-     * @param  \Illuminate\Database\Query\Builder  $query  Query builder instance
-     * @param  string                              $order       Order
+     * @param \Illuminate\Database\Query\Builder $query Query builder instance
+     * @param string                             $order Order
      *
      * @return \Illuminate\Database\Query\Builder          Modified query builder
      */
@@ -430,8 +417,8 @@ class Consumable extends SnipeModel
     /**
      * Query builder scope to order on remaining
      *
-     * @param  \Illuminate\Database\Query\Builder  $query  Query builder instance
-     * @param  string                              $order       Order
+     * @param \Illuminate\Database\Query\Builder $query Query builder instance
+     * @param string                             $order Order
      *
      * @return \Illuminate\Database\Query\Builder          Modified query builder
      */
@@ -444,8 +431,8 @@ class Consumable extends SnipeModel
     /**
      * Query builder scope to order on supplier
      *
-     * @param  \Illuminate\Database\Query\Builder  $query  Query builder instance
-     * @param  text                              $order       Order
+     * @param \Illuminate\Database\Query\Builder $query Query builder instance
+     * @param text                               $order Order
      *
      * @return \Illuminate\Database\Query\Builder          Modified query builder
      */

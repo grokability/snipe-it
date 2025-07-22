@@ -1,5 +1,5 @@
 {
-  "name": "snipe/snipe-it",
+  "name": "grokability/snipe-it",
   "description": "Open source asset management system built on Laravel.",
   "keywords": [
     "assets",
@@ -39,6 +39,7 @@
     "eduardokum/laravel-mail-auto-embed": "^2.0",
     "enshrined/svg-sanitize": "^0.15.0",
     "erusev/parsedown": "^1.7",
+    "fakerphp/faker": "^1.24",
     "guzzlehttp/guzzle": "^7.0.1",
     "intervention/image": "^2.5",
     "javiereguiluz/easyslugger": "^1.0",
@@ -82,7 +83,6 @@
     "ext-exif": "*"
   },
   "require-dev": {
-    "fakerphp/faker": "^1.16",
     "larastan/larastan": "^2.9",
     "mockery/mockery": "^1.4",
     "nunomaduro/phpinsights": "^2.11",

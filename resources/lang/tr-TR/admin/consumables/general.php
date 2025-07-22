@@ -8,5 +8,5 @@ return array(
     'remaining' 			            => 'Kalan',
     'total' 			                => 'Toplam',
     'update'                            => 'Sarf malzemesini Güncelle',
-    'inventory_warning'                 => 'The inventory of this consumable is below the minimum amount of :min_count',
+    'inventory_warning'                 => 'Bu tüketilebilir ürünün stoğu, minimum :min_count miktarının altındadır',
 );

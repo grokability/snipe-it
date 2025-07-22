@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'ប្រភេទ Asset',
     'category_name'  					=> 'ឈ្មោះប្រភេទ',
     'checkin_email'                     => 'ផ្ញើអ៊ីមែលទៅអ្នកប្រើប្រាស់នៅពេល Checkin/checkout',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'អ្នក​ប្រើ​នេះ​នឹង​ត្រូវ​បាន​ផ្ញើ​អ៊ីមែល​មួយ​នៅ​ពេល checkin/checkout',
     'clone'                             => 'ប្រភេទក្លូន',
     'create'  							=> 'បង្កើតប្រភេទ',
@@ -21,5 +22,9 @@ return array(
     'use_default_eula'					=> 'ប្រើ <a href="#" data-toggle="modal" data-target="#eulaModal">លំនាំដើមចម្បង EULA</a> ជំនួសវិញ។',
     'use_default_eula_disabled'			=> '<del>ប្រើ EULA លំនាំដើមចម្បងជំនួសវិញ។</del> គ្មាន EULA លំនាំដើមចម្បងត្រូវបានកំណត់ទេ។ សូមបន្ថែមមួយនៅក្នុងការកំណត់។',
     'use_default_eula_column'			=> 'ប្រើ EULA លំនាំដើម',
+    'import_require_acceptance'         => 'Require Acceptance',
+    'import_checkin_email'              => 'Send Checkin Email',
+    'import_eula_text'                  => 'EULA text',
+    'import_category_type'              => 'Category Type',
 
 );

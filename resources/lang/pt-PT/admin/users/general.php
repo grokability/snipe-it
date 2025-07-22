@@ -53,4 +53,5 @@ return [
     'next_save_user' => 'Próximo: Salvar Utilizador',
     'all_assigned_list_generation' => 'Criado em:',
     'email_user_creds_on_create' => 'Enviar por e-mail as credenciais deste utilizador?',
+    'department_manager' => 'Department Manager',
 ];

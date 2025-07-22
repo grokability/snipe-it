@@ -2,7 +2,7 @@
 
 return [
 
-    'undeployable' 		 => '<b>Warnung:</b> Dieses Asset wurde als nicht zur Herausgabe bereit markiert. Falls sich dieser Status geändert hat, aktualisieren Sie bitte den Asset Status.',
+    'undeployable' 		 => 'Die folgenden Assets sind nicht Einsetzbar und wurden aus der Herausgabe entfernt: :asset_tags',
     'does_not_exist' 	 => 'Asset existiert nicht.',
     'does_not_exist_var' => 'Asset mit Tag :asset_tag nicht gefunden.',
     'no_tag' 	         => 'Kein Asset Tag angegeben.',
@@ -19,6 +19,11 @@ return [
         'success_linked' => 'Asset mit Tag :tag wurde erfolgreich erstellt. <strong><a href=":link" style="color: white;">Klicken Sie hier, um</a></strong> anzuzeigen.',
         'multi_success_linked' => 'Asset mit Tag :links wurde erfolgreich erstellt.|:count Assets wurden erfolgreich erstellt. :links.',
         'partial_failure' => 'Ein Asset konnte nicht erstellt werden. Grund: :failures|:count Assets konnten nicht erstellt werden. Gründe: :failures',
+        'target_not_found' => [
+            'user' => 'Der zugeordnete Benutzer konnte nicht gefunden werden.',
+            'asset' => 'Das zugewiesene Asset konnte nicht gefunden werden.',
+            'location' => 'Der zugeordnete Standort konnte nicht gefunden werden.',
+        ],
     ],
 
     'update' => [
@@ -66,13 +71,14 @@ return [
         'file_already_deleted' => 'Die ausgewählte Datei wurde bereits gelöscht',
         'header_row_has_malformed_characters' => 'Ein oder mehrere Attribute in der Kopfzeile enthalten fehlerhafte UTF-8 Zeichen',
         'content_row_has_malformed_characters' => 'Ein oder mehrere Attribute in der ersten Zeile des Inhalts enthalten fehlerhafte UTF-8-Zeichen',
+        'transliterate_failure' => 'Umschreibung von :encoding nach UTF-8 fehlgeschlagen wegen ungültiger Zeichen in Eingabe'
     ],
 
 
     'delete' => [
         'confirm'   	=> 'Sind Sie sicher, dass Sie dieses Asset entfernen möchten?',
         'error'   		=> 'Beim Entfernen dieses Assets ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.',
-        'assigned_to_error' => '{1}Asset Tag: :asset_tag is currently checked out. Check in this device before deletion.|[2,*]Asset Tags: :asset_tag are currently checked out. Check in these devices before deletion.',
+        'assigned_to_error' => '{1}Asset Tag: :asset_tag ist derzeit herausgegeben. Überprüfen Sie dieses Gerät bevor Sie es löschen. [2,*]Asset Tags: :asset_tag sind derzeit herausgegeben. Überprüfen Sie diese Geräte bevor Sie sie löschen.',
         'nothing_updated'   => 'Es wurden keine Assets ausgewählt, somit wurde auch nichts gelöscht.',
         'success' 		=> 'Dieses Asset wurde erfolgreich entfernt.',
     ],
@@ -99,9 +105,10 @@ return [
     ],
 
     'requests' => [
-        'error'   		=> 'Das Asset wurde nicht angefordert, bitte versuchen Sie es erneut',
-        'success' 		=> 'Gegenstand erfolgreich angefordert.',
-        'canceled'      => 'Herausgeben erfolgreich abgebrochen',
+        'error'   		=> 'Die Anfrage war nicht erfolgreich, bitte versuchen Sie es erneut.',
+        'success' 		=> 'Anfrage erfolgreich eingereicht.',
+        'canceled'      => 'Anfrage erfolgreich abgebrochen.',
+        'cancel'        => 'Diese Artikelanfrage abbrechen',
     ],
 
 ];

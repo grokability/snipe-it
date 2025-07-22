@@ -6,6 +6,6 @@ return array(
     'action' 		        => 'Hareket',
     'by'      		        => 'Tarafından',
     'item' 			        => 'Ürün',
-    'no_matching_records'   => 'No matching records found',
+    'no_matching_records'   => 'Eşleşen kayıt bulunamadı',
 
 );

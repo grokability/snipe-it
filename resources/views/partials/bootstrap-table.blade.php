@@ -48,13 +48,26 @@
                 }
                 return htmlData
             }
+
+            // This allows us to override the table defaults set below using the data-dash attributes
+            var table = this;
+            var data_with_default = function (key,default_value) {
+                attrib_val = $(table).data(key);
+                if(attrib_val !== undefined) {
+                    return attrib_val;
+                }
+                return default_value;
+            }
+
+
             $(this).bootstrapTable({
-                classes: 'table table-responsive table-no-bordered',
+
                 ajaxOptions: {
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     }
                 },
+                classes: 'table table-responsive table-striped snipe-table table-no-bordered',
                 // reorderableColumns: true,
                 stickyHeader: true,
                 stickyHeaderOffsetLeft: parseInt($('body').css('padding-left'), 10),
@@ -64,12 +77,24 @@
                 cookieStorage: '{{ config('session.bs_table_storage') }}',
                 cookie: true,
                 cookieExpire: '2y',
-                showColumnsToggleAll: true,
-                minimumCountColumns: 2,
-                mobileResponsive: true,
-                maintainSelected: true,
+                search: data_with_default('search', true),
+                advancedSearch: data_with_default('advanced-search', true),
+                searchHighlight: data_with_default('search-highlight', true),
+                clickToSelect: data_with_default('click-to-select', true),
+                showPrint: data_with_default('show-print', true),
+                showFullscreen: data_with_default('show-fullscreen', true),
+                showColumns: data_with_default('show-columns', true),
+                showExport: data_with_default('show-export', true),
+                showColumnsToggleAll: data_with_default('show-columns-toggle-all', true),
+                showRefresh: data_with_default('show-refresh', true),
+                pagination: data_with_default('pagination', true),
+                sortOrder: data_with_default('sort-order', 'desc'),
+                sortName: data_with_default('sort-name', 'created_at'),
+                minimumCountColumns: data_with_default('minimum-count-columns', 2),
+                mobileResponsive: data_with_default('mobile-responsive', true),
+                maintainSelected: data_with_default('maintain-selected', true),
                 trimOnSearch: false,
-                showSearchClearButton: true,
+                showSearchClearButton: data_with_default('show-search-clear-button', true),
                 addrbar: {{ (config('session.bs_table_addrbar') == 'true') ? 'true' : 'false'}}, // deeplink search phrases, sorting, etc
                 paginationFirstText: "{{ trans('general.first') }}",
                 paginationLastText: "{{ trans('general.last') }}",
@@ -341,7 +366,7 @@
 
 
     function hardwareAuditFormatter(value, row) {
-        return '<a href="{{ config('app.url') }}/hardware/' + row.id + '/audit" class="btn btn-sm bg-yellow" data-tooltip="true" title="Audit this item">{{ trans('general.audit') }}</a>';
+        return '<a href="{{ config('app.url') }}/hardware/' + row.id + '/audit" class="actions btn btn-sm btn-primary" data-tooltip="true" title="{{ trans('general.audit') }}"><x-icon type="audit" /><span class="sr-only">{{ trans('general.audit') }}</span></a>&nbsp;';
     }
 
 
@@ -371,6 +396,10 @@
                 actions += '<a href="{{ config('app.url') }}/' + dest + '/' + row.id + '/clone" class="actions btn btn-sm btn-info" data-tooltip="true" title="{{ trans('general.clone_item') }}"><x-icon type="clone" /><span class="sr-only">{{ trans('general.clone_item') }}</span></a>&nbsp;';
             }
 
+            if ((row.available_actions) && (row.available_actions.audit === true)) {
+                actions += '<a href="{{ config('app.url') }}/' + dest + '/' + row.id + '/audit" class="actions btn btn-sm btn-primary" data-tooltip="true" title="{{ trans('general.audit') }}"><x-icon type="audit" /><span class="sr-only">{{ trans('general.audit') }}</span></a>&nbsp;';
+            }
+
             if ((row.available_actions) && (row.available_actions.update === true)) {
                 actions += '<a href="{{ config('app.url') }}/' + dest + '/' + row.id + '/edit" class="actions btn btn-sm btn-warning" data-tooltip="true" title="{{ trans('general.update') }}"><x-icon type="edit" /><span class="sr-only">{{ trans('general.update') }}</span></a>&nbsp;';
             } else {
@@ -382,15 +411,21 @@
             if ((row.available_actions) && (row.available_actions.delete === true)) {
 
                 // use the asset tag if no name is provided
-                var name_for_box = row.name
-                if (row.name=='') {
+
+                if (row.name) {
+                    var name_for_box = row.name
+                } else if (row.title) {
+                    var name_for_box = row.title
+                } else if (row.asset_tag) {
                     var name_for_box = row.asset_tag
                 }
+
+
                 
                 actions += '<a href="{{ config('app.url') }}/' + dest + '/' + row.id + '" '
                     + ' class="actions btn btn-danger btn-sm delete-asset" data-tooltip="true"  '
                     + ' data-toggle="modal" '
-                    + ' data-content="{{ trans('general.sure_to_delete') }} ' + name_for_box + '?" '
+                    + ' data-content="{{ trans('general.sure_to_delete') }}: ' + name_for_box + '?" '
                     + ' data-title="{{  trans('general.delete') }}" onClick="return false;">'
                     + '<x-icon type="delete" /><span class="sr-only">{{ trans('general.delete') }}</span></a>&nbsp;';
             } else {
@@ -834,6 +869,12 @@
         }
     }
 
+    function jobtitleFormatter(value, row) {
+        if ((row) && (row.assigned_to) && ((row.assigned_to.jobtitle))) {
+            return '<a href="{{ config('app.url') }}/users/' + row.assigned_to.id + '">' + row.assigned_to.jobtitle + '</a>';
+        }
+    }
+
     function orderNumberObjFilterFormatter(value, row) {
         if (value) {
             return '<a href="{{ config('app.url') }}/hardware/?order_number=' + row.order_number + '">' + row.order_number + '</a>';
@@ -842,7 +883,7 @@
 
     function auditImageFormatter(value){
         if (value){
-            return '<a href="' + value.url + '" data-toggle="lightbox" data-type="image"><img src="' + value.url + '" style="max-height: {{ $snipeSettings->thumbnail_max_h }}px; width: auto;" class="img-responsive"></a>'
+            return '<a href="' + value.url + '" data-toggle="lightbox" data-type="image"><img src="' + value.url + '" style="max-height: {{ $snipeSettings->thumbnail_max_h }}px; width: auto;" class="img-responsive" alt=""></a>'
         }
     }
 
@@ -866,13 +907,13 @@
     }
     function downloadFormatter(value) {
         if (value) {
-            return '<a href="' + value + '" target="_blank"><x-icon type="download" /></a>';
+            return '<a href="' + value + '" class="btn btn-sm btn-default"><x-icon type="download" /></a>';
         }
     }
 
     function fileUploadFormatter(value) {
         if ((value) && (value.url) && (value.inlineable)) {
-            return '<a href="' + value.url + '" data-toggle="lightbox" data-type="image"><img src="' + value.url + '" style="max-height: {{ $snipeSettings->thumbnail_max_h }}px; width: auto;" class="img-responsive"></a>';
+            return '<a href="' + value.url + '" data-toggle="lightbox" data-type="image"><img src="' + value.url + '" style="max-height: {{ $snipeSettings->thumbnail_max_h }}px; width: auto;" class="img-responsive" alt=""></a>';
         } else if ((value) && (value.url)) {
             return '<a href="' + value.url + '" class="btn btn-default"><x-icon type="download" /></a>';
         }
@@ -880,7 +921,6 @@
 
 
     function fileUploadNameFormatter(value) {
-        console.dir(value);
         if ((value) && (value.filename) && (value.url)) {
             return '<a href="' + value.url + '">' + value.filename + '</a>';
         }

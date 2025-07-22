@@ -182,7 +182,7 @@ class LdapSync extends Command
             // Inject location information fields
             for ($i = 0; $i < $results['count']; $i++) {
                 $results[$i]['ldap_location_override'] = false;
-                $results[$i]['location_id'] = 0;
+                $results[$i]['location_id'] = null;
             }
 
             // Grab subsets based on location-specific DNs, and overwrite location for these users.

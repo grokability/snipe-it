@@ -68,6 +68,7 @@ class CategoriesController extends Controller
         $category->eula_text = $request->input('eula_text');
         $category->use_default_eula = $request->input('use_default_eula', '0');
         $category->require_acceptance = $request->input('require_acceptance', '0');
+        $category->alert_on_response = $request->input('alert_on_response', '0');
         $category->checkin_email = $request->input('checkin_email', '0');
         $category->notes = $request->input('notes');
         $category->created_by = auth()->id();
@@ -121,6 +122,7 @@ class CategoriesController extends Controller
         $category->eula_text = $request->input('eula_text');
         $category->use_default_eula = $request->input('use_default_eula', '0');
         $category->require_acceptance = $request->input('require_acceptance', '0');
+        $category->alert_on_response = $request->input('alert_on_response', '0');
         $category->checkin_email = $request->input('checkin_email', '0');
         $category->notes = $request->input('notes');
 
@@ -145,7 +147,7 @@ class CategoriesController extends Controller
     {
         $this->authorize('delete', Category::class);
         // Check if the category exists
-        if (is_null($category = Category::findOrFail($categoryId))) {
+        if (is_null($category = Category::withCount('assets as assets_count', 'accessories as accessories_count', 'consumables as consumables_count', 'components as components_count', 'licenses as licenses_count', 'models as models_count')->findOrFail($categoryId))) {
             return redirect()->route('categories.index')->with('error', trans('admin/categories/message.not_found'));
         }
 
@@ -155,7 +157,6 @@ class CategoriesController extends Controller
 
         Storage::disk('public')->delete('categories'.'/'.$category->image);
         $category->delete();
-        // Redirect to the locations management page
         return redirect()->route('categories.index')->with('success', trans('admin/categories/message.delete.success'));
     }
 

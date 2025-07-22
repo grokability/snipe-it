@@ -15,6 +15,6 @@ return array(
 
     'failed' => 'Þessar auðkenningar passa ekki við okkar skráningar.',
     'password' => 'Uppgefið lykilorð er rangt.',
-    'throttle' => 'Of margar innskráningartilraunir. Vinsamlegast reyndu aftur eftir :seconds sekúndur.',
+    'throttle' => 'Too many login attempts. Please try again in :minutes minute(s).',
 
 );
