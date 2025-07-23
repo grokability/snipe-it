@@ -291,6 +291,8 @@ return [
     'require_accept_signature_help_text'      => 'Enabling this feature will require users to physically sign off on accepting an asset.',
     'require_checkinout_notes'  => 'Require Notes on Checkin/Checkout',
     'require_checkinout_notes_help_text'    => 'Enabling this feature will require the note fields to be populated when checking in or checking out an asset.',
+    'log_audit' => 'Log an audit',
+    'log_audit_help_text' => 'Enabling this feature will also log an audit in addition to this',
     'left'        => 'left',
     'right'        => 'right',
     'top'        => 'top',

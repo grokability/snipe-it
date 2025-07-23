@@ -151,6 +151,25 @@
                                             </div>
                                         </div>
 
+                                        <!-- Log an audit checkbox -->
+                                        @can('audit', \App\Models\Asset::class)
+                                        <div class="form-group">
+                                            <div class="col-sm-3 control-label" >
+                                                <label>
+                                                    {{ trans('admin/settings/general.log_audit') }}
+                                                </label>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <label class="form-control">
+                                                    <input type="checkbox" value="1" name="log_audit" {{ (old('log_audit')) == '1' ? ' checked="checked"' : '' }} aria-label="log_audit">
+                                                    {{ trans('general.yes') }}
+                                                </label>
+                                                <p class="help-block">{{ trans('admin/settings/general.log_audit_help_text')  . " " .  trans('general.checkin') . "." }}</p>
+                                            </div>
+                                        </div>
+                                        @endcan
+
+
 
                                         <!-- Custom fields -->
                                         @include("models/custom_fields_form", [
