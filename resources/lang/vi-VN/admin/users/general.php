@@ -15,7 +15,7 @@ return [
     'info'				=> 'Thông tin',
     'restore_user'		=> 'Nhấp vào đây để khôi phục chúng.',
     'last_login'        => 'Lần đăng nhập trước',
-    'ldap_config_text'  => 'Bạn có thể tìm thấy cài đặt cấu hình LDAP Quản trị> Cài đặt. Địa điểm đã chọn (tùy chọn) sẽ được đặt cho tất cả người dùng được nhập.',
+    'ldap_config_text'  => 'Bạn có thể tìm thấy cài đặt cấu hình LDAP Quản trị> Cài đặt. Vị trí đã chọn (tùy chọn) sẽ được đặt cho tất cả người dùng được nhập.',
     'print_assigned'    => 'In tất cả tài sản đã cấp phát',
     'email_assigned'    => 'Danh sách email của tất cả được chỉ định',
     'user_notified'     => 'Người dùng đã được gửi qua email danh sách các thiết bị hiện được chỉ định của họ.',
