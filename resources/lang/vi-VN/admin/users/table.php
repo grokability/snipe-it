@@ -16,7 +16,7 @@ return array(
     'job' 					=> 'Tiêu đề công việc',
     'last_login'  			=> 'Lần đăng nhập trước',
     'last_name'  			=> 'Tên',
-    'location'  			=> 'Địa phương',
+    'location'  			=> 'Vị trí',
     'lock_passwords'		=> 'Chi tiết đăng nhập không thể thay đổi trong cài đặt này.',
     'manager' 				=> 'Người quản lý',
     'managed_locations'     => 'Vị trí Quản lý',
