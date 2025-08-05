@@ -153,13 +153,14 @@ class AssetCheckinController extends Controller
 
         if ($asset->save()) {
 
+            event(new CheckoutableCheckedIn($asset, $target, auth()->user(), $request->input('note'), $checkin_at, $originalValues));
+
             if(Gate::allows('audit',$asset)) {
                 if ($request->filled('log_audit') == "1") {
                     $asset->logAudit($request->input('note'), $request->input('location_id'));
                 }
             }
 
-            event(new CheckoutableCheckedIn($asset, $target, auth()->user(), $request->input('note'), $checkin_at, $originalValues));
             return Helper::getRedirectOption($request, $asset->id, 'Assets')
                 ->with('success', trans('admin/hardware/message.checkin.success'));
         }
