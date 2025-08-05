@@ -126,7 +126,7 @@ class AssetCheckoutController extends Controller
 
             if ($asset->checkOut($target, $admin, $checkout_at, $expected_checkin, $request->get('note'), $request->get('name'))) {
 
-                if(Gate::allows('audit',$asset)) {
+                if(Gate::allows('audit',Asset::class)) {
                     if ($request->filled('log_audit') == "1") {
                         $asset->logAudit($request->input('note'), $request->input('location_id'));
                     }
