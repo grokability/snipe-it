@@ -176,8 +176,6 @@
                                                 'model' => $asset->model,
                                                 'show_custom_fields_type' => 'checkin'
                                         ])
-
-
                     </div> <!--/.box-body-->
                 </div> <!--/.box-body-->
 
@@ -194,7 +192,6 @@
                 </form>
 
             </div>
-        </div>
     </div>
 
 @stop
