@@ -4,13 +4,8 @@
         "contributors:add": "all-contributors add",
         "contributors:check": "all-contributors check",
         "contributors:generate": "all-contributors generate",
-        "dev": "npm run development",
-        "development": "mix",
-        "watch": "mix watch",
-        "watch-poll": "mix watch -- --watch-options-poll=1000",
-        "hot": "mix watch --hot",
-        "prod": "npm run production",
-        "production": "mix --production"
+        "dev": "vite",
+        "build": "vite build"
     },
     "engines": {
         "node": ">=0.12"
