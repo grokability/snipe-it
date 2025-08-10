@@ -19,10 +19,11 @@
         "all-contributors-cli": "^6.26.1",
         "axios": "^1.11.0",
         "jquery": "<3.6.0",
-        "laravel-mix": "^6.0.49",
         "lodash": "^4.17.20",
         "postcss": "^8.5.6",
-        "webpack": "^5.98.0"
+        "webpack": "^5.98.0",
+        "vite": "^3.0.2",
+        "laravel-vite-plugin": "^0.6.0"
     },
     "dependencies": {
         "@fortawesome/fontawesome-free": "^6.7.2",
