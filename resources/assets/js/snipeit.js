@@ -13,15 +13,15 @@ window.$ = jQuery
 
 require('jquery-ui'); //should we export this to the window?
 jQuery.fn.uitooltip = jQuery.fn.tooltip;
-require('bootstrap-less');
-require('select2');
-require('admin-lte');
-require('tether');
-require('jquery-slimscroll');
+import 'bootstrap-less';
+import 'select2';
+import 'admin-lte';
+import 'tether';
+import 'jquery-slimscroll';
 require('jquery.iframe-transport'); //probably not needed anymore, if I'm honest
-require('blueimp-file-upload')
-require('bootstrap-colorpicker')
-require('bootstrap-datepicker')
+import 'blueimp-file-upload'
+import 'bootstrap-colorpicker'
+import 'bootstrap-datepicker'
 require('ekko-lightbox') //TODO - this doesn't seem jquery-ish, we might need to do something weird here
                          // it *does* require Bootstrap, which requires jquery, so maybe that's OK
                          // it seems to work...
@@ -29,9 +29,11 @@ require('./extensions/pGenerator.jquery'); //WEIRD, but works
 //require('chart.js') // Weirdly, this seems to "just work." Without this line, the dashboard blows up
 // but it's *HUGE* - and we only use it one place. So we're taking it out of the bundle
 window.SignaturePad = require('./signature_pad'); //ALSO WEIRD - but works
-require('jquery-validation')
-window.List = require('list.js')
-window.ClipboardJS = require('clipboard')
+import 'jquery-validation'
+import List from 'list.js'
+window.List = List
+import ClipboardJS from 'clipboard'
+window.ClipboardJS = ClipboardJS
 // TODO - find everything using moment.js and kill it or upgrade it? It's huge
 // - adminLTE (UGH)
 // - bootstrap-daterangepicker
