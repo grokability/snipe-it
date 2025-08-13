@@ -643,7 +643,7 @@
                     class="form-control select2"
                     data-placeholder="{{ trans('admin/reports/general.select_a_template') }}"
                 >
-                    <option></option>
+                    <option></option> {{-- This seems empty, but this makes the dropdown select work :| --}}
                     @foreach($report_templates as $savedTemplate)
                         <option
                             value="{{ $savedTemplate->id }}"
