@@ -33,8 +33,15 @@
                                 @else
                                     @switch($tableField->formatter)
                                         @case('dateDisplayFormatter')
-                                            <input type="date" id="advancedSearch_{{ $tableField->field }}"
-                                                name="{{ $tableField->title }}" class="datePicker">
+                                            <!--<input type="date" id="advancedSearch_{{ $tableField->field }}"
+                                                name="{{ $tableField->title }}" class="datePicker">-->
+                                            <div class="input-daterange input-group" id="checkin-range-datepicker">
+                                                <input type="date" id="advancedSearch_{{ $tableField->field }}_start"
+                                                    class="form-control" name="checkin_date_start" aria-label="checkin_date_start"">
+                                                <span class="input-group-addon">{{ strtolower(trans('general.to')) }}</span>
+                                                 <input type="date" id="advancedSearch_{{ $tableField->field }}_end" 
+                                                    class="form-control" name="checkin_date_end" aria-label="checkin_date_end"">
+                                            </div>
                                         @break
 
                                         @case('companiesLinkObjFormatter')
@@ -214,13 +221,15 @@
             });
 
             // Handle all date inputs
-            document.querySelectorAll('input[id^="advancedSearch_"][class="datePicker"]').forEach(function(el) {
+            // It filters all date inputs with the following id patterns: advancedSearch_..._start and advancedSearch_..._end
+            document.querySelectorAll(
+                'input[id^="advancedSearch_"][id$="_start"][type="date"], input[id^="advancedSearch_"][id$="_end"][type="date"]'
+            ).forEach(function(el) {
+                console.log(el);
                 // Use the field name from the id
                 const id = "#" + el.id;
                 const field = id.replace("#advancedSearch_", "");
                 if(el.value) {
-
-                    console.log("datepicker: " + el.value);
                     filters[field] = el.value;
                 }
             });

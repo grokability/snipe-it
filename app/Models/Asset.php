@@ -1745,6 +1745,12 @@ class Asset extends Depreciable
     {
         return $query->where(
             function ($query) use ($filter) {
+
+                $query = Asset::scopeDateRangeFilter($query, 'purchase_date', 'purchase_date_start', 'purchase_date_end', $filter);
+                $query = Asset::scopeDateRangeFilter($query, 'asset_eol_date', 'asset_eol_date_start', 'asset_eol_date_end', $filter);
+                $query = Asset::scopeDateRangeFilter($query, 'assets.created_at', 'created_at_start', 'created_at_end', $filter);
+                $query = Asset::scopeDateRangeFilter($query, 'assets.updated_at', 'updated_at_start', 'updated_at_end', $filter);
+
                 foreach ($filter as $key => $search_val) {
 
                     $fieldname = str_replace('custom_fields.', '', $key);
@@ -1771,6 +1777,27 @@ class Asset extends Depreciable
                         });
                     }
 
+                    if (isset($filter['purchase_date_start']) || isset($filter['purchase_date_end'])) {
+                        $query->where(function ($query) use ($filter) {
+                            if (isset($filter['purchase_date_start'])) {
+                                $query->whereDate('assets.purchase_date', '>=', $filter['purchase_date_start']);
+                            }
+                            if (isset($filter['purchase_date_end'])) {
+                                $query->whereDate('assets.purchase_date', '<=', $filter['purchase_date_end']);
+                            }
+                        });
+                    }
+
+                    if (isset($filter['eol_date_start']) || isset($filter['eol_date_end'])) {
+                        $query->where(function ($query) use ($filter) {
+                            if (isset($filter['eol_date_start'])) {
+                                $query->whereDate('assets.purchase_date', '>=', $filter['eol_date_start']);
+                            }
+                            if (isset($filter['eol_date_end'])) {
+                                $query->whereDate('assets.purchase_date', '<=', $filter['eol_date_end']);
+                            }
+                        });
+                    }
 
                     if ($fieldname == 'status_label') {
                         $query->where(function ($query) use ($search_val) {
@@ -2010,6 +2037,14 @@ class Asset extends Depreciable
                         'assigned_to',
                         'company',
                         'manufacturer',
+                        'purchase_date_start',
+                        'purchase_date_end',
+                        'asset_eol_date_start',
+                        'asset_eol_date_end',
+                        'created_at_start',
+                        'created_at_end',
+                        'updated_at_start',
+                        'updated_at_end'
                     ];
 
                     if (!in_array($fieldname, $relationalFields)) {
@@ -2268,5 +2303,28 @@ class Asset extends Depreciable
 
     }
 
+    /**
+     * Query builder scope to filter by a date range on a given field
+     *
+     * @param \Illuminate\Database\Query\Builder $query   Query builder instance
+     * @param string                             $field   Database column name
+     * @param string                             $startKey Filter array key for start date
+     * @param string                             $endKey   Filter array key for end date
+     * @param array                              $filter   Filter array
+     *
+     * @return \Illuminate\Database\Query\Builder          Modified query builder
+     */
+    public function scopeDateRangeFilter($query, $field, $startKey, $endKey, $filter)
+    {
+        if (isset($filter[$startKey])) {
+            $query->whereDate($field, '>=', $filter[$startKey]);
+            //$query->whereDate('assets.created_at', '<=', '2020-01-01');
+        }
+        
+        if (isset($filter[$endKey])) {
+            $query->whereDate($field, '<=', $filter[$endKey]);
+        }
+        return $query;
+    }
 
 }
