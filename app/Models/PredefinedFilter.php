@@ -32,14 +32,14 @@ class PredefinedFilter extends Model
         'status_id',
         'created_start',
         'created_end',
-        'purchased_start',
-        'purchased_end',
-        'checked_out_start',
-        'checked_out_end',
-        'checked_in_start',
-        'checked_in_end',
-        'expected_check_in_start',
-        'expected_check_in_end',
+        'purchase_start',
+        'purchase_end',
+        'checkout_start',
+        'checkout_end',
+        'checkin_start',
+        'checkin_end',
+        'expected_checkin_start',
+        'expected_checkin_end',
         'asset_eol_date_start',
         'asset_eol_date_end',
         'last_audit_start',
@@ -67,14 +67,14 @@ class PredefinedFilter extends Model
         'status_id'               => ['nullable', 'integer', 'exists:status_labels,id'],
         'created_start'           => ['nullable', 'date'],
         'created_end'             => ['nullable', 'date'],
-        'purchased_start'         => ['nullable', 'date'],
-        'purchased_end'           => ['nullable', 'date'],
-        'checked_out_start'       => ['nullable', 'date'],
-        'checked_out_end'         => ['nullable', 'date'],
-        'checked_in_start'        => ['nullable', 'date'],
-        'checked_in_end'          => ['nullable', 'date'],
-        'expected_check_in_start' => ['nullable', 'date'],
-        'expected_check_in_end'   => ['nullable', 'date'],
+        'purchase_start'          => ['nullable', 'date'],
+        'purchase_end'            => ['nullable', 'date'],
+        'checkout_start'          => ['nullable', 'date'],
+        'checkout_end'            => ['nullable', 'date'],
+        'checkin_start'           => ['nullable', 'date'],
+        'checkin_end'             => ['nullable', 'date'],
+        'expected_checkin_start'  => ['nullable', 'date'],
+        'expected_checkin_end'    => ['nullable', 'date'],
         'asset_eol_date_start'    => ['nullable', 'date'],
         'asset_eol_date_end'      => ['nullable', 'date'],
         'last_audit_start'        => ['nullable', 'date'],
@@ -128,17 +128,17 @@ class PredefinedFilter extends Model
         if (isset($this['purchase_end'])) {
             $assets->whereDate("assets.purchase_date", '<=', $this['purchase_end']);
         }
-        if (isset($this['checkout_date_start'])) {
-            $assets->whereDate("assets.last_checkout", '>=', $this['checkout_date_start']);
+        if (isset($this['checkout_start'])) {
+            $assets->whereDate("assets.last_checkout", '>=', $this['checkout_start']);
         }
-        if (isset($this['checkout_date_end'])) {
-            $assets->whereDate("assets.last_checkout", '<=', $this['checkout_date_end']);
+        if (isset($this['checkout_end'])) {
+            $assets->whereDate("assets.last_checkout", '<=', $this['checkout_end']);
         }
-        if (isset($this['checkin_date_start'])) {
-            $assets->whereDate("assets.last_checkin", '>=', $this['checkin_date_start']);
+        if (isset($this['checkin_start'])) {
+            $assets->whereDate("assets.last_checkin", '>=', $this['checkin_start']);
         }
-        if (isset($this['checkin_date_end'])) {
-            $assets->whereDate("assets.last_checkin", '<=', $this['checkin_date_end']);
+        if (isset($this['checkin_end'])) {
+            $assets->whereDate("assets.last_checkin", '<=', $this['checkin_end']);
         }
         if (isset($this['expected_checkin_start'])) {
             $assets->whereDate("assets.expected_checkin", '>=', $this['expected_checkin_start']);
