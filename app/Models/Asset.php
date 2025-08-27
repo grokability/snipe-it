@@ -1870,7 +1870,29 @@ class Asset extends Depreciable
                         });
                     }
 
-
+                    if ($fieldname == 'jobtitle') {
+                        $query->where(function ($query) use ($search_val) {
+                            if (is_array($search_val)) {
+                                $query->whereHasMorph(
+                                    'assignedTo',
+                                    [User::class],
+                                    function ($query) use ($search_val) {
+                                        $query->whereIn('users.jobtitle', $search_val);
+                                    }
+                                );
+                            } else {
+                                $query->whereHasMorph(
+                                    'assignedTo',
+                                    [User::class],
+                                    function ($query) use ($search_val) {
+                                        $query->where(function ($query) use ($search_val) {
+                                            $query->where('users.jobtitle', 'LIKE', '%' . $search_val . '%');
+                                        });
+                                    }
+                                );
+                            }
+                        });
+                    }
 
                     if ($fieldname == 'manufacturer') {
                         $query->where(function ($query) use ($search_val) {
@@ -2044,7 +2066,8 @@ class Asset extends Depreciable
                         'created_at_start',
                         'created_at_end',
                         'updated_at_start',
-                        'updated_at_end'
+                        'updated_at_end',
+                        'jobtitle'
                     ];
 
                     if (!in_array($fieldname, $relationalFields)) {
