@@ -1799,76 +1799,159 @@ class Asset extends Depreciable
                         });
                     }
 
+                    // For the 'status_label' field
                     if ($fieldname == 'status_label') {
                         $query->where(function ($query) use ($search_val) {
                             if (is_array($search_val)) {
-                                $query->whereHas('assetstatus', function ($query) use ($search_val) {
-                                    $query->whereIn('status_labels.name', $search_val);
-                                });
+                                // Check if the array is empty
+                                if (!empty($search_val)) {
+                                    // Separate integers (IDs) and strings
+                                    $ids = array_filter($search_val, 'is_int'); // Get only integers (IDs)
+                                    $names = array_diff($search_val, $ids); // Get only strings (names)
+    
+                                    if ($ids) {
+                                        $query->whereHas('assetstatus', function ($query) use ($ids) {
+                                            $query->whereIn('status_labels.id', $ids); // Filter by status label IDs
+                                        });
+                                    }
+
+                                    if ($names) {
+                                        $query->whereHas('assetstatus', function ($query) use ($names) {
+                                            $query->whereIn('status_labels.name', $names); // Filter by status label names
+                                        });
+                                    }
+                                }
                             } else {
-                                $query->whereHas('assetstatus', function ($query) use ($search_val) {
-                                    $query->where('status_labels.name', 'LIKE', '%' . $search_val . '%');
-                                });
+                                // If $search_val is a single value
+                                if (is_int($search_val)) {
+                                    $query->whereHas('assetstatus', function ($query) use ($search_val) {
+                                        $query->where('status_labels.id', $search_val); // Filter by status label ID
+                                    });
+                                } else {
+                                    $query->whereHas('assetstatus', function ($query) use ($search_val) {
+                                        $query->where('status_labels.name', 'LIKE', '%' . $search_val . '%'); // Filter by status label name
+                                    });
+                                }
                             }
                         });
                     }
 
-
+                    // For the 'location' field
                     if ($fieldname == 'location') {
                         $query->where(function ($query) use ($search_val) {
                             if (is_array($search_val)) {
-                                $query->whereHas('location', function ($query) use ($search_val) {
-                                    $query->whereIn('locations.name', $search_val);
-                                });
+                                // Check if the array is empty
+                                if (!empty($search_val)) {
+                                    // Separate integers (IDs) and strings
+                                    $ids = array_filter($search_val, 'is_int'); // Get only integers (IDs)
+                                    $names = array_diff($search_val, $ids); // Get only strings (names)
+    
+                                    if ($ids) {
+                                        $query->whereHas('location', function ($query) use ($ids) {
+                                            $query->whereIn('locations.id', $ids); // Filter by location IDs
+                                        });
+                                    }
+
+                                    if ($names) {
+                                        $query->whereHas('location', function ($query) use ($names) {
+                                            $query->whereIn('locations.name', $names); // Filter by location names
+                                        });
+                                    }
+                                }
                             } else {
-                                $query->whereHas('location', function ($query) use ($search_val) {
-                                    $query->where('locations.name', 'LIKE', '%' . $search_val . '%');
-                                });
+                                // If $search_val is a single value
+                                if (is_int($search_val)) {
+                                    $query->whereHas('location', function ($query) use ($search_val) {
+                                        $query->where('locations.id', $search_val); // Filter by location ID
+                                    });
+                                } else {
+                                    $query->whereHas('location', function ($query) use ($search_val) {
+                                        $query->where('locations.name', 'LIKE', '%' . $search_val . '%'); // Filter by location name
+                                    });
+                                }
                             }
                         });
                     }
 
-
+                    // For the 'rtd_location' field
                     if ($fieldname == 'rtd_location') {
                         $query->where(function ($query) use ($search_val) {
                             if (is_array($search_val)) {
-                                $query->whereHas('defaultLoc', function ($query) use ($search_val) {
-                                    $query->whereIn('locations.name', $search_val);
-                                });
+                                // Check if the array is empty
+                                if (!empty($search_val)) {
+                                    // Separate integers (IDs) and strings
+                                    $ids = array_filter($search_val, 'is_int'); // Get only integers (IDs)
+                                    $names = array_diff($search_val, $ids); // Get only strings (names)
+    
+                                    if ($ids) {
+                                        $query->whereHas('defaultLoc', function ($query) use ($ids) {
+                                            $query->whereIn('locations.id', $ids); // Filter by RTD location IDs
+                                        });
+                                    }
+
+                                    if ($names) {
+                                        $query->whereHas('defaultLoc', function ($query) use ($names) {
+                                            $query->whereIn('locations.name', $names); // Filter by RTD location names
+                                        });
+                                    }
+                                }
                             } else {
-                                $query->whereHas('defaultLoc', function ($query) use ($search_val) {
-                                    $query->where('locations.name', 'LIKE', '%' . $search_val . '%');
-                                });
+                                // If $search_val is a single value
+                                if (is_int($search_val)) {
+                                    $query->whereHas('defaultLoc', function ($query) use ($search_val) {
+                                        $query->where('locations.id', $search_val); // Filter by RTD location ID
+                                    });
+                                } else {
+                                    $query->whereHas('defaultLoc', function ($query) use ($search_val) {
+                                        $query->where('locations.name', 'LIKE', '%' . $search_val . '%'); // Filter by RTD location name
+                                    });
+                                }
                             }
                         });
                     }
 
-
+                    // For the 'assigned_to' field
                     if ($fieldname == 'assigned_to') {
                         $query->where(function ($query) use ($search_val) {
                             if (is_array($search_val)) {
-                                $query->whereHasMorph(
-                                    'assignedTo',
-                                    [User::class],
-                                    function ($query) use ($search_val) {
-                                        $query->whereIn('users.first_name', $search_val)
-                                            ->orWhereIn('users.last_name', $search_val);
+                                // Check if the array is empty
+                                if (!empty($search_val)) {
+                                    // Separate integers (IDs) and strings (user names)
+                                    $ids = array_filter($search_val, 'is_int'); // Get only integers (IDs)
+                                    $names = array_diff($search_val, $ids); // Get only strings (names)
+    
+                                    if ($ids) {
+                                        $query->whereHasMorph('assignedTo', [User::class], function ($query) use ($ids) {
+                                            $query->whereIn('users.id', $ids); // Filter by user IDs
+                                        });
                                     }
-                                );
+
+                                    if ($names) {
+                                        $query->whereHasMorph('assignedTo', [User::class], function ($query) use ($names) {
+                                            $query->whereIn('users.first_name', $names)
+                                                ->orWhereIn('users.last_name', $names);
+                                        });
+                                    }
+                                }
                             } else {
-                                $query->whereHasMorph(
-                                    'assignedTo',
-                                    [User::class],
-                                    function ($query) use ($search_val) {
+                                // If $search_val is a single value
+                                if (is_int($search_val)) {
+                                    $query->whereHasMorph('assignedTo', [User::class], function ($query) use ($search_val) {
+                                        $query->where('users.id', $search_val); // Filter by user ID
+                                    });
+                                } else {
+                                    $query->whereHasMorph('assignedTo', [User::class], function ($query) use ($search_val) {
                                         $query->where(function ($query) use ($search_val) {
                                             $query->where('users.first_name', 'LIKE', '%' . $search_val . '%')
                                                 ->orWhere('users.last_name', 'LIKE', '%' . $search_val . '%');
                                         });
-                                    }
-                                );
+                                    });
+                                }
                             }
                         });
                     }
+
+
 
                     if ($fieldname == 'jobtitle') {
                         $query->where(function ($query) use ($search_val) {
@@ -1897,66 +1980,130 @@ class Asset extends Depreciable
                     if ($fieldname == 'manufacturer') {
                         $query->where(function ($query) use ($search_val) {
                             if (is_array($search_val)) {
-                                $query->whereHas('model', function ($query) use ($search_val) {
-                                    $query->whereHas('manufacturer', function ($query) use ($search_val) {
-                                        $query->whereIn('manufacturers.name', $search_val);
-                                    });
-                                });
+                                // Check if the array is empty
+                                if (!empty($search_val)) {
+                                    // Separate integers (IDs) and strings (names)
+                                    $ids = array_filter($search_val, 'is_int'); // Get only integers (IDs)
+                                    $names = array_diff($search_val, $ids); // Get only strings (names)
+    
+                                    if ($ids) {
+                                        $query->whereHas('model', function ($query) use ($ids) {
+                                            $query->whereHas('manufacturer', function ($query) use ($ids) {
+                                                $query->whereIn('manufacturers.id', $ids); // Filter by manufacturer IDs
+                                            });
+                                        });
+                                    }
+
+                                    if ($names) {
+                                        $query->whereHas('model', function ($query) use ($names) {
+                                            $query->whereHas('manufacturer', function ($query) use ($names) {
+                                                $query->whereIn('manufacturers.name', $names); // Filter by manufacturer names
+                                            });
+                                        });
+                                    }
+                                }
                             } else {
-                                $query->whereHas('model', function ($query) use ($search_val) {
-                                    $query->whereHas('manufacturer', function ($query) use ($search_val) {
-                                        $query->where('manufacturers.name', 'LIKE', '%' . $search_val . '%');
+                                // If $search_val is a single value
+                                if (is_int($search_val)) {
+                                    $query->whereHas('model', function ($query) use ($search_val) {
+                                        $query->whereHas('manufacturer', function ($query) use ($search_val) {
+                                            $query->where('manufacturers.id', $search_val); // Filter by manufacturer ID
+                                        });
                                     });
-                                });
+                                } else {
+                                    $query->whereHas('model', function ($query) use ($search_val) {
+                                        $query->whereHas('manufacturer', function ($query) use ($search_val) {
+                                            $query->where('manufacturers.name', 'LIKE', '%' . $search_val . '%'); // Filter by manufacturer name
+                                        });
+                                    });
+                                }
                             }
                         });
                     }
+
 
 
                     if ($fieldname == 'category') {
                         $query->where(function ($query) use ($search_val) {
                             if (is_array($search_val)) {
-                                $query->whereHas('model', function ($query) use ($search_val) {
-                                    $query->whereHas('category', function ($query) use ($search_val) {
-                                        $query->whereIn('categories.name', $search_val);
-                                    });
-                                });
+                                // Check if the array is empty
+                                if (!empty($search_val)) {
+                                    // Separate integers (IDs) and strings (names)
+                                    $ids = array_filter($search_val, 'is_int'); // Get only integers (IDs)
+                                    $names = array_diff($search_val, $ids); // Get only strings (names)
+    
+                                    if ($ids) {
+                                        $query->whereHas('model', function ($query) use ($ids) {
+                                            $query->whereHas('category', function ($query) use ($ids) {
+                                                $query->whereIn('categories.id', $ids); // Filter by category IDs
+                                            });
+                                        });
+                                    }
+
+                                    if ($names) {
+                                        $query->whereHas('model', function ($query) use ($names) {
+                                            $query->whereHas('category', function ($query) use ($names) {
+                                                $query->whereIn('categories.name', $names); // Filter by category names
+                                            });
+                                        });
+                                    }
+                                }
                             } else {
-                                $query->whereHas('model', function ($query) use ($search_val) {
-                                    $query->whereHas('category', function ($query) use ($search_val) {
-                                        $query->where(function ($query) use ($search_val) {
-                                            $query->where('categories.name', 'LIKE', '%' . $search_val . '%')
-                                                ->orWhere('models.name', 'LIKE', '%' . $search_val . '%')
-                                                ->orWhere('models.model_number', 'LIKE', '%' . $search_val . '%');
+                                // If $search_val is a single value
+                                if (is_int($search_val)) {
+                                    $query->whereHas('model', function ($query) use ($search_val) {
+                                        $query->whereHas('category', function ($query) use ($search_val) {
+                                            $query->where('categories.id', $search_val); // Filter by category ID
                                         });
                                     });
-                                });
+                                } else {
+                                    $query->whereHas('model', function ($query) use ($search_val) {
+                                        $query->whereHas('category', function ($query) use ($search_val) {
+                                            $query->where('categories.name', 'LIKE', '%' . $search_val . '%'); // Filter by category name
+                                        });
+                                    });
+                                }
                             }
                         });
                     }
 
-
+                    // For the 'model' field
                     if ($fieldname == 'model') {
-                        $query->where(
-                            function ($query) use ($search_val) {
-                                if (is_array($search_val)) {
-                                    $query->whereHas(
-                                        'model',
-                                        function ($query) use ($search_val) {
-                                            $query->whereIn('models.name', $search_val);
-                                        }
-                                    );
+                        $query->where(function ($query) use ($search_val) {
+                            if (is_array($search_val)) {
+                                // Check if the array is empty
+                                if (!empty($search_val)) {
+                                    // Separate integers (IDs) and strings (names)
+                                    $ids = array_filter($search_val, 'is_int'); // Get only integers (IDs)
+                                    $names = array_diff($search_val, $ids); // Get only strings (names)
+    
+                                    if ($ids) {
+                                        $query->whereHas('model', function ($query) use ($ids) {
+                                            $query->whereIn('models.id', $ids); // Filter by model IDs
+                                        });
+                                    }
+
+                                    if ($names) {
+                                        $query->whereHas('model', function ($query) use ($names) {
+                                            $query->whereIn('models.name', $names); // Filter by model names
+                                        });
+                                    }
+                                }
+                            } else {
+                                // If $search_val is a single value
+                                if (is_int($search_val)) {
+                                    $query->whereHas('model', function ($query) use ($search_val) {
+                                        $query->where('models.id', $search_val); // Filter by model ID
+                                    });
                                 } else {
-                                    $query->whereHas(
-                                        'model',
-                                        function ($query) use ($search_val) {
-                                            $query->where('models.name', 'LIKE', '%' . $search_val . '%');
-                                        }
-                                    );
+                                    $query->whereHas('model', function ($query) use ($search_val) {
+                                        $query->where('models.name', 'LIKE', '%' . $search_val . '%'); // Filter by model name
+                                    });
                                 }
                             }
-                        );
+                        });
                     }
+
 
                     if ($fieldname == 'model_number') {
                         $query->where(
@@ -1980,49 +2127,76 @@ class Asset extends Depreciable
                         );
                     }
 
-
                     if ($fieldname == 'company') {
-                        $query->where(
-                            function ($query) use ($search_val) {
-                                if (is_array($search_val)) {
-                                    $query->whereHas(
-                                        'company',
-                                        function ($query) use ($search_val) {
-                                            $query->whereIn('companies.name', $search_val);
-                                        }
-                                    );
+                        $query->where(function ($query) use ($search_val) {
+                            if (is_array($search_val)) {
+                                // Check if the array is empty
+                                if (!empty($search_val)) {
+                                    // Separate integers (IDs) and strings (names)
+                                    $ids = array_filter($search_val, 'is_int'); // Get only integers (IDs)
+                                    $names = array_diff($search_val, $ids); // Get only strings (names)
+    
+                                    if ($ids) {
+                                        $query->whereHas('company', function ($query) use ($ids) {
+                                            $query->whereIn('companies.id', $ids); // Filter by company IDs
+                                        });
+                                    }
+
+                                    if ($names) {
+                                        $query->whereHas('company', function ($query) use ($names) {
+                                            $query->whereIn('companies.name', $names); // Filter by company names
+                                        });
+                                    }
+                                }
+                            } else {
+                                // If $search_val is a single value
+                                if (is_int($search_val)) {
+                                    $query->whereHas('company', function ($query) use ($search_val) {
+                                        $query->where('companies.id', $search_val); // Filter by company ID
+                                    });
                                 } else {
-                                    $query->whereHas(
-                                        'company',
-                                        function ($query) use ($search_val) {
-                                            $query->where('companies.name', 'LIKE', '%' . $search_val . '%');
-                                        }
-                                    );
+                                    $query->whereHas('company', function ($query) use ($search_val) {
+                                        $query->where('companies.name', 'LIKE', '%' . $search_val . '%'); // Filter by company name
+                                    });
                                 }
                             }
-                        );
+                        });
                     }
 
                     if ($fieldname == 'supplier') {
-                        $query->where(
-                            function ($query) use ($search_val) {
-                                if (is_array($search_val)) {
-                                    $query->whereHas(
-                                        'supplier',
-                                        function ($query) use ($search_val) {
-                                            $query->whereIn('suppliers.name', $search_val);
-                                        }
-                                    );
+                        $query->where(function ($query) use ($search_val) {
+                            if (is_array($search_val)) {
+                                // Check if the array is empty
+                                if (!empty($search_val)) {
+                                    // Separate integers (IDs) and strings (names)
+                                    $ids = array_filter($search_val, 'is_int'); // Get only integers (IDs)
+                                    $names = array_diff($search_val, $ids); // Get only strings (names)
+    
+                                    if ($ids) {
+                                        $query->whereHas('supplier', function ($query) use ($ids) {
+                                            $query->whereIn('suppliers.id', $ids); // Filter by supplier IDs
+                                        });
+                                    }
+
+                                    if ($names) {
+                                        $query->whereHas('supplier', function ($query) use ($names) {
+                                            $query->whereIn('suppliers.name', $names); // Filter by supplier names
+                                        });
+                                    }
+                                }
+                            } else {
+                                // If $search_val is a single value
+                                if (is_int($search_val)) {
+                                    $query->whereHas('supplier', function ($query) use ($search_val) {
+                                        $query->where('suppliers.id', $search_val); // Filter by supplier ID
+                                    });
                                 } else {
-                                    $query->whereHas(
-                                        'supplier',
-                                        function ($query) use ($search_val) {
-                                            $query->where('suppliers.name', 'LIKE', '%' . $search_val . '%');
-                                        }
-                                    );
+                                    $query->whereHas('supplier', function ($query) use ($search_val) {
+                                        $query->where('suppliers.name', 'LIKE', '%' . $search_val . '%'); // Filter by supplier name
+                                    });
                                 }
                             }
-                        );
+                        });
                     }
 
 
@@ -2343,7 +2517,7 @@ class Asset extends Depreciable
             $query->whereDate($field, '>=', $filter[$startKey]);
             //$query->whereDate('assets.created_at', '<=', '2020-01-01');
         }
-        
+
         if (isset($filter[$endKey])) {
             $query->whereDate($field, '<=', $filter[$endKey]);
         }
