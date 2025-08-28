@@ -3,55 +3,24 @@ name: advanced_search Tests
 on:
   push:
     branches: ['test/improve_advanced_search-pipeline']
-    paths:
-      - 'app/**'
-      - 'config/**'
-      - 'database/**'
-      - 'routes/**'
-      - 'composer.*'
-      - 'phpunit.xml*'
-      - '.github/workflows/tests.yml'
   pull_request:
   workflow_dispatch:
-    inputs:
-      php:
-        description: 'PHP-Version (8.2|8.3|8.4)'
-        required: false
-        default: '8.3'
-      db:
-        description: 'DB (mysql|sqlite)'
-        required: false
-        default: 'mysql'
-      group:
-        description: 'PHPUnit --group (optional, z.B. assetquery)'
-        required: false
-        default: ''
-      filter:
-        description: 'PHPUnit --filter (optional, Klassen-/Methodenname/Regex)'
-        required: false
-        default: ''
 
 concurrency:
   group: tests-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  tests:
-    name: PHP ${{ matrix.php }} • ${{ matrix.db }}
+  tests-mysql:
+    name: MySQL • PHP ${{ matrix.php }}
     runs-on: ubuntu-latest
-
     strategy:
       fail-fast: false
       matrix:
         php: ['8.2','8.3','8.4']
-        db: ['mysql']
-    env:
-      PHP_SELECTED: ${{ github.event.inputs.php || matrix.php }}
-      DB_SELECTED:  ${{ github.event.inputs.db || matrix.db }}
 
     services:
       mysql:
-        if: ${{ env.DB_SELECTED == 'mysql' }}
         image: mysql:5.7
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
@@ -60,9 +29,7 @@ jobs:
           - 33306:3306
         options: >-
           --health-cmd="mysqladmin ping"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
+          --health-interval=10s --health-timeout=5s --health-retries=5
 
     steps:
       - uses: actions/checkout@v4
@@ -70,7 +37,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ env.PHP_SELECTED }}
+          php-version: ${{ matrix.php }}
           coverage: none
           tools: composer
 
@@ -80,34 +47,25 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-${{ env.PHP_SELECTED }}-composer-${{ hashFiles('**/composer.lock') }}
+          key: ${{ runner.os }}-${{ matrix.php }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
-            ${{ runner.os }}-${{ env.PHP_SELECTED }}-composer-
+            ${{ runner.os }}-${{ matrix.php }}-composer-
 
-      - name: Prepare .env.testing
+      - name: Prepare .env.testing (MySQL)
         run: |
-          # Nimm vorhandene Vorlage, oder fallback auf example
           cp -v .env.testing-ci .env.testing || cp -v .env.testing.example .env.testing
+          sed -i 's/^APP_ENV=.*/APP_ENV=testing/' .env.testing || echo "APP_ENV=testing" >> .env.testing
+          sed -i 's/^DB_CONNECTION=.*/DB_CONNECTION=mysql/' .env.testing
+          sed -i 's/^DB_HOST=.*/DB_HOST=127.0.0.1/' .env.testing
+          sed -i 's/^DB_PORT=.*/DB_PORT=${{ job.services.mysql.ports[3306] }}/' .env.testing
+          sed -i 's/^DB_DATABASE=.*/DB_DATABASE=snipeit_test/' .env.testing
+          sed -i 's/^DB_USERNAME=.*/DB_USERNAME=root/' .env.testing
+          sed -i 's/^DB_PASSWORD=.*/DB_PASSWORD=/' .env.testing
 
-          if [ "${{ env.DB_SELECTED }}" = "mysql" ]; then
-            # MySQL: TCP-Port des Services eintragen
-            sed -i 's/^DB_CONNECTION=.*/DB_CONNECTION=mysql/' .env.testing
-            sed -i 's/^DB_HOST=.*/DB_HOST=127.0.0.1/' .env.testing
-            sed -i 's/^DB_PORT=.*/DB_PORT=${{ job.services.mysql.ports[3306] }}//' .env.testing
-            sed -i 's/^DB_DATABASE=.*/DB_DATABASE=snipeit_test/' .env.testing
-            sed -i 's/^DB_USERNAME=.*/DB_USERNAME=root/' .env.testing
-            sed -i 's/^DB_PASSWORD=.*/DB_PASSWORD=/' .env.testing
-          else
-            # SQLite: Datei-DB verwenden
-            sed -i 's/^DB_CONNECTION=.*/DB_CONNECTION=sqlite/' .env.testing || echo "DB_CONNECTION=sqlite" >> .env.testing
-            sed -i 's/^DB_DATABASE=.*/DB_DATABASE=database\/testing.sqlite/' .env.testing || echo "DB_DATABASE=database/testing.sqlite" >> .env.testing
-            mkdir -p database && touch database/testing.sqlite
-          fi
-
-      - name: Install Dependencies (with dev)
+      - name: Install Dependencies
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
-      - name: App key & Migrate
+      - name: Migrate & Prepare
         env:
           APP_ENV: testing
         run: |
@@ -117,12 +75,61 @@ jobs:
           php artisan passport:install --env=testing --no-interaction || true
           chmod -R 777 storage bootstrap/cache
 
-      - name: Run Tests
+      - name: Run Tests (MySQL)
+        env:
+          APP_ENV: testing
+        run: php artisan test --env=testing
+
+  tests-sqlite:
+    name: SQLite • PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.2','8.3','8.4']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+          tools: composer, sqlite
+
+      - name: Cache Composer
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-${{ matrix.php }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.php }}-composer-
+
+      - name: Prepare .env.testing (SQLite)
+        run: |
+          cp -v .env.testing-ci .env.testing || cp -v .env.testing.example .env.testing
+          sed -i 's/^APP_ENV=.*/APP_ENV=testing/' .env.testing || echo "APP_ENV=testing" >> .env.testing
+          sed -i 's/^DB_CONNECTION=.*/DB_CONNECTION=sqlite/' .env.testing || echo "DB_CONNECTION=sqlite" >> .env.testing
+          sed -i 's|^DB_DATABASE=.*|DB_DATABASE=database/testing.sqlite|' .env.testing || echo "DB_DATABASE=database/testing.sqlite" >> .env.testing
+          mkdir -p database && touch database/testing.sqlite
+
+      - name: Install Dependencies
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+      - name: Migrate & Prepare
         env:
           APP_ENV: testing
         run: |
-          CMD="php artisan test --env=testing"
-          [ -n "${{ github.event.inputs.group }}" ]  && CMD="$CMD --group '${{ github.event.inputs.group }}'"
-          [ -n "${{ github.event.inputs.filter }}" ] && CMD="$CMD --filter '${{ github.event.inputs.filter }}'"
-          echo "Running: $CMD"
-          bash -lc "$CMD"
+          php artisan key:generate --env=testing
+          php artisan config:clear
+          php artisan migrate --env=testing --force
+          php artisan passport:install --env=testing --no-interaction || true
+          chmod -R 777 storage bootstrap/cache
+
+      - name: Run Tests (SQLite)
+        env:
+          APP_ENV: testing
+        run: php artisan test --env=testing
