@@ -619,6 +619,7 @@ class UsersController extends Controller
                 ->with('settings', Setting::getSettings())
                 ->with('printable_customfields', CustomField::all()->filter(function ($customfield) {
                     return $customfield->display_on_print_assigned && $customfield->field_encrypted == 0;
+                    //This should make it to NOT show encrypted custom fields on the printout
                 }));
         }
 
