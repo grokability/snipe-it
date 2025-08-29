@@ -644,10 +644,11 @@ class CombinedQueryTest extends TestCase
 
     public function testFilterWithNullValueReturnsNone()
     {
-        Asset::factory()->count(2)->create();
+        $numberOfAssets = 5;
+        Asset::factory()->count($numberOfAssets)->create();
         $filter = ['location' => null];
         $results = Asset::query()->byFilter($filter)->get();
-        $this->assertCount(0, $results);
+        $this->assertCount($numberOfAssets, $results);
     }
 
     public function testConflictingFiltersReturnNone()

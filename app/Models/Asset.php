@@ -1810,21 +1810,13 @@ class Asset extends Depreciable
                                     $names = array_filter($search_val, 'is_string');
 
                                     if ($ids || $names) {
-                                        Asset::whereHasMatch($query, 'assetstatus', $ids, $names, 'status_labels.id', 'status_labels.name');
+                                        Asset::whereHasMatchItemArray($query, 'assetstatus', $ids, $names, 'status_labels.id', 'status_labels.name');
                                     }
                                 }
 
                             } else {
                                 // If $search_val is a single value
-                                if (is_int($search_val)) {
-                                    $query->whereHas('assetstatus', function ($query) use ($search_val) {
-                                        $query->where('status_labels.id', $search_val); // Filter by status label ID
-                                    });
-                                } else {
-                                    $query->whereHas('assetstatus', function ($query) use ($search_val) {
-                                        $query->where('status_labels.name', 'LIKE', '%' . $search_val . '%'); // Filter by status label name
-                                    });
-                                }
+                                Asset::whereHasMatchSingleItem($query, 'assetstatus', $search_val, 'status_labels.id', 'status_labels.name');
                             }
                         });
                     }
@@ -1839,21 +1831,13 @@ class Asset extends Depreciable
                                     $ids = array_filter($search_val, 'is_int');
                                     $names = array_filter($search_val, 'is_string');
 
-                                    Asset::whereHasMatch($query, 'location', $ids, $names, 'locations.id', 'locations.name');
+                                    Asset::whereHasMatchItemArray($query, 'location', $ids, $names, 'locations.id', 'locations.name');
 
                                 }
 
                             } else {
                                 // If $search_val is a single value
-                                if (is_int($search_val)) {
-                                    $query->whereHas('location', function ($query) use ($search_val) {
-                                        $query->where('locations.id', $search_val); // Filter by location ID
-                                    });
-                                } else {
-                                    $query->whereHas('location', function ($query) use ($search_val) {
-                                        $query->where('locations.name', 'LIKE', '%' . $search_val . '%'); // Filter by location name
-                                    });
-                                }
+                                Asset::whereHasMatchSingleItem($query, 'location', $search_val, 'locations.id', 'locations.name');
                             }
                         });
                     }
@@ -1868,20 +1852,12 @@ class Asset extends Depreciable
                                     $ids = array_filter($search_val, 'is_int'); // Get only integers (IDs)
                                     $names = array_diff($search_val, $ids); // Get only strings (names)
     
-                                    Asset::whereHasMatch($query, 'defaultLoc', $ids, $names, 'locations.id', 'locations.name');
+                                    Asset::whereHasMatchItemArray($query, 'defaultLoc', $ids, $names, 'locations.id', 'locations.name');
 
                                 }
                             } else {
                                 // If $search_val is a single value
-                                if (is_int($search_val)) {
-                                    $query->whereHas('defaultLoc', function ($query) use ($search_val) {
-                                        $query->where('locations.id', $search_val); // Filter by RTD location ID
-                                    });
-                                } else {
-                                    $query->whereHas('defaultLoc', function ($query) use ($search_val) {
-                                        $query->where('locations.name', 'LIKE', '%' . $search_val . '%'); // Filter by RTD location name
-                                    });
-                                }
+                                Asset::whereHasMatchSingleItem($query, 'defaultLoc', $search_val, 'locations.id', 'locations.name');
                             }
                         });
                     }
@@ -1893,6 +1869,7 @@ class Asset extends Depreciable
                                 $ids = array_filter($search_val, 'is_int');
                                 $names = array_filter($search_val, 'is_string');
 
+                                // Can't use the method whereHasMatch currently due to first and last name
                                 if ($ids || $names) {
                                     $query->whereHas('assignedTo', function ($query) use ($ids, $names) {
                                         $query->where(function ($subQuery) use ($ids, $names) {
@@ -1907,10 +1884,10 @@ class Asset extends Depreciable
                                         });
                                     });
                                 }
-                                //dump($query->toRawSQL());
-    
+
                             } else {
                                 // If $search_val is a single value
+                                // whereHasMatchSingleItem won't work due first and last name currently
                                 if (is_int($search_val)) {
                                     $query->whereHasMorph('assignedTo', [User::class], function ($query) use ($search_val) {
                                         $query->where('users.id', $search_val); // Filter by user ID
@@ -1964,25 +1941,15 @@ class Asset extends Depreciable
 
                                     if ($ids || $names) {
                                         $query->whereHas('model', function ($query) use ($ids, $names) {
-                                            Asset::whereHasMatch($query, 'manufacturer', $ids, $names, 'manufacturers.id', 'manufacturers.name');
+                                            Asset::whereHasMatchItemArray($query, 'manufacturer', $ids, $names, 'manufacturers.id', 'manufacturers.name');
                                         });
                                     }
                                 }
                             } else {
                                 // If $search_val is a single value
-                                if (is_int($search_val)) {
-                                    $query->whereHas('model', function ($query) use ($search_val) {
-                                        $query->whereHas('manufacturer', function ($query) use ($search_val) {
-                                            $query->where('manufacturers.id', $search_val); // Filter by manufacturer ID
-                                        });
-                                    });
-                                } else {
-                                    $query->whereHas('model', function ($query) use ($search_val) {
-                                        $query->whereHas('manufacturer', function ($query) use ($search_val) {
-                                            $query->where('manufacturers.name', 'LIKE', '%' . $search_val . '%'); // Filter by manufacturer name
-                                        });
-                                    });
-                                }
+                                $query->whereHas('model', function ($query) use ($search_val) {
+                                    Asset::whereHasMatchSingleItem($query, 'manufacturer', $search_val, 'manufacturers.id', 'manufacturers.name');
+                                });
                             }
                         });
                     }
@@ -1998,38 +1965,16 @@ class Asset extends Depreciable
                                     $ids = array_filter($search_val, 'is_int');
                                     $names = array_filter($search_val, 'is_string');
 
-                                    if ($ids || $names) {
-                                        $query->whereHas('model', function ($query) use ($ids, $names) {
-                                            $query->whereHas('category', function ($subQuery) use ($ids, $names) {
-                                                $subQuery->where(function ($q) use ($ids, $names) {
-                                                    if ($ids) {
-                                                        $q->whereIn('categories.id', $ids);
-                                                    }
-
-                                                    if ($names) {
-                                                        $q->orWhereIn('categories.name', $names);
-                                                    }
-                                                });
-                                            });
-                                        });
-                                    }
+                                    $query->whereHas('model', function ($query) use ($ids, $names) {
+                                        Asset::whereHasMatchItemArray($query, 'category', $ids, $names, 'categories.id', 'categories.name');
+                                    });
                                 }
 
                             } else {
                                 // If $search_val is a single value
-                                if (is_int($search_val)) {
-                                    $query->whereHas('model', function ($query) use ($search_val) {
-                                        $query->whereHas('category', function ($query) use ($search_val) {
-                                            $query->where('categories.id', $search_val); // Filter by category ID
-                                        });
-                                    });
-                                } else {
-                                    $query->whereHas('model', function ($query) use ($search_val) {
-                                        $query->whereHas('category', function ($query) use ($search_val) {
-                                            $query->where('categories.name', 'LIKE', '%' . $search_val . '%'); // Filter by category name
-                                        });
-                                    });
-                                }
+                                $query->whereHas('model', function ($query) use ($search_val) {
+                                    Asset::whereHasMatchSingleItem($query, 'category', $search_val, 'categories.id', 'categories.name');
+                                });
                             }
                         });
                     }
@@ -2044,31 +1989,11 @@ class Asset extends Depreciable
                                     $ids = array_filter($search_val, fn($val) => is_numeric($val) && (int) $val == $val);
                                     $names = array_filter($search_val, fn($val) => is_string($val) && trim($val) !== '');
 
-
-                                    $query->whereHas('model', function ($query) use ($ids, $names) {
-                                        $query->where(function ($query) use ($ids, $names) {
-                                            if (!empty($ids)) {
-                                                $query->whereIn('models.id', $ids);
-                                            }
-
-                                            if (!empty($names)) {
-                                                $query->orWhereIn('models.name', $names);
-                                            }
-                                        });
-                                    });
+                                    Asset::whereHasMatchItemArray($query, 'model', $ids, $names, 'models.id', 'models.name');
 
                                 }
                             } else {
-                                // If $search_val is a single value
-                                if (is_int($search_val)) {
-                                    $query->whereHas('model', function ($query) use ($search_val) {
-                                        $query->where('models.id', $search_val); // Filter by model ID
-                                    });
-                                } else {
-                                    $query->whereHas('model', function ($query) use ($search_val) {
-                                        $query->where('models.name', 'LIKE', '%' . $search_val . '%'); // Filter by model name
-                                    });
-                                }
+                                Asset::whereHasMatchSingleItem($query, 'model', $search_val, 'models.id', 'models.name');
                             }
                         });
                     }
@@ -2106,31 +2031,13 @@ class Asset extends Depreciable
                                     $names = array_filter($search_val, 'is_string');
 
                                     if ($ids || $names) {
-                                        $query->whereHas('company', function ($q) use ($ids, $names) {
-                                            $q->where(function ($subQuery) use ($ids, $names) {
-                                                if ($ids) {
-                                                    $subQuery->whereIn('companies.id', $ids);
-                                                }
-
-                                                if ($names) {
-                                                    $subQuery->orWhereIn('companies.name', $names);
-                                                }
-                                            });
-                                        });
+                                        Asset::whereHasMatchItemArray($query, 'company', $ids, $names, 'companies.id', 'companies.name');
                                     }
                                 }
 
                             } else {
                                 // If $search_val is a single value
-                                if (is_int($search_val)) {
-                                    $query->whereHas('company', function ($query) use ($search_val) {
-                                        $query->where('companies.id', $search_val); // Filter by company ID
-                                    });
-                                } else {
-                                    $query->whereHas('company', function ($query) use ($search_val) {
-                                        $query->where('companies.name', 'LIKE', '%' . $search_val . '%'); // Filter by company name
-                                    });
-                                }
+                                Asset::whereHasMatchSingleItem($query, 'company', $search_val, 'companies.id', 'companies.name');
                             }
                         });
                     }
@@ -2145,21 +2052,13 @@ class Asset extends Depreciable
                                     $names = array_filter($search_val, 'is_string');
 
                                     if ($ids || $names) {
-                                        Asset::whereHasMatch($query, 'supplier', $ids, $names, 'suppliers.id', 'suppliers.name');
+                                        Asset::whereHasMatchItemArray($query, 'supplier', $ids, $names, 'suppliers.id', 'suppliers.name');
                                     }
                                 }
 
                             } else {
                                 // If $search_val is a single value
-                                if (is_int($search_val)) {
-                                    $query->whereHas('supplier', function ($query) use ($search_val) {
-                                        $query->where('suppliers.id', $search_val); // Filter by supplier ID
-                                    });
-                                } else {
-                                    $query->whereHas('supplier', function ($query) use ($search_val) {
-                                        $query->where('suppliers.name', 'LIKE', '%' . $search_val . '%'); // Filter by supplier name
-                                    });
-                                }
+                                Asset::whereHasMatchSingleItem($query, 'supplier', $search_val, 'suppliers.id', 'suppliers.name');
                             }
                         });
                     }
@@ -2218,17 +2117,27 @@ class Asset extends Depreciable
                             }
                         });
                     }
-
-
                 }
-
-
             }
         );
 
     }
 
-    function whereHasMatch($query, $relation, $ids, $names, $idColumn = 'id', $nameColumn = 'name')
+    private function whereHasMatchSingleItem($query, $relation, $searchValue, $idColumn = 'id', $nameColumn = 'name')
+    {
+        if (is_int($searchValue)) {
+            $query->whereHas($relation, function ($query) use ($idColumn, $searchValue) {
+                $query->where($idColumn, $searchValue); // Filter by status label ID
+            });
+        } else if (is_string($searchValue)) {
+            $query->whereHas($relation, function ($query) use ($nameColumn, $searchValue) {
+                $query->where($nameColumn, 'LIKE', '%' . $searchValue . '%'); // Filter by status label name
+            });
+        }
+        return $query;
+    }
+
+    private function whereHasMatchItemArray($query, $relation, $ids, $names, $idColumn = 'id', $nameColumn = 'name')
     {
         return $query->whereHas($relation, function ($q) use ($ids, $names, $idColumn, $nameColumn) {
             $q->where(function ($sub) use ($ids, $names, $idColumn, $nameColumn) {
