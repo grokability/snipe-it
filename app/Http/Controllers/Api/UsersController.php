@@ -18,6 +18,7 @@ use App\Models\Accessory;
 use App\Models\Company;
 use App\Models\Consumable;
 use App\Models\License;
+use App\Models\Setting;
 use App\Models\User;
 use App\Notifications\CurrentInventory;
 use App\Notifications\WelcomeNotification;
@@ -660,6 +661,49 @@ class UsersController extends Controller
 
         return response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/users/message.user_not_found', compact('id'))));
 
+    }
+
+    /**
+     * Print inventory
+     *
+     * @since [v8.3.2]
+     * @author Aladin Alaily
+     */
+    public function printInventory($id)
+    {
+        $this->authorize('view', User::class);
+
+        $user = User::where('id', $id)
+            ->with([
+                'assets.log' => fn($query) => $query->withTrashed()->where('target_type', User::class)->where('target_id', $id)->where('action_type', 'accepted'),
+                'assets.assignedAssets.log' => fn($query) => $query->withTrashed()->where('target_type', User::class)->where('target_id', $id)->where('action_type', 'accepted'),
+                'assets.assignedAssets.defaultLoc',
+                'assets.assignedAssets.location',
+                'assets.assignedAssets.model.category',
+                'assets.defaultLoc',
+                'assets.location',
+                'assets.model.category',
+                'accessories.log' => fn($query) => $query->withTrashed()->where('target_type', User::class)->where('target_id', $id)->where('action_type', 'accepted'),
+                'accessories.category',
+                'accessories.manufacturer',
+                'consumables.log' => fn($query) => $query->withTrashed()->where('target_type', User::class)->where('target_id', $id)->where('action_type', 'accepted'),
+                'consumables.category',
+                'consumables.manufacturer',
+                'licenses.category',
+            ])
+            ->withTrashed()
+            ->first();
+
+        if ($user) {
+            $this->authorize('view', $user);
+
+            return response()->json(Helper::formatStandardApiResponse('success',view('users.print')
+                ->with('users', [$user])
+                ->with('settings', Setting::getSettings())
+                ->render(), null));
+        }
+
+        return response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/users/message.user_not_found', compact('id'))));
     }
 
     /**

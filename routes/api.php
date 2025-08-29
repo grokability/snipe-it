@@ -1103,6 +1103,14 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
                 ]
             )->name('api.users.email_assets');
 
+            Route::get('{userId}/print',
+                [
+                    Api\UsersController::class,
+                    'printInventory'
+                ]
+            )->name('api.users.print');
+
+
             Route::get('{user}/accessories',
             [
                 Api\UsersController::class, 
