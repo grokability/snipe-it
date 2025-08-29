@@ -120,4 +120,68 @@ class RtdLocationQueryTest extends TestCase
         $this->assertFalse($results->contains($assetD));
 
     }
+
+    public function testFilterAssetLocationId()
+    {
+
+        // Given: Locations and assets
+        $locationA = Location::factory()->create();
+        $locationB = Location::factory()->create();
+
+        $assetA = Asset::factory()->create(['rtd_location_id' => $locationA->id]);
+        $assetB = Asset::factory()->create(['rtd_location_id' => $locationB->id]);
+
+        $filter = ['rtd_location' => $locationA->id];
+        $results = Asset::query()->byFilter($filter)->get();
+
+        // Then: Should include only assetA and assetB
+        $this->assertCount(1, $results);
+        $this->assertTrue($results->contains($assetA));
+        $this->assertFalse($results->contains($assetB));
+
+    }
+
+    public function testFilterAssetLocationIdArraySingle()
+    {
+
+        // Given: Locations and assets
+        $locationA = Location::factory()->create();
+        $locationB = Location::factory()->create();
+
+        $assetA = Asset::factory()->create(['rtd_location_id' => $locationA->id]);
+        $assetB = Asset::factory()->create(['rtd_location_id' => $locationB->id]);
+
+        $filter = ['rtd_location' => [$locationA->id]];
+        $results = Asset::query()->byFilter($filter)->get();
+
+        // Then: Should include only assetA and assetB
+        $this->assertCount(1, $results);
+        $this->assertTrue($results->contains($assetA));
+        $this->assertFalse($results->contains($assetB));
+
+    }
+
+    public function testFilterAssetLocationIdAndNameArray()
+    {
+
+        // Given: Locations and assets
+        $locationA = Location::factory()->create();
+        $locationB = Location::factory()->create();
+        $locationC = Location::factory()->create();
+
+        $assetA = Asset::factory()->create(['rtd_location_id' => $locationA->id]);
+        $assetB = Asset::factory()->create(['rtd_location_id' => $locationB->id]);
+        $assetC = Asset::factory()->create(['rtd_location_id' => $locationC->id]);
+
+        $filter = ['rtd_location' => [$locationA->id, $locationB->name]];
+        $results = Asset::query()->byFilter($filter)->get();
+
+        // Then: Should include only assetA and assetB
+        $this->assertCount(2, $results);
+        $this->assertTrue($results->contains($assetA));
+        $this->assertTrue($results->contains($assetB));
+        $this->assertFalse($results->contains($assetC));
+
+    }
+
 }

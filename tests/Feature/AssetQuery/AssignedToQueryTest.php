@@ -254,4 +254,64 @@ class AssignedToQueryTest extends TestCase
 
     }
 
+    public function testFilterAssetAssignedToUserId()
+    {
+        $userA = User::factory()->create();
+        $userB = User::factory()->create();
+
+        // Assets
+        $assetA = Asset::factory()->create(['assigned_type' => User::class, 'assigned_to' => $userA->id]);
+        $assetB = Asset::factory()->create(['assigned_type' => User::class, 'assigned_to' => $userB->id]);
+
+        $filter = ['assigned_to' => $userA->id];
+
+        $results = Asset::query()->byFilter($filter)->get();
+
+        $this->assertCount(1, $results);
+        $this->assertTrue($results->contains($assetA));
+        $this->assertFalse($results->contains($assetB));
+    }
+
+    public function testFilterAssetAssignedToUserIdArraySingle()
+    {
+        $userA = User::factory()->create();
+        $userB = User::factory()->create();
+
+        // Assets
+        $assetA = Asset::factory()->create(['assigned_type' => User::class, 'assigned_to' => $userA->id]);
+        $assetB = Asset::factory()->create(['assigned_type' => User::class, 'assigned_to' => $userB->id]);
+
+        $filter = ['assigned_to' => [$userA->id]];
+
+        $results = Asset::query()->byFilter($filter)->get();
+
+        $this->assertCount(1, $results);
+        $this->assertTrue($results->contains($assetA));
+        $this->assertFalse($results->contains($assetB));
+    }
+
+    public function testFilterAssetAssignedToUserIdAndNameArray()
+    {
+        $userA = User::factory()->create();
+        $userB = User::factory()->create();
+        $userC = User::factory()->create();
+        $userD = User::factory()->create();
+
+        // Assets
+        $assetA = Asset::factory()->create(['assigned_type' => User::class, 'assigned_to' => $userA->id]);
+        $assetB = Asset::factory()->create(['assigned_type' => User::class, 'assigned_to' => $userB->id]);
+        $assetC = Asset::factory()->create(['assigned_type' => User::class, 'assigned_to' => $userC->id]);
+        $assetD = Asset::factory()->create(['assigned_type' => User::class, 'assigned_to' => $userD->id]);
+
+        $filter = ['assigned_to' => [$userA->id, $userB->first_name, $userC->last_name]];
+
+        $results = Asset::query()->byFilter($filter)->get();
+
+        $this->assertCount(3, $results);
+        $this->assertTrue($results->contains($assetA));
+        $this->assertTrue($results->contains($assetB));
+        $this->assertTrue($results->contains($assetC));
+        $this->assertFalse($results->contains($assetD));
+    }
+
 }

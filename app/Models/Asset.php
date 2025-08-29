@@ -1805,22 +1805,15 @@ class Asset extends Depreciable
                             if (is_array($search_val)) {
                                 // Check if the array is empty
                                 if (!empty($search_val)) {
-                                    // Separate integers (IDs) and strings
-                                    $ids = array_filter($search_val, 'is_int'); // Get only integers (IDs)
-                                    $names = array_diff($search_val, $ids); // Get only strings (names)
-    
-                                    if ($ids) {
-                                        $query->whereHas('assetstatus', function ($query) use ($ids) {
-                                            $query->whereIn('status_labels.id', $ids); // Filter by status label IDs
-                                        });
-                                    }
+                                    // Separate integers (IDs) and strings (names)
+                                    $ids = array_filter($search_val, 'is_int');
+                                    $names = array_filter($search_val, 'is_string');
 
-                                    if ($names) {
-                                        $query->whereHas('assetstatus', function ($query) use ($names) {
-                                            $query->whereIn('status_labels.name', $names); // Filter by status label names
-                                        });
+                                    if ($ids || $names) {
+                                        Asset::whereHasMatch($query, 'assetstatus', $ids, $names, 'status_labels.id', 'status_labels.name');
                                     }
                                 }
+
                             } else {
                                 // If $search_val is a single value
                                 if (is_int($search_val)) {
@@ -1842,22 +1835,14 @@ class Asset extends Depreciable
                             if (is_array($search_val)) {
                                 // Check if the array is empty
                                 if (!empty($search_val)) {
-                                    // Separate integers (IDs) and strings
-                                    $ids = array_filter($search_val, 'is_int'); // Get only integers (IDs)
-                                    $names = array_diff($search_val, $ids); // Get only strings (names)
-    
-                                    if ($ids) {
-                                        $query->whereHas('location', function ($query) use ($ids) {
-                                            $query->whereIn('locations.id', $ids); // Filter by location IDs
-                                        });
-                                    }
+                                    // Separate integers (IDs) and strings (names)
+                                    $ids = array_filter($search_val, 'is_int');
+                                    $names = array_filter($search_val, 'is_string');
 
-                                    if ($names) {
-                                        $query->whereHas('location', function ($query) use ($names) {
-                                            $query->whereIn('locations.name', $names); // Filter by location names
-                                        });
-                                    }
+                                    Asset::whereHasMatch($query, 'location', $ids, $names, 'locations.id', 'locations.name');
+
                                 }
+
                             } else {
                                 // If $search_val is a single value
                                 if (is_int($search_val)) {
@@ -1883,17 +1868,8 @@ class Asset extends Depreciable
                                     $ids = array_filter($search_val, 'is_int'); // Get only integers (IDs)
                                     $names = array_diff($search_val, $ids); // Get only strings (names)
     
-                                    if ($ids) {
-                                        $query->whereHas('defaultLoc', function ($query) use ($ids) {
-                                            $query->whereIn('locations.id', $ids); // Filter by RTD location IDs
-                                        });
-                                    }
+                                    Asset::whereHasMatch($query, 'defaultLoc', $ids, $names, 'locations.id', 'locations.name');
 
-                                    if ($names) {
-                                        $query->whereHas('defaultLoc', function ($query) use ($names) {
-                                            $query->whereIn('locations.name', $names); // Filter by RTD location names
-                                        });
-                                    }
                                 }
                             } else {
                                 // If $search_val is a single value
@@ -1913,26 +1889,26 @@ class Asset extends Depreciable
                     // For the 'assigned_to' field
                     if ($fieldname == 'assigned_to') {
                         $query->where(function ($query) use ($search_val) {
-                            if (is_array($search_val)) {
-                                // Check if the array is empty
-                                if (!empty($search_val)) {
-                                    // Separate integers (IDs) and strings (user names)
-                                    $ids = array_filter($search_val, 'is_int'); // Get only integers (IDs)
-                                    $names = array_diff($search_val, $ids); // Get only strings (names)
-    
-                                    if ($ids) {
-                                        $query->whereHasMorph('assignedTo', [User::class], function ($query) use ($ids) {
-                                            $query->whereIn('users.id', $ids); // Filter by user IDs
-                                        });
-                                    }
+                            if (is_array($search_val) && !empty($search_val)) {
+                                $ids = array_filter($search_val, 'is_int');
+                                $names = array_filter($search_val, 'is_string');
 
-                                    if ($names) {
-                                        $query->whereHasMorph('assignedTo', [User::class], function ($query) use ($names) {
-                                            $query->whereIn('users.first_name', $names)
-                                                ->orWhereIn('users.last_name', $names);
+                                if ($ids || $names) {
+                                    $query->whereHas('assignedTo', function ($query) use ($ids, $names) {
+                                        $query->where(function ($subQuery) use ($ids, $names) {
+                                            if ($ids) {
+                                                $subQuery->whereIn('id', $ids);
+                                            }
+
+                                            if ($names) {
+                                                $subQuery->orWhereIn('first_name', $names)
+                                                    ->orWhereIn('last_name', $names);
+                                            }
                                         });
-                                    }
+                                    });
                                 }
+                                //dump($query->toRawSQL());
+    
                             } else {
                                 // If $search_val is a single value
                                 if (is_int($search_val)) {
@@ -1983,22 +1959,12 @@ class Asset extends Depreciable
                                 // Check if the array is empty
                                 if (!empty($search_val)) {
                                     // Separate integers (IDs) and strings (names)
-                                    $ids = array_filter($search_val, 'is_int'); // Get only integers (IDs)
-                                    $names = array_diff($search_val, $ids); // Get only strings (names)
-    
-                                    if ($ids) {
-                                        $query->whereHas('model', function ($query) use ($ids) {
-                                            $query->whereHas('manufacturer', function ($query) use ($ids) {
-                                                $query->whereIn('manufacturers.id', $ids); // Filter by manufacturer IDs
-                                            });
-                                        });
-                                    }
+                                    $ids = array_filter($search_val, 'is_int');
+                                    $names = array_diff($search_val, $ids);
 
-                                    if ($names) {
-                                        $query->whereHas('model', function ($query) use ($names) {
-                                            $query->whereHas('manufacturer', function ($query) use ($names) {
-                                                $query->whereIn('manufacturers.name', $names); // Filter by manufacturer names
-                                            });
+                                    if ($ids || $names) {
+                                        $query->whereHas('model', function ($query) use ($ids, $names) {
+                                            Asset::whereHasMatch($query, 'manufacturer', $ids, $names, 'manufacturers.id', 'manufacturers.name');
                                         });
                                     }
                                 }
@@ -2029,25 +1995,26 @@ class Asset extends Depreciable
                                 // Check if the array is empty
                                 if (!empty($search_val)) {
                                     // Separate integers (IDs) and strings (names)
-                                    $ids = array_filter($search_val, 'is_int'); // Get only integers (IDs)
-                                    $names = array_diff($search_val, $ids); // Get only strings (names)
-    
-                                    if ($ids) {
-                                        $query->whereHas('model', function ($query) use ($ids) {
-                                            $query->whereHas('category', function ($query) use ($ids) {
-                                                $query->whereIn('categories.id', $ids); // Filter by category IDs
-                                            });
-                                        });
-                                    }
+                                    $ids = array_filter($search_val, 'is_int');
+                                    $names = array_filter($search_val, 'is_string');
 
-                                    if ($names) {
-                                        $query->whereHas('model', function ($query) use ($names) {
-                                            $query->whereHas('category', function ($query) use ($names) {
-                                                $query->whereIn('categories.name', $names); // Filter by category names
+                                    if ($ids || $names) {
+                                        $query->whereHas('model', function ($query) use ($ids, $names) {
+                                            $query->whereHas('category', function ($subQuery) use ($ids, $names) {
+                                                $subQuery->where(function ($q) use ($ids, $names) {
+                                                    if ($ids) {
+                                                        $q->whereIn('categories.id', $ids);
+                                                    }
+
+                                                    if ($names) {
+                                                        $q->orWhereIn('categories.name', $names);
+                                                    }
+                                                });
                                             });
                                         });
                                     }
                                 }
+
                             } else {
                                 // If $search_val is a single value
                                 if (is_int($search_val)) {
@@ -2074,20 +2041,22 @@ class Asset extends Depreciable
                                 // Check if the array is empty
                                 if (!empty($search_val)) {
                                     // Separate integers (IDs) and strings (names)
-                                    $ids = array_filter($search_val, 'is_int'); // Get only integers (IDs)
-                                    $names = array_diff($search_val, $ids); // Get only strings (names)
-    
-                                    if ($ids) {
-                                        $query->whereHas('model', function ($query) use ($ids) {
-                                            $query->whereIn('models.id', $ids); // Filter by model IDs
-                                        });
-                                    }
+                                    $ids = array_filter($search_val, fn($val) => is_numeric($val) && (int) $val == $val);
+                                    $names = array_filter($search_val, fn($val) => is_string($val) && trim($val) !== '');
 
-                                    if ($names) {
-                                        $query->whereHas('model', function ($query) use ($names) {
-                                            $query->whereIn('models.name', $names); // Filter by model names
+
+                                    $query->whereHas('model', function ($query) use ($ids, $names) {
+                                        $query->where(function ($query) use ($ids, $names) {
+                                            if (!empty($ids)) {
+                                                $query->whereIn('models.id', $ids);
+                                            }
+
+                                            if (!empty($names)) {
+                                                $query->orWhereIn('models.name', $names);
+                                            }
                                         });
-                                    }
+                                    });
+
                                 }
                             } else {
                                 // If $search_val is a single value
@@ -2133,21 +2102,24 @@ class Asset extends Depreciable
                                 // Check if the array is empty
                                 if (!empty($search_val)) {
                                     // Separate integers (IDs) and strings (names)
-                                    $ids = array_filter($search_val, 'is_int'); // Get only integers (IDs)
-                                    $names = array_diff($search_val, $ids); // Get only strings (names)
-    
-                                    if ($ids) {
-                                        $query->whereHas('company', function ($query) use ($ids) {
-                                            $query->whereIn('companies.id', $ids); // Filter by company IDs
-                                        });
-                                    }
+                                    $ids = array_filter($search_val, 'is_int');
+                                    $names = array_filter($search_val, 'is_string');
 
-                                    if ($names) {
-                                        $query->whereHas('company', function ($query) use ($names) {
-                                            $query->whereIn('companies.name', $names); // Filter by company names
+                                    if ($ids || $names) {
+                                        $query->whereHas('company', function ($q) use ($ids, $names) {
+                                            $q->where(function ($subQuery) use ($ids, $names) {
+                                                if ($ids) {
+                                                    $subQuery->whereIn('companies.id', $ids);
+                                                }
+
+                                                if ($names) {
+                                                    $subQuery->orWhereIn('companies.name', $names);
+                                                }
+                                            });
                                         });
                                     }
                                 }
+
                             } else {
                                 // If $search_val is a single value
                                 if (is_int($search_val)) {
@@ -2169,21 +2141,14 @@ class Asset extends Depreciable
                                 // Check if the array is empty
                                 if (!empty($search_val)) {
                                     // Separate integers (IDs) and strings (names)
-                                    $ids = array_filter($search_val, 'is_int'); // Get only integers (IDs)
-                                    $names = array_diff($search_val, $ids); // Get only strings (names)
-    
-                                    if ($ids) {
-                                        $query->whereHas('supplier', function ($query) use ($ids) {
-                                            $query->whereIn('suppliers.id', $ids); // Filter by supplier IDs
-                                        });
-                                    }
+                                    $ids = array_filter($search_val, 'is_int');
+                                    $names = array_filter($search_val, 'is_string');
 
-                                    if ($names) {
-                                        $query->whereHas('supplier', function ($query) use ($names) {
-                                            $query->whereIn('suppliers.name', $names); // Filter by supplier names
-                                        });
+                                    if ($ids || $names) {
+                                        Asset::whereHasMatch($query, 'supplier', $ids, $names, 'suppliers.id', 'suppliers.name');
                                     }
                                 }
+
                             } else {
                                 // If $search_val is a single value
                                 if (is_int($search_val)) {
@@ -2263,6 +2228,19 @@ class Asset extends Depreciable
 
     }
 
+    function whereHasMatch($query, $relation, $ids, $names, $idColumn = 'id', $nameColumn = 'name')
+    {
+        return $query->whereHas($relation, function ($q) use ($ids, $names, $idColumn, $nameColumn) {
+            $q->where(function ($sub) use ($ids, $names, $idColumn, $nameColumn) {
+                if (!empty($ids)) {
+                    $sub->whereIn($idColumn, $ids);
+                }
+                if (!empty($names)) {
+                    $sub->orWhereIn($nameColumn, $names);
+                }
+            });
+        });
+    }
 
     /**
      * Query builder scope to order on model
