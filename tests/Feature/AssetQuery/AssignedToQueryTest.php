@@ -11,7 +11,7 @@ class AssignedToQueryTest extends TestCase
 {
 
     // Assigned to user
-    public function testFilterAssetAssignedToUserFirstnameEmptyString()
+    public function testFilterAssetAssignedToEmptyString()
     {
         $userA = User::factory()->create();
         $userB = User::factory()->create();
@@ -314,4 +314,191 @@ class AssignedToQueryTest extends TestCase
         $this->assertFalse($results->contains($assetD));
     }
 
+    // Assigned to location
+    public function testFilterAssetAssignedToLocationStringComplete()
+    {
+        $locationA = Location::factory()->create();
+        $locationB = Location::factory()->create();
+
+        // Assets
+        $assetA = Asset::factory()->create(['assigned_type' => Location::class, 'assigned_to' => $locationA->id]);
+        $assetB = Asset::factory()->create(['assigned_type' => Location::class, 'assigned_to' => $locationB->id]);
+
+        $filter = ['assigned_to' => $locationA->name];
+
+        $results = Asset::query()->byFilter($filter)->get();
+
+        $this->assertCount(1, $results);
+        $this->assertTrue($results->contains($assetA));
+        $this->assertFalse($results->contains($assetB));
+    }
+
+    public function testFilterAssetAssignedToLocationStringPartital()
+    {
+        $locationA = Location::factory()->create();
+        $locationB = Location::factory()->create();
+
+        // Assets
+        $assetA = Asset::factory()->create(['assigned_type' => Location::class, 'assigned_to' => $locationA->id]);
+        $assetB = Asset::factory()->create(['assigned_type' => Location::class, 'assigned_to' => $locationB->id]);
+
+        $queryString = substr($locationA->first_name, 0, floor(strlen($locationA->first_name) / 2));
+        $filter = ['assigned_to' => $locationA->name];
+
+        $results = Asset::query()->byFilter($filter)->get();
+
+        $this->assertCount(1, $results);
+        $this->assertTrue($results->contains($assetA));
+        $this->assertFalse($results->contains($assetB));
+    }
+
+    public function testFilterAssetAssignedToLocationArraySingle()
+    {
+        $locationA = Location::factory()->create();
+        $locationB = Location::factory()->create();
+
+        // Assets
+        $assetA = Asset::factory()->create(['assigned_type' => Location::class, 'assigned_to' => $locationA->id]);
+        $assetB = Asset::factory()->create(['assigned_type' => Location::class, 'assigned_to' => $locationB->id]);
+
+        $filter = ['assigned_to' => [$locationA->name]];
+
+        $results = Asset::query()->byFilter($filter)->get();
+
+        $this->assertCount(1, $results);
+        $this->assertTrue($results->contains($assetA));
+        $this->assertFalse($results->contains($assetB));
+    }
+
+    public function testFilterAssetAssignedToLocationArrayMultiple()
+    {
+        $locationA = Location::factory()->create();
+        $locationB = Location::factory()->create();
+        $locationC = Location::factory()->create();
+
+        // Assets
+        $assetA = Asset::factory()->create(['assigned_type' => Location::class, 'assigned_to' => $locationA->id]);
+        $assetB = Asset::factory()->create(['assigned_type' => Location::class, 'assigned_to' => $locationB->id]);
+        $assetC = Asset::factory()->create(['assigned_type' => Location::class, 'assigned_to' => $locationC->id]);
+
+        $filter = ['assigned_to' => [$locationA->name, $locationC->name]];
+
+        $results = Asset::query()->byFilter($filter)->get();
+
+        $this->assertCount(2, $results);
+        $this->assertTrue($results->contains($assetA));
+        $this->assertTrue($results->contains($assetC));
+        $this->assertFalse($results->contains($assetB));
+    }
+
+    public function testFilterAssetAssignedToLocationId()
+    {
+        $locationA = Location::factory()->create();
+        $locationB = Location::factory()->create();
+
+        // Assets
+        $assetA = Asset::factory()->create(['assigned_type' => Location::class, 'assigned_to' => $locationA->id]);
+        $assetB = Asset::factory()->create(['assigned_type' => Location::class, 'assigned_to' => $locationB->id]);
+
+        $filter = ['assigned_to' => $locationA->id];
+
+        $results = Asset::query()->byFilter($filter)->get();
+
+        $this->assertCount(1, $results);
+        $this->assertTrue($results->contains($assetA));
+        $this->assertFalse($results->contains($assetB));
+    }
+
+    // Assigned to asset
+    public function testFilterAssetAssignedToAssetStringComplete()
+    {
+
+        // Assets
+        $assetThereAssetIsAssignedA = Asset::factory()->create();
+        $assetThereAssetIsAssignedB = Asset::factory()->create();
+        $assetA = Asset::factory()->create(['assigned_type' => Asset::class, 'assigned_to' => $assetThereAssetIsAssignedA->id]);
+        $assetB = Asset::factory()->create(['assigned_type' => Asset::class, 'assigned_to' => $assetThereAssetIsAssignedB->id]);
+
+        $filter = ['assigned_to' => $assetThereAssetIsAssignedA->name];
+
+        $results = Asset::query()->byFilter($filter)->get();
+
+        $this->assertCount(1, $results);
+        $this->assertTrue($results->contains($assetA));
+        $this->assertFalse($results->contains($assetB));
+    }
+
+    public function testFilterAssetAssignedToAssetStringPartital()
+    {
+        // Assets
+        $assetThereAssetIsAssignedA = Asset::factory()->create();
+        $assetThereAssetIsAssignedB = Asset::factory()->create();
+        $assetA = Asset::factory()->create(['assigned_type' => Asset::class, 'assigned_to' => $assetThereAssetIsAssignedA->id]);
+        $assetB = Asset::factory()->create(['assigned_type' => Asset::class, 'assigned_to' => $assetThereAssetIsAssignedB->id]);
+
+        $queryString = substr($assetThereAssetIsAssignedA->first_name, 0, floor(strlen($assetThereAssetIsAssignedA->first_name) / 2));
+        $filter = ['assigned_to' => $queryString];
+
+        $results = Asset::query()->byFilter($filter)->get();
+
+        $this->assertCount(1, $results);
+        $this->assertTrue($results->contains($assetA));
+        $this->assertFalse($results->contains($assetB));
+    }
+
+    public function testFilterAssetAssignedToAssetArraySingle()
+    {
+        // Assets
+        $assetThereAssetIsAssignedA = Asset::factory()->create();
+        $assetThereAssetIsAssignedB = Asset::factory()->create();
+        $assetA = Asset::factory()->create(['assigned_type' => Asset::class, 'assigned_to' => $assetThereAssetIsAssignedA->id]);
+        $assetB = Asset::factory()->create(['assigned_type' => Asset::class, 'assigned_to' => $assetThereAssetIsAssignedB->id]);
+
+        $filter = ['assigned_to' => [$assetThereAssetIsAssignedA->name]];
+
+        $results = Asset::query()->byFilter($filter)->get();
+
+        $this->assertCount(1, $results);
+        $this->assertTrue($results->contains($assetA));
+        $this->assertFalse($results->contains($assetB));
+    }
+
+    public function testFilterAssetAssignedToAssetArrayMultiple()
+    {
+        // Assets
+        $assetThereAssetIsAssignedA = Asset::factory()->create();
+        $assetThereAssetIsAssignedB = Asset::factory()->create();
+        $assetThereAssetIsAssignedC = Asset::factory()->create();
+        $assetA = Asset::factory()->create(['assigned_type' => Asset::class, 'assigned_to' => $assetThereAssetIsAssignedA->id]);
+        $assetB = Asset::factory()->create(['assigned_type' => Asset::class, 'assigned_to' => $assetThereAssetIsAssignedB->id]);
+        $assetC = Asset::factory()->create(['assigned_type' => Asset::class, 'assigned_to' => $assetThereAssetIsAssignedC->id]);
+
+        $filter = ['assigned_to' => [$assetThereAssetIsAssignedA->name, $assetThereAssetIsAssignedB->name]];
+
+        $results = Asset::query()->byFilter($filter)->get();
+
+        $this->assertCount(2, $results);
+        $this->assertTrue($results->contains($assetA));
+        $this->assertTrue($results->contains($assetA));
+        $this->assertFalse($results->contains($assetC));
+    }
+
+    public function testFilterAssetAssignedToAssetId()
+    {
+        // Assets
+        $assetThereAssetIsAssignedA = Asset::factory()->create();
+        $assetThereAssetIsAssignedB = Asset::factory()->create();
+        $assetA = Asset::factory()->create(['assigned_type' => Asset::class, 'assigned_to' => $assetThereAssetIsAssignedA->id]);
+        $assetB = Asset::factory()->create(['assigned_type' => Asset::class, 'assigned_to' => $assetThereAssetIsAssignedB->id]);
+
+        $filter = ['assigned_to' => $assetThereAssetIsAssignedA->id];
+
+        $results = Asset::query()->byFilter($filter)->get();
+
+        $this->assertCount(1, $results);
+        $this->assertTrue($results->contains($assetA));
+        $this->assertFalse($results->contains($assetB));
+    }
+
+    // Mixed queries
 }

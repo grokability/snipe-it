@@ -27,9 +27,7 @@
                                 </label>
                                 @if (!isset($tableField->formatter))
                                     {{-- Default select if formatter is not set --}}
-                                    <select class="form-control select2" data-endpoint="{{ $tableField->field }}"
-                                        name="{{ $tableField->title }}" style="width: 100%"
-                                        id="advancedSearch_{{ $tableField->field }}"></select>
+                                    <input class="advancedSearch_defaultField" type="text" autocomplete="on" id="advancedSearch_{{ $tableField->field }}_input" >
                                 @else
                                     @switch($tableField->formatter)
                                         @case('dateDisplayFormatter')
@@ -163,9 +161,7 @@
                                         @break
 
                                         @default
-                                            <select class="form-control select2" data-endpoint="{{ $tableField->field }}"
-                                                name="{{ $tableField->title }}" style="width: 100%"
-                                                id="advancedSearch_{{ $tableField->field }}_input"></select>
+                                            <input class="advancedSearch_defaultField" type="text" autocomplete="on" id="advancedSearch_{{ $tableField->field }}_input" >
                                     @endswitch
                                 @endif
                             </div>
