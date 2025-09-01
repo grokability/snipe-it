@@ -20,17 +20,6 @@ return new class extends Migration
             $table->timestamp('deleted_at')->nullable();
             $table->longText('filter_data');
             $table->unsignedInteger('permission_group_id')->nullable();
-
-            // Foreign keys
-            $table->foreign('created_by')
-                  ->references('id')
-                  ->on('users')
-                  ->onDelete('cascade');
-
-            $table->foreign('permission_group_id')
-                  ->references('id')
-                  ->on('permission_groups')
-                  ->onDelete('set null');
         });
     }
     /**
