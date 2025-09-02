@@ -137,7 +137,7 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
 
      
      /**
-      * Categpries API routes
+      * Categories API routes
       */
       Route::group(['prefix' => 'categories'], function () {
         
@@ -162,7 +162,7 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
         'except' => ['create', 'edit'],
         'parameters' => ['category' => 'category_id'],
         ]
-    ); // end category API routes
+    ); // end categories API routes
 
      /**
       * Companies API routes
