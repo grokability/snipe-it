@@ -43,12 +43,148 @@ class PredefinedFilterSeeder extends Seeder
 
         $filters = [
             [
-                'name'         => 'Company Filter',
+                'name'         => 'Name Filter',
+                'filter_data'  => ['name' => 'Test'],
+            ],
+            [
+                'name'         => 'Asset Tag Like 123',
+                'filter_data'  => ['asset_tag' => '123'],
+            ],
+            [
+                'name'         => 'Model Filter',
+                'filter_data'  => ['model_id' => '1'], // not tested
+            ],
+            [
+                'name'         => 'Serial Filter',
+                'filter_data'  => ['serial' => '42'], // not tested
+            ],
+            [
+                'name'         => 'purchase Filter',
+                'filter_data'  => ['purchase_date' => '2025-02-02'], // not tested
+            ],
+            [
+                'name'         => 'asset eol Filter',
+                'filter_data'  => ['asset_eol_date' => '2025-02-02'], // not tested
+            ],
+            [
+                'name'         => 'eol explicit Filter',
+                'filter_data'  => ['eol_explicit' => '2025-02-02'], // not tested
+            ],
+            [
+                'name'         => 'purchase_cost',
+                'filter_data'  => ['purchas_cost' => '2025-02-02'], // not tested
+            ],
+            [
+                'name'         => 'order number',
+                'filter_data'  => ['order_number' => '2025-02-02'], // not tested
+            ],
+            [
+                'name'         => 'assigned to',
+                'filter_data'  => ['assigned_to' => '2025-02-02'], // not tested
+            ],
+            [
+                'name'         => 'notes',
+                'filter_data'  => ['notes' => '2025-02-02'], // not tested
+            ],
+            [
+                'name'         => 'created by',
+                'filter_data'  => ['created_by' => '2025-02-02'], // not tested
+            ],
+            [
+                'name'         => 'created at',
+                'filter_data'  => ['created_at' => '2025-02-02'], // not tested
+            ],
+            [
+                'name'         => 'updadet at',
+                'filter_data'  => ['updated_at' => '2025-02-02'], // not tested
+            ],
+            [
+                'name'         => 'physical',
+                'filter_data'  => ['physical' => '2025-02-02'], // not tested
+            ],
+            [
+                'name'         => 'deleted at',
+                'filter_data'  => ['deleted_at' => '2025-02-02'], // not tested
+            ],
+            [
+                'name'         => 'status id',
+                'filter_data'  => ['status_id' => '2025-02-02'], // not tested
+            ],
+            [
+                'name'         => 'archived',
+                'filter_data'  => ['archived' => '2025-02-02'], // not tested
+            ],
+            [
+                'name'         => 'warranty months',
+                'filter_data'  => ['warranty_months' => '2025-02-02'], // not tested
+            ],
+            [
+                'name'         => 'depreciate',
+                'filter_data'  => ['depreciate' => '2025-02-02'], // not tested
+            ],
+            [
+                'name'         => 'supplier id',
+                'filter_data'  => ['supplier_id' => '2025-02-02'], // not tested
+            ],
+            [
+                'name'         => 'requestable',
+                'filter_data'  => ['requestable' => '2025-02-02'], // not tested
+            ],
+            [
+                'name'         => 'rtd location',
+                'filter_data'  => ['rtd_location_id' => '2025-02-02'], // not tested
+            ],
+            [
+                'name'         => 'accepted',
+                'filter_data'  => ['accepted' => '2025-02-02'], // not tested
+            ],
+            [
+                'name'         => 'last checkout',
+                'filter_data'  => ['last_checkout' => '2025-02-02'], // not tested
+            ],
+            [
+                'name'         => 'last checkin',
+                'filter_data'  => ['last_checkin' => '2025-02-02'], // not tested
+            ],
+            [
+                'name'         => 'expected checkin',
+                'filter_data'  => ['expected_checkin' => '2025-02-02'], // not tested
+            ],
+            [
+                'name'         => 'Company Id',
                 'filter_data'  => ['company_id' => 1],
             ],
             [
-                'name'         => 'Category: Desktop',
-                'filter_data'  => ['category_id' => 2],
+                'name'         => 'assigned type',
+                'filter_data'  => ['assigned_type' => '2025-02-02'], // not tested
+            ],
+            [
+                'name'         => 'last audit date',
+                'filter_data'  => ['last_audit_date' => '2025-02-02'], // not tested
+            ],
+            [
+                'name'         => 'next audit date',
+                'filter_data'  => ['next_audit_date' => '2025-02-02'], // not tested
+            ],
+            [
+                'name'         => 'location id',
+                'filter_data'  => ['location_id' => '2025-02-02'], // not tested
+            ],
+            [
+                'name'         => 'checkin counter',
+                'filter_data'  => ['checkin_counter' => '2025-02-02'], // not tested
+            ],
+            [
+                'name'         => 'checkout_counter',
+                'filter_data'  => ['checkout_counter' => 2],
+            ],
+            [
+                'name'         => 'requests counter',
+                'filter_data'  => ['requests_counter' => '2025-02-02'], // not tested
+            ],
+            [
+                'name'         => 'byod',
+                'filter_data'  => ['byod' => '2025-02-02'], // not tested
             ],
             [
                 'name'         => 'Custom RAM Filter',
@@ -63,11 +199,6 @@ class PredefinedFilterSeeder extends Seeder
                 ],
             ],
             [
-                'name'         => 'Asset Tag Like 123',
-
-                'filter_data'  => ['asset_tag' => '123'],
-            ],
-            [
                 'name'         => 'Combo: Company + RAM',
                 'filter_data'  => [
                     'company_id'    => 1,
@@ -76,7 +207,7 @@ class PredefinedFilterSeeder extends Seeder
             ],
             [
                 'name'         => 'ShouldNotBeVisible',
-                'created_by'    => 1,
+                'created_by'    => 404,
                 'filter_data'  => [
                     'company_id'    => 1,
                 ],
