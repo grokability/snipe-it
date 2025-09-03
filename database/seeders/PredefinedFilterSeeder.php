@@ -56,7 +56,7 @@ class PredefinedFilterSeeder extends Seeder
             ],
             [
                 'name'         => 'Serial Filter',
-                'filter_data'  => ['serial' => '42'], // not tested
+                'filter_data'  => ['serial' => 'FooBar'], // not tested 
             ],
             [
                 'name'         => 'purchase Filter',
@@ -64,7 +64,7 @@ class PredefinedFilterSeeder extends Seeder
             ],
             [
                 'name'         => 'asset eol Filter',
-                'filter_data'  => ['asset_eol_date' => '2025-02-02'], // not tested
+                'filter_data'  => ['asset_eol_date' => '2025-02-02'], // not tested 
             ],
             [
                 'name'         => 'eol explicit Filter',
@@ -72,79 +72,79 @@ class PredefinedFilterSeeder extends Seeder
             ],
             [
                 'name'         => 'purchase_cost',
-                'filter_data'  => ['purchas_cost' => '2025-02-02'], // not tested
+                'filter_data'  => ['purchas_cost' => '42'], // not tested
             ],
             [
                 'name'         => 'order number',
-                'filter_data'  => ['order_number' => '2025-02-02'], // not tested
+                'filter_data'  => ['order_number' => '42'], // not tested
             ],
             [
                 'name'         => 'assigned to',
-                'filter_data'  => ['assigned_to' => '2025-02-02'], // not tested
+                'filter_data'  => ['assigned_to' => '1337'], // not tested needsSet
             ],
             [
                 'name'         => 'notes',
-                'filter_data'  => ['notes' => '2025-02-02'], // not tested
+                'filter_data'  => ['notes' => 'FooBar'], // not tested
             ],
             [
                 'name'         => 'created by',
-                'filter_data'  => ['created_by' => '2025-02-02'], // not tested
+                'filter_data'  => ['created_by' => '1'], // not tested
             ],
             [
                 'name'         => 'created at',
-                'filter_data'  => ['created_at' => '2025-02-02'], // not tested
+                'filter_data'  => ['created_at' => '2025-01-01 13:37:37'], // not tested
             ],
             [
                 'name'         => 'updadet at',
-                'filter_data'  => ['updated_at' => '2025-02-02'], // not tested
+                'filter_data'  => ['updated_at' => '2025-01-01 13:37:37'], // not tested
             ],
             [
                 'name'         => 'physical',
-                'filter_data'  => ['physical' => '2025-02-02'], // not tested
+                'filter_data'  => ['physical' => '1'], // not tested
             ],
             [
                 'name'         => 'deleted at',
-                'filter_data'  => ['deleted_at' => '2025-02-02'], // not tested
+                'filter_data'  => ['deleted_at' => '2025-01-01 13:37:37'], // not tested
             ],
             [
                 'name'         => 'status id',
-                'filter_data'  => ['status_id' => '2025-02-02'], // not tested
+                'filter_data'  => ['status_id' => '13'], // not tested
             ],
             [
                 'name'         => 'archived',
-                'filter_data'  => ['archived' => '2025-02-02'], // not tested
+                'filter_data'  => ['archived' => '1'], // not tested
             ],
             [
                 'name'         => 'warranty months',
-                'filter_data'  => ['warranty_months' => '2025-02-02'], // not tested
+                'filter_data'  => ['warranty_months' => '42'], // not tested
             ],
             [
                 'name'         => 'depreciate',
-                'filter_data'  => ['depreciate' => '2025-02-02'], // not tested
+                'filter_data'  => ['depreciate' => '1'], // not tested
             ],
             [
                 'name'         => 'supplier id',
-                'filter_data'  => ['supplier_id' => '2025-02-02'], // not tested
+                'filter_data'  => ['supplier_id' => '42'], // not tested
             ],
             [
                 'name'         => 'requestable',
-                'filter_data'  => ['requestable' => '2025-02-02'], // not tested
+                'filter_data'  => ['requestable' => '1'], // not tested
             ],
             [
                 'name'         => 'rtd location',
-                'filter_data'  => ['rtd_location_id' => '2025-02-02'], // not tested
+                'filter_data'  => ['rtd_location_id' => '42'], // not tested
             ],
             [
                 'name'         => 'accepted',
-                'filter_data'  => ['accepted' => '2025-02-02'], // not tested
+                'filter_data'  => ['accepted' => '2025-02-02'], // not tested TBD
             ],
             [
                 'name'         => 'last checkout',
-                'filter_data'  => ['last_checkout' => '2025-02-02'], // not tested
+                'filter_data'  => ['last_checkout' => '2025-01-01 13:37:37'], // not tested
             ],
             [
                 'name'         => 'last checkin',
-                'filter_data'  => ['last_checkin' => '2025-02-02'], // not tested
+                'filter_data'  => ['last_checkin' => '2025-01-01 13:37:37'], // not tested
             ],
             [
                 'name'         => 'expected checkin',
@@ -156,11 +156,11 @@ class PredefinedFilterSeeder extends Seeder
             ],
             [
                 'name'         => 'assigned type',
-                'filter_data'  => ['assigned_type' => '2025-02-02'], // not tested
+                'filter_data'  => ['assigned_type' => 'App\Models\User'], // not tested
             ],
             [
                 'name'         => 'last audit date',
-                'filter_data'  => ['last_audit_date' => '2025-02-02'], // not tested
+                'filter_data'  => ['last_audit_date' => '2025-01-01 13:37:37'], // not tested
             ],
             [
                 'name'         => 'next audit date',
@@ -168,23 +168,23 @@ class PredefinedFilterSeeder extends Seeder
             ],
             [
                 'name'         => 'location id',
-                'filter_data'  => ['location_id' => '2025-02-02'], // not tested
+                'filter_data'  => ['location_id' => '42'], // not tested
             ],
             [
                 'name'         => 'checkin counter',
-                'filter_data'  => ['checkin_counter' => '2025-02-02'], // not tested
+                'filter_data'  => ['checkin_counter' => '1337'], // not tested
             ],
             [
                 'name'         => 'checkout_counter',
-                'filter_data'  => ['checkout_counter' => 2],
+                'filter_data'  => ['checkout_counter' => '1337'],
             ],
             [
                 'name'         => 'requests counter',
-                'filter_data'  => ['requests_counter' => '2025-02-02'], // not tested
+                'filter_data'  => ['requests_counter' => '1337'], // not tested
             ],
             [
                 'name'         => 'byod',
-                'filter_data'  => ['byod' => '2025-02-02'], // not tested
+                'filter_data'  => ['byod' => '1'], // not tested
             ],
             [
                 'name'         => 'Custom RAM Filter',
