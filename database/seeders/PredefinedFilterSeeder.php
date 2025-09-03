@@ -76,32 +76,26 @@ class PredefinedFilterSeeder extends Seeder
             ],
             [
                 'name'         => 'ShouldNotBeVisible',
-                'created_by'    => 404,
+                'created_by'    => 1,
                 'filter_data'  => [
                     'company_id'    => 1,
-                    
                 ],
             ],
 
         ];
 
-        $user = User::first();
-
         try {
+            
+            
             foreach ($filters as $filter) {
-                if (!$filter['created_by']){
-                    PredefinedFilter::create([
-                        'name'         => $filter['name'],
-                        'created_by'   => $user->id,
-                        'filter_data'  => $filter['filter_data'],
-                    ]);
-                } else {
-                    PredefinedFilter::create([
-                        'name'          => $filter['name'],
-                        'created_by'    => $filter['created_by'],
-                        'filter_data'   => $filter['filter_data'],
-                    ]);
-                }
+                $createdBy = array_key_exists('created_by', $filter) ? $filter['created_by'] : $user->id;
+                
+                PredefinedFilter::create([
+                    'name'         => $filter['name'],
+                    'created_by'   => $createdBy,
+                    'filter_data'  => $filter['filter_data'],
+                ]);
+                
             }
         }catch (\Exception $e) {
             echo "Error: " . $e->getMessage() . "\n";
