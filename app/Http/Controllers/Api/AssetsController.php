@@ -432,11 +432,12 @@ class AssetsController extends Controller
         // Filter with predefinedFilter if one is given
         if (isset($request->predefinedFilter)) {
             $id = $request->predefinedFilter;
-            $predefinedFilters = PredefinedFilter::where('id', $id)->get();
+            $predefinedFilters = PredefinedFilter::where('id', $id)
+                ->where('created_by', auth()->user()->id)
+                ->first();
 
-            if ($predefinedFilters->count() == 1) {
-                $predefinedFilter = $predefinedFilters[0];
-                $assets = $predefinedFilter->filterAssets($assets);
+            if ($predefinedFilters) {
+                $assets = $predefinedFilters->filterAssets($assets);
             }
         }
 

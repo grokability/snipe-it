@@ -25,6 +25,6 @@ class PredefinedFilterController extends Controller
         session()->flash('success', __('admin/reports/message.create.success'));
 
         // Weiterleitung zur Detailseite (oder Übersicht)
-        return redirect()->route('', $predefined_filter->id);  // TODO: Return hardware view
+        return redirect()->route('/hardware', $predefined_filter->id);  // TODO: Return hardware view
     }
 }

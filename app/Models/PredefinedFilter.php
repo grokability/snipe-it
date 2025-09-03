@@ -31,7 +31,6 @@ class PredefinedFilter extends Model
         'filter_data'             => ['nullable', 'array']
     ];
 
-
     protected function applyArrayOrScalarFilter(Builder $assets, array $filter, string $key, string $column): void
     {
         if (!empty($filter[$key])) {
@@ -50,10 +49,10 @@ class PredefinedFilter extends Model
     protected function applyDateRangeFilter(Builder $assets, array $filter, string $base): void
     {
         if (!empty($filter["{$base}_start"])) {
-            $assets->whereDate("assets.{$base}", '>=', $filter["{$base}_start"]);
+            $assets->whereDate("{$base}", '>=', $filter["{$base}_start"]);
         }
         if (!empty($filter["{$base}_end"])) {
-            $assets->whereDate("assets.{$base}", '<=', $filter["{$base}_end"]);
+            $assets->whereDate("{$base}", '<=', $filter["{$base}_end"]);
         }
     }
 
@@ -61,13 +60,17 @@ class PredefinedFilter extends Model
         $filter = $this->filter_data ?? [];
         
         $this->applyArrayOrScalarFilter($assets, $filter, 'company_id', 'assets.company_id');
-        $this->applyArrayOrScalarFilter($assets, $filter, 'location_id', 'assets.location_id');
-        $this->applyArrayOrScalarFilter($assets, $filter, 'rtd_location_id', 'assets.rtd_location_id');
-        $this->applyArrayOrScalarFilter($assets, $filter, 'supplier_id', 'assets.supplier_id');
-        $this->applyArrayOrScalarFilter($assets, $filter, 'model_id', 'assets.model_id');
-        $this->applyArrayOrScalarFilter($assets, $filter, 'manufacturer_id', 'assets.manufacturer_id');
-        $this->applyArrayOrScalarFilter($assets, $filter, 'category_id', 'assets.category_id');
-        $this->applyArrayOrScalarFilter($assets, $filter, 'status_id', 'assets.status_id');
+        $this->applyArrayOrScalarFilter($assets, $filter, 'location_id', 'location_id');
+        $this->applyArrayOrScalarFilter($assets, $filter, 'rtd_location_id', 'rtd_location_id');
+        $this->applyArrayOrScalarFilter($assets, $filter, 'supplier_id', 'supplier_id');
+        $this->applyArrayOrScalarFilter($assets, $filter, 'model_id', 'model_id');
+        $this->applyArrayOrScalarFilter($assets, $filter, 'status_id', 'status_id');
+
+        if (!empty($filter['category_id']) || !empty($filter['manufacturer_id'])) {
+            $assets->leftJoin('models', 'assets.model_id', '=', 'models.id');
+            $this->applyArrayOrScalarFilter($assets, $filter, 'category_id', 'models.category_id');
+            $this->applyArrayOrScalarFilter($assets, $filter, 'manufacturer_id', 'models.manufacturer_id');
+        }
 
         $this->applyDateRangeFilter($assets, $filter, 'created_at');
         $this->applyDateRangeFilter($assets, $filter, 'purchase_date');
@@ -86,7 +89,7 @@ class PredefinedFilter extends Model
         // Custom fields
         if (!empty($filter['custom_fields']) && is_array($filter['custom_fields'])) {
             foreach ($filter['custom_fields'] as $key => $value) {
-                $assets->where($key, '=', $value);
+                $assets->where("assets.$key", '=', $value);
             }
         }
         return $assets;

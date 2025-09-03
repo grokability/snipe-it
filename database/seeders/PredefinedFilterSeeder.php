@@ -16,7 +16,30 @@ class PredefinedFilterSeeder extends Seeder
      */
     public function run(): void
     {
-        PredefinedFilter::query()->delete();
+        PredefinedFilter::truncate();
+
+        $user_to_delete = User::where("email","predefined@filter.com")->first();
+
+        if ($user_to_delete) {
+            $user_to_delete->delete();
+        }
+
+        
+        $user = User::firstOrCreate(
+            ['email'=> 'predefined@filter.com'],
+            [
+            'activated' => 1,
+            'first_name' => 'Filter',
+            'last_name'=> 'Predefined',
+            'username' => 'filter',
+            'email'=> 'predefined@filter.com',
+            'password'=> Hash::make('1234567890'),
+            'permissions' => '{"superuser":"1"}',
+        ]);
+
+        if (!$user instanceof User) {
+            throw new \Exception('user could not be created.. seeder aborting..');
+        }
 
         $filters = [
             [
@@ -31,6 +54,7 @@ class PredefinedFilterSeeder extends Seeder
                 'name'         => 'Custom RAM Filter',
                 'filter_data'  => ['custom_fields' => ['_snipeit_ram_3' => '32']],
             ],
+            
             [
                 'name'         => 'Checked Out Between Dates',
                 'filter_data'  => [
@@ -50,17 +74,34 @@ class PredefinedFilterSeeder extends Seeder
                     'custom_fields' => ['_snipeit_ram_3' => '32'],
                 ],
             ],
+            [
+                'name'         => 'ShouldNotBeVisible',
+                'created_by'    => 404,
+                'filter_data'  => [
+                    'company_id'    => 1,
+                    
+                ],
+            ],
+
         ];
 
         $user = User::first();
 
         try {
             foreach ($filters as $filter) {
-                PredefinedFilter::create([
-                    'name'         => $filter['name'],
-                    'created_by'   => $user->id,
-                    'filter_data'  => $filter['filter_data'],
-                ]);
+                if (!$filter['created_by']){
+                    PredefinedFilter::create([
+                        'name'         => $filter['name'],
+                        'created_by'   => $user->id,
+                        'filter_data'  => $filter['filter_data'],
+                    ]);
+                } else {
+                    PredefinedFilter::create([
+                        'name'          => $filter['name'],
+                        'created_by'    => $filter['created_by'],
+                        'filter_data'   => $filter['filter_data'],
+                    ]);
+                }
             }
         }catch (\Exception $e) {
             echo "Error: " . $e->getMessage() . "\n";
