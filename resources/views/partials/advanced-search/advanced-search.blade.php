@@ -27,9 +27,7 @@
                                 </label>
                                 @if (!isset($tableField->formatter))
                                     {{-- Default select if formatter is not set --}}
-                                    <select class="form-control select2" data-endpoint="{{ $tableField->field }}"
-                                        name="{{ $tableField->title }}" style="width: 100%"
-                                        id="advancedSearch_{{ $tableField->field }}"></select>
+                                    <input class="advancedSearch_defaultField" type="text" autocomplete="on" id="advancedSearch_{{ $tableField->field }}_input" >
                                 @else
                                     @switch($tableField->formatter)
                                         @case('dateDisplayFormatter')
@@ -163,9 +161,7 @@
                                         @break
 
                                         @default
-                                            <select class="form-control select2" data-endpoint="{{ $tableField->field }}"
-                                                name="{{ $tableField->title }}" style="width: 100%"
-                                                id="advancedSearch_{{ $tableField->field }}_input"></select>
+                                            <input class="advancedSearch_defaultField" type="text" autocomplete="on" id="advancedSearch_{{ $tableField->field }}_input" >
                                     @endswitch
                                 @endif
                             </div>
@@ -196,20 +192,15 @@
                 const id = "#" + el.id;
                 const field = id.replace("#advancedSearch_", "");
 
-                //console.log($(id));
                 const selections = $(id).select2('data');
                 let selectedOptionValue = [];
 
-                //console.log(selections);
                 selections.forEach(item => {
-                        if (item.itemKey) {
-                            selectedOptionValue.push(item.itemKey);
-                        } else {
-                            selectedOptionValue.push(item.text);
-                        }
-                        //console.log(selectedOptionValue);
+                    const itemId = parseInt(item.id);
+                    if(itemId != NaN) {
+                        selectedOptionValue.push(itemId);
+                    }
                 });
-
 
                 if (selectedOptionValue.length > 0) {
                     filters[field] = selectedOptionValue;
@@ -236,13 +227,13 @@
             document.querySelectorAll(
                 'input[id^="advancedSearch_"][type="text"]'
             ).forEach(function(el) {
-                console.log(el);
+                //console.log(el);
                 // Use the field name from the id
                 if(el.value) {
                     const id = "#" + el.id;
                     let field = id.replace("#advancedSearch_", "");
                     field = field.replace("_input", "");
-                    console.log(el.value);
+                    //console.log(el.value);
                     filters[field] = el.value;
                 }
             });

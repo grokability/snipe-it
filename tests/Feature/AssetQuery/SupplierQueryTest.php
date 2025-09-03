@@ -128,4 +128,79 @@ class SupplierQueryTest extends TestCase
         $this->assertFalse($results->contains($assetD));
 
     }
+
+    public function testFilterAssetSupplierId()
+    {
+
+        $supplierA = Supplier::factory()->create();
+        $supplierB = Supplier::factory()->create();
+
+
+        $assetA = Asset::factory()->create([
+            'supplier_id' => $supplierA->id,
+        ]);
+        $assetB = Asset::factory()->create([
+            'supplier_id' => $supplierB->id,
+        ]);
+
+        $filter = ['supplier' => $supplierA->id];
+        $results = Asset::query()->byFilter($filter)->get();
+
+        $this->assertCount(1, $results);
+        $this->assertTrue($results->contains($assetA));
+        $this->assertFalse($results->contains($assetB));
+
+    }
+
+    public function testFilterAssetSupplierIdArraySingle()
+    {
+
+        $supplierA = Supplier::factory()->create();
+        $supplierB = Supplier::factory()->create();
+
+
+        $assetA = Asset::factory()->create([
+            'supplier_id' => $supplierA->id,
+        ]);
+        $assetB = Asset::factory()->create([
+            'supplier_id' => $supplierB->id,
+        ]);
+
+        $filter = ['supplier' => [$supplierA->id]];
+        $results = Asset::query()->byFilter($filter)->get();
+
+        $this->assertCount(1, $results);
+        $this->assertTrue($results->contains($assetA));
+        $this->assertFalse($results->contains($assetB));
+
+    }
+
+    public function testFilterAssetSupplierIdAndNameArray()
+    {
+
+        $supplierA = Supplier::factory()->create();
+        $supplierB = Supplier::factory()->create();
+        $supplierC = Supplier::factory()->create();
+
+
+        $assetA = Asset::factory()->create([
+            'supplier_id' => $supplierA->id,
+        ]);
+        $assetB = Asset::factory()->create([
+            'supplier_id' => $supplierB->id,
+        ]);
+        $assetC = Asset::factory()->create([
+            'supplier_id' => $supplierC->id,
+        ]);
+
+        $filter = ['supplier' => [$supplierA->name, $supplierB->id]];
+        $results = Asset::query()->byFilter($filter)->get();
+
+        $this->assertCount(2, $results);
+        $this->assertTrue($results->contains($assetA));
+        $this->assertTrue($results->contains($assetB));
+        $this->assertFalse($results->contains($assetC));
+
+    }
+
 }

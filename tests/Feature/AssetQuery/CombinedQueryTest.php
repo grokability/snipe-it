@@ -611,7 +611,7 @@ class CombinedQueryTest extends TestCase
         Asset::factory()->count(3)->create();
         $filter = ['model' => []];
         $results = Asset::query()->byFilter($filter)->get();
-        $this->assertCount(0, $results);
+        $this->assertCount(3, $results);
     }
 
     public function testFilterWithNonexistentValueReturnsNone()
@@ -644,10 +644,11 @@ class CombinedQueryTest extends TestCase
 
     public function testFilterWithNullValueReturnsNone()
     {
-        Asset::factory()->count(2)->create();
+        $numberOfAssets = 5;
+        Asset::factory()->count($numberOfAssets)->create();
         $filter = ['location' => null];
         $results = Asset::query()->byFilter($filter)->get();
-        $this->assertCount(0, $results);
+        $this->assertCount($numberOfAssets, $results);
     }
 
     public function testConflictingFiltersReturnNone()

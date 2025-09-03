@@ -133,4 +133,74 @@ class CompanyQueryTest extends TestCase
         $this->assertFalse($results->contains($assetD));
 
     }
+
+    // testFilterAssetAssignedToCategoryID
+    public function testFilterAssetCompanyId()
+    {
+        $companyA = Company::factory()->create();
+        $companyB = Company::factory()->create();
+
+        // Assets mit direkter company_id
+        $assetA = Asset::factory()->create([
+            'company_id' => $companyA->id,
+        ]);
+        $assetB = Asset::factory()->create([
+            'company_id' => $companyB->id,
+        ]);
+
+        $filter = ['company' => $companyA->id];
+        $results = Asset::query()->byFilter($filter)->get();
+
+        $this->assertCount(1, $results);
+        $this->assertTrue($results->contains($assetA));
+        $this->assertFalse($results->contains($assetB));
+    }
+
+    public function testFilterAssetCompanyIdArraySingle()
+    {
+        $companyA = Company::factory()->create();
+        $companyB = Company::factory()->create();
+
+        // Assets mit direkter company_id
+        $assetA = Asset::factory()->create([
+            'company_id' => $companyA->id,
+        ]);
+        $assetB = Asset::factory()->create([
+            'company_id' => $companyB->id,
+        ]);
+
+        $filter = ['company' => [$companyA->id]];
+        $results = Asset::query()->byFilter($filter)->get();
+
+        $this->assertCount(1, $results);
+        $this->assertTrue($results->contains($assetA));
+        $this->assertFalse($results->contains($assetB));
+    }
+
+    public function testFilterAssetCompanyIdAndNameArray()
+    {
+        $companyA = Company::factory()->create();
+        $companyB = Company::factory()->create();
+        $companyC = Company::factory()->create();
+
+        // Assets mit direkter company_id
+        $assetA = Asset::factory()->create([
+            'company_id' => $companyA->id,
+        ]);
+        $assetB = Asset::factory()->create([
+            'company_id' => $companyB->id,
+        ]);
+        $assetC = Asset::factory()->create([
+            'company_id' => $companyC->id,
+        ]);
+
+
+        $filter = ['company' => [$companyA->id, $companyB->name]];
+        $results = Asset::query()->byFilter($filter)->get();
+
+        $this->assertCount(2, $results);
+        $this->assertTrue($results->contains($assetA));
+        $this->assertTrue($results->contains($assetB));
+        $this->assertFalse($results->contains($assetC));
+    }
 }
