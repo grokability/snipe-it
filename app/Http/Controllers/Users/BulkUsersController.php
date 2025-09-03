@@ -9,6 +9,7 @@ use App\Models\Accessory;
 use App\Models\License;
 use App\Models\Actionlog;
 use App\Models\Asset;
+use App\Models\Company;
 use App\Models\Group;
 use App\Models\LicenseSeat;
 use App\Models\ConsumableAssignment;
@@ -231,6 +232,13 @@ class BulkUsersController extends Controller
         if ($request->filled('groups')) {
             foreach ($users as $user) {
                 $user->groups()->sync($request->input('groups'));
+            }
+        }
+
+        // Remove the new company from the fmcs mapping table
+        if ($request->filled('company_id') && Company::isFullMultipleCompanySupportEnabled()) {
+            foreach ($users as $user) {
+                $user->companies()->detach($request->input('company_id'));
             }
         }
 

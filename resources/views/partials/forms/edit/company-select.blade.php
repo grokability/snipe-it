@@ -1,6 +1,6 @@
 <!-- Company -->
-@if (($snipeSettings->full_multiple_companies_support=='1') && (!Auth::user()->isSuperUser()))
-    <!-- full company support is enabled and this user isn't a superadmin -->
+@if(!\App\Models\Company::canManageUsersCompanies())
+    <!-- full company support is enabled, this user isn't a superadmin and has no mapped companies -->
     <div class="form-group">
         <label for="{{ $fieldname }}" class="col-md-3 control-label">{{ $translated_name }}</label>
         <div class="col-md-6">
@@ -15,9 +15,8 @@
             </select>
         </div>
     </div>
-
 @else
-    <!-- full company support is enabled or this user is a superadmin -->
+    <!-- full company support is disabled or this user is a superadmin or has mapped companies -->
     <div id="{{ $fieldname }}" class="form-group{{ $errors->has($fieldname) ? ' has-error' : '' }}">
         <label for="{{ $fieldname }}" class="col-md-3 control-label">{{ $translated_name }}</label>
         <div class="col-md-8">
@@ -41,5 +40,4 @@
         {!! $errors->first($fieldname, '<div class="col-md-8 col-md-offset-3"><span class="alert-msg"><i class="fas fa-times" aria-hidden="true"></i> :message</span></div>') !!}
 
     </div>
-
 @endif

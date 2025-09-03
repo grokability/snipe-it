@@ -733,9 +733,6 @@ class AssetsController extends Controller
         if ($request->has('model_id')) {
             $asset->model()->associate(AssetModel::find($request->validated()['model_id']));
         }
-        if ($request->has('company_id')) {
-            $asset->company_id = Company::getIdForCurrentUser($request->validated()['company_id']);
-        }
         if ($request->has('rtd_location_id') && !$request->has('location_id')) {
             $asset->location_id = $request->validated()['rtd_location_id'];
         }

@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Http\Requests\Traits\MayContainCustomFields;
 use App\Models\Asset;
+use App\Models\Company;
 use App\Models\Setting;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
@@ -19,6 +20,13 @@ class UpdateAssetRequest extends ImageUploadRequest
     public function authorize()
     {
         return Gate::allows('update', $this->asset);
+    }
+
+    public function prepareForValidation(): void
+    {
+        $this->merge([
+            'company_id' => Company::getIdForCurrentUser($this->company_id),
+        ]);
     }
 
     /**

@@ -103,7 +103,7 @@ class Asset extends Depreciable
         'status_id'         => ['required', 'integer', 'exists:status_labels,id'],
         'asset_tag'         => ['required', 'min:1', 'max:255', 'unique_undeleted:assets,asset_tag', 'not_array'],
         'name'              => ['nullable', 'max:255'],
-        'company_id'        => ['nullable', 'integer', 'exists:companies,id'],
+        'company_id'        => ['nullable', 'integer', 'exists:companies,id', 'fmcs_validator'],
         'warranty_months'   => ['nullable', 'numeric', 'digits_between:0,240'],
         'last_checkout'     => ['nullable', 'date_format:Y-m-d H:i:s'],
         'last_checkin'      => ['nullable', 'date_format:Y-m-d H:i:s'],

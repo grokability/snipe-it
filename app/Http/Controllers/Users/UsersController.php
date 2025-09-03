@@ -70,7 +70,16 @@ class UsersController extends Controller
 
         $user = new User;
 
-        return view('users/edit', compact('groups', 'userGroups', 'permissions', 'userPermissions'))
+        $fmcs = Company::isFullMultipleCompanySupportEnabled();
+        if ($fmcs) {
+            $companies = Company::pluck('name', 'id');
+            $companyMappings = $user->company_ids();
+        } else {
+            $companies = null;
+            $companyMappings = null;
+        }
+
+        return view('users/edit', compact('groups', 'userGroups', 'permissions', 'userPermissions', 'fmcs', 'companies', 'companyMappings'))
             ->with('user', $user);
     }
 
@@ -156,6 +165,15 @@ class UsersController extends Controller
                 $user->groups()->sync([]);
             }
 
+            // Update the company mappings after removing the own company from the input, only super user are allowed to change the mappings
+            if (Company::isFullMultipleCompanySupportEnabled() && auth()->user()->isSuperUser()) {
+                $company_mappings = $request->input('companyMappings');
+                if ($company_mappings && ($key = array_search($user->company_id, $company_mappings)) !== false) {
+                    unset($company_mappings[$key]);
+                }
+                $user->companies()->sync($company_mappings);
+            }
+
             return Helper::getRedirectOption($request, $user->id, 'Users')
                 ->with('success', trans('admin/users/message.success.create'));
         }
@@ -206,7 +224,16 @@ class UsersController extends Controller
             $userPermissions = Helper::selectedPermissionsArray($permissions, $user->permissions);
             $permissions = $this->filterDisplayable($permissions);
 
-            return view('users/edit', compact('user', 'groups', 'userGroups', 'permissions', 'userPermissions'))->with('item', $user);
+            $fmcs = Company::isFullMultipleCompanySupportEnabled();
+            if ($fmcs) {
+                $companies = Company::pluck('name', 'id');
+                $companyMappings = $user->company_ids();
+            } else {
+                $companies = null;
+                $companyMappings = null;
+            }
+
+            return view('users/edit', compact('user', 'groups', 'userGroups', 'permissions', 'userPermissions', 'fmcs', 'companies', 'companyMappings'))->with('item', $user);
         }
 
     }
@@ -326,6 +353,15 @@ class UsersController extends Controller
         // Handle uploaded avatar
         app(ImageUploadRequest::class)->handleImages($user, 600, 'avatar', 'avatars', 'avatar');
         session()->put(['redirect_option' => $request->get('redirect_option')]);
+
+        // Update the company mappings after removing the own company from the input, only super user are allowed to change the mappings
+        if (Company::isFullMultipleCompanySupportEnabled() && auth()->user()->isSuperUser()) {
+            $company_mappings = $request->input('companyMappings');
+            if ($company_mappings && ($key = array_search($user->company_id, $company_mappings)) !== false) {
+                unset($company_mappings[$key]);
+            }
+            $user->companies()->sync($company_mappings);
+        }
 
         if ($user->save()) {
             // Redirect to the user page
@@ -482,8 +518,17 @@ class UsersController extends Controller
 
             $userPermissions = Helper::selectedPermissionsArray($permissions, $clonedPermissions);
 
+            $fmcs = Company::isFullMultipleCompanySupportEnabled();
+            if ($fmcs) {
+                $companies = Company::pluck('name', 'id');
+                $companyMappings = $user_to_clone->company_ids();
+            } else {
+                $companies = null;
+                $companyMappings = null;
+            }
+
             // Show the page
-            return view('users/edit', compact('permissions', 'userPermissions'))
+            return view('users/edit', compact('permissions', 'userPermissions', 'fmcs', 'companies', 'companyMappings'))
                 ->with('user', $user)
                 ->with('groups', Group::pluck('name', 'id'))
                 ->with('userGroups', $userGroups)

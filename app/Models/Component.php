@@ -39,7 +39,7 @@ class Component extends SnipeModel
         'qty'            => 'required|integer|min:1',
         'category_id'    => 'required|integer|exists:categories,id',
         'supplier_id'    => 'nullable|integer|exists:suppliers,id',
-        'company_id'     => 'integer|nullable|exists:companies,id',
+        'company_id'     => 'integer|nullable|exists:companies,id|fmcs_validator',
         'location_id'    => 'exists:locations,id|nullable|fmcs_location',
         'min_amt'        => 'integer|min:0|nullable',
         'purchase_date'   => 'date_format:Y-m-d|nullable',

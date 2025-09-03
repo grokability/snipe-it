@@ -7,6 +7,7 @@ use App\Models\Department;
 use App\Models\Location;
 use App\Models\Setting;
 use Illuminate\Support\Facades\DB;
+use App\Models\Company;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Validator;
 
@@ -367,6 +368,27 @@ class ValidationServiceProvider extends ServiceProvider
                 }
             }
             return true;
+        });
+
+        // Validates if the user has the permission to choose the specified company in case of FullMultipleCompanySupport
+        Validator::extendImplicit('fmcs_validator', function ($attribute, $value, $parameters, $validator) {
+            $current_user = auth()->user();
+
+            if ($current_user) {
+                if (!Company::isFullMultipleCompanySupportEnabled() || $current_user->isSuperUser() || $current_user->company_id == null) {
+                    return true;
+                }
+
+                if ($value != null && $current_user->company_ids()->contains($value)) {
+                    return true;
+                }
+            }
+            else {
+                // Needed for user creation from LDAP
+                return true;
+            }
+
+            return false;
         });
     }
 
