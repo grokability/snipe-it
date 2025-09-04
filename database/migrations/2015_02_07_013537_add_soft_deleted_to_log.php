@@ -12,8 +12,8 @@ class AddSoftDeletedToLog extends Migration
      */
     public function up()
     {
-        $platform = Schema::getConnection()->getDoctrineSchemaManager()->getDatabasePlatform();
-        $platform->registerDoctrineTypeMapping('enum', 'string');
+        //$platform = Schema::getConnection()->getDoctrineSchemaManager()->getDatabasePlatform();
+        //$platform->registerDoctrineTypeMapping('enum', 'string');
 
         Schema::table('asset_logs', function ($table) {
             $table->string('asset_type', 100)->nullable()->change();

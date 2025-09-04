@@ -206,6 +206,7 @@ class LoginController extends Controller
                 $user->password = bcrypt($request->input('password'));
             }
 
+            $user->last_login = \Carbon::now();
             $user->email = $ldap_attr['email'];
             $user->first_name = $ldap_attr['firstname'];
             $user->last_name = $ldap_attr['lastname']; //FIXME (or TODO?) - do we need to map additional fields that we now support? E.g. country, phone, etc.
@@ -226,7 +227,7 @@ class LoginController extends Controller
 
             $strip_prefixes = [
                 // IIS/AD
-                // https://github.com/snipe/snipe-it/pull/5862
+                // https://github.com/grokability/snipe-it/pull/5862
                 '\\',
 
                 // Google Cloud IAP
@@ -283,8 +284,11 @@ class LoginController extends Controller
             return redirect()->back()->withInput()->withErrors($validator);
         }
 
-        $this->maxLoginAttempts = config('auth.passwords.users.throttle.max_attempts');
-        $this->lockoutTime = config('auth.passwords.users.throttle.lockout_duration');
+        // Set the custom lockout attempts from the env and sett the custom lockout throttle from the env.
+        // We divide decayMinutes by 60 here to get minutes, since Laravel changed the default from minutes
+        // to seconds, and we don't want to break limits on existing systems
+        $this->maxAttempts = config('auth.passwords.users.throttle.max_attempts');
+        $this->decayMinutes = (config('auth.passwords.users.throttle.lockout_duration') / 60);
 
         if ($lockedOut = $this->hasTooManyLoginAttempts($request)) {
             $this->fireLockoutEvent($request);
@@ -354,7 +358,7 @@ class LoginController extends Controller
 
         // We wouldn't normally see this page if 2FA isn't enforced via the
         // \App\Http\Middleware\CheckForTwoFactor middleware AND if a device isn't enrolled,
-        // but let's check check anyway in case there's a browser history or back button thing.
+        // but let's check anyway in case there's a browser history or back button thing.
         // While you can access this page directly, enrolling a device when 2FA isn't enforced
         // won't cause any harm.
 
@@ -432,6 +436,7 @@ class LoginController extends Controller
 
         if (Google2FA::verifyKey($user->two_factor_secret, $secret)) {
             $user->two_factor_enrolled = 1;
+            $user->last_login = \Carbon::now();
             $user->saveQuietly();
             $request->session()->put('2fa_authed', $user->id);
 
@@ -479,6 +484,7 @@ class LoginController extends Controller
         }
 
         $request->session()->regenerate(true);
+        $request->session()->forget('2fa_authed');
 
         if ($request->session()->has('password_hash_'.Auth::getDefaultDriver())){
             $request->session()->remove('password_hash_'.Auth::getDefaultDriver());
@@ -519,45 +525,6 @@ class LoginController extends Controller
         return 'username';
     }
 
-    /**
-     * Redirect the user after determining they are locked out.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    protected function sendLockoutResponse(Request $request)
-    {
-        $seconds = $this->limiter()->availableIn(
-            $this->throttleKey($request)
-        );
-
-        $minutes = round($seconds / 60);
-
-        $message = trans('auth/message.throttle', ['minutes' => $minutes]);
-
-        return redirect()->back()
-            ->withInput($request->only($this->username(), 'remember'))
-            ->withErrors([$this->username() => $message]);
-    }
-
-
-    /**
-     * Override the lockout time and duration
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return bool
-     */
-    protected function hasTooManyLoginAttempts(Request $request)
-    {
-        $lockoutTime = config('auth.passwords.users.throttle.lockout_duration');
-        $maxLoginAttempts = config('auth.passwords.users.throttle.max_attempts');
-
-        return $this->limiter()->tooManyAttempts(
-            $this->throttleKey($request),
-            $maxLoginAttempts,
-            $lockoutTime
-        );
-    }
 
     public function legacyAuthRedirect()
     {

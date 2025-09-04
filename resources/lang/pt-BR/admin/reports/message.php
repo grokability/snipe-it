@@ -1,16 +1,16 @@
 <?php
 
 return [
-    'about_templates' => 'About Saved Templates',
-    'saving_templates_description' => 'Select your options, then enter the name of your template in the box above and click the \'Save Template\' button. Use the dropdown to select a previously saved template.',
+    'about_templates' => 'Sobre os Modelos Salvos',
+    'saving_templates_description' => 'Selecione as opções desejadas, em seguida, digite o nome do seu modelo na caixa acima e clique no botão "Salvar modelo". Use o menu suspenso para usar um modelo salvo anteriormente.',
     'create'  => [
-        'success' => 'Template saved successfully',
+        'success' => 'Modelo salvo com sucesso',
     ],
     'update' => [
-        'success' => 'Template updated successfully',
+        'success' => 'Modelo atualizado com sucesso',
     ],
     'delete' => [
-        'success' => 'Template deleted',
-        'no_delete_permission' => 'Template does not exist or you do not have permission to delete it.',
+        'success' => 'Modelo excluído',
+        'no_delete_permission' => 'Modelo não existe ou você não tem permissão para excluí-lo.',
     ],
 ];

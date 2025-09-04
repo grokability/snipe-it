@@ -21,6 +21,7 @@ class AccessoryPresenter extends Presenter
                 'switchable' => true,
                 'title' => trans('general.id'),
                 'visible' => false,
+                'printIgnore' => true,
             ], [
                 'field' => 'image',
                 'searchable' => false,
@@ -79,27 +80,35 @@ class AccessoryPresenter extends Presenter
                 'title' => trans('general.location'),
                 'formatter' => 'locationsLinkObjFormatter',
             ], [
+                'field' => 'min_amt',
+                'searchable' => false,
+                'sortable' => true,
+                'title' => trans('general.min_amt'),
+                'formatter' => 'minAmtFormatter',
+                'class' => 'text-right text-padding-number-cell',
+            ], [
                 'field' => 'qty',
                 'searchable' => false,
                 'sortable' => true,
                 'title' => trans('admin/accessories/general.total'),
+                'footerFormatter' => 'qtySumFormatter',
+                'class' => 'text-right text-padding-number-cell',
             ], [
-                'field' => 'remaining_qty',
+                'field' => 'remaining',
                 'searchable' => false,
                 'sortable' => false,
                 'visible' => false,
                 'title' => trans('admin/accessories/general.remaining'),
+                'footerFormatter' => 'qtySumFormatter',
+                'class' => 'text-right text-padding-number-cell',
             ],[
                 'field' => 'checkouts_count',
                 'searchable' => false,
                 'sortable' => true,
                 'visible' => true,
                 'title' => trans('general.checked_out'),
-            ], [
-                'field' => 'min_qty',
-                'searchable' => false,
-                'sortable' => true,
-                'title' => trans('general.min_amt'),
+                'footerFormatter' => 'qtySumFormatter',
+                'class' => 'text-right text-padding-number-cell',
             ], [
                 'field' => 'purchase_date',
                 'searchable' => true,
@@ -113,7 +122,7 @@ class AccessoryPresenter extends Presenter
                 'sortable' => true,
                 'title' => trans('general.purchase_cost'),
                 'footerFormatter' => 'sumFormatterQuantity',
-                'class' => 'text-right',
+                'class' => 'text-right text-padding-number-cell',
             ], [
                 'field' => 'order_number',
                 'searchable' => true,
@@ -164,6 +173,7 @@ class AccessoryPresenter extends Presenter
                 'switchable' => false,
                 'title' => trans('table.actions'),
                 'formatter' => 'accessoriesActionsFormatter',
+                'printIgnore' => true,
             ],
         ];
 
@@ -221,7 +231,7 @@ class AccessoryPresenter extends Presenter
                 'field' => 'created_by',
                 'searchable' => false,
                 'sortable' => false,
-                'title' => trans('general.admin'),
+                'title' => trans('general.created_by'),
                 'visible' => false,
                 'formatter' => 'usersLinkObjFormatter',
             ],
@@ -232,6 +242,7 @@ class AccessoryPresenter extends Presenter
                 'switchable' => false,
                 'title' => trans('table.actions'),
                 'formatter' => 'accessoriesInOutFormatter',
+                'printIgnore' => true,
             ],
         ];
 

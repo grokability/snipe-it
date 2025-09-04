@@ -6,6 +6,7 @@ use App\Http\Requests\ImageUploadRequest;
 use App\Models\Actionlog;
 use App\Models\Manufacturer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
@@ -31,7 +32,30 @@ class ManufacturersController extends Controller
     public function index() : View
     {
         $this->authorize('index', Manufacturer::class);
-        return view('manufacturers/index');
+        $manufacturer_count = Manufacturer::withTrashed()->count();
+        return view('manufacturers/index')->with('manufacturer_count', $manufacturer_count);
+    }
+
+    /**
+     * Returns a view that invokes the ajax tables which actually contains
+     * the content for the manufacturers listing, which is generated in getDatatable.
+     *
+     * @author [A. Gianotto] [<snipe@snipe.net>]
+     * @see Api\ManufacturersController::index() method that generates the JSON response
+     * @since [v1.0]
+     */
+    public function seed() : RedirectResponse
+    {
+        $this->authorize('index', Manufacturer::class);
+
+        $manufacturers_count = Manufacturer::withTrashed()->count();
+
+        if ($manufacturers_count == 0) {
+            Artisan::call('db:seed', ['--class' => 'Database\\Seeders\\ManufacturerSeeder', '--force' => true]);
+            return redirect()->route('manufacturers.index')->with('success', trans('general.seeding.manufacturers.success'));
+        }
+
+        return redirect()->route('manufacturers.index')->with('error', trans_choice('general.seeding.manufacturers.error', ['count' => $manufacturers_count]));
     }
 
     /**
@@ -85,18 +109,10 @@ class ManufacturersController extends Controller
      * @param int $manufacturerId
      * @since [v1.0]
      */
-    public function edit($manufacturerId = null) : View | RedirectResponse
+    public function edit(Manufacturer $manufacturer) : View | RedirectResponse
     {
-        // Handles manufacturer checks and permissions.
         $this->authorize('update', Manufacturer::class);
-
-        // Check if the manufacturer exists
-        if (! $item = Manufacturer::find($manufacturerId)) {
-            return redirect()->route('manufacturers.index')->with('error', trans('admin/manufacturers/message.does_not_exist'));
-        }
-
-        // Show the page
-        return view('manufacturers/edit', compact('item'));
+        return view('manufacturers/edit')->with('item', $manufacturer);
     }
 
     /**
@@ -108,16 +124,10 @@ class ManufacturersController extends Controller
      * @param int $manufacturerId
      * @since [v1.0]
      */
-    public function update(ImageUploadRequest $request, $manufacturerId = null) : RedirectResponse
+    public function update(ImageUploadRequest $request, Manufacturer $manufacturer) : RedirectResponse
     {
         $this->authorize('update', Manufacturer::class);
-        // Check if the manufacturer exists
-        if (is_null($manufacturer = Manufacturer::find($manufacturerId))) {
-            // Redirect to the manufacturer  page
-            return redirect()->route('manufacturers.index')->with('error', trans('admin/manufacturers/message.does_not_exist'));
-        }
 
-        // Save the data
         $manufacturer->name = $request->input('name');
         $manufacturer->url = $request->input('url');
         $manufacturer->support_url = $request->input('support_url');
@@ -185,18 +195,10 @@ class ManufacturersController extends Controller
      * @param int $manufacturerId
      * @since [v1.0]
      */
-    public function show($manufacturerId = null) : View | RedirectResponse
+    public function show(Manufacturer $manufacturer) : View | RedirectResponse
     {
         $this->authorize('view', Manufacturer::class);
-        $manufacturer = Manufacturer::find($manufacturerId);
-
-        if (isset($manufacturer->id)) {
-            return view('manufacturers/view', compact('manufacturer'));
-        }
-
-        $error = trans('admin/manufacturers/message.does_not_exist');
-        // Redirect to the user management page
-        return redirect()->route('manufacturers.index')->with('error', $error);
+        return view('manufacturers/view', compact('manufacturer'));
     }
 
     /**

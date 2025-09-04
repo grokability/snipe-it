@@ -4,6 +4,7 @@ return [
     'info'   => 'Selectati optiunile dorite pentru raportul de active.',
     'deleted_user' => 'Utilizator șters',
     'send_reminder' => 'Trimite memento',
+    'cannot_send_reminder' => 'User has been deleted or does not have an email address so cannot receive a reminder',
     'reminder_sent' => 'Memento trimis',
     'acceptance_deleted' => 'Solicitare de acceptare ștearsă',
     'acceptance_request' => 'Cerere de acceptare',

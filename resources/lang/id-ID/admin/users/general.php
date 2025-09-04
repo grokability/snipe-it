@@ -19,6 +19,8 @@ return [
     'print_assigned'    => 'Cetak Semua Ditugaskan',
     'email_assigned'    => 'Daftar Email Semua yang Ditetapkan',
     'user_notified'     => 'Pengguna telah dikirimi email berisi daftar item yang saat ini ditetapkan kepada mereka.',
+    'users_notified'    => 'The user has been emailed a list of their currently assigned items.|:count users have been emailed a list of their currently assigned items.',
+    'users_notified_warning' => ':count user has been emailed a list of their currently assigned items, however :no_email users did not have an email address so could not be emailed.|:count users have been emailed a list of their currently assigned items, however :no_email user(s) did not have an email address so could not be emailed.',
     'auto_assign_label' => 'Sertakan pengguna ini saat penugasan otomatis lisensi yang memenuhi syarat',
     'auto_assign_help'  => 'Lewati pengguna ini dalam penetapan otomatis lisensi',
     'software_user'     => 'Perangkat lunak pada :name',
@@ -51,4 +53,5 @@ return [
     'next_save_user' => 'Selanjutnya: Simpan Pengguna',
     'all_assigned_list_generation' => 'Dihasilkan pada:',
     'email_user_creds_on_create' => 'Kirim kredensial pengguna ini melalui email?',
+    'department_manager' => 'Department Manager',
 ];

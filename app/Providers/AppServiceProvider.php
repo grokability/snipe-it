@@ -7,6 +7,7 @@ use App\Models\Asset;
 use App\Models\Component;
 use App\Models\Consumable;
 use App\Models\License;
+use App\Models\Maintenance;
 use App\Models\User;
 use App\Models\Setting;
 use App\Models\SnipeSCIMConfig;
@@ -17,6 +18,7 @@ use App\Observers\ComponentObserver;
 use App\Observers\ConsumableObserver;
 use App\Observers\LicenseObserver;
 use App\Observers\SettingObserver;
+use App\Observers\MaintenanceObserver;
 use Illuminate\Routing\UrlGenerator;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
@@ -67,6 +69,7 @@ class AppServiceProvider extends ServiceProvider
 
         Schema::defaultStringLength(191);
         Asset::observe(AssetObserver::class);
+        Maintenance::observe(MaintenanceObserver::class);
         User::observe(UserObserver::class);
         Accessory::observe(AccessoryObserver::class);
         Component::observe(ComponentObserver::class);
@@ -82,6 +85,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+
+        if ($this->app->environment('local')) {
+            $this->app->register(\Laravel\Telescope\TelescopeServiceProvider::class);
+            $this->app->register(TelescopeServiceProvider::class);
+        }
+
         // Only load rollbar if there is a rollbar key and the app is in production
         if (($this->app->environment('production')) && (config('logging.channels.rollbar.access_token'))) {
             $this->app->register(\Rollbar\Laravel\RollbarServiceProvider::class);

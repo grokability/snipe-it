@@ -40,8 +40,8 @@ return [
         'ms-MY'=> 'Malais',
         'mi-NZ'=> 'Maori',
         'mn-MN'=> 'Mongol',
-        //'no-NO'=> 'Norwegian',
         'nb-NO'=> 'Norvégien (Bokmål)',
+        'om-ET' => 'Oromo (Ethiopian)',
         //'nn-NO'=> 'Norwegian Nynorsk',
         'fa-IR'=> 'Perse',
         'pl-PL'=> 'Polonais',
@@ -68,7 +68,7 @@ return [
         'zu-ZA'=> 'Zoulou',
     ],
 
-    'select_country' => 'Select a Country',
+    'select_country' => 'Sélectionnez un pays',
     
     'countries' => [
         'AC'=>'Île de l\'Ascension',

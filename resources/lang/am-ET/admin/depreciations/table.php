@@ -2,7 +2,7 @@
 
 return [
 
-    'id'      => 'ID',
+    'id'      => 'መለያ',
     'months'   => 'Months',
     'term'   => 'Term',
     'title'      => 'Name ',

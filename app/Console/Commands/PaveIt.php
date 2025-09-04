@@ -4,7 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Asset;
 use App\Models\CustomField;
-use Schema;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Console\Command;
 
@@ -51,8 +51,7 @@ class PaveIt extends Command
         }
 
         // List all the tables in the database so we don't have to worry about missing some as the app grows
-        $tables = DB::connection()->getDoctrineSchemaManager()->listTableNames();
-
+        $tables = Schema::getTables();
         $except_tables = [
             'oauth_access_tokens',
             'oauth_clients',
@@ -60,6 +59,9 @@ class PaveIt extends Command
             'migrations',
             'settings',
             'users',
+            'telescope_entries',
+            'telescope_entries_tags',
+            'telescope_monitoring',
         ];
 
         // We only need to find out what these are so we can nuke these columns on the assets table.
@@ -67,14 +69,15 @@ class PaveIt extends Command
         foreach ($custom_fields as $custom_field) {
             $this->info('DROP the '.$custom_field->db_column.' column from assets as well.');
 
-            if (\Schema::hasColumn('assets', $custom_field->db_column)) {
-                \Schema::table('assets', function ($table) use ($custom_field) {
+            if (Schema::hasColumn('assets', $custom_field->db_column)) {
+                Schema::table('assets', function ($table) use ($custom_field) {
                     $table->dropColumn($custom_field->db_column);
                 });
             }
         }
 
-        foreach ($tables as $table) {
+        foreach ($tables as $table_obj) {
+            $table = $table_obj['name'];
             if (in_array($table, $except_tables)) {
                 $this->info($table. ' is SKIPPED.');
             } else {
@@ -84,8 +87,8 @@ class PaveIt extends Command
         }
 
         // Leave in the demo oauth keys so we don't have to reset them every day in the demos
-        \DB::statement('delete from oauth_clients WHERE id > 2');
-        \DB::statement('delete from oauth_access_tokens WHERE id > 2');
+        DB::statement('delete from oauth_clients WHERE id > 2');
+        DB::statement('delete from oauth_access_tokens WHERE user_id > 2');
     
     }
 }

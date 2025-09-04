@@ -48,7 +48,8 @@ class ComponentsController extends Controller
             ];
 
         $components = Component::select('components.*')
-            ->with('company', 'location', 'category', 'assets', 'supplier', 'adminuser', 'manufacturer');
+            ->with('company', 'location', 'category', 'assets', 'supplier', 'adminuser', 'manufacturer', 'uncontrainedAssets')
+            ->withSum('uncontrainedAssets', 'components_assets.assigned_qty');
 
         if ($request->filled('search')) {
             $components = $components->TextSearch($request->input('search'));
@@ -59,7 +60,7 @@ class ComponentsController extends Controller
         }
 
         if ($request->filled('company_id')) {
-            $components->where('company_id', '=', $request->input('company_id'));
+            $components->where('components.company_id', '=', $request->input('company_id'));
         }
 
         if ($request->filled('category_id')) {
@@ -197,6 +198,11 @@ class ComponentsController extends Controller
         $this->authorize('delete', Component::class);
         $component = Component::findOrFail($id);
         $this->authorize('delete', $component);
+
+        if ($component->numCheckedOut() > 0) {
+            return response()->json(Helper::formatStandardApiResponse('error', null,  trans('admin/components/message.delete.error_qty')));
+        }
+
         $component->delete();
 
         return response()->json(Helper::formatStandardApiResponse('success', null, trans('admin/components/message.delete.success')));

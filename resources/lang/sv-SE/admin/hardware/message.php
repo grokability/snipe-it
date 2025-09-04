@@ -2,7 +2,7 @@
 
 return [
 
-    'undeployable' 		 => '<strong>Varning: </strong> Den här tillgången har för närvarande markerats som otillgänglig. Om denna status har ändrats; vänligen uppdatera tillgångsstatusen.',
+    'undeployable' 		 => 'The following assets cannot be deployed and have been removed from checkout: :asset_tags',
     'does_not_exist' 	 => 'Tillgång existerar inte.',
     'does_not_exist_var' => 'Tillgång med taggen :asset_tag hittades inte.',
     'no_tag' 	         => 'Ingen tillgångstagg angiven.',
@@ -19,6 +19,11 @@ return [
         'success_linked' => 'Tillgången med taggen :tag har skapats. <strong><a href=":link" style="color: white;">Klicka här för att visa</a></strong>.',
         'multi_success_linked' => 'Tillgång med taggen :links skapades.|:count tillgångar skapades. :links.',
         'partial_failure' => 'En tillgång kunde inte skapas. Anledning: :failures|:count tillgångar kunde inte skapas. Anledning: :failures',
+        'target_not_found' => [
+            'user' => 'The assigned user could not be found.',
+            'asset' => 'The assigned asset could not be found.',
+            'location' => 'The assigned location could not be found.',
+        ],
     ],
 
     'update' => [
@@ -66,12 +71,14 @@ return [
         'file_already_deleted' => 'Den valda filen har redan tagits bort',
         'header_row_has_malformed_characters' => 'Ett eller flera attribut i rubrikraden innehåller felaktigt formatterade UTF-8-tecken',
         'content_row_has_malformed_characters' => 'Ett eller flera attribut i den första raden av innehållet innehåller felaktigt formatterade UTF-8-tecken',
+        'transliterate_failure' => 'Transliteration from :encoding to UTF-8 failed due to invalid characters in input'
     ],
 
 
     'delete' => [
         'confirm'   	=> 'Är du säker på att du vill radera den här tillgången?',
         'error'   		=> 'Det gick inte att ta bort tillgången. Var god försök igen.',
+        'assigned_to_error' => '{1}Asset Tag: :asset_tag is currently checked out. Check in this device before deletion.|[2,*]Asset Tags: :asset_tag are currently checked out. Check in these devices before deletion.',
         'nothing_updated'   => 'Inga tillgångar valdes. Ingenting togs bort.',
         'success' 		=> 'Tillgång raderad.',
     ],
@@ -98,9 +105,10 @@ return [
     ],
 
     'requests' => [
-        'error'   		=> 'Tillgången begärdes inte, försök igen',
-        'success' 		=> 'Tillgång begärd.',
-        'canceled'      => 'Utcheckningsförfrågan har avbrutits',
+        'error'   		=> 'Request was not successful, please try again.',
+        'success' 		=> 'Request successfully submitted.',
+        'canceled'      => 'Request successfully canceled.',
+        'cancel'        => 'Avbryt objektbegäran',
     ],
 
 ];

@@ -24,8 +24,7 @@ return array(
 ',
         'assoc_licenses'	 => 'این تامین کننده در حال حاضر با مجوز(های) :licenses_count مرتبط است و قابل حذف نیست. لطفاً مجوزهای خود را به‌روزرسانی کنید تا دیگر به این تأمین‌کننده اشاره نکنید و دوباره امتحان کنید.
 ',
-        'assoc_maintenances'	 => 'این تامین کننده در حال حاضر با مجوز(های) :licenses_count مرتبط است و قابل حذف نیست. لطفاً مجوزهای خود را به‌روزرسانی کنید تا به این گزینه اشاره نکنید و دوباره امتحان کنید.
-',
+        'assoc_maintenances'	 => 'This supplier is currently associated with :maintenances_count asset maintenances(s) and cannot be deleted. Please update your asset maintenances to no longer reference this supplier and try again. ',
     )
 
 );

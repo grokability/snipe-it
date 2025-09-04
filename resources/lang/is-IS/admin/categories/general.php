@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Eignaflokkar',
     'category_name'  					=> 'Heiti Vöruflokks',
     'checkin_email'                     => 'Senda tölvupóst til notenda til að skrá sig inn / út.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'Þessi notandi fær tölvupóst til að skrá sig inn/út.',
     'clone'                             => 'Afrita Vöruflokk',
     'create'  							=> 'Stofna vöruflokk',
@@ -21,5 +22,9 @@ return array(
     'use_default_eula'					=> 'Notaðu frekar <a href="#" data-toggle="modal" data-target="#eulaModal">',
     'use_default_eula_disabled'			=> '<del>Notaðu frekar sjálfgefna notendaskilmálana.</del>Sjálfgefnu notendaskilmálarnir eru ekki í notkun. Vinsamlegast bættu einhverjum notendaskilmálum við í undir "Stillingar"',
     'use_default_eula_column'			=> 'Use default EULA',
+    'import_require_acceptance'         => 'Require Acceptance',
+    'import_checkin_email'              => 'Send Checkin Email',
+    'import_eula_text'                  => 'EULA text',
+    'import_category_type'              => 'Category Type',
 
 );

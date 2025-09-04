@@ -34,8 +34,8 @@ return array(
     ),
 
     'checkin' => array(
-        'error'   		=> 'L\'accessorio non è stato riconsegnato corretamente, si prega di riprovare',
-        'success' 		=> 'Accessorio riconsegnato con successo.',
+        'error'   		=> 'L\'accessorio non è stato restituito correttamente, riprova',
+        'success' 		=> 'Accessorio restituito con successo.',
         'user_does_not_exist' => 'Questo utente non è valido. Riprova.'
     )
 

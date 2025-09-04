@@ -1,6 +1,7 @@
 <?php
 
     return [
+        'select_type'            => 'Select Maintenance Type',
         'asset_maintenance_type' => 'Tip întreținere active',
         'title'                  => 'Titlu',
         'start_date'             => 'Data de început',

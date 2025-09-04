@@ -1,7 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-SNIPEIT_SH_URL= "https://raw.githubusercontent.com/snipe/snipe-it/master/snipeit.sh"
+SNIPEIT_SH_URL= "https://raw.githubusercontent.com/grokability/snipe-it/master/snipeit.sh"
 NETWORK_BRIDGE= "en0: Wi-Fi (AirPort)"
 
 Vagrant.configure("2") do |config|

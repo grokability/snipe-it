@@ -17,7 +17,8 @@ return array(
     'delete' => array(
         'confirm'   => 'Kas oled kindel, et soovid selle komponendi kustutada?',
         'error'   => 'Komponendi kustutamisel tekkis probleem. Palun proovi uuesti.',
-        'success' => 'Komponendi kustutamine õnnestus.'
+        'success' => 'Komponendi kustutamine õnnestus.',
+        'error_qty'   => 'Some components of this type are still checked out. Please check them in and try again.',
     ),
 
      'checkout' => array(

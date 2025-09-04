@@ -17,7 +17,8 @@ return array(
     'delete' => array(
         'confirm'   => 'Bạn có chắc chắn muốn xoá thành phần này?',
         'error'   => 'Đã xảy ra sự cố khi xóa thành phần này. Vui lòng thử lại.',
-        'success' => 'Thành phần đã được xóa thành công.'
+        'success' => 'Thành phần đã được xóa thành công.',
+        'error_qty'   => 'Some components of this type are still checked out. Please check them in and try again.',
     ),
 
      'checkout' => array(

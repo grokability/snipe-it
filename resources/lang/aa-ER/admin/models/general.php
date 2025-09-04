@@ -3,7 +3,7 @@
 return array(
     'about_models_title'     => 'crwdns1815:0crwdne1815:0',
     'about_models_text'           => 'crwdns1816:0crwdne1816:0',
-    'deleted'  					        => 'crwdns6077:0crwdne6077:0',
+    'deleted'  					=> 'crwdns6077:0crwdne6077:0',
     'bulk_delete'               => 'crwdns1972:0crwdne1972:0',
     'bulk_delete_help'               => 'crwdns1973:0crwdne1973:0',
     'bulk_delete_warn'          => 'crwdns11521:0crwdne11521:0',

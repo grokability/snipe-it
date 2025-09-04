@@ -17,7 +17,8 @@ return array(
     'delete' => array(
         'confirm'   => 'Ydych chi\'n siwr eich bod eisiau dileu\'r cydran yma?',
         'error'   => 'Nid oedd yn bosib dileu\'r cydran. Ceisiwch eto o. g. y. dd.',
-        'success' => 'Cydran wedi dileu\'n llwyddiannus.'
+        'success' => 'Cydran wedi dileu\'n llwyddiannus.',
+        'error_qty'   => 'Some components of this type are still checked out. Please check them in and try again.',
     ),
 
      'checkout' => array(

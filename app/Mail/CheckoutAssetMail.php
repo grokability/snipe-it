@@ -4,6 +4,7 @@ namespace App\Mail;
 
 use App\Helpers\Helper;
 use App\Models\Asset;
+use App\Models\Location;
 use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
@@ -20,21 +21,26 @@ class CheckoutAssetMail extends Mailable
 {
     use Queueable, SerializesModels;
 
+    private bool $firstTimeSending;
+
     /**
      * Create a new message instance.
+     * @throws \Exception
      */
-    public function __construct(Asset $asset, $checkedOutTo, User $checkedOutBy,  $acceptance, $note)
+    public function __construct(Asset $asset, $checkedOutTo, User $checkedOutBy, $acceptance, $note, bool $firstTimeSending = true)
     {
         $this->item = $asset;
         $this->admin = $checkedOutBy;
         $this->note = $note;
-        $this->target = $checkedOutTo;
         $this->acceptance = $acceptance;
 
         $this->settings = Setting::getSettings();
+        $this->target = $checkedOutTo;
 
         $this->last_checkout = '';
         $this->expected_checkin = '';
+
+        $this->firstTimeSending = $firstTimeSending;
 
         if ($this->item->last_checkout) {
             $this->last_checkout = Helper::getFormattedDateObject($this->item->last_checkout, 'date',
@@ -56,7 +62,7 @@ class CheckoutAssetMail extends Mailable
 
         return new Envelope(
             from: $from,
-            subject: trans('mail.Asset_Checkout_Notification'),
+            subject: $this->getSubject(),
         );
     }
 
@@ -70,8 +76,19 @@ class CheckoutAssetMail extends Mailable
     {
         $this->item->load('assetstatus');
         $eula = method_exists($this->item, 'getEula') ? $this->item->getEula() : '';
-        $req_accept = method_exists($this->item, 'requireAcceptance') ? $this->item->requireAcceptance() : 0;
+        $req_accept = $this->requiresAcceptance();
         $fields = [];
+        $name = null;
+
+        if($this->target instanceof User){
+            $name = $this->target->display_name;
+        }
+        else if($this->target instanceof Asset){
+            $name  = $this->target->assignedto?->display_name;
+        }
+        else if($this->target instanceof Location){
+            $name  = $this->target->manager->name;
+        }
 
         // Check if the item has custom fields associated with it
         if (($this->item->model) && ($this->item->model->fieldset)) {
@@ -87,13 +104,14 @@ class CheckoutAssetMail extends Mailable
                 'admin'         => $this->admin,
                 'status'        => $this->item->assetstatus?->name,
                 'note'          => $this->note,
-                'target'        => $this->target,
+                'target'        => $name,
                 'fields'        => $fields,
                 'eula'          => $eula,
                 'req_accept'    => $req_accept,
                 'accept_url'    => $accept_url,
                 'last_checkout' => $this->last_checkout,
                 'expected_checkin'  => $this->expected_checkin,
+                'introduction_line' => $this->introductionLine(),
             ],
         );
     }
@@ -106,5 +124,40 @@ class CheckoutAssetMail extends Mailable
     public function attachments(): array
     {
         return [];
+    }
+
+    private function getSubject(): string
+    {
+        if ($this->firstTimeSending) {
+            return trans('mail.Asset_Checkout_Notification', ['tag' => $this->item->asset_tag]);
+        }
+
+        return trans('mail.unaccepted_asset_reminder');
+    }
+
+    private function introductionLine(): string
+    {
+        if ($this->firstTimeSending && $this->target instanceof Location) {
+            return trans('mail.new_item_checked_location', ['location' => $this->target->name ]);
+        }
+        if ($this->firstTimeSending && $this->requiresAcceptance()) {
+            return trans('mail.new_item_checked_with_acceptance');
+        }
+
+        if ($this->firstTimeSending && !$this->requiresAcceptance()) {
+            return trans('mail.new_item_checked');
+        }
+
+        if (!$this->firstTimeSending && $this->requiresAcceptance()) {
+            return trans('mail.recent_item_checked');
+        }
+
+        // we shouldn't get here but let's send a default message just in case
+        return trans('new_item_checked');
+    }
+
+    private function requiresAcceptance(): int|bool
+    {
+        return method_exists($this->item, 'requireAcceptance') ? $this->item->requireAcceptance() : 0;
     }
 }

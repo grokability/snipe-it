@@ -47,7 +47,13 @@
                             {{ trans('admin/hardware/form.status') }}
                         </label>
                         <div class="col-md-7">
-                            {{ Form::select('status_id', $statusLabel_list, '', array('class'=>'select2', 'style'=>'width:100%','', 'aria-label'=>'status_id')) }}
+                            <x-input.select
+                                name="status_id"
+                                id="status_id"
+                                :options="$statusLabel_list"
+                                style="width:100%"
+                                aria-label="status_id"
+                            />
                             {!! $errors->first('status_id', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
                         </div>
                     </div>
@@ -141,7 +147,7 @@
                     if (data.status == 'success') {
                         $('#checkedin tbody').prepend("<tr class='success'><td>" + data.payload.asset_tag + "</td><td>" + data.payload.model + "</td><td>" + data.payload.model_number + "</td><td>" + data.messages + "</td><td><i class='fas fa-check text-success'></i></td></tr>");
 
-                        @if ($user->enable_sounds)
+                        @if ($user?->enable_sounds)
                         var audio = new Audio('{{ config('app.url') }}/sounds/success.mp3');
                         audio.play()
                         @endif
@@ -166,7 +172,7 @@
 
         function handlecheckinFail (data) {
 
-            @if ($user->enable_sounds)
+            @if ($user?->enable_sounds)
             var audio = new Audio('{{ config('app.url') }}/sounds/error.mp3');
             audio.play()
             @endif

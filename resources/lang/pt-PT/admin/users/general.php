@@ -19,6 +19,8 @@ return [
     'print_assigned'    => 'Imprimir todos atribuídos',
     'email_assigned'    => 'Lista de endereços eletrónicos de Todos os atribuídos',
     'user_notified'     => 'Um utilizador recebeu um endereço eletrónico com uma lista dos seus itens atualmente atribuídos.',
+    'users_notified'    => 'The user has been emailed a list of their currently assigned items.|:count users have been emailed a list of their currently assigned items.',
+    'users_notified_warning' => ':count user has been emailed a list of their currently assigned items, however :no_email users did not have an email address so could not be emailed.|:count users have been emailed a list of their currently assigned items, however :no_email user(s) did not have an email address so could not be emailed.',
     'auto_assign_label' => 'Inclua este utilizador quando atribuir licenças elegíveis automaticamente',
     'auto_assign_help'  => 'Ignorar este utilizador na atribuição automática de licenças',
     'software_user'     => 'Software alocado a :name',
@@ -51,4 +53,5 @@ return [
     'next_save_user' => 'Próximo: Salvar Utilizador',
     'all_assigned_list_generation' => 'Criado em:',
     'email_user_creds_on_create' => 'Enviar por e-mail as credenciais deste utilizador?',
+    'department_manager' => 'Department Manager',
 ];

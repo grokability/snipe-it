@@ -24,7 +24,7 @@ class DeleteUserRequest extends FormRequest
 
     public function prepareForValidation(): void
     {
-        $user_to_delete = User::withTrashed()->find(request()->route('user'));
+        $user_to_delete = User::withTrashed()->with('managesUsers')->find(request()->route('user'));
 
         if ($user_to_delete) {
             $this->merge([
@@ -61,7 +61,8 @@ class DeleteUserRequest extends FormRequest
     public function messages(): array
     {
 
-        $user_to_delete = User::withTrashed()->find(request()->route('user'));
+        $user_to_delete = User::withTrashed()->with('managesUsers')->find(request()->route('user'));
+
         $messages = [];
 
         if ($user_to_delete) {

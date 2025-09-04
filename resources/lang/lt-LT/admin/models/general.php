@@ -3,7 +3,7 @@
 return array(
     'about_models_title'     => 'Apie turto modelius',
     'about_models_text'           => 'Turto modeliai yra būdas grupuoti identišką turtą. („MBP 2013“, „IPhone 6s“ ir kt.)',
-    'deleted'  					        => 'Šis modelis buvo panaikintas.',
+    'deleted'  					=> 'Šis modelis buvo panaikintas.',
     'bulk_delete'               => 'Panaikinti kelis turto modelius',
     'bulk_delete_help'               => 'Naudokite žemiau esančius žymimuosius laukelius, kad patvirtintumėte pasirinktų turto modelių panaikinimą. Turto modelių, su kuriais yra susietas turtas, negalima ištrinti tol, kol šis turtas nebus susietas su kitu modeliu.',
     'bulk_delete_warn'          => 'Ketinate panaikinti vieną turto modelį.|Ketinate panaikinti :model_count turto modelius (-ų).',

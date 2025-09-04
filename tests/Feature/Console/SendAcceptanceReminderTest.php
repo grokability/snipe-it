@@ -43,9 +43,13 @@ class SendAcceptanceReminderTest extends TestCase
         CheckoutAcceptance::factory()->pending()->create([
             'assigned_to_id' => $userA->id,
         ]);
-
+        $headers = ['ID', 'Name'];
+        $rows = [
+            [$userA->id, $userA->display_name],
+        ];
         $this->artisan('snipeit:acceptance-reminder')
-            ->expectsOutput($userA->present()->fullName().' has no email address.')
+            ->expectsOutput("The following users do not have an email address:")
+            ->expectsTable($headers, $rows)
             ->assertExitCode(0);
 
         Mail::assertNotSent(UnacceptedAssetReminderMail::class);

@@ -27,7 +27,13 @@
         {{ trans('admin/statuslabels/table.status_type') }}
     </label>
     <div class="col-md-7 required">
-        {{ Form::select('statuslabel_types', $statuslabel_types, $item->getStatuslabelType(), array('class'=>'select2', 'style'=>'width: 100%; min-width:400px', 'aria-label'=>'statuslabel_types')) }}
+        <x-input.select
+            name="statuslabel_types"
+            :options="$statuslabel_types"
+            :selected="$item->getStatuslabelType()"
+            style="width: 100%; min-width:400px"
+            aria-label="statuslabel_types"
+        />
         {!! $errors->first('statuslabel_types', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
     </div>
 </div>

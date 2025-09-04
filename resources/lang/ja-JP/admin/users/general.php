@@ -19,6 +19,8 @@ return [
     'print_assigned'    => '割り当て先をすべて印刷',
     'email_assigned'    => '割り当てられたすべてのメール一覧',
     'user_notified'     => 'ユーザーは現在割り当てられているアイテムのリストを電子メールで送信しました。',
+    'users_notified'    => 'ユーザーに現在割り当てられているアイテムのリストをメールで送信しました。|:count ユーザーに現在割り当てられているアイテムのリストをメールで送信しました。',
+    'users_notified_warning' => ':count 人に現在割り当てられているアイテムのリストを電子メールで送信しました。 ただし、:no_email ユーザーはメールアドレスを持っていないため、メールできませんでした。 :count 人に現在割り当てられているアイテムのリストを電子メールで送信しました。 ただし、:no_email ユーザはメールアドレスを持っていないため、メールできませんでした。',
     'auto_assign_label' => '該当するライセンスを自動で割り当てる場合の、このユーザーを含める',
     'auto_assign_help'  => 'このユーザーのライセンスの自動割り当てをスキップ',
     'software_user'     => 'ソフトウェアは :name にチェックアウトしました。',
@@ -51,4 +53,5 @@ return [
     'next_save_user' => '次へ: ユーザの保存',
     'all_assigned_list_generation' => '生成日時：',
     'email_user_creds_on_create' => 'このユーザーの資格情報を電子メールで送信しますか？',
+    'department_manager' => 'Department Manager',
 ];

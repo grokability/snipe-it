@@ -31,6 +31,7 @@ return [
         'numeric' => ':attribute veld moet tussen de :min en de :max liggen.',
         'string' => ':attribute veld moet tussen :min en :max karakters lang zijn.',
     ],
+    'valid_regex' => 'The regular expression is invalid.',
     'boolean' => ':attribute moet waar of onwaar zijn.',
     'can' => ':attribute veld bevat een niet-geautoriseerde waarde.',
     'confirmed' => ':attribute veld bevestiging komt niet overeen.',
@@ -172,6 +173,7 @@ return [
     'url' => ':attribute veld moet een geldige URL zijn.',
     'ulid' => ':attribute veld moet een geldige ULID zijn.',
     'uuid' => ':attribute veld moet een geldige UUID zijn.',
+    'fmcs_location' => 'Full multiple company support and location scoping is enabled in the Admin Settings, and the selected location and selected company are not compatible.',
 
 
     /*
@@ -185,9 +187,13 @@ return [
     |
     */
 
+    'email_array'      => 'één of meer e-mail adressen kloppen niet.',
+    'checkboxes'           => ':attribute bevat ongeldige opties.',
+    'radio_buttons'        => ':attribute is ongeldig.',
+    
     'custom' => [
         'alpha_space' => ':attribute veld bevat een karakter wat niet is toegestaan.',
-        'email_array'      => 'één of meer e-mail adressen kloppen niet.',
+
         'hashed_pass'      => 'Je huidige wachtwoord is incorrect',
         'dumbpwd'          => 'Dat wachtwoord is te veelvoorkomend.',
         'statuslabel_type' => 'Selecteer een valide status label',
@@ -204,15 +210,13 @@ return [
         'expected_checkin.date_format'  =>  ':attribute moet een geldige datum zijn in JJJJ-MM-DD formaat',
         'start_date.date_format'        =>  ':attribute moet een geldige datum zijn in JJJJ-MM-DD formaat',
         'end_date.date_format'          =>  ':attribute moet een geldige datum zijn in JJJJ-MM-DD formaat',
-        'checkboxes'           => ':attribute bevat ongeldige opties.',
-        'radio_buttons'        => ':attribute is ongeldig.',
         'invalid_value_in_field' => 'Ongeldige waarde ingevoerd in dit veld',
 
         'ldap_username_field' => [
-            'not_in' =>         '<code>sAMAccountName</code> (mixed case) will likely not work. You should use <code>samaccountname</code> (lowercase) instead.'
+            'not_in' =>         '<code>sAMAccountName</code> (Hoofd- en kleine letters) zal waarschijnlijk niet werken. Je zou in plaats hiervan <code>samaccountname</code> (kleine letters) kunnen gebruiken.'
         ],
-        'ldap_auth_filter_query' => ['not_in' => '<code>uid=samaccountname</code> is probably not a valid auth filter. You probably want <code>uid=</code> '],
-        'ldap_filter' => ['regex' => 'This value should probably not be wrapped in parentheses.'],
+        'ldap_auth_filter_query' => ['not_in' => '<code>uid=samaccountname</code> is waarschijnlijk geen geldig authenticatiefilter. Je wilt waarschijnlijk <code>uid=</code> gebruiken.'],
+        'ldap_filter' => ['regex' => 'Deze waarde hoeft waarschijnlijk niet verpakt te worden in haakjes.'],
 
         ],
     /*

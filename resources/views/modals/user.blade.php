@@ -42,10 +42,10 @@
                         @include ('partials.forms.edit.location-profile-select', ['translated_name' => trans('general.location'), 'fieldname' => 'location_id'])
                     </div>
                     <div class="dynamic-form-row">
-                        @include('partials.forms.edit.name-first', [ 'required' => 'true', 'class' => 'col-md-8 col-xs-12-pull', 'style' => 'width:67%;'])
+                        @include('partials.forms.edit.name-first', ['value' => '', 'required' => 'true', 'class' => 'col-md-8 col-xs-12-pull', 'style' => 'width:67%;'])
                     </div>
                     <div class="dynamic-form-row">
-                    @include('partials.forms.edit.name-last', ['required' => 'true', 'class' => 'col-md-8 col-xs-12-pull', 'style' => 'width:67%;'])
+                    @include('partials.forms.edit.name-last', ['value' => '', 'required' => 'true', 'class' => 'col-md-8 col-xs-12-pull', 'style' => 'width:67%;'])
                     </div>
                     <div class="dynamic-form-row">
                         @include('partials.forms.edit.email')
@@ -77,6 +77,18 @@
 
                             </div>
                          </div>
+                    </div>
+
+                    <div class="dynamic-form-row">
+                        <div class="form-group">
+                            <div class="col-md-3 col-xs-12 ">
+                                <label class="control-label" for="modal-display_name">{{ trans('admin/users/table.display_name') }}:</label>
+                            </div>
+                            <div class="col-md-8 col-xs-12">
+                                <input class="form-control" type='text' name="display_name" id='modal-display_name' required>
+
+                            </div>
+                        </div>
                     </div>
 
 					<!-- Checkbox for activation new user, by default set for activated -->

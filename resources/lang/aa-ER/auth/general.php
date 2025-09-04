@@ -10,9 +10,11 @@ return [
     'forgot_password'               => 'crwdns1635:0crwdne1635:0',
     'ldap_reset_password'           => 'crwdns6066:0crwdne6066:0',
     'remember_me'                   => 'crwdns1636:0crwdne1636:0',
-    'username_help_top'                 => 'crwdns6044:0crwdne6044:0',
+    'username_help_top'             => 'crwdns6044:0crwdne6044:0',
     'username_help_bottom'          => 'crwdns6046:0crwdne6046:0',
     'google_login'                  => 'crwdns12026:0crwdne12026:0',
     'google_login_failed'           => 'crwdns11603:0crwdne11603:0',
+    'invite_password_expires'       => 'crwdns13496:0crwdne13496:0',
+
 ];
 

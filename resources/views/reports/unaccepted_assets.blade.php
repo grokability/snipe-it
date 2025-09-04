@@ -36,13 +36,8 @@
       <div class="box-body">
             <table
                 data-cookie-id-table="unacceptedAssetsReport"
-                data-pagination="true"
                 data-id-table="unacceptedAssetsReport"
-                data-search="true"
                 data-side-pagination="client"
-                data-show-columns="true"
-                data-show-export="true"
-                data-show-refresh="true"
                 data-sort-order="asc"
                 data-sort-name="created_at"
                 id="unacceptedAssetsReport"
@@ -68,7 +63,7 @@
               @foreach ($assetsForReport as $item)
                   @if ($item['assetItem'])
                   <tr @if($item['acceptance']->trashed()) style="text-decoration: line-through" @endif>
-                    <td>{{ $item['acceptance']->created_at }}</td>
+                    <td>{{ Helper::getFormattedDateObject($item['acceptance']->created_at, 'datetime', false) }}</td>
                     <td>{{ ($item['assetItem']->company) ? $item['assetItem']->company->name : '' }}</td>
                     <td>{!! $item['assetItem']->model->category->present()->nameUrl() !!}</td>
                     <td>{!! $item['assetItem']->present()->modelUrl() !!}</td>
@@ -79,13 +74,18 @@
                         <nobr>
                         @if(!$item['acceptance']->trashed())
                            <form method="post" class="white-space: nowrap;" action="{{ route('reports/unaccepted_assets_sent_reminder') }}">
-                            @if ($item['acceptance']->assignedTo)
+                            @if (($item['acceptance']->assignedTo) && ($item['acceptance']->assignedTo->email))
                                 @csrf
                                <input type="hidden" name="acceptance_id" value="{{ $item['acceptance']->id }}">
                                 <button class="btn btn-sm btn-warning" data-tooltip="true" data-title="{{ trans('admin/reports/general.send_reminder') }}">
                                     <i class="fa fa-repeat" aria-hidden="true"></i>
                                 </button>
-
+                            @else
+                                   <span data-tooltip="true" data-title="{{ trans('admin/reports/general.cannot_send_reminder') }}">
+                                       <a class="btn btn-sm btn-warning disabled" href="#">
+                                           <i class="fa fa-repeat" aria-hidden="true"></i>
+                                       </a>
+                                  </span>
                             @endif
                             <a href="{{ route('reports/unaccepted_assets_delete', ['acceptanceId' => $item['acceptance']->id]) }}" class="btn btn-sm btn-danger delete-asset" data-tooltip="true" data-toggle="modal" data-content="{{ trans('general.delete_confirm', ['item' =>trans('admin/reports/general.acceptance_request')]) }}" data-title="{{  trans('general.delete') }}" onClick="return false;"><i class="fa fa-trash"></i></a>
                            </form>

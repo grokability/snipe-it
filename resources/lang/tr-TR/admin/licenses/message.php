@@ -3,7 +3,7 @@
 return array(
 
     'does_not_exist' => 'Lisans mevcut değil veya görüntüleme izniniz yok.',
-    'user_does_not_exist' => 'User does not exist or you do not have permission to view them.',
+    'user_does_not_exist' => 'Kullanıcı mevcut değil veya bunları görüntüleme izniniz yok.',
     'asset_does_not_exist' 	=> 'Lisans ile ilişkilendirmek istediğiniz demirbaş mevcut değil.',
     'owner_doesnt_match_asset' => 'Lisans ile ilişkilendirmek istediğiniz demirbaş ilişkilendirmek istediğiniz kişiden başkasına atanmış durumda.',
     'assoc_users'	 => 'Bu demirbaş kullanıcıya çıkış yapılmış olaran görülüyor ve silinemez. Lütfen önce demirbaş girişi yapınız, ardından tekrar siliniz. ',
@@ -50,7 +50,7 @@ return array(
 
     'checkin' => array(
         'error'   => 'Lisans girişi yapılırken hata oluştu. Lütfen tekrar deneyin.',
-        'not_reassignable' => 'License not reassignable',
+        'not_reassignable' => 'Lisans devredilemez',
         'success' => 'Lisans girişi yapıldı'
     ),
 

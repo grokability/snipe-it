@@ -3,7 +3,7 @@
 return array(
 
     'does_not_exist' => 'مکان وجود ندارد.',
-    'assoc_users'    => 'This location is not currently deletable because it is the location of record for at least one asset or user, has assets assigned to it, or is the parent location of another location. Please update your records to no longer reference this location and try again. ',
+    'assoc_users'    => 'This location is not currently deletable because it is the location of record for at least one asset or user, has assets assigned to it, or is the parent location of another location. Please update your records to no longer reference this location and try again ',
     'assoc_assets'	 => 'این مکان در حال حاضر همراه با حداقل یک دارایی است و قادر به حذف نمی شود. لطفا بروز دارایی های خود را به دیگر این مکان مرجع و دوباره امتحان کنید. ',
     'assoc_child_loc'	 => 'این مکان در حال حاضر پدر و مادر کودک حداقل یک مکان است و قادر به حذف نمی شود. لطفا به روز رسانی مکان خود را به دیگر این مکان مرجع و دوباره امتحان کنید. ',
     'assigned_assets' => 'Assigned Assets',

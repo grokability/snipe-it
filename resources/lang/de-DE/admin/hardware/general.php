@@ -5,10 +5,11 @@ return [
     'about_assets_text'            => 'Assets sind Gegenstände die durch eine Seriennummer oder einem Asset-Tag identifiziert werden. Meistens sind diese Gegenstände von höherem Wert, weshalb es Sinn ergibt diese spezifisch zu kennzeichnen.',
     'archived'  				=> 'Archiviert',
     'asset'  					=> 'Asset',
-    'bulk_checkout'             => 'Assets herausgeben',
-    'bulk_checkin'              => 'Assets zurücknehmen',
+    'bulk_checkout'             => 'Massen-Herausgabe',
+    'bulk_checkin'              => 'Masseneinchecken',
     'checkin'  					=> 'Asset zurücknehmen',
     'checkout'  				=> 'Asset herausgeben',
+    'clear'                     => 'Zurücksetzen',
     'clone'  					=> 'Asset duplizieren',
     'deployable'  				=> 'Einsetzbar',
     'deleted'  					=> 'Dieses Asset wurde gelöscht.',
@@ -27,7 +28,7 @@ return [
     'undeployable_tooltip'  	=> 'Dieses Asset hat eine Statusbezeichnung, die nicht einsetzbar ist und zu diesem Zeitpunkt nicht ausgecheckt werden kann.',
     'view'  					=> 'Asset ansehen',
     'csv_error' => 'Es gibt einen Fehler in der CSV-Datei:',
-    'import_text' => '<p>Laden Sie eine CSV hoch, das den Assetverlauf enthält. Die Assets und Benutzer MÜSSEN bereits im System vorhanden sein oder sie werden übersprungen. Für den Verlaufsimport passende Assets werden über den Asset-Tag zugeordnet. Wir werden versuchen, einen passenden Benutzer, basierend auf dem von Ihnen angegebenen Benutzernamen und den unten ausgewählten Kriterien, zu finden. Wenn Sie keine Kriterien auswählen, wird über das Benutzernamensformat, das Sie in <code>Admin- &gt; Allgemeine Einstellungen</code>konfiguriert haben, eine Zuordnung versucht.</p><p>Felder, die in der CSV enthalten sind, müssen mit den Kopfzeilen übereinstimmen: <strong>Asset Tag, Name, Checkout Datum, Check-in Datum</strong>. Zusätzliche Felder werden ignoriert. </p><p>Check-in Datum: Bei leeren oder zukünftiger Check-in Daten werden die Elemente direkt dem genannten User ausgecheckt. Ohne die Spalte Check-in Datum wird das aktuelle Datum gesetzt.</p>
+    'import_text' => '<p>Laden Sie eine CSV hoch, das den Assetverlauf enthält. Die Assets und Benutzer MÜSSEN bereits im System vorhanden sein oder sie werden übersprungen. Für den Verlaufsimport passende Assets werden über das Asset-Tag zugeordnet. Wir werden versuchen, einen passenden Benutzer, basierend auf dem von Ihnen angegebenen Benutzernamen und den unten ausgewählten Kriterien, zu finden. Wenn Sie keine Kriterien auswählen, wird über das Benutzernamensformat, das Sie in <code>Admin- &gt; Allgemeine Einstellungen</code>konfiguriert haben, eine Zuordnung versucht.</p><p>Felder, die in der CSV enthalten sind, müssen mit den Kopfzeilen übereinstimmen: <strong>Asset Tag, Name, Checkout Datum, Check-in Datum</strong>. Zusätzliche Felder werden ignoriert. </p><p>Check-in Datum: Bei leeren oder zukünftigen Check-in Daten werden die Elemente direkt dem genannten User ausgecheckt. Ohne die Spalte Check-in Datum wird das aktuelle Datum gesetzt.</p>
     ',
     'csv_import_match_f-l' => 'Versuchen Sie, Benutzer im <strong>Vorname.Nachname</strong> (<code>jane.smith</code>) Format zu finden',
     'csv_import_match_initial_last' => 'Versuchen Sie, Benutzer im <strong>ersten ersten Nachnamen</strong> (<code>jsmith</code>) Format zu finden',

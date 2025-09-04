@@ -125,7 +125,13 @@
               {{ trans('admin/hardware/form.status') }}
             </label>
             <div class="col-md-7">
-              {{ Form::select('status_id', $statuslabel_list , old('status_id'), array('class'=>'select2', 'style'=>'width:100%', 'aria-label'=>'status_id')) }}
+              <x-input.select
+                  name="status_id"
+                  :options="$statuslabel_list"
+                  :selected="old('status_id')"
+                  style="width: 100%"
+                  aria-label="status_id"
+              />
               <p class="help-block">{{ trans('general.status_compatibility') }}</p>
               {!! $errors->first('status_id', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
             </div>
@@ -245,6 +251,17 @@
             </div>
           </div>
 
+          @include ('partials.forms.edit.notes')
+          <div class="form-group {{ $errors->has('null_notes') ? ' has-error' : '' }}">
+            <div class="col-md-8 col-md-offset-3">
+              <label class="form-control">
+                <input type="checkbox" name="null_notes" value="1">
+                {{ trans_choice('general.set_to_null', count($assets),['selection_count' => count($assets)]) }}
+              </label>
+            </div>
+          </div>
+
+
           @include("models/custom_fields_form_bulk_edit",["models" => $models])
 
           @foreach($assets as $asset)
@@ -260,3 +277,16 @@
   </div> <!--/.col-md-8-->
 </div>
 @stop
+@section('moar_scripts')
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('.clear-radio').forEach(function (button) {
+        button.addEventListener('click', function () {
+          const name = this.dataset.targetName;
+          const radios = document.querySelectorAll('input[type="radio"][name="' + name + '"]');
+          radios.forEach(radio => radio.checked = false);
+        });
+      });
+    });
+  </script>
+@endsection

@@ -1,9 +1,9 @@
 <?php
 
 return array(
-    'component_name'                  => '名称',
-    'checkin'                             => '借入组件',
-    'checkout'                             => '借出组件',
+    'component_name'                  => '组件名称',
+    'checkin'                             => '归还组件',
+    'checkout'                             => '签出组件',
     'cost'				=> '采购成本',
     'create'                             => '新增组件',
     'edit'                             => '编辑组件',

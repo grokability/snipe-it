@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\Licenses\Ui;
 
-use App\Models\AssetModel;
 use App\Models\Category;
 use App\Models\License;
 use App\Models\Depreciation;
@@ -41,7 +40,48 @@ class CreateLicenseTest extends TestCase
         $response->assertInvalid(['purchase_date']);
         $response->assertSessionHasErrors(['purchase_date']);
         $this->followRedirects($response)->assertSee(trans('general.error'));
-        $this->assertFalse(AssetModel::where('name', 'Test Invalid License')->exists());
+        $this->assertFalse(License::where('name', 'Test Invalid License')->exists());
 
     }
+
+    public function testLicenseCreate()
+    {
+        $response = $this->actingAs(User::factory()->superuser()->create())
+            ->from(route('licenses.create'))
+            ->post(route('licenses.store'), [
+                'name' => 'Test Valid License',
+                'seats' => '10',
+                'category_id' => Category::factory()->forLicenses()->create()->id,
+            ]);
+        $response->assertStatus(302);
+        $license = License::where('name', 'Test Valid License')->sole();
+        $this->assertNotNull($license);
+        //$license->assetlog()->has_one_of_();
+        $this->assertDatabaseHas('action_logs', ['action_type' => 'create', 'item_id' => $license->id, 'item_type' => License::class]);
+        $this->assertDatabaseHas('action_logs', ['action_type' => 'add seats', 'item_id' => $license->id, 'item_type' => License::class]);
+        $this->assertEquals($license->licenseseats()->count(), 10);
+        //test log entries? Sure.
+
+    }
+
+    public function testTooManySeatsLicenseCreate()
+    {
+        $response = $this->actingAs(User::factory()->superuser()->create())
+            ->from(route('licenses.create'))
+            ->post(route('licenses.store'), [
+                'name' => 'Test Valid License',
+                'seats' => '100000',
+                'category_id' => Category::factory()->forLicenses()->create()->id,
+            ]);
+        $response->assertStatus(302);
+        $license = License::where('name', 'Test Valid License')->first();
+        $this->assertNull($license);
+        //$license->assetlog()->has_one_of_();
+//        $this->assertDatabaseMissing('action_logs', ['action_type' => 'create', 'item_id' => $license->id, 'item_type' => License::class]);
+//        $this->assertDatabaseMissing('action_logs', ['action_type' => 'add seats', 'item_id' => $license->id, 'item_type' => License::class]);
+        //test log entries? Sure.
+
+    }
+
+
 }

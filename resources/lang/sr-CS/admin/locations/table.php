@@ -39,4 +39,5 @@ return [
     'signed_by_finance_auditor' => 'Obodrio:',
     'signed_by_location_manager' => 'Odobio:',
     'signed_by'                 => 'Signed Off By:',
+    'clone'  					=> 'Kloniraj lokaciju',
 ];

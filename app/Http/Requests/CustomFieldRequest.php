@@ -34,12 +34,14 @@ class CustomFieldRequest extends FormRequest
             case 'POST':
             {
                 $rules['name'] = 'required|unique:custom_fields';
+                $rules['tab'] = 'required';
                 break;
             }
 
             // Save all fields
             case 'PUT':
                 $rules['name'] = 'required';
+                $rules['tab'] = 'required';
                 break;
 
             // Save only what's passed

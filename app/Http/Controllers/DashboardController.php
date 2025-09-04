@@ -40,7 +40,7 @@ class DashboardController extends Controller
 
             if ((! file_exists(storage_path().'/oauth-private.key')) || (! file_exists(storage_path().'/oauth-public.key'))) {
                 Artisan::call('migrate', ['--force' => true]);
-                \Artisan::call('passport:install');
+                Artisan::call('passport:install', ['--no-interaction' => true]);
             }
 
             return view('dashboard')->with('asset_stats', $asset_stats)->with('counts', $counts);

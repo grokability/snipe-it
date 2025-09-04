@@ -11,7 +11,7 @@ class ShowCategoryTest extends TestCase
     public function testPageRenders()
     {
         $this->actingAs(User::factory()->superuser()->create())
-            ->get(route('categories.show', Category::factory()->create()->id))
+            ->get(route('categories.show', Category::factory()->create()))
             ->assertOk();
     }
 }

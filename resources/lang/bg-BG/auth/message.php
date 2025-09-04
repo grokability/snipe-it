@@ -6,8 +6,6 @@ return array(
     'account_not_found'      => 'Невалиден потребител или парола.',
     'account_not_activated'  => 'Потребителят все още не е активиран.',
     'account_suspended'      => 'Потребителят е временно спрян.',
-    'account_banned'         => 'Потребителят е неактивен.',
-    'throttle'               => 'Твърде много грешни опити. Моля опитайте отново след :minutes минути.',
 
     'two_factor' => array(
         'already_enrolled'      => 'Вашето устройство е вече вписано.',

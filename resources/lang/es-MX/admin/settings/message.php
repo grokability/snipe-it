@@ -37,7 +37,7 @@ return [
         'authentication_success' => 'Usuario autenticado contra LDAP con éxito!'
     ],
     'labels' => [
-        'null_template' => 'Label template not found. Please select a template.',
+        'null_template' => 'Plantilla de etiqueta no encontrada. Por favor, seleccione una plantilla.',
         ],
     'webhook' => [
         'sending' => 'Enviando mensaje de prueba a :app...',
@@ -49,6 +49,11 @@ return [
         'error_redirect' => 'ERROR: 301/302 :endpoint devuelve una redirección. Por razones de seguridad, no seguimos redirecciones. Por favor, utilice el punto final actual.',
         'error_misc' => 'Algo salió mal. :( ',
         'webhook_fail' => ' Notificación de webhook fallida: Compruebe que la URL sigue siendo válida.',
-        'webhook_channel_not_found' => ' webhook channel not found.'
-    ]
+        'webhook_channel_not_found' => ' canal webhook no encontrado.',
+        'ms_teams_deprecation' => 'La URL de webhook de Microsoft Teams seleccionada será obsoleta 31 de diciembre de 2025. Por favor, utilice una URL de flujo de trabajo. La documentación de Microsoft sobre la creación de un flujo de trabajo puede encontrarse <a href="https://support.microsoft.com/en-us/office/create-incoming-webhooks-with-workflows-for-microsoft-teams-8ae491c7-0394-4861-ba59-055e33f75498" target="_blank"> aquí.</a>',
+    ],
+    'location_scoping' => [
+        'not_saved' => 'Tu configuración no ha sido guardada.',
+        'mismatch' => 'Hay 1 elemento en la base de datos que necesita su atención antes de poder habilitar el alcance de la ubicación. Hay :count elementos en la base de datos que necesitan tu atención antes de poder habilitar el alcance de ubicación.',
+    ],
 ];

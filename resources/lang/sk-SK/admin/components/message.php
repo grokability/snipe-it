@@ -17,7 +17,8 @@ return array(
     'delete' => array(
         'confirm'   => 'Ste si istý, že chcete zmazať tento komponent?',
         'error'   => 'Nastal problém pri mazani komponentu. Prosím skúste znovu.',
-        'success' => 'Komponent bol úspešne zmazaný.'
+        'success' => 'Komponent bol úspešne zmazaný.',
+        'error_qty'   => 'Some components of this type are still checked out. Please check them in and try again.',
     ),
 
      'checkout' => array(

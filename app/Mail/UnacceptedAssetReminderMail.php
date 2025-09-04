@@ -19,9 +19,10 @@ class UnacceptedAssetReminderMail extends Mailable
      */
     public function __construct($checkout_info, $count)
     {
+
         $this->count = $count;
-        $this->target = $checkout_info['acceptance']?->assignedTo;
-        $this->acceptance = $checkout_info['acceptance'];
+        $this->target = $checkout_info?->assignedTo;
+        $this->acceptance = $checkout_info;
     }
 
     /**

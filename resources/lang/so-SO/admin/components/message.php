@@ -17,7 +17,8 @@ return array(
     'delete' => array(
         'confirm'   => 'Ma hubtaa inaad rabto inaad tirtirto qaybtan?',
         'error'   => 'Waxaa jirtay arrin tir-tireysay qaybta. Fadlan isku day mar kale.',
-        'success' => 'Qaybta waa lagu guuleystay in la tir-tiro.'
+        'success' => 'Qaybta waa lagu guuleystay in la tir-tiro.',
+        'error_qty'   => 'Some components of this type are still checked out. Please check them in and try again.',
     ),
 
      'checkout' => array(

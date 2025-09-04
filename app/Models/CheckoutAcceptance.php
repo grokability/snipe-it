@@ -15,6 +15,7 @@ class CheckoutAcceptance extends Model
     protected $casts = [
         'accepted_at' => 'datetime',
         'declined_at' => 'datetime',
+        'alert_on_response_id' => 'integer',
     ];
 
     /**
@@ -31,7 +32,19 @@ class CheckoutAcceptance extends Model
 
         return array_filter($recipients);
     }
+    public function getCheckoutableItemTypeAttribute(): string
+    {
+        $type = $this->checkoutable_type;
 
+        return match ($type) {
+            Asset::class       => trans('general.asset'),
+            LicenseSeat::class => trans('general.license'),
+            Accessory::class   => trans('general.accessory'),
+            Component::class   => trans('general.component'),
+            Consumable::class  => trans('general.consumable'),
+            default            => class_basename($type),
+        };
+    }
     /**
      * The resource that was is out
      *
@@ -65,7 +78,7 @@ class CheckoutAcceptance extends Model
     /**
      * Was the checkoutable checked out to this user?
      *
-     * @param  User    $user
+     * @param  User $user
      * @return bool
      */
     public function isCheckedOutTo(User $user)
@@ -78,7 +91,7 @@ class CheckoutAcceptance extends Model
      * Do not add stuff here that doesn't have a corresponding column in the
      * checkout_acceptances table or you'll get an error.
      *
-     * @param  string $signature_filename
+     * @param string $signature_filename
      */
     public function accept($signature_filename, $eula = null, $filename = null, $note = null)
     {
@@ -98,7 +111,7 @@ class CheckoutAcceptance extends Model
     /**
      * Decline the checkout acceptance
      *
-     * @param  string $signature_filename
+     * @param string $signature_filename
      */
     public function decline($signature_filename, $note = null)
     {
@@ -115,8 +128,9 @@ class CheckoutAcceptance extends Model
 
     /**
      * Filter checkout acceptences by the user
+     *
      * @param  Illuminate\Database\Eloquent\Builder $query
-     * @param  User    $user
+     * @param  User                                 $user
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeForUser(Builder $query, User $user)
@@ -126,6 +140,7 @@ class CheckoutAcceptance extends Model
 
     /**
      * Filter to only get pending acceptances
+     *
      * @param  Illuminate\Database\Eloquent\Builder $query
      * @return \Illuminate\Database\Eloquent\Builder
      */

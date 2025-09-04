@@ -19,6 +19,8 @@ return [
     'print_assigned'    => 'Tipărește toate activele atribuite',
     'email_assigned'    => 'Lista de e-mail a tuturor atribuite',
     'user_notified'     => 'Utilizatorul a primit prin e-mail o listă cu articolele alocate în prezent.',
+    'users_notified'    => 'The user has been emailed a list of their currently assigned items.|:count users have been emailed a list of their currently assigned items.',
+    'users_notified_warning' => ':count user has been emailed a list of their currently assigned items, however :no_email users did not have an email address so could not be emailed.|:count users have been emailed a list of their currently assigned items, however :no_email user(s) did not have an email address so could not be emailed.',
     'auto_assign_label' => 'Include acest utilizator la atribuirea automată a licențelor eligibile',
     'auto_assign_help'  => 'Sari peste acest utilizator în atribuirea automată a licențelor',
     'software_user'     => 'Software predat catre :name',
@@ -51,4 +53,5 @@ return [
     'next_save_user' => 'Următorul: Salvează Utilizatorul',
     'all_assigned_list_generation' => 'Generat pe:',
     'email_user_creds_on_create' => 'Trimite prin e-mail acest utilizator acreditările lor?',
+    'department_manager' => 'Department Manager',
 ];

@@ -17,7 +17,8 @@ return array(
     'delete' => array(
         'confirm'   => 'Er du sikker på at du vil slette denne komponenten?',
         'error'   => 'Det oppstod et problem under sletting av komponenten. Vennligst prøv igjen.',
-        'success' => 'Sletting av komponent vellykket.'
+        'success' => 'Sletting av komponent vellykket.',
+        'error_qty'   => 'Some components of this type are still checked out. Please check them in and try again.',
     ),
 
      'checkout' => array(

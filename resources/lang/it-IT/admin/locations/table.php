@@ -39,4 +39,5 @@ return [
     'signed_by_finance_auditor' => 'Firmato Da (Revisore Finanziario):',
     'signed_by_location_manager' => 'Firmato Da (Responsabile della Sede):',
     'signed_by'                 => 'Firmato Da:',
+    'clone'  					=> 'Clona Sede',
 ];

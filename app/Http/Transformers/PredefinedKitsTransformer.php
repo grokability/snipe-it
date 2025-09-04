@@ -34,7 +34,7 @@ class PredefinedKitsTransformer
             'name' => e($kit->name),
             'created_by' => ($kit->adminuser) ? [
                 'id' => (int) $kit->adminuser->id,
-                'name'=> e($kit->adminuser->present()->fullName()),
+                'name'=> e($kit->adminuser->display_name),
             ] : null,
             'created_at' => Helper::getFormattedDateObject($kit->created_at, 'datetime'),
             'updated_at' => Helper::getFormattedDateObject($kit->updated_at, 'datetime'),

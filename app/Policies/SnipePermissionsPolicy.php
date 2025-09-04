@@ -53,7 +53,7 @@ abstract class SnipePermissionsPolicy
         }
 
         /**
-         * If we got here by $this→authorize('something', $actualModel) then we can continue on Il but if we got here
+         * If we got here by $this→authorize('something', $actualModel) then we can continue on, but if we got here
          * via $this→authorize('something', Model::class) then calling Company:: isCurrentUserHasAccess($item) gets weird.
          * Bail out here by returning "nothing" and allow the relevant method lower in this class to be called and handle authorization.
          */
@@ -85,7 +85,7 @@ abstract class SnipePermissionsPolicy
     }
 
     /**
-     * Determine whether the user can view the accessory.
+     * Determine whether the user can view the model.
      *
      * @param  \App\Models\User  $user
      * @return mixed
@@ -101,7 +101,7 @@ abstract class SnipePermissionsPolicy
     }
 
     /**
-     * Determine whether the user can create accessories.
+     * Determine whether the user can create model.
      *
      * @param  \App\Models\User  $user
      * @return mixed
@@ -112,7 +112,7 @@ abstract class SnipePermissionsPolicy
     }
 
     /**
-     * Determine whether the user can update the accessory.
+     * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user
      * @return mixed
@@ -124,7 +124,7 @@ abstract class SnipePermissionsPolicy
 
 
     /**
-     * Determine whether the user can update the accessory.
+     * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user
      * @return mixed
@@ -135,7 +135,7 @@ abstract class SnipePermissionsPolicy
     }
 
     /**
-     * Determine whether the user can delete the accessory.
+     * Determine whether the user can delete the model.
      *
      * @param  \App\Models\User  $user
      * @return mixed
@@ -151,7 +151,7 @@ abstract class SnipePermissionsPolicy
     }
 
     /**
-     * Determine whether the user can manage the accessory.
+     * Determine whether the user can manage the model.
      *
      * @param  \App\Models\User  $user
      * @return mixed

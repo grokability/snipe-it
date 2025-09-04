@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Helper;
 use App\Models\AssetModel;
 use App\Models\CustomField;
 use App\Models\CustomFieldset;
@@ -35,15 +36,17 @@ class CustomFieldsetsController extends Controller
      * @param int $id
      * @since [v1.8]
      */
-    public function show($id) : View | RedirectResponse
+    public function show(CustomFieldset $fieldset) : View | RedirectResponse
     {
         $cfset = CustomFieldset::with('fields')
-            ->where('id', '=', $id)->orderBy('id', 'ASC')->first();
+            ->where('id', '=', $fieldset->id)
+            ->orderBy('id', 'ASC')
+            ->first();
 
         $this->authorize('view', $cfset);
 
         if ($cfset) {
-            $custom_fields_list = ['' => 'Add New Field to Fieldset'] + CustomField::pluck('name', 'id')->toArray();
+            $custom_fields_list = ['' => 'Add New Field to Fieldset'] + CustomField::where('type', $cfset->type)->pluck('name', 'id')->toArray();
 
             $maxid = 0;
             foreach ($cfset->fields as $field) {
@@ -91,6 +94,8 @@ class CustomFieldsetsController extends Controller
         $fieldset = new CustomFieldset([
                 'name' => $request->get('name'),
                 'created_by' => auth()->id(),
+                'type' => Helper::$itemtypes_having_custom_fields[$request->get('tab')]
+                //                'sub' =>
         ]);
 
         $validator = Validator::make($request->all(), $fieldset->rules);
@@ -122,16 +127,10 @@ class CustomFieldsetsController extends Controller
      * @param  int  $id
      * @since [v6.0.14]
      */
-    public function edit($id) : View | RedirectResponse
+    public function edit(CustomFieldset $fieldset) : View | RedirectResponse
     {
         $this->authorize('create', CustomField::class);
-
-        if ($fieldset = CustomFieldset::find($id)) {
-            return view('custom_fields.fieldsets.edit')->with('item', $fieldset);
-        }
-
-        return redirect()->route('fields.index')->with('error', trans('admin/custom_fields/general.fieldset_does_not_exist', ['id' => $id]));
-
+        return view('custom_fields.fieldsets.edit')->with('item', $fieldset);
     }
 
     /**
@@ -141,23 +140,18 @@ class CustomFieldsetsController extends Controller
      * @param  int  $id
      * @since [v6.0.14]
      */
-    public function update(Request $request, $id) : RedirectResponse
+    public function update(Request $request, CustomFieldset $fieldset) : RedirectResponse
     {
         $this->authorize('create', CustomField::class);
 
-        if ($fieldset = CustomFieldset::find($id)) {
+        $fieldset->name = $request->input('name');
 
-            $fieldset->name = $request->input('name');
-
-            if ($fieldset->save()) {
-                return redirect()->route('fields.index')->with('success', trans('admin/custom_fields/general.fieldset_updated'));
-            }
-
-            return redirect()->back()->withInput()->withErrors($fieldset->getErrors());
-
+        if ($fieldset->save()) {
+            return redirect()->route('fields.index')->with('success', trans('admin/custom_fields/general.fieldset_updated'));
         }
 
-        return redirect()->route('fields.index')->with('error', trans('admin/custom_fields/general.fieldset_does_not_exist', ['id' => $id]));
+        return redirect()->back()->withInput()->withErrors($fieldset->getErrors());
+
     }
 
     /**

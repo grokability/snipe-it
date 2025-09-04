@@ -28,16 +28,11 @@ class LicenseCheckinController extends Controller
      * @return \Illuminate\Contracts\View\View
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function create($seatId = null, $backTo = null)
+    public function create(LicenseSeat $licenseSeat, $backTo = null)
     {
         // Check if the asset exists
-        if (is_null($licenseSeat = LicenseSeat::find($seatId)) || is_null($license = License::find($licenseSeat->license_id))) {
-            // Redirect to the asset management page with error
-            return redirect()->route('licenses.index')->with('error', trans('admin/licenses/message.not_found'));
-        }
-
+        $license = License::find($licenseSeat->license_id);
         $this->authorize('checkout', $license);
-
         return view('licenses/checkin', compact('licenseSeat'))->with('backto', $backTo);
     }
 
@@ -69,12 +64,7 @@ class LicenseCheckinController extends Controller
 
         $this->authorize('checkout', $license);
 
-        if (! $license->reassignable) {
-            // Not allowed to checkin
-            Session::flash('error', trans('admin/licenses/message.checkin.not_reassignable') . '.');
 
-            return redirect()->back()->withInput();
-        }
 
         // Declare the rules for the form validation
         $rules = [
@@ -91,7 +81,10 @@ class LicenseCheckinController extends Controller
         }
 
         if($licenseSeat->assigned_to != null){
-            $return_to = User::find($licenseSeat->assigned_to);
+            $return_to = User::withTrashed()->find($licenseSeat->assigned_to);
+            if ($return_to) {
+                session()->put('checkedInFrom', $return_to->id);
+            }
         } else {
             $return_to = Asset::find($licenseSeat->asset_id);
         }
@@ -100,16 +93,22 @@ class LicenseCheckinController extends Controller
         $licenseSeat->assigned_to = null;
         $licenseSeat->asset_id = null;
         $licenseSeat->notes = $request->input('notes');
+        if (! $licenseSeat->license->reassignable) {
+            $licenseSeat->unreassignable_seat = true;
+        }
 
         session()->put(['redirect_option' => $request->get('redirect_option')]);
-
+        if ($request->get('redirect_option') === 'target'){
+            session()->put(['checkout_to_type' => 'user']);
+        }
 
         // Was the asset updated?
         if ($licenseSeat->save()) {
-            event(new CheckoutableCheckedIn($licenseSeat, $return_to, auth()->user(), $request->input('notes')));
+            event(new CheckoutableCheckedIn($licenseSeat, $return_to, auth()->user(), $licenseSeat->notes));
 
 
-            return redirect()->to(Helper::getRedirectOption($request, $license->id, 'Licenses'))->with('success', trans('admin/licenses/message.checkin.success'));
+            return Helper::getRedirectOption($request, $license->id, 'Licenses')
+                ->with('success', trans('admin/licenses/message.checkin.success'));
         }
 
         // Redirect to the license page with error
@@ -131,21 +130,17 @@ class LicenseCheckinController extends Controller
         $license = License::findOrFail($licenseId);
         $this->authorize('checkin', $license);
 
-        if (! $license->reassignable) {
-            // Not allowed to checkin
-            Session::flash('error', 'License not reassignable.');
-
-            return redirect()->back()->withInput();
-        }
-
         $licenseSeatsByUser = LicenseSeat::where('license_id', '=', $licenseId)
             ->whereNotNull('assigned_to')
-            ->with('user')
+            ->with('user', 'license')
             ->get();
 
+        $license = $licenseSeatsByUser->first()?->license;
         foreach ($licenseSeatsByUser as $user_seat) {
             $user_seat->assigned_to = null;
-
+            if ($license && ! $license->reassignable) {
+                $user_seat->unreassignable_seat = true;
+            }
             if ($user_seat->save()) {
                 Log::debug('Checking in '.$license->name.' from user '.$user_seat->username);
                 $user_seat->logCheckin($user_seat->user, trans('admin/licenses/general.bulk.checkin_all.log_msg'));
@@ -158,9 +153,12 @@ class LicenseCheckinController extends Controller
             ->get();
 
         $count = 0;
+        $license = $licenseSeatsByAsset->first()?->license;
         foreach ($licenseSeatsByAsset as $asset_seat) {
             $asset_seat->asset_id = null;
-
+            if ($license && ! $license->reassignable) {
+                $asset_seat->unreassignable_seat = true;
+            }
             if ($asset_seat->save()) {
                 Log::debug('Checking in '.$license->name.' from asset '.$asset_seat->asset_tag);
                 $asset_seat->logCheckin($asset_seat->asset, trans('admin/licenses/general.bulk.checkin_all.log_msg'));

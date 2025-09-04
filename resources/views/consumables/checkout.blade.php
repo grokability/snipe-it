@@ -36,6 +36,15 @@
             </div>
           </div>
           @endif
+          @if ($consumable->category)
+              <!-- consumable name -->
+              <div class="form-group">
+                  <label class="col-sm-3 control-label">{{ trans('general.category') }}</label>
+                  <div class="col-md-6">
+                      <p class="form-control-static">{{ $consumable->category->name }}</p>
+                  </div>
+              </div>
+          @endif
 
           <!-- total -->
           <div class="form-group">

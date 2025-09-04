@@ -22,15 +22,15 @@ return array(
     ),
 
      'checkout' => array(
-        'error'   		=> 'Il consumabile non è stato controllato, prova di nuovo',
-        'success' 		=> 'Il consumabile è stato controllato con successo.',
+        'error'   		=> 'Il Consumabile non è stato assegnato, prova di nuovo',
+        'success' 		=> 'Il Consumabile è stato assegnato con successo.',
         'user_does_not_exist' => 'Questo utente non è valido. Riprova.',
-         'unavailable'      => 'Non ci sono abbastanza consumabili per questo check-out. Controlla la quantità rimasta. ',
+         'unavailable'      => 'Non ci sono abbastanza consumabili per questa assegnazione. Controlla la quantità rimasta. ',
     ),
 
     'checkin' => array(
-        'error'   		=> 'Il consumabile non è stato controllato, prova di nuovo',
-        'success' 		=> 'Il consumabile è stato controllato con successo.',
+        'error'   		=> 'Il consumabile non è stato restituito, riprova',
+        'success' 		=> 'Consumabile restituito con successo.',
         'user_does_not_exist' => 'Questo utente non è valido. Riprova.'
     )
 

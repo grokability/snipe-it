@@ -6,8 +6,6 @@ return array(
     'account_not_found'      => 'crwdns1392:0crwdne1392:0',
     'account_not_activated'  => 'crwdns1104:0crwdne1104:0',
     'account_suspended'      => 'crwdns1105:0crwdne1105:0',
-    'account_banned'         => 'crwdns1106:0crwdne1106:0',
-    'throttle'               => 'crwdns5926:0crwdne5926:0',
 
     'two_factor' => array(
         'already_enrolled'      => 'crwdns5928:0crwdne5928:0',

@@ -17,7 +17,8 @@ return array(
     'delete' => array(
         'confirm'   => 'Sigur doriți să ștergeți această componentă?',
         'error'   => 'A apărut o problemă de ștergere a componentei. Vă rugăm să încercați din nou.',
-        'success' => 'Componenta a fost șters cu succes.'
+        'success' => 'Componenta a fost șters cu succes.',
+        'error_qty'   => 'Some components of this type are still checked out. Please check them in and try again.',
     ),
 
      'checkout' => array(

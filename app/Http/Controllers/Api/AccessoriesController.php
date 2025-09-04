@@ -66,7 +66,7 @@ class AccessoriesController extends Controller
         }
 
         if ($request->filled('company_id')) {
-            $accessories->where('company_id', '=', $request->input('company_id'));
+            $accessories->where('accessories.company_id', '=', $request->input('company_id'));
         }
 
         if ($request->filled('category_id')) {
@@ -249,11 +249,11 @@ class AccessoriesController extends Controller
     public function destroy($id)
     {
         $this->authorize('delete', Accessory::class);
-        $accessory = Accessory::findOrFail($id);
+        $accessory = Accessory::withCount('checkouts as checkouts_count')->findOrFail($id);
         $this->authorize($accessory);
 
-        if ($accessory->hasUsers() > 0) {
-            return response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/accessories/message.assoc_users', ['count'=> $accessory->hasUsers()])));
+        if ($accessory->checkouts_count > 0) {
+            return response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/accessories/general.delete_disabled')));
         }
 
         $accessory->delete();
@@ -288,32 +288,42 @@ class AccessoriesController extends Controller
                 'note' => $request->input('note'),
             ]);
 
+
             $accessory_checkout->created_by = auth()->id();
             $accessory_checkout->save();
+
+            $payload = [
+                'accessory_id' => $accessory->id,
+                'assigned_to' => $target->id,
+                'assigned_type' => $target::class,
+                'note' => $request->input('note'),
+                'created_by' => auth()->id(),
+                'pivot' => $accessory_checkout->id,
+            ];
         }
 
         // Set this value to be able to pass the qty through to the event
         event(new CheckoutableCheckedOut($accessory, $target, auth()->user(), $request->input('note')));
 
-        return response()->json(Helper::formatStandardApiResponse('success', null, trans('admin/accessories/message.checkout.success')));
+        return response()->json(Helper::formatStandardApiResponse('success', $payload, trans('admin/accessories/message.checkout.success')));
 
     }
 
     /**
      * Check in the item so that it can be checked out again to someone else
      *
-     * @uses Accessory::checkin_email() to determine if an email can and should be sent
-     * @author [A. Gianotto] [<snipe@snipe.net>]
      * @param Request $request
      * @param int $accessoryUserId
      * @param string $backto
-     * @return \Illuminate\Http\RedirectResponse
+     * @return JsonResponse
+     * @uses Accessory::checkin_email() to determine if an email can and should be sent
+     * @author [A. Gianotto] [<snipe@snipe.net>]
      * @internal param int $accessoryId
      */
     public function checkin(Request $request, $accessoryUserId = null)
     {
         if (is_null($accessory_checkout = AccessoryCheckout::find($accessoryUserId))) {
-            return response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/accessories/message.does_not_exist')));
+            return response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/accessories/message.does_not_exist', ['id' => $accessoryUserId])));
         }
 
         $accessory = Accessory::find($accessory_checkout->accessory_id);
@@ -327,7 +337,14 @@ class AccessoriesController extends Controller
                 $user = User::find($accessory_checkout->assigned_to);
             }
 
-            return response()->json(Helper::formatStandardApiResponse('success', null,  trans('admin/accessories/message.checkin.success')));
+            $payload = [
+                'accessory_id' => $accessory->id,
+                'note' => $request->input('note'),
+                'created_by' => auth()->id(),
+                'pivot' => $accessory_checkout->id,
+            ];
+
+            return response()->json(Helper::formatStandardApiResponse('success', $payload,  trans('admin/accessories/message.checkin.success')));
         }
 
         return response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/accessories/message.checkin.error')));

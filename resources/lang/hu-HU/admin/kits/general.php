@@ -47,5 +47,5 @@ return [
     'kit_deleted'                       => 'A készlet sikeresen törlődött',
     'kit_model_updated'                 => 'A modell sikeresen frissült',
     'kit_model_detached'                => 'A modell sikeresen levált',
-    'model_already_attached'            => 'Model already attached to kit',
+    'model_already_attached'            => 'Az eszközmodell már van hozzá van rendelve a készlethez',
 ];

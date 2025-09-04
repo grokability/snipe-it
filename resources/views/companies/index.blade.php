@@ -6,10 +6,6 @@
   @parent
 @stop
 
-@section('header_right')
-  <a href="{{ route('companies.create') }}" class="btn btn-primary pull-right">
-    {{ trans('general.create') }}</a>
-@stop
 {{-- Page content --}}
 @section('content')
   <div class="row">
@@ -19,16 +15,11 @@
             <table
               data-columns="{{ \App\Presenters\CompanyPresenter::dataTableLayout() }}"
               data-cookie-id-table="companiesTable"
-              data-pagination="true"
               data-id-table="companiesTable"
-              data-search="true"
               data-side-pagination="server"
-              data-show-columns="true"
-              data-show-export="true"
-              data-show-refresh="true"
-              data-show-fullscreen="true"
               data-sort-order="asc"
               id="companiesTable"
+              data-buttons="companyButtons"
               class="table table-striped snipe-table"
               data-url="{{ route('api.companies.index') }}"
               data-export-options='{

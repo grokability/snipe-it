@@ -37,7 +37,7 @@ class DeleteUsersTest extends TestCase implements TestsFullMultipleCompaniesSupp
     {
         $user = User::factory()->deletedUser()->create();
         $this->actingAsForApi(User::factory()->deleteUsers()->create())
-            ->deleteJson(route('api.users.destroy', $user->id))
+            ->deleteJson(route('api.users.destroy', $user))
             ->assertOk()
             ->assertStatus(200)
             ->assertStatusMessageIs('error')
@@ -51,7 +51,7 @@ class DeleteUsersTest extends TestCase implements TestsFullMultipleCompaniesSupp
         $this->assertFalse($manager->isDeletable());
 
         $this->actingAsForApi(User::factory()->deleteUsers()->create())
-            ->deleteJson(route('api.users.destroy', $manager->id))
+            ->deleteJson(route('api.users.destroy', $manager))
             ->assertOk()
             ->assertStatus(200)
             ->assertStatusMessageIs('error')
@@ -66,7 +66,7 @@ class DeleteUsersTest extends TestCase implements TestsFullMultipleCompaniesSupp
         $this->assertFalse($manager->isDeletable());
 
         $this->actingAsForApi(User::factory()->deleteUsers()->create())
-            ->deleteJson(route('api.users.destroy', $manager->id))
+            ->deleteJson(route('api.users.destroy', $manager))
             ->assertOk()
             ->assertStatus(200)
             ->assertStatusMessageIs('error')
@@ -81,7 +81,7 @@ class DeleteUsersTest extends TestCase implements TestsFullMultipleCompaniesSupp
         $this->assertFalse($manager->isDeletable());
 
         $this->actingAsForApi(User::factory()->deleteUsers()->create())
-            ->deleteJson(route('api.users.destroy', $manager->id))
+            ->deleteJson(route('api.users.destroy', $manager))
             ->assertOk()
             ->assertStatus(200)
             ->assertStatusMessageIs('error')
@@ -111,7 +111,7 @@ class DeleteUsersTest extends TestCase implements TestsFullMultipleCompaniesSupp
         $userFromB = User::factory()->deleteUsers()->for($companyB)->create();
 
         $this->actingAsForApi($userFromA)
-            ->deleteJson(route('api.users.destroy', ['user' => $userFromB->id]))
+            ->deleteJson(route('api.users.destroy',  $userFromB))
             ->assertOk()
             ->assertStatus(200)
             ->assertStatusMessageIs('error')
@@ -121,7 +121,7 @@ class DeleteUsersTest extends TestCase implements TestsFullMultipleCompaniesSupp
         $this->assertNull($userFromB->deleted_at);
 
         $this->actingAsForApi($userFromB)
-            ->deleteJson(route('api.users.destroy', ['user' => $userFromA->id]))
+            ->deleteJson(route('api.users.destroy', $userFromA))
             ->assertOk()
             ->assertStatus(200)
             ->assertStatusMessageIs('error')
@@ -131,7 +131,7 @@ class DeleteUsersTest extends TestCase implements TestsFullMultipleCompaniesSupp
         $this->assertNull($userFromA->deleted_at);
 
         $this->actingAsForApi($superuser)
-            ->deleteJson(route('api.users.destroy', ['user' => $userFromA->id]))
+            ->deleteJson(route('api.users.destroy', $userFromA))
             ->assertOk()
             ->assertStatus(200)
             ->assertStatusMessageIs('success')

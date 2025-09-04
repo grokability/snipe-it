@@ -72,6 +72,7 @@ abstract class Importer
         'termination_date' => 'termination date',
         'warranty_months' => 'warranty',
         'full_name' => 'full name',
+        'display_name' => 'display name',
         'email' => 'email',
         'username' => 'username',
         'address' => 'address',
@@ -88,6 +89,7 @@ abstract class Importer
         'department' => 'department',
         'manager_name' => 'manager full name',
         'manager_username' => 'manager username',
+        'manager_employee_num' => 'manager employee number',
         'min_amt' => 'minimum quantity',
         'remote' => 'remote',
         'vip' => 'vip',
@@ -132,7 +134,7 @@ abstract class Importer
         } else {
             $this->csv = Reader::createFromString($file);
         }
-        $this->tempPassword = substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 40);
+        $this->tempPassword = '*** NO PASSWORD - IMPORTED VIA CSV ***';
     }
 
     // Cached Values for import lookups
@@ -183,7 +185,7 @@ abstract class Importer
      * @author Daniel Meltzer
      * @since  5.0
      */
-    protected function populateCustomFields($headerRow)
+    protected function populateCustomFields($headerRow) // FIXME - what in the actual fuck is this.
     {
         // Stolen From https://adamwathan.me/2016/07/14/customizing-keys-when-mapping-collections/
         // This 'inverts' the fields such that we have a collection of fields indexed by name.
@@ -298,6 +300,7 @@ abstract class Importer
             'full_name' => $this->findCsvMatch($row, 'full_name'),
             'first_name' => $this->findCsvMatch($row, 'first_name'),
             'last_name' => $this->findCsvMatch($row, 'last_name'),
+            'display_name' => $this->findCsvMatch($row, 'display_name'),
             'email'     => $this->findCsvMatch($row, 'email'),
             'manager_id'=>  '',
             'department_id' =>  '',
@@ -368,6 +371,7 @@ abstract class Importer
         $user->first_name = $user_array['first_name'];
         $user->last_name = $user_array['last_name'];
         $user->username = $user_array['username'];
+        $user->display_name = $user_array['display_name'] ?? null;
         $user->email = $user_array['email'];
         $user->manager_id = $user_array['manager_id'] ?? null;
         $user->department_id = $user_array['department_id'] ?? null;

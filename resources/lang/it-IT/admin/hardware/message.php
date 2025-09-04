@@ -2,7 +2,7 @@
 
 return [
 
-    'undeployable' 		 => '<strong>Attenzione: </strong> Questo Bene è stato marcato come non distribuibile. Se lo stato del Bene è cambiato si prega di aggiornarlo.',
+    'undeployable' 		 => 'I seguenti Beni non possono essere consegnati e sono stati rimossi dall\'Assegnazione: :asset_tags',
     'does_not_exist' 	 => 'Questo Asset non esiste.',
     'does_not_exist_var' => 'Bene con tag :asset_tag non trovato.',
     'no_tag' 	         => 'Nessun tag del Bene è stato fornito.',
@@ -19,6 +19,11 @@ return [
         'success_linked' => 'Bene creato con tag :tag . <strong><a href=":link" style="color: white;">Clicca per vedere</a></strong>.',
         'multi_success_linked' => 'Il bene con tag :links è stato creato con successo.|:count beni sono stati creati con successo. :links.',
         'partial_failure' => 'Non è stato possibile creare un bene. Motivo: :failures|Non è stato possibile creare :count beni. Motivi: :failures',
+        'target_not_found' => [
+            'user' => 'L\'utente assegnato non è stato trovato.',
+            'asset' => 'Il Bene assegnato non è stato trovato.',
+            'location' => 'La Sede assegnata non è stata trovata.',
+        ],
     ],
 
     'update' => [
@@ -66,41 +71,44 @@ return [
         'file_already_deleted' => 'Il file selezionato è già stato eliminato',
         'header_row_has_malformed_characters' => 'Uno o più attributi nella riga d\'intestazione contengono caratteri UTF-8 malformati',
         'content_row_has_malformed_characters' => 'Uno o più attributi nella prima riga del contenuto contengono caratteri UTF-8 malformati',
+        'transliterate_failure' => 'Traslitterazione da :encoding a UTF-8 non riuscita a causa di caratteri non validi nell\'input'
     ],
 
 
     'delete' => [
         'confirm'   	=> 'Sei sicuro di voler eliminare questo bene?',
         'error'   		=> 'C\'è stato un problema durante la cancellazione del bene. Riprova per favore.',
+        'assigned_to_error' => '{1}Il tag: :asset_tag è assegnato. Effettua il check in del dispositivo prima di cancellarlo.|[2,*] :asset_tag sono assegnati. Effettua il check-in dei dispositivi prima di cancellarli.',
         'nothing_updated'   => 'Nessun patrimonio è stato selezionato, quindi niente è stato eliminato.',
         'success' 		=> 'Il bene è stato eliminato con successo.',
     ],
 
     'checkout' => [
-        'error'   		=> 'Il bene non è stato estratto, per favore riprova',
-        'success' 		=> 'Il bene è stato estratto con successo.',
+        'error'   		=> 'Il bene non è stato assegnato, per favore riprova',
+        'success' 		=> 'Il bene è stato assegnato con successo.',
         'user_does_not_exist' => 'Questo utente non è valido. Riprova.',
-        'not_available' => 'Questo prodotto non è disponibile per il checkout!',
-        'no_assets_selected' => 'È necessario selezionare almeno una risorsa dall\'elenco',
+        'not_available' => 'Questo Bene non è disponibile per l\'assegnazione!',
+        'no_assets_selected' => 'Devi selezionare almeno un Bene dall\'elenco',
     ],
 
     'multi-checkout' => [
-        'error'   => 'Il check-out non è andato a buon fine, riprova|Il check-out non è andato a buon fine, riprova',
-        'success' => 'Check-out del bene effettuato.|Check-out dei beni effettuato.',
+        'error'   => 'L\'assegnazione non è andata a buon fine, riprova|Le assegnazioni non sono andate a buon fine, riprova',
+        'success' => 'Bene assegnato correttamente.|Beni assegnati correttamente.',
     ],
 
     'checkin' => [
-        'error'   		=> 'Il bene non è stato registrato, per favore riprova',
-        'success' 		=> 'Il bene è stato registrato con successo.',
+        'error'   		=> 'Il Bene non è stato restituito, riprova',
+        'success' 		=> 'Bene restituito con successo.',
         'user_does_not_exist' => 'Questo utente non è valido. Riprova.',
         'already_checked_in'  => 'Il prodotto è già rientrato.',
 
     ],
 
     'requests' => [
-        'error'   		=> 'L\'asset non è stato richiesto, si prega di riprovare',
-        'success' 		=> 'Asset richiesto con successo.',
-        'canceled'      => 'Richiesta di checkout cancellata con successo',
+        'error'   		=> 'Richiesta non riuscita, riprova.',
+        'success' 		=> 'Richiesta inviata con successo.',
+        'canceled'      => 'Richiesta annullata con successo.',
+        'cancel'        => 'Annulla questa richiesta',
     ],
 
 ];

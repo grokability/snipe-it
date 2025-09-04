@@ -62,6 +62,7 @@ class ComponentsCheckoutTest extends TestCase
             ])
             ->assertStatus(302)
             ->assertRedirect(route('components.index'));
+        $this->assertHasTheseActionLogs($component, ['create', 'checkout']);
     }
 
     public function testComponentCheckoutPagePostIsRedirectedIfRedirectSelectionIsItem()
@@ -76,7 +77,8 @@ class ComponentsCheckoutTest extends TestCase
                 'assigned_qty' => 1,
             ])
             ->assertStatus(302)
-            ->assertRedirect(route('components.show', ['component' => $component->id]));
+            ->assertRedirect(route('components.show', $component));
+        $this->assertHasTheseActionLogs($component, ['create', 'checkout']);
     }
 
     public function testComponentCheckoutPagePostIsRedirectedIfRedirectSelectionIsTarget()
@@ -92,6 +94,7 @@ class ComponentsCheckoutTest extends TestCase
                 'assigned_qty' => 1,
             ])
             ->assertStatus(302)
-            ->assertRedirect(route('hardware.show', ['hardware' => $asset]));
+            ->assertRedirect(route('hardware.show', $asset));
+        $this->assertHasTheseActionLogs($component, ['create', 'checkout']);
     }
 }

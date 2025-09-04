@@ -2,22 +2,26 @@
 
 namespace App\Models;
 
+use App\Models\Traits\CompanyableTrait;
 use App\Models\Traits\Searchable;
 use App\Presenters\Presentable;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
-use Watson\Validating\ValidatingTrait;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
+use Watson\Validating\ValidatingTrait;
+
 /**
  * Model for Companies.
  *
- * @version    v1.8
+ * @version v1.8
  */
 final class Company extends SnipeModel
 {
     use HasFactory;
+    use CompanyableTrait;
+
 
     protected $table = 'companies';
 
@@ -26,19 +30,19 @@ final class Company extends SnipeModel
         'name' => 'required|min:1|max:255|unique:companies,name',
         'fax' => 'min:7|max:35|nullable',
         'phone' => 'min:7|max:35|nullable',
-		'email' => 'email|max:150|nullable',
+    'email' => 'email|max:150|nullable',
     ];
 
     protected $presenter = \App\Presenters\CompanyPresenter::class;
     use Presentable;
 
     /**
-    * Whether the model should inject it's identifier to the unique
-    * validation rules before attempting validation. If this property
-    * is not set in the model it will default to true.
-    *
+     * Whether the model should inject it's identifier to the unique
+     * validation rules before attempting validation. If this property
+     * is not set in the model it will default to true.
+     *
      * @var bool
-    */
+     */
     protected $injectUniqueIdentifier = true;
     use ValidatingTrait;
     use Searchable;
@@ -67,7 +71,8 @@ final class Company extends SnipeModel
         'phone',
         'fax',
         'email',
-        'created_by'
+        'created_by',
+        'notes',
     ];
 
     private static function isFullMultipleCompanySupportEnabled()
@@ -99,7 +104,7 @@ final class Company extends SnipeModel
      * account the full multiple company support setting
      * and if the current user is a super user.
      *
-     * @param $unescaped_input
+     * @param  $unescaped_input
      * @return int|mixed|string|null
      */
     public static function getIdForCurrentUser($unescaped_input)
@@ -126,7 +131,7 @@ final class Company extends SnipeModel
      * Check to see if the current user should have access to the model.
      * I hate this method and I think it should be refactored.
      *
-     * @param $companyable
+     * @param  $companyable
      * @return bool|void
      */
     public static function isCurrentUserHasAccess($companyable)
@@ -145,10 +150,10 @@ final class Company extends SnipeModel
         if (!is_string($companyable)) {
             $company_table = $companyable->getModel()->getTable();
             try {
-                // This is primary for the gate:allows-check in location->isDeletable()
+                // This is primarily for the gate:allows-check in location->isDeletable()
                 // Locations don't have a company_id so without this it isn't possible to delete locations with FullMultipleCompanySupport enabled
                 // because this function is called by SnipePermissionsPolicy->before()
-                if (!$companyable instanceof Company && !Schema::hasColumn($company_table, 'company_id')) {
+                if (!Schema::hasColumn($company_table, 'company_id')) {
                     return true;
                 }
 
@@ -159,11 +164,18 @@ final class Company extends SnipeModel
 
 
         if (auth()->user()) {
-            Log::warning('Companyable is '.$companyable);
+            // Log::warning('Companyable is '.$companyable);
             $current_user_company_id = auth()->user()->company_id;
             $companyable_company_id = $companyable->company_id;
-            return $current_user_company_id == null || $current_user_company_id == $companyable_company_id || auth()->user()->isSuperUser();
+
+            // Set this to check companyable on company
+            if ($companyable instanceof Company) {
+                $companyable_company_id = $companyable->id;
+            }
+            return ($current_user_company_id == null) || ($current_user_company_id == $companyable_company_id) || auth()->user()->isSuperUser();
         }
+
+        return false;
 
     }
 
@@ -182,7 +194,7 @@ final class Company extends SnipeModel
      * Checks if company can be deleted
      *
      * @author [Dan Meltzer] [<dmeltzer.devel@gmail.com>]
-     * @since [v5.0]
+     * @since  [v5.0]
      * @return bool
      */
     public function isDeletable()
@@ -199,7 +211,7 @@ final class Company extends SnipeModel
     }
 
     /**
-     * @param $unescaped_input
+     * @param  $unescaped_input
      * @return int|mixed|string|null
      */
     public static function getIdForUser($unescaped_input)
@@ -255,14 +267,14 @@ final class Company extends SnipeModel
      * @todo - refactor that trait to handle the user's model as well.
      *
      * @author [A. Gianotto] <snipe@snipe.net>
-     * @param $query
-     * @param $column
-     * @param $table_name
+     * @param  $query
+     * @param  $column
+     * @param  $table_name
      * @return mixed
      */
     public static function scopeCompanyables($query, $column = 'company_id', $table_name = null)
     {
-        // If not logged in and hitting this, assume we are on the command line and don't scope?'
+        // If not logged in and hitting this, assume we are on the command line and don't scope?
         if (! static::isFullMultipleCompanySupportEnabled() || (Auth::hasUser() && auth()->user()->isSuperUser()) || (! Auth::hasUser())) {
             return $query;
         } else {
@@ -279,11 +291,16 @@ final class Company extends SnipeModel
     private static function scopeCompanyablesDirectly($query, $column = 'company_id', $table_name = null)
     {
 
+        $company_id = null;
         // Get the company ID of the logged-in user, or set it to null if there is no company associated with the user
         if (Auth::hasUser()) {
             $company_id = auth()->user()->company_id;
-        } else {
-            $company_id = null;
+        }
+
+
+        // If we are scoping the companies table itself, look for the company.id
+        if ($query->getModel()->getTable() == 'companies') {
+            return $query->where('companies.id', '=', $company_id);
         }
 
 
@@ -295,6 +312,8 @@ final class Company extends SnipeModel
 
             return $query->where($table.$column, '=', $company_id);
         }
+
+
 
     }
 
@@ -310,8 +329,8 @@ final class Company extends SnipeModel
      * This gets invoked by CompanyableChildScope, but I'm not sure what it does.
      *
      * @author [A. Gianotto] <snipe@snipe.net>
-     * @param array $companyable_names
-     * @param $query
+     * @param  array $companyable_names
+     * @param  $query
      * @return mixed
      */
     public static function scopeCompanyableChildren(array $companyable_names, $query)
@@ -323,17 +342,18 @@ final class Company extends SnipeModel
             return $query;
         } else {
             $f = function ($q) {
-                Log::debug('scopeCompanyablesDirectly firing ');
                 static::scopeCompanyablesDirectly($q);
             };
 
-            $q = $query->where(function ($q) use ($companyable_names, $f) {
-                $q2 = $q->whereHas($companyable_names[0], $f);
+            $q = $query->where(
+                function ($q) use ($companyable_names, $f) {
+                    $q2 = $q->whereHas($companyable_names[0], $f);
 
-                for ($i = 1; $i < count($companyable_names); $i++) {
-                    $q2 = $q2->orWhereHas($companyable_names[$i], $f);
+                    for ($i = 1; $i < count($companyable_names); $i++) {
+                        $q2 = $q2->orWhereHas($companyable_names[$i], $f);
+                    }
                 }
-            });
+            );
 
             return $q;
         }

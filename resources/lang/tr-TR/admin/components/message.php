@@ -17,7 +17,8 @@ return array(
     'delete' => array(
         'confirm'   => 'Bu bileşeni silmek istediğinizden emin misiniz?',
         'error'   => 'Bileşen silinirken sorun oluştu. Lütfen yeniden deneyin.',
-        'success' => 'Bileşen başarıyla silindi.'
+        'success' => 'Bileşen başarıyla silindi.',
+        'error_qty'   => 'Bu türden bazı bileşenler hala alınmış. Lütfen bunları teslim edin ve tekrar deneyin.',
     ),
 
      'checkout' => array(

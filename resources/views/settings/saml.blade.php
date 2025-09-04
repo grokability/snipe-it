@@ -52,7 +52,7 @@
                             <div class="col-md-9">
 
                                 <label class="form-control{{ config('app.lock_passwords') === true ? ' form-control--disabled': '' }}">
-                                    {{ Form::checkbox('saml_enabled', '1', old('saml_enabled', $setting->saml_enabled), ['class' => config('app.lock_passwords') === true ? 'disabled ': '',  config('app.lock_passwords') === true ? 'disabled ': '', ]) }}
+                                    <input type="checkbox" name="saml_enabled" value="1" @checked(old('saml_enabled', $setting->saml_enabled)) @disabled(config('app.lock_passwords')) @class(['disabled' => config('app.lock_passwords')])/>
                                     {{ trans('admin/settings/general.saml_enabled') }}
                                 </label>
 
@@ -85,6 +85,7 @@
                                          <label for="saml_sp_x509cert">{{ trans('admin/settings/general.saml_sp_x509cert') }}</label>
                                             <x-input.textarea
                                                 name="saml_sp_x509cert"
+                                                id="saml_sp_x509cert"
                                                 :value="$setting->saml_sp_x509cert"
                                                 wrap="off"
                                                 readonly
@@ -113,6 +114,7 @@
                         <div class="col-md-9">
                             <x-input.textarea
                                 name="saml_idp_metadata"
+                                id="saml_idp_metadata"
                                 :value="old('saml_idp_metadata', $setting->saml_idp_metadata)"
                                 placeholder="https://example.com/idp/metadata"
                                 wrap="off"
@@ -146,7 +148,7 @@
                             </div>
                             <div class="col-md-9">
                                 <label class="form-control{{ config('app.lock_passwords') === true ? ' form-control--disabled': '' }}">
-                                    {{ Form::checkbox('saml_forcelogin', '1', old('saml_forcelogin', $setting->saml_forcelogin),['class' =>  $setting->demoMode, $setting->demoMode]) }}
+                                    <input type="checkbox" name="saml_forcelogin" value="1" @checked(old('saml_forcelogin', $setting->saml_forcelogin)) @disabled(config('app.lock_passwords')) @class(['disabled' => config('app.lock_passwords')]) />
                                     {{ trans('admin/settings/general.saml_forcelogin') }}
                                 </label>
                                 <p class="help-block">{{ trans('admin/settings/general.saml_forcelogin_help') }}</p>
@@ -162,7 +164,7 @@
                             </div>
                             <div class="col-md-9">
                                 <label class="form-control{{ config('app.lock_passwords') === true ? ' form-control--disabled': '' }}">
-                                    {{ Form::checkbox('saml_slo', '1', old('saml_slo', $setting->saml_slo),['class' => 'minimal '. $setting->demoMode, $setting->demoMode]) }}
+                                    <input type="checkbox" name="saml_slo" value="1" @checked(old('saml_slo', $setting->saml_slo)) @disabled(config('app.lock_passwords')) @class(['minimal', 'disabled' => config('app.lock_passwords')])/>
                                     {{ trans('admin/settings/general.saml_slo') }}
                                 </label>
                                 <p class="help-block">{{ trans('admin/settings/general.saml_slo_help') }}</p>
@@ -218,7 +220,7 @@
             var fr = new FileReader();
 
             fr.onload = function(e) {
-                $('#saml_idp_metadata').text(e.target.result);
+                $('#saml_idp_metadata').val(e.target.result);
             } 
 
             fr.readAsText(this.files[0]);

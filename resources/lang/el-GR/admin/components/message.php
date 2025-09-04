@@ -17,7 +17,8 @@ return array(
     'delete' => array(
         'confirm'   => 'Είστε βέβαιοι ότι θέλετε να διαγράψετε αυτό το εξάρτημα;',
         'error'   => 'Παρουσιάστηκε ένα ζήτημα κατάργησης του στοιχείου. ΠΑΡΑΚΑΛΩ προσπαθησε ξανα.',
-        'success' => 'Το εξάρτημα έχει διαγραφεί με επιτυχία.'
+        'success' => 'Το εξάρτημα έχει διαγραφεί με επιτυχία.',
+        'error_qty'   => 'Some components of this type are still checked out. Please check them in and try again.',
     ),
 
      'checkout' => array(

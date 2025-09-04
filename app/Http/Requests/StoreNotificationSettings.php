@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Models\Accessory;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 
 class StoreNotificationSettings extends FormRequest
 {
@@ -26,9 +27,12 @@ class StoreNotificationSettings extends FormRequest
         return [
             'alert_email'                         => 'email_array|nullable',
             'admin_cc_email'                      => 'email_array|nullable',
-            'alert_threshold'                     => 'numeric|nullable|gt:0',
+            'admin_cc_always' => [
+                Rule::in('0', '1'),
+            ],
+            'alert_threshold'                     => 'numeric|nullable',
             'alert_interval'                      => 'numeric|nullable|gt:0',
-            'audit_warning_days'                  => 'numeric|nullable|gt:0',
+            'audit_warning_days'                  => 'numeric|nullable',
             'due_checkin_days'                    => 'numeric|nullable|gt:0',
             'audit_interval'                      => 'numeric|nullable|gt:0',
         ];

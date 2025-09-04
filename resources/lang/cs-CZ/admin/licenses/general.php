@@ -14,7 +14,7 @@ return array(
     'info'  					=> 'Informace o licenci',
     'license_seats'  			=> 'Počet licencí',
     'seat'  					=> 'Licence',
-    'seat_count'  				=> 'Seat :count',
+    'seat_count'  				=> 'Počet míst: :count',
     'seats'  					=> 'Počet licencí',
     'software_licenses'  		=> 'Softwarové licence',
     'user'  					=> 'Uživatel',
@@ -24,12 +24,12 @@ return array(
         [
             'checkin_all'           => [
                 'button'            => 'Hromadně převzít všechny licence',
-                'modal'             => 'This action will checkin one seat. | This action will checkin all :checkedout_seats_count seats for this license.',
+                'modal'             => 'Tato akce vrátí jedno místo. | Tato akce vrátí všech :checkedout_seats_count míst u této licence.',
                 'enabled_tooltip'   => 'Převzít všechny licence vydané jak uživatelům, tak i zařízením',
                 'disabled_tooltip'  => 'To nelze provést, neboť není vydaná žádná licence',
                 'disabled_tooltip_reassignable'  => 'Toto je zakázáno, protože licence není znovu přiřazitelná',
                 'success'           => 'Lincece úspěšně převzata! | Licence úspěšně převzaty!',
-                'log_msg'           => 'Checked in via bulk license checkin in license GUI',
+                'log_msg'           => 'Vráceno prostřednictvím hromadného vrácení licencí v rozhraní licence',
             ],
 
             'checkout_all'              => [

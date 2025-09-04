@@ -31,15 +31,16 @@ class UsersImportFileBuilder extends FileBuilder
     protected function getDictionary(): array
     {
         return [
-            'companyName'    => 'Company',
-            'email'          => 'email',
-            'employeeNumber' => 'Employee Number',
+            'companyName'     => 'Company',
+            'email'           => 'email',
+            'employeeNumber'  => 'Employee Number',
             'firstName'       => 'First Name',
-            'lastName'       => 'Last Name',
-            'location'       => 'Location',
-            'phoneNumber'    => 'Phone Number',
-            'position'       => 'Job Title',
-            'username'       => 'Username',
+            'lastName'        => 'Last Name',
+            'displayName'     => 'Display Name',
+            'location'        => 'Location',
+            'phoneNumber'     => 'Phone Number',
+            'position'        => 'Job Title',
+            'username'        => 'Username',
         ];
     }
 
@@ -51,15 +52,16 @@ class UsersImportFileBuilder extends FileBuilder
         $faker = fake();
 
         return [
-            'companyName'    => $faker->company,
-            'email'          => Str::random(32) . "@{$faker->freeEmailDomain}",
-            'employeeNumber' => $faker->uuid,
+            'companyName'     => $faker->company,
+            'email'           => $faker->safeEmail(),
+            'employeeNumber'  => $faker->uuid,
             'firstName'       => $faker->firstName,
-            'lastName'       => $faker->lastName,
-            'location'       => "{$faker->city}, {$faker->country}",
-            'phoneNumber'    => $faker->phoneNumber,
-            'position'       => $faker->jobTitle,
-            'username'       => Str::random(),
+            'lastName'        => $faker->lastName,
+            'displayName'     => $faker->firstName,
+            'location'        => "{$faker->city}, {$faker->country}",
+            'phoneNumber'     => $faker->phoneNumber,
+            'position'        => $faker->jobTitle,
+            'username'        => $faker->userName(),
         ];
     }
 }

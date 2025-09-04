@@ -5,7 +5,7 @@ return array(
     'assigned_to'   	=> 'Assigned To',
     'checkout'   		=> 'In/Out',
     'deleted_at'        => 'Deleted at',
-    'id'      			=> 'ID',
+    'id'      			=> 'መለያ',
     'license_email'   	=> 'License Email',
     'license_name'   	=> 'Licensed To',
     'purchase_date'   	=> 'Purchase Date',

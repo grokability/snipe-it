@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ImageUploadRequest;
 use App\Models\Supplier;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
 use \Illuminate\Contracts\View\View;
 
@@ -77,17 +76,10 @@ class SuppliersController extends Controller
      *
      * @param  int $supplierId
      */
-    public function edit($supplierId = null) : View | RedirectResponse
+    public function edit(Supplier $supplier) : View | RedirectResponse
     {
         $this->authorize('update', Supplier::class);
-        // Check if the supplier exists
-        if (is_null($item = Supplier::find($supplierId))) {
-            // Redirect to the supplier  page
-            return redirect()->route('suppliers.index')->with('error', trans('admin/suppliers/message.does_not_exist'));
-        }
-
-        // Show the page
-        return view('suppliers/edit', compact('item'));
+        return view('suppliers/edit')->with('item',  $supplier);
     }
 
     /**
@@ -95,14 +87,9 @@ class SuppliersController extends Controller
      *
      * @param  int $supplierId
      */
-    public function update($supplierId, ImageUploadRequest $request) : RedirectResponse
+    public function update(ImageUploadRequest $request, Supplier $supplier) : RedirectResponse
     {
         $this->authorize('update', Supplier::class);
-
-        if (is_null($supplier = Supplier::find($supplierId))) {
-            return redirect()->route('suppliers.index')->with('error', trans('admin/suppliers/message.does_not_exist'));
-        }
-
         // Save the  data
         $supplier->name = request('name');
         $supplier->address = request('address');
@@ -134,7 +121,7 @@ class SuppliersController extends Controller
     public function destroy($supplierId) : RedirectResponse
     {
         $this->authorize('delete', Supplier::class);
-        if (is_null($supplier = Supplier::with('asset_maintenances', 'assets', 'licenses')->withCount('asset_maintenances as asset_maintenances_count', 'assets as assets_count', 'licenses as licenses_count')->find($supplierId))) {
+        if (is_null($supplier = Supplier::with('maintenances', 'assets', 'licenses')->withCount('maintenances as maintenances_count', 'assets as assets_count', 'licenses as licenses_count')->find($supplierId))) {
             return redirect()->route('suppliers.index')->with('error', trans('admin/suppliers/message.not_found'));
         }
 
@@ -142,8 +129,8 @@ class SuppliersController extends Controller
             return redirect()->route('suppliers.index')->with('error', trans('admin/suppliers/message.delete.assoc_assets', ['asset_count' => (int) $supplier->assets_count]));
         }
 
-        if ($supplier->asset_maintenances_count > 0) {
-            return redirect()->route('suppliers.index')->with('error', trans('admin/suppliers/message.delete.assoc_maintenances', ['asset_maintenances_count' => $supplier->asset_maintenances_count]));
+        if ($supplier->maintenances_count > 0) {
+            return redirect()->route('suppliers.index')->with('error', trans('admin/suppliers/message.delete.assoc_maintenances', ['maintenances_count' => $supplier->maintenances_count]));
         }
 
         if ($supplier->licenses_count > 0) {
@@ -163,15 +150,10 @@ class SuppliersController extends Controller
      * @param null $supplierId
      * @internal param int $assetId
      */
-    public function show($supplierId = null) : View | RedirectResponse
+    public function show(Supplier $supplier) : View | RedirectResponse
     {
         $this->authorize('view', Supplier::class);
-        $supplier = Supplier::find($supplierId);
+        return view('suppliers/view', compact('supplier'));
 
-        if (isset($supplier->id)) {
-            return view('suppliers/view', compact('supplier'));
-        }
-
-        return redirect()->route('suppliers.index')->with('error', trans('admin/suppliers/message.does_not_exist'));
     }
 }

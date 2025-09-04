@@ -2,6 +2,7 @@
 
 namespace App\Http\Transformers;
 
+use App\Helpers\CustomFieldHelper;
 use App\Helpers\Helper;
 use App\Models\Accessory;
 use App\Models\AccessoryCheckout;
@@ -42,7 +43,7 @@ class AssetsTransformer
             'requestable' => ($asset->requestable ? true : false),
 
             'model_number' => (($asset->model) && ($asset->model->model_number)) ? e($asset->model->model_number) : null,
-            'eol' => (($asset->asset_eol_date != '') && ($asset->purchase_date != '')) ? Carbon::parse($asset->asset_eol_date)->diffInMonths($asset->purchase_date).' months' : null,
+            'eol' => (($asset->asset_eol_date != '') && ($asset->purchase_date != '')) ? (int) Carbon::parse($asset->asset_eol_date)->diffInMonths($asset->purchase_date, true) . ' months' : null,
             'asset_eol_date' => ($asset->asset_eol_date != '') ? Helper::getFormattedDateObject($asset->asset_eol_date, 'date') : null,
             'status_label' => ($asset->assetstatus) ? [
                 'id' => (int) $asset->assetstatus->id,
@@ -57,6 +58,13 @@ class AssetsTransformer
             'manufacturer' => (($asset->model) && ($asset->model->manufacturer)) ? [
                 'id' => (int) $asset->model->manufacturer->id,
                 'name'=> e($asset->model->manufacturer->name),
+            ] : null,
+            'depreciation' => (($asset->model) && ($asset->model->depreciation)) ? [
+                'id' => (int) $asset->model->depreciation->id,
+                'name'=> e($asset->model->depreciation->name),
+                'months'=> (int) $asset->model->depreciation->months,
+                'type'=>  e($asset->model->depreciation->depreciation_type),
+                'minimum'=> ($asset->model->depreciation->depreciation_min) ? (int) $asset->model->depreciation->depreciation_min : null,
             ] : null,
             'supplier' => ($asset->supplier) ? [
                 'id' => (int) $asset->supplier->id,
@@ -84,7 +92,7 @@ class AssetsTransformer
             'warranty_expires' => ($asset->warranty_months > 0) ? Helper::getFormattedDateObject($asset->warranty_expires, 'date') : null,
             'created_by' => ($asset->adminuser) ? [
                 'id' => (int) $asset->adminuser->id,
-                'name'=> e($asset->adminuser->present()->fullName()),
+                'name'=> e($asset->adminuser->display_name),
             ] : null,
             'created_at' => Helper::getFormattedDateObject($asset->created_at, 'datetime'),
             'updated_at' => Helper::getFormattedDateObject($asset->updated_at, 'datetime'),
@@ -101,53 +109,11 @@ class AssetsTransformer
             'checkout_counter' => (int) $asset->checkout_counter,
             'requests_counter' => (int) $asset->requests_counter,
             'user_can_checkout' => (bool) $asset->availableForCheckout(),
-            'book_value' => Helper::formatCurrencyOutput($asset->getLinearDepreciatedValue()),
+            'book_value' => Helper::formatCurrencyOutput($asset->getDepreciatedValue()),
         ];
 
 
-        if (($asset->model) && ($asset->model->fieldset) && ($asset->model->fieldset->fields->count() > 0)) {
-            $fields_array = [];
-
-            foreach ($asset->model->fieldset->fields as $field) {
-                if ($field->isFieldDecryptable($asset->{$field->db_column})) {
-                    $decrypted = Helper::gracefulDecrypt($field, $asset->{$field->db_column});
-                    $value = (Gate::allows('assets.view.encrypted_custom_fields')) ? $decrypted : strtoupper(trans('admin/custom_fields/general.encrypted'));
-
-                    if ($field->format == 'DATE'){
-                        if (Gate::allows('assets.view.encrypted_custom_fields')){
-                            $value = Helper::getFormattedDateObject($value, 'date', false);
-                        } else {
-                           $value = strtoupper(trans('admin/custom_fields/general.encrypted'));
-                        }
-                    }
-
-                    $fields_array[$field->name] = [
-                            'field' => e($field->db_column),
-                            'value' => e($value),
-                            'field_format' => $field->format,
-                            'element' => $field->element,
-                        ];
-
-                } else {
-                    $value = $asset->{$field->db_column};
-
-                    if (($field->format == 'DATE') && (!is_null($value)) && ($value!='')){
-                        $value = Helper::getFormattedDateObject($value, 'date', false);
-                    }
-                    
-                    $fields_array[$field->name] = [
-                        'field' => e($field->db_column),
-                        'value' => e($value),
-                        'field_format' => $field->format,
-                        'element' => $field->element,
-                    ];
-                }
-
-                $array['custom_fields'] = $fields_array;
-            }
-        } else {
-            $array['custom_fields'] = new \stdClass; // HACK to force generation of empty object instead of empty list
-        }
+        $array['custom_fields'] = CustomFieldHelper::transform($asset->model->fieldset,$asset);
 
         $permissions_array['available_actions'] = [
             'checkout'      => ($asset->deleted_at=='' && Gate::allows('checkout', Asset::class)) ? true : false,
@@ -155,6 +121,7 @@ class AssetsTransformer
             'clone'         => Gate::allows('create', Asset::class) ? true : false,
             'restore'       => ($asset->deleted_at!='' && Gate::allows('create', Asset::class)) ? true : false,
             'update'        => ($asset->deleted_at=='' && Gate::allows('update', Asset::class)) ? true : false,
+            'audit'        => Gate::allows('audit', Asset::class) ? true : false,
             'delete'        => ($asset->deleted_at=='' && $asset->assigned_to =='' && Gate::allows('delete', Asset::class) && ($asset->deleted_at == '')) ? true : false,
         ];      
 
@@ -202,6 +169,7 @@ class AssetsTransformer
                     'last_name'=> ($asset->assigned->last_name) ? e($asset->assigned->last_name) : null,
                     'email'=> ($asset->assigned->email) ? e($asset->assigned->email) : null,
                     'employee_number' =>  ($asset->assigned->employee_num) ? e($asset->assigned->employee_num) : null,
+                    'jobtitle' => $asset->assigned->jobtitle ? e($asset->assigned->jobtitle) : null,
                     'type' => 'user',
                 ] : null;
         }
@@ -278,7 +246,7 @@ class AssetsTransformer
             'id' => (int) $asset->id,
             'image' => ($asset->getImageUrl()) ? $asset->getImageUrl() : null,
             'type' => 'asset',
-            'name' => e($asset->present()->fullName()),
+            'name' => e($asset->display_name),
             'model' => ($asset->model) ? e($asset->model->name) : null,
             'model_number' => (($asset->model) && ($asset->model->model_number)) ? e($asset->model->model_number) : null,
             'asset_tag' => e($asset->asset_tag),
@@ -302,29 +270,32 @@ class AssetsTransformer
 
     public function transformCheckedoutAccessory(AccessoryCheckout $accessory_checkout)
     {
+        if ($accessory_checkout->accessory) {
+            $array = [
+                'id' => $accessory_checkout->id,
+                'accessory' => [
+                    'id' => $accessory_checkout->accessory->id,
+                    'name' => $accessory_checkout->accessory->name,
+                ],
+                'assigned_to' => $accessory_checkout->assigned_to,
+                'image' => ($accessory_checkout->accessory->image) ? Storage::disk('public')->url('accessories/' . e($accessory_checkout->accessory->image)) : null,
+                'note' => $accessory_checkout->note ? e($accessory_checkout->note) : null,
+                'created_by' => $accessory_checkout->adminuser ? [
+                    'id' => (int)$accessory_checkout->adminuser->id,
+                    'name' => e($accessory_checkout->adminuser->present()->fullName),
+                ] : null,
+                'created_at' => Helper::getFormattedDateObject($accessory_checkout->created_at, 'datetime'),
+                'deleted_at' => Helper::getFormattedDateObject($accessory_checkout->deleted_at, 'datetime'),
+            ];
 
-        $array = [
-            'id' => $accessory_checkout->id,
-            'accessory' => [
-                'id' => $accessory_checkout->accessory->id,
-                'name' => $accessory_checkout->accessory->name,
-            ],
-            'image' => ($accessory_checkout->accessory->image) ? Storage::disk('public')->url('accessories/'.e($accessory_checkout->accessory->image)) : null,
-            'note' => $accessory_checkout->note ? e($accessory_checkout->note) : null,
-            'created_by' => $accessory_checkout->adminuser ? [
-                'id' => (int) $accessory_checkout->adminuser->id,
-                'name'=> e($accessory_checkout->adminuser->present()->fullName),
-            ]: null,
-            'created_at' => Helper::getFormattedDateObject($accessory_checkout->created_at, 'datetime'),
-        ];
+            $permissions_array['available_actions'] = [
+                'checkout' => false,
+                'checkin' => Gate::allows('checkin', Accessory::class),
+            ];
 
-        $permissions_array['available_actions'] = [
-            'checkout' => false,
-            'checkin' => Gate::allows('checkin', Accessory::class),
-        ];
-
-        $array += $permissions_array;
-        return $array;
+            $array += $permissions_array;
+            return $array;
+        }
     }
 
 }

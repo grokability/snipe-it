@@ -120,6 +120,7 @@ class ComponentCheckoutController extends Controller
 
         session()->put(['redirect_option' => $request->get('redirect_option'), 'checkout_to_type' => $request->get('checkout_to_type')]);
 
-        return redirect()->to(Helper::getRedirectOption($request, $component->id, 'Components'))->with('success', trans('admin/components/message.checkout.success'));
+        return Helper::getRedirectOption($request, $component->id, 'Components')
+            ->with('success', trans('admin/components/message.checkout.success'));
     }
 }

@@ -3,7 +3,7 @@
 return array(
     'about_models_title'     => 'Om asset modeller',
     'about_models_text'           => 'Asset modeller er en måte å gruppere identiske eiendeler. "MBP 2013", "IPhone 6s", etc.',
-    'deleted'  					        => 'Denne modellen har blitt slettet.',
+    'deleted'  					=> 'Denne modellen har blitt slettet.',
     'bulk_delete'               => 'Bulk slett modeller',
     'bulk_delete_help'               => 'Bruk merkeboksene nedenfor til å bekrefte sletting av de merkede modellene. Modeller som har eiendeler tilknyttet kan ikke slettes før eiendelene har blitt tilknyttet en annen modell.',
     'bulk_delete_warn'          => 'Du er i ferd med å slette en ressursmodell. | Du er i ferd med å slette :model_count modeller.',

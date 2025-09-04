@@ -8,7 +8,7 @@ return [
     'example_manufacturer'  => 'Test Manufacturing Inc.',
     'example_model'      => 'Test Model',
     'example_supplier'   => 'Test Company Limited',
-    'labels_per_page'    => 'Labels',
+    'labels_per_page'    => 'תוויות',
     'support_fields'     => 'שדות',
     'support_asset_tag'  => 'תָג',
     'support_1d_barcode' => '1D',

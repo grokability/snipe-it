@@ -14,8 +14,8 @@ trait Acceptable
     /**
      * Run after the checkout acceptance was accepted by the user
      *
-     * @param  User   $acceptedBy
-     * @param  string $signature
+     * @param User   $acceptedBy
+     * @param string $signature
      */
     public function acceptedCheckout(User $acceptedBy, $signature, $filename = null)
     {
@@ -25,8 +25,8 @@ trait Acceptable
     /**
      * Run after the checkout acceptance was declined by the user
      *
-     * @param  User   $acceptedBy
-     * @param  string $signature
+     * @param User   $acceptedBy
+     * @param string $signature
      */
     public function declinedCheckout(User $declinedBy, $signature)
     {

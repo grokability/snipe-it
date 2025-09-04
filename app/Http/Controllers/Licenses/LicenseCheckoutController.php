@@ -28,33 +28,29 @@ class LicenseCheckoutController extends Controller
      * @return \Illuminate\Contracts\View\View
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function create($id)
+    public function create(License $license)
     {
+        $this->authorize('checkout', $license);
 
-        if ($license = License::find($id)) {
+        if ($license->category) {
 
-            $this->authorize('checkout', $license);
-
-            if ($license->category) {
-
-                // Make sure there is at least one available to checkout
-                if ($license->availCount()->count() < 1){
-                    return redirect()->route('licenses.index')->with('error', trans('admin/licenses/message.checkout.not_enough_seats'));
-                }
-
-                // Return the checkout view
-                return view('licenses/checkout', compact('license'));
+            // Make sure there is at least one available to checkout
+            if ($license->availCount()->count() < 1) {
+                return redirect()->route('licenses.index')->with('error', trans('admin/licenses/message.checkout.not_enough_seats'));
             }
 
-            // Invalid category
-            return redirect()->route('licenses.edit', ['license' => $license->id])
-                ->with('error', trans('general.invalid_item_category_single', ['type' => trans('general.license')]));
+            // We don't currently allow checking out licenses to locations, so we'll reset that to user if needed
+            if (session()->get('checkout_to_type') == 'location') {
+                session()->put(['checkout_to_type' => 'user']);
+            }
 
+            // Return the checkout view
+            return view('licenses/checkout', compact('license'));
         }
 
-        // Not found
-        return redirect()->route('licenses.index')->with('error', trans('admin/licenses/message.not_found'));
-
+        // Invalid category
+        return redirect()->route('licenses.edit', ['license' => $license->id])
+            ->with('error', trans('general.invalid_item_category_single', ['type' => trans('general.license')]));
 
     }
 
@@ -79,17 +75,15 @@ class LicenseCheckoutController extends Controller
         $licenseSeat = $this->findLicenseSeatToCheckout($license, $seatId);
         $licenseSeat->created_by = auth()->id();
         $licenseSeat->notes = $request->input('notes');
-        
-
-        $checkoutMethod = 'checkoutTo'.ucwords(request('checkout_to_type'));
 
         if ($request->filled('asset_id')) {
-
+            session()->put(['checkout_to_type' => 'asset']);
             $checkoutTarget = $this->checkoutToAsset($licenseSeat);
             $request->request->add(['assigned_asset' => $checkoutTarget->id]);
             session()->put(['redirect_option' => $request->get('redirect_option'), 'checkout_to_type' => 'asset']);
 
         } elseif ($request->filled('assigned_to')) {
+            session()->put(['checkout_to_type' => 'user']);
             $checkoutTarget = $this->checkoutToUser($licenseSeat);
             $request->request->add(['assigned_user' => $checkoutTarget->id]);
             session()->put(['redirect_option' => $request->get('redirect_option'), 'checkout_to_type' => 'user']);
@@ -98,7 +92,9 @@ class LicenseCheckoutController extends Controller
 
 
         if ($checkoutTarget) {
-            return redirect()->to(Helper::getRedirectOption($request, $license->id, 'Licenses'))->with('success', trans('admin/licenses/message.checkout.success'));
+
+            return Helper::getRedirectOption($request, $license->id, 'Licenses')
+                ->with('success', trans('admin/licenses/message.checkout.success'));
         }
 
 

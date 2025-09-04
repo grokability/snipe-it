@@ -11,7 +11,7 @@ class ShowComponentTest extends TestCase
     public function testPageRenders()
     {
         $this->actingAs(User::factory()->superuser()->create())
-            ->get(route('components.show', Component::factory()->create()->id))
+            ->get(route('components.show', Component::factory()->create()))
             ->assertOk();
     }
 }

@@ -22,7 +22,7 @@ return array(
         'success' => 'crwdns869:0crwdne869:0',
         'assoc_assets'	 => 'crwdns1959:0crwdne1959:0',
         'assoc_licenses'	 => 'crwdns1960:0crwdne1960:0',
-        'assoc_maintenances'	 => 'crwdns1961:0crwdne1961:0',
+        'assoc_maintenances'	 => 'crwdns13582:0crwdne13582:0',
     )
 
 );

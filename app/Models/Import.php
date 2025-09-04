@@ -19,7 +19,7 @@ class Import extends Model
      * Establishes the license -> admin user relationship
      *
      * @author A. Gianotto <snipe@snipe.net>
-     * @since [v2.0]
+     * @since  [v2.0]
      * @return \Illuminate\Database\Eloquent\Relations\Relation
      */
     public function adminuser()

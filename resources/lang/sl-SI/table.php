@@ -6,6 +6,6 @@ return array(
     'action' 		        => 'Dejanje',
     'by'      		        => 'Od',
     'item' 			        => 'Element',
-    'no_matching_records'   => 'No matching records found',
+    'no_matching_records'   => 'Ne najdem ujemajočih se zapisov',
 
 );

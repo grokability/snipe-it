@@ -44,13 +44,13 @@ return array(
         'error'   => 'There was an issue checking out the license. Please try again.',
         'success' => 'The license was checked out successfully',
         'not_enough_seats' => 'Not enough licence seats available for checkout',
-        'mismatch' => 'The license seat provided does not match the license',
+        'mismatch' => 'The licence seat provided does not match the licence',
         'unavailable' => 'This seat is not available for checkout.',
     ),
 
     'checkin' => array(
         'error'   => 'There was an issue checking in the license. Please try again.',
-        'not_reassignable' => 'License not reassignable',
+        'not_reassignable' => 'Licence not reassignable',
         'success' => 'The license was checked in successfully'
     ),
 

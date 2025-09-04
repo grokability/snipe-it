@@ -19,6 +19,8 @@ return [
     'print_assigned'    => 'Vytlačiť všetky priradené',
     'email_assigned'    => 'Zaslať zoznam aktuálne priradeného majetku',
     'user_notified'     => 'Používateľovi bol zaslaný email so zoznamom aktuálne priradených položiek.',
+    'users_notified'    => 'The user has been emailed a list of their currently assigned items.|:count users have been emailed a list of their currently assigned items.',
+    'users_notified_warning' => ':count user has been emailed a list of their currently assigned items, however :no_email users did not have an email address so could not be emailed.|:count users have been emailed a list of their currently assigned items, however :no_email user(s) did not have an email address so could not be emailed.',
     'auto_assign_label' => 'Zahrnúť tohto používateľa do automatického priraďovania licencií',
     'auto_assign_help'  => 'Nezaradiť tohto používateľa do automatického priraďovania licencií',
     'software_user'     => 'Software priradený :name',
@@ -51,4 +53,5 @@ return [
     'next_save_user' => 'Ďalej: Uložiť používateľa',
     'all_assigned_list_generation' => 'Generované dňa:',
     'email_user_creds_on_create' => 'Zaslať tomuto používateľovi prihlasovacie údaje mailom?',
+    'department_manager' => 'Department Manager',
 ];

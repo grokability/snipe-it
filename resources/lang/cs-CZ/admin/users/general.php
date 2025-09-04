@@ -19,6 +19,8 @@ return [
     'print_assigned'    => 'Vypsat všechna přiřazení',
     'email_assigned'    => 'Odeslat seznam aktuálně přiřazeného majetku',
     'user_notified'     => 'Uživateli byl zaslán e-mail se seznamem aktuálně přiřazeného majetku.',
+    'users_notified'    => 'Uživateli byl odeslán e-mail se seznamem aktuálně přiřazených položek.|:count uživatelům byl odeslán e-mail se seznamem jejich aktuálně přiřazených položek.',
+    'users_notified_warning' => 'E-mail se seznamem aktuálně přiřazených položek byl odeslán :count uživatelům, avšak :no_email uživatel neměl uvedenou e-mailovou adresu, a proto mu nebyl e-mail doručen.|E-mail se seznamem aktuálně přiřazených položek byl odeslán :count uživatelům, avšak :no_email uživatel(ů) neměli uvedenou e-mailovou adresu, a proto jim e-mail doručen nebyl.',
     'auto_assign_label' => 'Zahrnout tohoto uživatele do automatického přiřazování licencí',
     'auto_assign_help'  => 'Nezahrnout tohoto uživatele do automatického přiřazování licencí',
     'software_user'     => 'Software vydaný pro :name',
@@ -51,4 +53,5 @@ return [
     'next_save_user' => 'Další: Uložení uživatele',
     'all_assigned_list_generation' => 'Vytvořeno:',
     'email_user_creds_on_create' => 'Poslat tomuto uživateli e-mail s jejich pověřením?',
+    'department_manager' => 'Vedoucí oddělení',
 ];

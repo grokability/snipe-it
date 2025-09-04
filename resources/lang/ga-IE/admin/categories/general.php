@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Catagóirí Sócmhainne',
     'category_name'  					=> 'Ainm Chatagóir',
     'checkin_email'                     => 'Send email to user on checkin/checkout.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'This user will be sent an email on checkin/checkout.',
     'clone'                             => 'Catagóir Clón',
     'create'  							=> 'Cruthaigh Catagóir',
@@ -21,5 +22,9 @@ return array(
     'use_default_eula'					=> 'Bain úsáid as an réamhshocraithe <a href="#" data-toggle="modal" data-target="#eulaModal"> réamhshocrú EULA</a> ina ionad.',
     'use_default_eula_disabled'			=> '<del>Cuir an príomh-réamhshocraithe EULA in ionad.</del> Níl aon réamhshocraithe EULA leagtha síos. Cuir ceann amháin i Socruithe le do thoil.',
     'use_default_eula_column'			=> 'Use default EULA',
+    'import_require_acceptance'         => 'Require Acceptance',
+    'import_checkin_email'              => 'Send Checkin Email',
+    'import_eula_text'                  => 'EULA text',
+    'import_category_type'              => 'Category Type',
 
 );

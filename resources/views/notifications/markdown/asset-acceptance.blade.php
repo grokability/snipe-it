@@ -7,6 +7,9 @@
 |        |          |
 | ------------- | ------------- |
 | **{{ trans('mail.user') }}** | {{ $assigned_to }} |
+@if (isset($user->location))
+| **{{ trans('general.location') }}** | {{ $user->location->name }} |
+@endif
 @if (isset($accepted_date))
 | **{{ ucfirst(trans('general.accepted')) }}** | {{ $accepted_date }} |
 @endif
@@ -33,6 +36,9 @@
 @endif
 @if (isset($item_serial))
 | **{{ trans('mail.serial') }}** | {{ $item_serial }} |
+@endif
+@if (isset($admin))
+| **{{ trans('general.administrator') }}** | {{ $admin }} |
 @endif
 @endcomponent
 

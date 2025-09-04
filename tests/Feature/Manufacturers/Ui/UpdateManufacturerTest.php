@@ -11,7 +11,7 @@ class UpdateManufacturerTest extends TestCase
     public function testPageRenders()
     {
         $this->actingAs(User::factory()->superuser()->create())
-            ->get(route('manufacturers.edit', Manufacturer::factory()->create()->id))
+            ->get(route('manufacturers.edit', Manufacturer::factory()->create()))
             ->assertOk();
     }
 
@@ -21,7 +21,7 @@ class UpdateManufacturerTest extends TestCase
         $this->assertTrue(Manufacturer::where('name', 'Test Manufacturer')->exists());
 
         $response = $this->actingAs(User::factory()->superuser()->create())
-            ->put(route('manufacturers.update', ['manufacturer' => $manufacturer]), [
+            ->put(route('manufacturers.update', $manufacturer), [
                 'name' => 'Test Manufacturer Edited',
                 'notes' => 'Test Note Edited',
             ])

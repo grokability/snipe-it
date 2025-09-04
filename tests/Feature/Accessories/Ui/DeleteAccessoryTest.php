@@ -5,6 +5,7 @@ namespace Tests\Feature\Accessories\Ui;
 use App\Models\Accessory;
 use App\Models\Company;
 use App\Models\User;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class DeleteAccessoryTest extends TestCase
@@ -29,9 +30,17 @@ class DeleteAccessoryTest extends TestCase
         $this->assertFalse($accessoryForCompanyA->refresh()->trashed(), 'Accessory should not be deleted');
     }
 
-    public function testCannotDeleteAccessoryThatHasCheckouts()
+    public static function checkedOutAccessories()
     {
-        $accessory = Accessory::factory()->checkedOutToUser()->create();
+        yield 'checked out to user' => [fn() => Accessory::factory()->checkedOutToUser()->create()];
+        yield 'checked out to asset' => [fn() => Accessory::factory()->checkedOutToAsset()->create()];
+        yield 'checked out to location' => [fn() => Accessory::factory()->checkedOutToLocation()->create()];
+    }
+
+    #[DataProvider('checkedOutAccessories')]
+    public function testCannotDeleteAccessoryThatHasCheckouts($data)
+    {
+        $accessory = $data();
 
         $this->actingAs(User::factory()->deleteAccessories()->create())
             ->delete(route('accessories.destroy', $accessory->id))

@@ -3,8 +3,8 @@
     "DOC2": "In other words, what you see locally are the requirements for your _current_ install",
     "DOC3": "Please don't rely on these versions for planning upgrades unless you've fetched the most recent version",
     "DOC4": "You should really just ignore it and run upgrade.php. Really",
-    "php_min_version": "8.1.0",
-    "php_max_major_minor": "8.3",
-    "php_max_wontwork": "8.4.0",
-    "current_snipeit_version": "7.0"
+    "php_min_version": "8.2.0",
+    "php_max_major_minor": "8.4",
+    "php_max_wontwork": "8.5.0",
+    "current_snipeit_version": "8.0"
 }

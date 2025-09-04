@@ -15,7 +15,7 @@ class ShowReportTemplateTest extends TestCase implements TestsPermissionsRequire
     {
         $this->actingAs(User::factory()->create())
             ->get(route('report-templates.show', ReportTemplate::factory()->create()))
-            ->assertNotFound();
+            ->assertStatus(302);
     }
 
     public function testCanLoadASavedReportTemplate()
@@ -38,6 +38,6 @@ class ShowReportTemplateTest extends TestCase implements TestsPermissionsRequire
 
         $this->actingAs(User::factory()->canViewReports()->create())
             ->get(route('report-templates.show', $reportTemplate))
-            ->assertNotFound();
+            ->assertStatus(302);
     }
 }

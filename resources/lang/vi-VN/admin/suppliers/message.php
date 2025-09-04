@@ -2,7 +2,7 @@
 
 return array(
 
-    'deleted' => 'Deleted supplier',
+    'deleted' => 'Xóa nhà cung cấp',
     'does_not_exist' => 'Nhà cung cấp không tồn tại.',
 
 
@@ -22,7 +22,7 @@ return array(
         'success' => 'Nhà cung cấp đã xóa thành công.',
         'assoc_assets'	 => 'Nhà cung cấp này hiện tại đang có liên kết với: asset_count tài sản và không thể xóa. Xin vui lòng cập nhật các tài sản để không còn liên kết với nhà cung cấp này và thử lại. ',
         'assoc_licenses'	 => 'Nhà cung cấp này hiện tại đang có liên kết với: licenses_count license(s) và không thể xóa. Xin vui lòng cập nhật các licence để không còn liên kết với nhà cung cấp này và thử lại. ',
-        'assoc_maintenances'	 => 'Nhà cung cấp này hiện tại đang có liên kết với: asset_maintainces_count tài sản đang trong trạng thái bảo trì và không thể xóa. Xin vui lòng cập nhật các tài sản đó để không còn liên kết với nhà cung cấp này và thử lại. ',
+        'assoc_maintenances'	 => 'This supplier is currently associated with :maintenances_count asset maintenances(s) and cannot be deleted. Please update your asset maintenances to no longer reference this supplier and try again. ',
     )
 
 );

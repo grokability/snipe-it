@@ -4,6 +4,7 @@ return [
     'info'   => 'Seleccione las opciones que desee para su informe de activos.',
     'deleted_user' => 'Usuario eliminado',
     'send_reminder' => 'Enviar recordatorio',
+    'cannot_send_reminder' => 'El usuario ha sido eliminado o no tiene una dirección de correo electrónico, por lo que no puede recibir un recordatorio',
     'reminder_sent' => 'Recordatorio enviado',
     'acceptance_deleted' => 'Solicitud de aceptación eliminada',
     'acceptance_request' => 'Solicitud de aceptación',

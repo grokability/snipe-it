@@ -1,16 +1,16 @@
 <?php
 
 return [
-    'about_templates' => 'About Saved Templates',
-    'saving_templates_description' => 'Select your options, then enter the name of your template in the box above and click the \'Save Template\' button. Use the dropdown to select a previously saved template.',
+    'about_templates' => 'درباره قالب های ذخیره شده',
+    'saving_templates_description' => 'گزینه ها را انتخاب کرده و سپس نام قالب خود را در باکس بالا وارد کرده و روی دکمه \'ذخیره قالب\' کلیک کنید. از منوی کشویی قالب های از قبل ذخیره شده را انتخاب کنید.',
     'create'  => [
-        'success' => 'Template saved successfully',
+        'success' => 'قالب با موفقیت ذخیره شد',
     ],
     'update' => [
-        'success' => 'Template updated successfully',
+        'success' => 'قالب با موفقیت بروز شد',
     ],
     'delete' => [
-        'success' => 'Template deleted',
-        'no_delete_permission' => 'Template does not exist or you do not have permission to delete it.',
+        'success' => 'قالب حذف شد',
+        'no_delete_permission' => 'قالب وجود ندارد یا شما مجوز حذف آن را ندارید.',
     ],
 ];

@@ -5,14 +5,22 @@ namespace App\Models\Labels;
 use App\Models\Asset;
 use Illuminate\Support\Collection;
 
-class FieldOption {
+class FieldOption
+{
     protected string $label;
-    public function getLabel() { return $this->label; }
+    public function getLabel()
+    {
+        return $this->label; 
+    }
 
     protected string $dataSource;
-    public function getDataSource() { return $this->dataSource; }
+    public function getDataSource()
+    {
+        return $this->dataSource; 
+    }
 
-    public function getValue(Asset $asset) {
+    public function getValue(Asset $asset)
+    {
         $dataPath = collect(explode('.', $this->dataSource));
 
         // assignedTo directly on the asset is a special case where
@@ -22,10 +30,10 @@ class FieldOption {
             if ($asset->relationLoaded('assignedTo')) {
                 // If the "assignedTo" relationship was eager loaded then the way to get the
                 // relationship changes from $asset->assignedTo to $asset->assigned.
-                return $asset->assigned ? $asset->assigned->present()->fullName() : null;
+                return $asset->assigned ? $asset->assigned->display_name : null;
             }
 
-            return $asset->assignedTo ? $asset->assignedTo->present()->fullName() : null;
+            return $asset->assignedTo ? $asset->assignedTo->display_name : null;
         }
 
         // Handle Laravel's stupid Carbon datetime casting
@@ -33,18 +41,29 @@ class FieldOption {
             return $asset->purchase_date ? $asset->purchase_date->format('Y-m-d') : null;
         }
         
-        return $dataPath->reduce(function ($myValue, $path) {
-            try { return $myValue ? $myValue->{$path} : ${$myValue}; }
-            catch (\Exception $e) { return $myValue; }
-        }, $asset);
+        return $dataPath->reduce(
+            function ($myValue, $path) {
+                try { return $myValue ? $myValue->{$path} : ${$myValue}; 
+                }
+                catch (\Exception $e) { return $myValue; 
+                }
+            }, $asset
+        );
     }
 
-    public function toArray(Asset $asset=null) { return FieldOption::makeArray($this, $asset); }
-    public function toString() { return FieldOption::makeString($this); }
+    public function toArray(Asset $asset=null)
+    {
+        return FieldOption::makeArray($this, $asset); 
+    }
+    public function toString()
+    {
+        return FieldOption::makeString($this); 
+    }
 
     /* Statics */
 
-    public static function makeArray(FieldOption $option, Asset $asset=null) {
+    public static function makeArray(FieldOption $option, Asset $asset=null)
+    {
         return [
             'label' => $option->getLabel(),
             'dataSource' => $option->getDataSource(),
@@ -52,11 +71,13 @@ class FieldOption {
         ];
     }
 
-    public static function makeString(FieldOption $option) {
+    public static function makeString(FieldOption $option)
+    {
         return $option->getLabel() . '=' . $option->getDataSource();
     }
 
-    public static function fromString(string $theString) {
+    public static function fromString(string $theString)
+    {
         $parts = explode('=', $theString);
         if (count($parts) == 2) {
             $option = new FieldOption();

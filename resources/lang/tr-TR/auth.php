@@ -15,6 +15,6 @@ return array(
 
     'failed' => 'Bu kimlik bilgileri kayıtlarımızla eşleşmiyor.',
     'password' => 'Sağlanan parola yanlış.',
-    'throttle' => 'Çok fazla giriş denemesi. Lütfen :second saniye içinde tekrar deneyin.',
+    'throttle' => 'Too many login attempts. Please try again in :minutes minute(s).',
 
 );

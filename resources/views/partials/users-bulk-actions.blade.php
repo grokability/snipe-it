@@ -18,6 +18,7 @@
 
                     @can('update', \App\Models\User::class)
                         <option value="edit">{{ trans('general.bulk_edit') }}</option>
+                        <option value="send_assigned">{{ trans('admin/users/general.email_assigned') }}</option>
                     @endcan
 
                     @can('delete', \App\Models\User::class)

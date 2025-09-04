@@ -17,7 +17,8 @@ return array(
     'delete' => array(
         'confirm'   => 'هل أنت متأكد من رغبتك في حذف هذا المكون؟',
         'error'   => 'حدثت مشكلة اثناء عملية حذف المكون. الرجاء المحاولة مرة اُخرى.',
-        'success' => 'تم حذف المكون بنجاح.'
+        'success' => 'تم حذف المكون بنجاح.',
+        'error_qty'   => 'Some components of this type are still checked out. Please check them in and try again.',
     ),
 
      'checkout' => array(

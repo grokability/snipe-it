@@ -3,7 +3,7 @@
 return array(
 
     'does_not_exist' => 'ابزار/وسیله [:id] وجود ندارد.',
-    'not_found' => 'That accessory was not found.',
+    'not_found' => 'وسیله پیدا نشد.',
     'assoc_users'	 => 'این وسیله هم اکنون:آیتم های چک شده به کاربران را حساب کنید.لطفا در لوازم جانبی چک کنید و دوباره امتحان کنید',
 
     'create' => array(
@@ -25,10 +25,10 @@ return array(
      'checkout' => array(
         'error'   		=> 'وسیله چک نشده بود. لطفا دوباره امتحان کنید',
         'success' 		=> 'وسیله با موفقیت چک شد.',
-        'unavailable'   => 'Accessory is not available for checkout. Check quantity available',
+        'unavailable'   => 'امکان تحویل وسیله وجود ندارد. تعداد موجودی را چک کنید',
         'user_does_not_exist' => 'کاربر نامعتبر است. لطفا دوباره امتحان کنید.',
          'checkout_qty' => array(
-            'lte'  => 'There is currently only one available accessory of this type, and you are trying to check out :checkout_qty. Please adjust the checkout quantity or the total stock of this accessory and try again.|There are :number_currently_remaining total available accessories, and you are trying to check out :checkout_qty. Please adjust the checkout quantity or the total stock of this accessory and try again.',
+            'lte'  => 'فقط یک عدد از این وسیله وجود دارد و شما می‌خواهید :checkout_qty تا از آن را تحویل دهید. لطفا تعداد تحویل یا موجودی وسیله را چک کنید و مجدد تلاش کنید.|فقط :number_currently_remaining عدد از این وسیله وجود دارد و شما می‌خواهید :checkout_qty تا از آن را تحویل دهید. لطفا تعداد تحویل یا موجودی وسیله را چک کنید و مجدد تلاش کنید.',
             ),
            
     ),

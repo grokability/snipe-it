@@ -31,6 +31,7 @@ return [
         'numeric' => 'Il campo :attribute deve essere tra :min e :max.',
         'string' => 'Il campo :attribute deve essere lungo tra :min e :max caratteri.',
     ],
+    'valid_regex' => 'L\'espressione regolare non è valida.',
     'boolean' => 'Il campo: attributo deve essere vero o falso.',
     'can' => 'Il campo :attribute contiene un valore non autorizzato.',
     'confirmed' => 'La conferma del campo :attribute non corrisponde.',
@@ -172,6 +173,7 @@ return [
     'url' => 'Il campo :attribute deve essere un URL valido.',
     'ulid' => 'Il campo :attribute deve essere un ULID valido.',
     'uuid' => 'Il campo :attribute deve essere un UUID valido.',
+    'fmcs_location' => 'Nelle Impostazioni Admin è abilitato il supporto completo multi aziendale con restrizione per le Sedi, e la Sede selezionata non è compatibile con l\'Azienda scelta.',
 
 
     /*
@@ -185,9 +187,13 @@ return [
     |
     */
 
+    'email_array'      => 'Una o più email sono invalidi.',
+    'checkboxes'           => ':attribute contiene opzioni non valide.',
+    'radio_buttons'        => ':attribute non è valido.',
+    
     'custom' => [
         'alpha_space' => 'Il campo :attribute contiene un carattere non consentito.',
-        'email_array'      => 'Uno o più indirizzi email non sono validi.',
+
         'hashed_pass'      => 'La tua attuale password non è corretta',
         'dumbpwd'          => 'Questa password è troppo comune.',
         'statuslabel_type' => 'È necessario selezionare un tipo di etichetta di stato valido',
@@ -204,8 +210,6 @@ return [
         'expected_checkin.date_format'  =>  ':attribute deve essere in formato AAAA-MM-GG',
         'start_date.date_format'        =>  ':attribute deve essere in formato AAAA-MM-GG',
         'end_date.date_format'          =>  ':attribute deve essere in formato AAAA-MM-GG',
-        'checkboxes'           => ':attribute contiene opzioni non valide.',
-        'radio_buttons'        => ':attribute non è valido.',
         'invalid_value_in_field' => 'Valore non valido incluso in questo campo',
 
         'ldap_username_field' => [

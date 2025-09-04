@@ -6,8 +6,6 @@ return array(
     'account_not_found'      => 'A felhasználónév vagy a jelszó érvénytelen.',
     'account_not_activated'  => 'Ez a felhasználó nincs aktiválva.',
     'account_suspended'      => 'Ez a felhasználói fiók fel van függesztve.',
-    'account_banned'         => 'Ez a felhasználó ki van tiltva.',
-    'throttle'               => 'Túl sok sikertelen bejelentkezési próbálkozás. Próbáld újra :minutes perc múlva.',
 
     'two_factor' => array(
         'already_enrolled'      => 'Az eszközöd már regisztrálva van.',

@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Kategórie majetku',
     'category_name'  					=> 'Názov kategórie',
     'checkin_email'                     => 'Poslať email používateľovi pri prevzatí / odovzdaní.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'Používateľovi bude odoslaný mail pri prevzatí / odovzdaní.',
     'clone'                             => 'Duplikovať kategóriu',
     'create'  							=> 'Vytvoriť kategóriu',
@@ -21,5 +22,9 @@ return array(
     'use_default_eula'					=> 'Použiť <a href="#" data-toggle="modal" data-target="#eulaModal">predvolený dokument EULA</a> namiesto toho.',
     'use_default_eula_disabled'			=> '<del>Použiť namiesto toho predvolený dokument EULA.</del> Predvolený dokument EULA nie je nastavený. Prosím vyberte predvolený dokument v Nastaveniach.',
     'use_default_eula_column'			=> 'Použiť predvolenú EULA',
+    'import_require_acceptance'         => 'Require Acceptance',
+    'import_checkin_email'              => 'Send Checkin Email',
+    'import_eula_text'                  => 'EULA text',
+    'import_category_type'              => 'Category Type',
 
 );

@@ -37,6 +37,15 @@
             </div>
         @endif
 
+            @if ($asset->deleted_at!='')
+                <div class="col-md-12">
+                    <div class="callout callout-warning">
+                        <x-icon type="warning"/>
+                        {{ trans('general.asset_deleted_warning') }}
+                    </div>
+                </div>
+            @endif
+
         <div class="col-md-12">
             <div class="nav-tabs-custom">
                 <ul class="nav nav-tabs hidden-print">
@@ -77,13 +86,46 @@
                           <span class="hidden-lg hidden-md">
                             <x-icon type="assets" class="fa-2x" />
                           </span>
-                            <span class="hidden-xs hidden-sm">{{ trans('general.assets') }}
+                            <span class="hidden-xs hidden-sm">
+                                {{ trans('general.assets') }}
                                 {!! ($asset->assignedAssets()->count() > 0 ) ? '<span class="badge badge-secondary">'.number_format($asset->assignedAssets()->count()).'</span>' : '' !!}
 
                           </span>
                         </a>
                     </li>
 
+                    @if ($asset->assignedAccessories->count() > 0)
+                        <li>
+                            <a href="#accessories_assigned" data-toggle="tab" data-tooltip="true">
+
+                                <span class="hidden-lg hidden-md">
+                                    <i class="fas fa-keyboard fa-2x"></i>
+                                </span>
+                                <span class="hidden-xs hidden-sm">
+                                    {{ trans('general.accessories_assigned') }}
+                                    {!! ($asset->assignedAccessories()->count() > 0 ) ? '<span class="badge badge-secondary">'.number_format($asset->assignedAccessories()->count()).'</span>' : '' !!}
+
+                                </span>
+                            </a>
+                        </li>
+                    @endif
+
+
+                    @if ($asset->audits->count() > 0)
+                        <li>
+                            <a href="#audits" data-toggle="tab" data-tooltip="true">
+
+                            <span class="hidden-lg hidden-md">
+                                <i class="fas fa-clipboard-check fa-2x"></i>
+                            </span>
+                                <span class="hidden-xs hidden-sm">
+                                {{ trans('general.audits') }}
+                                    {!! ($asset->audits()->count() > 0 ) ? '<span class="badge badge-secondary">'.number_format($asset->audits()->count()).'</span>' : '' !!}
+
+                            </span>
+                            </a>
+                        </li>
+                    @endif
 
                     <li>
                         <a href="#history" data-toggle="tab">
@@ -101,7 +143,7 @@
                               <x-icon type="maintenances" class="fa-2x" />
                           </span>
                             <span class="hidden-xs hidden-sm">{{ trans('general.maintenances') }}
-                                {!! ($asset->assetmaintenances()->count() > 0 ) ? '<span class="badge badge-secondary">'.number_format($asset->assetmaintenances()->count()).'</span>' : '' !!}
+                                {!! ($asset->maintenances()->count() > 0 ) ? '<span class="badge badge-secondary">'.number_format($asset->maintenances()->count()).'</span>' : '' !!}
                           </span>
                         </a>
                     </li>
@@ -152,15 +194,6 @@
                     <div class="tab-pane fade in active" id="details">
                     <div class="row">
 
-                            @if ($asset->deleted_at!='')
-                                <div class="col-md-12">
-                                    <div class="callout callout-warning">
-                                        <x-icon type="warning" />
-                                        {{ trans('general.asset_deleted_warning') }}
-                                    </div>
-                                </div>
-                            @endif
-
                         <div class="info-stack-container">
                             <!-- Start button column -->
                             <div class="col-md-3 col-xs-12 col-sm-push-9 info-stack">
@@ -181,7 +214,8 @@
                                 @if ($asset->deleted_at=='')
                                     @can('update', $asset)
                                         <div class="col-md-12 hidden-print" style="padding-top: 5px;">
-                                            <a href="{{ route('hardware.edit', $asset->id) }}" class="btn btn-sm btn-warning btn-social btn-block hidden-print">
+                                            <a href="{{ route('hardware.edit', $asset) }}"
+                                               class="btn btn-sm btn-warning btn-social btn-block hidden-print">
                                                 <x-icon type="edit" />
                                                 {{ trans('admin/hardware/general.edit') }}
                                             </a>
@@ -217,14 +251,15 @@
 
                                         <!-- Add notes -->
                                         @can('update', \App\Models\Asset::class)
-                                            <!--
-
                                             <div class="col-md-12 hidden-print" style="padding-top: 5px;">
-                                                <a href='{{ route('modal.show', 'add-note') }}?type=asset&id={{$asset->id}}' style="width: 100%" data-toggle="modal" data-target="#createModal" data-select='add-note_select_id' data-refresh="assetHistory" data-hasnopayload="true" class="btn btn-sm btn-primary btn-block btn-social hidden-print">
+                                                <a href="#" style="width: 100%" data-toggle="modal"
+                                                   data-target="#createNoteModal"
+                                                   class="btn btn-sm btn-primary btn-block btn-social hidden-print">
                                                     <x-icon type="note" />
-                                                    {{ trans('general.add_note') }}</a>
+                                                    {{ trans('general.add_note') }}
+                                                </a>
+                                                @include ('modals.add-note', ['type' => 'asset', 'id' => $asset->id])
                                             </div>
-                                            -->
                                         @endcan
 
 
@@ -253,14 +288,14 @@
 
                                 <div class="col-md-12 hidden-print" style="padding-top: 5px;">
                                     <form
-                                        method="POST"
-                                        action="{{ route('hardware/bulkedit') }}"
-                                        accept-charset="UTF-8"
-                                        class="form-inline"
-                                        target="_blank"
-                                        id="bulkForm"
+                                            method="POST"
+                                            action="{{ route('hardware/bulkedit') }}"
+                                            accept-charset="UTF-8"
+                                            class="form-inline"
+                                            target="_blank"
+                                            id="bulkForm"
                                     >
-                                    @csrf
+                                        @csrf
                                     <input type="hidden" name="bulk_actions" value="labels" />
                                     <input type="hidden" name="ids[{{$asset->id}}]" value="{{ $asset->id }}" />
                                     <button class="btn btn-block btn-social btn-sm btn-default" id="bulkEdit"{{ (!$asset->model ? ' disabled' : '') }}{!! (!$asset->model ? ' data-tooltip="true" title="'.trans('admin/hardware/general.model_invalid').'"' : '') !!}>
@@ -284,7 +319,7 @@
                                             </button>
                                             <span class="sr-only">{{ trans('general.delete') }}</span>
                                         @else
-                                            <form method="POST" action="{{ route('restore/hardware', ['assetId' => $asset->id]) }}">
+                                            <form method="POST" action="{{ route('restore/hardware', [$asset]) }}">
                                                 @csrf
                                                 <button class="btn btn-sm btn-block btn-warning btn-social delete-asset">
                                                     <x-icon type="restore" />
@@ -306,7 +341,9 @@
 
                                             @if (($asset->checkedOutToUser()) && ($asset->assignedTo->present()->gravatar()))
                                                 <li>
-                                                    <img src="{{ $asset->assignedTo->present()->gravatar() }}" class="user-image-inline hidden-print" alt="{{ $asset->assignedTo->present()->fullName() }}">
+                                                    <img src="{{ $asset->assignedTo->present()->gravatar() }}"
+                                                         class="user-image-inline hidden-print"
+                                                         alt="{{ $asset->assignedTo->display_name }}">
                                                     {!! $asset->assignedTo->present()->nameUrl() !!}
                                                 </li>
                                             @else
@@ -346,7 +383,11 @@
                                             @if (isset($asset->location))
                                                 <li>
                                                     <x-icon type="locations" class="fa-fw" />
-                                                     {{ $asset->location->name }}</li>
+                                                    {{ $asset->location->parent?->name }}
+                                                    @if ($asset->location->parent)
+                                                        <i class="fas fa-long-arrow-alt-right" aria-hidden="true"></i>
+                                                    @endif
+                                                    {{ $asset->location->name }}</li>
                                                 <li>{{ $asset->location->address }}
                                                     @if ($asset->location->address2!='')
                                                         {{ $asset->location->address2 }}
@@ -367,18 +408,21 @@
                                             @if (isset($asset->expected_checkin))
                                                 <li>
                                                     <x-icon type="calendar" class="fa-fw" />
-                                                    {{ trans('admin/hardware/form.expected_checkin') }}: {{ Helper::getFormattedDateObject($asset->expected_checkin, 'date', false) }}
+                                                    {{ trans('general.expected_checkin') }}
+                                                    : {{ Helper::getFormattedDateObject($asset->expected_checkin, 'date', false) }}
                                                 </li>
                                             @endif
                                         </ul>
                                     </div>
                                 @endif
-                                    @if  ($snipeSettings->qr_code=='1')
-                                        <div class="col-md-12 text-center" style="padding-top: 15px;">
-                                            <img src="{{ config('app.url') }}/hardware/{{ $asset->id }}/qr_code" class="img-thumbnail" style="height: 150px; width: 150px; margin-right: 10px;" alt="QR code for {{ $asset->getDisplayNameAttribute() }}">
-                                        </div>
-                                    @endif
-
+                                @if (($snipeSettings->qr_code=='1') || $snipeSettings->label2_2d_type!='none')
+                                    <div class="col-md-12 text-center" style="padding-top: 15px;">
+                                        <img src="{{ config('app.url') }}/hardware/{{ $asset->id }}/qr_code"
+                                             class="img-thumbnail"
+                                             style="height: 150px; width: 150px; margin-right: 10px;"
+                                             alt="QR code for {{ $asset->getDisplayNameAttribute() }}">
+                                    </div>
+                                @endif
                                 <br><br>
                             </div>
 
@@ -516,7 +560,8 @@
                                                 {!! $asset->checkInvalidNextAuditDate() ? '<i class="fas fa-exclamation-triangle text-orange" aria-hidden="true"></i>' : '' !!}
                                                 {{ Helper::getFormattedDateObject($audit_log->created_at, 'datetime', false) }}
                                                 @if ($audit_log->user)
-                                                    (by {{ link_to_route('users.show', $audit_log->user->present()->fullname(), [$audit_log->user->id]) }})
+                                                    (by {{ link_to_route('users.show', $audit_log->user->display_name, [$audit_log->user->id]) }}
+                                                    )
                                                 @endif
 
                                             </div>
@@ -670,7 +715,7 @@
                                     </div>
 
                                     <!-- byod -->
-                                    <div class="row">
+                                        <div class="row byod">
                                         <div class="col-md-3">
                                             <strong>{{ trans('general.byod') }}</strong>
                                         </div>
@@ -679,694 +724,470 @@
                                         </div>
                                     </div>
 
-                                    <!-- requestable -->
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <strong>{{ trans('admin/hardware/general.requestable') }}</strong>
-                                        </div>
-                                        <div class="col-md-9">
-                                            {!! ($asset->requestable=='1') ? '<i class="fas fa-check text-success" aria-hidden="true"></i> '.trans('general.yes') : '<i class="fas fa-times text-danger" aria-hidden="true"></i> '.trans('general.no')  !!}
-                                        </div>
-                                    </div>
 
-                                    @if (($asset->model) && ($asset->model->fieldset))
-                                        @foreach($asset->model->fieldset->fields as $field)
-                                            <div class="row">
-                                                <div class="col-md-3">
-                                                    <strong>
-                                                        {{ $field->name }}
-                                                    </strong>
-                                                </div>
-                                                <div class="col-md-9{{ (($field->format=='URL') && ($asset->{$field->db_column_name()}!='')) ? ' ellipsis': '' }}">
-                                                    @if (($field->field_encrypted=='1') && ($asset->{$field->db_column_name()}!=''))
+                                        @include('partials.custom-fields-view', ['item' => $asset,'width' => 2])
 
-                                                        <i class="fas fa-lock" data-tooltip="true" data-placement="top" title="{{ trans('admin/custom_fields/general.value_encrypted') }}" onclick="showHideEncValue(this)" id="text-{{ $field->id }}"></i>
-                                                    @endif
-
-                                                    @if ($field->isFieldDecryptable($asset->{$field->db_column_name()} ))
-                                                        @can('assets.view.encrypted_custom_fields')
-                                                            @php
-                                                                $fieldSize=strlen(Helper::gracefulDecrypt($field, $asset->{$field->db_column_name()}))
-                                                            @endphp
-                                                            @if ($fieldSize>0)
-                                                                <span id="text-{{ $field->id }}-to-hide">{{ str_repeat('*', $fieldSize) }}</span>
-                                                                <span class="js-copy-{{ $field->id }} hidden-print" id="text-{{ $field->id }}-to-show" style="font-size: 0px;">
-                                                                @if (($field->format=='URL') && ($asset->{$field->db_column_name()}!=''))
-                                                                        <a href="{{ Helper::gracefulDecrypt($field, $asset->{$field->db_column_name()}) }}" target="_new">{{ Helper::gracefulDecrypt($field, $asset->{$field->db_column_name()}) }}</a>
-                                                                    @elseif (($field->format=='DATE') && ($asset->{$field->db_column_name()}!=''))
-                                                                        {{ \App\Helpers\Helper::gracefulDecrypt($field, \App\Helpers\Helper::getFormattedDateObject($asset->{$field->db_column_name()}, 'date', false)) }}
-                                                                    @else
-                                                                        {{ Helper::gracefulDecrypt($field, $asset->{$field->db_column_name()}) }}
-                                                                    @endif
-                                                                </span>
-                                                                <i class="fa-regular fa-clipboard js-copy-link hidden-print" data-clipboard-target=".js-copy-{{ $field->id }}" aria-hidden="true" data-tooltip="true" data-placement="top" title="{{ trans('general.copy_to_clipboard') }}">
-                                                                    <span class="sr-only">{{ trans('general.copy_to_clipboard') }}</span>
-                                                                </i>
-                                                            @endif
-                                                        @else
-                                                            {{ strtoupper(trans('admin/custom_fields/general.encrypted')) }}
-                                                        @endcan
-
-                                                    @else
-                                                        @if (($field->format=='BOOLEAN') && ($asset->{$field->db_column_name()}!=''))
-                                                            {!! ($asset->{$field->db_column_name()} == 1) ? "<span class='fas fa-check-circle' style='color:green' />" : "<span class='fas fa-times-circle' style='color:red' />" !!}
-                                                        @elseif (($field->format=='URL') && ($asset->{$field->db_column_name()}!=''))
-                                                            <a href="{{ $asset->{$field->db_column_name()} }}" target="_new">{{ $asset->{$field->db_column_name()} }}</a>
-                                                        @elseif (($field->format=='DATE') && ($asset->{$field->db_column_name()}!=''))
-                                                            {{ \App\Helpers\Helper::getFormattedDateObject($asset->{$field->db_column_name()}, 'date', false) }}
-                                                        @else
-                                                            {!! nl2br(e($asset->{$field->db_column_name()})) !!}
-                                                        @endif
-
-                                                    @endif
-
-                                                    @if ($asset->{$field->db_column_name()}=='')
-                                                        &nbsp;
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                    @endif
-
-
+                                        </strong>{{-- Are we sure about this stray tag? --}}
+                                </div>
+                                <div class="col-md-9">
                                     @if ($asset->purchase_date)
-                                        <div class="row">
-                                            <div class="col-md-3">
-                                                <strong>
-                                                    {{ trans('admin/hardware/form.date') }}
-                                                </strong>
-                                            </div>
-                                            <div class="col-md-9">
-                                                {{ Helper::getFormattedDateObject($asset->purchase_date, 'date', false) }}
-                                                -
-                                                {{ Carbon::parse($asset->purchase_date)->diff(Carbon::now())->format('%y years, %m months and %d days')}}
+                                        {{ Helper::getFormattedDateObject($asset->present()->warranty_expires(), 'date', false) }}
+                                        -
+                                        {{ Carbon::parse($asset->present()->warranty_expires())->diffForHumans(['parts' => 3]) }}
 
-                                            </div>
-                                        </div>
+                                        @if ($asset->purchase_date)
+                                            {!! $asset->present()->warranty_expires() < date("Y-m-d") ? '<i class="fas fa-exclamation-triangle text-orange" aria-hidden="true"></i>' : '' !!}
+                                        @endif
+                                    @else
+                                        {{ trans('general.na_no_purchase_date') }}
                                     @endif
-
-                                    @if ($asset->purchase_cost)
-                                        <div class="row">
-                                            <div class="col-md-3">
-                                                <strong>
-                                                    {{ trans('admin/hardware/form.cost') }}
-                                                </strong>
-                                            </div>
-                                            <div class="col-md-9">
-                                                @if (($asset->id) && ($asset->location))
-                                                    {{ $asset->location->currency }}
-                                                @elseif (($asset->id) && ($asset->location))
-                                                    {{ $asset->location->currency }}
-                                                @else
-                                                    {{ $snipeSettings->default_currency }}
-                                                @endif
-                                                {{ Helper::formatCurrencyOutput($asset->purchase_cost)}}
-
-                                            </div>
-                                        </div>
-                                    @endif
-                                    @if(($asset->components->count() > 0) && ($asset->purchase_cost))
-                                        <div class="row">
-                                            <div class="col-md-3">
-                                                <strong>
-                                                    {{ trans('admin/hardware/table.components_cost') }}
-                                                </strong>
-                                            </div>
-                                            <div class="col-md-9">
-                                                @if (($asset->id) && ($asset->location))
-                                                    {{ $asset->location->currency }}
-                                                @elseif (($asset->id) && ($asset->location))
-                                                    {{ $asset->location->currency }}
-                                                @else
-                                                    {{ $snipeSettings->default_currency }}
-                                                @endif
-                                                {{Helper::formatCurrencyOutput($asset->getComponentCost())}}
-                                            </div>
-                                        </div>
-                                    @endif
-                                    @if (($asset->model) && ($asset->depreciation) && ($asset->purchase_date))
-                                        <div class="row">
-                                            <div class="col-md-3">
-                                                <strong>
-                                                    {{ trans('admin/hardware/table.current_value') }}
-                                                </strong>
-                                            </div>
-                                            <div class="col-md-9">
-                                                @if (($asset->id) && ($asset->location))
-                                                    {{ $asset->location->currency }}
-                                                @elseif (($asset->id) && ($asset->location))
-                                                    {{ $asset->location->currency }}
-                                                @else
-                                                    {{ $snipeSettings->default_currency }}
-                                                @endif
-                                                {{ Helper::formatCurrencyOutput($asset->getDepreciatedValue() )}}
-
-
-                                            </div>
-                                        </div>
-                                    @endif
-                                    @if ($asset->order_number)
-                                        <div class="row">
-                                            <div class="col-md-3">
-                                                <strong>
-                                                    {{ trans('general.order_number') }}
-                                                </strong>
-                                            </div>
-                                            <div class="col-md-9">
-                                                <a href="{{ route('hardware.index', ['order_number' => $asset->order_number]) }}">{{ $asset->order_number }}</a>
-                                            </div>
-                                        </div>
-                                    @endif
-
-                                    @if ($asset->supplier)
-                                        <div class="row">
-                                            <div class="col-md-3">
-                                                <strong>
-                                                    {{ trans('general.supplier') }}
-                                                </strong>
-                                            </div>
-                                            <div class="col-md-9">
-                                                @can ('superuser')
-                                                    <a href="{{ route('suppliers.show', $asset->supplier_id) }}">
-                                                        {{ $asset->supplier->name }}
-                                                    </a>
-                                                @else
-                                                    {{ $asset->supplier->name }}
-                                                @endcan
-                                            </div>
-                                        </div>
-                                    @endif
-
-
-                                    @if ($asset->warranty_months)
-                                        <div class="row">
-                                            <div class="col-md-3">
-                                                <strong>
-                                                    {{ trans('admin/hardware/form.warranty') }}
-                                                </strong>
-                                            </div>
-                                            <div class="col-md-9">
-                                                {{ $asset->warranty_months }}
-                                                {{ trans('admin/hardware/form.months') }}
-
-                                                @if (($asset->model) && ($asset->model->manufacturer) && ($asset->model->manufacturer->warranty_lookup_url!=''))
-                                                    <a href="{{ $asset->present()->dynamicUrl($asset->model->manufacturer->warranty_lookup_url) }}" target="_blank">
-                                                        <x-icon type="external-link" />
-                                                        <span class="sr-only">{{ trans('admin/hardware/general.mfg_warranty_lookup', ['manufacturer' => $asset->model->manufacturer->name]) }}</span></i>
-                                                    </a>
-                                                @endif
-                                            </div>
-                                        </div>
-
-                                        <div class="row">
-                                            <div class="col-md-3">
-                                                <strong>
-                                                    {{ trans('admin/hardware/form.warranty_expires') }}
-                                                    @if ($asset->purchase_date)
-                                                        {!! $asset->present()->warranty_expires() < date("Y-m-d") ? '<i class="fas fa-exclamation-triangle text-orange" aria-hidden="true"></i>' : '' !!}
-                                                    @endif
-
-                                                </strong>
-                                            </div>
-                                            <div class="col-md-9">
-                                                @if ($asset->purchase_date)
-                                                    {{ Helper::getFormattedDateObject($asset->present()->warranty_expires(), 'date', false) }}
-                                                    -
-                                                    {{ Carbon::parse($asset->present()->warranty_expires())->diffForHumans(['parts' => 2]) }}
-                                                @else
-                                                    {{ trans('general.na_no_purchase_date') }}
-                                                @endif
-                                            </div>
-                                        </div>
-
-                                    @endif
-
-                                    @if (($asset->model) && ($asset->depreciation))
-                                        <div class="row">
-                                            <div class="col-md-3">
-                                                <strong>
-                                                    {{ trans('general.depreciation') }}
-                                                </strong>
-                                            </div>
-                                            <div class="col-md-9">
-                                                {{ $asset->depreciation->name }}
-                                                ({{ $asset->depreciation->months }}
-                                                {{ trans('admin/hardware/form.months') }})
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-3">
-                                                <strong>
-                                                    {{ trans('admin/hardware/form.fully_depreciated') }}
-                                                </strong>
-                                            </div>
-                                            <div class="col-md-9">
-                                                @if ($asset->purchase_date)
-                                                    {{ Helper::getFormattedDateObject($asset->depreciated_date()->format('Y-m-d'), 'date', false) }}
-                                                    -
-                                                    {{ Carbon::parse($asset->depreciated_date())->diffForHumans(['parts' => 2]) }}
-                                                @else
-                                                    {{ trans('general.na_no_purchase_date') }}
-                                                @endif
-
-                                            </div>
-                                        </div>
-                                    @endif
-
-                                    @if (($asset->asset_eol_date) && ($asset->purchase_date))
-                                        <div class="row">
-                                            <div class="col-md-3">
-                                                <strong>
-                                                    {{ trans('admin/hardware/form.eol_rate') }}
-                                                </strong>
-                                            </div>
-                                            <div class="col-md-9">
-                                                {{ Carbon::parse($asset->asset_eol_date)->diffInMonths($asset->purchase_date) }}
-                                                {{ trans('admin/hardware/form.months') }}
-
-                                            </div>
-                                        </div>
-                                    @endif
-                                    @if ($asset->asset_eol_date)
-                                        <div class="row">
-                                            <div class="col-md-3">
-                                                <strong>
-                                                    {{ trans('admin/hardware/form.eol_date') }}
-                                                    @if ($asset->purchase_date)
-                                                        {!! $asset->asset_eol_date < date("Y-m-d") ? '<i class="fas fa-exclamation-triangle text-orange" aria-hidden="true"></i>' : '' !!}
-                                                    @endif
-                                                </strong>
-                                            </div>
-                                            <div class="col-md-9">
-                                                @if ($asset->asset_eol_date)
-                                                    {{ Helper::getFormattedDateObject($asset->asset_eol_date, 'date', false) }}
-                                                    -
-                                                    {{ Carbon::parse($asset->asset_eol_date)->diffForHumans(['parts' => 2]) }}
-                                                @else
-                                                    {{ trans('general.na_no_purchase_date') }}
-                                                @endif
-                                                @if ($asset->eol_explicit =='1')
-                                                        <span data-tooltip="true"
-                                                                data-placement="top"
-                                                                data-title="Explicit EOL"
-                                                                title="Explicit EOL">
-                                                                <x-icon type="warning" class="text-orange" />
-                                                        </span>
-                                                @endif
-                                            </div>
-                                        </div>
-                                    @endif
-
-
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <strong>
-                                                {{ trans('admin/hardware/form.notes') }}
-                                            </strong>
-                                        </div>
-                                        <div class="col-md-9">
-                                            {!! nl2br(Helper::parseEscapedMarkedownInline($asset->notes)) !!}
-                                        </div>
-                                    </div>
-
-                                    @if ($asset->location)
-                                        <div class="row">
-                                            <div class="col-md-3">
-                                                <strong>
-                                                    {{ trans('general.location') }}
-                                                </strong>
-                                            </div>
-                                            <div class="col-md-9">
-                                                @can('superuser')
-                                                    <a href="{{ route('locations.show', ['location' => $asset->location->id]) }}">
-                                                        {{ $asset->location->name }}
-                                                    </a>
-                                                @else
-                                                    {{ $asset->location->name }}
-                                                @endcan
-                                            </div>
-                                        </div>
-                                    @endif
-
-                                    @if ($asset->defaultLoc)
-                                        <div class="row">
-                                            <div class="col-md-3">
-                                                <strong>
-                                                    {{ trans('admin/hardware/form.default_location') }}
-                                                </strong>
-                                            </div>
-                                            <div class="col-md-9">
-                                                @can('superuser')
-                                                    <a href="{{ route('locations.show', ['location' => $asset->defaultLoc->id]) }}">
-                                                        {{ $asset->defaultLoc->name }}
-                                                    </a>
-                                                @else
-                                                    {{ $asset->defaultLoc->name }}
-                                                @endcan
-                                            </div>
-                                        </div>
-                                    @endif
-
-                                    @if ($asset->created_at!='')
-                                        <div class="row">
-                                            <div class="col-md-3">
-                                                <strong>
-                                                    {{ trans('general.created_at') }}
-                                                </strong>
-                                            </div>
-                                            <div class="col-md-9">
-                                                {{ Helper::getFormattedDateObject($asset->created_at, 'datetime', false) }}
-                                            </div>
-                                        </div>
-                                    @endif
-
-                                    @if ($asset->updated_at!='')
-                                        <div class="row">
-                                            <div class="col-md-3">
-                                                <strong>
-                                                    {{ trans('general.updated_at') }}
-                                                </strong>
-                                            </div>
-                                            <div class="col-md-9">
-                                                {{ Helper::getFormattedDateObject($asset->updated_at, 'datetime', false) }}
-                                            </div>
-                                        </div>
-                                    @endif
-
-                                    @if ($asset->expected_checkin!='')
-                                        <div class="row">
-                                            <div class="col-md-3">
-                                                <strong>
-                                                    {{ trans('admin/hardware/form.expected_checkin') }}
-                                                </strong>
-                                            </div>
-                                            <div class="col-md-9">
-                                                {{ Helper::getFormattedDateObject($asset->expected_checkin, 'date', false) }}
-                                            </div>
-                                        </div>
-                                    @endif
-
-                                    @if ($asset->last_checkin!='')
-                                        <div class="row">
-                                            <div class="col-md-3">
-                                                <strong>
-                                                    {{ trans('admin/hardware/table.last_checkin_date') }}
-                                                </strong>
-                                            </div>
-                                            <div class="col-md-9">
-                                                {{ Helper::getFormattedDateObject($asset->last_checkin, 'datetime', false) }}
-                                            </div>
-                                        </div>
-                                    @endif
-
-
-
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <strong>
-                                                {{ trans('general.checkouts_count') }}
-                                            </strong>
-                                        </div>
-                                        <div class="col-md-9">
-                                            {{ ($asset->checkouts) ? (int) $asset->checkouts->count() : '0' }}
-                                        </div>
-                                    </div>
-
-
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <strong>
-                                                {{ trans('general.checkins_count') }}
-                                            </strong>
-                                        </div>
-                                        <div class="col-md-9">
-                                            {{ ($asset->checkins) ? (int) $asset->checkins->count() : '0' }}
-                                        </div>
-                                    </div>
-
-
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <strong>
-                                                {{ trans('general.user_requests_count') }}
-                                            </strong>
-                                        </div>
-                                        <div class="col-md-9">
-                                            {{ ($asset->userRequests) ? (int) $asset->userRequests->count() : '0' }}
-                                        </div>
-                                    </div>
-
-                                </div> <!--/end striped container-->
-                            </div> <!-- end col-md-9 -->
-                        </div><!-- end info-stack-container -->
-                        </div> <!--/.row-->
-                    </div><!-- /.tab-pane -->
-
-                    <div class="tab-pane fade" id="software">
-                        <div class="row{{($asset->licenses->count() > 0 ) ? '' : ' hidden-print'}}">
-                            <div class="col-md-12">
-                                <!-- Licenses assets table -->
-                                @if ($asset->licenses->count() > 0)
-                                    <table class="table">
-                                        <thead>
-                                        <tr>
-                                            <th class="col-md-4">{{ trans('general.name') }}</th>
-                                            <th class="col-md-4"><span class="line"></span>{{ trans('admin/licenses/form.license_key') }}</th>
-                                            <th class="col-md-4"><span class="line"></span>{{ trans('admin/licenses/form.expiration') }}</th>
-                                            <th class="col-md-1"><span class="line"></span>{{ trans('table.actions') }}</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        @foreach ($asset->licenseseats as $seat)
-                                            @if ($seat->license)
-                                                <tr>
-                                                    <td><a href="{{ route('licenses.show', $seat->license->id) }}">{{ $seat->license->name }}</a></td>
-                                                    <td>
-                                                        @can('viewKeys', $seat->license)
-                                                            {!! nl2br(e($seat->license->serial)) !!}
-                                                        @else
-                                                            ------------
-                                                        @endcan
-                                                    </td>
-                                                    <td>
-                                                        {{ Helper::getFormattedDateObject($seat->license->expiration_date, 'date', false) }}
-                                                    </td>
-                                                    <td>
-                                                        <a href="{{ route('licenses.checkin', $seat->id) }}" class="btn btn-sm bg-purple hidden-print" data-tooltip="true">{{ trans('general.checkin') }}</a>
-                                                    </td>
-                                                </tr>
-                                            @endif
-                                        @endforeach
-                                        </tbody>
-                                    </table>
-                                @else
-
-                                    <div class="alert alert-info alert-block hidden-print">
-                                        <x-icon type="info-circle" />
-                                        {{ trans('general.no_results') }}
-                                    </div>
-                                @endif
-                            </div><!-- /col -->
-                        </div> <!-- row -->
-                    </div> <!-- /.tab-pane software -->
-
-                    <div class="tab-pane fade" id="components">
-                        <!-- checked out assets table -->
-                        <div class="row{{($asset->components->count() > 0 ) ? '' : ' hidden-print'}}">
-                            <div class="col-md-12">
-                                @if($asset->components->count() > 0)
-                                    <table class="table table-striped">
-                                        <thead>
-                                        <th>{{ trans('general.name') }}</th>
-                                        <th>{{ trans('general.qty') }}</th>
-                                        <th>{{ trans('general.purchase_cost') }}</th>
-                                        <th>{{trans('admin/hardware/form.serial')}}</th>
-                                        <th>{{trans('general.checkin')}}</th>
-                                        <th></th>
-                                        </thead>
-                                        <tbody>
-                                            <?php $totalCost = 0; ?>
-                                        @foreach ($asset->components as $component)
-
-
-                                            @if (is_null($component->deleted_at))
-                                                <tr>
-                                                    <td>
-                                                        <a href="{{ route('components.show', $component->id) }}">{{ $component->name }}</a>
-                                                    </td>
-                                                    <td>{{ $component->pivot->assigned_qty }}</td>
-                                                    <td>{{ Helper::formatCurrencyOutput($component->purchase_cost) }} each</td>
-                                                    <td>{{ $component->serial }}</td>
-                                                    <td>
-                                                        <a href="{{ route('components.checkin.show', $component->pivot->id) }}" class="btn btn-sm bg-purple hidden-print" data-tooltip="true">{{ trans('general.checkin') }}</a>
-                                                    </td>
-
-                                                        <?php $totalCost = $totalCost + ($component->purchase_cost *$component->pivot->assigned_qty) ?>
-                                                </tr>
-                                            @endif
-                                        @endforeach
-                                        </tbody>
-
-                                        <tfoot>
-                                        <tr>
-                                            <td colspan="2">
-                                            </td>
-                                            <td>{{ $totalCost }}</td>
-                                        </tr>
-                                        </tfoot>
-                                    </table>
-                                @else
-                                    <div class="alert alert-info alert-block hidden-print">
-                                        <x-icon type="info-circle" />
-                                        {{ trans('general.no_results') }}
-                                    </div>
-                                @endif
+                                </div>
                             </div>
-                        </div>
-                    </div> <!-- /.tab-pane components -->
 
+                            @endif
 
-                    <div class="tab-pane fade" id="assets">
-                        <div class="row{{($asset->assignedAssets->count() > 0 ) ? '' : ' hidden-print'}}">
-                            <div class="col-md-12">
-
-                                @if ($asset->assignedAssets->count() > 0)
-
-
-                                    <form
-                                        method="POST"
-                                        action="{{ route('hardware/bulkedit') }}"
-                                        accept-charset="UTF-8"
-                                        class="form-inline"
-                                        id="bulkForm"
-                                    >
-                                    @csrf
-                                    <div id="toolbar">
-                                        <label for="bulk_actions"><span class="sr-only">{{ trans('general.bulk_actions')}}</span></label>
-                                        <select name="bulk_actions" class="form-control select2" style="width: 150px;" aria-label="bulk_actions">
-                                            <option value="edit">{{ trans('button.edit') }}</option>
-                                            <option value="delete">{{ trans('button.delete')}}</option>
-                                            <option value="labels">{{ trans_choice('button.generate_labels', 2) }}</option>
-                                        </select>
-                                        <button class="btn btn-primary" id="{{ (isset($id_button)) ? $id_button : 'bulkAssetEditButton' }}" disabled>{{ trans('button.go') }}</button>
+                            @if (($asset->model) && ($asset->depreciation))
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <strong>
+                                            {{ trans('general.depreciation') }}
+                                        </strong>
                                     </div>
-
-                                    <!-- checked out assets table -->
-                                    <div class="table-responsive">
-
-                                        <table
-                                                data-columns="{{ \App\Presenters\AssetPresenter::dataTableLayout() }}"
-                                                data-cookie-id-table="assetsTable"
-                                                data-pagination="true"
-                                                data-id-table="assetsTable"
-                                                data-search="true"
-                                                data-side-pagination="server"
-                                                data-show-columns="true"
-                                                data-show-fullscreen="true"
-                                                data-show-export="true"
-                                                data-show-refresh="true"
-                                                data-sort-order="asc"
-                                                data-bulk-button-id="#bulkAssetEditButton"
-                                                id="assetsListingTable"
-                                                class="table table-striped snipe-table"
-                                                data-url="{{route('api.assets.index',['assigned_to' => $asset->id, 'assigned_type' => 'App\Models\Asset']) }}"
-                                                data-export-options='{
-                              "fileName": "export-assets-{{ str_slug($asset->name) }}-assets-{{ date('Y-m-d') }}",
-                              "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
-                              }'>
-
-                                        </table>
-
-
-                                        </form>
+                                    <div class="col-md-9">
+                                        {{ $asset->depreciation->name }}
+                                        ({{ trans_choice('general.months_plural', $asset->depreciation->months) }})
                                     </div>
-
-                                @else
-
-                                    <div class="alert alert-info alert-block hidden-print">
-                                        <x-icon type="info-circle" />
-                                        {{ trans('general.no_results') }}
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <strong>
+                                            {{ trans('admin/hardware/form.fully_depreciated') }}
+                                        </strong>
                                     </div>
+                                    <div class="col-md-9">
+                                        @if ($asset->purchase_date)
+                                            {{ Helper::getFormattedDateObject($asset->depreciated_date()->format('Y-m-d'), 'date', false) }}
+                                            -
+                                            {{ Carbon::parse($asset->depreciated_date())->diffForHumans(['parts' => 3]) }}
+                                        @else
+                                            {{ trans('general.na_no_purchase_date') }}
+                                        @endif
+
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if (($asset->asset_eol_date) && ($asset->purchase_date))
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <strong>
+                                            {{ trans('admin/hardware/form.eol_rate') }}
+                                        </strong>
+                                    </div>
+                                    <div class="col-md-9">
+                                        {{ (int) Carbon::parse($asset->asset_eol_date)->diffInMonths($asset->purchase_date, true) }}
+                                        {{ trans('admin/hardware/form.months') }}
+
+                                    </div>
+                                </div>
+                            @endif
+                            @if ($asset->asset_eol_date)
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <strong>
+                                            {{ trans('admin/hardware/form.eol_date') }}
+                                            @if ($asset->purchase_date)
+                                                {!! $asset->asset_eol_date < date("Y-m-d") ? '<i class="fas fa-exclamation-triangle text-orange" aria-hidden="true"></i>' : '' !!}
+                                            @endif
+                                        </strong>
+                                    </div>
+                                    <div class="col-md-9">
+                                        @if ($asset->asset_eol_date)
+                                            {{ Helper::getFormattedDateObject($asset->asset_eol_date, 'date', false) }}
+                                            -
+                                            {{ Carbon::parse($asset->asset_eol_date)->locale(app()->getLocale())->diffForHumans(['parts' => 3]) }}
+                                        @else
+                                            {{ trans('general.na_no_purchase_date') }}
+                                        @endif
+                                        @if ($asset->eol_explicit =='1')
+                                            <span data-tooltip="true"
+                                                  data-placement="top"
+                                                  data-title="Explicit EOL"
+                                                  title="Explicit EOL">
+                                                                    <x-icon type="warning" class="text-primary"/>
+                                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endif
+
+
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <strong>
+                                        {{ trans('admin/hardware/form.notes') }}
+                                    </strong>
+                                </div>
+                                <div class="col-md-9">
+                                    {!! nl2br(Helper::parseEscapedMarkedownInline($asset->notes)) !!}
+                                </div>
+                            </div>
+
+                            @if ($asset->location)
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <strong>
+                                            {{ trans('general.location') }}
+                                        </strong>
+                                    </div>
+                                    <div class="col-md-9">
+                                        @can('superuser')
+                                            <a href="{{ route('locations.show', ['location' => $asset->location->id]) }}">
+                                                {{ $asset->location->name }}
+                                            </a>
+                                        @else
+                                            {{ $asset->location->name }}
+                                        @endcan
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if ($asset->defaultLoc)
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <strong>
+                                            {{ trans('admin/hardware/form.default_location') }}
+                                        </strong>
+                                    </div>
+                                    <div class="col-md-9">
+                                        @can('superuser')
+                                            <a href="{{ route('locations.show', ['location' => $asset->defaultLoc->id]) }}">
+                                                {{ $asset->defaultLoc->name }}
+                                            </a>
+                                        @else
+                                            {{ $asset->defaultLoc->name }}
+                                        @endcan
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if ($asset->created_at!='')
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <strong>
+                                            {{ trans('general.created_at') }}
+                                        </strong>
+                                    </div>
+                                    <div class="col-md-9">
+                                        {{ Helper::getFormattedDateObject($asset->created_at, 'datetime', false) }}
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if ($asset->updated_at!='')
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <strong>
+                                            {{ trans('general.updated_at') }}
+                                        </strong>
+                                    </div>
+                                    <div class="col-md-9">
+                                        {{ Helper::getFormattedDateObject($asset->updated_at, 'datetime', false) }}
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if ($asset->expected_checkin!='')
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <strong>
+                                            {{ trans('general.expected_checkin') }}
+                                        </strong>
+                                    </div>
+                                    <div class="col-md-9">
+                                        {{ Helper::getFormattedDateObject($asset->expected_checkin, 'date', false) }}
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if ($asset->last_checkin!='')
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <strong>
+                                            {{ trans('admin/hardware/table.last_checkin_date') }}
+                                        </strong>
+                                    </div>
+                                    <div class="col-md-9">
+                                        {{ Helper::getFormattedDateObject($asset->last_checkin, 'datetime', false) }}
+                                    </div>
+                                </div>
+                            @endif
+
+
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <strong>
+                                        {{ trans('general.checkouts_count') }}
+                                    </strong>
+                                </div>
+                                <div class="col-md-9">
+                                    {{ ($asset->checkouts) ? (int) $asset->checkouts->count() : '0' }}
+                                </div>
+                            </div>
+
+
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <strong>
+                                        {{ trans('general.checkins_count') }}
+                                    </strong>
+                                </div>
+                                <div class="col-md-9">
+                                    {{ ($asset->checkins) ? (int) $asset->checkins->count() : '0' }}
+                                </div>
+                            </div>
+
+
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <strong>
+                                        {{ trans('general.user_requests_count') }}
+                                    </strong>
+                                </div>
+                                <div class="col-md-9">
+                                    {{ ($asset->userRequests) ? (int) $asset->userRequests->count() : '0' }}
+                                </div>
+                            </div>
+
+                        </div> <!--/end striped container-->
+                    </div> <!-- end col-md-9 -->
+                    </div><!-- end info-stack-container -->
+                </div> <!--/.row-->
+            </div><!-- /.tab-pane -->
+
+            <div class="tab-pane fade" id="software">
+                <div class="row{{($asset->licenses->count() > 0 ) ? '' : ' hidden-print'}}">
+                    <div class="col-md-12">
+                        <!-- Licenses assets table -->
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>{{ trans('general.name') }}</th>
+                                <th><span class="line"></span>{{ trans('admin/licenses/form.license_key') }}</th>
+                                <th><span class="line"></span>{{ trans('admin/licenses/form.expiration') }}</th>
+                                <th><span class="line"></span>{{ trans('table.actions') }}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach ($asset->licenseseats as $seat)
+                                @if ($seat->license)
+                                    <tr>
+                                        <td>
+                                            <a href="{{ route('licenses.show', $seat->license->id) }}">{{ $seat->license->name }}</a>
+                                        </td>
+                                        <td>
+                                            @can('viewKeys', $seat->license)
+                                                <code class="single-line"><span class="js-copy-link"
+                                                                                data-clipboard-target=".js-copy-key-{{ $seat->id }}"
+                                                                                aria-hidden="true" data-tooltip="true"
+                                                                                data-placement="top"
+                                                                                title="{{ trans('general.copy_to_clipboard') }}"><span
+                                                                class="js-copy-key-{{ $seat->id }}">{{ $seat->license->serial }}</span></span></code>
+                                            @else
+                                                ------------
+                                            @endcan
+                                        </td>
+                                        <td>
+                                            {{ Helper::getFormattedDateObject($seat->license->expiration_date, 'date', false) }}
+                                        </td>
+                                        <td>
+                                            <a href="{{ route('licenses.checkin', $seat->id) }}"
+                                               class="btn btn-sm bg-purple hidden-print"
+                                               data-tooltip="true">{{ trans('general.checkin') }}</a>
+                                        </td>
+                                    </tr>
                                 @endif
+                            @endforeach
+                            </tbody>
+                        </table>
+                    </div><!-- /col -->
+                </div> <!-- row -->
+            </div> <!-- /.tab-pane software -->
+
+            <div class="tab-pane fade" id="components">
+                <!-- checked out assets table -->
+                <div class="row{{($asset->components->count() > 0 ) ? '' : ' hidden-print'}}">
+                    <div class="col-md-12">
+
+                        <table class="table table-striped">
+                            <thead>
+                            <th>{{ trans('general.name') }}</th>
+                            <th>{{ trans('general.qty') }}</th>
+                            <th>{{ trans('general.purchase_cost') }}</th>
+                            <th>{{trans('admin/hardware/form.serial')}}</th>
+                            <th>{{trans('general.checkin')}}</th>
+                            <th></th>
+                            </thead>
+                            <tbody>
+                                <?php $totalCost = 0; ?>
+                            @foreach ($asset->components as $component)
+
+                                @if (is_null($component->deleted_at))
+                                    <tr>
+                                        <td>
+                                            <a href="{{ route('components.show', $component->id) }}">{{ $component->name }}</a>
+                                        </td>
+                                        <td>{{ $component->pivot->assigned_qty }}</td>
+                                        <td>
+                                            @if ($component->purchase_cost!='')
+                                                {{ trans('general.cost_each', ['amount' => Helper::formatCurrencyOutput($component->purchase_cost)])  }}
+                                            @endif
+                                        </td>
+                                        <td>{{ $component->serial }}</td>
+                                        <td>
+                                            <a href="{{ route('components.checkin.show', $component->pivot->id) }}"
+                                               class="btn btn-sm bg-purple hidden-print"
+                                               data-tooltip="true">{{ trans('general.checkin') }}</a>
+                                        </td>
+
+                                            <?php $totalCost = $totalCost + ($component->purchase_cost * $component->pivot->assigned_qty) ?>
+                                    </tr>
+                                @endif
+                            @endforeach
+                            </tbody>
+
+                            <tfoot>
+                            <tr>
+                                <td colspan="2">
+                                </td>
+                                <td>{{ $totalCost }}</td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div> <!-- /.tab-pane components -->
 
 
-                            </div><!-- /col -->
-                        </div> <!-- row -->
-                    </div> <!-- /.tab-pane software -->
+            <div class="tab-pane fade" id="assets">
+                <div class="row{{($asset->assignedAssets->count() > 0 ) ? '' : ' hidden-print'}}">
+                    <div class="col-md-12">
+
+                        @include('partials.asset-bulk-actions')
+
+                        <!-- checked out assets table -->
+                        <div class="table-responsive">
+
+                            <table
+                                    data-columns="{{ \App\Presenters\AssetPresenter::dataTableLayout() }}"
+                                    data-cookie-id-table="assetsTable"
+                                    data-id-table="assetsTable"
+                                    data-side-pagination="server"
+                                    data-sort-order="asc"
+                                    data-toolbar="#assetsBulkEditToolbar"
+                                    data-bulk-button-id="#bulkAssetEditButton"
+                                    data-bulk-form-id="#assetsBulkForm"
+                                    id="assetsListingTable"
+                                    class="table table-striped snipe-table"
+                                    data-url="{{route('api.assets.index',['assigned_to' => $asset->id, 'assigned_type' => 'App\Models\Asset']) }}"
+                                    data-export-options='{
+                                  "fileName": "export-assets-{{ str_slug($asset->name) }}-assets-{{ date('Y-m-d') }}",
+                                  "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
+                                  }'>
+
+                            </table>
+                        </div>
 
 
-                    <div class="tab-pane fade" id="maintenances">
-                        <div class="row{{($asset->assetmaintenances->count() > 0 ) ? '' : ' hidden-print'}}">
-                            <div class="col-md-12">
-                                @can('update', \App\Models\Asset::class)
-                                    <div id="maintenance-toolbar">
-                                        <a href="{{ route('maintenances.create', ['asset_id' => $asset->id]) }}" class="btn btn-primary">{{ trans('button.add_maintenance') }}</a>
-                                    </div>
-                                @endcan
+                    </div><!-- /col -->
+                </div> <!-- row -->
+            </div> <!-- /.tab-pane software -->
 
-                                <!-- Asset Maintenance table -->
-                                <table
-                                        data-columns="{{ \App\Presenters\AssetMaintenancesPresenter::dataTableLayout() }}"
-                                        class="table table-striped snipe-table"
-                                        id="assetMaintenancesTable"
-                                        data-pagination="true"
-                                        data-id-table="assetMaintenancesTable"
-                                        data-search="true"
-                                        data-side-pagination="server"
-                                        data-toolbar="#maintenance-toolbar"
-                                        data-show-columns="true"
-                                        data-show-fullscreen="true"
-                                        data-show-refresh="true"
-                                        data-show-export="true"
-                                        data-export-options='{
-                           "fileName": "export-{{ $asset->asset_tag }}-maintenances",
-                           "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
-                         }'
-                                        data-url="{{ route('api.maintenances.index', array('asset_id' => $asset->id)) }}"
-                                        data-cookie-id-table="assetMaintenancesTable"
-                                        data-cookie="true">
-                                </table>
-                            </div> <!-- /.col-md-12 -->
-                        </div> <!-- /.row -->
-                    </div> <!-- /.tab-pane maintenances -->
 
-                    <div class="tab-pane fade" id="history">
+            <div class="tab-pane" id="accessories_assigned">
+
+
+                <div class="table table-responsive">
+
+                    <h2 class="box-title" style="float:left">
+                        {{ trans('general.accessories_assigned') }}
+                    </h2>
+
+                    <table
+                            data-columns="{{ \App\Presenters\AssetPresenter::assignedAccessoriesDataTableLayout() }}"
+                            data-cookie-id-table="accessoriesAssignedListingTable"
+                            data-id-table="accessoriesAssignedListingTable"
+                            data-side-pagination="server"
+                            data-sort-order="asc"
+                            id="accessoriesAssignedListingTable"
+                            class="table table-striped snipe-table"
+                            data-url="{{ route('api.assets.assigned_accessories', ['asset' => $asset]) }}"
+                            data-export-options='{
+                                  "fileName": "export-locations-{{ str_slug($asset->name) }}-accessories-{{ date('Y-m-d') }}",
+                                  "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
+                                  }'>
+                    </table>
+
+                </div><!-- /.table-responsive -->
+            </div><!-- /.tab-pane -->
+
+
+            <div class="tab-pane fade" id="maintenances">
+                <div class="row{{($asset->maintenances->count() > 0 ) ? '' : ' hidden-print'}}">
+                    <div class="col-md-12">
+
+                        <!-- Asset Maintenance table -->
+                        <table
+                                data-columns="{{ \App\Presenters\MaintenancesPresenter::dataTableLayout() }}"
+                                class="table table-striped snipe-table"
+                                id="MaintenancesTable"
+                                data-buttons="maintenanceButtons"
+                                data-id-table="MaintenancesTable"
+                                data-side-pagination="server"
+                                data-toolbar="#maintenance-toolbar"
+                                data-export-options='{
+                                               "fileName": "export-{{ $asset->asset_tag }}-maintenances",
+                                               "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
+                                             }'
+                                data-url="{{ route('api.maintenances.index', array('asset_id' => $asset->id)) }}"
+                                data-cookie-id-table="MaintenancesTable"
+                                data-cookie="true">
+                        </table>
+                    </div> <!-- /.col-md-12 -->
+                </div> <!-- /.row -->
+            </div> <!-- /.tab-pane maintenances -->
+
+
+            <div class="tab-pane fade" id="audits">
                         <!-- checked out assets table -->
                         <div class="row">
                             <div class="col-md-12">
                                 <table
                                         class="table table-striped snipe-table"
-                                        id="assetHistory"
-                                        data-pagination="true"
-                                        data-id-table="assetHistory"
-                                        data-search="true"
+                                        id="assetAuditHistory"
+                                        data-id-table="assetAuditHistory"
                                         data-side-pagination="server"
-                                        data-show-columns="true"
-                                        data-show-fullscreen="true"
-                                        data-show-refresh="true"
                                         data-sort-order="desc"
                                         data-sort-name="created_at"
-                                        data-show-export="true"
                                         data-export-options='{
-                         "fileName": "export-asset-{{  $asset->id }}-history",
-                         "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
-                       }'
-
-                                        data-url="{{ route('api.activity.index', ['item_id' => $asset->id, 'item_type' => 'asset']) }}"
+                                             "fileName": "export-asset-{{  $asset->id }}-audits",
+                                             "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
+                                           }'
+                                        data-url="{{ route('api.activity.index', ['item_id' => $asset->id, 'item_type' => 'asset', 'action_type' => 'audit']) }}"
                                         data-cookie-id-table="assetHistory"
                                         data-cookie="true">
                                     <thead>
                                     <tr>
                                         <th data-visible="true" data-field="icon" style="width: 40px;" class="hidden-xs" data-formatter="iconFormatter">{{ trans('admin/hardware/table.icon') }}</th>
-                                        <th data-visible="true" data-field="action_date" data-sortable="true" data-formatter="dateDisplayFormatter">{{ trans('general.date') }}</th>
-                                        <th data-visible="true" data-field="admin" data-formatter="usersLinkObjFormatter">{{ trans('general.admin') }}</th>
-                                        <th data-visible="true" data-field="action_type">{{ trans('general.action') }}</th>
-                                        <th class="col-sm-2" data-field="file" data-visible="false" data-formatter="fileUploadNameFormatter">{{ trans('general.file_name') }}</th>
-                                        <th data-visible="true" data-field="item" data-formatter="polymorphicItemFormatter">{{ trans('general.item') }}</th>
-                                        <th data-visible="true" data-field="target" data-formatter="polymorphicItemFormatter">{{ trans('general.target') }}</th>
+                                        <th data-visible="true" data-field="created_at" data-sortable="true"
+                                            data-formatter="dateDisplayFormatter">{{ trans('general.date') }}</th>
+                                        <th data-visible="true" data-field="admin"
+                                            data-formatter="usersLinkObjFormatter">{{ trans('general.created_by') }}</th>
+                                        <th class="col-sm-2" data-field="file" data-sortable="true" data-visible="false"
+                                            data-formatter="fileUploadNameFormatter">{{ trans('general.file_name') }}</th>
                                         <th data-field="note">{{ trans('general.notes') }}</th>
-                                        <th data-field="signature_file" data-visible="false"  data-formatter="imageFormatter">{{ trans('general.signature') }}</th>
-                                        <th data-visible="false" data-field="file" data-visible="false"  data-formatter="fileUploadFormatter">{{ trans('general.download') }}</th>
+                                        <th data-visible="false" data-field="file" data-visible="false"
+                                            data-formatter="fileDownloadButtonsFormatter">{{ trans('general.download') }}</th>
                                         <th data-field="log_meta" data-visible="true" data-formatter="changeLogFormatter">{{ trans('admin/hardware/table.changed')}}</th>
                                         <th data-field="remote_ip" data-visible="false" data-sortable="true">{{ trans('admin/settings/general.login_ip') }}</th>
                                         <th data-field="user_agent" data-visible="false" data-sortable="true">{{ trans('admin/settings/general.login_user_agent') }}</th>
@@ -1378,52 +1199,59 @@
                         </div> <!-- /.row -->
                     </div> <!-- /.tab-pane history -->
 
-                    <div class="tab-pane fade" id="files">
-                        <div class="row{{ ($asset->uploads->count() > 0 ) ? '' : ' hidden-print' }}">
-                            <div class="col-md-12">
-                                <x-filestable
-                                        filepath="private_uploads/assets/"
-                                        showfile_routename="show/assetfile"
-                                        deletefile_routename="delete/assetfile"
-                                        :object="$asset" />
-                            </div> <!-- /.col-md-12 -->
-                        </div> <!-- /.row -->
-                    </div> <!-- /.tab-pane files -->
 
-                    @can('view', $asset->model)
+            <div class="tab-pane fade" id="history">
+                <!-- checked out assets table -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <table
+                                data-columns="{{ \App\Presenters\HistoryPresenter::dataTableLayout() }}"
+                                class="table table-striped snipe-table"
+                                id="assetHistory"
+                                data-id-table="assetHistory"
+                                data-side-pagination="server"
+                                data-sort-order="desc"
+                                data-sort-name="created_at"
+                                data-export-options='{
+                                                 "fileName": "export-asset-{{  $asset->id }}-history",
+                                                 "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
+                                               }'
+                                data-url="{{ route('api.activity.index', ['item_id' => $asset->id, 'item_type' => 'asset']) }}"
+                                data-cookie-id-table="assetHistory"
+                                data-cookie="true">
+                        </table>
+                    </div>
+                </div> <!-- /.row -->
+            </div> <!-- /.tab-pane history -->
+
+            <div class="tab-pane fade" id="files">
+                <div class="row{{ ($asset->uploads->count() > 0 ) ? '' : ' hidden-print' }}">
+                    <div class="col-md-12">
+                        <x-filestable object_type="assets" :object="$asset"/>
+                    </div> <!-- /.col-md-12 -->
+                </div> <!-- /.row -->
+            </div> <!-- /.tab-pane files -->
+
+            @if ($asset->model)
+                @can('view', $asset->model)
                     <div class="tab-pane fade" id="modelfiles">
                         <div class="row{{ (($asset->model) && ($asset->model->uploads->count() > 0)) ? '' : ' hidden-print' }}">
                             <div class="col-md-12">
-
-                                <x-filestable
-                                        filepath="private_uploads/assetmodels/"
-                                        showfile_routename="show/modelfile"
-                                        deletefile_routename="delete/modelfile"
-                                        :object="$asset->model" />
-
+                                <x-filestable object_type="models" :object="$asset->model"/>
                             </div> <!-- /.col-md-12 -->
                         </div> <!-- /.row -->
                     </div> <!-- /.tab-pane files -->
-                    @endcan
-            </div><!-- /.tab-content -->
-        </div><!-- nav-tabs-custom -->
+                @endcan
+            @endif
+        </div><!-- /.tab-content -->
+    </div><!-- nav-tabs-custom -->
     </div>
 
     @can('update', \App\Models\Asset::class)
         @include ('modals.upload-file', ['item_type' => 'asset', 'item_id' => $asset->id])
     @endcan
 @stop
-            @section('moar_scripts')
-                <script>
-
-                    $('#dataConfirmModal').on('show.bs.modal', function (event) {
-                        var content = $(event.relatedTarget).data('content');
-                        var title = $(event.relatedTarget).data('title');
-                        $(this).find(".modal-body").text(content);
-                        $(this).find(".modal-header").text(title);
-                    });
-
-                </script>
+@section('moar_scripts')
     @include ('partials.bootstrap-table')
 
 @stop

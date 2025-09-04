@@ -13,4 +13,8 @@ return [
     'no_depreciations_warning'               => '<strong>Aviso: </strong>
                       Não tem atualmente nenhuma depreciação configurada.
                       Por favor, defina pelo menos uma depreciação para visualizar o relatório de depreciação.',
+    'depreciation_method'                   => 'Relatório de Depreciação',
+    'linear_depreciation'                   => 'Linear (Default)',
+    'half_1'                                => 'Half-year convention, always applied',
+    'half_2'                                => 'Half-year convention, applied with condition',
 ];

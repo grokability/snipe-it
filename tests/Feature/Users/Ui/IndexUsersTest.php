@@ -9,7 +9,7 @@ class IndexUsersTest extends TestCase
 {
     public function testPageRenders()
     {
-        $this->actingAs(User::factory()->superuser()->create())
+        $this->actingAs(User::factory()->viewUsers()->create())
             ->get(route('users.index'))
             ->assertOk();
     }

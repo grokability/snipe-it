@@ -45,4 +45,24 @@ class ImportTest extends TestCase
             ]);
         $this->assertEquals($evil_string, $results->json()['files'][0]['first_row'][0]);
     }
+
+    public function testStoreInternationalAssetMisparse(): void
+    {
+        $evil_maker = function ($arr) {
+            $results = '';
+            foreach ($arr as $thing) {
+                $results .= chr($thing);
+            }
+            return $results;
+        };
+
+        // 0xC0 makes it 'not unicode', and 0xFF makes it 'likely WINDOWS-1251', and 0x98 at the end makes it 'not-valid-Windows-1251'
+        $evil_content = $evil_maker([0xC0, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x01, 0x02, 0x03, 0x98]);
+
+        $this->actingAsForApi(User::factory()->superuser()->create());
+        $results = $this->post(route('api.imports.store'), ['files' => [UploadedFile::fake()->createWithContent("myname.csv", $evil_content)]])
+            ->assertStatus(422)
+            ->assertStatusMessageIs('error')
+            ->assertMessagesAre(trans('admin/hardware/message.import.transliterate_failure', ["encoding" => "windows-1251"]));
+    }
 }

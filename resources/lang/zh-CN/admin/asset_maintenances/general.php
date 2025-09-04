@@ -12,5 +12,5 @@
         'software_support'   => '软件支持',
         'hardware_support'   => '硬件支持',
         'configuration_change'   => '配置更改',
-        'pat_test'           => 'PAT 测试',
+        'pat_test'           => '便携式设备测试',
     ];

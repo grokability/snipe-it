@@ -2,8 +2,8 @@
 
 return array(
     'component_name'                  => 'Nome Componente',
-    'checkin'                             => 'Checkin Componente',
-    'checkout'                             => 'Checkout Componente',
+    'checkin'                             => 'Restituzione Componente',
+    'checkout'                             => 'Assegna Componente',
     'cost'				=> 'Prezzo d\'acquisto',
     'create'                             => 'Crea Componente',
     'edit'                             => 'Modifica Componente',
@@ -12,5 +12,5 @@ return array(
     'remaining' 			             => 'Rimanenti',
     'total' 			                 => 'Totale',
     'update'                            => 'Aggiorna Componente',
-    'checkin_limit'            => 'La quantità in ingresso deve essere uguale o inferiore di :assigned_qty'
+    'checkin_limit'            => 'La quantità restituita deve essere uguale o inferiore a :assigned_qty'
 );

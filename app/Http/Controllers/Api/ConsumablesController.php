@@ -40,7 +40,7 @@ class ConsumablesController extends Controller
         }
 
         if ($request->filled('company_id')) {
-            $consumables->where('company_id', '=', $request->input('company_id'));
+            $consumables->where('consumables.company_id', '=', $request->input('company_id'));
         }
 
         if ($request->filled('category_id')) {
@@ -228,11 +228,16 @@ class ConsumablesController extends Controller
         foreach ($consumable->consumableAssignments as $consumable_assignment) {
             $rows[] = [
                 'avatar' => ($consumable_assignment->user) ? e($consumable_assignment->user->present()->gravatar) : '',
-                'name' => ($consumable_assignment->user) ? $consumable_assignment->user->present()->nameUrl() : 'Deleted User',
+                'user' => ($consumable_assignment->user) ? [
+                    'id' => (int) $consumable_assignment->user->id,
+                    'name'=> e($consumable_assignment->user->display_name),
+                ] : null,
                 'created_at' => Helper::getFormattedDateObject($consumable_assignment->created_at, 'datetime'),
                 'note' => ($consumable_assignment->note) ? e($consumable_assignment->note) : null,
-                'admin' => ($consumable_assignment->adminuser) ? $consumable_assignment->adminuser->present()->nameUrl() : null, // legacy, so we don't change the shape of the response
-                'created_by' => ($consumable_assignment->adminuser) ? $consumable_assignment->adminuser->present()->nameUrl() : null,
+                'created_by' => ($consumable_assignment->adminuser) ? [
+                    'id' => (int) $consumable_assignment->adminuser->id,
+                    'name'=> e($consumable_assignment->adminuser->display_name),
+                ] : null,
             ];
         }
 

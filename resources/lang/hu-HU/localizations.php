@@ -2,11 +2,11 @@
 
 return [
 
-    'select_language' => 'Select a Language',
+    'select_language' => 'Nyelv kiválasztása',
     'languages' => [
         'en-US'=> 'Angol, Amerikai Egyesült Államok',
         'en-GB'=> 'Angol, Egyesült Királyság',
-        'am-ET' => 'Amharic',
+        'am-ET' => 'Amhara',
         'af-ZA'=> 'Afrikaans',
         'ar-SA'=> 'Arab',
         'bg-BG'=> 'Bolgár',
@@ -40,8 +40,8 @@ return [
         'ms-MY'=> 'Maláj',
         'mi-NZ'=> 'Maori',
         'mn-MN'=> 'Mongol',
-        //'no-NO'=> 'Norwegian',
-        'nb-NO'=> 'Norwegian Bokmål',
+        'nb-NO'=> 'Norvég Bokmål',
+        'om-ET' => 'Oromó (Etióp)',
         //'nn-NO'=> 'Norwegian Nynorsk',
         'fa-IR'=> 'Perzsa',
         'pl-PL'=> 'Lengyel',
@@ -68,7 +68,7 @@ return [
         'zu-ZA'=> 'Zulu',
     ],
 
-    'select_country' => 'Select a Country',
+    'select_country' => 'Válasszon ki egy országot',
     
     'countries' => [
         'AC'=>'Ascension-sziget',
@@ -135,7 +135,7 @@ return [
         'EC'=>'Ecuadori Köztársaság',
         'EE'=>'Észtország',
         'EG'=>'Egyiptom',
-        'GB-ENG'=>'England',
+        'GB-ENG'=>'Anglia',
         'ER'=>'Eritrea',
         'ES'=>'Spanyolország',
         'ET'=>'Etiópia',
@@ -234,7 +234,7 @@ return [
         'NG'=>'Nigéria',
         'NI'=>'Nicaraguai Köztársaság',
         'NL'=>'Hollandia',
-        'GB-NIR' => 'Northern Ireland',
+        'GB-NIR' => 'Észak-Írország',
         'NO'=>'Norvégia',
         'NP'=>'Nepál',
         'NR'=>'Naurui Köztársaság',

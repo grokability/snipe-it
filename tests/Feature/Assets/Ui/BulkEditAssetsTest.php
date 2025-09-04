@@ -29,7 +29,7 @@ class BulkEditAssetsTest extends TestCase
         ])->assertStatus(200);
     }
 
-    public function testStandardUserCannotAccessPage()
+    public function test_standard_user_cannot_access_page()
     {
         $user = User::factory()->create();
         $assets = Asset::factory()->count(2)->create();
@@ -44,7 +44,7 @@ class BulkEditAssetsTest extends TestCase
         ])->assertStatus(403);
     }
 
-    public function testBulkEditAssetsAcceptsAllPossibleAttributes()
+    public function test_bulk_edit_assets_accepts_all_possible_attributes()
     {
         // sets up all needed models and attributes on the assets
         // this test does not deal with custom fields - will be dealt with in separate cases
@@ -112,7 +112,7 @@ class BulkEditAssetsTest extends TestCase
         });
     }
 
-    public function testBulkEditAssetsNullsOutFieldsIfSelected()
+    public function test_bulk_edit_assets_nulls_out_fields_if_selected()
     {
         // sets up all needed models and attributes on the assets
         // this test does not deal with custom fields - will be dealt with in separate cases
@@ -165,7 +165,7 @@ class BulkEditAssetsTest extends TestCase
         });
     }
 
-    public function testBulkEditAssetsAcceptsAndUpdatesUnencryptedCustomFields()
+    public function test_bulk_edit_assets_accepts_and_updates_unencrypted_custom_fields()
     {
         $this->markIncompleteIfMySQL('Custom Fields tests do not work on MySQL');
 
@@ -197,7 +197,48 @@ class BulkEditAssetsTest extends TestCase
         });
     }
 
-    public function testBulkEditAssetsAcceptsAndUpdatesEncryptedCustomFields()
+    public function test_bulk_edit_assets_nulls_custom_fields_if_selected()
+    {
+        $this->markIncompleteIfMySQL('Custom Fields tests do not work on MySQL');
+
+        CustomField::factory()->ram()->create();
+        CustomField::factory()->cpu()->create();
+        CustomField::factory()->phone()->create();
+
+        // when getting the custom field directly from the factory the field has not been fully created yet
+        // so we have to do a query afterwards to get the actual model :shrug:
+
+        $ram = CustomField::where('name', 'RAM')->first();
+        $cpu = CustomField::where('name', 'CPU')->first();
+        $phone = CustomField::where('name', 'Phone Number')->first();
+
+        $assets = Asset::factory()->count(10)->hasMultipleCustomFields([$ram, $cpu])->create([
+            $ram->db_column => 8,
+            $cpu->db_column => '2.1',
+        ]);
+
+        $id_array = $assets->pluck('id')->toArray();
+
+        $this->actingAs(User::factory()->editAssets()->create())->post(route('hardware/bulksave'), [
+            'ids'                    => $id_array,
+            $ram->db_column          => 16,
+            $cpu->db_column          => '4.1',
+            'null'.$phone->db_column => '8304997586',
+        ])->assertStatus(302);
+
+        $this->actingAs(User::factory()->editAssets()->create())->post(route('hardware/bulksave'), [
+            'ids'                  => $id_array,
+            null.$phone->db_column => 1,
+        ]);
+
+        Asset::findMany($id_array)->each(function (Asset $asset) use ($ram, $cpu, $phone) {
+            $this->assertEquals(16, $asset->{$ram->db_column});
+            $this->assertEquals('4.1', $asset->{$cpu->db_column});
+            $this->assertEquals(null, $asset->{$phone->db_column});
+        });
+    }
+
+    public function test_bulk_edit_assets_accepts_and_updates_encrypted_custom_fields()
     {
         $this->markIncompleteIfMySQL('Custom Fields tests do not work on MySQL');
 
@@ -221,7 +262,7 @@ class BulkEditAssetsTest extends TestCase
         });
     }
 
-    public function testBulkEditAssetsRequiresadminToUpdateEncryptedCustomFields()
+    public function test_bulk_edit_assets_requires_admin_to_update_encrypted_custom_fields()
     {
         $this->markIncompleteIfMySQL('Custom Fields tests do not work on mysql');
         $edit_user = User::factory()->editAssets()->create();

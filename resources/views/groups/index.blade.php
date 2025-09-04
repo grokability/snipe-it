@@ -22,16 +22,11 @@
 
             <table
                 data-cookie-id-table="groupsTable"
-                data-pagination="true"
-                data-search="true"
                 data-side-pagination="server"
-                data-show-columns="true"
-                data-show-export="true"
-                data-show-refresh="true"
-                data-show-fullscreen="true"
                 data-sort-order="asc"
                 data-sort-name="name"
                 id="groupsTable"
+                data-buttons="groupButtons"
                 class="table table-striped snipe-table"
                 data-url="{{ route('api.groups.index') }}"
                 data-export-options='{
@@ -44,7 +39,8 @@
                <th data-switchable="true" data-sortable="true" data-field="id" data-visible="false">{{ trans('general.id') }}</th>
                <th data-switchable="true" data-sortable="true" data-field="name" data-formatter="groupsAdminLinkFormatter" data-visible="true">{{ trans('admin/groups/table.name') }}</th>
                   <th data-switchable="true" data-sortable="true" data-field="users_count" data-visible="true"><x-icon type="user" /><span class="sr-only">{{ trans('admin/groups/table.users') }}</span></th>
-               <th data-switchable="true" data-sortable="true" data-field="created_at" data-visible="true" data-formatter="dateDisplayFormatter">{{ trans('general.created_at') }}</th>
+                  <th data-switchable="true" data-sortable="true" data-field="notes" data-visible="true">{{ trans('general.notes') }}</th>
+                  <th data-switchable="true" data-sortable="true" data-field="created_at" data-visible="true" data-formatter="dateDisplayFormatter">{{ trans('general.created_at') }}</th>
                <th data-switchable="false" data-searchable="false" data-sortable="true" data-field="created_by"  data-formatter="usersLinkObjFormatter">{{ trans('general.created_by') }}</th>
                <th data-switchable="false" data-searchable="false" data-sortable="false" data-field="actions"   data-formatter="groupsActionsFormatter">{{ trans('table.actions') }}</th>
 

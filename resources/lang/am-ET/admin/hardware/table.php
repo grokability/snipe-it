@@ -14,7 +14,7 @@ return [
     'diff' 			=> 'Diff',
     'dl_csv' 		=> 'Download CSV',
     'eol' 			=> 'EOL',
-    'id'      		=> 'ID',
+    'id'      		=> 'መለያ',
     'last_checkin_date' => 'Last Checkin Date',
     'location' 		=> 'Location',
     'purchase_cost'	=> 'Cost',

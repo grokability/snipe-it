@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Helpers\Helper;
 use App\Models\Traits\Acceptable;
+use App\Models\Traits\CompanyableTrait;
+use App\Models\Traits\HasUploads;
 use App\Models\Traits\Searchable;
 use App\Presenters\Presentable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,7 +16,7 @@ use Watson\Validating\ValidatingTrait;
 /**
  * Model for Accessories.
  *
- * @version    v1.0
+ * @version v1.0
  */
 class Accessory extends SnipeModel
 {
@@ -22,6 +24,7 @@ class Accessory extends SnipeModel
 
     protected $presenter = \App\Presenters\AccessoryPresenter::class;
     use CompanyableTrait;
+    use HasUploads;
     use Loggable, Presentable;
     use SoftDeletes;
 
@@ -54,26 +57,27 @@ class Accessory extends SnipeModel
     ];
 
     /**
-    * Accessory validation rules
-    */
+     * Accessory validation rules
+     */
     public $rules = [
         'name'              => 'required|min:3|max:255',
         'qty'               => 'required|integer|min:1',
         'category_id'       => 'required|integer|exists:categories,id',
         'company_id'        => 'integer|nullable',
+        'location_id'       => 'exists:locations,id|nullable|fmcs_location',
         'min_amt'           => 'integer|min:0|nullable',
-        'purchase_cost'     => 'numeric|nullable|gte:0|max:9999999999999',
+        'purchase_cost'     =>  'numeric|nullable|gte:0|max:99999999999999999.99',
         'purchase_date'     => 'date_format:Y-m-d|nullable',
     ];
 
 
     /**
-    * Whether the model should inject it's identifier to the unique
-    * validation rules before attempting validation. If this property
-    * is not set in the model it will default to true.
-    *
+     * Whether the model should inject it's identifier to the unique
+     * validation rules before attempting validation. If this property
+     * is not set in the model it will default to true.
+     *
      * @var bool
-    */
+     */
     protected $injectUniqueIdentifier = true;
     use ValidatingTrait;
 
@@ -101,29 +105,11 @@ class Accessory extends SnipeModel
     ];
 
 
-
-    /**
-     * Establishes the accessories -> action logs -> uploads relationship
-     *
-     * @author A. Gianotto <snipe@snipe.net>
-     * @since [v6.1.13]
-     * @return \Illuminate\Database\Eloquent\Relations\Relation
-     */
-    public function uploads()
-    {
-        return $this->hasMany(\App\Models\Actionlog::class, 'item_id')
-            ->where('item_type', '=', self::class)
-            ->where('action_type', '=', 'uploaded')
-            ->whereNotNull('filename')
-            ->orderBy('created_at', 'desc');
-    }
-
-
     /**
      * Establishes the accessory -> supplier relationship
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
+     * @since  [v3.0]
      * @return \Illuminate\Database\Eloquent\Relations\Relation
      */
     public function supplier()
@@ -136,7 +122,7 @@ class Accessory extends SnipeModel
      * Sets the requestable attribute on the accessory
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v4.0]
+     * @since  [v4.0]
      * @return void
      */
     public function setRequestableAttribute($value)
@@ -151,7 +137,7 @@ class Accessory extends SnipeModel
      * Establishes the accessory -> company relationship
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
+     * @since  [v3.0]
      * @return \Illuminate\Database\Eloquent\Relations\Relation
      */
     public function company()
@@ -163,7 +149,7 @@ class Accessory extends SnipeModel
      * Establishes the accessory -> location relationship
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
+     * @since  [v3.0]
      * @return \Illuminate\Database\Eloquent\Relations\Relation
      */
     public function location()
@@ -175,7 +161,7 @@ class Accessory extends SnipeModel
      * Establishes the accessory -> category relationship
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
+     * @since  [v3.0]
      * @return \Illuminate\Database\Eloquent\Relations\Relation
      */
     public function category()
@@ -187,7 +173,7 @@ class Accessory extends SnipeModel
      * Returns the action logs associated with the accessory
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
+     * @since  [v3.0]
      * @return \Illuminate\Database\Eloquent\Relations\Relation
      */
     public function assetlog()
@@ -216,8 +202,8 @@ class Accessory extends SnipeModel
      *
      * It's super-mega-assy, but it's the best I could do for now.
      *
-     * @author  A. Gianotto <snipe@snipe.net>
-     * @since v5.0.0
+     * @author A. Gianotto <snipe@snipe.net>
+     * @since  v5.0.0
      *
      * @see \App\Http\Controllers\Api\AccessoriesController\checkedout()
      */
@@ -234,7 +220,7 @@ class Accessory extends SnipeModel
      * presenter or service provider
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
+     * @since  [v3.0]
      * @return string
      */
     public function getImageUrl()
@@ -250,7 +236,7 @@ class Accessory extends SnipeModel
      * Establishes the accessory -> users relationship
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
+     * @since  [v3.0]
      * @return \Illuminate\Database\Eloquent\Relations\Relation
      */
     public function checkouts()
@@ -263,7 +249,7 @@ class Accessory extends SnipeModel
      * Establishes the accessory -> admin user relationship
      *
      * @author A. Gianotto <snipe@snipe.net>
-     * @since [v7.0.13]
+     * @since  [v7.0.13]
      * @return \Illuminate\Database\Eloquent\Relations\Relation
      */
     public function adminuser()
@@ -275,7 +261,7 @@ class Accessory extends SnipeModel
      * Checks whether or not the accessory has users
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
+     * @since  [v3.0]
      * @return int
      */
     public function hasUsers()
@@ -289,7 +275,7 @@ class Accessory extends SnipeModel
      * Establishes the accessory -> manufacturer relationship
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
+     * @since  [v3.0]
      * @return \Illuminate\Database\Eloquent\Relations\Relation
      */
     public function manufacturer()
@@ -302,12 +288,12 @@ class Accessory extends SnipeModel
      * accessory based on the category it belongs to.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
+     * @since  [v3.0]
      * @return bool
      */
     public function checkin_email()
     {
-        return $this->category->checkin_email;
+        return $this->category?->checkin_email;
     }
 
     /**
@@ -315,7 +301,7 @@ class Accessory extends SnipeModel
      * accept it via email.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
+     * @since  [v3.0]
      * @return bool
      */
     public function requireAcceptance()
@@ -328,7 +314,7 @@ class Accessory extends SnipeModel
      * checks for a settings level EULA
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
+     * @since  [v3.0]
      * @return string
      */
     public function getEula()
@@ -348,7 +334,7 @@ class Accessory extends SnipeModel
      * Check how many items within an accessory are checked out
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v5.0]
+     * @since  [v5.0]
      * @return int
      */
     public function numCheckedOut()
@@ -365,7 +351,7 @@ class Accessory extends SnipeModel
      * bad things happen.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
+     * @since  [v3.0]
      * @return int
      */
     public function numRemaining()
@@ -380,8 +366,8 @@ class Accessory extends SnipeModel
     /**
      * Run after the checkout acceptance was declined by the user
      * 
-     * @param  User   $acceptedBy
-     * @param  string $signature
+     * @param User   $acceptedBy
+     * @param string $signature
      */
     public function declinedCheckout(User $declinedBy, $signature)
     {
@@ -407,8 +393,8 @@ class Accessory extends SnipeModel
      * This simply checks that there is a value for quantity, and if there isn't, set it to 0.
      *
      * @author A. Gianotto <snipe@snipe.net>
-     * @since v6.3.4
-     * @param $value
+     * @since  v6.3.4
+     * @param  $value
      * @return void
      */
     public function setQtyAttribute($value)
@@ -425,7 +411,6 @@ class Accessory extends SnipeModel
 
     /**
      * Query builder scope to order on created_by name
-     *
      */
     public function scopeOrderByCreatedByName($query, $order)
     {
@@ -433,68 +418,68 @@ class Accessory extends SnipeModel
     }
 
     /**
-    * Query builder scope to order on company
-    *
-    * @param  \Illuminate\Database\Query\Builder  $query  Query builder instance
-    * @param  text                              $order       Order
-    *
-    * @return \Illuminate\Database\Query\Builder          Modified query builder
-    */
+     * Query builder scope to order on company
+     *
+     * @param \Illuminate\Database\Query\Builder $query Query builder instance
+     * @param text                               $order Order
+     *
+     * @return \Illuminate\Database\Query\Builder          Modified query builder
+     */
     public function scopeOrderCompany($query, $order)
     {
         return $query->leftJoin('companies', 'accessories.company_id', '=', 'companies.id')
-        ->orderBy('companies.name', $order);
+            ->orderBy('companies.name', $order);
     }
 
     /**
-    * Query builder scope to order on category
-    *
-    * @param  \Illuminate\Database\Query\Builder  $query  Query builder instance
-    * @param  text                              $order       Order
-    *
-    * @return \Illuminate\Database\Query\Builder          Modified query builder
-    */
+     * Query builder scope to order on category
+     *
+     * @param \Illuminate\Database\Query\Builder $query Query builder instance
+     * @param text                               $order Order
+     *
+     * @return \Illuminate\Database\Query\Builder          Modified query builder
+     */
     public function scopeOrderCategory($query, $order)
     {
         return $query->leftJoin('categories', 'accessories.category_id', '=', 'categories.id')
-        ->orderBy('categories.name', $order);
+            ->orderBy('categories.name', $order);
     }
 
     /**
-    * Query builder scope to order on location
-    *
-    * @param  \Illuminate\Database\Query\Builder  $query  Query builder instance
-    * @param  text                              $order       Order
-    *
-    * @return \Illuminate\Database\Query\Builder          Modified query builder
-    */
+     * Query builder scope to order on location
+     *
+     * @param \Illuminate\Database\Query\Builder $query Query builder instance
+     * @param text                               $order Order
+     *
+     * @return \Illuminate\Database\Query\Builder          Modified query builder
+     */
     public function scopeOrderLocation($query, $order)
     {
         return $query->leftJoin('locations', 'accessories.location_id', '=', 'locations.id')
-        ->orderBy('locations.name', $order);
+            ->orderBy('locations.name', $order);
     }
 
     /**
-    * Query builder scope to order on manufacturer
-    *
-    * @param  \Illuminate\Database\Query\Builder  $query  Query builder instance
-    * @param  text                              $order       Order
-    *
-    * @return \Illuminate\Database\Query\Builder          Modified query builder
-    */
+     * Query builder scope to order on manufacturer
+     *
+     * @param \Illuminate\Database\Query\Builder $query Query builder instance
+     * @param text                               $order Order
+     *
+     * @return \Illuminate\Database\Query\Builder          Modified query builder
+     */
     public function scopeOrderManufacturer($query, $order)
     {
         return $query->leftJoin('manufacturers', 'accessories.manufacturer_id', '=', 'manufacturers.id')->orderBy('manufacturers.name', $order);
     }
 
     /**
-    * Query builder scope to order on supplier
-    *
-    * @param  \Illuminate\Database\Query\Builder  $query  Query builder instance
-    * @param  text                              $order       Order
-    *
-    * @return \Illuminate\Database\Query\Builder          Modified query builder
-    */
+     * Query builder scope to order on supplier
+     *
+     * @param \Illuminate\Database\Query\Builder $query Query builder instance
+     * @param text                               $order Order
+     *
+     * @return \Illuminate\Database\Query\Builder          Modified query builder
+     */
     public function scopeOrderSupplier($query, $order)
     {
         return $query->leftJoin('suppliers', 'accessories.supplier_id', '=', 'suppliers.id')->orderBy('suppliers.name', $order);

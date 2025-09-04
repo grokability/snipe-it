@@ -12,6 +12,7 @@
 
 @section('inputFields')
 @include ('partials.forms.edit.name', ['translated_name' => trans('general.name')])
+    <input type="hidden" name="tab" value="{{ Request::query('tab') }}" />
 @stop
 
 

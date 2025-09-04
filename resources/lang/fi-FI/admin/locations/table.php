@@ -39,4 +39,5 @@ return [
     'signed_by_finance_auditor' => 'Allekirjoittaja (rahoitustarkastaja):',
     'signed_by_location_manager' => 'Allekirjoittanut (Sijaintipäällikkö):',
     'signed_by'                 => 'Luovuttanut:',
+    'clone'  					=> 'Clone Location',
 ];

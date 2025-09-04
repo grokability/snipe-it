@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'சொத்து வகைகள்',
     'category_name'  					=> 'வகை பெயர்',
     'checkin_email'                     => 'ஒப்படைக்கும்/பெற்றுக்கொள்ளும் போது பயனருக்கு மின்னஞ்சல் அனுப்பவும்.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'இந்த பயனருக்கு ஒப்படைக்கும்/பெற்றுக்கொள்ளும் போது மின்னஞ்சல் அனுப்பப்படும்.',
     'clone'                             => 'குளோன் வகை',
     'create'  							=> 'பகுப்பு உருவாக்கவும்',
@@ -21,5 +22,9 @@ return array(
     'use_default_eula'					=> 'பதிலாக <a href="#" data-toggle="modal" data-target="#eulaModal">primary இயல்புநிலை EULA</a> ஐப் பயன்படுத்துக.',
     'use_default_eula_disabled'			=> '<del> முதன்மை இயல்புநிலை EULA ஐப் பயன்படுத்தவும் .</del> முதன்மை இயல்புநிலை EULA அமைக்கப்படவில்லை. அமைப்புகளில் ஒன்றைச் சேர்க்கவும்.',
     'use_default_eula_column'			=> 'இயல்புநிலை EULAஐப் பயன்படுத்தவும்',
+    'import_require_acceptance'         => 'Require Acceptance',
+    'import_checkin_email'              => 'Send Checkin Email',
+    'import_eula_text'                  => 'EULA text',
+    'import_category_type'              => 'Category Type',
 
 );

@@ -11,7 +11,7 @@ class ShowDepartmentTest extends TestCase
     public function testPageRenders()
     {
         $this->actingAs(User::factory()->superuser()->create())
-            ->get(route('departments.show', Department::factory()->create()->id))
+            ->get(route('departments.show', Department::factory()->create()))
             ->assertOk();
     }
 }

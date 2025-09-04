@@ -31,6 +31,7 @@ return [
         'numeric' => 'Polje :attribute mora biti između :min i :max.',
         'string' => 'Polje :attribute mora biti između :min i :max karaktera.',
     ],
+    'valid_regex' => 'Regularni izraz nije ispravan.',
     'boolean' => 'Polje :attribute mora biti tačno ili netačno.',
     'can' => 'Polje :attribute mora da sadrži neovlašćenu vrednost.',
     'confirmed' => 'Potvrda polja :attribute se ne poklapa.',
@@ -172,6 +173,7 @@ return [
     'url' => 'Polje :attribute mora biti ispravna URL adresa.',
     'ulid' => 'Polje :attribute mora biti ispravan ULID.',
     'uuid' => 'Polje :attribute mora biti ispravan UUID.',
+    'fmcs_location' => 'Puna podrška za višestruko kompanija i opsezi lokacija je omogućeno u administratorskim podešavanjima, a izabrana lokacija i kompanija nisu kompatibilne.',
 
 
     /*
@@ -185,9 +187,13 @@ return [
     |
     */
 
+    'email_array'      => 'Jedna ili više adresa e-pošte nisu ispravne.',
+    'checkboxes'           => ':attribute sadrži neispravne opcije.',
+    'radio_buttons'        => ':attribute je neispravan.',
+    
     'custom' => [
         'alpha_space' => ':attribute polje sadrži znak koji nije dozvoljen.',
-        'email_array'      => 'Jedna ili više email adresa nisu ispravne.',
+
         'hashed_pass'      => 'Vaša lozinka je neispravna',
         'dumbpwd'          => 'Lozinka nije sigurna.',
         'statuslabel_type' => 'Morate odabrati ispravnu vrstu oznake statusa',
@@ -204,8 +210,6 @@ return [
         'expected_checkin.date_format'  =>  ':attribute mora biti ispravan datum u YYYY-MM-DD formatu',
         'start_date.date_format'        =>  ':attribute mora biti ispravan datum u YYYY-MM-DD formatu',
         'end_date.date_format'          =>  ':attribute mora biti ispravan datum u YYYY-MM-DD formatu',
-        'checkboxes'           => ':attribute sadrži neispravne opcije.',
-        'radio_buttons'        => ':attribute je neispravan.',
         'invalid_value_in_field' => 'Neispravna vrednost je sadržana u ovom polju',
 
         'ldap_username_field' => [

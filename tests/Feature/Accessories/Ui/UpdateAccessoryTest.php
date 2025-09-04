@@ -16,7 +16,7 @@ class UpdateAccessoryTest extends TestCase
     public function testRequiresPermissionToSeeEditAccessoryPage()
     {
         $this->actingAs(User::factory()->create())
-            ->get(route('accessories.edit', Accessory::factory()->create()->id))
+            ->get(route('accessories.edit', Accessory::factory()->create()))
             ->assertForbidden();
     }
 

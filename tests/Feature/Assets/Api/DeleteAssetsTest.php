@@ -67,5 +67,6 @@ class DeleteAssetsTest extends TestCase implements TestsFullMultipleCompaniesSup
             ->assertStatusMessageIs('success');
 
         $this->assertSoftDeleted($asset);
+        $this->assertHasTheseActionLogs($asset, ['create', 'delete']);
     }
 }

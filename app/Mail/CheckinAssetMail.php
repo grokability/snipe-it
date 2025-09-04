@@ -47,7 +47,7 @@ class CheckinAssetMail extends Mailable
 
         return new Envelope(
             from: $from,
-            subject: trans('mail.Asset_Checkin_Notification'),
+            subject: trans('mail.Asset_Checkin_Notification', ['tag' => $this->item->asset_tag]),
         );
     }
 

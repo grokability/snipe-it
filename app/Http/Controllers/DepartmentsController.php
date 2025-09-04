@@ -73,17 +73,10 @@ class DepartmentsController extends Controller
      * @param int $id
      * @since [v4.0]
      */
-    public function show($id) : View | RedirectResponse
+    public function show(Department $department) : View | RedirectResponse
     {
-        $department = Department::find($id);
-
         $this->authorize('view', $department);
-
-        if (isset($department->id)) {
-            return view('departments/view', compact('department'));
-        }
-
-        return redirect()->route('departments.index')->with('error', trans('admin/departments/message.does_not_exist'));
+        return view('departments/view', compact('department'));
     }
 
     /**
@@ -139,15 +132,10 @@ class DepartmentsController extends Controller
      * @param int $departmentId
      * @since [v1.0]
      */
-    public function edit($departmentId = null) : View | RedirectResponse
+    public function edit(Department $department) : View | RedirectResponse
     {
-        if (is_null($item = Department::find($departmentId))) {
-            return redirect()->back()->with('error', trans('admin/locations/message.does_not_exist'));
-        }
-
-        $this->authorize('update', $item);
-
-        return view('departments/edit', compact('item'));
+        $this->authorize('update', $department);
+        return view('departments/edit')->with('item', $department);
     }
 
     /**
@@ -158,11 +146,8 @@ class DepartmentsController extends Controller
      * @param int $departmentId
      * @since [v1.0]
      */
-    public function update(ImageUploadRequest $request, $id) : RedirectResponse
+    public function update(ImageUploadRequest $request, Department $department) : RedirectResponse
     {
-        if (is_null($department = Department::find($id))) {
-            return redirect()->route('departments.index')->with('error', trans('admin/departments/message.does_not_exist'));
-        }
 
         $this->authorize('update', $department);
 

@@ -17,7 +17,8 @@ return array(
     'delete' => array(
         'confirm'   => '您確定要刪除此組件嗎？',
         'error'   => '刪除組件時發生問題。請再試一次。',
-        'success' => '刪除組件成功。'
+        'success' => '刪除組件成功。',
+        'error_qty'   => 'Some components of this type are still checked out. Please check them in and try again.',
     ),
 
      'checkout' => array(

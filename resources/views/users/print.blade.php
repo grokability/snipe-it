@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     @if ((isset($users) && count($users) === 1))
-        <title>{{ trans('general.assigned_to', ['name' => $users[0]->present()->fullName()]) }} - {{ date('Y-m-d H:i', time()) }}</title>
+        <title>{{ trans('general.assigned_to', ['name' => $users[0]->display_name]) }} - {{ date('Y-m-d H:i', time()) }}</title>
     @else
         <title>{{ trans('admin/users/general.print_assigned') }} - {{ date('Y-m-d H:i', time()) }}</title>
     @endisset
@@ -34,7 +34,7 @@
         }
 
         @page {
-            size: A4;
+            size: auto;
         }
         
         .print-logo {
@@ -45,14 +45,24 @@
             margin-top: 20px;
             margin-bottom: 10px;
         }
+
+        @media print {
+            .signature-boxes {
+                page-break-after: always;
+            }
+        }
     </style>
 
 
 </head>
 <body>
 
+@php
+    $count = 0;
+@endphp
 {{-- If we are rendering multiple users we'll add the ability to show/hide EULAs for all of them at once via this button --}}
 @if (count($users) > 1)
+
     <div class="pull-right hidden-print">
         <span>{{ trans('general.show_or_hide_eulas') }}</span>
         <button class="btn btn-default" type="button" data-toggle="collapse" data-target=".eula-row" aria-expanded="false" aria-controls="eula-row" title="EULAs">
@@ -65,14 +75,14 @@
     @if ($snipeSettings->brand == '3')
 
         <h2>
-            @if ($snipeSettings->logo!='')
-                <img class="print-logo" src="{{ config('app.url') }}/uploads/{{ $snipeSettings->logo }}">
+            @if ($snipeSettings->acceptance_pdf_logo!='')
+                <img class="print-logo" src="{{ config('app.url') }}/uploads/{{ $snipeSettings->acceptance_pdf_logo }}">
             @endif
             {{ $snipeSettings->site_name }}
         </h2>
     @elseif ($snipeSettings->brand == '2')
-        @if ($snipeSettings->logo!='')
-            <img class="print-logo" src="{{ config('app.url') }}/uploads/{{ $snipeSettings->logo }}">
+        @if ($snipeSettings->acceptance_pdf_logo!='')
+            <img class="print-logo" src="{{ config('app.url') }}/uploads/{{ $snipeSettings->acceptance_pdf_logo }}">
         @endif
     @else
         <h2>{{ $snipeSettings->site_name }}</h2>
@@ -80,9 +90,16 @@
 @endif
 
 @foreach ($users as $show_user)
+    @php
+        $count++;
+    @endphp
     <div id="start_of_user_section"> {{-- used for page breaks when printing --}}</div>
     <h3>
-        {{ trans('general.assigned_to', ['name' => $show_user->present()->fullName()]) }}
+        @if ($show_user->company)
+            <b>{{ trans('admin/companies/table.name') }}:</b> {{ $show_user->company->name }}
+        <br>
+        @endif
+        {{ trans('general.assigned_to', ['name' => $show_user->display_name]) }}
         {{ ($show_user->employee_num!='') ? ' (#'.$show_user->employee_num.') ' : '' }}
         {{ ($show_user->jobtitle!='' ? ' - '.$show_user->jobtitle : '') }}
     </h3>
@@ -107,10 +124,9 @@
             data-side-pagination="client"
             data-sortable="true"
             data-toolbar="#assets-toolbar"
-            data-show-columns="true"
             data-sort-order="desc"
             data-sort-name="created_at"
-            data-show-columns-toggle-all="true"
+            data-show-columns="true"
             data-cookie-id-table="AssetsAssigned">
             <thead>
                 <th data-field="asset_id" data-sortable="false" data-visible="true" data-switchable="false">#</th>
@@ -123,7 +139,7 @@
                 <th data-field="asset_location" data-sortable="true" data-visible="false">{{ trans('general.location') }}</th>
                 <th data-field="asset_serial" data-sortable="true" data-visible="true">{{ trans('admin/hardware/form.serial') }}</th>
                 <th data-field="asset_checkout_date" data-sortable="true" data-visible="true">{{ trans('admin/hardware/table.checkout_date') }}</th>
-                <th data-field="signature" data-sortable="true" data-visible="true">{{ trans('general.signature') }}</th>
+                <th data-field="signature" data-sortable="false" data-visible="true">{{ trans('general.signature') }}</th>
             </thead>
             <tbody>
             @foreach ($show_user->assets as $asset)
@@ -147,8 +163,8 @@
                     <td>
                         {{ Helper::getFormattedDateObject($asset->last_checkout, 'datetime', false) }}</td>
                     <td>
-                        @if (($asset->assetlog->first()) && ($asset->assetlog->first()->accept_signature!=''))
-                            <img style="width:auto;height:100px;" src="{{ asset('/') }}display-sig/{{ $asset->assetlog->first()->accept_signature }}">
+                        @if ($asset->getLatestSignedAcceptance($show_user))
+                            <img style="width:auto;height:100px;" src="{{ asset('/') }}display-sig/{{ $asset->getLatestSignedAcceptance($show_user)->accept_signature }}">
                         @endif
                     </td>
                 </tr>
@@ -172,10 +188,11 @@
                             <td>{{ ($asset->location) ? $asset->location->name : '' }}</td>
                             <td>{{ $asset->serial }}</td>
                             <td>
-                                {{ Helper::getFormattedDateObject($asset->last_checkout, 'datetime', false) }}</td>
+                                {{ Helper::getFormattedDateObject($asset->last_checkout, 'datetime', false) }}
+                            </td>
                             <td>
-                                @if (($asset->assetlog->first()) && ($asset->assetlog->first()->accept_signature!=''))
-                                    <img style="width:auto;height:100px;" src="{{ asset('/') }}display-sig/{{ $asset->assetlog->first()->accept_signature }}">
+                                @if ($asset->getLatestSignedAcceptance($show_user))
+                                    <img style="width:auto;height:100px;" src="{{ asset('/') }}display-sig/{{ $asset->getLatestSignedAcceptance($show_user)->accept_signature }}">
                                 @endif
                             </td>
                         </tr>
@@ -206,17 +223,17 @@
             data-search="false"
             data-side-pagination="client"
             data-sortable="true"
-            data-show-columns="true"
             data-sort-order="desc"
             data-sort-name="created_at"
-            data-show-columns-toggle-all="true"
+            data-show-columns="true"
             data-cookie-id-table="licensessAssigned">
             <thead>
             <tr>
-                <th style="width: 20px;" data-sortable="false" data-switchable="false">#</th>
-                <th style="width: 40%;" data-sortable="true" data-switchable="false">{{ trans('general.name') }}</th>
-                <th style="width: 50%;" data-sortable="true">{{ trans('admin/licenses/form.license_key') }}</th>
-                <th style="width: 10%;" data-sortable="true">{{ trans('admin/hardware/table.checkout_date') }}</th>
+                <th data-sortable="false" data-switchable="false">#</th>
+                <th data-sortable="true" data-switchable="false">{{ trans('general.name') }}</th>
+                <th data-sortable="true">{{ trans('admin/licenses/form.license_key') }}</th>
+                <th data-sortable="true">{{ trans('admin/hardware/table.checkout_date') }}</th>
+                <th data-field="signature" data-sortable="false" data-visible="true">{{ trans('general.signature') }}</th>
             </tr>
             </thead>
             @php
@@ -232,12 +249,19 @@
                     <td>{{ $license->name }}</td>
                     <td>
                         @can('viewKeys', $license)
-                            {{ $license->serial }}
+                            <p class="monospace">{{ $license->serial }}</p>
                         @else
                             <i class="fa-lock" aria-hidden="true"></i> {{ str_repeat('x', 15) }}
                         @endcan
                     </td>
-                    <td>{{  $license->pivot->updated_at }}</td>
+                    <td>
+                        {{ Helper::getFormattedDateObject($license->pivot->updated_at, 'datetime', false) }}
+                    </td>
+                    <td>
+                        @if ($license->getLatestSignedAcceptance($show_user))
+                            <img style="width:auto;height:100px;" src="{{ asset('/') }}display-sig/{{ $license->getLatestSignedAcceptance($show_user)->accept_signature }}">
+                        @endif
+                    </td>
                 </tr>
                 @php
                     $lcounter++
@@ -261,10 +285,9 @@
             data-search="false"
             data-side-pagination="client"
             data-sortable="true"
-            data-show-columns="true"
             data-sort-order="desc"
             data-sort-name="created_at"
-            data-show-columns-toggle-all="true"
+            data-show-columns="true"
             data-cookie-id-table="accessoriesAssigned">
             <thead>
             <tr>
@@ -294,11 +317,13 @@
                         </td>
                         <td>{{ ($accessory->manufacturer) ? $accessory->manufacturer->name : '' }} {{ $accessory->name }} {{ $accessory->model_number }}</td>
                         <td>{{ $accessory->category->name }}</td>
-                        <td>{{ $accessory->pivot->created_at }}</td>
+                        <td>
+                            {{ Helper::getFormattedDateObject($accessory->pivot->created_at, 'datetime', false) }}
+                        </td>
 
                         <td>
-                            @if (($accessory->assetlog->first()) && ($accessory->assetlog->first()->accept_signature!=''))
-                                <img style="width:auto;height:100px;" src="{{ asset('/') }}display-sig/{{ $accessory->assetlog->first()->accept_signature }}">
+                            @if ($accessory->getLatestSignedAcceptance($show_user))
+                                <img style="width:auto;height:100px;" src="{{ asset('/') }}display-sig/{{ $accessory->getLatestSignedAcceptance($show_user)->accept_signature }}">
                             @endif
                         </td>
                     </tr>
@@ -324,10 +349,9 @@
             data-search="false"
             data-side-pagination="client"
             data-sortable="true"
-            data-show-columns="true"
             data-sort-order="desc"
             data-sort-name="created_at"
-            data-show-columns-toggle-all="true"
+            data-show-columns="true"
             data-cookie-id-table="consumablesAssigned">
             <thead>
             <tr>
@@ -353,17 +377,19 @@
                         <td>
                         @if ($consumable->deleted_at!='')
                             <td>{{ ($consumable->manufacturer) ? $consumable->manufacturer->name : '' }}  {{ $consumable->name }} {{ $consumable->model_number }}</td>
-                            @else
-                                {{ ($consumable->manufacturer) ? $consumable->manufacturer->name : '' }}  {{ $consumable->name }} {{ $consumable->model_number }}
+                        @else
+                            {{ ($consumable->manufacturer) ? $consumable->manufacturer->name : '' }}  {{ $consumable->name }} {{ $consumable->model_number }}
+                        @endif
+                        </td>
+                        <td>{{ ($consumable->category) ? $consumable->category->name : ' invalid/deleted category' }} </td>
+                        <td>
+                            {{ Helper::getFormattedDateObject($consumable->pivot->created_at, 'datetime', false) }}
+                        </td>
+                        <td>
+                            @if ($consumable->getLatestSignedAcceptance($show_user))
+                                <img style="width:auto;height:100px;" src="{{ asset('/') }}display-sig/{{ $consumable->getLatestSignedAcceptance($show_user)->accept_signature }}">
                             @endif
-                            </td>
-                            <td>{{ ($consumable->category) ? $consumable->category->name : ' invalid/deleted category' }} </td>
-                            <td>{{  $consumable->pivot->created_at }}</td>
-                            <td>
-                                @if (($consumable->assetlog->first()) && ($consumable->assetlog->first()->accept_signature!=''))
-                                    <img style="width:auto;height:100px;" src="{{ asset('/') }}display-sig/{{ $consumable->assetlog->first()->accept_signature }}">
-                                @endif
-                            </td>
+                        </td>
                     </tr>
                     @php
                         $ccounter++
@@ -386,7 +412,7 @@
         </div>
     @endif
 
-    <table style="margin-top: 80px;">
+    <table style="margin-top: 80px;" class="{{ count($users) > $count ? 'signature-boxes' : ''  }}">
         @if (!empty($eulas))
         <tr class="collapse eula-row">
             <td style="padding-right: 10px; vertical-align: top; font-weight: bold;">EULA</td>
@@ -488,7 +514,7 @@
                 return newParams;
             },
             formatLoadingMessage: function () {
-                return '<h2><i class="fas fa-spinner fa-spin" aria-hidden="true"></i> {{ trans('general.loading') }} </h4>';
+                return '<h2><i class="fas fa-spinner fa-spin" aria-hidden="true"></i> {{ trans('general.loading') }} </h2>';
             },
             icons: {
                 advancedSearchIcon: 'fas fa-search-plus',

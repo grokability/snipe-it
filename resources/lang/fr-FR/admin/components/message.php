@@ -17,7 +17,9 @@ return array(
     'delete' => array(
         'confirm'   => 'Etes-vous sûr de vouloir supprimer ce composant?',
         'error'   => 'Un problème est survenu durant la suppression de ce composant. Merci d\'essayer à nouveau.',
-        'success' => 'Le composant a bien été supprimé.'
+        'success' => 'Le composant a bien été supprimé.',
+        'error_qty'   => 'Certains composants sont toujours dans l\'état retiré \'checked out\'.
+Veuillez vérifier et recommencer',
     ),
 
      'checkout' => array(

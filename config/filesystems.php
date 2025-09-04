@@ -99,10 +99,73 @@ $config = [
 
     ],
 
+
 ];
 
 // copy the selected PUBLIC_FILESYSTEM_DISK's configuration to the 'public' key for easy use
 // (by default, the PUBLIC_FILESYSTEM DISK is 'local_public', in the public/uploads directory)
 $config['disks']['public'] = $config['disks'][env('PUBLIC_FILESYSTEM_DISK','local_public')];
+
+// This is used to determine which files to accept, and also to populate the language strings for the upload-file blade
+$config['allowed_upload_extensions_array']  = [
+    'avif',
+    'doc',
+    'doc',
+    'docx',
+    'docx',
+    'gif',
+    'ico',
+    'jpeg',
+    'jpg',
+    'json',
+    'key',
+    'lic',
+    'mov',
+    'mp3',
+    'mp4',
+    'odp',
+    'ods',
+    'odt',
+    'ogg',
+    'pdf',
+    'png',
+    'rar',
+    'rtf',
+    'svg',
+    'txt',
+    'wav',
+    'webm',
+    'webp',
+    'xls',
+    'xlsx',
+    'xml',
+    'zip',
+];
+
+
+// https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/MIME_types/Common_types
+$config['allowed_upload_mimetypes_array'] = [
+    'application/json',
+    'application/msword',
+    'application/pdf',
+    'application/vnd.ms-excel',
+    'application/vnd.oasis.opendocument.presentation',
+    'application/vnd.oasis.opendocument.spreadsheet',
+    'application/vnd.oasis.opendocument.text',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/x-rar-compressed',
+    'application/zip',
+    'audio/*',
+    'image/*',
+    'text/plain',
+    'text/rtf',
+    'text/xml',
+    'video/*',
+];
+
+$config['allowed_upload_mimetypes'] = implode(',', $config['allowed_upload_mimetypes_array']);
+$config['allowed_upload_extensions_for_validator'] = implode(',', $config['allowed_upload_extensions_array']);
+$config['allowed_upload_extensions'] = '.'.implode(', .', $config['allowed_upload_extensions_array']);
 
 return $config;

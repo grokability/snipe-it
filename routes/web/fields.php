@@ -33,14 +33,17 @@ Route::group([ 'prefix' => 'fields','middleware' => ['auth'] ], function () {
     )->name('fieldsets.associate');
 
     Route::resource('fieldsets', CustomFieldsetsController::class, [
-    'parameters' => ['fieldset' => 'field_id', 'field' => 'field_id']
+        'parameters' => [
+            'fieldset' => 'fieldset',
+            'field' => 'field_id'
+        ]
     ]);
 
 
 });
 
-Route::resource('fields', CustomFieldsController::class, [
-    'middleware' => ['auth'],
-    'parameters' => ['field' => 'field_id', 'fieldset' => 'fieldset_id'],
-]);
+Route::resource('fields', CustomFieldsController::class,
+    ['middleware' => ['auth'],
+        'except' => ['show']
+    ]);
 

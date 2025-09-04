@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Kategorie majetku',
     'category_name'  					=> 'Jméno kategorie',
     'checkin_email'                     => 'Při naskladnění/vyskladnění poslat uživateli e-mail.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'Tomuto uživateli bude poslán e-mail při naskladnění/vyskladnění.',
     'clone'                             => 'Klonovat Kategorii',
     'create'  							=> 'Vytvořit kategorii',
@@ -21,5 +22,9 @@ return array(
     'use_default_eula'					=> 'Použijte raději <a href="#" data-toggle="modal" data-target="#eulaModal">primární výchozí EULA</a>.',
     'use_default_eula_disabled'			=> '<del>Použijte raději primární výchozí EULA.</del> Nenalezena primární výchozí EULA. Přidejte ji v Nastaveních prosím.',
     'use_default_eula_column'			=> 'Použít výchozí EULA',
+    'import_require_acceptance'         => 'Vyžadovat přijetí',
+    'import_checkin_email'              => 'Odeslat e-mail o vrácení zařízení',
+    'import_eula_text'                  => 'Text EULA',
+    'import_category_type'              => 'Typ kategorie',
 
 );

@@ -6,8 +6,6 @@ return array(
     'account_not_found'      => 'O username ou password estão incorretos.',
     'account_not_activated'  => 'Esta conta de utilizador não está ativa.',
     'account_suspended'      => 'Está conta de utilizador encontra-se suspensa.',
-    'account_banned'         => 'Este utilizador foi desabilitado.',
-    'throttle'               => 'Muitas tentativas falhadas de início de sessão. Por favor, tente novamente dentro de :minutes minuto(s).',
 
     'two_factor' => array(
         'already_enrolled'      => 'O seu dispositivo já está inscrito.',

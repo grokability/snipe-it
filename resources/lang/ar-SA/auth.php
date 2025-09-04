@@ -15,6 +15,6 @@ return array(
 
     'failed' => 'بيانات الاعتماد هذه لا تتطابق مع سجلاتنا.',
     'password' => 'كلمة المرور المقدمة غير صحيحة.',
-    'throttle' => 'عدد كبير جدا من محاولات تسجيل الدخول. الرجاء المحاولة مرة أخرى خلال :seconds ثواني.',
+    'throttle' => 'Too many login attempts. Please try again in :minutes minute(s).',
 
 );

@@ -17,7 +17,8 @@ return array(
     'delete' => array(
         'confirm'   => 'Weet je zeker dat je dit component wil verwijderen?',
         'error'   => 'Er ging iets mis bij het verwijderen van het component. Probeer het nogmaals.',
-        'success' => 'Component succesvol verwijderd.'
+        'success' => 'Component succesvol verwijderd.',
+        'error_qty'   => 'Sommige componenten van dit type zijn nog steeds uitgecheckt. Check ze in en probeer het opnieuw.',
     ),
 
      'checkout' => array(

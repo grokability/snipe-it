@@ -17,7 +17,8 @@ return array(
     'delete' => array(
         'confirm'   => 'האם אתה בטוח שברצונך למחוק רכיב זה?',
         'error'   => 'הייתה בעיה במחיקת הרכיב. בבקשה נסה שוב.',
-        'success' => 'הרכיב נמחק בהצלחה.'
+        'success' => 'הרכיב נמחק בהצלחה.',
+        'error_qty'   => 'Some components of this type are still checked out. Please check them in and try again.',
     ),
 
      'checkout' => array(

@@ -17,7 +17,8 @@ return array(
     'delete' => array(
         'confirm'   => 'Uqinisekile ukuthi ufisa ukususa le ngxenye?',
         'error'   => 'Kube nenkinga yokususa ingxenye. Ngicela uzame futhi.',
-        'success' => 'Ingxenye isusiwe ngempumelelo.'
+        'success' => 'Ingxenye isusiwe ngempumelelo.',
+        'error_qty'   => 'Some components of this type are still checked out. Please check them in and try again.',
     ),
 
      'checkout' => array(

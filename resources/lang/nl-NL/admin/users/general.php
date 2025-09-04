@@ -19,6 +19,8 @@ return [
     'print_assigned'    => 'Print alles wat toegewezen is',
     'email_assigned'    => 'E-maillijst met alle toegewezen artikelen',
     'user_notified'     => 'Gebruiker is een lijst van de momenteel toegewezen artikelen gemaild.',
+    'users_notified'    => 'The user has been emailed a list of their currently assigned items.|:count users have been emailed a list of their currently assigned items.',
+    'users_notified_warning' => ':count user has been emailed a list of their currently assigned items, however :no_email users did not have an email address so could not be emailed.|:count users have been emailed a list of their currently assigned items, however :no_email user(s) did not have an email address so could not be emailed.',
     'auto_assign_label' => 'Neem deze gebruiker op bij het automatisch toewijzen van in aanmerking komende licenties',
     'auto_assign_help'  => 'Automatisch licentie toewijzen overslaan voor deze gebruiker',
     'software_user'     => 'Software is uitgecheckt aan :name',
@@ -51,4 +53,5 @@ return [
     'next_save_user' => 'Volgende: Gebruiker opslaan',
     'all_assigned_list_generation' => 'Aangemaakt op:',
     'email_user_creds_on_create' => 'Deze gebruiker zijn inloggegevens e-mailen?',
+    'department_manager' => 'Department Manager',
 ];

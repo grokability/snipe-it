@@ -49,26 +49,20 @@
                             <div class="table table-responsive">
                         <div class="col-md-12">
                             <table
-                                    data-click-to-select="true"
+
                                     data-columns="{{ \App\Presenters\AssetAuditPresenter::dataTableLayout() }}"
-                                            data-cookie-id-table="dueAssetAuditListing"
-                                    data-pagination="true"
-                                            data-id-table="dueAssetAuditListing"
-                                    data-search="true"
+                                    data-cookie-id-table="dueAssetAuditListing"
+                                    data-id-table="dueAssetAuditListing"
                                     data-side-pagination="server"
-                                    data-show-columns="true"
-                                    data-show-fullscreen="true"
-                                    data-show-export="true"
                                     data-show-footer="true"
-                                    data-show-refresh="true"
                                     data-sort-order="asc"
                                     data-sort-name="name"
-                                            data-toolbar="#dueAssetEditToolbar"
-                                            data-bulk-button-id="#dueAssetEditButton"
-                                            data-bulk-form-id="#dueAssetEditForm"
-                                            id="#dueAssetAuditListing"
+                                    data-toolbar="#dueAssetEditToolbar"
+                                    data-bulk-button-id="#dueAssetEditButton"
+                                    data-bulk-form-id="#dueAssetEditForm"
+                                    id="#dueAssetAuditListing"
                                     class="table table-striped snipe-table"
-                                            data-url="{{ route('api.assets.list-upcoming', ['action' => 'audits', 'upcoming_status' => 'due']) }}"
+                                    data-url="{{ route('api.assets.list-upcoming', ['action' => 'audits', 'upcoming_status' => 'due']) }}"
                                     data-export-options='{
                 "fileName": "export-assets-due-audit-{{ date('Y-m-d') }}",
                 "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
@@ -91,18 +85,11 @@
                             <div class="table table-responsive">
                                 <div class="col-md-12">
                                     <table
-                                        data-click-to-select="true"
                                         data-columns="{{ \App\Presenters\AssetAuditPresenter::dataTableLayout() }}"
                                         data-cookie-id-table="overdueAssetAuditListing"
-                                        data-pagination="true"
                                         data-id-table="overdueAssetAuditListing"
-                                        data-search="true"
                                         data-side-pagination="server"
-                                        data-show-columns="true"
-                                        data-show-fullscreen="true"
-                                        data-show-export="true"
                                         data-show-footer="true"
-                                        data-show-refresh="true"
                                         data-sort-order="asc"
                                         data-sort-name="name"
                                         data-toolbar="#overdueAssetEditToolbar"

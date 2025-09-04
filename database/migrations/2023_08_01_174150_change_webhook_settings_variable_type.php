@@ -14,7 +14,7 @@ class ChangeWebhookSettingsVariableType extends Migration
     public function up()
     {
         Schema::table('settings', function (Blueprint $table) {
-            $table->text('webhook_endpoint')->change();
+            $table->text('webhook_endpoint')->nullable()->change();
         });
     }
 
@@ -26,7 +26,7 @@ class ChangeWebhookSettingsVariableType extends Migration
     public function down()
     {
         Schema::table('settings', function (Blueprint $table) {
-            $table->string('webhook_endpoint')->change();
+            $table->string('webhook_endpoint')->nullable()->change();
         });
 
     }

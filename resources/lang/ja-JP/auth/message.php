@@ -6,8 +6,6 @@ return array(
     'account_not_found'      => 'ユーザー名またはパスワードが不正です。',
     'account_not_activated'  => 'このユーザーアカウントは有効化されていません。',
     'account_suspended'      => 'このユーザーアカウントは停止中です。',
-    'account_banned'         => 'このユーザーアカウントは禁止されています。',
-    'throttle'               => '複数回ログインに失敗しました。 :minutes 分後に再試行してください。',
 
     'two_factor' => array(
         'already_enrolled'      => 'お使いのデバイスは既に登録されています。',

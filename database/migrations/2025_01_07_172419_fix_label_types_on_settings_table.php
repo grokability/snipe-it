@@ -28,8 +28,8 @@ return new class extends Migration
         ]);
 
         Schema::table('settings', function (Blueprint $table) {
-            $table->string('label2_2d_type')->default('QRCODE')->change();
-            $table->string('label2_1d_type')->default('C128')->change();
+            $table->string('label2_2d_type')->default('QRCODE')->nullable(false)->change();
+            $table->string('label2_1d_type')->default('C128')->nullable(false)->change();
         });
     }
 

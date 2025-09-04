@@ -22,7 +22,7 @@ return array(
         'success' => 'Leverandøren blev slettet med succes.',
         'assoc_assets'	 => 'Denne placering er i øjeblikket forbundet med :asset_count(s) kan ikke slettes. Opdater dine aktiver for ikke længere at henvise til denne placering, og prøv igen. ',
         'assoc_licenses'	 => 'Denne leverandør er i øjeblikket forbundet med :licenses_count(s) og kan ikke slettes. Opdater dine modeller for ikke længere at henvise til denne leverandør, og prøv igen. ',
-        'assoc_maintenances'	 => 'Denne leverandør er i øjeblikket forbundet med :asset_maintenances_count aktiv vedligeholdelse(r) og kan ikke slettes. Opdater din aktiv vedligeholdelse så der ikke længere refereres til denne leverandør og prøv igen. ',
+        'assoc_maintenances'	 => 'This supplier is currently associated with :maintenances_count asset maintenances(s) and cannot be deleted. Please update your asset maintenances to no longer reference this supplier and try again. ',
     )
 
 );

@@ -6,8 +6,6 @@ return array(
     'account_not_found'      => 'Die gebruikersnaam of wagwoord is verkeerd.',
     'account_not_activated'  => 'Hierdie gebruikers rekening is nie geaktiveer nie.',
     'account_suspended'      => 'Hierdie gebruikerrekening is opgeskort.',
-    'account_banned'         => 'Hierdie gebruikerrekening is verban.',
-    'throttle'               => 'Too many failed login attempts. Please try again in :minutes minutes.',
 
     'two_factor' => array(
         'already_enrolled'      => 'Your device is already enrolled.',

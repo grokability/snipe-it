@@ -11,11 +11,11 @@ return [
         'file_deleted'          => 'קובץ הגיבוי נמחק בהצלחה.',
         'generated'             => 'קובץ גיבוי חדש נוצר בהצלחה.',
         'file_not_found'        => 'קובץ גיבוי זה לא נמצא בשרת.',
-        'restore_warning'       => 'Yes, restore it. I acknowledge that this will overwrite any existing data currently in the database. This will also log out all of your existing users (including you).',
+        'restore_warning'       => 'כן, שחזר זאת. אני מאשר שזה ידרוס מידע קיים במסד הנתונים. זה גם ינתק את כלל המשתמשים הקיימים (כולל אותך).',
         'restore_confirm'       => 'האם ברצונך לשחזר את המסד נתונים מ: קובץ?'
     ],
     'restore' => [
-        'success'               => 'Your system backup has been restored. Please log in again.'
+        'success'               => 'גיבוי המערכת שלך שוחזר. תתחבר מחדש בבקשה.'
     ],
     'purge' => [
         'error'     => 'אירעה שגיאה בעת הטיהור.',
@@ -49,6 +49,11 @@ return [
         'error_redirect' => 'ERROR: 301/302 :endpoint returns a redirect. For security reasons, we don’t follow redirects. Please use the actual endpoint.',
         'error_misc' => 'משהו השתבש אופסי פופסי. :( ',
         'webhook_fail' => ' webhook notification failed: Check to make sure the URL is still valid.',
-        'webhook_channel_not_found' => ' ערוץ ההתליות לא נמצא.'
-    ]
+        'webhook_channel_not_found' => ' ערוץ ההתליות לא נמצא.',
+        'ms_teams_deprecation' => 'The selected Microsoft Teams webhook URL will be deprecated Dec 31st, 2025. Please use a workflow URL. Microsoft\'s documentation on creating a workflow can be found <a href="https://support.microsoft.com/en-us/office/create-incoming-webhooks-with-workflows-for-microsoft-teams-8ae491c7-0394-4861-ba59-055e33f75498" target="_blank"> here.</a>',
+    ],
+    'location_scoping' => [
+        'not_saved' => 'Your settings were not saved.',
+        'mismatch' => 'There is 1 item in the database that need your attention before you can enable location scoping.|There are :count items in the database that need your attention before you can enable location scoping.',
+    ],
 ];

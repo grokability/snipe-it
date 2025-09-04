@@ -12,7 +12,7 @@ class MigrateMacAddress extends Migration
      */
     public function up()
     {
-        DB::getDoctrineSchemaManager()->getDatabasePlatform()->registerDoctrineTypeMapping('enum', 'string');
+        //DB::getDoctrineSchemaManager()->getDatabasePlatform()->registerDoctrineTypeMapping('enum', 'string');
 
         $f2 = new \App\Models\CustomFieldset(['name' => 'Asset with MAC Address']);
         $f2->timestamps = false; //when this model was first created, it had no timestamps. But later on it gets them.

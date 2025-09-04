@@ -4,6 +4,7 @@ return [
     'info'   => 'Pumili ng opsyon na gusto mo para sa iyong report sa asset.',
     'deleted_user' => 'Deleted user',
     'send_reminder' => 'Send reminder',
+    'cannot_send_reminder' => 'User has been deleted or does not have an email address so cannot receive a reminder',
     'reminder_sent' => 'Naipadala ang paalala',
     'acceptance_deleted' => 'Acceptance request deleted',
     'acceptance_request' => 'Acceptance request',

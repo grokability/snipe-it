@@ -33,9 +33,9 @@ return [
     'create_fieldset_title' => 'Sukurkite naują laukų rinkinį',
     'create_field'            => 'Naujas pritaikytas laukas',
     'create_field_title' => 'Sukurti naują pritaikytą lauką',
-    'value_encrypted'      	        => 'Šio lauko reikšmė yra užšifruota duomenų bazėje. Tik administratoriai gali matyti iššifruotą reikšmę',
+    'value_encrypted'      	        => 'The value of this field is encrypted in the database. Only users with permission to view encrypted custom fields will be able to view the decrypted value',
     'show_in_email'     => 'Įtraukti šio lauko reikšmę į išdavimo el. laiškus, siunčiamus naudotojams? Šifruotų laukų į el. laiškus įtraukti negalima',
-    'show_in_email_short'     => 'Įtraukti į el. laiškus.',
+    'show_in_email_short' => 'Įtraukti į el. laiškus',
     'help_text' => 'Pagalbos tekstas',
     'help_text_description' => 'Tai yra nebūtinas tekstas, kuris redaguojant turtą, bus rodomas po formos elementais, kad suteiktų kontekstą tam laukui.',
     'about_custom_fields_title' => 'Apie pritaikytus laukus',
@@ -57,5 +57,14 @@ return [
     'show_in_requestable_list_short' => 'Rodyti užsakomo turto sąraše',
     'show_in_requestable_list' => 'Rodyti reikšmę užsakomo turto sąraše. Šifruoti laukai nebus rodomi',
     'encrypted_options' => 'Šis laukas yra užšifruotas, todėl kai kurios rodymo parinktys nebus pasiekiamos.',
-
+    'display_checkin' => 'Rodyti paėmimo formose',
+    'display_checkout' => 'Rodyti išdavimo formose',
+    'display_audit' => 'Rodyti audito formose',
+    'types' => [
+        'text' => 'Teksto laukas',
+        'listbox' => 'Sąrašo laukas',
+        'textarea' => 'Teksto sritis (kelių eilučių)',
+        'checkbox' => 'Žymimasis langelis',
+        'radio' => 'Akutės',
+    ],
 ];

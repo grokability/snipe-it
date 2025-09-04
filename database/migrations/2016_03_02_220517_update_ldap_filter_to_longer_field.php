@@ -13,7 +13,7 @@ class UpdateLdapFilterToLongerField extends Migration
     public function up()
     {
         Schema::table('settings', function (Blueprint $table) {
-            $table->text('ldap_filter')->default(null)->change();
+            $table->text('ldap_filter')->nullable()->default(null)->change();
         });
     }
 

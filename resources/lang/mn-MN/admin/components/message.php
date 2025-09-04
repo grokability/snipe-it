@@ -17,7 +17,8 @@ return array(
     'delete' => array(
         'confirm'   => 'Та энэ бүрэлдэхүүн хэсгийг устгахдаа итгэлтэй байна уу?',
         'error'   => 'Энэ бүрэлдэхүүнийг устгах асуудал гарлаа. Дахин оролдоно уу.',
-        'success' => 'Бүрэлдэхүүн хэсэг амжилттай устгагдсан.'
+        'success' => 'Бүрэлдэхүүн хэсэг амжилттай устгагдсан.',
+        'error_qty'   => 'Some components of this type are still checked out. Please check them in and try again.',
     ),
 
      'checkout' => array(

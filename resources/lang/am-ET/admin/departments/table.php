@@ -2,7 +2,7 @@
 
 return array(
 
-    'id'                        => 'ID',
+    'id'                        => 'መለያ',
     'name'                      => 'Department Name',
     'manager'                   => 'Manager',
     'location'                  => 'Location',

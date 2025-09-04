@@ -2,7 +2,7 @@
 
     use Illuminate\Database\Migrations\Migration;
     use Illuminate\Database\Schema\Blueprint;
-    use Illuminate\Support\Facades\Lang;
+    use Illuminate\Support\Facades\Schema;
 
     class CreateAssetMaintenancesTable extends Migration
     {
@@ -40,9 +40,9 @@
         protected function getEnumFields()
         {
             return [
-                trans('admin/asset_maintenances/general.maintenance'),
-                trans('admin/asset_maintenances/general.repair'),
-                trans('admin/asset_maintenances/general.upgrade'),
+                trans('admin/maintenances/general.maintenance'),
+                trans('admin/maintenances/general.repair'),
+                trans('admin/maintenances/general.upgrade'),
             ];
         }
 

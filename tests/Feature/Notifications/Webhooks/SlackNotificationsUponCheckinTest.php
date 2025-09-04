@@ -2,6 +2,9 @@
 
 namespace Tests\Feature\Notifications\Webhooks;
 
+use App\Models\AssetModel;
+use App\Models\Category;
+use App\Notifications\CheckinComponentNotification;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use App\Events\CheckoutableCheckedIn;
@@ -94,17 +97,51 @@ class SlackNotificationsUponCheckinTest extends TestCase
 
         $this->assertNoSlackNotificationSent(CheckinAssetNotification::class);
     }
-
-    public function testComponentCheckinDoesNotSendSlackNotification()
+    #[DataProvider('assetCheckInTargets')]
+    public function testComponentCheckinSendsSlackNotificationWhenSettingEnabled($checkoutTarget)
     {
         $this->settings->enableSlackWebhook();
 
         $this->fireCheckInEvent(
             Component::factory()->create(),
-            Asset::factory()->laptopMbp()->create(),
+            $checkoutTarget(),
         );
 
-        Notification::assertNothingSent();
+        $this->assertSlackNotificationSent(CheckinComponentNotification::class);
+    }
+
+    #[DataProvider('assetCheckInTargets')]
+    public function testComponentCheckinDoesNotSendSlackNotificationWhenSettingDisabled($checkoutTarget)
+    {
+        $this->settings->disableSlackWebhook();
+
+        $this->fireCheckInEvent(
+            Component::factory()->create(),
+            $checkoutTarget(),
+        );
+
+        $this->assertNoSlackNotificationSent(CheckinComponentNotification::class);
+    }
+
+    public function testSlackNotificationIsStillSentWhenCategoryEmailIsNotSetToSendEmails()
+    {
+        $this->settings->enableSlackWebhook();
+
+        $category = Category::factory()->create([
+            'checkin_email' => false,
+            'eula_text' => null,
+            'require_acceptance' => false,
+            'use_default_eula' => false,
+        ]);
+        $assetModel = AssetModel::factory()->for($category)->create();
+        $asset = Asset::factory()->for($assetModel, 'model')->assignedToUser()->create();
+
+        $this->fireCheckInEvent(
+            $asset,
+            User::factory()->create(),
+        );
+
+        $this->assertSlackNotificationSent(CheckinAssetNotification::class);
     }
 
     #[DataProvider('licenseCheckInTargets')]

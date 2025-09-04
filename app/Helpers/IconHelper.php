@@ -16,6 +16,7 @@ class IconHelper
             case 'clone':
                 return 'far fa-clone';
             case 'delete':
+            case 'upload deleted':
                 return 'fas fa-trash';
             case 'create':
                 return 'fa-solid fa-plus';
@@ -43,6 +44,8 @@ class IconHelper
                 return 'fa-regular fa-envelope';
             case 'phone':
                 return 'fa-solid fa-phone';
+            case 'mobile':
+                return 'fas fa-mobile-screen-button';
             case 'long-arrow-right':
                 return 'fas fa-long-arrow-alt-right';
             case 'download':
@@ -59,6 +62,8 @@ class IconHelper
                 return 'fas fa-cog';
             case 'angle-left':
                 return 'fas fa-angle-left';
+            case 'angle-right':
+                return 'fas fa-angle-right';
             case 'warning':
                 return 'fas fa-exclamation-triangle';
             case 'kits':
@@ -149,6 +154,7 @@ class IconHelper
             case 'location':
                 return 'fas fa-map-marker-alt';
             case 'superadmin':
+            case 'admin':
                 return 'fas fa-crown';
             case 'print':
                 return 'fa-solid fa-print';
@@ -184,6 +190,8 @@ class IconHelper
                 return 'fa-regular fa-id-card';
             case 'department' :
                 return 'fa-solid fa-building-user';
+            case 'home' :
+                return 'fa-solid fa-house';
             case 'note':
             case 'notes':
                 return 'fas fa-sticky-note';

@@ -6,8 +6,6 @@ return array(
     'account_not_found'      => 'نام کاربری یا رمز عبور اشتباه است.',
     'account_not_activated'  => 'این حساب کاربری فعال نشده است.',
     'account_suspended'      => 'این حساب کاربری بسته است.',
-    'account_banned'         => 'این حساب کاربری ممنوع است.',
-    'throttle'               => 'دفعات تلاش شما برای ورود بیش از حد مجاز است. لطفا پس از :seconds ثانیه مجددا تلاش فرمایید.',
 
     'two_factor' => array(
         'already_enrolled'      => 'دستگاه شما قبلاً ثبت نام کرده است.

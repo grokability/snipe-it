@@ -2,7 +2,7 @@
 
 return [
 
-    'select_language' => 'Select a Language',
+    'select_language' => 'Vybrat jazyk',
     'languages' => [
         'en-US'=> 'Angličtina, USA',
         'en-GB'=> 'Angličtina, UK',
@@ -40,8 +40,8 @@ return [
         'ms-MY'=> 'Malajština',
         'mi-NZ'=> 'Maori',
         'mn-MN'=> 'Mongolština',
-        //'no-NO'=> 'Norwegian',
-        'nb-NO'=> 'Norwegian Bokmål',
+        'nb-NO'=> 'Norština',
+        'om-ET' => 'Oromo (Etiopie)',
         //'nn-NO'=> 'Norwegian Nynorsk',
         'fa-IR'=> 'Perština',
         'pl-PL'=> 'Polština',
@@ -68,7 +68,7 @@ return [
         'zu-ZA'=> 'Zuluština',
     ],
 
-    'select_country' => 'Select a Country',
+    'select_country' => 'Vyberte zemi',
     
     'countries' => [
         'AC'=>'Ostrov Ascension',
@@ -135,7 +135,7 @@ return [
         'EC'=>'Ekvádor',
         'EE'=>'Estonsko',
         'EG'=>'Egypt',
-        'GB-ENG'=>'England',
+        'GB-ENG'=>'Anglie',
         'ER'=>'Eritrea',
         'ES'=>'Španělsko',
         'ET'=>'Etiopie',
@@ -234,7 +234,7 @@ return [
         'NG'=>'Nigérie',
         'NI'=>'Nikaragua',
         'NL'=>'Nizozemsko',
-        'GB-NIR' => 'Northern Ireland',
+        'GB-NIR' => 'Severní Irsko',
         'NO'=>'Norsko',
         'NP'=>'Nepál',
         'NR'=>'Nauru',

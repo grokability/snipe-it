@@ -17,7 +17,8 @@ return array(
     'delete' => array(
         'confirm'   => 'តើអ្នកប្រាកដថាចង់លុបសមាសភាគនេះទេ?',
         'error'   => 'មាន​បញ្ហា​ក្នុង​ការ​លុប​សមាសភាគ។ សូមព្យាយាមម្តងទៀត។',
-        'success' => 'សមាសភាគត្រូវបានលុបដោយជោគជ័យ។'
+        'success' => 'សមាសភាគត្រូវបានលុបដោយជោគជ័យ។',
+        'error_qty'   => 'Some components of this type are still checked out. Please check them in and try again.',
     ),
 
      'checkout' => array(

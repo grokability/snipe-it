@@ -29,7 +29,7 @@ class PassportUpgrade extends Migration
     {
         if (Schema::hasTable('oauth_clients')) {
             Schema::table('oauth_clients', function (Blueprint $table) {
-                $table->string('secret', 100)->change();
+                $table->string('secret', 100)->nullable(false)->change();
             });
         }
     }

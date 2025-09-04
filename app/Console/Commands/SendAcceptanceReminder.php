@@ -64,28 +64,46 @@ class SendAcceptanceReminder extends Command
             ->groupBy(function($item) {
                 return $item['acceptance']->assignedTo ? $item['acceptance']->assignedTo->id : '';
             });
+            $no_email_list= [];
 
         foreach($unacceptedAssetGroups as $unacceptedAssetGroup) {
             // The [0] is weird, but it allows for the item_count to work and grabs the appropriate info for each user.
             // Collapsing and flattening the collection doesn't work above.
             $acceptance = $unacceptedAssetGroup[0]['acceptance'];
+
             $locale = $acceptance->assignedTo?->locale;
             $email = $acceptance->assignedTo?->email;
+
             if(!$email){
-                $this->info($acceptance->assignedTo?->present()->fullName().' has no email address.');
+                $no_email_list[] = [
+                    'id' => $acceptance->assignedTo?->id,
+                    'name' => $acceptance->assignedTo?->display_name,
+                ];
+            } else {
+                $count++;
             }
             $item_count = $unacceptedAssetGroup->count();
 
             if ($locale && $email) {
                 Mail::to($email)->send((new UnacceptedAssetReminderMail($acceptance, $item_count))->locale($locale));
-
             } elseif ($email) {
                 Mail::to($email)->send((new UnacceptedAssetReminderMail($acceptance, $item_count)));
             }
-            $count++;
+
         }
 
         $this->info($count.' users notified.');
+        $headers = ['ID', 'Name'];
+        $rows = [];
+
+        foreach ($no_email_list as $user) {
+            $rows[] = [$user['id'], $user['name']];
+        }
+
+        if (!empty($rows)) {
+            $this->info("The following users do not have an email address:");
+            $this->table($headers, $rows);
+        }
 
         return 0;
     }

@@ -19,6 +19,8 @@ return [
     'print_assigned'    => 'Печат на всички отдадени',
     'email_assigned'    => 'Изпрати Е-майл списък на всички заведени активи',
     'user_notified'     => 'На потребителя беше изпратен списак по е-майл с неговите заведени активи.',
+    'users_notified'    => 'The user has been emailed a list of their currently assigned items.|:count users have been emailed a list of their currently assigned items.',
+    'users_notified_warning' => ':count user has been emailed a list of their currently assigned items, however :no_email users did not have an email address so could not be emailed.|:count users have been emailed a list of their currently assigned items, however :no_email user(s) did not have an email address so could not be emailed.',
     'auto_assign_label' => 'Включи този потребител при автоматичното асоцииране на лицензи',
     'auto_assign_help'  => 'Не включвай този потребител при автоматичното асоцииране на лицензи',
     'software_user'     => 'Софтуерни продукти, изписани на :name',
@@ -51,4 +53,5 @@ return [
     'next_save_user' => 'Следва: Запазване на потребител',
     'all_assigned_list_generation' => 'Генерирано на:',
     'email_user_creds_on_create' => 'Да се изпрати ли е-майл с паролата на потребителя?',
+    'department_manager' => 'Department Manager',
 ];

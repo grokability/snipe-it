@@ -166,4 +166,49 @@ class ManufacturerFactory extends Factory
             ];
         });
     }
+
+    public function samsung()
+    {
+        return $this->state(function () {
+            return [
+                'name' => 'Samsung',
+                'url' => 'https://www.samsung.com',
+                'support_url' => 'https://www.samsung.com/support/',
+                'image' => 'samsung.png',
+            ];
+        });
+    }
+
+    public function google()
+    {
+        return $this->state(function () {
+            return [
+                'name' => 'Google',
+                'url' => 'https://www.google.com',
+                'image' => 'google.webp',
+            ];
+        });
+    }
+
+    public function huawei()
+    {
+        return $this->state(function () {
+            return [
+                'name' => 'Huawei',
+                'url' => 'https://consumer.huawei.com/',
+                'image' => 'huawei.webp',
+            ];
+        });
+    }
+
+    public function sony()
+    {
+        return $this->state(function () {
+            return [
+                'name' => 'Sony',
+                'url' => 'https://electronics.sony.com',
+                'image' => 'sony.png',
+            ];
+        });
+    }
 }

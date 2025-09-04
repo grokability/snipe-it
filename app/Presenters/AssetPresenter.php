@@ -2,8 +2,11 @@
 
 namespace App\Presenters;
 
+use App\Helpers\CustomFieldHelper;
+use App\Models\Asset;
 use App\Models\CustomField;
 use Carbon\CarbonImmutable;
+use App\Models\CustomFieldset;
 use DateTime;
 
 /**
@@ -21,6 +24,8 @@ class AssetPresenter extends Presenter
             [
                 'field' => 'checkbox',
                 'checkbox' => true,
+                'titleTooltip' => trans('general.select_all_none'),
+                'printIgnore' => true,
             ], [
                 'field' => 'id',
                 'searchable' => false,
@@ -35,7 +40,7 @@ class AssetPresenter extends Presenter
                 'switchable' => true,
                 'title' => trans('general.company'),
                 'visible' => false,
-                'formatter' => 'assetCompanyObjFilterFormatter',
+                'formatter' => 'companiesLinkObjFormatter',
             ], [
                 'field' => 'name',
                 'searchable' => true,
@@ -107,6 +112,13 @@ class AssetPresenter extends Presenter
                 'title' => trans('general.employee_number'),
                 'visible' => false,
                 'formatter' => 'employeeNumFormatter',
+            ], [
+                'field' => 'jobtitle',
+                'searchable' => true,
+                'sortable' => true,
+                'title' => trans('admin/users/table.title'),
+                'visible' => false,
+                'formatter' => 'jobtitleFormatter',
             ], [
                 'field' => 'location',
                 'searchable' => true,
@@ -297,6 +309,7 @@ class AssetPresenter extends Presenter
                 'sortable' => true,
                 'visible' => false,
                 'title' => trans('general.byod'),
+                'class' => 'byod',
                 'formatter' => 'trueFalseFormatter',
 
             ],
@@ -309,21 +322,27 @@ class AssetPresenter extends Presenter
         // models. We only pass the fieldsets that pertain to each asset (via their model) so that we
         // don't junk up the REST API with tons of custom fields that don't apply
 
-        $fields = CustomField::whereHas('fieldset', function ($query) {
-            $query->whereHas('models');
-        })->get();
+        //only get fieldsets that have fields
+        $fieldsets = CustomFieldset::where("type", Asset::class)->whereHas('fields')->get();
+        $ids = [];
+        foreach($fieldsets as $fieldset) {
+            if (count($fieldset->customizables()) > 0) { //only get fieldsets that are 'in use'
+                $ids[] = $fieldset->id;
+            }
+        }
 
+        $fields = CustomField::whereIn('id',$ids)->get(); // FIXME: d'oh! this is wrong. We just got fieldsets, above. Now we're getting fields?
         // Note: We do not need to e() escape the field names here, as they are already escaped when
         // they are presented in the blade view. If we escape them here, custom fields with quotes in their
         // name can break the listings page. - snipe
         foreach ($fields as $field) {
             $layout[] = [
-                'field' => 'custom_fields.'.$field->db_column,
+                'field' => $field->db_column,
                 'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,
                 'title' => $field->name,
-                'formatter'=> 'customFieldsFormatter',
+                'formatter' => 'customFieldsFormatter',
                 'escape' => true,
                 'class' => ($field->field_encrypted == '1') ? 'css-padlock' : '',
                 'visible' => ($field->show_in_listview == '1') ? true : false,
@@ -338,6 +357,7 @@ class AssetPresenter extends Presenter
             'title' => trans('general.checkin').'/'.trans('general.checkout'),
             'visible' => true,
             'formatter' => 'hardwareInOutFormatter',
+            'printIgnore' => true,
         ];
 
         $layout[] = [
@@ -347,6 +367,76 @@ class AssetPresenter extends Presenter
             'switchable' => false,
             'title' => trans('table.actions'),
             'formatter' => 'hardwareActionsFormatter',
+            'printIgnore' => true,
+        ];
+
+        return json_encode($layout);
+    }
+
+
+    public static function assignedAccessoriesDataTableLayout()
+    {
+        $layout = [
+            [
+                'field' => 'id',
+                'searchable' => false,
+                'sortable' => false,
+                'switchable' => true,
+                'title' => trans('general.id'),
+                'visible' => false,
+            ],
+            [
+                'field' => 'accessory',
+                'searchable' => false,
+                'sortable' => false,
+                'switchable' => true,
+                'title' => trans('general.accessory'),
+                'visible' => true,
+                'formatter' => 'accessoriesLinkObjFormatter',
+            ],
+            [
+                'field' => 'image',
+                'searchable' => false,
+                'sortable' => false,
+                'switchable' => true,
+                'title' => trans('general.image'),
+                'visible' => true,
+                'formatter' => 'imageFormatter',
+            ],
+            [
+                'field' => 'note',
+                'searchable' => false,
+                'sortable' => false,
+                'switchable' => true,
+                'title' => trans('general.notes'),
+                'visible' => true,
+            ],
+            [
+                'field' => 'created_at',
+                'searchable' => false,
+                'sortable' => false,
+                'switchable' => true,
+                'title' => trans('admin/hardware/table.checkout_date'),
+                'visible' => true,
+                'formatter' => 'dateDisplayFormatter',
+            ],
+            [
+                'field' => 'created_by',
+                'searchable' => false,
+                'sortable' => false,
+                'title' => trans('general.created_by'),
+                'visible' => false,
+                'formatter' => 'usersLinkObjFormatter',
+            ],
+            [
+                'field' => 'available_actions',
+                'searchable' => false,
+                'sortable' => false,
+                'switchable' => false,
+                'title' => trans('table.actions'),
+                'formatter' => 'accessoriesInOutFormatter',
+                'printIgnore' => true,
+            ],
         ];
 
         return json_encode($layout);
@@ -486,7 +576,7 @@ class AssetPresenter extends Presenter
      */
     public function statusMeta()
     {
-        if ($this->model->assigned) {
+        if ($this->model->assigned_to) {
             return 'deployed';
         }
 

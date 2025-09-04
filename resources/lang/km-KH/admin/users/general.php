@@ -19,6 +19,8 @@ return [
     'print_assigned'    => 'បោះពុម្ពដែលបានចាត់តាំងទាំងអស់។',
     'email_assigned'    => 'បញ្ជីអ៊ីមែលដែលបានចាត់តាំងទាំងអស់។',
     'user_notified'     => 'អ្នក​ប្រើ​ត្រូវ​បាន​ផ្ញើ​អ៊ីមែល​នូវ​បញ្ជី​នៃ​ធាតុ​ដែល​បាន​កំណត់​បច្ចុប្បន្ន​របស់​ពួកគេ។',
+    'users_notified'    => 'The user has been emailed a list of their currently assigned items.|:count users have been emailed a list of their currently assigned items.',
+    'users_notified_warning' => ':count user has been emailed a list of their currently assigned items, however :no_email users did not have an email address so could not be emailed.|:count users have been emailed a list of their currently assigned items, however :no_email user(s) did not have an email address so could not be emailed.',
     'auto_assign_label' => 'រួមបញ្ចូលអ្នកប្រើប្រាស់នេះនៅពេលផ្តល់អាជ្ញាប័ណ្ណដែលមានសិទ្ធិដោយស្វ័យប្រវត្តិ',
     'auto_assign_help'  => 'រំលងអ្នកប្រើប្រាស់នេះក្នុងការផ្តល់អាជ្ញាប័ណ្ណដោយស្វ័យប្រវត្តិ',
     'software_user'     => 'កម្មវិធីដែលបានប្រគល់ទៅកាន់៖ ឈ្មោះ',
@@ -51,4 +53,5 @@ return [
     'next_save_user' => 'បន្ទាប់៖ រក្សាទុកអ្នកប្រើប្រាស់',
     'all_assigned_list_generation' => 'បង្កើតនៅលើ៖',
     'email_user_creds_on_create' => 'ផ្ញើអ៊ីមែលទៅអ្នកប្រើប្រាស់នេះនូវអត្តសញ្ញាណប័ណ្ណរបស់ពួកគេ?',
+    'department_manager' => 'Department Manager',
 ];

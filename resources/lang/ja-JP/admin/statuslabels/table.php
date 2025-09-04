@@ -1,14 +1,14 @@
 <?php
 
 return array(
-    'about'      	=> 'ステータスラベルについて',
+    'about'      	=> 'About Status Types',
     'archived'      	=> 'アーカイブ',
     'create'      	=> 'ステータスラベルを作成',
     'color'      	=> 'グラフの色',
     'default_label' => 'デフォルトラベル',
     'default_label_help' => 'もっとも一般的に使用されるステータスラベルを、資産を作成/編集する際に選択ボックスの上部に表示します。',
     'deployable'      	=> '配備可能',
-    'info'      	=> 'ステータスラベルは資産の様々な状態の説明に利用されます。修理中であったり、紛失/盗難かもしれません。資産を配備可能、ペンディング、保管といった新しいステータスラベルを作成できます。',
+    'info'      	=> 'Status label types are used to describe the various states your assets could be in. They may be out for repair, lost/stolen, etc. You can create new status labels for your deployable, pending and archived assets according to your own workflow. For more information, <a href="https://snipe-it.readme.io/docs/overview#status-labels" target="_blank">see the documentation <i class="fa fa-external-link"></i></a>.',
     'name'      	=> 'ステータス名',
     'pending'      	=> '保留中',
     'status_type'   => 'ステータスタイプ',

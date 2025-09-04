@@ -32,7 +32,7 @@
                             <label for="asset_tag" class="col-md-3 control-label" id="audit_tag">{{ trans('general.asset_tag') }}</label>
                             <div class="col-md-9">
                                 <div class="input-group date col-md-11 required" data-date-format="yyyy-mm-dd">
-                                    <input type="text" class="form-control" name="asset_tag" id="asset_tag" value="{{ old('asset_tag') }}">
+                                    <input type="text" class="form-control" name="asset_tag" id="asset_tag" required value="{{ old('asset_tag') }}">
 
                                 </div>
                                 {!! $errors->first('asset_tag', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
@@ -112,7 +112,7 @@
                         <tr id="audit-loader" style="display: none;">
                             <td colspan="3">
                                 <x-icon type="spinner" />
-                                {{ trans('admin/hardware/form.processing_spinner') }}
+                                {{ trans('admin/hardware/form.processing') }}
                             </td>
                         </tr>
                         </thead>
@@ -140,9 +140,10 @@
 
             var form = $("#audit-form").get(0);
             var formData = $('#audit-form').serializeArray();
+            var asset_tag = $('#asset_tag').val();
 
             $.ajax({
-                url: "{{ route('api.asset.audit') }}",
+                url: "{{ route('api.asset.audit.legacy') }}",
                 type : 'POST',
                 headers: {
                     "X-Requested-With": 'XMLHttpRequest',
@@ -151,6 +152,7 @@
                 dataType : 'json',
                 data : formData,
                 success : function (data) {
+
                     if (data.status == 'success') {
                         $('#audited tbody').prepend("<tr class='success'><td>" + data.payload.asset_tag + "</td><td>" + data.messages + "</td><td><i class='fas fa-check text-success' style='font-size:18px;'></i></td></tr>");
 
@@ -161,12 +163,12 @@
 
                         incrementOnSuccess();
                     } else {
-                        handleAuditFail(data);
+                        handleAuditFail(data, asset_tag);
                     }
                     $('input#asset_tag').val('');
                 },
                 error: function (data) {
-                    handleAuditFail(data);
+                    handleAuditFail(data, asset_tag);
                 },
                 complete: function() {
                     $('#audit-loader').hide();
@@ -177,22 +179,29 @@
             return false;
         });
 
-        function handleAuditFail (data) {
+        function handleAuditFail (data, asset_tag) {
             @if ($user->enable_sounds)
             var audio = new Audio('{{ config('app.url') }}/sounds/error.mp3');
             audio.play()
             @endif
-            if (data.asset_tag) {
-                var asset_tag = data.asset_tag;
-            } else {
-                var asset_tag = '';
+
+
+            if ((!asset_tag) && (data.payload)  && (data.payload.asset_tag)) {
+                asset_tag = data.payload.asset_tag;
             }
-            if (data.messages) {
-                var messages = data.messages;
-            } else {
-                var messages = '';
+
+            asset_tag = jQuery('<span>' + asset_tag + '</span>').text();
+
+            let messages = "";
+
+            // Loop through the error messages
+            if ((data.messages)  && (data.messages)) {
+                for (let x in data.messages) {
+                    messages += data.messages[x];
+                }
             }
-            $('#audited tbody').prepend("<tr class='danger'><td>" + data.payload.asset_tag + "</td><td>" + messages + "</td><td><i class='fas fa-times text-danger' style='font-size:18px;'></i></td></tr>");
+
+            $('#audited tbody').prepend("<tr class='danger'><td>" + asset_tag + "</td><td>" + messages + "</td><td><i class='fas fa-times text-danger' style='font-size:18px;'></i></td></tr>");
         }
 
         function incrementOnSuccess() {

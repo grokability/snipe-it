@@ -95,17 +95,11 @@ class DepreciationsController extends Controller
      * @param int $depreciationId
      * @since [v1.0]
      */
-    public function edit($depreciationId = null) : RedirectResponse | View
+    public function edit(Depreciation $depreciation) : RedirectResponse | View
     {
-        // Check if the depreciation exists
-        if (is_null($item = Depreciation::find($depreciationId))) {
-            // Redirect to the blogs management page
-            return redirect()->route('depreciations.index')->with('error', trans('admin/depreciations/message.does_not_exist'));
-        }
 
-        $this->authorize('update', $item);
-
-        return view('depreciations/edit', compact('item'));
+        $this->authorize('update', $depreciation);
+        return view('depreciations/edit')->with('item', $depreciation);
     }
 
     /**
@@ -117,17 +111,10 @@ class DepreciationsController extends Controller
      * @param int $depreciationId
      * @since [v1.0]
      */
-    public function update(Request $request, $depreciationId = null) : RedirectResponse
+    public function update(Request $request, Depreciation $depreciation) : RedirectResponse
     {
-        // Check if the depreciation exists
-        if (is_null($depreciation = Depreciation::find($depreciationId))) {
-            // Redirect to the blogs management page
-            return redirect()->route('depreciations.index')->with('error', trans('admin/depreciations/message.does_not_exist'));
-        }
 
         $this->authorize('update', $depreciation);
-
-        // Depreciation data
         $depreciation->name             = $request->input('name');
         $depreciation->months           = $request->input('months');
 
@@ -191,12 +178,12 @@ class DepreciationsController extends Controller
      * @param int $depreciationId
      * @since [v1.0]
      */
-    public function show($id) : View | RedirectResponse
+    public function show(Depreciation $depreciation) : View | RedirectResponse
     {
         $depreciation = Depreciation::withCount('assets as assets_count')
             ->withCount('models as models_count')
             ->withCount('licenses as licenses_count')
-            ->find($id);
+            ->find($depreciation->id);
 
         $this->authorize('view', $depreciation);
 

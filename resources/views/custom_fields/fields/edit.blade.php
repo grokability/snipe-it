@@ -23,13 +23,16 @@
 
     <!-- Horizontal Form -->
     @if ($field->id)
-        <form method="POST" action="{{ route('fields.update', $field->id) }}" accept-charset="UTF-8" class="form-horizontal">
+        <form method="POST" action="{{ route('fields.update', $field->id) }}" accept-charset="UTF-8"
+              class="form-horizontal">
         {{ method_field('PUT') }}
     @else
-        <form method="POST" action="{{ route('fields.store') }}" accept-charset="UTF-8" class="form-horizontal">
+                <form method="POST" action="{{ route('fields.store') }}" accept-charset="UTF-8" class="form-horizontal">
     @endif
 
     @csrf
+
+    <input type="hidden" name="tab" value="{{ Request::query('tab') }}" />
 <div class="row">
   <div class="col-md-12">
     <div class="box box-default">
@@ -46,7 +49,8 @@
               {{ trans('admin/custom_fields/general.field_name') }}
             </label>
             <div class="col-md-8 required">
-                <input class="form-control" aria-label="name" name="name" type="text" value="{{ old('name', $field->name) }}">
+                <input class="form-control" aria-label="name" name="name" type="text" required
+                       value="{{ old('name', $field->name) }}">
                 {!! $errors->first('name', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
             </div>
           </div>
@@ -58,7 +62,19 @@
             </label>
             <div class="col-md-8 required">
 
-            {!! Form::customfield_elements('element', old('element', $field->element), 'field_element select2 form-control') !!}
+                <x-input.select
+                        name="element"
+                        :selected="old('element', $field->element)"
+                        class="field_element"
+                        style="width: 100%;"
+                        :options="[
+                    'text' => trans('admin/custom_fields/general.types.text'),
+                    'listbox' => trans('admin/custom_fields/general.types.listbox'),
+                    'textarea' => trans('admin/custom_fields/general.types.textarea'),
+                    'checkbox' => trans('admin/custom_fields/general.types.checkbox'),
+                    'radio' => trans('admin/custom_fields/general.types.radio'),
+                ]"
+                />
             {!! $errors->first('element', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
 
             </div>
@@ -71,11 +87,11 @@
             </label>
             <div class="col-md-8 required">
                 <x-input.textarea
-                    name="field_values"
-                    :value="old('field_values', $field->field_values)"
-                    style="width: 100%"
-                    rows="4"
-                    aria-label="field_values"
+                        name="field_values"
+                        :value="old('field_values', $field->field_values)"
+                        style="width: 100%"
+                        rows="4"
+                        aria-label="field_values"
                 />
               {!! $errors->first('field_values', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
               <p class="help-block">{{ trans('admin/custom_fields/general.field_values_help') }}</p>
@@ -94,7 +110,14 @@
               }
               @endphp
             <div class="col-md-8 required">
-              {{ Form::select("format",Helper::predefined_formats(), ($field_format == '') ? $field->format : $field_format, array('class'=>'format select2 form-control', 'aria-label'=>'format', 'style' => 'width:100%;')) }}
+                <x-input.select
+                        name="format"
+                        :options="Helper::predefined_formats()"
+                        :selected="($field_format == '') ? $field->format : $field_format"
+                        class="format form-control"
+                        style="width:100%"
+                        aria-label="format"
+                />
               {!! $errors->first('format', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
             </div>
           </div>
@@ -104,7 +127,9 @@
               {{ trans('admin/custom_fields/general.field_custom_format') }}
             </label>
             <div class="col-md-8 required">
-                <input class="form-control" id="custom_format" aria-label="custom_format" placeholder="regex:/^[0-9]{15}$/" name="custom_format" type="text" value="{{ old('custom_format', (($field->format!='') && (stripos($field->format,'regex')===0)) ? $field->format : '') }}">
+                <input class="form-control" id="custom_format" aria-label="custom_format"
+                       placeholder="regex:/^[0-9]{15}$/" name="custom_format" type="text"
+                       value="{{ old('custom_format', (($field->format!='') && (stripos($field->format,'regex')===0)) ? $field->format : '') }}">
                 <p class="help-block">{!! trans('admin/custom_fields/general.field_custom_format_help') !!}</p>
 
               {!! $errors->first('custom_format', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
@@ -118,7 +143,8 @@
                   {{ trans('admin/custom_fields/general.help_text') }}
               </label>
               <div class="col-md-8">
-                  <input class="form-control" aria-label="help_text" name="help_text" type="text" value=" {{ old('help_text', $field->help_text) }}">
+                  <input class="form-control" aria-label="help_text" name="help_text" type="text"
+                         value=" {{ old('help_text', $field->help_text) }}">
                   <p class="help-block">{{ trans('admin/custom_fields/general.help_text_description') }}</p>
                   {!! $errors->first('help_text', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
               </div>
@@ -157,15 +183,19 @@
 
 
               <!-- Auto-Add to Future Fieldsets  -->
-              <div class="col-md-9 col-md-offset-3">
+             <div class="form-group {{ $errors->has('auto_add_to_fieldsets') ? ' has-error' : '' }}"
+                  id="auto_add_to_fieldsets">
+                 @if (Request::query('tab') != 1)
+                     <div class="col-md-9 col-md-offset-3" style="padding-bottom: 10px;">
                   <label class="form-control">
                       <input type="checkbox" name="auto_add_to_fieldsets" aria-label="auto_add_to_fieldsets" value="1"{{ (old('auto_add_to_fieldsets') || $field->auto_add_to_fieldsets) ? ' checked="checked"' : '' }}>
                       {{ trans('admin/custom_fields/general.auto_add_to_fieldsets') }}
                   </label>
               </div>
+                 @endif
 
               <!-- Show in list view -->
-              <div class="col-md-9 col-md-offset-3">
+                 <div class="col-md-9 col-md-offset-3" style="padding-bottom: 10px;">
                   <label class="form-control">
                       <input type="checkbox" name="show_in_listview" aria-label="show_in_listview" value="1"{{ (old('show_in_listview') || $field->show_in_listview) ? ' checked="checked"' : '' }}>
                       {{ trans('admin/custom_fields/general.show_in_listview') }}
@@ -176,7 +206,7 @@
               @if ((!$field->id) || ($field->field_encrypted=='0'))
 
               <!-- Show in requestable list view -->
-              <div class="col-md-9 col-md-offset-3" id="show_in_requestable_list">
+                     <div class="col-md-9 col-md-offset-3" id="show_in_requestable_list" style="padding-bottom: 10px;">
                   <label class="form-control">
                       <input type="checkbox" name="show_in_requestable_list" aria-label="show_in_requestable_list" value="1"{{ (old('show_in_requestable_list') || $field->show_in_requestable_list) ? ' checked="checked"' : '' }}>
                       {{ trans('admin/custom_fields/general.show_in_requestable_list') }}
@@ -184,7 +214,7 @@
               </div>
 
               <!-- Show in Email  -->
-              <div class="col-md-9 col-md-offset-3" id="show_in_email">
+                     <div class="col-md-9 col-md-offset-3" id="show_in_email" style="padding-bottom: 10px;">
                   <label class="form-control">
                       <input type="checkbox" name="show_in_email" aria-label="show_in_email" value="1"{{ (old('show_in_email') || $field->show_in_email) ? ' checked="checked"' : '' }}>
                       {{ trans('admin/custom_fields/general.show_in_email') }}
@@ -192,7 +222,7 @@
               </div>
 
               <!-- Value Must be Unique -->
-              <div class="col-md-9 col-md-offset-3" id="is_unique">
+                     <div class="col-md-9 col-md-offset-3" id="is_unique" style="padding-bottom: 10px;">
                   <label class="form-control">
                       <input type="checkbox" name="is_unique" aria-label="is_unique" value="1"{{ (old('is_unique') || $field->is_unique) ? ' checked="checked"' : '' }}>
                       {{ trans('admin/custom_fields/general.is_unique') }}
@@ -200,7 +230,36 @@
               </div>
               @endif
 
-              <!-- Show in View All Assets profile view  -->
+
+                 <!-- Show in Checkout Form  -->
+                 <div class="col-md-9 col-md-offset-3" id="display_checkout" style="padding-bottom: 10px;">
+                     <label class="form-control">
+                         <input type="checkbox" name="display_checkout" aria-label="display_checkout"
+                                value="1" {{ (old('display_checkout') || $field->display_checkout) ? ' checked="checked"' : '' }}>
+                         {{ trans('admin/custom_fields/general.display_checkout') }}
+                     </label>
+                 </div>
+
+                 <!-- Show in Checkin Form  -->
+                 <div class="col-md-9 col-md-offset-3" id="display_checkin" style="padding-bottom: 10px;">
+                     <label class="form-control">
+                         <input type="checkbox" name="display_checkin" aria-label="display_checkin"
+                                value="1" {{ (old('display_checkin') || $field->display_checkin) ? ' checked="checked"' : '' }}>
+                         {{ trans('admin/custom_fields/general.display_checkin') }}
+                     </label>
+                 </div>
+
+                 <!-- Show in Audit Form  -->
+                 <div class="col-md-9 col-md-offset-3" id="display_audit" style="padding-bottom: 10px;">
+                     <label class="form-control">
+                         <input type="checkbox" name="display_audit" aria-label="display_audit"
+                                value="1" {{ (old('display_audit') || $field->display_audit) ? ' checked="checked"' : '' }}>
+                         {{ trans('admin/custom_fields/general.display_audit') }}
+                     </label>
+                 </div>
+
+
+                 <!-- Show in View All Assets profile view  -->
               <div class="col-md-9 col-md-offset-3" id="display_in_user_view">
                   <label class="form-control">
                       <input type="checkbox" name="display_in_user_view" aria-label="display_in_user_view" value="1" {{ (old('display_in_user_view') || $field->display_in_user_view) ? ' checked="checked"' : '' }}>
@@ -214,7 +273,7 @@
 
           </div>
 
-          @if ($fieldsets->count() > 0)
+              @if ($fieldsets->count() > 0 && Request::query('tab') != 1)
           <!-- begin fieldset columns -->
           <div class="col-md-4">
 
@@ -269,7 +328,7 @@
 
 
 </div>
-</form>
+                </form>
 @stop
 
 @section('moar_scripts')

@@ -6,8 +6,6 @@ return array(
     'account_not_found'      => 'Användarnamnet eller lösenordet är felaktigt.',
     'account_not_activated'  => 'Detta användarkonto är inte aktiverat.',
     'account_suspended'      => 'Detta användarkonto är suspenderat.',
-    'account_banned'         => 'Detta användarkonto är avstängt.',
-    'throttle'               => 'För många misslyckade inloggningsförsök. Försök igen om :minutes minuter.',
 
     'two_factor' => array(
         'already_enrolled'      => 'Din enhet är redan registrerad.',

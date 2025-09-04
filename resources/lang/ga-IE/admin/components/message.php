@@ -17,7 +17,8 @@ return array(
     'delete' => array(
         'confirm'   => 'An bhfuil tú cinnte gur mian leat an comhábhar seo a scriosadh?',
         'error'   => 'Bhí ceist ann a scriosadh an chomhpháirt. Arís, le d\'thoil.',
-        'success' => 'Scriosadh an comhpháirt go rathúil.'
+        'success' => 'Scriosadh an comhpháirt go rathúil.',
+        'error_qty'   => 'Some components of this type are still checked out. Please check them in and try again.',
     ),
 
      'checkout' => array(

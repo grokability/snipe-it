@@ -23,8 +23,8 @@ function updateLegacyColumnName($customfield)
     $name_to_db_name = CustomField::name_to_db_name($customfield->name);
     //\Log::debug('Trying to rename '.$name_to_db_name." to ".$customfield->convertUnicodeDbSlug()."...\n");
 
-    if (Schema::hasColumn(CustomField::$table_name, $name_to_db_name)) {
-        return Schema::table(CustomField::$table_name,
+    if (Schema::hasColumn('assets', $name_to_db_name)) {
+        return Schema::table('assets',
             function ($table) use ($name_to_db_name, $customfield) {
                 $table->renameColumn($name_to_db_name, $customfield->convertUnicodeDbSlug());
             }
@@ -43,8 +43,8 @@ class FixUtf8CustomFieldColumnNames extends Migration
      */
     public function up()
     {
-        $platform = Schema::getConnection()->getDoctrineSchemaManager()->getDatabasePlatform();
-        $platform->registerDoctrineTypeMapping('enum', 'string');
+        //$platform = Schema::getConnection()->getDoctrineSchemaManager()->getDatabasePlatform();
+        //$platform->registerDoctrineTypeMapping('enum', 'string');
 
         if (! Schema::hasColumn('custom_fields', 'db_column')) {
             Schema::table('custom_fields', function ($table) {
@@ -81,8 +81,8 @@ class FixUtf8CustomFieldColumnNames extends Migration
             // "_snipeit_imei_1" becomes "_snipeit_imei"
             $legacyColumnName = (string) Str::of($currentColumnName)->replaceMatches('/_(\d)+$/', '');
 
-            if (Schema::hasColumn(CustomField::$table_name, $currentColumnName)) {
-                Schema::table(CustomField::$table_name, function (Blueprint $table) use ($currentColumnName, $legacyColumnName) {
+            if (Schema::hasColumn('assets', $currentColumnName)) {
+                Schema::table('assets', function (Blueprint $table) use ($currentColumnName, $legacyColumnName) {
                     $table->renameColumn(
                         $currentColumnName,
                         $legacyColumnName

@@ -19,6 +19,8 @@ return [
     'print_assigned'    => 'crwdns1993:0crwdne1993:0',
     'email_assigned'    => 'crwdns10484:0crwdne10484:0',
     'user_notified'     => 'crwdns10486:0crwdne10486:0',
+    'users_notified'    => 'crwdns12921:0crwdne12921:0',
+    'users_notified_warning' => 'crwdns12923:0crwdne12923:0',
     'auto_assign_label' => 'crwdns11345:0crwdne11345:0',
     'auto_assign_help'  => 'crwdns11347:0crwdne11347:0',
     'software_user'     => 'crwdns1131:0crwdne1131:0',
@@ -51,4 +53,5 @@ return [
     'next_save_user' => 'crwdns11361:0crwdne11361:0',
     'all_assigned_list_generation' => 'crwdns11415:0crwdne11415:0',
     'email_user_creds_on_create' => 'crwdns11517:0crwdne11517:0',
+    'department_manager' => 'crwdns13408:0crwdne13408:0',
 ];

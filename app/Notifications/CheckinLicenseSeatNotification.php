@@ -77,12 +77,21 @@ class CheckinLicenseSeatNotification extends Notification
 
         if ($admin) {
             $fields = [
-                'To' => '<'.$target->present()->viewUrl().'|'.$target->present()->fullName().'>',
-                'By' => '<'.$admin->present()->viewUrl().'|'.$admin->present()->fullName().'>',
+                trans('general.from')  => '<'.$target->present()->viewUrl().'|'.$target->display_name.'>',
+                trans('general.by') => '<'.$admin->present()->viewUrl().'|'.$admin->display_name.'>',
             ];
+
+            if ($item->location) {
+                $fields[trans('general.location')] = $item->location->name;
+            }
+
+            if ($item->company) {
+                $fields[trans('general.company')] = $item->company->name;
+            }
+
         } else {
             $fields = [
-                'To' => '<'.$target->present()->viewUrl().'|'.$target->present()->fullName().'>',
+                'To' => '<'.$target->present()->viewUrl().'|'.$target->display_name.'>',
                 'By' => 'CLI tool',
             ];
         }
@@ -92,7 +101,7 @@ class CheckinLicenseSeatNotification extends Notification
             ->from($botname)
             ->to($channel)
             ->attachment(function ($attachment) use ($item, $note, $admin, $fields) {
-                $attachment->title(htmlspecialchars_decode($item->present()->name), $item->present()->viewUrl())
+                $attachment->title(htmlspecialchars_decode($item->display_name), $item->present()->viewUrl())
                     ->fields($fields)
                     ->content($note);
             });
@@ -110,18 +119,18 @@ class CheckinLicenseSeatNotification extends Notification
                 ->addStartGroupToSection('activityTitle')
                 ->title(trans('mail.License_Checkin_Notification'))
                 ->addStartGroupToSection('activityText')
-                ->fact(htmlspecialchars_decode($item->present()->name), '', 'header')
-                ->fact(trans('mail.License_Checkin_Notification')." by ", $admin->present()->fullName() ?: 'CLI tool')
-                ->fact(trans('mail.checkedin_from'), $target->present()->fullName())
+                ->fact(htmlspecialchars_decode($item->display_name), '', 'header')
+                ->fact(trans('mail.License_Checkin_Notification')." by ", $admin->display_name ?: 'CLI tool')
+                ->fact(trans('mail.checkedin_from'), $target->display_name)
                 ->fact(trans('admin/consumables/general.remaining'), $item->availCount()->count())
                 ->fact(trans('mail.notes'), $note ?: '');
         }
 
         $message = trans('mail.License_Checkin_Notification');
         $details = [
-            trans('mail.checkedin_from')=> $target->present()->fullName(),
-            trans('mail.license_for') => htmlspecialchars_decode($item->present()->name),
-            trans('mail.License_Checkin_Notification')." by " => $admin->present()->fullName() ?: 'CLI tool',
+            trans('mail.checkedin_from')=> $target->display_name,
+            trans('mail.license_for') => htmlspecialchars_decode($item->display_name),
+            trans('mail.License_Checkin_Notification')." by " => $admin->display_name ?: 'CLI tool',
             trans('admin/consumables/general.remaining') => $item->availCount()->count(),
             trans('mail.notes') => $note ?: '',
         ];
@@ -140,13 +149,13 @@ class CheckinLicenseSeatNotification extends Notification
                 Card::create()
                     ->header(
                         '<strong>'.trans('mail.License_Checkin_Notification').'</strong>' ?: '',
-                        htmlspecialchars_decode($item->present()->name) ?: '',
+                        htmlspecialchars_decode($item->display_name) ?: '',
                     )
                     ->section(
                         Section::create(
                             KeyValue::create(
                                 trans('mail.checkedin_from') ?: '',
-                                $target->present()->fullName() ?:  '',
+                                $target->display_name ?:  '',
                                 trans('admin/consumables/general.remaining').': '.$item->availCount()->count(),
                             )
                                 ->onClick(route('licenses.show', $item->id))

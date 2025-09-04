@@ -45,7 +45,7 @@
                         </div>
                         @if (isset($topSubmit) && ($topSubmit=='true'))
                         <div class="col-md-3 text-right" style="padding-right: 10px;">
-                            <button type="submit" class="btn btn-primary pull-right">
+                            <button type="submit" class="btn btn-primary pull-right" name="submit">
                                 <x-icon type="checkmark" />
                                 {{ trans('general.save') }}
                             </button>

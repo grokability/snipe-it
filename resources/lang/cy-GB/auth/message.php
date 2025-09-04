@@ -6,8 +6,6 @@ return array(
     'account_not_found'      => 'Mae eich enw defnyddiwr neu gyfrinair yn anghywir.',
     'account_not_activated'  => 'Nid yw\'r cyfrif defnyddiwr hwn wedi\'i actifadu.',
     'account_suspended'      => 'Mae\'r cyfrif defnyddiwr hwn wedi\'i atal.',
-    'account_banned'         => 'Mae\'r cyfrif defnyddiwr hwn wedi\'i atal.',
-    'throttle'               => 'Too many failed login attempts. Please try again in :minutes minutes.',
 
     'two_factor' => array(
         'already_enrolled'      => 'Your device is already enrolled.',

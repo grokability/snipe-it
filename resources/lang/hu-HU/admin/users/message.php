@@ -6,7 +6,7 @@ return array(
     'declined'                  => 'Az eszközt sikeresen csökkentetted.',
     'bulk_manager_warn'	        => 'A felhasználók sikeresen frissültek, azonban a kezelői bejegyzést nem mentette el, mert a kiválasztott kezelő a szerkesztőben is szerepel a felhasználók listájában, és a felhasználók nem lehetnek saját kezelőik. Kérjük, ismét válassza ki a felhasználókat, kivéve a kezelőt.',
     'user_exists'               => 'Felhasználó már létezik!',
-    'user_not_found'            => 'User does not exist or you do not have permission view them.',
+    'user_not_found'            => 'A felhasználó nem található, vagy nincs jogosultsága a megtekintéséhez.',
     'user_login_required'       => 'A bejelentkezési mező kötelező',
     'user_has_no_assets_assigned' => 'A felhasználóhoz jelenleg nincs hozzárendelve eszköz.',
     'user_password_required'    => 'A jelszó szükséges.',
@@ -16,7 +16,7 @@ return array(
     'password_resets_sent'      => 'A kiválasztott felhasználók számára, akik aktívak és van nekik érvényes email cím, elküldésre került egy jelszó visszaállítási link.',
     'password_reset_sent'       => 'A jelszó visszaállítási link elküldésre került a :email címre!',
     'user_has_no_email'         => 'Ez a felhasználó nem rendelkezik e-mail címmel a profiljában.',
-    'log_record_not_found'        => 'A matching log record for this user could not be found.',
+    'log_record_not_found'        => 'Nem található illeszkedő naplóbejegyzés ehhez a felhasználóhoz.',
 
 
     'success' => array(
@@ -37,23 +37,23 @@ return array(
         'update' => 'Hiba történt a felhasználó frissítésében. Kérlek próbáld újra.',
         'delete' => 'A felhasználó törölte a problémát. Kérlek próbáld újra.',
         'delete_has_assets' => 'Ez a felhasználó rendelkezik elemekkel, amelyeket nem lehet törölni.',
-        'delete_has_assets_var' => 'This user still has an asset assigned. Please check it in first.|This user still has :count assets assigned. Please check their assets in first.',
-        'delete_has_licenses_var' => 'This user still has a license seats assigned. Please check it in first.|This user still has :count license seats assigned. Please check them in first.',
-        'delete_has_accessories_var' => 'This user still has an accessory assigned. Please check it in first.|This user still has :count accessories assigned. Please check their assets in first.',
-        'delete_has_locations_var' => 'This user still manages a location. Please select another manager first.|This user still manages :count locations. Please select another manager first.',
-        'delete_has_users_var' => 'This user still manages another user. Please select another manager for that user first.|This user still manages :count users. Please select another manager for them first.',
+        'delete_has_assets_var' => 'Ehhez a felhasználóhoz még van egy eszköz hozzárendelve. Kérjük, előbb végezze el annak visszavételét.|Ehhez a felhasználóhoz még van :count eszköz hozzárendelve. Kérjük, előbb végezze el azok visszavételét.',
+        'delete_has_licenses_var' => 'Ehhez a felhasználóhoz még van egy licenchely hozzárendelve. Kérjük, előbb végezze el annak visszavételét.|Ehhez a felhasználóhoz még van :count licenchely hozzárendelve. Kérjük, előbb végezze el azok visszavételét.',
+        'delete_has_accessories_var' => 'Ehhez a felhasználóhoz még van egy tartozék hozzárendelve. Kérjük, előbb végezze el annak visszavételét.|Ehhez a felhasználóhoz még van :count tartozék hozzárendelve. Kérjük, előbb végezze el azok visszavételét.',
+        'delete_has_locations_var' => 'Ez a felhasználó még egy helyszín menedzsere. Kérjük, előbb állítson be másik menedzsert.|Ez a felhasználó még :count helyszín menedzsere. Kérjük, előbb állítson be másik menedzsert.',
+        'delete_has_users_var' => 'Ez a felhasználó még egy másik felhasználó menedzsere. Kérjük, előbb állítson be másik menedzsert számára.|Ez a felhasználó még :count felhasználó menedzsere. Kérjük, előbb állítson be másik menedzsert számukra.',
         'unsuspend' => 'A felhasználó felfüggesztette a problémát. Kérlek próbáld újra.',
         'import'    => 'Hiba történt a felhasználók importálása során. Kérlek próbáld újra.',
         'asset_already_accepted' => 'Ezt az eszközt már elfogadták.',
         'accept_or_decline' => 'El kell fogadnia vagy el kell utasítania ezt az eszközt.',
-        'cannot_delete_yourself' => 'We would feel really bad if you deleted yourself, please reconsider.',
+        'cannot_delete_yourself' => 'Nagyon rosszul éreznénk magunkat, ha törölné önmagát. Kérjük, gondolja át még egyszer.',
         'incorrect_user_accepted' => 'Az általad megpróbált eszköz nem lett kiegyenlítve.',
         'ldap_could_not_connect' => 'Nem sikerült csatlakozni az LDAP kiszolgálóhoz. Ellenőrizze az LDAP kiszolgáló konfigurációját az LDAP konfigurációs fájlban. <br>Az LDAP kiszolgáló hibája:',
         'ldap_could_not_bind' => 'Nem sikerült kötni az LDAP kiszolgálóhoz. Ellenőrizze az LDAP kiszolgáló konfigurációját az LDAP konfigurációs fájlban. <br>Az LDAP kiszolgáló hibája:',
         'ldap_could_not_search' => 'Nem sikerült keresni az LDAP kiszolgálót. Ellenőrizze az LDAP kiszolgáló konfigurációját az LDAP konfigurációs fájlban. <br>Az LDAP kiszolgáló hibája:',
         'ldap_could_not_get_entries' => 'Nem sikerült bejegyzéseket szerezni az LDAP kiszolgálóról. Ellenőrizze az LDAP kiszolgáló konfigurációját az LDAP konfigurációs fájlban. <br>Az LDAP kiszolgáló hibája:',
         'password_ldap' => 'A fiókhoz tartozó jelszót az LDAP / Active Directory kezeli. Kérjük, lépjen kapcsolatba informatikai részlegével a jelszó megváltoztatásához.',
-        'multi_company_items_assigned' => 'This user has items assigned that belong to a different company. Please check them in or edit their company.'
+        'multi_company_items_assigned' => 'Ehhez a felhasználóhoz olyan tételek vannak hozzárendelve, amelyek egy másik céghez tartoznak. Kérjük, előbb végezze el azok visszavételét, vagy módosítsa az cégüket.'
     ),
 
     'deletefile' => array(

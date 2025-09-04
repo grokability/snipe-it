@@ -19,6 +19,8 @@ return [
     'print_assigned'    => 'Печати задолжение',
     'email_assigned'    => 'Испрати Е-пошта со листа од сите доделени',
     'user_notified'     => 'На корисникот му е испрати Е-пошта со листа од сите доделени предмети.',
+    'users_notified'    => 'The user has been emailed a list of their currently assigned items.|:count users have been emailed a list of their currently assigned items.',
+    'users_notified_warning' => ':count user has been emailed a list of their currently assigned items, however :no_email users did not have an email address so could not be emailed.|:count users have been emailed a list of their currently assigned items, however :no_email user(s) did not have an email address so could not be emailed.',
     'auto_assign_label' => 'Вклучете го овој корисник при автоматско доделување подобни лиценци',
     'auto_assign_help'  => 'Прескокнете го овој корисник при доделување лиценци',
     'software_user'     => 'Софтвер задолжен на :name',
@@ -51,4 +53,5 @@ return [
     'next_save_user' => 'Сними корисник',
     'all_assigned_list_generation' => 'Генерирано на:',
     'email_user_creds_on_create' => 'Да му се испрати креденцијалите на корисникот?',
+    'department_manager' => 'Department Manager',
 ];

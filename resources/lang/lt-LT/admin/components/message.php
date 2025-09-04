@@ -17,7 +17,8 @@ return array(
     'delete' => array(
         'confirm'   => 'Ar tikrai norite panaikinti šį komponentą?',
         'error'   => 'Bandant panaikinti komponentą įvyko klaida. Bandykite dar kartą.',
-        'success' => 'Komponentas panaikintas sėkmingai.'
+        'success' => 'Komponentas panaikintas sėkmingai.',
+        'error_qty'   => 'Kai kurie šio tipo komponentai vis dar yra išduoti. Paimkite juos ir bandykite dar kartą.',
     ),
 
      'checkout' => array(

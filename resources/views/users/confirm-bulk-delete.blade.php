@@ -76,7 +76,7 @@
 
                     <td>
                       <span {!! (Auth::user()->id==$user->id ? ' style="text-decoration: line-through"' : '') !!}>
-                        {{ $user->present()->fullName() }} ({{ $user->username }})
+                        {{ $user->display_name }} ({{ $user->username }})
                       </span>
                       {{ (Auth::id()==$user->id ? ' (cannot delete yourself)' : '') }}
                     </td>
@@ -109,7 +109,15 @@
 
                   <tr>
                     <td colspan="8">
-                      {{ Form::select('status_id', $statuslabel_list , old('status_id'), array('class'=>'select2', 'style'=>'width:250px', 'required' => true)) }}
+                      <x-input.select
+                          name="status_id"
+                          id="status_id"
+                          :options="$statuslabel_list"
+                          :selected="old('status_id')"
+                          required
+                          style="width:250px"
+                          aria-label="status_id"
+                      />
                       <label>{{ trans('admin/users/general.update_user_assets_status') }}</label>
                     </td>
                   </tr>

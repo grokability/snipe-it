@@ -17,7 +17,8 @@ return array(
     'delete' => array(
         'confirm'   => '이 부품을 삭제하시겠습니까?',
         'error'   => '부품 삭제시 문제가 발생했습니다. 다시 시도해 주세요.',
-        'success' => '부품이 삭제되었습니다.'
+        'success' => '부품이 삭제되었습니다.',
+        'error_qty'   => 'Some components of this type are still checked out. Please check them in and try again.',
     ),
 
      'checkout' => array(

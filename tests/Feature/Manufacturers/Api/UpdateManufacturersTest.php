@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Manufacturers\Ui;
+namespace Tests\Feature\Manufacturers\Api;
 
 use App\Models\Manufacturer;
 use App\Models\Category;

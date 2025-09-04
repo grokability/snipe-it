@@ -34,7 +34,7 @@
       <label for="locale">
         {{ trans('admin/settings/general.default_language') }}
       </label>
-      {!! Form::locales('locale', old('locale', "en-US"), 'select2') !!}
+      <x-input.locale-select name="locale" :selected="old('locale', 'en-US')" />
       {!! $errors->first('locale', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
     </div>
 
@@ -98,7 +98,7 @@
 
       <!-- email format  -->
       <div class="form-group col-lg-6 {{ $errors->has('email_format') ? 'error' : '' }}">
-        <label for="email_format">{{ trans('general.email_format') }}</label>
+        <label for="email_format">{{ trans('admin/settings/general.email_formats.email_format') }}</label>
         {!! Form::username_format('email_format', old('email_format', 'filastname'), 'select2') !!}
         {!! $errors->first('email_format', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
       </div>

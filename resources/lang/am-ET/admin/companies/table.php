@@ -7,5 +7,5 @@ return array(
     'phone'     => 'Company Phone',
     'update'    => 'Update Company',
     'name'      => 'Company Name',
-    'id'        => 'ID',
+    'id'        => 'መለያ',
 );

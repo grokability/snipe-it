@@ -19,6 +19,8 @@ return [
     'print_assigned'    => 'Imprimir todos los asignados',
     'email_assigned'    => 'Enviar correo con todos los asignados',
     'user_notified'     => 'Se ha enviado al usuario un correo electrónico con lista de los elementos que tiene asignados actualmente.',
+    'users_notified'    => 'El usuario ha recibido un correo electrónico con una lista de sus artículos asignados actualmente.|:count usuarios han recibido una lista de los artículos asignados actualmente.',
+    'users_notified_warning' => ':count usuario ha sido enviado por correo electrónico una lista de sus elementos asignados actualmente, Sin embargo, los usuarios de :no_email no tenían una dirección de correo electrónico, por lo que no se pudo enviar por correo electrónico. :count usuarios han sido enviados por correo electrónico a una lista de sus elementos actualmente asignados, Sin embargo, el usuario de :no_email no tenía una dirección de correo electrónico, por lo que no se pudo enviar por correo electrónico.',
     'auto_assign_label' => 'Incluye a este usuario al asignar automáticamente licencias elegibles',
     'auto_assign_help'  => 'Omitir este usuario en la asignación automática de licencias',
     'software_user'     => 'Software asignado a :name',
@@ -51,4 +53,5 @@ return [
     'next_save_user' => 'Siguiente: Guardar usuario',
     'all_assigned_list_generation' => 'Generado el:',
     'email_user_creds_on_create' => '¿Enviar las credenciales por correo electrónico a este usuario?',
+    'department_manager' => 'Department Manager',
 ];

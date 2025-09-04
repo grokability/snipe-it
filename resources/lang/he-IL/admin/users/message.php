@@ -46,7 +46,7 @@ return array(
         'import'    => 'היתה בעיה בייבוא ​​משתמשים. בבקשה נסה שוב.',
         'asset_already_accepted' => 'הנכס כבר התקבל.',
         'accept_or_decline' => 'עליך לקבל או לדחות את הנכס.',
-        'cannot_delete_yourself' => 'We would feel really bad if you deleted yourself, please reconsider.',
+        'cannot_delete_yourself' => 'אנחנו נרגיש רע מאוד אם תמחק את עצמך, בבקשה שקול זאת מחדש.',
         'incorrect_user_accepted' => 'הנכס שניסית לקבל לא נבדק לך.',
         'ldap_could_not_connect' => 'לא ניתן להתחבר לשרת LDAP. בדוק את תצורת שרת LDAP בקובץ תצורת LDAP. <br> שגיאה משרת LDAP:',
         'ldap_could_not_bind' => 'לא ניתן היה להתחבר לשרת LDAP. בדוק את תצורת שרת LDAP בקובץ תצורת LDAP. <br> שגיאה משרת LDAP:',
@@ -69,7 +69,7 @@ return array(
     ),
 
     'inventorynotification' => array(
-        'error'   => 'This user has no email set.',
-        'success' => 'The user has been notified about their current inventory.'
+        'error'   => 'דוא"ל אינו מוגדר עבור משתמש זה.',
+        'success' => 'המשתמש עודכן בדבר הפריטים הרשומים עליו.'
     )
 );

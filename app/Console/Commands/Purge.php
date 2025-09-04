@@ -62,19 +62,19 @@ class Purge extends Command
             $assetcount = $assets->count();
             $this->info($assets->count().' assets purged.');
             $asset_assoc = 0;
-            $asset_maintenances = 0;
+            $maintenances = 0;
 
             foreach ($assets as $asset) {
-                $this->info('- Asset "'.$asset->present()->name().'" deleted.');
+                $this->info('- Asset "'.$asset->display_name.'" deleted.');
                 $asset_assoc += $asset->assetlog()->count();
                 $asset->assetlog()->forceDelete();
-                $asset_maintenances += $asset->assetmaintenances()->count();
-                $asset->assetmaintenances()->forceDelete();
+                $maintenances += $asset->maintenances()->count();
+                $asset->maintenances()->forceDelete();
                 $asset->forceDelete();
             }
 
             $this->info($asset_assoc.' corresponding log records purged.');
-            $this->info($asset_maintenances.' corresponding maintenance records purged.');
+            $this->info($maintenances.' corresponding maintenance records purged.');
 
             $locations = Location::whereNotNull('deleted_at')->withTrashed()->get();
             $this->info($locations->count().' locations purged.');

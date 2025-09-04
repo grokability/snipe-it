@@ -1,16 +1,16 @@
 <?php
 
 return [
-    'about_templates' => 'About Saved Templates',
-    'saving_templates_description' => 'Select your options, then enter the name of your template in the box above and click the \'Save Template\' button. Use the dropdown to select a previously saved template.',
+    'about_templates' => 'O uložených šablonách',
+    'saving_templates_description' => 'Vyberte své možnosti, poté zadejte název šablony do pole výše a klikněte na tlačítko „Uložit šablonu“. Pomocí rozbalovací nabídky můžete vybrat dříve uloženou šablonu.',
     'create'  => [
-        'success' => 'Template saved successfully',
+        'success' => 'Šablona úspěšně uložena',
     ],
     'update' => [
-        'success' => 'Template updated successfully',
+        'success' => 'Šablona úspěšně akualizována',
     ],
     'delete' => [
-        'success' => 'Template deleted',
-        'no_delete_permission' => 'Template does not exist or you do not have permission to delete it.',
+        'success' => 'Šablona byla smazána',
+        'no_delete_permission' => 'Šablona neexistuje nebo nemáte oprávnění k jejímu odstranění.',
     ],
 ];

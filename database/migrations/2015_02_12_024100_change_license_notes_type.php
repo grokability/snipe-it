@@ -14,7 +14,7 @@ class ChangeLicenseNotesType extends Migration
     {
         //
         Schema::table('licenses', function ($table) {
-            $table->text('notes')->change();
+            $table->text('notes')->nullable()->change();
         });
     }
 

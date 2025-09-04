@@ -53,4 +53,26 @@ class DeleteCompaniesTest extends TestCase implements TestsPermissionsRequiremen
 
         $this->assertDatabaseMissing('companies', ['id' => $company->id]);
     }
+
+    public function testAdheresToFullMultipleCompaniesSupportScoping()
+    {
+
+        $this->settings->enableMultipleFullCompanySupport();
+
+        [$companyA, $companyB] = Company::factory()->count(2)->create();
+
+        $superUser = $companyA->users()->save(User::factory()->superuser()->make());
+        $userInCompanyA = $companyA->users()->save(User::factory()->deleteCompanies()->create());
+
+        $this->actingAsForApi($userInCompanyA)
+            ->deleteJson(route('api.companies.destroy', $companyB))
+            ->assertStatus(200)
+            ->assertStatusMessageIs('error');
+
+        $this->actingAsForApi($superUser)
+            ->deleteJson(route('api.companies.destroy', $companyB))
+            ->assertStatus(200)
+            ->assertStatusMessageIs('success');
+
+    }
 }

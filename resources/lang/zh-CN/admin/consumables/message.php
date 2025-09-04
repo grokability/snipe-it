@@ -25,12 +25,12 @@ return array(
         'error'   		=> '耗材领取失败，请重试',
         'success' 		=> '耗材领取成功',
         'user_does_not_exist' => '无效用户，请重试。',
-         'unavailable'      => '没有足够的耗材可被借出。请检查剩余数量。 ',
+         'unavailable'      => '没有足够的耗材可被签出。请检查剩余数量。 ',
     ),
 
     'checkin' => array(
-        'error'   		=> '耗材登记失败，请重试',
-        'success' 		=> '耗材登记成功',
+        'error'   		=> '耗材归还失败，请重试',
+        'success' 		=> '耗材归还成功。',
         'user_does_not_exist' => '无效用户，请重试。'
     )
 

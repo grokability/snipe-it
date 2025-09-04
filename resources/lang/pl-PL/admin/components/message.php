@@ -17,7 +17,8 @@ return array(
     'delete' => array(
         'confirm'   => 'Czy na pewno chcesz usunąć ten składnik?',
         'error'   => 'Wystąpił problem podczas usuwania składnika. Spróbuj ponownie.',
-        'success' => 'Składnik został usunięty pomyślnie.'
+        'success' => 'Składnik został usunięty pomyślnie.',
+        'error_qty'   => 'Some components of this type are still checked out. Please check them in and try again.',
     ),
 
      'checkout' => array(

@@ -6,7 +6,7 @@
       "it asset"
     ],
     "website": "https://snipeitapp.com/",
-    "repository": "https://github.com/snipe/snipe-it",
+    "repository": "https://github.com/grokability/snipe-it",
     "logo": "https://pbs.twimg.com/profile_images/976748875733020672/K-HnZCCK_400x400.jpg",
     "success_url": "/setup",
     "env": {

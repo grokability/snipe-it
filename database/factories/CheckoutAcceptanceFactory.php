@@ -27,6 +27,10 @@ class CheckoutAcceptanceFactory extends Factory
     public function configure(): static
     {
         return $this->afterCreating(function (CheckoutAcceptance $acceptance) {
+            if ($acceptance->checkoutable instanceof Asset) {
+                $this->createdAssociatedActionLogEntry($acceptance);
+            }
+
             if ($acceptance->checkoutable instanceof Asset && $acceptance->assignedTo instanceof User) {
                 $acceptance->checkoutable->update([
                     'assigned_to' => $acceptance->assigned_to_id,
@@ -49,6 +53,43 @@ class CheckoutAcceptanceFactory extends Factory
         return $this->state([
             'accepted_at' => null,
             'declined_at' => null,
+        ]);
+    }
+
+    public function accepted()
+    {
+        return $this->state([
+            'accepted_at' => now()->subDay(),
+            'declined_at' => null,
+        ]);
+    }
+
+    public function withoutAlerting()
+    {
+        return $this->state(function () {
+            return [
+                'alert_on_response_id' => null,
+            ];
+        });
+    }
+
+    public function withAlertingTo(User $user)
+    {
+        return $this->state(function () use ($user) {
+            return [
+                'alert_on_response_id' => $user->id,
+            ];
+        });
+    }
+
+    private function createdAssociatedActionLogEntry(CheckoutAcceptance $acceptance): void
+    {
+        $acceptance->checkoutable->assetlog()->create([
+            'action_type' => 'checkout',
+            'target_id' => $acceptance->assigned_to_id,
+            'target_type' => get_class($acceptance->assignedTo),
+            'item_id' => $acceptance->checkoutable_id,
+            'item_type' => $acceptance->checkoutable_type,
         ]);
     }
 }

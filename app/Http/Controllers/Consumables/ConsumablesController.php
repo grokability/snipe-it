@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ImageUploadRequest;
 use App\Models\Company;
 use App\Models\Consumable;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\RedirectResponse;
 use \Illuminate\Contracts\View\View;
@@ -81,16 +81,33 @@ class ConsumablesController extends Controller
         $consumable->purchase_date          = $request->input('purchase_date');
         $consumable->purchase_cost          = $request->input('purchase_cost');
         $consumable->qty                    = $request->input('qty');
-        $consumable->created_by                = auth()->id();
+        $consumable->created_by             = auth()->id();
         $consumable->notes                  = $request->input('notes');
 
 
-        $consumable = $request->handleImages($consumable);
+        if ($request->has('use_cloned_image')) {
+            $cloned_model_img = Consumable::select('image')->find($request->input('clone_image_from_id'));
+            if ($cloned_model_img) {
+                $new_image_name = 'clone-'.date('U').'-'.$cloned_model_img->image;
+                $new_image = 'consumables/'.$new_image_name;
+                Storage::disk('public')->copy('consumables/'.$cloned_model_img->image, $new_image);
+                $consumable->image = $new_image_name;
+            }
 
-        session()->put(['redirect_option' => $request->get('redirect_option')]);
+        } else {
+            $consumable = $request->handleImages($consumable);
+        }
+
+        if($request->get('redirect_option') === 'back'){
+            session()->put(['redirect_option' => 'index']);
+        } else {
+            session()->put(['redirect_option' => $request->get('redirect_option')]);
+        }
+
 
         if ($consumable->save()) {
-            return redirect()->to(Helper::getRedirectOption($request, $consumable->id, 'Consumables'))->with('success', trans('admin/consumables/message.create.success'));
+            return Helper::getRedirectOption($request, $consumable->id, 'Consumables')
+                ->with('success', trans('admin/consumables/message.create.success'));
         }
 
         return redirect()->back()->withInput()->withErrors($consumable->getErrors());
@@ -104,15 +121,14 @@ class ConsumablesController extends Controller
      * @see ConsumablesController::postEdit() method that stores the form data.
      * @since [v1.0]
      */
-    public function edit($consumableId = null) : View | RedirectResponse
+    public function edit(Consumable $consumable) : View | RedirectResponse
     {
-        if ($item = Consumable::find($consumableId)) {
-            $this->authorize($item);
+            $this->authorize($consumable);
+            session()->put('back_url', url()->previous());
+            return view('consumables/edit')
+                ->with('item', $consumable)
+                ->with('category_type', 'consumable');
 
-            return view('consumables/edit', compact('item'))->with('category_type', 'consumable');
-        }
-
-        return redirect()->route('consumables.index')->with('error', trans('admin/consumables/message.does_not_exist'));
     }
 
     /**
@@ -126,11 +142,8 @@ class ConsumablesController extends Controller
      * @see ConsumablesController::getEdit() method that stores the form data.
      * @since [v1.0]
      */
-    public function update(StoreConsumableRequest $request, $consumableId = null)
+    public function update(StoreConsumableRequest $request, Consumable $consumable)
     {
-        if (is_null($consumable = Consumable::find($consumableId))) {
-            return redirect()->route('consumables.index')->with('error', trans('admin/consumables/message.does_not_exist'));
-        }
 
         $min = $consumable->numCheckedOut();
         $validator = Validator::make($request->all(), [
@@ -165,7 +178,8 @@ class ConsumablesController extends Controller
         session()->put(['redirect_option' => $request->get('redirect_option')]);
 
         if ($consumable->save()) {
-            return redirect()->to(Helper::getRedirectOption($request, $consumable->id, 'Consumables'))->with('success', trans('admin/consumables/message.update.success'));
+            return Helper::getRedirectOption($request, $consumable->id, 'Consumables')
+                ->with('success', trans('admin/consumables/message.update.success'));
         }
 
         return redirect()->back()->withInput()->withErrors($consumable->getErrors());
@@ -202,16 +216,11 @@ class ConsumablesController extends Controller
      * @return \Illuminate\Contracts\View\View
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function show($consumableId = null)
+    public function show(Consumable $consumable)
     {
-        $consumable = Consumable::withCount('users as users_consumables')->find($consumableId);
+        $consumable = Consumable::withCount('users as users_consumables')->find($consumable->id);
         $this->authorize($consumable);
-        if (isset($consumable->id)) {
-            return view('consumables/view', compact('consumable'));
-        }
-
-        return redirect()->route('consumables.index')
-            ->with('error', trans('admin/consumables/message.does_not_exist'));
+        return view('consumables/view', compact('consumable'));
     }
 
     public function clone(Consumable $consumable) : View
@@ -220,9 +229,10 @@ class ConsumablesController extends Controller
         $consumable_to_close = $consumable;
         $consumable = clone $consumable_to_close;
         $consumable->id = null;
-        $consumable->image = null;
         $consumable->created_by = null;
 
-        return view('consumables/edit')->with('item', $consumable);
+        return view('consumables/edit')
+            ->with('cloned_model', $consumable_to_close)
+            ->with('item', $consumable);
     }
 }

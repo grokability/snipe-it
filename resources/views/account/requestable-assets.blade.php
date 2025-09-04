@@ -32,14 +32,14 @@
                 @if ($assets->count() > 0)
                 <li class="active">
                     <a href="#assets" data-toggle="tab" title="{{ trans('general.assets') }}">{{ trans('general.assets') }}
-                        <badge class="badge badge-secondary"> {{ $assets->count()}}</badge>
+                        <span class="badge badge-secondary"> {{ $assets->count()}}</span>
                     </a>               
                 </li>
                 @endif
                 @if ($models->count() > 0)
                 <li>
                     <a href="#models" data-toggle="tab" title="{{ trans('general.asset_models') }}">{{ trans('general.asset_models') }}
-                        <badge class="badge badge-secondary"> {{ $models->count()}}</badge>
+                        <span class="badge badge-secondary"> {{ $models->count()}}</span>
                     </a>                   
                 </li>
                 @endif
@@ -51,16 +51,11 @@
                         <div class="col-md-12">
                                 <div class="table-responsive">
                                     <table
-                                        data-click-to-select="true"
                                         data-cookie-id-table="requestableAssetsListingTable"
-                                        data-pagination="true"
                                         data-id-table="requestableAssetsListingTable"
-                                        data-search="true"
                                         data-side-pagination="server"
-                                        data-show-columns="true"
                                         data-show-export="false"
                                         data-show-footer="false"
-                                        data-show-refresh="true"
                                         data-sort-order="asc"
                                         data-sort-name="name"
                                         data-toolbar="#assetsBulkEditToolbar"
@@ -106,7 +101,6 @@
                                         data-toolbar="#toolbar"
                                         class="table table-striped snipe-table"
                                         id="table"
-                                        data-advanced-search="true"
                                         data-id-table="advancedTable"
                                         data-cookie-id-table="requestableAssets">
                                 <thead>
@@ -125,9 +119,9 @@
 
                                                 <td>
 
-                                                    @if ($requestableModel->image)
-                                                        <a href="{{ config('app.url') }}/uploads/models/{{ $requestableModel->image }}" data-toggle="lightbox" data-type="image">
-                                                            <img src="{{ config('app.url') }}/uploads/models/{{ $requestableModel->image }}" style="max-height: {{ $snipeSettings->thumbnail_max_h }}px; width: auto;" class="img-responsive">
+                                                    @if (($requestableModel->image) && ($requestableModel->getImageUrl()))
+                                                        <a href="{{ $requestableModel->getImageUrl() }}" data-toggle="lightbox" data-type="image">
+                                                            <img src="{{ $requestableModel->getImageUrl() }}" style="max-height: {{ $snipeSettings->thumbnail_max_h }}px; width: auto;" class="img-responsive">
                                                         </a>
                                                     @endif
 

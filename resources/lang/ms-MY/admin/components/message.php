@@ -17,7 +17,8 @@ return array(
     'delete' => array(
         'confirm'   => 'Adakah anda pasti ingin memadamkan komponen ini?',
         'error'   => 'Terdapat isu memadamkan komponen. Sila cuba lagi.',
-        'success' => 'Komponen telah berjaya dipadam.'
+        'success' => 'Komponen telah berjaya dipadam.',
+        'error_qty'   => 'Some components of this type are still checked out. Please check them in and try again.',
     ),
 
      'checkout' => array(

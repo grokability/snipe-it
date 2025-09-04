@@ -11,7 +11,7 @@ class ShowCompanyTest extends TestCase
     public function testPageRenders()
     {
         $this->actingAs(User::factory()->superuser()->create())
-            ->get(route('companies.show', Company::factory()->create()->id))
+            ->get(route('companies.show', Company::factory()->create()))
             ->assertOk();
     }
 }

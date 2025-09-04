@@ -25,7 +25,7 @@ class AccessoryCheckoutTest extends TestCase
     public function testPageRenders()
     {
         $this->actingAs(User::factory()->superuser()->create())
-            ->get(route('accessories.checkout.show', Accessory::factory()->create()->id))
+            ->get(route('accessories.checkout.show', Accessory::factory()->create()))
             ->assertOk();
     }
 
@@ -83,6 +83,7 @@ class AccessoryCheckoutTest extends TestCase
             'item_type' => Accessory::class,
             'note' => 'oh hi there',
         ]);
+        $this->assertHasTheseActionLogs($accessory, ['create', 'checkout']);
     }
 
     public function testAccessoryCanBeCheckedOutWithQuantity()
@@ -109,6 +110,7 @@ class AccessoryCheckoutTest extends TestCase
             'item_type' => Accessory::class,
             'note' => 'oh hi there',
         ]);
+        $this->assertHasTheseActionLogs($accessory, ['create', 'checkout']);
     }
 
     public function testAccessoryCanBeCheckedOutToLocationWithQuantity()
@@ -135,6 +137,7 @@ class AccessoryCheckoutTest extends TestCase
             'item_type' => Accessory::class,
             'note' => 'oh hi there',
         ]);
+        $this->assertHasTheseActionLogs($accessory, ['create', 'checkout']);
     }
 
     public function testAccessoryCanBeCheckedOutToAssetWithQuantity()
@@ -161,6 +164,7 @@ class AccessoryCheckoutTest extends TestCase
             'item_type' => Accessory::class,
             'note' => 'oh hi there',
         ]);
+        $this->assertHasTheseActionLogs($accessory, ['create', 'checkout']);
     }
 
     public function testUserSentNotificationUponCheckout()
@@ -209,6 +213,7 @@ class AccessoryCheckoutTest extends TestCase
             ])->count(),
             'Log entry either does not exist or there are more than expected'
         );
+        $this->assertHasTheseActionLogs($accessory, ['create', 'checkout']);
     }
 
     public function testAccessoryCheckoutPagePostIsRedirectedIfRedirectSelectionIsIndex()
@@ -241,7 +246,7 @@ class AccessoryCheckoutTest extends TestCase
             ])
             ->assertStatus(302)
             ->assertSessionHasNoErrors()
-            ->assertRedirect(route('accessories.show', ['accessory' => $accessory->id]));
+            ->assertRedirect(route('accessories.show', $accessory));
     }
 
     public function testAccessoryCheckoutPagePostIsRedirectedIfRedirectSelectionIsTarget()
@@ -258,6 +263,6 @@ class AccessoryCheckoutTest extends TestCase
                 'assigned_qty' => 1,
             ])
             ->assertStatus(302)
-            ->assertRedirect(route('users.show', ['user' => $user]));
+            ->assertRedirect(route('users.show', $user));
     }
 }

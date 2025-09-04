@@ -19,6 +19,8 @@ return [
     'print_assigned'    => 'Alles Zugewiesene drucken',
     'email_assigned'    => 'E-Mail-Liste aller Zugewiesenen',
     'user_notified'     => 'Der Benutzer hat eine Liste seiner aktuell zugewiesenen Artikel per E-Mail erhalten.',
+    'users_notified'    => 'Dem Benutzer wurde eine Liste der aktuell zugewiesenen Artikel per E-Mail gesendet.|:count Benutzer wurden per E-Mail die Liste ihrer aktuell zugewiesenen Artikel gesendet.',
+    'users_notified_warning' => ':count Benutzer hat eine Liste der aktuell zugewiesenen Gegenstände per E-Mail erhalten, jedoch hatten :no_email Benutzer keine E-Mail-Adresse, so dass sie nicht per E-Mail empfangen werden konnten. :count Benutzer haben eine Liste der aktuell zugewiesenen Elemente per E-Mail erhalten, jedoch hatten :no_email Benutzer keine E-Mail-Adresse, so dass sie nicht per E-Mail empfangen werden konnten.',
     'auto_assign_label' => 'Diesen Benutzer bei der automatischen Zuweisung berechtigter Lizenzen einbeziehen',
     'auto_assign_help'  => 'Diesen Benutzer bei der automatischen Zuweisung von Lizenzen überspringen',
     'software_user'     => 'Software herausgegeben an :name',
@@ -51,4 +53,5 @@ return [
     'next_save_user' => 'Weiter: Benutzer speichern',
     'all_assigned_list_generation' => 'Generiert am:',
     'email_user_creds_on_create' => 'Diesem Benutzer seine Zugangsdaten per E-Mail senden?',
+    'department_manager' => 'Abteilungsleiter',
 ];

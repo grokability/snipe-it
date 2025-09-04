@@ -17,7 +17,8 @@ return array(
     'delete' => array(
         'confirm'   => 'Tem a certeza que deseja excluir este componente?',
         'error'   => 'Existe um problema ao excluir o componente. Por favor tente de novo.',
-        'success' => 'O componente foi excluído com sucesso.'
+        'success' => 'O componente foi excluído com sucesso.',
+        'error_qty'   => 'Alguns componentes deste tipo ainda estão registrados. Por favor, verifique-os e tente novamente.',
     ),
 
      'checkout' => array(

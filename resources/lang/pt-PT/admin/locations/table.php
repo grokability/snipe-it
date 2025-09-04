@@ -39,4 +39,5 @@ return [
     'signed_by_finance_auditor' => 'Assinado por (Auditor Financeiro):',
     'signed_by_location_manager' => 'Assinado por (Gestor de Localização):',
     'signed_by'                 => 'Assinado por:',
+    'clone'  					=> 'Clone Location',
 ];

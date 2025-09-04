@@ -11,4 +11,8 @@ return [
     'update'  					            => 'Cusbooneysii Qiima dhaca',
     'depreciation_min'                      => 'Qiimaha Ugu Yar Kadib Qiima Dhaca',
     'no_depreciations_warning'               => '<xooggan> Digniin: </strong> Hadda ma haysatid wax qiimo dhimis ah oo la dejiyay. Fadlan samee ugu yaraan hal qiimo dhimis si aad u aragto warbixinta qiimo dhimista.',
+    'depreciation_method'                   => 'Warbixinta Qiima dhaca',
+    'linear_depreciation'                   => 'Linear (Default)',
+    'half_1'                                => 'Half-year convention, always applied',
+    'half_2'                                => 'Half-year convention, applied with condition',
 ];

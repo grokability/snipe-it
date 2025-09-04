@@ -13,4 +13,8 @@ return [
     'no_depreciations_warning'               => '<strong>Varning: </strong>
                       Du har för närvarande inte några värdeminskningar uppsatta.
                       Vänligen ställ in minst en värdeminskning för att se värdeminskningsrapporten.',
+    'depreciation_method'                   => 'Värdeminskningsrapport',
+    'linear_depreciation'                   => 'Linear (Default)',
+    'half_1'                                => 'Half-year convention, always applied',
+    'half_2'                                => 'Half-year convention, applied with condition',
 ];

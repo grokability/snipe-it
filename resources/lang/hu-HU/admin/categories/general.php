@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Eszköz kategóriák',
     'category_name'  					=> 'Kategória név',
     'checkin_email'                     => 'E-mail küldése a felhasználónak, eszköz kiadás / visszavétel esetén.',
+    'email_to_initiator'                => 'E-mail küldése Önnek, amikor a felhasználó elfogad vagy elutasít egy kiadást.',
     'checkin_email_notification'        => 'Ez a felhasználó e-mailben lesz értesítve eszköz kiadás / visszavétel esetén.',
     'clone'                             => 'Kategória klónozása',
     'create'  							=> 'Kategória létrehozása',
@@ -21,5 +22,9 @@ return array(
     'use_default_eula'					=> 'Használja inkább az <a href="#" data-toggle="modal" data-target="#eulaModal">alapértelmezett EULA</a>-t.',
     'use_default_eula_disabled'			=> '<del>Használja inkább az alapértelmezett EULA-t.</del> Nincs alapértelmezett EULA beállítva. Kérem adjon hozzá egyet a Beállításokban.',
     'use_default_eula_column'			=> 'Alapértelmezett végfelhasználói engedély használata',
+    'import_require_acceptance'         => 'Elfogadás kötelező',
+    'import_checkin_email'              => 'E-mail küldése visszavételkor',
+    'import_eula_text'                  => 'EULA szövege',
+    'import_category_type'              => 'Kategóriatípus',
 
 );

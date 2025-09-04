@@ -6,8 +6,6 @@ return array(
     'account_not_found'      => 'Nama pengguna atau sandi tidak benar.',
     'account_not_activated'  => 'Akun pengguna ini belum ter-aktivasi.',
     'account_suspended'      => 'Akun pengguna ini di tangguhkan.',
-    'account_banned'         => 'Akun pengguna ini dilarang.',
-    'throttle'               => 'Terlalu banyak upaya login yang gagal. Silakan coba lagi dalam :minutes menit.',
 
     'two_factor' => array(
         'already_enrolled'      => 'Perangkat Anda sudah terdaftar.',

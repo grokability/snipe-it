@@ -4,10 +4,8 @@ namespace App\Http\Controllers\Kits;
 
 use App\Http\Controllers\CheckInOutRequest;
 use App\Http\Controllers\Controller;
-use App\Models\PredefinedKit;
 use App\Models\Asset;
-use App\Models\PredefinedLicence;
-use App\Models\PredefinedModel;
+use App\Models\PredefinedKit;
 use App\Models\User;
 use App\Services\PredefinedKitCheckoutService;
 use Illuminate\Http\Request;
@@ -35,12 +33,9 @@ class CheckoutKitController extends Controller
      * @author [D. Minaev.] [<dmitriy.minaev.v@gmail.com>]
      * @return \Illuminate\Contracts\View\View View to checkout
      */
-    public function showCheckout($kit_id)
+    public function showCheckout(PredefinedKit $kit)
     {
         $this->authorize('checkout', Asset::class);
-
-        $kit = PredefinedKit::findOrFail($kit_id);
-
         return view('kits/checkout')->with('kit', $kit);
     }
 

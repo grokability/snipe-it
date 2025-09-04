@@ -6,8 +6,6 @@ return array(
     'account_not_found'      => 'பயனர் பெயர் அல்லது கடவுச்சொல் தவறானது.',
     'account_not_activated'  => 'இந்த பயனர் கணக்கு செயல்படுத்தப்படவில்லை.',
     'account_suspended'      => 'இந்த பயனர் கணக்கு இடைநீக்கம் செய்யப்பட்டுள்ளது.',
-    'account_banned'         => 'இந்த பயனர் கணக்கு தடைசெய்யப்பட்டுள்ளது.',
-    'throttle'               => 'Too many failed login attempts. Please try again in :minutes minutes.',
 
     'two_factor' => array(
         'already_enrolled'      => 'Your device is already enrolled.',

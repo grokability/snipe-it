@@ -12,23 +12,59 @@ class _5267_A extends _5267
     private const FIELD_SIZE     =   0.150;
     private const FIELD_MARGIN   =   0.012;
 
-    public function getUnit() { return 'in'; }
+    public function getUnit()
+    {
+        return 'in'; 
+    }
 
-    public function getLabelMarginTop()    { return 0.02; }
-    public function getLabelMarginBottom() { return 0.00; }
-    public function getLabelMarginLeft()   { return 0.04; }
-    public function getLabelMarginRight()  { return 0.04; }
+    public function getLabelMarginTop()
+    {
+        return 0.02; 
+    }
+    public function getLabelMarginBottom()
+    {
+        return 0.00; 
+    }
+    public function getLabelMarginLeft()
+    {
+        return 0.04; 
+    }
+    public function getLabelMarginRight()
+    {
+        return 0.04; 
+    }
 
-    public function getSupportAssetTag()  { return false; }
-    public function getSupport1DBarcode() { return true; }
-    public function getSupport2DBarcode() { return false; }
-    public function getSupportFields()    { return 1; }
-    public function getSupportLogo()      { return false; }
-    public function getSupportTitle()     { return true; }
+    public function getSupportAssetTag()
+    {
+        return false; 
+    }
+    public function getSupport1DBarcode()
+    {
+        return true; 
+    }
+    public function getSupport2DBarcode()
+    {
+        return false; 
+    }
+    public function getSupportFields()
+    {
+        return 1; 
+    }
+    public function getSupportLogo()
+    {
+        return false; 
+    }
+    public function getSupportTitle()
+    {
+        return true; 
+    }
 
-    public function preparePDF($pdf) {}
+    public function preparePDF($pdf)
+    {
+    }
 
-    public function write($pdf, $record) {
+    public function write($pdf, $record)
+    {
         $pa = $this->getLabelPrintableArea();
 
         if ($record->has('barcode1d')) {

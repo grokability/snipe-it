@@ -4,6 +4,7 @@ return [
     'info'   => 'Pasirinkite tai, ką norite matyti savo turto ataskaitoje.',
     'deleted_user' => 'Panaikintas naudotojas',
     'send_reminder' => 'Siųsti priminimą',
+    'cannot_send_reminder' => 'Naudotojas buvo panaikintas arba neturi el. pašto adreso, todėl negali gauti priminimo',
     'reminder_sent' => 'Priminimas išsiųstas',
     'acceptance_deleted' => 'Sutikimo užklausa panaikinta',
     'acceptance_request' => 'Sutikimo užklausa',

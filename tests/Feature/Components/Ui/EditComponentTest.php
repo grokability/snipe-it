@@ -11,7 +11,7 @@ class EditComponentTest extends TestCase
     public function testPageRenders()
     {
         $this->actingAs(User::factory()->superuser()->create())
-            ->get(route('components.edit', Component::factory()->create()->id))
+            ->get(route('components.edit', Component::factory()->create()))
             ->assertOk();
     }
 }

@@ -14,6 +14,7 @@ use App\Http\Requests\StoreLabelSettings;
 use App\Http\Requests\StoreSecuritySettings;
 use App\Models\CustomField;
 use App\Models\Group;
+use App\Models\Labels\Label as LabelModel;
 use App\Models\Setting;
 use App\Models\Asset;
 use App\Models\User;
@@ -256,7 +257,7 @@ class SettingsController extends Controller
         Artisan::call('migrate', ['--force' => true]);
         if ((! file_exists(storage_path().'/oauth-private.key')) || (! file_exists(storage_path().'/oauth-public.key'))) {
             Artisan::call('migrate', ['--path' => 'vendor/laravel/passport/database/migrations', '--force' => true]);
-            Artisan::call('passport:install');
+            Artisan::call('passport:install', ['--no-interaction' => true]);
         }
 
         return view('setup/migrate')
@@ -290,7 +291,6 @@ class SettingsController extends Controller
     public function getSettings() : View
     {
         $setting = Setting::getSettings();
-
         return view('settings/general', compact('setting'));
     }
 
@@ -314,7 +314,23 @@ class SettingsController extends Controller
             $setting->modellist_displays = implode(',', $request->input('show_in_model_list'));
         }
 
+        $old_locations_fmcs = $setting->scope_locations_fmcs;
         $setting->full_multiple_companies_support = $request->input('full_multiple_companies_support', '0');
+        $setting->scope_locations_fmcs = $request->input('scope_locations_fmcs', '0');
+
+        // Backward compatibility for locations makes no sense without FullMultipleCompanySupport
+        if (!$setting->full_multiple_companies_support) {
+            $setting->scope_locations_fmcs = '0';
+        }
+
+        // check for inconsistencies when activating scoped locations
+        if ($old_locations_fmcs == '0' && $setting->scope_locations_fmcs == '1') {
+            $mismatched = Helper::test_locations_fmcs(false);
+            if (count($mismatched) != 0) {
+                return redirect()->back()->withInput()->with('error', trans_choice('admin/settings/message.location_scoping.mismatch', count($mismatched)).' '.trans('admin/settings/message.location_scoping.not_saved'));
+            }
+        }
+
         $setting->unique_serial = $request->input('unique_serial', '0');
         $setting->shortcuts_enabled = $request->input('shortcuts_enabled', '0');
         $setting->show_images_in_email = $request->input('show_images_in_email', '0');
@@ -336,6 +352,7 @@ class SettingsController extends Controller
         $setting->dash_chart_type = $request->input('dash_chart_type');
         $setting->profile_edit = $request->input('profile_edit', 0);
         $setting->require_checkinout_notes = $request->input('require_checkinout_notes', 0);
+        $setting->manager_view_enabled = $request->input('manager_view_enabled', 0);
 
 
         if ($request->input('per_page') != '') {
@@ -428,12 +445,20 @@ class SettingsController extends Controller
                 $setting->label_logo = null;
             }
 
+            // Acceptance PDF upload
+            $setting = $request->handleImages($setting, 600, 'acceptance_pdf_logo', '', 'acceptance_pdf_logo');
+            if ('1' == $request->input('clear_acceptance_pdf_logo')) {
+                $setting = $request->deleteExistingImage($setting, '', 'acceptance_pdf_logo');
+                $setting->acceptance_pdf_logo = null;
+            }
+
             // Favicon upload
             $setting = $request->handleImages($setting, 100, 'favicon', '', 'favicon');
             if ('1' == $request->input('clear_favicon')) {
                 $setting = $request->deleteExistingImage($setting, '', 'favicon');
                 $setting->favicon = null;
             }
+
 
             // Default avatar upload
             $setting = $request->handleImages($setting, 500, 'default_avatar', 'avatars', 'default_avatar');
@@ -626,6 +651,7 @@ class SettingsController extends Controller
 
         $setting->alert_email = $alert_email;
         $setting->admin_cc_email = $admin_cc_email;
+        $setting->admin_cc_always = $request->validated('admin_cc_always');
         $setting->alerts_enabled = $request->input('alerts_enabled', '0');
         $setting->alert_interval = $request->input('alert_interval');
         $setting->alert_threshold = $request->input('alert_threshold');
@@ -748,6 +774,7 @@ class SettingsController extends Controller
         $setting->label2_2d_type = $request->input('label2_2d_type');
         $setting->label2_2d_target = $request->input('label2_2d_target');
         $setting->label2_fields = $request->input('label2_fields');
+        $setting->label2_empty_row_count = $request->input('label2_empty_row_count');
         $setting->labels_per_page = $request->input('labels_per_page');
         $setting->labels_width = $request->input('labels_width');
         $setting->labels_height = $request->input('labels_height');
@@ -846,11 +873,13 @@ class SettingsController extends Controller
             $setting->ldap_default_group = $request->input('ldap_default_group');
             $setting->ldap_filter = $request->input('ldap_filter');
             $setting->ldap_username_field = $request->input('ldap_username_field');
+            $setting->ldap_display_name = $request->input('ldap_display_name');
             $setting->ldap_lname_field = $request->input('ldap_lname_field');
             $setting->ldap_fname_field = $request->input('ldap_fname_field');
             $setting->ldap_auth_filter_query = $request->input('ldap_auth_filter_query');
             $setting->ldap_version = $request->input('ldap_version', 3);
-            $setting->ldap_active_flag = $request->input('ldap_active_flag');
+            $setting->ldap_active_flag = $request->input('ldap_active_flag', 0);
+            $setting->ldap_invert_active_flag = $request->input('ldap_invert_active_flag', 0);
             $setting->ldap_emp_num = $request->input('ldap_emp_num');
             $setting->ldap_email = $request->input('ldap_email');
             $setting->ldap_manager = $request->input('ldap_manager');
@@ -861,7 +890,12 @@ class SettingsController extends Controller
             $setting->ldap_pw_sync = $request->input('ldap_pw_sync', '0');
             $setting->custom_forgot_pass_url = $request->input('custom_forgot_pass_url');
             $setting->ldap_phone_field = $request->input('ldap_phone');
+            $setting->ldap_mobile = $request->input('ldap_mobile');
             $setting->ldap_jobtitle = $request->input('ldap_jobtitle');
+            $setting->ldap_address = $request->input('ldap_address');
+            $setting->ldap_city = $request->input('ldap_city');
+            $setting->ldap_state = $request->input('ldap_state');
+            $setting->ldap_zip = $request->input('ldap_zip');
             $setting->ldap_country = $request->input('ldap_country');
             $setting->ldap_location = $request->input('ldap_location');
             $setting->ldap_dept = $request->input('ldap_dept');
@@ -896,7 +930,7 @@ class SettingsController extends Controller
      * @since v5.0.0
      */
     public function postSamlSettings(SettingsSamlRequest $request) : RedirectResponse
-    {
+    {       
         if (is_null($setting = Setting::getSettings())) {
             return redirect()->to('admin')->with('error', trans('admin/settings/message.update.error'));
         }
@@ -1056,6 +1090,7 @@ class SettingsController extends Controller
 
         if (! config('app.lock_passwords')) {
             if (Storage::exists($path.'/'.$filename)) {
+                Log::warning('User '.auth()->user()->username.' is attempting to download backup file: '.$filename);
                 return StorageHelper::downloader($path.'/'.$filename);
             } else {
                 // Redirect to the backup page
@@ -1083,6 +1118,7 @@ class SettingsController extends Controller
                 if (Storage::exists($path . '/' . $filename)) {
 
                     try {
+                        Log::warning('User '.auth()->user()->username.' is attempting to delete backup file: '.$filename);
                         Storage::delete($path . '/' . $filename);
                         return redirect()->route('settings.backups.index')->with('success', trans('admin/settings/message.backup.file_deleted'));
                     } catch (\Exception $e) {
@@ -1162,7 +1198,7 @@ class SettingsController extends Controller
                     '--force' => true,
                 ]);
 
-                Log::debug('Attempting to restore from: '. storage_path($path).'/'.$filename);
+                Log::warning('User '.auth()->user()->username.' is attempting to restore from: '. storage_path($path).'/'.$filename);
 
                 $restore_params = [
                     '--force' => true,
@@ -1311,9 +1347,11 @@ class SettingsController extends Controller
                 'name'  => config('mail.from.name'),
                 'email' => config('mail.from.address'),
             ])->notify(new MailTest());
-
+            Log::debug('Attempting to send mail to '.config('mail.from.address'));
             return response()->json(Helper::formatStandardApiResponse('success', null, trans('mail_sent.mail_sent')));
         } catch (\Exception $e) {
+            Log::error('Mail sent from '.config('mail.from.address') .' with errors '. $e->getMessage());
+            Log::debug($e);
             return response()->json(Helper::formatStandardApiResponse('success', null, $e->getMessage()));
         }
     }

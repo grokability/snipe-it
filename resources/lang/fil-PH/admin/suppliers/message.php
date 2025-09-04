@@ -22,7 +22,7 @@ return array(
         'success' => 'Matagumpay na nai-delete ang tagapagsuplay.',
         'assoc_assets'	 => 'Ang tagapagsuplay ay kasalukuyang naiugnay sa :asset_count asset(s) at hindi maaaring mai-delete. Manyaring i-update ang iyong mga asset upang hindi na magreperens sa tagapagsuplay na ito at pakisubok muli. ',
         'assoc_licenses'	 => 'Ang tagapagsuplay ay kasalukuyang naiugnay sa :licenses_count licences(s) at hindi maaaring mai-delete. Manyaring i-update ang iyong mga lisensya upang hindi na magreperens sa tagapagsuplay na ito at pakisubok muli. ',
-        'assoc_maintenances'	 => 'Ang tagapagsuplay ay kasalukuyang naiugnay sa :asset_maintenances_count asset maintenances(s) at hindi maaaring mai-delete. Manyaring i-update ang iyong asset maintenances upang hindi na magreperens sa tagapagsuplay na ito at pakisubok muli. ',
+        'assoc_maintenances'	 => 'This supplier is currently associated with :maintenances_count asset maintenances(s) and cannot be deleted. Please update your asset maintenances to no longer reference this supplier and try again. ',
     )
 
 );

@@ -17,7 +17,8 @@ return array(
     'delete' => array(
         'confirm'   => 'Vai tiešām vēlaties dzēst šo komponentu?',
         'error'   => 'Radās problēma, izdzēšot komponentu. Lūdzu mēģiniet vēlreiz.',
-        'success' => 'Komponents tika veiksmīgi dzēsts.'
+        'success' => 'Komponents tika veiksmīgi dzēsts.',
+        'error_qty'   => 'Some components of this type are still checked out. Please check them in and try again.',
     ),
 
      'checkout' => array(

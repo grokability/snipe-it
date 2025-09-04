@@ -6,8 +6,6 @@ return array(
     'account_not_found'      => 'Tá an t-ainm úsáideora nó an focal faire mícheart.',
     'account_not_activated'  => 'Níl an cuntas úsáideora seo curtha i ngníomh.',
     'account_suspended'      => 'Tá an cuntas úsáideora seo ar fionraí.',
-    'account_banned'         => 'Tá toirmeasc ar an gcuntas úsáideora seo.',
-    'throttle'               => 'Too many failed login attempts. Please try again in :minutes minutes.',
 
     'two_factor' => array(
         'already_enrolled'      => 'Your device is already enrolled.',

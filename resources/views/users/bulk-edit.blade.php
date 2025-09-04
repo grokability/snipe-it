@@ -42,7 +42,7 @@
                         <div class="form-group">
                             <div class=" col-md-9 col-md-offset-3">
                                 <label class="form-control">
-                                    {{ Form::checkbox('null_department_id', '1', false) }}
+                                    <input type="checkbox" name="null_department_id" value="1" />
                                     {{ trans_choice('general.set_users_field_to_null', count($users), ['field' => trans('general.department'), 'user_count' => count($users)]) }}
                                 </label>
                             </div>
@@ -55,7 +55,7 @@
                         <div class="form-group">
                             <div class=" col-md-9 col-md-offset-3">
                                 <label class="form-control">
-                                    {{ Form::checkbox('null_location_id', '1', false) }}
+                                    <input type="checkbox" name="null_location_id" value="1" />
                                     {{ trans_choice('general.set_users_field_to_null', count($users), ['field' => trans('general.location'), 'user_count' => count($users)]) }}
                                 </label>
                             </div>
@@ -69,7 +69,7 @@
                             <div class="form-group">
                                 <div class=" col-md-9 col-md-offset-3">
                                     <label class="form-control">
-                                        {{ Form::checkbox('null_company_id', '1', false) }}
+                                        <input type="checkbox" name="null_company_id" value="1" />
                                         {{ trans_choice('general.set_users_field_to_null', count($users), ['field' => trans('general.company'), 'user_count' => count($users)]) }}
                                     </label>
                                 </div>
@@ -83,7 +83,7 @@
                         <div class="form-group">
                             <div class=" col-md-9 col-md-offset-3">
                                 <label class="form-control">
-                                    {{ Form::checkbox('null_manager_id', '1', false) }}
+                                    <input type="checkbox" name="null_manager_id" value="1" />
                                     {{ trans_choice('general.set_users_field_to_null', count($users), ['field' => trans('admin/users/table.manager'), 'user_count' => count($users)]) }}
                                 </label>
                             </div>
@@ -94,7 +94,7 @@
                         <div class="form-group {{ $errors->has('locale') ? 'has-error' : '' }}">
                             <label class="col-md-3 control-label" for="locale">{{ trans('general.language') }}</label>
                             <div class="col-md-8">
-                                {!! Form::locales('locale', old('locale', ''), 'select2') !!}
+                                <x-input.locale-select name="locale" :selected="old('locale', '')"/>
                                 {!! $errors->first('locale', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
                             </div>
                         </div>
@@ -102,7 +102,7 @@
                         <div class="form-group">
                             <div class=" col-md-9 col-md-offset-3">
                                 <label class="form-control">
-                                    {{ Form::checkbox('null_locale', '1', false) }}
+                                    <input type="checkbox" name="null_locale" value="1" />
                                     {{ trans_choice('general.set_users_field_to_null', count($users), ['field' => trans('general.language'), 'user_count' => count($users)]) }}
                                 </label>
                             </div>
@@ -246,7 +246,7 @@
                             </div>
                             <div class="col-md-5">
                                 <label class="form-control">
-                                    {{ Form::checkbox('null_start_date', '1', false) }}
+                                    <input type="checkbox" name="null_start_date" value="1" />
                                     {{ trans_choice('general.set_to_null', count($users),['selection_count' => count($users)]) }}
                                 </label>
                             </div>
@@ -264,7 +264,7 @@
                             </div>
                             <div class="col-md-5">
                                 <label class="form-control">
-                                    {{ Form::checkbox('null_end_date', '1', false) }}
+                                    <input type="checkbox" name="null_end_date" value="1" />
                                     {{ trans_choice('general.set_to_null', count($users),['selection_count' => count($users)]) }}
                                 </label>
                             </div>

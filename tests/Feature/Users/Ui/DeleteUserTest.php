@@ -48,6 +48,14 @@ class DeleteUserTest extends TestCase
           $this->followRedirects($response)->assertSee(trans('general.error'));
     }
 
+    public function testCanViewSoftDeletedUser()
+    {
+        $user = User::factory()->deletedUser()->viewUsers()->create();
+        $response = $this->actingAs(User::factory()->deleteUsers()->viewUsers()->create())
+            ->get(route('users.show', $user->id))
+            ->assertStatus(200);
+    }
+
 
     public function testFmcsPermissionsToDeleteUser()
     {

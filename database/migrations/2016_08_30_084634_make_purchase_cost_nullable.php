@@ -12,8 +12,8 @@ class MakePurchaseCostNullable extends Migration
      */
     public function up()
     {
-        $platform = Schema::getConnection()->getDoctrineSchemaManager()->getDatabasePlatform();
-        $platform->registerDoctrineTypeMapping('enum', 'string');
+        //$platform = Schema::getConnection()->getDoctrineSchemaManager()->getDatabasePlatform();
+        //$platform->registerDoctrineTypeMapping('enum', 'string');
 
         Schema::table('assets', function ($table) {
             $table->decimal('purchase_cost', 8, 2)->nullable()->default(null)->change();

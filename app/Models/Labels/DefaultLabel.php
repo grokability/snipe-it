@@ -38,13 +38,14 @@ class DefaultLabel extends RectangleSheet
     private int $rows;
 
 
-    public function __construct() {
+    public function __construct()
+    {
         $settings = Setting::getSettings();
 
         $this->textSize = Helper::convertUnit($settings->labels_fontsize, 'pt', 'in');
 
-        $this->labelWidth  = $settings->labels_width;
-        $this->labelHeight = $settings->labels_height;
+        $this->labelWidth = $this->setLabelWidth($settings);
+        $this->labelHeight = $this->setLabelHeight($settings);
 
         $this->labelSpacingH = $settings->labels_display_sgutter;
         $this->labelSpacingV = $settings->labels_display_bgutter;
@@ -74,41 +75,116 @@ class DefaultLabel extends RectangleSheet
 
     }
 
-    public function getUnit()   { return 'in'; }
+    public function getUnit()
+    {
+        return 'in'; 
+    }
 
-    public function getPageWidth()  { return $this->pageWidth; }
-    public function getPageHeight() { return $this->pageHeight; }
+    public function getPageWidth()
+    {
+        return $this->pageWidth; 
+    }
+    public function getPageHeight()
+    {
+        return $this->pageHeight; 
+    }
 
-    public function getPageMarginTop()    { return $this->pageMarginTop; }
-    public function getPageMarginBottom() { return $this->pageMarginBottom; }
-    public function getPageMarginLeft()   { return $this->pageMarginLeft; }
-    public function getPageMarginRight()  { return $this->pageMarginRight; }
+    public function getPageMarginTop()
+    {
+        return $this->pageMarginTop; 
+    }
+    public function getPageMarginBottom()
+    {
+        return $this->pageMarginBottom; 
+    }
+    public function getPageMarginLeft()
+    {
+        return $this->pageMarginLeft; 
+    }
+    public function getPageMarginRight()
+    {
+        return $this->pageMarginRight; 
+    }
 
-    public function getColumns() { return $this->columns; }
-    public function getRows()    { return $this->rows; }
-    public function getLabelBorder() { return 0; }
+    public function getColumns()
+    {
+        return $this->columns; 
+    }
+    public function getRows()
+    {
+        return $this->rows; 
+    }
+    public function getLabelBorder()
+    {
+        return 0; 
+    }
 
-    public function getLabelWidth()  { return $this->labelWidth; }
-    public function getLabelHeight() { return $this->labelHeight; }
+    public function getLabelWidth()
+    {
+        return $this->labelWidth; 
+    }
+    public function getLabelHeight()
+    {
+        return $this->labelHeight; 
+    }
 
-    public function getLabelMarginTop()    { return 0; }
-    public function getLabelMarginBottom() { return 0; }
-    public function getLabelMarginLeft()   { return 0; }
-    public function getLabelMarginRight()  { return 0; }
+    public function getLabelMarginTop()
+    {
+        return 0; 
+    }
+    public function getLabelMarginBottom()
+    {
+        return 0; 
+    }
+    public function getLabelMarginLeft()
+    {
+        return 0; 
+    }
+    public function getLabelMarginRight()
+    {
+        return 0; 
+    }
 
-    public function getLabelColumnSpacing() { return $this->labelSpacingH; }
-    public function getLabelRowSpacing()    { return $this->labelSpacingV; }
+    public function getLabelColumnSpacing()
+    {
+        return $this->labelSpacingH; 
+    }
+    public function getLabelRowSpacing()
+    {
+        return $this->labelSpacingV; 
+    }
 
-    public function getSupportAssetTag()  { return false; }
-    public function getSupport1DBarcode() { return true; }
-    public function getSupport2DBarcode() { return true; }
-    public function getSupportFields()    { return 4; }
-    public function getSupportTitle()     { return true; }
-    public function getSupportLogo()      { return true; }
+    public function getSupportAssetTag()
+    {
+        return false; 
+    }
+    public function getSupport1DBarcode()
+    {
+        return true; 
+    }
+    public function getSupport2DBarcode()
+    {
+        return true; 
+    }
+    public function getSupportFields()
+    {
+        return 4; 
+    }
+    public function getSupportTitle()
+    {
+        return true; 
+    }
+    public function getSupportLogo()
+    {
+        return true; 
+    }
 
-    public function preparePDF($pdf) {}
+    public function preparePDF($pdf)
+    {
+    }
 
-    public function write($pdf, $record) {
+    public function write($pdf, $record)
+    {
 
         $asset = $record->get('asset');
         $settings = Setting::getSettings();
@@ -181,6 +257,25 @@ class DefaultLabel extends RectangleSheet
         }
     }
 
-}
+    private function setLabelWidth(Setting $settings)
+    {
+        $labelWidth = $settings->labels_width;
 
-?>
+        if ($labelWidth == 0) {
+            $labelWidth = 0.1;
+        }
+
+        return $labelWidth;
+    }
+
+    private function setLabelHeight(?Setting $settings)
+    {
+        $labelHeight = $settings->labels_height;
+
+        if ($labelHeight == 0) {
+            $labelHeight = 0.1;
+        }
+
+        return $labelHeight;
+    }
+}

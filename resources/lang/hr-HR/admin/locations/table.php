@@ -32,11 +32,12 @@ return [
     'asset_serial'              => 'Serijski',
     'asset_location'            => 'Mjesto',
     'asset_checked_out'         => 'Odjavio',
-    'asset_expected_checkin'    => 'Expected Checkin',
+    'asset_expected_checkin'    => 'Očekivana prijava',
     'date'                      => 'Datum:',
     'phone'                     => 'Location Phone',
     'signed_by_asset_auditor'   => 'Signed By (Asset Auditor):',
     'signed_by_finance_auditor' => 'Signed By (Finance Auditor):',
     'signed_by_location_manager' => 'Signed By (Location Manager):',
     'signed_by'                 => 'Signed Off By:',
+    'clone'  					=> 'Clone Location',
 ];

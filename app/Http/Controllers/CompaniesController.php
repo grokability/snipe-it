@@ -80,16 +80,10 @@ final class CompaniesController extends Controller
      * @since [v1.8]
      * @param int $companyId
      */
-    public function edit($companyId) : View | RedirectResponse
+    public function edit(Company $company) : View | RedirectResponse
     {
-        if (is_null($item = Company::find($companyId))) {
-            return redirect()->route('companies.index')
-                ->with('error', trans('admin/companies/message.does_not_exist'));
-        }
-
-        $this->authorize('update', $item);
-
-        return view('companies/edit')->with('item', $item);
+        $this->authorize('update', $company);
+        return view('companies/edit')->with('item', $company);
     }
 
     /**
@@ -100,14 +94,10 @@ final class CompaniesController extends Controller
      * @param ImageUploadRequest $request
      * @param int $companyId
      */
-    public function update(ImageUploadRequest $request, $companyId) : RedirectResponse
+    public function update(ImageUploadRequest $request, Company $company) : RedirectResponse
     {
-        if (is_null($company = Company::find($companyId))) {
-            return redirect()->route('companies.index')->with('error', trans('admin/companies/message.does_not_exist'));
-        }
 
         $this->authorize('update', $company);
-
         $company->name = $request->input('name');
         $company->phone = $request->input('phone');
         $company->fax = $request->input('fax');
@@ -133,10 +123,12 @@ final class CompaniesController extends Controller
      */
     public function destroy($companyId) : RedirectResponse
     {
+
         if (is_null($company = Company::find($companyId))) {
             return redirect()->route('companies.index')
                 ->with('error', trans('admin/companies/message.not_found'));
         }
+
 
         $this->authorize('delete', $company);
         if (! $company->isDeletable()) {
@@ -158,15 +150,9 @@ final class CompaniesController extends Controller
             ->with('success', trans('admin/companies/message.delete.success'));
     }
 
-    public function show($id) : View | RedirectResponse
+    public function show(Company $company) : View | RedirectResponse
     {
         $this->authorize('view', Company::class);
-
-        if (is_null($company = Company::find($id))) {
-            return redirect()->route('companies.index')
-                ->with('error', trans('admin/companies/message.not_found'));
-        }
-
         return view('companies/view')->with('company', $company);
     }
 }

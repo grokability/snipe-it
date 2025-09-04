@@ -19,6 +19,8 @@ return [
     'print_assigned'    => 'طباعة كل الممتلكات',
     'email_assigned'    => 'قائمة البريد اﻹلكتروني لكل المعينين',
     'user_notified'     => 'تم إرسال قائمة بالعناصر المعينة حاليا إلى المستخدم بالبريد الإلكتروني.',
+    'users_notified'    => 'The user has been emailed a list of their currently assigned items.|:count users have been emailed a list of their currently assigned items.',
+    'users_notified_warning' => ':count user has been emailed a list of their currently assigned items, however :no_email users did not have an email address so could not be emailed.|:count users have been emailed a list of their currently assigned items, however :no_email user(s) did not have an email address so could not be emailed.',
     'auto_assign_label' => 'تضمين هذا المستخدم عند التعيين التلقائي للتراخيص المؤهلة',
     'auto_assign_help'  => 'تخطي هذا المستخدم في التعيين التلقائي للترخيص',
     'software_user'     => 'البرامج المخرجة الى: :name',
@@ -51,4 +53,5 @@ return [
     'next_save_user' => 'التالي : حفظ المستخدم',
     'all_assigned_list_generation' => 'تم إنشاؤها في:',
     'email_user_creds_on_create' => 'إرسال بيانات دخول هذا المستخدم بالبريد الإلكتروني؟',
+    'department_manager' => 'Department Manager',
 ];

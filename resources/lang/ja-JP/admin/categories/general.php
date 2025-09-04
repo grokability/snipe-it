@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> '資産カテゴリー',
     'category_name'  					=> 'カテゴリー名',
     'checkin_email'                     => 'チェックイン/チェックアウト時、ユーザーに電子メールを送信します。',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'このユーザーには、チェックイン/チェックアウト時にメールが送信されます。',
     'clone'                             => 'カテゴリを複製',
     'create'  							=> 'カテゴリーの作成',
@@ -21,5 +22,9 @@ return array(
     'use_default_eula'					=> '<a href="#" data-toggle="modal" data-target="#eulaModal">初期設定EULA</a> を代わりに利用する。',
     'use_default_eula_disabled'			=> '<del>初期設定EULAを代わりに利用する。</del> 初期設定EULAが設定されていません。最低一つは追加してください。',
     'use_default_eula_column'			=> 'デフォルトのEULAを使用する',
+    'import_require_acceptance'         => '同意が必要',
+    'import_checkin_email'              => 'チェックインメールを送信',
+    'import_eula_text'                  => 'EULA文書',
+    'import_category_type'              => 'カテゴリータイプ',
 
 );

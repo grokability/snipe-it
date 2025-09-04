@@ -14,7 +14,7 @@
 
 @foreach($assets as $asset)
 <tr>
-    <td>{{ $asset->present()->name }}</td>
+    <td>{{ $asset->display_name }}</td>
     <td> {{ $asset->asset_tag }} </td>
     <td> {{ $asset->serial }} </td>
     <td> {{ $asset->model->category->name }}</td>

@@ -15,7 +15,7 @@ class EditReportTemplateTest extends TestCase implements TestsPermissionsRequire
     {
         $this->actingAs(User::factory()->create())
             ->get(route('report-templates.edit', ReportTemplate::factory()->create()))
-            ->assertNotFound();
+            ->assertStatus(302);
     }
 
     public function testCannotLoadEditPageForAnotherUsersReportTemplate()
@@ -25,7 +25,7 @@ class EditReportTemplateTest extends TestCase implements TestsPermissionsRequire
 
         $this->actingAs($user)
             ->get(route('report-templates.edit', $reportTemplate))
-            ->assertNotFound();
+            ->assertStatus(302);
     }
 
     public function testCanLoadEditReportTemplatePage()

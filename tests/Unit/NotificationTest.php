@@ -7,9 +7,7 @@ use App\Models\Asset;
 use App\Models\AssetModel;
 use App\Models\Category;
 use Carbon\Carbon;
-use App\Notifications\CheckoutAssetNotification;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
 class NotificationTest extends TestCase
@@ -33,8 +31,8 @@ class NotificationTest extends TestCase
 
         Mail::fake();
         $asset->checkOut($user, $admin->id);
-        Mail::assertSent(CheckoutAssetMail::class, function ($mail) use ($user) {
-            return $mail->hasTo($user->email);
+        Mail::assertSent(CheckoutAssetMail::class, function (CheckoutAssetMail $mail) use ($user, $asset) {
+            return $mail->hasTo($user->email) && $mail->hasSubject(trans('mail.Asset_Checkout_Notification', ['tag' => $asset->asset_tag]));
         });
     }
     public function testDefaultEulaIsSentWhenSetInCategory()

@@ -32,11 +32,45 @@ class Settings
             'alert_threshold' => $days,
         ]);
     }
+    public function setAuditWarningDays(int $days): Settings
+    {
+        return $this->update([
+            'audit_warning_days' => $days,
+        ]);
+    }
     public function disableAlertEmail(): Settings
     {
         return $this->update([
             'alert_email' => null,
             'alerts_enabled' => 0,
+        ]);
+    }
+
+    public function enableAdminCC(string $email = 'cc@example.co'): Settings
+    {
+        return $this->update([
+            'admin_cc_email' => $email,
+        ]);
+    }
+
+    public function disableAdminCC(): Settings
+    {
+        return $this->update([
+            'admin_cc_email' => null,
+        ]);
+    }
+
+    public function enableAdminCCAlways(): Settings
+    {
+        return $this->update([
+            'admin_cc_always' => 1,
+        ]);
+    }
+
+    public function disableAdminCCAlways(): Settings
+    {
+        return $this->update([
+            'admin_cc_always' => 0,
         ]);
     }
 

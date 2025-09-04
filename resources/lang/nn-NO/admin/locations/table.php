@@ -39,4 +39,5 @@ return [
     'signed_by_finance_auditor' => 'Undertegnet av (finansrevisor):',
     'signed_by_location_manager' => 'Signert av (Stedsansvarlig):',
     'signed_by'                 => 'Signert av:',
+    'clone'  					=> 'Clone Location',
 ];

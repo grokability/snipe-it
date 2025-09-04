@@ -290,10 +290,12 @@ class StatuslabelsController extends Controller
 
     /**
      * Returns a boolean response based on whether the status label
-     * is one that is deployable.
+     * is one that is deployable or pending.
      *
      * This is used by the hardware create/edit view to determine whether
-     * we should provide a dropdown of users for them to check the asset out to.
+     * we should provide a dropdown of users for them to check the asset out to,
+     * and whether we show a warning that the asset will be checked in if it's already
+     * assigned but the status is changed to one that isn't pending or deployable
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
      * @since [v4.0]
@@ -301,7 +303,7 @@ class StatuslabelsController extends Controller
     public function checkIfDeployable($id) : string
     {
         $statuslabel = Statuslabel::findOrFail($id);
-        if ($statuslabel->getStatuslabelType() == 'deployable') {
+        if (($statuslabel->getStatuslabelType() == 'pending') || ($statuslabel->getStatuslabelType() == 'deployable')) {
             return '1';
         }
 

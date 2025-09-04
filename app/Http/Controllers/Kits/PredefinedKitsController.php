@@ -76,17 +76,15 @@ class PredefinedKitsController extends Controller
      * @param int $kit_id
      * @return \Illuminate\Contracts\View\View
      */
-    public function edit($kit_id = null)
+    public function edit(PredefinedKit $kit)
     {
         $this->authorize('update', PredefinedKit::class);
-        if ($kit = PredefinedKit::find($kit_id)) {
+
             return view('kits/edit')
                 ->with('item', $kit)
                 ->with('models', $kit->models)
                 ->with('licenses', $kit->licenses);
-        }
 
-        return redirect()->route('kits.index')->with('error', trans('admin/kits/general.kit_none'));
     }
 
     /**
@@ -98,15 +96,9 @@ class PredefinedKitsController extends Controller
      * @param int $kit_id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(ImageUploadRequest $request, $kit_id = null)
+    public function update(ImageUploadRequest $request, PredefinedKit $kit)
     {
         $this->authorize('update', PredefinedKit::class);
-        // Check if the kit exists
-        if (is_null($kit = PredefinedKit::find($kit_id))) {
-            // Redirect to the kits management page
-            return redirect()->route('kits.index')->with('error', trans('admin/kits/general.kit_none'));
-        }
-
         $kit->name = $request->input('name');
 
         if ($kit->save()) {
@@ -153,9 +145,9 @@ class PredefinedKitsController extends Controller
      * @param int $modelId
      * @return \Illuminate\Contracts\View\View
      */
-    public function show($kit_id = null)
+    public function show(PredefinedKit $kit)
     {
-        return $this->edit($kit_id);
+        return $this->edit($kit);
     }
 
     /**

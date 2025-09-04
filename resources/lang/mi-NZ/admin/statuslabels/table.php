@@ -1,14 +1,14 @@
 <?php
 
 return array(
-    'about'      	=> 'Mō nga Tapanga Tūnga',
+    'about'      	=> 'About Status Types',
     'archived'      	=> 'Whakamahia',
     'create'      	=> 'Waihanga Tapanga Whakaaetanga',
     'color'      	=> 'Tae Tae',
     'default_label' => 'Default Label',
     'default_label_help' => 'This is used to ensure your most commonly used status labels appear at the top of the select box when creating/editing assets.',
     'deployable'      	=> 'Kaore e taea',
-    'info'      	=> 'Ka whakamahia nga tapanga taatai ​​hei whakaahua i nga ahuatanga ka taea e nga taonga hei whakauru ki a koe. Ka puta pea ki te whakapai, ki te ngaro, ki te tahae, me era atu. Ka taea e koe te hanga i nga waahanga hou hou mo nga mea e taea ana e nga mea e pa ana, e tatari ana me te kounga.',
+    'info'      	=> 'Status label types are used to describe the various states your assets could be in. They may be out for repair, lost/stolen, etc. You can create new status labels for your deployable, pending and archived assets according to your own workflow. For more information, <a href="https://snipe-it.readme.io/docs/overview#status-labels" target="_blank">see the documentation <i class="fa fa-external-link"></i></a>.',
     'name'      	=> 'Ingoa Tūnga',
     'pending'      	=> 'Kei te tatari',
     'status_type'   => 'Momo Tūnga',

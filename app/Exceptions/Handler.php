@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 use Throwable;
 use JsonException;
 use Carbon\Exceptions\InvalidFormatException;
+use Illuminate\Http\Exceptions\ThrottleRequestsException;
 
 class Handler extends ExceptionHandler
 {
@@ -107,21 +108,66 @@ class Handler extends ExceptionHandler
 
                 $statusCode = $e->getStatusCode();
 
+                // API throttle requests are handled in the RouteServiceProvider configureRateLimiting() method, so we don't need to handle them here
                 switch ($e->getStatusCode()) {
                     case '404':
                        return response()->json(Helper::formatStandardApiResponse('error', null, $statusCode . ' endpoint not found'), 404);
-                    case '429':
-                        return response()->json(Helper::formatStandardApiResponse('error', null, 'Too many requests'), 429);
                      case '405':
                         return response()->json(Helper::formatStandardApiResponse('error', null, 'Method not allowed'), 405);
                     default:
                         return response()->json(Helper::formatStandardApiResponse('error', null, $statusCode), $statusCode);
-
                 }
+
             }
+
+            // This handles API validation exceptions that happen at the Form Request level, so they
+            // never even get to the controller where we normally  nicely format JSON responses
+            if ($e instanceof ValidationException) {
+                $response = $this->invalidJson($request, $e);
+                return response()->json(Helper::formatStandardApiResponse('error', null,  $e->errors()), 200);
+            }
+
         }
 
 
+        // This is traaaaash but it handles models that are not found while using route model binding :(
+        // The only alternative is to set that at *each* route, which is crazypants
+        if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException) {
+            $ids = method_exists($e, 'getIds') ? $e->getIds() : [];
+
+            if (in_array('bulkedit', $ids, true)) {
+            $error_array = session()->get('bulk_asset_errors');
+                return redirect()
+                    ->route('hardware.index')
+                    ->withErrors($error_array, 'bulk_asset_errors')
+                    ->withInput();
+            }
+
+            // This gets the MVC model name from the exception and formats in a way that's less fugly
+            $model_name = trim(strtolower(implode(" ", preg_split('/(?=[A-Z])/', last(explode('\\', $e->getModel()))))));
+            $route = str_plural(strtolower(last(explode('\\', $e->getModel())))).'.index';
+
+            // Sigh.
+            if ($route == 'assets.index') {
+                $route = 'hardware.index';
+            } elseif ($route == 'reporttemplates.index') {
+                $route = 'reports/custom';
+            } elseif ($route == 'assetmodels.index') {
+                $route = 'models.index';
+            } elseif ($route == 'predefinedkits.index') {
+                $route = 'kits.index';
+            } elseif ($route == 'assetmaintenances.index') {
+                $route = 'maintenances.index';
+            } elseif ($route === 'licenseseats.index') {
+                $route = 'licenses.index';
+            } elseif (($route === 'customfieldsets.index') || ($route === 'customfields.index')) {
+                $route = 'fields.index';
+            }
+
+            return redirect()
+                ->route($route)
+                ->withError(trans('general.generic_model_not_found', ['model' => $model_name]));
+        }
 
 
         if ($this->isHttpException($e) && (isset($statusCode)) && ($statusCode == '404' )) {
@@ -174,6 +220,7 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
+
         $this->reportable(function (Throwable $e) {
             //
         });

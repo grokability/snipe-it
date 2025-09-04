@@ -8,7 +8,7 @@
             </div>
             <form
                 method="POST"
-                action="{{ route('upload/' . $item_type, $item_id) }}"
+                action="{{ route('ui.files.store', ['object_type' => str_plural($item_type), 'id' => $item_id]) }}"
                 accept-charset="UTF-8"
                 class="form-horizontal"
                 enctype="multipart/form-data"
@@ -21,7 +21,7 @@
 
                         <label class="btn btn-default btn-block">
                             {{ trans('button.select_files')  }}
-                            <input type="file" name="file[]" multiple="true" class="js-uploadFile" id="uploadFile" data-maxsize="{{ Helper::file_upload_max_size() }}" accept="image/*,.csv,.zip,.rar,.doc,.docx,.xls,.xlsx,.xml,.lic,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/plain,.pdf,application/rtf,application/json" style="display:none" required>
+                            <input type="file" name="file[]" multiple class="js-uploadFile" id="uploadFile" data-maxsize="{{ Helper::file_upload_max_size() }}" accept="{{ config('filesystems.allowed_upload_mimetypes') }}" style="display:none" required>
                         </label>
 
                     </div>
@@ -29,7 +29,7 @@
                         <span id="uploadFile-info"></span>
                     </div>
                     <div class="col-md-12">
-                        <p class="help-block" id="uploadFile-status">{{ trans('general.upload_filetypes_help', ['size' => Helper::file_upload_max_size_readable()]) }}</p>
+                        <p class="help-block" id="uploadFile-status">{{ trans('general.upload_filetypes_help', ['allowed_filetypes' => config('filesystems.allowed_upload_extensions'), 'size' => Helper::file_upload_max_size_readable()]) }}</p>
                     </div>
 
                     <div class="col-md-12">

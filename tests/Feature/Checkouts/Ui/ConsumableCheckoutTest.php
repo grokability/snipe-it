@@ -57,6 +57,7 @@ class ConsumableCheckoutTest extends TestCase
             ]);
 
         $this->assertTrue($user->consumables->contains($consumable));
+        $this->assertHasTheseActionLogs($consumable, ['create', 'checkout']);
     }
 
     public function testUserSentNotificationUponCheckout()
@@ -130,7 +131,7 @@ class ConsumableCheckoutTest extends TestCase
                 'assigned_qty' => 1,
             ])
             ->assertStatus(302)
-            ->assertRedirect(route('consumables.show', ['consumable' => $consumable->id]));
+            ->assertRedirect(route('consumables.show', $consumable));
     }
 
     public function testConsumableCheckoutPagePostIsRedirectedIfRedirectSelectionIsTarget()
@@ -146,7 +147,7 @@ class ConsumableCheckoutTest extends TestCase
                 'assigned_qty' => 1,
             ])
             ->assertStatus(302)
-            ->assertRedirect(route('users.show', ['user' => $user]));
+            ->assertRedirect(route('users.show', $user));
     }
 
 }

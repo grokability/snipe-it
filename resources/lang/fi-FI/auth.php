@@ -15,6 +15,6 @@ return array(
 
     'failed' => 'Nämä tiedot eivät vastaa tietueitamme.',
     'password' => 'Annettu salasana on virheellinen.',
-    'throttle' => 'Liian monta kirjautumisyritystä. Yritä uudelleen :seconds sekunnin kuluttua.',
+    'throttle' => 'Too many login attempts. Please try again in :minutes minute(s).',
 
 );

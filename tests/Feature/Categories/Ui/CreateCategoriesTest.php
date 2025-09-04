@@ -34,11 +34,20 @@ class CreateCategoriesTest extends TestCase
             ->post(route('categories.store'), [
                 'name' => 'Test Category',
                 'category_type' => 'asset',
-                'notes' => 'Test Note',
+                'eula_text' => 'Sample text',
+                'require_acceptance' => '1',
+                'notes' => 'My Note',
             ])
             ->assertRedirect(route('categories.index'));
 
-        $this->assertTrue(Category::where('name', 'Test Category')->where('notes', 'Test Note')->exists());
+        $this->assertDatabaseHas('categories', [
+            'name' => 'Test Category',
+            'category_type' => 'asset',
+            'eula_text' => 'Sample text',
+            'notes' => 'My Note',
+            'require_acceptance' => 1,
+            'alert_on_response' => 0,
+        ]);
     }
 
     public function testUserCannotCreateCategoriesWithInvalidType()

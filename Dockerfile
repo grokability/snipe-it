@@ -1,8 +1,8 @@
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 LABEL maintainer="Brady Wetherington <bwetherington@grokability.com>"
 
 # No need to add `apt-get clean` here, reference:
-# - https://github.com/snipe/snipe-it/pull/9201
+# - https://github.com/grokability/snipe-it/pull/9201
 # - https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#apt-get
 
 RUN export DEBIAN_FRONTEND=noninteractive; \
@@ -14,16 +14,16 @@ RUN export DEBIAN_FRONTEND=noninteractive; \
 apt-utils \
 apache2 \
 apache2-bin \
-libapache2-mod-php8.1 \
-php8.1-curl \
-php8.1-ldap \
-php8.1-mysql \
-php8.1-gd \
-php8.1-xml \
-php8.1-mbstring \
-php8.1-zip \
-php8.1-bcmath \
-php8.1-redis \
+libapache2-mod-php8.3 \
+php8.3-curl \
+php8.3-ldap \
+php8.3-mysql \
+php8.3-gd \
+php8.3-xml \
+php8.3-mbstring \
+php8.3-zip \
+php8.3-bcmath \
+php8.3-redis \
 php-memcached \
 patch \
 curl \
@@ -40,8 +40,7 @@ autoconf \
 libc-dev \
 libldap-common \
 pkg-config \
-libmcrypt-dev \
-php8.1-dev \
+php8.3-dev \
 ca-certificates \
 unzip \
 dnsutils \
@@ -51,18 +50,13 @@ dnsutils \
 RUN curl -L -O https://github.com/pear/pearweb_phars/raw/master/go-pear.phar
 RUN php go-pear.phar
 
-RUN pecl install mcrypt
-
-RUN bash -c "echo extension=/usr/lib/php/20210902/mcrypt.so > /etc/php/8.1/mods-available/mcrypt.ini"
-
-RUN phpenmod mcrypt
 RUN phpenmod gd
 RUN phpenmod bcmath
 
-RUN sed -i 's/variables_order = .*/variables_order = "EGPCS"/' /etc/php/8.1/apache2/php.ini
-RUN sed -i 's/variables_order = .*/variables_order = "EGPCS"/' /etc/php/8.1/cli/php.ini
+RUN sed -i 's/variables_order = .*/variables_order = "EGPCS"/' /etc/php/8.3/apache2/php.ini
+RUN sed -i 's/variables_order = .*/variables_order = "EGPCS"/' /etc/php/8.3/cli/php.ini
 
-RUN useradd -m --uid 1000 --gid 50 docker
+RUN useradd -m --uid 10000 --gid 50 docker
 
 RUN echo export APACHE_RUN_USER=docker >> /etc/apache2/envvars
 RUN echo export APACHE_RUN_GROUP=staff >> /etc/apache2/envvars
@@ -116,7 +110,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Get dependencies
 USER docker
-RUN composer install --no-dev --working-dir=/var/www/html
+RUN COMPOSER_CACHE_DIR=/dev/null composer install --no-dev --working-dir=/var/www/html && rm -rf /var/www/html/vendor/*/*/.git
 USER root
 
 ############### APPLICATION INSTALL/INIT #################

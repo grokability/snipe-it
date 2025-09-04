@@ -25,9 +25,9 @@ jobs:
       fail-fast: false
       matrix:
         php-version:
-          - "8.1"
           - "8.2"
           - "8.3"
+          - "8.4"
 
     name: PHP ${{ matrix.php-version }}
 
@@ -37,7 +37,7 @@ jobs:
           php-version: "${{ matrix.php-version }}"
           coverage: none
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Get Composer Cache Directory
         id: composer-cache
@@ -67,7 +67,7 @@ jobs:
         run: |
           php artisan key:generate
           php artisan migrate --force
-          php artisan passport:install
+          php artisan passport:install --no-interaction
           chmod -R 777 storage bootstrap/cache
 
       - name: Execute tests (Unit and Feature tests) via PHPUnit
@@ -76,4 +76,16 @@ jobs:
           DB_DATABASE: snipeit
           DB_PORT: ${{ job.services.mysql.ports[3306] }}
           DB_USERNAME: root
+          LOG_CHANNEL: single
+          LOG_LEVEL: debug
         run: php artisan test
+
+      - name: Upload Laravel logs as artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: laravel-logs-php-${{ matrix.php-version }}-run-${{ github.run_attempt }}
+          path: |
+            storage/logs/*.log
+          if-no-files-found: ignore
+          retention-days: 7

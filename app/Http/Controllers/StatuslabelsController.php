@@ -26,14 +26,10 @@ class StatuslabelsController extends Controller
         return view('statuslabels.index');
     }
 
-    public function show($id) : View | RedirectResponse
+    public function show(Statuslabel $statuslabel) : View | RedirectResponse
     {
         $this->authorize('view', Statuslabel::class);
-        if ($statuslabel = Statuslabel::find($id)) {
-            return view('statuslabels.view')->with('statuslabel', $statuslabel);
-        }
-
-        return redirect()->route('statuslabels.index')->with('error', trans('admin/statuslabels/message.does_not_exist'));
+        return view('statuslabels.view')->with('statuslabel', $statuslabel);
     }
 
     /**
@@ -91,20 +87,15 @@ class StatuslabelsController extends Controller
      *
      * @param  int $statuslabelId
      */
-    public function edit($statuslabelId = null) : View | RedirectResponse
+    public function edit(Statuslabel $statuslabel) : View | RedirectResponse
     {
         $this->authorize('update', Statuslabel::class);
-        // Check if the Statuslabel exists
-        if (is_null($item = Statuslabel::find($statuslabelId))) {
-            // Redirect to the blogs management page
-            return redirect()->route('statuslabels.index')->with('error', trans('admin/statuslabels/message.does_not_exist'));
-        }
-
-        $use_statuslabel_type = $item->getStatuslabelType();
 
         $statuslabel_types = ['' => trans('admin/hardware/form.select_statustype')] + ['undeployable' => trans('admin/hardware/general.undeployable')] + ['pending' => trans('admin/hardware/general.pending')] + ['archived' => trans('admin/hardware/general.archived')] + ['deployable' => trans('admin/hardware/general.deployable')];
 
-        return view('statuslabels/edit', compact('item', 'statuslabel_types'))->with('use_statuslabel_type', $use_statuslabel_type);
+        return view('statuslabels/edit', compact('statuslabel_types'))
+            ->with('item', $statuslabel)
+            ->with('use_statuslabel_type', $statuslabel);
     }
 
     /**
@@ -112,14 +103,9 @@ class StatuslabelsController extends Controller
      *
      * @param  int $statuslabelId
      */
-    public function update(Request $request, $statuslabelId = null) : RedirectResponse
+    public function update(Request $request, Statuslabel $statuslabel) : RedirectResponse
     {
         $this->authorize('update', Statuslabel::class);
-        // Check if the Statuslabel exists
-        if (is_null($statuslabel = Statuslabel::find($statuslabelId))) {
-            // Redirect to the blogs management page
-            return redirect()->route('statuslabels.index')->with('error', trans('admin/statuslabels/message.does_not_exist'));
-        }
 
         if (! $request->filled('statuslabel_types')) {
             return redirect()->back()->withInput()->withErrors(['statuslabel_types' => trans('validation.statuslabel_type')]);

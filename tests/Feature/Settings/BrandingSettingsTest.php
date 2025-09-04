@@ -44,26 +44,29 @@ class BrandingSettingsTest extends TestCase
 
         $response = $this->actingAs(User::factory()->superuser()->create())
             ->post(route('settings.branding.save',
-                ['logo' => UploadedFile::fake()->image('test_logo.png')->storeAs('', 'test_logo.png', 'public')]
+                ['logo' => UploadedFile::fake()->image('test_logo.png')]
             ))
             ->assertValid('logo')
             ->assertStatus(302)
             ->assertRedirect(route('settings.index'))
             ->assertSessionHasNoErrors();
 
+        // Assert files was stored...
+        Storage::disk('public')->assertExists( $setting->logo);
+
         $this->followRedirects($response)->assertSee('alert-success');
 
         $setting->refresh();
-        Storage::disk('public')->assertExists($setting->logo);
     }
+
 
     public function testLogoCanBeDeleted()
     {
         Storage::fake('public');
 
+        UploadedFile::fake()->image('new_test_logo.png')->storeAs('uploads', 'new_test_logo.png', 'public');
         $setting = Setting::factory()->create(['logo' => 'new_test_logo.png']);
-        $original_file = UploadedFile::fake()->image('new_test_logo.png')->storeAs('uploads', 'new_test_logo.png', 'public');
-        Storage::disk('public')->assertExists($original_file);
+        Storage::disk('public')->assertExists('uploads/'.$setting->logo);
 
         $this->assertNotNull($setting->logo);
 
@@ -78,17 +81,13 @@ class BrandingSettingsTest extends TestCase
 
         $this->followRedirects($response)->assertSee(trans('alert-success'));
         $this->assertDatabaseHas('settings', ['logo' => null]);
-        //Storage::disk('public')->assertMissing($original_file);
+        Storage::disk('public')->assertMissing($setting->logo);
     }
 
     public function testEmailLogoCanBeUploaded()
     {
         Storage::fake('public');
-
-        $original_file = UploadedFile::fake()->image('before_test_email_logo.png')->storeAs('', 'before_test_email_logo.png', 'public');
-
-        Storage::disk('public')->assertExists($original_file);
-        Setting::factory()->create(['email_logo' => $original_file]);
+        Setting::factory()->create(['email_logo' => null]);
 
         $response = $this->actingAs(User::factory()->superuser()->create())
             ->from(route('settings.branding.index'))
@@ -104,16 +103,14 @@ class BrandingSettingsTest extends TestCase
         $this->followRedirects($response)->assertSee(trans('alert-success'));
 
         Storage::disk('public')->assertExists('new_test_email_logo.png');
-        // Storage::disk('public')->assertMissing($original_file);
     }
 
     public function testEmailLogoCanBeDeleted()
     {
         Storage::fake('public');
-
-        $setting = Setting::factory()->create(['email_logo' => 'new_test_email_logo.png']);
-        $original_file = UploadedFile::fake()->image('new_test_email_logo.png')->storeAs('', 'new_test_email_logo.png', 'public');
-        Storage::disk('public')->assertExists($original_file);
+        UploadedFile::fake()->image('new_test_logo.png')->storeAs('uploads', 'new_test_logo.png', 'public');
+        $setting = Setting::factory()->create(['email_logo' => 'new_test_logo.png']);
+        Storage::disk('public')->assertExists('uploads/'.$setting->email_logo);
 
         $this->assertNotNull($setting->email_logo);
 
@@ -125,11 +122,12 @@ class BrandingSettingsTest extends TestCase
             ->assertValid('email_logo')
             ->assertStatus(302)
             ->assertRedirect(route('settings.index'));
+
         $setting->refresh();
         $this->followRedirects($response)->assertSee(trans('alert-success'));
         $this->assertDatabaseHas('settings', ['email_logo' => null]);
 
-        //Storage::disk('public')->assertMissing('new_test_email_logo.png');
+        Storage::disk('public')->assertMissing('new_test_email_logo.png');
 
     }
 
@@ -168,9 +166,9 @@ class BrandingSettingsTest extends TestCase
 
         Storage::fake('public');
 
+        UploadedFile::fake()->image('new_test_label_logo.png')->storeAs('uploads', 'new_test_label_logo.png', 'public');
         $setting = Setting::factory()->create(['label_logo' => 'new_test_label_logo.png']);
-        $original_file = UploadedFile::fake()->image('new_test_label_logo.png')->storeAs('', 'new_test_label_logo.png', 'public');
-        Storage::disk('public')->assertExists($original_file);
+        Storage::disk('public')->assertExists('uploads/'.$setting->label_logo);
 
         $this->assertNotNull($setting->label_logo);
 
@@ -185,8 +183,7 @@ class BrandingSettingsTest extends TestCase
 
         $setting->refresh();
         $this->followRedirects($response)->assertSee(trans('alert-success'));
-        // $this->assertNull($setting->refresh()->logo);
-        // Storage::disk('public')->assertMissing($original_file);
+        Storage::disk('public')->assertMissing('new_test_label_logo.png');
 
     }
 

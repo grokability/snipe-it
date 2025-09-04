@@ -76,7 +76,7 @@ class GroupsController extends Controller
         $this->authorize('superadmin');
         $group = new Group;
         // Get all the available permissions
-        $permissions = config('permissions');
+        $permissions = json_encode(config('permissions'));
         $groupPermissions = Helper::selectedPermissionsArray($permissions, $permissions);
 
         $group->name = $request->input('name');

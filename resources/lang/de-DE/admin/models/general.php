@@ -3,7 +3,7 @@
 return array(
     'about_models_title'     => 'Über Asset-Modelle',
     'about_models_text'           => 'Asset-Modelle sind eine Möglichkeit, identische Assets zu gruppieren. "MBP 2013", "IPhone 6 s" usw.',
-    'deleted'  					        => 'Dieses Modell wurde gelöscht.',
+    'deleted'  					=> 'Dieses Modell wurde gelöscht.',
     'bulk_delete'               => 'Massenlöschen von Asset-Modellen',
     'bulk_delete_help'               => 'Nutzen Sie die nachfolgenden Kontrollkästchen, um die Löschung der Asset-Modelle zu bestätigen. Asset-Modelle, die noch zugewiesene Assets haben, können nur dann gelöscht werden, wenn die enthaltenen Assets einem anderen Asset-Modell zugewiesen werden.',
     'bulk_delete_warn'          => 'Sie sind dabei, ein Asset Modell zu löschen.|Sie sind dabei, :model_count Asset Modelle zu löschen.',

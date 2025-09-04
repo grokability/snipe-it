@@ -6,8 +6,6 @@ return array(
     'account_not_found'      => 'Naudotojo vardas arba slaptažodis neteisingas.',
     'account_not_activated'  => 'Šio naudotojo paskyra nesuaktyvinta.',
     'account_suspended'      => 'Šio naudotojo paskyra yra išjungta.',
-    'account_banned'         => 'Šio naudotojo paskyra yra užblokuota.',
-    'throttle'               => 'Per daug nesėkmingų bandymų prisijungti. Bandykite dar kartą po :minutes minučių.',
 
     'two_factor' => array(
         'already_enrolled'      => 'Jūsų įrenginys jau yra įtrauktas.',

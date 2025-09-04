@@ -2,9 +2,9 @@
 return array(
     'companies' => 'شرکت ها',
     'create'    => 'ایجاد شرکت',
-    'email'     => 'Company Email',
+    'email'     => 'ایمیل شرکت',
     'title'     => 'شرکت',
-    'phone'     => 'Company Phone',
+    'phone'     => 'تلفن شرکت',
     'update'    => 'بروزرسانی شرکت',
     'name'      => 'نام شرکت',
     'id'        => 'شناسه',

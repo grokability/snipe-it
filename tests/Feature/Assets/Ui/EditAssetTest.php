@@ -27,7 +27,7 @@ class EditAssetTest extends TestCase
     {
         $asset = Asset::factory()->create();
         $user = User::factory()->editAssets()->create();
-        $response = $this->actingAs($user)->get(route('hardware.edit', $asset->id));
+        $response = $this->actingAs($user)->get(route('hardware.edit', $asset));
         $response->assertStatus(200);
     }
 
@@ -63,7 +63,7 @@ class EditAssetTest extends TestCase
                 'model_id' => AssetModel::factory()->create()->id,
             ])
             ->assertStatus(302)
-            ->assertRedirect(route('hardware.show', ['hardware' => $asset->id]));
+            ->assertRedirect(route('hardware.show', $asset));
 
         $this->assertDatabaseHas('assets', ['asset_tag' => 'New Asset Tag']);
     }
@@ -81,8 +81,8 @@ class EditAssetTest extends TestCase
         $currentTimestamp = now();
 
         $this->actingAs(User::factory()->viewAssets()->editAssets()->create())
-            ->from(route('hardware.edit', $asset->id))
-            ->put(route('hardware.update', $asset->id), [
+            ->from(route('hardware.edit', $asset))
+            ->put(route('hardware.update', $asset), [
                     'status_id' => $achived_status->id,
                     'model_id' => $asset->model_id,
                     'asset_tags' => $asset->asset_tag,
@@ -98,8 +98,31 @@ class EditAssetTest extends TestCase
         $this->assertEquals($achived_status->id, $asset->status_id);
 
         Event::assertDispatched(function (CheckoutableCheckedIn $event) use ($currentTimestamp) {
-            return Carbon::parse($event->action_date)->diffInSeconds($currentTimestamp) < 2;
+            return (int) Carbon::parse($event->action_date)->diffInSeconds($currentTimestamp, true) < 2;
         }, 1);
+    }
+
+    public function testCurrentLocationIsNotUpdatedOnEdit()
+    {
+        $defaultLocation = Location::factory()->create();
+        $currentLocation = Location::factory()->create();
+        $asset = Asset::factory()->create([
+            'location_id' => $currentLocation->id,
+            'rtd_location_id' => $defaultLocation->id
+        ]);
+
+        $this->actingAs(User::factory()->viewAssets()->editAssets()->create())
+            ->put(route('hardware.update', $asset), [
+                'redirect_option' => 'item',
+                'name' => 'New name',
+                'asset_tags' => 'New Asset Tag',
+                'status_id' => $asset->status_id,
+                'model_id' => $asset->model_id,
+            ]);
+
+        $asset->refresh();
+        $this->assertEquals('New name', $asset->name);
+        $this->assertEquals($currentLocation->id, $asset->location_id);
     }
 
 }

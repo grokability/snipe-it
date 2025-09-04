@@ -3,7 +3,6 @@
 namespace Tests\Unit\Listeners;
 
 use App\Events\CheckoutableCheckedOut;
-use App\Events\NoteAdded;
 use App\Listeners\LogListener;
 use App\Models\Asset;
 use App\Models\User;
@@ -38,19 +37,4 @@ class LogListenerTest extends TestCase
         ]);
     }
 
-    public function testLogsEntryOnAssetNoteCreation()
-    {
-        $asset = Asset::factory()->create();
-        $noteAddedBy = User::factory()->create();
-
-        event(new NoteAdded($asset, $noteAddedBy, 'My Cool Note!'));
-
-        $this->assertDatabaseHas('action_logs', [
-            'action_type' => 'note_added',
-            'created_by' => $noteAddedBy->id,
-            'item_id' => $asset->id,
-            'item_type' => Asset::class,
-            'note' => 'My Cool Note!',
-        ]);
-    }
 }

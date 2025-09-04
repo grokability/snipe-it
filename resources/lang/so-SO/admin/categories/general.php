@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Qaanadda Ra\'samaalka',
     'category_name'  					=> 'Magaca Qaanadda',
     'checkin_email'                     => 'U dir email isticmaalaha marka la galayo/baarayo.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'Isticmaalahan waxa loo soo diri doonaa email marka la hubinayo/baarayo.',
     'clone'                             => 'Qaanadda koobiyeynta',
     'create'  							=> 'Sameey Qaanad',
@@ -21,5 +22,9 @@ return array(
     'use_default_eula'					=> 'Isticmaal <a href="#" data-toggle="modal" data-target="#eulaModal">asaaska koowaad ee EULA</a> beddelkeeda.',
     'use_default_eula_disabled'			=> '<del>Isticmaal beddelka EULA-ga aasaasiga ah.</del> Ma jiro EULA aasaasi ah oo la dejiyay. Fadlan ku dar mid Settings.',
     'use_default_eula_column'			=> 'Isticmaal EULA caadiga ah',
+    'import_require_acceptance'         => 'Require Acceptance',
+    'import_checkin_email'              => 'Send Checkin Email',
+    'import_eula_text'                  => 'EULA text',
+    'import_category_type'              => 'Category Type',
 
 );

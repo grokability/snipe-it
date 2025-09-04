@@ -17,7 +17,8 @@ return array(
     'delete' => array(
         'confirm'   => 'Haluatko varmasti poistaa tämän komponentin?',
         'error'   => 'Komponentti poisto ei onnistunut. Yritä uudelleen.',
-        'success' => 'Komponentti poistettiin.'
+        'success' => 'Komponentti poistettiin.',
+        'error_qty'   => 'Some components of this type are still checked out. Please check them in and try again.',
     ),
 
      'checkout' => array(

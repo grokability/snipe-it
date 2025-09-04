@@ -39,4 +39,5 @@ return [
     'signed_by_finance_auditor' => 'Allkiri (finantsaudiitor):',
     'signed_by_location_manager' => 'Allkiri (asukohahaldur):',
     'signed_by'                 => 'Allkiri:',
+    'clone'  					=> 'Clone Location',
 ];

@@ -24,6 +24,12 @@ class ItemImporter extends Importer
 
     protected function handle($row)
     {
+
+        /**
+         * This section adds the most common fields into the $item array so we don't have to manually add them to
+         * things like accessories, consumables, etc.
+         */
+
         // Need to reset this between iterations or we'll have stale data.
         $this->item = [];
 
@@ -73,29 +79,20 @@ class ItemImporter extends Importer
         $this->item['notes'] = $this->findCsvMatch($row, 'notes');
         $this->item['order_number'] = $this->findCsvMatch($row, 'order_number');
         $this->item['purchase_cost'] = $this->findCsvMatch($row, 'purchase_cost');
+        $this->item['model_number'] = trim($this->findCsvMatch($row, 'model_number'));
+        $this->item['min_amt'] = $this->findCsvMatch($row, 'min_amt');
+        $this->item['qty'] = $this->findCsvMatch($row, 'quantity');
+        $this->item['requestable'] = $this->findCsvMatch($row, 'requestable');
+        $this->item['created_by'] = auth()->id();
+        $this->item['serial'] = $this->findCsvMatch($row, 'serial');
+        $this->item['item_no'] = trim($this->findCsvMatch($row, 'item_no'));
+
 
         $this->item['purchase_date'] = null;
         if ($this->findCsvMatch($row, 'purchase_date') != '') {
             $this->item['purchase_date'] = date('Y-m-d', strtotime($this->findCsvMatch($row, 'purchase_date')));
         }
 
-//        $this->item['asset_eol_date'] = null;
-//        if ($this->findCsvMatch($row, 'asset_eol_date') != '') {
-//            $csvMatch = $this->findCsvMatch($row, 'asset_eol_date');
-//            \Log::warning('EOL Date for $csvMatch is '.$csvMatch);
-//            try {
-//                $this->item['asset_eol_date'] = CarbonImmutable::parse($csvMatch)->format('Y-m-d');
-//            } catch (\Exception $e) {
-//                Log::info($e->getMessage());
-//                $this->log('Unable to parse date: '.$csvMatch);
-//            }
-//        }
-
-
-        $this->item['qty'] = $this->findCsvMatch($row, 'quantity');
-        $this->item['requestable'] = $this->findCsvMatch($row, 'requestable');
-        $this->item['created_by'] = auth()->id();
-        $this->item['serial'] = $this->findCsvMatch($row, 'serial');
         // NO need to call this method if we're running the user import.
         // TODO: Merge these methods.
         $this->item['checkout_class'] = $this->findCsvMatch($row, 'checkout_class');
@@ -113,7 +110,7 @@ class ItemImporter extends Importer
     protected function determineCheckout($row)
     {
         // Locations don't get checked out to anyone/anything
-        if ((get_class($this) == LocationImporter::class) || (get_class($this) == AssetModelImporter::class)) {
+        if ((get_class($this) == LocationImporter::class) || (get_class($this) == AssetModelImporter::class) || (get_class($this) == SupplierImporter::class) || (get_class($this) == ManufacturerImporter::class)  || (get_class($this) == CategoryImporter::class)) {
             return;
         }
 
@@ -356,16 +353,27 @@ class ItemImporter extends Importer
      * @param $user_manager string
      * @return int id of company created/found
      */
-    public function fetchManager($user_manager_first_name, $user_manager_last_name)
+    public function fetchManager($user_manager_username = null, $user_manager_employee_num = null, $user_manager_first_name = null, $user_manager_last_name = null)
     {
-        $manager = User::where('first_name', '=', $user_manager_first_name)
-            ->where('last_name', '=', $user_manager_last_name)->first();
+        if ($user_manager_username!='') {
+            $manager = User::where('username', '=', $user_manager_username)->first();
+            $this->log('Checking on username '.$user_manager_username);
+        } elseif ($user_manager_employee_num!='') {
+            $manager = User::where('employee_num', '=', $user_manager_employee_num)->first();
+            $this->log('Checking on employee_num '.$user_manager_employee_num);
+        } else {
+            $manager = User::where('first_name', '=', $user_manager_first_name)
+                ->where('last_name', '=', $user_manager_last_name)->first();
+            $this->log('Checking on full name');
+        }
+
         if ($manager) {
             $this->log('A matching Manager '.$user_manager_first_name.' '.$user_manager_last_name.' already exists');
 
             return $manager->id;
         }
-        $this->log('No matching Manager '.$user_manager_first_name.' '.$user_manager_last_name.' found. If their user account is being created through this import, you should re-process this file again. ');
+
+        $this->log('No matching Manager found. If their user account is being created through this import, you should re-process this file again. ');
 
         return null;
     }
@@ -512,7 +520,6 @@ class ItemImporter extends Importer
 
         if ($supplier->save()) {
             $this->log('Supplier '.$item_supplier.' was created');
-
             return $supplier->id;
         }
         $this->logError($supplier, 'Supplier');

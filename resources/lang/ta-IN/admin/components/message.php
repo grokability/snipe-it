@@ -17,7 +17,8 @@ return array(
     'delete' => array(
         'confirm'   => 'நிச்சயமாக இந்த உறுப்பு நீக்க வேண்டுமா?',
         'error'   => 'கூறு நீக்குவதில் ஒரு சிக்கல் இருந்தது. தயவு செய்து மீண்டும் முயற்சிக்கவும்.',
-        'success' => 'கூறு வெற்றிகரமாக நீக்கப்பட்டது.'
+        'success' => 'கூறு வெற்றிகரமாக நீக்கப்பட்டது.',
+        'error_qty'   => 'Some components of this type are still checked out. Please check them in and try again.',
     ),
 
      'checkout' => array(

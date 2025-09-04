@@ -23,12 +23,25 @@
         <div class="col-md-9 col-md-offset-3">
             @if ($defaultEulaText!='')
                 <label class="form-control">
-                    {{ Form::checkbox('use_default_eula', '1', $useDefaultEula, ['wire:model.live' => 'useDefaultEula', 'aria-label'=>'use_default_eula']) }}
+                    <input
+                        type="checkbox"
+                        name="use_default_eula"
+                        value="1"
+                        wire:model.live="useDefaultEula"
+                        aria-label="use_default_eula"
+                    />
                     <span>{!! trans('admin/categories/general.use_default_eula') !!}</span>
                 </label>
             @else
                 <label class="form-control form-control--disabled">
-                    {{ Form::checkbox('use_default_eula', '0', $useDefaultEula, ['wire:model.live' => 'useDefaultEula', 'class'=>'disabled','disabled' => 'disabled', 'aria-label'=>'use_default_eula']) }}
+                    <input
+                        type="checkbox"
+                        name="use_default_eula"
+                        value="0"
+                        wire:model.live="useDefaultEula"
+                        aria-label="use_default_eula"
+                        disabled
+                    />
                     <span>{!! trans('admin/categories/general.use_default_eula_disabled') !!}</span>
                 </label>
             @endif
@@ -39,17 +52,46 @@
     <div class="form-group">
         <div class="col-md-9 col-md-offset-3">
             <label class="form-control">
-                {{ Form::checkbox('require_acceptance', '1', $requireAcceptance, ['wire:model.live' => 'requireAcceptance', 'aria-label'=>'require_acceptance']) }}
+                <input
+                    type="checkbox"
+                    name="require_acceptance"
+                    value="1"
+                    wire:model.live="requireAcceptance"
+                    aria-label="require_acceptance"
+                />
                 {{ trans('admin/categories/general.require_acceptance') }}
             </label>
         </div>
     </div>
 
+    @if ($requireAcceptance)
+        <div class="form-group">
+            <div class="col-md-9 col-md-offset-3">
+                <label class="form-control">
+                    <input
+                        type="checkbox"
+                        name="alert_on_response"
+                        value="1"
+                        wire:model="alertOnResponse"
+                    />
+                    {{ trans('admin/categories/general.email_to_initiator') }}
+                </label>
+            </div>
+        </div>
+    @endif
+
     <!-- Email on Checkin -->
     <div class="form-group">
         <div class="col-md-9 col-md-offset-3">
             <label class="form-control">
-                {{ Form::checkbox('checkin_email', '1', $sendCheckInEmail, ['wire:model.live' => 'sendCheckInEmail', 'aria-label'=>'checkin_email', 'disabled' => $this->sendCheckInEmailDisabled]) }}
+                <input
+                    type="checkbox"
+                    name="checkin_email"
+                    value="1"
+                    wire:model.live="sendCheckInEmail"
+                    aria-label="checkin_email"
+                    @disabled($this->sendCheckInEmailDisabled)
+                />
                 {{ trans('admin/categories/general.checkin_email') }}
             </label>
             @if ($this->shouldDisplayEmailMessage)

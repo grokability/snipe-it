@@ -19,6 +19,8 @@ return [
     'print_assigned'    => 'Друкувати всі призначені',
     'email_assigned'    => 'Список адрес електронної пошти присвоєних',
     'user_notified'     => 'Користувач відправлений на email список призначених в даний час елементів.',
+    'users_notified'    => 'The user has been emailed a list of their currently assigned items.|:count users have been emailed a list of their currently assigned items.',
+    'users_notified_warning' => ':count user has been emailed a list of their currently assigned items, however :no_email users did not have an email address so could not be emailed.|:count users have been emailed a list of their currently assigned items, however :no_email user(s) did not have an email address so could not be emailed.',
     'auto_assign_label' => 'Включати цього користувача при автоматичному призначенні ліцензій',
     'auto_assign_help'  => 'Пропустити цього користувача в автопризначенні ліцензій',
     'software_user'     => 'Програмне забезпечення перевірено :name',
@@ -51,4 +53,5 @@ return [
     'next_save_user' => 'Далі: збереження користувача',
     'all_assigned_list_generation' => 'Згенерований на:',
     'email_user_creds_on_create' => 'Надішліть цьому користувачеві їх облікові дані?',
+    'department_manager' => 'Department Manager',
 ];

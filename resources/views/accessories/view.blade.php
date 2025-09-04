@@ -48,7 +48,7 @@
                                 <x-icon type="files" class="fa-2x" />
                                 </span>
                                 <span class="hidden-xs hidden-sm">{{ trans('general.file_uploads') }}
-                                    {!! ($accessory->uploads->count() > 0 ) ? '<badge class="badge badge-secondary">'.number_format($accessory->uploads->count()).'</badge>' : '' !!}
+                                    {!! ($accessory->uploads->count() > 0 ) ? '<span class="badge badge-secondary">'.number_format($accessory->uploads->count()).'</span>' : '' !!}
                                 </span>
                             </a>
                         </li>
@@ -78,14 +78,8 @@
                                 <table
                                     data-columns="{{ \App\Presenters\AccessoryPresenter::assignedDataTableLayout() }}"
                                     data-cookie-id-table="checkoutsTable"
-                                    data-pagination="true"
                                     data-id-table="checkoutsTable"
-                                    data-search="true"
                                     data-side-pagination="server"
-                                    data-show-columns="true"
-                                    data-show-fullscreen="true"
-                                    data-show-export="true"
-                                    data-show-refresh="true"
                                     data-sort-order="asc"
                                     id="checkoutsTable"
                                     class="table table-striped snipe-table"
@@ -102,41 +96,22 @@
 
                     <!-- history tab pane -->
                      <div class="tab-pane fade" id="history">
-                         <div class="table table-responsive">
+                         <div class="table-responsive">
                              <div class="row">
                                  <div class="col-md-12">
                                 <table
+                                        data-columns="{{ \App\Presenters\HistoryPresenter::dataTableLayout() }}"
                                         class="table table-striped snipe-table"
                                         data-cookie-id-table="AccessoryHistoryTable"
                                         data-id-table="AccessoryHistoryTable"
                                         id="AccessoryHistoryTable"
-                                        data-pagination="true"
-                                        data-show-columns="true"
                                         data-side-pagination="server"
-                                        data-show-refresh="true"
-                                        data-show-export="true"
                                         data-sort-order="desc"
                                         data-export-options='{
                        "fileName": "export-{{ str_slug($accessory->name) }}-history-{{ date('Y-m-d') }}",
                        "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
                      }'
-                                                data-url="{{ route('api.activity.index', ['item_id' => $accessory->id, 'item_type' => 'accessory']) }}">
-
-                                            <thead>
-                                            <tr>
-                                                <th class="col-sm-2" data-visible="false" data-sortable="true" data-field="created_at" data-formatter="dateDisplayFormatter">{{ trans('general.record_created') }}</th>
-                                                <th class="col-sm-2"data-visible="true" data-sortable="true" data-field="admin" data-formatter="usersLinkObjFormatter">{{ trans('general.admin') }}</th>
-                                                <th class="col-sm-2" data-sortable="true"  data-visible="true" data-field="action_type">{{ trans('general.action') }}</th>
-                                                <th class="col-sm-2" data-field="file" data-visible="false" data-formatter="fileUploadNameFormatter">{{ trans('general.file_name') }}</th>
-                                                <th class="col-sm-2" data-sortable="true"  data-visible="true" data-field="item" data-formatter="polymorphicItemFormatter">{{ trans('general.item') }}</th>
-                                                <th class="col-sm-2" data-visible="true" data-field="target" data-formatter="polymorphicItemFormatter">{{ trans('general.target') }}</th>
-                                                <th class="col-sm-2" data-sortable="true" data-visible="true" data-field="note">{{ trans('general.notes') }}</th>
-                                                <th class="col-sm-2" data-visible="true" data-field="action_date" data-formatter="dateDisplayFormatter">{{ trans('general.date') }}</th>
-                                                @if  ($snipeSettings->require_accept_signature=='1')
-                                                    <th class="col-md-3" data-field="signature_file" data-visible="false"  data-formatter="imageFormatter">{{ trans('general.signature') }}</th>
-                                                @endif
-                                            </tr>
-                                            </thead>
+                                        data-url="{{ route('api.activity.index', ['item_id' => $accessory->id, 'item_type' => 'accessory']) }}">
                                         </table>
                                     </div> <!-- /.col-md-12-->
                                 </div> <!-- /.row-->
@@ -150,11 +125,7 @@
 
                             <div class="row">
                                 <div class="col-md-12">
-                                    <x-filestable
-                                        filepath="private_uploads/accessories/"
-                                        showfile_routename="show.accessoryfile"
-                                        deletefile_routename="delete/accessoryfile"
-                                        :object="$accessory" />
+                                    <x-filestable object_type="accessories" :object="$accessory" />
                                 </div>
                             </div>
                         </div> <!-- /.tab-pane -->
@@ -178,6 +149,17 @@
           </div>
       @endif
 
+          @if ($accessory->model_number)
+              <div class="row">
+                  <div class="col-md-3" style="padding-bottom: 10px;">
+                      <strong>{{ trans('general.model_no')}}</strong>
+                  </div>
+                  <div class="col-md-9">
+                      {{ $accessory->model_number }}
+                  </div>
+              </div>
+          @endif
+
       @if ($accessory->company)
           <div class="row">
               <div class="col-md-3" style="padding-bottom: 15px;">
@@ -189,6 +171,16 @@
           </div>
       @endif
 
+          @if ($accessory->location)
+              <div class="row">
+                  <div class="col-md-3" style="padding-bottom: 10px;">
+                      <strong>{{ trans('general.location')}}</strong>
+                  </div>
+                  <div class="col-md-9">
+                      <a href="{{ route('locations.show', $accessory->location->id) }}">{{ $accessory->location->name }} </a>
+                  </div>
+              </div>
+          @endif
 
       @if ($accessory->category)
           <div class="row">
@@ -200,6 +192,18 @@
               </div>
           </div>
       @endif
+
+          @if ($accessory->manufacturer)
+              <div class="row">
+                  <div class="col-md-3" style="padding-bottom: 10px;">
+                      <strong>{{ trans('general.manufacturer')}}</strong>
+                  </div>
+                  <div class="col-md-9">
+                      <a href="{{ route('manufacturers.show', $accessory->manufacturer->id) }}">{{ $accessory->manufacturer->name }} </a>
+                  </div>
+              </div>
+          @endif
+
 
 
       @if ($accessory->notes)
@@ -213,9 +217,33 @@
               {!! nl2br(Helper::parseEscapedMarkedownInline($accessory->notes)) !!}
           </div>
        </div>
-
      @endif
 
+      @if ($accessory->purchase_date)
+          <div class="row">
+              <div class="col-md-3" style="padding-bottom: 10px;">
+                  <strong>
+                      {{ trans('general.purchase_date') }}
+                  </strong>
+              </div>
+              <div class="col-md-9" style="word-wrap: break-word;">
+                  {{ \App\Helpers\Helper::getFormattedDateObject($accessory->purchase_date, 'date')['formatted']}}
+              </div>
+          </div>
+      @endif
+
+          @if ($accessory->purchase_cost)
+              <div class="row">
+                  <div class="col-md-3" style="padding-bottom: 10px;">
+                      <strong>
+                          {{ trans('general.purchase_cost') }}
+                      </strong>
+                  </div>
+                  <div class="col-md-9" style="word-wrap: break-word;">
+                      {{ Helper::formatCurrencyOutput($accessory->purchase_cost) }}
+                  </div>
+              </div>
+          @endif
 
       <div class="row">
           <div class="col-md-3" style="padding-bottom: 10px;">
@@ -234,6 +262,45 @@
               {{ $accessory->checkouts_count }}
           </div>
       </div>
+
+          <div class="row">
+              <div class="col-md-3" style="padding-bottom: 10px;">
+                  <strong>
+                      {{ trans('general.created_at') }}
+                  </strong>
+              </div>
+              <div class="col-md-9" style="word-wrap: break-word;">
+                  {{ \App\Helpers\Helper::getFormattedDateObject($accessory->created_at, 'datetime')['formatted']}}
+              </div>
+          </div>
+
+          @if ($accessory->created_at!=$accessory->updated_at)
+          <div class="row">
+              <div class="col-md-3" style="padding-bottom: 10px;">
+                  <strong>
+                      {{ trans('general.updated_at') }}
+                  </strong>
+              </div>
+              <div class="col-md-9" style="word-wrap: break-word;">
+                  {{ \App\Helpers\Helper::getFormattedDateObject($accessory->updated_at, 'datetime')['formatted']}}
+              </div>
+          </div>
+
+          @endif
+
+          @if ($accessory->adminuser)
+              <div class="row">
+                  <div class="col-md-3" style="padding-bottom: 10px;">
+                      <strong>
+                          {{ trans('general.created_by') }}
+                      </strong>
+                  </div>
+                  <div class="col-md-9" style="word-wrap: break-word;">
+                      <x-full-user-name :user="$accessory->adminuser" />
+                  </div>
+              </div>
+          @endif
+
 </div>
 
     <div class="col-md-3 pull-right">
@@ -267,7 +334,7 @@
         @can('delete', $accessory)
             @if ($accessory->checkouts_count == 0)
                 <div class="text-center" style="padding-top:5px;">
-                    <button class="btn btn-block btn-danger btn-sm btn-social delete-asset" style="padding-top:5px;" data-toggle="modal" data-title="{{ trans('general.delete') }}" data-content="{{ trans('general.delete_confirm_no_undo', ['item' => $accessory->name]) }}" data-target="#dataConfirmModal">
+                    <button class="btn btn-block btn-danger btn-sm btn-social delete-asset" style="padding-top:5px;" data-toggle="modal" data-title="{{ trans('general.delete') }}" data-content="{{ trans('general.delete_confirm_no_undo', ['item' => $accessory->name]) }}" data-target="#dataConfirmModal" onClick="return false;">
                         <x-icon type="delete" />
                     {{ trans('general.delete') }}
                     </button>
@@ -293,17 +360,6 @@
 @endcan
 @stop
 
-
-
-
 @section('moar_scripts')
-    <script>
-        $('#dataConfirmModal').on('show.bs.modal', function (event) {
-            var content = $(event.relatedTarget).data('content');
-            var title = $(event.relatedTarget).data('title');
-            $(this).find(".modal-body").text(content);
-            $(this).find(".modal-header").text(title);
-        });
-    </script>
 @include ('partials.bootstrap-table')
 @stop

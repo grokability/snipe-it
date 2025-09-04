@@ -17,7 +17,8 @@ return array(
     'delete' => array(
         'confirm'   => 'Sind Sie sich sicher das sie diese Komponente löschen wollen?',
         'error'   => 'Beim Löschen der Komponente ist ein Fehler aufgetreten. Bitte probieren Sie es noch einmal.',
-        'success' => 'Die Komponente wurde erfolgreich gelöscht.'
+        'success' => 'Die Komponente wurde erfolgreich gelöscht.',
+        'error_qty'   => 'Einige Komponenten dieses Typs sind noch herausgegeben. Bitte nehmen Sie sie zurück und versuchen Sie es erneut.',
     ),
 
      'checkout' => array(

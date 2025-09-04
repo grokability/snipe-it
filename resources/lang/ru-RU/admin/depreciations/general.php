@@ -13,4 +13,8 @@ return [
     'no_depreciations_warning'               => '<strong>Предупреждение: </strong>
                       В настоящее время у вас нет настроенных амортизаций.
                       Пожалуйста, установите хотя бы одну амортизацию для просмотра отчета об амортизации.',
+    'depreciation_method'                   => 'Отчет по амортизации',
+    'linear_depreciation'                   => 'Linear (Default)',
+    'half_1'                                => 'Half-year convention, always applied',
+    'half_2'                                => 'Half-year convention, applied with condition',
 ];

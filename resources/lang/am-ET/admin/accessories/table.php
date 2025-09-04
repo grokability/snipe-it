@@ -3,7 +3,7 @@
 return array(
 	'dl_csv'      				=> 'Download CSV',
 	'eula_text'      			=> 'EULA',
-    'id'      					=> 'ID',
+    'id'      					=> 'መለያ',
     'require_acceptance'      	=> 'Acceptance',
     'title'      				=> 'Accessory Name',
 );

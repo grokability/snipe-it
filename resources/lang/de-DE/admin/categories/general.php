@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Asset-Kategorien',
     'category_name'  					=> 'Kategorie Name',
     'checkin_email'                     => 'Beim Checkin/Checkout eine E-Mail an den Benutzer senden.',
+    'email_to_initiator'                => 'Sende eine E-Mail an Sie, wenn der Benutzer die Herausgabe akzeptiert oder ablehnt.',
     'checkin_email_notification'        => 'Dieser Benutzer erhält beim Checkin / Checkout eine E-Mail.',
     'clone'                             => 'Kategorie duplizieren',
     'create'  							=> 'Kategorie erstellen',
@@ -21,5 +22,9 @@ return array(
     'use_default_eula'					=> 'Die <a href="#" data-toggle="modal" data-target="#eulaModal"> Standard EULA </a> statt dessen verwenden.',
     'use_default_eula_disabled'			=> '<del>Die Standard EULA verwenden.</del>Es wurde keine Standard EULA definiert.Bitte fügen Sie in den Einstellungen eine hinzu.',
     'use_default_eula_column'			=> 'Standard-EULA verwenden',
+    'import_require_acceptance'         => 'Akzeptanz erforderlich',
+    'import_checkin_email'              => 'Rücknahme E-mail senden',
+    'import_eula_text'                  => 'EULA Text',
+    'import_category_type'              => 'Kategorietyp',
 
 );

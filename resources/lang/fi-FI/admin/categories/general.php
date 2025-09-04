@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Laitekategoriat',
     'category_name'  					=> 'Kategorian nimi',
     'checkin_email'                     => 'Lähetä käyttäjälle sähköposti palautuksesta/luovutuksesta.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'Tälle käyttäjälle lähetetään sähköpostia palautuksesta/luovutuksesta.',
     'clone'                             => 'Monista kategoria',
     'create'  							=> 'Uusi kategoria',
@@ -21,5 +22,9 @@ return array(
     'use_default_eula'					=> 'Käytä <a href="#" data-toggle="modal" data-target="#eulaModal"> yleisiä käyttöehtoja</a>.',
     'use_default_eula_disabled'			=> '<del>Käytä yleisiä käyttöehtoja.</del> Yleisiä käyttöehtoja ei ole määritetty. Voit lisätä ne asetuksista.',
     'use_default_eula_column'			=> 'Käytä yleisiä käyttöehtoja',
+    'import_require_acceptance'         => 'Require Acceptance',
+    'import_checkin_email'              => 'Send Checkin Email',
+    'import_eula_text'                  => 'EULA text',
+    'import_category_type'              => 'Category Type',
 
 );

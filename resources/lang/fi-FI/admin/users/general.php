@@ -19,6 +19,8 @@ return [
     'print_assigned'    => 'Tulosta kaikki luovutetut',
     'email_assigned'    => 'Kaikkien määritettyjen sähköpostien luettelo',
     'user_notified'     => 'Käyttäjä on lähetetty sähköpostilla luettelo heidän tällä hetkellä määritetyistä kohteista.',
+    'users_notified'    => 'The user has been emailed a list of their currently assigned items.|:count users have been emailed a list of their currently assigned items.',
+    'users_notified_warning' => ':count user has been emailed a list of their currently assigned items, however :no_email users did not have an email address so could not be emailed.|:count users have been emailed a list of their currently assigned items, however :no_email user(s) did not have an email address so could not be emailed.',
     'auto_assign_label' => 'Sisällytä tämä käyttäjä automaattisesti määritettäessä hyväksyttäviä lisenssejä',
     'auto_assign_help'  => 'Ohita tämä käyttäjä automaattiseen lisenssien osoittamiseen',
     'software_user'     => 'Käyttäjälle :name luovutetut ohjelmistot',
@@ -51,4 +53,5 @@ return [
     'next_save_user' => 'Seuraava: Tallenna Käyttäjä',
     'all_assigned_list_generation' => 'Luotu:',
     'email_user_creds_on_create' => 'Lähetä tälle käyttäjälle käyttäjätunnukset?',
+    'department_manager' => 'Department Manager',
 ];

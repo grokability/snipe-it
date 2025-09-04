@@ -48,15 +48,15 @@ class Depreciable extends SnipeModel
         $depreciation = 0;
         $setting = Setting::getSettings();
         switch ($setting->depreciation_method) {
-            case 'half_1':
+        case 'half_1':
             $depreciation = $this->getHalfYearDepreciatedValue(true);
             break;
 
-            case 'half_2':
+        case 'half_2':
             $depreciation = $this->getHalfYearDepreciatedValue(false);
             break;
 
-            default:
+        default:
             $depreciation = $this->getLinearDepreciatedValue();
         }
 
@@ -74,7 +74,7 @@ class Depreciable extends SnipeModel
             return null;
         }
 
-        if ($months_passed >= $this->get_depreciation()->months){
+        if ($months_passed >= $this->get_depreciation()->months) {
             //if there is a floor use it
             if($this->get_depreciation()->depreciation_min) {
 
@@ -93,14 +93,15 @@ class Depreciable extends SnipeModel
         return $current_value;
     }
 
-    public function getMonthlyDepreciation(){
+    public function getMonthlyDepreciation()
+    {
 
         return ($this->purchase_cost-$this->calculateDepreciation())/$this->get_depreciation()->months;
 
     }
 
     /**
-     * @param onlyHalfFirstYear Boolean always applied only second half of the first year
+     * @param  onlyHalfFirstYear Boolean always applied only second half of the first year
      * @return float|int
      */
     public function getHalfYearDepreciatedValue($onlyHalfFirstYear = false)
@@ -131,7 +132,7 @@ class Depreciable extends SnipeModel
     }
 
     /**
-     * @param \DateTime $date
+     * @param  \DateTime $date
      * @return int
      */
     protected function get_fiscal_year($date)
@@ -146,7 +147,7 @@ class Depreciable extends SnipeModel
     }
 
     /**
-     * @param \DateTime $date
+     * @param  \DateTime $date
      * @return bool
      */
     protected function is_first_half_of_year($date)

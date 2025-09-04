@@ -11,7 +11,7 @@ jobs:
   dockerHubDescription:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Docker Hub Description
         uses: grokability/dockerhub-description@7ea9d275c7cdbe2b676a093a0308c50665e3b8b4

@@ -25,6 +25,7 @@ class Setting extends Model
 
     /**
      * The cache property so that multiple invocations of this will only load the Settings record from disk only once
+     *
      * @var self
      */
     public static ?self $_cache = null;
@@ -67,11 +68,13 @@ class Setting extends Model
         'google_login',
         'google_client_id',
         'google_client_secret',
+        'manager_view_enabled',
     ];
 
     protected $casts = [
         'label2_asset_logo' => 'boolean',
         'require_checkinout_notes' => 'boolean',
+        'manager_view_enabled' => 'boolean',
     ];
 
     /**
@@ -247,7 +250,7 @@ class Setting extends Model
      *
      * @return string
      */
-    public function routeNotificationForSlack(): string
+    public function routeNotificationForSlack(): ?string
     {
         // At this point the endpoint is the same for everything.
         //  In the future this may want to be adapted for individual notifications.
@@ -259,7 +262,7 @@ class Setting extends Model
      *
      * @return string
      */
-    public function routeNotificationForMail(): string
+    public function routeNotificationForMail(): ?string
     {
         // At this point the endpoint is the same for everything.
         //  In the future this may want to be adapted for individual notifications.
@@ -304,7 +307,8 @@ class Setting extends Model
      */
     public static function getLdapSettings(): Collection
     {
-        $ldapSettings = self::select([
+        $ldapSettings = self::select(
+            [
             'ldap_enabled',
             'ldap_server',
             'ldap_uname',
@@ -335,7 +339,8 @@ class Setting extends Model
             'ldap_manager',
             'ldap_country',
             'ldap_location',
-            ])->first()->getAttributes();
+            ]
+        )->first()->getAttributes();
 
         return collect($ldapSettings);
     }

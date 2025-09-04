@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Ngā Kāwai Āhuatanga',
     'category_name'  					=> 'Ingoa Kāwai',
     'checkin_email'                     => 'Send email to user on checkin/checkout.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'This user will be sent an email on checkin/checkout.',
     'clone'                             => 'Tuhinga Kāwai',
     'create'  							=> 'Waihanga Hanga',
@@ -21,5 +22,9 @@ return array(
     'use_default_eula'					=> 'Whakamahia te taunoa 123_57__321primary taunoa EULA</a> hei utu mo tenei.',
     'use_default_eula_disabled'			=> '<del>Me te taunoa tuatahi o te EULA instead.</del> Karekau he tautuhinga taunoa EULA. Tēnā tāpirihia tētahi i Ngā Tautuhinga.',
     'use_default_eula_column'			=> 'Use default EULA',
+    'import_require_acceptance'         => 'Require Acceptance',
+    'import_checkin_email'              => 'Send Checkin Email',
+    'import_eula_text'                  => 'EULA text',
+    'import_category_type'              => 'Category Type',
 
 );

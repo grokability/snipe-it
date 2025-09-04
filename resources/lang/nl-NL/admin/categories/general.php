@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Activacategorieën',
     'category_name'  					=> 'Categorienaam',
     'checkin_email'                     => 'Stuur een e-mail naar de gebruiker bij in- of uitchecken.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'Deze gebruiker ontvangt een e-mail bij het in- of uitchecken.',
     'clone'                             => 'Categorie dupliceren',
     'create'  							=> 'Categorie aanmaken',
@@ -21,5 +22,9 @@ return array(
     'use_default_eula'					=> 'Gebruik de <a href="#" data-toggle="modal" data-target="#eulaModal"> standaard gebruikersovereenkomst</a>.',
     'use_default_eula_disabled'			=> '<del>Gebruik de standaard gebruikersovereenkomst.</del> Geen standaard gebruikersovereenkomst ingesteld. Ga naar Instellingen en voeg er één toe.',
     'use_default_eula_column'			=> 'Std. geb. overeenkomst gebruiken',
+    'import_require_acceptance'         => 'Require Acceptance',
+    'import_checkin_email'              => 'Send Checkin Email',
+    'import_eula_text'                  => 'EULA text',
+    'import_category_type'              => 'Category Type',
 
 );

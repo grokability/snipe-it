@@ -11,7 +11,7 @@ return array(
     'create'                => 'Create Supplier',
     'email'                 => 'Email',
     'fax'                   => 'Fax',
-    'id'                    => 'ID',
+    'id'                    => 'መለያ',
     'licenses'              => 'Licenses',
     'name'                  => 'Supplier Name',
     'notes'                 => 'Notes',

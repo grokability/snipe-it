@@ -17,7 +17,8 @@ return array(
     'delete' => array(
         'confirm'   => 'Sigurado kaba na gusto mong i-delete ang komponent na ito?',
         'error'   => 'Mayroong isyu sa pag-delete ng komponent. Mangayring subukang muli.',
-        'success' => 'Ang komponent ay matagumpay na naisagawa.'
+        'success' => 'Ang komponent ay matagumpay na naisagawa.',
+        'error_qty'   => 'Some components of this type are still checked out. Please check them in and try again.',
     ),
 
      'checkout' => array(

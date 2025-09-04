@@ -32,11 +32,12 @@ return [
     'asset_serial'              => '일련번호',
     'asset_location'            => '위치',
     'asset_checked_out'         => '반출 확인',
-    'asset_expected_checkin'    => 'Expected Checkin',
+    'asset_expected_checkin'    => '반납 예상일',
     'date'                      => '날짜:',
     'phone'                     => '유선번호',
     'signed_by_asset_auditor'   => 'Signed By (Asset Auditor):',
     'signed_by_finance_auditor' => 'Signed By (Finance Auditor):',
     'signed_by_location_manager' => 'Signed By (Location Manager):',
     'signed_by'                 => 'Signed Off By:',
+    'clone'  					=> 'Clone Location',
 ];

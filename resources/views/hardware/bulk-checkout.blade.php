@@ -39,13 +39,32 @@
          ])
 
 
+            <!-- Status -->
+            <div class="form-group {{ $errors->has('status_id') ? 'error' : '' }}">
+                <label for="status_id" class="col-md-3 control-label">
+                    {{ trans('admin/hardware/form.status') }}
+                </label>
+                <div class="col-md-7 required">
+                    <x-input.select
+                            name="status_id"
+                            :options="$statusLabel_list"
+                            :selected="old('status_id', $status_id ?? null)"
+                            style="width: 100%;"
+                            aria-label="status_id"
+                    />
+                    {!! $errors->first('status_id', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
+                </div>
+            </div>
+
 
             <!-- Checkout selector -->
-          @include ('partials.forms.checkout-selector', ['user_select' => 'true','asset_select' => 'true', 'location_select' => 'true'])
 
-          @include ('partials.forms.edit.user-select', ['translated_name' => trans('general.user'), 'fieldname' => 'assigned_user'])
-            @include ('partials.forms.edit.asset-select', ['translated_name' => trans('general.asset'), 'asset_selector_div_id' => 'assigned_asset', 'fieldname' => 'assigned_asset', 'unselect' => 'true', 'style' => 'display:none;'])
-          @include ('partials.forms.edit.location-select', ['translated_name' => trans('general.location'), 'fieldname' => 'assigned_location', 'style' => 'display:none;'])
+
+          @include ('partials.forms.checkout-selector', ['user_select' => 'true','asset_select' => 'true', 'location_select' => 'true'])
+          @include ('partials.forms.edit.user-select', ['translated_name' => trans('general.user'), 'fieldname' => 'assigned_user', 'style' => session('checkout_to_type') == 'user' ? '' : 'display: none;'])
+            <!-- We have to pass unselect here so that we don't default to the asset that's being checked out. We want that asset to be pre-selected everywhere else. -->
+          @include ('partials.forms.edit.asset-select', ['translated_name' => trans('general.asset'), 'asset_selector_div_id' => 'assigned_asset', 'fieldname' => 'assigned_asset', 'unselect' => 'true', 'style' => session('checkout_to_type') == 'asset' ? '' : 'display: none;'])
+          @include ('partials.forms.edit.location-select', ['translated_name' => trans('general.location'), 'fieldname' => 'assigned_location', 'style' => session('checkout_to_type') == 'location' ? '' : 'display: none;'])
 
           <!-- Checkout/Checkin Date -->
               <div class="form-group {{ $errors->has('checkout_at') ? 'error' : '' }}">
@@ -120,6 +139,30 @@
         //if there's already a user selected, make sure their checked-out assets show up
         // (if there isn't one, it won't do anything)
         $('#assigned_user').change();
+
+        // Add the disabled attribute to empty inputs on submit to handle the case where someone does not pick a status ID
+        // and the form is submitted with an empty status ID which will fail validation via the form request
+        $("form").submit(function() {
+            $(this).find(":input").filter(function(){ return !this.value; }).attr("disabled", "disabled");
+            return true; // ensure form still submits
+        });
+
+        $('#assigned_assets_select').select2('open');
+        setTimeout(function () {
+            const $searchField = $('.select2-search__field');
+            const $results = $('.select2-results');
+
+            // Focus the search input
+            $searchField.focus();
+
+            // Hide results initially
+            $results.hide();
+
+            // Show results when a user starts typing
+            $searchField.on('input', function () {
+                $results.show();
+            });
+        }, 0);
     });
 </script>
 

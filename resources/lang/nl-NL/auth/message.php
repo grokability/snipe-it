@@ -6,8 +6,6 @@ return array(
     'account_not_found'      => 'De gebruikersnaam of het wachtwoord is niet juist.',
     'account_not_activated'  => 'Deze gebruikersaccount is niet actief.',
     'account_suspended'      => 'Deze gebruikersaccount is vergrendeld.',
-    'account_banned'         => 'Deze gebruikersaccount is geband.',
-    'throttle'               => 'Te veel mislukte inlog pogingen. Probeer het over :minuten opnieuw.',
 
     'two_factor' => array(
         'already_enrolled'      => 'Je apparaat is al uitgeleverd.',

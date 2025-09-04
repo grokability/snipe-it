@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Bate kategorieë',
     'category_name'  					=> 'Kategorie Naam',
     'checkin_email'                     => 'Stuur e-pos aan gebruiker by aanmelding/afmelding.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'Hierdie gebruiker sal \'n e-pos gestuur word by aanmelding/afmelding.',
     'clone'                             => 'Klone Kategorie',
     'create'  							=> 'Skep Kategorie',
@@ -21,5 +22,9 @@ return array(
     'use_default_eula'					=> 'Gebruik eerder die <a href="#" data-toggle="modal" data-target="#eulaModal">primary standaard EULA</a>.',
     'use_default_eula_disabled'			=> '<del>Gebruik die primêre standaardverlof in plaas daarvan.</del> Geen primêre standaard EULA is ingestel nie. Voeg asseblief een by Instellings.',
     'use_default_eula_column'			=> 'Use default EULA',
+    'import_require_acceptance'         => 'Require Acceptance',
+    'import_checkin_email'              => 'Send Checkin Email',
+    'import_eula_text'                  => 'EULA text',
+    'import_category_type'              => 'Category Type',
 
 );

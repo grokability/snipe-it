@@ -4,6 +4,7 @@ return [
     'info'   => 'Demirbaş Raporu için istediğiniz seçenekleri seçiniz.',
     'deleted_user' => 'Kullanıcı silindi',
     'send_reminder' => 'Hatırlatma gönder',
+    'cannot_send_reminder' => 'User has been deleted or does not have an email address so cannot receive a reminder',
     'reminder_sent' => 'Hatırlatıcı gönderildi',
     'acceptance_deleted' => 'Kabul talebi silindi',
     'acceptance_request' => 'Kabul talebi',

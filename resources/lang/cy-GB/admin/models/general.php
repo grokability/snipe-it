@@ -3,7 +3,7 @@
 return array(
     'about_models_title'     => 'Amdan Modelau',
     'about_models_text'           => 'Mae modelau o asedau yn ffordd o creu grwp o asedau. "iPhone 7, Samsung TAB 4, ayyb.',
-    'deleted'  					        => 'This model has been deleted.',
+    'deleted'  					=> 'This model has been deleted.',
     'bulk_delete'               => 'Dileu Nifer o Modelau',
     'bulk_delete_help'               => 'Rhowch tic yn y bocsys isod i cadarnhau dileu y model. Nid oes modd dileu modelau sydd hefo asedau yn ei erbyn.',
     'bulk_delete_warn'          => 'You are about to delete one asset model.|You are about to delete :model_count asset models.',

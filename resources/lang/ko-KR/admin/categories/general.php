@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> '자산 분류',
     'category_name'  					=> '분류 명',
     'checkin_email'                     => '반입/반출 시 사용자에게 이메일을 보냅니다.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => '이 사용자는 반입 / 반출 시 이메일을 보냅니다.',
     'clone'                             => '분류 복제',
     'create'  							=> '분류 생성',
@@ -21,5 +22,9 @@ return array(
     'use_default_eula'					=> '대체  <a href="#" data-toggle="modal" data-target="#eulaModal">기본 사용권 계약서</a>를 사용합니다.',
     'use_default_eula_disabled'			=> '<del>대체 기본 사용권 계약서를 사용합니다.</del> 기본 사용권 계약서가 정의되지 않았습니다. 설정에서 하나를 추가해 주세요.',
     'use_default_eula_column'			=> '기본 EULA 사용',
+    'import_require_acceptance'         => 'Require Acceptance',
+    'import_checkin_email'              => 'Send Checkin Email',
+    'import_eula_text'                  => 'EULA text',
+    'import_category_type'              => 'Category Type',
 
 );

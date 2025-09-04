@@ -19,6 +19,8 @@ return [
     'print_assigned'    => 'Spausdinti išduotą',
     'email_assigned'    => 'El. paštu nusiųsti išduoto turto sąrašą',
     'user_notified'     => 'Naudotojui el. paštu išsiųstas jam priskirtų daiktų sąrašas.',
+    'users_notified'    => 'Naudotojui el. paštu buvo išsiųstas jam šiuo metu išduotų daiktų sąrašas.|:count naudotojams (-ų) el. paštu buvo išsiųsti šiuo metu jiems išduotų daiktų sąrašai.',
+    'users_notified_warning' => ':count naudotojui buvo išsiųstas šiuo metu jam išduotų daiktų sąrašas, tačiau :no_email naudotojai (-ų) neturėjo el. pašto adreso, todėl jiems negalėjo būti išsiųsti el. laiškai.|:count naudotojams (-ų) buvo išsiųsti šiuo metu jiems išduotų daiktų sąrašai, tačiau :no_email naudotojas (-ai) neturėjo el. pašto adreso, todėl jam (jiems) negalėjo būti išsiųsti el. laiškai.',
     'auto_assign_label' => 'Įtraukti šį naudotoją, kai automatiškai priskiriamos tinkamos licencijos',
     'auto_assign_help'  => 'Praleisti šį naudotoją, kai automatiškai priskiriamos licencijos',
     'software_user'     => 'Programinė įranga išduota: :name',
@@ -51,4 +53,5 @@ return [
     'next_save_user' => 'Toliau: išsaugoti naudotoją',
     'all_assigned_list_generation' => 'Sugeneruota:',
     'email_user_creds_on_create' => 'Siųsti naudotojui jo prisijungimo duomenis?',
+    'department_manager' => 'Skyriaus vadovas',
 ];

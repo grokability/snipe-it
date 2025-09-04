@@ -11,7 +11,7 @@ class EditCompanyTest extends TestCase
     public function testPageRenders()
     {
         $this->actingAs(User::factory()->superuser()->create())
-            ->get(route('companies.edit', Company::factory()->create()->id))
+            ->get(route('companies.edit', Company::factory()->create()))
             ->assertOk();
     }
 }

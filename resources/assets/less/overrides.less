@@ -731,7 +731,7 @@ h4 {
  Instead, we use CSS to add the icon into the table header, which leaves the column selector
  "title" text as-is and hides the icon.
 
- See https://github.com/snipe/snipe-it/issues/7989
+ See https://github.com/grokability/snipe-it/issues/7989
  */
 th.css-accessory > .th-inner,
 th.css-accessory-alt > .th-inner,
@@ -769,7 +769,6 @@ th.css-house-laptop > .th-inner::before,
 th.css-house-user > .th-inner::before,
 th.css-license > .th-inner::before,
 th.css-location > .th-inner::before,
-th.css-padlock > .th-inner::before,
 th.css-users > .th-inner::before,
 th.css-currency > .th-inner::before,
 th.css-history > .th-inner::before
@@ -824,7 +823,9 @@ th.css-component > .th-inner::before
 
 th.css-padlock > .th-inner::before
 {
-  content: "\f023"; font-family: "Font Awesome 5 Free"; font-weight: 900;
+  content: "\f023"; font-family: "Font Awesome 5 Free";
+  font-weight: 800;
+  padding-right: 3px;
 }
 
 th.css-house-user > .th-inner::before {
@@ -886,7 +887,7 @@ th.css-history > .th-inner::before {
   height: 34px;
 }
 
-.form-group.has-error label {
+.form-group.has-error label, .form-group.has-error .help-block {
   color: #a94442;
 }
 
@@ -973,9 +974,9 @@ label.form-control {
 
 label.form-control--disabled {
   color: #959495;
-  pointer-events:none;
   cursor: not-allowed;
 }
+
 
 /** --------------------------------------- **/
 /** Start checkbox styles to replace iCheck **/
@@ -1163,4 +1164,91 @@ input[type="radio"]:checked::before {
 /** this is needed to override ekko-lightboxes card view styles **/
 .bootstrap-table .fixed-table-container .table tbody tr .card-view {
   display: table-row !important;
+}
+
+.form-control-static {
+  padding-top: 0px;
+}
+
+
+td.text-right.text-padding-number-cell {
+  padding-right: 30px !important;
+  white-space: nowrap;
+}
+
+th.text-right.text-padding-number-footer-cell {
+  padding-right: 20px !important;
+  white-space: nowrap;
+}
+
+code.single-line {
+  white-space: pre-wrap;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+  max-width: 400px;
+}
+
+p.monospace, span.monospace {
+  font-family: monospace, monospace;
+}
+
+legend.highlight {
+  background: repeating-linear-gradient(
+          45deg,
+          #222d32,
+          #222d32 10px,
+          #444 10px,
+          #444 11px
+  );
+
+  color: #fff;
+  font-size: 18px;
+  padding: 6px 6px 6px 10px;
+}
+
+legend.highlight a {
+  color: #fff;
+  cursor: pointer;
+}
+
+fieldset.bottom-padded {
+  padding-bottom: 20px;
+}
+
+caption.tableCaption {
+  font-size: 18px;
+  padding-left: 8px;
+}
+
+// via https://github.com/grokability/snipe-it/issues/11754
+.sidebar-toggle.btn {
+  border-radius: 3px;
+  box-shadow: none;
+  border-top: 0px solid transparent;
+  border-bottom: 0px solid transparent;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  margin-left: -47px;
+  margin-top: 2px;
+}
+.popover.help-popover,
+.popover.help-popover .popover-content,
+.popover.help-popover .popover-body,
+.popover.help-popover .popover-title,
+.popover.help-popover .popover-header {
+  color: #000;
+}
+
+.visually-hidden {
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: preserve;
+  display: inline-block;
 }

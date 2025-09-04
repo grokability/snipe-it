@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Tillgångskategorier',
     'category_name'  					=> 'Kategorinamn',
     'checkin_email'                     => 'Skicka e-post till användaren vid incheckning/utcheckning.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'Den här användaren kommer att få e-post vid incheckning/utcheckning.',
     'clone'                             => 'Kopiera kategori',
     'create'  							=> 'Skapa kategori',
@@ -21,5 +22,9 @@ return array(
     'use_default_eula'					=> 'Använd <a href="#" data-toggle="modal" data-target="#eulaModal">standard-licensavtal, EULA</a> istället.',
     'use_default_eula_disabled'			=> '<del>Använd den primära licensavtalet, EULA:n, istället.</del> Inget primärt licensavtal, EULA, är satt. Vänligen lägg till en under Inställningar.',
     'use_default_eula_column'			=> 'Använd standard-EULA',
+    'import_require_acceptance'         => 'Require Acceptance',
+    'import_checkin_email'              => 'Send Checkin Email',
+    'import_eula_text'                  => 'EULA text',
+    'import_category_type'              => 'Category Type',
 
 );

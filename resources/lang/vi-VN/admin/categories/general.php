@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> 'Danh mục tài sản',
     'category_name'  					=> 'Tên hạng mục',
     'checkin_email'                     => 'Gửi email đến người dùng khi checkin/checkout.',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => 'Người dùng này sẽ được gửi email khi checkin/checkout.',
     'clone'                             => 'Nhân đôi Danh mục',
     'create'  							=> 'Tạo hạng mục',
@@ -21,5 +22,9 @@ return array(
     'use_default_eula'					=> 'Sử dụng <a href="#" data-toggle="modal" data-target="#eulaModal">giá trị EULA mặc đinh</a> để thay vào.',
     'use_default_eula_disabled'			=> '<del>Sử dụng giá trị EULA mặc định để thay thế.</del> No primary default EULA is set. Please add one in Settings.',
     'use_default_eula_column'			=> 'Sử dụng EULA mặc định',
+    'import_require_acceptance'         => 'Require Acceptance',
+    'import_checkin_email'              => 'Send Checkin Email',
+    'import_eula_text'                  => 'EULA text',
+    'import_category_type'              => 'Kiểu danh mục',
 
 );

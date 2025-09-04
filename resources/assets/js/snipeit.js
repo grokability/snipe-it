@@ -1,10 +1,41 @@
+var jQuery = require('jquery');
+window.jQuery = jQuery
+window.$ = jQuery
 
+// window._ = require('lodash'); //the only place I saw this used was vue.js, and we don't use that anymore
 
-// var jQuery = require('jquery');
-// window.jQuery = jQuery
-// window.$ = jQuery
+/****************************************
+ Much of what you'll see below is just plain require()'ed, this is because
+ it is mostly jQuery stuff, which attaches itself to the $() function/object
+ So we don't have to assign it to anything, it will just automagically attach
+ itself
+ *****************************************/
 
-require('./bootstrap');
+require("jquery-ui/dist/jquery-ui")
+jQuery.fn.uitooltip = jQuery.fn.tooltip;
+require('bootstrap-less');
+require('select2');
+require('admin-lte');
+require('tether');
+require('jquery-slimscroll');
+require('jquery.iframe-transport'); //probably not needed anymore, if I'm honest
+require('blueimp-file-upload')
+require('bootstrap-colorpicker')
+require('bootstrap-datepicker')
+require('ekko-lightbox') //TODO - this doesn't seem jquery-ish, we might need to do something weird here
+                         // it *does* require Bootstrap, which requires jquery, so maybe that's OK
+                         // it seems to work...
+require('./extensions/pGenerator.jquery'); //WEIRD, but works
+//require('chart.js') // Weirdly, this seems to "just work." Without this line, the dashboard blows up
+// but it's *HUGE* - and we only use it one place. So we're taking it out of the bundle
+window.SignaturePad = require('./signature_pad'); //ALSO WEIRD - but works
+require('jquery-validation')
+window.List = require('list.js')
+window.ClipboardJS = require('clipboard')
+// TODO - find everything using moment.js and kill it or upgrade it? It's huge
+// - adminLTE (UGH)
+// - bootstrap-daterangepicker
+// - fullcalendar (what's that? it's used by AdminLTE)
 
 /**
  * Module containing core application logic.
@@ -82,9 +113,11 @@ pieOptions = {
 
 var baseUrl = $('meta[name="baseUrl"]').attr('content');
 
+
+
 $(function () {
 
-    var $el = $('table');
+    var $el = $('body');
 
     // confirm restore modal
 
@@ -105,48 +138,27 @@ $(function () {
     });
 
     // confirm delete modal
-
     $el.on('click', '.delete-asset', function (evnt) {
         var $context = $(this);
         var $dataConfirmModal = $('#dataConfirmModal');
         var href = $context.attr('href');
         var message = $context.attr('data-content');
+        var headericon = $context.attr('data-icon');
         var title = $context.attr('data-title');
 
-        $('#myModalLabel').text(title);
-        $dataConfirmModal.find('.modal-body').text(message);
+        // deleteForm is the ID of the modal form itself
         $('#deleteForm').attr('action', href);
+        $dataConfirmModal.find('.modal-header-icon').addClass(headericon);
+        $dataConfirmModal.find('.modal-title').text(title).prepend('<i class="fa ' + headericon + '"></i> ');
+        $dataConfirmModal.find('.modal-body').text(message);
+        $dataConfirmModal.attr('action', href);
+
+        // Fire the modal
         $dataConfirmModal.modal({
             show: true
         });
         return false;
     });
-
-    /*
-    * Slideout help menu
-    */
-     $('.slideout-menu-toggle').on('click', function(event){
-        event.preventDefault();
-        // create menu variables
-        var slideoutMenu = $('.slideout-menu');
-        var slideoutMenuWidth = $('.slideout-menu').width();
-
-        // toggle open class
-        slideoutMenu.toggleClass("open");
-
-        // slide menu
-        if (slideoutMenu.hasClass("open")) {
-         slideoutMenu.show();
-            slideoutMenu.animate({
-                right: "0px"
-            });
-        } else {
-            slideoutMenu.animate({
-                right: -slideoutMenuWidth
-            }, "-350px");
-         slideoutMenu.fadeOut();
-        }
-     });
 
 
 
@@ -198,6 +210,7 @@ $(function () {
                         search: params.term,
                         page: params.page || 1,
                         assetStatusType: link.data("asset-status-type"),
+                        companyId: link.data("company-id"),
                     };
                     return data;
                 },

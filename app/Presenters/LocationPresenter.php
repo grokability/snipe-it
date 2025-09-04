@@ -18,6 +18,8 @@ class LocationPresenter extends Presenter
                 'field' => 'bulk_selectable',
                 'checkbox' => true,
                 'formatter' => 'checkboxEnabledFormatter',
+                'titleTooltip' => trans('general.select_all_none'),
+                'printIgnore' => true,
             ], [
                 'field' => 'id',
                 'searchable' => false,
@@ -25,7 +27,17 @@ class LocationPresenter extends Presenter
                 'switchable' => true,
                 'title' => trans('general.id'),
                 'visible' => false,
-            ], [
+            ],
+            [
+                'field' => 'company',
+                'searchable' => true,
+                'sortable' => true,
+                'switchable' => true,
+                'title' => trans('general.company'),
+                'visible' => false,
+                'formatter' => 'companiesLinkObjFormatter'
+            ],
+            [
                 'field' => 'name',
                 'searchable' => true,
                 'sortable' => true,
@@ -55,7 +67,9 @@ class LocationPresenter extends Presenter
                 'sortable' => true,
                 'switchable' => true,
                 'title' =>  trans('admin/locations/message.current_location'),
+                'titleTooltip' => trans('admin/locations/message.current_location'),
                 'visible' => true,
+                'class' => 'css-house-laptop',
             ], [
                 'field' => 'rtd_assets_count',
                 'searchable' => false,
@@ -102,13 +116,13 @@ class LocationPresenter extends Presenter
                 'titleTooltip' =>  trans('general.people'),
                 'visible' => true,
                 'class' => 'css-house-user',
-                // 'data-tooltip' => true, - not working, but I want to try to use regular tooltips here
             ], [
                 'field' => 'currency',
                 'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,
-                'title' =>  trans('general.currency'),
+                'title' =>  trans('general.currency_text'),
+                'titleTooltip' =>  trans('general.currency_text'),
                 'visible' => true,
                 'class' => 'css-currency',
             ], [
@@ -198,7 +212,16 @@ class LocationPresenter extends Presenter
                 'title' => trans('general.created_at'),
                 'visible' => false,
                 'formatter' => 'dateDisplayFormatter',
-            ], [
+            ],
+            [
+                'field' => 'created_by',
+                'searchable' => true,
+                'sortable' => true,
+                'switchable' => true,
+                'title' => trans('general.created_by'),
+                'visible' => false,
+                'formatter' => 'usersLinkObjFormatter',
+            ],[
                 'field' => 'actions',
                 'searchable' => false,
                 'sortable' => false,
@@ -262,7 +285,7 @@ class LocationPresenter extends Presenter
                 'field' => 'created_by',
                 'searchable' => false,
                 'sortable' => false,
-                'title' => trans('general.admin'),
+                'title' => trans('general.created_by'),
                 'visible' => false,
                 'formatter' => 'usersLinkObjFormatter',
             ],

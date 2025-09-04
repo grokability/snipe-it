@@ -1,10 +1,10 @@
 <?php
 
 return array(
-	'eula_text'      			=> 'EULA',
-    'id'      					=> 'ID',
-    'parent'   					=> 'Parent',
-    'require_acceptance'      	=> 'Acceptance',
-    'title'      				=> 'Asset Category Name',
+	'eula_text'      			=> 'የመጨረሻ ተጠቃሚ የፍቃድ ስምምነት',
+    'id'      					=> 'መለያ',
+    'parent'   					=> 'ዋና መደብ',
+    'require_acceptance'      	=> 'ተቀባይነት',
+    'title'      				=> 'የንብረት መደብ ስም',
 
 );

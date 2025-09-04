@@ -47,7 +47,7 @@
                             </div>
                             <div class="col-md-7">
                                 <label class="form-control">
-                                    {{ Form::checkbox('auto_increment_assets', '1', old('auto_increment_assets', $setting->auto_increment_assets),array('aria-label'=>'auto_increment_assets')) }}
+                                    <input type="checkbox" name="auto_increment_assets" value="1" @checked(old('auto_increment_assets', $setting->auto_increment_assets)) aria-label="auto_increment_assets">
                                     {{ trans('admin/settings/general.enabled') }}
                                 </label>
                             </div>

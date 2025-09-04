@@ -19,6 +19,8 @@ return [
     'print_assigned'    => '列印所有分配的',
     'email_assigned'    => '電子郵件所有分配的清單',
     'user_notified'     => '使用者已透過電子郵件接收他們目前分配的項目清單。',
+    'users_notified'    => 'The user has been emailed a list of their currently assigned items.|:count users have been emailed a list of their currently assigned items.',
+    'users_notified_warning' => ':count user has been emailed a list of their currently assigned items, however :no_email users did not have an email address so could not be emailed.|:count users have been emailed a list of their currently assigned items, however :no_email user(s) did not have an email address so could not be emailed.',
     'auto_assign_label' => '自動分配可用軟體授權時包含此使用者',
     'auto_assign_help'  => '自動分配可用軟體授權時跳過此使用者',
     'software_user'     => ':name 借出的軟體',
@@ -51,4 +53,5 @@ return [
     'next_save_user' => '下一步: 儲存使用者',
     'all_assigned_list_generation' => '產生於：',
     'email_user_creds_on_create' => '在建立時寄送此使用者他們的憑證嗎？',
+    'department_manager' => 'Department Manager',
 ];

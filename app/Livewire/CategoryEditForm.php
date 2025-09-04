@@ -6,17 +6,19 @@ use Livewire\Component;
 
 class CategoryEditForm extends Component
 {
+    public bool $alertOnResponse;
+
     public $defaultEulaText;
 
     public $eulaText;
 
     public $originalSendCheckInEmailValue;
 
-    public $requireAcceptance;
+    public bool $requireAcceptance;
 
-    public $sendCheckInEmail;
+    public bool $sendCheckInEmail;
 
-    public $useDefaultEula;
+    public bool $useDefaultEula;
 
     public function mount()
     {

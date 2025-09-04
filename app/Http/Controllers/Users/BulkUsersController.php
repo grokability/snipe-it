@@ -15,6 +15,7 @@ use App\Models\ConsumableAssignment;
 use App\Models\Consumable;
 use App\Models\Setting;
 use App\Models\User;
+use App\Notifications\CurrentInventory;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -51,6 +52,28 @@ class BulkUsersController extends Controller
                 $this->authorize('update', User::class);
                 return view('users/bulk-edit', compact('users'))
                     ->with('groups', Group::pluck('name', 'id'));
+
+            // bulk send assigned inventory
+            } elseif ($request->input('bulk_actions') == 'send_assigned') {
+                    $this->authorize('update', User::class);
+
+                $users_without_email = 0;
+                foreach ($users as $user) {
+                    if (empty($user->email)) {
+                        $users_without_email++;
+                    } else {
+                        $user->notify((new CurrentInventory($user)));
+                    }
+                }
+
+                if ($users_without_email == 0) {
+                    return redirect()->back()->with('success', trans_choice('admin/users/general.users_notified', $users->count()));
+                } else {
+                    return redirect()->back()->with('warning', trans_choice('admin/users/general.users_notified_warning', $users->count(), ['no_email' => $users_without_email]));
+                }
+
+
+
 
             // bulk delete, display the bulk delete confirmation form
             } elseif ($request->input('bulk_actions') == 'delete') {
@@ -275,7 +298,6 @@ class BulkUsersController extends Controller
         $this->logItemCheckinAndDelete($assets, Asset::class);
         $this->logAccessoriesCheckin($accessoryUserRows);
         $this->logItemCheckinAndDelete($licenses, License::class);
-        $this->logConsumablesCheckin($consumableUserRows);
 
         Asset::whereIn('id', $assets->pluck('id'))->update([
             'status_id'     => e(request('status_id')),
@@ -337,21 +359,7 @@ class BulkUsersController extends Controller
             $logAction->item_type = Accessory::class;
             $logAction->target_id = $accessoryUserRow->assigned_to;
             $logAction->target_type = User::class;
-            $logAction->created_at = auth()->id();
-            $logAction->note = 'Bulk checkin items';
-            $logAction->logaction('checkin from');
-        }
-    }
-
-    private function logConsumablesCheckin(Collection $consumableUserRows): void
-    {
-        foreach ($consumableUserRows as $consumableUserRow) {
-            $logAction = new Actionlog();
-            $logAction->item_id = $consumableUserRow->consumable_id;
-            $logAction->item_type = Consumable::class;
-            $logAction->target_id = $consumableUserRow->assigned_to;
-            $logAction->target_type = User::class;
-            $logAction->created_at = auth()->id();
+            $logAction->created_by = auth()->id();
             $logAction->note = 'Bulk checkin items';
             $logAction->logaction('checkin from');
         }

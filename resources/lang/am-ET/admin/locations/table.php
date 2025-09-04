@@ -5,7 +5,7 @@ return [
     'about_locations'           => 'Locations are used to track location information for users, assets, and other items',
     'assets_rtd'                => 'ንብረቶች', // This has NEVER meant Assets Retired. I don't know how it keeps getting reverted.
     'assets_checkedout'         => 'Assets Assigned',
-    'id'                        => 'ID',
+    'id'                        => 'መለያ',
     'city'                      => 'City',
     'state'                     => 'State',
     'country'                   => 'Country',
@@ -18,7 +18,7 @@ return [
     'address2'                   => 'Address Line 2',
     'zip'                       => 'Postal Code',
     'locations'                 => 'Locations',
-    'parent'                    => 'Parent',
+    'parent'                    => 'ዋና መደብ',
     'currency'                  => 'Location Currency',
     'ldap_ou'                   => 'LDAP Search OU',
     'user_name'                 => 'User Name',
@@ -39,4 +39,5 @@ return [
     'signed_by_finance_auditor' => 'Signed By (Finance Auditor):',
     'signed_by_location_manager' => 'Signed By (Location Manager):',
     'signed_by'                 => 'Signed Off By:',
+    'clone'  					=> 'Clone Location',
 ];

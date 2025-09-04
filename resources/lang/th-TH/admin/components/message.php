@@ -17,7 +17,8 @@ return array(
     'delete' => array(
         'confirm'   => 'คุณแน่ใจหรือไม่ว่าต้องการลบคอมโพเนนต์นี้',
         'error'   => 'เกิดปัญหาในการลบคอมโพเนนต์ กรุณาลองอีกครั้ง.',
-        'success' => 'คอมโพเนนต์ถูกลบเรียบร้อยแล้ว'
+        'success' => 'คอมโพเนนต์ถูกลบเรียบร้อยแล้ว',
+        'error_qty'   => 'Some components of this type are still checked out. Please check them in and try again.',
     ),
 
      'checkout' => array(

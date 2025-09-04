@@ -8,18 +8,45 @@ class TZe_18mm_A extends TZe_18mm
     private const BARCODE_MARGIN = 0.30;
     private const TEXT_SIZE_MOD  = 1.00;
 
-    public function getUnit()  { return 'mm'; }
-    public function getWidth() { return 50.0; }
-    public function getSupportAssetTag()  { return true; }
-    public function getSupport1DBarcode() { return true; }
-    public function getSupport2DBarcode() { return false; }
-    public function getSupportFields()    { return 1; }
-    public function getSupportLogo()      { return false; }
-    public function getSupportTitle()     { return false; }
+    public function getUnit()
+    {
+        return 'mm'; 
+    }
+    public function getWidth()
+    {
+        return 50.0; 
+    }
+    public function getSupportAssetTag()
+    {
+        return true; 
+    }
+    public function getSupport1DBarcode()
+    {
+        return true; 
+    }
+    public function getSupport2DBarcode()
+    {
+        return false; 
+    }
+    public function getSupportFields()
+    {
+        return 1; 
+    }
+    public function getSupportLogo()
+    {
+        return false; 
+    }
+    public function getSupportTitle()
+    {
+        return false; 
+    }
 
-    public function preparePDF($pdf) {}
+    public function preparePDF($pdf)
+    {
+    }
 
-    public function write($pdf, $record) {
+    public function write($pdf, $record)
+    {
         $pa = $this->getPrintableArea();
 
         if ($record->has('barcode1d')) {

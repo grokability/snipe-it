@@ -104,6 +104,16 @@ return [
             ]
 
         ],
+
+        'invites' => [
+            'provider' => 'users',
+            'table' => 'password_resets',
+            'expire' => env('INVITE_PASSWORD_LINK_EXPIRES', 2880),
+            'throttle' => [
+                'max_attempts' => env('LOGIN_MAX_ATTEMPTS', 5),
+                'lockout_duration' => env('LOGIN_LOCKOUT_DURATION', 60),
+            ]
+        ],
     ],
 
     /*

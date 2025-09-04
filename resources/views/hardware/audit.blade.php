@@ -21,7 +21,7 @@
         <div class="col-md-8 col-md-offset-2">
             <div class="box box-default">
 
-                <form method="POST" action="{{ route('asset.audit.store', $asset->id) }}" accept-charset="UTF-8" class="form-horizontal" enctype="multipart/form-data">
+                <form method="POST" action="{{ route('asset.audit.store', $asset) }}" accept-charset="UTF-8" class="form-horizontal" enctype="multipart/form-data">
 
                     <div class="box-header with-border">
                         <h2 class="box-title"> {{ trans('admin/hardware/form.tag') }} {{ $asset->asset_tag }}</h2>
@@ -54,6 +54,8 @@
 
 
                     <!-- Asset Name -->
+
+                        @if ($asset->name)
                         <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
                             <label for="name" class="col-sm-3 control-label">
                                 {{ trans('general.name') }}
@@ -62,6 +64,7 @@
                                 <p class="form-control-static">{{ $asset->name }}</p>
                             </div>
                         </div>
+                        @endif
 
                         <!-- Locations -->
                     @include ('partials.forms.edit.location-select', ['translated_name' => trans('general.location'), 'fieldname' => 'location_id'])
@@ -127,15 +130,26 @@
                         <!-- Audit Image -->
                         @include ('partials.forms.edit.image-upload', ['help_text' => trans('general.audit_images_help')])
 
+                        <!-- Custom fields -->
+                        @include("models/custom_fields_form", [
+                                'model' => $asset->model,
+                                'show_custom_fields_type' => 'audit'
+                        ])
+
 
                     </div> <!--/.box-body-->
-                    <div class="box-footer">
-                        <a class="btn btn-link" href="{{ URL::previous() }}"> {{ trans('button.cancel') }}</a>
-                        <button type="submit" class="btn btn-success pull-right{{ (!$asset->model ? ' disabled' : '') }}"{!! (!$asset->model ? ' data-tooltip="true" title="'.trans('admin/hardware/general.model_invalid_fix').'" disabled' : '') !!}>
-                            <x-icon type="checkmark" />
-                            {{ trans('general.audit') }}
-                        </button>
-                    </div>
+
+                    <x-redirect_submit_options
+                            index_route="hardware.index"
+                            :button_label="trans('general.audit')"
+                            :disabled_select="!$asset->model"
+                            :options="[
+                                'index' => trans('admin/hardware/form.redirect_to_all', ['type' => trans('general.assets')]),
+                                'item' => trans('admin/hardware/form.redirect_to_type', ['type' => trans('general.asset')]),
+                                'other_redirect' => trans('general.audit_due')
+                               ]"
+                    />
+
                 </form>
             </div>
         </div> <!--/.col-md-7-->

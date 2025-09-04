@@ -1,5 +1,5 @@
 @component('mail::message')
-# {{ trans('mail.hello') }} {{ $target->present()->fullName() }},
+# {{ trans('mail.hello') }} {{ $target->display_name }},
 
 {{ trans('mail.the_following_item') }}
 
@@ -18,7 +18,7 @@
 | **{{ trans('general.model_no') }}** | {{ $item->model_no }} |
 @endif
 @if ($admin)
-| **{{ trans('general.administrator') }}** | {{ $admin->present()->fullName() }} |
+| **{{ trans('general.administrator') }}** | {{ $admin->display_name }} |
 @endif
 @if ($note)
 | **{{ trans('mail.additional_notes') }}** | {{ $note }} |

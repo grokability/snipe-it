@@ -39,4 +39,5 @@ return [
     'signed_by_finance_auditor' => 'Waxaa saxiixay (Hantidhawraha Maaliyadda):',
     'signed_by_location_manager' => 'Waxaa saxiixay (Maamulaha Goobta):',
     'signed_by'                 => 'Saxiixay:',
+    'clone'  					=> 'Clone Location',
 ];

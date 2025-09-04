@@ -24,7 +24,7 @@ class UpdateAssetModelsTest extends TestCase
     public function testPageRenders()
     {
         $this->actingAs(User::factory()->superuser()->create())
-            ->get(route('models.edit', AssetModel::factory()->create()->id))
+            ->get(route('models.edit', AssetModel::factory()->create()))
             ->assertOk();
     }
 
@@ -55,15 +55,15 @@ class UpdateAssetModelsTest extends TestCase
         $this->assertTrue(AssetModel::where('name', 'Test Model')->exists());
 
         $response = $this->actingAs(User::factory()->superuser()->create())
-            ->from(route('models.edit', ['model' => $model->id]))
-            ->put(route('models.update', ['model' => $model]), [
+            ->from(route('models.edit', $model))
+            ->put(route('models.update', $model), [
                 'name' => 'Test Model Edited',
                 'category_id' => Category::factory()->forAccessories()->create()->id,
             ])
             ->assertSessionHasErrors(['category_type'])
             ->assertInvalid(['category_type'])
             ->assertStatus(302)
-            ->assertRedirect(route('models.edit', ['model' => $model->id]));
+            ->assertRedirect(route('models.edit', $model));
 
         $this->followRedirects($response)->assertSee(trans('general.error'));
         $this->assertFalse(AssetModel::where('name', 'Test Model Edited')->exists());

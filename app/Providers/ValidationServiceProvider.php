@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\CustomField;
 use App\Models\Department;
+use App\Models\Location;
 use App\Models\Setting;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
@@ -352,6 +353,20 @@ class ValidationServiceProvider extends ServiceProvider
             $options = $field->formatFieldValuesAsArray();
 
             return in_array($value, $options);
+        });
+
+        // Validates that the company of the validated object matches the company of the location in case of scoped locations
+        Validator::extend('fmcs_location', function ($attribute, $value, $parameters, $validator){
+            $settings = Setting::getSettings();
+            if ($settings->full_multiple_companies_support == '1' && $settings->scope_locations_fmcs == '1') {
+                $company_id = array_get($validator->getData(), 'company_id');
+                $location = Location::find($value);
+
+                if (($location) && ($company_id != $location->company_id)) {
+                    return false;
+                }
+            }
+            return true;
         });
     }
 

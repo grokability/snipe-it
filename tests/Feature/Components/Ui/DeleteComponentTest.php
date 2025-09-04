@@ -40,6 +40,16 @@ class DeleteComponentTest extends TestCase implements TestsFullMultipleCompanies
         $this->assertSoftDeleted($component);
     }
 
+    public function testCannotDeleteComponentIfCheckedOut()
+    {
+        $component = Component::factory()->checkedOutToAsset()->create();
+
+        $this->actingAs(User::factory()->deleteComponents()->create())
+            ->delete(route('components.destroy', $component->id))
+            ->assertSessionHas('error')
+            ->assertRedirect(route('components.index'));
+    }
+
     public function testDeletingComponentRemovesComponentImage()
     {
         Storage::fake('public');

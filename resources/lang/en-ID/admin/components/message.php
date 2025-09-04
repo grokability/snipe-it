@@ -17,7 +17,8 @@ return array(
     'delete' => array(
         'confirm'   => 'Anda yakin akan mengahpus komponen ini?',
         'error'   => 'Ada masalah untuk hapus komponen, silahkan coba kembali.',
-        'success' => 'Komponen berhasil dihapus.'
+        'success' => 'Komponen berhasil dihapus.',
+        'error_qty'   => 'Some components of this type are still checked out. Please check them in and try again.',
     ),
 
      'checkout' => array(

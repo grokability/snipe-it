@@ -243,12 +243,15 @@ class RestoreFromBackup extends Command
         $private_dirs = [
             'storage/private_uploads/accessories',
             'storage/private_uploads/assetmodels',
+            'storage/private_uploads/maintenances',
+            'storage/private_uploads/models',
             'storage/private_uploads/assets', // these are asset _files_, not the pictures.
             'storage/private_uploads/audits',
             'storage/private_uploads/components',
             'storage/private_uploads/consumables',
             'storage/private_uploads/eula-pdfs',
             'storage/private_uploads/imports',
+            'storage/private_uploads/locations',
             'storage/private_uploads/licenses',
             'storage/private_uploads/signatures',
             'storage/private_uploads/users',
@@ -259,9 +262,10 @@ class RestoreFromBackup extends Command
         ];
         $public_dirs = [
             'public/uploads/accessories',
+            'public/uploads/assetmodels',
+            'public/uploads/maintenances',
             'public/uploads/assets', // these are asset _pictures_, not asset files
             'public/uploads/avatars',
-            //'public/uploads/barcodes', // we don't want this, let the barcodes be regenerated
             'public/uploads/categories',
             'public/uploads/companies',
             'public/uploads/components',
@@ -289,6 +293,7 @@ class RestoreFromBackup extends Command
 
         $interesting_files = [];
         $boring_files = [];
+        $unsafe_files = [];
 
         for ($i = 0; $i < $za->numFiles; $i++) {
             $stat_results = $za->statIndex($i);
@@ -327,8 +332,9 @@ class RestoreFromBackup extends Command
                     }
                 }
             }
-            $good_extensions = ['png', 'gif', 'jpg', 'svg', 'jpeg', 'doc', 'docx', 'pdf', 'txt',
-                'zip', 'rar', 'xls', 'xlsx', 'lic', 'xml', 'rtf', 'webp', 'key', 'ico',];
+
+            $good_extensions = config('filesystems.allowed_upload_extensions_array');
+
             foreach (array_merge($private_files, $public_files) as $file) {
                 $has_wildcard = (strpos($file, '*') !== false);
                 if ($has_wildcard) {
@@ -338,7 +344,9 @@ class RestoreFromBackup extends Command
                 if ($last_pos !== false) {
                     $extension = strtolower(pathinfo($raw_path, PATHINFO_EXTENSION));
                     if (!in_array($extension, $good_extensions)) {
-                        $this->warn('Potentially unsafe file ' . $raw_path . ' is being skipped');
+                        // gathering potentially unsafe files here to return at exit
+                        $unsafe_files[] = $raw_path;
+                        Log::debug('Potentially unsafe file '.$raw_path.' is being skipped');
                         $boring_files[] = $raw_path;
                         continue 2;
                     }
@@ -372,6 +380,7 @@ class RestoreFromBackup extends Command
         if ($this->option('sanitize-guess-prefix')) {
             $prefix = SQLStreamer::guess_prefix($sql_contents);
             $this->line($prefix);
+
             return $this->info("Re-run this command with '--sanitize-with-prefix=".$prefix."' to see an attempt to sanitize your SQL.");
         }
 
@@ -504,6 +513,11 @@ class RestoreFromBackup extends Command
             $this->line('');
         } else {
             $this->info(count($interesting_files).' files were succesfully transferred');
+        }
+        if (count($unsafe_files) > 0) {
+            foreach ($unsafe_files as $unsafe_file) {
+                $this->warn('Potentially unsafe file '.$unsafe_file.' was skipped');
+            }
         }
         foreach ($boring_files as $boring_file) {
             $this->warn($boring_file.' was skipped.');

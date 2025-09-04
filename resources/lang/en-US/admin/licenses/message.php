@@ -50,7 +50,7 @@ return array(
 
     'checkin' => array(
         'error'   => 'There was an issue checking in the license. Please try again.',
-        'not_reassignable' => 'License not reassignable',
+        'not_reassignable' => 'Seat has been used',
         'success' => 'The license was checked in successfully'
     ),
 

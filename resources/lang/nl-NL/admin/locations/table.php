@@ -39,4 +39,5 @@ return [
     'signed_by_finance_auditor' => 'Ondertekend door (Asset Auditor):',
     'signed_by_location_manager' => 'Ondertekend door (Locatiebeheer):',
     'signed_by'                 => 'Afgetekend door:',
+    'clone'  					=> 'Clone Location',
 ];

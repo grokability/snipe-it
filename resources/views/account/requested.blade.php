@@ -15,13 +15,10 @@
                 <div class="box-body">
 
                     <table
+
                             data-cookie-id-table="userRequests"
-                            data-pagination="true"
                             data-id-table="userRequests"
                             data-side-pagination="server"
-                            data-show-columns="true"
-                            data-show-export="true"
-                            data-show-refresh="true"
                             data-sort-order="desc"
                             id="userRequests"
                             class="table table-striped snipe-table"

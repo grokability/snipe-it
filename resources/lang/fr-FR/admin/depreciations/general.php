@@ -13,4 +13,8 @@ return [
     'no_depreciations_warning'               => '<strong>Avertissement : </strong>
                       Vous n\'avez actuellement aucun amortissement.
                       Veuillez mettre en place au moins un amortissement pour consulter le rapport d\'amortissement.',
+    'depreciation_method'                   => 'Rapport d’amortissement',
+    'linear_depreciation'                   => 'Linear (Default)',
+    'half_1'                                => 'Half-year convention, always applied',
+    'half_2'                                => 'Half-year convention, applied with condition',
 ];

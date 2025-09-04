@@ -95,8 +95,12 @@
                   <label for="field_id" class="sr-only">
                     {{ trans('admin/custom-field/general.add_field_to_fieldset')}}
                   </label>
-                  {{ Form::select("field_id",$custom_fields_list,"",['aria-label'=>'field_id', 'class'=>'select2', 'style' => 'min-width:400px;']) }}
-
+                  <x-input.select
+                      name="field_id"
+                      :options="$custom_fields_list"
+                      style="min-width:400px"
+                      aria-label="field_id"
+                  />
                 </div>
 
                 <div class="form-group" style="display: none;">

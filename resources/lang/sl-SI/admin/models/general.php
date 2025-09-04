@@ -3,10 +3,10 @@
 return array(
     'about_models_title'     => 'O modelih sredstev',
     'about_models_text'           => 'Modeli sredstev so način za združevanje identičnih sredstev. "MBP 2013", "IPhone 6s" itd.',
-    'deleted'  					        => 'Ta model je bil izbrisan.',
+    'deleted'  					=> 'Ta model je bil izbrisan.',
     'bulk_delete'               => 'Množično brisanje modelov sredstva',
     'bulk_delete_help'               => 'S potrditvenimi polji spodaj potrdite izbris izbranih modelov sredstev. Modelov sredstev, ki imajo z njimi povezana sredstva, ni mogoče izbrisati, dokler sredstva niso povezana z drugačnim modelom.',
-    'bulk_delete_warn'          => 'You are about to delete one asset model.|You are about to delete :model_count asset models.',
+    'bulk_delete_warn'          => 'Izbrisali boste en model sredstva.|Izbrisali boste :model_count modelov sredstev.',
     'restore'                   => 'Obnovi model',
     'requestable'               => 'Uporabniki lahko zahtevajo ta model',
 	'show_mac_address'			      => 'V tem modelu prikažite polje MAC naslov v sredstvih',

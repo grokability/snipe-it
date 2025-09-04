@@ -17,7 +17,8 @@ return array(
     'delete' => array(
         'confirm'   => 'Biztosan törölni szeretnéd az alkatrészt?',
         'error'   => 'Probléma támadt a vállalat törlésével. Próbálkozz újra.',
-        'success' => 'Az alkatrész sikeresen törlődött.'
+        'success' => 'Az alkatrész sikeresen törlődött.',
+        'error_qty'   => 'Néhány ilyen típusú alkatrész még ki van adva. Kérjük, előbb végezze el azok visszavételét, majd próbálja újra.',
     ),
 
      'checkout' => array(

@@ -64,7 +64,7 @@ class CategoriesTransformer
                 'licenses_count' => (int) $category->licenses_count,
                 'created_by' => ($category->adminuser) ? [
                     'id' => (int) $category->adminuser->id,
-                    'name'=> e($category->adminuser->present()->fullName()),
+                    'name'=> e($category->adminuser->display_name),
                 ] : null,
                 'notes' => Helper::parseEscapedMarkedownInline($category->notes),
                 'created_at' => Helper::getFormattedDateObject($category->created_at, 'datetime'),

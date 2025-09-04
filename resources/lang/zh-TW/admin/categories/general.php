@@ -4,6 +4,7 @@ return array(
     'asset_categories' 					=> '資產類別',
     'category_name'  					=> '類別名稱',
     'checkin_email'                     => '在借出/繳回時發送郵件給使用者。',
+    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
     'checkin_email_notification'        => '在借出/繳回時該使用者會發送郵件。',
     'clone'                             => '複製類別',
     'create'  							=> '新建類別',
@@ -21,5 +22,9 @@ return array(
     'use_default_eula'					=> '用<a href="#" data-toggle="modal" data-target="#eulaModal">預設EULA（最終使用者許可協議）</a> 進行替換。',
     'use_default_eula_disabled'			=> '<del>使用預設EULA（最終使用者許可協議）替換。</del>沒有找到預設EULA（最終使用者許可協議）。請在設定中增加一個。',
     'use_default_eula_column'			=> '使用預設的 EULA',
+    'import_require_acceptance'         => '需要接受',
+    'import_checkin_email'              => '發送借出郵件',
+    'import_eula_text'                  => 'EULA 文字',
+    'import_category_type'              => '類別類型',
 
 );

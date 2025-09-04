@@ -13,4 +13,8 @@ return [
     'no_depreciations_warning'               => '<strong>Предупредување: </strong>
                       Во моментов немате поставено амортизација.
                       Поставете барем една амортизација за да го видите извештајот за амортизација.',
+    'depreciation_method'                   => 'Извештај за амортизација',
+    'linear_depreciation'                   => 'Linear (Default)',
+    'half_1'                                => 'Half-year convention, always applied',
+    'half_2'                                => 'Half-year convention, applied with condition',
 ];

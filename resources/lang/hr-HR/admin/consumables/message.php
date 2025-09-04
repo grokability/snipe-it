@@ -2,7 +2,7 @@
 
 return array(
 
-    'invalid_category_type' => 'The category must be a consumable category.',
+    'invalid_category_type' => 'Kategorija mora biti za potrošni materijal.',
     'does_not_exist' => 'Potrošnja ne postoji.',
 
     'create' => array(
@@ -25,7 +25,7 @@ return array(
         'error'   		=> 'Potrošnja nije provjerena, pokušajte ponovo',
         'success' 		=> 'Isporuka potrošnog materijala uspješno je provjerena.',
         'user_does_not_exist' => 'Taj je korisnik nevažeći. Molim te pokušaj ponovno.',
-         'unavailable'      => 'There are not enough consumables for this checkout. Please check the quantity left. ',
+         'unavailable'      => 'Ne postoji dovoljno potrošnog materijala za ovo izdavanje. Molimo provjerite dostupnu količinu. ',
     ),
 
     'checkin' => array(

@@ -1,4 +1,9 @@
 <?php
+
+$error_icon = "\e[91m✘\e[0m";
+$success_icon = "\e[92m√\e[0m";
+$info_icon = "\e[93mⓘ\e[0m";
+
 (PHP_SAPI !== 'cli' || isset($_SERVER['HTTP_USER_AGENT'])) && die('Access denied.');
 
 // We define this because we can't reliably use file_get_contents because some
@@ -25,7 +30,7 @@ function url_get_contents ($Url) {
     $output = curl_exec($ch);
     curl_close($ch);
     if ($output === false) {
-        print("Error retrieving PHP requirements!\n");
+        print("\e[91mError retrieving PHP requirements!\e[39m\n");
         print("Error was: " . curl_error($ch) . "\n");
         print("Try enabling allow_url_fopen in php.ini, or fixing your curl/OpenSSL setup, or try rerunning with --skip-php-compatibility-checks");
         return '{}';
@@ -38,6 +43,7 @@ $skip_php_checks = false;
 $branch = 'master';
 $branch_override = false;
 $no_interactive = false;
+$skip_backup = false;
 
 // Check for branch or other overrides
 if ($argc > 1){
@@ -45,6 +51,9 @@ if ($argc > 1){
         switch ($argv[$arg]) {
             case '--skip-php-compatibility-checks':
                 $skip_php_checks = true;
+                break;
+            case '--skip-backup':
+                $skip_backup = true;
                 break;
             case '--branch':
                 $arg++;
@@ -62,7 +71,7 @@ if ($argc > 1){
     }
 }
 
-echo "--------------------------------------------------------\n";
+echo "\e[95m--------------------------------------------------------\n";
 echo "WELCOME TO THE SNIPE-IT UPGRADER! \n";
 echo "--------------------------------------------------------\n\n";
 echo "This script will attempt to: \n\n";
@@ -71,39 +80,40 @@ echo "- check your PHP version and extension requirements \n";
 echo "- check directory permissions \n";
 echo "- do a git pull to bring you to the latest version \n";
 echo "- run composer install to get your vendors up to date \n";
+echo "- run a backup \n";
 echo "- run migrations to get your schema up to date \n";
-echo "- clear out old cache settings\n\n";
+echo "- clear out old cache settings\e[39m\n\n";
 
 
-// Fetching most current upgrade requirements from github. Read more here: https://github.com/snipe/snipe-it/pull/14127
-$remote_requirements_file = "https://raw.githubusercontent.com/snipe/snipe-it/$branch/.upgrade_requirements.json";
+// Fetching most current upgrade requirements from github. Read more here: https://github.com/grokability/snipe-it/pull/14127
+$remote_requirements_file = "https://raw.githubusercontent.com/grokability/snipe-it/$branch/.upgrade_requirements.json";
 $upgrade_requirements_raw = url_get_contents($remote_requirements_file);
 $upgrade_requirements = json_decode($upgrade_requirements_raw, true);
 if (! $upgrade_requirements) {
     if(!$skip_php_checks){
-        echo "\nERROR: Failed to retrieve remote requirements from $remote_requirements_file\n\n";
+        echo "\n\e[91mERROR: Failed to retrieve remote requirements from $remote_requirements_file \e[39m\n\n";
         if ($branch_override){
-            echo "NOTE: You passed a custom branch: $branch\n";
-            echo "   If the above URL doesn't work, that may be why. Please check you branch spelling/existence\n\n";
+            echo "\e[93mNOTE: You passed a custom branch: $branch\n";
+            echo "If the above URL doesn't work, that may be why. Please check the branch spelling/existence\e[39m\n\n";
         }
 
         if (json_last_error()) {
-            print "JSON DECODE ERROR DETECTED:\n";
+            print "\e[91mJSON DECODE ERROR DETECTED:\n";
             print json_last_error_msg() . "\n\n";
             print "Raw curl output:\n";
-            print $upgrade_requirements_raw . "\n\n";
+            print $upgrade_requirements_raw . "\e[39m\n\n";
         }
 
-        echo "We suggest correcting this, but if you can't,  please verify that your requirements conform to those at that url.\n\n";
-        echo " -- DANGER -- DO AT YOUR OWN RISK --\n";
-        echo "      IF YOU ARE SURE, re-run this script with --skip-php-compatibility-checks to skip this check.\n";
-        echo " -- DANGER -- THIS COULD BREAK YOUR INSTALLATION";
-        die("Exiting.\n\n");
+        echo "\e[93mWe suggest correcting this, but if you can't,  please verify that your requirements conform to those at that url.\n\n";
+        echo "\e[91m-- DANGER -- DO AT YOUR OWN RISK --\n";
+        echo "IF YOU ARE SURE, re-run this script with --skip-php-compatibility-checks to skip this check.\n";
+        echo "-- DANGER -- THIS COULD BREAK YOUR INSTALLATION\e[39m\n\n";
+        die("Aborting upgrade.\n\n");
     }
-    echo "NOTICE: Unable to fetch upgrade requirements, but continuing because you passed --skip-php-compatibility-checks...\n";
+    echo "\e[93mNOTICE: Unable to fetch upgrade requirements, but continuing because you passed --skip-php-compatibility-checks...e[39m\n";
 }
 
-echo "Launching using branch: $branch\n";
+echo "Launching using branch: $branch\e[39m\n";
 
 if($upgrade_requirements){
     $php_min_works = $upgrade_requirements['php_min_version'];
@@ -133,27 +143,26 @@ if ((strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') || (!function_exists('posix_get
 	$username = $pwu_data['name'];
 
 	if (($username=='root') || ($username=='admin')) {
-		die("\nERROR: This script should not be run as root/admin. Exiting.\n\n");
+		die("\n".$error_icon."ERROR: This script should not be run as root/admin. Exiting.\n\n");
 	}
 }
 
 
 
-echo "--------------------------------------------------------\n";
+echo "\e[95m--------------------------------------------------------\n";
 echo "STEP 1: Checking .env file: \n";
-echo "- Your .env is located at ".getcwd()."/.env \n";
-echo "--------------------------------------------------------\n\n";
+echo "--------------------------------------------------------\e[39m\n\n";
 
 
 // Check the .env looks ok
 $env = file('.env');
 if (! $env){
-    echo "\n!!!!!!!!!!!!!!!!!!!!!!!!!! .ENV FILE ERROR !!!!!!!!!!!!!!!!!!!!!!!!!!\n";
+    echo "\n\e[91m!!!!!!!!!!!!!!!!!!!!!!!!!! .ENV FILE ERROR !!!!!!!!!!!!!!!!!!!!!!!!!!\n";
     echo "Your .env file doesn't seem to exist in this directory or isn't readable! Please look into that.\n";
     exit(1);
 }
 
-$env_good = '';
+$env_good = $success_icon.' Your .env file is located at '.getcwd()."/.env \n";
 $env_bad = '';
 
 // Loop through each line of the .env
@@ -198,32 +207,32 @@ foreach ($env as $line_num => $line) {
 
         if ($env_key == 'APP_KEY') {
             if (($env_value=='')  || (strlen($env_value) < 20)) {
-                $env_bad .= "✘ APP_KEY ERROR in your .env on line #'.{$show_line_num}.': Your APP_KEY should not be blank. Run `php artisan key:generate` to generate one.\n";
+                $env_bad .= $error_icon." APP_KEY ERROR in your .env on line #'.{$show_line_num}.': Your APP_KEY should not be blank. Run `php artisan key:generate` to generate one.\n";
             } else {
-                $env_good .= "√ Your APP_KEY is not blank. \n";
+                $env_good .= $success_icon." Your APP_KEY is not blank. \n";
             }
         }
 
         if ($env_key == 'APP_URL') {
 
             if (($env_value!="null") && ($env_value!="")) {
-                $env_good .= '√ Your APP_URL is not null or blank. It is set to '.$env_value."\n";
+                $env_good .= $success_icon.' Your APP_URL is not null or blank. It is set to '.$env_value."\n";
 
                 if (!str_begins(trim($env_value), 'http://') && (!str_begins($env_value, 'https://'))) {
-                    $env_bad .= '✘ APP_URL ERROR in your .env on line #'.$show_line_num.': Your APP_URL should start with https:// or http://!! It is currently set to: '.$env_value;
+                    $env_bad .= $error_icon.' APP_URL ERROR in your .env on line #'.$show_line_num.': Your APP_URL should start with https:// or http://!! It is currently set to: '.$env_value;
                 } else {
-                    $env_good .= '√ Your APP_URL is set to '.$env_value.' and starts with the protocol (https:// or http://)'."\n";
+                    $env_good .= $success_icon.' Your APP_URL is set to '.$env_value.' and starts with the protocol (https:// or http://)'."\n";
                 }
 
                 if (str_ends(trim($env_value), "/")) {
-                    $env_bad .= '✘ APP_URL ERROR in your .env on line #'.$show_line_num.': Your APP_URL should NOT end with a trailing slash. It is currently set to: '.$env_value;
+                    $env_bad .= $error_icon.' APP_URL ERROR in your .env on line #'.$show_line_num.': Your APP_URL should NOT end with a trailing slash. It is currently set to: '.$env_value;
                 } else {
-                    $env_good .= '√ Your APP_URL ('.$env_value.') does not have a trailing slash.'."\n";
+                    $env_good .= $success_icon.' Your APP_URL ('.$env_value.') does not have a trailing slash.'."\n";
                 }
 
 
             } else {
-                $env_bad .= "✘ APP_URL ERROR in your .env on line #".$show_line_num.": Your APP_URL CANNOT be set to null or left blank.\n";
+                $env_bad .= $error_icon." APP_URL ERROR in your .env on line #".$show_line_num.": Your APP_URL CANNOT be set to null or left blank.\n";
             }
 
         }
@@ -237,34 +246,34 @@ echo $env_good;
 
 if ($env_bad !='') {
 
-    echo "!!!!!!!!!!!!!!!!!!!!!!!!!! .ENV FILE ERROR !!!!!!!!!!!!!!!!!!!!!!!!!!\n";
-    echo "Your .env file is misconfigured. Upgrade cannot continue.\n";
+    echo "\e[91m!!!!!!!!!!!!!!!!!!!!!!!!!! .ENV FILE ERROR !!!!!!!!!!!!!!!!!!!!!!!!!!\n";
+    echo "\e[91mYour .env file is misconfigured. Upgrade cannot continue.\n";
     echo "--------------------------------------------------------\n\n";
     echo $env_bad;
     echo "\n\n--------------------------------------------------------\n";
-    echo "!!!!!!!!!!!!!!!!!!!!!!!!! ABORTING THE UPGRADER !!!!!!!!!!!!!!!!!!!!!!\n";
-    echo "Please correct the issues above in ".getcwd()."/.env and try again.\n";
-    echo "--------------------------------------------------------\n";
+    echo "\e[91m!!!!!!!!!!!!!!!!!!!!!!!!! ABORTING THE UPGRADER !!!!!!!!!!!!!!!!!!!!!!\n";
+    echo "\e[91mPlease correct the issues above in ".getcwd()."/.env and try again.\n";
+    echo "\e[91m--------------------------------------------------------\n";
     exit(1);
 }
 
 
 if(!$skip_php_checks){
-    echo "\n--------------------------------------------------------\n";
-    echo "STEP 2: Checking PHP requirements: (Required PHP >=". $php_min_works. " - <".$php_max_wontwork.") \n";
-    echo "--------------------------------------------------------\n\n";
+    echo "\n\e[95m--------------------------------------------------------\n";
+    echo "STEP 2: Checking PHP requirements: (Required PHP >=". $php_min_works. " - <".$php_max_wontwork.")\n";
+    echo "--------------------------------------------------------\e[39m\n\n";
 
     if ((version_compare(phpversion(), $php_min_works, '>=')) && (version_compare(phpversion(), $php_max_wontwork, '<'))) {
 
-        echo "√ Current PHP version: (" . phpversion() . ") is at least " . $php_min_works . " and less than ".$php_max_wontwork."! Continuing... \n";
+        echo $success_icon." Current PHP version: (" . phpversion() . ") is at least " . $php_min_works . " and less than ".$php_max_wontwork."! Continuing... \n";
         echo sprintf("FYI: The php.ini used by this PHP is: %s\n\n", get_cfg_var('cfg_file_path'));
 
     } else {
-        echo "!!!!!!!!!!!!!!!!!!!!!!!!! PHP VERSION ERROR !!!!!!!!!!!!!!!!!!!!!!!!!\n";
+        echo "\e[91m!!!!!!!!!!!!!!!!!!!!!!!!! PHP VERSION ERROR !!!!!!!!!!!!!!!!!!!!!!!!!\n";
         echo "This version of PHP (".phpversion().") is NOT compatible with Snipe-IT.\n";
         echo "Snipe-IT requires PHP versions between ".$php_min_works." and ".$php_max_wontwork.".\n";
         echo "Please install a compatible version of PHP and re-run this script again. \n";
-        echo "!!!!!!!!!!!!!!!!!!!!!!!!! ABORTING THE UPGRADER !!!!!!!!!!!!!!!!!!!!!!\n";
+        echo "\e[91m!!!!!!!!!!!!!!!!!!!!!!!!! ABORTING THE UPGRADER !!!!!!!!!!!!!!!!!!!!!!\n";
         exit(1);
     }
 }
@@ -318,7 +327,7 @@ foreach ($required_exts_array as $required_ext) {
             foreach ($require_either as $require_either_value) {
 
                 if (in_array($require_either_value, $loaded_exts_array)) {
-                    $ext_installed .=  '√ '.$require_either_value." is installed!\n";
+                    $ext_installed .=  $success_icon.' '.$require_either_value." is installed!\n";
                     $has_one_required_ext = true;
                     break;
                 }
@@ -326,20 +335,20 @@ foreach ($required_exts_array as $required_ext) {
 
             // If no match, add it to the string for errors
             if (!$has_one_required_ext) {
-                $ext_missing .= '✘ MISSING PHP EXTENSION: '.str_replace("|", " OR ", $required_ext)."\n";
+                $ext_missing .= $error_icon.' MISSING PHP EXTENSION: '.str_replace("|", " OR ", $required_ext)."\n";
                 break;
             }
 
         // If this isn't an either/or option, just add it to the string of errors conventionally
         } elseif (!in_array($required_ext, $recommended_exts_array)){
-            $ext_missing .=  '✘ MISSING PHP EXTENSION: '.$required_ext."\n";
+            $ext_missing .=  $error_icon.' MISSING PHP EXTENSION: '.$required_ext."\n";
         } else {
             $ext_installed .= '- '.$required_ext." is *NOT* installed, but is recommended...\n";
         }
 
     // The required extension string was found in the array of installed extensions - yay!
     } else {
-        $ext_installed .=  '√ '.$required_ext." is installed!\n";
+        $ext_installed .=  $success_icon.' '.$required_ext." is installed!\n";
     }
 }
 
@@ -350,15 +359,15 @@ if ($ext_missing!='') {
     echo "--------------------------------------------------------\n";
 
     foreach ($loaded_exts_array as $loaded_ext) {
-       echo "- ".$loaded_ext."\n";
+       echo $success_icon.' '.$loaded_ext."\n";
     }
 
-    echo "--------------------- !! ERROR !! ----------------------\n";
+    echo "\e[91m--------------------- !! ERROR !! ----------------------\n";
     echo $ext_missing;
-    echo "--------------------------------------------------------\n";
-    echo "ABORTING THE INSTALLER  \n";
-    echo "Please install the extensions above and re-run this script.\n";
-    echo "--------------------------------------------------------\n";
+    echo "\e[91m--------------------------------------------------------\n";
+    echo "\e[91mABORTING THE INSTALLER  \n";
+    echo "\e[91mPlease install the extensions above and re-run this script.\n";
+    echo "\e[91m--------------------------------------------------------\n";
     exit(1);
 } else {
     echo $ext_installed."\n";
@@ -367,9 +376,9 @@ if ($ext_missing!='') {
 
 
 
-echo "--------------------------------------------------------\n";
+echo "\e[95m--------------------------------------------------------\n";
 echo "STEP 3: Checking directory permissions: \n";
-echo "--------------------------------------------------------\n\n";
+echo "--------------------------------------------------------\e[39m\n\n";
 
 
 $writable_dirs_array =
@@ -395,9 +404,9 @@ $dirs_not_writable = '';
 // Loop through the directories that need to be writable
 foreach ($writable_dirs_array as $writable_dir) {
     if (is_writable($writable_dir)) {
-        $dirs_writable .= '√ '.getcwd().'/'.$writable_dir." is writable \n";
+        $dirs_writable .= $success_icon.' '.getcwd().'/'.$writable_dir." is writable \n";
     } else {
-        $dirs_not_writable .= '✘ PERMISSIONS ERROR: '.getcwd().'/'.$writable_dir." is NOT writable\n";
+        $dirs_not_writable .= $error_icon.' PERMISSIONS ERROR: '.getcwd().'/'.$writable_dir." is NOT writable\n";
     }
 }
 
@@ -405,44 +414,24 @@ echo $dirs_writable."\n";
 
 // Print out a useful error message
 if ($dirs_not_writable!='') {
-    echo "--------------------------------------------------------\n";
-    echo "The following directories/files do not seem writable: \n";
-    echo "--------------------------------------------------------\n";
+    echo "\e[91m--------------------------------------------------------\n";
+    echo "\eThe following directories/files do not seem writable: \n";
+    echo "\e--------------------------------------------------------\e[39m\n";
 
     echo $dirs_not_writable;
 
-    echo "--------------------- !! ERROR !! ----------------------\n";
-    echo "Please check the permissions on the directories above and re-run this script.\n";
-    echo "------------------------- :( ---------------------------\n\n";
+    echo "\e[91m--------------------- !! ERROR !! ----------------------\n";
+    echo "\ePlease check the permissions on the directories above and re-run this script.\n";
+    echo "\e------------------------- :( ---------------------------\e[39m\n\n";
     exit(1);
 }
 
 
 
-echo "--------------------------------------------------------\n";
-echo "STEP 4: Backing up database: \n";
-echo "--------------------------------------------------------\n\n";
-$backup = exec('php artisan snipeit:backup', $backup_results, $return_code);
-echo '-- ' . implode("\n", $backup_results) . "\n\n";
-if ($return_code > 0) {
-    die("Something went wrong with your backup. Aborting!\n\n");
-}
-unset($return_code);
 
-echo "--------------------------------------------------------\n";
-echo "STEP 5: Putting application into maintenance mode: \n";
-echo "--------------------------------------------------------\n\n";
-exec('php artisan down',  $down_results, $return_code);
-echo '-- ' . implode("\n", $down_results) . "\n";
-if ($return_code > 0) {
-    die("Something went wrong with downing you site. This can't be good. Please investigate the error. Aborting!n\n");
-}
-unset($return_code);
-
-
-echo "--------------------------------------------------------\n";
-echo "STEP 6: Pulling latest from Git (".$branch." branch): \n";
-echo "--------------------------------------------------------\n\n";
+echo "\e[95m--------------------------------------------------------\n";
+echo "STEP 4: Pulling latest from Git (".$branch." branch): \n";
+echo "--------------------------------------------------------\e[39m\n\n";
 $git_version = shell_exec('git --version');
 
 if ((strpos('git version', $git_version)) === false) {
@@ -466,9 +455,9 @@ if ((strpos('git version', $git_version)) === false) {
 }
 
 
-echo "--------------------------------------------------------\n";
-echo "STEP 7: Cleaning up old cached files:\n";
-echo "--------------------------------------------------------\n\n";
+echo "\e[95m--------------------------------------------------------\n";
+echo "STEP 5: Cleaning up old cached files:\n";
+echo "--------------------------------------------------------\e[39m\n\n";
 
 // Build an array of the files we generally want to delete because they
 // can cause issues with funky caching
@@ -481,38 +470,27 @@ $unused_files = [
 
 foreach ($unused_files as $unused_file) {
     if (file_exists($unused_file)) {
-        echo "√ Deleting ".$unused_file.". It is no longer used.\n";
+        echo $success_icon." Deleting ".$unused_file.". It is no longer used.\n";
         @unlink($unused_file);
     } else {
-        echo "√ No ".$unused_file.", so nothing to delete.\n";
+        echo $success_icon." No ".$unused_file.", so nothing to delete.\n";
     }
 }
 echo "\n";
 
-$config_clear = shell_exec('php artisan config:clear');
-$cache_clear = shell_exec('php artisan cache:clear');
-$route_clear = shell_exec('php artisan route:clear');
-$view_clear = shell_exec('php artisan view:clear');
-echo '-- '.$config_clear;
-echo '-- '.$cache_clear;
-echo '-- '.$route_clear;
-echo '-- '.$view_clear;
-echo "\n";
 
-echo "--------------------------------------------------------\n";
-echo "STEP 8: Updating composer dependencies:\n";
+echo "\e[95m--------------------------------------------------------\n";
+echo "STEP 6: Updating composer dependencies:\n";
 echo "(This may take a moment.)\n";
-echo "--------------------------------------------------------\n\n";
+echo "--------------------------------------------------------\e[39m\n\n";
 echo "-- Running the app in ".$app_environment." mode.\n";
 
 // Composer install
 if (file_exists('composer.phar')) {
-    echo "√ Local composer.phar detected, so we'll use that.\n\n";
+    echo $success_icon." Local composer.phar detected, so we'll use that.\n\n";
     echo "-- Updating local composer.phar\n\n";
     $composer_update = shell_exec('php composer.phar self-update');
     echo $composer_update."\n\n";
-
-
 
     // Use --no-dev only if we are in production mode.
     // This will cause errors otherwise, if the user is in develop or local for their APP_ENV
@@ -521,9 +499,8 @@ if (file_exists('composer.phar')) {
     } else {
         $composer = shell_exec('php composer.phar install --prefer-source');
     }
+
     $composer_dump = shell_exec('php composer.phar dump');
-
-
 
 } else {
 
@@ -541,48 +518,87 @@ if (file_exists('composer.phar')) {
     $composer_dump = shell_exec('composer dump');
 
 
-
 }
 
 echo $composer_dump."\n";
 echo $composer;
 
+$config_clear = shell_exec('php artisan config:clear');
+$cache_clear = shell_exec('php artisan cache:clear');
+$route_clear = shell_exec('php artisan route:clear');
+$view_clear = shell_exec('php artisan view:clear');
+echo $success_icon.' '.trim($config_clear)."\n";
+echo $success_icon.' '.trim($cache_clear)."\n";
+echo $success_icon.' '.trim($route_clear)."\n";
+echo $success_icon.' '.trim($view_clear)."\n";
+echo "\n";
 
-echo "--------------------------------------------------------\n";
+echo "\e[95m--------------------------------------------------------\n";
+echo "STEP 7: Putting application into maintenance mode: \n";
+echo "--------------------------------------------------------\e[39m\n\n";
+exec('php artisan down',  $down_results, $return_code);
+echo '-- ' . implode("\n", $down_results) . "\n";
+if ($return_code > 0) {
+    die("Something went wrong with downing your site. This can't be good. Please investigate the error. Aborting!\n\n");
+}
+unset($return_code);
+
+
+echo "\e[95m--------------------------------------------------------\n";
+echo "STEP 8: Backing up database: \n";
+echo "--------------------------------------------------------\e[39m\n\n";
+
+if (!$skip_backup) {
+    $backup = exec('php artisan snipeit:backup', $backup_results, $return_code);
+
+    if ($return_code > 0) {
+        die($error_icon." Something went wrong with your backup. Aborting!\n\n");
+    } else {
+        echo '-- ' . implode("\n", $backup_results) . "\n\n";
+    }
+    unset($return_code);
+} else {
+    echo "Upgrade was run with --skip-backup, so no backup will be run.\n\n";
+}
+
+
+
+
+echo "\e[95m--------------------------------------------------------\n";
 echo "STEP 9: Migrating database:\n";
-echo "--------------------------------------------------------\n\n";
+echo "--------------------------------------------------------\e[39m\n\n";
 
 $migrations = shell_exec('php artisan migrate --force');
 echo $migrations."\n";
 
 
-echo "--------------------------------------------------------\n";
+echo "\e[95m--------------------------------------------------------\n";
 echo "STEP 10: Checking for OAuth keys:\n";
-echo "--------------------------------------------------------\n\n";
+echo "--------------------------------------------------------\e[39m\n\n";
 
 
 if ((!file_exists('storage/oauth-public.key')) || (!file_exists('storage/oauth-private.key'))) {
-    echo "- No OAuth keys detected. Running passport install now.\n\n";
-    $passport = shell_exec('php artisan passport:install');
+    echo $info_icon." No OAuth keys detected. Running passport install now.\n\n";
+    $passport = shell_exec('php artisan passport:install --no-interaction');
     echo $passport;
 } else {
-    echo "√ OAuth keys detected. Skipping passport install.\n\n";
+    echo $success_icon." OAuth keys detected. Skipping passport install.\n\n";
 }
 
 
-echo "--------------------------------------------------------\n";
+echo "\e[95m--------------------------------------------------------\n";
 echo "STEP 11: Taking application out of maintenance mode:\n";
-echo "--------------------------------------------------------\n\n";
+echo "--------------------------------------------------------\e[39m\n\n";
 
 $up = shell_exec('php artisan up');
-echo '-- '.$up."\n";
+echo $success_icon.' '.trim($up)."\n\n";
 
 
 
-echo "---------------------- FINISHED! -----------------------\n";
+echo "\e[92m---------------------- FINISHED! -----------------------\n";
 echo "All done! Clear your browser cookies and re-login to use \n";
 echo "your upgraded Snipe-IT!\n";
-echo "--------------------------------------------------------\n\n";
+echo "--------------------------------------------------------\e[39m\n\n";
 
 
 function str_begins($haystack, $needle) {
@@ -592,6 +608,3 @@ function str_begins($haystack, $needle) {
 function str_ends($haystack,  $needle) {
     return (substr_compare($haystack, $needle, -strlen($needle)) === 0);
 }
-
-
-

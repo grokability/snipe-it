@@ -18,16 +18,14 @@ class AssetCheckinTest extends TestCase
     public function testCheckingInAssetRequiresCorrectPermission()
     {
         $this->actingAs(User::factory()->create())
-            ->post(route('hardware.checkin.store', [
-                'assetId' => Asset::factory()->assignedToUser()->create()->id,
-            ]))
+            ->post(route('hardware.checkin.store', [Asset::factory()->assignedToUser()->create()]))
             ->assertForbidden();
     }
 
     public function testCannotCheckInAssetThatIsNotCheckedOut()
     {
         $this->actingAs(User::factory()->checkinAssets()->create())
-            ->post(route('hardware.checkin.store', ['assetId' => Asset::factory()->create()->id]))
+            ->post(route('hardware.checkin.store', [Asset::factory()->create()]))
             ->assertStatus(302)
             ->assertSessionHas('error')
             ->assertRedirect(route('hardware.index'));
@@ -36,7 +34,7 @@ class AssetCheckinTest extends TestCase
     public function testCannotStoreAssetCheckinThatIsNotCheckedOut()
     {
         $this->actingAs(User::factory()->checkinAssets()->create())
-            ->get(route('hardware.checkin.store', ['assetId' => Asset::factory()->create()->id]))
+            ->get(route('hardware.checkin.store', [Asset::factory()->create()]))
             ->assertStatus(302)
             ->assertSessionHas('error')
             ->assertRedirect(route('hardware.index'));
@@ -68,7 +66,7 @@ class AssetCheckinTest extends TestCase
 
         $this->actingAs(User::factory()->checkinAssets()->create())
             ->post(
-                route('hardware.checkin.store', ['assetId' => $asset->id]),
+                route('hardware.checkin.store', [$asset]),
                 [
                     'name' => 'Changed Name',
                     'status_id' => $status->id,
@@ -88,7 +86,7 @@ class AssetCheckinTest extends TestCase
 
         Event::assertDispatched(function (CheckoutableCheckedIn $event) use ($currentTimestamp) {
             // this could be better mocked but is ok for now.
-            return Carbon::parse($event->action_date)->diffInSeconds($currentTimestamp) < 2;
+            return (int) Carbon::parse($event->action_date)->diffInSeconds($currentTimestamp, true) < 2;
         }, 1);
     }
 
@@ -101,9 +99,10 @@ class AssetCheckinTest extends TestCase
         ]);
 
         $this->actingAs(User::factory()->checkinAssets()->create())
-            ->post(route('hardware.checkin.store', ['assetId' => $asset->id]));
+            ->post(route('hardware.checkin.store', [$asset]));
 
         $this->assertTrue($asset->refresh()->location()->is($rtdLocation));
+        $this->assertHasTheseActionLogs($asset, ['create', 'checkin from']);
     }
 
     public function testDefaultLocationCanBeUpdatedUponCheckin()
@@ -112,7 +111,7 @@ class AssetCheckinTest extends TestCase
         $asset = Asset::factory()->assignedToUser()->create();
 
         $this->actingAs(User::factory()->checkinAssets()->create())
-            ->post(route('hardware.checkin.store', ['assetId' => $asset->id]), [
+            ->post(route('hardware.checkin.store', [$asset]), [
                 'location_id' => $location->id,
                 'update_default_location' => 0
             ]);
@@ -128,7 +127,7 @@ class AssetCheckinTest extends TestCase
         $this->assertNotNull($asset->licenseseats->first()->assigned_to);
 
         $this->actingAs(User::factory()->checkinAssets()->create())
-            ->post(route('hardware.checkin.store', ['assetId' => $asset->id]));
+            ->post(route('hardware.checkin.store', [$asset]));
 
         $this->assertNull($asset->refresh()->licenseseats->first()->assigned_to);
     }
@@ -141,7 +140,7 @@ class AssetCheckinTest extends TestCase
         ]);
 
         $this->actingAs(User::factory()->checkinAssets()->create())
-            ->post(route('hardware.checkin.store', ['assetId' => $asset->id]));
+            ->post(route('hardware.checkin.store', [$asset]));
 
         $this->assertNull($asset->refresh()->rtd_location_id);
         $this->assertEquals($asset->location_id, $asset->rtd_location_id);
@@ -154,7 +153,7 @@ class AssetCheckinTest extends TestCase
         $acceptance = CheckoutAcceptance::factory()->for($asset, 'checkoutable')->pending()->create();
 
         $this->actingAs(User::factory()->checkinAssets()->create())
-            ->post(route('hardware.checkin.store', ['assetId' => $asset->id]));
+            ->post(route('hardware.checkin.store', [$asset]));
 
         $this->assertFalse($acceptance->exists(), 'Acceptance was not deleted');
     }
@@ -165,8 +164,7 @@ class AssetCheckinTest extends TestCase
 
         $this->actingAs(User::factory()->checkinAssets()->create())
             ->post(route(
-                'hardware.checkin.store',
-                ['assetId' => Asset::factory()->assignedToUser()->create()->id]
+                'hardware.checkin.store', [Asset::factory()->assignedToUser()->create()]
             ), [
                 'checkin_at' => '2023-01-02',
                 'note' => 'hello'
@@ -185,10 +183,10 @@ class AssetCheckinTest extends TestCase
         $asset->forceSave();
 
         $this->actingAs(User::factory()->admin()->create())
-            ->get(route('hardware.checkin.create', ['assetId' => $asset->id]))
+            ->get(route('hardware.checkin.create', [$asset]))
             ->assertStatus(302)
             ->assertSessionHas('error')
-            ->assertRedirect(route('hardware.show',['hardware' => $asset->id]));
+            ->assertRedirect(route('hardware.show', $asset));
     }
 
     public function testAssetCheckinPagePostIsRedirectedIfModelIsInvalid()
@@ -198,10 +196,10 @@ class AssetCheckinTest extends TestCase
         $asset->forceSave();
 
         $this->actingAs(User::factory()->admin()->create())
-            ->post(route('hardware.checkin.store', ['assetId' => $asset->id]))
+            ->post(route('hardware.checkin.store', $asset))
             ->assertStatus(302)
             ->assertSessionHas('error')
-            ->assertRedirect(route('hardware.show', ['hardware' => $asset->id]));
+            ->assertRedirect(route('hardware.show', $asset));
     }
 
     public function testAssetCheckinPagePostIsRedirectedIfRedirectSelectionIsIndex()
@@ -228,6 +226,6 @@ class AssetCheckinTest extends TestCase
             ])
             ->assertStatus(302)
             ->assertSessionHasNoErrors()
-            ->assertRedirect(route('hardware.show', ['hardware' => $asset->id]));
+            ->assertRedirect(route('hardware.show', $asset));
     }
 }

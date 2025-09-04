@@ -4,6 +4,7 @@ return [
     'info'   => 'Изберете ги опциите за извештајот за основни средства.',
     'deleted_user' => 'Избришан корисник',
     'send_reminder' => 'Испрати потсетник',
+    'cannot_send_reminder' => 'User has been deleted or does not have an email address so cannot receive a reminder',
     'reminder_sent' => 'Потсетникот е испратен',
     'acceptance_deleted' => 'Барањето за прифаќање избришано',
     'acceptance_request' => 'Барање за прифаќање',

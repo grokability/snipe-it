@@ -22,7 +22,7 @@ return array(
         'success' => '仕入先が削除されました。',
         'assoc_assets'	 => 'この仕入先は現在:asset_count個の資産に関連付けされているため削除できません。この仕入先を参照しないように更新した上で、もう一度試して下さい。 ',
         'assoc_licenses'	 => 'この仕入先は現在:licences_count個のライセンスに関連付けされているため削除できません。この仕入先を参照しないように更新したうえで、もう一度試してください。 ',
-        'assoc_maintenances'	 => 'この仕入先は現在:asset_maintenances_count個の資産管理に関連付けされているため削除できません。この仕入先を参照しないように更新したうえで、もう一度試してください。 ',
+        'assoc_maintenances'	 => 'This supplier is currently associated with :maintenances_count asset maintenances(s) and cannot be deleted. Please update your asset maintenances to no longer reference this supplier and try again. ',
     )
 
 );

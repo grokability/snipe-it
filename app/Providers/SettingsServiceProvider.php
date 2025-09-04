@@ -31,7 +31,7 @@ class SettingsServiceProvider extends ServiceProvider
 
 
         // Make sure the limit is actually set, is an integer and does not exceed system limits
-        \App::singleton('api_limit_value', function () {
+        app()->singleton('api_limit_value', function () {
             $limit = config('app.max_results');
             $int_limit = intval(request('limit'));
 
@@ -43,7 +43,7 @@ class SettingsServiceProvider extends ServiceProvider
         });
 
         // Make sure the offset is actually set and is an integer
-        \App::singleton('api_offset_value', function () {
+        app()->singleton('api_offset_value', function () {
             $offset = intval(request('offset'));
             return $offset;
         });
@@ -57,113 +57,121 @@ class SettingsServiceProvider extends ServiceProvider
         // Model paths and URLs
 
 
-        \App::singleton('eula_pdf_path', function () {
+        app()->singleton('eula_pdf_path', function () {
             return 'eula_pdf_path/';
         });
 
-        \App::singleton('assets_upload_path', function () {
+        app()->singleton('assets_upload_path', function () {
             return 'assets/';
         });
 
-        \App::singleton('accessories_upload_path', function () {
+        app()->singleton('maintenances_path', function () {
+            return 'maintenances/';
+        });
+
+        app()->singleton('audits_upload_path', function () {
+            return 'audits/';
+        });
+
+        app()->singleton('accessories_upload_path', function () {
             return 'public/uploads/accessories/';
         });
 
-        \App::singleton('models_upload_path', function () {
+        app()->singleton('models_upload_path', function () {
             return 'models/';
         });
 
-        \App::singleton('models_upload_url', function () {
+        app()->singleton('models_upload_url', function () {
             return 'models/';
         });
 
         // Categories
-        \App::singleton('categories_upload_path', function () {
+        app()->singleton('categories_upload_path', function () {
             return 'categories/';
         });
 
-        \App::singleton('categories_upload_url', function () {
+        app()->singleton('categories_upload_url', function () {
             return 'categories/';
         });
 
         // Locations
-        \App::singleton('locations_upload_path', function () {
+        app()->singleton('locations_upload_path', function () {
             return 'locations/';
         });
 
-        \App::singleton('locations_upload_url', function () {
+        app()->singleton('locations_upload_url', function () {
             return 'locations/';
         });
 
         // Users
-        \App::singleton('users_upload_path', function () {
+        app()->singleton('users_upload_path', function () {
             return 'avatars/';
         });
 
-        \App::singleton('users_upload_url', function () {
+        app()->singleton('users_upload_url', function () {
             return 'users/';
         });
 
         // Manufacturers
-        \App::singleton('manufacturers_upload_path', function () {
+        app()->singleton('manufacturers_upload_path', function () {
             return 'manufacturers/';
         });
 
-        \App::singleton('manufacturers_upload_url', function () {
+        app()->singleton('manufacturers_upload_url', function () {
             return 'manufacturers/';
         });
 
         // Suppliers
-        \App::singleton('suppliers_upload_path', function () {
+        app()->singleton('suppliers_upload_path', function () {
             return 'suppliers/';
         });
 
-        \App::singleton('suppliers_upload_url', function () {
+        app()->singleton('suppliers_upload_url', function () {
             return 'suppliers/';
         });
 
         // Departments
-        \App::singleton('departments_upload_path', function () {
+        app()->singleton('departments_upload_path', function () {
             return 'departments/';
         });
 
-        \App::singleton('departments_upload_url', function () {
+        app()->singleton('departments_upload_url', function () {
             return 'departments/';
         });
 
         // Company paths and URLs
-        \App::singleton('companies_upload_path', function () {
+        app()->singleton('companies_upload_path', function () {
             return 'companies/';
         });
 
-        \App::singleton('companies_upload_url', function () {
+        app()->singleton('companies_upload_url', function () {
             return 'companies/';
         });
 
         // Accessories paths and URLs
-        \App::singleton('accessories_upload_path', function () {
+        app()->singleton('accessories_upload_path', function () {
             return 'accessories/';
         });
 
-        \App::singleton('accessories_upload_url', function () {
+        app()->singleton('accessories_upload_url', function () {
             return 'accessories/';
         });
 
         // Consumables paths and URLs
-        \App::singleton('consumables_upload_path', function () {
+        app()->singleton('consumables_upload_path', function () {
             return 'consumables/';
         });
 
-        \App::singleton('consumables_upload_url', function () {
+        app()->singleton('consumables_upload_url', function () {
             return 'consumables/';
         });
 
         // Components paths and URLs
-        \App::singleton('components_upload_path', function () {
+        app()->singleton('components_upload_path', function () {
             return 'components/';
         });
 
-        \App::singleton('components_upload_url', function () {
+        app()->singleton('components_upload_url', function () {
             return 'components/';
         });
 

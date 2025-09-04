@@ -167,7 +167,8 @@ class HelperTest extends TestCase
             Session::put('redirect_option', $data['redirect_option']);
             Session::put('checkout_to_type', $data['checkout_to_type']);
 
-            $redirect = redirect()->to(Helper::getRedirectOption($data['request'],$data['id'], $data['table']));
+            $redirect = Helper::getRedirectOption($data['request'], $data['id'], $data['table']);
+
 
             $this->assertInstanceOf(RedirectResponse::class, $redirect);
             $this->assertEquals($data['route'], $redirect->getTargetUrl(), $scenario.'failed.');

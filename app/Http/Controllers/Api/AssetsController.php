@@ -34,6 +34,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use App\View\Label;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 
 /**
@@ -113,17 +114,23 @@ class AssetsController extends Controller
             'byod',
             'asset_eol_date',
             'requestable',
+            'jobtitle',
         ];
+
+        $all_custom_fields = CustomField::where('type', Asset::class); //used as a 'cache' of custom fields throughout this page load
+
+        foreach ($all_custom_fields as $field) {
+            $allowed_columns[] = $field->db_column_name();
+        }
 
         $filter = [];
 
         if ($request->filled('filter')) {
             $filter = json_decode($request->input('filter'), true);
-        }
 
-        $all_custom_fields = CustomField::all(); //used as a 'cache' of custom fields throughout this page load
-        foreach ($all_custom_fields as $field) {
-            $allowed_columns[] = $field->db_column_name();
+            $filter = array_filter($filter, function ($key) use ($allowed_columns) {
+                return in_array($key, $allowed_columns);
+            }, ARRAY_FILTER_USE_KEY);
         }
 
         $assets = Asset::select('assets.*')
@@ -139,6 +146,7 @@ class AssetsController extends Controller
                 'model.category',
                 'model.manufacturer',
                 'model.fieldset',
+                'model.depreciation',
                 'supplier'
             ); // it might be tempting to add 'assetlog' here, but don't. It blows up update-heavy users.
 
@@ -299,7 +307,13 @@ class AssetsController extends Controller
         }
 
         if ($request->filled('model_id')) {
-            $assets->InModelList([$request->input('model_id')]);
+            // If model_id is already an array, just use it as-is
+            if (is_array($request->input('model_id'))) {
+                $assets->InModelList($request->input('model_id'));
+            } else {
+                // Otherwise, turn it into an array
+                $assets->InModelList([$request->input('model_id')]);
+            }
         }
 
         if ($request->filled('category_id')) {
@@ -388,6 +402,9 @@ class AssetsController extends Controller
             case 'assigned_to':
                 $assets->OrderAssigned($order);
                 break;
+            case 'jobtitle':
+                $assets->OrderByJobTitle($order);
+                break;
             case 'created_by':
                 $assets->OrderByCreatedByName($order);
                 break;
@@ -435,12 +452,6 @@ class AssetsController extends Controller
             }]);
         }
 
-
-
-        /**
-         * Here we're just determining which Transformer (via $transformer) to use based on the 
-         * variables we set earlier on in this method - we default to AssetsTransformer.
-         */
         return (new $transformer)->transformAssets($assets, $total, $request);
     }
 
@@ -491,15 +502,32 @@ class AssetsController extends Controller
     public function showBySerial(Request $request, $serial): JsonResponse | array
     {
         $this->authorize('index', Asset::class);
-        $assets = Asset::where('serial', $serial)->with('assetstatus')->with('assignedTo');
+        $assets = Asset::where('serial', $serial)->with([
+            'assetstatus',
+            'assignedTo',
+            'company',
+            'defaultLoc',
+            'location',
+            'model.category',
+            'model.depreciation',
+            'model.fieldset',
+            'model.manufacturer',
+            'supplier',
+        ]);
 
         // Check if they've passed ?deleted=true
         if ($request->input('deleted', 'false') == 'true') {
             $assets = $assets->withTrashed();
         }
 
-        if (($assets = $assets->get()) && ($assets->count()) > 0) {
-            return (new AssetsTransformer)->transformAssets($assets, $assets->count());
+        $offset = ($request->input('offset') > $assets->count()) ? $assets->count() : app('api_offset_value');
+        $limit = app('api_limit_value');
+
+        $total = $assets->count();
+        $assets = $assets->skip($offset)->take($limit)->get();
+
+        if (($assets) && ($assets->count()) > 0) {
+            return (new AssetsTransformer)->transformAssets($assets, $total);
         }
 
         // If there are 0 results, return the "no such asset" response
@@ -556,7 +584,12 @@ class AssetsController extends Controller
             'assets.assigned_to',
             'assets.assigned_type',
             'assets.status_id',
-        ])->with('model', 'assetstatus', 'assignedTo')->NotArchived();
+        ])->with('model', 'assetstatus', 'assignedTo')
+            ->NotArchived();
+
+        if ((Setting::getSettings()->full_multiple_companies_support == '1') && ($request->filled('companyId'))) {
+            $assets->where('assets.company_id', $request->input('companyId'));
+        }
 
         if ($request->filled('assetStatusType') && $request->input('assetStatusType') === 'RTD') {
             $assets = $assets->RTD();
@@ -565,7 +598,6 @@ class AssetsController extends Controller
         if ($request->filled('search')) {
             $assets = $assets->AssignedSearch($request->input('search'));
         }
-
 
         $assets = $assets->paginate(50);
 
@@ -578,7 +610,7 @@ class AssetsController extends Controller
             $asset->use_text = $asset->present()->fullName;
 
             if (($asset->checkedOutToUser()) && ($asset->assigned)) {
-                $asset->use_text .= ' → ' . $asset->assigned->getFullNameAttribute();
+                $asset->use_text .= ' → ' . $asset->assigned->display_name;
             }
 
 
@@ -618,48 +650,8 @@ class AssetsController extends Controller
 
         $asset = $request->handleImages($asset);
 
-        // Update custom fields in the database.
-        $model = AssetModel::find($request->input('model_id'));
+        $asset->customFill($request, Auth::user(), true);
 
-        // Check that it's an object and not a collection
-        // (Sometimes people send arrays here and they shouldn't
-        if (($model) && ($model instanceof AssetModel) && ($model->fieldset)) {
-            foreach ($model->fieldset->fields as $field) {
-
-                // Set the field value based on what was sent in the request
-                $field_val = $request->input($field->db_column, null);
-
-                // If input value is null, use custom field's default value
-                if ($field_val == null) {
-                    Log::debug('Field value for ' . $field->db_column . ' is null');
-                    $field_val = $field->defaultValue($request->get('model_id'));
-                    Log::debug('Use the default fieldset value of ' . $field->defaultValue($request->get('model_id')));
-                }
-
-                // if the field is set to encrypted, make sure we encrypt the value
-                if ($field->field_encrypted == '1') {
-                    Log::debug('This model field is encrypted in this fieldset.');
-
-                    if (Gate::allows('assets.view.encrypted_custom_fields')) {
-
-                        // If input value is null, use custom field's default value
-                        if (($field_val == null) && ($request->has('model_id') != '')) {
-                            $field_val = Crypt::encrypt($field->defaultValue($request->get('model_id')));
-                        } else {
-                            $field_val = Crypt::encrypt($request->input($field->db_column));
-                        }
-                    }
-                }
-                if ($field->element == 'checkbox') {
-                    if (is_array($field_val)) {
-                        $field_val = implode(',', $field_val);
-                    }
-                }
-
-
-                $asset->{$field->db_column} = $field_val;
-            }
-        }
 
         if ($asset->save()) {
             if ($request->get('assigned_user')) {
@@ -679,7 +671,9 @@ class AssetsController extends Controller
 
             return response()->json(Helper::formatStandardApiResponse('success', $asset, trans('admin/hardware/message.create.success')));
 
-            return response()->json(Helper::formatStandardApiResponse('success', (new AssetsTransformer)->transformAsset($asset), trans('admin/hardware/message.create.success')));
+            // below is what we want the _eventual_ return to look like - in a more standardized format.
+            // return response()->json(Helper::formatStandardApiResponse('success', (new AssetsTransformer)->transformAsset($asset), trans('admin/hardware/message.create.success')));
+
         }
 
         return response()->json(Helper::formatStandardApiResponse('error', null, $asset->getErrors()), 200);
@@ -721,29 +715,8 @@ class AssetsController extends Controller
         $model = $asset->model;
 
         // Update custom fields
-        $problems_updating_encrypted_custom_fields = false;
-        if (($model) && (isset($model->fieldset))) {
-            foreach ($model->fieldset->fields as $field) {
-                $field_val = $request->input($field->db_column, null);
+        $problems_updating_encrypted_custom_fields = !$asset->customFill($request, Auth::user());
 
-                if ($request->has($field->db_column)) {
-                    if ($field->element == 'checkbox') {
-                        if (is_array($field_val)) {
-                            $field_val = implode(',', $field_val);
-                        }
-                    }
-                    if ($field->field_encrypted == '1') {
-                        if (Gate::allows('assets.view.encrypted_custom_fields')) {
-                            $field_val = Crypt::encrypt($field_val);
-                        } else {
-                            $problems_updating_encrypted_custom_fields = true;
-                            continue;
-                        }
-                    }
-                    $asset->{$field->db_column} = $field_val;
-                }
-            }
-        }
         if ($asset->save()) {
             if (($request->filled('assigned_user')) && ($target = User::find($request->get('assigned_user')))) {
                 $location = $target->location_id;
@@ -1047,7 +1020,7 @@ class AssetsController extends Controller
      * @param int $id
      * @since [v4.0]
      */
-    public function audit(Request $request): JsonResponse
+    public function audit(Request $request, Asset $asset): JsonResponse
 
     {
         $this->authorize('audit', Asset::class);
@@ -1055,36 +1028,15 @@ class AssetsController extends Controller
         $settings = Setting::getSettings();
         $dt = Carbon::now()->addMonths($settings->audit_interval)->toDateString();
 
-        // No tag passed - return an error
-        if (!$request->filled('asset_tag')) {
-            return response()->json(Helper::formatStandardApiResponse('error', [
-                'asset_tag' => '',
-                'error' => trans('admin/hardware/message.no_tag'),
-            ], trans('admin/hardware/message.no_tag')), 200);
+        // Allow the asset tag to be passed in the payload (legacy method)
+        if ($request->filled('asset_tag')) {
+            $asset = Asset::where('asset_tag', '=', $request->input('asset_tag'))->first();
         }
-
-
-        $asset = Asset::where('asset_tag', '=', $request->input('asset_tag'))->first();
-
 
         if ($asset) {
 
-            /**
-             * Even though we do a save() further down, we don't want to log this as a "normal" asset update,
-             * which would trigger the Asset Observer and would log an asset *update* log entry (because the
-             * de-normed fields like next_audit_date on the asset itself will change on save()) *in addition* to
-             * the audit log entry we're creating through this controller.
-             *
-             * To prevent this double-logging (one for update and one for audit), we skip the observer and bypass
-             * that de-normed update log entry by using unsetEventDispatcher(), BUT invoking unsetEventDispatcher()
-             * will bypass normal model-level validation that's usually handled at the observer )
-             *
-             * We handle validation on the save() by checking if the asset is valid via the ->isValid() method,
-             * which manually invokes Watson Validating to make sure the asset's model is valid.
-             *
-             * @see \App\Observers\AssetObserver::updating()
-             */
-            $asset->unsetEventDispatcher();
+            $originalValues = $asset->getRawOriginal();
+
             $asset->next_audit_date = $dt;
 
             if ($request->filled('next_audit_date')) {
@@ -1099,33 +1051,89 @@ class AssetsController extends Controller
 
             $asset->last_audit_date = date('Y-m-d H:i:s');
 
+            // Set up the payload for re-display in the API response
+            $payload = [
+                'id' => $asset->id,
+                'asset_tag' => $asset->asset_tag,
+                'note' => $request->input('note'),
+                'next_audit_date' => Helper::getFormattedDateObject($asset->next_audit_date),
+            ];
+
+
+            /**
+             * Update custom fields in the database.
+             * Validation for these fields is handled through the AssetRequest form request
+             * $model = AssetModel::find($request->get('model_id'));
+             */
+            if (($asset->model) && ($asset->model->fieldset)) {
+                $payload['custom_fields'] = [];
+                foreach ($asset->model->fieldset->fields as $field) {
+                    if (($field->display_audit == '1') && ($request->has($field->db_column))) {
+                        if ($field->field_encrypted == '1') {
+                            if (Gate::allows('assets.view.encrypted_custom_fields')) {
+                                if (is_array($request->input($field->db_column))) {
+                                    $asset->{$field->db_column} = Crypt::encrypt(implode(', ', $request->input($field->db_column)));
+                                } else {
+                                    $asset->{$field->db_column} = Crypt::encrypt($request->input($field->db_column));
+                                }
+                            }
+                        } else {
+                            if (is_array($request->input($field->db_column))) {
+                                $asset->{$field->db_column} = implode(', ', $request->input($field->db_column));
+                            } else {
+                                $asset->{$field->db_column} = $request->input($field->db_column);
+                            }
+                        }
+                        $payload['custom_fields'][$field->db_column] = $request->input($field->db_column);
+                    }
+
+                }
+            }
+
+            // Invoke the validation to see if the audit will complete successfully
+            $asset->setRules($asset->getRules() + $asset->customFieldValidationRules());
+
+            // Validate the rest of the data before we turn off the event dispatcher
+            if ($asset->isInvalid()) {
+                return response()->json(Helper::formatStandardApiResponse('error', ['asset_tag' => $asset->asset_tag], $asset->getErrors()));
+            }
+
+
+            /**
+             * Even though we do a save() further down, we don't want to log this as a "normal" asset update,
+             * which would trigger the Asset Observer and would log an asset *update* log entry (because the
+             * de-normed fields like next_audit_date on the asset itself will change on save()) *in addition* to
+             * the audit log entry we're creating through this controller.
+             *
+             * To prevent this double-logging (one for update and one for audit), we skip the observer and bypass
+             * that de-normed update log entry by using unsetEventDispatcher(), BUT invoking unsetEventDispatcher()
+             * will bypass normal model-level validation that's usually handled at the observer)
+             *
+             * We handle validation on the save() by checking if the asset is valid via the ->isValid() method,
+             * which manually invokes Watson Validating to make sure the asset's model is valid.
+             *
+             * @see \App\Observers\AssetObserver::updating()
+             * @see \App\Models\Asset::save()
+             */
+
+            $asset->unsetEventDispatcher();
+
+
             /**
              * Invoke Watson Validating to check the asset itself and check to make sure it saved correctly.
              * We have to invoke this manually because of the unsetEventDispatcher() above.)
              */
             if ($asset->isValid() && $asset->save()) {
-                $asset->logAudit(request('note'), request('location_id'));
-
-                return response()->json(Helper::formatStandardApiResponse('success', [
-                    'asset_tag' => e($asset->asset_tag),
-                    'note' => e($request->input('note')),
-                    'next_audit_date' => Helper::getFormattedDateObject($asset->next_audit_date),
-                ], trans('admin/hardware/message.audit.success')));
+                $asset->logAudit(request('note'), request('location_id'), null, $originalValues);
+                return response()->json(Helper::formatStandardApiResponse('success', $payload, trans('admin/hardware/message.audit.success')));
             }
 
-            // Asset failed validation or was not able to be saved
-            return response()->json(Helper::formatStandardApiResponse('error', [
-                'asset_tag' => e($asset->asset_tag),
-                'error' => $asset->getErrors()->first(),
-            ], trans('admin/hardware/message.audit.error', ['error' => $asset->getErrors()->first()])), 200);
         }
 
 
         // No matching asset for the asset tag that was passed.
-        return response()->json(Helper::formatStandardApiResponse('error', [
-            'asset_tag' => e($request->input('asset_tag')),
-            'error' => trans('admin/hardware/message.audit.error'),
-        ], trans('admin/hardware/message.audit.error', ['error' => trans('admin/hardware/message.does_not_exist')])), 200);
+        return response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/hardware/message.does_not_exist')), 200);
+
     }
 
 
@@ -1230,7 +1238,10 @@ class AssetsController extends Controller
     {
         $this->authorize('view', Asset::class);
         $this->authorize('view', $asset);
-        $accessory_checkouts = AccessoryCheckout::AssetsAssigned()->with('adminuser')->with('accessories');
+        $accessory_checkouts = AccessoryCheckout::AssetsAssigned()
+            ->where('assigned_to', $asset->id)
+            ->with('adminuser')
+            ->with('accessories');
 
         $offset = ($request->input('offset') > $accessory_checkouts->count()) ? $accessory_checkouts->count() : app('api_offset_value');
         $limit = app('api_limit_value');
@@ -1239,6 +1250,8 @@ class AssetsController extends Controller
         $accessory_checkouts = $accessory_checkouts->skip($offset)->take($limit)->get();
         return (new AssetsTransformer)->transformCheckedoutAccessories($accessory_checkouts, $total);
     }
+
+
     /**
      * Generate asset labels by tag
      * 

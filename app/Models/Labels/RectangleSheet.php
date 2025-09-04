@@ -33,9 +33,13 @@ abstract class RectangleSheet extends Sheet
     public abstract function getLabelRowSpacing();
 
 
-    public function getLabelsPerPage()  { return $this->getColumns() * $this->getRows(); }
+    public function getLabelsPerPage()
+    {
+        return $this->getColumns() * $this->getRows(); 
+    }
 
-    public function getLabelPosition($index)  {
+    public function getLabelPosition($index)
+    {
         $printIndex = $index + $this->getLabelIndexOffset();
         $row = (int)($printIndex / $this->getColumns());
         $col = $printIndex - ($row * $this->getColumns());

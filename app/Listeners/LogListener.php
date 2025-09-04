@@ -17,7 +17,6 @@ use App\Events\ItemAccepted;
 use App\Events\ItemDeclined;
 use App\Events\LicenseCheckedIn;
 use App\Events\LicenseCheckedOut;
-use App\Events\NoteAdded;
 use App\Models\Actionlog;
 use App\Models\User;
 use App\Models\LicenseSeat;
@@ -66,6 +65,7 @@ class LogListener
         $logaction->filename = $event->acceptance->stored_eula_file;
         $logaction->note = $event->acceptance->note;
         $logaction->action_type = 'accepted';
+        $logaction->action_date = $event->acceptance->accepted_at;
 
         // TODO: log the actual license seat that was checked out
         if ($event->acceptance->checkoutable instanceof LicenseSeat) {
@@ -83,6 +83,7 @@ class LogListener
         $logaction->accept_signature = $event->acceptance->signature_filename;
         $logaction->note = $event->acceptance->note;
         $logaction->action_type = 'declined';
+        $logaction->action_date = $event->acceptance->declined_at;
 
         // TODO: log the actual license seat that was checked out
         if ($event->acceptance->checkoutable instanceof LicenseSeat) {
@@ -128,23 +129,6 @@ class LogListener
 
 
     }
-
-
-    /**
-     * Note is added to action log
-     *
-     */
-    public function onNoteAdded(NoteAdded $event)
-    {
-        $logaction = new Actionlog();
-        $logaction->item_id = $event->itemNoteAddedOn->id;
-        $logaction->item_type = get_class($event->itemNoteAddedOn);
-        $logaction->note = $event->note; //this is the received alphanumeric text from the box
-        $logaction->created_by = $event->noteAddedBy->id;
-        $logaction->action_type = 'note_added';
-        $logaction->save();
-    }
-
 
     /**
      * Register the listeners for the subscriber.

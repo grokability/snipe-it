@@ -24,9 +24,9 @@
   @elseif (Request::get('status')=='Archived')
     {{ trans('general.archived') }}
   @elseif (Request::get('status')=='Deleted')
-    {{ trans('general.deleted') }}
+    {{ ucfirst(trans('general.deleted')) }}
   @elseif (Request::get('status')=='byod')
-    {{ trans('general.byod') }}
+    {{ strtoupper(trans('general.byod')) }}
   @endif
 @else
 {{ trans('general.all') }}
@@ -43,14 +43,6 @@
 @yield('title0')  @parent
 @stop
 
-@section('header_right')
-  <a href="{{ route('reports/custom') }}" style="margin-right: 5px;" class="btn btn-default">
-    {{ trans('admin/hardware/general.custom_export') }}</a>
-  @can('create', \App\Models\Asset::class)
-  <a href="{{ route('hardware.create') }}" {{$snipeSettings->shortcuts_enabled == 1 ? "n" : ''}} class="btn btn-primary pull-right"></i> {{ trans('general.create') }}</a>
-  @endcan
-
-@stop
 
 {{-- Page content --}}
 @section('content')
@@ -66,26 +58,19 @@
                 @include('partials.asset-bulk-actions', ['status' => Request::get('status')])
                    
               <table
-                data-advanced-search="true"
-                data-click-to-select="true"
                 data-columns="{{ \App\Presenters\AssetPresenter::dataTableLayout() }}"
-                data-cookie-id-table="assetsListingTable"
-                data-pagination="true"
-                data-id-table="assetsListingTable"
-                data-search="true"
+                data-cookie-id-table="{{ request()->has('status') ? e(request()->input('status')) : ''  }}assetsListingTable"
+                data-id-table="{{ request()->has('status') ? e(request()->input('status')) : ''  }}assetsListingTable"
                 data-search-text="{{ e(Session::get('search')) }}"
                 data-side-pagination="server"
-                data-show-columns="true"
-                data-show-export="true"
                 data-show-footer="true"
-                data-show-refresh="true"
                 data-sort-order="asc"
                 data-sort-name="name"
-                data-show-fullscreen="true"
                 data-toolbar="#assetsBulkEditToolbar"
                 data-bulk-button-id="#bulkAssetEditButton"
                 data-bulk-form-id="#assetsBulkForm"
-                id="assetsListingTable"
+                data-buttons="assetButtons"
+                id="{{ request()->has('status') ? e(request()->input('status')) : ''  }}assetsListingTable"
                 class="table table-striped snipe-table"
                 data-url="{{ route('api.assets.index',
                     array('status' => e(Request::get('status')),

@@ -1,14 +1,15 @@
 <?php
 
     return [
-        'asset_maintenance_type' => 'Asset Maintenance Type',
+        'select_type'            => 'Odaberi tip održavanja',
+        'asset_maintenance_type' => 'Tip održavanja imovine',
         'title'                  => 'Titula',
-        'start_date'             => 'Start Date',
-        'completion_date'        => 'Completion Date',
+        'start_date'             => 'Datum Početka',
+        'completion_date'        => 'Datum Završetka',
         'cost'                   => 'cijena',
         'is_warranty'            => 'Poboljšanje jamstva',
-        'asset_maintenance_time' => 'Asset Maintenance Time (in days)',
+        'asset_maintenance_time' => 'Vrijeme održavanja imovine (u danima)',
         'notes'                  => 'Bilješke',
-        'update'                 => 'Update Asset Maintenance',
-        'create'                 => 'Create Asset Maintenance'
+        'update'                 => 'Ažuriraj održavanje imovine',
+        'create'                 => 'Kreiraj održavanje imovine'
     ];

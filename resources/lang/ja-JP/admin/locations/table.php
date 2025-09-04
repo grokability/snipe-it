@@ -39,4 +39,5 @@ return [
     'signed_by_finance_auditor' => '署名済み(会計監査人):',
     'signed_by_location_manager' => '署名済み (ロケーションマネージャー):',
     'signed_by'                 => '署名:',
+    'clone'  					=> 'Clone Location',
 ];

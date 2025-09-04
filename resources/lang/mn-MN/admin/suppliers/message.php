@@ -22,7 +22,7 @@ return array(
         'success' => 'Ханган нийлүүлэгч амжилттай устгагдсан.',
         'assoc_assets'	 => 'Энэ нийлүүлэгч одоогоор :asset_count хөрөнгөтэй холбоотой байгаа тул устгах боломжгүй байна. Энэ үйлдвэрлэгчтэй холбоогүй болгож хөрөнгөө шинэчлээд дахин оролдоно уу. ',
         'assoc_licenses'	 => 'Энэ нийлүүлэгч одоогоор :licenses_count лицензтэй холбоотой байгаа тул устгах боломжгүй байна. Энэ нийлүүлэгчтэй холбоогүй болгож лицензээ шинэчлээд дахин оролдоно уу. ',
-        'assoc_maintenances'	 => 'Энэ нийлүүлэгч одоогоор :asset_maintenances_count засвар үйлчилгээтэй холбоотой байгаа тул устгах боломжгүй байна. Энэ нийлүүлэгчтэй холбоогүй болгож засвар үйлчилгээгээ шинэчлээд дахин оролдоно уу. ',
+        'assoc_maintenances'	 => 'This supplier is currently associated with :maintenances_count asset maintenances(s) and cannot be deleted. Please update your asset maintenances to no longer reference this supplier and try again. ',
     )
 
 );

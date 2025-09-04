@@ -16,7 +16,15 @@
                 <div class="dynamic-form-row">
                     <div class="col-md-3 col-xs-12"><label for="modal-type">{{ trans('admin/statuslabels/table.status_type') }}:
                         </label></div>
-                    <div class="col-md-8 col-xs-12">{{ Form::select('type', $statuslabel_types, '', array('class'=>'select2', 'style'=>'width:100%','id' =>'modal-type', 'required',)) }}</div>
+                    <div class="col-md-8 col-xs-12">
+                        <x-input.select
+                            name="type"
+                            id="modal-type"
+                            :options="$statuslabel_types"
+                            required
+                            style="width:100%;"
+                        />
+                    </div>
                 </div>
             </form>
         </div>

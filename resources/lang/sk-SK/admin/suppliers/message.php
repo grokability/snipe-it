@@ -22,7 +22,7 @@ return array(
         'success' => 'Dodávateľ bol úspešne odstránený.',
         'assoc_assets'	 => 'Tento dodávateľ ma aktuálne priradené :asset_count majetky a nemôže byť odstránený. Prosím aktualizujte príslušne majetky, aby nevyužívali tohto dodávateľa a skúste znovu. ',
         'assoc_licenses'	 => 'Tento dodávateľ je aktuálne priradený :licenses_count licenciam a nemôže byť odstránený. Prosím aktualizujte príslušne licencie, aby nevyužívali tohto dodávateľa a skúste znovu. ',
-        'assoc_maintenances'	 => 'Tento dodávateľ je aktuálne priradený :asset_maintenances_count údržbam majetku a nemôže byť odstránený. Prosím aktualizujte príslušne údržba majetku, aby nevyužívali tohto dodávateľa a skúste znovu. ',
+        'assoc_maintenances'	 => 'This supplier is currently associated with :maintenances_count asset maintenances(s) and cannot be deleted. Please update your asset maintenances to no longer reference this supplier and try again. ',
     )
 
 );

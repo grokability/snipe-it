@@ -47,5 +47,5 @@ return [
     'kit_deleted'                       => 'Комплектът беше изтрит',
     'kit_model_updated'                 => 'Модела беше успешно обновен',
     'kit_model_detached'                => 'Модела беше премахнат успешно',
-    'model_already_attached'            => 'Model already attached to kit',
+    'model_already_attached'            => 'Модела е добавен в комплекта',
 ];

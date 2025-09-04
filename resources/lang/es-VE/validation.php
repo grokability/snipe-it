@@ -31,6 +31,7 @@ return [
         'numeric' => 'El campo :attribute debe estar entre :min y :max.',
         'string' => 'El campo :attribute debe tener entre :min y :max caracteres.',
     ],
+    'valid_regex' => 'La expresión regular no es válida.',
     'boolean' => 'El campo :attribute debe ser verdadero o falso.',
     'can' => 'El campo :attribute contiene un valor no autorizado.',
     'confirmed' => 'La confirmación del campo :attribute no coincide.',
@@ -172,6 +173,7 @@ return [
     'url' => 'El campo :attribute debe ser una URL válida.',
     'ulid' => 'El campo :attribute debe ser un ULID válido.',
     'uuid' => 'El campo :attribute debe ser un UUID válido.',
+    'fmcs_location' => 'El soporte completo de múltiples empresas y el alcance de la ubicación están habilitados en la Configuración de Administración, y la ubicación seleccionada y la empresa seleccionada no son compatibles.',
 
 
     /*
@@ -185,9 +187,13 @@ return [
     |
     */
 
+    'email_array'      => 'Una o más direcciones de correo electrónico no son válidas.',
+    'checkboxes'           => ':attribute contiene opciones no válidas.',
+    'radio_buttons'        => ':attribute no es válido.',
+    
     'custom' => [
         'alpha_space' => 'El campo :attribute contiene un carácter que no está permitido.',
-        'email_array'      => 'Una o más direcciones de correo electrónico no son válidas.',
+
         'hashed_pass'      => 'Su contraseña actual es incorrecta',
         'dumbpwd'          => 'Esa contraseña es muy común.',
         'statuslabel_type' => 'Debe seleccionar un tipo de etiqueta de estado válido',
@@ -204,8 +210,6 @@ return [
         'expected_checkin.date_format'  =>  ':attribute debe ser una fecha válida en formato AAAA-MM-DD',
         'start_date.date_format'        =>  ':attribute debe ser una fecha válida en formato AAAA-MM-DD',
         'end_date.date_format'          =>  ':attribute debe ser una fecha válida en formato AAAA-MM-DD',
-        'checkboxes'           => ':attribute contiene opciones no válidas.',
-        'radio_buttons'        => 'El valor de :attribute no es válido.',
         'invalid_value_in_field' => 'Valor no válido incluido en este campo',
 
         'ldap_username_field' => [

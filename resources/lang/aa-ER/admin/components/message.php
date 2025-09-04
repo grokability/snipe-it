@@ -17,7 +17,8 @@ return array(
     'delete' => array(
         'confirm'   => 'crwdns1560:0crwdne1560:0',
         'error'   => 'crwdns1561:0crwdne1561:0',
-        'success' => 'crwdns1562:0crwdne1562:0'
+        'success' => 'crwdns1562:0crwdne1562:0',
+        'error_qty'   => 'crwdns12937:0crwdne12937:0',
     ),
 
      'checkout' => array(

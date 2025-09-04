@@ -19,6 +19,8 @@ return [
     'print_assigned'    => 'Skriv ut alla tilldelade',
     'email_assigned'    => 'E-postlista med alla tilldelade',
     'user_notified'     => 'Användaren har blivit e-postad med en lista över sina nuvarande tilldelade objekt.',
+    'users_notified'    => 'The user has been emailed a list of their currently assigned items.|:count users have been emailed a list of their currently assigned items.',
+    'users_notified_warning' => ':count user has been emailed a list of their currently assigned items, however :no_email users did not have an email address so could not be emailed.|:count users have been emailed a list of their currently assigned items, however :no_email user(s) did not have an email address so could not be emailed.',
     'auto_assign_label' => 'Inkludera denna användare när du automatiskt tilldelar kvalificerade licenser',
     'auto_assign_help'  => 'Hoppa över denna användare i automatisk tilldelning av licenser',
     'software_user'     => 'Programvara utcheckad till :name',
@@ -51,4 +53,5 @@ return [
     'next_save_user' => 'Nästa: Spara användare',
     'all_assigned_list_generation' => 'Skapad:',
     'email_user_creds_on_create' => 'E-posta den här användaren sina inloggningsuppgifter?',
+    'department_manager' => 'Department Manager',
 ];

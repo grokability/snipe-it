@@ -17,7 +17,8 @@ return array(
     'delete' => array(
         'confirm'   => 'Kei te hiahia koe ki te muku i tenei waahanga?',
         'error'   => 'He raruraru kei te whakakore i te waahanga. Tena ngana ano.',
-        'success' => 'I mukua te wāhanga.'
+        'success' => 'I mukua te wāhanga.',
+        'error_qty'   => 'Some components of this type are still checked out. Please check them in and try again.',
     ),
 
      'checkout' => array(

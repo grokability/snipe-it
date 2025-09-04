@@ -16,10 +16,22 @@ class AssetImporter extends ItemImporter
     {
         parent::__construct($filename);
 
-        $this->defaultStatusLabelId = Statuslabel::first()->id;
-        
+        $this->defaultStatusLabelId = Statuslabel::first()?->id;
+
         if (!is_null(Statuslabel::deployable()->first())) {
-            $this->defaultStatusLabelId = Statuslabel::deployable()->first()->id;
+            $this->defaultStatusLabelId = Statuslabel::deployable()->first()?->id;
+        }
+
+        if (is_null($this->defaultStatusLabelId)) {
+            $defaultLabel = Statuslabel::create([
+                'name' => 'Default Status',
+                'deployable' => 0,
+                'pending' => 1,
+                'archived' => 0,
+                'notes' => 'Default status label created by AssetImporter',
+            ]);
+
+            $this->defaultStatusLabelId = $defaultLabel->id;
         }
     }
 
@@ -28,9 +40,10 @@ class AssetImporter extends ItemImporter
         // ItemImporter handles the general fetching.
         parent::handle($row);
 
+        // FIXME : YUP!!!!! This shit needs to go (?) Yeah?
         if ($this->customFields) {
             foreach ($this->customFields as $customField) {
-                $customFieldValue = $this->array_smart_custom_field_fetch($row, $customField);
+                $customFieldValue = $this->array_smart_custom_field_fetch($row, $customField); // TODO/FIXME - this might require a new 'mode' on customFill()?
 
                 if ($customFieldValue) {
                     if ($customField->field_encrypted == 1) {
@@ -40,7 +53,7 @@ class AssetImporter extends ItemImporter
                         $this->item['custom_fields'][$customField->db_column_name()] = $customFieldValue;
                         $this->log('Custom Field '.$customField->name.': '.$customFieldValue);
                     }
-                } else {
+                } else { // FIXME - think this through? Do we want to blank this? Is that how other stuff works?
                     // Clear out previous data.
                     $this->item['custom_fields'][$customField->db_column_name()] = null;
                 }
@@ -68,7 +81,16 @@ class AssetImporter extends ItemImporter
             $asset_tag = Asset::autoincrement_asset();
         }
 
-        $asset = Asset::where(['asset_tag'=> (string) $asset_tag])->first();
+
+
+        if ($this->findCsvMatch($row, 'id')!='') {
+            // Override asset if an ID was given
+            \Log::debug('Finding asset by ID: '.$this->findCsvMatch($row, 'id'));
+            $asset = Asset::find($this->findCsvMatch($row, 'id'));
+        } else {
+            $asset = Asset::where(['asset_tag'=> (string) $asset_tag])->first();
+        }
+        
         if ($asset) {
             if (! $this->updating) {
                 $exists_error = trans('general.import_asset_tag_exists', ['asset_tag' => $asset_tag]);

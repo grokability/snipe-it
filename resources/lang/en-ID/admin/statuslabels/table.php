@@ -1,14 +1,14 @@
 <?php
 
 return array(
-    'about'      	=> 'Tentang Label Status',
+    'about'      	=> 'About Status Types',
     'archived'      	=> 'Diarsipkan',
     'create'      	=> 'Buat label status',
     'color'      	=> 'Warna bagan',
     'default_label' => 'Label standar',
     'default_label_help' => 'Ini digunakan untuk memastikan label status yang paling sering digunakan muncul di bagian atas kotak pilih saat membuat / mengedit aset.',
     'deployable'      	=> 'Bisa disebarkan',
-    'info'      	=> 'Label status digunakan untuk menggambarkan berbagai keadaan aset Anda. Mungkin ada perbaikan, kehilangan / pencurian, dll. Anda dapat membuat label status baru untuk aset yang dapat dideplesikan, tertunda dan diarsipkan.',
+    'info'      	=> 'Status label types are used to describe the various states your assets could be in. They may be out for repair, lost/stolen, etc. You can create new status labels for your deployable, pending and archived assets according to your own workflow. For more information, <a href="https://snipe-it.readme.io/docs/overview#status-labels" target="_blank">see the documentation <i class="fa fa-external-link"></i></a>.',
     'name'      	=> 'Nama status',
     'pending'      	=> 'Tertunda',
     'status_type'   => 'Tipe status',

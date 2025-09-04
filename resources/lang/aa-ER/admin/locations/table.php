@@ -39,4 +39,5 @@ return [
     'signed_by_finance_auditor' => 'crwdns6693:0crwdne6693:0',
     'signed_by_location_manager' => 'crwdns6695:0crwdne6695:0',
     'signed_by'                 => 'crwdns6697:0crwdne6697:0',
+    'clone'  					=> 'crwdns13240:0crwdne13240:0',
 ];

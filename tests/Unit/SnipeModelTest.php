@@ -18,12 +18,14 @@ class SnipeModelTest extends TestCase
     public function testSetsPurchaseCostsAppropriately()
     {
         $c = new SnipeModel;
+        $c->purchase_cost = '';
+        $this->assertTrue($c->purchase_cost == null);
         $c->purchase_cost = '0.00';
-        $this->assertTrue($c->purchase_cost === null);
+        $this->assertTrue($c->purchase_cost == 0.00);
         $c->purchase_cost = '9.54';
-        $this->assertTrue($c->purchase_cost === 9.54);
+        $this->assertTrue($c->purchase_cost == 9.54);
         $c->purchase_cost = '9.50';
-        $this->assertTrue($c->purchase_cost === 9.5);
+        $this->assertTrue($c->purchase_cost == 9.5);
     }
 
     public function testNullsBlankLocationIdsButNotOthers()

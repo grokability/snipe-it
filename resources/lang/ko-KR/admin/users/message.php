@@ -6,7 +6,7 @@ return array(
     'declined'                  => '이 자산이 거부되었습니다.',
     'bulk_manager_warn'	        => '사용자가 성공적으로 갱신되었지만, 선택한 관리자가 편집할 사용자 목록에도 있었고, 사용자가 자신의 관리자가 아니 어서 관리자 항목이 저장되지 않았습니다. 관리자를 제외한 사용자를 다시 선택하십시오.',
     'user_exists'               => '사용자가 이미 존재합니다!',
-    'user_not_found'            => 'User does not exist or you do not have permission view them.',
+    'user_not_found'            => '사용자가 존재하지 않거나, 볼수 있는 권한이 없습니다.',
     'user_login_required'       => '로그인 항목을 입력해 주세요.',
     'user_has_no_assets_assigned' => 'No assets currently assigned to user.',
     'user_password_required'    => '비밀번호를 입력해 주세요.',
@@ -69,7 +69,7 @@ return array(
     ),
 
     'inventorynotification' => array(
-        'error'   => 'This user has no email set.',
+        'error'   => '해당 유저는 이메일이 설정되어 있지 않습니다.',
         'success' => 'The user has been notified about their current inventory.'
     )
 );

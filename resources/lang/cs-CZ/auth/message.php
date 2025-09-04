@@ -6,16 +6,14 @@ return array(
     'account_not_found'      => 'Neexistující uživatel nebo chybné heslo!',
     'account_not_activated'  => 'Uživatelský účet není aktivován.',
     'account_suspended'      => 'Uživatelský účet je pozastaven.',
-    'account_banned'         => 'Uživatelský účet je zablokován.',
-    'throttle'               => 'Příliš mnoho neúspěšných pokusů o přihlášení. Zkuste to prosím znovu za :minutes minut.',
 
     'two_factor' => array(
         'already_enrolled'      => 'Vaše zařízení je již zapsáno.',
         'success'               => 'Přihlášení proběhlo úspěšně.',
         'code_required'         => 'Dvoufaktorový kód je povinný.',
         'invalid_code'          => 'Dvoufaktorový kód je neplatný.',
-        'enter_two_factor_code' => 'Please enter your two-factor authentication code.',
-        'please_enroll'         => 'Please enroll a device in two-factor authentication.',
+        'enter_two_factor_code' => 'Zadejte prosím váš dvoufaktorový ověřovací kód.',
+        'please_enroll'         => 'Prosím zapište zařízení do dvoufaktorového ověření.',
     ),
 
     'signin' => array(

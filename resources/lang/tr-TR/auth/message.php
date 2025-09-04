@@ -6,8 +6,6 @@ return array(
     'account_not_found'      => 'Kullanıcı adı veya şifresi yanlış.',
     'account_not_activated'  => 'Hesabınız aktif edilmemiş.',
     'account_suspended'      => 'Hesabınız durdurulmuş.',
-    'account_banned'         => 'Hesabınız engellenmiş.',
-    'throttle'               => 'Çok fazla başarısız oturum açma girişimi. Lütfen :dakika dakika sonra tekrar deneyin.',
 
     'two_factor' => array(
         'already_enrolled'      => 'Cihazınız zaten kayıtlı.',

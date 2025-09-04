@@ -376,12 +376,19 @@ a.accordion-header {
   /* adjust based on your layout */
 }
 
-.skin-blue .main-header .navbar .dropdown-menu li a {
-  color: #333;
-}
-
 a.logo.no-hover a:hover {
   background-color: transparent;
+}
+
+.index-block {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.index-block:hover{
+  overflow: visible;
+  white-space: normal;
+  height:auto;
 }
 
 input:required, select:required, textarea:required {

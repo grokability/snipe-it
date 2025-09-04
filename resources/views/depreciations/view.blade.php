@@ -34,21 +34,21 @@
                         <a href="#assets" data-toggle="tab">
                             {{ trans('general.assets') }}
 
-                            {!! ($depreciation->assets()->AssetsForShow()->count() > 0 ) ? '<badge class="badge badge-secondary">'.number_format($depreciation->assets()->AssetsForShow()->count()).'</badge>' : '' !!}
+                            {!! ($depreciation->assets()->AssetsForShow()->count() > 0 ) ? '<span class="badge badge-secondary">'.number_format($depreciation->assets()->AssetsForShow()->count()).'</span>' : '' !!}
                         </a>
                     </li>
                     <li>
                         <a href="#licenses" data-toggle="tab">
                             {{ trans('general.licenses') }}
 
-                            {!! ($depreciation->licenses_count > 0 ) ? '<badge class="badge badge-secondary">'.number_format($depreciation->licenses_count).'</badge>' : '' !!}
+                            {!! ($depreciation->licenses_count > 0 ) ? '<span class="badge badge-secondary">'.number_format($depreciation->licenses_count).'</span>' : '' !!}
                         </a>
                     </li>
                     <li>
                         <a href="#models" data-toggle="tab">
                             {{ trans('general.asset_models') }}
 
-                            {!! ($depreciation->models_count > 0 ) ? '<badge class="badge badge-secondary">'.number_format($depreciation->models_count).'</badge>' : '' !!}
+                            {!! ($depreciation->models_count > 0 ) ? '<span class="badge badge-secondary">'.number_format($depreciation->models_count).'</span>' : '' !!}
                         </a>
                     </li>
                 </ul>
@@ -68,18 +68,12 @@
                                 data-cookie-id-table="depreciationsAssetTable"
                                 data-id-table="depreciationsAssetTable"
                                 id="depreciationsAssetTable"
-                                data-pagination="true"
-                                data-search="true"
                                 data-side-pagination="server"
-                                data-show-columns="true"
-                                data-show-export="true"
-                                data-show-refresh="true"
                                 data-sort-order="asc"
                                 data-sort-name="name"
                                 data-toolbar="#assetsBulkEditToolbar"
                                 data-bulk-button-id="#assetEditButton"
                                 data-bulk-form-id="#assetsBulkForm"
-                                data-click-to-select="true"
                                 class="table table-striped snipe-table"
                                 data-url="{{ route('api.assets.index',['depreciation_id'=> $depreciation->id]) }}"
                                 data-export-options='{
@@ -102,12 +96,7 @@
                                             data-cookie-id-table="depreciationsLicenseTable"
                                             data-id-table="depreciationsLicenseTable"
                                             id="depreciationsLicenseTable"
-                                            data-pagination="true"
-                                            data-search="true"
                                             data-side-pagination="server"
-                                            data-show-columns="true"
-                                            data-show-export="true"
-                                            data-show-refresh="true"
                                             data-sort-order="asc"
                                             data-sort-name="name"
                                             class="table table-striped snipe-table"
@@ -147,18 +136,12 @@
                                             data-cookie-id-table="depreciationsModelsTable"
                                             data-id-table="depreciationsModelsTable"
                                             id="depreciationsModelsTable"
-                                            data-pagination="true"
-                                            data-search="true"
                                             data-toolbar="#toolbar"
                                             data-side-pagination="server"
-                                            data-show-columns="true"
-                                            data-show-export="true"
-                                            data-show-refresh="true"
                                             data-sort-order="asc"
                                             data-sort-name="name"
                                             data-bulk-button-id="#AssetModelsBulkEditButton"
                                             data-bulk-form-id="#bulkForm"
-                                            data-click-to-select="true"
                                             class="table table-striped snipe-table"
                                             data-url="{{ route('api.models.index',['depreciation_id'=> $depreciation->id]) }}"
                                             data-export-options='{
@@ -171,7 +154,7 @@
                                 </div>
 
                             </div>
-                            {{ Form::close() }}
+                            </form>
 
                         </div> <!--/.row-->
                     </div> <!-- /.tab-pane -->

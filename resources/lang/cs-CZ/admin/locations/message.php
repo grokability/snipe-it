@@ -3,12 +3,12 @@
 return array(
 
     'does_not_exist' => 'Místo neexistuje.',
-    'assoc_users'    => 'This location is not currently deletable because it is the location of record for at least one asset or user, has assets assigned to it, or is the parent location of another location. Please update your records to no longer reference this location and try again. ',
+    'assoc_users'    => 'Toto umístění nelze aktuálně odstranit, protože je evidováno jako výchozí umístění alespoň jednoho zařízení nebo uživatele, má k sobě přiřazená zařízení, nebo je nadřazeným umístěním jiného umístění. Aktualizujte prosím záznamy tak, aby se na toto umístění již neodkazovalo, a zkuste to znovu ',
     'assoc_assets'	 => 'Toto umístění je spojeno s alespoň jedním majetkem a nemůže být smazáno. Aktualizujte majetky tak aby nenáleželi k tomuto umístění a zkuste to znovu. ',
     'assoc_child_loc'	 => 'Toto umístění je nadřazené alespoň jednomu umístění a nelze jej smazat. Aktualizujte své umístění tak, aby na toto umístění již neodkazovalo a zkuste to znovu. ',
     'assigned_assets' => 'Přiřazený majetek',
     'current_location' => 'Současné umístění',
-    'open_map' => 'Open in :map_provider_icon Maps',
+    'open_map' => 'Otevřít v :map_provider_icon mapách',
 
 
     'create' => array(
@@ -22,8 +22,8 @@ return array(
     ),
 
     'restore' => array(
-        'error'   => 'Location was not restored, please try again',
-        'success' => 'Location restored successfully.'
+        'error'   => 'Umístění nebylo obnoveno, zkuste to prosím znovu',
+        'success' => 'Umístění bylo úspěšně vytvořeno.'
     ),
 
     'delete' => array(

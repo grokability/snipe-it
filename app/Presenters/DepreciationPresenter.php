@@ -96,6 +96,7 @@ class DepreciationPresenter extends Presenter
                 'title' => trans('table.actions'),
                 'visible' => true,
                 'formatter' => 'depreciationsActionsFormatter',
+                'printIgnore' => true,
             ],
         ];
 

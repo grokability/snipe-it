@@ -13,4 +13,8 @@ return [
     'no_depreciations_warning'               => '<strong>警告: </strong>
                       現在、減価償却が設定されていません。
                       減価償却レポートを表示するには、少なくとも1つの減価償却を設定してください。',
+    'depreciation_method'                   => '減価償却レポート',
+    'linear_depreciation'                   => 'Linear (Default)',
+    'half_1'                                => 'Half-year convention, always applied',
+    'half_2'                                => 'Half-year convention, applied with condition',
 ];

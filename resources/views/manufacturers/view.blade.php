@@ -40,7 +40,7 @@
             </span>
             <span class="hidden-xs hidden-sm">
                 {{ trans('general.assets') }}
-                {!! ($manufacturer->assets()->AssetsForShow()->count() > 0 ) ? '<badge class="badge badge-secondary">'.number_format($manufacturer->assets()->AssetsForShow()->count()).'</badge>' : '' !!}
+                {!! ($manufacturer->assets()->AssetsForShow()->count() > 0 ) ? '<span class="badge badge-secondary">'.number_format($manufacturer->assets()->AssetsForShow()->count()).'</span>' : '' !!}
             </span>
           </a>
 
@@ -52,7 +52,7 @@
             </span>
             <span class="hidden-xs hidden-sm">
               {{ trans('general.licenses') }}
-              {!! ($manufacturer->licenses->count() > 0 ) ? '<badge class="badge badge-secondary">'.number_format($manufacturer->licenses->count()).'</badge>' : '' !!}
+              {!! ($manufacturer->licenses->count() > 0 ) ? '<span class="badge badge-secondary">'.number_format($manufacturer->licenses->count()).'</span>' : '' !!}
             </span>
 
           </a>
@@ -65,7 +65,7 @@
             </span>
             <span class="hidden-xs hidden-sm">
               {{ trans('general.accessories') }}
-              {!! ($manufacturer->accessories->count() > 0 ) ? '<badge class="badge badge-secondary">'.number_format($manufacturer->accessories->count()).'</badge>' : '' !!}
+              {!! ($manufacturer->accessories->count() > 0 ) ? '<span class="badge badge-secondary">'.number_format($manufacturer->accessories->count()).'</span>' : '' !!}
             </span>
           </a>
         </li>
@@ -77,7 +77,7 @@
             </span>
             <span class="hidden-xs hidden-sm">
               {{ trans('general.consumables') }}
-              {!! ($manufacturer->consumables->count() > 0 ) ? '<badge class="badge badge-secondary">'.number_format($manufacturer->consumables->count()).'</badge>' : '' !!}
+              {!! ($manufacturer->consumables->count() > 0 ) ? '<span class="badge badge-secondary">'.number_format($manufacturer->consumables->count()).'</span>' : '' !!}
             </span>
           </a>
         </li>
@@ -90,7 +90,7 @@
             </span>
             <span class="hidden-xs hidden-sm">
               {{ trans('general.components') }}
-              {!! ($manufacturer->components->count() > 0 ) ? '<badge class="badge badge-secondary">'.number_format($manufacturer->components->count()).'</badge>' : '' !!}
+              {!! ($manufacturer->components->count() > 0 ) ? '<span class="badge badge-secondary">'.number_format($manufacturer->components->count()).'</span>' : '' !!}
             </span>
 
           </a>
@@ -105,17 +105,11 @@
           <table
                   data-columns="{{ \App\Presenters\AssetPresenter::dataTableLayout() }}"
                   data-cookie-id-table="assetsListingTable"
-                  data-pagination="true"
                   data-id-table="assetsListingTable"
                   data-toolbar="#assetsBulkEditToolbar"
                   data-bulk-button-id="#bulkAssetEditButton"
                   data-bulk-form-id="#assetsBulkForm"
-                  data-search="true"
-                  data-show-fullscreen="true"
                   data-side-pagination="server"
-                  data-show-columns="true"
-                  data-show-export="true"
-                  data-show-refresh="true"
                   data-sort-order="asc"
                   id="assetsListingTable"
                   class="table table-striped snipe-table"
@@ -134,14 +128,9 @@
           <table
                   data-columns="{{ \App\Presenters\LicensePresenter::dataTableLayout() }}"
                   data-cookie-id-table="licensesTable"
-                  data-pagination="true"
                   data-id-table="licensesTable"
-                  data-search="true"
                   data-show-footer="true"
                   data-side-pagination="server"
-                  data-show-columns="true"
-                  data-show-export="true"
-                  data-show-refresh="true"
                   data-sort-order="asc"
                   id="licensesTable"
                   class="table table-striped snipe-table"
@@ -160,14 +149,9 @@
           <table
                   data-columns="{{ \App\Presenters\AccessoryPresenter::dataTableLayout() }}"
                   data-cookie-id-table="accessoriesTable"
-                  data-pagination="true"
                   data-id-table="accessoriesTable"
-                  data-search="true"
                   data-show-footer="true"
                   data-side-pagination="server"
-                  data-show-columns="true"
-                  data-show-export="true"
-                  data-show-refresh="true"
                   data-sort-order="asc"
                   id="accessoriesTable"
                   class="table table-striped snipe-table"
@@ -186,14 +170,9 @@
           <table
                   data-columns="{{ \App\Presenters\ConsumablePresenter::dataTableLayout() }}"
                   data-cookie-id-table="consumablesTable"
-                  data-pagination="true"
                   data-id-table="consumablesTable"
-                  data-search="true"
                   data-show-footer="true"
                   data-side-pagination="server"
-                  data-show-columns="true"
-                  data-show-export="true"
-                  data-show-refresh="true"
                   data-sort-order="asc"
                   id="consumablesTable"
                   class="table table-striped snipe-table"
@@ -211,14 +190,9 @@
           <table
                   data-columns="{{ \App\Presenters\ComponentPresenter::dataTableLayout() }}"
                   data-cookie-id-table="componentsTable"
-                  data-pagination="true"
                   data-id-table="componentsTable"
-                  data-search="true"
                   data-show-footer="true"
                   data-side-pagination="server"
-                  data-show-columns="true"
-                  data-show-export="true"
-                  data-show-refresh="true"
                   data-sort-order="asc"
                   id="componentsTable"
                   class="table table-striped snipe-table"

@@ -1,7 +1,4 @@
-@extends('layouts/default', [
-    'helpText' => trans('admin/statuslabels/table.info') ,
-    'helpPosition' => 'right',
-])
+@extends('layouts/default')
 
 {{-- Page title --}}
 @section('title')
@@ -9,12 +6,6 @@
 @parent
 @stop
 
-@section('header_right')
-    @can('create', \App\Models\Statuslabel::class)
-        <a href="{{ route('statuslabels.create') }}" class="btn btn-primary pull-right">
-{{ trans('general.create') }}</a>
-    @endcan
-@stop
 {{-- Page content --}}
 @section('content')
 
@@ -25,18 +16,13 @@
             <table
                     data-columns="{{ \App\Presenters\StatusLabelPresenter::dataTableLayout() }}"
                     data-cookie-id-table="statuslabelsTable"
-                    data-pagination="true"
                     data-id-table="statuslabelsTable"
-                    data-search="true"
                     data-show-footer="false"
                     data-side-pagination="server"
-                    data-show-columns="true"
-                    data-show-export="true"
-                    data-show-fullscreen="true"
-                    data-show-refresh="true"
                     data-sort-order="asc"
                     data-sort-name="name"
                     id="statuslabelsTable"
+                    data-buttons="statuslabelButtons"
                     class="table table-striped snipe-table"
                     data-url="{{ route('api.statuslabels.index') }}"
                     data-export-options='{
@@ -50,6 +36,13 @@
   <!-- side address column -->
   <div class="col-md-3">
     <h2>{{ trans('admin/statuslabels/table.about') }}</h2>
+
+      <div class="box">
+          <div class="box-body">
+              <p>{!!  trans('admin/statuslabels/table.info') !!}</p>
+          </div>
+      </div>
+
 
       <div class="box box-success">
           <div class="box-body">
@@ -125,7 +118,7 @@
 
           var typename_lower = trans;
           var typename = typename_lower.charAt(0).toUpperCase() + typename_lower.slice(1);
-          return '<i class="fa ' + icon_style + ' text-' + text_color + '"></i> ' + typename;
+          return '<nobr><i class="fa ' + icon_style + ' text-' + text_color + '"></i> ' + typename + '</nobr>';
 
 
       }

@@ -16,20 +16,6 @@ Route::group(['prefix' => 'consumables', 'middleware' => ['auth']], function () 
         [Consumables\ConsumableCheckoutController::class, 'store']
     )->name('consumables.checkout.store');
 
-    Route::post(
-        '{consumableId}/upload',
-        [Consumables\ConsumablesFilesController::class, 'store']
-    )->name('upload/consumable');
-
-    Route::delete(
-        '{consumableId}/deletefile/{fileId}',
-        [Consumables\ConsumablesFilesController::class, 'destroy']
-    )->name('delete/consumablefile');
-
-    Route::get(
-        '{consumableId}/showfile/{fileId}/{download?}',
-        [Consumables\ConsumablesFilesController::class, 'show']
-    )->name('show.consumablefile');
 
     Route::get('{consumable}/clone',
         [Consumables\ConsumablesController::class, 'clone']

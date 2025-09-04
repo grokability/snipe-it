@@ -17,7 +17,8 @@ return array(
     'delete' => array(
         'confirm'   => 'Are you sure you wish to delete this component?',
         'error'   => 'There was an issue deleting the component. Please try again.',
-        'success' => 'The component was deleted successfully.'
+        'success' => 'The component was deleted successfully.',
+        'error_qty'   => 'Some components of this type are still checked out. Please check them in and try again.',
     ),
 
      'checkout' => array(

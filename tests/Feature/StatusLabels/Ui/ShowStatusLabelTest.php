@@ -11,7 +11,7 @@ class ShowStatusLabelTest extends TestCase
     public function testPageRenders()
     {
         $this->actingAs(User::factory()->superuser()->create())
-            ->get(route('statuslabels.show', Statuslabel::factory()->create()->id))
+            ->get(route('statuslabels.show', Statuslabel::factory()->create()))
             ->assertOk();
     }
 }

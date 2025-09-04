@@ -6,6 +6,7 @@
     'formAction' => (isset($item->id)) ? route('components.update', ['component' => $item->id]) : route('components.store'),
     'index_route' => 'components.index',
     'options' => [
+                'back' => trans('admin/hardware/form.redirect_to_type',['type' => trans('general.previous_page')]),
                 'index' => trans('admin/hardware/form.redirect_to_all', ['type' => 'components']),
                 'item' => trans('admin/hardware/form.redirect_to_type', ['type' => trans('general.component')]),
                ]
@@ -26,7 +27,7 @@
 @include ('partials.forms.edit.location-select', ['translated_name' => trans('general.location'), 'fieldname' => 'location_id'])
 @include ('partials.forms.edit.supplier-select', ['translated_name' => trans('general.supplier'), 'fieldname' => 'supplier_id'])
 @include ('partials.forms.edit.order_number')
-@include ('partials.forms.edit.purchase_date')
+@include ('partials.forms.edit.datepicker', ['translated_name' => trans('general.purchase_date'),'fieldname' => 'purchase_date'])
 @include ('partials.forms.edit.purchase_cost')
 @include ('partials.forms.edit.notes')
 @include ('partials.forms.edit.image-upload', ['image_path' => app('components_upload_path')])

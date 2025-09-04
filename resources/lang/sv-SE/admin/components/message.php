@@ -17,7 +17,8 @@ return array(
     'delete' => array(
         'confirm'   => 'Är du säker på att du vill radera den här komponenten?',
         'error'   => 'Kunde inte ta bort komponenten. Vänligen försök igen.',
-        'success' => 'Komponent raderad.'
+        'success' => 'Komponent raderad.',
+        'error_qty'   => 'Some components of this type are still checked out. Please check them in and try again.',
     ),
 
      'checkout' => array(
