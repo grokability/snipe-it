@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
+use UnexpectedValueException;
 use Watson\Validating\ValidatingTrait;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 
@@ -1836,39 +1837,124 @@ class Asset extends Depreciable
                                     $query->whereIn('locations.name', $search_val);
                                 });
                             } else {
-                                $query->whereHas('defaultLoc', function ($query) use ($search_val) {
-                                    $query->where('locations.name', 'LIKE', '%' . $search_val . '%');
-                                });
+                                // If $search_val is a single value
+                                Asset::whereHasMatchSingleItem($query, 'defaultLoc', $search_val, 'locations.id', 'locations.name');
                             }
                         });
                     }
 
-
+                    // For the 'assigned_to' field
                     if ($fieldname == 'assigned_to') {
-                        $query->where(function ($query) use ($search_val) {
+                        $query->where(function ($query) use ($search_val, $filter) {
+                            // Support for 'type' filter (e.g. 'type' => User::class)
+                            $requestedType = isset($filter['type']) ? $filter['type'] : null;
+
+                            // Array input: should only support IDs, not names
                             if (is_array($search_val)) {
-                                $query->whereHasMorph(
-                                    'assignedTo',
-                                    [User::class],
-                                    function ($query) use ($search_val) {
-                                        $query->whereIn('users.first_name', $search_val)
-                                            ->orWhereIn('users.last_name', $search_val);
+                                $idsByType = [];
+
+                                foreach ($search_val as $item) {
+                                    if (is_array($item) && isset($item['assigned_to'])) {
+                                        $assignedType = isset($item['assignedType']) ? $item['assignedType'] : null;
+                                        // Only support integer IDs in array
+                                        if (is_int($item['assigned_to'])) {
+                                            $type = $assignedType ?: $requestedType ?: null;
+                                            $idsByType[$type ?? 'any'][] = $item['assigned_to'];
+                                        } else {
+                                            // If any string is in array, throw an UnexpectedValueException
+                                            throw new UnexpectedValueException("You can't provide a string here only IDs");
+                                        }
+                                    } elseif (is_int($item)) {
+                                        $type = $requestedType ?: null;
+                                        $idsByType[$type ?? 'any'][] = $item;
+                                    } else {
+                                        // If any string is in array, throw an UnexpectedValueException
+                                        throw new UnexpectedValueException("You can't provide a string here only IDs");
                                     }
-                                );
+                                }
+
+                                // Build morph queries for each type
+                                $query->where(function ($query) use ($idsByType) {
+                                    foreach ($idsByType as $type => $ids) {
+                                        if (empty($ids))
+                                            continue;
+                                        if ($type === User::class) {
+                                            $query->orWhere(function ($q) use ($ids) {
+                                                $q->where('assigned_type', User::class)
+                                                    ->whereIn('assigned_to', $ids);
+                                            });
+                                        } elseif ($type === Location::class) {
+                                            $query->orWhere(function ($q) use ($ids) {
+                                                $q->where('assigned_type', Location::class)
+                                                    ->whereIn('assigned_to', $ids);
+                                            });
+                                        } elseif ($type === Asset::class) {
+                                            $query->orWhere(function ($q) use ($ids) {
+                                                $q->where('assigned_type', Asset::class)
+                                                    ->whereIn('assigned_to', $ids);
+                                            });
+                                        } elseif ($type === null || $type === 'any' || empty($type)) {
+                                            $query->orWhereIn('assigned_to', $ids);
+                                        } else {
+                                            dump($type);
+                                            throw new UnexpectedValueException("You've provided an invalid type");
+                                        }
+                                    }
+                                });
+
                             } else {
-                                $query->whereHasMorph(
-                                    'assignedTo',
-                                    [User::class],
-                                    function ($query) use ($search_val) {
-                                        $query->where(function ($query) use ($search_val) {
-                                            $query->where('users.first_name', 'LIKE', '%' . $search_val . '%')
-                                                ->orWhere('users.last_name', 'LIKE', '%' . $search_val . '%');
+                                // Single value
+                                if (is_int($search_val)) {
+                                    // Use 'type' if set
+                                    if ($requestedType) {
+                                        $query->where('assigned_type', $requestedType)
+                                            ->where('assigned_to', $search_val);
+                                    } else {
+                                        $query->where('assigned_to', $search_val);
+                                    }
+                                } elseif (is_string($search_val)) {
+                                    if ($search_val === '') {
+                                        // Empty string: return all, or all of type if set
+                                        if ($requestedType) {
+                                            $query->where('assigned_type', $requestedType);
+                                        }
+                                        // else: no extra where, returns all
+                                    } else {
+                                        // Name search: only supported for string values, not arrays
+                                        $query->where(function ($q) use ($search_val, $requestedType) {
+                                            // Only search specific type if requested
+                                            $userCb = function ($uq) use ($search_val) {
+                                                $uq->where(function ($uq2) use ($search_val) {
+                                                    $uq2->where('first_name', 'LIKE', '%' . $search_val . '%')
+                                                        ->orWhere('last_name', 'LIKE', '%' . $search_val . '%');
+                                                });
+                                            };
+                                            $locationCb = function ($lq) use ($search_val) {
+                                                $lq->where('name', 'LIKE', '%' . $search_val . '%');
+                                            };
+                                            $assetCb = function ($aq) use ($search_val) {
+                                                $aq->where('name', 'LIKE', '%' . $search_val . '%');
+                                            };
+
+                                            if ($requestedType === User::class) {
+                                                $q->whereHasMorph('assignedTo', [User::class], $userCb);
+                                            } elseif ($requestedType === Location::class) {
+                                                $q->whereHasMorph('assignedTo', [Location::class], $locationCb);
+                                            } elseif ($requestedType === Asset::class) {
+                                                $q->whereHasMorph('assignedTo', [Asset::class], $assetCb);
+                                            } else {
+                                                $q->whereHasMorph('assignedTo', [User::class], $userCb)
+                                                    ->orWhereHasMorph('assignedTo', [Location::class], $locationCb)
+                                                    ->orWhereHasMorph('assignedTo', [Asset::class], $assetCb);
+                                            }
                                         });
                                     }
-                                );
+                                }
                             }
                         });
                     }
+                    //dump($query->toRawSql());
+    
 
                     if ($fieldname == 'jobtitle') {
                         $query->where(function ($query) use ($search_val) {
@@ -2057,6 +2143,7 @@ class Asset extends Depreciable
                         'supplier',
                         'status_label',
                         'assigned_to',
+                        'assigned_type',
                         'company',
                         'manufacturer',
                         'purchase_date_start',
