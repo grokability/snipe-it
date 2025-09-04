@@ -1871,13 +1871,6 @@ class Asset extends Depreciable
 
                             // Array input: should only support IDs, not names
                             if (is_array($search_val)) {
-                                // Defensive: If array is empty, return nothing
-                                /*if (empty($search_val)) {
-                                    $query->whereRaw('1 = 0');
-                                    return;
-                                }*/
-
-                                // Support both the "array of dicts" (recommended) and "array of ints" (legacy, maybe)
                                 $idsByType = [];
 
                                 foreach ($search_val as $item) {
@@ -1920,9 +1913,10 @@ class Asset extends Depreciable
                                                 $q->where('assigned_type', Asset::class)
                                                     ->whereIn('assigned_to', $ids);
                                             });
-                                        } elseif ($type !== null) {
+                                        } elseif ($type === null || $type === 'any' || empty($type)) {
                                             $query->orWhereIn('assigned_to', $ids);
                                         } else {
+                                            dump($type);
                                             throw new UnexpectedValueException("You've provided an invalid type");
                                         }
                                     }

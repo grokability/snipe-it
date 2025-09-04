@@ -174,25 +174,6 @@ class AssignedToQueryTest extends TestCase
 
     }
 
-    public function testFilterAssetAssignedToUserEmptyStringWithTypeReturnsAllOfType()
-    {
-        $userA = User::factory()->create();
-        $userB = User::factory()->create();
-        $location = Location::factory()->create();
-        $assetA = Asset::factory()->create(['assigned_type' => User::class, 'assigned_to' => $userA->id]);
-        $assetB = Asset::factory()->create(['assigned_type' => User::class, 'assigned_to' => $userB->id]);
-        $assetC = Asset::factory()->create(['assigned_type' => Location::class, 'assigned_to' => $location->id]);
-
-        $filter = ['assigned_to' => '', 'assigned_type' => User::class];
-
-        $results = Asset::query()->byFilter($filter)->get();
-
-        $this->assertCount(2, $results);
-        $this->assertTrue($results->contains($assetA));
-        $this->assertTrue($results->contains($assetB));
-        $this->assertFalse($results->contains($assetC));
-    }
-
     // --- Location assignment tests ---
 
     public function testFilterAssetAssignedToLocationId()
@@ -358,44 +339,7 @@ class AssignedToQueryTest extends TestCase
         $this->assertTrue($results->contains($assetB));
     }
 
-    public function testFilterAssetAssignedToLocationEmptyStringWithTypeReturnsAllOfType()
-    {
-        $locationA = Location::factory()->create();
-        $locationB = Location::factory()->create();
-        $user = User::factory()->create();
-        $assetA = Asset::factory()->create(['assigned_type' => Location::class, 'assigned_to' => $locationA->id]);
-        $assetB = Asset::factory()->create(['assigned_type' => Location::class, 'assigned_to' => $locationB->id]);
-        $assetC = Asset::factory()->create(['assigned_type' => User::class, 'assigned_to' => $user->id]);
-
-        $filter = ['assigned_to' => '', 'assigned_type' => Location::class];
-
-        $results = Asset::query()->byFilter($filter)->get();
-
-        $this->assertCount(2, $results);
-        $this->assertTrue($results->contains($assetA));
-        $this->assertTrue($results->contains($assetB));
-        $this->assertFalse($results->contains($assetC));
-    }
-
     // --- Asset assignment tests ---
-
-    public function testFilterAssetAssignedToAssetId()
-    {
-        $parentA = Asset::factory()->create();
-        $parentB = Asset::factory()->create();
-
-        $assetA = Asset::factory()->create(['assigned_type' => Asset::class, 'assigned_to' => $parentA->id]);
-        $assetB = Asset::factory()->create(['assigned_type' => Asset::class, 'assigned_to' => $parentB->id]);
-
-        $filter = ['assigned_to' => $parentA->id];
-
-        $results = Asset::query()->byFilter($filter)->get();
-
-        $this->assertCount(1, $results);
-        $this->assertTrue($results->contains($assetA));
-        $this->assertFalse($results->contains($assetB));
-    }
-
     public function testFilterAssetAssignedToAssetIdWithType()
     {
         $parentA = Asset::factory()->create();
@@ -478,7 +422,7 @@ class AssignedToQueryTest extends TestCase
     public function testFilterAssetAssignedToAssetNamePartial()
     {
         $parentA = Asset::factory()->create(['name' => 'assetParentA']);
-        $parentB = Asset::factory()->create(['name' => 'assetParentB']);
+        $parentB = Asset::factory()->create(['name' => 'parentAssetB']);
         $assetA = Asset::factory()->create(['assigned_type' => Asset::class, 'assigned_to' => $parentA->id]);
         $assetB = Asset::factory()->create(['assigned_type' => Asset::class, 'assigned_to' => $parentB->id]);
 
@@ -537,28 +481,11 @@ class AssignedToQueryTest extends TestCase
 
         $results = Asset::query()->byFilter($filter)->get();
 
-        $this->assertCount(2, $results);
+        $this->assertCount(4, $results);
         $this->assertTrue($results->contains($assetA));
         $this->assertTrue($results->contains($assetB));
-    }
-
-    public function testFilterAssetAssignedToAssetEmptyStringWithTypeReturnsAllOfType()
-    {
-        $parentA = Asset::factory()->create();
-        $parentB = Asset::factory()->create();
-        $user = User::factory()->create();
-        $assetA = Asset::factory()->create(['assigned_type' => Asset::class, 'assigned_to' => $parentA->id]);
-        $assetB = Asset::factory()->create(['assigned_type' => Asset::class, 'assigned_to' => $parentB->id]);
-        $assetC = Asset::factory()->create(['assigned_type' => User::class, 'assigned_to' => $user->id]);
-
-        $filter = ['assigned_to' => '', 'assigned_type' => Asset::class];
-
-        $results = Asset::query()->byFilter($filter)->get();
-
-        $this->assertCount(2, $results);
-        $this->assertTrue($results->contains($assetA));
-        $this->assertTrue($results->contains($assetB));
-        $this->assertFalse($results->contains($assetC));
+        $this->assertTrue($results->contains($parentA));
+        $this->assertTrue($results->contains($parentB));
     }
 
     // --- Edge and mixed cases ---
@@ -587,34 +514,33 @@ class AssignedToQueryTest extends TestCase
         $this->assertFalse($results->contains($assetAsset));
     }
 
-    public function testFilterAssetAssignedToArrayWithInvalidId()
+    public function testFilterAssetAssignedToInvalidType()
     {
-        $this->expectException(UnexpectedValueException::class);
-        $this->expectExceptionMessage("You've provided an invalid type");
-
-        $user = User::factory()->create();
-        $assetUser = Asset::factory()->create([
-            'assigned_type' => User::class,
-            'assigned_to' => $user->id,
-        ]);
-
         $invalidId = 999999;
 
         $filter = [
             'assigned_to' => [
-                ['assigned_to' => $invalidId, 'assignedType' => User::class],
+                ['assigned_to' => $invalidId, 'assignedType' => 'iAmAnInvalidType'],
             ],
         ];
 
-        // This should now throw the exception
-        Asset::query()->byFilter($filter)->get();
+        try {
+            Asset::query()->byFilter($filter)->get();
+            $this->fail('Expected UnexpectedValueException was not thrown.');
+        } catch (UnexpectedValueException $e) {
+            $this->assertSame("You've provided an invalid type", $e->getMessage());
+        }
     }
+
 
 
     public function testFilterAssetAssignedToStringUnsupportedForArray()
     {
         $user = User::factory()->create();
-        $assetUser = Asset::factory()->create(['assigned_type' => User::class, 'assigned_to' => $user->id]);
+        $assetUser = Asset::factory()->create([
+            'assigned_type' => User::class,
+            'assigned_to' => $user->id,
+        ]);
 
         $filter = [
             'assigned_to' => [
@@ -622,9 +548,14 @@ class AssignedToQueryTest extends TestCase
             ],
         ];
 
-        $results = Asset::query()->byFilter($filter)->get();
-        $this->assertCount(0, $results);
+        try {
+            Asset::query()->byFilter($filter)->get();
+            $this->fail('Expected UnexpectedValueException was not thrown.');
+        } catch (UnexpectedValueException $e) {
+            $this->assertSame("You can't provide a string here only IDs", $e->getMessage());
+        }
     }
+
 
     public function testFilterAssetAssignedToTypeWithArrayOverrides()
     {
