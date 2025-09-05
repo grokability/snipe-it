@@ -729,6 +729,4 @@ class CombinedQueryTest extends TestCase
         $this->assertTrue($results->contains($assetWithLocation));
         $this->assertFalse($results->contains($assetWithoutLocation));
     }
-
-
 }

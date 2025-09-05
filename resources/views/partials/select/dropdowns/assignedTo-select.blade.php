@@ -1,4 +1,4 @@
-<select class="js-data-ajax" data-endpoint="statuslabels" data-placeholder="{{ trans('general.select_statuslabel') }}"
+<select class="js-data-ajax" data-endpoint="assignedTo" data-placeholder="{{ trans('general.select_statuslabel') }}"
     name="{{ $fieldname }}" style="width: 100%"
     id="{{ isset($select_id) ? $select_id : $fieldname . '_assignedTo_select' }}" aria-label="{{ $fieldname }}" {!! ((isset($item)) && (Helper::checkIfRequired($item, $fieldname))) ? ' required ' : '' !!}{{ (isset($multiple) && ($multiple == 'true')) ? " multiple='multiple'" : '' }}>
     @isset ($selected)

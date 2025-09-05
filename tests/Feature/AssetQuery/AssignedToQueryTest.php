@@ -577,4 +577,32 @@ class AssignedToQueryTest extends TestCase
         $this->assertTrue($results->contains($assetA));
         $this->assertFalse($results->contains($assetB));
     }
+
+    public function testFilterAssetAssignedToLocationAndUser()
+    {
+        $userA = User::factory()->create();
+        $userB = User::factory()->create();
+
+        $locationA = Location::factory()->create();
+        $locationB = Location::factory()->create();
+
+        $assetA = Asset::factory()->create(['assigned_type' => User::class, 'assigned_to' => $userA->id]);
+        $assetB = Asset::factory()->create(['assigned_type' => User::class, 'assigned_to' => $userB->id]);
+        $assetC = Asset::factory()->create(['assigned_type' => Location::class, 'assigned_to' => $locationA->id]);
+        $assetD = Asset::factory()->create(['assigned_type' => Location::class, 'assigned_to' => $locationB->id]);
+
+        $filter = [
+            'assigned_to' => [
+                ['assigned_to' => $userA->id, 'assignedType' => User::class],
+                ['assigned_to' => $locationA->id, 'assignedType' => Location::class],
+            ],
+        ];
+
+        $results = Asset::query()->byFilter($filter)->get();
+        $this->assertCount(2, $results);
+        $this->assertTrue($results->contains($assetA));
+        $this->assertTrue($results->contains($assetC));
+        $this->assertFalse($results->contains($assetB));
+        $this->assertFalse($results->contains($assetD));
+    }
 }

@@ -89,7 +89,7 @@ class AssignedToDropdownController extends Controller
 
         $combined = $locations->merge($assets)->merge($users)->sortBy('name')->values();
 
-        // === PAGINATE ===
+        // ---- PAGINATE ----
         $paginated = new LengthAwarePaginator(
             $combined->forPage($page, $perPage),
             $combined->count(),
@@ -98,10 +98,6 @@ class AssignedToDropdownController extends Controller
             []
         );
 
-        /*dump($locations);
-        dump($assets);
-        dump($users);*/
-        //return [$paginated];
         return (new SelectlistTransformer)->transformSelectlist($paginated);
     }
 

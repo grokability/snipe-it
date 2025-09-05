@@ -83,16 +83,18 @@
                                         @break
 
                                         @case('employeeNumFormatter')
-                                            <p>employeeNumFormatter</p>
+                                            <input class="advancedSearch_employeeNumFormatter" type="text" id="advancedSearch_{{ $tableField->field }}_input" autocomplete="on">
                                         @break
 
                                         @case('hardwareLinkFormatter')
                                             <input class="advancedSearch_hardwarelinkFormatter" type="text" id="advancedSearch_{{ $tableField->field }}_input" autocomplete="on">
                                         @break
 
-                                        @case('imageFormatter')
+                                        <!-- Makes no sense for the advanced search
+                                            @case('imageFormatter')
                                             <p>imageFormatter</p>
-                                        @break
+                                            @break */
+                                        -->
 
                                         @case('manufacturersLinkObjFormatter')
                                             @include ('partials.select.dropdowns.manufacturer-select', [
@@ -115,11 +117,17 @@
                                         @break
 
                                         @case('orderNumberObjFilterFormatter')
-                                            <p>orderNumberObjFilterFormatter</p>
+                                            <input class="advancedSearch_orderNumberObjFilterFormatter" type="text" id="advancedSearch_{{ $tableField->field }}_input" autocomplete="on">
                                         @break
 
                                         @case('polymorphicItemFormatter')
-                                            <p>polymorphicItemFormatter</p>
+                                            @include ('partials.select.dropdowns.assignedTo-select', [
+                                                'translated_name' => trans('admin/hardware/assignedTo.model'),
+                                                'fieldname' => $tableField->field,
+                                                'select_id' => "advancedSearch_$tableField->field",
+                                                'required' => 'false',
+                                                'multiple' => 'true',
+                                            ])
                                         @break
 
                                         @case('statuslabelsLinkObjFormatter')
@@ -175,96 +183,120 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
+    // Insert the table ID using PHP
+    const tableId = "{{ request()->has('status') ? e(request()->input('status')) : '' }}assetsListingTable";
+    const $table = $('#' + tableId);
 
-        // Insert the table ID using php
-        const tableId =
-            "{{ request()->has('status') ? e(request()->input('status')) : '' }}assetsListingTable";
-        const $table = $('#' + tableId);
+    /**
+     * Extracts the filter key from the element ID
+     */
+    function getFilterKey(id, prefix = "advancedSearch_") {
+        return id.replace(prefix, "").replace("_input", "");
+    }
 
-        function collectAdvancedSearchFilters() {
-            // Collect all advanced search fields (selects, inputs, etc.)
-            const filters = {};
+    /**
+     * Collects selected values from Select2 dropdowns
+     */
+    function collectSelectFilters(filters) {
+        document.querySelectorAll('select[id^="advancedSearch_"]').forEach(el => {
+            const selections = $(el).select2('data');
+            const selectedIds = selections
+                .map(item => parseInt(item.id))
+                .filter(id => !isNaN(id));
 
-            // Handle all selects
-            document.querySelectorAll('select[id^="advancedSearch_"]').forEach(function(el) {
-                // Use the field name from the id
-                const id = "#" + el.id;
-                const field = id.replace("#advancedSearch_", "");
+            if (selectedIds.length > 0) {
 
-                const selections = $(id).select2('data');
-                let selectedOptionValue = [];
+                const key = getFilterKey(el.id);
+                if(el.getAttribute('id') ==='advancedSearch_assigned_to') {
+                    let assignedToFilters = []
+                    selections.forEach(selection => {
+                        const type = "App\\Models\\" + selection.type.charAt(0).toUpperCase() + selection.type.slice(1);
 
-                selections.forEach(item => {
-                    const itemId = parseInt(item.id);
-                    if(itemId != NaN) {
-                        selectedOptionValue.push(itemId);
-                    }
-                });
-
-                if (selectedOptionValue.length > 0) {
-                    filters[field] = selectedOptionValue;
+                        assignedToFilters.push({
+                            assignedType: type,
+                            assigned_to: parseInt(selection.id),
+                        });
+                    });
+                    filters[key] = assignedToFilters;
+                } else {
+                    filters[key] = selectedIds;
                 }
+            }
+        });
+    }
 
-            });
+    /**
+     * Collects values from date inputs (start and end)
+     */
+    function collectDateFilters(filters) {
+        const selector = 'input[id^="advancedSearch_"][id$="_start"][type="date"], input[id^="advancedSearch_"][id$="_end"][type="date"]';
+        document.querySelectorAll(selector).forEach(el => {
+            if (el.value) {
+                const key = getFilterKey(el.id);
+                filters[key] = el.value;
+            }
+        });
+    }
 
-            // Handle all date inputs
-            // It filters all date inputs with the following id patterns: advancedSearch_..._start and advancedSearch_..._end
-            document.querySelectorAll(
-                'input[id^="advancedSearch_"][id$="_start"][type="date"], input[id^="advancedSearch_"][id$="_end"][type="date"]'
-            ).forEach(function(el) {
-                //console.log(el);
-                // Use the field name from the id
-                const id = "#" + el.id;
-                const field = id.replace("#advancedSearch_", "");
-                if(el.value) {
-                    filters[field] = el.value;
-                }
-            });
+    /**
+     * Collects values from text inputs
+     */
+    function collectTextFilters(filters) {
+        const selector = 'input[id^="advancedSearch_"][type="text"]';
+        document.querySelectorAll(selector).forEach(el => {
+            if (el.value) {
+                const key = getFilterKey(el.id);
+                filters[key] = el.value;
+            }
+        });
+    }
 
-            // Handle all date inputs
-            // It filters all date inputs with the following id patterns: advancedSearch_..._start and advancedSearch_..._end
-            document.querySelectorAll(
-                'input[id^="advancedSearch_"][type="text"]'
-            ).forEach(function(el) {
-                //console.log(el);
-                // Use the field name from the id
-                if(el.value) {
-                    const id = "#" + el.id;
-                    let field = id.replace("#advancedSearch_", "");
-                    field = field.replace("_input", "");
-                    //console.log(el.value);
-                    filters[field] = el.value;
-                }
-            });
+    /**
+     * Main filter collector
+     */
+    function collectAdvancedSearchFilters() {
+        const filters = {};
+        collectSelectFilters(filters);
+        collectDateFilters(filters);
+        collectTextFilters(filters);
+        return filters;
+    }
 
-            return filters;
-        }
+    /**
+     * Refreshes the table with collected filters
+     */
+    function refreshTableWithAdvancedFilters() {
+        const filters = collectAdvancedSearchFilters();
+        console.log("Applying Filters:", filters);
 
-        function refreshTableWithAdvancedFilters() {
-            console.log("refreshTableWithAdvancedFilters");
+        $table.bootstrapTable('refresh', {
+            query: {
+                filter: JSON.stringify(filters)
+            }
+        });
+    }
 
-            const filters = collectAdvancedSearchFilters();
-            console.log(filters);
-            $table.bootstrapTable('refresh', {
-                query: {
-                    filter: JSON.stringify(filters)
-                }
-            });
-        }
-
-        // Trigger search on change
-        document.querySelectorAll('[id^="advancedSearch_"]').forEach(function(el) {
-            el.addEventListener('change', function() {
-                refreshTableWithAdvancedFilters();
-            });
+    /**
+     * Set up listeners
+     */
+    function bindFilterEvents() {
+        // Trigger refresh on any advancedSearch field change
+        document.querySelectorAll('[id^="advancedSearch_"]').forEach(el => {
+            el.addEventListener('change', refreshTableWithAdvancedFilters);
         });
 
+        // Trigger refresh on filter button click
         const filterButton = document.getElementById("filterButton");
-        filterButton.addEventListener("click", (event) => {
-            refreshTableWithAdvancedFilters();
-        })
-    });
+        if (filterButton) {
+            filterButton.addEventListener('click', refreshTableWithAdvancedFilters);
+        }
+    }
+
+    // Init
+    bindFilterEvents();
+});
+
 </script>
 
 <style>
