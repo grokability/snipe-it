@@ -303,7 +303,6 @@ class AssetModelsController extends Controller
                 $assetmodel->use_text .= ' (#'.$assetmodel->model_number.')';
             }
 
-            $assetmodel->use_item_key = $assetmodel->name;
             $assetmodel->use_image = ($settings->modellistCheckedValue('image') && ($assetmodel->image)) ? Storage::disk('public')->url('models/'.e($assetmodel->image)) : null;
         }
 

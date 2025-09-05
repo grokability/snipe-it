@@ -26,7 +26,7 @@ class AssignedToDropdownController extends Controller
             : $this->authorize('view.selectlists');
 
         $page = $request->input('page', 1);
-        $perPage = 50000;
+        $perPage = 50;
         $search = $request->input('search');
 
         $locationQuery = Location::select(['id', 'name', 'image']);
@@ -45,7 +45,6 @@ class AssignedToDropdownController extends Controller
                 'name' => $location->name,
                 'use_text' => $location->name,
                 'use_image' => $location->image,
-                'use_item_key' => $location->id,
                 'type' => 'location',
             ];
         });
@@ -67,7 +66,6 @@ class AssignedToDropdownController extends Controller
                 'name' => $name,
                 'use_text' => $name,
                 'use_image' => $asset->image,
-                'use_item_key' => $asset->id,
                 'type' => 'asset',
             ];
         });
@@ -84,7 +82,6 @@ class AssignedToDropdownController extends Controller
                 'name' => trim("{$user->first_name} {$user->last_name}"),
                 'use_text' => trim("{$user->first_name} {$user->last_name}"),
                 'use_image' => null,
-                'use_item_key' => $user->id,
                 'type' => 'user',
             ];
         });
