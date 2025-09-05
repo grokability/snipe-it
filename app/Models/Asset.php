@@ -1800,42 +1800,62 @@ class Asset extends Depreciable
                         });
                     }
 
+                    // For the 'status_label' field
                     if ($fieldname == 'status_label') {
                         $query->where(function ($query) use ($search_val) {
                             if (is_array($search_val)) {
-                                $query->whereHas('assetstatus', function ($query) use ($search_val) {
-                                    $query->whereIn('status_labels.name', $search_val);
-                                });
+                                // Check if the array is empty
+                                if (!empty($search_val)) {
+                                    // Separate integers (IDs) and strings (names)
+                                    $ids = array_filter($search_val, 'is_int');
+                                    $names = array_filter($search_val, 'is_string');
+
+                                    if ($ids || $names) {
+                                        Asset::whereHasMatchItemArray($query, 'assetstatus', $ids, $names, 'status_labels.id', 'status_labels.name');
+                                    }
+                                }
+
                             } else {
-                                $query->whereHas('assetstatus', function ($query) use ($search_val) {
-                                    $query->where('status_labels.name', 'LIKE', '%' . $search_val . '%');
-                                });
+                                // If $search_val is a single value
+                                Asset::whereHasMatchSingleItem($query, 'assetstatus', $search_val, 'status_labels.id', 'status_labels.name');
                             }
                         });
                     }
 
-
+                    // For the 'location' field
                     if ($fieldname == 'location') {
                         $query->where(function ($query) use ($search_val) {
                             if (is_array($search_val)) {
-                                $query->whereHas('location', function ($query) use ($search_val) {
-                                    $query->whereIn('locations.name', $search_val);
-                                });
+                                // Check if the array is empty
+                                if (!empty($search_val)) {
+                                    // Separate integers (IDs) and strings (names)
+                                    $ids = array_filter($search_val, 'is_int');
+                                    $names = array_filter($search_val, 'is_string');
+
+                                    Asset::whereHasMatchItemArray($query, 'location', $ids, $names, 'locations.id', 'locations.name');
+
+                                }
+
                             } else {
-                                $query->whereHas('location', function ($query) use ($search_val) {
-                                    $query->where('locations.name', 'LIKE', '%' . $search_val . '%');
-                                });
+                                // If $search_val is a single value
+                                Asset::whereHasMatchSingleItem($query, 'location', $search_val, 'locations.id', 'locations.name');
                             }
                         });
                     }
 
-
+                    // For the 'rtd_location' field
                     if ($fieldname == 'rtd_location') {
                         $query->where(function ($query) use ($search_val) {
                             if (is_array($search_val)) {
-                                $query->whereHas('defaultLoc', function ($query) use ($search_val) {
-                                    $query->whereIn('locations.name', $search_val);
-                                });
+                                // Check if the array is empty
+                                if (!empty($search_val)) {
+                                    // Separate integers (IDs) and strings
+                                    $ids = array_filter($search_val, 'is_int'); // Get only integers (IDs)
+                                    $names = array_diff($search_val, $ids); // Get only strings (names)
+    
+                                    Asset::whereHasMatchItemArray($query, 'defaultLoc', $ids, $names, 'locations.id', 'locations.name');
+
+                                }
                             } else {
                                 // If $search_val is a single value
                                 Asset::whereHasMatchSingleItem($query, 'defaultLoc', $search_val, 'locations.id', 'locations.name');
@@ -1983,66 +2003,71 @@ class Asset extends Depreciable
                     if ($fieldname == 'manufacturer') {
                         $query->where(function ($query) use ($search_val) {
                             if (is_array($search_val)) {
-                                $query->whereHas('model', function ($query) use ($search_val) {
-                                    $query->whereHas('manufacturer', function ($query) use ($search_val) {
-                                        $query->whereIn('manufacturers.name', $search_val);
-                                    });
-                                });
+                                // Check if the array is empty
+                                if (!empty($search_val)) {
+                                    // Separate integers (IDs) and strings (names)
+                                    $ids = array_filter($search_val, 'is_int');
+                                    $names = array_diff($search_val, $ids);
+
+                                    if ($ids || $names) {
+                                        $query->whereHas('model', function ($query) use ($ids, $names) {
+                                            Asset::whereHasMatchItemArray($query, 'manufacturer', $ids, $names, 'manufacturers.id', 'manufacturers.name');
+                                        });
+                                    }
+                                }
                             } else {
+                                // If $search_val is a single value
                                 $query->whereHas('model', function ($query) use ($search_val) {
-                                    $query->whereHas('manufacturer', function ($query) use ($search_val) {
-                                        $query->where('manufacturers.name', 'LIKE', '%' . $search_val . '%');
-                                    });
+                                    Asset::whereHasMatchSingleItem($query, 'manufacturer', $search_val, 'manufacturers.id', 'manufacturers.name');
                                 });
                             }
                         });
                     }
+
 
 
                     if ($fieldname == 'category') {
                         $query->where(function ($query) use ($search_val) {
                             if (is_array($search_val)) {
-                                $query->whereHas('model', function ($query) use ($search_val) {
-                                    $query->whereHas('category', function ($query) use ($search_val) {
-                                        $query->whereIn('categories.name', $search_val);
+                                // Check if the array is empty
+                                if (!empty($search_val)) {
+                                    // Separate integers (IDs) and strings (names)
+                                    $ids = array_filter($search_val, 'is_int');
+                                    $names = array_filter($search_val, 'is_string');
+
+                                    $query->whereHas('model', function ($query) use ($ids, $names) {
+                                        Asset::whereHasMatchItemArray($query, 'category', $ids, $names, 'categories.id', 'categories.name');
                                     });
-                                });
+                                }
+
                             } else {
+                                // If $search_val is a single value
                                 $query->whereHas('model', function ($query) use ($search_val) {
-                                    $query->whereHas('category', function ($query) use ($search_val) {
-                                        $query->where(function ($query) use ($search_val) {
-                                            $query->where('categories.name', 'LIKE', '%' . $search_val . '%')
-                                                ->orWhere('models.name', 'LIKE', '%' . $search_val . '%')
-                                                ->orWhere('models.model_number', 'LIKE', '%' . $search_val . '%');
-                                        });
-                                    });
+                                    Asset::whereHasMatchSingleItem($query, 'category', $search_val, 'categories.id', 'categories.name');
                                 });
                             }
                         });
                     }
 
-
+                    // For the 'model' field
                     if ($fieldname == 'model') {
-                        $query->where(
-                            function ($query) use ($search_val) {
-                                if (is_array($search_val)) {
-                                    $query->whereHas(
-                                        'model',
-                                        function ($query) use ($search_val) {
-                                            $query->whereIn('models.name', $search_val);
-                                        }
-                                    );
-                                } else {
-                                    $query->whereHas(
-                                        'model',
-                                        function ($query) use ($search_val) {
-                                            $query->where('models.name', 'LIKE', '%' . $search_val . '%');
-                                        }
-                                    );
+                        $query->where(function ($query) use ($search_val) {
+                            if (is_array($search_val)) {
+                                // Check if the array is empty
+                                if (!empty($search_val)) {
+                                    // Separate integers (IDs) and strings (names)
+                                    $ids = array_filter($search_val, fn($val) => is_numeric($val) && (int) $val == $val);
+                                    $names = array_filter($search_val, fn($val) => is_string($val) && trim($val) !== '');
+
+                                    Asset::whereHasMatchItemArray($query, 'model', $ids, $names, 'models.id', 'models.name');
+
                                 }
+                            } else {
+                                Asset::whereHasMatchSingleItem($query, 'model', $search_val, 'models.id', 'models.name');
                             }
-                        );
+                        });
                     }
+
 
                     if ($fieldname == 'model_number') {
                         $query->where(
@@ -2066,49 +2091,46 @@ class Asset extends Depreciable
                         );
                     }
 
-
                     if ($fieldname == 'company') {
-                        $query->where(
-                            function ($query) use ($search_val) {
-                                if (is_array($search_val)) {
-                                    $query->whereHas(
-                                        'company',
-                                        function ($query) use ($search_val) {
-                                            $query->whereIn('companies.name', $search_val);
-                                        }
-                                    );
-                                } else {
-                                    $query->whereHas(
-                                        'company',
-                                        function ($query) use ($search_val) {
-                                            $query->where('companies.name', 'LIKE', '%' . $search_val . '%');
-                                        }
-                                    );
+                        $query->where(function ($query) use ($search_val) {
+                            if (is_array($search_val)) {
+                                // Check if the array is empty
+                                if (!empty($search_val)) {
+                                    // Separate integers (IDs) and strings (names)
+                                    $ids = array_filter($search_val, 'is_int');
+                                    $names = array_filter($search_val, 'is_string');
+
+                                    if ($ids || $names) {
+                                        Asset::whereHasMatchItemArray($query, 'company', $ids, $names, 'companies.id', 'companies.name');
+                                    }
                                 }
+
+                            } else {
+                                // If $search_val is a single value
+                                Asset::whereHasMatchSingleItem($query, 'company', $search_val, 'companies.id', 'companies.name');
                             }
-                        );
+                        });
                     }
 
                     if ($fieldname == 'supplier') {
-                        $query->where(
-                            function ($query) use ($search_val) {
-                                if (is_array($search_val)) {
-                                    $query->whereHas(
-                                        'supplier',
-                                        function ($query) use ($search_val) {
-                                            $query->whereIn('suppliers.name', $search_val);
-                                        }
-                                    );
-                                } else {
-                                    $query->whereHas(
-                                        'supplier',
-                                        function ($query) use ($search_val) {
-                                            $query->where('suppliers.name', 'LIKE', '%' . $search_val . '%');
-                                        }
-                                    );
+                        $query->where(function ($query) use ($search_val) {
+                            if (is_array($search_val)) {
+                                // Check if the array is empty
+                                if (!empty($search_val)) {
+                                    // Separate integers (IDs) and strings (names)
+                                    $ids = array_filter($search_val, 'is_int');
+                                    $names = array_filter($search_val, 'is_string');
+
+                                    if ($ids || $names) {
+                                        Asset::whereHasMatchItemArray($query, 'supplier', $ids, $names, 'suppliers.id', 'suppliers.name');
+                                    }
                                 }
+
+                            } else {
+                                // If $search_val is a single value
+                                Asset::whereHasMatchSingleItem($query, 'supplier', $search_val, 'suppliers.id', 'suppliers.name');
                             }
-                        );
+                        });
                     }
 
 
@@ -2166,16 +2188,39 @@ class Asset extends Depreciable
                             }
                         });
                     }
-
-
                 }
-
-
             }
         );
 
     }
 
+    private function whereHasMatchSingleItem($query, $relation, $searchValue, $idColumn = 'id', $nameColumn = 'name')
+    {
+        if (is_int($searchValue)) {
+            $query->whereHas($relation, function ($query) use ($idColumn, $searchValue) {
+                $query->where($idColumn, $searchValue); // Filter by status label ID
+            });
+        } else if (is_string($searchValue)) {
+            $query->whereHas($relation, function ($query) use ($nameColumn, $searchValue) {
+                $query->where($nameColumn, 'LIKE', '%' . $searchValue . '%'); // Filter by status label name
+            });
+        }
+        return $query;
+    }
+
+    private function whereHasMatchItemArray($query, $relation, $ids, $names, $idColumn = 'id', $nameColumn = 'name')
+    {
+        return $query->whereHas($relation, function ($q) use ($ids, $names, $idColumn, $nameColumn) {
+            $q->where(function ($sub) use ($ids, $names, $idColumn, $nameColumn) {
+                if (!empty($ids)) {
+                    $sub->whereIn($idColumn, $ids);
+                }
+                if (!empty($names)) {
+                    $sub->orWhereIn($nameColumn, $names);
+                }
+            });
+        });
+    }
 
     /**
      * Query builder scope to order on model
@@ -2430,7 +2475,7 @@ class Asset extends Depreciable
             $query->whereDate($field, '>=', $filter[$startKey]);
             //$query->whereDate('assets.created_at', '<=', '2020-01-01');
         }
-        
+
         if (isset($filter[$endKey])) {
             $query->whereDate($field, '<=', $filter[$endKey]);
         }
