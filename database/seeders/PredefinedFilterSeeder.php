@@ -16,7 +16,7 @@ class PredefinedFilterSeeder extends Seeder
      */
     public function run(): void
     {
-        PredefinedFilter::truncate();
+        PredefinedFilter::query()->delete();
 
         $user_to_delete = User::where("email","predefined@filter.com")->first();
 

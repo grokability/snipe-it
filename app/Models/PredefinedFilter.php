@@ -22,7 +22,6 @@ class PredefinedFilter extends Model
         'name',
         'created_by',
         'filter_data',
-        'permission_group_id',
     ];
 
     protected $rules = [
@@ -30,6 +29,11 @@ class PredefinedFilter extends Model
         'created_by'              => ['required', 'integer', 'exists:users,id'],
         'filter_data'             => ['nullable', 'array']
     ];
+
+    public function permissions()
+    {
+        return $this->hasMany(PredefinedFilterPermission::class, 'predefined_filter_id');
+    }
 
     protected function applyArrayOrScalarFilter(Builder $assets, array $filter, string $key, string $column): void
     {
@@ -82,7 +86,7 @@ class PredefinedFilter extends Model
         $this->applyDateRangeFilter($assets, $filter, 'next_audit_date');
         $this->applyDateRangeFilter($assets, $filter, 'updated_at');
 
-        $this->applyLikeFilter($assets, $filter, 'asset_name', 'assets.name');
+        $this->applyLikeFilter($assets, $filter, 'name', 'assets.name');
         $this->applyLikeFilter($assets, $filter, 'asset_tag', 'assets.asset_tag');
         $this->applyLikeFilter($assets, $filter, 'serial', 'assets.serial');
 
