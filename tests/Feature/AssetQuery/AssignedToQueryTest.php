@@ -50,6 +50,7 @@ class AssignedToQueryTest extends TestCase
         $userB = User::factory()->create();
         $userC = User::factory()->create();
 
+        // Assets
         $assetA = Asset::factory()->create(['assigned_type' => User::class, 'assigned_to' => $userA->id]);
         $assetB = Asset::factory()->create(['assigned_type' => User::class, 'assigned_to' => $userB->id]);
         $assetC = Asset::factory()->create(['assigned_type' => User::class, 'assigned_to' => $userC->id]);
