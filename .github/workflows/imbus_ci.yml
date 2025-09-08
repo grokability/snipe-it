@@ -1,13 +1,13 @@
-name: advanced_search Tests
+name: imbus_ci
 
 on:
   push:
-    branches: ['test/improve_advanced_search-pipeline']
+    branches: ['develope, master']
   pull_request:
   workflow_dispatch:
 
 concurrency:
-  group: tests-${{ github.ref }}
+  group: imbus-main-ci-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -27,7 +27,7 @@ jobs:
           MYSQL_DATABASE: snipeit_test
         ports:
           - 33306:3306
-        options: >-
+        options:
           --health-cmd="mysqladmin ping"
           --health-interval=10s --health-timeout=5s --health-retries=5
 
