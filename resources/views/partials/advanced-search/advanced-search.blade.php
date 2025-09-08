@@ -192,119 +192,160 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    // Insert the table ID using PHP
-    const tableId = "{{ request()->has('status') ? e(request()->input('status')) : '' }}assetsListingTable";
-    const $table = $('#' + tableId);
 
-    /**
-     * Extracts the filter key from the element ID
-     */
-    function getFilterKey(id, prefix = "advancedSearch_") {
-        return id.replace(prefix, "").replace("_input", "");
+class FilterInput {
+    constructor(element) {
+        this.element = element;
     }
 
-    /**
-     * Collects selected values from Select2 dropdowns
-     */
-    function collectSelectFilters(filters) {
+    get key() {
+        return this.element.id
+            .replace("advancedSearch_", "")
+            .replace("_input", "")
+            .replace("_start", "")
+            .replace("_end", "");
+    }
+
+    hasValue() {
+        return Boolean(this.element.value);
+    }
+
+    getValue() {
+        throw new Error("getValue() must be implemented by subclass");
+    }
+
+    appendTo(filters) {
+        const value = this.getValue();
+        if (value !== null && value !== undefined && value !== '') {
+            filters[this.key] = value;
+        }
+    }
+
+    clear() {
+        this.element.value = "";
+    }
+}
+
+class SelectFilterInput extends FilterInput {
+    getValue() {
+        const selections = $(this.element).select2('data');
+        const selectedIds = selections
+            .map(item => parseInt(item.id))
+            .filter(id => !isNaN(id));
+
+        if (selectedIds.length === 0) {
+            return null;
+        }
+
+        if (this.element.id === 'advancedSearch_assigned_to') {
+            return selections.map(selection => ({
+                assignedType: "App\\Models\\" + selection.type.charAt(0).toUpperCase() + selection.type.slice(1),
+                assigned_to: parseInt(selection.id)
+            }));
+        }
+        return selectedIds;
+    }
+    clear() {
+        $(this.element).val(null).trigger('change');
+    }
+}
+
+class DateFilterInput extends FilterInput {
+    getValue() {
+           return this.hasValue() ? this.element.value : null;
+    }
+}
+
+class TextFilterInput extends FilterInput {
+    getValue() {
+        return this.hasValue() ? this.element.value : null;
+    }
+}
+
+class AdvancedSearchFilterCollector {
+    constructor() {
+        this.filters = {};
+        this.inputs = [];
+    }
+
+    collect() {
+        this.filters = {};
+
+        this.inputs = [];
+
+        // Select2
         document.querySelectorAll('select[id^="advancedSearch_"]').forEach(el => {
-            const selections = $(el).select2('data');
-            const selectedIds = selections
-                .map(item => parseInt(item.id))
-                .filter(id => !isNaN(id));
+            this.inputs.push(new SelectFilterInput(el));
+        });
 
-            if (selectedIds.length > 0) {
+        // Dates
+        document.querySelectorAll('input[id^="advancedSearch_"][id$="_start"][type="date"], input[id^="advancedSearch_"][id$="_end"][type="date"]').forEach(el => {
+            this.inputs.push(new DateFilterInput(el));
+        });
 
-                const key = getFilterKey(el.id);
-                if(el.getAttribute('id') ==='advancedSearch_assigned_to') {
-                    let assignedToFilters = []
-                    selections.forEach(selection => {
-                        const type = "App\\Models\\" + selection.type.charAt(0).toUpperCase() + selection.type.slice(1);
+        // Text
+        document.querySelectorAll('input[id^="advancedSearch_"][type="text"]').forEach(el => {
+            this.inputs.push(new TextFilterInput(el));
+        });
 
-                        assignedToFilters.push({
-                            assignedType: type,
-                            assigned_to: parseInt(selection.id),
-                        });
-                    });
-                    filters[key] = assignedToFilters;
-                } else {
-                    filters[key] = selectedIds;
-                }
-            }
+        // Process all inputs polymorphically
+        this.inputs.forEach(input => {
+            input.appendTo(this.filters);
+        });
+
+        return this.filters;
+    }
+
+    clearAll() {
+        this.collect();
+        this.inputs.forEach(field => {
+            field.clear();
         });
     }
+}
 
-    /**
-     * Collects values from date inputs (start and end)
-     */
-    function collectDateFilters(filters) {
-        const selector = 'input[id^="advancedSearch_"][id$="_start"][type="date"], input[id^="advancedSearch_"][id$="_end"][type="date"]';
-        document.querySelectorAll(selector).forEach(el => {
-            if (el.value) {
-                const key = getFilterKey(el.id);
-                filters[key] = el.value;
-            }
-        });
+class TableFilterController {
+    constructor(tableElement) {
+        this.$table = tableElement;
+        this.collector = new AdvancedSearchFilterCollector();
     }
 
-    /**
-     * Collects values from text inputs
-     */
-    function collectTextFilters(filters) {
-        const selector = 'input[id^="advancedSearch_"][type="text"]';
-        document.querySelectorAll(selector).forEach(el => {
-            if (el.value) {
-                const key = getFilterKey(el.id);
-                filters[key] = el.value;
-            }
-        });
-    }
-
-    /**
-     * Main filter collector
-     */
-    function collectAdvancedSearchFilters() {
-        const filters = {};
-        collectSelectFilters(filters);
-        collectDateFilters(filters);
-        collectTextFilters(filters);
-        return filters;
-    }
-
-    /**
-     * Refreshes the table with collected filters
-     */
-    function refreshTableWithAdvancedFilters() {
-        const filters = collectAdvancedSearchFilters();
+    refresh() {
+        const filters = this.collector.collect();
         console.log("Applying Filters:", filters);
-
-        $table.bootstrapTable('refresh', {
+        this.$table.bootstrapTable('refresh', {
             query: {
                 filter: JSON.stringify(filters)
             }
         });
     }
 
-    /**
-     * Set up listeners
-     */
-    function bindFilterEvents() {
-        // Trigger refresh on any advancedSearch field change
+    bindEvents() {
         document.querySelectorAll('[id^="advancedSearch_"]').forEach(el => {
-            el.addEventListener('change', refreshTableWithAdvancedFilters);
+            el.addEventListener('change', this.refresh.bind(this));
         });
 
-        // Trigger refresh on filter button click
         const filterButton = document.getElementById("filterButton");
         if (filterButton) {
-            filterButton.addEventListener('click', refreshTableWithAdvancedFilters);
+            filterButton.addEventListener('click', this.refresh.bind(this));
+        }
+
+        const clearButton = document.getElementById("clearInputButton");
+        if (clearButton) {
+            clearButton.addEventListener('click', () => this.collector.clearAll());
         }
     }
+}
 
-    // Init
-    bindFilterEvents();
+document.addEventListener('DOMContentLoaded', function () {
+    const tableId = "{{ request()->has('status') ? e(request()->input('status')) : '' }}assetsListingTable";
+    const $table = $('#' + tableId);
+
+    // Initialize everything
+    const controller = new TableFilterController($table);
+    controller.bindEvents();
 });
+
 
 </script>
 

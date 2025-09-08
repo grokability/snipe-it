@@ -26,7 +26,7 @@ class AssignedToDropdownController extends Controller
             : $this->authorize('view.selectlists');
 
         $page = $request->input('page', 1);
-        $perPage = 100;
+        $perPage = 500;
         $search = $request->input('search');
 
         $locationQuery = Location::select(['id', 'name', 'image']);
