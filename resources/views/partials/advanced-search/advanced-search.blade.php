@@ -21,19 +21,19 @@
 
                     @foreach ($layout as $tableField)
                         @if ((!empty($tableField->searchable) && $tableField->searchable === true))
-                            <div id="advancedSearch_{{ $tableField->field }}" class="advancedSearchItemContainer">
+                            <span id="advancedSearch_{{ $tableField->field }}" class="advancedSearchItemContainer">
                                 <label for="advancedSearch_{{ $tableField->field }}">
                                     <b>{{ $tableField->title }}</b>
                                 </label>
                                 @if (!isset($tableField->formatter))
                                     {{-- Default select if formatter is not set --}}
-                                    <input class="advancedSearch_defaultField" type="text" autocomplete="on" id="advancedSearch_{{ $tableField->field }}_input" >
+                                    <input class="advancedSearch_defaultField form-control" type="text" autocomplete="on" id="advancedSearch_{{ $tableField->field }}_input" >
                                 @else
                                     @switch($tableField->formatter)
                                         @case('dateDisplayFormatter')
                                             <!--<input type="date" id="advancedSearch_{{ $tableField->field }}"
                                                 name="{{ $tableField->title }}" class="datePicker">-->
-                                            <div class="input-daterange input-group" id="checkin-range-datepicker">
+                                            <div class="input-daterange input-group " id="checkin-range-datepicker">
                                                 <input type="date" id="advancedSearch_{{ $tableField->field }}_start"
                                                     class="form-control" name="checkin_date_start" aria-label="checkin_date_start"">
                                                 <span class="input-group-addon">{{ strtolower(trans('general.to')) }}</span>
@@ -83,11 +83,11 @@
                                         @break
 
                                         @case('employeeNumFormatter')
-                                            <input class="advancedSearch_employeeNumFormatter" type="text" id="advancedSearch_{{ $tableField->field }}_input" autocomplete="on">
+                                            <input class="advancedSearch_employeeNumFormatter form-control" type="text" id="advancedSearch_{{ $tableField->field }}_input" autocomplete="on">
                                         @break
 
                                         @case('hardwareLinkFormatter')
-                                            <input class="advancedSearch_hardwarelinkFormatter" type="text" id="advancedSearch_{{ $tableField->field }}_input" autocomplete="on">
+                                            <input class="advancedSearch_hardwarelinkFormatter form-control" type="text" id="advancedSearch_{{ $tableField->field }}_input" autocomplete="on">
                                         @break
 
                                         <!-- Makes no sense for the advanced search
@@ -117,7 +117,7 @@
                                         @break
 
                                         @case('orderNumberObjFilterFormatter')
-                                            <input class="advancedSearch_orderNumberObjFilterFormatter" type="text" id="advancedSearch_{{ $tableField->field }}_input" autocomplete="on">
+                                            <input class="advancedSearch_orderNumberObjFilterFormatter form-control" type="text" id="advancedSearch_{{ $tableField->field }}_input" autocomplete="on">
                                         @break
 
                                         @case('polymorphicItemFormatter')
@@ -155,7 +155,7 @@
                                         @break
 
                                         @case('customFieldsFormatter')
-                                            <input class="advancedSearch_customField" type="text" autocomplete="on" id="advancedSearch_{{ $tableField->field }}_input" >
+                                            <input class="advancedSearch_customField form-control" type="text" autocomplete="on" id="advancedSearch_{{ $tableField->field }}_input" >
                                         @break
 
                                         @case('usersLinkObjFormatter')
@@ -169,13 +169,22 @@
                                         @break
 
                                         @default
-                                            <input class="advancedSearch_defaultField" type="text" autocomplete="on" id="advancedSearch_{{ $tableField->field }}_input" >
+                                            <input class="advancedSearch_defaultField form-control" type="text" autocomplete="on" id="advancedSearch_{{ $tableField->field }}_input" >
                                     @endswitch
                                 @endif
-                            </div>
+                            </span>
                         @endif
                     @endforeach
-                    <button class="button" id="filterButton">Search</button>
+                    <div id="advancedSearchControlContainer" class="form-group">
+                        <button type="submit" class="btn btn-default" id="filterButton">
+                            <span aria-hidden="true"></span>
+                            <span class="visually-hidden">🔎 {{ trans('button.search') }}</span>
+                        </button>
+                        <button type="button" class="btn btn-default" id="clearInputButton">
+                            <span aria-hidden="true"></span>
+                            <span class="visually-hidden">❌ {{ trans('button.delete_search_query') }}</span>
+                        </button>
+                    </div>
                 </span>
             </div>
         </div>
