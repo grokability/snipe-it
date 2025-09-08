@@ -184,6 +184,10 @@
                             <span aria-hidden="true"></span>
                             <span class="visually-hidden">❌ {{ trans('button.delete_search_query') }}</span>
                         </button>
+                        <button type="button" class="btn btn-default" id="setDemoDataButton">
+                            <span aria-hidden="true"></span>
+                            <span class="visually-hidden">Fill with testdata</span>
+                        </button>
                     </div>
                 </span>
             </div>
@@ -214,6 +218,16 @@ class FilterInput {
         throw new Error("getValue() must be implemented by subclass");
     }
 
+    setValue(newValue) {
+        this.element.value = newValue;
+    }
+
+    getType() {
+        return this.element.id
+                .replace("advancedSearch_", "")
+                .replace("_", "");
+    }
+
     appendTo(filters) {
         const value = this.getValue();
         if (value !== null && value !== undefined && value !== '') {
@@ -237,18 +251,58 @@ class SelectFilterInput extends FilterInput {
             return null;
         }
 
-        if (this.element.id === 'advancedSearch_assigned_to') {
+        /*if (this.element.id === 'advancedSearch_assigned_to') {
             return selections.map(selection => ({
                 assignedType: "App\\Models\\" + selection.type.charAt(0).toUpperCase() + selection.type.slice(1),
                 assigned_to: parseInt(selection.id)
             }));
-        }
+        }*/
         return selectedIds;
     }
+
+    setValue(newValue) {
+        // More details are here https://select2.org/programmatic-control/add-select-clear-items#preselecting-options-in-an-remotely-sourced-ajax-select2
+
+        // Fetch data
+        const optionData = fetchItemFromBackendById(this.getType(), newValue)
+        .then((response) => {
+            var option = new Option(response.name, response.id, true, true);
+            $(this.element).append(option).trigger('change');
+            
+            // manually trigger the `select2:select` event
+            $(this.element).trigger({
+                type: 'select2:select',
+                /*params: {
+                    data: data
+                }*/
+            });
+        });
+    }
+
     clear() {
         $(this.element).val(null).trigger('change');
     }
 }
+
+class AssignedToSelectFilterInput extends SelectFilterInput {
+    getValue() {
+        const selections = $(this.element).select2('data');
+
+        if (!selections.length) return null;
+
+        return selections.map(selection => ({
+            assignedType: "App\\Models\\" + selection.type.charAt(0).toUpperCase() + selection.type.slice(1),
+            assigned_to: parseInt(selection.id)
+        }));
+    }
+
+    setValue(newValue) {
+        console.warn("Not implemented.");
+        console.log("Get the data depending if it's assigend to a asset, location or user and set it depending on that. Before implement the import from the data");
+    }
+
+}
+
 
 class DateFilterInput extends FilterInput {
     getValue() {
@@ -270,12 +324,15 @@ class AdvancedSearchFilterCollector {
 
     collect() {
         this.filters = {};
-
         this.inputs = [];
 
         // Select2
         document.querySelectorAll('select[id^="advancedSearch_"]').forEach(el => {
-            this.inputs.push(new SelectFilterInput(el));
+            if (el.id === 'advancedSearch_assigned_to') {
+                this.inputs.push(new AssignedToSelectFilterInput(el));
+            } else {
+                this.inputs.push(new SelectFilterInput(el));
+            }
         });
 
         // Dates
@@ -302,6 +359,13 @@ class AdvancedSearchFilterCollector {
             field.clear();
         });
     }
+
+    setValuesFromResponse(response) {
+        this.clearAll(); // Runs also this.collect();
+        this.inputs.forEach(field => {
+            field.setValue("1");
+        });
+    }
 }
 
 class TableFilterController {
@@ -312,7 +376,6 @@ class TableFilterController {
 
     refresh() {
         const filters = this.collector.collect();
-        console.log("Applying Filters:", filters);
         this.$table.bootstrapTable('refresh', {
             query: {
                 filter: JSON.stringify(filters)
@@ -334,6 +397,11 @@ class TableFilterController {
         if (clearButton) {
             clearButton.addEventListener('click', () => this.collector.clearAll());
         }
+
+        const setDemoDataButton = document.getElementById("setDemoDataButton");
+        if (setDemoDataButton) {
+            setDemoDataButton.addEventListener('click', () => this.collector.setValuesFromResponse("1"));
+        }
     }
 }
 
@@ -346,6 +414,41 @@ document.addEventListener('DOMContentLoaded', function () {
     controller.bindEvents();
 });
 
+function fetchItemFromBackendById(type, id) {
+    return new Promise((resolve, reject) => {
+
+        const typeSingularToPluralMap = new Map();
+        typeSingularToPluralMap.set("category", "categories");
+        typeSingularToPluralMap.set("company", "companies");
+        typeSingularToPluralMap.set("location", "locations");
+        typeSingularToPluralMap.set("manufacturer", "manufacturers");
+        typeSingularToPluralMap.set("model", "models");
+        typeSingularToPluralMap.set("rtdlocation", "locations");
+        typeSingularToPluralMap.set("statuslabel", "statuslabels");
+        typeSingularToPluralMap.set("supplier", "suppliers");
+
+        if(!typeSingularToPluralMap.has(type)) {
+            console.error("Invalid type");
+            reject("Invalid type");
+            return;
+        }
+
+        const path = "/api/v1/" + typeSingularToPluralMap.get(type) + "/" + id;
+        const options = {
+            method: 'GET',
+            headers: {
+                accept: 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        };
+        
+        fetch(path, options)
+        .then(res => res.json())
+        .then(res => resolve(res))
+        .catch(err => reject(err));
+    });
+}
 
 </script>
 
