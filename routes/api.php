@@ -853,6 +853,12 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
 
             Route::post('predefinedFilters', [PredefinedFilterController::class,'store'])
                 ->name('api.predefined filters.store');
+            
+            Route::put('predefinedFilters/{id}', [PredefinedFilterController::class,'update'])
+                ->name('api.predefined-filters.update');
+
+            Route::delete('predefinedFilters/{id}', [PredefinedFilterController::class,'destroy'])
+                ->name('api.predefined-filters.destroy');
         //}; // end predefinedFilters API routes
 
         /**
