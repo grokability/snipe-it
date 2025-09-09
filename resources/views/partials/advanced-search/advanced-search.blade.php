@@ -16,7 +16,7 @@
                     @php
                         $layoutJson = \App\Presenters\AssetPresenter::dataTableLayout();
                         $layout = json_decode($layoutJson); // decode to object by default
-                        dump($layout);
+                        //dump($layout);
                     @endphp
 
                     @foreach ($layout as $tableField)
@@ -205,9 +205,7 @@ class FilterInput {
     get key() {
         return this.element.id
             .replace("advancedSearch_", "")
-            .replace("_input", "")
-            .replace("_start", "")
-            .replace("_end", "");
+            .replace("_input", "");
     }
 
     hasValue() {
@@ -225,7 +223,9 @@ class FilterInput {
     getType() {
         return this.element.id
                 .replace("advancedSearch_", "")
-                .replace("_", "");
+                .replace("_input", "")
+                .replace("_start", "")
+                .replace("_end", "");
     }
 
     appendTo(filters) {
@@ -251,30 +251,27 @@ class SelectFilterInput extends FilterInput {
             return null;
         }
 
-        /*if (this.element.id === 'advancedSearch_assigned_to') {
-            return selections.map(selection => ({
-                assignedType: "App\\Models\\" + selection.type.charAt(0).toUpperCase() + selection.type.slice(1),
-                assigned_to: parseInt(selection.id)
-            }));
-        }*/
         return selectedIds;
     }
 
-    setValue(newValue) {
+    setValue(newValues) {
         // More details are here https://select2.org/programmatic-control/add-select-clear-items#preselecting-options-in-an-remotely-sourced-ajax-select2
 
-        // Fetch data
-        const optionData = fetchItemFromBackendById(this.getType(), newValue)
-        .then((response) => {
-            var option = new Option(response.name, response.id, true, true);
-            $(this.element).append(option).trigger('change');
+        let requestPromises = [];
+        newValues.forEach((newValue) => {
+            const promise = fetchItemFromBackendById(this.getType(), newValue);
+            requestPromises.push(promise);
+        })
+
+        Promise.all(requestPromises)
+        .then((responses) => {
+            responses.forEach((response) => {
+                var option = new Option(response.name, response.id, true, true);
+                $(this.element).append(option).trigger('change');
+            });
             
-            // manually trigger the `select2:select` event
             $(this.element).trigger({
                 type: 'select2:select',
-                /*params: {
-                    data: data
-                }*/
             });
         });
     }
@@ -290,17 +287,57 @@ class AssignedToSelectFilterInput extends SelectFilterInput {
 
         if (!selections.length) return null;
 
-        return selections.map(selection => ({
-            assignedType: "App\\Models\\" + selection.type.charAt(0).toUpperCase() + selection.type.slice(1),
-            assigned_to: parseInt(selection.id)
-        }));
+        return selections.map(selection => {
+            // Find the corresponding <option> element
+            const option = $(this.element).find(`option[value="${selection.id}"]`)[0];
+
+            // Default assignedType in case data-attribute isn't set
+            let assignedType = null;
+
+            if (option) {
+                assignedType = option.getAttribute('data-assigned-type');
+            }
+
+            // If data-assigned-type is missing, fallback to 'type' from Select2 selection (if available)
+            if (!assignedType && selection.type) {
+                assignedType = "App\\Models\\" + selection.type.charAt(0).toUpperCase() + selection.type.slice(1);
+            }
+
+            return {
+                assignedType,
+                assigned_to: parseInt(selection.id)
+            };
+        });
     }
 
-    setValue(newValue) {
-        console.warn("Not implemented.");
-        console.log("Get the data depending if it's assigend to a asset, location or user and set it depending on that. Before implement the import from the data");
-    }
 
+    setValue(newValues) {
+        // More details are here https://select2.org/programmatic-control/add-select-clear-items#preselecting-options-in-an-remotely-sourced-ajax-select2
+
+        const requestPromises = newValues.map(({ assignedType, assigned_to }) => {
+            const type = {
+                "App\\Models\\Asset": "asset",
+                "App\\Models\\Location": "location",
+                "App\\Models\\User": "user"
+            }[assignedType];
+
+            return fetchItemFromBackendById(type, assigned_to)
+                .then(response => ({ ...response, assignedType }));
+        });
+
+        Promise.all(requestPromises).then((responses) => {
+                responses.forEach(({ id, name, assignedType }) => {
+                const displayName = name || `#${id}`;
+                const option = new Option(displayName, id, true, true);
+
+                option.setAttribute('data-assigned-type', assignedType);
+
+                $(this.element).append(option).trigger('change');
+            });
+
+            $(this.element).trigger({ type: 'select2:select' });
+        });
+    }
 }
 
 
@@ -361,11 +398,28 @@ class AdvancedSearchFilterCollector {
     }
 
     setValuesFromResponse(response) {
-        this.clearAll(); // Runs also this.collect();
-        this.inputs.forEach(field => {
-            field.setValue("1");
-        });
+        this.clearAll();
+
+        for (const key in response) {
+            const value = response[key];
+
+            // Find the matching input by the `name` attribute
+            const field = this.inputs.find(input => input.key === key);
+            if (!field) {
+                console.warn(`No input found for key: ${key}`);
+                continue;
+            }
+            
+            const type = field.getType();
+
+            try {
+                field.setValue(value);
+            } catch (err) {
+                console.error(`Failed to set value for "${key}":`, err);
+            }
+        }
     }
+
 }
 
 class TableFilterController {
@@ -400,7 +454,23 @@ class TableFilterController {
 
         const setDemoDataButton = document.getElementById("setDemoDataButton");
         if (setDemoDataButton) {
-            setDemoDataButton.addEventListener('click', () => this.collector.setValuesFromResponse("1"));
+            const demoDataObject = {
+                                        category :[1, 3, 5, 7, 9],
+                                        manufacturer:[1,3,7, 9, 11, 13, 15],
+                                        asset_eol_date_end :"2027-10-31",
+                                        "custom_fields._snipeit_cpu_4": "Core i7",
+                                        assigned_to: [
+                                            {
+                                              assignedType: "App\\Models\\Location",
+                                              assigned_to: 6071
+                                            },
+                                            {
+                                              assignedType: "App\\Models\\Asset",
+                                              assigned_to: 42657
+                                            }
+                                        ]
+                                    };
+            setDemoDataButton.addEventListener('click', () => this.collector.setValuesFromResponse(demoDataObject));
         }
     }
 }
@@ -418,18 +488,20 @@ function fetchItemFromBackendById(type, id) {
     return new Promise((resolve, reject) => {
 
         const typeSingularToPluralMap = new Map();
+        typeSingularToPluralMap.set("asset", "hardware");
         typeSingularToPluralMap.set("category", "categories");
         typeSingularToPluralMap.set("company", "companies");
         typeSingularToPluralMap.set("location", "locations");
         typeSingularToPluralMap.set("manufacturer", "manufacturers");
         typeSingularToPluralMap.set("model", "models");
-        typeSingularToPluralMap.set("rtdlocation", "locations");
-        typeSingularToPluralMap.set("statuslabel", "statuslabels");
+        typeSingularToPluralMap.set("rtd_location", "locations");
+        typeSingularToPluralMap.set("status_label", "statuslabels");
         typeSingularToPluralMap.set("supplier", "suppliers");
+        typeSingularToPluralMap.set("user", "users");
 
         if(!typeSingularToPluralMap.has(type)) {
-            console.error("Invalid type");
-            reject("Invalid type");
+            console.error("Invalid type " + type);
+            reject("Invalid type " + type);
             return;
         }
 
