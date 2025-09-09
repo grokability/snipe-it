@@ -4,8 +4,8 @@ return [
 
     'Accessory_Checkin_Notification' => 'Accessoire enregistré',
     'Accessory_Checkout_Notification' => 'Accessoire verrouillé',
-    'Asset_Checkin_Notification' => 'Actif restitué',
-    'Asset_Checkout_Notification' => 'Actif affecté',
+    'Asset_Checkin_Notification' => 'Asset checked in: [:tag]',
+    'Asset_Checkout_Notification' => 'Asset checked out: [:tag]',
     'Confirm_Accessory_Checkin' => 'Confirmation de l\'association de l\'accessoire',
     'Confirm_Asset_Checkin' => 'Confirmation de l\'association du matériel',
     'Confirm_component_checkin' => 'Component checkin confirmation',
@@ -77,6 +77,7 @@ return [
     'name' => 'Nom',
     'new_item_checked' => 'Un nouvel élément a été vérifié sous votre nom, les détails sont ci-dessous.',
     'new_item_checked_with_acceptance' => 'Un nouvel matériel a été emprunté sous votre nom et doit être accepté. Vous trouverez ci-dessous les détails correspondants.',
+    'new_item_checked_location' => 'A new item has been checked out to :location, details are below.',
     'recent_item_checked' => 'Un matériel a récemment été emprunté sous votre nom et doit être accepté. Vous trouverez ci-dessous les détails correspondants.',
     'notes' => 'Notes',
     'password' => 'Mot de passe',

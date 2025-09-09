@@ -100,8 +100,8 @@ class CheckoutAccessoryNotification extends Notification
         $channel = ($this->settings->webhook_channel) ? $this->settings->webhook_channel : '';
 
         $fields = [
-            trans('general.to') => '<'.$target->present()->viewUrl().'|'.$target->present()->fullName().'>',
-            trans('general.by') => '<'.$admin->present()->viewUrl().'|'.$admin->present()->fullName().'>',
+            trans('general.to') => '<'.$target->present()->viewUrl().'|'.$target->display_name.'>',
+            trans('general.by') => '<'.$admin->present()->viewUrl().'|'.$admin->display_name.'>',
         ];
 
         if ($item->location) {
@@ -117,7 +117,7 @@ class CheckoutAccessoryNotification extends Notification
             ->from($botname)
             ->to($channel)
             ->attachment(function ($attachment) use ($item, $note, $admin, $fields) {
-                $attachment->title(htmlspecialchars_decode($this->checkout_qty.' x '.$item->present()->name), $item->present()->viewUrl())
+                $attachment->title(htmlspecialchars_decode($this->checkout_qty.' x '.$item->display_name), $item->present()->viewUrl())
                     ->fields($fields)
                     ->content($note);
             });
@@ -136,11 +136,11 @@ class CheckoutAccessoryNotification extends Notification
                 ->addStartGroupToSection('activityTitle')
                 ->title(trans('mail.Accessory_Checkout_Notification'))
                 ->addStartGroupToSection('activityText')
-                ->fact(htmlspecialchars_decode($item->present()->name), '', 'activityTitle')
-                ->fact(trans('mail.assigned_to'), $target->present()->name)
+                ->fact(htmlspecialchars_decode($item->display_name), '', 'activityTitle')
+                ->fact(trans('mail.assigned_to'), $target->display_name)
                 ->fact(trans('general.qty'), $this->checkout_qty)
                 ->fact(trans('mail.checkedout_from'), $item->location->name ? $item->location->name : '')
-                ->fact(trans('mail.Accessory_Checkout_Notification') . " by ", $admin->present()->fullName())
+                ->fact(trans('mail.Accessory_Checkout_Notification') . " by ", $admin->display_name)
                 ->fact(trans('admin/consumables/general.remaining'), $item->numRemaining())
                 ->fact(trans('mail.notes'), $note ?: '');
         }
@@ -148,10 +148,10 @@ class CheckoutAccessoryNotification extends Notification
         $message = trans('mail.Accessory_Checkout_Notification');
         $details = [
             trans('mail.assigned_to') => $target->present()->name,
-            trans('mail.accessory_name') => htmlspecialchars_decode($item->present()->name),
+            trans('mail.accessory_name') => htmlspecialchars_decode($item->display_name),
             trans('general.qty') => $this->checkout_qty,
             trans('mail.checkedout_from') => $item->location->name ? $item->location->name : '',
-            trans('mail.Accessory_Checkout_Notification'). ' by' => $admin->present()->fullName(),
+            trans('mail.Accessory_Checkout_Notification'). ' by' => $admin->display_name,
             trans('admin/consumables/general.remaining')=> $item->numRemaining(),
             trans('mail.notes') => $note ?: '',
         ];
@@ -169,7 +169,7 @@ class CheckoutAccessoryNotification extends Notification
                 Card::create()
                     ->header(
                         '<strong>'.trans('mail.Accessory_Checkout_Notification').'</strong>' ?: '',
-                        htmlspecialchars_decode($item->present()->name) ?: '',
+                        htmlspecialchars_decode($item->display_name) ?: '',
                     )
                     ->section(
                         Section::create(

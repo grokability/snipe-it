@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\AssetModelsController;
-use App\Http\Controllers\AssetModelsFilesController;
 use App\Http\Controllers\BulkAssetModelsController;
 use Illuminate\Support\Facades\Route;
 use Tabuna\Breadcrumbs\Trail;
@@ -10,18 +9,6 @@ use Tabuna\Breadcrumbs\Trail;
 
 
 Route::group(['prefix' => 'models', 'middleware' => ['auth']], function () {
-
-    Route::post('{model}/upload',
-        [AssetModelsFilesController::class, 'store']
-    )->name('upload/models')->withTrashed();
-
-    Route::get('{model}/showfile/{fileId}/{download?}',
-        [AssetModelsFilesController::class, 'show']
-    )->name('show/modelfile')->withTrashed();
-
-    Route::delete('{model}/showfile/{fileId}/delete',
-        [AssetModelsFilesController::class, 'destroy']
-    )->name('delete/modelfile')->withTrashed();
 
     Route::get(
         '{model}/clone',

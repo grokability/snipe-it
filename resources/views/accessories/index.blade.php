@@ -6,11 +6,6 @@
 @parent
 @stop
 
-@section('header_right')
-    @can('create', \App\Models\Accessory::class)
-        <a href="{{ route('accessories.create') }}" {{$snipeSettings->shortcuts_enabled == 1 ? "accesskey=n" : ''}} class="btn btn-primary pull-right"> {{ trans('general.create') }}</a>
-    @endcan
-@stop
 
 {{-- Page content --}}
 @section('content')
@@ -30,6 +25,7 @@
                 data-sort-order="asc"
                 data-footer-style="footerStyle"
                 id="accessoriesTable"
+                data-buttons="accessoryButtons"
                 class="table table-striped snipe-table"
                 data-url="{{route('api.accessories.index') }}"
                 data-export-options='{

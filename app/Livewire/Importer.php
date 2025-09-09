@@ -334,10 +334,12 @@ class Importer extends Component
             'manager_username' => trans('general.importer.manager_username'),
             'notes' => trans('general.notes'),
             'phone_number' => trans('admin/users/table.phone'),
+            'mobile_number' => trans('admin/users/table.mobile'),
             'remote' => trans('admin/users/general.remote'),
             'start_date' => trans('general.start_date'),
             'state' => trans('general.state'),
             'username' => trans('admin/users/table.username'),
+            'display_name' => trans('admin/users/table.display_name'),
             'vip' => trans('general.importer.vip'),
             'website' => trans('general.website'),
             'zip' => trans('general.zip'),
@@ -401,6 +403,7 @@ class Importer extends Component
 
 
         $this->assetmodels_fields  = [
+            'id' => trans('general.id'),
             'category' => trans('general.category'),
             'eol' => trans('general.eol'),
             'fieldset' => trans('admin/models/general.fieldset'),
@@ -410,6 +413,7 @@ class Importer extends Component
             'model_number' => trans('general.model_no'),
             'notes' => trans('general.item_notes', ['item' => trans('admin/hardware/form.model')]),
             'requestable' => trans('admin/models/general.requestable'),
+            'require_serial' => trans('admin/hardware/general.require_serial'),
 
         ];
 
@@ -484,6 +488,13 @@ class Importer extends Component
                     'username',
                     trans('general.importer.checked_out_to_username'),
                 ],
+            'display_name' =>
+                [
+                    'display name',
+                    'displayName',
+                    'display',
+                    trans('admin/users/table.display_name'),
+                ],
             'first_name' =>
                 [
                     'first name',
@@ -510,6 +521,13 @@ class Importer extends Component
                     'telephone',
                     'tel.',
                 ],
+            'mobile_number' =>
+                [
+                    'mobile',
+                    'mobile number',
+                    'cell',
+                    'cellphone',
+                ],
 
             'serial' =>
                 [
@@ -518,6 +536,10 @@ class Importer extends Component
                     'serial no',
                     'product key',
                     'key',
+                ],
+            'require_serial' =>
+                [
+                    'serial required',
                 ],
             'model_number' =>
                 [

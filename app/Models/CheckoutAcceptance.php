@@ -32,7 +32,19 @@ class CheckoutAcceptance extends Model
 
         return array_filter($recipients);
     }
+    public function getCheckoutableItemTypeAttribute(): string
+    {
+        $type = $this->checkoutable_type;
 
+        return match ($type) {
+            Asset::class       => trans('general.asset'),
+            LicenseSeat::class => trans('general.license'),
+            Accessory::class   => trans('general.accessory'),
+            Component::class   => trans('general.component'),
+            Consumable::class  => trans('general.consumable'),
+            default            => class_basename($type),
+        };
+    }
     /**
      * The resource that was is out
      *
@@ -135,5 +147,10 @@ class CheckoutAcceptance extends Model
     public function scopePending(Builder $query)
     {
         return $query->whereNull('accepted_at')->whereNull('declined_at');
+    }
+
+    public function scopeDeclined(Builder $query)
+    {
+        return $query->whereNull('accepted_at')->whereNotNull('declined_at');
     }
 }

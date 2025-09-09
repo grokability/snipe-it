@@ -4,8 +4,8 @@ return [
 
     'Accessory_Checkin_Notification' => 'Το αξεσουάρ επανήλθε',
     'Accessory_Checkout_Notification' => 'Το αξεσουάρ ελέγχθηκε',
-    'Asset_Checkin_Notification' => 'Το περιουσιακό στοιχείο ολοκληρώθηκε',
-    'Asset_Checkout_Notification' => 'Το περιουσιακό στοιχείο ολοκληρώθηκε',
+    'Asset_Checkin_Notification' => 'Asset checked in: [:tag]',
+    'Asset_Checkout_Notification' => 'Asset checked out: [:tag]',
     'Confirm_Accessory_Checkin' => 'Επιβεβαίωση ελέγχου αξεσουάρ',
     'Confirm_Asset_Checkin' => 'Επιβεβαίωση στοιχείου ενεργητικού',
     'Confirm_component_checkin' => 'Component checkin confirmation',
@@ -77,6 +77,7 @@ return [
     'name' => 'Όνομα',
     'new_item_checked' => 'Ένα νέο στοιχείο έχει ελεγχθεί με το όνομά σας, οι λεπτομέρειες είναι παρακάτω.',
     'new_item_checked_with_acceptance' => 'A new item has been checked out under your name that requires acceptance, details are below.',
+    'new_item_checked_location' => 'A new item has been checked out to :location, details are below.',
     'recent_item_checked' => 'An item was recently checked out under your name that requires acceptance, details are below.',
     'notes' => 'Σημειώσεις',
     'password' => 'Κωδικός Πρόσβασης',

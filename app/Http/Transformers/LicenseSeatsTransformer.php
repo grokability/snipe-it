@@ -7,7 +7,6 @@ use App\Models\License;
 use App\Models\LicenseSeat;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Database\Eloquent\Collection;
-
 class LicenseSeatsTransformer
 {
     public function transformLicenseSeats(Collection $seats, $total)
@@ -52,6 +51,7 @@ class LicenseSeatsTransformer
             'reassignable' => (bool) $seat->license->reassignable,
             'notes' => e($seat->notes),
             'user_can_checkout' => (($seat->assigned_to == '') && ($seat->asset_id == '')),
+            'disabled' => $seat->unreassignable_seat,
         ];
 
         $permissions_array['available_actions'] = [

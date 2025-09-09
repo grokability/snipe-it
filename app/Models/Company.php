@@ -2,14 +2,16 @@
 
 namespace App\Models;
 
+use App\Models\Traits\CompanyableTrait;
 use App\Models\Traits\Searchable;
 use App\Presenters\Presentable;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
-use Watson\Validating\ValidatingTrait;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
+use Watson\Validating\ValidatingTrait;
+
 /**
  * Model for Companies.
  *

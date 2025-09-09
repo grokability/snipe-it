@@ -1,13 +1,13 @@
 <?php
 
 return [
-    'example_company'    => 'Test Company Limited',
-    'example_defaultloc' => 'Building 1',
-    'example_category'   => 'Test Category',
-    'example_location'   => 'Building 2',
-    'example_manufacturer'  => 'Test Manufacturing Inc.',
-    'example_model'      => 'Test Model',
-    'example_supplier'   => 'Test Company Limited',
+    'example_company'    => 'Teszt Cég Kft.',
+    'example_defaultloc' => 'Épület 1',
+    'example_category'   => 'Teszt Kategória',
+    'example_location'   => 'Épület 2',
+    'example_manufacturer'  => 'Teszt Manufaktúra Rt.',
+    'example_model'      => 'Teszt Modell',
+    'example_supplier'   => 'Teszt Cég Kft',
     'labels_per_page'    => 'Címkék',
     'support_fields'     => 'Mezők',
     'support_asset_tag'  => 'Címke',

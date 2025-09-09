@@ -14,7 +14,7 @@ return [
     'username_help_bottom'          => 'Abhängig von der Konfiguration, <em>kann</em> der Benutzername identisch mit ihrer E-Mailadresse sein. Falls Sie ihren Benutzernamen vergessen haben, kontaktieren Sie ihren Administrator.<br><br><strong>Benutzernamen ohne zugeordnete E-Mailadresse erhalten keine E-Mail zum Zurücksetzen des Passwortes.</strong> ',
     'google_login'                  => 'Mit Google Workspace anmelden',
     'google_login_failed'           => 'Google-Anmeldung fehlgeschlagen, bitte versuchen Sie es erneut.',
-    'invite_password_expires'       => 'This password reset link will expire on :expire_date. You can use the manual password reset link to receive a new reset token by clicking here',
+    'invite_password_expires'       => 'Dieser Link zum Zurücksetzen des Passworts läuft am :expire_date ab. Sie können den manuellen Link zum Zurücksetzen des Passworts verwenden, um ein neues Zurücksetzungs-Token zu erhalten, indem Sie hier klicken',
 
 ];
 

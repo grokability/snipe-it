@@ -14,7 +14,7 @@ return [
     'username_help_bottom'          => 'A felhasználóneved és az email címed <em>talán</em> azonos, talán nem, ez függ a beállításoktól. Ha nem emlékszel a felhasználónevedre, vedd fel a kapcsolatot az adminiszrátorral. <br><br><strong>Email nélküli felhasználónevek nem fognak jelszó visszaállítási linket kapni.</strong> ',
     'google_login'                  => 'Bejelentkezés Google Workspace-el',
     'google_login_failed'           => 'Google bejelentkezés sikertelen, kérem, próbálja újra.',
-    'invite_password_expires'       => 'This password reset link will expire on :expire_date. You can use the manual password reset link to receive a new reset token by clicking here',
+    'invite_password_expires'       => 'Ez a jelszó-visszaállításhoz használt link :expire_date napon jár le. Erre a linkre kattintva tudsz új visszaállítási kulcsot kérni',
 
 ];
 

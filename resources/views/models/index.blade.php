@@ -12,21 +12,6 @@
 @parent
 @stop
 
-{{-- Page title --}}
-@section('header_right')
-  @can('create', \App\Models\AssetModel::class)
-    <a href="{{ route('models.create') }}" class="btn btn-primary pull-right"> {{ trans('general.create') }}</a>
-  @endcan
-
-  @if (Request::get('status')=='deleted')
-    <a class="btn btn-default pull-right" href="{{ route('models.index') }}" style="margin-right: 5px;">{{ trans('admin/models/general.view_models') }}</a>
-  @else
-    <a class="btn btn-default pull-right" href="{{ route('models.index', ['status' => 'deleted']) }}" style="margin-right: 5px;">{{ trans('admin/models/general.view_deleted') }}</a>
-  @endif
-
-@stop
-
-
 {{-- Page content --}}
 @section('content')
 
@@ -49,6 +34,7 @@
                         data-bulk-form-id="#modelsBulkForm"
                         data-sort-order="asc"
                         id="asssetModelsTable"
+                        data-buttons="modelButtons"
                         class="table table-striped snipe-table"
                         data-url="{{ route('api.models.index', ['status' => request('status')]) }}"
                         data-export-options='{

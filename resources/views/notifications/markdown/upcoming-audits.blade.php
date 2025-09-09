@@ -27,12 +27,12 @@ $icon = ($diff <= 7) ? '🚨' : (($diff <= 14) ? '⚠️' : ' ');
 
 <tr>
     <td style="vertical-align: top">{{ $icon }}</td>
-    <td style="vertical-align: top"><a href="{{ route('hardware.show', $asset->id) }}">{{ $asset->present()->name }}</a></td>
+    <td style="vertical-align: top"><a href="{{ route('hardware.show', $asset->id) }}">{{ $asset->display_name }}</a></td>
     <td style="vertical-align: top">{{ $last_audit_date }}</td>
     <td style="vertical-align: top">{{ $next_audit_date }}</td>
     <td style="vertical-align: top">{{ $diff }}</td>
     <td style="vertical-align: top">{{ ($asset->supplier ? e($asset->supplier->name) : '') }}</td>
-    <td style="vertical-align: top">{{ ($asset->assignedTo ? $asset->assignedTo->present()->name() : '') }}</td>
+    <td style="vertical-align: top">{{ ($asset->assignedTo ? $asset->display_name : '') }}</td>
     <td style="vertical-align: top">{!! nl2br(e($asset->notes)) !!}</td>
 </tr>
 

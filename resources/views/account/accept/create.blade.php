@@ -2,7 +2,7 @@
 
 {{-- Page title --}}
 @section('title')
-    {{trans('general.accept', ['asset' => $acceptance->checkoutable->present()->name()])}}
+    {{trans('general.accept', ['asset' => $acceptance->checkoutable->display_name])}}
     @parent
 @stop
 
@@ -17,12 +17,6 @@
         .form-horizontal .control-label, .form-horizontal .radio, .form-horizontal .checkbox, .form-horizontal .radio-inline, .form-horizontal .checkbox-inline {
             padding-top: 17px;
             padding-right: 10px;
-        }
-
-        #eula_div {
-            width: 100%;
-            height: auto;
-            overflow: auto;
         }
 
         .m-signature-pad--body {
@@ -42,36 +36,50 @@
         <div class="row">
             <div class="col-sm-12 col-sm-offset-1 col-md-10 col-md-offset-1">
                 <div class="panel box box-default">
+                    <div class="box-header with-border">
+                        <h2 class="box-title">
+                            <div>
+                                {{ $acceptance->checkoutable->display_name }}
+                                @if ($acceptance->qty > 1)
+                                    <strong>×{{ $acceptance->qty }}</strong>
+                                @endif
+                            </div>
+                            <div>{{ (($acceptance->checkoutable) && ($acceptance->checkoutable->serial)) ? trans('general.serial_number').': '.$acceptance->checkoutable->serial : '' }}</div>
+                        </h2>
+                    </div>
                     <div class="box-body">
-                        <div class="col-md-12" style="padding-top: 20px;">
                         @if ($acceptance->checkoutable->getEula())
-                            <div id="eula_div" style="padding-bottom: 20px">
-                                {!!  $acceptance->checkoutable->getEula() !!}
+                            <div class="col-md-12" style="padding-top: 15px; padding-bottom: 15px;">
+                                <div style="background-color: rgba(211,211,211,0.25); padding: 10px; border: lightgrey 1px solid;">
+                                    {!!  str_replace('<p>', '<p dir="auto">', $acceptance->checkoutable->getEula()) !!}
+                                </div>
                             </div>
                         @endif
-                        </div>
-                        <div class="col-md-12">
-                        <h3>{{$acceptance->checkoutable->present()->name()}}</h3>
-                        </div>
                         <div class="col-md-12">
                             <label class="form-control">
                                 <input type="radio" name="asset_acceptance" id="accepted" value="accepted">
-                                {{trans('general.i_accept')}}
+                                @if ($acceptance->qty)
+                                    {{trans_choice('general.i_accept_with_count', $acceptance->qty)}}
+                                @else
+                                    {{trans('general.i_accept')}}
+                                @endif
                             </label>
                             <label class="form-control">
                                 <input type="radio" name="asset_acceptance" id="declined" value="declined">
-                                {{trans('general.i_decline')}}
+                                @if ($acceptance->qty)
+                                    {{trans_choice('general.i_decline_with_count', $acceptance->qty)}}
+                                @else
+                                    {{trans('general.i_decline')}}
+                                @endif
                             </label>
 
                         </div>
                         <div class="col-md-12">
                             <br>
-                            <div class="col-md-12" style="display:block;">
                                 <label id="note_label" for="note" style="text-align:center;" >{{trans('admin/settings/general.acceptance_note')}}</label>
-                            </div>
-                            <div class="col-md-12">
-                                <textarea id="note" name="note" rows="4" value="note" class="form-control" style="width:100%"></textarea>
-                            </div>
+                                <br>
+                                <textarea id="note" name="note" rows="4" class="form-control" style="width:100%">{{ old('note') }}</textarea>
+
                         </div>
 
                         @if ($snipeSettings->require_accept_signature=='1')
@@ -103,7 +111,7 @@
                         <button type="submit" class="btn btn-success" id="submit-button">
                             <i class="fa fa-check icon-white" aria-hidden="true" id="submitIcon"></i>
                             <span id="buttonText">
-                                {{ trans('general.i_accept_item') }}
+                                {{ trans_choice('general.i_accept_item', $acceptance->qty ?? null) }}
                             </span>
                         </button>
                     </div><!-- /.box-footer -->
@@ -161,29 +169,22 @@
         
         $('[name="asset_acceptance"]').on('change', function() {
 
-            if ($(this).is(':checked') && $(this).attr('id') == 'declined') {
+            if ($(this).is(':checked') && $(this).attr('id') === 'declined') {
                 $("#showEmailBox").hide();
                 $("#showSubmit").show();
                 $("#submit-button").removeClass("btn-success").addClass("btn-danger").show();
                 $("#submitIcon").removeClass("fa-check").addClass("fa-times");
-                $("#buttonText").text('{{ trans('general.i_decline_item') }}');
+                $("#buttonText").text('{{ trans_choice('general.i_decline_item', $acceptance->qty ?? 1) }}');
                 $("#note").prop('required', true);
 
-            } else if ($(this).is(':checked') && $(this).attr('id') == 'accepted') {
+            } else if ($(this).is(':checked') && $(this).attr('id') === 'accepted') {
                 $("#showEmailBox").show();
                 $("#showSubmit").show();
                 $("#submit-button").removeClass("btn-danger").addClass("btn-success").show();
                 $("#submitIcon").removeClass("fa-check").addClass("fa-check");
-                $("#buttonText").text('{{ trans('general.i_accept_item') }}');
+                $("#buttonText").text('{{ trans_choice('general.i_accept_item', $acceptance->qty ?? 1) }}');
                 $("#note").prop('required', false);
-
-
-
             }
-
         });
-
-
-
     </script>
 @stop

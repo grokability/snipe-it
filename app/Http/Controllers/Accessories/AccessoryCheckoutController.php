@@ -71,6 +71,7 @@ class AccessoryCheckoutController extends Controller
         $this->authorize('checkout', $accessory);
 
         $target = $this->determineCheckoutTarget();
+        session()->put(['checkout_to_type' => $target]);
         
         $accessory->checkout_qty = $request->input('checkout_qty', 1);
         

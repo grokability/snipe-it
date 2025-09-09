@@ -91,7 +91,27 @@
                             </div>
 
                             @include ('partials.forms.edit.minimum_quantity')
+                            <!-- require serial boolean -->
+                            <div class="form-group">
+                                <label for="require_serial" class="col-md-3 control-label">
+                                    {{ trans('admin/hardware/general.require_serial') }}
+                                </label>
 
+                                <div class="col-md-9">
+                                    <div class="form-inline" style="display: flex; align-items: center; gap: 8px;">
+                                        <input type="checkbox" name="require_serial" value="1" id="require_serial" aria-label="require_serial" />
+                                        <a
+                                                href="#"
+                                                data-tooltip="true"
+                                                title="{{ trans('admin/hardware/general.require_serial_help') }}"
+                                                style="display: inline-flex; align-items: center;"
+                                        >
+                                            <x-icon type="info-circle" />
+                                            <span class="sr-only">{{ trans('admin/hardware/general.require_serial_help') }}</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
 
                             <!-- requestable -->
                                 <div class="form-group{{ $errors->has('requestable') ? ' has-error' : '' }}">

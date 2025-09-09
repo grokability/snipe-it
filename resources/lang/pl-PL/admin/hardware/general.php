@@ -9,7 +9,7 @@ return [
     'bulk_checkin'              => 'Bulk Checkin',
     'checkin'  					=> 'Potwierdzanie zasobu/aktywa',
     'checkout'  				=> 'Przypisz zasób',
-    'clear'                     => 'Clear',
+    'clear'                     => 'Wyczyść',
     'clone'  					=> 'Klonuj zasób',
     'deployable'  				=> 'Gotowe do wdrożenia',
     'deleted'  					=> 'Ten zasób został usunięty.',

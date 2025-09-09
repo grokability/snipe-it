@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Traits\CompanyableTrait;
 use Illuminate\Database\Eloquent\Model;
 use Watson\Validating\ValidatingTrait;
 

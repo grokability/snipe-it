@@ -7,12 +7,14 @@ use App\Exceptions\CheckoutNotAllowed;
 use App\Helpers\Helper;
 use App\Http\Traits\UniqueUndeletedTrait;
 use App\Models\Traits\Acceptable;
+use App\Models\Traits\CompanyableTrait;
 use App\Models\Traits\HasUploads;
 use App\Models\Traits\Searchable;
-use App\Presenters\Presentable;
 use App\Presenters\AssetPresenter;
+use App\Presenters\Presentable;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Crypt;
@@ -20,7 +22,6 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use UnexpectedValueException;
 use Watson\Validating\ValidatingTrait;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 
 /**
  * Model for Assets.
@@ -113,7 +114,7 @@ class Asset extends Depreciable
         'location_id' => ['nullable', 'exists:locations,id', 'fmcs_location'],
         'rtd_location_id' => ['nullable', 'exists:locations,id', 'fmcs_location'],
         'purchase_date' => ['nullable', 'date', 'date_format:Y-m-d'],
-        'serial' => ['nullable', 'unique_undeleted:assets,serial'],
+        'serial' => ['nullable', 'string', 'unique_undeleted:assets,serial'],
         'purchase_cost' => ['nullable', 'numeric', 'gte:0', 'max:9999999999999'],
         'supplier_id' => ['nullable', 'exists:suppliers,id'],
         'asset_eol_date' => ['nullable', 'date'],
@@ -207,6 +208,17 @@ class Asset extends Depreciable
         'model.manufacturer' => ['name'],
     ];
 
+    protected static function booted(): void
+    {
+        static::forceDeleted(function (Asset $asset) {
+            $asset->requests()->forceDelete();
+        });
+
+        static::softDeleted(function (Asset $asset) {
+            $asset->requests()->delete();
+        });
+    }
+
     // To properly set the expected checkin as Y-m-d
     public function setExpectedCheckinAttribute($value)
     {
@@ -227,7 +239,11 @@ class Asset extends Depreciable
 
             foreach ($this->model->fieldset->fields as $field) {
 
-                if ($field->format == 'BOOLEAN') {
+                // this just casts booleans that may come through as strings to an actual boolean type
+                // adding !$field->field_encrypted because when the encrypted value comes through it
+                // screws things up for the encrypted validation rules (and the encrypted string
+                // is not a valid boolean type)
+                if ($field->format == 'BOOLEAN' && !$field->field_encrypted) {
                     $this->{$field->db_column} = filter_var($this->{$field->db_column}, FILTER_VALIDATE_BOOLEAN);
                 }
             }
@@ -758,9 +774,9 @@ class Asset extends Depreciable
      * @since  1.0
      * @return \Illuminate\Database\Eloquent\Relations\Relation
      */
-    public function assetmaintenances()
+    public function maintenances()
     {
-        return $this->hasMany(\App\Models\AssetMaintenance::class, 'asset_id')
+        return $this->hasMany(\App\Models\Maintenance::class, 'asset_id')
             ->orderBy('created_at', 'desc');
     }
 
@@ -1018,9 +1034,9 @@ class Asset extends Depreciable
     {
 
         if (($this->model) && ($this->model->category)) {
-            if (($this->model->category->eula_text) && ($this->model->category->use_default_eula === 0)) {
+            if (($this->model->category->eula_text) && ($this->model->category->use_default_eula == 0)) {
                 return Helper::parseEscapedMarkedown($this->model->category->eula_text);
-            } elseif ($this->model->category->use_default_eula === 1) {
+            } elseif ($this->model->category->use_default_eula == 1) {
                 return Helper::parseEscapedMarkedown(Setting::getSettings()->default_eula_text);
             } else {
 
@@ -1973,10 +1989,8 @@ class Asset extends Depreciable
                             }
                         });
                     }
-                    //dump($query->toRawSql());
-    
 
-                    if ($fieldname == 'jobtitle') {
+                    /*if ($fieldname == 'jobtitle') {
                         $query->where(function ($query) use ($search_val) {
                             if (is_array($search_val)) {
                                 $query->whereHasMorph(
@@ -1998,7 +2012,7 @@ class Asset extends Depreciable
                                 );
                             }
                         });
-                    }
+                    }*/
 
                     if ($fieldname == 'manufacturer') {
                         $query->where(function ($query) use ($search_val) {
@@ -2132,6 +2146,29 @@ class Asset extends Depreciable
                             }
                         });
                     }
+
+                    if ($fieldname == 'jobtitle') {
+                        $query->where(function ($query) use ($search_val) {
+                            if (is_array($search_val)) {
+                                $query->whereHasMorph(
+                                    'assignedTo',
+                                    [User::class],
+                                    function ($query) use ($search_val) {
+                                        $query->whereIn('users.jobtitle', $search_val);
+                                    }
+                                );
+                            } else {
+                                $query->whereHasMorph(
+                                    'assignedTo',
+                                    [User::class],
+                                    function ($query) use ($search_val) {
+                                        $query->where('users.jobtitle', 'LIKE', '%' . $search_val . '%');
+                                    }
+                                );
+                            }
+                        });
+                    }
+
 
 
                     /**

@@ -22,7 +22,7 @@ return array(
         'success' => 'Dostawca usunięty pomyślnie.',
         'assoc_assets'	 => 'Ten dostawca jest obecnie powiązany z :asset_count aktywami i nie może zostać usunięty. Zaktualizuj aktywa aby nie były z nim powiązane i spróbuj ponownie. ',
         'assoc_licenses'	 => 'Ten dostawca jest obecnie powiązany z :licenses_count licencjami i nie może zostać usunięty. Zaktualizuj licencje tak aby do niego nie nawiązywały i spróbuj ponownie. ',
-        'assoc_maintenances'	 => 'Ten dostawca jest obecnie powiązany z :asset_maintenances_count konserwowanymi aktywami i nie może zostać usunięty. Zaktualizuj aktywa aby nie były z nim powiązane i spróbuj ponownie. ',
+        'assoc_maintenances'	 => 'This supplier is currently associated with :maintenances_count asset maintenances(s) and cannot be deleted. Please update your asset maintenances to no longer reference this supplier and try again. ',
     )
 
 );

@@ -25,7 +25,7 @@ return array(
         'error'   		=> 'Potrošni material ni bil izdan, poskusite znova',
         'success' 		=> 'Potrošni material uspešno izdan.',
         'user_does_not_exist' => 'Ta uporabnik ni veljaven. Prosim poskusite ponovno.',
-         'unavailable'      => 'There are not enough consumables for this checkout. Please check the quantity left. ',
+         'unavailable'      => 'Za to blagajno ni dovolj potrošnega materiala. Preverite preostalo količino. ',
     ),
 
     'checkin' => array(

@@ -4,8 +4,8 @@ return [
 
     'Accessory_Checkin_Notification' => 'Oheistarvike palautettu',
     'Accessory_Checkout_Notification' => 'Lisävaruste tarkistettu',
-    'Asset_Checkin_Notification' => 'Laite palautettu',
-    'Asset_Checkout_Notification' => 'Laite tarkistettu',
+    'Asset_Checkin_Notification' => 'Asset checked in: [:tag]',
+    'Asset_Checkout_Notification' => 'Asset checked out: [:tag]',
     'Confirm_Accessory_Checkin' => 'Oheistarvikkeen palautuksen vahvistus',
     'Confirm_Asset_Checkin' => 'Laitteen palautuksen vahvistus',
     'Confirm_component_checkin' => 'Component checkin confirmation',
@@ -77,6 +77,7 @@ return [
     'name' => 'Nimi',
     'new_item_checked' => 'Uusi nimike on luovutettu sinulle, yksityiskohdat ovat alla.',
     'new_item_checked_with_acceptance' => 'A new item has been checked out under your name that requires acceptance, details are below.',
+    'new_item_checked_location' => 'A new item has been checked out to :location, details are below.',
     'recent_item_checked' => 'An item was recently checked out under your name that requires acceptance, details are below.',
     'notes' => 'Muistiinpanot',
     'password' => 'Salasana',

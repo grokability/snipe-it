@@ -34,7 +34,7 @@ jobs:
           php-version: "${{ matrix.php-version }}"
           coverage: none
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Get Composer Cache Directory
         id: composer-cache
@@ -75,4 +75,16 @@ jobs:
           DB_PORT: ${{ job.services.postgresql.ports[5432] }}
           DB_USERNAME: snipeit
           DB_PASSWORD: password
+          LOG_CHANNEL: single
+          LOG_LEVEL: debug
         run: php artisan test
+
+      - name: Upload Laravel logs as artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: laravel-logs-php-${{ matrix.php-version }}-run-${{ github.run_attempt }}
+          path: |
+            storage/logs/*.log
+          if-no-files-found: ignore
+          retention-days: 7

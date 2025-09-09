@@ -20,7 +20,7 @@ class CheckoutAssetMailTest extends TestCase
                     'asset' => $asset,
                     'acceptance' => CheckoutAcceptance::factory()->for($asset, 'checkoutable')->create(),
                     'first_time_sending' => true,
-                    'expected_subject' => 'Asset checked out',
+                    'expected_subject' => trans('mail.Asset_Checkout_Notification', ['tag' => $asset->asset_tag]),
                     'expected_opening' => 'A new item has been checked out under your name that requires acceptance, details are below.'
                 ];
             }
@@ -28,11 +28,12 @@ class CheckoutAssetMailTest extends TestCase
 
         yield 'Asset not requiring acceptance' => [
             function () {
+                $asset = Asset::factory()->doesNotRequireAcceptance()->create();
                 return [
-                    'asset' => Asset::factory()->doesNotRequireAcceptance()->create(),
+                    'asset' => $asset,
                     'acceptance' => null,
                     'first_time_sending' => true,
-                    'expected_subject' => 'Asset checked out',
+                    'expected_subject' => trans('mail.Asset_Checkout_Notification', ['tag' => $asset->asset_tag]),
                     'expected_opening' => 'A new item has been checked out under your name, details are below.'
                 ];
             }

@@ -328,7 +328,7 @@ class AssetPresenter extends Presenter
         // name can break the listings page. - snipe
         foreach ($fields as $field) {
             $layout[] = [
-                'field' => 'custom_fields.'.$field->db_column,
+                'field' => $field->db_column,
                 'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,

@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     @if ((isset($users) && count($users) === 1))
-        <title>{{ trans('general.assigned_to', ['name' => $users[0]->present()->fullName()]) }} - {{ date('Y-m-d H:i', time()) }}</title>
+        <title>{{ trans('general.assigned_to', ['name' => $users[0]->display_name]) }} - {{ date('Y-m-d H:i', time()) }}</title>
     @else
         <title>{{ trans('admin/users/general.print_assigned') }} - {{ date('Y-m-d H:i', time()) }}</title>
     @endisset
@@ -45,14 +45,24 @@
             margin-top: 20px;
             margin-bottom: 10px;
         }
+
+        @media print {
+            .signature-boxes {
+                page-break-after: always;
+            }
+        }
     </style>
 
 
 </head>
 <body>
 
+@php
+    $count = 0;
+@endphp
 {{-- If we are rendering multiple users we'll add the ability to show/hide EULAs for all of them at once via this button --}}
 @if (count($users) > 1)
+
     <div class="pull-right hidden-print">
         <span>{{ trans('general.show_or_hide_eulas') }}</span>
         <button class="btn btn-default" type="button" data-toggle="collapse" data-target=".eula-row" aria-expanded="false" aria-controls="eula-row" title="EULAs">
@@ -80,13 +90,16 @@
 @endif
 
 @foreach ($users as $show_user)
+    @php
+        $count++;
+    @endphp
     <div id="start_of_user_section"> {{-- used for page breaks when printing --}}</div>
     <h3>
         @if ($show_user->company)
-            <b>{{ trans('admin/companies/table.name') }}:</b> {{ $show_user->company->name }}</b>
+            <b>{{ trans('admin/companies/table.name') }}:</b> {{ $show_user->company->name }}
         <br>
         @endif
-        {{ trans('general.assigned_to', ['name' => $show_user->present()->fullName()]) }}
+        {{ trans('general.assigned_to', ['name' => $show_user->display_name]) }}
         {{ ($show_user->employee_num!='') ? ' (#'.$show_user->employee_num.') ' : '' }}
         {{ ($show_user->jobtitle!='' ? ' - '.$show_user->jobtitle : '') }}
     </h3>
@@ -399,7 +412,7 @@
         </div>
     @endif
 
-    <table style="margin-top: 80px;">
+    <table style="margin-top: 80px;" class="{{ count($users) > $count ? 'signature-boxes' : ''  }}">
         @if (!empty($eulas))
         <tr class="collapse eula-row">
             <td style="padding-right: 10px; vertical-align: top; font-weight: bold;">EULA</td>

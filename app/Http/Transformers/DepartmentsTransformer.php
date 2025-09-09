@@ -35,7 +35,7 @@ class DepartmentsTransformer
                 ] : null,
                 'manager' => ($department->manager) ? [
                     'id' => (int) $department->manager->id,
-                    'name' => e($department->manager->getFullNameAttribute()),
+                    'name' => e($department->manager->display_name),
                     'first_name'=> e($department->manager->first_name),
                     'last_name'=> e($department->manager->last_name),
                 ] : null,

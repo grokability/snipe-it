@@ -4,8 +4,8 @@ return [
 
     'Accessory_Checkin_Notification' => 'აქსესუარი დაბრუნდა',
     'Accessory_Checkout_Notification' => 'აქსესუარი გაცემულია',
-    'Asset_Checkin_Notification' => 'ინვენტარი დაბრუნდა',
-    'Asset_Checkout_Notification' => 'ინვენტარი გაცემულია',
+    'Asset_Checkin_Notification' => 'Asset checked in: [:tag]',
+    'Asset_Checkout_Notification' => 'Asset checked out: [:tag]',
     'Confirm_Accessory_Checkin' => 'აქსესუარის დაბრუნების დადასტურება',
     'Confirm_Asset_Checkin' => 'ინვენტარის დაბრუნების დადასტურება',
     'Confirm_component_checkin' => 'Component checkin confirmation',
@@ -77,6 +77,7 @@ return [
     'name' => 'სახელი',
     'new_item_checked' => 'თქვენს სახელზე გაიცა ახალი ინვენტარი, იხილეთ დეტალები ქვემოთ.',
     'new_item_checked_with_acceptance' => 'თქვენს სახელზე გაიცვა ახალი ინვენტარი, რომლის დადასტურებაც აუცილებელია, იხილეთ დეტალები ქვემოთ.',
+    'new_item_checked_location' => 'A new item has been checked out to :location, details are below.',
     'recent_item_checked' => 'ახლახანს თქვენს სახელზე გაიცვა ინვენტარი, რომლის დადასტურებაც აუცილებელია, იხილეთ დეტალები ქვემოთ.',
     'notes' => 'შენიშვნები',
     'password' => 'პაროლი',

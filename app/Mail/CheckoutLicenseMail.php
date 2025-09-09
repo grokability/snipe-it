@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Models\Asset;
 use App\Models\LicenseSeat;
 use App\Models\Setting;
 use App\Models\User;
@@ -25,9 +26,16 @@ class CheckoutLicenseMail extends Mailable
         $this->item = $licenseSeat;
         $this->admin = $checkedOutBy;
         $this->note = $note;
-        $this->target = $checkedOutTo;
         $this->acceptance = $acceptance;
         $this->settings = Setting::getSettings();
+        $this->target = $checkedOutTo;
+
+        if($this->target instanceof User){
+            $this->target = $this->target->display_name;
+        }
+        elseif($this->target instanceof Asset){
+            $this->target = $this->target->display_name;
+        }
     }
 
     /**

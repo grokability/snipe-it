@@ -9,7 +9,7 @@ return [
     'bulk_checkin'              => 'Entrada em massa',
     'checkin'  					=> 'Retornar Ativo',
     'checkout'  				=> 'Checkout de Ativo',
-    'clear'                     => 'Clear',
+    'clear'                     => 'Limpar',
     'clone'  					=> 'Clonar Ativo',
     'deployable'  				=> 'Implementável',
     'deleted'  					=> 'Este modelo foi excluído.',

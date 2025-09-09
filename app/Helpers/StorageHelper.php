@@ -27,6 +27,45 @@ class StorageHelper
         }
     }
 
+    public static function getMediaType($file_with_path) {
+
+        // Get the file extension and determine the media type
+        if (Storage::exists($file_with_path)) {
+            $fileinfo = pathinfo($file_with_path);
+            $extension = strtolower($fileinfo['extension']);
+            switch ($extension) {
+                case 'avif':
+                case 'jpg':
+                case 'png':
+                case 'gif':
+                case 'svg':
+                case 'webp':
+                    return 'image';
+                case 'pdf':
+                    return 'pdf';
+                case 'mp3':
+                case 'wav':
+                case 'ogg':
+                    return 'audio';
+                case 'mp4':
+                case 'webm':
+                case 'mov':
+                    return 'video';
+                case 'doc':
+                case 'docx':
+                    return 'document';
+                case 'txt':
+                    return 'text';
+                case 'xls':
+                case 'xlsx':
+                case 'ods':
+                    return 'spreadsheet';
+                default:
+                    return $extension; // Default for unknown types
+            }
+        }
+        return null;
+    }
 
     /**
      * This determines the file types that should be allowed inline and checks their fileinfo extension
@@ -51,7 +90,6 @@ class StorageHelper
             'ogg',
             'pdf',
             'png',
-            'svg',
             'svg',
             'wav',
             'webm',

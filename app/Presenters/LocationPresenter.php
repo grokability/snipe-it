@@ -67,7 +67,9 @@ class LocationPresenter extends Presenter
                 'sortable' => true,
                 'switchable' => true,
                 'title' =>  trans('admin/locations/message.current_location'),
+                'titleTooltip' => trans('admin/locations/message.current_location'),
                 'visible' => true,
+                'class' => 'css-house-laptop',
             ], [
                 'field' => 'rtd_assets_count',
                 'searchable' => false,

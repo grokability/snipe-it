@@ -4,6 +4,7 @@ namespace App\Mail;
 
 use App\Helpers\Helper;
 use App\Models\Asset;
+use App\Models\Location;
 use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
@@ -24,16 +25,17 @@ class CheckoutAssetMail extends Mailable
 
     /**
      * Create a new message instance.
+     * @throws \Exception
      */
     public function __construct(Asset $asset, $checkedOutTo, User $checkedOutBy, $acceptance, $note, bool $firstTimeSending = true)
     {
         $this->item = $asset;
         $this->admin = $checkedOutBy;
         $this->note = $note;
-        $this->target = $checkedOutTo;
         $this->acceptance = $acceptance;
 
         $this->settings = Setting::getSettings();
+        $this->target = $checkedOutTo;
 
         $this->last_checkout = '';
         $this->expected_checkin = '';
@@ -76,6 +78,17 @@ class CheckoutAssetMail extends Mailable
         $eula = method_exists($this->item, 'getEula') ? $this->item->getEula() : '';
         $req_accept = $this->requiresAcceptance();
         $fields = [];
+        $name = null;
+
+        if($this->target instanceof User){
+            $name = $this->target->display_name;
+        }
+        else if($this->target instanceof Asset){
+            $name  = $this->target->assignedto?->display_name;
+        }
+        else if($this->target instanceof Location){
+            $name  = $this->target->manager->name;
+        }
 
         // Check if the item has custom fields associated with it
         if (($this->item->model) && ($this->item->model->fieldset)) {
@@ -91,7 +104,7 @@ class CheckoutAssetMail extends Mailable
                 'admin'         => $this->admin,
                 'status'        => $this->item->assetstatus?->name,
                 'note'          => $this->note,
-                'target'        => $this->target,
+                'target'        => $name,
                 'fields'        => $fields,
                 'eula'          => $eula,
                 'req_accept'    => $req_accept,
@@ -116,7 +129,7 @@ class CheckoutAssetMail extends Mailable
     private function getSubject(): string
     {
         if ($this->firstTimeSending) {
-            return trans('mail.Asset_Checkout_Notification');
+            return trans('mail.Asset_Checkout_Notification', ['tag' => $this->item->asset_tag]);
         }
 
         return trans('mail.unaccepted_asset_reminder');
@@ -124,6 +137,9 @@ class CheckoutAssetMail extends Mailable
 
     private function introductionLine(): string
     {
+        if ($this->firstTimeSending && $this->target instanceof Location) {
+            return trans('mail.new_item_checked_location', ['location' => $this->target->name ]);
+        }
         if ($this->firstTimeSending && $this->requiresAcceptance()) {
             return trans('mail.new_item_checked_with_acceptance');
         }

@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ImageUploadRequest;
 use App\Models\Supplier;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
 use \Illuminate\Contracts\View\View;
 
@@ -122,7 +121,7 @@ class SuppliersController extends Controller
     public function destroy($supplierId) : RedirectResponse
     {
         $this->authorize('delete', Supplier::class);
-        if (is_null($supplier = Supplier::with('asset_maintenances', 'assets', 'licenses')->withCount('asset_maintenances as asset_maintenances_count', 'assets as assets_count', 'licenses as licenses_count')->find($supplierId))) {
+        if (is_null($supplier = Supplier::with('maintenances', 'assets', 'licenses')->withCount('maintenances as maintenances_count', 'assets as assets_count', 'licenses as licenses_count')->find($supplierId))) {
             return redirect()->route('suppliers.index')->with('error', trans('admin/suppliers/message.not_found'));
         }
 
@@ -130,8 +129,8 @@ class SuppliersController extends Controller
             return redirect()->route('suppliers.index')->with('error', trans('admin/suppliers/message.delete.assoc_assets', ['asset_count' => (int) $supplier->assets_count]));
         }
 
-        if ($supplier->asset_maintenances_count > 0) {
-            return redirect()->route('suppliers.index')->with('error', trans('admin/suppliers/message.delete.assoc_maintenances', ['asset_maintenances_count' => $supplier->asset_maintenances_count]));
+        if ($supplier->maintenances_count > 0) {
+            return redirect()->route('suppliers.index')->with('error', trans('admin/suppliers/message.delete.assoc_maintenances', ['maintenances_count' => $supplier->maintenances_count]));
         }
 
         if ($supplier->licenses_count > 0) {

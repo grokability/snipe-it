@@ -4,8 +4,8 @@ return [
 
     'Accessory_Checkin_Notification' => 'Tillbehör incheckat',
     'Accessory_Checkout_Notification' => 'Tillbehör utchekat',
-    'Asset_Checkin_Notification' => 'Tillgång incheckat',
-    'Asset_Checkout_Notification' => 'Tillgång utcheckad',
+    'Asset_Checkin_Notification' => 'Asset checked in: [:tag]',
+    'Asset_Checkout_Notification' => 'Asset checked out: [:tag]',
     'Confirm_Accessory_Checkin' => 'Bekräfta incheckning av tillbehör',
     'Confirm_Asset_Checkin' => 'Bekräfta incheckning av tillgång',
     'Confirm_component_checkin' => 'Component checkin confirmation',
@@ -77,6 +77,7 @@ return [
     'name' => 'Namn',
     'new_item_checked' => 'Ett nytt objekt har blivit utcheckat i ditt namn, se detaljer nedan.',
     'new_item_checked_with_acceptance' => 'A new item has been checked out under your name that requires acceptance, details are below.',
+    'new_item_checked_location' => 'A new item has been checked out to :location, details are below.',
     'recent_item_checked' => 'An item was recently checked out under your name that requires acceptance, details are below.',
     'notes' => 'Anteckningar',
     'password' => 'Lösenord',

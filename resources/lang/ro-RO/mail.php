@@ -4,8 +4,8 @@ return [
 
     'Accessory_Checkin_Notification' => 'Accesoriu verificat în',
     'Accessory_Checkout_Notification' => 'Accesoriu predat',
-    'Asset_Checkin_Notification' => 'Activul verificat în',
-    'Asset_Checkout_Notification' => 'Activ predat',
+    'Asset_Checkin_Notification' => 'Asset checked in: [:tag]',
+    'Asset_Checkout_Notification' => 'Asset checked out: [:tag]',
     'Confirm_Accessory_Checkin' => 'Confirmare verificare accesoriu',
     'Confirm_Asset_Checkin' => 'Confirmare verificare active',
     'Confirm_component_checkin' => 'Component checkin confirmation',
@@ -77,6 +77,7 @@ return [
     'name' => 'Nume',
     'new_item_checked' => 'Un element nou a fost verificat sub numele dvs., detaliile sunt de mai jos.',
     'new_item_checked_with_acceptance' => 'A new item has been checked out under your name that requires acceptance, details are below.',
+    'new_item_checked_location' => 'A new item has been checked out to :location, details are below.',
     'recent_item_checked' => 'An item was recently checked out under your name that requires acceptance, details are below.',
     'notes' => 'notițe',
     'password' => 'Parola',

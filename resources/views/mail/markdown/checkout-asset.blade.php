@@ -1,5 +1,5 @@
 @component('mail::message')
-# {{ trans('mail.hello') }}{{ $target->assignedto?->present()->fullName() ? ' ' . $target->assignedto->present()->fullName() . ',' : ',' }}
+# {{ trans('mail.hello').' '.$target.','}}
 
 {{ $introduction_line }}
 
@@ -46,7 +46,7 @@
 @endif
 @endforeach
 @if ($admin)
-| **{{ trans('general.administrator') }}** | {{ $admin->present()->fullName() }} |
+| **{{ trans('general.administrator') }}** | {{ $admin->display_name }} |
 @endif
 @if ($note)
 | **{{ trans('mail.additional_notes') }}** | {{ $note }} |

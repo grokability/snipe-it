@@ -37,7 +37,7 @@
     "doctrine/dbal": "^3.1",
     "doctrine/instantiator": "^1.3",
     "eduardokum/laravel-mail-auto-embed": "^2.0",
-    "enshrined/svg-sanitize": "^0.16.0",
+    "enshrined/svg-sanitize": "^0.22.0",
     "erusev/parsedown": "^1.7",
     "fakerphp/faker": "^1.24",
     "guzzlehttp/guzzle": "^7.0.1",
@@ -84,6 +84,7 @@
   },
   "require-dev": {
     "larastan/larastan": "^2.9",
+    "laravel/telescope": "^5.11",
     "mockery/mockery": "^1.4",
     "nunomaduro/phpinsights": "^2.11",
     "php-mock/php-mock-phpunit": "^2.10",
@@ -95,7 +96,8 @@
   "extra": {
     "laravel": {
       "dont-discover": [
-        "rollbar/rollbar-laravel"
+        "rollbar/rollbar-laravel",
+        "laravel/telescope"
       ]
     }
   },

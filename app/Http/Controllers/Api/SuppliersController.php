@@ -194,7 +194,7 @@ class SuppliersController extends Controller
     public function destroy($id) : JsonResponse
     {
         $this->authorize('delete', Supplier::class);
-        $supplier = Supplier::with('asset_maintenances', 'assets', 'licenses')->withCount('asset_maintenances as asset_maintenances_count', 'assets as assets_count', 'licenses as licenses_count')->findOrFail($id);
+        $supplier = Supplier::with('maintenances', 'assets', 'licenses')->withCount('maintenances as maintenances_count', 'assets as assets_count', 'licenses as licenses_count')->findOrFail($id);
         $this->authorize('delete', $supplier);
 
 
@@ -202,8 +202,8 @@ class SuppliersController extends Controller
             return response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/suppliers/message.delete.assoc_assets', ['asset_count' => (int) $supplier->assets_count])));
         }
 
-        if ($supplier->asset_maintenances_count > 0) {
-            return response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/suppliers/message.delete.assoc_maintenances', ['asset_maintenances_count' => $supplier->asset_maintenances_count])));
+        if ($supplier->maintenances_count > 0) {
+            return response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/suppliers/message.delete.assoc_maintenances', ['maintenances_count' => $supplier->maintenances_count])));
         }
 
         if ($supplier->licenses_count > 0) {

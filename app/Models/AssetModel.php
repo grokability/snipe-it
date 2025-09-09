@@ -71,6 +71,7 @@ class AssetModel extends SnipeModel
         'name',
         'notes',
         'requestable',
+        'require_serial'
     ];
 
     use Searchable;
@@ -98,8 +99,16 @@ class AssetModel extends SnipeModel
         'manufacturer' => ['name'],
     ];
 
+    protected static function booted(): void
+    {
+        static::forceDeleted(function (AssetModel $assetModel) {
+            $assetModel->requests()->forceDelete();
+        });
 
-
+        static::softDeleted(function (AssetModel $assetModel) {
+            $assetModel->requests()->delete();
+        });
+    }
 
     /**
      * Establishes the model -> assets relationship

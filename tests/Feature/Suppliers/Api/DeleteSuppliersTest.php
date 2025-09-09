@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Suppliers\Api;
 
-use App\Models\AssetMaintenance;
+use App\Models\Maintenance;
 use App\Models\Supplier;
 use App\Models\User;
 use Tests\Concerns\TestsPermissionsRequirement;
@@ -24,17 +24,17 @@ class DeleteSuppliersTest extends TestCase implements TestsPermissionsRequiremen
     public function testCannotDeleteSupplierWithDataStillAssociated()
     {
         $supplierWithAsset = Supplier::factory()->hasAssets()->create();
-        $supplierWithAssetMaintenance = Supplier::factory()->has(AssetMaintenance::factory(), 'asset_maintenances')->create();
+        $supplierWithMaintenance = Supplier::factory()->has(Maintenance::factory(), 'maintenances')->create();
         $supplierWithLicense = Supplier::factory()->hasLicenses()->create();
 
         $actor = $this->actingAsForApi(User::factory()->deleteSuppliers()->create());
 
         $actor->deleteJson(route('api.suppliers.destroy', $supplierWithAsset))->assertStatusMessageIs('error');
-        $actor->deleteJson(route('api.suppliers.destroy', $supplierWithAssetMaintenance))->assertStatusMessageIs('error');
+        $actor->deleteJson(route('api.suppliers.destroy', $supplierWithMaintenance))->assertStatusMessageIs('error');
         $actor->deleteJson(route('api.suppliers.destroy', $supplierWithLicense))->assertStatusMessageIs('error');
 
         $this->assertNotSoftDeleted($supplierWithAsset);
-        $this->assertNotSoftDeleted($supplierWithAssetMaintenance);
+        $this->assertNotSoftDeleted($supplierWithMaintenance);
         $this->assertNotSoftDeleted($supplierWithLicense);
     }
 

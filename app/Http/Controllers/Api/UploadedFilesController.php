@@ -7,18 +7,9 @@ use App\Helpers\StorageHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UploadFileRequest;
 use App\Http\Transformers\UploadedFilesTransformer;
-use App\Models\Accessory;
 use App\Models\Actionlog;
-use App\Models\Asset;
-use App\Models\AssetModel;
-use App\Models\Component;
-use App\Models\Consumable;
-use App\Models\License;
-use App\Models\Location;
-use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -26,45 +17,6 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class UploadedFilesController extends Controller
 {
-
-
-    static $map_object_type = [
-        'accessories' => Accessory::class,
-        'assets' => Asset::class,
-        'components' => Component::class,
-        'consumables' => Consumable::class,
-        'hardware' => Asset::class,
-        'licenses' => License::class,
-        'locations' => Location::class,
-        'models' => AssetModel::class,
-        'users' => User::class,
-    ];
-
-    static $map_storage_path = [
-        'accessories' => 'private_uploads/accessories/',
-        'assets' => 'private_uploads/assets/',
-        'components' => 'private_uploads/components/',
-        'consumables' => 'private_uploads/consumables/',
-        'hardware' => 'private_uploads/assets/',
-        'licenses' => 'private_uploads/licenses/',
-        'locations' => 'private_uploads/locations/',
-        'models' => 'private_uploads/assetmodels/',
-        'users' => 'private_uploads/users/',
-    ];
-
-    static $map_file_prefix= [
-        'accessories' => 'accessory',
-        'assets' => 'asset',
-        'components' => 'component',
-        'consumables' => 'consumable',
-        'hardware' => 'asset',
-        'licenses' => 'license',
-        'locations' => 'location',
-        'models' => 'model',
-        'users' => 'user',
-    ];
-
-
 
 
     /**
@@ -80,7 +32,7 @@ class UploadedFilesController extends Controller
     {
 
         // Check the permissions to make sure the user can view the object
-        $object = self::$map_object_type[$object_type]::find($id);
+        $object = self::$map_object_type[$object_type]::withTrashed()->find($id);
         $this->authorize('view', $object);
 
         if (!$object) {
@@ -98,15 +50,18 @@ class UploadedFilesController extends Controller
                 'created_at',
             ];
 
-        $uploads = $object->uploads();
-        $offset = ($request->input('offset') > $object->count()) ? $object->count() : abs($request->input('offset'));
+
+        $uploads = self::$map_object_type[$object_type]::withTrashed()->find($id)->uploads()
+            ->with('adminuser');
+
+        $offset = ($request->input('offset') > $uploads->count()) ? $uploads->count() : abs($request->input('offset'));
         $limit = app('api_limit_value');
         $order = $request->input('order') === 'asc' ? 'asc' : 'desc';
-        $sort = in_array($request->input('sort'), $allowed_columns) ? $request->input('sort') : 'action_logs.created_at';
+        $sort = in_array($request->input('sort'), $allowed_columns) ? $request->input('sort') : 'created_at';
 
         // Text search on action_logs fields
-        // We could use the normal Actionlogs text scope, but it's a very heavy query since it's searcghing across all relations
-        // And we generally won't need that here
+        // We could use the normal Actionlogs text scope, but it's a very heavy query since it's searching across all relations
+        // and we generally won't need that here
         if ($request->filled('search')) {
 
             $uploads->where(
@@ -117,8 +72,10 @@ class UploadedFilesController extends Controller
             );
         }
 
+        $total = $uploads->count();
         $uploads = $uploads->skip($offset)->take($limit)->orderBy($sort, $order)->get();
-        return (new UploadedFilesTransformer())->transformFiles($uploads, $uploads->count());
+
+        return (new UploadedFilesTransformer())->transformFiles($uploads, $total);
     }
 
 
@@ -135,7 +92,7 @@ class UploadedFilesController extends Controller
     {
 
         // Check the permissions to make sure the user can view the object
-        $object = self::$map_object_type[$object_type]::find($id);
+        $object = self::$map_object_type[$object_type]::withTrashed()->find($id);
         $this->authorize('view', $object);
 
         if (!$object) {
@@ -183,7 +140,7 @@ class UploadedFilesController extends Controller
     public function show($object_type, $id, $file_id) : JsonResponse | StreamedResponse | Storage | StorageHelper | BinaryFileResponse
     {
         // Check the permissions to make sure the user can view the object
-        $object = self::$map_object_type[$object_type]::find($id);
+        $object = self::$map_object_type[$object_type]::withTrashed()->find($id);
         $this->authorize('view', $object);
 
         if (!$object) {
@@ -227,7 +184,7 @@ class UploadedFilesController extends Controller
     {
 
         // Check the permissions to make sure the user can view the object
-        $object = self::$map_object_type[$object_type]::find($id);
+        $object = self::$map_object_type[$object_type]::withTrashed()->find($id);
         $this->authorize('update', self::$map_object_type[$object_type]);
 
         if (!$object) {
@@ -245,7 +202,7 @@ class UploadedFilesController extends Controller
                 Storage::delete(self::$map_storage_path[$object_type].'/'.$log->filename);
             }
             // Delete the record of the file
-            if ($log->delete()) {
+            if ($log->logUploadDelete($object, $log->filename)) {
                 return response()->json(Helper::formatStandardApiResponse('success', null, trans_choice('general.file_upload_status.delete.success', 1)), 200);
             }
 

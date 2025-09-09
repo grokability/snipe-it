@@ -4,8 +4,8 @@ return [
 
     'Accessory_Checkin_Notification' => '配件已归还',
     'Accessory_Checkout_Notification' => '配件已签出',
-    'Asset_Checkin_Notification' => '资产已归还',
-    'Asset_Checkout_Notification' => '资产已签出',
+    'Asset_Checkin_Notification' => 'Asset checked in: [:tag]',
+    'Asset_Checkout_Notification' => 'Asset checked out: [:tag]',
     'Confirm_Accessory_Checkin' => '配件签入确认',
     'Confirm_Asset_Checkin' => '确认资产收回',
     'Confirm_component_checkin' => 'Component checkin confirmation',
@@ -77,6 +77,7 @@ return [
     'name' => '名字',
     'new_item_checked' => '一项新物品已分配至您的名下，详细信息如下。',
     'new_item_checked_with_acceptance' => '一件新物品已借至您的名下，需要签收，详情如下。',
+    'new_item_checked_location' => 'A new item has been checked out to :location, details are below.',
     'recent_item_checked' => '有一件物品刚刚签出到您的名下，需要签收，详情如下。',
     'notes' => '备注',
     'password' => '密码',

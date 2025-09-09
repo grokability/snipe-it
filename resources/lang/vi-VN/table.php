@@ -6,6 +6,6 @@ return array(
     'action' 		        => 'Tác vụ',
     'by'      		        => 'Bởi',
     'item' 			        => 'Mục',
-    'no_matching_records'   => 'No matching records found',
+    'no_matching_records'   => 'Không tìm thấy bản ghi phù hợp.',
 
 );

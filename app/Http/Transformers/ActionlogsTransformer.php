@@ -2,6 +2,7 @@
 namespace App\Http\Transformers;
 
 use App\Helpers\Helper;
+use App\Helpers\StorageHelper;
 use App\Models\Actionlog;
 use App\Models\Asset;
 use App\Models\CustomField;
@@ -16,6 +17,7 @@ use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class ActionlogsTransformer
 {
@@ -48,7 +50,12 @@ class ActionlogsTransformer
 
     public function transformActionlog (Actionlog $actionlog, $settings = null)
     {
+
         $icon = $actionlog->present()->icon();
+
+        if (($actionlog->filename!='') && ($actionlog->action_type!='upload deleted')) {
+            $icon =  Helper::filetype_icon($actionlog->filename);
+        }
 
         static $custom_fields = false;
 
@@ -56,9 +63,7 @@ class ActionlogsTransformer
             $custom_fields = CustomField::all();
         }
 
-        if ($actionlog->filename!='') {
-            $icon =  Helper::filetype_icon($actionlog->filename);
-        }
+
 
         // This is necessary since we can't escape special characters within a JSON object
         if (($actionlog->log_meta) && ($actionlog->log_meta!='')) {
@@ -133,24 +138,6 @@ class ActionlogsTransformer
             $clean_meta= $this->changedInfo($clean_meta);
         }
 
-        $file_url = '';
-        if($actionlog->filename!='') {
-            if ($actionlog->action_type == 'accepted') {
-                $file_url = route('log.storedeula.download', ['filename' => $actionlog->filename]);
-            } else {
-                if ($actionlog->item) {
-                    if ($actionlog->itemType() == 'asset') {
-                        $file_url = route('show/assetfile', ['asset' => $actionlog->item->id, 'fileId' => $actionlog->id]);
-                    } elseif ($actionlog->itemType() == 'accessory') {
-                        $file_url = route('show.accessoryfile', ['accessoryId' => $actionlog->item->id, 'fileId' => $actionlog->id]);
-                    } elseif ($actionlog->itemType() == 'license') {
-                        $file_url = route('show.licensefile', ['licenseId' => $actionlog->item->id, 'fileId' => $actionlog->id]);
-                    } elseif ($actionlog->itemType() == 'user') {
-                        $file_url = route('show/userfile', ['user' => $actionlog->item->id, 'fileId' => $actionlog->id]);
-                    }
-                }
-            }
-        }
 
         $array = [
             'id'          => (int) $actionlog->id,
@@ -158,15 +145,17 @@ class ActionlogsTransformer
             'file' => ($actionlog->filename!='')
                 ?
                 [
-                    'url' => $file_url,
+                    'url' => $actionlog->uploads_file_url(),
                     'filename' => $actionlog->filename,
+                    'inlineable' => StorageHelper::allowSafeInline($actionlog->uploads_file_url()),
+                    'exists_on_disk' => Storage::exists($actionlog->uploads_file_path()) ? true : false,
                 ] : null,
 
             'item' => ($actionlog->item) ? [
                 'id' => (int) $actionlog->item->id,
-                'name' => ($actionlog->itemType()=='user') ? e($actionlog->item->getFullNameAttribute()) : e($actionlog->item->getDisplayNameAttribute()),
+                'name' => e($actionlog->item->display_name) ?? null,
                 'type' => e($actionlog->itemType()),
-                'serial' =>e($actionlog->item->serial) ? e($actionlog->item->serial) : null
+                'serial' => e($actionlog->item->serial) ? e($actionlog->item->serial) : null
             ] : null,
             'location' => ($actionlog->location) ? [
                 'id' => (int) $actionlog->location->id,
@@ -179,19 +168,19 @@ class ActionlogsTransformer
             'action_type'   => $actionlog->present()->actionType(),
             'admin' => ($actionlog->adminuser) ? [
                 'id' => (int) $actionlog->adminuser->id,
-                'name' => e($actionlog->adminuser->getFullNameAttribute()),
+                'name' => e($actionlog->adminuser->display_name) ?? null,
                 'first_name'=> e($actionlog->adminuser->first_name),
                 'last_name'=> e($actionlog->adminuser->last_name)
             ] : null,
             'created_by' => ($actionlog->adminuser) ? [
                 'id' => (int) $actionlog->adminuser->id,
-                'name' => e($actionlog->adminuser->getFullNameAttribute()),
+                'name' => e($actionlog->adminuser->display_name),
                 'first_name'=> e($actionlog->adminuser->first_name),
                 'last_name'=> e($actionlog->adminuser->last_name)
             ] : null,
             'target' => ($actionlog->target) ? [
                 'id' => (int) $actionlog->target->id,
-                'name' => ($actionlog->targetType()=='user') ? e($actionlog->target->getFullNameAttribute()) : e($actionlog->target->getDisplayNameAttribute()),
+                'name' => e($actionlog->target->display_name) ?? null,
                 'type' => e($actionlog->targetType()),
             ] : null,
 

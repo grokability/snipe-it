@@ -196,6 +196,7 @@
                                                                     <input type="checkbox" name="send_welcome" data-livewire-component="{{ $this->getId() }}" wire:model.live="send_welcome">
                                                                     {{ trans('general.send_welcome_email_to_users') }}
                                                                 </label>
+                                                                    <p class="help-block"> {{ trans('general.send_welcome_email_import_help') }}</p>
                                                                 @endif
 
                                                                 <label class="form-control">

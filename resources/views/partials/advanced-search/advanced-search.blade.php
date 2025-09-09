@@ -178,15 +178,15 @@
                     <div id="advancedSearchControlContainer" class="form-group">
                         <button type="submit" class="btn btn-default" id="filterButton">
                             <span aria-hidden="true"></span>
-                            <span class="visually-hidden">🔎 {{ trans('button.search') }}</span>
+                            <span>🔎 {{ trans('button.search') }}</span>
                         </button>
                         <button type="button" class="btn btn-default" id="clearInputButton">
                             <span aria-hidden="true"></span>
-                            <span class="visually-hidden">❌ {{ trans('button.delete_search_query') }}</span>
+                            <span>❌ {{ trans('button.delete_search_query') }}</span>
                         </button>
                         <button type="button" class="btn btn-default" id="setDemoDataButton">
                             <span aria-hidden="true"></span>
-                            <span class="visually-hidden">Fill with testdata</span>
+                            <span>Fill with testdata</span>
                         </button>
                     </div>
                 </span>

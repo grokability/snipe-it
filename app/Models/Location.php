@@ -3,16 +3,11 @@
 namespace App\Models;
 
 use App\Http\Traits\UniqueUndeletedTrait;
-use App\Models\Asset;
-use App\Models\Setting;
-use App\Models\SnipeModel;
+use App\Models\Traits\CompanyableTrait;
 use App\Models\Traits\HasUploads;
 use App\Models\Traits\Searchable;
-use App\Models\User;
 use App\Presenters\Presentable;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Gate;
 use Watson\Validating\ValidatingTrait;

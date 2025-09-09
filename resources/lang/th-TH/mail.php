@@ -4,8 +4,8 @@ return [
 
     'Accessory_Checkin_Notification' => 'เช็คอินอุปกรณ์เสริมแล้ว',
     'Accessory_Checkout_Notification' => 'Accessory checked out',
-    'Asset_Checkin_Notification' => 'เช็คอินสินทรัพย์แล้ว',
-    'Asset_Checkout_Notification' => 'Asset checked out',
+    'Asset_Checkin_Notification' => 'Asset checked in: [:tag]',
+    'Asset_Checkout_Notification' => 'Asset checked out: [:tag]',
     'Confirm_Accessory_Checkin' => 'ยืนยันการเช็คอินอุปกรณ์เสริม',
     'Confirm_Asset_Checkin' => 'ยืนยันการเช็คอินสินทรัพย์',
     'Confirm_component_checkin' => 'Component checkin confirmation',
@@ -77,6 +77,7 @@ return [
     'name' => 'ชื่อ',
     'new_item_checked' => 'รายการใหม่ได้รับการตรวจสอบภายใต้ชื่อของคุณแล้วรายละเอียดมีดังนี้',
     'new_item_checked_with_acceptance' => 'A new item has been checked out under your name that requires acceptance, details are below.',
+    'new_item_checked_location' => 'A new item has been checked out to :location, details are below.',
     'recent_item_checked' => 'An item was recently checked out under your name that requires acceptance, details are below.',
     'notes' => 'จดบันทึก',
     'password' => 'รหัสผ่าน',

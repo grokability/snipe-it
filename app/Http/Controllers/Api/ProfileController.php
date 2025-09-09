@@ -69,7 +69,7 @@ class ProfileController extends Controller
             if ($checkoutRequest && $checkoutRequest->itemRequested()) {
                 $assets = [
                     'image' => e($checkoutRequest->itemRequested()->present()->getImageUrl()),
-                    'name' => e($checkoutRequest->itemRequested()->present()->name()),
+                    'name' => e($checkoutRequest->itemRequested()->display_name),
                     'type' => e($checkoutRequest->itemType()),
                     'qty' => (int) $checkoutRequest->quantity,
                     'location' => ($checkoutRequest->location()) ? e($checkoutRequest->location()->name) : null,

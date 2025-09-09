@@ -85,7 +85,7 @@ class UpdateLocationsTest extends TestCase
         $file = UploadedFile::fake()->image('file.jpg', 100, 100)->size(100);
 
         $this->actingAs(User::factory()->superuser()->create())
-            ->post(route('upload/locations', $location), [
+            ->post(route('ui.files.store', ['object_type' => 'locations', 'id' => $location->id]), [
             'file' => [$file],
             'notes' => 'Test Upload',
         ])

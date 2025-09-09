@@ -86,7 +86,7 @@
                             <td>
                                 @if ($request->requestingUser() && !$request->requestingUser()->trashed())
                                 <a href="{{ config('app.url') }}/users/{{ $request->requestingUser()->id }}">
-                                    {{ $request->requestingUser()->present()->fullName() }}
+                                    {{ $request->requestingUser()->display_name }}
                                 </a>
                                @else
                                     (deleted user)

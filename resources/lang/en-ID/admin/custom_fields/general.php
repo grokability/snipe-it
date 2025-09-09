@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Manage',
     'field'		                => 'Bidang',
     'about_fieldsets_title'		=> 'Tentang Fieldsets',
-    'about_fieldsets_text'		=> 'Fieldsets allow you to create groups of custom fields that are frequently re-used used for specific asset model types.',
+    'about_fieldsets_text'		=> 'Fieldsets memungkinkan Anda membuat kelompok bidang khusus yang sering digunakan kembali untuk jenis model aset tertentu.',
     'custom_format'             => 'Custom Regex format...',
     'encrypt_field'      	        => 'Enkripsikan nilai bidang ini di database',
     'encrypt_field_help'      => 'PERINGATAN: Mengenkripsi sebuah field membuatnya tidak bisa ditelusuri.
@@ -34,7 +34,7 @@ return [
     'create_fieldset_title' => 'Create a new fieldset',
     'create_field'            => 'Kostum field baru',
     'create_field_title' => 'Create a new custom field',
-    'value_encrypted'      	        => 'Nilai field ini dienkripsi dalam database. Hanya pengguna admin yang bisa melihat nilai dekripsi',
+    'value_encrypted'      	        => 'The value of this field is encrypted in the database. Only users with permission to view encrypted custom fields will be able to view the decrypted value',
     'show_in_email'     => 'Sertakan nilai bidang ini dalam semua email keluar yang dikirim ke pengguna? Bidang yang terenkripsi tidak dapat disertakan dalam email',
     'show_in_email_short' => 'Include in emails',
     'help_text' => 'Help Text',

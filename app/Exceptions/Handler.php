@@ -138,13 +138,13 @@ class Handler extends ExceptionHandler
             if (in_array('bulkedit', $ids, true)) {
             $error_array = session()->get('bulk_asset_errors');
                 return redirect()
-                    ->route('hardware.bulkedit')
+                    ->route('hardware.index')
                     ->withErrors($error_array, 'bulk_asset_errors')
                     ->withInput();
             }
 
-        // This gets the MVC model name from the exception and formats in a way that's less fugly
-            $model_name = strtolower(implode(" ", preg_split('/(?=[A-Z])/', last(explode('\\', $e->getModel())))));
+            // This gets the MVC model name from the exception and formats in a way that's less fugly
+            $model_name = trim(strtolower(implode(" ", preg_split('/(?=[A-Z])/', last(explode('\\', $e->getModel()))))));
             $route = str_plural(strtolower(last(explode('\\', $e->getModel())))).'.index';
 
             // Sigh.
@@ -160,9 +160,7 @@ class Handler extends ExceptionHandler
                 $route = 'maintenances.index';
             } elseif ($route === 'licenseseats.index') {
                 $route = 'licenses.index';
-            } elseif ($route === 'customfields.index') {
-                $route = 'fields.index';
-            } elseif ($route === 'customfieldsets.index') {
+            } elseif (($route === 'customfieldsets.index') || ($route === 'customfields.index')) {
                 $route = 'fields.index';
             }
 

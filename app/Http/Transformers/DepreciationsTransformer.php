@@ -33,7 +33,7 @@ class DepreciationsTransformer
             'licenses_count' => ($depreciation->licenses_count > 0) ? (int) $depreciation->licenses_count : 0,
             'created_by' => ($depreciation->adminuser) ? [
                 'id' => (int) $depreciation->adminuser->id,
-                'name'=> e($depreciation->adminuser->present()->fullName()),
+                'name'=> e($depreciation->adminuser->display_name),
             ] : null,
             'created_at' => Helper::getFormattedDateObject($depreciation->created_at, 'datetime'),
             'updated_at' => Helper::getFormattedDateObject($depreciation->updated_at, 'datetime')

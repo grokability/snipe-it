@@ -4,8 +4,8 @@ return [
 
     'Accessory_Checkin_Notification' => 'Ativo verificado em',
     'Accessory_Checkout_Notification' => 'Acessório verificado',
-    'Asset_Checkin_Notification' => 'Ativo verificado em',
-    'Asset_Checkout_Notification' => 'Ativo retornado',
+    'Asset_Checkin_Notification' => 'Asset checked in: [:tag]',
+    'Asset_Checkout_Notification' => 'Asset checked out: [:tag]',
     'Confirm_Accessory_Checkin' => 'Confirme a devolução do acessório',
     'Confirm_Asset_Checkin' => 'Confirme a devolução do ativo',
     'Confirm_component_checkin' => 'Component checkin confirmation',
@@ -77,6 +77,7 @@ return [
     'name' => 'Nome',
     'new_item_checked' => 'Um novo item foi atribuído em seu nome, os detalhes estão abaixo.',
     'new_item_checked_with_acceptance' => 'Um novo item foi registrado em seu nome que requer aceitação, detalhes abaixo.',
+    'new_item_checked_location' => 'A new item has been checked out to :location, details are below.',
     'recent_item_checked' => 'Um novo item foi registrado em seu nome que requer aceitação, detalhes abaixo.',
     'notes' => 'Notas',
     'password' => 'Senha',

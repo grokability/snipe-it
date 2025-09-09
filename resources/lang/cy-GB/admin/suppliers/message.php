@@ -22,7 +22,7 @@ return array(
         'success' => 'Cyflenwr wedi dileu\'n llwyddiannus.',
         'assoc_assets'	 => 'Ar hyn o bryd mae\'r cyflenwr hwn yn gysylltiedig ag :asset_count asset(s) ac ni ellir ei ddileu. Diweddarwch eich asedau i beidio â chyfeirio\'r cyflenwr hwn mwyach a rhowch cynnig arall arni. ',
         'assoc_licenses'	 => 'Ar hyn o bryd mae\'r cyflenwr hwn yn gysylltiedig â :licenses_count trwydded(au) ac ni ellir eu dileu. Diweddarwch eich trwyddedau i beidio â chyfeirio\'r cyflenwr hwn mwyach a rhoi cynnig arall arni. ',
-        'assoc_maintenances'	 => 'Ar hyn o bryd mae\'r cyflenwr hwn yn gysylltiedig â :asset_maintenances_count maint (au) asedau ac ni ellir ei ddileu. Diweddarwch eich cynhaliaeth asedau i beidio â chyfeirio\'r cyflenwr hwn mwyach a rhoi cynnig arall arni. ',
+        'assoc_maintenances'	 => 'This supplier is currently associated with :maintenances_count asset maintenances(s) and cannot be deleted. Please update your asset maintenances to no longer reference this supplier and try again. ',
     )
 
 );

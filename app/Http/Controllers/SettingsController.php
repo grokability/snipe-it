@@ -873,6 +873,7 @@ class SettingsController extends Controller
             $setting->ldap_default_group = $request->input('ldap_default_group');
             $setting->ldap_filter = $request->input('ldap_filter');
             $setting->ldap_username_field = $request->input('ldap_username_field');
+            $setting->ldap_display_name = $request->input('ldap_display_name');
             $setting->ldap_lname_field = $request->input('ldap_lname_field');
             $setting->ldap_fname_field = $request->input('ldap_fname_field');
             $setting->ldap_auth_filter_query = $request->input('ldap_auth_filter_query');
@@ -889,7 +890,12 @@ class SettingsController extends Controller
             $setting->ldap_pw_sync = $request->input('ldap_pw_sync', '0');
             $setting->custom_forgot_pass_url = $request->input('custom_forgot_pass_url');
             $setting->ldap_phone_field = $request->input('ldap_phone');
+            $setting->ldap_mobile = $request->input('ldap_mobile');
             $setting->ldap_jobtitle = $request->input('ldap_jobtitle');
+            $setting->ldap_address = $request->input('ldap_address');
+            $setting->ldap_city = $request->input('ldap_city');
+            $setting->ldap_state = $request->input('ldap_state');
+            $setting->ldap_zip = $request->input('ldap_zip');
             $setting->ldap_country = $request->input('ldap_country');
             $setting->ldap_location = $request->input('ldap_location');
             $setting->ldap_dept = $request->input('ldap_dept');
@@ -1084,6 +1090,7 @@ class SettingsController extends Controller
 
         if (! config('app.lock_passwords')) {
             if (Storage::exists($path.'/'.$filename)) {
+                Log::warning('User '.auth()->user()->username.' is attempting to download backup file: '.$filename);
                 return StorageHelper::downloader($path.'/'.$filename);
             } else {
                 // Redirect to the backup page
@@ -1111,6 +1118,7 @@ class SettingsController extends Controller
                 if (Storage::exists($path . '/' . $filename)) {
 
                     try {
+                        Log::warning('User '.auth()->user()->username.' is attempting to delete backup file: '.$filename);
                         Storage::delete($path . '/' . $filename);
                         return redirect()->route('settings.backups.index')->with('success', trans('admin/settings/message.backup.file_deleted'));
                     } catch (\Exception $e) {
@@ -1190,7 +1198,7 @@ class SettingsController extends Controller
                     '--force' => true,
                 ]);
 
-                Log::debug('Attempting to restore from: '. storage_path($path).'/'.$filename);
+                Log::warning('User '.auth()->user()->username.' is attempting to restore from: '. storage_path($path).'/'.$filename);
 
                 $restore_params = [
                     '--force' => true,
@@ -1339,9 +1347,11 @@ class SettingsController extends Controller
                 'name'  => config('mail.from.name'),
                 'email' => config('mail.from.address'),
             ])->notify(new MailTest());
-
+            Log::debug('Attempting to send mail to '.config('mail.from.address'));
             return response()->json(Helper::formatStandardApiResponse('success', null, trans('mail_sent.mail_sent')));
         } catch (\Exception $e) {
+            Log::error('Mail sent from '.config('mail.from.address') .' with errors '. $e->getMessage());
+            Log::debug($e);
             return response()->json(Helper::formatStandardApiResponse('success', null, $e->getMessage()));
         }
     }

@@ -59,6 +59,9 @@ class PaveIt extends Command
             'migrations',
             'settings',
             'users',
+            'telescope_entries',
+            'telescope_entries_tags',
+            'telescope_monitoring',
         ];
 
         // We only need to find out what these are so we can nuke these columns on the assets table.

@@ -30,10 +30,10 @@ class FieldOption
             if ($asset->relationLoaded('assignedTo')) {
                 // If the "assignedTo" relationship was eager loaded then the way to get the
                 // relationship changes from $asset->assignedTo to $asset->assigned.
-                return $asset->assigned ? $asset->assigned->present()->fullName() : null;
+                return $asset->assigned ? $asset->assigned->display_name : null;
             }
 
-            return $asset->assignedTo ? $asset->assignedTo->present()->fullName() : null;
+            return $asset->assignedTo ? $asset->assignedTo->display_name : null;
         }
 
         // Handle Laravel's stupid Carbon datetime casting

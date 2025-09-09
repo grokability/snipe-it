@@ -4,8 +4,8 @@ return [
 
     'Accessory_Checkin_Notification' => '부속품 반입 됨',
     'Accessory_Checkout_Notification' => 'Accessory checked out',
-    'Asset_Checkin_Notification' => '자산 반입 됨',
-    'Asset_Checkout_Notification' => 'Asset checked out',
+    'Asset_Checkin_Notification' => 'Asset checked in: [:tag]',
+    'Asset_Checkout_Notification' => 'Asset checked out: [:tag]',
     'Confirm_Accessory_Checkin' => '부속품 반입 확인',
     'Confirm_Asset_Checkin' => '자산 반입 확인',
     'Confirm_component_checkin' => 'Component checkin confirmation',
@@ -77,6 +77,7 @@ return [
     'name' => '이름',
     'new_item_checked' => '당신의 이름으로 새 품목이 반출 되었습니다, 이하는 상세입니다.',
     'new_item_checked_with_acceptance' => 'A new item has been checked out under your name that requires acceptance, details are below.',
+    'new_item_checked_location' => 'A new item has been checked out to :location, details are below.',
     'recent_item_checked' => 'An item was recently checked out under your name that requires acceptance, details are below.',
     'notes' => '주석',
     'password' => '비밀번호',

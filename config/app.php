@@ -207,7 +207,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Require SAML Login
+    |  Require SAML Login
     |--------------------------------------------------------------------------
     |
     | Disable the ability to login via form login, and disables the 'nosaml'
@@ -219,6 +219,23 @@ return [
     */
 
     'require_saml' => env('REQUIRE_SAML', false),
+
+    /*
+    |--------------------------------------------------------------------------
+    |  SAML KEYS
+    |--------------------------------------------------------------------------
+    |
+    | This is the size of the keys used by openssl_pkey_new for SAML authentication.
+    | The default is 2048 bits, but this can be changed to 3072 or 4096 bits
+    | for higher security. Note that this will increase the time it takes to
+    | generate the keys, so it is not recommended to set this to a very high value
+    | unless you have a specific need for it.
+    |
+    | The European Commission now requires at least 3072-bit keys for new SAML certificates
+    | @link https://github.com/grokability/snipe-it/issues/17386
+    */
+
+    'saml_key_size' => env('SAML_KEY_SIZE', 2048),
 
 
     /*

@@ -748,7 +748,7 @@ class Helper
         $consumables = Consumable::withCount('consumableAssignments as consumable_assignments_count')->whereNotNull('min_amt')->get();
         $accessories = Accessory::withCount('checkouts as checkouts_count')->whereNotNull('min_amt')->get();
         $components = Component::whereNotNull('min_amt')->get();
-        $asset_models = AssetModel::where('min_amt', '>', 0)->get();
+        $asset_models = AssetModel::where('min_amt', '>', 0)->with('assets')->get();
         $licenses = License::where('min_amt', '>', 0)->get();
 
         $items_array = [];
@@ -811,11 +811,13 @@ class Helper
             }
         }
 
-        foreach ($asset_models as $asset_model){
 
-            $asset = new Asset();
-            $total_owned = $asset->where('model_id', '=', $asset_model->id)->count();
-            $avail = $asset->where('model_id', '=', $asset_model->id)->whereNull('assigned_to')->count();
+
+
+        foreach ($asset_models as $asset_model) {
+
+            $total_owned = $asset_model->assets->count();
+            $avail =  $asset_model->assets->whereNull('assets.assigned_to')->count();
 
             if ($avail < ($asset_model->min_amt) + $alert_threshold) {
                 if ($avail > 0) {
@@ -1197,19 +1199,30 @@ class Helper
             'webp'   => 'far fa-image',
             'avif'   => 'far fa-image',
             'svg' => 'fas fa-vector-square',
+
             // word
             'doc'   => 'far fa-file-word',
             'docx'   => 'far fa-file-word',
+
             // Excel
             'xls'   => 'far fa-file-excel',
             'xlsx'   => 'far fa-file-excel',
+            'ods'   => 'far fa-file-excel',
+
+            // Presentation
+            'ppt'   => 'far fa-file-powerpoint',
+            'odp'   => 'far fa-file-powerpoint',
+
             // archive
             'zip'   => 'fas fa-file-archive',
             'rar'   => 'fas fa-file-archive',
+
             //Text
+            'odt'   => 'far fa-file-alt',
             'txt'   => 'far fa-file-alt',
             'rtf'   => 'far fa-file-alt',
             'xml'   => 'fas fa-code',
+
             // Misc
             'pdf'   => 'far fa-file-pdf',
             'lic'   => 'far fa-save',
@@ -1543,11 +1556,6 @@ class Helper
 
        // return to previous page
         if ($redirect_option === 'back') {
-            if ($backUrl === route('home')) {
-                return redirect()->to($backUrl)
-                ->with('warning', trans('general.page_error'));
-             }
-
             return redirect()->to($backUrl);
         }
 
@@ -1700,5 +1708,5 @@ class Helper
             }
         }
         return $mismatched;
-    }        
+    }
 }

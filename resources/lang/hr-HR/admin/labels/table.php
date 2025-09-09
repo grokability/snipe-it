@@ -9,7 +9,7 @@ return [
     'example_model'      => 'Test Model',
     'example_supplier'   => 'Test Company Limited',
     'labels_per_page'    => 'Labels',
-    'support_fields'     => 'Fields',
+    'support_fields'     => 'Polja',
     'support_asset_tag'  => 'Označiti',
     'support_1d_barcode' => '1D',
     'support_2d_barcode' => '2D',

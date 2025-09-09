@@ -20,9 +20,9 @@ return [
         'multi_success_linked' => 'Asset with tag :links was created successfully.|:count assets were created succesfully. :links.',
         'partial_failure' => 'An asset was unable to be created. Reason: :failures|:count assets were unable to be created. Reasons: :failures',
         'target_not_found' => [
-            'user' => 'The assigned user could not be found.',
-            'asset' => 'The assigned asset could not be found.',
-            'location' => 'The assigned location could not be found.',
+            'user' => 'המשתמש המוגדר לא ניתן לאיתור.',
+            'asset' => 'הפריט המוקצה לא ניתן לאיתור.',
+            'location' => 'המיקום המוגדר לא נמצא.',
         ],
     ],
 
@@ -31,19 +31,19 @@ return [
         'success' 			=> 'הנכס עודכן בהצלחה.',
         'encrypted_warning' => 'הנכס עודכן בהצלחה, אבל השדות המותאמים-אישית שמוצפנים לא עודכנו בגלל מחסור בהרשאות',
         'nothing_updated'	=>  'לא נבחרו שדות, ולכן דבר לא עודכן.',
-        'no_assets_selected'  =>  'No assets were selected, so nothing was updated.',
-        'assets_do_not_exist_or_are_invalid' => 'Selected assets cannot be updated.',
+        'no_assets_selected'  =>  'לא נבחרו פריטים, לא בוצעו שינויים.',
+        'assets_do_not_exist_or_are_invalid' => 'הפריטים הנבחרים לא יכולים להתעדכן.',
     ],
 
     'restore' => [
         'error'   		=> 'הנכס לא שוחזר, נסה שוב',
         'success' 		=> 'הנכס שוחזר בהצלחה.',
         'bulk_success' 		=> 'הנכס שוחזר בהצלחה.',
-        'nothing_updated'   => 'No assets were selected, so nothing was restored.', 
+        'nothing_updated'   => 'לא נבחרו פריטים, כלום לא שוחזר.', 
     ],
 
     'audit' => [
-        'error'   		=> 'Asset audit unsuccessful: :error ',
+        'error'   		=> 'ביקורת פריט לא הצליחה: :error ',
         'success' 		=> 'ביקורת נכסים נרשמה בהצלחה.',
     ],
 
@@ -61,15 +61,15 @@ return [
     ],
 
     'import' => [
-        'import_button'         => 'Process Import',
+        'import_button'         => 'יבוא תהליך',
         'error'                 => 'פריטים מסוימים לא ייבאו כראוי.',
         'errorDetail'           => 'הפריטים הבאים לא יובאו בגלל שגיאות.',
         'success'               => 'הקובץ שלך יובא',
         'file_delete_success'   => 'הקובץ שלך נמחק בהצלחה',
         'file_delete_error'      => 'לא ניתן היה למחוק את הקובץ',
-        'file_missing' => 'The file selected is missing',
-        'file_already_deleted' => 'The file selected was already deleted',
-        'header_row_has_malformed_characters' => 'One or more attributes in the header row contain malformed UTF-8 characters',
+        'file_missing' => 'הקובץ הנבחר חסר',
+        'file_already_deleted' => 'הקובץ הנבחר כבר נמחק',
+        'header_row_has_malformed_characters' => 'אחד או יותר נתונים בעמודות הכותרת מכילים תווי UTF-8 פגומים',
         'content_row_has_malformed_characters' => 'One or more attributes in the first row of content contain malformed UTF-8 characters',
         'transliterate_failure' => 'Transliteration from :encoding to UTF-8 failed due to invalid characters in input'
     ],
@@ -108,7 +108,7 @@ return [
         'error'   		=> 'הבקשה לא הצליחה, נא לנסות שוב.',
         'success' 		=> 'Request successfully submitted.',
         'canceled'      => 'הבקשה בוטלה בהצלחה.',
-        'cancel'        => 'Cancel this item request',
+        'cancel'        => 'בטל בקשה עבור פריט זה',
     ],
 
 ];

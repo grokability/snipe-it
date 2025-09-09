@@ -4,8 +4,8 @@ return [
 
     'Accessory_Checkin_Notification' => 'Aksesuar Zimmet Kabul',
     'Accessory_Checkout_Notification' => 'Aksesuar teslim alındı',
-    'Asset_Checkin_Notification' => 'Varlık Zimmet Kabul',
-    'Asset_Checkout_Notification' => 'Varlık teslim alındı',
+    'Asset_Checkin_Notification' => 'Asset checked in: [:tag]',
+    'Asset_Checkout_Notification' => 'Asset checked out: [:tag]',
     'Confirm_Accessory_Checkin' => 'Aksesuar giriş onayı',
     'Confirm_Asset_Checkin' => 'Varlık Kabul Onayı',
     'Confirm_component_checkin' => 'Component checkin confirmation',
@@ -77,6 +77,7 @@ return [
     'name' => 'Ad',
     'new_item_checked' => 'Yeni varlık altında kullanıma alındı, ayrıntıları aşağıdadır.',
     'new_item_checked_with_acceptance' => 'A new item has been checked out under your name that requires acceptance, details are below.',
+    'new_item_checked_location' => 'A new item has been checked out to :location, details are below.',
     'recent_item_checked' => 'An item was recently checked out under your name that requires acceptance, details are below.',
     'notes' => 'Notlar',
     'password' => 'Şifre',

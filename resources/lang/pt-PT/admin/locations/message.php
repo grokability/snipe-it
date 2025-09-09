@@ -23,7 +23,7 @@ return array(
 
     'restore' => array(
         'error'   => 'Location was not restored, please try again',
-        'success' => 'Location restored successfully.'
+        'success' => 'Localização restaurada com sucesso.'
     ),
 
     'delete' => array(

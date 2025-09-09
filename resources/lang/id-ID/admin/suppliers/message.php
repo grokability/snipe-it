@@ -22,7 +22,7 @@ return array(
         'success' => 'Sukses menghapus pemasok.',
         'assoc_assets'	 => 'Saat ini pemasok ini terkait dengan :asset_count aset dan tidak dapat dihapus. Harap perbarui aset Anda agar tidak lagi menggunakan pemasok ini sebagai referensi dan silakan coba lagi. ',
         'assoc_licenses'	 => 'Saat ini pemasok ini terkait dengan :licenses_count lisensi dan tidak dapat dihapus. Harap perbarui lisensi Anda agar tidak lagi menggunakan pemasok ini sebagai referensi dan silakan coba lagi. ',
-        'assoc_maintenances'	 => 'Saat ini pemasok ini terkait dengan :asset_maintenances_count pemeliharaan aset dan tidak dapat dihapus. Harap perbarui pemeliharaan aset Anda agar tidak lagi menggunakan pemasok ini sebagai referensi dan silakan coba lagi. ',
+        'assoc_maintenances'	 => 'This supplier is currently associated with :maintenances_count asset maintenances(s) and cannot be deleted. Please update your asset maintenances to no longer reference this supplier and try again. ',
     )
 
 );

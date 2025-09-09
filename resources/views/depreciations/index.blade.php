@@ -6,12 +6,6 @@
 @parent
 @stop
 
-@section('header_right')
-<a href="{{ route('depreciations.create') }}" class="btn btn-primary pull-right">
-  {{ trans('general.create') }}</a>
-@stop
-
-
 {{-- Page content --}}
 @section('content')
 
@@ -26,6 +20,7 @@
                   data-side-pagination="server"
                   data-sort-order="asc"
                   id="depreciationsTable"
+                  data-buttons="depreciationButtons"
                   class="table table-striped snipe-table"
                   data-url="{{ route('api.depreciations.index') }}"
                   data-export-options='{

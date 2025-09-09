@@ -57,14 +57,14 @@ use NotificationChannels\MicrosoftTeams\MicrosoftTeamsMessage;
         $channel = ($this->settings->webhook_channel) ? $this->settings->webhook_channel : '';
         return (new SlackMessage)
             ->success()
-            ->content(class_basename(get_class($this->params['item'])).' Audited')
+            ->content(class_basename(get_class($this->params['item'])).' '.trans('general.audited'))
             ->from(($this->settings->webhook_botname) ? $this->settings->webhook_botname : 'Snipe-Bot')
             ->to($channel)
             ->attachment(function ($attachment) {
                 $item = $this->params['item'];
                 $admin_user = $this->params['admin'];
                 $fields = [
-                    'By' => '<'.$admin_user->present()->viewUrl().'|'.$admin_user->present()->fullName().'>',
+                    'By' => '<'.$admin_user->present()->viewUrl().'|'.$admin_user->display_name.'>',
                 ];
                 array_key_exists('note', $this->params) && $fields['Notes'] = $this->params['note'];
                 array_key_exists('location', $this->params) && $fields['Location'] = $this->params['location'];
@@ -76,24 +76,24 @@ use NotificationChannels\MicrosoftTeams\MicrosoftTeamsMessage;
 
     public static function toMicrosoftTeams($params)
     {
-        $item = $params['item'];
-        $admin_user = $params['admin'];
-        $note = $params['note'];
-        $location = $params['location'];
+        $item = $params['item'] ?? null;
+        $admin_user = $params['admin'] ?? null;
+        $note = $params['note'] ?? '';
+        $location = $params['location'] ?? '';
         $setting = Setting::getSettings();
 
         if(!Str::contains($setting->webhook_endpoint, 'workflows')) {
             return MicrosoftTeamsMessage::create()
                 ->to($setting->webhook_endpoint)
                 ->type('success')
-                ->title(class_basename(get_class($params['item'])) . ' Audited')
+                ->title(class_basename(get_class($params['item'])) .' '.trans('general.audited'))
                 ->addStartGroupToSection('activityText')
                 ->fact(trans('mail.asset'), $item)
-                ->fact(trans('general.administrator'), $admin_user->present()->viewUrl() . '|' . $admin_user->present()->fullName());
+                ->fact(trans('general.administrator'), $admin_user->present()->viewUrl() . '|' . $admin_user->display_name);
         }
-            $message = class_basename(get_class($params['item'])) . ' Audited By '.$admin_user->present()->fullName();
+            $message = class_basename(get_class($params['item'])) . ' Audited By '.$admin_user->display_name;
             $details = [
-                trans('mail.asset') => htmlspecialchars_decode($item->present()->name),
+                trans('mail.asset') => htmlspecialchars_decode($item->display_name),
                 trans('mail.notes') => $note ?: '',
                 trans('general.location') => $location ?: '',
                 ];

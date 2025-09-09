@@ -2,7 +2,7 @@
 
 {{-- Page title --}}
 @section('title')
-{{ trans('admin/users/general.view_user', ['name' => $user->present()->fullName()]) }}
+{{ trans('admin/users/general.view_user', ['name' => $user->display_name]) }}
 @parent
 @stop
 
@@ -45,7 +45,7 @@
             <x-icon type="assets" class="fa-2x" />
             </span>
             <span class="hidden-xs hidden-sm">{{ trans('general.assets') }}
-              {!! ($user->assets()->AssetsForShow()->count() > 0 ) ? '<badge class="badge badge-secondary">'.number_format($user->assets()->AssetsForShow()->withoutTrashed()->count()).'</badge>' : '' !!}
+              {!! ($user->assets()->AssetsForShow()->count() > 0 ) ? '<span class="badge badge-secondary">'.number_format($user->assets()->AssetsForShow()->withoutTrashed()->count()).'</span>' : '' !!}
             </span>
           </a>
         </li>
@@ -56,7 +56,7 @@
             <x-icon type="licenses" class="fa-2x" />
             </span>
             <span class="hidden-xs hidden-sm">{{ trans('general.licenses') }}
-              {!! ($user->licenses->count() > 0 ) ? '<badge class="badge badge-secondary">'.number_format($user->licenses->count()).'</badge>' : '' !!}
+              {!! ($user->licenses->count() > 0 ) ? '<span class="badge badge-secondary">'.number_format($user->licenses->count()).'</span>' : '' !!}
             </span>
           </a>
         </li>
@@ -67,7 +67,7 @@
             <x-icon type="accessories" class="fa-2x" />
             </span> 
             <span class="hidden-xs hidden-sm">{{ trans('general.accessories') }}
-              {!! ($user->accessories->count() > 0 ) ? '<badge class="badge badge-secondary">'.number_format($user->accessories->count()).'</badge>' : '' !!}
+              {!! ($user->accessories->count() > 0 ) ? '<span class="badge badge-secondary">'.number_format($user->accessories->count()).'</span>' : '' !!}
             </span>
           </a>
         </li>
@@ -78,7 +78,7 @@
                 <x-icon type="consumables" class="fa-2x" />
             </span>
             <span class="hidden-xs hidden-sm">{{ trans('general.consumables') }}
-              {!! ($user->consumables->count() > 0 ) ? '<badge class="badge badge-secondary">'.number_format($user->consumables->count()).'</badge>' : '' !!}
+              {!! ($user->consumables->count() > 0 ) ? '<span class="badge badge-secondary">'.number_format($user->consumables->count()).'</span>' : '' !!}
             </span>
           </a>
         </li>
@@ -89,7 +89,7 @@
                 <x-icon type="files" class="fa-2x" />
             </span>
             <span class="hidden-xs hidden-sm">{{ trans('general.file_uploads') }}
-              {!! ($user->uploads->count() > 0 ) ? '<badge class="badge badge-secondary">'.number_format($user->uploads->count()).'</badge>' : '' !!}
+              {!! ($user->uploads->count() > 0 ) ? '<span class="badge badge-secondary">'.number_format($user->uploads->count()).'</span>' : '' !!}
             </span>
           </a>
         </li>
@@ -110,7 +110,7 @@
                 <x-icon type="locations" class="fa-2x" />
             </span>
             <span class="hidden-xs hidden-sm">{{ trans('admin/users/table.managed_locations') }}
-              {!! ($user->managedLocations->count() > 0 ) ? '<badge class="badge badge-secondary">'.number_format($user->managedLocations->count()).'</badge>' : '' !!}
+              {!! ($user->managedLocations->count() > 0 ) ? '<span class="badge badge-secondary">'.number_format($user->managedLocations->count()).'</span>' : '' !!}
           </a>
         </li>
         @endif
@@ -122,7 +122,7 @@
                       <x-icon type="users" class="fa-2x" />
                     </span>
                       <span class="hidden-xs hidden-sm">{{ trans('admin/users/table.managed_users') }}
-                      {!! ($user->managesUsers->count() > 0 ) ? '<badge class="badge badge-secondary">'.number_format($user->managesUsers->count()).'</badge>' : '' !!}
+                      {!! ($user->managesUsers->count() > 0 ) ? '<span class="badge badge-secondary">'.number_format($user->managesUsers->count()).'</span>' : '' !!}
                   </a>
               </li>
           @endif
@@ -179,7 +179,7 @@
 
               </div>
               <div class="col-md-12 text-center">
-                <img src="{{ $user->present()->gravatar() }}"  class=" img-thumbnail hidden-print" style="margin-bottom: 20px;" alt="{{ $user->present()->fullName() }}">
+                <img src="{{ $user->present()->gravatar() }}"  class=" img-thumbnail hidden-print" style="margin-bottom: 20px;" alt="{{ $user->display_name }}">
                </div>
 
               @can('update', $user)
@@ -266,7 +266,7 @@
                   @if ($user->deleted_at=='')
                     <div class="col-md-12" style="padding-top: 30px;">
                         @if ($user->isDeletable())
-                            <a href="#" class="btn-block delete-asset btn btn-sm btn-danger btn-social hidden-print" data-toggle="modal" data-title="{{ trans('general.delete') }}" data-content="{{ trans('general.sure_to_delete_var', ['item' => $user->present()->fullName]) }}" data-target="#dataConfirmModal">
+                            <a href="" class="delete-asset btn-block btn btn-sm btn-danger btn-social hidden-print" data-toggle="modal" data-title="{{ trans('general.delete') }}" data-content="{{ trans('general.sure_to_delete_var', ['item' => $user->display_name]) }}" data-icon="fa-trash" data-target="#dataConfirmModal" onClick="return false;" >
                                 <x-icon type="delete" />
                                 {{ trans('button.delete')}}
                             </a>
@@ -319,33 +319,12 @@
                         {{ trans('admin/users/table.name') }}
                       </div>
                       <div class="col-md-9">
-                        {{ $user->present()->fullName() }}
+                        {{ $user->first_name }} {{ $user->last_name }}
                       </div>
 
                   </div>
 
 
-
-                   <!-- company -->
-                    @if (!is_null($user->company))
-                    <div class="row">
-
-                      <div class="col-md-3">
-                        {{ trans('general.company') }}
-                      </div>
-                      <div class="col-md-9">
-                          @can('view', 'App\Models\Company')
-                            <a href="{{ route('companies.show', $user->company->id) }}">
-                                {{ $user->company->name }}
-                            </a>
-                              @else
-                              {{ $user->company->name }}
-                            @endcan
-                      </div>
-
-                    </div>
-
-                    @endif
 
                     <!-- username -->
                     <div class="row">
@@ -365,6 +344,19 @@
                       </div>
 
                     </div>
+
+                   <!-- display name -->
+                   @if ($user->display_name)
+                   <div class="row">
+
+                       <div class="col-md-3">
+                           {{ trans('admin/users/table.display_name') }}
+                       </div>
+                       <div class="col-md-9">
+                           {{ $user->getRawOriginal('display_name') }}
+                       </div>
+                   </div>
+                   @endif
 
                     <!-- address -->
                     @if (($user->address) || ($user->city) || ($user->state) || ($user->country))
@@ -394,6 +386,26 @@
                     </div>
                     @endif
 
+                   <!-- company -->
+                   @if (!is_null($user->company))
+                       <div class="row">
+
+                           <div class="col-md-3">
+                               {{ trans('general.company') }}
+                           </div>
+                           <div class="col-md-9">
+                               @can('view', 'App\Models\Company')
+                                   <a href="{{ route('companies.show', $user->company->id) }}">
+                                       {{ $user->company->name }}
+                                   </a>
+                               @else
+                                   {{ $user->company->name }}
+                               @endcan
+                           </div>
+
+                       </div>
+
+                   @endif
 
                      <!-- groups -->
                      <div class="row">
@@ -478,7 +490,7 @@
                         </div>
                         <div class="col-md-9">
                           <a href="{{ route('users.show', $user->manager->id) }}">
-                            {{ $user->manager->getFullNameAttribute() }}
+                            {{ $user->manager->display_name }}
                           </a>
                         </div>
 
@@ -527,6 +539,19 @@
                       </div>
                     @endif
 
+                   @if ($user->mobile)
+                       <!-- phone -->
+                       <div class="row">
+                           <div class="col-md-3">
+                               {{ trans('admin/users/table.mobile') }}
+                           </div>
+                           <div class="col-md-9">
+                               <a href="tel:{{ $user->mobile }}" data-tooltip="true" title="{{ trans('general.call') }}">
+                                   <x-icon type="mobile" />
+                                   {{ $user->mobile }}</a>
+                           </div>
+                       </div>
+                   @endif
                     @if ($user->userloc)
                      <!-- location -->
                      <div class="row">
@@ -588,7 +613,7 @@
                           @if ($user->createdBy)
                               -
                               @if ($user->createdBy->deleted_at=='')
-                                  <a href="{{ route('users.show', ['user' => $user->created_by]) }}">{{ $user->createdBy->present()->fullName }}</a>
+                                  <a href="{{ route('users.show', ['user' => $user->created_by]) }}">{{ $user->createdBy->display_name }}</a>
                               @else
                                   <del>{{ $user->createdBy->present()->fullName }}</del>
                               @endif
@@ -809,10 +834,11 @@
                     data-bulk-button-id="#bulkAssetEditButton"
                     data-bulk-form-id="#assetsBulkForm"
                     id="userAssetsListingTable"
+                    data-buttons="assetButtons"
                     class="table table-striped snipe-table"
                     data-url="{{ route('api.assets.index',['assigned_to' => e($user->id), 'assigned_type' => 'App\Models\User']) }}"
                     data-export-options='{
-                "fileName": "export-{{ str_slug($user->present()->fullName()) }}-assets-{{ date('Y-m-d') }}",
+                "fileName": "export-{{ str_slug($user->username) }}-assets-{{ date('Y-m-d') }}",
                 "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
                 }'>
             </table>
@@ -827,6 +853,7 @@
                     data-cookie-id-table="userLicenseTable"
                     data-id-table="userLicenseTable"
                     id="userLicenseTable"
+                    data-buttons="licenseButtons"
                     data-side-pagination="client"
                     data-show-footer="true"
                     data-sort-name="name"
@@ -886,6 +913,7 @@
                     data-cookie-id-table="userAccessoryTable"
                     data-id-table="userAccessoryTable"
                     id="userAccessoryTable"
+                    data-buttons="accessoryButtons"
                     data-side-pagination="client"
                     data-sort-name="name"
                     class="table table-striped snipe-table table-hover"
@@ -895,11 +923,12 @@
                     }'>
               <thead>
                 <tr>
-                    <th class="col-md-1">{{ trans('general.id') }}</th>
-                    <th class="col-md-4">{{ trans('general.name') }}</th>
-                    <th class="col-md-5" data-fieldname="note">{{ trans('general.notes') }}</th>
-                    <th class="col-md-1" data-footer-formatter="sumFormatter" data-fieldname="purchase_cost">{{ trans('general.purchase_cost') }}</th>
-                    <th class="col-md-1 hidden-print">{{ trans('general.action') }}</th>
+                    <th>{{ trans('general.id') }}</th>
+                    <th>{{ trans('general.name') }}</th>
+                    <th>{{ trans('general.date') }}</th>
+                    <th data-fieldname="note">{{ trans('general.notes') }}</th>
+                    <th data-footer-formatter="sumFormatter" data-fieldname="purchase_cost">{{ trans('general.purchase_cost') }}</th>
+                    <th class="hidden-print">{{ trans('general.action') }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -907,6 +936,7 @@
                   <tr>
                       <td>{{ $accessory->pivot->id }}</td>
                       <td>{!!$accessory->present()->nameUrl()!!}</td>
+                      <td>{{ Helper::getFormattedDateObject($accessory->pivot->created_at, 'datetime',  false) }}</td>
                       <td>{!! $accessory->pivot->note !!}</td>
                       <td>
                       {!! Helper::formatCurrencyOutput($accessory->purchase_cost) !!}
@@ -929,6 +959,7 @@
                     data-cookie-id-table="userConsumableTable"
                     data-id-table="userConsumableTable"
                     id="userConsumableTable"
+                    data-buttons="consumableButtons"
                     data-side-pagination="client"
                     data-show-footer="true"
                     data-sort-name="name"
@@ -965,11 +996,7 @@
           <div class="row">
 
             <div class="col-md-12 col-sm-12">
-                <x-filestable
-                        filepath="private_uploads/users/"
-                        showfile_routename="show/userfile"
-                        deletefile_routename="userfile.destroy"
-                        :object="$user" />
+                <x-filestable object_type="users" :object="$user" />
             </div>
           </div> <!--/ROW-->
         </div><!--/FILES-->
@@ -1010,6 +1037,7 @@
                     data-bulk-form-id="#locationsBulkForm"
                     data-side-pagination="server"
                     id="locationTable"
+                    data-buttons="locationButtons"
                     class="table table-striped snipe-table"
                     data-url="{{ route('api.locations.index', ['manager_id' => $user->id]) }}"
                     data-export-options='{
@@ -1034,6 +1062,7 @@
                       data-bulk-form-id="#usersBulkForm"
                       data-side-pagination="server"
                       id="managedUsersTable"
+                      data-buttons="userButtons"
                       class="table table-striped snipe-table"
                       data-url="{{ route('api.users.index', ['manager_id' => $user->id]) }}"
                       data-export-options='{
@@ -1061,12 +1090,6 @@
 <script nonce="{{ csrf_token() }}">
 $(function () {
 
-$('#dataConfirmModal').on('show.bs.modal', function (event) {
-    var content = $(event.relatedTarget).data('content');
-    var title = $(event.relatedTarget).data('title');
-    $(this).find(".modal-body").text(content);
-    $(this).find(".modal-header").text(title);
- });
 
 
   $("#two_factor_reset").click(function(){

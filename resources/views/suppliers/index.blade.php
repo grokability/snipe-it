@@ -10,12 +10,6 @@
 @section('content')
 
 
-@section('header_right')
-  @can('create', \App\Models\Supplier::class)
-    <a href="{{ route('suppliers.create') }}" class="btn btn-primary pull-right"> {{ trans('general.create') }}</a>
-  @endcan
-@stop
-
 <div class="row">
   <div class="col-md-12">
     <div class="box box-default">
@@ -27,6 +21,7 @@
             data-side-pagination="server"
             data-sort-order="asc"
             id="suppliersTable"
+            data-buttons="supplierButtons"
             class="table table-striped snipe-table"
             data-url="{{ route('api.suppliers.index') }}"
             data-export-options='{

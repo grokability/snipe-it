@@ -54,7 +54,7 @@
                         </span>
                         <span class="hidden-xs hidden-sm">
                             {{ trans('general.assets') }}
-                            {!! ($model->assets()->AssetsForShow()->count() > 0 ) ? '<badge class="badge badge-secondary">'.number_format($model->assets()->AssetsForShow()->count()).'</badge>' : '' !!}
+                            {!! ($model->assets()->AssetsForShow()->count() > 0 ) ? '<span class="badge badge-secondary">'.number_format($model->assets()->AssetsForShow()->count()).'</span>' : '' !!}
                         </span>
                     </a>
                 </li>
@@ -67,7 +67,7 @@
                         </span>
                         <span class="hidden-xs hidden-sm">
                             {{ trans('general.files') }}
-                            {!! ($model->uploads->count() > 0 ) ? '<badge class="badge badge-secondary">'.number_format($model->uploads->count()).'</badge>' : '' !!}
+                            {!! ($model->uploads->count() > 0 ) ? '<span class="badge badge-secondary">'.number_format($model->uploads->count()).'</span>' : '' !!}
                           </span>
                     </a>
                 </li>
@@ -110,11 +110,7 @@
                     <div class="row">
                         <div class="col-md-12">
 
-                            <x-filestable
-                                    filepath="private_uploads/assetmodels/"
-                                    showfile_routename="show/modelfile"
-                                    deletefile_routename="delete/modelfile"
-                                    :object="$model" />
+                            <x-filestable object_type="models" :object="$model" />
 
                         </div> <!-- /.col-md-12 -->
                     </div> <!-- /.row -->
@@ -253,7 +249,7 @@
                         @if ($model->adminuser)
                             <li>
                                 <strong>{{ trans('general.created_by') }}</strong>:
-                                {{ $model->adminuser->present()->name() }}
+                                {{ $model->adminuser->display_name }}
                             </li>
                         @endif
 
@@ -297,7 +293,7 @@
                             {{ trans('general.delete') }}
                         </button>
                     @else
-                        <button class="btn btn-block btn-sm btn-danger btn-social delete-asset" data-toggle="modal" title="{{ trans('general.delete_what', ['item'=> trans('general.asset_model')]) }}" data-content="{{ trans('general.sure_to_delete_var', ['item' => $model->name]) }}" data-target="#dataConfirmModal" data-tooltip="true"  data-placement="top" data-title="{{ trans('general.delete_what', ['item'=> trans('general.asset_model')]) }}">
+                        <button class="btn btn-block btn-sm btn-danger btn-social delete-asset" data-toggle="modal" title="{{ trans('general.delete_what', ['item'=> trans('general.asset_model')]) }}" data-content="{{ trans('general.sure_to_delete_var', ['item' => $model->name]) }}" data-target="#dataConfirmModal" data-tooltip="true" data-icon="fa fa-trash" data-placement="top" data-title="{{ trans('general.delete_what', ['item'=> trans('general.asset_model')]) }}" onClick="return false;">
                             <x-icon type="delete" />
                             {{ trans('general.delete') }}
                         </button>
@@ -314,15 +310,6 @@
 @stop
 
 @section('moar_scripts')
-
-        <script>
-            $('#dataConfirmModal').on('show.bs.modal', function (event) {
-                var content = $(event.relatedTarget).data('content');
-                var title = $(event.relatedTarget).data('title');
-                $(this).find(".modal-body").text(content);
-                $(this).find(".modal-header").text(title);
-            });
-        </script>
 
     @include ('partials.bootstrap-table', ['exportFile' => 'manufacturer' . $model->name . '-export', 'search' => false])
 

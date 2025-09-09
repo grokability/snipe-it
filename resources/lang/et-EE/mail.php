@@ -4,8 +4,8 @@ return [
 
     'Accessory_Checkin_Notification' => 'Tarvikud sisse võetud',
     'Accessory_Checkout_Notification' => 'Tarvik väljastatud',
-    'Asset_Checkin_Notification' => 'Vara sissevõetud',
-    'Asset_Checkout_Notification' => 'Vara väljastatud',
+    'Asset_Checkin_Notification' => 'Asset checked in: [:tag]',
+    'Asset_Checkout_Notification' => 'Asset checked out: [:tag]',
     'Confirm_Accessory_Checkin' => 'Tarviku vastuvõtmise kinnitus',
     'Confirm_Asset_Checkin' => 'Vara sissevõtmise kinnitus',
     'Confirm_component_checkin' => 'Component checkin confirmation',
@@ -77,6 +77,7 @@ return [
     'name' => 'Nimi',
     'new_item_checked' => 'Uus vara on Teie nimele väljastatud, üksikasjad on allpool.',
     'new_item_checked_with_acceptance' => 'A new item has been checked out under your name that requires acceptance, details are below.',
+    'new_item_checked_location' => 'A new item has been checked out to :location, details are below.',
     'recent_item_checked' => 'An item was recently checked out under your name that requires acceptance, details are below.',
     'notes' => 'Märkused',
     'password' => 'Parool',

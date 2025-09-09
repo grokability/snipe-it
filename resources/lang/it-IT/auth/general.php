@@ -14,7 +14,7 @@ return [
     'username_help_bottom'          => 'Il tuo nome utente e indirizzo email <em>possono</em> essere gli stessi, ma potrebbe non essere così a seconda della tua configurazione. Se non riesci a ricordare il tuo nome utente, contatta l\'amministratore. <br><br><strong>I nomi utente senza un indirizzo email associato non potranno ricevere via email il link di reimpostazione della password.</strong> ',
     'google_login'                  => 'Accedi con Google Workspace',
     'google_login_failed'           => 'Accesso con Google non riuscito, riprova.',
-    'invite_password_expires'       => 'This password reset link will expire on :expire_date. You can use the manual password reset link to receive a new reset token by clicking here',
+    'invite_password_expires'       => 'Questo link di reset della password scadrà il :expire_date. Puoi usare il link di reset della password manuale per ricevere un nuovo token di reset cliccando qui',
 
 ];
 

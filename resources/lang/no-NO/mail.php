@@ -4,8 +4,8 @@ return [
 
     'Accessory_Checkin_Notification' => 'Tilbehør sjekket inn',
     'Accessory_Checkout_Notification' => 'Tilbehør sjekket ut',
-    'Asset_Checkin_Notification' => 'Eiendel sjekket inn',
-    'Asset_Checkout_Notification' => 'Ressurs sjekket ut',
+    'Asset_Checkin_Notification' => 'Asset checked in: [:tag]',
+    'Asset_Checkout_Notification' => 'Asset checked out: [:tag]',
     'Confirm_Accessory_Checkin' => 'Bekreft innsjekk av tilbehør',
     'Confirm_Asset_Checkin' => 'Bekreft innsjekk av eiendel',
     'Confirm_component_checkin' => 'Component checkin confirmation',
@@ -77,6 +77,7 @@ return [
     'name' => 'Navn',
     'new_item_checked' => 'En ny enhet har blitt sjekket ut under ditt navn, detaljer nedenfor.',
     'new_item_checked_with_acceptance' => 'A new item has been checked out under your name that requires acceptance, details are below.',
+    'new_item_checked_location' => 'A new item has been checked out to :location, details are below.',
     'recent_item_checked' => 'An item was recently checked out under your name that requires acceptance, details are below.',
     'notes' => 'Notater',
     'password' => 'Passord',

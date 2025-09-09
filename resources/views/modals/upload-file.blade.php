@@ -8,7 +8,7 @@
             </div>
             <form
                 method="POST"
-                action="{{ route('upload/' . $item_type, $item_id) }}"
+                action="{{ route('ui.files.store', ['object_type' => str_plural($item_type), 'id' => $item_id]) }}"
                 accept-charset="UTF-8"
                 class="form-horizontal"
                 enctype="multipart/form-data"

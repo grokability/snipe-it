@@ -8,23 +8,6 @@
 @parent
 @stop
 
-@section('header_right')
-
-    <a href="{{ URL::previous() }}" class="btn btn-primary" style="margin-right: 10px;">
-        {{ trans('general.back') }}</a>
-
-<div class="btn-group pull-right">
-  <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">{{ trans('button.actions') }}
-    <span class="caret"></span>
-  </button>
-  <ul class="dropdown-menu">
-    <li><a href="{{ route('categories.edit', ['category' => $category->id]) }}">{{ trans('admin/categories/general.edit') }}</a></li>
-    <li><a href="{{ route('categories.create') }}">{{ trans('general.create') }}</a></li>
-  </ul>
-
-</div>
-@stop
-
 {{-- Page content --}}
 @section('content')
 
@@ -39,6 +22,9 @@
                         <a href="#items" data-toggle="tab" title="{{ trans('general.items') }}">
                             @if ($category->category_type=='asset')
                                 {{ trans('general.assets') }}
+                                @if ($category->showableAssets()->count() > 0)
+                                    <span class="badge badge-secondary"> {{ $category->showableAssets()->count() }}</span>
+                                @endif
                             @elseif ($category->category_type=='accessory')
                                 {{ trans('general.accessories') }}
                             @elseif ($category->category_type=='license')
@@ -49,16 +35,15 @@
                                 {{ trans('general.components') }}
                             @endif
 
-                            @if ($category->category_type=='asset')
-                            <badge class="badge badge-secondary"> {{ $category->showableAssets()->count() }}</badge>
-                            @endif
                         </a>
                     </li>
                     @if ($category->category_type=='asset')
                     <li>
                         <a href="#models" data-toggle="tab" title="{{ trans('general.asset_models') }}">
                             {{ trans('general.asset_models') }}
-                            <badge class="badge badge-secondary"> {{ $category->models->count()}}</badge>
+                            @if ($category->models->count() > 0)
+                                <span class="badge badge-secondary"> {{ $category->models->count()}}</span>
+                            @endif
                         </a>
                     </li>
                    @endif
@@ -75,10 +60,10 @@
                                     <table
 
                                             @if ($category->category_type=='asset')
-
                                             data-columns="{{ \App\Presenters\AssetPresenter::dataTableLayout() }}"
                                             data-cookie-id-table="categoryAssetsTable"
                                             id="categoryAssetsTable"
+                                            data-buttons="assetButtons"
                                             data-id-table="categoryAssetsTable"
                                             data-toolbar="#assetsBulkEditToolbar"
                                             data-bulk-button-id="#bulkAssetEditButton"
@@ -88,9 +73,10 @@
                     "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
                     }'
                                             @elseif ($category->category_type=='accessory')
-                                                data-columns="{{ \App\Presenters\AccessoryPresenter::dataTableLayout() }}"
+                                            data-columns="{{ \App\Presenters\AccessoryPresenter::dataTableLayout() }}"
                                             data-cookie-id-table="categoryAccessoryTable"
                                             id="categoryAccessoryTable"
+                                            data-buttons="accessoryButtons"
                                             data-id-table="categoryAccessoryTable"
                                             data-export-options='{
                       "fileName": "export-{{ str_slug($category->name) }}-accessories-{{ date('Y-m-d') }}",
@@ -100,31 +86,33 @@
                                                 data-columns="{{ \App\Presenters\ConsumablePresenter::dataTableLayout() }}"
                                             data-cookie-id-table="categoryConsumableTable"
                                             id="categoryConsumableTable"
+                                            data-buttons="consumableButtons"
                                             data-id-table="categoryConsumableTable"
                                             data-export-options='{
                       "fileName": "export-{{ str_slug($category->name) }}-consumables-{{ date('Y-m-d') }}",
                       "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
                       }'
                                             @elseif ($category->category_type=='component')
-                                                data-columns="{{ \App\Presenters\ComponentPresenter::dataTableLayout() }}"
+                                            data-columns="{{ \App\Presenters\ComponentPresenter::dataTableLayout() }}"
                                             data-cookie-id-table="categoryCompomnentTable"
                                             id="categoryCompomnentTable"
+                                            data-buttons="componentButtons"
                                             data-id-table="categoryCompomnentTable"
                                             data-export-options='{
                       "fileName": "export-{{ str_slug($category->name) }}-components-{{ date('Y-m-d') }}",
                       "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
                       }'
                                             @elseif ($category->category_type=='license')
-                                                data-columns="{{ \App\Presenters\LicensePresenter::dataTableLayout() }}"
+                                            data-columns="{{ \App\Presenters\LicensePresenter::dataTableLayout() }}"
                                             data-cookie-id-table="categoryLicenseTable"
                                             id="categoryLicenseTable"
+                                            data-buttons="licenseButtons"
                                             data-id-table="categoryLicenseTable"
                                             data-export-options='{
                       "fileName": "export-{{ str_slug($category->name) }}-licenses-{{ date('Y-m-d') }}",
                       "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
                       }'
                                             @endif
-
                                             data-show-footer="true"
                                             data-side-pagination="server"
                                             data-sort-order="asc"
@@ -151,15 +139,16 @@
 
                                     <table
                                             data-columns="{{ \App\Presenters\AssetModelPresenter::dataTableLayout() }}"
-                                            data-cookie-id-table="asssetModelsTable"
-                                            data-id-table="asssetModelsTable"
+                                            data-cookie-id-table="assetModelsTable"
+                                            data-id-table="assetModelsTable"
                                             data-show-footer="true"
                                             data-side-pagination="server"
                                             data-toolbar="#modelsBulkEditToolbar"
                                             data-bulk-button-id="#bulkModelsEditButton"
                                             data-bulk-form-id="#modelsBulkForm"
                                             data-sort-order="asc"
-                                            id="asssetModelsTable"
+                                            id="assetModelsTable"
+                                            data-buttons="modelButtons"
                                             class="table table-striped snipe-table"
                                             data-url="{{ route('api.models.index', ['status' => request('status'), 'category_id' => $category->id]) }}"
                                             data-export-options='{

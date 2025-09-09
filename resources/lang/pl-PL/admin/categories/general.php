@@ -25,6 +25,6 @@ return array(
     'import_require_acceptance'         => 'Require Acceptance',
     'import_checkin_email'              => 'Send Checkin Email',
     'import_eula_text'                  => 'EULA text',
-    'import_category_type'              => 'Category Type',
+    'import_category_type'              => 'Typ kategorii',
 
 );

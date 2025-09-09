@@ -102,7 +102,11 @@ class LicensesController extends Controller
         $license->created_by           = auth()->id();
         $license->min_amt           = $request->input('min_amt');
 
-        session()->put(['redirect_option' => $request->get('redirect_option')]);
+        if($request->get('redirect_option') === 'back'){
+            session()->put(['redirect_option' => 'index']);
+        } else {
+            session()->put(['redirect_option' => $request->get('redirect_option')]);
+        }
 
         if ($license->save()) {
             return Helper::getRedirectOption($request, $license->id, 'Licenses')
@@ -241,16 +245,25 @@ class LicensesController extends Controller
         $license = License::with('assignedusers')->find($license->id);
 
         $users_count = User::where('autoassign_licenses', '1')->count();
-        $total_seats_count = $license->totalSeatsByLicenseID();
+
+        $total_seats_count = (int) $license->totalSeatsByLicenseID();
         $available_seats_count = $license->availCount()->count();
-        $checkedout_seats_count = ($total_seats_count - $available_seats_count);
+        $unreassignable_seats_count = License::unReassignableCount($license);
+
+        if(!$license->reassignable){
+            $checkedout_seats_count = ($total_seats_count - $available_seats_count - $unreassignable_seats_count );
+        }
+        else {
+            $checkedout_seats_count = ($total_seats_count - $available_seats_count);
+        }
 
         $this->authorize('view', $license);
         return view('licenses.view', compact('license'))
             ->with('users_count', $users_count)
             ->with('total_seats_count', $total_seats_count)
             ->with('available_seats_count', $available_seats_count)
-            ->with('checkedout_seats_count', $checkedout_seats_count);
+            ->with('checkedout_seats_count', $checkedout_seats_count)
+            ->with('unreassignable_seats_count', $unreassignable_seats_count);
 
     }
 
@@ -304,13 +317,16 @@ class LicensesController extends Controller
         $response = new StreamedResponse(function () {
             // Open output stream
             $handle = fopen('php://output', 'w');
-            $licenses= License::with('company',
+            $licenses = License::with('company',
                           'manufacturer',
                           'category',
                           'supplier',
                           'adminuser',
-                          'assignedusers')
-                          ->orderBy('created_at', 'DESC');
+                          'assignedusers');
+            if (request()->filled('category_id')) {
+                $licenses = $licenses->where('category_id', request()->input('category_id'));
+            }
+            $licenses = $licenses->orderBy('created_at', 'DESC');
             Company::scopeCompanyables($licenses)
                 ->chunk(500, function ($licenses) use ($handle) {
                     $headers = [
@@ -357,7 +373,7 @@ class LicensesController extends Controller
                             $license->order_number,
                             $license->free_seat_count,
                             $license->seats,
-                            ($license->adminuser ? $license->adminuser->present()->fullName() : trans('admin/reports/general.deleted_user')),
+                            ($license->adminuser ? $license->adminuser->display_name : trans('admin/reports/general.deleted_user')),
                             $license->depreciation ? $license->depreciation->name: '',
                             $license->updated_at,
                             $license->deleted_at,

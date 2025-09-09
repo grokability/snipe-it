@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>{{ trans('general.assigned_to', array('name' => $location->present()->fullName())) }} </title>
+    <title>{{ trans('general.assigned_to', array('name' => $location->display_name)) }} </title>
     <style>
         body {
             font-family: "Arial, Helvetica", sans-serif;
@@ -49,17 +49,17 @@
     @endif
 @endif
 
-<h2>{{ trans('general.assigned_to', array('name' => $location->present()->fullName())) }}</h2>
+<h2>{{ trans('general.assigned_to', array('name' => $location->display_name)) }}</h2>
     @if ($parent)
-        {{ $parent->present()->fullName() }}
+        {{ $parent->display_name }}
     @endif
 <br>
 @if ($company)
-    <b>{{ trans('admin/companies/table.name') }}:</b> {{ $company->present()->Name() }}</b>
+    <b>{{ trans('admin/companies/table.name') }}:</b> {{ $company->display_name }}
 <br>
 @endif
 @if ($manager)
-    <b>{{ trans('general.manager') }}</b> {{ $manager->present()->fullName() }}<br>
+    <b>{{ trans('general.manager') }}</b> {{ $manager->display_name }}<br>
 @endif
 <b>{{ trans('general.date') }}</b>  {{ \App\Helpers\Helper::getFormattedDateObject(now(), 'datetime', false) }}<br><br>
 
@@ -142,7 +142,7 @@
         <td>{{ (($asset->model) && ($asset->model->manufacturer)) ? $asset->model->manufacturer->name : '' }}</td>
         <td>{{ ($asset->model) ? $asset->model->name : '' }}</td>
         <td>{{ $asset->serial }}</td>
-        <td>{{ $asset->location->name }}</td>
+        <td>{{ ($asset->location) ? $asset->location->name : '' }}</td>
         <td>{{ \App\Helpers\Helper::getFormattedDateObject( $asset->last_checkout, 'datetime', false) }}</td>
         <td>{{ \App\Helpers\Helper::getFormattedDateObject( $asset->expected_checkin, 'datetime', false) }}</td>
         </tr>

@@ -1,5 +1,5 @@
 @component('mail::message')
-# {{ trans('mail.hello') }} {{ $recipient->present()->fullName() }},
+# {{ trans('mail.hello') }} {{ $recipient->display_name }},
 
 {{ $introduction }}:
 
@@ -10,8 +10,8 @@
 @component('mail::table')
 |        |          |
 | ------------- | ------------- |
-| **{{ trans('mail.user') }}** | {{ $assignedTo->present()->fullName() }} |
-| **{{ trans('mail.name') }}** | {{ $item->present()->name() }} |
+| **{{ trans('mail.user') }}** | {{ $assignedTo->display_name }} |
+| **{{ trans('mail.name') }}** | {{ $item->display_name }} |
 @if (isset($item->asset_tag))
 | **{{ trans('mail.asset_tag') }}** | {{ $item->asset_tag }} |
 @endif

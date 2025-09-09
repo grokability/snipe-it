@@ -78,7 +78,7 @@ class RequestAssetNotification extends Notification
 
         $fields = [
             'QTY' => $qty,
-            'Requested By' => '<'.$target->present()->viewUrl().'|'.$target->present()->fullName().'>',
+            'Requested By' => '<'.$target->present()->viewUrl().'|'.$target->display_name.'>',
         ];
 
         return (new SlackMessage)
@@ -86,7 +86,7 @@ class RequestAssetNotification extends Notification
             ->from($botname)
             ->to($channel)
             ->attachment(function ($attachment) use ($item, $note, $fields) {
-                $attachment->title(htmlspecialchars_decode($item->present()->name), $item->present()->viewUrl())
+                $attachment->title(htmlspecialchars_decode($item->display_name), $item->present()->viewUrl())
                     ->fields($fields)
                     ->content($note);
             });

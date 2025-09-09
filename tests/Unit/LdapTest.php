@@ -20,7 +20,7 @@ class LdapTest extends TestCase
         $ldap_connect->expects($this->once())->willReturn('hello');
 
         $ldap_set_option = $this->getFunctionMock("App\\Models", "ldap_set_option");
-        $ldap_set_option->expects($this->exactly(3));
+        $ldap_set_option->expects($this->exactly(4));
 
 
         $blah = Ldap::connectToLdap();
@@ -84,7 +84,7 @@ class LdapTest extends TestCase
         $ldap_connect->expects($this->once())->willReturn('hello');
 
         $ldap_set_option = $this->getFunctionMock("App\\Models", "ldap_set_option");
-        $ldap_set_option->expects($this->exactly(3));
+        $ldap_set_option->expects($this->exactly(4));
 
         $this->getFunctionMock("App\\Models", "ldap_bind")->expects($this->once())->willReturn(true);
 
@@ -114,7 +114,7 @@ class LdapTest extends TestCase
         $ldap_connect->expects($this->once())->willReturn('hello');
 
         $ldap_set_option = $this->getFunctionMock("App\\Models", "ldap_set_option");
-        $ldap_set_option->expects($this->exactly(3));
+        $ldap_set_option->expects($this->exactly(4));
 
         // note - we return FALSE first, to simulate a bad-bind, then TRUE the second time to simulate a successful admin bind
         $this->getFunctionMock("App\\Models", "ldap_bind")->expects($this->exactly(2))->willReturn(false, true);
@@ -135,7 +135,7 @@ class LdapTest extends TestCase
         $ldap_connect->expects($this->once())->willReturn('hello');
 
         $ldap_set_option = $this->getFunctionMock("App\\Models", "ldap_set_option");
-        $ldap_set_option->expects($this->exactly(3));
+        $ldap_set_option->expects($this->exactly(4));
 
         $this->getFunctionMock("App\\Models", "ldap_bind")->expects($this->once())->willReturn(true);
 
@@ -156,7 +156,7 @@ class LdapTest extends TestCase
         $ldap_connect->expects($this->once())->willReturn('hello');
 
         $ldap_set_option = $this->getFunctionMock("App\\Models", "ldap_set_option");
-        $ldap_set_option->expects($this->exactly(3));
+        $ldap_set_option->expects($this->exactly(4));
 
         $this->getFunctionMock("App\\Models", "ldap_bind")->expects($this->once())->willReturn(true);
 
@@ -179,7 +179,7 @@ class LdapTest extends TestCase
         $ldap_connect->expects($this->once())->willReturn('hello');
 
         $ldap_set_option = $this->getFunctionMock("App\\Models", "ldap_set_option");
-        $ldap_set_option->expects($this->exactly(3));
+        $ldap_set_option->expects($this->exactly(4));
 
         $this->getFunctionMock("App\\Models", "ldap_bind")->expects($this->once())->willReturn(true);
 

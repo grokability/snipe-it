@@ -113,28 +113,28 @@ class ImportAssetModelsTest extends ImportDataTestCase implements TestsPermissio
     #[Test]
     public function updateAssetModelFromImport(): void
     {
-        $assetmodel = AssetModel::factory()->create()->refresh();
-        $category = Category::find($assetmodel->category->name);
-        $importFileBuilder = ImportFileBuilder::new(['name' => $assetmodel->name, 'model_number' => Str::random(), 'category' => $category]);
+        $assetmodel = AssetModel::factory()->create();
+        $category = Category::find($assetmodel->category_id);
+        $importFileBuilder = ImportFileBuilder::new(['name' => $assetmodel->name, 'model_number' => Str::random(), 'category' => $category->name]);
 
         $row = $importFileBuilder->firstRow();
         $import = Import::factory()->assetmodel()->create(['file_path' => $importFileBuilder->saveToImportsDirectory()]);
 
         $this->actingAsForApi(User::factory()->superuser()->create());
-        $this->importFileResponse(['import' => $import->id, 'import-update' => true])->assertOk();
+        $this->importFileResponse(['import' => $import->id, 'import-update' => true])
+            ->assertOk()
+            ->assertExactJson([
+                'payload'  => null,
+                'status'   => 'success',
+                'messages' => ['redirect_url' => route('models.index')]
+            ]);
 
         $updatedAssetmodel = AssetModel::query()->find($assetmodel->id);
-        $updatedAttributes = [
-            'name',
-            'model_number'
-        ];
 
         $this->assertEquals($row['model_number'], $updatedAssetmodel->model_number);
+        $this->assertEquals($row['name'], $updatedAssetmodel->name);
 
-        $this->assertEquals(
-            Arr::except($assetmodel->attributesToArray(), array_merge($updatedAttributes, $assetmodel->getDates())),
-            Arr::except($updatedAssetmodel->attributesToArray(), array_merge($updatedAttributes, $assetmodel->getDates())),
-        );
     }
+
 
 }

@@ -2,13 +2,13 @@
 
 return [
 
-    'undeployable' 		 => 'The following assets cannot be deployed and have been removed from checkout: :asset_tags',
+    'undeployable' 		 => 'Naslednjih sredstev ni mogoče namestiti in so bila odstranjena iz blagajne: :asset_tags',
     'does_not_exist' 	 => 'Sredstvo ne obstaja.',
     'does_not_exist_var' => 'Sredstvo z oznako :oznaka_sredstva ni bilo najdeno.',
     'no_tag' 	         => 'Oznaka sredstva ni podana.',
     'does_not_exist_or_not_requestable' => 'To sredstvo ne obstaja ali ga ni mogoče zahtevati.',
     'assoc_users'	 	 => 'To sredstvo je trenutno izdano uporabniku in ga ni mogoče izbrisati. Najprej preverite sredstvo in poskusite znova izbrisati. ',
-    'warning_audit_date_mismatch' 	=> 'This asset\'s next audit date (:next_audit_date) is before the last audit date (:last_audit_date). Please update the next audit date.',
+    'warning_audit_date_mismatch' 	=> 'Naslednji datum revizije tega sredstva (:next_audit_date) je pred zadnjim datumom revizije (:last_audit_date). Prosimo, posodobite naslednji datum revizije.',
     'labels_generated'   => 'Oznake so bile uspešno ustvarjene.',
     'error_generating_labels' => 'Napaka pri ustvarjanju oznak.',
     'no_assets_selected' => 'Ni izbranih sredstev.',
@@ -18,7 +18,7 @@ return [
         'success' 		=> 'Sredstvo je uspešno ustvarjeno. :)',
         'success_linked' => 'Sredstvo z oznako :tag je bilo uspešno ustvarjeno. <strong><a href=":link" style="color: white;">Kliknite tukaj za ogled</a></strong>.',
         'multi_success_linked' => 'Sredstvo z oznako :links je bilo uspešno ustvarjeno.|:count sredstev je bilo uspešno ustvarjenih. :links.',
-        'partial_failure' => 'An asset was unable to be created. Reason: :failures|:count assets were unable to be created. Reasons: :failures',
+        'partial_failure' => 'Sredstva ni bilo mogoče ustvariti. Razlog: :failures|:count sredstev ni bilo mogoče ustvariti. Razlogi: :failures',
         'target_not_found' => [
             'user' => 'Dodeljenega uporabnika ni bilo mogoče najti.',
             'asset' => 'Dodeljenega sredstva ni bilo mogoče najti.',
@@ -29,7 +29,7 @@ return [
     'update' => [
         'error'   			=> 'Sredstvo ni bilo posodobljeno, poskusite znova',
         'success' 			=> 'Sredstvo je uspešno posodobljeno.',
-        'encrypted_warning' => 'Asset updated successfully, but encrypted custom fields were not due to permissions',
+        'encrypted_warning' => 'Sredstvo je bilo uspešno posodobljeno, vendar šifrirana polja po meri niso bila zaradi dovoljenj',
         'nothing_updated'	=>  'Nobeno polje ni bilo izbrana, zato nebo nič posodobljeno.',
         'no_assets_selected'  =>  'Nobena sredstva niso bila izbrana, zato ni bilo nič izbrisanih.',
         'assets_do_not_exist_or_are_invalid' => 'Izbrana sredstva ni mogoče posodobiti.',
@@ -69,9 +69,9 @@ return [
         'file_delete_error'      => 'Datoteke ni bilo mogoče izbrisati',
         'file_missing' => 'Izbrana datoteka manjka',
         'file_already_deleted' => 'Izbrana datoteka je bila že izbrisana',
-        'header_row_has_malformed_characters' => 'One or more attributes in the header row contain malformed UTF-8 characters',
-        'content_row_has_malformed_characters' => 'One or more attributes in the first row of content contain malformed UTF-8 characters',
-        'transliterate_failure' => 'Transliteration from :encoding to UTF-8 failed due to invalid characters in input'
+        'header_row_has_malformed_characters' => 'Eden ali več atributov v vrstici glave vsebuje napačno oblikovane znake UTF-8',
+        'content_row_has_malformed_characters' => 'Eden ali več atributov v prvi vrstici vsebine vsebuje napačno oblikovane znake UTF-8',
+        'transliterate_failure' => 'Prečrkovanje iz :encoding v UTF-8 ni uspelo zaradi neveljavnih znakov v vnosu'
     ],
 
 
@@ -92,8 +92,8 @@ return [
     ],
 
     'multi-checkout' => [
-        'error'   => 'Asset was not checked out, please try again|Assets were not checked out, please try again',
-        'success' => 'Asset checked out successfully.|Assets checked out successfully.',
+        'error'   => 'Sredstvo ni bilo rezervirano, poskusite znova|Sredstva niso bila rezervirana, poskusite znova',
+        'success' => 'Sredstvo uspešno rezervirano.|Sredstva uspešno rezervirana.',
     ],
 
     'checkin' => [
@@ -108,7 +108,7 @@ return [
         'error'   		=> 'Zahteva ni bila uspešna, poskusite znova.',
         'success' 		=> 'Zahteva uspešno poslana.',
         'canceled'      => 'Zahteva je bila uspešno preklicana.',
-        'cancel'        => 'Cancel this item request',
+        'cancel'        => 'Prekliči to zahtevo za predmet',
     ],
 
 ];

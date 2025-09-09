@@ -25,7 +25,7 @@ return array(
         'error'   		=> 'Komponenta ni bila izdana, poskusite znova',
         'success' 		=> 'Komponenta je bila uspešno izdana.',
         'user_does_not_exist' => 'Ta uporabnik ni veljaven. Prosim poskusite ponovno.',
-        'unavailable'      => 'Not enough components remaining: :remaining remaining, :requested requested ',
+        'unavailable'      => 'Ni dovolj preostalih komponent: :remaining preostalo, :requested zahtevano ',
     ),
 
     'checkin' => array(

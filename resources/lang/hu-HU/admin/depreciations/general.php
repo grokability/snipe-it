@@ -14,7 +14,7 @@ return [
                       Jelenleg nincsenek értékcsökkenési leírások beállítva.
                       Kérjük, legalább egy értékcsökkenést állítson be az értékcsökkenési jelentés megtekintéséhez.',
     'depreciation_method'                   => 'Értékcsökkenés riport',
-    'linear_depreciation'                   => 'Linear (Default)',
-    'half_1'                                => 'Half-year convention, always applied',
-    'half_2'                                => 'Half-year convention, applied with condition',
+    'linear_depreciation'                   => 'Lineáris (Alapértelmezett)',
+    'half_1'                                => 'Féléves bekerülés, mindig érvényes',
+    'half_2'                                => 'Féléves bekerülés, feltételekkel érvényes',
 ];

@@ -84,7 +84,7 @@
             <span class="hidden-lg hidden-md">
             <i class="far fa-file fa-2x" aria-hidden="true"></i></span>
               <span class="hidden-xs hidden-sm">{{ trans('general.file_uploads') }}
-                {!! ($component->uploads->count() > 0 ) ? '<badge class="badge badge-secondary">'.number_format($component->uploads->count()).'</badge>' : '' !!}
+                {!! ($component->uploads->count() > 0 ) ? '<span class="badge badge-secondary">'.number_format($component->uploads->count()).'</span>' : '' !!}
             </span>
             </a>
           </li>
@@ -169,11 +169,7 @@
           <div class="tab-pane" id="files">
             <div class="row">
               <div class="col-md-12">
-                <x-filestable
-                        filepath="private_uploads/components/"
-                        showfile_routename="show.componentfile"
-                        deletefile_routename="delete/componentfile"
-                        :object="$component" />
+                <x-filestable object_type="components" :object="$component" />
               </div>
             </div>
           </div> <!-- /.tab-pane -->
@@ -245,6 +241,21 @@
               {{ trans('admin/components/general.checkout') }}
             </a>
     </div>
+  @endcan
+
+  @can('delete', $component)
+        <div class="col-md-12 hidden-print" style="padding-top: 5px;">
+          @if ($component->isDeletable())
+              <button class="btn btn-sm btn-block btn-danger btn-social delete-asset" data-icon="fa fa-trash" data-toggle="modal" data-title="{{ trans('general.delete') }}" data-content="{{ trans('general.sure_to_delete_var', ['item' => $component->name]) }}" data-target="#dataConfirmModal" onClick="return false;">
+              <x-icon type="delete" />
+              {{ trans('general.delete') }}
+            </button>
+          @else
+            <a href="#" class="btn btn-block btn-sm btn-danger btn-social hidden-print disabled" data-tooltip="true"  data-placement="top" data-title="{{ trans('general.cannot_be_deleted') }}" onClick="return false;">
+              <x-icon type="delete" />
+              {{ trans('general.delete') }}
+            </a>
+          @endif
   @endcan
 
 

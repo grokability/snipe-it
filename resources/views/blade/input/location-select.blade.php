@@ -11,6 +11,15 @@
     'hideNewButton' => false,
 ])
 
+@php
+    $id = $name . '_location_select';
+
+    // User provided id, overwrite the default
+    if ($attributes->has('id')) {
+        $id = $attributes->get('id');
+    }
+@endphp
+
 <div
     @class([
        'form-group',
@@ -26,7 +35,7 @@
             data-placeholder="{{ trans('general.select_location') }}"
             name="{{ $name }}"
             style="width: 100%"
-            id="{{ $name }}_location_select"
+            id="{{ $id }}"
             aria-label="{{ $name }}"
             @required($required)
             @if ($multiple)
@@ -34,9 +43,9 @@
             @endif
         >
             @if ($selected)
-                @foreach(Arr::wrap($selected) as $id)
-                    <option value="{{ $id }}" selected="selected" role="option" aria-selected="true"  role="option">
-                        {{ optional(Location::find($id))->name }}
+                @foreach(Arr::wrap($selected) as $value)
+                    <option value="{{ $value }}" selected="selected" role="option" aria-selected="true"  role="option">
+                        {{ optional(Location::find($value))->name }}
                     </option>
                 @endforeach
             @endif

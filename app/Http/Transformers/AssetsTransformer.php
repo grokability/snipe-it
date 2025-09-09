@@ -58,6 +58,13 @@ class AssetsTransformer
                 'id' => (int) $asset->model->manufacturer->id,
                 'name'=> e($asset->model->manufacturer->name),
             ] : null,
+            'depreciation' => (($asset->model) && ($asset->model->depreciation)) ? [
+                'id' => (int) $asset->model->depreciation->id,
+                'name'=> e($asset->model->depreciation->name),
+                'months'=> (int) $asset->model->depreciation->months,
+                'type'=>  e($asset->model->depreciation->depreciation_type),
+                'minimum'=> ($asset->model->depreciation->depreciation_min) ? (int) $asset->model->depreciation->depreciation_min : null,
+            ] : null,
             'supplier' => ($asset->supplier) ? [
                 'id' => (int) $asset->supplier->id,
                 'name'=> e($asset->supplier->name),
@@ -84,7 +91,7 @@ class AssetsTransformer
             'warranty_expires' => ($asset->warranty_months > 0) ? Helper::getFormattedDateObject($asset->warranty_expires, 'date') : null,
             'created_by' => ($asset->adminuser) ? [
                 'id' => (int) $asset->adminuser->id,
-                'name'=> e($asset->adminuser->present()->fullName()),
+                'name'=> e($asset->adminuser->display_name),
             ] : null,
             'created_at' => Helper::getFormattedDateObject($asset->created_at, 'datetime'),
             'updated_at' => Helper::getFormattedDateObject($asset->updated_at, 'datetime'),
@@ -280,7 +287,7 @@ class AssetsTransformer
             'id' => (int) $asset->id,
             'image' => ($asset->getImageUrl()) ? $asset->getImageUrl() : null,
             'type' => 'asset',
-            'name' => e($asset->present()->fullName()),
+            'name' => e($asset->display_name),
             'model' => ($asset->model) ? e($asset->model->name) : null,
             'model_number' => (($asset->model) && ($asset->model->model_number)) ? e($asset->model->model_number) : null,
             'asset_tag' => e($asset->asset_tag),

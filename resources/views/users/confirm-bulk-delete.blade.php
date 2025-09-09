@@ -76,7 +76,7 @@
 
                     <td>
                       <span {!! (Auth::user()->id==$user->id ? ' style="text-decoration: line-through"' : '') !!}>
-                        {{ $user->present()->fullName() }} ({{ $user->username }})
+                        {{ $user->display_name }} ({{ $user->username }})
                       </span>
                       {{ (Auth::id()==$user->id ? ' (cannot delete yourself)' : '') }}
                     </td>

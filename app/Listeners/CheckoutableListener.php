@@ -96,7 +96,8 @@ class CheckoutableListener
 
             if (!empty($to)) {
                 try {
-                    Mail::to(array_flatten($to))->cc(array_flatten($cc))->send($mailable);
+                    Mail::to(array_flatten($to))->send($mailable->locale($notifiable->locale));
+                    Mail::to(array_flatten($cc))->send($mailable->locale(Setting::getSettings()->locale));
                     Log::info('Checkout Mail sent to checkout target');
                 } catch (ClientException $e) {
                     Log::debug("Exception caught during checkout email: " . $e->getMessage());
@@ -180,7 +181,8 @@ class CheckoutableListener
 
             try {
                 if (!empty($to)) {
-                    Mail::to(array_flatten($to))->cc(array_flatten($cc))->send($mailable);
+                    Mail::to(array_flatten($to))->send($mailable->locale($notifiable->locale));
+                    Mail::to(array_flatten($cc))->send($mailable->locale(Setting::getSettings()->locale));
                     Log::info('Checkin Mail sent to CC addresses');
                 }
             } catch (ClientException $e) {
@@ -239,6 +241,12 @@ class CheckoutableListener
         $acceptance = new CheckoutAcceptance;
         $acceptance->checkoutable()->associate($event->checkoutable);
         $acceptance->assignedTo()->associate($event->checkedOutTo);
+
+        $acceptance->qty = 1;
+
+        if (isset($event->checkoutable->checkout_qty)) {
+            $acceptance->qty = $event->checkoutable->checkout_qty;
+        }
 
         $category = $this->getCategoryFromCheckoutable($event->checkoutable);
 

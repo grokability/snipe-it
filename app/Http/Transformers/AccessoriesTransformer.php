@@ -44,7 +44,7 @@ class AccessoriesTransformer
             'checkouts_count' =>  $accessory->checkouts_count,
             'created_by' => ($accessory->adminuser) ? [
                 'id' => (int) $accessory->adminuser->id,
-                'name'=> e($accessory->adminuser->present()->fullName()),
+                'name'=> e($accessory->adminuser->display_name),
             ] : null,
             'created_at' => Helper::getFormattedDateObject($accessory->created_at, 'datetime'),
             'updated_at' => Helper::getFormattedDateObject($accessory->updated_at, 'datetime'),

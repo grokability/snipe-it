@@ -4,8 +4,8 @@ return [
 
     'Accessory_Checkin_Notification' => 'crwdns6004:0crwdne6004:0',
     'Accessory_Checkout_Notification' => 'crwdns12060:0crwdne12060:0',
-    'Asset_Checkin_Notification' => 'crwdns6006:0crwdne6006:0',
-    'Asset_Checkout_Notification' => 'crwdns11625:0crwdne11625:0',
+    'Asset_Checkin_Notification' => 'crwdns13620:0crwdne13620:0',
+    'Asset_Checkout_Notification' => 'crwdns13622:0crwdne13622:0',
     'Confirm_Accessory_Checkin' => 'crwdns5992:0crwdne5992:0',
     'Confirm_Asset_Checkin' => 'crwdns5990:0crwdne5990:0',
     'Confirm_component_checkin' => 'crwdns13500:0crwdne13500:0',
@@ -77,6 +77,7 @@ return [
     'name' => 'crwdns1747:0crwdne1747:0',
     'new_item_checked' => 'crwdns1748:0crwdne1748:0',
     'new_item_checked_with_acceptance' => 'crwdns13007:0crwdne13007:0',
+    'new_item_checked_location' => 'crwdns13744:0crwdne13744:0',
     'recent_item_checked' => 'crwdns13009:0crwdne13009:0',
     'notes' => 'crwdns12070:0crwdne12070:0',
     'password' => 'crwdns12728:0crwdne12728:0',

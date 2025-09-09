@@ -77,9 +77,25 @@ class AccessoriesController extends Controller
         $accessory->supplier_id             = request('supplier_id');
         $accessory->notes                   = request('notes');
 
-        $accessory = $request->handleImages($accessory);
+        if ($request->has('use_cloned_image')) {
+            $cloned_model_img = Accessory::select('image')->find($request->input('clone_image_from_id'));
+            if ($cloned_model_img) {
+                $new_image_name = 'clone-'.date('U').'-'.$cloned_model_img->image;
+                $new_image = 'accessories/'.$new_image_name;
+                Storage::disk('public')->copy('accessories/'.$cloned_model_img->image, $new_image);
+                $accessory->image = $new_image_name;
+            }
 
-        session()->put(['redirect_option' => $request->get('redirect_option')]);
+        } else {
+            $accessory = $request->handleImages($accessory);
+        }
+
+        if($request->get('redirect_option') === 'back'){
+            session()->put(['redirect_option' => 'index']);
+        } else {
+            session()->put(['redirect_option' => $request->get('redirect_option')]);
+        }
+
         // Was the accessory created?
         if ($accessory->save()) {
             // Redirect to the new accessory  page
@@ -114,11 +130,12 @@ class AccessoriesController extends Controller
 
         $this->authorize('create', Accessory::class);
         $cloned = clone $accessory;
+        $accessory_to_clone = $accessory;
         $cloned->id = null;
         $cloned->deleted_at = '';
-        $cloned->location_id = null;
 
         return view('accessories/edit')
+            ->with('cloned_model', $accessory_to_clone)
             ->with('item', $cloned);
         
     }

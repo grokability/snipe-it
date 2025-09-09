@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Traits\CompanyableTrait;
 use App\Models\Traits\Searchable;
 use App\Presenters\Presentable;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 /**
  * Model for the Actionlog (the table that keeps a historical log of
@@ -244,19 +246,6 @@ class Actionlog extends SnipeModel
     }
 
 
-    /**
-     * Establishes the actionlog -> uploads relationship
-     *
-     * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since  [v3.0]
-     * @return \Illuminate\Database\Eloquent\Relations\Relation
-     */
-    public function uploads()
-    {
-        return $this->morphTo('item')
-            ->where('action_type', '=', 'uploaded')
-            ->withTrashed();
-    }
 
     /**
      * Establishes the actionlog -> userlog relationship
@@ -454,33 +443,55 @@ class Actionlog extends SnipeModel
 
     }
 
+
+    /**
+     * @author  Godfrey Martinez
+     * @since [v8.0.4]
+     * @return \App\Models\Actionlog
+     */
+    public function logUploadDelete($object, $filename)
+    {
+        $log = new Actionlog;
+        $log->item_type = $object instanceof SnipeModel ? get_class($object) : $object;
+        $log->item_id = $object->id;
+        $log->created_by = auth()->id();
+        $log->target_id = null;
+        $log->filename = $filename;
+        $log->created_at = date('Y-m-d H:i:s');
+        $log->logaction('upload deleted');
+
+        return $log;
+    }
+
     public function uploads_file_url()
     {
 
-        switch ($this->item_type) {
-        case Accessory::class:
-            return route('show.accessoryfile', [$this->item_id, $this->id]);
-        case Asset::class:
-            return route('show/assetfile', [$this->item_id, $this->id]);
-        case AssetModel::class:
-            return route('show/modelfile', [$this->item_id, $this->id]);
-        case Consumable::class:
-            return route('show/locationsfile', [$this->item_id, $this->id]);
-        case Component::class:
-            return route('show.componentfile', [$this->item_id, $this->id]);
-        case License::class:
-            return route('show.licensefile', [$this->item_id, $this->id]);
-        case Location::class:
-            return route('show/locationsfile', [$this->item_id, $this->id]);
-        case User::class:
-            return route('show/userfile', [$this->item_id, $this->id]);
-        default:
-            return null;
+
+
+        if (($this->action_type == 'accepted') || ($this->action_type == 'declined')) {
+            return route('log.storedeula.download', ['filename' => $this->filename]);
         }
+
+        $object = Str::snake(str_plural(str_replace("App\Models\\", '', $this->item_type)));
+
+        if ($object == 'asset_models') {
+            $object = 'models';
+        }
+
+        return route('ui.files.show', [
+            'object_type' => $object,
+            'id' => $this->item_id,
+            'file_id' => $this->id,
+        ]);
+
     }
 
     public function uploads_file_path()
     {
+
+        if (($this->action_type == 'accepted') || ($this->action_type == 'declined')) {
+            return 'private_uploads/eula-pdfs/'.$this->filename;
+        }
 
         switch ($this->item_type) {
         case Accessory::class:
@@ -488,7 +499,7 @@ class Actionlog extends SnipeModel
         case Asset::class:
             return 'private_uploads/assets/'.$this->filename;
         case AssetModel::class:
-            return 'private_uploads/assetmodels/'.$this->filename;
+            return 'private_uploads/models/'.$this->filename;
         case Consumable::class:
             return 'private_uploads/consumables/'.$this->filename;
         case Component::class:
@@ -497,17 +508,14 @@ class Actionlog extends SnipeModel
             return 'private_uploads/licenses/'.$this->filename;
         case Location::class:
             return 'private_uploads/locations/'.$this->filename;
+        case Maintenance::class:
+             return 'private_uploads/maintenances/'.$this->filename;
         case User::class:
             return 'private_uploads/users/'.$this->filename;
         default:
             return null;
         }
     }
-
-
-
-
-
 
 
     // Manually sets $this->source for determineActionSource()

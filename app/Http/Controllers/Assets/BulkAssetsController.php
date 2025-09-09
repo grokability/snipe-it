@@ -544,7 +544,7 @@ class BulkAssetsController extends Controller
                 session()->put('bulk_asset_errors',$error_array);
 
                 return redirect()
-                    ->route('hardware.bulkedit')
+                    ->route('hardware.index')
                     ->with('bulk_asset_errors', $error_array)
                     ->withInput();
             }
@@ -637,6 +637,7 @@ class BulkAssetsController extends Controller
             $admin = auth()->user();
 
             $target = $this->determineCheckoutTarget();
+            session()->put(['checkout_to_type' => $target]);
 
             if (! is_array($request->get('selected_assets'))) {
                 return redirect()->route('hardware.bulkcheckout.show')->withInput()->with('error', trans('admin/hardware/message.checkout.no_assets_selected'));

@@ -55,11 +55,11 @@ return [
     'asset_location_update_default' => 'Posodobi samo privzeto lokacijo',
     'asset_location_update_actual' => 'Posodobi samo aktualno lokacijo',
     'asset_not_deployable' => 'Tega statusa sredstev ni mogoče uporabiti. Tega sredstva ni mogoče odjaviti.',
-    'asset_not_deployable_checkin' => 'That asset status is not deployable. Using this status label will checkin the asset.',
+    'asset_not_deployable_checkin' => 'Stanje tega sredstva ni mogoče namestiti. S to oznako stanja boste sredstvo prijavili.',
     'asset_deployable' => 'To sredstvo je mogoče preveriti.',
     'processing_spinner' => 'Obdelava (pri velikih datotekah lahko traja nekaj časa)',
     'processing' => 'Obdelava... ',
     'optional_infos'  => 'Neobvezne informacije',
     'order_details'   => 'Informacije povezane z naročilom',
-    'calc_eol'    => 'If nulling the EOL date, use automatic EOL calculation based on the purchase date and EOL rate.',
+    'calc_eol'    => 'Če datum konca življenjske dobe EOL ničelno določite, uporabite samodejni izračun EOL na podlagi datuma nakupa in stopnje EOL.',
 ];

@@ -4,8 +4,8 @@ return [
 
     'Accessory_Checkin_Notification' => 'Accessory checked in',
     'Accessory_Checkout_Notification' => 'Accessory checked out',
-    'Asset_Checkin_Notification' => 'Asset checked in',
-    'Asset_Checkout_Notification' => 'Asset checked out',
+    'Asset_Checkin_Notification' => 'Asset checked in: [:tag]',
+    'Asset_Checkout_Notification' => 'Asset checked out: [:tag]',
     'Confirm_Accessory_Checkin' => 'Accessory checkin confirmation',
     'Confirm_Asset_Checkin' => 'Asset checkin confirmation',
     'Confirm_component_checkin' => 'Component checkin confirmation',
@@ -77,6 +77,7 @@ return [
     'name' => 'Nosaukums',
     'new_item_checked' => 'Jauns objekts ir atzīmēts zem sava vārda, sīkāk ir sniegta zemāk.',
     'new_item_checked_with_acceptance' => 'A new item has been checked out under your name that requires acceptance, details are below.',
+    'new_item_checked_location' => 'A new item has been checked out to :location, details are below.',
     'recent_item_checked' => 'An item was recently checked out under your name that requires acceptance, details are below.',
     'notes' => 'Piezīmes',
     'password' => 'Parole',

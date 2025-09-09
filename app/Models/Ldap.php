@@ -27,6 +27,35 @@ use Illuminate\Support\Facades\Crypt;
 
 class Ldap extends Model
 {
+    public static function ignoreCertificates(bool $ignore_cert = true)
+    {
+        if (defined('LDAP_OPT_X_TLS_REQUIRE_CERT') && defined('LDAP_OPT_X_TLS_NEVER')) {
+            // TODO - we are currently, as a 'safety', doing *both* the following 'new-style' ldap_set_option calls,
+            // as well as "falling-through" to the 'old-style' putenv() calls.
+            //
+            // I *suspect* we can eventually remove the putenv() calls, but I'm just a little nervous about that.
+            // According to the PHP docs, the LDAP_OPT_X_TLS_REQUIRE_CERT constant has been available since PHP 7.0.
+            // We're currently using PHP versions way, way later than that (v8.2-v8.4 as of this writing). So it's
+            // unlikely that these constants wouldn't be defined - unless you didn't have LDAP support in the first
+            // place. But if that were to happen, I would hope we would've detected that long, long ago, rather than at
+            // this point.
+            if ($ignore_cert) {
+                if (ldap_set_option(null, LDAP_OPT_X_TLS_REQUIRE_CERT, LDAP_OPT_X_TLS_NEVER)) {
+                    //return true;
+                }
+            } else {
+                if (ldap_set_option(null, LDAP_OPT_X_TLS_REQUIRE_CERT, LDAP_OPT_X_TLS_DEMAND)) {
+                    //return true;
+                }
+            }
+        }
+        if ($ignore_cert) {
+            return putenv('LDAPTLS_REQCERT=never');
+        } else {
+            return putenv('LDAPTLS_REQCERT');
+        }
+    }
+
     /**
      * Makes a connection to LDAP using the settings in Admin > Settings.
      *
@@ -43,15 +72,12 @@ class Ldap extends Model
 
         // If we are ignoring the SSL cert we need to setup the environment variable
         // before we create the connection
-        if ($ldap_server_cert_ignore == '1') {
-            putenv('LDAPTLS_REQCERT=never');
-        }
+        self::ignoreCertificates((bool)$ldap_server_cert_ignore);
 
         // If the user specifies where CA Certs are, make sure to use them
         if (env('LDAPTLS_CACERT')) {
             putenv('LDAPTLS_CACERT='.env('LDAPTLS_CACERT'));
         }
-
         $connection = @ldap_connect($ldap_host);
 
         if (! $connection) {

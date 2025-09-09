@@ -45,7 +45,7 @@ class SendAcceptanceReminderTest extends TestCase
         ]);
         $headers = ['ID', 'Name'];
         $rows = [
-            [$userA->id, $userA->present()->fullName()],
+            [$userA->id, $userA->display_name],
         ];
         $this->artisan('snipeit:acceptance-reminder')
             ->expectsOutput("The following users do not have an email address:")

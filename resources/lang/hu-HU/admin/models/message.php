@@ -7,7 +7,7 @@ return array(
     'no_association' => 'FIGYELEM! Az eszköz modell hiányzik, vagy nem érvényes!',
     'no_association_fix' => 'Ez furcsa és szörnyű módokon fogja szétzúzni a dolgokat. Szerkeszd ezt az eszközt most, és rendeld hozzá egy modellhez.',
     'assoc_users'	 => 'Ez a modell jelenleg társított egy vagy több eszközhöz, és nem törölhető. Legyen szíves törölje az eszközt, és próbálja meg ismét a modell törlését. ',
-    'invalid_category_type' => 'This category must be an asset category.',
+    'invalid_category_type' => 'A kategóriának eszköz típusúnak kell lennie.',
 
     'create' => array(
         'error'   => 'A model nem lett létrehozva. Próbálkozz újra.',
@@ -34,7 +34,7 @@ return array(
     'bulkedit' => array(
         'error'   		=> 'Nincsenek mezők megváltoztak, így semmi sem frissült.',
         'success' 		=> 'Eszköz modell sikeresen frissítve. Összesen |:model_count eszköz frissítve.',
-        'warn'          => 'You are about to update the properties of the following model:|You are about to edit the properties of the following :model_count models:',
+        'warn'          => 'A következő modell tulajdonságait fogja frissíteni:|A következő modellek tulajdonságait fogja szerkeszteni :model_count :',
 
     ),
 

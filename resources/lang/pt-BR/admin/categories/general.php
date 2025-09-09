@@ -4,7 +4,7 @@ return array(
     'asset_categories' 					=> 'Categorias de Ativos',
     'category_name'  					=> 'Nome da Categoria',
     'checkin_email'                     => 'Enviar email para o usuário na devolução / saída.',
-    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
+    'email_to_initiator'                => 'Envie um e-mail para você quando o usuário aceitar ou recusar o pagamento.',
     'checkin_email_notification'        => 'Este usuário receberá um email no checkin / checkout.',
     'clone'                             => 'Clonar Categoria',
     'create'  							=> 'Criar Categoria',
@@ -22,9 +22,9 @@ return array(
     'use_default_eula'					=> 'Em vez disso, use o <a href="#" data-toggle="modal" data-target="#eulaModal">EULA padrão primário</a>.',
     'use_default_eula_disabled'			=> '<del>Em vez disso, use o EULA padrão primário.</del> Nenhum EULA padrão primário foi definido. Adicione um nas Configurações.',
     'use_default_eula_column'			=> 'Usar padrão EULA',
-    'import_require_acceptance'         => 'Require Acceptance',
-    'import_checkin_email'              => 'Send Checkin Email',
-    'import_eula_text'                  => 'EULA text',
-    'import_category_type'              => 'Category Type',
+    'import_require_acceptance'         => 'Requerer Aceitação',
+    'import_checkin_email'              => 'Enviar e-mail de Checkin',
+    'import_eula_text'                  => 'Texto do EULA',
+    'import_category_type'              => 'Tipo de Categoria',
 
 );

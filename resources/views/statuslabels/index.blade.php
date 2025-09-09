@@ -6,12 +6,6 @@
 @parent
 @stop
 
-@section('header_right')
-    @can('create', \App\Models\Statuslabel::class)
-        <a href="{{ route('statuslabels.create') }}" class="btn btn-primary pull-right">
-{{ trans('general.create') }}</a>
-    @endcan
-@stop
 {{-- Page content --}}
 @section('content')
 
@@ -28,6 +22,7 @@
                     data-sort-order="asc"
                     data-sort-name="name"
                     id="statuslabelsTable"
+                    data-buttons="statuslabelButtons"
                     class="table table-striped snipe-table"
                     data-url="{{ route('api.statuslabels.index') }}"
                     data-export-options='{

@@ -33,7 +33,7 @@ return [
     'create_fieldset_title' => 'Yeni bir alan kümesi oluştur',
     'create_field'            => 'Yeni özel alan',
     'create_field_title' => 'Yeni bir özel alan oluştur',
-    'value_encrypted'      	        => 'Bu alanın değeri veritabanında şifrelidir. Yalnızca yönetici kullanıcıları şifresi çözülen değeri görüntüleyebilir',
+    'value_encrypted'      	        => 'The value of this field is encrypted in the database. Only users with permission to view encrypted custom fields will be able to view the decrypted value',
     'show_in_email'     => 'Bu hane içerisindeki bilgi "Zimmet e-postası" içerisinde kullanıcıya gönderilsinmi? Şifrelenmiş hanelerin içerisindeki bilgiler gönderilemez.',
     'show_in_email_short' => 'E-postalara dahil edin',
     'help_text' => 'Yardım Metni',

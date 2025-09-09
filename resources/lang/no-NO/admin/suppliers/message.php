@@ -22,7 +22,7 @@ return array(
         'success' => 'Sletting av leverandør vellykket.',
         'assoc_assets'	 => 'Denne leverandøren er tilknyttet med :asset_count eiendel(er), og kan ikke slettes. Oppdater eiendelene dine til ikke å bruke denne leverandøren og prøv igjen. ',
         'assoc_licenses'	 => 'Denne leverandøren er tilknyttet med :licenses_count lisens(er), og kan ikke slettes. Oppdater lisensene dine til ikke å bruke denne leverandøren og prøv igjen. ',
-        'assoc_maintenances'	 => 'Denne leverandøren er tilknyttet med :asset_maintenances_count eiendelsvedlikehold, og kan ikke slettes. Oppdater dine eiendelsvedlikehold til ikke å bruke denne leverandøren og prøv igjen. ',
+        'assoc_maintenances'	 => 'This supplier is currently associated with :maintenances_count asset maintenances(s) and cannot be deleted. Please update your asset maintenances to no longer reference this supplier and try again. ',
     )
 
 );

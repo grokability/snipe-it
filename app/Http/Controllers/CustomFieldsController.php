@@ -144,9 +144,8 @@ class CustomFieldsController extends Controller
      */
     public function deleteFieldFromFieldset($field_id, $fieldset_id) : RedirectResponse
     {
+        $this->authorize('update', CustomField::class);
         $field = CustomField::find($field_id);
-
-        $this->authorize('update', $field);
 
         // Check that the field exists - this is mostly related to the demo, where we 
         // rewrite the data every x minutes, so it's possible someone might be disassociating 
@@ -157,11 +156,12 @@ class CustomFieldsController extends Controller
             return redirect()->route('fieldsets.show', ['fieldset' => $fieldset_id])
                 ->with('success', trans('admin/custom_fields/message.field.delete.success'));
             } else {
-                return redirect()->back()->withErrors(['message' => "Field is in use and cannot be deleted."]);
+                return redirect()->back()->with('error', trans('admin/custom_fields/message.field.delete.error'))
+                    ->withInput();
             }
         }
 
-        return redirect()->back()->withErrors(['message' => "Error deleting field from fieldset"]);
+        return redirect()->back()->with('error', trans('admin/custom_fields/message.field.delete.error'));
 
        
     }
@@ -172,20 +172,16 @@ class CustomFieldsController extends Controller
      * @author [Brady Wetherington] [<uberbrady@gmail.com>]
      * @since [v1.8]
      */
-    public function destroy($field_id) : RedirectResponse
+    public function destroy(CustomField $field) : RedirectResponse
     {
-        if ($field = CustomField::find($field_id)) {
-            $this->authorize('delete', $field);
+        $this->authorize('delete', CustomField::class);
 
-            if (($field->fieldset) && ($field->fieldset->count() > 0)) {
-                return redirect()->back()->withErrors(['message' => 'Field is in-use']);
-            }
-            $field->delete();
-            return redirect()->route("fields.index")
-                ->with("success", trans('admin/custom_fields/message.field.delete.success'));
+        if (($field->fieldset) && ($field->fieldset->count() > 0)) {
+            return redirect()->back()->with('error', trans('admin/custom_fields/message.field.delete.in_use'));
         }
-
-        return redirect()->back()->withErrors(['message' => 'Field does not exist']);
+        $field->delete();
+        return redirect()->route("fields.index")
+            ->with("success", trans('admin/custom_fields/message.field.delete.success'));
     }
 
 
@@ -198,7 +194,7 @@ class CustomFieldsController extends Controller
      */
     public function edit(Request $request, CustomField $field) : View | RedirectResponse
     {
-        $this->authorize('update', $field);
+        $this->authorize('update', CustomField::class);
         $fieldsets = CustomFieldset::get();
         $customFormat = '';
         if ((stripos($field->format, 'regex') === 0) && ($field->format !== CustomField::PREDEFINED_FORMATS['MAC'])) {
@@ -228,7 +224,7 @@ class CustomFieldsController extends Controller
      */
     public function update(CustomFieldRequest $request, CustomField $field) : RedirectResponse
     {
-        $this->authorize('update', $field);
+        $this->authorize('update', CustomField::class);
         $show_in_email = $request->get("show_in_email", 0);
         $display_in_user_view = $request->get("display_in_user_view", 0);
 
@@ -264,7 +260,6 @@ class CustomFieldsController extends Controller
         }
 
         if ($field->save()) {
-
 
             // Sync fields with fieldsets
             $fieldset_array = $request->input('associate_fieldsets');

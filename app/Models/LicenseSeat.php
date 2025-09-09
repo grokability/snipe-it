@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Traits\Acceptable;
+use App\Models\Traits\CompanyableChildTrait;
 use App\Notifications\CheckinLicenseNotification;
 use App\Notifications\CheckoutLicenseNotification;
 use App\Presenters\Presentable;
@@ -21,6 +22,9 @@ class LicenseSeat extends SnipeModel implements ICompanyableChild
 
     protected $guarded = 'id';
     protected $table = 'license_seats';
+    protected $casts = [
+        'unreassignable_seat' => 'boolean',
+    ];
 
     /**
      * The attributes that are mass assignable.

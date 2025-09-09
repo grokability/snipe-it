@@ -50,6 +50,7 @@ class AssetModelsController extends Controller
                 'fieldset',
                 'deleted_at',
                 'updated_at',
+                'require_serial',
             ];
 
         $assetmodels = AssetModel::select([
@@ -69,6 +70,7 @@ class AssetModelsController extends Controller
             'models.fieldset_id',
             'models.deleted_at',
             'models.updated_at',
+            'models.require_serial'
          ])
             ->with('category', 'depreciation', 'manufacturer', 'fieldset.fields.defaultValues', 'adminuser')
             ->withCount('assets as assets_count');

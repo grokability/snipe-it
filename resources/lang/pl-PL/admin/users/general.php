@@ -53,5 +53,5 @@ return [
     'next_save_user' => 'Następnie: Zapisz użytkownika',
     'all_assigned_list_generation' => 'Data wygenerowania:',
     'email_user_creds_on_create' => 'Czy wysłać temu użytkownikowi dane logowania mailem?',
-    'department_manager' => 'Department Manager',
+    'department_manager' => 'Menedżer działu',
 ];

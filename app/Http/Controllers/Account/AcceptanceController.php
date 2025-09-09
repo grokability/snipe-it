@@ -232,6 +232,8 @@ class AcceptanceController extends Controller
                 'signature' => ($sig_filename) ? storage_path() . '/private_uploads/signatures/' . $sig_filename : null,
                 'logo' => $path_logo,
                 'date_settings' => $branding_settings->date_display_format,
+                'admin' => auth()->user()->present()?->fullName,
+                'qty' => $acceptance->qty ?? 1,
             ];
 
             if ($pdf_view_route!='') {
@@ -247,15 +249,15 @@ class AcceptanceController extends Controller
 
                 // Add the attachment for the signing user into the $data array
                 $data['file'] = $pdf_filename;
-
+                $locale = $assigned_user->locale;
                 try {
-                    $assigned_user->notify(new AcceptanceAssetAcceptedToUserNotification($data));
+                    $assigned_user->notify((new AcceptanceAssetAcceptedToUserNotification($data))->locale($locale));
                 } catch (\Exception $e) {
                     Log::warning($e);
                 }
             }
             try {
-                $acceptance->notify(new AcceptanceAssetAcceptedNotification($data));
+                $acceptance->notify((new AcceptanceAssetAcceptedNotification($data))->locale(Setting::getSettings()->locale));
             } catch (\Exception $e) {
                 Log::warning($e);
             }
@@ -337,6 +339,7 @@ class AcceptanceController extends Controller
                 'assigned_to' => $assigned_to,
                 'company_name' => $branding_settings->site_name,
                 'date_settings' => $branding_settings->date_display_format,
+                'qty' => $acceptance->qty ?? 1,
             ];
 
             if ($pdf_view_route!='') {
@@ -345,8 +348,12 @@ class AcceptanceController extends Controller
                 Storage::put('private_uploads/eula-pdfs/' .$pdf_filename, $pdf->output());
             }
 
-            $acceptance->decline($sig_filename, $request->input('note'));
+            for ($i = 0; $i < ($acceptance->qty ?? 1); $i++) {
+                $acceptance->decline($sig_filename, $request->input('note'));
+            }
+
             $acceptance->notify(new AcceptanceAssetDeclinedNotification($data));
+            Log::debug('New event acceptance.');
             event(new CheckoutDeclined($acceptance));
             $return_msg = trans('admin/users/message.declined');
         }
@@ -356,13 +363,16 @@ class AcceptanceController extends Controller
                 $recipient = User::find($acceptance->alert_on_response_id);
 
                 if ($recipient) {
+                    Log::debug('Attempting to send email acceptance.');
                     Mail::to($recipient)->send(new CheckoutAcceptanceResponseMail(
                         $acceptance,
                         $recipient,
                         $request->input('asset_acceptance') === 'accepted',
                     ));
+                    Log::debug('Send email notification sucess on checkout acceptance response.');
                 }
             } catch (Exception $e) {
+                Log::error($e->getMessage());
                 Log::warning($e);
             }
         }

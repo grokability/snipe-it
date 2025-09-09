@@ -92,7 +92,9 @@ class BulkAssetModelsController extends Controller
             $update_array['min_amt'] = $request->input('min_amt');
         }
 
-
+        if ($request->filled('require_serial')) {
+            $update_array['require_serial'] = $request->input('require_serial');
+        }
 
         if (count($update_array) > 0) {
             AssetModel::whereIn('id', $models_raw_array)->update($update_array);

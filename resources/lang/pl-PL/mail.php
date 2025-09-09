@@ -4,8 +4,8 @@ return [
 
     'Accessory_Checkin_Notification' => 'Akcesorium zwrócono',
     'Accessory_Checkout_Notification' => 'Akcesoria zablokowane',
-    'Asset_Checkin_Notification' => 'Sprzęt zwrócono',
-    'Asset_Checkout_Notification' => 'Zasób wydany',
+    'Asset_Checkin_Notification' => 'Asset checked in: [:tag]',
+    'Asset_Checkout_Notification' => 'Asset checked out: [:tag]',
     'Confirm_Accessory_Checkin' => 'Potwierdź przyjęcie akcesorium',
     'Confirm_Asset_Checkin' => 'Potwierdź otrzymanie sprzętu',
     'Confirm_component_checkin' => 'Component checkin confirmation',
@@ -77,6 +77,7 @@ return [
     'name' => 'Nazwa',
     'new_item_checked' => 'Nowy przedmiot został przypisany do Ciebie, szczegóły poniżej.',
     'new_item_checked_with_acceptance' => 'A new item has been checked out under your name that requires acceptance, details are below.',
+    'new_item_checked_location' => 'A new item has been checked out to :location, details are below.',
     'recent_item_checked' => 'An item was recently checked out under your name that requires acceptance, details are below.',
     'notes' => 'Uwagi',
     'password' => 'Hasło',

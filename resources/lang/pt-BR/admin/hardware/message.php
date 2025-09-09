@@ -2,27 +2,27 @@
 
 return [
 
-    'undeployable' 		 => 'The following assets cannot be deployed and have been removed from checkout: :asset_tags',
+    'undeployable' 		 => 'Os seguintes conteúdos não podem ser implantados e foram removidos do checkout: :asset_tags',
     'does_not_exist' 	 => 'O ativo não existe.',
     'does_not_exist_var' => 'Ativo com a etiqueta :asset_tag não encontrado.',
     'no_tag' 	         => 'Nenhuma etiqueta de ativo fornecida.',
     'does_not_exist_or_not_requestable' => 'Esse ativo não existe ou não pode ser solicitado.',
     'assoc_users'	 	 => 'Este ativo está no momento associado com pelo menos um usuário e não pode ser deletado. Por favor, atualize seu ativo para que não referencie mais este usuário e tente novamente. ',
     'warning_audit_date_mismatch' 	=> 'A próxima data de auditoria deste ativo (:next_audit_date) é anterior à última data de auditoria (:last_audit_date). Por favor, atualize a próxima data de auditoria.',
-    'labels_generated'   => 'Labels were successfully generated.',
-    'error_generating_labels' => 'Error while generating labels.',
-    'no_assets_selected' => 'No assets selected.',
+    'labels_generated'   => 'Marcadores foram gerados com sucesso.',
+    'error_generating_labels' => 'Erro ao gerar marcadores.',
+    'no_assets_selected' => 'Nenhum ativo selecionado.',
 
     'create' => [
         'error'   		=> 'O ativo não foi criado, tente novamente. :(',
         'success' 		=> 'Ativo criado com sucesso. :)',
         'success_linked' => 'O ativo com a tag :tag foi criado com sucesso. <strong><a href=":link" style="color: white;">clique aqui para ver</a></strong>.',
-        'multi_success_linked' => 'Asset with tag :links was created successfully.|:count assets were created succesfully. :links.',
-        'partial_failure' => 'An asset was unable to be created. Reason: :failures|:count assets were unable to be created. Reasons: :failures',
+        'multi_success_linked' => 'O ativo com a tag :links foi criado com sucesso: :count ativos foram criados com sucesso. :links.',
+        'partial_failure' => 'Um ativo não pôde ser criado. Motivo: :failures | :count assets não puderam ser criados. Motivos: :failures',
         'target_not_found' => [
-            'user' => 'The assigned user could not be found.',
-            'asset' => 'The assigned asset could not be found.',
-            'location' => 'The assigned location could not be found.',
+            'user' => 'O usuário atribuído não pôde ser encontrado.',
+            'asset' => 'O ativo atribuído não pôde ser encontrado.',
+            'location' => 'A localização atribuída não pôde ser encontrada.',
         ],
     ],
 
@@ -71,14 +71,14 @@ return [
         'file_already_deleted' => 'O arquivo selecionado já foi excluído',
         'header_row_has_malformed_characters' => 'Um ou mais atributos na linha do cabeçalho contém caracteres UTF-8 malformados',
         'content_row_has_malformed_characters' => 'Um ou mais atributos na primeira linha de conteúdo contém caracteres UTF-8 malformados',
-        'transliterate_failure' => 'Transliteration from :encoding to UTF-8 failed due to invalid characters in input'
+        'transliterate_failure' => 'Transliteração de :encoding para UTF-8 falhou devido a caracteres inválidos na entrada'
     ],
 
 
     'delete' => [
         'confirm'   	=> 'Tem certeza de que deseja excluir este ativo?',
         'error'   		=> 'Houve um problema ao excluir o ativo. Tente novamente.',
-        'assigned_to_error' => '{1}Asset Tag: :asset_tag is currently checked out. Check in this device before deletion.|[2,*]Asset Tags: :asset_tag are currently checked out. Check in these devices before deletion.',
+        'assigned_to_error' => '{1}Etiqueta do ativo :asset_tag está atualmente em uso. Efetue a devolução deste dispositivo antes de excluí-lo | [2,*] Etiquetas dos ativos :asset_tag estão atualmente em uso. Efetue a devolução destes dispositivos antes de excluí-los',
         'nothing_updated'   => 'Nenhum ativo foi selecionado, então nada foi deletado.',
         'success' 		=> 'O ativo foi excluído com sucesso.',
     ],
@@ -105,9 +105,9 @@ return [
     ],
 
     'requests' => [
-        'error'   		=> 'Request was not successful, please try again.',
-        'success' 		=> 'Request successfully submitted.',
-        'canceled'      => 'Request successfully canceled.',
+        'error'   		=> 'A solicitação não foi bem-sucedida. Por favor, tente novamente.',
+        'success' 		=> 'Solicitação enviada com sucesso.',
+        'canceled'      => 'Requisição cancelada com sucesso.',
         'cancel'        => 'Cancelar solicitação deste item',
     ],
 

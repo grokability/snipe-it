@@ -26,6 +26,7 @@
                 data-sort-order="asc"
                 data-sort-name="name"
                 id="groupsTable"
+                data-buttons="groupButtons"
                 class="table table-striped snipe-table"
                 data-url="{{ route('api.groups.index') }}"
                 data-export-options='{

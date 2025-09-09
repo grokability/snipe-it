@@ -1,7 +1,7 @@
 <?php
 
     return [
-        'select_type'            => 'Select Maintenance Type',
+        'select_type'            => 'Wybierz typ konserwacji',
         'asset_maintenance_type' => 'Rodzaj konserwacji aktywów',
         'title'                  => 'Tytuł',
         'start_date'             => 'Data rozpoczęcia',

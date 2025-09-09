@@ -33,7 +33,7 @@ return [
     'create_fieldset_title' => 'Vytvořit nový fieldset',
     'create_field'            => 'Nové vlastní pole',
     'create_field_title' => 'Vytvořít vlastní fieldset',
-    'value_encrypted'      	        => 'Hodnota tohoto pole je zašifrována v databázi. Pouze administrátoři budou moci zobrazit dešifrovanou hodnotu',
+    'value_encrypted'      	        => 'The value of this field is encrypted in the database. Only users with permission to view encrypted custom fields will be able to view the decrypted value',
     'show_in_email'     => 'Zahrnout hodnotu této kolonky do e-mailu o vyskladnění pro uživatele? Šifrované kolonky nemohou být součástí e-mailů',
     'show_in_email_short' => 'Zahrnout do e-mailů',
     'help_text' => 'Text nápovědy',

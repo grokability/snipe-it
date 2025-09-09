@@ -93,8 +93,8 @@ class CheckoutAssetNotification extends Notification
         $channel = ($this->settings->webhook_channel) ? $this->settings->webhook_channel : '';
 
         $fields = [
-            trans('general.to') => '<'.$target->present()->viewUrl().'|'.$target->present()->fullName().'>',
-            trans('general.by') => '<'.$admin->present()->viewUrl().'|'.$admin->present()->fullName().'>',
+            trans('general.to') => '<'.$target->present()->viewUrl().'|'.$target->display_name.'>',
+            trans('general.by') => '<'.$admin->present()->viewUrl().'|'.$admin->display_name.'>',
         ];
 
         if ($item->location) {
@@ -110,11 +110,11 @@ class CheckoutAssetNotification extends Notification
         }
 
         return (new SlackMessage)
-            ->content(':arrow_up: :computer: '.trans('mail.Asset_Checkout_Notification'))
+            ->content(':arrow_up: :computer: '.trans('mail.Asset_Checkout_Notification', ['tag' => '']))
             ->from($botname)
             ->to($channel)
             ->attachment(function ($attachment) use ($item, $note, $admin, $fields) {
-                $attachment->title(htmlspecialchars_decode($item->present()->name), $item->present()->viewUrl())
+                $attachment->title(htmlspecialchars_decode($item->display_name), $item->present()->viewUrl())
                     ->fields($fields)
                     ->content($note);
             });
@@ -131,19 +131,19 @@ class CheckoutAssetNotification extends Notification
             return MicrosoftTeamsMessage::create()
                 ->to($this->settings->webhook_endpoint)
                 ->type('success')
-                ->title(trans('mail.Asset_Checkout_Notification'))
+                ->title(trans('mail.Asset_Checkout_Notification', ['tag' => '']))
                 ->addStartGroupToSection('activityText')
-                ->fact(trans('mail.assigned_to'), $target->present()->name)
-                ->fact(htmlspecialchars_decode($item->present()->name), '', 'activityText')
-                ->fact(trans('mail.Asset_Checkout_Notification') . " by ", $admin->present()->fullName())
+                ->fact(trans('mail.assigned_to'), $target->display_name)
+                ->fact(htmlspecialchars_decode($item->display_name), '', 'activityText')
+                ->fact(trans('general.administrator'), $admin->display_name)
                 ->fact(trans('mail.notes'), $note ?: '');
         }
 
-        $message = trans('mail.Asset_Checkout_Notification');
+        $message = trans('mail.Asset_Checkout_Notification', ['tag' => '']);
         $details = [
             trans('mail.assigned_to') => $target->present()->name,
-            trans('mail.asset') => htmlspecialchars_decode($item->present()->name),
-            trans('mail.Asset_Checkout_Notification'). ' by' => $admin->present()->fullName(),
+            trans('mail.asset') => htmlspecialchars_decode($item->display_name),
+            trans('general.administrator') => $admin->display_name,
             trans('mail.notes') => $note ?: '',
         ];
        return  array($message, $details);
@@ -159,8 +159,8 @@ public function toGoogleChat()
             ->card(
                 Card::create()
                     ->header(
-                        '<strong>'.trans('mail.Asset_Checkout_Notification').'</strong>' ?: '',
-                        htmlspecialchars_decode($item->present()->name) ?: '',
+                        '<strong>'.trans('mail.Asset_Checkout_Notification', ['tag' => '']).'</strong>' ?: '',
+                        htmlspecialchars_decode($item->display_name) ?: '',
                     )
                     ->section(
                         Section::create(

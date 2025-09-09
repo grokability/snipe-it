@@ -144,6 +144,14 @@ class AssetModelPresenter extends Presenter
                 'formatter' => 'trueFalseFormatter',
             ],
             [
+                'field' => 'require_serial',
+                'searchable' => false,
+                'sortable' => true,
+                'visible' => false,
+                'title' => trans('admin/hardware/general.require_serial'),
+                'formatter' => 'trueFalseFormatter',
+            ],
+            [
                 'field' => 'notes',
                 'searchable' => true,
                 'sortable' => true,

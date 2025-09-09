@@ -33,7 +33,7 @@ return [
     'create_fieldset_title' => 'Buat fieldset baru',
     'create_field'            => 'Tambah Kolom Ubahan',
     'create_field_title' => 'Buat field kustom',
-    'value_encrypted'      	        => 'Nilai dari kolom ini di database dienkripsi. hanya pengguna admin yang bisa melihat nilai deskripsinya',
+    'value_encrypted'      	        => 'The value of this field is encrypted in the database. Only users with permission to view encrypted custom fields will be able to view the decrypted value',
     'show_in_email'     => 'Sertakan nilai bidang ini dalam email checkout yang dikirim kepada pengguna? Bidang terenkripsi tidak dapat dimasukkan dalam email',
     'show_in_email_short' => 'Sertakan dalam email',
     'help_text' => 'Teks bantuan',

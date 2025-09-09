@@ -4,7 +4,7 @@
         'select_type'            => 'Select Maintenance Type',
         'asset_maintenance_type' => 'Asset Maintenance Type',
         'title'                  => 'כותרת',
-        'start_date'             => 'Start Date',
+        'start_date'             => 'תאריך התחלה',
         'completion_date'        => 'Completion Date',
         'cost'                   => 'מחיר',
         'is_warranty'            => 'שיפור באחריות',

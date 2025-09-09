@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Helpers\Helper;
 use App\Models\Traits\Acceptable;
+use App\Models\Traits\CompanyableTrait;
 use App\Models\Traits\HasUploads;
 use App\Models\Traits\Searchable;
 use App\Presenters\Presentable;
@@ -65,7 +66,7 @@ class Accessory extends SnipeModel
         'company_id'        => 'integer|nullable',
         'location_id'       => 'exists:locations,id|nullable|fmcs_location',
         'min_amt'           => 'integer|min:0|nullable',
-        'purchase_cost'     => 'numeric|nullable|gte:0|max:9999999999999',
+        'purchase_cost'     =>  'numeric|nullable|gte:0|max:99999999999999999.99',
         'purchase_date'     => 'date_format:Y-m-d|nullable',
     ];
 

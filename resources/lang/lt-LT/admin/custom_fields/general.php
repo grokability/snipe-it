@@ -33,7 +33,7 @@ return [
     'create_fieldset_title' => 'Sukurkite naują laukų rinkinį',
     'create_field'            => 'Naujas pritaikytas laukas',
     'create_field_title' => 'Sukurti naują pritaikytą lauką',
-    'value_encrypted'      	        => 'Šio lauko reikšmė yra užšifruota duomenų bazėje. Tik administratoriai gali matyti iššifruotą reikšmę',
+    'value_encrypted'      	        => 'The value of this field is encrypted in the database. Only users with permission to view encrypted custom fields will be able to view the decrypted value',
     'show_in_email'     => 'Įtraukti šio lauko reikšmę į išdavimo el. laiškus, siunčiamus naudotojams? Šifruotų laukų į el. laiškus įtraukti negalima',
     'show_in_email_short' => 'Įtraukti į el. laiškus',
     'help_text' => 'Pagalbos tekstas',

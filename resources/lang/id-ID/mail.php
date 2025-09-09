@@ -4,8 +4,8 @@ return [
 
     'Accessory_Checkin_Notification' => 'Aksesoris Kembali',
     'Accessory_Checkout_Notification' => 'Aksesoris telah dialokasikan',
-    'Asset_Checkin_Notification' => 'Aset Kembali',
-    'Asset_Checkout_Notification' => 'Kembali-kan aset',
+    'Asset_Checkin_Notification' => 'Asset checked in: [:tag]',
+    'Asset_Checkout_Notification' => 'Asset checked out: [:tag]',
     'Confirm_Accessory_Checkin' => 'Konfirmasi check-in Aksesoris',
     'Confirm_Asset_Checkin' => 'Konfirmasi check-in Aset',
     'Confirm_component_checkin' => 'Component checkin confirmation',
@@ -77,6 +77,7 @@ return [
     'name' => 'Nama',
     'new_item_checked' => 'Item baru telah diperiksa berdasarkan nama Anda, rinciannya ada di bawah.',
     'new_item_checked_with_acceptance' => 'A new item has been checked out under your name that requires acceptance, details are below.',
+    'new_item_checked_location' => 'A new item has been checked out to :location, details are below.',
     'recent_item_checked' => 'An item was recently checked out under your name that requires acceptance, details are below.',
     'notes' => 'Catatan',
     'password' => 'Kata sandi',

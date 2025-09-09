@@ -29,7 +29,7 @@ class GroupsTransformer
             'notes' => Helper::parseEscapedMarkedownInline($group->notes),
             'created_by' => ($group->adminuser) ? [
                 'id' => (int) $group->adminuser->id,
-                'name'=> e($group->adminuser->present()->fullName()),
+                'name'=> e($group->adminuser->display_name),
             ] : null,
             'created_at' => Helper::getFormattedDateObject($group->created_at, 'datetime'),
             'updated_at' => Helper::getFormattedDateObject($group->updated_at, 'datetime'),

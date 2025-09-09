@@ -35,7 +35,7 @@
                 </span>
                 <span class="hidden-xs hidden-sm">
                     {{ trans('general.assets') }}
-                    {!! ($supplier->assets()->AssetsForShow()->count() > 0 ) ? '<badge class="badge badge-secondary">'.number_format($supplier->assets()->AssetsForShow()->count()).'</badge>' : '' !!}
+                    {!! ($supplier->assets()->AssetsForShow()->count() > 0 ) ? '<span class="badge badge-secondary">'.number_format($supplier->assets()->AssetsForShow()->count()).'</span>' : '' !!}
                </span>
 
             </a>
@@ -48,7 +48,7 @@
                     </span>
               <span class="hidden-xs hidden-sm">
                           {{ trans('general.accessories') }}
-                          {!! ($supplier->accessories->count() > 0 ) ? '<badge class="badge badge-secondary">'.number_format($supplier->accessories->count()).'</badge>' : '' !!}
+                          {!! ($supplier->accessories->count() > 0 ) ? '<span class="badge badge-secondary">'.number_format($supplier->accessories->count()).'</span>' : '' !!}
                     </span>
             </a>
           </li>
@@ -60,7 +60,7 @@
                     </span>
               <span class="hidden-xs hidden-sm">
                           {{ trans('general.licenses') }}
-                          {!! ($supplier->licenses->count() > 0 ) ? '<badge class="badge badge-secondary">'.number_format($supplier->licenses->count()).'</badge>' : '' !!}
+                          {!! ($supplier->licenses->count() > 0 ) ? '<span class="badge badge-secondary">'.number_format($supplier->licenses->count()).'</span>' : '' !!}
                     </span>
             </a>
           </li>
@@ -72,7 +72,7 @@
                     </span>
                     <span class="hidden-xs hidden-sm">
                           {{ trans('general.components') }}
-                        {!! ($supplier->components->count() > 0 ) ? '<badge class="badge badge-secondary">'.number_format($supplier->components->count()).'</badge>' : '' !!}
+                        {!! ($supplier->components->count() > 0 ) ? '<span class="badge badge-secondary">'.number_format($supplier->components->count()).'</span>' : '' !!}
                     </span>
                 </a>
             </li>
@@ -84,7 +84,7 @@
                     </span>
                     <span class="hidden-xs hidden-sm">
                           {{ trans('general.consumables') }}
-                        {!! ($supplier->consumables->count() > 0 ) ? '<badge class="badge badge-secondary">'.number_format($supplier->consumables->count()).'</badge>' : '' !!}
+                        {!! ($supplier->consumables->count() > 0 ) ? '<span class="badge badge-secondary">'.number_format($supplier->consumables->count()).'</span>' : '' !!}
                     </span>
                 </a>
             </li>
@@ -95,8 +95,8 @@
                         <x-icon type="maintenances" class="fa-2x" />
                     </span>
               <span class="hidden-xs hidden-sm">
-                        {{ trans('admin/asset_maintenances/general.asset_maintenances') }}
-                        {!! ($supplier->asset_maintenances->count() > 0 ) ? '<badge class="badge badge-secondary">'.number_format($supplier->asset_maintenances->count()).'</badge>' : '' !!}
+                        {{ trans('admin/maintenances/general.maintenances') }}
+                        {!! ($supplier->maintenances->count() > 0 ) ? '<span class="badge badge-secondary">'.number_format($supplier->maintenances->count()).'</span>' : '' !!}
                     </span>
             </a>
           </li>
@@ -220,16 +220,17 @@
 
 
           <div class="tab-pane" id="maintenances">
-            <h2 class="box-title">{{ trans('admin/asset_maintenances/general.asset_maintenances') }}</h2>
+            <h2 class="box-title">{{ trans('admin/maintenances/general.maintenances') }}</h2>
             <div class="table table-responsive">
 
               <table
-                      data-columns="{{ \App\Presenters\AssetMaintenancesPresenter::dataTableLayout() }}"
+                      data-columns="{{ \App\Presenters\MaintenancesPresenter::dataTableLayout() }}"
                       data-cookie-id-table="maintenancesTable"
                       data-id-table="maintenancesTable"
                       data-side-pagination="server"
                       data-sort-order="asc"
                       id="maintenancesTable"
+                      data-buttons="maintenanceButtons"
                       class="table table-striped snipe-table"
                       data-url="{{ route('api.maintenances.index', ['supplier_id' => $supplier->id])}}"
                       data-export-options='{

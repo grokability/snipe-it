@@ -11,7 +11,7 @@ window.$ = jQuery
  itself
  *****************************************/
 
-require('jquery-ui'); //should we export this to the window?
+require("jquery-ui/dist/jquery-ui")
 jQuery.fn.uitooltip = jQuery.fn.tooltip;
 require('bootstrap-less');
 require('select2');
@@ -113,9 +113,11 @@ pieOptions = {
 
 var baseUrl = $('meta[name="baseUrl"]').attr('content');
 
+
+
 $(function () {
 
-    var $el = $('table');
+    var $el = $('body');
 
     // confirm restore modal
 
@@ -136,48 +138,27 @@ $(function () {
     });
 
     // confirm delete modal
-
     $el.on('click', '.delete-asset', function (evnt) {
         var $context = $(this);
         var $dataConfirmModal = $('#dataConfirmModal');
         var href = $context.attr('href');
         var message = $context.attr('data-content');
+        var headericon = $context.attr('data-icon');
         var title = $context.attr('data-title');
 
-        $('#myModalLabel').text(title);
-        $dataConfirmModal.find('.modal-body').text(message);
+        // deleteForm is the ID of the modal form itself
         $('#deleteForm').attr('action', href);
+        $dataConfirmModal.find('.modal-header-icon').addClass(headericon);
+        $dataConfirmModal.find('.modal-title').text(title).prepend('<i class="fa ' + headericon + '"></i> ');
+        $dataConfirmModal.find('.modal-body').text(message);
+        $dataConfirmModal.attr('action', href);
+
+        // Fire the modal
         $dataConfirmModal.modal({
             show: true
         });
         return false;
     });
-
-    /*
-    * Slideout help menu
-    */
-     $('.slideout-menu-toggle').on('click', function(event){
-        event.preventDefault();
-        // create menu variables
-        var slideoutMenu = $('.slideout-menu');
-        var slideoutMenuWidth = $('.slideout-menu').width();
-
-        // toggle open class
-        slideoutMenu.toggleClass("open");
-
-        // slide menu
-        if (slideoutMenu.hasClass("open")) {
-         slideoutMenu.show();
-            slideoutMenu.animate({
-                right: "0px"
-            });
-        } else {
-            slideoutMenu.animate({
-                right: -slideoutMenuWidth
-            }, "-350px");
-         slideoutMenu.fadeOut();
-        }
-     });
 
 
 

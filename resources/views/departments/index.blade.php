@@ -6,10 +6,6 @@
     @parent
 @stop
 
-@section('header_right')
-    <a href="{{ route('departments.create') }}" class="btn btn-primary pull-right">
-        {{ trans('general.create') }}</a>
-@stop
 {{-- Page content --}}
 @section('content')
     <div class="row">
@@ -22,6 +18,7 @@
                                 data-side-pagination="server"
                                 data-sort-order="asc"
                                 id="departmentsTable"
+                                data-buttons="departmentButtons"
                                 class="table table-striped snipe-table"
                                 data-url="{{ route('api.departments.index') }}"
                                 data-export-options='{

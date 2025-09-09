@@ -14,7 +14,7 @@ return array(
     */
 
     'today' => 'Today',
-    'clear' => 'Clear',
+    'clear' => 'Limpar',
     'days' => [
         'sunday' => 'Sunday',
         'monday' => 'Monday',

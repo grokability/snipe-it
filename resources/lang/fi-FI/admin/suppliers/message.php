@@ -22,7 +22,7 @@ return array(
         'success' => 'Toimittaja poistettiin onnistuneesti.',
         'assoc_assets'	 => 'Tähän toimittajaan liittyy tällä hetkellä :asset_count laitetta ja sitä ei voi poistaa. Ole hyvä ja päivitä laitteet, jotta ne eivät enää viittaa tähän toimittajaan ja yritä uudelleen. ',
         'assoc_licenses'	 => 'Tähän toimittajaan liittyy tällä hetkellä :licenses_count lisenssiä ja sitä ei voi poistaa. Ole hyvä ja päivitä lisenssit, jotta ne eivät enää viittaa tähän toimittajaan ja yritä uudelleen. ',
-        'assoc_maintenances'	 => 'Tähän toimittajaan liittyy tällä hetkellä :asset_maintenances_count huoltoa ja sitä ei voi poistaa. Ole hyvä ja päivitä huoltotietosi , poista viittaukset tähän toimittajaan ja yritä uudelleen. ',
+        'assoc_maintenances'	 => 'This supplier is currently associated with :maintenances_count asset maintenances(s) and cannot be deleted. Please update your asset maintenances to no longer reference this supplier and try again. ',
     )
 
 );

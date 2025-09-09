@@ -18,7 +18,7 @@ class UploadedFilesPresenter extends Presenter
         $layout = [
             [
                 'field' => 'id',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,
                 'title' => trans('general.id'),
@@ -30,6 +30,7 @@ class UploadedFilesPresenter extends Presenter
                 'sortable' => false,
                 'switchable' => false,
                 'title' => trans('general.type'),
+                'visible' => true,
                 'formatter' => 'iconFormatter',
             ],
             [
@@ -38,16 +39,17 @@ class UploadedFilesPresenter extends Presenter
                 'sortable' => false,
                 'switchable' => true,
                 'title' => trans('general.image'),
-                'formatter' => 'inlineImageFormatter',
+                'visible' => true,
+                'formatter' => 'filePreviewFormatter',
             ],
             [
                 'field' => 'filename',
-                'searchable' => false,
-                'sortable' => false,
+                'searchable' => true,
+                'sortable' => true,
                 'switchable' => true,
                 'title' => trans('general.file_name'),
                 'visible' => true,
-                'formatter' => 'fileUploadNameFormatter',
+                'formatter' => 'fileNameFormatter',
             ],
             [
                 'field' => 'download',
@@ -56,7 +58,7 @@ class UploadedFilesPresenter extends Presenter
                 'switchable' => true,
                 'title' => trans('general.download'),
                 'visible' => true,
-                'formatter' => 'downloadOrOpenInNewWindowFormatter',
+                'formatter' => 'fileDownloadButtonsFormatter',
             ],
             [
                 'field' => 'note',
@@ -68,10 +70,10 @@ class UploadedFilesPresenter extends Presenter
             ],
             [
                 'field' => 'created_by',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'title' => trans('general.created_by'),
-                'visible' => false,
+                'visible' => true,
                 'formatter' => 'usersLinkObjFormatter',
             ],
             [
@@ -80,7 +82,7 @@ class UploadedFilesPresenter extends Presenter
                 'sortable' => true,
                 'switchable' => true,
                 'title' => trans('general.created_at'),
-                'visible' => false,
+                'visible' => true,
                 'formatter' => 'dateDisplayFormatter',
             ], [
                 'field' => 'available_actions',
@@ -88,6 +90,7 @@ class UploadedFilesPresenter extends Presenter
                 'sortable' => false,
                 'switchable' => false,
                 'title' => trans('table.actions'),
+                'visible' => true,
                 'formatter' => 'deleteUploadFormatter',
             ],
         ];

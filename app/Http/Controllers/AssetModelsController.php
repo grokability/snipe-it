@@ -82,12 +82,26 @@ class AssetModelsController extends Controller
         $model->notes = $request->input('notes');
         $model->created_by = auth()->id();
         $model->requestable = $request->has('requestable');
+        $model->require_serial = $request->input('require_serial', 0);
 
         if ($request->input('fieldset_id') != '') {
             $model->fieldset_id = $request->input('fieldset_id');
         }
 
-        $model = $request->handleImages($model);
+        if ($request->has('use_cloned_image')) {
+            $cloned_model_img = AssetModel::select('image')->find($request->input('clone_image_from_id'));
+            if ($cloned_model_img) {
+                $new_image_name = 'clone-'.date('U').'-'.$cloned_model_img->image;
+                $new_image = 'models/'.$new_image_name;
+                Storage::disk('public')->copy('models/'.$cloned_model_img->image, $new_image);
+                $model->image = $new_image_name;
+            }
+
+        } else {
+            $model = $request->handleImages($model);
+        }
+
+
 
         if ($model->save()) {
             if ($this->shouldAddDefaultValues($request->input())) {
@@ -142,7 +156,7 @@ class AssetModelsController extends Controller
         $model->category_id = $request->input('category_id');
         $model->notes = $request->input('notes');
         $model->requestable = $request->input('requestable', '0');
-
+        $model->require_serial = $request->input('require_serial', 0);
         $model->fieldset_id = $request->input('fieldset_id');
 
         if ($model->save()) {
@@ -271,7 +285,7 @@ class AssetModelsController extends Controller
             ->with('depreciation_list', Helper::depreciationList())
             ->with('item', $model)
             ->with('model_id', $model->id)
-            ->with('clone_model', $cloned_model);
+            ->with('cloned_model', $cloned_model);
     }
 
 

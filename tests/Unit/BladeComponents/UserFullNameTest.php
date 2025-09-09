@@ -17,7 +17,7 @@ class UserFullNameTest extends TestCase
             function () {
                 return [
                     'actor' => User::factory()->viewUsers()->create(),
-                    'user' => User::factory()->create(['first_name' => 'Jim', 'last_name' => 'Bagg']),
+                    'user' => User::factory()->create(['first_name' => 'Jim', 'last_name' => 'Bagg', 'display_name' => null]),
                     'assertions' => function ($rendered) {
                         Assert::assertStringContainsString('<a ', $rendered);
                         Assert::assertStringContainsString('Jim Bagg', $rendered);
@@ -30,7 +30,7 @@ class UserFullNameTest extends TestCase
             function () {
                 return [
                     'actor' => User::factory()->viewUsers()->create(),
-                    'user' => User::factory()->deleted()->create(['first_name' => 'Jim', 'last_name' => 'Bagg']),
+                    'user' => User::factory()->deleted()->create(['first_name' => 'Jim', 'last_name' => 'Bagg', 'display_name' => 'Jim Baggins']),
                     'assertions' => function ($rendered) {
                         Assert::assertStringContainsString('<s><a ', $rendered);
                         Assert::assertStringContainsString('Jim Bagg', $rendered);
@@ -43,7 +43,7 @@ class UserFullNameTest extends TestCase
             function () {
                 return [
                     'actor' => User::factory()->create(),
-                    'user' => User::factory()->create(['first_name' => 'Jim', 'last_name' => 'Bagg']),
+                    'user' => User::factory()->create(['first_name' => 'Jim', 'last_name' => 'Bagg',  'display_name' => 'Jim Bagg']),
                     'assertions' => function ($rendered) {
                         Assert::assertStringContainsString('<span>Jim Bagg', $rendered);
                         Assert::assertStringNotContainsString('<a ', $rendered);
@@ -56,7 +56,7 @@ class UserFullNameTest extends TestCase
             function () {
                 return [
                     'actor' => User::factory()->create(),
-                    'user' => User::factory()->deleted()->create(['first_name' => 'Jim', 'last_name' => 'Bagg']),
+                    'user' => User::factory()->deleted()->create(['first_name' => 'Jim', 'last_name' => 'Bagg',  'display_name' => 'Jim Bagg']),
                     'assertions' => function ($rendered) {
                         Assert::assertStringContainsString('<s><span>Jim Bagg', $rendered);
                     },
@@ -81,6 +81,10 @@ class UserFullNameTest extends TestCase
     public function testComponent($provided)
     {
         ['actor' => $actor, 'user' => $user, 'assertions' => $assertions] = $provided();
+
+         // $user->displayName();
+
+        // \Log::error($user->toArray());
 
         $this->actingAs($actor);
 

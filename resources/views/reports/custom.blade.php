@@ -672,7 +672,7 @@
 
                     <span data-tooltip="true" title="{{ trans('general.delete') }}">
                         <a href="#"
-                                class="btn btn-sm btn-danger btn-social btn-block"
+                                class="btn btn-sm btn-danger btn-social btn-block delete-asset"
                                 data-toggle="modal"
                                 data-title="{{ trans('general.delete') }}"
                                 data-content="{{ trans('general.delete_confirm', ['item' => $template->name]) }}"
@@ -823,12 +823,6 @@
           .on('select2:select', function (event) {
               window.location.href = event.params.data.element.dataset.route;
           });
-
-      $('#dataConfirmModal').on('show.bs.modal', function (event) {
-          var content = $(event.relatedTarget).data('content');
-          var title = $(event.relatedTarget).data('title');
-          $(this).find(".modal-body").text(content);
-          $(this).find(".modal-header").text(title);
-      });
+      
   </script>
 @stop

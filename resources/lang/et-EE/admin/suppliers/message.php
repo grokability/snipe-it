@@ -22,7 +22,7 @@ return array(
         'success' => 'Tarnija kustutamine õnnestus.',
         'assoc_assets'	 => 'Selle tarnijaga on seotud :asset_count vahendi(t) ja seda ei saa kustutada. Palun uuenda oma vahendeid, et need ei viitaks sellele tarnijale ning proovi uuesti. ',
         'assoc_licenses'	 => 'Selle tarnijaga on seotud :licenses_count litsents(i) ja seda ei saa kustutada. Palun uuenda oma litsentse, et need ei viitaks sellele tarnijale ning proovi uuesti. ',
-        'assoc_maintenances'	 => 'Selle tarnijaga on seotud :asset_maintenances_count vahendi hooldustöö(d) ja seda ei saa kustutada. Palun uuenda oma hooldustöid, et need ei viitaks sellele tarnijale ning proovi uuesti. ',
+        'assoc_maintenances'	 => 'This supplier is currently associated with :maintenances_count asset maintenances(s) and cannot be deleted. Please update your asset maintenances to no longer reference this supplier and try again. ',
     )
 
 );

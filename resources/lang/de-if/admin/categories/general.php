@@ -4,7 +4,7 @@ return array(
     'asset_categories' 					=> 'Asset-Kategorien',
     'category_name'  					=> 'Kategorie Name',
     'checkin_email'                     => 'Beim Checkin/Checkout eine E-Mail an den Benutzer senden.',
-    'email_to_initiator'                => 'Sende eine E-Mail an Sie, wenn der Benutzer die Herausgabe akzeptiert oder ablehnt.',
+    'email_to_initiator'                => 'Sende eine E-Mail an Dich, wenn der Benutzer die Herausgabe akzeptiert oder ablehnt.',
     'checkin_email_notification'        => 'Dieser Nutzer erhält beim Checkin/Checkout eine E-Mail.',
     'clone'                             => 'Kategorie duplizieren',
     'create'  							=> 'Kategorie erstellen',

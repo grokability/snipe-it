@@ -4,8 +4,8 @@ return [
 
     'Accessory_Checkin_Notification' => 'Accessoire ingecheckt',
     'Accessory_Checkout_Notification' => 'Accessoire uitgecheckt',
-    'Asset_Checkin_Notification' => 'Asset ingecheckt',
-    'Asset_Checkout_Notification' => 'Asset uitgecheckt',
+    'Asset_Checkin_Notification' => 'Asset checked in: [:tag]',
+    'Asset_Checkout_Notification' => 'Asset checked out: [:tag]',
     'Confirm_Accessory_Checkin' => 'Accessoire check in bevestiging',
     'Confirm_Asset_Checkin' => 'Asset check in bevestiging',
     'Confirm_component_checkin' => 'Component checkin confirmation',
@@ -77,6 +77,7 @@ return [
     'name' => 'Naam',
     'new_item_checked' => 'Een nieuw item is onder uw naam uitgecheckt, details staan hieronder.',
     'new_item_checked_with_acceptance' => 'Er is een nieuw activa onder uw naam uitgecheckt dat moet worden geaccepteerd. Hieronder vindt u de details.',
+    'new_item_checked_location' => 'A new item has been checked out to :location, details are below.',
     'recent_item_checked' => 'Er is onlangs een activa onder uw naam uitgeleend dat moet worden geaccepteerd. Hieronder vindt u de details.',
     'notes' => 'Opmerkingen',
     'password' => 'Wachtwoord',

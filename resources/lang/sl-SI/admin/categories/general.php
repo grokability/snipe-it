@@ -4,7 +4,7 @@ return array(
     'asset_categories' 					=> 'Kategorije sredstev',
     'category_name'  					=> 'Ime kategorije',
     'checkin_email'                     => 'Pošlji e-pošto uporabniku ob sprejemu/izdaji.',
-    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
+    'email_to_initiator'                => 'Pošljite vam e-pošto, ko uporabnik sprejme ali zavrne plačilo.',
     'checkin_email_notification'        => 'Uporabnik bo poslan e-pošto ob sprejemu/izdaji.',
     'clone'                             => 'Kloniraj Karegorijo',
     'create'  							=> 'Ustvari kategorijo',

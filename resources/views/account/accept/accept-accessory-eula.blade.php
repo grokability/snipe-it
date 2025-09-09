@@ -24,6 +24,7 @@
 <p>
     {{ trans('general.date') }}: {{ date($date_settings) }} <br>
     {{ trans('general.asset_model') }}: {{ $item_model }}<br>
+    {{ trans('general.quantity') }}: {{ $qty }}
 </p>
 
 @if ($eula)

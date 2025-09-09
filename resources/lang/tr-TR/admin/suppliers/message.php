@@ -22,7 +22,7 @@ return array(
         'success' => 'Tedarikçi silindi.',
         'assoc_assets'	 => 'Bu tedarikçi halihazırda :asset_count asset(s) ilişkili durumda ve silinemez. Lütfen varlıklarınızı bu tedarikçi ile ilişkisi olmayacak şekilde güncelleyin ve yeniden deneyin. ',
         'assoc_licenses'	 => 'Bu tedarikçi halihazırda :licenses_count licences(s) ilişkili durumda ve silinemez. Lütfen lisanslarınızı bu tedarikçi ile ilişkisi olmayacak şekilde güncelleyin ve yeniden deneyin. ',
-        'assoc_maintenances'	 => 'Bu tedarikçi halihazırda :asset_maintenances_count asset maintenances(s) ilişkili durumda ve silinemez. Lütfen varlık bakımlarınızı bu tedarikçi ile ilişkisi olmayacak şekilde güncelleyin ve yeniden deneyin. ',
+        'assoc_maintenances'	 => 'This supplier is currently associated with :maintenances_count asset maintenances(s) and cannot be deleted. Please update your asset maintenances to no longer reference this supplier and try again. ',
     )
 
 );

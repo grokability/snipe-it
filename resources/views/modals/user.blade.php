@@ -79,6 +79,18 @@
                          </div>
                     </div>
 
+                    <div class="dynamic-form-row">
+                        <div class="form-group">
+                            <div class="col-md-3 col-xs-12 ">
+                                <label class="control-label" for="modal-display_name">{{ trans('admin/users/table.display_name') }}:</label>
+                            </div>
+                            <div class="col-md-8 col-xs-12">
+                                <input class="form-control" type='text' name="display_name" id='modal-display_name' required>
+
+                            </div>
+                        </div>
+                    </div>
+
 					<!-- Checkbox for activation new user, by default set for activated -->
 					<div class="dynamic-form-row">
                         <div class="form-group">

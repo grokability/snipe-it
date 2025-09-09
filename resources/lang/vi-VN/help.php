@@ -15,7 +15,7 @@ return [
 
     'more_info_title' => 'Đọc thêm',
 
-    'audit_help' => 'Checking this box will edit the asset record to reflect this new location. Leaving it unchecked will simply note the location in the audit log.<br><br>Note that if this asset is checked out, it will not change the location of the person, asset or location it is checked out to.',
+    'audit_help' => 'Đánh dấu vào ô này sẽ cập nhật thông tin tài sản để phản ánh vị trí mới. Nếu bạn không đánh dấu, hệ thống chỉ ghi nhận vị trí này trong nhật ký kiểm kê.<br><br>Lưu ý: nếu tài sản này đang được cấp phát, thao tác này sẽ không thay đổi vị trí của người dùng, tài sản hoặc địa điểm mà nó đang được cấp phát đến.',
 
     'assets' => 'Nội dung là các mục được theo dõi bằng số sê-ri hoặc thẻ nội dung. Chúng có xu hướng trở thành những mặt hàng có giá trị cao hơn khi việc xác định một mặt hàng cụ thể rất quan trọng.',
 
@@ -25,7 +25,7 @@ return [
 
     'companies'     => 'Danh mục các công ty có thể được sử dụng như là một trường định danh đơn giản hoặc có thể được sử dụng để lọc ra số lượng hạn chế các tài sản, người dùng, v. v nếu như hỗ chợ công ty được kích hoạt trong thiết lập quản trị (Admin settings) của bạn.',
 
-    'components'    => 'Thành phần là các mục là một phần của tài sản, ví dụ như ổ cứng HDD, RAM, v. v.',
+    'components'    => 'Linh kiện là các mục thuộc một tài sản, ví dụ như ổ cứng HDD, RAM, v.v.',
 
     'consumables'   => 'Vật phẩm tiêu hao là bất cứ thứ gì đã mua sẽ được sử dụng hết theo thời gian. Ví dụ: mực máy in hoặc giấy máy photocopy.',
 

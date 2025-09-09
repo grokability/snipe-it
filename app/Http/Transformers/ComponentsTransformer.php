@@ -51,7 +51,7 @@ class ComponentsTransformer
             'notes' => ($component->notes) ? Helper::parseEscapedMarkedownInline($component->notes) : null,
             'created_by' => ($component->adminuser) ? [
                 'id' => (int) $component->adminuser->id,
-                'name'=> e($component->adminuser->present()->fullName()),
+                'name'=> e($component->adminuser->display_name),
             ] : null,
             'created_at' => Helper::getFormattedDateObject($component->created_at, 'datetime'),
             'updated_at' => Helper::getFormattedDateObject($component->updated_at, 'datetime'),
@@ -76,7 +76,7 @@ class ComponentsTransformer
             $array[] = [
                 'assigned_pivot_id' => $asset->pivot->id,
                 'id' => (int) $asset->id,
-                'name' =>  e($asset->model->present()->name).' '.e($asset->present()->name),
+                'name' =>  e($asset->model->display_name).' '.e($asset->display_name),
                 'qty' => $asset->pivot->assigned_qty,
                 'note' => $asset->pivot->note,
                 'type' => 'asset',

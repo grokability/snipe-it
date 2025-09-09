@@ -4,8 +4,8 @@ return [
 
     'Accessory_Checkin_Notification' => 'គ្រឿងបន្លាស់ បាន checked in',
     'Accessory_Checkout_Notification' => 'គ្រឿងបន្លាស់ បាន checked out',
-    'Asset_Checkin_Notification' => 'ទ្រព្យសកម្មបាន checked in',
-    'Asset_Checkout_Notification' => 'ទ្រព្យសកម្មបាន checked out',
+    'Asset_Checkin_Notification' => 'Asset checked in: [:tag]',
+    'Asset_Checkout_Notification' => 'Asset checked out: [:tag]',
     'Confirm_Accessory_Checkin' => 'ការបញ្ជាក់ការពិនិត្យមើលគ្រឿងបន្លាស់',
     'Confirm_Asset_Checkin' => 'ការបញ្ជាក់ការពិនិត្យមើលទ្រព្យសម្បត្តិ',
     'Confirm_component_checkin' => 'Component checkin confirmation',
@@ -77,6 +77,7 @@ return [
     'name' => 'ឈ្មោះ',
     'new_item_checked' => 'ធាតុថ្មីត្រូវបានchecked outក្រោមឈ្មោះរបស់អ្នក ព័ត៌មានលម្អិតមាននៅខាងក្រោម។',
     'new_item_checked_with_acceptance' => 'A new item has been checked out under your name that requires acceptance, details are below.',
+    'new_item_checked_location' => 'A new item has been checked out to :location, details are below.',
     'recent_item_checked' => 'An item was recently checked out under your name that requires acceptance, details are below.',
     'notes' => 'កំណត់ចំណាំ',
     'password' => 'ពាក្យសម្ងាត់',

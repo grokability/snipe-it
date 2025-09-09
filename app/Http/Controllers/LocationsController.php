@@ -96,7 +96,18 @@ class LocationsController extends Controller
             $location->company_id = $request->input('company_id');
         }
 
-        $location = $request->handleImages($location);
+        if ($request->has('use_cloned_image')) {
+            $cloned_model_img = Location::select('image')->find($request->input('clone_image_from_id'));
+            if ($cloned_model_img) {
+                $new_image_name = 'clone-'.date('U').'-'.$cloned_model_img->image;
+                $new_image = 'locations/'.$new_image_name;
+                Storage::disk('public')->copy('locations/'.$cloned_model_img->image, $new_image);
+                $location->image = $new_image_name;
+            }
+
+        } else {
+            $location = $request->handleImages($location);
+        }
 
         if ($location->save()) {
             return redirect()->route('locations.index')->with('success', trans('admin/locations/message.create.success'));
@@ -275,9 +286,9 @@ class LocationsController extends Controller
 
         // unset these values
         $location->id = null;
-        $location->image = null;
 
         return view('locations/edit')
+            ->with('cloned_model', $location_to_clone)
             ->with('item', $location);
     }
 

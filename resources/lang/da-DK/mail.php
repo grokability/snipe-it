@@ -4,8 +4,8 @@ return [
 
     'Accessory_Checkin_Notification' => 'Tilbehør tjekket ind',
     'Accessory_Checkout_Notification' => 'Tilbehør tjekket ud',
-    'Asset_Checkin_Notification' => 'Asset tjekket ind',
-    'Asset_Checkout_Notification' => 'Aktiv tjekket ud',
+    'Asset_Checkin_Notification' => 'Asset checked in: [:tag]',
+    'Asset_Checkout_Notification' => 'Asset checked out: [:tag]',
     'Confirm_Accessory_Checkin' => 'Tilbehør checkin bekræftelse',
     'Confirm_Asset_Checkin' => 'Asset checkin bekræftelse',
     'Confirm_component_checkin' => 'Component checkin confirmation',
@@ -77,6 +77,7 @@ return [
     'name' => 'Navn',
     'new_item_checked' => 'En ny vare er blevet tjekket ud under dit navn, detaljerne er nedenfor.',
     'new_item_checked_with_acceptance' => 'A new item has been checked out under your name that requires acceptance, details are below.',
+    'new_item_checked_location' => 'A new item has been checked out to :location, details are below.',
     'recent_item_checked' => 'An item was recently checked out under your name that requires acceptance, details are below.',
     'notes' => 'Noter',
     'password' => 'Adgangskode',

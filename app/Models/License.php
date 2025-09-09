@@ -3,14 +3,14 @@
 namespace App\Models;
 
 use App\Helpers\Helper;
+use App\Models\Traits\CompanyableTrait;
 use App\Models\Traits\HasUploads;
 use App\Models\Traits\Searchable;
 use App\Presenters\Presentable;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Watson\Validating\ValidatingTrait;
 
@@ -51,7 +51,7 @@ class License extends Depreciable
         'notes'   => 'string|nullable',
         'category_id' => 'required|exists:categories,id',
         'company_id' => 'integer|nullable',
-        'purchase_cost'=> 'numeric|nullable|gte:0',
+        'purchase_cost'     =>  'numeric|nullable|gte:0|max:99999999999999999.99',
         'purchase_date'   => 'date_format:Y-m-d|nullable|max:10|required_with:depreciation_id',
         'expiration_date'   => 'date_format:Y-m-d|nullable|max:10',
         'termination_date'   => 'date_format:Y-m-d|nullable|max:10',
@@ -534,6 +534,7 @@ class License extends Depreciable
         return $this->licenseSeatsRelation()
             ->whereNull('asset_id')
             ->whereNull('assigned_to')
+            ->where('unreassignable_seat', '=', false)
             ->whereNull('deleted_at');
     }
 
@@ -585,7 +586,22 @@ class License extends Depreciable
 
         return 0;
     }
-
+    /**
+     * Calculates the number of unreassignable seats
+     *
+     * @author G. Martinez
+     * @since [v7.1.15]
+     */
+    public static function unReassignableCount($license) : int
+    {
+        $count = 0;
+        if (!$license->reassignable) {
+            $count = licenseSeat::query()->where('unreassignable_seat', '=', true)
+                ->where('license_id', '=', $license->id)
+                ->count();
+        }
+        return $count;
+    }
     /**
      * Calculates the number of remaining seats
      *
@@ -593,11 +609,12 @@ class License extends Depreciable
      * @since  [v1.0]
      * @return int
      */
-    public function remaincount()
+    public function remaincount() : int
     {
         $total = $this->licenseSeatsCount;
         $taken = $this->assigned_seats_count;
-        $diff = ($total - $taken);
+        $unreassignable = self::unReassignableCount($this);
+        $diff = ($total - $taken - $unreassignable);
 
         return (int) $diff;
     }
@@ -655,12 +672,11 @@ class License extends Depreciable
     {
         return  $this->licenseseats()
             ->whereNull('deleted_at')
-            ->where(
-                function ($query) {
-                    $query->whereNull('assigned_to')
-                        ->whereNull('asset_id');
-                }
-            )
+            ->where('unreassignable_seat', '=', false)
+            ->where(function ($query) {
+                $query->whereNull('assigned_to')
+                    ->whereNull('asset_id');
+            })
             ->orderBy('id', 'asc')
             ->first();
     }

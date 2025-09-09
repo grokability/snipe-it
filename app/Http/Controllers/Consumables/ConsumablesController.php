@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ImageUploadRequest;
 use App\Models\Company;
 use App\Models\Consumable;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\RedirectResponse;
 use \Illuminate\Contracts\View\View;
@@ -81,13 +81,29 @@ class ConsumablesController extends Controller
         $consumable->purchase_date          = $request->input('purchase_date');
         $consumable->purchase_cost          = $request->input('purchase_cost');
         $consumable->qty                    = $request->input('qty');
-        $consumable->created_by                = auth()->id();
+        $consumable->created_by             = auth()->id();
         $consumable->notes                  = $request->input('notes');
 
 
-        $consumable = $request->handleImages($consumable);
+        if ($request->has('use_cloned_image')) {
+            $cloned_model_img = Consumable::select('image')->find($request->input('clone_image_from_id'));
+            if ($cloned_model_img) {
+                $new_image_name = 'clone-'.date('U').'-'.$cloned_model_img->image;
+                $new_image = 'consumables/'.$new_image_name;
+                Storage::disk('public')->copy('consumables/'.$cloned_model_img->image, $new_image);
+                $consumable->image = $new_image_name;
+            }
 
-        session()->put(['redirect_option' => $request->get('redirect_option')]);
+        } else {
+            $consumable = $request->handleImages($consumable);
+        }
+
+        if($request->get('redirect_option') === 'back'){
+            session()->put(['redirect_option' => 'index']);
+        } else {
+            session()->put(['redirect_option' => $request->get('redirect_option')]);
+        }
+
 
         if ($consumable->save()) {
             return Helper::getRedirectOption($request, $consumable->id, 'Consumables')
@@ -213,9 +229,10 @@ class ConsumablesController extends Controller
         $consumable_to_close = $consumable;
         $consumable = clone $consumable_to_close;
         $consumable->id = null;
-        $consumable->image = null;
         $consumable->created_by = null;
 
-        return view('consumables/edit')->with('item', $consumable);
+        return view('consumables/edit')
+            ->with('cloned_model', $consumable_to_close)
+            ->with('item', $consumable);
     }
 }

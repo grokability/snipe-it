@@ -769,7 +769,6 @@ th.css-house-laptop > .th-inner::before,
 th.css-house-user > .th-inner::before,
 th.css-license > .th-inner::before,
 th.css-location > .th-inner::before,
-th.css-padlock > .th-inner::before,
 th.css-users > .th-inner::before,
 th.css-currency > .th-inner::before,
 th.css-history > .th-inner::before
@@ -824,7 +823,9 @@ th.css-component > .th-inner::before
 
 th.css-padlock > .th-inner::before
 {
-  content: "\f023"; font-family: "Font Awesome 5 Free"; font-weight: 900;
+  content: "\f023"; font-family: "Font Awesome 5 Free";
+  font-weight: 800;
+  padding-right: 3px;
 }
 
 th.css-house-user > .th-inner::before {
@@ -1221,3 +1222,33 @@ caption.tableCaption {
   padding-left: 8px;
 }
 
+// via https://github.com/grokability/snipe-it/issues/11754
+.sidebar-toggle.btn {
+  border-radius: 3px;
+  box-shadow: none;
+  border-top: 0px solid transparent;
+  border-bottom: 0px solid transparent;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  margin-left: -47px;
+  margin-top: 2px;
+}
+.popover.help-popover,
+.popover.help-popover .popover-content,
+.popover.help-popover .popover-body,
+.popover.help-popover .popover-title,
+.popover.help-popover .popover-header {
+  color: #000;
+}
+
+.visually-hidden {
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: preserve;
+  display: inline-block;
+}

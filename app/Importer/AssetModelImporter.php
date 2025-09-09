@@ -40,11 +40,32 @@ class AssetModelImporter extends ItemImporter
     {
 
         $editingAssetModel = false;
-        $assetModel = AssetModel::where('name', '=', $this->findCsvMatch($row, 'name'))->first();
+
+        /**
+         * This part gets a little confusing, since folks might be importing multiple models with the same name and different model numbers for the first time
+         * or they might be wanting to update existing models with new model numbers.
+         */
+
+        // They are not trying to update existing models, so we'll check for duplicates with model name *and* number
+        if (! $this->updating) {
+            $this->log('Finding model by name and model number: '.$this->findCsvMatch($row, 'name').' / '.$this->findCsvMatch($row, 'model_number'));
+            $assetModel = AssetModel::where('name', '=', $this->findCsvMatch($row, 'name'))->where('model_number', '=', $this->findCsvMatch($row, 'model_number'))->first();
+        } else {
+
+            if ($this->findCsvMatch($row, 'id')!='') {
+                // Override model if an ID was given
+                $this->log('Finding model by ID: '.$this->findCsvMatch($row, 'id'));
+                $assetModel = AssetModel::find($this->findCsvMatch($row, 'id'));
+            } else {
+                $this->log('Finding model by name: '.$this->findCsvMatch($row, 'name'));
+                $assetModel = AssetModel::where('name', '=', $this->findCsvMatch($row, 'name'))->first();
+            }
+        }
+
 
         if ($assetModel) {
             if (! $this->updating) {
-                $this->log('A matching Model '.$this->item['name'].' already exists');
+                $this->log('A matching Model '.$this->item['name'].' already exists and we are not updating. Skipping.');
                 return;
             }
 
@@ -66,6 +87,7 @@ class AssetModelImporter extends ItemImporter
         $this->item['fieldset'] = trim($this->findCsvMatch($row, 'fieldset'));
         $this->item['depreciation'] = trim($this->findCsvMatch($row, 'depreciation'));
         $this->item['requestable'] = trim(($this->fetchHumanBoolean($this->findCsvMatch($row, 'requestable'))) == 1) ? 1 : 0;
+        $this->item['require_serial'] = trim(($this->fetchHumanBoolean($this->findCsvMatch($row, 'require_serial'))) == 1) ? 1 : 0;
 
         if (!empty($this->item['category'])) {
             if ($category = $this->createOrFetchCategory($this->item['category'])) {

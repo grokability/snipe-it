@@ -3,13 +3,13 @@
 namespace App\Models;
 
 use App\Helpers\Helper;
+use App\Models\Traits\CompanyableTrait;
 use App\Models\Traits\HasUploads;
 use App\Models\Traits\Searchable;
 use App\Presenters\Presentable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Storage;
 use Watson\Validating\ValidatingTrait;
 
 /**
@@ -43,7 +43,7 @@ class Component extends SnipeModel
         'location_id'    => 'exists:locations,id|nullable|fmcs_location',
         'min_amt'        => 'integer|min:0|nullable',
         'purchase_date'   => 'date_format:Y-m-d|nullable',
-        'purchase_cost'  => 'numeric|nullable|gte:0|max:9999999999999',
+        'purchase_cost'     =>  'numeric|nullable|gte:0|max:99999999999999999.99',
         'manufacturer_id'   => 'integer|exists:manufacturers,id|nullable',
     ];
 

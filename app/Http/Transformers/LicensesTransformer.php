@@ -37,7 +37,7 @@ class LicensesTransformer
             'notes' => Helper::parseEscapedMarkedownInline($license->notes),
             'expiration_date' => Helper::getFormattedDateObject($license->expiration_date, 'date'),
             'seats' => (int) $license->seats,
-            'free_seats_count' => (int) $license->free_seats_count,
+            'free_seats_count' => (int) $license->free_seats_count - License::unReassignableCount($license),
             'remaining' => (int) $license->free_seats_count,
             'min_amt' => ($license->min_amt) ? (int) ($license->min_amt) : null,
             'license_name' =>  ($license->license_name) ? e($license->license_name) : null,
@@ -48,7 +48,7 @@ class LicensesTransformer
             'category' =>  ($license->category) ? ['id' => (int) $license->category->id, 'name'=> e($license->category->name)] : null,
             'created_by' => ($license->adminuser) ? [
                 'id' => (int) $license->adminuser->id,
-                'name'=> e($license->adminuser->present()->fullName()),
+                'name'=> e($license->adminuser->display_name),
             ] : null,
             'created_at' => Helper::getFormattedDateObject($license->created_at, 'datetime'),
             'updated_at' => Helper::getFormattedDateObject($license->updated_at, 'datetime'),
@@ -62,7 +62,7 @@ class LicensesTransformer
             'checkin' => Gate::allows('checkin', License::class),
             'clone' => Gate::allows('create', License::class),
             'update' => Gate::allows('update', License::class),
-            'delete' => (Gate::allows('delete', License::class) && ($license->free_seats_count > 0)) ? true : false,
+            'delete' => (Gate::allows('delete', License::class) && ($license->free_seats_count == $license->seats)) ? true : false,
         ];
 
         $array += $permissions_array;

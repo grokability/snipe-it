@@ -26,7 +26,6 @@ class SecurityHeaders
         $response = $next($request);
 
         $response->headers->set('X-Content-Type-Options', 'nosniff');
-        $response->headers->set('X-XSS-Protection', '1; mode=block');
 
         // Ugh. Feature-Policy is dumb and clumsy and mostly irrelevant for Snipe-IT,
         // since we don't provide any way to IFRAME anything in in the first place.

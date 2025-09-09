@@ -55,6 +55,8 @@ class LdapSync extends Command
         ini_set('max_execution_time', env('LDAP_TIME_LIM', 600)); //600 seconds = 10 minutes
         ini_set('memory_limit', env('LDAP_MEM_LIM', '500M'));
 
+
+        // Map the LDAP attributes to the Snipe-IT user fields.
         $ldap_map = [
             "username" => Setting::getSettings()->ldap_username_field,
             "last_name" => Setting::getSettings()->ldap_lname_field,
@@ -63,11 +65,17 @@ class LdapSync extends Command
             "emp_num" => Setting::getSettings()->ldap_emp_num,
             "email" => Setting::getSettings()->ldap_email,
             "phone" => Setting::getSettings()->ldap_phone_field,
+            "mobile" => Setting::getSettings()->ldap_mobile,
             "jobtitle" => Setting::getSettings()->ldap_jobtitle,
+            "address" => Setting::getSettings()->ldap_address,
+            "city" => Setting::getSettings()->ldap_city,
+            "state" => Setting::getSettings()->ldap_state,
+            "zip" => Setting::getSettings()->ldap_zip,
             "country" => Setting::getSettings()->ldap_country,
             "location" => Setting::getSettings()->ldap_location,
             "dept" => Setting::getSettings()->ldap_dept,
             "manager" => Setting::getSettings()->ldap_manager,
+            "display_name" => Setting::getSettings()->ldap_display_name,
         ];
 
         $ldap_default_group = Setting::getSettings()->ldap_default_group;
@@ -234,9 +242,11 @@ class LdapSync extends Command
         }
 
 
+        // Assign the mapped LDAP attributes for each user to the Snipe-IT user fields
         for ($i = 0; $i < $results['count']; $i++) {
             $item = [];
             $item['username'] = $results[$i][$ldap_map["username"]][0] ?? '';
+            $item['display_name'] = $results[$i][$ldap_map["display_name"]][0] ?? '';
             $item['employee_number'] = $results[$i][$ldap_map["emp_num"]][0] ?? '';
             $item['lastname'] = $results[$i][$ldap_map["last_name"]][0] ?? '';
             $item['firstname'] = $results[$i][$ldap_map["first_name"]][0] ?? '';
@@ -244,8 +254,13 @@ class LdapSync extends Command
             $item['ldap_location_override'] = $results[$i]['ldap_location_override'] ?? '';
             $item['location_id'] = $results[$i]['location_id'] ?? '';
             $item['telephone'] = $results[$i][$ldap_map["phone"]][0] ?? '';
+            $item['mobile'] = $results[$i][$ldap_map["mobile"]][0] ?? '';
             $item['jobtitle'] = $results[$i][$ldap_map["jobtitle"]][0] ?? '';
+            $item['address'] = $results[$i][$ldap_map["address"]][0] ?? '';
+            $item['city'] = $results[$i][$ldap_map["city"]][0] ?? '';
+            $item['state'] = $results[$i][$ldap_map["state"]][0] ?? '';
             $item['country'] = $results[$i][$ldap_map["country"]][0] ?? '';
+            $item['zip'] = $results[$i][$ldap_map["zip"]][0] ?? '';
             $item['department'] = $results[$i][$ldap_map["dept"]][0] ?? '';
             $item['manager'] = $results[$i][$ldap_map["manager"]][0] ?? '';
             $item['location'] = $results[$i][$ldap_map["location"]][0] ?? '';
@@ -278,6 +293,9 @@ class LdapSync extends Command
             if($ldap_map["username"]  != null){
                 $user->username = $item['username'];
             }
+            if($ldap_map["display_name"]  != null){
+                $user->display_name = $item['display_name'];
+            }
             if($ldap_map["last_name"] != null){
                 $user->last_name = $item['lastname'];
             }
@@ -292,6 +310,9 @@ class LdapSync extends Command
             }
             if($ldap_map["phone"] != null){
                 $user->phone = $item['telephone'];
+            }
+            if($ldap_map["mobile"] != null){
+                $user->mobile = $item['mobile'];
             }
             if($ldap_map["jobtitle"] != null){
                 $user->jobtitle = $item['jobtitle'];

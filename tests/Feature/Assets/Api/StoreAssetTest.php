@@ -707,6 +707,22 @@ class StoreAssetTest extends TestCase
             });
     }
 
+    public function test_serial_validation()
+    {
+        $this->actingAsForApi(User::factory()->superuser()->create())
+            ->postJson(route('api.assets.store'), [
+                'asset_tag' => '1234',
+                'model_id' => AssetModel::factory()->create()->id,
+                'status_id' => Statuslabel::factory()->readyToDeploy()->create()->id,
+                'serial' => [
+                    // this should not be an array
+                ],
+            ])
+            ->assertOk()
+            ->assertStatusMessageIs('error')
+            ->assertMessagesContains('serial');
+    }
+
     public function testEncryptedCustomFieldCanBeStored()
     {
         $this->markIncompleteIfMySQL('Custom Fields tests do not work on MySQL');
@@ -730,6 +746,64 @@ class StoreAssetTest extends TestCase
         $asset = Asset::findOrFail($response['payload']['id']);
         $this->assertEquals('This is encrypted field', Crypt::decrypt($asset->{$field->db_column_name()}));
     }
+
+    public function test_encrypted_custom_field_validation_passes()
+    {
+        $this->markIncompleteIfMySQL('Custom Fields tests do not work on MySQL');
+
+        $status = Statuslabel::factory()->readyToDeploy()->create();
+        $alphaField = CustomField::factory()->encrypt()->alpha()->create();
+        $numericField = CustomField::factory()->encrypt()->numeric()->create();
+        $emailField = CustomField::factory()->encrypt()->email()->create();
+        $fields = [$alphaField, $numericField, $emailField];
+        $superuser = User::factory()->superuser()->create();
+        $assetData = Asset::factory()->hasMultipleCustomFields($fields)->make();
+
+        $response = $this->actingAsForApi($superuser)
+            ->postJson(route('api.assets.store'), [
+                $alphaField->db_column_name()   => 'Thisisencryptedfield',
+                $numericField->db_column_name() => '1234567890',
+                $emailField->db_column_name()   => 'poop@poop.com',
+                'model_id'                      => $assetData->model->id,
+                'status_id'                     => $status->id,
+                'asset_tag'                     => '1234',
+            ])
+            ->assertStatusMessageIs('success')
+            ->assertOk()
+            ->json();
+
+        $asset = Asset::findOrFail($response['payload']['id']);
+        $this->assertEquals('Thisisencryptedfield', Crypt::decrypt($asset->{$alphaField->db_column_name()}));
+        $this->assertEquals('1234567890', Crypt::decrypt($asset->{$numericField->db_column_name()}));
+        $this->assertEquals('poop@poop.com', Crypt::decrypt($asset->{$emailField->db_column_name()}));
+    }
+
+    public function test_encrypted_custom_field_validation_fails()
+    {
+        $this->markIncompleteIfMySQL('Custom Fields tests do not work on MySQL');
+
+        $status = Statuslabel::factory()->readyToDeploy()->create();
+        $alphaField = CustomField::factory()->encrypt()->alpha()->create();
+        $numericField = CustomField::factory()->encrypt()->numeric()->create();
+        $emailField = CustomField::factory()->encrypt()->email()->create();
+        $fields = [$alphaField, $numericField, $emailField];
+        $superuser = User::factory()->superuser()->create();
+        $assetData = Asset::factory()->hasMultipleCustomFields($fields)->make();
+        $cleaned_name = trim(preg_replace('/_+|snipeit|\d+/', ' ', $alphaField->db_column_name()));
+
+        $response = $this->actingAsForApi($superuser)
+            ->postJson(route('api.assets.store'), [
+                $alphaField->db_column_name() => 'Thisisencryptedfield123',
+                'model_id'                    => $assetData->model->id,
+                'status_id'                   => $status->id,
+                'asset_tag'                   => '1234',
+            ])
+            ->assertStatusMessageIs('error')
+            ->assertJsonPath('messages.'.$alphaField->db_column_name(), [trans('validation.alpha', ['attribute' => $cleaned_name])])
+            ->assertOk()
+            ->json();
+    }
+
 
     public function testPermissionNeededToStoreEncryptedField()
     {

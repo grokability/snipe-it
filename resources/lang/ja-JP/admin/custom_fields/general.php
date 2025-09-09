@@ -33,7 +33,7 @@ return [
     'create_fieldset_title' => '新しいフィールドセットを作成',
     'create_field'            => '新しいユーザー設定フィールド',
     'create_field_title' => '新しいカスタムフィールドを作成',
-    'value_encrypted'      	        => 'このフィールドの値は、データベースで暗号化されます。管理者ユーザーのみが復号化された値を表示することができます。',
+    'value_encrypted'      	        => 'The value of this field is encrypted in the database. Only users with permission to view encrypted custom fields will be able to view the decrypted value',
     'show_in_email'     => 'このフィールドの値をユーザーに送信されたチェックアウトメールに含めますか？暗号化されたフィールドはメールに含めることはできません',
     'show_in_email_short' => '電子メールに含める',
     'help_text' => 'ヘルプ テキスト',

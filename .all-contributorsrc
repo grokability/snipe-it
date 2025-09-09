@@ -3206,7 +3206,8 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/3755203?v=4",
       "profile": "https://github.com/swift2512",
       "contributions": [
-        "bug"
+        "bug",
+        "code"
       ]
     },
     {
@@ -4186,6 +4187,51 @@
       "name": "Lukas Kraic",
       "avatar_url": "https://avatars.githubusercontent.com/u/58696401?v=4",
       "profile": "https://github.com/lukaskraic",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "mckaygerhard",
+      "name": "Герхард PICCORO Lenz McKAY ",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1571724?v=4",
+      "profile": "https://github-readme-stats.vercel.app/api?username=mckaygerhard",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "FlorestanII",
+      "name": "Johannes Pollitt",
+      "avatar_url": "https://avatars.githubusercontent.com/u/15015119?v=4",
+      "profile": "https://github.com/FlorestanII",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "strobelm",
+      "name": "Michael Strobel",
+      "avatar_url": "https://avatars.githubusercontent.com/u/14185442?v=4",
+      "profile": "https://strobelm.de",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "nickwest",
+      "name": "Nicky West",
+      "avatar_url": "https://avatars.githubusercontent.com/u/634790?v=4",
+      "profile": "http://nickwest.me",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "akaspeh1",
+      "name": "akaspeh1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1347327?v=4",
+      "profile": "https://github.com/akaspeh1",
       "contributions": [
         "code"
       ]

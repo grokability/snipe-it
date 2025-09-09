@@ -69,7 +69,7 @@ class ImportController extends Controller
                 if (function_exists('iconv')) {
                     $file_contents = $file->getContent(); //TODO - this *does* load the whole file in RAM, but we need that to be able to 'iconv' it?
                     $encoding = $detector->getEncoding($file_contents);
-                    \Log::warning("Discovered encoding: $encoding in uploaded CSV");
+                    \Log::debug("Discovered encoding: $encoding in uploaded CSV");
                     $reader = null;
                     if (strcasecmp($encoding, 'UTF-8') != 0) {
                         $transliterated = false;
@@ -103,7 +103,7 @@ class ImportController extends Controller
                 $reader = Reader::createFromFileObject($file->openFile('r')); //file pointer leak?
 
                 try {
-                    $import->header_row = $reader->fetchOne(0);
+                    $import->header_row = $reader->nth(0);
                 } catch (JsonEncodingException $e) {
                     return response()->json(
                         Helper::formatStandardApiResponse(
@@ -136,7 +136,7 @@ class ImportController extends Controller
 
                 try {
                     // Grab the first row to display via ajax as the user picks fields
-                    $import->first_row = $reader->fetchOne(1);
+                    $import->first_row = $reader->nth(1);
                 } catch (JsonEncodingException $e) {
                     return response()->json(
                         Helper::formatStandardApiResponse(
@@ -195,7 +195,7 @@ class ImportController extends Controller
         // Run a backup immediately before processing
         if ($request->get('run-backup')) {
             Log::debug('Backup manually requested via importer');
-            Artisan::call('snipeit:backup', ['--filename' => 'pre-import-backup-'.date('Y-m-d-H:i:s')]);
+            Artisan::call('snipeit:backup', ['--filename' => 'pre-import-backup-'.date('Y-m-d-H-i-s')]);
         } else {
             Log::debug('NO BACKUP requested via importer');
         }

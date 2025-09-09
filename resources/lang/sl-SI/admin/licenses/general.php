@@ -25,28 +25,28 @@ return array(
             'checkin_all'           => [
                 'button'            => 'Checkin All Seats',
                 'modal'             => 'This action will checkin one seat. | This action will checkin all :checkedout_seats_count seats for this license.',
-                'enabled_tooltip'   => 'Checkin ALL seats for this license from both users and assets',
+                'enabled_tooltip'   => 'Prijava VSEH sedežev za to licenco tako od uporabnikov kot od sredstev',
                 'disabled_tooltip'  => 'This is disabled because there are no seats currently checked out',
-                'disabled_tooltip_reassignable'  => 'This is disabled because the License is not reassignable',
-                'success'           => 'License successfully checked in! | All licenses were successfully checked in!',
+                'disabled_tooltip_reassignable'  => 'To je onemogočeno, ker licence ni mogoče prenesti naprej',
+                'success'           => 'Licenca uspešno prijavljena! | Vse licence so bile uspešno prijavljene!',
                 'log_msg'           => 'Checked in via bulk license checkin in license GUI',
             ],
 
             'checkout_all'              => [
                 'button'                => 'Checkout All Seats',
-                'modal'                 => 'This action will checkout one seat to the first available user. | This action will checkout all :available_seats_count seats to the first available users. A user is considered available for this seat if they do not already have this license checked out to them, and the Auto-Assign License property is enabled on their user account.',
+                'modal'                 => 'To dejanje bo rezerviralo en sedež prvemu razpoložljivemu uporabniku. | To dejanje bo rezerviralo vse :available_seats_count sedeže prvim razpoložljivim uporabnikom. Uporabnik se šteje za razpoložljivega za ta sedež, če te licence še ni rezervirane in če je v njegovem uporabniškem računu omogočena lastnost Samodejno dodeljevanje licenc.',
                 'enabled_tooltip'   => 'Checkout ALL seats (or as many as are available) to ALL users',
                 'disabled_tooltip'  => 'This is disabled because there are no seats currently available',
-                'success'           => 'License successfully checked out! | :count licenses were successfully checked out!',
+                'success'           => 'Licenca uspešno prevzeta! | :count licenc je bilo uspešno prevzetih!',
                 'error_no_seats'    => 'There are no remaining seats left for this license.',
                 'warn_not_enough_seats'    => ':count users were assigned this license, but we ran out of available license seats.',
-                'warn_no_avail_users'    => 'Nothing to do. There are no users who do not already have this license assigned to them.',
-                'log_msg'           => 'Checked out via bulk license checkout in license GUI',
+                'warn_no_avail_users'    => 'Ničesar ni treba storiti. Ni uporabnikov, ki jim ta licenca še ni dodeljena.',
+                'log_msg'           => 'Prevzeto prek množične prevzemnice licenc v grafičnem uporabniškem vmesniku za licence',
 
 
             ],
     ],
 
-    'below_threshold' => 'There are only :remaining_count seats left for this license with a minimum quantity of :min_amt. You may want to consider purchasing more seats.',
-    'below_threshold_short' => 'This item is below the minimum required quantity.',
+    'below_threshold' => 'Za to licenco je na voljo le še :remaining_count sedežev z minimalno količino :min_amt. Morda boste želeli razmisliti o nakupu dodatnih sedežev.',
+    'below_threshold_short' => 'Ta artikel je pod minimalno zahtevano količino.',
 );

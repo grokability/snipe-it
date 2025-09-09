@@ -4,8 +4,8 @@ return [
 
     'Accessory_Checkin_Notification' => 'Oprema razdužena',
     'Accessory_Checkout_Notification' => 'Oprema je zadužena',
-    'Asset_Checkin_Notification' => 'Imovina razdužena',
-    'Asset_Checkout_Notification' => 'Zadužena imovina',
+    'Asset_Checkin_Notification' => 'Imovina je razdužena: [:tag]',
+    'Asset_Checkout_Notification' => 'Imovina je zadužena: [:tag]',
     'Confirm_Accessory_Checkin' => 'Potvrda razduženja opreme',
     'Confirm_Asset_Checkin' => 'Potvrda razduženja imovine',
     'Confirm_component_checkin' => 'Potvrda razduženja komponente',
@@ -77,6 +77,7 @@ return [
     'name' => 'Naziv',
     'new_item_checked' => 'Nova stavka je proverena pod vašim imenom, detalji su u nastavku.',
     'new_item_checked_with_acceptance' => 'Nova stavka je zadužena na vaše ime što zahteva prihvatanje. Detalji su u nastavku.',
+    'new_item_checked_location' => 'A new item has been checked out to :location, details are below.',
     'recent_item_checked' => 'Stavka je nedavno zadužena na vaše ime što zahteva prihvatanje. Detalji su u nastavku.',
     'notes' => 'Zabeleške',
     'password' => 'Lozinka',

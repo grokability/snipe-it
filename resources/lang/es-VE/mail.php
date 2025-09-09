@@ -4,8 +4,8 @@ return [
 
     'Accessory_Checkin_Notification' => 'Accesorio ingresado',
     'Accessory_Checkout_Notification' => 'Accesorio asignado',
-    'Asset_Checkin_Notification' => 'Activo ingresado',
-    'Asset_Checkout_Notification' => 'Activo asignado',
+    'Asset_Checkin_Notification' => 'Asset checked in: [:tag]',
+    'Asset_Checkout_Notification' => 'Asset checked out: [:tag]',
     'Confirm_Accessory_Checkin' => 'Confirmación de ingreso de accesorio',
     'Confirm_Asset_Checkin' => 'Confirmación de ingreso de activo',
     'Confirm_component_checkin' => 'Component checkin confirmation',
@@ -77,6 +77,7 @@ return [
     'name' => 'Nombre',
     'new_item_checked' => 'Un nuevo artículo ha sido asignado a su nombre, los detalles están a continuación.',
     'new_item_checked_with_acceptance' => 'A new item has been checked out under your name that requires acceptance, details are below.',
+    'new_item_checked_location' => 'A new item has been checked out to :location, details are below.',
     'recent_item_checked' => 'An item was recently checked out under your name that requires acceptance, details are below.',
     'notes' => 'Notas',
     'password' => 'Contraseña',

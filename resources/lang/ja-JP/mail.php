@@ -4,8 +4,8 @@ return [
 
     'Accessory_Checkin_Notification' => '付属品をチェックインしました',
     'Accessory_Checkout_Notification' => '付属品をチェックアウトしました',
-    'Asset_Checkin_Notification' => '資産をチェックインしました',
-    'Asset_Checkout_Notification' => '資産はチェックアウトされました',
+    'Asset_Checkin_Notification' => 'Asset checked in: [:tag]',
+    'Asset_Checkout_Notification' => 'Asset checked out: [:tag]',
     'Confirm_Accessory_Checkin' => 'アクセサリーのチェックインを承認してください。',
     'Confirm_Asset_Checkin' => '資産チェックインを承認してください。',
     'Confirm_component_checkin' => 'Component checkin confirmation',
@@ -77,6 +77,7 @@ return [
     'name' => '名前',
     'new_item_checked' => 'あなたの名前で新しいアイテムがチェックアウトされました。詳細は以下の通りです。',
     'new_item_checked_with_acceptance' => 'あなたの名前で新しいアイテムがチェックアウトされました。承認が必要です。詳細は以下の通りです。',
+    'new_item_checked_location' => 'A new item has been checked out to :location, details are below.',
     'recent_item_checked' => 'あなたの名前でチェックアウトされたアイテムがあります。承認が必要です。詳細は以下の通りです。',
     'notes' => '備考',
     'password' => 'パスワード',

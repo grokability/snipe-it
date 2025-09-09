@@ -4,6 +4,10 @@
 
     @if (request('status')=='deleted')
         {{ trans('general.deleted') }}
+    @elseif (request('admins')=='true')
+        {{ trans('general.show_admins') }}
+    @elseif (request('superadmins')=='true')
+        {{ trans('general.show_superadmins') }}
     @else
         {{ trans('general.current') }}
     @endif
@@ -16,18 +20,8 @@
 
     @can('create', \App\Models\User::class)
         @if ($snipeSettings->ldap_enabled == 1)
-            <a href="{{ route('ldap/user') }}" class="btn btn-default pull-right"><span class="fas fa-sitemap"></span>{{trans('general.ldap_sync')}}</a>
+            <a href="{{ route('ldap/user') }}" class="btn btn-default pull-right"><i class="fas fa-sitemap"></i> {{trans('general.ldap_sync')}}</a>
         @endif
-        <a href="{{ route('users.create') }}" {{$snipeSettings->shortcuts_enabled == 1 ? "n" : ''}} class="btn btn-primary pull-right" style="margin-right: 5px;">  {{ trans('general.create') }}</a>
-    @endcan
-
-    @if (request('status')=='deleted')
-        <a class="btn btn-default pull-right" href="{{ route('users.index') }}" style="margin-right: 5px;">{{ trans('admin/users/table.show_current') }}</a>
-    @else
-        <a class="btn btn-default pull-right" href="{{ route('users.index', ['status' => 'deleted']) }}" style="margin-right: 5px;">{{ trans('admin/users/table.show_deleted') }}</a>
-    @endif
-    @can('view', \App\Models\User::class)
-        <a class="btn btn-default pull-right" href="{{ route('users.export') }}" style="margin-right: 5px;">{{ trans('general.export') }}</a>
     @endcan
 @stop
 
@@ -50,9 +44,18 @@
                     data-bulk-button-id="#bulkUserEditButton"
                     data-bulk-form-id="#usersBulkForm"
                     id="usersTable"
+                    data-buttons="userButtons"
                     class="table table-striped snipe-table"
                     data-url="{{ route('api.users.index',
-              array('deleted'=> (request('status')=='deleted') ? 'true' : 'false','company_id' => e(request('company_id')))) }}"
+                        [
+                            'status' => e(request('status')),
+                            'deleted'=> (request('status')=='deleted') ? 'true' : 'false',
+                            'company_id' => e(request('company_id')),
+                            'manager_id' => e(request('manager_id')),
+                            'admins' => e(request('admins')),
+                            'superadmins' => e(request('superadmins')),
+                            'activated' => e(request('activated')),
+                       ]) }}"
                     data-export-options='{
                 "fileName": "export-users-{{ date('Y-m-d') }}",
                 "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
@@ -62,6 +65,7 @@
             </div><!-- /.box -->
         </div>
     </div>
+
 
 @stop
 

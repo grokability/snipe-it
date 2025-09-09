@@ -7,7 +7,7 @@ use App\Models\Traits\Searchable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Watson\Validating\ValidatingTrait;
-
+use \Illuminate\Database\Eloquent\Relations\Relation;
 class Supplier extends SnipeModel
 {
     use HasFactory;
@@ -133,7 +133,7 @@ class Supplier extends SnipeModel
      * Establishes the supplier -> admin user relationship
      *
      * @author A. Gianotto <snipe@snipe.net>
-     * @return \Illuminate\Database\Eloquent\Relations\Relation
+     * @return Relation
      */
     public function adminuser()
     {
@@ -147,9 +147,9 @@ class Supplier extends SnipeModel
      * @since  [v1.0]
      * @return \Illuminate\Database\Eloquent\Relations\Relation
      */
-    public function asset_maintenances()
+    public function maintenances(): Relation
     {
-        return $this->hasMany(\App\Models\AssetMaintenance::class, 'supplier_id');
+        return $this->hasMany(\App\Models\Maintenance::class, 'supplier_id');
     }
 
     /**

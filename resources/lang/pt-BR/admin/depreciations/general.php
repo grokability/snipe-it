@@ -14,7 +14,7 @@ return [
                       Você não tem atualmente nenhuma depreciação configurada.
                       Por favor, defina pelo menos uma depreciação para visualizar o relatório de depreciação.',
     'depreciation_method'                   => 'Relatório de Depreciações',
-    'linear_depreciation'                   => 'Linear (Default)',
-    'half_1'                                => 'Half-year convention, always applied',
-    'half_2'                                => 'Half-year convention, applied with condition',
+    'linear_depreciation'                   => 'Linear (Padrão)',
+    'half_1'                                => 'Convenção semestral, sempre aplicada',
+    'half_2'                                => 'Convenção semestral, aplicada com condição',
 ];

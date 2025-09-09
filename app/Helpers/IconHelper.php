@@ -16,6 +16,7 @@ class IconHelper
             case 'clone':
                 return 'far fa-clone';
             case 'delete':
+            case 'upload deleted':
                 return 'fas fa-trash';
             case 'create':
                 return 'fa-solid fa-plus';
@@ -43,6 +44,8 @@ class IconHelper
                 return 'fa-regular fa-envelope';
             case 'phone':
                 return 'fa-solid fa-phone';
+            case 'mobile':
+                return 'fas fa-mobile-screen-button';
             case 'long-arrow-right':
                 return 'fas fa-long-arrow-alt-right';
             case 'download':
@@ -151,6 +154,7 @@ class IconHelper
             case 'location':
                 return 'fas fa-map-marker-alt';
             case 'superadmin':
+            case 'admin':
                 return 'fas fa-crown';
             case 'print':
                 return 'fa-solid fa-print';

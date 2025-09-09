@@ -22,7 +22,7 @@ return array(
         'success' => 'Lieferant wurde erfolgreich gelöscht.',
         'assoc_assets'	 => 'Dieser Lieferant ist derzeit :asset_count Asset(s) zugeordnet und kann nicht gelöscht werden. Bitte aktualisieren Sie Ihre Assets so, dass sie nicht mehr auf diesen Lieferant verweisen und versuchen Sie es erneut. ',
         'assoc_licenses'	 => 'Dieser Lieferant ist derzeit mit :licenses_count Lizenze(n) verknüpft und kann nicht gelöscht werden. Bitte aktualisieren Sie Ihre Lizenzen so, dass sie nicht mehr auf diesen Lieferant verweisen und versuchen Sie es erneut. ',
-        'assoc_maintenances'	 => 'Diese Lieferant ist derzeit mindestens einem Modell zugeordnet und kann nicht gelöscht werden. Bitte aktualisieren Sie Ihre Modelle, um nicht mehr auf diesen Lieferant zu verweisen und versuchen Sie es erneut. ',
+        'assoc_maintenances'	 => 'This supplier is currently associated with :maintenances_count asset maintenances(s) and cannot be deleted. Please update your asset maintenances to no longer reference this supplier and try again. ',
     )
 
 );

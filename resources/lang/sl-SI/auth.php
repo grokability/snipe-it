@@ -13,8 +13,8 @@ return array(
     |
     */
 
-    'failed' => 'These credentials do not match our records.',
+    'failed' => 'Te poverilnice se ne ujemajo z našimi evidencami.',
     'password' => 'Vneseno geslo je napačno.',
-    'throttle' => 'Too many login attempts. Please try again in :minutes minute(s).',
+    'throttle' => 'Preveč poskusov prijave. Poskusite znova čez :minutes minut.',
 
 );

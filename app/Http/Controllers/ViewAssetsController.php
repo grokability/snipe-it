@@ -185,7 +185,7 @@ class ViewAssetsController extends Controller
         $logaction->target_type = User::class;
 
         $data['item_quantity'] = $request->has('request-quantity') ? e($request->input('request-quantity')) : 1;
-        $data['requested_by'] = $user->present()->fullName();
+        $data['requested_by'] = $user->display_name;
         $data['item'] = $item;
         $data['item_type'] = $itemType;
         $data['target'] = auth()->user();

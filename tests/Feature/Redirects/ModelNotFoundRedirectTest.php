@@ -14,7 +14,7 @@ class ModelNotFoundRedirectTest extends TestCase
             ->assertRedirectToRoute('hardware.index');
     }
 
-    public function testHandlesAssetMaintenance404()
+    public function testHandlesMaintenance404()
     {
         $this->actingAs(User::factory()->viewAssets()->create())
             ->get(route('maintenances.show', 9999))

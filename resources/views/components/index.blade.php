@@ -6,11 +6,6 @@
 @parent
 @stop
 
-@section('header_right')
-  @can('create', \App\Models\Component::class)
-    <a href="{{ route('components.create') }}" {{$snipeSettings->shortcuts_enabled == 1 ? "accesskey=n" : ''}} class="btn btn-primary pull-right"> {{ trans('general.create') }}</a>
-  @endcan
-@stop
 
 {{-- Page content --}}
 @section('content')
@@ -28,6 +23,7 @@
                 data-sort-order="asc"
                 data-sort-name="name"
                 id="componentsTable"
+                data-buttons="componentButtons"
                 class="table table-striped snipe-table"
                 data-url="{{ route('api.components.index') }}"
                 data-export-options='{

@@ -47,19 +47,6 @@ Route::group(['prefix' => 'licenses', 'middleware' => ['auth']], function () {
         [Licenses\LicenseCheckoutController::class, 'bulkCheckout']
     )->name('licenses.bulkcheckout');
 
-    Route::post(
-    '{licenseId}/upload',
-        [Licenses\LicenseFilesController::class, 'store']
-    )->name('upload/license');
-
-    Route::delete(
-    '{licenseId}/deletefile/{fileId}',
-        [Licenses\LicenseFilesController::class, 'destroy']
-    )->name('delete/licensefile');
-    Route::get(
-    '{licenseId}/showfile/{fileId}/{download?}',
-        [Licenses\LicenseFilesController::class, 'show']
-    )->name('show.licensefile');
     Route::get(
         'export',
         [
