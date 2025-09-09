@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api;
+use App\Http\Controllers\Api\PredefinedFilterController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -840,7 +841,19 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
         ]
         ); // end asset models API routes
 
+        /**
+        * PredefinedFilter API routes
+        */
+        //Route::middleware('auth:api')->group(function () {
+            Route::get('predefinedFilters', [PredefinedFilterController::class, 'index'])
+                ->name('api.predefined-filters.index');
 
+            Route::get('predefinedFilters/{id}', [PredefinedFilterController::class, 'show'])
+                ->name('api.predefined-filters.show');
+
+            Route::post('predefinedFilters', [PredefinedFilterController::class,'store'])
+                ->name('api.predefined filters.store');
+        //}; // end predefinedFilters API routes
 
         /**
         * Settings API routes
