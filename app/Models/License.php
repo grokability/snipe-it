@@ -45,6 +45,7 @@ class License extends Depreciable
 
     protected $rules = [
         'name'   => 'required|string|min:3|max:255',
+        'name'   => 'string|nullable',
         'seats' => 'required|min:1|integer|limit_change:10000', // limit_change is a "pseudo-rule" that translates into 'between', see prepareLimitChangeRule() below
         'license_email'   => 'email|nullable|max:120',
         'license_name'   => 'string|nullable|max:100',
@@ -73,6 +74,7 @@ class License extends Depreciable
         'manufacturer_id',
         'category_id',
         'name',
+        'version',
         'notes',
         'order_number',
         'purchase_cost',
