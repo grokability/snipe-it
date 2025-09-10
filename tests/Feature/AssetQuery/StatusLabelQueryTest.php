@@ -1,16 +1,9 @@
 <?php
 namespace Tests\Unit;
 
-use App\Http\Controllers\Assets\BulkAssetsController;
 use App\Models\Asset;
-use App\Models\AssetModel;
-use App\Models\Category;
-use App\Models\Location;
 use App\Models\Statuslabel;
-use App\Models\User;
-use Carbon\Carbon;
 use Tests\TestCase;
-use App\Models\Setting;
 
 class StatusLabelQueryTest extends TestCase
 {

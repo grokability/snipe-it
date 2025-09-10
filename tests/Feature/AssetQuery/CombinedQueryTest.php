@@ -719,7 +719,7 @@ class CombinedQueryTest extends TestCase
         $this->assertTrue($results->contains($asset));
     }
 
-    public function testAssetsWithMissingForeignKey()
+    public function testFilterAssetsWithMissingForeignKey()
     {
         $locationA = Location::factory()->create();
         $assetWithLocation = Asset::factory()->create(['location_id' => $locationA->id]);

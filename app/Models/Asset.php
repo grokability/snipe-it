@@ -1932,7 +1932,6 @@ class Asset extends Depreciable
                                         } elseif ($type === null || $type === 'any' || empty($type)) {
                                             $query->orWhereIn('assigned_to', $ids);
                                         } else {
-                                            dump($type);
                                             throw new UnexpectedValueException("You've provided an invalid type");
                                         }
                                     }
