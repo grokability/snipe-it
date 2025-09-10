@@ -9,6 +9,7 @@ return array(
     'license_key'       => 'Product Key',
     'maintained'        => 'Maintained',
     'name'              => 'Software Name',
+    'version'           => 'Software Version',
     'no_depreciation'   => 'Do Not Depreciate',
     'purchase_order'    => 'Purchase Order Number',
     'reassignable'      => 'Reassignable',

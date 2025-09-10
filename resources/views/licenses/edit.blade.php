@@ -14,6 +14,16 @@
 {{-- Page content --}}
 @section('inputFields')
 @include ('partials.forms.edit.name', ['translated_name' => trans('admin/licenses/form.name')])
+
+<!-- Version -->
+<div class="form-group {{ $errors->has('version') ? 'has-error' : '' }}">
+    <label for="version" class="col-md-3 control-label">{{ trans('admin/licenses/form.version') }}</label>
+    <div class="col-md-8 col-sm-12">
+            <input class="form-control" type="text" name="version" aria-label="version" id="version" value="{{ old('version', $item->version) }}" style="width: 100%;">
+            {!! $errors->first('version', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
+    </div>
+</div>
+
 @include ('partials.forms.edit.category-select', ['translated_name' => trans('admin/categories/general.category_name'), 'fieldname' => 'category_id', 'required' => 'true', 'category_type' => 'license'])
 
 
