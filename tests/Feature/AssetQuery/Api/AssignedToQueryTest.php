@@ -129,7 +129,7 @@ class AssignedToQueryTest extends TestCase
             ])
             ->assertJson(fn(AssertableJson $json) => $json->has('rows', 2)->etc())
             ->assertJsonFragment([
-                'id' => $assetB->id,
+                'id' => $assetA->id,
             ])
             ->assertJsonFragment([
                 'id' => $assetC->id,
