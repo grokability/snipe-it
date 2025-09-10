@@ -170,6 +170,7 @@ class LicensesController extends Controller
         $license->license_name      = $request->input('license_name');
         $license->maintained        = $request->input('maintained',0);
         $license->name              = $request->input('name');
+        $license->version           = $request->input('version');
         $license->notes             = $request->input('notes');
         $license->order_number      = $request->input('order_number');
         $license->purchase_cost     = $request->input('purchase_cost');
