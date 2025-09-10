@@ -160,6 +160,16 @@
                     </div>
                   @endif
 
+                  @if ($license->version)
+                    <div class="row">
+                      <div class="col-md-3">
+                        <strong>{{ trans('admin/licenses/form.version') }}</strong>
+                      </div>
+                      <div class="col-md-9">
+                        {{ $license->version }}
+                      </div>
+                    </div>
+                  @endif
 
                   @if ($license->license_name!='')
                     <div class="row">
