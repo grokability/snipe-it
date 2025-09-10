@@ -3,10 +3,14 @@ namespace Tests\Unit;
 
 use App\Models\Asset;
 use App\Models\Statuslabel;
+use Tests\Support\GetExtendedPrefix;
 use Tests\TestCase;
 
 class StatusLabelQueryTest extends TestCase
 {
+    // Load trait
+    use GetExtendedPrefix;
+
     // Status labels
     public function testFilterAssetStatusLabelEmptyString()
     {
@@ -75,7 +79,7 @@ class StatusLabelQueryTest extends TestCase
         ]);
 
         // Act
-        $queryString = substr($statusPending->name, 0, floor(strlen($statusPending->name) / 2));
+        $queryString = CompanyQueryTest::getExtendedPrefix($statusPending->name, $statusArchived->name);
         $filter = [
             'status_label' => $queryString,
         ];

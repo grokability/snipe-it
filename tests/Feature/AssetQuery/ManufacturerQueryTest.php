@@ -4,11 +4,16 @@ namespace Tests\Unit;
 use App\Models\Asset;
 use App\Models\AssetModel;
 use App\Models\Manufacturer;
+use Tests\Support\GetExtendedPrefix;
 use Tests\TestCase;
 
 
 class ManufacturerQueryTest extends TestCase
 {
+
+        // Load trait
+    use GetExtendedPrefix;
+
     public function testFilterAssetManufacturerEmptyString()
     {
         $manufacturerA = Manufacturer::factory()->create();
@@ -64,7 +69,7 @@ class ManufacturerQueryTest extends TestCase
         $assetA = Asset::factory()->create(['model_id' => $modelA->id]);
         $assetB = Asset::factory()->create(['model_id' => $modelB->id]);
 
-        $queryString = substr($manufacturerA->name, 0, floor(strlen($manufacturerA->name) / 2));
+        $queryString = ManufacturerQueryTest::getExtendedPrefix($manufacturerA->name, $manufacturerB->name);
         $filter = ['manufacturer' => $queryString];
 
         $results = Asset::query()->byFilter($filter)->get();

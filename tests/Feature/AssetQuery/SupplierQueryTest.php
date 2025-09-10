@@ -3,11 +3,16 @@ namespace Tests\Unit;
 
 use App\Models\Asset;
 use App\Models\Supplier;
+use Tests\Support\GetExtendedPrefix;
 use Tests\TestCase;
 
 
 class SupplierQueryTest extends TestCase
 {
+
+    // Load trait
+    use GetExtendedPrefix;
+
     public function testFilterAssetSupplierEmptyString()
     {
         $supplierA = Supplier::factory()->create();
@@ -61,7 +66,7 @@ class SupplierQueryTest extends TestCase
             'supplier_id' => $supplierB->id,
         ]);
 
-        $queryString = substr($supplierA->name, 0, floor(strlen($supplierA->name) / 2));
+        $queryString = CompanyQueryTest::getExtendedPrefix($supplierA->name, $supplierB->name);
         $filter = ['supplier' => $queryString];
         $results = Asset::query()->byFilter($filter)->get();
 

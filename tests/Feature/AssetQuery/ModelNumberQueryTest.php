@@ -3,11 +3,16 @@ namespace Tests\Unit;
 
 use App\Models\Asset;
 use App\Models\AssetModel;
+use Tests\Support\GetExtendedPrefix;
 use Tests\TestCase;
 
 
 class ModelNumberQueryTest extends TestCase
 {
+
+    // Load trait
+    use GetExtendedPrefix;
+
     public function testFilterAssetModelNumberEmptyString()
     {
         $modelA = AssetModel::factory()->create();
@@ -18,7 +23,7 @@ class ModelNumberQueryTest extends TestCase
         $assetB = Asset::factory()->create(['model_id' => $modelB->id]);
 
         $filter = ['model_number' => ''];
-        
+
         $results = Asset::query()->byFilter($filter)->get();
 
         $this->assertCount(2, $results);
@@ -54,7 +59,7 @@ class ModelNumberQueryTest extends TestCase
         $assetA = Asset::factory()->create(['model_id' => $modelA->id]);
         $assetB = Asset::factory()->create(['model_id' => $modelB->id]);
 
-        $queryString = substr($modelA->model_number, 0, floor(strlen($modelA->model_number) / 2));
+        $queryString = ModelNumberQueryTest::getExtendedPrefix($modelA->model_number, $modelB->model_number);
         $filter = ['model_number' => $queryString];
 
         $results = Asset::query()->byFilter($filter)->get();

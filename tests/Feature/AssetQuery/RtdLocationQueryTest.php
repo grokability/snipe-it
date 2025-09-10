@@ -3,11 +3,16 @@ namespace Tests\Unit;
 
 use App\Models\Asset;
 use App\Models\Location;
+use Tests\Support\GetExtendedPrefix;
 use Tests\TestCase;
 
 
 class RtdLocationQueryTest extends TestCase
 {
+
+    // Load trait
+    use GetExtendedPrefix;
+
     public function testFilterAssetLocationEmptyString()
     {
 
@@ -60,7 +65,7 @@ class RtdLocationQueryTest extends TestCase
         $assetA = Asset::factory()->create(['rtd_location_id' => $locationA->id]);
         $assetB = Asset::factory()->create(['rtd_location_id' => $locationB->id]);
 
-        $queryString = substr($locationA->name, 0, floor(strlen($locationA->name) / 2));
+        $queryString = RtdLocationQueryTest::getExtendedPrefix($locationA->name, $locationB->name);
         $filter = ['rtd_location' => $queryString];
         $results = Asset::query()->byFilter($filter)->get();
 

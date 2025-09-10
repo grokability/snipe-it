@@ -5,10 +5,14 @@ use UnexpectedValueException;
 use App\Models\Asset;
 use App\Models\Location;
 use App\Models\User;
+use Tests\Support\GetExtendedPrefix;
 use Tests\TestCase;
 
 class AssignedToQueryTest extends TestCase
 {
+    // Load trait
+    use GetExtendedPrefix;
+
     // --- User assignment tests ---
     public function testFilterAssetAssignedToUserId()
     {
@@ -114,7 +118,7 @@ class AssignedToQueryTest extends TestCase
         $assetA = Asset::factory()->create(['assigned_type' => User::class, 'assigned_to' => $userA->id]);
         $assetB = Asset::factory()->create(['assigned_type' => User::class, 'assigned_to' => $userB->id]);
 
-        $partial = substr($userA->first_name, 0, max(1, floor(strlen($userA->first_name) / 2)));
+        $partial = AssignedToQueryTest::getExtendedPrefix($userA->first_name, $userB->first_name);
         $filter = ['assigned_to' => $partial];
 
         $results = Asset::query()->byFilter($filter)->get();
@@ -147,7 +151,7 @@ class AssignedToQueryTest extends TestCase
         $assetA = Asset::factory()->create(['assigned_type' => User::class, 'assigned_to' => $userA->id]);
         $assetB = Asset::factory()->create(['assigned_type' => User::class, 'assigned_to' => $userB->id]);
 
-        $partial = substr($userA->first_name, 0, max(1, floor(strlen($userA->first_name) / 2)));
+        $partial = AssignedToQueryTest::getExtendedPrefix($userA->first_name, $userB->first_name);
         $filter = ['assigned_to' => $partial, 'assigned_type' => User::class];
 
         $results = Asset::query()->byFilter($filter)->get();
@@ -280,7 +284,7 @@ class AssignedToQueryTest extends TestCase
         $assetA = Asset::factory()->create(['assigned_type' => Location::class, 'assigned_to' => $locationA->id]);
         $assetB = Asset::factory()->create(['assigned_type' => Location::class, 'assigned_to' => $locationB->id]);
 
-        $partial = substr($locationA->name, 0, max(1, floor(strlen($locationA->name) / 2)));
+        $partial = AssignedToQueryTest::getExtendedPrefix($locationA->name, $locationB->name);
         $filter = ['assigned_to' => $partial];
 
         $results = Asset::query()->byFilter($filter)->get();
@@ -313,7 +317,7 @@ class AssignedToQueryTest extends TestCase
         $assetA = Asset::factory()->create(['assigned_type' => Location::class, 'assigned_to' => $locationA->id]);
         $assetB = Asset::factory()->create(['assigned_type' => Location::class, 'assigned_to' => $locationB->id]);
 
-        $partial = substr($locationA->name, 0, max(1, floor(strlen($locationA->name) / 2)));
+        $partial = AssignedToQueryTest::getExtendedPrefix($locationA->name, $locationB->name);
         $filter = ['assigned_to' => $partial, 'assigned_type' => Location::class];
 
         $results = Asset::query()->byFilter($filter)->get();
@@ -427,7 +431,7 @@ class AssignedToQueryTest extends TestCase
         $assetA = Asset::factory()->create(['assigned_type' => Asset::class, 'assigned_to' => $parentA->id]);
         $assetB = Asset::factory()->create(['assigned_type' => Asset::class, 'assigned_to' => $parentB->id]);
 
-        $partial = substr($parentA->name, 0, max(1, floor(strlen($parentA->name) / 2)));
+        $partial = AssignedToQueryTest::getExtendedPrefix($parentA->name, $parentB->name);
         $filter = ['assigned_to' => $partial];
 
         $results = Asset::query()->byFilter($filter)->get();
@@ -460,7 +464,7 @@ class AssignedToQueryTest extends TestCase
         $assetA = Asset::factory()->create(['assigned_type' => Asset::class, 'assigned_to' => $parentA->id]);
         $assetB = Asset::factory()->create(['assigned_type' => Asset::class, 'assigned_to' => $parentB->id]);
 
-        $partial = substr($parentA->name, 0, max(1, floor(strlen($parentA->name) / 2)));
+        $partial = AssignedToQueryTest::getExtendedPrefix($parentA->name, $parentB->name);
         $filter = ['assigned_to' => $partial, 'assigned_type' => Asset::class];
 
         $results = Asset::query()->byFilter($filter)->get();

@@ -3,11 +3,15 @@ namespace Tests\Unit;
 
 use App\Models\Company;
 use App\Models\Asset;
+use Tests\Support\GetExtendedPrefix;
 use Tests\TestCase;
 
 
 class CompanyQueryTest extends TestCase
 {
+    // Load trait
+    use GetExtendedPrefix;
+
     public function testFilterAssetCompanyEmptyString()
     {
         $companyA = Company::factory()->create();
@@ -64,7 +68,7 @@ class CompanyQueryTest extends TestCase
             'company_id' => $companyB->id,
         ]);
 
-        $queryString = substr($companyA->name, 0, floor(strlen($companyA->name) / 2));
+        $queryString = CompanyQueryTest::getExtendedPrefix($companyA->name, $companyB->name);
         $filter = ['company' => $queryString];
         $results = Asset::query()->byFilter($filter)->get();
 

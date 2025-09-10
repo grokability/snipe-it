@@ -4,11 +4,16 @@ namespace Tests\Unit;
 use App\Models\Category;
 use App\Models\Asset;
 use App\Models\AssetModel;
+use Tests\Support\GetExtendedPrefix;
 use Tests\TestCase;
 
 
 class CategoryQueryTest extends TestCase
 {
+
+        // Load trait
+    use GetExtendedPrefix;
+
     public function testFilterAssetCategoryEmptyString()
     {
         $categoryA = Category::factory()->create();
@@ -64,7 +69,7 @@ class CategoryQueryTest extends TestCase
         $assetA = Asset::factory()->create(['model_id' => $modelA->id]);
         $assetB = Asset::factory()->create(['model_id' => $modelB->id]);
 
-        $queryString = substr($categoryA->name, 0, floor(strlen($categoryA->name) / 2));
+        $queryString = CategoryQueryTest::getExtendedPrefix($categoryA->name, $categoryB->name);
         $filter = ['category' => $queryString];
 
         $results = Asset::query()->byFilter($filter)->get();
