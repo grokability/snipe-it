@@ -3,9 +3,11 @@ namespace Tests\Unit\Models\PredefinedFilter;
 
 use App\Models\Asset;
 use App\Models\AssetModel;
+use App\Models\Manufacturer;
 use App\Models\PredefinedFilter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\User; 
+use PhpParser\Node\Expr\FuncCall;
 use Tests\TestCase;
 
 class PredefinedFilterFilterAssetsTest extends TestCase
@@ -129,7 +131,6 @@ class PredefinedFilterFilterAssetsTest extends TestCase
     }
 
     //B
-
     /** @test  */
     public function it_filters_by_company_id_scalar()
     {
@@ -303,7 +304,7 @@ class PredefinedFilterFilterAssetsTest extends TestCase
             ],
         ]);
 
-        $q = \App\Models\Asset::query();
+        $q = Asset::query();
         $filter->filterAssets($q);
         $ids = $q->pluck('id');
 
@@ -312,4 +313,120 @@ class PredefinedFilterFilterAssetsTest extends TestCase
         $this->assertFalse($ids->contains($dropStatus->id));
     }
 
+    /** @test */
+    public function it_filters_by_manufacturer_id_with_join()
+    {
+       $user = User::factory()->create();
+       
+       $manufacturer1 = Manufacturer::factory()->create();
+       $manufacturer2 = Manufacturer::factory()->create();
+       
+       $model1 = AssetModel::factory()->create(['manufacturer_id' => $manufacturer1->id]);
+       $model2 = AssetModel::factory()->create(['manufacturer_id' => $manufacturer2->id]);
+
+       $keep = Asset::factory()->create(['model_id' => $model1->id]);
+       $drop = Asset::factory()->create(['model_id' => $model2->id]);
+
+       $filter = PredefinedFilter::create([
+            'name' => 'filer_by_manufaktur',
+            'created_by' => $user->id,
+            'filter_data' => ['manufacturer_id' => $manufacturer1->id],
+       ]);
+
+       $q = Asset::query();
+       $filter->filterAssets($q);
+       $ids = $q->pluck('assets.id');
+       
+       $this->assertTrue($ids->contains($keep->id));
+       $this->assertFalse($ids->contains($drop->id));
+    } 
+    
+    /** @test */
+    public function it_filters_by_created_at_date_range_insclusive()
+    {
+        $user = User::factory()->create();
+
+        $in = Asset::factory()->create(['created_at' => '2025-01-15']);
+        $out1 = Asset::factory()->create(['created_at' => '2024-12-31']);
+        $out2 = Asset::factory()->create(['created_at' => '2025-02-01']);
+
+        $filter = PredefinedFilter::create([
+            'name'  =>  'filter_by_date',
+            'created_by' => $user->id,
+            'filter_data' => [
+                'created_at_start' => '2025-01-01',
+                'created_at_end' => '2025-01-31',        
+            ],
+        ]);
+
+        $q = Asset::query();
+        $filter->filterAssets($q);
+        $ids = $q->pluck('id');
+
+        $this->assertTrue($ids->contains($in->id));
+        $this->assertFalse($ids->contains($out1->id));
+        $this->assertFalse($ids->contains($out2->id));
+    }
+
+    /** @test */
+    public function it_filters_by_name_with_like_operator() {
+
+        $user = User::factory()->create();
+
+        $keep = Asset::factory()->create(['name' => 'Dell Latitude 7420']);
+        $drop = Asset::factory()->create(['name' => 'HP ProBook 450']);
+
+        $filter = PredefinedFilter::create([
+            'name'  =>  'filter_by_date',
+            'created_by' => $user->id,
+            'filter_data' => ['name' => 'Latitude'],
+        ]);
+
+        $q = Asset::query();
+        $filter->filterAssets($q);
+        $ids = $q->pluck('id');
+
+        $this->assertTrue($ids->contains($keep->id));
+        $this->assertFalse($ids->contains($drop->id));
+    }
+    
+    /** @test */
+    public function it_filter_by_multiple_custom_fields_and_logic()
+    {
+        $user = User::factory()->create();
+
+        $keep = Asset::factory()->create([
+            'asset_tag' => 'TAG-001',
+            'serial'    => 'SN-AAA',
+        ]);
+
+        $drop1 = Asset::factory()->create([
+            'asset_tag' => 'TAG-001',
+            'serial'    => 'SN-WRONG',
+        ]);
+
+        $drop2 = Asset::factory()->create([
+            'asset_tag' => 'TAG-XYZ',
+            'serial'    => 'SN-AAA',
+        ]);
+
+        $filter = PredefinedFilter::create([
+            'name' => 'filter_by_custom:fields',
+            'created_by' => $user->id,
+            'filter_data' => [
+                'custom_fields' => [
+                    'asset_tag' => 'TAG-001',
+                    'serial'    => 'SN-AAA',
+                ],
+            ],
+        ]);
+        
+        $q = Asset::query();
+        $filter->filterAssets($q);
+        $ids = $q->pluck('id');
+
+        $this->assertTrue($ids->contains($keep->id));
+        $this->assertFalse($ids->contains($drop1->id));
+        $this->assertFalse($ids->contains($drop2->id));
+    }
 }
