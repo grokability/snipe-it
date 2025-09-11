@@ -47,6 +47,25 @@
 {{-- Page content --}}
 @section('content')
 
+<div class="form-group">
+<label for="predefined_filters">{{ trans('predefined filter label') }}</label>
+<select
+    id="predefined_filters"
+    class="form-control select"
+    data-placeholder="{{ trans('predefined filter placeholder') }}"
+>
+    <option></option>
+    @foreach($predefined_filters as $predefined_filter)
+        <option
+            value="{{ $predefined_filter->id }}"
+            @selected($predefined_filter->is(request()->route()->parameter('predefinedFilter')))
+        >
+            {{ $predefined_filter->name }}
+        </option>
+    @endforeach
+</select>
+</div>
+
     <div class="row">
         <div class="col-md-12">
             <div class="box">

@@ -72,6 +72,7 @@ class AssetFactory extends Factory
                 'model_id' => function () {
                     return AssetModel::where('name', 'Macbook Pro 13"')->first() ?? AssetModel::factory()->mbp13Model();
                 },
+                'company_id' => \App\Models\Company::inRandomOrder()->value('id'),
             ];
         });
     }

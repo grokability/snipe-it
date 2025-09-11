@@ -12,6 +12,8 @@ use App\Models\Consumable;
 use App\Models\License;
 use App\Models\Location;
 use App\Models\Manufacturer;
+use App\Models\PredefinedFilter;
+use App\Models\PredefinedFilterPermission;
 use App\Models\Statuslabel;
 use App\Models\Supplier;
 use App\Models\User;
@@ -178,6 +180,21 @@ class Purge extends Command
                 $this->info('- Status Label "'.$status_label->name.'" deleted.');
                 $status_label->forceDelete();
             }
+
+            $predefined_filters = PredefinedFilter::whereNotNull('deleted_at')->withTrashed()->get();
+            $this->info($predefined_filters->count().' predefined filters purged.');
+            foreach ($predefined_filters as $predefined_filter) {
+                $this->info('- Predefined Filter "'.$predefined_filter->name.'" deleted.');
+                $predefined_filter->forceDelete();
+            }
+
+            $predefined_filter_permissions = PredefinedFilterPermission::whereNotNull('deleted_at')->withTrashed()->get();
+            $this->info($predefined_filter_permissions->count().' predefined filters purged.');
+            foreach ($predefined_filter_permissions as $predefined_filter_permission) {
+                $this->info('- Predefined Filter "'.$predefined_filter_permission->name.'" deleted.');
+                $predefined_filter_permission->forceDelete();
+            }
+
         } else {
             $this->info('Action canceled. Nothing was purged.');
         }
