@@ -195,6 +195,10 @@
                             <span aria-hidden="true"></span>
                             <span>Store current filter in backend</span>
                         </button>
+                        <button type="button" class="btn btn-default" id="updateFilterButton">
+                            <span aria-hidden="true"></span>
+                            <span>Update current filter in backend</span>
+                        </button>
                         <button type="button" class="btn btn-default" id="deleteFilterButton">
                             <span aria-hidden="true"></span>
                             <span>Delete current filter from backend</span>
@@ -477,7 +481,34 @@ class FilterUIController {
                 alert("Filter stored successfully");
             } else {
                 console.error(response);
-                alert("An error hass occured. Look in the browser console for more details.");  
+                alert("An error has occured. Look in the browser console for more details.");  
+            }
+        })
+        .catch((error) => {
+            console.error(error);
+            alert("An error has occured: " + error);
+        })
+    }
+
+    updatePredefinedFilterInBackend() {
+        const selectedId = $("#predefinedfilters-select").select2('data')[0].id; // Always zero because only one element can be selected at the time
+        if (!selectedId) return;
+
+        const filters = this.collector.collect();
+        const name = prompt("Enter the name of the filter");
+
+        const payload = {
+            name: name,
+            filter_data: filters,
+        };
+
+        fetchFromBackend('PUT', `/api/v1/predefinedFilters/${selectedId}`, JSON.stringify(payload))
+        .then((response) => {
+            if(response.message === "Template updated successfully") {
+                alert("Filter stored successfully");
+            } else {
+                console.error(response);
+                alert("An error has occured. Look in the browser console for more details.");  
             }
         })
         .catch((error) => {
@@ -488,7 +519,6 @@ class FilterUIController {
 
     deletePredefinedFilterFromBackend() {
         const selectedId = $("#predefinedfilters-select").select2('data')[0].id; // Always zero because only one element can be selected at the time
-
         if (!selectedId) return;
 
         fetchFromBackend('DELETE', `/api/v1/predefinedFilters/${selectedId}`)
@@ -497,7 +527,7 @@ class FilterUIController {
                 alert("Filter deleted successfully");
             } else {
                 console.error(response);
-                alert("An error hass occured. Look in the browser console for more details.");  
+                alert("An error has occured. Look in the browser console for more details.");  
             }
         })
         .catch((error) => {
@@ -532,6 +562,11 @@ class FilterUIController {
         const saveFilterButton = document.getElementById("storeFilterButton");
         if (saveFilterButton) {
             saveFilterButton.addEventListener('click', () => this.storePredefinedFilterInBackend());
+        }
+
+        const updateFilterButton = document.getElementById("updateFilterButton");
+        if (updateFilterButton) {
+            updateFilterButton.addEventListener('click', () => this.updatePredefinedFilterInBackend());
         }
 
         const deleteFilterButton = document.getElementById("deleteFilterButton");
