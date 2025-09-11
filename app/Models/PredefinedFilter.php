@@ -26,7 +26,7 @@ class PredefinedFilter extends Model
 
     protected $rules = [
         'name'                    => ['required', 'string', 'max:255'],
-        'created_by'              => ['required', 'integer', 'exists:users,id'],
+        //'created_by'              => ['required', 'integer', 'exists:users,id'],
         'filter_data'             => ['nullable', 'array']
     ];
 

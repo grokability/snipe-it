@@ -52,6 +52,7 @@ class PredefinedFilterController extends Controller
         $rules = (new PredefinedFilter)->getRules();
         $validated = $request->validate($rules);
 
+        //dump($request);
         $predefined_filter = PredefinedFilter::create([
             'name' => $validated['name'],
             'filter_data' => $validated['filter_data'],

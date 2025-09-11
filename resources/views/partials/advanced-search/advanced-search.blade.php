@@ -9,7 +9,7 @@
 
                 @include ('partials.select.dropdowns.predefined-select', [
                     'translated_name' => trans('admin/hardware/company.model'),
-                    'fieldname' => 'prefdefinedFilters',
+                    'fieldname' => 'predefinedFilters',
                     'select_id' => "predefinedfilters-select",
                     'required' => 'false',
                 ])
@@ -191,9 +191,9 @@
                             <span aria-hidden="true"></span>
                             <span>❌ {{ trans('button.delete_search_query') }}</span>
                         </button>
-                        <button type="button" class="btn btn-default" id="setDemoDataButton">
+                        <button type="button" class="btn btn-default" id="storeFilterButton">
                             <span aria-hidden="true"></span>
-                            <span>Fill with testdata</span>
+                            <span>Store current filter in backend</span>
                         </button>
                     </div>
                 </span>
@@ -288,7 +288,7 @@ class SelectFilterInput extends FilterInput {
     }
 }
 
-class AssignedToSelectFilterInput extends SelectFilterInput {
+class AssignedEntityFilterInput extends SelectFilterInput {
     getValue() {
         const selections = $(this.element).select2('data');
 
@@ -360,7 +360,7 @@ class TextFilterInput extends FilterInput {
     }
 }
 
-class AdvancedSearchFilterCollector {
+class FilterFormManager {
     constructor() {
         this.filters = {};
         this.inputs = [];
@@ -373,7 +373,7 @@ class AdvancedSearchFilterCollector {
         // Select2
         document.querySelectorAll('select[id^="advancedSearch_"]').forEach(el => {
             if (el.id === 'advancedSearch_assigned_to') {
-                this.inputs.push(new AssignedToSelectFilterInput(el));
+                this.inputs.push(new AssignedEntityFilterInput(el));
             } else {
                 this.inputs.push(new SelectFilterInput(el));
             }
@@ -429,10 +429,10 @@ class AdvancedSearchFilterCollector {
 
 }
 
-class TableFilterController {
+class FilterUIController {
     constructor(tableElement) {
         this.$table = tableElement;
-        this.collector = new AdvancedSearchFilterCollector();
+        this.collector = new FilterFormManager();
     }
 
     refresh() {
@@ -444,9 +444,55 @@ class TableFilterController {
         });
     }
 
+    updateFilterWithPredefined(event) {
+        const selectedId = event?.target?.value;
+        if (!selectedId) return;
+
+        this.fetchPredefinedFilterData(selectedId)
+            .then(filterData => {
+                if (!filterData) return;
+                this.collector.setValuesFromResponse(filterData.filter_data);
+                this.refresh();
+            })
+            .catch(err => {
+                console.error("Failed to apply predefined filter:", err);
+                alert("Failed to apply predefined filter");
+            });
+    }
+
+    storePredefinedFilterInBackend() {
+        const filters = this.collector.collect();
+        const name = prompt("Enter the name of the filter");
+        const payload = {
+            name: name,
+            filter_data: filters,
+        };
+        fetchFromBackend('POST', `/api/v1/predefinedFilters`, JSON.stringify(payload))
+        .then((response) => {
+            if(response.message === "Template saved successfully") {
+                alert("Filter stored successfully");
+            } else {
+                console.error(response);
+                alert("An error hass occured. Look in the browser console for more details.");  
+            }
+        })
+        .catch((error) => {
+            console.error(error);
+            alert("An error hass occured: " + error);
+        })
+    }
+
+    fetchPredefinedFilterData(filterId) {
+        return fetchFromBackend('GET', `/api/v1/predefinedFilters/${filterId}`);
+    }
+
     bindEvents() {
         document.querySelectorAll('[id^="advancedSearch_"]').forEach(el => {
             el.addEventListener('change', this.refresh.bind(this));
+        });
+
+        $('#predefinedfilters-select').on('change', (e) => {
+            this.updateFilterWithPredefined(e);
         });
 
         const filterButton = document.getElementById("filterButton");
@@ -459,26 +505,11 @@ class TableFilterController {
             clearButton.addEventListener('click', () => this.collector.clearAll());
         }
 
-        const setDemoDataButton = document.getElementById("setDemoDataButton");
-        if (setDemoDataButton) {
-            const demoDataObject = {
-                                        category :[1, 3, 5, 7, 9],
-                                        manufacturer:[1,3,7, 9, 11, 13, 15],
-                                        asset_eol_date_end :"2027-10-31",
-                                        "custom_fields._snipeit_cpu_4": "Core i7",
-                                        assigned_to: [
-                                            {
-                                              assignedType: "App\\Models\\Location",
-                                              assigned_to: 6071
-                                            },
-                                            {
-                                              assignedType: "App\\Models\\Asset",
-                                              assigned_to: 42657
-                                            }
-                                        ]
-                                    };
-            setDemoDataButton.addEventListener('click', () => this.collector.setValuesFromResponse(demoDataObject));
+        const saveFilterButton = document.getElementById("storeFilterButton");
+        if (saveFilterButton) {
+            saveFilterButton.addEventListener('click', () => this.storePredefinedFilterInBackend());
         }
+
     }
 }
 
@@ -487,46 +518,60 @@ document.addEventListener('DOMContentLoaded', function () {
     const $table = $('#' + tableId);
 
     // Initialize everything
-    const controller = new TableFilterController($table);
+    const controller = new FilterUIController($table);
     controller.bindEvents();
 });
 
+function getCsrfToken() {
+    return $('meta[name="csrf-token"]').attr('content');
+}
+
+function fetchFromBackend(method, path, body = null) {
+    const options = {
+        method: method,
+        headers: {
+            accept: 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-TOKEN': getCsrfToken(),
+            'Content-Type': 'application/json'
+        },
+        ...(body && { body })
+    };
+
+    return fetch(path, options)
+        .then(res => res.json());
+}
+
 function fetchItemFromBackendById(type, id) {
-    return new Promise((resolve, reject) => {
+    const typeMap = {
+        asset: "hardware",
+        category: "categories",
+        company: "companies",
+        location: "locations",
+        manufacturer: "manufacturers",
+        model: "models",
+        rtd_location: "locations",
+        status_label: "statuslabels",
+        supplier: "suppliers",
+        user: "users"
+    };
 
-        const typeSingularToPluralMap = new Map();
-        typeSingularToPluralMap.set("asset", "hardware");
-        typeSingularToPluralMap.set("category", "categories");
-        typeSingularToPluralMap.set("company", "companies");
-        typeSingularToPluralMap.set("location", "locations");
-        typeSingularToPluralMap.set("manufacturer", "manufacturers");
-        typeSingularToPluralMap.set("model", "models");
-        typeSingularToPluralMap.set("rtd_location", "locations");
-        typeSingularToPluralMap.set("status_label", "statuslabels");
-        typeSingularToPluralMap.set("supplier", "suppliers");
-        typeSingularToPluralMap.set("user", "users");
+    if (!typeMap[type]) {
+        return Promise.reject(`Invalid type ${type}`);
+    }
 
-        if(!typeSingularToPluralMap.has(type)) {
-            console.error("Invalid type " + type);
-            reject("Invalid type " + type);
-            return;
-        }
+    const path = `/api/v1/${typeMap[type]}/${id}`;
+    return fetchFromBackend('GET', path);
+}
 
-        const path = "/api/v1/" + typeSingularToPluralMap.get(type) + "/" + id;
-        const options = {
-            method: 'GET',
-            headers: {
-                accept: 'application/json',
-                'X-Requested-With': 'XMLHttpRequest',
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        };
-        
-        fetch(path, options)
-        .then(res => res.json())
-        .then(res => resolve(res))
-        .catch(err => reject(err));
-    });
+function predefinedFilterRequest(method, filterId = null, filterData = null) {
+    let  path = "/api/v1/predefinedFilters";
+
+    if(filterId !== null) {
+        path += "/" + filterId;
+    }
+
+    return fetchFromBackend(method, path, filterData);
 }
 
 </script>
