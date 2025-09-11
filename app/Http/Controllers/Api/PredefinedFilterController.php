@@ -13,11 +13,21 @@ class PredefinedFilterController extends Controller
 {
     public function index(Request $request)
     {
-        $filters = PredefinedFilter:://where('created_by', $request->user()->id)
+        //$this->authorize('view', PredefinedFilter::class);
+        
+        $filters = PredefinedFilter::
             orderBy('name')
             ->get(['id','name']);
 
-        return response()->json($filters);
+        $viewableFilters = [];
+
+        foreach ($filters as $filter) {
+            //if ($filter->userHasPermission(auth()->user(), 'view') || $filter->created_by === auth()->user()->id) {
+                $viewableFilters[] = $filter;
+            //}
+        }
+
+        return response()->json($viewableFilters);
     }
 
     public function show(Request $request, string $id)
