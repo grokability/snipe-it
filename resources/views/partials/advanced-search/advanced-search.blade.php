@@ -195,6 +195,10 @@
                             <span aria-hidden="true"></span>
                             <span>Store current filter in backend</span>
                         </button>
+                        <button type="button" class="btn btn-default" id="deleteFilterButton">
+                            <span aria-hidden="true"></span>
+                            <span>Delete current filter from backend</span>
+                        </button>
                     </div>
                 </span>
             </div>
@@ -478,7 +482,27 @@ class FilterUIController {
         })
         .catch((error) => {
             console.error(error);
-            alert("An error hass occured: " + error);
+            alert("An error has occured: " + error);
+        })
+    }
+
+    deletePredefinedFilterFromBackend() {
+        const selectedId = $("#predefinedfilters-select").select2('data')[0].id; // Always zero because only one element can be selected at the time
+
+        if (!selectedId) return;
+
+        fetchFromBackend('DELETE', `/api/v1/predefinedFilters/${selectedId}`)
+        .then((response) => {
+            if(response.message === "Template deleted") {
+                alert("Filter deleted successfully");
+            } else {
+                console.error(response);
+                alert("An error hass occured. Look in the browser console for more details.");  
+            }
+        })
+        .catch((error) => {
+            console.error(error);
+            alert("An error has occured: " + error);
         })
     }
 
@@ -508,6 +532,11 @@ class FilterUIController {
         const saveFilterButton = document.getElementById("storeFilterButton");
         if (saveFilterButton) {
             saveFilterButton.addEventListener('click', () => this.storePredefinedFilterInBackend());
+        }
+
+        const deleteFilterButton = document.getElementById("deleteFilterButton");
+        if (deleteFilterButton) {
+            deleteFilterButton.addEventListener('click', () => this.deletePredefinedFilterFromBackend());
         }
 
     }
