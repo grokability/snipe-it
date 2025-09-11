@@ -6,6 +6,14 @@
             <span class="panel-title" style="margin: 0;">
                 <i class="fas fa-search"></i>
                 Advanced search
+
+                @include ('partials.select.dropdowns.predefined-select', [
+                    'translated_name' => trans('admin/hardware/company.model'),
+                    'fieldname' => 'prefdefinedFilters',
+                    'select_id' => "predefinedfilters-select",
+                    'required' => 'false',
+                ])
+
             </span>
         </div>
 
