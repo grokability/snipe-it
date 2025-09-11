@@ -55,7 +55,7 @@ class AssetsController extends Controller
      * @param int $assetId
      * @since [v4.0]
      */
-    public function index(Request $request, $action = null, $upcoming_status = null) : JsonResponse | array
+    public function index(Request $request, $action = null, $upcoming_status = null): JsonResponse|array
     {
 
 
@@ -76,7 +76,7 @@ class AssetsController extends Controller
          * It was either this mess, or repeating ALL of the searching and sorting and filtering code, 
          * which would have been far worse of a mess. *sad face*  - snipe (Sept 1, 2021)
          */
-        if (Route::currentRouteName()=='api.depreciation-report.index') {
+        if (Route::currentRouteName() == 'api.depreciation-report.index') {
             $filter_non_deprecable_assets = true;
             $transformer = 'App\Http\Transformers\DepreciationReportTransformer';
             $this->authorize('reports.view');
@@ -127,10 +127,11 @@ class AssetsController extends Controller
 
         if ($request->filled('filter')) {
             $filter = json_decode($request->input('filter'), true);
+        }
 
-            $filter = array_filter($filter, function ($key) use ($allowed_columns) {
-                return in_array($key, $allowed_columns);
-            }, ARRAY_FILTER_USE_KEY);
+        $all_custom_fields = CustomField::all(); //used as a 'cache' of custom fields throughout this page load
+        foreach ($all_custom_fields as $field) {
+            $allowed_columns[] = $field->db_column_name();
         }
 
         $assets = Asset::select('assets.*')
@@ -169,7 +170,7 @@ class AssetsController extends Controller
             }
         }
 
-        if ((! is_null($filter)) && (count($filter)) > 0) {
+        if ((!is_null($filter)) && (count($filter)) > 0) {
             $assets->ByFilter($filter);
         } elseif ($request->filled('search')) {
             $assets->TextSearch($request->input('search'));
@@ -180,7 +181,7 @@ class AssetsController extends Controller
          * Handle due and overdue audits and checkin dates
          */
         switch ($action) {
-                // Audit (singular) is left over from earlier legacy APIs
+            // Audit (singular) is left over from earlier legacy APIs
             case 'audits':
                 switch ($upcoming_status) {
                     case 'due':
@@ -273,7 +274,7 @@ class AssetsController extends Controller
                 break;
             default:
 
-                if ((! $request->filled('status_id')) && ($settings->show_archived_in_list != '1')) {
+                if ((!$request->filled('status_id')) && ($settings->show_archived_in_list != '1')) {
                     // terrible workaround for complex-query Laravel bug in fulltext
                     $assets->join('status_labels AS status_alias', function ($join) {
                         $join->on('status_alias.id', '=', 'assets.status_id')
@@ -305,7 +306,7 @@ class AssetsController extends Controller
         if ($request->input('requestable') == 'true') {
             $assets->where('assets.requestable', '=', '1');
         }
-        
+
         if ($request->filled('model_id')) {
             // If model_id is already an array, just use it as-is
             if (is_array($request->input('model_id'))) {
@@ -390,6 +391,7 @@ class AssetsController extends Controller
                 break;
             case 'location':
                 $assets->OrderLocation($order);
+                break;
             case 'rtd_location':
                 $assets->OrderRtdLocation($order);
                 break;
@@ -447,9 +449,11 @@ class AssetsController extends Controller
          * Include additional associated relationships
          */
         if ($request->input('components')) {
-            $assets->loadMissing(['components' => function ($query) {
-                $query->orderBy('created_at', 'desc');
-            }]);
+            $assets->loadMissing([
+                'components' => function ($query) {
+                    $query->orderBy('created_at', 'desc');
+                }
+            ]);
         }
 
         return (new $transformer)->transformAssets($assets, $total, $request);
@@ -463,7 +467,7 @@ class AssetsController extends Controller
      * @since [v4.2.1]
      * @author [A. Gianotto] [<snipe@snipe.net>]
      */
-    public function showByTag(Request $request, $tag): JsonResponse | array
+    public function showByTag(Request $request, $tag): JsonResponse|array
     {
         $this->authorize('index', Asset::class);
         $assets = Asset::where('asset_tag', $tag)->with('assetstatus')->with('assignedTo');
@@ -499,7 +503,7 @@ class AssetsController extends Controller
      * @since [v4.2.1]
      * @return \Illuminate\Http\JsonResponse
      */
-    public function showBySerial(Request $request, $serial): JsonResponse | array
+    public function showBySerial(Request $request, $serial): JsonResponse|array
     {
         $this->authorize('index', Asset::class);
         $assets = Asset::where('serial', $serial)->with([
@@ -542,11 +546,12 @@ class AssetsController extends Controller
      * @since [v4.0]
      * @return \Illuminate\Http\JsonResponse
      */
-    public function show(Request $request, $id): JsonResponse | array
+    public function show(Request $request, $id): JsonResponse|array
     {
-        if ($asset = Asset::with('assetstatus')
-            ->with('assignedTo')->withTrashed()
-            ->withCount('checkins as checkins_count', 'checkouts as checkouts_count', 'userRequests as user_requests_count')->find($id)
+        if (
+            $asset = Asset::with('assetstatus')
+                ->with('assignedTo')->withTrashed()
+                ->withCount('checkins as checkins_count', 'checkouts as checkouts_count', 'userRequests as user_requests_count')->find($id)
         ) {
             $this->authorize('view', $asset);
 
@@ -587,7 +592,7 @@ class AssetsController extends Controller
         ])->with('model', 'assetstatus', 'assignedTo')
             ->NotArchived();
 
-        if ((Setting::getSettings()->full_multiple_companies_support=='1') &&  ($request->filled('companyId'))) {
+        if ((Setting::getSettings()->full_multiple_companies_support == '1') && ($request->filled('companyId'))) {
             $assets->where('assets.company_id', $request->input('companyId'));
         }
 
@@ -638,7 +643,7 @@ class AssetsController extends Controller
         $asset->model()->associate(AssetModel::find((int) $request->get('model_id')));
 
         $asset->fill($request->validated());
-        $asset->created_by    = auth()->id();
+        $asset->created_by = auth()->id();
 
         /**
          * this is here just legacy reasons. Api\AssetController
@@ -902,7 +907,7 @@ class AssetsController extends Controller
         $this->authorize('checkout', Asset::class);
         $asset = Asset::findOrFail($asset_id);
 
-        if (! $asset->availableForCheckout()) {
+        if (!$asset->availableForCheckout()) {
             return response()->json(Helper::formatStandardApiResponse('error', ['asset' => e($asset->asset_tag)], trans('admin/hardware/message.checkout.not_available')));
         }
 
@@ -938,7 +943,7 @@ class AssetsController extends Controller
             $asset->status_id = $request->get('status_id');
         }
 
-        if (! isset($target)) {
+        if (!isset($target)) {
             return response()->json(Helper::formatStandardApiResponse('error', $error_payload, 'Checkout target for asset ' . e($asset->asset_tag) . ' is invalid - ' . $error_payload['target_type'] . ' does not exist.'));
         }
 
@@ -1082,7 +1087,6 @@ class AssetsController extends Controller
      * @since [v4.0]
      */
     public function audit(Request $request, Asset $asset): JsonResponse
-
     {
         $this->authorize('audit', Asset::class);
 
@@ -1125,11 +1129,11 @@ class AssetsController extends Controller
              * Update custom fields in the database.
              * Validation for these fields is handled through the AssetRequest form request
              * $model = AssetModel::find($request->get('model_id'));
-            */
+             */
             if (($asset->model) && ($asset->model->fieldset)) {
                 $payload['custom_fields'] = [];
                 foreach ($asset->model->fieldset->fields as $field) {
-                    if (($field->display_audit=='1') && ($request->has($field->db_column))) {
+                    if (($field->display_audit == '1') && ($request->has($field->db_column))) {
                         if ($field->field_encrypted == '1') {
                             if (Gate::allows('assets.view.encrypted_custom_fields')) {
                                 if (is_array($request->input($field->db_column))) {
@@ -1145,7 +1149,7 @@ class AssetsController extends Controller
                                 $asset->{$field->db_column} = $request->input($field->db_column);
                             }
                         }
-                        $payload['custom_fields'][$field->db_column] =  $request->input($field->db_column);
+                        $payload['custom_fields'][$field->db_column] = $request->input($field->db_column);
                     }
 
                 }
@@ -1156,7 +1160,7 @@ class AssetsController extends Controller
 
             // Validate the rest of the data before we turn off the event dispatcher
             if ($asset->isInvalid()) {
-                return response()->json(Helper::formatStandardApiResponse('error', ['asset_tag' => $asset->asset_tag],  $asset->getErrors()));
+                return response()->json(Helper::formatStandardApiResponse('error', ['asset_tag' => $asset->asset_tag], $asset->getErrors()));
             }
 
 
@@ -1177,7 +1181,7 @@ class AssetsController extends Controller
              * @see \App\Models\Asset::save()
              */
 
-             $asset->unsetEventDispatcher();
+            $asset->unsetEventDispatcher();
 
 
             /**
@@ -1193,7 +1197,7 @@ class AssetsController extends Controller
 
 
         // No matching asset for the asset tag that was passed.
-        return response()->json(Helper::formatStandardApiResponse('error', null,  trans('admin/hardware/message.does_not_exist')), 200);
+        return response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/hardware/message.does_not_exist')), 200);
 
     }
 
@@ -1205,7 +1209,7 @@ class AssetsController extends Controller
      * @author [A. Gianotto] [<snipe@snipe.net>]
      * @since [v4.0]
      */
-    public function requestable(Request $request): JsonResponse | array
+    public function requestable(Request $request): JsonResponse|array
     {
         $this->authorize('viewRequestable', Asset::class);
 
@@ -1288,14 +1292,14 @@ class AssetsController extends Controller
     }
 
 
-    public function assignedAssets(Request $request, Asset $asset) : JsonResponse | array
+    public function assignedAssets(Request $request, Asset $asset): JsonResponse|array
     {
 
         return [];
         // to do
     }
 
-    public function assignedAccessories(Request $request, Asset $asset) : JsonResponse | array
+    public function assignedAccessories(Request $request, Asset $asset): JsonResponse|array
     {
         $this->authorize('view', Asset::class);
         $this->authorize('view', $asset);
@@ -1326,20 +1330,26 @@ class AssetsController extends Controller
         try {
             $this->authorize('view', Asset::class);
 
-             // Validate that asset tags were provided in the request
+            // Validate that asset tags were provided in the request
             if (!$request->filled('asset_tags')) {
-                return response()->json(Helper::formatStandardApiResponse('error', null, 
-                    trans('admin/hardware/message.no_assets_selected')), 400);
+                return response()->json(Helper::formatStandardApiResponse(
+                    'error',
+                    null,
+                    trans('admin/hardware/message.no_assets_selected')
+                ), 400);
             }
 
-             // Convert asset tags from request into collection and fetch matching assets
+            // Convert asset tags from request into collection and fetch matching assets
             $asset_tags = collect($request->input('asset_tags'));
             $assets = Asset::whereIn('asset_tag', $asset_tags)->get();
 
-             // Return error if no assets were found for the provided tags
+            // Return error if no assets were found for the provided tags
             if ($assets->isEmpty()) {
-                return response()->json(Helper::formatStandardApiResponse('error', null,
-                    trans('admin/hardware/message.does_not_exist')), 404);
+                return response()->json(Helper::formatStandardApiResponse(
+                    'error',
+                    null,
+                    trans('admin/hardware/message.does_not_exist')
+                ), 404);
             }
 
             try {
@@ -1351,7 +1361,7 @@ class AssetsController extends Controller
 
 
                 $label = new Label();
-                
+
                 if (!$label) {
                     throw new \Exception('Label object could not be created');
                 }
@@ -1359,14 +1369,14 @@ class AssetsController extends Controller
                 // Configure label with assets and settings
                 // bulkedit=false and count=0 are default values for label generation
                 $label = $label->with('assets', $assets)
-                              ->with('settings', $settings)
-                              ->with('bulkedit', false)
-                              ->with('count', 0);
+                    ->with('settings', $settings)
+                    ->with('bulkedit', false)
+                    ->with('count', 0);
 
                 // Generate PDF using callback function
                 // The callback captures the PDF content in $pdf_content variable
                 $pdf_content = '';
-                $label->render(function($pdf) use (&$pdf_content) {
+                $label->render(function ($pdf) use (&$pdf_content) {
                     $pdf_content = $pdf->Output('', 'S');
                     return $pdf;
                 });

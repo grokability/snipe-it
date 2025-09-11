@@ -39,7 +39,7 @@
 
         @can('self.edit_location')
         <!-- Location -->
-        @include ('partials.forms.edit.location-profile-select', ['translated_name' => trans('general.location')])
+        @include ('partials.forms.edit.location-profile-select', ['translated_name' => trans('general.location'), 'fieldname'=>'location-profile-select'])
         @endcan
 
 

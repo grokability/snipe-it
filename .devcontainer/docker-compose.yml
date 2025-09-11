@@ -1,0 +1,36 @@
+version: "3"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ../:/workspace/snipe-it
+    ports:
+      - "8000:80"
+    depends_on:
+      - db
+    #environment:
+    #  - DB_HOST=db
+    #  - DB_DATABASE=snipeit
+    #  - DB_USERNAME=snipeit
+    #  - DB_PASSWORD=password
+    #  - APP_ENV=local
+
+  # Run 
+  # docker exec -i snipe-it_devcontainer-db-1 mysql -u root -proot -e "GRANT ALL PRIVILEGES ON snipeit.* TO 'snipeit'@'%'; FLUSH PRIVILEGES;"
+  # to grant the right rights to that database.
+  db:
+    image: mariadb:10.5
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: snipeit
+      MYSQL_USER: snipeit
+      MYSQL_PASSWORD: password
+    volumes:
+      - snipeit-db-data:/var/lib/mysql
+
+volumes:
+  snipeit-db-data:

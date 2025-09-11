@@ -10,6 +10,8 @@ return [
     'clone'    	                => 'Duplizieren',
     'restore' 	                => 'Wiederherstellen',
     'remove'                    => 'Entfernen',
+    'delete_search_query'       => 'Suche löschen',
+    'search'                    => 'Suchen',
     'request'                   => 'Anfrage',
     'submit'  	                => 'Abschicken',
     'upload'                    => 'Hochladen',
