@@ -16,7 +16,6 @@
                     @php
                         $layoutJson = \App\Presenters\AssetPresenter::dataTableLayout();
                         $layout = json_decode($layoutJson); // decode to object by default
-                        //dump($layout);
                     @endphp
 
                     @foreach ($layout as $tableField)

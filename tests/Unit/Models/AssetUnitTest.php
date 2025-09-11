@@ -15,7 +15,6 @@ class AssetUnitTest extends TestCase
         $this->assertSame('007', Asset::zerofill(7, 3));
         $this->assertSame('42', Asset::zerofill(42, 2));
 
-        // Zusätzliche Checks
         $this->assertSame('00042', Asset::zerofill(42, 5));
         $this->assertSame('5', Asset::zerofill(5, 1));
     }
