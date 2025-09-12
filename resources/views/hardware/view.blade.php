@@ -805,12 +805,6 @@
                                                     </div>
                                                 </div>
                                             @endforeach
-
-                                            <script nonce="{{ csrf_token() }}">
-                                                $(".js-show-hide-enc-value").on('click', function(event) {
-                                                    showHideEncValue(this);
-                                                })
-                                            </script>
                                         @endif
 
 

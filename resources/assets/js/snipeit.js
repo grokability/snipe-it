@@ -172,6 +172,11 @@ $(function () {
         this.removeAttribute('readonly');
     });
 
+
+    $el.on('click', '.js-show-hide-enc-value', function() {
+        showHideEncValue(this);
+    })
+
      /*
      * Select2
      */
