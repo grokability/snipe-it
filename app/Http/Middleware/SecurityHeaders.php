@@ -100,7 +100,9 @@ class SecurityHeaders
             ## start strict CSP
 
             $strictCspPolicy[] = "default-src 'self'";
-            $strictCspPolicy[] = "style-src 'self' 'nonce-" . csrf_token() . "'";
+            // FIXME: There is a LOT of dynamically loaded inline styles into elements, so this isn't going to work for now...
+            // $strictCspPolicy[] = "style-src 'self' 'nonce-" . csrf_token() . "'";
+            $strictCspPolicy[] = "style-src 'self' 'unsafe-inline'";
             $strictCspPolicy[] = "script-src 'self' 'nonce-" . csrf_token() . "'";
             $strictCspPolicy[] = "connect-src 'self'";
             $strictCspPolicy[] = "base-uri 'self'";
