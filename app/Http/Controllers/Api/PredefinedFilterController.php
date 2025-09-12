@@ -15,9 +15,8 @@ class PredefinedFilterController extends Controller
     {
         $this->authorize('view', PredefinedFilter::class);
         
-        $filters = PredefinedFilter::
-            orderBy('name')
-            ->get(['id','name']);
+        $filters = PredefinedFilter::orderBy('name')
+            ->get(['id','name','created_by']);
 
         $viewableFilters = [];
 
