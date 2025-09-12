@@ -88,7 +88,7 @@
                   @if($fieldset->models->count() > 0)
                   <button type="submit" class="btn btn-danger btn-sm disabled" data-tooltip="true" title="{{ trans('general.cannot_be_deleted') }}" disabled><i class="fas fa-trash"></i></button>
                   @else
-                  <a type="submit" href="{{ route('fieldsets.destroy', $fieldset) }}" class="btn btn-danger btn-sm delete-asset" data-tooltip="true" title="{{ trans('general.delete') }}" data-toggle="modal" data-title="{{ trans('general.delete') }}" data-content="{{ trans('general.sure_to_delete_var', ['item' => $fieldset->name]) }}" data-icon="fa fa-trash" data-target="#dataConfirmModal" onClick="return false;"><i class="fas fa-trash"></i></a>
+                  <a type="submit" href="{{ route('fieldsets.destroy', $fieldset) }}" class="btn btn-danger btn-sm delete-asset js-suppress-click" data-tooltip="true" title="{{ trans('general.delete') }}" data-toggle="modal" data-title="{{ trans('general.delete') }}" data-content="{{ trans('general.sure_to_delete_var', ['item' => $fieldset->name]) }}" data-icon="fa fa-trash" data-target="#dataConfirmModal"><i class="fas fa-trash"></i></a>
                   @endif
                 @endcan
                   </nobr>
@@ -249,7 +249,7 @@
                       <span class="sr-only">{{ trans('button.delete') }}</span>
                     </button>
                   @else
-                    <a href="{{ route('fields.destroy', $field) }}" class="btn btn-danger btn-sm delete-asset" data-tooltip="true" title="{{ trans('general.delete') }}" data-toggle="modal" data-title="{{ trans('general.delete') }}" data-content="{{ trans('general.sure_to_delete_var', ['item' => $field->name]) }}" data-target="#dataConfirmModal" data-icon="fa fa-trash" onClick="return false;">
+                    <a href="{{ route('fields.destroy', $field) }}" class="btn btn-danger btn-sm delete-asset js-suppress-click" data-tooltip="true" title="{{ trans('general.delete') }}" data-toggle="modal" data-title="{{ trans('general.delete') }}" data-content="{{ trans('general.sure_to_delete_var', ['item' => $field->name]) }}" data-target="#dataConfirmModal" data-icon="fa fa-trash">
                       <i class="fas fa-trash" aria-hidden="true"></i>
                       <span class="sr-only">{{ trans('button.delete') }}</span>
                     </a>

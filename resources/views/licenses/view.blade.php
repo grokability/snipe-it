@@ -583,7 +583,7 @@
             </a>
         </span>
       @else
-        <a href="#"  class="btn btn-primary bg-purple btn-sm btn-social btn-block hidden-print" style="margin-bottom: 25px;" data-toggle="modal" data-tooltip="true"  data-target="#checkinFromAllModal" data-content="{{ trans('general.sure_to_delete') }} data-title="{{  trans('general.delete') }}" onClick="return false;">
+        <a href="#"  class="btn btn-primary bg-purple btn-sm btn-social btn-block hidden-print js-suppress-click" style="margin-bottom: 25px;" data-toggle="modal" data-tooltip="true"  data-target="#checkinFromAllModal" data-content="{{ trans('general.sure_to_delete') }}" data-title="{{  trans('general.delete') }}">
           <x-icon type="checkin" />
           {{ trans('admin/licenses/general.bulk.checkin_all.button') }}
         </a>
@@ -593,13 +593,13 @@
       @can('delete', $license)
 
         @if ($license->availCount()->count() == $license->seats)
-          <a class="btn btn-block btn-danger btn-sm btn-social delete-asset" data-icon="fa fa trash" data-toggle="modal" data-title="{{ trans('general.delete') }}" data-content="{{ trans('general.delete_confirm', ['item' => $license->name]) }}" data-target="#dataConfirmModal" onClick="return false;">
+          <a class="btn btn-block btn-danger btn-sm btn-social delete-asset js-suppress-click" data-icon="fa fa trash" data-toggle="modal" data-title="{{ trans('general.delete') }}" data-content="{{ trans('general.delete_confirm', ['item' => $license->name]) }}" data-target="#dataConfirmModal">
             <x-icon type="delete" />
             {{ trans('general.delete') }}
           </a>
         @else
           <span data-tooltip="true" title=" {{ trans('admin/licenses/general.delete_disabled') }}">
-            <a href="#" class="btn btn-block btn-danger btn-sm btn-social delete-asset disabled" onClick="return false;">
+            <a href="#" class="btn btn-block btn-danger btn-sm btn-social delete-asset disabled js-suppress-click">
               <x-icon type="delete" />
               {{ trans('general.delete') }}
             </a>

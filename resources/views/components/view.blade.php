@@ -246,12 +246,16 @@
   @can('delete', $component)
         <div class="col-md-12 hidden-print" style="padding-top: 5px;">
           @if ($component->isDeletable())
-              <button class="btn btn-sm btn-block btn-danger btn-social delete-asset" data-icon="fa fa-trash" data-toggle="modal" data-title="{{ trans('general.delete') }}" data-content="{{ trans('general.sure_to_delete_var', ['item' => $component->name]) }}" data-target="#dataConfirmModal" onClick="return false;">
+          <button class="btn btn-sm btn-block btn-danger btn-social delete-asset js-suppress-click" data-icon="fa fa-trash"
+            data-toggle="modal" data-title="{{ trans('general.delete') }}"
+            data-content="{{ trans('general.sure_to_delete_var', ['item' => $component->name]) }}"
+            data-target="#dataConfirmModal">
               <x-icon type="delete" />
               {{ trans('general.delete') }}
             </button>
           @else
-            <a href="#" class="btn btn-block btn-sm btn-danger btn-social hidden-print disabled" data-tooltip="true"  data-placement="top" data-title="{{ trans('general.cannot_be_deleted') }}" onClick="return false;">
+          <a href="#" class="btn btn-block btn-sm btn-danger btn-social hidden-print disabled js-suppress-click"
+            data-tooltip="true" data-placement="top" data-title="{{ trans('general.cannot_be_deleted') }}">
               <x-icon type="delete" />
               {{ trans('general.delete') }}
             </a>

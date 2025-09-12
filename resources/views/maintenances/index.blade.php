@@ -48,10 +48,10 @@
         actions += '</nobr>'
         if ((row) && (row.available_actions.delete === true)) {
             actions += '<a href="{{ config('app.url') }}/hardware/maintenances/' + row.id + '" '
-                + ' class="btn btn-danger btn-sm delete-asset"  data-tooltip="true"  '
+                + ' class="btn btn-danger btn-sm delete-asset js-suppress-click"  data-tooltip="true"  '
                 + ' data-toggle="modal" '
                 + ' data-content="{{ trans('general.sure_to_delete') }} ' + row.name + '?" '
-                + ' data-title="{{  trans('general.delete') }}" onClick="return false;">'
+                + ' data-title="{{  trans('general.delete') }}">'
                 + '<i class="fas fa-trash"></i></a></nobr>';
         }
 

@@ -266,7 +266,7 @@
                   @if ($user->deleted_at=='')
                     <div class="col-md-12" style="padding-top: 30px;">
                         @if ($user->isDeletable())
-                            <a href="" class="delete-asset btn-block btn btn-sm btn-danger btn-social hidden-print" data-toggle="modal" data-title="{{ trans('general.delete') }}" data-content="{{ trans('general.sure_to_delete_var', ['item' => $user->display_name]) }}" data-icon="fa-trash" data-target="#dataConfirmModal" onClick="return false;" >
+                            <a href="" class="delete-asset btn-block btn btn-sm btn-danger btn-social hidden-print js-suppress-click" data-toggle="modal" data-title="{{ trans('general.delete') }}" data-content="{{ trans('general.sure_to_delete_var', ['item' => $user->display_name]) }}" data-icon="fa-trash" data-target="#dataConfirmModal">
                                 <x-icon type="delete" />
                                 {{ trans('button.delete')}}
                             </a>

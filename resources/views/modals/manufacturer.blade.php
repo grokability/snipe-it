@@ -7,7 +7,7 @@
             <h2 class="modal-title">{{ trans('admin/manufacturers/table.create') }}</h2>
         </div>
         <div class="modal-body">
-            <form action="{{ route('api.manufacturers.store') }}" onsubmit="return false">
+            <form action="{{ route('api.manufacturers.store') }}" class="js-suppress-submit">
                 <div class="dynamic-form-row">
                     @include('partials.forms.edit.name', ['item' => new \App\Models\Manufacturer(), 'translated_name' => trans('admin/manufacturers/table.name')])
                 </div>

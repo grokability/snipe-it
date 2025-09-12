@@ -3,10 +3,16 @@
         <div class="box-header with-border">
             <div class="text-right">
                 <a class="btn btn-info btn-sm pull-right"
-                   onclick="$('#modal-create-token').modal('show');"
+                   id="button-create-token"
                    wire:click="$dispatch('openModal')">
                     {{ trans('general.create') }}
                 </a>
+
+                <script nonce="{{ csrf_token() }}">
+                    $('#button-create-token').on('click', function(event) {
+                        $('#modal-create-token').modal('show');
+                    })
+                </script>
             </div>
         </div>
         <div class="box-body">

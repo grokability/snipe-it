@@ -755,7 +755,7 @@
                                                             </i>
                                                         @endif
                                                         @if (($field->field_encrypted=='1') && ($asset->{$field->db_column_name()}!='') && (Gate::allows('assets.view.encrypted_custom_fields')))
-                                                            <i class="fas fa-lock" data-tooltip="true" data-placement="top" title="{{ trans('admin/custom_fields/general.value_encrypted') }}" onclick="showHideEncValue(this)" id="text-{{ $field->id }}"></i>
+                                                            <i class="fas fa-lock js-show-hide-enc-value" data-tooltip="true" data-placement="top" title="{{ trans('admin/custom_fields/general.value_encrypted') }}" id="text-{{ $field->id }}"></i>
                                                         @endif
 
                                                         @if ($field->isFieldDecryptable($asset->{$field->db_column_name()} ))
@@ -805,6 +805,12 @@
                                                     </div>
                                                 </div>
                                             @endforeach
+
+                                            <script nonce="{{ csrf_token() }}">
+                                                $(".js-show-hide-enc-value").on('click', function(event) {
+                                                    showHideEncValue(this);
+                                                })
+                                            </script>
                                         @endif
 
 

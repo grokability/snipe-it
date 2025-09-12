@@ -139,7 +139,7 @@
                   @can('delete', $consumable)
                     <div class="col-md-12" style="padding-top: 10px; padding-bottom: 20px">
                       @if ($consumable->deleted_at=='')
-                        <button class="btn btn-sm btn-block btn-danger btn-social hidden-print delete-asset" data-icon="fa fa-trash" data-toggle="modal" data-title="{{ trans('general.delete') }}" data-content="{{ trans('general.sure_to_delete_var', ['item' => $consumable->name]) }}" data-target="#dataConfirmModal" onClick="return false;">
+                        <button class="btn btn-sm btn-block btn-danger btn-social hidden-print delete-asset js-suppress-click" data-icon="fa fa-trash" data-toggle="modal" data-title="{{ trans('general.delete') }}" data-content="{{ trans('general.sure_to_delete_var', ['item' => $consumable->name]) }}" data-target="#dataConfirmModal">
                           <x-icon type="delete" />
                           {{ trans('general.delete') }}
                         </button>

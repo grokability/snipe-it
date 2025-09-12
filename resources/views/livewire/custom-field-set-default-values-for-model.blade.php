@@ -56,10 +56,15 @@
                                                 name="default_values[{{ $field->id }}]"
                                                 id="default-value{{ $field->id }}"
                                                 wire:model="selectedValues.{{ $field->db_column }}"
-                                                {{-- catch the onchange event and dispatch an InputEvent ourselves so Livewire can react to it... --}}
-                                                {{-- https://laracasts.com/discuss/channels/livewire/livewire-and-bootstrap-datepicker?page=1&replyId=623122--}}
-                                                onchange="this.dispatchEvent(new InputEvent('input'))"
                                             >
+                                            
+                                            {{-- catch the onchange event and dispatch an InputEvent ourselves so Livewire can react to it... --}}
+                                            {{-- https://laracasts.com/discuss/channels/livewire/livewire-and-bootstrap-datepicker?page=1&replyId=623122--}}
+                                            <script nonce="{{ csrf_token() }}">
+                                                $("#default-value{{ $field->id }}").on('change', function(event) {
+                                                    this.dispatchEvent(new InputEvent('input'));
+                                                })
+                                            </script>
                                             <span class="input-group-addon"><x-icon type="calendar" /></span>
                                         </div>
                                     </div>

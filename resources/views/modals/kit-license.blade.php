@@ -7,7 +7,7 @@
             <h4 class="modal-title">{{ trans('admin/kits/general.append_license') }}</h4>
         </div>
         <div class="modal-body">
-            <form action="{{ route('api.kits.licenses.store', $kitId) }}" onsubmit="return false">
+            <form action="{{ route('api.kits.licenses.store', $kitId) }}" class="js-suppress-submit">
                 {{ csrf_field() }}
                 <div class="alert alert-danger" id="modal_error_msg" style="display:none">
                 </div>

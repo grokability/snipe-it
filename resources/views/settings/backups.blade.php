@@ -97,11 +97,10 @@
                   @can('superadmin')
                       @if (config('app.allow_backup_delete')=='true')
                       <a data-html="false"
-                         class="btn delete-asset btn-danger btn-sm {{ (config('app.lock_passwords')) ? ' disabled': '' }}" 
+                         class="btn delete-asset btn-danger btn-sm js-suppress-click {{ (config('app.lock_passwords')) ? ' disabled': '' }}" 
                          data-toggle="modal" href="{{ route('settings.backups.destroy', $file['filename']) }}" 
                          data-content="{{ trans('admin/settings/message.backup.delete_confirm') }}" 
-                         data-title="{{ trans('general.delete') }}  {{ e($file['filename']) }}?"
-                         onClick="return false;">
+                         data-title="{{ trans('general.delete') }}  {{ e($file['filename']) }}?">
                           <i class="fas fa-trash icon-white" aria-hidden="true"></i>
                           <span class="sr-only">{{ trans('general.delete') }}</span>
                       </a>
@@ -115,10 +114,9 @@
 
                           <a data-html="true"
                              href="{{ route('settings.backups.restore', $file['filename']) }}"
-                             class="btn btn-warning btn-sm restore-backup {{ (config('app.lock_passwords')) ? ' disabled': '' }}"
+                             class="btn btn-warning btn-sm restore-backup js-suppress-click {{ (config('app.lock_passwords')) ? ' disabled': '' }}"
                              data-target="#backupRestoreModal"
-                             data-title="{{ trans('admin/settings/message.backup.restore_confirm', array('filename' => e($file['filename']))) }}"
-                             onClick="return false;">
+                             data-title="{{ trans('admin/settings/message.backup.restore_confirm', array('filename' => e($file['filename']))) }}">
                       <i class="fas fa-retweet" aria-hidden="true"></i>
                       <span class="sr-only">{{ trans('general.restore') }}</span>
                     </a>

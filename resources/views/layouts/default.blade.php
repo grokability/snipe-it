@@ -409,18 +409,19 @@ dir="{{ Helper::determineLanguageDirection() }}">
                                         @endcan
                                         <li class="divider" style="margin-top: -1px; margin-bottom: -1px"></li>
                                         <li>
-                                            <script nonce="{{ csrf_token() }}">
-                                                function logout(event) {
-                                                    event.preventDefault();
-                                                    document.getElementById('logout-form').submit();
-                                                }
-                                            </script>
 
                                             <a href="{{ route('logout.get') }}"
-                                               onclick="logout">
+                                                id="logout-button">
                                                 <x-icon type="logout" class="fa-fw" />
                                                  {{ trans('general.logout') }}
                                             </a>
+
+                                            <script nonce="{{ csrf_token() }}">
+                                                $("#logout-button").on('click', function(event) {
+                                                    event.preventDefault();
+                                                    document.getElementById('logout-form').submit();
+                                                })
+                                            </script>
 
                                             <form id="logout-form" action="{{ route('logout.post') }}" method="POST" style="display: none;">
                                                 <button type="submit" style="display: none;" title="logout"></button>

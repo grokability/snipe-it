@@ -334,7 +334,7 @@
         @can('delete', $accessory)
             @if ($accessory->checkouts_count == 0)
                 <div class="text-center" style="padding-top:5px;">
-                    <button class="btn btn-block btn-danger btn-sm btn-social delete-asset" style="padding-top:5px;" data-toggle="modal" data-title="{{ trans('general.delete') }}" data-content="{{ trans('general.delete_confirm_no_undo', ['item' => $accessory->name]) }}" data-target="#dataConfirmModal" onClick="return false;">
+                    <button class="btn btn-block btn-danger btn-sm btn-social delete-asset js-suppress-click" style="padding-top:5px;" data-toggle="modal" data-title="{{ trans('general.delete') }}" data-content="{{ trans('general.delete_confirm_no_undo', ['item' => $accessory->name]) }}" data-target="#dataConfirmModal">
                         <x-icon type="delete" />
                     {{ trans('general.delete') }}
                     </button>

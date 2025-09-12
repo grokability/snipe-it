@@ -87,7 +87,7 @@
                                        </a>
                                   </span>
                             @endif
-                            <a href="{{ route('reports/unaccepted_assets_delete', ['acceptanceId' => $item['acceptance']->id]) }}" class="btn btn-sm btn-danger delete-asset" data-tooltip="true" data-toggle="modal" data-content="{{ trans('general.delete_confirm', ['item' =>trans('admin/reports/general.acceptance_request')]) }}" data-title="{{  trans('general.delete') }}" onClick="return false;"><i class="fa fa-trash"></i></a>
+                            <a href="{{ route('reports/unaccepted_assets_delete', ['acceptanceId' => $item['acceptance']->id]) }}" class="btn btn-sm btn-danger delete-asset js-suppress-click" data-tooltip="true" data-toggle="modal" data-content="{{ trans('general.delete_confirm', ['item' =>trans('admin/reports/general.acceptance_request')]) }}" data-title="{{  trans('general.delete') }}"><i class="fa fa-trash"></i></a>
                            </form>
                         @endif
 

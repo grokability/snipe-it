@@ -160,7 +160,17 @@ $(function () {
         return false;
     });
 
+    $el.on('click', '.js-suppress-click', function (event) {
+        return false;
+    });
 
+    $el.on('submit', '.js-suppress-submit', function (event) {
+        return false;
+    });
+
+    $el.on('focus', '.js-allow-write-on-focus', function (event) {
+        this.removeAttribute('readonly');
+    });
 
      /*
      * Select2

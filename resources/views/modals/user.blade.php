@@ -26,7 +26,7 @@
             <h2 class="modal-title">{{ trans('admin/users/table.createuser') }}</h2>
         </div>
             <div class="modal-body" style="width:100%; display:block;">
-                <form action="{{ route('api.users.store') }}" onsubmit="return false">
+                <form action="{{ route('api.users.store') }}" class="js-suppress-submit">
                     <div class="alert alert-danger" id="modal_error_msg" style="display:none">
                     </div>
                     <!-- Setup of default company, taken from asset creator -->

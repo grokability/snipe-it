@@ -6,7 +6,7 @@
             <h2 class="modal-title">{{ trans('admin/statuslabels/table.create') }}</h2>
         </div>
         <div class="modal-body">
-            <form action="{{ route('api.statuslabels.store') }}" onsubmit="return false">
+            <form action="{{ route('api.statuslabels.store') }}" class="js-suppress-submit">
                 <div class="alert alert-danger" id="modal_error_msg" style="display:none">
                 </div>
                 <div class="dynamic-form-row">
