@@ -81,6 +81,8 @@ class SecurityHeaders
         // and it will break things.
 
         if ((config('app.debug') != 'true') && (config('app.enable_csp') == 'true')) {
+            ## start lax CSP
+
             $laxCspPolicy[] = "default-src 'self'";
             $laxCspPolicy[] = "style-src 'self' 'unsafe-inline'";
             $laxCspPolicy[] = "script-src 'self' 'unsafe-inline' 'unsafe-eval'";
@@ -93,7 +95,9 @@ class SecurityHeaders
                 $laxCspPolicy[] = "img-src 'self' data:  " . config('filesystems.disks.public.url');
             }
 
-            $laxCspPolicy = join(';', $laxCspPolicy);
+            ## end lax CSP
+
+            ## start strict CSP
 
             $strictCspPolicy[] = "default-src 'self'";
             $strictCspPolicy[] = "style-src 'self' 'nonce-" . csrf_token() . "'";
@@ -113,8 +117,21 @@ class SecurityHeaders
                 $strictCspPolicy[] = "frame-ancestors 'none'";
             }
 
-            $cspReportOnlyPolicy = $strictCspPolicy;
+            ## end strict CSP
 
+            if (!empty(config('csp_report_to'))) {
+                $cspReportToUri = config('csp_report_to');
+
+                $response->headers->set('Reporting-Endpoints', 'csp-endpoint="' . $cspReportToUri . '"');
+
+                $cspReportTo[] = "report-to csp-endpoint";
+                $cspReportTo[] = "report-uri " . $cspReportToUri;
+
+                $laxCspPolicy = array_merge($laxCspPolicy, $cspReportTo);
+                $strictCspPolicy = array_merge($strictCspPolicy, $laxCspPolicy);
+            }
+
+            $laxCspPolicy = join(';', $laxCspPolicy);
             $strictCspPolicy = join(';', $strictCspPolicy);
 
             if (config('enable_strict_csp') == true) {
@@ -123,19 +140,7 @@ class SecurityHeaders
                 $response->headers->set('Content-Security-Policy', $laxCspPolicy);
             }
 
-
-            if (!empty(config('csp_report_to'))) {
-                $cspReportToUri = config('csp_report_to');
-
-                $response->headers->set('Reporting-Endpoints', 'csp-endpoint="' . $cspReportToUri . '"');
-
-                $cspReportOnlyPolicy[] = "report-to csp-endpoint";
-                $cspReportOnlyPolicy[] = "report-uri " . $cspReportToUri;
-            }
-
-            $cspReportOnlyPolicy = join(';', $cspReportOnlyPolicy);
-
-            $response->headers->set('Content-Security-Policy-Report-Only', $cspReportOnlyPolicy);
+            $response->headers->set('Content-Security-Policy-Report-Only', $strictCspPolicy);
         }
 
         return $response;
