@@ -151,6 +151,18 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
     );
 
 
+    Route::group(['prefix' => 'assignedTo'], function () {
+
+        Route::get(
+            'selectlist',
+            [
+                Api\AssignedToDropdownController::class,
+                'selectlist'
+            ]
+        )->name('api.assignedTo.selectlist');
+
+    }); // end Assigned to dropdown selectlist routes group
+
     /**
      * Categpries API routes
      */
@@ -942,7 +954,7 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
         Route::get('/', [PredefinedFilterController::class, 'index'])
             ->name('api.predefined-filters.index');
         Route::get('/selectlist', [PredefinedFilterController::class, 'selectlist'])
-                ->name('api.predefined-filters.selectlist');
+            ->name('api.predefined-filters.selectlist');
         Route::get('/{id}', [PredefinedFilterController::class, 'show'])
             ->name('api.predefined-filters.show');
 

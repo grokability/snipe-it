@@ -1,5 +1,5 @@
 <div class="container">
-    <div class="panel panel-default">
+    <div id="advancedSearchPanel" class="panel panel-default">
         <!-- The button for controlling the collapse -->
         <div class="panel-heading" data-toggle="collapse" data-target="#collapsePanel" aria-expanded="false"
             aria-controls="collapsePanel">
@@ -191,6 +191,7 @@
                             <span aria-hidden="true"></span>
                             <span>❌ {{ trans('button.delete_search_query') }}</span>
                         </button>
+                        <hr/>
                         <button type="button" class="btn btn-default" id="storeFilterButton">
                             <span aria-hidden="true"></span>
                             <span>Store current filter in backend</span>
@@ -270,26 +271,22 @@ class SelectFilterInput extends FilterInput {
     }
 
     setValue(newValues) {
-        // More details are here https://select2.org/programmatic-control/add-select-clear-items#preselecting-options-in-an-remotely-sourced-ajax-select2
+        let requestPromises = newValues.map((newValue) => {
+            return fetchItemFromBackendById(this.getType(), newValue);
+        });
 
-        let requestPromises = [];
-        newValues.forEach((newValue) => {
-            const promise = fetchItemFromBackendById(this.getType(), newValue);
-            requestPromises.push(promise);
-        })
-
-        Promise.all(requestPromises)
-        .then((responses) => {
+        return Promise.all(requestPromises).then((responses) => {
             responses.forEach((response) => {
                 var option = new Option(response.name, response.id, true, true);
                 $(this.element).append(option).trigger('change');
             });
-            
+
             $(this.element).trigger({
                 type: 'select2:select',
             });
         });
     }
+
 
     clear() {
         $(this.element).val(null).trigger('change');
@@ -327,8 +324,6 @@ class AssignedEntityFilterInput extends SelectFilterInput {
 
 
     setValue(newValues) {
-        // More details are here https://select2.org/programmatic-control/add-select-clear-items#preselecting-options-in-an-remotely-sourced-ajax-select2
-
         const requestPromises = newValues.map(({ assignedType, assigned_to }) => {
             const type = {
                 "App\\Models\\Asset": "asset",
@@ -340,13 +335,11 @@ class AssignedEntityFilterInput extends SelectFilterInput {
                 .then(response => ({ ...response, assignedType }));
         });
 
-        Promise.all(requestPromises).then((responses) => {
-                responses.forEach(({ id, name, assignedType }) => {
+        return Promise.all(requestPromises).then((responses) => {
+            responses.forEach(({ id, name, assignedType }) => {
                 const displayName = name || `#${id}`;
                 const option = new Option(displayName, id, true, true);
-
                 option.setAttribute('data-assigned-type', assignedType);
-
                 $(this.element).append(option).trigger('change');
             });
 
@@ -412,29 +405,35 @@ class FilterFormManager {
         });
     }
 
-    setValuesFromResponse(response) {
+    async setValuesFromResponse(response) {
         this.clearAll();
+
+        const promises = [];
 
         for (const key in response) {
             const value = response[key];
 
-            // Find the matching input by the `name` attribute
             const field = this.inputs.find(input => input.key === key);
             if (!field) {
                 console.warn(`No input found for key: ${key}`);
                 continue;
             }
-            
-            const type = field.getType();
 
             try {
-                field.setValue(value);
+                const result = field.setValue(value);
+                // If the method returns a promise, store it
+                if (result instanceof Promise) {
+                    promises.push(result);
+                }
             } catch (err) {
                 console.error(`Failed to set value for "${key}":`, err);
             }
         }
-    }
 
+        // Wait for all async setValue calls to complete
+        await Promise.all(promises);
+        setAdvancedSearchPanelState(false);
+    }
 }
 
 class FilterUIController {
@@ -452,21 +451,25 @@ class FilterUIController {
         });
     }
 
-    updateFilterWithPredefined(event) {
+    async updateFilterWithPredefined(event) {
         const selectedId = event?.target?.value;
         if (!selectedId) return;
 
-        this.fetchPredefinedFilterData(selectedId)
-            .then(filterData => {
-                if (!filterData) return;
-                this.collector.setValuesFromResponse(filterData.filter_data);
-                this.refresh();
-            })
-            .catch(err => {
-                console.error("Failed to apply predefined filter:", err);
-                alert("Failed to apply predefined filter");
-            });
+        setAdvancedSearchPanelState(true);
+
+        try {
+            const filterData = await this.fetchPredefinedFilterData(selectedId);
+            if (!filterData) return;
+
+            await this.collector.setValuesFromResponse(filterData.filter_data); // Await here
+            this.refresh();
+        } catch (err) {
+            console.error("Failed to apply predefined filter:", err);
+            alert("Failed to apply predefined filter");
+            setAdvancedSearchPanelState(false);
+        }
     }
+
 
     storePredefinedFilterInBackend() {
         const filters = this.collector.collect();
@@ -638,6 +641,13 @@ function predefinedFilterRequest(method, filterId = null, filterData = null) {
     return fetchFromBackend(method, path, filterData);
 }
 
+function setAdvancedSearchPanelState(state) {
+    const fields = document.getElementById("advancedSearchPanel").getElementsByTagName('*');
+    for(var i = 0; i < fields.length; i++)
+    {
+        fields[i].disabled = state;
+    }
+}
 </script>
 
 <style>
