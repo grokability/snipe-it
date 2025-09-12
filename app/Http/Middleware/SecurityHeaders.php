@@ -87,14 +87,36 @@ class SecurityHeaders
             $csp_policy[] = "connect-src 'self'";
             $csp_policy[] = "object-src 'none'";
             $csp_policy[] = "font-src 'self' data:";
-            $csp_policy[] = "img-src 'self' data: ".config('app.url').' '.config('app.additional_csp_urls').' '.env('PUBLIC_AWS_URL').' https://secure.gravatar.com http://gravatar.com maps.google.com maps.gstatic.com *.googleapis.com';
-	          
+            $csp_policy[] = "img-src 'self' data: " . config('app.url') . ' ' . config('app.additional_csp_urls') . ' ' . env('PUBLIC_AWS_URL') . ' https://secure.gravatar.com http://gravatar.com maps.google.com maps.gstatic.com *.googleapis.com';
+
             if (config('filesystems.disks.public.driver') == 's3') {
-               $csp_policy[] = "img-src 'self' data:  ".config('filesystems.disks.public.url');
+                $csp_policy[] = "img-src 'self' data:  " . config('filesystems.disks.public.url');
             }
             $csp_policy = join(';', $csp_policy);
 
             $response->headers->set('Content-Security-Policy', $csp_policy);
+
+            $csp_policy = [];
+            $csp_policy[] = "default-src 'self'";
+            $csp_policy[] = "style-src 'self' 'unsafe-inline'";
+            $csp_policy[] = "script-src 'self' 'nonce-" . csrf_token() . "'";
+            $csp_policy[] = "connect-src 'self'";
+            $csp_policy[] = "object-src 'none'";
+            $csp_policy[] = "font-src 'self' data:";
+            $csp_policy[] = "img-src 'self' data: https://secure.gravatar.com https://gravatar.com https://maps.google.com https://maps.gstatic.com https://*.googleapis.com";
+            $csp_policy[] = "img-src 'self' data: " . config('app.url') . ' ' . config('app.additional_csp_urls') . ' ' . env('PUBLIC_AWS_URL');
+
+            if (config('filesystems.disks.public.driver') == 's3') {
+                $csp_policy[] = "img-src 'self' data:  " . config('filesystems.disks.public.url');
+            }
+
+            if (config('allow_iframing') == false) {
+                $csp_policy[] = "frame-ancestors 'none'";
+            }
+
+            $csp_policy = join(';', $csp_policy);
+
+            $response->headers->set('Content-Security-Policy-Report-Only', $csp_policy);
         }
 
         return $response;
