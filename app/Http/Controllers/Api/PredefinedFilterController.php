@@ -13,7 +13,7 @@ class PredefinedFilterController extends Controller
 {
     public function index(Request $request)
     {
-        //$this->authorize('view', PredefinedFilter::class);
+        $this->authorize('view', PredefinedFilter::class);
         
         $filters = PredefinedFilter::
             orderBy('name')
@@ -22,19 +22,19 @@ class PredefinedFilterController extends Controller
         $viewableFilters = [];
 
         foreach ($filters as $filter) {
-            //if ($filter->userHasPermission(auth()->user(), 'view') || $filter->created_by === auth()->user()->id) {
+            if ($filter->userHasPermission(auth()->user(), 'view') || $filter->created_by === auth()->user()->id) {
                 $viewableFilters[] = $filter;
-            //}
+            }
         }
 
         return response()->json($viewableFilters);
     }
 
-    public function show(Request $request, string $id)
+    public function show(Request $request, int $id)
     {
-        // $this->authorize('view', PredefinedFilter::class);
+        $this->authorize('view', PredefinedFilter::class);
 
-        $filter = PredefinedFilter::find($id)
+        $filter = PredefinedFilter::find($id) //find vs findOrFail
             //->where('created_by', $request->user()->id)
             ;
 
@@ -42,7 +42,7 @@ class PredefinedFilterController extends Controller
             return response()->json(['error' => 'Filter not found'], 404);
         }
 
-        return response()->json($filter->toArray());
+        return response()->json($filter->toArray(), 200);
     }
 
     public function store(Request $request): JsonResponse
@@ -62,7 +62,7 @@ class PredefinedFilterController extends Controller
         return response()->json([
             'message' => __('admin/reports/message.create.success'),
             'filter_data' => $predefined_filter
-        ], 201); // check for status code
+        ], 201);
     }
 
     public function update(Request $request, int $id): JsonResponse
@@ -73,7 +73,7 @@ class PredefinedFilterController extends Controller
             return response()->json(['error' => 'Filter not found'], 404);
         }
         
-        // $this->authorize('edit', PredefinedFilter::class);
+        $this->authorize('edit', PredefinedFilter::class);
 
         $rules = (new PredefinedFilter)->getRules();
         $validated = $request->validate($rules);
@@ -86,13 +86,13 @@ class PredefinedFilterController extends Controller
         return response()->json([
             'message' => __('admin/reports/message.update.success'),
             'filter_data' => $filter
-        ], 200); // check for status code
+        ], 200);
     }
     
     public function destroy(Request $request, int $id){
         $filter = PredefinedFilter::find($id);
 
-        // $this->authorize('delete', PredefinedFilter::class);
+        $this->authorize('delete', PredefinedFilter::class);
 
         if (!$filter) {
             return response()->json(['error' => 'Filter not found'], 404);
@@ -102,7 +102,6 @@ class PredefinedFilterController extends Controller
 
         return response()->json([
             'message'=> __('admin/reports/message.delete.success'),
-        ],200); //check for status code
+        ],204);
     }
-    
 }

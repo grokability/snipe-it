@@ -844,7 +844,7 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
         /**
         * PredefinedFilter API routes
         */
-        //Route::middleware('auth:api')->group(function () {
+        Route::middleware('auth:api')->group(function () {
             Route::get('predefinedFilters', [PredefinedFilterController::class, 'index'])
                 ->name('api.predefined-filters.index');
 
@@ -852,14 +852,14 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
                 ->name('api.predefined-filters.show');
 
             Route::post('predefinedFilters', [PredefinedFilterController::class,'store'])
-                ->name('api.predefined filters.store');
+                ->name('api.predefined-filters.store');
             
             Route::put('predefinedFilters/{id}', [PredefinedFilterController::class,'update'])
                 ->name('api.predefined-filters.update');
 
             Route::delete('predefinedFilters/{id}', [PredefinedFilterController::class,'destroy'])
                 ->name('api.predefined-filters.destroy');
-        //}; // end predefinedFilters API routes
+        }); // end predefinedFilters API routes
 
         /**
         * Settings API routes
