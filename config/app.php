@@ -201,6 +201,8 @@ return [
 
     'enable_csp' => env('ENABLE_CSP', true),
 
+    'enable_strict_csp' => env('ENABLE_STRICT_CSP', false),
+
     'additional_csp_urls' => env('ADDITIONAL_CSP_URLS', ''),
 
     'csp_report_to' => env("CSP_REPORT_TO", null),
