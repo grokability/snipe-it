@@ -115,12 +115,12 @@ class SecurityHeaders
             }
 
             if (!empty(config('csp_report_to'))) {
-                $csp_report_to_uri = config('csp_report_to');
+                $cspReportToUri = config('csp_report_to');
 
-                $response->headers->set('Reporting-Endpoints', 'csp-endpoint="'.$csp_report_to_uri.'"');
+                $response->headers->set('Reporting-Endpoints', 'csp-endpoint="'.$cspReportToUri.'"');
 
                 $csp_policy[] = "report-to csp-endpoint";
-                $csp_policy[] = "report-uri ".$csp_report_to_uri;
+                $csp_policy[] = "report-uri ".$cspReportToUri;
             }
 
             $csp_policy = join(';', $csp_policy);
