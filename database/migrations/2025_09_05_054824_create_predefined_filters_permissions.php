@@ -18,15 +18,7 @@ return new class extends Migration
                 ->onDelete('cascade');
             
             $table->unsignedBigInteger('permission_group_id');
-            $table->boolean('can_view')->default(false);
-            $table->boolean('can_create')->default(false);
-            $table->boolean('can_edit')->default(false);
-            $table->boolean('can_delete')->default(false);
-
             $table->unsignedInteger('created_by');
-            $table->timestamp('created_at')->nullable()->useCurrent();
-            $table->timestamp('updated_at')->nullable()->useCurrent()->useCurrentOnUpdate();
-            $table->softDeletes();
         });
     }
 

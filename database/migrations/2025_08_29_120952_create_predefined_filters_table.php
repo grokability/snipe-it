@@ -19,6 +19,7 @@ return new class extends Migration
             $table->timestamp('updated_at')->nullable()->useCurrent()->useCurrentOnUpdate();
             $table->softDeletes();
             $table->longText('filter_data');
+            $table->boolean('is_public')->default(false);
         });
     }
     /**
