@@ -409,9 +409,15 @@ dir="{{ Helper::determineLanguageDirection() }}">
                                         @endcan
                                         <li class="divider" style="margin-top: -1px; margin-bottom: -1px"></li>
                                         <li>
+                                            <script nonce="{{ csrf_token() }}">
+                                                function logout(event) {
+                                                    event.preventDefault();
+                                                    document.getElementById('logout-form').submit();
+                                                }
+                                            </script>
 
                                             <a href="{{ route('logout.get') }}"
-                                               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                               onclick="logout">
                                                 <x-icon type="logout" class="fa-fw" />
                                                  {{ trans('general.logout') }}
                                             </a>

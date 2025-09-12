@@ -41,8 +41,15 @@
                         <div class="box-footer">
                             <button class="btn btn-lg btn-primary btn-block">{{ trans('general.submit')  }}</button>
                         </div>
+                        <script nonce="{{ csrf_token() }}">
+                            function logout(event) {
+                                document.getElementById('logout-form').submit();
+                                return false;
+                            }
+                        </script>
+
                         <div class="col-md-12 col-sm-12 col-xs-12 text-right" style="padding-top: 10px;">
-                            <a href="{{ route('logout.get') }}" onclick="document.getElementById('logout-form').submit(); return false;">
+                            <a href="{{ route('logout.get') }}" onclick="logout">
                                 {{ trans('general.cancel')  }}
                             </a>
                         </div>
