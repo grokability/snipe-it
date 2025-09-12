@@ -22,7 +22,7 @@
 
 
     @if (($snipeSettings) && ($snipeSettings->header_color))
-        <style>
+        <style nonce="{{ csrf_token() }}">
         .main-header .navbar, .main-header .logo {
         background-color: {{ $snipeSettings->header_color }};
         background: -webkit-linear-gradient(top,  {{ $snipeSettings->header_color }} 0%,{{ $snipeSettings->header_color }} 100%);
@@ -36,7 +36,7 @@
     @endif
 
     @if (($snipeSettings) && ($snipeSettings->custom_css))
-        <style>
+        <style nonce="{{ csrf_token() }}">
             {!! $snipeSettings->show_custom_css() !!}
         </style>
     @endif

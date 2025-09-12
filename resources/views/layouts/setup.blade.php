@@ -21,7 +21,7 @@
 
 
 
-        <style>
+        <style nonce="{{ csrf_token() }}">
           td, th {
             font-size: 14px;
           }

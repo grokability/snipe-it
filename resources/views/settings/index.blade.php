@@ -35,7 +35,7 @@
 
 
 
-  <style>
+  <style nonce="{{ csrf_token() }}">
     #searchinput {
       width: 200px;
     }

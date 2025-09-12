@@ -96,7 +96,7 @@ class SecurityHeaders
             $laxCspPolicy = join(';', $laxCspPolicy);
 
             $strictCspPolicy[] = "default-src 'self'";
-            $strictCspPolicy[] = "style-src 'self' 'unsafe-inline'";
+            $strictCspPolicy[] = "style-src 'self' 'nonce-" . csrf_token() . "'";
             $strictCspPolicy[] = "script-src 'self' 'nonce-" . csrf_token() . "'";
             $strictCspPolicy[] = "connect-src 'self'";
             $strictCspPolicy[] = "base-uri 'self'";

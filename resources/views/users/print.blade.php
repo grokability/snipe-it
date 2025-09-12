@@ -23,7 +23,7 @@
         };
     </script>
 
-    <style>
+    <style nonce="{{ csrf_token() }}">
         body {
             font-family: "Arial, Helvetica", sans-serif;
             padding: 20px;

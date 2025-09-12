@@ -14,7 +14,7 @@
 {{-- Page content --}}
 @section('content')
 
-    <style>
+    <style nonce="{{ csrf_token() }}">
         .checkbox label {
             padding-right: 40px;
         }

@@ -8,7 +8,7 @@
 
 {{-- Page content --}}
 @section('content')
-    <style>
+    <style nonce="{{ csrf_token() }}">
 
         .input-group {
             padding-left: 0px !important;

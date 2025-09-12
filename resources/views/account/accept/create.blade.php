@@ -13,7 +13,7 @@
 
     <link rel="stylesheet" href="{{ url('css/signature-pad.min.css') }}">
 
-    <style>
+    <style nonce="{{ csrf_token() }}">
         .form-horizontal .control-label, .form-horizontal .radio, .form-horizontal .checkbox, .form-horizontal .radio-inline, .form-horizontal .checkbox-inline {
             padding-top: 17px;
             padding-right: 10px;

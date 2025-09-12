@@ -10,7 +10,7 @@
 
     {{-- stylesheets --}}
     <link rel="stylesheet" href="{{ url(mix('css/dist/all.css')) }}">
-    <style>
+    <style nonce="{{ csrf_token() }}">
         .passport-authorize .container {
             margin-top: 30px;
         }

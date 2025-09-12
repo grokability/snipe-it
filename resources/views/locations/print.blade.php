@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>{{ trans('general.assigned_to', array('name' => $location->display_name)) }} </title>
-    <style>
+    <style nonce="{{ csrf_token() }}">
         body {
             font-family: "Arial, Helvetica", sans-serif;
         }

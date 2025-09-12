@@ -1,6 +1,6 @@
 @once
     @push('css')
-        <style>
+        <style nonce="{{ csrf_token() }}">
             :root {
                 --l2p-height: 200px;
                 --l2p-background-color: aliceblue;

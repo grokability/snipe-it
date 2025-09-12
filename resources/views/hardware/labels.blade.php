@@ -14,7 +14,7 @@ $settings->labels_height = $settings->labels_height - $settings->labels_display_
 $qr_size = ($settings->alt_barcode_enabled=='1') && ($settings->label2_1d_type!='') ? $settings->labels_height - .3 : $settings->labels_height - 0.1;
 ?>
 
-<style>
+<style nonce="{{ csrf_token() }}">
     body {
         font-family: arial, helvetica, sans-serif;
         width: {{ $settings->labels_pagewidth }}in;

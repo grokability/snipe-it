@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex,nofollow">
     <title>{{ Lang::get(Config::get('maintenancemode.language-path', 'maintenancemode::defaults.') . '.title') }}</title>
-    <style>
+    <style nonce="{{ csrf_token() }}">
         html, body {
             width: 100%;
             height: 100%;

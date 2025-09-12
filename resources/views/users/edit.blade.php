@@ -19,7 +19,7 @@
 {{-- Page content --}}
 @section('content')
 
-<style>
+<style nonce="{{ csrf_token() }}">
     .form-horizontal .control-label {
       padding-top: 0px;
     }

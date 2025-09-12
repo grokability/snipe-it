@@ -9,7 +9,7 @@
     ${Config::get('maintenancemode.inject.prefix').'Enabled'} == true)
 
     @if(Config::get('maintenancemode.notification-styles', true))
-        <style>
+        <style nonce="{{ csrf_token() }}">
             .maintenance-mode-alert {
                 width: 100%;
                 padding: .5em;

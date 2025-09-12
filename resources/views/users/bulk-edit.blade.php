@@ -14,7 +14,7 @@
 {{-- Page content --}}
 @section('content')
 
-    <style>
+    <style nonce="{{ csrf_token() }}">
         .radio {
             margin-left: -20px;
         }

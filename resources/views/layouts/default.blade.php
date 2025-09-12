@@ -67,7 +67,7 @@ dir="{{ Helper::determineLanguageDirection() }}">
 
     {{-- Custom CSS --}}
     @if (($snipeSettings) && ($snipeSettings->custom_css))
-        <style>
+        <style nonce="{{ csrf_token() }}">
             {!! $snipeSettings->show_custom_css() !!}
         </style>
     @endif
@@ -897,7 +897,7 @@ dir="{{ Helper::determineLanguageDirection() }}">
                     <div class="row">
                         <div class="col-md-12" style="margin-bottom: 0px;">
 
-                        <style>
+                        <style nonce="{{ csrf_token() }}">
                             .breadcrumb-item {
                                 display: inline;
                                 list-style: none;
