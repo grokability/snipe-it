@@ -1,216 +1,229 @@
-<div class="container">
-    @include('partials.confetti-js', ['autostart' => false])
-    <div id="advancedSearchPanel" class="panel panel-default">
+<div id="advancedSearchPanel" class="box box-default filter-sidebar">
+    <div class="box-header with-border">
+        <h3 class="box-title">
+            <i class="fas fa-filter"></i> <span class="filter-title">Advanced Filters</span>
+        </h3>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool collapse-toggle" onclick="toggleFilterSidebar()">
+                <i class="fa fa-chevron-left" id="collapseIcon"></i>
+            </button>
+            <button id="topClearInputButton" type="button" class="btn btn-box-tool">
+                <i class="fa fa-times"></i> <span class="clear-text">Clear</span>
+            </button>
+        </div>
+    </div>
+    
+    <div class="box-body filter-body" style="max-height: 80vh; overflow-y: auto;">
+        <!-- Quick Filter Search -->
+        <div class="form-group filter-content">
+            <label>Search Filters</label>
+            <input type="text" class="form-control" id="filterSearch" placeholder="Type to search filters...">
+        </div>
+        
+        <!-- Predefined Filters -->
+        <div class="form-group filter-content">
             @include ('partials.select.dropdowns.predefined-select', [
                 'translated_name' => trans('admin/hardware/company.model'),
                 'fieldname' => 'predefinedFilters',
                 'select_id' => "predefinedfilters-select",
                 'required' => 'false',
             ])
-        <!-- The button for controlling the collapse -->
-        <div class="panel-heading" data-toggle="collapse" data-target="#collapsePanel" aria-expanded="false"
-            aria-controls="collapsePanel">
-            <span class="panel-title" style="margin: 0;">
-                <i class="fas fa-search"></i>
-                Advanced search
-
-
-            </span>
         </div>
+        
+        <hr class="filter-content">
+        
+        <!-- All Filter Fields -->
+        <span id="advancedSearchFilters" class="filter-content">
+            @php
+                $layoutJson = \App\Presenters\AssetPresenter::dataTableLayout();
+                $layout = json_decode($layoutJson); // decode to object by default
+            @endphp
 
-        <!-- The collapsible content section -->
-        <div id="collapsePanel" class="panel-collapse collapse" role="region" aria-labelledby="panelHeading">
-            <div class="panel-body">
-                <span id="advancedSearchFilters">
-                    @php
-                        $layoutJson = \App\Presenters\AssetPresenter::dataTableLayout();
-                        $layout = json_decode($layoutJson); // decode to object by default
-                    @endphp
+            @foreach ($layout as $tableField)
+                @if ((!empty($tableField->searchable) && $tableField->searchable === true))
+                    <span id="advancedSearch_{{ $tableField->field }}" class="advancedSearchItemContainer filter-item" data-filter-name="{{ strtolower($tableField->title) }}">
+                        <label for="advancedSearch_{{ $tableField->field }}">
+                            <b>{{ $tableField->title }}</b>
+                        </label>
+                        @if (!isset($tableField->formatter))
+                            {{-- Default select if formatter is not set --}}
+                            <input class="advancedSearch_defaultField form-control" type="text" autocomplete="on" id="advancedSearch_{{ $tableField->field }}_input" >
+                        @else
+                            @switch($tableField->formatter)
+                                @case('dateDisplayFormatter')
+                                    <!--<input type="date" id="advancedSearch_{{ $tableField->field }}"
+                                        name="{{ $tableField->title }}" class="datePicker">-->
+                                    <div class="input-daterange input-group " id="checkin-range-datepicker">
+                                        <input type="date" id="advancedSearch_{{ $tableField->field }}_start"
+                                            class="form-control" name="checkin_date_start" aria-label="checkin_date_start"">
+                                        <span class="input-group-addon">{{ strtolower(trans('general.to')) }}</span>
+                                         <input type="date" id="advancedSearch_{{ $tableField->field }}_end" 
+                                            class="form-control" name="checkin_date_end" aria-label="checkin_date_end"">
+                                    </div>
+                                @break
 
-                    @foreach ($layout as $tableField)
-                        @if ((!empty($tableField->searchable) && $tableField->searchable === true))
-                            <span id="advancedSearch_{{ $tableField->field }}" class="advancedSearchItemContainer">
-                                <label for="advancedSearch_{{ $tableField->field }}">
-                                    <b>{{ $tableField->title }}</b>
-                                </label>
-                                @if (!isset($tableField->formatter))
-                                    {{-- Default select if formatter is not set --}}
+                                @case('companiesLinkObjFormatter')
+                                    @include ('partials.select.dropdowns.company-select', [
+                                        'translated_name' => trans('admin/hardware/company.model'),
+                                        'fieldname' => $tableField->field,
+                                        'select_id' => "advancedSearch_$tableField->field",
+                                        'required' => 'false',
+                                        'multiple' => 'true',
+                                    ])
+                                @break
+
+                                @case('trueFalseFormatter')
+                                    <p>True/false</p>
+                                @break
+
+                                @case('categoriesLinkObjFormatter')
+                                    @include ('partials.select.dropdowns.category-select', [
+                                        'translated_name' => trans('admin/hardware/category.model'),
+                                        'fieldname' => $tableField->field,
+                                        'category_type' => 'asset',
+                                        'select_id' => "advancedSearch_$tableField->field",
+                                        'required' => 'false',
+                                        'multiple' => 'true',
+                                    ])
+                                @break
+
+                                @case('companiesLinkObjFormatter')
+                                    <p>companiesLinkObjFormatter</p>
+                                @break
+
+                                @case('deployedLocationFormatter')
+                                    @include ('partials.select.dropdowns.location-select', [
+                                        'translated_name' => trans('admin/hardware/location.model'),
+                                        'category_type' => 'asset',
+                                        'select_id' => "advancedSearch_$tableField->field",
+                                        'fieldname' => $tableField->field,
+                                        'required' => 'false',
+                                        'multiple' => 'true',
+                                    ])
+                                @break
+
+                                @case('employeeNumFormatter')
+                                    <input class="advancedSearch_employeeNumFormatter form-control" type="text" id="advancedSearch_{{ $tableField->field }}_input" autocomplete="on">
+                                @break
+
+                                @case('hardwareLinkFormatter')
+                                    <input class="advancedSearch_hardwarelinkFormatter form-control" type="text" id="advancedSearch_{{ $tableField->field }}_input" autocomplete="on">
+                                @break
+
+                                <!-- Makes no sense for the advanced search
+                                    @case('imageFormatter')
+                                    <p>imageFormatter</p>
+                                    @break */
+                                -->
+
+                                @case('manufacturersLinkObjFormatter')
+                                    @include ('partials.select.dropdowns.manufacturer-select', [
+                                        'translated_name' => trans('admin/hardware/manufacturer.model'),
+                                        'select_id' => "advancedSearch_$tableField->field",
+                                        'fieldname' => $tableField->field,
+                                        'required' => 'false',
+                                        'multiple' => 'true',
+                                    ])
+                                @break
+
+                                @case('modelsLinkObjFormatter')
+                                    @include ('partials.select.dropdowns.model-select', [
+                                        'translated_name' => trans('admin/hardware/form.model'),
+                                        'select_id' => "advancedSearch_$tableField->field",
+                                        'fieldname' => $tableField->field,
+                                        'required' => 'false',
+                                        'multiple' => 'true',
+                                    ])
+                                @break
+
+                                @case('orderNumberObjFilterFormatter')
+                                    <input class="advancedSearch_orderNumberObjFilterFormatter form-control" type="text" id="advancedSearch_{{ $tableField->field }}_input" autocomplete="on">
+                                @break
+
+                                @case('polymorphicItemFormatter')
+                                    @include ('partials.select.dropdowns.assignedTo-select', [
+                                        'translated_name' => trans('admin/hardware/assignedTo.model'),
+                                        'fieldname' => $tableField->field,
+                                        'select_id' => "advancedSearch_$tableField->field",
+                                        'required' => 'false',
+                                        'multiple' => 'true',
+                                    ])
+                                @break
+
+                                @case('statuslabelsLinkObjFormatter')
+                                    @include ('partials.select.dropdowns.status-select', [
+                                        'translated_name' => trans('admin/hardware/status.model'),
+                                        'select_id' => "advancedSearch_$tableField->field",
+                                        'fieldname' => $tableField->field,
+                                        'required' => 'false',
+                                        'multiple' => 'true',
+                                    ])
+                                @break
+
+                                @case('suppliersLinkObjFormatter')
+                                    @include ('partials.select.dropdowns.supplier-select', [
+                                        'translated_name' => trans('admin/hardware/supplier.model'),
+                                        'select_id' => "advancedSearch_$tableField->field",
+                                        'fieldname' => $tableField->field,
+                                        'required' => 'false',
+                                        'multiple' => 'true',
+                                    ])
+                                @break
+
+                                @case('trueFalseFormatter')
+                                    <p>trueFalseFormatter</p>
+                                @break
+
+                                @case('customFieldsFormatter')
+                                    <input class="advancedSearch_customField form-control" type="text" autocomplete="on" id="advancedSearch_{{ $tableField->field }}_input" >
+                                @break
+
+                                @case('usersLinkObjFormatter')
+                                    @include ('partials.select.dropdowns.user-select', [
+                                        'translated_name' => trans('admin/hardware/user.model'),
+                                        'select_id' => "advancedSearch_$tableField->field",
+                                        'fieldname' => $tableField->field,
+                                        'required' => 'false',
+                                        'multiple' => 'true',
+                                    ])
+                                @break
+
+                                @default
                                     <input class="advancedSearch_defaultField form-control" type="text" autocomplete="on" id="advancedSearch_{{ $tableField->field }}_input" >
-                                @else
-                                    @switch($tableField->formatter)
-                                        @case('dateDisplayFormatter')
-                                            <!--<input type="date" id="advancedSearch_{{ $tableField->field }}"
-                                                name="{{ $tableField->title }}" class="datePicker">-->
-                                            <div class="input-daterange input-group " id="checkin-range-datepicker">
-                                                <input type="date" id="advancedSearch_{{ $tableField->field }}_start"
-                                                    class="form-control" name="checkin_date_start" aria-label="checkin_date_start"">
-                                                <span class="input-group-addon">{{ strtolower(trans('general.to')) }}</span>
-                                                 <input type="date" id="advancedSearch_{{ $tableField->field }}_end" 
-                                                    class="form-control" name="checkin_date_end" aria-label="checkin_date_end"">
-                                            </div>
-                                        @break
-
-                                        @case('companiesLinkObjFormatter')
-                                            @include ('partials.select.dropdowns.company-select', [
-                                                'translated_name' => trans('admin/hardware/company.model'),
-                                                'fieldname' => $tableField->field,
-                                                'select_id' => "advancedSearch_$tableField->field",
-                                                'required' => 'false',
-                                                'multiple' => 'true',
-                                            ])
-                                        @break
-
-                                        @case('trueFalseFormatter')
-                                            <p>True/false</p>
-                                        @break
-
-                                        @case('categoriesLinkObjFormatter')
-                                            @include ('partials.select.dropdowns.category-select', [
-                                                'translated_name' => trans('admin/hardware/category.model'),
-                                                'fieldname' => $tableField->field,
-                                                'category_type' => 'asset',
-                                                'select_id' => "advancedSearch_$tableField->field",
-                                                'required' => 'false',
-                                                'multiple' => 'true',
-                                            ])
-                                        @break
-
-                                        @case('companiesLinkObjFormatter')
-                                            <p>companiesLinkObjFormatter</p>
-                                        @break
-
-                                        @case('deployedLocationFormatter')
-                                            @include ('partials.select.dropdowns.location-select', [
-                                                'translated_name' => trans('admin/hardware/location.model'),
-                                                'category_type' => 'asset',
-                                                'select_id' => "advancedSearch_$tableField->field",
-                                                'fieldname' => $tableField->field,
-                                                'required' => 'false',
-                                                'multiple' => 'true',
-                                            ])
-                                        @break
-
-                                        @case('employeeNumFormatter')
-                                            <input class="advancedSearch_employeeNumFormatter form-control" type="text" id="advancedSearch_{{ $tableField->field }}_input" autocomplete="on">
-                                        @break
-
-                                        @case('hardwareLinkFormatter')
-                                            <input class="advancedSearch_hardwarelinkFormatter form-control" type="text" id="advancedSearch_{{ $tableField->field }}_input" autocomplete="on">
-                                        @break
-
-                                        <!-- Makes no sense for the advanced search
-                                            @case('imageFormatter')
-                                            <p>imageFormatter</p>
-                                            @break */
-                                        -->
-
-                                        @case('manufacturersLinkObjFormatter')
-                                            @include ('partials.select.dropdowns.manufacturer-select', [
-                                                'translated_name' => trans('admin/hardware/manufacturer.model'),
-                                                'select_id' => "advancedSearch_$tableField->field",
-                                                'fieldname' => $tableField->field,
-                                                'required' => 'false',
-                                                'multiple' => 'true',
-                                            ])
-                                        @break
-
-                                        @case('modelsLinkObjFormatter')
-                                            @include ('partials.select.dropdowns.model-select', [
-                                                'translated_name' => trans('admin/hardware/form.model'),
-                                                'select_id' => "advancedSearch_$tableField->field",
-                                                'fieldname' => $tableField->field,
-                                                'required' => 'false',
-                                                'multiple' => 'true',
-                                            ])
-                                        @break
-
-                                        @case('orderNumberObjFilterFormatter')
-                                            <input class="advancedSearch_orderNumberObjFilterFormatter form-control" type="text" id="advancedSearch_{{ $tableField->field }}_input" autocomplete="on">
-                                        @break
-
-                                        @case('polymorphicItemFormatter')
-                                            @include ('partials.select.dropdowns.assignedTo-select', [
-                                                'translated_name' => trans('admin/hardware/assignedTo.model'),
-                                                'fieldname' => $tableField->field,
-                                                'select_id' => "advancedSearch_$tableField->field",
-                                                'required' => 'false',
-                                                'multiple' => 'true',
-                                            ])
-                                        @break
-
-                                        @case('statuslabelsLinkObjFormatter')
-                                            @include ('partials.select.dropdowns.status-select', [
-                                                'translated_name' => trans('admin/hardware/status.model'),
-                                                'select_id' => "advancedSearch_$tableField->field",
-                                                'fieldname' => $tableField->field,
-                                                'required' => 'false',
-                                                'multiple' => 'true',
-                                            ])
-                                        @break
-
-                                        @case('suppliersLinkObjFormatter')
-                                            @include ('partials.select.dropdowns.supplier-select', [
-                                                'translated_name' => trans('admin/hardware/supplier.model'),
-                                                'select_id' => "advancedSearch_$tableField->field",
-                                                'fieldname' => $tableField->field,
-                                                'required' => 'false',
-                                                'multiple' => 'true',
-                                            ])
-                                        @break
-
-                                        @case('trueFalseFormatter')
-                                            <p>trueFalseFormatter</p>
-                                        @break
-
-                                        @case('customFieldsFormatter')
-                                            <input class="advancedSearch_customField form-control" type="text" autocomplete="on" id="advancedSearch_{{ $tableField->field }}_input" >
-                                        @break
-
-                                        @case('usersLinkObjFormatter')
-                                            @include ('partials.select.dropdowns.user-select', [
-                                                'translated_name' => trans('admin/hardware/user.model'),
-                                                'select_id' => "advancedSearch_$tableField->field",
-                                                'fieldname' => $tableField->field,
-                                                'required' => 'false',
-                                                'multiple' => 'true',
-                                            ])
-                                        @break
-
-                                        @default
-                                            <input class="advancedSearch_defaultField form-control" type="text" autocomplete="on" id="advancedSearch_{{ $tableField->field }}_input" >
-                                    @endswitch
-                                @endif
-                            </span>
+                            @endswitch
                         @endif
-                    @endforeach
-                    <div id="advancedSearchControlContainer" class="form-group">
-                        <button type="submit" class="btn btn-default" id="filterButton">
-                            <span aria-hidden="true"></span>
-                            <span>🔎 {{ trans('button.search') }}</span>
-                        </button>
-                        <button type="button" class="btn btn-default" id="clearInputButton">
-                            <span aria-hidden="true"></span>
-                            <span>❌ {{ trans('button.delete_search_query') }}</span>
-                        </button>
-                        <hr/>
-                        <button type="button" class="btn btn-default" id="storeFilterButton">
-                            <span aria-hidden="true"></span>
-                            <span>Store current filter in backend</span>
-                        </button>
-                        <button type="button" class="btn btn-default" id="updateFilterButton">
-                            <span aria-hidden="true"></span>
-                            <span>Update current filter in backend</span>
-                        </button>
-                        <button type="button" class="btn btn-default" id="deleteFilterButton">
-                            <span aria-hidden="true"></span>
-                            <span>Delete current filter from backend</span>
-                        </button>
-                    </div>
-                </span>
+                    </span>
+                @endif
+            @endforeach
+            
+            <div id="advancedSearchControlContainer" class="form-group">
+                <button type="submit" class="btn btn-default btn-block" id="filterButton">
+                    <span aria-hidden="true"></span>
+                    <span>🔎 {{ trans('button.search') }}</span>
+                </button>
+                <button type="button" class="btn btn-default btn-block" id="clearInputButton">
+                    <span aria-hidden="true"></span>
+                    <span>❌ {{ trans('button.delete_search_query') }}</span>
+                </button>
+                <hr/>
+                <button type="button" class="btn btn-success btn-block" id="storeFilterButton">
+                    <span aria-hidden="true"></span>
+                    <span>Store current filter in backend</span>
+                </button>
+                <button type="button" class="btn btn-warning btn-block" id="updateFilterButton">
+                    <span aria-hidden="true"></span>
+                    <span>Update current filter in backend</span>
+                </button>
+                <button type="button" class="btn btn-danger btn-block" id="deleteFilterButton">
+                    <span aria-hidden="true"></span>
+                    <span>Delete current filter from backend</span>
+                </button>
             </div>
-        </div>
+        </span>
     </div>
 </div>
+
+@include('partials.confetti-js', ['autostart' => false])
 
 <script>
 
@@ -565,6 +578,11 @@ class FilterUIController {
             clearButton.addEventListener('click', () => this.collector.clearAll());
         }
 
+        const topClearButton = document.getElementById("topClearInputButton");
+        if (topClearButton) {
+            topClearButton.addEventListener('click', () => this.collector.clearAll());
+        }
+
         const saveFilterButton = document.getElementById("storeFilterButton");
         if (saveFilterButton) {
             saveFilterButton.addEventListener('click', () => this.storePredefinedFilterInBackend());
@@ -651,49 +669,153 @@ function setAdvancedSearchPanelState(state) {
         fields[i].disabled = state;
     }
 }
+
+function toggleFilterSidebar() {
+    const sidebar = document.getElementById('advancedSearchPanel');
+    const icon = document.getElementById('collapseIcon');
+    
+    sidebar.classList.toggle('collapsed');
+    
+    if (sidebar.classList.contains('collapsed')) {
+        // Collapsed state
+        if (window.innerWidth <= 768) {
+            icon.className = 'fa fa-chevron-down'; // Mobile: point down when collapsed
+        } else {
+            icon.className = 'fa fa-chevron-right'; // Desktop: point right when collapsed
+        }
+    } else {
+        // Expanded state
+        if (window.innerWidth <= 768) {
+            icon.className = 'fa fa-chevron-up'; // Mobile: point up when expanded
+        } else {
+            icon.className = 'fa fa-chevron-left'; // Desktop: point left when expanded
+        }
+    }
+}
 </script>
 
 <style>
-    /* Ensure the container is properly constrained */
-    .container {
-        width: 100%;
-        margin: 0 auto;
-        padding: 10px;
-        box-sizing: border-box;
-    }
+/* Base styles */
+.filter-sidebar {
+    transition: all 0.3s ease;
+    position: relative;
+}
 
-    /* Make the panel-heading fit within the container */
-    .panel-heading {
-        cursor: pointer;
-        width: 100%;
-        box-sizing: border-box;
-        padding: 10px 15px;
-        margin: 0;
-    }
+.filter-body {
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
 
-    /* Ensure the grid stays centered */
-    #advancedSearchFilters {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 15px 20px;
-        max-width: 1050px;
-        margin: 0 auto;
-        justify-content: center;
-    }
+.filter-content {
+    transition: opacity 0.2s ease;
+}
 
-    /* Flexbox styling remains the same */
-    .advancedSearchItemContainer {
-        display: flex;
-        flex-direction: column;
-        align-items: stretch;
-    }
+.filter-title,
+.clear-text {
+    transition: opacity 0.2s ease;
+}
 
-    .advancedSearchItemContainer b {
-        margin-bottom: 5px;
+/* Desktop styles (default) */
+@media (min-width: 769px) {
+    .filter-sidebar.collapsed {
+        width: 60px;
+        min-width: 60px;
     }
+    
+    .filter-sidebar.collapsed .filter-body {
+        padding: 0;
+        max-height: 0;
+    }
+    
+    .filter-sidebar.collapsed .filter-content {
+        display: none;
+    }
+    
+    .filter-sidebar.collapsed .filter-title,
+    .filter-sidebar.collapsed .clear-text {
+        display: none;
+    }
+}
 
-    .advancedSearchItemContainer select.form-control {
-        width: 100%;
-        box-sizing: border-box;
+/* Mobile/Tablet styles */
+@media (max-width: 768px) {
+    .filter-sidebar {
+        width: 100% !important;
+        margin-bottom: 15px;
     }
+    
+    .filter-sidebar.collapsed .filter-body {
+        max-height: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+    
+    .filter-sidebar.collapsed .filter-content {
+        opacity: 0;
+        pointer-events: none;
+    }
+    
+    .filter-sidebar.collapsed .filter-title,
+    .filter-sidebar.collapsed .clear-text {
+        opacity: 0.7;
+    }
+}
+
+/* Ensure the container is properly constrained */
+.container {
+    width: 100%;
+    margin: 0 auto;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.filter-item {
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+}
+
+.filter-item:last-child {
+    border-bottom: none;
+}
+
+/* Ensure the grid stays centered */
+#advancedSearchFilters {
+    display: block;
+    max-width: 100%;
+    margin: 0;
+}
+
+/* Flexbox styling remains the same */
+.advancedSearchItemContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.advancedSearchItemContainer b {
+    margin-bottom: 5px;
+}
+
+.advancedSearchItemContainer select.form-control {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.box-body {
+    padding: 15px;
+}
+
+.btn-block {
+    margin-bottom: 5px;
+}
+
+/* Custom scrollbar for filter area */
+.box-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+/* Collapse button styling */
+.collapse-toggle {
+    margin-right: 5px;
+}
 </style>
