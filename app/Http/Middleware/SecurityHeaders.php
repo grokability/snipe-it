@@ -103,8 +103,7 @@ class SecurityHeaders
             $csp_policy[] = "connect-src 'self'";
             $csp_policy[] = "object-src 'none'";
             $csp_policy[] = "font-src 'self' data:";
-            $csp_policy[] = "img-src 'self' data: https://secure.gravatar.com https://gravatar.com https://maps.google.com https://maps.gstatic.com https://*.googleapis.com";
-            $csp_policy[] = "img-src 'self' data: " . config('app.url') . ' ' . config('app.additional_csp_urls') . ' ' . env('PUBLIC_AWS_URL');
+            $csp_policy[] = "img-src 'self' data: ". config('app.url') . ' ' . config('app.additional_csp_urls') . ' ' . env('PUBLIC_AWS_URL') . ' https://secure.gravatar.com https://gravatar.com https://maps.google.com https://maps.gstatic.com https://*.googleapis.com';
 
             if (config('filesystems.disks.public.driver') == 's3') {
                 $csp_policy[] = "img-src 'self' data:  " . config('filesystems.disks.public.url');
