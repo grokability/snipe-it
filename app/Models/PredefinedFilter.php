@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Watson\Validating\ValidatingTrait;
 use Illuminate\Database\Eloquent\Builder;
 
+use App\Models\User;
+
 class PredefinedFilter extends Model
 {
     use HasFactory;
@@ -27,8 +29,24 @@ class PredefinedFilter extends Model
     protected $rules = [
         'name'                    => ['required', 'string', 'max:255'],
         'created_by'              => ['required', 'integer', 'exists:users,id'],
-        'filter_data'             => ['nullable', 'array']
+        'filter_data'             => ['required', 'array'] // TODO check against db seeder and migration
     ];
+
+    public function userHasPermission(User $user, string $permission): bool
+    {
+        $column = "can_$permission";
+
+        if (!in_array($column, ['can_view', 'can_create', 'can_edit', 'can_delete'])) {
+            return false;
+        }
+
+        $permissionGroupIds = $user->groups()->pluck('id');
+
+        return $this->permissions()
+            -> whereIn('permission_group_id', $permissionGroupIds)
+            -> where($column, true)
+            -> exists();
+    }
 
     public function permissions()
     {

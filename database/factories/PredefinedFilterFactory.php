@@ -23,6 +23,7 @@ class PredefinedFilterFactory extends Factory
         return [
             'name' => $this->faker->name,
             'created_by' => User::factory(),
+            'filter_data' => ['company_id' => [1]],
         ];
     }
 
