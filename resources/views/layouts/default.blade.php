@@ -416,7 +416,7 @@ dir="{{ Helper::determineLanguageDirection() }}">
                                                  {{ trans('general.logout') }}
                                             </a>
 
-                                            <script nonce="{{ csrf_token() }}">
+                                            <script nonce="{{ csrf_token() }}" defer>
                                                 $("#logout-button").on('click', function(event) {
                                                     event.preventDefault();
                                                     document.getElementById('logout-form').submit();
