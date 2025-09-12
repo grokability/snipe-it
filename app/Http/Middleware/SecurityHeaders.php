@@ -130,7 +130,7 @@ class SecurityHeaders
                 $cspReportTo[] = "report-uri " . $cspReportToUri;
 
                 $laxCspPolicy = array_merge($laxCspPolicy, $cspReportTo);
-                $strictCspPolicy = array_merge($strictCspPolicy, $laxCspPolicy);
+                $strictCspPolicy = array_merge($strictCspPolicy, $cspReportTo);
             }
 
             $laxCspPolicy = join(';', $laxCspPolicy);
