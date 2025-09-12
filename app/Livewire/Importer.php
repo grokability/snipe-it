@@ -296,6 +296,7 @@ class Importer extends Component
             'license_name' => trans('admin/licenses/form.to_name'),
             'location' => trans('general.location'),
             'maintained' => trans('admin/licenses/form.maintained'),
+            'version' => trans('admin/licenses/form.version'),
             'manufacturer' => trans('general.manufacturer'),
             'min_amt' => trans('general.min_amt'),
             'notes' => trans('general.notes'),
