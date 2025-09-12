@@ -101,6 +101,7 @@ class SecurityHeaders
             $csp_policy[] = "style-src 'self' 'unsafe-inline'";
             $csp_policy[] = "script-src 'self' 'nonce-" . csrf_token() . "'";
             $csp_policy[] = "connect-src 'self'";
+            $csp_policy[] = "base-uri 'self'";
             $csp_policy[] = "object-src 'none'";
             $csp_policy[] = "font-src 'self' data:";
             $csp_policy[] = "img-src 'self' data: ". config('app.url') . ' ' . config('app.additional_csp_urls') . ' ' . env('PUBLIC_AWS_URL') . ' https://secure.gravatar.com https://gravatar.com https://maps.google.com https://maps.gstatic.com https://*.googleapis.com';
