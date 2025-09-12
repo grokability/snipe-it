@@ -92,7 +92,7 @@ class SecurityHeaders
             if (config('filesystems.disks.public.driver') == 's3') {
                 $laxCspPolicy[] = "img-src 'self' data:  " . config('filesystems.disks.public.url');
             }
-            
+
             $laxCspPolicy = join(';', $laxCspPolicy);
 
             $strictCspPolicy[] = "default-src 'self'";
@@ -100,6 +100,7 @@ class SecurityHeaders
             $strictCspPolicy[] = "script-src 'self' 'nonce-" . csrf_token() . "'";
             $strictCspPolicy[] = "connect-src 'self'";
             $strictCspPolicy[] = "base-uri 'self'";
+            $strictCspPolicy[] = "form-action 'self'";
             $strictCspPolicy[] = "object-src 'none'";
             $strictCspPolicy[] = "font-src 'self' data:";
             $strictCspPolicy[] = "img-src 'self' data: " . config('app.url') . ' ' . config('app.additional_csp_urls') . ' ' . env('PUBLIC_AWS_URL') . ' https://secure.gravatar.com https://gravatar.com https://maps.google.com https://maps.gstatic.com https://*.googleapis.com';
