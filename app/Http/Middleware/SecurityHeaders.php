@@ -114,6 +114,15 @@ class SecurityHeaders
                 $csp_policy[] = "frame-ancestors 'none'";
             }
 
+            if (!empty(config('csp_report_to'))) {
+                $csp_report_to_uri = config('csp_report_to');
+
+                $response->headers->set('Reporting-Endpoints', 'csp-endpoint="'.$csp_report_to_uri.'"');
+
+                $csp_policy[] = "report-to csp-endpoint";
+                $csp_policy[] = "report-uri ".$csp_report_to_uri;
+            }
+
             $csp_policy = join(';', $csp_policy);
 
             $response->headers->set('Content-Security-Policy-Report-Only', $csp_policy);

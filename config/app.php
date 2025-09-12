@@ -203,6 +203,7 @@ return [
 
     'additional_csp_urls' => env('ADDITIONAL_CSP_URLS', ''),
 
+    'csp_report_to' => env("CSP_REPORT_TO", null),
 
 
     /*
