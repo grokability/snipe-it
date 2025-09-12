@@ -21,11 +21,13 @@
                            id="button-create-client">
                             {{ trans('general.create') }}
                         </a>
+                        @push('js')
                         <script nonce="{{ csrf_token() }}">
                             $('#button-create-client').on('click', function(event) {
                                 $('#modal-create-client').modal('show');
                             })
                         </script>
+                        @endpush
                 </div>
             </div>
 
@@ -105,11 +107,13 @@
                                         </span>
                                     </a>
 
+                                    @push('js')
                                     <script nonce="{{ csrf_token() }}">
                                         $('#button-edit-client').on('click', function(event) {
                                             $('#modal-edit-client').modal('show');
                                         })
                                     </script>
+                                    @endpush
 
                                     <a class="action-link btn btn-danger btn-sm" wire:click="deleteClient('{{ $client->id }}')">
                                         <i class="fas fa-trash" aria-hidden="true"></i>

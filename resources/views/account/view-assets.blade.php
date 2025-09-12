@@ -44,11 +44,13 @@
               </option>
             @endforeach
           </select>
+          @push('js')
           <script nonce="{{ csrf_token() }}">
             $('#user_id').on('change', function (event) {
               this.form.submit();
             })
           </script>
+          @endpush
         </div>
       </form>
     </div>

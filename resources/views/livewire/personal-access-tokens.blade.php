@@ -8,11 +8,13 @@
                     {{ trans('general.create') }}
                 </a>
 
+                @push('js')
                 <script nonce="{{ csrf_token() }}">
                     $('#button-create-token').on('click', function(event) {
                         $('#modal-create-token').modal('show');
                     })
                 </script>
+                @endpush
             </div>
         </div>
         <div class="box-body">

@@ -47,12 +47,14 @@
                             </a>
                         </div>
 
+                        @push('js')
                         <script nonce="{{ csrf_token() }}">
                             $("#2fa-logout-button").on('click', function(event) {
                                 document.getElementById('logout-form').submit();
                                 return false;
                             })
                         </script>
+                        @endpush
             </div>
             </form>
             <form id="logout-form" action="{{ route('logout.post') }}" method="POST" style="display: none;">

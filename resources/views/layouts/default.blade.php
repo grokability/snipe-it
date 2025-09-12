@@ -416,12 +416,14 @@ dir="{{ Helper::determineLanguageDirection() }}">
                                                  {{ trans('general.logout') }}
                                             </a>
 
+                                            @push('js')
                                             <script nonce="{{ csrf_token() }}" defer>
                                                 $("#logout-button").on('click', function(event) {
                                                     event.preventDefault();
                                                     document.getElementById('logout-form').submit();
                                                 })
                                             </script>
+                                            @endpush
 
                                             <form id="logout-form" action="{{ route('logout.post') }}" method="POST" style="display: none;">
                                                 <button type="submit" style="display: none;" title="logout"></button>
