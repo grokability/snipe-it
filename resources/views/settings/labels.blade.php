@@ -87,7 +87,7 @@
                                         id="label2TemplateTable"
                                         class="table table-striped snipe-table"
                                     ></table>
-                                    <script>
+                                    <script nonce="{{ csrf_token() }}">
                                         document.addEventListener('DOMContentLoaded', () => {
                                             const chosenLabel = "{{ old('label2_template', $chosenLabel ?? '') }}";
                                             $('#label2TemplateTable').on('load-success.bs.table', (e) => {

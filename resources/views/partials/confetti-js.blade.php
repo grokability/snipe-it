@@ -1,5 +1,5 @@
 @if (auth()->user() && auth()->user()->enable_confetti=='1')
-<script>
+<script nonce="{{ csrf_token() }}">
     var duration = 1500;
     var animationEnd = Date.now() + duration;
     var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };

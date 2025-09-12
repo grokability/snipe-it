@@ -228,7 +228,7 @@
     @include ('partials.bootstrap-table')
 
     
-    <script>
+    <script nonce="{{ csrf_token() }}">
       /*
       * This just disables the upload button via JS unless they have actually selected a file.
       *

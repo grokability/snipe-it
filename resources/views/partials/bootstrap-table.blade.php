@@ -4,11 +4,11 @@
 
 @push('js')
 
-<script src="{{ url(mix('js/dist/bootstrap-table.js')) }}"></script>
-<script src="{{ url(mix('js/dist/bootstrap-table-locale-all.min.js')) }}"></script>
+<script src="{{ url(mix('js/dist/bootstrap-table.js')) }}" nonce="{{ csrf_token() }}"></script>
+<script src="{{ url(mix('js/dist/bootstrap-table-locale-all.min.js')) }}" nonce="{{ csrf_token() }}"></script>
 
 <!-- load english again here, even though it's in the all.js file, because if BS table doesn't have the translation, it otherwise defaults to chinese. See https://bootstrap-table.com/docs/api/table-options/#locale -->
-<script src="{{ url(mix('js/dist/bootstrap-table-en-US.min.js')) }}"></script>
+<script src="{{ url(mix('js/dist/bootstrap-table-en-US.min.js')) }}" nonce="{{ csrf_token() }}"></script>
 
 <script nonce="{{ csrf_token() }}">
     $(function () {

@@ -45,7 +45,7 @@
 @endonce
 
 @push('js')
-    <script>
+    <script nonce="{{ csrf_token() }}">
         document.addEventListener('alpine:init', () => {
 
             Alpine.data('label2_preview', () => ({

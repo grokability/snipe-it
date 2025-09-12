@@ -216,7 +216,7 @@ Create a User ::
 @stop
 
 @section('moar_scripts')
-<script type="text/javascript">
+<script type="text/javascript" nonce="{{ csrf_token() }}">
     $(document).ready(function () {
 
         // Test Mail

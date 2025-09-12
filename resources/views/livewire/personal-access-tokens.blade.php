@@ -159,7 +159,7 @@
             </div>
         </div>
     </div>
-    <script>
+    <script nonce="{{ csrf_token() }}">
         window.addEventListener('tokenCreated', token => {
             $('#modal-create-token').modal('hide');
             $('#modal-access-token').modal('show');

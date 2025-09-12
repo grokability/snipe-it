@@ -271,7 +271,7 @@
 @stop
 @section('moar_scripts')
   @include ('partials.bootstrap-table')
-  <script>
+  <script nonce="{{ csrf_token() }}">
     $(function () {
       $('th').each(function (index, raw_element) {
         var element = $(raw_element);

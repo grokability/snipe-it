@@ -148,7 +148,7 @@
 @stop
 
 @section('moar_scripts')
-<script>
+<script nonce="{{ csrf_token() }}">
 
 
   // TODO: include a class that excludes certain checkboxes by class to not be select-all'd

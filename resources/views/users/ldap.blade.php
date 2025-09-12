@@ -103,7 +103,7 @@
 
 @section('moar_scripts')
 
-<script type="text/javascript">
+<script type="text/javascript" nonce="{{ csrf_token() }}">
     $(document).ready(function () {
         $("#sync").click(function () {
             $("#sync").removeClass("btn-warning");

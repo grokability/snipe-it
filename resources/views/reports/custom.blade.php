@@ -730,7 +730,7 @@
 @stop
 
 @section('moar_scripts')
-  <script>
+  <script nonce="{{ csrf_token() }}">
 
       $('.purchase-range .input-daterange').datepicker({
           clearBtn: true,

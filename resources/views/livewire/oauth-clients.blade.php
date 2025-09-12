@@ -399,7 +399,7 @@
             </div>
         </div>
     </div>
-    <script>
+    <script nonce="{{ csrf_token() }}">
         document.addEventListener('DOMContentLoaded', function() {
             Livewire.on('openModal', () => {
                 $('#modal-create-client').modal('show').on('shown.bs.modal', function() {

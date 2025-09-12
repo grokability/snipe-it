@@ -319,7 +319,7 @@
         </div>
 </div>
 @script
-    <script>
+    <script nonce="{{ csrf_token() }}">
 
         {{-- TODO: Maybe change this to the file upload thing that's baked-in to Livewire? --}}
         $('#fileupload').fileupload({

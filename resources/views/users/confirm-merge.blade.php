@@ -139,7 +139,7 @@
 
     @if (!(config('app.lock_passwords')))
 
-    <script>
+    <script nonce="{{ csrf_token() }}">
 
         $('button[type="submit"]').prop("disabled", true);
 

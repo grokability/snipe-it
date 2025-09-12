@@ -59,9 +59,7 @@
     </div><!--.row-->
 @stop
 @section('moar_scripts')
-    <script>
-
-
+    <script nonce="{{ csrf_token() }}">
         $("#checkAll").change(function () {
             $("input:checkbox").prop('checked', $(this).prop("checked"));
         });

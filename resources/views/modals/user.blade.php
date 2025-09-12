@@ -110,7 +110,7 @@
     </div><!-- /.modal-content -->
 </div><!-- /.modal-dialog -->
 
-<script>
+<script nonce="{{ csrf_token() }}">
     $(document).ready(function(){
         $('#modal-first_name').focus();
     });

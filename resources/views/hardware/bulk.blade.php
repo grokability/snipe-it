@@ -278,7 +278,7 @@
 </div>
 @stop
 @section('moar_scripts')
-  <script>
+  <script nonce="{{ csrf_token() }}">
     document.addEventListener('DOMContentLoaded', function () {
       document.querySelectorAll('.clear-radio').forEach(function (button) {
         button.addEventListener('click', function () {
