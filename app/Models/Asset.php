@@ -2196,7 +2196,7 @@ class Asset extends Depreciable
                             if (is_array($search_val)) {
                                 $query->whereIn('assets.' . $fieldname, $search_val);
                             } else {
-                                $query->where('assets.' . $fieldname, 'LIKE', '%' . $search_val . '%');
+                                $query->where('assets.' . $fieldname, 'REGEXP', $search_val);
                             }
                         });
                     }

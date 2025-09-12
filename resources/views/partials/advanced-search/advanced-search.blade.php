@@ -1,5 +1,11 @@
 <div class="container">
     <div id="advancedSearchPanel" class="panel panel-default">
+            @include ('partials.select.dropdowns.predefined-select', [
+                'translated_name' => trans('admin/hardware/company.model'),
+                'fieldname' => 'predefinedFilters',
+                'select_id' => "predefinedfilters-select",
+                'required' => 'false',
+            ])
         <!-- The button for controlling the collapse -->
         <div class="panel-heading" data-toggle="collapse" data-target="#collapsePanel" aria-expanded="false"
             aria-controls="collapsePanel">
@@ -7,12 +13,6 @@
                 <i class="fas fa-search"></i>
                 Advanced search
 
-                @include ('partials.select.dropdowns.predefined-select', [
-                    'translated_name' => trans('admin/hardware/company.model'),
-                    'fieldname' => 'predefinedFilters',
-                    'select_id' => "predefinedfilters-select",
-                    'required' => 'false',
-                ])
 
             </span>
         </div>
@@ -494,18 +494,17 @@ class FilterUIController {
     }
 
     updatePredefinedFilterInBackend() {
-        const selectedId = $("#predefinedfilters-select").select2('data')[0].id; // Always zero because only one element can be selected at the time
-        if (!selectedId) return;
-
+        const selectedFilter = $("#predefinedfilters-select").select2('data')[0]; // Always zero because only one element can be selected at the time
+        if (!selectedFilter) return;
         const filters = this.collector.collect();
-        const name = prompt("Enter the name of the filter");
+        const name = prompt("Enter the name of the filter", selectedFilter.text);
 
         const payload = {
             name: name,
             filter_data: filters,
         };
 
-        fetchFromBackend('PUT', `/api/v1/predefinedFilters/${selectedId}`, JSON.stringify(payload))
+        fetchFromBackend('PUT', `/api/v1/predefinedFilters/${selectedFilter.id}`, JSON.stringify(payload))
         .then((response) => {
             if(response.message === "Template updated successfully") {
                 alert("Filter stored successfully");
