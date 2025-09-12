@@ -1,4 +1,5 @@
 <div class="container">
+    @include('partials.confetti-js', ['autostart' => false])
     <div id="advancedSearchPanel" class="panel panel-default">
             @include ('partials.select.dropdowns.predefined-select', [
                 'translated_name' => trans('admin/hardware/company.model'),
@@ -482,6 +483,7 @@ class FilterUIController {
         .then((response) => {
             if(response.message === "Template saved successfully") {
                 alert("Filter stored successfully");
+                if(window.triggerConfetti) window.triggerConfetti();
             } else {
                 console.error(response);
                 alert("An error has occured. Look in the browser console for more details.");  
@@ -508,6 +510,7 @@ class FilterUIController {
         .then((response) => {
             if(response.message === "Template updated successfully") {
                 alert("Filter stored successfully");
+                if(window.triggerConfetti) window.triggerConfetti();
             } else {
                 console.error(response);
                 alert("An error has occured. Look in the browser console for more details.");  
@@ -527,6 +530,7 @@ class FilterUIController {
         .then((response) => {
             if(response.message === "Template deleted") {
                 alert("Filter deleted successfully");
+                if(window.triggerConfetti) window.triggerConfetti();
             } else {
                 console.error(response);
                 alert("An error has occured. Look in the browser console for more details.");  
