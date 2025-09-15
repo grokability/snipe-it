@@ -21,7 +21,7 @@ class PredefinedFilterPolicy extends SnipePermissionsPolicy
             return true;
         }
 
-        //temp
+        //Controller
         if (is_string($filter) && $filter === PredefinedFilter::class) {
         return true; 
     }

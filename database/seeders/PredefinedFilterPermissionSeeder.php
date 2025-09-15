@@ -49,10 +49,6 @@ class PredefinedFilterPermissionSeeder extends Seeder
                 PredefinedFilterPermission::create([
                     'predefined_filter_id' => $filter->id,
                     'permission_group_id'  => 1,
-                    'can_view'             => true,
-                    'can_create'           => false,
-                    'can_edit'             => false,
-                    'can_delete'           => false,
                     'created_by'           => $user->id,
                 ]);
             }
