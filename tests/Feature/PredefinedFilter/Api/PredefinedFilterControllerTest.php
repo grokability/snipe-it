@@ -141,13 +141,24 @@ class PredefinedFilterControllerTest extends TestCase
 
     public function test_show_404_when_missing()
     {
-        //TODO Eingeloggter User MIT view-Recht Abruf einer nicht existierenden ID
+        $u = User::factory()->create();
+        $this->grant($u,['predefinedFilter.edit' => '1']);
+        $this->actingAs($u, 'api')
+            ->putJson('/api/v1/predefinedFilters/999999', ['name' => 'X', 'filter_data'=>[]])
+            ->assertStatus(404)
+            ->assertJson(['error' => 'Filter not found']);
     }
 
-    public function test_store_validates_payload()
-    {
-        //TODO Eingeloggter User OHNE spezielle Rechte POST mit leerem Payload
-    }
+public function test_store_validates_payload()
+{
+    $u = User::factory()->create();
+
+    $this->actingAs($u, 'api')
+        ->postJson('/api/v1/predefinedFilters', [])
+        ->assertStatus(422)
+        ->assertJsonValidationErrors(['name','filter_data']);
+}
+
 
     public function test_store_creates_and_sets_owner()
     {
