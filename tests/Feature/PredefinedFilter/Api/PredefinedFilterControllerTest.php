@@ -162,7 +162,15 @@ public function test_store_validates_payload()
 
     public function test_store_creates_and_sets_owner()
     {
-        //TODO Eingeloggter User POST mit gültigem Payload (name + filter_data) und manipuliertem created_by
+        $u = User::factory()->create();
+
+        $this->actingAs($u, 'api')
+            ->postJson(route('api.predefined-filters.store'), [
+                'name'=>'Neu',
+                'filter_data'=>['status_id'=>[1,2]],
+                'created_by'=>999,
+            ])
+        ->assertCreated();
     }
 
     public function test_update_forbidden_without_edit()
