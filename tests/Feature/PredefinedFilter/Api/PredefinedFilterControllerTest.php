@@ -124,14 +124,19 @@ class PredefinedFilterControllerTest extends TestCase
     }
     public function test_index_unauthenticated_gets_401()
     {
-        //TODO API-Aufruf auf /api/v1/predefinedFilters OHNE Login
+        $this->getJson('api/v1/predefinedFilters')->assertStatus(401);
 
     }
 
     public function test_index_empty_return_empty_array()
     {
-        //TODO: Eingeloggter User MIT view-Recht
+        $u = User::factory()->create();
+        $this-> grant($u, ['predefinedFilter.view' => '1']);
 
+        $this->actingAs($u, 'api')
+            ->getJson('/api/v1/predefinedFilters')
+            ->assertOk()
+            ->assertExactJson([]);
     }
 
     public function test_show_404_when_missing()
