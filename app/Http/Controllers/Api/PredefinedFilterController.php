@@ -48,7 +48,7 @@ class PredefinedFilterController extends Controller
 
         if (!$filter) {
             return response()->json([
-            'message' => trans('admin/predefinedFilters/message.does_not_exist'),
+            'message' => __('admin/reports/message.NotFound'), // TODO check for lang
         ], 404);
         }
 
@@ -61,7 +61,7 @@ class PredefinedFilterController extends Controller
         }
 
         return response()->json([
-            'message' => trans('admin/predefinedFilters/message.show.not_allowed'), 
+            'message' => __('admin/reports/message.NotAllowed'), // TODO check for lang
         ], 403);
     }
 
@@ -75,7 +75,7 @@ class PredefinedFilterController extends Controller
         if (!empty($validated['is_public'] ?? false)) {  
             if (!$user->hasAccess('predefinedFilter.create')) {
                 return response()->json([
-            'message' => trans('admin/predefinedFilters/message.create.not_allowed'), 
+                    'message' => __('admin/reports/message.NotAllowed'), // TODO check for lang
             ], 403);}
         }
 
@@ -115,19 +115,19 @@ class PredefinedFilterController extends Controller
             // private -> public requires create permission
             if (!$user->hasAccess('predefinedFilter.create')) {
                 return response()->json([
-                    'message' => trans('admin/predefinedFilters/message.update.not_allowed_to_change_isPublic'),
+                    'message' => __('admin/reports/message.NotAllowedToChangePublicStatus'),
                 ], 403);
             }
         }
         } elseif ($currentIsPublic) {
             if (!$filter->userHasPermission($user, 'update')) {
                 return response()->json([
-                    'message' => trans('admin/predefinedFilters/message.not_allowed_to_edit'),
+                    'message' => __('admin/reports/message.NotAllowed'),
                 ], 403);
             }
         } else {
             return response()->json([
-                    'message' => trans('admin/predefinedFilters/message.not_allowed_to_edit'),
+                'message' => __('admin/reports/message.NotAllowed'),
             ], 403);
         }
 
@@ -137,7 +137,7 @@ class PredefinedFilterController extends Controller
         $filter->save();
 
         return response()->json([
-            'message' => trans('admin/predefinedFilters/message.update.success'),
+            'message' => __('admin/reports/message.update.success'),
             'filter_data' => $filter,
         ], 200);
     }
@@ -149,9 +149,7 @@ class PredefinedFilterController extends Controller
         $filter = PredefinedFilter::find($id);
 
         if (!$filter) {
-            return response()->json([
-            'message' => trans('admin/predefinedFilters/message.does_not_exist'),
-        ], 404);
+            return response()->json(['error' => 'Filter not found'], 404);
         }
 
         if ($filter->created_by === $user->id) {
@@ -159,19 +157,19 @@ class PredefinedFilterController extends Controller
         } elseif ($filter->is_public) {
             if (!$filter->userHasPermission($user, 'destroy')) {
                 return response()->json([
-                    'message' => trans('admin/predefinedFilters/message.not_allowed_to_delete'),
+                    'message' => __('admin/reports/message.NotAllowed'),
                 ], 403);
             }
             $filter->delete();
         } else {
         
             return response()->json([
-                'message' => trans('admin/predefinedFilters/message.delete.not_allowed_to_delete'),
+                'message' => __('admin/reports/message.NotAllowed'),
             ], 403);
         }
 
         return response()->json([
-            'message'=> trans('admin/predefinedFilters/message.delete.success'),
+            'message'=> __('admin/reports/message.delete.success'),
         ],200);
     }
 }
