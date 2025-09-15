@@ -5,8 +5,8 @@
         </h3>
         <div class="box-tools pull-right">
         <button type="button" id="closeSidebarButton" class="btn btn-box-tool collapse-toggle">
-    <i class="fa fa-chevron-left icon-desktop" id="collapseIconDesktop"></i>
-    <i class="fa fa-chevron-up icon-mobile" id="collapseIconMobile"></i>
+            <i class="fa fa-chevron-left icon-desktop" id="collapseIconDesktop"></i>
+            <i class="fa fa-chevron-up icon-mobile" id="collapseIconMobile"></i>
         </button>
             <button id="topClearInputButton" type="button" class="btn btn-box-tool">
                 <i class="fa fa-times"></i> <span class="clear-text">Clear</span>
@@ -670,6 +670,22 @@ function setAdvancedSearchPanelState(state) {
         fields[i].disabled = state;
     }
 }
+
+
+// Filter search functionality
+document.getElementById('filterSearch').addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    const items = document.querySelectorAll('.filter-item');
+    items.forEach(item => {
+        const label = item.querySelector('label');
+        const labelText = label ? label.textContent.toLowerCase() : '';
+        if (labelText.includes(searchTerm)) {
+            item.style.display = '';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+});
 
 </script>
 

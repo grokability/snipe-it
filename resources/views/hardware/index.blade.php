@@ -33,14 +33,6 @@
 
 @section('content')
 
-<!-- Toggle Button -->
-<div class="filter-toggle-container text-left" style="margin-bottom: 15px;">
-    <button type="button" class="btn btn-default" id="toggleFilterBtn">
-        <i class="glyphicon glyphicon-filter"></i> 
-            {{ trans('general.open_filters') }}
-    </button>
-</div>
-
 <div class="responsive-layout">
     <!-- Filter Section -->
     <div class="filter-section hide" id="filterSection">
@@ -52,6 +44,14 @@
         <div class="box">
             <div class="box-body">
                 @include('partials.asset-bulk-actions', ['status' => Request::get('status')])
+                <!-- Toggle Button -->
+                <div class="filter-toggle-container text-left" style="margin-bottom: 15px;">
+                    <button type="button" class="btn btn-default" id="toggleFilterBtn">
+                        <i class="fa-solid fa-filter"></i>
+                        <span class="filter-btn-text">{{ trans('general.open_filters') }}</span>
+                    </button>
+                </div>
+
 
                 <table data-columns="{{ \App\Presenters\AssetPresenter::dataTableLayout() }}"
                     data-cookie-id-table="{{ request()->has('status') ? e(request()->input('status')) : '' }}assetsListingTable"
@@ -140,12 +140,15 @@
     });
 
     function updateFilterToggleButtonText(filterSection, toggleBtn) {
-        if(filterSection.classList.contains('hide')) {
-            toggleBtn.innerText = "{{ trans('general.open_filters') }}";
+        const textSpan = toggleBtn.querySelector('.filter-btn-text');
+
+        if (filterSection.classList.contains('hide')) {
+            textSpan.innerText = "{{ trans('general.open_filters') }}";
         } else {
-            toggleBtn.innerText = "{{ trans('general.close_filters') }}";
+            textSpan.innerText = "{{ trans('general.close_filters') }}";
         }
     }
+
 </script>
 
 @stop
