@@ -20,6 +20,7 @@ return new class extends Migration
             $table->softDeletes();
             $table->longText('filter_data');
             $table->boolean('is_public')->default(false);
+            $table->string('object_type')->default('asset');
         });
     }
     /**
