@@ -4,16 +4,17 @@
             <i class="fas fa-filter"></i> <span class="filter-title">Advanced Filters</span>
         </h3>
         <div class="box-tools pull-right">
-            <button type="button" class="btn btn-box-tool collapse-toggle" onclick="toggleFilterSidebar()">
-                <i class="fa fa-chevron-left" id="collapseIcon"></i>
-            </button>
+        <button type="button" id="closeSidebarButton" class="btn btn-box-tool collapse-toggle">
+    <i class="fa fa-chevron-left icon-desktop" id="collapseIconDesktop"></i>
+    <i class="fa fa-chevron-up icon-mobile" id="collapseIconMobile"></i>
+        </button>
             <button id="topClearInputButton" type="button" class="btn btn-box-tool">
                 <i class="fa fa-times"></i> <span class="clear-text">Clear</span>
             </button>
         </div>
     </div>
     
-    <div class="box-body filter-body" style="max-height: 80vh; overflow-y: auto;">
+    <div class="box-body filter-body">
         <!-- Quick Filter Search -->
         <div class="form-group filter-content">
             <label>Search Filters</label>
@@ -670,28 +671,6 @@ function setAdvancedSearchPanelState(state) {
     }
 }
 
-function toggleFilterSidebar() {
-    const sidebar = document.getElementById('advancedSearchPanel');
-    const icon = document.getElementById('collapseIcon');
-    
-    sidebar.classList.toggle('collapsed');
-    
-    if (sidebar.classList.contains('collapsed')) {
-        // Collapsed state
-        if (window.innerWidth <= 768) {
-            icon.className = 'fa fa-chevron-down'; // Mobile: point down when collapsed
-        } else {
-            icon.className = 'fa fa-chevron-right'; // Desktop: point right when collapsed
-        }
-    } else {
-        // Expanded state
-        if (window.innerWidth <= 768) {
-            icon.className = 'fa fa-chevron-up'; // Mobile: point up when expanded
-        } else {
-            icon.className = 'fa fa-chevron-left'; // Desktop: point left when expanded
-        }
-    }
-}
 </script>
 
 <style>
@@ -802,8 +781,25 @@ function toggleFilterSidebar() {
 }
 
 .box-body {
+    overflow-y: auto;
     padding: 15px;
 }
+
+/* Small screens: < 769px */
+@media (max-width: 768px) {
+  .box-body {
+    max-height: 75vh;
+  }
+}
+
+/* Medium and up: ≥ 769px */
+@media (min-width: 769px) {
+  .box-body {
+    height: 100%;
+  }
+}
+
+
 
 .btn-block {
     margin-bottom: 5px;
@@ -818,4 +814,25 @@ function toggleFilterSidebar() {
 .collapse-toggle {
     margin-right: 5px;
 }
+
+/* By default, hide both */
+.icon-desktop,
+.icon-mobile {
+  display: none;
+}
+
+/* Show desktop icon when screen ≥ 768px */
+@media (min-width: 768px) {
+  .icon-desktop {
+    display: inline;
+  }
+}
+
+/* Show mobile icon when screen < 768px */
+@media (max-width: 767px) {
+  .icon-mobile {
+    display: inline;
+  }
+}
+
 </style>

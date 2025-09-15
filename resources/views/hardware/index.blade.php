@@ -1,31 +1,22 @@
 @extends('layouts/default')
 
 @section('title0')
-
 @if (Request::get('company_id') && $company)
     {{ $company->name }}
 @endif
 
 @if (Request::get('status'))
-    @if (Request::get('status') == 'Pending')
-        {{ trans('general.pending') }}
-    @elseif (Request::get('status') == 'RTD')
-        {{ trans('general.ready_to_deploy') }}
-    @elseif (Request::get('status') == 'Deployed')
-        {{ trans('general.deployed') }}
-    @elseif (Request::get('status') == 'Undeployable')
-        {{ trans('general.undeployable') }}
-    @elseif (Request::get('status') == 'Deployable')
-        {{ trans('general.deployed') }}
-    @elseif (Request::get('status') == 'Requestable')
-        {{ trans('admin/hardware/general.requestable') }}
-    @elseif (Request::get('status') == 'Archived')
-        {{ trans('general.archived') }}
-    @elseif (Request::get('status') == 'Deleted')
-        {{ ucfirst(trans('general.deleted')) }}
-    @elseif (Request::get('status') == 'byod')
-        {{ strtoupper(trans('general.byod')) }}
-    @endif
+    @switch(Request::get('status'))
+        @case('Pending') {{ trans('general.pending') }} @break
+        @case('RTD') {{ trans('general.ready_to_deploy') }} @break
+        @case('Deployed') {{ trans('general.deployed') }} @break
+        @case('Undeployable') {{ trans('general.undeployable') }} @break
+        @case('Deployable') {{ trans('general.deployed') }} @break
+        @case('Requestable') {{ trans('admin/hardware/general.requestable') }} @break
+        @case('Archived') {{ trans('general.archived') }} @break
+        @case('Deleted') {{ ucfirst(trans('general.deleted')) }} @break
+        @case('byod') {{ strtoupper(trans('general.byod')) }} @break
+    @endswitch
 @else
     {{ trans('general.all') }}
 @endif
@@ -36,100 +27,127 @@
 @endif
 @stop
 
-{{-- Page title --}}
 @section('title')
 @yield('title0') @parent
 @stop
 
-{{-- Page content --}}
 @section('content')
 
+<!-- Toggle Button -->
+<div class="filter-toggle-container text-left" style="margin-bottom: 15px;">
+    <button type="button" class="btn btn-default" id="toggleFilterBtn">
+        <i class="glyphicon glyphicon-filter"></i> 
+            {{ trans('general.open_filters') }}
+    </button>
+</div>
+
 <div class="responsive-layout">
-    <!-- Filter Section - responsive positioning -->
-    <div class="filter-section col-md-3 col-sm-12">
-        @include('partials.advanced-search/advanced-search')
+    <!-- Filter Section -->
+    <div class="filter-section hide" id="filterSection">
+        @include('partials.advanced-search.advanced-search')
     </div>
-    
+
     <!-- Table Section -->
-    <div class="table-section col-md-9 col-sm-12">
+    <div class="table-section">
         <div class="box">
             <div class="box-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        @include('partials.asset-bulk-actions', ['status' => Request::get('status')])
+                @include('partials.asset-bulk-actions', ['status' => Request::get('status')])
 
-                        <table data-columns="{{ \App\Presenters\AssetPresenter::dataTableLayout() }}"
-                            data-cookie-id-table="{{ request()->has('status') ? e(request()->input('status')) : '' }}assetsListingTable"
-                            data-id-table="{{ request()->has('status') ? e(request()->input('status')) : '' }}assetsListingTable"
-                            data-search-text="{{ e(Session::get('search')) }}" data-side-pagination="server"
-                            data-show-footer="true" data-sort-order="asc" data-sort-name="name"
-                            data-toolbar="#assetsBulkEditToolbar" data-bulk-button-id="#bulkAssetEditButton"
-                            data-bulk-form-id="#assetsBulkForm" data-buttons="assetButtons"
-                            id="{{ request()->has('status') ? e(request()->input('status')) : '' }}assetsListingTable"
-                            class="table table-striped snipe-table" data-url="{{ route('api.assets.index', [
-        'status' => e(Request::get('status')),
-        'order_number' => e(strval(Request::get('order_number'))),
-        'company_id' => e(Request::get('company_id')),
-        'status_id' => e(Request::get('status_id')),
-    ]) }}" data-export-options='{
-                        "fileName": "export{{ Request::has('status') ? '-' . str_slug(Request::get('status')) : '' }}-assets-{{ date('Y-m-d') }}",
-                        "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
-                        }'>
-                        </table>
-                    </div><!-- /.col -->
-                </div><!-- /.row -->
-            </div><!-- ./box-body -->
-        </div><!-- /.box -->
+                <table data-columns="{{ \App\Presenters\AssetPresenter::dataTableLayout() }}"
+                    data-cookie-id-table="{{ request()->has('status') ? e(request()->input('status')) : '' }}assetsListingTable"
+                    data-id-table="{{ request()->has('status') ? e(request()->input('status')) : '' }}assetsListingTable"
+                    data-search-text="{{ e(Session::get('search')) }}" data-side-pagination="server"
+                    data-show-footer="true" data-sort-order="asc" data-sort-name="name"
+                    data-toolbar="#assetsBulkEditToolbar" data-bulk-button-id="#bulkAssetEditButton"
+                    data-bulk-form-id="#assetsBulkForm" data-buttons="assetButtons"
+                    id="{{ request()->has('status') ? e(request()->input('status')) : '' }}assetsListingTable"
+                    class="table table-striped snipe-table" data-url="{{ route('api.assets.index', [
+    'status' => e(Request::get('status')),
+    'order_number' => e(strval(Request::get('order_number'))),
+    'company_id' => e(Request::get('company_id')),
+    'status_id' => e(Request::get('status_id')),
+]) }}" data-export-options='{
+                    "fileName": "export{{ Request::has('status') ? '-' . str_slug(Request::get('status')) : '' }}-assets-{{ date('Y-m-d') }}",
+                    "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
+                }'>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 
 <style>
-.responsive-layout {
-    display: flex;
-    flex-wrap: wrap;
-}
-
-/* Desktop: side-by-side layout */
-@media (min-width: 769px) {
     .responsive-layout {
-        flex-direction: row;
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
     }
-    
-    .filter-section {
-        flex: 0 0 25%;
-        max-width: 25%;
-        padding-right: 15px;
-    }
-    
-    .table-section {
-        flex: 0 0 75%;
-        max-width: 75%;
-    }
-}
 
-/* Mobile/Tablet: stacked layout */
-@media (max-width: 768px) {
-    .responsive-layout {
-        flex-direction: column;
-    }
-    
-    .filter-section,
-    .table-section {
-        flex: 0 0 100%;
-        max-width: 100%;
-        padding: 0 15px;
-    }
-    
     .filter-section {
-        order: 1; /* Filters on top */
-        margin-bottom: 15px;
+        transition: all 0.3s ease;
     }
-    
-    .table-section {
-        order: 2; /* Table below filters */
+
+    .filter-section.hide {
+        display: none !important;
     }
-}
+
+    /* DESKTOP */
+    @media (min-width: 768px) {
+        .filter-section {
+            flex: 0 0 25%;
+            max-width: 25%;
+            padding-right: 15px;
+        }
+
+        .table-section {
+            flex: 0 0 75%;
+            max-width: 75%;
+        }
+
+        .filter-section.hide + .table-section {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+    }
+
+    /* MOBILE */
+    @media (max-width: 767px) {
+        .filter-section {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .table-section {
+            width: 100%;
+        }
+    }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggleBtn = document.getElementById('toggleFilterBtn');
+        const toggleSidebarButton = document.getElementById('closeSidebarButton');
+        const filterSection = document.getElementById('filterSection');
+
+        toggleBtn.addEventListener('click', function () {
+            filterSection.classList.toggle('hide');
+            updateFilterToggleButtonText(filterSection, toggleBtn);
+        });
+        toggleSidebarButton.addEventListener('click', function () {
+            filterSection.classList.toggle('hide');
+            updateFilterToggleButtonText(filterSection, toggleBtn);
+        });
+    });
+
+    function updateFilterToggleButtonText(filterSection, toggleBtn) {
+        if(filterSection.classList.contains('hide')) {
+            toggleBtn.innerText = "{{ trans('general.open_filters') }}";
+        } else {
+            toggleBtn.innerText = "{{ trans('general.close_filters') }}";
+        }
+    }
+</script>
+
 @stop
 
 @section('moar_scripts')
