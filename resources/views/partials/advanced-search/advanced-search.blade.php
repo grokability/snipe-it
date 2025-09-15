@@ -690,28 +690,44 @@ document.getElementById('filterSearch').addEventListener('input', function(e) {
 </script>
 
 <style>
-/* Base styles */
+/* 
+Base styles for the filter sidebar and its transitions.
+Handles showing/hiding the sidebar smoothly.
+*/
 .filter-sidebar {
     transition: all 0.3s ease;
     position: relative;
 }
 
+/* 
+Smooth transition for the filter body (the inner panel).
+Ensures expanding/collapsing feels fluid.
+*/
 .filter-body {
     transition: all 0.3s ease;
     overflow: hidden;
 }
 
+/* 
+Fade-in/out effect for any element with this class when shown/hidden.
+*/
 .filter-content {
     transition: opacity 0.2s ease;
 }
 
+/* 
+Fade-in/out for filter section title and clear text.
+*/
 .filter-title,
 .clear-text {
     transition: opacity 0.2s ease;
 }
 
-/* Desktop styles (default) */
+/* ---------- Desktop styles ---------- */
 @media (min-width: 769px) {
+    /* 
+    When collapsed, the sidebar is skinny and its content is hidden.
+    */
     .filter-sidebar.collapsed {
         width: 60px;
         min-width: 60px;
@@ -732,13 +748,19 @@ document.getElementById('filterSearch').addEventListener('input', function(e) {
     }
 }
 
-/* Mobile/Tablet styles */
+/* ---------- Mobile/Tablet styles ---------- */
 @media (max-width: 768px) {
+    /* 
+    Sidebar takes full width and less margin on mobile.
+    */
     .filter-sidebar {
         width: 100% !important;
         margin-bottom: 15px;
     }
     
+    /* 
+    Collapsed sidebar hides content and disables interaction.
+    */
     .filter-sidebar.collapsed .filter-body {
         max-height: 0;
         padding-top: 0;
@@ -756,7 +778,10 @@ document.getElementById('filterSearch').addEventListener('input', function(e) {
     }
 }
 
-/* Ensure the container is properly constrained */
+/* 
+Ensures filter panel container uses full width and is padded.
+Makes it responsive.
+*/
 .container {
     width: 100%;
     margin: 0 auto;
@@ -764,6 +789,9 @@ document.getElementById('filterSearch').addEventListener('input', function(e) {
     box-sizing: border-box;
 }
 
+/* 
+Spacing between filter fields/items.
+*/
 .filter-item {
     margin-bottom: 15px;
     padding-bottom: 10px;
@@ -773,78 +801,108 @@ document.getElementById('filterSearch').addEventListener('input', function(e) {
     border-bottom: none;
 }
 
-/* Ensure the grid stays centered */
+/* 
+Makes the advanced search filters section block-level and full width.
+*/
 #advancedSearchFilters {
     display: block;
     max-width: 100%;
     margin: 0;
 }
 
-/* Flexbox styling remains the same */
+/* 
+Flexbox layout for each filter field for nice stacking.
+*/
 .advancedSearchItemContainer {
     display: flex;
     flex-direction: column;
     align-items: stretch;
 }
 
+/* 
+Spacing for label text in advanced search.
+*/
 .advancedSearchItemContainer b {
     margin-bottom: 5px;
 }
 
+/* 
+Make selects stretch to fill the available width.
+*/
 .advancedSearchItemContainer select.form-control {
     width: 100%;
     box-sizing: border-box;
 }
 
+/* 
+Scrollable filter panel body, with padding.
+*/
 .box-body {
     overflow-y: auto;
     padding: 15px;
 }
 
-/* Small screens: < 769px */
+/* 
+On small screens, limit box-body max height to 75% of viewport.
+Makes scrolling manageable on mobile.
+*/
 @media (max-width: 768px) {
   .box-body {
     max-height: 75vh;
   }
 }
 
-/* Medium and up: ≥ 769px */
+/* 
+On desktop, take up all available vertical height.
+*/
 @media (min-width: 769px) {
   .box-body {
     height: 100%;
   }
 }
 
-
-
+/* 
+Button blocks have a little space between each for clarity.
+*/
 .btn-block {
     margin-bottom: 5px;
 }
 
-/* Custom scrollbar for filter area */
+/* 
+Custom thin scrollbar for the filter area.
+Aesthetic tweak.
+*/
 .box-body::-webkit-scrollbar {
     width: 6px;
 }
 
-/* Collapse button styling */
+/* 
+Collapse button tweaks for spacing.
+*/
 .collapse-toggle {
     margin-right: 5px;
 }
 
-/* By default, hide both */
+/* 
+By default, hide both the desktop and mobile collapse icons.
+*/
 .icon-desktop,
 .icon-mobile {
   display: none;
 }
 
-/* Show desktop icon when screen ≥ 768px */
+/* 
+Show the desktop collapse icon on desktop screens.
+*/
 @media (min-width: 768px) {
   .icon-desktop {
     display: inline;
   }
 }
 
-/* Show mobile icon when screen < 768px */
+/* 
+Show the mobile collapse icon on mobile screens.
+*/
 @media (max-width: 767px) {
   .icon-mobile {
     display: inline;
