@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Api;
 
+use Spatie\FlareClient\Api;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\User;
@@ -175,17 +176,39 @@ public function test_store_validates_payload()
 
     public function test_update_forbidden_without_edit()
     {
-        //TODO Eingeloggter User OHNE edit-Recht PUT auf bestehenden Filter
+        $u = User::factory()->create();
+        $f = PredefinedFilter::factory()->create();
+        $this->actingAs($u, 'api')
+            ->putJson("/api/v1/predefinedFilters/{$f->id}", ['name' => 'X', 'filter_data' => []])
+            ->assertStatus(403);
     }
 
     public function test_update_404_when_missing()
     {
-        //TODO Eingeloggter User MIT edit-Recht PUT auf nicht existierende ID
+        $u = User::factory()->create();
+        $this->grant($u, ['predefinedFilters.edit' => '1']);
+        $this->actingAs($u, 'api')
+            ->putJson('/api/v1/predefinedFilters/999999', ['name' => 'X', 'filter_data' =>[]])
+            ->assertStatus(404)
+            ->assertJson(['error' => 'Filter not found']);
     }
 
     public function test_update_validates_payload()
     {
-        //TODO Eingeloggter User MIT edit-Recht PUT mit leerem Payload auf bestehenden Filter
+        $u = User::factory()->create();
+        $this->grant($u, [
+            'predefinedFilter.view'=>'1',
+            'predefinedFilter.edit'=>'1',
+        ]);
+
+        $this->assertTrue($u->can('edit', PredefinedFilter::class));
+
+        $f = PredefinedFilter::factory()->create();
+
+        $this->actingAs($u, 'api')
+            ->putJson(route('api.predefined-filters.update', ['id'=>$f->id]), [])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['name','filter_data']);
     }
 
     public function test_update_persists_changes_and_keeps_owner()
