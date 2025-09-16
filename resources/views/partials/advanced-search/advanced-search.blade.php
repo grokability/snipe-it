@@ -162,9 +162,6 @@ class FilterUIController {
     }
 
     bindEvents() {
-        document.querySelectorAll('[id^="advancedSearch_"]').forEach(el => {
-            el.addEventListener('change', this.refresh.bind(this));
-        });
 
         $('#predefinedfilters-select').on('change', (e) => {
             this.updateFilterWithPredefined(e);

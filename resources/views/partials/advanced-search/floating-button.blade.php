@@ -1,19 +1,20 @@
 <div id="floatingButtonContainer" class="fab-fixed-wrapper">
     <button id="filterButton" type="button" class="fab" id="searchButton" title="Search" aria-label="Search">
-        &#128269;
+        <i class="fa-solid fa-magnifying-glass"></i>
     </button>
 
     <button type="button" class="fab" id="menuToggleButton" title="Menu" aria-label="Toggle menu" aria-haspopup="true"
         aria-expanded="false" aria-controls="fabMenu">
-        &#9776;
+        <i class="fa-solid fa-bars"></i>
     </button>
 
     <br />
     <div class="menu" id="fabMenu" role="menu" aria-labelledby="menuToggleButton">
-        <a href="#" id="clearInputButton" role="menuitem" tabindex="1">{{ trans('button.delete_search_query') }}</a>
-        <a href="#" id="storeFilterButton" role="menuitem" tabindex="2">Save filter</a>
-        <a href="#" id="updateFilterButton" role="menuitem" tabindex="3">Update filter</a>
-        <a href="#" id="deleteFilterButton" role="menuitem" tabindex="4">Delete filter</a>
+        <a href="#" id="clearInputButton" class="menuButton" role="menuitem"
+            tabindex="1">{{ trans('button.delete_search_query') }}</a>
+        <a href="#" id="storeFilterButton" class="menuButton" role="menuitem" tabindex="2">Save filter</a>
+        <a href="#" id="updateFilterButton" class="menuButton" role="menuitem" tabindex="3">Update filter</a>
+        <a href="#" id="deleteFilterButton" class="menuButton" role="menuitem" tabindex="4">Delete filter</a>
     </div>
 </div>
 
@@ -102,6 +103,11 @@
         }
     });
 
+    const menuButtonItems = document.querySelectorAll(".menuButton");
+    menuButtonItems.forEach((item) => {
+        item.addEventListener("click", closeMenu);
+    });
+
     window.addEventListener("resize", alignFloatingButtons);
     window.addEventListener("orientationchange", alignFloatingButtons);
     window.addEventListener("load", alignFloatingButtons);
@@ -138,13 +144,12 @@
 
     /* FAB style */
     .fab {
-        width: 56px;
-        height: 56px;
+        width: 50px;
+        height: 50px;
         border-radius: 50%;
-        background-color: #007BFF;
+        background-color: var(--button-primary);
         color: white;
         border: none;
-        font-size: 24px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -154,7 +159,7 @@
     }
 
     .fab:hover {
-        background-color: #0056b3;
+        background-color: var(--button-hover);
     }
 
     #menuToggle {
@@ -175,7 +180,7 @@
 
     .menu {
         position: absolute;
-        bottom: 7vh;
+        bottom: 6vh;
         left: 50%;
         transform: translateX(38px);
         background: white;
@@ -185,7 +190,7 @@
         display: none;
         flex-direction: column;
         min-width: 120px;
-        z-index: 99;
+        z-index: -99;
     }
 
     .menu a {

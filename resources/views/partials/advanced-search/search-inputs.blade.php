@@ -359,7 +359,7 @@ class FilterFormManager {
 
         // Wait for all async setValue calls to complete
         await Promise.all(promises);
-        setAdvancedSearchPanelState(false);
+        setAdvancedSearchPanelFilterEnabledState(false);
     }
 }
 </script>
