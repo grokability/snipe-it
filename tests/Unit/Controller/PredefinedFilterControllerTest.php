@@ -217,7 +217,7 @@ class PredefinedFilterControllerTest extends TestCase
 
         $response->assertStatus(403);
         $response->assertJsonFragment([
-            'message' => __('admin/reports/message.NotAllowed'),
+            'message' => "You don't have the permissions to see this filter"
         ]);
     }
 
@@ -229,6 +229,9 @@ class PredefinedFilterControllerTest extends TestCase
             ->getJson("/api/v1/predefinedFilters/404"); // Nonexistent ID
 
         $response->assertStatus(404);
+                $response->assertJsonFragment([
+            'message' => "Filter does not exist."
+        ]);
     }
 
     public function test_user_with_permission_can_create_public_filter()
@@ -278,7 +281,7 @@ class PredefinedFilterControllerTest extends TestCase
 
         $response->assertStatus(403)
             ->assertJsonFragment([
-                'message' => __('admin/reports/message.NotAllowed'),
+                'message' => "You don't have the permissions to create this public filter",
         ]);
 }
 }
