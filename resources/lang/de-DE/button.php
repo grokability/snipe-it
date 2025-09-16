@@ -24,6 +24,9 @@ return [
     'add_maintenance'           => 'Füge Wartung hinzu',
     'append'                    => 'Anhängen',
     'new'                       => 'Neu',
+    'save_predefined_filter_as' => 'Filter speichern unter...',
+    'update_predefined_filter'  => 'Vordefinierten Filter aktualisieren',
+    'delete_predefined_filter'  => 'Vordefinierten Filter löschen',
     'var' => [
         'clone'     => ':item_type duplizieren',
         'edit'      => ':item_type bearbeiten',

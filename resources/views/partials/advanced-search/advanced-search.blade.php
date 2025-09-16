@@ -1,7 +1,7 @@
 <div id="advancedSearchPanel" class="box box-default filter-sidebar">
     <div class="box-header with-border">
         <h3 class="box-title">
-            <i class="fas fa-filter"></i> <span class="filter-title">Advanced Filters</span>
+            <i class="fas fa-filter"></i> <span class="filter-title"> {{ trans('general.advanced_search') }} </span>
         </h3>
         <div class="box-tools pull-right">
         <button type="button" id="closeSidebarButton" class="btn btn-box-tool collapse-toggle">
@@ -9,7 +9,7 @@
             <i class="fa fa-chevron-up icon-mobile" id="collapseIconMobile"></i>
         </button>
             <button id="topClearInputButton" type="button" class="btn btn-box-tool">
-                <i class="fa fa-times"></i> <span class="clear-text">Clear</span>
+                <i class="fa fa-times"></i> <span class="clear-text"> {{ trans('button.delete') }}</span>
             </button>
         </div>
     </div>
@@ -18,13 +18,13 @@
         <!-- Quick Filter Search -->
         <div class="form-group filter-content">
             <label>Search Filters</label>
-            <input type="text" class="form-control" id="filterSearch" placeholder="Type to search filters...">
+            <input type="text" class="form-control" id="filterSearch" placeholder="{{ trans('general.search_after_filter_field') }}">
         </div>
         
         <!-- Predefined Filters -->
         <div class="form-group filter-content">
             @include ('partials.select.dropdowns.predefined-select', [
-                'translated_name' => trans('admin/hardware/company.model'),
+                'translated_name' => trans('general.select_predefined_filter'),
                 'fieldname' => 'predefinedFilters',
                 'select_id' => "predefinedfilters-select",
                 'required' => 'false',

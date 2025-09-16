@@ -274,6 +274,7 @@ return [
     'select_location'		=> 'Select a Location',
     'select_manufacturer'	=> 'Select a Manufacturer',
     'select_model'			=> 'Select a Model',
+    'select_predefined_filter' => 'Select a predefined filter',
     'select_supplier'		=> 'Select a Supplier',
     'select_user'			=> 'Select a User',
     'select_date'			=> 'Select Date (YYYY-MM-DD)',
@@ -685,5 +686,7 @@ return [
 
     'months_plural' => '1 month|:count months',
 
+    'advanced_search' => "Advanced search",
+    'search_after_filter_field' => 'Type here to find a field',
 
 ];

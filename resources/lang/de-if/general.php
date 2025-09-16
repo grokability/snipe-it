@@ -274,6 +274,7 @@ return [
     'select_location'		=> 'Wähle einen Standort',
     'select_manufacturer'	=> 'Wähle einen Hersteller',
     'select_model'			=> 'Wähle ein Modell',
+    'select_predefined_filter' => 'Wähle einen vordefinierten Filter aus',
     'select_supplier'		=> 'Wähle einen Lieferanten',
     'select_user'			=> 'Wähle einen Benutzer',
     'select_date'			=> 'Datum auswählen (JJJJ-MM-TT)',
@@ -683,7 +684,9 @@ return [
         'percent' => 'Prozentsatz',
     ],
 
+    'advanced_search' => "Erweiterte Suche",
     'months_plural' => '1 Monat|:count Monate',
 
+    'search_after_filter_field' => 'Nach einem Feld suchen...',
 
 ];

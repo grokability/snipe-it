@@ -274,6 +274,7 @@ return [
     'select_location'		=> 'Wählen Sie einen Standort',
     'select_manufacturer'	=> 'Wählen Sie einen Hersteller',
     'select_model'			=> 'Wählen Sie ein Modell',
+    'select_predefined_filter' => 'Wählen Sie einen vordefinierten Filter aus',
     'select_supplier'		=> 'Wählen Sie einen Lieferanten',
     'select_user'			=> 'Wählen Sie einen Benutzer',
     'select_date'			=> 'Wählen Sie ein Datum (JJJJ-MM-DD)',
@@ -684,6 +685,9 @@ return [
     ],
 
     'months_plural' => '1 Monat|:count Monate',
+
+    'advanced_search' => "Erweiterte Suche",
+    'search_after_filter_field' => 'Geben Sie hier einen Text ein um nach einem Feld zu suchen...',
 
 
 ];

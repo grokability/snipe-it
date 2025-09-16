@@ -10,11 +10,9 @@
 
     <br />
     <div class="menu" id="fabMenu" role="menu" aria-labelledby="menuToggleButton">
-        <a href="#" id="clearInputButton" class="menuButton" role="menuitem"
-            tabindex="1">{{ trans('button.delete_search_query') }}</a>
-        <a href="#" id="storeFilterButton" class="menuButton" role="menuitem" tabindex="2">Save filter</a>
-        <a href="#" id="updateFilterButton" class="menuButton" role="menuitem" tabindex="3">Update filter</a>
-        <a href="#" id="deleteFilterButton" class="menuButton" role="menuitem" tabindex="4">Delete filter</a>
+        <a href="#" id="storeFilterButton" class="menuButton" role="menuitem" tabindex="1">{{ trans('button.save_predefined_filter_as') }}</a>
+        <a href="#" id="updateFilterButton" class="menuButton" role="menuitem" tabindex="2">{{ trans('button.update_predefined_filter') }}</a>
+        <a href="#" id="deleteFilterButton" class="menuButton" role="menuitem" tabindex="3">{{ trans('button.delete_predefined_filter') }}</a>
     </div>
 </div>
 

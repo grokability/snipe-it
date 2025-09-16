@@ -79,6 +79,7 @@ return [
     'city'  				=> 'City',
     'click_here'			=> 'Click here',
     'clear_selection'		=> 'Clear Selection',
+    'close_filters'         => 'Close filters',
     'companies'			    => 'Companies',
     'company'				=> 'Company',
     'component'			    => 'Component',
@@ -227,6 +228,7 @@ return [
     'delete_note'              => 'Delete Note',
     'order_number'          => 'Order Number',
     'only_deleted'          => 'Only Deleted Assets',
+    'open_filters'          => 'Open filters',
     'page_menu'				=> 'Showing _MENU_ items',
     'page_error'            => 'Could not determine previous page. Redirected to homepage.',
     'pagination_info'		=> 'Showing _START_ to _END_ of _TOTAL_ items',
@@ -272,6 +274,7 @@ return [
     'select_location'		=> 'Select a Location',
     'select_manufacturer'	=> 'Select a Manufacturer',
     'select_model'			=> 'Select a Model',
+    'select_predefined_filter' => 'Select a predefined filter',
     'select_supplier'		=> 'Select a Supplier',
     'select_user'			=> 'Select a User',
     'select_date'			=> 'Select Date (YYYY-MM-DD)',
@@ -688,5 +691,7 @@ return [
 
     'months_plural' => '1 month|:count months',
 
-
+    'advanced_search' => "Advanced search",
+    'search_after_filter_field' => 'Type here to find a field',
+    
 ];
