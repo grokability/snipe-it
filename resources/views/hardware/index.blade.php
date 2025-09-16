@@ -168,8 +168,11 @@ When .hide is applied, the filter section is hidden.
 
         if (filterSection.classList.contains('hide')) {
             textSpan.innerText = "{{ trans('general.open_filters') }}";
+            hideFloatingButtons();
         } else {
             textSpan.innerText = "{{ trans('general.close_filters') }}";
+            showFloatingButtons();
+            alignFloatingButtons();
         }
     }
 

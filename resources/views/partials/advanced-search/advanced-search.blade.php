@@ -34,39 +34,18 @@
         <hr class="filter-content">
         
         <!-- All Filter Fields -->
-        <span id="advancedSearchFilters" class="filter-content">
-            @php
-                $layoutJson = \App\Presenters\AssetPresenter::dataTableLayout();
-                $layout = json_decode($layoutJson); // decode to object by default
-            @endphp
+<div id="advancedSearchFilters" class="filter-content container">
+    @php
+        $layoutJson = \App\Presenters\AssetPresenter::dataTableLayout();
+        $layout = json_decode($layoutJson);
+    @endphp
 
-            @include('partials.advanced-search.search-inputs')
-            
-            <div id="advancedSearchControlContainer" class="form-group">
-                <button type="submit" class="btn btn-default btn-block" id="filterButton">
-                    <span aria-hidden="true"></span>
-                    <span>🔎 {{ trans('button.search') }}</span>
-                </button>
-                <button type="button" class="btn btn-default btn-block" id="clearInputButton">
-                    <span aria-hidden="true"></span>
-                    <span>❌ {{ trans('button.delete_search_query') }}</span>
-                </button>
-                <hr/>
-                <button type="button" class="btn btn-success btn-block" id="storeFilterButton">
-                    <span aria-hidden="true"></span>
-                    <span>Store current filter in backend</span>
-                </button>
-                <button type="button" class="btn btn-warning btn-block" id="updateFilterButton">
-                    <span aria-hidden="true"></span>
-                    <span>Update current filter in backend</span>
-                </button>
-                <button type="button" class="btn btn-danger btn-block" id="deleteFilterButton">
-                    <span aria-hidden="true"></span>
-                    <span>Delete current filter from backend</span>
-                </button>
-            </div>
-        </span>
+    @include('partials.advanced-search.search-inputs')
+</div>
+
+
     </div>
+    @include ('partials.advanced-search.floating-button')
 </div>
 
 @include('partials.confetti-js', ['autostart' => false])
@@ -92,7 +71,7 @@ class FilterUIController {
         const selectedId = event?.target?.value;
         if (!selectedId) return;
 
-        setAdvancedSearchPanelState(true);
+        setAdvancedSearchPanelFilterEnabledState(true);
 
         try {
             const filterData = await this.fetchPredefinedFilterData(selectedId);
@@ -103,7 +82,7 @@ class FilterUIController {
         } catch (err) {
             console.error("Failed to apply predefined filter:", err);
             alert("Failed to apply predefined filter");
-            setAdvancedSearchPanelState(false);
+            setAdvancedSearchPanelFilterEnabledState(false);
         }
     }
 
@@ -285,7 +264,7 @@ function predefinedFilterRequest(method, filterId = null, filterData = null) {
     return fetchFromBackend(method, path, filterData);
 }
 
-function setAdvancedSearchPanelState(state) {
+function setAdvancedSearchPanelFilterEnabledState(state) {
     const fields = document.getElementById("advancedSearchPanel").getElementsByTagName('*');
     for(var i = 0; i < fields.length; i++)
     {
