@@ -683,7 +683,7 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
      */
     Route::resource(
         'maintenances',
-        Api\AssetMaintenancesController::class,
+        Api\MaintenancesController::class,
         [
             'names' => [
                 'index' => 'api.maintenances.index',
