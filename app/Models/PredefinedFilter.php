@@ -18,39 +18,52 @@ class PredefinedFilter extends Model
 
     protected $casts = [
         "filter_data"=> "array",
+        "is_public" => "boolean"
     ];
 
     protected $fillable = [
         'name',
         'created_by',
         'filter_data',
+        'is_public',
+        'object_type',
     ];
 
     protected $rules = [
         'name'                    => ['required', 'string', 'max:255'],
-        'created_by'              => ['required', 'integer', 'exists:users,id'],
-        'filter_data'             => ['required', 'array'] // TODO check against db seeder and migration
+        'filter_data'             => ['required', 'array'],
+        'is_public' => 'sometimes|boolean'
     ];
 
-    public function userHasPermission(User $user, string $permission): bool
+    public function permissionGroups()
     {
-        $column = "can_$permission";
+        return $this->belongsToMany(
+            PermissionGroup::class,
+            'predefined_filter_permissions',
+            'predefined_filter_id',
+            'permission_group_id'
+        );
+    }
 
-        if (!in_array($column, ['can_view', 'can_create', 'can_edit', 'can_delete'])) {
+    public function userHasPermission(User $user, string $action): bool
+    {
+        if (!$this->is_public){
             return false;
         }
 
-        $permissionGroupIds = $user->groups()->pluck('id');
+        $userGroupIds = $user->groups()->pluck('id')->toArray();
 
-        return $this->permissions()
-            -> whereIn('permission_group_id', $permissionGroupIds)
-            -> where($column, true)
-            -> exists();
-    }
+        foreach ($this->permissionGroups as $group){
+            if (in_array($group->id, $userGroupIds)){
+                $permissions = json_decode($group->permissions, true);    
+                
+                if((isset($permissions["predefinedFilter.$action"]) && $permissions["predefinedFilter.$action"] == '1')){
+                    return true;
+                }   
+            }
+        }
 
-    public function permissions()
-    {
-        return $this->hasMany(PredefinedFilterPermission::class, 'predefined_filter_id');
+        return false;
     }
 
     protected function applyArrayOrScalarFilter(Builder $assets, array $filter, string $key, string $column): void
