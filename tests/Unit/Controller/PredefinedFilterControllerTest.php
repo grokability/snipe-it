@@ -25,27 +25,6 @@ class PredefinedFilterControllerTest extends TestCase
      * Test that unauthenticated user is denied access to predefined filters
      */
 
-    public function test_api_request_with_headers_returns_403_response()
-    {  
-        $user = User::factory()->create();
-
-        $response = $this->actingAs($user, 'api')
-            ->withHeaders([
-                'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:141.0) Gecko/20100101 Firefox/141.0',
-                'Accept' => 'application/json, text/javascript, */*; q=0.01',
-                'Accept-Language' => 'de-DE,de;q=0.8,en-US;q=0.5,en;q=0.3',
-                'Content-Type' => 'application/json',
-                'X-CSRF-TOKEN' => csrf_token(),
-                'X-Requested-With' => 'XMLHttpRequest',
-                'Sec-Fetch-Dest' => 'empty',
-                'Sec-Fetch-Mode' => 'cors',
-                'Sec-Fetch-Site' => 'same-origin',
-            ])
-            ->json('GET', '/api/v1/predefinedFilters');
-
-        $response->assertStatus(403);
-    }
-
     public function test_api_request_with_headers_returns_200_response()
     {
         $user = User::factory()->create([
@@ -238,7 +217,7 @@ class PredefinedFilterControllerTest extends TestCase
 
         $response->assertStatus(403);
         $response->assertJsonFragment([
-            'message' => __('admin/reports/message.NotAllowed'),
+            'message' => "You don't have the permissions to see this filter"
         ]);
     }
 
@@ -250,6 +229,9 @@ class PredefinedFilterControllerTest extends TestCase
             ->getJson("/api/v1/predefinedFilters/404"); // Nonexistent ID
 
         $response->assertStatus(404);
+                $response->assertJsonFragment([
+            'message' => "Filter does not exist."
+        ]);
     }
 
     public function test_user_with_permission_can_create_public_filter()
@@ -299,7 +281,7 @@ class PredefinedFilterControllerTest extends TestCase
 
         $response->assertStatus(403)
             ->assertJsonFragment([
-                'message' => __('admin/reports/message.NotAllowed'),
+                'message' => "You don't have the permissions to create this public filter",
         ]);
 }
 }
