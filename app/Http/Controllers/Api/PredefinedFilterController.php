@@ -48,7 +48,7 @@ class PredefinedFilterController extends Controller
 
         if (!$filter) {
             return response()->json([
-            'message' => ('admin/predefinedFilters/message.does_not_exist'),
+            'message' => trans('admin/predefinedFilters/message.does_not_exist'),
         ], 404);
         }
 
@@ -150,7 +150,7 @@ class PredefinedFilterController extends Controller
 
         if (!$filter) {
             return response()->json([
-            'message' => ('admin/predefinedFilters/message.does_not_exist'),
+            'message' => trans('admin/predefinedFilters/message.does_not_exist'),
         ], 404);
         }
 
@@ -159,19 +159,19 @@ class PredefinedFilterController extends Controller
         } elseif ($filter->is_public) {
             if (!$filter->userHasPermission($user, 'destroy')) {
                 return response()->json([
-                    'message' => __('admin/predefinedFilters/message.not_allowed_to_delete'),
+                    'message' => trans('admin/predefinedFilters/message.not_allowed_to_delete'),
                 ], 403);
             }
             $filter->delete();
         } else {
         
             return response()->json([
-                'message' => __('admin/predefinedFilters/message.delete.not_allowed_to_delete'),
+                'message' => trans('admin/predefinedFilters/message.delete.not_allowed_to_delete'),
             ], 403);
         }
 
         return response()->json([
-            'message'=> __('admin/predefinedFilters/message.delete.success'),
+            'message'=> trans('admin/predefinedFilters/message.delete.success'),
         ],200);
     }
 }
