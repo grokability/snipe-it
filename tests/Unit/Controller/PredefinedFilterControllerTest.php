@@ -115,7 +115,7 @@ class PredefinedFilterControllerTest extends TestCase
             ->getJson("/api/v1/predefinedFilters/{$filter->id}");
 
         $response->assertStatus(403);
-        $response->assertJsonFragment(['message' => 'permission']);
+        $response->assertJsonFragment(['message' => "You don't have the permissions to see this filter"]);
     }
 
     public function test_user_sees_only_filters_they_have_permission_for()
