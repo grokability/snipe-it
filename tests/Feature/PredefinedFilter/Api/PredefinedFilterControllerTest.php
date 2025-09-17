@@ -32,6 +32,20 @@ class PredefinedFilterControllerTest extends TestCase
         ]);
     }
     //INDEX TESTS
+
+    public function test_index_ok_with_public_and_view_permission(): void
+    {
+        $u = User::factory()->create();
+        $g = $this->grant($u, ['predefinedFilter.view' => '1']);
+
+        $f = PredefinedFilter::factory()->create(['is_public' => 1]);
+        $this->linkGroupFilter($f, $g);
+
+        $this->actingAs($u, 'api')
+            ->getJson('/api/v1/predefinedFilters')
+            ->assertOk();
+    }
+
     public function test_index_unauthenticated_gets_302() 
     {
         $this->getJson('api/v1/predefinedFilters')->assertStatus(302);
@@ -96,7 +110,7 @@ class PredefinedFilterControllerTest extends TestCase
             ->assertJson(['message' => 'admin/predefinedFilters/message.does_not_exist']);
     }
     
-    public function test_show_forbidden_without_view_permission(): void //CHECK
+    public function test_show_forbidden_without_view_permission(): void 
     {
         $user = User::factory()->create();
         $owner = User::factory()->create();
@@ -111,35 +125,35 @@ class PredefinedFilterControllerTest extends TestCase
             ->assertStatus(403);
     }
 
-        public function test_show_ok_as_owner_without_public_or_view(): void
-        {
-            $u = User::factory()->create();
-            $f = PredefinedFilter::factory()->create([
-                'created_by' => $u->id,
-                'is_public'  => 0,
-            ]);
+    public function test_show_ok_as_owner_without_public_or_view(): void
+    {
+        $u = User::factory()->create();
+        $f = PredefinedFilter::factory()->create([
+            'created_by' => $u->id,
+            'is_public'  => 0,
+        ]);
 
-            $this->actingAs($u, 'api')
-                ->getJson("/api/v1/predefinedFilters/{$f->id}")
-                ->assertOk()
-                ->assertJsonFragment(['id'=>$f->id,'name'=>$f->name]);
-        }
+        $this->actingAs($u, 'api')
+            ->getJson("/api/v1/predefinedFilters/{$f->id}")
+            ->assertOk()
+            ->assertJsonFragment(['id'=>$f->id,'name'=>$f->name]);
+    }
 
-        public function test_show_forbidden_without_view_or_not_public()
-        {
-            $owner = User::factory()->create();
-            $u = User::factory()->create();
+    public function test_show_forbidden_without_view_or_not_public()
+    {
+        $owner = User::factory()->create();
+        $u = User::factory()->create();
 
-            $f = PredefinedFilter::factory()->create([
-                'created_by' => $owner->id,
-                'is_public' => 0,
-            ]);
+        $f = PredefinedFilter::factory()->create([
+            'created_by' => $owner->id,
+            'is_public' => 0,
+        ]);
 
-            $this->actingAs($u, 'api')
-                ->getJson("/api/v1/predefinedFilters/{$f->id}")
-                ->assertStatus(403)
-                ->assertJson(['message' => trans('admin/predefinedFilters/message.show.not_allowed')]);
-        }
+        $this->actingAs($u, 'api')
+            ->getJson("/api/v1/predefinedFilters/{$f->id}")
+            ->assertStatus(403)
+            ->assertJson(['message' => trans('admin/predefinedFilters/message.show.not_allowed')]);
+    }
 
     public function test_show_ok_as_non_owner_when_public_and_view()
     {
@@ -159,8 +173,8 @@ class PredefinedFilterControllerTest extends TestCase
             ->assertJsonFragment(['id' => $f->id, 'name'=> $f->name]);
     }
 
-
     // STORE TESTS
+    
     public function test_store_validates_payload()
     {
         $u = User::factory()->create();
@@ -172,82 +186,167 @@ class PredefinedFilterControllerTest extends TestCase
     }
 
 
-    public function test_store_creates_and_sets_owner() //CHECK
+    public function test_store_creates_and_sets_owner() 
+    {
+        $u = User::factory()->create();
+        $this->grant($u, ['predefinedFilter.create' => '1']);
+
+        $this->actingAs($u, 'api')
+            ->postJson(route('api.predefined-filters.store'), [
+                'name'        => 'Neu',
+                'filter_data' => ['status_id' => [1, 2]],
+                'is_public'   => 1,
+                'created_by'  => 999,
+            ])
+        ->assertCreated()
+        ->assertJsonPath('filter_data.name', 'Neu')
+        ->assertJsonPath('filter_data.is_public', true)
+        ->assertJsonPath('filter_data.created_by', $u->id);
+    }
+
+    public function test_store_public_requires_create_permission()
     {
         $u = User::factory()->create();
 
         $this->actingAs($u, 'api')
-            ->postJson(route('api.predefined-filters.store'), [
-                'name'=>'Neu',
-                'filter_data'=>['status_id'=>[1,2]],
-                'created_by'=>999,
+            ->postJson(route('api.predefined-filters.store'),[
+                'name'  => 'X',
+                'filter_data' => ['a' => 1],
+                'is_public' => 1,
             ])
-        ->assertCreated();
-    }
-
-    public function test_store_public_requires_create_permission() //CHECK
-    {
-        //TODO neue Logik: public speichern erfordert create-Recht
+        ->assertStatus(403)
+        ->assertJson(['message' => trans('admin/predefinedFilters/message.create.not_allowed')]);
     }
 
     //UPDATE TESTS
 
-    public function test_update_owner_private_to_public_requires_create() //CHECK
-    {
-        //TODO
-    }
-    public function test_update_non_owner_public_requires_update_permission() //CHECK
-    {
-        //TODO
-    }
-
-    public function test_update_404_when_missing() //CHECK
+    public function test_update_owner_private_to_public_requires_create(): void
     {
         $u = User::factory()->create();
-        $this->grant($u, ['predefinedFilters.edit' => '1']);
-        $this->actingAs($u, 'api')
-            ->putJson('/api/v1/predefinedFilters/999999', ['name' => 'X', 'filter_data' =>[]])
-            ->assertStatus(404)
-            ->assertJson(['error' => 'Filter not found']);
-    }
-
-    public function test_update_validates_payload() //CHECK
-    {
-        $u = User::factory()->create();
-        $this->grant($u, [
-            'predefinedFilter.view'=>'1',
-            'predefinedFilter.edit'=>'1',
+        $f = PredefinedFilter::factory()->create([
+            'created_by' => $u->id,
+            'is_public'  => 0,
+            'name'       => 'Old',
+            'filter_data'=> ['a' => 1],
         ]);
 
-        $this->assertTrue($u->can('edit', PredefinedFilter::class));
+        $this->actingAs($u, 'api')
+            ->putJson("/api/v1/predefinedFilters/{$f->id}", [
+                'name'=>'New','filter_data'=>['a'=>2],'is_public'=>1
+            ])
+            ->assertStatus(403);
 
+        $this->grant($u, ['predefinedFilter.create' => '1']);
+        $u->refresh();
+
+        $this->actingAs($u->fresh(), 'api')
+            ->putJson("/api/v1/predefinedFilters/{$f->id}", [
+                'name'=>'New','filter_data'=>['a'=>2],'is_public'=>1
+            ])
+            ->assertOk()
+            ->assertJsonPath('filter_data.is_public', true)
+            ->assertJsonPath('filter_data.name', 'New');
+    }
+
+    public function test_update_non_owner_public_requires_update_permission(): void
+    {
+        $owner = User::factory()->create();
+        $other = User::factory()->create();
+
+        $f = PredefinedFilter::factory()->create([
+            'created_by' => $owner->id,
+            'is_public'  => 1,
+            'name'       => 'Old',
+            'filter_data'=> ['a' => 1],
+        ]);
+
+        $this->actingAs($other, 'api')
+            ->putJson("/api/v1/predefinedFilters/{$f->id}", [
+                'name'=>'X','filter_data'=>['a'=>3],'is_public'=>1
+            ])
+        ->assertStatus(403);
+
+        $g = $this->grant($other, ['predefinedFilter.update'=>'1']);
+        $this->linkGroupFilter($f, $g);
+
+        $this->actingAs($other, 'api')
+            ->putJson("/api/v1/predefinedFilters/{$f->id}", [
+                'name'=>'X','filter_data'=>['a'=>3],'is_public'=>1
+            ])
+        ->assertOk()
+        ->assertJsonPath('filter_data.name','X');
+    }
+    public function test_update_404_when_missing(): void
+    {
+        $u = User::factory()->create();
+        $this->actingAs($u, 'api')
+            ->putJson('/api/v1/predefinedFilters/999999', [
+                'name' => 'X', 'filter_data' => [], 'is_public' => 0
+            ])
+            ->assertStatus(404)
+            ->assertJson(['message' => 'admin/predefinedFilters/message.does_not_exist']);
+    }
+
+    public function test_update_validates_payload(): void
+    {
+        $u = User::factory()->create();
         $f = PredefinedFilter::factory()->create();
 
         $this->actingAs($u, 'api')
-            ->putJson(route('api.predefined-filters.update', ['id'=>$f->id]), [])
+            ->putJson(route('api.predefined-filters.update', ['id' => $f->id]), [])
             ->assertStatus(422)
-            ->assertJsonValidationErrors(['name','filter_data']);
+            ->assertJsonValidationErrors(['name', 'filter_data']);
     }
 
-    public function test_update_persists_changes_and_keeps_owner() //CHECK
-    {
-        //TODO Eingeloggter User MIT edit-Recht PUT mit neuem Namen + neuem filter_data + manipuliertem created_by
-    }
 
     //DESTROY TESTS
+public function test_destroy_non_owner_public_requires_destroy_permission()
+{
+    $owner = User::factory()->create();
+    $other = User::factory()->create();
 
-    public function test_destroy_non_owner_public_requires_destroy_permission() //CHECK
+    $f = PredefinedFilter::factory()->create([
+        'created_by' => $owner->id,
+        'is_public'  => 1,
+    ]);
+
+    $this->actingAs($other, 'api')
+        ->deleteJson("/api/v1/predefinedFilters/{$f->id}")
+        ->assertStatus(403);
+
+    $g = $this->grant($other, ['predefinedFilter.destroy' => '1']);
+    $this->linkGroupFilter($f, $g);
+
+    $this->actingAs($other, 'api')
+        ->deleteJson("/api/v1/predefinedFilters/{$f->id}")
+        ->assertOk()
+        ->assertJson([
+            'message' => trans('admin/predefinedFilters/message.delete.success'),
+        ]);
+
+    $this->assertSoftDeleted('predefined_filters', ['id' => $f->id]);
+}
+
+    public function test_destroy_404_when_missing() 
     {
-        //TODO Eingeloggter User OHNE delete-Recht DELETE auf bestehenden Filter
+        $u = User::factory()->create();
+
+        $this->actingAs($u, 'api')
+            ->deleteJson('/api/v1/predefinedFilters/999999')
+            ->assertStatus(404)
+            ->assertJson(['message'=>trans('admin/predefinedFilters/message.does_not_exist')]);
     }
 
-    public function test_destroy_404_when_missing() //CHECK
+    public function test_destroy_owner_private_ok_200() 
     {
-        //TODO Eingeloggter User MIT delete-Recht DELETE auf nicht existierende ID
-    }
+    $u = User::factory()->create();
+    $f = PredefinedFilter::factory()->create(['created_by'=>$u->id,'is_public'=>0]);
 
-    public function test_destroy_owner_private_ok_200() //CHECK
-    {
-        //TODO Eingeloggter User MIT delete-Recht DELETE auf bestehenden Filter
+    $this->actingAs($u, 'api')
+        ->deleteJson("/api/v1/predefinedFilters/{$f->id}")
+        ->assertOk()
+        ->assertJson(['message'=>trans('admin/predefinedFilters/message.delete.success')]);
+
+    $this->assertSoftDeleted('predefined_filters', ['id' => $f->id]);
     }
 }
