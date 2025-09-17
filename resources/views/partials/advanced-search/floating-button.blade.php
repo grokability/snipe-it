@@ -11,8 +11,8 @@
     <br />
     <div class="menu" id="fabMenu" role="menu" aria-labelledby="menuToggleButton">
         <a href="#" id="storeFilterButton" class="menuButton" role="menuitem" tabindex="1">{{ trans('button.save_predefined_filter_as') }}</a>
-        <a href="#" id="updateFilterButton" class="menuButton" role="menuitem" tabindex="2">{{ trans('button.update_predefined_filter') }}</a>
-        <a href="#" id="deleteFilterButton" class="menuButton" role="menuitem" tabindex="3">{{ trans('button.delete_predefined_filter') }}</a>
+        <a href="#" id="updateFilterButton" class="menuButton disabled" role="menuitem" tabindex="2">{{ trans('button.update_predefined_filter') }}</a>
+        <a href="#" id="deleteFilterButton" class="menuButton disabled" role="menuitem" tabindex="3">{{ trans('button.delete_predefined_filter') }}</a>
     </div>
 </div>
 
@@ -67,6 +67,16 @@
             menuToggleButton.setAttribute("aria-expanded", "false");
             menuItems.forEach(item => item.setAttribute("tabindex", "-1"));
         }
+    }
+
+    function floatingMenuEnableEditDeleteButtons() {
+        document.getElementById("updateFilterButton").classList.remove('disabled');
+        document.getElementById("deleteFilterButton").classList.remove('disabled');
+    }
+
+    function floatingMenuDisableEditDeleteButtons() {
+        document.getElementById("updateFilterButton").classList.add('disabled');
+        document.getElementById("deleteFilterButton").classList.add('disabled');
     }
 
     // Toggle menu on button click
@@ -208,5 +218,10 @@
 
     #menuToggle:checked~.floating-span .menu {
         display: flex;
+    }
+
+    .disabled {
+        cursor: not-allowed;
+        opacity: 0.3;
     }
 </style>
