@@ -12,36 +12,18 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\PermissionGroup;
 use Illuminate\Support\Facades\DB;
 use function PHPUnit\Framework\assertEquals;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 
 
 
 class PredefinedFilterControllerTest extends TestCase
 {
+
+    use RefreshDatabase;
     /**
      * Test that unauthenticated user is denied access to predefined filters
      */
-
-    public function test_api_request_with_headers_returns_403_response()
-    {  
-        $user = User::factory()->create();
-
-        $response = $this->actingAs($user, 'api')
-            ->withHeaders([
-                'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:141.0) Gecko/20100101 Firefox/141.0',
-                'Accept' => 'application/json, text/javascript, */*; q=0.01',
-                'Accept-Language' => 'de-DE,de;q=0.8,en-US;q=0.5,en;q=0.3',
-                'Content-Type' => 'application/json',
-                'X-CSRF-TOKEN' => csrf_token(),
-                'X-Requested-With' => 'XMLHttpRequest',
-                'Sec-Fetch-Dest' => 'empty',
-                'Sec-Fetch-Mode' => 'cors',
-                'Sec-Fetch-Site' => 'same-origin',
-            ])
-            ->json('GET', '/api/v1/predefinedFilters');
-
-        $response->assertStatus(403);
-    }
 
     public function test_api_request_with_headers_returns_200_response()
     {
@@ -97,10 +79,7 @@ class PredefinedFilterControllerTest extends TestCase
         DB::table('predefined_filter_permissions')->insert([
             'predefined_filter_id' => $filter->id,
             'permission_group_id'  => $group->id,
-            'can_view'             => 1,
             'created_by'           => $user->id,
-            'created_at'           => now(),
-            'updated_at'           => now(),
         ]);
 
         $response = $this->actingAs($user, 'api')->getJson("/api/v1/predefinedFilters/{$filter->id}");
@@ -136,6 +115,7 @@ class PredefinedFilterControllerTest extends TestCase
             ->getJson("/api/v1/predefinedFilters/{$filter->id}");
 
         $response->assertStatus(403);
+        $response->assertJsonFragment(['message' => "You don't have the permissions to see this filter"]);
     }
 
     public function test_user_sees_only_filters_they_have_permission_for()
@@ -153,24 +133,22 @@ class PredefinedFilterControllerTest extends TestCase
         // Filter 1: User has view permission
         $filterWithAccess = PredefinedFilter::factory()->create([
             'name' => 'Viewable Filter',
-            'created_by' => $owner->id, // Not the user, so only permission matters
+            'created_by' => $owner->id,
             'filter_data' => ['status_id' => [1]],
+            'is_public' => 1,
         ]);
 
         // Grant permission to view Filter 1
         DB::table('predefined_filter_permissions')->insert([
             'predefined_filter_id' => $filterWithAccess->id,
             'permission_group_id'  => $group->id,
-            'can_view'             => 1,
             'created_by'           => $user->id,
-            'created_at'           => now(),
-            'updated_at'           => now(),
         ]);
 
         // Filter 2: No permission to view
         $filterWithoutAccess = PredefinedFilter::factory()->create([
             'name' => 'Hidden Filter',
-            'created_by' => $owner->id, // Again, not owned by the user
+            'created_by' => $owner->id, 
             'filter_data' => ['status_id' => [1]],
         ]);
 
@@ -182,5 +160,129 @@ class PredefinedFilterControllerTest extends TestCase
         $response->assertJsonFragment(['name' => 'Viewable Filter']);
         $response->assertJsonMissing(['name' => 'Hidden Filter']);
     }
+
+    public function test_user_can_view_public_filter_with_permission()
+    {
+        $owner = User::factory()->create();
+        $user = User::factory()->create();
+
+        // Create permission group that allows view
+        $group = PermissionGroup::factory()->create([
+            'permissions' => json_encode(['predefinedFilter.view' => '1']),
+        ]);
+
+        // Attach group to user
+        $user->groups()->attach($group->id);
+
+        // Create a public filter owned by someone else
+        $filter = PredefinedFilter::factory()->create([
+            'name' => 'Allowed Public Filter',
+            'created_by' => $owner->id,
+            'filter_data' => ['status_id' => [1]],
+            'is_public' => 1,
+        ]);
+
+        // Grant permission via predefined_filter_permissions pivot table
+        DB::table('predefined_filter_permissions')->insert([
+            'predefined_filter_id' => $filter->id,
+            'permission_group_id' => $group->id,
+            'created_by' => $user->id,
+        ]);
+
+        // Make the request as the user
+        $response = $this->actingAs($user, 'api')
+            ->getJson("/api/v1/predefinedFilters/{$filter->id}");
+
+        $response->assertStatus(200);
+        $response->assertJsonFragment(['name' => 'Allowed Public Filter']);
+    }
+
+    public function test_user_cannot_view_private_filter_they_do_not_own()
+    {
+        $owner = User::factory()->create();
+        $user = User::factory()->create();
+
+        // Create a private filter (not public, no permissions)
+        $filter = PredefinedFilter::factory()->create([
+            'name' => 'Private Filter',
+            'created_by' => $owner->id,
+            'filter_data' => ['status_id' => [2]],
+            'is_public' => 0,
+        ]);
+
+        // No permissions are granted to user
+
+        $response = $this->actingAs($user, 'api')
+            ->getJson("/api/v1/predefinedFilters/{$filter->id}");
+
+        $response->assertStatus(403);
+        $response->assertJsonFragment([
+            'message' => "You don't have the permissions to see this filter"
+        ]);
+    }
+
+    public function test_show_returns_404_if_filter_not_found()
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user, 'api')
+            ->getJson("/api/v1/predefinedFilters/404"); // Nonexistent ID
+
+        $response->assertStatus(404);
+                $response->assertJsonFragment([
+            'message' => "Filter does not exist."
+        ]);
+    }
+
+    public function test_user_with_permission_can_create_public_filter()
+    {
+        $user = User::factory()->create();
+
+        // Attach permission group with predefinedFilter.create permission
+        $group = PermissionGroup::factory()->create([
+            'permissions' => json_encode(['predefinedFilter.create' => '1']),
+        ]);
+        $user->groups()->attach($group->id);
+
+        $payload = [
+            'name' => 'Test Public Filter',
+            'filter_data' => ['status_id' => [1]],
+            'is_public' => true,
+        ];
+
+        $response = $this->actingAs($user, 'api')
+            ->postJson('/api/v1/predefinedFilters', $payload);
+
+        \Log::error('Response: ' . $response->getContent()); 
+
+        $response->assertStatus(201)
+            ->assertJsonFragment([
+                'name' => 'Test Public Filter',
+                'is_public' => true,
+        ]);
+    }
+
+    public function test_user_without_permission_cannot_create_public_filter()
+    {
+        $user = User::factory()->create();
+
+        // No permissions attached to user here
+
+        $payload = [
+            'name' => 'Unauthorized Public Filter',
+            'filter_data' => ['status_id' => [1]],
+            'is_public' => true,
+        ];
+
+        $response = $this->actingAs($user, 'api')
+            ->postJson('/api/v1/predefinedFilters', $payload);
+
+        \Log::error('Response: ' . $response->getContent()); 
+
+        $response->assertStatus(403)
+            ->assertJsonFragment([
+                'message' => "You don't have the permissions to create this public filter",
+        ]);
+}
 }
 

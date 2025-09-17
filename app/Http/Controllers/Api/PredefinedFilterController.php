@@ -17,7 +17,7 @@ class PredefinedFilterController extends Controller
         
         $filters = PredefinedFilter::
             orderBy('name')
-            ->get(['id', 'name']);
+            ->get(['id','name']);
 
         $viewableFilters = [];
 
@@ -25,86 +25,154 @@ class PredefinedFilterController extends Controller
             if ($filter->userHasPermission(auth()->user(), 'view') || $filter->created_by === auth()->user()->id) {
                 $viewableFilters[] = $filter;
             }
-        }
+            
+            return false;
+        })->values();
 
         return response()->json($viewableFilters);
     }
 
     public function show(Request $request, int $id)
     {
-        $this->authorize('view', PredefinedFilter::class);
+        $user = auth()->user();
 
-        $filter = PredefinedFilter::find($id) //find vs findOrFail
-            //->where('created_by', $request->user()->id)
-        ;
+        $filter = PredefinedFilter::find($id);
 
         if (!$filter) {
-            return response()->json(['error' => 'Filter not found'], 404);
+            return response()->json([
+            'message' => trans('admin/predefinedFilters/message.does_not_exist'),
+        ], 404);
         }
 
-        return response()->json($filter->toArray(), 200);
+        if ($filter->created_by == $user->id) {
+            return response()->json($filter->toArray());
+        }
+
+        if ($filter->is_public && $filter->userHasPermission($user,'view')) {
+            return response()->json($filter->toArray());
+        }
+
+        return response()->json([
+            'message' => trans('admin/predefinedFilters/message.show.not_allowed'), 
+        ], 403);
     }
 
     public function store(Request $request): JsonResponse
     {
-        // $this->authorize('create', PredefinedFilter::class);  // TODO: needed? or should everyone be able to create
+        $user = auth()->user();
 
         $rules = (new PredefinedFilter)->getRules();
         $validated = $request->validate($rules);
+
+        if (!empty($validated['is_public'] ?? false)) {  
+            if (!$user->hasAccess('predefinedFilter.create')) {
+                return response()->json([
+            'message' => trans('admin/predefinedFilters/message.create.not_allowed'), 
+            ], 403);}
+        }
+
+        if (!empty($validated['is_public'] ?? false)) {  
+            if (!$user->hasAccess('predefinedFilter.create')) {
+                return response()->json([
+            'message' => trans('admin/predefinedFilters/message.create.not_allowed'), 
+            ], 403);}
+        }
 
         //dump($request);
         $predefined_filter = PredefinedFilter::create([
             'name' => $validated['name'],
             'filter_data' => $validated['filter_data'],
-            'created_by' => $request->user()->id
+            'created_by' => $user->id,
+            'is_public' => $validated['is_public'] ?? 0,
         ]);
 
-        // Weiterleitung zur Detailseite (oder Übersicht)?
         return response()->json([
-            'message' => __('admin/reports/message.create.success'),
+            'message' => trans('admin/predefinedFilters/message.create.success'),
             'filter_data' => $predefined_filter
         ], 201);
     }
 
     public function update(Request $request, int $id): JsonResponse
     {
+        $user = auth()->user();
+
         $filter = PredefinedFilter::find($id);
 
         if (!$filter) {
-            return response()->json(['error' => 'Filter not found'], 404);
+            return response()->json([
+            'message' => ('admin/predefinedFilters/message.does_not_exist'),
+        ], 404);
         }
-        
-        $this->authorize('edit', PredefinedFilter::class);
 
         $rules = (new PredefinedFilter)->getRules();
         $validated = $request->validate($rules);
 
-        $filter->update([
-            'name' => $validated['name'],
-            'filter_data' => $validated['filter_data'],
-        ]);
+        $currentIsPublic = $filter->is_public;
+        $newIsPublic = $validated['is_public'];
 
-        return response()->json([
-            'message' => __('admin/reports/message.update.success'),
-            'filter_data' => $filter
-        ], 200);
-    }
-
-    public function destroy(Request $request, int $id)
-    {
-        $filter = PredefinedFilter::find($id);
-
-        $this->authorize('delete', PredefinedFilter::class);
-
-        if (!$filter) {
-            return response()->json(['error' => 'Filter not found'], 404);
+        if ($filter->created_by === $user->id) {
+        if (!$currentIsPublic && $newIsPublic) {
+            // private -> public requires create permission
+            if (!$user->hasAccess('predefinedFilter.create')) {
+                return response()->json([
+                    'message' => trans('admin/predefinedFilters/message.update.not_allowed_to_change_isPublic'),
+                ], 403);
+            }
+        }
+        } elseif ($currentIsPublic) {
+            if (!$filter->userHasPermission($user, 'update')) {
+                return response()->json([
+                    'message' => trans('admin/predefinedFilters/message.not_allowed_to_edit'),
+                ], 403);
+            }
+        } else {
+            return response()->json([
+                    'message' => trans('admin/predefinedFilters/message.not_allowed_to_edit'),
+            ], 403);
         }
 
-        $filter->delete();
+        $filter->name = $validated['name'];
+        $filter->filter_data = $validated['filter_data'];
+        $filter->is_public = $newIsPublic;
+        $filter->save();
 
         return response()->json([
-            'message'=> __('admin/reports/message.delete.success'),
-        ],204);
+            'message' => trans('admin/predefinedFilters/message.update.success'),
+            'filter_data' => $filter,
+        ], 200);
+    }
+    
+    public function destroy(Request $request, int $id)
+    {
+        $user = auth()->user();
+        
+        $filter = PredefinedFilter::find($id);
+
+        if (!$filter) {
+            return response()->json([
+            'message' => trans('admin/predefinedFilters/message.does_not_exist'),
+        ], 404);
+        }
+
+        if ($filter->created_by === $user->id) {
+            $filter->delete();
+        } elseif ($filter->is_public) {
+            if (!$filter->userHasPermission($user, 'destroy')) {
+                return response()->json([
+                    'message' => trans('admin/predefinedFilters/message.not_allowed_to_delete'),
+                ], 403);
+            }
+            $filter->delete();
+        } else {
+        
+            return response()->json([
+                'message' => trans('admin/predefinedFilters/message.delete.not_allowed_to_delete'),
+            ], 403);
+        }
+
+        return response()->json([
+            'message'=> trans('admin/predefinedFilters/message.delete.success'),
+        ],200);
     }
 
     public function selectlist(Request $request)
