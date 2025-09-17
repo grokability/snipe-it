@@ -34,18 +34,21 @@
         <hr class="filter-content">
         
         <!-- All Filter Fields -->
-<div id="advancedSearchFilters" class="filter-content container">
-    @php
-        $layoutJson = \App\Presenters\AssetPresenter::dataTableLayout();
-        $layout = json_decode($layoutJson);
-    @endphp
+        <div id="advancedSearchFilters" class="filter-content container">
+            @php
+                $layoutJson = \App\Presenters\AssetPresenter::dataTableLayout();
+                $layout = json_decode($layoutJson);
+            @endphp
 
-    @include('partials.advanced-search.search-inputs')
-</div>
+            @include('partials.advanced-search.search-inputs')
+        </div>
 
 
     </div>
     @include ('partials.advanced-search.floating-button')
+    @include ('partials.advanced-search.modal', [
+        'createNew' => false,
+    ])
 </div>
 
 @include('partials.confetti-js', ['autostart' => false])
@@ -89,52 +92,60 @@ class FilterUIController {
 
     storePredefinedFilterInBackend() {
         const filters = this.collector.collect();
-        const name = prompt("Enter the name of the filter");
-        const payload = {
-            name: name,
-            filter_data: filters,
-        };
-        fetchFromBackend('POST', `/api/v1/predefinedFilters`, JSON.stringify(payload))
-        .then((response) => {
-            if(response.message === "Template saved successfully") {
-                alert("Filter stored successfully");
-                if(window.triggerConfetti) window.triggerConfetti();
-            } else {
-                console.error(response);
-                alert("An error has occured. Look in the browser console for more details.");  
-            }
-        })
-        .catch((error) => {
-            console.error(error);
-            alert("An error has occured: " + error);
-        })
+        
+        openFilterCreateUpdateModal(true)
+        .then((input) => {
+            const payload = {
+                name: input.name,
+                filter_data: filters,
+                is_public: input.visibility === "public" ? true : false,
+            };
+            fetchFromBackend('POST', `/api/v1/predefinedFilters`, JSON.stringify(payload))
+            .then((response) => {
+                if(response.message === "Filter created successfully") {
+                    alert("Filter stored successfully");
+                    if(window.triggerConfetti) window.triggerConfetti();
+                } else {
+                    console.error(response);
+                    alert("An error has occured. Look in the browser console for more details.");  
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+                alert("An error has occured: " + error);
+            })
+        });
     }
 
     updatePredefinedFilterInBackend() {
         const selectedFilter = $("#predefinedfilters-select").select2('data')[0]; // Always zero because only one element can be selected at the time
         if (!selectedFilter) return;
         const filters = this.collector.collect();
-        const name = prompt("Enter the name of the filter", selectedFilter.text);
 
-        const payload = {
-            name: name,
-            filter_data: filters,
-        };
+        openFilterCreateUpdateModal(false, selectedFilter.text)
+        .then((input) => {
 
-        fetchFromBackend('PUT', `/api/v1/predefinedFilters/${selectedFilter.id}`, JSON.stringify(payload))
-        .then((response) => {
-            if(response.message === "Template updated successfully") {
-                alert("Filter stored successfully");
-                if(window.triggerConfetti) window.triggerConfetti();
-            } else {
-                console.error(response);
-                alert("An error has occured. Look in the browser console for more details.");  
-            }
-        })
-        .catch((error) => {
-            console.error(error);
-            alert("An error has occured: " + error);
-        })
+            const payload = {
+                name: input.name,
+                filter_data: filters,
+                is_public: input.visibility === "public" ? true : false,
+            };
+            
+            fetchFromBackend('PUT', `/api/v1/predefinedFilters/${selectedFilter.id}`, JSON.stringify(payload))
+            .then((response) => {
+                if(response.message === "Template updated successfully") {
+                    alert("Filter updated successfully");
+                    if(window.triggerConfetti) window.triggerConfetti();
+                } else {
+                    console.error(response);
+                    alert("An error has occured. Look in the browser console for more details.");  
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+                alert("An error has occured: " + error);
+            })
+        });
     }
 
     deletePredefinedFilterFromBackend() {
@@ -327,8 +338,9 @@ Fade-in/out for filter section title and clear text.
     When collapsed, the sidebar is skinny and its content is hidden.
     */
     .filter-sidebar.collapsed {
-        width: 60px;
-        min-width: 60px;
+        width: 85px;
+        min-width: 80px;
+        max-width: 90px;
     }
     
     .filter-sidebar.collapsed .filter-body {

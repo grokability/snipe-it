@@ -27,9 +27,9 @@ class PredefinedFilterController extends Controller
             }
             
             return false;
-        })->values();
+        }#9->values();
 
-        return response()->json($viewableFilters);
+        return response()->json($viewableFilters->toArray());
     }
 
     public function show(Request $request, int $id)
