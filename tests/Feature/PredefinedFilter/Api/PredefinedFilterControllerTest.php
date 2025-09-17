@@ -59,7 +59,7 @@ class PredefinedFilterControllerTest extends TestCase
             'created_by' => $owner->id,
             'is_public'  => 1,
         ]);
-        $this->attachCanView($viewable, $g);
+        $this->linkGroupFilter($viewable, $g);
 
         $hidden = PredefinedFilter::factory()->create([
             'name'       => 'Z Hidden',
@@ -161,7 +161,7 @@ class PredefinedFilterControllerTest extends TestCase
 
 
     // STORE TESTS
-    public function test_store_validates_payload() //CHECK
+    public function test_store_validates_payload()
     {
         $u = User::factory()->create();
 
@@ -184,6 +184,7 @@ class PredefinedFilterControllerTest extends TestCase
             ])
         ->assertCreated();
     }
+
     public function test_store_public_requires_create_permission() //CHECK
     {
         //TODO neue Logik: public speichern erfordert create-Recht
