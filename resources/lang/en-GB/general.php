@@ -688,5 +688,11 @@ return [
 
     'advanced_search' => "Advanced search",
     'search_after_filter_field' => 'Type here to find a field',
+    'predefined_filter_name' => 'Filter Name',
+    'enter_predefined_filter_name' => 'Enter filter name',
+    'visibility' => 'Visibility',
+    'public' => 'Public',
+    'private' => 'Private',
+    'validation_required' => 'Please enter a filter name',
 
 ];

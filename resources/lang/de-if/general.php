@@ -688,5 +688,11 @@ return [
     'months_plural' => '1 Monat|:count Monate',
 
     'search_after_filter_field' => 'Nach einem Feld suchen...',
+    'predefined_filter_name' => 'Filtername',
+    'enter_predefined_filter_name' => 'Gib bitte einen Filternamen ein',
+    'visibility' => 'Sichtbarkeit',
+    'public' => 'Öffentlich',
+    'private' => 'Privat',
+    'validation_required' => 'Gib bitte einen Filternamen ein.',
 
 ];

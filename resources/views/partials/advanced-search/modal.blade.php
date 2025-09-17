@@ -16,9 +16,9 @@
             <div class="modal-body">
                 <!-- Filter Name -->
                 <div class="form-group">
-                    <label for="filterName">{{ trans('general.filter_name') }}</label>
+                    <label for="filterName">{{ trans('general.predefined_filter_name') }}</label>
                     <input type="text" class="form-control" id="filterName"
-                        placeholder="{{ trans('general.enter_filter_name') }}">
+                        placeholder="{{ trans('general.enter_predefined_filter_name') }}">
                 </div>
 
                 <!-- Visibility -->
