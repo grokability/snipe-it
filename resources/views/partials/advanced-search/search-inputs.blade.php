@@ -204,12 +204,11 @@ class SelectFilterInput extends FilterInput {
 
         return Promise.all(requestPromises).then((responses) => {
             responses.forEach((response) => {
-                var option = new Option(response.name, response.id, true, true);
-                $(this.element).append(option).trigger('change');
-            });
-
-            $(this.element).trigger({
-                type: 'select2:select',
+                response.json()
+                .then((responseJson) => {
+                    var option = new Option(responseJson.name, responseJson.id, true, true);
+                    $(this.element).append(option).trigger('change');
+                });
             });
         });
     }
@@ -251,7 +250,7 @@ class AssignedEntityFilterInput extends SelectFilterInput {
 
 
     setValue(newValues) {
-        const requestPromises = newValues.map(({ assignedType, assigned_to }) => {
+       const requestPromises = newValues.map(({ assignedType, assigned_to }) => {
             const type = {
                 "App\\Models\\Asset": "asset",
                 "App\\Models\\Location": "location",
@@ -259,7 +258,12 @@ class AssignedEntityFilterInput extends SelectFilterInput {
             }[assignedType];
 
             return fetchItemFromBackendById(type, assigned_to)
-                .then(response => ({ ...response, assignedType }));
+                .then(response => 
+                    response.json().then(responseJson => ({
+                        ...responseJson,
+                        assignedType
+                    }))
+                );
         });
 
         return Promise.all(requestPromises).then((responses) => {
@@ -273,6 +277,7 @@ class AssignedEntityFilterInput extends SelectFilterInput {
             $(this.element).trigger({ type: 'select2:select' });
         });
     }
+
 }
 
 

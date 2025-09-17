@@ -70,24 +70,36 @@ class FilterUIController {
         });
     }
 
-    async updateFilterWithPredefined(event) {
-        const selectedId = event?.target?.value;
-        if (!selectedId) return;
+updateFilterWithPredefined(event) {
+    const selectedId = event?.target?.value;
+    if (!selectedId) {
+        floatingMenuDisableEditDeleteButtons();
+        return;
+    }
 
-        setAdvancedSearchPanelFilterEnabledState(true);
+    floatingMenuEnableEditDeleteButtons();
+    setAdvancedSearchPanelFilterEnabledState(true);
 
-        try {
-            const filterData = await this.fetchPredefinedFilterData(selectedId);
-            if (!filterData) return;
+    this.fetchPredefinedFilterData(selectedId)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+            return response.json(); // Parse JSON from response
+        })
+        .then(data => {
+            if (!data.filter_data) return;
 
-            await this.collector.setValuesFromResponse(filterData.filter_data); // Await here
-            this.refresh();
-        } catch (err) {
+            return this.collector.setValuesFromResponse(data.filter_data)
+                .then(() => this.refresh());
+        })
+        .catch(err => {
             console.error("Failed to apply predefined filter:", err);
             alert("Failed to apply predefined filter");
             setAdvancedSearchPanelFilterEnabledState(false);
-        }
-    }
+        });
+}
+
 
 
     storePredefinedFilterInBackend() {
@@ -100,9 +112,9 @@ class FilterUIController {
                 filter_data: filters,
                 is_public: input.visibility === "public" ? true : false,
             };
-            fetchFromBackend('POST', `/api/v1/predefinedFilters`, JSON.stringify(payload))
+            fetchFromBackend('POST', '{{ route('api.predefinedFilters.store') }}', JSON.stringify(payload))
             .then((response) => {
-                if(response.message === "Filter created successfully") {
+                if(response.status === 201) {
                     alert("Filter stored successfully");
                     if(window.triggerConfetti) window.triggerConfetti();
                 } else {
@@ -117,7 +129,9 @@ class FilterUIController {
         });
     }
 
-    updatePredefinedFilterInBackend() {
+    updatePredefinedFilterInBackend(updateFilterButtonId) {
+        if (document.getElementById(updateFilterButtonId).classList.contains('disabled')) return; // Do nothing when the button is disabled
+
         const selectedFilter = $("#predefinedfilters-select").select2('data')[0]; // Always zero because only one element can be selected at the time
         if (!selectedFilter) return;
         const filters = this.collector.collect();
@@ -131,9 +145,13 @@ class FilterUIController {
                 is_public: input.visibility === "public" ? true : false,
             };
             
-            fetchFromBackend('PUT', `/api/v1/predefinedFilters/${selectedFilter.id}`, JSON.stringify(payload))
+            const updateUrlTemplate = `{{ route('api.predefinedFilters.update', ['id' => '__ID__']) }}`;
+            const selectedFilterId = selectedFilter.id; // JS context
+            const finalUrl = updateUrlTemplate.replace('__ID__', selectedFilterId);
+
+            fetchFromBackend('PUT', finalUrl, JSON.stringify(payload))
             .then((response) => {
-                if(response.message === "Template updated successfully") {
+                if(response.status === 200) {
                     alert("Filter updated successfully");
                     if(window.triggerConfetti) window.triggerConfetti();
                 } else {
@@ -148,13 +166,19 @@ class FilterUIController {
         });
     }
 
-    deletePredefinedFilterFromBackend() {
+    deletePredefinedFilterFromBackend(deleteFilterButtonId) {
+        if (document.getElementById(deleteFilterButtonId).classList.contains('disabled')) return; // Do nothing when the button is disabled
+
         const selectedId = $("#predefinedfilters-select").select2('data')[0].id; // Always zero because only one element can be selected at the time
         if (!selectedId) return;
 
-        fetchFromBackend('DELETE', `/api/v1/predefinedFilters/${selectedId}`)
+        const updateUrlTemplate = `{{ route('api.predefinedFilters.destroy', ['id' => '__ID__']) }}`;
+        const selectedFilterId = selectedFilter.id; // JS context
+        const finalUrl = updateUrlTemplate.replace('__ID__', selectedFilterId);
+
+        fetchFromBackend('PUT', finalUrl)
         .then((response) => {
-            if(response.message === "Template deleted") {
+            if(response.status === 200) {
                 alert("Filter deleted successfully");
                 if(window.triggerConfetti) window.triggerConfetti();
             } else {
@@ -169,7 +193,10 @@ class FilterUIController {
     }
 
     fetchPredefinedFilterData(filterId) {
-        return fetchFromBackend('GET', `/api/v1/predefinedFilters/${filterId}`);
+        const updateUrlTemplate = `{{ route('api.predefinedFilters.show', ['id' => '__ID__']) }}`;
+        const finalUrl = updateUrlTemplate.replace('__ID__', filterId);
+
+        return fetchFromBackend('GET', finalUrl);
     }
 
     bindEvents() {
@@ -200,12 +227,12 @@ class FilterUIController {
 
         const updateFilterButton = document.getElementById("updateFilterButton");
         if (updateFilterButton) {
-            updateFilterButton.addEventListener('click', () => this.updatePredefinedFilterInBackend());
+            updateFilterButton.addEventListener('click', () => this.updatePredefinedFilterInBackend(updateFilterButton.id));
         }
 
         const deleteFilterButton = document.getElementById("deleteFilterButton");
         if (deleteFilterButton) {
-            deleteFilterButton.addEventListener('click', () => this.deletePredefinedFilterFromBackend());
+            deleteFilterButton.addEventListener('click', () => this.deletePredefinedFilterFromBackend(deleteFilterButton.id));
         }
 
     }
@@ -214,10 +241,25 @@ class FilterUIController {
 document.addEventListener('DOMContentLoaded', function () {
     const tableId = "{{ request()->has('status') ? e(request()->input('status')) : '' }}assetsListingTable";
     const $table = $('#' + tableId);
-
+    
     // Initialize everything
     const controller = new FilterUIController($table);
     controller.bindEvents();
+});
+
+// Filter search functionality
+document.getElementById('filterSearch').addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    const items = document.querySelectorAll('.filter-item');
+    items.forEach(item => {
+        const label = item.querySelector('label');
+        const labelText = label ? label.textContent.toLowerCase() : '';
+        if (labelText.includes(searchTerm)) {
+            item.style.display = '';
+        } else {
+            item.style.display = 'none';
+        }
+    });
 });
 
 function getCsrfToken() {
@@ -236,8 +278,8 @@ function fetchFromBackend(method, path, body = null) {
         ...(body && { body })
     };
 
-    return fetch(path, options)
-        .then(res => res.json());
+    return fetch(path, options);
+        //.then(res => res.json());
 }
 
 function fetchItemFromBackendById(type, id) {
@@ -279,22 +321,6 @@ function setAdvancedSearchPanelFilterEnabledState(state) {
         fields[i].disabled = state;
     }
 }
-
-
-// Filter search functionality
-document.getElementById('filterSearch').addEventListener('input', function(e) {
-    const searchTerm = e.target.value.toLowerCase();
-    const items = document.querySelectorAll('.filter-item');
-    items.forEach(item => {
-        const label = item.querySelector('label');
-        const labelText = label ? label.textContent.toLowerCase() : '';
-        if (labelText.includes(searchTerm)) {
-            item.style.display = '';
-        } else {
-            item.style.display = 'none';
-        }
-    });
-});
 
 </script>
 
