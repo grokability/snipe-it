@@ -12,8 +12,6 @@ use App\Models\User;
 
 class PredefinedFilter extends Model
 {
-
-    // Test
     use HasFactory;
     use SoftDeletes;
     use ValidatingTrait;
@@ -34,7 +32,7 @@ class PredefinedFilter extends Model
     protected $rules = [
         'name'                    => ['required', 'string', 'max:255'],
         'filter_data'             => ['required', 'array'],
-        'is_public' => 'sometimes|boolean'
+        'is_public'               => 'sometimes|boolean'
     ];
 
     public function permissionGroups()

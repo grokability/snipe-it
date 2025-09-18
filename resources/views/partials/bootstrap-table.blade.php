@@ -634,7 +634,8 @@
         'depreciations',
         'fieldsets',
         'groups',
-        'kits'
+        'kits',
+        'predefinedFilters'
     ];
 
     for (var i in formatters) {

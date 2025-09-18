@@ -698,6 +698,14 @@ dir="{{ Helper::determineLanguageDirection() }}">
                                         </li>
                                     @endif
 
+                                    @if(Gate::allows('view', App\Models\predefinedFilters::class) || Gate::allows('view', App\Models\CustomFieldset::class))
+                                        <li {!! (request()->is('predefined-filters*') ? ' class="active"' : '') !!}>
+                                            <a href="{{ route('predefined-filters.index') }}">
+                                                {{ trans('admin/predefinedFilters/general.predefined_filter') }}
+                                            </a>
+                                        </li>
+                                    @endif
+
                                     @can('view', \App\Models\Statuslabel::class)
                                         <li {!! (request()->is('statuslabels*') ? ' class="active"' : '') !!}>
                                             <a href="{{ route('statuslabels.index') }}">

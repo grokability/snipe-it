@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Models\PredefinedFilter;
+use App\Http\Transformers\PredefinedFiltersTransformer;
 
 
 
@@ -36,8 +37,10 @@ class PredefinedFilterController extends Controller
             
             return false;
         })->values();
+        
+        $transformer = new PredefinedFiltersTransformer();
 
-        return response()->json($viewableFilters);
+        return $transformer->transformPredefinedFilters($viewableFilters, $viewableFilters->count());
     }
 
     public function show(Request $request, int $id)
@@ -173,5 +176,72 @@ class PredefinedFilterController extends Controller
         return response()->json([
             'message'=> trans('admin/predefinedFilters/message.delete.success'),
         ],200);
+    }
+
+    // permission endpoints | atm not used
+    public function syncPermissionGroups(Request $request, int $id)
+    {
+        $user = auth()->user();
+
+        $filter = PredefinedFilter::findOrFail($id);
+
+        // Authorization check (only creator or someone with update rights)
+        if ($filter->created_by !== $user->id && !$filter->userHasPermission($user, 'update')) {
+            return response()->json([
+                'message' => trans('admin/predefinedFilters/message.update.not_allowed_to_edit'),
+            ], 403);
+        }
+
+        $groupIds = $request->input('group_ids', []);
+
+        $filter->permissionGroups()->sync($groupIds);
+
+        return response()->json([
+            'message' => 'Permission groups synced successfully.',
+        ], 200);
+    }
+
+    public function attachPermissionsGroup(Request $request, int $id)
+    {
+        // possibly not needed
+        $user = auth()->user();
+
+        $filter = PredefinedFilter::findOrFail($id);
+
+        if ($filter->created_by !== $user->id && !$filter->userHasPermission($user, 'update')) {
+            return response()->json([
+                'message' => trans('admin/predefinedFilters/message.update.not_allowed_to_edit'),
+            ], 403);
+        }
+
+        $groupId = $request->input('group_id');
+
+        $filter->permissionGroups()->attach($groupId);
+
+        return response()->json([
+            'message' => 'Permission group attached successfully.',
+        ], 200);
+    }
+
+    public function detachPermissionsGroups(Request $request, int $id)
+    {
+        // possibly not needed
+        $user = auth()->user();
+
+        $filter = PredefinedFilter::findOrFail($id);
+
+        if ($filter->created_by !== $user->id && !$filter->userHasPermission($user, 'update')) {
+            return response()->json([
+                'message' => trans('admin/predefinedFilters/message.update.not_allowed_to_edit'),
+            ], 403);
+        }
+
+        $groupId = $request->input('group_id');
+
+        $filter->permissionGroups()->detach($groupId);
+
+        return response()->json([
+            'message' => 'Permission group detached successfully.',
+        ], 200);
     }
 }
