@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Models\PredefinedFilter;
+use App\Http\Transformers\PredefinedFiltersTransformer;
 use App\Http\Transformers\SelectlistTransformer;
 
 
@@ -13,23 +14,33 @@ class PredefinedFilterController extends Controller
 {
     public function index(Request $request)
     {
-        $this->authorize('view', PredefinedFilter::class);
-        
-        $filters = PredefinedFilter::
-            orderBy('name')
-            ->get(['id','name']);
+        $user = auth()->user();
 
-        $viewableFilters = [];
+        // Get all Filters
+        $filters = PredefinedFilter::with("permissionGroups")
+            ->orderBy('name')
+            ->get(['id', 'name', 'created_by', 'is_public']);
 
-        foreach ($filters as $filter) {
-            if ($filter->userHasPermission(auth()->user(), 'view') || $filter->created_by === auth()->user()->id) {
-                $viewableFilters[] = $filter;
+
+        // Permission per filter
+
+        $viewableFilters = $filters->filter(function ($filter) use ($user) {
+            //own filter
+            if ($filter->created_by == $user->id) {
+                return true;
             }
-            
-            return false;
-        }#9->values();
 
-        return response()->json($viewableFilters->toArray());
+            // public and view permission
+            if ($filter->is_public && $filter->userHasPermission($user, 'view')) {
+                return true;
+            }
+
+            return false;
+        })->values();
+
+        $transformer = new PredefinedFiltersTransformer();
+
+        return $transformer->transformPredefinedFilters($viewableFilters, $viewableFilters->count());
     }
 
     public function show(Request $request, int $id)
@@ -40,20 +51,20 @@ class PredefinedFilterController extends Controller
 
         if (!$filter) {
             return response()->json([
-            'message' => trans('admin/predefinedFilters/message.does_not_exist'),
-        ], 404);
+                'message' => trans('admin/predefinedFilters/message.does_not_exist'),
+            ], 404);
         }
 
         if ($filter->created_by == $user->id) {
             return response()->json($filter->toArray());
         }
 
-        if ($filter->is_public && $filter->userHasPermission($user,'view')) {
+        if ($filter->is_public && $filter->userHasPermission($user, 'view')) {
             return response()->json($filter->toArray());
         }
 
         return response()->json([
-            'message' => trans('admin/predefinedFilters/message.show.not_allowed'), 
+            'message' => trans('admin/predefinedFilters/message.show.not_allowed'),
         ], 403);
     }
 
@@ -64,18 +75,20 @@ class PredefinedFilterController extends Controller
         $rules = (new PredefinedFilter)->getRules();
         $validated = $request->validate($rules);
 
-        if (!empty($validated['is_public'] ?? false)) {  
+        if (!empty($validated['is_public'] ?? false)) {
             if (!$user->hasAccess('predefinedFilter.create')) {
                 return response()->json([
-            'message' => trans('admin/predefinedFilters/message.create.not_allowed'), 
-            ], 403);}
+                    'message' => trans('admin/predefinedFilters/message.create.not_allowed'),
+                ], 403);
+            }
         }
 
-        if (!empty($validated['is_public'] ?? false)) {  
+        if (!empty($validated['is_public'] ?? false)) {
             if (!$user->hasAccess('predefinedFilter.create')) {
                 return response()->json([
-            'message' => trans('admin/predefinedFilters/message.create.not_allowed'), 
-            ], 403);}
+                    'message' => trans('admin/predefinedFilters/message.create.not_allowed'),
+                ], 403);
+            }
         }
 
         //dump($request);
@@ -100,8 +113,8 @@ class PredefinedFilterController extends Controller
 
         if (!$filter) {
             return response()->json([
-            'message' => ('admin/predefinedFilters/message.does_not_exist'),
-        ], 404);
+                'message' => ('admin/predefinedFilters/message.does_not_exist'),
+            ], 404);
         }
 
         $rules = (new PredefinedFilter)->getRules();
@@ -111,14 +124,14 @@ class PredefinedFilterController extends Controller
         $newIsPublic = $validated['is_public'];
 
         if ($filter->created_by === $user->id) {
-        if (!$currentIsPublic && $newIsPublic) {
-            // private -> public requires create permission
-            if (!$user->hasAccess('predefinedFilter.create')) {
-                return response()->json([
-                    'message' => trans('admin/predefinedFilters/message.update.not_allowed_to_change_isPublic'),
-                ], 403);
+            if (!$currentIsPublic && $newIsPublic) {
+                // private -> public requires create permission
+                if (!$user->hasAccess('predefinedFilter.create')) {
+                    return response()->json([
+                        'message' => trans('admin/predefinedFilters/message.update.not_allowed_to_change_isPublic'),
+                    ], 403);
+                }
             }
-        }
         } elseif ($currentIsPublic) {
             if (!$filter->userHasPermission($user, 'update')) {
                 return response()->json([
@@ -127,31 +140,31 @@ class PredefinedFilterController extends Controller
             }
         } else {
             return response()->json([
-                    'message' => trans('admin/predefinedFilters/message.not_allowed_to_edit'),
+                'message' => trans('admin/predefinedFilters/message.not_allowed_to_edit'),
             ], 403);
         }
 
         $filter->name = $validated['name'];
         $filter->filter_data = $validated['filter_data'];
         $filter->is_public = $newIsPublic;
-        $filter->save();
-
+        dump($filter->toRawSql());
+        $filter->update();
         return response()->json([
             'message' => trans('admin/predefinedFilters/message.update.success'),
             'filter_data' => $filter,
         ], 200);
     }
-    
+
     public function destroy(Request $request, int $id)
     {
         $user = auth()->user();
-        
+
         $filter = PredefinedFilter::find($id);
 
         if (!$filter) {
             return response()->json([
-            'message' => trans('admin/predefinedFilters/message.does_not_exist'),
-        ], 404);
+                'message' => trans('admin/predefinedFilters/message.does_not_exist'),
+            ], 404);
         }
 
         if ($filter->created_by === $user->id) {
@@ -164,15 +177,82 @@ class PredefinedFilterController extends Controller
             }
             $filter->delete();
         } else {
-        
+
             return response()->json([
                 'message' => trans('admin/predefinedFilters/message.delete.not_allowed_to_delete'),
             ], 403);
         }
 
         return response()->json([
-            'message'=> trans('admin/predefinedFilters/message.delete.success'),
-        ],200);
+            'message' => trans('admin/predefinedFilters/message.delete.success'),
+        ], 200);
+    }
+
+    // permission endpoints | atm not used
+    public function syncPermissionGroups(Request $request, int $id)
+    {
+        $user = auth()->user();
+
+        $filter = PredefinedFilter::findOrFail($id);
+
+        // Authorization check (only creator or someone with update rights)
+        if ($filter->created_by !== $user->id && !$filter->userHasPermission($user, 'update')) {
+            return response()->json([
+                'message' => trans('admin/predefinedFilters/message.update.not_allowed_to_edit'),
+            ], 403);
+        }
+
+        $groupIds = $request->input('group_ids', []);
+
+        $filter->permissionGroups()->sync($groupIds);
+
+        return response()->json([
+            'message' => 'Permission groups synced successfully.',
+        ], 200);
+    }
+
+    public function attachPermissionsGroup(Request $request, int $id)
+    {
+        // possibly not needed
+        $user = auth()->user();
+
+        $filter = PredefinedFilter::findOrFail($id);
+
+        if ($filter->created_by !== $user->id && !$filter->userHasPermission($user, 'update')) {
+            return response()->json([
+                'message' => trans('admin/predefinedFilters/message.update.not_allowed_to_edit'),
+            ], 403);
+        }
+
+        $groupId = $request->input('group_id');
+
+        $filter->permissionGroups()->attach($groupId);
+
+        return response()->json([
+            'message' => 'Permission group attached successfully.',
+        ], 200);
+    }
+
+    public function detachPermissionsGroups(Request $request, int $id)
+    {
+        // possibly not needed
+        $user = auth()->user();
+
+        $filter = PredefinedFilter::findOrFail($id);
+
+        if ($filter->created_by !== $user->id && !$filter->userHasPermission($user, 'update')) {
+            return response()->json([
+                'message' => trans('admin/predefinedFilters/message.update.not_allowed_to_edit'),
+            ], 403);
+        }
+
+        $groupId = $request->input('group_id');
+
+        $filter->permissionGroups()->detach($groupId);
+
+        return response()->json([
+            'message' => 'Permission group detached successfully.',
+        ], 200);
     }
 
     public function selectlist(Request $request)
@@ -184,7 +264,7 @@ class PredefinedFilterController extends Controller
         ]);
 
         if ($request->filled('search')) {
-            $predefinedFilters = $predefinedFilters->where('name', 'LIKE', '%'.$request->get('search').'%');
+            $predefinedFilters = $predefinedFilters->where('name', 'LIKE', '%' . $request->get('search') . '%');
         }
 
         $predefinedFilters = $predefinedFilters->orderBy('name', 'ASC')->paginate(50);
@@ -199,6 +279,4 @@ class PredefinedFilterController extends Controller
 
         return (new SelectlistTransformer)->transformSelectlist($predefinedFilters);
     }
-
-
 }

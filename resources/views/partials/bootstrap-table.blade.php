@@ -634,6 +634,7 @@
         'groups',
         'hardware',
         'kits',
+        'predefinedFilters',
         'licenses',
         'locations',
         'maintenances',
