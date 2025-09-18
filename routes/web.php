@@ -18,7 +18,6 @@ use App\Http\Controllers\ManufacturersController;
 use App\Http\Controllers\ModalController;
 use App\Http\Controllers\NotesController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\PredefinedFilterController;
 use App\Http\Controllers\ReportTemplatesController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\SettingsController;

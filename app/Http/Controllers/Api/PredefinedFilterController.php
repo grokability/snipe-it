@@ -103,7 +103,7 @@ class PredefinedFilterController extends Controller
 
         if (!$filter) {
             return response()->json([
-            'message' => ('admin/predefinedFilters/message.does_not_exist'),
+            'message' => trans('admin/predefinedFilters/message.does_not_exist'),
         ], 404);
         }
 
@@ -115,7 +115,7 @@ class PredefinedFilterController extends Controller
 
         if (empty($validated['filter_data'])){
             return response()->json([
-                    'message' => trans('admin/predefinedFilters/message.update.filterData_required'),// TODO
+                    'message' => trans('admin/predefinedFilters/message.update.filterData_required'),
                 ], 400);
         }
 

@@ -635,7 +635,7 @@
         'fieldsets',
         'groups',
         'kits',
-        'predefinedFilters'
+        'predefined-filters'
     ];
 
     for (var i in formatters) {
