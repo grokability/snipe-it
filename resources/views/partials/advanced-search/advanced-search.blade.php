@@ -363,25 +363,6 @@ Fade-in/out for filter section title and clear text.
     /* 
     When collapsed, the sidebar is skinny and its content is hidden.
     */
-    .filter-sidebar.collapsed {
-        width: 85px;
-        min-width: 80px;
-        max-width: 90px;
-    }
-    
-    .filter-sidebar.collapsed .filter-body {
-        padding: 0;
-        max-height: 0;
-    }
-    
-    .filter-sidebar.collapsed .filter-content {
-        display: none;
-    }
-    
-    .filter-sidebar.collapsed .filter-title,
-    .filter-sidebar.collapsed .clear-text {
-        display: none;
-    }
 }
 
 /* ---------- Mobile/Tablet styles ---------- */
@@ -397,21 +378,6 @@ Fade-in/out for filter section title and clear text.
     /* 
     Collapsed sidebar hides content and disables interaction.
     */
-    .filter-sidebar.collapsed .filter-body {
-        max-height: 0;
-        padding-top: 0;
-        padding-bottom: 0;
-    }
-    
-    .filter-sidebar.collapsed .filter-content {
-        opacity: 0;
-        pointer-events: none;
-    }
-    
-    .filter-sidebar.collapsed .filter-title,
-    .filter-sidebar.collapsed .clear-text {
-        opacity: 0.7;
-    }
 }
 
 /* 
@@ -464,9 +430,6 @@ On desktop, take up all available vertical height.
 /* 
 Button blocks have a little space between each for clarity.
 */
-.btn-block {
-    margin-bottom: 5px;
-}
 
 /* 
 Custom thin scrollbar for the filter area.

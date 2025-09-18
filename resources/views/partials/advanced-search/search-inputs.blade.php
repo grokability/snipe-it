@@ -398,12 +398,4 @@ Spacing for label text in advanced search.
     margin-bottom: 5px;
 }
 
-/* 
-Make selects stretch to fill the available width.
-*/
-.advancedSearchItemContainer select.form-control {
-    width: 100%;
-    box-sizing: border-box;
-}
-
 </style>

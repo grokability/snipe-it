@@ -1,18 +1,18 @@
-<div id="floatingButtonContainer" class="fab-fixed-wrapper">
-    <button id="filterButton" type="button" class="fab" id="searchButton" title="Search" aria-label="Search">
+<div id="floatingButtonContainer" class="floatingButtons-fab-fixed-wrapper">
+    <button id="filterButton" type="button" class="floatingButtons-fab" id="searchButton" title="Search" aria-label="Search">
         <i class="fa-solid fa-magnifying-glass"></i>
     </button>
 
-    <button type="button" class="fab" id="menuToggleButton" title="Menu" aria-label="Toggle menu" aria-haspopup="true"
+    <button type="button" class="floatingButtons-fab" id="menuToggleButton" title="Menu" aria-label="Toggle menu" aria-haspopup="true"
         aria-expanded="false" aria-controls="fabMenu">
         <i class="fa-solid fa-bars"></i>
     </button>
 
     <br />
-    <div class="menu" id="fabMenu" role="menu" aria-labelledby="menuToggleButton">
-        <a href="#" id="storeFilterButton" class="menuButton" role="menuitem" tabindex="1">{{ trans('button.save_predefined_filter_as') }}</a>
-        <a href="#" id="updateFilterButton" class="menuButton disabled" role="menuitem" tabindex="2">{{ trans('button.update_predefined_filter') }}</a>
-        <a href="#" id="deleteFilterButton" class="menuButton disabled" role="menuitem" tabindex="3">{{ trans('button.delete_predefined_filter') }}</a>
+    <div class="floatingButtons-menu" id="fabMenu" role="menu" aria-labelledby="menuToggleButton">
+        <a href="#" id="storeFilterButton" class="floatingButtons-menuButton" role="menuitem" tabindex="1">{{ trans('button.save_predefined_filter_as') }}</a>
+        <a href="#" id="updateFilterButton" class="floatingButtons-menuButton floatingButtons-disabled" role="menuitem" tabindex="2">{{ trans('button.update_predefined_filter') }}</a>
+        <a href="#" id="deleteFilterButton" class="floatingButtons-menuButton floatingButtons-disabled" role="menuitem" tabindex="3">{{ trans('button.delete_predefined_filter') }}</a>
     </div>
 </div>
 
@@ -70,13 +70,13 @@
     }
 
     function floatingMenuEnableEditDeleteButtons() {
-        document.getElementById("updateFilterButton").classList.remove('disabled');
-        document.getElementById("deleteFilterButton").classList.remove('disabled');
+        document.getElementById("updateFilterButton").classList.remove('floatingButtons-disabled');
+        document.getElementById("deleteFilterButton").classList.remove('floatingButtons-disabled');
     }
 
     function floatingMenuDisableEditDeleteButtons() {
-        document.getElementById("updateFilterButton").classList.add('disabled');
-        document.getElementById("deleteFilterButton").classList.add('disabled');
+        document.getElementById("updateFilterButton").classList.add('floatingButtons-disabled');
+        document.getElementById("deleteFilterButton").classList.add('floatingButtons-disabled');
     }
 
     // Toggle menu on button click
@@ -111,7 +111,7 @@
         }
     });
 
-    const menuButtonItems = document.querySelectorAll(".menuButton");
+    const menuButtonItems = document.querySelectorAll(".floatingButtons-menuButton");
     menuButtonItems.forEach((item) => {
         item.addEventListener("click", closeMenu);
     });
@@ -124,7 +124,7 @@
 
 <style>
     /* Fix the buttons to bottom of screen */
-    .fab-fixed-wrapper {
+    .floatingButtons-fab-fixed-wrapper {
         position: fixed;
         bottom: 20px;
         left: 10.5vw;
@@ -136,22 +136,19 @@
     }
 
     /* Limit width to match container if needed */
-    #advancedSearchFilters {
-        position: relative;
-    }
 
     /* Optional: align wrapper to container width */
-    .fab-fixed-wrapper {
+    .floatingButtons-fab-fixed-wrapper {
         padding: 0 15px;
     }
 
     /* Center inner buttons within max-width */
-    .fab-fixed-wrapper {
+    .floatingButtons-fab-fixed-wrapper {
         justify-content: center;
     }
 
     /* FAB style */
-    .fab {
+    .floatingButtons-fab {
         width: 50px;
         height: 50px;
         border-radius: 50%;
@@ -166,27 +163,13 @@
         transition: background 0.3s;
     }
 
-    .fab:hover {
+    .floatingButtons-fab:hover {
         background-color: var(--button-hover);
     }
 
-    #menuToggle {
-        display: none;
-    }
-
     /* Label to toggle menu */
-    .menu-button-label {
-        position: absolute;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(38px);
-        width: 56px;
-        height: 56px;
-        cursor: pointer;
-        z-index: 101;
-    }
 
-    .menu {
+    .floatingButtons-menu {
         position: absolute;
         bottom: 6vh;
         left: 50%;
@@ -201,26 +184,22 @@
         z-index: -99;
     }
 
-    .menu a {
+    .floatingButtons-menu a {
         padding: 10px 10px;
         text-decoration: none;
         color: #333;
         border-bottom: 1px solid #eee;
     }
 
-    .menu a:last-child {
+    .floatingButtons-menu a:last-child {
         border-bottom: none;
     }
 
-    .menu a:hover {
+    .floatingButtons-menu a:hover {
         background-color: #f8f8f8;
     }
 
-    #menuToggle:checked~.floating-span .menu {
-        display: flex;
-    }
-
-    .disabled {
+    .floatingButtons-disabled {
         cursor: not-allowed;
         opacity: 0.3;
     }
