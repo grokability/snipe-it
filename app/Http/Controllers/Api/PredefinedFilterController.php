@@ -113,6 +113,12 @@ class PredefinedFilterController extends Controller
         $currentIsPublic = $filter->is_public;
         $newIsPublic = $validated['is_public'];
 
+        if (empty($validated['filter_data'])){
+            return response()->json([
+                    'message' => trans('admin/predefinedFilters/message.update.filterData_required'),// TODO
+                ], 400);
+        }
+
         if ($filter->created_by === $user->id) {
         if (!$currentIsPublic && $newIsPublic) {
             // private -> public requires create permission
