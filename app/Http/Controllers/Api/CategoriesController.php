@@ -38,6 +38,8 @@ class CategoriesController extends Controller
             'consumables_count',
             'components_count',
             'licenses_count',
+            'created_at',
+            'updated_at',
             'image',
             'notes',
         ];

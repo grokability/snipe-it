@@ -78,6 +78,13 @@ class Ldap extends Model
         if (env('LDAPTLS_CACERT')) {
             putenv('LDAPTLS_CACERT='.env('LDAPTLS_CACERT'));
         }
+        // You _were_ allowed to do this *after* the ldap_connect() in some versions of PHP, but it's not how they want
+        // you to anymore, and it seems to not work at all in later PHP versions.
+        if (Setting::getSettings()->ldap_client_tls_cert && Setting::getSettings()->ldap_client_tls_key) {
+            ldap_set_option(null, LDAP_OPT_X_TLS_CERTFILE, Setting::get_client_side_cert_path());
+            ldap_set_option(null, LDAP_OPT_X_TLS_KEYFILE, Setting::get_client_side_key_path());
+        }
+
         $connection = @ldap_connect($ldap_host);
 
         if (! $connection) {
@@ -88,11 +95,6 @@ class Ldap extends Model
         ldap_set_option($connection, LDAP_OPT_REFERRALS, 0);
         ldap_set_option($connection, LDAP_OPT_PROTOCOL_VERSION, $ldap_version);
         ldap_set_option($connection, LDAP_OPT_NETWORK_TIMEOUT, 20);
-
-        if (Setting::getSettings()->ldap_client_tls_cert && Setting::getSettings()->ldap_client_tls_key) {
-            ldap_set_option(null, LDAP_OPT_X_TLS_CERTFILE, Setting::get_client_side_cert_path());
-            ldap_set_option(null, LDAP_OPT_X_TLS_KEYFILE, Setting::get_client_side_key_path());
-        }
 
         if ($ldap_use_tls=='1') {
             ldap_start_tls($connection);

@@ -31,11 +31,11 @@ class LicensesTransformer
             'purchase_order' => ($license->purchase_order) ? e($license->purchase_order) : null,
             'purchase_date' => Helper::getFormattedDateObject($license->purchase_date, 'date'),
             'termination_date' => Helper::getFormattedDateObject($license->termination_date, 'date'),
+            'expiration_date' => Helper::getFormattedDateObject($license->expiration_date, 'date'),
             'depreciation' => ($license->depreciation) ? ['id' => (int) $license->depreciation->id,'name'=> e($license->depreciation->name)] : null,
             'purchase_cost' => Helper::formatCurrencyOutput($license->purchase_cost),
             'purchase_cost_numeric' => $license->purchase_cost,
             'notes' => Helper::parseEscapedMarkedownInline($license->notes),
-            'expiration_date' => Helper::getFormattedDateObject($license->expiration_date, 'date'),
             'seats' => (int) $license->seats,
             'free_seats_count' => (int) $license->free_seats_count - License::unReassignableCount($license),
             'remaining' => (int) $license->free_seats_count,
@@ -54,7 +54,7 @@ class LicensesTransformer
             'updated_at' => Helper::getFormattedDateObject($license->updated_at, 'datetime'),
             'deleted_at' => Helper::getFormattedDateObject($license->deleted_at, 'datetime'),
             'user_can_checkout' => (bool) ($license->free_seats_count > 0),
-
+            'disabled' => $license->isInactive(),
         ];
 
         $permissions_array['available_actions'] = [

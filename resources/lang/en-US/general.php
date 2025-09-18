@@ -309,10 +309,12 @@ return [
     'total_licenses'		=> 'total licenses',
     'total_accessories'		=> 'total accessories',
     'total_consumables'		=> 'total consumables',
+    'total_cost'			=> 'Total Cost',
     'type'  				=> 'Type',
     'undeployable'			=> 'Un-deployable',
     'unknown_admin'			=> 'Unknown Admin',
     'unknown_user'          => 'Unknown User',
+    'unit_cost'				=> 'Unit Cost',
     'username'              => 'Username',
     'update'                => 'Update',
     'updating_item' => 'Updating :item',
@@ -589,6 +591,7 @@ return [
         'components'  => ':count Component|:count Components',
     ],
 
+    'show_inactive' => 'Expired or Terminated',
     'more_info' => 'More Info',
     'quickscan_bulk_help' => 'Checking this box will edit the asset record to reflect this new location. Leaving it unchecked will simply note the location in the audit log. Note that if this asset is checked out, it will not change the location of the person, asset or location it is checked out to.',
     'whoops' => 'Whoops!',
@@ -614,6 +617,7 @@ return [
     'footer_credit' => '<a target="_blank" href="https://snipeitapp.com" rel="noopener">Snipe-IT</a> is open source software, made with <i class="fa fa-heart" aria-hidden="true" style="color: #a94442; font-size: 10px" /></i><span class="sr-only">love</span> by <a href="https://bsky.app/profile/snipeitapp.com" rel="noopener">@snipeitapp.com</a>.',
     'set_password' => 'Set a Password',
     'upload_deleted'        => 'Upload Deleted',
+    'child_locations' => 'Child Locations',
 
 // Add form placeholders here
     'placeholders' => [

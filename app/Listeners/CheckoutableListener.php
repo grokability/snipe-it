@@ -96,9 +96,19 @@ class CheckoutableListener
 
             if (!empty($to)) {
                 try {
-                    Mail::to(array_flatten($to))->send($mailable->locale($notifiable->locale));
-                    Mail::to(array_flatten($cc))->send($mailable->locale(Setting::getSettings()->locale));
+                    $toMail = (clone $mailable)->locale($notifiable->locale);
+                    Mail::to(array_flatten($to))->send($toMail);
                     Log::info('Checkout Mail sent to checkout target');
+                } catch (ClientException $e) {
+                    Log::debug("Exception caught during checkout email: " . $e->getMessage());
+                } catch (Exception $e) {
+                    Log::debug("Exception caught during checkout email: " . $e->getMessage());
+                }
+            }
+            if (!empty($cc)) {
+                try {
+                    $ccMail = (clone $mailable)->locale(Setting::getSettings()->locale);
+                    Mail::to(array_flatten($cc))->send($ccMail);
                 } catch (ClientException $e) {
                     Log::debug("Exception caught during checkout email: " . $e->getMessage());
                 } catch (Exception $e) {
@@ -179,16 +189,26 @@ class CheckoutableListener
 
             [$to, $cc] = $this->generateEmailRecipients($shouldSendEmailToUser, $shouldSendEmailToAlertAddress, $notifiable);
 
-            try {
-                if (!empty($to)) {
-                    Mail::to(array_flatten($to))->send($mailable->locale($notifiable->locale));
-                    Mail::to(array_flatten($cc))->send($mailable->locale(Setting::getSettings()->locale));
-                    Log::info('Checkin Mail sent to CC addresses');
+            if (!empty($to)) {
+                try {
+                    $toMail = (clone $mailable)->locale($notifiable->locale);
+                    Mail::to(array_flatten($to))->send($toMail);
+                    Log::info('Checkin Mail sent to checkin target');
+                } catch (ClientException $e) {
+                    Log::debug("Exception caught during checkin email: " . $e->getMessage());
+                } catch (Exception $e) {
+                    Log::debug("Exception caught during checkin email: " . $e->getMessage());
                 }
-            } catch (ClientException $e) {
-                Log::debug("Exception caught during checkin email: " . $e->getMessage());
-            } catch (Exception $e) {
-                Log::debug("Exception caught during checkin email: " . $e->getMessage());
+            }
+            if (!empty($cc)) {
+                try {
+                    $ccMail = (clone $mailable)->locale(Setting::getSettings()->locale);
+                    Mail::to(array_flatten($cc))->send($ccMail);
+                } catch (ClientException $e) {
+                    Log::debug("Exception caught during checkin email: " . $e->getMessage());
+                } catch (Exception $e) {
+                    Log::debug("Exception caught during checkin email: " . $e->getMessage());
+                }
             }
         }
 

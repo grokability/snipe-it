@@ -7,6 +7,7 @@ use App\Models\Traits\CompanyableChildTrait;
 use App\Notifications\CheckinLicenseNotification;
 use App\Notifications\CheckoutLicenseNotification;
 use App\Presenters\Presentable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -63,6 +64,21 @@ class LicenseSeat extends SnipeModel implements ICompanyableChild
     {
         return $this->license->getEula();
     }
+
+    protected function name(): Attribute
+    {
+        return Attribute:: make(
+            get: fn(mixed $value) => $this->license->name,
+        );
+    }
+
+    protected function displayName(): Attribute
+    {
+        return Attribute:: make(
+            get: fn(mixed $value) => $this->license->name,
+        );
+    }
+
 
     /**
      * Establishes the seat -> license relationship

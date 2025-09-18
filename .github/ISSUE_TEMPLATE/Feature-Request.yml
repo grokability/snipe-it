@@ -1,0 +1,38 @@
+name: Feature Request
+description: Request a new feature.
+title: "[Feature]: "
+projects: ["grokability/snipe-it"]
+type: feature
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this feature request! Please make sure to search the existing issues in this repository to see if your feature has already been requested, and feel free to add your context to any existing requests.
+        
+        **Please write your issue in English.** You can use tools like [DeepL](https://www.deepl.com) or [Google Translate](https://translate.google.com/) to translate if necessary. 
+        
+         **If you choose to upload screenshots or videos (which we always encourage), please make sure they do not contain any sensitive information.**
+  - type: input
+    id: version
+    attributes:
+      label: Snipe-IT Version
+      description: What version of Snipe-IT are you currently running? You can find the version number in the footer of any page in Snipe-IT.
+      placeholder: ex. v8.3.1 - build 19577 (master)
+    validations:
+      required: true
+  - type: textarea
+    id: feature-description
+    attributes:
+      label: How can we help?
+      description: Let us know in detail what feature you'd like to see added. While we can't promise to implement every feature request, we do read every one and take them into consideration when planning future releases.
+      placeholder: Tell us what you'd like to see in Snipe-IT! (Be nice!)
+    validations:
+      required: true
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/grokability/snipe-it/blob/master/CODE_OF_CONDUCT.md).
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true

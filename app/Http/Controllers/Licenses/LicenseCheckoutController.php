@@ -25,7 +25,7 @@ class LicenseCheckoutController extends Controller
      * @author [A. Gianotto] [<snipe@snipe.net>]
      * @since [v1.0]
      * @param $id
-     * @return \Illuminate\Contracts\View\View
+     * @return \Illuminate\Contracts\View\View |\Illuminate\Http\RedirectResponse
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function create(License $license)
@@ -37,6 +37,11 @@ class LicenseCheckoutController extends Controller
             // Make sure there is at least one available to checkout
             if ($license->availCount()->count() < 1) {
                 return redirect()->route('licenses.index')->with('error', trans('admin/licenses/message.checkout.not_enough_seats'));
+            }
+
+            // Make sure the license is expired or terminated
+            if ($license->isInactive()) {
+                return redirect()->route('licenses.index')->with('error', trans('admin/licenses/message.checkout.license_is_inactive'));
             }
 
             // We don't currently allow checking out licenses to locations, so we'll reset that to user if needed
@@ -70,7 +75,18 @@ class LicenseCheckoutController extends Controller
             return redirect()->route('licenses.index')->with('error', trans('admin/licenses/message.not_found'));
         }
 
+
         $this->authorize('checkout', $license);
+
+        // Make sure there is at least one available to checkout
+        if ($license->availCount()->count() < 1) {
+            return redirect()->route('licenses.index')->with('error', trans('admin/licenses/message.checkout.not_enough_seats'));
+        }
+
+        // Make sure the license is expired or terminated
+        if ($license->isInactive()) {
+            return redirect()->route('licenses.index')->with('error', trans('admin/licenses/message.checkout.license_is_inactive'));
+        }
 
         $licenseSeat = $this->findLicenseSeatToCheckout($license, $seatId);
         $licenseSeat->created_by = auth()->id();
@@ -113,6 +129,7 @@ class LicenseCheckoutController extends Controller
             
             throw new \Illuminate\Http\Exceptions\HttpResponseException(redirect()->route('licenses.index')->with('error', trans('admin/licenses/message.checkout.not_enough_seats')));
         }
+
 
         if (! $licenseSeat->license->is($license)) {
             throw new \Illuminate\Http\Exceptions\HttpResponseException(redirect()->route('licenses.index')->with('error', trans('admin/licenses/message.checkout.mismatch')));

@@ -162,7 +162,6 @@ class Asset extends Depreciable
         'eol_explicit',
         'last_audit_date',
         'next_audit_date',
-        'asset_eol_date',
         'last_checkin',
         'last_checkout',
     ];
@@ -826,21 +825,26 @@ class Asset extends Depreciable
      * @since  [v2.0]
      * @return mixed
      */
-    public static function getExpiringWarrantee($days = 30)
+    public static function getExpiringWarrantyOrEol($days = 30)
     {
-        $days = (is_null($days)) ? 30 : $days;
-
-        return self::where('archived', '=', '0') // this can stay for right now, as `archived` defaults to 0 at the db level, but should probably be replaced with assetstatus->archived?
-            ->whereNotNull('warranty_months')
-            ->whereNotNull('purchase_date')
-            ->whereNull('deleted_at')
+        
+        return self::where('archived', '=', '0')
             ->NotArchived()
-            ->whereRaw(
-                'DATE_ADD(`purchase_date`, INTERVAL `warranty_months` MONTH) <= DATE_ADD(NOW(), INTERVAL '
-                . $days
-                . ' DAY) AND DATE_ADD(`purchase_date`, INTERVAL `warranty_months` MONTH) > NOW()'
-            )
-            ->orderByRaw('DATE_ADD(`purchase_date`,INTERVAL `warranty_months` MONTH)')
+            ->whereNull('deleted_at')
+            ->where(function ($query) use ($days) {
+                // Check for manual asset EOL first
+                $query->where(function ($query) use ($days) {
+                    $query->whereNotNull('asset_eol_date')
+                        ->whereBetween('asset_eol_date', [Carbon::now(), Carbon::now()->addDays($days)]);
+                // Otherwise use the warranty months + purchase date + threshold
+                })->orWhere(function ($query) use ($days) {
+                    $query->whereNotNull('purchase_date')
+                        ->whereNotNull('warranty_months')
+                        ->whereBetween('purchase_date', [Carbon::now(), Carbon::now()->addMonths('assets.warranty_months')->addDays($days)]);
+                });
+            })
+            ->orderBy('asset_eol_date', 'ASC')
+            ->orderBy('purchase_date', 'ASC')
             ->get();
     }
 
@@ -1021,31 +1025,6 @@ class Asset extends Depreciable
         return false;
     }
 
-
-    /**
-     * Checks for a category-specific EULA, and if that doesn't exist,
-     * checks for a settings level EULA
-     *
-     * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since  [v4.0]
-     * @return string | false
-     */
-    public function getEula()
-    {
-
-        if (($this->model) && ($this->model->category)) {
-            if (($this->model->category->eula_text) && ($this->model->category->use_default_eula == 0)) {
-                return Helper::parseEscapedMarkedown($this->model->category->eula_text);
-            } elseif ($this->model->category->use_default_eula == 1) {
-                return Helper::parseEscapedMarkedown(Setting::getSettings()->default_eula_text);
-            } else {
-
-                return false;
-            }
-        }
-
-        return false;
-    }
     public function getComponentCost()
     {
         $cost = 0;

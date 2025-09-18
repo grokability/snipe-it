@@ -26,6 +26,12 @@ class LicensesController extends Controller
 
         $licenses = License::with('company', 'manufacturer', 'supplier','category', 'adminuser')->withCount('freeSeats as free_seats_count');
 
+        if ($request->input('status')=='inactive') {
+            $licenses->ExpiredLicenses();
+        } else {
+            $licenses->ActiveLicenses();
+        }
+
         if ($request->filled('company_id')) {
             $licenses->where('licenses.company_id', '=', $request->input('company_id'));
         }
@@ -93,6 +99,8 @@ class LicensesController extends Controller
         if ($request->input('deleted')=='true') {
             $licenses->onlyTrashed();
         }
+
+
 
         // Make sure the offset and limit are actually integers and do not exceed system limits
         $offset = ($request->input('offset') > $licenses->count()) ? $licenses->count() : app('api_offset_value');

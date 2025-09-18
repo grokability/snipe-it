@@ -61,7 +61,7 @@ use NotificationChannels\MicrosoftTeams\MicrosoftTeamsMessage;
             ->from(($this->settings->webhook_botname) ? $this->settings->webhook_botname : 'Snipe-Bot')
             ->to($channel)
             ->attachment(function ($attachment) {
-                $item = $this->params['item'];
+                $item = $this->params['item'] ?? null;
                 $admin_user = $this->params['admin'];
                 $fields = [
                     'By' => '<'.$admin_user->present()->viewUrl().'|'.$admin_user->display_name.'>',

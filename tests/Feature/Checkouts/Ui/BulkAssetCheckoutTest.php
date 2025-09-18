@@ -58,7 +58,7 @@ class BulkAssetCheckoutTest extends TestCase
             $this->assertHasTheseActionLogs($asset, ['create', 'checkout']); //Note: '$this' gets auto-bound in closures, so this does work.
         });
 
-        Mail::assertSent(CheckoutAssetMail::class, 4);
+        Mail::assertSent(CheckoutAssetMail::class, 2);
         Mail::assertSent(CheckoutAssetMail::class, function (CheckoutAssetMail $mail) {
             return $mail->hasTo('someone@example.com');
         });

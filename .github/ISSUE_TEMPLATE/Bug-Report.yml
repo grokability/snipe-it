@@ -1,0 +1,105 @@
+name: Bug Report
+description: File a bug report.
+title: "[Bug]: "
+projects: ["grokability/snipe-it"]
+type: bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report! Most issues are documented in the [Snipe-IT repository's issues](https://github.com/grokability/snipe-it/issues) or in the official [Common Issues section of the Documentation](https://snipe-it.readme.io/docs/common-issues#/) and are due to the following:
+        
+        - `.env` misconfiguration
+        - [Server Permissions](https://snipe-it.readme.io/docs/debugging-permissions#/)
+        - [Database Migrations](https://snipe-it.readme.io/docs/database-issues#run-migrations)
+        
+        Please make sure you've checked these resources before submitting a new issue. If you find an existing issue, please add your context to it instead of opening a new issue. If your issue is more of a question, consider [opening a new discussion](https://github.com/grokability/snipe-it/discussions) or [pop by our Discord](https://discord.gg/yZFtShAcKk) instead of creating an issue.
+        
+        **Please write your bug report in English.** You can use tools like [DeepL](https://www.deepl.com) or [Google Translate](https://translate.google.com/) to translate if necessary. 
+        
+        **If you choose to upload screenshots or videos (which we always encourage), please make sure they do not contain any sensitive information.**
+  - type: input
+    id: version
+    attributes:
+      label: Snipe-IT Version
+      description: What version of Snipe-IT are you seeing this issue on? You can find the version number in the footer of any page in Snipe-IT.
+      placeholder: ex. v8.3.1 - build 19577 (master)
+    validations:
+      required: true
+  - type: input
+    id: db-version
+    attributes:
+      label: MySQL/MariaDB version
+      description: What database are you using, and what version?
+      placeholder: ex. MySQL 5.7
+    validations:
+      required: true
+  - type: dropdown
+    id: install-method
+    attributes:
+      label: How did you install Snipe-IT?
+      options:
+        - Git install
+        - Manual install (downloading zip/tar.gz)
+        - Docker
+        - install.sh
+        - Hosted by Grokability
+        - Other
+        - Not sure
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Also tell us, what did you expect to happen?
+      placeholder: Tell us what you see! (Be nice!)
+    validations:
+      required: true
+  - type: dropdown
+    id: browsers
+    attributes:
+      label: What browsers are you seeing the problem on?
+      multiple: true
+      options:
+        - Firefox
+        - Chrome
+        - Safari
+        - Microsoft Edge
+        - Other
+  - type: textarea
+    id: server-logs
+    attributes:
+      label: Application log output
+      description: Please copy and paste any relevant log output from `storage/logs/laravel.log`. This will be automatically formatted into code, so no need for backticks.
+      render: shell
+  - type: textarea
+    id: browser-logs
+    attributes:
+      label: Browser console output
+      description: Please copy and paste any relevant log output from your browser console. This will be automatically formatted into code, so no need for backticks.
+      render: shell
+  - type: checkboxes
+    id: common-issues
+    attributes:
+      label: Common Issues
+      description: Please make sure you have done the following before submitting your issue.
+      options:
+        - label: I have searched this repo for existing issues related to my issue (including closed issues)
+          required: true
+        - label: My APP_URL is set correctly in my .env file (including http or https and no trailing slash)
+          required: true
+        - label: I have searched the official Snipe-IT documentation and have checked the Common Issues documentation (where applicable)
+          required: true
+        - label: I have run database migrations (where applicable).
+          required: true
+        - label: I have attached screenshots and/or videos of the issue (where applicable)
+          required: true
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/grokability/snipe-it/blob/master/CODE_OF_CONDUCT.md).
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true

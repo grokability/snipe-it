@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Helper;
+use App\Models\Actionlog;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use \Illuminate\Http\Response;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use \Illuminate\Http\Response;
+
 class ActionlogController extends Controller
 {
     public function displaySig($filename) : RedirectResponse | Response | bool
@@ -39,17 +41,29 @@ class ActionlogController extends Controller
 
     public function getStoredEula($filename) : Response | BinaryFileResponse | RedirectResponse
     {
-        $this->authorize('view', \App\Models\Asset::class);
 
-        if (config('filesystems.default') == 's3_private') {
-            return redirect()->away(Storage::disk('s3_private')->temporaryUrl('private_uploads/eula-pdfs/'.$filename, now()->addMinutes(5)));
+        if ($actionlog = Actionlog::where('filename', $filename)->with('user')->with('target')->firstOrFail()) {
+
+            $this->authorize('view', $actionlog->target);
+            $this->authorize('view', $actionlog->user);
+
+
+            if (config('filesystems.default') == 's3_private') {
+                return redirect()->away(Storage::disk('s3_private')->temporaryUrl('private_uploads/eula-pdfs/' . $filename, now()->addMinutes(5)));
+            }
+
+            if (Storage::exists('private_uploads/eula-pdfs/' . $filename)) {
+
+                if (request()->input('inline') == 'true') {
+                    return response()->file(config('app.private_uploads') . '/eula-pdfs/' . $filename);
+                }
+
+                return response()->download(config('app.private_uploads') . '/eula-pdfs/' . $filename);
+            }
+
+            return redirect()->back()->with('error', trans('general.file_does_not_exist'));
         }
 
-        if (Storage::exists('private_uploads/eula-pdfs/'.$filename)) {
-            return response()->download(config('app.private_uploads').'/eula-pdfs/'.$filename);
-        }
-
-        return redirect()->back()->with('error',  trans('general.file_does_not_exist'));
-
+        return redirect()->back()->with('error', trans('general.record_not_found'));
     }
 }

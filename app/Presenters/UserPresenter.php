@@ -60,18 +60,14 @@ class UserPresenter extends Presenter
                 'title' => trans('admin/users/table.name'),
                 'visible' => true,
                 'formatter' => 'usersLinkFormatter',
-            ],
-
-            [
+            ], [
                 'field' => 'first_name',
                 'searchable' => true,
                 'sortable' => true,
                 'title' => trans('general.first_name'),
                 'visible' => false,
                 'formatter' => 'usersLinkFormatter',
-            ],
-
-            [
+            ], [
                 'field' => 'last_name',
                 'searchable' => true,
                 'sortable' => true,
@@ -85,7 +81,23 @@ class UserPresenter extends Presenter
                 'sortable' => true,
                 'switchable' => false,
                 'title' => trans('admin/users/table.display_name'),
+                'visible' => false,
+            ], [
+                'field' => 'username',
+                'searchable' => true,
+                'sortable' => true,
+                'switchable' => false,
+                'title' => trans('admin/users/table.username'),
                 'visible' => true,
+                'formatter' => 'usernameRoleLinkFormatter',
+            ],
+            [
+                'field' => 'employee_num',
+                'searchable' => true,
+                'sortable' => true,
+                'switchable' => true,
+                'title' => trans('general.employee_number'),
+                'visible' => false,
             ],
             [
                 'field' => 'jobtitle',
@@ -129,7 +141,7 @@ class UserPresenter extends Presenter
                 'sortable' => true,
                 'switchable' => true,
                 'title' => trans('admin/users/table.phone'),
-                'visible' => true,
+                'visible' => false,
                 'formatter'    => 'phoneFormatter',
             ],
             [
@@ -190,24 +202,7 @@ class UserPresenter extends Presenter
                 'title' => trans('general.zip'),
                 'visible' => false,
             ],
-            [
-                'field' => 'username',
-                'searchable' => true,
-                'sortable' => true,
-                'switchable' => false,
-                'title' => trans('admin/users/table.username'),
-                'visible' => true,
-                'formatter' => 'usernameRoleLinkFormatter',
-            ],
 
-            [
-                'field' => 'employee_num',
-                'searchable' => true,
-                'sortable' => true,
-                'switchable' => true,
-                'title' => trans('general.employee_number'),
-                'visible' => false,
-            ],
             [
                 'field' => 'locale',
                 'searchable' => true,
@@ -231,7 +226,7 @@ class UserPresenter extends Presenter
                 'sortable' => true,
                 'switchable' => true,
                 'title' => trans('admin/users/general.department_manager'),
-                'visible' => true,
+                'visible' => false,
                 'formatter' => 'usersLinkObjFormatter',
             ],
             [
@@ -248,7 +243,7 @@ class UserPresenter extends Presenter
                 'searchable' => true,
                 'sortable' => true,
                 'title' => trans('admin/users/table.manager'),
-                'visible' => true,
+                'visible' => false,
                 'formatter' => 'usersLinkObjFormatter',
             ],
             [

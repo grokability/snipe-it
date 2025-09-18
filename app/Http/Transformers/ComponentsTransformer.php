@@ -43,6 +43,7 @@ class ComponentsTransformer
             'order_number'  => e($component->order_number),
             'purchase_date' =>  Helper::getFormattedDateObject($component->purchase_date, 'date'),
             'purchase_cost' => Helper::formatCurrencyOutput($component->purchase_cost),
+            'total_cost' => Helper::formatCurrencyOutput($component->totalCostSum()),
             'remaining'  => (int) $component->numRemaining(),
             'company'   => ($component->company) ? [
                 'id' => (int) $component->company->id,

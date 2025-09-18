@@ -9,7 +9,7 @@
 {{-- Account page content --}}
 @section('content')
 
-@if ($acceptances = \App\Models\CheckoutAcceptance::forUser(Auth::user())->pending()->count())
+@if ($acceptanceQuantity = \App\Models\CheckoutAcceptance::forUser(Auth::user())->pending()->sum('qty'))
   <div class="row">
     <div class="col-md-12">
       <div class="alert alert alert-warning fade in">
@@ -17,7 +17,7 @@
 
         <strong>
           <a href="{{ route('account.accept') }}" style="color: white;">
-            {{ trans_choice('general.unaccepted_profile_warning', $acceptances, ['count' => $acceptances]) }}
+            {{ trans_choice('general.unaccepted_profile_warning', $acceptanceQuantity, ['count' => $acceptanceQuantity]) }}
           </a>
           </strong>
       </div>
@@ -446,6 +446,9 @@
                       <th class="col-md-2" data-switchable="true" data-visible="false">
                         {{ trans('general.name') }}
                       </th>
+                      <th class="col-md-2" data-switchable="true" data-visible="false">
+                        {{ trans('general.status') }}
+                      </th>
                       <th class="col-md-2" data-switchable="true" data-visible="true">
                         {{ trans('admin/hardware/table.asset_model') }}
                       </th>
@@ -461,7 +464,6 @@
                       <th class="col-md-2" data-switchable="true" data-visible="false">
                         {{ trans('general.location') }}
                       </th>
-
                       @can('self.view_purchase_cost')
                         <th class="col-md-6" data-footer-formatter="sumFormatter" data-fieldname="purchase_cost">
                           {{ trans('general.purchase_cost') }}
@@ -507,6 +509,11 @@
                         </td>
                         <td>
                           {{ $asset->name }}
+                        </td>
+                        <td>
+                          <x-icon type="circle-solid" class="text-blue" />
+                          {{ $asset->assetstatus->name }}
+                          <label class="label label-default">{{ trans('general.deployed') }}</label>
                         </td>
                         <td>
                             {{ $asset->model->name }}

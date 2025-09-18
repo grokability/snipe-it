@@ -310,27 +310,6 @@ class Accessory extends SnipeModel
     }
 
     /**
-     * Checks for a category-specific EULA, and if that doesn't exist,
-     * checks for a settings level EULA
-     *
-     * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since  [v3.0]
-     * @return string
-     */
-    public function getEula()
-    {
-
-        if ($this->category->eula_text) {
-            return Helper::parseEscapedMarkedown($this->category->eula_text);
-        } elseif ((Setting::getSettings()->default_eula_text) && ($this->category->use_default_eula == '1')) {
-            return Helper::parseEscapedMarkedown(Setting::getSettings()->default_eula_text);
-        }
-
-        return null;
-    }
-
-
-    /**
      * Check how many items within an accessory are checked out
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
@@ -377,6 +356,10 @@ class Accessory extends SnipeModel
         }
 
         $accessory_checkout->limit(1)->delete();
+    }
+    public function totalCostSum() {
+
+        return $this->purchase_cost !== null ? $this->qty * $this->purchase_cost : null;
     }
 
     /**

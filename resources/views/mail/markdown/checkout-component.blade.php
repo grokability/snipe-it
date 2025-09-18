@@ -1,7 +1,7 @@
 @component('mail::message')
 # {{ trans('mail.hello') }} {{ $target->assignedto->display_name }},
 
-{{ trans('mail.new_item_checked') }}
+{{ trans_choice('mail.new_item_checked', $qty) }}
 
 @component('mail::table')
 |        |          |

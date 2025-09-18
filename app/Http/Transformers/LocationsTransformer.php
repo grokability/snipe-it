@@ -53,6 +53,9 @@ class LocationsTransformer
                 'assets_count'    => (int) $location->assets_count,
                 'rtd_assets_count'    => (int) $location->rtd_assets_count,
                 'users_count'    => (int) $location->users_count,
+                'consumables_count'    => (int) $location->consumables_count,
+                'components_count'    => (int) $location->components_count,
+                'children_count'    => (int) $location->children_count,
                 'currency' =>  ($location->currency) ? e($location->currency) : null,
                 'ldap_ou' =>  ($location->ldap_ou) ? e($location->ldap_ou) : null,
                 'notes' => Helper::parseEscapedMarkedownInline($location->notes),
@@ -76,12 +79,13 @@ class LocationsTransformer
             ];
 
             $permissions_array['available_actions'] = [
-                'update' => Gate::allows('update', Location::class) ? true : false,
+                'update' => (Gate::allows('update', Location::class) && ($location->deleted_at == '')),
                 'delete' => $location->isDeletable(),
                 'bulk_selectable' => [
                     'delete' => $location->isDeletable()
                 ],
                 'clone' => (Gate::allows('create', Location::class) && ($location->deleted_at == '')),
+                'restore' => (Gate::allows('create', Location::class) && ($location->deleted_at != '')),
             ];
 
             $array += $permissions_array;

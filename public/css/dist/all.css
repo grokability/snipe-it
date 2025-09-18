@@ -22385,6 +22385,7 @@ th.css-license > .th-inner,
 th.css-location > .th-inner,
 th.css-users > .th-inner,
 th.css-currency > .th-inner,
+th.css-child-locations > .th-inner,
 th.css-history > .th-inner {
   font-size: 0px;
   line-height: 0.75 !important;
@@ -22407,6 +22408,7 @@ th.css-license > .th-inner::before,
 th.css-location > .th-inner::before,
 th.css-users > .th-inner::before,
 th.css-currency > .th-inner::before,
+th.css-child-locations > .th-inner::before,
 th.css-history > .th-inner::before {
   display: inline-block;
   font-size: 20px;
@@ -22484,6 +22486,12 @@ th.css-house-laptop > .th-inner::before {
 }
 th.css-accessory-alt > .th-inner::before {
   content: "\f11c";
+  font-family: "Font Awesome 5 Free";
+  font-size: 19px;
+  margin-bottom: 0px;
+}
+th.css-child-locations > .th-inner::before {
+  content: "\f64f";
   font-family: "Font Awesome 5 Free";
   font-size: 19px;
   margin-bottom: 0px;
@@ -23989,6 +23997,7 @@ th.css-license > .th-inner,
 th.css-location > .th-inner,
 th.css-users > .th-inner,
 th.css-currency > .th-inner,
+th.css-child-locations > .th-inner,
 th.css-history > .th-inner {
   font-size: 0px;
   line-height: 0.75 !important;
@@ -24011,6 +24020,7 @@ th.css-license > .th-inner::before,
 th.css-location > .th-inner::before,
 th.css-users > .th-inner::before,
 th.css-currency > .th-inner::before,
+th.css-child-locations > .th-inner::before,
 th.css-history > .th-inner::before {
   display: inline-block;
   font-size: 20px;
@@ -24088,6 +24098,12 @@ th.css-house-laptop > .th-inner::before {
 }
 th.css-accessory-alt > .th-inner::before {
   content: "\f11c";
+  font-family: "Font Awesome 5 Free";
+  font-size: 19px;
+  margin-bottom: 0px;
+}
+th.css-child-locations > .th-inner::before {
+  content: "\f64f";
   font-family: "Font Awesome 5 Free";
   font-size: 19px;
   margin-bottom: 0px;

@@ -43,6 +43,7 @@ class Location extends SnipeModel
         'company_id'    => 'integer',
     ];
 
+
     /**
      * Whether the model should inject its identifier to the unique
      * validation rules before attempting validation. If this property
@@ -113,12 +114,18 @@ class Location extends SnipeModel
     {
 
         return Gate::allows('delete', $this)
-                && ($this->assets_count == 0)
-                && ($this->assigned_assets_count == 0)
-                && ($this->children_count == 0)
-                && ($this->accessories_count == 0)
-                && ($this->users_count == 0);
+            && ($this->deleted_at == '')
+            && (($this->assets_count ?? $this->assets()->count()) === 0)
+            && (($this->assigned_assets_count ?? $this->assignedAssets()->count()) === 0)
+            && (($this->accessories_count ?? $this->accessories()->count()) === 0)
+            && (($this->assigned_accessories_count ?? $this->assignedAccessories()->count()) === 0)
+            && (($this->children_count ?? $this->children()->count()) === 0)
+            && (($this->components_count ?? $this->components()->count()) === 0)
+            && (($this->consumables_count ?? $this->consumables()->count()) === 0)
+            && (($this->rtd_assets_count ?? $this->rtd_assets()->count()) === 0)
+            && (($this->users_count ?? $this->users()->count()) === 0);
     }
+
 
     /**
      * Establishes the user -> location relationship

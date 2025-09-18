@@ -27,7 +27,7 @@
               id="licensesTable"
               data-buttons="licenseButtons"
               class="table table-striped snipe-table"
-              data-url="{{ route('api.licenses.index') }}"
+              data-url="{{ route('api.licenses.index', ['status' => e(request('status'))]) }}"
               data-export-options='{
             "fileName": "export-licenses-{{ date('Y-m-d') }}",
             "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]

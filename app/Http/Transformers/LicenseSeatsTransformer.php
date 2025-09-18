@@ -51,7 +51,7 @@ class LicenseSeatsTransformer
             'reassignable' => (bool) $seat->license->reassignable,
             'notes' => e($seat->notes),
             'user_can_checkout' => (($seat->assigned_to == '') && ($seat->asset_id == '')),
-            'disabled' => $seat->unreassignable_seat,
+            'disabled' => $seat->unreassignable_seat || $seat->license->isInactive(),
         ];
 
         $permissions_array['available_actions'] = [

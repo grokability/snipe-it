@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Helpers\Helper;
 use App\Mail\ExpiringAssetsMail;
 use App\Mail\ExpiringLicenseMail;
 use App\Models\Asset;
@@ -52,19 +53,35 @@ class SendExpirationAlerts extends Command
                 ->filter(fn($item) => !empty($item))
                 ->all();
             // Expiring Assets
-            $assets = Asset::getExpiringWarrantee($alert_interval);
+            $assets = Asset::getExpiringWarrantyOrEol($alert_interval);
 
             if ($assets->count() > 0) {
-                $this->info(trans_choice('mail.assets_warrantee_alert', $assets->count(), ['count' => $assets->count(), 'threshold' => $alert_interval]));
+
                 Mail::to($recipients)->send(new ExpiringAssetsMail($assets, $alert_interval));
+
+                $this->table(
+                    ['ID', 'Tag', 'Model', 'Model Number', 'EOL', 'EOL Months', 'Warranty Expires', 'Warranty Months'],
+                    $assets->map(fn($item) => ['ID' => $item->id, 'Tag' => $item->asset_tag, 'Model' => $item->model->name, 'Model Number' => $item->model->model_number, 'EOL' => $item->asset_eol_date, 'EOL Months' => $item->model->eol,  'Warranty Expires' => $item->warranty_expires,  'Warranty Months' => $item->warranty_months])
+                );
             }
 
             // Expiring licenses
             $licenses = License::getExpiringLicenses($alert_interval);
             if ($licenses->count() > 0) {
-                $this->info(trans_choice('mail.license_expiring_alert', $licenses->count(), ['count' => $licenses->count(), 'threshold' => $alert_interval]));
                 Mail::to($recipients)->send(new ExpiringLicenseMail($licenses, $alert_interval));
+
+                $this->table(
+                    ['ID', 'Name', 'Expires', 'Termination Date'],
+                    $licenses->map(fn($item) => ['ID' => $item->id, 'Name' => $item->name, 'Expires' => $item->expiration_date, 'Termination Date' => $item->termination_date])
+                );
             }
+
+            // Send a message even if the count is 0
+            $this->info(trans_choice('mail.assets_warrantee_alert', $assets->count(), ['count' => $assets->count(), 'threshold' => $alert_interval]));
+            $this->info(trans_choice('mail.license_expiring_alert', $licenses->count(), ['count' => $licenses->count(), 'threshold' => $alert_interval]));
+
+
+
         } else {
             if ($settings->alert_email == '') {
                 $this->error('Could not send email. No alert email configured in settings');

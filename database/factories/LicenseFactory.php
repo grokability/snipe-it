@@ -33,9 +33,9 @@ class LicenseFactory extends Factory
             'seats' => $this->faker->numberBetween(1, 10),
             'purchase_date' => $this->faker->dateTimeBetween('-1 years', 'now', date_default_timezone_get())->format('Y-m-d'),
             'order_number' => $this->faker->numberBetween(1000000, 50000000),
-            'expiration_date' => $this->faker->dateTimeBetween('now', '+3 years', date_default_timezone_get())->format('Y-m-d H:i:s'),
+            'expiration_date' => null,
             'reassignable' => $this->faker->boolean(),
-            'termination_date' => $this->faker->dateTimeBetween('-1 years', 'now', date_default_timezone_get())->format('Y-m-d H:i:s'),
+            'termination_date' => null,
             'supplier_id' => Supplier::factory(),
             'category_id' => Category::factory(),
         ];

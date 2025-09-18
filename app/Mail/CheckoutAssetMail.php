@@ -138,14 +138,15 @@ class CheckoutAssetMail extends Mailable
     private function introductionLine(): string
     {
         if ($this->firstTimeSending && $this->target instanceof Location) {
-            return trans('mail.new_item_checked_location', ['location' => $this->target->name ]);
+            return trans_choice('mail.new_item_checked_location', 1, ['location' => $this->target->name]);
         }
+
         if ($this->firstTimeSending && $this->requiresAcceptance()) {
-            return trans('mail.new_item_checked_with_acceptance');
+            return trans_choice('mail.new_item_checked_with_acceptance', 1);
         }
 
         if ($this->firstTimeSending && !$this->requiresAcceptance()) {
-            return trans('mail.new_item_checked');
+            return trans_choice('mail.new_item_checked', 1);
         }
 
         if (!$this->firstTimeSending && $this->requiresAcceptance()) {

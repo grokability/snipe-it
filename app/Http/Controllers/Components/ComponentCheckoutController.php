@@ -102,13 +102,15 @@ class ComponentCheckoutController extends Controller
             return redirect()->route('components.checkout.show', $componentId)->with('error', trans('general.error_user_company'));
         }
 
+        $component->checkout_qty = $request->input('assigned_qty');
+
         // Update the component data
         $component->asset_id = $request->input('asset_id');
         $component->assets()->attach($component->id, [
             'component_id' => $component->id,
             'created_by' => auth()->user()->id,
             'created_at' => date('Y-m-d H:i:s'),
-            'assigned_qty' => $request->input('assigned_qty'),
+            'assigned_qty' => $component->checkout_qty,
             'asset_id' => $request->input('asset_id'),
             'note' => $request->input('note'),
         ]);

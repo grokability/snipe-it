@@ -249,6 +249,11 @@
                         </strong>
                       </div>
                       <div class="col-md-9">
+                        @if ($license->isExpired())
+                          <span class="text-danger">
+                           <x-icon type="warning" class="text-warning" />
+                          </span>
+                        @endif
                         {{ Helper::getFormattedDateObject($license->expiration_date, 'date', false) }}
                       </div>
                     </div>
@@ -262,6 +267,12 @@
                         </strong>
                       </div>
                       <div class="col-md-9">
+                        @if ($license->isTerminated())
+                          <span class="text-danger">
+                           <x-icon type="warning" class="text-warning" />
+                          </span>
+                        @endif
+
                         {{ Helper::getFormattedDateObject($license->termination_date, 'date', false) }}
                       </div>
                     </div>
@@ -545,7 +556,7 @@
 
       @can('checkout', $license)
 
-        @if ($license->availCount()->count() > 0)
+        @if (($license->availCount()->count() > 0) && (!$license->isInactive()))
 
           <a href="{{ route('licenses.checkout', $license->id) }}" class="btn bg-maroon btn-sm btn-social btn-block hidden-print" style="margin-bottom: 5px;">
             <x-icon type="checkout" />
@@ -558,17 +569,13 @@
           </a>
 
         @else
-          <span data-tooltip="true" title=" {{ trans('admin/licenses/general.bulk.checkout_all.disabled_tooltip') }}">
-          <a href="#" class="btn bg-maroon btn-sm btn-social btn-block hidden-print disabled" style="margin-bottom: 5px;" data-tooltip="true" title="{{ trans('general.checkout') }}">
+          <span data-tooltip="true" title="{{ ($license->availCount()->count() == 0) ? trans('admin/licenses/general.bulk.checkout_all.disabled_tooltip') : trans('admin/licenses/message.checkout.license_is_inactive') }}" class="btn bg-maroon btn-sm btn-social btn-block hidden-print disabled" style="margin-bottom: 5px;" data-tooltip="true" title="{{ trans('general.checkout') }}">
             <x-icon type="checkout" />
             {{ trans('general.checkout') }}
-          </a>
           </span>
-          <span data-tooltip="true" title=" {{ trans('admin/licenses/general.bulk.checkout_all.disabled_tooltip') }}">
-            <a href="#" class="btn bg-maroon btn-sm btn-social btn-block hidden-print disabled" style="margin-bottom: 5px;" data-tooltip="true" title="{{ trans('general.checkout') }}">
+          <span data-tooltip="true" title="{{ ($license->availCount()->count() == 0) ? trans('admin/licenses/general.bulk.checkout_all.disabled_tooltip') : trans('admin/licenses/message.checkout.license_is_inactive') }}" class="btn bg-maroon btn-sm btn-social btn-block hidden-print disabled" style="margin-bottom: 5px;" data-tooltip="true" title="{{ trans('general.checkout') }}">
               <x-icon type="checkout" />
               {{ trans('admin/licenses/general.bulk.checkout_all.button') }}
-            </a>
           </span>
         @endif
       @endcan

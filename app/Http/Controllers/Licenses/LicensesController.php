@@ -256,6 +256,9 @@ class LicensesController extends Controller
         else {
             $checkedout_seats_count = ($total_seats_count - $available_seats_count);
         }
+        if($license->isInactive()){
+            session()->flash('warning', (trans('admin/licenses/message.checkout.license_is_inactive')));
+        }
 
         $this->authorize('view', $license);
         return view('licenses.view', compact('license'))

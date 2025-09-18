@@ -272,13 +272,25 @@
                   @if ($consumable->purchase_cost)
                     <div class="row">
                       <div class="col-md-3">
-                        {{ trans('general.purchase_cost') }}
+                        {{ trans('general.unit_cost') }}
                       </div>
                       <div class="col-md-9">
                         {{ $snipeSettings->default_currency }}
                         {{ Helper::formatCurrencyOutput($consumable->purchase_cost) }}
                       </div>
                     </div>
+                  @endif
+
+                  @if ($consumable->purchase_cost)
+                        <div class="row">
+                            <div class="col-md-3">
+                                {{ trans('general.total_cost') }}
+                            </div>
+                            <div class="col-md-9">
+                                {{ $snipeSettings->default_currency }}
+                                {{ Helper::formatCurrencyOutput($consumable->totalCostSum()) }}
+                            </div>
+                        </div>
                   @endif
 
                   @if ($consumable->order_number)
