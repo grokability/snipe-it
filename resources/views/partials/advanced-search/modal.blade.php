@@ -24,16 +24,20 @@
                 <!-- Visibility -->
                 <div class="form-group">
                     <label>{{ trans('general.visibility') }}</label>
-                    <div class="radio">
+                    <div class="radio modal-radio">
                         <label>
                             <input type="radio" name="visibility" value="public" checked>
-                            {{ trans('general.public') }}
+                            <span class="modal-radiobutton-label">
+                                {{ trans('general.public') }}
+                            </span>
                         </label>
                     </div>
-                    <div class="radio">
+                    <div class="radio modal-radio">
                         <label>
                             <input type="radio" name="visibility" value="private">
-                            {{ trans('general.private') }}
+                            <span class="modal-radiobutton-label">
+                                {{ trans('general.private') }}
+                            </span>
                         </label>
                     </div>
                 </div>
@@ -129,3 +133,12 @@
         });
     }
 </script>
+
+<style>
+    .modal-radiobutton-label {
+        margin-left: 1vw;
+    }
+    .modal-radio {
+        margin-bottom: 1.5vh;
+    }
+</style>
