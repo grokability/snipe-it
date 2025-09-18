@@ -258,25 +258,49 @@ class PredefinedFilterController extends Controller
     public function selectlist(Request $request)
     {
         $this->authorize('view.selectlists');
-        $predefinedFilters = PredefinedFilter::select([
-            'id',
-            'name',
-        ]);
+        $user = auth()->user();
 
+        // Fetch predefined filters along with permission groups
+        $filters = PredefinedFilter::with("permissionGroups")
+            ->orderBy('name')
+            ->get(['id', 'name', 'created_by', 'is_public']);
+
+        // Permission per filter
+        $viewableFilters = $filters->filter(function ($filter) use ($user) {
+            // Own filter
+            if ($filter->created_by == $user->id) {
+                return true;
+            }
+
+            // Public and view permission
+            if ($filter->is_public && $filter->userHasPermission($user, 'view')) {
+                return true;
+            }
+
+            return false;
+        })->values();
+
+        // Start predefined filter query
+        $predefinedFiltersQuery = PredefinedFilter::select(['id', 'name']);
+
+        // If a search term is provided, filter by name
         if ($request->filled('search')) {
-            $predefinedFilters = $predefinedFilters->where('name', 'LIKE', '%' . $request->get('search') . '%');
+            $predefinedFiltersQuery = $predefinedFiltersQuery->where('name', 'LIKE', '%' . $request->get('search') . '%');
         }
 
-        $predefinedFilters = $predefinedFilters->orderBy('name', 'ASC')->paginate(50);
+        // Apply the filters (viewable filters based on permissions and search filter)
+        $predefinedFilters = $predefinedFiltersQuery
+            ->whereIn('id', $viewableFilters->pluck('id')) // Only include filters user is authorized to view
+            ->orderBy('name', 'ASC')
+            ->paginate(50);
 
-        // Loop through and set some custom properties for the transformer to use.
-        // This lets us have more flexibility in special cases like assets, where
-        // they may not have a ->name value but we want to display something anyway
-        foreach ($predefinedFilters as $predefinedFiler) {
-            $predefinedFiler->use_text = $predefinedFiler->name;
-            //$manufacturer->use_image = ($manufacturer->image) ? Storage::disk('public')->url('manufacturers/'.$manufacturer->image, $manufacturer->image) : null;
+        // Set custom properties for each filter
+        foreach ($predefinedFilters as $predefinedFilter) {
+            $predefinedFilter->use_text = $predefinedFilter->name;
         }
 
+        // Return transformed list
         return (new SelectlistTransformer)->transformSelectlist($predefinedFilters);
     }
+
 }
