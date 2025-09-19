@@ -2,7 +2,7 @@
 
 {{-- Page title --}}
 @section('title')
-{{ trans('admin/predefinedfilters/table.title') }}  {{-- TODO --}}
+{{ trans('admin/predefinedFilters/table.title') }}  {{-- TODO --}}
 @parent
 @stop
 
@@ -88,44 +88,5 @@
 
         return value ?? '';
     }
-
-    // TODO not working atm 
-    function actionButtonsFormatter(value, row) {
-        let buttons = '';
-
-        if (row.available_actions.update) {
-            buttons += `<a href="/predefinedFilters/${row.id}/edit" class="btn btn-sm btn-primary">Edit</a> `;
-        }
-
-        if (row.available_actions.delete) {
-            buttons += `<button onclick="deletePredefinedFilter(${row.id})" class="btn btn-sm btn-danger">Delete</button>`;
-        }
-
-        return buttons;
-    }
-
-    // TODO check for similar implementation matching snipe-its architecture
-    function deletePredefinedFilter(id) {
-        if (!confirm('Are you sure you want to delete this filter?')) return;
-
-        fetch(`/api/predefinedFilters/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'Authorization': 'Bearer {{ auth()->user()->api_token ?? '' }}',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Accept': 'application/json',
-            }
-        }).then(response => {
-            if (response.ok) {
-                alert('Deleted successfully');
-                $('#predefinedFiltersTable').bootstrapTable('refresh');
-            } else {
-                alert('Delete failed');
-            }
-        });
-    }
-</script>
-
-
 
 @stop
