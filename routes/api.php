@@ -584,8 +584,6 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
     Route::patch('/hardware/{asset}', [Api\AssetsController::class, 'update'])->name('api.assets.update');
     Route::put('/hardware/{asset}', [Api\AssetsController::class, 'update'])->name('api.assets.put-update');
 
-    Route::put('/hardware/{asset}', [Api\AssetsController::class, 'update'])->name('api.assets.put-update');
-
     Route::resource('hardware',
         Api\AssetsController::class,
         ['names' => [
