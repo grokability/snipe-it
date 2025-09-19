@@ -19,6 +19,7 @@ return new class extends Migration
             
             $table->unsignedBigInteger('permission_group_id');
             $table->unsignedInteger('created_by');
+            $table->timestamps();
         });
     }
 

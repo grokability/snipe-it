@@ -3,13 +3,23 @@
 namespace App\Services;
 
 use App\Models\PredefinedFilter;
+use App\Services\PredefinedFilterPermissionService;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use function PHPUnit\Framework\isEmpty;
 
 class PredefinedFilterService
 {
+
+    protected PredefinedFilterPermissionService $predefinedFilterPermissionService;
+
+    public function __construct(PredefinedFilterPermissionService $predefinedFilterPermissionService)
+    {
+        $this->predefinedFilterPermissionService = $predefinedFilterPermissionService;
+    }
+
     public function getAllViewableFilters(): Collection
     {
         $user = Auth::user();
@@ -39,17 +49,32 @@ class PredefinedFilterService
     {
         $user = Auth::user();
         return $filter->created_by == $user->id ||
-               ($filter->is_public && $filter->userHasPermission($user, 'view'));
+            ($filter->is_public && $filter->userHasPermission($user, 'view'));
     }
 
-    public function createFilter(array $validated): PredefinedFilter
+    public function createFilter($validated): PredefinedFilter
     {
-        return PredefinedFilter::create([
+        //dump($validated);
+        $filter_create_response =  PredefinedFilter::create([
             'name' => $validated['name'],
             'filter_data' => $validated['filter_data'],
             'created_by' => Auth::id(),
             'is_public' => $validated['is_public'] ?? 0,
         ]);
+
+        if (array_key_exists('permissions', $validated)) {
+            //dump($validated->permissions);
+            foreach ($validated['permissions'] as $permission) {
+                $permission['predefined_filter_id'] = $filter_create_response->id;
+                //dump($permission);
+                $this->predefinedFilterPermissionService->store($permission);
+            }
+        }
+
+
+        dump($filter_create_response);
+        dump($this->predefinedFilterPermissionService->get($filter_create_response->id));
+        return $filter_create_response;
     }
 
     public function updateFilter(PredefinedFilter $filter, array $validated): PredefinedFilter

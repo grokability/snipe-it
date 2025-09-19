@@ -5,44 +5,39 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\PredefinedFilter;
 use App\Models\PredefinedFilterPermission;
+use App\Services\PredefinedFilterPermissionService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class PredefinedFilterPermissionController extends Controller
 {
-    public function store (Request $request) : JsonResponse
+    protected PredefinedFilterPermissionService $service;
+
+    public function __construct(PredefinedFilterPermissionService $service)
     {
-        // Global Permissions
+        $this->service = $service;
+    }
+
+    public function store(Request $request): JsonResponse
+    {
         $this->authorize('edit', PredefinedFilter::class);
 
-        
         $model = new PredefinedFilterPermission();
-        
         $validated = $request->validate($model->getRules());
-        
+
         $filter = PredefinedFilter::findOrFail($validated['predefined_filter_id']);
-        
         $this->authorize('update', $filter);
-        
-        
+
         // Granular Permission
         if ($filter->created_by !== $request->user()->id && !$filter->userHasPermission($request->user(), 'edit')) {
-            return response()->json(['error' => 'Unauthorized'], 403); // TODO check for lang
+            return response()->json(['error' => 'Unauthorized'], 403);
         }
 
-        $permission = PredefinedFilterPermission::updateOrCreate(
-            [
-                'predefined_filter_id'  => $validated['predefined_filter_id'],
-                'permission_group_id'   => $validated['permission_group_id'],
-            ],
-            array_merge($validated,[
-                'created_by' => $request->user()->id,
-            ])
-        );
+        $permission = $this->service->store($validated);
 
         return response()->json([
             'message' => __('admin/reports/message.create.success'),
-            'data'  => $permission
+            'data' => $permission,
         ]);
     }
 
@@ -50,13 +45,12 @@ class PredefinedFilterPermissionController extends Controller
     {
         $this->authorize('view', PredefinedFilter::class);
 
-        $permission = PredefinedFilterPermission::with('filter')->findOrFail($id);
+        $permission = $this->service->show($id);
 
         $filter = $permission->filter;
 
-        if (!$filter) 
-        {
-            return response()->json(['message' => trans('NotFound')],404);
+        if (!$filter) {
+            return response()->json(['message' => trans('NotFound')], 404);
         }
 
         $this->authorize('view', $filter);
@@ -69,14 +63,12 @@ class PredefinedFilterPermissionController extends Controller
         $this->authorize('delete', PredefinedFilterPermission::class);
 
         $permission = PredefinedFilterPermission::findOrFail($id);
-        $filter = $permission->filter;
+        $this->authorize('delete', $permission->filter);
 
-        $this->authorize('delete', $filter);
-
-        $permission->delete();
+        $this->service->delete($id);
 
         return response()->json([
             'message' => __('admin/reports/message.delete.success'),
-        ],204);
+        ], 204);
     }
 }
