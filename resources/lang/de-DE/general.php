@@ -271,6 +271,7 @@ return [
     'select_datasource' => 'Datenquelle auswählen',
     'select_department'     => 'Abteilung auswählen',
     'select_depreciation'	=> 'Wählen Sie einen Abschreibungstyp',
+    'select_group'          => 'Gruppe auswählen',
     'select_location'		=> 'Wählen Sie einen Standort',
     'select_manufacturer'	=> 'Wählen Sie einen Hersteller',
     'select_model'			=> 'Wählen Sie ein Modell',

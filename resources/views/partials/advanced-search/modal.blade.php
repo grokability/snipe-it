@@ -41,6 +41,13 @@
                         </label>
                     </div>
                 </div>
+                @include ('partials.select.dropdowns.group-select', [
+                    'translated_name' => trans('admin/hardware/form.model'),
+                    'select_id' => "group-select",
+                    'fieldname' => "groupSelect",
+                    'required' => 'false',
+                    'multiple' => 'true',
+                ])
             </div>
 
             <!-- Modal Footer -->
@@ -58,6 +65,8 @@
 </div>
 
 <script>
+    let groupSelectDropdown = {};
+
     function openFilterCreateUpdateModal(createNew, name = null) {
         return new Promise((resolve, reject) => {
             const $modal = $('#advancedSearchModal');
@@ -132,6 +141,10 @@
             });
         });
     }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        groupSelectDropdown = new SelectFilterInput(document.getElementById("group-select"));
+    });
 </script>
 
 <style>

@@ -271,6 +271,7 @@ return [
     'select_datasource' => 'Select a data source',
     'select_department'     => 'Select a Department',
     'select_depreciation'	=> 'Select a Depreciation Type',
+    'select_group'          => 'Select a Group',
     'select_location'		=> 'Select a Location',
     'select_manufacturer'	=> 'Select a Manufacturer',
     'select_model'			=> 'Select a Model',
