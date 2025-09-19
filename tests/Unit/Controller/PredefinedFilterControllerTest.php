@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Controller;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\PredefinedFilter;
