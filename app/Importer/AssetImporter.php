@@ -41,8 +41,8 @@ class AssetImporter extends ItemImporter
         parent::handle($row);
 
         if ($this->customFields) {
-            foreach ($this->customFields as $customField) {
-                $customFieldValue = $this->array_smart_custom_field_fetch($row, $customField);
+            foreach ($this->customFields as $key => $customField) {
+                $customFieldValue = $this->array_smart_custom_field_fetch($row, $key);
 
                 if ($customFieldValue) {
                     if ($customField->field_encrypted == 1) {

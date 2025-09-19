@@ -190,7 +190,12 @@ abstract class Importer
         // Stolen From https://adamwathan.me/2016/07/14/customizing-keys-when-mapping-collections/
         // This 'inverts' the fields such that we have a collection of fields indexed by name.
         $this->customFields = CustomField::All()->reduce(function ($nameLookup, $field) {
-            $nameLookup[$field['name']] = $field;
+            $fieldDbName = $field->db_column_name();
+            if (array_key_exists($fieldDbName, $this->fieldMap)) {
+                $nameLookup[$this->fieldMap[$fieldDbName]] = $field;
+            } else {
+                $nameLookup[$field['name']] = $field;
+            }
 
             return $nameLookup;
         });
@@ -251,11 +256,12 @@ abstract class Importer
      * @author A. Gianotto <snipe@snipe.net>
      * @since 3.0
      * @param $array array
+     * @param $key string
      * @return string
      */
     public function array_smart_custom_field_fetch(array $array, $key)
     {
-        $index_name = strtolower($key->name);
+        $index_name = strtolower($key);
 
         return array_key_exists($index_name, $array) ? trim($array[$index_name]) : false;
     }
