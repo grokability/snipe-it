@@ -169,11 +169,10 @@ updateFilterWithPredefined(event) {
     deletePredefinedFilterFromBackend(deleteFilterButtonId) {
         if (document.getElementById(deleteFilterButtonId).classList.contains('disabled')) return; // Do nothing when the button is disabled
 
-        const selectedId = $("#predefinedfilters-select").select2('data')[0].id; // Always zero because only one element can be selected at the time
-        if (!selectedId) return;
+        const selectedFilterId = $("#predefinedfilters-select").select2('data')[0].id; // Always zero because only one element can be selected at the time
+        if (!selectedFilterId) return;
 
         const updateUrlTemplate = `{{ route('api.predefinedFilters.destroy', ['id' => '__ID__']) }}`;
-        const selectedFilterId = selectedFilter.id; // JS context
         const finalUrl = updateUrlTemplate.replace('__ID__', selectedFilterId);
 
         fetchFromBackend('PUT', finalUrl)
