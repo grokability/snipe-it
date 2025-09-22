@@ -2,6 +2,9 @@
 
 namespace App\Services;
 
+use DB;
+use Exception;
+use Throwable;
 use App\Models\PredefinedFilter;
 use App\Services\PredefinedFilterPermissionService;
 use Illuminate\Http\Request;
@@ -24,7 +27,7 @@ class PredefinedFilterService
     {
         $user = Auth::user();
 
-        return PredefinedFilter::with('permissionGroups')
+        $response = PredefinedFilter::with('permissionGroups')
             ->orderBy('name')
             ->get(['id', 'name', 'created_by', 'is_public'])
             ->filter(function ($filter) use ($user) {
@@ -38,6 +41,8 @@ class PredefinedFilterService
 
                 return false;
             })->values();
+
+        return $response;
     }
 
     public function getFilterById(int $id)
@@ -55,25 +60,20 @@ class PredefinedFilterService
     public function createFilter($validated): PredefinedFilter
     {
         //dump($validated);
-        $filter_create_response =  PredefinedFilter::create([
+        $filter_create_response = PredefinedFilter::create([
             'name' => $validated['name'],
             'filter_data' => $validated['filter_data'],
             'created_by' => Auth::id(),
             'is_public' => $validated['is_public'] ?? 0,
         ]);
 
+        // Set permissions
         if (array_key_exists('permissions', $validated)) {
-            //dump($validated->permissions);
             foreach ($validated['permissions'] as $permission) {
                 $permission['predefined_filter_id'] = $filter_create_response->id;
-                //dump($permission);
                 $this->predefinedFilterPermissionService->store($permission);
             }
         }
-
-
-        dump($filter_create_response);
-        dump($this->predefinedFilterPermissionService->get($filter_create_response->id));
         return $filter_create_response;
     }
 
@@ -85,6 +85,38 @@ class PredefinedFilterService
             'is_public' => $validated['is_public'],
         ]);
         $filter->save();
+
+        // Update permissions
+        if (array_key_exists('permissions', $validated)) {
+            $currently_set_permssions = $this->predefinedFilterPermissionService->getPermissionsById($filter->id);
+            $new_permissions = $validated['permissions'];
+            $permission_diff = $this->syncPermissions($currently_set_permssions->toArray(), $new_permissions);
+            //dump($permission_diff);
+
+            try {
+                DB::transaction(function () use ($permission_diff, $filter) {
+                    if (!empty($permission_diff['to_delete'])) {
+                        foreach ($permission_diff['to_delete'] as $permission) {
+                            //dump($permission);
+                            $this->predefinedFilterPermissionService->deletePermissionByFilterId($permission['predefined_filter_id']);
+                        }
+                    }
+
+                    if (!empty($permission_diff['to_add'])) {
+                        foreach ($permission_diff['to_add'] as $permission) {
+                            $permission['predefined_filter_id'] = $filter->id;
+                            //dump($permission);
+                            $this->predefinedFilterPermissionService->store($permission);
+                        }
+                    }
+                });
+            } catch (Throwable $e) {
+                // If any exception occurs, the transaction is automatically rolled back.
+                //dump($e);
+                throw new Exception($e->getMessage());
+                //abort(500,message: "Something went wrong");
+            }
+        }
 
         return $filter;
     }
@@ -129,4 +161,31 @@ class PredefinedFilterService
 
         return $paginated;
     }
+
+    private function syncPermissions($currentPermissions, $newPermissions): array
+    {
+        // Calculate permissions to add
+        $toAdd = array_udiff(
+            $newPermissions,
+            $currentPermissions,
+            function ($obj_a, $obj_b) {
+                return $obj_a['permission_group_id'] !== $obj_b['permission_group_id'];
+            }
+        );
+
+        // Calculate permissions to delete
+        $toDelete = array_udiff(
+            $currentPermissions,
+            $newPermissions,
+            function ($obj_a, $obj_b) {
+                return $obj_a['permission_group_id'] !== $obj_b['permission_group_id'];
+            }
+        );
+
+        return [
+            'to_add' => $toAdd,
+            'to_delete' => $toDelete
+        ];
+    }
+
 }

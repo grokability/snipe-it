@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Exception;
 use App\Models\PredefinedFilter;
 use App\Models\PredefinedFilterPermission;
 use Illuminate\Support\Facades\Auth;
@@ -10,7 +11,6 @@ class PredefinedFilterPermissionService
 {
     public function store(array $validated): PredefinedFilterPermission
     {
-        \DB::enableQueryLog();
         $userId = Auth::id();
 
         $permission = new PredefinedFilterPermission();
@@ -19,7 +19,8 @@ class PredefinedFilterPermissionService
         $permission->created_by = $userId;
 
         if (!$permission->save()) {
-            dd($permission->getErrors());
+            //dump($permission->getErrors());
+            throw new Exception($permission->getErrors());
         }
 
         return $permission;
@@ -37,8 +38,17 @@ class PredefinedFilterPermissionService
         $permission->delete();
     }
 
-    public function get(int $id)
+    public function deletePermissionByFilterId($filter_id): void
     {
-        return PredefinedFilterPermission::with('filter')->get();
+        $permissions = PredefinedFilterPermission::where('predefined_filter_id', '=', $filter_id)->get();
+        foreach($permissions as $permission) {
+            $permission->delete();
+        }
+    }
+
+    public function getPermissionsById(int $filter_id)
+    {
+        $permissions = PredefinedFilterPermission::where('predefined_filter_id', '=', $filter_id)->get();
+        return $permissions;
     }
 }
