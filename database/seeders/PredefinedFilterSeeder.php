@@ -190,6 +190,12 @@ class PredefinedFilterSeeder extends Seeder
                 'name'         => 'Custom RAM Filter',
                 'filter_data'  => ['custom_fields' => ['_snipeit_ram_3' => '32']],
             ],
+            [
+                'created_by'    => 1,
+                'name'         => 'Public Filter for Group 1',
+                'filter_data'  => ['name' => 'Test'],
+                'is_public'    => 1
+            ],
             
             [
                 'name'         => 'Checked Out Between Dates',
@@ -220,7 +226,8 @@ class PredefinedFilterSeeder extends Seeder
             
             foreach ($filters as $filter) {
                 $createdBy = array_key_exists('created_by', $filter) ? $filter['created_by'] : $user->id;
-                
+                $is_public = array_key_exists('is_public', $filter) ? $filter['is_public'] : 
+
                 PredefinedFilter::create([
                     'name'         => $filter['name'],
                     'created_by'   => $createdBy,

@@ -2,7 +2,7 @@
 
 {{-- Page title --}}
 @section('title')
-{{ trans('admin/predefinedFilters/table.title') }}  {{-- TODO --}}
+{{ trans('admin/predefinedFilters/table.title') }} 
 @parent
 @stop
 
@@ -35,7 +35,7 @@
   </div>
   <!-- side address column -->
   <div class="col-md-3">
-    <h2>{{ trans('admin/predefinedfilters/table.about') }}</h2> {{-- TODO --}}
+    <h2>{{ trans('admin/predefinedfilters/table.about') }}</h2>
 
       <div class="box">
           <div class="box-body">
@@ -43,27 +43,15 @@
           </div>
       </div>
 
-
       <div class="box box-success">
           <div class="box-body">
-          <p><i class="fas fa-circle text-green"></i> <strong>{{ trans('admin/predefinedfilters/table.deployable') }}</strong>: {!!  trans('admin/predefinedfilters/message.help.deployable')  !!}</p> {{-- TODO --}}
-          </div>
-      </div>
-
-      <div class="box box-warning">
-          <div class="box-body">
-              <p><i class="fas fa-circle text-orange"></i> <strong>{{ trans('admin/predefinedfilters/table.pending') }}</strong>: {{ trans('admin/predefinedfilters/message.help.pending') }}</p> {{-- TODO --}}
-          </div>
-      </div>
-      <div class="box box-danger">
-          <div class="box-body">
-            <p><i class="fas fa-times text-red"></i> <strong>{{ trans('admin/predefinedfilters/table.undeployable') }}</strong>: {{ trans('admin/predefinedfilters/message.help.undeployable') }}</p> {{-- TODO --}}
+            <p><i class="fas fa-check icon-white text-success"></i> <strong>{{ trans('admin/predefinedfilters/table.private') }}</strong>: {{ trans('admin/predefinedfilters/message.help.private') }}</p> {{-- TODO --}}
           </div>
       </div>
 
       <div class="box box-danger">
           <div class="box-body">
-              <p><i class="fas fa-times text-red"></i> <strong>{{ trans('admin/predefinedfilters/table.archived') }}</strong>: {{ trans('admin/predefinedfilters/message.help.archived') }}</p> {{-- TODO --}}
+              <p><i class="fas fa-times text-red"></i> <strong>{{ trans('admin/predefinedfilters/table.public') }}</strong>: {{ trans('admin/predefinedfilters/message.help.public') }}</p> {{-- TODO --}}
           </div>
       </div>
 
@@ -76,17 +64,5 @@
 @include ('partials.bootstrap-table')
 
 
-<script nonce="{{ csrf_token() }}">
-    function predefinedFiltersFormatter(value, row, index) {
-        if (typeof value === 'boolean') {
-            return value ? '✔️ Public' : '❌ Private'; // TODO look for matching checkmark
-        }
-        
-        if (typeof value === 'object') {
-            return JSON.stringify(value);
-        }
-
-        return value ?? '';
-    }
 
 @stop

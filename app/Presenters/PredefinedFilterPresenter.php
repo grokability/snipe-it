@@ -33,7 +33,7 @@ class PredefinedFilterPresenter extends Presenter
                 'formatter' => 'predefined-filtersLinkFormatter',
             ], [
                 'field' => 'is_public',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,
                 'title' => trans('is_public'),
@@ -57,7 +57,7 @@ class PredefinedFilterPresenter extends Presenter
                 'formatter' => 'predefined-filtersFormatter',
             ], [
                 'field' => 'created_by',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'title' => trans('general.created_by'),
                 'visible' => true,
