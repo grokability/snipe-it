@@ -43,7 +43,7 @@
                 </div>
                 @include ('partials.select.dropdowns.group-select', [
                     'translated_name' => trans('admin/hardware/form.model'),
-                    'select_id' => "group-select",
+                    'select_id' => "group_select",
                     'fieldname' => "groupSelect",
                     'required' => 'false',
                     'multiple' => 'true',
@@ -67,7 +67,7 @@
 <script>
     let groupSelectDropdown = {};
 
-    function openFilterCreateUpdateModal(createNew, name = null) {
+    function openFilterCreateUpdateModal(createNew, name = null, currentlySetFilterGroups = []) {
         return new Promise((resolve, reject) => {
             const $modal = $('#advancedSearchModal');
             const $title = $('#modalLabel');
@@ -88,6 +88,10 @@
             // Set modal title and button text
             $title.text(createNew ? '{{ trans('general.create') }}' : '{{ trans('general.edit') }}');
             $saveBtn.text(createNew ? '{{ trans('general.save') }}' : '{{ trans('general.update') }}');
+
+            const currentlySetFilterGroupIDs = currentlySetFilterGroups.map(group => group.id);
+            groupSelectDropdown.clear();
+            groupSelectDropdown.setValue(currentlySetFilterGroupIDs);
 
             // Show the modal
             $modal.modal('show');
@@ -143,7 +147,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        groupSelectDropdown = new SelectFilterInput(document.getElementById("group-select"));
+        groupSelectDropdown = new SelectFilterInput(document.getElementById("group_select"));
     });
 </script>
 

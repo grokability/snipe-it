@@ -45,9 +45,14 @@ class PredefinedFilterService
         return $response;
     }
 
-    public function getFilterById(int $id)
+    public function getFilterById(int $id, bool $include_predefined_filter_groups = true)
     {
-        return PredefinedFilter::find($id);
+        $predefinedFilter = PredefinedFilter::find($id);
+        if($include_predefined_filter_groups) {
+            $permissions = $this->predefinedFilterPermissionService->getPermissionsById($id);
+            $predefinedFilter['permissions'] = $permissions;
+        }
+        return $predefinedFilter;
     }
 
     public function canUserViewFilter($filter): bool
