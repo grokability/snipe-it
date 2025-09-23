@@ -283,6 +283,62 @@ class PredefinedFilterControllerTest extends TestCase
             ->assertJsonFragment([
                 'message' => "You don't have the permissions to create this public filter",
         ]);
-}
+    }
+
+    public function test_sync_permission_groups_returns_200_response()
+    {
+        // Create user
+        $user = User::factory()->create([
+            'email' => 'sync@test.com'
+        ]);
+
+        // Give user update permission
+        $user->permissions = json_encode([
+            'predefinedFilter.update' => '1',
+        ]);
+        $user->save();
+
+        // Create filter with user as creator
+        $filter = PredefinedFilter::factory()->create([
+            'created_by' => $user->id,
+        ]);
+
+        // Create groups to sync
+        $group1 = PermissionGroup::factory()->create([
+            'name' => 'Group 1',
+            'created_by' => $user->id,
+        ]);
+
+        $group2 = PermissionGroup::factory()->create([
+            'name' => 'Group 2',
+            'created_by' => $user->id,
+        ]);
+
+        // Prepare payload
+        $payload = [
+            'group_ids' => [$group1->id, $group2->id],
+        ];
+
+        // Call the endpoint
+        $response = $this->actingAs($user, 'api')
+            ->json('Put', "/api/v1/predefinedFilters/{$filter->id}/sync-permissions", $payload);
+
+        // Assert success
+        $response->assertStatus(200)
+            ->assertJson([
+                'message' => 'Permission groups synced successfully.',
+        ]);
+
+        // Optional: Assert the sync actually occurred
+        $this->assertDatabaseHas('predefined_filter_permissions', [
+            'predefined_filter_id' => $filter->id,
+            'permission_group_id' => $group1->id,
+        ]);
+
+        $this->assertDatabaseHas('predefined_filter_permissions', [
+            'predefined_filter_id' => $filter->id,
+            'permission_group_id' => $group2->id,
+        ]);
+    }
 }
 
