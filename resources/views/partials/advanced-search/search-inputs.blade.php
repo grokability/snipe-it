@@ -199,7 +199,7 @@ class SelectFilterInput extends FilterInput {
 
     setValue(newValues) {
         let requestPromises = newValues.map((newValue) => {
-            return fetchItemFromBackendById(this.getType(), newValue);
+            return fetchItemFromBackendById("groups", newValue);
         });
 
         return Promise.all(requestPromises).then((responses) => {

@@ -138,40 +138,56 @@ updateFilterWithPredefined(event) {
 
         // Fetch filter from backend to get the permissions
         fetchItemFromBackendById("group_select", selectedFilter.id)
-        .then((response) => {
-            response.json()
-            .then((responseJson) => {
+            .then((response) => {
+                response.json()
+                    .then((responseJson) => {
+                        const permissionGroupRequests = [];
 
-                openFilterCreateUpdateModal(false, responseJson.name, responseJson.permissions)
-                .then((input) => {
-                    
-                    const payload = {
-                        name: input.name,
-                        filter_data: filters,
-                        is_public: input.visibility === "public" ? true : false,
-                    };
-                    
-                    const updateUrlTemplate = `{{ route('api.predefinedFilters.update', ['id' => '__ID__']) }}`;
-                    const selectedFilterId = selectedFilter.id; // JS context
-                    const finalUrl = updateUrlTemplate.replace('__ID__', selectedFilterId);
-                    
-                    fetchFromBackend('PUT', finalUrl, JSON.stringify(payload))
-                    .then((response) => {
-                        if(response.status === 200) {
-                            alert("Filter updated successfully");
-                            if(window.triggerConfetti) window.triggerConfetti();
-                        } else {
-                            console.error(response);
-                            alert("An error has occured. Look in the browser console for more details.");  
-                        }
-                    });
-                });
-            })
-            .catch((error) => {
-                console.error(error);
-                alert("An error has occured: " + error);
-            })
-        });
+                        responseJson.permissions.forEach(permission => {
+                            permissionGroupRequests.push(fetchItemFromBackendById("groups", permission.permission_group_id));
+                        });
+                        Promise.all(permissionGroupRequests).
+                        then((permissionGroupResponses) => {
+
+                            const permissionGroupResponsePromises = [];
+                            permissionGroupResponses.forEach((permissionGroupResponse) => {
+                                permissionGroupResponsePromises.push(permissionGroupResponse.json());
+                            })
+                            Promise.all(permissionGroupResponsePromises)
+                                .then((permissionGroupResponses) => {
+                                    console.log(permissionGroupResponses);
+                                    openFilterCreateUpdateModal(false, responseJson.name, permissionGroupResponses)
+                                        .then((input) => {
+
+                                            const payload = {
+                                                name: input.name,
+                                                filter_data: filters,
+                                                is_public: input.visibility === "public" ? true : false,
+                                            };
+
+                                            const updateUrlTemplate = `{{ route('api.predefinedFilters.update', ['id' => '__ID__']) }}`;
+                                            const selectedFilterId = selectedFilter.id; // JS context
+                                            const finalUrl = updateUrlTemplate.replace('__ID__', selectedFilterId);
+
+                                            fetchFromBackend('PUT', finalUrl, JSON.stringify(payload))
+                                                .then((response) => {
+                                                    if (response.status === 200) {
+                                                        alert("Filter updated successfully");
+                                                        if (window.triggerConfetti) window.triggerConfetti();
+                                                    } else {
+                                                        console.error(response);
+                                                        alert("An error has occured. Look in the browser console for more details.");
+                                                    }
+                                                });
+                                        });
+                                });
+                        });
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                        alert("An error has occured: " + error);
+                    })
+            });
     }
 
     deletePredefinedFilterFromBackend(deleteFilterButtonId) {
@@ -297,6 +313,7 @@ function fetchItemFromBackendById(type, id) {
         location: "locations",
         manufacturer: "manufacturers",
         model: "models",
+        groups: "groups",
         group_select: "predefinedFilters",
         rtd_location: "locations",
         status_label: "statuslabels",
@@ -307,7 +324,7 @@ function fetchItemFromBackendById(type, id) {
     if (!typeMap[type]) {
         return Promise.reject(`Invalid type ${type}`);
     }
-
+    console.log(typeMap[type]);
     const path = `/api/v1/${typeMap[type]}/${id}`;
     return fetchFromBackend('GET', path);
 }

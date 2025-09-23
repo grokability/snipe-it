@@ -67,7 +67,7 @@
 <script>
     let groupSelectDropdown = {};
 
-    function openFilterCreateUpdateModal(createNew, name = null, currentlySetFilterGroups = []) {
+    function openFilterCreateUpdateModal(createNew, name = null, permissionGroupResponses = []) {
         return new Promise((resolve, reject) => {
             const $modal = $('#advancedSearchModal');
             const $title = $('#modalLabel');
@@ -89,7 +89,7 @@
             $title.text(createNew ? '{{ trans('general.create') }}' : '{{ trans('general.edit') }}');
             $saveBtn.text(createNew ? '{{ trans('general.save') }}' : '{{ trans('general.update') }}');
 
-            const currentlySetFilterGroupIDs = currentlySetFilterGroups.map(group => group.id);
+            const currentlySetFilterGroupIDs = permissionGroupResponses.map(group => group.id);
             groupSelectDropdown.clear();
             groupSelectDropdown.setValue(currentlySetFilterGroupIDs);
 
