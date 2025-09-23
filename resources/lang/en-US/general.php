@@ -231,6 +231,8 @@ return [
     'pending'				=> 'Pending',
     'people'				=> 'People',
     'per_page'				=> 'Results Per Page',
+    'predefined_filter'		=> 'Predefined Filter',
+    'predefined_Filters'	=> 'Predefined Filters',
     'previous'				=> 'Previous',
     'previous_page'			=> 'Previous Page',
     'processing'			=> 'Processing',
