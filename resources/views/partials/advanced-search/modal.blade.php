@@ -91,7 +91,7 @@
 
             const currentlySetFilterGroupIDs = permissionGroupResponses.map(group => group.id);
             groupSelectDropdown.clear();
-            groupSelectDropdown.setValue(currentlySetFilterGroupIDs);
+            groupSelectDropdown.setValue(currentlySetFilterGroupIDs, "groups");
 
             // Show the modal
             $modal.modal('show');
@@ -103,18 +103,27 @@
 
             const onSave = () => {
                 const inputName = $input.val().trim();
+                const permissionInput = groupSelectDropdown.getValue();
 
                 // Validate input
                 if (!inputName) {
-                    $input.addClass('is-invalid').css('border-color', '#d9534f');
-                    $('#nameError').text('{{ trans('general.validation_required') }}').show();
-                    return;
+                                    $input.addClass('is-invalid').css('border-color', '#d9534f');
+                                      $('#nameError').text('{{ trans('general.validation_required') }}').show();
+                                    return;
                 }
+
+
+                const permissions = permissionInput.map(id => ({
+                    permission_group_id: id
+                }));
 
                 const inputData = {
                     name: inputName,
-                    visibility: $('input[name="visibility"]:checked').val()
+                    visibility: $('input[name="visibility"]:checked').val(),
+                    permissions: permissions,
                 };
+                console.log("onsave");
+                console.log(inputData);
 
                 // Close modal before resolving
                 $modal.modal('hide');
@@ -148,7 +157,8 @@
 
     document.addEventListener('DOMContentLoaded', function () {
         groupSelectDropdown = new SelectFilterInput(document.getElementById("group_select"));
-    });
+    }
+);
 </script>
 
 <style>

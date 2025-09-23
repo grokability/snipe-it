@@ -155,13 +155,13 @@ updateFilterWithPredefined(event) {
                             })
                             Promise.all(permissionGroupResponsePromises)
                                 .then((permissionGroupResponses) => {
-                                    console.log(permissionGroupResponses);
                                     openFilterCreateUpdateModal(false, responseJson.name, permissionGroupResponses)
                                         .then((input) => {
 
                                             const payload = {
                                                 name: input.name,
                                                 filter_data: filters,
+                                                permissions: input.permissions,
                                                 is_public: input.visibility === "public" ? true : false,
                                             };
 
@@ -324,7 +324,6 @@ function fetchItemFromBackendById(type, id) {
     if (!typeMap[type]) {
         return Promise.reject(`Invalid type ${type}`);
     }
-    console.log(typeMap[type]);
     const path = `/api/v1/${typeMap[type]}/${id}`;
     return fetchFromBackend('GET', path);
 }
