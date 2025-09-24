@@ -196,7 +196,7 @@ updateFilterWithPredefined(event) {
         const selectedFilterId = $("#predefinedfilters-select").select2('data')[0].id; // Always zero because only one element can be selected at the time
         if (!selectedFilterId) return;
 
-        const updateUrlTemplate = `{{ route('api.predefinedFilters.destroy', ['id' => '__ID__']) }}`;
+        const updateUrlTemplate = `{{ route('api.predefined-filters.destroy', ['id' => '__ID__']) }}`;
         const finalUrl = updateUrlTemplate.replace('__ID__', selectedFilterId);
 
         fetchFromBackend('PUT', finalUrl)
