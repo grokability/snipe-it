@@ -954,19 +954,19 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
 
     Route::middleware('auth:api')->prefix('predefinedFilters')->group(function () {
         Route::get('/', [PredefinedFilterController::class, 'index'])
-            ->name('api.predefinedFilters.index');
+            ->name('api.predefined-filters.index');
 
         Route::get('/selectlist', [PredefinedFilterController::class, 'selectlist'])
-            ->name('api.predefinedFilters.selectlist');
+            ->name('api.predefined-filters.selectlist');
 
         Route::get('/{id}', [PredefinedFilterController::class, 'show'])
-            ->name('api.predefinedFilters.show');
+            ->name('api.predefined-filters.show');
 
         Route::post('/', [PredefinedFilterController::class, 'store'])
-            ->name('api.predefinedFilters.store');
+            ->name('api.predefined-filters.store');
 
         Route::put('/{id}', [PredefinedFilterController::class, 'update'])
-            ->name('api.predefinedFilters.update');
+            ->name('api.predefined-filters.update');
 
             Route::put('predefinedFilters/{id}/sync-permissions', [PredefinedFilterController::class,'syncPermissionGroups'])
                 ->name('api.predefined-filters.sync-permissions');
