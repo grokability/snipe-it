@@ -20,7 +20,7 @@ return array(
     ),
 
     'delete' => array(
-        //'confirm'   => 'Are you sure you wish to delete this filter?',
+        'confirm'   => 'Sind sie sicher, dass sie diesen Filter löschen wollen?',
         'not_allowed_to_delete'=> "Du hast nicht die Berechtigungen um diesen Filter zu löschen",
         'success' => 'Filter erfolgreich gelöscht.'
     ),

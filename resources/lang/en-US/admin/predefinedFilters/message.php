@@ -16,7 +16,8 @@ return array(
     'update' => array(
         'not_allowed_to_change_isPublic'=> "You don't have the permissions to make this filter public",
         'not_allowed_to_edit'=> "You don't have the permissions to edit this Filter",
-        'success' => 'Filter updated successfully.'
+        'success' => 'Filter updated successfully.',
+        'filterData_required' => 'No Filter Data given, is required'
     ),
 
     'delete' => array(

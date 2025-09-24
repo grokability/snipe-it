@@ -63,12 +63,19 @@ class PredefinedFilterController extends Controller
         $filter = PredefinedFilter::find($id);
 
         if (!$filter) {
-            return response()->json(['message' => trans('admin/predefinedFilters/message.does_not_exist')], 404);
+            return response()->json([
+            'message' => trans('admin/predefinedFilters/message.does_not_exist'),
+        ], 404);
         }
 
         $validated = $request->validate((new PredefinedFilter)->getRules());
         $newIsPublic = $validated['is_public'];
-        $currentIsPublic = $filter->is_public;
+
+        if (empty($validated['filter_data'])){
+            return response()->json([
+                    'message' => trans('admin/predefinedFilters/message.update.filterData_required'),
+                ], 400);
+        }
 
         if ($filter->created_by === $user->id) {
             if (!$currentIsPublic && $newIsPublic && !$user->hasAccess('predefinedFilter.create')) {

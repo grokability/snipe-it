@@ -46,8 +46,17 @@ class PredefinedFilter extends Model
         );
     }
 
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
     public function userHasPermission(User $user, string $action): bool
     {
+        if ($user->id == $this->created_by){
+            return true;
+        }
+
         if (!$this->is_public){
             return false;
         }

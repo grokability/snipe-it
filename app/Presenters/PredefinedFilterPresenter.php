@@ -30,15 +30,15 @@ class PredefinedFilterPresenter extends Presenter
                 'switchable' => false,
                 'title' => trans('general.name'),
                 'visible' => true,
-                'formatter' => 'predefinedFiltersFormatter',
+                'formatter' => 'predefined-filtersLinkFormatter',
             ], [
                 'field' => 'is_public',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,
                 'title' => trans('is_public'),
                 'visible' => true,
-                'formatter' => 'predefinedFiltersFormatter',
+                'formatter' => 'trueFalseFormatter',
             ], [
                 'field' => 'object_type',
                 'searchable' => true,
@@ -46,7 +46,7 @@ class PredefinedFilterPresenter extends Presenter
                 'switchable' => true,
                 'title' => trans('object_type'),
                 'visible' => false,
-                'formatter' => 'predefinedFiltersFormatter',
+                'formatter' => 'predefined-filtersFormatter',
             ], [
                 'field' => 'filter_data',
                 'searchable' => true,
@@ -54,10 +54,10 @@ class PredefinedFilterPresenter extends Presenter
                 'switchable' => true,
                 'title' => trans('filter_data'),
                 'visible' => false,
-                'formatter' => 'predefinedFiltersFormatter',
+                'formatter' => 'predefined-filtersFormatter',
             ], [
                 'field' => 'created_by',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'title' => trans('general.created_by'),
                 'visible' => true,
@@ -84,7 +84,7 @@ class PredefinedFilterPresenter extends Presenter
                 'sortable' => false,
                 'switchable' => false,
                 'title' => trans('table.actions'),
-                'formatter' => 'predefinedFiltersActionsFormatter',
+                'formatter' => 'predefined-filtersActionsFormatter',
                 'printIgnore' => true,
             ]
         ];
