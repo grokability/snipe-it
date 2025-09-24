@@ -10,6 +10,8 @@ return [
     'clone'    	                => 'Clone',
     'restore' 	                => 'Restore',
     'remove'                    => 'Remove',
+    'delete_search_query'       => 'Delete',
+    'search'                    => 'Search',
     'request'                   => 'Request',
     'submit'  	                => 'Submit',
     'upload'                    => 'Upload',
@@ -22,6 +24,9 @@ return [
     'add_maintenance'           => 'Add Maintenance',
     'append'                    => 'Append',
     'new'                       => 'New',
+    'save_predefined_filter_as' => 'Save filter as...',
+    'update_predefined_filter' => 'Update predefined filter',
+    'delete_predefined_filter' => 'Delete predefined filter',
     'var' => [
         'clone'     => 'Clone :item_type',
         'edit'      => 'Edit :item_type',

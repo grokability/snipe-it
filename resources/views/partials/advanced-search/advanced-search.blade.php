@@ -1,430 +1,64 @@
-<div class="container">
-    <div class="panel panel-default">
-        <!-- The button for controlling the collapse -->
-        <div class="panel-heading" data-toggle="collapse" data-target="#collapsePanel" aria-expanded="false"
-            aria-controls="collapsePanel">
-            <span class="panel-title" style="margin: 0;">
-                <i class="fas fa-search"></i>
-                Advanced search
-            </span>
-        </div>
-
-        <!-- The collapsible content section -->
-        <div id="collapsePanel" class="panel-collapse collapse" role="region" aria-labelledby="panelHeading">
-            <div class="panel-body">
-                <span id="advancedSearchFilters">
-                    @php
-                        $layoutJson = \App\Presenters\AssetPresenter::dataTableLayout();
-                        $layout = json_decode($layoutJson); // decode to object by default
-                    @endphp
-
-                    @foreach ($layout as $tableField)
-                        @if ((!empty($tableField->searchable) && $tableField->searchable === true))
-                            <span id="advancedSearch_{{ $tableField->field }}" class="advancedSearchItemContainer">
-                                <label for="advancedSearch_{{ $tableField->field }}">
-                                    <b>{{ $tableField->title }}</b>
-                                </label>
-                                @if (!isset($tableField->formatter))
-                                    {{-- Default select if formatter is not set --}}
-                                    <input class="advancedSearch_defaultField form-control" type="text" autocomplete="on" id="advancedSearch_{{ $tableField->field }}_input" >
-                                @else
-                                    @switch($tableField->formatter)
-                                        @case('dateDisplayFormatter')
-                                            <!--<input type="date" id="advancedSearch_{{ $tableField->field }}"
-                                                name="{{ $tableField->title }}" class="datePicker">-->
-                                            <div class="input-daterange input-group " id="checkin-range-datepicker">
-                                                <input type="date" id="advancedSearch_{{ $tableField->field }}_start"
-                                                    class="form-control" name="checkin_date_start" aria-label="checkin_date_start"">
-                                                <span class="input-group-addon">{{ strtolower(trans('general.to')) }}</span>
-                                                 <input type="date" id="advancedSearch_{{ $tableField->field }}_end" 
-                                                    class="form-control" name="checkin_date_end" aria-label="checkin_date_end"">
-                                            </div>
-                                        @break
-
-                                        @case('companiesLinkObjFormatter')
-                                            @include ('partials.select.dropdowns.company-select', [
-                                                'translated_name' => trans('admin/hardware/company.model'),
-                                                'fieldname' => $tableField->field,
-                                                'select_id' => "advancedSearch_$tableField->field",
-                                                'required' => 'false',
-                                                'multiple' => 'true',
-                                            ])
-                                        @break
-
-                                        @case('trueFalseFormatter')
-                                            <p>True/false</p>
-                                        @break
-
-                                        @case('categoriesLinkObjFormatter')
-                                            @include ('partials.select.dropdowns.category-select', [
-                                                'translated_name' => trans('admin/hardware/category.model'),
-                                                'fieldname' => $tableField->field,
-                                                'category_type' => 'asset',
-                                                'select_id' => "advancedSearch_$tableField->field",
-                                                'required' => 'false',
-                                                'multiple' => 'true',
-                                            ])
-                                        @break
-
-                                        @case('companiesLinkObjFormatter')
-                                            <p>companiesLinkObjFormatter</p>
-                                        @break
-
-                                        @case('deployedLocationFormatter')
-                                            @include ('partials.select.dropdowns.location-select', [
-                                                'translated_name' => trans('admin/hardware/location.model'),
-                                                'category_type' => 'asset',
-                                                'select_id' => "advancedSearch_$tableField->field",
-                                                'fieldname' => $tableField->field,
-                                                'required' => 'false',
-                                                'multiple' => 'true',
-                                            ])
-                                        @break
-
-                                        @case('employeeNumFormatter')
-                                            <input class="advancedSearch_employeeNumFormatter form-control" type="text" id="advancedSearch_{{ $tableField->field }}_input" autocomplete="on">
-                                        @break
-
-                                        @case('hardwareLinkFormatter')
-                                            <input class="advancedSearch_hardwarelinkFormatter form-control" type="text" id="advancedSearch_{{ $tableField->field }}_input" autocomplete="on">
-                                        @break
-
-                                        <!-- Makes no sense for the advanced search
-                                            @case('imageFormatter')
-                                            <p>imageFormatter</p>
-                                            @break */
-                                        -->
-
-                                        @case('manufacturersLinkObjFormatter')
-                                            @include ('partials.select.dropdowns.manufacturer-select', [
-                                                'translated_name' => trans('admin/hardware/manufacturer.model'),
-                                                'select_id' => "advancedSearch_$tableField->field",
-                                                'fieldname' => $tableField->field,
-                                                'required' => 'false',
-                                                'multiple' => 'true',
-                                            ])
-                                        @break
-
-                                        @case('modelsLinkObjFormatter')
-                                            @include ('partials.select.dropdowns.model-select', [
-                                                'translated_name' => trans('admin/hardware/form.model'),
-                                                'select_id' => "advancedSearch_$tableField->field",
-                                                'fieldname' => $tableField->field,
-                                                'required' => 'false',
-                                                'multiple' => 'true',
-                                            ])
-                                        @break
-
-                                        @case('orderNumberObjFilterFormatter')
-                                            <input class="advancedSearch_orderNumberObjFilterFormatter form-control" type="text" id="advancedSearch_{{ $tableField->field }}_input" autocomplete="on">
-                                        @break
-
-                                        @case('polymorphicItemFormatter')
-                                            @include ('partials.select.dropdowns.assignedTo-select', [
-                                                'translated_name' => trans('admin/hardware/assignedTo.model'),
-                                                'fieldname' => $tableField->field,
-                                                'select_id' => "advancedSearch_$tableField->field",
-                                                'required' => 'false',
-                                                'multiple' => 'true',
-                                            ])
-                                        @break
-
-                                        @case('statuslabelsLinkObjFormatter')
-                                            @include ('partials.select.dropdowns.status-select', [
-                                                'translated_name' => trans('admin/hardware/status.model'),
-                                                'select_id' => "advancedSearch_$tableField->field",
-                                                'fieldname' => $tableField->field,
-                                                'required' => 'false',
-                                                'multiple' => 'true',
-                                            ])
-                                        @break
-
-                                        @case('suppliersLinkObjFormatter')
-                                            @include ('partials.select.dropdowns.supplier-select', [
-                                                'translated_name' => trans('admin/hardware/supplier.model'),
-                                                'select_id' => "advancedSearch_$tableField->field",
-                                                'fieldname' => $tableField->field,
-                                                'required' => 'false',
-                                                'multiple' => 'true',
-                                            ])
-                                        @break
-
-                                        @case('trueFalseFormatter')
-                                            <p>trueFalseFormatter</p>
-                                        @break
-
-                                        @case('customFieldsFormatter')
-                                            <input class="advancedSearch_customField form-control" type="text" autocomplete="on" id="advancedSearch_{{ $tableField->field }}_input" >
-                                        @break
-
-                                        @case('usersLinkObjFormatter')
-                                            @include ('partials.select.dropdowns.user-select', [
-                                                'translated_name' => trans('admin/hardware/user.model'),
-                                                'select_id' => "advancedSearch_$tableField->field",
-                                                'fieldname' => $tableField->field,
-                                                'required' => 'false',
-                                                'multiple' => 'true',
-                                            ])
-                                        @break
-
-                                        @default
-                                            <input class="advancedSearch_defaultField form-control" type="text" autocomplete="on" id="advancedSearch_{{ $tableField->field }}_input" >
-                                    @endswitch
-                                @endif
-                            </span>
-                        @endif
-                    @endforeach
-                    <div id="advancedSearchControlContainer" class="form-group">
-                        <button type="submit" class="btn btn-default" id="filterButton">
-                            <span aria-hidden="true"></span>
-                            <span>🔎 {{ trans('button.search') }}</span>
-                        </button>
-                        <button type="button" class="btn btn-default" id="clearInputButton">
-                            <span aria-hidden="true"></span>
-                            <span>❌ {{ trans('button.delete_search_query') }}</span>
-                        </button>
-                        <button type="button" class="btn btn-default" id="setDemoDataButton">
-                            <span aria-hidden="true"></span>
-                            <span>Fill with testdata</span>
-                        </button>
-                    </div>
-                </span>
-            </div>
+<div id="advancedSearchPanel" class="box box-default filter-sidebar">
+    <div class="box-header with-border">
+        <h3 class="box-title">
+            <i class="fas fa-filter"></i> <span class="filter-title"> {{ trans('general.advanced_search') }} </span>
+        </h3>
+        <div class="box-tools pull-right">
+        <button type="button" id="closeSidebarButton" class="btn btn-box-tool collapse-toggle">
+            <i class="fa fa-chevron-left icon-desktop" id="collapseIconDesktop"></i>
+            <i class="fa fa-chevron-up icon-mobile" id="collapseIconMobile"></i>
+        </button>
+            <button id="topClearInputButton" type="button" class="btn btn-box-tool">
+                <i class="fa fa-times"></i> <span class="clear-text"> {{ trans('button.delete') }}</span>
+            </button>
         </div>
     </div>
+    
+    <div class="box-body filter-body">
+        <!-- Quick Filter Search -->
+        <div class="form-group filter-content">
+            <label>Search Filters</label>
+            <input type="text" class="form-control" id="filterSearch" placeholder="{{ trans('general.search_after_filter_field') }}">
+        </div>
+        
+        <!-- Predefined Filters -->
+        <div class="form-group filter-content">
+            @include ('partials.select.dropdowns.predefined-select', [
+                'translated_name' => trans('general.select_predefined_filter'),
+                'fieldname' => 'predefinedFilters',
+                'select_id' => "predefinedfilters-select",
+                'required' => 'false',
+            ])
+        </div>
+        
+        <hr class="filter-content">
+        
+        <!-- All Filter Fields -->
+        <div id="advancedSearchFilters" class="filter-content container">
+            @php
+                $layoutJson = \App\Presenters\AssetPresenter::dataTableLayout();
+                $layout = json_decode($layoutJson);
+            @endphp
+
+            @include('partials.advanced-search.search-inputs')
+        </div>
+
+
+    </div>
+    @include ('partials.advanced-search.floating-button')
+    @include ('partials.advanced-search.modal', [
+        'createNew' => false,
+    ])
 </div>
+
+@include('partials.confetti-js', ['autostart' => false])
 
 <script>
 
-class FilterInput {
-    constructor(element) {
-        this.element = element;
-    }
-
-    get key() {
-        return this.element.id
-            .replace("advancedSearch_", "")
-            .replace("_input", "");
-    }
-
-    hasValue() {
-        return Boolean(this.element.value);
-    }
-
-    getValue() {
-        throw new Error("getValue() must be implemented by subclass");
-    }
-
-    setValue(newValue) {
-        this.element.value = newValue;
-    }
-
-    getType() {
-        return this.element.id
-                .replace("advancedSearch_", "")
-                .replace("_input", "")
-                .replace("_start", "")
-                .replace("_end", "");
-    }
-
-    appendTo(filters) {
-        const value = this.getValue();
-        if (value !== null && value !== undefined && value !== '') {
-            filters[this.key] = value;
-        }
-    }
-
-    clear() {
-        this.element.value = "";
-    }
-}
-
-class SelectFilterInput extends FilterInput {
-    getValue() {
-        const selections = $(this.element).select2('data');
-        const selectedIds = selections
-            .map(item => parseInt(item.id))
-            .filter(id => !isNaN(id));
-
-        if (selectedIds.length === 0) {
-            return null;
-        }
-
-        return selectedIds;
-    }
-
-    setValue(newValues) {
-        // More details are here https://select2.org/programmatic-control/add-select-clear-items#preselecting-options-in-an-remotely-sourced-ajax-select2
-
-        let requestPromises = [];
-        newValues.forEach((newValue) => {
-            const promise = fetchItemFromBackendById(this.getType(), newValue);
-            requestPromises.push(promise);
-        })
-
-        Promise.all(requestPromises)
-        .then((responses) => {
-            responses.forEach((response) => {
-                var option = new Option(response.name, response.id, true, true);
-                $(this.element).append(option).trigger('change');
-            });
-            
-            $(this.element).trigger({
-                type: 'select2:select',
-            });
-        });
-    }
-
-    clear() {
-        $(this.element).val(null).trigger('change');
-    }
-}
-
-class AssignedToSelectFilterInput extends SelectFilterInput {
-    getValue() {
-        const selections = $(this.element).select2('data');
-
-        if (!selections.length) return null;
-
-        return selections.map(selection => {
-            // Find the corresponding <option> element
-            const option = $(this.element).find(`option[value="${selection.id}"]`)[0];
-
-            // Default assignedType in case data-attribute isn't set
-            let assignedType = null;
-
-            if (option) {
-                assignedType = option.getAttribute('data-assigned-type');
-            }
-
-            // If data-assigned-type is missing, fallback to 'type' from Select2 selection (if available)
-            if (!assignedType && selection.type) {
-                assignedType = "App\\Models\\" + selection.type.charAt(0).toUpperCase() + selection.type.slice(1);
-            }
-
-            return {
-                assignedType,
-                assigned_to: parseInt(selection.id)
-            };
-        });
-    }
-
-
-    setValue(newValues) {
-        // More details are here https://select2.org/programmatic-control/add-select-clear-items#preselecting-options-in-an-remotely-sourced-ajax-select2
-
-        const requestPromises = newValues.map(({ assignedType, assigned_to }) => {
-            const type = {
-                "App\\Models\\Asset": "asset",
-                "App\\Models\\Location": "location",
-                "App\\Models\\User": "user"
-            }[assignedType];
-
-            return fetchItemFromBackendById(type, assigned_to)
-                .then(response => ({ ...response, assignedType }));
-        });
-
-        Promise.all(requestPromises).then((responses) => {
-                responses.forEach(({ id, name, assignedType }) => {
-                const displayName = name || `#${id}`;
-                const option = new Option(displayName, id, true, true);
-
-                option.setAttribute('data-assigned-type', assignedType);
-
-                $(this.element).append(option).trigger('change');
-            });
-
-            $(this.element).trigger({ type: 'select2:select' });
-        });
-    }
-}
-
-
-class DateFilterInput extends FilterInput {
-    getValue() {
-           return this.hasValue() ? this.element.value : null;
-    }
-}
-
-class TextFilterInput extends FilterInput {
-    getValue() {
-        return this.hasValue() ? this.element.value : null;
-    }
-}
-
-class AdvancedSearchFilterCollector {
-    constructor() {
-        this.filters = {};
-        this.inputs = [];
-    }
-
-    collect() {
-        this.filters = {};
-        this.inputs = [];
-
-        // Select2
-        document.querySelectorAll('select[id^="advancedSearch_"]').forEach(el => {
-            if (el.id === 'advancedSearch_assigned_to') {
-                this.inputs.push(new AssignedToSelectFilterInput(el));
-            } else {
-                this.inputs.push(new SelectFilterInput(el));
-            }
-        });
-
-        // Dates
-        document.querySelectorAll('input[id^="advancedSearch_"][id$="_start"][type="date"], input[id^="advancedSearch_"][id$="_end"][type="date"]').forEach(el => {
-            this.inputs.push(new DateFilterInput(el));
-        });
-
-        // Text
-        document.querySelectorAll('input[id^="advancedSearch_"][type="text"]').forEach(el => {
-            this.inputs.push(new TextFilterInput(el));
-        });
-
-        // Process all inputs polymorphically
-        this.inputs.forEach(input => {
-            input.appendTo(this.filters);
-        });
-
-        return this.filters;
-    }
-
-    clearAll() {
-        this.collect();
-        this.inputs.forEach(field => {
-            field.clear();
-        });
-    }
-
-    setValuesFromResponse(response) {
-        this.clearAll();
-
-        for (const key in response) {
-            const value = response[key];
-
-            // Find the matching input by the `name` attribute
-            const field = this.inputs.find(input => input.key === key);
-            if (!field) {
-                console.warn(`No input found for key: ${key}`);
-                continue;
-            }
-            
-            const type = field.getType();
-
-            try {
-                field.setValue(value);
-            } catch (err) {
-                console.error(`Failed to set value for "${key}":`, err);
-            }
-        }
-    }
-
-}
-
-class TableFilterController {
+class FilterUIController {
     constructor(tableElement) {
         this.$table = tableElement;
-        this.collector = new AdvancedSearchFilterCollector();
+        this.collector = new FilterFormManager();
     }
 
     refresh() {
@@ -436,9 +70,162 @@ class TableFilterController {
         });
     }
 
+updateFilterWithPredefined(event) {
+    const selectedId = event?.target?.value;
+    if (!selectedId) {
+        floatingMenuDisableEditDeleteButtons();
+        return;
+    }
+
+    floatingMenuEnableEditDeleteButtons();
+    setAdvancedSearchPanelFilterEnabledState(true);
+
+    this.fetchPredefinedFilterData(selectedId)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+            return response.json(); // Parse JSON from response
+        })
+        .then(data => {
+            if (!data.filter_data) return;
+
+            return this.collector.setValuesFromResponse(data.filter_data)
+                .then(() => this.refresh());
+        })
+        .catch(err => {
+            console.error("Failed to apply predefined filter:", err);
+            alert("Failed to apply predefined filter");
+            setAdvancedSearchPanelFilterEnabledState(false);
+        });
+}
+
+
+
+    storePredefinedFilterInBackend() {
+        const filters = this.collector.collect();
+        
+        openFilterCreateUpdateModal(true)
+        .then((input) => {
+            const payload = {
+                name: input.name,
+                filter_data: filters,
+                is_public: input.visibility === "public" ? true : false,
+            };
+            fetchFromBackend('POST', '{{ route('api.predefinedFilters.store') }}', JSON.stringify(payload))
+            .then((response) => {
+                if(response.status === 201) {
+                    alert("Filter stored successfully");
+                    if(window.triggerConfetti) window.triggerConfetti();
+                } else {
+                    console.error(response);
+                    alert("An error has occured. Look in the browser console for more details.");  
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+                alert("An error has occured: " + error);
+            })
+        });
+    }
+
+    updatePredefinedFilterInBackend(updateFilterButtonId) {
+        if (document.getElementById(updateFilterButtonId).classList.contains('disabled')) return; // Do nothing when the button is disabled
+
+        const selectedFilter = $("#predefinedfilters-select").select2('data')[0]; // Always zero because only one element can be selected at the time
+        if (!selectedFilter) return;
+        const filters = this.collector.collect();
+
+        // Fetch filter from backend to get the permissions
+        fetchItemFromBackendById("group_select", selectedFilter.id)
+            .then((response) => {
+                response.json()
+                    .then((responseJson) => {
+                        const permissionGroupRequests = [];
+
+                        responseJson.permissions.forEach(permission => {
+                            permissionGroupRequests.push(fetchItemFromBackendById("groups", permission.permission_group_id));
+                        });
+                        Promise.all(permissionGroupRequests).
+                        then((permissionGroupResponses) => {
+
+                            const permissionGroupResponsePromises = [];
+                            permissionGroupResponses.forEach((permissionGroupResponse) => {
+                                permissionGroupResponsePromises.push(permissionGroupResponse.json());
+                            })
+                            Promise.all(permissionGroupResponsePromises)
+                                .then((permissionGroupResponses) => {
+                                    openFilterCreateUpdateModal(false, responseJson.name, permissionGroupResponses)
+                                        .then((input) => {
+
+                                            const payload = {
+                                                name: input.name,
+                                                filter_data: filters,
+                                                permissions: input.permissions,
+                                                is_public: input.visibility === "public" ? true : false,
+                                            };
+
+                                            const updateUrlTemplate = `{{ route('api.predefinedFilters.update', ['id' => '__ID__']) }}`;
+                                            const selectedFilterId = selectedFilter.id; // JS context
+                                            const finalUrl = updateUrlTemplate.replace('__ID__', selectedFilterId);
+
+                                            fetchFromBackend('PUT', finalUrl, JSON.stringify(payload))
+                                                .then((response) => {
+                                                    if (response.status === 200) {
+                                                        alert("Filter updated successfully");
+                                                        if (window.triggerConfetti) window.triggerConfetti();
+                                                    } else {
+                                                        console.error(response);
+                                                        alert("An error has occured. Look in the browser console for more details.");
+                                                    }
+                                                });
+                                        });
+                                });
+                        });
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                        alert("An error has occured: " + error);
+                    })
+            });
+    }
+
+    deletePredefinedFilterFromBackend(deleteFilterButtonId) {
+        if (document.getElementById(deleteFilterButtonId).classList.contains('disabled')) return; // Do nothing when the button is disabled
+
+        const selectedFilterId = $("#predefinedfilters-select").select2('data')[0].id; // Always zero because only one element can be selected at the time
+        if (!selectedFilterId) return;
+
+        const updateUrlTemplate = `{{ route('api.predefinedFilters.destroy', ['id' => '__ID__']) }}`;
+        const finalUrl = updateUrlTemplate.replace('__ID__', selectedFilterId);
+
+        fetchFromBackend('PUT', finalUrl)
+        .then((response) => {
+            if(response.status === 200) {
+                alert("Filter deleted successfully");
+                if(window.triggerConfetti) window.triggerConfetti();
+            } else {
+                console.error(response);
+                alert("An error has occured. Look in the browser console for more details.");  
+            }
+        })
+        .catch((error) => {
+            console.error(error);
+            alert("An error has occured: " + error);
+        })
+    }
+
+    fetchPredefinedFilterData(filterId) {
+        const updateUrlTemplate = `{{ route('api.predefinedFilters.show', ['id' => '__ID__']) }}`;
+        const finalUrl = updateUrlTemplate.replace('__ID__', filterId);
+
+        return fetchFromBackend('GET', finalUrl);
+    }
+
     bindEvents() {
-        document.querySelectorAll('[id^="advancedSearch_"]').forEach(el => {
-            el.addEventListener('change', this.refresh.bind(this));
+
+        $('#predefinedfilters-select').on('change', (e) => {
+            this.updateFilterWithPredefined(e);
         });
 
         const filterButton = document.getElementById("filterButton");
@@ -451,119 +238,262 @@ class TableFilterController {
             clearButton.addEventListener('click', () => this.collector.clearAll());
         }
 
-        const setDemoDataButton = document.getElementById("setDemoDataButton");
-        if (setDemoDataButton) {
-            const demoDataObject = {
-                                        category :[1, 3, 5, 7, 9],
-                                        manufacturer:[1,3,7, 9, 11, 13, 15],
-                                        asset_eol_date_end :"2027-10-31",
-                                        "custom_fields._snipeit_cpu_4": "Core i7",
-                                        assigned_to: [
-                                            {
-                                              assignedType: "App\\Models\\Location",
-                                              assigned_to: 6071
-                                            },
-                                            {
-                                              assignedType: "App\\Models\\Asset",
-                                              assigned_to: 42657
-                                            }
-                                        ]
-                                    };
-            setDemoDataButton.addEventListener('click', () => this.collector.setValuesFromResponse(demoDataObject));
+        const topClearButton = document.getElementById("topClearInputButton");
+        if (topClearButton) {
+            topClearButton.addEventListener('click', () => this.collector.clearAll());
         }
+
+        const saveFilterButton = document.getElementById("storeFilterButton");
+        if (saveFilterButton) {
+            saveFilterButton.addEventListener('click', () => this.storePredefinedFilterInBackend());
+        }
+
+        const updateFilterButton = document.getElementById("updateFilterButton");
+        if (updateFilterButton) {
+            updateFilterButton.addEventListener('click', () => this.updatePredefinedFilterInBackend(updateFilterButton.id));
+        }
+
+        const deleteFilterButton = document.getElementById("deleteFilterButton");
+        if (deleteFilterButton) {
+            deleteFilterButton.addEventListener('click', () => this.deletePredefinedFilterFromBackend(deleteFilterButton.id));
+        }
+
     }
 }
 
 document.addEventListener('DOMContentLoaded', function () {
     const tableId = "{{ request()->has('status') ? e(request()->input('status')) : '' }}assetsListingTable";
     const $table = $('#' + tableId);
-
+    
     // Initialize everything
-    const controller = new TableFilterController($table);
+    const controller = new FilterUIController($table);
     controller.bindEvents();
 });
 
-function fetchItemFromBackendById(type, id) {
-    return new Promise((resolve, reject) => {
-
-        const typeSingularToPluralMap = new Map();
-        typeSingularToPluralMap.set("asset", "hardware");
-        typeSingularToPluralMap.set("category", "categories");
-        typeSingularToPluralMap.set("company", "companies");
-        typeSingularToPluralMap.set("location", "locations");
-        typeSingularToPluralMap.set("manufacturer", "manufacturers");
-        typeSingularToPluralMap.set("model", "models");
-        typeSingularToPluralMap.set("rtd_location", "locations");
-        typeSingularToPluralMap.set("status_label", "statuslabels");
-        typeSingularToPluralMap.set("supplier", "suppliers");
-        typeSingularToPluralMap.set("user", "users");
-
-        if(!typeSingularToPluralMap.has(type)) {
-            console.error("Invalid type " + type);
-            reject("Invalid type " + type);
-            return;
+// Filter search functionality
+document.getElementById('filterSearch').addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    const items = document.querySelectorAll('.filter-item');
+    items.forEach(item => {
+        const label = item.querySelector('label');
+        const labelText = label ? label.textContent.toLowerCase() : '';
+        if (labelText.includes(searchTerm)) {
+            item.style.display = '';
+        } else {
+            item.style.display = 'none';
         }
-
-        const path = "/api/v1/" + typeSingularToPluralMap.get(type) + "/" + id;
-        const options = {
-            method: 'GET',
-            headers: {
-                accept: 'application/json',
-                'X-Requested-With': 'XMLHttpRequest',
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        };
-        
-        fetch(path, options)
-        .then(res => res.json())
-        .then(res => resolve(res))
-        .catch(err => reject(err));
     });
+});
+
+function getCsrfToken() {
+    return $('meta[name="csrf-token"]').attr('content');
+}
+
+function fetchFromBackend(method, path, body = null) {
+    const options = {
+        method: method,
+        headers: {
+            accept: 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-TOKEN': getCsrfToken(),
+            'Content-Type': 'application/json'
+        },
+        ...(body && { body })
+    };
+
+    return fetch(path, options);
+        //.then(res => res.json());
+}
+
+function fetchItemFromBackendById(type, id) {
+    const typeMap = {
+        asset: "hardware",
+        category: "categories",
+        company: "companies",
+        location: "locations",
+        manufacturer: "manufacturers",
+        model: "models",
+        groups: "groups",
+        group_select: "predefinedFilters",
+        rtd_location: "locations",
+        status_label: "statuslabels",
+        supplier: "suppliers",
+        user: "users"
+    };
+
+    if (!typeMap[type]) {
+        return Promise.reject(`Invalid type ${type}`);
+    }
+    const path = `/api/v1/${typeMap[type]}/${id}`;
+    return fetchFromBackend('GET', path);
+}
+
+function predefinedFilterRequest(method, filterId = null, filterData = null) {
+    let  path = "/api/v1/predefinedFilters";
+
+    if(filterId !== null) {
+        path += "/" + filterId;
+    }
+
+    return fetchFromBackend(method, path, filterData);
+}
+
+function setAdvancedSearchPanelFilterEnabledState(state) {
+    const fields = document.getElementById("advancedSearchPanel").getElementsByTagName('*');
+    for(var i = 0; i < fields.length; i++)
+    {
+        fields[i].disabled = state;
+    }
 }
 
 </script>
 
 <style>
-    /* Ensure the container is properly constrained */
-    .container {
-        width: 100%;
-        margin: 0 auto;
-        padding: 10px;
-        box-sizing: border-box;
-    }
+/* 
+Base styles for the filter sidebar and its transitions.
+Handles showing/hiding the sidebar smoothly.
+*/
+.filter-sidebar {
+    transition: all 0.3s ease;
+    position: relative;
+}
 
-    /* Make the panel-heading fit within the container */
-    .panel-heading {
-        cursor: pointer;
-        width: 100%;
-        box-sizing: border-box;
-        padding: 10px 15px;
-        margin: 0;
-    }
+/* 
+Smooth transition for the filter body (the inner panel).
+Ensures expanding/collapsing feels fluid.
+*/
+.filter-body {
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
 
-    /* Ensure the grid stays centered */
-    #advancedSearchFilters {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 15px 20px;
-        max-width: 1050px;
-        margin: 0 auto;
-        justify-content: center;
-    }
+/* 
+Fade-in/out effect for any element with this class when shown/hidden.
+*/
+.filter-content {
+    transition: opacity 0.2s ease;
+}
 
-    /* Flexbox styling remains the same */
-    .advancedSearchItemContainer {
-        display: flex;
-        flex-direction: column;
-        align-items: stretch;
-    }
+/* 
+Fade-in/out for filter section title and clear text.
+*/
+.filter-title,
+.clear-text {
+    transition: opacity 0.2s ease;
+}
 
-    .advancedSearchItemContainer b {
-        margin-bottom: 5px;
-    }
+/* ---------- Desktop styles ---------- */
+@media (min-width: 769px) {
+    /* 
+    When collapsed, the sidebar is skinny and its content is hidden.
+    */
+}
 
-    .advancedSearchItemContainer select.form-control {
-        width: 100%;
-        box-sizing: border-box;
+/* ---------- Mobile/Tablet styles ---------- */
+@media (max-width: 768px) {
+    /* 
+    Sidebar takes full width and less margin on mobile.
+    */
+    .filter-sidebar {
+        width: 100% !important;
+        margin-bottom: 15px;
     }
+    
+    /* 
+    Collapsed sidebar hides content and disables interaction.
+    */
+}
+
+/* 
+Ensures filter panel container uses full width and is padded.
+Makes it responsive.
+*/
+.container {
+    width: 100%;
+    margin: 0 auto;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+/* 
+Makes the advanced search filters section block-level and full width.
+*/
+#advancedSearchFilters {
+    display: block;
+    max-width: 100%;
+    margin: 0;
+}
+
+/* 
+Scrollable filter panel body, with padding.
+*/
+.box-body {
+    overflow-y: auto;
+    padding: 15px;
+}
+
+/* 
+On small screens, limit box-body max height to 75% of viewport.
+Makes scrolling manageable on mobile.
+*/
+@media (max-width: 768px) {
+  .box-body {
+    max-height: 75vh;
+  }
+}
+
+/* 
+On desktop, take up all available vertical height.
+*/
+@media (min-width: 769px) {
+  .box-body {
+    height: 100%;
+  }
+}
+
+/* 
+Button blocks have a little space between each for clarity.
+*/
+
+/* 
+Custom thin scrollbar for the filter area.
+Aesthetic tweak.
+*/
+.box-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+/* 
+Collapse button tweaks for spacing.
+*/
+.collapse-toggle {
+    margin-right: 5px;
+}
+
+/* 
+By default, hide both the desktop and mobile collapse icons.
+*/
+.icon-desktop,
+.icon-mobile {
+  display: none;
+}
+
+/* 
+Show the desktop collapse icon on desktop screens.
+*/
+@media (min-width: 768px) {
+  .icon-desktop {
+    display: inline;
+  }
+}
+
+/* 
+Show the mobile collapse icon on mobile screens.
+*/
+@media (max-width: 767px) {
+  .icon-mobile {
+    display: inline;
+  }
+}
+
 </style>

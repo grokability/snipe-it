@@ -18,6 +18,7 @@ use App\Models\Location;
 use App\Models\Setting;
 use App\Models\Statuslabel;
 use App\Models\User;
+use App\Models\PredefinedFilter;
 use App\View\Label;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -64,8 +65,13 @@ class AssetsController extends Controller
     {
         $this->authorize('index', Asset::class);
         $company = Company::find($request->input('company_id'));
+        // $predefined_filters = PredefinedFilter::Auth();
+        // $predefined_filters = PredefinedFilter::orderBy('name')->get();
+        $predefined_filters = PredefinedFilter::where('created_by', auth()->user()->id)
+            -> orderBy('name')
+            ->get();
 
-        return view('hardware/index')->with('company', $company);
+        return view('hardware/index')->with('company', $company)->with('predefined_filters', $predefined_filters); // TODO maybe switch later to user / role based view
     }
 
     /**

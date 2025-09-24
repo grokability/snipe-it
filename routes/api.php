@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api;
+use App\Http\Controllers\Api\PredefinedFilterController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -149,9 +150,7 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
         ]
     );
 
-    /**
-     * Assigned to dropdown selectlist routes group
-     */
+
     Route::group(['prefix' => 'assignedTo'], function () {
 
         Route::get(
@@ -164,9 +163,8 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
 
     }); // end Assigned to dropdown selectlist routes group
 
-    
     /**
-     * Categories API routes
+     * Categpries API routes
      */
     Route::group(['prefix' => 'categories'], function () {
 
@@ -488,6 +486,8 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
     /**
      * Groups API routes
      */
+    Route::get('groups/selectlist', [Api\GroupsController::class, 'selectlist'])
+    ->name('api.groups.selectlist');
     Route::resource(
         'groups',
         Api\GroupsController::class,
@@ -947,29 +947,32 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
         ]
     ); // end asset models API routes
 
+    /**
+     * PredefinedFilter API routes
+     */
+    //Route::middleware('auth:api')->group(function () {
 
-        /**
-         * Asset notes API routes
-         */
-        Route::group(['prefix' => 'notes'], function () {
+    Route::middleware('auth:api')->prefix('predefinedFilters')->group(function () {
+        Route::get('/', [PredefinedFilterController::class, 'index'])
+            ->name('api.predefinedFilters.index');
 
-            Route::post(
-                '{asset}/store',
-                [
-                    Api\NotesController::class,
-                    'store'
-                ]
-            )->name('api.notes.store');
+        Route::get('/selectlist', [PredefinedFilterController::class, 'selectlist'])
+            ->name('api.predefinedFilters.selectlist');
 
-            Route::get(
-                '{asset}/index',
-                [
-                    Api\NotesController::class,
-                    'index'
-                ]
-            )->name('api.notes.index');
-        }
-        ); // end asset notes API routes
+        Route::get('/{id}', [PredefinedFilterController::class, 'show'])
+            ->name('api.predefinedFilters.show');
+
+        Route::post('/', [PredefinedFilterController::class, 'store'])
+            ->name('api.predefinedFilters.store');
+
+        Route::put('/{id}', [PredefinedFilterController::class, 'update'])
+            ->name('api.predefinedFilters.update');
+
+        Route::delete('/{id}', [PredefinedFilterController::class, 'destroy'])
+            ->name('api.predefinedFilters.destroy');
+    });
+
+    //}; // end predefinedFilters API routes
 
     /**
      * Settings API routes
@@ -1175,19 +1178,13 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
      */
     Route::group(['prefix' => 'users'], function () {
 
-            Route::get('selectlist',
-                [
-                    Api\UsersController::class, 
-                    'selectlist'
-                ]
-            )->name('api.users.selectlist');
-
-            Route::post('ldapsync',
-                [
-                    Api\UsersController::class,
-                    'syncLdapUsers'
-                ]
-            )->name('api.users.ldapsync');
+        Route::get(
+            'selectlist',
+            [
+                Api\UsersController::class,
+                'selectlist'
+            ]
+        )->name('api.users.selectlist');
 
         Route::post(
             'two_factor_reset',
@@ -1505,7 +1502,7 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
             'index'
         ]
     )->name('api.files.index')
-        ->where(['object_type' => 'accessories|assets|components|consumables|hardware|licenses|locations|maintenances|models|users']);
+        ->where(['object_type' => 'assets|hardware|models|users|locations|accessories|consumables|licenses|components']);
 
     // Get a file
     Route::get(
@@ -1515,7 +1512,7 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
             'show'
         ]
     )->name('api.files.show')
-        ->where(['object_type' => 'accessories|assets|components|consumables|hardware|licenses|locations|maintenances|models|users']);
+        ->where(['object_type' => 'assets|hardware|models|users|locations|accessories|consumables|licenses|components']);
 
     // Upload files(s)
     Route::post(
@@ -1525,7 +1522,7 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
             'store'
         ]
     )->name('api.files.store')
-        ->where(['object_type' => 'accessories|assets|components|consumables|hardware|licenses|locations|maintenances|models|users']);
+        ->where(['object_type' => 'assets|hardware|models|users|locations|accessories|consumables|licenses|components']);
 
     // Delete files(s)
     Route::delete(
@@ -1535,6 +1532,6 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
             'destroy'
         ]
     )->name('api.files.destroy')
-        ->where(['object_type' => 'accessories|assets|components|consumables|hardware|licenses|locations|maintenances|models|users']);
+        ->where(['object_type' => 'assets|hardware|models|users|locations|accessories|consumables|licenses|components']);
 
 }); // end API routes

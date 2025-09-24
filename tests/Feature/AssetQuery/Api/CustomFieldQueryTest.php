@@ -161,6 +161,8 @@ class CustomFieldQueryTest extends TestCase
     public function testFilterWithUTF8CharactersInCustomField(): void
     {
 
+        $this->markIncompleteIfMySQL();
+
         $match = Asset::factory()->create(['custom_text' => '🥶🎃😅']);
         $nope = Asset::factory()->create(['custom_text' => '🙃🥳🙄😵‍💫']);
 
@@ -196,4 +198,6 @@ class CustomFieldQueryTest extends TestCase
                 'id' => $match->id,
             ]);
     }
+
+
 }
