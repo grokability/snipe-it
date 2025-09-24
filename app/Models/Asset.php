@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use DB;
 use App\Events\CheckoutableCheckedOut;
 use App\Exceptions\CheckoutNotAllowed;
 use App\Helpers\Helper;
@@ -2190,13 +2191,18 @@ class Asset extends Depreciable
                         'updated_at_end',
                         'jobtitle'
                     ];
-
+                    
                     if (!in_array($fieldname, $relationalFields)) {
                         $query->where(function ($query) use ($search_val, $fieldname) {
                             if (is_array($search_val)) {
                                 $query->whereIn('assets.' . $fieldname, $search_val);
                             } else {
-                                $query->where('assets.' . $fieldname, 'REGEXP', $search_val);
+                                if(DB::getDriverName() === "sqlite") {
+                                    // SQLite doesn't support REGEXP without an extionsion
+                                    $query->where('assets.' . $fieldname, 'LIKE', '%' . $search_val . '%');
+                                } else {
+                                    $query->where('assets.' . $fieldname, 'REGEXP', $search_val);
+                                }
                             }
                         });
                     }
