@@ -112,7 +112,7 @@ updateFilterWithPredefined(event) {
                 filter_data: filters,
                 is_public: input.visibility === "public" ? true : false,
             };
-            fetchFromBackend('POST', '{{ route('api.predefinedFilters.store') }}', JSON.stringify(payload))
+            fetchFromBackend('POST', '{{ route('api.predefined-filters.store') }}', JSON.stringify(payload))
             .then((response) => {
                 if(response.status === 201) {
                     alert("Filter stored successfully");
@@ -165,7 +165,7 @@ updateFilterWithPredefined(event) {
                                                 is_public: input.visibility === "public" ? true : false,
                                             };
 
-                                            const updateUrlTemplate = `{{ route('api.predefinedFilters.update', ['id' => '__ID__']) }}`;
+                                            const updateUrlTemplate = `{{ route('api.predefined-filters.update', ['id' => '__ID__']) }}`;
                                             const selectedFilterId = selectedFilter.id; // JS context
                                             const finalUrl = updateUrlTemplate.replace('__ID__', selectedFilterId);
 
@@ -216,7 +216,7 @@ updateFilterWithPredefined(event) {
     }
 
     fetchPredefinedFilterData(filterId) {
-        const updateUrlTemplate = `{{ route('api.predefinedFilters.show', ['id' => '__ID__']) }}`;
+        const updateUrlTemplate = `{{ route('api.predefined-filters.show', ['id' => '__ID__']) }}`;
         const finalUrl = updateUrlTemplate.replace('__ID__', filterId);
 
         return fetchFromBackend('GET', finalUrl);
