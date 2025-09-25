@@ -88,7 +88,19 @@ class PredefinedFilterController extends Controller
             return response()->json(['message' => trans('admin/predefinedFilters/message.does_not_exist')], 404);
         }
 
-        $validated = $request->validate((new PredefinedFilter)->getRules());
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'filter_data' => 'required|array',
+            'is_public' => 'sometimes|boolean'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(Helper::formatStandardApiResponse(422, null, $validator->errors()),422);
+        }
+        Log::Error('Incoming request data:', $request->all()); //TODO Remove
+        
+        $validated = $validator->validated();
+        
         $newIsPublic = $validated['is_public'];
         $currentIsPublic = $filter->is_public;
 

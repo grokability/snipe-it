@@ -45,6 +45,7 @@ class PredefinedFilterService
         return $response;
     }
 
+    //TODO different Naming because it does more than only get a filter by ID
     public function getFilterById(int $id, bool $include_predefined_filter_groups = true)
     {
         $predefinedFilter = PredefinedFilter::find($id);
