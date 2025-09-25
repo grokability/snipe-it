@@ -971,7 +971,7 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
             Route::put('predefinedFilters/{id}/sync-permissions', [PredefinedFilterController::class,'syncPermissionGroups'])
                 ->name('api.predefined-filters.sync-permissions');
 
-            Route::delete('predefinedFilters/{id}', [PredefinedFilterController::class,'destroy'])
+            Route::delete('/{id}', [PredefinedFilterController::class,'destroy'])
                 ->name('api.predefined-filters.destroy');
         }); // end predefinedFilters API routes
 
