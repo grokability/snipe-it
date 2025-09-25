@@ -3,9 +3,6 @@
 namespace App\Http\Transformers;
 
 use App\Helpers\Helper;
-use App\Models\Labels\Label;
-use App\Models\Labels\Sheet;
-use App\Models\Labels\RectangleSheet;
 use Illuminate\Support\Collection;
 use App\Models\Setting;
 
@@ -33,7 +30,7 @@ class PredefinedFiltersTransformer
             'object_type' => e($filter->object_type),
             'created_by' => $filter->createdBy ? [
                 'id' => (int) $filter-> createdBy ->id,
-                'name'=> e($filter->createdBy->present()->fullName()),
+                'name' => $filter->createdBy->present()->nameUrl(),
             ] : null,
             'created_at' => Helper::getFormattedDateObject($filter->created_at, 'datetime'),
             'updated_at' => Helper::getFormattedDateObject($filter->updated_at, 'datetime'),
