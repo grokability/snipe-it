@@ -9,6 +9,9 @@ use App\Models\PredefinedFilter;
 use App\Services\PredefinedFilterService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use App\Helpers\Helper;
+use Log;
 
 class PredefinedFilterController extends Controller
 {
@@ -28,10 +31,13 @@ class PredefinedFilterController extends Controller
     public function show(int $id)
     {
         $filter = $this->service->getFilterById($id);
-
+        
+        Log::error('Filter :', ['filter' => $filter]); //TODO Remove
         if (!$filter) {
             return response()->json(['message' => trans('admin/predefinedFilters/message.does_not_exist')], 404);
         }
+
+        Log::error('Filter class before canUserViewFilter: ' . gettype($filter)); // TODO remove
 
         if ($this->service->canUserViewFilter($filter)) {
             return response()->json($filter->toArray());
@@ -40,10 +46,26 @@ class PredefinedFilterController extends Controller
         return response()->json(['message' => trans('admin/predefinedFilters/message.show.not_allowed')], 403);
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(Request $request): JsonResponse | array
     {
+        Log::Error('Incoming request data:', $request->all()); //TODO Remove
+
+
         $user = auth()->user();
-        $validated = $request->validate((new PredefinedFilter)->getRules());
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'filter_data' => 'required|array',
+            'is_public' => 'sometimes|boolean'
+        ]);
+
+        Log::error('Validator :', ['validator' => $validator]); //TODO Remove
+
+        if ($validator->fails()) {
+            return response()->json(Helper::formatStandardApiResponse(422, null, $validator->errors()),422);
+        }
+        
+        $validated = $validator->validated();
 
         if (!empty($validated['is_public']) && !$user->hasAccess('predefinedFilter.create')) {
             return response()->json(['message' => trans('admin/predefinedFilters/message.create.not_allowed')], 403);
