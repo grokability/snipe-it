@@ -79,6 +79,7 @@ return [
     'city'  				=> 'Stadt',
     'click_here'			=> 'Hier klicken',
     'clear_selection'		=> 'Auswahl löschen',
+    'close_filters'         => 'Filter schließen',
     'companies'			    => 'Firmen',
     'company'				=> 'Firma',
     'component'			    => 'Komponente',
@@ -226,6 +227,7 @@ return [
     'note_deleted'            => 'Notiz gelöscht',
     'delete_note'              => 'Notiz löschen',
     'order_number'          => 'Auftragsnummer',
+    'open_filters'          => 'Filter öffnen',
     'only_deleted'          => 'Nur gelöschte Assets',
     'page_menu'				=> 'Zeige _MENU_ Einträge',
     'page_error'            => 'Vorherige Seite konnte nicht ermittelt werden. Auf Startseite weitergeleitet.',
@@ -269,9 +271,11 @@ return [
     'select_datasource' => 'Datenquelle auswählen',
     'select_department'     => 'Wähle eine Abteilung',
     'select_depreciation'	=> 'Wähle einen Abschreibungstyp',
+    'select_group'          => 'Gruppe auswählen',
     'select_location'		=> 'Wähle einen Standort',
     'select_manufacturer'	=> 'Wähle einen Hersteller',
     'select_model'			=> 'Wähle ein Modell',
+    'select_predefined_filter' => 'Wähle einen vordefinierten Filter aus',
     'select_supplier'		=> 'Wähle einen Lieferanten',
     'select_user'			=> 'Wähle einen Benutzer',
     'select_date'			=> 'Datum auswählen (JJJJ-MM-TT)',
@@ -681,7 +685,15 @@ return [
         'percent' => 'Prozentsatz',
     ],
 
+    'advanced_search' => "Erweiterte Suche",
     'months_plural' => '1 Monat|:count Monate',
 
+    'search_after_filter_field' => 'Nach einem Feld suchen...',
+    'predefined_filter_name' => 'Filtername',
+    'enter_predefined_filter_name' => 'Gib bitte einen Filternamen ein',
+    'visibility' => 'Sichtbarkeit',
+    'public' => 'Öffentlich',
+    'private' => 'Privat',
+    'validation_required' => 'Gib bitte einen Filternamen ein.',
 
 ];

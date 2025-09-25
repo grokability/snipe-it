@@ -653,6 +653,7 @@
         'groups',
         'hardware',
         'kits',
+        'predefined-filters',
         'licenses',
         'locations',
         'maintenances',

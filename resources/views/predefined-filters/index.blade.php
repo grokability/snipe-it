@@ -1,0 +1,68 @@
+@extends('layouts/default')
+
+{{-- Page title --}}
+@section('title')
+{{ trans('admin/predefinedFilters/table.title') }} 
+@parent
+@stop
+
+{{-- Page content --}}
+@section('content')
+
+<div class="row">
+  <div class="col-md-9">
+    <div class="box box-default">
+      <div class="box-body">
+            <table
+                    data-columns="{{ \App\Presenters\PredefinedFilterPresenter::dataTableLayout() }}"
+                    data-cookie-id-table="predefinedFiltersTable"
+                    data-id-table="predefinedFiltersTable"
+                    data-show-footer="false"
+                    data-side-pagination="server"
+                    data-sort-order="asc"
+                    data-sort-name="name"
+                    id="predefinedFiltersTable"
+                    data-buttons="predefinedFiltersButtons"
+                    class="table table-striped snipe-table"
+                    data-url="{{ route('api.predefined-filters.index') }}"
+                    data-export-options='{
+                "fileName": "export-predefinedFilters-{{ date('Y-m-d') }}",
+                "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
+                }'>
+          </table>
+      </div>
+    </div>
+  </div>
+  <!-- side address column -->
+  <div class="col-md-3">
+    <h2>{{ trans('admin/predefinedfilters/table.about') }}</h2>
+
+      <div class="box">
+          <div class="box-body">
+              <p>{!!  trans('admin/predefinedfilters/table.info') !!}</p> {{-- TODO --}}
+          </div>
+      </div>
+
+      <div class="box box-success">
+          <div class="box-body">
+            <p><i class="fas fa-check icon-white text-success"></i> <strong>{{ trans('admin/predefinedfilters/table.private') }}</strong>: {{ trans('admin/predefinedfilters/message.help.private') }}</p> {{-- TODO --}}
+          </div>
+      </div>
+
+      <div class="box box-danger">
+          <div class="box-body">
+              <p><i class="fas fa-times text-red"></i> <strong>{{ trans('admin/predefinedfilters/table.public') }}</strong>: {{ trans('admin/predefinedfilters/message.help.public') }}</p> {{-- TODO --}}
+          </div>
+      </div>
+
+  </div>
+
+</div>
+@stop
+
+@section('moar_scripts')
+@include ('partials.bootstrap-table')
+
+
+
+@stop

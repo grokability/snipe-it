@@ -25,6 +25,7 @@ use App\Models\Company;
 use App\Models\CustomField;
 use App\Models\License;
 use App\Models\Location;
+use App\Models\PredefinedFilter;
 use App\Models\Setting;
 use App\Models\User;
 use Carbon\Carbon;
@@ -434,6 +435,18 @@ class AssetsController extends Controller
                     $assets->orderBy($column_sort, $order);
                 }
                 break;
+        }
+
+        // Filter with predefinedFilter if one is given
+        if (isset($request->predefinedFilter)) {
+            $id = $request->predefinedFilter;
+            $predefinedFilters = PredefinedFilter::where('id', $id)
+                ->where('created_by', auth()->user()->id)
+                ->first();
+
+            if ($predefinedFilters) {
+                $assets = $predefinedFilters->filterAssets($assets);
+            }
         }
 
 
