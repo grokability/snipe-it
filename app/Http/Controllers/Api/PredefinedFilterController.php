@@ -97,7 +97,6 @@ class PredefinedFilterController extends Controller
         if ($validator->fails()) {
             return response()->json(Helper::formatStandardApiResponse(422, null, $validator->errors()),422);
         }
-        Log::Error('Incoming request data:', $request->all()); //TODO Remove
         
         $validated = $validator->validated();
         
@@ -108,9 +107,7 @@ class PredefinedFilterController extends Controller
             if (!$currentIsPublic && $newIsPublic && !$user->hasAccess('predefinedFilter.create')) {
                 return response()->json(['message' => trans('admin/predefinedFilters/message.update.not_allowed_to_change_isPublic')], 403);
             }
-        } elseif ($currentIsPublic && !$filter->userHasPermission($user, 'update')) {
-            return response()->json(['message' => trans('admin/predefinedFilters/message.not_allowed_to_edit')], 403);
-        } else {
+        } if (!$filter->userHasPermission($user, 'update')) {
             return response()->json(['message' => trans('admin/predefinedFilters/message.not_allowed_to_edit')], 403);
         }
 

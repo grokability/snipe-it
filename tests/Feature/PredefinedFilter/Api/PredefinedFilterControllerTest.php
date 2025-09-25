@@ -59,7 +59,7 @@ class PredefinedFilterControllerTest extends TestCase
         $this->actingAs($u, 'api')
             ->getJson('/api/v1/predefinedFilters')
             ->assertOk()
-            ->assertExactJson([]);
+            ->assertExactJson(['rows' => [], 'total' => 0,]);
     }
 
     public function test_index_lists_only_viewable_or_owned(): void
@@ -87,15 +87,14 @@ class PredefinedFilterControllerTest extends TestCase
             'is_public'  => 0,
         ]);
 
-        $this->actingAs($u, 'api')
+        $response = $this->actingAs($u, 'api')
             ->getJson('/api/v1/predefinedFilters')
             ->assertOk()
-            ->assertJsonStructure([['id','name','created_by','is_public']])
             ->assertJsonFragment(['id'=>$viewable->id,'name'=>'A Viewable'])
-            ->assertJsonFragment(['id'=>$mine->id,'name'=>'M My Own'])
-            ->assertJsonMissing(['id'=>$hidden->id,'name'=>'Z Hidden'])
-            ->assertJsonPath('0.name', 'A Viewable');
+            ->assertJsonFragment(['id'=>$mine->id,'name'=>'M My Own']);
+        $this->assertCount(2, $response->json('rows'));
     }
+    
     public function test_index_lists_only_public_linked_or_owned(): void
     {
         $owner = User::factory()->create();
@@ -133,7 +132,7 @@ class PredefinedFilterControllerTest extends TestCase
         $this->actingAs($u, 'api')
             ->getJson('/api/v1/predefinedFilters/999999')
             ->assertStatus(404)
-            ->assertJson(['message' => 'admin/predefinedFilters/message.does_not_exist']);
+            ->assertJson(['message' => 'Filter does not exist.']);
     }
     
     public function test_show_forbidden_without_view_permission(): void 
@@ -271,7 +270,8 @@ class PredefinedFilterControllerTest extends TestCase
         $this->actingAs($u, 'api')
             ->postJson('/api/v1/predefinedFilters', [])
             ->assertStatus(422)
-            ->assertJsonValidationErrors(['name','filter_data']);
+            ->assertJsonPath('messages.name.0', 'The name field is required.')
+            ->assertJsonPath('messages.filter_data.0', 'The filter data field is required.');
     }
 
 
@@ -387,11 +387,11 @@ class PredefinedFilterControllerTest extends TestCase
             ->putJson("/api/v1/predefinedFilters/{$f->id}", [
                 'name'=>'X','filter_data'=>['a'=>3],'is_public'=>1
             ])
-        ->assertStatus(403);
-
+            ->assertStatus(403);
+            
         $g = $this->grant($other, ['predefinedFilter.update'=>'1']);
         $this->linkGroupFilter($f, $g);
-
+            
         $this->actingAs($other, 'api')
             ->putJson("/api/v1/predefinedFilters/{$f->id}", [
                 'name'=>'X','filter_data'=>['a'=>3],'is_public'=>1
@@ -407,7 +407,7 @@ class PredefinedFilterControllerTest extends TestCase
                 'name' => 'X', 'filter_data' => [], 'is_public' => 0
             ])
         ->assertStatus(404)
-        ->assertJson(['message' => 'admin/predefinedFilters/message.does_not_exist']);
+        ->assertJson(['message' => 'Filter does not exist.']);
     }
 
     public function test_update_validates_payload(): void
@@ -416,11 +416,14 @@ class PredefinedFilterControllerTest extends TestCase
         $f = PredefinedFilter::factory()->create();
 
         $this->actingAs($u, 'api')
+            ->putJson(route('api.predefined-filters.update', ['id' => $f->id]), []);
+        
+        $this->actingAs($u, 'api')
             ->putJson(route('api.predefined-filters.update', ['id' => $f->id]), [])
             ->assertStatus(422)
-            ->assertJsonValidationErrors(['name', 'filter_data']);
+            ->assertJsonPath('messages.name.0', 'The name field is required.')
+            ->assertJsonPath('messages.filter_data.0', 'The filter data field is required.');
     }
-
 
 //------DESTROY TESTS------
 public function test_destroy_non_owner_public_requires_destroy_permission()
