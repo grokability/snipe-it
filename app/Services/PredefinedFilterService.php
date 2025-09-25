@@ -49,7 +49,7 @@ class PredefinedFilterService
     {
         $predefinedFilter = PredefinedFilter::find($id);
         if($include_predefined_filter_groups) {
-            $permissions = $this->predefinedFilterPermissionService->getPermissionsById($id);
+            $permissions = $this->predefinedFilterPermissionService->getPermissionsByPredefinedFilterId($id);
             $predefinedFilter['permissions'] = $permissions;
         }
         return $predefinedFilter;
@@ -93,7 +93,7 @@ class PredefinedFilterService
 
         // Update permissions
         if (array_key_exists('permissions', $validated)) {
-            $currently_set_permssions = $this->predefinedFilterPermissionService->getPermissionsById($filter->id);
+            $currently_set_permssions = $this->predefinedFilterPermissionService->getPermissionsByPredefinedFilterId($filter->id);
             $new_permissions = $validated['permissions'];
             $permission_diff = $this->syncPermissions($currently_set_permssions->toArray(), $new_permissions);
             //dump($permission_diff);

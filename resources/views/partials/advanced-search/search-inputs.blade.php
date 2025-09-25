@@ -197,21 +197,33 @@ class SelectFilterInput extends FilterInput {
         return selectedIds;
     }
 
-    setValue(newValues, type = this.getType()) {
-        let requestPromises = newValues.map((newValue) => {
-            return fetchItemFromBackendById(type, newValue);
-        });
+setValue(newValues, type = this.getType()) {
+    let requestPromises = newValues.map((newValue) => {
+        return fetchItemFromBackendById(type, newValue);
+    });
 
-        return Promise.all(requestPromises).then((responses) => {
-            responses.forEach((response) => {
-                response.json()
-                .then((responseJson) => {
+    return Promise.all(requestPromises).then((responses) => {
+        responses.forEach((response) => {
+            response.json().then((responseJson) => {
+                // Check if option already exists
+                let $existingOption = $(this.element).find(`option[value='${responseJson.id}']`);
+
+                if ($existingOption.length === 0) {
+                    // Option doesn't exist, create and append it
                     var option = new Option(responseJson.name, responseJson.id, true, true);
-                    $(this.element).append(option).trigger('change');
-                });
+                    $(this.element).append(option);
+                } else {
+                    // Option exists, just select it
+                    $existingOption.prop('selected', true);
+                }
+
+                // Trigger change once per response (or once after all?)
+                $(this.element).trigger('change');
             });
         });
-    }
+    });
+}
+
 
 
     clear() {
@@ -248,35 +260,39 @@ class AssignedEntityFilterInput extends SelectFilterInput {
         });
     }
 
+setValue(newValues, type = this.getType()) {
+    // Map each new value to a fetch request
+    let requestPromises = newValues.map((newValue) => {
+        return fetchItemFromBackendById(type, newValue);
+    });
 
-    setValue(newValues) {
-       const requestPromises = newValues.map(({ assignedType, assigned_to }) => {
-            const type = {
-                "App\\Models\\Asset": "asset",
-                "App\\Models\\Location": "location",
-                "App\\Models\\User": "user"
-            }[assignedType];
+    // Wait for all fetches to complete
+    return Promise.all(requestPromises).then((responses) => {
+        // For each response, parse JSON and prepare to update select options
+        let appendPromises = responses.map(response =>
+            response.json().then(responseJson => {
+                // Check if option with this ID already exists
+                let $existingOption = $(this.element).find(`option[value='${responseJson.id}']`);
 
-            return fetchItemFromBackendById(type, assigned_to)
-                .then(response => 
-                    response.json().then(responseJson => ({
-                        ...responseJson,
-                        assignedType
-                    }))
-                );
+                if ($existingOption.length === 0) {
+                    // Option does not exist, create and append new one (selected)
+                    let option = new Option(responseJson.name, responseJson.id, true, true);
+                    $(this.element).append(option);
+                } else {
+                    // Option exists, mark it selected (in case it was not)
+                    $existingOption.prop('selected', true);
+                }
+            })
+        );
+
+        // Wait for all JSON processing and DOM updates to finish
+        return Promise.all(appendPromises).then(() => {
+            // Trigger change event once, so Select2 updates UI properly
+            $(this.element).trigger('change');
         });
+    });
+}
 
-        return Promise.all(requestPromises).then((responses) => {
-            responses.forEach(({ id, name, assignedType }) => {
-                const displayName = name || `#${id}`;
-                const option = new Option(displayName, id, true, true);
-                option.setAttribute('data-assigned-type', assignedType);
-                $(this.element).append(option).trigger('change');
-            });
-
-            $(this.element).trigger({ type: 'select2:select' });
-        });
-    }
 
 }
 
