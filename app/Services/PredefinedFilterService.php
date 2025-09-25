@@ -48,7 +48,7 @@ class PredefinedFilterService
     public function getFilterById(int $id, bool $include_predefined_filter_groups = true)
     {
         $predefinedFilter = PredefinedFilter::find($id);
-        if($include_predefined_filter_groups) {
+        if($include_predefined_filter_groups && $predefinedFilter) {
             $permissions = $this->predefinedFilterPermissionService->getPermissionsById($id);
             $predefinedFilter['permissions'] = $permissions;
         }
