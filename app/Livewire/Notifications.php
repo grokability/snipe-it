@@ -10,12 +10,12 @@ class Notifications extends Component
 
     public array $liveAlerts = [];
 
-    #[On('notify')]
-    public function notify($type = null, $message = null): void
+    #[On('showNotification')]
+    public function notify($type = null, $message = null, $tag = null): void
     {
         // Plain string fallback: treat as success
         if (is_string($type) && $message === null) {
-            $this->pushAlert('success', $type);
+            $this->pushAlert('success', $type, $tag);
             return;
         }
 
@@ -24,7 +24,7 @@ class Notifications extends Component
         }
 
         $mapped = $this->mapType($type);
-        $this->pushAlert($mapped, $message);
+        $this->pushAlert($mapped, $message, $tag);
     }
 
     protected function mapType(string $type): string
@@ -35,20 +35,46 @@ class Notifications extends Component
             default => strtolower($type),
         };
     }
-
-    protected function pushAlert(string $type, string $message): void
+    
+    protected function pushAlert(string $type, string $message, $tag): void
     {
+        
+        if($tag !== null) {
+            foreach ($this->liveAlerts as $index => $liveAlert) {
+                if ($liveAlert['tag'] === $tag) {
+                    $this->liveAlerts[$index] = [
+                        'id' => uniqid('al_', true),
+                        'type' => $type === 'error' ? 'danger' : $type, // bootstrap 3 'danger'
+                        'tag' => $tag,
+                        'message' => $message,
+                    ];
+                    return;
+                }
+            } 
+        }
+        
+        
         $this->liveAlerts[] = [
             'id' => uniqid('al_', true),
             'type' => $type === 'error' ? 'danger' : $type, // bootstrap 3 'danger'
+            'tag' => $tag,
             'message' => $message,
         ];
     }
-
+    
+    #[On('dismissNotification')]
     public function dismiss(string $id): void
     {
         $this->liveAlerts = array_values(
             array_filter($this->liveAlerts, fn($a) => $a['id'] !== $id)
+        );
+    }
+
+    #[On('dismissNotificationByTag')]
+    public function dismissByTag(string $tag): void
+    {
+        $this->liveAlerts = array_values(
+            array_filter($this->liveAlerts, fn($a) => $a['tag'] !== $tag)
         );
     }
 
