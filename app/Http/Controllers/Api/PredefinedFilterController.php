@@ -32,12 +32,9 @@ class PredefinedFilterController extends Controller
     {
         $filter = $this->service->getFilterById($id);
         
-        Log::error('Filter :', ['filter' => $filter]); //TODO Remove
         if (!$filter) {
             return response()->json(['message' => trans('admin/predefinedFilters/message.does_not_exist')], 404);
         }
-
-        Log::error('Filter class before canUserViewFilter: ' . gettype($filter)); // TODO remove
 
         if ($this->service->canUserViewFilter($filter)) {
             return response()->json($filter->toArray());
@@ -48,8 +45,6 @@ class PredefinedFilterController extends Controller
 
     public function store(Request $request): JsonResponse | array
     {
-        Log::Error('Incoming request data:', $request->all()); //TODO Remove
-
 
         $user = auth()->user();
 
@@ -58,8 +53,6 @@ class PredefinedFilterController extends Controller
             'filter_data' => 'required|array',
             'is_public' => 'sometimes|boolean'
         ]);
-
-        Log::error('Validator :', ['validator' => $validator]); //TODO Remove
 
         if ($validator->fails()) {
             return response()->json(Helper::formatStandardApiResponse(422, null, $validator->errors()),422);
