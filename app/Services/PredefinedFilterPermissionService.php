@@ -29,7 +29,7 @@ class PredefinedFilterPermissionService
 
     public function show(int $id): PredefinedFilterPermission
     {
-        return PredefinedFilterPermission::with('filter')->findOrFail($id);
+        return PredefinedFilterPermission::with('filter')->findOrFail($id)->distinct();
     }
 
     public function delete(int $id): void
@@ -46,7 +46,7 @@ class PredefinedFilterPermissionService
         }
     }
 
-    public function getPermissionsById(int $filter_id)
+    public function getPermissionsByPredefinedFilterId(int $filter_id)
     {
         $permissions = PredefinedFilterPermission::where('predefined_filter_id', '=', $filter_id)->get();
         return $permissions;
