@@ -9,6 +9,9 @@ use App\Models\PredefinedFilter;
 use App\Services\PredefinedFilterService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use App\Helpers\Helper;
+use Log;
 
 class PredefinedFilterController extends Controller
 {
@@ -28,7 +31,7 @@ class PredefinedFilterController extends Controller
     public function show(int $id)
     {
         $filter = $this->service->getFilterById($id);
-
+        
         if (!$filter) {
             return response()->json(['message' => trans('admin/predefinedFilters/message.does_not_exist')], 404);
         }
@@ -40,10 +43,22 @@ class PredefinedFilterController extends Controller
         return response()->json(['message' => trans('admin/predefinedFilters/message.show.not_allowed')], 403);
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(Request $request): JsonResponse | array
     {
+
         $user = auth()->user();
-        $validated = $request->validate((new PredefinedFilter)->getRules());
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'filter_data' => 'required|array',
+            'is_public' => 'sometimes|boolean'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(Helper::formatStandardApiResponse(422, null, $validator->errors()),422);
+        }
+        
+        $validated = $validator->validated();
 
         if (!empty($validated['is_public']) && !$user->hasAccess('predefinedFilter.create')) {
             return response()->json(['message' => trans('admin/predefinedFilters/message.create.not_allowed')], 403);
@@ -66,7 +81,18 @@ class PredefinedFilterController extends Controller
             return response()->json(['message' => trans('admin/predefinedFilters/message.does_not_exist')], 404);
         }
 
-        $validated = $request->validate((new PredefinedFilter)->getRules());
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'filter_data' => 'required|array',
+            'is_public' => 'sometimes|boolean'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(Helper::formatStandardApiResponse(422, null, $validator->errors()),422);
+        }
+        
+        $validated = $validator->validated();
+        
         $newIsPublic = $validated['is_public'];
         $currentIsPublic = $filter->is_public;
 
@@ -74,9 +100,7 @@ class PredefinedFilterController extends Controller
             if (!$currentIsPublic && $newIsPublic && !$user->hasAccess('predefinedFilter.create')) {
                 return response()->json(['message' => trans('admin/predefinedFilters/message.update.not_allowed_to_change_isPublic')], 403);
             }
-        } elseif ($currentIsPublic && !$filter->userHasPermission($user, 'update')) {
-            return response()->json(['message' => trans('admin/predefinedFilters/message.not_allowed_to_edit')], 403);
-        } else {
+        } if (!$filter->userHasPermission($user, 'update')) {
             return response()->json(['message' => trans('admin/predefinedFilters/message.not_allowed_to_edit')], 403);
         }
 
