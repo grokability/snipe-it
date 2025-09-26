@@ -114,17 +114,31 @@ updateFilterWithPredefined(event) {
             fetchFromBackend('POST', '{{ route('api.predefined-filters.store') }}', JSON.stringify(payload))
             .then((response) => {
                 if(response.status === 201) {
-                    //alert("Filter stored successfully");
-                    Livewire.dispatch('show-message', { message: "Filter stored successfully" });
+                    console.log(response);
+                    Livewire.dispatch('showNotification', {
+                      type: 'success',
+                      title: '{{ trans('general.notification_success') }}',
+                      message: 'The predefinedfilter was created successfully',
+                      tag: 'prefindedFilters'
+                    });
                     if(window.triggerConfetti) window.triggerConfetti();
                 } else {
-                    console.error(response);
-                    alert("An error has occured. Look in the browser console for more details.");  
+                    Livewire.dispatch('showNotification', {
+                      type: 'error',
+                      title: '{{ trans('general.notification_error') }}',
+                      message: 'The backend responded with ' + response.status + " - " + response.statusText,
+                      tag: 'prefindedFilters'
+                    });  
                 }
             })
             .catch((error) => {
                 console.error(error);
-                alert("An error has occured: " + error);
+                Livewire.dispatch('showNotification', {
+                  type: 'error',
+                  title: '{{ trans('general.notification_error') }}',
+                  message: 'error,
+                  tag: 'prefindedFilters'
+                }); 
             })
         });
     }
@@ -172,12 +186,21 @@ updateFilterWithPredefined(event) {
                                             fetchFromBackend('PUT', finalUrl, JSON.stringify(payload))
                                                 .then((response) => {
                                                     if (response.status === 200) {
-                                                        //alert("Filter updated successfully");
-                                                        Livewire.dispatch('show-message', { message: "Filter updated successfully" });
+                                                        Livewire.dispatch('showNotification', {
+                                                          type: 'success',
+                                                          title: '{{ trans('general.notification_success') }}',
+                                                          message: 'The predefinedfilter was updated successfully',
+                                                          tag: 'prefindedFilters'
+                                                        });
                                                         if (window.triggerConfetti) window.triggerConfetti();
                                                     } else {
                                                         console.error(response);
-                                                        alert("An error has occured. Look in the browser console for more details.");
+                                                        Livewire.dispatch('showNotification', {
+                                                          type: 'error',
+                                                          title: '{{ trans('general.notification_error') }}',
+                                                          message: 'The backend responded with ' + response.status + " - " + response.statusText,
+                                                          tag: 'prefindedFilters'
+                                                        }); 
                                                     }
                                                 });
                                         });
@@ -186,7 +209,12 @@ updateFilterWithPredefined(event) {
                     })
                     .catch((error) => {
                         console.error(error);
-                        alert("An error has occured: " + error);
+                        Livewire.dispatch('showNotification', {
+                          type: 'error',
+                          title: '{{ trans('general.notification_error') }}',
+                          message: 'error,
+                          tag: 'prefindedFilters'
+                        }); 
                     })
             });
     }
@@ -203,16 +231,31 @@ updateFilterWithPredefined(event) {
         fetchFromBackend('PUT', finalUrl)
         .then((response) => {
             if(response.status === 200) {
-                alert("Filter deleted successfully");
+                Livewire.dispatch('showNotification', {
+                  type: 'success',
+                  title: '{{ trans('general.notification_success') }}',
+                  message: 'The predefinedfilter was deleted successfully',
+                  tag: 'prefindedFilters'
+                });
                 if(window.triggerConfetti) window.triggerConfetti();
             } else {
                 console.error(response);
-                alert("An error has occured. Look in the browser console for more details.");  
+                Livewire.dispatch('showNotification', {
+                  type: 'error',
+                  title: '{{ trans('general.notification_error') }}',
+                  message: 'The backend responded with ' + response.status + " - " + response.statusText,
+                  tag: 'prefindedFilters'
+                });  
             }
         })
         .catch((error) => {
             console.error(error);
-            alert("An error has occured: " + error);
+            Livewire.dispatch('showNotification', {
+              type: 'error',
+              title: '{{ trans('general.notification_error') }}',
+              message: 'error,
+              tag: 'prefindedFilters'
+            }); 
         })
     }
 
