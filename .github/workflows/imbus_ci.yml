@@ -2,7 +2,7 @@ name: imbus_ci
 
 on:
   push:
-    branches: ['develope, master']
+    branches: ['develop, master']
   pull_request:
   workflow_dispatch:
 
