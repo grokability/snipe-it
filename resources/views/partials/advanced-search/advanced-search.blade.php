@@ -110,6 +110,7 @@ updateFilterWithPredefined(event) {
             const payload = {
                 name: input.name,
                 filter_data: filters,
+                permissions: input.permissions,
                 is_public: input.visibility === "public" ? true : false,
             };
             fetchFromBackend('POST', '{{ route('api.predefined-filters.store') }}', JSON.stringify(payload))
