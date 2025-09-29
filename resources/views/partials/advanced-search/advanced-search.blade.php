@@ -341,7 +341,7 @@ function predefinedFilterRequest(method, filterId = null, filterData = null) {
 
 function setAdvancedSearchPanelFilterEnabledState(state) {
     const fields = document.getElementById("advancedSearchPanel").getElementsByTagName('*');
-    for(var i = 0; i < fields.length; i++)
+    for(let i = 0; i < fields.length; i++)
     {
         fields[i].disabled = state;
     }
