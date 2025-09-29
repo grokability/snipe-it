@@ -2,41 +2,45 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Schema;
-use App\Models\Asset;
-use App\Models\AssetModel;
-use App\Models\Location;
-use App\Models\Manufacturer;
-use App\Models\Statuslabel;
-use App\Models\User;
-use App\Models\Company;
-
+use Illuminate\Support\Facades\DB;
+use App\Models\{Asset, AssetModel, Location, Manufacturer, Statuslabel, User, Company};
 
 class AverageSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        foreach (['assets','asset_models','locations','manufacturers','statuslabels','users','companies'] as $t) {
+        foreach (['assets','models','locations','manufacturers','status_labels','users','companies','settings'] as $t) {
             if (!Schema::hasTable($t)) { echo "Skip: missing table {$t}\n"; return; }
         }
+
+        DB::table('settings')->updateOrInsert(
+            ['id' => 1],
+            ['scope_locations_fmcs' => 0]
+        );
+
+        DB::disableQueryLog();
+
+        $models    = (int) env('AVG_MODELS', 50);
+        $locations = (int) env('AVG_LOCATIONS', 15);
+        $users     = (int) env('AVG_USERS', 50);
+        $assets    = (int) env('AVG_ASSETS', 2000);
+        $chunk     = (int) env('AVG_CHUNK', 500);
 
         Manufacturer::factory()->count(10)->create();
         Statuslabel::factory()->count(5)->create();
         Company::factory()->count(3)->create();
-        Location::factory()->count(15)->create();
-        User::factory()->count(50)->create();
-        AssetModel::factory()->count(50)->create();
+        Location::factory()->count($locations)->create();
+        User::factory()->count($users)->create();
+        AssetModel::factory()->count($models)->create();
 
-        $total = 2000;
-        $chunk = 500;
-        for ($i = 0; $i < $total; $i += $chunk) {
-            Asset::factory()->count(min($chunk, $total - $i))->create();
-            echo "Assets: ".min($i+$chunk, $total)."/{$total}\n";
-        }
+        Asset::withoutEvents(function () use ($assets, $chunk) {
+            for ($i = 0; $i < $assets; $i += $chunk) {
+                $count = min($chunk, $assets - $i);
+                Asset::factory()->count($count)->create();
+                echo "Assets: ".($i + $count)."/{$assets}\n";
+            }
+        });
     }
 }
