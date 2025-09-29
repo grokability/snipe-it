@@ -54,7 +54,6 @@
 @include('partials.confetti-js', ['autostart' => false])
 
 <script>
-
 class FilterUIController {
     constructor(tableElement) {
         this.$table = tableElement;
@@ -95,7 +94,7 @@ updateFilterWithPredefined(event) {
         })
         .catch(err => {
             console.error("Failed to apply predefined filter:", err);
-            alert("Failed to apply predefined filter");
+            Livewire.dispatch('showNotification', { type: 'error', message: '{{ trans('general.failed_to_apply_predefined_filter') }}'}); // TODO: i18n
             setAdvancedSearchPanelFilterEnabledState(false);
         });
 }
@@ -116,16 +115,31 @@ updateFilterWithPredefined(event) {
             fetchFromBackend('POST', '{{ route('api.predefined-filters.store') }}', JSON.stringify(payload))
             .then((response) => {
                 if(response.status === 201) {
-                    alert("Filter stored successfully");
+                    console.log(response);
+                    Livewire.dispatch('showNotification', {
+                      type: 'success',
+                      title: '{{ trans('general.notification_success') }}',
+                      message: '{{ trans('general.predefined_filter_saved_successfully') }}',
+                      tag: 'prefindedFilters'
+                    });
                     if(window.triggerConfetti) window.triggerConfetti();
                 } else {
-                    console.error(response);
-                    alert("An error has occured. Look in the browser console for more details.");  
+                    Livewire.dispatch('showNotification', {
+                      type: 'error',
+                      title: '{{ trans('general.notification_error') }}',
+                      message: '{{ trans('general.backend_responded_with') }} ' + response.status + " - " + response.statusText,
+                      tag: 'prefindedFilters'
+                    });  
                 }
             })
             .catch((error) => {
                 console.error(error);
-                alert("An error has occured: " + error);
+                Livewire.dispatch('showNotification', {
+                  type: 'error',
+                  title: '{{ trans('general.notification_error') }}',
+                  message: '{{ trans('general.notification_error') }}' + error,
+                  tag: 'prefindedFilters'
+                }); 
             })
         });
     }
@@ -173,11 +187,21 @@ updateFilterWithPredefined(event) {
                                             fetchFromBackend('PUT', finalUrl, JSON.stringify(payload))
                                                 .then((response) => {
                                                     if (response.status === 200) {
-                                                        alert("Filter updated successfully");
+                                                        Livewire.dispatch('showNotification', {
+                                                          type: 'success',
+                                                          title: '{{ trans('general.notification_success') }}',
+                                                          message: '{{ trans('general.predefined_filter_updated_successfully') }}',
+                                                          tag: 'prefindedFilters'
+                                                        });
                                                         if (window.triggerConfetti) window.triggerConfetti();
                                                     } else {
                                                         console.error(response);
-                                                        alert("An error has occured. Look in the browser console for more details.");
+                                                        Livewire.dispatch('showNotification', {
+                                                          type: 'error',
+                                                          title: '{{ trans('general.notification_error') }}',
+                                                          message: '{{ trans('general.backend_responded_with') }} ' + response.status + " - " + response.statusText,
+                                                          tag: 'prefindedFilters'
+                                                        }); 
                                                     }
                                                 });
                                         });
@@ -186,7 +210,12 @@ updateFilterWithPredefined(event) {
                     })
                     .catch((error) => {
                         console.error(error);
-                        alert("An error has occured: " + error);
+                        Livewire.dispatch('showNotification', {
+                          type: 'error',
+                          title: '{{ trans('general.notification_error') }}',
+                          message: '{{ trans('general.notification_error') }}' + error,
+                          tag: 'prefindedFilters'
+                        }); 
                     })
             });
     }
@@ -203,16 +232,31 @@ updateFilterWithPredefined(event) {
         fetchFromBackend('PUT', finalUrl)
         .then((response) => {
             if(response.status === 200) {
-                alert("Filter deleted successfully");
+                Livewire.dispatch('showNotification', {
+                  type: 'success',
+                  title: '{{ trans('general.notification_success') }}',
+                  message: '{{ trans('general.predefined_filter_deleted_successfully') }}',
+                  tag: 'prefindedFilters'
+                });
                 if(window.triggerConfetti) window.triggerConfetti();
             } else {
                 console.error(response);
-                alert("An error has occured. Look in the browser console for more details.");  
+                Livewire.dispatch('showNotification', {
+                  type: 'error',
+                  title: '{{ trans('general.notification_error') }}',
+                  message: '{{ trans('general.backend_responded_with') }} ' + response.status + " - " + response.statusText,
+                  tag: 'prefindedFilters'
+                });  
             }
         })
         .catch((error) => {
             console.error(error);
-            alert("An error has occured: " + error);
+            Livewire.dispatch('showNotification', {
+              type: 'error',
+              title: '{{ trans('general.notification_error') }}',
+              message: '{{ trans('general.notification_error') }}' + error,
+              tag: 'prefindedFilters'
+            }); 
         })
     }
 
@@ -242,6 +286,7 @@ updateFilterWithPredefined(event) {
         const topClearButton = document.getElementById("topClearInputButton");
         if (topClearButton) {
             topClearButton.addEventListener('click', () => this.collector.clearAll());
+            //Livewire.emit('refreshNotifications');
         }
 
         const saveFilterButton = document.getElementById("storeFilterButton");

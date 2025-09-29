@@ -25,8 +25,6 @@
                                 <!-- Notifications -->
                                 @include('notifications')
 
-
-
                                     <input type="hidden" name="token" value="{{ $token }}">
 
                                     <div class="form-group{{ $errors->has('username') ? ' has-error' : '' }}">
