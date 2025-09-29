@@ -52,6 +52,7 @@
                     </button>
                 </div>
 
+                <livewire:partials.advancedsearch.modal />
 
                 <table data-columns="{{ \App\Presenters\AssetPresenter::dataTableLayout() }}"
                     data-cookie-id-table="{{ request()->has('status') ? e(request()->input('status')) : '' }}assetsListingTable"

@@ -26,7 +26,7 @@
                     <label>{{ trans('general.visibility') }}</label>
                     <div class="radio modal-radio">
                         <label>
-                            <input type="radio" name="visibility" value="public" checked>
+                            <input type="radio" class="modal-radiobutton-label" name="visibility" value="public" checked>
                             <span class="modal-radiobutton-label">
                                 {{ trans('general.public') }}
                             </span>
@@ -34,7 +34,7 @@
                     </div>
                     <div class="radio modal-radio">
                         <label>
-                            <input type="radio" name="visibility" value="private">
+                            <input type="radio" class="modal-radiobutton-label" name="visibility" value="private">
                             <span class="modal-radiobutton-label">
                                 {{ trans('general.private') }}
                             </span>
