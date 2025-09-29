@@ -1,3 +1,7 @@
+@php
+    use App\Presenters\PredefinedFilterPresenter;
+@endphp
+
 @extends('layouts/default')
 
 {{-- Page title --}}
@@ -14,7 +18,7 @@
     <div class="box box-default">
       <div class="box-body">
             <table
-                    data-columns="{{ \App\Presenters\PredefinedFilterPresenter::dataTableLayout() }}"
+                    data-columns="{{ PredefinedFilterPresenter::dataTableLayout() }}"
                     data-cookie-id-table="predefinedFiltersTable"
                     data-id-table="predefinedFiltersTable"
                     data-show-footer="false"
@@ -148,7 +152,7 @@ $(document).ready(function () {
 @include('partials/advanced-search.modal')
 
 @php
-    $layout = json_decode(\App\Presenters\PredefinedFilterPresenter::dataTableLayout());
+    $layout = json_decode(PredefinedFilterPresenter::dataTableLayout());
 @endphp
 @include('partials/advanced-search.search-inputs', ['layout' => $layout])
 @stop
