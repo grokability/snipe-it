@@ -94,7 +94,7 @@ updateFilterWithPredefined(event) {
         })
         .catch(err => {
             console.error("Failed to apply predefined filter:", err);
-            Livewire.dispatch('showNotification', { type: 'error', message: 'Failed to apply predefined filter'}); // TODO: i18n
+            Livewire.dispatch('showNotification', { type: 'error', message: '{{ trans('general.failed_to_apply_predefined_filter') }}'}); // TODO: i18n
             setAdvancedSearchPanelFilterEnabledState(false);
         });
 }
@@ -118,7 +118,7 @@ updateFilterWithPredefined(event) {
                     Livewire.dispatch('showNotification', {
                       type: 'success',
                       title: '{{ trans('general.notification_success') }}',
-                      message: 'The predefinedfilter was created successfully',
+                      message: '{{ trans('general.predefined_filter_saved_successfully') }}',
                       tag: 'prefindedFilters'
                     });
                     if(window.triggerConfetti) window.triggerConfetti();
@@ -126,7 +126,7 @@ updateFilterWithPredefined(event) {
                     Livewire.dispatch('showNotification', {
                       type: 'error',
                       title: '{{ trans('general.notification_error') }}',
-                      message: 'The backend responded with ' + response.status + " - " + response.statusText,
+                      message: '{{ trans('general.backend_responded_with') }} ' + response.status + " - " + response.statusText,
                       tag: 'prefindedFilters'
                     });  
                 }
@@ -136,7 +136,7 @@ updateFilterWithPredefined(event) {
                 Livewire.dispatch('showNotification', {
                   type: 'error',
                   title: '{{ trans('general.notification_error') }}',
-                  message: 'error,
+                  message: '{{ trans('general.notification_error') }}' + error,
                   tag: 'prefindedFilters'
                 }); 
             })
@@ -189,7 +189,7 @@ updateFilterWithPredefined(event) {
                                                         Livewire.dispatch('showNotification', {
                                                           type: 'success',
                                                           title: '{{ trans('general.notification_success') }}',
-                                                          message: 'The predefinedfilter was updated successfully',
+                                                          message: '{{ trans('general.predefined_filter_updated_successfully') }}',
                                                           tag: 'prefindedFilters'
                                                         });
                                                         if (window.triggerConfetti) window.triggerConfetti();
@@ -198,7 +198,7 @@ updateFilterWithPredefined(event) {
                                                         Livewire.dispatch('showNotification', {
                                                           type: 'error',
                                                           title: '{{ trans('general.notification_error') }}',
-                                                          message: 'The backend responded with ' + response.status + " - " + response.statusText,
+                                                          message: '{{ trans('general.backend_responded_with') }} ' + response.status + " - " + response.statusText,
                                                           tag: 'prefindedFilters'
                                                         }); 
                                                     }
@@ -212,7 +212,7 @@ updateFilterWithPredefined(event) {
                         Livewire.dispatch('showNotification', {
                           type: 'error',
                           title: '{{ trans('general.notification_error') }}',
-                          message: 'error,
+                          message: '{{ trans('general.notification_error') }}' + error,
                           tag: 'prefindedFilters'
                         }); 
                     })
@@ -234,7 +234,7 @@ updateFilterWithPredefined(event) {
                 Livewire.dispatch('showNotification', {
                   type: 'success',
                   title: '{{ trans('general.notification_success') }}',
-                  message: 'The predefinedfilter was deleted successfully',
+                  message: '{{ trans('general.predefined_filter_deleted_successfully') }}',
                   tag: 'prefindedFilters'
                 });
                 if(window.triggerConfetti) window.triggerConfetti();
@@ -243,7 +243,7 @@ updateFilterWithPredefined(event) {
                 Livewire.dispatch('showNotification', {
                   type: 'error',
                   title: '{{ trans('general.notification_error') }}',
-                  message: 'The backend responded with ' + response.status + " - " + response.statusText,
+                  message: '{{ trans('general.backend_responded_with') }} ' + response.status + " - " + response.statusText,
                   tag: 'prefindedFilters'
                 });  
             }
@@ -253,7 +253,7 @@ updateFilterWithPredefined(event) {
             Livewire.dispatch('showNotification', {
               type: 'error',
               title: '{{ trans('general.notification_error') }}',
-              message: 'error,
+              message: '{{ trans('general.notification_error') }}' + error,
               tag: 'prefindedFilters'
             }); 
         })
