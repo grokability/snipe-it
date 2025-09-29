@@ -858,6 +858,13 @@
         return '';
     }
 
+    // this Links to '/hardware' with the filter id 
+    function predefinedFiltersLinkFormatter(value, row){
+        if (value && row.id){
+            return `<a href="{{ config('app.url') }}/hardware?predefinedFilterEditModalOpen=true&predefinedFilterId=${row.id}">${value}</a>`;
+        } 
+    }
+
     function trueFalseFormatter(value) {
         if ((value) && ((value == 'true') || (value == '1'))) {
             return '<x-icon type="checkmark" class="text-success" /><span class="sr-only">{{ trans('general.true') }}</span>';

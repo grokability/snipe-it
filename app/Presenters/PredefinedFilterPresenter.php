@@ -30,7 +30,7 @@ class PredefinedFilterPresenter extends Presenter
                 'switchable' => false,
                 'title' => trans('general.name'),
                 'visible' => true,
-                'formatter' => 'predefined-filtersLinkFormatter',
+                'formatter' => 'predefinedFiltersLinkFormatter',
             ], [
                 'field' => 'is_public',
                 'searchable' => true,
