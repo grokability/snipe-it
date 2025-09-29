@@ -210,7 +210,7 @@ class SelectFilterInput extends FilterInput {
                 
                     if ($existingOption.length === 0) {
                         // Option doesn't exist, create and append it
-                        var option = new Option(responseJson.name, responseJson.id, true, true);
+                        let option = new Option(responseJson.name, responseJson.id, true, true);
                         $(this.element).append(option);
                     } else {
                         // Option exists, just select it
