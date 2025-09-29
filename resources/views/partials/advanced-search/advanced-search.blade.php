@@ -4,10 +4,10 @@
             <i class="fas fa-filter"></i> <span class="filter-title"> {{ trans('general.advanced_search') }} </span>
         </h3>
         <div class="box-tools pull-right">
-        <button type="button" id="closeSidebarButton" class="btn btn-box-tool collapse-toggle">
-            <i class="fa fa-chevron-left icon-desktop" id="collapseIconDesktop"></i>
-            <i class="fa fa-chevron-up icon-mobile" id="collapseIconMobile"></i>
-        </button>
+            <button type="button" id="closeSidebarButton" class="btn btn-box-tool collapse-toggle">
+                <i class="fa fa-chevron-left icon-desktop" id="collapseIconDesktop"></i>
+                <i class="fa fa-chevron-up icon-mobile" id="collapseIconMobile"></i>
+            </button>
             <button id="topClearInputButton" type="button" class="btn btn-box-tool">
                 <i class="fa fa-times"></i> <span class="clear-text"> {{ trans('button.delete') }}</span>
             </button>
@@ -39,21 +39,18 @@
                 $layoutJson = \App\Presenters\AssetPresenter::dataTableLayout();
                 $layout = json_decode($layoutJson);
             @endphp
-
             @include('partials.advanced-search.search-inputs')
         </div>
-
-
     </div>
+
     @include ('partials.advanced-search.floating-button')
-    @include ('partials.advanced-search.modal', [
-        'createNew' => false,
-    ])
+    @include ('partials.advanced-search.modal', ['createNew' => false])
 </div>
 
 @include('partials.confetti-js', ['autostart' => false])
 
 <script>
+let controller = {};
 
 class FilterUIController {
     constructor(tableElement) {
@@ -64,239 +61,216 @@ class FilterUIController {
     refresh() {
         const filters = this.collector.collect();
         this.$table.bootstrapTable('refresh', {
-            query: {
-                filter: JSON.stringify(filters)
-            }
+            query: { filter: JSON.stringify(filters) }
         });
     }
 
-updateFilterWithPredefined(event, selectedId = null) {
-    if(selectedId === null) {
-        selectedId = event?.target?.value;
+    /**
+     * Apply a predefined filter by its id.
+     * Returns a promise so callers can chain actions (like opening the edit modal).
+     */
+    updateFilterWithPredefined(event, selectedId = null) {
+        if (selectedId === null) {
+            selectedId = event?.target?.value;
+        }
+
+        if (!selectedId) {
+            floatingMenuDisableEditDeleteButtons();
+            return Promise.resolve();
+        }
+
+        floatingMenuEnableEditDeleteButtons();
+        setAdvancedSearchPanelFilterEnabledState(true);
+
+        return this.fetchPredefinedFilterData(selectedId)
+            .then(response => {
+                if (!response.ok) throw new Error("Network response was not ok");
+                return response.json();
+            })
+            .then(data => {
+                if (!data.filter_data) return;
+                return this.collector.setValuesFromResponse(data.filter_data)
+                    .then(() => this.refresh());
+            })
+            .catch(err => {
+                console.error("Failed to apply predefined filter:", err);
+                alert("Failed to apply predefined filter");
+                setAdvancedSearchPanelFilterEnabledState(false);
+            });
     }
-
-    if (!selectedId) {
-        floatingMenuDisableEditDeleteButtons();
-        return;
-    }
-
-    floatingMenuEnableEditDeleteButtons();
-    setAdvancedSearchPanelFilterEnabledState(true);
-
-    this.fetchPredefinedFilterData(selectedId)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
-            }
-            return response.json(); // Parse JSON from response
-        })
-        .then(data => {
-            if (!data.filter_data) return;
-
-            return this.collector.setValuesFromResponse(data.filter_data)
-                .then(() => this.refresh());
-        })
-        .catch(err => {
-            console.error("Failed to apply predefined filter:", err);
-            alert("Failed to apply predefined filter");
-            setAdvancedSearchPanelFilterEnabledState(false);
-        });
-}
-
-
 
     storePredefinedFilterInBackend() {
         const filters = this.collector.collect();
-        
         openFilterCreateUpdateModal(true)
-        .then((input) => {
-            const payload = {
-                name: input.name,
-                filter_data: filters,
-                permissions: input.permissions,
-                is_public: input.visibility === "public" ? true : false,
-            };
-            fetchFromBackend('POST', '{{ route('api.predefined-filters.store') }}', JSON.stringify(payload))
-            .then((response) => {
-                if(response.status === 201) {
-                    alert("Filter stored successfully");
-                    if(window.triggerConfetti) window.triggerConfetti();
-                } else {
-                    console.error(response);
-                    alert("An error has occured. Look in the browser console for more details.");  
-                }
-            })
-            .catch((error) => {
-                console.error(error);
-                alert("An error has occured: " + error);
-            })
-        });
+            .then(input => {
+                const payload = {
+                    name: input.name,
+                    filter_data: filters,
+                    permissions: input.permissions,
+                    is_public: input.visibility === "public"
+                };
+                fetchFromBackend('POST', '{{ route('api.predefined-filters.store') }}', JSON.stringify(payload))
+                    .then(response => {
+                        if (response.status === 201) {
+                            alert("Filter stored successfully");
+                            if (window.triggerConfetti) window.triggerConfetti();
+                        } else {
+                            console.error(response);
+                            alert("An error has occured. Look in the browser console for more details.");  
+                        }
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        alert("An error has occured: " + error);
+                    });
+            });
     }
 
     updatePredefinedFilterInBackend(updateFilterButtonId = null) {
-        if(updateFilterButtonId !== null) {
-            if (document.getElementById(updateFilterButtonId).classList.contains('disabled')) return; // Do nothing when the button is disabled
+        if (updateFilterButtonId !== null) {
+            if (document.getElementById(updateFilterButtonId).classList.contains('disabled')) return;
         }
 
-        const selectedFilter = $("#predefinedfilters-select").select2('data')[0]; // Always zero because only one element can be selected at the time
+        const selectedFilter = $("#predefinedfilters-select").select2('data')[0];
         if (!selectedFilter) return;
         const filters = this.collector.collect();
 
-        // Fetch filter from backend to get the permissions
         fetchItemFromBackendById("group_select", selectedFilter.id)
-            .then((response) => {
+            .then(response => {
                 response.json()
-                    .then((responseJson) => {
-                        const permissionGroupRequests = [];
+                    .then(responseJson => {
+                        const permissionGroupRequests = responseJson.permissions.map(
+                            permission => fetchItemFromBackendById("groups", permission.permission_group_id)
+                        );
+                        Promise.all(permissionGroupRequests)
+                            .then(permissionGroupResponses => Promise.all(permissionGroupResponses.map(r => r.json())))
+                            .then(permissionGroupResponses => {
+                                openFilterCreateUpdateModal(false, responseJson.name, permissionGroupResponses)
+                                    .then(input => {
+                                        const payload = {
+                                            name: input.name,
+                                            filter_data: filters,
+                                            permissions: input.permissions,
+                                            is_public: input.visibility === "public"
+                                        };
+                                        const updateUrlTemplate = `{{ route('api.predefined-filters.update', ['id' => '__ID__']) }}`;
+                                        const finalUrl = updateUrlTemplate.replace('__ID__', selectedFilter.id);
 
-                        responseJson.permissions.forEach(permission => {
-                            permissionGroupRequests.push(fetchItemFromBackendById("groups", permission.permission_group_id));
-                        });
-                        Promise.all(permissionGroupRequests).
-                        then((permissionGroupResponses) => {
-
-                            const permissionGroupResponsePromises = [];
-                            permissionGroupResponses.forEach((permissionGroupResponse) => {
-                                permissionGroupResponsePromises.push(permissionGroupResponse.json());
-                            })
-                            Promise.all(permissionGroupResponsePromises)
-                                .then((permissionGroupResponses) => {
-                                    openFilterCreateUpdateModal(false, responseJson.name, permissionGroupResponses)
-                                        .then((input) => {
-
-                                            const payload = {
-                                                name: input.name,
-                                                filter_data: filters,
-                                                permissions: input.permissions,
-                                                is_public: input.visibility === "public" ? true : false,
-                                            };
-
-                                            const updateUrlTemplate = `{{ route('api.predefined-filters.update', ['id' => '__ID__']) }}`;
-                                            const selectedFilterId = selectedFilter.id; // JS context
-                                            const finalUrl = updateUrlTemplate.replace('__ID__', selectedFilterId);
-
-                                            fetchFromBackend('PUT', finalUrl, JSON.stringify(payload))
-                                                .then((response) => {
-                                                    if (response.status === 200) {
-                                                        alert("Filter updated successfully");
-                                                        if (window.triggerConfetti) window.triggerConfetti();
-                                                    } else {
-                                                        console.error(response);
-                                                        alert("An error has occured. Look in the browser console for more details.");
-                                                    }
-                                                });
-                                        });
-                                });
-                        });
+                                        fetchFromBackend('PUT', finalUrl, JSON.stringify(payload))
+                                            .then(response => {
+                                                if (response.status === 200) {
+                                                    alert("Filter updated successfully");
+                                                    if (window.triggerConfetti) window.triggerConfetti();
+                                                } else {
+                                                    console.error(response);
+                                                    alert("An error has occured. Look in the browser console for more details.");
+                                                }
+                                            });
+                                    });
+                            });
                     })
-                    .catch((error) => {
+                    .catch(error => {
                         console.error(error);
                         alert("An error has occured: " + error);
-                    })
+                    });
             });
     }
 
     deletePredefinedFilterFromBackend(deleteFilterButtonId) {
-        if (document.getElementById(deleteFilterButtonId).classList.contains('disabled')) return; // Do nothing when the button is disabled
+        if (document.getElementById(deleteFilterButtonId).classList.contains('disabled')) return;
 
-        const selectedFilterId = $("#predefinedfilters-select").select2('data')[0].id; // Always zero because only one element can be selected at the time
+        const selectedFilterId = $("#predefinedfilters-select").select2('data')[0]?.id;
         if (!selectedFilterId) return;
 
         const updateUrlTemplate = `{{ route('api.predefined-filters.destroy', ['id' => '__ID__']) }}`;
         const finalUrl = updateUrlTemplate.replace('__ID__', selectedFilterId);
 
         fetchFromBackend('PUT', finalUrl)
-        .then((response) => {
-            if(response.status === 200) {
-                alert("Filter deleted successfully");
-                if(window.triggerConfetti) window.triggerConfetti();
-            } else {
-                console.error(response);
-                alert("An error has occured. Look in the browser console for more details.");  
-            }
-        })
-        .catch((error) => {
-            console.error(error);
-            alert("An error has occured: " + error);
-        })
+            .then(response => {
+                if (response.status === 200) {
+                    alert("Filter deleted successfully");
+                    if (window.triggerConfetti) window.triggerConfetti();
+                } else {
+                    console.error(response);
+                    alert("An error has occured. Look in the browser console for more details.");  
+                }
+            })
+            .catch(error => {
+                console.error(error);
+                alert("An error has occured: " + error);
+            });
     }
 
     fetchPredefinedFilterData(filterId) {
         const updateUrlTemplate = `{{ route('api.predefined-filters.show', ['id' => '__ID__']) }}`;
         const finalUrl = updateUrlTemplate.replace('__ID__', filterId);
-
         return fetchFromBackend('GET', finalUrl);
     }
 
     bindEvents() {
-
         $('#predefinedfilters-select').on('change', (e) => {
+            // Only handle user-triggered changes; programmatic apply is handled elsewhere
             this.updateFilterWithPredefined(e);
         });
 
         const filterButton = document.getElementById("filterButton");
-        if (filterButton) {
-            filterButton.addEventListener('click', this.refresh.bind(this));
-        }
+        if (filterButton) filterButton.addEventListener('click', this.refresh.bind(this));
 
         const clearButton = document.getElementById("clearInputButton");
-        if (clearButton) {
-            clearButton.addEventListener('click', () => this.collector.clearAll());
-        }
+        if (clearButton) clearButton.addEventListener('click', () => this.collector.clearAll());
 
         const topClearButton = document.getElementById("topClearInputButton");
-        if (topClearButton) {
-            topClearButton.addEventListener('click', () => this.collector.clearAll());
-        }
+        if (topClearButton) topClearButton.addEventListener('click', () => this.collector.clearAll());
 
         const saveFilterButton = document.getElementById("storeFilterButton");
-        if (saveFilterButton) {
-            saveFilterButton.addEventListener('click', () => this.storePredefinedFilterInBackend());
-        }
+        if (saveFilterButton) saveFilterButton.addEventListener('click', () => this.storePredefinedFilterInBackend());
 
         const updateFilterButton = document.getElementById("updateFilterButton");
-        if (updateFilterButton) {
-            updateFilterButton.addEventListener('click', () => this.updatePredefinedFilterInBackend(updateFilterButton.id));
-        }
+        if (updateFilterButton) updateFilterButton.addEventListener('click', () => this.updatePredefinedFilterInBackend(updateFilterButton.id));
 
         const deleteFilterButton = document.getElementById("deleteFilterButton");
-        if (deleteFilterButton) {
-            deleteFilterButton.addEventListener('click', () => this.deletePredefinedFilterFromBackend(deleteFilterButton.id));
-        }
-
+        if (deleteFilterButton) deleteFilterButton.addEventListener('click', () => this.deletePredefinedFilterFromBackend(deleteFilterButton.id));
     }
 }
 
 document.addEventListener('DOMContentLoaded', function () {
     const tableId = "{{ request()->has('status') ? e(request()->input('status')) : '' }}assetsListingTable";
     const $table = $('#' + tableId);
-    
-    // Initialize everything
-    const controller = new FilterUIController($table);
+
+    controller = new FilterUIController($table);
     controller.bindEvents();
 
-    @if($predefined_filter_id !== null)
-    filterSection.classList.toggle('hide'); // Then the page is reloaded the menu is usually closed
-    //controller.updateFilterWithPredefined(null, {{ $predefined_filter_id }});
-    console.log(controller);
-    @endif
-    @if($predefined_filter_edit_modal_open === true && $predefined_filter_id !== null)
-    controller.updatePredefinedFilterInBackend();
-    @endif
+    // Auto-apply predefined filter if provided
+    const predefinedFilterId = @json($predefined_filter_id);
+    const predefinedFilterEditModalOpen = @json($predefined_filter_edit_modal_open);
+    const filterSection = document.getElementById('advancedSearchPanel');
+
+    if (predefinedFilterId) {
+        // Make sure the panel is visible
+        if (filterSection && filterSection.classList.contains('hide')) {
+            filterSection.classList.remove('hide');
+        }
+
+        // Set the select's value WITHOUT triggering the change event (we manually apply)
+        $('#predefinedfilters-select').val(predefinedFilterId);
+
+        // Apply the filter and optionally open the modal after it's loaded
+        controller.updateFilterWithPredefined(null, predefinedFilterId)
+            ?.then(() => {
+                if (predefinedFilterEditModalOpen) {
+                    controller.updatePredefinedFilterInBackend();
+                }
+            });
+    }
 });
 
 // Filter search functionality
 document.getElementById('filterSearch').addEventListener('input', function(e) {
     const searchTerm = e.target.value.toLowerCase();
-    const items = document.querySelectorAll('.filter-item');
-    items.forEach(item => {
+    document.querySelectorAll('.filter-item').forEach(item => {
         const label = item.querySelector('label');
         const labelText = label ? label.textContent.toLowerCase() : '';
-        if (labelText.includes(searchTerm)) {
-            item.style.display = '';
-        } else {
-            item.style.display = 'none';
-        }
+        item.style.display = labelText.includes(searchTerm) ? '' : 'none';
     });
 });
 
@@ -306,7 +280,7 @@ function getCsrfToken() {
 
 function fetchFromBackend(method, path, body = null) {
     const options = {
-        method: method,
+        method,
         headers: {
             accept: 'application/json',
             'X-Requested-With': 'XMLHttpRequest',
@@ -315,9 +289,7 @@ function fetchFromBackend(method, path, body = null) {
         },
         ...(body && { body })
     };
-
     return fetch(path, options);
-        //.then(res => res.json());
 }
 
 function fetchItemFromBackendById(type, id) {
@@ -335,180 +307,75 @@ function fetchItemFromBackendById(type, id) {
         supplier: "suppliers",
         user: "users"
     };
-
-    if (!typeMap[type]) {
-        return Promise.reject(`Invalid type ${type}`);
-    }
-    const path = `/api/v1/${typeMap[type]}/${id}`;
-    return fetchFromBackend('GET', path);
+    if (!typeMap[type]) return Promise.reject(`Invalid type ${type}`);
+    return fetchFromBackend('GET', `/api/v1/${typeMap[type]}/${id}`);
 }
 
 function predefinedFilterRequest(method, filterId = null, filterData = null) {
-    let  path = "/api/v1/predefinedFilters";
-
-    if(filterId !== null) {
-        path += "/" + filterId;
-    }
-
+    let path = "/api/v1/predefinedFilters";
+    if (filterId !== null) path += "/" + filterId;
     return fetchFromBackend(method, path, filterData);
 }
 
 function setAdvancedSearchPanelFilterEnabledState(state) {
     const fields = document.getElementById("advancedSearchPanel").getElementsByTagName('*');
-    for(var i = 0; i < fields.length; i++)
-    {
+    for (let i = 0; i < fields.length; i++) {
         fields[i].disabled = state;
     }
 }
-
 </script>
 
 <style>
-/* 
-Base styles for the filter sidebar and its transitions.
-Handles showing/hiding the sidebar smoothly.
-*/
 .filter-sidebar {
     transition: all 0.3s ease;
     position: relative;
 }
-
-/* 
-Smooth transition for the filter body (the inner panel).
-Ensures expanding/collapsing feels fluid.
-*/
 .filter-body {
     transition: all 0.3s ease;
     overflow: hidden;
 }
-
-/* 
-Fade-in/out effect for any element with this class when shown/hidden.
-*/
 .filter-content {
     transition: opacity 0.2s ease;
 }
-
-/* 
-Fade-in/out for filter section title and clear text.
-*/
 .filter-title,
 .clear-text {
     transition: opacity 0.2s ease;
 }
-
-/* ---------- Desktop styles ---------- */
-@media (min-width: 769px) {
-    /* 
-    When collapsed, the sidebar is skinny and its content is hidden.
-    */
-}
-
-/* ---------- Mobile/Tablet styles ---------- */
 @media (max-width: 768px) {
-    /* 
-    Sidebar takes full width and less margin on mobile.
-    */
     .filter-sidebar {
         width: 100% !important;
         margin-bottom: 15px;
     }
-    
-    /* 
-    Collapsed sidebar hides content and disables interaction.
-    */
 }
-
-/* 
-Ensures filter panel container uses full width and is padded.
-Makes it responsive.
-*/
 .container {
     width: 100%;
     margin: 0 auto;
     padding: 10px;
     box-sizing: border-box;
 }
-
-/* 
-Makes the advanced search filters section block-level and full width.
-*/
 #advancedSearchFilters {
     display: block;
     max-width: 100%;
     margin: 0;
 }
-
-/* 
-Scrollable filter panel body, with padding.
-*/
 .box-body {
     overflow-y: auto;
     padding: 15px;
 }
-
-/* 
-On small screens, limit box-body max height to 75% of viewport.
-Makes scrolling manageable on mobile.
-*/
 @media (max-width: 768px) {
-  .box-body {
-    max-height: 75vh;
-  }
+  .box-body { max-height: 75vh; }
 }
-
-/* 
-On desktop, take up all available vertical height.
-*/
 @media (min-width: 769px) {
-  .box-body {
-    height: 100%;
-  }
+  .box-body { height: 100%; }
 }
-
-/* 
-Button blocks have a little space between each for clarity.
-*/
-
-/* 
-Custom thin scrollbar for the filter area.
-Aesthetic tweak.
-*/
-.box-body::-webkit-scrollbar {
-    width: 6px;
-}
-
-/* 
-Collapse button tweaks for spacing.
-*/
-.collapse-toggle {
-    margin-right: 5px;
-}
-
-/* 
-By default, hide both the desktop and mobile collapse icons.
-*/
+.box-body::-webkit-scrollbar { width: 6px; }
+.collapse-toggle { margin-right: 5px; }
 .icon-desktop,
-.icon-mobile {
-  display: none;
-}
-
-/* 
-Show the desktop collapse icon on desktop screens.
-*/
+.icon-mobile { display: none; }
 @media (min-width: 768px) {
-  .icon-desktop {
-    display: inline;
-  }
+  .icon-desktop { display: inline; }
 }
-
-/* 
-Show the mobile collapse icon on mobile screens.
-*/
 @media (max-width: 767px) {
-  .icon-mobile {
-    display: inline;
-  }
+  .icon-mobile { display: inline; }
 }
-
 </style>
