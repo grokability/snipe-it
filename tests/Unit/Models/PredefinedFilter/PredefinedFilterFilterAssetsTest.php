@@ -7,7 +7,6 @@ use App\Models\Manufacturer;
 use App\Models\PredefinedFilter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\User; 
-use Log;
 use PhpParser\Node\Expr\FuncCall;
 use Tests\TestCase;
 
@@ -318,8 +317,6 @@ class PredefinedFilterFilterAssetsTest extends TestCase
         $q = Asset::query();
         $filter->filterAssets($q);
         $ids = $q->pluck('id');
-
-        Log::error('Ids :', ['Ids' => $ids]); //TODO Remove
 
         $this->assertTrue($ids->contains($keep->id));
         $this->assertFalse($ids->contains($dropCompany->id));
