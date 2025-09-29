@@ -36,7 +36,10 @@
 <div class="responsive-layout">
     <!-- Filter Section -->
     <div class="filter-section hide" id="filterSection">
-        @include('partials.advanced-search.advanced-search')
+        @include('partials.advanced-search.advanced-search', [
+            'predefined_filter_edit_modal_open' => $predefined_filter_edit_modal_open,
+            'predefined_filter_id' => $predefined_filter_id,
+        ])
     </div>
 
     <!-- Table Section -->

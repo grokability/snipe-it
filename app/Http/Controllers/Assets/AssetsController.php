@@ -20,6 +20,7 @@ use App\Models\Setting;
 use App\Models\Statuslabel;
 use App\Models\User;
 use App\Models\PredefinedFilter;
+use App\Services\PredefinedFilterService;
 use App\View\Label;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -46,10 +47,11 @@ class AssetsController extends Controller
 {
     protected $qrCodeDimensions = ['height' => 3.5, 'width' => 3.5];
     protected $barCodeDimensions = ['height' => 2, 'width' => 22];
-
-    public function __construct()
+    protected PredefinedFilterService $predefinedFilterService;
+    public function __construct(PredefinedFilterService $predefinedFilterService)
     {
         $this->middleware('auth');
+        $this->predefinedFilterService = $predefinedFilterService;
         parent::__construct();
     }
 
@@ -68,9 +70,9 @@ class AssetsController extends Controller
         $company = Company::find($request->input('company_id'));
         // $predefined_filters = PredefinedFilter::Auth();
         // $predefined_filters = PredefinedFilter::orderBy('name')->get();
-        $predefined_filters = PredefinedFilter::where('created_by', auth()->user()->id)
+        /*$predefined_filters = PredefinedFilter::where('created_by', auth()->user()->id)
             ->orderBy('name')
-            ->get();
+            ->get();*/
 
         $predefined_filter_edit_modal_open = $request->input('predefinedFilterModalOpen');
         $predefined_filter_id = $request->input('predefinedFilterId');
@@ -80,7 +82,7 @@ class AssetsController extends Controller
             $predefined_filter_edit_modal_open = false;
         }
 
-        if ($predefined_filter_edit_modal_open !== 'true' && $predefined_filter_edit_modal_open !== 'false') {
+        if ($predefined_filter_edit_modal_open !== 'true' && $predefined_filter_edit_modal_open !== 'false' && $predefined_filter_edit_modal_open != null) {
             throw new InvalidArgumentException("You provided an invalid parameter for predefinedFilterModalOpen (must be true or false).");
         } else {
             // Convert string to boolean
@@ -88,11 +90,18 @@ class AssetsController extends Controller
         }
 
         // Validate if it's a valid integer
-        if (filter_var($predefined_filter_id, FILTER_VALIDATE_INT) === false) {
+        if (filter_var($predefined_filter_id, FILTER_VALIDATE_INT) === false && $predefined_filter_id != null) {
             throw new InvalidArgumentException('You provided an invalid parameter for predefinedFilterId (must be an integer).');
         }
 
-        return view('hardware/index')->with('company', $company)->with('predefined_filters', $predefined_filters); // TODO maybe switch later to user / role based view
+        if ($predefined_filter_id !== null) {
+            if ($this->predefinedFilterService->checkIfFilterExists($predefined_filter_id) === false) {
+                $predefined_filter_id = null;
+            }
+        }
+
+        // TODO maybe switch later to user / role based view
+        return view('hardware/index')->with('company', $company)->with('predefined_filter_edit_modal_open', $predefined_filter_edit_modal_open)->with('predefined_filter_id', $predefined_filter_id);
     }
 
     /**

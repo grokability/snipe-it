@@ -169,6 +169,14 @@ class PredefinedFilterService
         return $paginated;
     }
 
+    public function checkIfFilterExists(int $predefined_filter_id): bool {
+        $filter = $this->getFilterById($predefined_filter_id, false);
+        if($filter !== null) {
+            return true;
+        }
+        return false;
+     }
+
     private function syncPermissions($currentPermissions, $newPermissions): array
     {
         // Calculate permissions to add

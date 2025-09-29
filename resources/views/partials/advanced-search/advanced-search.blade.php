@@ -70,8 +70,11 @@ class FilterUIController {
         });
     }
 
-updateFilterWithPredefined(event) {
-    const selectedId = event?.target?.value;
+updateFilterWithPredefined(event, selectedId = null) {
+    if(selectedId === null) {
+        selectedId = event?.target?.value;
+    }
+
     if (!selectedId) {
         floatingMenuDisableEditDeleteButtons();
         return;
@@ -130,8 +133,10 @@ updateFilterWithPredefined(event) {
         });
     }
 
-    updatePredefinedFilterInBackend(updateFilterButtonId) {
-        if (document.getElementById(updateFilterButtonId).classList.contains('disabled')) return; // Do nothing when the button is disabled
+    updatePredefinedFilterInBackend(updateFilterButtonId = null) {
+        if(updateFilterButtonId !== null) {
+            if (document.getElementById(updateFilterButtonId).classList.contains('disabled')) return; // Do nothing when the button is disabled
+        }
 
         const selectedFilter = $("#predefinedfilters-select").select2('data')[0]; // Always zero because only one element can be selected at the time
         if (!selectedFilter) return;
@@ -269,6 +274,15 @@ document.addEventListener('DOMContentLoaded', function () {
     // Initialize everything
     const controller = new FilterUIController($table);
     controller.bindEvents();
+
+    @if($predefined_filter_id !== null)
+    filterSection.classList.toggle('hide'); // Then the page is reloaded the menu is usually closed
+    //controller.updateFilterWithPredefined(null, {{ $predefined_filter_id }});
+    console.log(controller);
+    @endif
+    @if($predefined_filter_edit_modal_open === true && $predefined_filter_id !== null)
+    controller.updatePredefinedFilterInBackend();
+    @endif
 });
 
 // Filter search functionality
