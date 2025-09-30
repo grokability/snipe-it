@@ -27,6 +27,22 @@ body:
     validations:
       required: true
   - type: input
+    id: php-version
+    attributes:
+      label: PHP version
+      description: What version of PHP are you using?
+      placeholder: ex. PHP 8.3.1
+    validations:
+      required: true
+   - type: input
+    id: composer-version
+    attributes:
+      label: Composer version
+      description: What version of composer are you using?
+      placeholder: ex. 2.8.10
+    validations:
+      required: true     
+  - type: input
     id: db-version
     attributes:
       label: MySQL/MariaDB version
