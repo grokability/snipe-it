@@ -11,7 +11,7 @@
 
 
     <div class="row">
-
+<livewire:partials.advancedsearch.modal />
         @if (!$asset->model)
             <div class="col-md-12">
                 <div class="callout callout-danger">

@@ -11,25 +11,32 @@ enum FilterVisibility: string
     case Public = 'public';
 }
 
+enum AdvancedsearchModalAction: string
+{
+    case Create = 'create';
+    case Edit = 'edit';
+}
+
 class Modal extends Component
 {
     public $showModal = false;
+    public AdvancedsearchModalAction $modalActionType;
 
-    public string $name = '';
-    public string $visibility = 'private'; // Use string binding for Livewire compatibility
+
+    public ?string $name = '';
+    public FilterVisibility $visibility = FilterVisibility::Private;
     public array $groups = [];
 
     #[On('openPredefinedFiltersModal')]
-    public function openPredefinedFiltersModal($name = '', $visibility = 'private', $groups = [])
+    public function openPredefinedFiltersModal(string $action, ?int $predefinedFilterId = null)
     {
+        $this->modalActionType = AdvancedsearchModalAction::from($action);
+        //dump($modalActionType);
+        //dump($predefinedFilterId);
+
         $this->showModal = true;
 
-        $this->name = $name;
-        $this->visibility = $visibility === 'public'
-            ? FilterVisibility::Public->value
-            : FilterVisibility::Private->value;
-
-        $this->groups = is_array($groups) ? $groups : [];
+        // use $predefinedFilterId, $name as needed
 
         $this->dispatch('openPredefinedFiltersModalEvent');
     }
@@ -47,11 +54,11 @@ class Modal extends Component
     public function saveFilter()
     {
         // Convert visibility string back to enum if needed
-        $enumVisibility = FilterVisibility::from($this->visibility);
+        //$enumVisibility = FilterVisibility::from($this->visibility);
 
         // Handle saving logic here...
 
-        $this->dispatch('close-modal'); // JS listener closes the modal
+        $this->dispatch('closePredefinedFiltersModalEvent'); // JS listener closes the modal
     }
 
     public function render()
