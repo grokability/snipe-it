@@ -5,6 +5,7 @@ namespace App\Livewire\Partials\Advancedsearch;
 use Livewire\Component;
 use Livewire\Attributes\On;
 
+use App\Services\PredefinedFilterService;
 enum FilterVisibility: string
 {
     case Private = 'private';
@@ -28,18 +29,35 @@ class Modal extends Component
     public array $groups = [];
 
     #[On('openPredefinedFiltersModal')]
-    public function openPredefinedFiltersModal(string $action, ?int $predefinedFilterId = null)
-    {
+    public function openPredefinedFiltersModal(
+        PredefinedFilterService $predefinedFilterService,
+        string $action,
+        ?int $predefinedFilterId = null
+    ) {
         $this->modalActionType = AdvancedsearchModalAction::from($action);
-        //dump($modalActionType);
-        //dump($predefinedFilterId);
-
         $this->showModal = true;
+        $this->groups = []; // Empty groups array
 
-        // use $predefinedFilterId, $name as needed
+        if($this->modalActionType === AdvancedsearchModalAction::Edit && $predefinedFilterId !== null) {
+            $predefinedFilter = $predefinedFilterService->getFilterById($predefinedFilterId);
+            dump($predefinedFilter);
+            $this->name = $predefinedFilter['name'];
+
+            if($predefinedFilter['is_public'] === 1) {
+                $this->visibility = FilterVisibility::Public;
+            } else {
+                $this->visibility = FilterVisibility::Private;
+            }
+
+            foreach($predefinedFilter['permissions'] as $permission) {
+                array_push($this->groups, $permission->permission_group_id);
+            }
+            dump($this->groups);
+        }
 
         $this->dispatch('openPredefinedFiltersModalEvent');
     }
+
 
     #[On('closePredefinedFiltersModal')]
     public function closePredefinedFiltersModal()

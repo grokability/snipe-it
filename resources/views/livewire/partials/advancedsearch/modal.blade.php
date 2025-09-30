@@ -69,6 +69,8 @@
                                         name="visibility"
                                         value="public"
                                         wire:model="visibility"
+                                        @checked(old('active', $this->visibility === App\Livewire\Partials\Advancedsearch\FilterVisibility::Public))
+
                                     />
                                     <span class="radio-label-text">Public</span>
                                 </label>
@@ -81,6 +83,7 @@
                                         name="visibility"
                                         value="private"
                                         wire:model="visibility"
+                                        @checked(old('active', $this->visibility === App\Livewire\Partials\Advancedsearch\FilterVisibility::Private))
                                     />
                                     <span class="radio-label-text">Private</span>
                                 </label>
@@ -91,11 +94,12 @@
                         @include(
                             "partials.select.dropdowns.group-select",
                             [
-                                "translated_name" => trans("admin/hardware/form.model"),
-                                "select_id" => "group_select",
-                                "fieldname" => "groupSelect",
-                                "required" => "false",
-                                "multiple" => "true",
+                                'translated_name' => trans("admin/hardware/form.model"),
+                                'select_id' => "group_select",
+                                'fieldname' => "groupSelect",
+                                'required' => "false",
+                                'multiple' => "true",
+                                'selected' => $groups,
                             ]
                         )
                     </div>
