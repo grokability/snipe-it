@@ -111,7 +111,6 @@ class PredefinedFilterController extends Controller
             'filter_data' => $updated,
         ]);
     }
-
     public function destroy(Request $request, int $id)
     {
         $user = auth()->user();
