@@ -99,7 +99,8 @@
                                 'fieldname' => "groupSelect",
                                 'required' => "false",
                                 'multiple' => "true",
-                                'selected' => $groups,
+                                'selected' => $groupSelect,
+                                'otherOptions' => $groupSelectOtherOptions,
                             ]
                         )
                     </div>
