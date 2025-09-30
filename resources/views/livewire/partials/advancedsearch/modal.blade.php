@@ -117,6 +117,7 @@
                         <button
                             type="button"
                             @class(["btn", "btn-primary"])
+                            wire:click="savePredefinedFiltersModal"
                         >
                         @if($modalActionType === App\Livewire\Partials\Advancedsearch\AdvancedsearchModalAction::Edit)
                             {{ trans("general.update") }}

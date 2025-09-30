@@ -4,9 +4,10 @@ namespace App\Livewire\Partials\Advancedsearch;
 
 use Livewire\Component;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Validate;
 
+use App\Models\PredefinedFilter;
 use App\Services\PredefinedFilterService;
-use App\Models\User;
 
 enum FilterVisibility: string
 {
@@ -26,21 +27,28 @@ class Modal extends Component
     public AdvancedsearchModalAction $modalActionType;
 
 
+    #[Validate('required')] 
     public ?string $name = '';
     public FilterVisibility $visibility = FilterVisibility::Private;
     public array $groupSelect = [];
     public array $groupSelectOtherOptions = [];
 
+    public ?int $filterId;
+    public string $filterData;
+
     #[On('openPredefinedFiltersModal')]
     public function openPredefinedFiltersModal(
         PredefinedFilterService $predefinedFilterService,
         string $action,
+        string $predefinedFilterData,
         ?int $predefinedFilterId = null
     ) {
         $this->modalActionType = AdvancedsearchModalAction::from($action);
         $this->showModal = true;
         $this->groupSelect = []; // Empty groups array
         $this->groupSelectOtherOptions = [];
+        $this->filterData = $predefinedFilterData;
+        $this->filterId = $predefinedFilterId;
 
         $user = auth()->user();
         $this->groupSelectOtherOptions = $user->groups()->pluck('id')->toArray();
@@ -71,20 +79,38 @@ class Modal extends Component
     public function closePredefinedFiltersModal()
     {
         $this->showModal = false;
-
-        // TODO: Get inputs from modal
-
         $this->dispatch('closePredefinedFiltersModalEvent');
     }
 
-    public function saveFilter()
+    #[On('savePredefinedFiltersModal')]
+    public function savePredefinedFiltersModal(PredefinedFilterService $predefinedFilterService)
     {
         // Convert visibility string back to enum if needed
         //$enumVisibility = FilterVisibility::from($this->visibility);
 
-        // Handle saving logic here...
+        $this->validate(); 
+        
+        if($this->modalActionType === AdvancedsearchModalAction::Create) {
+            $predefinedFilter = new PredefinedFilter();
+        } else {
+            $predefinedFilter = $predefinedFilterService->getFilterById($this->filterId);
+        }
+        $predefinedFilter->name = $this->name;
+        $predefinedFilter->filter_data = $this->filterData;
+        
+        if($this->visibility === FilterVisibility::Public) {
+            $predefinedFilter->is_public = 1;
+        } else {
+            $predefinedFilter->is_public = 0;
+        }
+        
+        dump($predefinedFilter->toArray());
+        dump($predefinedFilter->getErrors());
+        dump($predefinedFilter->isDirty());
+        $predefinedFilter->save();
 
-        $this->dispatch('closePredefinedFiltersModalEvent'); // JS listener closes the modal
+        $this->dispatch('savePredefinedFiltersModalEvent');
+        $this->dispatch('closePredefinedFiltersModal');
     }
 
     public function render()
