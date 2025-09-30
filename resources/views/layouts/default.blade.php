@@ -967,7 +967,8 @@ dir="{{ Helper::determineLanguageDirection() }}">
                             </div>
                         @endif
 
-                        @include('notifications')
+                        {{-- @include('notifications') --}}
+                        <livewire:notifications />
                     </div>
 
 

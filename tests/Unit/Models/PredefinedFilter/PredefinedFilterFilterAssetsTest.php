@@ -135,14 +135,17 @@ class PredefinedFilterFilterAssetsTest extends TestCase
     public function it_filters_by_company_id_scalar()
     {
        $user = User::factory()->create();
+
+        $company1 = \App\Models\Company::factory()->create();
+        $company2 = \App\Models\Company::factory()->create();
        
-        $keep1 = Asset::factory()->create(['company_id' => 1]);
-        $drop1 = Asset::factory()->create(['company_id' => 2]);
+        $keep1 = Asset::factory()->create(['company_id' => $company1->id]);
+        $drop1 = Asset::factory()->create(['company_id' => $company2->id]);
 
         $filter = PredefinedFilter::create([
             'name'          => 'company_scalar',
             'created_by'    => $user->id,
-            'filter_data'   => ['company_id' => 1],  
+            'filter_data'   => ['company_id' => $company1->id],  
         ]);    
         $q = Asset::query();
         $filter->filterAssets($q);
@@ -157,14 +160,18 @@ class PredefinedFilterFilterAssetsTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $keep1 = Asset::factory()->create(['company_id' => 1]);
-        $keep2 = Asset::factory()->create(['company_id' => 3]);
-        $drop1 = Asset::factory()->create(['company_id' => 4]);
+        $company1 = \App\Models\Company::factory()->create();
+        $company2 = \App\Models\Company::factory()->create();
+        $company3 = \App\Models\Company::factory()->create();
+
+        $keep1 = Asset::factory()->create(['company_id' => $company1->id]);
+        $keep2 = Asset::factory()->create(['company_id' => $company2->id]);
+        $drop1 = Asset::factory()->create(['company_id' => $company3->id]);
 
         $filter = PredefinedFilter::create([
             'name'          => 'company_scalar',
             'created_by'    => $user->id,
-            'filter_data'   =>['company_id' => [1,3]],  
+            'filter_data'   =>['company_id' => [$company1->id, $company2->id]],  
         ]);
         
         $q = Asset::query();
@@ -291,15 +298,18 @@ class PredefinedFilterFilterAssetsTest extends TestCase
         $stKeep = \App\Models\Statuslabel::factory()->create();
         $stOther = \App\Models\Statuslabel::factory()->create();
 
-        $keep = Asset::factory()->create(['company_id' => 1, 'status_id' => $stKeep->id]);
-        $dropCompany = Asset::factory()->create(['company_id' => 2, 'status_id' => $stKeep->id]);
-        $dropStatus = Asset::factory()->create(['company_id' => 1, 'status_id' => $stOther->id]);
+        $company1 = \App\Models\Company::factory()->create();
+        $company2 = \App\Models\Company::factory()->create();
+
+        $keep = Asset::factory()->create(['company_id' => $company1->id, 'status_id' => $stKeep->id]);
+        $dropCompany = Asset::factory()->create(['company_id' => $company2->id, 'status_id' => $stKeep->id]);
+        $dropStatus = Asset::factory()->create(['company_id' => $company1->id, 'status_id' => $stOther->id]);
 
         $filter = PredefinedFilter::create([
             'name'        => 'and_logic_company_status',
             'created_by'  => $user->id,
             'filter_data' => [
-                'company_id' => 1,
+                'company_id' => $company1->id,
                 'status_id'  => [$stKeep->id],
             ],
         ]);
