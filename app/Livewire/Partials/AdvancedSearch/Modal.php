@@ -27,11 +27,15 @@ class Modal extends Component
     public AdvancedsearchModalAction $modalActionType;
 
 
-    #[Validate('required')] 
+    #[Validate('required')]
     public ?string $name = '';
     public FilterVisibility $visibility = FilterVisibility::Private;
-    public array $groupSelect = [];
+    public $groupSelect = [];
     public array $groupSelectOtherOptions = [];
+
+    protected $listeners = [
+    'groupSelect',
+    ];
 
     public ?int $filterId;
     public string $filterData;
@@ -53,17 +57,17 @@ class Modal extends Component
         $user = auth()->user();
         $this->groupSelectOtherOptions = $user->groups()->pluck('id')->toArray();
 
-        if($this->modalActionType === AdvancedsearchModalAction::Edit && $predefinedFilterId !== null) {
+        if ($this->modalActionType === AdvancedsearchModalAction::Edit && $predefinedFilterId !== null) {
             $predefinedFilter = $predefinedFilterService->getFilterById($predefinedFilterId);
             $this->name = $predefinedFilter['name'];
 
-            if($predefinedFilter['is_public'] === 1) {
+            if ($predefinedFilter['is_public'] === 1) {
                 $this->visibility = FilterVisibility::Public;
             } else {
                 $this->visibility = FilterVisibility::Private;
             }
 
-            foreach($predefinedFilter['permissions'] as $permission) {
+            foreach ($predefinedFilter['permissions'] as $permission) {
                 array_push($this->groupSelect, $permission->permission_group_id);
             }
 
@@ -85,36 +89,48 @@ class Modal extends Component
     #[On('savePredefinedFiltersModal')]
     public function savePredefinedFiltersModal(PredefinedFilterService $predefinedFilterService)
     {
-        // Convert visibility string back to enum if needed
-        //$enumVisibility = FilterVisibility::from($this->visibility);
+        $this->validate();
 
-        $this->validate(); 
-        
-        if($this->modalActionType === AdvancedsearchModalAction::Create) {
-            $predefinedFilter = new PredefinedFilter();
-        } else {
-            $predefinedFilter = $predefinedFilterService->getFilterById($this->filterId);
-        }
-        $predefinedFilter->name = $this->name;
-        $predefinedFilter->filter_data = $this->filterData;
-        
-        if($this->visibility === FilterVisibility::Public) {
-            $predefinedFilter->is_public = 1;
-        } else {
-            $predefinedFilter->is_public = 0;
-        }
-        
-        dump($predefinedFilter->toArray());
-        dump($predefinedFilter->getErrors());
-        dump($predefinedFilter->isDirty());
-        $predefinedFilter->save();
+        $validated = [
+            'name' => $this->name,
+            'filter_data' => $this->filterData,
+            'is_public' => $this->visibility === FilterVisibility::Public ? 1 : 0,
+            // Add permissions if needed:
+            'permissions' => $this->groupSelect,
+        ];
+
+        dump($this->groupSelect);
+        $r = $predefinedFilterService->createFilter($validated);
+        dump($r->save());
 
         $this->dispatch('savePredefinedFiltersModalEvent');
         $this->dispatch('closePredefinedFiltersModal');
     }
 
+    public function groupSelect($groupSelect)
+{
+    $this->groupSelect = $groupSelect;
+}
+
     public function render()
     {
         return view('livewire.partials.advancedsearch.modal');
+    }
+
+    private function getGroupSelectArrayAsArray(): array {
+        if(is_array($this->groupSelect) === true) {
+            return $this->groupSelect;
+        }
+        return [$this->groupSelect];
+    }
+    static private function formatPermissions(array $permissions): array
+    {
+        $result = [];
+
+        foreach ($permissions as $value) {
+            $result[] = ["predefined_filter_id" => $value];
+        }
+
+        return $result;
     }
 }

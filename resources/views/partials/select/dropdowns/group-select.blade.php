@@ -1,6 +1,8 @@
-<select class="js-data-ajax livewire-select2" data-endpoint="groups"
+<select class="js-data-ajax livewire-select2"
     data-placeholder="{{ trans('general.select_group') }}" name="{{ $fieldname }}" style="width: 100%"
-    data-livewire-component=" {{ $this->getId() }}}}"
+    data-livewire-component="{{ $this->getId() }}"
+    wire:model="groupSelect"
+    wire:ignore.self
     id="{{ isset($select_id) ? $select_id : $fieldname . '_group_select' }}" {!! isset($item) && Helper::checkIfRequired($item, $fieldname) ? ' required ' : '' !!}{{ isset($multiple) && $multiple == 'true' ? " multiple='multiple'" : '' }}>
     @isset($selected)
         @if (!is_iterable($selected))

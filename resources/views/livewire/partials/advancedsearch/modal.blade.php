@@ -12,7 +12,7 @@
                 display: inline-block;
             }
         </style>
-
+    
         <div
             @class(["modal", "fade", "in"])
             id="advancedSearchModal"
@@ -48,7 +48,7 @@
                     <!-- Body -->
                     <div @class(["modal-body"])>
                         {{-- Filter name --}}
-                        <div @class(["form-group"])>
+                        <div @class(["form-group"]) wire:ignore.self>
                             <label for="filterName">{{ trans("general.predefined_filter_name") }}</label>
                             <input
                                 type="text"
@@ -116,8 +116,9 @@
                         </button>
                         <button
                             type="button"
-                            @class(["btn", "btn-primary"])
+                            id="submitButton"
                             wire:click="savePredefinedFiltersModal"
+                            @class(["btn", "btn-primary"])
                         >
                         @if($modalActionType === App\Livewire\Partials\Advancedsearch\AdvancedsearchModalAction::Edit)
                             {{ trans("general.update") }}
@@ -129,5 +130,23 @@
                 </div>
             </div>
         </div>
+
+    {{-- Javascript --}}
+        <script>
+    $(document).ready(function() {
+    window.initSelectDrop=()=>{
+        $('#group_select').select2({
+        placeholder: 'placeholder',
+        allowClear: true});
+    }
+    initSelectDrop();
+    $('#group_select').on('change', function (e) {
+        livewire.emit('groupSelect', e.target.value)
+    });
+});
+
+        </script>
+
+
     @endif
 </span>
