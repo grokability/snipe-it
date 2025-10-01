@@ -34,7 +34,7 @@ class Modal extends Component
     public array $groupSelectOtherOptions = [];
 
     protected $listeners = [
-    'groupSelect',
+        'groupSelect',
     ];
 
     public ?int $filterId;
@@ -107,18 +107,20 @@ class Modal extends Component
         $this->dispatch('closePredefinedFiltersModal');
     }
 
-    public function groupSelect($groupSelect)
-{
-    $this->groupSelect = $groupSelect;
-}
+    public function updateGroupSelect($values)
+    {
+        $this->groupSelect = is_array($values) ? $values : ($values ? [$values] : []);
+    }
+
 
     public function render()
     {
         return view('livewire.partials.advancedsearch.modal');
     }
 
-    private function getGroupSelectArrayAsArray(): array {
-        if(is_array($this->groupSelect) === true) {
+    private function getGroupSelectArrayAsArray(): array
+    {
+        if (is_array($this->groupSelect) === true) {
             return $this->groupSelect;
         }
         return [$this->groupSelect];

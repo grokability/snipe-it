@@ -1,6 +1,5 @@
 <span id="advancedSearchModalContainer">
     @if ($showModal)
-
         {{-- CSS --}}
         <style>
             .modal-radio {
@@ -12,7 +11,7 @@
                 display: inline-block;
             }
         </style>
-    
+
         <div
             @class(["modal", "fade", "in"])
             id="advancedSearchModal"
@@ -38,17 +37,21 @@
                         >
                             <span>&times;</span>
                         </button>
-                        @if($modalActionType === App\Livewire\Partials\Advancedsearch\AdvancedsearchModalAction::Edit)
-                            <h4 class="modal-title">{{ __('general.edit') }}</h4>
+
+                        @if ($modalActionType === App\Livewire\Partials\Advancedsearch\AdvancedsearchModalAction::Edit)
+                            <h4 class="modal-title">{{ __("general.edit") }}</h4>
                         @else
-                            <h4 class="modal-title">{{ __('general.create') }}</h4>
+                            <h4 class="modal-title">{{ __("general.create") }}</h4>
                         @endif
                     </div>
 
                     <!-- Body -->
-                    <div @class(["modal-body"])>
+                    <div @class(["modal-body"]) wire:ignore>
                         {{-- Filter name --}}
-                        <div @class(["form-group"]) wire:ignore.self>
+                        <div
+                            @class(["form-group"])
+                            wire:ignore.self
+                        >
                             <label for="filterName">{{ trans("general.predefined_filter_name") }}</label>
                             <input
                                 type="text"
@@ -69,8 +72,7 @@
                                         name="visibility"
                                         value="public"
                                         wire:model="visibility"
-                                        @checked(old('active', $this->visibility === App\Livewire\Partials\Advancedsearch\FilterVisibility::Public))
-
+                                        @checked(old("active", $this->visibility === App\Livewire\Partials\Advancedsearch\FilterVisibility::Public))
                                     />
                                     <span class="radio-label-text">Public</span>
                                 </label>
@@ -83,7 +85,7 @@
                                         name="visibility"
                                         value="private"
                                         wire:model="visibility"
-                                        @checked(old('active', $this->visibility === App\Livewire\Partials\Advancedsearch\FilterVisibility::Private))
+                                        @checked(old("active", $this->visibility === App\Livewire\Partials\Advancedsearch\FilterVisibility::Private))
                                     />
                                     <span class="radio-label-text">Private</span>
                                 </label>
@@ -94,13 +96,13 @@
                         @include(
                             "partials.select.dropdowns.group-select",
                             [
-                                'translated_name' => trans("admin/hardware/form.model"),
-                                'select_id' => "group_select",
-                                'fieldname' => "groupSelect",
-                                'required' => "false",
-                                'multiple' => "true",
-                                'selected' => $groupSelect,
-                                'otherOptions' => $groupSelectOtherOptions,
+                                "translated_name" => trans("admin/hardware/form.model"),
+                                "select_id" => "group_select",
+                                "fieldname" => "groupSelect",
+                                "required" => "false",
+                                "multiple" => "true",
+                                "selected" => $groupSelect,
+                                "otherOptions" => $groupSelectOtherOptions,
                             ]
                         )
                     </div>
@@ -117,36 +119,36 @@
                         <button
                             type="button"
                             id="submitButton"
-                            wire:click="savePredefinedFiltersModal"
                             @class(["btn", "btn-primary"])
+                            @click="window.advancedSearchModalSendInputToBackend();"
                         >
-                        @if($modalActionType === App\Livewire\Partials\Advancedsearch\AdvancedsearchModalAction::Edit)
-                            {{ trans("general.update") }}
-                        @else
-                            {{ trans("general.save") }}
-                        @endif   
+                            @if ($modalActionType === App\Livewire\Partials\Advancedsearch\AdvancedsearchModalAction::Edit)
+                                {{ trans("general.update") }}
+                            @else
+                                {{ trans("general.save") }}
+                            @endif
                         </button>
                     </div>
                 </div>
             </div>
         </div>
 
-    {{-- Javascript --}}
+        {{-- Javascript --}}
+        @script
         <script>
-    $(document).ready(function() {
-    window.initSelectDrop=()=>{
-        $('#group_select').select2({
-        placeholder: 'placeholder',
-        allowClear: true});
-    }
-    initSelectDrop();
-    $('#group_select').on('change', function (e) {
-        livewire.emit('groupSelect', e.target.value)
-    });
-});
-
-        </script>
-
-
-    @endif
+            window.advancedSearchModalSendInputToBackend = function() {
+                console.log("submit");
+                const component = Livewire.getByName('partials.advancedsearch.modal')[0];
+                
+                if (component) {
+                    component.set('groupSelect', [2, 3, 4, 5]);
+                } else {
+                    console.error('Livewire component not found!');
+                }
+                
+                Livewire.dispatch('savePredefinedFiltersModal');
+            }
+            </script>
+        @endscript
+        @endif
 </span>
