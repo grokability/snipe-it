@@ -90,7 +90,7 @@ class PredefinedFilterService
             'filter_data' => $validated['filter_data'],
             'is_public' => $validated['is_public'],
         ]);
-        //dump($filter);
+
         $filter->save();
 
         // Update permissions

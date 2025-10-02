@@ -93,6 +93,11 @@ class Modal extends Component
     public function closePredefinedFiltersModal()
     {
         $this->showModal = false;
+        $this->groupSelect = [];
+        $this->groupSelectOtherOptions = [];
+        $this->filterData = null;
+        $this->filterId = null;
+        $this->name = "";
         $this->dispatch("closePredefinedFiltersModalEvent");
     }
 
@@ -143,7 +148,8 @@ class Modal extends Component
             'groupSelect.*' => 'required|integer|exists:permission_groups,id',
         ]);
 
-        $predefinedFilter = $predefinedFilterService->getFilterById($this->filterId);
+        $predefinedFilter = PredefinedFilter::find($this->filterId);
+        //dump($predefinedFilter);
 
         $validated = [
             'name' => $this->name ?? $predefinedFilter->name,
@@ -155,10 +161,7 @@ class Modal extends Component
         ];
 
         $updateFilterResponse = $predefinedFilterService->updateFilter($predefinedFilter, $validated);
-        dump($predefinedFilter);
-        dump($validated);
-        dump($updateFilterResponse);
-        dump(self::formatPermissions($this->getGroupSelectArrayAsArray()));
+
         if ($updateFilterResponse === true) {
             $this->dispatch('showNotification', [
                 'type' => 'success',
