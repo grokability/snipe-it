@@ -125,7 +125,7 @@
                             type="button"
                             id="submitButton"
                             @class(["btn", "btn-primary"])
-                            @click="window.advancedSearchModalSendInputToBackend();"
+                            @click="window.advancedSearchModalSendInputToBackend('create');"
                         >
                                 {{ trans("general.save") }}
                         </button>
@@ -134,7 +134,7 @@
                             type="button"
                             id="submitButton"
                             @class(["btn", "btn-primary"])
-                            @click="window.advancedSearchModalSendInputToBackend();"
+                            @click="window.advancedSearchModalSendInputToBackend('edit');"
                         >
                                 {{ trans("general.edit") }}
                         </button>
@@ -156,7 +156,7 @@
         {{-- Javascript --}}
         @script
         <script>
-            window.advancedSearchModalSendInputToBackend = function() {
+            window.advancedSearchModalSendInputToBackend = function(action) {
                 console.log("submit");
 
                 let selectedGroups = $("#group_select").select2('data');
@@ -169,7 +169,15 @@
                     console.error('Livewire component not found!');
                 }
                 
-                Livewire.dispatch('savePredefinedFiltersModal');
+                if(action === 'create')
+                {
+                    Livewire.dispatch('savePredefinedFiltersModal');
+                } else if(action === 'edit')
+                {
+                    Livewire.dispatch('updatePredefinedFiltersModal');
+                } else {
+                    console.warn(`${action} is an unkown action type`);
+                }
             }
             </script>
         @endscript

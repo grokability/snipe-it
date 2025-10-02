@@ -136,7 +136,12 @@ class Modal extends Component
     public function updatePredefinedFiltersModal(
         PredefinedFilterService $predefinedFilterService
     ) {
-        $this->validate(); // You may want to adjust this if some fields are now optional
+        $this->validate([
+            'name' => 'required|string',
+            'filterData' => 'array',
+            'groupSelect' => 'array',
+            'groupSelect.*' => 'required|integer|exists:permission_groups,id',
+        ]);
 
         $predefinedFilter = $predefinedFilterService->getFilterById($this->filterId);
 
@@ -146,13 +151,14 @@ class Modal extends Component
             'is_public' => isset($this->visibility)
                 ? ($this->visibility === FilterVisibility::Public ? 1 : 0)
                 : $predefinedFilter->is_public,
-            'permissions' => !empty($this->groupSelect)
-                ? self::formatPermissions($this->groupSelect)
-                : $predefinedFilter->permissions,
+            'permissions' => self::formatPermissions($this->getGroupSelectArrayAsArray()),
         ];
 
         $updateFilterResponse = $predefinedFilterService->updateFilter($predefinedFilter, $validated);
-
+        dump($predefinedFilter);
+        dump($validated);
+        dump($updateFilterResponse);
+        dump(self::formatPermissions($this->getGroupSelectArrayAsArray()));
         if ($updateFilterResponse === true) {
             $this->dispatch('showNotification', [
                 'type' => 'success',
@@ -224,13 +230,12 @@ class Modal extends Component
         return [$this->groupSelect];
     }
 
-    // FIXED: This was the main issue!
     private static function formatPermissions(array $permissions): array
     {
         $result = [];
 
         foreach ($permissions as $value) {
-            $result[] = ["permission_group_id" => $value]; // FIXED: was "predefined_filter_id"
+            $result[] = ["permission_group_id" => $value];
         }
 
         return $result;
