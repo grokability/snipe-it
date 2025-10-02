@@ -22837,6 +22837,9 @@ caption.tableCaption {
   white-space: preserve;
   display: inline-block;
 }
+input[name="columnsSearch"] {
+  width: 120px;
+}
 
 
 /*# sourceMappingURL=app.css.map*/
@@ -24448,6 +24451,9 @@ caption.tableCaption {
   clip: rect(0, 0, 0, 0);
   white-space: preserve;
   display: inline-block;
+}
+input[name="columnsSearch"] {
+  width: 120px;
 }
 
 

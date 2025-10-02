@@ -33,6 +33,10 @@
 
 @section('content')
 
+
+
+
+
 <div class="responsive-layout">
     <!-- Filter Section -->
     <div class="filter-section hide" id="filterSection">
@@ -58,7 +62,8 @@
                     data-id-table="{{ request()->has('status') ? e(request()->input('status')) : '' }}assetsListingTable"
                     data-search-text="{{ e(Session::get('search')) }}" data-side-pagination="server"
                     data-show-footer="true" data-sort-order="asc" data-sort-name="name"
-                    data-toolbar="#assetsBulkEditToolbar" data-bulk-button-id="#bulkAssetEditButton"
+                    data-show-columns-search="true"
+                data-toolbar="#assetsBulkEditToolbar" data-bulk-button-id="#bulkAssetEditButton"
                     data-bulk-form-id="#assetsBulkForm" data-buttons="assetButtons"
                     id="{{ request()->has('status') ? e(request()->input('status')) : '' }}assetsListingTable"
                     class="table table-striped snipe-table" data-url="{{ route('api.assets.index', [

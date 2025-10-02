@@ -122,6 +122,22 @@ class AssetModel extends SnipeModel
         return $this->hasMany(\App\Models\Asset::class, 'model_id');
     }
 
+
+    public function availableAssets()
+    {
+        return $this->hasMany(\App\Models\Asset::class, 'model_id')->RTD();
+    }
+
+    public function assignedAssets()
+    {
+        return $this->hasMany(\App\Models\Asset::class, 'model_id')->Deployed();
+    }
+
+    public function archivedAssets()
+    {
+        return $this->hasMany(\App\Models\Asset::class, 'model_id')->Archived();
+    }
+
     /**
      * Establishes the model -> category relationship
      *

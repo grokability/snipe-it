@@ -229,7 +229,7 @@ class DefaultLabel extends RectangleSheet
             static::writeText(
                 $pdf, $record->get('title'),
                 $textX1, 0,
-                'freesans', 'b', $this->textSize, 'L',
+                Helper::isCjk($record->get('title')) ? 'cid0cs' : 'freesans', 'b', $this->textSize, 'L',
                 $textW, $this->textSize,
                 true, 0
             );
@@ -246,10 +246,11 @@ class DefaultLabel extends RectangleSheet
                 static::writeText(
                     $pdf, (($field['label']) ? $field['label'].' ' : '') . $field['value'],
                     $textX1, $textY,
-                    'freesans', '', $this->textSize, 'L',
+                    Helper::isCjk($field['label']) ? 'cid0cs' : 'freesans', '', $this->textSize, 'L',
                     $textW, $this->textSize,
                     true, 0
                 );
+
 
                 $textY += $this->textSize + self::TEXT_MARGIN;
                 $fieldsDone++;

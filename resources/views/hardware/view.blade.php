@@ -1285,6 +1285,7 @@
 
                                             <table
                                                     data-columns="{{ \App\Presenters\AssetPresenter::dataTableLayout() }}"
+                                                    data-show-columns-search="true"
                                                     data-cookie-id-table="assetsTable"
                                                     data-id-table="assetsTable"
                                                     data-side-pagination="server"

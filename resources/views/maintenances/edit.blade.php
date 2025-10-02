@@ -179,6 +179,7 @@
           <label for="notes" class="col-md-3 control-label">{{ trans('admin/maintenances/form.notes') }}</label>
           <div class="col-md-7">
             <textarea class="col-md-6 form-control" id="notes" name="notes">{{ old('notes', $item->notes) }}</textarea>
+            <p class="help-block">{!! trans('general.markdown') !!}</p>
             {!! $errors->first('notes', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
           </div>
         </div>
