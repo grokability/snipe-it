@@ -143,7 +143,7 @@
                             type="button"
                             id="submitButton"
                             @class(["btn", "btn-primary"])
-                            @click="window.advancedSearchModalSendInputToBackend();"
+                            wire:click="deletePredefinedFiltersModal"
                         >
                                 {{ trans("general.delete") }}
                         </button>

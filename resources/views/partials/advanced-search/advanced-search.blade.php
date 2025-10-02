@@ -46,9 +46,7 @@
 
     </div>
     @include ('partials.advanced-search.floating-button')
-    @include ('partials.advanced-search.modal', [
-        'createNew' => false,
-    ])
+
 </div>
 
 @include('partials.confetti-js', ['autostart' => false])
@@ -226,38 +224,10 @@ updateFilterWithPredefined(event) {
         const selectedFilterId = $("#predefinedfilters-select").select2('data')[0].id; // Always zero because only one element can be selected at the time
         if (!selectedFilterId) return;
 
-        const updateUrlTemplate = `{{ route('api.predefined-filters.destroy', ['id' => '__ID__']) }}`;
-        const finalUrl = updateUrlTemplate.replace('__ID__', selectedFilterId);
-
-        fetchFromBackend('PUT', finalUrl)
-        .then((response) => {
-            if(response.status === 200) {
-                Livewire.dispatch('showNotification', {
-                  type: 'success',
-                  title: '{{ trans('general.notification_success') }}',
-                  message: '{{ trans('general.predefined_filter_deleted_successfully') }}',
-                  tag: 'prefindedFilters'
-                });
-                if(window.triggerConfetti) window.triggerConfetti();
-            } else {
-                console.error(response);
-                Livewire.dispatch('showNotification', {
-                  type: 'error',
-                  title: '{{ trans('general.notification_error') }}',
-                  message: '{{ trans('general.backend_responded_with') }} ' + response.status + " - " + response.statusText,
-                  tag: 'prefindedFilters'
-                });  
-            }
-        })
-        .catch((error) => {
-            console.error(error);
-            Livewire.dispatch('showNotification', {
-              type: 'error',
-              title: '{{ trans('general.notification_error') }}',
-              message: '{{ trans('general.notification_error') }}' + error,
-              tag: 'prefindedFilters'
-            }); 
-        })
+        Livewire.dispatch('openPredefinedFiltersModal',{ 
+            action: 'delete',
+            predefinedFilterId: parseInt(selectedFilterId),
+        });
     }
 
     fetchPredefinedFilterData(filterId) {

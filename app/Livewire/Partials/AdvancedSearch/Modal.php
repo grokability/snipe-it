@@ -42,7 +42,7 @@ class Modal extends Component
     public function openPredefinedFiltersModal(
         PredefinedFilterService $predefinedFilterService,
         string $action,
-        $predefinedFilterData,
+        ?array $predefinedFilterData = null,
         ?int $predefinedFilterId = null
     ) {
         $this->modalActionType = AdvancedsearchModalAction::from($action);
