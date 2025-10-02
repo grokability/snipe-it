@@ -5,7 +5,7 @@
     style="width: 100%"
     data-livewire-component="{{ $this->getId() }}"
     wire:model="groupSelect"
-    wire:ignore
+    wire:ignore.self
     id="{{ isset($select_id) ? $select_id : $fieldname . '_group_select' }}"
     @if(isset($item) && Helper::checkIfRequired($item, $fieldname)) required @endif
     @if(isset($multiple) && $multiple) multiple="multiple" @endif

@@ -165,30 +165,29 @@ class PredefinedFilterService
         return $paginated;
     }
 
-    private function syncPermissions($currentPermissions, $newPermissions): array
-    {
-        // Calculate permissions to add
-        $toAdd = array_udiff(
-            $newPermissions,
-            $currentPermissions,
-            function ($obj_a, $obj_b) {
-                return $obj_a['permission_group_id'] !== $obj_b['permission_group_id'];
-            }
-        );
+private function syncPermissions($currentPermissions, $newPermissions): array
+{
+    $toAdd = array_udiff(
+        $newPermissions,
+        $currentPermissions,
+        function ($a, $b) {
+            return $a['permission_group_id'] <=> $b['permission_group_id'];
+        }
+    );
 
-        // Calculate permissions to delete
-        $toDelete = array_udiff(
-            $currentPermissions,
-            $newPermissions,
-            function ($obj_a, $obj_b) {
-                return $obj_a['permission_group_id'] !== $obj_b['permission_group_id'];
-            }
-        );
+    $toDelete = array_udiff(
+        $currentPermissions,
+        $newPermissions,
+        function ($a, $b) {
+            return $a['permission_group_id'] <=> $b['permission_group_id'];
+        }
+    );
 
-        return [
-            'to_add' => $toAdd,
-            'to_delete' => $toDelete
-        ];
-    }
+    return [
+        'to_add' => $toAdd,
+        'to_delete' => $toDelete
+    ];
+}
+
 
 }

@@ -157,7 +157,6 @@
         @script
         <script>
             window.advancedSearchModalSendInputToBackend = function(action) {
-                console.log("submit");
 
                 let selectedGroups = $("#group_select").select2('data');
                 selectedGroups = selectedGroups.map((item) => { return parseInt(item.id); }); 

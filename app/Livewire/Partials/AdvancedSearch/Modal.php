@@ -149,7 +149,6 @@ class Modal extends Component
         ]);
 
         $predefinedFilter = PredefinedFilter::find($this->filterId);
-        //dump($predefinedFilter);
 
         $validated = [
             'name' => $this->name ?? $predefinedFilter->name,
