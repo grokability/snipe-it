@@ -66,7 +66,6 @@ class PredefinedFilterService
 
     public function createFilter($validated): PredefinedFilter
     {
-        //dump($validated);
         $filter_create_response = PredefinedFilter::create([
             'name' => $validated['name'],
             'filter_data' => $validated['filter_data'],
@@ -98,13 +97,11 @@ class PredefinedFilterService
             $currently_set_permssions = $this->predefinedFilterPermissionService->getPermissionsByPredefinedFilterId($filter->id);
             $new_permissions = $validated['permissions'];
             $permission_diff = $this->syncPermissions($currently_set_permssions->toArray(), $new_permissions);
-            //dump($permission_diff);
 
             try {
                 DB::transaction(function () use ($permission_diff, $filter) {
                     if (!empty($permission_diff['to_delete'])) {
                         foreach ($permission_diff['to_delete'] as $permission) {
-                            //dump($permission);
                             $this->predefinedFilterPermissionService->deletePermissionByFilterId($permission['predefined_filter_id']);
                         }
                     }
@@ -112,14 +109,12 @@ class PredefinedFilterService
                     if (!empty($permission_diff['to_add'])) {
                         foreach ($permission_diff['to_add'] as $permission) {
                             $permission['predefined_filter_id'] = $filter->id;
-                            //dump($permission);
                             $this->predefinedFilterPermissionService->store($permission);
                         }
                     }
                 });
             } catch (Throwable $e) {
                 // If any exception occurs, the transaction is automatically rolled back.
-                //dump($e);
                 throw new Exception($e->getMessage());
                 //abort(500,message: "Something went wrong");
             }
@@ -128,9 +123,9 @@ class PredefinedFilterService
         return $filter;
     }
 
-    public function deleteFilter(PredefinedFilter $filter): void
+    public function deleteFilter(PredefinedFilter $filter): bool
     {
-        $filter->delete();
+        return $filter->delete();
     }
 
     public function selectList(Request $request): LengthAwarePaginator

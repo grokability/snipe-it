@@ -38,15 +38,18 @@
                             <span>&times;</span>
                         </button>
 
-                        @if ($modalActionType === App\Livewire\Partials\Advancedsearch\AdvancedsearchModalAction::Edit)
-                            <h4 class="modal-title">{{ __("general.edit") }}</h4>
-                        @else
+                        @if ($modalActionType === App\Livewire\Partials\Advancedsearch\AdvancedsearchModalAction::Create)
                             <h4 class="modal-title">{{ __("general.create") }}</h4>
+                        @elseif ($modalActionType === App\Livewire\Partials\Advancedsearch\AdvancedsearchModalAction::Edit)
+                            <h4 class="modal-title">{{ __("general.edit") }}</h4>
+                        @elseif ($modalActionType === App\Livewire\Partials\Advancedsearch\AdvancedsearchModalAction::Delete)
+                            <h4 class="modal-title">{{ __("general.delete") }}</h4>
                         @endif
                     </div>
 
                     <!-- Body -->
                     <div @class(["modal-body"]) wire:ignore>
+                        @if ($modalActionType !== App\Livewire\Partials\Advancedsearch\AdvancedsearchModalAction::Delete)
                         {{-- Filter name --}}
                         <div
                             @class(["form-group"])
@@ -105,6 +108,7 @@
                                 "otherOptions" => $groupSelectOtherOptions,
                             ]
                         )
+                    @endif
                     </div>
 
                     <!-- Footer -->
@@ -116,18 +120,34 @@
                         >
                             {{ trans("general.close") }}
                         </button>
+                        @if ($modalActionType === App\Livewire\Partials\Advancedsearch\AdvancedsearchModalAction::Create)
                         <button
                             type="button"
                             id="submitButton"
                             @class(["btn", "btn-primary"])
                             @click="window.advancedSearchModalSendInputToBackend();"
                         >
-                            @if ($modalActionType === App\Livewire\Partials\Advancedsearch\AdvancedsearchModalAction::Edit)
-                                {{ trans("general.update") }}
-                            @else
                                 {{ trans("general.save") }}
-                            @endif
                         </button>
+                        @elseif ($modalActionType === App\Livewire\Partials\Advancedsearch\AdvancedsearchModalAction::Edit)
+                        <button
+                            type="button"
+                            id="submitButton"
+                            @class(["btn", "btn-primary"])
+                            @click="window.advancedSearchModalSendInputToBackend();"
+                        >
+                                {{ trans("general.edit") }}
+                        </button>
+                        @elseif ($modalActionType === App\Livewire\Partials\Advancedsearch\AdvancedsearchModalAction::Delete)
+                        <button
+                            type="button"
+                            id="submitButton"
+                            @class(["btn", "btn-primary"])
+                            @click="window.advancedSearchModalSendInputToBackend();"
+                        >
+                                {{ trans("general.delete") }}
+                        </button>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -138,10 +158,13 @@
         <script>
             window.advancedSearchModalSendInputToBackend = function() {
                 console.log("submit");
+
+                let selectedGroups = $("#group_select").select2('data');
+                selectedGroups = selectedGroups.map((item) => { return parseInt(item.id); }); 
                 const component = Livewire.getByName('partials.advancedsearch.modal')[0];
                 
                 if (component) {
-                    component.set('groupSelect', [2, 3, 4, 5]);
+                    component.set('groupSelect', selectedGroups);
                 } else {
                     console.error('Livewire component not found!');
                 }

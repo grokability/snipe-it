@@ -94,7 +94,7 @@ updateFilterWithPredefined(event) {
         })
         .catch(err => {
             console.error("Failed to apply predefined filter:", err);
-            Livewire.dispatch('showNotification', { type: 'error', message: '{{ trans('general.failed_to_apply_predefined_filter') }}'}); // TODO: i18n
+            Livewire.dispatch('showNotification', { type: 'error', message: '{{ trans('general.failed_to_apply_predefined_filter') }}'});
             setAdvancedSearchPanelFilterEnabledState(false);
         });
 }
