@@ -745,3 +745,55 @@ Route::middleware(['auth'])->get(
     ->breadcrumbs(fn (Trail $trail) =>
     $trail->push('Home', route('home'))
     );
+use App\Http\Controllers\PurchaseOrderController;
+
+/*
+|--------------------------------------------------------------------------
+| Purchase Order Routes - Add these to the end of routes/web.php
+|--------------------------------------------------------------------------
+*/
+
+// API routes (accessible without prefix)
+Route::middleware(['auth'])->get('/api/purchase-orders/suppliers/{supplier}/assets', [PurchaseOrderController::class, 'getSupplierAssets'])->name('api.suppliers.assets');
+
+Route::middleware(['auth'])->prefix('purchase-orders')->name('purchase-orders.')->group(function () {
+    
+    // Main CRUD routes
+    Route::get('/', [PurchaseOrderController::class, 'index'])->name('index');
+    Route::get('/create', [PurchaseOrderController::class, 'create'])->name('create');
+    Route::post('/', [PurchaseOrderController::class, 'store'])->name('store');
+    Route::get('/{purchaseOrder}', [PurchaseOrderController::class, 'show'])->name('show');
+    Route::get('/{purchaseOrder}/edit', [PurchaseOrderController::class, 'edit'])->name('edit');
+    Route::put('/{purchaseOrder}', [PurchaseOrderController::class, 'update'])->name('update');
+    Route::delete('/{purchaseOrder}', [PurchaseOrderController::class, 'destroy'])->name('destroy');
+    
+    // Additional functionality routes
+    Route::get('/{purchaseOrder}/pdf', [PurchaseOrderController::class, 'generatePdf'])->name('pdf');
+    Route::patch('/{purchaseOrder}/status', [PurchaseOrderController::class, 'updateStatus'])->name('update-status');
+    Route::post('/{purchaseOrder}/duplicate', [PurchaseOrderController::class, 'duplicate'])->name('duplicate');
+    
+});
+
+// API routes for AJAX calls
+Route::middleware(['auth'])->prefix('api/purchase-orders')->name('api.purchase-orders.')->group(function () {
+    
+    Route::get('/models/search', function (Illuminate\Http\Request $request) {
+        $models = \App\Models\AssetModel::where('name', 'like', '%' . $request->q . '%')
+                                       ->limit(10)
+                                       ->get(['id', 'name', 'model_number']);
+        return response()->json($models);
+    })->name('models.search');
+    
+    Route::get('/suppliers/{supplier}/models', [PurchaseOrderController::class, 'getSupplierModels'])->name('suppliers.models');
+    Route::get('/suppliers/{supplier}/assets', [PurchaseOrderController::class, 'getSupplierAssets'])->name('suppliers.assets');
+    Route::get('/asset/{asset}/info', [PurchaseOrderController::class, 'getAssetPurchaseOrderInfo'])->name('asset.info');
+    
+});
+
+// Asset PO Lookup API routes
+Route::middleware(['auth'])->prefix('api/asset-po-lookup')->name('api.asset-po-lookup.')->group(function () {
+    
+    Route::post('/lookup', [\App\Http\Controllers\AssetPOLookupController::class, 'lookupAssetPO'])->name('lookup');
+    Route::get('/all', [\App\Http\Controllers\AssetPOLookupController::class, 'getAllAssetPOs'])->name('all');
+    
+});

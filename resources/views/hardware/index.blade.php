@@ -24,9 +24,9 @@
   @elseif (Request::get('status')=='Archived')
     {{ trans('general.archived') }}
   @elseif (Request::get('status')=='Deleted')
-    {{ ucfirst(trans('general.deleted')) }}
+    {{ trans('general.deleted') }}
   @elseif (Request::get('status')=='byod')
-    {{ strtoupper(trans('general.byod')) }}
+    {{ trans('general.byod') }}
   @endif
 @else
 {{ trans('general.all') }}
@@ -43,58 +43,111 @@
 @yield('title0')  @parent
 @stop
 
+@section('header_right')
+  <a href="{{ route('reports/custom') }}" style="margin-right: 5px;" class="btn btn-default">
+    {{ trans('admin/hardware/general.custom_export') }}</a>
+  @can('create', \App\Models\Asset::class)
+  <a href="{{ route('hardware.create') }}" {{$snipeSettings->shortcuts_enabled == 1 ? "n" : ''}} class="btn btn-primary pull-right"></i> {{ trans('general.create') }}</a>
+  @endcan
+@stop
 
-{{-- Page content --}}
 @section('content')
-
-
 
 <div class="row">
   <div class="col-md-12">
-    <div class="box">
+
+    <div class="box box-default">
       <div class="box-body">
-       
+
+        <div class="table-responsive">
+
           <div class="row">
             <div class="col-md-12">
-
+              @if (Request::get('status'))
                 @include('partials.asset-bulk-actions', ['status' => Request::get('status')])
                    
               <table
                 data-columns="{{ \App\Presenters\AssetPresenter::dataTableLayout() }}"
                 data-cookie-id-table="{{ request()->has('status') ? e(request()->input('status')) : ''  }}assetsListingTable"
                 data-id-table="{{ request()->has('status') ? e(request()->input('status')) : ''  }}assetsListingTable"
+                data-search-text="{{ e(Session::get('search')) }}"
                 data-side-pagination="server"
+                data-show-columns="true"
+                data-show-export="true"
                 data-show-footer="true"
+                data-show-refresh="true"
                 data-sort-order="asc"
                 data-sort-name="name"
-                data-show-columns-search="true"
                 data-toolbar="#assetsBulkEditToolbar"
                 data-bulk-button-id="#bulkAssetEditButton"
                 data-bulk-form-id="#assetsBulkForm"
-                data-buttons="assetButtons"
                 id="{{ request()->has('status') ? e(request()->input('status')) : ''  }}assetsListingTable"
                 class="table table-striped snipe-table"
                 data-url="{{ route('api.assets.index',
                     array('status' => e(Request::get('status')),
-                    'order_number'=>e(strval(Request::get('order_number'))),
+                    'order_number'=>e(Request::get('order_number')),
                     'company_id'=>e(Request::get('company_id')),
                     'status_id'=>e(Request::get('status_id')))) }}"
                 data-export-options='{
-                "fileName": "export{{ (Request::has('status')) ? '-'.str_slug(Request::get('status')) : '' }}-assets-{{ date('Y-m-d') }}",
+                "fileName": "export-assets-{{ date('Y-m-d') }}",
                 "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
                 }'>
               </table>
-
+              @else
+                @include('partials.asset-bulk-actions')
+                   
+              <table
+                data-columns="{{ \App\Presenters\AssetPresenter::dataTableLayout() }}"
+                data-cookie-id-table="assetsListingTable"
+                data-id-table="assetsListingTable"
+                data-search-text="{{ e(Session::get('search')) }}"
+                data-side-pagination="server"
+                data-show-columns="true"
+                data-show-export="true"
+                data-show-footer="true"
+                data-show-refresh="true"
+                data-sort-order="asc"
+                data-sort-name="name"
+                data-toolbar="#assetsBulkEditToolbar"
+                data-bulk-button-id="#bulkAssetEditButton"
+                data-bulk-form-id="#assetsBulkForm"
+                id="assetsListingTable"
+                class="table table-striped snipe-table"
+                data-url="{{ route('api.assets.index',
+                    array('status' => e(Request::get('status')),
+                    'order_number'=>e(Request::get('order_number')),
+                    'company_id'=>e(Request::get('company_id')),
+                    'status_id'=>e(Request::get('status_id')))) }}"
+                data-export-options='{
+                "fileName": "export-assets-{{ date('Y-m-d') }}",
+                "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
+                }'>
+              </table>
+              @endif
             </div><!-- /.col -->
           </div><!-- /.row -->
-        
-      </div><!-- ./box-body -->
+        </div><!-- /.table-responsive -->
+      </div><!-- /.box-body -->
     </div><!-- /.box -->
   </div>
 </div>
+
 @stop
 
 @section('moar_scripts')
 @include('partials.bootstrap-table')
+
+{{-- Custom Purchase Order Formatter --}}
+<script>
+// Custom formatter for Purchase Order column
+function purchaseOrderLinkFormatter(value, row) {
+    if (value && value.po_number) {
+        return '<a href="/purchase-orders/' + value.id + '" class="btn btn-xs btn-primary">' + 
+               value.po_number + '</a>';
+    } else {
+        return '<span class="text-muted">No PO</span>';
+    }
+}
+</script>
 
 @stop
