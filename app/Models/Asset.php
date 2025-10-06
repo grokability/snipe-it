@@ -3063,24 +3063,41 @@ protected function applyWhereWithOperator(Builder $query, string $column, $value
     /**
      * Query builder scope to filter by a date range on a given field
      *
-     * @param \Illuminate\Database\Query\Builder $query   Query builder instance
-     * @param string                             $field   Database column name
-     * @param string                             $startKey Filter array key for start date
-     * @param string                             $endKey   Filter array key for end date
-     * @param array                              $filter   Filter array
+     * @param \Illuminate\Database\Eloquent\Builder $query      Query builder instance
+     * @param string                                $field      Database column name
+     * @param string                                $startKey   Filter array key for start date
+     * @param string                                $endKey     Filter array key for end date
+     * @param array                                 $filter     Filter array
      *
-     * @return \Illuminate\Database\Query\Builder          Modified query builder
+     * @return \Illuminate\Database\Eloquent\Builder            Modified query builder
      */
-    public function scopeDateRangeFilter($query, $field, $startKey, $endKey, $filter)
+    public function scopeDateRangeFilter($query, $field, $startKey, $endKey, $filters)
     {
-        if (isset($filter[$startKey])) {
-            $query->whereDate($field, '>=', $filter[$startKey]);
-            //$query->whereDate('assets.created_at', '<=', '2020-01-01');
+        $start = null;
+        $end = null;
+
+        foreach ($filters as $filter) {
+            if (!isset($filter['field'], $filter['value'])) {
+                continue;
+            }
+
+            if ($filter['field'] === $startKey) {
+                $start = $filter['value'];
+            }
+
+            if ($filter['field'] === $endKey) {
+                $end = $filter['value'];
+            }
         }
 
-        if (isset($filter[$endKey])) {
-            $query->whereDate($field, '<=', $filter[$endKey]);
+        if (!empty($start)) {
+            $query->whereDate($field, '>=', $start);
         }
+
+        if (!empty($end)) {
+            $query->whereDate($field, '<=', $end);
+        }
+
         return $query;
     }
 
