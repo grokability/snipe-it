@@ -23,6 +23,8 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use UnexpectedValueException;
 use Watson\Validating\ValidatingTrait;
+use Arr;
+use Illuminate\Support\Str;
 
 /**
  * Model for Assets.
@@ -1734,10 +1736,613 @@ class Asset extends Depreciable
      * Query builder scope to search on text filters for complex Bootstrap Tables API
      *
      * @param \Illuminate\Database\Query\Builder $query  Query builder instance
-     * @param text                               $filter JSON array of search keys and terms
+     * @param text                               $filters JSON array of search keys and terms
      *
      * @return \Illuminate\Database\Query\Builder          Modified query builder
      */
+
+
+    // TODO rename, remove Old one
+    public function scopeByFilterNew( $query, $filters){
+        return $query->where(
+            function(Builder $query) use ($filters){
+                $query = Asset::scopeDateRangeFilter($query, 'purchase_date', 'purchase_date_start', 'purchase_date_end', $filters);
+                $query = Asset::scopeDateRangeFilter($query, 'asset_eol_date', 'asset_eol_date_start', 'asset_eol_date_end', $filters);
+                $query = Asset::scopeDateRangeFilter($query, 'assets.created_at', 'created_at_start', 'created_at_end', $filters);
+                $query = Asset::scopeDateRangeFilter($query, 'assets.updated_at', 'updated_at_start', 'updated_at_end', $filters);
+
+                $skipFields = [
+                    'purchase_date_start', 'purchase_date_end',
+                    'asset_eol_date_start', 'asset_eol_date_end',
+                    'created_at_start', 'created_at_end',
+                    'updated_at_start', 'updated_at_end',
+                ];
+
+                //changed to Array and loop through each item
+                foreach($filters as $filterItem) {
+                    // legacy
+                    if (!is_array($filterItem) || !isset($filterItem['field'])) {
+                        foreach ($filters as $key => $value){
+                            if (is_string($key) && !is_array($value) && !in_array($key, $skipFields)) {
+                                $filterObj = [
+                                    'field'     => $key,
+                                    'value'     => $value,
+                                    'operator'  => 'contains', // default
+                                    'logic'     => 'AND' // default
+                                ];
+                                $this->applySingleFilter($query, $filterObj);
+                            }
+                        }
+                        break;
+                    }
+                    if (!isset($filterItem['field'], $filterItem['operator'], $filterItem['logic'], $filterItem['value'])) {
+                        continue;
+                    }
+                    if (in_array($filterItem['field'], $skipFields)) {
+                        continue;
+                    }
+                    $this->applySingleFilter($query, $filterItem);
+                }
+            }
+        );
+    }
+
+    /**
+    * Apply a single filter object into the query builder, using operator & logic.
+    *
+    * @param Builder $q
+    * @param array $filterObj  keys: field, value, operator, logic
+    * @return void
+    */
+    protected function applySingleFilter(Builder &$q, array $filterObj)
+    {
+        $fieldname = $filterObj['field'];
+        $value     = $filterObj['value'];
+        $operator  = strtolower($filterObj['operator'] ?? 'equals'); // "equals" or "contains"
+        $logic     = strtoupper($filterObj['logic'] ?? 'AND');       // "AND", "OR", "NOT"
+
+        $callback = function (Builder $inner) use ($fieldname, $value, $operator, $filterObj) {
+        // === 1. Custom Field Support ===
+
+        if (Str::startsWith($fieldname, ['cf:', 'custom_field:'])) {
+            $fieldLabel = Str::after($fieldname, ':');
+
+            // Try to get the custom field from DB
+            $cf = DB::table('custom_fields')
+                ->where('name', $fieldLabel)
+                ->first();
+
+            if (!$cf) {
+                Log::error($cf, 'not found'); //TODO Remove
+                return;
+            }
+
+            $column = $cf->db_column ?? null;
+
+            if (!$column || !Schema::hasColumn('assets', $column)) {
+                Log::error($column, 'not found'); //TODO Remove
+                return;
+            }
+
+            if ($operator === 'equals') {
+                $value = is_array($value) ? $value : [$value];
+                $inner->whereIn('assets.' . $column, $value);
+            } elseif ($operator === 'contains') {
+                $value = is_array($value) ? $value : [$value];
+                $inner->where(function ($query) use ($column, $value) {
+                    foreach ($value as $v) {
+                        $query->orWhere('assets.' . $column, 'LIKE', '%' . $v . '%');
+                    }
+                });
+            }
+            return;
+        }
+
+        // === 2. Field Mapping for Relational Fields ===
+        $simpleFields = [
+            'asset_tag'     => 'assets.asset_tag',
+            'name'          => 'assets.name',
+            'serial'        => 'assets.serial',
+            'purchase_date' => 'assets.purchase_date',
+            'purchase_cost' => 'assets.purchase_cost',
+            'notes'         => 'assets.notes',
+            'order_number'  => 'assets.order_number',
+        ];
+
+        $relationMap = [
+            'model' => [
+                'relation' => 'model',
+                'id' => 'models.id',
+                'name' => 'models.name',
+            ],
+            'category' => [
+                'relation' => 'model.category',
+                'id' => 'categories.id',
+                'name' => 'categories.name',
+            ],
+            'manufacturer' => [
+                'relation' => 'model.manufacturer',
+                'id' => 'manufacturers.id',
+                'name' => 'manufacturers.name',
+            ],
+            'company' => [
+                'relation' => 'company',
+                'id' => 'companies.id',
+                'name' => 'companies.name',
+            ],
+            'supplier' => [
+                'relation' => 'supplier',
+                'id' => 'suppliers.id',
+                'name' => 'suppliers.name',
+            ],
+            'location' => [
+                'relation' => 'location',
+                'id' => 'locations.id',
+                'name' => 'locations.name',
+            ],
+            'rtd_location' => [
+                'relation' => 'defaultLoc',
+                'id' => 'locations.id',
+                'name' => 'locations.name',
+            ],
+            'status_label' => [
+                'relation' => 'assetstatus',
+                'id' => 'status_labels.id',
+                'name' => 'status_labels.name',
+            ],
+            'model_number' => [
+                'relation' => 'model',
+                'column' => 'models.model_number',
+            ],
+            'jobtitle' => [
+                'relation' => 'assignedTo',
+                'morph' => true,
+                'type' => User::class,
+                'column' => 'users.jobtitle',
+            ],
+            'assigned_to' => [
+                'relation' => 'assignedTo',
+                'morph' => true,
+                'types' => [User::class, Asset::class, Location::class],
+            ],
+        ];
+
+        // === 3. Simple Fields ===
+        if (array_key_exists($fieldname, $simpleFields)) {
+            $column = $simpleFields[$fieldname];
+
+        $this->applyWhereWithOperator($inner, $column, $value, $operator);
+            return;
+        }
+
+        // === 4. Relational or Morph ===
+        if (isset($relationMap[$fieldname])) {
+            $meta = $relationMap[$fieldname];
+
+            // --- Morph Relation ---
+            if (!empty($meta['morph'])) {
+                $types = $meta['types'] ?? [$meta['type']];
+
+                $inner->where(function ($q2) use ($types, $value, $operator, $meta) {
+                    foreach ($types as $type) {
+                        $q2->orWhereHasMorph($meta['relation'], [$type], function ($morphQ) use ($type, $value, $operator, $meta) {
+                            if ($meta['column'] ?? false) {
+                                $field = $meta['column'];
+                                if (is_array($value)) {
+                                    $morphQ->whereIn($field, $value);
+                                } else {
+                                    $morphQ->where($field, $operator === 'equals' ? '=' : 'LIKE', $operator === 'equals' ? $value : '%' . $value . '%');
+                                }
+                            } else {
+                                if ($type === User::class) {
+                                    $morphQ->where(function ($sq) use ($value) {
+                                        $sq->where('first_name', 'LIKE', '%' . $value . '%')
+                                           ->orWhere('last_name', 'LIKE', '%' . $value . '%');
+                                    });
+                                } else {
+                                    $morphQ->where('name', 'LIKE', '%' . $value . '%');
+                                }
+                            }
+                        });
+                    }
+                });
+                return;
+            }
+
+            // --- Normal Relation ---
+            $relationPath = explode('.', $meta['relation']);
+            $first = array_shift($relationPath);
+
+            $inner->whereHas($first, function ($subQ) use ($relationPath, $value, $operator, $meta) {
+                foreach ($relationPath as $relation) {
+                    $subQ->whereHas($relation, function ($q) use ($value, $operator, $meta) {
+                        $this->applyRelationalValue($q, $value, $operator, $meta);
+                    });
+                }
+
+                if (empty($relationPath)) {
+                    $this->applyRelationalValue($subQ, $value, $operator, $meta);
+                }
+            });
+
+            return;
+        }
+
+        // === 5. Fallback: Direct column ===
+        $column = 'assets.' . $fieldname;
+
+        if (!Schema::hasColumn('assets', $fieldname)) {
+                Log::error($fieldname, 'not found'); //TODO Remove
+            return;
+        }
+
+        $this->applyWhereWithOperator($inner, $column, $value, $operator);
+    };
+
+    // === Apply logic ===
+    switch ($logic) {
+        case 'OR':
+            $q->orWhere($callback);
+            break;
+        case 'NOT':
+            $q->whereNot($callback);
+            break;
+        case 'AND':
+        default:
+            $q->where($callback);
+            break;
+    }
+}
+
+protected function applyRelationalValue(Builder $q, $value, string $operator, array $meta): void
+{
+    $idField = $meta['id'] ?? null;
+    $nameField = $meta['name'] ?? null;
+    $column = $meta['column'] ?? null;
+
+    if ($column) {
+        $this->applyWhereWithOperator($q, $column, $value, $operator);
+        return;
+    }
+
+    if (is_array($value)) {
+        $ids   = array_filter($value, 'is_int');
+        $names = array_filter($value, 'is_string');
+
+        $q->where(function ($sub) use ($idField, $nameField, $ids, $names , $operator) {
+            if (!empty($ids)) {
+                $sub->orWhereIn($idField, $ids);
+            }
+
+            foreach ($names as $name) {
+                $this->applyWhereWithOperator($sub, $nameField, $name, $operator);
+            }
+        });
+    } else {
+        if (is_int($value)) {
+            $q->where($idField, $value);
+        } else {
+            $this->applyWhereWithOperator($q, $nameField, $value, $operator);
+        }
+    }
+}
+
+
+
+
+protected function applyWhereWithOperator(Builder $query, string $column, $value, string $operator)
+{
+    $value = is_array($value) ? $value : [$value];
+
+    if ($operator === 'equals') {
+        $query->whereIn($column, $value);
+    } else { // contains
+        $query->where(function ($q) use ($column, $value) {
+            foreach ($value as $v) {
+                $q->orWhere($column, 'LIKE', '%' . $v . '%');
+            }
+        });
+    }
+}
+    protected function applySingleFilterOld(Builder &$q, array $filterObj)
+{
+    $fieldname = $filterObj['field'];
+    $value     = $filterObj['value'];
+    $operator  = strtolower($filterObj['operator']); // "equals" or "contains"
+    $logic     = strtoupper($filterObj['logic']);    // "AND" or "NOT"
+
+    $callback = function (Builder $inner) use ($fieldname, $value, $operator, $filterObj) {
+         
+        
+
+        $likeFields = [
+            'asset_tag'      => 'assets.asset_tag',
+            'name'           => 'assets.name',
+            'serial'         => 'assets.serial',
+            'purchase_date'  => 'assets.purchase_date',
+            'purchase_cost'  => 'assets.purchase_cost',
+            'notes'          => 'assets.notes',
+            'order_number'   => 'assets.order_number',
+        ];
+
+        if (array_key_exists($fieldname, $likeFields)) {
+            $column = $likeFields[$fieldname];
+            if (is_array($value)) {
+                // array logic => multiple values
+                if ($operator === 'equals') {
+                    $inner->whereIn($column, $value);
+                } else { // contains
+                    $inner->where(function (Builder $q2) use ($column, $value) {
+                        foreach ($value as $v) {
+                            $q2->orWhere($column, 'LIKE', '%' . $v . '%');
+                        }
+                    });
+                }
+            } else {
+                if ($operator === 'equals') {
+                    $inner->where($column, $value);
+                } else {
+                    $inner->where($column, 'LIKE', '%' . $value . '%');
+                }
+            }
+            return;
+        }
+
+        switch ($fieldname) {
+            case 'status_label':
+                if (is_array($value)) {
+                    if (!empty($value)) {
+                        $ids   = array_filter($value, 'is_int');
+                        $names = array_filter($value, 'is_string');
+                        Asset::whereHasMatchItemArray($inner, 'assetstatus', $ids, $names, 'status_labels.id', 'status_labels.name');
+                    }
+                } else {
+                    Asset::whereHasMatchSingleItem($inner, 'assetstatus', $value, 'status_labels.id', 'status_labels.name');
+                }
+                break;
+
+            case 'location':
+                if (is_array($value)) {
+                    if (!empty($value)) {
+                        $ids   = array_filter($value, 'is_int');
+                        $names = array_filter($value, 'is_string');
+                        Asset::whereHasMatchItemArray($inner, 'location', $ids, $names, 'locations.id', 'locations.name');
+                    }
+                } else {
+                    Asset::whereHasMatchSingleItem($inner, 'location', $value, 'locations.id', 'locations.name');
+                }
+                break;
+
+            case 'rtd_location':
+                if (is_array($value)) {
+                    if (!empty($value)) {
+                        $ids   = array_filter($value, 'is_int');
+                        $names = array_filter($value, 'is_string');
+                        Asset::whereHasMatchItemArray($inner, 'defaultLoc', $ids, $names, 'locations.id', 'locations.name');
+                    }
+                } else {
+                    Asset::whereHasMatchSingleItem($inner, 'defaultLoc', $value, 'locations.id', 'locations.name');
+                }
+                break;
+
+            /* case 'assigned_to':
+                // Polymorphic logic (mostly unchanged)
+                $requestedType = Arr::get($filterObj, 'type', null);
+                if (is_array($value)) {
+                    $idsByType = [];
+                    foreach ($value as $item) {
+                        if (is_array($item) && isset($item['assigned_to'])) {
+                            $assType = $item['assignedType'] ?? null;
+                            if (is_int($item['assigned_to'])) {
+                                $type = $assType ?: $requestedType;
+                                $idsByType[$type ?? 'any'][] = $item['assigned_to'];
+                            } else {
+                                throw new UnexpectedValueException("Only integer IDs allowed in assigned_to filter");
+                            }
+                        } elseif (is_int($item)) {
+                            $type = $requestedType;
+                            $idsByType[$type ?? 'any'][] = $item;
+                        } else {
+                            throw new UnexpectedValueException("Invalid assigned_to filter item");
+                        }
+                    }
+                    $inner->where(function (Builder $inner2) use ($idsByType) {
+                        foreach ($idsByType as $type => $ids) {
+                            if (empty($ids)) {
+                                continue;
+                            }
+                            $inner2->orWhere(function (Builder $sub) use ($type, $ids) {
+                                if ($type === User::class) {
+                                    $sub->where('assigned_type', User::class)
+                                        ->whereIn('assigned_to', $ids);
+                                } elseif ($type === Location::class) {
+                                    $sub->where('assigned_type', Location::class)
+                                        ->whereIn('assigned_to', $ids);
+                                } elseif ($type === Asset::class) {
+                                    $sub->where('assigned_type', Asset::class)
+                                        ->whereIn('assigned_to', $ids);
+                                } elseif ($type === null || $type === 'any') {
+                                    $sub->whereIn('assigned_to', $ids);
+                                } else {
+                                    throw new UnexpectedValueException("Invalid assigned_to type in filter");
+                                }
+                            });
+                        }
+                    });
+                } else {
+                    if (is_int($value)) {
+                        if ($requestedType) {
+                            $inner->where('assigned_type', $requestedType)
+                                  ->where('assigned_to', $value);
+                        } else {
+                            $inner->where('assigned_to', $value);
+                        }
+                    } elseif (is_string($value)) {
+                        if ($value === '') {
+                            if ($requestedType) {
+                                $inner->where('assigned_type', $requestedType);
+                            }
+                        } else {
+                            $inner->where(function (Builder $sub) use ($value, $requestedType) {
+                                $userCb = function ($uq) use ($value) {
+                                    $uq->where(function ($sq) use ($value) {
+                                        $sq->where('first_name', 'LIKE', '%' . $value . '%')
+                                           ->orWhere('last_name', 'LIKE', '%' . $value . '%');
+                                    });
+                                };
+                                $locationCb = function ($lq) use ($value) {
+                                    $lq->where('name', 'LIKE', '%' . $value . '%');
+                                };
+                                $assetCb = function ($aq) use ($value) {
+                                    $aq->where('name', 'LIKE', '%' . $value . '%');
+                                };
+
+                                if ($requestedType === User::class) {
+                                    $sub->whereHasMorph('assignedTo', [User::class], $userCb);
+                                } elseif ($requestedType === Location::class) {
+                                    $sub->whereHasMorph('assignedTo', [Location::class], $locationCb);
+                                } elseif ($requestedType === Asset::class) {
+                                    $sub->whereHasMorph('assignedTo', [Asset::class], $assetCb);
+                                } else {
+                                    $sub->whereHasMorph('assignedTo', [User::class], $userCb)
+                                        ->orWhereHasMorph('assignedTo', [Location::class], $locationCb)
+                                        ->orWhereHasMorph('assignedTo', [Asset::class], $assetCb);
+                                }
+                            });
+                        }
+                    }
+                }
+                break; */
+
+            case 'manufacturer':
+                if (is_array($value)) {
+                    if (!empty($value)) {
+                        $ids   = array_filter($value, 'is_int');
+                        $names = array_filter($value, 'is_string');
+                        $inner->whereHas('model', function (Builder $mq) use ($ids, $names) {
+                            Asset::whereHasMatchItemArray($mq, 'manufacturer', $ids, $names, 'manufacturers.id', 'manufacturers.name');
+                        });
+                    }
+                } else {
+                    $inner->whereHas('model', function (Builder $mq) use ($value) {
+                        Asset::whereHasMatchSingleItem($mq, 'manufacturer', $value, 'manufacturers.id', 'manufacturers.name');
+                    });
+                }
+                break;
+
+            case 'category':
+                if (is_array($value)) {
+                    if (!empty($value)) {
+                        $ids   = array_filter($value, 'is_int');
+                        $names = array_filter($value, 'is_string');
+                        $inner->whereHas('model', function (Builder $mq) use ($ids, $names) {
+                            Asset::whereHasMatchItemArray($mq, 'category', $ids, $names, 'categories.id', 'categories.name');
+                        });
+                    }
+                } else {
+                    $inner->whereHas('model', function (Builder $mq) use ($value) {
+                        Asset::whereHasMatchSingleItem($mq, 'category', $value, 'categories.id', 'categories.name');
+                    });
+                }
+                break;
+
+            case 'model':
+                if (is_array($value)) {
+                    if (!empty($value)) {
+                        $ids   = array_filter($value, fn($v) => is_numeric($v) && (int)$v == $v);
+                        $names = array_filter($value, fn($v) => is_string($v) && trim($v) !== '');
+                        Asset::whereHasMatchItemArray($inner, 'model', $ids, $names, 'models.id', 'models.name');
+                    }
+                } else {
+                    Asset::whereHasMatchSingleItem($inner, 'model', $value, 'models.id', 'models.name');
+                }
+                break;
+
+            case 'model_number':
+                $inner->where(function (Builder $mq) use ($value, $operator) {
+                    if (is_array($value)) {
+                        $mq->whereHas('model', function (Builder $mq2) use ($value) {
+                            $mq2->whereIn('models.model_number', $value);
+                        });
+                    } else {
+                        $mq->whereHas('model', function (Builder $mq2) use ($value, $operator) {
+                            if ($operator === 'equals') {
+                                $mq2->where('models.model_number', $value);
+                            } else {
+                                $mq2->where('models.model_number', 'LIKE', '%' . $value . '%');
+                            }
+                        });
+                    }
+                });
+                break;
+
+            case 'company':
+                if (is_array($value)) {
+                    if (!empty($value)) {
+                        $ids   = array_filter($value, 'is_int');
+                        $names = array_filter($value, 'is_string');
+                        Asset::whereHasMatchItemArray($inner, 'company', $ids, $names, 'companies.id', 'companies.name');
+                    }
+                } else {
+                    Asset::whereHasMatchSingleItem($inner, 'company', $value, 'companies.id', 'companies.name');
+                }
+                break;
+
+            case 'supplier':
+                if (is_array($value)) {
+                    if (!empty($value)) {
+                        $ids   = array_filter($value, 'is_int');
+                        $names = array_filter($value, 'is_string');
+                        Asset::whereHasMatchItemArray($inner, 'supplier', $ids, $names, 'suppliers.id', 'suppliers.name');
+                    }
+                } else {
+                    Asset->whereHasMatchSingleItem($inner, 'supplier', $value, 'suppliers.id', 'suppliers.name');
+                }
+                break;
+
+            case 'jobtitle':
+                if (is_array($value)) {
+                    $inner->whereHasMorph('assignedTo', [User::class], function ($uq) use ($value) {
+                        $uq->whereIn('users.jobtitle', $value);
+                    });
+                } else {
+                    $inner->whereHasMorph('assignedTo', [User::class],
+                        fn($uq) => $uq->where('users.jobtitle', 'LIKE', '%' . $value . '%')
+                    );
+                }
+                break;
+
+            default:
+                // Fallback: direct column on assets (if exists)
+                if (is_array($value)) {
+                    $inner->whereIn('assets.' . $fieldname, $value);
+                } else {
+                    if (config('database.default') === 'sqlite') {
+                        $inner->where('assets.' . $fieldname, 'LIKE', '%' . $value . '%');
+                    } else {
+                        if ($operator === 'equals') {
+                            $inner->where('assets.' . $fieldname, $value);
+                        } else {
+                            $inner->where('assets.' . $fieldname, 'LIKE', '%' . $value . '%');
+                        }
+                    }
+                }
+                break;
+        }
+    };
+
+    switch ($logic) {
+        case 'NOT':
+            // We wrap a WHERE NOT ( … ) or use whereNot
+            $q->whereNot($callback);
+            break;
+        case 'AND':
+        default:
+            $q->where($callback);
+            break;
+    }
+}
+
     public function scopeByFilter($query, $filter)
     {
         return $query->where(

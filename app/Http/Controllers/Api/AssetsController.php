@@ -172,7 +172,7 @@ class AssetsController extends Controller
         }
 
         if ((!is_null($filter)) && (count($filter)) > 0) {
-            $assets->ByFilter($filter);
+            $assets->ByFilterNew($filter);
         } elseif ($request->filled('search')) {
             $assets->TextSearch($request->input('search'));
         }
@@ -442,7 +442,7 @@ class AssetsController extends Controller
             $id = $request->predefinedFilter;
             $predefinedFilters = PredefinedFilter::where('id', $id)
                 ->where('created_by', auth()->user()->id)
-                ->first();
+                ->first(); // just own?
 
             if ($predefinedFilters) {
                 $assets = $predefinedFilters->filterAssets($assets);
