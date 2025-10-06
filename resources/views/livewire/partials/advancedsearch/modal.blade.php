@@ -35,6 +35,8 @@
             aria-labelledby="modalLabel"
             aria-hidden="false"
             style="display: block"
+            x-init="window.advancedSearchModalFocusTrap()"
+            onkeydown="window.advancedSearchModalCloseModal(event)"
             {{-- Show immediately --}}
             wire:ignore.self
         >
@@ -133,6 +135,7 @@
                         <button
                             type="button"
                             @class(["btn", "btn-default"])
+                            @click="window.advancedSearchModalReleaseFocus()"
                             wire:click="closePredefinedFiltersModal"
                         >
                             {{ trans("general.close") }}
@@ -175,7 +178,6 @@
         @script
         <script>
             window.advancedSearchModalSendInputToBackend = function(action) {
-
                 let selectedGroups = $("#group_select").select2('data');
                 selectedGroups = selectedGroups.map((item) => { return parseInt(item.id); }); 
                 const component = Livewire.getByName('partials.advancedsearch.modal')[0];
@@ -185,7 +187,7 @@
                 } else {
                     console.error('Livewire component not found!');
                 }
-                
+                {{--  --}}
                 if(action === 'create')
                 {
                     Livewire.dispatch('savePredefinedFiltersModal');
@@ -195,12 +197,53 @@
                 } else {
                     console.warn(`${action} is an unkown action type`);
                 }
+
+                window.advancedSearchModalReleaseFocus();
+            }
+
+            window.advancedSearchModalCloseModal = function(event) {
+                if (event.keyCode == 27) {
+                    window.advancedSearchModalReleaseFocus();
+                    Livewire.dispatch('closePredefinedFiltersModal');
+                }
             }
 
             window.advancedSearchModalSetGroupSelectDisabled = function(disabled) {
                 const element = document.getElementById("group_select").disabled = disabled; 
             }
 
+            window.advancedSearchModalFocusTrap = function() {
+                const $modal = $("#advancedSearchModal");
+                const focusableSelector = 'a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+                const $focusableElements = $modal.find(focusableSelector).filter(':visible');
+                const $first = $focusableElements.first();
+                const $last = $focusableElements.last();
+
+                // Focus first element
+                $first.focus();
+
+                $modal.on('keydown.focusTrap', function(e) {
+                    if (e.key !== 'Tab') return;
+
+                    const isShift = e.shiftKey;
+
+                    const $active = $(document.activeElement);
+
+                    if (isShift && $active.is($first)) {
+                        e.preventDefault();
+                        $last.focus();
+                    } else if (!isShift && $active.is($last)) {
+                        e.preventDefault();
+                        $first.focus();
+                    }
+                });
+            }
+
+            window.advancedSearchModalReleaseFocus = function() {
+                const $modal = $("#advancedSearchModal");
+                $modal.off('keydown.focusTrap');
+            }
         </script>
         @endscript
         @endif

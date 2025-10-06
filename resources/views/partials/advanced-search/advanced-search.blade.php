@@ -8,8 +8,8 @@
             <i class="fa fa-chevron-left icon-desktop" id="collapseIconDesktop"></i>
             <i class="fa fa-chevron-up icon-mobile" id="collapseIconMobile"></i>
         </button>
-            <button id="topClearInputButton" type="button" class="btn btn-box-tool">
-                <i class="fa fa-times"></i> <span class="clear-text"> {{ trans('button.delete') }}</span>
+            <button id="topClearInputButton" type="button" class="btn btn-box-tool" aria-labelledby="topClearInputButtonLabel" >
+                <i class="fa fa-times"></i> <span id="topClearInputButtonLabel" class="clear-text"> {{ trans('button.delete') }}</span>
             </button>
         </div>
     </div>
