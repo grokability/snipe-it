@@ -1,3 +1,4 @@
+{{-- TODO check for every TAG --}}
 <span>
    @foreach ($layout as $tableField)
       @if ((!empty($tableField->searchable) && $tableField->searchable === true))
@@ -5,6 +6,17 @@
                <label for="advancedSearch_{{ $tableField->field }}">
                   <b>{{ $tableField->title }}</b>
                </label>
+
+                <select class="form-control filter-operator" data-field="{{ $tableField->field }}">
+                    <option value="equals">equals</option>
+                    <option value="contains">contains</option>
+                </select>
+
+
+                <select class="form-control filter-logic" data-field="{{ $tableField->field }}">
+                    <option value="AND">AND</option>
+                    <option value="NOT">NOT</option>
+                </select>
                @if (!isset($tableField->formatter))
                   {{-- Default select if formatter is not set --}}
                   <input class="advancedSearch_defaultField form-control" type="text" autocomplete="on" id="advancedSearch_{{ $tableField->field }}_input" >
@@ -28,6 +40,7 @@
                            'select_id' => "advancedSearch_$tableField->field",
                            'required' => 'false',
                            'multiple' => 'true',
+                           'allow_tags' => 'true',
                         ])
                         @break
                      @case('trueFalseFormatter')
@@ -41,6 +54,7 @@
                            'select_id' => "advancedSearch_$tableField->field",
                            'required' => 'false',
                            'multiple' => 'true',
+                           'allow_tags' => 'true',
                         ])
                         @break
                      @case('companiesLinkObjFormatter')
@@ -54,6 +68,7 @@
                            'fieldname' => $tableField->field,
                            'required' => 'false',
                            'multiple' => 'true',
+                           'allow_tags' => 'true',
                         ])
                         @break
                      @case('employeeNumFormatter')
@@ -74,6 +89,7 @@
                         'fieldname' => $tableField->field,
                         'required' => 'false',
                         'multiple' => 'true',
+                        'allow_tags' => 'true',
                      ])
                      @break
                      @case('modelsLinkObjFormatter')
@@ -83,6 +99,7 @@
                            'fieldname' => $tableField->field,
                            'required' => 'false',
                            'multiple' => 'true',
+                           'allow_tags' => 'true',
                         ])
                         @break
                      @case('orderNumberObjFilterFormatter')
@@ -95,6 +112,7 @@
                            'select_id' => "advancedSearch_$tableField->field",
                            'required' => 'false',
                            'multiple' => 'true',
+                           'allow_tags' => 'true',
                         ])
                         @break
                      @case('statuslabelsLinkObjFormatter')
@@ -104,6 +122,7 @@
                            'fieldname' => $tableField->field,
                            'required' => 'false',
                            'multiple' => 'true',
+                           'allow_tags' => 'true',
                         ])
                         @break
                      @case('suppliersLinkObjFormatter')
@@ -113,6 +132,7 @@
                            'fieldname' => $tableField->field,
                            'required' => 'false',
                            'multiple' => 'true',
+                           'allow_tags' => 'true',
                         ])
                         @break
                      @case('trueFalseFormatter')
@@ -128,6 +148,7 @@
                            'fieldname' => $tableField->field,
                            'required' => 'false',
                            'multiple' => 'true',
+                           'allow_tags' => 'true',
                         ])
                         @break
                      @default
@@ -173,9 +194,23 @@ class FilterInput {
 
     appendTo(filters) {
         const value = this.getValue();
-        if (value !== null && value !== undefined && value !== '') {
-            filters[this.key] = value;
+        if (value === null || value === undefined || value === '') {
+            return;
         }
+
+        const field = this.key;
+        const operatorSelect = document.querySelector(`.filter-operator[data-field="${field}"]`)
+        const logicSelect = document.querySelector(`.filter-logic[data-field="${field}"]`);
+
+        const operator = operatorSelect?.value || 'contains';
+        const logic = logicSelect?.value || 'AND';
+        
+        filters.push({
+            field,
+            value,
+            operator,
+            logic
+        })
     }
 
     clear() {
@@ -186,15 +221,17 @@ class FilterInput {
 class SelectFilterInput extends FilterInput {
     getValue() {
         const selections = $(this.element).select2('data');
-        const selectedIds = selections
-            .map(item => parseInt(item.id))
-            .filter(id => !isNaN(id));
 
-        if (selectedIds.length === 0) {
+        const selectedValues = selections.map(item => {
+            const parseId = parseInt(item.id);
+           return isNaN(parseId) ? item.id : parseId;
+        })
+
+        if (selectedValues.length === 0) {
             return null;
         }
 
-        return selectedIds;
+        return selectedValues;
     }
 
     setValue(newValues, type = this.getType()) {
@@ -310,12 +347,12 @@ class TextFilterInput extends FilterInput {
 
 class FilterFormManager {
     constructor() {
-        this.filters = {};
+        this.filters = [];
         this.inputs = [];
     }
 
     collect() {
-        this.filters = {};
+        this.filters = [];
         this.inputs = [];
 
         // Select2
