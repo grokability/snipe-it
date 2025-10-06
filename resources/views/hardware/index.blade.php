@@ -47,16 +47,7 @@
     <div class="table-section">
         <div class="box">
             <div class="box-body">
-                @include('partials.asset-bulk-actions', ['status' => Request::get('status')])
-                <!-- Toggle Button -->
-                <div class="filter-toggle-container text-left" style="margin-bottom: 15px;">
-                    <button type="button" class="btn btn-default" id="toggleFilterBtn">
-                        <i class="fa-solid fa-filter"></i>
-                        <span class="filter-btn-text">{{ trans('general.open_filters') }}</span>
-                    </button>
-                </div>
-
-                <livewire:partials.advancedsearch.modal />
+                @include('partials.asset-bulk-actions', ['status' => Request::get('status'), 'showFiltersTogglebutton' => true])
 
                 <table data-columns="{{ \App\Presenters\AssetPresenter::dataTableLayout() }}"
                     data-cookie-id-table="{{ request()->has('status') ? e(request()->input('status')) : '' }}assetsListingTable"

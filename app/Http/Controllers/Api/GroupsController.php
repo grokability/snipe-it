@@ -19,7 +19,7 @@ class GroupsController extends Controller
      * @author [A. Gianotto] [<snipe@snipe.net>]
      * @since [v4.0]
      */
-    public function index(Request $request): JsonResponse|array
+    public function index(Request $request) : JsonResponse | array
     {
         $this->authorize('superadmin');
 
@@ -72,7 +72,7 @@ class GroupsController extends Controller
      * @since [v4.0]
      * @param  \Illuminate\Http\Request  $request
      */
-    public function store(Request $request): JsonResponse
+    public function store(Request $request) : JsonResponse
     {
         $this->authorize('superadmin');
         $group = new Group;
@@ -99,7 +99,7 @@ class GroupsController extends Controller
      * @since [v4.0]
      * @param  int  $id
      */
-    public function show($id): array
+    public function show($id) : array
     {
         $this->authorize('superadmin');
         $group = Group::findOrFail($id);
