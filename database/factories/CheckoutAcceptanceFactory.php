@@ -23,22 +23,38 @@ class CheckoutAcceptanceFactory extends Factory
             'assigned_to_id' => User::factory(),
         ];
     }
+    protected static bool $skipActionLog = false;
+
+    public function withoutActionLog(): static
+    {
+        // turn off for this create() call
+        static::$skipActionLog = true;
+
+        // ensure it turns back on AFTER creating
+        return $this->afterCreating(function () {
+            static::$skipActionLog = false;
+        });
+    }
 
     public function configure(): static
     {
         return $this->afterCreating(function (CheckoutAcceptance $acceptance) {
+            if (static::$skipActionLog) {
+                return; // short-circuit
+            }
             if ($acceptance->checkoutable instanceof Asset) {
                 $this->createdAssociatedActionLogEntry($acceptance);
             }
 
             if ($acceptance->checkoutable instanceof Asset && $acceptance->assignedTo instanceof User) {
                 $acceptance->checkoutable->update([
-                    'assigned_to' => $acceptance->assigned_to_id,
-                    'assigned_type' => get_class($acceptance->assignedTo),
+                    'assigned_to'  => $acceptance->assigned_to_id,
+                    'assigned_type'=> get_class($acceptance->assignedTo),
                 ]);
             }
         });
     }
+
 
     public function forAccessory()
     {

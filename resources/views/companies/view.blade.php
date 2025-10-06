@@ -94,6 +94,7 @@
                                     data-cookie-id-table="assetsListingTable"
                                     data-id-table="assetsListingTable"
                                     data-side-pagination="server"
+                                    data-show-columns-search="true"
                                     data-sort-order="asc"
                                     data-toolbar="#assetsBulkEditToolbar"
                                     data-bulk-button-id="#bulkAssetEditButton"

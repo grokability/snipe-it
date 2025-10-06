@@ -529,7 +529,10 @@ return [
     'item_notes' => ':item Notes',
     'item_name_var' => ':item Name',
     'error_user_company' => 'Checkout target company and asset company do not match',
+    'error_user_company_multiple' => 'One or more of the checkout target company and asset company do not match',
     'error_user_company_accept_view' => 'An Asset assigned to you belongs to a different company so you can\'t accept nor deny it, please check with your manager',
+    'error_assets_already_checked_out' => 'One or more of the assets are already checked out',
+    'assigned_assets_removed' => 'The following were removed from the selected assets because they are already checked out',
     'importer' => [
         'checked_out_to_fullname' => 'Checked Out to: Full Name',
         'checked_out_to_first_name' => 'Checked Out to: First Name',

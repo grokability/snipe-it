@@ -1325,24 +1325,25 @@
                     </div>
                 </div> <!-- /.tab-pane components -->
 
+                                    @include('partials.asset-bulk-actions')
 
-                <div class="tab-pane fade" id="assets">
-                    <div class="row{{($asset->assignedAssets->count() > 0) ? '' : ' hidden-print'}}">
-                        <div class="col-md-12">
+                                        <!-- checked out assets table -->
+                                        <div class="table-responsive">
 
-                            @include('partials.asset-bulk-actions')
-
-                            <!-- checked out assets table -->
-                            <div class="table-responsive">
-
-                                <table data-columns="{{ \App\Presenters\AssetPresenter::dataTableLayout() }}"
-                                    data-cookie-id-table="assetsTable" data-id-table="assetsTable"
-                                    data-side-pagination="server" data-sort-order="asc"
-                                    data-toolbar="#assetsBulkEditToolbar" data-bulk-button-id="#bulkAssetEditButton"
-                                    data-bulk-form-id="#assetsBulkForm" id="assetsListingTable"
-                                    class="table table-striped snipe-table"
-                                    data-url="{{route('api.assets.index', ['assigned_to' => $asset->id, 'assigned_type' => 'App\Models\Asset']) }}"
-                                    data-export-options='{
+                                            <table
+                                                    data-columns="{{ \App\Presenters\AssetPresenter::dataTableLayout() }}"
+                                                    data-show-columns-search="true"
+                                                    data-cookie-id-table="assetsTable"
+                                                    data-id-table="assetsTable"
+                                                    data-side-pagination="server"
+                                                    data-sort-order="asc"
+                                                    data-toolbar="#assetsBulkEditToolbar"
+                                                    data-bulk-button-id="#bulkAssetEditButton"
+                                                    data-bulk-form-id="#assetsBulkForm"
+                                                    id="assetsListingTable"
+                                                    class="table table-striped snipe-table"
+                                                    data-url="{{route('api.assets.index',['assigned_to' => $asset->id, 'assigned_type' => 'App\Models\Asset']) }}"
+                                                    data-export-options='{
                                   "fileName": "export-assets-{{ str_slug($asset->name) }}-assets-{{ date('Y-m-d') }}",
                                   "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
                                   }'>

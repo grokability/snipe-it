@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use ZipArchive;
 use Illuminate\Support\Facades\Log;
+use enshrined\svgSanitize\Sanitizer;
 
 class SQLStreamer {
     private $input;
@@ -242,9 +243,10 @@ class RestoreFromBackup extends Command
 
         $private_dirs = [
             'storage/private_uploads/accessories',
-            'storage/private_uploads/assetmodels',
-            'storage/private_uploads/maintenances',
-            'storage/private_uploads/models',
+            'storage/private_uploads/assetmodels' => 'storage/private_uploads/models', //this was changed from assetmodels => models Aug 10 2025
+            'storage/private_uploads/asset_maintenances' => 'storage/private_uploads/maintenances', //this was changed from asset_maintenances => maintenances Aug 10 2025
+            'storage/private_uploads/maintenances', //but let 'maintenances' take precedence
+            'storage/private_uploads/models', //and let 'models' take precedence
             'storage/private_uploads/assets', // these are asset _files_, not the pictures.
             'storage/private_uploads/audits',
             'storage/private_uploads/components',
@@ -262,7 +264,7 @@ class RestoreFromBackup extends Command
         ];
         $public_dirs = [
             'public/uploads/accessories',
-            'public/uploads/assetmodels',
+            // 'public/uploads/assetmodels' => 'public/uploads/models', //according to git, this was _never_ a thing... (see below)
             'public/uploads/maintenances',
             'public/uploads/assets', // these are asset _pictures_, not asset files
             'public/uploads/avatars',
@@ -273,7 +275,7 @@ class RestoreFromBackup extends Command
             'public/uploads/departments',
             'public/uploads/locations',
             'public/uploads/manufacturers',
-            'public/uploads/models',
+            'public/uploads/models', // ...it's been this way for 9 years (as of late 2025)
             'public/uploads/suppliers',
         ];
 
@@ -286,8 +288,6 @@ class RestoreFromBackup extends Command
             'public/uploads/favicon-uploaded.*',
         ];
 
-        $all_files = $private_dirs + $public_dirs;
-
         $sqlfiles = [];
         $sqlfile_indices = [];
 
@@ -295,6 +295,20 @@ class RestoreFromBackup extends Command
         $boring_files = [];
         $unsafe_files = [];
 
+        $good_extensions = config('filesystems.allowed_upload_extensions_array');
+
+        $private_extensions = array_merge($good_extensions, ["csv", "key"]); //add csv, and 'key'
+        $public_extensions = array_diff($good_extensions, ["xml"]); //remove xml
+
+        $sanitizer = new Sanitizer();
+
+        /**
+         * TODO: I _hate_ the "continue 3" thing we keep doing here
+         * I think a better approach might be to have the "each file" stuff be in a method on this class, and the
+         * boring_files and interesting_files be properties on it that we fill out. Then, in that method, we could
+         * just do a 'return' once the file is actually handled (yay or nay). We could also start to break out some of
+         * the _other_ things that we do into their own methods too? But I don't care about that as much.
+         */
         for ($i = 0; $i < $za->numFiles; $i++) {
             $stat_results = $za->statIndex($i);
             // echo "index: $i\n";
@@ -309,7 +323,7 @@ class RestoreFromBackup extends Command
             // skip macOS resource fork files (?!?!?!)
             if (strpos($raw_path, '__MACOSX') !== false && strpos($raw_path, '._') !== false) {
                 //print "SKIPPING macOS Resource fork file: $raw_path\n";
-                $boring_files[] = $raw_path;
+                // $boring_files[] = $raw_path; //stop adding this to the boring files list; it's just confusing
                 continue;
             }
             if (@pathinfo($raw_path, PATHINFO_EXTENSION) == 'sql') {
@@ -318,44 +332,70 @@ class RestoreFromBackup extends Command
                 $sqlfile_indices[] = $i;
                 continue;
             }
+            if ($raw_path[-1] == '/') {
+                //last character is '/' - this is a directory, and we don't need it, and we don't need to warn about it
+                continue;
+            }
+            if (in_array(basename($raw_path), [".gitkeep", ".gitignore", ".DS_Store"])) {
+                //skip these boring files silently without reporting on them; they're stupid
+                continue;
+            }
+            $extension = strtolower(pathinfo($raw_path, PATHINFO_EXTENSION));
 
-            foreach (array_merge($private_dirs, $public_dirs) as $dir) {
-                $last_pos = strrpos($raw_path, $dir . '/');
-                if ($last_pos !== false) {
-                    //print("INTERESTING - last_pos is $last_pos when searching $raw_path for $dir - last_pos+strlen(\$dir) is: ".($last_pos+strlen($dir))." and strlen(\$rawpath) is: ".strlen($raw_path)."\n");
-                    //print("We would copy $raw_path to $dir.\n"); //FIXME append to a path?
-                    $interesting_files[$raw_path] = ['dest' => $dir, 'index' => $i];
-                    continue 2;
-                    if ($last_pos + strlen($dir) + 1 == strlen($raw_path)) {
-                        // we don't care about that; we just want files with the appropriate prefix
-                        //print("FOUND THE EXACT DIRECTORY: $dir AT: $raw_path!!!\n");
+            foreach (['public' => $public_dirs, 'private' => $private_dirs] as $purpose => $dirs) {
+                $allowed_extensions = match ($purpose) {
+                    'public' => $public_extensions,
+                    'private' => $private_extensions,
+                };
+                foreach ($dirs as $dir => $destdir) {
+                    if (is_int($dir)) {
+                        $dir = $destdir;
+                    }
+                    $last_pos = strrpos($raw_path, $dir . '/');
+                    if ($last_pos !== false) {
+                        //print("INTERESTING - last_pos is $last_pos when searching $raw_path for $dir - last_pos+strlen(\$dir) is: ".($last_pos+strlen($dir))." and strlen(\$rawpath) is: ".strlen($raw_path)."\n");
+                        //print("We would copy $raw_path to $dir.\n"); //FIXME append to a path?
+                        //the CSV bit, below, is because we store CSV files as "blahcsv" - without an extension
+                        if (!in_array($extension, $allowed_extensions) && !($dir == "storage/private_uploads/imports" && substr($raw_path, -3) == "csv" && $extension == "")) {
+                            $unsafe_files[] = $raw_path;
+                            Log::debug($raw_path . ' from directory ' . $dir . ' is being skipped');
+                        } else {
+                            if ($dir != $destdir) {
+                                Log::debug("Getting ready to save file $raw_path to new directory $destdir");
+                            }
+                            $interesting_files[$raw_path] = ['dest' => $destdir, 'index' => $i];
+                        }
+                        continue 3;
                     }
                 }
             }
 
-            $good_extensions = config('filesystems.allowed_upload_extensions_array');
-
-            foreach (array_merge($private_files, $public_files) as $file) {
-                $has_wildcard = (strpos($file, '*') !== false);
-                if ($has_wildcard) {
-                    $file = substr($file, 0, -1); //trim last character (which should be the wildcard)
-                }
-                $last_pos = strrpos($raw_path, $file); // no trailing slash!
-                if ($last_pos !== false) {
-                    $extension = strtolower(pathinfo($raw_path, PATHINFO_EXTENSION));
-                    if (!in_array($extension, $good_extensions)) {
-                        // gathering potentially unsafe files here to return at exit
-                        $unsafe_files[] = $raw_path;
-                        Log::debug('Potentially unsafe file '.$raw_path.' is being skipped');
-                        $boring_files[] = $raw_path;
-                        continue 2;
+            foreach (['public' => $public_files, 'private' => $private_files] as $purpose => $files) {
+                $allowed_extensions = match ($purpose) {
+                    'public' => $public_extensions,
+                    'private' => $private_extensions,
+                };
+                foreach ($files as $file) {
+                    $has_wildcard = (strpos($file, '*') !== false);
+                    if ($has_wildcard) {
+                        $file = substr($file, 0, -1); //trim last character (which should be the wildcard)
                     }
-                    //print("INTERESTING - last_pos is $last_pos when searching $raw_path for $file - last_pos+strlen(\$file) is: ".($last_pos+strlen($file))." and strlen(\$rawpath) is: ".strlen($raw_path)."\n");
-                    //no wildcards found in $file, process 'normally'
-                    if ($last_pos + strlen($file) == strlen($raw_path) || $has_wildcard) { //again, no trailing slash. or this is a wildcard and we just take it.
-                        // print("FOUND THE EXACT FILE: $file AT: $raw_path!!!\n"); //we *do* care about this, though.
-                        $interesting_files[$raw_path] = ['dest' => dirname($file), 'index' => $i];
-                        continue 2;
+                    $last_pos = strrpos($raw_path, $file); // no trailing slash!
+                    if ($last_pos !== false) {
+                        if (!in_array($extension, $allowed_extensions)) {
+                            // gathering potentially unsafe files here to return at exit
+                            $unsafe_files[] = $raw_path;
+                            Log::debug('Potentially unsafe file ' . $raw_path . ' is being skipped');
+                            $boring_files[] = $raw_path;
+                            continue 3;
+                        }
+                        //print("INTERESTING - last_pos is $last_pos when searching $raw_path for $file - last_pos+strlen(\$file) is: ".($last_pos+strlen($file))." and strlen(\$rawpath) is: ".strlen($raw_path)."\n");
+                        //no wildcards found in $file, process 'normally'
+                        if ($last_pos + strlen($file) == strlen($raw_path) || $has_wildcard) { //again, no trailing slash. or this is a wildcard and we just take it.
+                            // print("FOUND THE EXACT FILE: $file AT: $raw_path!!!\n"); //we *do* care about this, though.
+                            $interesting_files[$raw_path] = ['dest' => dirname($file), 'index' => $i];
+                            continue 3;
+                        }
                     }
                 }
             }
@@ -492,18 +532,25 @@ class RestoreFromBackup extends Command
         }
         foreach ($interesting_files as $pretty_file_name => $file_details) {
             $ugly_file_name = $za->statIndex($file_details['index'])['name'];
-            $fp = $za->getStream($ugly_file_name);
-            //$this->info("Weird problem, here are file details? ".print_r($file_details,true));
-            if (!is_dir($file_details['dest'])) {
-                mkdir($file_details['dest'], 0755, true); //0755 is what Laravel uses, so we do that
+            $migrated_file_name = $file_details['dest'] . '/' . basename($pretty_file_name);
+            if (strcasecmp(substr($pretty_file_name, -4), ".svg") === 0) {
+                $svg_contents = $za->getFromIndex($file_details['index']);
+                $cleaned_svg = $sanitizer->sanitize($svg_contents);
+                file_put_contents($migrated_file_name, $cleaned_svg);
+            } else {
+                $fp = $za->getStream($ugly_file_name);
+                //$this->info("Weird problem, here are file details? ".print_r($file_details,true));
+                if (!is_dir($file_details['dest'])) {
+                    mkdir($file_details['dest'], 0755, true); //0755 is what Laravel uses, so we do that
+                }
+                $migrated_file = fopen($migrated_file_name, 'w');
+                while (($buffer = fgets($fp, SQLStreamer::$buffer_size)) !== false) {
+                    fwrite($migrated_file, $buffer);
+                }
+                fclose($migrated_file);
+                fclose($fp);
+                //$this->info("Wrote $ugly_file_name to $pretty_file_name");
             }
-            $migrated_file = fopen($file_details['dest'].'/'.basename($pretty_file_name), 'w');
-            while (($buffer = fgets($fp, SQLStreamer::$buffer_size)) !== false) {
-                fwrite($migrated_file, $buffer);
-            }
-            fclose($migrated_file);
-            fclose($fp);
-            //$this->info("Wrote $ugly_file_name to $pretty_file_name");
             if ($bar) {
                 $bar->advance();
             }

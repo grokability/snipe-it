@@ -210,6 +210,7 @@
                       @include('partials.asset-bulk-actions')
                       <table
                               data-columns="{{ \App\Presenters\AssetPresenter::dataTableLayout() }}"
+                              data-show-columns-search="true"
                               data-cookie-id-table="assetsListingTable"
                               data-id-table="assetsListingTable"
                               data-side-pagination="server"
@@ -237,6 +238,7 @@
                       <table
                               role="table"
                               data-columns="{{ \App\Presenters\AssetPresenter::dataTableLayout() }}"
+                              data-show-columns-search="true"
                               data-cookie-id-table="assetsAssignedListingTable"
                               data-id-table="assetsAssignedListingTable"
                               data-side-pagination="server"
@@ -262,6 +264,7 @@
                       <table
                               role="table"
                               data-columns="{{ \App\Presenters\AssetPresenter::dataTableLayout() }}"
+                              data-show-columns-search="true"
                               data-cookie-id-table="RTDassetsListingTable"
                               data-id-table="RTDassetsListingTable"
                               data-side-pagination="server"

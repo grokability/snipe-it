@@ -72,10 +72,10 @@ use Illuminate\Notifications\Notification;
                 'company_name'  => $this->company_name,
                 'admin'         => $this->admin,
                 'qty' => $this->qty,
-                'intro_text'    => trans('mail.acceptance_asset_accepted_to_user', ['site_name' => $this->company_name ?? $this->settings->site_name]),
+                'intro_text'    => trans_choice('mail.acceptance_asset_accepted_to_user', $this->qty, ['qty' => $this->qty, 'site_name' => $this->settings->site_name]),
             ])
             ->attach($pdf_path)
-            ->subject(trans('mail.acceptance_asset_accepted_to_user', ['site_name' => $this->settings->site_name]));
+            ->subject(trans_choice('mail.acceptance_asset_accepted_to_user', $this->qty, ['qty' => $this->qty, 'site_name' => $this->settings->site_name]));
 
         return $message;
     }

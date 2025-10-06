@@ -215,7 +215,7 @@ dir="{{ Helper::determineLanguageDirection() }}">
                                         @can('create', \App\Models\Asset::class)
                                             <li{!! (request()->is('hardware/create') ? ' class="active"' : '') !!}>
                                                 <a href="{{ route('hardware.create') }}" tabindex="-1">
-                                                    <x-icon type="assets" />
+                                                    <x-icon type="assets" class="fa-fw" />
                                                     {{ trans('general.asset') }}
                                                 </a>
                                             </li>
@@ -223,7 +223,7 @@ dir="{{ Helper::determineLanguageDirection() }}">
                                         @can('create', \App\Models\License::class)
                                             <li{!! (request()->is('licenses/create') ? ' class="active"' : '') !!}>
                                                 <a href="{{ route('licenses.create') }}" tabindex="-1">
-                                                    <x-icon type="licenses" />
+                                                    <x-icon type="licenses" class="fa-fw" />
                                                     {{ trans('general.license') }}
                                                 </a>
                                             </li>
@@ -231,7 +231,7 @@ dir="{{ Helper::determineLanguageDirection() }}">
                                         @can('create', \App\Models\Accessory::class)
                                             <li {!! (request()->is('accessories/create') ? 'class="active"' : '') !!}>
                                                 <a href="{{ route('accessories.create') }}" tabindex="-1">
-                                                    <x-icon type="accessories" />
+                                                    <x-icon type="accessories" class="fa-fw" />
                                                     {{ trans('general.accessory') }}
                                                 </a>
                                             </li>
@@ -239,7 +239,7 @@ dir="{{ Helper::determineLanguageDirection() }}">
                                         @can('create', \App\Models\Consumable::class)
                                             <li {!! (request()->is('consunmables/create') ? 'class="active"' : '') !!}>
                                                 <a href="{{ route('consumables.create') }}" tabindex="-1">
-                                                    <x-icon type="consumables" />
+                                                    <x-icon type="consumables" class="fa-fw" />
                                                     {{ trans('general.consumable') }}
                                                 </a>
                                             </li>
@@ -247,7 +247,7 @@ dir="{{ Helper::determineLanguageDirection() }}">
                                         @can('create', \App\Models\Component::class)
                                             <li {!! (request()->is('components/create') ? 'class="active"' : '') !!}>
                                                 <a href="{{ route('components.create') }}" tabindex="-1">
-                                                    <x-icon type="components" />
+                                                    <x-icon type="components" class="fa-fw" />
                                                     {{ trans('general.component') }}
                                                 </a>
                                             </li>
@@ -255,7 +255,7 @@ dir="{{ Helper::determineLanguageDirection() }}">
                                         @can('create', \App\Models\User::class)
                                             <li {!! (request()->is('users/create') ? 'class="active"' : '') !!}>
                                                 <a href="{{ route('users.create') }}" tabindex="-1">
-                                                    <x-icon type="users" />
+                                                    <x-icon type="users" class="fa-fw" />
                                                     {{ trans('general.user') }}
                                                 </a>
                                             </li>

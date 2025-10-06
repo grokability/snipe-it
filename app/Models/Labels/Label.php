@@ -211,29 +211,36 @@ abstract class Label
      */
     public final function writeText(TCPDF $pdf, $text, $x, $y, $font=null, $style=null, $size=null, $align='L', $width=null, $height=null, $squash=false, $border=0, $spacing=0)
     {
+
+
         $prevFamily = $pdf->getFontFamily();
         $prevStyle = $pdf->getFontStyle();
         $prevSizePt = $pdf->getFontSizePt();
+
 
         $text = !empty($text) ? $text : '';
 
         $fontFamily = !empty($font) ? $font : $prevFamily;
         $fontStyle = !empty($style) ? $style : $prevStyle;
-        if ($size) { $fontSizePt = Helper::convertUnit($size, $this->getUnit(), 'pt', true);
-        } else { $fontSizePt = $prevSizePt;
+
+
+        if ($size) {
+            $fontSizePt = Helper::convertUnit($size, $this->getUnit(), 'pt', true);
+        } else {
+            $fontSizePt = $prevSizePt;
         }
 
         $pdf->SetFontSpacing($spacing);
 
         $parts = collect(explode('**', $text))
             ->map(
-                function ($part, $index) use ($pdf, $fontFamily, $fontStyle, $fontSizePt) {
+                function ($part, $index) use ($pdf, $fontFamily, $fontStyle, $fontSizePt, $text) {
                     $modStyle = ($index % 2 == 1) ? 'B' : $fontStyle;
                     $pdf->setFont($fontFamily, $modStyle, $fontSizePt);
                     return [
                     'text' => $part,
                     'text_width' => $pdf->GetStringWidth($part),
-                    'font_family' => $fontFamily,
+                    'font_family' => Helper::isCjk($text) ? 'cid0cs' : $fontFamily,
                     'font_style' => $modStyle,
                     'font_size' => $fontSizePt,
                     ];
