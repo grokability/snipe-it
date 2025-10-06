@@ -10,6 +10,21 @@
                 margin-left: 0.5em; /* adjust as needed */
                 display: inline-block;
             }
+
+            .capitalizeFirstLetter {
+                text-transform: capitalize;
+            }
+
+            .sr-only {
+                position: absolute !important;
+                width: 1px !important;
+                height: 1px !important;
+                margin: -1px !important;
+                padding: 0 !important;
+                overflow: hidden !important;
+                clip: rect(0,0,0,0) !important;
+                border: 0 !important;
+            }
         </style>
 
         <div
@@ -41,7 +56,7 @@
                         @if ($modalActionType === App\Livewire\Partials\Advancedsearch\AdvancedsearchModalAction::Create)
                             <h4 class="modal-title">{{ __("general.create") }}</h4>
                         @elseif ($modalActionType === App\Livewire\Partials\Advancedsearch\AdvancedsearchModalAction::Edit)
-                            <h4 class="modal-title">{{ __("general.edit") }}</h4>
+                            <h4 class="modal-title capitalizeFirstLetter">{{ __("general.edit") }}</h4>
                         @elseif ($modalActionType === App\Livewire\Partials\Advancedsearch\AdvancedsearchModalAction::Delete)
                             <h4 class="modal-title">{{ __("general.delete") }}</h4>
                         @endif
@@ -65,7 +80,7 @@
                         </div>
 
                         {{-- Visibility --}}
-                        <div class="form-group">
+                        <div class="form-group" x-init="$nextTick(() => { window.advancedSearchModalSetGroupSelectDisabled(true) })">
                             <label>Visibility</label>
 
                             <div class="radio modal-radio">
@@ -75,6 +90,7 @@
                                         name="visibility"
                                         value="public"
                                         wire:model="visibility"
+                                        @change="window.advancedSearchModalSetGroupSelectDisabled(false)"
                                         @checked(old("active", $this->visibility === App\Livewire\Partials\Advancedsearch\FilterVisibility::Public))
                                     />
                                     <span class="radio-label-text">Public</span>
@@ -88,6 +104,7 @@
                                         name="visibility"
                                         value="private"
                                         wire:model="visibility"
+                                        @change="window.advancedSearchModalSetGroupSelectDisabled(true)"
                                         @checked(old("active", $this->visibility === App\Livewire\Partials\Advancedsearch\FilterVisibility::Private))
                                     />
                                     <span class="radio-label-text">Private</span>
@@ -133,7 +150,8 @@
                         <button
                             type="button"
                             id="submitButton"
-                            @class(["btn", "btn-primary"])
+
+                            @class(["btn", "btn-primary", "capitalizeFirstLetter"])
                             @click="window.advancedSearchModalSendInputToBackend('edit');"
                         >
                                 {{ trans("general.edit") }}
@@ -178,7 +196,12 @@
                     console.warn(`${action} is an unkown action type`);
                 }
             }
-            </script>
+
+            window.advancedSearchModalSetGroupSelectDisabled = function(disabled) {
+                const element = document.getElementById("group_select").disabled = disabled; 
+            }
+
+        </script>
         @endscript
         @endif
 </span>
