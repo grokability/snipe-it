@@ -31,7 +31,7 @@ return [
     'Low_Inventory_Report' => 'Low Inventory Report',
     'a_user_canceled' => 'A user has canceled an item request on the website',
     'a_user_requested' => 'A user has requested an item on the website',
-    'acceptance_asset_accepted_to_user' => 'You have accepted an item assigned to you by :site_name',
+    'acceptance_asset_accepted_to_user' => 'You have accepted an item assigned to you by :site_name|You have accepted :qty items assigned to you by :site_name',
     'acceptance_asset_accepted' => 'A user has accepted an item',
     'acceptance_asset_declined' => 'A user has declined an item',
     'send_pdf_copy' => 'Send a copy of this acceptance to my email address',

@@ -49,6 +49,7 @@
                                     <table
 
                                             data-columns="{{ \App\Presenters\AssetPresenter::dataTableLayout() }}"
+                                            data-show-columns-search="true"
                                             data-cookie-id-table="dueAssetcheckinListing"
                                             data-id-table="dueAssetcheckinListing"
                                             data-side-pagination="server"

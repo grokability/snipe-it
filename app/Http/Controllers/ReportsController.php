@@ -685,6 +685,14 @@ class ReportsController extends Controller
                 $assets->whereBetween('assets.purchase_date', [$request->input('purchase_start'), $request->input('purchase_end')]);
             }
 
+            if ($request->filled('purchase_cost_start')) {
+                if ($request->filled('purchase_cost_end')) {
+                    $assets->whereBetween('assets.purchase_cost', [$request->input('purchase_cost_start'), $request->input('purchase_cost_end')]);
+                } else {
+                    $assets->where('assets.purchase_cost', ">", $request->input('purchase_cost_start'));
+                }
+            }
+
             if (($request->filled('created_start')) && ($request->filled('created_end'))) {
                 $created_start = Carbon::parse($request->input('created_start'))->startOfDay();
                 $created_end = Carbon::parse($request->input('created_end'))->endOfDay();

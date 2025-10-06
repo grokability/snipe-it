@@ -74,6 +74,10 @@ class Label implements View
             [0 => $template->getWidth(), 1 => $template->getHeight(), 'Rotate' => $template->getRotation()]
         );
 
+        // Required for CJK languages, otherwise the embedded font can get too massive
+        $pdf->SetFontSubsetting(true);
+
+
         // Reset parameters
         $pdf->SetPrintHeader(false);
         $pdf->SetPrintFooter(false);
@@ -176,14 +180,14 @@ class Label implements View
                             // For fields that have multiple options, we need to combine them
                             // into a single field so all values are displayed.
                             ->reduce(function ($previous, $current) {
-                                // On the first iteration we simply return the item.
+                                // On the first iteration, we simply return the item.
                                 // If there is only one item to be processed for the row
                                 // then this effectively skips everything below this if block.
                                 if (is_null($previous)) {
                                     return $current;
                                 }
 
-                                // At this point we are dealing with a row with multiple items being displayed.
+                                // At this point, we are dealing with a row with multiple items being displayed.
                                 // We need to combine the label and value of the current item with the previous item.
 
                                 // The end result of this will be in this format:

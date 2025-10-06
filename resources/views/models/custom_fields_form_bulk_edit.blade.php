@@ -5,7 +5,7 @@
 @endphp
 
 @foreach($models as $model)
-    @if ($model->fieldset ? $model->fieldset->count() > 0 : false)
+    @if (($model) && ($model->fieldset ? $model->fieldset->count() > 0 : false))
         @php
             $anyModelHasCustomFields++;
         @endphp
