@@ -35,11 +35,6 @@ class PredefinedFilterModalTest extends TestCase
     {
         $user = User::factory()->create();
 
-        // If your User model has a groups() relationship, ensure at least an empty set:
-        if (method_exists($user, 'groups')) {
-            // If there is a Group/PermissionGroup model you can attach here.
-        }
-
         $this->be($user);
 
         return $user;
@@ -71,7 +66,7 @@ class PredefinedFilterModalTest extends TestCase
             
     }
 
-    public function testOpenModalForCreationWitOnlyRequiredParameters()
+    public function testOpenModalForCreationWithOnlyRequiredParameters()
     {
         $this->loginUser();
         $this->makeServiceMock();
@@ -95,7 +90,7 @@ class PredefinedFilterModalTest extends TestCase
     }
 
 
-    public function testOpenModalForEditWitOnlyRequiredParameters()
+    public function testOpenModalForEditWithOnlyRequiredParameters()
     {
         $this->loginUser();
 
@@ -126,7 +121,7 @@ class PredefinedFilterModalTest extends TestCase
     }
 
 
-    public function testOpenModalForDeletionWitOnlyRequiredParameters()
+    public function testOpenModalForDeletionWithOnlyRequiredParameters()
     {
         $this->loginUser();
         $this->makeServiceMock();
@@ -145,7 +140,7 @@ class PredefinedFilterModalTest extends TestCase
             ->assertSee('Close');
     }
 
-    public function testOpenModalForDeletionWitMissingParameters()
+    public function testOpenModalForDeletionWithMissingParameters()
     {
         $this->loginUser();
         $this->makeServiceMock();

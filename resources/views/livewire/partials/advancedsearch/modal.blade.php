@@ -209,7 +209,7 @@
             }
 
             window.advancedSearchModalSetGroupSelectDisabled = function(disabled) {
-                const element = document.getElementById("group_select").disabled = disabled; 
+                document.getElementById("group_select").disabled = disabled; 
             }
 
             window.advancedSearchModalFocusTrap = function() {
