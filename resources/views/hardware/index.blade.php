@@ -71,6 +71,8 @@
             </div>
         </div>
     </div>
+    <livewire:partials.advancedsearch.modal />
+
 </div>
 
 <style>
