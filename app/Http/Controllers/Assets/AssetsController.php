@@ -95,11 +95,12 @@ class AssetsController extends Controller
         }
 
         if ($predefined_filter_id !== null) {
-            if ($this->predefinedFilterService->checkIfFilterExists($predefined_filter_id) === false) {
+            if (!$this->predefinedFilterService->getFilterById($predefined_filter_id)) {
                 $predefined_filter_id = null;
             }
         }
-
+        // Force modal open for now (for testing/debug), remove later
+        $predefined_filter_edit_modal_open = true;
         dump($predefined_filter_edit_modal_open);
         
         // TODO maybe switch later to user / role based view

@@ -67,8 +67,11 @@ class FilterUIController {
         });
     }
 
-updateFilterWithPredefined(event) {
-    const selectedId = event?.target?.value;
+updateFilterWithPredefined(event, selectedId = null) {
+    if(event !== null) {
+        selectedId = event?.target?.value;
+    }
+
     if (!selectedId) {
         floatingMenuDisableEditDeleteButtons();
         return;
@@ -183,13 +186,33 @@ updateFilterWithPredefined(event) {
     }
 }
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('livewire:init', function () {
     const tableId = "{{ request()->has('status') ? e(request()->input('status')) : '' }}assetsListingTable";
     const $table = $('#' + tableId);
     
     // Initialize everything
     const controller = new FilterUIController($table);
     controller.bindEvents();
+
+    function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+
+    @if(isset($predefined_filter_id))
+        controller.updateFilterWithPredefined(null, {{ $predefined_filter_id }});
+
+        @if(!empty($predefined_filter_edit_modal_open) && $predefined_filter_edit_modal_open == true)
+            sleep(200).then(() => { // I know that this is bad practice but I havn't found another way that works :-(
+                Livewire.dispatch('openPredefinedFiltersModal', {
+                    action: 'edit',
+                    predefinedFilterId: {{ (int) $predefined_filter_id }},
+                    predefinedFilterData: {},
+                });
+            });
+        @endif
+    @endif
+
 });
 
 // Filter search functionality
