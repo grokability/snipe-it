@@ -150,7 +150,7 @@
       <div class="box-body">
 
         <p>
-          {!! trans('admin/settings/general.backups_path', ['path'=> 'storage/app/backup']) !!}
+          {!! trans('admin/settings/general.backups_path', ['path'=> 'storage/app/backups']) !!}
         </p>
 
         @if (config('app.lock_passwords')===true)

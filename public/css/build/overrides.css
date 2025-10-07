@@ -1125,6 +1125,9 @@ caption.tableCaption {
   white-space: preserve;
   display: inline-block;
 }
+input[name="columnsSearch"] {
+  width: 120px;
+}
 
 
 /*# sourceMappingURL=overrides.css.map*/

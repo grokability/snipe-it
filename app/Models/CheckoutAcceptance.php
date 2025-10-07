@@ -207,6 +207,9 @@ class CheckoutAcceptance extends Model
         if ($data['item_serial'] != null) {
             $pdf->writeHTML(trans('admin/hardware/form.serial').': '.e($data['item_serial']), true, 0, true, 0, '');
         }
+        if (($data['qty'] != null) && ($data['qty'] > 1)) {
+            $pdf->writeHTML(trans('general.qty').': '.e($data['qty']), true, 0, true, 0, '');
+        }
         $pdf->writeHTML(trans('general.assignee').': '.e($data['assigned_to']), true, 0, true, 0, '');
         $pdf->Ln();
         $pdf->writeHTML('<hr>', true, 0, true, 0, '');

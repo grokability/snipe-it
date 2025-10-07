@@ -6,6 +6,7 @@ use App\Events\CheckoutableCheckedIn;
 use App\Http\Requests\StoreAssetRequest;
 use App\Http\Requests\UpdateAssetRequest;
 use App\Http\Traits\MigratesLegacyAssetLocations;
+use App\Http\Transformers\ComponentsTransformer;
 use App\Models\AccessoryCheckout;
 use App\Models\CheckoutAcceptance;
 use App\Models\LicenseSeat;
@@ -56,7 +57,7 @@ class AssetsController extends Controller
      * @param int $assetId
      * @since [v4.0]
      */
-    public function index(Request $request, $action = null, $upcoming_status = null): JsonResponse|array
+    public function index(Request $request, $action = null, $upcoming_status = null):JsonResponse|array
     {
 
 
@@ -77,7 +78,7 @@ class AssetsController extends Controller
          * It was either this mess, or repeating ALL of the searching and sorting and filtering code, 
          * which would have been far worse of a mess. *sad face*  - snipe (Sept 1, 2021)
          */
-        if (Route::currentRouteName() == 'api.depreciation-report.index') {
+        if (Route::currentRouteName()=='api.depreciation-report.index') {
             $filter_non_deprecable_assets = true;
             $transformer = 'App\Http\Transformers\DepreciationReportTransformer';
             $this->authorize('reports.view');
@@ -480,7 +481,7 @@ class AssetsController extends Controller
      * @since [v4.2.1]
      * @author [A. Gianotto] [<snipe@snipe.net>]
      */
-    public function showByTag(Request $request, $tag): JsonResponse|array
+    public function showByTag(Request $request, $tag): JsonResponse | array
     {
         $this->authorize('index', Asset::class);
         $assets = Asset::where('asset_tag', $tag)->with('assetstatus')->with('assignedTo');
@@ -516,7 +517,7 @@ class AssetsController extends Controller
      * @since [v4.2.1]
      * @return \Illuminate\Http\JsonResponse
      */
-    public function showBySerial(Request $request, $serial): JsonResponse|array
+    public function showBySerial(Request $request, $serial): JsonResponse | array
     {
         $this->authorize('index', Asset::class);
         $assets = Asset::where('serial', $serial)->with([
@@ -605,7 +606,7 @@ class AssetsController extends Controller
         ])->with('model', 'assetstatus', 'assignedTo')
             ->NotArchived();
 
-        if ((Setting::getSettings()->full_multiple_companies_support == '1') && ($request->filled('companyId'))) {
+        if ((Setting::getSettings()->full_multiple_companies_support=='1') && ($request->filled('companyId'))) {
             $assets->where('assets.company_id', $request->input('companyId'));
         }
 
@@ -920,7 +921,7 @@ class AssetsController extends Controller
         $this->authorize('checkout', Asset::class);
         $asset = Asset::findOrFail($asset_id);
 
-        if (!$asset->availableForCheckout()) {
+        if (! $asset->availableForCheckout()) {
             return response()->json(Helper::formatStandardApiResponse('error', ['asset' => e($asset->asset_tag)], trans('admin/hardware/message.checkout.not_available')));
         }
 
@@ -956,7 +957,7 @@ class AssetsController extends Controller
             $asset->status_id = $request->get('status_id');
         }
 
-        if (!isset($target)) {
+        if (! isset($target)) {
             return response()->json(Helper::formatStandardApiResponse('error', $error_payload, 'Checkout target for asset ' . e($asset->asset_tag) . ' is invalid - ' . $error_payload['target_type'] . ' does not exist.'));
         }
 
@@ -1146,7 +1147,7 @@ class AssetsController extends Controller
             if (($asset->model) && ($asset->model->fieldset)) {
                 $payload['custom_fields'] = [];
                 foreach ($asset->model->fieldset->fields as $field) {
-                    if (($field->display_audit == '1') && ($request->has($field->db_column))) {
+                    if (($field->display_audit=='1') && ($request->has($field->db_column))) {
                         if ($field->field_encrypted == '1') {
                             if (Gate::allows('assets.view.encrypted_custom_fields')) {
                                 if (is_array($request->input($field->db_column))) {
@@ -1222,7 +1223,7 @@ class AssetsController extends Controller
      * @author [A. Gianotto] [<snipe@snipe.net>]
      * @since [v4.0]
      */
-    public function requestable(Request $request): JsonResponse|array
+    public function requestable(Request $request): JsonResponse | array
     {
         $this->authorize('viewRequestable', Asset::class);
 
@@ -1305,7 +1306,7 @@ class AssetsController extends Controller
     }
 
 
-    public function assignedAssets(Request $request, Asset $asset): JsonResponse|array
+    public function assignedAssets(Request $request, Asset $asset) : JsonResponse | array
     {
         $this->authorize('view', Asset::class);
         $this->authorize('view', $asset);
@@ -1322,7 +1323,7 @@ class AssetsController extends Controller
         return (new AssetsTransformer)->transformAssets($assets, $total);
     }
 
-    public function assignedAccessories(Request $request, Asset $asset): JsonResponse|array
+    public function assignedAccessories(Request $request, Asset $asset) : JsonResponse | array
     {
         $this->authorize('view', Asset::class);
         $this->authorize('view', $asset);
@@ -1339,6 +1340,18 @@ class AssetsController extends Controller
         return (new AssetsTransformer)->transformCheckedoutAccessories($accessory_checkouts, $total);
     }
 
+    public function assignedComponents(Request $request, Asset $asset): JsonResponse|array
+    {
+        $this->authorize('view', Asset::class);
+        $this->authorize('view', $asset);
+
+        $asset->loadCount('components');
+        $total = $asset->components_count;
+
+        $components = $asset->load(['components' => fn($query) => $query->applyOffsetAndLimit($total)])->components;
+
+        return (new ComponentsTransformer)->transformComponents($components, $total);
+    }
 
     /**
      * Generate asset labels by tag
@@ -1399,7 +1412,7 @@ class AssetsController extends Controller
                 // Generate PDF using callback function
                 // The callback captures the PDF content in $pdf_content variable
                 $pdf_content = '';
-                $label->render(function ($pdf) use (&$pdf_content) {
+                $label->render(function($pdf) use (&$pdf_content) {
                     $pdf_content = $pdf->Output('', 'S');
                     return $pdf;
                 });

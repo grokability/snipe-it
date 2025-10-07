@@ -65,6 +65,7 @@
 
                         <table
                                 data-columns="{{ \App\Presenters\AssetPresenter::dataTableLayout() }}"
+                                data-show-columns-search="true"
                                 data-cookie-id-table="depreciationsAssetTable"
                                 data-id-table="depreciationsAssetTable"
                                 id="depreciationsAssetTable"

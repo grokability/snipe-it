@@ -66,7 +66,6 @@ class PredefinedFilterService
 
     public function createFilter($validated): PredefinedFilter
     {
-        //dump($validated);
         $filter_create_response = PredefinedFilter::create([
             'name' => $validated['name'],
             'filter_data' => $validated['filter_data'],
@@ -91,6 +90,7 @@ class PredefinedFilterService
             'filter_data' => $validated['filter_data'],
             'is_public' => $validated['is_public'],
         ]);
+
         $filter->save();
 
         // Update permissions
@@ -98,13 +98,11 @@ class PredefinedFilterService
             $currently_set_permssions = $this->predefinedFilterPermissionService->getPermissionsByPredefinedFilterId($filter->id);
             $new_permissions = $validated['permissions'];
             $permission_diff = $this->syncPermissions($currently_set_permssions->toArray(), $new_permissions);
-            //dump($permission_diff);
 
             try {
                 DB::transaction(function () use ($permission_diff, $filter) {
                     if (!empty($permission_diff['to_delete'])) {
                         foreach ($permission_diff['to_delete'] as $permission) {
-                            //dump($permission);
                             $this->predefinedFilterPermissionService->deletePermissionByFilterId($permission['predefined_filter_id']);
                         }
                     }
@@ -112,14 +110,12 @@ class PredefinedFilterService
                     if (!empty($permission_diff['to_add'])) {
                         foreach ($permission_diff['to_add'] as $permission) {
                             $permission['predefined_filter_id'] = $filter->id;
-                            //dump($permission);
                             $this->predefinedFilterPermissionService->store($permission);
                         }
                     }
                 });
             } catch (Throwable $e) {
                 // If any exception occurs, the transaction is automatically rolled back.
-                //dump($e);
                 throw new Exception($e->getMessage());
                 //abort(500,message: "Something went wrong");
             }
@@ -128,9 +124,9 @@ class PredefinedFilterService
         return $filter;
     }
 
-    public function deleteFilter(PredefinedFilter $filter): void
+    public function deleteFilter(PredefinedFilter $filter): ?bool
     {
-        $filter->delete();
+        return $filter->delete();
     }
 
     public function selectList(Request $request): LengthAwarePaginator
@@ -169,38 +165,29 @@ class PredefinedFilterService
         return $paginated;
     }
 
-    public function checkIfFilterExists(int $predefined_filter_id): bool {
-        $filter = $this->getFilterById($predefined_filter_id, false);
-        if($filter !== null) {
-            return true;
+private function syncPermissions($currentPermissions, $newPermissions): array
+{
+    $toAdd = array_udiff(
+        $newPermissions,
+        $currentPermissions,
+        function ($a, $b) {
+            return $a['permission_group_id'] <=> $b['permission_group_id'];
         }
-        return false;
-     }
+    );
 
-    private function syncPermissions($currentPermissions, $newPermissions): array
-    {
-        // Calculate permissions to add
-        $toAdd = array_udiff(
-            $newPermissions,
-            $currentPermissions,
-            function ($obj_a, $obj_b) {
-                return $obj_a['permission_group_id'] !== $obj_b['permission_group_id'];
-            }
-        );
+    $toDelete = array_udiff(
+        $currentPermissions,
+        $newPermissions,
+        function ($a, $b) {
+            return $a['permission_group_id'] <=> $b['permission_group_id'];
+        }
+    );
 
-        // Calculate permissions to delete
-        $toDelete = array_udiff(
-            $currentPermissions,
-            $newPermissions,
-            function ($obj_a, $obj_b) {
-                return $obj_a['permission_group_id'] !== $obj_b['permission_group_id'];
-            }
-        );
+    return [
+        'to_add' => $toAdd,
+        'to_delete' => $toDelete
+    ];
+}
 
-        return [
-            'to_add' => $toAdd,
-            'to_delete' => $toDelete
-        ];
-    }
 
 }

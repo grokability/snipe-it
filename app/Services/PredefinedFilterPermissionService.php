@@ -17,7 +17,6 @@ class PredefinedFilterPermissionService
         $permission->predefined_filter_id = $validated['predefined_filter_id'];
         $permission->permission_group_id = $validated['permission_group_id'];
         $permission->created_by = $userId;
-
         if (!$permission->save()) {
             //dump($permission->getErrors());
             throw new Exception($permission->getErrors());

@@ -33,6 +33,10 @@
 
 @section('content')
 
+
+
+
+
 <div class="responsive-layout">
     <!-- Filter Section -->
     <div class="filter-section hide" id="filterSection">
@@ -46,22 +50,15 @@
     <div class="table-section">
         <div class="box">
             <div class="box-body">
-                @include('partials.asset-bulk-actions', ['status' => Request::get('status')])
-                <!-- Toggle Button -->
-                <div class="filter-toggle-container text-left" style="margin-bottom: 15px;">
-                    <button type="button" class="btn btn-default" id="toggleFilterBtn">
-                        <i class="fa-solid fa-filter"></i>
-                        <span class="filter-btn-text">{{ trans('general.open_filters') }}</span>
-                    </button>
-                </div>
-
+                @include('partials.asset-bulk-actions', ['status' => Request::get('status'), 'showFiltersTogglebutton' => true])
 
                 <table data-columns="{{ \App\Presenters\AssetPresenter::dataTableLayout() }}"
                     data-cookie-id-table="{{ request()->has('status') ? e(request()->input('status')) : '' }}assetsListingTable"
                     data-id-table="{{ request()->has('status') ? e(request()->input('status')) : '' }}assetsListingTable"
                     data-search-text="{{ e(Session::get('search')) }}" data-side-pagination="server"
                     data-show-footer="true" data-sort-order="asc" data-sort-name="name"
-                    data-toolbar="#assetsBulkEditToolbar" data-bulk-button-id="#bulkAssetEditButton"
+                    data-show-columns-search="true"
+                data-toolbar="#assetsBulkEditToolbar" data-bulk-button-id="#bulkAssetEditButton"
                     data-bulk-form-id="#assetsBulkForm" data-buttons="assetButtons"
                     id="{{ request()->has('status') ? e(request()->input('status')) : '' }}assetsListingTable"
                     class="table table-striped snipe-table" data-url="{{ route('api.assets.index', [
@@ -77,6 +74,8 @@
             </div>
         </div>
     </div>
+    <livewire:partials.advancedSearch.modal />
+
 </div>
 
 <style>
