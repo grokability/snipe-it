@@ -1,22 +1,28 @@
 {{-- TODO check for every TAG --}}
-<span>
+<span class="advancedSearchWrapper">
+<span class="advancedSearchGridContainer">
    @foreach ($layout as $tableField)
       @if ((!empty($tableField->searchable) && $tableField->searchable === true))
             <span id="advancedSearch_{{ $tableField->field }}" class="advancedSearchItemContainer filter-item" data-filter-name="{{ strtolower($tableField->title) }}">
-               <label for="advancedSearch_{{ $tableField->field }}">
+               <label for="advancedSearch_{{ $tableField->field }}" class="filterFieldName">
                   <b>{{ $tableField->title }}</b>
                </label>
 
-                <select class="form-control filter-operator" data-field="{{ $tableField->field }}">
-                    <option value="equals">equals</option>
-                    <option value="contains">contains</option>
+               <div class="filter-controls-row">
+                <select class="form-control filter-option" data-field="{{ $tableField->field }}">
+                    {{--<option value="equals"> == </option>
+                    <option value="contains"> ~= </option>
+                    <option value="AND"> &&</option>
+                    <option value="NOT"> ! </option>
+                    <option value="AND_not"> && != </option>
+                    --}}
+                    <option value="AND_contains"> && ~= </option>
+                    <option value="AND_equals"> && == </option>
+                    <option value="NOT_equals"> != </option>
+                    <option value="NOT_contains"> ~! </option>
                 </select>
 
 
-                <select class="form-control filter-logic" data-field="{{ $tableField->field }}">
-                    <option value="AND">AND</option>
-                    <option value="NOT">NOT</option>
-                </select>
                @if (!isset($tableField->formatter))
                   {{-- Default select if formatter is not set --}}
                   <input class="advancedSearch_defaultField form-control" type="text" autocomplete="on" id="advancedSearch_{{ $tableField->field }}_input" >
@@ -155,9 +161,11 @@
                         <input class="advancedSearch_defaultField form-control" type="text" autocomplete="on" id="advancedSearch_{{ $tableField->field }}_input" >
                   @endswitch
                @endif
+                    </div>
          </span>
       @endif
    @endforeach
+</span>
 </span>
 
 <script>
@@ -199,11 +207,28 @@ class FilterInput {
         }
 
         const field = this.key;
-        const operatorSelect = document.querySelector(`.filter-operator[data-field="${field}"]`)
-        const logicSelect = document.querySelector(`.filter-logic[data-field="${field}"]`);
+        const filterOptionSelect = document.querySelector(`.filter-option[data-field="${field}"]`)
 
-        const operator = operatorSelect?.value || 'contains';
-        const logic = logicSelect?.value || 'AND';
+        let operator = "contains";
+        let logic = "AND";
+        switch(filterOptionSelect.value) {
+            case "AND_equals":
+                operator = "equals";
+                logic = "AND";
+                break;
+            case "AND_contains":
+                operator = "contains";
+                logic = "AND";
+                break;
+            case "NOT_equals":
+                operator = "equals";
+                logic = "NOT"
+                break;
+            case "NOT_contains":
+                operator = "contains";
+                logic = "NOT";
+                break;
+        }
         
         filters.push({
             field,
@@ -423,31 +448,207 @@ class FilterFormManager {
 
 <style>
 /* 
-Spacing between filter fields/items.
+Layout container for the whole page.
+Uses flexbox so the filter and table sections can sit side by side on desktop, and stack on mobile.
 */
-.filter-item {
-    margin-bottom: 15px;
-    padding-bottom: 10px;
-}
-
-.filter-item:last-child {
-    border-bottom: none;
+.responsive-layout {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
 }
 
 /* 
-Flexbox layout for each filter field for nice stacking.
+The filter (sidebar) section.
+Transition allows smooth showing/hiding.
 */
+.filter-section {
+    transition: all 0.3s ease;
+}
+
+/* 
+When .hide is applied, the filter section is hidden.
+!important ensures it's forced, even if overridden by other classes.
+*/
+.filter-section.hide {
+    display: none !important;
+}
+
+/* New CSS for the advanced search layout */
+.advancedSearchWrapper {
+    width: 100%;
+    padding: 0 15px;
+}
+
+.advancedSearchGridContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Space between each filter item */
+}
+
 .advancedSearchItemContainer {
     display: flex;
     flex-direction: column;
-    align-items: stretch;
+    gap: 8px;
 }
 
-/* 
-Spacing for label text in advanced search.
-*/
-.advancedSearchItemContainer b {
-    margin-bottom: 5px;
+/* Heading takes full width on its own row */
+.filterFieldName {
+    font-weight: 600;
+    font-size: 14px;
+    margin: 0;
+    color: #333;
 }
 
+/* Container for operator dropdown + input */
+.filter-controls-row {
+    display: flex;
+    gap: 0;
+    width: 100%;
+}
+
+/* Operator dropdown - smaller width */
+.filter-option {
+    flex: 0 0 60px; /* Fixed width for consistency */
+    min-width: 30px;
+    max-width: 60px;
+    height: 38px;
+    padding: 6px 8px;
+    font-size: 13px;
+    border: 1px solid #ced4da;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    background-color: #fff;
+    border-right: none;
+}
+
+/* Input field - takes remaining space */
+.advancedSearch_defaultField,
+.advancedSearchGridContainer .form-control:not(.filter-option),
+.select2-container {
+    flex: 1;
+    height: 38px;
+    font-size: 13px;
+    border: 1px solid #ced4da;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    background-color: #fff;
+}
+
+.advancedSearch_defaultField,
+.advancedSearchGridContainer .form-control:not(.filter-option) {
+    padding: 6px 10px;
+}
+
+/* Select2 specific styling */
+.select2-container {
+    width: 100% !important;
+    box-sizing: border-box;
+}
+
+.select2-container--default .select2-selection--single,
+.select2-container--default .select2-selection--multiple {
+    height: 38px;
+    border: 1px solid #ced4da;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-left: none;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 36px;
+    padding-left: 10px;
+}
+
+/* Focus states */
+.filter-option:focus,
+.advancedSearch_defaultField:focus,
+.form-control:focus {
+    border-color: #6c63ff;
+    box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.08);
+    outline: none;
+}
+
+.select2-container--default .select2-selection:focus {
+    border-color: #6c63ff;
+    box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.08);
+    outline: none;
+}
+
+/* Date range styling */
+.input-daterange {
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+
+.input-daterange .form-control {
+    border-radius: 0;
+    border-left: none;
+}
+
+.input-daterange .form-control:first-child {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.input-daterange .form-control:last-child {
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+.input-daterange .input-group-addon {
+    padding: 0 8px;
+    font-size: 12px;
+    color: #666;
+    white-space: nowrap;
+}
+
+/* ---------- DESKTOP Styles (screen ≥ 768px) ---------- */
+@media (min-width: 768px) {
+    /* 
+    Filter sidebar gets 25% width, and some space on the right.
+    */
+    .filter-section {
+        flex: 0 0 25%;
+        max-width: 25%;
+        padding-right: 15px;
+    }
+
+    /* 
+    Main table takes the remaining 75%.
+    */
+    .table-section {
+        flex: 0 0 75%;
+        max-width: 75%;
+    }
+
+    /* 
+    If filter is hidden, the table takes full width.
+    */
+    .filter-section.hide + .table-section {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
+
+/* ---------- MOBILE Styles (screen < 768px) ---------- */
+@media (max-width: 767px) {
+    /* 
+    Filter takes full width, and sits above the table section.
+    */
+    .filter-section {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+
+    .table-section {
+        width: 100%;
+    }
+    
+    /* Adjust operator dropdown width on mobile */
+    .filter-option {
+        flex: 0 0 120px;
+        min-width: 120px;
+    }
+}
 </style>
