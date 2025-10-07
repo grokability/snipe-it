@@ -172,7 +172,7 @@ class AssetsController extends Controller
         }
 
         if ((!is_null($filter)) && (count($filter)) > 0) {
-            $assets->ByFilterNew($filter);
+            $assets->ByFilter($filter);
         } elseif ($request->filled('search')) {
             $assets->TextSearch($request->input('search'));
         }
