@@ -8,8 +8,8 @@
             <i class="fa fa-chevron-left icon-desktop" id="collapseIconDesktop"></i>
             <i class="fa fa-chevron-up icon-mobile" id="collapseIconMobile"></i>
         </button>
-            <button id="topClearInputButton" type="button" class="btn btn-box-tool">
-                <i class="fa fa-times"></i> <span class="clear-text"> {{ trans('button.delete') }}</span>
+            <button id="topClearInputButton" type="button" class="btn btn-box-tool" aria-labelledby="topClearInputButtonLabel" >
+                <i class="fa fa-times"></i> <span id="topClearInputButtonLabel" class="clear-text"> {{ trans('button.delete') }}</span>
             </button>
         </div>
     </div>
@@ -46,9 +46,7 @@
 
     </div>
     @include ('partials.advanced-search.floating-button')
-    @include ('partials.advanced-search.modal', [
-        'createNew' => false,
-    ])
+
 </div>
 
 @include('partials.confetti-js', ['autostart' => false])
@@ -94,7 +92,7 @@ updateFilterWithPredefined(event) {
         })
         .catch(err => {
             console.error("Failed to apply predefined filter:", err);
-            Livewire.dispatch('showNotification', { type: 'error', message: '{{ trans('general.failed_to_apply_predefined_filter') }}'}); // TODO: i18n
+            Livewire.dispatch('showNotification', { type: 'error', message: '{{ trans('general.failed_to_apply_predefined_filter') }}'});
             setAdvancedSearchPanelFilterEnabledState(false);
         });
 }
@@ -104,44 +102,11 @@ updateFilterWithPredefined(event) {
     storePredefinedFilterInBackend() {
         const filters = this.collector.collect();
         
-        openFilterCreateUpdateModal(true)
-        .then((input) => {
-            const payload = {
-                name: input.name,
-                filter_data: filters,
-                permissions: input.permissions,
-                is_public: input.visibility === "public" ? true : false,
-            };
-            fetchFromBackend('POST', '{{ route('api.predefined-filters.store') }}', JSON.stringify(payload))
-            .then((response) => {
-                if(response.status === 201) {
-                    console.log(response);
-                    Livewire.dispatch('showNotification', {
-                      type: 'success',
-                      title: '{{ trans('general.notification_success') }}',
-                      message: '{{ trans('general.predefined_filter_saved_successfully') }}',
-                      tag: 'prefindedFilters'
-                    });
-                    if(window.triggerConfetti) window.triggerConfetti();
-                } else {
-                    Livewire.dispatch('showNotification', {
-                      type: 'error',
-                      title: '{{ trans('general.notification_error') }}',
-                      message: '{{ trans('general.backend_responded_with') }} ' + response.status + " - " + response.statusText,
-                      tag: 'prefindedFilters'
-                    });  
-                }
-            })
-            .catch((error) => {
-                console.error(error);
-                Livewire.dispatch('showNotification', {
-                  type: 'error',
-                  title: '{{ trans('general.notification_error') }}',
-                  message: '{{ trans('general.notification_error') }}' + error,
-                  tag: 'prefindedFilters'
-                }); 
-            })
+        Livewire.dispatch('openPredefinedFiltersModal', {
+            action: 'create',
+            predefinedFilterData: filters,
         });
+
     }
 
     updatePredefinedFilterInBackend(updateFilterButtonId) {
@@ -151,73 +116,12 @@ updateFilterWithPredefined(event) {
         if (!selectedFilter) return;
         const filters = this.collector.collect();
 
-        // Fetch filter from backend to get the permissions
-        fetchItemFromBackendById("group_select", selectedFilter.id)
-            .then((response) => {
-                response.json()
-                    .then((responseJson) => {
-                        const permissionGroupRequests = [];
+        Livewire.dispatch('openPredefinedFiltersModal', {
+            action: 'edit',
+            predefinedFilterId: parseInt(selectedFilter.id),
+            predefinedFilterData: filters,
+        });
 
-                        responseJson.permissions.forEach(permission => {
-                            permissionGroupRequests.push(fetchItemFromBackendById("groups", permission.permission_group_id));
-                        });
-                        Promise.all(permissionGroupRequests).
-                        then((permissionGroupResponses) => {
-
-                            const permissionGroupResponsePromises = [];
-                            permissionGroupResponses.forEach((permissionGroupResponse) => {
-                                permissionGroupResponsePromises.push(permissionGroupResponse.json());
-                            })
-                            Promise.all(permissionGroupResponsePromises)
-                                .then((permissionGroupResponses) => {
-                                    openFilterCreateUpdateModal(false, responseJson.name, permissionGroupResponses)
-                                        .then((input) => {
-
-                                            const payload = {
-                                                name: input.name,
-                                                filter_data: filters,
-                                                permissions: input.permissions,
-                                                is_public: input.visibility === "public" ? true : false,
-                                            };
-
-                                            const updateUrlTemplate = `{{ route('api.predefined-filters.update', ['id' => '__ID__']) }}`;
-                                            const selectedFilterId = selectedFilter.id; // JS context
-                                            const finalUrl = updateUrlTemplate.replace('__ID__', selectedFilterId);
-
-                                            fetchFromBackend('PUT', finalUrl, JSON.stringify(payload))
-                                                .then((response) => {
-                                                    if (response.status === 200) {
-                                                        Livewire.dispatch('showNotification', {
-                                                          type: 'success',
-                                                          title: '{{ trans('general.notification_success') }}',
-                                                          message: '{{ trans('general.predefined_filter_updated_successfully') }}',
-                                                          tag: 'prefindedFilters'
-                                                        });
-                                                        if (window.triggerConfetti) window.triggerConfetti();
-                                                    } else {
-                                                        console.error(response);
-                                                        Livewire.dispatch('showNotification', {
-                                                          type: 'error',
-                                                          title: '{{ trans('general.notification_error') }}',
-                                                          message: '{{ trans('general.backend_responded_with') }} ' + response.status + " - " + response.statusText,
-                                                          tag: 'prefindedFilters'
-                                                        }); 
-                                                    }
-                                                });
-                                        });
-                                });
-                        });
-                    })
-                    .catch((error) => {
-                        console.error(error);
-                        Livewire.dispatch('showNotification', {
-                          type: 'error',
-                          title: '{{ trans('general.notification_error') }}',
-                          message: '{{ trans('general.notification_error') }}' + error,
-                          tag: 'prefindedFilters'
-                        }); 
-                    })
-            });
     }
 
     deletePredefinedFilterFromBackend(deleteFilterButtonId) {
@@ -226,38 +130,10 @@ updateFilterWithPredefined(event) {
         const selectedFilterId = $("#predefinedfilters-select").select2('data')[0].id; // Always zero because only one element can be selected at the time
         if (!selectedFilterId) return;
 
-        const updateUrlTemplate = `{{ route('api.predefined-filters.destroy', ['id' => '__ID__']) }}`;
-        const finalUrl = updateUrlTemplate.replace('__ID__', selectedFilterId);
-
-        fetchFromBackend('PUT', finalUrl)
-        .then((response) => {
-            if(response.status === 200) {
-                Livewire.dispatch('showNotification', {
-                  type: 'success',
-                  title: '{{ trans('general.notification_success') }}',
-                  message: '{{ trans('general.predefined_filter_deleted_successfully') }}',
-                  tag: 'prefindedFilters'
-                });
-                if(window.triggerConfetti) window.triggerConfetti();
-            } else {
-                console.error(response);
-                Livewire.dispatch('showNotification', {
-                  type: 'error',
-                  title: '{{ trans('general.notification_error') }}',
-                  message: '{{ trans('general.backend_responded_with') }} ' + response.status + " - " + response.statusText,
-                  tag: 'prefindedFilters'
-                });  
-            }
-        })
-        .catch((error) => {
-            console.error(error);
-            Livewire.dispatch('showNotification', {
-              type: 'error',
-              title: '{{ trans('general.notification_error') }}',
-              message: '{{ trans('general.notification_error') }}' + error,
-              tag: 'prefindedFilters'
-            }); 
-        })
+        Livewire.dispatch('openPredefinedFiltersModal',{ 
+            action: 'delete',
+            predefinedFilterId: parseInt(selectedFilterId),
+        });
     }
 
     fetchPredefinedFilterData(filterId) {
