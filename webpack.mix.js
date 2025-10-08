@@ -41,6 +41,18 @@ mix
   .minify("./public/css/dist/signature-pad.css");
 
 /**
+ * Copy, minify and version the required files for the advanced search (advanced-search, floating buttons, modal)
+ */
+mix
+  .copy("./resources/assets/css/components/advancedSearch/floating-buttons.css", "./public/css/dist")
+  .minify("./public/css/dist/floating-buttons.css");
+mix
+  .copy("./resources/assets/css/components/advancedSearch/advanced-search.css", "./public/css/dist")
+  .minify("./public/css/dist/advanced-search.css");
+mix
+  .copy("./resources/assets/css/components/advancedSearch/modal.css", "./public/css/dist")
+  .minify("./public/css/dist/modal.css");
+/**
  * Copy and version select2
  */
 mix
