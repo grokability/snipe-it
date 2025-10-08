@@ -49,13 +49,13 @@
 
       <div class="box box-success">
           <div class="box-body">
-            <p><i class="fas fa-check icon-white text-success"></i> <strong>{{ trans('admin/predefinedfilters/table.private') }}</strong>: {{ trans('admin/predefinedfilters/message.help.private') }}</p> {{-- TODO --}}
+            <p><i class="fas fa-check icon-white text-success"></i> <strong>{{ trans('admin/predefinedfilters/table.private') }}</strong>: {{ trans('admin/predefinedfilters/help.private') }}</p> {{-- TODO --}}
           </div>
       </div>
 
       <div class="box box-danger">
           <div class="box-body">
-              <p><i class="fas fa-times text-red"></i> <strong>{{ trans('admin/predefinedfilters/table.public') }}</strong>: {{ trans('admin/predefinedfilters/message.help.public') }}</p> {{-- TODO --}}
+              <p><i class="fas fa-times text-red"></i> <strong>{{ trans('admin/predefinedfilters/table.public') }}</strong>: {{ trans('admin/predefinedfilters/help.public') }}</p> {{-- TODO --}}
           </div>
       </div>
 
@@ -69,90 +69,59 @@
 
 <script>
 $(document).ready(function () { 
+    Livewire.on('updatePredefinedFiltersModalEvent', () => {
+        $('#predefinedFiltersTable').bootstrapTable('refresh');
+    });
+
   // TODO Ensure that L10n is complete after refactoring.
     $('#predefinedFiltersTable').on('click', '.btn-warning', function (e) {
-    e.preventDefault();
+        e.preventDefault();
 
-    // Extract filter ID from href 
-    const editLink = $(this).attr('href');
-    const match = editLink.match(/predefined-filters\/(\d+)/);
+        // Extract filter ID from href 
+        const editLink = $(this).attr('href');
+        const match = editLink.match(/predefined-filters\/(\d+)/);
 
-    if (!match) {
-        alert("Could not extract filter ID from the link.");
-        return;
-    }
-
-    const filterId = match[1];
-
-    // Generate URL to fetch filter data via Laravel route helper
-    const showUrlTemplate = `{{ route('api.predefined-filters.show', ['id' => '__ID__']) }}`;
-    const showUrl = showUrlTemplate.replace('__ID__', filterId);
-
-    // Fetch the filter data from backend
-    fetch(showUrl, {
-        method: 'GET',
-        headers: {
-            'Accept': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest',
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+        if (!match) {
+            alert("Could not extract filter ID from the link.");
+            return;
         }
-    })
-    .then(response => {
-        if (!response.ok) throw new Error(`Failed to fetch filter data: ${response.statusText}`);
-        return response.json();
-    })
-    .then(data => {
-        // Extract name, visibility, and permissions
-        const name = data.name || '';
-        const visibility = data.visibility || 'private'; // default if not present
-        const permissions = data.permission_groups || [];
 
-        // this function returns a Promise
-        return openFilterCreateUpdateModal(false, name, permissions, visibility);
-    })
-    .then(updatedInput => {
-        // After modal closes, send updated data back to backend
-        const updateUrlTemplate = `{{ route('api.predefined-filters.update', ['id' => '__ID__']) }}`;
-        const updateUrl = updateUrlTemplate.replace('__ID__', filterId);
+        const filterId = match[1];
 
-        // Prepare payload based on your backend expectations
-        const payload = {
-            name: updatedInput.name,
-            filter_data: updatedInput.filter_data,   // make sure this exists in your modal return
-            permissions: updatedInput.permissions,
-            is_public: updatedInput.visibility === "public"
-        };
+        // Generate URL to fetch filter data via Laravel route helper
+        const showUrlTemplate = `{{ route('api.predefined-filters.show', ['id' => '__ID__']) }}`;
+        const showUrl = showUrlTemplate.replace('__ID__', filterId);
 
-        return fetch(updateUrl, {
-            method: 'PUT',
+        // Fetch the filter data from backend
+        fetch(showUrl, {
+            method: 'GET',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json',
                 'X-Requested-With': 'XMLHttpRequest',
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-                // Add 'Authorization' header if rebquired
-            },
-            body: JSON.stringify(payload)
+            }
+        })
+        .then(response => {
+            if (!response.ok) throw new Error(`Failed to fetch filter data: ${response.statusText}`);
+            return response.json();
+        })
+        .then(data => {
+            Livewire.dispatch('openPredefinedFiltersModal', {
+                action: 'edit',
+                predefinedFilterData: {
+                    name: data.name || '',
+                    visibility: data.visibility || 'private',
+                    permission_groups: data.permission_groups || []
+                },
+                predefinedFilterId: data.id 
+            });
         });
-    })
-    .then(response => {
-        if (!response.ok) throw new Error(`Failed to update filter: ${response.statusText}`);
-        //actual with alert 
-        $('#predefinedFiltersTable').bootstrapTable('refresh');
-        alert("Filter updated successfully.");
-    })
-    .catch(error => {
-        console.error(error);
-        alert("Error: " + error.message);
     });
 });
-
-});
 </script>
-@include('partials/advanced-search.modal')
+<livewire:partials.advancedsearch.modal/>
 
 @php
     $layout = json_decode(PredefinedFilterPresenter::dataTableLayout());
 @endphp
-@include('partials/advanced-search.search-inputs', ['layout' => $layout])
 @stop

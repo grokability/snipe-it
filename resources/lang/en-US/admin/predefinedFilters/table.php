@@ -2,7 +2,7 @@
 
 return array(
     'about'      	=> 'About Predefined Filter',
-    'info'      	=> 'Predefined Filters are used to . You can create or update a filter and its permissions in the advanced Search <a href="/hardware". For more information, <a href="https://snipe-it.readme.io/docs/overview#TODOPAGEPREDEFINEDFILTER" target="_blank">see the documentation <i class="fa fa-external-link"></i></a>.',// TODO Docu
+    'info'      	=> 'Predefined Filters allow you to quickly apply commonly used search criteria within the advanced search. These filters can be created or updated with specific visibility and permission settings. You can manage them directly through the advanced search modal.',
     'title'      	=> 'Predefined Filter',
     'private'       => 'Private Publicity',
     'public'        => 'Public Publicity',
