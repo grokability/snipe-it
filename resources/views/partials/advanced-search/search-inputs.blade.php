@@ -1,4 +1,3 @@
-{{-- TODO check for every TAG --}}
 <span class="advancedSearchWrapper">
 <span class="advancedSearchGridContainer">
    @foreach ($layout as $tableField)
@@ -10,12 +9,6 @@
 
                <div class="filter-controls-row">
                 <select class="form-control filter-option" data-field="{{ $tableField->field }}">
-                    {{--<option value="equals"> == </option>
-                    <option value="contains"> ~= </option>
-                    <option value="AND"> &&</option>
-                    <option value="NOT"> ! </option>
-                    <option value="AND_not"> && != </option>
-                    --}}
                     <option value="AND_contains"> && ~= </option>
                     <option value="AND_equals"> && == </option>
                     <option value="NOT_equals"> != </option>
@@ -541,7 +534,7 @@ When .hide is applied, the filter section is hidden.
 
 /* Select2 specific styling */
 .select2-container {
-    width: 100% !important;
+    width: auto;
     box-sizing: border-box;
 }
 

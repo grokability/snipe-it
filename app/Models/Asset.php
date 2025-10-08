@@ -1742,7 +1742,6 @@ class Asset extends Depreciable
      */
 
 
-    // TODO rename, remove Old one
     public function scopeByFilter( $query, $filters){
         return $query->where(
             function(Builder $query) use ($filters){
