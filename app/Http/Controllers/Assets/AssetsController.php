@@ -74,9 +74,8 @@ class AssetsController extends Controller
             ->orderBy('name')
             ->get();*/
 
-        $predefined_filter_edit_modal_open = $request->input('predefinedFilterModalOpen');
+        $predefined_filter_edit_modal_open = $request->input('predefinedFilterEditModalOpen');
         $predefined_filter_id = $request->input('predefinedFilterId');
-
 
         if ($predefined_filter_edit_modal_open === null) {
             $predefined_filter_edit_modal_open = false;
@@ -99,10 +98,8 @@ class AssetsController extends Controller
                 $predefined_filter_id = null;
             }
         }
-        // Force modal open for now (for testing/debug), remove later
-        $predefined_filter_edit_modal_open = true;
-        dump($predefined_filter_edit_modal_open);
-        
+
+
         // TODO maybe switch later to user / role based view
         return view('hardware/index')->with('company', $company)->with('predefined_filter_edit_modal_open', $predefined_filter_edit_modal_open)->with('predefined_filter_id', $predefined_filter_id);
     }
@@ -405,24 +402,24 @@ class AssetsController extends Controller
         $asset->purchase_date = $request->input('purchase_date', null);
         $asset->next_audit_date = $request->input('next_audit_date', null);
         if ($request->filled('purchase_date') && !$request->filled('asset_eol_date') && ($asset->model?->eol > 0)) {
-            $asset->purchase_date = $request->input('purchase_date', null); 
+            $asset->purchase_date = $request->input('purchase_date', null);
             $asset->asset_eol_date = Carbon::parse($request->input('purchase_date'))->addMonths($asset->model->eol)->format('Y-m-d');
             $asset->eol_explicit = false;
         } elseif ($request->filled('asset_eol_date')) {
             $asset->asset_eol_date = $request->input('asset_eol_date', null);
             $months = (int) Carbon::parse($asset->asset_eol_date)->diffInMonths($asset->purchase_date, true);
-           if($asset->model->eol) {
-               if($months != $asset->model->eol > 0) {
-                   $asset->eol_explicit = true;
-               } else {
-                   $asset->eol_explicit = false;
-               }
-           } else {
-               $asset->eol_explicit = true;
-           }
+            if ($asset->model->eol) {
+                if ($months != $asset->model->eol > 0) {
+                    $asset->eol_explicit = true;
+                } else {
+                    $asset->eol_explicit = false;
+                }
+            } else {
+                $asset->eol_explicit = true;
+            }
         } elseif (!$request->filled('asset_eol_date') && (($asset->model?->eol) == 0)) {
-           $asset->asset_eol_date = null;
-		   $asset->eol_explicit = false;
+            $asset->asset_eol_date = null;
+            $asset->eol_explicit = false;
         }
         $asset->supplier_id = $request->input('supplier_id', null);
         $asset->expected_checkin = $request->input('expected_checkin', null);

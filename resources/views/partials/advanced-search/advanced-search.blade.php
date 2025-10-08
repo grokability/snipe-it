@@ -202,6 +202,9 @@ document.addEventListener('livewire:init', function () {
     @if(isset($predefined_filter_id))
         controller.updateFilterWithPredefined(null, {{ $predefined_filter_id }});
 
+        const filterSection = document.getElementById('filterSection');
+        filterSection.classList.remove('hide');
+
         @if(!empty($predefined_filter_edit_modal_open) && $predefined_filter_edit_modal_open == true)
             sleep(200).then(() => { // I know that this is bad practice but I havn't found another way that works :-(
                 Livewire.dispatch('openPredefinedFiltersModal', {
