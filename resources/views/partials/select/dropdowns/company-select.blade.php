@@ -2,6 +2,7 @@
     class="js-data-ajax" 
     data-endpoint="companies" 
     data-placeholder="{{ trans('general.select_company') }}" 
+    data-tags="{{ isset($allow_tags) && $allow_tags ? 'true' : 'false' }}"
     name="{{ $fieldname }}" 
     style="width: 100%" 
     id="{{ isset($select_id) ? $select_id : $fieldname . '_company_select' }}"

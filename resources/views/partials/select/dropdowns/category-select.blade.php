@@ -1,5 +1,7 @@
-<select class="js-data-ajax" data-endpoint="categories/{{ isset($category_type) ? $category_type : 'assets' }}"
+<select class="js-data-ajax"
+    data-endpoint="categories/{{ isset($category_type) ? $category_type : 'assets' }}"
     data-placeholder="{{ trans('general.select_category') }}" name="{{ $fieldname }}" style="width: 100%"
+    data-tags="{{ isset($allow_tags) && $allow_tags ? 'true' : 'false' }}"
     id="{{ isset($select_id) ? $select_id : $fieldname . '_category_select' }}"
     {!! isset($item) && Helper::checkIfRequired($item, $fieldname) ? ' required ' : '' !!}{{ isset($multiple) && $multiple == 'true' ? " multiple='multiple'" : '' }}>
     @isset($selected)
