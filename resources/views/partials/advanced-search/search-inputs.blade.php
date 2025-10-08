@@ -202,6 +202,12 @@ class FilterInput {
         const field = this.key;
         const filterOptionSelect = document.querySelector(`.filter-option[data-field="${field}"]`)
 
+        // only temporarly to skip error with dates
+        if (!filterOptionSelect) {
+                console.warn(`No filter option select found for field: ${field}`);
+            return; 
+        }
+
         let operator = "contains";
         let logic = "AND";
         switch(filterOptionSelect.value) {
@@ -535,6 +541,7 @@ When .hide is applied, the filter section is hidden.
 /* Select2 specific styling */
 .select2-container {
     width: auto;
+    max-width: auto;
     box-sizing: border-box;
 }
 
