@@ -170,11 +170,11 @@ When .hide is applied, the filter section is hidden.
 
         if (filterSection.classList.contains('hide')) {
             textSpan.innerText = "{{ trans('general.open_filters') }}";
-            hideFloatingButtons();
+            window.floatingButtons.hide();
         } else {
             textSpan.innerText = "{{ trans('general.close_filters') }}";
-            showFloatingButtons();
-            alignFloatingButtons();
+            window.floatingButtons.show();
+            window.floatingButtons.align();
         }
     }
 

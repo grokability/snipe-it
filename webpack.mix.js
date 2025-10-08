@@ -47,6 +47,9 @@ mix
   .copy("./resources/assets/css/components/advancedSearch/floating-buttons.css", "./public/css/dist")
   .minify("./public/css/dist/floating-buttons.css");
 mix
+  .copy("resources/assets/js/advancedSearch/floating-buttons.js", "./public/js/dist")
+  .minify("./public/js/dist/floating-buttons.js");
+mix
   .copy("./resources/assets/css/components/advancedSearch/advanced-search.css", "./public/css/dist")
   .minify("./public/css/dist/advanced-search.css");
 mix

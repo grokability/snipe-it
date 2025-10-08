@@ -76,11 +76,11 @@ updateFilterWithPredefined(event, selectedId = null) {
     }
 
     if (!selectedId) {
-        floatingMenuDisableEditDeleteButtons();
+        window.floatingButtons.disableEditDeleteButtons();
         return;
     }
 
-    floatingMenuEnableEditDeleteButtons();
+    window.floatingButtons.enableEditDeleteButtons();
     setAdvancedSearchPanelFilterEnabledState(true);
 
     this.fetchPredefinedFilterData(selectedId)
