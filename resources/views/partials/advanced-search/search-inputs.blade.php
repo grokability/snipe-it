@@ -541,7 +541,7 @@ When .hide is applied, the filter section is hidden.
 /* Select2 specific styling */
 .select2-container {
     width: auto;
-    max-width: auto;
+    max-width: width;
     box-sizing: border-box;
 }
 
