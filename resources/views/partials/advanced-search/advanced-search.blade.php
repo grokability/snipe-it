@@ -55,15 +55,19 @@
 @include('partials.confetti-js', ['autostart' => false])
 
 <script type="module">
-    import ApiService from  '/js/dist/apiService.min.js';
-    import FilterFormManager from  '/js/dist/filterFormManager.min.js';
+    import ApiService from '/js/dist/apiService.min.js';
+    import FilterFormManager from '/js/dist/filterFormManager.min.js';
+    import { container } from '/js/dist/simpleDIContainer.min.js';
 
-    
+    // Add needed stuff into the di-container
+    container.register("apiService", new ApiService);
+    container.register("filterFormManager", new FilterFormManager);
+
     class FilterUIController {
         constructor(tableElement) {
-            this.apiService = new ApiService();
             this.$table = tableElement;
-            this.collector = new FilterFormManager(this.apiService);
+            this.apiService = container.resolve("apiService");
+            this.collector = container.resolve("filterFormManager");
         }
 
     refresh() {

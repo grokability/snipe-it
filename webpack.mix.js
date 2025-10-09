@@ -41,6 +41,13 @@ mix
   .minify("./public/css/dist/signature-pad.css");
 
 /**
+ * Copy and minifiy the di container implemenation
+ */
+mix
+  .copy("resources/assets/js/simpleDIContainer.js", "./public/js/dist")
+  .minify("./public/js/dist/simpleDIContainer.js");
+
+/**
  * Copy, minify and version the required files for the advanced search (advanced-search, floating buttons, modal)
  */
 mix

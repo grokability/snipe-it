@@ -5,13 +5,13 @@ import {
     DateFilterInput,
     TextFilterInput
 } from '/js/dist/filterInputs.min.js';
+import { container } from '/js/dist/simpleDIContainer.min.js';
 
 export default class FilterFormManager {
-    constructor(apiService) {
+    constructor() {
         this.filters = [];
         this.inputs = [];
-        this.apiService = apiService;
-        console.log(this.apiService);
+        this.apiService = container.resolve("apiService");;
     }
 
     collect() {

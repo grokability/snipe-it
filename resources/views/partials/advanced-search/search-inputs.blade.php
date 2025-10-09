@@ -161,15 +161,6 @@
 </span>
 </span>
 
-<script type="module" >
-
-import ApiService from  '/js/dist/apiService.min.js';
-
-const apiService = new ApiService();
-
-
-</script>
-
 <style>
 /* 
 Layout container for the whole page.
