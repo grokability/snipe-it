@@ -54,12 +54,17 @@
 
 @include('partials.confetti-js', ['autostart' => false])
 
-<script>
-class FilterUIController {
-    constructor(tableElement) {
-        this.$table = tableElement;
-        this.collector = new FilterFormManager();
-    }
+<script type="module">
+    import ApiService from  '/js/dist/apiService.min.js';
+    import FilterFormManager from  '/js/dist/filterFormManager.min.js';
+
+    
+    class FilterUIController {
+        constructor(tableElement) {
+            this.apiService = new ApiService();
+            this.$table = tableElement;
+            this.collector = new FilterFormManager(this.apiService);
+        }
 
     refresh() {
         const filters = this.collector.collect();
@@ -81,9 +86,9 @@ updateFilterWithPredefined(event, selectedId = null) {
     }
 
     window.floatingButtons.enableEditDeleteButtons();
-    setAdvancedSearchPanelFilterEnabledState(true);
+    //setAdvancedSearchPanelFilterEnabledState(true);
 
-    this.fetchPredefinedFilterData(selectedId)
+    this.apiService.fetchPredefinedFilterData(selectedId)
         .then(response => {
             if (!response.ok) {
                 throw new Error("Network response was not ok");
@@ -99,7 +104,7 @@ updateFilterWithPredefined(event, selectedId = null) {
         .catch(err => {
             console.error("Failed to apply predefined filter:", err);
             Livewire.dispatch('showNotification', { type: 'error', message: '{{ trans('general.failed_to_apply_predefined_filter') }}'});
-            setAdvancedSearchPanelFilterEnabledState(false);
+            //setAdvancedSearchPanelFilterEnabledState(false);
         });
 }
 
@@ -140,13 +145,6 @@ updateFilterWithPredefined(event, selectedId = null) {
             action: 'delete',
             predefinedFilterId: parseInt(selectedFilterId),
         });
-    }
-
-    fetchPredefinedFilterData(filterId) {
-        const updateUrlTemplate = `{{ route('api.predefined-filters.show', ['id' => '__ID__']) }}`;
-        const finalUrl = updateUrlTemplate.replace('__ID__', filterId);
-
-        return fetchFromBackend('GET', finalUrl);
     }
 
     bindEvents() {
@@ -192,7 +190,7 @@ updateFilterWithPredefined(event, selectedId = null) {
 document.addEventListener('livewire:init', function () {
     const tableId = "{{ request()->has('status') ? e(request()->input('status')) : '' }}assetsListingTable";
     const $table = $('#' + tableId);
-    
+
     // Initialize everything
     const controller = new FilterUIController($table);
     controller.bindEvents();
@@ -236,65 +234,5 @@ document.getElementById('filterSearch').addEventListener('input', function(e) {
     });
 });
 
-function getCsrfToken() {
-    return $('meta[name="csrf-token"]').attr('content');
-}
-
-function fetchFromBackend(method, path, body = null) {
-    const options = {
-        method: method,
-        headers: {
-            accept: 'application/json',
-            'X-Requested-With': 'XMLHttpRequest',
-            'X-CSRF-TOKEN': getCsrfToken(),
-            'Content-Type': 'application/json'
-        },
-        ...(body && { body })
-    };
-
-    return fetch(path, options);
-        //.then(res => res.json());
-}
-
-function fetchItemFromBackendById(type, id) {
-    const typeMap = {
-        asset: "hardware",
-        category: "categories",
-        company: "companies",
-        location: "locations",
-        manufacturer: "manufacturers",
-        model: "models",
-        groups: "groups",
-        group_select: "predefinedFilters",
-        rtd_location: "locations",
-        status_label: "statuslabels",
-        supplier: "suppliers",
-        user: "users"
-    };
-
-    if (!typeMap[type]) {
-        return Promise.reject(`Invalid type ${type}`);
-    }
-    const path = `/api/v1/${typeMap[type]}/${id}`;
-    return fetchFromBackend('GET', path);
-}
-
-function predefinedFilterRequest(method, filterId = null, filterData = null) {
-    let  path = "/api/v1/predefinedFilters";
-
-    if(filterId !== null) {
-        path += "/" + filterId;
-    }
-
-    return fetchFromBackend(method, path, filterData);
-}
-
-function setAdvancedSearchPanelFilterEnabledState(state) {
-    const fields = document.getElementById("advancedSearchPanel").getElementsByTagName('*');
-    for(let i = 0; i < fields.length; i++)
-    {
-        fields[i].disabled = state;
-    }
-}
 
 </script>

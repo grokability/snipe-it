@@ -46,15 +46,24 @@ mix
 mix
   .copy("./resources/assets/css/components/advancedSearch/floating-buttons.css", "./public/css/dist")
   .minify("./public/css/dist/floating-buttons.css");
-mix
-  .copy("resources/assets/js/advancedSearch/floating-buttons.js", "./public/js/dist")
-  .minify("./public/js/dist/floating-buttons.js");
-mix
+  mix
   .copy("./resources/assets/css/components/advancedSearch/advanced-search.css", "./public/css/dist")
   .minify("./public/css/dist/advanced-search.css");
-mix
+  mix
   .copy("./resources/assets/css/components/advancedSearch/modal.css", "./public/css/dist")
   .minify("./public/css/dist/modal.css");
+  mix
+    .copy("resources/assets/js/advancedSearch/floating-buttons.js", "./public/js/dist")
+    .minify("./public/js/dist/floating-buttons.js");
+  mix
+  .copy("resources/assets/js/advancedSearch/apiService.js", "./public/js/dist")
+  .minify("./public/js/dist/apiService.js");
+  mix
+  .copy("resources/assets/js/advancedSearch/filterInputs.js", "./public/js/dist")
+  .minify("./public/js/dist/filterInputs.js");
+  mix
+  .copy("resources/assets/js/advancedSearch/filterFormManager.js", "./public/js/dist")
+  .minify("./public/js/dist/filterFormManager.js");
 /**
  * Copy and version select2
  */

@@ -102,9 +102,3 @@ export default class FloatingButtons {
         document.getElementById("deleteFilterButton")?.classList.add("floatingButtons-disabled");
     }
 }
-
-/*
-const floatingButtonsInstance = new FloatingButtons();
-console.log(floatingButtonsInstance);
-window.floatingButtons = floatingButtonsInstance;
-export default floatingButtonsInstance;*/
