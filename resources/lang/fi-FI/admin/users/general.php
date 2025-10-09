@@ -24,7 +24,6 @@ return [
     'auto_assign_label' => 'Sisällytä tämä käyttäjä automaattisesti määritettäessä hyväksyttäviä lisenssejä',
     'auto_assign_help'  => 'Ohita tämä käyttäjä automaattiseen lisenssien osoittamiseen',
     'software_user'     => 'Käyttäjälle :name luovutetut ohjelmistot',
-    'send_email_help'   => 'Käyttäjälle on määritettävä sähköpostiosoite lähettääksesi salasanan sähköpostitse. Salasanat voi lähettää sähköpostilla vain käyttäjän luonnin yhteydessä. Salasanat tallennetaan järjestelmään yksisuuntaisesti tiivistettyinä, eikä niitä voida lukea selväkielisenä tallennuksen jälkeen.',
     'view_user'         => 'Näytä käyttäjä :name',
     'usercsv'           => 'CSV-tiedosto',
     'two_factor_admin_optin_help' => 'Nykyiset järjestelmänvalvojan asetukset mahdollistavat kaksivaiheisen tunnistautumisen käyttöönoton valituille käyttäjille.  ',

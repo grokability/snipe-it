@@ -153,6 +153,7 @@
           </div>
         </div>
 
+
         <!-- Asset Maintenance Cost -->
         <div class="form-group {{ $errors->has('cost') ? ' has-error' : '' }}">
           <label for="cost" class="col-md-3 control-label">{{ trans('admin/maintenances/form.cost') }}</label>
@@ -171,6 +172,15 @@
           </div>
         </div>
 
+        <div class="form-group {{ $errors->has('url') ? ' has-error' : '' }}">
+          <label for="url" class="col-md-3 control-label">{{ trans('general.url') }}</label>
+          <div class="col-md-7">
+            <input class="form-control" name="url" type="url" id="url" value="{{ old('url', $item->url) }}" placeholder="https://example.com">
+            {!! $errors->first('url', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
+          </div>
+        </div>
+
+
         @include ('partials.forms.edit.image-upload', ['image_path' => app('maintenances_path')])
 
 
@@ -179,6 +189,7 @@
           <label for="notes" class="col-md-3 control-label">{{ trans('admin/maintenances/form.notes') }}</label>
           <div class="col-md-7">
             <textarea class="col-md-6 form-control" id="notes" name="notes">{{ old('notes', $item->notes) }}</textarea>
+            <p class="help-block">{!! trans('general.markdown') !!}</p>
             {!! $errors->first('notes', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
           </div>
         </div>

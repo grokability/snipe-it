@@ -244,6 +244,18 @@
                   </div>
               </div>
           @endif
+          @if ($accessory->purchase_cost)
+              <div class="row">
+                  <div class="col-md-3" style="padding-bottom: 10px;">
+                      <strong>
+                          {{ trans('general.total_cost') }}
+                      </strong>
+                  </div>
+                  <div class="col-md-9" style="word-wrap: break-word;">
+                      {{ Helper::formatCurrencyOutput($accessory->totalCostSum()) }}
+                  </div>
+              </div>
+          @endif
 
       <div class="row">
           <div class="col-md-3" style="padding-bottom: 10px;">

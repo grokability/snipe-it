@@ -58,8 +58,12 @@
                                 <label for="name_display_format">{{ trans('general.name_display_format') }}</label>
                             </div>
                             <div class="col-md-5 col-xs-12">
-                                {!! Form::name_display_format('name_display_format', old('name_display_format', $setting->name_display_format), 'select2') !!}
-
+                                <x-input.select
+                                    name="name_display_format"
+                                    :options="['first_last' => trans('general.firstname_lastname_display'), 'last_first' => trans('general.lastname_firstname_display')]"
+                                    :selected="old('name_display_format', $setting->name_display_format)"
+                                    style="width: 100%"
+                                />
                                 {!! $errors->first('name_display_format', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
                             </div>
                         </div>
@@ -72,10 +76,10 @@
                                 <label for="time_display_format">{{ trans('general.time_and_date_display') }}</label>
                             </div>
                             <div class="col-md-5 col-xs-12">
-                                {!! Form::date_display_format('date_display_format', old('date_display_format', $setting->date_display_format), 'select2') !!}
+                                <x-input.date-display-format name="date_display_format" :selected="old('date_display_format', $setting->date_display_format)" style="min-width:100%" />
                             </div>
                             <div class="col-md-3 col-xs-12">
-                                {!! Form::time_display_format('time_display_format', old('time_display_format', $setting->time_display_format), 'select2') !!}
+                                <x-input.time-display-format name="time_display_format" :selected="old('time_display_format', $setting->time_display_format)" style="min-width:150px" />
                             </div>
                             
                             {!! $errors->first('time_display_format', '<div class="col-md-9 col-md-offset-3"><span class="alert-msg" aria-hidden="true">:message</span> </div>') !!}
@@ -99,7 +103,12 @@
                                     id="default_currency"
                                 >
 
-                                {!! Form::digit_separator('digit_separator', old('digit_separator', $setting->digit_separator), 'select2') !!}
+                                <x-input.select
+                                    name="digit_separator"
+                                    :options="['1,234.56', '1.234,56']"
+                                    :selected="old('digit_separator', $setting->digit_separator)"
+                                    style="min-width:120px"
+                                />
 
                                 {!! $errors->first('default_currency', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
                             </div>

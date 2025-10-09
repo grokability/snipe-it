@@ -11,7 +11,6 @@ return array(
     'title'					=> 'Bate Modelle',
     'update'				=> 'Update Bate Model',
     'view'					=> 'Bekyk bate-model',
-    'update'				=> 'Update Bate Model',
-    'clone'				=> 'Klone Model',
-    'edit'				=> 'Wysig Model',
+    'clone'				    => 'Klone Model',
+    'edit'				    => 'Wysig Model',
 );

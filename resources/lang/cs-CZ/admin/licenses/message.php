@@ -46,11 +46,12 @@ return array(
         'not_enough_seats' => 'Není k dispozici dostatek licenčních míst pro pokladnu',
         'mismatch' => 'Poskytnutá licence se neshoduje s licencí',
         'unavailable' => 'Tuto licenci nelze aktuálně přidělit.',
+        'license_is_inactive' => 'This license is expired or terminated.',
     ),
 
     'checkin' => array(
         'error'   => 'Vyskytl se problém při ověřování licence. Zkuste to znovu prosím.',
-        'not_reassignable' => 'Licence není znovu přiřazitelná',
+        'not_reassignable' => 'Seat has been used',
         'success' => 'Licence byla úspěšně zkontrolována'
     ),
 

@@ -11,7 +11,6 @@ return array(
     'title'					=> 'Asset modellen',
     'update'				=> 'Wijzig asset model',
     'view'					=> 'Bekijk asset model',
-    'update'				=> 'Wijzig asset model',
-    'clone'				=> 'Kopieer model',
-    'edit'				=> 'Bewerk model',
+    'clone'				    => 'Kopieer model',
+    'edit'				    => 'Bewerk model',
 );

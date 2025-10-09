@@ -46,11 +46,12 @@ return array(
         'not_enough_seats' => 'Нема доволно достапни места за задолжување',
         'mismatch' => 'Обезбеденото место за лиценца не одговара на лиценцата',
         'unavailable' => 'Ова не е место достапно за задолжување.',
+        'license_is_inactive' => 'This license is expired or terminated.',
     ),
 
     'checkin' => array(
         'error'   => 'Имаше проблем со раздолжување на лиценцата. Обидете се повторно.',
-        'not_reassignable' => 'License not reassignable',
+        'not_reassignable' => 'Seat has been used',
         'success' => 'Лиценцата беше успешно раздолжена'
     ),
 

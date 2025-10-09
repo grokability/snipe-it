@@ -22,6 +22,8 @@ return [
     'requested'				    => 'Zahtevano',
     'not_requestable'           => 'Ni zahtevano',
     'requestable_status_warning' => 'Ne spreminjaj zahtevanega statusa',
+    'require_serial'       => 'Require Serial Number',
+    'require_serial_help'       => 'A serial number will be required when creating a new asset of this model.',
     'restore'  					=> 'Obnovitev sredstev',
     'pending'  					=> 'Na čakanju',
     'undeployable'  			=> 'Nerazdeljeno',

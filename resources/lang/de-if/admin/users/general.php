@@ -24,7 +24,6 @@ return [
     'auto_assign_label' => 'Diesen Benutzer bei der automatischen Zuweisung berechtigter Lizenzen einbeziehen',
     'auto_assign_help'  => 'Diesen Benutzer bei der automatischen Zuweisung von Lizenzen überspringen',
     'software_user'     => 'Software herausgegeben an :name',
-    'send_email_help'   => 'Du musst eine E-Mail-Adresse angeben, um dem Benutzer Zugangsdaten zu zusenden. Das Versenden von Zugangsdaten ist nur bei der Erstellung eines Benutzers möglich. Passwörter werden in einem Einweg-Hash gespeichert und können danach nicht mehr ausgelesen werden.',
     'view_user'         => 'Benutzer :name ansehen',
     'usercsv'           => 'CSV Datei',
     'two_factor_admin_optin_help' => 'Ihre aktuellen Administrator-Einstellungen erlauben die selektive Durchführung der Zwei-Faktor-Authentifizierung.  ',

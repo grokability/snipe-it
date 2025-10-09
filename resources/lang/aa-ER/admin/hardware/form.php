@@ -44,6 +44,8 @@ return [
     'redirect_to_checked_out_to'   => 'crwdns12226:0crwdne12226:0',
     'select_statustype'	=> 'crwdns1167:0crwdne1167:0',
     'serial'			=> 'crwdns716:0crwdne716:0',
+    'serial_required'	=> 'crwdns13774:0crwdne13774:0',
+    'serial_required_post_model_update'	=> 'crwdns13776:0crwdne13776:0',
     'status'			=> 'crwdns717:0crwdne717:0',
     'tag'				=> 'crwdns719:0crwdne719:0',
     'update'			=> 'crwdns720:0crwdne720:0',

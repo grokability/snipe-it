@@ -20,6 +20,7 @@
                   data-side-pagination="server"
                   data-sort-order="asc"
                   id="depreciationsTable"
+                  data-advanced-search="false"
                   data-buttons="depreciationButtons"
                   class="table table-striped snipe-table"
                   data-url="{{ route('api.depreciations.index') }}"

@@ -24,7 +24,6 @@ return [
     'auto_assign_label' => 'Inkludér denne bruger ved automatisk tildeling af kvalificerede licenser',
     'auto_assign_help'  => 'Spring denne bruger over i auto-tildeling af licenser',
     'software_user'     => 'Software Checket ud til: navn',
-    'send_email_help'   => 'Du skal angive en e-mail-adresse for denne bruger for at sende dem legitimationsoplysninger. E-mailing af legitimationsoplysninger kan kun gøres ved brugeroprettelse. Adgangskoder gemmes i en envejs hash og kan ikke hentes når de er gemt.',
     'view_user'         => 'Se bruger :navn',
     'usercsv'           => 'CSV-fil',
     'two_factor_admin_optin_help' => 'Dine nuværende administratorindstillinger tillader selektiv håndhævelse af tofaktors godkendelse.',

@@ -3,12 +3,13 @@
 return array(
 
     'does_not_exist' => 'Lokasi tidak wujud.',
-    'assoc_users'    => 'Lokasi ini tidak boleh dipadam buat masa ini kerana ia merupakan lokasi rekod bagi sekurang-kurangnya satu aset atau pengguna, mempunyai aset yang ditetapkan kepadanya, atau merupakan lokasi induk kepada lokasi lain. Sila kemas kini rekod anda supaya tidak lagi merujuk kepada lokasi ini dan cuba semula.',
+    'assoc_users'    => 'This location is not currently deletable because it is the location of record for at least one item or user, has assets assigned to it, or is the parent location of another location. Please update your records to no longer reference this location and try again ',
     'assoc_assets'	 => 'Lokasi ini kini dikaitkan dengan sekurang-kurangnya satu aset dan tidak boleh dihapuskan. Sila kemas kini aset anda untuk tidak merujuk lagi lokasi ini dan cuba lagi.',
     'assoc_child_loc'	 => 'Lokasi ini adalah ibu bapa sekurang-kurangnya satu lokasi kanak-kanak dan tidak boleh dipadamkan. Sila kemas kini lokasi anda untuk tidak merujuk lokasi ini lagi dan cuba lagi.',
     'assigned_assets' => 'Aset yang Ditetapkan',
     'current_location' => 'Lokasi Semasa',
     'open_map' => 'Buka dalam :map_provider_icon Peta',
+    'deleted_warning' => 'This location has been deleted. Please restore it before attempting to make any changes.',
 
 
     'create' => array(

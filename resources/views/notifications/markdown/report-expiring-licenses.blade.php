@@ -1,17 +1,13 @@
 @component('mail::message')
 {{ trans_choice('mail.license_expiring_alert', $licenses->count(), ['count'=>$licenses->count(), 'threshold' => $threshold]) }}
-@component('mail::table')
 
-<table width="100%">
-<tr><td>&nbsp;</td><td>{{ trans('mail.name') }}</td><td>{{ trans('mail.Days') }}</td><td>{{ trans('mail.expires') }}</td></tr>
+<x-mail::table>
+
+|        | {{ trans('mail.name') }} | {{ trans('general.category') }} | {{ trans('mail.expires') }} | {{ trans('mail.terminates') }} |
+| :------------- | :------------- | :------------- | :------------- | :------------- |
 @foreach ($licenses as $license)
-@php
-$expires = Helper::getFormattedDateObject($license->expiration_date, 'date');
-$diff = round(abs(strtotime($license->expiration_date->format('Y-m-d')) - strtotime(date('Y-m-d')))/86400);
-$icon = ($diff <= ($threshold / 2)) ? '🚨' : (($diff <= $threshold) ? '⚠️' : ' ');
-@endphp
-<tr><td>{{ $icon }} </td><td> <a href="{{ route('licenses.show', $license->id) }}">{{ $license->name }}</a> </td><td> {{ $diff }} {{ trans('mail.Days') }}  </td><td>{{ $expires['formatted'] }}</td></tr>
+| {{ (($license->isExpired()) || ($license->isTerminated()) || ($license->terminates_diff_in_days <= ($threshold / 2)) || ($license->expires_diff_in_days <= ($threshold / 2))) ? '🚨' : (($license->expires_diff_in_days <= $threshold) ? '⚠️' : 'ℹ️ ') }} | <a href="{{ route('licenses.show', $license->id) }}">{{ $license->name }}</a> {{ $license->manufacturer ?  '('.$license->manufacturer->name.')' : '' }} | {{ $license->category ?  $license->category->name : '' }} | {{ $license->expires_formatted_date }} {!! $license->expires_diff_for_humans ? ' ('.$license->expires_diff_for_humans .')' : '' !!} | {{ $license->terminates_formatted_date }} {{ $license->terminates_diff_for_humans ? ' ('.$license->terminates_diff_for_humans .')' : '' }}|
+| <hr> | <hr> | <hr> | <hr> | <hr> |
 @endforeach
-</table>
-@endcomponent
+</x-mail::table>
 @endcomponent

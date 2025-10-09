@@ -25,7 +25,6 @@ return [
     'auto_assign_label' => 'Bao gồm người dùng này khi giấy phép đủ điều kiện tự động chỉ định',
     'auto_assign_help'  => 'Bỏ qua người dùng này trong chế độ tự động chỉ định giấy phép',
     'software_user'     => 'Phần mềm đã được checkout đến :name',
-    'send_email_help'   => 'Bạn phải cung cấp địa chỉ email của người dùng để gửi chứng thực. Gửi mail chứng thực chỉ có hiệu lực đối với người dùng tạo ra. Mật khẩu được mã hóa một chiều và không thể lấy lại một khi đã lưu.',
     'view_user'         => 'Xem người dùng :name',
     'usercsv'           => 'Tập tin CSV',
     'two_factor_admin_optin_help' => 'Cài đặt quản trị hiện tại của bạn cho phép thực thi có chọn lọc xác thực hai yếu tố.',

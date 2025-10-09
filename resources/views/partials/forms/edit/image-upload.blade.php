@@ -38,8 +38,8 @@
    @elseif (isset($item) && (isset($item->model)) && ($item->model->image != ''))
         <div class="form-group">
             <div class="col-md-8 col-md-offset-3">
-                <p class="text-info">
-                    <x-icon type="info-circle" /> {{ trans('general.use_cloned_no_image_help') }}
+                <p class="help-block">
+                    <x-icon type="info-circle" class="text-primary" /> {{ trans('general.use_cloned_no_image_help') }}
                 </p>
             </div>
         </div>

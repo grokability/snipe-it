@@ -5,7 +5,7 @@ return [
     'manage'                    => '管理',
     'field'		                => '欄位',
     'about_fieldsets_title'		=> '關於欄位集',
-    'about_fieldsets_text'		=> 'Fieldsets allow you to create groups of custom fields that are frequently re-used used for specific asset model types.',
+    'about_fieldsets_text'		=> '欄位集允許您為常用的資產模型定義一組可重複使用的欄位。',
     'custom_format'             => '自訂正規表達式格式...',
     'encrypt_field'      	        => '加密資料庫中此欄位的值',
     'encrypt_field_help'      => '警告：對欄位加密將導致此欄無法用於搜索',

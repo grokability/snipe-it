@@ -38,6 +38,7 @@ class Maintenance extends SnipeModel implements ICompanyableChild
         'completion_date'        => 'date_format:Y-m-d|nullable|after_or_equal:start_date',
         'notes'                  => 'string|nullable',
         'cost'                   =>  'numeric|nullable|gte:0|max:99999999999999999.99',
+        'url'                    =>  'nullable|url|max:255',
     ];
 
 
@@ -57,6 +58,7 @@ class Maintenance extends SnipeModel implements ICompanyableChild
         'asset_maintenance_time',
         'notes',
         'cost',
+        'url',
     ];
 
     use Searchable;

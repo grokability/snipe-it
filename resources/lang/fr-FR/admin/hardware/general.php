@@ -22,6 +22,8 @@ return [
     'requested'				    => 'Demandé',
     'not_requestable'           => 'Non demandable',
     'requestable_status_warning' => 'Ne pas modifier l\'état demandable',
+    'require_serial'       => 'Require Serial Number',
+    'require_serial_help'       => 'A serial number will be required when creating a new asset of this model.',
     'restore'  					=> 'Restaurer l\'actif',
     'pending'  					=> 'En attente',
     'undeployable'  			=> 'Non déployable',

@@ -46,11 +46,12 @@ return array(
         'not_enough_seats' => '没有足够的许可证席位可供签出',
         'mismatch' => '提供的许可证席位与许可证不匹配',
         'unavailable' => '这个席位不能签出。',
+        'license_is_inactive' => 'This license is expired or terminated.',
     ),
 
     'checkin' => array(
         'error'   => '归还许可证的过程中出现了一些问题，请重试。',
-        'not_reassignable' => '许可证不可重新分配',
+        'not_reassignable' => '席位已被使用',
         'success' => '许可证已经成功归还。'
     ),
 

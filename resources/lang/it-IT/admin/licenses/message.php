@@ -46,11 +46,12 @@ return array(
         'not_enough_seats' => 'Non ci sono abbastanza copie della licenza disponibili per l\'assegnazione',
         'mismatch' => 'Lo slot di licenza fornito non corrisponde alla licenza',
         'unavailable' => 'Questo slot non è disponibile per l\'Assegnazione.',
+        'license_is_inactive' => 'Questa licenza è scaduta o terminata.',
     ),
 
     'checkin' => array(
         'error'   => 'C\'è stato un problema nella restituzione della licenza. Riprova.',
-        'not_reassignable' => 'Licenza non riassegnabile',
+        'not_reassignable' => 'Licenza già utilizzata',
         'success' => 'La licenza è stata restituita con successo'
     ),
 

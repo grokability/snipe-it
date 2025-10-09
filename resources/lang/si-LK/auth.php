@@ -13,8 +13,8 @@ return array(
     |
     */
 
-    'failed' => 'These credentials do not match our records.',
-    'password' => 'The provided password is incorrect.',
-    'throttle' => 'Too many login attempts. Please try again in :minutes minute(s).',
+    'failed' => 'මෙම credentials අපගේ වාර්තා සමඟ නොගැලපේ.',
+    'password' => 'සපයා ඇති මුරපදය වැරදියි.',
+    'throttle' => 'පිවිසුම් උත්සාහයන් වැඩියි. කරුණාකර මිනිත්තු :minutes කින් නැවත උත්සාහ කරන්න.',
 
 );

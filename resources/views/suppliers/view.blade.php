@@ -114,6 +114,7 @@
               <table
                       data-cookie-id-table="suppliersAssetsTable"
                       data-columns="{{ \App\Presenters\AssetPresenter::dataTableLayout() }}"
+                      data-show-columns-search="true"
                       data-id-table="suppliersAssetsTable"
                       data-show-footer="true"
                       data-side-pagination="server"

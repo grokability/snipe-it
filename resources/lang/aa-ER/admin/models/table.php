@@ -11,7 +11,6 @@ return array(
     'title'					=> 'crwdns665:0crwdne665:0',
     'update'				=> 'crwdns666:0crwdne666:0',
     'view'					=> 'crwdns667:0crwdne667:0',
-    'update'				=> 'crwdns666:0crwdne666:0',
-    'clone'				=> 'crwdns669:0crwdne669:0',
-    'edit'				=> 'crwdns670:0crwdne670:0',
+    'clone'				    => 'crwdns669:0crwdne669:0',
+    'edit'				    => 'crwdns670:0crwdne670:0',
 );

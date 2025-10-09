@@ -13,9 +13,9 @@ return array(
     |
     */
 
-    "password" => "Passwords must be six characters and match the confirmation.",
-    "user"     => "Username or email address is incorrect",
-    "token"    => 'This password reset token is invalid or expired, or does not match the username provided.',
-    'sent'	   => 'If a matching user with a valid email address exists in our system, a password recovery email has been sent.',
+    "password" => "මුරපදය අක්ෂර හයකින් යුක්ත විය යුතු අතර තහවුරු කිරීමට අනුරූප විය යුතුය.",
+    "user"     => "පරිශීලක නාමය හෝ විද්‍යුත් තැපැල් ලිපිනය වැරදියි",
+    "token"    => 'මෙම මුරපද යළි පිහිටුවීමේ ටෝකනය අවලංගු වී හෝ කල්ඉකුත් වී ඇත, නැතහොත් සපයා ඇති පරිශීලක නාමයට නොගැලපේ.',
+    'sent'	   => 'වලංගු විද්‍යුත් තැපැල් ලිපිනයක් සහිත ගැලපෙන පරිශීලකයෙකු අපගේ පද්ධතිය තුළ සිටී නම්, මුරපද ප්‍රතිසාධන විද්‍යුත් තැපෑලක් යවා ඇත.',
 
 );

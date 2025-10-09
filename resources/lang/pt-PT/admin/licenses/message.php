@@ -46,11 +46,12 @@ return array(
         'not_enough_seats' => 'Não há assentos de licença suficientes disponíveis para o pagamento',
         'mismatch' => 'The license seat provided does not match the license',
         'unavailable' => 'This seat is not available for checkout.',
+        'license_is_inactive' => 'This license is expired or terminated.',
     ),
 
     'checkin' => array(
         'error'   => 'Ocorreu um problema ao devolver esta licença. Por favor, tente novamente.',
-        'not_reassignable' => 'License not reassignable',
+        'not_reassignable' => 'Seat has been used',
         'success' => 'A licença foi devolvida com sucesso'
     ),
 

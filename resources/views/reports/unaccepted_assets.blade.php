@@ -40,6 +40,7 @@
                 data-side-pagination="client"
                 data-sort-order="asc"
                 data-sort-name="created_at"
+                data-advanced-search="false"
                 id="unacceptedAssetsReport"
                 class="table table-striped snipe-table"
                 data-export-options='{

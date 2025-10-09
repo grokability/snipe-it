@@ -44,6 +44,8 @@ return [
     'redirect_to_checked_out_to'   => '跳转到已签出者',
     'select_statustype'	=> '选择状态类型',
     'serial'			=> '序列号',
+    'serial_required'	=> 'Asset :number 需要序列号',
+    'serial_required_post_model_update'	=> ':asset_model 已更新，需要序列号。请为此资产添加序列号。',
     'status'			=> '状态',
     'tag'				=> '资产标签',
     'update'			=> '更新资产',

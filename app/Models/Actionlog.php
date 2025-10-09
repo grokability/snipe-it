@@ -493,6 +493,10 @@ class Actionlog extends SnipeModel
             return 'private_uploads/eula-pdfs/'.$this->filename;
         }
 
+        if ($this->action_type == 'audit')  {
+            return 'private_uploads/audits/'.$this->filename;
+        }
+
         switch ($this->item_type) {
         case Accessory::class:
             return 'private_uploads/accessories/'.$this->filename;

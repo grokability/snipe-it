@@ -44,6 +44,8 @@ return [
     'redirect_to_checked_out_to'   => 'Aller aux attributions',
     'select_statustype'	=> 'Choisissez le type de statut',
     'serial'			=> 'Série ',
+    'serial_required'	=> 'Asset :number requires a serial number',
+    'serial_required_post_model_update'	=> ':asset_model have been updated to require a serial number. Please add a serial number for this asset.',
     'status'			=> 'Statut',
     'tag'				=> 'Numéro d\'inventaire',
     'update'			=> 'Mise à jour de l\'actif',

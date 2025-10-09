@@ -3,12 +3,13 @@
 return array(
 
     'does_not_exist' => 'Ang lokasyon ay hindi umiiral.',
-    'assoc_users'    => 'This location is not currently deletable because it is the location of record for at least one asset or user, has assets assigned to it, or is the parent location of another location. Please update your records to no longer reference this location and try again ',
+    'assoc_users'    => 'This location is not currently deletable because it is the location of record for at least one item or user, has assets assigned to it, or is the parent location of another location. Please update your records to no longer reference this location and try again ',
     'assoc_assets'	 => 'Ang lokasyong ito ay kasalukuyang naiugnay sa hindi bumaba sa isang asset at hindi maaaring mai-delete. Mangyaring i-update ang iyong mga asset upang hindi na magreperens sa lokasyong ito at paki-subok muli. ',
     'assoc_child_loc'	 => 'Ang lokasyong ito ay kasalukuyang pinagmumulan sa hindi bumaba sa lokasyon isang bata at hindi maaaring mai-delete. Mangyaring i-update ang iyong mga lokasyon upang hindi na magreperens sa lokasyong ito at paki-subok muli. ',
     'assigned_assets' => 'Assigned Assets',
     'current_location' => 'Current Location',
     'open_map' => 'Buksan sa :map_provider_icon Maps',
+    'deleted_warning' => 'This location has been deleted. Please restore it before attempting to make any changes.',
 
 
     'create' => array(

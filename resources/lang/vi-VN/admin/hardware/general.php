@@ -22,6 +22,8 @@ return [
     'requested'				    => 'Yêu cầu',
     'not_requestable'           => 'Không cho phép đề xuất',
     'requestable_status_warning' => 'Không thay đổi trạng thái yêu cầu',
+    'require_serial'       => 'Require Serial Number',
+    'require_serial_help'       => 'A serial number will be required when creating a new asset of this model.',
     'restore'  					=> 'Phục hồi tài sản',
     'pending'  					=> 'Đang chờ',
     'undeployable'  			=> 'Không cho phép cấp phát',

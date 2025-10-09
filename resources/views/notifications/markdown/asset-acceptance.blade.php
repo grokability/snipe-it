@@ -6,6 +6,9 @@
 @component('mail::table')
 |        |          |
 | ------------- | ------------- |
+@if (isset($item_name))
+| **{{ trans('general.name') }}** | {{ $item_name }} |
+@endif
 | **{{ trans('mail.user') }}** | {{ $assigned_to }} |
 @if (isset($user->location))
 | **{{ trans('general.location') }}** | {{ $user->location->name }} |

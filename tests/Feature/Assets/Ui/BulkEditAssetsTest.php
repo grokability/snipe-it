@@ -29,6 +29,25 @@ class BulkEditAssetsTest extends TestCase
         ])->assertStatus(200);
     }
 
+    public function test_handles_model_being_deleted()
+    {
+        $this->withoutExceptionHandling();
+
+        $user = User::factory()->viewAssets()->editAssets()->create();
+        $assets = Asset::factory()->count(2)->create();
+
+        $assets->first()->model->forceDelete();
+
+        $id_array = $assets->pluck('id')->toArray();
+
+        $this->actingAs($user)->post('/hardware/bulkedit', [
+            'ids' => $id_array,
+            'order' => 'asc',
+            'bulk_actions' => 'edit',
+            'sort' => 'id'
+        ])->assertStatus(200);
+    }
+
     public function test_standard_user_cannot_access_page()
     {
         $user = User::factory()->create();

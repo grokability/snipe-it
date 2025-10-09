@@ -11,7 +11,6 @@ return array(
     'title'					=> 'Model aset',
     'update'				=> 'Perbarui model aset',
     'view'					=> 'Lihat model aset',
-    'update'				=> 'Perbarui model aset',
-    'clone'				=> 'Gandakan model',
-    'edit'				=> 'Ubah model',
+    'clone'				    => 'Gandakan model',
+    'edit'				    => 'Ubah model',
 );

@@ -24,6 +24,7 @@
                         data-sort-name="created_at"
                         data-show-footer="true"
                         id="depreciationReport"
+                        data-advanced-search="false"
                         data-url="{{ route('api.depreciation-report.index') }}"
                         data-mobile-responsive="true"
                         {{-- data-toggle="table" --}}

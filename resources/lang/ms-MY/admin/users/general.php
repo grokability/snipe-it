@@ -24,7 +24,6 @@ return [
     'auto_assign_label' => 'Include this user when auto-assigning eligible licenses',
     'auto_assign_help'  => 'Skip this user in auto assignment of licenses',
     'software_user'     => 'Perisian diagihkan kepada :nama',
-    'send_email_help'   => 'Anda mesti memberikan alamat e-mel untuk pengguna ini menghantar bukti kelayakan kepada mereka. Bukti kelayakan e-mel hanya boleh dilakukan pada penciptaan pengguna. Kata laluan disimpan dalam cincang sehala dan tidak boleh diambil semula setelah disimpan.',
     'view_user'         => 'Papar Pengguna :nama',
     'usercsv'           => 'Fail CSV',
     'two_factor_admin_optin_help' => 'Tetapan admin semasa anda membenarkan penguatkuasaan selektif pengesahan dua faktor.',

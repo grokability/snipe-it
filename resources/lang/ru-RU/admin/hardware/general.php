@@ -22,6 +22,8 @@ return [
     'requested'				    => 'Запрошенное',
     'not_requestable'           => 'Не подлежит запросу',
     'requestable_status_warning' => 'Не изменять запрашиваемый статус',
+    'require_serial'       => 'Require Serial Number',
+    'require_serial_help'       => 'A serial number will be required when creating a new asset of this model.',
     'restore'  					=> 'Восстановить актив',
     'pending'  					=> 'Ожидание',
     'undeployable'  			=> 'Выданные',

@@ -4,7 +4,7 @@ return array(
     'asset_categories' 					=> '資產類別',
     'category_name'  					=> '類別名稱',
     'checkin_email'                     => '在借出/繳回時發送郵件給使用者。',
-    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
+    'email_to_initiator'                => '在用戶接受或拒絕繳回時發送郵件給您。',
     'checkin_email_notification'        => '在借出/繳回時該使用者會發送郵件。',
     'clone'                             => '複製類別',
     'create'  							=> '新建類別',

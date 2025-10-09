@@ -92,7 +92,7 @@ class CategoryPresenter extends Presenter
                 'formatter' => 'usersLinkObjFormatter',
             ], [
                 'field' => 'created_at',
-                'searchable' => true,
+                'searchable' => false,
                 'sortable' => true,
                 'switchable' => true,
                 'title' => trans('general.created_at'),
@@ -100,7 +100,7 @@ class CategoryPresenter extends Presenter
                 'formatter' => 'dateDisplayFormatter',
             ], [
                 'field' => 'updated_at',
-                'searchable' => true,
+                'searchable' => false,
                 'sortable' => true,
                 'switchable' => true,
                 'title' => trans('general.updated_at'),

@@ -46,11 +46,12 @@ return array(
         'not_enough_seats' => 'Nema dovoljno dostupnih licenci za zaduživanje',
         'mismatch' => 'Dostavljeno mesto licence se ne poklapa sa licencom',
         'unavailable' => 'Ovo mesto nije dostupno za zaduživanje.',
+        'license_is_inactive' => 'Licenca je istekla ili je otkazana.',
     ),
 
     'checkin' => array(
         'error'   => 'Došlo je do problema prilikom provere licence. Molim pokušajte ponovo.',
-        'not_reassignable' => 'Licenca nije premestiva',
+        'not_reassignable' => 'Mesto je iskorišćeno',
         'success' => 'Licenca je uspešno proverena'
     ),
 

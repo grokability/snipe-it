@@ -207,6 +207,13 @@
     {{ Helper::formatCurrencyOutput($component->purchase_cost) }} </div>
     @endif
 
+    @if ($component->purchase_cost)
+        <div class="col-md-12" style="padding-bottom: 5px;"><strong>{{ trans('general.total_cost') }}:</strong>
+            {{ $snipeSettings->default_currency }}
+
+            {{ Helper::formatCurrencyOutput($component->totalCostSum()) }} </div>
+    @endif
+
     @if ($component->order_number)
     <div class="col-md-12" style="padding-bottom: 5px;"><strong>{{ trans('general.order_number') }}:</strong>
     {{ $component->order_number }} </div>

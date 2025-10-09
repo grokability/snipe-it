@@ -9,6 +9,7 @@ return array(
     'assigned_assets' => '已分配的资产',
     'current_location' => '当前位置',
     'open_map' => '在 :map_provider_icon 地图中打开',
+    'deleted_warning' => '此位置已被删除。请在尝试做更改之前将其还原。',
 
 
     'create' => array(

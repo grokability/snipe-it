@@ -2,7 +2,7 @@
 
 return [
     'about_asset_depreciations'  			=> 'Thông tin về khấu hao tài sản',
-    'about_depreciations'  					=> 'Bạn có thể thiết lập các loại khấu hao để khấu hao tài sản dựa trên straight-line khấu hao.',
+    'about_depreciations'  					=> 'You can set up asset depreciations to depreciate assets based on linear (straight-line), Half Year applied with condition, or Half Year always applied.',
     'asset_depreciations'  					=> 'Khấu hao tài sản',
     'create'  					            => 'Tạo khấu hao',
     'depreciation_name'  					=> 'Tên khấu hao',

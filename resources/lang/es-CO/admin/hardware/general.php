@@ -22,6 +22,8 @@ return [
     'requested'				    => 'Solicitado',
     'not_requestable'           => 'No puede solicitarse',
     'requestable_status_warning' => 'No cambiar el estado solicitable',
+    'require_serial'       => 'Require Serial Number',
+    'require_serial_help'       => 'A serial number will be required when creating a new asset of this model.',
     'restore'  					=> 'Restaurar activo',
     'pending'  					=> 'Pendiente',
     'undeployable'  			=> 'No utilizable',

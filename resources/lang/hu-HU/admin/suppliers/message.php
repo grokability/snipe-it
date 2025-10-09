@@ -22,7 +22,7 @@ return array(
         'success' => 'A szállító sikeresen törölve lett.',
         'assoc_assets'	 => 'Ez a beszállító jelenleg :asset_count eszközhöz van társítva és nem törölhető. Kérem frissítse az eszközeit hogy ne hivatkozzon erre a beszállítóra és próbálja újra. ',
         'assoc_licenses'	 => 'Ez a beszállító jelenleg :asset_count licenszhez van társítva és nem törölhető. Kérem frissítse az licenszeit hogy ne hivatkozzonak erre a beszállítóra és próbálja újra. ',
-        'assoc_maintenances'	 => 'This supplier is currently associated with :maintenances_count asset maintenances(s) and cannot be deleted. Please update your asset maintenances to no longer reference this supplier and try again. ',
+        'assoc_maintenances'	 => 'Ez a beszállító jelenleg :maintenances_count eszközkarbantartás(ok)hoz van társítva, ezért nem törölhető. Kérjük, frissítse az eszközkarbantartásokat úgy, hogy már ne hivatkozzanak erre a beszállítóra, majd próbálja újra ',
     )
 
 );

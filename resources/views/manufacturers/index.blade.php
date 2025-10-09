@@ -36,6 +36,7 @@
               data-columns="{{ \App\Presenters\ManufacturerPresenter::dataTableLayout() }}"
               data-cookie-id-table="manufacturersTable"
               data-id-table="manufacturersTable"
+              data-advanced-search="false"
               data-side-pagination="server"
               data-sort-order="asc"
               id="manufacturersTable"

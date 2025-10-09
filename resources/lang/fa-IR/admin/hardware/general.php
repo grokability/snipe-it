@@ -25,6 +25,8 @@ return [
     'not_requestable'           => 'غیر قابل درخواست
 ',
     'requestable_status_warning' => 'Do not change requestable status',
+    'require_serial'       => 'Require Serial Number',
+    'require_serial_help'       => 'A serial number will be required when creating a new asset of this model.',
     'restore'  					=> 'بازیابی دارایی',
     'pending'  					=> 'در انتظار',
     'undeployable'  			=> 'غیرقابل گسترش',

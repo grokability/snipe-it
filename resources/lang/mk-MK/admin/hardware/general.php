@@ -22,6 +22,8 @@ return [
     'requested'				    => 'Побарано',
     'not_requestable'           => 'Не е побарливо',
     'requestable_status_warning' => 'Не менувајте го побарливиот статус ',
+    'require_serial'       => 'Require Serial Number',
+    'require_serial_help'       => 'A serial number will be required when creating a new asset of this model.',
     'restore'  					=> 'Врати основно средство',
     'pending'  					=> 'Во чекање',
     'undeployable'  			=> 'Нераспоредливи',

@@ -1,16 +1,16 @@
 <?php
 
 return [
-    'about_templates' => 'About Saved Templates',
-    'saving_templates_description' => 'Select your options, then enter the name of your template in the box above and click the \'Save Template\' button. Use the dropdown to select a previously saved template.',
+    'about_templates' => 'Mentett sablonok',
+    'saving_templates_description' => 'Állítsa be a kívánt opciókat, adja meg a sablon nevét, majd kattintson a \'Sablon mentése\' gombra. A legördülőből választhat korábban mentett sablont.',
     'create'  => [
         'success' => 'A sablon sikeresen mentve',
     ],
     'update' => [
-        'success' => 'Template updated successfully',
+        'success' => 'A sablon sikeresen frissítve',
     ],
     'delete' => [
-        'success' => 'Template deleted',
-        'no_delete_permission' => 'Template does not exist or you do not have permission to delete it.',
+        'success' => 'A sablon törölve',
+        'no_delete_permission' => 'A sablon nem található, vagy nincs jogosultsága törölni.',
     ],
 ];

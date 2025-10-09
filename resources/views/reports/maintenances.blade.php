@@ -19,6 +19,7 @@
                     data-side-pagination="server"
                     data-sort-order="asc"
                     id="maintenancesReport"
+                    data-advanced-search="false"
                     data-url="{{route('api.maintenances.index') }}"
                     class="table table-striped snipe-table"
                     data-export-options='{

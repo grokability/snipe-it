@@ -24,7 +24,6 @@ return [
     'auto_assign_label' => 'Inclua este usuário quando atribuir licenças elegíveis automaticamente',
     'auto_assign_help'  => 'Ignorar este usuário em atribuição automática de licenças',
     'software_user'     => 'Disponibilização de software para :name',
-    'send_email_help'   => 'Você deve fornecer um endereço de e-mail para este usuário enviar credenciais. As credenciais de e-mail só podem ser feitas na criação do usuário. As senhas são armazenadas em hash unidirecional e não podem ser recuperadas uma vez salva.',
     'view_user'         => 'Ver Usuário :name',
     'usercsv'           => 'Arquivo CSV',
     'two_factor_admin_optin_help' => 'As configurações de admin atuais permitem a aplicação seletiva de autenticação de dois passos.  ',

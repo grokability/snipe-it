@@ -46,11 +46,12 @@ return array(
         'not_enough_seats' => 'Turimų laisvų vietų nepakanka licencijos išdavimui',
         'mismatch' => 'Pateikta licencijos vieta nesutampa su licencija',
         'unavailable' => 'Šios licencijos negalima išduoti.',
+        'license_is_inactive' => 'This license is expired or terminated.',
     ),
 
     'checkin' => array(
         'error'   => 'Bandant paimti licenciją įvyko klaida. Bandykite dar kartą.',
-        'not_reassignable' => 'Ši licencija nėra perduodama',
+        'not_reassignable' => 'Vieta buvo panadota',
         'success' => 'Licencija paimta sėkmingai'
     ),
 

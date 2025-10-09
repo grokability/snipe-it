@@ -22,6 +22,8 @@ return [
     'requested'				    => 'Gofynnwyd amdano',
     'not_requestable'           => 'Ddim ar gael',
     'requestable_status_warning' => 'Do not change requestable status',
+    'require_serial'       => 'Require Serial Number',
+    'require_serial_help'       => 'A serial number will be required when creating a new asset of this model.',
     'restore'  					=> 'Adfer Ased',
     'pending'  					=> 'Yn disgwl',
     'undeployable'  			=> 'Dim ar gael',

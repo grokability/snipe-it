@@ -13,8 +13,8 @@ return array(
     |
     */
 
-    'previous' => '&laquo; Previous',
+    'previous' => '&laquo; පෙර',
 
-    'next'     => 'Next &raquo;',
+    'next'     => 'ඊළඟ &raquo;',
 
 );

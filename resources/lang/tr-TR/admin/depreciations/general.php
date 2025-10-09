@@ -2,7 +2,7 @@
 
 return [
     'about_asset_depreciations'  			=> 'Demirbaş Amortismanları Hakkında',
-    'about_depreciations'  					=> 'Demirbaş amortismanını sabit bir oran ile düşecek şekilde ayarlayabilirsiniz.',
+    'about_depreciations'  					=> 'Varlık amortismanlarını; doğrusal (normal amortisman), koşullu uygulanan Kıst Amortisman veya her zaman uygulanan Kıst Amortisman yöntemlerine göre ayarlayabilirsiniz.',
     'asset_depreciations'  					=> 'Demirbaş Amortismanları',
     'create'  					            => 'Değer Kaybı Oluştur',
     'depreciation_name'  					=> 'Amortisman Adı',

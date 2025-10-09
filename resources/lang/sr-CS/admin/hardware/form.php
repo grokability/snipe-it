@@ -44,6 +44,8 @@ return [
     'redirect_to_checked_out_to'   => 'Idi na zaduženo',
     'select_statustype'	=> 'Odaberite vrstu statusa',
     'serial'			=> 'Serial',
+    'serial_required'	=> 'Imovini :number je neophodan serijski broj',
+    'serial_required_post_model_update'	=> ':asset_model je izmenjen tako da je serijski broj obavezan. Molim vas dodajte serijski broj ovoj imovini.',
     'status'			=> 'Status',
     'tag'				=> 'Oznaka imovine',
     'update'			=> 'Ažuriranje imovine',

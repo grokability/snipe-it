@@ -24,7 +24,6 @@ return [
     'auto_assign_label' => '自動分配可用軟體授權時包含此使用者',
     'auto_assign_help'  => '自動分配可用軟體授權時跳過此使用者',
     'software_user'     => ':name 借出的軟體',
-    'send_email_help'   => '必須為此使用者提供一個電子郵件地址以傳送他們的憑證。只有在建立使用者時，才能夠傳送電子郵件憑證。密碼儲存在一個單向雜湊中，一旦儲存，就無法再取回。',
     'view_user'         => '檢視使用者： :name',
     'usercsv'           => 'CSV 檔',
     'two_factor_admin_optin_help' => '您當前的管理員設置允許使用雙因素身份驗證。',

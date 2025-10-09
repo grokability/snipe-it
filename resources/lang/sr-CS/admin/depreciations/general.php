@@ -2,7 +2,7 @@
 
 return [
     'about_asset_depreciations'  			=> 'O amortizacijama imovine',
-    'about_depreciations'  					=> 'Možete postaviti amortizaciju imovine na osnovu linearne amortizacije.',
+    'about_depreciations'  					=> 'Možete podesiti amortizaciju imovine kako bi amortizacija tekla linearno (prava linija), polugodišnju sa uslovima, ili polugodišnju koja se uvek primenjuje.',
     'asset_depreciations'  					=> 'Amortizacija imovine',
     'create'  					            => 'Kreiraj amortizaciju',
     'depreciation_name'  					=> 'Naziv amortizacije',

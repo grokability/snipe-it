@@ -2,7 +2,7 @@
 
 return [
     'about_asset_depreciations'  			=> 'Amdan Dibrisiant Asedau',
-    'about_depreciations'  					=> 'Cewch creu mathau o dibrisiant i dibrisio asedau yn seiliedig ar dibrisiant llinell syth.',
+    'about_depreciations'  					=> 'You can set up asset depreciations to depreciate assets based on linear (straight-line), Half Year applied with condition, or Half Year always applied.',
     'asset_depreciations'  					=> 'Dibrisiant Asedau',
     'create'  					            => 'Creu Dibrisiant',
     'depreciation_name'  					=> 'Enw Dibrisiant',

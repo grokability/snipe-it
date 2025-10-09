@@ -45,15 +45,39 @@ class ComponentsController extends Controller
                 'qty',
                 'image',
                 'notes',
+                // These are *relationships* so we wouldn't normally include them in this array,
+                // since they would normally create a `column not found` error,
+                // BUT we account for them in the ordering switch down at the end of this method
+                // DO NOT ADD ANYTHING TO THIS LIST WITHOUT CHECKING THE ORDERING SWITCH BELOW!
+                'company',
+                'location',
+                'category',
+                'manufacturer',
+                'supplier',
+
             ];
 
         $components = Component::select('components.*')
             ->with('company', 'location', 'category', 'assets', 'supplier', 'adminuser', 'manufacturer', 'uncontrainedAssets')
             ->withSum('uncontrainedAssets', 'components_assets.assigned_qty');
 
-        if ($request->filled('search')) {
-            $components = $components->TextSearch($request->input('search'));
+        $filter = [];
+
+        if ($request->filled('filter')) {
+            $filter = json_decode($request->input('filter'), true);
+
+            $filter = array_filter($filter, function ($key) use ($allowed_columns) {
+                return in_array($key, $allowed_columns);
+            }, ARRAY_FILTER_USE_KEY);
+
         }
+
+        if ((! is_null($filter)) && (count($filter)) > 0) {
+            $components->ByFilter($filter);
+        } elseif ($request->filled('search')) {
+            $components->TextSearch($request->input('search'));
+        }
+
 
         if ($request->filled('name')) {
             $components->where('name', '=', $request->input('name'));

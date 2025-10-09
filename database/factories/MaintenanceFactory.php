@@ -31,6 +31,7 @@ class MaintenanceFactory extends Factory
             'start_date' => $this->faker->date(),
             'is_warranty' => $this->faker->boolean(),
             'notes' => $this->faker->paragraph(),
+            'url' => $this->faker->url(),
         ];
     }
 }

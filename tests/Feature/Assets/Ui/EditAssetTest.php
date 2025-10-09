@@ -75,7 +75,10 @@ class EditAssetTest extends TestCase
         $user = User::factory()->create();
         $deployable_status = Statuslabel::factory()->rtd()->create();
         $achived_status = Statuslabel::factory()->archived()->create();
-        $asset = Asset::factory()->assignedToUser($user)->create(['status_id' => $deployable_status->id]);
+        $asset = Asset::factory()->assignedToUser($user)->create([
+            'status_id' => $deployable_status->id,
+            'last_checkin' => null,
+        ]);
         $this->assertTrue($asset->assignedTo->is($user));
 
         $currentTimestamp = now();
@@ -96,6 +99,7 @@ class EditAssetTest extends TestCase
         $this->assertNull($asset->assigned_to);
         $this->assertNull($asset->assigned_type);
         $this->assertEquals($achived_status->id, $asset->status_id);
+        $this->assertNotNull($asset->last_checkin);
 
         Event::assertDispatched(function (CheckoutableCheckedIn $event) use ($currentTimestamp) {
             return (int) Carbon::parse($event->action_date)->diffInSeconds($currentTimestamp, true) < 2;
@@ -125,4 +129,32 @@ class EditAssetTest extends TestCase
         $this->assertEquals($currentLocation->id, $asset->location_id);
     }
 
+
+    public function test_handles_model_being_deleted()
+    {
+        $this->withoutExceptionHandling();
+
+        $newStatus = StatusLabel::factory()->create();
+
+        $asset = Asset::factory()->create();
+
+        $asset->model()->forceDelete();
+
+        $this->actingAs(User::factory()->viewAssets()->editAssets()->create())
+            ->from(route('hardware.edit', $asset))
+            ->put(route('hardware.update', $asset), [
+                'redirect_option' => 'index',
+                'purchase_date' => '2025-08-30',
+                'name' => 'New name',
+                'asset_tags' => 'New Asset Tag',
+                'status_id' => $newStatus->id,
+                // triggers potential issue in AssetObserver's saving method
+                'model_id' => AssetModel::factory()->create()->id,
+            ]);
+
+        $this->assertDatabaseHas('assets', [
+            'id' => $asset->id,
+            'status_id' => $newStatus->id,
+        ]);
+    }
 }

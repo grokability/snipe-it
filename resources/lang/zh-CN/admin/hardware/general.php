@@ -22,6 +22,8 @@ return [
     'requested'				    => '已申请',
     'not_requestable'           => '不可申领',
     'requestable_status_warning' => '不可更改申领状态',
+    'require_serial'       => '需要序列号',
+    'require_serial_help'       => '创建此型号的新资产时需要序列号。',
     'restore'  					=> '还原资产',
     'pending'  					=> '待处理',
     'undeployable'  			=> '不可部署',

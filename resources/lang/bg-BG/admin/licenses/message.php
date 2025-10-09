@@ -46,11 +46,12 @@ return array(
         'not_enough_seats' => 'Няма достатъчно лицензи за изписване',
         'mismatch' => 'Броя лицензни места не отговаря на броя лицензи',
         'unavailable' => 'Този лиценз за работно място не е наличен за изписване.',
+        'license_is_inactive' => 'This license is expired or terminated.',
     ),
 
     'checkin' => array(
         'error'   => 'Възникна проблем при вписването на лиценза. Моля, опитайте отново.',
-        'not_reassignable' => 'Лиценза не може да се прехвърля',
+        'not_reassignable' => 'Seat has been used',
         'success' => 'Лицензът е вписан'
     ),
 

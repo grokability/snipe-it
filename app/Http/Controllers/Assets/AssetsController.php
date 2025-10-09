@@ -363,7 +363,7 @@ class AssetsController extends Controller
         $asset->purchase_cost = $request->input('purchase_cost', null);
         $asset->purchase_date = $request->input('purchase_date', null);
         $asset->next_audit_date = $request->input('next_audit_date', null);
-        if ($request->filled('purchase_date') && !$request->filled('asset_eol_date') && ($asset->model->eol > 0)) {
+        if ($request->filled('purchase_date') && !$request->filled('asset_eol_date') && ($asset->model?->eol > 0)) {
             $asset->purchase_date = $request->input('purchase_date', null); 
             $asset->asset_eol_date = Carbon::parse($request->input('purchase_date'))->addMonths($asset->model->eol)->format('Y-m-d');
             $asset->eol_explicit = false;
@@ -379,7 +379,7 @@ class AssetsController extends Controller
            } else {
                $asset->eol_explicit = true;
            }
-        } elseif (!$request->filled('asset_eol_date') && (($asset->model->eol) == 0)) {
+        } elseif (!$request->filled('asset_eol_date') && (($asset->model?->eol) == 0)) {
            $asset->asset_eol_date = null;
 		   $asset->eol_explicit = false;
         }
@@ -398,6 +398,7 @@ class AssetsController extends Controller
             $asset->assigned_to = null;
             $asset->assigned_type = null;
             $asset->accepted = null;
+            $asset->last_checkin = now();
             event(new CheckoutableCheckedIn($asset, $target, auth()->user(), 'Checkin on asset update with '.$status->getStatuslabelType().' status', date('Y-m-d H:i:s'), $originalValues));
         }
 

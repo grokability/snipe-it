@@ -60,19 +60,57 @@ class SendExpirationAlerts extends Command
                 Mail::to($recipients)->send(new ExpiringAssetsMail($assets, $alert_interval));
 
                 $this->table(
-                    ['ID', 'Tag', 'Model', 'Model Number', 'EOL', 'EOL Months', 'Warranty Expires', 'Warranty Months'],
-                    $assets->map(fn($item) => ['ID' => $item->id, 'Tag' => $item->asset_tag, 'Model' => $item->model->name, 'Model Number' => $item->model->model_number, 'EOL' => $item->asset_eol_date, 'EOL Months' => $item->model->eol,  'Warranty Expires' => $item->warranty_expires,  'Warranty Months' => $item->warranty_months])
-                );
+                    [
+                        trans('general.id'),
+                        trans('admin/hardware/form.tag'),
+                        trans('admin/hardware/form.model'),
+                        trans('general.model_no'),
+                        trans('general.purchase_date'),
+                        trans('admin/hardware/form.eol_rate'),
+                        trans('admin/hardware/form.eol_date'),
+                        trans('admin/hardware/form.warranty_expires'),
+                    ],
+                    $assets->map(fn($item) =>
+                    [
+                        trans('general.id')  => $item->id,
+                        trans('admin/hardware/form.tag') => $item->asset_tag,
+                        trans('admin/hardware/form.model') => $item->model->name,
+                        trans('general.model_no') => $item->model->model_number,
+                        trans('general.purchase_date') => $item->purchase_date_formatted,
+                        trans('admin/hardware/form.eol_rate')  => $item->model->eol,
+                        trans('admin/hardware/form.eol_date') => $item->eol_date ? $item->eol_formatted_date .' ('.$item->eol_diff_for_humans.')' : '',
+                        trans('admin/hardware/form.warranty_expires') => $item->warranty_expires ? $item->warranty_expires_formatted_date .' ('.$item->warranty_expires_diff_for_humans.')' : '',
+                   ])
+                   );
             }
 
             // Expiring licenses
-            $licenses = License::getExpiringLicenses($alert_interval);
+            $licenses = License::query()->ExpiringLicenses($alert_interval)
+                ->with('manufacturer','category')
+                ->orderBy('expiration_date', 'ASC')
+                ->orderBy('termination_date', 'ASC')
+                ->get();
             if ($licenses->count() > 0) {
                 Mail::to($recipients)->send(new ExpiringLicenseMail($licenses, $alert_interval));
 
                 $this->table(
-                    ['ID', 'Name', 'Expires', 'Termination Date'],
-                    $licenses->map(fn($item) => ['ID' => $item->id, 'Name' => $item->name, 'Expires' => $item->expiration_date, 'Termination Date' => $item->termination_date])
+                    [
+                        trans('general.id'),
+                        trans('general.name'),
+                        trans('general.purchase_date'),
+                        trans('admin/licenses/form.expiration'),
+                        trans('mail.expires'),
+                        trans('admin/licenses/form.termination_date'),
+                        trans('mail.terminates')],
+                    $licenses->map(fn($item) => [
+                        trans('general.id') => $item->id,
+                        trans('general.name') => $item->name,
+                        trans('general.purchase_date') => $item->purchase_date_formatted,
+                        trans('admin/licenses/form.expiration') => $item->expires_formatted_date,
+                        trans('mail.expires') => $item->expires_diff_for_humans,
+                        trans('admin/licenses/form.termination_date') => $item->terminates_formatted_date,
+                        trans('mail.terminates') => $item->terminates_diff_for_humans
+                    ])
                 );
             }
 

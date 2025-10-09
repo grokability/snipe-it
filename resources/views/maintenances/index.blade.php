@@ -20,6 +20,7 @@
               data-cookie-id-table="maintenancesTable"
               data-side-pagination="server"
               data-show-footer="true"
+              data-advanced-search="false"
               id="maintenancesTable"
               data-buttons="maintenanceButtons"
               class="table table-striped snipe-table"

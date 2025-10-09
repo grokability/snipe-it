@@ -3,12 +3,13 @@
 return array(
 
     'does_not_exist' => 'Lokalita neexistuje.',
-    'assoc_users'    => 'Túto lokalitu nie je možné odstrániť nakoľko je využívaná pri minimálne jednom majetku alebo užívateľovi, má priradené majetky alebo je nadradenou lokalitou inej lokality. Prosím upravte ostatné záznamy, aby nevyužívali túto lokalitu a skúste znovu ',
+    'assoc_users'    => 'This location is not currently deletable because it is the location of record for at least one item or user, has assets assigned to it, or is the parent location of another location. Please update your records to no longer reference this location and try again ',
     'assoc_assets'	 => 'Táto lokalita je priradená minimálne jednému majetku, preto nemôže byť odstránená. Prosím odstráňte referenciu na túto lokalitu z príslušného majetku a skúste znovu. ',
     'assoc_child_loc'	 => 'Táto lokalita je nadradenou minimálne jednej podradenej lokalite, preto nemôže byť odstránená. Prosím odstráňte referenciu s príslušnej lokality a skúste znovu. ',
     'assigned_assets' => 'Priradené položky majetku',
     'current_location' => 'Aktuálna lokalita',
     'open_map' => 'Otvoriť v :map_provider_icon mapách',
+    'deleted_warning' => 'This location has been deleted. Please restore it before attempting to make any changes.',
 
 
     'create' => array(

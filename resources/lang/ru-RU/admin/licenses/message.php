@@ -46,11 +46,12 @@ return array(
         'not_enough_seats' => 'Недостаточно мест лицензии для выдачи',
         'mismatch' => 'Предоставленное место лицензии не соответствует лицензии',
         'unavailable' => 'Место недоступно для выдачи.',
+        'license_is_inactive' => 'This license is expired or terminated.',
     ),
 
     'checkin' => array(
         'error'   => 'При возврате лицензии произошла проблема. Попробуйте снова.',
-        'not_reassignable' => 'Лицензия не переназначаема',
+        'not_reassignable' => 'Seat has been used',
         'success' => 'Лицензия возвращена'
     ),
 

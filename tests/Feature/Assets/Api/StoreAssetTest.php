@@ -11,6 +11,7 @@ use App\Models\Statuslabel;
 use App\Models\Supplier;
 use App\Models\User;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Testing\Fluent\AssertableJson;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
@@ -830,5 +831,29 @@ class StoreAssetTest extends TestCase
 
         $asset = Asset::findOrFail($response['payload']['id']);
         $this->assertEquals('This is encrypted field', Crypt::decrypt($asset->{$field->db_column_name()}));
+    }
+
+    public function testBase64AssetImages()
+    {
+        $status = Statuslabel::factory()->readyToDeploy()->create();
+        $model = AssetModel::factory()->create();
+        $superuser = User::factory()->superuser()->create();
+
+        $response = $this->actingAsForApi($superuser)
+            ->postJson(route('api.assets.store'), [
+                'model_id' => $model->id,
+                'status_id' => $status->id,
+                'asset_tag' => '1234',
+                'image' => 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAZAAAAEsAQMAAADXeXeBAAAABlBMVEX+AAD///+KQee0AAAACXBIWXMAAAsSAAALEgHS3X78AAAAB3RJTUUH5QQbCAoNcoiTQAAAACZJREFUaN7twTEBAAAAwqD1T20JT6AAAAAAAAAAAAAAAAAAAICnATvEAAEnf54JAAAAAElFTkSuQmCC'
+            ])
+            ->assertStatusMessageIs('success')
+            ->assertOk()
+            ->json();
+
+        $asset = Asset::findOrFail($response['payload']['id']);
+        $this->assertEquals($asset->asset_tag, '1234');
+        $image_data = Storage::disk('public')->get(app('assets_upload_path') . e($asset->image));
+        //$this->assertEquals('3d67fb99a0b6926e350f7b71397525d7a6b936c1', sha1($image_data)); //this doesn't work because the image gets resized - use the resized hash instead
+        $this->assertEquals('db2e13ba04318c99058ca429d67777322f48566b', sha1($image_data));
     }
 }

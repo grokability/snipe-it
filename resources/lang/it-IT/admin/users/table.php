@@ -35,7 +35,7 @@ return array(
     'total_assets_cost'     => "Costo Totale Beni",
     'updateuser' 			=> 'Aggiornamento utente',
     'username' 				=> 'Username',
-    'display_name' 			=> 'Display Name',
+    'display_name' 			=> 'Nome Visualizzato',
 	'user_deleted_text' 	=> 'Questo utente è stato contrassegnato come eliminato.',
     'username_note' 		=> '(Questo è usato solo per Active Directory vincolante, non per il login.)',
     'cloneuser'             => 'Clona Utente',

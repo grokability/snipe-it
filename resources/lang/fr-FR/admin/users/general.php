@@ -24,7 +24,6 @@ return [
     'auto_assign_label' => 'Inclure cet utilisateur lors de l\'affectation automatique des licences éligibles',
     'auto_assign_help'  => 'Ignorer cet utilisateur dans l\'affectation automatique des licences',
     'software_user'     => 'Logiciels associés avec :name',
-    'send_email_help'   => 'Vous devez fournir une adresse e-mail pour que cet utilisateur puisse recevoir ses identifiants. Les envois d\'identifiants par email ne peuvent être faits que lors de la création de l\'utilisateur. Les mots de passe sont stockés dans un hachage à sens unique et ne peuvent pas être récupérés une fois enregistrés.',
     'view_user'         => 'Voir l\'utilisateur :name',
     'usercsv'           => 'Fichier CSV',
     'two_factor_admin_optin_help' => 'Vos paramètres administratifs actuels permettent une application sélective de l\'authentification à deux facteurs.  ',

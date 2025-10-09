@@ -11,7 +11,6 @@ return array(
     'title'					=> 'Gegenstands Modelle',
     'update'				=> 'Gegenstands Modell aktualisieren',
     'view'					=> 'Gegenstands Modell ansehen',
-    'update'				=> 'Gegenstands Modell aktualisieren',
-    'clone'				=> 'Modell duplizieren',
-    'edit'				=> 'Modell bearbeiten',
+    'clone'				    => 'Modell duplizieren',
+    'edit'				    => 'Modell bearbeiten',
 );

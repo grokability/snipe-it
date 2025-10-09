@@ -38,6 +38,7 @@ class EditMaintenanceTest extends TestCase
                 'image' => UploadedFile::fake()->image('test_image.png'),
                 'cost' => '100.99',
                 'notes' => 'A note',
+                'url' => 'https://snipeitapp.com',
             ])
             ->assertSessionHasNoErrors()
             ->assertRedirect(route('maintenances.index'));
@@ -58,6 +59,7 @@ class EditMaintenanceTest extends TestCase
             'completion_date' => '2021-01-10',
             'asset_maintenance_time' => '9',
             'notes' => 'A note',
+            'url' => 'https://snipeitapp.com',
             'cost' => '100.99',
         ]);
 

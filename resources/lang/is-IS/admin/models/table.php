@@ -11,7 +11,6 @@ return array(
     'title'					=> 'Tegundir',
     'update'				=> 'Uppfæra eignategund',
     'view'					=> 'Skoða eignategund',
-    'update'				=> 'Uppfæra eignategund',
-    'clone'				=> 'Klóna tegund',
-    'edit'				=> 'Breyta tegund',
+    'clone'				    => 'Klóna tegund',
+    'edit'				    => 'Breyta tegund',
 );

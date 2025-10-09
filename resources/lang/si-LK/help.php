@@ -13,13 +13,13 @@ return [
     |
     */
 
-    'more_info_title' => 'More Info',
+    'more_info_title' => 'වැඩි විස්තර',
 
-    'audit_help' => 'Checking this box will edit the asset record to reflect this new location. Leaving it unchecked will simply note the location in the audit log.<br><br>Note that if this asset is checked out, it will not change the location of the person, asset or location it is checked out to.',
+    'audit_help' => 'මෙම කොටුව සලකුණු කිරීමෙන් මෙම නව ස්ථානය පිළිබිඹු කිරීම සඳහා වත්කම් වාර්තාව සංස්කරණය කරනු ඇත. එය සලකුණු නොකර තැබීමෙන් විගණන ලොගයේ ස්ථානය සටහන් වනු ඇත.<br><br>මෙම වත්කම පරීක්ෂා කර ඇත්නම්, එය පරීක්ෂා කර ඇති පුද්ගලයාගේ, වත්කමේ හෝ ස්ථානයේ ස්ථානය වෙනස් නොකරන බව සලකන්න.',
 
-    'assets' => 'Assets are items tracked by serial number or asset tag.  They tend to be higher value items where identifying a specific item matters.',
+    'assets' => 'වත්කම් යනු අනුක්‍රමික අංකය හෝ වත්කම් ටැගය මගින් නිරීක්ෂණය කරන ලද අයිතම වේ. නිශ්චිත අයිතමයක් හඳුනා ගැනීම වැදගත් වන විට ඒවා ඉහළ වටිනාකමක් ඇති අයිතම වේ.',
 
-    'categories' => 'Categories help you organize your items. Some example categories might be &quot;Desktops&quot;, &quot;Laptops&quot;, &quot;Mobile Phones&quot;, &quot;Tablets&quot;, and so on, but you can use categories any way that makes sense for you.',
+    'categories' => 'කාණ්ඩ ඔබේ අයිතම සංවිධානය කිරීමට උපකාරී වේ. උදාහරණ කාණ්ඩ කිහිපයක් &quot;ඩෙස්ක්ටොප්&quot;, &quot;ලැප්ටොප්&quot;, &quot;ජංගම දුරකථන&quot;, &quot;ටැබ්ලට්&quot; යනාදිය විය හැකි නමුත්, ඔබට අර්ථවත් වන ඕනෑම ආකාරයකින් කාණ්ඩ භාවිතා කළ හැකිය.',
 
     'accessories' => 'Accessories are anything you issue to users but that do not have a serial number (or you do not care about tracking them uniquely). For example, computer mice or keyboards.',
 

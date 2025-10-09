@@ -22,6 +22,8 @@ return [
     'requested'				    => 'versoek',
     'not_requestable'           => 'Not Requestable',
     'requestable_status_warning' => 'Do not change requestable status',
+    'require_serial'       => 'Require Serial Number',
+    'require_serial_help'       => 'A serial number will be required when creating a new asset of this model.',
     'restore'  					=> 'Herstel bate',
     'pending'  					=> 'hangende',
     'undeployable'  			=> 'Undeployable',

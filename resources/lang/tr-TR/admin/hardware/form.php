@@ -44,6 +44,8 @@ return [
     'redirect_to_checked_out_to'   => 'Tıkla Çekilmişlere Git',
     'select_statustype'	=> 'Durum Seçiniz',
     'serial'			=> 'Seri No',
+    'serial_required'	=> 'Asset :number numaralı varlık için bir seri numarası gereklidir',
+    'serial_required_post_model_update'	=> ':asset_model, seri numarası gerektirecek şekilde güncellendi. Lütfen bu varlık için bir seri numarası ekleyin.',
     'status'			=> 'Durum',
     'tag'				=> 'Demirbaş Etiketi',
     'update'			=> 'Demirbaş Güncelle',

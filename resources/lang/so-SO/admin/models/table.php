@@ -11,7 +11,6 @@ return array(
     'title'					=> 'Qaababka Hantida',
     'update'				=> 'Cusbooneysii Qaabka Hantida',
     'view'					=> 'Soo bandhig Qaabka Hantida',
-    'update'				=> 'Cusbooneysii Qaabka Hantida',
-    'clone'				=> 'Qaabka Clone',
-    'edit'				=> 'Wax ka beddel Model',
+    'clone'				    => 'Qaabka Clone',
+    'edit'				    => 'Wax ka beddel Model',
 );

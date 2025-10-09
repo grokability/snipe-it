@@ -2,7 +2,7 @@
 
 return [
     'about_asset_depreciations'  			=> 'O amortizaci majetku',
-    'about_depreciations'  					=> 'Můžete nastavit amortizaci majetku pro jeho rovnoměrné odepisování.',
+    'about_depreciations'  					=> 'You can set up asset depreciations to depreciate assets based on linear (straight-line), Half Year applied with condition, or Half Year always applied.',
     'asset_depreciations'  					=> 'Amortizace majetku',
     'create'  					            => 'Vytvořit amortizaci',
     'depreciation_name'  					=> 'Jméno amortizace',

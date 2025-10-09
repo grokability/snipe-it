@@ -44,6 +44,8 @@ return [
     'redirect_to_checked_out_to'   => 'Ir para Checked Out para',
     'select_statustype'	=> 'Selecione o Tipo de Situação',
     'serial'			=> 'Serial',
+    'serial_required'	=> 'Asset :number requires a serial number',
+    'serial_required_post_model_update'	=> ':asset_model have been updated to require a serial number. Please add a serial number for this asset.',
     'status'			=> 'Situação',
     'tag'				=> 'Marcação do Ativo',
     'update'			=> 'Atualização do Ativo',

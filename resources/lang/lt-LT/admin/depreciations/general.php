@@ -2,7 +2,7 @@
 
 return [
     'about_asset_depreciations'  			=> 'Apie turto nusidėvėjimą',
-    'about_depreciations'  					=> 'Jūs galite nustatyti turto nusidėvėjimą pagal tiesinį nusidėvėjimo modelį.',
+    'about_depreciations'  					=> 'You can set up asset depreciations to depreciate assets based on linear (straight-line), Half Year applied with condition, or Half Year always applied.',
     'asset_depreciations'  					=> 'Turto nusidėvėjimas',
     'create'  					            => 'Sukurti nusidėvėjimą',
     'depreciation_name'  					=> 'Nusidėvėjimo pavadinimas',

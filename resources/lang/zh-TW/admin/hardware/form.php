@@ -44,6 +44,8 @@ return [
     'redirect_to_checked_out_to'   => 'Go to Checked Out to',
     'select_statustype'	=> '選擇狀態類型',
     'serial'			=> '序號',
+    'serial_required'	=> 'Asset :number requires a serial number',
+    'serial_required_post_model_update'	=> ':asset_model have been updated to require a serial number. Please add a serial number for this asset.',
     'status'			=> '狀態',
     'tag'				=> '資產標籤',
     'update'			=> '更新資產',

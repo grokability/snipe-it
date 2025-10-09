@@ -28,8 +28,6 @@ return [
     'auto_assign_label' => 'Include this user when auto-assigning eligible licenses',
     'auto_assign_help'  => 'Skip this user in auto assignment of licenses',
     'software_user'     => 'برنامه چک شد برای:',
-    'send_email_help'   => 'شما باید یک آدرس ایمیل برای این کاربر ارائه دهید تا اطلاعات کاربری خود را ارسال کند. ارسال اعتبار نامه ایمیل فقط با ایجاد کاربر امکان پذیر است. رمزهای عبور در یک هش یک طرفه ذخیره می شوند و پس از ذخیره نمی توان آنها را بازیابی کرد.
-',
     'view_user'         => 'نمایش کاربر :',
     'usercsv'           => 'فایل CSV',
     'two_factor_admin_optin_help' => 'تنظیمات مدیریت فعلی شما اجازه اجرای مجدد احراز هویت دو عامل را می دهد.',
