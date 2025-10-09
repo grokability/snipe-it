@@ -57,11 +57,14 @@
 <script type="module">
     import ApiService from '/js/dist/apiService.min.js';
     import FilterFormManager from '/js/dist/filterFormManager.min.js';
+    import FloatingButtons from  '/js/dist/floating-buttons.min.js';
+
     import { container } from '/js/dist/simpleDIContainer.min.js';
 
     // Add needed stuff into the di-container
     container.register("apiService", new ApiService);
     container.register("filterFormManager", new FilterFormManager);
+    container.register("floatingButtons", new FloatingButtons());
 
     class FilterUIController {
         constructor(tableElement) {
@@ -84,12 +87,14 @@ updateFilterWithPredefined(event, selectedId = null) {
         selectedId = event?.target?.value;
     }
 
+    const floatingButtons = container.resolve("floatingButtons");
+
     if (!selectedId) {
-        window.floatingButtons.disableEditDeleteButtons();
+        floatingButtons.disableEditDeleteButtons();
         return;
     }
 
-    window.floatingButtons.enableEditDeleteButtons();
+    floatingButtons.enableEditDeleteButtons();
     //setAdvancedSearchPanelFilterEnabledState(true);
 
     this.apiService.fetchPredefinedFilterData(selectedId)

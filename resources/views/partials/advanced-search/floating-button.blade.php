@@ -2,14 +2,6 @@
     @push('css')
         <link rel="stylesheet" href="{{ mix('css/dist/floating-buttons.min.css') }}">
     @endpush
-    @push('js')
-    <script type="module">
-            import FloatingButtons from  '/js/dist/floating-buttons.min.js';
-
-            const floatingButtonsInstance = new FloatingButtons();
-            window.floatingButtons = floatingButtonsInstance;
-    </script>
-    @endpush
     <button id="filterButton" type="button" class="floatingButtons-fab" id="searchButton" title="Search" aria-label="Search">
         <i class="fa-solid fa-magnifying-glass"></i>
     </button>
