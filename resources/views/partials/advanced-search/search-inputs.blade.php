@@ -424,6 +424,7 @@ class FilterFormManager {
             const input = this.inputs.find(input => input.key === field);
             if (!input) {
                 console.warn(`No input found for key: ${field}`);
+                Livewire.dispatch('showNotification', { type: 'error', message: '{{ trans('general.failed_to_apply_predefined_filter') }}'});
                 continue;
             }
 
@@ -435,6 +436,7 @@ class FilterFormManager {
                 }
             } catch (err) {
                 console.error(`Failed to set value for "${field}":`, err);
+                Livewire.dispatch('showNotification', { type: 'error', message: '{{ trans('general.failed_to_apply_predefined_filter') }}'});
             }
         }
 
