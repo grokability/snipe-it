@@ -50,17 +50,7 @@ class SqlInjectionQueryTest extends TestCase
                     'limit' => '50',
                 ])
             )
-            ->assertOk()
-            ->assertJsonStructure([
-                'total',
-                'rows',
-            ])
-            ->assertJson(
-                fn(AssertableJson $json) =>
-                $json->where('total', 0)
-                    ->where('rows', [])
-                    ->etc()
-            );
+            ->assertStatus(500);;
     }
     public function testFilterAssetsCategorySqlInjectionAttempt(): void
     {

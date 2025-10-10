@@ -14,7 +14,7 @@ class ModelQueryTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testFilterAssetsCategoryEmptyString(): void
+    public function testFilterAssetsModelEmptyString(): void
     {
         $modelA = AssetModel::factory()->create();
         $modelB = AssetModel::factory()->create();
@@ -54,7 +54,7 @@ class ModelQueryTest extends TestCase
             ]);
     }
 
-    public function testFilterAssetsCategoryString(): void
+    public function testFilterAssetsModelString(): void
     {
         $modelA = AssetModel::factory()->create();
         $modelB = AssetModel::factory()->create();
@@ -91,7 +91,7 @@ class ModelQueryTest extends TestCase
             ]);
     }
 
-    public function testFilterAssetsCategoryArray(): void
+    public function testFilterAssetsModelArray(): void
     {
         $modelA = AssetModel::factory()->create();
         $modelB = AssetModel::factory()->create();
