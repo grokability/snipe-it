@@ -114,10 +114,12 @@ class ManufacturerQueryTest extends TestCase
         $assetC = Asset::factory()->create(['model_id' => $modelC->id]);
 
         $filter = [
-            'manufacturer' => [
-                $manufacturerA->id,
-                $manufacturerC->id,
-            ],
+            [
+                'field' => 'manufacturer',
+                'value' => [$manufacturerA->id, $manufacturerC->id],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
         ];
 
         $this->actingAsForApi(User::factory()->superuser()->create())
