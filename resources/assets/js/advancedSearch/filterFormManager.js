@@ -52,13 +52,13 @@ export default class FilterFormManager {
         });
     }
 
-    async setValuesFromResponse(response) {
+    async setValuesFromResponse(responseArray) {
         this.clearAll();
 
         const promises = [];
 
-        for (const key in response) {
-            const value = response[key];
+        for (const filter of responseArray) {
+            const { field: key, value } = filter;
 
             const field = this.inputs.find(input => input.key === key);
             if (!field) {
@@ -68,7 +68,6 @@ export default class FilterFormManager {
 
             try {
                 const result = field.setValue(value);
-                // If the method returns a promise, store it
                 if (result instanceof Promise) {
                     promises.push(result);
                 }
@@ -77,7 +76,6 @@ export default class FilterFormManager {
             }
         }
 
-        // Wait for all async setValue calls to complete
         await Promise.all(promises);
         this.setAdvancedSearchPanelFilterEnabledState(false);
     }
