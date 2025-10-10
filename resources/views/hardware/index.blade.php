@@ -149,7 +149,9 @@ When .hide is applied, the filter section is hidden.
 }
 </style>
 
-<script>
+<script type="module">
+    import { container } from '/js/dist/simpleDIContainer.min.js';
+
     document.addEventListener('DOMContentLoaded', function () {
         const toggleBtn = document.getElementById('toggleFilterBtn');
         const toggleSidebarButton = document.getElementById('closeSidebarButton');
@@ -167,14 +169,14 @@ When .hide is applied, the filter section is hidden.
 
     function updateFilterToggleButtonText(filterSection, toggleBtn) {
         const textSpan = toggleBtn.querySelector('.filter-btn-text');
-
+        const floatingButtons = container.resolve("floatingButtons");
         if (filterSection.classList.contains('hide')) {
             textSpan.innerText = "{{ trans('general.open_filters') }}";
-            hideFloatingButtons();
+            floatingButtons.hide();
         } else {
             textSpan.innerText = "{{ trans('general.close_filters') }}";
-            showFloatingButtons();
-            alignFloatingButtons();
+            floatingButtons.show();
+            floatingButtons.align();
         }
     }
 

@@ -1,31 +1,9 @@
 <span id="advancedSearchModalContainer">
+    @push('css')
+        <link rel="stylesheet" href="{{ mix('css/dist/modal.min.css') }}">
+    @endpush
     @if ($showModal)
         {{-- CSS --}}
-        <style>
-            .modal-radio {
-                margin-bottom: 1.5vh;
-            }
-
-            .radio-label-text {
-                margin-left: 0.5em; /* adjust as needed */
-                display: inline-block;
-            }
-
-            .capitalizeFirstLetter {
-                text-transform: capitalize;
-            }
-
-            .sr-only {
-                position: absolute !important;
-                width: 1px !important;
-                height: 1px !important;
-                margin: -1px !important;
-                padding: 0 !important;
-                overflow: hidden !important;
-                clip: rect(0,0,0,0) !important;
-                border: 0 !important;
-            }
-        </style>
 
         <div
             @class(["modal", "fade", "in"])

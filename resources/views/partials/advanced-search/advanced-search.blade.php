@@ -1,4 +1,7 @@
 <div id="advancedSearchPanel" class="box box-default filter-sidebar">
+    @push('css')
+        <link rel="stylesheet" href="{{ mix('css/dist/advanced-search.min.css') }}">
+    @endpush
     <div class="box-header with-border">
         <h3 class="box-title">
             <i class="fas fa-filter"></i> <span class="filter-title"> {{ trans('general.advanced_search') }} </span>
@@ -51,12 +54,24 @@
 
 @include('partials.confetti-js', ['autostart' => false])
 
-<script>
-class FilterUIController {
-    constructor(tableElement) {
-        this.$table = tableElement;
-        this.collector = new FilterFormManager();
-    }
+<script type="module">
+    import ApiService from '/js/dist/apiService.min.js';
+    import FilterFormManager from '/js/dist/filterFormManager.min.js';
+    import FloatingButtons from  '/js/dist/floating-buttons.min.js';
+
+    import { container } from '/js/dist/simpleDIContainer.min.js';
+
+    // Add needed stuff into the di-container
+    container.register("apiService", new ApiService);
+    container.register("filterFormManager", new FilterFormManager);
+    container.register("floatingButtons", new FloatingButtons());
+
+    class FilterUIController {
+        constructor(tableElement) {
+            this.$table = tableElement;
+            this.apiService = container.resolve("apiService");
+            this.collector = container.resolve("filterFormManager");
+        }
 
     refresh() {
         const filters = this.collector.collect();
@@ -72,15 +87,17 @@ updateFilterWithPredefined(event, selectedId = null) {
         selectedId = event?.target?.value;
     }
 
+    const floatingButtons = container.resolve("floatingButtons");
+
     if (!selectedId) {
-        floatingMenuDisableEditDeleteButtons();
+        floatingButtons.disableEditDeleteButtons();
         return;
     }
 
-    floatingMenuEnableEditDeleteButtons();
-    setAdvancedSearchPanelFilterEnabledState(true);
+    floatingButtons.enableEditDeleteButtons();
+    //setAdvancedSearchPanelFilterEnabledState(true);
 
-    this.fetchPredefinedFilterData(selectedId)
+    this.apiService.fetchPredefinedFilterData(selectedId)
         .then(response => {
             if (!response.ok) {
                 throw new Error("Network response was not ok");
@@ -96,7 +113,7 @@ updateFilterWithPredefined(event, selectedId = null) {
         .catch(err => {
             console.error("Failed to apply predefined filter:", err);
             Livewire.dispatch('showNotification', { type: 'error', message: '{{ trans('general.failed_to_apply_predefined_filter') }}'});
-            setAdvancedSearchPanelFilterEnabledState(false);
+            //setAdvancedSearchPanelFilterEnabledState(false);
         });
 }
 
@@ -137,13 +154,6 @@ updateFilterWithPredefined(event, selectedId = null) {
             action: 'delete',
             predefinedFilterId: parseInt(selectedFilterId),
         });
-    }
-
-    fetchPredefinedFilterData(filterId) {
-        const updateUrlTemplate = `{{ route('api.predefined-filters.show', ['id' => '__ID__']) }}`;
-        const finalUrl = updateUrlTemplate.replace('__ID__', filterId);
-
-        return fetchFromBackend('GET', finalUrl);
     }
 
     bindEvents() {
@@ -189,7 +199,7 @@ updateFilterWithPredefined(event, selectedId = null) {
 document.addEventListener('livewire:init', function () {
     const tableId = "{{ request()->has('status') ? e(request()->input('status')) : '' }}assetsListingTable";
     const $table = $('#' + tableId);
-    
+
     // Initialize everything
     const controller = new FilterUIController($table);
     controller.bindEvents();
@@ -233,215 +243,5 @@ document.getElementById('filterSearch').addEventListener('input', function(e) {
     });
 });
 
-function getCsrfToken() {
-    return $('meta[name="csrf-token"]').attr('content');
-}
-
-function fetchFromBackend(method, path, body = null) {
-    const options = {
-        method: method,
-        headers: {
-            accept: 'application/json',
-            'X-Requested-With': 'XMLHttpRequest',
-            'X-CSRF-TOKEN': getCsrfToken(),
-            'Content-Type': 'application/json'
-        },
-        ...(body && { body })
-    };
-
-    return fetch(path, options);
-        //.then(res => res.json());
-}
-
-function fetchItemFromBackendById(type, id) {
-    const typeMap = {
-        asset: "hardware",
-        category: "categories",
-        company: "companies",
-        location: "locations",
-        manufacturer: "manufacturers",
-        model: "models",
-        groups: "groups",
-        group_select: "predefinedFilters",
-        rtd_location: "locations",
-        status_label: "statuslabels",
-        supplier: "suppliers",
-        user: "users"
-    };
-
-    if (!typeMap[type]) {
-        return Promise.reject(`Invalid type ${type}`);
-    }
-    const path = `/api/v1/${typeMap[type]}/${id}`;
-    return fetchFromBackend('GET', path);
-}
-
-function predefinedFilterRequest(method, filterId = null, filterData = null) {
-    let  path = "/api/v1/predefinedFilters";
-
-    if(filterId !== null) {
-        path += "/" + filterId;
-    }
-
-    return fetchFromBackend(method, path, filterData);
-}
-
-function setAdvancedSearchPanelFilterEnabledState(state) {
-    const fields = document.getElementById("advancedSearchPanel").getElementsByTagName('*');
-    for(let i = 0; i < fields.length; i++)
-    {
-        fields[i].disabled = state;
-    }
-}
 
 </script>
-
-<style>
-/* 
-Base styles for the filter sidebar and its transitions.
-Handles showing/hiding the sidebar smoothly.
-*/
-.filter-sidebar {
-    transition: all 0.3s ease;
-    position: relative;
-}
-
-/* 
-Smooth transition for the filter body (the inner panel).
-Ensures expanding/collapsing feels fluid.
-*/
-.filter-body {
-    transition: all 0.3s ease;
-    overflow: hidden;
-}
-
-/* 
-Fade-in/out effect for any element with this class when shown/hidden.
-*/
-.filter-content {
-    transition: opacity 0.2s ease;
-}
-
-/* 
-Fade-in/out for filter section title and clear text.
-*/
-.filter-title,
-.clear-text {
-    transition: opacity 0.2s ease;
-}
-
-/* ---------- Desktop styles ---------- */
-@media (min-width: 769px) {
-    /* 
-    When collapsed, the sidebar is skinny and its content is hidden.
-    */
-}
-
-/* ---------- Mobile/Tablet styles ---------- */
-@media (max-width: 768px) {
-    /* 
-    Sidebar takes full width and less margin on mobile.
-    */
-    .filter-sidebar {
-        width: 100% !important;
-        margin-bottom: 15px;
-    }
-    
-    /* 
-    Collapsed sidebar hides content and disables interaction.
-    */
-}
-
-/* 
-Ensures filter panel container uses full width and is padded.
-Makes it responsive.
-*/
-.container {
-    width: 100%;
-    margin: 0 auto;
-    padding: 10px;
-    box-sizing: border-box;
-}
-
-/* 
-Makes the advanced search filters section block-level and full width.
-*/
-#advancedSearchFilters {
-    display: block;
-    max-width: 100%;
-    margin: 0;
-}
-
-/* 
-Scrollable filter panel body, with padding.
-*/
-.box-body {
-    overflow-y: auto;
-    padding: 15px;
-}
-
-/* 
-On small screens, limit box-body max height to 75% of viewport.
-Makes scrolling manageable on mobile.
-*/
-@media (max-width: 768px) {
-  .box-body {
-    max-height: 75vh;
-  }
-}
-
-/* 
-On desktop, take up all available vertical height.
-*/
-@media (min-width: 769px) {
-  .box-body {
-    height: 100%;
-  }
-}
-
-/* 
-Button blocks have a little space between each for clarity.
-*/
-
-/* 
-Custom thin scrollbar for the filter area.
-Aesthetic tweak.
-*/
-.box-body::-webkit-scrollbar {
-    width: 6px;
-}
-
-/* 
-Collapse button tweaks for spacing.
-*/
-.collapse-toggle {
-    margin-right: 5px;
-}
-
-/* 
-By default, hide both the desktop and mobile collapse icons.
-*/
-.icon-desktop,
-.icon-mobile {
-  display: none;
-}
-
-/* 
-Show the desktop collapse icon on desktop screens.
-*/
-@media (min-width: 768px) {
-  .icon-desktop {
-    display: inline;
-  }
-}
-
-/* 
-Show the mobile collapse icon on mobile screens.
-*/
-@media (max-width: 767px) {
-  .icon-mobile {
-    display: inline;
-  }
-}
-
-</style>
