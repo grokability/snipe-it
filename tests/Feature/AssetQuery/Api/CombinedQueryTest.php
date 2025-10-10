@@ -40,9 +40,24 @@ class CombinedQueryTest extends TestCase
         $assetE = Asset::factory()->create(['location_id' => $locationC->id]);
 
         $filter = [
-            'model' => [$modelA->name, $modelB->name],
-            'location' => [$locationA->name, $locationB->name],
-            'manufacturer' => [$manufacturerA->name, $manufacturerB->name]
+            [
+                'field' => 'model',
+                'value' => [$modelA->id, $modelB->id],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ],
+            [
+                'field' => 'location',
+                'value' => [$locationA->id, $locationB->id],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ],
+            [
+                'field' => 'manufacturer',
+                'value' => [$manufacturerA->id, $manufacturerB->id],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ],
         ];
 
         $this->actingAsForApi(User::factory()->superuser()->create())
