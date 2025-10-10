@@ -14,7 +14,7 @@ class StatusLabelQueryTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testFilterAssetsCategoryEmptyString(): void
+    public function testFilterAssetsStatusEmptyString(): void
     {
         $statusPending = Statuslabel::factory()->create();
         $statusArchived = Statuslabel::factory()->create();
@@ -54,7 +54,7 @@ class StatusLabelQueryTest extends TestCase
             ]);
     }
 
-    public function testFilterAssetsCategoryString(): void
+    public function testFilterAssetsStatusString(): void
     {
         $statusPending = Statuslabel::factory()->create();
         $statusArchived = Statuslabel::factory()->create();
@@ -91,7 +91,7 @@ class StatusLabelQueryTest extends TestCase
             ]);
     }
 
-    public function testFilterAssetsCategoryArray(): void
+    public function testFilterAssetsStatusArray(): void
     {
         $statusPending = Statuslabel::factory()->create();
         $statusArchived = Statuslabel::factory()->create();
@@ -102,10 +102,12 @@ class StatusLabelQueryTest extends TestCase
         $assetC = Asset::factory()->create(['status_id' => $statusBroken->id]);
 
         $filter = [
-            'status_label' => [
-                $statusPending->id,
-                $statusBroken->id,
-            ],
+            [
+                'field' => 'status_label',
+                'value' => [$statusPending->id, $statusBroken->id],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
         ];
 
         $this->actingAsForApi(User::factory()->superuser()->create())
