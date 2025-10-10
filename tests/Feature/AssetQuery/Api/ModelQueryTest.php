@@ -102,9 +102,11 @@ class ModelQueryTest extends TestCase
         $assetC = Asset::factory()->create(['model_id' => $modelC->id]);
 
         $filter = [
-            'model' => [
-                $modelA->id,
-                $modelC->id,
+            [
+                'field' => 'model',
+                'value' => [$modelA->id, $modelC->id],
+                'operator' => 'contains',
+                'logic' => 'AND',
             ],
         ];
 
