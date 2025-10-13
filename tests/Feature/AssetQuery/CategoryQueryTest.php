@@ -140,7 +140,7 @@ class CategoryQueryTest extends TestCase
         ];
 
         $results = Asset::query()->byFilter($filter)->get();
-        dump($results);
+        //dump($results);
         // Then: Should include only assetA to assetD
         $this->assertCount(2, $results);
         $this->assertTrue($results->contains($assetB));
