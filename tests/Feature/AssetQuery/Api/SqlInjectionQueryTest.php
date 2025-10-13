@@ -35,7 +35,7 @@ class SqlInjectionQueryTest extends TestCase
 
         $filter = ['assigned_to' => $sqlInjectionString, 'assigned_type' => Location::class];
 
-        $this->actingAsForApi(User::factory()->superuser()->create())
+        $response = $this->actingAsForApi(User::factory()->superuser()->create())
             ->getJson(
                 route('api.assets.index', [
                     'status' => '',
@@ -49,8 +49,16 @@ class SqlInjectionQueryTest extends TestCase
                     'offset' => '0',
                     'limit' => '50',
                 ])
-            )
-            ->assertStatus(500);;
+                );
+
+
+        $response->assertOk(); // 200
+        $response->assertJsonStructure(['total', 'rows']);
+        $response->assertJson(fn(AssertableJson $json) =>
+            $json->where('total', 0)
+                 ->where('rows', [])
+                ->etc()
+        );
     }
     public function testFilterAssetsCategorySqlInjectionAttempt(): void
     {
