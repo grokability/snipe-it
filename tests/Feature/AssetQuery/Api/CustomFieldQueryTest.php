@@ -11,6 +11,7 @@ use Illuminate\Testing\Fluent\AssertableJson;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Log;
 
 class CustomFieldQueryTest extends TestCase
 {
@@ -40,7 +41,15 @@ class CustomFieldQueryTest extends TestCase
         $aNoMatch1 = Asset::factory()->create(['custom_text' => 'Strings are awsome']);
         $aNoMatch2 = Asset::factory()->create(['custom_text' => 'I am just a string']);
 
-        $filter = ['custom_fields.custom_text' => 'is another'];
+        $filter = [
+            [
+                'field' => 'custom_text',
+                'value' => 'is another',
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
+
         $results = Asset::query()->byFilter($filter)->get();
 
         $this->assertCount(1, $results);
@@ -82,8 +91,18 @@ class CustomFieldQueryTest extends TestCase
         $missCode = Asset::factory()->create(['custom_text' => 'Report Q3', 'custom_code' => 'X-0001']);
 
         $filter = [
-            'custom_fields.custom_text' => 'Report',
-            'custom_fields.custom_code' => 'R-2025',
+            [
+                'field' => 'custom_text',
+                'value' => 'Report',
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ],
+            [
+                'field' => 'custom_code',
+                'value' => 'R-2025',
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
         ];
 
         $results = Asset::query()->byFilter($filter)->get();
@@ -125,7 +144,15 @@ class CustomFieldQueryTest extends TestCase
         $match = Asset::factory()->create(['custom_text' => 'Mödël#1 (ß)']);
         $nope = Asset::factory()->create(['custom_text' => 'ÄäÖöÜüëÅ']);
 
-        $filter = ['custom_fields.custom_text' => 'Mödël#1'];
+        $filter = [
+            [
+                'field' => 'custom_text',
+                'value' => 'Mödël#1',
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
+
         $results = Asset::query()->byFilter($filter)->get();
 
         $this->assertCount(1, $results);
@@ -166,7 +193,15 @@ class CustomFieldQueryTest extends TestCase
         $match = Asset::factory()->create(['custom_text' => '🥶🎃😅']);
         $nope = Asset::factory()->create(['custom_text' => '🙃🥳🙄😵‍💫']);
 
-        $filter = ['custom_fields.custom_text' => '🎃'];
+        $filter = [
+            [
+                'field' => 'custom_text',
+                'value' => '🎃',
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
+        
         $results = Asset::query()->byFilter($filter)->get();
 
         $this->assertCount(1, $results);
