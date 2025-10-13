@@ -89,11 +89,6 @@ class CustomFieldQueryTest extends TestCase
         $missText = Asset::factory()->create(['custom_text' => 'Notes Q3',  'custom_code' => 'R-2025']);
         $missCode = Asset::factory()->create(['custom_text' => 'Report Q3', 'custom_code' => 'X-0001']);
 
-/*         $filter = [
-            'custom_fields.custom_text' => 'Report',
-            'custom_fields.custom_code' => 'R-2025',  
-        ]; */
-
         $filter = [
             [
                 'field' => 'custom_text',
@@ -122,8 +117,6 @@ class CustomFieldQueryTest extends TestCase
         $a = Asset::factory()->create(['custom_text' => 'A']);
         $b = Asset::factory()->create(['custom_text' => 'B']);
 
-        //$filter  = ['custom_fields.custom_text' => []];
-
         $filter = [[]];
 
         $results = Asset::query()->byFilter($filter)->get();
@@ -136,7 +129,6 @@ class CustomFieldQueryTest extends TestCase
     public function testFilterWithNonexistentValueReturnsNone()
     {
         Asset::factory()->count(3)->create(['custom_text' => 'X']);
-        //$filter  = ['custom_fields.custom_text' => 'does-not-exist'];
         $filter = [
             [
                 'field' => 'custom_text',
@@ -154,8 +146,6 @@ class CustomFieldQueryTest extends TestCase
     {
         $match = Asset::factory()->create(['custom_text' => 'Mödel#1 (ß)']);
         $nope  = Asset::factory()->create(['custom_text' => 'Model 2']);
-
-        //$filter  = ['custom_fields.custom_text' => 'Mödel#1'];
 
         $filter = [
             [
