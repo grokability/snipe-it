@@ -205,10 +205,7 @@ class ManufacturerQueryTest extends TestCase
     }
 
     public function testFilterAssetManufacturerIdAndNameArray()
-    {
-
-        $this->markTestSkipped("It's not possible to filter after name and id at once.");
-        
+    {        
         $manufacturerA = Manufacturer::factory()->create();
         $manufacturerB = Manufacturer::factory()->create();
         $manufacturerC = Manufacturer::factory()->create();
@@ -222,7 +219,14 @@ class ManufacturerQueryTest extends TestCase
         $assetB = Asset::factory()->create(['model_id' => $modelB->id]);
         $assetC = Asset::factory()->create(['model_id' => $modelC->id]);
 
-        $filter = ['manufacturer' => [$manufacturerA->id, $manufacturerB->name]];
+        $filter = [
+            [
+                'field' => 'manufacturer',
+                'value' => [$manufacturerA->id, $manufacturerB->name],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
 
         $results = Asset::query()->byFilter($filter)->get();
 

@@ -206,8 +206,6 @@ class CategoryQueryTest extends TestCase
 
     public function testFilterAssetAssignedToCategoryIdAndNameArray()
     {
-
-        $this->markTestSkipped("It's not possible to filter after name and id at once.");
         $categoryA = Category::factory()->create();
         $categoryB = Category::factory()->create();
         $categoryC = Category::factory()->create();

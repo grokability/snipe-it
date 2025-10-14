@@ -193,8 +193,6 @@ class RtdLocationQueryTest extends TestCase
     public function testFilterAssetLocationIdAndNameArray()
     {
 
-        $this->markTestSkipped("It's not possible to filter after name and id at once.");
-
         // Given: Locations and assets
         $locationA = Location::factory()->create();
         $locationB = Location::factory()->create();
@@ -204,7 +202,14 @@ class RtdLocationQueryTest extends TestCase
         $assetB = Asset::factory()->create(['rtd_location_id' => $locationB->id]);
         $assetC = Asset::factory()->create(['rtd_location_id' => $locationC->id]);
 
-        $filter = ['rtd_location' => [$locationA->id, $locationB->name]];
+        $filter = [
+            [
+                'field' => 'rtd_location',
+                'value' => [$locationA->id, $locationB->name],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
         $results = Asset::query()->byFilter($filter)->get();
 
         // Then: Should include only assetA and assetB

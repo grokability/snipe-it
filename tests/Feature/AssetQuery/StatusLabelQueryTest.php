@@ -234,7 +234,6 @@ class StatusLabelQueryTest extends TestCase
 
     public function testFilterAssetStatusLabelIdAndNameArray()
     {
-        $this->markTestSkipped("It's not possible to filter after name and id at once.");
         // Arrange:
         $statusPending = Statuslabel::factory()->create();
         $statusArchived = Statuslabel::factory()->create();
@@ -254,7 +253,12 @@ class StatusLabelQueryTest extends TestCase
 
         // Act
         $filter = [
-            'status_label' => [$statusPending->id, $statusArchived->name],
+            [
+                'field' => 'status_label',
+                'value' => [$statusPending->id, $statusArchived->name],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
         ];
 
         $results = Asset::query()->byFilter($filter)->get();
