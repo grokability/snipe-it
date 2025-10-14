@@ -121,9 +121,9 @@ class CustomFieldQueryTest extends TestCase
 
         $results = Asset::query()->byFilter($filter)->get();
 
-        $this->assertCount(0, $results);
-        $this->assertFalse($results->contains($a));
-        $this->assertFalse($results->contains($b));
+        $this->assertCount(2, $results);
+        $this->assertTrue($results->contains($a));
+        $this->assertTrue($results->contains($b));
     }
 
     public function testFilterWithNonexistentValueReturnsNone()

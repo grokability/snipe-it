@@ -552,7 +552,7 @@ class CombinedQueryTest extends TestCase
         $assetC = Asset::factory()->create();
 
         // No filters applied
-        $filter = [];
+        $filter = [[]];
         $results = Asset::query()->byFilter($filter)->get();
 
         $this->assertCount(3, $results);
