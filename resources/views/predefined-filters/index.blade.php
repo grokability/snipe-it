@@ -119,7 +119,7 @@ $(document).ready(function () {
     });
 });
 </script>
-<livewire:partials.advancedsearch.modal/>
+<livewire:partials.advancedSearch.modal/>
 
 @php
     $layout = json_decode(PredefinedFilterPresenter::dataTableLayout());
