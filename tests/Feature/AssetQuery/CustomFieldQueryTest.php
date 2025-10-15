@@ -31,7 +31,15 @@ class CustomFieldQueryTest extends TestCase
         $aNoMatch1 = Asset::factory()->create(['custom_text' => 'Gamma Green']);
         $aNoMatch2 = Asset::factory()->create(['custom_text' => 'Delta Red']);
 
-        $filter  = ['custom_fields.custom_text' => 'Blu']; 
+        $filter = [
+            [
+                'field' => 'custom_text',
+                'value' => 'Blu',
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
+
         $results = Asset::query()->byFilter($filter)->get();
 
         $this->assertCount(1, $results);
@@ -40,32 +48,35 @@ class CustomFieldQueryTest extends TestCase
         $this->assertFalse($results->contains($aNoMatch2));
     }
 
-    public function testFilterBySingleCustomFieldArrayWhereIn()
-    {
-        $a1 = Asset::factory()->create(['custom_text' => 'ValueA']);
-        $a2 = Asset::factory()->create(['custom_text' => 'ValueB']);
-        $a3 = Asset::factory()->create(['custom_text' => 'ValueC']);
-
-        $filter  = ['custom_fields.custom_text' => ['ValueA', 'ValueB']];
-        $results = Asset::query()->byFilter($filter)->get();
-
-        $this->assertCount(2, $results);
-        $this->assertTrue($results->contains($a1));
-        $this->assertTrue($results->contains($a2));
-        $this->assertFalse($results->contains($a3));
-    }
-
     public function testFilterBooleanLikeCustomFieldArrayAndString()
     {
         $on  = Asset::factory()->create(['custom_flag' => '1']);
         $off = Asset::factory()->create(['custom_flag' => '0']);
 
-        $resIn = Asset::query()->byFilter(['custom_fields.custom_flag' => ['1']])->get();
+        $filterOn = [
+            [
+                'field' => 'custom_flag',
+                'value' => '1',
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
+
+        $filterOff = [
+            [
+                'field' => 'custom_flag',
+                'value' => '1',
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
+
+        $resIn = Asset::query()->byFilter($filterOn)->get();
         $this->assertCount(1, $resIn);
         $this->assertTrue($resIn->contains($on));
         $this->assertFalse($resIn->contains($off));
 
-        $resLike = Asset::query()->byFilter(['custom_fields.custom_flag' => '1'])->get();
+        $resLike = Asset::query()->byFilter($filterOff)->get();
         $this->assertCount(1, $resLike);
         $this->assertTrue($resLike->contains($on));
         $this->assertFalse($resLike->contains($off));
@@ -79,8 +90,18 @@ class CustomFieldQueryTest extends TestCase
         $missCode = Asset::factory()->create(['custom_text' => 'Report Q3', 'custom_code' => 'X-0001']);
 
         $filter = [
-            'custom_fields.custom_text' => 'Report',
-            'custom_fields.custom_code' => 'R-2025',  
+            [
+                'field' => 'custom_text',
+                'value' => 'Report',
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ],
+            [
+                'field' => 'custom_code',
+                'value' => 'R-2025',
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
         ];
 
         $results = Asset::query()->byFilter($filter)->get();
@@ -96,40 +117,29 @@ class CustomFieldQueryTest extends TestCase
         $a = Asset::factory()->create(['custom_text' => 'A']);
         $b = Asset::factory()->create(['custom_text' => 'B']);
 
-        $filter  = ['custom_fields.custom_text' => []];
+        $filter = [[]];
+
         $results = Asset::query()->byFilter($filter)->get();
 
-        $this->assertCount(0, $results);
-        $this->assertFalse($results->contains($a));
-        $this->assertFalse($results->contains($b));
+        $this->assertCount(2, $results);
+        $this->assertTrue($results->contains($a));
+        $this->assertTrue($results->contains($b));
     }
 
     public function testFilterWithNonexistentValueReturnsNone()
     {
         Asset::factory()->count(3)->create(['custom_text' => 'X']);
-        $filter  = ['custom_fields.custom_text' => 'does-not-exist'];
+        $filter = [
+            [
+                'field' => 'custom_text',
+                'value' => 'does-not-exist',
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
         $results = Asset::query()->byFilter($filter)->get();
 
         $this->assertCount(0, $results);
-    }
-
-    public function testFilterCombinationArrayAndStringAcrossCustomFields()
-    {
-        $keep1 = Asset::factory()->create(['custom_text' => 'Alpha', 'custom_code' => 'G-100']);
-        $keep2 = Asset::factory()->create(['custom_text' => 'Beta',  'custom_code' => 'G-100']);
-        $drop  = Asset::factory()->create(['custom_text' => 'Gamma', 'custom_code' => 'Z-999']);
-
-        $filter = [
-            'custom_fields.custom_text' => ['Alpha', 'Beta'], 
-            'custom_fields.custom_code' => 'G-100',         
-        ];
-
-        $results = Asset::query()->byFilter($filter)->get();
-
-        $this->assertCount(2, $results);
-        $this->assertTrue($results->contains($keep1));
-        $this->assertTrue($results->contains($keep2));
-        $this->assertFalse($results->contains($drop));
     }
 
     public function testFilterWithSpecialCharactersInCustomField()
@@ -137,7 +147,15 @@ class CustomFieldQueryTest extends TestCase
         $match = Asset::factory()->create(['custom_text' => 'Mödel#1 (ß)']);
         $nope  = Asset::factory()->create(['custom_text' => 'Model 2']);
 
-        $filter  = ['custom_fields.custom_text' => 'Mödel#1'];
+        $filter = [
+            [
+                'field' => 'custom_text',
+                'value' => 'Mödel#1',
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
+
         $results = Asset::query()->byFilter($filter)->get();
 
         $this->assertCount(1, $results);

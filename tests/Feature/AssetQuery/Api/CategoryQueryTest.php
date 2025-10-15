@@ -114,9 +114,11 @@ class CategoryQueryTest extends TestCase
         $assetC = Asset::factory()->create(['model_id' => $modelC->id]);
 
         $filter = [
-            'category' => [
-                $categoryA->id,
-                $categoryC->id,
+            [
+                'field' => 'category',
+                'value' => [$categoryA->id, $categoryC->id],
+                'operator' => 'contains',
+                'logic' => 'AND',
             ],
         ];
 

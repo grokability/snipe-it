@@ -78,7 +78,14 @@ class ModelNumberQueryTest extends TestCase
         $assetA = Asset::factory()->create(['model_id' => $modelA->id]);
         $assetB = Asset::factory()->create(['model_id' => $modelB->id]);
 
-        $filter = ['model_number' => [$modelA->model_number]];
+        $filter = [
+            [
+                'field' => 'model_number',
+                'value' => [$modelA->model_number],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
 
         $results = Asset::query()->byFilter($filter)->get();
 
@@ -104,7 +111,15 @@ class ModelNumberQueryTest extends TestCase
         $assetE = Asset::factory()->create(['model_id' => $modelE->id]);
 
         // When: Query with an array of names
-        $filter = ['model_number' => [$modelB->model_number, $modelE->model_number]];
+        $filter = [
+            [
+                'field' => 'model_number',
+                'value' => [$modelB->model_number, $modelE->model_number],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
+
         $results = Asset::query()->byFilter($filter)->get();
 
         // Then: Should include only assetA to assetD

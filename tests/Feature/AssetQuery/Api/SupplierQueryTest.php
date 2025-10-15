@@ -14,7 +14,7 @@ class SupplierQueryTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testFilterAssetsCategoryEmptyString(): void
+    public function testFilterAssetsSupplierEmptyString(): void
     {
         $supplierA = Supplier::factory()->create();
         $statusArchived = Supplier::factory()->create();
@@ -54,7 +54,7 @@ class SupplierQueryTest extends TestCase
             ]);
     }
 
-    public function testFilterAssetsCategoryString(): void
+    public function testFilterAssetsSupplierString(): void
     {
         $supplierA = Supplier::factory()->create();
         $supplierB = Supplier::factory()->create();
@@ -91,7 +91,7 @@ class SupplierQueryTest extends TestCase
             ]);
     }
 
-    public function testFilterAssetsCategoryArray(): void
+    public function testFilterAssetsSupplierArray(): void
     {
         $supplierA = Supplier::factory()->create();
         $supplierB = Supplier::factory()->create();
@@ -102,9 +102,11 @@ class SupplierQueryTest extends TestCase
         $assetC = Asset::factory()->create(['supplier_id' => $supplierC->id]);
 
         $filter = [
-            'supplier' => [
-                $supplierA->id,
-                $supplierC->id,
+            [
+                'field' => 'supplier',
+                'value' => [$supplierA->id, $supplierC->id],
+                'operator' => 'contains',
+                'logic' => 'AND',
             ],
         ];
 

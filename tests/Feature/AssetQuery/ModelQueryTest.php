@@ -73,7 +73,14 @@ class ModelQueryTest extends TestCase
         $assetA = Asset::factory()->create(['model_id' => $modelA->id]);
         $assetB = Asset::factory()->create(['model_id' => $modelB->id]);
 
-        $filter = ['model' => [$modelA->name]];
+        $filter = [
+            [
+                'field' => 'model',
+                'value' => [$modelA->name],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ],
+        ];
 
         $results = Asset::query()->byFilter($filter)->get();
 
@@ -99,7 +106,14 @@ class ModelQueryTest extends TestCase
         $assetE = Asset::factory()->create(['model_id' => $modelE->id]);
 
         // When: Query with an array of names
-        $filter = ['model' => [$modelB->name, $modelE->name]];
+        $filter = [
+            [
+                'field' => 'model',
+                'value' => [$modelB->id, $modelE->id],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ],
+        ];
         $results = Asset::query()->byFilter($filter)->get();
 
         // Then: Should include only assetA to assetD
@@ -121,7 +135,14 @@ class ModelQueryTest extends TestCase
         $assetB = Asset::factory()->create(['model_id' => $modelB->id]);
 
         // When: Query with an array of names
-        $filter = ['model' => [$modelB->id]];
+        $filter = [
+            [
+                'field' => 'model',
+                'value' => $modelB->id,
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ],
+        ];
         $results = Asset::query()->byFilter($filter)->get();
 
         // Then: Should include only assetA to assetD
@@ -139,7 +160,14 @@ class ModelQueryTest extends TestCase
         $assetB = Asset::factory()->create(['model_id' => $modelB->id]);
 
         // When: Query with an array of names
-        $filter = ['model' => [$modelB->id]];
+        $filter = [
+            [
+                'field' => 'model',
+                'value' => [$modelB->name],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ],
+        ];
         $results = Asset::query()->byFilter($filter)->get();
 
         // Then: Should include only assetA to assetD
@@ -150,7 +178,6 @@ class ModelQueryTest extends TestCase
 
     public function testFilterAssetModelIdAndNameArray()
     {
-
         $modelA = AssetModel::factory()->create();
         $modelB = AssetModel::factory()->create();
         $modelC = AssetModel::factory()->create();
@@ -160,7 +187,16 @@ class ModelQueryTest extends TestCase
         $assetC = Asset::factory()->create(['model_id' => $modelC->id]);
 
         // When: Query with an array of names
-        $filter = ['model' => [$modelA->name, $modelB->id]];
+
+        $filter = [
+            [
+                'field' => 'model',
+                'value' => [$modelA->id, $modelB->name],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
+
         $results = Asset::query()->byFilter($filter)->get();
 
         // Then: Should include only assetA to assetD

@@ -14,7 +14,7 @@ class ModelNumberQueryTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testFilterAssetsCategoryEmptyString(): void
+    public function testFilterAssetsModelNumberEmptyString(): void
     {
         $modelA = AssetModel::factory()->create();
         $modelB = AssetModel::factory()->create();
@@ -54,7 +54,7 @@ class ModelNumberQueryTest extends TestCase
             ]);
     }
 
-    public function testFilterAssetsCategoryString(): void
+    public function testFilterAssetsModelNumberString(): void
     {
         $modelA = AssetModel::factory()->create();
         $modelB = AssetModel::factory()->create();
@@ -91,7 +91,7 @@ class ModelNumberQueryTest extends TestCase
             ]);
     }
 
-    public function testFilterAssetsCategoryArray(): void
+    public function testFilterAssetsModelNumberArray(): void
     {
         $modelA = AssetModel::factory()->create();
         $modelB = AssetModel::factory()->create();
@@ -102,10 +102,12 @@ class ModelNumberQueryTest extends TestCase
         $assetC = Asset::factory()->create(['model_id' => $modelC->id]);
 
         $filter = [
-            'model_number' => [
-                $modelA->model_number,
-                $modelC->model_number,
-            ],
+            [
+                'field' => 'model_number',
+                'value' => [$modelA->model_number, $modelC->model_number],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
         ];
 
         $this->actingAsForApi(User::factory()->superuser()->create())

@@ -79,7 +79,7 @@ class StatusLabelQueryTest extends TestCase
         ]);
 
         // Act
-        $queryString = CompanyQueryTest::getExtendedPrefix($statusPending->name, $statusArchived->name);
+        $queryString = StatusLabelQueryTest::getExtendedPrefix($statusPending->name, $statusArchived->name);
         $filter = [
             'status_label' => $queryString,
         ];
@@ -107,7 +107,12 @@ class StatusLabelQueryTest extends TestCase
 
         // Act
         $filter = [
-            'status_label' => [$statusPending->name],
+            [
+                'field' => 'status_label',
+                'value' => $statusPending->id,
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
         ];
 
         $results = Asset::query()->byFilter($filter)->get();
@@ -149,7 +154,12 @@ class StatusLabelQueryTest extends TestCase
 
         // Act
         $filter = [
-            'status_label' => [$statusPending->name, $statusDeployed->name],
+            [
+                'field' => 'status_label',
+                'value' => [$statusPending->id, $statusDeployed->id],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
         ];
 
         $results = Asset::query()->byFilter($filter)->get();
@@ -206,7 +216,12 @@ class StatusLabelQueryTest extends TestCase
 
         // Act
         $filter = [
-            'status_label' => [$statusPending->id],
+            [
+                'field' => 'status_label',
+                'value' => [$statusPending->id],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
         ];
 
         $results = Asset::query()->byFilter($filter)->get();
@@ -238,7 +253,12 @@ class StatusLabelQueryTest extends TestCase
 
         // Act
         $filter = [
-            'status_label' => [$statusPending->id, $statusArchived->name],
+            [
+                'field' => 'status_label',
+                'value' => [$statusPending->id, $statusArchived->name],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
         ];
 
         $results = Asset::query()->byFilter($filter)->get();

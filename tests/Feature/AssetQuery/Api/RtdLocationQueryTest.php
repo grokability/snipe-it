@@ -15,7 +15,7 @@ class RtdLocationQueryTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testFilterAssetsCategoryEmptyString(): void
+    public function testFilterAssetsRtdLocationEmptyString(): void
     {
         $locationA = Location::factory()->create();
         $locationB = Location::factory()->create();
@@ -55,7 +55,7 @@ class RtdLocationQueryTest extends TestCase
             ]);
     }
 
-    public function testFilterAssetsCategoryString(): void
+    public function testFilterAssetsRtdLocationString(): void
     {
         $locationA = Location::factory()->create();
         $locationB = Location::factory()->create();
@@ -92,7 +92,7 @@ class RtdLocationQueryTest extends TestCase
             ]);
     }
 
-    public function testFilterAssetsCategoryArray(): void
+    public function testFilterAssetsRtdLocationArray(): void
     {
         $locationA = Location::factory()->create();
         $locationB = Location::factory()->create();
@@ -103,9 +103,11 @@ class RtdLocationQueryTest extends TestCase
         $assetC = Asset::factory()->create(['rtd_location_id' => $locationC->id]);
 
         $filter = [
-            'rtd_location' => [
-                $locationA->id,
-                $locationC->id,
+            [
+                'field' => 'rtd_location',
+                'value' => [$locationA->id, $locationC->id],
+                'operator' => 'contains',
+                'logic' => 'AND',
             ],
         ];
 

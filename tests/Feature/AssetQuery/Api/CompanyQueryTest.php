@@ -117,7 +117,14 @@ class CompanyQueryTest extends TestCase
             'company_id' => $companyC->id,
         ]);
 
-        $filter = ['company' => [$companyB->name, $companyC->name]];
+        $filter = [
+            [
+                'field' => 'company',
+                'value' => [$companyB->id, $companyC->id],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ],
+        ];
 
         $this->actingAsForApi(User::factory()->superuser()->create())
             ->getJson(

@@ -15,7 +15,7 @@ class LocationQueryTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testFilterAssetsCategoryEmptyString(): void
+    public function testFilterAssetsLocationEmptyString(): void
     {
         $locationA = Location::factory()->create();
         $locationB = Location::factory()->create();
@@ -55,7 +55,7 @@ class LocationQueryTest extends TestCase
             ]);
     }
 
-    public function testFilterAssetsCategoryString(): void
+    public function testFilterAssetsLocationString(): void
     {
         $locationA = Location::factory()->create();
         $locationB = Location::factory()->create();
@@ -92,7 +92,7 @@ class LocationQueryTest extends TestCase
             ]);
     }
 
-    public function testFilterAssetsCategoryArray(): void
+    public function testFilterAssetsLocationArray(): void
     {
         $locationA = Location::factory()->create();
         $locationB = Location::factory()->create();
@@ -103,10 +103,12 @@ class LocationQueryTest extends TestCase
         $assetC = Asset::factory()->create(['location_id' => $locationC->id]);
 
         $filter = [
-            'location' => [
-                $locationA->id,
-                $locationC->id,
-            ],
+            [
+                'field' => 'location',
+                'value' => [$locationA->id, $locationC->id],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
         ];
 
         $this->actingAsForApi(User::factory()->superuser()->create())
