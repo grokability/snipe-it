@@ -1919,6 +1919,43 @@ class Asset extends Depreciable
 
             // --- Morph Relation ---
             if (!empty($meta['morph'])) {
+                if (is_array($value) && isset($value[0]['assignedType'])){
+                    $grouped = collect($value)->groupBy('assignedType');
+
+                    $inner->where(function ($q2) use ($grouped, $meta){
+                        foreach ($grouped as $type => $items) {
+                            $q2->orWhereHasMorph($meta['relation'],[$type], function ($morphQ) use ($items, $type) {
+                                $ids = collect($items)->pluck('assigned_to')->filter((fn($v)=>is_numeric($v)));
+                                $names = collect($items)->pluck('assigned_to')->filter(fn($v) => is_string($v));
+                                
+                                if ($ids->isNotEmpty()){
+                                    $morphQ->whereIn('id', $ids);
+                                }
+
+                                if ($names->isNotEmpty()){
+                                    $morphQ->where(function($query) use ($names, $type) {
+
+                                        foreach ($names as $name) {
+                                            if ($type === \App\Models\User::class) {
+                                                
+                                                $query->orWhere(function($sq) use ($name) {
+                                                    $sq->where('first_name', 'LIKE', '%' . $name . '%')
+                                                    ->orWhere('last_name', 'LIKE', '%' . $name . '%');
+                                                });
+                                                
+                                            }else{
+                                                $query->orWhere('name', 'LIKE', '%' . $name . '%');
+                                            }
+                                        }
+                                    });
+                                    }
+                                });
+                            }
+                        });
+
+                    return;
+                }
+
                 $types = $meta['types'] ?? [$meta['type']];
 
                 $inner->where(function ($q2) use ($types, $value, $operator, $meta) {
