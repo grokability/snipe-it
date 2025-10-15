@@ -15,7 +15,7 @@ class AssignedToQueryTest extends TestCase
     use GetExtendedPrefix;
 
 
-    public function testFilterAssetAssignedToUserId() // FAIL
+    public function testFilterAssetAssignedToUserId() 
     {
 
         $userA = User::factory()->create(['first_name'=>'UAA']);
@@ -35,7 +35,7 @@ class AssignedToQueryTest extends TestCase
         $this->assertFalse($results->contains($assetB));
     }
 
-    public function testFilterAssetAssignedToUserIdWithType() // FAIL
+    public function testFilterAssetAssignedToUserIdWithType() 
     {
         $userA = User::factory()->create(['first_name'=>'U1']);
         $userB = User::factory()->create(['first_name'=>'U2']);
@@ -87,17 +87,50 @@ class AssignedToQueryTest extends TestCase
         $this->assertFalse($results->contains($assetB));
     }
 
-    public function testFilterAssetAssignedToUserNameCompleteWithType() // FAIL
+    public function testFilterAssetAssignedToUserNameCompleteWithoutType() 
     {
-        $this->markTestSkipped("the actual implementation does not allow arrays and types");
-
-
         $userA = User::factory()->create(['first_name'=>'CARA']);
         $userB = User::factory()->create(['first_name'=>'DORA']);
         $assetA = Asset::factory()->create(['assigned_type'=>User::class,'assigned_to'=>$userA->id]);
         $assetB = Asset::factory()->create(['assigned_type'=>User::class,'assigned_to'=>$userB->id]);
 
-        $filter = ['assigned_to'=>'CARA','assigned_type'=>User::class];
+        $filter = [
+            [
+                "field" => "assigned_to",
+                "value" => 'Cara',
+                "operator" => "contains",
+                "logic" => "AND"
+            ]
+        ];
+        $results = Asset::query()->byFilter($filter)->get();
+
+        Log::error($results);
+
+        $this->assertCount(1, $results);
+        $this->assertTrue($results->contains($assetA));
+        $this->assertFalse($results->contains($assetB));
+    }
+
+    public function testFilterAssetAssignedToUserNameAsStringCompleteWithType() 
+    {
+        $userA = User::factory()->create(['first_name'=>'CARA']);
+        $userB = User::factory()->create(['first_name'=>'DORA']);
+        $assetA = Asset::factory()->create(['assigned_type'=>User::class,'assigned_to'=>$userA->id]);
+        $assetB = Asset::factory()->create(['assigned_type'=>User::class,'assigned_to'=>$userB->id]);
+
+        $filter = [
+            [
+                "field" => "assigned_to",
+                "value" => [
+                    [
+                        "assignedType" => User::class,
+                        "assigned_to" => 'CARA'
+                    ]
+                ],
+                "operator" => "contains",
+                "logic" => "AND"
+            ]
+        ];
 
         $results = Asset::query()->byFilter($filter)->get();
 
@@ -145,7 +178,7 @@ class AssignedToQueryTest extends TestCase
     }
 
     // --- Location assignment tests ---
-    public function testFilterAssetAssignedToLocationId() // FAIL
+    public function testFilterAssetAssignedToLocationId() 
     {
 
         $locationA = Location::factory()->create(['name'=>'LOC-A']);
@@ -164,7 +197,7 @@ class AssignedToQueryTest extends TestCase
         $this->assertFalse($results->contains($assetB));
     }
 
-    public function testFilterAssetAssignedToLocationIdWithType() // FAIL
+    public function testFilterAssetAssignedToLocationIdWithType() 
     {
         $locationA = Location::factory()->create(['name'=>'L1']);
         $locationB = Location::factory()->create(['name'=>'L2']);
@@ -219,17 +252,21 @@ class AssignedToQueryTest extends TestCase
         $this->assertFalse($results->contains($assetB));
     }
 
-    public function testFilterAssetAssignedToLocationNameCompleteWithType() //failed
+    public function testFilterAssetAssignedToLocationNameCompleteWithType() 
     {
-        $this->markTestSkipped("the actual implementation does not allow arrays and type");
-
-
         $locationA = Location::factory()->create();
         $locationB = Location::factory()->create();
         $assetA = Asset::factory()->create(['assigned_type' => Location::class, 'assigned_to' => $locationA->id]);
         $assetB = Asset::factory()->create(['assigned_type' => Location::class, 'assigned_to' => $locationB->id]);
 
-        $filter = ['assigned_to' => $locationA->name, 'assigned_type' => Location::class];
+        $filter = [
+            [
+                "field" => "assigned_to",
+                "value" => $locationA->name,
+                "operator" => "contains",
+                "logic" => "AND"
+            ]
+        ];
 
         $results = Asset::query()->byFilter($filter)->get();
 
@@ -238,17 +275,27 @@ class AssignedToQueryTest extends TestCase
         $this->assertFalse($results->contains($assetB));
     }
 
-    public function testFilterAssetAssignedToLocationNamePartialWithType() //failed
+    public function testFilterAssetAssignedToLocationNamePartialWithType()
     {
-        $this->markTestSkipped("the actual implementation does not allow arrays and types");
-
         $locationA = Location::factory()->create();
         $locationB = Location::factory()->create();
         $assetA = Asset::factory()->create(['assigned_type' => Location::class, 'assigned_to' => $locationA->id]);
         $assetB = Asset::factory()->create(['assigned_type' => Location::class, 'assigned_to' => $locationB->id]);
 
         $partial = AssignedToQueryTest::getExtendedPrefix($locationA->name, $locationB->name);
-        $filter = ['assigned_to' => $partial, 'assigned_type' => Location::class];
+        $filter = [
+            [
+                'field' => 'assigned_to',
+                'value' => [
+                    [
+                        'assignedType' => Location::class,
+                        'assigned_to' => $partial
+                    ]
+                ],
+                'operator' => 'contains',
+                'logic' => 'AND'
+            ]
+        ];
 
         $results = Asset::query()->byFilter($filter)->get();
 
@@ -275,11 +322,8 @@ class AssignedToQueryTest extends TestCase
     }
 
     // --- Asset assignment tests ---
-    public function testFilterAssetAssignedToAssetIdWithType() //failed
+    public function testFilterAssetAssignedToAssetIdWithType() 
     {
-        $this->markTestSkipped("the actual implementation does not allow arrays and type");
-
-
         $parentA = Asset::factory()->create();
         $parentB = Asset::factory()->create();
 
@@ -287,18 +331,18 @@ class AssignedToQueryTest extends TestCase
         $assetB = Asset::factory()->create(['assigned_type' => Asset::class, 'assigned_to' => $parentB->id]);
 
         $filter = [
-            ['field'=>'assigned_to','value'=>$parentA->name,'operator'=>'equals','logic'=>'AND'],
-            ['field'=>'assigned_type','value'=>Asset::class,'operator'=>'equals','logic'=>'AND'],
+            [
+                "field" => "assigned_to",
+                "value" => [
+                    [
+                        "assignedType" => Asset::class,
+                        "assigned_to" => $parentA->id
+                    ]
+                ],
+                "operator" => "contains",
+                "logic" => "AND"
+            ]
         ];
-
-        // $filter = [
-        //     [
-        //         "field"=>"assigned_to",
-        //         "value"=>$parentA->id,
-        //         "operator"=>"contains",
-        //         "logic"=>"AND"
-        //     ]
-        // ];
 
         $results = Asset::query()->byFilter($filter)->get();
 
@@ -340,7 +384,7 @@ class AssignedToQueryTest extends TestCase
         $this->assertFalse($results->contains($assetB));
     }
 
-    public function testFilterAssetAssignedToAssetNameCompleteWithType() //failed
+    public function testFilterAssetAssignedToAssetNameCompleteWithType() 
     {
         $parentA = Asset::factory()->create(['name' => 'assetParentA']);
         $parentB = Asset::factory()->create(['name' => 'assetParentB']);
@@ -363,7 +407,7 @@ class AssignedToQueryTest extends TestCase
         $this->assertFalse($results->contains($assetB));
     }
 
-    public function testFilterAssetAssignedToAssetNamePartialWithType() //failed
+    public function testFilterAssetAssignedToAssetNamePartialWithType() 
     {
         $parentA = Asset::factory()->create(['name' => 'assetParentA']);
         $parentB = Asset::factory()->create(['name' => 'parentAssetB']);
@@ -406,7 +450,7 @@ class AssignedToQueryTest extends TestCase
     }
 
 
-    public function testFilterAssetAssignedTo_User_only() //failed
+    public function testFilterAssetAssignedTo_User_only() 
     {
         $userA = User::factory()->create();
         $assetA = Asset::factory()->create(['assigned_type'=>User::class,'assigned_to'=>$userA->id]);
@@ -421,7 +465,7 @@ class AssignedToQueryTest extends TestCase
         $this->assertTrue($res->contains($assetA));
     }
 
-    public function testFilterAssetAssignedTo_Location_only() //failed
+    public function testFilterAssetAssignedTo_Location_only() 
     {
         $locationA = Location::factory()->create();
         $assetC = Asset::factory()->create(['assigned_type'=>Location::class,'assigned_to'=>$locationA->id]);

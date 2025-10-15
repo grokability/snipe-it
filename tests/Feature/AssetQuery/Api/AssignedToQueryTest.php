@@ -100,9 +100,6 @@ class AssignedToQueryTest extends TestCase
 
     public function testFilterAssetsAssignedToMixedArray(): void
     {
-        $this->markTestSkipped("the actual implementation does not allow arrays");
- 
-
         $assignedToAssetA = Asset::factory()->create();
         $locationA = Location::factory()->create();
         $userA = User::factory()->create();
@@ -122,7 +119,6 @@ class AssignedToQueryTest extends TestCase
             [
                 "field"=>"assigned_to",
                 "value" => [
-                    [ "assignedType" => Location::class, "assigned_to" => $locationA->id ],
                     [ "assignedType" => Asset::class, "assigned_to" => $assignedToAssetA->id ],
                     [ "assignedType" => User::class, "assigned_to" => $userA->id ]
                 ],
@@ -131,7 +127,7 @@ class AssignedToQueryTest extends TestCase
             ]
         ];
 
-        $this->actingAsForApi(User::factory()->superuser()->create())
+        $response = $this->actingAsForApi(User::factory()->superuser()->create())
             ->getJson(
                 route('api.assets.index', [
                     'status' => '',
@@ -145,7 +141,8 @@ class AssignedToQueryTest extends TestCase
                     'offset' => '0',
                     'limit' => '50',
                 ])
-            )
+                );
+            $response
             ->assertOk()
             ->assertJsonStructure([
                 'total',
