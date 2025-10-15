@@ -91,7 +91,6 @@ class CombinedQueryTest extends TestCase
 
     public function testFilterAssetModelStatusArray()
     {
-        $this->markTestSkipped("needs investigation");
         $modelA = AssetModel::factory()->create();
         $modelB = AssetModel::factory()->create();
 
@@ -155,7 +154,6 @@ class CombinedQueryTest extends TestCase
 
     public function testFilterAssetModelManufacturerArray()
     {
-        $this->markTestSkipped("Needs Investigation");
         $manufacturerA = Manufacturer::factory()->create();
         $manufacturerB = Manufacturer::factory()->create();
 
@@ -211,7 +209,6 @@ class CombinedQueryTest extends TestCase
 
     public function testFilterAssetLocationArrayStatus()
     {
-        $this->markTestSkipped("Needs Investigation");
         $locationA = Location::factory()->create();
         $locationB = Location::factory()->create();
         $locationC = Location::factory()->create();
@@ -224,7 +221,15 @@ class CombinedQueryTest extends TestCase
         $assetD = Asset::factory()->create(['location_id' => $locationB->id, 'status_id' => $statusA->id]);
 
 
-        $filter = ['location' => [$locationA->name, $locationB->name], 'status_label' => $statusA->name];
+        $filter = [
+            [
+                "field"=>"location",
+                "value"=>[$locationA->name, $locationB->name],
+                "operator"=>"contains",
+                "logic"=>"AND"
+            ]
+        ];
+        
         $results = Asset::query()->byFilter($filter)->get();
 
         $this->assertCount(3, $results);
@@ -544,7 +549,7 @@ class CombinedQueryTest extends TestCase
         $assetC = Asset::factory()->create();
 
         // No filters applied
-        $filter = [];
+        $filter = [[]];
         $results = Asset::query()->byFilter($filter)->get();
 
         $this->assertCount(3, $results);
@@ -585,8 +590,6 @@ class CombinedQueryTest extends TestCase
 
     public function testFilterAssetAllFiltersAsArrays()
     {
-        $this->markTestSkipped("needs investigation");
-
         $modelA = AssetModel::factory()->create();
         $modelB = AssetModel::factory()->create();
 
@@ -670,13 +673,11 @@ class CombinedQueryTest extends TestCase
 
     public function testFilterWithNullValueReturnsNone()
     {
-        $this->markTestSkipped("needs investigation");
-
         $numberOfAssets = 5;
         Asset::factory()->count($numberOfAssets)->create();
 
         $filter = [
-            ["field"=>"location","value"=>[null],"operator"=>"contains","logic"=>"AND"]
+            ["field"=>"location","value"=>null,"operator"=>"contains","logic"=>"AND"],
         ];
 
         $results = Asset::query()->byFilter($filter)->get();

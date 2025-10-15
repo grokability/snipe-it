@@ -1999,30 +1999,41 @@ protected function applyRelationalValue(Builder $q, $value, string $operator, ar
         return;
     }
 
-    if (is_array($value)) {
-        $ids   = array_filter($value, 'is_int');
-        $names = array_filter($value, 'is_string');
-
-        $q->where(function ($sub) use ($idField, $nameField, $ids, $names , $operator) {
-            if (!empty($ids)) {
-                $sub->orWhereIn($idField, $ids);
-            }
-
-            foreach ($names as $name) {
-                $this->applyWhereWithOperator($sub, $nameField, $name, $operator);
-            }
-        });
-    } else {
-        if (is_int($value)) {
-            $q->where($idField, $value);
-        } else {
-            $this->applyWhereWithOperator($q, $nameField, $value, $operator);
-        }
+    // Fallback safety check
+    if (!$idField && !$nameField) {
+        return;
     }
+    $values = is_array($value) ? $value : [$value];
+
+    $ids = array_filter($values, 'is_int');
+    $names = array_filter($values, 'is_string');
+
+    $q->where(function ($subQ) use ($ids, $names, $idField, $nameField, $operator) {
+        $first = true;
+
+        // IDs only
+        if (!empty($ids)) {
+            if ($first) {
+                $subQ->whereIn($idField, $ids);
+                $first = false;
+            } else {
+                $subQ->orWhereIn($idField, $ids);
+            }
+        }
+
+        // Names only
+        foreach ($names as $name) {
+            if ($first) {
+                $this->applyWhereWithOperator($subQ, $nameField, $name, $operator);
+                $first = false;
+            } else {
+                $subQ->orWhere(function ($q) use ($nameField, $name, $operator) {
+                    $this->applyWhereWithOperator($q, $nameField, $name, $operator);
+                });
+            }
+        }
+    });
 }
-
-
-
 
 protected function applyWhereWithOperator(Builder $query, string $column, $value, string $operator)
 {
@@ -2036,215 +2047,6 @@ protected function applyWhereWithOperator(Builder $query, string $column, $value
                 $q->orWhere($column, 'LIKE', '%' . $v . '%');
             }
         });
-    }
-}
-    protected function applySingleFilterOld(Builder &$q, array $filterObj)
-{
-    $fieldname = $filterObj['field'];
-    $value     = $filterObj['value'];
-    $operator  = strtolower($filterObj['operator']); // "equals" or "contains"
-    $logic     = strtoupper($filterObj['logic']);    // "AND" or "NOT"
-
-    $callback = function (Builder $inner) use ($fieldname, $value, $operator, $filterObj) {
-         
-        
-
-        $likeFields = [
-            'asset_tag'      => 'assets.asset_tag',
-            'name'           => 'assets.name',
-            'serial'         => 'assets.serial',
-            'purchase_date'  => 'assets.purchase_date',
-            'purchase_cost'  => 'assets.purchase_cost',
-            'notes'          => 'assets.notes',
-            'order_number'   => 'assets.order_number',
-        ];
-
-        if (array_key_exists($fieldname, $likeFields)) {
-            $column = $likeFields[$fieldname];
-            if (is_array($value)) {
-                // array logic => multiple values
-                if ($operator === 'equals') {
-                    $inner->whereIn($column, $value);
-                } else { // contains
-                    $inner->where(function (Builder $q2) use ($column, $value) {
-                        foreach ($value as $v) {
-                            $q2->orWhere($column, 'LIKE', '%' . $v . '%');
-                        }
-                    });
-                }
-            } else {
-                if ($operator === 'equals') {
-                    $inner->where($column, $value);
-                } else {
-                    $inner->where($column, 'LIKE', '%' . $value . '%');
-                }
-            }
-            return;
-        }
-
-        switch ($fieldname) {
-            case 'status_label':
-                if (is_array($value)) {
-                    if (!empty($value)) {
-                        $ids   = array_filter($value, 'is_int');
-                        $names = array_filter($value, 'is_string');
-                        Asset::whereHasMatchItemArray($inner, 'assetstatus', $ids, $names, 'status_labels.id', 'status_labels.name');
-                    }
-                } else {
-                    Asset::whereHasMatchSingleItem($inner, 'assetstatus', $value, 'status_labels.id', 'status_labels.name');
-                }
-                break;
-
-            case 'location':
-                if (is_array($value)) {
-                    if (!empty($value)) {
-                        $ids   = array_filter($value, 'is_int');
-                        $names = array_filter($value, 'is_string');
-                        Asset::whereHasMatchItemArray($inner, 'location', $ids, $names, 'locations.id', 'locations.name');
-                    }
-                } else {
-                    Asset::whereHasMatchSingleItem($inner, 'location', $value, 'locations.id', 'locations.name');
-                }
-                break;
-
-            case 'rtd_location':
-                if (is_array($value)) {
-                    if (!empty($value)) {
-                        $ids   = array_filter($value, 'is_int');
-                        $names = array_filter($value, 'is_string');
-                        Asset::whereHasMatchItemArray($inner, 'defaultLoc', $ids, $names, 'locations.id', 'locations.name');
-                    }
-                } else {
-                    Asset::whereHasMatchSingleItem($inner, 'defaultLoc', $value, 'locations.id', 'locations.name');
-                }
-                break;
-
-            case 'manufacturer':
-                if (is_array($value)) {
-                    if (!empty($value)) {
-                        $ids   = array_filter($value, 'is_int');
-                        $names = array_filter($value, 'is_string');
-                        $inner->whereHas('model', function (Builder $mq) use ($ids, $names) {
-                            Asset::whereHasMatchItemArray($mq, 'manufacturer', $ids, $names, 'manufacturers.id', 'manufacturers.name');
-                        });
-                    }
-                } else {
-                    $inner->whereHas('model', function (Builder $mq) use ($value) {
-                        Asset::whereHasMatchSingleItem($mq, 'manufacturer', $value, 'manufacturers.id', 'manufacturers.name');
-                    });
-                }
-                break;
-
-            case 'category':
-                if (is_array($value)) {
-                    if (!empty($value)) {
-                        $ids   = array_filter($value, 'is_int');
-                        $names = array_filter($value, 'is_string');
-                        $inner->whereHas('model', function (Builder $mq) use ($ids, $names) {
-                            Asset::whereHasMatchItemArray($mq, 'category', $ids, $names, 'categories.id', 'categories.name');
-                        });
-                    }
-                } else {
-                    $inner->whereHas('model', function (Builder $mq) use ($value) {
-                        Asset::whereHasMatchSingleItem($mq, 'category', $value, 'categories.id', 'categories.name');
-                    });
-                }
-                break;
-
-            case 'model':
-                if (is_array($value)) {
-                    if (!empty($value)) {
-                        $ids   = array_filter($value, fn($v) => is_numeric($v) && (int)$v == $v);
-                        $names = array_filter($value, fn($v) => is_string($v) && trim($v) !== '');
-                        Asset::whereHasMatchItemArray($inner, 'model', $ids, $names, 'models.id', 'models.name');
-                    }
-                } else {
-                    Asset::whereHasMatchSingleItem($inner, 'model', $value, 'models.id', 'models.name');
-                }
-                break;
-
-            case 'model_number':
-                $inner->where(function (Builder $mq) use ($value, $operator) {
-                    if (is_array($value)) {
-                        $mq->whereHas('model', function (Builder $mq2) use ($value) {
-                            $mq2->whereIn('models.model_number', $value);
-                        });
-                    } else {
-                        $mq->whereHas('model', function (Builder $mq2) use ($value, $operator) {
-                            if ($operator === 'equals') {
-                                $mq2->where('models.model_number', $value);
-                            } else {
-                                $mq2->where('models.model_number', 'LIKE', '%' . $value . '%');
-                            }
-                        });
-                    }
-                });
-                break;
-
-            case 'company':
-                if (is_array($value)) {
-                    if (!empty($value)) {
-                        $ids   = array_filter($value, 'is_int');
-                        $names = array_filter($value, 'is_string');
-                        Asset::whereHasMatchItemArray($inner, 'company', $ids, $names, 'companies.id', 'companies.name');
-                    }
-                } else {
-                    Asset::whereHasMatchSingleItem($inner, 'company', $value, 'companies.id', 'companies.name');
-                }
-                break;
-
-            case 'supplier':
-                if (is_array($value)) {
-                    if (!empty($value)) {
-                        $ids   = array_filter($value, 'is_int');
-                        $names = array_filter($value, 'is_string');
-                        Asset::whereHasMatchItemArray($inner, 'supplier', $ids, $names, 'suppliers.id', 'suppliers.name');
-                    }
-                } else {
-                    Asset->whereHasMatchSingleItem($inner, 'supplier', $value, 'suppliers.id', 'suppliers.name');
-                }
-                break;
-
-            case 'jobtitle':
-                if (is_array($value)) {
-                    $inner->whereHasMorph('assignedTo', [User::class], function ($uq) use ($value) {
-                        $uq->whereIn('users.jobtitle', $value);
-                    });
-                } else {
-                    $inner->whereHasMorph('assignedTo', [User::class],
-                        fn($uq) => $uq->where('users.jobtitle', 'LIKE', '%' . $value . '%')
-                    );
-                }
-                break;
-
-            default:
-                // Fallback: direct column on assets (if exists)
-                if (is_array($value)) {
-                    $inner->whereIn('assets.' . $fieldname, $value);
-                } else {
-                    if (config('database.default') === 'sqlite') {
-                        $inner->where('assets.' . $fieldname, 'LIKE', '%' . $value . '%');
-                    } else {
-                        if ($operator === 'equals') {
-                            $inner->where('assets.' . $fieldname, $value);
-                        } else {
-                            $inner->where('assets.' . $fieldname, 'LIKE', '%' . $value . '%');
-                        }
-                    }
-                }
-                break;
-        }
-    };
-
-    switch ($logic) {
-        case 'NOT':
-            // We wrap a WHERE NOT ( … ) or use whereNot
-            $q->whereNot($callback);
-            break;
-        case 'AND':
-        default:
-            $q->where($callback);
-            break;
     }
 }
 

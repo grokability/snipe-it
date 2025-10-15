@@ -213,9 +213,6 @@ class SupplierQueryTest extends TestCase
 
     public function testFilterAssetSupplierIdAndNameArray()
     {
-
-        $this->markTestSkipped("It's not possible to filter after name and id at once.");
-
         $supplierA = Supplier::factory()->create();
         $supplierB = Supplier::factory()->create();
         $supplierC = Supplier::factory()->create();
@@ -231,7 +228,15 @@ class SupplierQueryTest extends TestCase
             'supplier_id' => $supplierC->id,
         ]);
 
-        $filter = ['supplier' => [$supplierA->name, $supplierB->id]];
+        $filter = [
+            [
+                'field' => 'supplier',
+                'value' => [$supplierA->id, $supplierB->name],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
+
         $results = Asset::query()->byFilter($filter)->get();
 
         $this->assertCount(2, $results);

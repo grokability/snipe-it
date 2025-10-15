@@ -208,9 +208,7 @@ class CompanyQueryTest extends TestCase
     }
 
     public function testFilterAssetCompanyIdAndNameArray()
-    {
-        $this->markTestSkipped("It's not possible to filter after name and id at once.");
-        
+    {        
         $companyA = Company::factory()->create();
         $companyB = Company::factory()->create();
         $companyC = Company::factory()->create();
@@ -226,8 +224,15 @@ class CompanyQueryTest extends TestCase
             'company_id' => $companyC->id,
         ]);
 
+        $filter = [
+            [
+                'field' => 'company',
+                'value' => [$companyA->id, $companyB->name],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
 
-        $filter = ['company' => [$companyA->id, $companyB->name]];
         $results = Asset::query()->byFilter($filter)->get();
 
         $this->assertCount(2, $results);

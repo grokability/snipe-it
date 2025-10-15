@@ -178,9 +178,6 @@ class ModelQueryTest extends TestCase
 
     public function testFilterAssetModelIdAndNameArray()
     {
-
-        $this->markTestSkipped("It's not possible to filter after name and id at once.");
-
         $modelA = AssetModel::factory()->create();
         $modelB = AssetModel::factory()->create();
         $modelC = AssetModel::factory()->create();
@@ -190,7 +187,16 @@ class ModelQueryTest extends TestCase
         $assetC = Asset::factory()->create(['model_id' => $modelC->id]);
 
         // When: Query with an array of names
-        $filter = ['model' => [$modelA->name, $modelB->id]];
+
+        $filter = [
+            [
+                'field' => 'model',
+                'value' => [$modelA->id, $modelB->name],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
+
         $results = Asset::query()->byFilter($filter)->get();
 
         // Then: Should include only assetA to assetD
