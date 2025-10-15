@@ -228,8 +228,6 @@ class SupplierQueryTest extends TestCase
             'supplier_id' => $supplierC->id,
         ]);
 
-        // TODO $filter = ['supplier' => [$supplierA->name, $supplierB->id]];
-
         $filter = [
             [
                 'field' => 'supplier',

@@ -91,7 +91,6 @@ class CombinedQueryTest extends TestCase
 
     public function testFilterAssetModelStatusArray()
     {
-        //$this->markTestSkipped("needs investigation");
         $modelA = AssetModel::factory()->create();
         $modelB = AssetModel::factory()->create();
 
@@ -155,7 +154,6 @@ class CombinedQueryTest extends TestCase
 
     public function testFilterAssetModelManufacturerArray()
     {
-        //$this->markTestSkipped("Needs Investigation");
         $manufacturerA = Manufacturer::factory()->create();
         $manufacturerB = Manufacturer::factory()->create();
 
@@ -211,7 +209,6 @@ class CombinedQueryTest extends TestCase
 
     public function testFilterAssetLocationArrayStatus()
     {
-        //$this->markTestSkipped("Needs Investigation");
         $locationA = Location::factory()->create();
         $locationB = Location::factory()->create();
         $locationC = Location::factory()->create();
@@ -593,8 +590,6 @@ class CombinedQueryTest extends TestCase
 
     public function testFilterAssetAllFiltersAsArrays()
     {
-        //$this->markTestSkipped("needs investigation");
-
         $modelA = AssetModel::factory()->create();
         $modelB = AssetModel::factory()->create();
 
@@ -678,8 +673,6 @@ class CombinedQueryTest extends TestCase
 
     public function testFilterWithNullValueReturnsNone()
     {
-        //$this->markTestSkipped("needs investigation");
-
         $numberOfAssets = 5;
         Asset::factory()->count($numberOfAssets)->create();
 
