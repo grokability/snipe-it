@@ -2,13 +2,17 @@ name: imbus_ci
 
 on:
   push:
-    branches: ['develop', 'master']
+    branches: ["develop", "master"]
+    tags: ["v*", "release-*"]
   pull_request:
   workflow_dispatch:
 
 concurrency:
   group: imbus-main-ci-${{ github.ref }}
   cancel-in-progress: true
+
+env:
+  IMAGE_NAME: imbusklausw/snipeit-imbus
 
 jobs:
   tests-mysql:
@@ -17,19 +21,21 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['8.2','8.3','8.4']
+        php: ["8.2","8.3","8.4"]
 
     services:
       mysql:
         image: mysql:5.7
         env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
           MYSQL_DATABASE: snipeit_test
         ports:
           - 33306:3306
-        options:
-          --health-cmd="mysqladmin ping"
-          --health-interval=10s --health-timeout=5s --health-retries=5
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
     steps:
       - uses: actions/checkout@v4
@@ -86,7 +92,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['8.2','8.3','8.4']
+        php: ["8.2","8.3","8.4"]
 
     steps:
       - uses: actions/checkout@v4
@@ -132,4 +138,74 @@ jobs:
       - name: Run Tests (SQLite)
         env:
           APP_ENV: testing
-        run:  php artisan test --env=testing
+        run: php artisan test --env=testing
+
+  build-and-push-dev:
+    name: Build & Push Docker (dev)
+    needs: [tests-mysql, tests-sqlite]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/develop'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Derive tags
+        id: meta
+        run: |
+          SHORT_SHA="$(echo "${GITHUB_SHA}" | cut -c1-7)"
+          echo "short_sha=$SHORT_SHA" >> $GITHUB_OUTPUT
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build & Push dev tags
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ env.IMAGE_NAME }}:dev
+            ${{ env.IMAGE_NAME }}:dev-${{ steps.meta.outputs.short_sha }}
+          labels: |
+            org.opencontainers.image.source=${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+
+  build-and-push-release:
+    name: Build & Push Docker (release)
+    needs: [tests-mysql, tests-sqlite]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v') || startsWith(github.ref, 'refs/tags/release-')
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Extract tag
+        id: meta
+        run: |
+          REF="${GITHUB_REF#refs/tags/}"
+          echo "tag=$REF" >> $GITHUB_OUTPUT
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build & Push release tags
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tag }}
+            ${{ env.IMAGE_NAME }}:latest
+          labels: |
+            org.opencontainers.image.source=${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
