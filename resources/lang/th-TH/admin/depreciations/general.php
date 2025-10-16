@@ -2,7 +2,7 @@
 
 return [
     'about_asset_depreciations'  			=> 'เกี่ยวกับค่าเสื่อมราคาสินทรัพย์',
-    'about_depreciations'  					=> 'คุณสามารถกำหนดการคิดค่าเสื่อมราคาเพื่อตัดค่าเสื่อมราคาโดยวิธีการคิดค่าเสื่อมราคาแบบเส้นตรง',
+    'about_depreciations'  					=> 'You can set up asset depreciations to depreciate assets based on linear (straight-line), Half Year applied with condition, or Half Year always applied.',
     'asset_depreciations'  					=> 'ค่าเสื่อมราคาสินทรัพย์',
     'create'  					            => 'สร้างค่าเสื่อมราคา',
     'depreciation_name'  					=> 'ชื่อค่าเสื่อมราคา',

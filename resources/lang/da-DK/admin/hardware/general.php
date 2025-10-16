@@ -22,6 +22,8 @@ return [
     'requested'				    => 'Anmodet',
     'not_requestable'           => 'Ikke Anmodet',
     'requestable_status_warning' => 'Ændr ikke status for anfordring',
+    'require_serial'       => 'Require Serial Number',
+    'require_serial_help'       => 'A serial number will be required when creating a new asset of this model.',
     'restore'  					=> 'Gendan aktiv',
     'pending'  					=> 'Verserende',
     'undeployable'  			=> 'Undeployable',

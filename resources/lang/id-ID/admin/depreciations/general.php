@@ -2,7 +2,7 @@
 
 return [
     'about_asset_depreciations'  			=> 'Tentang Penyusutan Aset',
-    'about_depreciations'  					=> 'Anda dapat mengatur penyusutan aset dengan perhitungan penyusutan garis lurus.',
+    'about_depreciations'  					=> 'You can set up asset depreciations to depreciate assets based on linear (straight-line), Half Year applied with condition, or Half Year always applied.',
     'asset_depreciations'  					=> 'Depresiasi Aset',
     'create'  					            => 'Buat Penyusutan',
     'depreciation_name'  					=> 'Nama Penyusutan',

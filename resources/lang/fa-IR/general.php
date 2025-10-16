@@ -172,8 +172,7 @@ return [
     'import'         	    => 'واردات',
     'import_this_file'      => 'انتخاب نظیر به نظیر فیلدها و پردازش فایل',
     'importing'         	=> 'در حال وارد کردن',
-    'importing_help'        => 'می‌توانید دارایی‌ها، لوازم جانبی، مجوزها، اجزا، مواد مصرفی و کاربران را از طریق فایل CSV وارد کنید. <br><br>CSV باید با کاما محدود شود و با سرصفحه‌هایی که در <a href="https://snipe-it.readme.io/docs/importing" target="_new"> مطابقت دارند قالب‌بندی شود. نمونه CSV در مستندات</a>.
-',
+    'importing_help'        => 'The CSV should be comma-delimited and formatted with headers that match the ones in the <a href="https://snipe-it.readme.io/docs/importing" target="_new">sample CSVs in the documentation</a>.',
     'import-history'        => 'واردات تاریخ',
     'asset_maintenance'        => 'نگهداشت دارایی',
     'asset_maintenance_report' => 'گزارش  تعمیر و نگهداری دارایی ها',
@@ -333,10 +332,12 @@ return [
     'total_licenses'		=> 'کل مجوزهای',
     'total_accessories'		=> 'لوازم جانبی کل',
     'total_consumables'		=> 'کل مواد مصرفی',
+    'total_cost'			=> 'Total Cost',
     'type'  				=> 'نوع',
     'undeployable'			=> 'غیر قابل استقرار',
     'unknown_admin'			=> 'نامشخص مدیریت',
     'unknown_user'          => 'Unknown User',
+    'unit_cost'				=> 'Unit Cost',
     'username'              => 'نام کاربری',
     'update'                => 'بروزرسانی',
     'updating_item' => 'بروزرسانی :item',
@@ -380,9 +381,11 @@ return [
 ',
     'accept'                => 'دارایی های پذیرفته',
     'i_accept'              => 'می پذیرم',
-    'i_decline_item'        => 'Decline this item',
-    'i_accept_item'         => 'Accept this item',
+    'i_accept_with_count' => 'I accept :count item|I accept :count items',
+    'i_decline_item' => 'Decline this item|Decline these items',
+    'i_accept_item' => 'Accept this item|Accept these items',
     'i_decline'             => 'نمی پذیرم',
+    'i_decline_with_count' => 'I decline :count item|I decline :count items',
     'accept_decline'        => 'قبول/رد کردن
 ',
     'sign_tos'              => 'برای نشان دادن موافقت با شرایط خدمات زیر را امضا کنید:
@@ -438,6 +441,7 @@ return [
     'managed_ldap'          => '(مدیریت شده از طریق LDAP)
 ',
     'export'                => 'خروجی گرفتن',
+    'export_all_to_csv'     => 'Export all to CSV',
     'ldap_sync'             => 'همگام سازی LDAP
 ',
     'ldap_user_sync'        => 'همگام سازی کاربر LDAP
@@ -562,7 +566,9 @@ return [
     'update_existing_values'    => 'Update Existing Values?',
     'auto_incrementing_asset_tags_disabled_so_tags_required' => 'Generating auto-incrementing asset tags is disabled so all rows need to have the "Asset Tag" column populated.',
     'auto_incrementing_asset_tags_enabled_so_now_assets_will_be_created' => 'Note: Generating auto-incrementing asset tags is enabled so assets will be created for rows that do not have "Asset Tag" populated. Rows that do have "Asset Tag" populated will be updated with the provided information.',
-    'send_welcome_email_to_users'   => ' Send Welcome Email for new Users? Note that only users with a valid email address and who are marked as activated in your import file will received a welcome.',
+    'send_welcome_email_to_users'   => ' Send welcome email to new users',
+    'send_welcome_email_help'   => 'Only users with a valid email address and who are marked as activated will receive a welcome email where they can reset their password.',
+    'send_welcome_email_import_help'   => 'Only new users with a valid email address and who are marked as activated in your import file will receive a welcome email where they can set their password.',
     'send_email'                => 'Send Email',
     'call'                      => 'Call number',
     'back_before_importing'     => 'Backup before importing?',
@@ -595,7 +601,10 @@ return [
     'item_notes' => 'یادداشت های:item',
     'item_name_var' => ':نام کالا',
     'error_user_company' => 'Checkout target company and asset company do not match',
+    'error_user_company_multiple' => 'One or more of the checkout target company and asset company do not match',
     'error_user_company_accept_view' => 'An Asset assigned to you belongs to a different company so you can\'t accept nor deny it, please check with your manager',
+    'error_assets_already_checked_out' => 'One or more of the assets are already checked out',
+    'assigned_assets_removed' => 'The following were removed from the selected assets because they are already checked out',
     'importer' => [
         'checked_out_to_fullname' => 'Checked Out to: Full Name',
         'checked_out_to_first_name' => 'Checked Out to: First Name',
@@ -667,6 +676,8 @@ return [
         'components'  => ':count Component|:count Components',
     ],
 
+    'show_inactive' => 'Expired or Terminated',
+    'show_expiring' => 'Expiring or Terminating Soon',
     'more_info' => 'اطلاعات بیشتر',
     'quickscan_bulk_help' => 'Checking this box will edit the asset record to reflect this new location. Leaving it unchecked will simply note the location in the audit log. Note that if this asset is checked out, it will not change the location of the person, asset or location it is checked out to.',
     'whoops' => 'Whoops!',
@@ -691,6 +702,8 @@ return [
     'use_cloned_no_image_help' => 'This item does not have an associated image and instead inherits from the model or category it belongs to. If you would like to use a specific image for this item, you can upload a new one below.',
     'footer_credit' => '<a target="_blank" href="https://snipeitapp.com" rel="noopener">Snipe-IT</a> is open source software, made with <i class="fa fa-heart" aria-hidden="true" style="color: #a94442; font-size: 10px" /></i><span class="sr-only">love</span> by <a href="https://bsky.app/profile/snipeitapp.com" rel="noopener">@snipeitapp.com</a>.',
     'set_password' => 'Set a Password',
+    'upload_deleted'        => 'Upload Deleted',
+    'child_locations' => 'Child Locations',
 
 // Add form placeholders here
     'placeholders' => [
@@ -707,11 +720,11 @@ return [
         'site_default' => 'Site Default',
         'default_blue' => 'Default Blue',
         'blue_dark' => 'Blue (Dark Mode)',
-        'green' => 'Green Dark',
+        'green' => 'Green',
         'green_dark' => 'Green (Dark Mode)',
-        'red' => 'Red Dark',
+        'red' => 'Red',
         'red_dark' => 'Red (Dark Mode)',
-        'orange' => 'Orange Dark',
+        'orange' => 'Orange',
         'orange_dark' => 'Orange (Dark Mode)',
         'black' => 'Black',
         'black_dark' => 'Black (Dark Mode)',

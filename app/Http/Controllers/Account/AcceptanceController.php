@@ -77,7 +77,6 @@ class AcceptanceController extends Controller
         $acceptance = CheckoutAcceptance::find($id);
         $assigned_user = User::find($acceptance->assigned_to_id);
         $settings = Setting::getSettings();
-        $path_logo = '';
         $sig_filename='';
 
 
@@ -138,6 +137,13 @@ class AcceptanceController extends Controller
         }
 
 
+        // Convert PDF logo to base64 for TCPDF
+        // This is needed for TCPDF to properly embed the image if it's a png and the cache isn't writable
+        $encoded_logo = null;
+        if ($settings->acceptance_pdf_logo) {
+            $encoded_logo = base64_encode(file_get_contents(public_path() . '/uploads/' . $settings->acceptance_pdf_logo));
+        }
+
         // Get the data array ready for the notifications and PDF generation
         $data = [
             'item_tag' => $item->asset_tag,
@@ -151,10 +157,12 @@ class AcceptanceController extends Controller
             'accepted_date' => Helper::getFormattedDateObject(now()->format('Y-m-d H:i:s'), 'datetime', false),
             'declined_date' => Helper::getFormattedDateObject(now()->format('Y-m-d H:i:s'), 'datetime', false),
             'assigned_to' => $assigned_user->display_name,
+            'email' => $assigned_user->email,
+            'employee_num' => $assigned_user->employee_num,
             'site_name' => $settings->site_name,
             'company_name' => $item->company?->name?? $settings->site_name,
-            'signature' => ($sig_filename) ? storage_path() . '/private_uploads/signatures/' . $sig_filename : null,
-            'logo' => ($settings->acceptance_pdf_logo) ? public_path() . '/uploads/' . $settings->acceptance_pdf_logo : null,
+            'signature' => (($sig_filename && array_key_exists('1', $encoded_image))) ? $encoded_image[1] : null,
+            'logo' => ($encoded_logo) ?? null,
             'date_settings' => $settings->date_display_format,
             'admin' => auth()->user()->present()?->fullName,
             'qty' => $acceptance->qty ?? 1,

@@ -46,11 +46,12 @@ return array(
         'not_enough_seats' => 'Not enough license seats available for checkout',
         'mismatch' => 'The license seat provided does not match the license',
         'unavailable' => 'This seat is not available for checkout.',
+        'license_is_inactive' => 'This license is expired or terminated.',
     ),
 
     'checkin' => array(
         'error'   => 'உரிமத்தில் சோதனை ஒரு சிக்கல் இருந்தது. தயவு செய்து மீண்டும் முயற்சிக்கவும்.',
-        'not_reassignable' => 'License not reassignable',
+        'not_reassignable' => 'Seat has been used',
         'success' => 'உரிமம் வெற்றிகரமாக சரிபார்க்கப்பட்டது'
     ),
 

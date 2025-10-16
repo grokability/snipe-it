@@ -2,6 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Actions\Manufacturers\DeleteManufacturerAction;
+use App\Exceptions\ItemStillHasAccessories;
+use App\Exceptions\ItemStillHasAssets;
+use App\Exceptions\ItemStillHasChildren;
+use App\Exceptions\ItemStillHasComponents;
+use App\Exceptions\ItemStillHasConsumables;
+use App\Exceptions\ItemStillHasLicenses;
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Http\Transformers\ManufacturersTransformer;
@@ -184,19 +191,19 @@ class ManufacturersController extends Controller
      * @since [v4.0]
      * @param  int  $id
      */
-    public function destroy($id) : JsonResponse
+    public function destroy(Manufacturer $manufacturer): JsonResponse
     {
-        $this->authorize('delete', Manufacturer::class);
-        $manufacturer = Manufacturer::findOrFail($id);
         $this->authorize('delete', $manufacturer);
-
-        if ($manufacturer->isDeletable()) {
-            $manufacturer->delete();
-            return response()->json(Helper::formatStandardApiResponse('success', null,  trans('admin/manufacturers/message.delete.success')));
+        try {
+            DeleteManufacturerAction::run($manufacturer);
+        } catch (ItemStillHasChildren $e) {
+            return response()->json(Helper::formatStandardApiResponse('error', null, trans('general.bulk_delete_associations.general_assoc_warning', ['item' => trans('general.manufacturer')])));
+        } catch (\Exception $e) {
+            report($e);
+            return response()->json(Helper::formatStandardApiResponse('error', null, trans('general.something_went_wrong')));
         }
 
-        return response()->json(Helper::formatStandardApiResponse('error', null,  trans('admin/manufacturers/message.assoc_users')));
-
+        return response()->json(Helper::formatStandardApiResponse('success', null, trans('admin/manufacturers/message.delete.success')));
     }
 
     /**

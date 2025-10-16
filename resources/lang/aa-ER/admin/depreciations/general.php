@@ -2,7 +2,7 @@
 
 return [
     'about_asset_depreciations'  			=> 'crwdns819:0crwdne819:0',
-    'about_depreciations'  					=> 'crwdns820:0crwdne820:0',
+    'about_depreciations'  					=> 'crwdns13748:0crwdne13748:0',
     'asset_depreciations'  					=> 'crwdns821:0crwdne821:0',
     'create'  					            => 'crwdns1799:0crwdne1799:0',
     'depreciation_name'  					=> 'crwdns823:0crwdne823:0',

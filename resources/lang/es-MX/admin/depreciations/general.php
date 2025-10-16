@@ -2,7 +2,7 @@
 
 return [
     'about_asset_depreciations'  			=> 'Sobre amortización de activos',
-    'about_depreciations'  					=> 'Puede configurar la depreciación de activos usando un método de línea recta.',
+    'about_depreciations'  					=> 'You can set up asset depreciations to depreciate assets based on linear (straight-line), Half Year applied with condition, or Half Year always applied.',
     'asset_depreciations'  					=> 'Depreciación de activos',
     'create'  					            => 'Crear amortización',
     'depreciation_name'  					=> 'Nombre amortización',

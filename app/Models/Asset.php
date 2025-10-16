@@ -232,7 +232,6 @@ class Asset extends Depreciable
     }
 
 
-
     public function customFieldValidationRules()
     {
 
@@ -271,7 +270,6 @@ class Asset extends Depreciable
         return parent::save($params);
     }
 
-
     public function getDisplayNameAttribute()
     {
         return $this->present()->name();
@@ -282,20 +280,128 @@ class Asset extends Depreciable
      *
      * @return \Carbon\Carbon|null
      */
-    public function getWarrantyExpiresAttribute()
+
+
+    protected function warrantyExpires(): Attribute
     {
-        if (isset($this->attributes['warranty_months']) && isset($this->attributes['purchase_date'])) {
-            if (is_string($this->attributes['purchase_date']) || is_string($this->attributes['purchase_date'])) {
-                $purchase_date = \Carbon\Carbon::parse($this->attributes['purchase_date']);
-            } else {
-                $purchase_date = \Carbon\Carbon::instance($this->attributes['purchase_date']);
+        return Attribute:: make(
+            get: fn(mixed $value, array $attributes) => ($attributes['warranty_months'] && $attributes['purchase_date']) ? Carbon::parse($attributes['purchase_date'])->addMonths($attributes['warranty_months']) : null,
+        );
+    }
+
+    protected function warrantyExpiresFormattedDate(): Attribute
+    {
+
+        return Attribute:: make(
+             get: fn(mixed $value, array $attributes) => Helper::getFormattedDateObject($this->warrantyExpires, 'date', false)
+        );
+    }
+
+    protected function warrantyExpiresDiff(): Attribute
+    {
+        return Attribute:: make(
+            get: fn(mixed $value, array $attributes) => $this->warrantyExpires ? round((Carbon::now()->diffInDays($this->warrantyExpires))) : null,
+        );
+
+    }
+
+    protected function warrantyExpiresDiffForHumans(): Attribute
+    {
+        return Attribute:: make(
+            get: fn(mixed $value, array $attributes) => $this->warrantyExpires ? Carbon::parse($this->warrantyExpires)->diffForHumans() : null,
+        );
+
+    }
+
+
+    protected function lastAuditFormattedDate(): Attribute
+    {
+
+        return Attribute:: make(
+            get: fn(mixed $value, array $attributes) => Helper::getFormattedDateObject($this->last_audit_date, 'datetime', false)
+        );
+    }
+
+    protected function lastAuditDiff(): Attribute
+    {
+        return Attribute:: make(
+            get: fn(mixed $value, array $attributes) => $this->warrantyExpires ? round((Carbon::now()->diffInDays($this->warrantyExpires))) : null,
+        );
+
+    }
+
+    protected function lastAuditDiffForHumans(): Attribute
+    {
+        return Attribute:: make(
+            get: fn(mixed $value, array $attributes) =>  $attributes['last_audit_date'] ? Carbon::parse($attributes['last_audit_date'])->diffForHumans() : null,
+        );
+
+    }
+
+    protected function nextAuditFormattedDate(): Attribute
+    {
+
+        return Attribute:: make(
+            get: fn(mixed $value, array $attributes) => Helper::getFormattedDateObject($this->next_audit_date, 'date', false)
+        );
+    }
+
+    protected function nextAuditDiffInDays(): Attribute
+    {
+        return Attribute:: make(
+            get: fn(mixed $value, array $attributes) => $attributes['next_audit_date'] ? Carbon::now()->diffInDays($attributes['next_audit_date']) : null,
+        );
+    }
+
+    protected function nextAuditDiffForHumans(): Attribute
+    {
+        return Attribute:: make(
+            get: fn(mixed $value, array $attributes) => $attributes['next_audit_date'] ? Carbon::parse($attributes['next_audit_date'])->diffForHumans() : null,
+        );
+
+    }
+
+    protected function eolDate(): Attribute
+    {
+
+        return Attribute:: make(
+            get: function(mixed $value, array $attributes) {
+                if ($attributes['asset_eol_date'] && $attributes['eol_explicit'] == '1') {
+                    return Carbon::parse($attributes['asset_eol_date']);
+                } elseif ($attributes['purchase_date'] && $this->model && ((int) $this->model->eol > 0)) {
+                    return Carbon::parse($attributes['purchase_date'])->addMonths((int) $this->model->eol);
+                } else {
+                    return null;
+                }
             }
-            $purchase_date->setTime(0, 0, 0);
+        );
 
-            return $purchase_date->addMonths((int) $this->attributes['warranty_months']);
-        }
+    }
 
-        return null;
+
+
+    protected function eolFormattedDate(): Attribute
+    {
+        return Attribute:: make(
+            get: fn(mixed $value, array $attributes) => $this->eolDate ? Helper::getFormattedDateObject($this->eolDate, 'date', false) : null,
+        );
+    }
+
+    protected function eolDiffInDays(): Attribute
+    {
+        return Attribute:: make(
+            get: fn(mixed $value, array $attributes) => $this->eolDate ? round((Carbon::now()->diffInDays(Carbon::parse($this->eolDate), false,  1))) : null,
+        );
+
+    }
+
+    protected function eolDiffForHumans(): Attribute
+    {
+
+        return Attribute:: make(
+            get: fn(mixed $value, array $attributes) => $this->eolDate  ? Carbon::parse($this->eolDate)->diffForHumans() : null,
+        );
+
     }
 
 

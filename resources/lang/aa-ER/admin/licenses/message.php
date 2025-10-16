@@ -46,11 +46,12 @@ return array(
         'not_enough_seats' => 'crwdns11902:0crwdne11902:0',
         'mismatch' => 'crwdns12574:0crwdne12574:0',
         'unavailable' => 'crwdns12576:0crwdne12576:0',
+        'license_is_inactive' => 'crwdns13798:0crwdne13798:0',
     ),
 
     'checkin' => array(
         'error'   => 'crwdns948:0crwdne948:0',
-        'not_reassignable' => 'crwdns12802:0crwdne12802:0',
+        'not_reassignable' => 'crwdns13778:0crwdne13778:0',
         'success' => 'crwdns949:0crwdne949:0'
     ),
 

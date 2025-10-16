@@ -24,7 +24,6 @@ return [
     'auto_assign_label' => 'Include this user when auto-assigning eligible licenses',
     'auto_assign_help'  => 'Skip this user in auto assignment of licenses',
     'software_user'     => 'Isofthiwe ihlolwe ku: igama',
-    'send_email_help'   => 'You must provide an email address for this user to send them credentials. Emailing credentials can only be done on user creation. Passwords are stored in a one-way hash and cannot be retrieved once saved.',
     'view_user'         => 'Buka umsebenzisi: igama',
     'usercsv'           => 'Ifayela le-CSV',
     'two_factor_admin_optin_help' => 'Izilungiselelo zakho zamanje zomlawuli zivumela ukusethwa okukhethiwe kokuqinisekiswa kwezinto ezimbili.',

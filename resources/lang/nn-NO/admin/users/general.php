@@ -24,7 +24,6 @@ return [
     'auto_assign_label' => 'Inkluder denne brukeren ved automatisk tildeling av kvalifiserte lisenser',
     'auto_assign_help'  => 'Hopp over brukeren i autotildeling av lisenser',
     'software_user'     => 'Programvare utsjekket til :name',
-    'send_email_help'   => 'Du må legge inn brukerens e-postadresse for å kunne sende dem innloggingsinformasjon. Sending av innloggingsinformasjon kan kun gjøres når brukeren blir opprettet. Passordet lagres på en sikker måte, slik at det ikke kan hentes opp når det er lagret.',
     'view_user'         => 'Vis bruker :name',
     'usercsv'           => 'CSV-fil',
     'two_factor_admin_optin_help' => 'Gjeldende administrasjonsinnstillinger tillater selektiv håndhevelse av to-faktor autentisering.  ',

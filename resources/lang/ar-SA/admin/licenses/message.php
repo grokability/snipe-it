@@ -46,11 +46,12 @@ return array(
         'not_enough_seats' => 'لا توجد مقاعد ترخيص كافية متاحة للدفع',
         'mismatch' => 'The license seat provided does not match the license',
         'unavailable' => 'This seat is not available for checkout.',
+        'license_is_inactive' => 'This license is expired or terminated.',
     ),
 
     'checkin' => array(
         'error'   => 'حدثت مشكلة في التحقق من الترخيص. يرجى إعادة المحاولة.',
-        'not_reassignable' => 'License not reassignable',
+        'not_reassignable' => 'Seat has been used',
         'success' => 'تم ادخال الترخيص بنجاح'
     ),
 

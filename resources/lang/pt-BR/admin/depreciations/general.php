@@ -2,7 +2,7 @@
 
 return [
     'about_asset_depreciations'  			=> 'Sobre as Depreciações de Ativos',
-    'about_depreciations'  					=> 'Você pode configurar depreciações para depreciar ativos baseados na depreciação linear.',
+    'about_depreciations'  					=> 'Você pode configurar a depreciação de ativos para depreciar com base em três métodos: Linear (linha reta), Meio Ano aplicado com condição ou Meio Ano sempre aplicado.',
     'asset_depreciations'  					=> 'Depreciações de Ativos',
     'create'  					            => 'Criar Depreciação',
     'depreciation_name'  					=> 'Nome da Depreciação',

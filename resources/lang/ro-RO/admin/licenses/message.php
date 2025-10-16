@@ -46,11 +46,12 @@ return array(
         'not_enough_seats' => 'Nu sunt disponibile suficiente locuri de licență pentru checkout',
         'mismatch' => 'The license seat provided does not match the license',
         'unavailable' => 'This seat is not available for checkout.',
+        'license_is_inactive' => 'This license is expired or terminated.',
     ),
 
     'checkin' => array(
         'error'   => 'A aparut o problema la primirea licentei. Va rugam incercati iar.',
-        'not_reassignable' => 'License not reassignable',
+        'not_reassignable' => 'Seat has been used',
         'success' => 'Licenta a fost primita'
     ),
 

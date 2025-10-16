@@ -22,7 +22,7 @@ return array(
         'success' => '供应商成功被删除。',
         'assoc_assets'	 => '此供应商目前关联着 :asset_count 个资产，无法删除。请更新您的资产，取消关联此供应商后再试。 ',
         'assoc_licenses'	 => '此供应商目前关联着 :licenses_count 个许可证，不能删除。请更新您的许可证，取消关联此供应商，然后重试。 ',
-        'assoc_maintenances'	 => 'This supplier is currently associated with :maintenances_count asset maintenances(s) and cannot be deleted. Please update your asset maintenances to no longer reference this supplier and try again. ',
+        'assoc_maintenances'	 => '此供应商目前与 :asset_count 项资产维护记录关联，无法删除。请更新您的资产维护记录，移除对该供应商的引用，然后重试。 ',
     )
 
 );

@@ -35,7 +35,7 @@ return array(
     'total_assets_cost'     => "Bendra turto vertė",
     'updateuser' 			=> 'Atnaujinti naudotoją',
     'username' 				=> 'Naudotojo vardas',
-    'display_name' 			=> 'Display Name',
+    'display_name' 			=> 'Rodomas vardas',
 	'user_deleted_text' 	=> 'Šis naudotojas buvo pažymėtas kaip panaikintas.',
     'username_note' 		=> '(Tai naudojama tik „Active Directory“ susiejimui, o ne prisijungimui.)',
     'cloneuser'             => 'Klonuoti naudotoją',

@@ -13,13 +13,31 @@
   <div class="col-md-12">
     <div class="box box-default">
       <div class="box-body">
-        <table
-            data-columns="{{ \App\Presenters\CategoryPresenter::dataTableLayout() }}"
+
+          <x-tables.bulk-actions
+                  id_divname='categoriesBulkEditToolbar'
+                  action_route="{{route('categories.bulk.delete')}}"
+                  id_formname="categoriesBulkForm"
+                  id_button="bulkCategoryEditButton"
+                  model_name="category"
+          >
+              @can('delete', App\Models\Category::class)
+                  <option>Delete</option>
+              @endcan
+          </x-tables.bulk-actions>
+
+          <table
+                  data-columns="{{ \App\Presenters\CategoryPresenter::dataTableLayout() }}"
             data-cookie-id-table="categoryTable"
             data-id-table="categoryTable"
             data-side-pagination="server"
             data-sort-order="asc"
             id="categoryTable"
+            {{-- begin stuff for bulk dropdown --}}
+            data-toolbar="#categoriesBulkEditToolbar"
+            data-bulk-button-id="#bulkCategoryEditButton"
+            data-bulk-form-id="#categoriesBulkForm"
+            {{-- end stuff for bulk dropdown --}}
             data-buttons="categoryButtons"
             class="table table-striped snipe-table"
             data-url="{{ route('api.categories.index') }}"

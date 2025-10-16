@@ -2,7 +2,7 @@
 
 return [
     'about_asset_depreciations'  			=> 'Par Asset Depreciations',
-    'about_depreciations'  					=> 'Jūs varat izveidot aktīvu nolietojumu, lai nolietotu aktīvus, pamatojoties uz lineāro nolietojumu.',
+    'about_depreciations'  					=> 'You can set up asset depreciations to depreciate assets based on linear (straight-line), Half Year applied with condition, or Half Year always applied.',
     'asset_depreciations'  					=> 'Aktīvu vērtības samazināšanās',
     'create'  					            => 'Izveidot nolietojumu',
     'depreciation_name'  					=> 'Nolietojuma nosaukums',

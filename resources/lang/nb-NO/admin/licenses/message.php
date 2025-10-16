@@ -46,11 +46,12 @@ return array(
         'not_enough_seats' => 'Ikke nok lisensseter tilgjengelige for utsjekking',
         'mismatch' => 'The license seat provided does not match the license',
         'unavailable' => 'This seat is not available for checkout.',
+        'license_is_inactive' => 'This license is expired or terminated.',
     ),
 
     'checkin' => array(
         'error'   => 'Det oppstod et problem under innsjekk av lisens. Vennligst prøv igjen.',
-        'not_reassignable' => 'License not reassignable',
+        'not_reassignable' => 'Seat has been used',
         'success' => 'Vellykket innsjekk av lisens'
     ),
 

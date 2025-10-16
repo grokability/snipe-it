@@ -2,7 +2,7 @@
 
 return [
     'about_asset_depreciations'  			=> 'Για αποσβέσεις παγίου',
-    'about_depreciations'  					=> 'Μπορείτε να ορίσετε αποσβέσεις του περιουσιακού στοιχείου προκειμένου να γίνει απόσβεση περιουσιακών στοιχείων βάσει σταθερής απόσβεσης.',
+    'about_depreciations'  					=> 'You can set up asset depreciations to depreciate assets based on linear (straight-line), Half Year applied with condition, or Half Year always applied.',
     'asset_depreciations'  					=> 'Αποσβέσεις περιουσιακών στοιχείων',
     'create'  					            => 'Δημιουργία αποσβέσεων',
     'depreciation_name'  					=> 'Όνομα απόσβεσης',

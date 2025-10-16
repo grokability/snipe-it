@@ -22,6 +22,8 @@ return [
     'requested'				    => 'Solicitat',
     'not_requestable'           => 'Nu poate fi solicitat',
     'requestable_status_warning' => 'Nu schimba starea care poate fi solicitată',
+    'require_serial'       => 'Require Serial Number',
+    'require_serial_help'       => 'A serial number will be required when creating a new asset of this model.',
     'restore'  					=> 'Restabilirea activului',
     'pending'  					=> 'In asteptare',
     'undeployable'  			=> 'Nelansabil',

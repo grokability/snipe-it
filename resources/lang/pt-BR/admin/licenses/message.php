@@ -46,11 +46,12 @@ return array(
         'not_enough_seats' => 'Não há vagas de licença suficientes disponíveis para o pagamento',
         'mismatch' => 'A alocação de licença fornecida não corresponde à licença',
         'unavailable' => 'Esta alocação não está disponível para empréstimo.',
+        'license_is_inactive' => 'This license is expired or terminated.',
     ),
 
     'checkin' => array(
         'error'   => 'Houve um problema de registro na licença. Favor tentar novamente.',
-        'not_reassignable' => 'Licença não pode ser transferida',
+        'not_reassignable' => 'Seat has been used',
         'success' => 'A licença foi registrada com sucesso.'
     ),
 

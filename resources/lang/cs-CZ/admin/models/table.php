@@ -11,7 +11,6 @@ return array(
     'title'					=> 'Model',
     'update'				=> 'Upravit vzor majetku',
     'view'					=> 'Zobrazit vzor majetku',
-    'update'				=> 'Upravit vzor majetku',
-    'clone'				=> 'Kopíruj modelovou řadu',
-    'edit'				=> 'Edituj model',
+    'clone'				    => 'Kopíruj modelovou řadu',
+    'edit'				    => 'Edituj model',
 );

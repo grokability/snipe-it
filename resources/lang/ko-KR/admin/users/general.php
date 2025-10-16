@@ -24,7 +24,6 @@ return [
     'auto_assign_label' => 'Include this user when auto-assigning eligible licenses',
     'auto_assign_help'  => 'Skip this user in auto assignment of licenses',
     'software_user'     => '소프트웨어 반출 목록 :name',
-    'send_email_help'   => '이 사용자에게 자격 증명을 보내려면 이메일 주소를 입력해야 합니다. 자격 증명을 이메일로 보내는 것은 사용자 생성 시에만 수행할 수 있습니다. 암호는 단방향 해시에 저장되며 한 번 저장하면 재열람 할 수 없습니다.',
     'view_user'         => '사용자 보기 :name',
     'usercsv'           => 'CSV 파일',
     'two_factor_admin_optin_help' => '현재 관리 설정이 두가지 인증방법을 선택적으로 실행하게 되어 있습니다.  ',

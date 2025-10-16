@@ -317,8 +317,20 @@ class LdapSync extends Command
             if($ldap_map["jobtitle"] != null){
                 $user->jobtitle = $item['jobtitle'];
             }
+            if($ldap_map["address"] != null){
+                $user->address = $item['address'];
+            }
+            if($ldap_map["city"] != null){
+                $user->city = $item['city'];
+            }
+            if($ldap_map["state"] != null){
+                $user->state = $item['state'];
+            }
             if($ldap_map["country"] != null){
                 $user->country = $item['country'];
+            }
+            if($ldap_map["zip"] != null){
+                $user->zip = $item['zip'];
             }
             if($ldap_map["dept"]  != null){
                 $user->department_id = $department->id;

@@ -46,11 +46,12 @@ return array(
         'not_enough_seats' => 'Lama hayo shatiyo ku filan wax bixinta',
         'mismatch' => 'The license seat provided does not match the license',
         'unavailable' => 'This seat is not available for checkout.',
+        'license_is_inactive' => 'This license is expired or terminated.',
     ),
 
     'checkin' => array(
         'error'   => 'Cillad ayaa dhacday intii la hubinayay shatiga. Fadlan kuceli markale.',
-        'not_reassignable' => 'License not reassignable',
+        'not_reassignable' => 'Seat has been used',
         'success' => 'Shatiga si guul leh ayaa loo hubiyay'
     ),
 

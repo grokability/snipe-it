@@ -11,7 +11,6 @@ return array(
     'title'					=> 'Modelli Bene',
     'update'				=> 'Aggiorna Modello Bene',
     'view'					=> 'Visualizza Modello Bene',
-    'update'				=> 'Aggiorna Modello Bene',
-    'clone'				=> 'Clona Modello',
-    'edit'				=> 'Modifica Modello',
+    'clone'				    => 'Clona Modello',
+    'edit'				    => 'Modifica Modello',
 );

@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Zarządzaj',
     'field'		                => 'Pole',
     'about_fieldsets_title'		=> 'O zestawie pól',
-    'about_fieldsets_text'		=> 'Zestawy pól pozwalają tworzyć grupy pól niestandardowych, które często są używane dla specyficznych typów modeli.',
+    'about_fieldsets_text'		=> 'Zestawy pól pozwalają na utworzenie grup własnych, niestandardowych pól, które są często wykorzystywane. Mogą być one wykorzystane i przypisane do modeli aktywów.',
     'custom_format'             => 'Własny format...',
     'encrypt_field'      	        => 'Szyfruje wartość tego pola w bazie danych',
     'encrypt_field_help'      => 'UWAGA: Szyfrowanie pola spowoduje brak możliwości wyszukiwania go.',

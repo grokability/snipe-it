@@ -43,6 +43,7 @@
                     data-toolbar="#userBulkEditToolbar"
                     data-bulk-button-id="#bulkUserEditButton"
                     data-bulk-form-id="#usersBulkForm"
+                    data-show-columns-search="true"
                     id="usersTable"
                     data-buttons="userButtons"
                     class="table table-striped snipe-table"

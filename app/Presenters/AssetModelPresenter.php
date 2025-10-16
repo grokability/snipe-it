@@ -53,7 +53,7 @@ class AssetModelPresenter extends Presenter
             ],
             [
                 'field' => 'manufacturer',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,
                 'title' => trans('general.manufacturer'),
@@ -62,7 +62,7 @@ class AssetModelPresenter extends Presenter
             ],
             [
                 'field' => 'model_number',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,
                 'title' => trans('admin/models/table.modelnumber'),
@@ -130,7 +130,7 @@ class AssetModelPresenter extends Presenter
             ],
             [
                 'field' => 'category',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,
                 'title' => trans('general.category'),

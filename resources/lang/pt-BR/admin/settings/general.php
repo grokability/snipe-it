@@ -145,7 +145,7 @@ return [
     'login_user_agent'          => 'Agente de usuário',
     'login_help'                => 'Lista de tentativas de login',
     'login_note'                => 'Login Note',
-    'login_note_placeholder'            => "If you do not have a login or have found a device belonging to this company, please call technical support at 888-555-1212. Thank you.",
+    'login_note_placeholder'            => "Caso você não tenha um login ou tenha encontrado um dispositivo pertencente a esta empresa, por favor ligue para o suporte técnico entre 888-555-12. Obrigado.",
     'login_note_help'           => 'Optionally inclui algumas coisas na sua tela de login, por exemplo para ajudar pessoas que acharam um equipamento perdido ou um equipamento furtado. Este campo aceita <a href="https://help.github.com/articles/github-flavored-markdown/">Github flavored markdown</a>',
     'login_remote_user_text'    => 'Opções de login do usuário remoto',
     'login_remote_user_enabled_text' => 'Ativar login de usuário remoto',

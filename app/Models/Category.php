@@ -291,6 +291,35 @@ class Category extends SnipeModel
      **/
 
     /**
+     * Query builder scope to search on text filters for complex Bootstrap Tables API
+     *
+     * @param \Illuminate\Database\Query\Builder $query  Query builder instance
+     * @param text                               $filter JSON array of search keys and terms
+     *
+     * @return \Illuminate\Database\Query\Builder          Modified query builder
+     */
+    public function scopeByFilter($query, $filter)
+    {
+        return $query->where(
+            function ($query) use ($filter) {
+                foreach ($filter as $fieldname => $search_val) {
+
+                    if ($fieldname == 'name') {
+                        $query->where('categories.name', 'LIKE', '%' . $search_val . '%');
+                    }
+
+                    if ($fieldname == 'category_type') {
+                        $query->where('categories.category_type', 'LIKE', '%' . $search_val . '%');
+                    }
+
+                }
+
+
+            }
+        );
+    }
+
+    /**
      * Query builder scope for whether or not the category requires acceptance
      *
      * @author Vincent Sposato <vincent.sposato@gmail.com>

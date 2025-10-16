@@ -15,7 +15,7 @@ return [
 
     'more_info_title' => 'Több információ',
 
-    'audit_help' => 'Checking this box will edit the asset record to reflect this new location. Leaving it unchecked will simply note the location in the audit log.<br><br>Note that if this asset is checked out, it will not change the location of the person, asset or location it is checked out to.',
+    'audit_help' => 'Ha bejelöli ezt a négyzetet, az eszköz adatlapja frissülni fog az új helyszínnel. Ha nem jelöli be, a helyszínt csak az auditnaplóban rögzítjük. <br><br>Fontos: ha az eszköz ki van adva, ez nem módosítja annak a személynek, eszköznek vagy helyszínnek a helyét, amelyhez ki lett adva.',
 
     'assets' => 'Az eszközök sorozatszám vagy eszközcímke alapján nyomon követhető tételek.  Ezek általában nagyobb értékű tételek, ahol egy adott tétel azonosítása fontos.',
 

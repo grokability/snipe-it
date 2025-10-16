@@ -46,11 +46,12 @@ return array(
         'not_enough_seats' => 'Za mało dostępnych miejsc do zamówienia',
         'mismatch' => 'Podane miejsce licencji nie jest zgodne z licencją',
         'unavailable' => 'To miejsce nie jest dostępne do wydania.',
+        'license_is_inactive' => 'This license is expired or terminated.',
     ),
 
     'checkin' => array(
         'error'   => 'Nastąpił problem podczas weryfikacji licencji. Spróbuj ponownie',
-        'not_reassignable' => 'Licencja nie może zostać ponownie przypisana',
+        'not_reassignable' => 'Seat has been used',
         'success' => 'Licencja poprawna'
     ),
 

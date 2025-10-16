@@ -46,11 +46,12 @@ return array(
         'not_enough_seats' => 'Not enough license seats available for checkout',
         'mismatch' => 'The license seat provided does not match the license',
         'unavailable' => 'This seat is not available for checkout.',
+        'license_is_inactive' => 'This license is expired or terminated.',
     ),
 
     'checkin' => array(
         'error'   => '라이선스 반입 중 문제가 발생했습니다. 다시 시도해 주세요.',
-        'not_reassignable' => 'License not reassignable',
+        'not_reassignable' => 'Seat has been used',
         'success' => '라이선스가 반입 되었습니다.'
     ),
 

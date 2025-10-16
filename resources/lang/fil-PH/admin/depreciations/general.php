@@ -2,7 +2,7 @@
 
 return [
     'about_asset_depreciations'  			=> 'Tungkol sa Depresasyon ng Asset',
-    'about_depreciations'  					=> 'Pwede kang mag-set up ng depresasyon para mai-depreciate ang mga asset basi sa straight-line depreciation.',
+    'about_depreciations'  					=> 'You can set up asset depreciations to depreciate assets based on linear (straight-line), Half Year applied with condition, or Half Year always applied.',
     'asset_depreciations'  					=> 'Ang Depresasyon ng Asset',
     'create'  					            => 'Magsagawa ng Depresasyon',
     'depreciation_name'  					=> 'Ang Pangalan ng Depresasyon',

@@ -22,6 +22,8 @@ return [
     'requested'				    => 'Begärda',
     'not_requestable'           => 'Inte begärbar',
     'requestable_status_warning' => 'Ändra inte begärbar status',
+    'require_serial'       => 'Require Serial Number',
+    'require_serial_help'       => 'A serial number will be required when creating a new asset of this model.',
     'restore'  					=> 'Återställ tillgången',
     'pending'  					=> 'Väntande',
     'undeployable'  			=> 'Otillgänglig',

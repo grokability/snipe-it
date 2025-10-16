@@ -54,6 +54,12 @@ class AssetModelsController extends Controller
                 'deleted_at',
                 'updated_at',
                 'require_serial',
+                // These are *relationships* so we wouldn't normally include them in this array,
+                // since they would normally create a `column not found` error,
+                // BUT we account for them in the ordering switch down at the end of this method
+                // DO NOT ADD ANYTHING TO THIS LIST WITHOUT CHECKING THE ORDERING SWITCH BELOW!
+                'manufacturer',
+                'category',
             ];
 
         $assetmodels = AssetModel::select([
@@ -80,6 +86,24 @@ class AssetModelsController extends Controller
             ->withCount('availableAssets as remaining')
             ->withCount('assignedAssets as assets_assigned_count')
             ->withCount('archivedAssets as assets_archived_count');
+
+        $filter = [];
+
+        if ($request->filled('filter')) {
+            $filter = json_decode($request->input('filter'), true);
+
+            $filter = array_filter($filter, function ($key) use ($allowed_columns) {
+                return in_array($key, $allowed_columns);
+            }, ARRAY_FILTER_USE_KEY);
+
+        }
+
+        if ((! is_null($filter)) && (count($filter)) > 0) {
+            $assetmodels->ByFilter($filter);
+        } elseif ($request->filled('search')) {
+            $assetmodels->TextSearch($request->input('search'));
+        }
+
 
         if ($request->input('status')=='deleted') {
             $assetmodels->onlyTrashed();

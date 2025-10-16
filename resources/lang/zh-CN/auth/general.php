@@ -14,7 +14,7 @@ return [
     'username_help_bottom'          => '您的用户名和邮箱地址<em>可以</em>相同，也可以不同，这取决于您的配置。如果您忘记了您的用户名，请与管理员联系。<br><br><strong>没有关联电子邮件地址的用户名将不会通过电子邮件发送密码重置链接。 </strong> ',
     'google_login'                  => '使用 Google Workspace 登录',
     'google_login_failed'           => 'Google 登录失败，请重试。',
-    'invite_password_expires'       => 'This password reset link will expire on :expire_date. You can use the manual password reset link to receive a new reset token by clicking here',
+    'invite_password_expires'       => '此密码重置链接将在 :expire_date 过期。您可以点击这里使用手动密码重置链接接收新的重置令牌',
 
 ];
 

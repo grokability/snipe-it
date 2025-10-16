@@ -22,6 +22,8 @@ return [
     'requested'				    => 'მოთხოვნილია',
     'not_requestable'           => 'არ არის მოთხოვნადი',
     'requestable_status_warning' => 'არ შეცვალოთ მოთხოვნადი სტატუსი',
+    'require_serial'       => 'Require Serial Number',
+    'require_serial_help'       => 'A serial number will be required when creating a new asset of this model.',
     'restore'  					=> 'ინვენტარის აღდგენა',
     'pending'  					=> 'მოლოდინშია',
     'undeployable'  			=> 'არ არის მზად გასაცემად',

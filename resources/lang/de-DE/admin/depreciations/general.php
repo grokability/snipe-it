@@ -2,7 +2,7 @@
 
 return [
     'about_asset_depreciations'  			=> 'Über Asset-Abschreibungen',
-    'about_depreciations'  					=> 'Sie können Asset-Abschreibungen einrichten, um Assets linear abzuschreiben.',
+    'about_depreciations'  					=> 'Sie können Asset-Abschreibungen einrichten, um Vermögenswerte abzuwerten, basierend auf linearer Abschreibung, Halbjahr mit Bedingung oder Halbjahr immer angewendet.',
     'asset_depreciations'  					=> 'Asset-Abschreibungen',
     'create'  					            => 'Abschreibung erstellen',
     'depreciation_name'  					=> 'Abschreibungs Name',

@@ -2,7 +2,7 @@
 
 return [
     'about_asset_depreciations'  			=> 'Про амортизації активів',
-    'about_depreciations'  					=> 'Ви можете встановити амортизацію активів для знецінення активів, заснованих на амортизації прямої лінії.',
+    'about_depreciations'  					=> 'You can set up asset depreciations to depreciate assets based on linear (straight-line), Half Year applied with condition, or Half Year always applied.',
     'asset_depreciations'  					=> 'Амортизація Активу',
     'create'  					            => 'Створити амортизацію',
     'depreciation_name'  					=> 'Назва амортизації',

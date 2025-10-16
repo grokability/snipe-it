@@ -2,7 +2,7 @@
 
 return [
     'about_asset_depreciations'  			=> 'Maidir le Dímheas Sócmhainní',
-    'about_depreciations'  					=> 'Is féidir leat dímheasanna sócmhainní a bhunú chun sócmhainní a dhímheas bunaithe ar dhímheas díreach líne.',
+    'about_depreciations'  					=> 'You can set up asset depreciations to depreciate assets based on linear (straight-line), Half Year applied with condition, or Half Year always applied.',
     'asset_depreciations'  					=> 'Dímheas Sócmhainní',
     'create'  					            => 'Críochnaigh Dímheas',
     'depreciation_name'  					=> 'Ainm Dímheas',

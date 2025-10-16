@@ -22,6 +22,8 @@ return [
     'requested'				    => 'Pyydetty',
     'not_requestable'           => 'Ei pyydettävissä',
     'requestable_status_warning' => 'Älä muuta pyydettävyyden tilaa',
+    'require_serial'       => 'Require Serial Number',
+    'require_serial_help'       => 'A serial number will be required when creating a new asset of this model.',
     'restore'  					=> 'Palauta laite',
     'pending'  					=> 'Odottaa',
     'undeployable'  			=> 'Ei käytettävissä',

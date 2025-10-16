@@ -2,7 +2,7 @@
 
 return [
     'about_asset_depreciations'  			=> '關於資產折舊',
-    'about_depreciations'  					=> '您可以設置資產折舊期限',
+    'about_depreciations'  					=> 'You can set up asset depreciations to depreciate assets based on linear (straight-line), Half Year applied with condition, or Half Year always applied.',
     'asset_depreciations'  					=> '資產折舊',
     'create'  					            => '新建折舊',
     'depreciation_name'  					=> '折舊名稱',

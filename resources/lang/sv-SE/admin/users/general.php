@@ -24,7 +24,6 @@ return [
     'auto_assign_label' => 'Inkludera denna användare när du automatiskt tilldelar kvalificerade licenser',
     'auto_assign_help'  => 'Hoppa över denna användare i automatisk tilldelning av licenser',
     'software_user'     => 'Programvara utcheckad till :name',
-    'send_email_help'   => 'Du måste ange en e-postadress till användaren för att kunna skicka inloggningsuppgifterna. Utskick av inloggningsuppgifter kan endast göras när användaren skapas. Lösenorden lagras i en one-way hash och kan inte hämtas när de väl sparats.',
     'view_user'         => 'Visa användare :name',
     'usercsv'           => 'CSV-fil',
     'two_factor_admin_optin_help' => 'Dina nuvarande administratörsinställningar tillåter selektiv tillämpning av tvåfaktorsautentisering.  ',

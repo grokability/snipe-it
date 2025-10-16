@@ -40,7 +40,7 @@
                     <li><strong>{{ trans('general.model_name') }}</strong> {{ $asset->model->name }}</li>
                 @endisset
                 @isset($asset->name)
-                    <li><strong>{{ trans('general.asset_name') }}</strong> {{ $asset->model->name }}</li>
+                    <li><strong>{{ trans('general.asset_name') }}</strong> {{ $asset->name }}</li>
                 @endisset
                 <li><strong>{{ trans('general.asset_tag') }}</strong> {{ $asset->asset_tag }}</li>
                 @isset($asset->notes)
@@ -96,6 +96,31 @@
             @endforeach
         @endforeach
     </x-alert>
+@endif
+
+@if ($messages = session()->get('multi_error_messages'))
+    <div class="col-md-12">
+        <div class="alert alert-warning fade in">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <i class="fas fa-exclamation-triangle faa-pulse animated"></i>
+            <strong>{{ trans('general.notification_error') }}: </strong>
+            <ul>
+                @foreach(array_splice($messages, 0, 3) as $message)
+                    <li>{{ $message }}</li>
+                @endforeach
+            </ul>
+            @if (count($messages) > 0)
+                <details>
+                    <summary>{{ trans('general.show_all') }}</summary>
+                    <ul>
+                        @foreach($messages as $message)
+                            <li>{{ $message }}</li>
+                        @endforeach
+                    </ul>
+                </details>
+            @endif
+        </div>
+    </div>
 @endif
 
 @if ($msg = $pull('warning'))

@@ -47,7 +47,7 @@ class SendUpcomingAuditReport extends Command
         $today = Carbon::now();
         $interval_date = $today->copy()->addDays($interval);
 
-        $assets = Asset::whereNull('deleted_at')->dueOrOverdueForAudit($settings)->orderBy('assets.next_audit_date', 'desc')->get();
+        $assets = Asset::whereNull('deleted_at')->dueOrOverdueForAudit($settings)->orderBy('assets.next_audit_date', 'asc')->get();
         $this->info($assets->count() . ' assets must be audited in on or before ' . $interval_date . ' is deadline');
 
 
@@ -61,6 +61,28 @@ class SendUpcomingAuditReport extends Command
 
             $this->info('Sending Admin SendUpcomingAuditNotification to: ' . $settings->alert_email);
             Mail::to($recipients)->send(new SendUpcomingAuditMail($assets, $settings->audit_warning_days));
+
+            $this->table(
+                [
+                    trans('general.id'),
+                    trans('general.name'),
+                    trans('general.last_audit'),
+                    trans('general.next_audit_date'),
+                    trans('mail.Days'),
+                    trans('mail.supplier'),
+                    trans('mail.assigned_to'),
+
+                ],
+                $assets->map(fn($item) => [
+                    trans('general.id') => $item->id,
+                    trans('general.name') => $item->display_name,
+                    trans('general.last_audit') => $item->last_audit_formatted_date,
+                    trans('general.next_audit_date') => $item->next_audit_formatted_date,
+                    trans('mail.Days') => round($item->next_audit_diff_in_days),
+                    trans('mail.supplier') => $item->supplier ? $item->supplier->name : '',
+                    trans('mail.assigned_to') => $item->assignedTo ? $item->assignedTo->display_name : '',
+                ])
+            );
         }
 
     }

@@ -2,7 +2,7 @@
 
 return [
     'about_asset_depreciations'  			=> 'Om avskrivninger',
-    'about_depreciations'  					=> 'Du kan sette opp avskrivninger for å kostnadsføre eiendeler basert på en lineær avskrivning i perioden.',
+    'about_depreciations'  					=> 'You can set up asset depreciations to depreciate assets based on linear (straight-line), Half Year applied with condition, or Half Year always applied.',
     'asset_depreciations'  					=> 'Avskrivninger',
     'create'  					            => 'Opprett avskrivning',
     'depreciation_name'  					=> 'Avskrivningsnavn',

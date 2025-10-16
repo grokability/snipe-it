@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Hallitse',
     'field'		                => 'Kenttä',
     'about_fieldsets_title'		=> 'Tietoja kenttäsarjoista',
-    'about_fieldsets_text'		=> 'Kentäsarjoilla voit luoda ryhmiä mukautetuista kentistä, joita tarvitaan tietyillä laitemalleilla.',
+    'about_fieldsets_text'		=> 'Kenttäkokoelma mahdollistaa kokoelmien muodostamisen mukautetuista kentistä joita käytetään usein tiettyjen laitemallien kanssa.',
     'custom_format'             => 'Mukautettu regex-formaatti...',
     'encrypt_field'      	        => 'Salaa tämän kentän arvo tietokannassa',
     'encrypt_field_help'      => 'VAROITUS: Kentän salaaminen estää kentän arvolla hakemisen.',

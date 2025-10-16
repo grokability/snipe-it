@@ -22,6 +22,8 @@ return [
     'requested'				    => 'La codsaday',
     'not_requestable'           => 'Looma baahna',
     'requestable_status_warning' => 'Ha bedelin heerka la codsan karo',
+    'require_serial'       => 'Require Serial Number',
+    'require_serial_help'       => 'A serial number will be required when creating a new asset of this model.',
     'restore'  					=> 'Soo Celinta Hantida',
     'pending'  					=> 'La sugayo',
     'undeployable'  			=> 'Aan la hawlgelin',

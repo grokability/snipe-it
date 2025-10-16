@@ -22,6 +22,8 @@ return [
     'requested'				    => '已申領',
     'not_requestable'           => '不可申請',
     'requestable_status_warning' => '請不要更改可申請狀態',
+    'require_serial'       => 'Require Serial Number',
+    'require_serial_help'       => 'A serial number will be required when creating a new asset of this model.',
     'restore'  					=> '還原資產',
     'pending'  					=> '待處理',
     'undeployable'  			=> '不可部署',

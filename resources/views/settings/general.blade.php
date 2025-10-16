@@ -87,7 +87,12 @@
                                    <label for="email_format">{{ trans('admin/settings/general.email_formats.email_format') }}</label>
                                </div>
                                <div class="col-md-8">
-                                   {!! Form::email_format('email_format', old('email_format', $setting->email_format), 'select2') !!}
+                                   <x-input.email-format-select
+                                       name="email_format"
+                                       :selected="old('email_format', $setting->email_format)"
+                                       style="width: 100%"
+                                       aria-label="email_format"
+                                   />
                                    {!! $errors->first('email_format', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
                                </div>
                            </div>

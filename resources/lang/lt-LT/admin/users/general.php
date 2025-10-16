@@ -24,7 +24,6 @@ return [
     'auto_assign_label' => 'Įtraukti šį naudotoją, kai automatiškai priskiriamos tinkamos licencijos',
     'auto_assign_help'  => 'Praleisti šį naudotoją, kai automatiškai priskiriamos licencijos',
     'software_user'     => 'Programinė įranga išduota: :name',
-    'send_email_help'   => 'Turite nurodyti šio naudotojo el. pašto adresą, kad galėmtumėte jam nusiųsti prisijungimo duomenis. El. pašto prisijungimo duomenis galima siųsti tik kuriant naudotoją. Slaptažodžiai saugomi vienpuse maiša ir jų negalima atkurti po to, kai jie yra išsaugomi.',
     'view_user'         => 'Peržiūrėti naudotoją :name',
     'usercsv'           => 'CSV failas',
     'two_factor_admin_optin_help' => 'Dabartiniai administratoriaus nustatymai leidžia pasirinktinai naudoti dviejų veiksnių autentifikavimą.  ',

@@ -22,6 +22,8 @@ return [
     'requested'				    => 'Zatraženo',
     'not_requestable'           => 'Ne može da se potražuje',
     'requestable_status_warning' => 'Ne manjajte status mogućnosti potraživanja',
+    'require_serial'       => 'Zahteva serijski broj',
+    'require_serial_help'       => 'Serijski broj će biti zahtevan pri kreiranju nove imovine ovog modela.',
     'restore'  					=> 'Restore Asset',
     'pending'  					=> 'U čekanju',
     'undeployable'  			=> 'Ne može da se razmesti',

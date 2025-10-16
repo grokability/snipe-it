@@ -3,12 +3,13 @@
 return array(
 
     'does_not_exist' => 'الموقع غير موجود.',
-    'assoc_users'    => 'This location is not currently deletable because it is the location of record for at least one asset or user, has assets assigned to it, or is the parent location of another location. Please update your records to no longer reference this location and try again ',
+    'assoc_users'    => 'This location is not currently deletable because it is the location of record for at least one item or user, has assets assigned to it, or is the parent location of another location. Please update your records to no longer reference this location and try again ',
     'assoc_assets'	 => 'هذا الموقع مرتبط حاليا بمادة عرض واحدة على الأقل ولا يمكن حذفها. يرجى تحديث مواد العرض لم تعد تشير إلى هذا الموقع ثم أعد المحاولة. ',
     'assoc_child_loc'	 => 'هذا الموقع هو حاليا أحد الوالدين لموقع طفل واحد على الأقل ولا يمكن حذفه. يرجى تحديث مواقعك لم تعد تشير إلى هذا الموقع ثم أعد المحاولة.',
     'assigned_assets' => 'الأصول المعينة',
     'current_location' => 'الموقع الحالي',
     'open_map' => 'Open in :map_provider_icon Maps',
+    'deleted_warning' => 'This location has been deleted. Please restore it before attempting to make any changes.',
 
 
     'create' => array(

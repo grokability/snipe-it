@@ -103,9 +103,75 @@ class UsersController extends Controller
                 'managedLocations as manages_locations_count'
             ]);
 
+        $allowed_columns =
+            [
+                'last_name',
+                'first_name',
+                'display_name',
+                'email',
+                'jobtitle',
+                'username',
+                'employee_num',
+                'groups',
+                'activated',
+                'created_at',
+                'updated_at',
+                'two_factor_enrolled',
+                'two_factor_optin',
+                'last_login',
+                'assets_count',
+                'licenses_count',
+                'consumables_count',
+                'accessories_count',
+                'manages_users_count',
+                'manages_locations_count',
+                'phone',
+                'mobile',
+                'address',
+                'city',
+                'state',
+                'country',
+                'zip',
+                'id',
+                'ldap_import',
+                'two_factor_optin',
+                'two_factor_enrolled',
+                'remote',
+                'vip',
+                'start_date',
+                'end_date',
+                'autoassign_licenses',
+                'website',
+                'locale',
+                'notes',
+                'employee_num',
 
-        if ($request->filled('search') != '') {
-            $users = $users->TextSearch($request->input('search'));
+                // These are *relationships* so we wouldn't normally include them in this array,
+                // since they would normally create a `column not found` error,
+                // BUT we account for them in the ordering switch down at the end of this method
+                // DO NOT ADD ANYTHING TO THIS LIST WITHOUT CHECKING THE ORDERING SWITCH BELOW!
+                'company',
+                'location',
+                'department',
+                'manager',
+                'created_by',
+
+            ];
+
+        $filter = [];
+
+        if ($request->filled('filter')) {
+            $filter = json_decode($request->input('filter'), true);
+            $filter = array_filter($filter, function ($key) use ($allowed_columns) {
+                return in_array($key, $allowed_columns);
+            }, ARRAY_FILTER_USE_KEY);
+
+        }
+
+        if ((! is_null($filter)) && (count($filter)) > 0) {
+            $users->ByFilter($filter);
+        } elseif ($request->filled('search')) {
+            $users->TextSearch($request->input('search'));
         }
 
         if ($request->filled('activated')) {
@@ -286,49 +352,6 @@ class UsersController extends Controller
                 $users->orderBy('first_name', $order);
                 break;
             default:
-                $allowed_columns =
-                    [
-                        'last_name',
-                        'first_name',
-                        'display_name',
-                        'email',
-                        'jobtitle',
-                        'username',
-                        'employee_num',
-                        'groups',
-                        'activated',
-                        'created_at',
-                        'updated_at',
-                        'two_factor_enrolled',
-                        'two_factor_optin',
-                        'last_login',
-                        'assets_count',
-                        'licenses_count',
-                        'consumables_count',
-                        'accessories_count',
-                        'manages_users_count',
-                        'manages_locations_count',
-                        'phone',
-                        'mobile',
-                        'address',
-                        'city',
-                        'state',
-                        'country',
-                        'zip',
-                        'id',
-                        'ldap_import',
-                        'two_factor_optin',
-                        'two_factor_enrolled',
-                        'remote',
-                        'vip',
-                        'start_date',
-                        'end_date',
-                        'autoassign_licenses',
-                        'website',
-                        'locale',
-                        'notes',
-                    ];
-
                 $sort = in_array($request->input('sort'), $allowed_columns) ? $request->input('sort') : 'first_name';
                 $users = $users->orderBy($sort, $order);
                 break;

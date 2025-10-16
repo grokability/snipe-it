@@ -22,6 +22,8 @@ return [
     'requested'				    => '요청됨',
     'not_requestable'           => 'Not Requestable',
     'requestable_status_warning' => 'Do not change requestable status',
+    'require_serial'       => 'Require Serial Number',
+    'require_serial_help'       => 'A serial number will be required when creating a new asset of this model.',
     'restore'  					=> '자산 복원',
     'pending'  					=> '대기중',
     'undeployable'  			=> '사용불가',

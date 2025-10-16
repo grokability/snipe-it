@@ -19,6 +19,7 @@
                                 data-side-pagination="server"
                                 data-sort-order="asc"
                                 id="accessoriesReport"
+                                data-advanced-search="false"
                                 class="table table-striped snipe-table"
                                 data-url="{{ route('api.accessories.index') }}"
                                 data-export-options='{

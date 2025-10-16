@@ -22,6 +22,8 @@ return [
     'requested'				    => 'crwdns1697:0crwdne1697:0',
     'not_requestable'           => 'crwdns6555:0crwdne6555:0',
     'requestable_status_warning' => 'crwdns11681:0crwdne11681:0',
+    'require_serial'       => 'crwdns13770:0crwdne13770:0',
+    'require_serial_help'       => 'crwdns13772:0crwdne13772:0',
     'restore'  					=> 'crwdns1178:0crwdne1178:0',
     'pending'  					=> 'crwdns1170:0crwdne1170:0',
     'undeployable'  			=> 'crwdns1171:0crwdne1171:0',

@@ -46,11 +46,12 @@ return array(
         'not_enough_seats' => 'Niet genoeg licentieplaatsen beschikbaar voor de kassa',
         'mismatch' => 'De opgegeven licentie werkplek komt niet overeen met de licentie',
         'unavailable' => 'Deze licentie is niet beschikbaar voor uitchecken.',
+        'license_is_inactive' => 'This license is expired or terminated.',
     ),
 
     'checkin' => array(
         'error'   => 'Er was een probleem met het inchecken van deze licentie. Probeer het opnieuw.',
-        'not_reassignable' => 'License not reassignable',
+        'not_reassignable' => 'Seat has been used',
         'success' => 'De licentie is met succes ingecheckt'
     ),
 

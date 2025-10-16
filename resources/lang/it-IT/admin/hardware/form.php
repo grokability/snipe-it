@@ -44,6 +44,8 @@ return [
     'redirect_to_checked_out_to'   => 'Vai agli assegnati',
     'select_statustype'	=> 'Selezionare il tipo di stato',
     'serial'			=> 'Seriale',
+    'serial_required'	=> 'È obbligatorio il numero di serie per il bene :number',
+    'serial_required_post_model_update'	=> 'Il numero di serie è obbligatorio per :asset_model . Aggiungi un numero di serie per questo bene.',
     'status'			=> 'Stato',
     'tag'				=> 'Etichetta Bene',
     'update'			=> 'Aggiorna Bene',

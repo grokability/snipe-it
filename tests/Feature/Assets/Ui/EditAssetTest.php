@@ -75,7 +75,10 @@ class EditAssetTest extends TestCase
         $user = User::factory()->create();
         $deployable_status = Statuslabel::factory()->rtd()->create();
         $achived_status = Statuslabel::factory()->archived()->create();
-        $asset = Asset::factory()->assignedToUser($user)->create(['status_id' => $deployable_status->id]);
+        $asset = Asset::factory()->assignedToUser($user)->create([
+            'status_id' => $deployable_status->id,
+            'last_checkin' => null,
+        ]);
         $this->assertTrue($asset->assignedTo->is($user));
 
         $currentTimestamp = now();
@@ -96,6 +99,7 @@ class EditAssetTest extends TestCase
         $this->assertNull($asset->assigned_to);
         $this->assertNull($asset->assigned_type);
         $this->assertEquals($achived_status->id, $asset->status_id);
+        $this->assertNotNull($asset->last_checkin);
 
         Event::assertDispatched(function (CheckoutableCheckedIn $event) use ($currentTimestamp) {
             return (int) Carbon::parse($event->action_date)->diffInSeconds($currentTimestamp, true) < 2;

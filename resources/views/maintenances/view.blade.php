@@ -138,6 +138,20 @@ use Carbon\Carbon;
                 </div>
               </div> <!-- /row -->
 
+              @if ($maintenance->url)
+                <div class="row">
+                  <div class="col-md-3">
+                    {{ trans('general.url') }}
+                  </div>
+                  <div class="col-md-9">
+                    <a href="{{ $maintenance->url }}">
+                      {{ $maintenance->url }}
+                      <x-icon type="external-link" />
+                    </a>
+                  </div>
+                </div> <!-- /row -->
+              @endif
+
               <div class="row">
                 <div class="col-md-3">
                   {{ trans('admin/maintenances/form.asset_maintenance_time') }}

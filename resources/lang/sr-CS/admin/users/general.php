@@ -24,7 +24,6 @@ return [
     'auto_assign_label' => 'Uvrsti ovog korisnika u automatskom dodeljivanju kvalifikovanih licenci',
     'auto_assign_help'  => 'Preskoči ovog korisnika u automatskoj dodeli licenci',
     'software_user'     => 'Software Checked out to :name',
-    'send_email_help'   => 'Morate da navedete adresu e-pošte za ovog korisnika da biste mu poslali akreditive. Slanje akreditiva e-poštom se može izvršiti samo prilikom kreiranja korisnika. Lozinke se čuvaju u jednosmernom hešu i ne mogu se preuzeti kada su sačuvane.',
     'view_user'         => 'Prikaži korisnika :name',
     'usercsv'           => 'CSV file',
     'two_factor_admin_optin_help' => 'Your current admin settings allow selective enforcement of two-factor authentication.  ',

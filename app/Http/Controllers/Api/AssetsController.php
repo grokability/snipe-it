@@ -117,6 +117,22 @@ class AssetsController extends Controller
             'asset_eol_date',
             'requestable',
             'jobtitle',
+            // These are *relationships* so we wouldn't normally include them in this array,
+            // since they would normally create a `column not found` error,
+            // BUT we account for them in the ordering switch down at the end of this method
+            // DO NOT ADD ANYTHING TO THIS LIST WITHOUT CHECKING THE ORDERING SWITCH BELOW!
+            'company',
+            'model',
+            'location',
+            'rtd_location',
+            'category',
+            'status_label',
+            'manufacturer',
+            'supplier',
+            'jobtitle',
+            'assigned_to',
+            'created_by',
+
         ];
 
         $all_custom_fields = CustomField::all(); //used as a 'cache' of custom fields throughout this page load
@@ -129,11 +145,11 @@ class AssetsController extends Controller
 
         if ($request->filled('filter')) {
             $filter = json_decode($request->input('filter'), true);
-        }
 
-        $all_custom_fields = CustomField::all(); //used as a 'cache' of custom fields throughout this page load
-        foreach ($all_custom_fields as $field) {
-            $allowed_columns[] = $field->db_column_name();
+            $filter = array_filter($filter, function ($key) use ($allowed_columns) {
+                return in_array($key, $allowed_columns);
+            }, ARRAY_FILTER_USE_KEY);
+
         }
 
         $assets = Asset::select('assets.*')

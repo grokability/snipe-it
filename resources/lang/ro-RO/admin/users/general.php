@@ -24,7 +24,6 @@ return [
     'auto_assign_label' => 'Include acest utilizator la atribuirea automată a licențelor eligibile',
     'auto_assign_help'  => 'Sari peste acest utilizator în atribuirea automată a licențelor',
     'software_user'     => 'Software predat catre :name',
-    'send_email_help'   => 'Trebuie să furnizați o adresă de e-mail pentru ca acest utilizator să îi trimită acreditările. Trimiterea de acreditări poate fi efectuată numai la crearea utilizatorului. Parolele sunt stocate într-un singur fel și nu pot fi recuperate după ce au fost salvate.',
     'view_user'         => 'Vezi utilizator :name',
     'usercsv'           => 'Fișier CSV',
     'two_factor_admin_optin_help' => 'Setările dvs. actuale de administrare permit executarea selectivă a autentificării cu două factori.',

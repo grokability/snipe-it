@@ -28,7 +28,7 @@ return array(
         'unavailable'   => '配件不足無法借出, 檢查可用數量.',
         'user_does_not_exist' => '使用者不正確。請再試一次。',
          'checkout_qty' => array(
-            'lte'  => 'There is currently only one available accessory of this type, and you are trying to check out :checkout_qty. Please adjust the checkout quantity or the total stock of this accessory and try again.|There are :number_currently_remaining total available accessories, and you are trying to check out :checkout_qty. Please adjust the checkout quantity or the total stock of this accessory and try again.',
+            'lte'  => '目前此類型只有一個可用的配件，您正在試圖借出 :checkout_qty 個。 請修改借出數量或是該配件的庫存量後再試一次。|有 :num_currently_restotal 個可用配件，您正在試圖借出 :checkout_qty 個。請修改借出數量或是該配件的庫存量後再試一次。',
             ),
            
     ),

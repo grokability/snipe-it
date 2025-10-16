@@ -59,6 +59,7 @@ return [
     'days' => 'Days',
     'expecting_checkin_date' => 'Expected Checkin Date',
     'expires' => 'Expires',
+    'terminates' => 'Terminates',
     'following_accepted' => 'The following was accepted',
     'following_declined' => 'The following was declined',
     'hello' => 'Hello',

@@ -44,6 +44,8 @@ return [
     'redirect_to_checked_out_to'   => 'Chuyển đến mục Đã cấp phát',
     'select_statustype'	=> 'Lựa chọn loại tình trạng',
     'serial'			=> 'Số Sê-ri',
+    'serial_required'	=> 'Asset :number requires a serial number',
+    'serial_required_post_model_update'	=> ':asset_model have been updated to require a serial number. Please add a serial number for this asset.',
     'status'			=> 'Tình trạng',
     'tag'				=> 'Thẻ tài sản',
     'update'			=> 'Cập nhật tài sản',

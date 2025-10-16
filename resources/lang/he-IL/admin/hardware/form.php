@@ -44,6 +44,8 @@ return [
     'redirect_to_checked_out_to'   => 'עבור לנמסר ל',
     'select_statustype'	=> 'בחר סוג סטטוס',
     'serial'			=> 'סידורי',
+    'serial_required'	=> 'Asset :number requires a serial number',
+    'serial_required_post_model_update'	=> ':asset_model have been updated to require a serial number. Please add a serial number for this asset.',
     'status'			=> 'סטָטוּס',
     'tag'				=> 'תג נכס',
     'update'			=> 'עדכון נכס',

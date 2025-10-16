@@ -46,11 +46,12 @@ return array(
         'not_enough_seats' => 'Jumlah slot lisensi yang tersedia tidak mencukupi untuk dipinjam atau diambil',
         'mismatch' => 'Slot lisensi yang diberikan tidak cocok dengan lisensi',
         'unavailable' => 'Slot lisensi ini tidak tersedia untuk dipinjam atau diambil.',
+        'license_is_inactive' => 'This license is expired or terminated.',
     ),
 
     'checkin' => array(
         'error'   => 'Terdapat kesalahan pada saat penerimaan lisensi ini. Silahkan coba kembali.',
-        'not_reassignable' => 'Lisensi tidak dapat dialihkan atau ditetapkan ulang',
+        'not_reassignable' => 'Seat has been used',
         'success' => 'Lisensi telah berhasil diterima'
     ),
 

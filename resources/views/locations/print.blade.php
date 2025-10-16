@@ -279,8 +279,8 @@
                 <td>{{ $accessory->name }}</td>
                 <td>{{ ($accessory->category) ? $accessory->category->name : '' }}</td>
                 <td>{{ ($accessory->manufacturer) ? $accessory->manufacturer->name : '' }}</td>
-                <td>{{ $asset->model_number }}</td>
-                <td>{{ ($asset->location) ? $asset->location->name : '' }}</td>
+                <td>{{ $accessory->model_number }}</td>
+                <td>{{ ($accessory->location) ? $accessory->location->name : '' }}</td>
             </tr>
             @php
                 $counter++
@@ -318,8 +318,8 @@
                     <td>{{ $accessory->name }}</td>
                     <td>{{ ($accessory->category) ? $accessory->category->name : '' }}</td>
                     <td>{{ ($accessory->manufacturer) ? $accessory->manufacturer->name : '' }}</td>
-                    <td>{{ $asset->model_number }}</td>
-                    <td>{{ ($asset->location) ? $asset->location->name : '' }}</td>
+                    <td>{{ $accessory->model_number }}</td>
+                    <td>{{ ($accessory->location) ? $accessory->location->name : '' }}</td>
                 </tr>
                 @php
                     $counter++

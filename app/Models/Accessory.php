@@ -390,7 +390,91 @@ class Accessory extends SnipeModel
      * BEGIN QUERY SCOPES
      * -----------------------------------------------
      **/
+    /**
+     * Query builder scope to search on text filters for complex Bootstrap Tables API
+     *
+     * @param \Illuminate\Database\Query\Builder $query  Query builder instance
+     * @param text                               $filter JSON array of search keys and terms
+     *
+     * @return \Illuminate\Database\Query\Builder          Modified query builder
+     */
 
+    public function scopeByFilter($query, $filter)
+    {
+        return $query->where(
+            function ($query) use ($filter) {
+                foreach ($filter as $fieldname => $search_val) {
+
+                    if ($fieldname == 'name') {
+                        $query->where('accessories.name', 'LIKE', '%' . $search_val . '%');
+                    }
+
+                    if ($fieldname == 'notes') {
+                        $query->where('accessories.notes', 'LIKE', '%' . $search_val . '%');
+                    }
+
+                    if ($fieldname == 'model_number') {
+                        $query->where('accessories.model_number', 'LIKE', '%' . $search_val . '%');
+                    }
+
+                    if ($fieldname == 'order_number') {
+                        $query->where('accessories.order_number', 'LIKE', '%' . $search_val . '%');
+                    }
+
+                    if ($fieldname == 'purchase_cost') {
+                        $query->where('accessories.purchase_cost', 'LIKE', '%' . $search_val . '%');
+                    }
+
+                    if ($fieldname == 'location') {
+                        $query->whereHas(
+                            'location', function ($query) use ($search_val) {
+                            $query->where('locations.name', 'LIKE', '%'.$search_val.'%');
+                        }
+                        );
+                    }
+
+                    if ($fieldname == 'manufacturer') {
+                        $query->whereHas(
+                            'manufacturer', function ($query) use ($search_val) {
+                            $query->where('manufacturers.name', 'LIKE', '%'.$search_val.'%');
+                        }
+                        );
+                    }
+
+
+                    if ($fieldname == 'supplier') {
+                        $query->whereHas(
+                            'supplier', function ($query) use ($search_val) {
+                            $query->where('suppliers.name', 'LIKE', '%'.$search_val.'%');
+                        }
+                        );
+                    }
+
+
+                    if ($fieldname == 'category') {
+                        $query->whereHas(
+                            'category', function ($query) use ($search_val) {
+                            $query->where('categories.name', 'LIKE', '%'.$search_val.'%');
+                        }
+                        );
+                    }
+
+                    if ($fieldname == 'company') {
+                        $query->whereHas(
+                            'company', function ($query) use ($search_val) {
+                            $query->where('companies.name', 'LIKE', '%'.$search_val.'%');
+                        }
+                        );
+                    }
+
+
+
+                }
+
+
+            }
+        );
+    }
 
     /**
      * Query builder scope to order on created_by name

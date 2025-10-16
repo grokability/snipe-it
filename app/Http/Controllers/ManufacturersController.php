@@ -2,6 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Manufacturers\DeleteManufacturerAction;
+use App\Exceptions\ItemStillHasAccessories;
+use App\Exceptions\ItemStillHasAssets;
+use App\Exceptions\ItemStillHasChildren;
+use App\Exceptions\ItemStillHasComponents;
+use App\Exceptions\ItemStillHasConsumables;
+use App\Exceptions\ItemStillHasLicenses;
+use App\Helpers\Helper;
 use App\Http\Requests\ImageUploadRequest;
 use App\Models\Actionlog;
 use App\Models\Manufacturer;
@@ -157,32 +165,18 @@ class ManufacturersController extends Controller
      * @param int $manufacturerId
      * @since [v1.0]
      */
-    public function destroy($manufacturerId) : RedirectResponse
+    public function destroy(Manufacturer $manufacturer): RedirectResponse
     {
-        $this->authorize('delete', Manufacturer::class);
-        if (is_null($manufacturer = Manufacturer::withTrashed()->withCount('models as models_count')->find($manufacturerId))) {
-            return redirect()->route('manufacturers.index')->with('error', trans('admin/manufacturers/message.not_found'));
+        $this->authorize('delete', $manufacturer);
+        try {
+            DeleteManufacturerAction::run($manufacturer);
+        } catch (ItemStillHasChildren $e) {
+            return redirect()->route('manufacturers.index')->with('error', trans('general.bulk_delete_associations.general_assoc_warning', ['item' => trans('general.manufacturer')]));
+        } catch (\Exception $e) {
+            report($e);
+            return redirect()->route('manufacturers.index')->with('error', trans('general.something_went_wrong'));
         }
 
-        if (! $manufacturer->isDeletable()) {
-            return redirect()->route('manufacturers.index')->with('error', trans('admin/manufacturers/message.assoc_users'));
-        }
-
-        if ($manufacturer->image) {
-            try {
-                Storage::disk('public')->delete('manufacturers/'.$manufacturer->image);
-            } catch (\Exception $e) {
-                Log::info($e);
-            }
-        }
-
-        // Soft delete the manufacturer if active, permanent delete if is already deleted
-        if ($manufacturer->deleted_at === null) {
-            $manufacturer->delete();
-        } else {
-            $manufacturer->forceDelete();
-        }
-        // Redirect to the manufacturers management page
         return redirect()->route('manufacturers.index')->with('success', trans('admin/manufacturers/message.delete.success'));
     }
 

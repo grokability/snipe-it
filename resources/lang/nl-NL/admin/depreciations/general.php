@@ -2,7 +2,7 @@
 
 return [
     'about_asset_depreciations'  			=> 'Over afschrijvingen van Asset',
-    'about_depreciations'  					=> 'U kan de asset-afschrijving instellen om assets af te schrijven op basis van lineaire afschrijving.',
+    'about_depreciations'  					=> 'You can set up asset depreciations to depreciate assets based on linear (straight-line), Half Year applied with condition, or Half Year always applied.',
     'asset_depreciations'  					=> 'Asset afschrijvingen',
     'create'  					            => 'Afschrijving aanmaken',
     'depreciation_name'  					=> 'Afschrijvingsnaam',
