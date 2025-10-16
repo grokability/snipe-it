@@ -39,23 +39,23 @@
   </div>
   <!-- side address column -->
   <div class="col-md-3">
-    <h2>{{ trans('admin/predefinedfilters/table.about') }}</h2>
+    <h2>{{ trans('admin/predefinedFilters/table.about') }}</h2>
 
       <div class="box">
           <div class="box-body">
-              <p>{!!  trans('admin/predefinedfilters/table.info') !!}</p> {{-- TODO --}}
+              <p>{!!  trans('admin/predefinedFilters/table.info') !!}</p>
           </div>
       </div>
 
       <div class="box box-success">
           <div class="box-body">
-            <p><i class="fas fa-check icon-white text-success"></i> <strong>{{ trans('admin/predefinedfilters/table.private') }}</strong>: {{ trans('admin/predefinedfilters/help.private') }}</p> {{-- TODO --}}
+            <p><i class="fas fa-check icon-white text-success"></i> <strong>{{ trans('admin/predefinedFilters/table.private') }}</strong>: {{ trans('admin/predefinedFilters/help.private') }}</p>
           </div>
       </div>
 
       <div class="box box-danger">
           <div class="box-body">
-              <p><i class="fas fa-times text-red"></i> <strong>{{ trans('admin/predefinedfilters/table.public') }}</strong>: {{ trans('admin/predefinedfilters/help.public') }}</p> {{-- TODO --}}
+              <p><i class="fas fa-times text-red"></i> <strong>{{ trans('admin/predefinedFilters/table.public') }}</strong>: {{ trans('admin/predefinedFilters/help.public') }}</p>
           </div>
       </div>
 
@@ -73,7 +73,6 @@ $(document).ready(function () {
         $('#predefinedFiltersTable').bootstrapTable('refresh');
     });
 
-  // TODO Ensure that L10n is complete after refactoring.
     $('#predefinedFiltersTable').on('click', '.btn-warning', function (e) {
         e.preventDefault();
 
