@@ -46,6 +46,7 @@
         "jquery-ui": "^1.14.1",
         "jquery-validation": "^1.21.0",
         "jquery.iframe-transport": "^1.0.0",
+        "jspdf": "^3.0.3",
         "jspdf-autotable": "^5.0.2",
         "less": "^4.2.2",
         "less-loader": "^6.0",

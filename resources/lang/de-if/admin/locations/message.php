@@ -3,12 +3,13 @@
 return array(
 
     'does_not_exist' => 'Standort existiert nicht.',
-    'assoc_users'    => 'Dieser Standort kann derzeit nicht gelöscht werden, da er der Standort eines Datensatzes für mindestens ein Asset oder einen Benutzer ist, ihm Assets zugewiesen sind oder er der übergeordnete Standort eines anderen Standorts ist. Aktualisiere Deine Datensätze, sodass dieser Standort nicht mehr referenziert wird, und versuche es erneut ',
+    'assoc_users'    => 'Dieser Standort kann aktuell nicht gelöscht werden, da ihm mindestens ein Asset, User oder anderer Standort zugewiesen ist. Bitte entferne alle Zuweisungen und versuche es erneut. ',
     'assoc_assets'	 => 'Dieser Standort ist mindestens einem Gegenstand zugewiesen und kann nicht gelöscht werden. Bitte entferne die Standortzuweisung bei den jeweiligen Gegenständen und versuche erneut, diesen Standort zu entfernen. ',
     'assoc_child_loc'	 => 'Dieser Standort ist mindestens einem anderen Ort übergeordnet und kann nicht gelöscht werden. Bitte aktualisiere Deine Standorte, so dass dieser Standort nicht mehr verknüpft ist, und versuche es erneut. ',
     'assigned_assets' => 'Zugeordnete Assets',
     'current_location' => 'Aktueller Standort',
     'open_map' => 'Öffnen in :map_provider_icon Karten',
+    'deleted_warning' => 'Dieser Standort wurde gelöscht. Bitte stellen Sie ihn wieder her, bevor Sie Änderungen vornehmen.',
 
 
     'create' => array(

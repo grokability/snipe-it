@@ -11,7 +11,6 @@ return array(
     'title'					=> 'Typy majetku',
     'update'				=> 'Upraviť typ majetku',
     'view'					=> 'Zobraziť typ majetku',
-    'update'				=> 'Upraviť typ majetku',
-    'clone'				=> 'Zduplikovať model',
-    'edit'				=> 'Upraviť model',
+    'clone'				    => 'Zduplikovať model',
+    'edit'				    => 'Upraviť model',
 );

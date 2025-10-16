@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Manage',
     'field'		                => 'שדה',
     'about_fieldsets_title'		=> 'אודות שדות',
-    'about_fieldsets_text'		=> 'Fieldsets מאפשרים לך ליצור קבוצות של שדות מותאמים אישית המשמשים לעתים קרובות לשימוש עבור סוגים ספציפיים של דגמי נכסים.',
+    'about_fieldsets_text'		=> 'Fieldsets allow you to create groups of custom fields that are frequently re-used for specific asset model types.',
     'custom_format'             => 'Custom Regex format...',
     'encrypt_field'      	        => 'הצפן את הערך של שדה זה במסד הנתונים',
     'encrypt_field_help'      => 'אזהרה: הצפנת שדה הופכת אותו לבלתי ניתן לחיפוש.',

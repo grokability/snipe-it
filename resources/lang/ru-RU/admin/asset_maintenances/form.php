@@ -3,7 +3,7 @@
     return [
         'select_type'            => 'Выберите тип обслуживания',
         'asset_maintenance_type' => 'Вид обслуживания актива',
-        'title'                  => 'Заголовок',
+        'title'                  => 'Название',
         'start_date'             => 'Дата начала',
         'completion_date'        => 'Дата завершения',
         'cost'                   => 'Стоимость',

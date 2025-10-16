@@ -78,6 +78,7 @@ class MaintenancesController extends Controller
             $maintenance->is_warranty = $request->input('is_warranty');
             $maintenance->cost = $request->input('cost');
             $maintenance->notes = $request->input('notes');
+            $maintenance->url = $request->input('url');
 
             // Save the asset maintenance data
             $maintenance->asset_id = $asset->id;
@@ -152,6 +153,7 @@ class MaintenancesController extends Controller
         $maintenance->name = $request->input('name');
         $maintenance->start_date = $request->input('start_date');
         $maintenance->completion_date = $request->input('completion_date');
+        $maintenance->url = $request->input('url');
 
 
         // Todo - put this in a getter/setter?

@@ -14,7 +14,7 @@ return [
     'username_help_bottom'          => 'Ваши Имя Пользователя и Ваш E-Mail <em>могут</em> быть одинаковыми, но могут и не быть, в зависимости от Вашей конфигурации. Если Вы не можете вспомнить Ваше Имя Пользователя - обратитесь к Вашему системному администратору.<br><br><strong>Имена Пользователя, к которым не привязан адрес электронной почты, не смогут получить ссылку на сброс пароля.</strong> ',
     'google_login'                  => 'Войти с помощью рабочего пространства Google',
     'google_login_failed'           => 'Не удаётся авторизоваться через Google аккаунт, пожалуйста попробуйте ещё раз.',
-    'invite_password_expires'       => 'This password reset link will expire on :expire_date. You can use the manual password reset link to receive a new reset token by clicking here',
+    'invite_password_expires'       => 'Ссылка для сброса пароля истечет :expire_date. Вы можете использовать ссылку для ручного сброса пароля, чтобы получить новый токен сброса, нажав здесь',
 
 ];
 

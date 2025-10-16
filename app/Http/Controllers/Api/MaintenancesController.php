@@ -52,6 +52,10 @@ class MaintenancesController extends Controller
             $maintenances->where('maintenances.created_by', '=', $request->input('created_by'));
         }
 
+        if ($request->filled('url')) {
+            $maintenances->where('maintenances.url', '=', $request->input('url'));
+        }
+
         if ($request->filled('asset_maintenance_type')) {
             $maintenances->where('asset_maintenance_type', '=', $request->input('asset_maintenance_type'));
         }

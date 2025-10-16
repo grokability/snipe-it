@@ -18,6 +18,7 @@
                                 data-side-pagination="server"
                                 data-sort-order="asc"
                                 id="departmentsTable"
+                                data-advanced-search="false"
                                 data-buttons="departmentButtons"
                                 class="table table-striped snipe-table"
                                 data-url="{{ route('api.departments.index') }}"

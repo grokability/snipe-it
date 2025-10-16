@@ -22,6 +22,8 @@ return [
     'requested'				    => '要求済',
     'not_requestable'           => '要求可能ではありません',
     'requestable_status_warning' => '要求可能な状態を変更しない',
+    'require_serial'       => 'Require Serial Number',
+    'require_serial_help'       => 'A serial number will be required when creating a new asset of this model.',
     'restore'  					=> '資産を復元',
     'pending'  					=> 'ペンディング',
     'undeployable'  			=> '配備不可',

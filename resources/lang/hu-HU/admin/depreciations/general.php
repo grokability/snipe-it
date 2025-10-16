@@ -2,7 +2,7 @@
 
 return [
     'about_asset_depreciations'  			=> 'Eszköz értékcsökkentésekről',
-    'about_depreciations'  					=> 'Beállíthat az eszközökhöz, eszköz alapú lineáris értékcsökkentést.',
+    'about_depreciations'  					=> 'Beállíthatja az eszközök értékcsökkenését úgy, hogy az lineárisan (egyenletesen), féléves alkalmazással feltétellel, vagy féléves alkalmazással mindig történjen.',
     'asset_depreciations'  					=> 'Eszköz értékcsökkenések',
     'create'  					            => 'Értékcsökkenés létrehozása',
     'depreciation_name'  					=> 'Értékcsökkenés neve',

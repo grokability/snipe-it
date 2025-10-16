@@ -14,7 +14,7 @@ return array(
     'update' => array(
         'error'   => '분류가 갱신되지 않았습니다. 다시 시도해 주세요',
         'success' => '분류가 갱신되었습니다.',
-        'cannot_change_category_type'   => 'You cannot change the category type once it has been created',
+        'cannot_change_category_type'   => '',
     ),
 
     'delete' => array(

@@ -24,7 +24,6 @@ return [
     'auto_assign_label' => 'Vključi tega uporabnika pri samodejni dodelitvi upravičenih licenc',
     'auto_assign_help'  => 'Preskoči tega uporabnika pri samodejni dodelitvi licenc',
     'software_user'     => 'Programska oprema izdana osebi :name',
-    'send_email_help'   => 'Obvezno je potrebno navesti e-poštni račun za tega uporabnika kamor bo prejel poverilnice. Pošiljanje poverilnic je mogoče le ob ustvarjanju uporabnika. Gesla so shranjena eno-smerno šifrirano in jih je nemogoče pridobiti po shranjenju.',
     'view_user'         => 'Ogled uporabnika :name',
     'usercsv'           => 'Datoteko CSV',
     'two_factor_admin_optin_help' => 'Vaše trenutne nastavitve skrbnika omogočajo selektivno uveljavljanje dvotaktne pristnosti.  ',

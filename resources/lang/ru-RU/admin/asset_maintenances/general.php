@@ -1,7 +1,7 @@
 <?php
 
     return [
-        'asset_maintenances' => 'Обслуживание',
+        'asset_maintenances' => 'Обслуживания активов',
         'edit'               => 'Редактировать',
         'delete'             => 'Удалить',
         'view'               => 'Показать подробности',

@@ -44,6 +44,8 @@ return [
     'redirect_to_checked_out_to'   => 'Ga naar uitcheckt naar',
     'select_statustype'	=> 'Selecteer status type',
     'serial'			=> 'Serienummer',
+    'serial_required'	=> 'Asset :number requires a serial number',
+    'serial_required_post_model_update'	=> ':asset_model have been updated to require a serial number. Please add a serial number for this asset.',
     'status'			=> 'Status',
     'tag'				=> 'Assettag',
     'update'			=> 'Asset update',

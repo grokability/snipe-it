@@ -3,7 +3,20 @@
 @slot('header')
 
 {{-- Check that the $snipeSettings variable is set, images are set to be shown, and setup is complete --}}
+<style>
 
+    th, td {
+        vertical-align: top;
+    }
+    hr {
+        display: block;
+        height: 1px;
+        border: 0;
+        border-top: 1px solid #edeff2;
+        margin: 1em 0;
+        padding: 0;
+    }
+</style>
 
 @if (isset($snipeSettings) && ($snipeSettings::setupCompleted()))
 

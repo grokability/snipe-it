@@ -44,6 +44,8 @@ return [
     'redirect_to_checked_out_to'   => 'Ir a elementos asignados',
     'select_statustype'	=> 'Seleccionar un tipo de estado',
     'serial'			=> 'Número de serie',
+    'serial_required'	=> 'Asset :number requires a serial number',
+    'serial_required_post_model_update'	=> ':asset_model have been updated to require a serial number. Please add a serial number for this asset.',
     'status'			=> 'Estado',
     'tag'				=> 'Placa del activo',
     'update'			=> 'Actualizar activo',

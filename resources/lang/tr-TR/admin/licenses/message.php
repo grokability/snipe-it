@@ -46,11 +46,12 @@ return array(
         'not_enough_seats' => 'Ödeme için yeterli sayıda lisans yeri yok',
         'mismatch' => 'Girdiğiniz bu lisans türü lisans ile eşleşmiyor',
         'unavailable' => 'Bu varlığı atayamazsınız.',
+        'license_is_inactive' => 'This license is expired or terminated.',
     ),
 
     'checkin' => array(
         'error'   => 'Lisans girişi yapılırken hata oluştu. Lütfen tekrar deneyin.',
-        'not_reassignable' => 'Lisans devredilemez',
+        'not_reassignable' => 'Seat has been used',
         'success' => 'Lisans girişi yapıldı'
     ),
 

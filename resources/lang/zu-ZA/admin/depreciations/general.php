@@ -2,7 +2,7 @@
 
 return [
     'about_asset_depreciations'  			=> 'Mayelana nokunciphisa kwefa',
-    'about_depreciations'  					=> 'Ungasetha ukwehla kwefa ukuze wehlise izimpahla ezisuselwe ekunciphiseni komugqa oqondile.',
+    'about_depreciations'  					=> 'You can set up asset depreciations to depreciate assets based on linear (straight-line), Half Year applied with condition, or Half Year always applied.',
     'asset_depreciations'  					=> 'Ukuncishiswa kwempahla',
     'create'  					            => 'Dala ukwehla',
     'depreciation_name'  					=> 'Igama lokunciphisa',

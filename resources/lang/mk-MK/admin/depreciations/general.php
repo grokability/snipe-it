@@ -2,7 +2,7 @@
 
 return [
     'about_asset_depreciations'  			=> 'За амортизационите планови',
-    'about_depreciations'  					=> 'Можете да поставите амортизационен план за основните средства за да ја намалувате нивната вредност праволиниски.',
+    'about_depreciations'  					=> 'You can set up asset depreciations to depreciate assets based on linear (straight-line), Half Year applied with condition, or Half Year always applied.',
     'asset_depreciations'  					=> 'Амортизациони планови',
     'create'  					            => 'Креирај амортизационен план',
     'depreciation_name'  					=> 'Име на амортизационен план',

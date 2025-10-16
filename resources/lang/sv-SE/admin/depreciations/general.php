@@ -2,7 +2,7 @@
 
 return [
     'about_asset_depreciations'  			=> 'Om värdeminskning av tillgångar',
-    'about_depreciations'  					=> 'Du kan ställa in värdeminskning av tillgångar baserat på linjär värdeminskning.',
+    'about_depreciations'  					=> 'You can set up asset depreciations to depreciate assets based on linear (straight-line), Half Year applied with condition, or Half Year always applied.',
     'asset_depreciations'  					=> 'Värdeminskning av tillgångar',
     'create'  					            => 'Skapa värdeminskning',
     'depreciation_name'  					=> 'Värdeminskningsnamn',

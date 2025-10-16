@@ -22,6 +22,8 @@ return [
     'requested'				    => 'richiesto',
     'not_requestable'           => 'Non Richiedibili',
     'requestable_status_warning' => 'Non cambiare richiedibilità',
+    'require_serial'       => 'Numero di serie obbligatorio',
+    'require_serial_help'       => 'Sarà richiesto il numero di serie per la creazione di un nuovo bene con questo modello.',
     'restore'  					=> 'Ripristina Asset',
     'pending'  					=> 'In attesa',
     'undeployable'  			=> 'Non Distribuilbile',

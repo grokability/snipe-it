@@ -22,6 +22,8 @@ return [
     'requested'				    => 'Angefordert',
     'not_requestable'           => 'Kann nicht angefordert werden',
     'requestable_status_warning' => 'Wechsle nicht den Status "Anforderbar"',
+    'require_serial'       => 'Seriennummer erforderlich',
+    'require_serial_help'       => 'Beim Erstellen eines neuen Assets dieses Modells wird eine Seriennummer benötigt.',
     'restore'  					=> 'Asset wiederherstellen',
     'pending'  					=> 'Ausstehend',
     'undeployable'  			=> 'Nicht einsetzbar',

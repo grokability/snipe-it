@@ -44,6 +44,8 @@ return [
     'redirect_to_checked_out_to'   => 'Go to Checked Out to',
     'select_statustype'	=> 'Veldu stöðu',
     'serial'			=> 'Raðnúmer',
+    'serial_required'	=> 'Asset :number requires a serial number',
+    'serial_required_post_model_update'	=> ':asset_model have been updated to require a serial number. Please add a serial number for this asset.',
     'status'			=> 'Staða',
     'tag'				=> 'Eignamerking',
     'update'			=> 'Eign uppfærð',

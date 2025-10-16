@@ -2,7 +2,7 @@
 
 return [
     'about_asset_depreciations'  			=> 'சொத்து துயரங்கள் பற்றி',
-    'about_depreciations'  					=> 'நேராக வரி தேய்மானத்தை அடிப்படையாகக் கொண்ட சொத்துக்களை அடமானம் செய்வதற்கு சொத்து இழப்புகளை நீங்கள் அமைக்கலாம்.',
+    'about_depreciations'  					=> 'You can set up asset depreciations to depreciate assets based on linear (straight-line), Half Year applied with condition, or Half Year always applied.',
     'asset_depreciations'  					=> 'சொத்து குறைபாடுகள்',
     'create'  					            => 'தேய்மானத்தை உருவாக்குங்கள்',
     'depreciation_name'  					=> 'தேய்மானி பெயர்',

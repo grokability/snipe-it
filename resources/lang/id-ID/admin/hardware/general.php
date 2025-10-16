@@ -22,6 +22,8 @@ return [
     'requested'				    => 'Telah diminta',
     'not_requestable'           => 'Tidak Dapat Diminta',
     'requestable_status_warning' => ' Jangan ubah status permintaan.',
+    'require_serial'       => 'Require Serial Number',
+    'require_serial_help'       => 'A serial number will be required when creating a new asset of this model.',
     'restore'  					=> 'Mengembalikan aset',
     'pending'  					=> 'Tunda',
     'undeployable'  			=> 'Tidak dapat digunakan',

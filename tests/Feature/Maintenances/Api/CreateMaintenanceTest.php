@@ -41,6 +41,7 @@ class CreateMaintenanceTest extends TestCase
                 'completion_date' => '2021-01-10',
                 'is_warranty' => '1',
                 'cost' => '100.00',
+                'url' => 'https://snipeitapp.com',
                 'image' => UploadedFile::fake()->image('test_image.png'),
                 'notes' => 'A note',
             ])
@@ -62,6 +63,7 @@ class CreateMaintenanceTest extends TestCase
             'start_date' => '2021-01-01',
             'completion_date' => '2021-01-10',
             'notes' => 'A note',
+            'url' => 'https://snipeitapp.com',
             'image' => $maintenance->image,
             'created_by' => $actor->id,
         ]);

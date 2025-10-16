@@ -233,6 +233,12 @@ return [
             'display'    => true,
         ],
         [
+            'permission' => 'licenses.checkin',
+            'label'      => 'Checkin ',
+            'note'       => '',
+            'display'    => true,
+        ],
+        [
             'permission' => 'licenses.keys',
             'label'      => 'View License Keys',
             'note'       => '',

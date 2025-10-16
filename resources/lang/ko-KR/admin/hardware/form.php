@@ -44,6 +44,8 @@ return [
     'redirect_to_checked_out_to'   => 'Go to Checked Out to',
     'select_statustype'	=> '상태 유형 선택',
     'serial'			=> '일련번호',
+    'serial_required'	=> 'Asset :number requires a serial number',
+    'serial_required_post_model_update'	=> ':asset_model have been updated to require a serial number. Please add a serial number for this asset.',
     'status'			=> '상태',
     'tag'				=> '자산 태그',
     'update'			=> '자산 갱신',

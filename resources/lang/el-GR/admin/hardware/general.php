@@ -22,6 +22,8 @@ return [
     'requested'				    => 'Ζητήθηκαν',
     'not_requestable'           => 'Δεν Απαιτούνται',
     'requestable_status_warning' => 'Να μην αλλαχθεί η κατάσταση αιτήματος',
+    'require_serial'       => 'Require Serial Number',
+    'require_serial_help'       => 'A serial number will be required when creating a new asset of this model.',
     'restore'  					=> 'Επαναφορά παγίου',
     'pending'  					=> 'Εκκρεμεί',
     'undeployable'  			=> 'Μη διανέμεται',

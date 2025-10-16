@@ -436,7 +436,8 @@ class AssetsController extends Controller
             $asset->assigned_to = null;
             $asset->assigned_type = null;
             $asset->accepted = null;
-            event(new CheckoutableCheckedIn($asset, $target, auth()->user(), 'Checkin on asset update with ' . $status->getStatuslabelType() . ' status', date('Y-m-d H:i:s'), $originalValues));
+            $asset->last_checkin = now();
+            event(new CheckoutableCheckedIn($asset, $target, auth()->user(), 'Checkin on asset update with '.$status->getStatuslabelType().' status', date('Y-m-d H:i:s'), $originalValues));
         }
 
         if ($request->filled('image_delete')) {

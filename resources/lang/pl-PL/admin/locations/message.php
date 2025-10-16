@@ -3,12 +3,13 @@
 return array(
 
     'does_not_exist' => 'Lokalizacja nie istnieje.',
-    'assoc_users'    => 'Ta lokalizacja nie jest obecnie usuwana, ponieważ jest to lokalizacja rekordu dla co najmniej jednego zasobu lub użytkownika, posiada przypisane do niego aktywa lub jest miejscem macierzystym innej lokalizacji. Zaktualizuj swoje rekordy, aby nie odnosić się już do tej lokalizacji i spróbuj ponownie ',
+    'assoc_users'    => 'This location is not currently deletable because it is the location of record for at least one item or user, has assets assigned to it, or is the parent location of another location. Please update your records to no longer reference this location and try again ',
     'assoc_assets'	 => 'Lokalizacja obecnie jest skojarzona z minimum jednym aktywem i nie może zostać usunięta. Uaktualnij właściwości aktywów tak aby nie było relacji z tą lokalizacją i spróbuj ponownie. ',
     'assoc_child_loc'	 => 'Lokalizacja obecnie jest rodzicem minimum jeden innej lokalizacji i nie może zostać usunięta. Uaktualnij właściwości lokalizacji tak aby nie było relacji z tą lokalizacją i spróbuj ponownie. ',
     'assigned_assets' => 'Przypisane aktywa',
     'current_location' => 'Bieżąca lokalizacja',
     'open_map' => 'Otwórz w mapach :map_provider_icon',
+    'deleted_warning' => 'This location has been deleted. Please restore it before attempting to make any changes.',
 
 
     'create' => array(

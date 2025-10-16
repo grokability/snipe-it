@@ -14,7 +14,11 @@ class ManufacturerPresenter extends Presenter
     public static function dataTableLayout()
     {
         $layout = [
-
+            [
+                'field'        => 'checkbox',
+                'checkbox'     => true,
+                'titleTooltip' => trans('general.select_all_none'),
+            ],
             [
                 'field' => 'id',
                 'searchable' => false,

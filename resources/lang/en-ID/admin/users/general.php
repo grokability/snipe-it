@@ -24,7 +24,6 @@ return [
     'auto_assign_label' => 'Include this user when auto-assigning eligible licenses',
     'auto_assign_help'  => 'Skip this user in auto assignment of licenses',
     'software_user'     => 'Software diperiksa untuk :name',
-    'send_email_help'   => 'Anda harus menyediakan sebuah alamat email untuk pengguna ini untuk dikirimkan kredesial pada mereka. Kredensial penyuratan/email hanya dapat dilakukan pada pembuatan pengguna. Kata sandi disimpan dalam sebuah hash satu-arah dan tidak dapat diterima lagi setelah disimpan.',
     'view_user'         => 'Lihat pengguna :name',
     'usercsv'           => 'Berkas CSV',
     'two_factor_admin_optin_help' => 'Pengaturan admin anda saat ini membolehkan pelaksanaan otentifikasi dua-faktor secara selektif.  ',

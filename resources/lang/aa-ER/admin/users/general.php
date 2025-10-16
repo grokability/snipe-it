@@ -24,7 +24,6 @@ return [
     'auto_assign_label' => 'crwdns11345:0crwdne11345:0',
     'auto_assign_help'  => 'crwdns11347:0crwdne11347:0',
     'software_user'     => 'crwdns1131:0crwdne1131:0',
-    'send_email_help'   => 'crwdns5920:0crwdne5920:0',
     'view_user'         => 'crwdns1132:0crwdne1132:0',
     'usercsv'           => 'crwdns1193:0crwdne1193:0',
     'two_factor_admin_optin_help' => 'crwdns1823:0crwdne1823:0',

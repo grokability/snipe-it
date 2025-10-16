@@ -24,7 +24,6 @@ return [
     'auto_assign_label' => 'Incluir a este usuario al asignar automáticamente licencias elegibles',
     'auto_assign_help'  => 'Omitir este usuario en la asignación automática de licencias',
     'software_user'     => 'Software asignado a :name',
-    'send_email_help'   => 'Debe proporcionar una dirección de correo electrónico para este usuario para poder enviarle las credenciales. Únicamente pueden enviarse las credenciales por correo eléctronico durante la creación del usuario. Las contraseñas se almacenan en un hash de un solo sentido y no se pueden recuperar una vez guardadas.',
     'view_user'         => 'Ver usuario :name',
     'usercsv'           => 'Archivo CSV',
     'two_factor_admin_optin_help' => 'La configuración actual permite la aplicación selectiva de la autenticación de dos factores.  ',

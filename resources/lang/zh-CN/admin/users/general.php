@@ -24,7 +24,6 @@ return [
     'auto_assign_label' => '在自动分配符合条件的许可证时包括此用户',
     'auto_assign_help'  => '在自动分配许可证时跳过此用户',
     'software_user'     => ':name 签出的软件',
-    'send_email_help'   => '您必须为此用户提供电子邮件地址才能发送他们的凭据。电子邮件凭据只能在用户创建时完成。 密码存储在单向散列中，保存后无法检索。',
     'view_user'         => '查看用户： :name',
     'usercsv'           => 'CSV 档案',
     'two_factor_admin_optin_help' => '您当前的管理员设置允许使用双重认证。 ',

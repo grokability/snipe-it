@@ -18,6 +18,7 @@
               data-id-table="companiesTable"
               data-side-pagination="server"
               data-sort-order="asc"
+              data-advanced-search="false"
               id="companiesTable"
               data-buttons="companyButtons"
               class="table table-striped snipe-table"

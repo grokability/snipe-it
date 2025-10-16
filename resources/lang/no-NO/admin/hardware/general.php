@@ -22,6 +22,8 @@ return [
     'requested'				    => 'Forespurt',
     'not_requestable'           => 'Ikke mulig å spørre etter',
     'requestable_status_warning' => 'Ikke endre forespørselsstatus',
+    'require_serial'       => 'Require Serial Number',
+    'require_serial_help'       => 'A serial number will be required when creating a new asset of this model.',
     'restore'  					=> 'Gjenopprett eiendel',
     'pending'  					=> 'Under arbeid',
     'undeployable'  			=> 'Ikke utleverbar',

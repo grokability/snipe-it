@@ -11,7 +11,6 @@ return array(
     'title'					=> 'Modeller',
     'update'				=> 'Uppdatera tillgångsmodell',
     'view'					=> 'Visa tillgångsmodell',
-    'update'				=> 'Uppdatera tillgångsmodell',
-    'clone'				=> 'Kopiera modell',
-    'edit'				=> 'Ändra modell',
+    'clone'				    => 'Kopiera modell',
+    'edit'				    => 'Ändra modell',
 );

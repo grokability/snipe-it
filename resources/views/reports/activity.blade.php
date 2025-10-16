@@ -29,6 +29,7 @@
                         data-cookie-id-table="activityReport"
                         data-id-table="activityReport"
                         data-side-pagination="server"
+                        data-advanced-search="false"
                         data-sort-order="desc"
                         data-sort-name="created_at"
                         id="activityReport"

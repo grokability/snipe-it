@@ -33,6 +33,7 @@
                 data-side-pagination="client"
                 data-sort-order="asc"
                 data-sort-name="name"
+                data-advanced-search="false"
                 id="customFieldsetTable"
                 data-buttons="customFieldsetButtons"
                 class="table table-striped snipe-table"
@@ -128,6 +129,7 @@
                 data-sort-order="asc"
                 data-sort-name="name"
                 id="customFieldsTable"
+                data-advanced-search="false"
                 data-buttons="customFieldButtons"
                 class="table table-striped snipe-table"
                 data-export-options='{

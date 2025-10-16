@@ -57,75 +57,77 @@
                     <a href="#details" data-toggle="tab">
                         <span class="hidden-lg hidden-md">
                             <x-icon type="info-circle" class="fa-2x" />
-                        </span>
-                        <span class="hidden-xs hidden-sm">{{ trans('admin/users/general.info') }}</span>
-                    </a>
-                </li>
+                          </span>
+                            <span class="hidden-xs hidden-sm">
+                                {{ trans('admin/users/general.info') }}
+                            </span>
+                        </a>
+                    </li>
 
-                <li>
-                    <a href="#software" data-toggle="tab">
-                        <span class="hidden-lg hidden-md">
-                            <x-icon type="licenses" class="fa-2x" />
-                        </span>
-                        <span class="hidden-xs hidden-sm">{{ trans('general.licenses') }}
-                            {!! ($asset->licenses->count() > 0) ? '<span class="badge badge-secondary">' . number_format($asset->licenses->count()) . '</span>' : '' !!}
-                        </span>
-                    </a>
-                </li>
+                    <li>
+                        <a href="#software" data-toggle="tab">
+                          <span class="hidden-lg hidden-md">
+                           <x-icon type="licenses" class="fa-2x" />
+                          </span>
+                            <span class="hidden-xs hidden-sm">
+                                {{ trans('general.licenses') }}
+                            </span>
+                            {!! ($asset->licenses->count() > 0 ) ? '<span class="badge badge-secondary">'.number_format($asset->licenses->count()).'</span>' : '' !!}
+
+                        </a>
+                    </li>
 
                 <li>
                     <a href="#components" data-toggle="tab">
                         <span class="hidden-lg hidden-md">
                             <x-icon type="components" class="fa-2x" />
-                        </span>
-                        <span class="hidden-xs hidden-sm">{{ trans('general.components') }}
-                            {!! ($asset->components->count() > 0) ? '<span class="badge badge-secondary">' . number_format($asset->components->count()) . '</span>' : '' !!}
-                        </span>
-                    </a>
-                </li>
+                          </span>
+                            <span class="hidden-xs hidden-sm">
+                                {{ trans('general.components') }}
+                            </span>
+                            {!! ($asset->components->count() > 0 ) ? '<span class="badge badge-secondary">'.number_format($asset->components->count()).'</span>' : '' !!}
+
+                        </a>
+                    </li>
 
                 <li>
                     <a href="#assets" data-toggle="tab">
                         <span class="hidden-lg hidden-md">
                             <x-icon type="assets" class="fa-2x" />
-                        </span>
-                        <span class="hidden-xs hidden-sm">
-                            {{ trans('general.assets') }}
-                            {!! ($asset->assignedAssets()->count() > 0) ? '<span class="badge badge-secondary">' . number_format($asset->assignedAssets()->count()) . '</span>' : '' !!}
-
-                        </span>
-                    </a>
-                </li>
-
-                @if ($asset->assignedAccessories->count() > 0)
-                    <li>
-                        <a href="#accessories_assigned" data-toggle="tab" data-tooltip="true">
-
-                            <span class="hidden-lg hidden-md">
-                                <i class="fas fa-keyboard fa-2x"></i>
-                            </span>
+                          </span>
                             <span class="hidden-xs hidden-sm">
-                                {{ trans('general.accessories_assigned') }}
-                                {!! ($asset->assignedAccessories()->count() > 0) ? '<span class="badge badge-secondary">' . number_format($asset->assignedAccessories()->count()) . '</span>' : '' !!}
-
+                                {{ trans('general.assets') }}
                             </span>
+                            {!! ($asset->assignedAssets()->count() > 0 ) ? '<span class="badge badge-secondary">'.number_format($asset->assignedAssets()->count()).'</span>' : '' !!}
+
                         </a>
                     </li>
-                @endif
+
+                    @if ($asset->assignedAccessories->count() > 0)
+                        <li>
+                            <a href="#accessories_assigned" data-toggle="tab" data-tooltip="true">
+                                <span class="hidden-lg hidden-md">
+                                    <i class="fas fa-keyboard fa-2x"></i>
+                                </span>
+                                <span class="hidden-xs hidden-sm">
+                                    {{ trans('general.accessories_assigned') }}
+                                </span>
+                                {!! ($asset->assignedAccessories()->count() > 0 ) ? '<span class="badge badge-secondary">'.number_format($asset->assignedAccessories()->count()).'</span>' : '' !!}
+                            </a>
+                        </li>
+                    @endif
 
 
                 @if ($asset->audits->count() > 0)
                     <li>
                         <a href="#audits" data-toggle="tab" data-tooltip="true">
-
                             <span class="hidden-lg hidden-md">
                                 <i class="fas fa-clipboard-check fa-2x"></i>
                             </span>
                             <span class="hidden-xs hidden-sm">
                                 {{ trans('general.audits') }}
-                                {!! ($asset->audits()->count() > 0) ? '<span class="badge badge-secondary">' . number_format($asset->audits()->count()) . '</span>' : '' !!}
-
                             </span>
+                            {!! ($asset->audits()->count() > 0 ) ? '<span class="badge badge-secondary">'.number_format($asset->audits()->count()).'</span>' : '' !!}
                         </a>
                     </li>
                 @endif
@@ -140,27 +142,29 @@
                     </a>
                 </li>
 
-                <li>
-                    <a href="#maintenances" data-toggle="tab">
-                        <span class="hidden-lg hidden-md">
-                            <x-icon type="maintenances" class="fa-2x" />
-                        </span>
-                        <span class="hidden-xs hidden-sm">{{ trans('general.maintenances') }}
-                            {!! ($asset->maintenances()->count() > 0) ? '<span class="badge badge-secondary">' . number_format($asset->maintenances()->count()) . '</span>' : '' !!}
-                        </span>
-                    </a>
-                </li>
+                    <li>
+                        <a href="#maintenances" data-toggle="tab">
+                          <span class="hidden-lg hidden-md">
+                              <x-icon type="maintenances" class="fa-2x" />
+                          </span>
+                            <span class="hidden-xs hidden-sm">
+                                {{ trans('general.maintenances') }}
+                            </span>
+                            {!! ($asset->maintenances()->count() > 0 ) ? '<span class="badge badge-secondary">'.number_format($asset->maintenances()->count()).'</span>' : '' !!}
+                        </a>
+                    </li>
 
                 <li>
                     <a href="#files" data-toggle="tab">
                         <span class="hidden-lg hidden-md">
                             <x-icon type="files" class="fa-2x" />
-                        </span>
-                        <span class="hidden-xs hidden-sm">{{ trans('general.files') }}
-                            {!! ($asset->uploads->count() > 0) ? '<span class="badge badge-secondary">' . number_format($asset->uploads->count()) . '</span>' : '' !!}
-                        </span>
-                    </a>
-                </li>
+                          </span>
+                            <span class="hidden-xs hidden-sm">
+                            {{ trans('general.files') }}
+                            </span>
+                            {!! ($asset->uploads->count() > 0 ) ? '<span class="badge badge-secondary">'.number_format($asset->uploads->count()).'</span>' : '' !!}
+                        </a>
+                    </li>
 
                 @can('view', $asset->model)
                     <li>
@@ -169,9 +173,9 @@
                                 <x-icon type="more-files" class="fa-2x" />
                             </span>
                             <span class="hidden-xs hidden-sm">
-                                {{ trans('general.additional_files') }}
-                                {!! ($asset->model) && ($asset->model->uploads->count() > 0) ? '<span class="badge badge-secondary">' . number_format($asset->model->uploads->count()) . '</span>' : '' !!}
+                            {{ trans('general.additional_files') }}
                             </span>
+                            {!! ($asset->model) && ($asset->model->uploads->count() > 0 ) ? '<span class="badge badge-secondary">'.number_format($asset->model->uploads->count()).'</span>' : '' !!}
                         </a>
                     </li>
                 @endcan
@@ -1416,16 +1420,10 @@
                                 data-cookie-id-table="assetHistory" data-cookie="true">
                                 <thead>
                                     <tr>
-                                        <th data-visible="true" data-field="icon" style="width: 40px;" class="hidden-xs"
-                                            data-formatter="iconFormatter">{{ trans('admin/hardware/table.icon') }}</th>
-                                        <th data-visible="true" data-field="created_at" data-sortable="true"
-                                            data-formatter="dateDisplayFormatter">{{ trans('general.date') }}</th>
-                                        <th data-visible="true" data-field="admin"
-                                            data-formatter="usersLinkObjFormatter">{{ trans('general.created_by') }}
-                                        </th>
-                                        <th class="col-sm-2" data-field="file" data-sortable="true" data-visible="false"
-                                            data-formatter="fileUploadNameFormatter">{{ trans('general.file_name') }}
-                                        </th>
+                                        <th data-visible="true" data-field="icon" style="width: 40px;" class="hidden-xs" data-formatter="iconFormatter">{{ trans('admin/hardware/table.icon') }}</th>
+                                        <th data-visible="true" data-field="created_at" data-sortable="true" data-formatter="dateDisplayFormatter">{{ trans('general.date') }}</th>
+                                        <th data-visible="true" data-field="admin" data-formatter="usersLinkObjFormatter">{{ trans('general.created_by') }}</th>
+                                        <th class="col-sm-2" data-field="file" data-sortable="true" data-visible="false" data-formatter="fileNameFormatter">{{ trans('general.file_name') }}</th>
                                         <th data-field="note">{{ trans('general.notes') }}</th>
                                         <th data-visible="false" data-field="file" data-visible="false"
                                             data-formatter="fileDownloadButtonsFormatter">

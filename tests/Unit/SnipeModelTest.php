@@ -10,9 +10,12 @@ class SnipeModelTest extends TestCase
     {
         $c = new SnipeModel;
         $c->purchase_date = '';
-        $this->assertTrue($c->purchase_date === null);
-        $c->purchase_date = '2016-03-25 12:35:50';
-        $this->assertTrue($c->purchase_date === '2016-03-25 12:35:50');
+        $this->assertNull($c->purchase_date);
+        $c->purchase_date = null;
+        $this->assertNull($c->purchase_date);
+        $c->purchase_date = '2016-03-25';
+        $this->assertTrue($c->purchase_date === '2016-03-25');
+        $this->assertEquals('2016-03-25', $c->purchase_date);
     }
 
     public function testSetsPurchaseCostsAppropriately()

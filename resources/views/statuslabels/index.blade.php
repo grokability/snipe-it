@@ -23,6 +23,7 @@
                     data-sort-name="name"
                     id="statuslabelsTable"
                     data-buttons="statuslabelButtons"
+                    data-advanced-search="false"
                     class="table table-striped snipe-table"
                     data-url="{{ route('api.statuslabels.index') }}"
                     data-export-options='{

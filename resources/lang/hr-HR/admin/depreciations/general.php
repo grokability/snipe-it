@@ -2,7 +2,7 @@
 
 return [
     'about_asset_depreciations'  			=> 'O amortizacijama imovine',
-    'about_depreciations'  					=> 'Možete postaviti amortizaciju imovine za amortizaciju imovine na temelju linearne amortizacije.',
+    'about_depreciations'  					=> 'You can set up asset depreciations to depreciate assets based on linear (straight-line), Half Year applied with condition, or Half Year always applied.',
     'asset_depreciations'  					=> 'Deprecijacija imovine',
     'create'  					            => 'Stvorite amortizaciju',
     'depreciation_name'  					=> 'Naziv amortizacije',

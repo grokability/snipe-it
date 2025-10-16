@@ -22,6 +22,8 @@ return [
     'requested'				    => 'Užsakytas',
     'not_requestable'           => 'Neužsakomas',
     'requestable_status_warning' => 'Nekeisti užsakomo turto būsenos',
+    'require_serial'       => 'Reikalauti serijinio numerio',
+    'require_serial_help'       => 'Kuriant naują šio modelio turtą reikės įvesti jo serijinį numerį.',
     'restore'  					=> 'Atkurti turtą',
     'pending'  					=> 'Ruošiamas',
     'undeployable'  			=> 'Neišduotinas',

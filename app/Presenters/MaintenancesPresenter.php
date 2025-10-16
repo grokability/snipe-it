@@ -112,6 +112,12 @@ class MaintenancesPresenter extends Presenter
                 'title' => trans('admin/maintenances/form.completion_date'),
                 'formatter' => 'dateDisplayFormatter',
             ], [
+                'field' => 'url',
+                'searchable' => true,
+                'sortable' => true,
+                'title' => trans('general.url'),
+                'formatter' => 'externalLinkFormatter',
+            ], [
                 'field' => 'notes',
                 'searchable' => true,
                 'sortable' => true,

@@ -22,6 +22,8 @@ return [
     'requested'				    => 'تم الطلب',
     'not_requestable'           => 'غير مطلوب',
     'requestable_status_warning' => 'لا تقم بتغيير حالة الطلب',
+    'require_serial'       => 'Require Serial Number',
+    'require_serial_help'       => 'A serial number will be required when creating a new asset of this model.',
     'restore'  					=> 'استعادة الأصل',
     'pending'  					=> 'قيد الانتظار',
     'undeployable'  			=> 'غير قابل للتوزيع',

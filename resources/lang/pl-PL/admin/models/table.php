@@ -11,7 +11,6 @@ return array(
     'title'					=> 'Model aktywa',
     'update'				=> 'Uaktualnij model aktywa',
     'view'					=> 'Podgląd modelu aktywa',
-    'update'				=> 'Uaktualnij model aktywa',
-    'clone'				=> 'Kopiuj Model',
-    'edit'				=> 'Edytuj Model',
+    'clone'				    => 'Kopiuj Model',
+    'edit'				    => 'Edytuj Model',
 );

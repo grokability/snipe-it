@@ -44,6 +44,8 @@ return [
     'redirect_to_checked_out_to'   => 'გადასვლა მიმღებთან',
     'select_statustype'	=> 'აირჩიეთ სტატუსის ტიპი',
     'serial'			=> 'სერიული ნომერი',
+    'serial_required'	=> 'Asset :number requires a serial number',
+    'serial_required_post_model_update'	=> ':asset_model have been updated to require a serial number. Please add a serial number for this asset.',
     'status'			=> 'სტატუსი',
     'tag'				=> 'ინვენტარის ნომერი',
     'update'			=> 'ინვენტარის განახლება',

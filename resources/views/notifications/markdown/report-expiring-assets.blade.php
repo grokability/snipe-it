@@ -1,38 +1,22 @@
 @component('mail::message')
 {{ trans_choice('mail.assets_warrantee_alert', $assets->count(), ['count'=>$assets->count(), 'threshold' => $threshold]) }}
 
-<style>
-
-    th, td {
-        vertical-align: top;
-    }
-    hr {
-        display: block;
-        height: 1px;
-        border: 0;
-        border-top: 1px solid #ccc;
-        margin: 1em 0;
-        padding: 0;
-    }
-</style>
 <x-mail::table>
-
 |        |        |          |
 | ------------- | ------------- | ------------- |
 @foreach ($assets as $asset)
-@php
-    $warranty_expires = \App\Helpers\Helper::getFormattedDateObject($asset->present()->warranty_expires, 'date');
-    $eol_date = \App\Helpers\Helper::getFormattedDateObject($asset->asset_eol_date, 'date');
-    $warranty_diff = ($asset->present()->warranty_expires) ? round(\Carbon\Carbon::now()->diffInDays(\Carbon\Carbon::parse($warranty_expires['date']), false), 1) : '';
-    $eol_diff = round(\Carbon\Carbon::now()->diffInDays(\Carbon\Carbon::parse($asset->asset_eol_date), false),  1);
-    $icon = ($warranty_diff <= $threshold && $warranty_diff >= 0) ? '⚠️' : (($eol_diff <= $threshold && $eol_diff >= 0) ? '🚨' : 'ℹ️');
-@endphp
-| {{ $icon }} **{{ trans('mail.name') }}** | <a href="{{ route('hardware.show', $asset->id) }}">{{ $asset->display_name }}</a> <br><small>{{trans('mail.serial').': '.$asset->serial}}</small> |
-@if ($warranty_expires)
-| **{{ trans('mail.expires') }}** | {{ !is_null($warranty_expires) ? $warranty_expires['formatted'] : '' }} (<strong>{{ $warranty_diff }} {{ trans('mail.Days') }}</strong>) |
+| {{ ($asset->eol_diff_in_days <= ($threshold / 2)) ? '🚨' : (($asset->eol_diff_in_days <= $threshold) ? '⚠️' : 'ℹ️ ') }} **{{ trans('mail.name') }}** | <a href="{{ route('hardware.show', $asset->id) }}">{{ $asset->display_name }}</a> |
+@if ($asset->serial)
+| **{{ trans('general.serial_number') }}** | {{ $asset->serial }} |
 @endif
-@if ($eol_date)
-| **{{ trans('mail.eol') }}** | {{ !is_null($eol_date) ? $eol_date['formatted'] : '' }} (<strong>{{ $eol_diff }} {{ trans('mail.Days') }}</strong>) |
+@if ($asset->purchase_date)
+| **{{ trans('general.purchase_date') }}** | {{ $asset->purchase_date_formatted }} |
+@endif
+@if ($asset->warranty_expires)
+| **{{ trans('mail.expires') }}** | {{ $asset->warranty_expires_formatted_date }} ({{ $asset->warranty_expires_diff_for_humans }}) |
+@endif
+@if ($asset->eol_date && $asset->eol_diff_for_humans)
+| **{{ trans('mail.eol') }}** | {{ $asset->eol_formatted_date }} ({{ $asset->eol_diff_for_humans }}) |
 @endif
 @if ($asset->supplier)
 | **{{ trans('mail.supplier') }}** | {{ ($asset->supplier ? e($asset->supplier->name) : '') }} |

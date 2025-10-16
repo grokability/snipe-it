@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Helpers\Helper;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
@@ -17,6 +18,37 @@ class SnipeModel extends Model
             $value = null;
         }
         $this->attributes['purchase_date'] = $value;
+    }
+
+
+    protected function purchaseDateFormatted(): Attribute
+    {
+        return Attribute:: make(
+            get: fn(mixed $value, array $attributes) => $attributes['purchase_date']  ? Helper::getFormattedDateObject(Carbon::parse($attributes['purchase_date']), 'date', false) : null,
+        );
+    }
+
+
+    protected function expiresDiffInDays(): Attribute
+    {
+        return Attribute:: make(
+            get: fn(mixed $value, array $attributes) => in_array('expiration_date', $attributes) ? Carbon::now()->diffInDays($attributes['expiration_date']) : null,
+        );
+    }
+
+
+    protected function expiresDiffForHumans(): Attribute
+    {
+        return Attribute:: make(
+            get: fn(mixed $value, array $attributes) => in_array('expiration_date', $attributes) ? Carbon::parse($attributes['expiration_date'])->diffForHumans() : null,
+        );
+    }
+
+    protected function expiresFormattedDate(): Attribute
+    {
+        return Attribute:: make(
+            get: fn(mixed $value, array $attributes) => in_array('expiration_date', $attributes) ? Helper::getFormattedDateObject($attributes['expiration_date'], 'date', false) : null,
+        );
     }
 
     /**
@@ -179,6 +211,7 @@ class SnipeModel extends Model
             get: fn(mixed $value) => $this->name,
         );
     }
+
 
     public function getEula()
     {

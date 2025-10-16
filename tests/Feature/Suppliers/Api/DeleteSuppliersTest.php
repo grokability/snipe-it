@@ -33,6 +33,7 @@ class DeleteSuppliersTest extends TestCase implements TestsPermissionsRequiremen
         $actor->deleteJson(route('api.suppliers.destroy', $supplierWithMaintenance))->assertStatusMessageIs('error');
         $actor->deleteJson(route('api.suppliers.destroy', $supplierWithLicense))->assertStatusMessageIs('error');
 
+
         $this->assertNotSoftDeleted($supplierWithAsset);
         $this->assertNotSoftDeleted($supplierWithMaintenance);
         $this->assertNotSoftDeleted($supplierWithLicense);

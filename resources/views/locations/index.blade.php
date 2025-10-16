@@ -22,6 +22,7 @@
                   data-bulk-button-id="#bulkLocationsEditButton"
                   data-bulk-form-id="#locationsBulkForm"
                   data-side-pagination="server"
+                  data-advanced-search="false"
                   data-sort-order="asc"
                   data-buttons="locationButtons"
                   id="locationTable"

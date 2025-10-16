@@ -11,7 +11,6 @@ return array(
     'title'					=> 'Amamodeli asefa',
     'update'				=> 'Buyekeza i-Asset Model',
     'view'					=> 'Buka i-Model Model',
-    'update'				=> 'Buyekeza i-Asset Model',
-    'clone'				=> 'I-Clone Model',
-    'edit'				=> 'Hlela Isibonelo',
+    'clone'				    => 'I-Clone Model',
+    'edit'				    => 'Hlela Isibonelo',
 );

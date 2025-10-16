@@ -46,6 +46,7 @@ class CreateMaintenanceTest extends TestCase
                 'cost' => '100.00',
                 'image' => UploadedFile::fake()->image('test_image.png'),
                 'notes' => 'A note',
+                'url' => 'https://snipeitapp.com',
             ])
             ->assertSessionHasNoErrors()
             ->assertRedirect(route('maintenances.index'));
@@ -67,6 +68,7 @@ class CreateMaintenanceTest extends TestCase
             'completion_date' => '2021-01-10',
             'asset_maintenance_time' => '9',
             'notes' => 'A note',
+            'url' => 'https://snipeitapp.com',
             'cost' => '100.00',
             'image' => $maintenance->image,
             'created_by' => $actor->id,

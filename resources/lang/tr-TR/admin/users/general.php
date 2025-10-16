@@ -24,7 +24,6 @@ return [
     'auto_assign_label' => 'Uygun lisansları otomatik olarak atarken bu kullanıcıyı dahil edin',
     'auto_assign_help'  => 'Lisansların otomatik atanmasında bu kullanıcıyı atla',
     'software_user'     => 'Yazılıma :name için çıkış yapılmış',
-    'send_email_help'   => 'Bu kullanıcıya kimlik bilgilerini gönderebilmesi için bir e-posta adresi sağlamalısınız. E-posta kimlik bilgileri yalnızca kullanıcı oluşturulurken yapılabilir. Parolalar tek yönlü bir karmada saklanır ve bir kez kaydedildikten sonra geri alınamaz.',
     'view_user'         => 'Kullanıcıyı Görüntüle :name',
     'usercsv'           => 'CSV Dosyası',
     'two_factor_admin_optin_help' => 'Mevcut yönetici ayarlarınız, iki aşamalı kimlik doğrulamasının seçici olarak uygulanmasına izin verir.  ',

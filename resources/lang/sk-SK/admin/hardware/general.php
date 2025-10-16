@@ -22,6 +22,8 @@ return [
     'requested'				    => 'Vyžiadané',
     'not_requestable'           => 'Nevyžiadateľný',
     'requestable_status_warning' => 'Nemeniť stav vyžiadateľnosti',
+    'require_serial'       => 'Require Serial Number',
+    'require_serial_help'       => 'A serial number will be required when creating a new asset of this model.',
     'restore'  					=> 'Obnoviť majetok',
     'pending'  					=> 'Čakajúce',
     'undeployable'  			=> 'Neodovzdateľný',

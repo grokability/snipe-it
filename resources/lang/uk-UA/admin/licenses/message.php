@@ -46,11 +46,12 @@ return array(
         'not_enough_seats' => 'Недостатньо вільних ліцензійних місць для оформлення замовлення',
         'mismatch' => 'Надане місце ліцензії не відповідає ліцензії',
         'unavailable' => 'Це місце недоступне для видачі.',
+        'license_is_inactive' => 'This license is expired or terminated.',
     ),
 
     'checkin' => array(
         'error'   => 'Виникла помилка перевірки ліцензії. Будь ласка, спробуйте ще раз.',
-        'not_reassignable' => 'Ліцензія не є допустимою',
+        'not_reassignable' => 'Seat has been used',
         'success' => 'Ліцензія успішно перевірена'
     ),
 

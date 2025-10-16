@@ -2,7 +2,7 @@
 
 return [
     'about_asset_depreciations'  			=> 'Acerca de Depreciações de Equipamentos',
-    'about_depreciations'  					=> 'Podes configurar as depreciações dos equipamentos baseadas numa depreciação constante ao longo do tempo.',
+    'about_depreciations'  					=> 'You can set up asset depreciations to depreciate assets based on linear (straight-line), Half Year applied with condition, or Half Year always applied.',
     'asset_depreciations'  					=> 'Depreciações dos Equipamentos',
     'create'  					            => 'Criar Depreciação',
     'depreciation_name'  					=> 'Nome da depreciação',

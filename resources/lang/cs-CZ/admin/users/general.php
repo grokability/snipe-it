@@ -24,7 +24,6 @@ return [
     'auto_assign_label' => 'Zahrnout tohoto uživatele do automatického přiřazování licencí',
     'auto_assign_help'  => 'Nezahrnout tohoto uživatele do automatického přiřazování licencí',
     'software_user'     => 'Software vydaný pro :name',
-    'send_email_help'   => 'Musíte zadat e-mailovou adresu tohoto uživatele pro odeslání přihlašovacích údajů. Odeslání přihlašovacích údajů lze provést pouze při vytvoření uživatele. Hesla jsou zašifrována a nelze je zjistit po tom, co jsou uložena.',
     'view_user'         => 'Zobraz uživatele',
     'usercsv'           => 'CSV soubor',
     'two_factor_admin_optin_help' => 'Vaše současná nastavení administrátora umožňují selektivní vynucení dvoufaktorového ověřování.  ',

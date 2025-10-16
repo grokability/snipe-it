@@ -2,7 +2,7 @@
 
 return [
     'about_asset_depreciations'  			=> 'Omkring Aktiv Afskrivninger',
-    'about_depreciations'  					=> 'Du kan sætte aktiv afskrivninger til at afskrive aktiver baseret på lineære afskrivninger.',
+    'about_depreciations'  					=> 'You can set up asset depreciations to depreciate assets based on linear (straight-line), Half Year applied with condition, or Half Year always applied.',
     'asset_depreciations'  					=> 'Aktiv Afskrivninger',
     'create'  					            => 'Opret afskrivninger',
     'depreciation_name'  					=> 'Afskrivningnavn',

@@ -22,6 +22,8 @@ return [
     'requested'				    => 'கோரப்பட்டது',
     'not_requestable'           => 'Not Requestable',
     'requestable_status_warning' => 'Do not change requestable status',
+    'require_serial'       => 'Require Serial Number',
+    'require_serial_help'       => 'A serial number will be required when creating a new asset of this model.',
     'restore'  					=> 'சொத்து மீட்டமை',
     'pending'  					=> 'நிலுவையில்',
     'undeployable'  			=> 'Undeployable',

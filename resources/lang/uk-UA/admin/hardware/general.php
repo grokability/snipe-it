@@ -22,6 +22,8 @@ return [
     'requested'				    => 'Запрошено користувачем',
     'not_requestable'           => 'Ви не можете запросити',
     'requestable_status_warning' => 'Не змінювати статус запиту',
+    'require_serial'       => 'Require Serial Number',
+    'require_serial_help'       => 'A serial number will be required when creating a new asset of this model.',
     'restore'  					=> 'Restore Asset',
     'pending'  					=> 'Очікуєтся',
     'undeployable'  			=> 'Непридатний для зберігання',

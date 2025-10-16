@@ -22,6 +22,8 @@ return [
     'requested'				    => 'បានស្នើសុំ',
     'not_requestable'           => 'មិនអាចស្នើសុំបាន។',
     'requestable_status_warning' => 'កុំផ្លាស់ប្តូរស្ថានភាពដែលអាចស្នើសុំបាន។',
+    'require_serial'       => 'Require Serial Number',
+    'require_serial_help'       => 'A serial number will be required when creating a new asset of this model.',
     'restore'  					=> 'ស្តារទ្រព្យសម្បត្តិ',
     'pending'  					=> 'កំពុងរង់ចាំ',
     'undeployable'  			=> 'មិន​អាច​ប្រើ​បាន',

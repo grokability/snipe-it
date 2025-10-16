@@ -11,7 +11,6 @@ return array(
     'title'					=> 'Kiểu tài sản',
     'update'				=> 'Cập nhật kiểu tài sản',
     'view'					=> 'Xem kiểu tài sản',
-    'update'				=> 'Cập nhật kiểu tài sản',
-    'clone'				=> 'Nhân đôi kiểu tài sản',
-    'edit'				=> 'Cập nhật kiểu tài sản',
+    'clone'				    => 'Nhân đôi kiểu tài sản',
+    'edit'				    => 'Cập nhật kiểu tài sản',
 );

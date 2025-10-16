@@ -295,7 +295,14 @@
 
                           <div class="col-md-8 col-md-offset-3">
                               <label class="form-control form-control--disabled">
-                                  {{ Form::checkbox('send_welcome', '1', old('send_welcome'), ['id' => "email_user_checkbox", 'aria-label'=>'send_welcome']) }}
+                                  <input
+                                      type="checkbox"
+                                      name="send_welcome"
+                                      id="email_user_checkbox"
+                                      value="1"
+                                      aria-label="send_welcome"
+                                      @checked(old('send_welcome'))
+                                  />
                                   {{ trans('general.send_welcome_email_to_users') }}
                               </label>
 

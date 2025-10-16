@@ -22,6 +22,8 @@ return [
     'requested'				    => 'การขอใช้บริการ',
     'not_requestable'           => 'Not Requestable',
     'requestable_status_warning' => 'Do not change requestable status',
+    'require_serial'       => 'Require Serial Number',
+    'require_serial_help'       => 'A serial number will be required when creating a new asset of this model.',
     'restore'  					=> 'กู้คืนสินทรัพย์',
     'pending'  					=> 'อยู่ระหว่างดำเนินการ',
     'undeployable'  			=> 'ไม่สามารถนำไปใช้งานได้',

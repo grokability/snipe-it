@@ -66,6 +66,7 @@ class MaintenancesTransformer
                     'id' => $assetmaintenance->supplier->id,
                     'name'=> e($assetmaintenance->supplier->name)
                     ] : null,
+            'url'         => ($assetmaintenance->url) ? e($assetmaintenance->url) : null,
             'cost'          => Helper::formatCurrencyOutput($assetmaintenance->cost),
             'asset_maintenance_type'          => e($assetmaintenance->asset_maintenance_type),
             'start_date'         => Helper::getFormattedDateObject($assetmaintenance->start_date, 'date'),

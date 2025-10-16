@@ -2,7 +2,7 @@
 
 return [
     'about_asset_depreciations'  			=> 'Informacja na temat amortyzacji nabytku',
-    'about_depreciations'  					=> 'Możesz ustawić amortyzację środków trwałych na podstawie amortyzacji aktywów w oparciu o metodę liniową.',
+    'about_depreciations'  					=> 'You can set up asset depreciations to depreciate assets based on linear (straight-line), Half Year applied with condition, or Half Year always applied.',
     'asset_depreciations'  					=> 'Amortyzacja nabytków',
     'create'  					            => 'Nowa amortyzacja',
     'depreciation_name'  					=> 'Nazwa amortyzacji',

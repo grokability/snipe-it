@@ -11,7 +11,6 @@ return array(
     'title'					=> 'Modèles d\'actif',
     'update'				=> 'Mettre à jour le modèle d\'actif',
     'view'					=> 'Voir le modèle d\'actif',
-    'update'				=> 'Mettre à jour le modèle d\'actif',
-    'clone'				=> 'Cloner le modèle',
-    'edit'				=> 'Éditer le modèle',
+    'clone'				    => 'Cloner le modèle',
+    'edit'				    => 'Éditer le modèle',
 );

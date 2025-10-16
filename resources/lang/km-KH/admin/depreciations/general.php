@@ -2,7 +2,7 @@
 
 return [
     'about_asset_depreciations'  			=> 'អំពីការរំលោះទ្រព្យសកម្ម',
-    'about_depreciations'  					=> 'អ្នកអាចកំណត់ការរំលោះទ្រព្យសកម្ម ដើម្បីរំលោះទ្រព្យសកម្មដោយផ្អែកលើការរំលោះបន្ទាត់ត្រង់។',
+    'about_depreciations'  					=> 'You can set up asset depreciations to depreciate assets based on linear (straight-line), Half Year applied with condition, or Half Year always applied.',
     'asset_depreciations'  					=> 'ការរំលោះទ្រព្យសកម្ម',
     'create'  					            => 'បង្កើតការរំលោះ',
     'depreciation_name'  					=> 'ឈ្មោះរំលោះ',

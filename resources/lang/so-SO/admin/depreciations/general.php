@@ -2,7 +2,7 @@
 
 return [
     'about_asset_depreciations'  			=> 'Ku saabsan Qiimo dhaca Hantida',
-    'about_depreciations'  					=> 'Waxaad dejin kartaa qiimo dhimista hantida si aad u qiimayso hantida ku salaysan qiimo-dhaca khadka tooska ah.',
+    'about_depreciations'  					=> 'You can set up asset depreciations to depreciate assets based on linear (straight-line), Half Year applied with condition, or Half Year always applied.',
     'asset_depreciations'  					=> 'Qiimo dhaca Hantida',
     'create'  					            => 'Samee Qiimo Dhac',
     'depreciation_name'  					=> 'Magaca Qiimo dhaca',

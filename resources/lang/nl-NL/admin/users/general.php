@@ -24,7 +24,6 @@ return [
     'auto_assign_label' => 'Neem deze gebruiker op bij het automatisch toewijzen van in aanmerking komende licenties',
     'auto_assign_help'  => 'Automatisch licentie toewijzen overslaan voor deze gebruiker',
     'software_user'     => 'Software is uitgecheckt aan :name',
-    'send_email_help'   => 'U moet een e-mailadres opgeven voor deze gebruiker om hen inloggegevens te sturen. E-mailen van inloggegevens kan alleen worden gedaan bij het maken van gebruikers. Wachtwoorden worden in eenrichtingshash opgeslagen en kunnen niet worden opgehaald zodra ze zijn opgeslagen.',
     'view_user'         => 'Bekijk gebruiker :name',
     'usercsv'           => 'CSV bestand',
     'two_factor_admin_optin_help' => 'De huidige beheer instellingen staan selectief gebruik van twee factor authenticatie toe.  ',

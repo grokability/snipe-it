@@ -184,7 +184,7 @@ class CheckoutAcceptance extends Model
 
         $pdf->AddPage();
         if ($data['logo'] != null) {
-            $pdf->writeHTML('<img src="'.$data['logo'].'">', true, 0, true, 0, '');
+            $pdf->writeHTML('<img src="@'.$data['logo'].'">', true, 0, true, 0, '');
         } else {
             $pdf->writeHTML('<h3>'.$data['site_name'].'</h3><br /><br />', true, 0, true, 0, 'C');
         }
@@ -210,7 +210,10 @@ class CheckoutAcceptance extends Model
         if (($data['qty'] != null) && ($data['qty'] > 1)) {
             $pdf->writeHTML(trans('general.qty').': '.e($data['qty']), true, 0, true, 0, '');
         }
-        $pdf->writeHTML(trans('general.assignee').': '.e($data['assigned_to']), true, 0, true, 0, '');
+        $pdf->writeHTML(trans('general.assignee').': '.e($data['assigned_to']) . ($data['employee_num'] ? ' ('.$data['employee_num'].')' : ''), true, 0, true, 0, '');
+        if ($data['email'] != null) {
+            $pdf->writeHTML(trans('general.email').': '.e($data['email']), true, 0, true, 0, '');
+        }
         $pdf->Ln();
         $pdf->writeHTML('<hr>', true, 0, true, 0, '');
 
@@ -230,7 +233,7 @@ class CheckoutAcceptance extends Model
         $pdf->Ln();
 
         if ($data['signature'] != null) {
-            $pdf->writeHTML('<img src="'.$data['signature'].'">', true, 0, true, 0, '');
+            $pdf->writeHTML('<img src="@'.$data['signature'].'">', true, 0, true, 0, '');
             $pdf->writeHTML('<hr>', true, 0, true, 0, '');
             $pdf->writeHTML(e($data['assigned_to']), true, 0, true, 0, 'C');
             $pdf->Ln();
