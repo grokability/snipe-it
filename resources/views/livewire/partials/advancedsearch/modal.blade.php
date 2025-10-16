@@ -60,9 +60,8 @@
                         </div>
 
                         {{-- Visibility --}}
-                        <div class="form-group" x-init="$nextTick(() => { window.advancedSearchModalSetGroupSelectDisabled(true) })">
+                        <div class="form-group" x-init="$nextTick(() => { window.advancedSearchModalSetGroupSelectDisabled({{ $this->visibility === App\Livewire\Partials\Advancedsearch\FilterVisibility::Private }}) })">
                             <label>Visibility</label>
-
                             <div class="radio modal-radio">
                                 <label>
                                     <input
@@ -94,15 +93,15 @@
 
                         {{-- Group Select --}}
                         @include(
-                            "partials.select.dropdowns.group-select",
+                            'partials.select.dropdowns.group-select',
                             [
-                                "translated_name" => trans("admin/hardware/form.model"),
-                                "select_id" => "group_select",
-                                "fieldname" => "groupSelect",
-                                "required" => "false",
-                                "multiple" => "true",
-                                "selected" => $groupSelect,
-                                "otherOptions" => $groupSelectOtherOptions,
+                                'translated_name' => trans("admin/hardware/form.model"),
+                                'select_id' => 'group_select',
+                                'fieldname' => 'groupSelect',
+                                'required' => 'false',
+                                'multiple' => 'true',
+                                'selected' => $groupSelect,
+                                'otherOptions' => $groupSelectOtherOptions,
                             ]
                         )
                     @endif
@@ -189,6 +188,7 @@
                 document.getElementById("group_select").disabled = disabled; 
             }
 
+            // Focus trap
             window.advancedSearchModalFocusTrap = function() {
                 const $modal = $("#advancedSearchModal");
                 const focusableSelector = 'a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), [tabindex]:not([tabindex="-1"])';

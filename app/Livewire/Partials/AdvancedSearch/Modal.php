@@ -28,9 +28,15 @@ class Modal extends Component
     public AdvancedsearchModalAction $modalActionType;
 
     #[Validate("required")]
-    public ?string $name = "";
     public FilterVisibility $visibility = FilterVisibility::Private;
+
+    #[Validate("required")]
+    public ?string $name = "";
+
+    #[Validate("sometimes")]
     public $groupSelect = [];
+
+    #[Validate("sometimes")]
     public array $groupSelectOtherOptions = [];
 
     protected $listeners = ["groupSelect"];
@@ -67,7 +73,7 @@ class Modal extends Component
             );
             $this->name = $predefinedFilter["name"];
 
-            if ($predefinedFilter["is_public"] === 1) {
+            if ($predefinedFilter["is_public"] == 1) {
                 $this->visibility = FilterVisibility::Public;
             } else {
                 $this->visibility = FilterVisibility::Private;
@@ -141,6 +147,7 @@ class Modal extends Component
     public function updatePredefinedFiltersModal(
         PredefinedFilterService $predefinedFilterService
     ) {
+
         $this->validate([
             'name' => 'required|string',
             'filterData' => 'array',
