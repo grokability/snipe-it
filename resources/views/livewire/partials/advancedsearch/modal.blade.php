@@ -158,17 +158,16 @@
             window.advancedSearchModalSendInputToBackend = function(action) {
                 let selectedGroups = $("#group_select").select2('data');
                 selectedGroups = selectedGroups.map((item) => { return parseInt(item.id); }); 
-                const component = Livewire.getByName('partials.advancedsearch.modal')[0];
-                
+                const component = Livewire.getByName('partials.advanced-search.modal')[0];
                 if (component) {
                     component.set('groupSelect', selectedGroups);
                 } else {
                     console.error('Livewire component not found!');
                 }
-                {{--  --}}
+
                 if(action === 'create')
                 {
-                    Livewire.dispatch('savePredefinedFiltersModal');
+                   Livewire.dispatch('savePredefinedFiltersModal');
                 } else if(action === 'edit')
                 {
                     Livewire.dispatch('updatePredefinedFiltersModal');
