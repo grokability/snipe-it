@@ -62,7 +62,6 @@
                         {{-- Visibility --}}
                         <div class="form-group" x-init="$nextTick(() => { window.advancedSearchModalSetGroupSelectDisabled(true) })">
                             <label>Visibility</label>
-
                             <div class="radio modal-radio">
                                 <label>
                                     <input
