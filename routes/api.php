@@ -487,7 +487,7 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
      * Groups API routes
      */
     Route::get('groups/selectlist', [Api\GroupsController::class, 'selectlist'])
-    ->name('api.groups.selectlist');
+        ->name('api.groups.selectlist');
     Route::resource(
         'groups',
         Api\GroupsController::class,
@@ -651,12 +651,13 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
             ]
         )->name('api.assets.assigned_accessories');
 
-          Route::get('{asset}/assigned/components',
-              [
-                  Api\AssetsController::class,
-                  'assignedComponents'
-              ]
-          )->name('api.assets.assigned_components');
+        Route::get(
+            '{asset}/assigned/components',
+            [
+                Api\AssetsController::class,
+                'assignedComponents'
+            ]
+        )->name('api.assets.assigned_components');
         /** End assigned routes */
 
     });
@@ -669,7 +670,7 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
     // the model name to be the parameter - and i think it's a good differentiation in the code while we convert the others.
     Route::patch('/hardware/{asset}', [Api\AssetsController::class, 'update'])->name('api.assets.update');
     Route::put('/hardware/{asset}', [Api\AssetsController::class, 'update'])->name('api.assets.put-update');
-    
+
     Route::resource(
         'hardware',
         Api\AssetsController::class,
@@ -950,7 +951,34 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
             'except' => ['create', 'edit'],
             'parameters' => ['model' => 'model_id'],
         ]
-    ); // end asset models API routes
+    );
+
+    // end asset models API routes
+
+    /**
+     * Asset notes API routes
+     */
+    Route::group(
+        ['prefix' => 'notes'],
+        function () {
+
+            Route::post(
+                '{asset}/store',
+                [
+                    Api\NotesController::class,
+                    'store'
+                ]
+            )->name('api.notes.store');
+
+            Route::get(
+                '{asset}/index',
+                [
+                    Api\NotesController::class,
+                    'index'
+                ]
+            )->name('api.notes.index');
+        }
+    );
 
     /**
      * PredefinedFilter API routes
@@ -973,12 +1001,12 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
         Route::put('/{id}', [PredefinedFilterController::class, 'update'])
             ->name('api.predefined-filters.update');
 
-            Route::put('predefinedFilters/{id}/sync-permissions', [PredefinedFilterController::class,'syncPermissionGroups'])
-                ->name('api.predefined-filters.sync-permissions');
+        Route::put('predefinedFilters/{id}/sync-permissions', [PredefinedFilterController::class, 'syncPermissionGroups'])
+            ->name('api.predefined-filters.sync-permissions');
 
-            Route::delete('/{id}', [PredefinedFilterController::class,'destroy'])
-                ->name('api.predefined-filters.destroy');
-        }); // end predefinedFilters API routes
+        Route::delete('/{id}', [PredefinedFilterController::class, 'destroy'])
+            ->name('api.predefined-filters.destroy');
+    }); // end predefinedFilters API routes
 
     /**
      * Settings API routes
