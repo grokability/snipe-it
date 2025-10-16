@@ -134,7 +134,7 @@ class AssetsController extends Controller
             'created_by',
 
         ];
-
+        
         $all_custom_fields = CustomField::all(); //used as a 'cache' of custom fields throughout this page load
 
         foreach ($all_custom_fields as $field) {
@@ -145,12 +145,13 @@ class AssetsController extends Controller
 
         if ($request->filled('filter')) {
             $filter = json_decode($request->input('filter'), true);
-
-            $filter = array_filter($filter, function ($key) use ($allowed_columns) {
-                return in_array($key, $allowed_columns);
-            }, ARRAY_FILTER_USE_KEY);
-
         }
+
+        $all_custom_fields = CustomField::all(); //used as a 'cache' of custom fields throughout this page load
+        foreach ($all_custom_fields as $field) {
+            $allowed_columns[] = $field->db_column_name();
+        }
+
 
         $assets = Asset::select('assets.*')
             ->with(
