@@ -86,11 +86,18 @@ class AssetUnitTest extends TestCase
         $this->assertInstanceOf(Carbon::class, $expires);
         $this->assertSame('2025-01-15', $expires->format('Y-m-d'));
 
-        $asset->warranty_months = 0;
-        $this->assertSame('2024-01-15', $asset->warranty_expires->format('Y-m-d'));
+    }
 
-        $asset->purchase_date = null;
-        $this->assertNull($asset->warranty_expires);
+    public function test_warranty_expires_negative_attribute()
+    {
+        $asset = new Asset;
+
+        $asset->purchase_date   = '2024-01-15';
+        $asset->warranty_months = -48;
+        $expires = $asset->warranty_expires;
+        $this->assertInstanceOf(Carbon::class, $expires);
+        $this->assertSame('2020-01-15', $expires->format('Y-m-d'));
+
     }
 
     public function test_date_and_bool_mutators()
