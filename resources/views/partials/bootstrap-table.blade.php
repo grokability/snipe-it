@@ -1442,7 +1442,7 @@
     // this Links to '/hardware' with the filter id 
     function predefinedFiltersLinkFormatter(value, row){
         if (value && row.id){
-            return `<a href="{{ config('app.url') }}/hardware?predefinedFilterEditModalOpen=true&predefinedFilterId=${row.id}">${value}</a>`;
+            return `<a href="{{ config('app.url') }}/hardware?predefinedFilterEditModalOpen=false&predefinedFilterId=${row.id}">${value}</a>`;
         } 
     }
 
