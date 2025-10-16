@@ -36,7 +36,7 @@ class PredefinedFilterPresenter extends Presenter
                 'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,
-                'title' => trans('is_public'),
+                'title' => trans('general.is_public'),
                 'visible' => true,
                 'formatter' => 'trueFalseFormatter',
             ], [

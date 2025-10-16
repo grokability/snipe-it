@@ -172,6 +172,7 @@ return [
     'import_file'  			=> 'CSV-Datei importieren',
     'import_type'  			=> 'CSV-Import-Typ',
     'insufficient_permissions' => 'Fehlende Berechtigungen!',
+    'is_public'             =>  'Ist öffentlich',
     'kits'       			=> 'Vordefinierte Kits',
     'language'				=> 'Sprache',
     'last'					=> 'Letzte',
