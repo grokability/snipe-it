@@ -42,8 +42,8 @@ class PredefinedFiltersTransformer
         }
 
         $permissions_array['available_actions'] = [
-            'update' => $filter->created_by === auth()->id() || $filter->userHasPermission(auth()->user(), 'update'),
-            'delete' => $filter->created_by === auth()->id() || $filter->userHasPermission(auth()->user(), 'destroy')
+            'update' => $filter->created_by === auth()->id() || $filter->userHasPermission(auth()->user(), 'edit'),
+            'delete' => $filter->created_by === auth()->id() || $filter->userHasPermission(auth()->user(), 'delete')
         ];
         $array += $permissions_array;
         return $array;

@@ -75,9 +75,9 @@ class PredefinedFilterController extends Controller
 
             // It's public, so check permission logic
         if ($filter->is_public) {
-            if (!$filter->userHasPermission($user, 'destroy')) {
+            if (!$filter->userHasPermission($user, 'delete')) {
                 return redirect()->route('predefined-filters.index')
-                    ->with('error', trans('admin/predefinedFilters/message.not_allowed_to_delete'));
+                    ->with('error', trans('general.insufficient_permissions'));
             }
 
             $filter->delete();
@@ -86,6 +86,6 @@ class PredefinedFilterController extends Controller
         }
 
         return redirect()->route('predefined-filters.index')
-            ->with('error', trans('admin/predefinedFilters/message.delete.not_allowed_to_delete'));
+            ->with('error', trans('general.insufficient_permissions'));
     }
 }
