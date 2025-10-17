@@ -52,7 +52,7 @@ export default class FilterFormManager {
         });
     }
 
-    async setValuesFromResponse(responseArray) {
+    setValuesFromResponse(responseArray) {
         this.clearAll();
 
         const promises = [];
@@ -76,8 +76,11 @@ export default class FilterFormManager {
             }
         }
 
-        await Promise.all(promises);
-        this.setAdvancedSearchPanelFilterEnabledState(false);
+        return Promise.all(promises)
+            .then((results) => {
+                this.setAdvancedSearchPanelFilterEnabledState(false);
+                return results;
+            });
     }
 
     setAdvancedSearchPanelFilterEnabledState(state) {
