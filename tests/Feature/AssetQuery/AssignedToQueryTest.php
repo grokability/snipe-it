@@ -9,10 +9,13 @@ use Tests\TestCase;
 use Tests\Support\GetExtendedPrefix;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class AssignedToQueryTest extends TestCase
 {
     use GetExtendedPrefix;
+    use RefreshDatabase;
+
 
 
     public function testFilterAssetAssignedToUserId() 
@@ -78,13 +81,6 @@ class AssignedToQueryTest extends TestCase
         $assetB = Asset::factory()->create(['assigned_type' => User::class, 'assigned_to' => $userB->id]);
 
         $partial = self::getExtendedPrefix($userA->first_name, $userB->first_name);
-        dump($userA->first_name);
-        dump($userB->first_name);
-        dump($partial);
-
-        if($userA->first_name === $partial || $userB->first_name === $partial) {
-            $this->markTestSkipped("Skipped because it would fail due to same names");
-        }
 
         $filter  = ['assigned_to' => $partial];
 
@@ -383,10 +379,10 @@ class AssignedToQueryTest extends TestCase
         $partial = AssignedToQueryTest::getExtendedPrefix($parentA->name, $parentB->name);
         $filter = ['assigned_to' => $partial];
 
-        dump($parentA->name);
-        dump($parentB->name);
+        dump($parentA);
+        dump($parentB);
         dump($partial);
-        
+
         $results = Asset::query()->byFilter($filter)->get();
 
         $this->assertCount(1, $results);
