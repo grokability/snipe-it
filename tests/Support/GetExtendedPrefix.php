@@ -4,31 +4,35 @@ namespace Tests\Support;
 
 trait GetExtendedPrefix
 {
-    public static function getExtendedPrefix(string $stringA, string $stringB): string
+    public static function getExtendedPrefix(string $valueA, string $valueB): string
     {
-        $minLength = max(3, intdiv(strlen($stringA), 5));
-        $common = '';
+        $lengthA = strlen($valueA);
+        $lengthB = strlen($valueB);
+        $minLength = max(1, intdiv($lengthA, 2));
 
-        $length = min(strlen($stringA), strlen($stringB));
-        for ($i = 0; $i < $length; $i++) {
-            if ($stringA[$i] === $stringB[$i]) {
-                $common .= $stringA[$i];
+        $identical = '';
+        $maxIndex = min($lengthA, $lengthB);
+
+        // Build identical prefix
+        for ($i = 0; $i < $maxIndex; $i++) {
+            if ($valueA[$i] === $valueB[$i]) {
+                $identical .= $valueA[$i];
             } else {
                 break;
             }
         }
 
-        // Add the next char from stringA if available
-        if (strlen($common) < strlen($stringA)) {
-            $common .= $stringA[strlen($common)];
+        // Add one more char from valueA if possible
+        if (strlen($identical) < $lengthA) {
+            $identical .= $valueA[strlen($identical)];
         }
 
-        // Ensure at least half of stringA is returned
-        if (strlen($common) < $minLength) {
-            $common = substr($stringA, 0, $minLength);
+        // Ensure the result is at least half of valueA
+        if (strlen($identical) < $minLength) {
+            $identical = substr($valueA, 0, $minLength);
         }
 
-        return $common;
+        return $identical;
     }
 
 }

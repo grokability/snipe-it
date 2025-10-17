@@ -383,6 +383,10 @@ class AssignedToQueryTest extends TestCase
         $partial = AssignedToQueryTest::getExtendedPrefix($parentA->name, $parentB->name);
         $filter = ['assigned_to' => $partial];
 
+        dump($parentA->name);
+        dump($parentB->name);
+        dump($partial);
+        
         $results = Asset::query()->byFilter($filter)->get();
 
         $this->assertCount(1, $results);
