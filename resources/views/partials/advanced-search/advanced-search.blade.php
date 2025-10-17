@@ -169,12 +169,19 @@ updateFilterWithPredefined(event, selectedId = null) {
 
         const clearButton = document.getElementById("clearInputButton");
         if (clearButton) {
-            clearButton.addEventListener('click', () => this.collector.clearAll());
+            clearButton.addEventListener('click', () => {
+                this.collector.clearAll() 
+                $('#predefinedfilters-select').val(null).trigger('change');
+            });
         }
 
         const topClearButton = document.getElementById("topClearInputButton");
         if (topClearButton) {
-            topClearButton.addEventListener('click', () => this.collector.clearAll());
+            topClearButton.addEventListener('click', () => 
+            {
+                this.collector.clearAll() 
+                $('#predefinedfilters-select').val(null).trigger('change');
+            });
             //Livewire.emit('refreshNotifications');
         }
 
