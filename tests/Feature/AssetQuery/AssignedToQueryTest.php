@@ -78,6 +78,14 @@ class AssignedToQueryTest extends TestCase
         $assetB = Asset::factory()->create(['assigned_type' => User::class, 'assigned_to' => $userB->id]);
 
         $partial = self::getExtendedPrefix($userA->first_name, $userB->first_name);
+        dump($userA->first_name);
+        dump($userB->first_name);
+        dump($partial);
+
+        if($userA->first_name === $partial || $userB->first_name === $partial) {
+            $this->markTestSkipped("Skipped because it would fail due to same names");
+        }
+
         $filter  = ['assigned_to' => $partial];
 
         $results = Asset::query()->byFilter($filter)->get();

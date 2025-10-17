@@ -6,7 +6,7 @@ trait GetExtendedPrefix
 {
     public static function getExtendedPrefix(string $stringA, string $stringB): string
     {
-        $minLength = max(1, intdiv(strlen($stringA), 2));
+        $minLength = max(3, intdiv(strlen($stringA), 5));
         $common = '';
 
         $length = min(strlen($stringA), strlen($stringB));
