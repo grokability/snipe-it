@@ -19,7 +19,15 @@ class FilterInput {
     }
 
     setValue(newValue) {
-        this.element.value = newValue;
+        return new Promise((resolve, reject) => {
+            try {
+                this.element.value = newValue;
+            }
+            catch(e) {
+                reject(e);
+            }
+            resolve(newValue);
+        })
     }
 
     getType() {
@@ -104,31 +112,36 @@ class SelectFilterInput extends FilterInput {
     }
 
     setValue(newValues, type = this.getType()) {
-        let requestPromises = newValues.map((newValue) => {
+        const requestPromises = newValues.map((newValue) => {
             return this.apiService.fetchItemFromBackendById(type, newValue);
         });
 
-        return Promise.all(requestPromises).then((responses) => {
-            responses.forEach((response) => {
+        return Promise.all(requestPromises)
+        .then((responses) => {
+            // Map each response to its parsed JSON and DOM manipulation
+            const jsonProcessingPromises = responses.map((response) =>
                 response.json().then((responseJson) => {
                     // Check if option already exists
-                    let $existingOption = $(this.element).find(`option[value='${responseJson.id}']`);
+                    const $existingOption = $(this.element).find(`option[value='${responseJson.id}']`);
 
                     if ($existingOption.length === 0) {
                         // Option doesn't exist, create and append it
-                        let option = new Option(responseJson.name, responseJson.id, true, true);
+                        const option = new Option(responseJson.name, responseJson.id, true, true);
                         $(this.element).append(option);
                     } else {
                         // Option exists, just select it
                         $existingOption.prop('selected', true);
                     }
 
-                    // Trigger change once per response (or once after all?)
                     $(this.element).trigger('change');
-                });
-            });
+                    return responseJson;
+                })
+            );
+
+            return Promise.all(jsonProcessingPromises); // Wait for all `.json()` parsing to finish
         });
     }
+
 
     clear() {
         $(this.element).val(null).trigger('change');

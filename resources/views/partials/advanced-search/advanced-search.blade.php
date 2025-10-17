@@ -108,7 +108,9 @@ updateFilterWithPredefined(event, selectedId = null) {
             if (!data.filter_data) return;
 
             return this.collector.setValuesFromResponse(data.filter_data)
-                .then(() => this.refresh());
+                .then(() => {
+                    this.refresh();
+            });
         })
         .catch(err => {
             console.error("Failed to apply predefined filter:", err);
@@ -209,6 +211,7 @@ document.addEventListener('livewire:init', function () {
 
     // Initialize everything
     const controller = new FilterUIController($table);
+    container.register("filterUiController", controller);
     controller.bindEvents();
 
     function sleep(ms) {
@@ -217,6 +220,7 @@ document.addEventListener('livewire:init', function () {
 
 
     @if(isset($predefined_filter_id))
+        // To set a predefined filter and open the modal over the url
         controller.updateFilterWithPredefined(null, {{ $predefined_filter_id }});
 
         const filterSection = document.getElementById('filterSection');
