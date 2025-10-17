@@ -9,10 +9,13 @@ use Tests\TestCase;
 use Tests\Support\GetExtendedPrefix;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class AssignedToQueryTest extends TestCase
 {
     use GetExtendedPrefix;
+    use RefreshDatabase;
+
 
 
     public function testFilterAssetAssignedToUserId() 
@@ -78,6 +81,7 @@ class AssignedToQueryTest extends TestCase
         $assetB = Asset::factory()->create(['assigned_type' => User::class, 'assigned_to' => $userB->id]);
 
         $partial = self::getExtendedPrefix($userA->first_name, $userB->first_name);
+
         $filter  = ['assigned_to' => $partial];
 
         $results = Asset::query()->byFilter($filter)->get();
