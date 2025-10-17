@@ -9,10 +9,10 @@
 
                <div class="filter-controls-row">
                 <select class="form-control filter-option" data-field="{{ $tableField->field }}">
-                    <option value="AND_contains"> && ~= </option>
-                    <option value="AND_equals"> && == </option>
-                    <option value="NOT_equals"> != </option>
-                    <option value="NOT_contains"> ~! </option>
+                    <option value="AND_contains"> = </option>
+                    <option value="AND_equals"> != </option>
+                    <option value="NOT_equals"> [abc] </option>
+                    <option value="NOT_contains"> ![abc] </option>
                 </select>
 
 
