@@ -60,7 +60,7 @@
                         </div>
 
                         {{-- Visibility --}}
-                        <div class="form-group" x-init="$nextTick(() => { window.advancedSearchModalSetGroupSelectDisabled({{ $this->visibility === App\Livewire\Partials\Advancedsearch\FilterVisibility::Private }}) })">
+                        <div id="modalVisibilityRadio" class="form-group" x-init="$nextTick(() => { window.advancedSearchModalSetGroupSelectDisabled({{ $this->visibility === App\Livewire\Partials\Advancedsearch\FilterVisibility::Private }}) })">
                             <label>Visibility</label>
                             <div class="radio modal-radio">
                                 <label>
@@ -155,11 +155,21 @@
         @script
         <script>
             window.advancedSearchModalSendInputToBackend = function(action) {
+
+                // It's just a bad work-around to set it using js and not the native livewire functions. 
+                const component = Livewire.getByName('partials.advanced-search.modal')[0];
+
                 let selectedGroups = $("#group_select").select2('data');
                 selectedGroups = selectedGroups.map((item) => { return parseInt(item.id); }); 
-                const component = Livewire.getByName('partials.advanced-search.modal')[0];
+                
+                let filterName = document.getElementById("filterName").value;
+                let visibility = document.querySelector('input[name="visibility"]:checked')?.value;
+
+
                 if (component) {
                     component.set('groupSelect', selectedGroups);
+                    component.set('name', filterName);
+                    component.set('visibility', visibility);
                 } else {
                     console.error('Livewire component not found!');
                 }
