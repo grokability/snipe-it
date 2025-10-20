@@ -96,7 +96,6 @@ class PredefinedFilterController extends Controller
         $newIsPublic = $validated['is_public'];
         $currentIsPublic = $filter->is_public;
 
-        //refactored one
         if (!$filter->userHasPermission($user, 'update')){
             return response()->json(['message' => trans('admin/predefinedFilters/message.not_allowed_to_edit')], 403);
         }
