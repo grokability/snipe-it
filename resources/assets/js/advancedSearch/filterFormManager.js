@@ -14,7 +14,7 @@ export default class FilterFormManager {
         this.apiService = container.resolve("apiService");;
     }
 
-    collect() {
+    findFilterInput() {
         this.filters = [];
         this.inputs = [];
 
@@ -28,7 +28,9 @@ export default class FilterFormManager {
         });
 
         // Dates
-        document.querySelectorAll('input[id^="advancedSearch_"][id$="_start"][type="date"], input[id^="advancedSearch_"][id$="_end"][type="date"]').forEach(el => {
+        document.querySelectorAll(
+            '.input-daterange.input-group.date-range-input'
+        ).forEach(el => {
             this.inputs.push(new DateFilterInput(el, this.apiService));
         });
 
@@ -36,6 +38,12 @@ export default class FilterFormManager {
         document.querySelectorAll('input[id^="advancedSearch_"][type="text"]').forEach(el => {
             this.inputs.push(new TextFilterInput(el, this.apiService));
         });
+
+        return this.inputs;
+    }
+
+    collect() {
+        this.filters = [];
 
         // Process all inputs polymorphically
         this.inputs.forEach(input => {

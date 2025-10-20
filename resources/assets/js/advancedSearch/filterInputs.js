@@ -23,7 +23,7 @@ class FilterInput {
             try {
                 this.element.value = newValue;
             }
-            catch(e) {
+            catch (e) {
                 reject(e);
             }
             resolve(newValue);
@@ -117,29 +117,29 @@ class SelectFilterInput extends FilterInput {
         });
 
         return Promise.all(requestPromises)
-        .then((responses) => {
-            // Map each response to its parsed JSON and DOM manipulation
-            const jsonProcessingPromises = responses.map((response) =>
-                response.json().then((responseJson) => {
-                    // Check if option already exists
-                    const $existingOption = $(this.element).find(`option[value='${responseJson.id}']`);
+            .then((responses) => {
+                // Map each response to its parsed JSON and DOM manipulation
+                const jsonProcessingPromises = responses.map((response) =>
+                    response.json().then((responseJson) => {
+                        // Check if option already exists
+                        const $existingOption = $(this.element).find(`option[value='${responseJson.id}']`);
 
-                    if ($existingOption.length === 0) {
-                        // Option doesn't exist, create and append it
-                        const option = new Option(responseJson.name, responseJson.id, true, true);
-                        $(this.element).append(option);
-                    } else {
-                        // Option exists, just select it
-                        $existingOption.prop('selected', true);
-                    }
+                        if ($existingOption.length === 0) {
+                            // Option doesn't exist, create and append it
+                            const option = new Option(responseJson.name, responseJson.id, true, true);
+                            $(this.element).append(option);
+                        } else {
+                            // Option exists, just select it
+                            $existingOption.prop('selected', true);
+                        }
 
-                    $(this.element).trigger('change');
-                    return responseJson;
-                })
-            );
+                        $(this.element).trigger('change');
+                        return responseJson;
+                    })
+                );
 
-            return Promise.all(jsonProcessingPromises); // Wait for all `.json()` parsing to finish
-        });
+                return Promise.all(jsonProcessingPromises); // Wait for all `.json()` parsing to finish
+            });
     }
 
 
@@ -214,8 +214,39 @@ class AssignedEntityFilterInput extends SelectFilterInput {
 
 
 class DateFilterInput extends FilterInput {
+
+    constructor(el, apiService) {
+        super(el, apiService);
+
+        this.container = this.element.closest('.input-daterange');
+
+        if (this.container) {
+            $(this.container).datepicker({
+                todayBtn: "linked",
+                clearBtn: true,
+                forceParse: false,
+                daysOfWeekHighlighted: "0,1",
+                todayHighlight: true
+            });
+        }
+
+
+    }
+
     getValue() {
-        return this.hasValue() ? this.element.value : null;
+        console.error("Currently not implemented");
+        throw new Error("Currently not implemented");
+        //return this.hasValue() ? this.element.value : null;
+    }
+
+    setValue() {
+        console.error("Currently not implemented");
+        throw new Error("Currently not implemented");
+        //return this.hasValue() ? this.element.value : null;
+    }
+
+    clear() {
+        $(this.container).datepicker('clear');
     }
 }
 
