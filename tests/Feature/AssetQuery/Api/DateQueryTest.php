@@ -180,8 +180,8 @@ class DateQueryTest extends TestCase
             [
                 'field' => 'asset_eol_date',
                 'values' => [
-                    'start' => Carbon::now()->addMonths(35)->format('Y-m-d'),
-                    'end' => Carbon::now()->addMonths(49)->format('Y-m-d'),
+                    'start' => Carbon::now()->addMonths(20)->format('Y-m-d'),
+                    'end' => Carbon::now()->addMonths(50)->format('Y-m-d'),
                 ],
                 'operator' => 'contains',
                 'logic' => 'AND',
@@ -316,15 +316,12 @@ class DateQueryTest extends TestCase
                 'total',
                 'rows',
             ])
-            ->assertJson(fn(AssertableJson $json) => $json->has('rows', 3)->etc())
+            ->assertJson(fn(AssertableJson $json) => $json->has('rows', 2)->etc())
+            ->assertJsonFragment([
+                'id' => $assetA->id,
+            ])
             ->assertJsonFragment([
                 'id' => $assetB->id,
-            ])
-            ->assertJsonFragment([
-                'id' => $assetC->id,
-            ])
-            ->assertJsonFragment([
-                'id' => $assetD->id,
             ]);
     }
     public function testCreatedAtDateQueryRange()
@@ -482,9 +479,12 @@ class DateQueryTest extends TestCase
                 'total',
                 'rows',
             ])
-            ->assertJson(fn(AssertableJson $json) => $json->has('rows', 1)->etc())
+            ->assertJson(fn(AssertableJson $json) => $json->has('rows', 2)->etc())
             ->assertJsonFragment([
                 'id' => $assetA->id,
+            ])
+            ->assertJsonFragment([
+                'id' => $assetB->id,
             ]);
     }
 

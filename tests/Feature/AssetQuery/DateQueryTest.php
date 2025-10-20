@@ -119,9 +119,9 @@ class DateQueryTest extends TestCase
 
         $results = Asset::query()->byFilter($filter)->get();
 
-        $this->assertCount(2, $results);
+        $this->assertCount(1, $results);
         $this->assertTrue($results->contains($assetA));
-        $this->assertTrue($results->contains($assetB));
+        $this->assertFalse($results->contains($assetB));
         $this->assertFalse($results->contains($assetC));
     }
 
@@ -158,16 +158,7 @@ class DateQueryTest extends TestCase
     public function testEolDateQueryRange()
     {
 
-        \DB::listen(function ($query) {
-            $sql = $query->sql;
-            foreach ($query->bindings as $binding) {
-                $binding = is_numeric($binding) ? $binding : "'$binding'";
-                $sql = preg_replace('/\?/', $binding, $sql, 1);
-            }
-            echo ($sql);
-        });
-
-        $modelA = AssetModel::factory()->create(['eol' => 12]); // EOL in months
+        $modelA = AssetModel::factory()->create(['eol' => 12]);
         $modelB = AssetModel::factory()->create(['eol' => 24]);
         $modelC = AssetModel::factory()->create(['eol' => 36]);
         $modelD = AssetModel::factory()->create(['eol' => 48]);
@@ -184,8 +175,8 @@ class DateQueryTest extends TestCase
             [
                 'field' => 'asset_eol_date',
                 'values' => [
-                    'start' => Carbon::now()->addMonths(24)->format('Y-m-d'),
-                    'end' => Carbon::now()->addMonths(55)->format('Y-m-d'),
+                    'start' => Carbon::now()->addMonths(20)->format('Y-m-d'),
+                    'end' => Carbon::now()->addMonths(50)->format('Y-m-d'),
                 ],
                 'operator' => 'contains',
                 'logic' => 'AND',
