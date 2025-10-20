@@ -1,5 +1,5 @@
 <?php
-namespace Tests\Unit;
+namespace Tests\Feature\AssetQuery;
 
 use App\Models\Asset;
 use App\Models\Supplier;
