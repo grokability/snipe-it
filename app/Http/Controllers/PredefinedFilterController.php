@@ -11,13 +11,15 @@ class PredefinedFilterController extends Controller
 {
     public function index()
     {
+        $this->authorize('index', PredefinedFilter::class);
+
         $user = auth()->user();
 
         $filters = PredefinedFilter::with('permissionGroups')
             ->orderBy('name')
             ->get()
             ->filter(function ($filter) use ($user) {
-                return $filter->created_by === $user->id
+                return $filter->created_by === $user->id //TODO 
                     || ($filter->is_public && $filter->userHasPermission($user, 'view'));
             });
 
@@ -42,7 +44,7 @@ class PredefinedFilterController extends Controller
             ]);
         }
 
-        if ($filter->created_by === $user->id || ($filter->is_public && $filter->userHasPermission($user, 'view'))) {
+        if ($filter->created_by === $user->id || ($filter->is_public && $filter->userHasPermission($user, 'view'))) {//TODO 
 
             return view('predefined-filters.view', compact('filter'));
         }
