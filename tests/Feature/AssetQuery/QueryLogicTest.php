@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Feature\AssetQuery;
 
 use Tests\TestCase;
 use App\Models\Asset;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Accessories\Api;
+namespace Tests\Feature\AssetQuery\Api;
 
 use App\Models\Asset;
 use App\Models\Statuslabel;
