@@ -2,7 +2,9 @@
 namespace Tests\Feature\AssetQuery\Api\DateQuery;
 
 use App\Models\Asset;
+use App\Models\AssetModel;
 use App\Models\User;
+use Carbon\Carbon;
 use Tests\TestCase;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -15,15 +17,15 @@ class DateQueryTest extends TestCase
     public function testPurchaseDateQueryStart()
     {
         // Assets
-        $assetA = Asset::factory()->create(['purchase_date' => '2025-01-23']);
-        $assetB = Asset::factory()->create(['purchase_date' => '2025-03-24']);
-        $assetC = Asset::factory()->create(['purchase_date' => '2025-05-25']);
+        $assetA = Asset::factory()->create(['purchase_date' => Carbon::now()->addDays(14)->format('Y-m-d')]);
+        $assetB = Asset::factory()->create(['purchase_date' => Carbon::now()->addWeeks(14)->format('Y-m-d')]);
+        $assetC = Asset::factory()->create(['purchase_date' => Carbon::now()->addMonths(14)->format('Y-m-d')]);
 
         $filter = [
             [
                 'field' => 'purchase_date',
                 'values' => [
-                    'start' => '2025-03-20',
+                    'start' => Carbon::now()->addMonths(3)->format('Y-m-d'),
                 ],
                 'operator' => 'contains',
                 'logic' => 'AND',
@@ -52,7 +54,7 @@ class DateQueryTest extends TestCase
             ])
             ->assertJson(fn(AssertableJson $json) => $json->has('rows', 2)->etc())
             ->assertJsonFragment([
-                'id' => $assetA->id,
+                'id' => $assetC->id,
             ])
             ->assertJsonFragment([
                 'id' => $assetB->id,
@@ -62,18 +64,18 @@ class DateQueryTest extends TestCase
     public function testPurchaseDateQueryRange()
     {
         // Assets
-        $assetA = Asset::factory()->create(['purchase_date' => '2025-01-23']);
-        $assetB = Asset::factory()->create(['purchase_date' => '2025-03-24']);
-        $assetC = Asset::factory()->create(['purchase_date' => '2025-05-25']);
-        $assetD = Asset::factory()->create(['purchase_date' => '2025-07-26']);
-        $assetE = Asset::factory()->create(['purchase_date' => '2025-09-27']);
+        $assetA = Asset::factory()->create(['purchase_date' => Carbon::now()->addWeeks(50)->format('Y-m-d')]);
+        $assetB = Asset::factory()->create(['purchase_date' => Carbon::now()->addWeeks(75)->format('Y-m-d')]);
+        $assetC = Asset::factory()->create(['purchase_date' => Carbon::now()->addWeeks(100)->format('Y-m-d')]);
+        $assetD = Asset::factory()->create(['purchase_date' => Carbon::now()->addWeeks(125)->format('Y-m-d')]);
+        $assetE = Asset::factory()->create(['purchase_date' => Carbon::now()->addWeeks(150)->format('Y-m-d')]);
 
         $filter = [
             [
                 'field' => 'purchase_date',
                 'values' => [
-                    'start' => '2025-03-20',
-                    'end' => '2025-07-30',
+                    'start' => Carbon::now()->addWeeks(70)->format('Y-m-d'),
+                    'end' => Carbon::now()->addWeeks(130)->format('Y-m-d'),
                 ],
                 'operator' => 'contains',
                 'logic' => 'AND',
@@ -114,16 +116,20 @@ class DateQueryTest extends TestCase
 
     public function testEolDateQueryEnd()
     {
+        $modelA = AssetModel::factory()->create(['eol' => 12]);
+        $modelB = AssetModel::factory()->create(['eol' => 24]);
+        $modelC = AssetModel::factory()->create(['eol' => 36]);
+
         // Assets
-        $assetA = Asset::factory()->create(['asset_eol_date' => '2025-01-23']);
-        $assetB = Asset::factory()->create(['asset_eol_date' => '2025-03-24']);
-        $assetC = Asset::factory()->create(['asset_eol_date' => '2025-05-25']);
+        $assetA = Asset::factory()->create(['model_id' => $modelA->id]);
+        $assetB = Asset::factory()->create(['model_id' => $modelB->id]);
+        $assetC = Asset::factory()->create(['model_id' => $modelC->id]);
 
         $filter = [
             [
                 'field' => 'asset_eol_date',
                 'values' => [
-                    'end' => '2025-02-20',
+                    'end' => Carbon::now()->addMonths(14)->format('Y-m-d'),
                 ],
                 'operator' => 'contains',
                 'logic' => 'AND',
@@ -157,19 +163,25 @@ class DateQueryTest extends TestCase
     }
     public function testEolDateQueryRange()
     {
+        $modelA = AssetModel::factory()->create(['eol' => 12]);
+        $modelB = AssetModel::factory()->create(['eol' => 24]);
+        $modelC = AssetModel::factory()->create(['eol' => 36]);
+        $modelD = AssetModel::factory()->create(['eol' => 48]);
+        $modelE = AssetModel::factory()->create(['eol' => 60]);
+
         // Assets
-        $assetA = Asset::factory()->create(['asset_eol_date' => '2025-01-23']);
-        $assetB = Asset::factory()->create(['asset_eol_date' => '2025-03-24']);
-        $assetC = Asset::factory()->create(['asset_eol_date' => '2025-05-25']);
-        $assetD = Asset::factory()->create(['asset_eol_date' => '2025-07-26']);
-        $assetE = Asset::factory()->create(['asset_eol_date' => '2025-09-27']);
+        $assetA = Asset::factory()->create(['model_id' => $modelA->id]);
+        $assetB = Asset::factory()->create(['model_id' => $modelB->id]);
+        $assetC = Asset::factory()->create(['model_id' => $modelC->id]);
+        $assetD = Asset::factory()->create(['model_id' => $modelD->id]);
+        $assetE = Asset::factory()->create(['model_id' => $modelE->id]);
 
         $filter = [
             [
                 'field' => 'asset_eol_date',
                 'values' => [
-                    'start' => '2025-03-20',
-                    'end' => '2025-07-30',
+                    'start' => Carbon::now()->addMonths(35)->format('Y-m-d'),
+                    'end' => Carbon::now()->addMonths(49)->format('Y-m-d'),
                 ],
                 'operator' => 'contains',
                 'logic' => 'AND',
@@ -210,22 +222,27 @@ class DateQueryTest extends TestCase
 
     public function testCreatedAtDateQueryStart()
     {
-        // Assets
-        $assetA = Asset::factory()->create(['created_at' => '2025-01-23']);
-        $assetB = Asset::factory()->create(['created_at' => '2025-03-24']);
-        $assetC = Asset::factory()->create(['created_at' => '2025-05-25']);
+        // Setup dates
+        $yesterday = Carbon::now()->subDays(5)->startOfDay();
+        $today = Carbon::now()->startOfDay();
+        $tomorrow = Carbon::now()->addDays(5)->startOfDay();
 
+        // Assets
+        $assetA = Asset::factory()->create(['created_at' => $yesterday->toDateTimeString()]);
+        $assetB = Asset::factory()->create(['created_at' => $today->toDateTimeString()]);
+        $assetC = Asset::factory()->create(['created_at' => $tomorrow->toDateTimeString()]);
+
+        // Filter: only include assets created on or after today
         $filter = [
             [
                 'field' => 'created_at',
                 'values' => [
-                    'start' => '2025-03-20',
+                    'start' => $today->toDateString(), 
                 ],
-                'operator' => 'contains',
+                'operator' => 'contains', // Assuming your filter logic handles this correctly
                 'logic' => 'AND',
             ]
         ];
-
         $this->actingAsForApi(User::factory()->superuser()->create())
             ->getJson(
                 route('api.assets.index', [
@@ -248,81 +265,145 @@ class DateQueryTest extends TestCase
             ])
             ->assertJson(fn(AssertableJson $json) => $json->has('rows', 2)->etc())
             ->assertJsonFragment([
-                'id' => $assetA->id,
+                'id' => $assetB->id,
             ])
             ->assertJsonFragment([
-                'id' => $assetB->id,
+                'id' => $assetC->id,
             ]);
     }
 
     public function testCreatedAtDateQueryEnd()
     {
+        // Setup dates
+        $yesterday = Carbon::now()->subDays(1)->startOfDay();
+        $today = Carbon::now()->startOfDay();
+        $tomorrow = Carbon::now()->addDays(1)->startOfDay();
+
         // Assets
-        $assetA = Asset::factory()->create(['created_at' => '2025-01-23']);
-        $assetB = Asset::factory()->create(['created_at' => '2025-03-24']);
-        $assetC = Asset::factory()->create(['created_at' => '2025-05-25']);
+        $assetA = Asset::factory()->create(['created_at' => $yesterday->toDateTimeString()]);
+        $assetB = Asset::factory()->create(['created_at' => $today->toDateTimeString()]);
+        $assetC = Asset::factory()->create(['created_at' => $tomorrow->toDateTimeString()]);
 
         $filter = [
             [
                 'field' => 'created_at',
                 'values' => [
-                    'end' => '2025-02-20',
+                    'end' => $today->toDateString(), 
                 ],
                 'operator' => 'contains',
                 'logic' => 'AND',
             ]
         ];
 
-        $results = Asset::query()->byFilter($filter)->get();
 
-        $this->assertCount(1, $results);
-        $this->assertTrue($results->contains($assetA));
-        $this->assertFalse($results->contains($assetB));
-        $this->assertFalse($results->contains($assetC));
+        $this->actingAsForApi(User::factory()->superuser()->create())
+            ->getJson(
+                route('api.assets.index', [
+                    'status' => '',
+                    'order_number' => '',
+                    'company_id' => '',
+                    'status_id' => '',
+                    'filter' => json_encode($filter),
+                    'search' => '',
+                    'sort' => 'id',
+                    'order' => 'asc',
+                    'offset' => '0',
+                    'limit' => '50',
+                ])
+            )
+            ->assertOk()
+            ->assertJsonStructure([
+                'total',
+                'rows',
+            ])
+            ->assertJson(fn(AssertableJson $json) => $json->has('rows', 3)->etc())
+            ->assertJsonFragment([
+                'id' => $assetB->id,
+            ])
+            ->assertJsonFragment([
+                'id' => $assetC->id,
+            ])
+            ->assertJsonFragment([
+                'id' => $assetD->id,
+            ]);
     }
     public function testCreatedAtDateQueryRange()
     {
+        // Setup dates
+        $dayBeforeYesterday = Carbon::now()->subDays(2)->startOfDay();
+        $yesterday = Carbon::now()->subDays(1)->startOfDay();
+        $today = Carbon::now()->startOfDay();
+        $tomorrow = Carbon::now()->addDays(1)->startOfDay();
+        $dayAfterTomorrow = Carbon::now()->addDays(2)->startOfDay();
+
         // Assets
-        $assetA = Asset::factory()->create(['created_at' => '2025-01-23']);
-        $assetB = Asset::factory()->create(['created_at' => '2025-03-24']);
-        $assetC = Asset::factory()->create(['created_at' => '2025-05-25']);
-        $assetD = Asset::factory()->create(['created_at' => '2025-07-26']);
-        $assetE = Asset::factory()->create(['created_at' => '2025-09-27']);
+        $assetA = Asset::factory()->create(['created_at' => $dayBeforeYesterday->toDateTimeString()]);
+        $assetB = Asset::factory()->create(['created_at' => $yesterday->toDateTimeString()]);
+        $assetC = Asset::factory()->create(['created_at' => $today->toDateTimeString()]);
+        $assetD = Asset::factory()->create(['created_at' => $tomorrow->toDateTimeString()]);
+        $assetE = Asset::factory()->create(['created_at' => $dayAfterTomorrow->toDateTimeString()]);
 
         $filter = [
             [
                 'field' => 'created_at',
                 'values' => [
-                    'start' => '2025-03-20',
-                    'end' => '2025-07-30',
+                    'start' => $yesterday->toDateString(), 
+                    'end' => $tomorrow->toDateString(), 
                 ],
                 'operator' => 'contains',
                 'logic' => 'AND',
             ]
         ];
 
-        $results = Asset::query()->byFilter($filter)->get();
-
-        $this->assertCount(3, $results);
-        $this->assertTrue($results->contains($assetB));
-        $this->assertTrue($results->contains($assetC));
-        $this->assertTrue($results->contains($assetD));
-        $this->assertFalse($results->contains($assetA));
-        $this->assertFalse($results->contains($assetE));
+        $this->actingAsForApi(User::factory()->superuser()->create())
+            ->getJson(
+                route('api.assets.index', [
+                    'status' => '',
+                    'order_number' => '',
+                    'company_id' => '',
+                    'status_id' => '',
+                    'filter' => json_encode($filter),
+                    'search' => '',
+                    'sort' => 'id',
+                    'order' => 'asc',
+                    'offset' => '0',
+                    'limit' => '50',
+                ])
+            )
+            ->assertOk()
+            ->assertJsonStructure([
+                'total',
+                'rows',
+            ])
+            ->assertJson(fn(AssertableJson $json) => $json->has('rows', 3)->etc())
+            ->assertJsonFragment([
+                'id' => $assetB->id,
+            ])
+            ->assertJsonFragment([
+                'id' => $assetC->id,
+            ])
+            ->assertJsonFragment([
+                'id' => $assetD->id,
+            ]);
     }
 
     public function testUpdatedAtDateQueryStart()
     {
+        // Setup dates
+        $yesterday = Carbon::now()->subDays(1)->startOfDay();
+        $today = Carbon::now()->startOfDay();
+        $tomorrow = Carbon::now()->addDays(1)->startOfDay();
+
         // Assets
-        $assetA = Asset::factory()->create(['updated_at' => '2025-01-23']);
-        $assetB = Asset::factory()->create(['updated_at' => '2025-03-24']);
-        $assetC = Asset::factory()->create(['updated_at' => '2025-05-25']);
+        $assetA = Asset::factory()->create(['updated_at' => $yesterday->toDateTimeString()]);
+        $assetB = Asset::factory()->create(['updated_at' => $today->toDateTimeString()]);
+        $assetC = Asset::factory()->create(['updated_at' => $tomorrow->toDateTimeString()]);
 
         $filter = [
             [
                 'field' => 'updated_at',
-                'values' => [
-                    'start' => '2025-03-20',
+                'updated_at' => [
+                    'start' => $today->toDateString(), 
                 ],
                 'operator' => 'contains',
                 'logic' => 'AND',
@@ -351,25 +432,30 @@ class DateQueryTest extends TestCase
             ])
             ->assertJson(fn(AssertableJson $json) => $json->has('rows', 2)->etc())
             ->assertJsonFragment([
-                'id' => $assetA->id,
+                'id' => $assetB->id,
             ])
             ->assertJsonFragment([
-                'id' => $assetB->id,
+                'id' => $assetC->id,
             ]);
     }
 
     public function testUpdatedAtDateQueryEnd()
     {
+        // Setup dates
+        $yesterday = Carbon::now()->subDays(1)->startOfDay();
+        $today = Carbon::now()->startOfDay();
+        $tomorrow = Carbon::now()->addDays(1)->startOfDay();
+
         // Assets
-        $assetA = Asset::factory()->create(['updated_at' => '2025-01-23']);
-        $assetB = Asset::factory()->create(['updated_at' => '2025-03-24']);
-        $assetC = Asset::factory()->create(['updated_at' => '2025-05-25']);
+        $assetA = Asset::factory()->create(['updated_at' => $yesterday->toDateTimeString()]);
+        $assetB = Asset::factory()->create(['updated_at' => $today->toDateTimeString()]);
+        $assetC = Asset::factory()->create(['updated_at' => $tomorrow->toDateTimeString()]);
 
         $filter = [
             [
                 'field' => 'updated_at',
                 'values' => [
-                    'end' => '2025-02-20',
+                    'end' => $today->toDateString(), 
                 ],
                 'operator' => 'contains',
                 'logic' => 'AND',
