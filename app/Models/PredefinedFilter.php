@@ -53,12 +53,11 @@ class PredefinedFilter extends Model
 
     public function userHasPermission(User $user, string $action): bool
     {
-        if ($user->id == $this->created_by){
+        // If filter is private AND is_owner AND action != create he can do everything
+        // such as create private, edit and delete
+        // note the 'create' permission is only for creating public filters. 
+        if ($user->id == $this->created_by && !$this->is_public && $action != 'create'){
             return true;
-        }
-
-        if (!$this->is_public){
-            return false;
         }
 
         $userGroupIds = $user->groups()->pluck('id')->toArray();
