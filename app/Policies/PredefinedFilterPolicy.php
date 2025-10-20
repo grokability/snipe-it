@@ -28,7 +28,7 @@ class PredefinedFilterPolicy extends SnipePermissionsPolicy
 
         // Record-level permissions
         if ($filter instanceof PredefinedFilter) {
-            return $filter->created_by === $user->id || $filter->userHasPermission($user, 'view');
+            return $filter->userHasPermission($user, 'view');
         }
 
         return false;
@@ -41,7 +41,7 @@ class PredefinedFilterPolicy extends SnipePermissionsPolicy
         }
 
         if ($filter instanceof PredefinedFilter) {
-            return $filter->created_by === $user->id || $filter->userHasPermission($user, 'edit');
+            $filter->userHasPermission($user, 'edit');
         }
 
         return false;
@@ -54,7 +54,7 @@ class PredefinedFilterPolicy extends SnipePermissionsPolicy
         }
 
         if ($filter instanceof PredefinedFilter) {
-            return $filter->created_by === $user->id || $filter->userHasPermission($user, 'delete');
+            return $filter->userHasPermission($user, 'delete');
         }
 
         return false;

@@ -19,8 +19,7 @@ class PredefinedFilterController extends Controller
             ->orderBy('name')
             ->get()
             ->filter(function ($filter) use ($user) {
-                return $filter->created_by === $user->id //TODO 
-                    || ($filter->is_public && $filter->userHasPermission($user, 'view'));
+                return $filter->userHasPermission($user, 'view');
             });
 
         return view('predefined-filters.index', compact('filters'));
@@ -44,7 +43,7 @@ class PredefinedFilterController extends Controller
             ]);
         }
 
-        if ($filter->created_by === $user->id || ($filter->is_public && $filter->userHasPermission($user, 'view'))) {//TODO 
+        if ($filter->userHasPermission($user, 'view')) {
 
             return view('predefined-filters.view', compact('filter'));
         }

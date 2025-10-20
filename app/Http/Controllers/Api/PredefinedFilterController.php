@@ -96,12 +96,14 @@ class PredefinedFilterController extends Controller
         $newIsPublic = $validated['is_public'];
         $currentIsPublic = $filter->is_public;
 
-        if ($filter->created_by === $user->id) {
-            if (!$currentIsPublic && $newIsPublic && !$user->hasAccess('predefinedFilter.create')) {
-                return response()->json(['message' => trans('admin/predefinedFilters/message.update.not_allowed_to_change_isPublic')], 403);
-            }
-        } else if (!$filter->userHasPermission($user, 'update')) {
+        //refactored one
+        if (!$filter->userHasPermission($user, 'update')){
             return response()->json(['message' => trans('admin/predefinedFilters/message.not_allowed_to_edit')], 403);
+        }
+
+        //create permission
+        if (!$currentIsPublic && $newIsPublic && !$user->hasAccess('predefinedFilter.create')){
+                return response()->json(['message' => trans('admin/predefinedFilters/message.update.not_allowed_to_change_isPublic')], 403);
         }
 
         $updated = $this->service->updateFilter($filter, $validated);
@@ -120,10 +122,7 @@ class PredefinedFilterController extends Controller
             return response()->json(['message' => trans('admin/predefinedFilters/message.does_not_exist')], 404);
         }
 
-        if (
-            $filter->created_by === $user->id ||
-            ($filter->is_public && $filter->userHasPermission($user, 'destroy'))
-        ) {
+        if ($filter->userHasPermission($user, 'destroy')) {
             $this->service->deleteFilter($filter);
             return response()->json(['message' => trans('admin/predefinedFilters/message.delete.success')]);
         }

@@ -31,11 +31,8 @@ class PredefinedFilterService
             ->orderBy('name')
             ->get(['id', 'name', 'created_by', 'is_public'])
             ->filter(function ($filter) use ($user) {
-                if ($filter->created_by == $user->id) {
-                    return true;
-                }
 
-                if ($filter->is_public && $filter->userHasPermission($user, 'view')) {
+                if ($filter->userHasPermission($user, 'view')) {
                     return true;
                 }
 
@@ -138,11 +135,7 @@ class PredefinedFilterService
             ->get(['id', 'name', 'created_by', 'is_public']);
 
         $viewableFilters = $filters->filter(function ($filter) use ($user) {
-            if ($filter->created_by == $user->id) {
-                return true;
-            }
-
-            if ($filter->is_public && $filter->userHasPermission($user, 'view')) {
+            if ($filter->userHasPermission($user, 'view')) {
                 return true;
             }
 
@@ -165,9 +158,9 @@ class PredefinedFilterService
         return $paginated;
     }
 
-private function syncPermissions($currentPermissions, $newPermissions): array
-{
-    $toAdd = array_udiff(
+    private function syncPermissions($currentPermissions, $newPermissions): array
+    {
+        $toAdd = array_udiff(
         $newPermissions,
         $currentPermissions,
         function ($a, $b) {
@@ -175,7 +168,7 @@ private function syncPermissions($currentPermissions, $newPermissions): array
         }
     );
 
-    $toDelete = array_udiff(
+        $toDelete = array_udiff(
         $currentPermissions,
         $newPermissions,
         function ($a, $b) {
@@ -183,11 +176,9 @@ private function syncPermissions($currentPermissions, $newPermissions): array
         }
     );
 
-    return [
-        'to_add' => $toAdd,
-        'to_delete' => $toDelete
-    ];
-}
-
-
+        return [
+            'to_add' => $toAdd,
+            'to_delete' => $toDelete
+        ];
+    }
 }
