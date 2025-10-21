@@ -1891,7 +1891,6 @@ class Asset extends Depreciable
                     }
                     $this->applySingleFilter($query, $filterItem);
                 }
-                dump($query->toRawSql());
             }
         );
     }

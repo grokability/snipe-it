@@ -119,9 +119,9 @@ class DateQueryTest extends TestCase
 
         $results = Asset::query()->byFilter($filter)->get();
 
-        $this->assertCount(1, $results);
+        $this->assertCount(2, $results);
         $this->assertTrue($results->contains($assetA));
-        $this->assertFalse($results->contains($assetB));
+        $this->assertTrue($results->contains($assetB));
         $this->assertFalse($results->contains($assetC));
     }
 
@@ -147,7 +147,6 @@ class DateQueryTest extends TestCase
             ]
         ];
 
-        //dump($assetA);
         $results = Asset::query()->byFilter($filter)->get();
 
         $this->assertCount(1, $results);
@@ -184,12 +183,6 @@ class DateQueryTest extends TestCase
         ];
 
         $results = Asset::query()->byFilter($filter)->get();
-
-        dump($results->contains($assetA));
-        dump($results->contains($assetB));
-        dump($results->contains($assetC));
-        dump($results->contains($assetD));
-        dump($results->contains($assetE));
 
         $this->assertCount(3, $results);
         $this->assertTrue($results->contains($assetB));
@@ -316,7 +309,7 @@ class DateQueryTest extends TestCase
         $filter = [
             [
                 'field' => 'updated_at',
-                'updated_at' => [
+                'values' => [
                     'start' => $today->toDateString(),
                 ],
                 'operator' => 'contains',

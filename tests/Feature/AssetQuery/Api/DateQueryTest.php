@@ -399,7 +399,7 @@ class DateQueryTest extends TestCase
         $filter = [
             [
                 'field' => 'updated_at',
-                'updated_at' => [
+                'values' => [
                     'start' => $today->toDateString(), 
                 ],
                 'operator' => 'contains',
