@@ -101,7 +101,7 @@ class FilterInput {
         const filterOptionsDropdown = document.querySelector('[data-field="' + data + '"]');
 
         if (filterOptionsDropdown && filterOptionsDropdown.value) {
-            filterOptionsDropdown.value = "AND_contains";
+            filterOptionsDropdown.value = "AND_equals";
         } else {
             console.warn("No filterOptionsDropdown found with datafield " + data);
         }
