@@ -118,7 +118,7 @@ class Modal extends Component
             $this->visibility !== FilterVisibility::Private &&
             (empty($this->groupSelect) || count($this->groupSelect) === 0)
         ) {
-            $this->dispatch('showNotification', [
+            $this->dispatch('showNotificationInFrontend', [
                 'type' => 'error',
                 'title' => trans('general.notification_error'),
                 'message' => 'You must select at least one group or set the filter to private.',
@@ -138,14 +138,14 @@ class Modal extends Component
         $createFilterResponse = $predefinedFilterService->createFilter($validated);
 
         if ($createFilterResponse === true) {
-            $this->dispatch('showNotification', [
+            $this->dispatch('showNotificationInFrontend', [
                 'type' => 'success',
                 'title' => trans('general.notification_success'),
                 'message' => trans('general.predefined_filter_saved_successfully'),
                 'tag' => 'predefinedFilter',
             ]);
         } else {
-            $this->dispatch('showNotification', [
+            $this->dispatch('showNotificationInFrontend', [
                 'type' => 'error',
                 'title' => trans('general.notification_error'),
                 'message' => trans('general.notification_error'),
@@ -173,7 +173,7 @@ class Modal extends Component
             $this->visibility !== FilterVisibility::Private &&
             (empty($this->groupSelect) || count($this->groupSelect) === 0)
         ) {
-            $this->dispatch('showNotification', [
+            $this->dispatch('showNotificationInFrontend', [
                 'type' => 'error',
                 'title' => trans('general.notification_error'),
                 'message' => 'You must select at least one group or set the filter to private.',
@@ -196,14 +196,14 @@ class Modal extends Component
         $updateFilterResponse = $predefinedFilterService->updateFilter($predefinedFilter, $validated);
 
         if ($updateFilterResponse === true) {
-            $this->dispatch('showNotification', [
+            $this->dispatch('showNotificationInFrontend', [
                 'type' => 'success',
                 'title' => trans('general.notification_success'),
                 'message' => trans('general.predefined_filter_saved_successfully'),
                 'tag' => 'predefinedFilter',
             ]);
         } else {
-            $this->dispatch('showNotification', [
+            $this->dispatch('showNotificationInFrontend', [
                 'type' => 'error',
                 'title' => trans('general.notification_error'),
                 'message' => trans('general.notification_error'),
@@ -225,14 +225,14 @@ class Modal extends Component
         $deleteFilterResponse = $predefinedFilterService->deleteFilter($predefinedFilter);
 
         if ($deleteFilterResponse === true) {
-            $this->dispatch('showNotification', [
+            $this->dispatch('showNotificationInFrontend', [
                 'type' => 'success',
                 'title' => trans('general.notification_success'),
                 'message' => trans('general.predefined_filter_saved_successfully'),
                 'tag' => 'predefinedFilter',
             ]);
         } else {
-            $this->dispatch('showNotification', [
+            $this->dispatch('showNotificationInFrontend', [
                 'type' => 'error',
                 'title' => trans('general.notification_error'),
                 'message' => trans('general.notification_error'),
