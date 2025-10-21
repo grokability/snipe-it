@@ -113,6 +113,20 @@ class Modal extends Component
     ) {
         $this->validate();
 
+        // Enforce: only allow creation if private or groups selected
+        if (
+            $this->visibility !== FilterVisibility::Private &&
+            (empty($this->groupSelect) || count($this->groupSelect) === 0)
+        ) {
+            $this->dispatch('showNotification', [
+                'type' => 'error',
+                'title' => trans('general.notification_error'),
+                'message' => 'You must select at least one group or set the filter to private.',
+                'tag' => 'predefinedFilter',
+            ]);
+            return;
+        }
+
         $validated = [
             "name" => $this->name,
             "filter_data" => $this->filterData,
@@ -147,13 +161,26 @@ class Modal extends Component
     public function updatePredefinedFiltersModal(
         PredefinedFilterService $predefinedFilterService
     ) {
-
         $this->validate([
             'name' => 'required|string',
             'filterData' => 'array',
             'groupSelect' => 'array',
             'groupSelect.*' => 'required|integer|exists:permission_groups,id',
         ]);
+
+        // Enforce: only allow update if private or groups selected
+        if (
+            $this->visibility !== FilterVisibility::Private &&
+            (empty($this->groupSelect) || count($this->groupSelect) === 0)
+        ) {
+            $this->dispatch('showNotification', [
+                'type' => 'error',
+                'title' => trans('general.notification_error'),
+                'message' => 'You must select at least one group or set the filter to private.',
+                'tag' => 'predefinedFilter',
+            ]);
+            return;
+        }
 
         $predefinedFilter = PredefinedFilter::find($this->filterId);
 

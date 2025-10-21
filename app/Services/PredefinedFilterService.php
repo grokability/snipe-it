@@ -42,8 +42,8 @@ class PredefinedFilterService
         return $response;
     }
 
-    //TODO different Naming because it does more than only get a filter by ID
-    //TODO discuss because there is the built-in with() ['predefinedFilter::with('permissionGroups')->find(id)']
+    // TODO different Naming because it does more than only get a filter by ID
+    // TODO discuss because there is the built-in with() ['predefinedFilter::with('permissionGroups')->find(id)']
     public function getFilterById(int $id, bool $include_predefined_filter_groups = true)
     {
         $predefinedFilter = PredefinedFilter::find($id);
@@ -71,12 +71,13 @@ class PredefinedFilterService
         ]);
 
         // Set permissions
-        if (array_key_exists('permissions', $validated)) {
+        if (array_key_exists('permissions', $validated)  && count($validated['permissions']) > 0) {
             foreach ($validated['permissions'] as $permission) {
                 $permission['predefined_filter_id'] = $filter_create_response->id;
                 $this->predefinedFilterPermissionService->store($permission);
             }
         }
+
         return $filter_create_response;
     }
 
