@@ -234,10 +234,28 @@ class DateFilterInput extends FilterInput {
     }
 
     getValue() {
-        console.error("Currently not implemented");
-        throw new Error("Currently not implemented");
-        //return this.hasValue() ? this.element.value : null;
+        const startDate = $(this.container).datepicker('getStartDate');
+        const endDate = $(this.container).datepicker('getEndDate');
+
+        const formatDate = (date) => {
+            if (!date) return null;
+            console.log(date);
+            const yyyy = date.getFullYear();
+            const mm = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
+            const dd = String(date.getDate()).padStart(2, '0');
+            return `${yyyy}-${mm}-${dd}`;
+        };
+
+        const result = {};
+        const formattedStart = formatDate(startDate);
+        const formattedEnd = formatDate(endDate);
+
+        if (formattedStart) result.start = formattedStart;
+        if (formattedEnd) result.end = formattedEnd;
+        console.log(result);
+        return result;
     }
+
 
     setValue() {
         console.error("Currently not implemented");
