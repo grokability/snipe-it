@@ -1,11 +1,7 @@
 <?php
 namespace Tests\Feature\AssetQuery;
 
-use App\Models\Category;
 use App\Models\Asset;
-use App\Models\AssetModel;
-use Log;
-use Tests\Support\GetExtendedPrefix;
 use Tests\TestCase;
 
 
@@ -27,9 +23,7 @@ class AssetTagQueryTest extends TestCase
             ]
         ];
 
-        $results = Asset::query()->byFilter($filter)->get();
-
-        Log::error($results);
+        $results = Asset::query()->byFilter($filter)->get();;
 
         $this->assertCount(1, $results);
         $this->assertTrue($results->contains($assetA));
@@ -54,8 +48,6 @@ class AssetTagQueryTest extends TestCase
 
         $results = Asset::query()->byFilter($filter)->get();
 
-        Log::error($results);
-
         $this->assertCount(2, $results);
         $this->assertTrue($results->contains($assetA));
     }
@@ -75,8 +67,6 @@ class AssetTagQueryTest extends TestCase
         ]];
 
         $results = Asset::query()->byFilter($filter)->get();
-
-        Log::error($results);
 
         $this->assertCount(3, $results);
         $this->assertTrue($results->contains($assetB));
@@ -99,8 +89,6 @@ class AssetTagQueryTest extends TestCase
         ]];
 
         $results = Asset::query()->byFilter($filter)->get();
-
-        Log::error($results);
 
         $this->assertCount(2, $results);
         $this->assertTrue($results->contains($assetB));
