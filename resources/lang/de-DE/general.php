@@ -714,5 +714,7 @@ return [
     'public' => 'Öffentlich',
     'private' => 'Privat',
     'validation_required' => 'Bitte geben Sie einen Filternamen ein.',
+    'can_not_save_empty_filter' => 'Sie können keinen leeren Filter speichern.',
+    'can_not_update_empty_filter' => 'Sie können keinen leeren Filter aktualisieren.',
 
 ];

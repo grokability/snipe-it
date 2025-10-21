@@ -124,6 +124,15 @@ updateFilterWithPredefined(event, selectedId = null) {
     storePredefinedFilterInBackend() {
         const filters = this.collector.collect();
         
+        if(filters.length === 0) {
+            Livewire.dispatch('showNotification', {
+                type: "error",
+                title: "{{ trans('general.error') }}",
+                message: "{{ trans('general.can_not_save_empty_filter') }}",
+            });
+            return;
+        }
+
         Livewire.dispatch('openPredefinedFiltersModal', {
             action: 'create',
             predefinedFilterData: filters,
@@ -137,6 +146,15 @@ updateFilterWithPredefined(event, selectedId = null) {
         const selectedFilter = $("#predefinedfilters-select").select2('data')[0]; // Always zero because only one element can be selected at the time
         if (!selectedFilter) return;
         const filters = this.collector.collect();
+
+        if(filters.length === 0) {
+            Livewire.dispatch('showNotification', {
+                type: "error",
+                title: "{{ trans('general.error') }}",
+                message: "{{ trans('general.can_not_update_empty_filter') }}",
+            });
+            return;
+        }
 
         Livewire.dispatch('openPredefinedFiltersModal', {
             action: 'edit',
