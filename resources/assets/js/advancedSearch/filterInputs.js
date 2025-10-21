@@ -40,7 +40,13 @@ class FilterInput {
 
     appendTo(filters) {
         const value = this.getValue();
-        if (value === null || value === undefined || value === '') {
+
+        // Skip empty values
+        const isEmptyArray = Array.isArray(value) && value.length === 0;
+        const isArrayOfEmptyStrings = Array.isArray(value) && value.every(v => v === "");
+        const isTrulyEmpty = value === null || value === undefined || value === "";
+        
+        if (isTrulyEmpty || isEmptyArray || isArrayOfEmptyStrings) {
             return;
         }
 
