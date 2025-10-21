@@ -23,7 +23,7 @@ class FilterInput {
             try {
                 this.element.value = newValue;
             }
-            catch(e) {
+            catch (e) {
                 reject(e);
             }
             resolve(newValue);
@@ -96,7 +96,16 @@ class FilterInput {
     }
 
     clear() {
-        this.element.value = "";
+        // Reset filter options
+        const data = this.element.id.replace("advancedSearch_", "").replace("_input", "").replace("_start", "").replace("_end", "");
+        const filterOptionsDropdown = document.querySelector('[data-field="' + data + '"]');
+
+        if (filterOptionsDropdown && filterOptionsDropdown.value) {
+            filterOptionsDropdown.value = "AND_contains";
+        } else {
+            console.warn("No filterOptionsDropdown found with datafield " + data);
+        }
+
     }
 }
 
@@ -123,34 +132,35 @@ class SelectFilterInput extends FilterInput {
         });
 
         return Promise.all(requestPromises)
-        .then((responses) => {
-            // Map each response to its parsed JSON and DOM manipulation
-            const jsonProcessingPromises = responses.map((response) =>
-                response.json().then((responseJson) => {
-                    // Check if option already exists
-                    const $existingOption = $(this.element).find(`option[value='${responseJson.id}']`);
+            .then((responses) => {
+                // Map each response to its parsed JSON and DOM manipulation
+                const jsonProcessingPromises = responses.map((response) =>
+                    response.json().then((responseJson) => {
+                        // Check if option already exists
+                        const $existingOption = $(this.element).find(`option[value='${responseJson.id}']`);
 
-                    if ($existingOption.length === 0) {
-                        // Option doesn't exist, create and append it
-                        const option = new Option(responseJson.name, responseJson.id, true, true);
-                        $(this.element).append(option);
-                    } else {
-                        // Option exists, just select it
-                        $existingOption.prop('selected', true);
-                    }
+                        if ($existingOption.length === 0) {
+                            // Option doesn't exist, create and append it
+                            const option = new Option(responseJson.name, responseJson.id, true, true);
+                            $(this.element).append(option);
+                        } else {
+                            // Option exists, just select it
+                            $existingOption.prop('selected', true);
+                        }
 
-                    $(this.element).trigger('change');
-                    return responseJson;
-                })
-            );
+                        $(this.element).trigger('change');
+                        return responseJson;
+                    })
+                );
 
-            return Promise.all(jsonProcessingPromises); // Wait for all `.json()` parsing to finish
-        });
+                return Promise.all(jsonProcessingPromises); // Wait for all `.json()` parsing to finish
+            });
     }
 
 
     clear() {
         $(this.element).val(null).trigger('change');
+        super.clear();
     }
 }
 
@@ -223,11 +233,20 @@ class DateFilterInput extends FilterInput {
     getValue() {
         return this.hasValue() ? this.element.value : null;
     }
+
+    clear() {
+        this.element.value = "";
+        super.clear();
+    }
 }
 
 class TextFilterInput extends FilterInput {
     getValue() {
         return this.hasValue() ? this.element.value : null;
+    }
+    clear() {
+        this.element.value = "";
+        super.clear();
     }
 }
 
