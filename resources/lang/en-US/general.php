@@ -735,5 +735,7 @@ return [
     'public' => 'Public',
     'private' => 'Private',
     'validation_required' => 'Please enter a filter name',
+    'can_not_save_empty_filter' => 'You can not save a empty filter',
+    'can_not_update_empty_filter' => 'You can not update a empty filter',
     
 ];
