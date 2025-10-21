@@ -716,5 +716,5 @@ return [
     'validation_required' => 'Gib bitte einen Filternamen ein.',
     'can_not_save_empty_filter' => 'Du kannst keinen leeren Filter speichern.',
     'can_not_update_empty_filter' => 'Du kannst keinen leeren Filter aktualisieren.',
-
+    'at_least_one_is_group_required_for_public_filter' => 'Es muss mindestens eine Gruppe ausgewählt sein um einen öffentlichen Filter zu speichern',
 ];

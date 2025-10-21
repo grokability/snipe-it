@@ -113,6 +113,20 @@ class Modal extends Component
     ) {
         $this->validate();
 
+        // Enforce: only allow creation if private or groups selected
+        if (
+            $this->visibility !== FilterVisibility::Private &&
+            (empty($this->groupSelect) || count($this->groupSelect) === 0)
+        ) {
+            $this->dispatch('showNotificationInFrontend', [
+                'type' => 'error',
+                'title' => trans('general.notification_error'),
+                'message' => trans('general.at_least_one_is_group_required_for_public_filter'),
+                'tag' => 'predefinedFilter',
+            ]);
+            return;
+        }
+
         $validated = [
             "name" => $this->name,
             "filter_data" => $this->filterData,
@@ -124,14 +138,14 @@ class Modal extends Component
         $createFilterResponse = $predefinedFilterService->createFilter($validated);
 
         if ($createFilterResponse === true) {
-            $this->dispatch('showNotification', [
+            $this->dispatch('showNotificationInFrontend', [
                 'type' => 'success',
                 'title' => trans('general.notification_success'),
                 'message' => trans('general.predefined_filter_saved_successfully'),
                 'tag' => 'predefinedFilter',
             ]);
         } else {
-            $this->dispatch('showNotification', [
+            $this->dispatch('showNotificationInFrontend', [
                 'type' => 'error',
                 'title' => trans('general.notification_error'),
                 'message' => trans('general.notification_error'),
@@ -147,13 +161,26 @@ class Modal extends Component
     public function updatePredefinedFiltersModal(
         PredefinedFilterService $predefinedFilterService
     ) {
-
         $this->validate([
             'name' => 'required|string',
             'filterData' => 'array',
             'groupSelect' => 'array',
             'groupSelect.*' => 'required|integer|exists:permission_groups,id',
         ]);
+
+        // Enforce: only allow update if private or groups selected
+        if (
+            $this->visibility !== FilterVisibility::Private &&
+            (empty($this->groupSelect) || count($this->groupSelect) === 0)
+        ) {
+            $this->dispatch('showNotificationInFrontend', [
+                'type' => 'error',
+                'title' => trans('general.notification_error'),
+                'message' => trans('general.at_least_one_is_group_required_for_public_filter'),
+                'tag' => 'predefinedFilter',
+            ]);
+            return;
+        }
 
         $predefinedFilter = PredefinedFilter::find($this->filterId);
 
@@ -167,16 +194,16 @@ class Modal extends Component
         ];
 
         $updateFilterResponse = $predefinedFilterService->updateFilter($predefinedFilter, $validated);
-
-        if ($updateFilterResponse === true) {
-            $this->dispatch('showNotification', [
+      
+        if ($updateFilterResponse["validationErrors"] === null) {
+            $this->dispatch('showNotificationInFrontend', [
                 'type' => 'success',
                 'title' => trans('general.notification_success'),
                 'message' => trans('general.predefined_filter_saved_successfully'),
                 'tag' => 'predefinedFilter',
             ]);
         } else {
-            $this->dispatch('showNotification', [
+            $this->dispatch('showNotificationInFrontend', [
                 'type' => 'error',
                 'title' => trans('general.notification_error'),
                 'message' => trans('general.notification_error'),
@@ -198,14 +225,14 @@ class Modal extends Component
         $deleteFilterResponse = $predefinedFilterService->deleteFilter($predefinedFilter);
 
         if ($deleteFilterResponse === true) {
-            $this->dispatch('showNotification', [
+            $this->dispatch('showNotificationInFrontend', [
                 'type' => 'success',
                 'title' => trans('general.notification_success'),
                 'message' => trans('general.predefined_filter_saved_successfully'),
                 'tag' => 'predefinedFilter',
             ]);
         } else {
-            $this->dispatch('showNotification', [
+            $this->dispatch('showNotificationInFrontend', [
                 'type' => 'error',
                 'title' => trans('general.notification_error'),
                 'message' => trans('general.notification_error'),
