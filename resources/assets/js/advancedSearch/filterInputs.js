@@ -45,7 +45,7 @@ class FilterInput {
         const isEmptyArray = Array.isArray(value) && value.length === 0;
         const isArrayOfEmptyStrings = Array.isArray(value) && value.every(v => v === "");
         const isTrulyEmpty = value === null || value === undefined || value === "";
-        
+
         if (isTrulyEmpty || isEmptyArray || isArrayOfEmptyStrings) {
             return;
         }
@@ -128,34 +128,45 @@ class SelectFilterInput extends FilterInput {
 
     setValue(newValues, type = this.getType()) {
         const requestPromises = newValues.map((newValue) => {
-            return this.apiService.fetchItemFromBackendById(type, newValue);
+            // If it's a number, fetch from backend
+            if (typeof newValue === "number") {
+                return this.apiService.fetchItemFromBackendById(type, newValue)
+                    .then((response) => {
+                        return response.json().then((responseJson) => {
+                            const $existingOption = $(this.element).find(`option[value='${responseJson.id}']`);
+
+                            if ($existingOption.length === 0) {
+                                const option = new Option(responseJson.name, responseJson.id, true, true);
+                                $(this.element).append(option);
+                            } else {
+                                $existingOption.prop('selected', true);
+                            }
+
+                            $(this.element).trigger('change');
+                            return responseJson;
+                        });
+                    });
+            } else {
+                // Directly insert/select string value
+                const $existingOption = $(this.element).find(`option[value='${newValue}']`);
+
+                if ($existingOption.length === 0) {
+                    const option = new Option(newValue, newValue, true, true);
+                    $(this.element).append(option);
+                } else {
+                    $existingOption.prop('selected', true);
+                }
+
+                $(this.element).trigger('change');
+
+                // Return a resolved promise for consistency
+                return Promise.resolve({ id: newValue, name: newValue });
+            }
         });
 
-        return Promise.all(requestPromises)
-            .then((responses) => {
-                // Map each response to its parsed JSON and DOM manipulation
-                const jsonProcessingPromises = responses.map((response) =>
-                    response.json().then((responseJson) => {
-                        // Check if option already exists
-                        const $existingOption = $(this.element).find(`option[value='${responseJson.id}']`);
-
-                        if ($existingOption.length === 0) {
-                            // Option doesn't exist, create and append it
-                            const option = new Option(responseJson.name, responseJson.id, true, true);
-                            $(this.element).append(option);
-                        } else {
-                            // Option exists, just select it
-                            $existingOption.prop('selected', true);
-                        }
-
-                        $(this.element).trigger('change');
-                        return responseJson;
-                    })
-                );
-
-                return Promise.all(jsonProcessingPromises); // Wait for all `.json()` parsing to finish
-            });
+        return Promise.all(requestPromises);
     }
+
 
 
     clear() {
