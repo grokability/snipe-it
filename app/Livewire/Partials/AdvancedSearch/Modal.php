@@ -121,7 +121,7 @@ class Modal extends Component
             $this->dispatch('showNotificationInFrontend', [
                 'type' => 'error',
                 'title' => trans('general.notification_error'),
-                'message' => 'You must select at least one group or set the filter to private.',
+                'message' => trans('general.at_least_one_is_group_required_for_public_filter'),
                 'tag' => 'predefinedFilter',
             ]);
             return;
@@ -176,7 +176,7 @@ class Modal extends Component
             $this->dispatch('showNotificationInFrontend', [
                 'type' => 'error',
                 'title' => trans('general.notification_error'),
-                'message' => 'You must select at least one group or set the filter to private.',
+                'message' => trans('general.at_least_one_is_group_required_for_public_filter'),
                 'tag' => 'predefinedFilter',
             ]);
             return;
