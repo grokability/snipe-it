@@ -194,8 +194,8 @@ class Modal extends Component
         ];
 
         $updateFilterResponse = $predefinedFilterService->updateFilter($predefinedFilter, $validated);
-
-        if ($updateFilterResponse === true) {
+      
+        if ($updateFilterResponse["validationErrors"] === null) {
             $this->dispatch('showNotificationInFrontend', [
                 'type' => 'success',
                 'title' => trans('general.notification_success'),
