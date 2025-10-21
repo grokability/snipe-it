@@ -23,7 +23,7 @@ class AssetTagQueryTest extends TestCase
             ]
         ];
 
-        $results = Asset::query()->byFilter($filter)->get();;
+        $results = Asset::query()->byFilter($filter)->get();
 
         $this->assertCount(1, $results);
         $this->assertTrue($results->contains($assetA));
