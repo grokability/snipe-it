@@ -71,10 +71,11 @@
             this.$table = tableElement;
             this.apiService = container.resolve("apiService");
             this.collector = container.resolve("filterFormManager");
+            this.collector.collectFilterInputs();
         }
 
     refresh() {
-        const filters = this.collector.collect();
+        const filters = this.collector.collectFilterData();
         this.$table.bootstrapTable('refresh', {
             query: {
                 filter: JSON.stringify(filters)
@@ -82,22 +83,22 @@
         });
     }
 
-updateFilterWithPredefined(event, selectedId = null) {
-    if(event !== null) {
-        selectedId = event?.target?.value;
-    }
+    updateFilterWithPredefined(event, selectedId = null) {
+        if(event !== null) {
+            selectedId = event?.target?.value;
+        }
 
-    const floatingButtons = container.resolve("floatingButtons");
+        const floatingButtons = container.resolve("floatingButtons");
 
-    if (!selectedId) {
-        floatingButtons.disableEditDeleteButtons();
-        return;
-    }
+        if (!selectedId) {
+            floatingButtons.disableEditDeleteButtons();
+            return;
+        }
 
-    floatingButtons.enableEditDeleteButtons();
-    //setAdvancedSearchPanelFilterEnabledState(true);
+        floatingButtons.enableEditDeleteButtons();
+        //setAdvancedSearchPanelFilterEnabledState(true);
 
-    this.apiService.fetchPredefinedFilterData(selectedId)
+        this.apiService.fetchPredefinedFilterData(selectedId)
         .then(response => {
             if (!response.ok) {
                 throw new Error("Network response was not ok");
@@ -108,21 +109,19 @@ updateFilterWithPredefined(event, selectedId = null) {
             if (!data.filter_data) return;
 
             return this.collector.setValuesFromResponse(data.filter_data)
-                .then(() => {
+               .then(() => {
                     this.refresh();
             });
         })
-        .catch(err => {
+            .catch(err => {
             console.error("Failed to apply predefined filter:", err);
-            Livewire.dispatch('showNotification', { type: 'error', message: '{{ trans('general.failed_to_apply_predefined_filter') }}'});
+                Livewire.dispatch('showNotification', { type: 'error', message: '{{ trans('general.failed_to_apply_predefined_filter') }}'});
             //setAdvancedSearchPanelFilterEnabledState(false);
         });
-}
-
-
+    }
 
     storePredefinedFilterInBackend() {
-        const filters = this.collector.collect();
+        const filters = this.collector.collectFilterData();
         
         if(filters.length === 0) {
             Livewire.dispatch('showNotification', {
@@ -145,7 +144,7 @@ updateFilterWithPredefined(event, selectedId = null) {
 
         const selectedFilter = $("#predefinedfilters-select").select2('data')[0]; // Always zero because only one element can be selected at the time
         if (!selectedFilter) return;
-        const filters = this.collector.collect();
+        const filters = this.collector.collectFilterData();
 
         if(filters.length === 0) {
             Livewire.dispatch('showNotification', {

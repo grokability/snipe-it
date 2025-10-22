@@ -14,8 +14,7 @@ export default class FilterFormManager {
         this.apiService = container.resolve("apiService");;
     }
 
-    collect() {
-        this.filters = [];
+    collectFilterInputs() {
         this.inputs = [];
 
         // Select2
@@ -37,6 +36,13 @@ export default class FilterFormManager {
             this.inputs.push(new TextFilterInput(el, this.apiService));
         });
 
+
+        return this.inputs;
+    }
+
+    collectFilterData() {
+        this.filters = [];
+
         // Process all inputs polymorphically
         this.inputs.forEach(input => {
             input.appendTo(this.filters);
@@ -46,7 +52,7 @@ export default class FilterFormManager {
     }
 
     clearAll() {
-        this.collect();
+        //this.collectFilterData();
         this.inputs.forEach(field => {
             field.clear();
         });
