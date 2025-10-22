@@ -58,18 +58,32 @@ class PredefinedFilter extends Model
             return true;
         }
 
-        // 
-        if ($action == 'create'){
-            return $user->hasAccess('predefinedFilter.create');
-        }
+        switch($action){
+            case 'create':
+                return $user->hasAccess('predefinedFilter.create');
+            case 'view':
+                if ($this->checkPermissions($user, 'view')) {
+                    return true;
+                }
+                //cascade for edit and view
+                return $this->userHasPermission($user, 'edit') || $this->userHasPermission($user, 'delete');
+            case 'edit':
+            case 'delete':
+                // If filter is private AND is_owner AND action != create he can do everything
+                // such as create private, edit and delete
+                // note the 'create' permission is only for creating public filters. 
+                if ($user->id == $this->created_by && !$this->is_public && $action != 'create'){
+                    return true;
+                }
 
-        // If filter is private AND is_owner AND action != create he can do everything
-        // such as create private, edit and delete
-        // note the 'create' permission is only for creating public filters. 
-        if ($user->id == $this->created_by && !$this->is_public && $action != 'create'){
-            return true;
-        }
+                return $this->checkPermissions($user, $action);
+            }
 
+        return false;
+    }
+    
+    private function checkPermissions(User $user, $action):bool
+    {
         $userGroupIds = $user->groups()->pluck('id')->toArray();
 
         if (!$user->relationLoaded('groups')) {
@@ -79,13 +93,12 @@ class PredefinedFilter extends Model
         foreach ($this->permissionGroups as $group){
             if (in_array($group->id, $userGroupIds)){
                 $permissions = json_decode($group->permissions, true);    
-                
                 if((isset($permissions["predefinedFilter.$action"]) && $permissions["predefinedFilter.$action"] == '1')){
                     return true;
                 }   
             }
         }
-        
+
         return false;
     }
 
