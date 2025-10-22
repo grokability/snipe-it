@@ -72,7 +72,7 @@ export default class FilterFormManager {
         const promises = [];
 
         for (const filter of responseArray) {
-            const { field: key, value } = filter;
+            const { field: key, value, logic, operator } = filter;
 
             const field = this.inputs.find(input => input.key === key);
             if (!field) {
@@ -81,7 +81,7 @@ export default class FilterFormManager {
             }
 
             try {
-                const result = field.setValue(value);
+                const result = field.setValue(value, logic, operator);
                 if (result instanceof Promise) {
                     promises.push(result);
                 }

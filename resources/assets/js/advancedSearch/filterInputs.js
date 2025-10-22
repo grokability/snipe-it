@@ -10,6 +10,12 @@ class FilterInput {
             .replace("_input", "");
     }
 
+    setSearchOperator(logic, operator) {
+        const data = this.element.id.replace("advancedSearch_", "").replace("_input", "").replace("_start", "").replace("_end", "");
+        const filterOptionsDropdown = document.querySelector('[data-field="' + data + '"]');
+        filterOptionsDropdown.value = logic + "_" + operator;
+    }
+
     hasValue() {
         return Boolean(this.element.value);
     }
@@ -18,10 +24,11 @@ class FilterInput {
         throw new Error("getValue() must be implemented by subclass");
     }
 
-    setValue(newValue) {
+    setValue(newValue, logic, operator) {
         return new Promise((resolve, reject) => {
             try {
                 this.element.value = newValue;
+                this.setSearchOperator(logic, operator)
             }
             catch (e) {
                 reject(e);
@@ -126,7 +133,7 @@ class SelectFilterInput extends FilterInput {
         return selectedValues;
     }
 
-    setValue(newValues, type = this.getType()) {
+    setValue(newValues, logic, operator, type = this.getType()) {
         const requestPromises = newValues.map((newValue) => {
             // If it's a number, fetch from backend
             if (typeof newValue === "number") {
@@ -141,6 +148,8 @@ class SelectFilterInput extends FilterInput {
                             } else {
                                 $existingOption.prop('selected', true);
                             }
+
+                            this.setSearchOperator(logic, operator)
 
                             $(this.element).trigger('change');
                             return responseJson;
@@ -204,7 +213,7 @@ class AssignedEntityFilterInput extends SelectFilterInput {
         });
     }
 
-    setValue(newValues, type = this.getType()) {
+    setValue(newValues, logic, operator, type = this.getType()) {
         // Map each new value to a fetch request
         let requestPromises = newValues.map((newValue) => {
             return this.apiService.fetchItemFromBackendById(type, newValue);
@@ -231,6 +240,8 @@ class AssignedEntityFilterInput extends SelectFilterInput {
 
             // Wait for all JSON processing and DOM updates to finish
             return Promise.all(appendPromises).then(() => {
+                this.setSearchOperator(logic, operator)
+
                 // Trigger change event once, so Select2 updates UI properly
                 $(this.element).trigger('change');
             });

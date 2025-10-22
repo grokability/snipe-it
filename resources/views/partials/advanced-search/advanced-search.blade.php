@@ -238,7 +238,6 @@ document.addEventListener('livewire:init', function () {
 
     sleep().then(async () => {
         const filterSection = document.getElementById('filterSection');
-        console.log(filterSection);
         filterSection.classList.remove('hide');
         container.resolve("filterFormManager").clearAll();
         await sleep();

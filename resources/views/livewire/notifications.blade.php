@@ -12,7 +12,7 @@
     <script>
         // Livewire event bridging. This isn't the best way but it works for now...
         Livewire.on('showNotificationInFrontend', (params) => {
-            console.log(params);
+            //console.log(params);
             Livewire.dispatch('showNotification', params[0]);
         });
     </script>
