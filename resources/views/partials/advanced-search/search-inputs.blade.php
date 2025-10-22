@@ -18,7 +18,7 @@
 
                @if (!isset($tableField->formatter))
                   {{-- Default select if formatter is not set --}}
-                  <input class="advancedSearch_defaultField form-control" type="text" autocomplete="on" id="advancedSearch_{{ $tableField->field }}_input" >
+                  <input class="advancedSearch_defaultField form-control" type="text" autocomplete="on" id="advancedSearch_{{ $tableField->field }}_input" placeholder="{{ $tableField->title }}" >
                @else
                   @switch($tableField->formatter)
                      @case('dateDisplayFormatter')
@@ -71,10 +71,10 @@
                         ])
                         @break
                      @case('employeeNumFormatter')
-                        <input class="advancedSearch_employeeNumFormatter form-control" type="text" id="advancedSearch_{{ $tableField->field }}_input" autocomplete="on">
+                        <input class="advancedSearch_employeeNumFormatter form-control" type="text" id="advancedSearch_{{ $tableField->field }}_input" placeholder="{{ $tableField->title }}" autocomplete="on">
                         @break
                      @case('hardwareLinkFormatter')
-                        <input class="advancedSearch_hardwarelinkFormatter form-control" type="text" id="advancedSearch_{{ $tableField->field }}_input" autocomplete="on">
+                        <input class="advancedSearch_hardwarelinkFormatter form-control" type="text" id="advancedSearch_{{ $tableField->field }}_input" placeholder="{{ $tableField->title }}" autocomplete="on">
                         @break
                      <!-- Makes no sense for the advanced search
                      @case('imageFormatter')
@@ -102,7 +102,7 @@
                         ])
                         @break
                      @case('orderNumberObjFilterFormatter')
-                        <input class="advancedSearch_orderNumberObjFilterFormatter form-control" type="text" id="advancedSearch_{{ $tableField->field }}_input" autocomplete="on">
+                        <input class="advancedSearch_orderNumberObjFilterFormatter form-control" type="text" id="advancedSearch_{{ $tableField->field }}_input" placeholder="{{ trans('general.order_number') }}" autocomplete="on">
                         @break
                      @case('polymorphicItemFormatter')
                         @include ('partials.select.dropdowns.assignedTo-select', [
@@ -138,7 +138,7 @@
                         <p>trueFalseFormatter</p>
                         @break
                      @case('customFieldsFormatter')
-                        <input class="advancedSearch_customField form-control" type="text" autocomplete="on" id="advancedSearch_{{ $tableField->field }}_input" >
+                        <input class="advancedSearch_customField form-control" type="text" autocomplete="on" id="advancedSearch_{{ $tableField->field }}_input" placeholder="{{ $tableField->title }}">
                         @break
                      @case('usersLinkObjFormatter')
                         @include ('partials.select.dropdowns.user-select', [
@@ -151,7 +151,7 @@
                         ])
                         @break
                      @default
-                        <input class="advancedSearch_defaultField form-control" type="text" autocomplete="on" id="advancedSearch_{{ $tableField->field }}_input" >
+                        <input class="advancedSearch_defaultField form-control" type="text" autocomplete="on" id="advancedSearch_{{ $tableField->field }}_input" placeholder="{{ $tableField->title }}">
                   @endswitch
                @endif
                     </div>
