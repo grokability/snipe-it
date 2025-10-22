@@ -53,6 +53,16 @@ class PredefinedFilter extends Model
 
     public function userHasPermission(User $user, string $action): bool
     {
+        // Give the superuser all permissions no matter in which groups he is
+        if($user->isSuperUser()) {
+            return true;
+        }
+
+        // 
+        if ($action == 'create'){
+            return $user->hasAccess('predefinedFilter.create');
+        }
+
         // If filter is private AND is_owner AND action != create he can do everything
         // such as create private, edit and delete
         // note the 'create' permission is only for creating public filters. 
@@ -61,6 +71,10 @@ class PredefinedFilter extends Model
         }
 
         $userGroupIds = $user->groups()->pluck('id')->toArray();
+
+        if (!$user->relationLoaded('groups')) {
+            $user->load('groups');
+        }
 
         foreach ($this->permissionGroups as $group){
             if (in_array($group->id, $userGroupIds)){
@@ -71,7 +85,7 @@ class PredefinedFilter extends Model
                 }   
             }
         }
-
+        
         return false;
     }
 
