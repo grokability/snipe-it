@@ -37,7 +37,7 @@ return [
     'backups_clean_helptext' => "This can be useful if you're changing between database versions",
     'backups_upload'            => 'Upload Sikkerhedskopi',
     'backups_path'              => 'Sikkerhedskopier på serveren gemmes i <code>:path</code>',
-    'backups_restore_warning'   => 'Use the restore button <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small> to restore from a previous backup. (This does not currently work with S3 file storage or Docker.)<br><br>Your <strong>entire :app_name database and any uploaded files will be completely replaced</strong> by what\'s in the backup file  ',
+    'backups_restore_warning'   => 'Use the restore button <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small> to restore from a previous backup. (This does not currently work with S3 file storage.)<br><br>Your <strong>entire :app_name database and any uploaded files will be completely replaced</strong> by what\'s in the backup file  ',
     'backups_logged_out'         => 'Alle eksisterende brugere, herunder dig, vil blive logget ud, når din gendannelse er fuldført.',
     'backups_large'             => 'Meget store sikkerhedskopier kan timeout på gendannelsesforsøg og kan stadig være nødvendigt at køre via kommandolinjen. ',
     'barcode_settings'			=> 'Stregkodeindstillinger',

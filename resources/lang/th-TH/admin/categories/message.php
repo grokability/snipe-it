@@ -18,9 +18,11 @@ return array(
     ),
 
     'delete' => array(
-        'confirm'   => 'คุณแน่ใจที่ต้องการจะลบหมวดหมู่นี้?',
-        'error'   => 'มีปัญหาขณะลบหมวดหมู่นี้ กรุณาลองอีกครั้ง.',
-        'success' => 'ลบหมวดหมู่เรียบร้อยแล้ว.'
+        'confirm'                => 'คุณแน่ใจที่ต้องการจะลบหมวดหมู่นี้?',
+        'error'                  => 'มีปัญหาขณะลบหมวดหมู่นี้ กรุณาลองอีกครั้ง.',
+        'success'                => 'Category was deleted successfully.',
+        'bulk_success'           => 'Categories were deleted successfully.',
+        'partial_success'        => 'Category deleted successfully. See additional information below. | :count categories were deleted successfully. See additional information below.',
     )
 
 );

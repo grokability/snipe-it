@@ -37,7 +37,7 @@ return [
     'backups_clean_helptext' => "Ini dapat berguna jika Anda beralih antar versi database",
     'backups_upload'            => 'Unggah Cadangan',
     'backups_path'              => 'Cadangan di server disimpan di <code>:path</code>',
-    'backups_restore_warning'   => 'Use the restore button <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small> to restore from a previous backup. (This does not currently work with S3 file storage or Docker.)<br><br>Your <strong>entire :app_name database and any uploaded files will be completely replaced</strong> by what\'s in the backup file  ',
+    'backups_restore_warning'   => 'Use the restore button <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small> to restore from a previous backup. (This does not currently work with S3 file storage.)<br><br>Your <strong>entire :app_name database and any uploaded files will be completely replaced</strong> by what\'s in the backup file  ',
     'backups_logged_out'         => 'Semua pengguna yang ada, termasuk Anda, akan keluar setelah pemulihan selesai.',
     'backups_large'             => 'Cadangan yang sangat besar mungkin mengalami timeout pada percobaan pemulihan dan mungkin masih perlu dijalankan melalui baris perintah. ',
     'barcode_settings'			=> 'Pengaturan barcode',

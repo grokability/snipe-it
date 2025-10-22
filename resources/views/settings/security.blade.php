@@ -37,14 +37,14 @@
 
                     <div class="col-md-12">
 
-                        <fieldset name="password-preferences" class="bottom-padded">
-                            <legend class="highlight">
+                        <fieldset name="password-preferences">
+                            <x-form-legend>
                                 {{ trans('admin/settings/general.legends.security') }}
-                            </legend>
+                            </x-form-legend>
 
                             <!-- Two Factor -->
                             <div class="form-group {{ $errors->has('brand') ? 'error' : '' }}">
-                                <div class="col-md-3">
+                                <div class="col-md-3 text-right">
                                     <label for="two_factor_enabled">{{ trans('admin/settings/general.two_factor_enabled_text') }}</label>
                                 </div>
                                 <div class="col-md-9">
@@ -67,9 +67,13 @@
                                 </div>
                             </div>
 
+                            <x-form-legend>
+                                {{ trans('admin/settings/general.legends.passwords') }}
+                            </x-form-legend>
+
                             <!-- Min characters -->
                             <div class="form-group {{ $errors->has('pwd_secure_min') ? 'error' : '' }}">
-                                <div class="col-md-3">
+                                <div class="col-md-3 text-right  text-right">
                                     <label for="pwd_secure_min">{{ trans('admin/settings/general.pwd_secure_min') }}</label>
                                 </div>
                                 <div class="col-md-9">
@@ -85,7 +89,7 @@
 
                             <!-- Common Passwords -->
                             <div class="form-group {{ $errors->has('pwd_secure_complexity.*') ? 'error' : '' }}">
-                                <div class="col-md-3">
+                                <div class="col-md-3 text-right">
                                     <label for="pwd_secure_complexity">{{ trans('admin/settings/general.pwd_secure_complexity') }}</label>
                                 </div>
                                 <div class="col-md-9">
@@ -124,10 +128,10 @@
                             </div>
                         </fieldset>
 
-                        <fieldset name="remote-login" class="bottom-padded">
-                            <legend class="highlight">
+                        <fieldset name="remote-login">
+                            <x-form-legend>
                                 {{ trans('admin/settings/general.login_remote_user_text') }}
-                            </legend>
+                            </x-form-legend>
                             <!-- Remote User Authentication -->
                             <div class="form-group {{ $errors->has('login_remote_user') ? 'error' : '' }}">
 
@@ -147,7 +151,7 @@
                                             {{ trans('admin/settings/general.login_remote_user_enabled_help') }}
                                         </p>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-3 text-right">
                                         <!-- Use custom remote user header name -->
                                         <label for="login_remote_user_header_name">{{ trans('admin/settings/general.login_remote_user_header_name_text') }}</label>
                                 </div>
@@ -158,7 +162,7 @@
                                             {{ trans('admin/settings/general.login_remote_user_header_name_help') }}
                                         </p>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-3 text-right">
                                         <!-- Custom logout url to redirect to authentication provider -->
                                         <label for="login_remote_user_custom_logout_url">{{ trans('admin/settings/general.login_remote_user_custom_logout_url_text') }}</label>
                                 </div>
@@ -170,7 +174,7 @@
                                         </p>
                                 </div>
                                 @if ($setting->login_remote_user_enabled == '1')
-                                    <div class="col-md-3">
+                                    <div class="col-md-3 text-right">
                                         <!--  Disable other logins mechanism -->
                                         <label class="form-control">
                                             <input type="checkbox" name="login_common_disabled" value="1" @checked(old('login_common_disabled', $setting->login_common_disabled)) aria-label="login_common_disabled"/>

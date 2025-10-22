@@ -18,9 +18,11 @@ return array(
     ),
 
     'delete' => array(
-        'confirm'   => 'Ma hubtaa inaad doonayso inaad tirtirto qaanadan?',
-        'error'   => 'Waxaa jirtay arrin tir-tireysay qaanadda. Fadlan isku day mar kale.',
-        'success' => 'Qaanadda waa lag guuleystay in la tir-tiro.'
+        'confirm'                => 'Ma hubtaa inaad doonayso inaad tirtirto qaanadan?',
+        'error'                  => 'Waxaa jirtay arrin tir-tireysay qaanadda. Fadlan isku day mar kale.',
+        'success'                => 'Category was deleted successfully.',
+        'bulk_success'           => 'Categories were deleted successfully.',
+        'partial_success'        => 'Category deleted successfully. See additional information below. | :count categories were deleted successfully. See additional information below.',
     )
 
 );

@@ -18,9 +18,11 @@ return array(
     ),
 
     'delete' => array(
-        'confirm'   => 'Oletko varma että haluat poistaa tämän kategorian?',
-        'error'   => 'Kategorian poistossa tapahtui virhe. Yritä uudelleen.',
-        'success' => 'Kategoria poistettiin onnistuneesti.'
+        'confirm'                => 'Oletko varma että haluat poistaa tämän kategorian?',
+        'error'                  => 'Kategorian poistossa tapahtui virhe. Yritä uudelleen.',
+        'success'                => 'Category was deleted successfully.',
+        'bulk_success'           => 'Categories were deleted successfully.',
+        'partial_success'        => 'Category deleted successfully. See additional information below. | :count categories were deleted successfully. See additional information below.',
     )
 
 );

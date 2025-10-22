@@ -46,7 +46,7 @@
 
                         <!-- Enable SAML -->
                         <div class="form-group{{ $errors->has('saml_integration') ? ' error' : '' }}">
-                            <div class="col-md-3">
+                            <div class="col-md-3 text-right">
                                 <strong>{{ trans('admin/settings/general.saml_integration') }}</strong>
                             </div>
                             <div class="col-md-9">
@@ -108,7 +108,7 @@
 
                         <!-- SAML IdP Metadata -->
                         <div class="form-group {{ $errors->has('saml_idp_metadata') ? 'error' : '' }}">
-                        <div class="col-md-3">
+                        <div class="col-md-3 text-right">
                             <label for="saml_idp_metadata">{{ trans('admin/settings/general.saml_idp_metadata') }}</label>
                         </div>
                         <div class="col-md-9">
@@ -131,7 +131,7 @@
 
                         <!-- SAML Attribute Mapping Username -->
                         <div class="form-group {{ $errors->has('saml_attr_mapping_username') ? 'error' : '' }}">
-                            <div class="col-md-3">
+                            <div class="col-md-3 text-right">
                                 <label for="saml_attr_mapping_username">{{ trans('admin/settings/general.saml_attr_mapping_username') }}</label>
                             </div>
                             <div class="col-md-9">
@@ -143,7 +143,7 @@
 
                         <!-- SAML Force Login -->
                         <div class="form-group">
-                            <div class="col-md-3">
+                            <div class="col-md-3 text-right">
                                 <strong>{{  trans('admin/settings/general.saml_forcelogin_label') }}</strong>
                             </div>
                             <div class="col-md-9">
@@ -159,7 +159,7 @@
 
                         <!-- SAML Single Log Out -->
                         <div class="form-group">
-                            <div class="col-md-3">
+                            <div class="col-md-3 text-right">
                                 <strong>{{ trans('admin/settings/general.saml_slo_label') }}</strong>
                             </div>
                             <div class="col-md-9">
@@ -174,7 +174,7 @@
 
                         <!-- SAML Custom Options -->
                         <div class="form-group {{ $errors->has('saml_custom_settings') ? 'error' : '' }}">
-                        <div class="col-md-3">
+                        <div class="col-md-3 text-right">
                             <label for="saml_custom_settings">{{ trans('admin/settings/general.saml_custom_settings') }}</label>
                         </div>
                         <div class="col-md-9">

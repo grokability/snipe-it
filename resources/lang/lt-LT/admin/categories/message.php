@@ -18,9 +18,11 @@ return array(
     ),
 
     'delete' => array(
-        'confirm'   => 'Ar jūs tikrai norite panaikinti šią kategoriją?',
-        'error'   => 'Bandant panaikinti kategoriją įvyko klaida. Bandykite dar kartą.',
-        'success' => 'Kategorija panaikinta sėkmingai.'
+        'confirm'                => 'Ar jūs tikrai norite panaikinti šią kategoriją?',
+        'error'                  => 'Bandant panaikinti kategoriją įvyko klaida. Bandykite dar kartą.',
+        'success'                => 'Category was deleted successfully.',
+        'bulk_success'           => 'Categories were deleted successfully.',
+        'partial_success'        => 'Category deleted successfully. See additional information below. | :count categories were deleted successfully. See additional information below.',
     )
 
 );

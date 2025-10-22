@@ -18,9 +18,11 @@ return array(
     ),
 
     'delete' => array(
-        'confirm'   => 'இந்த வகையை நிச்சயமாக நீக்க விரும்புகிறீர்களா?',
-        'error'   => 'வகையை நீக்குவதில் ஒரு சிக்கல் இருந்தது. தயவு செய்து மீண்டும் முயற்சிக்கவும்.',
-        'success' => 'வகை வெற்றிகரமாக நீக்கப்பட்டது.'
+        'confirm'                => 'இந்த வகையை நிச்சயமாக நீக்க விரும்புகிறீர்களா?',
+        'error'                  => 'வகையை நீக்குவதில் ஒரு சிக்கல் இருந்தது. தயவு செய்து மீண்டும் முயற்சிக்கவும்.',
+        'success'                => 'Category was deleted successfully.',
+        'bulk_success'           => 'Categories were deleted successfully.',
+        'partial_success'        => 'Category deleted successfully. See additional information below. | :count categories were deleted successfully. See additional information below.',
     )
 
 );

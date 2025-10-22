@@ -20,9 +20,9 @@ return array(
         'confirm'   => 'هل أنت متأكد من رغبتك في حذف هذا المورد؟',
         'error'   => 'حدثت مشكلة أثناء حذف المورد. حاول مرة اخرى.',
         'success' => 'تم حذف المورد بنجاح.',
-        'assoc_assets'	 => 'هذا المورد مرتبط حاليا مع :asset_count من الأصول على الاقل ولا يمكن حذفه. الرجاء تحديث الأصول لكي لا تشير الى هذا المورد ثم حاول مرة أخرى. ',
-        'assoc_licenses'	 => 'هذا المورد مرتبط حاليا مع :licenses_count من التراخيص ولا يمكن حذفه. الرجاء تحديث التراخيص الخاصة بك لكي لا تشير الى هذا المورد وحاول مرة أخرى. ',
-        'assoc_maintenances'	 => 'This supplier is currently associated with :maintenances_count asset maintenances(s) and cannot be deleted. Please update your asset maintenances to no longer reference this supplier and try again. ',
+        'not_found'               => 'Supplier not found.',
+        'bulk_success'            => 'Suppliers were deleted successfully.',
+        'partial_success'        => 'Supplier deleted successfully. See additional information below. | :count suppliers were deleted successfully. See additional information below.',
     )
 
 );

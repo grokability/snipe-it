@@ -20,9 +20,9 @@ return array(
         'confirm'   => 'Är du säker på att du vill radera denna leverantör?',
         'error'   => 'Det uppstod ett problem vid radering av leverantör. Var god försök igen.',
         'success' => 'Leverantör raderad.',
-        'assoc_assets'	 => 'Denna leverantör är för närvarande associerad med :asset_count tillgång(ar) och kan inte tas bort. Vänligen uppdatera dina tillgångar för att inte längre referera till denna leverantör och försök igen. ',
-        'assoc_licenses'	 => 'Denna leverantör är för närvarande är associerade med :licenses_count licens(er) och kan inte tas bort. Vänligen uppdatera din(a) licens(er) för att inte längre referera till denna leverantör och försök igen. ',
-        'assoc_maintenances'	 => 'This supplier is currently associated with :maintenances_count asset maintenances(s) and cannot be deleted. Please update your asset maintenances to no longer reference this supplier and try again. ',
+        'not_found'               => 'Supplier not found.',
+        'bulk_success'            => 'Suppliers were deleted successfully.',
+        'partial_success'        => 'Supplier deleted successfully. See additional information below. | :count suppliers were deleted successfully. See additional information below.',
     )
 
 );

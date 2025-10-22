@@ -22,9 +22,11 @@ return array(
     ),
 
     'delete' => array(
-        'confirm'   => 'Vai tiešām vēlaties dzēst šo ražotāju?',
+        'confirm' => 'Vai tiešām vēlaties dzēst šo ražotāju?',
         'error'   => 'Radās problēma, izdzēšot ražotāju. Lūdzu mēģiniet vēlreiz.',
-        'success' => 'Ražotājs tika veiksmīgi dzēsts.'
+        'success'                => 'Manufacturer deleted successfully.',
+        'bulk_success'           => 'Manufacturers deleted successfully.',
+        'partial_success'        => 'Manufacturer deleted successfully. See additional information below. | :count manufacturers were deleted successfully. See additional information below.',
     )
 
 );

@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'accepted' => 'The :attribute field must be accepted.',
+    'accepted' => 'A :attribute el kell fogadni.',
     'accepted_if' => 'The :attribute field must be accepted when :other is :value.',
     'active_url' => 'The :attribute field must be a valid URL.',
     'after' => 'The :attribute field must be a date after :date.',
@@ -32,12 +32,12 @@ return [
         'string' => 'The :attribute field must be between :min and :max characters.',
     ],
     'valid_regex' => 'The regular expression is invalid.',
-    'boolean' => 'The :attribute field must be true or false.',
+    'boolean' => 'Az :attribute igaznak vagy hamisnak kell lennie.',
     'can' => 'The :attribute field contains an unauthorized value.',
     'confirmed' => 'The :attribute field confirmation does not match.',
     'contains' => 'The :attribute field is missing a required value.',
-    'current_password' => 'The password is incorrect.',
-    'date' => 'The :attribute field must be a valid date.',
+    'current_password' => 'Érvénytelen jelszó.',
+    'date' => 'A :attribute nem egy valós dátum.',
     'date_equals' => 'The :attribute field must be a date equal to :date.',
     'date_format' => 'The :attribute field must match the format :format.',
     'decimal' => 'The :attribute field must have :decimal decimal places.',

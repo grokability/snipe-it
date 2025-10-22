@@ -196,7 +196,7 @@
             <label for="warranty_months" class="col-md-3 control-label">
               {{ trans('admin/hardware/form.warranty') }}
             </label>
-            <div class="col-md-3">
+            <div class="col-md-3 text-right">
               <div class="input-group">
                 <input class="col-md-3 form-control" maxlength="4" type="text" name="warranty_months" id="warranty_months" value="{{ old('warranty_months') }}" />
                 <span class="input-group-addon">{{ trans('admin/hardware/form.months') }}</span>

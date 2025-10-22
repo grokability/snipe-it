@@ -22,9 +22,11 @@ return array(
     ),
 
     'delete' => array(
-        'confirm'   => 'Ви впевнені що хочете видалити виробника?',
+        'confirm' => 'Ви впевнені що хочете видалити виробника?',
         'error'   => 'Виникла проблема при видаленні виробника. Будь ласка, спробуйте знову.',
-        'success' => 'Виробник успішно видалений.'
+        'success'                => 'Manufacturer deleted successfully.',
+        'bulk_success'           => 'Manufacturers deleted successfully.',
+        'partial_success'        => 'Manufacturer deleted successfully. See additional information below. | :count manufacturers were deleted successfully. See additional information below.',
     )
 
 );

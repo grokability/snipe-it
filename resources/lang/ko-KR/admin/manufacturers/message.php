@@ -22,9 +22,11 @@ return array(
     ),
 
     'delete' => array(
-        'confirm'   => '이 제조업체를 삭제하시겠습니까?',
+        'confirm' => '이 제조업체를 삭제하시겠습니까?',
         'error'   => '제조업체를 삭제하는 중에 문제가 생겼습니다. 다시 시도해 주세요.',
-        'success' => '제조업체가 삭제되었습니다.'
+        'success'                => 'Manufacturer deleted successfully.',
+        'bulk_success'           => 'Manufacturers deleted successfully.',
+        'partial_success'        => 'Manufacturer deleted successfully. See additional information below. | :count manufacturers were deleted successfully. See additional information below.',
     )
 
 );

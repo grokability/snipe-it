@@ -18,9 +18,11 @@ return array(
     ),
 
     'delete' => array(
-        'confirm'   => 'crwdns631:0crwdne631:0',
-        'error'   => 'crwdns632:0crwdne632:0',
-        'success' => 'crwdns633:0crwdne633:0'
+        'confirm'                => 'crwdns631:0crwdne631:0',
+        'error'                  => 'crwdns632:0crwdne632:0',
+        'success'                => 'crwdns13884:0crwdne13884:0',
+        'bulk_success'           => 'crwdns13886:0crwdne13886:0',
+        'partial_success'        => 'crwdns13888:0crwdne13888:0',
     )
 
 );

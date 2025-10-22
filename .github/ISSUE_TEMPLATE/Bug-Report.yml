@@ -23,7 +23,23 @@ body:
     attributes:
       label: Snipe-IT Version
       description: What version of Snipe-IT are you seeing this issue on? You can find the version number in the footer of any page in Snipe-IT.
-      placeholder: ex. v8.3.1 - build 19577 (master)
+      placeholder: ex. v8.3.2 - build 19577 (master)
+    validations:
+      required: true
+  - type: input
+    id: php-version
+    attributes:
+      label: PHP Version
+      description: What version of PHP are you running? You can find the version of PHP your webserver is running in the `Admin Settings` section in the footer, and the cli version by running `php -v` via command line .
+      placeholder: ex. v8.3.1 (web), PHP 8.4.12 (cli)
+    validations:
+      required: true
+  - type: input
+    id: composer-version
+    attributes:
+      label: Composer Version
+      description: What version of composer are you running? You can find the version number by running `composer --version`.
+      placeholder: ex. 2.8.10
     validations:
       required: true
   - type: input
@@ -48,6 +64,16 @@ body:
         - Not sure
     validations:
       required: true
+  - type: dropdown
+    id: upgrade-or-fresh
+    attributes:
+      label: Is this a fresh install or an upgrade?
+      options:
+        - Fresh install
+        - Upgrade
+        - NA
+    validations:
+      required: true
   - type: textarea
     id: what-happened
     attributes:
@@ -67,6 +93,38 @@ body:
         - Safari
         - Microsoft Edge
         - Other
+  - type: dropdown
+    id: on-demo
+    attributes:
+      label: Can you reproduce this on the public demo?
+      description: You can check this at https://demo.snipeitapp.com.
+      options:
+        - 'Yes'
+        - 'No'
+        - N/A
+    validations:
+      required: true
+  - type: dropdown
+    id: fmcs
+    attributes:
+      label: Do you have full multiple company support enabled?
+      description: You can check this in your Snipe-IT installation at `Admin Settings > General Settings > Scoping`.
+      options:
+        - 'Yes'
+        - 'No'
+    validations:
+      required: true
+  - type: dropdown
+    id: fmcs-location
+    attributes:
+      label: If you have full multiple company support enabled, do you have location scoping to company enabled?
+      description: You can check this in your Snipe-IT installation at `Admin Settings > General Settings > Scoping`.
+      options:
+        - 'Yes'
+        - 'No'
+        - I do not have full multiple company support enabled
+    validations:
+      required: true
   - type: textarea
     id: server-logs
     attributes:

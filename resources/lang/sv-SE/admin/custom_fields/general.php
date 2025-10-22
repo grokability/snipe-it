@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Hantera',
     'field'		                => 'Fält',
     'about_fieldsets_title'		=> 'Om fältuppsättningar',
-    'about_fieldsets_text'		=> 'Fältuppsättningar låter dig skapa grupper av anpassade fält som ofta återanvänds för specifika tillgångsmodelltyper.',
+    'about_fieldsets_text'		=> 'Fieldsets låter dig skapa grupper av fält som är anpassade efter och ofta använda av en viss typ av tillgång. Ex. "CPU", "RAM", "HDD", etc.',
     'custom_format'             => 'Anpassat Regex-format...',
     'encrypt_field'      	        => 'Kryptera värdet för det här fältet i databasen',
     'encrypt_field_help'      => 'VARNING: Kryptering av ett fält genererar fältet osökbart.',

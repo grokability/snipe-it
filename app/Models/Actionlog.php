@@ -478,6 +478,10 @@ class Actionlog extends SnipeModel
             $object = 'models';
         }
 
+        if ($this->action_type == 'audit') {
+            $object = 'audits';
+        }
+
         return route('ui.files.show', [
             'object_type' => $object,
             'id' => $this->item_id,

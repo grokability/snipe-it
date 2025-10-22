@@ -22,9 +22,11 @@ return array(
     ),
 
     'delete' => array(
-        'confirm'   => 'Is jy seker jy wil hierdie vervaardiger uitvee?',
+        'confirm' => 'Is jy seker jy wil hierdie vervaardiger uitvee?',
         'error'   => 'Daar was \'n probleem met die verwydering van die vervaardiger. Probeer asseblief weer.',
-        'success' => 'Die vervaardiger is suksesvol verwyder.'
+        'success'                => 'Manufacturer deleted successfully.',
+        'bulk_success'           => 'Manufacturers deleted successfully.',
+        'partial_success'        => 'Manufacturer deleted successfully. See additional information below. | :count manufacturers were deleted successfully. See additional information below.',
     )
 
 );

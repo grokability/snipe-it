@@ -37,7 +37,7 @@ return [
     'backups_clean_helptext' => "Tai gali būti naudinga, jei keičiate duomenų bazės versiją",
     'backups_upload'            => 'Įkelti atsarginę kopiją',
     'backups_path'              => 'Atsarginės kopijos serveryje saugomos <code>:path</code>',
-    'backups_restore_warning'   => 'Naudokite atkūrimo mygtuką <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small>, jei norite atkurti iš ankstesnės atsarginės kopijos. (Šiuo metu tai neveikia naudojant S3 failų saugyklą arba „Docker“.)<br><br>Jūsų <strong>visa :app_name duomenų bazė ir visi įkelti failai bus visiškai pakeisti</strong> tuo, kas yra atsarginės kopijos faile.  ',
+    'backups_restore_warning'   => 'Use the restore button <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small> to restore from a previous backup. (This does not currently work with S3 file storage.)<br><br>Your <strong>entire :app_name database and any uploaded files will be completely replaced</strong> by what\'s in the backup file  ',
     'backups_logged_out'         => 'Kai atkūrimas bus baigtas, visi esami naudotojai, įskaitant jus, bus atjungti.',
     'backups_large'             => 'Atkuriant labai dideles atsargines kopijas, gali pasibaigti tam skirtas laikas, todėl vis tiek gali tekti atkūrimui naudoti komandinę eilutę. ',
     'barcode_settings'			=> 'Brūkšninio kodo nustatymai',

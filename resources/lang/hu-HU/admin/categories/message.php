@@ -18,9 +18,11 @@ return array(
     ),
 
     'delete' => array(
-        'confirm'   => 'Biztos benne, hogy törölni szeretné a kategóriát?',
-        'error'   => 'A kategória törlése közben probléma merült fel, kérjük, próbálja újra.',
-        'success' => 'Sikeresen törölte a kategóriát.'
+        'confirm'                => 'Biztos benne, hogy törölni szeretné a kategóriát?',
+        'error'                  => 'A kategória törlése közben probléma merült fel, kérjük, próbálja újra.',
+        'success'                => 'Category was deleted successfully.',
+        'bulk_success'           => 'Categories were deleted successfully.',
+        'partial_success'        => 'Category deleted successfully. See additional information below. | :count categories were deleted successfully. See additional information below.',
     )
 
 );

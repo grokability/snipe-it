@@ -13,7 +13,7 @@ return [
     'update'                    => 'Actualizar ubicación',
     'print_assigned'            => 'Imprimir los asignados',
     'print_inventory'           => 'Print Inventory',
-    'print_all_assigned'        => 'Print Inventory and Assigned',
+    'print_all_assigned'        => 'Imprimir inventario y asignar',
     'name'                      => 'Nombre de ubicación',
     'address'                   => 'Dirección',
     'address2'                   => '2da linea de Dirección',

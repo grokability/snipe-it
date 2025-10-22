@@ -4,7 +4,7 @@ return array(
     'asset_categories' 					=> 'Categorías de activos',
     'category_name'  					=> 'Nombre de la categoría',
     'checkin_email'                     => 'Enviar un correo electrónico al usuario al recibir/devolver.',
-    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
+    'email_to_initiator'                => 'Envíe un correo electrónico cuando el usuario acepte o rechace la salida.',
     'checkin_email_notification'        => 'A este usuario se le enviará un correo electrónico al recibir/devolver.',
     'clone'                             => 'Clonar categoría',
     'create'  							=> 'Crear categoría',
@@ -25,6 +25,6 @@ return array(
     'import_require_acceptance'         => 'Require Acceptance',
     'import_checkin_email'              => 'Send Checkin Email',
     'import_eula_text'                  => 'EULA text',
-    'import_category_type'              => 'Category Type',
+    'import_category_type'              => 'Tipo de categoría',
 
 );

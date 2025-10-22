@@ -18,9 +18,11 @@ return array(
     ),
 
     'delete' => array(
-        'confirm'   => '您確定要刪除此類別嗎？',
-        'error'   => '刪除類別時發生問題。請再試一次。',
-        'success' => '刪除類別成功。'
+        'confirm'                => '您確定要刪除此類別嗎？',
+        'error'                  => '刪除類別時發生問題。請再試一次。',
+        'success'                => 'Category was deleted successfully.',
+        'bulk_success'           => 'Categories were deleted successfully.',
+        'partial_success'        => 'Category deleted successfully. See additional information below. | :count categories were deleted successfully. See additional information below.',
     )
 
 );

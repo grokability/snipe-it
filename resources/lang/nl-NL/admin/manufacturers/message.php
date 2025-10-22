@@ -22,9 +22,11 @@ return array(
     ),
 
     'delete' => array(
-        'confirm'   => 'Weet u zeker dat deze fabrikant verwijderd kan worden?',
+        'confirm' => 'Weet u zeker dat deze fabrikant verwijderd kan worden?',
         'error'   => 'Er was een probleem bij het verwijderen. Probeer opnieuw.',
-        'success' => 'Fabrikant succesvol verwijderd.'
+        'success'                => 'Manufacturer deleted successfully.',
+        'bulk_success'           => 'Manufacturers deleted successfully.',
+        'partial_success'        => 'Manufacturer deleted successfully. See additional information below. | :count manufacturers were deleted successfully. See additional information below.',
     )
 
 );

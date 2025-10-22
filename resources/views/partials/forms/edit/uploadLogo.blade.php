@@ -1,7 +1,7 @@
 <!-- {{ $logoVariable }}logo image upload -->
 
 <div class="form-group">
-    <div class="col-md-3">
+    <div class="col-md-3 text-right">
         <label {!! $errors->has($logoVariable) ? 'class="alert-msg"' : '' !!} for="{{ $logoVariable }}">
         {{ trans($logoLabel) }}
         </label>

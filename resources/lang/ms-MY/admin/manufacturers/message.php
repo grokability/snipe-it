@@ -22,9 +22,11 @@ return array(
     ),
 
     'delete' => array(
-        'confirm'   => 'Anda pasti anda ingin hapuskan pengeluar ini?',
+        'confirm' => 'Anda pasti anda ingin hapuskan pengeluar ini?',
         'error'   => 'Ada isu semasa menghapuskan pengeluar. Sila cuba lagi.',
-        'success' => 'Pengeluar gagal dihapuskan.'
+        'success'                => 'Manufacturer deleted successfully.',
+        'bulk_success'           => 'Manufacturers deleted successfully.',
+        'partial_success'        => 'Manufacturer deleted successfully. See additional information below. | :count manufacturers were deleted successfully. See additional information below.',
     )
 
 );

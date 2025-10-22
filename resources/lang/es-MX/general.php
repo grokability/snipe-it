@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'show_all' => 'Show All',
     '2FA_reset'             => 'Restablecer 2FA',
     'accessories'			=> 'Accesorios',
     'activated'			    => 'Activado',
@@ -356,10 +357,10 @@ return [
     'accept'                => 'Aceptar :asset',
     'i_accept'              => 'Acepto',
     'i_accept_with_count' => 'I accept :count item|I accept :count items',
-    'i_decline_item' => 'Decline this item|Decline these items',
+    'i_decline_item' => 'Rechazar este artículo|Rechazar estos artículos',
     'i_accept_item' => 'Accept this item|Accept these items',
     'i_decline'             => 'Rechazo',
-    'i_decline_with_count' => 'I decline :count item|I decline :count items',
+    'i_decline_with_count' => 'Rechazo :count artículo|rechazo :count artículos',
     'accept_decline'        => 'Aceptar/Rechazar',
     'sign_tos'              => 'Firme abajo para indicar que está de acuerdo con los términos de servicio:',
     'clear_signature'       => 'Borrar firma',
@@ -520,9 +521,9 @@ return [
     'item_notes' => ':item Notas',
     'item_name_var' => ':item Nombre',
     'error_user_company' => 'La compañía destino de la asignación y la compañía del activo no coinciden',
-    'error_user_company_multiple' => 'One or more of the checkout target company and asset company do not match',
+    'error_user_company_multiple' => 'Uno o más salidas y activos no coinciden',
     'error_user_company_accept_view' => 'Un activo asignado a usted pertenece a una compañía diferente por lo que no puede aceptarlo ni rechazarlo, por favor verifique con su supervisor',
-    'error_assets_already_checked_out' => 'One or more of the assets are already checked out',
+    'error_assets_already_checked_out' => 'Uno o más de los activos ya están comprobados',
     'assigned_assets_removed' => 'The following were removed from the selected assets because they are already checked out',
     'importer' => [
         'checked_out_to_fullname' => 'Asignado a: Nombre completo',
@@ -619,7 +620,7 @@ return [
     'use_cloned_image' => 'Clone image from original',
     'use_cloned_image_help' => 'You may clone the original image or you can upload a new one using the upload field below.',
     'use_cloned_no_image_help' => 'This item does not have an associated image and instead inherits from the model or category it belongs to. If you would like to use a specific image for this item, you can upload a new one below.',
-    'footer_credit' => '<a target="_blank" href="https://snipeitapp.com" rel="noopener">Snipe-IT</a> is open source software, made with <i class="fa fa-heart" aria-hidden="true" style="color: #a94442; font-size: 10px" /></i><span class="sr-only">love</span> by <a href="https://bsky.app/profile/snipeitapp.com" rel="noopener">@snipeitapp.com</a>.',
+    'footer_credit' => '<a target="_blank" href="https://snipeitapp.com" rel="noopener">Snipe-IT</a> es software de código abierto, hecho con <i class="fa fa-heart" aria-hidden="true" style="color: #a94442; font-size: 10px" /></i><span class="sr-only">amor</span> por <a href="https://bsky.app/profile/snipeitapp.com" rel="noopener">@snipeitapp.com</a>.',
     'set_password' => 'Set a Password',
     'upload_deleted'        => 'Upload Deleted',
     'child_locations' => 'Child Locations',
@@ -629,9 +630,27 @@ return [
         'notes'  => 'Agregar una nota',
     ],
 
+    'bulk_delete_associations' => [
+        'general_assoc_warning'       => ':item_name still has associated items. Please remove them before deleting this :item.',
+        'assoc_assets'                => ':item_name is currently associated with :asset_count asset(s) and cannot be deleted. Please update your assets to no longer reference this :item and try again.',
+        'asset_models'                => ':item_name is currently associated with :asset_count asset(s) and cannot be deleted. Please update your asset models to no longer reference this :item and try again.',
+        'assoc_maintenances'          => ':item_name is currently associated with :maintenance_count maintenance(s) and cannot be deleted. Please update your maintenances to no longer reference this :item and try again.',
+        'assoc_accessories'           => ':item_name is currently associated with :accessory_count accessory(ies) and cannot be deleted. Please update your accessories to no longer reference this :item and try again.',
+        'assoc_consumables'           => ':item_name is currently associated with :consumable_count consumable(s) and cannot be deleted. Please update your consumables to no longer reference this :item and try again.',
+        'assoc_components'            => ':item_name is currently associated with :component_count component(s) and cannot be deleted. Please update your components to no longer reference this :item and try again.',
+        'assoc_licenses'              => ':item_name is currently associated with :license_count license(s) and cannot be deleted. Please update your licenses to no longer reference this :item and try again.',
+        'assoc_assets_no_count'       => ':item_name is currently associated with other assets and cannot be deleted. Please update your assets to no longer reference this :item and try again.',
+        'asset_models_no_count'       => ':item_name is currently associated with other asset models and cannot be deleted. Please update your assets to no longer reference this :item and try again.',
+        'assoc_maintenances_no_count' => ':item_name is currently associated with other maintenances and cannot be deleted. Please update your maintenances to no longer reference this :item and try again.',
+        'assoc_accessories_no_count'  => ':item_name is currently associated with other accessories and cannot be deleted. Please update your accessories to no longer reference this :item and try again.',
+        'assoc_consumables_no_count'  => ':item_name is currently associated with other consumables and cannot be deleted. Please update your consumables to no longer reference this :item and try again.',
+        'assoc_components_no_count'   => ':item_name is currently associated with other components and cannot be deleted. Please update your components to no longer reference this :item and try again.',
+        'assoc_licenses_no_count'     => ':item_name is currently associated with other licenses and cannot be deleted. Please update your licenses to no longer reference this :item and try again.',
+    ],
+
     'breadcrumb_button_actions' => [
         'edit_item' => 'Editar nombre',
-        'checkout_item' => 'Checkout :name',
+        'checkout_item' => '',
         'checkin_item' => 'Checkin :name',
     ],
 
@@ -641,7 +660,7 @@ return [
         'blue_dark' => 'Azul (modo oscuro)',
         'green' => 'Green',
         'green_dark' => 'Verde (modo oscuro)',
-        'red' => 'Red',
+        'red' => 'Rojo',
         'red_dark' => 'Rojo (Modo Oscuro)',
         'orange' => 'Orange',
         'orange_dark' => 'Naranja (Modo oscuro)',
@@ -656,18 +675,18 @@ return [
     ],
 
     'select_all_none' => 'Select/Unselect All',
-    'generic_model_not_found' => 'That :model was not found or you do not have permission to access it',
-    'deleted_models' => 'Deleted Asset Models',
+    'generic_model_not_found' => 'Esto :model no se encontró o no tienes permiso para acceder a él',
+    'deleted_models' => 'Modelos de activos eliminados',
     'deleted_users' => 'Usuarios eliminados',
-    'cost_each' => ':amount each',
-    'remove_current_image' => 'Remove current :type image',
+    'cost_each' => ':amount cada uno',
+    'remove_current_image' => 'Eliminar imagen :type image',
 
     'seeding' => [
         'manufacturers' => [
-            'button' => 'Create Manufacturers',
-            'prompt' => 'You do not have any manufacturers yet. Would you like to seed a list of common manufacturers? (THIS WILL OVERWRITE EXISTING MANUFACTURERS, including those that have been soft-deleted.)',
-            'success' => 'Manufacturers seeded successfully',
-            'error' => 'Could not seed manufacturers. A manufacturer record already exists and seeding would overwrite it.|Could not seed manufacturers. :count manufacturer records already exist and seeding would overwrite them.',
+            'button' => 'Crear Fabricantes',
+            'prompt' => 'Aún no tienes ningún fabricante. ¿Le gustaría crear una lista de fabricantes? (ESTO SOBRESCRIBIRA LA LISTA DE FABRICANTES EXISTENTE)',
+            'success' => '',
+            'error' => 'Ya existe un registro de fabricante el archivo se sobrescribiría. :count registros de fabricante ya existen y se sobrescribirían.',
         ],
     ],
 
@@ -675,7 +694,7 @@ return [
 
         'upload' => [
             'success' => 'File successfully uploaded |:count files successfully uploaded',
-            'error' => 'File upload failed |:count file uploads failed',
+            'error' => 'Error al subir el archivo |:count archivos subidos',
         ],
 
         'delete' => [

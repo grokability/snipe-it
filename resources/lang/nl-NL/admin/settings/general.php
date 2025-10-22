@@ -37,7 +37,7 @@ return [
     'backups_clean_helptext' => "Dit kan handig zijn als je wisselt tussen databaseversies",
     'backups_upload'            => 'Backup uploaden',
     'backups_path'              => 'Back-ups op de server worden opgeslagen in <code>:path</code>',
-    'backups_restore_warning'   => 'Use the restore button <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small> to restore from a previous backup. (This does not currently work with S3 file storage or Docker.)<br><br>Your <strong>entire :app_name database and any uploaded files will be completely replaced</strong> by what\'s in the backup file  ',
+    'backups_restore_warning'   => 'Use the restore button <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small> to restore from a previous backup. (This does not currently work with S3 file storage.)<br><br>Your <strong>entire :app_name database and any uploaded files will be completely replaced</strong> by what\'s in the backup file  ',
     'backups_logged_out'         => 'Alle bestaande gebruikers, inclusief jijzelf, worden uitgelogd zodra je herstel is voltooid.',
     'backups_large'             => 'Zeer grote back-ups kunnen uitvallen op de herstelpoging en moeten mogelijk nog steeds worden uitgevoerd via de command line. ',
     'barcode_settings'			=> 'Barcode instellingen',

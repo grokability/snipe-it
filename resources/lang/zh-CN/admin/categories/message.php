@@ -18,9 +18,11 @@ return array(
     ),
 
     'delete' => array(
-        'confirm'   => '你确定要删除这个分类吗？',
-        'error'   => '删除分类出现异常，请重试。',
-        'success' => '分类已经被成功删除。'
+        'confirm'                => '你确定要删除这个分类吗？',
+        'error'                  => '删除分类出现异常，请重试。',
+        'success'                => 'Category was deleted successfully.',
+        'bulk_success'           => 'Categories were deleted successfully.',
+        'partial_success'        => 'Category deleted successfully. See additional information below. | :count categories were deleted successfully. See additional information below.',
     )
 
 );

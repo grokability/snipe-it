@@ -31,7 +31,7 @@ Form::macro('countries', function ($name = 'country', $selected = null, $class =
 
     // If the country value doesn't exist in the array, add it as a new option and select it so we don't drop that data
     if (!array_key_exists($selected, $countries_array)) {
-        $select .= '<option value="' . $selected . '" selected="selected" role="option" aria-selected="true">' . $selected .' *</option> ';
+        $select .= '<option value="' . e($selected) . '" selected="selected" role="option" aria-selected="true">' . e($selected) .' *</option> ';
     }
 
     $select .= '</select>';

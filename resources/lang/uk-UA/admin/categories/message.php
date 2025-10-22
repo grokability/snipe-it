@@ -18,9 +18,11 @@ return array(
     ),
 
     'delete' => array(
-        'confirm'   => 'Ви впевнені що бажаєте видалити цю категорію?',
-        'error'   => 'Виникла проблема з видаленням категорії. Будь ласка, спробуйте ще раз.',
-        'success' => 'Категорія успішно видалена.'
+        'confirm'                => 'Ви впевнені що бажаєте видалити цю категорію?',
+        'error'                  => 'Виникла проблема з видаленням категорії. Будь ласка, спробуйте ще раз.',
+        'success'                => 'Category was deleted successfully.',
+        'bulk_success'           => 'Categories were deleted successfully.',
+        'partial_success'        => 'Category deleted successfully. See additional information below. | :count categories were deleted successfully. See additional information below.',
     )
 
 );

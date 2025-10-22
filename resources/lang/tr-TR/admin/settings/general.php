@@ -37,7 +37,7 @@ return [
     'backups_clean_helptext' => "Veritabanı sürümleri arasında değişiklik yapıyorsanız bu yararlı olabilir",
     'backups_upload'            => 'Yedeği yükle',
     'backups_path'              => 'Yedeklerin sunucuda saklanacağı yer <code>:path</code>',
-    'backups_restore_warning'   => 'Önceki bir yedeklemeden geri yüklemek için geri yükle düğmesini <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small> kullanın. (Bu özellik şu anda S3 dosya depolama veya Docker ile çalışmamaktadır.)<br><br><strong>Tüm :app_name veritabanınız ve yüklenen tüm dosyalar, yedekleme dosyasındaki içerikle tamamen değiştirilecektir</strong>  ',
+    'backups_restore_warning'   => 'Use the restore button <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small> to restore from a previous backup. (This does not currently work with S3 file storage.)<br><br>Your <strong>entire :app_name database and any uploaded files will be completely replaced</strong> by what\'s in the backup file  ',
     'backups_logged_out'         => 'Geri yüklemeniz tamamlandıktan sonra, siz de dahil olmak üzere, tüm mevcut kullanıcıların oturumu kapatılacaktır.',
     'backups_large'             => 'Çok büyük yedeklemeler, geri yükleme girişiminde zaman aşımına uğrayabilir ve komut satırı üzerinden çalıştırılması gerekebilir. ',
     'barcode_settings'			=> 'Barkod Ayarları',

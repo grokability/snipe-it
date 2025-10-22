@@ -947,9 +947,9 @@
                   @foreach ($user->accessories as $accessory)
                   <tr>
                       <td>{{ $accessory->pivot->id }}</td>
-                      <td>{!!$accessory->present()->nameUrl()!!}</td>
+                      <td>{!! $accessory->present()->nameUrl() !!}</td>
                       <td>{{ Helper::getFormattedDateObject($accessory->pivot->created_at, 'datetime',  false) }}</td>
-                      <td>{!! $accessory->pivot->note !!}</td>
+                      <td>{{ $accessory->pivot->note }}</td>
                       <td>
                       {!! Helper::formatCurrencyOutput($accessory->purchase_cost) !!}
                       </td>

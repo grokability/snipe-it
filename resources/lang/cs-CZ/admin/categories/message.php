@@ -18,9 +18,11 @@ return array(
     ),
 
     'delete' => array(
-        'confirm'   => 'Opravdu chcete smazat tuto kategorii na trvalo?',
-        'error'   => 'Vyskytl se problém při mazání kategorie. Zkuste to znovu prosím.',
-        'success' => 'Kategorie byla úspěšně smazána.'
+        'confirm'                => 'Opravdu chcete smazat tuto kategorii na trvalo?',
+        'error'                  => 'Vyskytl se problém při mazání kategorie. Zkuste to znovu prosím.',
+        'success'                => 'Category was deleted successfully.',
+        'bulk_success'           => 'Categories were deleted successfully.',
+        'partial_success'        => 'Category deleted successfully. See additional information below. | :count categories were deleted successfully. See additional information below.',
     )
 
 );

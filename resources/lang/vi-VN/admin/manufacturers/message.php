@@ -22,9 +22,11 @@ return array(
     ),
 
     'delete' => array(
-        'confirm'   => 'Bạn có chắc chắn muốn xoá hãng sản xuất này?',
+        'confirm' => 'Bạn có chắc chắn muốn xoá hãng sản xuất này?',
         'error'   => 'Có vấn đề xảy ra khi xoá hãng sản xuất này. Bạn hãy thử lại.',
-        'success' => 'Hãng sản xuất đã được xoá thành công.'
+        'success'                => 'Manufacturer deleted successfully.',
+        'bulk_success'           => 'Manufacturers deleted successfully.',
+        'partial_success'        => 'Manufacturer deleted successfully. See additional information below. | :count manufacturers were deleted successfully. See additional information below.',
     )
 
 );

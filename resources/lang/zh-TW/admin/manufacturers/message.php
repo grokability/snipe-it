@@ -22,9 +22,11 @@ return array(
     ),
 
     'delete' => array(
-        'confirm'   => '您確定要刪除此製造商嗎？',
+        'confirm' => '您確定要刪除此製造商嗎？',
         'error'   => '刪除製造商失敗，請重試。',
-        'success' => '刪除製造商成功。'
+        'success'                => 'Manufacturer deleted successfully.',
+        'bulk_success'           => 'Manufacturers deleted successfully.',
+        'partial_success'        => 'Manufacturer deleted successfully. See additional information below. | :count manufacturers were deleted successfully. See additional information below.',
     )
 
 );
