@@ -8,6 +8,7 @@ use Livewire\Attributes\Validate;
 
 use App\Models\PredefinedFilter;
 use App\Services\PredefinedFilterService;
+use App\Models\PermissionGroup;
 
 enum FilterVisibility: string
 {
@@ -59,10 +60,17 @@ class Modal extends Component
         $this->filterId = $predefinedFilterId;
 
         $user = auth()->user();
-        $this->groupSelectOtherOptions = $user
+         // If the user a superuser show him all groups
+        if($user->isSuperUser()) {
+            $this->groupSelectOtherOptions = PermissionGroup::all()->pluck("id")->toArray();
+
+        } else {
+            // Show only the groups there the user is member of
+            $this->groupSelectOtherOptions = $user
             ->groups()
             ->pluck("id")
             ->toArray();
+        }
 
         if (
             $this->modalActionType === AdvancedsearchModalAction::Edit &&
@@ -127,6 +135,29 @@ class Modal extends Component
             return;
         }
 
+        // mock a filter to check if userHasTheCreatePermission
+        if ($this->visibility === FilterVisibility::Public) {
+
+            // create dummy filter
+            $filter = new PredefinedFilter();
+            $filter->is_public = true;
+            $filter->filter_data = [];
+            $filter->created_by = auth()->user()->id;
+
+            if (!$filter->userHasPermission(auth()->user(), 'create')) {
+                $this->dispatch('showNotificationInFrontend', [
+                    'type' => 'error',
+                    'title' => trans('general.notification_error'),
+                    'message' => trans('admin/predefinedFilters/message.create.not_allowed'),
+                    'tag' => 'predefinedFilter',
+                ]);
+
+                $this->dispatch("closePredefinedFiltersModal");
+                return;
+            }
+        }
+
+
         $validated = [
             "name" => $this->name,
             "filter_data" => $this->filterData,
@@ -135,23 +166,7 @@ class Modal extends Component
             "permissions" => self::formatPermissions($this->groupSelect),
         ];
 
-        $createFilterResponse = $predefinedFilterService->createFilter($validated);
-
-        if ($createFilterResponse === true) {
-            $this->dispatch('showNotificationInFrontend', [
-                'type' => 'success',
-                'title' => trans('general.notification_success'),
-                'message' => trans('general.predefined_filter_saved_successfully'),
-                'tag' => 'predefinedFilter',
-            ]);
-        } else {
-            $this->dispatch('showNotificationInFrontend', [
-                'type' => 'error',
-                'title' => trans('general.notification_error'),
-                'message' => trans('general.notification_error'),
-                'tag' => 'predefinedFilter',
-            ]);
-        }
+        $predefinedFilterService->createFilter($validated);
 
         $this->dispatch("savePredefinedFiltersModalEvent");
         $this->dispatch("closePredefinedFiltersModal");
