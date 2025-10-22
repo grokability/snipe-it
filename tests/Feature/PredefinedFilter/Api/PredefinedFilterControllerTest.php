@@ -389,7 +389,7 @@ class PredefinedFilterControllerTest extends TestCase
             ])
             ->assertStatus(403);
             
-        $g = $this->grant($other, ['predefinedFilter.update'=>'1']);
+        $g = $this->grant($other, ['predefinedFilter.edit'=>'1']);
         $this->linkGroupFilter($f, $g);
             
         $this->actingAs($other, 'api')
@@ -440,7 +440,7 @@ public function test_destroy_non_owner_public_requires_destroy_permission()
         ->deleteJson("/api/v1/predefinedFilters/{$f->id}")
         ->assertStatus(403);
 
-    $g = $this->grant($other, ['predefinedFilter.destroy' => '1']);
+    $g = $this->grant($other, ['predefinedFilter.delete' => '1']);
     $this->linkGroupFilter($f, $g);
 
     $this->actingAs($other, 'api')
@@ -466,7 +466,7 @@ public function test_destroy_non_owner_public_requires_destroy_permission()
     public function test_destroy_owner_private_ok_200() 
     {
     $u = User::factory()->create();
-    $f = PredefinedFilter::factory()->create(['created_by'=>$u->id,'is_public'=>0]);
+    $f = PredefinedFilter::factory()->create(['created_by'=>$u->id,'is_public'=>0, 'filter_data'=>[['a'=>'a']]]);
 
     $this->actingAs($u, 'api')
         ->deleteJson("/api/v1/predefinedFilters/{$f->id}")
@@ -475,4 +475,121 @@ public function test_destroy_non_owner_public_requires_destroy_permission()
 
     $this->assertSoftDeleted('predefined_filters', ['id' => $f->id]);
     }
+
+    public function test_cascade_permissions_when_edit_also_view()
+    {
+        $user = User::factory()->create();
+        $filter = PredefinedFilter::factory()->create([
+            'created_by' => $user->id,
+            'is_public'  => 1,
+        ]);
+
+        // Grant edit permission
+        $g = $this->grant($user, ['predefinedFilter.edit' => '1']);
+
+        // Link the user to the filter
+        $this->linkGroupFilter($filter, $g);
+
+        // Test the user can view the filter due to the cascade (edit => view)
+        $this->actingAs($user, 'api')
+            ->getJson("/api/v1/predefinedFilters/{$filter->id}")
+            ->assertOk();
+    }
+
+    public function test_cascade_permissions_when_delete_also_view()
+    {
+        $user = User::factory()->create();
+        $filter = PredefinedFilter::factory()->create([
+            'created_by' => $user->id,
+            'is_public'  => 1,
+        ]);
+
+        // Grant delete permission
+        $g = $this->grant($user, ['predefinedFilter.delete' => '1']);
+
+        // Link the user to the filter
+        $this->linkGroupFilter($filter, $g);
+
+        // Test the user can view the filter due to the cascade (delete => view)
+        $this->actingAs($user, 'api')
+            ->getJson("/api/v1/predefinedFilters/{$filter->id}")
+            ->assertOk();
+    }
+
+    public function test_superuser_has_create_permissions()
+    {
+        $superuser = User::factory()->create([
+            'permissions' => json_encode([
+            'superuser' => '1', 
+            ]),
+        ]);
+
+        $this->actingAs($superuser, 'api')
+            ->postJson("/api/v1/predefinedFilters", [
+                'name' => 'New Filter',
+                'filter_data' => ['a' => 1],
+                'is_public' => true,
+            ])
+            ->assertCreated();
+    }
+    public function test_superuser_has_view_permissions()
+    {
+        $superuser = User::factory()->create([
+            'permissions' => json_encode([
+            'superuser' => '1', 
+            ]),
+        ]);
+
+        $filter = PredefinedFilter::factory()->create([
+            'is_public' => true,
+        ]);
+
+        $this->actingAs($superuser, 'api')
+            ->getJson("/api/v1/predefinedFilters/{$filter->id}")
+            ->assertOk();
+        }
+    public function test_superuser_has_edit_permissions()
+    {
+        $superuser = User::factory()->create([
+            'permissions' => json_encode([
+            'superuser' => '1', 
+            ]),
+        ]);
+
+        $other = User::factory()->create();
+
+        $filter = PredefinedFilter::factory()->create([
+            'is_public' => true,
+            'created_by' => $other->id,
+        ]);
+
+        $this->actingAs($superuser, 'api')
+            ->putJson("/api/v1/predefinedFilters/{$filter->id}", [
+                'name' => 'Updated Filter',
+                'filter_data' => ['a' => 2],
+                'is_public' => true,
+            ])
+            ->assertOk(); 
+    }
+    public function test_superuser_has_delete_permissions()
+    {
+        $superuser = User::factory()->create([
+            'permissions' => json_encode([
+            'superuser' => '1', 
+            ]),
+        ]);
+
+        $other = User::factory()->create();
+
+        $filter = PredefinedFilter::factory()->create([
+            'is_public' => true, 
+            'created_by' => $other->id,
+        ]);
+
+        $this->actingAs($superuser, 'api')
+            ->deleteJson("/api/v1/predefinedFilters/{$filter->id}")
+            ->assertOk();
+    }
+    
+
 }
