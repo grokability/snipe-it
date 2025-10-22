@@ -240,7 +240,6 @@ return [
     'per_page'				=> 'Results Per Page',
     'predefined_filter'		=> 'Predefined Filter',
     'predefined_Filters'	=> 'Predefined Filters',
-    'predefined_filter_saved_successfully' => 'The predefined filter was created successfully',
     'predefined_filter_deleted_successfully' => 'The predefined filter was deleted successfully',
     'predefined_filter_updated_successfully' => 'The predefined filter was updated successfully',
     'previous'				=> 'Previous',
@@ -736,7 +735,5 @@ return [
     'private' => 'Private',
     'validation_required' => 'Please enter a filter name',
     'can_not_save_empty_filter' => 'You can not save a empty filter',
-    'can_not_update_empty_filter' => 'You can not update a empty filter',
-    'at_least_one_is_group_required_for_public_filter' => 'You must select at least one group or set the filter to private.',
-    
+    'can_not_update_empty_filter' => 'You can not update a empty filter',    
 ];
