@@ -113,9 +113,9 @@
                     this.refresh();
             });
         })
-            .catch(err => {
+        .catch(err => {
             console.error("Failed to apply predefined filter:", err);
-                Livewire.dispatch('showNotification', { type: 'error', message: '{{ trans('general.failed_to_apply_predefined_filter') }}'});
+            Livewire.dispatch('showNotification', { type: 'error', message: '{{ trans('general.failed_to_apply_predefined_filter') }}'});
             //setAdvancedSearchPanelFilterEnabledState(false);
         });
     }
@@ -232,15 +232,24 @@ document.addEventListener('livewire:init', function () {
     controller.bindEvents();
 
     function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
 
+
+    sleep().then(async () => {
+        const filterSection = document.getElementById('filterSection');
+        console.log(filterSection);
+        filterSection.classList.remove('hide');
+        container.resolve("filterFormManager").clearAll();
+        await sleep();
+        filterSection.classList.add('hide');
+    });
 
     @if(isset($predefined_filter_id))
         // To set a predefined filter and open the modal over the url
         controller.updateFilterWithPredefined(null, {{ $predefined_filter_id }});
 
-        const filterSection = document.getElementById('filterSection');
+        //filterSection = document.getElementById('filterSection'); // Is defined above
         filterSection.classList.remove('hide');
 
         @if(!empty($predefined_filter_edit_modal_open) && $predefined_filter_edit_modal_open == true)
