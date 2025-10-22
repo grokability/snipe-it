@@ -19,21 +19,27 @@ export default class FilterFormManager {
 
         // Select2
         document.querySelectorAll('select[id^="advancedSearch_"]').forEach(el => {
-            if (el.id === 'advancedSearch_assigned_to') {
-                this.inputs.push(new AssignedEntityFilterInput(el, this.apiService));
-            } else {
-                this.inputs.push(new SelectFilterInput(el, this.apiService));
-            }
+            queueMicrotask(() => {
+                if (el.id === 'advancedSearch_assigned_to') {
+                    this.inputs.push(new AssignedEntityFilterInput(el, this.apiService));
+                } else {
+                    this.inputs.push(new SelectFilterInput(el, this.apiService));
+                }
+            });
         });
 
         // Dates
         document.querySelectorAll('input[id^="advancedSearch_"][id$="_start"][type="date"], input[id^="advancedSearch_"][id$="_end"][type="date"]').forEach(el => {
-            this.inputs.push(new DateFilterInput(el, this.apiService));
+            queueMicrotask(() => {
+                this.inputs.push(new DateFilterInput(el, this.apiService));
+            });
         });
 
         // Text
         document.querySelectorAll('input[id^="advancedSearch_"][type="text"]').forEach(el => {
-            this.inputs.push(new TextFilterInput(el, this.apiService));
+            queueMicrotask(() => {
+                this.inputs.push(new TextFilterInput(el, this.apiService));
+            });
         });
 
 
@@ -54,7 +60,9 @@ export default class FilterFormManager {
     clearAll() {
         //this.collectFilterData();
         this.inputs.forEach(field => {
-            field.clear();
+            queueMicrotask(() => {
+                field.clear();
+            })
         });
     }
 
@@ -90,9 +98,11 @@ export default class FilterFormManager {
     }
 
     setAdvancedSearchPanelFilterEnabledState(state) {
-        const fields = document.getElementById("advancedSearchPanel").getElementsByTagName('*');
-        for (let i = 0; i < fields.length; i++) {
-            fields[i].disabled = state;
-        }
+        queueMicrotask(() => {
+            const fields = document.getElementById("advancedSearchPanel").getElementsByTagName('*');
+            for (let i = 0; i < fields.length; i++) {
+                fields[i].disabled = state;
+            }
+        });
     }
 }
