@@ -37,7 +37,7 @@ return [
     'backups_clean_helptext' => "This can be useful if you're changing between database versions",
     'backups_upload'            => 'Téléverser la sauvegarde',
     'backups_path'              => 'Les sauvegardes sont stockées dans <code>:path</code> sur le serveur',
-    'backups_restore_warning'   => 'Use the restore button <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small> to restore from a previous backup. (This does not currently work with S3 file storage or Docker.)<br><br>Your <strong>entire :app_name database and any uploaded files will be completely replaced</strong> by what\'s in the backup file  ',
+    'backups_restore_warning'   => 'Use the restore button <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small> to restore from a previous backup. (This does not currently work with S3 file storage.)<br><br>Your <strong>entire :app_name database and any uploaded files will be completely replaced</strong> by what\'s in the backup file  ',
     'backups_logged_out'         => 'Tous les utilisateurs existants, y compris vous, seront déconnectés une fois la restauration achevée.',
     'backups_large'             => 'La restauration de fichiers de sauvegardes volumineux peut provoquer une erreur de délai d\'attente (time-out error) et nécessiter d\'être effectuée à l\'aide de la ligne de commande. ',
     'barcode_settings'			=> 'Configuration des codes à barres',

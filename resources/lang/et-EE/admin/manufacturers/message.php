@@ -22,9 +22,11 @@ return array(
     ),
 
     'delete' => array(
-        'confirm'   => 'Kas oled kindel, et soovid selle tootja kustutada?',
+        'confirm' => 'Kas oled kindel, et soovid selle tootja kustutada?',
         'error'   => 'Tootja kustutamisel tekkis probleem. Palun proovi uuesti.',
-        'success' => 'Tootja kustutamine õnnestus.'
+        'success'                => 'Manufacturer deleted successfully.',
+        'bulk_success'           => 'Manufacturers deleted successfully.',
+        'partial_success'        => 'Manufacturer deleted successfully. See additional information below. | :count manufacturers were deleted successfully. See additional information below.',
     )
 
 );

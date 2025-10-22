@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Gérer',
     'field'		                => 'Champ',
     'about_fieldsets_title'		=> 'A propos des fieldsets',
-    'about_fieldsets_text'		=> 'Les jeux de champs permettent de grouper les champs supplémentaires affectés à des modèles d\'actifs.',
+    'about_fieldsets_text'		=> 'Les fieldsets permettent de créer des groupes de champs personnalisés que vous utilisez fréquemment pour des types de modèles spécifiques.',
     'custom_format'             => 'Format Regex personnalisé...',
     'encrypt_field'      	        => 'Chiffrer la valeur de ce champ dans la base de données',
     'encrypt_field_help'      => 'AVERTISSEMENT: Chiffrer un champ en rend la recherche sur le contenu impossible.',

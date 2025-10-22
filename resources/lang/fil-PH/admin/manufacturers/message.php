@@ -22,9 +22,11 @@ return array(
     ),
 
     'delete' => array(
-        'confirm'   => 'Sigurado kaba na gusto mong i-delete ang tagapagsagawang ito?',
+        'confirm' => 'Sigurado kaba na gusto mong i-delete ang tagapagsagawang ito?',
         'error'   => 'Mayroong isyu sa pag-delete ng tagapagsagawa. Mangayaring subukang muli.',
-        'success' => 'Ang Tagapagsagawa na ito ay matagumpay na nai-delete.'
+        'success'                => 'Manufacturer deleted successfully.',
+        'bulk_success'           => 'Manufacturers deleted successfully.',
+        'partial_success'        => 'Manufacturer deleted successfully. See additional information below. | :count manufacturers were deleted successfully. See additional information below.',
     )
 
 );

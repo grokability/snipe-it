@@ -37,7 +37,7 @@ return [
     'backups_clean_helptext' => "Това може да е полесно при смяна на версията на базата",
     'backups_upload'            => 'Качване на архив',
     'backups_path'              => 'Архивите на сървъра са записани в <code>:path</code>',
-    'backups_restore_warning'   => 'Използвайте бутона за възстановяване <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small> ,за да възстановите архивно копие. (Това не работи с S3 файлова система или Docker.)<br><br>Вашата <strong>цяла :app_name датабаза и всички качени файлове ще бъдат заменени</strong> от съдържанието на архива.  ',
+    'backups_restore_warning'   => 'Use the restore button <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small> to restore from a previous backup. (This does not currently work with S3 file storage.)<br><br>Your <strong>entire :app_name database and any uploaded files will be completely replaced</strong> by what\'s in the backup file  ',
     'backups_logged_out'         => 'Всички потребители, включително и вие, ще бъдат отписани след възстановяването.',
     'backups_large'             => 'Много големите архиви може да не могат да се възстановят поради изтичане на времето на сесията и ще трябва да се възстановят ръчно през команден ред. ',
     'barcode_settings'			=> 'Настройки на баркод',

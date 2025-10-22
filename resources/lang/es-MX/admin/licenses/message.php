@@ -51,7 +51,7 @@ return array(
 
     'checkin' => array(
         'error'   => 'Hubo un problema ingresando la licencia. Por favor, inténtelo de nuevo.',
-        'not_reassignable' => 'Seat has been used',
+        'not_reassignable' => 'Se ha usado Seat',
         'success' => 'La licencia fue ingresada correctamente'
     ),
 

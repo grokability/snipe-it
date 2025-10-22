@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Kezelés',
     'field'		                => 'Mező',
     'about_fieldsets_title'		=> 'A mezőcsoportokról',
-    'about_fieldsets_text'		=> 'A mezőkészletek lehetővé teszik, hogy olyan egyéni mezők csoportjait hozza létre, amelyeket gyakran újra használnak bizonyos eszközmodell-típusok.',
+    'about_fieldsets_text'		=> 'A mezőcsoportokkal tudsz létrehozni olyan gyakran használt egyedi mezőket csoportosító speciális eszköz modell típusokat.',
     'custom_format'             => 'Egyedi Regex formátum...',
     'encrypt_field'      	        => 'A mező értékének titkosítása az adatbázisban',
     'encrypt_field_help'      => 'Figyelmeztetés: egy mező titkosítása kereshetetlenné teszi azt.',

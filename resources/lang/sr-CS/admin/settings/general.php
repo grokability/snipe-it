@@ -37,7 +37,7 @@ return [
     'backups_clean_helptext' => "Ovo može biti korisno ako menjate verzije baza popdataka",
     'backups_upload'            => 'Učitavanje rezervne kopije',
     'backups_path'              => 'Rezervne kopije se čuvaju na <code>:path</code>',
-    'backups_restore_warning'   => 'Koristite dugme za vraćanje <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small> da bi ste vratili na raniju rezervnu kopiju. (Ovo trenutno ne radi sa S3 skladištem datoteka ili Docker-om.)<br><br>Vaša <strong>kompletna :app_name baza podataka i sve zakačene datoteke će biti potpuno zamenjene</strong> sa onim što je u rezervnoj kopiji  ',
+    'backups_restore_warning'   => 'Koristite dugme za povraćaj <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small> da bi ste vratili raniju rezervnu kopiju. (Ovo trenutno ne funkcioniše sa S3 skladištem datoteka.)<br><br>Vaša <strong>kompletna :app_name baza podataka i sve poslate datoteke će biti potpuno zamenjene</strong> sa onim što je u datoteci rezervne kopije  ',
     'backups_logged_out'         => 'Svi postojeći korisnici, uključujući i vas, biće odjavljeni kada se vraćanje završi.',
     'backups_large'             => 'Veoma velike rezervne kopije mogu da istekne tokom pokušaja vraćanja i možda će morati da se pokrenu preko komandne linije. ',
     'barcode_settings'			=> 'Podešavanja barkoda',

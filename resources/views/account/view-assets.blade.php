@@ -464,6 +464,9 @@
                       <th class="col-md-2" data-switchable="true" data-visible="false">
                         {{ trans('general.location') }}
                       </th>
+                      <th class="col-md-2" data-switchable="true" data-visible="true">
+                        {{ trans('admin/hardware/form.expected_checkin') }}
+                      </th>
                       @can('self.view_purchase_cost')
                         <th class="col-md-6" data-footer-formatter="sumFormatter" data-fieldname="purchase_cost">
                           {{ trans('general.purchase_cost') }}
@@ -529,6 +532,9 @@
                         </td>
                         <td>
                           {{ ($asset->location) ? $asset->location->name : '' }}
+                        </td>
+                        <td>
+                          {{ ($asset->expected_checkin) ? $asset->expected_checkin_formatted_date : '' }}
                         </td>
                         @can('self.view_purchase_cost')
                         <td>

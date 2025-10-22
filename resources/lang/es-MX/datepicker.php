@@ -61,7 +61,7 @@ return array(
     ],
 
     'months_short' => [
-        'january' => 'Jan',
+        'january' => 'Ene',
         'february' => 'Feb',
         'march' => 'Mar',
         'april' => 'Apr',
@@ -72,7 +72,7 @@ return array(
         'september' => 'Sep',
         'october' => 'Oct',
         'november' => 'Nov',
-        'december' => 'Dec',
+        'december' => 'Dic',
     ],
 
 );

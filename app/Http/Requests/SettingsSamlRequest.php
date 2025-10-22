@@ -109,7 +109,7 @@ class SettingsSamlRequest extends FormRequest
                 ];
 
                 $pkey = openssl_pkey_new([
-                    'private_key_bits' => config('app.saml_key_size'),
+                    'private_key_bits' => (int) config('app.saml_key_size'),
                     'private_key_type' => OPENSSL_KEYTYPE_RSA,
                 ]);
 

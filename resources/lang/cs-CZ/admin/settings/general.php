@@ -37,9 +37,7 @@ return [
     'backups_clean_helptext' => "To může být užitečné, pokud měníte mezi verzemi databáze",
     'backups_upload'            => 'Nahrát zálohu',
     'backups_path'              => 'Zálohy jsou uloženy v <code>:path</code>',
-    'backups_restore_warning'   => 'Použijte tlačítko pro obnovení <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small> pro obnovení ze zálohy. (Tato funkce aktuálně nefunguje s úložištěm S3 ani při použití Dockeru.)<br><br> Vaše <strong> databáze aplikace :app_name a všechny nahrané soubory budou kompletně přepsány </strong>obsahem záložního souboru 
-
-',
+    'backups_restore_warning'   => 'Use the restore button <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small> to restore from a previous backup. (This does not currently work with S3 file storage.)<br><br>Your <strong>entire :app_name database and any uploaded files will be completely replaced</strong> by what\'s in the backup file  ',
     'backups_logged_out'         => 'Všichni stávající uživatelé, včetně vás, budou odhlášeni po dokončení obnovy.',
     'backups_large'             => 'Velmi velké zálohy mohou při obnovování způsobit time out chybu a možná budou muset být spuštěny přes příkazový řádek. ',
     'barcode_settings'			=> 'Nastavení čárového kódu',

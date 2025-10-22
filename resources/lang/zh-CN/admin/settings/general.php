@@ -37,7 +37,7 @@ return [
     'backups_clean_helptext' => "如果您数据库版本发生变化，这可能是有用的",
     'backups_upload'            => '上传备份',
     'backups_path'              => '服务器上的备份存储在 <code>:path</code>',
-    'backups_restore_warning'   => '使用恢复按钮 <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small> 从上次备份恢复。 (目前无法使用 S3 文件存储或 Docker容器。)<br><br>您的 <strong>完整的 :app_name 数据库和任何上传的文件将被备份文件中的内容完全替换</strong>  ',
+    'backups_restore_warning'   => 'Use the restore button <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small> to restore from a previous backup. (This does not currently work with S3 file storage.)<br><br>Your <strong>entire :app_name database and any uploaded files will be completely replaced</strong> by what\'s in the backup file  ',
     'backups_logged_out'         => '恢复完成后，包括您在内的所有现有用户都将被注销。',
     'backups_large'             => '非常大的备份在恢复尝试时可能会超时，可能仍然需要通过命令行运行。 ',
     'barcode_settings'			=> '条码设置',

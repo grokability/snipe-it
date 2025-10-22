@@ -5,7 +5,7 @@ return [
     'manage'                    => '관리',
     'field'		                => '항목',
     'about_fieldsets_title'		=> '항목세트란',
-    'about_fieldsets_text'		=> 'Fieldsets allow you to create groups of custom fields that are frequently re-used for specific asset model types.',
+    'about_fieldsets_text'		=> '항목세트는 특정 자산 모델에 사용하기 위해 빈번하게 재사용되는 사용자 정의 항목의 그룹을 생성하는 것을 허용합니다.',
     'custom_format'             => 'Custom Regex format...',
     'encrypt_field'      	        => '필드 암호화',
     'encrypt_field_help'      => '경고: 항목을 암호화 하면 검색을 할 수 없습니다.',

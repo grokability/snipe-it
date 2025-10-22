@@ -18,9 +18,11 @@ return array(
     ),
 
     'delete' => array(
-        'confirm'   => 'Bist Du sicher, dass du diese Kategorie löschen willst?',
-        'error'   => 'Beim löschen der Kategorie ist ein Problem aufgetreten. Bitte versuche es erneut.',
-        'success' => 'Die Kategorie wurde erfolgreich gelöscht.'
+        'confirm'                => 'Bist Du sicher, dass du diese Kategorie löschen willst?',
+        'error'                  => 'Beim löschen der Kategorie ist ein Problem aufgetreten. Bitte versuche es erneut.',
+        'success'                => 'Kategorie wurde erfolgreich gelöscht.',
+        'bulk_success'           => 'Kategorien wurden erfolgreich gelöscht.',
+        'partial_success'        => 'Kategorie wurde erfolgreich gelöscht. Siehe weitere Informationen unten. | :count Kategorien wurden erfolgreich gelöscht. Siehe weitere Informationen unten.',
     )
 
 );

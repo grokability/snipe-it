@@ -37,7 +37,7 @@ return [
     'backups_clean_helptext' => "Toto môže byť užitočne ak prepínate medzi dvoma databázovými verziami",
     'backups_upload'            => 'Nahrať zálohu',
     'backups_path'              => 'Zálohy na servery sú uložené v <code>:path</code>',
-    'backups_restore_warning'   => 'Use the restore button <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small> to restore from a previous backup. (This does not currently work with S3 file storage or Docker.)<br><br>Your <strong>entire :app_name database and any uploaded files will be completely replaced</strong> by what\'s in the backup file  ',
+    'backups_restore_warning'   => 'Use the restore button <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small> to restore from a previous backup. (This does not currently work with S3 file storage.)<br><br>Your <strong>entire :app_name database and any uploaded files will be completely replaced</strong> by what\'s in the backup file  ',
     'backups_logged_out'         => 'Všetci existujúci používatelia vrátane Vás budú odhlásení, keď sa ukončí obnova.',
     'backups_large'             => 'Veľmi veľké zálohy môžu naraziť na časový limit počas pokusu o obnovu a možno budú musieť byť spustené cez príkazový riadok. ',
     'barcode_settings'			=> 'Nastavnia čiarového kódu',

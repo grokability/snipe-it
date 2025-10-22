@@ -18,9 +18,11 @@ return array(
     ),
 
     'delete' => array(
-        'confirm'   => 'האם אתה בטוח שברצונך למחוק קטגוריה זו?',
-        'error'   => 'היתה בעיה במחיקת הקטגוריה. בבקשה נסה שוב.',
-        'success' => 'הקטגוריה נמחקה בהצלחה.'
+        'confirm'                => 'האם אתה בטוח שברצונך למחוק קטגוריה זו?',
+        'error'                  => 'היתה בעיה במחיקת הקטגוריה. בבקשה נסה שוב.',
+        'success'                => 'Category was deleted successfully.',
+        'bulk_success'           => 'Categories were deleted successfully.',
+        'partial_success'        => 'Category deleted successfully. See additional information below. | :count categories were deleted successfully. See additional information below.',
     )
 
 );

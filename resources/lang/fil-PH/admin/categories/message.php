@@ -18,9 +18,11 @@ return array(
     ),
 
     'delete' => array(
-        'confirm'   => 'Sigurado kaba na gusto mong i-delete ang kategoryang ito?',
-        'error'   => 'Mayroong isyu sa pag-delete ng kategoryan. Mangyaring subukang muli.',
-        'success' => 'Matagumpay na nai-delete ang kategorya.'
+        'confirm'                => 'Sigurado kaba na gusto mong i-delete ang kategoryang ito?',
+        'error'                  => 'Mayroong isyu sa pag-delete ng kategoryan. Mangyaring subukang muli.',
+        'success'                => 'Category was deleted successfully.',
+        'bulk_success'           => 'Categories were deleted successfully.',
+        'partial_success'        => 'Category deleted successfully. See additional information below. | :count categories were deleted successfully. See additional information below.',
     )
 
 );

@@ -51,15 +51,15 @@
 
                     <div class="col-md-12">
 
-                        <fieldset name="logo-preferences" class="bottom-padded">
-                            <legend class="highlight">
+                        <fieldset name="logo-preferences"">
+                            <x-form-legend>
                                 {{ trans('admin/settings/general.legends.logos') }}
-                            </legend>
+                            </x-form-legend>
 
                             <!-- Site name -->
                             <div class="form-group {{ $errors->has('site_name') ? 'error' : '' }}">
 
-                                <div class="col-md-3">
+                                <div class="col-md-3 text-right">
                                     <label for="site_name">{{ trans('admin/settings/general.site_name') }}</label>
                                 </div>
                                 <div class="col-md-7 required">
@@ -81,7 +81,7 @@
 
                             <!-- Branding -->
                             <div class="form-group {{ $errors->has('brand') ? 'error' : '' }}">
-                                <div class="col-md-3">
+                                <div class="col-md-3 text-right">
                                     <label for="brand">{{ trans('admin/settings/general.web_brand') }}</label>
                                 </div>
                                 <div class="col-md-9">
@@ -176,7 +176,7 @@
 
                             <!-- Load gravatar -->
                             <div class="form-group {{ $errors->has('load_remote') ? 'error' : '' }}">
-                                <div class="col-md-3">
+                                <div class="col-md-3 text-right">
                                     <strong>{{ trans('admin/settings/general.load_remote') }}</strong>
                                 </div>
                                 <div class="col-md-9">
@@ -196,7 +196,7 @@
 
                             <!-- Include logo in print assets -->
                             <div class="form-group">
-                                <div class="col-md-3">
+                                <div class="col-md-3 text-right">
                                     <strong>{{ trans('admin/settings/general.logo_print_assets') }}</strong>
                                 </div>
                                 <div class="col-md-9">
@@ -211,7 +211,7 @@
 
                             <!-- show urls in emails-->
                             <div class="form-group">
-                                <div class="col-md-3">
+                                <div class="col-md-3 text-right">
                                     <strong>{{ trans('admin/settings/general.show_url_in_emails') }}</strong>
                                 </div>
                                 <div class="col-md-9">
@@ -225,14 +225,14 @@
                         </fieldset>
                         <!-- colors and skins -->
 
-                        <fieldset name="color-preferences" class="bottom-padded">
-                            <legend class="highlight">
+                        <fieldset name="color-preferences"">
+                            <x-form-legend>
                                 {{ trans('admin/settings/general.legends.colors') }}
-                            </legend>
+                            </x-form-legend>
 
                             <!-- Header color -->
                             <div class="form-group {{ $errors->has('header_color') ? 'error' : '' }}">
-                                <div class="col-md-3">
+                                <div class="col-md-3 text-right">
                                     <label for="header_color">{{ trans('admin/settings/general.header_color') }}</label>
                                 </div>
                                 <div class="col-md-5 col-xs-5 col-sm-3 col-md-4 col-lg-3 col-xl-3">
@@ -248,7 +248,7 @@
 
                             <!-- Skin -->
                             <div class="form-group {{ $errors->has('skin') ? 'error' : '' }}">
-                                <div class="col-md-3">
+                                <div class="col-md-3 text-right">
                                     <label for="skin">{{ trans('general.skin') }}</label>
                                 </div>
                                 <div class="col-md-9">
@@ -259,7 +259,7 @@
 
                             <!-- Custom css -->
                             <div class="form-group {{ $errors->has('custom_css') ? 'error' : '' }}">
-                                <div class="col-md-3">
+                                <div class="col-md-3 text-right">
                                     <label for="custom_css">{{ trans('admin/settings/general.custom_css') }}</label>
                                 </div>
                                 <div class="col-md-9">
@@ -302,14 +302,14 @@
 
                             <!-- colors and skins -->
 
-                            <fieldset name="footer-preferences" class="bottom-padded">
-                                <legend class="highlight">
+                            <fieldset name="footer-preferences"">
+                                <x-form-legend>
                                     {{ trans('admin/settings/general.legends.footer') }}
-                                </legend>
+                                </x-form-legend>
 
                                 <!-- Support Footer -->
                                 <div class="form-group {{ $errors->has('support_footer') ? 'error' : '' }}">
-                                    <div class="col-md-3">
+                                    <div class="col-md-3 text-right">
                                         <label for="support_footer">{{ trans('admin/settings/general.support_footer') }}</label>
                                     </div>
                                     <div class="col-md-9">
@@ -343,7 +343,7 @@
 
                                 <!-- Version Footer -->
                                 <div class="form-group {{ $errors->has('version_footer') ? 'error' : '' }}">
-                                    <div class="col-md-3">
+                                    <div class="col-md-3 text-right">
                                         <label for="version_footer">{{ trans('admin/settings/general.version_footer') }}</label>
                                     </div>
                                     <div class="col-md-9">
@@ -376,7 +376,7 @@
 
                                 <!-- Additional footer -->
                                 <div class="form-group {{ $errors->has('footer_text') ? 'error' : '' }}">
-                                    <div class="col-md-3">
+                                    <div class="col-md-3 text-right">
                                         <label for="footer_text">{{ trans('admin/settings/general.footer_text') }}</label>
                                     </div>
                                     <div class="col-md-9">

@@ -18,9 +18,11 @@ return array(
     ),
 
     'delete' => array(
-        'confirm'   => 'Vai tiešām vēlaties dzēst šo kategoriju?',
-        'error'   => 'Radās problēma, dzēšot kategoriju. Lūdzu mēģiniet vēlreiz.',
-        'success' => 'Kategorija tika veiksmīgi dzēsta.'
+        'confirm'                => 'Vai tiešām vēlaties dzēst šo kategoriju?',
+        'error'                  => 'Radās problēma, dzēšot kategoriju. Lūdzu mēģiniet vēlreiz.',
+        'success'                => 'Category was deleted successfully.',
+        'bulk_success'           => 'Categories were deleted successfully.',
+        'partial_success'        => 'Category deleted successfully. See additional information below. | :count categories were deleted successfully. See additional information below.',
     )
 
 );
