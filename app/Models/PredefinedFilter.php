@@ -53,6 +53,12 @@ class PredefinedFilter extends Model
 
     public function userHasPermission(User $user, string $action): bool
     {
+
+        // Give the superuser all permissions no matter in which groups he is
+        if($user->isSuperUser()) {
+            return true;
+        }
+
         // If filter is private AND is_owner AND action != create he can do everything
         // such as create private, edit and delete
         // note the 'create' permission is only for creating public filters. 

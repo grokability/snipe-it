@@ -8,6 +8,7 @@ use Livewire\Attributes\Validate;
 
 use App\Models\PredefinedFilter;
 use App\Services\PredefinedFilterService;
+use App\Models\PermissionGroup;
 
 enum FilterVisibility: string
 {
@@ -59,11 +60,19 @@ class Modal extends Component
         $this->filterId = $predefinedFilterId;
 
         $user = auth()->user();
-        $this->groupSelectOtherOptions = $user
+
+        // If the user a superuser show him all groups
+        if($user->isSuperUser()) {
+            $this->groupSelectOtherOptions = PermissionGroup::all()->pluck("id")->toArray();
+
+        } else {
+            // Show only the groups there the user is member of
+            $this->groupSelectOtherOptions = $user
             ->groups()
             ->pluck("id")
             ->toArray();
-
+        }
+ 
         if (
             $this->modalActionType === AdvancedsearchModalAction::Edit &&
             $predefinedFilterId !== null
