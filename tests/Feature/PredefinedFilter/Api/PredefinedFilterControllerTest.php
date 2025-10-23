@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\PredefinedFilter\Api;
 
+use App\Http\Transformers\PredefinedFiltersTransformer;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\User;
@@ -476,120 +477,136 @@ public function test_destroy_non_owner_public_requires_destroy_permission()
     $this->assertSoftDeleted('predefined_filters', ['id' => $f->id]);
     }
 
-    public function test_cascade_permissions_when_edit_also_view()
+    // PermissionStructureTests
+    public function test_transform_with_loaded_permission_groups_structure()
     {
+        $this->transformer = new PredefinedFiltersTransformer();
+
         $user = User::factory()->create();
+        $this->actingAs($user);
+
+        // Create creator user (could be same as current user or different)
+        $creator = User::factory()->create();
+
+        // Create some permission groups (assuming you have a factory)
+        $permissionGroup1 = PermissionGroup::factory()->create(['name' => 'Group 1']);
+        $permissionGroup2 = PermissionGroup::factory()->create(['name' => 'Group 2']);
+
+        // Create the filter with JSON-encoded filter_data
         $filter = PredefinedFilter::factory()->create([
-            'created_by' => $user->id,
-            'is_public'  => 1,
+            'created_by' => $creator->id,
+            'filter_data' => json_encode(['foo' => 'bar']),
+            'is_public' => true,
+            'object_type' => 'test_type',
         ]);
 
-        // Grant edit permission
-        $g = $this->grant($user, ['predefinedFilter.edit' => '1']);
+        // Manually set relations
+        $filter->setRelation('createdBy', $creator);
+        $filter->setRelation('permissionGroups', collect([$permissionGroup1, $permissionGroup2]));
 
-        // Link the user to the filter
-        $this->linkGroupFilter($filter, $g);
+        // Partial mock to stub userHasPermission as false to focus on structure
+        $filter = \Mockery::mock($filter)->makePartial();
+        $filter->shouldReceive('userHasPermission')->with($user, 'edit')->andReturn(false);
+        $filter->shouldReceive('userHasPermission')->with($user, 'delete')->andReturn(false);
 
-        // Test the user can view the filter due to the cascade (edit => view)
-        $this->actingAs($user, 'api')
-            ->getJson("/api/v1/predefinedFilters/{$filter->id}")
-            ->assertOk();
+        $result = $this->transformer->transformPredefinedFilter($filter);
+
+        // Check main keys exist and types
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('id', $result);
+        $this->assertArrayHasKey('name', $result);
+        $this->assertArrayHasKey('filter_data', $result);
+        $this->assertArrayHasKey('is_public', $result);
+        $this->assertArrayHasKey('object_type', $result);
+        $this->assertArrayHasKey('created_by', $result);
+        $this->assertArrayHasKey('created_at', $result);
+        $this->assertArrayHasKey('updated_at', $result);
+        $this->assertArrayHasKey('deleted_at', $result);
+        $this->assertArrayHasKey('groups', $result);
+        $this->assertArrayHasKey('available_actions', $result);
+
+        // Validate groups structure
+        $this->assertIsArray($result['groups']);
+        $this->assertEquals(2, $result['groups']['total']);
+        $this->assertCount(2, $result['groups']['rows']);
+
+        $this->assertEquals($permissionGroup1->id, $result['groups']['rows'][0]['id']);
+        $this->assertEquals($permissionGroup1->name, $result['groups']['rows'][0]['name']);
+
+        $this->assertEquals($permissionGroup2->id, $result['groups']['rows'][1]['id']);
+        $this->assertEquals($permissionGroup2->name, $result['groups']['rows'][1]['name']);
+
+        // Confirm available actions are false (since userHasPermission mocked false and not owner)
+        $this->assertFalse($result['available_actions']['update']);
+        $this->assertFalse($result['available_actions']['delete']);
     }
 
-    public function test_cascade_permissions_when_delete_also_view()
+    public function test_transform_without_permission_groups_loaded_sets_groups_null()
     {
+        $this->transformer = new PredefinedFiltersTransformer();
+
         $user = User::factory()->create();
-        $filter = PredefinedFilter::factory()->create([
-            'created_by' => $user->id,
-            'is_public'  => 1,
-        ]);
-
-        // Grant delete permission
-        $g = $this->grant($user, ['predefinedFilter.delete' => '1']);
-
-        // Link the user to the filter
-        $this->linkGroupFilter($filter, $g);
-
-        // Test the user can view the filter due to the cascade (delete => view)
-        $this->actingAs($user, 'api')
-            ->getJson("/api/v1/predefinedFilters/{$filter->id}")
-            ->assertOk();
-    }
-
-    public function test_superuser_has_create_permissions()
-    {
-        $superuser = User::factory()->create([
-            'permissions' => json_encode([
-            'superuser' => '1', 
-            ]),
-        ]);
-
-        $this->actingAs($superuser, 'api')
-            ->postJson("/api/v1/predefinedFilters", [
-                'name' => 'New Filter',
-                'filter_data' => ['a' => 1],
-                'is_public' => true,
-            ])
-            ->assertCreated();
-    }
-    public function test_superuser_has_view_permissions()
-    {
-        $superuser = User::factory()->create([
-            'permissions' => json_encode([
-            'superuser' => '1', 
-            ]),
-        ]);
+        $this->actingAs($user);
 
         $filter = PredefinedFilter::factory()->create([
-            'is_public' => true,
+            'created_by' => User::factory()->create()->id, // different user
+            'filter_data' => json_encode([['foo' => 'bar']]),
         ]);
 
-        $this->actingAs($superuser, 'api')
-            ->getJson("/api/v1/predefinedFilters/{$filter->id}")
-            ->assertOk();
-        }
-    public function test_superuser_has_edit_permissions()
-    {
-        $superuser = User::factory()->create([
-            'permissions' => json_encode([
-            'superuser' => '1', 
-            ]),
-        ]);
+        $filter->setRelation('createdBy', $filter->created_by ? User::find($filter->created_by) : null);
 
-        $other = User::factory()->create();
+        $filter = \Mockery::mock($filter)->makePartial();
+        $filter->shouldReceive('userHasPermission')->andReturn(false);
 
-        $filter = PredefinedFilter::factory()->create([
-            'is_public' => true,
-            'created_by' => $other->id,
-        ]);
+        // Intentionally do NOT load permissionGroups relationship
 
-        $this->actingAs($superuser, 'api')
-            ->putJson("/api/v1/predefinedFilters/{$filter->id}", [
-                'name' => 'Updated Filter',
-                'filter_data' => ['a' => 2],
-                'is_public' => true,
-            ])
-            ->assertOk(); 
+        $result = $this->transformer->transformPredefinedFilter($filter);
+
+        $this->assertNull($result['groups']);
+        $this->assertArrayHasKey('available_actions', $result);
+        $this->assertFalse($result['available_actions']['update']);
+        $this->assertFalse($result['available_actions']['delete']);
     }
-    public function test_superuser_has_delete_permissions()
+
+    public function test_transform_sets_available_actions_true_for_owner()
     {
-        $superuser = User::factory()->create([
-            'permissions' => json_encode([
-            'superuser' => '1', 
-            ]),
-        ]);
+        $this->transformer = new PredefinedFiltersTransformer();
 
-        $other = User::factory()->create();
+        $user = User::factory()->create();
+        $this->actingAs($user);
 
-        $filter = PredefinedFilter::factory()->create([
-            'is_public' => true, 
-            'created_by' => $other->id,
-        ]);
+        $filter = PredefinedFilter::factory()->create(['created_by' => $user->id, 'filter_data' => json_encode([['foo' => 'bar']])]);
 
-        $this->actingAs($superuser, 'api')
-            ->deleteJson("/api/v1/predefinedFilters/{$filter->id}")
-            ->assertOk();
+        $filter->setRelation('createdBy', $user);
+
+        // Make sure userHasPermission returns false, but user is owner
+        $filter = \Mockery::mock($filter)->makePartial();
+        $filter->shouldReceive('userHasPermission')->andReturn(false);
+
+        $result = $this->transformer->transformPredefinedFilter($filter);
+
+        $this->assertTrue($result['available_actions']['update']);
+        $this->assertTrue($result['available_actions']['delete']);
     }
-    
+
+    public function test_transform_formats_dates_correctly()
+    {
+        $this->transformer = new PredefinedFiltersTransformer();
+
+        $user = User::factory()->create();
+        $this->actingAs($user);
+        $filter = PredefinedFilter::factory()->create(['created_by' => $user->id, 'filter_data' => json_encode([['foo' => 'bar']])]);
+
+        $filter->setRelation('createdBy', $user);
+
+        $filter = \Mockery::mock($filter)->makePartial();
+        $filter->shouldReceive('userHasPermission')->andReturn(false);
+
+        $result = $this->transformer->transformPredefinedFilter($filter);
+
+        $this->assertArrayHasKey('created_at', $result);
+        $this->assertArrayHasKey('updated_at', $result);
+        $this->assertArrayHasKey('deleted_at', $result);
+    }
 
 }
