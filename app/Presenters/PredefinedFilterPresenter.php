@@ -64,7 +64,7 @@ class PredefinedFilterPresenter extends Presenter
                 'formatter' => 'usersLinkObjFormatter',
             ], [
                 'field' => 'groups',
-                'searchable' => true,
+                'searchable' => false,
                 'sortable' => false,
                 'switchable' => true,
                 'title' => trans('general.groups'),

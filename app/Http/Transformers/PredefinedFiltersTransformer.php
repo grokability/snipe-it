@@ -5,6 +5,7 @@ namespace App\Http\Transformers;
 use App\Helpers\Helper;
 use Illuminate\Support\Collection;
 use App\Models\Setting;
+use Log;
 
 class PredefinedFiltersTransformer 
 {
@@ -38,7 +39,24 @@ class PredefinedFiltersTransformer
         ];
 
         if ($filter->relationLoaded('permissionGroups')) {
-            $array['permission_groups'] = $filter->permissionGroups->pluck('name')->toArray();
+
+            $permissionGroups = $filter->permissionGroups;
+
+            $groups = [
+                'total' => $permissionGroups->count(),
+                'rows' => []
+            ];
+
+            foreach ($permissionGroups as $group){
+                $groups['rows'][] = [
+                    'id' => $group->id,
+                    'name' => $group->name
+                ];
+            }
+            $array['groups'] = $groups;
+        } else {
+            Log::error('!relationLoaded');
+            $array['groups'] = null;
         }
 
         $permissions_array['available_actions'] = [

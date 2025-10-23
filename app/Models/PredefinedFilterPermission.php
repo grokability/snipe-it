@@ -38,4 +38,9 @@ class PredefinedFilterPermission extends Model
     {
         return $this->belongsTo(PredefinedFilter::class, 'predefined_filter_id');
     }
+
+    public function group()
+    {
+        return $this->belongsTo(PermissionGroup::class, 'permission_group_id');
+    }
 }
