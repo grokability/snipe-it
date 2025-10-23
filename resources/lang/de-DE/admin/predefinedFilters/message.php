@@ -15,12 +15,16 @@ return array(
 
     'update' => array(
         'not_allowed_to_change_isPublic'=> "Sie haben nicht die Berechtigungen um diesen Filter öffentlich zu machen.",
+        'at_least_one_is_group_required_for_public_filter' => 'Bitte mindestens eine Gruppe auswählen oder setze den Filter auf Privat.',
         'not_allowed_to_edit'=> "Sie haben nicht die Berechtigungen um diesen Filter zu bearbeiten",
-        'success' => 'Filter erfolgreich bearbeitet.'
+        'success' => 'Filter erfolgreich bearbeitet.',
+        'validation_error'=> 'Ein Fehler ist aufgetreten, bitte setzen Sie zumindest einen Namen, Daten zum Filtern und falls öffentlich eine Gruppe.',
+        'filterData_required' => 'Keine Daten zum Filtern gesetzt. Diese sind Vorraussetzung.'
     ),
 
     'delete' => array(
         'confirm'   => 'Sind sie sicher, dass sie diesen Filter löschen wollen?',
+        'error' => 'Ein Fehler ist aufgetreten. Bitte erneut versuchen.',
         'not_allowed_to_delete'=> "Die haben nicht die Berechtigungen um diesen Filter zu löschen",
         'success' => 'Filter erfolgreich gelöscht.'
     ),

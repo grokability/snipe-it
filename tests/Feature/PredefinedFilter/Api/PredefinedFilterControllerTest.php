@@ -390,7 +390,7 @@ class PredefinedFilterControllerTest extends TestCase
             ])
             ->assertStatus(403);
             
-        $g = $this->grant($other, ['predefinedFilter.update'=>'1']);
+        $g = $this->grant($other, ['predefinedFilter.edit'=>'1']);
         $this->linkGroupFilter($f, $g);
             
         $this->actingAs($other, 'api')
@@ -441,7 +441,7 @@ public function test_destroy_non_owner_public_requires_destroy_permission()
         ->deleteJson("/api/v1/predefinedFilters/{$f->id}")
         ->assertStatus(403);
 
-    $g = $this->grant($other, ['predefinedFilter.destroy' => '1']);
+    $g = $this->grant($other, ['predefinedFilter.delete' => '1']);
     $this->linkGroupFilter($f, $g);
 
     $this->actingAs($other, 'api')
@@ -467,7 +467,7 @@ public function test_destroy_non_owner_public_requires_destroy_permission()
     public function test_destroy_owner_private_ok_200() 
     {
     $u = User::factory()->create();
-    $f = PredefinedFilter::factory()->create(['created_by'=>$u->id,'is_public'=>0]);
+    $f = PredefinedFilter::factory()->create(['created_by'=>$u->id,'is_public'=>0, 'filter_data'=>[['a'=>'a']]]);
 
     $this->actingAs($u, 'api')
         ->deleteJson("/api/v1/predefinedFilters/{$f->id}")
