@@ -154,27 +154,30 @@ class SelectFilterInput extends FilterInput {
                                 $existingOption.prop('selected', true);
                             }
 
-                            this.setSearchOperator(logic, operator)
+                            this.setSearchOperator(logic, operator);
 
                             $(this.element).trigger('change');
                             return responseJson;
                         });
                     });
             } else {
-                // Directly insert/select string value
-                const $existingOption = $(this.element).find(`option[value='${newValue}']`);
+                queueMicrotask(() => {
+                    // Directly insert/select string value
+                    this.setSearchOperator(logic, operator);
+                    const existingOption = $(this.element).find(`option[value='${newValue}']`);
 
-                if ($existingOption.length === 0) {
-                    const option = new Option(newValue, newValue, true, true);
-                    $(this.element).append(option);
-                } else {
-                    $existingOption.prop('selected', true);
-                }
+                    if (existingOption.length === 0) {
+                        const option = new Option(newValue, newValue, true, true);
+                        $(this.element).append(option);
+                    } else {
+                        existingOption.prop('selected', true);
+                    }
 
-                $(this.element).trigger('change');
+                    $(this.element).trigger('change');
 
-                // Return a resolved promise for consistency
-                return Promise.resolve({ id: newValue, name: newValue });
+                    // Return a resolved promise for consistency
+                    return Promise.resolve({ id: newValue, name: newValue });
+                });
             }
         });
 
