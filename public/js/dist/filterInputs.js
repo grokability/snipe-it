@@ -27,10 +27,15 @@ class FilterInput {
     setValue(newValue, logic, operator) {
         return new Promise((resolve, reject) => {
             try {
-                this.element.value = newValue;
+                queueMicrotask(() => {
+                    this.element.value = newValue;
+                });
+
+
                 this.setSearchOperator(logic, operator)
             }
             catch (e) {
+                console.error(e);
                 reject(e);
             }
             resolve(newValue);
