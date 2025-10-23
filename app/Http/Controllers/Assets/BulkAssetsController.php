@@ -240,10 +240,6 @@ class BulkAssetsController extends Controller
             $custom_fields_to_null[str_replace('null', '', $key)] = $value;
         }
 
-
-
-
-
      
         if (! $request->filled('ids') || count($request->input('ids')) == 0) {
             return redirect($bulk_back_url)->with('error', trans('admin/hardware/message.update.no_assets_selected'));
@@ -274,6 +270,7 @@ class BulkAssetsController extends Controller
             || ($request->filled('company_id'))
             || ($request->filled('status_id'))
             || ($request->filled('model_id'))
+            || ($request->filled('notes'))
             || ($request->filled('next_audit_date'))
             || ($request->filled('asset_eol_date'))
             || ($request->filled('null_name'))

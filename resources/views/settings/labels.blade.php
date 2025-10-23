@@ -421,14 +421,14 @@
                                 <div class="col-md-3 text-right">
                                     <label for="labels_width" class="control-label">{{ trans('admin/settings/general.label_dimensions') }}</label>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-3 text-right">
                                     <div class="input-group">
                                         <input class="form-control" aria-label="labels_width" name="labels_width" type="text" value="{{ old('labels_width', $setting->labels_width) }}" id="labels_width">
                                         <div class="input-group-addon">{{ trans('admin/settings/general.width_w') }}</div>
                                     </div>
                                     {!! $errors->first('labels_width', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-3 text-right">
                                     <div class="input-group">
                                         <input class="form-control" aria-label="labels_height" name="labels_height" type="text" value="{{ old('labels_height', $setting->labels_height) }}">
                                         <div class="input-group-addon">{{ trans('admin/settings/general.height_h') }}</div>
@@ -441,13 +441,13 @@
                                 <div class="col-md-3 text-right">
                                     <label for="labels_display_sgutter">{{ trans('admin/settings/general.label_gutters') }}</label>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-3 text-right">
                                     <div class="input-group">
                                         <input class="form-control" aria-label="labels_display_sgutter" name="labels_display_sgutter" type="text" value="{{ old('labels_display_sgutter', $setting->labels_display_sgutter) }}" id="labels_display_sgutter">
                                         <div class="input-group-addon">{{ trans('admin/settings/general.horizontal') }}</div>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-3 text-right">
                                     <div class="input-group">
                                         <input class="form-control" aria-label="labels_display_bgutter" name="labels_display_bgutter" type="text" value="{{ old('labels_display_bgutter', $setting->labels_display_bgutter) }}">
                                         <div class="input-group-addon">{{ trans('admin/settings/general.vertical') }}</div>
@@ -463,7 +463,7 @@
                                 <div class="col-md-3 text-right">
                                     <label for="labels_pmargin_top">{{ trans('admin/settings/general.page_padding') }}</label>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-3 text-right">
                                     <div class="input-group" style="margin-bottom: 15px;">
                                         <input class="form-control" aria-label="labels_pmargin_top" name="labels_pmargin_top" type="text" value="{{ old('labels_pmargin_top', $setting->labels_pmargin_top) }}" id="labels_pmargin_top">
                                         <div class="input-group-addon">{{ trans('admin/settings/general.top') }}</div>
@@ -490,7 +490,7 @@
                                 <div class="col-md-3 text-right">
                                     <label for="labels_pagewidth" class="control-label">{{ trans('admin/settings/general.page_dimensions') }}</label>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-3 text-right">
                                     <div class="input-group">
                                         <input class="form-control" aria-label="labels_pagewidth" name="labels_pagewidth" type="text" value="{{ old('labels_pagewidth', $setting->labels_pagewidth) }}" id="labels_pagewidth">
                                         <div class="input-group-addon">{{ trans('admin/settings/general.width_w') }}</div>

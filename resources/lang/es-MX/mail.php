@@ -80,7 +80,7 @@ return [
     'new_item_checked' => 'A new item has been checked out under your name, details are below.|:count new items have been checked out under your name, details are below.',
     'new_item_checked_with_acceptance' => 'A new item has been checked out under your name that requires acceptance, details are below.|:count new items have been checked out under your name that requires acceptance, details are below.',
     'new_item_checked_location' => 'A new item has been checked out to :location, details are below.|:count new items have been checked out to :location, details are below.',
-    'recent_item_checked' => 'An item was recently checked out under your name that requires acceptance, details are below.',
+    'recent_item_checked' => 'Un nuevo artículo ha sido asignado a su nombre, los detalles están a continuación.',
     'notes' => 'Notas',
     'password' => 'Contraseña',
     'password_reset' => 'Reiniciar la contraseña',

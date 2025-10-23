@@ -18,9 +18,11 @@ return array(
     ),
 
     'delete' => array(
-        'confirm'   => 'Ydych chi\'n siwr eich bod eisiau dileu\'r categori yma?',
-        'error'   => 'Nid oedd yn bosib dileu\'r categori. Ceisiwch eto o.g.y.dd.',
-        'success' => 'Categori wedi dileu\'n llwyddiannus.'
+        'confirm'                => 'Ydych chi\'n siwr eich bod eisiau dileu\'r categori yma?',
+        'error'                  => 'Nid oedd yn bosib dileu\'r categori. Ceisiwch eto o.g.y.dd.',
+        'success'                => 'Category was deleted successfully.',
+        'bulk_success'           => 'Categories were deleted successfully.',
+        'partial_success'        => 'Category deleted successfully. See additional information below. | :count categories were deleted successfully. See additional information below.',
     )
 
 );

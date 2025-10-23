@@ -9,7 +9,7 @@ return array(
     'assigned_assets' => 'Hozzárendelt eszközök',
     'current_location' => 'Jelenlegi hely',
     'open_map' => 'Megnyitás a :map_provider_icon térképen',
-    'deleted_warning' => 'This location has been deleted. Please restore it before attempting to make any changes.',
+    'deleted_warning' => 'Ez a helyszín törlésre került. Kérjük, állítsa vissza, mielőtt bármilyen módosítást végezne.',
 
 
     'create' => array(
@@ -23,8 +23,8 @@ return array(
     ),
 
     'restore' => array(
-        'error'   => 'Location was not restored, please try again',
-        'success' => 'Location restored successfully.'
+        'error'   => 'A helyszín nem lett visszaállítva, kérjük, próbálja újra',
+        'success' => 'A helyszín sikeresen visszaállítva.'
     ),
 
     'delete' => array(

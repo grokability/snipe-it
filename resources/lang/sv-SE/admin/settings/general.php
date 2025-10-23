@@ -37,7 +37,7 @@ return [
     'backups_clean_helptext' => "Detta kan vara användbart om du skiftar mellan databasversioner",
     'backups_upload'            => 'Ladda upp säkerhetskopia',
     'backups_path'              => 'Säkerhetskopior på servern lagras i <code>:path</code>',
-    'backups_restore_warning'   => 'Use the restore button <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small> to restore from a previous backup. (This does not currently work with S3 file storage or Docker.)<br><br>Your <strong>entire :app_name database and any uploaded files will be completely replaced</strong> by what\'s in the backup file  ',
+    'backups_restore_warning'   => 'Use the restore button <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small> to restore from a previous backup. (This does not currently work with S3 file storage.)<br><br>Your <strong>entire :app_name database and any uploaded files will be completely replaced</strong> by what\'s in the backup file  ',
     'backups_logged_out'         => 'Alla befintliga användare, inklusive du, kommer att loggas ut när din återställning är slutförd.',
     'backups_large'             => 'Mycket stora säkerhetskopior kan stoppa omställningsprocessen och behöver köras via kommandoraden. ',
     'barcode_settings'			=> 'Streckkodsinställningar',

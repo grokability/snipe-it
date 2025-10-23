@@ -37,7 +37,7 @@ return [
     'backups_clean_helptext' => "Isso pode ser útil se você estiver mudando entre versões de banco de dados",
     'backups_upload'            => 'Carregar Backup',
     'backups_path'              => 'As cópias de segurança no servidor são armazenadas em <code>:path</code>',
-    'backups_restore_warning'   => 'Use the restore button <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small> to restore from a previous backup. (This does not currently work with S3 file storage or Docker.)<br><br>Your <strong>entire :app_name database and any uploaded files will be completely replaced</strong> by what\'s in the backup file  ',
+    'backups_restore_warning'   => 'Use the restore button <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small> to restore from a previous backup. (This does not currently work with S3 file storage.)<br><br>Your <strong>entire :app_name database and any uploaded files will be completely replaced</strong> by what\'s in the backup file  ',
     'backups_logged_out'         => 'Todos os usuários existentes, incluindo você, serão desconectados assim que sua restauração for concluída.',
     'backups_large'             => 'Backups muito grandes podem expirar na tentativa de restauração e ainda precisam ser executados via linha de comando. ',
     'barcode_settings'			=> 'Configuração do código de barras',

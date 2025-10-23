@@ -20,9 +20,9 @@ return array(
         'confirm'   => 'Vai tiešām vēlaties dzēst šo piegādātāju?',
         'error'   => 'Radās problēma, izlaižot piegādātāju. Lūdzu mēģiniet vēlreiz.',
         'success' => 'Piegādātājs tika veiksmīgi dzēsts.',
-        'assoc_assets'	 => 'Šis piegādātājs pašlaik ir saistīts ar :asset_count aktīvu(-iem), un to nevar dzēst. Lūdzu, atjauniniet savus aktīvus, lai tie vairs neatsauktos uz šo piegādātāju, tad mēģiniet vēlreiz. ',
-        'assoc_licenses'	 => 'Šis piegādātājs pašlaik ir saistīts ar :licenses_count licenci(-ēm), un to nevar dzēst. Lūdzu, atjauniniet savas licences, lai tās vairs neatsauktos uz šo piegādātāju, tad mēģiniet vēlreiz. ',
-        'assoc_maintenances'	 => 'This supplier is currently associated with :maintenances_count asset maintenances(s) and cannot be deleted. Please update your asset maintenances to no longer reference this supplier and try again. ',
+        'not_found'               => 'Supplier not found.',
+        'bulk_success'            => 'Suppliers were deleted successfully.',
+        'partial_success'        => 'Supplier deleted successfully. See additional information below. | :count suppliers were deleted successfully. See additional information below.',
     )
 
 );

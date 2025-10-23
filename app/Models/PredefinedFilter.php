@@ -58,6 +58,13 @@ class PredefinedFilter extends Model
             return true;
         }
 
+        // If filter is private AND is_owner AND action != create he can do everything
+        // such as create private, edit and delete
+        // note the 'create' permission is only for creating public filters. 
+        if ($user->id == $this->created_by && !$this->is_public && $action != 'create'){
+            return true;
+        }
+
         switch($action){
             case 'create':
                 return $user->hasAccess('predefinedFilter.create');

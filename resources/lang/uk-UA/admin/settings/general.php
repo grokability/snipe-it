@@ -37,7 +37,7 @@ return [
     'backups_clean_helptext' => "Це може бути корисно, якщо ви змінюєте версії бази даних",
     'backups_upload'            => 'Завантажити резервну копію',
     'backups_path'              => 'Резервні копії на сервері зберігаються в <code>:path</code>',
-    'backups_restore_warning'   => 'Скористайтеся кнопкою відновлення <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span> </small> для відновлення з попередньої резервної копії. (Наразі це не працює зі сховищем файлів S3 або Docker.)<br><br>Ваша <strong>вся база даних :app_name і всі завантажені файли будуть повністю замінені</strong> файлом резервної копії.  ',
+    'backups_restore_warning'   => 'Use the restore button <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small> to restore from a previous backup. (This does not currently work with S3 file storage.)<br><br>Your <strong>entire :app_name database and any uploaded files will be completely replaced</strong> by what\'s in the backup file  ',
     'backups_logged_out'         => 'Усі наявні користувачі, включаючи вас, вийдуть з системи після завершення відновлення.',
     'backups_large'             => 'Дуже великі резервні копії можуть вийти за допомогою командного рядка. ',
     'barcode_settings'			=> 'Параметри штрих-кодів',

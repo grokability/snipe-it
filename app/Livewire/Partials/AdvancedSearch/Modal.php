@@ -60,7 +60,8 @@ class Modal extends Component
         $this->filterId = $predefinedFilterId;
 
         $user = auth()->user();
-         // If the user a superuser show him all groups
+
+        // If the user a superuser show him all groups
         if($user->isSuperUser()) {
             $this->groupSelectOtherOptions = PermissionGroup::all()->pluck("id")->toArray();
 

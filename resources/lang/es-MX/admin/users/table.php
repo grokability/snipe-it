@@ -17,7 +17,7 @@ return array(
     'last_login'  			=> 'Último inicio de sesión',
     'last_name'  			=> 'Apellidos',
     'location'  			=> 'Ubicación',
-    'lock_passwords'		=> 'Login details cannot be changed on the demo.',
+    'lock_passwords'		=> 'Los detalles de acceso no se pueden cambiar en la demo.',
     'manager' 				=> 'Supervisor',
     'managed_locations'     => 'Ubicaciones gestionadas',
     'managed_users'         => 'Usuarios gestionados',

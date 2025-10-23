@@ -18,10 +18,12 @@ return array(
     ),
 
     'delete' => array(
-        'confirm'   => 'Er du sikker på du vil slette denne kategorien?',
-        'error'   => 'Det oppsto et problem ved sletting av kategorien. Vennligst prøv igjen.
+        'confirm'                => 'Er du sikker på du vil slette denne kategorien?',
+        'error'                  => 'Det oppsto et problem ved sletting av kategorien. Vennligst prøv igjen.
 ',
-        'success' => 'Kategorien ble slettet.'
+        'success'                => 'Category was deleted successfully.',
+        'bulk_success'           => 'Categories were deleted successfully.',
+        'partial_success'        => 'Category deleted successfully. See additional information below. | :count categories were deleted successfully. See additional information below.',
     )
 
 );

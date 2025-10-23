@@ -20,9 +20,9 @@ return array(
         'confirm'   => 'Είστε βέβαιοι ότι θέλετε να διαγράψετε αυτό τον προμηθευτή;',
         'error'   => 'Υπήρξε ένα ζήτημα διαγράφοντας τον προμηθευτή. Παρακαλώ δοκιμάστε ξανά.',
         'success' => 'Ο προμηθευτής διαγράφηκε επιτυχώς.',
-        'assoc_assets'	 => 'Αυτός ο προμηθευτής συσχετίζεται με τουλάχιστον ένα asset και δεν μπορεί να διαγραφεί. Παρακαλούμε να ενημερώσετε τα asset σας να μην αναφέρονται σε αυτόν τον προμηθευτή και δοκιμάστε ξανά. ',
-        'assoc_licenses'	 => 'Αυτός ο προμηθευτής συσχετίζεται επί του παρόντος με :licenses_count άδειες(ες) και δεν μπορεί να διαγραφεί. Ενημερώστε τις άδειες χρήσης σας ώστε να μην αναφέρονται πλέον σε αυτόν τον προμηθευτή και προσπαθήστε ξανά. ',
-        'assoc_maintenances'	 => 'This supplier is currently associated with :maintenances_count asset maintenances(s) and cannot be deleted. Please update your asset maintenances to no longer reference this supplier and try again. ',
+        'not_found'               => 'Supplier not found.',
+        'bulk_success'            => 'Suppliers were deleted successfully.',
+        'partial_success'        => 'Supplier deleted successfully. See additional information below. | :count suppliers were deleted successfully. See additional information below.',
     )
 
 );

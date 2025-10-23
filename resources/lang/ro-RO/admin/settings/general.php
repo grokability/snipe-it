@@ -37,7 +37,7 @@ return [
     'backups_clean_helptext' => "This can be useful if you're changing between database versions",
     'backups_upload'            => 'Încărcare copie de rezervă',
     'backups_path'              => 'Copiile de rezervă de pe server sunt stocate în <code>:path</code>',
-    'backups_restore_warning'   => 'Use the restore button <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small> to restore from a previous backup. (This does not currently work with S3 file storage or Docker.)<br><br>Your <strong>entire :app_name database and any uploaded files will be completely replaced</strong> by what\'s in the backup file  ',
+    'backups_restore_warning'   => 'Use the restore button <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small> to restore from a previous backup. (This does not currently work with S3 file storage.)<br><br>Your <strong>entire :app_name database and any uploaded files will be completely replaced</strong> by what\'s in the backup file  ',
     'backups_logged_out'         => 'Toți utilizatorii existenți, inclusiv dvs., vor fi deconectați odată ce restaurarea este completă.',
     'backups_large'             => 'Copiile de rezervă foarte mari pot expira în încercarea de restaurare și s-ar putea să trebuiască să fie rulate prin linia de comandă. ',
     'barcode_settings'			=> 'Setări cod de bare',

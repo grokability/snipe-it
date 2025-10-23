@@ -37,7 +37,7 @@ return [
     'backups_clean_helptext' => "This can be useful if you're changing between database versions",
     'backups_upload'            => 'Μεταφόρτωση Αντιγράφου Ασφαλείας',
     'backups_path'              => 'Τα αντίγραφα ασφαλείας στο διακομιστή αποθηκεύονται στο <code>:path</code>',
-    'backups_restore_warning'   => 'Use the restore button <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small> to restore from a previous backup. (This does not currently work with S3 file storage or Docker.)<br><br>Your <strong>entire :app_name database and any uploaded files will be completely replaced</strong> by what\'s in the backup file  ',
+    'backups_restore_warning'   => 'Use the restore button <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small> to restore from a previous backup. (This does not currently work with S3 file storage.)<br><br>Your <strong>entire :app_name database and any uploaded files will be completely replaced</strong> by what\'s in the backup file  ',
     'backups_logged_out'         => 'Όλοι οι υπάρχοντες χρήστες, συμπεριλαμβανομένου και σας, θα αποσυνδεθούν μόλις ολοκληρωθεί η επαναφορά σας.',
     'backups_large'             => 'Πολύ μεγάλα αντίγραφα ασφαλείας μπορεί να τερματίσουν στην προσπάθεια επαναφοράς και μπορεί ακόμα να χρειαστεί να εκτελεστούν μέσω της γραμμής εντολών. ',
     'barcode_settings'			=> 'Ρυθμίσεις γραμμωτού κώδικα',

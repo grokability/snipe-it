@@ -149,6 +149,7 @@ class ActionlogsTransformer
                     'filename' => $actionlog->filename,
                     'inlineable' => StorageHelper::allowSafeInline($actionlog->uploads_file_path()),
                     'exists_on_disk' => Storage::exists($actionlog->uploads_file_path()) ? true : false,
+                    'mediatype' => StorageHelper::getMediaType($actionlog->uploads_file_path()),
                 ] : null,
 
             'item' => ($actionlog->item) ? [

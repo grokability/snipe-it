@@ -20,9 +20,9 @@ return array(
         'confirm'   => 'Ste si istý, že chcete odstrániť tohto dodávateľa?',
         'error'   => 'Pri odstraňovaní doávateľa sa vyskytla chby. Skúste prosím neskôr.',
         'success' => 'Dodávateľ bol úspešne odstránený.',
-        'assoc_assets'	 => 'Tento dodávateľ ma aktuálne priradené :asset_count majetky a nemôže byť odstránený. Prosím aktualizujte príslušne majetky, aby nevyužívali tohto dodávateľa a skúste znovu. ',
-        'assoc_licenses'	 => 'Tento dodávateľ je aktuálne priradený :licenses_count licenciam a nemôže byť odstránený. Prosím aktualizujte príslušne licencie, aby nevyužívali tohto dodávateľa a skúste znovu. ',
-        'assoc_maintenances'	 => 'This supplier is currently associated with :maintenances_count asset maintenances(s) and cannot be deleted. Please update your asset maintenances to no longer reference this supplier and try again. ',
+        'not_found'               => 'Supplier not found.',
+        'bulk_success'            => 'Suppliers were deleted successfully.',
+        'partial_success'        => 'Supplier deleted successfully. See additional information below. | :count suppliers were deleted successfully. See additional information below.',
     )
 
 );

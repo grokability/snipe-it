@@ -18,9 +18,11 @@ return array(
     ),
 
     'delete' => array(
-        'confirm'   => 'Желаете ли да изтриете тази категория?',
-        'error'   => 'Проблем при изтриване на категорията. Моля опитайте отново.',
-        'success' => 'Категорията бе изтрита успешно.'
+        'confirm'                => 'Желаете ли да изтриете тази категория?',
+        'error'                  => 'Проблем при изтриване на категорията. Моля опитайте отново.',
+        'success'                => 'Category was deleted successfully.',
+        'bulk_success'           => 'Categories were deleted successfully.',
+        'partial_success'        => 'Category deleted successfully. See additional information below. | :count categories were deleted successfully. See additional information below.',
     )
 
 );

@@ -20,9 +20,9 @@ return array(
         'confirm'   => 'Czy na pewno usunąć tego dostawcę?',
         'error'   => 'Podczas usuwania dostawcy napotkano błąd. Spróbuj ponownie.',
         'success' => 'Dostawca usunięty pomyślnie.',
-        'assoc_assets'	 => 'Ten dostawca jest obecnie powiązany z :asset_count aktywami i nie może zostać usunięty. Zaktualizuj aktywa aby nie były z nim powiązane i spróbuj ponownie. ',
-        'assoc_licenses'	 => 'Ten dostawca jest obecnie powiązany z :licenses_count licencjami i nie może zostać usunięty. Zaktualizuj licencje tak aby do niego nie nawiązywały i spróbuj ponownie. ',
-        'assoc_maintenances'	 => 'This supplier is currently associated with :maintenances_count asset maintenances(s) and cannot be deleted. Please update your asset maintenances to no longer reference this supplier and try again. ',
+        'not_found'               => 'Supplier not found.',
+        'bulk_success'            => 'Suppliers were deleted successfully.',
+        'partial_success'        => 'Supplier deleted successfully. See additional information below. | :count suppliers were deleted successfully. See additional information below.',
     )
 
 );

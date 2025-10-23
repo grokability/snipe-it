@@ -107,7 +107,7 @@ class SendExpirationAlerts extends Command
                         trans('general.name') => $item->name,
                         trans('general.purchase_date') => $item->purchase_date_formatted,
                         trans('admin/licenses/form.expiration') => $item->expires_formatted_date,
-                        trans('mail.expires') => $item->expires_diff_for_humans,
+                        trans('mail.expires') => $item->expires_formatted_date ? $item->expires_diff_for_humans : '',
                         trans('admin/licenses/form.termination_date') => $item->terminates_formatted_date,
                         trans('mail.terminates') => $item->terminates_diff_for_humans
                     ])

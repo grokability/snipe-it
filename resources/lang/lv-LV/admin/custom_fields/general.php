@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Pārvaldīt',
     'field'		                => 'Lauks',
     'about_fieldsets_title'		=> 'Par lauka laukiem',
-    'about_fieldsets_text'		=> 'Fieldsets allow you to create groups of custom fields that are frequently re-used for specific asset model types.',
+    'about_fieldsets_text'		=> 'Lauka ailes ļauj jums izveidot pielāgotu lauku grupas, kuras bieži tiek atkārtoti izmantotas konkrētu aktīvu veidu tipiem.',
     'custom_format'             => 'Custom Regex format...',
     'encrypt_field'      	        => 'Šifrējiet šī lauka vērtību datu bāzē',
     'encrypt_field_help'      => 'BRĪDINĀJUMS: lauka šifrēšana padara to neizpētītu.',

@@ -14,7 +14,7 @@ return array(
     'info'  					=> 'Licensz információ',
     'license_seats'  			=> 'Licenc ülések',
     'seat'  					=> 'Ülés',
-    'seat_count'  				=> 'Seat :count',
+    'seat_count'  				=> 'Licenchely: :count',
     'seats'  					=> 'ülések',
     'software_licenses'  		=> 'Szoftverlicencek',
     'user'  					=> 'használó',
@@ -23,24 +23,24 @@ return array(
     'bulk'                      =>
         [
             'checkin_all'           => [
-                'button'            => 'Checkin All Seats',
-                'modal'             => 'This action will checkin one seat. | This action will checkin all :checkedout_seats_count seats for this license.',
-                'enabled_tooltip'   => 'Checkin ALL seats for this license from both users and assets',
-                'disabled_tooltip'  => 'This is disabled because there are no seats currently checked out',
-                'disabled_tooltip_reassignable'  => 'This is disabled because the License is not reassignable',
+                'button'            => 'Minden licenchely visszaadása',
+                'modal'             => 'Ez a művelet egy licenchely visszaadását végzi. | Ez a művelet visszaadja az összes, :checkedout_seats_count licenchelyt ehhez a licenchez.',
+                'enabled_tooltip'   => 'Az összes licenchely visszaadása ehhez a licenchez mind a felhasználóktól, mind az eszközökről',
+                'disabled_tooltip'  => 'Ez le van tiltva, mert jelenleg nincs kivett licenchely',
+                'disabled_tooltip_reassignable'  => 'Ez le van tiltva, mert a licenc nem átruházható',
                 'success'           => 'Licenc visszavétel sikeres! | Minden licenc sikeresen visszavéve!',
-                'log_msg'           => 'Checked in via bulk license checkin in license GUI',
+                'log_msg'           => 'Visszaadva a licenc GUI-ban végzett tömeges licenchely-visszaadással.”',
             ],
 
             'checkout_all'              => [
-                'button'                => 'Checkout All Seats',
-                'modal'                 => 'This action will checkout one seat to the first available user. | This action will checkout all :available_seats_count seats to the first available users. A user is considered available for this seat if they do not already have this license checked out to them, and the Auto-Assign License property is enabled on their user account.',
-                'enabled_tooltip'   => 'Checkout ALL seats (or as many as are available) to ALL users',
-                'disabled_tooltip'  => 'This is disabled because there are no seats currently available',
+                'button'                => 'Minden licenchely kadása',
+                'modal'                 => 'Ez a művelet egy licenchelyt ad ki az első elérhető felhasználónak. | Ez a művelet az összes, :available_seats_count licenchelyt kiosztja az első elérhető felhasználóknak. Egy felhasználó az adott licenchelyre elérhetőnek számít, ha még nincs hozzá kiosztva, és az Automatikus licenckiosztás beállítás engedélyezve van a felhasználói fiókjában.',
+                'enabled_tooltip'   => 'Az összes licenchely (vagy amennyi elérhető) kiosztása minden felhasználónak',
+                'disabled_tooltip'  => 'Ez le van tiltva, mert jelenleg nincs elérhető licenchely',
                 'success'           => 'Licenc sikeresen kiadva! | :count db. licenc sikeresen kiadva !',
-                'error_no_seats'    => 'There are no remaining seats left for this license.',
-                'warn_not_enough_seats'    => ':count users were assigned this license, but we ran out of available license seats.',
-                'warn_no_avail_users'    => 'Nothing to do. There are no users who do not already have this license assigned to them.',
+                'error_no_seats'    => 'Ehhez a licenchöz már nincs szabad licenchely.',
+                'warn_not_enough_seats'    => ':count felhasználónak lett kiosztva ez a licenc, de elfogytak az elérhető licenchelyek.',
+                'warn_no_avail_users'    => 'Nincs teendő. Nincsenek olyan felhasználók, akiknek még nincs hozzárendelve ez a licenc.',
                 'log_msg'           => 'Checked out via bulk license checkout in license GUI',
 
 

@@ -18,9 +18,11 @@ return array(
     ),
 
     'delete' => array(
-        'confirm'   => 'An bhfuil tú cinnte gur mian leat an chatagóir seo a scriosadh?',
-        'error'   => 'Bhí ceist ann a scriosadh an chatagóir. Arís, le d\'thoil.',
-        'success' => 'Scriosadh an catagóir go rathúil.'
+        'confirm'                => 'An bhfuil tú cinnte gur mian leat an chatagóir seo a scriosadh?',
+        'error'                  => 'Bhí ceist ann a scriosadh an chatagóir. Arís, le d\'thoil.',
+        'success'                => 'Category was deleted successfully.',
+        'bulk_success'           => 'Categories were deleted successfully.',
+        'partial_success'        => 'Category deleted successfully. See additional information below. | :count categories were deleted successfully. See additional information below.',
     )
 
 );

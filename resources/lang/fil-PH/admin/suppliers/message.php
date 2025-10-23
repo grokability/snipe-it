@@ -20,9 +20,9 @@ return array(
         'confirm'   => 'Sigurado kaba na gusto mong i-delete ang tagapagsuplay na ito?',
         'error'   => 'Mayroong isyu sa pag-delete ng tagapagsuplay. Mangyaring subukang muli.',
         'success' => 'Matagumpay na nai-delete ang tagapagsuplay.',
-        'assoc_assets'	 => 'Ang tagapagsuplay ay kasalukuyang naiugnay sa :asset_count asset(s) at hindi maaaring mai-delete. Manyaring i-update ang iyong mga asset upang hindi na magreperens sa tagapagsuplay na ito at pakisubok muli. ',
-        'assoc_licenses'	 => 'Ang tagapagsuplay ay kasalukuyang naiugnay sa :licenses_count licences(s) at hindi maaaring mai-delete. Manyaring i-update ang iyong mga lisensya upang hindi na magreperens sa tagapagsuplay na ito at pakisubok muli. ',
-        'assoc_maintenances'	 => 'This supplier is currently associated with :maintenances_count asset maintenances(s) and cannot be deleted. Please update your asset maintenances to no longer reference this supplier and try again. ',
+        'not_found'               => 'Supplier not found.',
+        'bulk_success'            => 'Suppliers were deleted successfully.',
+        'partial_success'        => 'Supplier deleted successfully. See additional information below. | :count suppliers were deleted successfully. See additional information below.',
     )
 
 );

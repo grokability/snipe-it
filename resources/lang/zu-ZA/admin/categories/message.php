@@ -18,9 +18,11 @@ return array(
     ),
 
     'delete' => array(
-        'confirm'   => 'Uqinisekile ukuthi ufisa ukususa lesi sigaba?',
-        'error'   => 'Kube nenkinga yokususa isigaba. Ngicela uzame futhi.',
-        'success' => 'Isigaba sisusiwe ngempumelelo.'
+        'confirm'                => 'Uqinisekile ukuthi ufisa ukususa lesi sigaba?',
+        'error'                  => 'Kube nenkinga yokususa isigaba. Ngicela uzame futhi.',
+        'success'                => 'Category was deleted successfully.',
+        'bulk_success'           => 'Categories were deleted successfully.',
+        'partial_success'        => 'Category deleted successfully. See additional information below. | :count categories were deleted successfully. See additional information below.',
     )
 
 );

@@ -14,28 +14,40 @@ export default class FilterFormManager {
         this.apiService = container.resolve("apiService");;
     }
 
-    collect() {
-        this.filters = [];
+    collectFilterInputs() {
         this.inputs = [];
 
         // Select2
         document.querySelectorAll('select[id^="advancedSearch_"]').forEach(el => {
-            if (el.id === 'advancedSearch_assigned_to') {
-                this.inputs.push(new AssignedEntityFilterInput(el, this.apiService));
-            } else {
-                this.inputs.push(new SelectFilterInput(el, this.apiService));
-            }
+            queueMicrotask(() => {
+                if (el.id === 'advancedSearch_assigned_to') {
+                    this.inputs.push(new AssignedEntityFilterInput(el, this.apiService));
+                } else {
+                    this.inputs.push(new SelectFilterInput(el, this.apiService));
+                }
+            });
         });
 
         // Dates
         document.querySelectorAll('input[id^="advancedSearch_"][id$="_start"][type="date"], input[id^="advancedSearch_"][id$="_end"][type="date"]').forEach(el => {
-            this.inputs.push(new DateFilterInput(el, this.apiService));
+            queueMicrotask(() => {
+                this.inputs.push(new DateFilterInput(el, this.apiService));
+            });
         });
 
         // Text
         document.querySelectorAll('input[id^="advancedSearch_"][type="text"]').forEach(el => {
-            this.inputs.push(new TextFilterInput(el, this.apiService));
+            queueMicrotask(() => {
+                this.inputs.push(new TextFilterInput(el, this.apiService));
+            });
         });
+
+
+        return this.inputs;
+    }
+
+    collectFilterData() {
+        this.filters = [];
 
         // Process all inputs polymorphically
         this.inputs.forEach(input => {
@@ -46,9 +58,11 @@ export default class FilterFormManager {
     }
 
     clearAll() {
-        this.collect();
+        //this.collectFilterData();
         this.inputs.forEach(field => {
-            field.clear();
+            queueMicrotask(() => {
+                field.clear();
+            })
         });
     }
 
@@ -58,7 +72,7 @@ export default class FilterFormManager {
         const promises = [];
 
         for (const filter of responseArray) {
-            const { field: key, value } = filter;
+            const { field: key, value, logic, operator } = filter;
 
             const field = this.inputs.find(input => input.key === key);
             if (!field) {
@@ -67,7 +81,7 @@ export default class FilterFormManager {
             }
 
             try {
-                const result = field.setValue(value);
+                const result = field.setValue(value, logic, operator);
                 if (result instanceof Promise) {
                     promises.push(result);
                 }
@@ -84,9 +98,11 @@ export default class FilterFormManager {
     }
 
     setAdvancedSearchPanelFilterEnabledState(state) {
-        const fields = document.getElementById("advancedSearchPanel").getElementsByTagName('*');
-        for (let i = 0; i < fields.length; i++) {
-            fields[i].disabled = state;
-        }
+        queueMicrotask(() => {
+            const fields = document.getElementById("advancedSearchPanel").getElementsByTagName('*');
+            for (let i = 0; i < fields.length; i++) {
+                fields[i].disabled = state;
+            }
+        });
     }
 }

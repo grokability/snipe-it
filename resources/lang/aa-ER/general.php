@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'show_all' => 'crwdns13848:0crwdne13848:0',
     '2FA_reset'             => 'crwdns12148:0crwdne12148:0',
     'accessories'			=> 'crwdns1200:0crwdne1200:0',
     'activated'			    => 'crwdns1540:0crwdne1540:0',
@@ -626,6 +627,24 @@ return [
 // Add form placeholders here
     'placeholders' => [
         'notes'  => 'crwdns12878:0crwdne12878:0',
+    ],
+
+    'bulk_delete_associations' => [
+        'general_assoc_warning'       => 'crwdns13850:0crwdne13850:0',
+        'assoc_assets'                => 'crwdns13852:0crwdne13852:0',
+        'asset_models'                => 'crwdns13854:0crwdne13854:0',
+        'assoc_maintenances'          => 'crwdns13856:0crwdne13856:0',
+        'assoc_accessories'           => 'crwdns13858:0crwdne13858:0',
+        'assoc_consumables'           => 'crwdns13860:0crwdne13860:0',
+        'assoc_components'            => 'crwdns13862:0crwdne13862:0',
+        'assoc_licenses'              => 'crwdns13864:0crwdne13864:0',
+        'assoc_assets_no_count'       => 'crwdns13866:0crwdne13866:0',
+        'asset_models_no_count'       => 'crwdns13868:0crwdne13868:0',
+        'assoc_maintenances_no_count' => 'crwdns13870:0crwdne13870:0',
+        'assoc_accessories_no_count'  => 'crwdns13872:0crwdne13872:0',
+        'assoc_consumables_no_count'  => 'crwdns13874:0crwdne13874:0',
+        'assoc_components_no_count'   => 'crwdns13876:0crwdne13876:0',
+        'assoc_licenses_no_count'     => 'crwdns13878:0crwdne13878:0',
     ],
 
     'breadcrumb_button_actions' => [

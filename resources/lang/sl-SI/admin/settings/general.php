@@ -37,7 +37,7 @@ return [
     'backups_clean_helptext' => "To je lahko uporabno, če preklapljate med različicami baze podatkov",
     'backups_upload'            => 'Naloži varnostno kopijo',
     'backups_path'              => 'Varnostne kopije na strežniku so shranjene v <code>:path</code>',
-    'backups_restore_warning'   => 'Za obnovitev iz prejšnje varnostne kopije uporabite gumb za obnovitev <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small>. (To trenutno ne deluje s shrambo datotek S3 ali Dockerjem.)<br><br>Vaša <strong>celotna baza podatkov :app_name in vse naložene datoteke bodo v celoti zamenjane</strong> s tem, kar je v datoteki varnostne kopije  ',
+    'backups_restore_warning'   => 'Use the restore button <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small> to restore from a previous backup. (This does not currently work with S3 file storage.)<br><br>Your <strong>entire :app_name database and any uploaded files will be completely replaced</strong> by what\'s in the backup file  ',
     'backups_logged_out'         => 'Vsi obstoječi uporabniki, vključno z vami, bodo odjavljeni, ko bo obnovitev končana.',
     'backups_large'             => 'Zelo velike varnostne kopije lahko med poskusom obnovitve potečejo in jih je morda še vedno treba zagnati prek ukazne vrstice. ',
     'barcode_settings'			=> 'Nastavitve črtne kode',

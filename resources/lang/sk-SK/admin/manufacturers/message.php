@@ -22,9 +22,11 @@ return array(
     ),
 
     'delete' => array(
-        'confirm'   => 'Ste si istí, že chete zmazať tohto výrobcu?',
+        'confirm' => 'Ste si istí, že chete zmazať tohto výrobcu?',
         'error'   => 'Pri mazaní výrobcu nastala chyba. Skúste znovu.',
-        'success' => 'Výrobca bol úspešne zmazaný.'
+        'success'                => 'Manufacturer deleted successfully.',
+        'bulk_success'           => 'Manufacturers deleted successfully.',
+        'partial_success'        => 'Manufacturer deleted successfully. See additional information below. | :count manufacturers were deleted successfully. See additional information below.',
     )
 
 );

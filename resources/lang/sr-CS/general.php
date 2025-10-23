@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'show_all' => 'Prikaži sve',
     '2FA_reset'             => 'Resetovanje 2FA',
     'accessories'			=> 'Dodatna oprema',
     'activated'			    => 'Aktiviran',
@@ -627,6 +628,24 @@ return [
 // Add form placeholders here
     'placeholders' => [
         'notes'  => 'Dodaj napomenu',
+    ],
+
+    'bulk_delete_associations' => [
+        'general_assoc_warning'       => ':item_name još uvek ima povezane stavke. Molim vas uklonite ih pre brisanja ove :item.',
+        'assoc_assets'                => ':item_name je trenutno povezana sa :asset_count imovine i ne može biti izbrisana. Molim vas izmenite vaše imovine da više nisu povezane sa ovom :item i pokušajte ponovo.',
+        'asset_models'                => ':item_name je trenutno povezana sa :asset_count imovine i ne može biti izbrisana. Molim vas izmenite vaše modele imovine da više nisu povezane sa ovom :item i pokušajte ponovo.',
+        'assoc_maintenances'          => ':item_name je trenutno povezana sa :maintenance_count održavanjem i ne može biti izbrisana. Molim vas izmenite vaše održavanje da više nisu povezane sa ovom :item i pokušajte ponovo.',
+        'assoc_accessories'           => ':item_name je trenutno povezana sa :accessory_count dodatne opreme i ne može biti izbrisana. Molim vas izmenite vašu dodatnu opremu da više nisu povezana sa ovom :item i pokušajte ponovo.',
+        'assoc_consumables'           => ':item_name je trenutno povezana sa :consumable_count potrošnom opremom i ne može biti izbrisana. Molim vas izmenite vašu potrošnu opremu da više nije povezana sa ovom :item i pokušajte ponovo.',
+        'assoc_components'            => ':item_name je trenutno povezana sa :component_count komponentama i ne može biti izbrisana. Molim vas izmenite vaše komponente da više nisu povezane sa ovom :item i pokušajte ponovo.',
+        'assoc_licenses'              => ':item_name je trenutno povezana sa :license_count licencama i ne može biti izbrisana. Molim vas izmenite vaše licence da više nisu povezane sa ovom :item i pokušajte ponovo.',
+        'assoc_assets_no_count'       => ':item_name je trenutno povezana sa drugim imovinama i ne može biti izbrisana. Molim vas izmenite vaše imovine da više nisu povezane sa ovom :item i pokušajte ponovo.',
+        'asset_models_no_count'       => ':item_name je trenutno povezana sa drugim modelima imovine i ne može biti izbrisana. Molim vas izmenite vaše imovine da više nisu povezane sa ovom :item i pokušajte ponovo.',
+        'assoc_maintenances_no_count' => ':item_name je trenutno povezana sa drugim održavanjima i ne može biti izbrisana. Molim vas izmenite vaša održavanja da više nisu povezana sa ovom :item i pokušajte ponovo.',
+        'assoc_accessories_no_count'  => ':item_name je trenutno povezana sa drugom dodatnom opremom i ne može biti izbrisana. Molim vas izmenite vašu dodatnu opremu da više nisu povezane sa ovom :item i pokušajte ponovo.',
+        'assoc_consumables_no_count'  => ':item_name je trenutno povezana sa drugom potrošnom opremom i ne može biti izbrisana. Molim vas izmenite vašu potrošnu opremu da više nisu povezane sa ovom :item i pokušajte ponovo.',
+        'assoc_components_no_count'   => ':item_name je trenutno povezana sa drugim komponentama i ne može biti izbrisana. Molim vas izmenite vaše komponente da više nisu povezane sa ovom :item i pokušajte ponovo.',
+        'assoc_licenses_no_count'     => ':item_name je trenutno povezana sa drugim licencama i ne može biti izbrisana. Molim vas izmenite vaše licence da više nisu povezane sa ovom :item i pokušajte ponovo.',
     ],
 
     'breadcrumb_button_actions' => [

@@ -195,6 +195,10 @@ class IconHelper
             case 'note':
             case 'notes':
                 return 'fas fa-sticky-note';
+            case 'tip':
+                return 'fa-solid fa-lightbulb';
+            case 'highlight':
+                return 'fa-solid fa-highlighter';
         }
     }
 }

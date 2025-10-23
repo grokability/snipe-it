@@ -322,12 +322,12 @@
 
                       <fieldset name="optional-details">
 
-                          <legend class="highlight">
+                          <x-form-legend>
                               <a id="optional_user_info">
                                   <x-icon type="caret-right" id="optional_user_info_icon" />
                                   {{ trans('admin/hardware/form.optional_infos') }}
                               </a>
-                          </legend>
+                          </x-form-legend>
 
                           <div id="optional_user_details" class="col-md-12" style="display:none">
 
@@ -537,7 +537,7 @@
                               <!-- Zip -->
                               <div class="form-group{{ $errors->has('zip') ? ' has-error' : '' }}">
                                   <label class="col-md-3 control-label" for="zip">{{ trans('general.zip') }}</label>
-                                  <div class="col-md-3">
+                                  <div class="col-md-3 text-right">
                                       <input class="form-control" type="text" name="zip" id="zip" value="{{ old('zip', $user->zip) }}" maxlength="10" />
                                       {!! $errors->first('zip', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
                                   </div>

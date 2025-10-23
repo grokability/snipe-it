@@ -404,6 +404,12 @@ class Asset extends Depreciable
 
     }
 
+    protected function expectedCheckinFormattedDate(): Attribute
+    {
+        return Attribute:: make(
+            get: fn(mixed $value, array $attributes) => array_key_exists('expected_checkin', $attributes) ? Helper::getFormattedDateObject($attributes['expected_checkin'], 'date', false) : null,
+        );
+    }
 
     /**
      * Establishes the asset -> company relationship

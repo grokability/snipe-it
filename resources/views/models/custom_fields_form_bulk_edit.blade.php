@@ -13,10 +13,10 @@
 @endforeach
 
 @if ($anyModelHasCustomFields > 0)
-    <fieldset name="custom-fields" class="bottom-padded">
-        <legend class="highlight">
+    <fieldset name="custom-fields"">
+        <x-form-legend>
             {{ trans('admin/custom_fields/general.custom_fields') }}
-        </legend>
+        </x-form-legend>
 @endif
 
 @foreach($models as $model)

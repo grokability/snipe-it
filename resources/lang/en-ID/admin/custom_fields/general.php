@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Manage',
     'field'		                => 'Bidang',
     'about_fieldsets_title'		=> 'Tentang Fieldsets',
-    'about_fieldsets_text'		=> 'Fieldsets allow you to create groups of custom fields that are frequently re-used used for specific asset model types.',
+    'about_fieldsets_text'		=> 'Fieldsets memungkinkan Anda membuat kelompok bidang khusus yang sering digunakan kembali untuk jenis model aset tertentu.',
     'custom_format'             => 'Custom Regex format...',
     'encrypt_field'      	        => 'Enkripsikan nilai bidang ini di database',
     'encrypt_field_help'      => 'PERINGATAN: Mengenkripsi sebuah field membuatnya tidak bisa ditelusuri.
