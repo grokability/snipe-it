@@ -18,18 +18,6 @@ class PredefinedFilterPermissionController extends Controller
         $this->service = $service;
     }
 
-    public function index(Request $request):JsonResponse
-    {
-        $this -> authorize('view', PredefinedFilter::class);
-
-        $permissions = PredefinedFilterPermission::with(['group', 'filter'])->get();
-
-        return response()->json([
-            'total' => $permissions->count(),
-            'row' => $permissions
-        ]);
-    }
-
     public function store(Request $request): JsonResponse
     {
         $this->authorize('edit', PredefinedFilter::class);

@@ -5,7 +5,6 @@ namespace App\Http\Transformers;
 use App\Helpers\Helper;
 use Illuminate\Support\Collection;
 use App\Models\Setting;
-use Log;
 
 class PredefinedFiltersTransformer 
 {
@@ -55,7 +54,7 @@ class PredefinedFiltersTransformer
             }
             $array['groups'] = $groups;
         } else {
-            Log::error('!relationLoaded');
+
             $array['groups'] = null;
         }
 
