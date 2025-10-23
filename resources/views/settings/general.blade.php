@@ -308,6 +308,17 @@
                                    </div>
                                </div>
 
+                           <!-- Allow Bulk Asset Transfer -->
+                           <div class="form-group">
+                               <div class="col-md-8 col-md-offset-3">
+                                   <label class="form-control">
+                                       <input type="checkbox" value="1" name="allow_bulk_asset_transfer" {{ (old('allow_bulk_asset_transfer', $setting->allow_bulk_asset_transfer)) == '1' ? ' checked="checked"' : '' }} aria-label="allow_bulk_asset_transfer">
+                                       {{ trans('admin/settings/general.allow_bulk_asset_transfer') }}
+                                   </label>
+                                   <p class="help-block">{{ trans('admin/settings/general.allow_bulk_asset_transfer_help_text') }}</p>
+                               </div>
+                           </div>
+
 
                        </fieldset>
 

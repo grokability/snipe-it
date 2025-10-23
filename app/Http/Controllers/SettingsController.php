@@ -352,6 +352,7 @@ class SettingsController extends Controller
         $setting->dash_chart_type = $request->input('dash_chart_type');
         $setting->profile_edit = $request->input('profile_edit', 0);
         $setting->require_checkinout_notes = $request->input('require_checkinout_notes', 0);
+        $setting->allow_bulk_asset_transfer = $request->input('allow_bulk_asset_transfer', 0);
         $setting->manager_view_enabled = $request->input('manager_view_enabled', 0);
 
 

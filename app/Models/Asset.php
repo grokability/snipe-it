@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\AssetsTransferredInBulk;
 use App\Events\CheckoutableCheckedOut;
 use App\Exceptions\CheckoutNotAllowed;
 use App\Helpers\Helper;
@@ -17,6 +18,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
@@ -516,6 +518,63 @@ class Asset extends Depreciable
         return false;
     }
 
+    public function transfer($alreadyAssigned, $target, $transferredFrom, $admin= null, $transferred_at = null, $expected_checkin = null, $note = null, $name = null, $location = null ){
+        if (! $target) {
+            return false;
+        }
+        if ($this->is($target)) {
+            throw new CheckoutNotAllowed('You cannot transfer an asset to itself.');
+        }
+        if ($expected_checkin) {
+            $this->expected_checkin = $expected_checkin;
+        }
+
+        $this->last_checkout = $transferred_at;
+        $this->name = $name;
+
+        $this->assignedTo()->associate($target);
+
+        if ($location != null) {
+            $this->location_id = $location;
+        } else {
+            if (isset($target->location)) {
+                $this->location_id = $target->location->id;
+            }
+            if ($target instanceof Location) {
+                $this->location_id = $target->id;
+            }
+        }
+
+        $originalValues = $this->getRawOriginal();
+        // attempt to detect change in value if different from today's date
+        if ($transferred_at && strpos($transferred_at, date('Y-m-d')) === false) {
+            $originalValues['action_date'] = date('Y-m-d H:i:s');
+        }
+
+        if ($this->save()) {
+            if (is_int($admin)) {
+                $transferredBy = User::findOrFail($admin);
+            } elseif ($admin && get_class($admin) === \App\Models\User::class) {
+                $transferredBy = $admin;
+            } else {
+                $transferredBy = auth()->user();
+            }
+            event(new AssetsTransferredInBulk(
+                transferable: $alreadyAssigned,
+                transferredTo: $target,
+                transferredFrom: $transferredFrom,
+                admin: $transferredBy,
+                transferred_at: (string) $transferred_at,
+                expected_checkin: (string) $expected_checkin?? '',
+                note: $note,
+                originalValues: $originalValues,
+            ));
+            $this->increment('checkout_counter', 1);
+
+            return true;
+        }
+        return false;
+    }
     /**
      * Sets the detailedNameAttribute
      *

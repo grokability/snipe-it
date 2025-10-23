@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Assets;
 
+use App\Events\AssetsTransferredInBulk;
 use App\Helpers\Helper;
 use App\Http\Controllers\CheckInOutRequest;
 use App\Http\Controllers\Controller;
@@ -12,6 +13,7 @@ use App\Models\Setting;
 use App\View\Label;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -617,17 +619,19 @@ class BulkAssetsController extends Controller
     public function showCheckout() : View
     {
         $this->authorize('checkout', Asset::class);
-
         $alreadyAssigned = collect();
 
-        if (old('selected_assets') && is_array(old('selected_assets'))) {
-            $assets = Asset::findMany(old('selected_assets'));
+        if (!Setting::getSettings()->allow_bulk_asset_transfer) {
 
-            [$assignable, $alreadyAssigned] = $assets->partition(function (Asset $asset) {
-                return !$asset->assigned_to;
-            });
+            if (old('selected_assets') && is_array(old('selected_assets'))) {
+                $assets = Asset::findMany(old('selected_assets'));
 
-            session()->flashInput(['selected_assets' => $assignable->pluck('id')->values()->toArray()]);
+                [$assignable, $alreadyAssigned] = $assets->partition(function (Asset $asset) {
+                    return !$asset->assigned_to;
+                });
+
+                session()->flashInput(['selected_assets' => $assignable->pluck('id')->values()->toArray()]);
+            }
         }
 
         $do_not_change = ['' => trans('general.do_not_change')];
@@ -646,6 +650,7 @@ class BulkAssetsController extends Controller
     {
         $this->authorize('checkout', Asset::class);
 
+
         try {
             $admin = auth()->user();
 
@@ -660,8 +665,9 @@ class BulkAssetsController extends Controller
 
             $assets = Asset::findOrFail($asset_ids);
 
-            // Prevent checking out assets that are already checked out
-            if ($assets->pluck('assigned_to')->unique()->filter()->isNotEmpty()) {
+            [$alreadyAssigned, $unassigned] = $assets->collect()->partition(fn ($asset) => !is_null($asset->assigned_to));
+
+            if ($unassigned->pluck('assigned_to')->unique()->filter()->isNotEmpty()){
                 // re-add the asset ids so the assets select is re-populated
                 $request->session()->flashInput(['selected_assets' => $asset_ids]);
 
@@ -703,8 +709,8 @@ class BulkAssetsController extends Controller
             }
 
             $errors = [];
-            DB::transaction(function () use ($target, $admin, $checkout_at, $expected_checkin, &$errors, $assets, $request) { //NOTE: $errors is passsed by reference!
-                foreach ($assets as $asset) {
+            DB::transaction(function () use ($target, $admin, $checkout_at, $expected_checkin, &$errors, $unassigned, $alreadyAssigned, $request) { //NOTE: $errors is passsed by reference!
+                foreach ($unassigned as $asset) {
                     $this->authorize('checkout', $asset);
 
                     // See if there is a status label passed
@@ -725,6 +731,32 @@ class BulkAssetsController extends Controller
 
                     if (!$checkout_success) {
                         $errors = array_merge_recursive($errors, $asset->getErrors()->toArray());
+                    }
+                }
+                if ($alreadyAssigned->isNotEmpty() && Setting::getSettings()->allow_bulk_asset_transfer) {
+                    Context::add('action', 'bulk_transfer');
+                    foreach ($alreadyAssigned as $asset) {
+                        $this->authorize('checkout', $asset);
+                        $transferredFrom = $asset->assignedTo;
+                        // See if there is a status label passed
+                        if ($request->filled('status_id')) {
+                            $asset->status_id = $request->get('status_id');
+                        }
+
+                        $checkout_success = $asset->transfer($alreadyAssigned, $target, $transferredFrom, $admin, $checkout_at, $expected_checkin, e($request->get('note')), $asset->name, null);
+
+                        //TODO - I think this logic is duplicated in the checkOut method?
+                        if ($target->location_id != '') {
+                            $asset->location_id = $target->location_id;
+                            // TODO - I don't know why this is being saved without events
+                            $asset::withoutEvents(function () use ($asset) {
+                                $asset->save();
+                            });
+                        }
+
+                        if (!$checkout_success) {
+                            $errors = array_merge_recursive($errors, $asset->getErrors()->toArray());
+                        }
                     }
                 }
             });

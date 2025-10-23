@@ -311,6 +311,7 @@ return [
     'total_accessories'		=> 'total accessories',
     'total_consumables'		=> 'total consumables',
     'total_cost'			=> 'Total Cost',
+    'transferred'           => 'Transferred',
     'type'  				=> 'Type',
     'undeployable'			=> 'Un-deployable',
     'unknown_admin'			=> 'Unknown Admin',

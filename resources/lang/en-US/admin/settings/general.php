@@ -22,6 +22,8 @@ return [
     'alert_inv_threshold'		=> 'Inventory Alert Threshold',
     'allow_user_skin'           => 'Allow User Skin',
     'allow_user_skin_help_text' => 'Checking this box will allow a user to override the UI skin with a different one.',
+    'allow_bulk_asset_transfer' => 'Allow transfer of assets in Bulk Checkout',
+    'allow_bulk_asset_transfer_help_text' => 'Allow checked out assets to be transferred to another user during bulk checkout.',
     'asset_ids'					=> 'Asset IDs',
     'audit_interval'            => 'Audit Interval',
     'audit_interval_help'       => 'If you are required to regularly physically audit your assets, enter the interval in months that you use. If you update this value, all of the "next audit dates" for assets with an upcoming audit date will be updated.',

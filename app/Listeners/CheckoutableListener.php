@@ -33,6 +33,7 @@ use App\Notifications\CheckoutConsumableNotification;
 use App\Notifications\CheckoutLicenseSeatNotification;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Exception;
@@ -433,6 +434,10 @@ class CheckoutableListener
          * 2. The item has a EULA
          * 3. The item should send an email at check-in/check-out
          */
+
+        if (Context::get('action') === 'transfer') {
+            return true;
+        }
 
         if ($checkoutable->requireAcceptance()) {
             return true;

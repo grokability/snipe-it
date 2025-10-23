@@ -6,6 +6,7 @@ use App\Events\AccessoryCheckedIn;
 use App\Events\AccessoryCheckedOut;
 use App\Events\AssetCheckedIn;
 use App\Events\AssetCheckedOut;
+use App\Events\AssetsTransferredInBulk;
 use App\Events\CheckoutableCheckedIn;
 use App\Events\CheckoutableCheckedOut;
 use App\Events\CheckoutAccepted;
@@ -75,6 +76,15 @@ class LogListener
         $logaction->save();
     }
 
+    /**
+     * @throws \Exception
+     */
+    public function onAssetsTransferredInBulk(AssetsTransferredInBulk $event): void
+    {
+        Log::debug('event passed to the listener:');
+        $event->transferable->logCheckout($event->note, $event->transferredTo, $event->transferable->last_checkout, $event->originalValues, true);
+
+    }
     public function onCheckoutDeclined(CheckoutDeclined $event)
     {
         $logaction = new Actionlog();
@@ -140,6 +150,7 @@ class LogListener
         $list = [
             'CheckoutableCheckedIn',
             'CheckoutableCheckedOut',
+            'AssetsTransferredInBulk',
             'CheckoutAccepted',
             'CheckoutDeclined',
             'UserMerged',

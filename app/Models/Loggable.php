@@ -34,7 +34,7 @@ trait Loggable
      * @since  [v3.4]
      * @return \App\Models\Actionlog
      */
-    public function logCheckout($note, $target, $action_date = null, $originalValues = [])
+    public function logCheckout($note, $target, $action_date = null, $originalValues = [], $transfer = null)
     {
 
         $log = new Actionlog;
@@ -95,7 +95,6 @@ trait Loggable
         $array_to_flip = array_merge($array_to_flip, ['name','status_id','location_id','expected_checkin']);
         $originalValues = array_intersect_key($originalValues, array_flip($array_to_flip));
 
-
         foreach ($originalValues as $key => $value) {
             // TODO - action_date isn't a valid attribute of any first-class object, so we might want to remove this?
             if ($key == 'action_date' && $value != $action_date) {
@@ -111,9 +110,12 @@ trait Loggable
         if (!empty($changed)) {
             $log->log_meta = json_encode($changed);
         }
-
-        $log->logaction('checkout');
-
+        if($transfer){
+            $log->logaction('transferred');
+        }
+        else {
+            $log->logaction('checkout');
+        }
         return $log;
     }
 
