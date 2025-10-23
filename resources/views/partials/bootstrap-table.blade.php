@@ -384,25 +384,25 @@
     });
     @endcan
 
-    @can('create', \App\Models\Accessory::class)
-    // Accessory table buttons
-    window.accessoryButtons = () => ({
-        btnAdd: {
-            text: '{{ trans('general.create') }}',
-            icon: 'fa fa-plus',
-            event () {
-                window.location.href = '{{ route('accessories.create') }}';
-            },
-            attributes: {
-                class: 'btn-info',
-                title: '{{ trans('general.create') }}',
-                @if ($snipeSettings->shortcuts_enabled == 1)
-                accesskey: 'n'
-                @endif
-            }
-        },
-    });
-    @endcan
+    // @can('create', \App\Models\Accessory::class)
+    // // Accessory table buttons
+    // window.accessoryButtons = () => ({
+    //     btnAdd: {
+    //         text: '{{ trans('general.create') }}',
+    //         icon: 'fa fa-plus',
+    //         event () {
+    //             window.location.href = ''';
+    //         },
+    //         attributes: {
+    //             class: 'btn-info',
+    //             title: '{{ trans('general.create') }}',
+    //             @if ($snipeSettings->shortcuts_enabled == 1)
+    //             accesskey: 'n'
+    //             @endif
+    //         }
+    //     },
+    // });
+    // @endcan
 
     @can('create', \App\Models\Depreciation::class)
     // Accessory table buttons
@@ -465,25 +465,25 @@
     });
     @endcan
 
-    @can('create', \App\Models\Component::class)
-    // Compoment table buttons
-    window.componentButtons = () => ({
-        btnAdd: {
-            text: '{{ trans('general.create') }}',
-            icon: 'fa fa-plus',
-            event () {
-                window.location.href = '{{ route('components.create') }}';
-            },
-            attributes: {
-                class: 'btn-info',
-                title: '{{ trans('general.create') }}',
-                @if ($snipeSettings->shortcuts_enabled == 1)
-                accesskey: 'n'
-                @endif
-            }
-        },
-    });
-    @endcan
+    // @can('create', \App\Models\Component::class)
+    // // Compoment table buttons
+    // window.componentButtons = () => ({
+    //     btnAdd: {
+    //         text: '{{ trans('general.create') }}',
+    //         icon: 'fa fa-plus',
+    //         event () {
+    //             window.location.href = '';
+    //         },
+    //         attributes: {
+    //             class: 'btn-info',
+    //             title: '{{ trans('general.create') }}',
+    //             @if ($snipeSettings->shortcuts_enabled == 1)
+    //             accesskey: 'n'
+    //             @endif
+    //         }
+    //     },
+    // });
+    // @endcan
 
     @can('create', \App\Models\Consumable::class)
     // Consumable table buttons
@@ -689,68 +689,6 @@
         },
     });
     @endcan
-
-
-    // License table buttons
-    window.licenseButtons = () => ({
-        @can('create', \App\Models\License::class)
-        btnAdd: {
-            text: '{{ trans('general.create') }}',
-            icon: 'fa fa-plus',
-            event () {
-                window.location.href = '{{ route('licenses.create') }}';
-            },
-            attributes: {
-                class: 'btn-info',
-                title: '{{ trans('general.create') }}',
-                @if ($snipeSettings->shortcuts_enabled == 1)
-                accesskey: 'n'
-                @endif
-            },
-        },
-        @endcan
-
-        btnExport: {
-            text: '{{ trans('general.export_all_to_csv') }}',
-            icon: 'fa-solid fa-file-csv',
-            event () {
-                window.location.href = '{{ route('licenses.export', ['category_id' => (isset($category)) ? $category->id :'' ]) }}';
-            },
-            attributes: {
-                class: 'btn-primary',
-                title: '{{ trans('general.export_all_to_csv') }}',
-            }
-        },
-
-        btnShowExpiring: {
-            text: '{{ (request()->input('status') == "expiring") ? trans('general.list_all') : trans('general.show_expiring') }}',
-            icon: 'fas fa-clock',
-            event () {
-                window.location.href = '{{ (request()->input('status') == "expiring") ? route('licenses.index') : route('licenses.index', ['status' => 'expiring']) }}';
-            },
-            attributes: {
-                class: "{{ (request()->input('status') == "expiring") ? ' btn-warning' : '' }}",
-                title: '{{ (request()->input('status') == "expiring") ? trans('general.list_all') : trans('general.show_expiring') }}',
-
-            }
-        },
-
-        btnShowInactive: {
-            text: '{{ (request()->input('status') == "inactive") ? trans('general.list_all') : trans('general.show_inactive') }}',
-            icon: 'fas fa-history',
-            event () {
-                window.location.href = '{{ (request()->input('status') == "inactive") ? route('licenses.index') : route('licenses.index', ['status' => 'inactive']) }}';
-            },
-            attributes: {
-                class: "{{ (request()->input('status') == "inactive") ? ' btn-warning' : '' }}",
-                title: '{{ (request()->input('status') == "inactive") ? trans('general.list_all') : trans('general.show_inactive') }}',
-
-            }
-        },
-    });
-
-
-
 
 
     function dateRowCheckStyle(value) {

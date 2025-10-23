@@ -49,45 +49,6 @@
     </div><!-- ./col -->
 
     <div class="col-lg-2 col-xs-6">
-        <a href="{{ route('licenses.index') }}" aria-hidden="true">
-            <!-- small license box -->
-            <div class="dashboard small-box bg-maroon">
-                <div class="inner">
-                    <h3>{{ number_format($counts['license']) }}</h3>
-                    <p>{{ trans('general.licenses') }}</p>
-                </div>
-                <div class="icon" aria-hidden="true">
-                    <x-icon type="licenses" />
-                </div>
-                <span class="small-box-footer">
-                    {{ trans('general.view_all') }}
-                    <x-icon type="arrow-circle-right" />
-                </span>
-            </div>
-        </a>
-    </div><!-- ./col -->
-
-
-    <div class="col-lg-2 col-xs-6">
-    <!-- small accessories box -->
-        <a href="{{ route('accessories.index') }}">
-            <div class="dashboard small-box bg-orange">
-                <div class="inner">
-                    <h3> {{ number_format($counts['accessory']) }}</h3>
-                    <p>{{ trans('general.accessories') }}</p>
-                </div>
-                <div class="icon" aria-hidden="true">
-                    <x-icon type="accessories" />
-                </div>
-                <span class="small-box-footer">
-                    {{ trans('general.view_all') }}
-                <x-icon type="arrow-circle-right" />
-                </span>
-            </div>
-        </a>
-    </div><!-- ./col -->
-
-    <div class="col-lg-2 col-xs-6">
     <!-- small consumables box -->
         <a href="{{ route('consumables.index') }}">
             <div class="dashboard small-box bg-purple">
@@ -97,25 +58,6 @@
                 </div>
                 <div class="icon" aria-hidden="true">
                     <x-icon type="consumables" />
-                </div>
-                <span class="small-box-footer">
-                    {{ trans('general.view_all') }}
-                    <x-icon type="arrow-circle-right" />
-                </span>
-            </div>
-        </a>
-    </div><!-- ./col -->
-
-    <div class="col-lg-2 col-xs-6">
-        <!-- small components box -->
-        <a href="{{ route('components.index') }}">
-            <div class="dashboard small-box bg-yellow">
-                <div class="inner">
-                    <h3>{{ number_format($counts['component']) }}</h3>
-                    <p>{{ trans('general.components') }}</p>
-                </div>
-                <div class="icon" aria-hidden="true">
-                    <x-icon type="components" />
                 </div>
                 <span class="small-box-footer">
                     {{ trans('general.view_all') }}
@@ -178,23 +120,8 @@
                             @endcan
                         </div>
                         <div class="col-md-2">
-                            @can('create', \App\Models\License::class)
-                                <a class="btn bg-maroon" style="width: 100%" href="{{ route('licenses.create') }}">{{ trans('general.new_license') }}</a>
-                            @endcan
-                        </div>
-                        <div class="col-md-2">
-                            @can('create', \App\Models\Accessory::class)
-                                <a class="btn bg-orange" style="width: 100%" href="{{ route('accessories.create') }}">{{ trans('general.new_accessory') }}</a>
-                            @endcan
-                        </div>
-                        <div class="col-md-2">
                             @can('create', \App\Models\Consumable::class)
                                 <a class="btn bg-purple" style="width: 100%" href="{{ route('consumables.create') }}">{{ trans('general.new_consumable') }}</a>
-                            @endcan
-                        </div>
-                        <div class="col-md-2">
-                            @can('create', \App\Models\Component::class)
-                                <a class="btn bg-yellow" style="width: 100%" href="{{ route('components.create') }}">{{ trans('general.new_component') }}</a>
                             @endcan
                         </div>
                         <div class="col-md-2">
