@@ -9,8 +9,8 @@ export default class FloatingButtons {
         this.menuItems = this.fabMenu?.querySelectorAll("[role='menuitem']");
         this.menuOpen = false;
 
-        this.stickyElement = document.getElementById("advancedSearchPanel");
-        this.targetRect = document.getElementById("floatingButtonContainer");
+        //this.stickyElement = document.getElementById("advancedSearchPanel");
+        //this.targetRect = document.getElementById("floatingButtonContainer");
         this.init();
     }
 
@@ -49,10 +49,10 @@ export default class FloatingButtons {
                 item.addEventListener("click", () => this.closeMenu());
             });
 
-            window.addEventListener("resize", () => { this.align(); this.changeClassForScrolling(); });
-            window.addEventListener("orientationchange", () => { this.align(); this.changeClassForScrolling(); });
-            window.addEventListener("load", () => { this.align(); this.changeClassForScrolling(); });
-            window.addEventListener("scroll", () => { this.changeClassForScrolling(); })
+            window.addEventListener("resize", () => { this.align(); /*this.changeClassForScrolling();*/ });
+            window.addEventListener("orientationchange", () => { this.align(); /*this.changeClassForScrolling();*/ });
+            window.addEventListener("load", () => { this.align(); /*this.changeClassForScrolling();*/ });
+            //window.addEventListener("scroll", () => { this.changeClassForScrolling(); })
         });
     }
 
@@ -113,7 +113,8 @@ export default class FloatingButtons {
         document.getElementById("deleteFilterButton")?.classList.add("floatingButtons-disabled");
     }
 
-    changeClassForScrolling() {
+    // My attempts to write a method that can switch the floating buttons between a relative and an absolute postion.
+    /*changeClassForScrolling() {
         queueMicrotask(() => {
             this.target = document.getElementById("advancedSearchPanel");
             this.stickyElement = document.getElementById("floatingButtonContainer");
@@ -138,5 +139,5 @@ export default class FloatingButtons {
                 shouldBeScrollable
             );
         });
-    }
+    }*/
 }

@@ -9,8 +9,8 @@ export default class FloatingButtons {
         this.menuItems = this.fabMenu?.querySelectorAll("[role='menuitem']");
         this.menuOpen = false;
 
-        this.stickyElement = document.getElementById("advancedSearchPanel");
-        this.targetRect = document.getElementById("floatingButtonContainer");
+        //this.stickyElement = document.getElementById("advancedSearchPanel");
+        //this.targetRect = document.getElementById("floatingButtonContainer");
         this.init();
     }
 
@@ -49,10 +49,10 @@ export default class FloatingButtons {
                 item.addEventListener("click", () => this.closeMenu());
             });
 
-            window.addEventListener("resize", () => { this.align(); this.changeClassForScrolling(); });
-            window.addEventListener("orientationchange", () => { this.align(); this.changeClassForScrolling(); });
-            window.addEventListener("load", () => { this.align(); this.changeClassForScrolling(); });
-            window.addEventListener("scroll", () => { this.changeClassForScrolling(); })
+            window.addEventListener("resize", () => { this.align(); /*this.changeClassForScrolling();*/ });
+            window.addEventListener("orientationchange", () => { this.align(); /*this.changeClassForScrolling();*/ });
+            window.addEventListener("load", () => { this.align(); /*this.changeClassForScrolling();*/ });
+            //window.addEventListener("scroll", () => { this.changeClassForScrolling(); })
         });
     }
 
@@ -113,32 +113,31 @@ export default class FloatingButtons {
         document.getElementById("deleteFilterButton")?.classList.add("floatingButtons-disabled");
     }
 
-changeClassForScrolling() {
-    queueMicrotask(() => {
-        this.target = document.getElementById("advancedSearchPanel");
-        this.stickyElement = document.getElementById("floatingButtonContainer");
-        if (!this.stickyElement || !this.target) {
-            console.warn("stickyElement or target not defined");
-            return;
-        }
-        
-        const stickyRect = this.stickyElement.getBoundingClientRect();
-        const targetRect = this.target.getBoundingClientRect();
-        
-        const shouldBeScrollable = stickyRect.bottom + 50 >= targetRect.top;
-        console.log(stickyRect.bottom + " " + targetRect.top);
+    // My attempts to write a method that can switch the floating buttons between a relative and an absolute postion.
+    /*changeClassForScrolling() {
+        queueMicrotask(() => {
+            this.target = document.getElementById("advancedSearchPanel");
+            this.stickyElement = document.getElementById("floatingButtonContainer");
+            if (!this.stickyElement || !this.target) {
+                console.warn("stickyElement or target not defined");
+                return;
+            }
 
-        this.stickyElement.classList.toggle(
-            'floatingButtons-fab-fixed-wrapper',
-            !shouldBeScrollable
-        );
+            const stickyRect = this.stickyElement.getBoundingClientRect();
+            const targetRect = this.target.getBoundingClientRect();
 
-        this.stickyElement.classList.toggle(
-            'floatingButtons-fab-scrollable-wrapper',
-            shouldBeScrollable
-        );
-    });
-}
+            const shouldBeScrollable = stickyRect.bottom + 50 >= targetRect.top;
+            console.log(stickyRect.bottom + " " + targetRect.top);
 
+            this.stickyElement.classList.toggle(
+                'floatingButtons-fab-fixed-wrapper',
+                !shouldBeScrollable
+            );
 
+            this.stickyElement.classList.toggle(
+                'floatingButtons-fab-scrollable-wrapper',
+                shouldBeScrollable
+            );
+        });
+    }*/
 }

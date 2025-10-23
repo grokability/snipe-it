@@ -10,14 +10,14 @@
      pointer-events: auto;
  }
 
-.floatingButtons-fab-scrollable-wrapper {
+/*.floatingButtons-fab-scrollable-wrapper {
     position: absolute;
     left: 50% !important;
     display: flex;
     gap: 20px;
     z-index: 1000;
     pointer-events: auto;
-}
+}*/
 
  /* Limit width to match container if needed */
  /* Optional: align wrapper to container width */
