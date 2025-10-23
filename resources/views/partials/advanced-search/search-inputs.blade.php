@@ -161,6 +161,48 @@
 </span>
 </span>
 
+<script>
+   /*document.addEventListener('DOMContentLoaded',() => {
+      $(document).on('select2:open', (e) => {
+         const dropdown = document.querySelector('.select2-container--open .select2-results__options');
+         if (dropdown) {
+            console.log(dropdown);
+            console.log(e.target);
+            console.log("dropdown open");
+         }
+
+         
+      });
+      $(document).on('select2:closing', (e) => {
+         const dropdown = document.querySelector('.select2-container--open .select2-results__options');
+         if (dropdown) {
+            console.log(dropdown);
+            console.log(e.target);
+            console.log("dropdown close");
+         }
+      });
+
+      $(document).on('select2:open', (e) => {
+  const selectEl = e.target; // <select> element that triggered the event
+  const $select = $(selectEl);
+
+  // Select2 wraps the <select> with its .select2-container, placed right after it
+  const $container = $select.next('.select2-container');
+
+  if ($container.length) {
+    // Clear inline height styles for this specific Select2 instance
+    $container.css('height', '');
+    $container.find('.select2-selection--multiple').css('height', '');
+    $container.find('.select2-selection--single .select2-selection__rendered').css('height', '');
+
+    console.log('✅ Height cleared for Select2:', selectEl.id);
+  }
+});
+
+
+   });*/
+</script>
+
 <style>
 /* 
 Layout container for the whole page.
@@ -224,10 +266,10 @@ When .hide is applied, the filter section is hidden.
 /* Operator dropdown - smaller width */
 .filter-option {
     flex: 0 0 60px; /* Fixed width for consistency */
-    min-width: 30px;
-    max-width: 60px;
+    min-width: 35px;
+    max-width: 42px;
     height: 38px;
-    padding: 6px 8px;
+    padding: 0px 2px;
     font-size: 13px;
     border: 1px solid #ced4da;
     border-top-right-radius: 0;
@@ -317,6 +359,14 @@ When .hide is applied, the filter section is hidden.
     font-size: 12px;
     color: #666;
     white-space: nowrap;
+}
+
+.filter-option {
+   /* for Firefox */
+   -moz-appearance: none;
+   /* for Safari, Chrome, Opera */
+   -webkit-appearance: none;
+   appearance: none;
 }
 
 /* ---------- DESKTOP Styles (screen ≥ 768px) ---------- */
