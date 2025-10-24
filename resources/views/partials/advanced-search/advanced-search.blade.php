@@ -55,199 +55,206 @@
 @include('partials.confetti-js', ['autostart' => false])
 
 <script type="module">
-    import ApiService from '/js/dist/apiService.min.js';
-    import FilterFormManager from '/js/dist/filterFormManager.min.js';
-    import FloatingButtons from  '/js/dist/floating-buttons.min.js';
+import ApiService from '/js/dist/apiService.min.js';
+import FilterFormManager from '/js/dist/filterFormManager.min.js';
+import FloatingButtons from '/js/dist/floating-buttons.min.js';
+import { container } from '/js/dist/simpleDIContainer.min.js';
 
-    import { container } from '/js/dist/simpleDIContainer.min.js';
+// Add needed stuff into the DI container
+container.register("apiService", new ApiService());
+container.register("filterFormManager", new FilterFormManager());
+container.register("floatingButtons", new FloatingButtons());
 
-    // Add needed stuff into the di-container
-    container.register("apiService", new ApiService);
-    container.register("filterFormManager", new FilterFormManager);
-    container.register("floatingButtons", new FloatingButtons());
+class FilterUIController {
+    constructor(tableElement) {
+        this.$table = tableElement;
+        this.apiService = container.resolve("apiService");
+        this.collector = container.resolve("filterFormManager");
+        this.collector.collectFilterInputs();
+    }
 
-    class FilterUIController {
-        constructor(tableElement) {
-            this.$table = tableElement;
-            this.apiService = container.resolve("apiService");
-            this.collector = container.resolve("filterFormManager");
-            this.filters = this.collector.findFilterInput();
+    refresh() {
+        const filters = this.collector.collectFilterData();
+        this.$table.bootstrapTable('refresh', {
+            query: {
+                filter: JSON.stringify(filters)
+            }
+        });
+    }
+
+    async updateFilterWithPredefined(event, selectedId = null) {
+        if (event !== null) {
+            selectedId = event?.target?.value;
         }
 
-        refresh() {
-            const filters = this.collector.collect();
-            this.$table.bootstrapTable('refresh', {
-                query: {
-                    filter: JSON.stringify(filters)
-                }
-            });
+        const floatingButtons = container.resolve("floatingButtons");
+
+        if (!selectedId) {
+            floatingButtons.disableEditDeleteButtons();
+            return;
         }
 
-        updateFilterWithPredefined(event, selectedId = null) {
-            if(event !== null) {
-                selectedId = event?.target?.value;
+        floatingButtons.enableEditDeleteButtons();
+
+        try {
+            const response = await this.apiService.fetchPredefinedFilterData(selectedId);
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
             }
 
-            const floatingButtons = container.resolve("floatingButtons");
+            const data = await response.json();
+            await this.collector.setValuesFromResponse(data.filter_data);
+            this.refresh();
 
-            if (!selectedId) {
-                floatingButtons.disableEditDeleteButtons();
-                return;
-            }
-
-            floatingButtons.enableEditDeleteButtons();
-            //setAdvancedSearchPanelFilterEnabledState(true);
-
-            this.apiService.fetchPredefinedFilterData(selectedId)
-             .then(response => {
-                if (!response.ok) {
-                    throw new Error("Network response was not ok");
-                }
-                return response.json(); // Parse JSON from response
-            })
-            .then(data => {
-                if (!data.filter_data) return;
-
-                return this.collector.setValuesFromResponse(data.filter_data)
-                    .then(() => {
-                        this.refresh();
-                });
-            })
-            .catch(err => {
-                console.error("Failed to apply predefined filter:", err);
-                Livewire.dispatch('showNotification', { type: 'error', message: '{{ trans('general.failed_to_apply_predefined_filter') }}'});
-                //setAdvancedSearchPanelFilterEnabledState(false);
+        } catch (err) {
+            console.error("Failed to apply predefined filter:", err);
+            Livewire.dispatch('showNotification', {
+                type: 'error',
+                message: '{{ trans("general.failed_to_apply_predefined_filter") }}'
             });
-        }
-
-        storePredefinedFilterInBackend() {
-            Livewire.dispatch('openPredefinedFiltersModal', {
-                action: 'create',
-                predefinedFilterData: filters,
-            });
-        }
-
-        updatePredefinedFilterInBackend(updateFilterButtonId) {
-            if (document.getElementById(updateFilterButtonId).classList.contains('disabled')) return; // Do nothing when the button is disabled
-
-            const selectedFilter = $("#predefinedfilters-select").select2('data')[0]; // Always zero because only one element can be selected at the time
-            if (!selectedFilter) return;
-            const filters = this.collector.collect();
-
-            Livewire.dispatch('openPredefinedFiltersModal', {
-                action: 'edit',
-                predefinedFilterId: parseInt(selectedFilter.id),
-                predefinedFilterData: filters,
-            });
-        }
-
-        deletePredefinedFilterFromBackend(deleteFilterButtonId) {
-            if (document.getElementById(deleteFilterButtonId).classList.contains('disabled')) return; // Do nothing when the button is disabled
-
-            const selectedFilterId = $("#predefinedfilters-select").select2('data')[0].id; // Always zero because only one element can be selected at the time
-            if (!selectedFilterId) return;
-
-            Livewire.dispatch('openPredefinedFiltersModal',{ 
-                action: 'delete',
-                predefinedFilterId: parseInt(selectedFilterId),
-            });
-        }
-
-        bindEvents() {
-
-            $('#predefinedfilters-select').on('change', (e) => {
-                this.updateFilterWithPredefined(e);
-            });
-
-            const filterButton = document.getElementById("filterButton");
-            if (filterButton) {
-                filterButton.addEventListener('click', this.refresh.bind(this));
-            }
-
-            const clearButton = document.getElementById("clearInputButton");
-            if (clearButton) {
-                clearButton.addEventListener('click', () => {
-                    this.collector.clearAll() 
-                    $('#predefinedfilters-select').val(null).trigger('change');
-                });
-            }
-
-            const topClearButton = document.getElementById("topClearInputButton");
-            if (topClearButton) {
-                topClearButton.addEventListener('click', () => 
-                {
-                    this.collector.clearAll() 
-                    $('#predefinedfilters-select').val(null).trigger('change');
-                });
-                //Livewire.emit('refreshNotifications');
-            }
-
-            const saveFilterButton = document.getElementById("storeFilterButton");
-            if (saveFilterButton) {
-                saveFilterButton.addEventListener('click', () => this.storePredefinedFilterInBackend());
-            }
-
-            const updateFilterButton = document.getElementById("updateFilterButton");
-            if (updateFilterButton) {
-                updateFilterButton.addEventListener('click', () => this.updatePredefinedFilterInBackend(updateFilterButton.id));
-            }
-
-            const deleteFilterButton = document.getElementById("deleteFilterButton");
-            if (deleteFilterButton) {
-                deleteFilterButton.addEventListener('click', () => this.deletePredefinedFilterFromBackend(deleteFilterButton.id));
-            }
-
         }
     }
 
-    document.addEventListener('livewire:init', function () {
-        const tableId = "{{ request()->has('status') ? e(request()->input('status')) : '' }}assetsListingTable";
-        const $table = $('#' + tableId);
+    storePredefinedFilterInBackend() {
+        const filters = this.collector.collectFilterData();
 
-        // Initialize everything
-        const controller = new FilterUIController($table);
-        container.register("filterUiController", controller);
-        controller.bindEvents();
-
-        function sleep(ms) {
-            return new Promise(resolve => setTimeout(resolve, ms));
+        if (!filters || filters.length === 0) {
+            Livewire.dispatch('showNotification', {
+                type: "error",
+                title: "{{ trans('general.error') }}",
+                message: "{{ trans('general.can_not_save_empty_filter') }}"
+            });
+            return;
         }
 
+        Livewire.dispatch('openPredefinedFiltersModal', {
+            action: 'create',
+            predefinedFilterData: filters
+        });
+    }
 
-        @if(isset($predefined_filter_id))
-            // To set a predefined filter and open the modal over the url
-            controller.updateFilterWithPredefined(null, {{ $predefined_filter_id }});
+    updatePredefinedFilterInBackend(updateFilterButtonId) {
+        const updateBtn = document.getElementById(updateFilterButtonId);
+        if (updateBtn.classList.contains('disabled')) return;
 
-            const filterSection = document.getElementById('filterSection');
-            filterSection.classList.remove('hide');
+        const selectedFilter = $("#predefinedfilters-select").select2('data')[0];
+        if (!selectedFilter) return;
 
-            @if(!empty($predefined_filter_edit_modal_open) && $predefined_filter_edit_modal_open == true)
-                sleep(200).then(() => { // I know that this is bad practice but I havn't found another way that works :-(
-                    Livewire.dispatch('openPredefinedFiltersModal', {
-                        action: 'edit',
-                        predefinedFilterId: {{ (int) $predefined_filter_id }},
-                        predefinedFilterData: {},
-                    });
+        const filters = this.collector.collectFilterData();
+
+        if (!filters || filters.length === 0) {
+            Livewire.dispatch('showNotification', {
+                type: "error",
+                title: "{{ trans('general.error') }}",
+                message: "{{ trans('general.can_not_update_empty_filter') }}"
+            });
+            return;
+        }
+
+        Livewire.dispatch('openPredefinedFiltersModal', {
+            action: 'edit',
+            predefinedFilterId: parseInt(selectedFilter.id),
+            predefinedFilterData: filters
+        });
+    }
+
+    deletePredefinedFilterFromBackend(deleteFilterButtonId) {
+        const deleteBtn = document.getElementById(deleteFilterButtonId);
+        if (deleteBtn.classList.contains('disabled')) return;
+
+        const selected = $("#predefinedfilters-select").select2('data')[0];
+        if (!selected || !selected.id) return;
+
+        Livewire.dispatch('openPredefinedFiltersModal', {
+            action: 'delete',
+            predefinedFilterId: parseInt(selected.id)
+        });
+    }
+
+    bindEvents() {
+        $('#predefinedfilters-select').on('change', (e) => this.updateFilterWithPredefined(e));
+
+        const filterButton = document.getElementById("filterButton");
+        if (filterButton) {
+            filterButton.addEventListener('click', this.refresh.bind(this));
+        }
+
+        const clearButtons = ["clearInputButton", "topClearInputButton"];
+        clearButtons.forEach(id => {
+            const btn = document.getElementById(id);
+            if (btn) {
+                btn.addEventListener('click', () => {
+                    this.collector.clearAll();
+                    $('#predefinedfilters-select').val(null).trigger('change');
                 });
-            @endif
+            }
+        });
+
+        const saveButton = document.getElementById("storeFilterButton");
+        if (saveButton) {
+            saveButton.addEventListener('click', () => this.storePredefinedFilterInBackend());
+        }
+
+        const updateButton = document.getElementById("updateFilterButton");
+        if (updateButton) {
+            updateButton.addEventListener('click', () => this.updatePredefinedFilterInBackend(updateButton.id));
+        }
+
+        const deleteButton = document.getElementById("deleteFilterButton");
+        if (deleteButton) {
+            deleteButton.addEventListener('click', () => this.deletePredefinedFilterFromBackend(deleteButton.id));
+        }
+    }
+}
+
+document.addEventListener('livewire:init', function () {
+    const tableId = "{{ request()->has('status') ? e(request()->input('status')) : '' }}assetsListingTable";
+    const $table = $('#' + tableId);
+
+    const controller = new FilterUIController($table);
+    container.register("filterUiController", controller);
+    controller.bindEvents();
+
+    function sleep(ms = 0) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    (async () => {
+        const filterSection = document.getElementById('filterSection');
+        filterSection.classList.remove('hide');
+        container.resolve("filterFormManager").clearAll();
+        await sleep();
+        filterSection.classList.add('hide');
+    })();
+
+    @if(isset($predefined_filter_id))
+        controller.updateFilterWithPredefined(null, {{ $predefined_filter_id }});
+
+        const filterSection = document.getElementById('filterSection');
+        filterSection.classList.remove('hide');
+
+        @if(!empty($predefined_filter_edit_modal_open) && $predefined_filter_edit_modal_open == true)
+            sleep(200).then(() => {
+                Livewire.dispatch('openPredefinedFiltersModal', {
+                    action: 'edit',
+                    predefinedFilterId: {{ (int) $predefined_filter_id }},
+                    predefinedFilterData: {}
+                });
+            });
         @endif
+    @endif
+});
 
+// Filter search functionality
+document.getElementById('filterSearch').addEventListener('input', function (e) {
+    const searchTerm = e.target.value.toLowerCase();
+    const items = document.querySelectorAll('.filter-item');
+    items.forEach(item => {
+        const label = item.querySelector('label');
+        const labelText = label ? label.textContent.toLowerCase() : '';
+        item.style.display = labelText.includes(searchTerm) ? '' : 'none';
     });
-
-    // Filter search functionality
-    document.getElementById('filterSearch').addEventListener('input', function(e) {
-        const searchTerm = e.target.value.toLowerCase();
-        const items = document.querySelectorAll('.filter-item');
-        items.forEach(item => {
-            const label = item.querySelector('label');
-            const labelText = label ? label.textContent.toLowerCase() : '';
-            if (labelText.includes(searchTerm)) {
-               item.style.display = '';
-           } else {
-               item.style.display = 'none';
-           }
-       });
-    });
+});
 
 
 </script>

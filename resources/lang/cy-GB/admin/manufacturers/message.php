@@ -22,9 +22,11 @@ return array(
     ),
 
     'delete' => array(
-        'confirm'   => 'Ydych chi\'n sicr eich bod eisiau dileu\'r gwneuthyrwr yma?',
+        'confirm' => 'Ydych chi\'n sicr eich bod eisiau dileu\'r gwneuthyrwr yma?',
         'error'   => 'Roedd problem wrth ceisio dileu\'r gwneuthyrwr. Ceisiwch eto o. g. y. dd.',
-        'success' => 'Gwneuthyrwr wedi dileu\'n llwyddiannus.'
+        'success'                => 'Manufacturer deleted successfully.',
+        'bulk_success'           => 'Manufacturers deleted successfully.',
+        'partial_success'        => 'Manufacturer deleted successfully. See additional information below. | :count manufacturers were deleted successfully. See additional information below.',
     )
 
 );

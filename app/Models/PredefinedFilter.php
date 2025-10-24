@@ -53,20 +53,53 @@ class PredefinedFilter extends Model
 
     public function userHasPermission(User $user, string $action): bool
     {
-        if ($user->id == $this->created_by){
+        // Give the superuser all permissions no matter in which groups he is
+        if($user->isSuperUser()) {
             return true;
         }
 
-        if (!$this->is_public){
-            return false;
+        // If filter is private AND is_owner AND action != create he can do everything
+        // such as create private, edit and delete
+        // note the 'create' permission is only for creating public filters. 
+        if ($user->id == $this->created_by && !$this->is_public && $action != 'create'){
+            return true;
         }
 
+        switch($action){
+            case 'create':
+                return $user->hasAccess('predefinedFilter.create');
+            case 'view':
+                if ($this->checkPermissions($user, 'view')) {
+                    return true;
+                }
+                //cascade for edit and view
+                return $this->userHasPermission($user, 'edit') || $this->userHasPermission($user, 'delete');
+            case 'edit':
+            case 'delete':
+                // If filter is private AND is_owner AND action != create he can do everything
+                // such as create private, edit and delete
+                // note the 'create' permission is only for creating public filters. 
+                if ($user->id == $this->created_by && !$this->is_public && $action != 'create'){
+                    return true;
+                }
+
+                return $this->checkPermissions($user, $action);
+            }
+
+        return false;
+    }
+    
+    private function checkPermissions(User $user, $action):bool
+    {
         $userGroupIds = $user->groups()->pluck('id')->toArray();
+
+        if (!$user->relationLoaded('groups')) {
+            $user->load('groups');
+        }
 
         foreach ($this->permissionGroups as $group){
             if (in_array($group->id, $userGroupIds)){
                 $permissions = json_decode($group->permissions, true);    
-                
                 if((isset($permissions["predefinedFilter.$action"]) && $permissions["predefinedFilter.$action"] == '1')){
                     return true;
                 }   

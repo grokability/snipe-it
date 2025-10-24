@@ -22,9 +22,11 @@ return array(
     ),
 
     'delete' => array(
-        'confirm'   => 'Êtes-vous sûr de vouloir supprimer ce fabricant ?',
+        'confirm' => 'Êtes-vous sûr de vouloir supprimer ce fabricant ?',
         'error'   => 'Un problème a eu lieu pendant la suppression du fabricant. Veuillez essayer à nouveau.',
-        'success' => 'Le fabricant a été supprimé avec succès.'
+        'success'                => 'Manufacturer deleted successfully.',
+        'bulk_success'           => 'Manufacturers deleted successfully.',
+        'partial_success'        => 'Manufacturer deleted successfully. See additional information below. | :count manufacturers were deleted successfully. See additional information below.',
     )
 
 );

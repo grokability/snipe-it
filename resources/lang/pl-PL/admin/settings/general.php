@@ -37,7 +37,7 @@ return [
     'backups_clean_helptext' => "To może być przydatne, jeśli zmieniasz się pomiędzy wersjami bazy danych",
     'backups_upload'            => 'Prześlij kopię zapasową',
     'backups_path'              => 'Kopie zapasowe na serwerze są przechowywane w <code>:path</code>',
-    'backups_restore_warning'   => 'Use the restore button <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small> to restore from a previous backup. (This does not currently work with S3 file storage or Docker.)<br><br>Your <strong>entire :app_name database and any uploaded files will be completely replaced</strong> by what\'s in the backup file  ',
+    'backups_restore_warning'   => 'Use the restore button <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small> to restore from a previous backup. (This does not currently work with S3 file storage.)<br><br>Your <strong>entire :app_name database and any uploaded files will be completely replaced</strong> by what\'s in the backup file  ',
     'backups_logged_out'         => 'Wszyscy istniejący użytkownicy, w tym Ty, zostaną wylogowani po zakończeniu przywracania.',
     'backups_large'             => 'Bardzo duże kopie zapasowe mogą przekroczyć limit czasu podczas próby przywrócenia i mogą nadal wymagać uruchomienia za pomocą wiersza poleceń. ',
     'barcode_settings'			=> 'Ustawienia Kodów Kreskowych',

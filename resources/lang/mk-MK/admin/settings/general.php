@@ -37,7 +37,7 @@ return [
     'backups_clean_helptext' => "Ова може да биде корисно ако ги менувате верзиите на базата на податоци",
     'backups_upload'            => 'Прикачете резервна копија',
     'backups_path'              => 'Резервните копии се чуваат на <code>:path</code>',
-    'backups_restore_warning'   => 'Use the restore button <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small> to restore from a previous backup. (This does not currently work with S3 file storage or Docker.)<br><br>Your <strong>entire :app_name database and any uploaded files will be completely replaced</strong> by what\'s in the backup file  ',
+    'backups_restore_warning'   => 'Use the restore button <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small> to restore from a previous backup. (This does not currently work with S3 file storage.)<br><br>Your <strong>entire :app_name database and any uploaded files will be completely replaced</strong> by what\'s in the backup file  ',
     'backups_logged_out'         => 'Сите постојни корисници, вклучително и вас, ќе бидат одјавени откако ќе заврши обновувањето.',
     'backups_large'             => 'Многу големи резервни копии може да излезат од обидот за обновување и можеби сè уште треба да се водат преку командната линија. ',
     'barcode_settings'			=> 'Поставки за баркод',

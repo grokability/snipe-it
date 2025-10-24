@@ -22,9 +22,11 @@ return array(
     ),
 
     'delete' => array(
-        'confirm'   => 'Üreticiyi silmek istediğinize emin misiniz?',
+        'confirm' => 'Üreticiyi silmek istediğinize emin misiniz?',
         'error'   => 'Üretici silinirken bir hata oluştu. Lütfen tekrar deneyin.',
-        'success' => 'Üretici silindi.'
+        'success'                => 'Manufacturer deleted successfully.',
+        'bulk_success'           => 'Manufacturers deleted successfully.',
+        'partial_success'        => 'Manufacturer deleted successfully. See additional information below. | :count manufacturers were deleted successfully. See additional information below.',
     )
 
 );

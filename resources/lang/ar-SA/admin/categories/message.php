@@ -18,9 +18,11 @@ return array(
     ),
 
     'delete' => array(
-        'confirm'   => 'هل أنت متأكد أنك تريد حذف هذا التصنيف؟',
-        'error'   => 'حدث خطأ أثناء محاولة حذف التصنيف. الرجاء المحاولة مرة أخرى.',
-        'success' => 'تم حذف التصنيف بنجاح.'
+        'confirm'                => 'هل أنت متأكد أنك تريد حذف هذا التصنيف؟',
+        'error'                  => 'حدث خطأ أثناء محاولة حذف التصنيف. الرجاء المحاولة مرة أخرى.',
+        'success'                => 'Category was deleted successfully.',
+        'bulk_success'           => 'Categories were deleted successfully.',
+        'partial_success'        => 'Category deleted successfully. See additional information below. | :count categories were deleted successfully. See additional information below.',
     )
 
 );

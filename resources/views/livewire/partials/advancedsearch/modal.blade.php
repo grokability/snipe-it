@@ -44,6 +44,7 @@
 
                     <!-- Body -->
                     <div @class(["modal-body"]) wire:ignore>
+                        <livewire:notifications />
                         @if ($modalActionType !== App\Livewire\Partials\Advancedsearch\AdvancedsearchModalAction::Delete)
                         {{-- Filter name --}}
                         <div
@@ -56,6 +57,7 @@
                                 @class(["form-control"])
                                 id="filterName"
                                 wire:model.defer="name"
+                                placeholder="{{ trans("general.predefined_filter_name") }}"
                             />
                         </div>
 

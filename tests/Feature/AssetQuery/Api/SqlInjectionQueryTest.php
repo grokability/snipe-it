@@ -3,7 +3,7 @@
 /*
 * These testcases are trying to inject SQL through the advanced search api.
 */
-namespace Tests\Feature\Accessories\Api;
+namespace Tests\Feature\AssetQuery\Api;
 
 use App\Models\Asset;
 use App\Models\AssetModel;

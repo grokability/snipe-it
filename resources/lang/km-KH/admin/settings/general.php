@@ -37,7 +37,7 @@ return [
     'backups_clean_helptext' => "វាអាចមានប្រយោជន៍ប្រសិនបើអ្នកកំពុងផ្លាស់ប្តូររវាងកំណែមូលដ្ឋានទិន្នន័យ",
     'backups_upload'            => 'ផ្ទុកឡើងការបម្រុងទុក',
     'backups_path'              => 'ការបម្រុងទុកនៅលើម៉ាស៊ីនមេត្រូវបានរក្សាទុកក្នុង <code>:path</code>',
-    'backups_restore_warning'   => 'Use the restore button <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small> to restore from a previous backup. (This does not currently work with S3 file storage or Docker.)<br><br>Your <strong>entire :app_name database and any uploaded files will be completely replaced</strong> by what\'s in the backup file  ',
+    'backups_restore_warning'   => 'Use the restore button <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small> to restore from a previous backup. (This does not currently work with S3 file storage.)<br><br>Your <strong>entire :app_name database and any uploaded files will be completely replaced</strong> by what\'s in the backup file  ',
     'backups_logged_out'         => 'អ្នក​ប្រើ​ដែល​មាន​ស្រាប់​ទាំង​អស់ រួម​ទាំង​អ្នក​នឹង​ត្រូវ​បានចាក​ចេញ​នៅ​ពេល​ដែល​ការ​ស្ដារ​របស់​អ្នក​ត្រូវ​បាន​បញ្ចប់។',
     'backups_large'             => 'ការបម្រុងទុកដ៏ធំបំផុតអាចនឹងអស់ពេលក្នុងការព្យាយាមស្ដារ ហើយប្រហែលជានៅតែត្រូវដំណើរការតាមរយៈបន្ទាត់ពាក្យបញ្ជា។ ',
     'barcode_settings'			=> 'ការកំណត់បាកូដ',

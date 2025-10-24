@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'show_all' => 'Show All',
     '2FA_reset'             => '2FA reset',
     'accessories'			=> 'Accessories',
     'activated'			    => 'Activated',
@@ -236,7 +237,8 @@ return [
     'pending'				=> 'Pending',
     'people'				=> 'People',
     'per_page'				=> 'Results Per Page',
-    'predefined_filter_saved_successfully' => 'The predefined filter was created successfully',
+    'predefined_filter'		=> 'Predefined Filter',
+    'predefined_Filters'	=> 'Predefined Filters',
     'predefined_filter_deleted_successfully' => 'The predefined filter was deleted successfully',
     'predefined_filter_updated_successfully' => 'The predefined filter was updated successfully',
     'previous'				=> 'Previous',
@@ -637,6 +639,24 @@ return [
         'notes'  => 'Add a note',
     ],
 
+    'bulk_delete_associations' => [
+        'general_assoc_warning'       => ':item_name still has associated items. Please remove them before deleting this :item.',
+        'assoc_assets'                => ':item_name is currently associated with :asset_count asset(s) and cannot be deleted. Please update your assets to no longer reference this :item and try again.',
+        'asset_models'                => ':item_name is currently associated with :asset_count asset(s) and cannot be deleted. Please update your asset models to no longer reference this :item and try again.',
+        'assoc_maintenances'          => ':item_name is currently associated with :maintenance_count maintenance(s) and cannot be deleted. Please update your maintenances to no longer reference this :item and try again.',
+        'assoc_accessories'           => ':item_name is currently associated with :accessory_count accessory(ies) and cannot be deleted. Please update your accessories to no longer reference this :item and try again.',
+        'assoc_consumables'           => ':item_name is currently associated with :consumable_count consumable(s) and cannot be deleted. Please update your consumables to no longer reference this :item and try again.',
+        'assoc_components'            => ':item_name is currently associated with :component_count component(s) and cannot be deleted. Please update your components to no longer reference this :item and try again.',
+        'assoc_licenses'              => ':item_name is currently associated with :license_count license(s) and cannot be deleted. Please update your licenses to no longer reference this :item and try again.',
+        'assoc_assets_no_count'       => ':item_name is currently associated with other assets and cannot be deleted. Please update your assets to no longer reference this :item and try again.',
+        'asset_models_no_count'       => ':item_name is currently associated with other asset models and cannot be deleted. Please update your assets to no longer reference this :item and try again.',
+        'assoc_maintenances_no_count' => ':item_name is currently associated with other maintenances and cannot be deleted. Please update your maintenances to no longer reference this :item and try again.',
+        'assoc_accessories_no_count'  => ':item_name is currently associated with other accessories and cannot be deleted. Please update your accessories to no longer reference this :item and try again.',
+        'assoc_consumables_no_count'  => ':item_name is currently associated with other consumables and cannot be deleted. Please update your consumables to no longer reference this :item and try again.',
+        'assoc_components_no_count'   => ':item_name is currently associated with other components and cannot be deleted. Please update your components to no longer reference this :item and try again.',
+        'assoc_licenses_no_count'     => ':item_name is currently associated with other licenses and cannot be deleted. Please update your licenses to no longer reference this :item and try again.',
+    ],
+
     'breadcrumb_button_actions' => [
         'edit_item' => 'Edit :name',
         'checkout_item' => 'Checkout :name',
@@ -713,5 +733,8 @@ return [
     'public' => 'Public',
     'private' => 'Private',
     'validation_required' => 'Please enter a filter name',
+    'can_not_save_empty_filter' => 'You can not save a empty filter',
+    'can_not_update_empty_filter' => 'You can not update a empty filter',
+    'at_least_one_is_group_required_for_public_filter' => 'You must select at least one group or set the filter to private.',
 
 ];

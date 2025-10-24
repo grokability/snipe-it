@@ -37,7 +37,7 @@ return [
     'backups_clean_helptext' => "This can be useful if you're changing between database versions",
     'backups_upload'            => 'Soo rar kaabta',
     'backups_path'              => 'Kaydka serfarka waxa lagu kaydiyaa <code>:path</code>',
-    'backups_restore_warning'   => 'Use the restore button <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small> to restore from a previous backup. (This does not currently work with S3 file storage or Docker.)<br><br>Your <strong>entire :app_name database and any uploaded files will be completely replaced</strong> by what\'s in the backup file  ',
+    'backups_restore_warning'   => 'Use the restore button <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small> to restore from a previous backup. (This does not currently work with S3 file storage.)<br><br>Your <strong>entire :app_name database and any uploaded files will be completely replaced</strong> by what\'s in the backup file  ',
     'backups_logged_out'         => 'Dhammaan isticmaalayaasha jira, oo ay ku jiraan adiga, waa laga bixi doonaa marka soo celintaada dhammaato.',
     'backups_large'             => 'Kaydka aadka u weyn ayaa laga yaabaa inuu waqti ku qaato isku dayga soo celinta waxaana laga yaabaa inuu weli u baahdo in lagu socodsiiyo khadka taliska. ',
     'barcode_settings'			=> 'Dejinta Barcode',

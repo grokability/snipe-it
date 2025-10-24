@@ -209,7 +209,7 @@ class Notifications extends Component
     }
 
     /**
-     * Optional: dismiss everything (add a button if you want).
+     * Dismiss everything (add a button if you want).
      */
     #[On('dismissAllNotifications')]
     public function dismissAll(): void

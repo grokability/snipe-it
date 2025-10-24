@@ -81,18 +81,22 @@ class LdapTest extends TestCase
         $this->settings->enableLdap();
 
         $ldap_connect = $this->getFunctionMock("App\\Models", "ldap_connect");
-        $ldap_connect->expects($this->once())->willReturn('hello');
+        $ldap_connect->expects($this->exactly(3))->willReturn('hello');
 
         $ldap_set_option = $this->getFunctionMock("App\\Models", "ldap_set_option");
-        $ldap_set_option->expects($this->exactly(4));
+        $ldap_set_option->expects($this->exactly(12));
 
-        $this->getFunctionMock("App\\Models", "ldap_bind")->expects($this->once())->willReturn(true);
+        $this->getFunctionMock("App\\Models", "ldap_bind")->expects($this->exactly(2))->willReturn(true);
 
-        $this->getFunctionMock("App\\Models", "ldap_search")->expects($this->once())->willReturn(true);
+        $this->getFunctionMock("App\\Models", "ldap_search")->expects($this->exactly(1))->willReturn(true);
 
-        $this->getFunctionMock("App\\Models", "ldap_first_entry")->expects($this->once())->willReturn(true);
+        $this->getFunctionMock("App\\Models", "ldap_first_entry")->expects($this->exactly(1))->willReturn(true);
+        $this->getFunctionMock("App\\Models", "ldap_unbind")->expects($this->exactly(2));
+        $this->getFunctionMock("App\\Models", "ldap_count_entries")->expects($this->once())->willReturn(1);
+        $this->getFunctionMock("App\\Models", "ldap_get_dn")->expects($this->once())->willReturn('dn=FirstName Surname,ou=Org,dc=example,dc=com');
 
-        $this->getFunctionMock("App\\Models", "ldap_get_attributes")->expects($this->once())->willReturn(
+
+        $this->getFunctionMock("App\\Models", "ldap_get_attributes")->expects($this->exactly(1))->willReturn(
             [
                 "count" => 1,
                 0 => [
@@ -111,13 +115,25 @@ class LdapTest extends TestCase
         $this->settings->enableLdap();
 
         $ldap_connect = $this->getFunctionMock("App\\Models", "ldap_connect");
-        $ldap_connect->expects($this->once())->willReturn('hello');
+        $ldap_connect->expects($this->exactly(3))->willReturn('hello');
 
         $ldap_set_option = $this->getFunctionMock("App\\Models", "ldap_set_option");
-        $ldap_set_option->expects($this->exactly(4));
+        $ldap_set_option->expects($this->exactly(12));
 
-        // note - we return FALSE first, to simulate a bad-bind, then TRUE the second time to simulate a successful admin bind
-        $this->getFunctionMock("App\\Models", "ldap_bind")->expects($this->exactly(2))->willReturn(false, true);
+        //
+        $this->getFunctionMock("App\\Models", "ldap_bind")->expects($this->exactly(4))->willReturn(
+            true, /* initial admin connection for 'fast path' */
+            false, /* the actual login for the user */
+            false, /* the direct login for the user binding-as-themselves in the legacy path */
+            true /* the admin login afterwards (which is weird and doesn't make sense)  */
+        );
+        $this->getFunctionMock("App\\Models", "ldap_unbind")->expects($this->exactly(2));
+        $this->getFunctionMock("App\\Models", "ldap_error")->expects($this->never())->willReturn("exception");
+        $this->getFunctionMock("App\\Models", "ldap_search")->expects($this->exactly(1))->willReturn(false); //uhm?
+        $this->getFunctionMock("App\\Models", "ldap_count_entries")->expects($this->exactly(1))->willReturn(1);
+        $this->getFunctionMock("App\\Models", "ldap_first_entry")->expects($this->exactly(1))->willReturn(true);
+        $this->getFunctionMock("App\\Models", "ldap_get_attributes")->expects($this->exactly(1))->willReturn(1);
+        $this->getFunctionMock("App\\Models", "ldap_get_dn")->expects($this->exactly(1))->willReturn('dn=FirstName Surname,ou=Org,dc=example,dc=com');
 
 //        $this->getFunctionMock("App\\Models","ldap_error")->expects($this->once())->willReturn("exception");
 
@@ -132,14 +148,17 @@ class LdapTest extends TestCase
         $this->settings->enableLdap();
 
         $ldap_connect = $this->getFunctionMock("App\\Models", "ldap_connect");
-        $ldap_connect->expects($this->once())->willReturn('hello');
+        $ldap_connect->expects($this->exactly(2))->willReturn('hello');
 
         $ldap_set_option = $this->getFunctionMock("App\\Models", "ldap_set_option");
-        $ldap_set_option->expects($this->exactly(4));
+        $ldap_set_option->expects($this->exactly(8));
 
-        $this->getFunctionMock("App\\Models", "ldap_bind")->expects($this->once())->willReturn(true);
+        $this->getFunctionMock("App\\Models", "ldap_bind")->expects($this->exactly(2))->willReturn(true); //I think this is OK
 
-        $this->getFunctionMock("App\\Models", "ldap_search")->expects($this->once())->willReturn(false);
+        $this->getFunctionMock("App\\Models", "ldap_search")->expects($this->exactly(2))->willReturn(false); //uhm?
+        $this->getFunctionMock("App\\Models", "ldap_unbind")->expects($this->once());
+        $this->getFunctionMock("App\\Models", "ldap_count_entries")->expects($this->once())->willReturn(0);
+
 
         $this->expectExceptionMessage("Could not search LDAP:");
         $results = Ldap::findAndBindUserLdap("username","password");

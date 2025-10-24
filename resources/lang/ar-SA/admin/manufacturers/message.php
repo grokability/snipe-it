@@ -22,9 +22,11 @@ return array(
     ),
 
     'delete' => array(
-        'confirm'   => 'هل أنت متأكد من رغبتك في حذف هذه الشركة المصنعة؟',
+        'confirm' => 'هل أنت متأكد من رغبتك في حذف هذه الشركة المصنعة؟',
         'error'   => 'لقد حدثت مشكلة اثناء عملية حذف الشركة المصنعة، الرجاء المحاولة مرة اخرى.',
-        'success' => 'تم حذف الشركة المصنعة بنجاح.'
+        'success'                => 'Manufacturer deleted successfully.',
+        'bulk_success'           => 'Manufacturers deleted successfully.',
+        'partial_success'        => 'Manufacturer deleted successfully. See additional information below. | :count manufacturers were deleted successfully. See additional information below.',
     )
 
 );

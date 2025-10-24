@@ -157,7 +157,7 @@
         <!-- Asset Maintenance Cost -->
         <div class="form-group {{ $errors->has('cost') ? ' has-error' : '' }}">
           <label for="cost" class="col-md-3 control-label">{{ trans('admin/maintenances/form.cost') }}</label>
-          <div class="col-md-3">
+          <div class="col-md-3 text-right">
             <div class="input-group">
               <span class="input-group-addon">
                 @if (($item->asset) && ($item->asset->location) && ($item->asset->location->currency!=''))

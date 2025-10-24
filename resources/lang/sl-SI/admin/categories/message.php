@@ -18,9 +18,11 @@ return array(
     ),
 
     'delete' => array(
-        'confirm'   => 'Ali ste prepričani, da želite izbrisati to kategorijo?',
-        'error'   => 'Prišlo je do težave z izbrisom kategorije. Prosim poskusite ponovno.',
-        'success' => 'Kategorija je bila uspešno izbrisana.'
+        'confirm'                => 'Ali ste prepričani, da želite izbrisati to kategorijo?',
+        'error'                  => 'Prišlo je do težave z izbrisom kategorije. Prosim poskusite ponovno.',
+        'success'                => 'Category was deleted successfully.',
+        'bulk_success'           => 'Categories were deleted successfully.',
+        'partial_success'        => 'Category deleted successfully. See additional information below. | :count categories were deleted successfully. See additional information below.',
     )
 
 );

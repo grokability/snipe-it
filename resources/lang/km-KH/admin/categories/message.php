@@ -18,9 +18,11 @@ return array(
     ),
 
     'delete' => array(
-        'confirm'   => 'តើអ្នកប្រាកដថាចង់លុបប្រភេទនេះទេ?',
-        'error'   => 'មានបញ្ហាក្នុងការលុបប្រភេទ។ សូម​ព្យាយាម​ម្តង​ទៀត។',
-        'success' => 'ប្រភេទត្រូវបានលុបដោយជោគជ័យ។'
+        'confirm'                => 'តើអ្នកប្រាកដថាចង់លុបប្រភេទនេះទេ?',
+        'error'                  => 'មានបញ្ហាក្នុងការលុបប្រភេទ។ សូម​ព្យាយាម​ម្តង​ទៀត។',
+        'success'                => 'Category was deleted successfully.',
+        'bulk_success'           => 'Categories were deleted successfully.',
+        'partial_success'        => 'Category deleted successfully. See additional information below. | :count categories were deleted successfully. See additional information below.',
     )
 
 );

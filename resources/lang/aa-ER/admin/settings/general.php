@@ -37,7 +37,7 @@ return [
     'backups_clean_helptext' => "crwdns12714:0crwdne12714:0",
     'backups_upload'            => 'crwdns6327:0crwdne6327:0',
     'backups_path'              => 'crwdns6329:0crwdne6329:0',
-    'backups_restore_warning'   => 'crwdns13156:0crwdne13156:0',
+    'backups_restore_warning'   => 'crwdns13840:0crwdne13840:0',
     'backups_logged_out'         => 'crwdns6774:0crwdne6774:0',
     'backups_large'             => 'crwdns6335:0crwdne6335:0',
     'barcode_settings'			=> 'crwdns1295:0crwdne1295:0',

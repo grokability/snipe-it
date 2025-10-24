@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Manage',
     'field'		                => 'Meysydd',
     'about_fieldsets_title'		=> 'Amdan grwpiau meysydd',
-    'about_fieldsets_text'		=> 'Fieldsets allow you to create groups of custom fields that are frequently re-used for specific asset model types.',
+    'about_fieldsets_text'		=> 'Mae grwpiau meysydd yn caniatau i chi creu grwpiau o meysydd addasedig sydd yn cael ei defnyddio yn amal ar gyfer mathau penodol o asedau.',
     'custom_format'             => 'Custom Regex format...',
     'encrypt_field'      	        => 'Hamcryptio gwerth y maes yma yn y basdata',
     'encrypt_field_help'      => 'RHYBUDD: Mae hamcryptio maes yn feddwl nid oes modd chwilio amdano.',

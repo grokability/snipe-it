@@ -37,7 +37,7 @@ return [
     'backups_clean_helptext' => "This can be useful if you're changing between database versions",
     'backups_upload'            => 'バックアップをアップロード',
     'backups_path'              => 'サーバー上のバックアップは <code>:path</code> に保存されています',
-    'backups_restore_warning'   => 'Use the restore button <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small> to restore from a previous backup. (This does not currently work with S3 file storage or Docker.)<br><br>Your <strong>entire :app_name database and any uploaded files will be completely replaced</strong> by what\'s in the backup file  ',
+    'backups_restore_warning'   => 'Use the restore button <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small> to restore from a previous backup. (This does not currently work with S3 file storage.)<br><br>Your <strong>entire :app_name database and any uploaded files will be completely replaced</strong> by what\'s in the backup file  ',
     'backups_logged_out'         => 'あなたを含むすべての既存のユーザーは、復元が完了するとログアウトされます。',
     'backups_large'             => '非常に大きなバックアップは、復元時にタイムアウトする可能性があり、コマンドラインを介して実行する必要があります。 ',
     'barcode_settings'			=> 'バーコード設定',

@@ -38,7 +38,7 @@
                         <!-- Qty -->
                         <div class="form-group {{ $errors->has('checkin_qty') ? 'error' : '' }}">
                             <label for="checkin_qty" class="col-md-2 control-label">{{ trans('general.qty') }}</label>
-                            <div class="col-md-3">
+                            <div class="col-md-3 text-right">
                                 <input type="text" class="form-control" name="checkin_qty" aria-label="checkin_qty" value="{{ old('assigned_qty', $component_assets->assigned_qty) }}">
                             </div>
                             <div class="col-md-9 col-md-offset-2">

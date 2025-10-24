@@ -11,4 +11,3 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('predefined-filters/{id}', [PredefinedFilterController::class, 'destroy'])->name('predefined-filters.destroy');
 });
 
-

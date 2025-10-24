@@ -11,7 +11,6 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
-use function PHPUnit\Framework\isEmpty;
 
 class PredefinedFilterService
 {
@@ -31,11 +30,8 @@ class PredefinedFilterService
             ->orderBy('name')
             ->get(['id', 'name', 'created_by', 'is_public'])
             ->filter(function ($filter) use ($user) {
-                if ($filter->created_by == $user->id) {
-                    return true;
-                }
 
-                if ($filter->is_public && $filter->userHasPermission($user, 'view')) {
+                if ($filter->userHasPermission($user, 'view')) {
                     return true;
                 }
 
@@ -45,8 +41,8 @@ class PredefinedFilterService
         return $response;
     }
 
-    //TODO different Naming because it does more than only get a filter by ID
-    //TODO discuss because there is the built-in with() ['predefinedFilter::with('permissionGroups')->find(id)']
+    // TODO different Naming because it does more than only get a filter by ID
+    // TODO discuss because there is the built-in with() ['predefinedFilter::with('permissionGroups')->find(id)']
     public function getFilterById(int $id, bool $include_predefined_filter_groups = true)
     {
         $predefinedFilter = PredefinedFilter::find($id);
@@ -74,12 +70,13 @@ class PredefinedFilterService
         ]);
 
         // Set permissions
-        if (array_key_exists('permissions', $validated)) {
+        if (array_key_exists('permissions', $validated)  && count($validated['permissions']) > 0) {
             foreach ($validated['permissions'] as $permission) {
                 $permission['predefined_filter_id'] = $filter_create_response->id;
                 $this->predefinedFilterPermissionService->store($permission);
             }
         }
+
         return $filter_create_response;
     }
 
@@ -138,11 +135,7 @@ class PredefinedFilterService
             ->get(['id', 'name', 'created_by', 'is_public']);
 
         $viewableFilters = $filters->filter(function ($filter) use ($user) {
-            if ($filter->created_by == $user->id) {
-                return true;
-            }
-
-            if ($filter->is_public && $filter->userHasPermission($user, 'view')) {
+            if ($filter->userHasPermission($user, 'view')) {
                 return true;
             }
 
@@ -165,9 +158,9 @@ class PredefinedFilterService
         return $paginated;
     }
 
-private function syncPermissions($currentPermissions, $newPermissions): array
-{
-    $toAdd = array_udiff(
+    private function syncPermissions($currentPermissions, $newPermissions): array
+    {
+        $toAdd = array_udiff(
         $newPermissions,
         $currentPermissions,
         function ($a, $b) {
@@ -175,7 +168,7 @@ private function syncPermissions($currentPermissions, $newPermissions): array
         }
     );
 
-    $toDelete = array_udiff(
+        $toDelete = array_udiff(
         $currentPermissions,
         $newPermissions,
         function ($a, $b) {
@@ -183,11 +176,9 @@ private function syncPermissions($currentPermissions, $newPermissions): array
         }
     );
 
-    return [
-        'to_add' => $toAdd,
-        'to_delete' => $toDelete
-    ];
-}
-
-
+        return [
+            'to_add' => $toAdd,
+            'to_delete' => $toDelete
+        ];
+    }
 }

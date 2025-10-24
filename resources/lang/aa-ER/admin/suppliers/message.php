@@ -20,9 +20,9 @@ return array(
         'confirm'   => 'crwdns867:0crwdne867:0',
         'error'   => 'crwdns868:0crwdne868:0',
         'success' => 'crwdns869:0crwdne869:0',
-        'assoc_assets'	 => 'crwdns1959:0crwdne1959:0',
-        'assoc_licenses'	 => 'crwdns1960:0crwdne1960:0',
-        'assoc_maintenances'	 => 'crwdns13582:0crwdne13582:0',
+        'not_found'               => 'crwdns13842:0crwdne13842:0',
+        'bulk_success'            => 'crwdns13844:0crwdne13844:0',
+        'partial_success'        => 'crwdns13882:0crwdne13882:0',
     )
 
 );

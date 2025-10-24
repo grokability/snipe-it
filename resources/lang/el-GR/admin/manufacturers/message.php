@@ -22,9 +22,11 @@ return array(
     ),
 
     'delete' => array(
-        'confirm'   => 'Είστε βέβαιοι ότι θέλετε να διαγράψετε αυτόν τον κατασκευαστή;',
+        'confirm' => 'Είστε βέβαιοι ότι θέλετε να διαγράψετε αυτόν τον κατασκευαστή;',
         'error'   => 'Υπήρξε ένα ζήτημα διαγράφοντας τον κατασκευαστή. Παρακαλώ δοκιμάστε ξανά.',
-        'success' => 'Ο Κατασκευαστής διαγράφηκε με επιτυχία.'
+        'success'                => 'Manufacturer deleted successfully.',
+        'bulk_success'           => 'Manufacturers deleted successfully.',
+        'partial_success'        => 'Manufacturer deleted successfully. See additional information below. | :count manufacturers were deleted successfully. See additional information below.',
     )
 
 );

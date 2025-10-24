@@ -436,10 +436,8 @@ class ReportsController extends Controller
             // Open output stream
             $handle = fopen('php://output', 'w');
             stream_set_timeout($handle, 2000);
-            
-            if ($request->filled('use_bom')) {
-                fprintf($handle, chr(0xEF).chr(0xBB).chr(0xBF));
-            }
+
+            fprintf($handle, chr(0xEF).chr(0xBB).chr(0xBF));
 
             $header = [];
 

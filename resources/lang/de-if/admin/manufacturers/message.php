@@ -22,9 +22,11 @@ return array(
     ),
 
     'delete' => array(
-        'confirm'   => 'Bist du sicher, dass du diesen Hersteller löschen willst?',
+        'confirm' => 'Bist du sicher, dass du diesen Hersteller löschen willst?',
         'error'   => 'Beim löschen des Herstellers ist ein Problem aufgetreten. Bitte versuche es erneut.',
-        'success' => 'Der Hersteller wurde erfolgreich gelöscht.'
+        'success'                => 'Hersteller wurde erfolgreich gelöscht.',
+        'bulk_success'           => 'Hersteller wurden erfolgreich gelöscht.',
+        'partial_success'        => 'Hersteller wurde erfolgreich gelöscht. Siehe weitere Informationen unten. | :count Hersteller wurden erfolgreich gelöscht. Siehe weitere Informationen unten.',
     )
 
 );

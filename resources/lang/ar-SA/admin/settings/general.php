@@ -37,7 +37,7 @@ return [
     'backups_clean_helptext' => "This can be useful if you're changing between database versions",
     'backups_upload'            => 'تحميل نسخة احتياطية',
     'backups_path'              => 'يتم تخزين النسخ الاحتياطي على الخادم في <code>:path</code>',
-    'backups_restore_warning'   => 'Use the restore button <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small> to restore from a previous backup. (This does not currently work with S3 file storage or Docker.)<br><br>Your <strong>entire :app_name database and any uploaded files will be completely replaced</strong> by what\'s in the backup file  ',
+    'backups_restore_warning'   => 'Use the restore button <small><span class="btn btn-xs btn-warning"><i class="text-white fas fa-retweet" aria-hidden="true"></i></span></small> to restore from a previous backup. (This does not currently work with S3 file storage.)<br><br>Your <strong>entire :app_name database and any uploaded files will be completely replaced</strong> by what\'s in the backup file  ',
     'backups_logged_out'         => 'سيتم تسجيل الخروج من جميع المستخدمين الحاليين، بما في ذلك انت، بمجرد اكتمال الاستعادة.',
     'backups_large'             => 'قد تنتهي النسخ الاحتياطية الكبيرة جدا عند محاولة الاستعادة وقد تكون هناك حاجة إلى تشغيلها عبر سطر الأوامر. ',
     'barcode_settings'			=> 'إعدادات الباركود',

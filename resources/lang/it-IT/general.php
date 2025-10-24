@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'show_all' => 'Mostra tutto',
     '2FA_reset'             => '2FA reset',
     'accessories'			=> 'Accessori',
     'activated'			    => 'Attivato',
@@ -627,6 +628,24 @@ return [
 // Add form placeholders here
     'placeholders' => [
         'notes'  => 'Aggiungere una nota',
+    ],
+
+    'bulk_delete_associations' => [
+        'general_assoc_warning'       => ':item_name ha ancora articoli associati. Rimuovili prima di eliminare questo :item.',
+        'assoc_assets'                => ':item_name al momento è associato con :asset_count Bene/i e non può essere eliminato. Aggiorna i tuoi Beni in modo che non si riferiscano più a questo :item, e poi riprova.',
+        'asset_models'                => ':item_name al momento è associato con :asset_count Bene/i e non può essere eliminato. Aggiorna i tuoi Modelli di Bene in modo che non si riferiscano più a questo :item, e poi riprova.',
+        'assoc_maintenances'          => ':item_name al momento è associato con :maintenance_count manutenzione/i e non può essere eliminato. Aggiorna le tue manutentioni in modo che non si riferiscano più a questo :item, e poi riprova.',
+        'assoc_accessories'           => ':item_name al momento è associato con :accessory_count accessorio/i e non può essere eliminato. Aggiorna i tuoi accessori in modo che non si riferiscano più a questo :item, e poi riprova.',
+        'assoc_consumables'           => ':item_name al momento è associato con :consumable_count consumabile/i e non può essere eliminato. Aggiorna i tuoi consumabili in modo che non si riferiscano più a questo :item, e poi riprova.',
+        'assoc_components'            => ':item_name al momento è associato con :component_count componente/i e non può essere eliminato. Aggiorna i tuoi componenti in modo che non si riferiscano più a questo :item, e poi riprova.',
+        'assoc_licenses'              => ':item_name al momento è associato con :license_count licenza/e e non può essere eliminato. Aggiorna le tue licenze in modo che non si riferiscano più a questo :item, e poi riprova.',
+        'assoc_assets_no_count'       => ':item_name al momento è associato con altri Beni e non può essere eliminato. Aggiorna i tuoi Beni in modo che non si riferiscano più a questo :item, e poi riprova.',
+        'asset_models_no_count'       => ':item_name al momento è associato con altri modelli di Bene e e non può essere eliminato. Aggiorna i tuoi Beni in modo che non si riferiscano più a questo :item, e poi riprova.',
+        'assoc_maintenances_no_count' => ':item_name al momento è associato con altri manutenzioni e non può essere eliminato. Aggiorna le tue manutenzioni in modo che non si riferiscano più a questo :item, e poi riprova.',
+        'assoc_accessories_no_count'  => ':item_name al momento è associato con altri accessori e non può essere eliminato. Aggiorna i tuoi accessori in modo che non si riferiscano più a questo :item, e poi riprova.',
+        'assoc_consumables_no_count'  => ':item_name al momento è associato con altri consumabili e non può essere eliminato. Aggiorna i tuoi consumabili in modo che non si riferiscano più a questo :item, e poi riprova.',
+        'assoc_components_no_count'   => ':item_name al momento è associato ad altri componenti e non può essere eliminato. Aggiorna i tuoi componenti in modo che non si riferiscano più a questo :item, e poi riprova.',
+        'assoc_licenses_no_count'     => ':item_name al momento è associato ad altre licenze e non può essere eliminato. Aggiorna le tue licenze in modo che non si riferiscano più a questo :item, e poi riprova.',
     ],
 
     'breadcrumb_button_actions' => [

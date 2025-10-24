@@ -5,7 +5,7 @@ return [
     'manage'                    => '管理',
     'field'		                => '字段',
     'about_fieldsets_title'		=> '关于字段集',
-    'about_fieldsets_text'		=> '字段集允许你创建用于特定资产模型类型的可复用的自定义字段组。',
+    'about_fieldsets_text'		=> '字段组功能允许您创建可重复使用的自定义字段集合，这些字段组可针对特定资产模型类型进行配置。',
     'custom_format'             => '自定义正则表达式格式...',
     'encrypt_field'      	        => '在数据库中加密此字段',
     'encrypt_field_help'      => '警告︰ 对字段的加密将导致该字段无法用于搜索',

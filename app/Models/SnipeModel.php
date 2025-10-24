@@ -32,7 +32,7 @@ class SnipeModel extends Model
     protected function expiresDiffInDays(): Attribute
     {
         return Attribute:: make(
-            get: fn(mixed $value, array $attributes) => in_array('expiration_date', $attributes) ? Carbon::now()->diffInDays($attributes['expiration_date']) : null,
+            get: fn(mixed $value, array $attributes) => array_key_exists('expiration_date', $attributes) ? Carbon::now()->diffInDays($attributes['expiration_date']) : null,
         );
     }
 
@@ -40,14 +40,14 @@ class SnipeModel extends Model
     protected function expiresDiffForHumans(): Attribute
     {
         return Attribute:: make(
-            get: fn(mixed $value, array $attributes) => in_array('expiration_date', $attributes) ? Carbon::parse($attributes['expiration_date'])->diffForHumans() : null,
+            get: fn(mixed $value, array $attributes) => array_key_exists('expiration_date', $attributes) ? Carbon::parse($attributes['expiration_date'])->diffForHumans() : null,
         );
     }
 
     protected function expiresFormattedDate(): Attribute
     {
         return Attribute:: make(
-            get: fn(mixed $value, array $attributes) => in_array('expiration_date', $attributes) ? Helper::getFormattedDateObject($attributes['expiration_date'], 'date', false) : null,
+            get: fn(mixed $value, array $attributes) => array_key_exists('expiration_date', $attributes) ? Helper::getFormattedDateObject($attributes['expiration_date'], 'date', false) : null,
         );
     }
 

@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'show_all' => 'Show All',
     '2FA_reset'             => '2FA reset',
     'accessories'			=> 'Accesorii',
     'activated'			    => 'activat',
@@ -627,6 +628,24 @@ return [
 // Add form placeholders here
     'placeholders' => [
         'notes'  => 'Adaugă o notă',
+    ],
+
+    'bulk_delete_associations' => [
+        'general_assoc_warning'       => ':item_name still has associated items. Please remove them before deleting this :item.',
+        'assoc_assets'                => ':item_name is currently associated with :asset_count asset(s) and cannot be deleted. Please update your assets to no longer reference this :item and try again.',
+        'asset_models'                => ':item_name is currently associated with :asset_count asset(s) and cannot be deleted. Please update your asset models to no longer reference this :item and try again.',
+        'assoc_maintenances'          => ':item_name is currently associated with :maintenance_count maintenance(s) and cannot be deleted. Please update your maintenances to no longer reference this :item and try again.',
+        'assoc_accessories'           => ':item_name is currently associated with :accessory_count accessory(ies) and cannot be deleted. Please update your accessories to no longer reference this :item and try again.',
+        'assoc_consumables'           => ':item_name is currently associated with :consumable_count consumable(s) and cannot be deleted. Please update your consumables to no longer reference this :item and try again.',
+        'assoc_components'            => ':item_name is currently associated with :component_count component(s) and cannot be deleted. Please update your components to no longer reference this :item and try again.',
+        'assoc_licenses'              => ':item_name is currently associated with :license_count license(s) and cannot be deleted. Please update your licenses to no longer reference this :item and try again.',
+        'assoc_assets_no_count'       => ':item_name is currently associated with other assets and cannot be deleted. Please update your assets to no longer reference this :item and try again.',
+        'asset_models_no_count'       => ':item_name is currently associated with other asset models and cannot be deleted. Please update your assets to no longer reference this :item and try again.',
+        'assoc_maintenances_no_count' => ':item_name is currently associated with other maintenances and cannot be deleted. Please update your maintenances to no longer reference this :item and try again.',
+        'assoc_accessories_no_count'  => ':item_name is currently associated with other accessories and cannot be deleted. Please update your accessories to no longer reference this :item and try again.',
+        'assoc_consumables_no_count'  => ':item_name is currently associated with other consumables and cannot be deleted. Please update your consumables to no longer reference this :item and try again.',
+        'assoc_components_no_count'   => ':item_name is currently associated with other components and cannot be deleted. Please update your components to no longer reference this :item and try again.',
+        'assoc_licenses_no_count'     => ':item_name is currently associated with other licenses and cannot be deleted. Please update your licenses to no longer reference this :item and try again.',
     ],
 
     'breadcrumb_button_actions' => [

@@ -22,9 +22,11 @@ return array(
     ),
 
     'delete' => array(
-        'confirm'   => 'Та энэ үйлдвэрлэгчийн устгахыг хүсч байгаадаа итгэлтэй байна уу?',
+        'confirm' => 'Та энэ үйлдвэрлэгчийн устгахыг хүсч байгаадаа итгэлтэй байна уу?',
         'error'   => 'Үйлдвэрлэгчийг устгахад асуудал гарлаа. Дахин оролдоно уу.',
-        'success' => 'Үйлдвэрлэгч амжилттай устгагдсан байна.'
+        'success'                => 'Manufacturer deleted successfully.',
+        'bulk_success'           => 'Manufacturers deleted successfully.',
+        'partial_success'        => 'Manufacturer deleted successfully. See additional information below. | :count manufacturers were deleted successfully. See additional information below.',
     )
 
 );

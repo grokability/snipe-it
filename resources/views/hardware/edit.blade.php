@@ -103,12 +103,12 @@
 
         <fieldset name="optional-details">
 
-            <legend class="highlight">
+            <x-form-legend>
                 <a id="optional_info">
                     <x-icon type="caret-right" id="optional_info_icon" />
                     {{ trans('admin/hardware/form.optional_infos') }}
                 </a>
-            </legend>
+            </x-form-legend>
 
             <div id="optional_details" class="col-md-12" style="display:none">
                 @include ('partials.forms.edit.name', ['translated_name' => trans('admin/hardware/form.name')])
@@ -137,12 +137,12 @@
 
         <div class="col-md-12 col-sm-12">
             <fieldset name="order-info">
-                <legend class="highlight">
+                <x-form-legend>
                     <a id="order_info">
                         <x-icon type="caret-right" id="order_info_icon" />
                         {{ trans('admin/hardware/form.order_details') }}
                     </a>
-                </legend>
+                </x-form-legend>
 
                 <div id='order_details' class="col-md-12" style="display:none">
                     @include ('partials.forms.edit.order_number')

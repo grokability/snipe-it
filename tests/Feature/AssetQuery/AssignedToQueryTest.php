@@ -1,5 +1,5 @@
 <?php
-namespace Tests\Unit;
+namespace Tests\Feature\AssetQuery;
 
 use UnexpectedValueException;
 use App\Models\Asset;
@@ -76,6 +76,8 @@ class AssignedToQueryTest extends TestCase
     public function testFilterAssetAssignedToUserNamePartial() 
     {
         $this->markTestSkipped("Tests that test the partial are currently very flaky");
+        $this->markTestSkipped('randomly failing');
+
         $userA = User::factory()->create();
         $userB = User::factory()->create();
         $assetA = Asset::factory()->create(['assigned_type' => User::class, 'assigned_to' => $userA->id]);
@@ -145,6 +147,8 @@ class AssignedToQueryTest extends TestCase
     public function testFilterAssetAssignedToUserNamePartialWithType() 
     {
         $this->markTestSkipped("Tests that test the partial are currently very flaky");
+        $this->markTestSkipped('randomly failing');
+
         $userA = User::factory()->create();
         $userB = User::factory()->create();
         $assetA = Asset::factory()->create(['assigned_type' => User::class, 'assigned_to' => $userA->id]);

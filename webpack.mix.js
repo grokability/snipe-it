@@ -60,6 +60,9 @@ mix
   .copy("./resources/assets/css/components/advancedSearch/modal.css", "./public/css/dist")
   .minify("./public/css/dist/modal.css");
   mix
+  .copy("./resources/assets/css/components/advancedSearch/filterInputs.css", "./public/css/dist")
+  .minify("./public/css/dist/filterInputs.css");
+  mix
     .copy("resources/assets/js/advancedSearch/floating-buttons.js", "./public/js/dist")
     .minify("./public/js/dist/floating-buttons.js");
   mix

@@ -10,6 +10,12 @@ class FilterInput {
             .replace("_input", "");
     }
 
+    setSearchOperator(logic, operator) {
+        const data = this.element.id.replace("advancedSearch_", "").replace("_input", "").replace("_start", "").replace("_end", "");
+        const filterOptionsDropdown = document.querySelector('[data-field="' + data + '"]');
+        filterOptionsDropdown.value = logic + "_" + operator;
+    }
+
     hasValue() {
         return Boolean(this.element.value);
     }
@@ -18,10 +24,15 @@ class FilterInput {
         throw new Error("getValue() must be implemented by subclass");
     }
 
-    setValue(newValue) {
+    setValue(newValue, logic, operator) {
         return new Promise((resolve, reject) => {
             try {
-                this.element.value = newValue;
+                queueMicrotask(() => {
+                    this.element.value = newValue;
+                });
+
+
+                this.setSearchOperator(logic, operator)
             }
             catch (e) {
                 reject(e);
@@ -40,7 +51,13 @@ class FilterInput {
 
     appendTo(filters) {
         const value = this.getValue();
-        if (value === null || value === undefined || value === '') {
+
+        // Skip empty values
+        const isEmptyArray = Array.isArray(value) && value.length === 0;
+        const isArrayOfEmptyStrings = Array.isArray(value) && value.every(v => v === "");
+        const isTrulyEmpty = value === null || value === undefined || value === "";
+
+        if (isTrulyEmpty || isEmptyArray || isArrayOfEmptyStrings) {
             return;
         }
 
@@ -90,7 +107,16 @@ class FilterInput {
     }
 
     clear() {
-        this.element.value = "";
+        // Reset filter options
+        const data = this.element.id.replace("advancedSearch_", "").replace("_input", "").replace("_start", "").replace("_end", "");
+        const filterOptionsDropdown = document.querySelector('[data-field="' + data + '"]');
+
+        if (filterOptionsDropdown && filterOptionsDropdown.value) {
+            filterOptionsDropdown.value = "AND_equals";
+        } else {
+            console.warn("No filterOptionsDropdown found with datafield " + data);
+        }
+
     }
 }
 
@@ -111,40 +137,57 @@ class SelectFilterInput extends FilterInput {
         return selectedValues;
     }
 
-    setValue(newValues, type = this.getType()) {
+    setValue(newValues, logic, operator, type = this.getType()) {
         const requestPromises = newValues.map((newValue) => {
-            return this.apiService.fetchItemFromBackendById(type, newValue);
+            // If it's a number, fetch from backend
+            if (typeof newValue === "number") {
+                return this.apiService.fetchItemFromBackendById(type, newValue)
+                    .then((response) => {
+                        return response.json().then((responseJson) => {
+                            const $existingOption = $(this.element).find(`option[value='${responseJson.id}']`);
+
+                            if ($existingOption.length === 0) {
+                                const option = new Option(responseJson.name, responseJson.id, true, true);
+                                $(this.element).append(option);
+                            } else {
+                                $existingOption.prop('selected', true);
+                            }
+
+                            this.setSearchOperator(logic, operator);
+
+                            $(this.element).trigger('change');
+                            return responseJson;
+                        });
+                    });
+            } else {
+                queueMicrotask(() => {
+                    // Directly insert/select string value
+                    this.setSearchOperator(logic, operator);
+                    const existingOption = $(this.element).find(`option[value='${newValue}']`);
+
+                    if (existingOption.length === 0) {
+                        const option = new Option(newValue, newValue, true, true);
+                        $(this.element).append(option);
+                    } else {
+                        existingOption.prop('selected', true);
+                    }
+
+                    $(this.element).trigger('change');
+
+                    // Return a resolved promise for consistency
+                    return Promise.resolve({ id: newValue, name: newValue });
+                });
+            }
         });
 
-        return Promise.all(requestPromises)
-            .then((responses) => {
-                // Map each response to its parsed JSON and DOM manipulation
-                const jsonProcessingPromises = responses.map((response) =>
-                    response.json().then((responseJson) => {
-                        // Check if option already exists
-                        const $existingOption = $(this.element).find(`option[value='${responseJson.id}']`);
-
-                        if ($existingOption.length === 0) {
-                            // Option doesn't exist, create and append it
-                            const option = new Option(responseJson.name, responseJson.id, true, true);
-                            $(this.element).append(option);
-                        } else {
-                            // Option exists, just select it
-                            $existingOption.prop('selected', true);
-                        }
-
-                        $(this.element).trigger('change');
-                        return responseJson;
-                    })
-                );
-
-                return Promise.all(jsonProcessingPromises); // Wait for all `.json()` parsing to finish
-            });
+        return Promise.all(requestPromises);
     }
+
 
 
     clear() {
         $(this.element).val(null).trigger('change');
+        super.clear();
     }
 }
 
@@ -177,7 +220,7 @@ class AssignedEntityFilterInput extends SelectFilterInput {
         });
     }
 
-    setValue(newValues, type = this.getType()) {
+    setValue(newValues, logic, operator, type = this.getType()) {
         // Map each new value to a fetch request
         let requestPromises = newValues.map((newValue) => {
             return this.apiService.fetchItemFromBackendById(type, newValue);
@@ -204,6 +247,8 @@ class AssignedEntityFilterInput extends SelectFilterInput {
 
             // Wait for all JSON processing and DOM updates to finish
             return Promise.all(appendPromises).then(() => {
+                this.setSearchOperator(logic, operator)
+
                 // Trigger change event once, so Select2 updates UI properly
                 $(this.element).trigger('change');
             });
@@ -266,11 +311,20 @@ class DateFilterInput extends FilterInput {
     clear() {
         $(this.container).datepicker('clear');
     }
+
+    clear() {
+        this.element.value = "";
+        super.clear();
+    }
 }
 
 class TextFilterInput extends FilterInput {
     getValue() {
         return this.hasValue() ? this.element.value : null;
+    }
+    clear() {
+        this.element.value = "";
+        super.clear();
     }
 }
 
