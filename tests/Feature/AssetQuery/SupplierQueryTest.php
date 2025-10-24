@@ -25,7 +25,14 @@ class SupplierQueryTest extends TestCase
             'supplier_id' => $supplierB->id,
         ]);
 
-        $filter = ['supplier' => ''];
+        $filter = [
+            [
+                'field' => 'supplier',
+                'value' => [''],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ],
+        ];
         $results = Asset::query()->byFilter($filter)->get();
 
         $this->assertCount(2, $results);
@@ -46,7 +53,16 @@ class SupplierQueryTest extends TestCase
             'supplier_id' => $supplierB->id,
         ]);
 
-        $filter = ['supplier' => $supplierA->name];
+
+        $filter = [
+            [
+                'field' => 'supplier',
+                'value' => [$supplierA->name],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ],
+        ];
+
         $results = Asset::query()->byFilter($filter)->get();
 
         $this->assertCount(1, $results);
@@ -67,7 +83,16 @@ class SupplierQueryTest extends TestCase
         ]);
 
         $queryString = SupplierQueryTest::getExtendedPrefix($supplierA->name, $supplierB->name);
-        $filter = ['supplier' => $queryString];
+
+        $filter = [
+            [
+                'field' => 'supplier',
+                'value' => [$queryString],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ],
+        ];
+
         $results = Asset::query()->byFilter($filter)->get();
 
         $this->assertCount(1, $results);

@@ -27,7 +27,14 @@ class CategoryQueryTest extends TestCase
         $assetA = Asset::factory()->create(['model_id' => $modelA->id]);
         $assetB = Asset::factory()->create(['model_id' => $modelB->id]);
 
-        $filter = ['category' => ''];
+        $filter = [
+            [
+                'field' => 'category',
+                'value' => [""],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ],
+        ];
 
         $this->actingAsForApi(User::factory()->superuser()->create())
             ->getJson(
@@ -70,7 +77,14 @@ class CategoryQueryTest extends TestCase
         $assetA = Asset::factory()->create(['model_id' => $modelA->id]);
         $assetB = Asset::factory()->create(['model_id' => $modelB->id]);
 
-        $filter = ['category' => $categoryA->name];
+        $filter = [
+            [
+                'field' => 'category',
+                'value' => [$categoryA->name],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ],
+        ];
 
         $this->actingAsForApi(User::factory()->superuser()->create())
             ->getJson(

@@ -27,7 +27,14 @@ class ManufacturerQueryTest extends TestCase
         $assetA = Asset::factory()->create(['model_id' => $modelA->id]);
         $assetB = Asset::factory()->create(['model_id' => $modelB->id]);
 
-        $filter = ['manufacturer' => ''];
+        $filter = [
+            [
+                'field' => 'manufacturer',
+                'value' => [''],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ],
+        ];
 
         $this->actingAsForApi(User::factory()->superuser()->create())
             ->getJson(
@@ -70,7 +77,14 @@ class ManufacturerQueryTest extends TestCase
         $assetA = Asset::factory()->create(['model_id' => $modelA->id]);
         $assetB = Asset::factory()->create(['model_id' => $modelB->id]);
 
-        $filter = ['manufacturer' => $manufacturerA->name];
+        $filter = [
+            [
+                'field' => 'manufacturer',
+                'value' => [$manufacturerA->name],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ],
+        ];
 
         $this->actingAsForApi(User::factory()->superuser()->create())
             ->getJson(

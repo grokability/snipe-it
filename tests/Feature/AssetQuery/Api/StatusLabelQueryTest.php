@@ -23,7 +23,14 @@ class StatusLabelQueryTest extends TestCase
         $assetA = Asset::factory()->create(['status_id' => $statusPending->id]);
         $assetB = Asset::factory()->create(['status_id' => $statusArchived->id]);
 
-        $filter = ['status_label' => ''];
+        $filter = [
+            [
+                'field' => 'status_label',
+                'value' => [''],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
 
         $this->actingAsForApi(User::factory()->superuser()->create())
             ->getJson(
@@ -63,7 +70,14 @@ class StatusLabelQueryTest extends TestCase
         $assetA = Asset::factory()->create(['status_id' => $statusPending->id]);
         $assetB = Asset::factory()->create(['status_id' => $statusArchived->id]);
 
-        $filter = ['status_label' => $statusPending->id];
+        $filter = [
+            [
+                'field' => 'status_label',
+                'value' => [$statusPending->id],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
 
         $this->actingAsForApi(User::factory()->superuser()->create())
             ->getJson(

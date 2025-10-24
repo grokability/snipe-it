@@ -26,7 +26,14 @@ class CategoryQueryTest extends TestCase
         $assetA = Asset::factory()->create(['model_id' => $modelA->id]);
         $assetB = Asset::factory()->create(['model_id' => $modelB->id]);
 
-        $filter = ['category' => ''];
+        $filter = [
+            [
+                'field' => 'category',
+                'value' => [''],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
 
         $results = Asset::query()->byFilter($filter)->get();
 
@@ -47,7 +54,14 @@ class CategoryQueryTest extends TestCase
         $assetA = Asset::factory()->create(['model_id' => $modelA->id]);
         $assetB = Asset::factory()->create(['model_id' => $modelB->id]);
 
-        $filter = ['category' => $categoryA->name];
+        $filter = [
+            [
+                'field' => 'category',
+                'value' => [$categoryA->name],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
 
         $results = Asset::query()->byFilter($filter)->get();
 
@@ -69,7 +83,15 @@ class CategoryQueryTest extends TestCase
         $assetB = Asset::factory()->create(['model_id' => $modelB->id]);
 
         $queryString = CategoryQueryTest::getExtendedPrefix($categoryA->name, $categoryB->name);
-        $filter = ['category' => $queryString];
+
+        $filter = [
+            [
+                'field' => 'category',
+                'value' => [$queryString],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
 
         $results = Asset::query()->byFilter($filter)->get();
 
@@ -94,7 +116,7 @@ class CategoryQueryTest extends TestCase
         $filter = [
             [
                 'field' => 'category',
-                'value' => $categoryA->name,
+                'value' => [$categoryA->name],
                 'operator' => 'contains',
                 'logic' => 'AND',
             ]
@@ -164,7 +186,14 @@ class CategoryQueryTest extends TestCase
         $assetA = Asset::factory()->create(['model_id' => $modelA->id]);
         $assetB = Asset::factory()->create(['model_id' => $modelB->id]);
 
-        $filter = ['category' => $categoryA->id];
+        $filter = [
+            [
+                'field' => 'category',
+                'value' => [$categoryA->id],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
 
         $results = Asset::query()->byFilter($filter)->get();
 
