@@ -57,6 +57,7 @@
                                 @class(["form-control"])
                                 id="filterName"
                                 wire:model.defer="name"
+                                placeholder="{{ trans("general.predefined_filter_name") }}"
                             />
                         </div>
 

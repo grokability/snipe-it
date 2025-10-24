@@ -15,8 +15,7 @@
             <i class="{{ $icon }}"></i>
         @endif
         @if($title)
-            <strong>{{ $title }}</strong>
-            @if(!$html && $message) : @endif
+            <strong>{{ $title }}@if(!$html && $message){{ ': ' }}@endif</strong>
         @endif
 
         @if($html)

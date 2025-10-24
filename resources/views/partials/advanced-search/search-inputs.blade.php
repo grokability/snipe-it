@@ -1,4 +1,7 @@
 <span class="advancedSearchWrapper">
+   @push('css')
+      <link rel="stylesheet" href="{{ mix('css/dist/filterInputs.min.css') }}">
+   @endpush
 <span class="advancedSearchGridContainer">
    @foreach ($layout as $tableField)
       @if ((!empty($tableField->searchable) && $tableField->searchable === true))
@@ -18,7 +21,7 @@
 
                @if (!isset($tableField->formatter))
                   {{-- Default select if formatter is not set --}}
-                  <input class="advancedSearch_defaultField form-control" type="text" autocomplete="on" id="advancedSearch_{{ $tableField->field }}_input" >
+                  <input class="advancedSearch_defaultField form-control" type="text" autocomplete="on" id="advancedSearch_{{ $tableField->field }}_input" placeholder="{{ $tableField->title }}" >
                @else
                   @switch($tableField->formatter)
                      @case('dateDisplayFormatter')
@@ -71,10 +74,10 @@
                         ])
                         @break
                      @case('employeeNumFormatter')
-                        <input class="advancedSearch_employeeNumFormatter form-control" type="text" id="advancedSearch_{{ $tableField->field }}_input" autocomplete="on">
+                        <input class="advancedSearch_employeeNumFormatter form-control" type="text" id="advancedSearch_{{ $tableField->field }}_input" placeholder="{{ $tableField->title }}" autocomplete="on">
                         @break
                      @case('hardwareLinkFormatter')
-                        <input class="advancedSearch_hardwarelinkFormatter form-control" type="text" id="advancedSearch_{{ $tableField->field }}_input" autocomplete="on">
+                        <input class="advancedSearch_hardwarelinkFormatter form-control" type="text" id="advancedSearch_{{ $tableField->field }}_input" placeholder="{{ $tableField->title }}" autocomplete="on">
                         @break
                      <!-- Makes no sense for the advanced search
                      @case('imageFormatter')
@@ -102,7 +105,7 @@
                         ])
                         @break
                      @case('orderNumberObjFilterFormatter')
-                        <input class="advancedSearch_orderNumberObjFilterFormatter form-control" type="text" id="advancedSearch_{{ $tableField->field }}_input" autocomplete="on">
+                        <input class="advancedSearch_orderNumberObjFilterFormatter form-control" type="text" id="advancedSearch_{{ $tableField->field }}_input" placeholder="{{ trans('general.order_number') }}" autocomplete="on">
                         @break
                      @case('polymorphicItemFormatter')
                         @include ('partials.select.dropdowns.assignedTo-select', [
@@ -138,7 +141,7 @@
                         <p>trueFalseFormatter</p>
                         @break
                      @case('customFieldsFormatter')
-                        <input class="advancedSearch_customField form-control" type="text" autocomplete="on" id="advancedSearch_{{ $tableField->field }}_input" >
+                        <input class="advancedSearch_customField form-control" type="text" autocomplete="on" id="advancedSearch_{{ $tableField->field }}_input" placeholder="{{ $tableField->title }}">
                         @break
                      @case('usersLinkObjFormatter')
                         @include ('partials.select.dropdowns.user-select', [
@@ -151,7 +154,7 @@
                         ])
                         @break
                      @default
-                        <input class="advancedSearch_defaultField form-control" type="text" autocomplete="on" id="advancedSearch_{{ $tableField->field }}_input" >
+                        <input class="advancedSearch_defaultField form-control" type="text" autocomplete="on" id="advancedSearch_{{ $tableField->field }}_input" placeholder="{{ $tableField->title }}">
                   @endswitch
                @endif
                     </div>
@@ -161,210 +164,75 @@
 </span>
 </span>
 
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+   // Store original heights for each Select2 instance
+   const originalHeights = new Map();
+
+   // When a Select2 dropdown opens
+   $(document).on('select2:open', (e) => {
+      const selectEl = e.target;
+      const $select = $(selectEl);
+      const $container = $select.next('.select2-container');
+
+      if ($container.length) {
+         // Store the original height before we change it
+         if (!originalHeights.has(selectEl.id)) {
+            const originalHeight = $container.find('.select2-selection').outerHeight();
+            originalHeights.set(selectEl.id, originalHeight);
+         }
+
+         // Expand the dropdown container
+         $container.css({
+            'height': 'auto',
+            'min-height': '150px'
+         });
+         
+         $container.find('.select2-selection--multiple').css({
+            'height': 'auto',
+            'min-height': '100px',
+            'max-height': '200px',
+            'overflow-y': 'auto'
+         });
+         
+         $container.find('.select2-selection--single').css({
+            'height': 'auto',
+            'min-height': '38px'
+         });
+      }
+   });
+
+   // When a Select2 dropdown closes (loses focus)
+   $(document).on('select2:close', (e) => {
+      const selectEl = e.target;
+      const $select = $(selectEl);
+      const $container = $select.next('.select2-container');
+
+      if ($container.length) {
+         // Reset to original height
+         const originalHeight = originalHeights.get(selectEl.id) || '38px';
+         
+         $container.css({
+            'height': originalHeight,
+            'min-height': ''
+         });
+         
+         $container.find('.select2-selection--multiple').css({
+            'height': originalHeight,
+            'min-height': '',
+            'max-height': '',
+            'overflow-y': ''
+         });
+         
+         $container.find('.select2-selection--single').css({
+            'height': originalHeight,
+            'min-height': ''
+         });
+      }
+   });
+});
+</script>
+
 <style>
-/* 
-Layout container for the whole page.
-Uses flexbox so the filter and table sections can sit side by side on desktop, and stack on mobile.
-*/
-.responsive-layout {
-    display: flex;
-    flex-wrap: wrap;
-    width: 100%;
-}
 
-/* 
-The filter (sidebar) section.
-Transition allows smooth showing/hiding.
-*/
-.filter-section {
-    transition: all 0.3s ease;
-}
-
-/* 
-When .hide is applied, the filter section is hidden.
-!important ensures it's forced, even if overridden by other classes.
-*/
-.filter-section.hide {
-    display: none !important;
-}
-
-/* New CSS for the advanced search layout */
-.advancedSearchWrapper {
-    width: 100%;
-    padding: 0 15px;
-}
-
-.advancedSearchGridContainer {
-    display: flex;
-    flex-direction: column;
-    gap: 20px; /* Space between each filter item */
-}
-
-.advancedSearchItemContainer {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-/* Heading takes full width on its own row */
-.filterFieldName {
-    font-weight: 600;
-    font-size: 14px;
-    margin: 0;
-    color: #333;
-}
-
-/* Container for operator dropdown + input */
-.filter-controls-row {
-    display: flex;
-    gap: 0;
-    width: 100%;
-}
-
-/* Operator dropdown - smaller width */
-.filter-option {
-    flex: 0 0 60px; /* Fixed width for consistency */
-    min-width: 30px;
-    max-width: 60px;
-    height: 38px;
-    padding: 6px 8px;
-    font-size: 13px;
-    border: 1px solid #ced4da;
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-    background-color: #fff;
-    border-right: none;
-}
-
-/* Input field - takes remaining space */
-.advancedSearch_defaultField,
-.advancedSearchGridContainer .form-control:not(.filter-option),
-.select2-container {
-    flex: 1;
-    height: 38px;
-    font-size: 13px;
-    border: 1px solid #ced4da;
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-    background-color: #fff;
-}
-
-.advancedSearch_defaultField,
-.advancedSearchGridContainer .form-control:not(.filter-option) {
-    padding: 6px 10px;
-}
-
-/* Select2 specific styling */
-.select2-container {
-    width: auto;
-    max-width: width;
-    box-sizing: border-box;
-}
-
-.select2-container--default .select2-selection--single,
-.select2-container--default .select2-selection--multiple {
-    height: 38px;
-    border: 1px solid #ced4da;
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-    border-left: none;
-}
-
-.select2-container--default .select2-selection--single .select2-selection__rendered {
-    line-height: 36px;
-    padding-left: 10px;
-}
-
-/* Focus states */
-.filter-option:focus,
-.advancedSearch_defaultField:focus,
-.form-control:focus {
-    border-color: #6c63ff;
-    box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.08);
-    outline: none;
-}
-
-.select2-container--default .select2-selection:focus {
-    border-color: #6c63ff;
-    box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.08);
-    outline: none;
-}
-
-/* Date range styling */
-.input-daterange {
-    display: flex;
-    align-items: center;
-    flex: 1;
-}
-
-.input-daterange .form-control {
-    border-radius: 0;
-    border-left: none;
-}
-
-.input-daterange .form-control:first-child {
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-}
-
-.input-daterange .form-control:last-child {
-    border-top-right-radius: 4px;
-    border-bottom-right-radius: 4px;
-}
-
-.input-daterange .input-group-addon {
-    padding: 0 8px;
-    font-size: 12px;
-    color: #666;
-    white-space: nowrap;
-}
-
-/* ---------- DESKTOP Styles (screen ≥ 768px) ---------- */
-@media (min-width: 768px) {
-    /* 
-    Filter sidebar gets 25% width, and some space on the right.
-    */
-    .filter-section {
-        flex: 0 0 25%;
-        max-width: 25%;
-        padding-right: 15px;
-    }
-
-    /* 
-    Main table takes the remaining 75%.
-    */
-    .table-section {
-        flex: 0 0 75%;
-        max-width: 75%;
-    }
-
-    /* 
-    If filter is hidden, the table takes full width.
-    */
-    .filter-section.hide + .table-section {
-        flex: 0 0 100%;
-        max-width: 100%;
-    }
-}
-
-/* ---------- MOBILE Styles (screen < 768px) ---------- */
-@media (max-width: 767px) {
-    /* 
-    Filter takes full width, and sits above the table section.
-    */
-    .filter-section {
-        width: 100%;
-        margin-bottom: 15px;
-    }
-
-    .table-section {
-        width: 100%;
-    }
-    
-    /* Adjust operator dropdown width on mobile */
-    .filter-option {
-        flex: 0 0 120px;
-        min-width: 120px;
-    }
-}
 </style>
