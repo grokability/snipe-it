@@ -1,8 +1,8 @@
  /* Fix the buttons to bottom of screen */
  .floatingButtons-fab-fixed-wrapper {
      position: fixed;
-     bottom: 20px;
-     left: 10.5vw;
+     bottom: 22px;
+     left: 17vw !important;
      transform: translateX(-50%);
      display: flex;
      gap: 20px;
@@ -10,23 +10,22 @@
      pointer-events: auto;
  }
 
-/*.floatingButtons-fab-scrollable-wrapper {
+.floatingButtons-fab-scrollable-wrapper {
     position: absolute;
+    bottom: 20px;
     left: 50% !important;
+    /*transform: translateX(-50%) !important;*/
     display: flex;
     gap: 20px;
     z-index: 1000;
     pointer-events: auto;
-}*/
+}
 
  /* Limit width to match container if needed */
  /* Optional: align wrapper to container width */
- .floatingButtons-fab-fixed-wrapper {
+ .floatingButtons-fab-fixed-wrapper,
+ .floatingButtons-fab-scrollable-wrapper {
      padding: 0 15px;
- }
-
- /* Center inner buttons within max-width */
- .floatingButtons-fab-fixed-wrapper {
      justify-content: center;
  }
 

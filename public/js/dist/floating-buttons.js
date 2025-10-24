@@ -9,14 +9,13 @@ export default class FloatingButtons {
         this.menuItems = this.fabMenu?.querySelectorAll("[role='menuitem']");
         this.menuOpen = false;
 
-        //this.stickyElement = document.getElementById("advancedSearchPanel");
-        //this.targetRect = document.getElementById("floatingButtonContainer");
         this.init();
     }
 
     init() {
         this.bindEvents();
         this.align();
+        this.updatePositionMode();
     }
 
     bindEvents() {
@@ -49,10 +48,21 @@ export default class FloatingButtons {
                 item.addEventListener("click", () => this.closeMenu());
             });
 
-            window.addEventListener("resize", () => { this.align(); /*this.changeClassForScrolling();*/ });
-            window.addEventListener("orientationchange", () => { this.align(); /*this.changeClassForScrolling();*/ });
-            window.addEventListener("load", () => { this.align(); /*this.changeClassForScrolling();*/ });
-            //window.addEventListener("scroll", () => { this.changeClassForScrolling(); })
+            window.addEventListener("resize", () => {
+                this.align();
+                this.updatePositionMode();
+            });
+            window.addEventListener("orientationchange", () => {
+                this.align();
+                this.updatePositionMode();
+            });
+            window.addEventListener("load", () => {
+                this.align();
+                this.updatePositionMode();
+            });
+            window.addEventListener("scroll", () => {
+                this.updatePositionMode();
+            });
         });
     }
 
@@ -66,6 +76,47 @@ export default class FloatingButtons {
 
             this.floatingButtonContainer.style.left = `${centerX}px`;
             this.floatingButtonContainer.style.transform = "translateX(-50%)";
+        });
+    }
+
+    updatePositionMode() {
+        if (!this.advancedSearchPanel || !this.floatingButtonContainer) return;
+
+        queueMicrotask(() => {
+            const panelRect = this.advancedSearchPanel.getBoundingClientRect();
+
+            // Check if panel is actually visible and has height
+            const panelVisible = panelRect.height > 0 &&
+                window.getComputedStyle(this.advancedSearchPanel).display !== 'none' &&
+                window.getComputedStyle(this.advancedSearchPanel).visibility !== 'hidden';
+
+            // If panel isn't visible, keep buttons fixed
+            if (!panelVisible) {
+                if (!this.floatingButtonContainer.classList.contains('floatingButtons-fab-fixed-wrapper')) {
+                    this.floatingButtonContainer.classList.remove('floatingButtons-fab-scrollable-wrapper');
+                    this.floatingButtonContainer.classList.add('floatingButtons-fab-fixed-wrapper');
+                }
+                return;
+            }
+
+            const buttonAreaHeight = 90;
+            const viewportHeight = window.innerHeight;
+            const buttonZoneTop = viewportHeight - buttonAreaHeight;
+
+            // If panel extends into the button zone, make buttons scroll
+            const wouldOverlap = panelRect.bottom > buttonZoneTop + 75;
+
+            if (!wouldOverlap) {
+                if (!this.floatingButtonContainer.classList.contains('floatingButtons-fab-scrollable-wrapper')) {
+                    this.floatingButtonContainer.classList.remove('floatingButtons-fab-fixed-wrapper');
+                    this.floatingButtonContainer.classList.add('floatingButtons-fab-scrollable-wrapper');
+                }
+            } else {
+                if (!this.floatingButtonContainer.classList.contains('floatingButtons-fab-fixed-wrapper')) {
+                    this.floatingButtonContainer.classList.remove('floatingButtons-fab-scrollable-wrapper');
+                    this.floatingButtonContainer.classList.add('floatingButtons-fab-fixed-wrapper');
+                }
+            }
         });
     }
 
@@ -112,32 +163,4 @@ export default class FloatingButtons {
         document.getElementById("updateFilterButton")?.classList.add("floatingButtons-disabled");
         document.getElementById("deleteFilterButton")?.classList.add("floatingButtons-disabled");
     }
-
-    // My attempts to write a method that can switch the floating buttons between a relative and an absolute postion.
-    /*changeClassForScrolling() {
-        queueMicrotask(() => {
-            this.target = document.getElementById("advancedSearchPanel");
-            this.stickyElement = document.getElementById("floatingButtonContainer");
-            if (!this.stickyElement || !this.target) {
-                console.warn("stickyElement or target not defined");
-                return;
-            }
-
-            const stickyRect = this.stickyElement.getBoundingClientRect();
-            const targetRect = this.target.getBoundingClientRect();
-
-            const shouldBeScrollable = stickyRect.bottom + 50 >= targetRect.top;
-            console.log(stickyRect.bottom + " " + targetRect.top);
-
-            this.stickyElement.classList.toggle(
-                'floatingButtons-fab-fixed-wrapper',
-                !shouldBeScrollable
-            );
-
-            this.stickyElement.classList.toggle(
-                'floatingButtons-fab-scrollable-wrapper',
-                shouldBeScrollable
-            );
-        });
-    }*/
 }
