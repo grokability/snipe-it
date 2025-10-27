@@ -277,12 +277,10 @@ class DateFilterInput extends FilterInput {
         }
 
         datepicker.on('changeDate', (event) => {
-            if(event.target.id.endsWith("_start")) {
+            if (event.target.id.endsWith("_start")) {
                 this.startDate = new Intl.DateTimeFormat('en-CA').format(event.date);
-                console.log("startdate: " + this.startDate);
             } else {
                 this.endDate = new Intl.DateTimeFormat('en-CA').format(event.date);
-                console.log("enddate: " + this.endDate);
             }
         });
 
@@ -294,22 +292,43 @@ class DateFilterInput extends FilterInput {
 
     getValue() {
         const result = {};
-        
-        if(this.startDate != undefined) {
+
+        if (this.startDate != undefined) {
             result.startDate = this.startDate;
         }
-        if(this.endDate != undefined) {
+        if (this.endDate != undefined) {
             result.endDate = this.endDate;
         }
 
         return result;
     }
 
-
-    setValue() {
-        console.error("Currently not implemented");
-        throw new Error("Currently not implemented");
+    /*setValue() {
+        $(this.container).datepicker('setStartDate', '2020-01-01');
+        //console.error("Currently not implemented");
+        //throw new Error("Currently not implemented");
         //return this.hasValue() ? this.element.value : null;
+    }*/
+
+    setValue(newValue, logic, operator) {
+        return new Promise((resolve, reject) => {
+            try {
+                queueMicrotask(() => {
+                    if (this.startDate != undefined) {
+                        $(this.container).datepicker('setStartDate', this.startDate);
+                    }
+                    if (this.endDate != undefined) {
+                        $(this.container).datepicker('setEndDate', this.endDate);
+                    }
+                });
+
+                this.setSearchOperator(logic, operator)
+            }
+            catch (e) {
+                reject(e);
+            }
+            resolve(newValue);
+        })
     }
 
     clear() {
