@@ -146,9 +146,9 @@ class DateQueryTest extends TestCase
         $results = Asset::query()->byFilter($filter)->get();
 
         $this->assertCount(2, $results);
+        $this->assertFalse($results->contains($assetA));
         $this->assertTrue($results->contains($assetB));
         $this->assertTrue($results->contains($assetC));
-        $this->assertFalse($results->contains($assetA));
     }
 
     public function testEolDateQueryEnd()

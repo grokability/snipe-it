@@ -24,7 +24,16 @@ class LocationQueryTest extends TestCase
         $assetA = Asset::factory()->create(['location_id' => $locationA->id]);
         $assetB = Asset::factory()->create(['location_id' => $locationB->id]);
 
-        $filter = ['location' => ''];
+        //$filter = ['location' => ''];
+
+        $filter = [
+            [
+                'field' => 'location',
+                'value' => [''],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
 
         $this->actingAsForApi(User::factory()->superuser()->create())
             ->getJson(
@@ -65,6 +74,15 @@ class LocationQueryTest extends TestCase
         $assetB = Asset::factory()->create(['location_id' => $locationB->id]);
 
         $filter = ['location' => $locationA->name];
+
+        $filter = [
+            [
+                'field' => 'location',
+                'value' => [$locationA->name],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
 
         $this->actingAsForApi(User::factory()->superuser()->create())
             ->getJson(

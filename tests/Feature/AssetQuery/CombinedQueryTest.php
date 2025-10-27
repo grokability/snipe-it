@@ -65,7 +65,20 @@ class CombinedQueryTest extends TestCase
         $modelB_locationB = Asset::factory()->create(['model_id' => $modelB->id, 'location_id' => $locationB->id]);
         $modelB_locationC = Asset::factory()->create(['model_id' => $modelA->id, 'location_id' => $locationC->id]);
 
-        $filter = ['model' => $modelB->name, 'location' => [$locationB->name, $locationA->name]];
+        $filter = [
+            [
+                'field' => 'model',
+                'value' => [$modelB->name],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ],[
+                'field' => 'location',
+                'value' => [$locationB->name,$locationA->name],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
+
         $results = Asset::query()->byFilter($filter)->get();
 
         $this->assertCount(2, $results);
