@@ -31,7 +31,6 @@ class FilterInput {
                     this.element.value = newValue;
                 });
 
-
                 this.setSearchOperator(logic, operator)
             }
             catch (e) {
@@ -257,7 +256,6 @@ class AssignedEntityFilterInput extends SelectFilterInput {
 
 }
 
-
 class DateFilterInput extends FilterInput {
 
     constructor(el, apiService) {
@@ -265,38 +263,45 @@ class DateFilterInput extends FilterInput {
 
         this.container = this.element.closest('.input-daterange');
 
+        let datepicker = null;
         if (this.container) {
-            $(this.container).datepicker({
+            datepicker = $(this.container).datepicker({
                 todayBtn: "linked",
                 clearBtn: true,
+                disableTouchKeyboard: true,
                 forceParse: false,
+                keepEmptyValues: true,
                 daysOfWeekHighlighted: "0,1",
                 todayHighlight: true
             });
         }
 
+        datepicker.on('changeDate', (event) => {
+            if(event.target.id.endsWith("_start")) {
+                this.startDate = new Intl.DateTimeFormat('en-CA').format(event.date);
+                console.log("startdate: " + this.startDate);
+            } else {
+                this.endDate = new Intl.DateTimeFormat('en-CA').format(event.date);
+                console.log("enddate: " + this.endDate);
+            }
+        });
 
+        datepicker.on('clearDate', (_) => {
+            this.startDate = undefined;
+            this.endDate = undefined;
+        });
     }
 
     getValue() {
-        const startDate = $(this.container).datepicker('getStartDate');
-        const endDate = $(this.container).datepicker('getEndDate');
-
-        const formatDate = (date) => {
-            if (!date) return null;
-            console.log(date);
-            const yyyy = date.getFullYear();
-            const mm = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
-            const dd = String(date.getDate()).padStart(2, '0');
-            return `${yyyy}-${mm}-${dd}`;
-        };
-
         const result = {};
-        const formattedStart = formatDate(startDate);
-        const formattedEnd = formatDate(endDate);
+        
+        if(this.startDate != undefined) {
+            result.startDate = this.startDate;
+        }
+        if(this.endDate != undefined) {
+            result.endDate = this.endDate;
+        }
 
-        if (formattedStart) result.start = formattedStart;
-        if (formattedEnd) result.end = formattedEnd;
         console.log(result);
         return result;
     }
