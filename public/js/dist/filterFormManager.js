@@ -19,7 +19,7 @@ export default class FilterFormManager {
 
         // Select2
         document.querySelectorAll('select[id^="advancedSearch_"]').forEach(el => {
-            queueMicrotask(() => {
+            setTimeout(() => {
                 if (el.id === 'advancedSearch_assigned_to') {
                     this.inputs.push(new AssignedEntityFilterInput(el, this.apiService));
                 } else {
