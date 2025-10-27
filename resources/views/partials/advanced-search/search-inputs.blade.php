@@ -108,14 +108,7 @@
                         <input class="advancedSearch_orderNumberObjFilterFormatter form-control" type="text" id="advancedSearch_{{ $tableField->field }}_input" placeholder="{{ trans('general.order_number') }}" autocomplete="on">
                         @break
                      @case('polymorphicItemFormatter')
-                        @include ('partials.select.dropdowns.assignedTo-select', [
-                           'translated_name' => trans('admin/hardware/assignedTo.model'),
-                           'fieldname' => $tableField->field,
-                           'select_id' => "advancedSearch_$tableField->field",
-                           'required' => 'false',
-                           'multiple' => 'true',
-                           'allow_tags' => 'true',
-                        ])
+                        <input class="advancedSearch_polymorphicItemFormatter form-control" type="text" autocomplete="on" id="advancedSearch_{{ $tableField->field }}_input" placeholder="{{ trans('admin/hardware/form.checkedout_to') }}">
                         @break
                      @case('statuslabelsLinkObjFormatter')
                         @include ('partials.select.dropdowns.status-select', [
