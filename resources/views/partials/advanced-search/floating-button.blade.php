@@ -2,19 +2,32 @@
     @push('css')
         <link rel="stylesheet" href="{{ mix('css/dist/floating-buttons.min.css') }}">
     @endpush
-    <button id="filterButton" type="button" class="floatingButtons-fab" id="searchButton" title="Search" aria-label="Search">
-        <i class="fa-solid fa-magnifying-glass"></i>
-    </button>
 
-    <button type="button" class="floatingButtons-fab" id="menuToggleButton" title="Menu" aria-label="Toggle menu" aria-haspopup="true"
-        aria-expanded="false" aria-controls="fabMenu">
-        <i class="fa-solid fa-bars"></i>
-    </button>
+    <div class="floatingButtons-inner">
+        <button id="filterButton" type="button" class="floatingButtons-fab" title="Search" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
 
-    <br />
-    <div class="floatingButtons-menu" id="fabMenu" role="menu" aria-labelledby="menuToggleButton">
-        <a href="#" id="storeFilterButton" class="floatingButtons-menuButton" role="menuitem" tabindex="1">{{ trans('button.save_predefined_filter_as') }}</a>
-        <a href="#" id="updateFilterButton" class="floatingButtons-menuButton floatingButtons-disabled" role="menuitem" tabindex="2">{{ trans('button.update_predefined_filter') }}</a>
-        <a href="#" id="deleteFilterButton" class="floatingButtons-menuButton floatingButtons-disabled" role="menuitem" tabindex="3">{{ trans('button.delete_predefined_filter') }}</a>
+        <button type="button" class="floatingButtons-fab" id="menuToggleButton" title="Menu" aria-label="Toggle menu" aria-haspopup="true"
+            aria-expanded="false" aria-controls="fabMenu">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <div class="floatingButtons-menu" id="fabMenu" role="menu" aria-labelledby="menuToggleButton" aria-hidden="true">
+            <a href="#" id="storeFilterButton" class="floatingButtons-menuButton" role="menuitem" tabindex="-1">{{ trans('button.save_predefined_filter_as') }}</a>
+            <a href="#" id="updateFilterButton" class="floatingButtons-menuButton floatingButtons-disabled" role="menuitem" tabindex="-1">{{ trans('button.update_predefined_filter') }}</a>
+            <a href="#" id="deleteFilterButton" class="floatingButtons-menuButton floatingButtons-disabled" role="menuitem" tabindex="-1">{{ trans('button.delete_predefined_filter') }}</a>
+        </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+    // If you want an inline quick init; remove if your bundle already initializes FloatingButtons.
+    document.addEventListener('DOMContentLoaded', function () {
+        if (window.FloatingButtons) {
+            try { new FloatingButtons(); } catch (e) { /* ignore */ }
+        }
+    });
+</script>
+@endpush
