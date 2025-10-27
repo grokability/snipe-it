@@ -17,7 +17,7 @@ class PredefinedFilter extends Model
     use ValidatingTrait;
 
     protected $casts = [
-        "filter_data"=> "array",
+        "filter_data" => "array",
         "is_public" => "boolean"
     ];
 
@@ -30,10 +30,10 @@ class PredefinedFilter extends Model
     ];
 
     protected $rules = [
-        'name'                    => ['required', 'string', 'max:255'],
-        'filter_data'             => ['required', 'array'],
-        'permissions'             => ['sometimes', 'array'],
-        'is_public'               => 'sometimes|boolean'
+        'name' => ['required', 'string', 'max:255'],
+        'filter_data' => ['required', 'array'],
+        'permissions' => ['sometimes', 'array'],
+        'is_public' => 'sometimes|boolean'
     ];
 
     public function permissionGroups()
@@ -54,18 +54,18 @@ class PredefinedFilter extends Model
     public function userHasPermission(User $user, string $action): bool
     {
         // Give the superuser all permissions no matter in which groups he is
-        if($user->isSuperUser()) {
+        if ($user->isSuperUser()) {
             return true;
         }
 
         // If filter is private AND is_owner AND action != create he can do everything
         // such as create private, edit and delete
         // note the 'create' permission is only for creating public filters. 
-        if ($user->id == $this->created_by && !$this->is_public && $action != 'create'){
+        if ($user->id == $this->created_by && !$this->is_public && $action != 'create') {
             return true;
         }
 
-        switch($action){
+        switch ($action) {
             case 'create':
                 return $user->hasAccess('predefinedFilter.create');
             case 'view':
@@ -79,17 +79,17 @@ class PredefinedFilter extends Model
                 // If filter is private AND is_owner AND action != create he can do everything
                 // such as create private, edit and delete
                 // note the 'create' permission is only for creating public filters. 
-                if ($user->id == $this->created_by && !$this->is_public && $action != 'create'){
+                if ($user->id == $this->created_by && !$this->is_public && $action != 'create') {
                     return true;
                 }
 
                 return $this->checkPermissions($user, $action);
-            }
+        }
 
         return false;
     }
-    
-    private function checkPermissions(User $user, $action):bool
+
+    private function checkPermissions(User $user, $action): bool
     {
         $userGroupIds = $user->groups()->pluck('id')->toArray();
 
@@ -97,12 +97,12 @@ class PredefinedFilter extends Model
             $user->load('groups');
         }
 
-        foreach ($this->permissionGroups as $group){
-            if (in_array($group->id, $userGroupIds)){
-                $permissions = json_decode($group->permissions, true);    
-                if((isset($permissions["predefinedFilter.$action"]) && $permissions["predefinedFilter.$action"] == '1')){
+        foreach ($this->permissionGroups as $group) {
+            if (in_array($group->id, $userGroupIds)) {
+                $permissions = json_decode($group->permissions, true);
+                if ((isset($permissions["predefinedFilter.$action"]) && $permissions["predefinedFilter.$action"] == '1')) {
                     return true;
-                }   
+                }
             }
         }
 
@@ -117,7 +117,7 @@ class PredefinedFilter extends Model
         }
     }
 
-        protected function applyLikeFilter(Builder $assets, array $filter, string $key, string $column): void
+    protected function applyLikeFilter(Builder $assets, array $filter, string $key, string $column): void
     {
         if (!empty($filter[$key])) {
             $assets->where($column, 'LIKE', '%' . $filter[$key] . '%');
@@ -134,9 +134,10 @@ class PredefinedFilter extends Model
         }
     }
 
-    public function filterAssets(Builder $assets) {
+    public function filterAssets(Builder $assets)
+    {
         $filter = $this->filter_data ?? [];
-        
+
         $this->applyArrayOrScalarFilter($assets, $filter, 'company_id', 'assets.company_id');
         $this->applyArrayOrScalarFilter($assets, $filter, 'location_id', 'location_id');
         $this->applyArrayOrScalarFilter($assets, $filter, 'rtd_location_id', 'rtd_location_id');
@@ -173,7 +174,16 @@ class PredefinedFilter extends Model
         return $assets;
     }
 
-    public function checkIfNameAlreadyExists(string $name): bool {
-        return $this->where('name', '=', $name)->exists();
+    public function checkIfNameAlreadyExists(string $name, int $id = null): bool
+    {
+        if ($id === null) {
+            $query = $this->where('name', '=', $name);
+            return $query->exists();
+        }
+
+        $query = $this->where('name', '=', $name);
+        $query->where('id', '<>', $id);
+        return sizeof($query->get()->toArray()) > 1;
+
     }
 }

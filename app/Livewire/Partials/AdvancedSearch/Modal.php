@@ -260,7 +260,7 @@ class Modal extends Component
             ]);
         }
 
-        if ($predefinedFilter->checkIfNameAlreadyExists($this->name)) {
+        if ($predefinedFilter->checkIfNameAlreadyExists($this->name, $predefinedFilter->id)) {
             $this->dispatch('showNotificationInFrontend', [
                 'type' => 'warning',
                 'title' => trans('general.notification_warning'),
