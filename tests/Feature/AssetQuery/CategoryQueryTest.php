@@ -4,6 +4,7 @@ namespace Tests\Feature\AssetQuery;
 use App\Models\Category;
 use App\Models\Asset;
 use App\Models\AssetModel;
+use Carbon\Carbon;
 use Tests\Support\GetExtendedPrefix;
 use Tests\TestCase;
 
@@ -219,7 +220,7 @@ class CategoryQueryTest extends TestCase
         $filter = [
             [
                 'field' => 'category',
-                'value' => $categoryA->id,
+                'value' => [$categoryA->id],
                 'operator' => 'contains',
                 'logic' => 'AND',
             ]

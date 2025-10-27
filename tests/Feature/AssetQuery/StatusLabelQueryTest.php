@@ -125,7 +125,7 @@ class StatusLabelQueryTest extends TestCase
         $filter = [
             [
                 'field' => 'status_label',
-                'value' => $statusPending->id,
+                'value' => [$statusPending->id],
                 'operator' => 'contains',
                 'logic' => 'AND',
             ]

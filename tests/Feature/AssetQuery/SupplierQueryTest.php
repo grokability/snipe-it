@@ -223,7 +223,7 @@ class SupplierQueryTest extends TestCase
         $filter = [
             [
                 'field' => 'supplier',
-                'value' => $supplierA->id,
+                'value' => [$supplierA->id],
                 'operator' => 'contains',
                 'logic' => 'AND',
             ],

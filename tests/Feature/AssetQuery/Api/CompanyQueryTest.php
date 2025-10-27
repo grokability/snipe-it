@@ -79,7 +79,7 @@ class CompanyQueryTest extends TestCase
             'company_id' => $companyB->id,
         ]);
 
-                $filter = [
+        $filter = [
             [
                 'field' => 'company',
                 'value' => [$companyB->name],

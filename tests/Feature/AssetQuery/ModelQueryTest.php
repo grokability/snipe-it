@@ -160,7 +160,7 @@ class ModelQueryTest extends TestCase
         $filter = [
             [
                 'field' => 'model',
-                'value' => $modelB->id,
+                'value' => [$modelB->id],
                 'operator' => 'contains',
                 'logic' => 'AND',
             ],
