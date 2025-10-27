@@ -172,4 +172,8 @@ class PredefinedFilter extends Model
         }
         return $assets;
     }
+
+    public function checkIfNameAlreadyExists(string $name): bool {
+        return $this->where('name', '=', $name)->exists();
+    }
 }

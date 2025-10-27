@@ -62,15 +62,15 @@ class Modal extends Component
         $user = auth()->user();
 
         // If the user a superuser show him all groups
-        if($user->isSuperUser()) {
+        if ($user->isSuperUser()) {
             $this->groupSelectOtherOptions = PermissionGroup::all()->pluck("id")->toArray();
 
         } else {
             // Show only the groups there the user is member of
             $this->groupSelectOtherOptions = $user
-            ->groups()
-            ->pluck("id")
-            ->toArray();
+                ->groups()
+                ->pluck("id")
+                ->toArray();
         }
 
         if (
@@ -122,6 +122,8 @@ class Modal extends Component
     ) {
         $this->validate();
 
+        $filter = new PredefinedFilter();;
+
         // Enforce: only allow creation if private or groups selected
         if (
             $this->visibility !== FilterVisibility::Private &&
@@ -140,7 +142,6 @@ class Modal extends Component
         if ($this->visibility === FilterVisibility::Public) {
 
             // create dummy filter
-            $filter = new PredefinedFilter();
             $filter->is_public = true;
             $filter->filter_data = [];
             $filter->created_by = auth()->user()->id;
@@ -169,6 +170,16 @@ class Modal extends Component
 
         $predefinedFilterService->createFilter($validated);
 
+
+        if ($filter->checkIfNameAlreadyExists($this->name)) {
+            $this->dispatch('showNotificationInFrontend', [
+                'type' => 'warning',
+                'title' => trans('general.notification_warning'),
+                'message' => trans('admin/predefinedFilters/message.filter_duplicate_name'),
+                'tag' => 'predefinedFilter',
+            ]);
+        }
+
         $this->dispatch("savePredefinedFiltersModalEvent");
         $this->dispatch("closePredefinedFiltersModal");
     }
@@ -188,19 +199,19 @@ class Modal extends Component
         if (
             $this->visibility !== FilterVisibility::Private &&
             (empty($this->groupSelect) || count($this->groupSelect) === 0)
-            ) {
-                $this->dispatch('showNotificationInFrontend', [
-                    'type' => 'error',
-                    'title' => trans('general.notification_error'),
-                    'message' => trans('admin/predefinedFilters/message.update.at_least_one_is_group_required_for_public_filter'),
-                    'tag' => 'predefinedFilter',
-                ]);
-                return;
-            }
-            
+        ) {
+            $this->dispatch('showNotificationInFrontend', [
+                'type' => 'error',
+                'title' => trans('general.notification_error'),
+                'message' => trans('admin/predefinedFilters/message.update.at_least_one_is_group_required_for_public_filter'),
+                'tag' => 'predefinedFilter',
+            ]);
+            return;
+        }
+
         $predefinedFilter = PredefinedFilter::find($this->filterId);
 
-        if (!isset($predefinedFilter)){
+        if (!isset($predefinedFilter)) {
             $this->dispatch('showNotificationInFrontend', [
                 'type' => 'error',
                 'title' => trans('general.notification_error'),
@@ -210,7 +221,7 @@ class Modal extends Component
             return;
         }
 
-        if (!$predefinedFilter->userHasPermission(auth()->user(), 'edit')){
+        if (!$predefinedFilter->userHasPermission(auth()->user(), 'edit')) {
             $this->dispatch('showNotificationInFrontend', [
                 'type' => 'error',
                 'title' => trans('general.notification_error'),
@@ -232,7 +243,7 @@ class Modal extends Component
         ];
 
         $updateFilterResponse = $predefinedFilterService->updateFilter($predefinedFilter, $validated);
-      
+
         if ($updateFilterResponse["validationErrors"] === null) {
             $this->dispatch('showNotificationInFrontend', [
                 'type' => 'success',
@@ -249,6 +260,15 @@ class Modal extends Component
             ]);
         }
 
+        if ($predefinedFilter->checkIfNameAlreadyExists($this->name)) {
+            $this->dispatch('showNotificationInFrontend', [
+                'type' => 'warning',
+                'title' => trans('general.notification_warning'),
+                'message' => trans('admin/predefinedFilters/message.filter_duplicate_name'),
+                'tag' => 'predefinedFilter',
+            ]);
+        }
+
         $this->dispatch("updatePredefinedFiltersModalEvent");
         $this->dispatch("closePredefinedFiltersModal");
     }
@@ -261,7 +281,7 @@ class Modal extends Component
 
         $predefinedFilter = $predefinedFilterService->getFilterById($this->filterId);
 
-        if (!isset($predefinedFilter)){
+        if (!isset($predefinedFilter)) {
             $this->dispatch('showNotificationInFrontend', [
                 'type' => 'error',
                 'title' => trans('general.notification_error'),
@@ -270,7 +290,7 @@ class Modal extends Component
             ]);
         }
 
-        if (!$predefinedFilter->userHasPermission(auth()->user(), 'delete')){
+        if (!$predefinedFilter->userHasPermission(auth()->user(), 'delete')) {
             $this->dispatch('showNotificationInFrontend', [
                 'type' => 'error',
                 'title' => trans('general.notification_error'),

@@ -3,6 +3,7 @@
 return array(
 
     'does_not_exist' => 'Filter existiert nicht.',
+    'filter_duplicate_name' => 'Es gibt bereits einen Filter mit dem gleichem Namen',
 
     'show' => array(
         'not_allowed' => "Sie haben nicht die Berechtigungen um diesen Filter anzuzeigen",
