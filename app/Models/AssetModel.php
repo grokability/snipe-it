@@ -2,16 +2,18 @@
 
 namespace App\Models;
 
+use App\Http\Traits\TwoColumnUniqueUndeletedTrait;
 use App\Models\Traits\HasUploads;
+use App\Models\Traits\Loggable;
+use App\Models\Traits\Requestable;
 use App\Models\Traits\Searchable;
+use App\Presenters\AssetModelPresenter;
 use App\Presenters\Presentable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Watson\Validating\ValidatingTrait;
-use \App\Presenters\AssetModelPresenter;
-use App\Http\Traits\TwoColumnUniqueUndeletedTrait;
 
 /**
  * Model for Asset Models. Asset Models contain higher level

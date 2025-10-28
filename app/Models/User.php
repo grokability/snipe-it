@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Http\Traits\UniqueUndeletedTrait;
 use App\Models\Traits\CompanyableTrait;
 use App\Models\Traits\HasUploads;
+use App\Models\Traits\Loggable;
 use App\Models\Traits\Searchable;
 use App\Presenters\Presentable;
 use App\Presenters\UserPresenter;
@@ -221,6 +222,26 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
             return true;
         }
 
+        return false;
+    }
+
+    public function hasIndividualPermissions()
+    {
+        $permissions = [];
+
+        if (is_object($this->permissions)) {
+            $permissions = json_decode(json_encode($this->permissions), true);
+        }
+
+        if (is_string($this->permissions)) {
+            $permissions = json_decode($this->permissions, true);
+        }
+
+        foreach ($permissions as $permission) {
+            if ($permission != 0) {
+                return true;
+            }
+        }
         return false;
     }
 

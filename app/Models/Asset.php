@@ -10,6 +10,8 @@ use App\Http\Traits\UniqueUndeletedTrait;
 use App\Models\Traits\Acceptable;
 use App\Models\Traits\CompanyableTrait;
 use App\Models\Traits\HasUploads;
+use App\Models\Traits\Loggable;
+use App\Models\Traits\Requestable;
 use App\Models\Traits\Searchable;
 use App\Presenters\AssetPresenter;
 use App\Presenters\Presentable;
@@ -943,25 +945,37 @@ class Asset extends Depreciable
      */
     public static function getExpiringWarrantyOrEol($days = 30)
     {
-        
-        return self::where('archived', '=', '0')
+        $now = now();
+        $end = now()->addDays($days);
+
+        $expired_assets = self::query()
+            ->where('archived', '=', '0')
             ->NotArchived()
             ->whereNull('deleted_at')
-            ->where(function ($query) use ($days) {
-                // Check for manual asset EOL first
-                $query->where(function ($query) use ($days) {
-                    $query->whereNotNull('asset_eol_date')
-                        ->whereBetween('asset_eol_date', [Carbon::now(), Carbon::now()->addDays($days)]);
-                // Otherwise use the warranty months + purchase date + threshold
-                })->orWhere(function ($query) use ($days) {
-                    $query->whereNotNull('purchase_date')
-                        ->whereNotNull('warranty_months')
-                        ->whereBetween('purchase_date', [Carbon::now(), Carbon::now()->addMonths('assets.warranty_months')->addDays($days)]);
-                });
-            })
-            ->orderBy('asset_eol_date', 'ASC')
-            ->orderBy('purchase_date', 'ASC')
+            ->whereNotNull('asset_eol_date')
+            ->whereBetween('asset_eol_date', [$now, $end])
             ->get();
+
+        $assets_with_warranties = self::query()
+            ->where('archived', '=', '0')
+            ->NotArchived()
+            ->whereNull('deleted_at')
+            ->whereNotNull('purchase_date')
+            ->whereNotNull('warranty_months')
+            ->get();
+
+        $expired_warranties = $assets_with_warranties->filter(function ($asset) use ($now, $end) {
+            $expiration_window = Carbon::parse($asset->purchase_date)->addMonths((int) $asset->warranty_months);
+
+            return $expiration_window->betweenIncluded($now, $end);
+        });
+        return $expired_assets->concat($expired_warranties)
+            ->unique('id')
+            ->sortBy([
+                ['asset_eol_date', 'ASC'],
+                ['purchase_date', 'ASC']
+            ])
+            ->values();
     }
 
 

@@ -120,8 +120,8 @@ class LdapTest extends TestCase
         $ldap_set_option = $this->getFunctionMock("App\\Models", "ldap_set_option");
         $ldap_set_option->expects($this->exactly(12));
 
-        //
-        $this->getFunctionMock("App\\Models", "ldap_bind")->expects($this->exactly(4))->willReturn(
+        // Was previsouly four times
+        $this->getFunctionMock("App\\Models", "ldap_bind")->expects($this->exactly(3))->willReturn(
             true, /* initial admin connection for 'fast path' */
             false, /* the actual login for the user */
             false, /* the direct login for the user binding-as-themselves in the legacy path */
