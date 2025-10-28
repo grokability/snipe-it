@@ -99,7 +99,16 @@ class CombinedQueryTest extends TestCase
     {
         $modelA = AssetModel::factory()->create();
         $assetA = Asset::factory()->create(['model_id' => $modelA->id]);
-        $filter = ['model' => [$modelA->name, $modelA->name]];
+
+        $filter = [
+            [
+                'field' => 'model',
+                'value' => [$modelA->name, $modelA->name],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ],
+        ];
+
 
         $this->actingAsForApi(User::factory()->superuser()->create())
             ->getJson(
@@ -135,7 +144,21 @@ class CombinedQueryTest extends TestCase
         $modelA->save();
 
         $assetA = Asset::factory()->create(['model_id' => $modelA->id]);
-        $filter = ['model' => $modelA->name, 'manufacturer' => 'NonexistentManufacturer'];
+
+        $filter = [
+            [
+                'field' => 'model',
+                'value' => [$modelA->name, $modelA->name],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ],
+            [
+                'field' => 'manufacturer',
+                'value' => ['NonexistentManufacturer'],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ],
+        ];
 
         $this->actingAsForApi(User::factory()->superuser()->create())
             ->getJson(
@@ -178,10 +201,27 @@ class CombinedQueryTest extends TestCase
         $assetB = Asset::factory()->create(); // Should not match
 
         $filter = [
-            'model' => $model->name,
-            'location' => $location->name,
-            'manufacturer' => $manufacturer->name,
-            'status_label' => $status->name,
+            [
+                'field' => 'model',
+                'value' => [$model->name],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ],[
+                'field' => 'location',
+                'value' => [$location->name],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ],[
+                'field' => 'manufacturer',
+                'value' => [$manufacturer->name],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ],[
+                'field' => 'status_label',
+                'value' => [$status->name],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ],
         ];
 
         $this->actingAsForApi(User::factory()->superuser()->create())
@@ -230,9 +270,22 @@ class CombinedQueryTest extends TestCase
         $assetD = Asset::factory()->create(['model_id' => $modelB->id, 'location_id' => $locationB->id]);
 
         $filter = [
-            'model' => $modelA->name,
-            'location' => $locationA->name,
-            'manufacturer' => $manufacturerA->name
+            [
+                'field' => 'model',
+                'value' => [$modelA->name],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ],[
+                'field' => 'location',
+                'value' => [$locationA->name],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ],[
+                'field' => 'manufacturer',
+                'value' => [$manufacturerA->name],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ],
         ];
 
         $this->actingAsForApi(User::factory()->superuser()->create())

@@ -26,7 +26,15 @@ class ManufacturerQueryTest extends TestCase
         $assetA = Asset::factory()->create(['model_id' => $modelA->id]);
         $assetB = Asset::factory()->create(['model_id' => $modelB->id]);
 
-        $filter = ['manufacturer' => ''];
+        $filter = [
+            [
+                'field' => 'manufacturer',
+                'value' => [''],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
+        
 
         $results = Asset::query()->byFilter($filter)->get();
 
@@ -48,7 +56,14 @@ class ManufacturerQueryTest extends TestCase
         $assetA = Asset::factory()->create(['model_id' => $modelA->id]);
         $assetB = Asset::factory()->create(['model_id' => $modelB->id]);
 
-        $filter = ['manufacturer' => $manufacturerA->name];
+        $filter = [
+            [
+                'field' => 'manufacturer',
+                'value' => [$manufacturerA->name],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
 
         $results = Asset::query()->byFilter($filter)->get();
 
@@ -70,7 +85,15 @@ class ManufacturerQueryTest extends TestCase
         $assetB = Asset::factory()->create(['model_id' => $modelB->id]);
 
         $queryString = ManufacturerQueryTest::getExtendedPrefix($manufacturerA->name, $manufacturerB->name);
-        $filter = ['manufacturer' => $queryString];
+
+        $filter = [
+            [
+                'field' => 'manufacturer',
+                'value' => [$queryString],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
 
         $results = Asset::query()->byFilter($filter)->get();
 
@@ -164,7 +187,14 @@ class ManufacturerQueryTest extends TestCase
         $assetA = Asset::factory()->create(['model_id' => $modelA->id]);
         $assetB = Asset::factory()->create(['model_id' => $modelB->id]);
 
-        $filter = ['manufacturer' => $manufacturerA->id];
+        $filter = [
+            [
+                'field' => 'manufacturer',
+                'value' => [$manufacturerA->id],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
 
         $results = Asset::query()->byFilter($filter)->get();
 

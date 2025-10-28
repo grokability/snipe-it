@@ -23,7 +23,14 @@ class ModelNumberQueryTest extends TestCase
         $assetA = Asset::factory()->create(['model_id' => $modelA->id]);
         $assetB = Asset::factory()->create(['model_id' => $modelB->id]);
 
-        $filter = ['model_number' => ''];
+        $filter = [
+            [
+                'field' => 'model_number',
+                'value' => [''],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
 
         $this->actingAsForApi(User::factory()->superuser()->create())
             ->getJson(
@@ -63,7 +70,14 @@ class ModelNumberQueryTest extends TestCase
         $assetA = Asset::factory()->create(['model_id' => $modelA->id]);
         $assetB = Asset::factory()->create(['model_id' => $modelB->id]);
 
-        $filter = ['model_number' => $modelA->model_number];
+        $filter = [
+            [
+                'field' => 'model_number',
+                'value' => [$modelA->model_number],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
 
         $this->actingAsForApi(User::factory()->superuser()->create())
             ->getJson(

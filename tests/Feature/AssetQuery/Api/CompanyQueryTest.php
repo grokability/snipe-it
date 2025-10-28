@@ -28,7 +28,14 @@ class CompanyQueryTest extends TestCase
             'company_id' => $companyB->id,
         ]);
 
-        $filter = ['company' => ''];
+        $filter = [
+            [
+                'field' => 'company',
+                'value' => [''],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ],
+        ];
 
         $this->actingAsForApi(User::factory()->superuser()->create())
             ->getJson(
@@ -72,7 +79,14 @@ class CompanyQueryTest extends TestCase
             'company_id' => $companyB->id,
         ]);
 
-        $filter = ['company' => $companyB->name];
+        $filter = [
+            [
+                'field' => 'company',
+                'value' => [$companyB->name],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ],
+        ];
 
         $this->actingAsForApi(User::factory()->superuser()->create())
             ->getJson(

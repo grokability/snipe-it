@@ -22,7 +22,15 @@ class LocationQueryTest extends TestCase
         $assetA = Asset::factory()->create(['location_id' => $locationA->id]);
         $assetB = Asset::factory()->create(['location_id' => $locationB->id]);
 
-        $filter = ['location' => ''];
+        $filter = [
+            [
+                'field' => 'location',
+                'value' => [''],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
+
         $results = Asset::query()->byFilter($filter)->get();
 
         // Then: Should include only assetA and assetB
@@ -43,7 +51,15 @@ class LocationQueryTest extends TestCase
         $assetA = Asset::factory()->create(['location_id' => $locationA->id]);
         $assetB = Asset::factory()->create(['location_id' => $locationB->id]);
 
-        $filter = ['location' => $locationA->name];
+        $filter = [
+            [
+                'field' => 'location',
+                'value' => [$locationA->name],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
+
         $results = Asset::query()->byFilter($filter)->get();
 
 
@@ -65,7 +81,16 @@ class LocationQueryTest extends TestCase
         $assetB = Asset::factory()->create(['location_id' => $locationB->id]);
 
         $queryString = LocationQueryTest::getExtendedPrefix($locationA->name, $locationB->name);
-        $filter = ['location' => $queryString];
+
+        $filter = [
+            [
+                'field' => 'location',
+                'value' => [$queryString],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
+
         $results = Asset::query()->byFilter($filter)->get();
 
         // Then: Should include only assetA and assetB
@@ -150,7 +175,15 @@ class LocationQueryTest extends TestCase
         $assetA = Asset::factory()->create(['location_id' => $locationA->id]);
         $assetB = Asset::factory()->create(['location_id' => $locationB->id]);
 
-        $filter = ['location' => $locationA->id];
+        $filter = [
+            [
+                'field' => 'location',
+                'value' => [$locationA->id],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
+
         $results = Asset::query()->byFilter($filter)->get();
 
         // Then: Should include only assetA and assetB

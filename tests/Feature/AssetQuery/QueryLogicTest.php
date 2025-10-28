@@ -29,13 +29,13 @@ class QueryLogicTest extends TestCase
         $filter = [
             [
                 'field' => 'model',
-                'value' => 'macbook',
+                'value' => ['macbook'],
                 'operator' => 'contains',
                 'logic' => 'AND',
             ],
             [
                 'field' => 'manufacturer',
-                'value' => 'Apple',
+                'value' => ['Apple'],
                 'operator' => 'contains',
                 'logic' => 'AND',
             ],
@@ -62,13 +62,13 @@ class QueryLogicTest extends TestCase
         $filter = [
             [
                 'field' => 'model',
-                'value' => 'macbook',
+                'value' => ['macbook'],
                 'operator' => 'contains',
                 'logic' => 'AND',
             ],
             [
                 'field' => 'manufacturer',
-                'value' => 'Apple',
+                'value' => ['Apple'],
                 'operator' => 'contains',
                 'logic' => 'NOT',
             ],
@@ -93,13 +93,13 @@ class QueryLogicTest extends TestCase
         $filter = [
             [
                 'field' => 'model',
-                'value' => 'macb',
+                'value' => ['macb'],
                 'operator' => 'contains',
                 'logic' => 'AND',
             ],
             [
                 'field' => 'manufacturer',
-                'value' => 'Apple',
+                'value' => ['Apple'],
                 'operator' => 'contains',
                 'logic' => 'AND',
             ],
@@ -126,13 +126,13 @@ class QueryLogicTest extends TestCase
         $filter = [
             [
                 'field' => 'model',
-                'value' => 'macb',
+                'value' => ['macb'],
                 'operator' => 'contains',
                 'logic' => 'AND',
             ],
             [
                 'field' => 'manufacturer',
-                'value' => 'Apple',
+                'value' => ['Apple'],
                 'operator' => 'contains',
                 'logic' => 'NOT',
             ],
@@ -160,13 +160,13 @@ class QueryLogicTest extends TestCase
         $filter = [
             [
                 'field' => 'model',
-                'value' => 'book',
+                'value' => ['book'],
                 'operator' => 'contains',
                 'logic' => 'AND',
             ],
             [
                 'field' => 'manufacturer',
-                'value' => 'Apple',
+                'value' => ['Apple'],
                 'operator' => 'contains',
                 'logic' => 'NOT',
             ],

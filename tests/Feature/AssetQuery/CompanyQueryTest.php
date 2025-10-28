@@ -25,7 +25,16 @@ class CompanyQueryTest extends TestCase
             'company_id' => $companyB->id,
         ]);
 
-        $filter = ['company' => ''];
+
+        $filter = [
+            [
+                'field' => 'company',
+                'value' => [''],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
+
         $results = Asset::query()->byFilter($filter)->get();
 
         $this->assertCount(2, $results);
@@ -47,7 +56,15 @@ class CompanyQueryTest extends TestCase
             'company_id' => $companyB->id,
         ]);
 
-        $filter = ['company' => $companyA->name];
+        $filter = [
+            [
+                'field' => 'company',
+                'value' => [$companyA->name],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
+
         $results = Asset::query()->byFilter($filter)->get();
 
         $this->assertCount(1, $results);
@@ -69,7 +86,16 @@ class CompanyQueryTest extends TestCase
         ]);
 
         $queryString = CompanyQueryTest::getExtendedPrefix($companyA->name, $companyB->name);
-        $filter = ['company' => $queryString];
+
+        $filter = [
+            [
+                'field' => 'company',
+                'value' => [$queryString],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
+
         $results = Asset::query()->byFilter($filter)->get();
 
         $this->assertCount(1, $results);
@@ -95,7 +121,7 @@ class CompanyQueryTest extends TestCase
         $filter = [
             [
                 'field' => 'company',
-                'value' => $companyA->name,
+                'value' => [$companyA->name],
                 'operator' => 'contains',
                 'logic' => 'AND',
             ]
@@ -170,7 +196,15 @@ class CompanyQueryTest extends TestCase
             'company_id' => $companyB->id,
         ]);
 
-        $filter = ['company' => $companyA->id];
+        $filter = [
+            [
+                'field' => 'company',
+                'value' => [$companyA->id,],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
+
         $results = Asset::query()->byFilter($filter)->get();
 
         $this->assertCount(1, $results);

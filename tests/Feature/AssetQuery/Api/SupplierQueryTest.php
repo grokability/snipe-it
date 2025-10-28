@@ -23,7 +23,14 @@ class SupplierQueryTest extends TestCase
         $assetA = Asset::factory()->create(['supplier_id' => $supplierA->id]);
         $assetB = Asset::factory()->create(['supplier_id' => $statusArchived->id]);
 
-        $filter = ['supplier' => ''];
+        $filter = [
+            [
+                'field' => 'supplier',
+                'value' => [''],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
 
         $this->actingAsForApi(User::factory()->superuser()->create())
             ->getJson(
@@ -63,7 +70,14 @@ class SupplierQueryTest extends TestCase
         $assetA = Asset::factory()->create(['supplier_id' => $supplierA->id]);
         $assetB = Asset::factory()->create(['supplier_id' => $supplierB->id]);
 
-        $filter = ['supplier' => $supplierA->id];
+        $filter = [
+            [
+                'field' => 'supplier',
+                'value' => [$supplierA->id],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
 
         $this->actingAsForApi(User::factory()->superuser()->create())
             ->getJson(

@@ -3,6 +3,7 @@ namespace Tests\Feature\AssetQuery\DateQuery;
 
 use App\Models\Asset;
 use App\Models\AssetModel;
+use Log;
 use Tests\TestCase;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -145,9 +146,9 @@ class DateQueryTest extends TestCase
         $results = Asset::query()->byFilter($filter)->get();
 
         $this->assertCount(2, $results);
+        $this->assertFalse($results->contains($assetA));
         $this->assertTrue($results->contains($assetB));
         $this->assertTrue($results->contains($assetC));
-        $this->assertFalse($results->contains($assetA));
     }
 
     public function testEolDateQueryEnd()
@@ -190,6 +191,8 @@ class DateQueryTest extends TestCase
         ];
 
         $results = Asset::query()->byFilter($filter)->get();
+
+        Log::error($results);
 
         $this->assertCount(1, $results);
         $this->assertTrue($results->contains($assetA));
@@ -365,7 +368,7 @@ class DateQueryTest extends TestCase
 
     public function testUpdatedAtDateQueryStart()
     {
-        $this->markTestSkipped("Test doesn't work currently at the moment");
+        // $this->markTestSkipped("Test doesn't work currently at the moment");
         Carbon::setTestNow(Carbon::create(2010, 10, 14));
 
         // Setup dates
@@ -392,14 +395,14 @@ class DateQueryTest extends TestCase
         $results = Asset::query()->byFilter($filter)->get();
 
         $this->assertCount(2, $results);
-        $this->assertTrue($results->contains($assetA));
+        $this->assertFalse($results->contains($assetA));
         $this->assertTrue($results->contains($assetB));
-        $this->assertFalse($results->contains($assetC));
+        $this->assertTrue($results->contains($assetC));
     }
 
     public function testUpdatedAtDateQueryEnd()
     {
-        $this->markTestSkipped("Test doesn't work currently at the moment");
+        // $this->markTestSkipped("Test doesn't work currently at the moment");
         Carbon::setTestNow(Carbon::create(2020, 3, 24));
 
         // Setup dates
