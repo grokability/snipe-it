@@ -1,8 +1,14 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Traits;
 
+use App\Models\Actionlog;
+use App\Models\Asset;
+use App\Models\License;
+use App\Models\LicenseSeat;
+use App\Models\Location;
 use App\Models\Setting;
+use App\Models\User;
 use App\Notifications\AuditNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;

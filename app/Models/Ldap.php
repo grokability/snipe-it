@@ -220,7 +220,7 @@ class Ldap extends Model
         Log::debug('Filter query: '.$filterQuery);
 
         // only try this if we have an Admin username set; otherwise use the 'legacy' method
-        if ($settings->ldap_uname) {
+        if (($settings->ldap_uname) && ($baseDn)) {
             // in the fallowing call, we pick a slow-failure of 0 because we might need to fall through to 'legacy'
             $fast_bind = self::findAndBindMultiOU($baseDn, $filterQuery, $password, 0);
             if ($fast_bind) {
@@ -232,23 +232,14 @@ class Ldap extends Model
 
         if (! $ldapbind = @ldap_bind($connection, $userDn, $password)) {
             Log::debug("Status of binding user: $userDn to directory: (directly!) ".($ldapbind ? "success" : "FAILURE"));
-            if (! $ldapbind = self::bindAdminToLdap($connection)) {
-                /*
-                 * TODO PLEASE:
-                 *
-                 * this isn't very clear, so it's important to note: the $ldapbind value is never correctly returned - we never 'return true' from self::bindAdminToLdap() (the function
-                 * just "falls off the end" without ever explicitly returning 'true')
-                 *
-                 * but it *does* have an interesting side-effect of checking for the LDAP password being incorrectly encrypted with the wrong APP_KEY, so I'm leaving it in for now.
-                 *
-                 * If it *did* correctly return 'true' on a successful bind, it would _probably_ allow users to log in with an incorrect password. Which would be horrible!
-                 *
-                 * Let's definitely fix this at the next refactor!!!!
-                 *
-                 */
-                Log::debug("Status of binding Admin user: $userDn to directory instead: ".($ldapbind ? "success" : "FAILURE"));
-                return false;
+            // replicate the old bad-decryption-key detection behavior here
+            try {
+                Crypt::decrypt(Setting::getSettings()->ldap_pword);
+            } catch (\Exception $e) {
+                throw new \Exception('Your app key has changed! Could not decrypt LDAP password using your current app key, so LDAP authentication has been disabled. Login with a local account, update the LDAP password and re-enable it in Admin > Settings.');
             }
+            //regardless of anything else; stuff isn't working. Return false.
+            return false;
         }
 
         if (! $results = ldap_search($connection, $baseDn, $filterQuery)) {

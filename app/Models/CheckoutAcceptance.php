@@ -190,6 +190,11 @@ class CheckoutAcceptance extends Model
         }
 
         $pdf->Ln();
+
+        // Check for CJK in the translation string for date. (This is a good proxy for the rest of the document)
+        Helper::hasRtl(trans('general.date')) ? $pdf->setRTL(true) : $pdf->setRTL(false);
+        Helper::isCjk(trans('general.date')) ? $pdf->SetFont('cid0cs', '', 9) : $pdf->SetFont('dejavusans', '', 8, '', true);
+
         $pdf->writeHTML(trans('general.date') . ': ' . Helper::getFormattedDateObject(now(), 'datetime', false), true, 0, true, 0, '');
 
         if ($data['company_name'] != null) {
@@ -224,7 +229,6 @@ class CheckoutAcceptance extends Model
         foreach ($eula_lines as $eula_line) {
             Helper::hasRtl($eula_line) ? $pdf->setRTL(true) : $pdf->setRTL(false);
             Helper::isCjk($eula_line) ? $pdf->SetFont('cid0cs', '', 9) : $pdf->SetFont('dejavusans', '', 8, '', true);
-
             $pdf->writeHTML(Helper::parseEscapedMarkedown($eula_line), true, 0, true, 0, '');
         }
         $pdf->Ln();
@@ -239,8 +243,11 @@ class CheckoutAcceptance extends Model
             $pdf->Ln();
         }
 
+        Helper::hasRtl(trans('general.notes')) ? $pdf->setRTL(true) : $pdf->setRTL(false);
+        Helper::isCjk(trans('general.notes')) ? $pdf->SetFont('cid0cs', '', 9) : $pdf->SetFont('dejavusans', '', 8, '', true);
+
         if ($data['note'] != null) {
-            Helper::isCjk($data['note']) ? $pdf->SetFont('cid0cs', '', 9) : $pdf->SetFont('dejavusans', '', 8, '', true);
+            Helper::isCjk(trans('general.notes')) ? $pdf->SetFont('cid0cs', '', 9) : $pdf->SetFont('dejavusans', '', 8, '', true);
             $pdf->writeHTML(trans('general.notes') . ': ' . e($data['note']), true, 0, true, 0, '');
             $pdf->Ln();
         }
