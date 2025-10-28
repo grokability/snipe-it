@@ -25,14 +25,12 @@
                @else
                   @switch($tableField->formatter)
                      @case('dateDisplayFormatter')
-                        <!--<input type="date" id="advancedSearch_{{ $tableField->field }}"
-                        name="{{ $tableField->title }}" class="datePicker">-->
-                        <div class="input-daterange input-group " id="checkin-range-datepicker">
-                           <input type="date" id="advancedSearch_{{ $tableField->field }}_start"
-                              class="form-control" name="checkin_date_start" aria-label="checkin_date_start"">
-                           <span class="input-group-addon">{{ strtolower(trans('general.to')) }}</span>
-                           <input type="date" id="advancedSearch_{{ $tableField->field }}_end" 
-                              class="form-control" name="checkin_date_end" aria-label="checkin_date_end"">
+                        <div class="input-daterange input-group date-range-input" id="advancedSearch_{{ $tableField->field }}">
+                           <input type="text" id="advancedSearch_{{ $tableField->field }}_start" autocomplete="off"
+                              class="form-control input-daterange-field" name="checkin_date_start" aria-label="checkin_date_start"">
+                           <div class="input-group-addon">{{ strtolower(trans('general.to')) }}</div>
+                           <input type="text" id="advancedSearch_{{ $tableField->field }}_end" autocomplete="off"
+                              class="form-control input-daterange-field" name="checkin_date_end" aria-label="checkin_date_end"">
                         </div>
                         @break
                      @case('companiesLinkObjFormatter')
@@ -171,6 +169,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
    // When a Select2 dropdown opens
    $(document).on('select2:open', (e) => {
+      
+      if(e.target.id === "predefinedfilters-select") {
+         return; // Don't expand the predefinedfilter-seletion field
+      }
+
       const selectEl = e.target;
       const $select = $(selectEl);
       const $container = $select.next('.select2-container');
@@ -204,6 +207,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
    // When a Select2 dropdown closes (loses focus)
    $(document).on('select2:close', (e) => {
+
+      if(e.target.id === "predefinedfilters-select") {
+         return; // Don't expand the predefinedfilter-seletion field
+      }
+
       const selectEl = e.target;
       const $select = $(selectEl);
       const $container = $select.next('.select2-container');

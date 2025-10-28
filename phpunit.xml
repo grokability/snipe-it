@@ -26,6 +26,7 @@
     <env name="QUEUE_DRIVER" value="sync"/>
     <env name="SESSION_DRIVER" value="array"/>
     <ini name="display_errors" value="true"/>
+    <ini name="memory_limit" value="1G"/>
   </php>
   <source>
     <include>
