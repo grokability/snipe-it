@@ -20,11 +20,7 @@ export default class FilterFormManager {
         // Select2
         document.querySelectorAll('select[id^="advancedSearch_"]').forEach(el => {
             setTimeout(() => {
-                if (el.id === 'advancedSearch_assigned_to') {
-                    this.inputs.push(new AssignedEntityFilterInput(el, this.apiService));
-                } else {
-                    this.inputs.push(new SelectFilterInput(el, this.apiService));
-                }
+                this.inputs.push(new SelectFilterInput(el, this.apiService));
             });
         });
 

@@ -81,6 +81,7 @@ class AssignedToQueryTest extends TestCase
                 ];
 
         $results = Asset::query()->byFilter($filter)->get();
+        dump($results);
 
         $this->assertCount(1, $results);
         $this->assertTrue($results->contains($assetA));
