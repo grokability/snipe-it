@@ -215,17 +215,18 @@ document.addEventListener('livewire:init', function () {
     container.register("filterUiController", controller);
     controller.bindEvents();
 
-    function sleep(ms = 0) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
 
     (async () => {
-        const filterSection = document.getElementById('filterSection');
-        filterSection.classList.remove('hide');
-        container.resolve("filterFormManager").clearAll();
-        await sleep();
-        filterSection.classList.add('hide');
+        setTimeout(async () => {
+            const filterSection = document.getElementById('filterSection');
+            filterSection.classList.remove('hide');
+            container.resolve("filterFormManager").clearAll();
+
+            await new Promise(resolve => setTimeout(resolve, 0));
+            filterSection.classList.add('hide');
+        }, 0);
     })();
+
 
     @if(isset($predefined_filter_id))
         controller.updateFilterWithPredefined(null, {{ $predefined_filter_id }});

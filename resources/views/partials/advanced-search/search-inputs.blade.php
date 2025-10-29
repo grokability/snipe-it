@@ -180,13 +180,13 @@ document.addEventListener('DOMContentLoaded', () => {
          // Expand the dropdown container
          $container.css({
             'height': 'auto',
-            'min-height': '150px'
+            'min-height': '75px'
          });
          
          $container.find('.select2-selection--multiple').css({
             'height': 'auto',
-            'min-height': '100px',
-            'max-height': '200px',
+            'min-height': '75px',
+            'max-height': '150',
             'overflow-y': 'auto'
          });
          
