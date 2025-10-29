@@ -147,6 +147,7 @@ When .hide is applied, the filter section is hidden.
         width: 100%;
     }
 }
+
 </style>
 
 <script type="module">
@@ -177,7 +178,7 @@ When .hide is applied, the filter section is hidden.
             textSpan.innerText = "{{ trans('general.close_filters') }}";
             floatingButtons.show();
             floatingButtons.align();
-        }
+  filterSection}
     }
 
 </script>

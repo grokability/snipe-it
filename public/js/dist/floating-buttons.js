@@ -1,5 +1,4 @@
 // resources/js/modules/floating-buttons.js
-
 export default class FloatingButtons {
     constructor() {
         this.advancedSearchPanel = document.getElementById("advancedSearchPanel");
@@ -9,18 +8,71 @@ export default class FloatingButtons {
         this.menuItems = this.fabMenu?.querySelectorAll("[role='menuitem']");
         this.menuOpen = false;
 
+        // rAF throttle flag
+        this._ticking = false;
+
+        // store original parent/sibling to restore when switching back to fixed
+        this._originalParent = this.floatingButtonContainer?.parentNode || document.body;
+        this._originalNextSibling = this.floatingButtonContainer?.nextSibling || null;
+
+        // remember if we changed panel positioning so we can avoid overwriting styles
+        this._panelPositionWasStatic = false;
+
+        // saved inline height so we can restore when switching back to fixed mode
+        this._savedPanelInlineHeight = this.advancedSearchPanel ? this.advancedSearchPanel.style.height || '' : '';
+
+        // buffer used when making the panel taller to accommodate the floating buttons
+        this._heightBuffer = 70;
+
+        // measured content height (natural)
+        this.advancedSearchPanelHeight = this.advancedSearchPanel ? this.advancedSearchPanel.scrollHeight : 0;
+        this.advancedSearchPanelExtended = false;
+
         this.init();
     }
 
     init() {
+        if (!this.floatingButtonContainer) return;
+
+        // Ensure we have an inner wrapper to animate transforms/opacity
+        this._ensureInnerWrapper();
+
         this.bindEvents();
         this.align();
         this.updatePositionMode();
+        // refresh stored natural height
+        this.advancedSearchPanelHeight = this._getNaturalPanelHeight();
+    }
+
+    // Wrap existing children in a .floatingButtons-inner so we can animate transforms
+    _ensureInnerWrapper() {
+        if (!this.floatingButtonContainer) return;
+
+        const existing = this.floatingButtonContainer.querySelector('.floatingButtons-inner');
+        if (existing) {
+            this.inner = existing;
+            return;
+        }
+
+        const inner = document.createElement('div');
+        inner.className = 'floatingButtons-inner';
+
+        while (this.floatingButtonContainer.firstChild) {
+            inner.appendChild(this.floatingButtonContainer.firstChild);
+        }
+
+        this.floatingButtonContainer.appendChild(inner);
+        this.inner = inner;
+
+        // re-query nodes moved into inner
+        this.menuToggleButton = this.floatingButtonContainer.querySelector('#menuToggleButton') || this.menuToggleButton;
+        this.fabMenu = this.floatingButtonContainer.querySelector('#fabMenu') || this.fabMenu;
+        this.menuItems = this.fabMenu?.querySelectorAll("[role='menuitem']");
     }
 
     bindEvents() {
         queueMicrotask(() => {
-            // Event Listeners
+            // Menu events
             this.menuToggleButton?.addEventListener("click", () => this.toggleMenu());
 
             this.menuToggleButton?.addEventListener("keydown", (e) => {
@@ -33,7 +85,7 @@ export default class FloatingButtons {
             document.addEventListener("keydown", (e) => {
                 if (e.key === "Escape") {
                     this.closeMenu();
-                    this.menuToggleButton.focus();
+                    try { this.menuToggleButton.focus(); } catch (err) { }
                 }
             });
 
@@ -48,21 +100,32 @@ export default class FloatingButtons {
                 item.addEventListener("click", () => this.closeMenu());
             });
 
-            window.addEventListener("resize", () => {
-                this.align();
-                this.updatePositionMode();
-            });
-            window.addEventListener("orientationchange", () => {
-                this.align();
-                this.updatePositionMode();
-            });
-            window.addEventListener("load", () => {
-                this.align();
-                this.updatePositionMode();
-            });
+            // Window events — schedule with rAF for smoothness
+            const scheduleFullUpdate = () => {
+                if (!this._ticking) {
+                    this._ticking = true;
+                    window.requestAnimationFrame(() => {
+                        this.align();
+                        this.updatePositionMode();
+                        this._ticking = false;
+                    });
+                }
+            };
+
+            window.addEventListener("resize", scheduleFullUpdate, { passive: true });
+            window.addEventListener("orientationchange", scheduleFullUpdate, { passive: true });
+            window.addEventListener("load", scheduleFullUpdate, { passive: true });
+
             window.addEventListener("scroll", () => {
-                this.updatePositionMode();
-            });
+                // on scroll we only need to check the mode; throttle via rAF
+                if (!this._ticking) {
+                    this._ticking = true;
+                    window.requestAnimationFrame(() => {
+                        this.updatePositionMode();
+                        this._ticking = false;
+                    });
+                }
+            }, { passive: true });
         });
     }
 
@@ -74,13 +137,23 @@ export default class FloatingButtons {
             const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
             const centerX = panelRect.left + (panelRect.width / 2) + scrollLeft;
 
-            this.floatingButtonContainer.style.left = `${centerX}px`;
-            this.floatingButtonContainer.style.transform = "translateX(-50%)";
+            // Only set absolute page-based left when the container is in the document root (fixed mode).
+            if (this.floatingButtonContainer.classList.contains('floatingButtons-fab-fixed-wrapper')) {
+                this.floatingButtonContainer.style.left = `${centerX}px`;
+                this.floatingButtonContainer.style.transform = "translateX(-50%)";
+            } else {
+                // when positioned inside the panel (absolute), use left:50% + translateX(-50%) to center relative to panel
+                this.floatingButtonContainer.style.left = '50%';
+                this.floatingButtonContainer.style.transform = "translateX(-50%)";
+            }
         });
     }
 
     updatePositionMode() {
         if (!this.advancedSearchPanel || !this.floatingButtonContainer) return;
+
+        // always refresh natural height (don't rely on stale stored value)
+        this.advancedSearchPanelHeight = this._getNaturalPanelHeight();
 
         queueMicrotask(() => {
             const panelRect = this.advancedSearchPanel.getBoundingClientRect();
@@ -90,12 +163,9 @@ export default class FloatingButtons {
                 window.getComputedStyle(this.advancedSearchPanel).display !== 'none' &&
                 window.getComputedStyle(this.advancedSearchPanel).visibility !== 'hidden';
 
-            // If panel isn't visible, keep buttons fixed
+            // If panel isn't visible, force fixed
             if (!panelVisible) {
-                if (!this.floatingButtonContainer.classList.contains('floatingButtons-fab-fixed-wrapper')) {
-                    this.floatingButtonContainer.classList.remove('floatingButtons-fab-scrollable-wrapper');
-                    this.floatingButtonContainer.classList.add('floatingButtons-fab-fixed-wrapper');
-                }
+                this._setFixedMode();
                 return;
             }
 
@@ -103,55 +173,167 @@ export default class FloatingButtons {
             const viewportHeight = window.innerHeight;
             const buttonZoneTop = viewportHeight - buttonAreaHeight;
 
-            // If panel extends into the button zone, make buttons scroll
+            // If panel extends into the button zone, make buttons fixed; otherwise make them scrollable (absolute inside panel)
             const wouldOverlap = panelRect.bottom > buttonZoneTop + 75;
 
             if (!wouldOverlap) {
-                if (!this.floatingButtonContainer.classList.contains('floatingButtons-fab-scrollable-wrapper')) {
-                    this.floatingButtonContainer.classList.remove('floatingButtons-fab-fixed-wrapper');
-                    this.floatingButtonContainer.classList.add('floatingButtons-fab-scrollable-wrapper');
-                }
+                this._setScrollableMode();
             } else {
-                if (!this.floatingButtonContainer.classList.contains('floatingButtons-fab-fixed-wrapper')) {
-                    this.floatingButtonContainer.classList.remove('floatingButtons-fab-scrollable-wrapper');
-                    this.floatingButtonContainer.classList.add('floatingButtons-fab-fixed-wrapper');
-                }
+                this._setFixedMode();
             }
         });
     }
 
+    // helper to get the natural content height of the panel without any inline height applied
+    _getNaturalPanelHeight() {
+        if (!this.advancedSearchPanel) return 0;
+        const prevInline = this.advancedSearchPanel.style.height;
+        // Temporarily clear inline height to measure natural content height
+        this.advancedSearchPanel.style.height = '';
+        const natural = this.advancedSearchPanel.scrollHeight;
+        // restore previous inline height
+        this.advancedSearchPanel.style.height = prevInline;
+        return natural;
+    }
+
+    // Move the floating container inside the panel and set class for absolute positioning
+    _setScrollableMode() {
+        if (!this.floatingButtonContainer || !this.advancedSearchPanel) return;
+
+        // if already scrollable, nothing to do
+        if (this.floatingButtonContainer.classList.contains('floatingButtons-fab-scrollable-wrapper')) {
+            return;
+        }
+
+        // ensure panel can be a positioned ancestor
+        const panelStyle = window.getComputedStyle(this.advancedSearchPanel);
+        if (panelStyle.position === 'static') {
+            this._panelPositionWasStatic = true;
+            this.advancedSearchPanel.style.position = 'relative';
+        }
+
+        // move container into the panel so position:absolute makes it scroll with the panel
+        try {
+            this.advancedSearchPanel.appendChild(this.floatingButtonContainer);
+        } catch (e) {
+            // fallback: if append fails, ignore
+        }
+
+        // switch classes
+        this.floatingButtonContainer.classList.remove('floatingButtons-fab-fixed-wrapper');
+        this.floatingButtonContainer.classList.add('floatingButtons-fab-scrollable-wrapper');
+
+        // ensure proper centering inside the panel
+        this.floatingButtonContainer.style.left = '50%';
+        this.floatingButtonContainer.style.transform = 'translateX(-50%)';
+
+        // measure natural content height and ensure there's extra space for the buttons to sit comfortably
+        const naturalHeight = this._getNaturalPanelHeight();
+        this.advancedSearchPanelHeight = naturalHeight;
+
+        this.advancedSearchPanelExtended = false;
+        this.advancedSearchPanel.style.height = `${Math.max(0, naturalHeight + this._heightBuffer)}px`;
+    }
+
+    // Move the floating container back to its original parent and set fixed class
+    _setFixedMode() {
+        if (!this.floatingButtonContainer) return;
+
+        // if already fixed, nothing to do
+        if (this.floatingButtonContainer.classList.contains('floatingButtons-fab-fixed-wrapper')) {
+            return;
+        }
+
+        // restore panel position style if we changed it earlier
+        if (this._panelPositionWasStatic && this.advancedSearchPanel) {
+            this.advancedSearchPanel.style.position = '';
+            this._panelPositionWasStatic = false;
+        }
+
+        // restore container to original parent in original position
+        try {
+            if (this._originalNextSibling && this._originalNextSibling.parentNode === this._originalParent) {
+                this._originalParent.insertBefore(this.floatingButtonContainer, this._originalNextSibling);
+            } else {
+                this._originalParent.appendChild(this.floatingButtonContainer);
+            }
+        } catch (e) {
+            // fallback: append to body
+            document.body.appendChild(this.floatingButtonContainer);
+        }
+
+        // switch classes
+        this.floatingButtonContainer.classList.remove('floatingButtons-fab-scrollable-wrapper');
+        this.floatingButtonContainer.classList.add('floatingButtons-fab-fixed-wrapper');
+
+        // align using panel metrics to compute fixed-left position
+        const panelRect = this.advancedSearchPanel ? this.advancedSearchPanel.getBoundingClientRect() : null;
+        if (panelRect) {
+            const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+            const centerX = panelRect.left + (panelRect.width / 2) + scrollLeft;
+            this.floatingButtonContainer.style.left = `${centerX}px`;
+            this.floatingButtonContainer.style.transform = "translateX(-50%)";
+        }
+
+        // restore the panel's original inline height (if we saved one) so we don't keep a reduced height
+        if (this.advancedSearchPanel) {
+            this.advancedSearchPanelExtended = true;
+            // restore saved inline height (may be empty string, which will clear the inline style)
+            this.advancedSearchPanel.style.height = this._savedPanelInlineHeight || '';
+        }
+    }
+
+    // Public setter so other code can explicitly set the mode
+    setFloatingMode(mode) {
+        if (mode === 'scrollable') {
+            this._setScrollableMode();
+        } else {
+            this._setFixedMode();
+        }
+    }
+
     show() {
+        if (!this.floatingButtonContainer) return;
         this.floatingButtonContainer.style.visibility = "visible";
     }
 
     hide() {
+        if (!this.floatingButtonContainer) return;
         this.floatingButtonContainer.style.visibility = "hidden";
     }
 
     toggleMenu() {
         queueMicrotask(() => {
             this.menuOpen = !this.menuOpen;
-            this.fabMenu.style.display = this.menuOpen ? "flex" : "none";
-            this.menuToggleButton.setAttribute("aria-expanded", String(this.menuOpen));
 
             if (this.menuOpen) {
-                this.menuItems[0]?.setAttribute("tabindex", "0");
-                this.menuItems[0]?.focus();
+                this.fabMenu?.classList.add('open');
+                this.fabMenu && this.fabMenu.setAttribute('aria-hidden', 'false');
+                this.menuToggleButton?.setAttribute("aria-expanded", "true");
+
+                this.menuItems?.forEach((item, idx) => {
+                    item.setAttribute("tabindex", "0");
+                });
+                this.menuItems?.[0]?.focus();
             } else {
+                this.fabMenu?.classList.remove('open');
+                this.fabMenu && this.fabMenu.setAttribute('aria-hidden', 'true');
+                this.menuToggleButton?.setAttribute("aria-expanded", "false");
+
                 this.menuItems?.forEach(item => item.setAttribute("tabindex", "-1"));
             }
         });
     }
 
     closeMenu() {
-        if (this.menuOpen) {
-            queueMicrotask(() => {
-                this.menuOpen = false;
-                this.fabMenu.style.display = "none";
-                this.menuToggleButton.setAttribute("aria-expanded", "false");
-                this.menuItems?.forEach(item => item.setAttribute("tabindex", "-1"));
-            });
-        }
+        if (!this.menuOpen) return;
+        queueMicrotask(() => {
+            this.menuOpen = false;
+            this.fabMenu?.classList.remove('open');
+            this.fabMenu && this.fabMenu.setAttribute('aria-hidden', 'true');
+            this.menuToggleButton?.setAttribute("aria-expanded", "false");
+            this.menuItems?.forEach(item => item.setAttribute("tabindex", "-1"));
+        });
     }
 
     enableEditDeleteButtons() {
