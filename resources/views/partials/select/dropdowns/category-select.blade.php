@@ -1,4 +1,4 @@
-<select class="js-data-ajax"
+<select class="js-data-ajax expandOnFocus"
     data-endpoint="categories/{{ isset($category_type) ? $category_type : 'assets' }}"
     data-placeholder="{{ trans('general.select_category') }}" name="{{ $fieldname }}" style="width: 100%"
     data-tags="{{ isset($allow_tags) && $allow_tags ? 'true' : 'false' }}"

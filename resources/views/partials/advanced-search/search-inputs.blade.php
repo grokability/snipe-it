@@ -162,9 +162,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
    // When a Select2 dropdown opens
    $(document).on('select2:open', (e) => {
-      
-      if(e.target.id === "predefinedfilters-select") {
-         return; // Don't expand the predefinedfilter-seletion field
+      if(e.target.classList.value.includes("expandOnFocus") === false) {
+         return;
       }
 
       const selectEl = e.target;
@@ -201,8 +200,8 @@ document.addEventListener('DOMContentLoaded', () => {
    // When a Select2 dropdown closes (loses focus)
    $(document).on('select2:close', (e) => {
 
-      if(e.target.id === "predefinedfilters-select") {
-         return; // Don't expand the predefinedfilter-seletion field
+      if(e.target.classList.value.includes("expandOnFocus") === false) {
+         return;
       }
 
       const selectEl = e.target;
