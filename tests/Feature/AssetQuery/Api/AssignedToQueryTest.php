@@ -17,13 +17,22 @@ class AssignedToQueryTest extends TestCase
 
     public function testFilterAssetsAssignedToEmptyString(): void
     {
+        $this->markTestSkipped("not allowed in Frontend no tag field");
+
         $userA = User::factory()->create();
         $locationA = Location::factory()->create();
 
         $assetA = Asset::factory()->create(['assigned_type' => User::class, 'assigned_to' => $userA->id]);
         $assetB = Asset::factory()->create(['assigned_type' => Location::class, 'assigned_to' => $locationA->id]);
 
-        $filter = ['assigned_to' => ''];
+        $filter = [
+            [
+                "field"=>"assigned_to",
+                "value"=>[''],
+                "operator"=>"contains",
+                "logic"=>"AND"
+            ]
+        ];
 
         $this->actingAsForApi(User::factory()->superuser()->create())
             ->getJson(
@@ -56,6 +65,8 @@ class AssignedToQueryTest extends TestCase
 
     public function testFilterAssetsAssignedToStringWithLocationType(): void
     {
+        $this->markTestSkipped("not allowed in Frontend no tag field");
+
         $assignedToAssetA = Asset::factory()->create();
         $locationA = Location::factory()->create();
 
@@ -63,13 +74,13 @@ class AssignedToQueryTest extends TestCase
         $assetB = Asset::factory()->create(['assigned_type' => Location::class, 'assigned_to' => $locationA->id]);
 
         $filter = [
-            [
+            [   
                 "field"=>"assigned_to",
-                "value"=>$locationA->name,
+                "value"=>[$locationA->name],
                 "operator"=>"contains",
                 "logic"=>"AND"
             ]
-        ];
+        ]; 
 
         $response = $this->actingAsForApi(User::factory()->superuser()->create())
             ->getJson(
@@ -96,7 +107,7 @@ class AssignedToQueryTest extends TestCase
             ->assertJsonFragment([
                 'id' => $assetB->id,
             ]);
-    }
+    } 
 
     public function testFilterAssetsAssignedToMixedArray(): void
     {

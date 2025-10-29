@@ -17,7 +17,14 @@ class ModelQueryTest extends TestCase
         $assetA = Asset::factory()->create(['model_id' => $modelA->id]);
         $assetB = Asset::factory()->create(['model_id' => $modelB->id]);
 
-        $filter = ['model' => ''];
+        $filter = [
+            [
+                'field' => 'model',
+                'value' => [''],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
 
         $results = Asset::query()->byFilter($filter)->get();
 
@@ -36,7 +43,14 @@ class ModelQueryTest extends TestCase
         $assetA = Asset::factory()->create(['model_id' => $modelA->id]);
         $assetB = Asset::factory()->create(['model_id' => $modelB->id]);
 
-        $filter = ['model' => $modelA->name];
+        $filter = [
+            [
+                'field' => 'model',
+                'value' => [$modelA->name],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
 
         $results = Asset::query()->byFilter($filter)->get();
 
@@ -55,7 +69,15 @@ class ModelQueryTest extends TestCase
         $assetB = Asset::factory()->create(['model_id' => $modelB->id]);
 
         $queryString = substr($modelA->name, 0, floor(strlen($modelA->name) / 2));
-        $filter = ['model' => $queryString];
+
+        $filter = [
+            [
+                'field' => 'model',
+                'value' => [$queryString],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
 
         $results = Asset::query()->byFilter($filter)->get();
 
@@ -138,7 +160,7 @@ class ModelQueryTest extends TestCase
         $filter = [
             [
                 'field' => 'model',
-                'value' => $modelB->id,
+                'value' => [$modelB->id],
                 'operator' => 'contains',
                 'logic' => 'AND',
             ],

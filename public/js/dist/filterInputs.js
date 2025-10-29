@@ -31,11 +31,9 @@ class FilterInput {
                     this.element.value = newValue;
                 });
 
-
                 this.setSearchOperator(logic, operator)
             }
             catch (e) {
-                console.error(e);
                 reject(e);
             }
             resolve(newValue);
@@ -258,10 +256,83 @@ class AssignedEntityFilterInput extends SelectFilterInput {
 
 }
 
-
 class DateFilterInput extends FilterInput {
+
+    constructor(el, apiService) {
+        super(el, apiService);
+
+        this.container = this.element.closest('.input-daterange');
+
+        let datepicker = null;
+        if (this.container) {
+            datepicker = $(this.container).datepicker({
+                todayBtn: "linked",
+                clearBtn: true,
+                disableTouchKeyboard: true,
+                forceParse: false,
+                keepEmptyValues: true,
+                daysOfWeekHighlighted: "0,1",
+                todayHighlight: true
+            });
+        }
+
+        datepicker.on('changeDate', (event) => {
+            if (event.target.id.endsWith("_start")) {
+                this.startDate = new Intl.DateTimeFormat('en-CA').format(event.date);
+            } else {
+                this.endDate = new Intl.DateTimeFormat('en-CA').format(event.date);
+            }
+        });
+
+        datepicker.on('clearDate', (_) => {
+            this.startDate = undefined;
+            this.endDate = undefined;
+        });
+    }
+
     getValue() {
-        return this.hasValue() ? this.element.value : null;
+        const result = {};
+
+        if (this.startDate != undefined) {
+            result.startDate = this.startDate;
+        }
+        if (this.endDate != undefined) {
+            result.endDate = this.endDate;
+        }
+
+        return result;
+    }
+
+    /*setValue() {
+        $(this.container).datepicker('setStartDate', '2020-01-01');
+        //console.error("Currently not implemented");
+        //throw new Error("Currently not implemented");
+        //return this.hasValue() ? this.element.value : null;
+    }*/
+
+    setValue(newValue, logic, operator) {
+        return new Promise((resolve, reject) => {
+            try {
+                queueMicrotask(() => {
+                    if (this.startDate != undefined) {
+                        $(this.container).datepicker('setStartDate', this.startDate);
+                    }
+                    if (this.endDate != undefined) {
+                        $(this.container).datepicker('setEndDate', this.endDate);
+                    }
+                });
+
+                this.setSearchOperator(logic, operator)
+            }
+            catch (e) {
+                reject(e);
+            }
+            resolve(newValue);
+        })
+    }
+
+    clear() {
+        $(this.container).datepicker('clear');
     }
 
     clear() {

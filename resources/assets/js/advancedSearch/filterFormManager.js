@@ -19,20 +19,16 @@ export default class FilterFormManager {
 
         // Select2
         document.querySelectorAll('select[id^="advancedSearch_"]').forEach(el => {
-            queueMicrotask(() => {
-                if (el.id === 'advancedSearch_assigned_to') {
-                    this.inputs.push(new AssignedEntityFilterInput(el, this.apiService));
-                } else {
-                    this.inputs.push(new SelectFilterInput(el, this.apiService));
-                }
+            setTimeout(() => {
+                this.inputs.push(new SelectFilterInput(el, this.apiService));
             });
         });
 
         // Dates
-        document.querySelectorAll('input[id^="advancedSearch_"][id$="_start"][type="date"], input[id^="advancedSearch_"][id$="_end"][type="date"]').forEach(el => {
-            queueMicrotask(() => {
-                this.inputs.push(new DateFilterInput(el, this.apiService));
-            });
+        document.querySelectorAll(
+            '.input-daterange.input-group.date-range-input'
+        ).forEach(el => {
+            this.inputs.push(new DateFilterInput(el, this.apiService));
         });
 
         // Text

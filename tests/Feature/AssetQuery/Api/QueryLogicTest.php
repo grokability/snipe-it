@@ -32,13 +32,13 @@ class QueryLogicTest extends TestCase
         $filter1 = [
             [
                 'field' => 'model',
-                'value' => 'macbook',
+                'value' => ['macbook'],
                 'operator' => 'contains',
                 'logic' => 'AND',
             ],
             [
                 'field' => 'manufacturer',
-                'value' => 'Apple',
+                'value' => ['Apple'],
                 'operator' => 'contains',
                 'logic' => 'AND',
             ],
@@ -58,13 +58,13 @@ class QueryLogicTest extends TestCase
         $filter2 = [
             [
                 'field' => 'model',
-                'value' => 'macbook',
+                'value' => ['macbook'],
                 'operator' => 'contains',
                 'logic' => 'AND',
             ],
             [
                 'field' => 'manufacturer',
-                'value' => 'Apple',
+                'value' => ['Apple'],
                 'operator' => 'contains',
                 'logic' => 'NOT',
             ],
@@ -81,13 +81,13 @@ class QueryLogicTest extends TestCase
         $filter3 = [
             [
                 'field' => 'model',
-                'value' => 'macb',
+                'value' => ['macb'],
                 'operator' => 'contains',
                 'logic' => 'AND',
             ],
             [
                 'field' => 'manufacturer',
-                'value' => 'Apple',
+                'value' => ['Apple'],
                 'operator' => 'contains',
                 'logic' => 'AND',
             ],
@@ -104,13 +104,13 @@ class QueryLogicTest extends TestCase
         $filter4 = [
             [
                 'field' => 'model',
-                'value' => 'macb',
+                'value' => ['macb'],
                 'operator' => 'contains',
                 'logic' => 'AND',
             ],
             [
                 'field' => 'manufacturer',
-                'value' => 'Apple',
+                'value' => ['Apple'],
                 'operator' => 'contains',
                 'logic' => 'NOT',
             ],

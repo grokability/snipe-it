@@ -23,7 +23,14 @@ class ModelQueryTest extends TestCase
         $assetA = Asset::factory()->create(['model_id' => $modelA->id]);
         $assetB = Asset::factory()->create(['model_id' => $modelB->id]);
 
-        $filter = ['model' => ''];
+        $filter = [
+            [
+                'field' => 'model',
+                'value' => [''],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
 
         $this->actingAsForApi(User::factory()->superuser()->create())
             ->getJson(
@@ -63,7 +70,14 @@ class ModelQueryTest extends TestCase
         $assetA = Asset::factory()->create(['model_id' => $modelA->id]);
         $assetB = Asset::factory()->create(['model_id' => $modelB->id]);
 
-        $filter = ['model' => $modelA->id];
+        $filter = [
+            [
+                'field' => 'model',
+                'value' => [$modelA->id],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
 
         $this->actingAsForApi(User::factory()->superuser()->create())
             ->getJson(

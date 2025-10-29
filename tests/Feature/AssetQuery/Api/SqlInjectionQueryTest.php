@@ -33,7 +33,21 @@ class SqlInjectionQueryTest extends TestCase
         // Attempted SQL injection payload in the filter
         $sqlInjectionString = "' OR '1'='1";
 
-        $filter = ['assigned_to' => $sqlInjectionString, 'assigned_type' => Location::class];
+        // $filter = ['assigned_to' => $sqlInjectionString, 'assigned_type' => Location::class];
+
+        $filter = [
+            [
+                "field" => "assigned_to",
+                "value" => [
+                    [
+                        "assignedType" => Location::class,
+                        "assigned_to" => $sqlInjectionString
+                    ]
+                ],
+                "operator" => "contains",
+                "logic" => "AND"
+            ]
+        ];
 
         $response = $this->actingAsForApi(User::factory()->superuser()->create())
             ->getJson(
@@ -75,7 +89,16 @@ class SqlInjectionQueryTest extends TestCase
         // Attempted SQL injection payload in the filter
         $sqlInjectionString = "' OR '1'='1";
 
-        $filter = ['category' => $sqlInjectionString];
+        // $filter = ['category' => $sqlInjectionString];
+
+        $filter = [
+            [
+                "field"=>"category",
+                "value"=>[$sqlInjectionString],
+                "operator"=>"contains",
+                "logic"=>"AND"
+            ]
+        ];
 
         $this->actingAsForApi(User::factory()->superuser()->create())
             ->getJson(

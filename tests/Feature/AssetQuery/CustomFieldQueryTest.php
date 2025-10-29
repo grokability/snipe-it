@@ -2,6 +2,7 @@
 namespace Tests\Feature\AssetQuery;
 
 use App\Models\Asset;
+use App\Models\CustomField;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
@@ -34,7 +35,7 @@ class CustomFieldQueryTest extends TestCase
         $filter = [
             [
                 'field' => 'custom_text',
-                'value' => 'Blu',
+                'value' => ['Blu'],
                 'operator' => 'contains',
                 'logic' => 'AND',
             ]
@@ -56,7 +57,7 @@ class CustomFieldQueryTest extends TestCase
         $filterOn = [
             [
                 'field' => 'custom_flag',
-                'value' => '1',
+                'value' => ['1'],
                 'operator' => 'contains',
                 'logic' => 'AND',
             ]
@@ -65,7 +66,7 @@ class CustomFieldQueryTest extends TestCase
         $filterOff = [
             [
                 'field' => 'custom_flag',
-                'value' => '1',
+                'value' => ['1'],
                 'operator' => 'contains',
                 'logic' => 'AND',
             ]
@@ -92,13 +93,13 @@ class CustomFieldQueryTest extends TestCase
         $filter = [
             [
                 'field' => 'custom_text',
-                'value' => 'Report',
+                'value' => ['Report'],
                 'operator' => 'contains',
                 'logic' => 'AND',
             ],
             [
                 'field' => 'custom_code',
-                'value' => 'R-2025',
+                'value' => ['R-2025'],
                 'operator' => 'contains',
                 'logic' => 'AND',
             ]
@@ -132,7 +133,7 @@ class CustomFieldQueryTest extends TestCase
         $filter = [
             [
                 'field' => 'custom_text',
-                'value' => 'does-not-exist',
+                'value' => ['does-not-exist'],
                 'operator' => 'contains',
                 'logic' => 'AND',
             ]
@@ -150,7 +151,7 @@ class CustomFieldQueryTest extends TestCase
         $filter = [
             [
                 'field' => 'custom_text',
-                'value' => 'Mödel#1',
+                'value' => ['Mödel#1'],
                 'operator' => 'contains',
                 'logic' => 'AND',
             ]

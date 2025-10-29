@@ -23,7 +23,15 @@ class RtdLocationQueryTest extends TestCase
         $assetA = Asset::factory()->create(['rtd_location_id' => $locationA->id]);
         $assetB = Asset::factory()->create(['rtd_location_id' => $locationB->id]);
 
-        $filter = ['rtd_location' => ''];
+        $filter = [
+            [
+                'field' => 'rtd_location',
+                'value' => [''],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
+
         $results = Asset::query()->byFilter($filter)->get();
 
         // Then: Should include only assetA and assetB
@@ -44,7 +52,15 @@ class RtdLocationQueryTest extends TestCase
         $assetA = Asset::factory()->create(['rtd_location_id' => $locationA->id]);
         $assetB = Asset::factory()->create(['rtd_location_id' => $locationB->id]);
 
-        $filter = ['rtd_location' => $locationA->name];
+        $filter = [
+            [
+                'field' => 'rtd_location',
+                'value' => [$locationA->name],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
+
         $results = Asset::query()->byFilter($filter)->get();
 
 
@@ -66,7 +82,16 @@ class RtdLocationQueryTest extends TestCase
         $assetB = Asset::factory()->create(['rtd_location_id' => $locationB->id]);
 
         $queryString = RtdLocationQueryTest::getExtendedPrefix($locationA->name, $locationB->name);
-        $filter = ['rtd_location' => $queryString];
+
+        $filter = [
+            [
+                'field' => 'rtd_location',
+                'value' => [$queryString],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
+
         $results = Asset::query()->byFilter($filter)->get();
 
         // Then: Should include only assetA and assetB
@@ -152,7 +177,15 @@ class RtdLocationQueryTest extends TestCase
         $assetA = Asset::factory()->create(['rtd_location_id' => $locationA->id]);
         $assetB = Asset::factory()->create(['rtd_location_id' => $locationB->id]);
 
-        $filter = ['rtd_location' => $locationA->id];
+        $filter = [
+            [
+                'field' => 'rtd_location',
+                'value' => [$locationA->id],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
+
         $results = Asset::query()->byFilter($filter)->get();
 
         // Then: Should include only assetA and assetB

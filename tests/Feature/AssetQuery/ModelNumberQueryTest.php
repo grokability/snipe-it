@@ -22,7 +22,14 @@ class ModelNumberQueryTest extends TestCase
         $assetA = Asset::factory()->create(['model_id' => $modelA->id]);
         $assetB = Asset::factory()->create(['model_id' => $modelB->id]);
 
-        $filter = ['model_number' => ''];
+        $filter = [
+            [
+                'field' => 'model_number',
+                'value' => [''],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
 
         $results = Asset::query()->byFilter($filter)->get();
 
@@ -41,7 +48,14 @@ class ModelNumberQueryTest extends TestCase
         $assetA = Asset::factory()->create(['model_id' => $modelA->id]);
         $assetB = Asset::factory()->create(['model_id' => $modelB->id]);
 
-        $filter = ['model_number' => $modelA->model_number];
+        $filter = [
+            [
+                'field' => 'model_number',
+                'value' => [$modelA->model_number],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
 
         $results = Asset::query()->byFilter($filter)->get();
 
@@ -60,7 +74,15 @@ class ModelNumberQueryTest extends TestCase
         $assetB = Asset::factory()->create(['model_id' => $modelB->id]);
 
         $queryString = ModelNumberQueryTest::getExtendedPrefix($modelA->model_number, $modelB->model_number);
-        $filter = ['model_number' => $queryString];
+
+        $filter = [
+            [
+                'field' => 'model_number',
+                'value' => [$queryString],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
 
         $results = Asset::query()->byFilter($filter)->get();
 

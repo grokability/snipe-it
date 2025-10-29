@@ -4,6 +4,7 @@ namespace Tests\Feature\AssetQuery;
 use App\Models\Category;
 use App\Models\Asset;
 use App\Models\AssetModel;
+use Carbon\Carbon;
 use Tests\Support\GetExtendedPrefix;
 use Tests\TestCase;
 
@@ -26,7 +27,14 @@ class CategoryQueryTest extends TestCase
         $assetA = Asset::factory()->create(['model_id' => $modelA->id]);
         $assetB = Asset::factory()->create(['model_id' => $modelB->id]);
 
-        $filter = ['category' => ''];
+        $filter = [
+            [
+                'field' => 'category',
+                'value' => [''],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
 
         $results = Asset::query()->byFilter($filter)->get();
 
@@ -47,7 +55,14 @@ class CategoryQueryTest extends TestCase
         $assetA = Asset::factory()->create(['model_id' => $modelA->id]);
         $assetB = Asset::factory()->create(['model_id' => $modelB->id]);
 
-        $filter = ['category' => $categoryA->name];
+        $filter = [
+            [
+                'field' => 'category',
+                'value' => [$categoryA->name],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
 
         $results = Asset::query()->byFilter($filter)->get();
 
@@ -69,7 +84,15 @@ class CategoryQueryTest extends TestCase
         $assetB = Asset::factory()->create(['model_id' => $modelB->id]);
 
         $queryString = CategoryQueryTest::getExtendedPrefix($categoryA->name, $categoryB->name);
-        $filter = ['category' => $queryString];
+
+        $filter = [
+            [
+                'field' => 'category',
+                'value' => [$queryString],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
 
         $results = Asset::query()->byFilter($filter)->get();
 
@@ -94,7 +117,7 @@ class CategoryQueryTest extends TestCase
         $filter = [
             [
                 'field' => 'category',
-                'value' => $categoryA->name,
+                'value' => [$categoryA->name],
                 'operator' => 'contains',
                 'logic' => 'AND',
             ]
@@ -140,7 +163,7 @@ class CategoryQueryTest extends TestCase
         ];
 
         $results = Asset::query()->byFilter($filter)->get();
-        //dump($results);
+
         // Then: Should include only assetA to assetD
         $this->assertCount(2, $results);
         $this->assertTrue($results->contains($assetB));
@@ -164,7 +187,14 @@ class CategoryQueryTest extends TestCase
         $assetA = Asset::factory()->create(['model_id' => $modelA->id]);
         $assetB = Asset::factory()->create(['model_id' => $modelB->id]);
 
-        $filter = ['category' => $categoryA->id];
+        $filter = [
+            [
+                'field' => 'category',
+                'value' => [$categoryA->id],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ]
+        ];
 
         $results = Asset::query()->byFilter($filter)->get();
 
@@ -190,7 +220,7 @@ class CategoryQueryTest extends TestCase
         $filter = [
             [
                 'field' => 'category',
-                'value' => $categoryA->id,
+                'value' => [$categoryA->id],
                 'operator' => 'contains',
                 'logic' => 'AND',
             ]
