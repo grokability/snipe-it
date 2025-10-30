@@ -1,4 +1,4 @@
-<select class="js-data-ajax" 
+<select class="js-data-ajax expandOnFocus" 
     data-endpoint="models" 
     data-placeholder="{{ trans('general.select_model') }}"
     data-tags="{{ isset($allow_tags) && $allow_tags ? 'true' : 'false' }}"

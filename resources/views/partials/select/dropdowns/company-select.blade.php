@@ -1,5 +1,5 @@
 <select 
-    class="js-data-ajax" 
+    class="js-data-ajax expandOnFocus" 
     data-endpoint="companies" 
     data-placeholder="{{ trans('general.select_company') }}" 
     data-tags="{{ isset($allow_tags) && $allow_tags ? 'true' : 'false' }}"

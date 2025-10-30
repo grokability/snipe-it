@@ -162,9 +162,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
    // When a Select2 dropdown opens
    $(document).on('select2:open', (e) => {
-      
-      if(e.target.id === "predefinedfilters-select") {
-         return; // Don't expand the predefinedfilter-seletion field
+      if(e.target.classList.value.includes("expandOnFocus") === false) {
+         return;
       }
 
       const selectEl = e.target;
@@ -181,13 +180,13 @@ document.addEventListener('DOMContentLoaded', () => {
          // Expand the dropdown container
          $container.css({
             'height': 'auto',
-            'min-height': '150px'
+            'min-height': '75px'
          });
          
          $container.find('.select2-selection--multiple').css({
             'height': 'auto',
-            'min-height': '100px',
-            'max-height': '200px',
+            'min-height': '75px',
+            'max-height': '150',
             'overflow-y': 'auto'
          });
          
@@ -201,8 +200,8 @@ document.addEventListener('DOMContentLoaded', () => {
    // When a Select2 dropdown closes (loses focus)
    $(document).on('select2:close', (e) => {
 
-      if(e.target.id === "predefinedfilters-select") {
-         return; // Don't expand the predefinedfilter-seletion field
+      if(e.target.classList.value.includes("expandOnFocus") === false) {
+         return;
       }
 
       const selectEl = e.target;

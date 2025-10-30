@@ -1,4 +1,4 @@
-<select class="js-data-ajax" 
+<select class="js-data-ajax expandOnFocus" 
     data-endpoint="locations" 
     data-placeholder="{{ trans('general.select_location') }}" name="{{ $fieldname }}" style="width: 100%" id="{{ isset($select_id) ? $select_id : $fieldname . '_location_select' }}"  aria-label="{{ $fieldname }}" {{ (isset($multiple) && ($multiple=='true')) ? " multiple='multiple'" : '' }}{!! ((isset($item)) && (Helper::checkIfRequired($item, $fieldname))) ? ' required ' : '' !!}>
     data-tags="{{ isset($allow_tags) && $allow_tags ? 'true' : 'false' }}"
