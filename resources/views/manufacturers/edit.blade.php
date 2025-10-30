@@ -9,75 +9,89 @@
 
 {{-- Page content --}}
 @section('inputFields')
-@include ('partials.forms.edit.name', ['translated_name' => trans('admin/manufacturers/table.name')])
+
+    <!-- Name -->
+    <x-form-row
+            :label="trans('admin/manufacturers/table.name')"
+            :$item
+            name="name"
+    />
+
     <!-- URL -->
-    <div class="form-group {{ $errors->has('url') ? ' has-error' : '' }}">
-        <label for="url" class="col-md-3 control-label">{{ trans('general.url') }}
-        </label>
-        <div class="col-md-6">
-            <input class="form-control" type="text" name="url" id="url" value="{{ old('url', $item->url) }}" />
-            {!! $errors->first('url', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
-        </div>
-    </div>
+    <x-form-row
+            :label="trans('general.url')"
+            :$item
+            name="url"
+            type="url"
+            input_icon="link"
+            input_group_addon="left"
+            placeholder="https://example.com"
+    />
+
+
 
     <!-- Support URL -->
-    <div class="form-group {{ $errors->has('support_url') ? ' has-error' : '' }}">
-        <label for="support_url" class="col-md-3 control-label">{{ trans('admin/manufacturers/table.support_url') }}
-        </label>
-        <div class="col-md-6">
-            <input class="form-control" type="url" name="support_url" id="support_url" value="{{ old('support_url', $item->support_url) }}" />
-            {!! $errors->first('support_url', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
-        </div>
-    </div>
+    <x-form-row
+            :label="trans('admin/manufacturers/table.support_url')"
+            :$item
+            name="support_url"
+            type="url"
+            input_icon="link"
+            input_group_addon="left"
+            placeholder="https://example.com"
+    />
+
+
 
     <!-- Warranty Lookup URL -->
-    <div class="form-group {{ $errors->has('warranty_lookup_url') ? ' has-error' : '' }}">
-        <label for="support_url" class="col-md-3 control-label">{{ trans('admin/manufacturers/table.warranty_lookup_url') }}
-        </label>
-        <div class="col-md-6">
-            <input class="form-control" type="url" name="warranty_lookup_url" id="warranty_lookup_url" value="{{ old('warranty_lookup_url', $item->warranty_lookup_url) }}" />
-            <p class="help-block">{!! trans('admin/manufacturers/message.support_url_help') !!}</p>
-            {!! $errors->first('warranty_lookup_url', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
-        </div>
-    </div>
+    <x-form-row
+            :label="trans('admin/manufacturers/table.warranty_lookup_url')"
+            :$item
+            name="warranty_lookup_url"
+            type="url"
+            help_text="{!! trans('admin/manufacturers/message.support_url_help') !!}"
+            input_icon="link"
+            input_group_addon="left"
+            placeholder="https://example.com"
+    />
 
     <!-- Support Phone -->
-    <div class="form-group {{ $errors->has('support_phone') ? ' has-error' : '' }}">
-        <label for="support_phone" class="col-md-3 control-label">{{ trans('admin/manufacturers/table.support_phone') }}
-        </label>
-        <div class="col-md-6">
-            <input class="form-control" type="text" name="support_phone" id="support_phone" value="{{ old('support_phone', $item->support_phone) }}" />
-            {!! $errors->first('support_phone', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
-        </div>
-    </div>
+    <x-form-row
+            :label="trans('admin/manufacturers/table.support_phone')"
+            :$item
+            name="support_phone"
+            input_div_class="col-md-6"
+            type="tel"
+            input_icon="phone"
+            input_group_addon="left"
+            placeholder="1-800-555-5555"
+    />
+
 
     <!-- Support Email -->
-    <div class="form-group {{ $errors->has('support_email') ? ' has-error' : '' }}">
-        <label for="support_email" class="col-md-3 control-label">{{ trans('admin/manufacturers/table.support_email') }}
-        </label>
-        <div class="col-md-6">
-            <input class="form-control" type="email" name="support_email" id="support_email" value="{{ old('support_email', $item->support_email) }}" />
-            {!! $errors->first('support_email', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
-        </div>
-    </div>
+    <x-form-row
+            :label="trans('admin/manufacturers/table.support_email')"
+            :$item
+            name="support_email"
+            input_div_class="col-md-6"
+            type="email"
+            input_icon="email"
+            input_group_addon="left"
+            placeholder="support@example.com"
+    />
+
 
 @include ('partials.forms.edit.image-upload', ['image_path' => app('manufacturers_upload_path')])
 
-<div class="form-group{!! $errors->has('notes') ? ' has-error' : '' !!}">
-    <label for="notes" class="col-md-3 control-label">{{ trans('general.notes') }}</label>
-    <div class="col-md-8">
-        <x-input.textarea
-                name="notes"
-                id="notes"
-                :value="old('notes', $item->notes)"
-                placeholder="{{ trans('general.placeholders.notes') }}"
-                aria-label="notes"
-                rows="5"
-        />
-        {!! $errors->first('notes', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
-    </div>
-</div>
 
+    <!-- Notes -->
+    <x-form-row
+            :label="trans('general.notes')"
+            :$item
+            name="notes"
+            type="textarea"
+            placeholder="{{ trans('general.placeholders.notes') }}"
+    />
 
 
 @stop

@@ -38,11 +38,11 @@
 
                         <!-- Google Redirect URL -->
                         <div class="form-group">
-                            <div class="col-md-3 text-right">
-                                <strong>Redirect URL</strong>
+                            <div class="col-md-3 control-label">
+                                <strong>{{ trans('admin/settings/general.redirect_url') }}</strong>
                             </div>
                             <div class="col-md-8">
-                                <p class="form-control-static" style="margin-top: -5px"><code>{{ config('app.url') }}/google/callback</code></p>
+                                <p class="form-control-static"><code>{{ config('app.url') }}/google/callback</code></p>
                                 <p class="help-block">{!! trans('admin/settings/general.google_callback_help') !!}</p>
                             </div>
                         </div>
@@ -64,9 +64,9 @@
 
                         <!-- Google Client ID -->
                         <div class="form-group {{ $errors->has('google_client_id') ? 'error' : '' }}">
-                            <div class="col-md-3 text-right">
-                                <label for="google_client_id">Client ID</label>
-                            </div>
+
+                           <label for="google_client_id" class="col-md-3 control-label">{{ trans('admin/settings/general.client_id') }}</label>
+
                             <div class="col-md-8">
                                 <input
                                     class="form-control"
@@ -86,9 +86,9 @@
 
                         <!-- Google Client Secret -->
                         <div class="form-group {{ $errors->has('google_client_secret') ? 'error' : '' }}">
-                            <div class="col-md-3 text-right">
-                                <label for="google_client_secret">Client Secret</label>
-                            </div>
+
+                            <label for="google_client_secret" class="col-md-3 control-label">{{ trans('admin/settings/general.client_secret') }}</label>
+
                             <div class="col-md-8">
 
                                 @if (config('app.lock_passwords')===true)

@@ -76,7 +76,7 @@ class LicenseSeat extends SnipeModel implements ICompanyableChild
     protected function displayName(): Attribute
     {
         return Attribute:: make(
-            get: fn(mixed $value) => $this->license->name,
+            get: fn(mixed $value) => $this->license?->name,
         );
     }
 

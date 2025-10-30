@@ -44,7 +44,7 @@ class AssetImporter extends ItemImporter
             foreach ($this->customFields as $customField) {
                 $customFieldValue = $this->array_smart_custom_field_fetch($row, $customField);
 
-                if ($customFieldValue) {
+                if (!is_null($customFieldValue)) {
                     if ($customField->field_encrypted == 1) {
                         $this->item['custom_fields'][$customField->db_column_name()] = Crypt::encrypt($customFieldValue);
                         $this->log('Custom Field '.$customField->name.': '.Crypt::encrypt($customFieldValue));

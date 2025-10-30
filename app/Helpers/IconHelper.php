@@ -40,6 +40,8 @@ class IconHelper
                 return 'fa-solid fa-trash-arrow-up';
             case 'external-link':
                 return 'fa fa-external-link';
+            case 'link':
+                return 'fa fa-link';
             case 'email':
                 return 'fa-regular fa-envelope';
             case 'phone':

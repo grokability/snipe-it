@@ -93,8 +93,8 @@ class CheckoutAssetNotification extends Notification
         $channel = ($this->settings->webhook_channel) ? $this->settings->webhook_channel : '';
 
         $fields = [
-            trans('general.to') => '<'.$target->present()->viewUrl().'|'.$target->display_name.'>',
-            trans('general.by') => '<'.$admin->present()->viewUrl().'|'.$admin->display_name.'>',
+            trans('general.to_user') => '<'.$target->present()->viewUrl().'|'.$target->display_name.'>',
+            trans('general.by_user') => '<'.$admin->present()->viewUrl().'|'.$admin->display_name.'>',
         ];
 
         if ($item->location) {

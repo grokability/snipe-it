@@ -43,9 +43,6 @@
 @if (isset($qty))
 | **{{ trans('general.qty') }}** | {{ $qty }} |
 @endif
-@if (isset($admin))
-| **{{ trans('general.administrator') }}** | {{ $admin }} |
-@endif
 @endcomponent
 
 {{ trans('mail.best_regards') }}

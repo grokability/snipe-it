@@ -46,7 +46,7 @@
 
                         <!-- Enable SAML -->
                         <div class="form-group{{ $errors->has('saml_integration') ? ' error' : '' }}">
-                            <div class="col-md-3 text-right">
+                            <div class="control-label col-md-3">
                                 <strong>{{ trans('admin/settings/general.saml_integration') }}</strong>
                             </div>
                             <div class="col-md-9">
@@ -69,20 +69,20 @@
                                     <div class="col-md-9 col-md-offset-3">
                                     <!-- SAML SP Details -->
                                     <!-- SAML SP Entity ID -->
-                                    <label for="saml_sp_entitiyid">{{ trans('admin/settings/general.saml_sp_entityid') }}</label>
+                                    <label for="saml_sp_entitiyid" class="control-label col-md-3">{{ trans('admin/settings/general.saml_sp_entityid') }}</label>
                                     <input class="form-control" readonly="" name="saml_sp_entitiyid" type="text" value="{{ config('app.url') }}" id="saml_sp_entitiyid">
                                     <br>
                                     <!-- SAML SP ACS -->
-                                    <label for="saml_sp_acs_url">{{ trans('admin/settings/general.saml_sp_acs_url') }}</label>
+                                    <label for="saml_sp_acs_url" class="control-label col-md-3">{{ trans('admin/settings/general.saml_sp_acs_url') }}</label>
                                     <input class="form-control" readonly="" name="saml_sp_acs_url" type="text" value="{{ route('saml.acs') }}" id="saml_sp_acs_url">
                                     <br>
                                     <!-- SAML SP SLS -->
-                                    <label for="saml_sp_sls_url">{{ trans('admin/settings/general.saml_sp_sls_url') }}</label>
+                                    <label for="saml_sp_sls_url" class="control-label col-md-3">{{ trans('admin/settings/general.saml_sp_sls_url') }}</label>
                                     <input class="form-control" readonly="" name="saml_sp_sls_url" type="text" value="{{ route('saml.sls') }}" id="saml_sp_sls_url">
                                     <br>
                                     <!-- SAML SP Certificate -->
                                     @if (!empty($setting->saml_sp_x509cert))
-                                         <label for="saml_sp_x509cert">{{ trans('admin/settings/general.saml_sp_x509cert') }}</label>
+                                         <label for="saml_sp_x509cert" class="control-label col-md-3">{{ trans('admin/settings/general.saml_sp_x509cert') }}</label>
                                             <x-input.textarea
                                                 name="saml_sp_x509cert"
                                                 id="saml_sp_x509cert"
@@ -93,7 +93,7 @@
                                         <br>
                                     @endif
                                     <!-- SAML SP Metadata URL -->
-                                    <label for="saml_sp_metadata_url">{{ trans('admin/settings/general.saml_sp_metadata_url') }}</label>
+                                    <label for="saml_sp_metadata_url" class="control-label col-md-3">{{ trans('admin/settings/general.saml_sp_metadata_url') }}</label>
                                     <input class="form-control" readonly="" name="saml_sp_metadata_url" type="text" value="{{ route('saml.metadata') }}" id="saml_sp_metadata_url">
                                     <br>
                                     <p class="help-block">
@@ -108,10 +108,10 @@
 
                         <!-- SAML IdP Metadata -->
                         <div class="form-group {{ $errors->has('saml_idp_metadata') ? 'error' : '' }}">
-                        <div class="col-md-3 text-right">
-                            <label for="saml_idp_metadata">{{ trans('admin/settings/general.saml_idp_metadata') }}</label>
-                        </div>
-                        <div class="col-md-9">
+
+                            <label for="saml_idp_metadata" class="control-label col-md-3">{{ trans('admin/settings/general.saml_idp_metadata') }}</label>
+
+                        <div class="col-md-8">
                             <x-input.textarea
                                 name="saml_idp_metadata"
                                 id="saml_idp_metadata"
@@ -131,9 +131,9 @@
 
                         <!-- SAML Attribute Mapping Username -->
                         <div class="form-group {{ $errors->has('saml_attr_mapping_username') ? 'error' : '' }}">
-                            <div class="col-md-3 text-right">
-                                <label for="saml_attr_mapping_username">{{ trans('admin/settings/general.saml_attr_mapping_username') }}</label>
-                            </div>
+
+                            <label for="saml_attr_mapping_username" class="control-label col-md-3">{{ trans('admin/settings/general.saml_attr_mapping_username') }}</label>
+
                             <div class="col-md-9">
                                 <input class="form-control" name="saml_attr_mapping_username" type="text" id="saml_attr_mapping_username" value="{{ old('saml_attr_mapping_username', $setting->saml_attr_mapping_username) }}">
                                 <p class="help-block">{{ trans('admin/settings/general.saml_attr_mapping_username_help') }}</p>
@@ -143,7 +143,7 @@
 
                         <!-- SAML Force Login -->
                         <div class="form-group">
-                            <div class="col-md-3 text-right">
+                            <div class="control-label col-md-3">
                                 <strong>{{  trans('admin/settings/general.saml_forcelogin_label') }}</strong>
                             </div>
                             <div class="col-md-9">
@@ -159,7 +159,7 @@
 
                         <!-- SAML Single Log Out -->
                         <div class="form-group">
-                            <div class="col-md-3 text-right">
+                            <div class="control-label col-md-3">
                                 <strong>{{ trans('admin/settings/general.saml_slo_label') }}</strong>
                             </div>
                             <div class="col-md-9">
@@ -174,9 +174,8 @@
 
                         <!-- SAML Custom Options -->
                         <div class="form-group {{ $errors->has('saml_custom_settings') ? 'error' : '' }}">
-                        <div class="col-md-3 text-right">
-                            <label for="saml_custom_settings">{{ trans('admin/settings/general.saml_custom_settings') }}</label>
-                        </div>
+                        <label for="saml_custom_settings" class="control-label col-md-3">{{ trans('admin/settings/general.saml_custom_settings') }}</label>
+
                         <div class="col-md-9">
                             <x-input.textarea
                                 name="saml_custom_settings"

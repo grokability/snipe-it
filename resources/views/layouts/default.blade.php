@@ -1172,21 +1172,42 @@ dir="{{ Helper::determineLanguageDirection() }}">
             var validator = $('#create-form').validate({
                 ignore: 'input[type=hidden]',
                 errorClass: 'alert-msg',
-                errorElement: 'span',
+                errorElement: 'div',
                 errorPlacement: function(error, element) {
-                    $(element).hasClass('select2') || $(element).hasClass('js-data-ajax')
+
+                    if ($(element).hasClass('select2') || $(element).hasClass('js-data-ajax')) {
                         // If the element is a select2 then append the error to the parent div
-                        ? element.parent('div').append(error)
-                        // Otherwise place it after
-                        : error.insertAfter(element);
+                        element.parent('div').append(error);
+
+                     } else if ($(element).parent().hasClass('input-group')) {
+                        var end_input_group = $(element).next('.input-group-addon').parent();
+                        error.insertAfter(end_input_group);
+                    } else {
+                        error.insertAfter(element);
+                    }
+
                 },
                 highlight: function(inputElement) {
-                    $(inputElement).parent().addClass('has-error');
-                    $(inputElement).closest('.help-block').remove();
+
+                    // We have to go two levels up if it's an input group
+                    if ($(inputElement).parent().hasClass('input-group')) {
+                        $(inputElement).parent().parent().parent().addClass('has-error');
+                    } else {
+                        $(inputElement).parent().addClass('has-error');
+                        $(inputElement).closest('.help-block').remove();
+                    }
+
                 },
                 onfocusout: function(element) {
-                    $(element).parent().removeClass('has-error');
-                    return $(element).valid();
+                    // We have to go two levels up if it's an input group
+                    if ($(element).parent().hasClass('input-group')) {
+                        $(element).parent().parent().parent().removeClass('has-error');
+                        return $(element).valid();
+                    } else {
+                        $(element).parent().removeClass('has-error');
+                        return $(element).valid();
+                    }
+
                 },
 
             });

@@ -9,7 +9,13 @@
 
 @section('inputFields')
 
-@include ('partials.forms.edit.name', ['translated_name' => trans('admin/categories/general.name')])
+    <!-- Name -->
+    <x-form-row
+            :label="trans('general.name')"
+            :$item
+            name="name"
+    />
+
 
 <!-- Type -->
 <div class="form-group {{ $errors->has('category_type') ? ' has-error' : '' }}">

@@ -51,25 +51,22 @@
 
                     <div class="col-md-12">
 
-                        <fieldset name="logo-preferences"">
+                        <fieldset name="logo-preferences">
                             <x-form-legend>
                                 {{ trans('admin/settings/general.legends.logos') }}
                             </x-form-legend>
 
                             <!-- Site name -->
-                            <div class="form-group {{ $errors->has('site_name') ? 'error' : '' }}">
-
-                                <div class="col-md-3 text-right">
-                                    <label for="site_name">{{ trans('admin/settings/general.site_name') }}</label>
-                                </div>
-                                <div class="col-md-7 required">
+                            <div class="form-group{{ $errors->has('site_name') ? ' error' : '' }}">
+                                <label for="site_name" class="col-md-3 control-label">{{ trans('admin/settings/general.site_name') }}</label>
+                                <div class="col-md-8 required">
                                     @if (config('app.lock_passwords')===true)
-                                        <input class="form-control" disabled="disabled" placeholder="Snipe-IT Asset Management" name="site_name" type="text" value="{{ old('site_name', $setting->site_name) }}" id="site_name">
+                                        <input maxlength="191" class="form-control" disabled="disabled" placeholder="Snipe-IT Asset Management" name="site_name" type="text" value="{{ old('site_name', $setting->site_name) }}" id="site_name">
                                         <p class="text-warning">
                                             <x-icon type="locked" />
                                             {{ trans('general.feature_disabled') }}</p>
                                     @else
-                                        <input class="form-control" placeholder="Snipe-IT Asset Management" required="required" name="site_name" type="text" value="{{ old('site_name', $setting->site_name) }}" id="site_name">
+                                        <input maxlength="191" class="form-control" placeholder="Snipe-IT Asset Management" required="required" name="site_name" type="text" value="{{ old('site_name', $setting->site_name) }}" id="site_name">
                                     @endif
                                     {!! $errors->first('site_name', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
                                 </div>
@@ -81,9 +78,9 @@
 
                             <!-- Branding -->
                             <div class="form-group {{ $errors->has('brand') ? 'error' : '' }}">
-                                <div class="col-md-3 text-right">
-                                    <label for="brand">{{ trans('admin/settings/general.web_brand') }}</label>
-                                </div>
+
+                                <label for="brand" class="col-md-3 control-label">{{ trans('admin/settings/general.web_brand') }}</label>
+
                                 <div class="col-md-9">
                                     <x-input.select
                                         name="brand"
@@ -161,7 +158,6 @@
                             @if (($setting->default_avatar == '') || (($setting->default_avatar == 'default.png') && (Storage::disk('public')->missing('default.png'))))
                             <!-- Restore Default Avatar -->
                             <div class="form-group">
-
                                 <div class="col-md-9 col-md-offset-3">
                                     <label class="form-control">
                                         <input type="checkbox" name="restore_default_avatar" value="1" @checked(old('restore_default_avatar', $setting->restore_default_avatar)) />
@@ -175,8 +171,8 @@
                             @endif
 
                             <!-- Load gravatar -->
-                            <div class="form-group {{ $errors->has('load_remote') ? 'error' : '' }}">
-                                <div class="col-md-3 text-right">
+                            <div class="form-group{{ $errors->has('load_remote') ? ' error' : '' }}">
+                                <div class="col-md-3 control-label">
                                     <strong>{{ trans('admin/settings/general.load_remote') }}</strong>
                                 </div>
                                 <div class="col-md-9">
@@ -196,7 +192,7 @@
 
                             <!-- Include logo in print assets -->
                             <div class="form-group">
-                                <div class="col-md-3 text-right">
+                                <div class="col-md-3 control-label">
                                     <strong>{{ trans('admin/settings/general.logo_print_assets') }}</strong>
                                 </div>
                                 <div class="col-md-9">
@@ -211,7 +207,7 @@
 
                             <!-- show urls in emails-->
                             <div class="form-group">
-                                <div class="col-md-3 text-right">
+                                <div class="col-md-3 control-label">
                                     <strong>{{ trans('admin/settings/general.show_url_in_emails') }}</strong>
                                 </div>
                                 <div class="col-md-9">
@@ -225,16 +221,16 @@
                         </fieldset>
                         <!-- colors and skins -->
 
-                        <fieldset name="color-preferences"">
+                        <fieldset name="color-preferences">
                             <x-form-legend>
                                 {{ trans('admin/settings/general.legends.colors') }}
                             </x-form-legend>
 
                             <!-- Header color -->
                             <div class="form-group {{ $errors->has('header_color') ? 'error' : '' }}">
-                                <div class="col-md-3 text-right">
-                                    <label for="header_color">{{ trans('admin/settings/general.header_color') }}</label>
-                                </div>
+
+                                    <label for="header_color" class="col-md-3 control-label">{{ trans('admin/settings/general.header_color') }}</label>
+
                                 <div class="col-md-5 col-xs-5 col-sm-3 col-md-4 col-lg-3 col-xl-3">
                                     <div class="input-group header-color">
                                         <input class="form-control" placeholder="#FF0000" aria-label="header_color" name="header_color" type="text" id="header_color" value="{{ old('header_color', ($setting->header_color ?? '#3c8dbc')) }}">
@@ -248,9 +244,7 @@
 
                             <!-- Skin -->
                             <div class="form-group {{ $errors->has('skin') ? 'error' : '' }}">
-                                <div class="col-md-3 text-right">
-                                    <label for="skin">{{ trans('general.skin') }}</label>
-                                </div>
+                                <label for="skin" class="col-md-3 control-label">{{ trans('general.skin') }}</label>
                                 <div class="col-md-9">
                                     <x-input.skin name="skin" :selected="old('skin', $setting->skin)" />
                                     {!! $errors->first('skin', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
@@ -259,9 +253,9 @@
 
                             <!-- Custom css -->
                             <div class="form-group {{ $errors->has('custom_css') ? 'error' : '' }}">
-                                <div class="col-md-3 text-right">
-                                    <label for="custom_css">{{ trans('admin/settings/general.custom_css') }}</label>
-                                </div>
+
+                                <label for="custom_css" class="col-md-3 control-label">{{ trans('admin/settings/general.custom_css') }}</label>
+
                                 <div class="col-md-9">
                                     @if (config('app.lock_passwords')===true)
                                         <x-input.textarea
@@ -302,17 +296,17 @@
 
                             <!-- colors and skins -->
 
-                            <fieldset name="footer-preferences"">
+                            <fieldset name="footer-preferences">
                                 <x-form-legend>
                                     {{ trans('admin/settings/general.legends.footer') }}
                                 </x-form-legend>
 
                                 <!-- Support Footer -->
                                 <div class="form-group {{ $errors->has('support_footer') ? 'error' : '' }}">
-                                    <div class="col-md-3 text-right">
-                                        <label for="support_footer">{{ trans('admin/settings/general.support_footer') }}</label>
-                                    </div>
-                                    <div class="col-md-9">
+
+                                    <label for="support_footer" class="col-md-3 control-label">{{ trans('admin/settings/general.support_footer') }}</label>
+
+                                    <div class="col-md-8">
                                         @if (config('app.lock_passwords')===true)
                                             <x-input.select
                                                 name="support_footer"
@@ -343,9 +337,9 @@
 
                                 <!-- Version Footer -->
                                 <div class="form-group {{ $errors->has('version_footer') ? 'error' : '' }}">
-                                    <div class="col-md-3 text-right">
-                                        <label for="version_footer">{{ trans('admin/settings/general.version_footer') }}</label>
-                                    </div>
+
+                                    <label for="version_footer" class="col-md-3 control-label">{{ trans('admin/settings/general.version_footer') }}</label>
+
                                     <div class="col-md-9">
                                         @if (config('app.lock_passwords')===true)
                                             <x-input.select
@@ -376,9 +370,9 @@
 
                                 <!-- Additional footer -->
                                 <div class="form-group {{ $errors->has('footer_text') ? 'error' : '' }}">
-                                    <div class="col-md-3 text-right">
-                                        <label for="footer_text">{{ trans('admin/settings/general.footer_text') }}</label>
-                                    </div>
+
+                                    <label for="footer_text" class="col-md-3 control-label">{{ trans('admin/settings/general.footer_text') }}</label>
+
                                     <div class="col-md-9">
                                         @if (config('app.lock_passwords')===true)
                                             <x-input.textarea

@@ -416,6 +416,9 @@ return [
     'manager_view' => 'Manager View',
     'manager_view_enabled_text' => 'Enable Manager View',
     'manager_view_enabled_help' => 'Allow managers to view assigned items to their direct and indirect reports in their account view.',
+    'redirect_url' => 'Redirect URL',
+    'client_secret' => 'Client Secret',
+    'client_id' => 'Client ID',
 
     'username_formats' => [
         'username_format'		=> 'Username Format',
