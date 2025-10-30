@@ -16,7 +16,7 @@ class FilterService
 {
     
     public function searchByFilter( $query, $filters){
-        return $query->where(
+        $q = $query->where(
             function(Builder $query) use ($filters){
 
                 $dateFields = [
@@ -68,6 +68,7 @@ class FilterService
                 }
             }
         );
+        return $q;
     }
 
     /**
@@ -394,7 +395,7 @@ protected function applyWhereWithOperator(Builder $query, string $column, $value
         $end = null;
 
         foreach ($filters as $filter) {
-            if (!isset($filter['field'], $filter['values']) || !is_array($filter['values'])) {
+            if (!isset($filter['field'], $filter['value']) || !is_array($filter['value'])) {
                 continue;
             }
 
@@ -405,23 +406,22 @@ protected function applyWhereWithOperator(Builder $query, string $column, $value
                 continue;
             }
 
-            if (isset($filter['values']['start'])) {
-                $start = $filter['values']['start'];
+            if (isset($filter['value']['startDate'])) {
+                $start = $filter['value']['startDate'];
             }
 
-            if (isset($filter['values']['end'])) {
-                $end = $filter['values']['end'];
+            if (isset($filter['value']['endDate'])) {
+                $end = $filter['value']['endDate'];
             }
         }
-
+        
         if (!empty($start)) {
             $query->whereDate($field, '>=', $start);
         }
-
+        
         if (!empty($end)) {
             $query->whereDate($field, '<=', $end);
         }
-
         return $query;
     }
 }

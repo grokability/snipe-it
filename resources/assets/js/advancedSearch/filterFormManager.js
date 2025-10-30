@@ -34,11 +34,17 @@ export default class FilterFormManager {
         // Text
         document.querySelectorAll('input[id^="advancedSearch_"][type="text"]').forEach(el => {
             queueMicrotask(() => {
+
+                // Skip daterangefields
+                if(el.classList.contains("input-daterange-field")) {
+                    return;
+                }
+                
                 this.inputs.push(new TextFilterInput(el, this.apiService));
             });
         });
 
-
+        console.log(this.inputs)
         return this.inputs;
     }
 
