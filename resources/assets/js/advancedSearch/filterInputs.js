@@ -299,7 +299,6 @@ class DateFilterInput extends FilterInput {
         if (this.endDate != undefined) {
             result.endDate = this.endDate;
         }
-
         return result;
     }
 
