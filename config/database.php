@@ -18,9 +18,10 @@ $dump_options = [
     //'add_extra_option' => '--optionname=optionvalue',
 ];
 
-// Some versions of mysql do not support the --skip-ssl option and will fail if it is even set
+// For modern versions of mysqldump, use --ssl-mode=DISABLED
 if (env('DB_DUMP_SKIP_SSL') == 'true') {
-    $dump_options['skip_ssl'] = true;
+    // Correctly add the option as a string to the 'add_extra_option' key.
+    $dump_options['add_extra_option'] = '--ssl-mode=DISABLED';
 }
 
 

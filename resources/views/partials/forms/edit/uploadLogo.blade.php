@@ -1,10 +1,10 @@
 <!-- {{ $logoVariable }}logo image upload -->
 
 <div class="form-group">
-    <div class="col-md-3 text-right">
-        <label {!! $errors->has($logoVariable) ? 'class="alert-msg"' : '' !!} for="{{ $logoVariable }}">
+    <div class="col-md-3 control-label{!! $errors->has($logoVariable) ? ' error' : '' !!}">
+        <strong>
         {{ trans($logoLabel) }}
-        </label>
+        </strong>
     </div>
     <div class="col-md-9">
         <label class="btn btn-default{{ (config('app.lock_passwords')) ? ' disabled' : '' }}">

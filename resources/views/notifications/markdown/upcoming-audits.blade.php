@@ -1,12 +1,17 @@
 @component('mail::message')
 
-{{ trans_choice('mail.upcoming-audits', $assets->count(), ['count' => $assets->count(), 'threshold' => $threshold]) }}
+{{ trans_choice('mail.upcoming-audits', $total, ['count' => $total, 'threshold' => $threshold]) }}
+{{ trans('mail.upcoming-audits_click') }}
+
+<x-mail::button :url="route('assets.audit.due')">
+    {{ trans_choice('general.audit_due_days_view_all', $threshold, ['days' => $threshold]) }}
+</x-mail::button>
 
 <x-mail::table>
 |        |        |          |
 | ------------- | ------------- | ------------- |
 @foreach ($assets as $asset)
-| {{ ($asset->next_audit_diff_in_days <= 7) ? '🚨' : (($asset->next_audit_diff_in_days <= 14) ? '⚠️' : '⚠️') }} **{{ trans('mail.name') }}** | <a href="{{ route('hardware.show', $asset->id) }}">{{ $asset->display_name }}</a> |
+| {{ ($asset->next_audit_diff_in_days <= 7) ? '🚨' : (($asset->next_audit_diff_in_days <= 14) ? '⚠️' : '⚠️') }} **{{ trans('mail.name') }}** | <a href="{{ route('hardware.show', $asset->id) }}">{{ $asset->display_name }}</a>  (<a href="{{ route('asset.audit.create', $asset->id) }}">{{ trans('general.audit') }}</a>)|
 @if ($asset->serial)
 | **{{ trans('general.serial_number') }}** | {{ $asset->serial }} |
 @endif
@@ -33,6 +38,6 @@
 </x-mail::table>
 
 <x-mail::button :url="route('assets.audit.due')">
-    {{ trans_choice('general.audit_due_days', $threshold, ['days' => $threshold]) }}
+    {{ trans_choice('general.audit_due_days_view_all', $threshold, ['days' => $threshold]) }}
 </x-mail::button>
 @endcomponent

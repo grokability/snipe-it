@@ -32,7 +32,7 @@ class StoreNotificationSettings extends FormRequest
             ],
             'alert_threshold'                     => 'numeric|nullable',
             'alert_interval'                      => 'numeric|nullable|gt:0',
-            'audit_warning_days'                  => 'numeric|nullable',
+            'audit_warning_days'                  => 'numeric|nullable|gte:0',
             'due_checkin_days'                    => 'numeric|nullable|gt:0',
             'audit_interval'                      => 'numeric|nullable|gt:0',
         ];

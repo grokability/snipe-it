@@ -42,23 +42,20 @@
 
                         <!-- auto ids -->
                         <div class="form-group">
-                            <div class="col-md-5">
-                                <strong>{{  trans('admin/settings/general.auto_increment_assets') }}</strong>
-                            </div>
-                            <div class="col-md-7">
+                            <div class="col-md-8 col-md-offset-3">
                                 <label class="form-control">
                                     <input type="checkbox" name="auto_increment_assets" value="1" @checked(old('auto_increment_assets', $setting->auto_increment_assets)) aria-label="auto_increment_assets">
-                                    {{ trans('admin/settings/general.enabled') }}
+                                    {{  trans('admin/settings/general.auto_increment_assets') }}
                                 </label>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <div class="col-md-5">
-                                <label for="next_auto_tag_base">{{ trans('admin/settings/general.next_auto_tag_base') }}</label>
-                            </div>
-                            <div class="col-md-7">
-                                <input class="form-control" style="width: 150px;" aria-label="next_auto_tag_base" name="next_auto_tag_base" type="text" value="{{ old('next_auto_tag_base', $setting->next_auto_tag_base) }}" id="next_auto_tag_base">
+
+                            <label for="next_auto_tag_base" class="col-md-3 control-label">{{ trans('admin/settings/general.next_auto_tag_base') }}</label>
+
+                            <div class="col-md-8">
+                                <input class="form-control" style="width: 200px;" aria-label="next_auto_tag_base" name="next_auto_tag_base" type="text" value="{{ old('next_auto_tag_base', $setting->next_auto_tag_base) }}" id="next_auto_tag_base">
                                 {!! $errors->first('next_auto_tag_base', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
                             </div>
                         </div>
@@ -66,26 +63,26 @@
 
                         <!-- auto prefix -->
                         <div class="form-group {{ $errors->has('auto_increment_prefix') ? 'error' : '' }}">
-                            <div class="col-md-5">
-                                <label for="auto_increment_prefix">{{ trans('admin/settings/general.auto_increment_prefix') }}</label>
-                            </div>
-                            <div class="col-md-7">
+
+                            <label for="auto_increment_prefix" class="col-md-3 control-label">{{ trans('admin/settings/general.auto_increment_prefix') }}</label>
+
+                            <div class="col-md-8">
                                 @if ($setting->auto_increment_assets == 1)
-                                    <input class="form-control" style="width: 150px;" aria-label="auto_increment_prefix" name="auto_increment_prefix" type="text" id="auto_increment_prefix" value="{{ old('auto_increment_prefix', $setting->auto_increment_prefix) }}">
+                                    <input class="form-control"  maxlength="100" style="width: 200px;" aria-label="auto_increment_prefix" name="auto_increment_prefix" type="text" id="auto_increment_prefix" value="{{ old('auto_increment_prefix', $setting->auto_increment_prefix) }}">
                                     {!! $errors->first('auto_increment_prefix', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
                                 @else
-                                    <input class="form-control" disabled="disabled" style="width: 150px;" aria-label="auto_increment_prefix" name="auto_increment_prefix" type="text" id="auto_increment_prefix" value="{{ old('auto_increment_prefix', $setting->auto_increment_prefix) }}">
+                                    <input class="form-control" maxlength="100" disabled="disabled" style="width: 200px;" aria-label="auto_increment_prefix" name="auto_increment_prefix" type="text" id="auto_increment_prefix" value="{{ old('auto_increment_prefix', $setting->auto_increment_prefix) }}">
                                 @endif
                             </div>
                         </div>
 
                         <!-- auto zerofill -->
                         <div class="form-group {{ $errors->has('zerofill_count') ? 'error' : '' }}">
-                            <div class="col-md-5">
-                                <label for="zerofill_count">{{ trans('admin/settings/general.zerofill_count') }}</label>
-                            </div>
+
+                            <label for="zerofill_count" class="col-md-3 control-label">{{ trans('admin/settings/general.zerofill_count') }}</label>
+
                             <div class="col-md-7">
-                                <input class="form-control" style="width: 150px;" aria-label="zerofill_count" name="zerofill_count" type="text" value="{{ old('zerofill_count', $setting->zerofill_count) }}" id="zerofill_count">
+                                <input class="form-control" maxlength="100" style="width: 200px;" aria-label="zerofill_count" name="zerofill_count" type="text" value="{{ old('zerofill_count', $setting->zerofill_count) }}" id="zerofill_count">
                                 {!! $errors->first('zerofill_count', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
                             </div>
                         </div>

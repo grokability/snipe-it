@@ -132,7 +132,7 @@ class PredefinedFilterController extends Controller
     public function selectlist(Request $request)
     {
         $this->authorize('view.selectlists');
-
+        
         $filters = $this->service->selectList($request);
 
         return (new SelectlistTransformer)->transformSelectlist($filters);
