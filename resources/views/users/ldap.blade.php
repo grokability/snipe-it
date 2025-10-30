@@ -16,7 +16,7 @@
 @section('content')
 
 <div class="row">
-  <div class="col-md-9">
+  <div class="col-md-12">
     @if ($snipeSettings->ldap_enabled == 0)
       {{ trans('admin/users/message.ldap_not_configured') }}
     @else
@@ -24,13 +24,19 @@
       {{csrf_field()}}
       <div class="box box-default">
         <div class="box-body">
+
+                <div class="callout callout-legend col-md-12">
+
+                    <p>
+                        <i class="fa-solid fa-lightbulb"></i>
+                        <strong>{!!  trans('admin/users/general.ldap_sync_intro', ['link' => 'https://snipe-it.readme.io/docs/ldap-sync#/']) !!}</strong>
+                    </p>
+                </div>
+         
           <!-- location_id-->
           <div class="form-group {{ $errors->has('location_id') ? 'has-error' : '' }}">
-            
-            <div class="col-md-12">
                <!-- Location -->
-              @include ('partials.forms.edit.location-select', ['translated_name' => trans('general.location'), 'fieldname' => 'location_id[]', 'multiple' => true])
-            </div>
+              @include ('partials.forms.edit.location-select', ['translated_name' => trans('general.ldap_sync_location'), 'help_text' => trans('admin/users/general.ldap_config_text'), 'fieldname' => 'location_id[]', 'multiple' => true])
           </div>
 
             <div class="box-footer">
@@ -50,10 +56,7 @@
     </form>
   </div>
   <div class="col-md-3">
-    <p>
-        {{ trans('admin/users/general.ldap_config_text') }}
-    </p>
-  <p><a href="{{ route('settings.ldap.index') }}">{{ trans('admin/settings/general.ldap_settings_link') }}</a></p>
+
   </div>
 </div>
 

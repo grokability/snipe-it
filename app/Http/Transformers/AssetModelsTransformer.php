@@ -68,7 +68,7 @@ class AssetModelsTransformer
             'default_fieldset_values' => $default_field_values,
             'eol' => ($assetmodel->eol > 0) ? $assetmodel->eol.' months' : 'None',
             'requestable' => ($assetmodel->requestable == '1') ? true : false,
-            'require_serial' => $assetmodel->require_serial,
+            'require_serial' => ($assetmodel->require_serial == '1') ? true : false,
             'notes' => Helper::parseEscapedMarkedownInline($assetmodel->notes),
             'created_by' => ($assetmodel->adminuser) ? [
                 'id' => (int) $assetmodel->adminuser->id,

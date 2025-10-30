@@ -294,6 +294,28 @@
     @endcan
 
 
+    @can('create', \App\Models\Groups::class)
+    // Groups table buttons
+    window.groupButtons = () => ({
+        btnAdd: {
+            text: '{{ trans('general.create') }}',
+            icon: 'fa fa-plus',
+            event () {
+                window.location.href = '{{ route('groups.create') }}';
+            },
+            attributes: {
+                class: 'btn-info',
+                title: '{{ trans('general.create') }}',
+                @if ($snipeSettings->shortcuts_enabled == 1)
+                accesskey: 'n'
+                @endif
+            }
+        },
+
+    }); // End Groups table buttons
+    @endcan
+
+
     // Asset table buttons
     window.assetButtons = () => ({
         @can('create', \App\Models\Asset::class)

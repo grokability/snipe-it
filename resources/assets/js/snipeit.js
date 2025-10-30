@@ -579,6 +579,8 @@ function htmlEntities(str) {
     
 })(jQuery);
 
+
+
 /**
  * Universal Livewire Select2 integration
  *
@@ -610,3 +612,105 @@ document.addEventListener('livewire:init', () => {
         });
     });
 });
+
+
+
+
+// Check/Uncheck all radio buttons in the permissions group
+$('.header-row input:radio').change(function() {
+    value = $(this).attr('value');
+    area = $(this).data('checker-group');
+    $('.radiochecker-'+area+'[value='+value+']').prop('checked', true);
+});
+
+// Generic toggleable callouts with remember state
+$(".remember-toggle").on("click",function(){
+    var toggleable_callout_id = $(this).attr('id');
+    var toggle_content_class = 'toggle-content-'+$(this).attr('id');
+    var toggle_arrow = '#toggle-arrow-' + toggleable_callout_id;
+    var toggle_cookie_name='toggle_state_'+toggleable_callout_id;
+
+    console.log('Callout ID: ' + toggleable_callout_id);
+    console.log('Content ID: '+toggle_content_class);
+    console.log('Arrow ID: '+toggle_arrow);
+    console.log('Cookie Name: '+toggle_cookie_name);
+
+    $('.'+toggle_content_class).fadeToggle(100);
+    $(toggle_arrow).toggleClass('fa-caret-right fa-caret-down');
+    var toggle_open = $(toggle_arrow).hasClass('fa-caret-down');
+    console.log('Cookie will set open state to: '+toggle_open);
+    document.cookie=toggle_cookie_name+"="+toggle_open+';path=/';
+});
+
+var all_cookies = document.cookie.split(';')
+for (var i in all_cookies) {
+    var trimmed_cookie = all_cookies[i].trim(' ')
+    elems = all_cookies[i].split('=', 2);
+
+
+    // We have to do more here since we don't know the name of the selector
+    if (trimmed_cookie.startsWith('toggle_state_')) {
+        console.log(trimmed_cookie + ' matches toggle_state_');
+        var toggle_selector_name = elems[0].replace(' toggle_state_','');
+        if (elems[1] == 'true') {
+            console.log('Selector name for cookie click trigger: '+toggle_selector_name);
+            $('#'+toggle_selector_name+'.remember-toggle').trigger('click')
+        }
+    }
+
+}
+
+
+/**
+ * This handles the show/hide of superuser and admin specific permissions
+ * on the group edit and user edit pages
+ */
+if ($("#superuser_allow").is(':checked')) {
+
+    // Hide here instead of fadeout on pageload to prevent what looks like Flash Of Unstyled Content (FOUC)
+    $(".nonsuperuser").hide();
+    $(".nonsuperuser").attr('display','none');
+}
+
+
+$(".superuser").change(function() {
+    if ($(this).val() == '1') {
+        $(".nonsuperuser").fadeOut();
+        $(".nonsuperuser").attr('display','none');
+        $(".nonadmin").fadeOut();
+        $(".nonadmin").attr('display','none');
+    } else if ($(this).val() != '1') {
+        $(".nonsuperuser").fadeIn();
+        $(".nonsuperuser").attr('display','block');
+
+        // If the superuser button has been set to deny, we need to
+        // check that the admin button isn't set to allow, before we show non-admin stuff
+        if ($("#admin_allow").is(':checked')) {
+
+            // Hide here instead of fadeout on pageload to prevent what looks like Flash Of Unstyled Content (FOUC)
+            $(".nonadmin").hide();
+            $(".nonadmin").attr('display','none');
+        }
+
+    }
+});
+
+
+
+if ($("#admin_allow").is(':checked')) {
+
+    // Hide here instead of fadeout on pageload to prevent what looks like Flash Of Unstyled Content (FOUC)
+    $(".nonadmin").hide();
+    $(".nonadmin").attr('display','none');
+}
+
+$(".admin").change(function() {
+    if ($(this).val() == '1') {
+        $(".nonadmin").fadeOut();
+        $(".nonadmin").attr('display','none');
+    } else if ($(this).val() != '1') {
+        $(".nonadmin").fadeIn();
+        $(".nonadmin").attr('display','block');
+    }
+});
+

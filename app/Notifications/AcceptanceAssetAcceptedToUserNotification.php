@@ -32,7 +32,6 @@ use Illuminate\Notifications\Notification;
         $this->settings = Setting::getSettings();
         $this->file = $params['file'] ?? null;
         $this->qty = $params['qty'] ?? null;
-        $this->admin = $params['admin'] ?? null;
     }
 
     /**
@@ -70,7 +69,6 @@ use Illuminate\Notifications\Notification;
                 'accepted_date' => $this->accepted_date,
                 'assigned_to'   => $this->assigned_to,
                 'company_name'  => $this->company_name,
-                'admin'         => $this->admin,
                 'qty' => $this->qty,
                 'intro_text'    => trans_choice('mail.acceptance_asset_accepted_to_user', $this->qty, ['qty' => $this->qty, 'site_name' => $this->settings->site_name]),
             ])

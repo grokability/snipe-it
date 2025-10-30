@@ -37,6 +37,8 @@ class SystemBackup extends Command
      */
     public function handle()
     {
+        ini_set('max_execution_time', env('BACKUP_TIME_LIMIT', 600)); //600 seconds = 10 minutes
+
         if ($this->option('filename')) {
             $filename = $this->option('filename');
 

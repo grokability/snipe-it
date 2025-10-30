@@ -34,7 +34,7 @@
 
                    <div class="col-md-12">
 
-                       <fieldset">
+                       <fieldset>
                            <x-form-legend>
                                {{ trans('admin/settings/general.legends.scoping') }}
                            </x-form-legend>

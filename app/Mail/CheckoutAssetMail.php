@@ -87,7 +87,7 @@ class CheckoutAssetMail extends Mailable
             $name  = $this->target->assignedto?->display_name;
         }
         else if($this->target instanceof Location){
-            $name  = $this->target->manager->name;
+            $name  = $this->target->manager?->name;
         }
 
         // Check if the item has custom fields associated with it
