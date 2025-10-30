@@ -26,7 +26,7 @@ class DateQueryTest extends TestCase
         $filter = [
             [
                 'field' => 'purchase_date',
-                'values' => [
+                'value' => [
                     'start' => Carbon::now()->addMonths(3)->format('Y-m-d'),
                 ],
                 'operator' => 'contains',
@@ -55,7 +55,7 @@ class DateQueryTest extends TestCase
         $filter = [
             [
                 'field' => 'purchase_date',
-                'values' => [
+                'value' => [
                     'end' => Carbon::now()->addWeeks(7)->format('Y-m-d'),
                 ],
                 'operator' => 'contains',
@@ -86,7 +86,7 @@ class DateQueryTest extends TestCase
         $filter = [
             [
                 'field' => 'purchase_date',
-                'values' => [
+                'value' => [
                     'start' => Carbon::now()->addWeeks(70)->format('Y-m-d'),
                     'end' => Carbon::now()->addWeeks(130)->format('Y-m-d'),
                 ],
@@ -137,7 +137,7 @@ class DateQueryTest extends TestCase
         $filter = [
             [
                 'field' => 'asset_eol_date',
-                'values' => [
+                'value' => [
                     'start' => Carbon::now()->addMonths(16)->format('Y-m-d'),
                 ],
                 'operator' => 'contains',
@@ -184,7 +184,7 @@ class DateQueryTest extends TestCase
         $filter = [
             [
                 'field' => 'asset_eol_date',
-                'values' => [
+                'value' => [
                     'end' => Carbon::now()->addMonths(14)->format('Y-m-d'),
                 ],
                 'operator' => 'contains',
@@ -242,7 +242,7 @@ class DateQueryTest extends TestCase
         $filter = [
             [
                 'field' => 'asset_eol_date',
-                'values' => [
+                'value' => [
                     'start' => Carbon::now()->addMonths(24)->format('Y-m-d'),
                     'end' => Carbon::now()->addMonths(55)->format('Y-m-d'),
                 ],
@@ -279,7 +279,7 @@ class DateQueryTest extends TestCase
         $filter = [
             [
                 'field' => 'created_at',
-                'values' => [
+                'value' => [
                     'start' => $today->toDateString(),
                 ],
                 'operator' => 'contains', // Assuming your filter logic handles this correctly
@@ -314,7 +314,7 @@ class DateQueryTest extends TestCase
         $filter = [
             [
                 'field' => 'created_at',
-                'values' => [
+                'value' => [
                     'end' => $today->toDateString(),
                 ],
                 'operator' => 'contains',
@@ -350,7 +350,7 @@ class DateQueryTest extends TestCase
         $filter = [
             [
                 'field' => 'created_at',
-                'values' => [
+                'value' => [
                     'start' => $yesterday->toDateString(),
                     'end' => $tomorrow->toDateString(),
                 ],
@@ -387,7 +387,7 @@ class DateQueryTest extends TestCase
         $filter = [
             [
                 'field' => 'updated_at',
-                'values' => [
+                'value' => [
                     'start' => $today->toDateString(),
                 ],
                 'operator' => 'contains',
@@ -421,7 +421,7 @@ class DateQueryTest extends TestCase
         $filter = [
             [
                 'field' => 'updated_at',
-                'values' => [
+                'value' => [
                     'end' => $today->toDateString(),
                 ],
                 'operator' => 'contains',
@@ -457,7 +457,7 @@ class DateQueryTest extends TestCase
         $filter = [
             [
                 'field' => 'updated_at',
-                'values' => [
+                'value' => [
                     'start' => $yesterday->toDateString(),
                     'end' => $tomorrow->toDateString(),
                 ],
