@@ -120,6 +120,7 @@ class DateQueryTest extends TestCase
 
     public function testEolDateQueryEnd()
     {
+        //$this->markTestSkipped("Test doesn't work currently at the moment");
         Carbon::setTestNow(Carbon::create(2020, 12, 16));
 
         $purchaseDate = Carbon::now();
@@ -351,8 +352,8 @@ class DateQueryTest extends TestCase
     }
     public function testCreatedAtDateQueryRange()
     {
-        $this->markTestSkipped("Test doesn't work currently at the moment");
-        Carbon::setTestNow(Carbon::create(2121, 11, 21));
+        //$this->markTestSkipped("Test doesn't work currently at the moment");
+        Carbon::setTestNow(Carbon::create(2018, 11, 21));
         // Setup dates
         $dayBeforeYesterday = Carbon::now()->subDays(2)->startOfDay();
         $yesterday = Carbon::now()->subDays(1)->startOfDay();

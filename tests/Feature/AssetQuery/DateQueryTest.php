@@ -107,7 +107,7 @@ class DateQueryTest extends TestCase
     public function testEolDateQueryStart()
     {
 
-        Carbon::setTestNow(Carbon::create(2065, 1, 1));
+        Carbon::setTestNow(Carbon::create(2005, 1, 1));
 
         $modelA = AssetModel::factory()->create(['eol' => 12]);
         $modelB = AssetModel::factory()->create(['eol' => 24]);
