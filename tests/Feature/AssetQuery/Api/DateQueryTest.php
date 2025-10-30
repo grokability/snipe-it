@@ -27,7 +27,7 @@ class DateQueryTest extends TestCase
             [
                 'field' => 'purchase_date',
                 'value' => [
-                    'start' => Carbon::now()->addMonths(3)->format('Y-m-d'),
+                    'startDate' => Carbon::now()->addMonths(3)->format('Y-m-d'),
                 ],
                 'operator' => 'contains',
                 'logic' => 'AND',
@@ -78,8 +78,8 @@ class DateQueryTest extends TestCase
             [
                 'field' => 'purchase_date',
                 'value' => [
-                    'start' => Carbon::now()->addWeeks(70)->format('Y-m-d'),
-                    'end' => Carbon::now()->addWeeks(130)->format('Y-m-d'),
+                    'startDate' => Carbon::now()->addWeeks(70)->format('Y-m-d'),
+                    'endDate' => Carbon::now()->addWeeks(130)->format('Y-m-d'),
                 ],
                 'operator' => 'contains',
                 'logic' => 'AND',
@@ -120,8 +120,8 @@ class DateQueryTest extends TestCase
 
     public function testEolDateQueryEnd()
     {
-        $this->markTestSkipped("Marked as skipped because some of these tests fail sometimes on the pipeline and we hadn't enought time to fix it :-( ");
-        $this->markTestSkipped("Test doesn't work currently at the moment");
+        //$this->markTestSkipped("Marked as skipped because some of these tests fail sometimes on the pipeline and we hadn't enought time to fix it :-( ");
+        //$this->markTestSkipped("Test doesn't work currently at the moment");
         Carbon::setTestNow(Carbon::create(2020, 12, 16));
 
         $purchaseDate = Carbon::now();
@@ -150,7 +150,7 @@ class DateQueryTest extends TestCase
             [
                 'field' => 'asset_eol_date',
                 'value' => [
-                    'end' => Carbon::now()->addMonths(20)->format('Y-m-d'),
+                    'endDate' => Carbon::now()->addMonths(20)->format('Y-m-d'),
                 ],
                 'operator' => 'contains',
                 'logic' => 'AND',
@@ -184,7 +184,7 @@ class DateQueryTest extends TestCase
     }
     public function testEolDateQueryRange()
     {
-        $this->markTestSkipped("Marked as skipped because some of these tests fail sometimes on the pipeline and we hadn't enought time to fix it :-( ");
+        //$this->markTestSkipped("Marked as skipped because some of these tests fail sometimes on the pipeline and we hadn't enought time to fix it :-( ");
         $this->markTestSkipped("Test doesn't work currently at the moment");
         Carbon::setTestNow(Carbon::create(2020, 12, 16));
 
@@ -205,8 +205,8 @@ class DateQueryTest extends TestCase
             [
                 'field' => 'asset_eol_date',
                 'value' => [
-                    'start' => Carbon::now()->addMonths(20)->format('Y-m-d'),
-                    'end' => Carbon::now()->addMonths(50)->format('Y-m-d'),
+                    'startDate' => Carbon::now()->addMonths(20)->format('Y-m-d'),
+                    'endDate' => Carbon::now()->addMonths(50)->format('Y-m-d'),
                 ],
                 'operator' => 'contains',
                 'logic' => 'AND',
@@ -264,7 +264,7 @@ class DateQueryTest extends TestCase
             [
                 'field' => 'created_at',
                 'value' => [
-                    'start' => $today->toDateString(),
+                    'startDate' => $today->toDateString(),
                 ],
                 'operator' => 'contains', // Assuming your filter logic handles this correctly
                 'logic' => 'AND',
@@ -316,7 +316,7 @@ class DateQueryTest extends TestCase
             [
                 'field' => 'created_at',
                 'value' => [
-                    'end' => $today->toDateString(),
+                    'endDate' => $today->toDateString(),
                 ],
                 'operator' => 'contains',
                 'logic' => 'AND',
@@ -374,8 +374,8 @@ class DateQueryTest extends TestCase
             [
                 'field' => 'created_at',
                 'value' => [
-                    'start' => $yesterday->toDateString(),
-                    'end' => $tomorrow->toDateString(),
+                    'startDate' => $yesterday->toDateString(),
+                    'endDate' => $tomorrow->toDateString(),
                 ],
                 'operator' => 'contains',
                 'logic' => 'AND',
@@ -431,7 +431,7 @@ class DateQueryTest extends TestCase
             [
                 'field' => 'updated_at',
                 'value' => [
-                    'start' => $today->toDateString(),
+                    'startDate' => $today->toDateString(),
                 ],
                 'operator' => 'contains',
                 'logic' => 'AND',
@@ -484,7 +484,7 @@ class DateQueryTest extends TestCase
             [
                 'field' => 'updated_at',
                 'value' => [
-                    'end' => $today->toDateString(),
+                    'endDate' => $today->toDateString(),
                 ],
                 'operator' => 'contains',
                 'logic' => 'AND',
