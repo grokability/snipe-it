@@ -13,10 +13,6 @@ class DateQueryTest extends TestCase
 
     use RefreshDatabase;
 
-    protected function setUp()
-    {
-        $this->markTestSkipped("Marked as skipped because some of these tests fail sometimes on the pipeline and we hadn't enought time to fix it :-( ");
-    }
 
     public function testPurchaseDateQueryStart()
     {
