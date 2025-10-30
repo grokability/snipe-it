@@ -14,10 +14,6 @@ class DateQueryTest extends TestCase
 
     use RefreshDatabase;
 
-    protected function setUp()
-    {
-        $this->markTestSkipped("Marked as skipped because some of these tests fail sometimes on the pipeline and we hadn't enought time to fix it :-( ");
-    }
     public function testPurchaseDateQueryStart()
     {
         Carbon::setTestNow(Carbon::create(2023, 4, 16));
@@ -124,6 +120,7 @@ class DateQueryTest extends TestCase
 
     public function testEolDateQueryEnd()
     {
+        $this->markTestSkipped("Marked as skipped because some of these tests fail sometimes on the pipeline and we hadn't enought time to fix it :-( ");
         $this->markTestSkipped("Test doesn't work currently at the moment");
         Carbon::setTestNow(Carbon::create(2020, 12, 16));
 
@@ -187,6 +184,7 @@ class DateQueryTest extends TestCase
     }
     public function testEolDateQueryRange()
     {
+        $this->markTestSkipped("Marked as skipped because some of these tests fail sometimes on the pipeline and we hadn't enought time to fix it :-( ");
         $this->markTestSkipped("Test doesn't work currently at the moment");
         Carbon::setTestNow(Carbon::create(2020, 12, 16));
 
