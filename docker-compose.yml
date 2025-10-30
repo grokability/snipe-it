@@ -11,14 +11,24 @@ services:
     volumes:
       - storage:/var/lib/snipeit
     ports:
-      - "${APP_PORT:-8000}:80"
+      - "${APP_PORT:-8080}:80"
     depends_on:
       db:
         condition: service_healthy
         restart: true
     env_file:
       - .env
-
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: snipeit-phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+    ports:
+      - "8081:80"
+    depends_on:
+      - db
   db:
     image: mariadb:11.4.7
     restart: unless-stopped
@@ -33,5 +43,5 @@ services:
       # https://mariadb.com/kb/en/using-healthcheck-sh/#compose-file-example
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       interval: 5s
-      timeout: 1s
+      timeout: 10s
       retries: 5
