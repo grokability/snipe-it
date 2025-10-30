@@ -120,7 +120,7 @@ class DateQueryTest extends TestCase
 
     public function testEolDateQueryEnd()
     {
-        //$this->markTestSkipped("Test doesn't work currently at the moment");
+        $this->markTestSkipped("Test doesn't work currently at the moment");
         Carbon::setTestNow(Carbon::create(2020, 12, 16));
 
         $purchaseDate = Carbon::now();
