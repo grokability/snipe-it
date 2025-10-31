@@ -8,6 +8,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Database\Seeders\CustomFieldsStandaloneSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -46,6 +47,7 @@ class DatabaseSeeder extends Seeder
         $this->call(ActionlogSeeder::class);
         $this->call(PredefinedFilterSeeder::class);
         $this->call(PredefinedFilterPermissionSeeder::class);
+        $this->call(CustomFieldsStandaloneSeeder::class);
 
 
         Artisan::call('snipeit:sync-asset-locations', ['--output' => 'all']);
