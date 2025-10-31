@@ -72,42 +72,56 @@ class DateQueryTest extends TestCase
     {
         Carbon::setTestNow(Carbon::create(2020, 12, 16));
 
+        $marker = 'eol-end-marker-'.\Illuminate\Support\Str::uuid();
+
         $purchaseDate = Carbon::now();
         $modelA = AssetModel::factory()->create(['eol' => 12]);
         $modelB = AssetModel::factory()->create(['eol' => 24]);
         $modelC = AssetModel::factory()->create(['eol' => 36]);
 
         $assetA = Asset::factory()->create([
-            'model_id' => $modelA->id,
-            'purchase_date' => $purchaseDate->toDateString(),
+            'model_id'       => $modelA->id,
+            'purchase_date'  => $purchaseDate->toDateString(),
             'asset_eol_date' => $purchaseDate->copy()->addMonths(12)->toDateString(),
+            'order_number'   => $marker,
         ]);
         $assetB = Asset::factory()->create([
-            'model_id' => $modelB->id,
-            'purchase_date' => $purchaseDate->toDateString(),
+            'model_id'       => $modelB->id,
+            'purchase_date'  => $purchaseDate->toDateString(),
             'asset_eol_date' => $purchaseDate->copy()->addMonths(24)->toDateString(),
+            'order_number'   => $marker,
         ]);
         $assetC = Asset::factory()->create([
-            'model_id' => $modelC->id,
-            'purchase_date' => $purchaseDate->toDateString(),
+            'model_id'       => $modelC->id,
+            'purchase_date'  => $purchaseDate->toDateString(),
             'asset_eol_date' => $purchaseDate->copy()->addMonths(36)->toDateString(),
+            'order_number'   => $marker,
         ]);
 
-        $filter = [[
-            'field' => 'asset_eol_date',
-            'value' => ['endDate' => Carbon::now()->addMonths(20)->toDateString()],
-            'operator' => 'contains',
-            'logic' => 'AND',
-        ]];
+        $filter = [
+            [
+                'field'    => 'asset_eol_date',
+                'value'    => ['endDate' => Carbon::now()->addMonths(20)->toDateString()],
+                'operator' => 'contains',
+                'logic'    => 'AND',
+            ],
+            [
+                'field'    => 'order_number',
+                'value'    => $marker,
+                'operator' => 'equals',
+                'logic'    => 'AND',
+            ],
+        ];
 
         $response = $this->actingAsForApi(User::factory()->superuser()->create())
-            ->getJson(route('api.assets.index', ['filter' => json_encode($filter)]));
+            ->getJson(route('api.assets.index', [
+                'filter' => json_encode($filter),
+            ]));
 
-        $response->assertOk()
-            ->assertJsonStructure(['total', 'rows']);
+        $response->assertOk()->assertJsonStructure(['total', 'rows']);
+
         $ids = collect($response->json('rows'))->pluck('id')->all();
-
-        $this->assertSame([ $assetA->id ], $ids, 'Es darf nur assetA enthalten sein.');
+        $this->assertSame([$assetA->id], $ids, 'Es darf nur assetA enthalten sein.');
     }
 
 }

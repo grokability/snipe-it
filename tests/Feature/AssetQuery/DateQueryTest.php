@@ -88,50 +88,48 @@ class DateQueryTest extends TestCase
         $this->assertFalse($results->contains($assetE));
     }
 
-    public function testEolDateQueryEnd()
+   public function testEolDateQueryEnd()
     {
         Carbon::setTestNow(Carbon::create(2015, 2, 1));
 
-        $company = \App\Models\Company::factory()->create();
 
-        $modelA = AssetModel::factory()->create(['eol' => 12, 'company_id' => $company->id]);
-        $modelB = AssetModel::factory()->create(['eol' => 24, 'company_id' => $company->id]);
-        $modelC = AssetModel::factory()->create(['eol' => 36, 'company_id' => $company->id]);
+        $marker = 'eol-end-marker-'.\Illuminate\Support\Str::uuid();
+
+        $modelA = AssetModel::factory()->create(['eol' => 12]);
+        $modelB = AssetModel::factory()->create(['eol' => 24]);
+        $modelC = AssetModel::factory()->create(['eol' => 36]);
 
         $purchaseDate = Carbon::now();
 
         $assetA = Asset::factory()->create([
-            'company_id'     => $company->id,
             'model_id'       => $modelA->id,
             'purchase_date'  => $purchaseDate->toDateString(),
             'asset_eol_date' => $purchaseDate->copy()->addMonths(12)->toDateString(),
+            'order_number'   => $marker, 
         ]);
         $assetB = Asset::factory()->create([
-            'company_id'     => $company->id,
             'model_id'       => $modelB->id,
             'purchase_date'  => $purchaseDate->toDateString(),
             'asset_eol_date' => $purchaseDate->copy()->addMonths(24)->toDateString(),
+            'order_number'   => $marker,
         ]);
         $assetC = Asset::factory()->create([
-            'company_id'     => $company->id,
             'model_id'       => $modelC->id,
             'purchase_date'  => $purchaseDate->toDateString(),
             'asset_eol_date' => $purchaseDate->copy()->addMonths(36)->toDateString(),
+            'order_number'   => $marker,
         ]);
 
         $filter = [
             [
                 'field'    => 'asset_eol_date',
-                'value'    => [
-                    'endDate' => Carbon::now()->addMonths(14)->toDateString(), 
-                ],
+                'value'    => ['endDate' => Carbon::now()->addMonths(14)->toDateString()],
                 'operator' => 'contains',
                 'logic'    => 'AND',
             ],
-
             [
-                'field'    => 'company_id',
-                'value'    => $company->id,
+                'field'    => 'order_number',
+                'value'    => $marker,
                 'operator' => 'equals',
                 'logic'    => 'AND',
             ],
@@ -143,6 +141,8 @@ class DateQueryTest extends TestCase
         $this->assertTrue($results->contains($assetA));
         $this->assertFalse($results->contains($assetB));
         $this->assertFalse($results->contains($assetC));
+
+
     }
 }
 
