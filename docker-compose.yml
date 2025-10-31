@@ -3,6 +3,7 @@
 volumes:
   db_data:
   storage:
+  backup_data:
 
 services:
   app:
@@ -18,6 +19,24 @@ services:
         restart: true
     env_file:
       - .env
+  
+  backup:
+    image: fradelg/mysql-cron-backup
+    restart: unless-stopped
+    volumes:
+      - backup_data:/backup
+    environment:
+      MYSQL_HOST: db
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASS: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+      CRON_TIME: "0 2 * * *"              # Backtup every day at 2 AM
+      BACKUP_RETAIN_DAYS: 30              # Store backups for 30 days
+      INIT_BACKUP: "1"                    # Start with an initial backup
+      GZIP_LEVEL: "9"                     # Maximum compression
+    depends_on:
+      db:
+        condition: service_healthy
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     container_name: snipeit-phpmyadmin
