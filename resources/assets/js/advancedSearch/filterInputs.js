@@ -29,9 +29,9 @@ class FilterInput {
             try {
                 queueMicrotask(() => {
                     this.element.value = newValue;
+                    this.setSearchOperator(logic, operator)
                 });
 
-                this.setSearchOperator(logic, operator)
             }
             catch (e) {
                 reject(e);
