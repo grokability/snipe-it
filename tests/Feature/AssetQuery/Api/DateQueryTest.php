@@ -70,54 +70,54 @@ class DateQueryTest extends TestCase
 
     public function testEolDateQueryEnd()
     {
-        Carbon::setTestNow(Carbon::create(2020, 12, 16));
+        Carbon::setTestNow('2020-01-01');
 
-        $purchaseDate = Carbon::now();
-
-        $prefix = 'EOLEND-' . \Illuminate\Support\Str::random(6);
+        $prefix = 'EOLENDA-' . \Illuminate\Support\Str::random(6);
 
         $modelA = AssetModel::factory()->create(['eol' => 12]);
         $modelB = AssetModel::factory()->create(['eol' => 24]);
         $modelC = AssetModel::factory()->create(['eol' => 36]);
 
+        $purchase = '2020-01-01';
+        $eolA = '2021-01-01';
+        $eolB = '2022-01-01';
+        $eolC = '2023-01-01';
+
         $assetA = Asset::factory()->create([
             'model_id'       => $modelA->id,
-            'purchase_date'  => $purchaseDate->toDateString(),
-            'asset_eol_date' => $purchaseDate->copy()->addMonths(12)->toDateString(),
-            'asset_tag'      => $prefix . '-A',
+            'purchase_date'  => $purchase,
+            'asset_eol_date' => $eolA,
+            'asset_tag'      => $prefix.'-A',
         ]);
         $assetB = Asset::factory()->create([
             'model_id'       => $modelB->id,
-            'purchase_date'  => $purchaseDate->toDateString(),
-            'asset_eol_date' => $purchaseDate->copy()->addMonths(24)->toDateString(),
-            'asset_tag'      => $prefix . '-B',
+            'purchase_date'  => $purchase,
+            'asset_eol_date' => $eolB,
+            'asset_tag'      => $prefix.'-B',
         ]);
         $assetC = Asset::factory()->create([
             'model_id'       => $modelC->id,
-            'purchase_date'  => $purchaseDate->toDateString(),
-            'asset_eol_date' => $purchaseDate->copy()->addMonths(36)->toDateString(),
-            'asset_tag'      => $prefix . '-C',
+            'purchase_date'  => $purchase,
+            'asset_eol_date' => $eolC,
+            'asset_tag'      => $prefix.'-C',
         ]);
-
-        $end = Carbon::now()->addMonths(20)->toDateString();
 
         $filter = [
             [
                 'field'    => 'asset_eol_date',
-                'value'    => ['endDate' => $end],
+                'value'    => ['endDate' => '2021-06-30'],
                 'operator' => 'contains',
                 'logic'    => 'AND',
             ],
-
             [
                 'field'    => 'asset_tag',
-                'value'    => $prefix,
+                'value'    => $prefix, 
                 'operator' => 'contains',
                 'logic'    => 'AND',
             ],
         ];
 
-        $response = $this->actingAsForApi(User::factory()->superuser()->create())
+        $response = $this->actingAsForApi(\App\Models\User::factory()->superuser()->create())
             ->getJson(route('api.assets.index', [
                 'filter' => json_encode($filter),
             ]));
@@ -127,4 +127,5 @@ class DateQueryTest extends TestCase
         $ids = collect($response->json('rows'))->pluck('id')->all();
         $this->assertSame([$assetA->id], $ids, 'Es darf nur assetA enthalten sein.');
     }
+
 }

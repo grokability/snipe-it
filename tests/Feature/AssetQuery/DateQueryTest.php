@@ -88,49 +88,52 @@ class DateQueryTest extends TestCase
         $this->assertFalse($results->contains($assetE));
     }
 
-   public function testEolDateQueryEnd()
+    public function testEolDateQueryEnd()
     {
-        Carbon::setTestNow(Carbon::create(2015, 2, 1));
+        Carbon::setTestNow('2020-01-01');
 
-
-        $marker = 'eol-end-marker-'.\Illuminate\Support\Str::uuid();
+        $prefix = 'EOLENDQ-' . \Illuminate\Support\Str::random(6);
 
         $modelA = AssetModel::factory()->create(['eol' => 12]);
         $modelB = AssetModel::factory()->create(['eol' => 24]);
         $modelC = AssetModel::factory()->create(['eol' => 36]);
 
-        $purchaseDate = Carbon::now();
+        $purchase = '2020-01-01';
+        $eolA = '2021-01-01';
+        $eolB = '2022-01-01';
+        $eolC = '2023-01-01';
+        
 
         $assetA = Asset::factory()->create([
             'model_id'       => $modelA->id,
-            'purchase_date'  => $purchaseDate->toDateString(),
-            'asset_eol_date' => $purchaseDate->copy()->addMonths(12)->toDateString(),
-            'order_number'   => $marker, 
+            'purchase_date'  => $purchase,
+            'asset_eol_date' => $eolA,
+            'asset_tag'      => $prefix.'-A',
         ]);
         $assetB = Asset::factory()->create([
             'model_id'       => $modelB->id,
-            'purchase_date'  => $purchaseDate->toDateString(),
-            'asset_eol_date' => $purchaseDate->copy()->addMonths(24)->toDateString(),
-            'order_number'   => $marker,
+            'purchase_date'  => $purchase,
+            'asset_eol_date' => $eolB,
+            'asset_tag'      => $prefix.'-B',
         ]);
         $assetC = Asset::factory()->create([
             'model_id'       => $modelC->id,
-            'purchase_date'  => $purchaseDate->toDateString(),
-            'asset_eol_date' => $purchaseDate->copy()->addMonths(36)->toDateString(),
-            'order_number'   => $marker,
+            'purchase_date'  => $purchase,
+            'asset_eol_date' => $eolC,
+            'asset_tag'      => $prefix.'-C',
         ]);
 
         $filter = [
             [
                 'field'    => 'asset_eol_date',
-                'value'    => ['endDate' => Carbon::now()->addMonths(14)->toDateString()],
+                'value'    => ['endDate' => '2021-06-30'],
                 'operator' => 'contains',
                 'logic'    => 'AND',
             ],
             [
-                'field'    => 'order_number',
-                'value'    => $marker,
-                'operator' => 'equals',
+                'field'    => 'asset_tag',
+                'value'    => $prefix,
+                'operator' => 'contains',
                 'logic'    => 'AND',
             ],
         ];
@@ -141,8 +144,6 @@ class DateQueryTest extends TestCase
         $this->assertTrue($results->contains($assetA));
         $this->assertFalse($results->contains($assetB));
         $this->assertFalse($results->contains($assetC));
-
-
     }
 }
 
