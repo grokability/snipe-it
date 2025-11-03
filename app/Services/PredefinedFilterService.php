@@ -53,13 +53,6 @@ class PredefinedFilterService
         return $predefinedFilter;
     }
 
-    public function canUserViewFilter($filter): bool
-    {
-        $user = Auth::user();
-        return $filter->created_by == $user->id ||
-            ($filter->is_public && $filter->userHasPermission($user, 'view'));
-    }
-
     public function createFilter($validated): PredefinedFilter
     {
         $filter_create_response = PredefinedFilter::create([

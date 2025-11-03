@@ -123,6 +123,22 @@ class PredefinedFilterControllerTest extends TestCase
             ->assertJsonMissing(['name'=>'Hidden Filter']);
     }
 
+    public function test_su_can_see_private_filter(){
+        $superuser = User::factory()->superuser()->create();
+        $privateOwner = User::factory()->create();
+
+        $filter = PredefinedFilter::factory()->create([
+            'name'=>'Allowed Private Filter',
+            'created_by'=>$privateOwner->id,
+            'is_public'=>0,
+        ]);
+
+        $this->actingAs($superuser,'api')
+            ->getJson("/api/v1/predefinedFilters")
+            ->assertStatus(200)
+            ->assertJsonFragment(['name'=>'Allowed Private Filter']);
+    }
+
     //------SHOW TESTS------
 
     public function test_show_404_when_missing(): void
@@ -259,6 +275,25 @@ class PredefinedFilterControllerTest extends TestCase
             ->getJson('/api/v1/predefinedFilters/404')
             ->assertStatus(404)
             ->assertJson(['message'=>trans('admin/predefinedFilters/message.does_not_exist')]);
+    }
+
+    public function test_su_can_show_private_filter()
+    {
+        $superuser = User::factory()->superuser()->create();
+        $privateOwner = User::factory()->create();
+
+        $filter = PredefinedFilter::factory()->create([
+            'name'=>'Allowed Private Filter',
+            'created_by'=>$privateOwner->id,
+            'is_public'=>0,
+            'filter_data' => ['Allowed Private Filter_Data']
+        ]);
+
+        $this->actingAs($superuser,'api')
+            ->getJson("/api/v1/predefinedFilters/{$filter->id}")
+            ->assertStatus(200)
+            ->assertJsonFragment(['name'=>'Allowed Private Filter'])
+            ->assertJsonFragment(['filter_data'=>['Allowed Private Filter_Data']]);
     }
 
 
