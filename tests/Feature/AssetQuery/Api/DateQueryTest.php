@@ -72,7 +72,7 @@ class DateQueryTest extends TestCase
     {
         Carbon::setTestNow(Carbon::create(2020,1,1));
 
-        $prefix = 'EOLENDA-' . \Illuminate\Support\Str::random(6);
+        $owner = User::factory()->superuser()->create();
 
         $modelA = AssetModel::factory()->create(['eol' => 12]);
         $modelB = AssetModel::factory()->create(['eol' => 24]);
@@ -87,32 +87,39 @@ class DateQueryTest extends TestCase
             'model_id'       => $modelA->id,
             'purchase_date'  => $purchase,
             'asset_eol_date' => $eolA,
-            'asset_tag'      => $prefix.'-A',
+            'asset_tag'      => 'API-EOLEND-A',
+            'created_by'     => $owner->id,
         ]);
         $assetB = Asset::factory()->create([
             'model_id'       => $modelB->id,
             'purchase_date'  => $purchase,
             'asset_eol_date' => $eolB,
-            'asset_tag'      => $prefix.'-B',
+            'asset_tag'      => 'API-EOLEND-B',
+            'created_by'     => $owner->id,
         ]);
         $assetC = Asset::factory()->create([
             'model_id'       => $modelC->id,
             'purchase_date'  => $purchase,
             'asset_eol_date' => $eolC,
-            'asset_tag'      => $prefix.'-C',
+            'asset_tag'      => 'API-EOLEND-C',
+            'created_by'     => $owner->id,
         ]);
 
         $filter = [
             [
                 'field'    => 'asset_eol_date',
-                'value'    => ['endDate' => '2021-06-30'],
+                'value'    => [
+                    'startDate' => '2020-12-01',
+                    'endDate'   => '2021-01-31',
+                ],
                 'operator' => 'contains',
                 'logic'    => 'AND',
             ],
+            
             [
-                'field'    => 'asset_tag',
-                'value'    => $prefix, 
-                'operator' => 'contains',
+                'field'    => 'created_by',
+                'value'    => [$owner->id],
+                'operator' => 'equals',
                 'logic'    => 'AND',
             ],
         ];
