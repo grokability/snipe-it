@@ -663,12 +663,12 @@ class PredefinedFilterControllerTest extends TestCase
             ->getJson('/api/v1/predefinedFilters/selectlist');
 
         $response->assertOk()
-            ->assertJsonFragment(['id' => $publicFilterA->id, 'name' => $publicFilterA->name])
-            ->assertJsonFragment(['id' => $publicFilterB->id, 'name' => $publicFilterB->name])
-            ->assertJsonFragment(['id' => $privateFilterA->id, 'name' => $privateFilterA->name])
-            ->assertJsonFragment(['id' => $privateFilterB->id, 'name' => $privateFilterB->name]);
+            ->assertJsonFragment(['id' => $publicFilterA->id, 'text' => $publicFilterA->name . " (Public)"])
+            ->assertJsonFragment(['id' => $publicFilterB->id, 'text' => $publicFilterB->name . " (Public)"])
+            ->assertJsonFragment(['id' => $privateFilterA->id, 'text' => $privateFilterA->name . " (Private)"])
+            ->assertJsonFragment(['id' => $privateFilterB->id, 'text' => $privateFilterB->name . " (Private)"]);
 
-        $this->assertCount(4, $response->json('rows'));
+        $this->assertCount(4, $response->json('results'));
     }
 
     public function test_selectlist_search()
@@ -704,16 +704,179 @@ class PredefinedFilterControllerTest extends TestCase
         $this->linkGroupFilter($publicFilterB, $grant);
 
         $response = $this->actingAs($owner, 'api')
-            ->getJson('/api/v1/predefinedFilters/selectlist', [
-                'search' => 'coffee',
-                'page' => 1,
-            ]);
+            ->getJson('/api/v1/predefinedFilters/selectlist?search=coffee&page=1');
 
         $response->assertOk()
-            ->assertJsonFragment(['id' => $publicFilterA->id, 'name' => $publicFilterA->name])
-            ->assertJsonFragment(['id' => $privateFilterB->id, 'name' => $privateFilterB->name]);
+            ->assertJsonFragment(['id' => $publicFilterA->id, 'text' => $publicFilterA->name . " (Public)"])
+            ->assertJsonFragment(['id' => $privateFilterB->id, 'text' => $privateFilterB->name . " (Private)"]);
 
-        $this->assertCount(2, $response->json('rows'));
+        $this->assertCount(2, $response->json('results'));
+    }
+
+    public function test_selectlist_private()
+    {
+        $owner = User::factory()->create();
+        $grant = $this->grant($owner, ['predefinedFilter.view' => '1']);
+
+        $publicFilterA = PredefinedFilter::factory()->create([
+            'name' => 'All coffee machines',
+            'created_by' => $owner->id,
+            'is_public' => 1,
+        ]);
+
+        $publicFilterB = PredefinedFilter::factory()->create([
+            'name' => 'Desktops',
+            'created_by' => $owner->id,
+            'is_public' => 1,
+        ]);
+
+        $privateFilterA = PredefinedFilter::factory()->create([
+            'name' => 'Laptops',
+            'created_by' => $owner->id,
+            'is_public' => 0,
+        ]);
+
+        $privateFilterB = PredefinedFilter::factory()->create([
+            'name' => 'Coffee mugs',
+            'created_by' => $owner->id,
+            'is_public' => 0,
+        ]);
+
+        $this->linkGroupFilter($publicFilterA, $grant);
+        $this->linkGroupFilter($publicFilterB, $grant);
+
+        $response = $this->actingAs($owner, 'api')
+            ->getJson('/api/v1/predefinedFilters/selectlist?search=PRIVATE:&page=1');
+
+        $response->assertOk()
+            ->assertJsonFragment(['id' => $privateFilterA->id, 'text' => $privateFilterA->name . " (Private)"])
+            ->assertJsonFragment(['id' => $privateFilterB->id, 'text' => $privateFilterB->name . " (Private)"]);
+
+        $this->assertCount(2, $response->json('results'));
+    }
+
+    public function test_selectlist_public()
+    {
+        $owner = User::factory()->create();
+        $grant = $this->grant($owner, ['predefinedFilter.view' => '1']);
+
+        $publicFilterA = PredefinedFilter::factory()->create([
+            'name' => 'All coffee machines',
+            'created_by' => $owner->id,
+            'is_public' => 1,
+        ]);
+
+        $publicFilterB = PredefinedFilter::factory()->create([
+            'name' => 'Desktops',
+            'created_by' => $owner->id,
+            'is_public' => 1,
+        ]);
+
+        $privateFilterA = PredefinedFilter::factory()->create([
+            'name' => 'Laptops',
+            'created_by' => $owner->id,
+            'is_public' => 0,
+        ]);
+
+        $privateFilterB = PredefinedFilter::factory()->create([
+            'name' => 'Coffee mugs',
+            'created_by' => $owner->id,
+            'is_public' => 0,
+        ]);
+
+        $this->linkGroupFilter($publicFilterA, $grant);
+        $this->linkGroupFilter($publicFilterB, $grant);
+
+        $response = $this->actingAs($owner, 'api')
+            ->getJson('/api/v1/predefinedFilters/selectlist?search=PUBLIC:&page=1');
+
+        $response->assertOk()
+            ->assertJsonFragment(['id' => $publicFilterA->id, 'text' => $publicFilterA->name . " (Public)"])
+            ->assertJsonFragment(['id' => $publicFilterB->id, 'text' => $publicFilterB->name . " (Public)"]);
+
+        $this->assertCount(2, $response->json('results'));
+    }
+
+    public function test_selectlist_private_search()
+    {
+        $owner = User::factory()->create();
+        $grant = $this->grant($owner, ['predefinedFilter.view' => '1']);
+
+        $publicFilterA = PredefinedFilter::factory()->create([
+            'name' => 'All coffee machines',
+            'created_by' => $owner->id,
+            'is_public' => 1,
+        ]);
+
+        $publicFilterB = PredefinedFilter::factory()->create([
+            'name' => 'Desktops',
+            'created_by' => $owner->id,
+            'is_public' => 1,
+        ]);
+
+        $privateFilterA = PredefinedFilter::factory()->create([
+            'name' => 'Laptops',
+            'created_by' => $owner->id,
+            'is_public' => 0,
+        ]);
+
+        $privateFilterB = PredefinedFilter::factory()->create([
+            'name' => 'Coffee mugs',
+            'created_by' => $owner->id,
+            'is_public' => 0,
+        ]);
+
+        $this->linkGroupFilter($publicFilterA, $grant);
+        $this->linkGroupFilter($publicFilterB, $grant);
+
+        $response = $this->actingAs($owner, 'api')
+            ->getJson('/api/v1/predefinedFilters/selectlist?search=PRIVATE: Laptop&page=1');
+
+        $response->assertOk()
+            ->assertJsonFragment(['id' => $privateFilterA->id, 'text' => $privateFilterA->name . " (Private)"]);
+
+        $this->assertCount(1, $response->json('results'));
+    }
+
+    public function test_selectlist_public_search()
+    {
+        $owner = User::factory()->create();
+        $grant = $this->grant($owner, ['predefinedFilter.view' => '1']);
+
+        $publicFilterA = PredefinedFilter::factory()->create([
+            'name' => 'All coffee machines',
+            'created_by' => $owner->id,
+            'is_public' => 1,
+        ]);
+
+        $publicFilterB = PredefinedFilter::factory()->create([
+            'name' => 'Desktops',
+            'created_by' => $owner->id,
+            'is_public' => 1,
+        ]);
+
+        $privateFilterA = PredefinedFilter::factory()->create([
+            'name' => 'Laptops',
+            'created_by' => $owner->id,
+            'is_public' => 0,
+        ]);
+
+        $privateFilterB = PredefinedFilter::factory()->create([
+            'name' => 'Coffee mugs',
+            'created_by' => $owner->id,
+            'is_public' => 0,
+        ]);
+
+        $this->linkGroupFilter($publicFilterA, $grant);
+        $this->linkGroupFilter($publicFilterB, $grant);
+
+        $response = $this->actingAs($owner, 'api')
+            ->getJson('/api/v1/predefinedFilters/selectlist?search=PUBLIC: coffee&page=1');
+
+        $response->assertOk()
+            ->assertJsonFragment(['id' => $publicFilterA->id, 'text' => $publicFilterA->name . " (Public)"]);
+
+        $this->assertCount(1, $response->json('results'));
     }
 
 }
