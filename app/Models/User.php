@@ -237,11 +237,14 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
             $permissions = json_decode($this->permissions, true);
         }
 
-        foreach ($permissions as $permission) {
-            if ($permission != 0) {
-                return true;
+        if (($permissions) && (is_array($permissions))) {
+            foreach ($permissions as $permission) {
+                if ($permission != 0) {
+                    return true;
+                }
             }
         }
+
         return false;
     }
 

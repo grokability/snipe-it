@@ -44,7 +44,6 @@ export default class FilterFormManager {
             });
         });
 
-        console.log(this.inputs)
         return this.inputs;
     }
 

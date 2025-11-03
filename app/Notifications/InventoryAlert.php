@@ -2,10 +2,12 @@
 
 namespace App\Notifications;
 
+use AllowDynamicProperties;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
+#[AllowDynamicProperties]
 class InventoryAlert extends Notification
 {
     use Queueable;
@@ -32,9 +34,8 @@ class InventoryAlert extends Notification
      */
     public function via()
     {
-        $notifyBy = ['mail'];
+       return (!empty($this->items) && $this->threshold !== null) ? ['mail'] : [];
 
-        return $notifyBy;
     }
 
     /**
