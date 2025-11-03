@@ -313,21 +313,29 @@ class DateFilterInput extends FilterInput {
         console.log("setdate");
         return new Promise((resolve, reject) => {
             try {
-                console.log(newValue);
+                //console.log(newValue);
 
                 const $container = $(this.container);
                 const $startInput = $container.find('input:first');
                 const $endInput = $container.find('input:last');
+                console.log($startInput);
+                console.log($endInput);
 
                 if (newValue.startDate != undefined) {
                     // Set the value directly and update datepicker
                     $startInput.val = newValue.startDate;
+                    const d = document.getElementById($startInput[0].id);
+                    console.log(d);
+                    d.value = newValue.startDate;
                     $startInput.datepicker('update');
                 }
 
                 if (newValue.endDate != undefined) {
                     // Set the value directly and update datepicker
                     $endInput.val = newValue.endDate;
+                    const d = document.getElementById($endInput[0].id);
+                    console.log(d);
+                    d.value = newValue.endDate;
                     $endInput.datepicker('update');
                 }
 
