@@ -159,6 +159,14 @@ class Modal extends Component
             }
         }
 
+        if ($filter->checkIfNameAlreadyExists($this->name)) {
+            $this->dispatch('showNotificationInFrontend', [
+                'type' => 'warning',
+                'title' => trans('general.notification_warning'),
+                'message' => trans('admin/predefinedFilters/message.filter_duplicate_name'),
+                'tag' => 'predefinedFilter',
+            ]);
+        }
 
         $validated = [
             "name" => $this->name,
@@ -171,14 +179,6 @@ class Modal extends Component
         $predefinedFilterService->createFilter($validated);
 
 
-        if ($filter->checkIfNameAlreadyExists($this->name)) {
-            $this->dispatch('showNotificationInFrontend', [
-                'type' => 'warning',
-                'title' => trans('general.notification_warning'),
-                'message' => trans('admin/predefinedFilters/message.filter_duplicate_name'),
-                'tag' => 'predefinedFilter',
-            ]);
-        }
 
         $this->dispatch("savePredefinedFiltersModalEvent");
         $this->dispatch("closePredefinedFiltersModal");
@@ -242,6 +242,15 @@ class Modal extends Component
             'permissions' => self::formatPermissions($this->getGroupSelectArrayAsArray()),
         ];
 
+        if ($predefinedFilter->checkIfNameAlreadyExists($this->name, $predefinedFilter->id)) {
+            $this->dispatch('showNotificationInFrontend', [
+                'type' => 'warning',
+                'title' => trans('general.notification_warning'),
+                'message' => trans('admin/predefinedFilters/message.filter_duplicate_name'),
+                'tag' => 'predefinedFilter',
+            ]);
+        }
+        
         $updateFilterResponse = $predefinedFilterService->updateFilter($predefinedFilter, $validated);
 
         if ($updateFilterResponse["validationErrors"] === null) {
@@ -260,14 +269,6 @@ class Modal extends Component
             ]);
         }
 
-        if ($predefinedFilter->checkIfNameAlreadyExists($this->name, $predefinedFilter->id)) {
-            $this->dispatch('showNotificationInFrontend', [
-                'type' => 'warning',
-                'title' => trans('general.notification_warning'),
-                'message' => trans('admin/predefinedFilters/message.filter_duplicate_name'),
-                'tag' => 'predefinedFilter',
-            ]);
-        }
 
         $this->dispatch("updatePredefinedFiltersModalEvent");
         $this->dispatch("closePredefinedFiltersModal");
