@@ -389,8 +389,6 @@ class Asset extends Depreciable
 
     }
 
-
-
     protected function eolFormattedDate(): Attribute
     {
         return Attribute::make(

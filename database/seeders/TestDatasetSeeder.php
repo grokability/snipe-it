@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use Database\Seeders\CustomFieldsStandaloneSeeder;
 use Illuminate\Database\Seeder;
 
 class TestDatasetSeeder extends Seeder
@@ -41,6 +42,31 @@ class TestDatasetSeeder extends Seeder
                 AverageSeeder::class,
                 ActionlogSeeder::class,     
             ]);
+
+        }
+        if ($dataset === 'avg+custom') {
+            $this->call([
+                ManufacturerSeeder::class,
+                CategorySeeder::class,
+                StatuslabelSeeder::class,
+                LocationSeeder::class,
+                SupplierSeeder::class,
+
+                AssetModelSeeder::class,
+                AssetSeeder::class,
+
+                LicenseSeeder::class,          
+                ComponentSeeder::class,
+                CustomFieldSeeder::class,
+                ConsumableSeeder::class,
+                AccessorySeeder::class,
+
+                PredefinedFilterPermissionSeeder::class,
+                PredefinedFilterSeeder::class,
+
+                AverageSeeder::class,
+                ActionlogSeeder::class,     
+            ]);
         }
 
         if ($dataset === 'huge') {
@@ -65,6 +91,81 @@ class TestDatasetSeeder extends Seeder
                 HugeSeeder::class,
                 ActionlogSeeder::class,    
 
+            ]);
+        }
+
+        if ($dataset === 'huge+custom') {
+            $this->call([
+                ManufacturerSeeder::class,
+                CategorySeeder::class,
+                StatuslabelSeeder::class,
+                LocationSeeder::class,
+                SupplierSeeder::class,
+
+                AssetModelSeeder::class,
+                AssetSeeder::class,
+
+                LicenseSeeder::class,          
+                ComponentSeeder::class,
+                CustomFieldSeeder::class,
+                ConsumableSeeder::class,
+                AccessorySeeder::class,
+
+                PredefinedFilterPermissionSeeder::class,
+                PredefinedFilterSeeder::class,
+
+                HugeSeeder::class,
+                ActionlogSeeder::class,    
+
+            ]);
+        }
+
+        if ($dataset === 'custom') {
+            $this->call([
+                ManufacturerSeeder::class,
+                CategorySeeder::class,
+                StatuslabelSeeder::class,
+                LocationSeeder::class,
+                SupplierSeeder::class,
+
+                AssetModelSeeder::class,
+                AssetSeeder::class,
+
+                LicenseSeeder::class,          
+                ComponentSeeder::class,
+                CustomFieldSeeder::class,
+                ConsumableSeeder::class,
+                AccessorySeeder::class,
+
+                PredefinedFilterPermissionSeeder::class,
+                PredefinedFilterSeeder::class,
+
+                ActionlogSeeder::class,    
+
+            ]);
+        }
+        if ($dataset === 'avg+stcustom') {
+            $this->call([
+                ManufacturerSeeder::class,
+                CategorySeeder::class,
+                StatuslabelSeeder::class,
+                LocationSeeder::class,
+                SupplierSeeder::class,
+
+                AssetModelSeeder::class,
+                AssetSeeder::class,
+
+                LicenseSeeder::class,          
+                ComponentSeeder::class,
+                CustomFieldsStandaloneSeeder::class,
+                ConsumableSeeder::class,
+                AccessorySeeder::class,
+
+                PredefinedFilterPermissionSeeder::class,
+                PredefinedFilterSeeder::class,
+
+                AverageSeeder::class,
+                ActionlogSeeder::class,     
             ]);
         }
     }

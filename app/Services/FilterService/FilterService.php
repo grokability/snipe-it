@@ -15,59 +15,43 @@ use function Laravel\Prompts\note;
 class FilterService
 {
     
-    public function searchByFilter( $query, $filters){
-        $q = $query->where(
-            function(Builder $query) use ($filters){
+    public function searchByFilter($query, $filters)
+    {
+        $q = $query->where(function (Builder $query) use ($filters) {
 
-                $dateFields = [
-                    'purchase_date',
-                    'asset_eol_date',
-                    'created_at',
-                    'updated_at',
-                ];
+            // 1) ZUERST strikt die Datumsfelder anwenden (keine LIKEs!)
+            //    - reine DATE-Spalten
+            $this->applyDateRangeFilter($query, 'assets.purchase_date', $filters, /* isDateTime */ false);
+            $this->applyDateRangeFilter($query, 'assets.asset_eol_date', $filters, /* isDateTime */ false);
 
-                $query = $this->applyDateRangeFilter($query, 'purchase_date', $filters);
-                $query = $this->applyDateRangeFilter($query, 'asset_eol_date', $filters);
-                $query = $this->applyDateRangeFilter($query, 'assets.created_at', $filters);
-                $query = $this->applyDateRangeFilter($query, 'assets.updated_at', $filters);
+            //    - DATETIME-Spalten (volle Tagesgrenzen)
+            $this->applyDateRangeFilter($query, 'assets.created_at', $filters, /* isDateTime */ true);
+            $this->applyDateRangeFilter($query, 'assets.updated_at', $filters, /* isDateTime */ true);
 
-                $skipFields = [
-                    'purchase_date',
-                    'asset_eol_date',
-                    'created_at',
-                    'updated_at',
-                ];
+            // Diese Felder nicht noch einmal als Textfilter behandeln
+            $skipFields = [
+                'purchase_date',
+                'asset_eol_date',
+                'created_at',
+                'updated_at',
+            ];
 
-                //changed to Array and loop through each item
-                foreach($filters as $filterItem) {
-                            // this legacy part does break tests with new structure covers the tests we had
-                    // if (!is_array($filterItem) || !isset($filterItem['field'])) {
-                    //     foreach ($filters as $key => $value){
-                    //         // if (is_string($key) && !is_array($value) && !in_array($key, $skipFields)) {
-                    //         //     $filterObj = [
-                    //         //         'field'     => $key,
-                    //         //         'value'     => $value,
-                    //         //         'operator'  => 'contains', // default
-                    //         //         'logic'     => 'AND' // default
-                    //         //     ];
-                    //         //     $this->applySingleFilter($query, $filterObj);
-                    //         // }
-                    //     }
-                    //     break;
-                    // }
-                    if (!isset($filterItem['field'], $filterItem['operator'], $filterItem['logic'], $filterItem['value'])) {
-                        continue;
-                    }
-                    if ($filterItem['value'] === ['']) {
-                        continue;
-                    }
-                    if (in_array($filterItem['field'], $skipFields)) {
-                        continue;
-                    }
-                    $this->applySingleFilter($query, $filterItem);
+            // 2) Restliche Filter (Text, Relationen, etc.)
+            foreach ($filters as $filterItem) {
+                if (!isset($filterItem['field'], $filterItem['operator'], $filterItem['logic'], $filterItem['value'])) {
+                    continue;
                 }
+                if ($filterItem['value'] === ['']) {
+                    continue;
+                }
+                if (in_array($filterItem['field'], $skipFields, true)) {
+                    continue;
+                }
+
+                $this->applySingleFilter($query, $filterItem);
             }
-        );
+        });
+
         return $q;
     }
 
@@ -78,6 +62,7 @@ class FilterService
     * @param array $filterObj  keys: field, value, operator, logic
     * @return void
     */
+
     protected function applySingleFilter(Builder &$q, array $filterObj)
     {
         $fieldname = $filterObj['field'];
@@ -316,112 +301,128 @@ class FilterService
             $this->applyWhereWithOperator($query, $column, $value, $operator);
     }
 
-protected function applyRelationalValue(Builder $q, $value, string $operator, array $meta): void
-{
-    $idField = $meta['id'] ?? null;
-    $nameField = $meta['name'] ?? null;
-    $column = $meta['column'] ?? null;
+    protected function applyRelationalValue(Builder $q, $value, string $operator, array $meta): void
+    {
+        $idField = $meta['id'] ?? null;
+        $nameField = $meta['name'] ?? null;
+        $column = $meta['column'] ?? null;
 
-    if ($column) {
-        $this->applyWhereWithOperator($q, $column, $value, $operator);
-        return;
-    }
-
-    // Fallback safety check
-    if (!$idField && !$nameField) {
-        return;
-    }
-    $values = is_array($value) ? $value : [$value];
-
-    $ids = array_filter($values, 'is_int');
-    $names = array_filter($values, 'is_string');
-
-    $q->where(function ($subQ) use ($ids, $names, $idField, $nameField, $operator) {
-        $first = true;
-
-        // IDs only
-        if (!empty($ids)) {
-            if ($first) {
-                $subQ->whereIn($idField, $ids);
-                $first = false;
-            } else {
-                $subQ->orWhereIn($idField, $ids);
-            }
+        if ($column) {
+            $this->applyWhereWithOperator($q, $column, $value, $operator);
+            return;
         }
 
-        // Names only
-        foreach ($names as $name) {
-            if ($first) {
-                $this->applyWhereWithOperator($subQ, $nameField, $name, $operator);
-                $first = false;
-            } else {
-                $subQ->orWhere(function ($q) use ($nameField, $name, $operator) {
-                    $this->applyWhereWithOperator($q, $nameField, $name, $operator);
-                });
-            }
+        // Fallback safety check
+        if (!$idField && !$nameField) {
+            return;
         }
-    });
-}
+        $values = is_array($value) ? $value : [$value];
 
-protected function applyWhereWithOperator(Builder $query, string $column, $value, string $operator)
-{
-    $value = is_array($value) ? $value : [$value];
+        $ids = array_filter($values, 'is_int');
+        $names = array_filter($values, 'is_string');
 
-    if ($operator === 'equals') {
-        $query->whereIn($column, $value);
-    } else { // contains
-        $query->where(function ($q) use ($column, $value) {
-            foreach ($value as $v) {
-                $q->orWhere($column, 'LIKE', '%' . $v . '%');
+        $q->where(function ($subQ) use ($ids, $names, $idField, $nameField, $operator) {
+            $first = true;
+
+            // IDs only
+            if (!empty($ids)) {
+                if ($first) {
+                    $subQ->whereIn($idField, $ids);
+                    $first = false;
+                } else {
+                    $subQ->orWhereIn($idField, $ids);
+                }
+            }
+
+            // Names only
+            foreach ($names as $name) {
+                if ($first) {
+                    $this->applyWhereWithOperator($subQ, $nameField, $name, $operator);
+                    $first = false;
+                } else {
+                    $subQ->orWhere(function ($q) use ($nameField, $name, $operator) {
+                        $this->applyWhereWithOperator($q, $nameField, $name, $operator);
+                    });
+                }
             }
         });
     }
-}
+
+    protected function applyWhereWithOperator(Builder $query, string $column, $value, string $operator)
+    {
+        $value = is_array($value) ? $value : [$value];
+
+        if ($operator === 'equals') {
+            $query->whereIn($column, $value);
+        } else { 
+            $query->where(function ($q) use ($column, $value) {
+                foreach ($value as $v) {
+                    $q->orWhere($column, 'LIKE', '%' . $v . '%');
+                }
+            });
+        }
+    }
 
     /**
-     * Query builder scope to filter by a date range on a given field
+     * 
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query      Query builder instance
-     * @param string                                $field      Database column name
-     * @param string                                $startKey   Filter array key for start date
-     * @param string                                $endKey     Filter array key for end date
-     * @param array                                 $filter     Filter array
-     *
-     * @return \Illuminate\Database\Eloquent\Builder            Modified query builder
+     * @param Builder $query
+     * @param string  $qualifiedField 
+     * @param array   $filters
+     * @param bool    $isDateTime      
      */
-    public function applyDateRangeFilter($query, $field, $filters)
+
+    public function applyDateRangeFilter($query, $qualifiedField, $filters, bool $isDateTime = false)
     {
         $start = null;
-        $end = null;
+        $end   = null;
+
+        $fieldNameOnly = \Illuminate\Support\Str::afterLast($qualifiedField, '.');
 
         foreach ($filters as $filter) {
             if (!isset($filter['field'], $filter['value']) || !is_array($filter['value'])) {
                 continue;
             }
-
-            // Normalize: Remove table prefix (e.g., 'assets.')
-            $fieldNameOnly = Str::afterLast($field, '.');
-
             if ($filter['field'] !== $fieldNameOnly) {
                 continue;
             }
-
-            if (isset($filter['value']['startDate'])) {
+            if (array_key_exists('startDate', $filter['value'])) {
                 $start = $filter['value']['startDate'];
             }
-
-            if (isset($filter['value']['endDate'])) {
+            if (array_key_exists('endDate', $filter['value'])) {
                 $end = $filter['value']['endDate'];
             }
         }
-        
-        if (!empty($start)) {
-            $query->whereDate($field, '>=', $start);
+
+        if (!$start && !$end) {
+            return $query;
         }
-        
-        if (!empty($end)) {
-            $query->whereDate($field, '<=', $end);
+
+        if ($isDateTime) {
+
+            if ($start && $end) {
+                $query->whereBetween($qualifiedField, [
+                    \Carbon\Carbon::parse($start)->startOfDay(),
+                    \Carbon\Carbon::parse($end)->endOfDay(),
+                ]);
+            } elseif ($start) {
+                $query->where($qualifiedField, '>=', \Carbon\Carbon::parse($start)->startOfDay());
+            } elseif ($end) {
+                $query->where($qualifiedField, '<=', \Carbon\Carbon::parse($end)->endOfDay());
+            }
+        } else {
+            if ($start && $end) {
+                $query->whereBetween($qualifiedField, [
+                    \Carbon\Carbon::parse($start)->toDateString(),
+                    \Carbon\Carbon::parse($end)->toDateString(),
+                ]);
+            } elseif ($start) {
+                $query->whereDate($qualifiedField, '>=', \Carbon\Carbon::parse($start)->toDateString());
+            } elseif ($end) {
+                $query->whereDate($qualifiedField, '<=', \Carbon\Carbon::parse($end)->toDateString());
+            }
         }
+
         return $query;
     }
 }
