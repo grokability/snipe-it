@@ -7,6 +7,7 @@ use App\Http\Transformers\PredefinedFiltersTransformer;
 use App\Http\Transformers\SelectlistTransformer;
 use App\Models\PredefinedFilter;
 use App\Services\PredefinedFilterService;
+use Auth;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -36,7 +37,7 @@ class PredefinedFilterController extends Controller
             return response()->json(['message' => trans('admin/predefinedFilters/message.does_not_exist')], 404);
         }
 
-        if ($this->service->canUserViewFilter($filter)) {
+        if ($filter->userHasPermission(Auth::user(), 'view')){
             return response()->json($filter->toArray());
         }
 

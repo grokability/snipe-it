@@ -68,13 +68,13 @@ class PredefinedFilterController extends Controller
                 ->with('error', trans('admin/predefinedFilters/message.does_not_exist'));
         }
 
-        if ($filter->created_by === $user->id) {
+        if ($filter->userHasPermission($user, 'delete')) {
             $filter->delete();
             return redirect()->route('predefined-filters.index')
                 ->with('success', trans('admin/predefinedFilters/message.delete.success'));
         }
 
-            // It's public, so check permission logic
+        // It's public, so check permission logic
         if ($filter->is_public) {
             if (!$filter->userHasPermission($user, 'delete')) {
                 return redirect()->route('predefined-filters.index')
