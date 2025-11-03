@@ -29,7 +29,7 @@ class PredefinedFilterPermissionController extends Controller
         $this->authorize('update', $filter);
 
         // Granular Permission
-        if ($filter->created_by !== $request->user()->id && !$filter->userHasPermission($request->user(), 'edit')) {
+        if (!$filter->userHasPermission($request->user(), 'edit')) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
