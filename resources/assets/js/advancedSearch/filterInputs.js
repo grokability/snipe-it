@@ -331,11 +331,7 @@ class DateFilterInput extends FilterInput {
     }
 
     clear() {
-        $(this.container).datepicker('clear');
-    }
-
-    clear() {
-        this.element.value = "";
+        $(this.container).datepicker('clearDates');
         super.clear();
     }
 }
