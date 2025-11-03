@@ -330,8 +330,14 @@ class DateFilterInput extends FilterInput {
         })
     }
 
-    clear() {
-        $(this.container).datepicker('clearDates');
+    clear() {        
+        const r = this.getValue();
+        if(r.startDate !== undefined || r.endDate !== undefined) {
+            console.log("delete");
+            $(this.container).datepicker('update', '2000-01-01', '2000-01-02');
+            $(this.container).datepicker('clearDates');
+        }
+
         super.clear();
     }
 }
