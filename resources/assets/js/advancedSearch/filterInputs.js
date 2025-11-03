@@ -271,7 +271,7 @@ class DateFilterInput extends FilterInput {
                 disableTouchKeyboard: true,
                 forceParse: false,
                 keepEmptyValues: true,
-                daysOfWeekHighlighted: "0,1",
+                daysOfWeekHighlighted: "0,6",
                 todayHighlight: true
             });
         }
@@ -310,29 +310,44 @@ class DateFilterInput extends FilterInput {
     }*/
 
     setValue(newValue, logic, operator) {
+        console.log("setdate");
         return new Promise((resolve, reject) => {
             try {
-                queueMicrotask(() => {
-                    if (this.startDate != undefined) {
-                        $(this.container).datepicker('setStartDate', this.startDate);
-                    }
-                    if (this.endDate != undefined) {
-                        $(this.container).datepicker('setEndDate', this.endDate);
-                    }
-                });
+                console.log(newValue);
 
-                this.setSearchOperator(logic, operator)
+                const $container = $(this.container);
+                const $startInput = $container.find('input:first');
+                const $endInput = $container.find('input:last');
+
+                if (newValue.startDate != undefined) {
+                    // Set the value directly and update datepicker
+                    $startInput.val = newValue.startDate;
+                    $startInput.datepicker('update');
+                }
+
+                if (newValue.endDate != undefined) {
+                    // Set the value directly and update datepicker
+                    $endInput.val = newValue.endDate;
+                    $endInput.datepicker('update');
+                }
+
+                // Trigger change event to update any listeners
+                $startInput.trigger('changeDate');
+                $endInput.trigger('changeDate');
+
+                this.setSearchOperator(logic, operator);
+                resolve(newValue);
             }
             catch (e) {
+                console.error('Error setting dates:', e);
                 reject(e);
             }
-            resolve(newValue);
-        })
+        });
     }
 
-    clear() {        
+    clear() {
         const r = this.getValue();
-        if(r.startDate !== undefined || r.endDate !== undefined) {
+        if (r.startDate !== undefined || r.endDate !== undefined) {
             // I don't know why this is needed but without it won't reset properly
             $(this.container).datepicker('setDates', ['2000-01-01', '2000-01-02']);
             $(this.container).datepicker('clearDates');
