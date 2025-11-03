@@ -46,7 +46,7 @@ class PredefinedFilterService
     public function getFilterById(int $id, bool $include_predefined_filter_groups = true)
     {
         $predefinedFilter = PredefinedFilter::find($id);
-        if($include_predefined_filter_groups && $predefinedFilter) {
+        if ($include_predefined_filter_groups && $predefinedFilter) {
             $permissions = $this->predefinedFilterPermissionService->getPermissionsByPredefinedFilterId($id);
             $predefinedFilter['permissions'] = $permissions;
         }
@@ -70,7 +70,7 @@ class PredefinedFilterService
         ]);
 
         // Set permissions
-        if (array_key_exists('permissions', $validated)  && count($validated['permissions']) > 0) {
+        if (array_key_exists('permissions', $validated) && count($validated['permissions']) > 0) {
             foreach ($validated['permissions'] as $permission) {
                 $permission['predefined_filter_id'] = $filter_create_response->id;
                 $this->predefinedFilterPermissionService->store($permission);
@@ -126,7 +126,7 @@ class PredefinedFilterService
         return $filter->delete();
     }
 
-    public function selectList(Request $request): LengthAwarePaginator
+    public function selectList(Request $request, bool $visibilityInName = false): LengthAwarePaginator
     {
         $user = Auth::user();
 
@@ -142,17 +142,37 @@ class PredefinedFilterService
             return false;
         })->pluck('id');
 
-        $query = PredefinedFilter::select(['id', 'name'])
+        $query = PredefinedFilter::select(['id', 'name', 'is_public'])
             ->whereIn('id', $viewableFilters);
 
         if ($request->filled('search')) {
-            $query->where('name', 'LIKE', '%' . $request->get('search') . '%');
+            $search = trim($request->get('search', ''));
+            $upper = strtoupper($search);
+
+            $privateTag = strtoupper(trans('general.private')) . ':';
+            $publicTag = strtoupper(trans('general.public')) . ':';
+
+            if (str_starts_with($upper, 'PRIVATE:') || str_starts_with($upper, $privateTag)) {
+                $query->where('is_public', 0);
+                $search = preg_replace('/^(PRIVATE:|' . preg_quote($privateTag, '/') . ')/i', '', $search);
+            } elseif (str_starts_with($upper, 'PUBLIC:') || str_starts_with($upper, $publicTag)) {
+                $query->where('is_public', 1);
+                $search = preg_replace('/^(PUBLIC:|' . preg_quote($publicTag, '/') . ')/i', '', $search);
+            }
+
+            $query->where('name', 'LIKE', '%' . trim($search) . '%');
         }
+
+
 
         $paginated = $query->orderBy('name')->paginate(50);
 
         foreach ($paginated as $item) {
-            $item->use_text = $item->name;
+            if ($visibilityInName === true) {
+                $item->use_text = $item->name . ' (' . $this->getVisibilityAsLocalizedString($item->is_public) . ')';
+            } else {
+                $item->use_text = $item->name;
+            }
         }
 
         return $paginated;
@@ -161,24 +181,29 @@ class PredefinedFilterService
     private function syncPermissions($currentPermissions, $newPermissions): array
     {
         $toAdd = array_udiff(
-        $newPermissions,
-        $currentPermissions,
-        function ($a, $b) {
-            return $a['permission_group_id'] <=> $b['permission_group_id'];
-        }
-    );
+            $newPermissions,
+            $currentPermissions,
+            function ($a, $b) {
+                return $a['permission_group_id'] <=> $b['permission_group_id'];
+            }
+        );
 
         $toDelete = array_udiff(
-        $currentPermissions,
-        $newPermissions,
-        function ($a, $b) {
-            return $a['permission_group_id'] <=> $b['permission_group_id'];
-        }
-    );
+            $currentPermissions,
+            $newPermissions,
+            function ($a, $b) {
+                return $a['permission_group_id'] <=> $b['permission_group_id'];
+            }
+        );
 
         return [
             'to_add' => $toAdd,
             'to_delete' => $toDelete
         ];
+    }
+
+    private function getVisibilityAsLocalizedString(bool $isPublic): string
+    {
+        return $isPublic == true ? trans('general.public') : trans('general.private');
     }
 }
