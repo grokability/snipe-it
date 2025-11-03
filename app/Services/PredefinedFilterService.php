@@ -126,7 +126,7 @@ class PredefinedFilterService
         return $filter->delete();
     }
 
-    public function selectList(Request $request): LengthAwarePaginator
+    public function selectList(Request $request, Bool $visibilityInName = false): LengthAwarePaginator
     {
         $user = Auth::user();
 
@@ -142,7 +142,7 @@ class PredefinedFilterService
             return false;
         })->pluck('id');
 
-        $query = PredefinedFilter::select(['id', 'name'])
+        $query = PredefinedFilter::select(['id', 'name', 'is_public'])
             ->whereIn('id', $viewableFilters);
 
         if ($request->filled('search')) {
@@ -152,7 +152,7 @@ class PredefinedFilterService
         $paginated = $query->orderBy('name')->paginate(50);
 
         foreach ($paginated as $item) {
-            $item->use_text = $item->name;
+            $item->use_text = $item->name . ' (' . $this->getVisibilityAsLocalizedString($item->is_public) . ')';
         }
 
         return $paginated;
@@ -180,5 +180,9 @@ class PredefinedFilterService
             'to_add' => $toAdd,
             'to_delete' => $toDelete
         ];
+    }
+
+    private function getVisibilityAsLocalizedString(Bool $isPublic): String {
+        return $isPublic == true ? trans('general.public') : trans('general.private');
     }
 }
