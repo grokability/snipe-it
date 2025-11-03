@@ -54,7 +54,7 @@ class FilterInput {
         // Skip empty values
         const isEmptyArray = Array.isArray(value) && value.length === 0;
         const isArrayOfEmptyStrings = Array.isArray(value) && value.every(v => v === "");
-        const isTrulyEmpty = value === null || value === undefined || value === "";
+        const isTrulyEmpty = value === null || value === undefined || jQuery.isEmptyObject(value) === true;
 
         if (isTrulyEmpty || isEmptyArray || isArrayOfEmptyStrings) {
             return;
@@ -330,8 +330,14 @@ class DateFilterInput extends FilterInput {
         })
     }
 
-    clear() {
-        $(this.container).datepicker('clearDates');
+    clear() {        
+        const r = this.getValue();
+        if(r.startDate !== undefined || r.endDate !== undefined) {
+            // I don't know why this is needed but without it won't reset properly
+            $(this.container).datepicker('setDates', ['2000-01-01', '2000-01-02']);
+            $(this.container).datepicker('clearDates');
+        }
+
         super.clear();
     }
 }
