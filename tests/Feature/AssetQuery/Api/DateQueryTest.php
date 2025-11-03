@@ -70,7 +70,7 @@ class DateQueryTest extends TestCase
 
     public function testEolDateQueryEnd()
     {
-        Carbon::setTestNow('2020-01-01');
+        Carbon::setTestNow(Carbon::create(2020,1,1));
 
         $prefix = 'EOLENDA-' . \Illuminate\Support\Str::random(6);
 
@@ -117,10 +117,20 @@ class DateQueryTest extends TestCase
             ],
         ];
 
-        $response = $this->actingAsForApi(\App\Models\User::factory()->superuser()->create())
-            ->getJson(route('api.assets.index', [
-                'filter' => json_encode($filter),
-            ]));
+        $response = $this->actingAsForApi(User::factory()->superuser()->create())
+        ->getJson(route('api.assets.index', [
+            'status'      => '',
+            'order_number'=> '',
+            'company_id'  => '',
+            'status_id'   => '',
+            'filter'      => json_encode($filter),
+            'search'      => '',
+            'sort'        => 'id',
+            'order'       => 'asc',
+            'offset'      => '0',
+            'limit'       => '50',
+        ]));
+
 
         $response->assertOk()->assertJsonStructure(['total','rows']);
 
