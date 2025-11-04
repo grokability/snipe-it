@@ -4,7 +4,7 @@ import {
     AssignedEntityFilterInput,
     DateFilterInput,
     TextFilterInput
-} from '/js/dist/filterInputs.min.js';
+} from '/js/dist/filterInputs.js';
 import { container } from '/js/dist/simpleDIContainer.min.js';
 
 export default class FilterFormManager {
