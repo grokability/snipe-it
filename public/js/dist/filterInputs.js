@@ -325,13 +325,6 @@ class DateFilterInput extends FilterInput {
         return result;
     }
 
-    /*setValue() {
-        $(this.container).datepicker('setStartDate', '2020-01-01');
-        //console.error("Currently not implemented");
-        //throw new Error("Currently not implemented");
-        //return this.hasValue() ? this.element.value : null;
-    }*/
-
     setValue(newValue, logic, operator) {
 
         return new Promise((resolve, reject) => {
@@ -339,18 +332,15 @@ class DateFilterInput extends FilterInput {
 
                 if (newValue.startDate != undefined) {
                     const startDateObject = new Date(newValue.startDate);
-                    console.log("start", newValue.startDate, startDateObject);
                     this.startDatepicker.datepicker('setDate', startDateObject);
                 }
 
                 if (newValue.endDate != undefined) {
                     const endDateObject = new Date(newValue.endDate);
-                    console.log("end", newValue.endDate, endDateObject);
                     this.endDatepicker.datepicker('setDate', endDateObject);
                 }
 
                 this.setSearchOperator(logic, operator);
-                console.log("this.getvalues", this.getValue());
                 resolve(newValue);
             }
             catch (e) {
@@ -361,16 +351,16 @@ class DateFilterInput extends FilterInput {
     }
 
     clear() {
-        /*const r = this.getValue();
-        if (r.startDate !== undefined || r.endDate !== undefined) {
-            // I don't know why this is needed but without it won't reset properly
-            $(this.container).datepicker('setDates', ['2000-01-01', '2000-01-02']);
-            $(this.container).datepicker('clearDates');
-        }*/
-        //this.startDatepicker.datepicker('clearDates');
-        //this.endDatepicker.datepicker('clearDates');
-        this.startDate = undefined;
-        this.endDate = undefined;
+        const r = this.getValue();
+        console.log("r", r);
+        if (r.startDate !== undefined || jQuery.isEmptyObject(r) === false) {
+            this.startDatepicker.datepicker('clearDates');
+            this.startDate = undefined;
+        }
+        if (r.endDate !== undefined || jQuery.isEmptyObject(r) === false) {
+            this.endDatepicker.datepicker('clearDates');
+            this.endDate = undefined;
+        }
 
         super.clear();
     }

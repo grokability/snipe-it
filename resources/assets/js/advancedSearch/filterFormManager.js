@@ -4,7 +4,7 @@ import {
     AssignedEntityFilterInput,
     DateFilterInput,
     TextFilterInput
-} from '/js/dist/filterInputs.js';
+} from '/js/dist/filterInputs.min.js';
 import { container } from '/js/dist/simpleDIContainer.min.js';
 
 export default class FilterFormManager {
@@ -61,9 +61,7 @@ export default class FilterFormManager {
     clearAll() {
         //this.collectFilterData();
         this.inputs.forEach(field => {
-            queueMicrotask(() => {
                 field.clear();
-            })
         });
     }
 
