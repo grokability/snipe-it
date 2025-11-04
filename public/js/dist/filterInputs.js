@@ -257,38 +257,61 @@ class AssignedEntityFilterInput extends SelectFilterInput {
 }
 
 class DateFilterInput extends FilterInput {
-
     constructor(el, apiService) {
         super(el, apiService);
 
-        this.container = this.element.closest('.input-daterange');
+        // assign as class properties
+        this.startDatepickerInput = document.getElementById(el.id + "_start");
+        this.endDatepickerInput = document.getElementById(el.id + "_end");
 
-        let datepicker = null;
-        if (this.container) {
-            datepicker = $(this.container).datepicker({
+        if (this.startDatepickerInput) {
+            this.startDatepicker = $(this.startDatepickerInput).datepicker({
                 todayBtn: "linked",
                 clearBtn: true,
                 disableTouchKeyboard: true,
                 forceParse: false,
                 keepEmptyValues: true,
                 daysOfWeekHighlighted: "0,6",
-                todayHighlight: true
+                todayHighlight: true,
+                format: "yyyy-mm-dd",
             });
         }
 
-        datepicker.on('changeDate', (event) => {
-            if (event.target.id.endsWith("_start")) {
-                this.startDate = new Intl.DateTimeFormat('en-CA').format(event.date);
-            } else {
-                this.endDate = new Intl.DateTimeFormat('en-CA').format(event.date);
-            }
-        });
+        if (this.endDatepickerInput) {
+            this.endDatepicker = $(this.endDatepickerInput).datepicker({
+                todayBtn: "linked",
+                clearBtn: true,
+                disableTouchKeyboard: true,
+                forceParse: false,
+                keepEmptyValues: true,
+                daysOfWeekHighlighted: "0,6",
+                todayHighlight: true,
+                format: "yyyy-mm-dd",
+            });
+        }
 
-        datepicker.on('clearDate', (_) => {
-            this.startDate = undefined;
-            this.endDate = undefined;
-        });
+        // event listeners (check element exists)
+        if (this.startDatepickerInput) {
+            $(this.startDatepickerInput).on('changeDate', (event) => {
+                this.startDate = new Intl.DateTimeFormat('en-CA').format(event.date);
+            });
+
+            $(this.startDatepickerInput).on('clearDate', (_) => {
+                this.startDate = undefined;
+            });
+        }
+
+        if (this.endDatepickerInput) {
+            $(this.endDatepickerInput).on('changeDate', (event) => {
+                this.endDate = new Intl.DateTimeFormat('en-CA').format(event.date);
+            });
+
+            $(this.endDatepickerInput).on('clearDate', (_) => {
+                this.endDate = undefined;
+            });
+        }
     }
+
 
     getValue() {
         const result = {};
@@ -302,46 +325,20 @@ class DateFilterInput extends FilterInput {
         return result;
     }
 
-    /*setValue() {
-        $(this.container).datepicker('setStartDate', '2020-01-01');
-        //console.error("Currently not implemented");
-        //throw new Error("Currently not implemented");
-        //return this.hasValue() ? this.element.value : null;
-    }*/
-
     setValue(newValue, logic, operator) {
-        console.log("setdate");
+
         return new Promise((resolve, reject) => {
             try {
-                //console.log(newValue);
-
-                const $container = $(this.container);
-                const $startInput = $container.find('input:first');
-                const $endInput = $container.find('input:last');
-                console.log($startInput);
-                console.log($endInput);
 
                 if (newValue.startDate != undefined) {
-                    // Set the value directly and update datepicker
-                    $startInput.val = newValue.startDate;
-                    const d = document.getElementById($startInput[0].id);
-                    console.log(d);
-                    d.value = newValue.startDate;
-                    $startInput.datepicker('update');
+                    const startDateObject = new Date(newValue.startDate);
+                    this.startDatepicker.datepicker('setDate', startDateObject);
                 }
 
                 if (newValue.endDate != undefined) {
-                    // Set the value directly and update datepicker
-                    $endInput.val = newValue.endDate;
-                    const d = document.getElementById($endInput[0].id);
-                    console.log(d);
-                    d.value = newValue.endDate;
-                    $endInput.datepicker('update');
+                    const endDateObject = new Date(newValue.endDate);
+                    this.endDatepicker.datepicker('setDate', endDateObject);
                 }
-
-                // Trigger change event to update any listeners
-                $startInput.trigger('changeDate');
-                $endInput.trigger('changeDate');
 
                 this.setSearchOperator(logic, operator);
                 resolve(newValue);
@@ -355,10 +352,14 @@ class DateFilterInput extends FilterInput {
 
     clear() {
         const r = this.getValue();
-        if (r.startDate !== undefined || r.endDate !== undefined) {
-            // I don't know why this is needed but without it won't reset properly
-            $(this.container).datepicker('setDates', ['2000-01-01', '2000-01-02']);
-            $(this.container).datepicker('clearDates');
+        console.log("r", r);
+        if (r.startDate !== undefined || jQuery.isEmptyObject(r) === false) {
+            this.startDatepicker.datepicker('clearDates');
+            this.startDate = undefined;
+        }
+        if (r.endDate !== undefined || jQuery.isEmptyObject(r) === false) {
+            this.endDatepicker.datepicker('clearDates');
+            this.endDate = undefined;
         }
 
         super.clear();

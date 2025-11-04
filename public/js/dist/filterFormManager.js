@@ -61,9 +61,7 @@ export default class FilterFormManager {
     clearAll() {
         //this.collectFilterData();
         this.inputs.forEach(field => {
-            queueMicrotask(() => {
                 field.clear();
-            })
         });
     }
 
