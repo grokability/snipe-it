@@ -3,7 +3,6 @@
 namespace Tests\Feature\PredefinedFilter\Api;
 
 use App\Http\Transformers\PredefinedFiltersTransformer;
-use Log;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\User;
