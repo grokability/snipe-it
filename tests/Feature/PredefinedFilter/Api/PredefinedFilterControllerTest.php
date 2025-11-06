@@ -3,6 +3,7 @@
 namespace Tests\Feature\PredefinedFilter\Api;
 
 use App\Http\Transformers\PredefinedFiltersTransformer;
+use Log;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\User;
@@ -143,6 +144,84 @@ class PredefinedFilterControllerTest extends TestCase
             ->getJson("/api/v1/predefinedFilters")
             ->assertStatus(200)
             ->assertJsonFragment(['name'=>'Allowed Private Filter']);
+    }
+
+    public function test_index_can_search_by_name(): void
+    {
+        $user = User::factory()->create();
+
+        $match = PredefinedFilter::factory()->create([
+            'name' => 'Important Filter',
+            'is_public' => 0,
+            'created_by' => $user->id,
+        ]);
+        $noMatch = PredefinedFilter::factory()->create([
+            'name' => 'Unrelated',
+            'is_public' => 0,
+            'created_by' => $user->id,
+        ]);
+
+        $response = $this->actingAs($user, 'api')
+            ->getJson('/api/v1/predefinedFilters?search=important')
+            ->assertOk();
+
+        $response->assertJsonFragment(['name' => 'Important Filter']);
+        $response->assertJsonMissing(['name' => 'Unrelated']);
+        $this->assertCount(1, $response->json('rows'));
+    }
+
+    public function test_index_can_sort_results_by_name(): void
+    {
+        $user = User::factory()->create();
+
+        $a = PredefinedFilter::factory()->create(['name' => 'Alpha', 'is_public' => 0, 'created_by' => $user->id]);
+        $z = PredefinedFilter::factory()->create(['name' => 'Zulu', 'is_public' => 0, 'created_by' => $user->id]);
+        $m = PredefinedFilter::factory()->create(['name' => 'Mike', 'is_public' => 0, 'created_by' => $user->id]);
+
+        // Ascending
+        $asc = $this->actingAs($user, 'api')
+            ->getJson('/api/v1/predefinedFilters?sort=name&order=asc')
+            ->assertOk()
+            ->json('rows');
+
+        Log::error($asc);
+
+        $this->assertEquals(['Alpha', 'Mike', 'Zulu'], array_column($asc, 'name'));
+
+        // Descending
+        $desc = $this->actingAs($user, 'api')
+            ->getJson('/api/v1/predefinedFilters?sort=name&order=desc')
+            ->assertOk()
+            ->json('rows');
+
+        $this->assertEquals(['Zulu', 'Mike', 'Alpha'], array_column($desc, 'name'));
+    }
+
+    public function test_index_can_paginate_results(): void
+    {
+        $user = User::factory()->create();
+
+        $filters = PredefinedFilter::factory()->count(5)->sequence(
+            ['name' => 'Filter 1', 'is_public' => 0],
+            ['name' => 'Filter 2', 'is_public' => 0],
+            ['name' => 'Filter 3', 'is_public' => 0],
+            ['name' => 'Filter 4', 'is_public' => 0],
+            ['name' => 'Filter 5', 'is_public' => 0],
+        )->create(['created_by' => $user->id]);
+
+        $response1 = $this->actingAs($user, 'api')
+            ->getJson('/api/v1/predefinedFilters?limit=2&offset=0')
+            ->assertOk();
+
+        $this->assertCount(2, $response1->json('rows'));
+        $this->assertEquals(5, $response1->json('total'));
+
+        $response2 = $this->actingAs($user, 'api')
+            ->getJson('/api/v1/predefinedFilters?limit=2&offset=2')
+            ->assertOk();
+
+        $this->assertCount(2, $response2->json('rows'));
+        $this->assertEquals(5, $response2->json('total'));
     }
 
     //------SHOW TESTS------

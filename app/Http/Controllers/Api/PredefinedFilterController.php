@@ -23,11 +23,42 @@ class PredefinedFilterController extends Controller
         $this->service = $service;
     }
 
-    public function index()
+    public function index(Request $request) : JsonResponse | array
     {
         $filters = $this->service->getAllViewableFilters();
-        return (new PredefinedFiltersTransformer)->transformPredefinedFilters($filters, $filters->count());
+
+        if ($request->filled('search')) {
+            $search = strtolower($request->get('search'));
+            $filters = $filters->filter(fn($filter) =>
+                str_contains(strtolower($filter->name), $search)
+            );
+        }
+
+        // --- Sorting ---
+        $sort = $request->input('sort', 'name');
+        $order = $request->input('order', 'asc');
+
+        $allowed_columns = ['id', 'name', 'is_public', 'created_by'];
+        
+        if (!in_array($sort, $allowed_columns)) {
+            $sort = 'name';
+        }
+
+        $filters = $order === 'desc'
+            ? $filters->sortByDesc(fn($f) => strtolower(data_get($f, $sort, '')))
+            : $filters->sortBy(fn($f) => strtolower(data_get($f, $sort, '')));
+        
+        // --- Pagination ---
+        $total = $filters->count();
+        $offset = (int) $request->input('offset', 0);
+        $limit = (int) $request->input('limit', config('app.max_results', 50));
+
+        $filters = $filters->slice($offset, $limit)->values();
+
+        return (new PredefinedFiltersTransformer)->transformPredefinedFilters($filters, $total);
     }
+
+
 
     public function show(int $id)
     {
