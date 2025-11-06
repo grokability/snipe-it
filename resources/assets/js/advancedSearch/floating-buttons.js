@@ -42,7 +42,36 @@ export default class FloatingButtons {
         this.updatePositionMode();
         // refresh stored natural height
         this.advancedSearchPanelHeight = this._getNaturalPanelHeight();
+
+        // observe changes if sidepanel is open / closed
+        this._observePanelSize();
     }
+
+
+
+    _observePanelSize() {
+    if (!this.advancedSearchPanel) return;
+
+    let lastWidth = this.advancedSearchPanel.offsetWidth;
+
+    const ro = new ResizeObserver(entries => {
+        for (const entry of entries) {
+            const newWidth = entry.contentRect.width;
+
+            // Only run logic when width actually changes height works fine
+            if (newWidth !== lastWidth) {
+                lastWidth = newWidth;
+
+                console.log('triggeredobserver')
+
+                this.align();
+                this.updatePositionMode();
+            }
+        }
+    });
+
+    ro.observe(this.advancedSearchPanel);
+}
 
     // Wrap existing children in a .floatingButtons-inner so we can animate transforms
     _ensureInnerWrapper() {
@@ -121,6 +150,7 @@ export default class FloatingButtons {
                 if (!this._ticking) {
                     this._ticking = true;
                     window.requestAnimationFrame(() => {
+                        console.log('triggeredScroll');
                         this.updatePositionMode();
                         this._ticking = false;
                     });
@@ -200,6 +230,8 @@ export default class FloatingButtons {
     _setScrollableMode() {
         if (!this.floatingButtonContainer || !this.advancedSearchPanel) return;
 
+        console.log('triggerd scrollable');
+
         // if already scrollable, nothing to do
         if (this.floatingButtonContainer.classList.contains('floatingButtons-fab-scrollable-wrapper')) {
             return;
@@ -223,10 +255,6 @@ export default class FloatingButtons {
         this.floatingButtonContainer.classList.remove('floatingButtons-fab-fixed-wrapper');
         this.floatingButtonContainer.classList.add('floatingButtons-fab-scrollable-wrapper');
 
-        // ensure proper centering inside the panel
-        this.floatingButtonContainer.style.left = '50%';
-        this.floatingButtonContainer.style.transform = 'translateX(-50%)';
-
         // measure natural content height and ensure there's extra space for the buttons to sit comfortably
         const naturalHeight = this._getNaturalPanelHeight();
         this.advancedSearchPanelHeight = naturalHeight;
@@ -238,6 +266,8 @@ export default class FloatingButtons {
     // Move the floating container back to its original parent and set fixed class
     _setFixedMode() {
         if (!this.floatingButtonContainer) return;
+
+        console.log('triggerd fixedmode');
 
         // if already fixed, nothing to do
         if (this.floatingButtonContainer.classList.contains('floatingButtons-fab-fixed-wrapper')) {
