@@ -183,8 +183,6 @@ class PredefinedFilterControllerTest extends TestCase
             ->assertOk()
             ->json('rows');
 
-        Log::error($asc);
-
         $this->assertEquals(['Alpha', 'Mike', 'Zulu'], array_column($asc, 'name'));
 
         // Descending
