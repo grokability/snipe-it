@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'predefined_filter'     => 'TEST2',
+    'predefined_filter'     => 'Vordefinierte Filter',
     'is_public'             => 'Öffentlich',
     'object_type'           => 'Filtertyp',
     'info'                  => 'Info',
