@@ -2,7 +2,7 @@
 .floatingButtons-fab-fixed-wrapper {
     position: fixed;
     bottom: 22px;
-    left: 17vw !important;
+    left: 50%;
     transform: translateX(-50%);
     display: flex;
     gap: 20px;
@@ -10,6 +10,7 @@
     pointer-events: auto;
     padding: 0 15px;
     justify-content: center;
+    transition: left 0.25s ease;
 }
 
 /* Scrollable wrapper: position absolute and intended to be placed inside the panel

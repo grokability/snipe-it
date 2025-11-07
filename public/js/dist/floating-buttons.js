@@ -42,7 +42,37 @@ export default class FloatingButtons {
         this.updatePositionMode();
         // refresh stored natural height
         this.advancedSearchPanelHeight = this._getNaturalPanelHeight();
+
+        // observe changes if sidepanel is open / closed
+        this._observePanelSize();
     }
+
+
+
+    _observePanelSize() {
+    if (!this.advancedSearchPanel) return;
+
+    let lastWidth = this.advancedSearchPanel.offsetWidth;
+    let lastHeight = this.advancedSearchPanel.offsetHeight;
+
+    const ro = new ResizeObserver(entries => {
+        for (const entry of entries) {
+            const newWidth = entry.contentRect.width;
+            const newHeight = entry.contentRect.height;
+
+            // Only trigger when size changes (with / height)
+            if (newWidth !== lastWidth || newHeight !== lastHeight ) {
+                lastWidth = newWidth;
+                lastHeight = newHeight;
+                
+                this.align();
+                this.updatePositionMode();
+            }
+        }
+    });
+
+    ro.observe(this.advancedSearchPanel);
+}
 
     // Wrap existing children in a .floatingButtons-inner so we can animate transforms
     _ensureInnerWrapper() {
@@ -174,7 +204,13 @@ export default class FloatingButtons {
             const buttonZoneTop = viewportHeight - buttonAreaHeight;
 
             // If panel extends into the button zone, make buttons fixed; otherwise make them scrollable (absolute inside panel)
-            const wouldOverlap = panelRect.bottom > buttonZoneTop + 75;
+            const wouldOverlap = panelRect.bottom > buttonZoneTop + 250;
+
+            const minScrollableHeight = 400; // tweak as needed to match your layout
+            if (panelRect.height < minScrollableHeight) {
+                this._setScrollableMode();
+                return;
+            }
 
             if (!wouldOverlap) {
                 this._setScrollableMode();
@@ -200,10 +236,14 @@ export default class FloatingButtons {
     _setScrollableMode() {
         if (!this.floatingButtonContainer || !this.advancedSearchPanel) return;
 
-        // if already scrollable, nothing to do
-        if (this.floatingButtonContainer.classList.contains('floatingButtons-fab-scrollable-wrapper')) {
-            return;
-        }
+        // // if already scrollable, nothing to do
+        // if (this.floatingButtonContainer.classList.contains('floatingButtons-fab-scrollable-wrapper')) {
+        //     console.log('abort');
+            
+        //     return;
+
+            
+        // }
 
         // ensure panel can be a positioned ancestor
         const panelStyle = window.getComputedStyle(this.advancedSearchPanel);
@@ -213,26 +253,23 @@ export default class FloatingButtons {
         }
 
         // move container into the panel so position:absolute makes it scroll with the panel
-        try {
-            this.advancedSearchPanel.appendChild(this.floatingButtonContainer);
-        } catch (e) {
-            // fallback: if append fails, ignore
-        }
+        this.advancedSearchPanel.appendChild(this.floatingButtonContainer);
 
         // switch classes
         this.floatingButtonContainer.classList.remove('floatingButtons-fab-fixed-wrapper');
         this.floatingButtonContainer.classList.add('floatingButtons-fab-scrollable-wrapper');
-
-        // ensure proper centering inside the panel
-        this.floatingButtonContainer.style.left = '50%';
-        this.floatingButtonContainer.style.transform = 'translateX(-50%)';
 
         // measure natural content height and ensure there's extra space for the buttons to sit comfortably
         const naturalHeight = this._getNaturalPanelHeight();
         this.advancedSearchPanelHeight = naturalHeight;
 
         this.advancedSearchPanelExtended = false;
-        this.advancedSearchPanel.style.height = `${Math.max(0, naturalHeight + this._heightBuffer)}px`;
+        
+        // to Ensure there is everytime a minheight for the buttons when the advancedSearchPanel is very small
+        const minHeight = 0;
+        const newHeight = Math.max(minHeight, naturalHeight + this._heightBuffer);
+        this.advancedSearchPanel.style.height = `${newHeight}px`;
+        // this.advancedSearchPanel.style.height = `${Math.max(0, naturalHeight + this._heightBuffer)}px`;
     }
 
     // Move the floating container back to its original parent and set fixed class
