@@ -772,6 +772,7 @@ class SettingsController extends Controller
         $setting->label2_asset_logo = $request->input('label2_asset_logo');
         $setting->label2_1d_type = $request->input('label2_1d_type');
         $setting->label2_2d_type = $request->input('label2_2d_type');
+        $setting->label2_2d_prefix = $request->input('label2_2d_prefix');
         $setting->label2_2d_target = $request->input('label2_2d_target');
         $setting->label2_fields = $request->input('label2_fields');
         $setting->label2_empty_row_count = $request->input('label2_empty_row_count');

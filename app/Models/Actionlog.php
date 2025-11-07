@@ -360,7 +360,7 @@ class Actionlog extends SnipeModel
     {
         $now = Carbon::now();
         $last_audit_date = $this->created_at; // this is the action log's created at, not the asset itself
-        $next_audit = $last_audit_date->addMonth($monthInterval); // this actually *modifies* the $last_audit_date
+        $next_audit = $last_audit_date->addMonth((int) $monthInterval); // this actually *modifies* the $last_audit_date
         $next_audit_days = (int) round($now->diffInDays($next_audit, true));
         $override_default_next = $next_audit;
 

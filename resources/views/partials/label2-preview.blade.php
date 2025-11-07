@@ -91,7 +91,6 @@
 
 <div x-data="label2_preview" x-init="_init" class="l2p-root">
     <div class="l2p-top">
-        <label for="label2-preview">{{trans('general.preview')}}</label>
         <button class="l2p-pop-button btn btn-default" x-on:click.prevent="popout" title="Pop Out"><i class="fa-solid fa-maximize"></i></button>
     </div>
     <iframe id="label2-preview" x-bind:src="previewURL"></iframe>

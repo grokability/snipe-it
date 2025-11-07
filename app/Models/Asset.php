@@ -295,8 +295,8 @@ class Asset extends Depreciable
 
     protected function warrantyExpires(): Attribute
     {
-        return Attribute::make(
-            get: fn(mixed $value, array $attributes) => ($attributes['warranty_months'] && $attributes['purchase_date']) ? Carbon::parse($attributes['purchase_date'])->addMonths($attributes['warranty_months']) : null,
+        return Attribute:: make(
+            get: fn(mixed $value, array $attributes) => ($attributes['warranty_months'] && $attributes['purchase_date']) ? Carbon::parse($attributes['purchase_date'])->addMonths((int)$attributes['warranty_months']) : null,
         );
     }
 

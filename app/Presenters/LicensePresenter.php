@@ -248,10 +248,20 @@ class LicensePresenter extends Presenter
                 'title' => trans('admin/users/table.email'),
                 'visible' => true,
                 'formatter' => 'emailFormatter',
-            ], [
-                'field' => 'department',
+            ],
+            [
+                'field' => 'assigned_user.company',
                 'searchable' => false,
-                'sortable' => true,
+                'sortable' => false,
+                'switchable' => true,
+                'title' => trans('general.company'),
+                'visible' => true,
+                'formatter' => 'companiesLinkObjFormatter',
+            ],
+            [
+                'field' => 'assigned_user.department',
+                'searchable' => false,
+                'sortable' => false,
                 'switchable' => true,
                 'title' => trans('general.department'),
                 'visible' => false,

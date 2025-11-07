@@ -26,11 +26,11 @@ class LicenseSeatsController extends Controller
         if ($license = License::find($licenseId)) {
             $this->authorize('view', $license);
 
-            $seats = LicenseSeat::with('license', 'user', 'asset', 'user.department')
+            $seats = LicenseSeat::with('license', 'user', 'asset', 'user.department',  'user.company', 'asset.company')
                 ->where('license_seats.license_id', $licenseId);
 
             if ($request->input('status') == 'available') {
-                $seats->whereNull('license_seats.assigned_to');
+                $seats->whereNull('license_seats.assigned_to')->whereNull('license_seats.asset_id');
             }
 
             if ($request->input('status') == 'assigned') {
@@ -40,8 +40,10 @@ class LicenseSeatsController extends Controller
 
             $order = $request->input('order') === 'asc' ? 'asc' : 'desc';
 
-            if ($request->input('sort') == 'department') {
+            if ($request->input('sort') == 'assigned_user.department') {
                 $seats->OrderDepartments($order);
+            } elseif ($request->input('sort') == 'assigned_user.company') {
+                    $seats->OrderCompany($order);
             } else {
                 $seats->orderBy('updated_at', $order);
             }
@@ -83,7 +85,7 @@ class LicenseSeatsController extends Controller
             return response()->json(Helper::formatStandardApiResponse('error', null, 'Seat not found'));
         }
         // 2. does the seat belong to the specified license?
-        if (! $license = $licenseSeat->license()->first() || $license->id != intval($licenseId)) {
+        if (! $licenseSeat = $licenseSeat->license()->first() || $licenseSeat->id != intval($licenseId)) {
             return response()->json(Helper::formatStandardApiResponse('error', null, 'Seat does not belong to the specified license'));
         }
 
