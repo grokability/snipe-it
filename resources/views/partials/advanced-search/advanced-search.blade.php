@@ -255,12 +255,6 @@ document.getElementById('filterSearch').addEventListener('input', function (e) {
         const labelText = label ? label.textContent.toLowerCase() : '';
         item.style.display = labelText.includes(searchTerm) ? '' : 'none';
     });
-
-    // reset panel height if cleared
-    const panel = document.getElementById('advancedSearchPanel');
-    if (panel){
-        panel.style.height = '';
-    }
 });
 
 
