@@ -807,8 +807,6 @@
                                                                 style="font-size: 0px;">{{ $asset->{$field->db_column_name()} }}</span>
                                                         @endif
 
-
-                                                        @endif
                                                         @if (($field->field_encrypted=='1') && ($asset->{$field->db_column_name()}!='') && (Gate::allows('assets.view.encrypted_custom_fields')))
                                                             <i class="fas fa-lock" data-tooltip="true" data-placement="top" title="{{ trans('admin/custom_fields/general.value_encrypted') }}" onclick="showHideEncValue(this)" id="text-{{ $field->id }}"></i>
                                                         @endif
