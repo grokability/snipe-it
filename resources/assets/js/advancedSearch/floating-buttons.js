@@ -310,6 +310,16 @@ export default class FloatingButtons {
             return;
         }
 
+        // align using panel metrics to compute fixed-left position before moving the container
+        const panelRect = this.advancedSearchPanel ? this.advancedSearchPanel.getBoundingClientRect() : null;
+        if (panelRect) {
+            const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+            const centerX = panelRect.left + (panelRect.width / 2) + scrollLeft;
+            this.floatingButtonContainer.style.left = `${centerX}px`;
+            this.floatingButtonContainer.style.transform = 'translateX(-50%)';
+            console.log('panelRect', panelRect, 'scrollLeft', scrollLeft);
+        }
+
         // restore panel position style if we changed it earlier
         if (this._panelPositionWasStatic && this.advancedSearchPanel) {
             this.advancedSearchPanel.style.position = '';
@@ -331,15 +341,6 @@ export default class FloatingButtons {
         // switch classes
         this.floatingButtonContainer.classList.remove('floatingButtons-fab-scrollable-wrapper');
         this.floatingButtonContainer.classList.add('floatingButtons-fab-fixed-wrapper');
-
-        // align using panel metrics to compute fixed-left position
-        const panelRect = this.advancedSearchPanel ? this.advancedSearchPanel.getBoundingClientRect() : null;
-        if (panelRect) {
-            const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
-            const centerX = panelRect.left + (panelRect.width / 2) + scrollLeft;
-            this.floatingButtonContainer.style.left = `${centerX}px`;
-            this.floatingButtonContainer.style.transform = 'translateX(-50%)';
-        }
 
         // restore the panel's original inline height (if we saved one) so we don't keep a reduced height
         if (this.advancedSearchPanel) {
