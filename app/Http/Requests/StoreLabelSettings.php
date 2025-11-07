@@ -49,6 +49,7 @@ class StoreLabelSettings extends FormRequest
             'labels_pagewidth'                    => 'numeric|nullable',
             'labels_pageheight'                   => 'numeric|nullable',
             'qr_text'                             => 'max:31|nullable',
+            'label2_2d_prefix'                    => 'nullable|max:191',
             'label2_template'                     => [
                 'required',
                 Rule::in($names),

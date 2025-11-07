@@ -140,18 +140,32 @@ class Label implements View
             if ($template->getSupport2DBarcode()) {
                     $barcode2DType = $settings->label2_2d_type;
                 if (($barcode2DType != 'none') && (!is_null($barcode2DType))) {
+
+                    $label2_2d_prefix = $settings->label2_2d_prefix ? e($settings->label2_2d_prefix) : '';
                         switch ($settings->label2_2d_target) {
                             case 'ht_tag': 
                                 $barcode2DTarget = route('ht/assetTag', $asset->asset_tag); 
                                 break;
                             case 'plain_asset_id': 
-                                $barcode2DTarget = (string) $asset->id; 
+                                $barcode2DTarget = $label2_2d_prefix.(string) $asset->id;
                                 break;
                             case 'plain_asset_tag': 
-                                $barcode2DTarget = $asset->asset_tag; 
+                                $barcode2DTarget = $label2_2d_prefix.$asset->asset_tag;
                                 break;
                             case 'plain_serial_number': 
-                                $barcode2DTarget = $asset->serial; 
+                                $barcode2DTarget = $label2_2d_prefix.$asset->serial;
+                                break;
+                            case 'plain_model_number':
+                                $barcode2DTarget = $label2_2d_prefix.$asset->model->model_number ?? '';
+                                break;
+                            case 'plain_model_name':
+                                $barcode2DTarget = $label2_2d_prefix.$asset->model->display_name ?? '';
+                                break;
+                            case 'plain_manufacturer_name':
+                                $barcode2DTarget = $label2_2d_prefix.$asset->model->display_name;
+                                break;
+                            case 'plain_location_name':
+                                $barcode2DTarget = $label2_2d_prefix.$asset->location->name;
                                 break;
                             case 'location':
                                 $barcode2DTarget = $asset->location_id

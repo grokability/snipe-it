@@ -68,7 +68,7 @@ class UserSeeder extends Seeder
             ]))
             ->create();
 
-        User::factory()->count(50)->viewAssets()
+        User::factory()->count(2000)->viewAssets()
             ->state(new Sequence(fn($sequence) => [
                 'company_id' => $companyIds->random(),
                 'department_id' => $departmentIds->random(),

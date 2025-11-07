@@ -159,7 +159,7 @@ class SlackSettingsForm extends Component
             ]);
 
         try {
-            $test = $webhook->post($this->webhook_endpoint, ['body' => $payload, ['headers' => ['Content-Type' => 'application/json']]]);
+            $test = $webhook->post($this->webhook_endpoint, ['body' => $payload, 'headers' => ['Content-Type' => 'application/json']]);
 
             if(($test->getStatusCode() == 302)||($test->getStatusCode() == 301)){
                 return session()->flash('error' , trans('admin/settings/message.webhook.error_redirect', ['endpoint' => $this->webhook_endpoint]));

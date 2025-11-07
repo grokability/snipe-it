@@ -26,7 +26,7 @@
     {{csrf_field()}}
 
     <div class="row">
-        <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
+        <div class="col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3">
 
 
             <div class="panel box box-default">
@@ -38,13 +38,13 @@
                 <div class="box-body">
 
 
-                    <div class="col-md-11 col-md-offset-1">
+                    <div class="col-md-12">
 
                         <!-- auto ids -->
                         <div class="form-group">
                             <div class="col-md-8 col-md-offset-3">
                                 <label class="form-control">
-                                    <input type="checkbox" name="auto_increment_assets" value="1" @checked(old('auto_increment_assets', $setting->auto_increment_assets)) aria-label="auto_increment_assets">
+                                    <input type="checkbox" id="auto_increment_assets" name="auto_increment_assets" value="1" @checked(old('auto_increment_assets', $setting->auto_increment_assets)) aria-label="auto_increment_assets">
                                     {{  trans('admin/settings/general.auto_increment_assets') }}
                                 </label>
                             </div>
@@ -67,12 +67,9 @@
                             <label for="auto_increment_prefix" class="col-md-3 control-label">{{ trans('admin/settings/general.auto_increment_prefix') }}</label>
 
                             <div class="col-md-8">
-                                @if ($setting->auto_increment_assets == 1)
-                                    <input class="form-control"  maxlength="100" style="width: 200px;" aria-label="auto_increment_prefix" name="auto_increment_prefix" type="text" id="auto_increment_prefix" value="{{ old('auto_increment_prefix', $setting->auto_increment_prefix) }}">
-                                    {!! $errors->first('auto_increment_prefix', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
-                                @else
-                                    <input class="form-control" maxlength="100" disabled="disabled" style="width: 200px;" aria-label="auto_increment_prefix" name="auto_increment_prefix" type="text" id="auto_increment_prefix" value="{{ old('auto_increment_prefix', $setting->auto_increment_prefix) }}">
-                                @endif
+                                <input class="form-control" disabled maxlength="100" style="width: 200px;" aria-label="auto_increment_prefix" name="auto_increment_prefix" type="text" id="auto_increment_prefix" value="{{ old('auto_increment_prefix', $setting->auto_increment_prefix) }}">
+                                {!! $errors->first('auto_increment_prefix', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
+
                             </div>
                         </div>
 
@@ -104,5 +101,24 @@
     </div> <!-- /.row-->
 
     </form>
+
+    @section('moar_scripts')
+        <script>
+        if ($("#auto_increment_assets").is(':checked')) {
+            // Hide here instead of fadeout on pageload to prevent what looks like Flash Of Unstyled Content (FOUC)
+            $("#auto_increment_prefix").prop('disabled', false);
+        }
+
+        $("#auto_increment_assets").change(function () {
+
+            if ($("#auto_increment_assets").is(':checked')) {
+                $("#auto_increment_prefix").prop('disabled', false);
+            } else {
+                $("#auto_increment_prefix").prop('disabled', true);
+            }
+        });
+        </script>
+    @endsection
+
 
 @stop

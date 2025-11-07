@@ -36,6 +36,12 @@ class LicenseSeatsTransformer
                             'name' => e($seat->user->department->name),
 
                         ] : null,
+                'company'=> ($seat->user->company) ?
+                    [
+                        'id' => (int) $seat->user->company->id,
+                        'name' => e($seat->user->company->name),
+
+                    ] : null,
                 'created_at' => Helper::getFormattedDateObject($seat->created_at, 'datetime'),
             ] : null,
             'assigned_asset' => ($seat->asset) ? [

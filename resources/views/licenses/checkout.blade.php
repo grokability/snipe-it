@@ -45,12 +45,13 @@
                     @can('viewKeys', $license)
                     <div class="form-group">
                         <label class="col-sm-3 control-label">{{ trans('admin/licenses/form.license_key') }}
-                            <i class="fa-regular fa-clipboard js-copy-link hidden-print" data-clipboard-target=".js-copy-key" aria-hidden="true" data-tooltip="true" data-placement="top" title="{{ trans('general.copy_to_clipboard') }}">
-                                <span class="sr-only">{{ trans('general.copy_to_clipboard') }}</span>
-                            </i>
+
                         </label>
                         <div class="col-md-9">
-                            <p class="form-control-static"><code style="white-space: pre-wrap"><span class="js-copy-key">{{ $license->serial }}</span></code>
+                            <p class="form-control-static">
+                                <x-copy-to-clipboard copy_what="license_key" style="white-space: pre-wrap">
+                                    <code>{!! nl2br(e($license->serial)) !!}</code>
+                                </x-copy-to-clipboard>
                             </p>
                         </div>
                     </div>

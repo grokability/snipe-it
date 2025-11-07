@@ -25,7 +25,7 @@ class AcceptanceAssetDeclinedNotification extends Notification
         $this->item_model = $params['item_model'];
         $this->item_serial = $params['item_serial'];
         $this->item_status = $params['item_status'];
-        $this->declined_date = Helper::getFormattedDateObject($params['declined_date'], 'date', false);
+        $this->declined_date = $params['declined_date'];
         $this->note = $params['note'];
         $this->assigned_to = $params['assigned_to'];
         $this->company_name = $params['company_name'];

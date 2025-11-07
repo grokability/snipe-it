@@ -27,7 +27,7 @@ use Illuminate\Notifications\Notification;
         $this->item_model = $params['item_model'];
         $this->item_serial = $params['item_serial'];
         $this->item_status = $params['item_status'];
-        $this->accepted_date = Helper::getFormattedDateObject($params['accepted_date'], 'datetime', false);
+        $this->accepted_date = $params['accepted_date'];
         $this->assigned_to = $params['assigned_to'];
         $this->company_name = $params['company_name'];
         $this->settings = Setting::getSettings();
