@@ -9,7 +9,7 @@ return array(
         'note'       => 'Gewährt Zugriff auf Vordefinierte Filter in der App.',
     ],
     'predefinedfiltercreate' => [
-        'name' => 'Öffentliche vordefinierte Filter sehen',
+        'name' => 'Öffentliche vordefinierte Filter anzeigen',
     ],
     'predefinedfilterview' => [
         'name' => 'Öffentliche vordefinierte Filter erstellen',
