@@ -309,7 +309,8 @@ export default class FloatingButtons {
         if (this.floatingButtonContainer.classList.contains('floatingButtons-fab-fixed-wrapper')) {
             return;
         }
-        // align using panel metrics to compute fixed-left position
+
+        // align using panel metrics to compute fixed-left position before moving the container
         const panelRect = this.advancedSearchPanel ? this.advancedSearchPanel.getBoundingClientRect() : null;
         if (panelRect) {
             const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
@@ -340,7 +341,6 @@ export default class FloatingButtons {
         // switch classes
         this.floatingButtonContainer.classList.remove('floatingButtons-fab-scrollable-wrapper');
         this.floatingButtonContainer.classList.add('floatingButtons-fab-fixed-wrapper');
-
 
         // restore the panel's original inline height (if we saved one) so we don't keep a reduced height
         if (this.advancedSearchPanel) {
