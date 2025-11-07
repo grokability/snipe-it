@@ -1,0 +1,15 @@
+@props([
+    'copy_what' => null,
+])
+
+<!-- copy to clipboard -->
+<i class="fa-regular fa-clipboard js-copy-link hidden-print" data-clipboard-target=".js-copy-{{ $copy_what }}" aria-hidden="true" data-tooltip="true" data-placement="top" title="{{ trans('general.copy_to_clipboard') }}">
+    <span class="sr-only">{{ trans('general.copy_to_clipboard') }}</span>
+</i>
+
+@if (!$slot->isEmpty())
+<span class="js-copy-{{ $copy_what }}">
+    {{ $slot }}
+</span>
+@endif
+

@@ -4,15 +4,15 @@ namespace App\Models\Labels\Tapes\Brother;
 
 class TZe_24mm_E extends TZe_24mm
 {
-    private const BARCODE_MARGIN =   1.50;
+    private const BARCODE_MARGIN =   1.75;
     private const TAG_SIZE       =   2.00;
     private const TITLE_SIZE     =   2.80;
     private const TITLE_MARGIN   =   0.50;
     private const LABEL_SIZE     =   2.00;
-    private const LABEL_MARGIN   = - 0.35;
+    private const LABEL_MARGIN   = - 0.75;
     private const FIELD_SIZE     =   2.80;
     private const FIELD_MARGIN   =   0.15;
-    private const BARCODE1D_SIZE = - 1.00;  
+    private const BARCODE1D_SIZE = - 2.25;
 
     public function getUnit()  { return 'mm'; }
     public function getWidth() { return 45.0; }

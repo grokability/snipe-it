@@ -31,10 +31,13 @@ class Department extends SnipeModel
     ];
 
     protected $rules = [
-        'name'                  => 'required|max:255|is_unique_department',
-        'location_id'           => 'numeric|nullable',
-        'company_id'            => 'numeric|nullable',
-        'manager_id'            => 'numeric|nullable',
+        'name'        => 'required|max:255|is_unique_across_company_and_location:departments,name',
+        'location_id' => 'numeric|nullable|exists:locations,id',
+        'company_id'  => 'numeric|nullable|exists:companies,id',
+        'manager_id'  => 'numeric|nullable|exists:users,id',
+        'phone'       => 'string|max:255|nullable',
+        'fax'         => 'string|max:255|nullable',
+        'notes'       => 'string|max:255|nullable',
     ];
 
     /**

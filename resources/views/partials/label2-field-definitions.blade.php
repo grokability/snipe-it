@@ -43,9 +43,11 @@
             }
 
             .l2fd-root {
-                height: 400px;
+                height: 300px;
                 display: flex;
                 flex-direction: column;
+                overflow:auto!important;
+                max-height:400px;
             }
 
             .l2fd-title {

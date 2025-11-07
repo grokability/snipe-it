@@ -90,7 +90,7 @@
                         class="form-control  {{ str_slug($main_section) }} deny"
                         data-checker-group="{{ str_slug($main_section) }}"
                         aria-label="{{ str_slug($main_section) }}"
-                        name="permission[{{ str_slug($main_section) }}]"
+                        name="permission[{{ $section_name }}]"
                         @checked(array_key_exists(str_slug($main_section), $groupPermissions) && $groupPermissions[str_slug($main_section)] == '-1')
                         type="radio"
                         value="-1"

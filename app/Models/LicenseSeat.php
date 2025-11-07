@@ -153,17 +153,24 @@ class LicenseSeat extends SnipeModel implements ICompanyableChild
     }
 
 
+    public function scopeOrderCompany($query, $order)
+    {
+
+
+        return $query->leftJoin('users as license_seat_users', 'license_seats.assigned_to', '=', 'license_seat_users.id')
+            ->leftJoin('companies as license_user_company', 'license_user_company.id', '=', 'license_seat_users.company_id')
+            ->whereNotNull('license_seats.assigned_to')
+            ->orderBy('license_user_company.name', $order);
+    }
+
+
     public function scopeByAssigned($query)
     {
 
         return $query->where(
             function ($query) {
                 $query->whereNotNull('assigned_to')
-                    ->orWhere(
-                        function ($query) {
-                            $query->whereNotNull('asset_id');
-                        }
-                    );
+                    ->orWhereNotNull('asset_id');
             }
         );
 

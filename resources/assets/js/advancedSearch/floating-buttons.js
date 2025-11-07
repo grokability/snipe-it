@@ -238,11 +238,8 @@ export default class FloatingButtons {
 
         // // if already scrollable, nothing to do
         // if (this.floatingButtonContainer.classList.contains('floatingButtons-fab-scrollable-wrapper')) {
-        //     console.log('abort');
-            
+        //     console.log('abort'); 
         //     return;
-
-            
         // }
 
         // ensure panel can be a positioned ancestor
