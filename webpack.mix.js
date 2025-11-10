@@ -74,6 +74,9 @@ mix
   mix
   .copy("resources/assets/js/advancedSearch/filterFormManager.js", "./public/js/dist")
   .minify("./public/js/dist/filterFormManager.js");
+  mix
+  .copy("resources/assets/js/advancedSearch/filterUiController.js", "./public/js/dist")
+  .minify("./public/js/dist/filterUiController.js");
 /**
  * Copy and version select2
  */
