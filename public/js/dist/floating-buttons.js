@@ -156,7 +156,6 @@ export default class FloatingButtons {
             window.addEventListener('scroll', () => {
                 // on scroll we only need to check the mode; throttle via rAF
                 if (!this._ticking) {
-                    console.log('ticking', this._ticking);
                     this._ticking = true;
                     window.requestAnimationFrame(() => {
                         this.updatePositionMode();
@@ -189,8 +188,6 @@ export default class FloatingButtons {
 
     updatePositionMode() {
         if (!this.advancedSearchPanel || !this.floatingButtonContainer) return;
-
-        console.log('update');
 
         // always refresh natural height (don't rely on stale stored value)
         this.advancedSearchPanelHeight = this._getNaturalPanelHeight();
@@ -245,10 +242,8 @@ export default class FloatingButtons {
             // Only update mode if it changed
             if (newMode !== this._currentMode) {
                 if (newMode === PositionMode.FIXED) {
-                    console.log('setFixedMode');
                     this._setFixedMode();
                 } else {
-                    console.log('setScrollableMode');
                     this._setScrollableMode();
                 }
                 this._currentMode = newMode;
@@ -271,12 +266,6 @@ export default class FloatingButtons {
     // Move the floating container inside the panel and set class for absolute positioning
     _setScrollableMode() {
         if (!this.floatingButtonContainer || !this.advancedSearchPanel) return;
-
-        // // if already scrollable, nothing to do
-        // if (this.floatingButtonContainer.classList.contains('floatingButtons-fab-scrollable-wrapper')) {
-        //     console.log('abort'); 
-        //     return;
-        // }
 
         // ensure panel can be a positioned ancestor
         const panelStyle = window.getComputedStyle(this.advancedSearchPanel);
@@ -317,7 +306,6 @@ export default class FloatingButtons {
             const centerX = panelRect.left + (panelRect.width / 2) + scrollLeft;
             this.floatingButtonContainer.style.left = `${centerX}px`;
             this.floatingButtonContainer.style.transform = 'translateX(-50%)';
-            console.log('panelRect', panelRect, 'scrollLeft', scrollLeft);
         }
 
         // restore panel position style if we changed it earlier
