@@ -641,14 +641,44 @@ dir="{{ Helper::determineLanguageDirection() }}">
                                 </a>
                             </li>
                         @endcan
-                        @can('view', \App\Models\PredefinedKit::class)
-                            <li id="kits-sidenav-option"{!! (request()->is('kits') ? ' class="active"' : '') !!}>
-                                <a href="{{ route('kits.index') }}">
+                       @if(auth()->user()->hasAccess('kits.view'))
+                            <li class="treeview{{ request()->is('maintenance*') ? ' active' : '' }}" id="maintenance-sidenav-option">
+                                <a href="#">
                                     <x-icon type="kits" class="fa-fw" />
-                                    <span>{{ trans('general.kits') }}</span>
+                                    <span>Maintenance Kits</span>
+                                    <x-icon type="angle-left" class="pull-right fa-fw"/>
                                 </a>
+
+                                <ul class="treeview-menu">
+
+                                    {{-- Scheduler --}}
+                                    <li class="{{ request()->is('maintenance/scheduler*') ? 'active' : '' }}" id="maintenance-sidenav-scheduler">
+                                        <a href="{{ route('maintenance.scheduler.index') }}">
+                                            <i class="fa-solid fa-calendar-days text-success fa-fw"></i>
+                                            Scheduler
+                                        </a>
+                                    </li>
+
+                                    {{-- Work Orders --}}
+                                    <li class="{{ request()->is('maintenance/workorders*') ? 'active' : '' }}" id="maintenance-sidenav-workorders">
+                                        <a href="{{ route('maintenance.workorders.index') }}">
+                                            <i class="fa-solid fa-clipboard-list text-primary fa-fw"></i>
+                                            Work Orders
+                                        </a>
+                                    </li>
+
+                                    {{-- Maintenance History --}}
+                                    <li class="{{ request()->is('maintenance/history*') ? 'active' : '' }}" id="maintenance-sidenav-history">
+                                        <a href="{{ route('maintenance.history.index') }}">
+                                            <i class="fa-solid fa-clock-rotate-left text-info fa-fw"></i>
+                                            Maintenance History
+                                        </a>
+                                    </li>
+                                </ul>
                             </li>
-                        @endcan
+                        @endif
+
+
 
                         @can('view', \App\Models\User::class)
                                 <li class="treeview{{ (request()->is('users*') ? ' active' : '') }}" id="users-sidenav-option">

@@ -29,6 +29,9 @@ class Kernel extends ConsoleKernel
         $schedule->command('backup:clean')->daily();
         $schedule->command('auth:clear-resets')->everyFifteenMinutes();
         $schedule->command('saml:clear_expired_nonces')->weekly();
+        
+        // Maintenance CMMS - Check schedules and create work orders for overdue items
+        $schedule->command('maintenance:check-schedules')->dailyAt('06:00');
     }
 
     /**

@@ -27,6 +27,9 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\StatuslabelsController;
 use App\Http\Controllers\SuppliersController;
 use App\Http\Controllers\ViewAssetsController;
+use App\Http\Controllers\KitHistoryController;
+Use App\Http\Controllers\KitSchedulerController;
+use App\Http\Controllers\KitWorkOrderController;
 use App\Livewire\Importer;
 use App\Models\ReportTemplate;
 use Illuminate\Support\Facades\Route;
@@ -458,6 +461,34 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('notes', [NotesController::class, 'store'])->name('notes.store');
 });
 
+
+// Route::prefix('maintenance-kits')->middleware(['auth'])->group(function () {
+//     // 顶级列表页
+//     Route::get('/', [App\Http\Controllers\MaintenanceKitController::class, 'index'])
+//         ->name('maintenance-kits.index');
+//
+//     // 可扩展：调度、工单、历史等页面
+//     // Route::get('scheduler', [App\Http\Controllers\KitSchedulerController::class, 'index'])
+//     //     ->name('maintenance-kits.scheduler.index');
+//     // Route::get('workorders', [App\Http\Controllers\KitWorkOrderController::class, 'index'])
+//     //     ->name('maintenance-kits.workorders.index');
+//     // Route::get('history', [App\Http\Controllers\KitHistoryController::class, 'index'])
+//     //     ->name('maintenance-kits.history.index');
+//
+//     // maintenance-kits/{kit} 详细操作页（隐式模型绑定）
+//     Route::group(['prefix' => '{maintenance_kit}'], function () {
+//         Route::get('/', [App\Http\Controllers\MaintenanceKitController::class, 'show'])
+//             ->name('maintenance-kits.show');
+//
+//         // 可扩展：licenses、models、consumables、accessories 等子路由
+//         // Route::put('licenses', [App\Http\Controllers\MaintenanceKitController::class, 'storeLicense'])
+//         //     ->name('maintenance-kits.licenses.store');
+//         // Route::put('licenses/{license_id}', [App\Http\Controllers\MaintenanceKitController::class, 'updateLicense'])
+//         //     ->name('maintenance-kits.licenses.update');
+//     });
+// });
+
+
 Route::group(['prefix' => 'reports', 'middleware' => ['auth']], function () {
 
     Route::get('audit', [ReportsController::class, 'audit'])
@@ -754,3 +785,39 @@ Route::middleware(['auth'])->get(
     ->breadcrumbs(fn (Trail $trail) =>
     $trail->push('Home', route('home'))
     );
+
+/*
+ * CMMS Routes - Maintenance Kits System
+ */
+Route::group(['prefix' => 'maintenance', 'middleware' => ['auth']], function () {
+    // Scheduler Routes
+    Route::get('scheduler', [App\Http\Controllers\Kits\SchedulerController::class, 'index'])->name('maintenance.scheduler.index');
+    Route::get('scheduler/create', [App\Http\Controllers\Kits\SchedulerController::class, 'create'])->name('maintenance.scheduler.create');
+    Route::post('scheduler', [App\Http\Controllers\Kits\SchedulerController::class, 'store'])->name('maintenance.scheduler.store');
+    Route::get('scheduler/{schedule}', [App\Http\Controllers\Kits\SchedulerController::class, 'show'])->name('maintenance.scheduler.show');
+    Route::get('scheduler/{schedule}/edit', [App\Http\Controllers\Kits\SchedulerController::class, 'edit'])->name('maintenance.scheduler.edit');
+    Route::put('scheduler/{schedule}', [App\Http\Controllers\Kits\SchedulerController::class, 'update'])->name('maintenance.scheduler.update');
+    Route::delete('scheduler/{schedule}', [App\Http\Controllers\Kits\SchedulerController::class, 'destroy'])->name('maintenance.scheduler.destroy');
+    Route::get('scheduler-overdue', [App\Http\Controllers\Kits\SchedulerController::class, 'overdue'])->name('maintenance.scheduler.overdue');
+    Route::get('scheduler-upcoming', [App\Http\Controllers\Kits\SchedulerController::class, 'upcoming'])->name('maintenance.scheduler.upcoming');
+    
+    // Work Orders Routes
+    Route::get('workorders', [App\Http\Controllers\Kits\WorkOrderController::class, 'index'])->name('maintenance.workorders.index');
+    Route::get('workorders/create', [App\Http\Controllers\Kits\WorkOrderController::class, 'create'])->name('maintenance.workorders.create');
+    Route::post('workorders', [App\Http\Controllers\Kits\WorkOrderController::class, 'store'])->name('maintenance.workorders.store');
+    Route::get('workorders/{workorder}', [App\Http\Controllers\Kits\WorkOrderController::class, 'show'])->name('maintenance.workorders.show');
+    Route::get('workorders/{workorder}/edit', [App\Http\Controllers\Kits\WorkOrderController::class, 'edit'])->name('maintenance.workorders.edit');
+    Route::put('workorders/{workorder}', [App\Http\Controllers\Kits\WorkOrderController::class, 'update'])->name('maintenance.workorders.update');
+    Route::delete('workorders/{workorder}', [App\Http\Controllers\Kits\WorkOrderController::class, 'destroy'])->name('maintenance.workorders.destroy');
+    Route::post('workorders/{workorder}/complete', [App\Http\Controllers\Kits\WorkOrderController::class, 'complete'])->name('maintenance.workorders.complete');
+    Route::post('workorders/{workorder}/update-status', [App\Http\Controllers\Kits\WorkOrderController::class, 'updateStatus'])->name('maintenance.workorders.updateStatus');
+    
+    // Maintenance History Routes
+    Route::get('history', [App\Http\Controllers\Kits\HistoryController::class, 'index'])->name('maintenance.history.index');
+    Route::get('history/{history}', [App\Http\Controllers\Kits\HistoryController::class, 'show'])->name('maintenance.history.show');
+    Route::get('history/asset/{asset}', [App\Http\Controllers\Kits\HistoryController::class, 'byAsset'])->name('maintenance.history.by-asset');
+    Route::get('history-export', [App\Http\Controllers\Kits\HistoryController::class, 'export'])->name('maintenance.history.export');
+    Route::get('history-statistics', [App\Http\Controllers\Kits\HistoryController::class, 'statistics'])->name('maintenance.history.statistics');
+});
+
+// Route::resource('maintenance-kits', App\Http\Controllers\MaintenanceKitController::class);

@@ -10,6 +10,10 @@ services:
     image: snipe/snipe-it:${APP_VERSION:-latest}
     restart: unless-stopped
     volumes:
+      - ./app:/var/www/html/app
+      - ./resources:/var/www/html/resources
+      - ./routes:/var/www/html/routes
+      - ./database:/var/www/html/database
       - storage:/var/lib/snipeit
     ports:
       - "${APP_PORT:-8080}:80"
