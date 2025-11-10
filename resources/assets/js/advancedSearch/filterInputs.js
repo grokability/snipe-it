@@ -352,7 +352,6 @@ class DateFilterInput extends FilterInput {
 
     clear() {
         const r = this.getValue();
-        console.log("r", r);
         if (r.startDate !== undefined || jQuery.isEmptyObject(r) === false) {
             this.startDatepicker.datepicker('clearDates');
             this.startDate = undefined;

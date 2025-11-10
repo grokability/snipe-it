@@ -346,8 +346,8 @@ When .hide is applied, the filter section is hidden.
 
 /* Select2 specific styling */
 .select2-container {
-    width: auto;
-    max-width: width;
+    min-width: 0;
+    width: 100%;
     box-sizing: border-box;
 }
 
