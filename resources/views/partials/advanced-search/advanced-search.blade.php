@@ -52,6 +52,7 @@
 
 </div>
 
+@include ('partials.advanced-search.advanced-search-translations')
 @include('partials.confetti-js', ['autostart' => false])
 
 <script type="module">

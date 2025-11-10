@@ -6,6 +6,7 @@ class FilterUIController {
         this.apiService = container.resolve("apiService");
         this.collector = container.resolve("filterFormManager");
         this.collector.collectFilterInputs();
+        this.translations = container.resolve("advancedSearchTranslations");
     }
 
     refresh() {
@@ -45,7 +46,7 @@ class FilterUIController {
             console.error("Failed to apply predefined filter:", err);
             Livewire.dispatch('showNotification', {
                 type: 'error',
-                message: '{{ trans("general.failed_to_apply_predefined_filter") }}'
+                message: this.translations.general_failed_to_apply_predefined_filter
             });
         }
     }
@@ -56,8 +57,8 @@ class FilterUIController {
         if (!filters || filters.length === 0) {
             Livewire.dispatch('showNotification', {
                 type: "error",
-                title: "{{ trans('general.error') }}",
-                message: "{{ trans('general.can_not_save_empty_filter') }}"
+                title: this.translations.error,
+                message: this.translations.general_can_not_save_empty_filter
             });
             return;
         }
@@ -80,8 +81,8 @@ class FilterUIController {
         if (!filters || filters.length === 0) {
             Livewire.dispatch('showNotification', {
                 type: "error",
-                title: "{{ trans('general.error') }}",
-                message: "{{ trans('general.can_not_update_empty_filter') }}"
+                title: this.translations.error,
+                message: this.translations.general_can_not_update_empty_filter
             });
             return;
         }
