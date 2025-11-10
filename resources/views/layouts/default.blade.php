@@ -674,6 +674,14 @@ dir="{{ Helper::determineLanguageDirection() }}">
                                             Maintenance History
                                         </a>
                                     </li>
+
+                                    {{-- Maintenance Activity Log --}}
+                                    <li class="{{ request()->is('maintenance/activity') ? 'active' : '' }}" id="maintenance-sidenav-activity">
+                                        <a href="{{ route('maintenance.activity') }}">
+                                            <i class="fa-solid fa-stream text-primary fa-fw"></i>
+                                            Activity Log
+                                        </a>
+                                    </li>
                                 </ul>
                             </li>
                         @endif

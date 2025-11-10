@@ -16,6 +16,9 @@
                             <i class="fas fa-plus"></i> Create Work Order
                         </a>
                     @endif
+                    <a href="{{ route('maintenance.workorders.deleted') }}" class="btn btn-sm btn-danger" title="View deleted work orders">
+                        <i class="fas fa-trash"></i> Deleted
+                    </a>
                 </div>
             </div>
 

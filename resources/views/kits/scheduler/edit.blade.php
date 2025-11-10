@@ -108,6 +108,18 @@
     </div>
 </div>
 
+<!-- Next Due Date -->
+<div class="form-group {{ $errors->has('next_due_date') ? ' has-error' : '' }}">
+    <label for="next_due_date" class="col-md-3 control-label">
+        Next Due Date <span class="text-danger">*</span>
+    </label>
+    <div class="col-md-7">
+        <input class="form-control" type="date" name="next_due_date" id="next_due_date" 
+               value="{{ old('next_due_date', $schedule->next_due_date ? $schedule->next_due_date->format('Y-m-d') : date('Y-m-d')) }}" required>
+        {!! $errors->first('next_due_date', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times"></i> :message</span>') !!}
+    </div>
+</div>
+
 <!-- Priority -->
 <div class="form-group {{ $errors->has('priority') ? ' has-error' : '' }}">
     <label for="priority" class="col-md-3 control-label">
@@ -122,6 +134,23 @@
             <option value="critical" {{ old('priority', $schedule->priority) == 'critical' ? 'selected' : '' }}>Critical</option>
         </select>
         {!! $errors->first('priority', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times"></i> :message</span>') !!}
+    </div>
+</div>
+
+<!-- Status -->
+<div class="form-group {{ $errors->has('status') ? ' has-error' : '' }}">
+    <label for="status" class="col-md-3 control-label">
+        Status <span class="text-danger">*</span>
+    </label>
+    <div class="col-md-7">
+        <select class="form-control" name="status" id="status" required>
+            <option value="">Select Status</option>
+            <option value="active" {{ old('status', $schedule->status ?? 'active') == 'active' ? 'selected' : '' }}>Active</option>
+            <option value="paused" {{ old('status', $schedule->status) == 'paused' ? 'selected' : '' }}>Paused</option>
+            <option value="completed" {{ old('status', $schedule->status) == 'completed' ? 'selected' : '' }}>Completed</option>
+            <option value="cancelled" {{ old('status', $schedule->status) == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+        </select>
+        {!! $errors->first('status', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times"></i> :message</span>') !!}
     </div>
 </div>
 

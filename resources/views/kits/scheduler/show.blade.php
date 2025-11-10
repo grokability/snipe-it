@@ -117,6 +117,11 @@
                     <div class="col-md-12">
                         <h4>Description</h4>
                         <p>{{ $schedule->description ?: 'No description provided.' }}</p>
+                        <p>
+                            <a href="{{ route('maintenance.scheduler.activity', $schedule) }}" class="btn btn-xs btn-info">
+                                <i class="fas fa-stream"></i> View Activity Log
+                            </a>
+                        </p>
                     </div>
                 </div>
 

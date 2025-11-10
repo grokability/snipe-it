@@ -45,6 +45,13 @@ class ReportsController extends Controller
                     ->where('target_type', '=', 'App\\Models\\'.ucwords($request->input('item_type')));
                 });
             });
+        } elseif ($request->filled('item_type') && !$request->filled('item_id')) {
+            // Filter by item_type only (for category filtering)
+            $itemType = $request->input('item_type');
+            $actionlogs = $actionlogs->where(function($query) use ($itemType) {
+                $query->where('item_type', '=', $itemType)
+                      ->orWhere('target_type', '=', $itemType);
+            });
         }
 
         if ($request->filled('action_type')) {
@@ -87,6 +94,74 @@ class ReportsController extends Controller
 
         $total = $actionlogs->count();
         // Make sure the offset and limit are actually integers and do not exceed system limits
+        $offset = ($request->input('offset') > $total) ? $total : app('api_offset_value');
+        $limit = app('api_limit_value');
+
+        $order = ($request->input('order') == 'asc') ? 'asc' : 'desc';
+
+        switch ($request->input('sort')) {
+            case 'created_by':
+                $actionlogs->OrderByCreatedBy($order);
+                break;
+            default:
+                $sort = in_array($request->input('sort'), $allowed_columns) ? e($request->input('sort')) : 'action_logs.created_at';
+                $actionlogs = $actionlogs->orderBy($sort, $order);
+                break;
+        }
+
+        $actionlogs = $actionlogs->skip($offset)->take($limit)->get();
+
+        return response()->json((new ActionlogsTransformer)->transformActionlogs($actionlogs, $total), 200, ['Content-Type' => 'application/json;charset=utf8'], JSON_UNESCAPED_UNICODE);
+    }
+
+    /**
+     * Returns Maintenance Activity Report JSON (Work Orders and Schedules only).
+     *
+     * @author [Tao]
+     * @since [v1.0]
+     */
+    public function maintenanceActivity(Request $request) : JsonResponse | array
+    {
+        $this->authorize('activity.view');
+
+        // Only show activity for WorkOrder and MaintenanceSchedule
+        $actionlogs = Actionlog::with('item', 'user', 'adminuser', 'target', 'location')
+            ->where(function($query) {
+                $query->where('item_type', '=', 'App\\Models\\WorkOrder')
+                      ->orWhere('item_type', '=', 'App\\Models\\MaintenanceSchedule')
+                      ->orWhere('target_type', '=', 'App\\Models\\WorkOrder')
+                      ->orWhere('target_type', '=', 'App\\Models\\MaintenanceSchedule');
+            });
+
+        if ($request->filled('search')) {
+            $actionlogs = $actionlogs->TextSearch(e($request->input('search')));
+        }
+
+        if ($request->filled('action_type')) {
+            $actionlogs = $actionlogs->where('action_type', '=', $request->input('action_type'));
+        }
+
+        if ($request->filled('created_by')) {
+            $actionlogs = $actionlogs->where('created_by', '=', $request->input('created_by'));
+        }
+
+        $allowed_columns = [
+            'id',
+            'created_at',
+            'target_id',
+            'created_by',
+            'accept_signature',
+            'action_type',
+            'note',
+            'remote_ip',
+            'user_agent',
+            'target_type',
+            'item_type',
+            'action_source',
+            'action_date',
+        ];
+
+        $total = $actionlogs->count();
         $offset = ($request->input('offset') > $total) ? $total : app('api_offset_value');
         $limit = app('api_limit_value');
 

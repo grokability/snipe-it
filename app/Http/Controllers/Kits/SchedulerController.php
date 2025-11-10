@@ -7,6 +7,8 @@ use App\Models\MaintenanceSchedule;
 use App\Models\Asset;
 use App\Models\PredefinedKit;
 use App\Models\User;
+use App\Models\Actionlog;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class SchedulerController extends Controller
@@ -102,7 +104,15 @@ class SchedulerController extends Controller
         $validated['next_due_date'] = $validated['start_date'];
         $validated['status'] = 'active';
 
-        $schedule = MaintenanceSchedule::create($validated);
+    $schedule = MaintenanceSchedule::create($validated);
+
+    // Log action: schedule created
+    $log = new Actionlog();
+    $log->item_type = MaintenanceSchedule::class;
+    $log->item_id = $schedule->id;
+    $log->created_by = Auth::id();
+    $log->note = 'Maintenance schedule created';
+    $log->logaction('created');
 
         return redirect()->route('maintenance.scheduler.index')
             ->with('success', 'Maintenance schedule created successfully.');
@@ -144,7 +154,26 @@ class SchedulerController extends Controller
             'notes' => 'nullable|string',
         ]);
 
+        $oldStatus = $schedule->status;
         $schedule->update($validated);
+
+    // Log action: schedule updated
+    $logUp = new Actionlog();
+    $logUp->item_type = MaintenanceSchedule::class;
+    $logUp->item_id = $schedule->id;
+    $logUp->created_by = Auth::id();
+    $statusPart = ($oldStatus !== $schedule->status) ? ' (status: '.$oldStatus.' -> '.$schedule->status.')' : '';
+    $logUp->note = 'Maintenance schedule updated'.$statusPart;
+    $logUp->logaction('updated');
+
+        if ($oldStatus !== $schedule->status) {
+            $logStatus = new Actionlog();
+            $logStatus->item_type = MaintenanceSchedule::class;
+            $logStatus->item_id = $schedule->id;
+            $logStatus->created_by = Auth::id();
+            $logStatus->note = 'Status changed from '.$oldStatus.' to '.$schedule->status;
+            $logStatus->logaction('status_changed');
+        }
 
         return redirect()->route('maintenance.scheduler.index')
             ->with('success', 'Maintenance schedule updated successfully.');
@@ -153,6 +182,14 @@ class SchedulerController extends Controller
     public function destroy(MaintenanceSchedule $schedule)
     {
         $schedule->delete();
+
+        // Log action: schedule deleted
+    $logDel = new Actionlog();
+    $logDel->item_type = MaintenanceSchedule::class;
+    $logDel->item_id = $schedule->id;
+    $logDel->created_by = Auth::id();
+        $logDel->note = 'Maintenance schedule deleted';
+        $logDel->logaction('deleted');
 
         return redirect()->route('maintenance.scheduler.index')
             ->with('success', 'Maintenance schedule deleted successfully.');
@@ -176,6 +213,16 @@ class SchedulerController extends Controller
             ->paginate(50);
 
         return view('kits.scheduler.upcoming', compact('schedules'));
+    }
+
+    public function activity(MaintenanceSchedule $schedule)
+    {
+        return view('kits.scheduler.activity', compact('schedule'));
+    }
+
+    public function allActivity()
+    {
+        return view('kits.scheduler.all-activity');
     }
 }
 

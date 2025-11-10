@@ -140,6 +140,11 @@
                     <div class="col-md-12">
                         <h4>Description</h4>
                         <p>{{ $workorder->description ?: 'No description provided.' }}</p>
+                        <p>
+                            <a href="{{ route('maintenance.workorders.activity', $workorder) }}" class="btn btn-xs btn-info">
+                                <i class="fas fa-stream"></i> View Activity Log
+                            </a>
+                        </p>
                     </div>
                 </div>
 

@@ -243,6 +243,18 @@
         </div>
     </div>
 
+    <!-- Actual Duration -->
+    <div class="form-group {{ $errors->has('actual_duration') ? ' has-error' : '' }}">
+        <label for="actual_duration" class="col-md-3 control-label">
+            Actual Duration (minutes)
+        </label>
+        <div class="col-md-7 col-sm-12">
+            <input type="number" name="actual_duration" id="actual_duration" class="form-control" 
+                   value="{{ old('actual_duration', $workorder->actual_duration) }}" min="1" step="1">
+            {!! $errors->first('actual_duration', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
+        </div>
+    </div>
+
     <!-- Actual Cost -->
     <div class="form-group {{ $errors->has('actual_cost') ? ' has-error' : '' }}">
         <label for="actual_cost" class="col-md-3 control-label">
@@ -252,6 +264,24 @@
             <input type="number" name="actual_cost" id="actual_cost" class="form-control" 
                    value="{{ old('actual_cost', $workorder->actual_cost) }}" min="0" step="0.01">
             {!! $errors->first('actual_cost', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
+        </div>
+    </div>
+
+    <!-- Completed By -->
+    <div class="form-group {{ $errors->has('completed_by') ? ' has-error' : '' }}">
+        <label for="completed_by" class="col-md-3 control-label">
+            Completed By
+        </label>
+        <div class="col-md-7 col-sm-12">
+            <select name="completed_by" id="completed_by" class="form-control select2">
+                <option value="">Select User</option>
+                @foreach($users as $user)
+                    <option value="{{ $user->id }}" {{ old('completed_by', $workorder->completed_by) == $user->id ? 'selected' : '' }}>
+                        {{ $user->getFullNameAttribute() }}
+                    </option>
+                @endforeach
+            </select>
+            {!! $errors->first('completed_by', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
         </div>
     </div>
 

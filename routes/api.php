@@ -1301,6 +1301,20 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
             )->name('api.activity.index');
         }); // end reports api routes
 
+        /**
+         * Maintenance Activity API routes
+         */
+        
+        Route::group(['prefix' => 'maintenance'], function () {
+
+            Route::get('activity',
+            [
+                Api\ReportsController::class, 
+                'maintenanceActivity'
+            ]
+            )->name('api.maintenance.activity.all');
+        }); // end maintenance api routes
+
 
 
     /**

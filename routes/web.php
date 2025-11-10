@@ -800,6 +800,7 @@ Route::group(['prefix' => 'maintenance', 'middleware' => ['auth']], function () 
     Route::delete('scheduler/{schedule}', [App\Http\Controllers\Kits\SchedulerController::class, 'destroy'])->name('maintenance.scheduler.destroy');
     Route::get('scheduler-overdue', [App\Http\Controllers\Kits\SchedulerController::class, 'overdue'])->name('maintenance.scheduler.overdue');
     Route::get('scheduler-upcoming', [App\Http\Controllers\Kits\SchedulerController::class, 'upcoming'])->name('maintenance.scheduler.upcoming');
+    Route::get('scheduler/{schedule}/activity', [App\Http\Controllers\Kits\SchedulerController::class, 'activity'])->name('maintenance.scheduler.activity');
     
     // Work Orders Routes
     Route::get('workorders', [App\Http\Controllers\Kits\WorkOrderController::class, 'index'])->name('maintenance.workorders.index');
@@ -811,6 +812,14 @@ Route::group(['prefix' => 'maintenance', 'middleware' => ['auth']], function () 
     Route::delete('workorders/{workorder}', [App\Http\Controllers\Kits\WorkOrderController::class, 'destroy'])->name('maintenance.workorders.destroy');
     Route::post('workorders/{workorder}/complete', [App\Http\Controllers\Kits\WorkOrderController::class, 'complete'])->name('maintenance.workorders.complete');
     Route::post('workorders/{workorder}/update-status', [App\Http\Controllers\Kits\WorkOrderController::class, 'updateStatus'])->name('maintenance.workorders.updateStatus');
+    Route::get('workorders-deleted', [App\Http\Controllers\Kits\WorkOrderController::class, 'deleted'])->name('maintenance.workorders.deleted');
+    Route::post('workorders/{id}/restore', [App\Http\Controllers\Kits\WorkOrderController::class, 'restore'])->name('maintenance.workorders.restore');
+    Route::get('workorders/{workorder}/activity', [App\Http\Controllers\Kits\WorkOrderController::class, 'activity'])->name('maintenance.workorders.activity');
+    
+    // Unified Maintenance Activity Route
+    Route::get('activity', function () {
+        return view('kits.maintenance-activity');
+    })->name('maintenance.activity');
     
     // Maintenance History Routes
     Route::get('history', [App\Http\Controllers\Kits\HistoryController::class, 'index'])->name('maintenance.history.index');

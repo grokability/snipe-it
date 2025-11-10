@@ -7,6 +7,7 @@ use App\Models\WorkOrder;
 use App\Models\MaintenanceSchedule;
 use App\Models\MaintenanceHistory;
 use App\Models\Asset;
+use App\Models\Actionlog;
 use App\Models\PredefinedKit;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -30,7 +31,7 @@ class WorkOrderController extends Controller
                 $query->where('status', $request->status);
             }
         }
-        
+
         // Other filters
         $query->when($request->priority, function ($q, $priority) {
                 return $q->where('priority', $priority);
@@ -62,7 +63,6 @@ class WorkOrderController extends Controller
         $users = User::select(['id', 'first_name', 'last_name'])->orderBy('first_name')->get();
         $schedules = MaintenanceSchedule::select(['id', 'title', 'asset_id'])->active()->get();
         $item = new WorkOrder(); // Required by layouts/edit-form
-
         return view('kits.workorders.create', compact('assets', 'kits', 'users', 'schedules', 'item'));
     }
 
@@ -89,6 +89,9 @@ class WorkOrderController extends Controller
 
         $workOrder = WorkOrder::create($validated);
 
+        // Log action: created
+        $this->logAction($workOrder, 'created', 'Work order created');
+
         return redirect()->route('maintenance.workorders.index')
             ->with('success', 'Work order created successfully. Work Order #: ' . $workOrder->work_order_number);
     }
@@ -114,6 +117,7 @@ class WorkOrderController extends Controller
 
     public function update(Request $request, WorkOrder $workorder)
     {
+        $originalStatus = $workorder->status;
         $validated = $request->validate([
             'asset_id' => 'required|exists:assets,id',
             'maintenance_schedule_id' => 'nullable|exists:maintenance_schedules,id',
@@ -141,8 +145,17 @@ class WorkOrderController extends Controller
 
         $workorder->update($validated);
 
+        // Log action: updated
+        $this->logAction($workorder, 'updated', 'Work order updated'.(isset($validated['status']) ? ' (status: '.$validated['status'].')' : ''));
+
+        // Status-specific logs
+        if ($originalStatus !== $workorder->status) {
+            $this->logAction($workorder, 'status_changed', 'Status changed from '.$originalStatus.' to '.$workorder->status);
+        }
+
         if ($validated['status'] === 'completed' && !$workorder->maintenanceHistory) {
             $this->createMaintenanceHistory($workorder, $validated['completed_by'] ?? null);
+            $this->logAction($workorder, 'completed', 'Work order marked completed');
             
             if ($workorder->maintenanceSchedule) {
                 $workorder->maintenanceSchedule->last_completed_date = now();
@@ -159,8 +172,27 @@ class WorkOrderController extends Controller
     {
         $workorder->delete();
 
+        $this->logAction($workorder, 'deleted', 'Work order soft-deleted');
+
         return redirect()->route('maintenance.workorders.index')
             ->with('success', 'Work order deleted successfully.');
+    }
+
+    public function deleted()
+    {
+        $workOrders = WorkOrder::onlyTrashed()->with(['asset','assignedUser'])->orderBy('deleted_at','desc')->paginate(50);
+        return view('kits.workorders.deleted', compact('workOrders'));
+    }
+
+    public function restore($id)
+    {
+        $workOrder = WorkOrder::withTrashed()->findOrFail($id);
+        if ($workOrder->trashed()) {
+            $workOrder->restore();
+            $this->logAction($workOrder, 'restored', 'Work order restored');
+            return redirect()->route('maintenance.workorders.deleted')->with('success','Work order restored successfully.');
+        }
+        return redirect()->route('maintenance.workorders.show',$workOrder)->with('info','Work order is not deleted.');
     }
 
     public function complete(Request $request, WorkOrder $workorder)
@@ -192,6 +224,8 @@ class WorkOrderController extends Controller
             $workorder->update(['actual_start' => now()]);
         }
 
+        $this->logAction($workorder, 'status_changed', 'Status changed to '.$validated['status']);
+
         return redirect()->route('maintenance.workorders.show', $workorder)
             ->with('success', $statusMessages[$validated['status']]);
     }
@@ -215,6 +249,26 @@ class WorkOrderController extends Controller
             'outcome' => 'success',
             'notes' => $workorder->notes,
         ]);
+    }
+
+    public function activity(WorkOrder $workorder)
+    {
+        return view('kits.workorders.activity', compact('workorder'));
+    }
+
+    public function allActivity()
+    {
+        return view('kits.workorders.all-activity');
+    }
+
+    private function logAction(WorkOrder $workorder, string $actionType, string $note): void
+    {
+        $log = new Actionlog();
+        $log->item_type = WorkOrder::class;
+        $log->item_id = $workorder->id;
+        $log->created_by = Auth::id();
+        $log->note = $note;
+        $log->logaction($actionType);
     }
 }
 
