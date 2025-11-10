@@ -72,6 +72,10 @@ Makes the advanced search filters section block-level and full width.
     max-width: 100%;
     margin: 0;
 }
+.advancedSearchPanel--with-buffer {
+    min-height: calc(100% + 70px);
+    padding-bottom: 70px; /* gives room for floating buttons */
+}
 
 /* 
 Scrollable filter panel body, with padding.
