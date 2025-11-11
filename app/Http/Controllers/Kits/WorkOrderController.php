@@ -50,10 +50,12 @@ class WorkOrderController extends Controller
 
         $pendingCount = WorkOrder::pending()->count();
         $inProgressCount = WorkOrder::inProgress()->count();
+        $onHoldCount = WorkOrder::where('status', 'on_hold')->count();
         $overdueCount = WorkOrder::overdue()->count();
         $completedCount = WorkOrder::where('status', 'completed')->count();
+        $cancelledCount = WorkOrder::where('status', 'cancelled')->count();
 
-        return view('kits.workorders.index', compact('workOrders', 'pendingCount', 'inProgressCount', 'overdueCount', 'completedCount'));
+        return view('kits.workorders.index', compact('workOrders', 'pendingCount', 'inProgressCount', 'onHoldCount', 'overdueCount', 'completedCount', 'cancelledCount'));
     }
 
     public function create()

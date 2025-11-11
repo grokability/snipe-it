@@ -34,7 +34,8 @@ class CheckMaintenanceSchedules extends Command
         $overdueSchedules = MaintenanceSchedule::where('status', 'active')
             ->where('next_due_date', '<=', Carbon::today())
             ->whereDoesntHave('workOrders', function ($query) {
-                $query->whereIn('status', ['pending', 'in_progress']);
+                // Don't create new work order if there's already a pending, in_progress, or on_hold work order
+                $query->whereIn('status', ['pending', 'in_progress', 'on_hold']);
             })
             ->get();
 

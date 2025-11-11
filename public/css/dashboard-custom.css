@@ -1,0 +1,68 @@
+/* Custom Dashboard Styles for Maintenance Widgets */
+
+/* Work Order Status Badges */
+.dashboard .small-box {
+    transition: all 0.3s ease;
+}
+
+.dashboard .small-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* Alert Boxes */
+.box-danger .alert-danger,
+.box-warning .alert-warning {
+    border-left: 5px solid;
+    padding-left: 15px;
+}
+
+/* To-Do List Priority Colors */
+tr.danger {
+    background-color: #fef5f5 !important;
+}
+
+tr.warning {
+    background-color: #fefef5 !important;
+}
+
+/* Priority Labels */
+.label-danger {
+    background-color: #dd4b39;
+}
+
+.label-warning {
+    background-color: #f39c12;
+}
+
+.label-info {
+    background-color: #00c0ef;
+}
+
+/* Pulse animation for overdue items */
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(221, 75, 57, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(221, 75, 57, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(221, 75, 57, 0);
+    }
+}
+
+.bg-red .icon {
+    animation: pulse 2s infinite;
+}
+
+/* Responsive improvements */
+@media (max-width: 767px) {
+    .dashboard .small-box .inner h3 {
+        font-size: 24px;
+    }
+    
+    .dashboard .small-box .inner p {
+        font-size: 12px;
+    }
+}

@@ -24,6 +24,7 @@
 
             <div class="box-body">
                 <!-- Statistics Cards - Clickable Filters -->
+                <!-- First Row: Active States -->
                 <div class="row">
                     <div class="col-md-3">
                         <a href="{{ route('maintenance.workorders.index', ['status' => 'pending']) }}" 
@@ -54,6 +55,20 @@
                         </a>
                     </div>
                     <div class="col-md-3">
+                        <a href="{{ route('maintenance.workorders.index', ['status' => 'on_hold']) }}" 
+                           class="info-box-link" 
+                           style="display: block; color: inherit; text-decoration: none;">
+                            <div class="info-box {{ request('status') == 'on_hold' ? 'info-box-active' : '' }}" 
+                                 style="cursor: pointer; {{ request('status') == 'on_hold' ? 'box-shadow: 0 0 10px rgba(243, 156, 18, 0.5);' : '' }}">
+                                <span class="info-box-icon bg-orange"><i class="fas fa-pause-circle"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">On Hold</span>
+                                    <span class="info-box-number">{{ $onHoldCount }}</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-3">
                         <a href="{{ route('maintenance.workorders.index', ['status' => 'overdue']) }}" 
                            class="info-box-link" 
                            style="display: block; color: inherit; text-decoration: none;">
@@ -67,7 +82,11 @@
                             </div>
                         </a>
                     </div>
-                    <div class="col-md-3">
+                </div>
+
+                <!-- Second Row: Closed States -->
+                <div class="row">
+                    <div class="col-md-6">
                         <a href="{{ route('maintenance.workorders.index', ['status' => 'completed']) }}" 
                            class="info-box-link" 
                            style="display: block; color: inherit; text-decoration: none;">
@@ -77,6 +96,20 @@
                                 <div class="info-box-content">
                                     <span class="info-box-text">Completed</span>
                                     <span class="info-box-number">{{ $completedCount }}</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="{{ route('maintenance.workorders.index', ['status' => 'cancelled']) }}" 
+                           class="info-box-link" 
+                           style="display: block; color: inherit; text-decoration: none;">
+                            <div class="info-box {{ request('status') == 'cancelled' ? 'info-box-active' : '' }}" 
+                                 style="cursor: pointer; {{ request('status') == 'cancelled' ? 'box-shadow: 0 0 10px rgba(119, 119, 119, 0.5);' : '' }}">
+                                <span class="info-box-icon bg-gray"><i class="fas fa-ban"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Cancelled</span>
+                                    <span class="info-box-number">{{ $cancelledCount }}</span>
                                 </div>
                             </div>
                         </a>
@@ -94,6 +127,7 @@
                                     <option value="in_progress" {{ request('status') == 'in_progress' ? 'selected' : '' }}>In Progress</option>
                                     <option value="on_hold" {{ request('status') == 'on_hold' ? 'selected' : '' }}>On Hold</option>
                                     <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Completed</option>
+                                    <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
                                 </select>
                             </div>
                             <div class="form-group">
@@ -151,7 +185,12 @@
                                         </span>
                                     </td>
                                     <td>
-                                        <span class="label label-{{ $workOrder->status == 'completed' ? 'success' : ($workOrder->status == 'in_progress' ? 'primary' : 'warning') }}">
+                                        <span class="label label-{{ 
+                                            $workOrder->status == 'completed' ? 'success' : 
+                                            ($workOrder->status == 'in_progress' ? 'primary' : 
+                                            ($workOrder->status == 'on_hold' ? 'warning' : 
+                                            ($workOrder->status == 'cancelled' ? 'default' : 'info'))) 
+                                        }}">
                                             {{ ucfirst(str_replace('_', ' ', $workOrder->status)) }}
                                         </span>
                                     </td>

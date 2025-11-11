@@ -1313,9 +1313,14 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
                 'maintenanceActivity'
             ]
             )->name('api.maintenance.activity.all');
+
+            Route::get('dashboard/todo',
+            [
+                Api\Kits\MaintenanceDashboardController::class,
+                'getTodoItems'
+            ]
+            )->name('api.maintenance.dashboard.todo');
         }); // end maintenance api routes
-
-
 
     /**
          * Version API routes

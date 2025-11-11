@@ -830,3 +830,13 @@ Route::group(['prefix' => 'maintenance', 'middleware' => ['auth']], function () 
 });
 
 // Route::resource('maintenance-kits', App\Http\Controllers\MaintenanceKitController::class);
+
+/**
+ * Dashboard Widget Configuration Routes (Web-based API)
+ */
+Route::group(['prefix' => 'api/v1/dashboard/widgets', 'middleware' => ['web', 'auth']], function () {
+    Route::get('/', [App\Http\Controllers\Api\DashboardWidgetController::class, 'index'])->name('api.dashboard.widgets.index');
+    Route::post('/', [App\Http\Controllers\Api\DashboardWidgetController::class, 'update'])->name('api.dashboard.widgets.update');
+    Route::post('/reset', [App\Http\Controllers\Api\DashboardWidgetController::class, 'reset'])->name('api.dashboard.widgets.reset');
+    Route::post('/{widgetId}/toggle', [App\Http\Controllers\Api\DashboardWidgetController::class, 'toggleVisibility'])->name('api.dashboard.widgets.toggle');
+});

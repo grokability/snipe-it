@@ -1,0 +1,86 @@
+/* Dashboard Customization Styles */
+
+/* Edit Mode - Widget Container Styling */
+.dashboard-customization-mode .widget-container {
+    border: 2px dashed #3c8dbc;
+    padding: 5px;
+    margin: 5px;
+    cursor: move;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.dashboard-customization-mode .widget-container:hover {
+    border-color: #00a65a;
+    box-shadow: 0 0 10px rgba(0, 166, 90, 0.3);
+}
+
+.dashboard-customization-mode .widget-container.ui-sortable-helper {
+    opacity: 0.8;
+    transform: scale(1.02);
+}
+
+.dashboard-customization-mode .widget-container.ui-sortable-placeholder {
+    border: 2px dashed #dd4b39;
+    background-color: #f9f9f9;
+    visibility: visible !important;
+}
+
+/* Drag Handle - Only visible in edit mode */
+.widget-handle {
+    display: none !important;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    cursor: move;
+    background: #3c8dbc;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 3px;
+    font-size: 12px;
+    z-index: 100;
+    font-weight: bold;
+}
+
+.dashboard-customization-mode .widget-handle {
+    display: block !important;
+}
+
+.widget-handle:hover {
+    background: #00a65a;
+}
+
+/* Hidden Widget Styling */
+.widget-hidden {
+    display: none;
+}
+
+/* Visibility Modal Styling */
+.settings-modal .widget-checkbox {
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.settings-modal .widget-checkbox:hover {
+    background-color: #f5f5f5;
+}
+
+.settings-modal .widget-checkbox label {
+    cursor: pointer;
+    font-weight: normal;
+    margin-bottom: 0;
+}
+
+.settings-modal .widget-checkbox label i {
+    margin-right: 5px;
+}
+
+/* Disabled elements in edit mode */
+.disabled-in-edit {
+    opacity: 0.5;
+    cursor: not-allowed !important;
+}
+
