@@ -812,6 +812,8 @@ Route::group(['prefix' => 'maintenance', 'middleware' => ['auth']], function () 
     Route::delete('workorders/{workorder}', [App\Http\Controllers\Kits\WorkOrderController::class, 'destroy'])->name('maintenance.workorders.destroy');
     Route::post('workorders/{workorder}/complete', [App\Http\Controllers\Kits\WorkOrderController::class, 'complete'])->name('maintenance.workorders.complete');
     Route::post('workorders/{workorder}/update-status', [App\Http\Controllers\Kits\WorkOrderController::class, 'updateStatus'])->name('maintenance.workorders.updateStatus');
+    Route::get('workorders/components/search', [App\Http\Controllers\Kits\WorkOrderController::class, 'getComponents'])->name('maintenance.workorders.getComponents');
+    Route::post('workorders/{workorder}/checkout-component', [App\Http\Controllers\Kits\WorkOrderController::class, 'checkoutComponent'])->name('maintenance.workorders.checkoutComponent');
     Route::get('workorders-deleted', [App\Http\Controllers\Kits\WorkOrderController::class, 'deleted'])->name('maintenance.workorders.deleted');
     Route::post('workorders/{id}/restore', [App\Http\Controllers\Kits\WorkOrderController::class, 'restore'])->name('maintenance.workorders.restore');
     Route::get('workorders/{workorder}/activity', [App\Http\Controllers\Kits\WorkOrderController::class, 'activity'])->name('maintenance.workorders.activity');

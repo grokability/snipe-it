@@ -369,18 +369,19 @@
                         </div>
                     @endif
                 @endcan
-
-                @can('delete', $workorder)
-                    <form method="POST" action="{{ route('maintenance.workorders.destroy', $workorder) }}" style="display: inline-block;" onsubmit="return confirm('Are you sure you want to delete this work order?');">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger">
-                            <i class="fas fa-trash"></i> Delete
-                        </button>
-                    </form>
-                @endcan
             </div>
             </form>
+
+            <!-- Delete Form - Outside main form -->
+            @can('delete', $workorder)
+                <form method="POST" action="{{ route('maintenance.workorders.destroy', $workorder) }}" style="display: inline-block; margin-left: 10px;" onsubmit="return confirm('Are you sure you want to delete this work order?');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </form>
+            @endcan
 
             <!-- Hidden forms for status changes -->
             <form id="status-pending-form" method="POST" action="{{ route('maintenance.workorders.updateStatus', $workorder) }}" style="display: none;">
@@ -428,7 +429,101 @@
     </div>
 </div>
 
+<!-- Component Checkout Modal -->
+<div class="modal fade" id="componentModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"><i class="fas fa-tools"></i> Component Usage</h4>
+            </div>
+            <div class="modal-body">
+                <p><strong>Did you use any components/spare parts for this work order?</strong></p>
+                
+                <div class="form-group">
+                    <label for="component_id">Select Component:</label>
+                    <select id="component_id" class="form-control">
+                        <option value="">Select a component (optional)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="component_qty">Quantity:</label>
+                    <input type="number" id="component_qty" class="form-control" min="1" value="1">
+                </div>
+                
+                <div id="componentError" class="alert alert-danger" style="display: none;">
+                    <i class="fas fa-exclamation-circle"></i> <span id="componentErrorMsg"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button type="button" class="btn btn-primary" id="completeWithoutComponent">
+                    <i class="fas fa-check"></i> Complete Without Component
+                </button>
+                <button type="button" class="btn btn-success" id="completeWithComponent">
+                    <i class="fas fa-check-double"></i> Checkout & Complete
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
+// Add quick date buttons for datetime-local inputs
+document.addEventListener('DOMContentLoaded', function() {
+    // Get all datetime-local inputs
+    var dateTimeInputs = document.querySelectorAll('input[type="datetime-local"]');
+    
+    dateTimeInputs.forEach(function(input) {
+        // Create a wrapper div for buttons
+        var wrapper = document.createElement('div');
+        wrapper.style.marginTop = '5px';
+        
+        // Create "Now" button
+        var nowBtn = document.createElement('button');
+        nowBtn.type = 'button';
+        nowBtn.className = 'btn btn-xs btn-default';
+        nowBtn.innerHTML = '<i class="fas fa-clock"></i> Now';
+        nowBtn.style.marginRight = '5px';
+        nowBtn.onclick = function() {
+            var now = new Date();
+            var year = now.getFullYear();
+            var month = String(now.getMonth() + 1).padStart(2, '0');
+            var day = String(now.getDate()).padStart(2, '0');
+            var hours = String(now.getHours()).padStart(2, '0');
+            var minutes = String(now.getMinutes()).padStart(2, '0');
+            input.value = year + '-' + month + '-' + day + 'T' + hours + ':' + minutes;
+            input.blur(); // Close the calendar
+        };
+        
+        // Create "Clear" button
+        var clearBtn = document.createElement('button');
+        clearBtn.type = 'button';
+        clearBtn.className = 'btn btn-xs btn-default';
+        clearBtn.innerHTML = '<i class="fas fa-times"></i> Clear';
+        clearBtn.onclick = function() {
+            input.value = '';
+            input.blur(); // Close the calendar
+        };
+        
+        wrapper.appendChild(nowBtn);
+        wrapper.appendChild(clearBtn);
+        
+        // Insert after the input
+        input.parentNode.insertBefore(wrapper, input.nextSibling);
+        
+        // Auto-close calendar when a value is selected
+        input.addEventListener('change', function() {
+            setTimeout(function() {
+                input.blur();
+            }, 100);
+        });
+    });
+});
+
 function saveChanges() {
     document.getElementById('workOrderForm').submit();
 }
@@ -486,15 +581,140 @@ function checkAndComplete() {
         return false;
     }
     
-    // All required fields are filled, proceed to complete
-    if (confirm('Are you sure you want to mark this work order as completed? This will create a maintenance history record.')) {
-        // Set status to completed and submit
-        var form = document.getElementById('workOrderForm');
-        var statusInput = form.querySelector('input[name="status"]');
-        statusInput.value = 'completed';
-        form.submit();
-    }
+    // All required fields are filled, show component modal
+    $('#componentModal').modal('show');
+}
+
+function completeWorkOrder() {
+    var form = document.getElementById('workOrderForm');
+    var statusInput = form.querySelector('input[name="status"]');
+    statusInput.value = 'completed';
+    form.submit();
 }
 </script>
 
 @endsection
+
+@section('moar_scripts')
+<script>
+$(document).ready(function() {
+    // Initialize Select2 for component dropdown
+    $('#component_id').select2({
+        placeholder: 'Type to search components...',
+        allowClear: true,
+        dropdownParent: $('#componentModal'),
+        minimumInputLength: 0,
+        ajax: {
+            url: '{{ route('maintenance.workorders.getComponents') }}',
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+                return {
+                    search: params.term,
+                    limit: 50
+                };
+            },
+            processResults: function (data) {
+                console.log('Component data:', data);
+                return data;
+            },
+            cache: true
+        }
+    });
+
+    // Handle "Complete Without Component" button
+    $('#completeWithoutComponent').click(function() {
+        $('#componentModal').modal('hide');
+        completeWorkOrder();
+    });
+
+    // Handle "Checkout & Complete" button
+    $('#completeWithComponent').click(function() {
+        var componentId = $('#component_id').val();
+        var qty = $('#component_qty').val();
+        
+        // Hide previous error
+        $('#componentError').hide();
+        
+        // Validation
+        if (!componentId) {
+            $('#componentErrorMsg').text('Please select a component or click "Complete Without Component"');
+            $('#componentError').show();
+            return;
+        }
+        
+        if (!qty || qty < 1) {
+            $('#componentErrorMsg').text('Please enter a valid quantity (minimum 1)');
+            $('#componentError').show();
+            return;
+        }
+
+        // Get selected component data
+        var selectedData = $('#component_id').select2('data')[0];
+        if (selectedData && qty > selectedData.qty_available) {
+            $('#componentErrorMsg').text('Insufficient quantity available. Only ' + selectedData.qty_available + ' available.');
+            $('#componentError').show();
+            return;
+        }
+
+        var $btn = $(this);
+        var originalText = $btn.html();
+        $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Processing...');
+        $('#completeWithoutComponent').prop('disabled', true);
+
+        // Make AJAX call to checkout component via our custom route
+        $.ajax({
+            url: '{{ route('maintenance.workorders.checkoutComponent', $workorder) }}',
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            data: JSON.stringify({
+                component_id: componentId,
+                checkout_qty: parseInt(qty)
+            }),
+            success: function(response) {
+                if (response.status === 'success') {
+                    // Checkout successful, now complete the work order
+                    $('#componentModal').modal('hide');
+                    completeWorkOrder();
+                } else {
+                    // Checkout failed
+                    $btn.prop('disabled', false).html(originalText);
+                    $('#completeWithoutComponent').prop('disabled', false);
+                    $('#componentErrorMsg').text('Checkout failed: ' + (response.message || 'Unknown error'));
+                    $('#componentError').show();
+                }
+            },
+            error: function(xhr) {
+                $btn.prop('disabled', false).html(originalText);
+                $('#completeWithoutComponent').prop('disabled', false);
+                
+                var errorMsg = 'Checkout failed';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMsg += ': ' + xhr.responseJSON.message;
+                } else {
+                    errorMsg += ': ' + xhr.statusText;
+                }
+                
+                console.error('Checkout error:', xhr);
+                $('#componentErrorMsg').text(errorMsg);
+                $('#componentError').show();
+            }
+        });
+    });
+
+    // Reset modal when closed
+    $('#componentModal').on('hidden.bs.modal', function () {
+        $('#component_id').val(null).trigger('change');
+        $('#component_qty').val(1);
+        $('#componentError').hide();
+        $('#completeWithComponent').prop('disabled', false).html('<i class="fas fa-check-double"></i> Checkout & Complete');
+        $('#completeWithoutComponent').prop('disabled', false);
+    });
+});
+</script>
+@endsection
+

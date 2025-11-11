@@ -100,7 +100,7 @@ class WorkOrderController extends Controller
 
     public function show(WorkOrder $workorder)
     {
-    $workorder->load(['asset', 'maintenanceSchedule', 'kit', 'assignedUser', 'createdByUser', 'completedByUser', 'maintenanceHistory']);
+        $workorder->load(['asset', 'maintenanceSchedule', 'kit', 'assignedUser', 'createdByUser', 'completedByUser', 'maintenanceHistory']);
         $users = User::select(['id', 'first_name', 'last_name'])->orderBy('first_name')->get();
         return view('kits.workorders.show', compact('workorder', 'users'));
     }
@@ -261,6 +261,86 @@ class WorkOrderController extends Controller
     public function allActivity()
     {
         return view('kits.workorders.all-activity');
+    }
+
+    public function getComponents(Request $request)
+    {
+        $search = $request->input('search', '');
+        $limit = $request->input('limit', 50);
+        
+        $query = \App\Models\Component::query();
+        
+        if ($search) {
+            $query->where('name', 'like', '%' . $search . '%');
+        }
+        
+        $components = $query->orderBy('name')
+            ->limit($limit)
+            ->get();
+        
+        return response()->json([
+            'results' => $components->map(function($component) {
+                $remaining = $component->numRemaining();
+                return [
+                    'id' => $component->id,
+                    'text' => $component->name . ' (Available: ' . $remaining . ')',
+                    'qty_available' => $remaining
+                ];
+            })
+        ]);
+    }
+
+    public function checkoutComponent(Request $request, WorkOrder $workorder)
+    {
+        $validated = $request->validate([
+            'component_id' => 'required|exists:components,id',
+            'checkout_qty' => 'required|integer|min:1',
+        ]);
+
+        try {
+            $component = \App\Models\Component::findOrFail($validated['component_id']);
+            
+            // Check if sufficient quantity available (remaining, not total)
+            $remaining = $component->numRemaining();
+            if ($remaining < $validated['checkout_qty']) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Insufficient quantity available. Only ' . $remaining . ' remaining.'
+                ], 400);
+            }
+
+            // Create component checkout via Snipe-IT's proper checkout method
+            $target = Asset::find($workorder->asset_id);
+            
+            // Use Snipe-IT's checkout logic - attach to asset
+            if ($target) {
+                $component->assets()->attach($target->id, [
+                    'assigned_qty' => $validated['checkout_qty'],
+                    'created_at' => now(),
+                ]);
+            }
+            
+            // Create component log entry
+            $log = new Actionlog();
+            $log->item_type = \App\Models\Component::class;
+            $log->item_id = $component->id;
+            $log->created_by = Auth::id();
+            $log->target_type = Asset::class;
+            $log->target_id = $workorder->asset_id;
+            $log->note = 'Checked out ' . $validated['checkout_qty'] . ' for Work Order #' . $workorder->id;
+            $log->logaction('checkout');
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Component checked out successfully'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
     private function logAction(WorkOrder $workorder, string $actionType, string $note): void
