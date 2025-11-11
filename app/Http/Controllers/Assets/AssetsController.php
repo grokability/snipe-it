@@ -77,17 +77,6 @@ class AssetsController extends Controller
         // $predefined_filter_edit_modal_open = $request->input('predefinedFilterEditModalOpen');
         $predefined_filter_id = $request->input('predefinedFilterId');
 
-        // if ($predefined_filter_edit_modal_open === null) {
-        //     $predefined_filter_edit_modal_open = false;
-        // }
-
-        // if ($predefined_filter_edit_modal_open !== 'true' && $predefined_filter_edit_modal_open !== 'false' && $predefined_filter_edit_modal_open != null) {
-        //     throw new InvalidArgumentException("You provided an invalid parameter for predefinedFilterModalOpen (must be true or false).");
-        // } else {
-        //     // Convert string to boolean
-        //     $predefined_filter_edit_modal_open = $predefined_filter_edit_modal_open == 'true' ? true : false;
-        // }
-
         // Validate if it's a valid integer
         if (filter_var($predefined_filter_id, FILTER_VALIDATE_INT) === false && $predefined_filter_id != null) {
             throw new InvalidArgumentException('You provided an invalid parameter for predefinedFilterId (must be an integer).');
