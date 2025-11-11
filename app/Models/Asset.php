@@ -295,8 +295,8 @@ class Asset extends Depreciable
 
     protected function warrantyExpires(): Attribute
     {
-        return Attribute:: make(
-            get: fn(mixed $value, array $attributes) => ($attributes['warranty_months'] && $attributes['purchase_date']) ? Carbon::parse($attributes['purchase_date'])->addMonths((int)$attributes['warranty_months']) : null,
+        return Attribute::make(
+            get: fn(mixed $value, array $attributes) => ($attributes['warranty_months'] && $attributes['purchase_date']) ? Carbon::parse($attributes['purchase_date'])->addMonths((int) $attributes['warranty_months']) : null,
         );
     }
 
@@ -415,7 +415,7 @@ class Asset extends Depreciable
 
     protected function expectedCheckinFormattedDate(): Attribute
     {
-        return Attribute:: make(
+        return Attribute::make(
             get: fn(mixed $value, array $attributes) => array_key_exists('expected_checkin', $attributes) ? Helper::getFormattedDateObject($attributes['expected_checkin'], 'date', false) : null,
         );
     }
@@ -662,6 +662,23 @@ class Asset extends Depreciable
     {
         return $this->assignedType() === self::ASSET;
     }
+
+    public function assignedToLocation()
+    {
+        return $this->belongsTo(Location::class, 'assigned_to')->whereNotNull('assigned_to');
+    }
+
+    public function assignedToUser()
+    {
+        return $this->belongsTo(User::class, 'assigned_to')->whereNotNull('assigned_to');
+    }
+
+    // Optional — only if an asset can be assigned to another asset
+    public function assignedToAsset()
+    {
+        return $this->belongsTo(Asset::class, 'assigned_to')->whereNotNull('assigned_to');
+    }
+
 
     /**
      * Get the target this asset is checked out to

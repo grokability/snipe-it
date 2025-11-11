@@ -14,21 +14,17 @@ use function Laravel\Prompts\note;
 
 class FilterService
 {
-    
+
     public function searchByFilter($query, $filters)
     {
         $q = $query->where(function (Builder $query) use ($filters) {
 
-            // 1) ZUERST strikt die Datumsfelder anwenden (keine LIKEs!)
-            //    - reine DATE-Spalten
             $this->applyDateRangeFilter($query, 'assets.purchase_date', $filters, /* isDateTime */ false);
             $this->applyDateRangeFilter($query, 'assets.asset_eol_date', $filters, /* isDateTime */ false);
 
-            //    - DATETIME-Spalten (volle Tagesgrenzen)
             $this->applyDateRangeFilter($query, 'assets.created_at', $filters, /* isDateTime */ true);
             $this->applyDateRangeFilter($query, 'assets.updated_at', $filters, /* isDateTime */ true);
 
-            // Diese Felder nicht noch einmal als Textfilter behandeln
             $skipFields = [
                 'purchase_date',
                 'asset_eol_date',
@@ -36,7 +32,6 @@ class FilterService
                 'updated_at',
             ];
 
-            // 2) Restliche Filter (Text, Relationen, etc.)
             foreach ($filters as $filterItem) {
                 if (!isset($filterItem['field'], $filterItem['operator'], $filterItem['logic'], $filterItem['value'])) {
                     continue;
@@ -56,19 +51,19 @@ class FilterService
     }
 
     /**
-    * Apply a single filter object into the query builder, using operator & logic.
-    *
-    * @param Builder $q
-    * @param array $filterObj  keys: field, value, operator, logic
-    * @return void
-    */
+     * Apply a single filter object into the query builder, using operator & logic.
+     *
+     * @param Builder $q
+     * @param array $filterObj  keys: field, value, operator, logic
+     * @return void
+     */
 
     protected function applySingleFilter(Builder &$q, array $filterObj)
     {
         $fieldname = $filterObj['field'];
-        $value     = $filterObj['value'];
-        $operator  = strtolower($filterObj['operator'] ?? 'equals'); // "equals" or "contains"
-        $logic     = strtoupper($filterObj['logic'] ?? 'AND');       // "AND", "OR", "NOT"
+        $value = $filterObj['value'];
+        $operator = strtolower($filterObj['operator'] ?? 'equals'); // "equals" or "contains"
+        $logic = strtoupper($filterObj['logic'] ?? 'AND');       // "AND", "OR", "NOT"
 
         $callback = function (Builder $inner) use ($fieldname, $value, $operator, $filterObj) {
             // === 1. Custom Field Support ===
@@ -85,13 +80,13 @@ class FilterService
 
             // === 2. Field Mapping for Relational Fields ===
             $simpleFields = [
-                'asset_tag'     => 'assets.asset_tag',
-                'name'          => 'assets.name',
-                'serial'        => 'assets.serial',
+                'asset_tag' => 'assets.asset_tag',
+                'name' => 'assets.name',
+                'serial' => 'assets.serial',
                 'purchase_date' => 'assets.purchase_date',
                 'purchase_cost' => 'assets.purchase_cost',
-                'notes'         => 'assets.notes',
-                'order_number'  => 'assets.order_number',
+                'notes' => 'assets.notes',
+                'order_number' => 'assets.order_number',
             ];
 
             $relationMap = [
@@ -145,18 +140,18 @@ class FilterService
                     'type' => User::class,
                     'column' => 'users.jobtitle',
                 ],
-                'assigned_to' => [
+                /*'assigned_to' => [
                     'relation' => 'assignedTo',
                     'morph' => true,
                     'types' => [User::class, Asset::class, Location::class],
-                ],
+                ],*/
             ];
 
             // === 3. Simple Fields ===
             if (array_key_exists($fieldname, $simpleFields)) {
                 $column = $simpleFields[$fieldname];
 
-            $this->applyWhereWithOperator($inner, $column, $value, $operator);
+                $this->applyWhereWithOperator($inner, $column, $value, $operator);
                 return;
             }
 
@@ -166,31 +161,31 @@ class FilterService
 
                 // --- Morph Relation ---
                 if (!empty($meta['morph'])) {
-                    if (is_array($value) && isset($value[0]['assignedType'])){
+                    if (is_array($value) && isset($value[0]['assignedType'])) {
                         $grouped = collect($value)->groupBy('assignedType');
 
-                        $inner->where(function ($q2) use ($grouped, $meta){
+                        $inner->where(function ($q2) use ($grouped, $meta) {
                             foreach ($grouped as $type => $items) {
-                                $q2->orWhereHasMorph($meta['relation'],[$type], function ($morphQ) use ($items, $type) {
-                                    $ids = collect($items)->pluck('assigned_to')->filter((fn($v)=>is_numeric($v)));
+                                $q2->orWhereHasMorph($meta['relation'], [$type], function ($morphQ) use ($items, $type) {
+                                    $ids = collect($items)->pluck('assigned_to')->filter((fn($v) => is_numeric($v)));
                                     $names = collect($items)->pluck('assigned_to')->filter(fn($v) => is_string($v));
-                                
-                                    if ($ids->isNotEmpty()){
+
+                                    if ($ids->isNotEmpty()) {
                                         $morphQ->whereIn('id', $ids);
                                     }
 
-                                    if ($names->isNotEmpty()){
-                                        $morphQ->where(function($query) use ($names, $type) {
+                                    if ($names->isNotEmpty()) {
+                                        $morphQ->where(function ($query) use ($names, $type) {
 
                                             foreach ($names as $name) {
                                                 if ($type === \App\Models\User::class) {
-                                                
-                                                    $query->orWhere(function($sq) use ($name) {
+
+                                                    $query->orWhere(function ($sq) use ($name) {
                                                         $sq->where('first_name', 'LIKE', '%' . $name . '%')
-                                                        ->orWhere('last_name', 'LIKE', '%' . $name . '%');
+                                                            ->orWhere('last_name', 'LIKE', '%' . $name . '%');
                                                     });
-                                                
-                                                }else{
+
+                                                } else {
                                                     $query->orWhere('name', 'LIKE', '%' . $name . '%');
                                                 }
                                             }
@@ -200,85 +195,107 @@ class FilterService
                             }
                         });
 
+                        return;
+                    }
+
+                    $types = $meta['types'] ?? [$meta['type']];
+
+                    $inner->where(function ($q2) use ($types, $value, $operator, $meta) {
+                        foreach ($types as $type) {
+                            $q2->orWhereHasMorph($meta['relation'], [$type], function ($morphQ) use ($type, $value, $operator, $meta) {
+                                if ($meta['column'] ?? false) {
+                                    $field = $meta['column'];
+                                    if (is_array($value)) {
+                                        $morphQ->whereIn($field, $value);
+                                    } else {
+                                        $morphQ->where($field, $operator === 'equals' ? '=' : 'LIKE', $operator === 'equals' ? $value : '%' . $value . '%');
+                                    }
+                                } else {
+                                    if ($type === User::class) {
+                                        $morphQ->where(function ($sq) use ($value) {
+                                            $sq->where('first_name', 'LIKE', '%' . $value . '%')
+                                                ->orWhere('last_name', 'LIKE', '%' . $value . '%');
+                                        });
+                                    } else {
+                                        $morphQ->where('name', 'LIKE', '%' . $value . '%');
+                                    }
+                                }
+                            });
+                        }
+                    });
                     return;
                 }
 
-                $types = $meta['types'] ?? [$meta['type']];
+                // --- Normal Relation ---
+                $relationPath = explode('.', $meta['relation']);
+                $first = array_shift($relationPath);
 
-                $inner->where(function ($q2) use ($types, $value, $operator, $meta) {
-                    foreach ($types as $type) {
-                        $q2->orWhereHasMorph($meta['relation'], [$type], function ($morphQ) use ($type, $value, $operator, $meta) {
-                            if ($meta['column'] ?? false) {
-                                $field = $meta['column'];
-                                if (is_array($value)) {
-                                    $morphQ->whereIn($field, $value);
-                                } else {
-                                    $morphQ->where($field, $operator === 'equals' ? '=' : 'LIKE', $operator === 'equals' ? $value : '%' . $value . '%');
-                                }
-                            } else {
-                                if ($type === User::class) {
-                                    $morphQ->where(function ($sq) use ($value) {
-                                        $sq->where('first_name', 'LIKE', '%' . $value . '%')
-                                           ->orWhere('last_name', 'LIKE', '%' . $value . '%');
-                                    });
-                                } else {
-                                    $morphQ->where('name', 'LIKE', '%' . $value . '%');
-                                }
-                            }
+                $inner->whereHas($first, function ($subQ) use ($relationPath, $value, $operator, $meta) {
+                    foreach ($relationPath as $relation) {
+                        $subQ->whereHas($relation, function ($q) use ($value, $operator, $meta) {
+                            $this->applyRelationalValue($q, $value, $operator, $meta);
                         });
                     }
+
+                    if (empty($relationPath)) {
+                        $this->applyRelationalValue($subQ, $value, $operator, $meta);
+                    }
                 });
+
                 return;
             }
 
-            // --- Normal Relation ---
-            $relationPath = explode('.', $meta['relation']);
-            $first = array_shift($relationPath);
+            // === 5a. Handle assignedTo ===
+            if ($fieldname === 'assigned_to') {
+                $inner->where(function ($query) use ($value, $operator) {
+                    // Match by location name
+                    $query->whereHas('assignedToLocation', function ($q) use ($value, $operator) {
+                        $this->applyRelationalValue($q, $value, $operator, ['column' => 'locations.name']);
+                    })
+                        // Match by user name
+                        ->orWhereHas('assignedToUser', function ($q) use ($value, $operator) {
+                            $this->applyRelationalValue($q, $value, $operator, ['column' => 'users.first_name']);
+                            $this->applyRelationalValue($q, $value, $operator, ['column' => 'users.last_name']);
+                        })
+                        // Match by assigned asset name (if this relation exists)
+                        ->orWhereHas('assignedToAsset', function ($q) use ($value, $operator) {
+                            $this->applyRelationalValue($q, $value, $operator, ['column' => 'name']);
+                            $this->applyRelationalValue($q, $value, $operator, ['column' => 'asset_tag']);
+                        });
+                });
 
-            $inner->whereHas($first, function ($subQ) use ($relationPath, $value, $operator, $meta) {
-                foreach ($relationPath as $relation) {
-                    $subQ->whereHas($relation, function ($q) use ($value, $operator, $meta) {
-                        $this->applyRelationalValue($q, $value, $operator, $meta);
-                    });
-                }
+                return;
+            }
 
-                if (empty($relationPath)) {
-                    $this->applyRelationalValue($subQ, $value, $operator, $meta);
-                }
-            });
+            // === 6. Fallback: Direct column ===
+            $column = 'assets.' . $fieldname;
 
-            return;
-        }
+            if (!Schema::hasColumn('assets', $fieldname)) {
+                return;
+            }
 
-        // === 5. Fallback: Direct column ===
-        $column = 'assets.' . $fieldname;
-
-        if (!Schema::hasColumn('assets', $fieldname)) {
-            return;
-        }
-
-         $this->applyWhereWithOperator($inner, $column, $value, $operator);
-    };
+            $this->applyWhereWithOperator($inner, $column, $value, $operator);
+        };
 
         // === Apply logic ===
         switch ($logic) {
             case 'NOT':
-            $q->where(function ($outer) use ($callback, $fieldname) {
-                $outer->whereNot($callback);
+                $q->where(function ($outer) use ($callback, $fieldname) {
+                    $outer->whereNot($callback);
 
-                // Only add "OR IS NULL" for direct columns (not relationships)
-                if (!Str::contains($fieldname, '.')) {
-                    // Also double-check column existence
-                    if (Schema::hasColumn('assets', $fieldname)) {
-                        $outer->orWhereNull('assets.' . $fieldname);
+                    // Only add "OR IS NULL" for direct columns (not relationships)
+                    if (!Str::contains($fieldname, '.')) {
+                        // Also double-check column existence
+                        if (Schema::hasColumn('assets', $fieldname)) {
+                            $outer->orWhereNull('assets.' . $fieldname);
+                        }
                     }
-                }
-            });
-        break;
-        case 'AND':
-        default:
-            $q->where($callback);
-            break;
+                });
+                break;
+            case 'AND':
+            default:
+                $q->where($callback);
+                break;
         }
     }
     protected function applyCustomFieldFilter(Builder $query, array $filter)
@@ -287,18 +304,18 @@ class FilterService
         $value = $filter['value'];
         $operator = strtolower($filter['operator'] ?? 'contains');
 
-            Log::error($fieldname);
-            Log::error($value);
+        Log::error($fieldname);
+        Log::error($value);
 
-            $column = $fieldname;
+        $column = $fieldname;
 
-            if (!$column || !Schema::hasColumn('assets', $column)) {
-                return;
-            }
+        if (!$column || !Schema::hasColumn('assets', $column)) {
+            return;
+        }
 
-            $column = 'assets.' . $column;
+        $column = 'assets.' . $column;
 
-            $this->applyWhereWithOperator($query, $column, $value, $operator);
+        $this->applyWhereWithOperator($query, $column, $value, $operator);
     }
 
     protected function applyRelationalValue(Builder $q, $value, string $operator, array $meta): void
@@ -354,7 +371,7 @@ class FilterService
 
         if ($operator === 'equals') {
             $query->whereIn($column, $value);
-        } else { 
+        } else {
             $query->where(function ($q) use ($column, $value) {
                 foreach ($value as $v) {
                     $q->orWhere($column, 'LIKE', '%' . $v . '%');
@@ -375,7 +392,7 @@ class FilterService
     public function applyDateRangeFilter($query, $qualifiedField, $filters, bool $isDateTime = false)
     {
         $start = null;
-        $end   = null;
+        $end = null;
 
         $fieldNameOnly = \Illuminate\Support\Str::afterLast($qualifiedField, '.');
 
