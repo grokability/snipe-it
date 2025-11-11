@@ -74,19 +74,19 @@ class AssetsController extends Controller
             ->orderBy('name')
             ->get();*/
 
-        $predefined_filter_edit_modal_open = $request->input('predefinedFilterEditModalOpen');
+        // $predefined_filter_edit_modal_open = $request->input('predefinedFilterEditModalOpen');
         $predefined_filter_id = $request->input('predefinedFilterId');
 
-        if ($predefined_filter_edit_modal_open === null) {
-            $predefined_filter_edit_modal_open = false;
-        }
+        // if ($predefined_filter_edit_modal_open === null) {
+        //     $predefined_filter_edit_modal_open = false;
+        // }
 
-        if ($predefined_filter_edit_modal_open !== 'true' && $predefined_filter_edit_modal_open !== 'false' && $predefined_filter_edit_modal_open != null) {
-            throw new InvalidArgumentException("You provided an invalid parameter for predefinedFilterModalOpen (must be true or false).");
-        } else {
-            // Convert string to boolean
-            $predefined_filter_edit_modal_open = $predefined_filter_edit_modal_open == 'true' ? true : false;
-        }
+        // if ($predefined_filter_edit_modal_open !== 'true' && $predefined_filter_edit_modal_open !== 'false' && $predefined_filter_edit_modal_open != null) {
+        //     throw new InvalidArgumentException("You provided an invalid parameter for predefinedFilterModalOpen (must be true or false).");
+        // } else {
+        //     // Convert string to boolean
+        //     $predefined_filter_edit_modal_open = $predefined_filter_edit_modal_open == 'true' ? true : false;
+        // }
 
         // Validate if it's a valid integer
         if (filter_var($predefined_filter_id, FILTER_VALIDATE_INT) === false && $predefined_filter_id != null) {
@@ -101,7 +101,7 @@ class AssetsController extends Controller
 
 
         // TODO maybe switch later to user / role based view
-        return view('hardware/index')->with('company', $company)->with('predefined_filter_edit_modal_open', $predefined_filter_edit_modal_open)->with('predefined_filter_id', $predefined_filter_id);
+        return view('hardware/index')->with('company', $company)/*->with('predefined_filter_edit_modal_open', $predefined_filter_edit_modal_open)*/->with('predefined_filter_id', $predefined_filter_id);
     }
 
     /**
