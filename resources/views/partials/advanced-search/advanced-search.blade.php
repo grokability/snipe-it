@@ -76,17 +76,6 @@ document.addEventListener('livewire:init', function () {
     controller.bindEvents();
 
 
-    (async () => {
-        setTimeout(async () => {
-            const filterSection = document.getElementById('filterSection');
-            filterSection.classList.remove('hide');
-            container.resolve("filterFormManager").clearAll();
-
-            await new Promise(resolve => setTimeout(resolve, 0));
-            filterSection.classList.add('hide');
-        }, 0);
-    })();
-
 
     @if(isset($predefined_filter_id))
         controller.updateFilterWithPredefined(null, {{ $predefined_filter_id }});
@@ -103,6 +92,17 @@ document.addEventListener('livewire:init', function () {
                 });
             });
         @endif
+    @else
+        (async () => {
+        setTimeout(async () => {
+            const filterSection = document.getElementById('filterSection');
+            filterSection.classList.remove('hide');
+            container.resolve("filterFormManager").clearAll();
+
+            await new Promise(resolve => setTimeout(resolve, 0));
+            filterSection.classList.add('hide');
+        }, 0);
+    })();
     @endif
 });
 
