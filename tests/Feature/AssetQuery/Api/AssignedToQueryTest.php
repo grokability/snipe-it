@@ -17,7 +17,7 @@ class AssignedToQueryTest extends TestCase
 
     public function testFilterAssetsAssignedToEmptyString(): void
     {
-        $this->markTestSkipped("not allowed in Frontend no tag field");
+        //$this->markTestSkipped("not allowed in Frontend no tag field");
 
         $userA = User::factory()->create();
         $locationA = Location::factory()->create();
@@ -65,7 +65,7 @@ class AssignedToQueryTest extends TestCase
 
     public function testFilterAssetsAssignedToStringWithLocationType(): void
     {
-        $this->markTestSkipped("not allowed in Frontend no tag field");
+        //$this->markTestSkipped("not allowed in Frontend no tag field");
 
         $assignedToAssetA = Asset::factory()->create();
         $locationA = Location::factory()->create();
