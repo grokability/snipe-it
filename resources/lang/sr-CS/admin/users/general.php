@@ -15,7 +15,8 @@ return [
     'info'				=> 'Info',
     'restore_user'		=> 'Kliknite ovdje da biste ih vratili.',
     'last_login'        => 'Poslednja prijava',
-    'ldap_config_text'  => 'Postavke LDAP konfiguracije mogu se pronaći u Administrator> Postavke. Odabrana lokacija (opcionalno) će biti podešena za sve importovane korisnike.',
+    'ldap_config_text'  => 'Izabrana lokacija će biti podešena za SVE uvežene korisnike. Ovo će preduprediti njihovu postojeću lokaciju, što je neuobičajen slučaj, tako da ostaviti ovo prazno je obično najbolje.',
+    'ldap_sync_intro'   => 'Kliknite na dugme ispod da bi ste ručno sinhronizovali vaše LDAP korisnike. Da bi ste saznali više o podešavanju automatske LDAP sinhronizacije, pogledajte <a href=":link" target="_blank">dokumentaciju <i class="fa fa-external-link"></i></a> .',
     'print_assigned'    => 'Print All Assigned',
     'email_assigned'    => 'Pošalji spisak svega zaduženog',
     'user_notified'     => 'Korisniku je poslata poruka sa spiskom svega zaduženog na njegovo ime.',
@@ -53,4 +54,6 @@ return [
     'all_assigned_list_generation' => 'Generisano:',
     'email_user_creds_on_create' => 'Poslati ovom korisniku e-poruku sa njegovim kredencijalima?',
     'department_manager' => 'Rukovodilac odeljenja',
+    'generate_password' => 'Generiši nasumičnu lozinku',
+    'individual_override' => 'Ovaj korisnik ima podešeno barem jedno lično ovlašćenje, koje može da predupredi grupna ovlašćenja.',
 ];

@@ -4,7 +4,7 @@ return [
     'info'   => 'Wybierz opcje, które chcesz by znalazły się w raporcie aktywów.',
     'deleted_user' => 'Usuń użytkownika',
     'send_reminder' => 'Wyślij przypomnienie',
-    'cannot_send_reminder' => 'User has been deleted or does not have an email address so cannot receive a reminder',
+    'cannot_send_reminder' => 'Użytkownik został usunięty lub nie posiada przypisanego adresu email przez co nie może otrzymać przypomnienia',
     'reminder_sent' => 'Przypomnienie wysłane',
     'acceptance_deleted' => 'Prośba o akceptację usunięta',
     'acceptance_request' => 'Prośba o akceptację',

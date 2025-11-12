@@ -2,8 +2,8 @@
 
 return array(
 
-    'accepted'                  => 'Este aceitou este ativo com sucesso.',
-    'declined'                  => 'Você recusou com sucesso esse ativo.',
+    'accepted'                  => 'You have successfully accepted this item.',
+    'declined'                  => 'You have successfully declined this item.',
     'bulk_manager_warn'	        => 'Os usuários foram atualizados com êxito, no entanto seu Gerenciador de entrada não foi salvo porque o gerente selecionado estava também na lista de usuários a ser editado e usuários podem não ser seu próprio gerente. Por favor, selecione os usuários novamente, excluindo o gerente.',
     'user_exists'               => 'O usuário já existe!',
     'user_not_found'            => 'O usuário não existe ou você não tem permissão para visualizá-lo.',

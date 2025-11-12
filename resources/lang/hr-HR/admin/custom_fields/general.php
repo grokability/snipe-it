@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Manage',
     'field'		                => 'Polje',
     'about_fieldsets_title'		=> 'O karticama Fieldsets',
-    'about_fieldsets_text'		=> 'Poljaci omogućuju stvaranje grupa prilagođenih polja koja se često upotrebljavaju za određene vrste imovine.',
+    'about_fieldsets_text'		=> 'Fieldsets allow you to create groups of custom fields that are frequently re-used for specific asset model types.',
     'custom_format'             => 'Custom Regex format...',
     'encrypt_field'      	        => 'Šifriranje vrijednosti ovog polja u bazi podataka',
     'encrypt_field_help'      => 'UPOZORENJE: Šifriranje polja čini ga nedokučivim.',
@@ -67,4 +67,5 @@ return [
         'checkbox' => 'Checkbox',
         'radio' => 'Radio Buttons',
     ],
+    'general_help_text' => 'Custom fields store additional information not covered by the default asset fields. <a href="https://snipe-it.readme.io/docs/custom-fields#/"><i class="fa fa-external-link"></i></a>.',
 ];

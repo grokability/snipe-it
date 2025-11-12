@@ -174,7 +174,7 @@ return [
     'ulid' => 'Полето :attribute трябва да бъде валиден ULID.',
     'uuid' => 'Полето :attribute трябва да съдържа валиден UUID.',
     'fmcs_location' => 'Пълна поддръжка за множество компаний и местоположения е включена в админ настройките, но избраната локация и компания не са съвместими.',
-
+    'is_unique_across_company_and_location' => 'The :attribute must be unique within the selected company and location.',
 
     /*
     |--------------------------------------------------------------------------

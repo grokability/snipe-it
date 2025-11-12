@@ -104,7 +104,7 @@ return [
     'upcoming-audits_click' => 'This email may not contain the full list so as not to exceed email size limits. Click on the button below to view all assets due for audit.',
     'user' => 'User',
     'username' => 'Username',
-    'unaccepted_asset_reminder' => 'Reminder: You have Unaccepted Assets.',
+    'unaccepted_asset_reminder' => 'Reminder: You have Unaccepted Items',
     'welcome' => 'Welcome :name',
     'welcome_to' => 'Welcome to :web!',
     'your_assets' => 'View Your Assets',

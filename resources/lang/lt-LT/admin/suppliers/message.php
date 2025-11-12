@@ -20,9 +20,9 @@ return array(
         'confirm'   => 'Ar tikrai norite panaikinti šį tiekėją?',
         'error'   => 'Bandant panaikinti tiekėją įvyko klaida. Bandykite dar kartą.',
         'success' => 'Tiekėjas panaikintas sėkmingai.',
-        'not_found'               => 'Supplier not found.',
-        'bulk_success'            => 'Suppliers were deleted successfully.',
-        'partial_success'        => 'Supplier deleted successfully. See additional information below. | :count suppliers were deleted successfully. See additional information below.',
+        'not_found'               => 'Tiekėjas nerastas.',
+        'bulk_success'            => 'Tiekėjas sėkmingai ištrintas.',
+        'partial_success'        => 'Tiekėjas sėkmingai ištrintas. Daugiau informacijos rasite žemiau. | :count tiekėjai (-ų) buvo sėkmingai ištrinti. Daugiau informacijos rasite žemiau.',
     )
 
 );

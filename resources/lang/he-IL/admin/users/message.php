@@ -2,8 +2,8 @@
 
 return array(
 
-    'accepted'                  => 'קיבלת בהצלחה את הנכס הזה.',
-    'declined'                  => 'דחיית את הנכס הזה בהצלחה.',
+    'accepted'                  => 'You have successfully accepted this item.',
+    'declined'                  => 'You have successfully declined this item.',
     'bulk_manager_warn'	        => 'המשתמשים שלך עודכנו בהצלחה, אך רשומת המנהל שלך לא נשמרה מפני שהמנהל שבחרת נבחר גם ברשימת המשתמשים כדי לערוך, והמשתמשים לא יכולים להיות המנהל שלהם. בחר שוב את המשתמשים שלך, למעט המנהל.',
     'user_exists'               => 'משתמש כבר קיים!',
     'user_not_found'            => 'User does not exist or you do not have permission view them.',

@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Maamul',
     'field'		                => 'Garoonka',
     'about_fieldsets_title'		=> 'Ku saabsan Fieldsets',
-    'about_fieldsets_text'		=> 'Fieldsets allow you to create groups of custom fields that are frequently re-used used for specific asset model types.',
+    'about_fieldsets_text'		=> 'Fieldsets waxay kuu oggolaanayaan inaad abuurto kooxo garoomo gaar ah kuwaas oo inta badan dib loogu isticmaalo noocyada moodooyinka hantida gaarka ah.',
     'custom_format'             => 'Qaabka Regex ee gaarka ah...',
     'encrypt_field'      	        => 'Siri qiimaha goobtan kaydka xogta',
     'encrypt_field_help'      => 'DIGNIIN: Siraynta goobta ayaa ka dhigaysa mid aan la baari karin.',
@@ -67,4 +67,5 @@ return [
         'checkbox' => 'Checkbox',
         'radio' => 'Radio Buttons',
     ],
+    'general_help_text' => 'Custom fields store additional information not covered by the default asset fields. <a href="https://snipe-it.readme.io/docs/custom-fields#/"><i class="fa fa-external-link"></i></a>.',
 ];

@@ -2,8 +2,8 @@
 
 return array(
 
-    'accepted'                  => 'Je hebt dit asset succesvol geaccepteerd.',
-    'declined'                  => 'Je hebt dit asset met succes geweigerd.',
+    'accepted'                  => 'You have successfully accepted this item.',
+    'declined'                  => 'You have successfully declined this item.',
     'bulk_manager_warn'	        => 'Uw gebruikers zijn succesvol bijgewerkt, de gekozen manager kon echter niet toegepast worden omdat deze persoon ook in de lijst staat, gebruikers mogen niet hun eigen manager zijn. Probeer het nogmaals en selecteer de gebruikers zonder de manager.',
     'user_exists'               => 'Gebruiker bestaat reeds!',
     'user_not_found'            => 'Gebruiker bestaat niet of je hebt geen toestemming om deze gebruiker te bekijken.',

@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Administrer',
     'field'		                => 'Felt',
     'about_fieldsets_title'		=> 'Om Feltsæt',
-    'about_fieldsets_text'		=> 'Fieldsets giver dig mulighed for at oprette grupper af brugerdefinerede felter, der ofte bruges igen til specifikke aktivmodeltyper.',
+    'about_fieldsets_text'		=> 'Feltsæt giver dig mulighed for at oprette grupper af brugerdefinerede felter, der ofte genbruges til specifikke asset-modeltyper.',
     'custom_format'             => 'Tilpasset Regex format...',
     'encrypt_field'      	        => 'Kryptere værdien af dette felt i databasen',
     'encrypt_field_help'      => 'Advarsel: Kryptere et felt gør det uransagelige.',
@@ -67,4 +67,5 @@ return [
         'checkbox' => 'Checkbox',
         'radio' => 'Radio Buttons',
     ],
+    'general_help_text' => 'Custom fields store additional information not covered by the default asset fields. <a href="https://snipe-it.readme.io/docs/custom-fields#/"><i class="fa fa-external-link"></i></a>.',
 ];

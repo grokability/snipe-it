@@ -2,8 +2,8 @@
 
 return array(
 
-    'accepted'                  => 'Uwamukele ngempumelelo le mali.',
-    'declined'                  => 'Uye wenqaba ngempumelelo le mali.',
+    'accepted'                  => 'You have successfully accepted this item.',
+    'declined'                  => 'You have successfully declined this item.',
     'bulk_manager_warn'	        => 'Abasebenzisi bakho babuyekezwe ngempumelelo, kodwa ukungena kwakho kwemenenja akulondoloziwe ngoba umphathi oyikhethile naye ohlwini lomsebenzisi oluzohlelwa, futhi abasebenzisi bangase bangabi umphathi wabo. Sicela ukhethe abasebenzisi bakho futhi, ngaphandle kwamenenja.',
     'user_exists'               => 'Umsebenzisi usuvele ukhona!',
     'user_not_found'            => 'User does not exist or you do not have permission view them.',

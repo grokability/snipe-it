@@ -2,8 +2,8 @@
 
 return array(
 
-    'accepted'                  => 'Oled selle vahendi edukalt vastu võtnud.',
-    'declined'                  => 'Oled selle vahendi tagasi lükanud.',
+    'accepted'                  => 'You have successfully accepted this item.',
+    'declined'                  => 'You have successfully declined this item.',
     'bulk_manager_warn'	        => 'Sinu kasutajad on edukalt muudetud, kuid sinu juhi-kirjet ei salvestatud sest juht, kelle valisid oli ka muudatavate kasutajate hulgas ning kasutaja ei või olla ise-enda juht. Palun vali oma kasutajad uuesti, jättes juhi kõrvale.',
     'user_exists'               => 'Kasutaja on juba olemas!',
     'user_not_found'            => 'User does not exist or you do not have permission view them.',

@@ -24,9 +24,9 @@ return array(
     'delete' => array(
         'confirm' => 'Czy na pewno usunąć danego producenta?',
         'error'   => 'Podczas usuwania producenta wystąpił błąd. Spróbuj ponownie.',
-        'success'                => 'Manufacturer deleted successfully.',
-        'bulk_success'           => 'Manufacturers deleted successfully.',
-        'partial_success'        => 'Manufacturer deleted successfully. See additional information below. | :count manufacturers were deleted successfully. See additional information below.',
+        'success'                => 'Pomyślnie usunięto producenta.',
+        'bulk_success'           => 'Pomyślnie usunięto producentów.',
+        'partial_success'        => 'Pomyślnie usunięto producenta. Więcej informacji poniżej. |Pomyślnie usunięto :count producentów. Więcej informacji poniżej.',
     )
 
 );

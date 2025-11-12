@@ -3,12 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Helper;
+use App\Mail\CheckoutAccessoryMail;
 use App\Mail\CheckoutAssetMail;
+use App\Mail\CheckoutComponentMail;
+use App\Mail\CheckoutConsumableMail;
+use App\Mail\CheckoutLicenseMail;
 use App\Models\Accessory;
+use App\Models\AccessoryCheckout;
 use App\Models\Actionlog;
 use App\Models\Asset;
 use App\Models\AssetModel;
 use App\Models\Category;
+use App\Models\Checkoutable;
+use App\Models\Component;
+use App\Models\Consumable;
+use App\Models\LicenseSeat;
 use App\Models\Maintenance;
 use App\Models\CheckoutAcceptance;
 use App\Models\Company;
@@ -18,9 +27,11 @@ use App\Models\License;
 use App\Models\ReportTemplate;
 use App\Models\Setting;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Mail\Mailable;
 use Illuminate\Support\Facades\Mail;
 use \Illuminate\Contracts\View\View;
 use League\Csv\Reader;
@@ -1116,34 +1127,30 @@ class ReportsController extends Controller
         $this->authorize('reports.view');
         $showDeleted = $deleted == 'deleted';
 
-        $query = CheckoutAcceptance::pending()
-            ->where('checkoutable_type', 'App\Models\Asset')
+        $query = CheckoutAcceptance::Pending()
             ->with([
                 'checkoutable' => function (MorphTo $query) {
-                    $query->morphWith([
-                        AssetModel::class => ['model'],
-                        Company::class => ['company'],
-                        Asset::class => ['assignedTo'],
-                    ])->with('model.category');
+                    $query->withTrashed()->morphWith([
+                        Asset::class => ['model.category', 'assignedTo', 'company'],
+                        Accessory::class => ['category','checkouts', 'company'],
+                        LicenseSeat::class => ['user', 'license'],
+                        Component::class => ['assignedTo', 'company'],
+                        Consumable::class => ['company'],
+                    ]);
                 },
                 'assignedTo' => function($query){
                          $query->withTrashed();
                     }
-            ]);
+            ])->orderByDesc('checkout_acceptances.created_at');
+
 
         if ($showDeleted) {
             $query->withTrashed();
         }
 
-        $assetsForReport = $query->get()
-                ->map(function ($acceptance) {
-                    return [
-                        'assetItem' => $acceptance->checkoutable,
-                        'acceptance' => $acceptance,
-                    ];
-            });
+        $itemsForReport = $query->get()->map(fn ($unaccepted) => Checkoutable::fromAcceptance($unaccepted));
 
-        return view('reports/unaccepted_assets', compact('assetsForReport','showDeleted' ));
+        return view('reports/unaccepted_assets', compact('itemsForReport','showDeleted' ));
     }
 
     /**
@@ -1155,41 +1162,77 @@ class ReportsController extends Controller
     public function sentAssetAcceptanceReminder(Request $request) : RedirectResponse
     {
         $this->authorize('reports.view');
-
-        if (!$acceptance = CheckoutAcceptance::pending()->find($request->input('acceptance_id'))) {
+        $id = $request->input('acceptance_id');
+        $query = CheckoutAcceptance::query()
+            ->with([
+                'checkoutable' => function (MorphTo $query) {
+                    $query->withTrashed()->morphWith([
+                        Asset::class       => ['model.category', 'assignedTo', 'company', 'checkouts'],
+                        Accessory::class   => ['category', 'company', 'checkouts'],
+                        LicenseSeat::class => ['user', 'license', 'checkouts'],
+                        Component::class   => ['assignedTo', 'company', 'checkouts'],
+                        Consumable::class  => ['company', 'checkouts'],
+                    ]);
+                },
+                'assignedTo' => fn ($q) => $q->withTrashed(),
+            ])
+            ->pending();
+        $acceptance = $query->find($id);
+        if (!$acceptance) {
             Log::debug('No pending acceptances');
-            // Redirect to the unaccepted assets report page with error
+            // Redirect to the unaccepted items report page with error
             return redirect()->route('reports/unaccepted_assets')->with('error', trans('general.bad_data'));
         }
+        $item      = $acceptance->checkoutable;
+        $assignee  = $acceptance->assignedTo ?? $item->assignedTo ?? null;
+        $email     = $assignee?->email;
+        $locale    = $assignee?->locale;
 
-        $assetItem = $acceptance->checkoutable;
-
-        Log::debug(print_r($assetItem, true));
+        Log::debug(print_r($acceptance, true));
 
         if (is_null($acceptance->created_at)){
             Log::debug('No acceptance created_at');
             return redirect()->route('reports/unaccepted_assets')->with('error', trans('general.bad_data'));
         } else {
-            $logItem_res = $assetItem->checkouts()->where('created_at', '=', $acceptance->created_at)->get();
-
+            if($item instanceof LicenseSeat){
+                $logItem_res = $item->license->checkouts()->with('adminuser')->where('created_at', '=', $acceptance->created_at)->get();
+            }
+            else{
+                $logItem_res = $item->checkouts()->with('adminuser')->where('created_at', '=', $acceptance->created_at)->get();
+                }
             if ($logItem_res->isEmpty()){
                 Log::debug('Acceptance date mismatch');
                 return redirect()->route('reports/unaccepted_assets')->with('error', trans('general.bad_data'));
             }
             $logItem = $logItem_res[0];
         }
-        $email = $assetItem->assignedTo?->email;
-        $locale = $assetItem->assignedTo?->locale;
 
         if (is_null($email) || $email === '') {
             return redirect()->route('reports/unaccepted_assets')->with('error', trans('general.no_email'));
         }
-
-        Mail::to($email)->send((new CheckoutAssetMail($assetItem, $assetItem->assignedTo, $logItem->user, $acceptance, $logItem->note, firstTimeSending: false))->locale($locale));
+        $mailable = $this->getCheckoutMailType($acceptance, $logItem);
+        Mail::to($email)->send($mailable->locale($locale));
 
         return redirect()->route('reports/unaccepted_assets')->with('success', trans('admin/reports/general.reminder_sent'));
     }
+    private function getCheckoutMailType(CheckoutAcceptance $acceptance, $logItem) : Mailable
+    {
+        $lookup = [
+            Accessory::class => CheckoutAccessoryMail::class,
+            Asset::class => CheckoutAssetMail::class,
+            LicenseSeat::class => CheckoutLicenseMail::class,
+            Consumable::class => CheckoutConsumableMail::class,
+            Component::class => CheckoutComponentMail::class,
+        ];
+        $mailable= $lookup[get_class($acceptance->checkoutable)];
 
+        return new $mailable($acceptance->checkoutable,
+            $acceptance->checkedOutTo ?? $acceptance->assignedTo,
+            $logItem->adminuser,
+            $acceptance,
+            $acceptance->note);
+
+    }
     /**
      * sentAssetAcceptanceReminder
      *
@@ -1221,31 +1264,41 @@ class ReportsController extends Controller
     public function postAssetAcceptanceReport($deleted = false) : Response
     {
         $this->authorize('reports.view');
-        $showDeleted = $deleted == 'deleted';
+        $showDeleted = request('deleted') === 'deleted';;
 
         /**
          * Get all assets with pending checkout acceptances
          */
-        if($showDeleted) {
-            $acceptances = CheckoutAcceptance::pending()->where('checkoutable_type', 'App\Models\Asset')->withTrashed()->with(['assignedTo', 'checkoutable.assignedTo', 'checkoutable.model'])->get();
-        } else {
-            $acceptances = CheckoutAcceptance::pending()->where('checkoutable_type', 'App\Models\Asset')->with(['assignedTo', 'checkoutable.assignedTo', 'checkoutable.model'])->get();
-        }
 
-        $assetsForReport = $acceptances
-            ->filter(function($acceptance) {
-                return $acceptance->checkoutable_type == 'App\Models\Asset';
-            })
-            ->map(function($acceptance) {
-                return ['assetItem' => $acceptance->checkoutable, 'acceptance' => $acceptance];
-            });
+            $acceptances = CheckoutAcceptance::pending()
+                ->with([
+                    'checkoutable' => function (MorphTo $acceptance) {
+                        $acceptance->withTrashed()->morphWith([
+                            Asset::class => ['model.category', 'assignedTo', 'company'],
+                            Accessory::class => ['category','checkouts', 'company'],
+                            LicenseSeat::class => ['user', 'license'],
+                            Component::class => ['assignedTo', 'company'],
+                            Consumable::class => ['company'],
+                        ]);
+                    },
+                    'assignedTo',
+                ])->orderByDesc('checkout_acceptances.created_at');
+
+            if ($showDeleted) {
+                $acceptances->withTrashed();
+            }
+
+        $itemsForReport = $acceptances->get()->map(fn ($unaccepted) => Checkoutable::fromAcceptance($unaccepted));
 
         $rows = [];
 
         $header = [
+            trans('general.date'),
+            trans('general.type'),
+            trans('admin/companies/table.title'),
             trans('general.category'),
             trans('admin/hardware/form.model'),
-            trans('admin/hardware/form.name'),
+            trans('general.name'),
             trans('admin/hardware/table.asset_tag'),
             trans('admin/hardware/table.checkoutto'),
         ];
@@ -1253,16 +1306,19 @@ class ReportsController extends Controller
         $header = array_map('trim', $header);
         $rows[] = implode(',', $header);
 
-        foreach ($assetsForReport as $item) {
+        foreach ($itemsForReport as $item) {
 
-            if ($item['assetItem'] != null){
+            if ($item != null){
             
                 $row    = [ ];
-                $row[]  = str_replace(',', '', e($item['assetItem']->model->category->name));
-                $row[]  = str_replace(',', '', e($item['assetItem']->model->name));
-                $row[]  = str_replace(',', '', e($item['assetItem']->name));
-                $row[]  = str_replace(',', '', e($item['assetItem']->asset_tag));
-                $row[]  = str_replace(',', '', e(($item['acceptance']->assignedTo) ? $item['acceptance']->assignedTo->display_name : trans('admin/reports/general.deleted_user')));
+                $row[]  = str_replace(',', '', $item->acceptance->created_at);
+                $row[]  = str_replace(',', '', $item->type);
+                $row[]  = str_replace(',', '', $item->plain_text_company);
+                $row[]  = str_replace(',', '', $item->plain_text_category);
+                $row[]  = str_replace(',', '', $item->plain_text_model);
+                $row[]  = str_replace(',', '', $item->plain_text_name);
+                $row[]  = str_replace(',', '', $item->asset_tag);
+                $row[]  = str_replace(',', '', ($item->acceptance->assignedto) ? $item->acceptance->assignedto->display_name : trans('admin/reports/general.deleted_user'));
                 $rows[] = implode(',', $row);
             }
         }

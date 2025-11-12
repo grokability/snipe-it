@@ -2,8 +2,8 @@
 
 return array(
 
-    'accepted'                  => 'Du har akseptert eiendelen.',
-    'declined'                  => 'Du har avvist eiendelen.',
+    'accepted'                  => 'You have successfully accepted this item.',
+    'declined'                  => 'You have successfully declined this item.',
     'bulk_manager_warn'	        => 'Brukerne er oppdatert, men lederen ble ikke lagret fordi lederen du valgte også i brukerlisten for redigering og brukere kan ikke være sin egen leder. Velg brukerne igjen, unntatt lederen.',
     'user_exists'               => 'Bruker finnes allerede!',
     'user_not_found'            => 'User does not exist or you do not have permission view them.',

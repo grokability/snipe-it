@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Gestire',
     'field'		                => 'Campo',
     'about_fieldsets_title'		=> 'Fileldsets',
-    'about_fieldsets_text'		=> 'I set di campi consentono di creare gruppi di campi personalizzati che sono utilizzati spesso per tipi di modelli di Bene specifici.',
+    'about_fieldsets_text'		=> 'I set di campi consentono di creare gruppi di campi personalizzati che vengono spesso riutilizzati per modelli di beni specifici.',
     'custom_format'             => 'Formato Regex personalizzato...',
     'encrypt_field'      	        => 'Crittografare il valore di questo campo nel database',
     'encrypt_field_help'      => 'ATTENZIONE: Se il campo viene crittografato non sarà possibile cercarlo.',
@@ -67,4 +67,5 @@ return [
         'checkbox' => 'Casella di spunta',
         'radio' => 'Pulsanti di opzione',
     ],
+    'general_help_text' => 'I campi personalizzati memorizzano informazioni aggiuntive non coperte dai campi predefiniti del Bene. <a href="https://snipe-it.readme.io/docs/custom-fields#/"><i class="fa fa-external-link"></i></a>.',
 ];

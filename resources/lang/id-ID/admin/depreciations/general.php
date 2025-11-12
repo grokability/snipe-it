@@ -2,7 +2,7 @@
 
 return [
     'about_asset_depreciations'  			=> 'Tentang Penyusutan Aset',
-    'about_depreciations'  					=> 'You can set up asset depreciations to depreciate assets based on linear (straight-line), Half Year applied with condition, or Half Year always applied.',
+    'about_depreciations'  					=> 'Anda dapat mengatur penyusutan aset untuk menyusutkan aset berdasarkan linier (garis lurus), Setengah Tahun diterapkan dengan kondisi, atau Setengah Tahun yang diterapkan.',
     'asset_depreciations'  					=> 'Depresiasi Aset',
     'create'  					            => 'Buat Penyusutan',
     'depreciation_name'  					=> 'Nama Penyusutan',
@@ -14,7 +14,7 @@ return [
                       Saat ini Anda belum menyiapkan laporan penyusutan.
                       Harap atur setidaknya satu penyusutan untuk melihat laporan penyusutan.',
     'depreciation_method'                   => 'Laporan penyusutan',
-    'linear_depreciation'                   => 'Linear (Default)',
-    'half_1'                                => 'Half-year convention, always applied',
-    'half_2'                                => 'Half-year convention, applied with condition',
+    'linear_depreciation'                   => 'Linear (ketetapan)',
+    'half_1'                                => 'Ketetapan setengah tahun, selalu diterapkan',
+    'half_2'                                => 'Konvensi setengah tahun, diterapkan dengan kondisi',
 ];

@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Manage',
     'field'		                => 'Inkambu',
     'about_fieldsets_title'		=> 'Mayelana nama-Fieldsets',
-    'about_fieldsets_text'		=> 'Ama-Fieldsets akuvumela ukuthi udale amaqembu wenkambiso yenkambiso evame ukusetshenziselwa kabusha asetshenziselwa izinhlobo ezithile zemodeli yefa.',
+    'about_fieldsets_text'		=> 'Fieldsets allow you to create groups of custom fields that are frequently re-used for specific asset model types.',
     'custom_format'             => 'Custom Regex format...',
     'encrypt_field'      	        => 'Bhala ukubaluleka kwalensimu ku-database',
     'encrypt_field_help'      => 'ISEXWAYISO: Ukubethela insimu kungenza kungabhekeki.',
@@ -67,4 +67,5 @@ return [
         'checkbox' => 'Checkbox',
         'radio' => 'Radio Buttons',
     ],
+    'general_help_text' => 'Custom fields store additional information not covered by the default asset fields. <a href="https://snipe-it.readme.io/docs/custom-fields#/"><i class="fa fa-external-link"></i></a>.',
 ];

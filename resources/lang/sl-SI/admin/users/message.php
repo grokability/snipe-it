@@ -2,8 +2,8 @@
 
 return array(
 
-    'accepted'                  => 'To sredstev ste uspešno sprejeli.',
-    'declined'                  => 'To sredstev ste uspešno zavrnili.',
+    'accepted'                  => 'You have successfully accepted this item.',
+    'declined'                  => 'You have successfully declined this item.',
     'bulk_manager_warn'	        => 'Vaši uporabniki so bili uspešno posodobljeni, vendar vnos v upravitelju ni bil shranjen, ker je bil izbran upravitelj tudi na seznamu uporabnikov, ki ga je treba urediti, uporabniki pa morda niso njihovi lastniki. Prosimo, izberite svoje uporabnike, razen upravitelja.',
     'user_exists'               => 'Uporabnik že obstaja!',
     'user_not_found'            => 'Uporabnik ne obstaja ali pa nimate dovoljenja za ogled.',

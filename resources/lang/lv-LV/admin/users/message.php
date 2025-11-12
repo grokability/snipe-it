@@ -2,8 +2,8 @@
 
 return array(
 
-    'accepted'                  => 'Jūs esat veiksmīgi pieņēmuši šo aktīvu.',
-    'declined'                  => 'Jūs esat veiksmīgi atteicies no šī īpašuma.',
+    'accepted'                  => 'You have successfully accepted this item.',
+    'declined'                  => 'You have successfully declined this item.',
     'bulk_manager_warn'	        => 'Jūsu lietotāji ir veiksmīgi atjaunināti, taču jūsu pārvaldnieka ieraksts netika saglabāts, jo izvēlētā pārvaldnieks bija arī rediģējamo lietotāju sarakstā, un lietotāji, iespējams, nav viņu īpašnieks. Lūdzu, vēlreiz atlasiet savus lietotājus, izņemot pārvaldnieku.',
     'user_exists'               => 'Lietotājs jau eksistē!',
     'user_not_found'            => 'User does not exist or you do not have permission view them.',

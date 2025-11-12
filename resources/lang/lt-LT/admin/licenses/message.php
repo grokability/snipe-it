@@ -46,7 +46,7 @@ return array(
         'not_enough_seats' => 'Turimų laisvų vietų nepakanka licencijos išdavimui',
         'mismatch' => 'Pateikta licencijos vieta nesutampa su licencija',
         'unavailable' => 'Šios licencijos negalima išduoti.',
-        'license_is_inactive' => 'This license is expired or terminated.',
+        'license_is_inactive' => 'Šios licencijos galiojimas pasibaigęs arba ji yra nutraukta.',
     ),
 
     'checkin' => array(

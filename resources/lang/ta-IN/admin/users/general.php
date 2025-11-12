@@ -15,7 +15,8 @@ return [
     'info'				=> 'தகவல்',
     'restore_user'		=> 'அவற்றை மீட்டெடுக்க இங்கு கிளிக் செய்க.',
     'last_login'        => 'கடைசி தேதி',
-    'ldap_config_text'  => 'LDAP உள்ளமைவு அமைப்புகள் நிர்வாகம்> அமைப்புகள். இறக்குமதி செய்யப்பட்ட அனைத்து பயனர்களுக்கும் (விரும்பினால்) தேர்ந்தெடுக்கப்பட்ட இடம் அமைக்கப்படும்.',
+    'ldap_config_text'  => 'The selected location will be set for ALL imported users. This will overwrite their existing location, and is an unusual use-case, so leaving this blank is typically best.',
+    'ldap_sync_intro'   => 'Click on the button below to manually sync your LDAP users. To learn more about configuring LDAP sync to run automatically, please see the <a href=":link" target="_blank">documentation <i class="fa fa-external-link"></i></a> .',
     'print_assigned'    => 'ஒப்படைக்கப்பட்ட அனைத்தையும் அச்சிடு',
     'email_assigned'    => 'Email List of All Assigned',
     'user_notified'     => 'User has been emailed a list of their currently assigned items.',
@@ -53,4 +54,6 @@ return [
     'all_assigned_list_generation' => 'Generated on:',
     'email_user_creds_on_create' => 'Email this user their credentials?',
     'department_manager' => 'Department Manager',
+    'generate_password' => 'Generate random password',
+    'individual_override' => 'This user has at least one individual permission set, which may override group permissions.',
 ];

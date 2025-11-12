@@ -5,7 +5,8 @@ return [
     'manage'                    => 'مدیریت',
     'field'		                => 'فیلد',
     'about_fieldsets_title'		=> 'درباره ی تنظیمات فیلد',
-    'about_fieldsets_text'		=> 'تنظیمات فیلد به شما امکان این را می دهد که گروه های فیلدهای سفارشی ایجاد کنید که مرتبا برای انواع مدل های دارایی خاص مورد استفاده ی مجدد قرار می گیرند.',
+    'about_fieldsets_text'		=> 'مجموعه‌های فیلد به شما امکان می‌دهند گروه‌هایی از فیلدهای سفارشی ایجاد کنید که اغلب برای انواع مدل دارایی خاص دوباره استفاده می‌شوند.
+',
     'custom_format'             => 'فرمت Regex سفارشی...
 ',
     'encrypt_field'      	        => 'مقدار این فیلد را در پایگاه داده رمزگذاری کنید',
@@ -79,4 +80,5 @@ return [
         'checkbox' => 'Checkbox',
         'radio' => 'Radio Buttons',
     ],
+    'general_help_text' => 'Custom fields store additional information not covered by the default asset fields. <a href="https://snipe-it.readme.io/docs/custom-fields#/"><i class="fa fa-external-link"></i></a>.',
 ];

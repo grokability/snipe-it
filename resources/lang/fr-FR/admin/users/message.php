@@ -2,8 +2,8 @@
 
 return array(
 
-    'accepted'                  => 'Vous avez accepté cet actif.',
-    'declined'                  => 'Vous avez refusé cet actif.',
+    'accepted'                  => 'You have successfully accepted this item.',
+    'declined'                  => 'You have successfully declined this item.',
     'bulk_manager_warn'	        => 'Vos utilisateurs ont été mis à jour avec succès, mais votre entrée de gestionnaire n\'a pas été enregistrée, car le gestionnaire que vous avez sélectionné était également dans la liste d\'utilisateurs à éditer, et les utilisateurs peuvent ne pas être leur propre gestionnaire. Sélectionnez à nouveau vos utilisateurs, à l\'exclusion du gestionnaire.',
     'user_exists'               => 'L\'utilisateur existe déjà !',
     'user_not_found'            => 'User does not exist or you do not have permission view them.',

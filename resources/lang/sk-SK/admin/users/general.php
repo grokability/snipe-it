@@ -15,7 +15,8 @@ return [
     'info'				=> 'Info',
     'restore_user'		=> 'Kliknite sem pre obnovenie.',
     'last_login'        => 'Posledné prihlásenie',
-    'ldap_config_text'  => 'Nastavenia LDAP-u sa nachádzajú v menu Administrácia => Nastavenia. Vybraná (voliteľná) lokalita bude nastavená pre všetkých importovaných používateľov.',
+    'ldap_config_text'  => 'The selected location will be set for ALL imported users. This will overwrite their existing location, and is an unusual use-case, so leaving this blank is typically best.',
+    'ldap_sync_intro'   => 'Click on the button below to manually sync your LDAP users. To learn more about configuring LDAP sync to run automatically, please see the <a href=":link" target="_blank">documentation <i class="fa fa-external-link"></i></a> .',
     'print_assigned'    => 'Vytlačiť všetky priradené',
     'email_assigned'    => 'Zaslať zoznam aktuálne priradeného majetku',
     'user_notified'     => 'Používateľovi bol zaslaný email so zoznamom aktuálne priradených položiek.',
@@ -53,4 +54,6 @@ return [
     'all_assigned_list_generation' => 'Generované dňa:',
     'email_user_creds_on_create' => 'Zaslať tomuto používateľovi prihlasovacie údaje mailom?',
     'department_manager' => 'Department Manager',
+    'generate_password' => 'Generate random password',
+    'individual_override' => 'This user has at least one individual permission set, which may override group permissions.',
 ];

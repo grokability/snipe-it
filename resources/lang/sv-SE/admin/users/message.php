@@ -2,8 +2,8 @@
 
 return array(
 
-    'accepted'                  => 'Du har godkänt denna tillgång.',
-    'declined'                  => 'Du har avböjt denna tillgång.',
+    'accepted'                  => 'You have successfully accepted this item.',
+    'declined'                  => 'You have successfully declined this item.',
     'bulk_manager_warn'	        => 'Dina användare har uppdaterats, men ansvarigfältet sparades inte eftersom den ansvarige du valt även finns i användarlistan varvid en användare inte kan ange sig själv som ansvarig. Vänligen välj dina användare igen, med den ansvarige exkluderad ur valen.',
     'user_exists'               => 'Användaren existerar redan!',
     'user_not_found'            => 'Användaren existerar inte eller så har du inte behörighet att se den.',

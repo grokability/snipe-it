@@ -15,7 +15,8 @@ return [
     'info'				=> '情報',
     'restore_user'		=> '復元するには、ここをクリックします。',
     'last_login'        => '最終ログイン',
-    'ldap_config_text'  => 'LDAP 構成設定 管理者 > 設定。 選択した場所は、インポートされたすべてのユーザーに対して設定されます。',
+    'ldap_config_text'  => 'The selected location will be set for ALL imported users. This will overwrite their existing location, and is an unusual use-case, so leaving this blank is typically best.',
+    'ldap_sync_intro'   => 'Click on the button below to manually sync your LDAP users. To learn more about configuring LDAP sync to run automatically, please see the <a href=":link" target="_blank">documentation <i class="fa fa-external-link"></i></a> .',
     'print_assigned'    => '割り当て先をすべて印刷',
     'email_assigned'    => '割り当てられたすべてのメール一覧',
     'user_notified'     => 'ユーザーは現在割り当てられているアイテムのリストを電子メールで送信しました。',
@@ -53,4 +54,6 @@ return [
     'all_assigned_list_generation' => '生成日時：',
     'email_user_creds_on_create' => 'このユーザーの資格情報を電子メールで送信しますか？',
     'department_manager' => 'Department Manager',
+    'generate_password' => 'Generate random password',
+    'individual_override' => 'This user has at least one individual permission set, which may override group permissions.',
 ];

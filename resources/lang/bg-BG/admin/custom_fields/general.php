@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Управление',
     'field'		                => 'Поле',
     'about_fieldsets_title'		=> 'Относно Fieldsets',
-    'about_fieldsets_text'		=> 'Fieldsets позволяват създаването на групи от персонализирани полета, които се използват и преизползват често за специфични типове модели на активи.',
+    'about_fieldsets_text'		=> '"Група от полета" позволяват създаването на групи от персонализирани полета, които се използват и преизползват често за специфични типове модели на активи.',
     'custom_format'             => 'Персонализиран формат...',
     'encrypt_field'      	        => 'Шифроване на стойността на това поле в базата данни',
     'encrypt_field_help'      => 'ВНИМАНИЕ: Шифроване на поле го прави невалидно за търсене.',
@@ -67,4 +67,5 @@ return [
         'checkbox' => 'Checkbox',
         'radio' => 'Radio Buttons',
     ],
+    'general_help_text' => 'Custom fields store additional information not covered by the default asset fields. <a href="https://snipe-it.readme.io/docs/custom-fields#/"><i class="fa fa-external-link"></i></a>.',
 ];

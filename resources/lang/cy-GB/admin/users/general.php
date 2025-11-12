@@ -15,7 +15,8 @@ return [
     'info'				=> 'Gwybodaeth',
     'restore_user'		=> 'Cliciwch yma yw adfer.',
     'last_login'        => 'Mewngofnodi Diwethaf',
-    'ldap_config_text'  => 'Gweler Gweinyddiaeth > Gosodiadau am gosodiadau LDAP. Mae\'r lleoliad (dewisol) yn cael ei osod am unrhyw defnyddwyr sydd yn cael ei mewnforio.',
+    'ldap_config_text'  => 'The selected location will be set for ALL imported users. This will overwrite their existing location, and is an unusual use-case, so leaving this blank is typically best.',
+    'ldap_sync_intro'   => 'Click on the button below to manually sync your LDAP users. To learn more about configuring LDAP sync to run automatically, please see the <a href=":link" target="_blank">documentation <i class="fa fa-external-link"></i></a> .',
     'print_assigned'    => 'Argraffu Asedau',
     'email_assigned'    => 'Email List of All Assigned',
     'user_notified'     => 'User has been emailed a list of their currently assigned items.',
@@ -53,4 +54,6 @@ return [
     'all_assigned_list_generation' => 'Generated on:',
     'email_user_creds_on_create' => 'Email this user their credentials?',
     'department_manager' => 'Department Manager',
+    'generate_password' => 'Generate random password',
+    'individual_override' => 'This user has at least one individual permission set, which may override group permissions.',
 ];

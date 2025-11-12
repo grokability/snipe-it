@@ -2,8 +2,8 @@
 
 return array(
 
-    'accepted'                  => '이 자산이 승인되었습니다.',
-    'declined'                  => '이 자산이 거부되었습니다.',
+    'accepted'                  => 'You have successfully accepted this item.',
+    'declined'                  => 'You have successfully declined this item.',
     'bulk_manager_warn'	        => '사용자가 성공적으로 갱신되었지만, 선택한 관리자가 편집할 사용자 목록에도 있었고, 사용자가 자신의 관리자가 아니 어서 관리자 항목이 저장되지 않았습니다. 관리자를 제외한 사용자를 다시 선택하십시오.',
     'user_exists'               => '사용자가 이미 존재합니다!',
     'user_not_found'            => '사용자가 존재하지 않거나, 볼수 있는 권한이 없습니다.',

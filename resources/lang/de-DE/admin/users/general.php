@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'activated_help_text' => 'Der Nutzer kann sich einloggen',
+    'activated_help_text' => 'Dieser Benutzer kann sich anmelden',
     'activated_disabled_help_text' => 'Sie können den Aktiverungsstatus für Ihren eigenen Account nicht ändern.',
     'assets_user'       => 'Assets zugewiesen an :name',
     'bulk_update_warn'	=> 'Sie sind dabei, die Eigenschaften von :user_count Benutzern zu bearbeiten. Bitte beachten Sie, dass Sie Ihre eigenen Benutzerattribute nicht über dieses Formular ändern können. Sie müssen Ihren eigenen Benutzer einzeln bearbeiten.',
@@ -15,7 +15,8 @@ return [
     'info'				=> 'Info',
     'restore_user'		=> 'Klicken Sie hier, um sie wiederherzustellen.',
     'last_login'        => 'Letzte Anmeldung',
-    'ldap_config_text'  => 'Die LDAP Konfigurations Einstellungen finden Sie hier Admin -> Einstellungen. Der (optional) wählbare Standort wird für alle importierten Benutzer gesetzt.',
+    'ldap_config_text'  => 'Der ausgewählte Standort wird für ALLE importierten Benutzer festgelegt. Dies wird ihren bestehenden Standort überschreiben und ist ein ungewöhnlicher Anwendungsfall, daher ist es typischerweise am besten, diese leer zu lassen.',
+    'ldap_sync_intro'   => 'Click on the button below to manually sync your LDAP users. To learn more about configuring LDAP sync to run automatically, please see the <a href=":link" target="_blank">documentation <i class="fa fa-external-link"></i></a> .',
     'print_assigned'    => 'Alles zugewiesene drucken',
     'email_assigned'    => 'Alles zugewiesene per Mail zusenden',
     'user_notified'     => 'Der Benutzer hat eine Liste seiner aktuell zugewiesenen Artikel per E-Mail erhalten.',
@@ -53,4 +54,6 @@ return [
     'all_assigned_list_generation' => 'Generiert am:',
     'email_user_creds_on_create' => 'Diesem Benutzer seine Zugangsdaten per E-Mail senden?',
     'department_manager' => 'Abteilungsleiter',
+    'generate_password' => 'Zufälliges Passwort generieren',
+    'individual_override' => 'Dieser Benutzer hat mindestens eine individuelle Berechtigung, die Gruppenberechtigungen überschreiben kann.',
 ];

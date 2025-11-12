@@ -45,7 +45,7 @@ class CheckoutAssetMailTest extends TestCase
                     'asset' => Asset::factory()->requiresAcceptance()->create(),
                     'acceptance' => CheckoutAcceptance::factory()->create(),
                     'first_time_sending' => false,
-                    'expected_subject' => 'Reminder: You have Unaccepted Assets.',
+                    'expected_subject' => 'Reminder: You have Unaccepted Items',
                     'expected_opening' => 'An item was recently checked out under your name that requires acceptance, details are below.'
                 ];
             }

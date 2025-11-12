@@ -15,7 +15,8 @@ return [
     'info'				=> 'Інфо',
     'restore_user'		=> 'Натисніть тут, щоб відновити їх.',
     'last_login'        => 'Останній вхід',
-    'ldap_config_text'  => 'Налаштування конфігурації LDAP можна знайти Адміністратора > Налаштування. (опціонально) вибране місце розташування буде встановлено для всіх імпортованих користувачів.',
+    'ldap_config_text'  => 'The selected location will be set for ALL imported users. This will overwrite their existing location, and is an unusual use-case, so leaving this blank is typically best.',
+    'ldap_sync_intro'   => 'Click on the button below to manually sync your LDAP users. To learn more about configuring LDAP sync to run automatically, please see the <a href=":link" target="_blank">documentation <i class="fa fa-external-link"></i></a> .',
     'print_assigned'    => 'Друкувати всі призначені',
     'email_assigned'    => 'Список адрес електронної пошти присвоєних',
     'user_notified'     => 'Користувач відправлений на email список призначених в даний час елементів.',
@@ -53,4 +54,6 @@ return [
     'all_assigned_list_generation' => 'Згенерований на:',
     'email_user_creds_on_create' => 'Надішліть цьому користувачеві їх облікові дані?',
     'department_manager' => 'Department Manager',
+    'generate_password' => 'Generate random password',
+    'individual_override' => 'This user has at least one individual permission set, which may override group permissions.',
 ];

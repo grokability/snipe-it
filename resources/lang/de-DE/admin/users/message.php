@@ -2,8 +2,8 @@
 
 return array(
 
-    'accepted'                  => 'Sie haben diesen Gegenstand erfolgreich angenommen.',
-    'declined'                  => 'Sie haben diesen Gegenstand abgelehnt.',
+    'accepted'                  => 'You have successfully accepted this item.',
+    'declined'                  => 'You have successfully declined this item.',
     'bulk_manager_warn'	        => 'Benutzer erfolgreich geändert. Vorgesetzter sollte auch bearbeitet werden und konnte nicht angepasst werden, weil er sich nicht selbst als Vorgesetzter eingetragen haben kann. Bitte Benutzer ohne den Vorgesetzten nochmal bearbeiten.',
     'user_exists'               => 'Benutzer existiert bereits!',
     'user_not_found'            => 'Der Benutzer existiert nicht oder Sie sind nicht berechtigt, ihn anzuzeigen.',

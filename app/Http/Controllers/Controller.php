@@ -30,6 +30,7 @@ use App\Models\Consumable;
 use App\Models\License;
 use App\Models\Location;
 use App\Models\Maintenance;
+use App\Models\Supplier;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -52,6 +53,7 @@ abstract class Controller extends BaseController
         'licenses' => License::class,
         'locations' => Location::class,
         'models' => AssetModel::class,
+        'suppliers' => Supplier::class,
         'users' => User::class,
     ];
 
@@ -66,6 +68,7 @@ abstract class Controller extends BaseController
         'licenses' => 'private_uploads/licenses/',
         'locations' => 'private_uploads/locations/',
         'models' => 'private_uploads/models/',
+        'suppliers' => 'private_uploads/suppliers/',
         'users' => 'private_uploads/users/',
     ];
 
@@ -80,6 +83,7 @@ abstract class Controller extends BaseController
         'licenses' => 'license',
         'locations' => 'location',
         'models' => 'model',
+        'suppliers' => 'supplier',
         'users' => 'user',
     ];
 

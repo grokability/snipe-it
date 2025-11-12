@@ -15,7 +15,8 @@ return [
     'info'				=> 'Tiedot',
     'restore_user'		=> 'Klikkaa tästä palauttaaksesi ne.',
     'last_login'        => 'Viimeisin kirjautuminen',
-    'ldap_config_text'  => 'LDAP-asetukset löytyvät kohdasta Järjestelmänvalvoja> Asetukset. Valittu (valinnainen) sijainti määritetään kaikille tuodulle käyttäjälle.',
+    'ldap_config_text'  => 'The selected location will be set for ALL imported users. This will overwrite their existing location, and is an unusual use-case, so leaving this blank is typically best.',
+    'ldap_sync_intro'   => 'Click on the button below to manually sync your LDAP users. To learn more about configuring LDAP sync to run automatically, please see the <a href=":link" target="_blank">documentation <i class="fa fa-external-link"></i></a> .',
     'print_assigned'    => 'Tulosta kaikki luovutetut',
     'email_assigned'    => 'Kaikkien määritettyjen sähköpostien luettelo',
     'user_notified'     => 'Käyttäjä on lähetetty sähköpostilla luettelo heidän tällä hetkellä määritetyistä kohteista.',
@@ -53,4 +54,6 @@ return [
     'all_assigned_list_generation' => 'Luotu:',
     'email_user_creds_on_create' => 'Lähetä tälle käyttäjälle käyttäjätunnukset?',
     'department_manager' => 'Department Manager',
+    'generate_password' => 'Generate random password',
+    'individual_override' => 'This user has at least one individual permission set, which may override group permissions.',
 ];

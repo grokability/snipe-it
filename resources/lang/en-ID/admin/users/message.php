@@ -2,8 +2,8 @@
 
 return array(
 
-    'accepted'                  => 'Anda sudah berhasil menerima aset ini.',
-    'declined'                  => 'Anda sudah berhasil menolak aset ini.',
+    'accepted'                  => 'You have successfully accepted this item.',
+    'declined'                  => 'You have successfully declined this item.',
     'bulk_manager_warn'	        => 'Pengguna anda sudah berhasil diperbarui, namun entri manajer anda tidak disimpan karena manajer yang anda pilih juga berada dalam daftar pengguna untuk disunting, dan pengguna mungkin bukan manajer mereka sendiri. Silahkan pilih pengguna anda lagi, tidak termasuk manajernya.',
     'user_exists'               => 'Pengguna sudah ada!',
     'user_not_found'            => 'User does not exist or you do not have permission view them.',

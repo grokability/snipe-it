@@ -2,8 +2,8 @@
 
 return array(
 
-    'accepted'                  => 'Έχετε αποδεχθεί με επιτυχία αυτό το πάγιο.',
-    'declined'                  => 'Έχετε απορρίψει επιτυχώς αυτό το στοιχείο.',
+    'accepted'                  => 'You have successfully accepted this item.',
+    'declined'                  => 'You have successfully declined this item.',
     'bulk_manager_warn'	        => 'Οι χρήστες σας ενημερώθηκαν με επιτυχία, ωστόσο η καταχώριση του διαχειριστή σας δεν αποθηκεύτηκε, επειδή ο διαχειριστής που επιλέξατε ήταν επίσης στη λίστα χρηστών για επεξεργασία και οι χρήστες ενδέχεται να μην είναι ο δικός τους διαχειριστής. Επιλέξτε ξανά τους χρήστες σας, εξαιρουμένου του διαχειριστή.',
     'user_exists'               => 'Ο χρήστης υπάρχει ήδη!',
     'user_not_found'            => 'User does not exist or you do not have permission view them.',

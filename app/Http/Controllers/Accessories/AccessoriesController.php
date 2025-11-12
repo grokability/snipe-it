@@ -182,7 +182,11 @@ class AccessoriesController extends Controller
 
             $accessory = $request->handleImages($accessory);
 
-            session()->put(['redirect_option' => $request->get('redirect_option')]);
+            if($request->get('redirect_option') === 'back'){
+                session()->put(['redirect_option' => 'index']);
+            } else {
+                session()->put(['redirect_option' => $request->get('redirect_option')]);
+            }
 
             if ($accessory->save()) {
                 return Helper::getRedirectOption($request, $accessory->id, 'Accessories')

@@ -5,7 +5,7 @@ return [
     'manage'                    => 'จัดการ',
     'field'		                => 'สนาม',
     'about_fieldsets_title'		=> 'เกี่ยวกับ Fieldsets',
-    'about_fieldsets_text'		=> 'ฟิลด์ช่วยให้คุณสามารถสร้างกลุ่มของฟิลด์ที่กำหนดเองซึ่งมักใช้ซ้ำสำหรับรูปแบบโมเดลของเนื้อหาบางประเภท',
+    'about_fieldsets_text'		=> 'ชุดฟิลด์ที่ช่วยให้คุณสร้างกลุ่มของฟิลด์ที่กำหนดได้เอง ซึ่งมักจะใช้ซ้ำสำหรับการเจาะจงประเภทของสินทรัพย์',
     'custom_format'             => 'กำหนดรูปแบบ...',
     'encrypt_field'      	        => 'เข้ารหัสค่าของฟิลด์นี้ในฐานข้อมูล',
     'encrypt_field_help'      => 'คำเตือน: การเข้ารหัสฟิลด์ทำให้ไม่สามารถค้นหาได้',
@@ -67,4 +67,5 @@ return [
         'checkbox' => 'Checkbox',
         'radio' => 'Radio Buttons',
     ],
+    'general_help_text' => 'Custom fields store additional information not covered by the default asset fields. <a href="https://snipe-it.readme.io/docs/custom-fields#/"><i class="fa fa-external-link"></i></a>.',
 ];

@@ -275,7 +275,19 @@ class Component extends SnipeModel
     {
         return $this->category?->checkin_email;
     }
-
+    /**
+     * Get the list of checkouts for this License
+     *
+     * @author [A. Gianotto] [<snipe@snipe.net>]
+     * @since  [v2.0]
+     * @return \Illuminate\Database\Eloquent\Relations\Relation
+     */
+    public function checkouts()
+    {
+        return $this->assetlog()->where('action_type', '=', 'checkout')
+            ->orderBy('created_at', 'desc')
+            ->withTrashed();
+    }
 
     /**
      * Check how many items within a component are remaining

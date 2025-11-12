@@ -15,7 +15,8 @@ return [
     'info'				=> 'Xog',
     'restore_user'		=> 'Riix halkan si aad u soo celiso.',
     'last_login'        => 'Gelidii u dambaysay',
-    'ldap_config_text'  => 'Dejinta qaabeynta LDAP waxaa laga heli karaa Maamulka> Dejinta. Goobta (ikhtiyaarka) ee la doortay ayaa loo dejin doonaa dhammaan isticmaalayaasha la soo dhoofiyo.',
+    'ldap_config_text'  => 'The selected location will be set for ALL imported users. This will overwrite their existing location, and is an unusual use-case, so leaving this blank is typically best.',
+    'ldap_sync_intro'   => 'Click on the button below to manually sync your LDAP users. To learn more about configuring LDAP sync to run automatically, please see the <a href=":link" target="_blank">documentation <i class="fa fa-external-link"></i></a> .',
     'print_assigned'    => 'Daabac Dhammaan Ku-meel-gaadhka ah',
     'email_assigned'    => 'Liistada iimaylka ee Dhammaan la qoondeeyay',
     'user_notified'     => 'Isticmaalaha waxaa loo soo diray iimayl liiska alaabta hadda loo qoondeeyay.',
@@ -53,4 +54,6 @@ return [
     'all_assigned_list_generation' => 'Lagu soo saaray:',
     'email_user_creds_on_create' => 'Imayl u dir isticmaalahan aqoonsigiisa?',
     'department_manager' => 'Department Manager',
+    'generate_password' => 'Generate random password',
+    'individual_override' => 'This user has at least one individual permission set, which may override group permissions.',
 ];

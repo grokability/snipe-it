@@ -2,8 +2,8 @@
 
 return array(
 
-    'accepted'                  => 'دارایی با موفقیت پذیرفته شد.',
-    'declined'                  => 'شما با موفقیت این دارایی را به کاهش دادید.',
+    'accepted'                  => 'You have successfully accepted this item.',
+    'declined'                  => 'You have successfully declined this item.',
     'bulk_manager_warn'	        => 'کاربران شما با موفقیت به روز شده اند، با این حال مدیر ورود شما ذخیره نشد زیرا مدیر شما انتخاب شده بود نیز در لیست کاربر برای ویرایش، و کاربران ممکن است مدیر خود نیست. لطفا کاربران خود را دوباره انتخاب کنید، به غیر از مدیر.',
     'user_exists'               => 'کاربر "{0}" در حال حاضر وجود دارد.',
     'user_not_found'            => 'User does not exist or you do not have permission view them.',

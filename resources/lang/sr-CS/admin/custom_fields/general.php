@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Uredi',
     'field'		                => 'Polje',
     'about_fieldsets_title'		=> 'O grupi polja',
-    'about_fieldsets_text'		=> 'Skupovi polja vam omogućavaju da kreirate grupe prilagođenih polja koja se često ponovo koriste za određene tipove modela imovine.',
+    'about_fieldsets_text'		=> 'Skupovi polja vam omogućavaju da kreirate grupe prilagođenih polja koja se često ponovo koriste za određene tipove modela sredstava.',
     'custom_format'             => 'Prilagodljivi Regex format...',
     'encrypt_field'      	        => 'Enkriptujte vrednost polja u bazi podataka',
     'encrypt_field_help'      => 'UPUZORENJE: Nije moguće pretraživati enkriptovana polja.',
@@ -67,4 +67,5 @@ return [
         'checkbox' => 'Polje za potvrdu',
         'radio' => 'Dugmići izbora',
     ],
+    'general_help_text' => 'Prilagođena polja skladište dodatne informacije koje nisu pokrivene podrazumevanim poljima imovine. <a href="https://snipe-it.readme.io/docs/custom-fields#/"><i class="fa fa-external-link"></i></a>.',
 ];

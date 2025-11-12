@@ -3,11 +3,11 @@
     return [
         'asset_maintenances' => 'Utrzymanie aktywów', // not used anymore
         'maintenances'       => 'Utrzymanie',
-        'edit'               => 'Edytuj konserwacje aktywa',
-        'delete'             => 'Usuń konserwacje aktywa',
-        'view'               => 'Zobacz szczegóły konserwacji aktywa',
+        'edit'               => 'Edytuj okno serwisowe środka',
+        'delete'             => 'Usuń okno serwisowe środka',
+        'view'               => 'Zobacz szczegóły serwisu środka',
         'repair'             => 'Naprawa',
-        'maintenance'        => 'Konserwacja',
+        'maintenance'        => 'Serwis',
         'upgrade'            => 'Uaktualnienie',
         'calibration'        => 'Kalibracja',
         'software_support'   => 'Wsparcie oprogramowania',

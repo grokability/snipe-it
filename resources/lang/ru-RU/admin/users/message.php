@@ -2,8 +2,8 @@
 
 return array(
 
-    'accepted'                  => 'Вы успешно приняли актив.',
-    'declined'                  => 'Вы успешно отклонили актив.',
+    'accepted'                  => 'You have successfully accepted this item.',
+    'declined'                  => 'You have successfully declined this item.',
     'bulk_manager_warn'	        => 'Ваши пользователи были успешно обновлены, однако запись менеджера не была сохранена, потому что выбранный менеджер также присутствовал в редактируемом списке пользователей, и пользователи не могут быть менеджерами самим себе. Пожалуйста выберите ваших пользователей снова, за исключением их менеджера.',
     'user_exists'               => 'Пользователь уже существует!',
     'user_not_found'            => 'User does not exist or you do not have permission view them.',

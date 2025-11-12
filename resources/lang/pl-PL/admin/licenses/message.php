@@ -46,7 +46,7 @@ return array(
         'not_enough_seats' => 'Za mało dostępnych miejsc do zamówienia',
         'mismatch' => 'Podane miejsce licencji nie jest zgodne z licencją',
         'unavailable' => 'To miejsce nie jest dostępne do wydania.',
-        'license_is_inactive' => 'This license is expired or terminated.',
+        'license_is_inactive' => 'Ta licencja jest nieaktualna lub wycofana.',
     ),
 
     'checkin' => array(

@@ -2,8 +2,8 @@
 
 return array(
 
-    'accepted'                  => 'Ha aceptado este artículo exitosamente.',
-    'declined'                  => 'Ha rechazado correctamente este activo.',
+    'accepted'                  => 'You have successfully accepted this item.',
+    'declined'                  => 'You have successfully declined this item.',
     'bulk_manager_warn'	        => 'Sus usuarios han sido actualizados con éxito, sin embargo, la entrada supervisor (manager) no fue guardada porque el supervisor seleccionado también estaba en la lista de usuarios a editar, y los usuarios no pueden ser su propio supervisor. Vuelva a seleccionar los usuarios, excluyendo al supervisor.',
     'user_exists'               => '¡El usuario ya existe!',
     'user_not_found'            => 'El usuario no existe o usted no tiene permisos para verlo.',

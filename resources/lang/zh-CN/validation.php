@@ -174,7 +174,7 @@ return [
     'ulid' => ':attribute 字段必须是个有效的 ULID。',
     'uuid' => ':attribute 字段必须是一个有效的 UUID。',
     'fmcs_location' => '管理设置中已启用完整的多公司支持及位置范围限定功能，但当前选择的位置与公司不兼容。',
-
+    'is_unique_across_company_and_location' => 'The :attribute must be unique within the selected company and location.',
 
     /*
     |--------------------------------------------------------------------------

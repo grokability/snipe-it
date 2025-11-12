@@ -15,7 +15,8 @@ return [
     'info'				=> 'Info',
     'restore_user'		=> 'Clique aqui para restaurá-los.',
     'last_login'        => 'Último início de sessão',
-    'ldap_config_text'  => 'As definições de configuração do LDAP podem ser encontradas em Administrador > Definições. A localização (opcional) selecionada vai ser defenida para todos os utilizadores importados.',
+    'ldap_config_text'  => 'The selected location will be set for ALL imported users. This will overwrite their existing location, and is an unusual use-case, so leaving this blank is typically best.',
+    'ldap_sync_intro'   => 'Click on the button below to manually sync your LDAP users. To learn more about configuring LDAP sync to run automatically, please see the <a href=":link" target="_blank">documentation <i class="fa fa-external-link"></i></a> .',
     'print_assigned'    => 'Imprimir todos atribuídos',
     'email_assigned'    => 'Lista de endereços eletrónicos de Todos os atribuídos',
     'user_notified'     => 'Um utilizador recebeu um endereço eletrónico com uma lista dos seus itens atualmente atribuídos.',
@@ -53,4 +54,6 @@ return [
     'all_assigned_list_generation' => 'Criado em:',
     'email_user_creds_on_create' => 'Enviar por e-mail as credenciais deste utilizador?',
     'department_manager' => 'Department Manager',
+    'generate_password' => 'Generate random password',
+    'individual_override' => 'This user has at least one individual permission set, which may override group permissions.',
 ];

@@ -416,7 +416,12 @@ class License extends Depreciable
         }
         return false;
     }
-
+    public function checkouts()
+    {
+        return $this->assetlog()->where('action_type', '=', 'checkout')
+            ->orderBy('created_at', 'desc')
+            ->withTrashed();
+    }
     /**
      * Determine whether the user should be required to accept the license
      *

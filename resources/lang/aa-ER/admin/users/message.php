@@ -2,8 +2,8 @@
 
 return array(
 
-    'accepted'                  => 'crwdns1344:0crwdne1344:0',
-    'declined'                  => 'crwdns1345:0crwdne1345:0',
+    'accepted'                  => 'crwdns14254:0crwdne14254:0',
+    'declined'                  => 'crwdns14256:0crwdne14256:0',
     'bulk_manager_warn'	        => 'crwdns1849:0crwdne1849:0',
     'user_exists'               => 'crwdns787:0crwdne787:0',
     'user_not_found'            => 'crwdns12744:0crwdne12744:0',

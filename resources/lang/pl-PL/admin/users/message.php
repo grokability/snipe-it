@@ -2,8 +2,8 @@
 
 return array(
 
-    'accepted'                  => 'Pomyślnie zaakceptowałeś ten składnik aktywów.',
-    'declined'                  => 'Pomyślnie odrzuciłeś ten składnik aktywów.',
+    'accepted'                  => 'You have successfully accepted this item.',
+    'declined'                  => 'You have successfully declined this item.',
     'bulk_manager_warn'	        => 'Użytkownicy zostały pomyślnie zaktualizowane, jednak Twój wpis manager nie został zapisany, bo dyrektor wybrano był również na liście użytkowników do edycji i użytkowników nie może być ich Menedżer. Wybierz użytkowników, z wyjątkiem Menedżera.',
     'user_exists'               => 'Użytkownik już istnieje!',
     'user_not_found'            => 'Użytkownik nie istnieje lub nie masz uprawnień.',

@@ -3,13 +3,18 @@
 namespace App\Console\Commands;
 
 use App\Mail\UnacceptedAssetReminderMail;
+use App\Models\Accessory;
 use App\Models\Asset;
 use App\Models\CheckoutAcceptance;
+use App\Models\Component;
+use App\Models\Consumable;
+use App\Models\LicenseSeat;
 use App\Models\Setting;
 use App\Models\User;
 use App\Notifications\CheckoutAssetNotification;
 use App\Notifications\CurrentInventory;
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Facades\Mail;
 
 class SendAcceptanceReminder extends Command
@@ -26,7 +31,7 @@ class SendAcceptanceReminder extends Command
      *
      * @var string
      */
-    protected $description = 'This will resend users with unaccepted assets a reminder to accept or decline them.';
+    protected $description = 'This will resend users with unaccepted items a reminder to accept or decline them.';
 
     /**
      * Create a new command instance.
@@ -45,19 +50,30 @@ class SendAcceptanceReminder extends Command
      */
     public function handle()
     {
-        $pending = CheckoutAcceptance::pending()->where('checkoutable_type', 'App\Models\Asset')
-                                                ->whereHas('checkoutable', function($query) {
-                                                    $query->where('accepted_at', null)
-                                                          ->where('declined_at', null);
-                                                })
-                                                ->with(['assignedTo', 'checkoutable.assignedTo', 'checkoutable.model', 'checkoutable.adminuser'])
-                                                ->get();
+        $pending = CheckoutAcceptance::query()
+            ->with([
+                'checkoutable' => function (MorphTo $morph) {
+                    $morph->morphWith([
+                        Asset::class       => ['model.category', 'assignedTo', 'adminuser', 'company', 'checkouts'],
+                        Accessory::class   => ['category', 'company', 'checkouts'],
+                        LicenseSeat::class => ['user', 'license', 'checkouts'],
+                        Component::class   => ['assignedTo', 'company', 'checkouts'],
+                        Consumable::class  => ['company', 'checkouts'],
+                    ]);
+                },
+                'assignedTo',
+            ])
+            ->whereHasMorph(
+                'checkoutable',
+                [Asset::class, Accessory::class, LicenseSeat::class, Component::class, Consumable::class],
+                fn ($q) => $q->whereNull('accepted_at')
+                    ->whereNull('declined_at')
+            )
+            ->pending()
+            ->get();
 
         $count = 0;
         $unacceptedAssetGroups = $pending
-            ->filter(function($acceptance) {
-                return $acceptance->checkoutable_type == 'App\Models\Asset';
-            })
             ->map(function($acceptance) {
                 return ['assetItem' => $acceptance->checkoutable, 'acceptance' => $acceptance];
             })

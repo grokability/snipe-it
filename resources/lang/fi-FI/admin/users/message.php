@@ -2,8 +2,8 @@
 
 return array(
 
-    'accepted'                  => 'Olet hyväksynyt tämän laitteen.',
-    'declined'                  => 'Olet onnistuneesti hylännyt tämän laitteen.',
+    'accepted'                  => 'You have successfully accepted this item.',
+    'declined'                  => 'You have successfully declined this item.',
     'bulk_manager_warn'	        => 'Käyttäjät on onnistuneesti päivitetty, mutta esimies-merkintää ei tallennettu, koska valitsemasi esimies oli mukana käyttäjäluettelossa, eikä käyttäjä voi olla itsensä esimies. Valitse käyttäjät uudelleen, poislukien esimies.',
     'user_exists'               => 'Käyttäjä on jo luotu!',
     'user_not_found'            => 'User does not exist or you do not have permission view them.',

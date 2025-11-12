@@ -2,7 +2,7 @@
 
 return [
 
-    'select_language' => 'Select a Language',
+    'select_language' => 'Valitse kieli',
     'languages' => [
         'en-US'=> 'Englanti, Yhdysvallat',
         'en-GB'=> 'Englanti, UK',
@@ -68,7 +68,7 @@ return [
         'zu-ZA'=> 'Zulu',
     ],
 
-    'select_country' => 'Select a Country',
+    'select_country' => 'Valitse maa',
     
     'countries' => [
         'AC'=>'Ascension saari',
@@ -135,7 +135,7 @@ return [
         'EC'=>'Ecuador',
         'EE'=>'Eesti',
         'EG'=>'Egypti',
-        'GB-ENG'=>'England',
+        'GB-ENG'=>'Englanti',
         'ER'=>'Eritrea',
         'ES'=>'Espanja',
         'ET'=>'Etiopia',
@@ -234,7 +234,7 @@ return [
         'NG'=>'Nigeria',
         'NI'=>'Nicaragua',
         'NL'=>'Alankomaat',
-        'GB-NIR' => 'Northern Ireland',
+        'GB-NIR' => 'Pohjois-Irlanti',
         'NO'=>'Norja',
         'NP'=>'Nepal',
         'NR'=>'Nauru',
