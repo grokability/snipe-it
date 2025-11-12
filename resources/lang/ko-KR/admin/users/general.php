@@ -15,7 +15,8 @@ return [
     'info'				=> '정보',
     'restore_user'		=> '그것들을 복원하려면 여기를 클릭하세요.',
     'last_login'        => '마지막 로그인',
-    'ldap_config_text'  => 'LDAP 구성 설정들은 Admin > Settings 에서 찾을 수 있습니다. (부가적으로) 선택된 장소는 불러온 모든 사용자들에게 설정됩니다.',
+    'ldap_config_text'  => 'The selected location will be set for ALL imported users. This will overwrite their existing location, and is an unusual use-case, so leaving this blank is typically best.',
+    'ldap_sync_intro'   => 'Click on the button below to manually sync your LDAP users. To learn more about configuring LDAP sync to run automatically, please see the <a href=":link" target="_blank">documentation <i class="fa fa-external-link"></i></a> .',
     'print_assigned'    => 'Assigned 자산 모두 인쇄',
     'email_assigned'    => 'Email List of All Assigned',
     'user_notified'     => 'User has been emailed a list of their currently assigned items.',
@@ -53,4 +54,6 @@ return [
     'all_assigned_list_generation' => 'Generated on:',
     'email_user_creds_on_create' => 'Email this user their credentials?',
     'department_manager' => 'Department Manager',
+    'generate_password' => 'Generate random password',
+    'individual_override' => 'This user has at least one individual permission set, which may override group permissions.',
 ];

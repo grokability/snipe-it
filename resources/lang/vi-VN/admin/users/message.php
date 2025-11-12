@@ -2,8 +2,8 @@
 
 return array(
 
-    'accepted'                  => 'Bạn đã xác nhận tài sản này thành công.',
-    'declined'                  => 'Bạn đã từ chối tài sản này thành công.',
+    'accepted'                  => 'You have successfully accepted this item.',
+    'declined'                  => 'You have successfully declined this item.',
     'bulk_manager_warn'	        => 'Người dùng của bạn đã được cập nhật thành công, tuy nhiên mục nhập của người quản lý của bạn không được lưu bởi vì người quản lý bạn đã chọn cũng nằm trong danh sách người dùng cần chỉnh sửa, và người dùng không phải là người quản lý của họ. Vui lòng chọn người dùng của bạn một lần nữa, ngoại trừ người quản lý.',
     'user_exists'               => 'Người dùng đã tồn tại!',
     'user_not_found'            => 'User does not exist or you do not have permission view them.',

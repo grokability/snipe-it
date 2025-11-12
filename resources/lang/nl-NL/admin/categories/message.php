@@ -20,8 +20,8 @@ return array(
     'delete' => array(
         'confirm'                => 'Weet u zeker dat u deze categorie wilt verwijderen?',
         'error'                  => 'Er is een probleem opgetreden bij het verwijderen van deze categorie. Probeer het opnieuw.',
-        'success'                => 'Category was deleted successfully.',
-        'bulk_success'           => 'Categories were deleted successfully.',
+        'success'                => 'De categorie is succesvol verwijderd.',
+        'bulk_success'           => 'De categorieën zijn succesvol verwijderd.',
         'partial_success'        => 'Category deleted successfully. See additional information below. | :count categories were deleted successfully. See additional information below.',
     )
 

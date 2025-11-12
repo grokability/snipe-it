@@ -15,7 +15,8 @@ return [
     'info'				=> 'Informacija',
     'restore_user'		=> 'Spustelėkite čia, kad juos atkurtumėte.',
     'last_login'        => 'Paskutinis prisijungimas',
-    'ldap_config_text'  => 'LDAP konfigūracijos nustatymus rasite „Administratorius > Nustatymai“. Pasirinkta (neprivaloma) vieta bus priskirta visiems importuotiems naudotojams.',
+    'ldap_config_text'  => 'The selected location will be set for ALL imported users. This will overwrite their existing location, and is an unusual use-case, so leaving this blank is typically best.',
+    'ldap_sync_intro'   => 'Click on the button below to manually sync your LDAP users. To learn more about configuring LDAP sync to run automatically, please see the <a href=":link" target="_blank">documentation <i class="fa fa-external-link"></i></a> .',
     'print_assigned'    => 'Spausdinti išduotą',
     'email_assigned'    => 'El. paštu nusiųsti išduoto turto sąrašą',
     'user_notified'     => 'Naudotojui el. paštu išsiųstas jam priskirtų daiktų sąrašas.',
@@ -53,4 +54,6 @@ return [
     'all_assigned_list_generation' => 'Sugeneruota:',
     'email_user_creds_on_create' => 'Siųsti naudotojui jo prisijungimo duomenis?',
     'department_manager' => 'Skyriaus vadovas',
+    'generate_password' => 'Generate random password',
+    'individual_override' => 'This user has at least one individual permission set, which may override group permissions.',
 ];

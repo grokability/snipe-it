@@ -15,7 +15,8 @@ return [
     'info'				=> 'crwdns1848:0crwdne1848:0',
     'restore_user'		=> 'crwdns1912:0crwdne1912:0',
     'last_login'        => 'crwdns1130:0crwdne1130:0',
-    'ldap_config_text'  => 'crwdns1580:0crwdne1580:0',
+    'ldap_config_text'  => 'crwdns14248:0crwdne14248:0',
+    'ldap_sync_intro'   => 'crwdns14250:0crwdne14250:0',
     'print_assigned'    => 'crwdns1993:0crwdne1993:0',
     'email_assigned'    => 'crwdns10484:0crwdne10484:0',
     'user_notified'     => 'crwdns10486:0crwdne10486:0',
@@ -53,4 +54,6 @@ return [
     'all_assigned_list_generation' => 'crwdns11415:0crwdne11415:0',
     'email_user_creds_on_create' => 'crwdns11517:0crwdne11517:0',
     'department_manager' => 'crwdns13408:0crwdne13408:0',
+    'generate_password' => 'crwdns13908:0crwdne13908:0',
+    'individual_override' => 'crwdns13910:0crwdne13910:0',
 ];

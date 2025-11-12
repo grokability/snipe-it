@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Actions\CheckoutRequests\CancelCheckoutRequestAction;
 use App\Actions\CheckoutRequests\CreateCheckoutRequestAction;
+use App\Enums\ActionType;
 use App\Exceptions\AssetNotRequestable;
 use App\Models\Actionlog;
 use App\Models\Asset;
@@ -201,7 +202,7 @@ class ViewAssetsController extends Controller
         if (($item_request = $item->isRequestedBy($user)) || $cancel_by_admin) {
             $item->cancelRequest($requestingUser);
             $data['item_quantity'] = ($item_request) ? $item_request->qty : 1;
-            $logaction->logaction('request_canceled');
+            $logaction->logaction(ActionType::RequestCanceled);
 
             if (($settings->alert_email != '') && ($settings->alerts_enabled == '1') && (! config('app.lock_passwords'))) {
                 $settings->notify(new RequestAssetCancelation($data));

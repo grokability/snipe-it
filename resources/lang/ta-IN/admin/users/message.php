@@ -2,8 +2,8 @@
 
 return array(
 
-    'accepted'                  => 'இந்த சொத்தை வெற்றிகரமாக ஏற்றுக்கொண்டீர்கள்.',
-    'declined'                  => 'இந்த சொத்து வெற்றிகரமாக நிராகரித்தது.',
+    'accepted'                  => 'You have successfully accepted this item.',
+    'declined'                  => 'You have successfully declined this item.',
     'bulk_manager_warn'	        => 'உங்கள் பயனர் வெற்றிகரமாக புதுப்பிக்கப்பட்டிருந்தாலும், உங்கள் மேலாளர் நுழைவு சேமிக்கப்படவில்லை, ஏனெனில் நீங்கள் தேர்ந்தெடுத்த மேலாளர் பயனர் பட்டியலில் திருத்தப்பட வேண்டும், மேலும் பயனர்கள் தங்கள் மேலாளராக இருக்கலாம். மேலாளரைத் தவிர்த்து உங்கள் பயனர்களை மீண்டும் தேர்ந்தெடுக்கவும்.',
     'user_exists'               => 'பயனர் ஏற்கனவே உள்ளது!',
     'user_not_found'            => 'User does not exist or you do not have permission view them.',

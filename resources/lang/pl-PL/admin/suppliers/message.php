@@ -20,9 +20,9 @@ return array(
         'confirm'   => 'Czy na pewno usunąć tego dostawcę?',
         'error'   => 'Podczas usuwania dostawcy napotkano błąd. Spróbuj ponownie.',
         'success' => 'Dostawca usunięty pomyślnie.',
-        'not_found'               => 'Supplier not found.',
-        'bulk_success'            => 'Suppliers were deleted successfully.',
-        'partial_success'        => 'Supplier deleted successfully. See additional information below. | :count suppliers were deleted successfully. See additional information below.',
+        'not_found'               => 'Dostawca nie został odnaleziony.',
+        'bulk_success'            => 'Pomyślnie usunięto dostawcę.',
+        'partial_success'        => 'Pomyślnie usunięto dostawcę. Sprawdź dodatkowe informacje poniżej.|Pomyślnie usunięto :count dostawców. Sprawdź dodatkowe informacje poniżej.',
     )
 
 );

@@ -15,7 +15,8 @@ return [
     'info'				=> 'מידע',
     'restore_user'		=> 'לחץ כאן כדי לשחזר אותם.',
     'last_login'        => 'כניסה אחרונה',
-    'ldap_config_text'  => 'הגדרות תצורה של LDAP נמצאות \'מנהל\'> \'הגדרות\'. המיקום הנבחר (אופציונלי) ייקבע עבור כל המשתמשים המיובאים.',
+    'ldap_config_text'  => 'The selected location will be set for ALL imported users. This will overwrite their existing location, and is an unusual use-case, so leaving this blank is typically best.',
+    'ldap_sync_intro'   => 'Click on the button below to manually sync your LDAP users. To learn more about configuring LDAP sync to run automatically, please see the <a href=":link" target="_blank">documentation <i class="fa fa-external-link"></i></a> .',
     'print_assigned'    => 'להדפיס את כל ההקצאות',
     'email_assigned'    => 'שלח רשימה של כל מה שמשוייך',
     'user_notified'     => 'המשתמש קיבל בדוא"ל רשימה של כל הפריטים אשר רשומים תחתיו.',
@@ -53,4 +54,6 @@ return [
     'all_assigned_list_generation' => 'נוצר על:',
     'email_user_creds_on_create' => 'האם לשלוח בדוא"ל את פרטי ההתחברות שלו?',
     'department_manager' => 'מנהל מחלקה',
+    'generate_password' => 'Generate random password',
+    'individual_override' => 'This user has at least one individual permission set, which may override group permissions.',
 ];

@@ -15,7 +15,8 @@ return [
     'info'				=> 'ព័ត៌មាន',
     'restore_user'		=> 'ចុចទីនេះដើម្បីស្ដារពួកវាឡើងវិញ។',
     'last_login'        => 'ការចូលចុងក្រោយ',
-    'ldap_config_text'  => 'ការកំណត់រចនាសម្ព័ន្ធ LDAP អាចត្រូវបានរកឃើញ អ្នកគ្រប់គ្រង > ការកំណត់។ ទីតាំងដែលបានជ្រើសរើស (ជាជម្រើស) នឹងត្រូវបានកំណត់សម្រាប់អ្នកប្រើប្រាស់ដែលបាននាំចូលទាំងអស់។',
+    'ldap_config_text'  => 'The selected location will be set for ALL imported users. This will overwrite their existing location, and is an unusual use-case, so leaving this blank is typically best.',
+    'ldap_sync_intro'   => 'Click on the button below to manually sync your LDAP users. To learn more about configuring LDAP sync to run automatically, please see the <a href=":link" target="_blank">documentation <i class="fa fa-external-link"></i></a> .',
     'print_assigned'    => 'បោះពុម្ពដែលបានចាត់តាំងទាំងអស់។',
     'email_assigned'    => 'បញ្ជីអ៊ីមែលដែលបានចាត់តាំងទាំងអស់។',
     'user_notified'     => 'អ្នក​ប្រើ​ត្រូវ​បាន​ផ្ញើ​អ៊ីមែល​នូវ​បញ្ជី​នៃ​ធាតុ​ដែល​បាន​កំណត់​បច្ចុប្បន្ន​របស់​ពួកគេ។',
@@ -53,4 +54,6 @@ return [
     'all_assigned_list_generation' => 'បង្កើតនៅលើ៖',
     'email_user_creds_on_create' => 'ផ្ញើអ៊ីមែលទៅអ្នកប្រើប្រាស់នេះនូវអត្តសញ្ញាណប័ណ្ណរបស់ពួកគេ?',
     'department_manager' => 'Department Manager',
+    'generate_password' => 'Generate random password',
+    'individual_override' => 'This user has at least one individual permission set, which may override group permissions.',
 ];

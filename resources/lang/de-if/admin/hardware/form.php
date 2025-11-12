@@ -45,7 +45,7 @@ return [
     'select_statustype'	=> 'Status Typ auswählen',
     'serial'			=> 'Seriennummer',
     'serial_required'	=> 'Asset :number erfordert eine Seriennummer',
-    'serial_required_post_model_update'	=> ':asset_model wurde aktualisiert, um eine Seriennummer zu erfordern. Bitte fügen Sie eine Seriennummer für dieses Asset hinzu.',
+    'serial_required_post_model_update'	=> ':asset_model wurde aktualisiert, um eine Seriennummer zu erfordern. Bitte füge eine Seriennummer für dieses Asset hinzu.',
     'status'			=> 'Status',
     'tag'				=> 'Asset Tag',
     'update'			=> 'Asset Update',

@@ -4235,6 +4235,33 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "smarsching",
+      "name": "Sebastian Marsching",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2880129?v=4",
+      "profile": "http://sebastian.marsching.com/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "mohammad-ahmadi1",
+      "name": "Mo",
+      "avatar_url": "https://avatars.githubusercontent.com/u/40658372?v=4",
+      "profile": "https://github.com/mohammad-ahmadi1",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "MarvelousAnything",
+      "name": "Owen V. Hayes",
+      "avatar_url": "https://avatars.githubusercontent.com/u/20994684?v=4",
+      "profile": "https://github.com/MarvelousAnything",
+      "contributions": [
+        "code"
+      ]
     }
   ]
 }

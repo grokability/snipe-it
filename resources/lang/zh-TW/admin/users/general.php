@@ -15,7 +15,8 @@ return [
     'info'				=> '資訊',
     'restore_user'		=> '點擊此處可將它們還原。',
     'last_login'        => '上次登入',
-    'ldap_config_text'  => 'LDAP 設定在 管理 > 設定。所選位置將套用至匯入的使用者。',
+    'ldap_config_text'  => 'The selected location will be set for ALL imported users. This will overwrite their existing location, and is an unusual use-case, so leaving this blank is typically best.',
+    'ldap_sync_intro'   => 'Click on the button below to manually sync your LDAP users. To learn more about configuring LDAP sync to run automatically, please see the <a href=":link" target="_blank">documentation <i class="fa fa-external-link"></i></a> .',
     'print_assigned'    => '列印所有分配的',
     'email_assigned'    => '電子郵件所有分配的清單',
     'user_notified'     => '使用者已透過電子郵件接收他們目前分配的項目清單。',
@@ -53,4 +54,6 @@ return [
     'all_assigned_list_generation' => '產生於：',
     'email_user_creds_on_create' => '在建立時寄送此使用者他們的憑證嗎？',
     'department_manager' => 'Department Manager',
+    'generate_password' => 'Generate random password',
+    'individual_override' => 'This user has at least one individual permission set, which may override group permissions.',
 ];

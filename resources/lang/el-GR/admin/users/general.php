@@ -15,7 +15,8 @@ return [
     'info'				=> 'Πληροφορίες',
     'restore_user'		=> 'Κάντε κλικ εδώ για να τα επαναφέρετε.',
     'last_login'        => 'Τελευταία σύνδεση',
-    'ldap_config_text'  => 'Οι ρυθμίσεις διαμόρφωσης LDAP μπορούν να βρεθούν στο στοιχείο Διαχειριστής> Ρυθμίσεις. Η (επιλεγμένη) επιλεγμένη τοποθεσία θα οριστεί για όλους τους εισαγόμενους χρήστες.',
+    'ldap_config_text'  => 'The selected location will be set for ALL imported users. This will overwrite their existing location, and is an unusual use-case, so leaving this blank is typically best.',
+    'ldap_sync_intro'   => 'Click on the button below to manually sync your LDAP users. To learn more about configuring LDAP sync to run automatically, please see the <a href=":link" target="_blank">documentation <i class="fa fa-external-link"></i></a> .',
     'print_assigned'    => 'Εκτύπωση Όλων Των Ανατεθέντων',
     'email_assigned'    => 'Λίστα Email όλων των ανατεθέντων',
     'user_notified'     => 'Ο χρήστης έχει αποσταλεί μέσω ηλεκτρονικού ταχυδρομείου σε μια λίστα των αντιστοιχισμένων αντικειμένων του.',
@@ -53,4 +54,6 @@ return [
     'all_assigned_list_generation' => 'Δημιουργήθηκε στις:',
     'email_user_creds_on_create' => 'Στείλτε email στο χρήστη τα διαπιστευτήριά τους?',
     'department_manager' => 'Department Manager',
+    'generate_password' => 'Generate random password',
+    'individual_override' => 'This user has at least one individual permission set, which may override group permissions.',
 ];

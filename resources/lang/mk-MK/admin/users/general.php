@@ -15,7 +15,8 @@ return [
     'info'				=> 'Информации',
     'restore_user'		=> 'Кликни тука за да ги вратите.',
     'last_login'        => 'Последна најава',
-    'ldap_config_text'  => 'LDAP конфигурациските поставки може да се најдат во Admin > Settings. Избраната локација (опционално) ќе биде поставена за сите увезени корисници.',
+    'ldap_config_text'  => 'The selected location will be set for ALL imported users. This will overwrite their existing location, and is an unusual use-case, so leaving this blank is typically best.',
+    'ldap_sync_intro'   => 'Click on the button below to manually sync your LDAP users. To learn more about configuring LDAP sync to run automatically, please see the <a href=":link" target="_blank">documentation <i class="fa fa-external-link"></i></a> .',
     'print_assigned'    => 'Печати задолжение',
     'email_assigned'    => 'Испрати Е-пошта со листа од сите доделени',
     'user_notified'     => 'На корисникот му е испрати Е-пошта со листа од сите доделени предмети.',
@@ -53,4 +54,6 @@ return [
     'all_assigned_list_generation' => 'Генерирано на:',
     'email_user_creds_on_create' => 'Да му се испрати креденцијалите на корисникот?',
     'department_manager' => 'Department Manager',
+    'generate_password' => 'Generate random password',
+    'individual_override' => 'This user has at least one individual permission set, which may override group permissions.',
 ];

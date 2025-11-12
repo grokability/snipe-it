@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Verwalten',
     'field'		                => 'Feld',
     'about_fieldsets_title'		=> 'Über Feldsätze',
-    'about_fieldsets_text'		=> 'Feldsätze erlauben es, Gruppen aus benutzerdefinierten Feldern zu erstellen, die regelmäßig für spezifische Modelltypen benutzt werden.',
+    'about_fieldsets_text'		=> 'Feldsätze erlauben es, Gruppen aus benutzerdefinierten Feldern zu erstellen, welche regelmäßig für spezifische Modelltypen benutzt werden.',
     'custom_format'             => 'Benutzerdefiniertes Regex-Format...',
     'encrypt_field'      	        => 'Den Wert dieses Feldes in der Datenbank verschlüsseln',
     'encrypt_field_help'      => 'WARNUNG: Ein verschlüsseltes Feld kann nicht durchsucht werden.',
@@ -67,4 +67,5 @@ return [
         'checkbox' => 'Auswahlfeld',
         'radio' => 'Auswahlknöpfe',
     ],
+    'general_help_text' => 'Benutzerdefinierte Felder speichern zusätzliche Informationen, die nicht von den Standard-Asset-Feldern abgedeckt sind. <a href="https://snipe-it.readme.io/docs/custom-fields#/"><i class="fa fa-external-link"></i></a>.',
 ];

@@ -15,7 +15,8 @@ return [
     'info'				=> 'Info',
     'restore_user'		=> 'Klik di sini untuk mengembalikannya.',
     'last_login'        => 'Terakhir masuk',
-    'ldap_config_text'  => 'Konfigurasi LDAP terdapat di Admin > Pengaturan. Jika lokasi di pilih, maka akan di impor untuk semua pengguna.',
+    'ldap_config_text'  => 'The selected location will be set for ALL imported users. This will overwrite their existing location, and is an unusual use-case, so leaving this blank is typically best.',
+    'ldap_sync_intro'   => 'Click on the button below to manually sync your LDAP users. To learn more about configuring LDAP sync to run automatically, please see the <a href=":link" target="_blank">documentation <i class="fa fa-external-link"></i></a> .',
     'print_assigned'    => 'Cetak Semua Ditugaskan',
     'email_assigned'    => 'Daftar Email Semua yang Ditetapkan',
     'user_notified'     => 'Pengguna telah dikirimi email berisi daftar item yang saat ini ditetapkan kepada mereka.',
@@ -53,4 +54,6 @@ return [
     'all_assigned_list_generation' => 'Dihasilkan pada:',
     'email_user_creds_on_create' => 'Kirim kredensial pengguna ini melalui email?',
     'department_manager' => 'Department Manager',
+    'generate_password' => 'Generate random password',
+    'individual_override' => 'This user has at least one individual permission set, which may override group permissions.',
 ];

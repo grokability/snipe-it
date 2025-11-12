@@ -14,7 +14,7 @@ return [
     'username_help_bottom'          => 'Twoja nazwa użytkownika i adres e-mail <em>mogą być</em> takie same, ale mogą nie być zależne od konfiguracji. Jeśli nie pamiętasz nazwy użytkownika, skontaktuj się z administratorem. <br><br><strong>Nazwy użytkowników bez powiązanego adresu e-mail nie będą otrzymywać powiadomień na adres e-mail z linkiem do resetowania hasła.</strong> ',
     'google_login'                  => 'Zaloguj się przez Google Workspace',
     'google_login_failed'           => 'Logowanie Google nie powiodło się, spróbuj ponownie.',
-    'invite_password_expires'       => 'This password reset link will expire on :expire_date. You can use the manual password reset link to receive a new reset token by clicking here',
+    'invite_password_expires'       => 'Ten link resetowania hasła wygaśnie dnia :expire_date. Możesz skorzystać ze standardowego linku do resetowania hasła klikając tutaj, w celu otrzymania nowego tokenu',
 
 ];
 

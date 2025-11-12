@@ -2,8 +2,8 @@
 
 return array(
 
-    'accepted'                  => 'Matagumpay mong natanggap ang asset na ito.',
-    'declined'                  => 'Matagumpay mong hindi tinaggap ang asset na ito.',
+    'accepted'                  => 'You have successfully accepted this item.',
+    'declined'                  => 'You have successfully declined this item.',
     'bulk_manager_warn'	        => 'Ang iyong mga user ay matagumpay nang nai-update, subalit ang iyong manager entry ay hindi nai-save dahil ang manager na iyong pinili ay kabilang sa listahan ng user na kailangang i-edit, at ang mga user ay maaaring wala sa sarili nilang pamamahala. Mangyaring pumiling muli ng iyong user, hindi kasama ang manager.',
     'user_exists'               => 'Ang user ay umiiral na!',
     'user_not_found'            => 'User does not exist or you do not have permission view them.',

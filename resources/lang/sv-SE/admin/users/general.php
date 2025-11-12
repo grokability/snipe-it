@@ -15,7 +15,8 @@ return [
     'info'				=> 'Info',
     'restore_user'		=> 'Klicka här för att återställa dem.',
     'last_login'        => 'Senaste inloggning',
-    'ldap_config_text'  => 'LDAP-konfigurationsinställningar återfinnes under Admin > Inställningar. Den (valfria) valda platsen kommer att ställas in för alla importerade användare.',
+    'ldap_config_text'  => 'The selected location will be set for ALL imported users. This will overwrite their existing location, and is an unusual use-case, so leaving this blank is typically best.',
+    'ldap_sync_intro'   => 'Click on the button below to manually sync your LDAP users. To learn more about configuring LDAP sync to run automatically, please see the <a href=":link" target="_blank">documentation <i class="fa fa-external-link"></i></a> .',
     'print_assigned'    => 'Skriv ut alla tilldelade',
     'email_assigned'    => 'E-postlista med alla tilldelade',
     'user_notified'     => 'Användaren har blivit e-postad med en lista över sina nuvarande tilldelade objekt.',
@@ -53,4 +54,6 @@ return [
     'all_assigned_list_generation' => 'Skapad:',
     'email_user_creds_on_create' => 'E-posta den här användaren sina inloggningsuppgifter?',
     'department_manager' => 'Department Manager',
+    'generate_password' => 'Generate random password',
+    'individual_override' => 'This user has at least one individual permission set, which may override group permissions.',
 ];

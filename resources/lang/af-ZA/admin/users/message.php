@@ -2,8 +2,8 @@
 
 return array(
 
-    'accepted'                  => 'U het hierdie bate suksesvol aanvaar.',
-    'declined'                  => 'Jy het hierdie bate suksesvol geweier.',
+    'accepted'                  => 'You have successfully accepted this item.',
+    'declined'                  => 'You have successfully declined this item.',
     'bulk_manager_warn'	        => 'Jou gebruikers is suksesvol opgedateer, maar jou bestuurderinskrywing is nie gestoor nie, want die bestuurder wat jy gekies het, was ook in die gebruikerslys om geredigeer te word, en gebruikers mag nie hul eie bestuurder wees nie. Kies asseblief u gebruikers weer, behalwe die bestuurder.',
     'user_exists'               => 'Gebruiker bestaan ​​reeds!',
     'user_not_found'            => 'User does not exist or you do not have permission view them.',

@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Manage',
     'field'		                => 'Väli',
     'about_fieldsets_title'		=> 'Andmeväljade kohta',
-    'about_fieldsets_text'		=> 'Valdkonnad lubavad teil luua kohandatud väljade rühmad, mida kasutatakse sageli teatud varade mudelitüüpide jaoks.',
+    'about_fieldsets_text'		=> 'Fieldsets allow you to create groups of custom fields that are frequently re-used for specific asset model types.',
     'custom_format'             => 'Custom Regex format...',
     'encrypt_field'      	        => 'Krüpti selle valdkonna väärtus andmebaasis',
     'encrypt_field_help'      => 'HOIATUS: põllu krüptimine muudab selle otsingumatuks.',
@@ -67,4 +67,5 @@ return [
         'checkbox' => 'Checkbox',
         'radio' => 'Radio Buttons',
     ],
+    'general_help_text' => 'Custom fields store additional information not covered by the default asset fields. <a href="https://snipe-it.readme.io/docs/custom-fields#/"><i class="fa fa-external-link"></i></a>.',
 ];

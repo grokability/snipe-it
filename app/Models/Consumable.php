@@ -318,6 +318,20 @@ class Consumable extends SnipeModel
         return $this->purchase_cost !== null ? $this->qty * $this->purchase_cost : null;
     }
     /**
+     * Get the list of checkouts for this consumable
+     *
+     * @author [A. Gianotto] [<snipe@snipe.net>]
+     * @since  [v2.0]
+     * @return \Illuminate\Database\Eloquent\Relations\Relation
+     */
+    public function checkouts()
+    {
+        return $this->assetlog()->where('action_type', '=', 'checkout')
+            ->orderBy('created_at', 'desc')
+            ->withTrashed();
+    }
+
+    /**
      * -----------------------------------------------
      * BEGIN MUTATORS
      * -----------------------------------------------

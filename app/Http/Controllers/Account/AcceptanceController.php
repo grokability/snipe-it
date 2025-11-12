@@ -138,7 +138,7 @@ class AcceptanceController extends Controller
         // Convert PDF logo to base64 for TCPDF
         // This is needed for TCPDF to properly embed the image if it's a png and the cache isn't writable
         $encoded_logo = null;
-        if ($settings->acceptance_pdf_logo) {
+        if (($settings->acceptance_pdf_logo) && (Storage::disk('public')->exists($settings->acceptance_pdf_logo))) {
             $encoded_logo = base64_encode(file_get_contents(public_path() . '/uploads/' . $settings->acceptance_pdf_logo));
         }
 

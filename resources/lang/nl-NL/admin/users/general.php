@@ -15,7 +15,8 @@ return [
     'info'				=> 'Info',
     'restore_user'		=> 'Klik hier om ze te herstellen.',
     'last_login'        => 'Laatst aangemeld',
-    'ldap_config_text'  => 'LDAP configuratie kan worden gevonden in Admin > Instellingen. De (optioneel) geselecteerde locatie zal voor alle geimporteerde gebruikers ingesteld worden.',
+    'ldap_config_text'  => 'The selected location will be set for ALL imported users. This will overwrite their existing location, and is an unusual use-case, so leaving this blank is typically best.',
+    'ldap_sync_intro'   => 'Click on the button below to manually sync your LDAP users. To learn more about configuring LDAP sync to run automatically, please see the <a href=":link" target="_blank">documentation <i class="fa fa-external-link"></i></a> .',
     'print_assigned'    => 'Print alles wat toegewezen is',
     'email_assigned'    => 'E-maillijst met alle toegewezen artikelen',
     'user_notified'     => 'Gebruiker is een lijst van de momenteel toegewezen artikelen gemaild.',
@@ -53,4 +54,6 @@ return [
     'all_assigned_list_generation' => 'Aangemaakt op:',
     'email_user_creds_on_create' => 'Deze gebruiker zijn inloggegevens e-mailen?',
     'department_manager' => 'Department Manager',
+    'generate_password' => 'Generate random password',
+    'individual_override' => 'This user has at least one individual permission set, which may override group permissions.',
 ];

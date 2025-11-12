@@ -1,7 +1,7 @@
 <?php
 
     return [
-        'select_type'            => 'Select Maintenance Type',
+        'select_type'            => 'Pilih tipe pemeliharaan',
         'asset_maintenance_type' => 'Pemeliharan Jenis Aset',
         'title'                  => 'Judul',
         'start_date'             => 'Tanggal Mulai',

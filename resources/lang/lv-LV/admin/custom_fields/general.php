@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Pārvaldīt',
     'field'		                => 'Lauks',
     'about_fieldsets_title'		=> 'Par lauka laukiem',
-    'about_fieldsets_text'		=> 'Lauka ailes ļauj jums izveidot pielāgotu lauku grupas, kuras bieži tiek atkārtoti izmantotas konkrētu aktīvu veidu tipiem.',
+    'about_fieldsets_text'		=> 'Fieldsets allow you to create groups of custom fields that are frequently re-used for specific asset model types.',
     'custom_format'             => 'Custom Regex format...',
     'encrypt_field'      	        => 'Šifrējiet šī lauka vērtību datu bāzē',
     'encrypt_field_help'      => 'BRĪDINĀJUMS: lauka šifrēšana padara to neizpētītu.',
@@ -67,4 +67,5 @@ return [
         'checkbox' => 'Checkbox',
         'radio' => 'Radio Buttons',
     ],
+    'general_help_text' => 'Custom fields store additional information not covered by the default asset fields. <a href="https://snipe-it.readme.io/docs/custom-fields#/"><i class="fa fa-external-link"></i></a>.',
 ];

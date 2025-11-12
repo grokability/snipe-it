@@ -174,7 +174,7 @@ return [
     'ulid' => ':attribute ველი უნდა იყოს ვალიდური ULID.',
     'uuid' => ':attribute ველი უნდა იყოს ვალიდური UUID.',
     'fmcs_location' => 'ადმინისტრატორის პარამეტრებში ჩართულია კომპანიის მრავალმხრივი მხარდაჭერა და ლოკაციის გამორკვევა, ხოლო არჩეული ლოკაცია და კომპანია ერთმანეთთან შეუთავსებელია.',
-
+    'is_unique_across_company_and_location' => 'The :attribute must be unique within the selected company and location.',
 
     /*
     |--------------------------------------------------------------------------

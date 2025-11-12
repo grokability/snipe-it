@@ -23,7 +23,7 @@ return [
     'alert_email_help'          => 'آدرس‌های ایمیل یا لیست‌های توزیعی که می‌خواهید هشدارها به آنها ارسال شود، با کاما از هم جدا شده‌اند.
 ',
     'alerts_enabled'			=> 'هشدارها فعال شد',
-    'alert_interval'			=> 'آستانه ی انقضای هشدارها( به روز)',
+    'alert_interval'			=> 'Expiring Alerts Threshold',
     'alert_inv_threshold'		=> 'فهرست آستانه ی هشدار',
     'allow_user_skin'           => 'اجازه کاربر پوسته',
     'allow_user_skin_help_text' => 'علامت زدن این کادر به کاربر این امکان را می دهد که پوسته رابط کاربری را با پوسته دیگری لغو کند.
@@ -122,11 +122,13 @@ return [
     'ldap_client_tls_cert_help' => 'گواهی TLS سمت کلاینت و کلید برای اتصالات LDAP معمولاً فقط در پیکربندی‌های Google Workspace با « LDAP ایمن» مفید هستند. هر دو مورد نیاز است.
 ',
     'ldap_location'             => 'LDAP Location Field',
-'ldap_location_help'             => 'The LDAP Location field should be used if <strong>an OU is not being used in the Base Bind DN.</strong> Leave this blank if an OU search is being used.',
+    'ldap_location_help'             => 'The LDAP Location field should be used if <strong>an OU is not being used in the Base Bind DN.</strong> Leave this blank if an OU search is being used.',
     'ldap_login_test_help'      => 'یک نام کاربری و رمز عبور LDAP معتبر از DN پایه ای که در بالا مشخص کرده اید وارد کنید تا بررسی کنید که آیا ورود به سیستم LDAP شما به درستی پیکربندی شده است یا خیر. ابتدا باید تنظیمات LDAP به روز شده خود را ذخیره کنید.
 ',
     'ldap_login_sync_help'      => 'This only tests that LDAP can sync and that your fields are mapped correctly. If your LDAP Authentication query is not correct, users may still not be able to login. YOU MUST SAVE YOUR UPDATED LDAP SETTINGS FIRST.',
     'ldap_manager'              => 'LDAP Manager Field',
+    'ldap_mapping_help'         => 'If your fields are not syncing correctly, try using the <strong>lower-case version</strong> of the field names. Display Name (<code>displayName</code>) in your LDAP/AD should be mapped here as <code>displayname</code>, <code>givenName</code> should be <code>givenname</code>, <code>sAMAccountName</code> as <code>samaccountname</code>, etc. <a href="https://snipe-it.readme.io/docs/ldap-sync-login#field-mapping-for-syncing"><i class="fa fa-external-link"></i></a>',
+    'save_ldap_first'           => 'You must save your LDAP settings before testing. Save your settings on this page and then reload to test LDAP login and/or sync.',
     'ldap_server'               => 'سرویس دهنده LDAP',
     'ldap_server_help'          => 'This should start with ldap:// (for unencrypted) or ldaps:// (for TLS or SSL)',
     'ldap_server_cert'			=> 'اعتبار گواهی نامه LDAP SSL',
@@ -461,6 +463,7 @@ return [
     'labels' => 'برچسب ها',
     'labels_title' => 'تنظیمات برچسب را به روز کنید
 ',
+    'labels_title_help' => 'Changes made here must be saved before they will be reflected in the labels or the preview below.',
     'labels_help' => 'Barcodes &amp; label settings',
     'purge_help' => 'پاک کردن رکوردهای حذف شده
 ',
@@ -508,14 +511,17 @@ return [
     'label2_1d_type_help'     => 'Format for 1D barcodes',
     'label2_2d_type'          => 'نوع بارکد 2D',
     'label2_2d_type_help'     => 'Format for 2D barcodes',
-    'label2_2d_target'        => '2D Barcode Target',
-    'label2_2d_target_help'   => 'The data that will be contained in the 2D barcode',
+    'label2_2d_prefix'        => '2D Barcode Prefix',
+    'label2_2d_prefix_help'   => 'This text will be prepended to the 2D Barcode Target value selected below when the 2D code is scanned. This can be used to prepend an external URL or any other value that you might need.',
+    'label2_2d_target'        => '2D Barcode Content',
+    'label2_2d_target_help'   => 'The data that will be contained in the 2D barcode. This can link to the asset directly in Snipe-IT or can be one of the non-linked field values. If you use the prefix above, it will be prepended to this value.',
+    'select_template'         => 'انتخاب قالب',
     'label2_fields'           => 'Field Definitions',
-    'label2_fields_help'      => 'Fields can be added, removed, and reordered in the left column. For each field, multiple options for Label and DataSource can be added, removed, and reordered in the right column.',
+    'label2_fields_help'      => 'Fields can be added, removed, and reordered in the left column. For each field, multiple options for Label and DataSource can be added, removed, and reordered in the right column. Field changes made here will be reflected immediately in the preview below but must be saved for them to apply to new labels.',
     'purge_barcodes' => 'Purge Barcodes',
     'help_asterisk_bold'    => 'Text entered as <code>**text**</code> will be displayed as bold',
     'help_blank_to_use'     => 'Leave blank to use the value from <code>:setting_name</code>',
-    'help_default_will_use' => '<code>:default</code> will use the value from <code>:setting_name</code>. <br>Note that the value of the barcodes must comply with the respective barcode spec in order to be successfully generated. Please see <a href="https://snipe-it.readme.io/docs/barcodes">the documentation <i class="fa fa-external-link"></i></a> for more details. ',
+    'help_default_will_use' => 'Note that the value of the barcodes must comply with the respective barcode spec in order to be successfully generated. Please see <a href="https://snipe-it.readme.io/docs/barcodes">the documentation <i class="fa fa-external-link"></i></a> for more details. ',
     'asset_id'              => 'Asset ID',
     'data'               => 'Data',
     'default'               => 'Default',
@@ -543,6 +549,9 @@ return [
     'manager_view' => 'Manager View',
     'manager_view_enabled_text' => 'Enable Manager View',
     'manager_view_enabled_help' => 'Allow managers to view assigned items to their direct and indirect reports in their account view.',
+    'redirect_url' => 'Redirect URL',
+    'client_secret' => 'Client Secret',
+    'client_id' => 'Client ID',
 
     'username_formats' => [
         'username_format'		=> 'فرمت نام کاربری',
@@ -619,6 +628,7 @@ return [
         'server' => 'Server Settings',
         'scoping' => 'Scoping',
         'security' => 'Security Preferences',
+        'passwords' => 'Password Security Preferences',
     ],
 
 

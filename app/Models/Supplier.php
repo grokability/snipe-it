@@ -3,15 +3,18 @@
 namespace App\Models;
 
 use App\Http\Traits\UniqueUndeletedTrait;
+use App\Models\Traits\HasUploads;
 use App\Models\Traits\Searchable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Watson\Validating\ValidatingTrait;
 use \Illuminate\Database\Eloquent\Relations\Relation;
+use App\Models\Traits\Loggable;
 class Supplier extends SnipeModel
 {
     use HasFactory;
     use SoftDeletes;
+    use HasUploads;
 
     protected $table = 'suppliers';
 
@@ -42,6 +45,7 @@ class Supplier extends SnipeModel
     use ValidatingTrait;
     use UniqueUndeletedTrait;
     use Searchable;
+    use Loggable;
 
     /**
      * The attributes that should be included when searching the model.

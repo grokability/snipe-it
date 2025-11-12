@@ -2,8 +2,8 @@
 
 return array(
 
-    'accepted'                  => 'Та энэ хөрөнгийг амжилттай хүлээн авлаа.',
-    'declined'                  => 'Та энэ хөрөнгийг амжилттай татгалзсан.',
+    'accepted'                  => 'You have successfully accepted this item.',
+    'declined'                  => 'You have successfully declined this item.',
     'bulk_manager_warn'	        => 'Таны хэрэглэгчид амжилттай шинэчлэгдсэн хэдий ч таны менежерийн оруулгыг хадгалсангүй, учир нь таны сонгосон менежер засварлах хэрэглэгчийн жагсаалт мөн хэрэглэгчид магадгүй өөрийн менежер биш байж болно. Менежерийг оруулалгүйгээр хэрэглэгчдийг дахин сонгоно уу.',
     'user_exists'               => 'Хэрэглэгч бүртгэгдсэн байна!',
     'user_not_found'            => 'User does not exist or you do not have permission view them.',

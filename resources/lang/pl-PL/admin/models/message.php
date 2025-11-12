@@ -2,17 +2,17 @@
 
 return array(
 
-    'deleted' => 'Usunięty model aktywów',
+    'deleted' => 'Usunięty model środka',
     'does_not_exist' => 'Model nie istnieje.',
-    'no_association' => 'OSTRZEŻENIE! Model aktywów dla tego przedmiotu jest nieprawidłowy lub brakuje!',
-    'no_association_fix' => 'To zepsuje rzeczy w dziwny i straszny sposób. Edytuj teraz ten zasób, aby przypisać mu model.',
-    'assoc_users'	 => 'Ten model jest przypisany do minim jednego aktywa i nie może być usunięty. Proszę usunąć aktywa, a następnie spróbować ponownie. ',
-    'invalid_category_type' => 'Kategoria musi być kategorią zasobu.',
+    'no_association' => 'OSTRZEŻENIE! Model środka dla tego przedmiotu jest nieprawidłowy lub brakuje!',
+    'no_association_fix' => 'To zepsuje rzeczy w dziwny i straszny sposób. Edytuj teraz ten środek, aby przypisać mu model.',
+    'assoc_users'	 => 'Ten model jest przypisany do minimum jednego środka i nie może być usunięty. Proszę usunąć środki, a następnie spróbować ponownie. ',
+    'invalid_category_type' => 'Kategoria musi być kategorią środka.',
 
     'create' => array(
         'error'   => 'Model nie został stworzony. Spróbuj ponownie.',
         'success' => 'Model utworzony pomyślnie.',
-        'duplicate_set' => 'Istnieje już model aktywu o tej nazwie, producencie i numerze.',
+        'duplicate_set' => 'Istnieje już model środka o tej nazwie, producencie i numerze.',
     ),
 
     'update' => array(
@@ -21,7 +21,7 @@ return array(
     ),
 
     'delete' => array(
-        'confirm'   => 'Czy na pewno chcesz usunąć ten model aktywów?',
+        'confirm'   => 'Czy na pewno chcesz usunąć ten model środków?',
         'error'   => 'Wystąpił błąd podczas usuwania modelu. Spróbuj ponownie.',
         'success' => 'Model usunięty poprawnie.'
     ),
@@ -41,7 +41,7 @@ return array(
     'bulkdelete' => array(
         'error'   		    => 'Nie wybrano modeli, więc nic nie zostało usunięte.',
         'success' 		    => 'Model usunięty!|:success_count modele usunięte!',
-        'success_partial' 	=> ':success_count model(i) zostało usuniętych, jednakże :fail_count nie udało się usunąć, ponieważ wciąż są powiązane z nimi zasoby.'
+        'success_partial' 	=> ':success_count model(i) zostało usuniętych, jednakże :fail_count nie udało się usunąć, ponieważ wciąż są powiązane z nimi środki.'
     ),
 
 );

@@ -15,7 +15,8 @@ return [
     'info'				=> 'Bilgi',
     'restore_user'		=> 'Onları geri yüklemek için buraya tıklayın.',
     'last_login'        => 'Son oturum açma tarihi',
-    'ldap_config_text'  => 'LDAP yapılandırma ayarları Yönetici> Ayarlar\'da bulunabilir. Seçilen yer (isteğe bağlı), tüm içe aktarılan kullanıcılar için ayarlanır.',
+    'ldap_config_text'  => 'The selected location will be set for ALL imported users. This will overwrite their existing location, and is an unusual use-case, so leaving this blank is typically best.',
+    'ldap_sync_intro'   => 'Click on the button below to manually sync your LDAP users. To learn more about configuring LDAP sync to run automatically, please see the <a href=":link" target="_blank">documentation <i class="fa fa-external-link"></i></a> .',
     'print_assigned'    => 'Atananların Tümünü Yazdır',
     'email_assigned'    => 'Tüm Atananların E-posta Listesi',
     'user_notified'     => 'Kullanıcıya, atanmış nesnelerinin bir listesi e-posta ile gönderildi.',
@@ -53,4 +54,6 @@ return [
     'all_assigned_list_generation' => 'Bu tarihinde oluşturuldu:',
     'email_user_creds_on_create' => 'Bu kullanıcıya kimlik bilgileri e-postayla gönderilsin mi?',
     'department_manager' => 'Departman Yöneticisi',
+    'generate_password' => 'Generate random password',
+    'individual_override' => 'This user has at least one individual permission set, which may override group permissions.',
 ];

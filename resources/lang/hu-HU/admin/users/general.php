@@ -15,7 +15,8 @@ return [
     'info'				=> 'Info',
     'restore_user'		=> 'Kattintson ide a visszaállításhoz.',
     'last_login'        => 'Utolsó bejelentkezés',
-    'ldap_config_text'  => 'Az LDAP konfigurációs beállításai megtalálhatók az Adminisztrálás> Beállítások menüben. Az (opcionális) kiválasztott hely minden importált felhasználó számára be lesz állítva.',
+    'ldap_config_text'  => 'The selected location will be set for ALL imported users. This will overwrite their existing location, and is an unusual use-case, so leaving this blank is typically best.',
+    'ldap_sync_intro'   => 'Click on the button below to manually sync your LDAP users. To learn more about configuring LDAP sync to run automatically, please see the <a href=":link" target="_blank">documentation <i class="fa fa-external-link"></i></a> .',
     'print_assigned'    => 'Az összes hozzárendelt nyomtatása',
     'email_assigned'    => 'A hozzárendeltek e-mail listája',
     'user_notified'     => 'A felhasználó e-mailben megkapta az aktuálisan hozzárendelt elemek listáját.',
@@ -53,4 +54,6 @@ return [
     'all_assigned_list_generation' => 'Létrehozva:',
     'email_user_creds_on_create' => 'Elküldjük a felhasználónak a bejelentkezési adatait emailben?',
     'department_manager' => 'Részleg menedzser',
+    'generate_password' => 'Generate random password',
+    'individual_override' => 'This user has at least one individual permission set, which may override group permissions.',
 ];

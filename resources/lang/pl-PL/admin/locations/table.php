@@ -2,9 +2,9 @@
 
 return [
     'about_locations_title'     => 'O Lokalizacjach',
-    'about_locations'           => 'Lokalizacje są używane do śledzenia informacji o lokalizacji użytkowników, aktywów i innych elementów',
-    'assets_rtd'                => 'Aktywa', // This has NEVER meant Assets Retired. I don't know how it keeps getting reverted.
-    'assets_checkedout'         => 'Aktywa przypisane',
+    'about_locations'           => 'Lokalizacje są używane do śledzenia informacji o lokalizacji użytkowników, środków i innych elementów',
+    'assets_rtd'                => 'Środki', // This has NEVER meant Assets Retired. I don't know how it keeps getting reverted.
+    'assets_checkedout'         => 'Przypisane środki',
     'id'                        => 'ID',
     'city'                      => 'Miasto',
     'state'                     => 'Województwo',
@@ -12,8 +12,8 @@ return [
     'create'                    => 'Utwórz Lokalizację',
     'update'                    => 'Zaktualizuj lokalizację',
     'print_assigned'            => 'Drukuj przypisane',
-    'print_inventory'           => 'Print Inventory',
-    'print_all_assigned'        => 'Print Inventory and Assigned',
+    'print_inventory'           => 'Wydrukuj inwentarz',
+    'print_all_assigned'        => 'Wydrukuj inwentarz i przypisane',
     'name'                      => 'Nazwa Lokalizacji',
     'address'                   => 'Adres',
     'address2'                   => 'Druga linia adresu',
@@ -23,9 +23,9 @@ return [
     'currency'                  => 'Waluta lokalna',
     'ldap_ou'                   => 'OU wyszukiwania LDAP',
     'user_name'                 => 'Nazwa użytkownika',
-    'department'                => 'Departament',
+    'department'                => 'Oddział',
     'location'                  => 'Lokalizacja',
-    'asset_tag'                 => 'Tag sprzętu',
+    'asset_tag'                 => 'Numery [tag] środków',
     'asset_name'                => 'Nazwa',
     'asset_category'            => 'Kategoria',
     'asset_manufacturer'        => 'Producent',
@@ -36,9 +36,9 @@ return [
     'asset_expected_checkin'    => 'Przewidywana data zwrotu',
     'date'                      => 'Data:',
     'phone'                     => 'Telefon lokalizacji',
-    'signed_by_asset_auditor'   => 'Podpisane przez (Audytor aktywów):',
+    'signed_by_asset_auditor'   => 'Podpisane przez (Audytor środków):',
     'signed_by_finance_auditor' => 'Podpisane przez (Audytor finansowy):',
     'signed_by_location_manager' => 'Podpisane przez (Audytor Lokalizacji):',
     'signed_by'                 => 'Podpisano przez:',
-    'clone'  					=> 'Clone Location',
+    'clone'  					=> 'Powiel lokalizację',
 ];

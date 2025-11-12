@@ -2,8 +2,8 @@
 
 return array(
 
-    'accepted'                  => 'คุณยอมรับสินทรัพย์นี้เรียบร้อยแล้ว',
-    'declined'                  => 'คุณปฏิเสธสินทรัพย์นี้เรียบร้อยแล้ว',
+    'accepted'                  => 'You have successfully accepted this item.',
+    'declined'                  => 'You have successfully declined this item.',
     'bulk_manager_warn'	        => 'ผู้ใช้ของคุณได้รับการอัปเดตแล้วแม้ว่ารายการผู้จัดการจะไม่ได้รับการบันทึกเนื่องจากผู้จัดการที่คุณเลือกอยู่ในรายชื่อผู้ใช้ที่จะแก้ไขและผู้ใช้ต้องไม่เป็นผู้จัดการของตัวเอง โปรดเลือกผู้ใช้ของคุณอีกครั้งโดยไม่รวมผู้จัดการ',
     'user_exists'               => 'มีผู้ใช้งานนี้แล้ว',
     'user_not_found'            => 'User does not exist or you do not have permission view them.',

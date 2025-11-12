@@ -174,7 +174,7 @@ return [
     'ulid' => 'Polje :attribute mora biti veljaven ULID.',
     'uuid' => 'Polje :attribute mora biti veljaven UUID.',
     'fmcs_location' => 'V skrbniških nastavitvah je omogočena polna podpora za več podjetij in določanje obsega lokacij, izbrana lokacija in izbrano podjetje pa nista združljiva.',
-
+    'is_unique_across_company_and_location' => 'The :attribute must be unique within the selected company and location.',
 
     /*
     |--------------------------------------------------------------------------

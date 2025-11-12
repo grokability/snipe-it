@@ -24,9 +24,9 @@ return array(
     'delete' => array(
         'confirm' => 'Apakah Anda yakin untuk menghapus produsen ini?',
         'error'   => 'Terdapat kesalahan pada saat penghapusan produsen. Silahkan coba kembali.',
-        'success'                => 'Manufacturer deleted successfully.',
-        'bulk_success'           => 'Manufacturers deleted successfully.',
-        'partial_success'        => 'Manufacturer deleted successfully. See additional information below. | :count manufacturers were deleted successfully. See additional information below.',
+        'success'                => 'Produsen berhasil dihapus.',
+        'bulk_success'           => 'Beberapa produsen berhasil dihapus.',
+        'partial_success'        => 'Produsen berhasil dihapus. Lihat informasi tambahan di bawah. | :count produsen berhasil dihapus. Lihat informasi tambahan di bawah.',
     )
 
 );

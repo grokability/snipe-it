@@ -20,9 +20,9 @@ return array(
     'delete' => array(
         'confirm'                => 'Czy jesteś pewien że chcesz usunąć tą kategorię ?',
         'error'                  => 'Wystąpił błąd podczas usuwania kategorii. Spróbuj ponownie.',
-        'success'                => 'Category was deleted successfully.',
-        'bulk_success'           => 'Categories were deleted successfully.',
-        'partial_success'        => 'Category deleted successfully. See additional information below. | :count categories were deleted successfully. See additional information below.',
+        'success'                => 'Pomyślnie usunięto kategorię.',
+        'bulk_success'           => 'Pomyślnie usunięto kategorie.',
+        'partial_success'        => 'Kategoria usunięta z powodzeniem. Sprawdź szczegółowe informacje poniżej. | :count kategorie zostały usunięte z powodzeniem. Sprawdź szczegółowe informacje poniżej.',
     )
 
 );

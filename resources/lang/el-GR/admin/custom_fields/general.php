@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Διαχείριση',
     'field'		                => 'Πεδίο',
     'about_fieldsets_title'		=> 'Σχετικά με τα σύνολα πεδίων',
-    'about_fieldsets_text'		=> 'Τα πεδία των πεδίων σάς επιτρέπουν να δημιουργείτε ομάδες προσαρμοσμένων πεδίων που χρησιμοποιούνται συχνά ξανά για συγκεκριμένους τύπους μοντέλων στοιχείων ενεργητικού.',
+    'about_fieldsets_text'		=> 'Τα Fieldsets σας επιτρέπουν να δημιουργήσετε ομάδες προσαρμοσμένων πεδίων που συχνά επαναχρησιμοποιούνται για συγκεκριμένους τύπους μοντέλου στοιχείων ενεργητικού.',
     'custom_format'             => 'Προσαρμοσμένη μορφή Regex...',
     'encrypt_field'      	        => 'Κρυπτογράφηση της αξίας του πεδίου στη βάση δεδομένων',
     'encrypt_field_help'      => 'Προειδοποίηση: H κρυπτογράφηση ενός πεδίου την καθιστά ανεξερεύνητη.',
@@ -67,4 +67,5 @@ return [
         'checkbox' => 'Checkbox',
         'radio' => 'Radio Buttons',
     ],
+    'general_help_text' => 'Custom fields store additional information not covered by the default asset fields. <a href="https://snipe-it.readme.io/docs/custom-fields#/"><i class="fa fa-external-link"></i></a>.',
 ];

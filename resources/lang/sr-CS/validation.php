@@ -174,7 +174,7 @@ return [
     'ulid' => 'Polje :attribute mora biti ispravan ULID.',
     'uuid' => 'Polje :attribute mora biti ispravan UUID.',
     'fmcs_location' => 'Puna podrška za višestruko kompanija i opsezi lokacija je omogućeno u administratorskim podešavanjima, a izabrana lokacija i kompanija nisu kompatibilne.',
-
+    'is_unique_across_company_and_location' => ':attribute mora biti jedinstven u okviru izabrane kompanije i lokacije.',
 
     /*
     |--------------------------------------------------------------------------

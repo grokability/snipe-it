@@ -100,6 +100,26 @@
                     </span>
             </a>
           </li>
+
+            <li>
+                <a href="#files" data-toggle="tab">
+
+                        <span class="hidden-lg hidden-md">
+                          <i class="fas fa-barcode fa-2x"></i>
+                        </span>
+                    <span class="hidden-xs hidden-sm">
+                            {{ trans('general.files') }}
+                        {!! ($supplier->uploads->count() > 0 ) ? '<span class="badge badge-secondary">'.number_format($supplier->uploads->count()).'</span>' : '' !!}
+                          </span>
+                </a>
+            </li>
+
+            <li class="pull-right">
+                <a href="#" data-toggle="modal" data-target="#uploadFileModal">
+                    <x-icon type="paperclip" />
+                    {{ trans('button.upload') }}
+                </a>
+            </li>
         </ul>
 
 
@@ -243,6 +263,14 @@
             </div><!-- /.table-responsive -->
           </div><!-- /.tab-pane -->
 
+            <div class="tab-pane fade" id="files">
+                <div class="row">
+                    <div class="col-md-12">
+                        <x-filestable object_type="suppliers" :object="$supplier" />
+                    </div> <!-- /.col-md-12 -->
+                </div> <!-- /.row -->
+            </div>
+
         </div><!--/.col-md-9-->
       </div><!--/.col-md-9-->
     </div><!--/.col-md-9-->
@@ -318,6 +346,9 @@
   </div>
   </div>
 
+  @can('update', \App\Models\Supplier::class)
+      @include ('modals.upload-file', ['item_type' => 'supplier', 'item_id' => $supplier->id])
+  @endcan
 @stop
 
 @section('moar_scripts')

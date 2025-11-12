@@ -174,7 +174,7 @@ return [
     'ulid' => ':attribute lauke turi būti galiojantis ULID identifikatorius.',
     'uuid' => ':attribute lauke turi būti galiojantis UUID identifikatorius.',
     'fmcs_location' => 'Administratoriaus nustatymuose yra įjungtas pilnas kelių įmonių palaikymas ir vietos susiejimas, o pasirinkta vieta ir pasirinkta įmonė yra nesuderinamos.',
-
+    'is_unique_across_company_and_location' => 'The :attribute must be unique within the selected company and location.',
 
     /*
     |--------------------------------------------------------------------------

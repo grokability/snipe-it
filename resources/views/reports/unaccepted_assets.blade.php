@@ -49,54 +49,81 @@
                     }'>
             <thead>
               <tr role="row">
-                <th class="col-sm-1" data-searchable="false" data-field="created_at"  data-sortable="true">{{ trans('general.date') }}</th>
+                  <th class="col-sm-1" data-field="created_at" data-searchable="false" data-sortable="true">{{ trans('general.date') }}</th>
+                  <th class="col-sm-1" data-sortable="true" >{{ trans('general.type') }}</th>
                 <th class="col-sm-1" data-sortable="true" >{{ trans('admin/companies/table.title') }}</th>
                 <th class="col-sm-1" data-sortable="true" >{{ trans('general.category') }}</th>
                 <th class="col-sm-1" data-sortable="true" >{{ trans('admin/hardware/form.model') }}</th>
-                <th class="col-sm-1" data-sortable="true" >{{ trans('admin/hardware/form.name') }}</th>
+                <th class="col-sm-1" data-sortable="true" >{{ trans('general.name') }}</th>
                 <th class="col-sm-1" data-sortable="true" >{{ trans('admin/hardware/table.asset_tag') }}</th>
                 <th class="col-sm-1" data-sortable="true" >{{ trans('admin/hardware/table.checkoutto') }}</th>
                 <th class="col-md-1"><span class="line"></span>{{ trans('table.actions') }}</th>
               </tr>
             </thead>
             <tbody>
-              @if ($assetsForReport)
-              @foreach ($assetsForReport as $item)
-                  @if ($item['assetItem'])
-                  <tr @if($item['acceptance']->trashed()) style="text-decoration: line-through" @endif>
-                    <td>{{ Helper::getFormattedDateObject($item['acceptance']->created_at, 'datetime', false) }}</td>
-                    <td>{{ ($item['assetItem']->company) ? $item['assetItem']->company->name : '' }}</td>
-                    <td>{!! $item['assetItem']->model->category->present()->nameUrl() !!}</td>
-                    <td>{!! $item['assetItem']->present()->modelUrl() !!}</td>
-                    <td>{!! $item['assetItem']->present()->nameUrl() !!}</td>
-                    <td>{{ $item['assetItem']->asset_tag }}</td>
-                    <td @if($item['acceptance']->assignedTo === null || $item['acceptance']->assignedTo->trashed()) style="text-decoration: line-through" @endif>{!! ($item['acceptance']->assignedTo) ? $item['acceptance']->assignedTo->present()->nameUrl() : trans('admin/reports/general.deleted_user') !!}</td>
-                    <td class="white-space: nowrap;">
-                        <nobr>
-                        @if(!$item['acceptance']->trashed())
-                           <form method="post" class="white-space: nowrap;" action="{{ route('reports/unaccepted_assets_sent_reminder') }}">
-                            @if (($item['acceptance']->assignedTo) && ($item['acceptance']->assignedTo->email))
-                                @csrf
-                               <input type="hidden" name="acceptance_id" value="{{ $item['acceptance']->id }}">
-                                <button class="btn btn-sm btn-warning" data-tooltip="true" data-title="{{ trans('admin/reports/general.send_reminder') }}">
-                                    <i class="fa fa-repeat" aria-hidden="true"></i>
-                                </button>
-                            @else
-                                   <span data-tooltip="true" data-title="{{ trans('admin/reports/general.cannot_send_reminder') }}">
-                                       <a class="btn btn-sm btn-warning disabled" href="#">
-                                           <i class="fa fa-repeat" aria-hidden="true"></i>
-                                       </a>
-                                  </span>
-                            @endif
-                            <a href="{{ route('reports/unaccepted_assets_delete', ['acceptanceId' => $item['acceptance']->id]) }}" class="btn btn-sm btn-danger delete-asset" data-tooltip="true" data-toggle="modal" data-content="{{ trans('general.delete_confirm', ['item' =>trans('admin/reports/general.acceptance_request')]) }}" data-title="{{  trans('general.delete') }}" onClick="return false;"><i class="fa fa-trash"></i></a>
-                           </form>
-                        @endif
+              @if ($itemsForReport)
+                  @foreach ($itemsForReport as $item)
+                      <tr @if($item->acceptance->trashed()) style="text-decoration: line-through" @endif>
+                          {{-- Created date --}}
+                          <td>
+                              {{ Helper::getFormattedDateObject($item->acceptance->created_at, 'datetime', false) }}
+                          </td>
+                          {{-- Item Type --}}
+                          <td>{{ $item->type }}</td>
+                          {{-- Company name --}}
+                          <td>{!! $item->company !!}</td>
 
-                        </nobr>
-                    </td>
-                  </tr>
-                  @endif
-              @endforeach
+                          {{-- Category --}}
+                          <td>{!! $item->category !!}</td>
+
+                          {{-- Model --}}
+                          <td>{!! $item->model !!}</td>
+
+                          {{-- Name --}}
+                          <td>{!! $item->name !!}</td>
+
+                          {{-- Asset tag or blank --}}
+                          <td>{{ $item->asset_tag }}</td>
+
+                          {{-- Assigned To (with soft-delete strike if needed) --}}
+                          <td @if(!$item->assignee || (method_exists($item->assignee, 'trashed') && $item->assignee->trashed())) style="text-decoration: line-through" @endif>
+                              {!! $item->assignee
+                                  ? optional($item->assignee->present())->nameUrl() ?? e($item->assignee->name)
+                                  : trans('admin/reports/general.deleted_user') !!}
+                          </td>
+
+                          {{-- Actions: send reminder / delete --}}
+                          <td class="text-nowrap">
+
+                                  @unless($item->acceptance->trashed())
+                                      <form method="post" class="white-space: nowrap;" action="{{ route('reports/unaccepted_assets_sent_reminder') }}">
+                                          @csrf
+                                          <input type="hidden" name="acceptance_id" value="{{ $item->acceptance_id }}">
+                                          @if ($item->assignee && $item->assignee->email)
+                                              <button class="btn btn-sm btn-warning" data-tooltip="true" data-title="{{ trans('admin/reports/general.send_reminder') }}">
+                                                  <i class="fa fa-repeat" aria-hidden="true"></i>
+                                              </button>
+                                          @else
+                                              <span data-tooltip="true" data-title="{{ trans('admin/reports/general.cannot_send_reminder') }}">
+                                                  <a class="btn btn-sm btn-warning disabled" href="#">
+                                                        <i class="fa fa-repeat" aria-hidden="true"></i>
+                                                  </a>
+                                              </span>
+                                          @endif
+                                          <a href="{{ route('reports/unaccepted_assets_delete', ['acceptanceId' => $item->acceptance_id]) }}"
+                                             class="btn btn-sm btn-danger delete-asset"
+                                             data-tooltip="true"
+                                             data-toggle="modal"
+                                             data-content="{{ trans('general.delete_confirm', ['item' => trans('admin/reports/general.acceptance_request')]) }}"
+                                             data-title="{{ trans('general.delete') }}"
+                                             onClick="return false;">
+                                              <i class="fa fa-trash"></i>
+                                          </a>
+                                      </form>
+                                  @endunless
+                          </td>
+                      </tr>
+                  @endforeach
               @endif
             </tbody>
             <tfoot>

@@ -5,7 +5,7 @@ return [
     'manage'                    => 'إدارة',
     'field'		                => 'حقل',
     'about_fieldsets_title'		=> 'حول مجموعة الحقول',
-    'about_fieldsets_text'		=> '(مجموعات الحقول) تسمح لك بإنشاء مجموعات من الحقول اللتي يمكن إعادة إستخدامها مع موديل محدد.',
+    'about_fieldsets_text'		=> 'مجموعات الحقول تسمح لك بإنشاء مجموعات من الحقول المخصصة التي يعاد استخدامها في كثير من الأحيان لأنواع معينة من نماذج الأصول.',
     'custom_format'             => 'تنسيق Regex المخصص...',
     'encrypt_field'      	        => 'تشفير قيمة هذا الحقل في قاعدة البيانات',
     'encrypt_field_help'      => 'تحذير: تشفير الحقل يجعله غير قابل للبحث.',
@@ -67,4 +67,5 @@ return [
         'checkbox' => 'Checkbox',
         'radio' => 'Radio Buttons',
     ],
+    'general_help_text' => 'Custom fields store additional information not covered by the default asset fields. <a href="https://snipe-it.readme.io/docs/custom-fields#/"><i class="fa fa-external-link"></i></a>.',
 ];

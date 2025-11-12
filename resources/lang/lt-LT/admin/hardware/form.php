@@ -45,7 +45,7 @@ return [
     'select_statustype'	=> 'Pasirinkite būsenos tipą',
     'serial'			=> 'Serijinis numeris',
     'serial_required'	=> 'Turtui :number būtina nurodyti serijinį numerį',
-    'serial_required_post_model_update'	=> ':asset_model have been updated to require a serial number. Please add a serial number for this asset.',
+    'serial_required_post_model_update'	=> ':asset_model buvo atnaujintas, kad būtų reikalaujama serijinio numerio. Pridėkite šio turto serijinį numerį.',
     'status'			=> 'Būsena',
     'tag'				=> 'Inventorinis numeris',
     'update'			=> 'Turto atnaujinimas',

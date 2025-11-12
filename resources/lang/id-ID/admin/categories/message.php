@@ -20,9 +20,9 @@ return array(
     'delete' => array(
         'confirm'                => 'Apakah Anda yakin untuk menghapus kategori ini?',
         'error'                  => 'Terdapat kesalahan pada saat penghapusan kategori ini. Silahkan coba kembali.',
-        'success'                => 'Category was deleted successfully.',
-        'bulk_success'           => 'Categories were deleted successfully.',
-        'partial_success'        => 'Category deleted successfully. See additional information below. | :count categories were deleted successfully. See additional information below.',
+        'success'                => 'Kategori berhasil dihapus.',
+        'bulk_success'           => 'Kategori berhasil dihapus.',
+        'partial_success'        => 'Kategori berhasil dihapus. Lihat info tambahan dibawah. | :count katergori berhasil dihapus. Lihat info tambahan dibawah.',
     )
 
 );

@@ -2,8 +2,8 @@
 
 return array(
 
-    'accepted'                  => 'Kua whakaaetia e koe tenei taonga.',
-    'declined'                  => 'Kua paopao angitu koe ki tenei taonga.',
+    'accepted'                  => 'You have successfully accepted this item.',
+    'declined'                  => 'You have successfully declined this item.',
     'bulk_manager_warn'	        => 'Kua angitu te whakahoutia o nga kaiwhakamahi, heoi kihai i tohua to tautuhinga kaiwhakahaere no te mea ko te kaiwhakahaere i tohua e koe i roto i te rarangi kaiwhakamahi kia whakatikaia, kaore ano hoki nga kaiwhakamahi i to ratou ake kaiwhakahaere. Tēnā koa tīpako anō i ō kaiwhakamahi, kaore i te kaiwhakahaere.',
     'user_exists'               => 'Kua noho kē te Kaiwhakamahi!',
     'user_not_found'            => 'User does not exist or you do not have permission view them.',

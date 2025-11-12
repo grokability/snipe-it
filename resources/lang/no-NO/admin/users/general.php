@@ -15,7 +15,8 @@ return [
     'info'				=> 'Info',
     'restore_user'		=> 'Klikk her for å gjenopprette dem.',
     'last_login'        => 'Siste innlogging',
-    'ldap_config_text'  => 'LDAP-konfigurasjonsinnstillingene kan finnes på Admin > innstillinger. Den (Valgfrie) valgte plasseringen angis for alle importerte brukere.',
+    'ldap_config_text'  => 'The selected location will be set for ALL imported users. This will overwrite their existing location, and is an unusual use-case, so leaving this blank is typically best.',
+    'ldap_sync_intro'   => 'Click on the button below to manually sync your LDAP users. To learn more about configuring LDAP sync to run automatically, please see the <a href=":link" target="_blank">documentation <i class="fa fa-external-link"></i></a> .',
     'print_assigned'    => 'Skriv ut alt tilordnet',
     'email_assigned'    => 'Epostliste for alle tilknyttede',
     'user_notified'     => 'Brukeren har blitt sendt en liste over elementer som er tildelt brukeren.',
@@ -53,4 +54,6 @@ return [
     'all_assigned_list_generation' => 'Generert på:',
     'email_user_creds_on_create' => 'Send denne brukeren sin påloggingsinformasjon via e-post?',
     'department_manager' => 'Department Manager',
+    'generate_password' => 'Generate random password',
+    'individual_override' => 'This user has at least one individual permission set, which may override group permissions.',
 ];

@@ -375,6 +375,7 @@ return [
     'audit_due'             => 'موعد حسابرسی
 ',
     'audit_due_days'        => '{}Assets Due or Overdue for Audit|[1]Assets Due or Overdue for Audit Within a Day|[2,*]Assets Due or Overdue for Audit Within :days Days',
+    'audit_due_days_view_all' => '{}Assets Due or Overdue for Audit|[1]View All Assets Due or Overdue for Audit Within a Day|[2,*]View All Assets Due or Overdue for Audit Within :days Days',
     'checkin_due'           => 'Due for Checkin',
     'checkin_overdue'       => 'Overdue for Checkin',
     'checkin_due_days'      => '{}Due for Checkin|[1]Assets Due for Checkin Within :days Day|[2,*]Assets Due for Checkin Within :days Days',
@@ -420,6 +421,14 @@ return [
     'checked_out_to'        => 'تحویل شده به
 
 ',
+    'available_users'       => 'Available Users to Add',
+    'add_users_to_group'    => 'Add Users to Group',
+    'users_to_add_to_group' => 'Users to Add',
+    'add_all_users_to_group' => 'Add all users to group',
+    'add_selected_users_to_group' => 'Add selected users to group',
+    'remove_selected_users_from_group' => 'Remove selected users from group',
+    'remove_all_users_from_group' => 'Remove all users from group',
+    'add_users_to_group_help'  => 'Use the arrows to add or remove users from this group. You can select multiple users by holding down the Ctrl (Windows) or Command (Mac) key while clicking.',
     'fields'                => 'فیلدها',
     'last_checkout'         => 'آخرین تسویه حساب
 ',
@@ -431,6 +440,7 @@ return [
 ',
     'changed'               => 'تغییر انجام شد',
     'to'                    => 'به',
+    'to_user'               => 'به',
     'report_fields_info'    => '<p>فیلدهایی را که می‌خواهید در گزارش سفارشی خود اضافه کنید انتخاب کنید و روی ایجاد کلیک کنید. فایل (custom-asset-report-YYYY-mm-dd.csv) به طور خودکار دانلود می شود و می توانید آن را در Excel باز کنید.</p>
             <p>اگر می‌خواهید فقط دارایی‌های خاصی را صادر کنید، از گزینه‌های زیر برای تنظیم دقیق نتایج خود استفاده کنید.</p>',
     'range'                 => 'محدوده',
@@ -696,6 +706,8 @@ return [
     'user_managed_passwords_allow' => 'Allow users to manage their own passwords',
     'from' => 'From',
     'by' => 'توسط',
+    'by_user' => 'توسط',
+    'ldap_sync_location' => 'Sync All Users to This Location (Optional)',
     'version' => 'Version',
     'build' => 'build',
     'use_cloned_image' => 'Clone image from original',

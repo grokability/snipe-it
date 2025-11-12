@@ -2,8 +2,8 @@
 
 return array(
 
-    'accepted'                  => 'Ön sikeresen elfogadta ezt az eszközt.',
-    'declined'                  => 'Az eszközt sikeresen csökkentetted.',
+    'accepted'                  => 'You have successfully accepted this item.',
+    'declined'                  => 'You have successfully declined this item.',
     'bulk_manager_warn'	        => 'A felhasználók sikeresen frissültek, azonban a kezelői bejegyzést nem mentette el, mert a kiválasztott kezelő a szerkesztőben is szerepel a felhasználók listájában, és a felhasználók nem lehetnek saját kezelőik. Kérjük, ismét válassza ki a felhasználókat, kivéve a kezelőt.',
     'user_exists'               => 'Felhasználó már létezik!',
     'user_not_found'            => 'A felhasználó nem található, vagy nincs jogosultsága a megtekintéséhez.',

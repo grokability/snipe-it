@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Управление',
     'field'		                => 'Поле',
     'about_fieldsets_title'		=> 'О наборах полей',
-    'about_fieldsets_text'		=> 'Наборы полей позволяют вам создать группы пользовательских полей, которые часто используются для конкретных моделей автивов.',
+    'about_fieldsets_text'		=> 'Наборы полей позволяют создавать группы настраиваемых полей, которые часто переиспользуются для конкретных типов моделей активов.',
     'custom_format'             => 'Пользовательский формат регулярных выражений...',
     'encrypt_field'      	        => 'Зашифровать значение этого поля в базе данных',
     'encrypt_field_help'      => 'ПРЕДУПРЕЖДЕНИЕ: Шифрование поля исключит возможность поиска по нему.',
@@ -67,4 +67,5 @@ return [
         'checkbox' => 'Флажок',
         'radio' => 'Переключатель',
     ],
+    'general_help_text' => 'Custom fields store additional information not covered by the default asset fields. <a href="https://snipe-it.readme.io/docs/custom-fields#/"><i class="fa fa-external-link"></i></a>.',
 ];

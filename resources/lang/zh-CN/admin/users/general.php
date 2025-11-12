@@ -15,7 +15,8 @@ return [
     'info'				=> '信息',
     'restore_user'		=> '单击此处可将其还原。',
     'last_login'        => '上一次登陆',
-    'ldap_config_text'  => 'LDAP配置在 管理 > 设置。所选位置将为导入的用户所用',
+    'ldap_config_text'  => 'The selected location will be set for ALL imported users. This will overwrite their existing location, and is an unusual use-case, so leaving this blank is typically best.',
+    'ldap_sync_intro'   => 'Click on the button below to manually sync your LDAP users. To learn more about configuring LDAP sync to run automatically, please see the <a href=":link" target="_blank">documentation <i class="fa fa-external-link"></i></a> .',
     'print_assigned'    => '打印所有已分配资产',
     'email_assigned'    => '邮件发送所有已分配的列表',
     'user_notified'     => '用户已通过电子邮件收到当前分配给他们的物品列表。',
@@ -53,4 +54,6 @@ return [
     'all_assigned_list_generation' => '生成于：',
     'email_user_creds_on_create' => '给此用户发电子邮件？',
     'department_manager' => '部门经理',
+    'generate_password' => 'Generate random password',
+    'individual_override' => 'This user has at least one individual permission set, which may override group permissions.',
 ];

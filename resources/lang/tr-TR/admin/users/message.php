@@ -2,8 +2,8 @@
 
 return array(
 
-    'accepted'                  => 'Bu aksesuarı başarıyla kabul ettiniz.',
-    'declined'                  => 'Bu varlığı başarıyla reddettiniz.',
+    'accepted'                  => 'You have successfully accepted this item.',
+    'declined'                  => 'You have successfully declined this item.',
     'bulk_manager_warn'	        => 'Kullanıcılarınızın başarıyla güncelleştirildi, ancak kaydedilmedi Yöneticisi giriş Yöneticisi\'ni seçtiğiniz çünkü aynı zamanda düzenlenecek kullanıcı listesinde oldu ve kullanıcıların kendi yöneticisi olmayabilir. Yine, yönetici hariç olmak üzere, kullanıcılarınızı seçiniz.',
     'user_exists'               => 'Kullanıcı zaten var!',
     'user_not_found'            => 'Kullanıcı mevcut değil veya görüntüleme izniniz yok.',

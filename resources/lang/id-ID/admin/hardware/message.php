@@ -2,7 +2,7 @@
 
 return [
 
-    'undeployable' 		 => 'The following assets cannot be deployed and have been removed from checkout: :asset_tags',
+    'undeployable' 		 => 'Aset berikut tidak dapat digunakan dan telah dihapus dari checkout: :asset_tags',
     'does_not_exist' 	 => 'Aset tidak ada.',
     'does_not_exist_var' => 'Aset dengan tag :asset_tag tidak ditemukan.',
     'no_tag' 	         => 'Tidak ada tag aset yang diberikan.',
@@ -20,8 +20,8 @@ return [
         'multi_success_linked' => 'Aset dengan tag :links berhasil dibuat.|:count aset berhasil dibuat :links.',
         'partial_failure' => 'Aset gagal dibuat. Alasan: :failures|:count aset gagal dibuat. Alasan: :failures.',
         'target_not_found' => [
-            'user' => 'The assigned user could not be found.',
-            'asset' => 'The assigned asset could not be found.',
+            'user' => 'Pengguna yang ditugaskan tidak ditemukan.',
+            'asset' => 'Aset yang diperuntukkan tidak ditemukan.',
             'location' => 'The assigned location could not be found.',
         ],
     ],
@@ -71,14 +71,14 @@ return [
         'file_already_deleted' => 'File yang dipilih telah dihapus',
         'header_row_has_malformed_characters' => 'Salah satu atau lebih atribut di baris header mengandung karakter UTF-8 yang tidak sah',
         'content_row_has_malformed_characters' => 'Salah satu atau lebih atribut di baris pertama konten mengandung karakter UTF-8 yang tidak sah',
-        'transliterate_failure' => 'Transliteration from :encoding to UTF-8 failed due to invalid characters in input'
+        'transliterate_failure' => 'Transliterasi dari :encoding ke UTF-8 gagal karena karakter input tidak valid'
     ],
 
 
     'delete' => [
         'confirm'   	=> 'Apakah Anda yakin untuk menghapus aset ini?',
         'error'   		=> 'Terdapat kesalahan pada saat penghapusan aset. Silahkan coba kembali.',
-        'assigned_to_error' => '{1}Asset Tag: :asset_tag is currently checked out. Check in this device before deletion.|[2,*]Asset Tags: :asset_tag are currently checked out. Check in these devices before deletion.',
+        'assigned_to_error' => '{1}Tag Aset: :asset_tag saat ini sedang diperiksa. Periksa perangkat ini sebelum dihapus.|[2,*]Tag Aset: :asset_tag saat ini sedang diperiksa. Periksa perangkat ini sebelum dihapus.',
         'nothing_updated'   => 'Tidak ada aset yang dipilih, jadi tidak ada yang dihapus.',
         'success' 		=> 'Aset sukses terhapus.',
     ],
@@ -105,9 +105,9 @@ return [
     ],
 
     'requests' => [
-        'error'   		=> 'Request was not successful, please try again.',
-        'success' 		=> 'Request successfully submitted.',
-        'canceled'      => 'Request successfully canceled.',
+        'error'   		=> 'Permintaan tidak berhasil, silakan coba lagi.',
+        'success' 		=> 'Permintaan berhasil dikirim.',
+        'canceled'      => 'Permintaan berhasil dibatalkan.',
         'cancel'        => 'Batalkan permintaan barang ini',
     ],
 

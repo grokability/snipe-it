@@ -15,7 +15,8 @@ return [
     'info'				=> 'Thông tin',
     'restore_user'		=> 'Nhấp vào đây để khôi phục chúng.',
     'last_login'        => 'Lần đăng nhập trước',
-    'ldap_config_text'  => 'Bạn có thể tìm thấy cài đặt cấu hình LDAP Quản trị> Cài đặt. Địa điểm đã chọn (tùy chọn) sẽ được đặt cho tất cả người dùng được nhập.',
+    'ldap_config_text'  => 'The selected location will be set for ALL imported users. This will overwrite their existing location, and is an unusual use-case, so leaving this blank is typically best.',
+    'ldap_sync_intro'   => 'Click on the button below to manually sync your LDAP users. To learn more about configuring LDAP sync to run automatically, please see the <a href=":link" target="_blank">documentation <i class="fa fa-external-link"></i></a> .',
     'print_assigned'    => 'In tất cả tài sản đã cấp phát',
     'email_assigned'    => 'Danh sách email của tất cả được chỉ định',
     'user_notified'     => 'Người dùng đã được gửi qua email danh sách các thiết bị hiện được chỉ định của họ.',
@@ -54,4 +55,6 @@ return [
     'all_assigned_list_generation' => 'Ngày in:',
     'email_user_creds_on_create' => 'Gửi thông tin đăng nhập cho người dùng này qua email?',
     'department_manager' => 'Trưởng bộ phận',
+    'generate_password' => 'Generate random password',
+    'individual_override' => 'This user has at least one individual permission set, which may override group permissions.',
 ];

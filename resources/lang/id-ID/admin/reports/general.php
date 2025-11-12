@@ -4,7 +4,7 @@ return [
     'info'   => 'Pilih opsi yang Anda inginkan untuk laporan aset Anda.',
     'deleted_user' => 'Pengguna yang dihapus',
     'send_reminder' => 'Kirim pengingat',
-    'cannot_send_reminder' => 'User has been deleted or does not have an email address so cannot receive a reminder',
+    'cannot_send_reminder' => 'Pengguna telah dihapus atau tidak ada alamat email sehingga tidak dapat menerima pemberitahun',
     'reminder_sent' => 'Pengingat terkirim',
     'acceptance_deleted' => 'Permintaan penerimaan dihapus',
     'acceptance_request' => 'Permintaan penerimaan',

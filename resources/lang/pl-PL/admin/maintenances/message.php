@@ -1,19 +1,19 @@
 <?php
 
     return [
-        'not_found'                    => 'Aktyw, którego poszukujesz nie został odnaleziony!',
+        'not_found'                    => 'Serwis środka, którego poszukujesz nie został odnaleziony!',
         'delete'                       => [
-            'confirm' => 'Czy chcesz usunąć konserwację tego aktywa?',
-            'error'   => 'Wystąpił błąd przy usuwaniu konserwacji aktywa. Spróbuj ponownie.',
-            'success' => 'Konserwacja aktywa usunięta pomyślnie.',
+            'confirm' => 'Czy chcesz usunąć serwis tego środka?',
+            'error'   => 'Wystąpił błąd przy usuwaniu serwisu środka. Spróbuj ponownie.',
+            'success' => 'Serwis środka usunięty pomyślnie.',
         ],
         'create'                       => [
-            'error'   => 'Konserwacja aktywa nie została utworzona, spróbuj ponownie.',
-            'success' => 'Konserwacja aktywa utworzona pomyślnie.',
+            'error'   => 'Serwis środka nie został utworzony, spróbuj ponownie.',
+            'success' => 'Serwis środka utworzony pomyślnie.',
         ],
         'edit'                       => [
-            'error'   => 'Konserwacja aktywa nie została edytowana, spróbuj ponownie.',
-            'success' => 'Edycja konserwacji aktywa zakończona pomyślnie.',
+            'error'   => 'Serwis środka nie został edytowany, spróbuj ponownie.',
+            'success' => 'Edycja serwisu środka zakończona pomyślnie.',
         ],
         'asset_maintenance_incomplete' => 'Nieukończone',
         'warranty'                     => 'Gwarancja',

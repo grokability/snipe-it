@@ -2,8 +2,8 @@
 
 return array(
 
-    'accepted'                  => 'Rydych wedi llwyddo I dderbyn yr ased yma.',
-    'declined'                  => 'Rydych wedi llwyddo I wrthod yr ased yma.',
+    'accepted'                  => 'You have successfully accepted this item.',
+    'declined'                  => 'You have successfully declined this item.',
     'bulk_manager_warn'	        => 'Mae eich defnyddwyr wedi diweddaru\'n llwyddiannus ond mae\'r blwch rheolwr heb newid gan fod y rheolwr yn y rhestr o defnyddwyr. Dewisiwch eto heb cynnwys y rheolwr.',
     'user_exists'               => 'Defnyddiwr yn bodoli yn barod!',
     'user_not_found'            => 'User does not exist or you do not have permission view them.',

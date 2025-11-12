@@ -2,7 +2,7 @@
 
 return [
     'about_asset_depreciations'  			=> 'Informacja na temat amortyzacji nabytku',
-    'about_depreciations'  					=> 'You can set up asset depreciations to depreciate assets based on linear (straight-line), Half Year applied with condition, or Half Year always applied.',
+    'about_depreciations'  					=> 'Możesz ustawić amortyzację środków jako liniową, półroczną - aktywowaną warunkowo lub półroczną - zawsze aktywną.',
     'asset_depreciations'  					=> 'Amortyzacja nabytków',
     'create'  					            => 'Nowa amortyzacja',
     'depreciation_name'  					=> 'Nazwa amortyzacji',
@@ -14,7 +14,7 @@ return [
                       Obecnie nie masz żadnych skonfigurowanych amortyzacji.
                       Skonfiguruj co najmniej jedną amortyzację, aby wyświetlić raport.',
     'depreciation_method'                   => 'Raport Amortyzacji',
-    'linear_depreciation'                   => 'Linear (Default)',
-    'half_1'                                => 'Half-year convention, always applied',
-    'half_2'                                => 'Half-year convention, applied with condition',
+    'linear_depreciation'                   => 'Liniowa (domyślna)',
+    'half_1'                                => 'Konwencja półroczna, zawsze aktywna',
+    'half_2'                                => 'Konwencja półroczna,  aktywowana warunkowo',
 ];

@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Manage',
     'field'		                => 'Padang',
     'about_fieldsets_title'		=> 'Mengenai Fieldsets',
-    'about_fieldsets_text'		=> 'Fieldsets membolehkan anda membuat kumpulan bidang tersuai yang sering digunakan semula digunakan untuk jenis model aset tertentu.',
+    'about_fieldsets_text'		=> 'Fieldsets allow you to create groups of custom fields that are frequently re-used for specific asset model types.',
     'custom_format'             => 'Custom Regex format...',
     'encrypt_field'      	        => 'Sulitkan nilai medan ini dalam pangkalan data',
     'encrypt_field_help'      => 'AMARAN: Menyulitkan medan menjadikannya tidak dapat ditemui.',
@@ -67,4 +67,5 @@ return [
         'checkbox' => 'Checkbox',
         'radio' => 'Radio Buttons',
     ],
+    'general_help_text' => 'Custom fields store additional information not covered by the default asset fields. <a href="https://snipe-it.readme.io/docs/custom-fields#/"><i class="fa fa-external-link"></i></a>.',
 ];

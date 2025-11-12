@@ -2,8 +2,8 @@
 
 return array(
 
-    'accepted'                  => '你已成功接受此项资产。',
-    'declined'                  => '你已拒绝此项资产。',
+    'accepted'                  => 'You have successfully accepted this item.',
+    'declined'                  => 'You have successfully declined this item.',
     'bulk_manager_warn'	        => '您的用户已成功更新，但经理信息未保存，因为您选择的经理也在本次编辑的用户列表中，用户不能是自己的经理。请重新选择您的用户，但这次请排除经理。',
     'user_exists'               => '用户已经存在!',
     'user_not_found'            => '用户不存在或您没有权限查看。',

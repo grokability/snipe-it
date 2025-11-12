@@ -135,7 +135,31 @@ class LicenseSeat extends SnipeModel implements ICompanyableChild
 
         return false;
     }
+    /**
+     * Get the list of checkouts for this License
+     *
+     * @author [A. Gianotto] [<snipe@snipe.net>]
+     * @since  [v2.0]
+     * @return \Illuminate\Database\Eloquent\Relations\Relation
+     */
+    public function checkouts()
+    {
+        return $this->assetlog()->where('action_type', '=', 'checkout')
+            ->orderBy('created_at', 'desc')
+            ->withTrashed();
+    }
 
+    /**
+     * Establishes the license -> action logs relationship
+     *
+     * @author [A. Gianotto] [<snipe@snipe.net>]
+     * @since  [v3.0]
+     * @return \Illuminate\Database\Eloquent\Relations\Relation
+     */
+    public function assetlog()
+    {
+        return $this->hasMany(Actionlog::class, 'item_id')->where('item_type', self::class)->orderBy('created_at', 'desc')->withTrashed();
+    }
     /**
      * Query builder scope to order on department
      *

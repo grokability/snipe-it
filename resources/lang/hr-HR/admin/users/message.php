@@ -2,8 +2,8 @@
 
 return array(
 
-    'accepted'                  => 'Uspješno ste prihvatili ovaj materijal.',
-    'declined'                  => 'Uspješno ste odbili ovaj materijal.',
+    'accepted'                  => 'You have successfully accepted this item.',
+    'declined'                  => 'You have successfully declined this item.',
     'bulk_manager_warn'	        => 'Vaši su korisnici uspješno ažurirani, ali vaš unos upravitelja nije spremljen jer je upravitelj koji ste odabrali također bio na popisu korisnika koji se uređuje, a korisnici možda nisu vlastiti upravitelj. Ponovno odaberite svoje korisnike, isključujući upravitelja.',
     'user_exists'               => 'Korisnik već postoji!',
     'user_not_found'            => 'User does not exist or you do not have permission view them.',

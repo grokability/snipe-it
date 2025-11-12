@@ -2,8 +2,8 @@
 
 return array(
 
-    'accepted'                  => 'Du har godkendt dette aktiv.',
-    'declined'                  => 'Du har afvist dette aktiv.',
+    'accepted'                  => 'You have successfully accepted this item.',
+    'declined'                  => 'You have successfully declined this item.',
     'bulk_manager_warn'	        => 'Dine brugere er blevet opdateret, men din administratorindgang blev ikke gemt, fordi den valgte leder også var på brugerlisten, der skulle redigeres, og brugerne er måske ikke deres egen administrator. Vælg venligst dine brugere igen, undtagen manager.',
     'user_exists'               => 'Bruger eksistere allerede!',
     'user_not_found'            => 'User does not exist or you do not have permission view them.',

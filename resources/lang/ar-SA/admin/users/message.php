@@ -2,8 +2,8 @@
 
 return array(
 
-    'accepted'                  => 'لقد قبلت هذا الأصل بنجاح.',
-    'declined'                  => 'لقد رفضت هذا الأصل بنجاح.',
+    'accepted'                  => 'You have successfully accepted this item.',
+    'declined'                  => 'You have successfully declined this item.',
     'bulk_manager_warn'	        => 'تم تحديث المستخدمين بنجاح، ولكن لم يتم حفظ إدخال مديرك لأن المدير الذي حددته كان أيضا في قائمة المستخدمين التي سيتم تعديلها، وقد لا يكون المستخدمون مديرهم الخاص. يرجى تحديد المستخدمين مرة أخرى، باستثناء المدير.',
     'user_exists'               => 'المستخدم موجود مسبقاً!',
     'user_not_found'            => 'User does not exist or you do not have permission view them.',

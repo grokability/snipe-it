@@ -2,8 +2,8 @@
 
 return array(
 
-    'accepted'                  => 'Активът беше приет.',
-    'declined'                  => 'Активът беше отказан.',
+    'accepted'                  => 'You have successfully accepted this item.',
+    'declined'                  => 'You have successfully declined this item.',
     'bulk_manager_warn'	        => 'Вашите потребителски профили бяха обновени успешно, обаче вашето управителско вписване не беше запазено, защото управителят, които сте избрали бе в списъка с потребителски профили за промяна и потребителите не могат да бъдат свои управители. Моля изберете вашите потребителски профили отново, с изключение на управителя.',
     'user_exists'               => 'Потребителят вече съществува!',
     'user_not_found'            => 'User does not exist or you do not have permission view them.',

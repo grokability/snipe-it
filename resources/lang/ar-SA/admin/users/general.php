@@ -15,7 +15,8 @@ return [
     'info'				=> 'معلومات',
     'restore_user'		=> 'انقر هنا لاستعادتها.',
     'last_login'        => 'آخر دخول للمستخدم',
-    'ldap_config_text'  => 'يمكن العثور على إعدادات تهيئة لداب المشرف> الإعدادات. سيتم تعيين الموقع (اختياري) المحدد لجميع المستخدمين الذين تم استيرادهم.',
+    'ldap_config_text'  => 'The selected location will be set for ALL imported users. This will overwrite their existing location, and is an unusual use-case, so leaving this blank is typically best.',
+    'ldap_sync_intro'   => 'Click on the button below to manually sync your LDAP users. To learn more about configuring LDAP sync to run automatically, please see the <a href=":link" target="_blank">documentation <i class="fa fa-external-link"></i></a> .',
     'print_assigned'    => 'طباعة كل الممتلكات',
     'email_assigned'    => 'قائمة البريد اﻹلكتروني لكل المعينين',
     'user_notified'     => 'تم إرسال قائمة بالعناصر المعينة حاليا إلى المستخدم بالبريد الإلكتروني.',
@@ -53,4 +54,6 @@ return [
     'all_assigned_list_generation' => 'تم إنشاؤها في:',
     'email_user_creds_on_create' => 'إرسال بيانات دخول هذا المستخدم بالبريد الإلكتروني؟',
     'department_manager' => 'Department Manager',
+    'generate_password' => 'Generate random password',
+    'individual_override' => 'This user has at least one individual permission set, which may override group permissions.',
 ];

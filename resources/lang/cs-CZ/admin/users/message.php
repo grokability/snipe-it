@@ -2,8 +2,8 @@
 
 return array(
 
-    'accepted'                  => 'Úspěšně jste přijali tento majetek.',
-    'declined'                  => 'Úspěšně jste odmítli tento majetek.',
+    'accepted'                  => 'You have successfully accepted this item.',
+    'declined'                  => 'You have successfully declined this item.',
     'bulk_manager_warn'	        => 'Uživatelé byli úspěšně aktualizováni, položka správce však nebyla uložena, protože správce, který jste si vybrali, byl také v seznamu uživatelů, který má být upraven, a uživatelé nemusí být jejich vlastní správce. Zvolte své uživatele znovu, kromě správce.',
     'user_exists'               => 'Uživatel již existuje!',
     'user_not_found'            => 'Uživatel neexistuje nebo nemáte oprávnění k jeho zobrazení.',

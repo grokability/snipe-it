@@ -15,7 +15,8 @@ return [
     'info'				=> 'Informacije',
     'restore_user'		=> 'Kliknite tukaj, da jih obnovite.',
     'last_login'        => 'Zadnja prijava',
-    'ldap_config_text'  => 'Nastavitve konfiguracije LDAP-a lahko najdete v zavihku Admin> Nastavitve. Izbrana lokacija bo nastavljena za vse uvožene uporabnike.',
+    'ldap_config_text'  => 'The selected location will be set for ALL imported users. This will overwrite their existing location, and is an unusual use-case, so leaving this blank is typically best.',
+    'ldap_sync_intro'   => 'Click on the button below to manually sync your LDAP users. To learn more about configuring LDAP sync to run automatically, please see the <a href=":link" target="_blank">documentation <i class="fa fa-external-link"></i></a> .',
     'print_assigned'    => 'Natisni vse dodeljene',
     'email_assigned'    => 'Izpis E pošt od vseh dodeljenih',
     'user_notified'     => 'Uporabnik je bil po E pošti obveščen o seznamu vseh njemu dodeljenih stvari.',
@@ -53,4 +54,6 @@ return [
     'all_assigned_list_generation' => 'Ustvarjena na:',
     'email_user_creds_on_create' => 'Sporoči temu uporabniku poverilnice po E pošti?',
     'department_manager' => 'Vodja oddelka',
+    'generate_password' => 'Generate random password',
+    'individual_override' => 'This user has at least one individual permission set, which may override group permissions.',
 ];

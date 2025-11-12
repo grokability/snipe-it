@@ -67,4 +67,5 @@ return [
         'checkbox' => 'Zaškrtávací políčko',
         'radio' => 'Přepínače',
     ],
+    'general_help_text' => 'Custom fields store additional information not covered by the default asset fields. <a href="https://snipe-it.readme.io/docs/custom-fields#/"><i class="fa fa-external-link"></i></a>.',
 ];
