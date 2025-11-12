@@ -11,6 +11,7 @@ use App\Models\Location;
 use App\Models\Asset;
 use Log;
 use function Laravel\Prompts\note;
+use Illuminate\Support\Facades\Log as FacadesLog;
 
 class FilterService
 {
@@ -141,11 +142,6 @@ class FilterService
                     'type' => User::class,
                     'column' => 'users.jobtitle',
                 ],
-                /*'assigned_to' => [
-                    'relation' => 'assignedTo',
-                    'morph' => true,
-                    'types' => [User::class, Asset::class, Location::class],
-                ],*/
             ];
 
             // === 3. Simple Fields ===
@@ -248,77 +244,78 @@ class FilterService
 
             // === 5a. Handle assignedTo ===
             if ($fieldname === 'assigned_to') {
-                dump($value);
-                dump(isset($value['assignedType']));
-                if (!isset($value['assignedType'])) {
-                    dump($value->assignedType);
-                    $inner->where(function ($query) use ($value, $operator) {
 
-                        // Match by location name
-                        $query->whereHas('assignedToLocation', function ($q) use ($value, $operator) {
-                            $this->applyRelationalValue($q, $value, $operator, ['column' => 'locations.name']);
-                        })
-                            // Match by user name
-                            ->orWhereHas('assignedToUser', function ($q) use ($value, $operator) {
-                                $this->applyRelationalValue($q, $value, $operator, ['column' => 'users.first_name']);
-                                $this->applyRelationalValue($q, $value, $operator, ['column' => 'users.last_name']);
-                            })
-                            // Match by assigned asset name (if this relation exists)
-                            ->orWhereHas('assignedToAsset', function ($q) use ($value, $operator) {
-                                $this->applyRelationalValue($q, $value, $operator, ['column' => 'name']);
-                                $this->applyRelationalValue($q, $value, $operator, ['column' => 'asset_tag']);
-                            });
-                    });
-                } else {
-                    dump("type");
-                    switch ($value->field) {
-                        case Asset::class:
-                            $inner->where(function ($query) use ($value, $operator) {
+                // Normalize incoming value into an array of raw tokens
+                $values = is_array($value) ? $value : [$value];
 
-                                // unpack array to string
-                                if (is_array($value->assigned_to)) {
-                                    $value->assigned_to = $value->assigned_to[0];
-                                }
+                // Strip out empty tokens
+                $values = array_values(array_filter($values, function ($v) {
+                    return $v !== null && $v !== '';
+                }));
 
-                                $query->whereHas('assignedToAsset', function ($q) use ($value, $operator) {
-                                    $this->applyRelationalValue($q, $value->assigned_to, $operator, ['column' => 'name']);
-                                    $this->applyRelationalValue($q, $value->assigned_to, $operator, ['column' => 'asset_tag']);
-                                });
-                            });
-                            break;
-                        case Location::class:
-                            $inner->where(function ($query) use ($value, $operator) {
+                // Separate numeric-ish tokens (treated as ids) and strings (treated as names)
+                $ids = array_values(array_filter($values, function ($v) {
+                    return is_numeric($v);
+                }));
 
-                                // unpack array to string
-                                if (is_array($value->assigned_to)) {
-                                    $value->assigned_to = $value->assigned_to[0];
-                                }
+                $names = array_values(array_filter($values, function ($v) {
+                    return is_string($v);
+                }));
 
-                                $query->whereHas('assignedToLocation', function ($q) use ($value, $operator) {
-                                    $this->applyRelationalValue($q, $value->assigned_to, $operator, ['column' => 'locations.name']);
-                                });
-                            });
-                            break;
-                        case User::class:
-                            $inner->where(function ($query) use ($value, $operator) {
+                $inner->where(function ($query) use ($ids, $names, $operator) {
 
-                                // unpack array to string
-                                if (is_array($value->value)) {
-                                    $value->value = $value->value[0];
-                                }
+                    // If numeric ids were provided, match by id across the morph targets
+                    if (!empty($ids)) {
+                        $query->orWhereHas('assignedToUser', function ($q) use ($ids) {
+                            $q->whereIn('id', $ids);
+                        });
 
-                                $query->whereHas('assignedToUser', function ($q) use ($value, $operator) {
-                                    $this->applyRelationalValue($q, $value->value, $operator, ['column' => 'users.first_name']);
-                                    //$this->applyRelationalValue($q, $value->value, $operator, ['column' => 'users.last_name']);
-                                })->orWhereHas('assignedToUser', function ($q) use ($value, $operator) {
-                                    //$this->applyRelationalValue($q, $value->value, $operator, ['column' => 'users.first_name']);
-                                    $this->applyRelationalValue($q, $value->value, $operator, ['column' => 'users.last_name']);
-                                });
-                            });
-                            break;
+                        $query->orWhereHas('assignedToLocation', function ($q) use ($ids) {
+                            $q->whereIn('id', $ids);
+                        });
+
+                        $query->orWhereHas('assignedToAsset', function ($q) use ($ids) {
+                            $q->whereIn('id', $ids);
+                        });
                     }
-                }
-                //dump($inner->toRawSql());
+
+                    // If string names were provided, match across user name, location name, assigned asset name and asset_tag
+                    if (!empty($names)) {
+                        foreach ($names as $name) {
+                            // users: first_name, last_name, full name
+                            $query->orWhereHas('assignedToUser', function ($q) use ($name) {
+                                $q->where(function ($sq) use ($name) {
+                                    $sq->where('first_name', 'LIKE', '%' . $name . '%')
+                                        ->orWhere('last_name', 'LIKE', '%' . $name . '%')
+                                        ->orWhere(DB::raw("CONCAT(first_name, ' ', last_name)"), 'LIKE', '%' . $name . '%');
+                                });
+                            });
+
+                            // locations: name
+                            $query->orWhereHas('assignedToLocation', function ($q) use ($name, $operator) {
+                                $this->applyRelationalValue($q, $name, $operator, ['column' => 'locations.name']);
+                            });
+
+                            // assets: name and asset_tag
+                            $query->orWhereHas('assignedToAsset', function ($q) use ($name, $operator) {
+                                // check asset name
+                                $this->applyRelationalValue($q, $name, $operator, ['column' => 'name']);
+                                // check asset_tag
+                                $this->applyRelationalValue($q, $name, $operator, ['column' => 'asset_tag']);
+                            });
+
+                            // also allow matching the root assets.asset_tag or assets.name directly (so queries like "asset_tag" or "name" still match)
+                            $query->orWhere(function ($q2) use ($name) {
+                                $q2->where('assets.asset_tag', 'LIKE', '%' . $name . '%')
+                                    ->orWhere('assets.name', 'LIKE', '%' . $name . '%');
+                            });
+                        }
+                    }
+
+                    // If nothing was supplied (empty array) we intentionally do NOT add any restricting condition here,
+                    // which lets the assigned_to filter behave as "match anything" (i.e., no narrowing).
+                });
+
                 return;
             }
 
