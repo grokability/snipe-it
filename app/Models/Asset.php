@@ -665,18 +665,24 @@ class Asset extends Depreciable
 
     public function assignedToLocation()
     {
-        return $this->belongsTo(Location::class, 'assigned_to')->whereNotNull('assigned_to');
+        return $this->belongsTo(Location::class, 'assigned_to')
+            ->where('assigned_type', '=', Location::class);
+            //->whereNotNull('assigned_to');
     }
 
     public function assignedToUser()
     {
-        return $this->belongsTo(User::class, 'assigned_to')->whereNotNull('assigned_to');
+        return $this->belongsTo(User::class, 'assigned_to')
+            ->where('assigned_type', '=', User::class)
+            ->whereNotNull('assigned_to');
     }
 
     // Optional — only if an asset can be assigned to another asset
     public function assignedToAsset()
     {
-        return $this->belongsTo(Asset::class, 'assigned_to')->whereNotNull('assigned_to');
+        return $this->belongsTo(Asset::class, 'assigned_to')
+            ->where('assigned_type', '=', Asset::class)
+            ->whereNotNull('assigned_to');
     }
 
 
