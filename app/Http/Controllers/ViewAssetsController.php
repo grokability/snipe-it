@@ -156,7 +156,30 @@ class ViewAssetsController extends Controller
     public function getRequestableIndex() : View
     {
         $assets = Asset::with('model', 'defaultLoc', 'location', 'assignedTo', 'requests')->Hardware()->RequestableAssets();
-        $models = AssetModel::with('category', 'requests', 'assets')->RequestableModels()->get();
+            $onlyUnassignedDeployable = Setting::getSettings()->request_unassigned_deployable;
+        $models = AssetModel::with([
+            'category',
+            'requests',
+            'assets' => function ($q) use ($onlyUnassignedDeployable) {
+                if ($onlyUnassignedDeployable) {
+                    // Unassigned + deployable (not archived)
+                    $q->whereNull('assets.assigned_to')
+                        ->whereHas('assetstatus', function ($s) {
+                            $s->where('deployable', 1);
+                        });
+                } else {
+                    // Requestable + (deployable OR pending) but never archived
+                    $q->where('requestable', 1)
+                        ->whereHas('assetstatus', function ($s) {
+                            $s->where('archived', 0)
+                                ->where(function ($s) {
+                                    $s->where('deployable', 1)
+                                        ->orWhere('pending', 1);
+                                });
+                        });
+                }
+            },
+        ])->RequestableModels()->get();
 
         return view('account/requestable-assets', compact('assets', 'models'));
     }

@@ -135,7 +135,7 @@
                                                     @endcan
                                                 </td>
 
-                                                <td>{{$requestableModel->assets->where('requestable', '1')->count()}}</td>
+                                                <td>{{'requestable '.$requestableModel->assets->where('requestable', '1')->count()}} {{'Unrequestable '.$requestableModel->assets->where('requestable', '0')->count()}}</td>
 
                                                 <td>
                                                     <form  action="{{ route('account/request-item', ['itemType' => 'asset_model', 'itemId' => $requestableModel->id])}}" method="POST" accept-charset="utf-8">

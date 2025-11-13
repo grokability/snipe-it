@@ -435,6 +435,21 @@
                                    </div>
                                </div>
 
+                           <!-- Request only Unassigned Deployable Assets -->
+                           <div class="form-group">
+                               <div class="col-md-8 col-md-offset-3">
+                                   <label class="form-control">
+                                       <input type="checkbox" name="request_unassigned_deployable" value="1" @checked(old('request_unassigned_deployable', $setting->request_unassigned_deployable)) />
+                                       {{ trans('admin/settings/general.request_unassigned_deployable') }}
+                                       {!! $errors->first('request_unassigned_deployable', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
+                                   </label>
+
+                                   <p class="help-block">
+                                       {{ trans('admin/settings/general.request_unassigned_deployable_help_text') }}
+                                   </p>
+                               </div>
+                           </div>
+
                            <!-- Manager View -->
                            <div class="form-group {{ $errors->has('manager_view_enabled') ? 'error' : '' }}">
                                <div class="col-md-3">

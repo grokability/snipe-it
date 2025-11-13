@@ -1662,10 +1662,19 @@ class Asset extends Depreciable
     public function scopeRequestableAssets($query): Builder
     {
         $table = $query->getModel()->getTable();
+        $query = Company::scopeCompanyables($query->where($table . '.requestable', '=', 1));
+        $onlyUnassignedDeployable = Setting::getSettings()->request_unassigned_deployable;
 
-        return Company::scopeCompanyables($query->where($table.'.requestable', '=', 1))
-        ->whereHas(
-            'assetstatus', function ($query) {
+        if ($onlyUnassignedDeployable) {
+            // Unassigned + Deployable ONLY
+            $query
+                ->whereNull($table . '.assigned_to')
+                ->whereHas('assetstatus', function ($q) {
+                    $q->where('deployable', 1)
+                        ->where('archived', 0);
+                });
+        } else {
+            $query->whereHas('assetstatus', function ($query) {
                 $query->where(
                     function ($query) {
                         $query->where('deployable', '=', 1)
@@ -1673,7 +1682,9 @@ class Asset extends Depreciable
                     }
                 )->orWhere('pending', '=', 1); // we've decided that even though an asset may be 'pending', you can still request it
             }
-        );
+            );
+        }
+            return $query;
     }
 
 

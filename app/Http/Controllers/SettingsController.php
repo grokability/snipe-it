@@ -331,6 +331,7 @@ class SettingsController extends Controller
             }
         }
 
+        $setting->request_unassigned_deployable = $request->input('request_unassigned_deployable', '0');
         $setting->unique_serial = $request->input('unique_serial', '0');
         $setting->shortcuts_enabled = $request->input('shortcuts_enabled', '0');
         $setting->show_images_in_email = $request->input('show_images_in_email', '0');

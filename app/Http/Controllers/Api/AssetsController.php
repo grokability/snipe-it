@@ -1225,6 +1225,7 @@ class AssetsController extends Controller
      */
     public function requestable(Request $request): JsonResponse | array
     {
+
         $this->authorize('viewRequestable', Asset::class);
 
         $allowed_columns = [
@@ -1256,9 +1257,6 @@ class AssetsController extends Controller
                 'supplier',
                 'requests'
             );
-
-
-
 
         if ($request->filled('search')) {
             $assets->TextSearch($request->input('search'));
