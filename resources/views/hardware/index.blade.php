@@ -1,38 +1,30 @@
 @extends('layouts/default')
 
 @section('title0')
-    @if (Request::get('company_id') && $company)
-        {{ $company->name }}
-    @endif
+@if (Request::get('company_id') && $company)
+    {{ $company->name }}
+@endif
 
-    @if (Request::get('status'))
-        @switch(Request::get('status'))
-            @case('Pending') {{ trans('general.pending') }} @break
+@if (Request::get('status'))
+    @switch(Request::get('status'))
+        @case('Pending') {{ trans('general.pending') }} @break
+        @case('RTD') {{ trans('general.ready_to_deploy') }} @break
+        @case('Deployed') {{ trans('general.deployed') }} @break
+        @case('Undeployable') {{ trans('general.undeployable') }} @break
+        @case('Deployable') {{ trans('general.deployed') }} @break
+        @case('Requestable') {{ trans('admin/hardware/general.requestable') }} @break
+        @case('Archived') {{ trans('general.archived') }} @break
+        @case('Deleted') {{ ucfirst(trans('general.deleted')) }} @break
+        @case('byod') {{ strtoupper(trans('general.byod')) }} @break
+    @endswitch
+@else
+    {{ trans('general.all') }}
+@endif
+{{ trans('general.assets') }}
 
-            @case('RTD') {{ trans('general.ready_to_deploy') }} @break
-
-            @case('Deployed') {{ trans('general.deployed') }} @break
-
-            @case('Undeployable') {{ trans('general.undeployable') }} @break
-
-            @case('Deployable') {{ trans('general.deployed') }} @break
-
-            @case('Requestable') {{ trans('admin/hardware/general.requestable') }} @break
-
-            @case('Archived') {{ trans('general.archived') }} @break
-
-            @case('Deleted') {{ ucfirst(trans('general.deleted')) }} @break
-
-            @case('byod') {{ strtoupper(trans('general.byod')) }} @break
-        @endswitch
-    @else
-        {{ trans('general.all') }}
-    @endif
-    {{ trans('general.assets') }}
-
-    @if (Request::has('order_number'))
-        : Order #{{ strval(Request::get('order_number')) }}
-    @endif
+@if (Request::has('order_number'))
+    : Order #{{ strval(Request::get('order_number')) }}
+@endif
 @stop
 
 @section('title')
