@@ -7,41 +7,23 @@
 
     @if (Request::get('status'))
         @switch(Request::get('status'))
-            @case('Pending')
-                {{ trans('general.pending') }}
-            @break
+            @case('Pending') {{ trans('general.pending') }} @break
 
-            @case('RTD')
-                {{ trans('general.ready_to_deploy') }}
-            @break
+            @case('RTD') {{ trans('general.ready_to_deploy') }} @break
 
-            @case('Deployed')
-                {{ trans('general.deployed') }}
-            @break
+            @case('Deployed') {{ trans('general.deployed') }} @break
 
-            @case('Undeployable')
-                {{ trans('general.undeployable') }}
-            @break
+            @case('Undeployable') {{ trans('general.undeployable') }} @break
 
-            @case('Deployable')
-                {{ trans('general.deployed') }}
-            @break
+            @case('Deployable') {{ trans('general.deployed') }} @break
 
-            @case('Requestable')
-                {{ trans('admin/hardware/general.requestable') }}
-            @break
+            @case('Requestable') {{ trans('admin/hardware/general.requestable') }} @break
 
-            @case('Archived')
-                {{ trans('general.archived') }}
-            @break
+            @case('Archived') {{ trans('general.archived') }} @break
 
-            @case('Deleted')
-                {{ ucfirst(trans('general.deleted')) }}
-            @break
+            @case('Deleted') {{ ucfirst(trans('general.deleted')) }} @break
 
-            @case('byod')
-                {{ strtoupper(trans('general.byod')) }}
-            @break
+            @case('byod') {{ strtoupper(trans('general.byod')) }} @break
         @endswitch
     @else
         {{ trans('general.all') }}
@@ -54,7 +36,7 @@
 @stop
 
 @section('title')
-    @yield('title0') @parent
+@yield('title0') @parent
 @stop
 
 @section('content')
