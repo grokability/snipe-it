@@ -259,6 +259,35 @@ class FilterService
                         });
                     });
                 }
+
+                // === 5b. Handle assignedTo asset ===
+                else if ($value['type'] === Asset::class) {
+                    $assignedValue = $value['value'];
+
+                    // Ensure parent asset has an assigned asset and the assigned type is Asset.
+                    // Use a whereExists subquery that selects a real column (b.id) — no DB::raw required.
+                    $inner->where(function ($q) use ($assignedValue, $operator) {
+                        $q->whereNotNull('assets.assigned_to')
+                            ->where('assets.assigned_type', Asset::class)
+                            ->whereExists(function ($sub) use ($assignedValue, $operator) {
+                                $sub->from('assets as b')
+                                    ->select('b.id')
+                                    ->whereColumn('b.id', 'assets.assigned_to')
+                                    ->where(function ($q2) use ($assignedValue, $operator) {   // <-- FIX
+                                        if ($operator === 'equals') {
+                                            $q2->where('b.asset_tag', '=', $assignedValue)
+                                                ->orWhere('b.name', '=', $assignedValue);
+                                        } else {
+                                            $q2->where('b.asset_tag', 'LIKE', '%' . $assignedValue . '%')
+                                                ->orWhere('b.name', 'LIKE', '%' . $assignedValue . '%');
+                                        }
+                                    });
+                            });
+                    });
+
+                    return;
+                }
+
                 return;
             }
 
