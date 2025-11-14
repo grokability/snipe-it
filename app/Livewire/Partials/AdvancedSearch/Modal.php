@@ -140,6 +140,7 @@ class Modal extends Component
 
         // mock a filter to check if userHasTheCreatePermission
         if ($this->visibility === FilterVisibility::Public) {
+            // TODO different === Public vs !== Private
 
             // create dummy filter
             $filter->is_public = true;
@@ -178,7 +179,12 @@ class Modal extends Component
 
         $predefinedFilterService->createFilter($validated);
 
-
+        $this->dispatch('showNotificationInFrontend', [
+                'type' => 'success',
+                'title' => trans('general.notification_success'),
+                'message' => trans('admin/predefinedFilters/message.create.success'),
+                'tag' => 'predefinedFilter',
+            ]);
 
         $this->dispatch("savePredefinedFiltersModalEvent");
         $this->dispatch("closePredefinedFiltersModal");
@@ -220,7 +226,8 @@ class Modal extends Component
             ]);
             return;
         }
-
+        
+        
         if (!$predefinedFilter->userHasPermission(auth()->user(), 'edit')) {
             $this->dispatch('showNotificationInFrontend', [
                 'type' => 'error',
@@ -268,7 +275,6 @@ class Modal extends Component
                 'tag' => 'predefinedFilter',
             ]);
         }
-
 
         $this->dispatch("updatePredefinedFiltersModalEvent");
         $this->dispatch("closePredefinedFiltersModal");
