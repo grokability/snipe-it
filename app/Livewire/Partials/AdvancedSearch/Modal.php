@@ -140,6 +140,7 @@ class Modal extends Component
 
         // mock a filter to check if userHasTheCreatePermission
         if ($this->visibility === FilterVisibility::Public) {
+            // TODO different === Public vs !== Private
 
             // create dummy filter
             $filter->is_public = true;
@@ -178,7 +179,12 @@ class Modal extends Component
 
         $predefinedFilterService->createFilter($validated);
 
-
+        $this->dispatch('showNotificationInFrontend', [
+                'type' => 'success',
+                'title' => trans('general.notification_success'),
+                'message' => trans('admin/predefinedFilters/message.create.success'),
+                'tag' => 'predefinedFilter',
+            ]);
 
         $this->dispatch("savePredefinedFiltersModalEvent");
         $this->dispatch("closePredefinedFiltersModal");
@@ -220,7 +226,34 @@ class Modal extends Component
             ]);
             return;
         }
+        
+        // mock a filter to check if userHasTheCreatePermission
+        if ($this->visibility === FilterVisibility::Public) {
 
+            if (!$predefinedFilter->is_public)
+            {
+
+                $filter = new PredefinedFilter();
+                
+                // create dummy filter
+                $filter->is_public = true;
+                $filter->filter_data = [];
+                $filter->created_by = auth()->user()->id;
+                
+                if (!$filter->userHasPermission(auth()->user(), 'create')) {
+                    $this->dispatch('showNotificationInFrontend', [
+                        'type' => 'error',
+                        'title' => trans('general.notification_error'),
+                        'message' => trans('admin/predefinedFilters/message.create.not_allowed'),
+                        'tag' => 'predefinedFilter',
+                    ]);
+                    
+                    $this->dispatch("closePredefinedFiltersModal");
+                    return;
+                }
+            }
+        }
+        
         if (!$predefinedFilter->userHasPermission(auth()->user(), 'edit')) {
             $this->dispatch('showNotificationInFrontend', [
                 'type' => 'error',
@@ -268,7 +301,6 @@ class Modal extends Component
                 'tag' => 'predefinedFilter',
             ]);
         }
-
 
         $this->dispatch("updatePredefinedFiltersModalEvent");
         $this->dispatch("closePredefinedFiltersModal");
