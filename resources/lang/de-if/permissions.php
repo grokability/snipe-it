@@ -214,6 +214,22 @@ return array(
         'name' => 'Benutzer',
         'note'       => 'Grants access to the Users section of the application.',
     ],
+    'predefinedfilters'   => [
+        'name' => 'Vordefinierte Filter',
+        'note'       => 'Gewährt Zugriff auf Vordefinierte Filter in der App.',
+    ],
+    'predefinedfiltercreate' => [
+        'name' => 'Öffentliche vordefinierte Filter erstellen',
+    ],
+    'predefinedfilterview' => [
+        'name' => 'Öffentliche vordefinierte Filter anzeigen',
+    ],
+    'predefinedfilteredit' => [
+        'name' => 'Öffentliche vordefinierte Filter bearbeiten',
+    ],
+    'predefinedfilterdelete' => [
+        'name' => 'Öffentliche vordefinierte Filter löschen',
+    ],
     'usersview' => [
         'name' => 'Benutzer anzeigen',
     ],

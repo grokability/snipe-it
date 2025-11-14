@@ -448,27 +448,19 @@ return [
 
     'PredefinedFilters' => [
         [
-            'permission' => 'predefinedFilter.view',
-            'label'      => 'View ',
-            'note'       => '',
+            'permission' => 'PredefinedFilter.view',
             'display'    => true,
         ],
         [
-            'permission' => 'predefinedFilter.create',
-            'label'      => 'Create ',
-            'note'       => '',
+            'permission' => 'PredefinedFilter.create',
             'display'    => true,
         ],
         [
-            'permission' => 'predefinedFilter.edit',
-            'label'      => 'Edit  ',
-            'note'       => '',
+            'permission' => 'PredefinedFilter.edit',
             'display'    => true,
         ],
         [
-            'permission' => 'predefinedFilter.delete',
-            'label'      => 'Delete ',
-            'note'       => '',
+            'permission' => 'PredefinedFilter.delete',
             'display'    => true,
         ],
     ],

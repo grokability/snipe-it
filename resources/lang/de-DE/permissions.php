@@ -418,10 +418,10 @@ return array(
         'note'       => 'Gewährt Zugriff auf Vordefinierte Filter in der App.',
     ],
     'predefinedfiltercreate' => [
-        'name' => 'Öffentliche vordefinierte Filter anzeigen',
+        'name' => 'Öffentliche vordefinierte Filter erstellen',
     ],
     'predefinedfilterview' => [
-        'name' => 'Öffentliche vordefinierte Filter erstellen',
+        'name' => 'Öffentliche vordefinierte Filter anzeigen',
     ],
     'predefinedfilteredit' => [
         'name' => 'Öffentliche vordefinierte Filter bearbeiten',
