@@ -244,15 +244,16 @@ class FilterService
             // === 5. Handle assignedTo ===
             if ($fieldname === 'assigned_to') {
 
+                if ($value['value'] == '') {
+                    return;
+                }
+                
                 // Check if type is valid
                 $validTypes = [Asset::class, Location::class, User::class];
                 if (!in_array($value['type'], $validTypes)) {
                     throw new \UnexpectedValueException('You\'ve provided an invalid type');
                 }
 
-                if ($value['value'] == '') {
-                    return;
-                }
 
                 // === 5a. Handle assignedTo location ===
                 if ($value['type'] === Location::class) {

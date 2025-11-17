@@ -355,7 +355,6 @@ When .hide is applied, the filter section is hidden.
     width: unset;
     box-sizing: border-box;
     z-index: 100;
-
 }
 
 .select2-container--default .select2-selection--single,
