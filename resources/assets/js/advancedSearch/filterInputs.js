@@ -190,72 +190,6 @@ class SelectFilterInput extends FilterInput {
     }
 }
 
-class AssignedEntityFilterInput extends SelectFilterInput {
-    getValue() {
-        const selections = $(this.element).select2('data');
-
-        if (!selections.length) return null;
-
-        return selections.map(selection => {
-            // Find the corresponding <option> element
-            const option = $(this.element).find(`option[value="${selection.id}"]`)[0];
-
-            // Default assignedType in case data-attribute isn't set
-            let assignedType = null;
-
-            if (option) {
-                assignedType = option.getAttribute('data-assigned-type');
-            }
-
-            // If data-assigned-type is missing, fallback to 'type' from Select2 selection (if available)
-            if (!assignedType && selection.type) {
-                assignedType = "App\\Models\\" + selection.type.charAt(0).toUpperCase() + selection.type.slice(1);
-            }
-
-            return {
-                assignedType,
-                assigned_to: parseInt(selection.id)
-            };
-        });
-    }
-
-    setValue(newValues, logic, operator, type = this.getType()) {
-        // Map each new value to a fetch request
-        let requestPromises = newValues.map((newValue) => {
-            return this.apiService.fetchItemFromBackendById(type, newValue);
-        });
-
-        // Wait for all fetches to complete
-        return Promise.all(requestPromises).then((responses) => {
-            // For each response, parse JSON and prepare to update select options
-            let appendPromises = responses.map(response =>
-                response.json().then(responseJson => {
-                    // Check if option with this ID already exists
-                    let $existingOption = $(this.element).find(`option[value='${responseJson.id}']`);
-
-                    if ($existingOption.length === 0) {
-                        // Option does not exist, create and append new one (selected)
-                        let option = new Option(responseJson.name, responseJson.id, true, true);
-                        $(this.element).append(option);
-                    } else {
-                        // Option exists, mark it selected (in case it was not)
-                        $existingOption.prop('selected', true);
-                    }
-                })
-            );
-
-            // Wait for all JSON processing and DOM updates to finish
-            return Promise.all(appendPromises).then(() => {
-                this.setSearchOperator(logic, operator)
-
-                // Trigger change event once, so Select2 updates UI properly
-                $(this.element).trigger('change');
-            });
-        });
-    }
-
-}
-
 class DateFilterInput extends FilterInput {
     constructor(el, apiService) {
         super(el, apiService);
@@ -375,6 +309,46 @@ class TextFilterInput extends FilterInput {
     }
 }
 
+class AssignedEntityFilterInput extends TextFilterInput {
+    getValue() {
+        const value = this.hasValue() ? this.element.value : null;
+        const type = document.getElementById(this.element.id + "_type").value;
+
+        if(value == "" && type == "") {
+            return;
+        }
+
+        return {
+            type: type,
+            value: value
+        }
+
+    }
+
+    setValue(newValue, logic, operator) {
+        return new Promise((resolve, reject) => {
+            try {
+                queueMicrotask(() => {
+                    this.element.value = newValue.value;
+                    document.getElementById(this.element.id + "_type").value = newValue.type;
+                    this.setSearchOperator(logic, operator)
+                });
+
+            }
+            catch (e) {
+                reject(e);
+            }
+            resolve(newValue);
+        })
+    } 
+
+    clear() {
+        this.element.value = "";
+        document.getElementById(this.element.id + "_type").value = "";
+        super.clear();
+    }
+
+}
 export {
     FilterInput,
     SelectFilterInput,
