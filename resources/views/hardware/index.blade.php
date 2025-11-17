@@ -37,153 +37,228 @@
 
 
 
-<div class="responsive-layout">
-    <!-- Filter Section -->
-    <div class="filter-section hide" id="filterSection">
-        @include('partials.advanced-search.advanced-search', [
-            'predefined_filter_id' => $predefined_filter_id,
-        ])
-    </div>
+    <div class="responsive-layout">
+        <!-- Filter Section -->
+        <div class="filter-section hide" id="filterSection">
+            @include('partials.advanced-search.advanced-search', [
+                'predefined_filter_id' => $predefined_filter_id,
+            ])
+        </div>
 
-    <!-- Table Section -->
-    <div class="table-section">
-        <div class="box">
-            <div class="box-body">
-                @include('partials.asset-bulk-actions', ['status' => Request::get('status'), 'showFiltersTogglebutton' => true])
+        <!-- Table Section -->
+        <div class="table-section">
+            <div class="box">
+                <div class="box-body">
+                    @include('partials.asset-bulk-actions', [
+                        'status' => Request::get('status'),
+                        'showFiltersTogglebutton' => true,
+                    ])
 
-                <table data-columns="{{ \App\Presenters\AssetPresenter::dataTableLayout() }}"
-                    data-cookie-id-table="{{ request()->has('status') ? e(request()->input('status')) : '' }}assetsListingTable"
-                    data-id-table="{{ request()->has('status') ? e(request()->input('status')) : '' }}assetsListingTable"
-                    data-search-text="{{ e(Session::get('search')) }}" data-side-pagination="server"
-                    data-show-footer="true" data-sort-order="asc" data-sort-name="name"
-                    data-show-columns-search="true"
-                data-toolbar="#assetsBulkEditToolbar" data-bulk-button-id="#bulkAssetEditButton"
-                    data-bulk-form-id="#assetsBulkForm" data-buttons="assetButtons"
-                    id="{{ request()->has('status') ? e(request()->input('status')) : '' }}assetsListingTable"
-                    class="table table-striped snipe-table" data-url="{{ route('api.assets.index', [
-    'status' => e(Request::get('status')),
-    'order_number' => e(strval(Request::get('order_number'))),
-    'company_id' => e(Request::get('company_id')),
-    'status_id' => e(Request::get('status_id')),
-]) }}" data-export-options='{
+                    <table data-columns="{{ \App\Presenters\AssetPresenter::dataTableLayout() }}"
+                        data-cookie-id-table="{{ request()->has('status') ? e(request()->input('status')) : '' }}assetsListingTable"
+                        data-id-table="{{ request()->has('status') ? e(request()->input('status')) : '' }}assetsListingTable"
+                        data-search-text="{{ e(Session::get('search')) }}" data-side-pagination="server"
+                        data-show-footer="true" data-sort-order="asc" data-sort-name="name" data-show-columns-search="true"
+                        data-toolbar="#assetsBulkEditToolbar" data-bulk-button-id="#bulkAssetEditButton"
+                        data-bulk-form-id="#assetsBulkForm" data-buttons="assetButtons"
+                        id="{{ request()->has('status') ? e(request()->input('status')) : '' }}assetsListingTable"
+                        class="table table-striped snipe-table"
+                        data-url="{{ route('api.assets.index', [
+                            'status' => e(Request::get('status')),
+                            'order_number' => e(strval(Request::get('order_number'))),
+                            'company_id' => e(Request::get('company_id')),
+                            'status_id' => e(Request::get('status_id')),
+                        ]) }}"
+                        data-export-options='{
                     "fileName": "export{{ Request::has('status') ? '-' . str_slug(Request::get('status')) : '' }}-assets-{{ date('Y-m-d') }}",
                     "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
                 }'>
-                </table>
+                    </table>
+                </div>
             </div>
         </div>
+        <livewire:partials.advancedSearch.modal />
+
     </div>
-    <livewire:partials.advancedSearch.modal />
 
-</div>
-
-<style>
-/* 
-Layout container for the whole page.
-Uses flexbox so the filter and table sections can sit side by side on desktop, and stack on mobile.
-*/
-.responsive-layout {
-    display: flex;
-    flex-wrap: wrap;
-    width: 100%;
-}
-
-/* 
-The filter (sidebar) section.
-Transition allows smooth showing/hiding.
-*/
-.filter-section {
-    transition: all 0.3s ease;
-}
-
-/* 
-When .hide is applied, the filter section is hidden.
-!important ensures it's forced, even if overridden by other classes.
-*/
-.filter-section.hide {
-    display: none !important;
-}
-
-/* ---------- DESKTOP Styles (screen ≥ 768px) ---------- */
-@media (min-width: 768px) {
-    /* 
-    Filter sidebar gets 25% width, and some space on the right.
+    <style>
+        /*
+    Layout container for the whole page.
+    Uses flexbox so the filter and table sections can sit side by side on desktop, and stack on mobile.
     */
-    .filter-section {
-        flex: 0 0 25%;
-        max-width: 25%;
-        padding-right: 15px;
-    }
+        .responsive-layout {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+        }
 
-    /* 
-    Main table takes the remaining 75%.
+        /*
+    The filter (sidebar) section.
+    Transition allows smooth showing/hiding.
     */
-    .table-section {
-        flex: 0 0 75%;
-        max-width: 75%;
-    }
+        .filter-section {
+            transition: all 0.3s ease;
+        }
 
-    /* 
-    If filter is hidden, the table takes full width.
+        /*
+    When .hide is applied, the filter section is hidden.
+    !important ensures it's forced, even if overridden by other classes.
     */
-    .filter-section.hide + .table-section {
-        flex: 0 0 100%;
-        max-width: 100%;
-    }
-}
+        .filter-section.hide {
+            display: none !important;
+        }
 
-/* ---------- MOBILE Styles (screen < 768px) ---------- */
-@media (max-width: 767px) {
-    /* 
-    Filter takes full width, and sits above the table section.
-    */
-    .filter-section {
-        width: 100%;
-        margin-bottom: 15px;
-    }
+        /* ---------- DESKTOP Styles (screen ≥ 768px) ---------- */
+        @media (min-width: 768px) {
 
-    .table-section {
-        width: 100%;
-    }
-}
+            /*
+        Filter sidebar gets 25% width, and some space on the right.
+        */
+            .filter-section {
+                flex: 0 0 25%;
+                max-width: 25%;
+                padding-right: 15px;
+            }
 
-</style>
+            /*
+        Main table takes the remaining 75%.
+        */
+            .table-section {
+                flex: 0 0 75%;
+                max-width: 75%;
+            }
 
-<script type="module">
-    import { container } from '/js/dist/simpleDIContainer.min.js';
+            /*
+        If filter is hidden, the table takes full width.
+        */
+            .filter-section.hide+.table-section {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+        }
 
-    document.addEventListener('DOMContentLoaded', function () {
-        const toggleBtn = document.getElementById('toggleFilterBtn');
-        const toggleSidebarButton = document.getElementById('closeSidebarButton');
-        const filterSection = document.getElementById('filterSection');
+        /* ---------- MOBILE Styles (screen < 768px) ---------- */
+        @media (max-width: 767px) {
 
-        toggleBtn.addEventListener('click', function () {
-            filterSection.classList.toggle('hide');
-            updateFilterToggleButtonText(filterSection, toggleBtn);
-        });
-        toggleSidebarButton.addEventListener('click', function () {
-            filterSection.classList.toggle('hide');
-            updateFilterToggleButtonText(filterSection, toggleBtn);
-        });
-    });
+            /*
+        Filter takes full width, and sits above the table section.
+        */
+            .filter-section {
+                width: 100%;
+                margin-bottom: 15px;
+            }
 
-    function updateFilterToggleButtonText(filterSection, toggleBtn) {
-        const textSpan = toggleBtn.querySelector('.filter-btn-text');
-        const floatingButtons = container.resolve("floatingButtons");
-        if (filterSection.classList.contains('hide')) {
-            textSpan.innerText = "{{ trans('general.open_filters') }}";
-            floatingButtons.hide();
-        } else {
-            textSpan.innerText = "{{ trans('general.close_filters') }}";
-            floatingButtons.show();
-            floatingButtons.align();
-  filterSection}
-    }
+            .table-section {
+                width: 100%;
+            }
+        }
+    </style>
 
-</script>
+    <script type="module">
+        import {
+            container
+        } from '/js/dist/simpleDIContainer.min.js';
 
+        document.addEventListener('DOMContentLoaded', initFilterSidebar);
+
+        function initFilterSidebar() {
+            const toggleBtn = document.getElementById('toggleFilterBtn');
+            const closeBtn = document.getElementById('closeSidebarButton');
+            const filterSection = document.getElementById('filterSection');
+            const tableSection = document.querySelector('.table-section');
+            const floatingButtons = container.resolve("floatingButtons");
+
+            if (!toggleBtn || !filterSection) return;
+
+            // Bind events
+            toggleBtn.addEventListener('click', toggleSidebar);
+            closeBtn?.addEventListener('click', () => setSidebarState(false));
+            document.addEventListener('keydown', handleGlobalKeys);
+
+            // ---- Handlers ----
+
+            function toggleSidebar() {
+                const shouldOpen = filterSection.classList.contains('hide');
+                setSidebarState(shouldOpen);
+            }
+
+            function setSidebarState(open) {
+                filterSection.classList.toggle('hide', !open);
+                toggleBtn.setAttribute('aria-expanded', open);
+
+                updateFilterButtonText(open);
+
+                if (open) {
+                    focusFirstElement(filterSection);
+                    attachTabTrap();
+                } else {
+                    detachTabTrap();
+                    toggleBtn.focus();
+                }
+            }
+
+            function updateFilterButtonText(open) {
+                const textSpan = toggleBtn.querySelector('.filter-btn-text');
+                textSpan.innerText = open ?
+                    "{{ trans('general.close_filters') }}" :
+                    "{{ trans('general.open_filters') }}";
+
+                if (open) {
+                    floatingButtons.show();
+                    floatingButtons.align();
+                } else {
+                    floatingButtons.hide();
+                }
+            }
+
+            // ---- Focus Management ----
+            function focusFirstElement(container) {
+                requestAnimationFrame(() => {
+                    const firstFocusable = container.querySelector(
+                        'button, [href], input, select, textarea, [tabindex="0"]'
+                    );
+                    firstFocusable?.focus();
+                });
+            }
+
+            function attachTabTrap() {
+                const last = getLastFocusable(filterSection);
+                last?.addEventListener('keydown', trapTabForward);
+            }
+
+            function detachTabTrap() {
+                const last = getLastFocusable(filterSection);
+                last?.removeEventListener('keydown', trapTabForward);
+            }
+
+            function trapTabForward(e) {
+                if (e.key === 'Tab' && !e.shiftKey) {
+                    e.preventDefault();
+                    const firstTableFocusable = tableSection?.querySelector(
+                        'button, [href], input, select, textarea, [tabindex="0"]'
+                    );
+                    firstTableFocusable?.focus();
+                }
+            }
+
+            function getLastFocusable(container) {
+                const items = container.querySelectorAll(
+                    'button, [href], input, select, textarea, [tabindex="0"]'
+                );
+                return items[items.length - 1];
+            }
+
+            // ---- Accessibility ----
+            function handleGlobalKeys(e) {
+                // ESC closes the sidebar
+                if (e.key === 'Escape' && !filterSection.classList.contains('hide')) {
+                    setSidebarState(false);
+                }
+            }
+        }
+    </script>
 @stop
 
 @section('moar_scripts')
-@include('partials.bootstrap-table')
+    @include('partials.bootstrap-table')
 @stop
