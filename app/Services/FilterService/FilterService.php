@@ -10,9 +10,6 @@ use App\Models\User;
 use App\Models\Location;
 use App\Models\Asset;
 use Log;
-use function Laravel\Prompts\note;
-use Illuminate\Support\Facades\Log as FacadesLog;
-use function PHPUnit\Framework\isEmpty;
 
 class FilterService
 {
@@ -71,15 +68,16 @@ class FilterService
         $callback = function (Builder $inner) use ($fieldname, $value, $logic, $operator, $filterObj) {
             // === 1. Custom Field Support ===
 
-            // if (Str::startsWith($fieldname, ['_snipeit_'])) {
-            //     Log::error("fieldName: {$fieldname}");
-            //     Log::error("value: {$value}");
-            //     $fieldLabel = Str::after($fieldname, '_snipeit_');
+          
+            /*if (Str::startsWith($fieldname, ['_snipeit_'])) {
+                //Log::error("fieldName: {$fieldname}");
+                //Log::error("value: {$value}");
+                 $fieldLabel = Str::after($fieldname, '_snipeit_');
 
-            //     $this->applyCustomFieldFilter($inner, $filterObj);
-
-            //     return;
-            // }
+                $this->applyCustomFieldFilter($inner, $filterObj);
+                return;
+            }
+            */
 
             // === 2. Field Mapping for Relational Fields ===
             $simpleFields = [
@@ -366,9 +364,6 @@ class FilterService
         $fieldname = $filter['field'];
         $value = $filter['value'];
         $operator = strtolower($filter['operator'] ?? 'contains');
-
-        Log::error($fieldname);
-        Log::error($value);
 
         $column = $fieldname;
 

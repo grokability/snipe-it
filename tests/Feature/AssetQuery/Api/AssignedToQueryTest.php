@@ -15,10 +15,6 @@ class AssignedToQueryTest extends TestCase
 {
     use RefreshDatabase;
 
-    // @TODO
-    // Location contains
-    // Location contains not
-
     public function testFilterAssetsEmptyValue(): void
     {
         $parentAssetA = Asset::factory()->create(['asset_tag' => 'pc01', 'name' => 'Server']);
