@@ -18,7 +18,7 @@ export default class FilterFormManager {
         this.inputs = [];
 
         // Select2
-        document.querySelectorAll('select[id^="advancedSearch_"]').forEach(el => {
+        document.querySelectorAll('select[id^="advancedSearch_"]:not(.no-select2)').forEach(el => {
             setTimeout(() => {
                 this.inputs.push(new SelectFilterInput(el, this.apiService));
             });
@@ -37,6 +37,12 @@ export default class FilterFormManager {
 
                 // Skip daterangefields
                 if(el.classList.contains("input-daterange-field")) {
+                    return;
+                }
+
+                // AssignedTo / CheckedOutTo-fields
+                if(el.classList.contains("advancedSearch_polymorphicItemFormatter")) {
+                    this.inputs.push(new AssignedEntityFilterInput(el, this.apiService));
                     return;
                 }
                 

@@ -106,6 +106,13 @@
                         <input class="advancedSearch_orderNumberObjFilterFormatter form-control" type="text" id="advancedSearch_{{ $tableField->field }}_input" placeholder="{{ trans('general.order_number') }}" autocomplete="on">
                         @break
                      @case('polymorphicItemFormatter')
+                     
+                           <select id="advancedSearch_{{ $tableField->field }}_input_type" class="form-control filter-option advancedSearch_polymorphicItemFormatter_type no-select2">
+                              <option value="{{ \App\Models\Asset::class }}"> &#128421; ({{ trans('general.asset') }})</option>
+                              <option value="{{ \App\Models\Location::class }}"> &#127968;  ({{ trans('general.location') }})</option>
+                              <option value="{{ \App\Models\User::class }}"> &#129485;  ({{ trans('general.user') }})</option>
+                           </select>
+                        
                         <input class="advancedSearch_polymorphicItemFormatter form-control" type="text" autocomplete="on" id="advancedSearch_{{ $tableField->field }}_input" placeholder="{{ trans('admin/hardware/form.checkedout_to') }}">
                         @break
                      @case('statuslabelsLinkObjFormatter')
