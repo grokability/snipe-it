@@ -215,10 +215,10 @@ return array(
         'note'       => 'Grants access to the Predefined Filters section of the application.',
     ],
     'predefinedfiltercreate' => [
-        'name' => 'View public Predefined Filters',
+        'name' => 'Create public Predefined Filters',
     ],
     'predefinedfilterview' => [
-        'name' => 'Create New public Predefined Filters',
+        'name' => 'View New public Predefined Filters',
     ],
     'predefinedfilteredit' => [
         'name' => 'Edit public Predefined Filters',

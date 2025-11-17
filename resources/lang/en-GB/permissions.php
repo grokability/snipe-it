@@ -210,6 +210,22 @@ return array(
     'kitsdelete' => [
         'name' => 'Delete Predefined Kits',
     ],
+        'predefinedfilters'   => [
+        'name' => 'Predefined Filters',
+        'note'       => 'Grants access to the Predefined Filters section of the application.',
+    ],
+    'predefinedfiltercreate' => [
+        'name' => 'Create public Predefined Filters',
+    ],
+    'predefinedfilterview' => [
+        'name' => 'View New public Predefined Filters',
+    ],
+    'predefinedfilteredit' => [
+        'name' => 'Edit public Predefined Filters',
+    ],
+    'predefinedfilterdelete' => [
+        'name' => 'Delete public Predefined Filters',
+    ],
     'users'   => [
         'name' => 'Users',
         'note'       => 'Grants access to the Users section of the application.',
