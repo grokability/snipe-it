@@ -151,10 +151,10 @@ When .hide is applied, the filter section is hidden.
 }
 
 .input-group-addon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 11px;
 }
 
 .filter-option {
@@ -354,6 +354,7 @@ When .hide is applied, the filter section is hidden.
 .select2-container--open {
     width: unset;
     box-sizing: border-box;
+    z-index: 100;
 }
 
 .select2-container--default .select2-selection--single,

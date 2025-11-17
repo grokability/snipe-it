@@ -41,6 +41,12 @@ dir="{{ Helper::determineLanguageDirection() }}">
               href="{{ url(mix('css/dist/skins/skin-'.($snipeSettings->skin!='' ? $snipeSettings->skin : 'blue').'.css')) }}">
     @endif
     {{-- page level css --}}
+
+    <style>
+        .treeview-menu {
+            z-index: 10000 !important;
+        }
+    </style>
     @stack('css')
 
 
