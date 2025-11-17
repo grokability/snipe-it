@@ -246,7 +246,12 @@ class FilterService
             // === 5. Handle assignedTo ===
             if ($fieldname === 'assigned_to') {
 
-                // Skip empty search values
+                // Check if type is valid
+                $validTypes = [Asset::class, Location::class, User::class];
+                if (!in_array($value['type'], $validTypes)) {
+                    throw new \UnexpectedValueException('You\'ve provided an invalid type');
+                }
+
                 if ($value['value'] == '') {
                     return;
                 }
@@ -273,7 +278,7 @@ class FilterService
                                 $sub->from('assets as b')
                                     ->select('b.id')
                                     ->whereColumn('b.id', 'assets.assigned_to')
-                                    ->where(function ($q2) use ($assignedValue, $operator) { 
+                                    ->where(function ($q2) use ($assignedValue, $operator) {
                                         if ($operator === 'equals') {
                                             $q2->where('b.asset_tag', '=', $assignedValue)
                                                 ->orWhere('b.name', '=', $assignedValue);
@@ -294,30 +299,30 @@ class FilterService
                     $tokens = preg_split('/\s+/', $assignedValue, -1, PREG_SPLIT_NO_EMPTY);
 
                     $inner->where(function ($q) use ($tokens, $operator, $isNotLogic) {
-                            $q->whereHas('assignedToUser', function ($qq) use ($tokens, $operator) {
-                                if (count($tokens) === 1) {
-                                    $term = $tokens[0];
+                        $q->whereHas('assignedToUser', function ($qq) use ($tokens, $operator) {
+                            if (count($tokens) === 1) {
+                                $term = $tokens[0];
 
-                                    // single token: match first_name OR last_name
-                                    $qq->where(function ($r) use ($term, $operator) {
-                                        $this->applyRelationalValue($r, $term, $operator, ['column' => 'users.first_name']);
-                                    })->orWhere(function ($r) use ($term, $operator) {
-                                        $this->applyRelationalValue($r, $term, $operator, ['column' => 'users.last_name']);
-                                    });
-
-                                    return;
-                                }
-
-                                // multiple tokens: first => first_name, rest => last_name
-                                $first = array_shift($tokens);
-                                $last = implode(' ', $tokens);
-
-                                $qq->where(function ($r) use ($first, $operator) {
-                                    $this->applyRelationalValue($r, $first, $operator, ['column' => 'users.first_name']);
-                                })->where(function ($r) use ($last, $operator) {
-                                    $this->applyRelationalValue($r, $last, $operator, ['column' => 'users.last_name']);
+                                // single token: match first_name OR last_name
+                                $qq->where(function ($r) use ($term, $operator) {
+                                    $this->applyRelationalValue($r, $term, $operator, ['column' => 'users.first_name']);
+                                })->orWhere(function ($r) use ($term, $operator) {
+                                    $this->applyRelationalValue($r, $term, $operator, ['column' => 'users.last_name']);
                                 });
+
+                                return;
+                            }
+
+                            // multiple tokens: first => first_name, rest => last_name
+                            $first = array_shift($tokens);
+                            $last = implode(' ', $tokens);
+
+                            $qq->where(function ($r) use ($first, $operator) {
+                                $this->applyRelationalValue($r, $first, $operator, ['column' => 'users.first_name']);
+                            })->where(function ($r) use ($last, $operator) {
+                                $this->applyRelationalValue($r, $last, $operator, ['column' => 'users.last_name']);
                             });
+                        });
 
                     });
                 }

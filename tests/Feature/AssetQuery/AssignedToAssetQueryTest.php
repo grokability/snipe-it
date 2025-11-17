@@ -339,7 +339,7 @@ class AssignedToAssetQueryTest extends TestCase
                     'value' => 'pc'
                 ],
                 'operator' => 'contains',
-                'logic' => 'contains'
+                'logic' => 'AND'
             ],
         ];
         $results = Asset::query()->byFilter($filter)->get();
