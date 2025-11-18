@@ -86,9 +86,10 @@ class AssetsController extends Controller
         
         if ($predefined_filter_id !== null) {
             $filter = $this->predefinedFilterService->getFilterById($predefined_filter_id);
-            if (!$filter) {
-                $predefined_filter_name = $filter->name;
+            if (!($filter)) {
                 $predefined_filter_id = null;
+            } else {
+                $predefined_filter_name = $filter->name;
             }
         } 
 
