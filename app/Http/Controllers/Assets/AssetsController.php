@@ -76,17 +76,20 @@ class AssetsController extends Controller
 
         // $predefined_filter_edit_modal_open = $request->input('predefinedFilterEditModalOpen');
         $predefined_filter_id = $request->input('predefinedFilterId');
-        $predefined_filter_name = PredefinedFilter::where('id', '=', $predefined_filter_id)->first()->name;
-
+        
         // Validate if it's a valid integer
         if (filter_var($predefined_filter_id, FILTER_VALIDATE_INT) === false && $predefined_filter_id != null) {
             throw new InvalidArgumentException('You provided an invalid parameter for predefinedFilterId (must be an integer).');
         }
-
+        
         if ($predefined_filter_id !== null) {
-            if (!$this->predefinedFilterService->getFilterById($predefined_filter_id)) {
+            $filter = $this->predefinedFilterService->getFilterById($predefined_filter_id);
+            if (!filter) {
+                $predefined_filter_name = $filter->name;
                 $predefined_filter_id = null;
             }
+        } else {
+            $predefined_filter_name = ""; // Just an empty string to not fail other stuff because it is only needed when a predefined filter is set using the url
         }
 
 
