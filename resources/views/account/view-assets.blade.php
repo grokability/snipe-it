@@ -219,7 +219,7 @@
                         {{ trans('general.company') }}
                       </div>
                       <div class="col-md-9">
-                        {{ $user->company->name }}
+                          {!!  $user->company->present()->formattedNameLink !!}
                       </div>
 
                     </div>
@@ -324,7 +324,7 @@
                         {{ trans('admin/users/table.email') }}
                       </div>
                       <div class="col-md-9">
-                        <a href="mailto:{{ $user->email }}">{{ $user->email }}</a>
+                        <a href="mailto:{{ $user->email }}"><x-icon type="email" /> {{ $user->email }}</a>
                       </div>
                     </div>
                   @endif
@@ -336,7 +336,7 @@
                         {{ trans('general.website') }}
                       </div>
                       <div class="col-md-9">
-                        <a href="{{ $user->website }}" target="_blank">{{ $user->website }}</a>
+                        <a href="{{ $user->website }}" target="_blank"><x-icon type="external-link" /> {{ $user->website }}</a>
                       </div>
                     </div>
                   @endif
@@ -348,10 +348,24 @@
                         {{ trans('admin/users/table.phone') }}
                       </div>
                       <div class="col-md-9">
-                        <a href="tel:{{ $user->phone }}">{{ $user->phone }}</a>
+                        <a href="tel:{{ $user->phone }}"><x-icon type="phone" /> {{ $user->phone }}</a>
                       </div>
                     </div>
                   @endif
+
+                @if ($user->mobile)
+                    <!-- phone -->
+                    <div class="row">
+                        <div class="col-md-3">
+                            {{ trans('admin/users/table.mobile') }}
+                        </div>
+                        <div class="col-md-9">
+                            <a href="tel:{{ $user->mobile }}" data-tooltip="true" title="{{ trans('general.call') }}">
+                                <x-icon type="mobile" />
+                                {{ $user->mobile }}</a>
+                        </div>
+                    </div>
+                @endif
 
                   @if ($user->userloc)
                     <!-- location -->
@@ -360,7 +374,7 @@
                         {{ trans('admin/users/table.location') }}
                       </div>
                       <div class="col-md-9">
-                        {{ link_to_route('locations.show', $user->userloc->name, [$user->userloc->id]) }}
+                          {!!  $user->userloc->present()->formattedNameLink !!}
                       </div>
                     </div>
                   @endif
@@ -383,7 +397,7 @@
                         {{ trans('general.department') }}
                       </div>
                       <div class="col-md-9">
-                          {{ $user->department->name }}
+                          {!!  $user->department->present()->formattedNameLink !!}
                       </div>
                     </div>
                   @endif
@@ -504,7 +518,7 @@
                         </td>
                         <td>
                           @if (($asset->model) && ($asset->model->category))
-                          {{ $asset->model->category->name }}
+                         {!! $asset->model->category->present()->formattedNameLink  !!}
                           @endif
                         </td>
                         <td>
@@ -519,7 +533,7 @@
                           <label class="label label-default">{{ trans('general.deployed') }}</label>
                         </td>
                         <td>
-                            {{ $asset->model->name }}
+                            {!!  ($asset->model) ? $asset->model->present()->formattedNameLink : trans('general.deleted') !!}
                         </td>
                         <td>
                           {{ $asset->model->model_number }}
@@ -528,10 +542,11 @@
                           {{ $asset->serial }}
                         </td>
                         <td>
-                          {{ ($asset->defaultLoc) ? $asset->defaultLoc->name : '' }}
+                            {!!  ($asset->defaultLoc) ? $asset->defaultLoc->present()->formattedNameLink : '' !!}
+
                         </td>
                         <td>
-                          {{ ($asset->location) ? $asset->location->name : '' }}
+                            {!!  ($asset->location) ? $asset->location->present()->formattedNameLink : '' !!}
                         </td>
                         <td>
                           {{ ($asset->expected_checkin) ? $asset->expected_checkin_formatted_date : '' }}
@@ -568,6 +583,8 @@
                     </tbody>
                   </table>
           </div><!-- /asset -->
+
+
           <div class="tab-pane" id="licenses">
 
               <table
@@ -595,7 +612,6 @@
                   <th class="col-md-2">{{ trans('admin/licenses/form.to_name') }}</th>
                   <th class="col-md-2">{{ trans('admin/licenses/form.to_email') }}</th>
                   <th class="col-md-2">{{ trans('general.category') }}</th>
-
                 </tr>
                 </thead>
                 <tbody>
@@ -607,7 +623,6 @@
                     <td>
                       @can('viewKeys', $license)
                         <code class="single-line"><span class="js-copy-link" data-clipboard-target=".js-copy-key-{{ $license->id }}" aria-hidden="true" data-tooltip="true" data-placement="top" title="{{ trans('general.copy_to_clipboard') }}"><span class="js-copy-key-{{ $license->id }}">{{ $license->serial }}</span></span></code>
-
                       @else
                         ------------
                       @endcan
@@ -619,12 +634,15 @@
                         ------------
                       @endcan
                     </td>
-                    @can('viewKeys', $license)
-                    <td>{{$license->license_email}}</td>
-                    @else
-                      ------------
-                    @endcan
-                    <td>{{ ($license->category) ? $license->category->name : trans('general.deleted') }}</td>
+                      <td>
+                      @can('viewKeys', $license)
+                         {{$license->license_email}}
+                      @else
+                          ------------
+                     @endcan
+                     </td>
+
+                    <td>{!!  ($license->category) ? $license->category->present()->formattedNameLink : trans('general.deleted') !!}</td>
                   </tr>
                 @endforeach
                 </tbody>

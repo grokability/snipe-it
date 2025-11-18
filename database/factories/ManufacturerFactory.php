@@ -29,6 +29,7 @@ class ManufacturerFactory extends Factory
             'url' => $this->faker->url(),
             'support_email' => $this->faker->safeEmail(),
             'notes'   => 'Created by DB seeder',
+            'tag_color' => $this->faker->hexColor(),
         ];
     }
 

@@ -31,7 +31,7 @@
 | **{{ trans('mail.assigned_to') }}** | {{ e($asset->assignedTo->present()->display_name) }} |
 @endif
 @if ($asset->notes)
-| **{{ trans('general.notes') }}** | {{ e($asset->notes) }} |
+| **{{ trans('general.notes') }}** | {!! nl2br(e($asset->notes)) !!}  |
 @endif
 | <hr> | <hr> |
 @endforeach

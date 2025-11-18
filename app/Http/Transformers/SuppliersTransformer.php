@@ -43,6 +43,7 @@ class SuppliersTransformer
                 'licenses_count' => (int) $supplier->licenses_count,
                 'consumables_count' => (int) $supplier->consumables_count,
                 'components_count' => (int) $supplier->components_count,
+                'tag_color' => $supplier->tag_color ? e($supplier->tag_color) : null,
                 'notes' => ($supplier->notes) ? Helper::parseEscapedMarkedownInline($supplier->notes) : null,
                 'created_at' => Helper::getFormattedDateObject($supplier->created_at, 'datetime'),
                 'created_by' => $supplier->adminuser ? [

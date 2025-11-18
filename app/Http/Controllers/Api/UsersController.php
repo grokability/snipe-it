@@ -162,6 +162,11 @@ class UsersController extends Controller
 
         if ($request->filled('filter')) {
             $filter = json_decode($request->input('filter'), true);
+
+            if (is_null($filter)) {
+                $filter = [];
+            }
+
             $filter = array_filter($filter, function ($key) use ($allowed_columns) {
                 return in_array($key, $allowed_columns);
             }, ARRAY_FILTER_USE_KEY);

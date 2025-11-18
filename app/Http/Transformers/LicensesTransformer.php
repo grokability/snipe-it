@@ -25,7 +25,11 @@ class LicensesTransformer
             'id' => (int) $license->id,
             'name' => e($license->name),
             'company' => ($license->company) ? ['id' => (int) $license->company->id, 'name'=> e($license->company->name)] : null,
-            'manufacturer' =>  ($license->manufacturer) ? ['id' => (int) $license->manufacturer->id, 'name'=> e($license->manufacturer->name)] : null,
+            'manufacturer' =>  ($license->manufacturer) ? [
+                'id' => (int) $license->manufacturer->id,
+                'name'=> e($license->manufacturer->name),
+                'tag_color'=> ($license->manufacturer->tag_color) ? e($license->manufacturer->tag_color) : null,
+            ] : null,
             'product_key' => (Gate::allows('viewKeys', License::class)) ? e($license->serial) : '------------',
             'order_number' => ($license->order_number) ? e($license->order_number) : null,
             'purchase_order' => ($license->purchase_order) ? e($license->purchase_order) : null,
@@ -44,8 +48,16 @@ class LicensesTransformer
             'license_email' => ($license->license_email) ? e($license->license_email) : null,
             'reassignable' => ($license->reassignable == 1) ? true : false,
             'maintained' => ($license->maintained == 1) ? true : false,
-            'supplier' =>  ($license->supplier) ? ['id' => (int) $license->supplier->id, 'name'=> e($license->supplier->name)] : null,
-            'category' =>  ($license->category) ? ['id' => (int) $license->category->id, 'name'=> e($license->category->name)] : null,
+            'supplier' =>  ($license->supplier) ? [
+                'id' => (int) $license->supplier->id,
+                'name'=> e($license->supplier->name),
+                'tag_color'=> ($license->supplier->tag_color) ? e($license->supplier->tag_color) : null,
+            ] : null,
+            'category' =>  ($license->category) ? [
+                'id' => (int) $license->category->id,
+                'name'=> e($license->category->name),
+                'tag_color'=> ($license->category->tag_color) ? e($license->category->tag_color) : null,
+            ] : null,
             'created_by' => ($license->adminuser) ? [
                 'id' => (int) $license->adminuser->id,
                 'name'=> e($license->adminuser->display_name),

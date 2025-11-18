@@ -57,4 +57,14 @@ class IndexUsersTest extends TestCase
                 ->etc();
         });
     }
+
+    public function test_gracefully_handles_malformed_filter()
+    {
+        $this->actingAsForApi(User::factory()->viewUsers()->create())
+            ->getJson(route('api.users.index', [
+                // filter should be a json encoded array and not a string
+                'filter' => 'email:an-email-address@example.com',
+            ]))
+            ->assertOk();
+    }
 }

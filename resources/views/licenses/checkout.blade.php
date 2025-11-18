@@ -33,13 +33,27 @@
                             <p class="form-control-static">{{ $license->name }}</p>
                         </div>
                     </div>
-                    <!-- Category -->
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label">{{ trans('general.category') }}</label>
-                        <div class="col-md-9">
-                            <p class="form-control-static">{{ $license->category->name }}</p>
+
+                    @if ($license->company)
+                        <!-- company name -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">{{ trans('general.company') }}</label>
+                            <div class="col-md-6">
+                                <p class="form-control-static">{!! $license->company->present()->formattedNameLink  !!}</p>
+                            </div>
                         </div>
-                    </div>
+                    @endif
+
+
+                    @if ($license->category)
+                        <!-- category name -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">{{ trans('general.category') }}</label>
+                            <div class="col-md-6">
+                                <p class="form-control-static">{!! $license->category->present()->formattedNameLink  !!}</p>
+                            </div>
+                        </div>
+                    @endif
 
                     <!-- Serial -->
                     @can('viewKeys', $license)

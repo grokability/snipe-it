@@ -30,15 +30,25 @@ class ComponentsTransformer
             'location' => ($component->location) ? [
                 'id' => (int) $component->location->id,
                 'name' => e($component->location->name),
+                'tag_color' => $component->location->tag_color ? e($component->location->tag_color) : null,
             ] : null,
             'qty' => ($component->qty != '') ? (int) $component->qty : null,
             'min_amt' => ($component->min_amt != '') ? (int) $component->min_amt : null,
             'category' => ($component->category) ? [
                 'id' => (int) $component->category->id,
                 'name' => e($component->category->name),
+                'tag_color' => $component->category->tag_color ? e($component->category->tag_color) : null,
             ] : null,
-            'supplier' => ($component->supplier) ? ['id' => $component->supplier->id, 'name'=> e($component->supplier->name)] : null,
-            'manufacturer' => ($component->manufacturer) ? ['id' => $component->manufacturer->id, 'name'=> e($component->manufacturer->name)] : null,
+            'supplier' => ($component->supplier) ? [
+                'id' => $component->supplier->id,
+                'name'=> e($component->supplier->name),
+                'tag_color' => $component->supplier->tag_color ? e($component->supplier->tag_color) : null,
+            ] : null,
+            'manufacturer' => ($component->manufacturer) ? [
+                'id' => $component->manufacturer->id,
+                'name'=> e($component->manufacturer->name),
+                'tag_color' => $component->manufacturer->tag_color ? e($component->manufacturer->tag_color) : null,
+            ] : null,
             'model_number' => ($component->model_number) ? e($component->model_number) : null,
             'order_number'  => e($component->order_number),
             'purchase_date' =>  Helper::getFormattedDateObject($component->purchase_date, 'date'),
@@ -48,6 +58,7 @@ class ComponentsTransformer
             'company'   => ($component->company) ? [
                 'id' => (int) $component->company->id,
                 'name' => e($component->company->name),
+                'tag_color' => $component->company->tag_color ? e($component->company->tag_color) : null,
             ] : null,
             'notes' => ($component->notes) ? Helper::parseEscapedMarkedownInline($component->notes) : null,
             'created_by' => ($component->adminuser) ? [

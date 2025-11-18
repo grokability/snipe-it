@@ -101,6 +101,7 @@ class ManufacturersController extends Controller
         $manufacturer->support_email = $request->input('support_email');
         $manufacturer->notes = $request->input('notes');
         $manufacturer = $request->handleImages($manufacturer);
+        $manufacturer->tag_color  = $request->input('tag_color');
 
         if ($manufacturer->save()) {
             return redirect()->route('manufacturers.index')->with('success', trans('admin/manufacturers/message.create.success'));
@@ -142,6 +143,7 @@ class ManufacturersController extends Controller
         $manufacturer->warranty_lookup_url = $request->input('warranty_lookup_url');
         $manufacturer->support_phone = $request->input('support_phone');
         $manufacturer->support_email = $request->input('support_email');
+        $manufacturer->tag_color  = $request->input('tag_color');
         $manufacturer->notes = $request->input('notes');
 
         // Set the model's image property to null if the image is being deleted

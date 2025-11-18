@@ -49,7 +49,7 @@ class AccessoryPresenter extends Presenter
                 'field' => 'category',
                 'searchable' => true,
                 'sortable' => true,
-                'title' => trans('admin/accessories/general.accessory_category'),
+                'title' => trans('general.category'),
                 'formatter' => 'categoriesLinkObjFormatter',
             ], [
                 'field' => 'model_number',

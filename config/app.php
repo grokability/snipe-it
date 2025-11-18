@@ -448,5 +448,15 @@ return [
   */
 
     'escape_formulas' => env('CSV_ESCAPE_FORMULAS', true),
-    
+
+  /*
+  |--------------------------------------------------------------------------
+  | Max Unpaginated Records
+  |--------------------------------------------------------------------------
+  | This sets the maximum number of records that can be exported or
+  | viewed without pagination. This is to prevent server timeouts.
+  */
+
+    'max_unpaginated_records' => env('MAX_UNPAGINATED', '5000'),
+
 ];
