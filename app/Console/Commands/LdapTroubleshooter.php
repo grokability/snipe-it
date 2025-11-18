@@ -165,7 +165,7 @@ class LdapTroubleshooter extends Command
             try {
                 $w = Crypt::Decrypt($settings->ldap_pword);
             } catch (\Exception $e) {
-                $this->warn("Could not decrypt password. This usually means an LDAP password was not set or the APP_KEY was changed since the LDAP pasword was last saved.  Aborting.");
+                $this->warn("Could not decrypt password. This usually means an LDAP password was not set or the APP_KEY was changed since the LDAP password was last saved.  Aborting.");
                 exit(0);
             }
 
@@ -307,7 +307,7 @@ class LdapTroubleshooter extends Command
             $this->line("Trying TLS first for port $port");
             $ldap_url = "ldaps://".$parsed['host'].":$port";
             if($this->test_anonymous_bind($ldap_url)) {
-                $this->info("Anonymous bind succesful to $ldap_url!");
+                $this->info("Anonymous bind successful to $ldap_url!");
                 $ldap_urls[] = [ $ldap_url, true, false ];
                 $pretty_ldap_urls[] = [$ldap_url, "enabled", "n/a (no)"];
                 continue; // TODO - lots of copypasta in these if(test_anonymous_bind()) routines...
@@ -328,7 +328,7 @@ class LdapTroubleshooter extends Command
             $ldap_url = "ldap://".$parsed['host'].":$port";
 
             if($this->test_anonymous_bind($ldap_url, true, true)) {
-                $this->info("Plain connection to $ldap_url with STARTTLS succesful!");
+                $this->info("Plain connection to $ldap_url with STARTTLS successful!");
                 $ldap_urls[] = [ $ldap_url, true, true ];
                 $pretty_ldap_urls[] = [$ldap_url, "enabled", "STARTTLS ENABLED"];
                 continue;
@@ -346,7 +346,7 @@ class LdapTroubleshooter extends Command
             }
 
             if($this->test_anonymous_bind($ldap_url)) {
-                $this->info("Plain connection to $ldap_url succesful!");
+                $this->info("Plain connection to $ldap_url successful!");
                 $ldap_urls[] = [ $ldap_url, true, false ];
                 $pretty_ldap_urls[] = [$ldap_url, "n/a", "starttls disabled"];
                 continue;
@@ -374,7 +374,7 @@ class LdapTroubleshooter extends Command
             try {
                 $w = Crypt::Decrypt($settings->ldap_pword);
             } catch (\Exception $e) {
-                $this->warn("Could not decrypt password. This usually means an LDAP password was not set or the APP_KEY was changed since the LDAP pasword was last saved.  Aborting.");
+                $this->warn("Could not decrypt password. This usually means an LDAP password was not set or the APP_KEY was changed since the LDAP password was last saved.  Aborting.");
                 exit(0);
             }
             $this->test_authed_bind($ldap_url[0], $ldap_url[1], $ldap_url[2], $settings->ldap_uname, $w);
@@ -395,7 +395,7 @@ class LdapTroubleshooter extends Command
             try {
                 $w = Crypt::Decrypt($settings->ldap_pword);
             } catch (\Exception $e) {
-                $this->warn("Could not decrypt password. This usually means an LDAP password was not set or the APP_KEY was changed since the LDAP pasword was last saved.  Aborting.");
+                $this->warn("Could not decrypt password. This usually means an LDAP password was not set or the APP_KEY was changed since the LDAP password was last saved.  Aborting.");
                 exit(0);
             }
 
