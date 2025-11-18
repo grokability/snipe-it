@@ -1101,6 +1101,10 @@ dir="{{ Helper::determineLanguageDirection() }}">
 
         <script nonce="{{ csrf_token() }}">
 
+            //color picker with addon
+            $("#color").colorpicker();
+
+
             $.fn.datepicker.dates['{{ app()->getLocale() }}'] = {
                 days: [
                     "{{ trans('datepicker.days.sunday') }}",
@@ -1160,19 +1164,17 @@ dir="{{ Helper::determineLanguageDirection() }}">
                 today: "{{ trans('datepicker.today') }}",
                 clear: "{{ trans('datepicker.clear') }}",
                 format: "yyyy-mm-dd",
-                weekStart: 0
+                weekStart: {{ $snipeSettings->week_start ?? 0 }},
             };
 
             var clipboard = new ClipboardJS('.js-copy-link');
 
             clipboard.on('success', function(e) {
-                // Get the clicked element
+                e.text = e.text.replace(/^\s/, '').trim();
                 var clickedElement = $(e.trigger);
-                // Get the target element selector from data attribute
-                var targetSelector = clickedElement.data('data-clipboard-target');
-                // Show the alert that the content was copied
                 clickedElement.tooltip('hide').attr('data-original-title', '{{ trans('general.copied') }}').tooltip('show');
             });
+
 
             // Reference: https://jqueryvalidation.org/validate/
             var validator = $('#create-form').validate({

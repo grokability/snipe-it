@@ -7,6 +7,7 @@ use App\Models\Group;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use \Illuminate\Contracts\View\View;
+use \App\Models\User;
 
 /**
  * This controller handles all actions related to User Groups for
@@ -43,12 +44,20 @@ class GroupsController extends Controller
         $permissions = config('permissions');
         $groupPermissions = Helper::selectedPermissionsArray($permissions, $permissions);
         $selectedPermissions = $request->old('permissions', $groupPermissions);
-        $users = \App\Models\User::orderBy('first_name', 'asc')->orderBy('last_name', 'asc')->get();
+        $users_query = User::where('show_in_list', 1)->whereNull('deleted_at');
+        $users_count = $users_query->count();
+
+        $users = collect();
+        if ($users_count <= config('app.max_unpaginated_records')) {
+            $users = $users_query->orderBy('first_name', 'asc')->orderBy('last_name', 'asc')->get();
+        }
+
         // Show the page
         return view('groups/edit', compact('permissions', 'selectedPermissions', 'groupPermissions'))
             ->with('group', $group)
             ->with('associated_users', [])
-            ->with('unselected_users', $users);
+            ->with('unselected_users', $users)
+            ->with('all_users_count', $users_count);
     }
 
     /**
@@ -102,13 +111,26 @@ class GroupsController extends Controller
         if ((!is_array($groupPermissions)) || (!$groupPermissions)) {
             $groupPermissions = [];
         }
+
         $selected_array = Helper::selectedPermissionsArray($permissions, $groupPermissions);
-        $associated_users = $group->users()->orderBy('first_name', 'asc')->orderBy('last_name', 'asc')->get();
 
-        // Get the unselected users
-        $unselected_users = \App\Models\User::whereNotIn('id', $associated_users->pluck('id')->toArray())->orderBy('first_name', 'asc')->orderBy('last_name', 'asc')->get();
 
-        return view('groups.edit', compact('group', 'permissions', 'selected_array', 'groupPermissions'))->with('associated_users', $associated_users)->with('unselected_users', $unselected_users);
+        $users_query = User::where('show_in_list', 1)->whereNull('deleted_at');
+        $users_count = $users_query->count();
+
+        $associated_users = collect();
+        $unselected_users = collect();
+
+        if ($users_count <= config('app.max_unpaginated_records')) {
+            $associated_users = $group->users()->where('show_in_list', 1)->orderBy('first_name', 'asc')->orderBy('last_name', 'asc')->get();
+            // Get the unselected users
+            $unselected_users = User::where('show_in_list', 1)->whereNotIn('id', $associated_users->pluck('id')->toArray())->orderBy('first_name', 'asc')->orderBy('last_name', 'asc')->get();
+        }
+
+        return view('groups.edit', compact('group', 'permissions', 'selected_array', 'groupPermissions'))
+            ->with('associated_users', $associated_users)
+            ->with('unselected_users', $unselected_users)
+            ->with('all_users_count', $users_count);
     }
 
     /**
@@ -135,7 +157,7 @@ class GroupsController extends Controller
         if (! config('app.lock_passwords')) {
             if ($group->save()) {
 
-                if ($request->filled('users_to_sync')) {
+                if ($request->has('users_to_sync')) {
                     $associated_users = explode(',',$request->input('users_to_sync'));
                     $group->users()->sync($associated_users);
                 }

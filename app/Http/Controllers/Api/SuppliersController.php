@@ -50,12 +50,13 @@ class SuppliersController extends Controller
             'accessories_count',
             'components_count',
             'consumables_count',
+            'tag_color',
             'url',
             'notes',
         ];
         
         $suppliers = Supplier::select(
-                ['id', 'name', 'address', 'address2', 'city', 'state', 'country', 'fax', 'phone', 'email', 'contact', 'created_at', 'created_by', 'updated_at', 'deleted_at', 'image', 'notes', 'url', 'zip'])
+                ['id', 'name', 'address', 'address2', 'city', 'state', 'country', 'fax', 'phone', 'email', 'contact', 'created_at', 'created_by', 'updated_at', 'deleted_at', 'image', 'notes', 'url', 'zip', 'tag_color'])
                     ->withCount('assets as assets_count')
                     ->withCount('licenses as licenses_count')
                     ->withCount('accessories as accessories_count')
@@ -251,6 +252,7 @@ class SuppliersController extends Controller
             'id',
             'name',
             'image',
+            'tag_color',
         ]);
 
         if ($request->filled('search')) {

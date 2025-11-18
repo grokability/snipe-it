@@ -24,6 +24,7 @@ class LocationFactory extends Factory
             'zip' => $this->faker->postcode(),
             'image' => rand(1, 9).'.jpg',
             'notes'   => 'Created by DB seeder',
+            'tag_color' => $this->faker->hexColor(),
         ];
     }
   

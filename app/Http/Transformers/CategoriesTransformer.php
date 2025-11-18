@@ -66,6 +66,7 @@ class CategoriesTransformer
                     'id' => (int) $category->adminuser->id,
                     'name'=> e($category->adminuser->display_name),
                 ] : null,
+                'tag_color' => $category->tag_color ? e($category->tag_color) : null,
                 'notes' => Helper::parseEscapedMarkedownInline($category->notes),
                 'created_at' => Helper::getFormattedDateObject($category->created_at, 'datetime'),
                 'updated_at' => Helper::getFormattedDateObject($category->updated_at, 'datetime'),

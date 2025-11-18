@@ -44,7 +44,7 @@
              <div class="form-group">
                  <label class="col-sm-3 control-label">{{ trans('general.company') }}</label>
                  <div class="col-md-6">
-                     <p class="form-control-static">{{ $accessory->company->name }}</p>
+                     <p class="form-control-static">{!! $accessory->company->present()->formattedNameLink  !!}</p>
                  </div>
              </div>
          @endif
@@ -53,9 +53,9 @@
          @if ($accessory->category)
           <!-- accessory name -->
           <div class="form-group">
-            <label class="col-sm-3 control-label">{{ trans('admin/accessories/general.accessory_category') }}</label>
+            <label class="col-sm-3 control-label">{{ trans('general.category') }}</label>
             <div class="col-md-6">
-              <p class="form-control-static">{{ $accessory->category->name }}</p>
+              <p class="form-control-static">{!! $accessory->category->present()->formattedNameLink  !!}</p>
             </div>
           </div>
           @endif

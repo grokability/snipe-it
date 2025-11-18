@@ -589,6 +589,7 @@ class SettingsController extends Controller
         $setting->time_display_format = $request->input('time_display_format');
         $setting->digit_separator = $request->input('digit_separator');
         $setting->name_display_format = $request->input('name_display_format');
+        $setting->week_start = $request->input('week_start', 0);
 
         if ($setting->save()) {
             return redirect()->route('settings.index')

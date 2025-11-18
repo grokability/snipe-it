@@ -7,26 +7,23 @@ use App\Models\Labels\RectangleSheet;
 
 abstract class L6009 extends RectangleSheet
 {
-
     private const PAPER_FORMAT      = 'A4';
     private const PAPER_ORIENTATION = 'P';
 
-    /* Data in pt from Word Template */
-	private const COLUMN1_X =  31.70;
-	private const COLUMN2_X = 167.92;
-	private const ROW1_Y    =  53.00;
-	private const ROW2_Y    = 112.8;
-	private const LABEL_W   = 122.24;	
-	private const LABEL_H   =  66.5; 
+    // Convert mm to pt (1 mm = 2.83465 pt)
+    private const LABEL_W        = 129.54;
+    private const LABEL_H        =  60.09;
+    private const COLUMN1_X      =  22.67;
+    private const ROW1_Y         =  37.41;
+    private const COLUMN_SPACING =  14.17;
+    private const ROW_SPACING    =   2.26;
 
     private float $pageWidth;
     private float $pageHeight;
     private float $pageMarginLeft;
     private float $pageMarginTop;
-
     private float $columnSpacing;
     private float $rowSpacing;
-
     private float $labelWidth;
     private float $labelHeight;
 
@@ -39,72 +36,31 @@ abstract class L6009 extends RectangleSheet
         $this->pageMarginLeft = Helper::convertUnit(self::COLUMN1_X, 'pt', $this->getUnit());
         $this->pageMarginTop = Helper::convertUnit(self::ROW1_Y, 'pt', $this->getUnit());
 
-        $columnSpacingPt = self::COLUMN2_X - self::COLUMN1_X - self::LABEL_W;
-        $this->columnSpacing = Helper::convertUnit($columnSpacingPt, 'pt', $this->getUnit());
-        $rowSpacingPt = self::ROW2_Y - self::ROW1_Y - self::LABEL_H;
-        $this->rowSpacing = Helper::convertUnit($rowSpacingPt, 'pt', $this->getUnit());
+        $this->columnSpacing = Helper::convertUnit(self::COLUMN_SPACING, 'pt', $this->getUnit());
+        $this->rowSpacing = Helper::convertUnit(self::ROW_SPACING, 'pt', $this->getUnit());
 
         $this->labelWidth = Helper::convertUnit(self::LABEL_W, 'pt', $this->getUnit());
         $this->labelHeight = Helper::convertUnit(self::LABEL_H, 'pt', $this->getUnit());
     }
 
-    public function getPageWidth()
-    {
-        return $this->pageWidth;
-    }
-    public function getPageHeight()
-    {
-        return $this->pageHeight;
-    }
+    public function getPageWidth()         { return $this->pageWidth; }
+    public function getPageHeight()        { return $this->pageHeight; }
 
-    public function getPageMarginTop()
-    {
-        return $this->pageMarginTop;
-    }
-    public function getPageMarginBottom()
-    {
-        return $this->pageMarginTop;
-    }
-    public function getPageMarginLeft()
-    {
-        return $this->pageMarginLeft;
-    }
-    public function getPageMarginRight()
-    {
-        return $this->pageMarginLeft;
-    }
+    public function getPageMarginTop()     { return $this->pageMarginTop; }
+    public function getPageMarginBottom()  { return $this->pageMarginTop; }
+    public function getPageMarginLeft()    { return $this->pageMarginLeft; }
+    public function getPageMarginRight()   { return $this->pageMarginLeft; }
 
-    public function getColumns()
-    {
-        return 4;
-    }
-    public function getRows()
-    {
-        return 12;
-    }
+    public function getColumns()           { return 4; }
+    public function getRows()              { return 12; }
 
-    public function getLabelColumnSpacing()
-    {
-        return $this->columnSpacing;
-    }
-    public function getLabelRowSpacing()
-    {
-        return $this->rowSpacing;
-    }
+    public function getLabelColumnSpacing(){ return $this->columnSpacing; }
+    public function getLabelRowSpacing()   { return $this->rowSpacing; }
 
-    public function getLabelWidth()
-    {
-        return $this->labelWidth;
-    }
-    public function getLabelHeight()
-    {
-        return $this->labelHeight;
-    }
+    public function getLabelWidth()        { return $this->labelWidth; }
+    public function getLabelHeight()       { return $this->labelHeight; }
 
-    public function getLabelBorder()
-    {
-        return 0;
-    }
+    public function getLabelBorder()       { return 0; }
 }
 
 ?>

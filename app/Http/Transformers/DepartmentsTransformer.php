@@ -32,6 +32,7 @@ class DepartmentsTransformer
                 'company' => ($department->company) ? [
                     'id' => (int) $department->company->id,
                     'name'=> e($department->company->name),
+                    'tag_color' => $department->company->tag_color ? e($department->company->tag_color) : null,
                 ] : null,
                 'manager' => ($department->manager) ? [
                     'id' => (int) $department->manager->id,
@@ -42,8 +43,10 @@ class DepartmentsTransformer
                 'location' => ($department->location) ? [
                     'id' => (int) $department->location->id,
                     'name' => e($department->location->name),
+                    'tag_color' => $department->location->tag_color ? e($department->location->tag_color) : null,
                 ] : null,
                 'users_count' => (int) ($department->users_count),
+                'tag_color' => $department->tag_color ? e($department->tag_color) : null,
                 'notes' => Helper::parseEscapedMarkedownInline($department->notes),
                 'created_at' => Helper::getFormattedDateObject($department->created_at, 'datetime'),
                 'updated_at' => Helper::getFormattedDateObject($department->updated_at, 'datetime'),

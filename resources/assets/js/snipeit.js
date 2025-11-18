@@ -355,8 +355,7 @@ $(function () {
     }
 
     function formatDatalistSafe(datalist) {
-        // console.warn("What in the hell is going on with Select2?!?!!?!?");
-        // console.warn($.select2);
+
         if (datalist.loading) {
             return $('<i class="fas fa-spinner fa-spin" aria-hidden="true"></i> Loading...');
         }
@@ -364,28 +363,29 @@ $(function () {
         var root_div = $("<div class='clearfix'>");
         var left_pull = $("<div class='pull-left' style='padding-right: 10px;'>");
         if (datalist.image) {
-            var inner_div = $("<div style='width: 30px;'>");
+            var inner_div = $("<div style='width: 20px;'>");
             /******************************************************************
-             * 
-             * We are specifically chosing empty alt-text below, because this 
+             *
+             * We are specifically chosing empty alt-text below, because this
              * image conveys no additional information, relative to the text
              * that will *always* be there in any select2 list that is in use
              * in Snipe-IT. If that changes, we would probably want to change
              * some signatures of some functions, but right now, we don't want
-             * screen readers to say "HP SuperJet 5000, .... picture of HP 
+             * screen readers to say "HP SuperJet 5000, .... picture of HP
              * SuperJet 5000..." and so on, for every single row in a list of
              * assets or models or whatever.
-             * 
+             *
              *******************************************************************/
-            var img = $("<img src='' style='max-height: 20px; max-width: 30px;' alt=''>");
-            // console.warn("Img is: ");
-            // console.dir(img);
-            // console.warn("Strigularly, that's: ");
-            // console.log(img);
+            var img = $("<img src='' style='max-height: 20px; max-width: 20px;' alt=''>");
             img.attr("src", datalist.image);
             inner_div.append(img)
+        } else if (datalist.tag_color) {
+            var inner_div = $("<div style='width: 20px;'>");
+            var icon = $('<i class="fa-solid fa-square" style="font-size: 20px;" aria-hidden="true"></i>');
+            icon.css("color", datalist.tag_color );
+            inner_div.append(icon)
         } else {
-            var inner_div = $("<div style='height: 20px; width: 30px;'></div>");
+            var inner_div=$("<div style='height: 20px; width: 20px;'></div>");
         }
         left_pull.append(inner_div);
         root_div.append(left_pull);

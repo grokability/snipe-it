@@ -82,6 +82,7 @@ class LocationsController extends Controller
         $location->created_by = auth()->id();
         $location->phone = request('phone');
         $location->fax = request('fax');
+        $location->tag_color  = $request->input('tag_color');
         $location->notes = $request->input('notes');
         $location->company_id = Company::getIdForCurrentUser($request->input('company_id'));
 
@@ -156,6 +157,7 @@ class LocationsController extends Controller
         $location->fax = request('fax');
         $location->ldap_ou = $request->input('ldap_ou');
         $location->manager_id = $request->input('manager_id');
+        $location->tag_color  = $request->input('tag_color');
         $location->notes = $request->input('notes');
 
         // Only scope the location if the setting is enabled

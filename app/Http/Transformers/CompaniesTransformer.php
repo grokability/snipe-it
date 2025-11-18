@@ -40,6 +40,7 @@ class CompaniesTransformer
                     'id' => (int) $company->adminuser->id,
                     'name'=> e($company->adminuser->display_name),
                 ] : null,
+                'tag_color' => ($company->tag_color!='') ? e($company->tag_color): null,
                 'notes' => Helper::parseEscapedMarkedownInline($company->notes),
                 'created_at' => Helper::getFormattedDateObject($company->created_at, 'datetime'),
                 'updated_at' => Helper::getFormattedDateObject($company->updated_at, 'datetime'),

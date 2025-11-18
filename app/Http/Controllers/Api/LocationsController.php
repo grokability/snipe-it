@@ -59,6 +59,7 @@ class LocationsController extends Controller
             'state',
             'updated_at',
             'zip',
+            'tag_color',
             'notes',
             ];
 
@@ -81,6 +82,8 @@ class LocationsController extends Controller
             'locations.ldap_ou',
             'locations.currency',
             'locations.company_id',
+            'locations.tag_color',
+            'locations.tag_color',
             'locations.notes',
             'locations.created_by',
             'locations.deleted_at',
@@ -143,6 +146,10 @@ class LocationsController extends Controller
 
         if ($request->input('status') == 'deleted') {
             $locations->onlyTrashed();
+        }
+
+        if ($request->filled('tag_color')) {
+            $locations->where('tag_color', '=', $request->input('locations.tag_color'));
         }
 
         // Make sure the offset and limit are actually integers and do not exceed system limits
@@ -402,6 +409,7 @@ class LocationsController extends Controller
             'locations.name',
             'locations.parent_id',
             'locations.image',
+            'locations.tag_color',
         ]);
 
         // Only scope locations if the setting is enabled

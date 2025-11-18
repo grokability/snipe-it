@@ -69,6 +69,8 @@ return [
     'change' 		        => 'In/Out',
     'changeemail'  			=> 'Change Email Address',
     'changepassword'  		=> 'Change Password',
+    'tag_color'  		    => 'Tag Color',
+    'tag_color_help'  		=> 'If you wish to use a custom color indicator for this entry, enter a hex color code (e.g., #ffffff for white). Make sure the text color you select is readable against the background color. Otherwise, you can leave these blank for the default appearance.',
     'checkin'  				=> 'Checkin',
     'checkin_from'  		=> 'Checkin from',
     'checkin_note'  		=> 'Checkin Note',

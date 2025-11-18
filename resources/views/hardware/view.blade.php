@@ -396,11 +396,11 @@
                                             @if (isset($asset->location))
                                                 <li>
                                                     <x-icon type="locations" class="fa-fw" />
-                                                    {{ $asset->location->parent?->name }}
-                                                    @if ($asset->location->parent)
-                                                        <i class="fas fa-long-arrow-alt-right" aria-hidden="true"></i>
-                                                    @endif
-                                                    {{ $asset->location->name }}
+                                                     {{ $asset->location->parent?->name }}
+                                                        @if ($asset->location->parent)
+                                                            <i class="fas fa-long-arrow-alt-right" aria-hidden="true"></i>
+                                                        @endif
+                                                    {!!  $asset->location->present()->formattedNameLink !!}
                                                 </li>
                                                 <li>{{ $asset->location->address }}
                                                     @if ($asset->location->address2 != '')
@@ -527,8 +527,7 @@
                                                 <strong>{{ trans('general.company') }}</strong>
                                             </div>
                                             <div class="col-md-9">
-                                                <a
-                                                    href="{{ url('/companies/' . $asset->company->id) }}">{{ $asset->company->name }}</a>
+                                                {!!  $asset->company->present()->formattedNameLink !!}
                                             </div>
                                         </div>
                                     @endif
@@ -592,8 +591,7 @@
                                                 {!! $asset->checkInvalidNextAuditDate() ? '<i class="fas fa-exclamation-triangle text-orange" aria-hidden="true"></i>' : '' !!}
                                                 {{ Helper::getFormattedDateObject($audit_log->created_at, 'datetime', false) }}
                                                 @if ($audit_log->user)
-                                                    (by
-                                                    {{ link_to_route('users.show', $audit_log->user->display_name, [$audit_log->user->id]) }})
+                                                    ({{ link_to_route('users.show', $audit_log->user->display_name, [$audit_log->user->id]) }})
                                                 @endif
 
                                             </div>
@@ -623,18 +621,10 @@
                                             </div>
                                             <div class="col-md-9">
                                                 <ul class="list-unstyled">
-                                                    @can('view', \App\Models\Manufacturer::class)
 
-                                                        <li>
-                                                            <a
-                                                                href="{{ route('manufacturers.show', $asset->model->manufacturer->id) }}">
-                                                                {{ $asset->model->manufacturer->name }}
-                                                            </a>
-                                                        </li>
-
-                                                    @else
-                                                        <li> {{ $asset->model->manufacturer->name }}</li>
-                                                    @endcan
+                                                    <li>
+                                                        <x-copy-to-clipboard copy_what="manufacturer">{!!  $asset->model->manufacturer->present()->formattedNameLink !!}</x-copy-to-clipboard>
+                                                    </li>
 
                                                     @if (($asset->model) && ($asset->model->manufacturer) && ($asset->model->manufacturer->url != ''))
                                                         <li>
@@ -702,17 +692,7 @@
                                         </div>
                                         <div class="col-md-9">
                                             @if (($asset->model) && ($asset->model->category))
-                                                <x-copy-to-clipboard copy_what="category">
-                                                @can('view', \App\Models\Category::class)
-
-                                                    <a href="{{ route('categories.show', $asset->model->category->id) }}">
-                                                        {{ $asset->model->category->name }}
-                                                    </a>
-
-                                                @else
-                                                    {{ $asset->model->category->name }}
-                                                @endcan
-                                                </x-copy-to-clipboard>
+                                                <x-copy-to-clipboard copy_what="category">{!!  $asset->model->category->present()->formattedNameLink !!}</x-copy-to-clipboard>
                                             @else
                                                 Invalid category
                                             @endif
@@ -728,15 +708,7 @@
                                             </div>
                                             <div class="col-md-9">
                                                 @if ($asset->model)
-                                                    <x-copy-to-clipboard copy_what="model">
-                                                        @can('view', \App\Models\AssetModel::class)
-                                                            <a href="{{ route('models.show', $asset->model->id) }}">
-                                                                {{ $asset->model->name }}
-                                                            </a>
-                                                        @else
-                                                            {{ $asset->model->name }}
-                                                        @endcan
-                                                    </x-copy-to-clipboard>
+                                                    <x-copy-to-clipboard copy_what="model">{!!  $asset->model->present()->formattedNameLink !!}</x-copy-to-clipboard>
 
                                                 @endif
                                             </div>
@@ -751,9 +723,7 @@
                                         </div>
                                         <div class="col-md-9">
                                             @if (($asset->model) && ($asset->model->model_number!=''))
-                                                <x-copy-to-clipboard copy_what="model_number">
-                                                    {{ ($asset->model) ? $asset->model->model_number : ''}}
-                                                </x-copy-to-clipboard>
+                                                <x-copy-to-clipboard copy_what="model_number">{{ ($asset->model) ? $asset->model->model_number : ''}}</x-copy-to-clipboard>
                                             @endif
                                         </div>
                                     </div>
@@ -953,45 +923,34 @@
                                                     </x-copy-to-clipboard>
 
 
+                                                </div>
                                             </div>
-                                        </div>
-                                    @endif
-                                    @if ($asset->order_number)
-                                        <div class="row">
-                                            <div class="col-md-3">
-                                                <strong>
-                                                    {{ trans('general.order_number') }}
-                                                </strong>
+                                        @endif
+                                        @if ($asset->order_number)
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <strong>
+                                                        {{ trans('general.order_number') }}
+                                                    </strong>
+                                                </div>
+                                                <div class="col-md-9">
+                                                    <x-copy-to-clipboard copy_what="order_number"><a href="{{ route('hardware.index', ['order_number' => $asset->order_number]) }}">{{ $asset->order_number }}</a></x-copy-to-clipboard>
+                                                </div>
                                             </div>
-                                            <div class="col-md-9">
-                                                    <x-copy-to-clipboard copy_what="order_number">
-                                                    <a
-                                                    href="{{ route('hardware.index', ['order_number' => $asset->order_number]) }}">{{ $asset->order_number }}</a>
-                                                    </x-copy-to-clipboard>
-                                            </div>
-                                        </div>
-                                    @endif
+                                        @endif
 
-                                    @if ($asset->supplier)
-                                        <div class="row">
-                                            <div class="col-md-3">
-                                                <strong>
-                                                    {{ trans('general.supplier') }}
-                                                </strong>
+                                        @if ($asset->supplier)
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <strong>
+                                                        {{ trans('general.supplier') }}
+                                                    </strong>
+                                                </div>
+                                                <div class="col-md-9">
+                                                    <x-copy-to-clipboard copy_what="supplier">{!!  $asset->supplier->present()->formattedNameLink !!}</x-copy-to-clipboard>
+                                                </div>
                                             </div>
-                                            <div class="col-md-9">
-                                                    <x-copy-to-clipboard copy_what="supplier">
-                                                    @can ('superuser')
-                                                        <a href="{{ route('suppliers.show', $asset->supplier_id) }}">
-                                                            {{ $asset->supplier->name }}
-                                                        </a>
-                                                    @else
-                                                        {{ $asset->supplier->name }}
-                                                    @endcan
-                                                    </x-copy-to-clipboard>
-                                            </div>
-                                        </div>
-                                    @endif
+                                        @endif
 
 
                                     @if ($asset->warranty_months)

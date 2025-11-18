@@ -37,6 +37,7 @@ class ManufacturersTransformer
                 'consumables_count' => (int) $manufacturer->consumables_count,
                 'accessories_count' => (int) $manufacturer->accessories_count,
                 'components_count' => (int) $manufacturer->components_count,
+                'tag_color' => $manufacturer->tag_color ? e($manufacturer->tag_color) : null,
                 'notes' => Helper::parseEscapedMarkedownInline($manufacturer->notes),
                 'created_by' => ($manufacturer->adminuser) ? [
                     'id' => (int) $manufacturer->adminuser->id,

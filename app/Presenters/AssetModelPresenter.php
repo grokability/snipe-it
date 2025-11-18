@@ -301,4 +301,13 @@ class AssetModelPresenter extends Presenter
     {
         return route('models.show', $this->id);
     }
+
+    public function formattedNameLink() {
+
+        if (auth()->user()->can('models.view', $this)) {
+            return '<a href="'.route('models.show', e($this->id)).'">'.e($this->name).'</a>';
+        }
+
+        return $this->name;
+    }
 }

@@ -78,6 +78,7 @@ class CategoriesController extends Controller
         $category->require_acceptance = $request->input('require_acceptance', '0');
         $category->alert_on_response = $request->input('alert_on_response', '0');
         $category->checkin_email = $request->input('checkin_email', '0');
+        $category->tag_color  = $request->input('tag_color');
         $category->notes = $request->input('notes');
         $category->created_by = auth()->id();
 
@@ -132,6 +133,7 @@ class CategoriesController extends Controller
         $category->require_acceptance = $request->input('require_acceptance', '0');
         $category->alert_on_response = $request->input('alert_on_response', '0');
         $category->checkin_email = $request->input('checkin_email', '0');
+        $category->tag_color  = $request->input('tag_color');
         $category->notes = $request->input('notes');
 
         $category = $request->handleImages($category);

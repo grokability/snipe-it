@@ -166,7 +166,7 @@
                   <strong> {{ trans('general.company')}}</strong>
               </div>
               <div class="col-md-9">
-                  <a href="{{ route('companies.show', $accessory->company->id) }}">{{ $accessory->company->name }} </a>
+                  {!!  $accessory->company->present()->formattedNameLink !!}
               </div>
           </div>
       @endif
@@ -177,7 +177,7 @@
                       <strong>{{ trans('general.location')}}</strong>
                   </div>
                   <div class="col-md-9">
-                      <a href="{{ route('locations.show', $accessory->location->id) }}">{{ $accessory->location->name }} </a>
+                      {!!  $accessory->location->present()->formattedNameLink !!}
                   </div>
               </div>
           @endif
@@ -188,7 +188,7 @@
                   <strong>{{ trans('general.category')}}</strong>
               </div>
               <div class="col-md-9">
-                  <a href="{{ route('categories.show', $accessory->category->id) }}">{{ $accessory->category->name }} </a>
+                  {!!  $accessory->category->present()->formattedNameLink !!}
               </div>
           </div>
       @endif
@@ -199,7 +199,7 @@
                       <strong>{{ trans('general.manufacturer')}}</strong>
                   </div>
                   <div class="col-md-9">
-                      <a href="{{ route('manufacturers.show', $accessory->manufacturer->id) }}">{{ $accessory->manufacturer->name }} </a>
+                      {!!  $accessory->manufacturer->present()->formattedNameLink !!}
                   </div>
               </div>
           @endif

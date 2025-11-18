@@ -172,7 +172,7 @@
                         {{ trans('general.company') }}
                       </div>
                       <div class="col-md-9">
-                        {{ $consumable->company->name }}
+                          {!!  $consumable->company->present()->formattedNameLink !!}
                       </div>
                     </div>
                   @endif
@@ -184,7 +184,7 @@
                         {{ trans('general.category') }}
                       </div>
                       <div class="col-md-9">
-                        {{ $consumable->category->name }}
+                          {!!  $consumable->category->present()->formattedNameLink !!}
                       </div>
                     </div>
                   @endif
@@ -240,7 +240,7 @@
                         {{ trans('general.location') }}
                       </div>
                       <div class="col-md-9">
-                        {{ $consumable->location->name }}
+                          {!!  $consumable->location->present()->formattedNameLink !!}
                       </div>
                     </div>
                   @endif
@@ -252,7 +252,7 @@
                         {{ trans('general.supplier') }}
                       </div>
                       <div class="col-md-9">
-                        {{ $consumable->supplier->name }}
+                          {!!  $consumable->supplier->present()->formattedNameLink !!}
                       </div>
                     </div>
                   @endif
@@ -264,7 +264,7 @@
                         {{ trans('general.manufacturer') }}
                       </div>
                       <div class="col-md-9">
-                        {{ $consumable->manufacturer->name }}
+                          {!!  $consumable->manufacturer->present()->formattedNameLink !!}
                       </div>
                     </div>
                   @endif

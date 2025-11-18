@@ -53,6 +53,7 @@ class Manufacturer extends SnipeModel
         'support_url',
         'url',
         'warranty_lookup_url',
+        'tag_color',
         'notes',
     ];
 
