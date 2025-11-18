@@ -76,9 +76,11 @@ document.addEventListener('livewire:init', function () {
     controller.bindEvents();
 
 
-
     @if(isset($predefined_filter_id))
         controller.updateFilterWithPredefined(null, {{ $predefined_filter_id }});
+
+        const option = new Option("{{ $predefined_filter_name }}", {{ $predefined_filter_id }}, true, true);
+        document.getElementById("predefinedfilters-select").append(option);
 
         const filterSection = document.getElementById('filterSection');
         filterSection.classList.remove('hide');
