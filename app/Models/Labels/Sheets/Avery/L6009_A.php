@@ -2,73 +2,36 @@
 
 namespace App\Models\Labels\Sheets\Avery;
 
-
 class L6009_A extends L6009
 {
-    private const BARCODE_MARGIN =   1.80;
-    private const TAG_SIZE       =   4.80;
-    private const TITLE_SIZE     =   3.00;
-    private const TITLE_MARGIN   =   1.80;
-    private const LABEL_SIZE     =   2.8;
-    private const LABEL_MARGIN   = - 0.45;
-    private const FIELD_SIZE     =   3.80;
-    private const FIELD_MARGIN   =   0.20;
+    private const BARCODE_MARGIN = 1.80;
+    private const TAG_SIZE       = 4.80;
+    private const TITLE_SIZE     = 3.00;
+    private const TITLE_MARGIN   = 1.80;
+    private const LABEL_SIZE     = 2.8;
+    private const LABEL_MARGIN   = -0.45;
+    private const FIELD_SIZE     = 3.80;
+    private const FIELD_MARGIN   = 0.20;
 
-    public function getUnit()
-    {
-        return 'mm';
-    }
+    public function getUnit() { return 'mm'; }
 
-    public function getLabelMarginTop()
-    {
-        return 0.06;
-    }
-    public function getLabelMarginBottom()
-    {
-        return 0.06;
-    }
-    public function getLabelMarginLeft()
-    {
-        return 0.06;
-    }
-    public function getLabelMarginRight()
-    {
-        return 0.06;
-    }
+    public function getLabelMarginTop()    { return 0.06; }
+    public function getLabelMarginBottom() { return 0.06; }
+    public function getLabelMarginLeft()   { return 0.06; }
+    public function getLabelMarginRight()  { return 0.06; }
 
-    public function getSupportAssetTag()
-    {
-        return true;
-    }
-    public function getSupport1DBarcode()
-    {
-        return false;
-    }
-    public function getSupport2DBarcode()
-    {
-        return true;
-    }
-    public function getSupportFields()
-    {
-        return 4;
-    }
-    public function getSupportLogo()
-    {
-        return false;
-    }
-    public function getSupportTitle()
-    {
-        return true;
-    }
+    public function getSupportAssetTag() { return true; }
+    public function getSupport1DBarcode() { return false; }
+    public function getSupport2DBarcode() { return true; }
+    public function getSupportFields() { return 4; }
+    public function getSupportLogo() { return false; }
+    public function getSupportTitle() { return false; }
 
-    public function preparePDF($pdf)
-    {
-    }
+    public function preparePDF($pdf) {}
 
     public function write($pdf, $record)
     {
         $pa = $this->getLabelPrintableArea();
-
         $currentX = $pa->x1;
         $currentY = $pa->y1;
         $usableWidth = $pa->w;
@@ -81,10 +44,11 @@ class L6009_A extends L6009
                 'freesans', '', self::TITLE_SIZE, 'C',
                 $pa->w, self::TITLE_SIZE, true, 0
             );
-
         }
-            $currentY += self::TITLE_SIZE + self::TITLE_MARGIN;
-            $usableHeight -= self::TITLE_SIZE + self::TITLE_MARGIN;
+
+        $currentY += self::TITLE_SIZE + self::TITLE_MARGIN;
+        $usableHeight -= self::TITLE_SIZE + self::TITLE_MARGIN;
+
         $barcodeSize = $usableHeight;
         if ($record->has('barcode2d')) {
             static::write2DBarcode(
@@ -113,9 +77,7 @@ class L6009_A extends L6009
             );
             $currentY += self::FIELD_SIZE + self::FIELD_MARGIN;
         }
-
     }
 }
-
 
 ?>

@@ -89,7 +89,7 @@
                         <strong>{{ trans('general.company') }}</strong>
                       </div>
                       <div class="col-md-9">
-                        <a href="{{ route('companies.show', $license->company->id) }}">{{ $license->company->name }}</a>
+                          {!!  $license->company->present()->formattedNameLink !!}
                       </div>
                     </div>
                   @endif
@@ -100,13 +100,7 @@
                         <strong>{{ trans('admin/hardware/form.manufacturer') }}</strong>
                       </div>
                       <div class="col-md-9">
-                        @can('view', \App\Models\Manufacturer::class)
-                          <a href="{{ route('manufacturers.show', $license->manufacturer->id) }}">
-                            {{ $license->manufacturer->name }}
-                          </a>
-                        @else
-                          {{ $license->manufacturer->name }}
-                        @endcan
+                          {!!  $license->manufacturer->present()->formattedNameLink !!}
 
                         @if ($license->manufacturer->url)
                           <br><x-icon type="globe-us" /> <a href="{{ $license->manufacturer->url }}" rel="noopener">{{ $license->manufacturer->url }}</a>
@@ -196,13 +190,7 @@
                       </div>
                       <div class="col-md-9">
                         @if ($license->supplier->deleted_at=='')
-                          @can('view', \App\Models\Supplier::class)
-                            <a href="{{ route('suppliers.show', $license->supplier->id) }}">
-                              {{ $license->supplier->name }}
-                            </a>
-                          @else
-                            {{ $license->supplier->name }}
-                          @endcan
+                              {!!  $license->supplier->present()->formattedNameLink !!}
 
                           @if ($license->supplier->url)
                             <br><x-icon type="globe-us" /> <a href="{{ $license->supplier->url }}" rel="noopener">{{ $license->supplier->url }}</a>

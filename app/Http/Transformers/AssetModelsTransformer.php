@@ -44,6 +44,7 @@ class AssetModelsTransformer
             'manufacturer' => ($assetmodel->manufacturer) ? [
                 'id' => (int) $assetmodel->manufacturer->id,
                 'name'=> e($assetmodel->manufacturer->name),
+                'tag_color'=> ($assetmodel->manufacturer->tag_color) ? e($assetmodel->manufacturer->tag_color) : null,
             ] : null,
             'image' => ($assetmodel->image != '') ? Storage::disk('public')->url('models/'.e($assetmodel->image)) : null,
             'model_number' => ($assetmodel->model_number ? e($assetmodel->model_number): null),
@@ -60,6 +61,7 @@ class AssetModelsTransformer
             'category' => ($assetmodel->category) ? [
                 'id' => (int) $assetmodel->category->id,
                 'name'=> e($assetmodel->category->name),
+                'tag_color'=> ($assetmodel->category->tag_color) ? e($assetmodel->category->tag_color) : null,
             ] : null,
             'fieldset' => ($assetmodel->fieldset) ? [
                 'id' => (int) $assetmodel->fieldset->id,

@@ -28,19 +28,32 @@
 
             <!-- license name -->
             <div class="form-group">
-                <label class="col-sm-3 control-label">{{ trans('admin/hardware/form.name') }}</label>
+                <label class="col-sm-3 control-label">{{ trans('general.name') }}</label>
                 <div class="col-md-8">
                     <p class="form-control-static">{{ $licenseSeat->license->name }}</p>
                 </div>
             </div>
 
-            <!-- Category -->
-            <div class="form-group">
-                <label class="col-sm-3 control-label">{{ trans('general.category') }}</label>
-                <div class="col-md-9">
-                    <p class="form-control-static">{{ $licenseSeat->license->category->name }}</p>
+            @if ($licenseSeat->license->company)
+                <!-- accessory name -->
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">{{ trans('general.company') }}</label>
+                    <div class="col-md-6">
+                        <p class="form-control-static">{!! $licenseSeat->license->company->present()->formattedNameLink  !!}</p>
+                    </div>
                 </div>
-            </div>
+            @endif
+
+
+            @if ($licenseSeat->license->category)
+                <!-- category name -->
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">{{ trans('general.category') }}</label>
+                    <div class="col-md-6">
+                        <p class="form-control-static">{!! $licenseSeat->license->category->present()->formattedNameLink  !!}</p>
+                    </div>
+                </div>
+            @endif
 
             <!-- Serial -->
             @can('viewKeys', $licenseSeat->license)

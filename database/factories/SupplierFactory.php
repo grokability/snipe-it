@@ -35,6 +35,7 @@ class SupplierFactory extends Factory
             'email' => $this->faker->safeEmail(),
             'url'   => $this->faker->url(),
             'notes' => $this->faker->text(191), // Supplier notes can be a max of 255 characters.
+            'tag_color' => $this->faker->hexColor(),
         ];
     }
 }

@@ -25,6 +25,7 @@ class CompanyFactory extends Factory
             'name' => $this->faker->unique()->company(),
             'created_by' => 1,
             'notes'   => 'Created by DB seeder',
+            'tag_color' => $this->faker->hexColor(),
         ];
     }
 }

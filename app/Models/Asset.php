@@ -420,6 +420,13 @@ class Asset extends Depreciable
         );
     }
 
+    protected function expectedCheckinDiffForHumans(): Attribute
+    {
+        return Attribute:: make(
+            get: fn(mixed $value, array $attributes) => array_key_exists('expected_checkin', $attributes)  ? Carbon::parse($this->expected_checkin)->diffForHumans() : null,
+        );
+    }
+
     /**
      * Establishes the asset -> company relationship
      *

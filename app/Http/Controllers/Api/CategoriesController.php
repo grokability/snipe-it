@@ -43,6 +43,7 @@ class CategoriesController extends Controller
             'created_at',
             'updated_at',
             'image',
+            'tag_color',
             'notes',
         ];
 
@@ -57,6 +58,7 @@ class CategoriesController extends Controller
             'require_acceptance',
             'checkin_email',
             'image',
+            'tag_color',
             'notes',
             ])
             ->with('adminuser')

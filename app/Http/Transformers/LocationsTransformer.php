@@ -58,6 +58,7 @@ class LocationsTransformer
                 'children_count'    => (int) $location->children_count,
                 'currency' =>  ($location->currency) ? e($location->currency) : null,
                 'ldap_ou' =>  ($location->ldap_ou) ? e($location->ldap_ou) : null,
+                'tag_color' => $location->tag_color ? e($location->tag_color) : null,
                 'notes' => Helper::parseEscapedMarkedownInline($location->notes),
                 'created_at' => Helper::getFormattedDateObject($location->created_at, 'datetime'),
                 'created_by' => $location->adminuser ? [
@@ -68,11 +69,13 @@ class LocationsTransformer
                 'parent' => ($location->parent) ? [
                     'id' => (int) $location->parent->id,
                     'name'=> e($location->parent->name),
+                    'tag_color' => $location->parent->tag_color ? e($location->parent->tag_color) : null,
                 ] : null,
                 'manager' => ($location->manager) ? (new UsersTransformer)->transformUser($location->manager) : null,
                 'company' => ($location->company) ? [
                     'id' => (int) $location->company->id,
-                    'name'=> e($location->company->name)
+                    'name'=> e($location->company->name),
+                    'tag_color' => $location->company->tag_color ? e($location->company->tag_color) : null,
                 ] : null,
 
                 'children' => $children_arr,

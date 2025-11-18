@@ -67,6 +67,7 @@ class SuppliersController extends Controller
         $supplier->phone = request('phone');
         $supplier->fax = request('fax');
         $supplier->email = request('email');
+        $supplier->tag_color  = $request->input('tag_color');
         $supplier->notes = request('notes');
         $supplier->url = $supplier->addhttp(request('url'));
         $supplier->created_by = auth()->id();
@@ -111,6 +112,7 @@ class SuppliersController extends Controller
         $supplier->fax = request('fax');
         $supplier->email = request('email');
         $supplier->url = $supplier->addhttp(request('url'));
+        $supplier->tag_color  = $request->input('tag_color');
         $supplier->notes = request('notes');
         $supplier = $request->handleImages($supplier);
 

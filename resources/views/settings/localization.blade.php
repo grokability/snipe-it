@@ -86,6 +86,43 @@
 
                         </div>
 
+                        <!-- Week Start format -->
+                        <div class="form-group {{ $errors->has('week_start') ? 'error' : '' }}">
+
+                            <label for="week_start" class="col-md-3 control-label">{{ trans('datepicker.week_start') }}</label>
+
+                            <div class="col-md-5 col-xs-12">
+                                <select name="week_start" class="select2" style="width: 100%;" aria-label="week_start" data-placeholder="{{ trans('datepicker.select_day') }}">
+                                    <option value="0" @selected(old('week_start', $setting->week_start) == 0)>
+                                        {{ trans('datepicker.days.sunday') }}
+                                    </option>
+                                    <option value="1" @selected(old('week_start', $setting->week_start) == 1)>
+                                        {{ trans('datepicker.days.monday') }}
+                                    </option>
+                                    <option value="2" @selected(old('week_start', $setting->week_start) == 2)>
+                                        {{ trans('datepicker.days.tuesday') }}
+                                    </option>
+                                    <option value="3" @selected(old('week_start', $setting->week_start) == 3)>
+                                        {{ trans('datepicker.days.wednesday') }}
+                                    </option>
+                                    <option value="4" @selected(old('week_start', $setting->week_start) == 4)>
+                                        {{ trans('datepicker.days.thursday') }}
+                                    </option>
+                                    <option value="5" @selected(old('week_start', $setting->week_start) == 5)>
+                                        {{ trans('datepicker.days.friday') }}
+                                    </option>
+                                    <option value="6" @selected(old('week_start', $setting->week_start) == 6)>
+                                        {{ trans('datepicker.days.saturday') }}
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                            {!! $errors->first('week_start', '<div class="col-md-9 col-md-offset-3"><span class="alert-msg" aria-hidden="true">:message</span> </div>') !!}
+
+                        </div>
+
                         <!-- Currency -->
                         <div class="form-group {{ $errors->has('default_currency') ? 'error' : '' }}">
 

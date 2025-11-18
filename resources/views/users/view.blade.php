@@ -405,13 +405,7 @@
                                {{ trans('general.company') }}
                            </div>
                            <div class="col-md-9">
-                               @can('view', 'App\Models\Company')
-                                   <a href="{{ route('companies.show', $user->company->id) }}">
-                                       {{ $user->company->name }}
-                                   </a>
-                               @else
-                                   {{ $user->company->name }}
-                               @endcan
+                               {!!  $user->company->present()->formattedNameLink !!}
                            </div>
 
                        </div>
@@ -572,20 +566,10 @@
                         {{ trans('admin/users/table.location') }}
                       </div>
                       <div class="col-md-9">
-                        {{ link_to_route('locations.show', $user->userloc->name, [$user->userloc->id]) }}
+                          {!!  $user->userloc->present()->formattedNameLink !!}
                       </div>
                     </div>
                     @endif
-
-                    <!-- last login -->
-                    <div class="row">
-                      <div class="col-md-3">
-                        {{ trans('general.last_login') }}
-                      </div>
-                      <div class="col-md-9">
-                        {{ \App\Helpers\Helper::getFormattedDateObject($user->last_login, 'datetime', false) }}
-                      </div>
-                    </div>
 
 
                     @if ($user->department)
@@ -596,7 +580,7 @@
                         </div>
                         <div class="col-md-9">
                           <a href="{{ route('departments.show', $user->department) }}">
-                            {{ $user->department->name }}
+                              {!!  $user->department->present()->formattedNameLink !!}
                           </a>
                         </div>
                       </div>
@@ -614,6 +598,17 @@
                       @endif
                     @endif
 
+
+                   <!-- last login -->
+                   <div class="row">
+                       <div class="col-md-3">
+                           {{ trans('general.last_login') }}
+                       </div>
+                       <div class="col-md-9">
+                           {{ \App\Helpers\Helper::getFormattedDateObject($user->last_login, 'datetime', false) }}
+                       </div>
+                   </div>
+                   
                     @if ($user->created_at)
                     <!-- created at -->
                     <div class="row">

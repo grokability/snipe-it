@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Helpers\Helper;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -47,14 +48,17 @@ class ExpectedCheckinNotification extends Notification
      */
     public function toMail()
     {
+        $today = Carbon::now();
+
         $message = (new MailMessage)->markdown('notifications.markdown.expected-checkin',
             [
+                'expected_checkin_date' => $this->params->expected_checkin,
                 'date' => Helper::getFormattedDateObject($this->params->expected_checkin, 'date', false),
                 'asset' => $this->params->display_name,
                 'serial' => $this->params->serial,
                 'asset_tag' => $this->params->asset_tag,
             ])
-            ->subject(trans('mail.Expected_Checkin_Notification', ['name' => $this->params->display_name]));
+            ->subject(($today > $this->params->expected_checkin) ? trans('mail.Expected_Checkin_Notification_Pastdue', ['name' => $this->params->display_name]) : trans('mail.Expected_Checkin_Notification', ['name' => $this->params->display_name]));
 
         return $message;
     }

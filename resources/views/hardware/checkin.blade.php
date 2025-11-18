@@ -41,6 +41,27 @@
                                         @endif
                                         {{csrf_field()}}
 
+                                        @if ($asset->company)
+                                            <!-- accessory name -->
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label">{{ trans('general.company') }}</label>
+                                                <div class="col-md-6">
+                                                    <p class="form-control-static">{!! $asset->company->present()->formattedNameLink  !!}</p>
+                                                </div>
+                                            </div>
+                                        @endif
+
+
+                                        @if ($asset->model->category)
+                                            <!-- category name -->
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label">{{ trans('general.category') }}</label>
+                                                <div class="col-md-6">
+                                                    <p class="form-control-static">{!! $asset->model->category->present()->formattedNameLink  !!}</p>
+                                                </div>
+                                            </div>
+                                        @endif
+
                                         <!-- AssetModel name -->
                                         <div class="form-group">
                                             <label for="model" class="col-sm-3 control-label">

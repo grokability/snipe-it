@@ -47,6 +47,7 @@ class ManufacturersController extends Controller
             'consumables_count',
             'components_count',
             'licenses_count',
+            'tag_color',
             'notes',
         ];
 
@@ -63,6 +64,7 @@ class ManufacturersController extends Controller
                 'updated_at',
                 'image',
                 'deleted_at',
+                'tag_color',
                 'notes',
             ])
             ->with('adminuser')
@@ -102,6 +104,10 @@ class ManufacturersController extends Controller
 
         if ($request->filled('support_email')) {
             $manufacturers->where('support_email', '=', $request->input('support_email'));
+        }
+
+        if ($request->filled('tag_color')) {
+            $manufacturers->where('tag_color', '=', $request->input('manufacturers.tag_color'));
         }
 
         // Make sure the offset and limit are actually integers and do not exceed system limits
@@ -258,6 +264,7 @@ class ManufacturersController extends Controller
             'id',
             'name',
             'image',
+            'tag_color',
         ]);
 
         if ($request->filled('search')) {

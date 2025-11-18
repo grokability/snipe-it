@@ -190,6 +190,28 @@
 
     @endif
 
+        @if ($component->company)
+            <div class="col-md-12" style="padding-bottom: 5px;">
+                <strong>{{ trans('general.company') }}: </strong>
+                {!!  $component->company->present()->formattedNameLink !!}
+            </div>
+        @endif
+
+        @if ($component->category)
+            <div class="col-md-12" style="padding-bottom: 5px;">
+                <strong>{{ trans('general.category') }}: </strong>
+                {!!  $component->category->present()->formattedNameLink !!}
+            </div>
+        @endif
+
+        @if ($component->location)
+            <div class="col-md-12" style="padding-bottom: 5px;">
+                <strong>{{ trans('general.location') }}: </strong>
+                {!!  $component->location->present()->formattedNameLink !!}
+            </div>
+        @endif
+
+
     @if ($component->serial!='')
     <div class="col-md-12" style="padding-bottom: 5px;"><strong>{{ trans('admin/hardware/form.serial') }}: </strong>
     {{ $component->serial }} </div>

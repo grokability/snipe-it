@@ -31,6 +31,7 @@ class CategoryFactory extends Factory
             'use_default_eula' => false,
             'created_by' => User::factory()->superuser(),
             'notes'   => 'Created by DB seeder',
+            'tag_color' => $this->faker->hexColor(),
         ];
     }
 

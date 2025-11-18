@@ -25,6 +25,28 @@
         @endif
 
         <div class="box-body">
+
+            @if ($component->company)
+                <!-- accessory name -->
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">{{ trans('general.company') }}</label>
+                    <div class="col-md-6">
+                        <p class="form-control-static">{!! $component->company->present()->formattedNameLink  !!}</p>
+                    </div>
+                </div>
+            @endif
+
+
+            @if ($component->category)
+                <!-- accessory name -->
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">{{ trans('general.category') }}</label>
+                    <div class="col-md-6">
+                        <p class="form-control-static">{!! $component->category->present()->formattedNameLink  !!}</p>
+                    </div>
+                </div>
+            @endif
+
           <!-- Asset -->
             @include ('partials.forms.edit.asset-select', ['translated_name' => trans('general.select_asset'), 'fieldname' => 'asset_id', 'company_id' => $component->company_id, 'required' => 'true', 'value' => old('asset_id')])
 

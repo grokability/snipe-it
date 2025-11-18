@@ -156,7 +156,19 @@ class ViewAssetsController extends Controller
     public function getRequestableIndex() : View
     {
         $assets = Asset::with('model', 'defaultLoc', 'location', 'assignedTo', 'requests')->Hardware()->RequestableAssets();
-        $models = AssetModel::with('category', 'requests', 'assets')->RequestableModels()->get();
+        $models = AssetModel::with([
+            'category',
+            'requests',
+            'assets' => function ($q) {
+                $q->where('requestable', 1)
+                    ->whereHas('assetstatus', fn ($s) =>
+                    $s->where('archived', 0)
+                        ->where(fn ($s) =>
+                        $s->where('deployable', 1)->orWhere('pending', 1)
+                        )
+                    );
+            },
+        ])->RequestableModels()->get();
 
         return view('account/requestable-assets', compact('assets', 'models'));
     }

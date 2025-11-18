@@ -519,7 +519,7 @@ class AssetPresenter extends Presenter
 
         // Asset tag
         if ($this->asset_tag) {
-            $str .= ' ('.$this->model->asset_tag.')';
+            $str .= ' #'.$this->model->asset_tag;
         }
 
         // Asset Model name

@@ -57,6 +57,7 @@ class UsersTransformer
                 'department' => ($user->department) ? [
                     'id' => (int) $user->department->id,
                     'name'=> e($user->department->name),
+                    'tag_color' => ($user->department->tag_color) ? e($user->department->tag_color) : null,
                 ] : null,
                 'department_manager' => ($user->department?->manager) ? [
                     'id' => (int) $user->department->manager->id,
@@ -65,6 +66,7 @@ class UsersTransformer
                 'location' => ($user->userloc) ? [
                     'id' => (int) $user->userloc->id,
                     'name'=> e($user->userloc->name),
+                    'tag_color'=> ($user->userloc->tag_color) ? e($user->userloc->tag_color) : null,
                 ] : null,
                 'notes'=> Helper::parseEscapedMarkedownInline($user->notes),
                 'role' => $role,
@@ -80,7 +82,11 @@ class UsersTransformer
                 'consumables_count' => (int) $user->consumables_count,
                 'manages_users_count' => (int) $user->manages_users_count,
                 'manages_locations_count' => (int) $user->manages_locations_count,
-                'company' => ($user->company) ? ['id' => (int) $user->company->id, 'name'=> e($user->company->name)] : null,
+                'company' => ($user->company) ? [
+                    'id' => (int) $user->company->id,
+                    'name'=> e($user->company->name),
+                    'tag_color'=> ($user->company->tag_color) ? e($user->company->tag_color) : null,
+                ] : null,
                 'created_by' => ($user->createdBy) ? [
                     'id' => (int) $user->createdBy->id,
                     'name'=> e($user->createdBy->display_name),

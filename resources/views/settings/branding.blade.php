@@ -228,16 +228,15 @@
 
                             <!-- Header color -->
                             <div class="form-group {{ $errors->has('header_color') ? 'error' : '' }}">
-
                                     <label for="header_color" class="col-md-3 control-label">{{ trans('admin/settings/general.header_color') }}</label>
+                                <div class="col-md-9">
+                                    <div id="header-color" class="input-group colorpicker-component row col-md-5">
+                                        <input type="text" class="form-control" placeholder="#FF0000" aria-label="header_color" name="header_color" id="header_color" value="{{ old('header_color', ($setting->header_color ?? '#3c8dbc')) }}" />
+                                        <span class="input-group-addon"><i></i></span>
+                                    </div>
+                                    <p class="help-block">{{ trans('admin/settings/general.header_color_help') }}</p>
 
-                                <div class="col-md-5 col-xs-5 col-sm-3 col-md-4 col-lg-3 col-xl-3">
-                                    <div class="input-group header-color">
-                                        <input class="form-control" placeholder="#FF0000" aria-label="header_color" name="header_color" type="text" id="header_color" value="{{ old('header_color', ($setting->header_color ?? '#3c8dbc')) }}">
-                                        <div class="input-group-addon">
-                                            <i class="fa-solid fa-square" style="color: {{ old('header_color', ($setting->header_color ?? '#3c8dbc')) }}"></i>
-                                        </div>
-                                    </div><!-- /.input group -->
+
                                     {!! $errors->first('header_color', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
                                 </div>
                             </div>
@@ -423,9 +422,17 @@
 
 @section('moar_scripts')
     <!-- bootstrap color picker -->
+
+
+
     <script nonce="{{ csrf_token() }}">
-        //color picker with addon
-        $(".header-color").colorpicker();
+        $(function() {
+            $('#header-color').colorpicker().on('changeColor', function(e) {
+                $('.main-header .navbar')[0].style.backgroundColor = e.color
+                    .toString('rgba');
+            });
+        });
+
         // toggle the disabled state of asset id prefix
         $('#auto_increment_assets').on('ifChecked', function(){
             $('#auto_increment_prefix').prop('disabled', false).focus();
