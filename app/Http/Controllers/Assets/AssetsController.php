@@ -81,17 +81,16 @@ class AssetsController extends Controller
         if (filter_var($predefined_filter_id, FILTER_VALIDATE_INT) === false && $predefined_filter_id != null) {
             throw new InvalidArgumentException('You provided an invalid parameter for predefinedFilterId (must be an integer).');
         }
+
+        $predefined_filter_name = ""; // Just an empty string to not fail other stuff because it is only needed when a predefined filter is set using the url
         
         if ($predefined_filter_id !== null) {
             $filter = $this->predefinedFilterService->getFilterById($predefined_filter_id);
-            if (!filter) {
+            if (!$filter) {
                 $predefined_filter_name = $filter->name;
                 $predefined_filter_id = null;
             }
-        } else {
-            $predefined_filter_name = ""; // Just an empty string to not fail other stuff because it is only needed when a predefined filter is set using the url
-        }
-
+        } 
 
         // TODO maybe switch later to user / role based view
         return view('hardware/index')->with('company', $company)/*->with('predefined_filter_edit_modal_open', $predefined_filter_edit_modal_open)*/
