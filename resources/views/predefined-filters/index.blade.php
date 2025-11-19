@@ -107,11 +107,7 @@ $(document).ready(function () {
         .then(data => {
             Livewire.dispatch('openPredefinedFiltersModal', {
                 action: 'edit',
-                predefinedFilterData: {
-                    name: data.name || '',
-                    visibility: data.visibility || 'private',
-                    permission_groups: data.permission_groups || []
-                },
+                predefinedFilterData: data.filter_data,                
                 predefinedFilterId: data.id 
             });
         });
