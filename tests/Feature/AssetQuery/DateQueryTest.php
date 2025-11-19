@@ -146,4 +146,3 @@ class DateQueryTest extends TestCase
         $this->assertFalse($results->contains($assetC));
     }
 }
-

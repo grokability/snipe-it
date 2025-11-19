@@ -23,7 +23,14 @@ class UserFactory extends Factory
             'activated' => 1,
             'address' => $this->faker->address(),
             'city' => $this->faker->city(),
-            'company_id' => Company::factory(),
+            'company_id' => function () {
+                $existingId = Company::query()->inRandomOrder()->value('id');
+                if ($existingId) {
+                    return $existingId;
+                }
+    return Company::factory()->create()->id;
+},
+
             'country' => $this->faker->country(),
             'email' => $this->faker->safeEmail(),
             'employee_num' => $this->faker->numberBetween(3500, 35050),

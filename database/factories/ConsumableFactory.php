@@ -37,7 +37,14 @@ class ConsumableFactory extends Factory
             'purchase_cost' => $this->faker->randomFloat(2, 1, 50),
             'qty' => $this->faker->numberBetween(5, 10),
             'min_amt' => $this->faker->numberBetween($min = 1, $max = 2),
-            'company_id' => Company::factory(),
+            'company_id' => function () {
+                $existingId = Company::query()->inRandomOrder()->value('id');
+                if ($existingId) {
+                    return $existingId;
+                }
+    return Company::factory()->create()->id;
+},
+
             'supplier_id' => Supplier::factory(),
         ];
     }

@@ -21,9 +21,7 @@ class DatabaseSeeder extends Seeder
     {
         Model::unguard();
 
-        // Only create default settings if they do not exist in the db.
         if (! Setting::first()) {
-            // factory(Setting::class)->create();
             $this->call(SettingsSeeder::class);
         }
 
@@ -39,7 +37,15 @@ class DatabaseSeeder extends Seeder
         $this->call(DepreciationSeeder::class);
         $this->call(StatuslabelSeeder::class);
         $this->call(AccessorySeeder::class);
-        $this->call(CustomFieldSeeder::class);
+
+        $dataset = env('TEST_DATASET', 'default');
+
+        if ($dataset === 'huge+custom') {
+            $this->call(CustomFieldsStandaloneSeeder::class);
+        } else {
+            $this->call(CustomFieldSeeder::class);
+        }
+
         $this->call(AssetSeeder::class);
         $this->call(LicenseSeeder::class);
         $this->call(ComponentSeeder::class);
@@ -47,8 +53,6 @@ class DatabaseSeeder extends Seeder
         $this->call(ActionlogSeeder::class);
         $this->call(PredefinedFilterSeeder::class);
         $this->call(PredefinedFilterPermissionSeeder::class);
-        $this->call(CustomFieldsStandaloneSeeder::class);
-
 
         Artisan::call('snipeit:sync-asset-locations', ['--output' => 'all']);
         $output = Artisan::output();

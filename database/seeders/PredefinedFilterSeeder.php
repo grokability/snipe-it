@@ -15,18 +15,18 @@ class PredefinedFilterSeeder extends Seeder
     {
         DB::transaction(function () {
             if (method_exists(PredefinedFilter::class, 'groups')) {
-                PredefinedFilter::all()->each(fn($pf) => $pf->groups()->detach());
+                PredefinedFilter::all()->each(fn ($pf) => $pf->groups()->detach());
             }
             PredefinedFilter::query()->delete();
 
             $owner = User::firstOrCreate(
                 ['email'=> 'predefined@filter.com'],
                 [
-                    'activated' => 1,
-                    'first_name' => 'Filter',
-                    'last_name'=> 'Predefined',
-                    'username' => 'filter',
-                    'password'=> Hash::make('1234567890'),
+                    'activated'   => 1,
+                    'first_name'  => 'Filter',
+                    'last_name'   => 'Predefined',
+                    'username'    => 'filter',
+                    'password'    => Hash::make('1234567890'),
                     'permissions' => '{"superuser":"1"}',
                 ]
             );
@@ -34,11 +34,11 @@ class PredefinedFilterSeeder extends Seeder
             $hidden = User::firstOrCreate(
                 ['email'=> 'hidden_predefined@filter.com'],
                 [
-                    'activated' => 0,
+                    'activated'  => 0,
                     'first_name' => 'Hidden',
-                    'last_name'=> 'Owner',
-                    'username' => 'hidden_owner',
-                    'password'=> Hash::make('1234567890'),
+                    'last_name'  => 'Owner',
+                    'username'   => 'hidden_owner',
+                    'password'   => Hash::make('1234567890'),
                 ]
             );
 
@@ -51,186 +51,209 @@ class PredefinedFilterSeeder extends Seeder
             $filters = [
                 [
                     'name' => 'Asset Tag UI Copy',
-                    'filter_data' => json_decode('[{"field":"asset_tag","value":"123","operator":"contains","logic":"AND"}]', true),
-                ],
-                [
-                    'name'          => 'Test Name Filter',
-                    'filter_data'   => [
+                    'filter_data' => [
                         [
-                        'field'         => 'name',
-                        'value'         => 'Test',
-                        'operator'      => 'equals',
-                        'logic'         => 'AND'
+                            'field'    => 'asset_tag',
+                            'value'    => '123',
+                            'operator' => 'contains',
+                            'logic'    => 'AND',
                         ],
                     ],
                 ],
                 [
-                    'name'          => 'Asset TAG Like 123',
-                    'filter_data'   => [
+                    'name'        => 'Test Name Filter',
+                    'filter_data' => [
                         [
-                        'field'         => 'asset_tag',
-                        'value'         => '123',
-                        'operator'      => 'contains',
-                        'logic'         => 'AND'
+                            'field'    => 'name',
+                            'value'    => 'Test',
+                            'operator' => 'equals',
+                            'logic'    => 'AND',
                         ],
                     ],
                 ],
                 [
-                    'name'          => 'Model filter',
-                    'filter_data'   => [
+                    'name'        => 'Asset TAG Like 123',
+                    'filter_data' => [
                         [
-                        'field'         => 'model',
-                        'value'         => [$model->id],
-                        'operator'      => 'equals',
-                        'logic'         => 'AND'
+                            'field'    => 'asset_tag',
+                            'value'    => '123',
+                            'operator' => 'contains',
+                            'logic'    => 'AND',
                         ],
                     ],
                 ],
                 [
-                    'name'          => 'Serial filter',
-                    'filter_data'   => [
+                    'name'        => 'Model filter',
+                    'filter_data' => [
                         [
-                        'field'         => 'serial',
-                        'value'         => 'FooBar',
-                        'operator'      => 'equals',
-                        'logic'         => 'AND'
+                            'field'    => 'model',
+                            'value'    => [$model->id],
+                            'operator' => 'equals',
+                            'logic'    => 'AND',
                         ],
                     ],
                 ],
                 [
-                    'name'          => 'Status filter',
-                    'filter_data'   => [
+                    'name'        => 'Serial filter',
+                    'filter_data' => [
                         [
-                        'field'         => 'status',
-                        'value'         => [$status->id],
-                        'operator'      => 'equals',
-                        'logic'         => 'AND'
+                            'field'    => 'serial',
+                            'value'    => 'FooBar',
+                            'operator' => 'equals',
+                            'logic'    => 'AND',
                         ],
                     ],
                 ],
                 [
-                    'name'          => 'Supplier filter',
-                    'filter_data'   => [
+                    'name'        => 'Status filter',
+                    'filter_data' => [
                         [
-                        'field'         => 'supplier',
-                        'value'         => [$supplier->id],
-                        'operator'      => 'equals',
-                        'logic'         => 'AND'
+                            'field'    => 'status',
+                            'value'    => [$status->id],
+                            'operator' => 'equals',
+                            'logic'    => 'AND',
                         ],
                     ],
                 ],
                 [
-                    'name'          => 'Company filter',
-                    'filter_data'   => [
+                    'name'        => 'Supplier filter',
+                    'filter_data' => [
                         [
-                        'field'         => 'company',
-                        'value'         => [$company->id],
-                        'operator'      => 'equals',
-                        'logic'         => 'AND'
+                            'field'    => 'supplier',
+                            'value'    => [$supplier->id],
+                            'operator' => 'equals',
+                            'logic'    => 'AND',
                         ],
                     ],
                 ],
                 [
-                    'name'          => 'RTD-Location filter',
-                    'filter_data'   => [
+                    'name'        => 'Company filter',
+                    'filter_data' => [
                         [
-                        'field'         => 'rtd_location',
-                        'value'         => [$location->id],
-                        'operator'      => 'equals',
-                        'logic'         => 'AND'
+                            'field'    => 'company',
+                            'value'    => [$company->id],
+                            'operator' => 'equals',
+                            'logic'    => 'AND',
                         ],
                     ],
                 ],
                 [
-                    'name'          => 'Custom Field Ram',
-                    'filter_data'   => [
+                    'name'        => 'RTD-Location filter',
+                    'filter_data' => [
                         [
-                        'field'         => '_snipeit_ram_3',
-                        'value'         => '32',
-                        'operator'      => 'equals',
-                        'logic'         => 'AND'
+                            'field'    => 'rtd_location',
+                            'value'    => [$location->id],
+                            'operator' => 'equals',
+                            'logic'    => 'AND',
                         ],
                     ],
                 ],
                 [
-                    'name'          => 'Purchased Between',
-                    'filter_data'   => [
+                    'name'        => 'Custom Field Ram',
+                    'filter_data' => [
                         [
-                        'field'         => 'purchase_date_start',
-                        'value'         => '2024-10-15',
-                        'operator'      => 'equals',
-                        'logic'         => 'AND'
-                        ],
-                        [
-                        'field'         => 'purchase_date_end',
-                        'value'         => '2024-10-30',
-                        'operator'      => 'equals',
-                        'logic'         => 'AND'
+                            'field'    => '_snipeit_ram_3',
+                            'value'    => '32',
+                            'operator' => 'equals',
+                            'logic'    => 'AND',
                         ],
                     ],
                 ],
                 [
-                    'name'          => 'Combo contains: Model AND CustomField_RAM',
-                    'filter_data'   => [
+                    'name'        => 'Purchased Between',
+                    'filter_data' => [
                         [
-                        'field'         => 'model',
-                        'value'         => ['book'],
-                        'operator'      => 'contains',
-                        'logic'         => 'AND'
+                            'field'    => 'purchase_date_start',
+                            'value'    => '2024-10-15',
+                            'operator' => 'equals',
+                            'logic'    => 'AND',
                         ],
                         [
-                        'field'         => '_snipeit_ram_3',
-                        'value'         => '32',
-                        'operator'      => 'equals',
-                        'logic'         => 'AND'
-                        ],
-                    ],
-                ],
-                [
-                    'name'          => 'Combo contains: Model AND Manufacturer',
-                    'filter_data'   => [
-                        [
-                        'field'         => 'model',
-                        'value'         => ['book'],
-                        'operator'      => 'contains',
-                        'logic'         => 'AND'
-                        ],
-                        [
-                        'field'         => 'manufacturer',
-                        'value'         => [1],
-                        'operator'      => 'equals',
-                        'logic'         => 'AND'
-                        ],
-                    ],
-                ],
-                                [
-                    'name'          => 'Combo contains: Model NOT Manufacturer',
-                    'filter_data'   => [
-                        [
-                        'field'         => 'model',
-                        'value'         => ['book'],
-                        'operator'      => 'contains',
-                        'logic'         => 'AND'
-                        ],
-                        [
-                        'field'         => 'manufacturer',
-                        'value'         => ['apple'],
-                        'operator'      => 'contains',
-                        'logic'         => 'NOT'
+                            'field'    => 'purchase_date_end',
+                            'value'    => '2024-10-30',
+                            'operator' => 'equals',
+                            'logic'    => 'AND',
                         ],
                     ],
                 ],
                 [
-                    'name'          => 'ShouldNotBeVisibleForUserFilter',
-                    'created_by'    => $hidden->id,
-                    'filter_data'       => [
+                    'name'        => 'Combo contains: Model AND CustomField_RAM',
+                    'filter_data' => [
                         [
-                            'field'     => 'company',
-                            'value'     => [$company->id],
-                            'operator'  => 'equals',
-                            'logic'     => 'AND'
-                        ]
-                    ]
+                            'field'    => 'model',
+                            'value'    => ['book'],
+                            'operator' => 'contains',
+                            'logic'    => 'AND',
+                        ],
+                        [
+                            'field'    => '_snipeit_ram_3',
+                            'value'    => '32',
+                            'operator' => 'equals',
+                            'logic'    => 'AND',
+                        ],
+                    ],
+                ],
+                [
+                    'name'        => 'Combo contains: Model AND Manufacturer',
+                    'filter_data' => [
+                        [
+                            'field'    => 'model',
+                            'value'    => ['book'],
+                            'operator' => 'contains',
+                            'logic'    => 'AND',
+                        ],
+                        [
+                            'field'    => 'manufacturer',
+                            'value'    => [1],
+                            'operator' => 'equals',
+                            'logic'    => 'AND',
+                        ],
+                    ],
+                ],
+                [
+                    'name'        => 'Combo contains: Model NOT Manufacturer',
+                    'filter_data' => [
+                        [
+                            'field'    => 'model',
+                            'value'    => ['book'],
+                            'operator' => 'contains',
+                            'logic'    => 'AND',
+                        ],
+                        [
+                            'field'    => 'manufacturer',
+                            'value'    => ['apple'],
+                            'operator' => 'contains',
+                            'logic'    => 'NOT',
+                        ],
+                    ],
+                ],
+
+                [
+                    'name'        => 'Assigned To Location contains name',
+                    'filter_data' => [
+                        [
+                            'field'    => 'assigned_to',
+                            'value'    => [
+                                'type'  => Location::class,
+                                'value' => $location->name,   
+                            ],
+                            'operator' => 'contains',
+                            'logic'    => 'AND',
+                        ],
+                    ],
+                ],
+
+                [
+                    'name'        => 'ShouldNotBeVisibleForUserFilter',
+                    'created_by'  => $hidden->id,
+                    'filter_data' => [
+                        [
+                            'field'    => 'company',
+                            'value'    => [$company->id],
+                            'operator' => 'equals',
+                            'logic'    => 'AND',
+                        ],
+                    ],
                 ],
             ];
 
