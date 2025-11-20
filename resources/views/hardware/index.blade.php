@@ -83,7 +83,7 @@
 
     <link rel="stylesheet" href="{{ mix('css/dist/advanced-search-index.min.css') }}">
 
-    <script type="module" src="{{ mix('js/dist/advanced-search.min.js') }}">
+    <script type="module" src="{{ mix('js/dist/advanced-search-index.min.js') }}">
     </script>
 @stop
 
