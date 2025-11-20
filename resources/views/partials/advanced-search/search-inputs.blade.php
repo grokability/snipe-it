@@ -1,7 +1,4 @@
 <span class="advancedSearchWrapper">
-   @push('css')
-      <link rel="stylesheet" href="{{ mix('css/dist/filterInputs.min.css') }}">
-   @endpush
 <span class="advancedSearchGridContainer">
    @foreach ($layout as $tableField)
       @if ((!empty($tableField->searchable) && $tableField->searchable === true))

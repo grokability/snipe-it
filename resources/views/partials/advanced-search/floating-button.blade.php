@@ -1,7 +1,4 @@
 <div id="floatingButtonContainer" class="floatingButtons-fab-fixed-wrapper">
-    @push('css')
-        <link rel="stylesheet" href="{{ mix('css/dist/floating-buttons.min.css') }}">
-    @endpush
 
     <div class="floatingButtons-inner">
         <button id="filterButton" type="button" class="floatingButtons-fab" title="Search" aria-label="Search">
