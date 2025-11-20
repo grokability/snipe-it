@@ -87,7 +87,6 @@ class AssetsController extends Controller
             }
         } 
 
-        // TODO maybe switch later to user / role based view
         return view('hardware/index')->with('company', $company)
                                      ->with('predefined_filter_id', $predefined_filter_id)
                                      ->with('predefined_filter_name', $predefined_filter_name);
