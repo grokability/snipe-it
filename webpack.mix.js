@@ -41,7 +41,7 @@ mix
   .minify("./public/css/dist/signature-pad.css");
 
 /**
- * Copy and minifiy the di container implemenation
+ * Copy and minifiy the di container implementation
  */
 mix
   .copy("resources/assets/js/simpleDIContainer.js", "./public/js/dist")
@@ -77,6 +77,10 @@ mix
   mix
   .copy("resources/assets/js/advancedSearch/filterUiController.js", "./public/js/dist")
   .minify("./public/js/dist/filterUiController.js");
+
+  mix
+  .copy("resources/assets/js/advancedSearch/search-inputs.js", "./public/js/dist")
+  .minify("./public/js/dist/search-inputs.js");
 /**
  * Copy and version select2
  */
