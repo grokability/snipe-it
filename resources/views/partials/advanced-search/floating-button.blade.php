@@ -17,14 +17,3 @@
         </div>
     </div>
 </div>
-
-@push('scripts')
-<script>
-    // If you want an inline quick init; remove if your bundle already initializes FloatingButtons.
-    document.addEventListener('DOMContentLoaded', function () {
-        if (window.FloatingButtons) {
-            try { new FloatingButtons(); } catch (e) { /* ignore */ }
-        }
-    });
-</script>
-@endpush

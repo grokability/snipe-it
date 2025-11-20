@@ -41,7 +41,7 @@ mix
   .minify("./public/css/dist/signature-pad.css");
 
 /**
- * Copy and minifiy the di container implemenation
+ * Copy and minifiy the di container implementation
  */
 mix
   .copy("resources/assets/js/simpleDIContainer.js", "./public/js/dist")
@@ -61,21 +61,40 @@ mix.combine([
 ], "./public/css/dist/advanced-search.css")
   .minify("./public/css/dist/advanced-search.css");
 
+// Keep advanced-search-index.css as a separate build artifact (used in some views)
+mix
+  .copy("./resources/assets/css/components/advancedSearch/advanced-search-index.css", "./public/css/dist")
+  .minify("./public/css/dist/advanced-search-index.css");
+
 mix
   .copy("resources/assets/js/advancedSearch/floating-buttons.js", "./public/js/dist")
   .minify("./public/js/dist/floating-buttons.js");
+
 mix
   .copy("resources/assets/js/advancedSearch/apiService.js", "./public/js/dist")
   .minify("./public/js/dist/apiService.js");
+
 mix
   .copy("resources/assets/js/advancedSearch/filterInputs.js", "./public/js/dist")
   .minify("./public/js/dist/filterInputs.js");
+
 mix
   .copy("resources/assets/js/advancedSearch/filterFormManager.js", "./public/js/dist")
   .minify("./public/js/dist/filterFormManager.js");
+
 mix
   .copy("resources/assets/js/advancedSearch/filterUiController.js", "./public/js/dist")
   .minify("./public/js/dist/filterUiController.js");
+
+mix
+  .babel("resources/assets/js/advancedSearch/search-inputs.js", "./public/js/dist/search-inputs.js")
+  .minify("./public/js/dist/search-inputs.js");
+  mix
+  .babel("resources/assets/js/advancedSearch/advanced-search.js", "./public/js/dist/advanced-search.js")
+  .minify("./public/js/dist/advanced-search.js");
+mix
+  .babel("resources/assets/js/advancedSearch/advanced-search-index.js", "./public/js/dist/advanced-search-index.js")
+  .minify("./public/js/dist/advanced-search-index.js");
 /**
  * Copy and version select2
  */

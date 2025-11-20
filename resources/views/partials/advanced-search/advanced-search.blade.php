@@ -56,68 +56,13 @@
 @include('partials.confetti-js', ['autostart' => false])
 
 <script type="module">
-import ApiService from '/js/dist/apiService.min.js';
-import FilterFormManager from '/js/dist/filterFormManager.min.js';
-import FilterUIController from '/js/dist/filterUiController.min.js';
-import FloatingButtons from '/js/dist/floating-buttons.min.js';
-import { container } from '/js/dist/simpleDIContainer.min.js';
+    import initAdvancedSearch from '/js/dist/advanced-search.min.js';
 
-// Add needed stuff into the DI container
-container.register("apiService", new ApiService());
-container.register("filterFormManager", new FilterFormManager());
-container.register("floatingButtons", new FloatingButtons());
-
-document.addEventListener('livewire:init', function () {
-    const tableId = "{{ request()->has('status') ? e(request()->input('status')) : '' }}assetsListingTable";
-    const $table = $('#' + tableId);
-
-    const controller = new FilterUIController($table);
-    container.register("filterUiController", controller);
-    controller.bindEvents();
-
-
-    @if(isset($predefined_filter_id))
-        controller.updateFilterWithPredefined(null, {{ $predefined_filter_id }});
-
-        const option = new Option("{{ $predefined_filter_name }}", {{ $predefined_filter_id }}, true, true);
-        document.getElementById("predefinedfilters-select").append(option);
-
-        const filterSection = document.getElementById('filterSection');
-        filterSection.classList.remove('hide');
-
-        @if(!empty($predefined_filter_edit_modal_open) && $predefined_filter_edit_modal_open == true)
-            sleep(200).then(() => {
-                Livewire.dispatch('openPredefinedFiltersModal', {
-                    action: 'edit',
-                    predefinedFilterId: {{ (int) $predefined_filter_id }},
-                    predefinedFilterData: {}
-                });
-            });
-        @endif
-    @else
-        (async () => {
-        setTimeout(async () => {
-            const filterSection = document.getElementById('filterSection');
-            filterSection.classList.remove('hide');
-            container.resolve("filterFormManager").clearAll();
-
-            await new Promise(resolve => setTimeout(resolve, 0));
-            filterSection.classList.add('hide');
-        }, 0);
-    })();
-    @endif
-});
-
-// Filter search functionality
-document.getElementById('filterSearch').addEventListener('input', function (e) {
-    const searchTerm = e.target.value.toLowerCase();
-    const items = document.querySelectorAll('.filter-item');
-    items.forEach(item => {
-        const label = item.querySelector('label');
-        const labelText = label ? label.textContent.toLowerCase() : '';
-        item.style.display = labelText.includes(searchTerm) ? '' : 'none';
-    });
-});
-
-
+    initAdvancedSearch(
+        {
+            "tableId": "{{ request()->has('status') ? e(request()->input('status')) : '' }}assetsListingTable",
+            "predefinedFilterId": {{ $predefined_filter_id ?? "null" }},
+            "predefinedFilterName": "{{ $predefined_filter_name }}",
+        }
+    );
 </script>

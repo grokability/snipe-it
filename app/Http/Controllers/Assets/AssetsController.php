@@ -68,13 +68,7 @@ class AssetsController extends Controller
     {
         $this->authorize('index', Asset::class);
         $company = Company::find($request->input('company_id'));
-        // $predefined_filters = PredefinedFilter::Auth();
-        // $predefined_filters = PredefinedFilter::orderBy('name')->get();
-        /*$predefined_filters = PredefinedFilter::where('created_by', auth()->user()->id)
-            ->orderBy('name')
-            ->get();*/
 
-        // $predefined_filter_edit_modal_open = $request->input('predefinedFilterEditModalOpen');
         $predefined_filter_id = $request->input('predefinedFilterId');
         
         // Validate if it's a valid integer
@@ -93,8 +87,7 @@ class AssetsController extends Controller
             }
         } 
 
-        // TODO maybe switch later to user / role based view
-        return view('hardware/index')->with('company', $company)/*->with('predefined_filter_edit_modal_open', $predefined_filter_edit_modal_open)*/
+        return view('hardware/index')->with('company', $company)
                                      ->with('predefined_filter_id', $predefined_filter_id)
                                      ->with('predefined_filter_name', $predefined_filter_name);
     }
