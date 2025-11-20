@@ -84,9 +84,10 @@ class PredefinedFilter extends Model
                 }
 
                 return $this->checkPermissions($user, $action);
-        }
 
-        return false;
+            default:
+                return false;
+        }
     }
 
     private function checkPermissions(User $user, $action): bool

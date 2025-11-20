@@ -23,7 +23,7 @@ class PredefinedFilterPolicy extends SnipePermissionsPolicy
 
         //Controller
         if (is_string($filter) && $filter === PredefinedFilter::class) {
-        return true; 
+        return true;
     }
 
         // Record-level permissions
@@ -63,6 +63,6 @@ class PredefinedFilterPolicy extends SnipePermissionsPolicy
     public function create(User $user)
     {
         // Allow via global create permission
-        return parent::create($user) || true; 
+        return parent::create($user) || true;
     }
 }
