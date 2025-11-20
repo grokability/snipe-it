@@ -3,33 +3,95 @@
 namespace App\Services\FilterService;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use App\Models\User;
 use App\Models\Location;
 use App\Models\Asset;
-use Log;
 
 class FilterService
 {
 
+    // === Field Mapping Arrays ===
+    protected array $skipFields = [
+        'purchase_date',
+        'asset_eol_date',
+        'created_at',
+        'updated_at',
+    ];
+
+    protected array $simpleFields = [
+        'asset_tag' => 'assets.asset_tag',
+        'name' => 'assets.name',
+        'serial' => 'assets.serial',
+        'purchase_date' => 'assets.purchase_date',
+        'purchase_cost' => 'assets.purchase_cost',
+        'notes' => 'assets.notes',
+        'order_number' => 'assets.order_number',
+    ];
+
+    protected array $relationMap = [
+        'model' => [
+            'relation' => 'model',
+            'id' => 'models.id',
+            'name' => 'models.name',
+        ],
+        'category' => [
+            'relation' => 'model.category',
+            'id' => 'categories.id',
+            'name' => 'categories.name',
+        ],
+        'manufacturer' => [
+            'relation' => 'model.manufacturer',
+            'id' => 'manufacturers.id',
+            'name' => 'manufacturers.name',
+        ],
+        'company' => [
+            'relation' => 'company',
+            'id' => 'companies.id',
+            'name' => 'companies.name',
+        ],
+        'supplier' => [
+            'relation' => 'supplier',
+            'id' => 'suppliers.id',
+            'name' => 'suppliers.name',
+        ],
+        'location' => [
+            'relation' => 'location',
+            'id' => 'locations.id',
+            'name' => 'locations.name',
+        ],
+        'rtd_location' => [
+            'relation' => 'defaultLoc',
+            'id' => 'locations.id',
+            'name' => 'locations.name',
+        ],
+        'status_label' => [
+            'relation' => 'assetstatus',
+            'id' => 'status_labels.id',
+            'name' => 'status_labels.name',
+        ],
+        'model_number' => [
+            'relation' => 'model',
+            'column' => 'models.model_number',
+        ],
+        'jobtitle' => [
+            'relation' => 'assignedTo',
+            'morph' => true,
+            'type' => User::class,
+            'column' => 'users.jobtitle',
+        ],
+    ];
+
     public function searchByFilter($query, $filters)
     {
-        $q = $query->where(function (Builder $query) use ($filters) {
+        return $query->where(function (Builder $query) use ($filters) {
 
             $this->applyDateRangeFilter($query, 'assets.purchase_date', $filters, /* isDateTime */ false);
             $this->applyDateRangeFilter($query, 'assets.asset_eol_date', $filters, /* isDateTime */ false);
 
             $this->applyDateRangeFilter($query, 'assets.created_at', $filters, /* isDateTime */ true);
             $this->applyDateRangeFilter($query, 'assets.updated_at', $filters, /* isDateTime */ true);
-
-            $skipFields = [
-                'purchase_date',
-                'asset_eol_date',
-                'created_at',
-                'updated_at',
-            ];
 
             foreach ($filters as $filterItem) {
                 if (!isset($filterItem['field'], $filterItem['operator'], $filterItem['logic'], $filterItem['value'])) {
@@ -38,15 +100,13 @@ class FilterService
                 if ($filterItem['value'] === ['']) {
                     continue;
                 }
-                if (in_array($filterItem['field'], $skipFields, true)) {
+                if (in_array($filterItem['field'], $this->skipFields, true)) {
                     continue;
                 }
 
                 $this->applySingleFilter($query, $filterItem);
             }
         });
-
-        return $q;
     }
 
     /**
@@ -59,101 +119,24 @@ class FilterService
 
     protected function applySingleFilter(Builder &$q, array $filterObj)
     {
-        //dump($filterObj);
         $fieldname = $filterObj['field'];
         $value = $filterObj['value'];
         $operator = strtolower($filterObj['operator'] ?? 'equals'); // "equals" or "contains"
         $logic = strtoupper($filterObj['logic'] ?? 'AND');       // "AND", "OR", "NOT"
 
-        $callback = function (Builder $inner) use ($fieldname, $value, $logic, $operator, $filterObj) {
-            // === 1. Custom Field Support ===
+        $callback = function (Builder $inner) use ($fieldname, $value, $operator) {
 
-          
-            /*if (Str::startsWith($fieldname, ['_snipeit_'])) {
-                //Log::error("fieldName: {$fieldname}");
-                //Log::error("value: {$value}");
-                 $fieldLabel = Str::after($fieldname, '_snipeit_');
-
-                $this->applyCustomFieldFilter($inner, $filterObj);
-                return;
-            }
-            */
-
-            // === 2. Field Mapping for Relational Fields ===
-            $simpleFields = [
-                'asset_tag' => 'assets.asset_tag',
-                'name' => 'assets.name',
-                'serial' => 'assets.serial',
-                'purchase_date' => 'assets.purchase_date',
-                'purchase_cost' => 'assets.purchase_cost',
-                'notes' => 'assets.notes',
-                'order_number' => 'assets.order_number',
-            ];
-
-            $relationMap = [
-                'model' => [
-                    'relation' => 'model',
-                    'id' => 'models.id',
-                    'name' => 'models.name',
-                ],
-                'category' => [
-                    'relation' => 'model.category',
-                    'id' => 'categories.id',
-                    'name' => 'categories.name',
-                ],
-                'manufacturer' => [
-                    'relation' => 'model.manufacturer',
-                    'id' => 'manufacturers.id',
-                    'name' => 'manufacturers.name',
-                ],
-                'company' => [
-                    'relation' => 'company',
-                    'id' => 'companies.id',
-                    'name' => 'companies.name',
-                ],
-                'supplier' => [
-                    'relation' => 'supplier',
-                    'id' => 'suppliers.id',
-                    'name' => 'suppliers.name',
-                ],
-                'location' => [
-                    'relation' => 'location',
-                    'id' => 'locations.id',
-                    'name' => 'locations.name',
-                ],
-                'rtd_location' => [
-                    'relation' => 'defaultLoc',
-                    'id' => 'locations.id',
-                    'name' => 'locations.name',
-                ],
-                'status_label' => [
-                    'relation' => 'assetstatus',
-                    'id' => 'status_labels.id',
-                    'name' => 'status_labels.name',
-                ],
-                'model_number' => [
-                    'relation' => 'model',
-                    'column' => 'models.model_number',
-                ],
-                'jobtitle' => [
-                    'relation' => 'assignedTo',
-                    'morph' => true,
-                    'type' => User::class,
-                    'column' => 'users.jobtitle',
-                ],
-            ];
-
-            // === 3. Simple Fields ===
-            if (array_key_exists($fieldname, $simpleFields)) {
-                $column = $simpleFields[$fieldname];
+            // === 1. Simple Fields ===
+            if (array_key_exists($fieldname, $this->simpleFields)) {
+                $column = $this->simpleFields[$fieldname];
 
                 $this->applyWhereWithOperator($inner, $column, $value, $operator);
                 return;
             }
 
-            // === 4. Relational or Morph ===
-            if (isset($relationMap[$fieldname])) {
-                $meta = $relationMap[$fieldname];
+            // === 2. Relational or Morph ===
+            if (isset($this->relationMap[$fieldname])) {
+                $meta = $this->relationMap[$fieldname];
 
                 // --- Morph Relation ---
                 if (!empty($meta['morph'])) {
@@ -241,95 +224,14 @@ class FilterService
                 return;
             }
 
-            // === 5. Handle assignedTo ===
+            
+            // // === 3. Handle assignedTo ===
             if ($fieldname === 'assigned_to') {
-
-                
-                // Check if type is valid
-                $validTypes = [Asset::class, Location::class, User::class];
-                if (!in_array($value['type'], $validTypes)) {
-                    throw new \UnexpectedValueException('You\'ve provided an invalid type');
-                }
-                
-                if ($value['value'] == '') {
-                    return;
-                }
-
-                // === 5a. Handle assignedTo location ===
-                if ($value['type'] === Location::class) {
-                    $inner->where(function ($query) use ($value, $logic, $operator) {
-                        $query->whereHas('assignedToLocation', function ($q) use ($value, $operator) {
-                            $this->applyRelationalValue($q, $value['value'], $operator, ['column' => 'locations.name']);
-                        });
-                    });
-                }
-
-                // === 5b. Handle assignedTo asset ===
-                else if ($value['type'] === Asset::class) {
-                    $assignedValue = $value['value'];
-
-                    // Ensure parent asset has an assigned asset and the assigned type is Asset.
-                    // Use a whereExists subquery that selects a real column (b.id) — no DB::raw required.
-                    $inner->where(function ($q) use ($assignedValue, $operator) {
-                        $q->whereNotNull('assets.assigned_to')
-                            ->where('assets.assigned_type', Asset::class)
-                            ->whereExists(function ($sub) use ($assignedValue, $operator) {
-                                $sub->from('assets as b')
-                                    ->select('b.id')
-                                    ->whereColumn('b.id', 'assets.assigned_to')
-                                    ->where(function ($q2) use ($assignedValue, $operator) {
-                                        if ($operator === 'equals') {
-                                            $q2->where('b.asset_tag', '=', $assignedValue)
-                                                ->orWhere('b.name', '=', $assignedValue);
-                                        } else {
-                                            $q2->where('b.asset_tag', 'LIKE', '%' . $assignedValue . '%')
-                                                ->orWhere('b.name', 'LIKE', '%' . $assignedValue . '%');
-                                        }
-                                    });
-                            });
-                    });
-                }
-                // === 5c. Handle assignedTo user ===
-                else if ($value['type'] === User::class) {
-                    $assignedValue = trim((string) ($value['value'] ?? ''));
-                    $isNotLogic = (isset($logic) && strtoupper($logic) === 'NOT');
-
-                    // Non-empty search: split into tokens
-                    $tokens = preg_split('/\s+/', $assignedValue, -1, PREG_SPLIT_NO_EMPTY);
-
-                    $inner->where(function ($q) use ($tokens, $operator, $isNotLogic) {
-                        $q->whereHas('assignedToUser', function ($qq) use ($tokens, $operator) {
-                            if (count($tokens) === 1) {
-                                $term = $tokens[0];
-
-                                // single token: match first_name OR last_name
-                                $qq->where(function ($r) use ($term, $operator) {
-                                    $this->applyRelationalValue($r, $term, $operator, ['column' => 'users.first_name']);
-                                })->orWhere(function ($r) use ($term, $operator) {
-                                    $this->applyRelationalValue($r, $term, $operator, ['column' => 'users.last_name']);
-                                });
-
-                                return;
-                            }
-
-                            // multiple tokens: first => first_name, rest => last_name
-                            $first = array_shift($tokens);
-                            $last = implode(' ', $tokens);
-
-                            $qq->where(function ($r) use ($first, $operator) {
-                                $this->applyRelationalValue($r, $first, $operator, ['column' => 'users.first_name']);
-                            })->where(function ($r) use ($last, $operator) {
-                                $this->applyRelationalValue($r, $last, $operator, ['column' => 'users.last_name']);
-                            });
-                        });
-
-                    });
-                }
-
+                $this->handleAssignedTo($value, $inner, $operator);
                 return;
             }
 
-            // === 6. Fallback: Direct column ===
+            // === 4. Direct column - CustomFields ===
             $column = 'assets.' . $fieldname;
 
             if (!Schema::hasColumn('assets', $fieldname)) {
@@ -340,41 +242,99 @@ class FilterService
         };
 
         // === Apply logic ===
-        switch ($logic) {
-            case 'NOT':
-                $q->where(function ($outer) use ($callback, $fieldname) {
-                    $outer->whereNot($callback);
-
-                    // Only add "OR IS NULL" for direct columns (not relationships)
-                    if (!Str::contains($fieldname, '.')) {
-                        // Also double-check column existence
-                        if (Schema::hasColumn('assets', $fieldname)) {
-                            $outer->orWhereNull('assets.' . $fieldname);
-                        }
-                    }
-                });
-                break;
-            case 'AND':
-            default:
-                $q->where($callback);
-                break;
-        }
+        $this->applyLogic($logic, $q, $callback, $fieldname);
     }
-    protected function applyCustomFieldFilter(Builder $query, array $filter)
-    {
-        $fieldname = $filter['field'];
-        $value = $filter['value'];
-        $operator = strtolower($filter['operator'] ?? 'contains');
 
-        $column = $fieldname;
+    protected function applyAssignedToLocation($inner, $value, $operator){
+        $inner->where(function ($query) use ($value, $operator) {
+            $query->whereHas('assignedToLocation', function ($q) use ($value, $operator) {
+                $this->applyRelationalValue($q, $value['value'], $operator, ['column' => 'locations.name']);
+            });
+        });
+    }
 
-        if (!$column || !Schema::hasColumn('assets', $column)) {
+    protected function handleAssignedTo($value, $inner, $operator){
+
+        // Check if type is valid
+        $validTypes = [Asset::class, Location::class, User::class];
+        if (!in_array($value['type'], $validTypes)) {
+            throw new \UnexpectedValueException('You\'ve provided an invalid type');
+        }
+                
+        if ($value['value'] == '') {
             return;
         }
 
-        $column = 'assets.' . $column;
+        // === 3a. Handle assignedTo location ===
+        if ($value['type'] === Location::class) {
+            $this->applyAssignedToLocation($inner, $value, $operator);
+        }
 
-        $this->applyWhereWithOperator($query, $column, $value, $operator);
+        // === 3b. Handle assignedTo asset ===
+        elseif ($value['type'] === Asset::class) {
+            $assignedValue = $value['value'];
+
+            $this->applyAssignedToAsset($inner, $assignedValue, $operator);
+        }
+        // === 3c. Handle assignedTo user ===
+        elseif ($value['type'] === User::class) {
+            $assignedValue = trim((string) ($value['value'] ?? ''));
+
+            $this->applyAssignedToUser($inner, $assignedValue, $operator);
+        }
+    }
+
+    protected function applyAssignedToUser($inner, $assignedValue, $operator){
+        // Non-empty search: split into tokens
+        $tokens = preg_split('/\s+/', $assignedValue, -1, PREG_SPLIT_NO_EMPTY);
+        $inner->where(function ($q) use ($tokens, $operator) {
+            $q->whereHas('assignedToUser', function ($qq) use ($tokens, $operator) {
+                if (count($tokens) === 1) {
+                    $term = $tokens[0];
+
+                    // single token: match first_name OR last_name
+                    $qq->where(function ($r) use ($term, $operator) {
+                        $this->applyRelationalValue($r, $term, $operator, ['column' => 'users.first_name']);
+                    })->orWhere(function ($r) use ($term, $operator) {
+                        $this->applyRelationalValue($r, $term, $operator, ['column' => 'users.last_name']);
+                    });
+                    return;
+                }
+
+                // multiple tokens: first => first_name, rest => last_name
+                $first = array_shift($tokens);
+                $last = implode(' ', $tokens);
+
+                $qq->where(function ($r) use ($first, $operator) {
+                    $this->applyRelationalValue($r, $first, $operator, ['column' => 'users.first_name']);
+                })->where(function ($r) use ($last, $operator) {
+                    $this->applyRelationalValue($r, $last, $operator, ['column' => 'users.last_name']);
+                });
+            });
+
+        });
+    }
+    protected function applyAssignedToAsset($inner, $assignedValue, $operator){
+        // Ensure parent asset has an assigned asset and the assigned type is Asset.
+        // Use a whereExists subquery that selects a real column (b.id) — no DB::raw required.
+        $inner->where(function ($q) use ($assignedValue, $operator) {
+            $q->whereNotNull('assets.assigned_to')
+            ->where('assets.assigned_type', Asset::class)
+            ->whereExists(function ($sub) use ($assignedValue, $operator) {
+                $sub->from('assets as b')
+                ->select('b.id')
+                ->whereColumn('b.id', 'assets.assigned_to')
+                ->where(function ($q2) use ($assignedValue, $operator) {
+                    if ($operator === 'equals') {
+                        $q2->where('b.asset_tag', '=', $assignedValue)
+                        ->orWhere('b.name', '=', $assignedValue);
+                    } else {
+                        $q2->where('b.asset_tag', 'LIKE', '%' . $assignedValue . '%')
+                        ->orWhere('b.name', 'LIKE', '%' . $assignedValue . '%');
+                    }
+                });
+            });
+        });
     }
 
     protected function applyRelationalValue(Builder $q, $value, string $operator, array $meta): void
@@ -439,13 +399,32 @@ class FilterService
         }
     }
 
+    protected function applyLogic($logic, $q, $callback, $fieldname){
+        switch ($logic) {
+            case 'NOT':
+                $q->where(function ($outer) use ($callback, $fieldname) {
+                    $outer->whereNot($callback);
+
+                    // Only add "OR IS NULL" for direct columns (not relationships)
+                    if (!Str::contains($fieldname, '.')  && Schema::hasColumn('assets', $fieldname)) {
+                        $outer->orWhereNull('assets.' . $fieldname);
+                    }
+                });
+                break;
+            case 'AND':
+            default:
+                $q->where($callback);
+                break;
+        }
+    }
+
     /**
-     * 
+     *
      *
      * @param Builder $query
-     * @param string  $qualifiedField 
+     * @param string  $qualifiedField
      * @param array   $filters
-     * @param bool    $isDateTime      
+     * @param bool    $isDateTime
      */
 
     public function applyDateRangeFilter($query, $qualifiedField, $filters, bool $isDateTime = false)
