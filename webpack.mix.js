@@ -51,96 +51,95 @@ mix
  * Copy, minify and version the required files for the advanced search (advanced-search, floating buttons, modal)
  */
 mix
-  .copy("./resources/assets/css/components/advancedSearch/floating-buttons.css", "./public/css/dist")
-  .minify("./public/css/dist/floating-buttons.css");
-  mix
-  .copy("./resources/assets/css/components/advancedSearch/advanced-search.css", "./public/css/dist")
-  .minify("./public/css/dist/advanced-search.css");
-  mix
   .copy("./resources/assets/css/components/advancedSearch/modal.css", "./public/css/dist")
   .minify("./public/css/dist/modal.css");
-  mix
-  .copy("./resources/assets/css/components/advancedSearch/filterInputs.css", "./public/css/dist")
-  .minify("./public/css/dist/filterInputs.css");
-  mix
-    .copy("resources/assets/js/advancedSearch/floating-buttons.js", "./public/js/dist")
-    .minify("./public/js/dist/floating-buttons.js");
-  mix
+
+mix.combine([
+  "./resources/assets/css/components/advancedSearch/advanced-search.css",
+  "./resources/assets/css/components/advancedSearch/filterInputs.css",
+  "./resources/assets/css/components/advancedSearch/floating-buttons.css",
+], "./public/css/dist/advanced-search.css")
+  .minify("./public/css/dist/advanced-search.css");
+
+mix
+  .copy("resources/assets/js/advancedSearch/floating-buttons.js", "./public/js/dist")
+  .minify("./public/js/dist/floating-buttons.js");
+mix
   .copy("resources/assets/js/advancedSearch/apiService.js", "./public/js/dist")
   .minify("./public/js/dist/apiService.js");
-  mix
+mix
   .copy("resources/assets/js/advancedSearch/filterInputs.js", "./public/js/dist")
   .minify("./public/js/dist/filterInputs.js");
-  mix
+mix
   .copy("resources/assets/js/advancedSearch/filterFormManager.js", "./public/js/dist")
   .minify("./public/js/dist/filterFormManager.js");
-  mix
+mix
   .copy("resources/assets/js/advancedSearch/filterUiController.js", "./public/js/dist")
   .minify("./public/js/dist/filterUiController.js");
 /**
  * Copy and version select2
  */
 mix
-    .copy("./node_modules/select2/dist/js/i18n", "./public/js/select2/i18n")
+  .copy("./node_modules/select2/dist/js/i18n", "./public/js/select2/i18n")
 
 /**
  * Copy and version fontawesome
  */
 mix
-    .copy("./node_modules/@fortawesome/fontawesome-free/webfonts", "./public/css/webfonts")
+  .copy("./node_modules/@fortawesome/fontawesome-free/webfonts", "./public/css/webfonts")
 
 /**
  * Copy BS tables js file
  */
 mix
-    .copy( './node_modules/bootstrap-table/dist/bootstrap-table-locale-all.min.js', 'public/js/dist' )
-    .copy( './node_modules/bootstrap-table/dist/locale/bootstrap-table-en-US.min.js', 'public/js/dist' )
+  .copy('./node_modules/bootstrap-table/dist/bootstrap-table-locale-all.min.js', 'public/js/dist')
+  .copy('./node_modules/bootstrap-table/dist/locale/bootstrap-table-en-US.min.js', 'public/js/dist')
 
 /**
  * Copy Chart.js file (it's big, and used in only one place)
  */
 mix
-    .copy('./node_modules/chart.js/dist/Chart.min.js', 'public/js/dist')
+  .copy('./node_modules/chart.js/dist/Chart.min.js', 'public/js/dist')
 
 // Combine main SnipeIT JS files
 mix
   .js(
     [
-        "./resources/assets/js/snipeit.js",
+      "./resources/assets/js/snipeit.js",
       "./resources/assets/js/snipeit_modals.js",
       "./node_modules/canvas-confetti/dist/confetti.browser.js",
-        // The general direction we have been going is to pull these via require() directly
-        // But this runs in only one place, is only 24k, and doesn't break the sourcemaps
-        // (and it needs to run in 'immediate' mode, not in 'moar_scripts'), so let's just
-        // leave it here. It *could* be moved to confetti-js.blade.php, but I don't think
-        // it helps anything if we do that.
+      // The general direction we have been going is to pull these via require() directly
+      // But this runs in only one place, is only 24k, and doesn't break the sourcemaps
+      // (and it needs to run in 'immediate' mode, not in 'moar_scripts'), so let's just
+      // leave it here. It *could* be moved to confetti-js.blade.php, but I don't think
+      // it helps anything if we do that.
     ],
-      "./public/js/dist/all.js"
+    "./public/js/dist/all.js"
   ).sourceMaps(true, 'source-map', 'source-map').version();
 
 var skins = fs.readdirSync("resources/assets/less/skins");
 
 // Convert the skins to CSS
 for (var i in skins) {
-    mix.less(
-        "resources/assets/less/skins/" + skins[i],
-        "css/dist/skins"
-    )
+  mix.less(
+    "resources/assets/less/skins/" + skins[i],
+    "css/dist/skins"
+  )
 }
 
 var css_skins = fs.readdirSync("public/css/dist/skins");
 for (var i in css_skins) {
-    if (css_skins[i].endsWith(".min.css")) {
-        //don't minify already minified skinns
-        continue;
-    }
-    if (css_skins[i].endsWith(".css")) {
-        // only minify files ending with '.css'
-        mix.minify("public/css/dist/skins/" + css_skins[i]).version();
-    }
-    //TODO - if we only ever use the minified versions, this could be simplified down to one line (above)
-    // but it stays like this so we have the minified and non-minified versions of the skins
-    // right now the code seems to use the un-minified skins
+  if (css_skins[i].endsWith(".min.css")) {
+    //don't minify already minified skinns
+    continue;
+  }
+  if (css_skins[i].endsWith(".css")) {
+    // only minify files ending with '.css'
+    mix.minify("public/css/dist/skins/" + css_skins[i]).version();
+  }
+  //TODO - if we only ever use the minified versions, this could be simplified down to one line (above)
+  // but it stays like this so we have the minified and non-minified versions of the skins
+  // right now the code seems to use the un-minified skins
 }
 
 /**
@@ -151,7 +150,7 @@ mix
     [
       "./node_modules/bootstrap-table/dist/bootstrap-table.css",
       "./node_modules/bootstrap-table/dist/extensions/sticky-header/bootstrap-table-sticky-header.css",
-     "./resources/assets/css/dragtable.css",
+      "./resources/assets/css/dragtable.css",
     ],
     "public/css/dist/bootstrap-table.css"
   )
@@ -162,23 +161,23 @@ mix
  */
 mix
   .combine(
-        [
-            "./resources/assets/js/dragtable.js",
-            './node_modules/bootstrap-table/dist/bootstrap-table.js',
-            './node_modules/bootstrap-table/dist/extensions/mobile/bootstrap-table-mobile.js',
-            './node_modules/bootstrap-table/dist/extensions/export/bootstrap-table-export.js',
-            './node_modules/bootstrap-table/dist/extensions/cookie/bootstrap-table-cookie.js',
-            './node_modules/bootstrap-table/dist/extensions/sticky-header/bootstrap-table-sticky-header.js',
-            './node_modules/bootstrap-table/dist/extensions/addrbar/bootstrap-table-addrbar.js',
-            './node_modules/bootstrap-table/dist/extensions/print/bootstrap-table-print.min.js',
-            './node_modules/bootstrap-table/dist/extensions/custom-view/bootstrap-table-custom-view.js',
-            './resources/assets/js/extensions/jquery.base64.js',
-            './node_modules/tableexport.jquery.plugin/tableExport.min.js',
-            './node_modules/tableexport.jquery.plugin/libs/jsPDF/jspdf.umd.min.js',
-            './resources/assets/js/FileSaver.min.js',
-            './node_modules/xlsx/dist/xlsx.core.min.js',
-            './node_modules/bootstrap-table/dist/extensions/sticky-header/bootstrap-table-sticky-header.js',
-            './node_modules/bootstrap-table/dist/extensions/toolbar/bootstrap-table-toolbar.js'
-        ],
-        'public/js/dist/bootstrap-table.js'
- ).version();
+    [
+      "./resources/assets/js/dragtable.js",
+      './node_modules/bootstrap-table/dist/bootstrap-table.js',
+      './node_modules/bootstrap-table/dist/extensions/mobile/bootstrap-table-mobile.js',
+      './node_modules/bootstrap-table/dist/extensions/export/bootstrap-table-export.js',
+      './node_modules/bootstrap-table/dist/extensions/cookie/bootstrap-table-cookie.js',
+      './node_modules/bootstrap-table/dist/extensions/sticky-header/bootstrap-table-sticky-header.js',
+      './node_modules/bootstrap-table/dist/extensions/addrbar/bootstrap-table-addrbar.js',
+      './node_modules/bootstrap-table/dist/extensions/print/bootstrap-table-print.min.js',
+      './node_modules/bootstrap-table/dist/extensions/custom-view/bootstrap-table-custom-view.js',
+      './resources/assets/js/extensions/jquery.base64.js',
+      './node_modules/tableexport.jquery.plugin/tableExport.min.js',
+      './node_modules/tableexport.jquery.plugin/libs/jsPDF/jspdf.umd.min.js',
+      './resources/assets/js/FileSaver.min.js',
+      './node_modules/xlsx/dist/xlsx.core.min.js',
+      './node_modules/bootstrap-table/dist/extensions/sticky-header/bootstrap-table-sticky-header.js',
+      './node_modules/bootstrap-table/dist/extensions/toolbar/bootstrap-table-toolbar.js'
+    ],
+    'public/js/dist/bootstrap-table.js'
+  ).version();
