@@ -7,6 +7,26 @@ class FilterUIController {
         this.collector = container.resolve("filterFormManager");
         this.collector.collectFilterInputs();
         this.translations = container.resolve("advancedSearchTranslations");
+
+        // store handler references so we can unbind them
+        this.handlePredefinedChange = (e) => this.updateFilterWithPredefined(e);
+        this.handleFilterClick = this.refresh.bind(this);
+        this.handleClearClick = () => {
+            this.collector.clearAll();
+            $('#predefinedfilters-select').val(null).trigger('change');
+        };
+        this.handleSaveClick = () => this.storePredefinedFilterInBackend();
+        this.handleUpdateClick = (e) => this.updatePredefinedFilterInBackend(e.target.id);
+        this.handleDeleteClick = (e) => this.deletePredefinedFilterFromBackend(e.target.id);
+
+    }
+
+    destroy() {
+        document.removeEventListener('click', this._boundDocumentClick, true);
+        window.removeEventListener('keydown', this._boundKeydown);
+        // also null any large references & call other destroy methods (floating buttons, etc)
+        this._boundDocumentClick = null;
+        this._boundKeydown = null;
     }
 
     refresh() {
@@ -108,37 +128,66 @@ class FilterUIController {
     }
 
     bindEvents() {
-        $('#predefinedfilters-select').on('change', (e) => this.updateFilterWithPredefined(e));
+        $('#predefinedfilters-select').on('change', this.handlePredefinedChange);
 
         const filterButton = document.getElementById("filterButton");
         if (filterButton) {
-            filterButton.addEventListener('click', this.refresh.bind(this));
+            filterButton.addEventListener('click', this.handleFilterClick);
         }
 
         const clearButtons = ["clearInputButton", "topClearInputButton"];
         clearButtons.forEach(id => {
             const btn = document.getElementById(id);
             if (btn) {
-                btn.addEventListener('click', () => {
-                    this.collector.clearAll();
-                    $('#predefinedfilters-select').val(null).trigger('change');
-                });
+                btn.addEventListener('click', this.handleClearClick);
             }
         });
 
         const saveButton = document.getElementById("storeFilterButton");
         if (saveButton) {
-            saveButton.addEventListener('click', () => this.storePredefinedFilterInBackend());
+            saveButton.addEventListener('click', this.handleSaveClick);
         }
 
         const updateButton = document.getElementById("updateFilterButton");
         if (updateButton) {
-            updateButton.addEventListener('click', () => this.updatePredefinedFilterInBackend(updateButton.id));
+            updateButton.addEventListener('click', this.handleUpdateClick);
         }
 
         const deleteButton = document.getElementById("deleteFilterButton");
         if (deleteButton) {
-            deleteButton.addEventListener('click', () => this.deletePredefinedFilterFromBackend(deleteButton.id));
+            deleteButton.addEventListener('click', this.handleDeleteClick);
+        }
+    }
+
+    unbindEvents() {
+        $('#predefinedfilters-select').off('change', this.handlePredefinedChange);
+
+        const filterButton = document.getElementById("filterButton");
+        if (filterButton) {
+            filterButton.removeEventListener('click', this.handleFilterClick);
+        }
+
+        const clearButtons = ["clearInputButton", "topClearInputButton"];
+        clearButtons.forEach(id => {
+            const btn = document.getElementById(id);
+            if (btn) {
+                btn.removeEventListener('click', this.handleClearClick);
+            }
+        });
+
+        const saveButton = document.getElementById("storeFilterButton");
+        if (saveButton) {
+            saveButton.removeEventListener('click', this.handleSaveClick);
+        }
+
+        const updateButton = document.getElementById("updateFilterButton");
+        if (updateButton) {
+            updateButton.removeEventListener('click', this.handleUpdateClick);
+        }
+
+        const deleteButton = document.getElementById("deleteFilterButton");
+        if (deleteButton) {
+            deleteButton.removeEventListener('click', this.handleDeleteClick);
         }
     }
 }

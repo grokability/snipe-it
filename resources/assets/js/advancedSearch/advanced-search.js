@@ -42,6 +42,11 @@ export default function initAdvancedSearch(config = {}) {
         }
     });
 
+    document.addEventListener('unload', function () {
+        const controller = container.resolve("filterUiController");
+        controller.unbindEvents()
+    });
+
     // Filter search functionality (guard element existence)
     const input = document.getElementById('filterSearch');
     if (input) {

@@ -57,29 +57,40 @@ export default class FloatingButtons {
 
 
     _observePanelSize() {
-    if (!this.advancedSearchPanel) return;
+        if (!this.advancedSearchPanel) return;
 
-    let lastWidth = this.advancedSearchPanel.offsetWidth;
-    let lastHeight = this._getNaturalPanelHeight();
+        let lastWidth = this.advancedSearchPanel.offsetWidth;
+        let lastHeight = this._getNaturalPanelHeight();
 
-    const ro = new ResizeObserver(entries => {
-        for (const entry of entries) {
-            const newWidth = entry.contentRect.width;
-            const newHeight = this._getNaturalPanelHeight();
+        const ro = new ResizeObserver(entries => {
+            for (const entry of entries) {
+                const newWidth = entry.contentRect.width;
+                const newHeight = this._getNaturalPanelHeight();
 
-            // Only trigger when size changes (with / height)
-            if (newWidth !== lastWidth || newHeight !== lastHeight ) {
-                lastWidth = newWidth;
-                lastHeight = newHeight;
+                // Only trigger when size changes (with / height)
+                if (newWidth !== lastWidth || newHeight !== lastHeight) {
+                    lastWidth = newWidth;
+                    lastHeight = newHeight;
 
-                this.align();
-                this.updatePositionMode();
+                    this.align();
+                    this.updatePositionMode();
+                }
             }
-        }
-    });
+        });
 
-    ro.observe(this.advancedSearchPanel);
-}
+        ro.observe(this.advancedSearchPanel);
+    }
+
+
+    destroy() {
+        if (this._resizeObserver) {
+            this._resizeObserver.disconnect();
+            this._resizeObserver = null;
+        }
+        if (this._boundResizeFallback) {
+            window.removeEventListener('resize', this._boundResizeFallback);
+        }
+    }
 
     // Wrap existing children in a .floatingButtons-inner so we can animate transforms
     _ensureInnerWrapper() {
@@ -285,7 +296,7 @@ export default class FloatingButtons {
         this.advancedSearchPanelHeight = this._getNaturalPanelHeight();
 
         this.advancedSearchPanelExtended = false;
-        
+
         this.advancedSearchPanel.classList.add('advancedSearchPanel--withBuffer');
         this.advancedSearchPanel.style.paddingBottom = `${this._heightBuffer}px`;
     }
@@ -361,13 +372,13 @@ export default class FloatingButtons {
     toggleMenu() {
         queueMicrotask(() => {
             this.menuOpen = !this.menuOpen;
-            try{
+            try {
 
                 if (this.menuOpen) {
                     this.fabMenu?.classList.add('open');
                     this.fabMenu && this.fabMenu.setAttribute('aria-hidden', 'false');
                     this.menuToggleButton?.setAttribute('aria-expanded', 'true');
-                    
+
                     this.menuItems?.forEach((item, idx) => {
                         item.setAttribute('tabindex', '0');
                     });
@@ -376,10 +387,10 @@ export default class FloatingButtons {
                     this.fabMenu?.classList.remove('open');
                     this.fabMenu && this.fabMenu.setAttribute('aria-hidden', 'true');
                     this.menuToggleButton?.setAttribute('aria-expanded', 'false');
-                    
+
                     this.menuItems?.forEach(item => item.setAttribute('tabindex', '-1'));
                 }
-            }catch{};
+            } catch { };
         });
     }
 
