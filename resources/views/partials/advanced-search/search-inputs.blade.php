@@ -162,8 +162,4 @@
 </span>
 </span>
 
-<script src="{{ url(mix('js/dist/search-inputs.js')) }}"></script>
-
-<style>
-
-</style>
+<script src="{{ url(mix('js/dist/search-inputs.min.js')) }}"></script>

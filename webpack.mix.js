@@ -57,6 +57,9 @@ mix
   .copy("./resources/assets/css/components/advancedSearch/advanced-search.css", "./public/css/dist")
   .minify("./public/css/dist/advanced-search.css");
   mix
+  .copy("./resources/assets/css/components/advancedSearch/advanced-search-index.css", "./public/css/dist")
+  .minify("./public/css/dist/advanced-search-index.css");
+  mix
   .copy("./resources/assets/css/components/advancedSearch/modal.css", "./public/css/dist")
   .minify("./public/css/dist/modal.css");
   mix
@@ -64,7 +67,7 @@ mix
   .minify("./public/css/dist/filterInputs.css");
   mix
     .copy("resources/assets/js/advancedSearch/floating-buttons.js", "./public/js/dist")
-    .minify("./public/js/dist/floating-buttons.js");
+    .minify("./public/js/dist/floating-buttons.js"); 
   mix
   .copy("resources/assets/js/advancedSearch/apiService.js", "./public/js/dist")
   .minify("./public/js/dist/apiService.js");
@@ -79,8 +82,11 @@ mix
   .minify("./public/js/dist/filterUiController.js");
 
   mix
-  .copy("resources/assets/js/advancedSearch/search-inputs.js", "./public/js/dist")
+  .babel("resources/assets/js/advancedSearch/search-inputs.js", "./public/js/dist/search-inputs.js")
   .minify("./public/js/dist/search-inputs.js");
+  mix
+  .babel("resources/assets/js/advancedSearch/advanced-search.js", "./public/js/dist/advanced-search.js")
+  .minify("./public/js/dist/advanced-search.js");
 /**
  * Copy and version select2
  */
