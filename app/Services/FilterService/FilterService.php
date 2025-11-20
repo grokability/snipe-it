@@ -87,11 +87,11 @@ class FilterService
     {
         return $query->where(function (Builder $query) use ($filters) {
 
-            $this->applyDateRangeFilter($query, 'assets.purchase_date', $filters, /* isDateTime */ false);
-            $this->applyDateRangeFilter($query, 'assets.asset_eol_date', $filters, /* isDateTime */ false);
+            $this->applyDateRangeFilter($query, 'assets.purchase_date', $filters, false);
+            $this->applyDateRangeFilter($query, 'assets.asset_eol_date', $filters, false);
 
-            $this->applyDateRangeFilter($query, 'assets.created_at', $filters, /* isDateTime */ true);
-            $this->applyDateRangeFilter($query, 'assets.updated_at', $filters, /* isDateTime */ true);
+            $this->applyDateRangeFilter($query, 'assets.created_at', $filters, true);
+            $this->applyDateRangeFilter($query, 'assets.updated_at', $filters, true);
 
             foreach ($filters as $filterItem) {
                 if (!isset($filterItem['field'], $filterItem['operator'], $filterItem['logic'], $filterItem['value'])) {
@@ -122,7 +122,7 @@ class FilterService
         $fieldname = $filterObj['field'];
         $value = $filterObj['value'];
         $operator = strtolower($filterObj['operator'] ?? 'equals'); // "equals" or "contains"
-        $logic = strtoupper($filterObj['logic'] ?? 'AND');       // "AND", "OR", "NOT"
+        $logic = strtoupper($filterObj['logic'] ?? 'AND');       // "AND", "NOT"
 
         $callback = function (Builder $inner) use ($fieldname, $value, $operator) {
 
@@ -140,86 +140,13 @@ class FilterService
 
                 // --- Morph Relation ---
                 if (!empty($meta['morph'])) {
-                    if (is_array($value) && isset($value[0]['assignedType'])) {
-                        $grouped = collect($value)->groupBy('assignedType');
+                    $this->applyMorphRelation($inner, $meta, $value, $operator);
 
-                        $inner->where(function ($q2) use ($grouped, $meta) {
-                            foreach ($grouped as $type => $items) {
-                                $q2->orWhereHasMorph($meta['relation'], [$type], function ($morphQ) use ($items, $type) {
-                                    $ids = collect($items)->pluck('assigned_to')->filter((fn($v) => is_numeric($v)));
-                                    $names = collect($items)->pluck('assigned_to')->filter(fn($v) => is_string($v));
-
-                                    if ($ids->isNotEmpty()) {
-                                        $morphQ->whereIn('id', $ids);
-                                    }
-
-                                    if ($names->isNotEmpty()) {
-                                        $morphQ->where(function ($query) use ($names, $type) {
-
-                                            foreach ($names as $name) {
-                                                if ($type === \App\Models\User::class) {
-
-                                                    $query->orWhere(function ($sq) use ($name) {
-                                                        $sq->where('first_name', 'LIKE', '%' . $name . '%')
-                                                            ->orWhere('last_name', 'LIKE', '%' . $name . '%');
-                                                    });
-
-                                                } else {
-                                                    $query->orWhere('name', 'LIKE', '%' . $name . '%');
-                                                }
-                                            }
-                                        });
-                                    }
-                                });
-                            }
-                        });
-
-                        return;
-                    }
-
-                    $types = $meta['types'] ?? [$meta['type']];
-
-                    $inner->where(function ($q2) use ($types, $value, $operator, $meta) {
-                        foreach ($types as $type) {
-                            $q2->orWhereHasMorph($meta['relation'], [$type], function ($morphQ) use ($type, $value, $operator, $meta) {
-                                if ($meta['column'] ?? false) {
-                                    $field = $meta['column'];
-                                    if (is_array($value)) {
-                                        $morphQ->whereIn($field, $value);
-                                    } else {
-                                        $morphQ->where($field, $operator === 'equals' ? '=' : 'LIKE', $operator === 'equals' ? $value : '%' . $value . '%');
-                                    }
-                                } else {
-                                    if ($type === User::class) {
-                                        $morphQ->where(function ($sq) use ($value) {
-                                            $sq->where('first_name', 'LIKE', '%' . $value . '%')
-                                                ->orWhere('last_name', 'LIKE', '%' . $value . '%');
-                                        });
-                                    } else {
-                                        $morphQ->where('name', 'LIKE', '%' . $value . '%');
-                                    }
-                                }
-                            });
-                        }
-                    });
                     return;
                 }
 
                 // --- Normal Relation ---
-                $relationPath = explode('.', $meta['relation']);
-                $first = array_shift($relationPath);
-
-                $inner->whereHas($first, function ($subQ) use ($relationPath, $value, $operator, $meta) {
-                    foreach ($relationPath as $relation) {
-                        $subQ->whereHas($relation, function ($q) use ($value, $operator, $meta) {
-                            $this->applyRelationalValue($q, $value, $operator, $meta);
-                        });
-                    }
-
-                    if (empty($relationPath)) {
-                        $this->applyRelationalValue($subQ, $value, $operator, $meta);
-                    }
-                });
+                $this->applyNormalRelation($meta, $inner, $value, $operator);
 
                 return;
             }
@@ -243,6 +170,52 @@ class FilterService
 
         // === Apply logic ===
         $this->applyLogic($logic, $q, $callback, $fieldname);
+    }
+
+    protected function applyNormalRelation($meta, $inner, $value, $operator){
+        $relationPath = explode('.', $meta['relation']);
+        $first = array_shift($relationPath);
+
+        $inner->whereHas($first, function ($subQ) use ($relationPath, $value, $operator, $meta) {
+            foreach ($relationPath as $relation) {
+                $subQ->whereHas($relation, function ($q) use ($value, $operator, $meta) {
+                    $this->applyRelationalValue($q, $value, $operator, $meta);
+                });
+            }
+
+            if (empty($relationPath)) {
+                $this->applyRelationalValue($subQ, $value, $operator, $meta);
+            }
+        });
+    }
+
+    protected function applyMorphRelation($inner, $meta, $value, $operator){
+        
+        $types = $meta['types'] ?? [$meta['type']];
+
+        $inner->where(function ($q2) use ($types, $value, $operator, $meta) {
+            foreach ($types as $type) {
+                $q2->orWhereHasMorph($meta['relation'], [$type], function ($morphQ) use ($type, $value, $operator, $meta) {
+                    if ($meta['column'] ?? false) {
+                        $field = $meta['column'];
+                        if (is_array($value)) {
+                            $morphQ->whereIn($field, $value);
+                        } else {
+                            $morphQ->where($field, $operator === 'equals' ? '=' : 'LIKE', $operator === 'equals' ? $value : '%' . $value . '%');
+                        }
+                    } else {
+                        if ($type === User::class) {
+                            $morphQ->where(function ($sq) use ($value) {
+                                $sq->where('first_name', 'LIKE', '%' . $value . '%')
+                                    ->orWhere('last_name', 'LIKE', '%' . $value . '%');
+                            });
+                        } else {
+                            $morphQ->where('name', 'LIKE', '%' . $value . '%');
+                        }
+                    }
+                });
+            }
+        });
     }
 
     protected function applyAssignedToLocation($inner, $value, $operator){
