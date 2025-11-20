@@ -26,7 +26,7 @@ class PredefinedFilterService
     {
         $user = Auth::user();
 
-        $response = PredefinedFilter::with('permissionGroups')
+        return PredefinedFilter::with('permissionGroups')
             ->orderBy('name')
             ->get(['id', 'name', 'created_by', 'is_public'])
             ->filter(function ($filter) use ($user) {
@@ -37,12 +37,9 @@ class PredefinedFilterService
 
                 return false;
             })->values();
-
-        return $response;
     }
 
-    // TODO different Naming because it does more than only get a filter by ID
-    // TODO discuss because there is the built-in with() ['predefinedFilter::with('permissionGroups')->find(id)']
+    // TODO different Naming because it does more than only get a filter by ID - getFilterWithOptionalPermissionsById
     public function getFilterById(int $id, bool $include_predefined_filter_groups = true)
     {
         $predefinedFilter = PredefinedFilter::find($id);
@@ -107,7 +104,6 @@ class PredefinedFilterService
             } catch (Throwable $e) {
                 // If any exception occurs, the transaction is automatically rolled back.
                 throw new Exception($e->getMessage());
-                //abort(500,message: "Something went wrong");
             }
         }
 

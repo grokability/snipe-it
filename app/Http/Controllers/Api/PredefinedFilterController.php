@@ -165,6 +165,4 @@ class PredefinedFilterController extends Controller
         $filters = $this->service->selectList($request, true);
         return (new SelectlistTransformer)->transformSelectlist($filters);
     }
-
-    // Optional: You can refactor the permission syncing methods similarly
 }
