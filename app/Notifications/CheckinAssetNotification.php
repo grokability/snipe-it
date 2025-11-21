@@ -20,6 +20,7 @@ use NotificationChannels\GoogleChat\Widgets\KeyValue;
 use NotificationChannels\MicrosoftTeams\MicrosoftTeamsChannel;
 use NotificationChannels\MicrosoftTeams\MicrosoftTeamsMessage;
 use Illuminate\Support\Facades\Log;
+#[AllowDynamicProperties]
 class CheckinAssetNotification extends Notification
 {
     use Queueable;

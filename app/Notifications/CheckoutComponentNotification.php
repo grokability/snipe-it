@@ -20,6 +20,7 @@ use NotificationChannels\MicrosoftTeams\MicrosoftTeamsChannel;
 use NotificationChannels\MicrosoftTeams\MicrosoftTeamsMessage;
 
 
+#[AllowDynamicProperties]
 class CheckoutComponentNotification extends Notification
 {
     use Queueable;

@@ -8,7 +8,9 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Messages\SlackMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\Mime\Email;
 
+#[AllowDynamicProperties]
 class RequestAssetCancelation extends Notification
 {
     /**
@@ -124,7 +126,12 @@ class RequestAssetCancelation extends Notification
                 'expected_checkin'  => $this->expected_checkin,
                 'intro_text'        => trans('mail.a_user_canceled'),
             ])
-            ->subject(trans('Item Request Canceled'));
+            ->subject('⚠️ '.trans('general.request_canceled'))
+            ->withSymfonyMessage(function (Email $message) {
+                $message->getHeaders()->addTextHeader(
+                    'X-System-Sender', 'Snipe-IT'
+                );
+            });
 
         return $message;
     }

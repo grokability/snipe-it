@@ -21,7 +21,7 @@
     </style>
 
 
-    <form method="POST" action="{{ route('settings.saml.save') }}" accept-charset="UTF-8" autocomplete="false" class="form-horizontal" role="form">
+    <form method="POST" action="{{ route('settings.saml.save') }}" accept-charset="UTF-8" autocomplete="false"  role="form">
     <!-- CSRF Token -->
     {{csrf_field()}}
 
@@ -49,7 +49,7 @@
                             <div class="control-label col-md-3">
                                 <strong>{{ trans('admin/settings/general.saml_integration') }}</strong>
                             </div>
-                            <div class="col-md-9">
+                            <div class="col-md-8">
 
                                 <label class="form-control{{ config('app.lock_passwords') === true ? ' form-control--disabled': '' }}">
                                     <input type="checkbox" name="saml_enabled" value="1" @checked(old('saml_enabled', $setting->saml_enabled)) @disabled(config('app.lock_passwords')) @class(['disabled' => config('app.lock_passwords')])/>

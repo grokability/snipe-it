@@ -20,6 +20,7 @@ use NotificationChannels\MicrosoftTeams\MicrosoftTeamsChannel;
 use NotificationChannels\MicrosoftTeams\MicrosoftTeamsMessage;
 use Illuminate\Support\Facades\Log;
 
+#[AllowDynamicProperties]
 class CheckoutConsumableNotification extends Notification
 {
     use Queueable;

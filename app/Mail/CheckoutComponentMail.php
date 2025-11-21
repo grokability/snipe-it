@@ -6,13 +6,12 @@ use App\Models\Component;
 use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class CheckoutComponentMail extends Mailable
+class CheckoutComponentMail extends BaseMailable
 {
     use Queueable, SerializesModels;
 

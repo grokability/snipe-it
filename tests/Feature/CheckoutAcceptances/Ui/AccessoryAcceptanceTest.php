@@ -7,8 +7,8 @@ use App\Models\AccessoryCheckout;
 use App\Models\Asset;
 use App\Models\CheckoutAcceptance;
 use App\Models\User;
-use App\Notifications\AcceptanceAssetAcceptedNotification;
-use App\Notifications\AcceptanceAssetDeclinedNotification;
+use App\Notifications\AcceptanceItemAcceptedNotification;
+use App\Notifications\AcceptanceItemDeclinedNotification;
 use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
@@ -36,7 +36,7 @@ class AccessoryAcceptanceTest extends TestCase
 
         Notification::assertSentTo(
             $acceptance,
-            function (AcceptanceAssetAcceptedNotification $notification) use ($acceptance) {
+            function (AcceptanceItemAcceptedNotification $notification) use ($acceptance) {
                 $this->assertStringContainsString(
                     $acceptance->assignedTo->present()->fullName,
                     $notification->toMail()->render()
@@ -69,7 +69,7 @@ class AccessoryAcceptanceTest extends TestCase
 
         Notification::assertSentTo(
             $acceptance,
-            function (AcceptanceAssetDeclinedNotification $notification) use ($acceptance) {
+            function (AcceptanceItemDeclinedNotification $notification) use ($acceptance) {
                 $this->assertStringContainsString(
                     $acceptance->assignedTo->present()->fullName,
                     $notification->toMail($acceptance)->render()

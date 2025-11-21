@@ -1148,7 +1148,9 @@ class ReportsController extends Controller
             $query->withTrashed();
         }
 
-        $itemsForReport = $query->get()->map(fn ($unaccepted) => Checkoutable::fromAcceptance($unaccepted));
+        $itemsForReport = $query->get()
+            ->filter(fn ($unaccepted) => $unaccepted->checkoutable)
+            ->map(fn ($unaccepted) => Checkoutable::fromAcceptance($unaccepted));
 
         return view('reports/unaccepted_assets', compact('itemsForReport','showDeleted' ));
     }
@@ -1288,7 +1290,9 @@ class ReportsController extends Controller
                 $acceptances->withTrashed();
             }
 
-        $itemsForReport = $acceptances->get()->map(fn ($unaccepted) => Checkoutable::fromAcceptance($unaccepted));
+        $itemsForReport = $acceptances->get()
+                ->filter(fn ($unaccepted) => $unaccepted->checkoutable)
+                ->map(fn ($unaccepted) => Checkoutable::fromAcceptance($unaccepted));
 
         $rows = [];
 

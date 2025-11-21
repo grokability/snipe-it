@@ -1000,11 +1000,6 @@
         };
     }
 
-    function colorSqFormatter(value, row) {
-        if (value) {
-            return '<span class="label" style="background-color: ' + value + ';">&nbsp;</span> ' + value;
-        }
-    }
 
     function colorTagFormatter(value, row) {
         if (value) {

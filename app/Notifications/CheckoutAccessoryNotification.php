@@ -18,7 +18,9 @@ use NotificationChannels\GoogleChat\Widgets\KeyValue;
 use NotificationChannels\MicrosoftTeams\MicrosoftTeamsChannel;
 use NotificationChannels\MicrosoftTeams\MicrosoftTeamsMessage;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\Mime\Email;
 
+#[AllowDynamicProperties]
 class CheckoutAccessoryNotification extends Notification
 {
     use Queueable;
@@ -210,6 +212,11 @@ class CheckoutAccessoryNotification extends Notification
                 'accept_url'    => $accept_url,
                 'checkout_qty'  => $this->checkout_qty,
             ])
-            ->subject(trans('mail.Confirm_accessory_delivery'));
+            ->subject(trans('mail.Confirm_accessory_delivery'))
+            ->withSymfonyMessage(function (Email $message) {
+                $message->getHeaders()->addTextHeader(
+                    'X-System-Sender', 'Snipe-IT'
+                );
+            });
     }
 }

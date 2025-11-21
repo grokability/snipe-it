@@ -455,17 +455,7 @@
                                                 <strong>{{ trans('admin/hardware/form.tag') }}</strong>
                                             </div>
                                             <div class="col-md-9">
-                                                <x-copy-to-clipboard copy_what="assettag">
-                                                    {{ $asset->asset_tag  }}
-                                                </x-copy-to-clipboard>
-                                                <span class="js-copy-assettag">{{ $asset->asset_tag  }}</span>
-
-                                                <i class="fa-regular fa-clipboard js-copy-link hidden-print"
-                                                    data-clipboard-target=".js-copy-assettag" aria-hidden="true"
-                                                    data-tooltip="true" data-placement="top"
-                                                    title="{{ trans('general.copy_to_clipboard') }}">
-                                                    <span class="sr-only">{{ trans('general.copy_to_clipboard') }}</span>
-                                                </i>
+                                                <x-copy-to-clipboard copy_what="assettag">{{ $asset->asset_tag  }}</x-copy-to-clipboard>
                                             </div>
                                         </div>
                                     @endif
@@ -762,16 +752,11 @@
                                                         <x-copy-to-clipboard copy_what="{{ $field->id }}">
                                                         </x-copy-to-clipboard>
                                                         {{-- Hidden span used as copy target --}}
-                                                        {{-- It's tempting to break out the HTML into separate lines for this, but
-                                                        it results in extra spaces being added onto the end of the copied value
-                                                        --}}
-                                                        @if (($field->field_encrypted == '1') && (Gate::allows('assets.view.encrypted_custom_fields')))
-
-                                                            <span class="js-copy-{{ $field->id }} visually-hidden hidden-print"
-                                                                style="font-size: 0px;">{{ ($field->isFieldDecryptable($asset->{$field->db_column_name()}) ? Helper::gracefulDecrypt($field, $asset->{$field->db_column_name()}) : $asset->{$field->db_column_name()}) }}</span>
-                                                        @elseif (($field->field_encrypted == '1') && (Gate::denies('assets.view.encrypted_custom_fields')))
-                                                            <span class="js-copy-{{ $field->id }} visually-hidden hidden-print"
-                                                                style="font-size: 0px;">{{ strtoupper(trans('admin/custom_fields/general.encrypted')) }}</span>
+                                                        {{-- It's tempting to break out the HTML into separate lines for this, but it results in extra spaces being added onto the end of the copied value --}}
+                                                        @if (($field->field_encrypted=='1') && (Gate::allows('assets.view.encrypted_custom_fields')))
+                                                            <span class="js-copy-{{ $field->id }} visually-hidden hidden-print" style="font-size: 0px;">{{ ($field->isFieldDecryptable($asset->{$field->db_column_name()}) ? Helper::gracefulDecrypt($field, $asset->{$field->db_column_name()}) : $asset->{$field->db_column_name()}) }}</span>
+                                                        @elseif (($field->field_encrypted=='1') && (Gate::denies('assets.view.encrypted_custom_fields')))
+                                                            <span class="js-copy-{{ $field->id }} visually-hidden hidden-print" style="font-size: 0px;">{{ strtoupper(trans('admin/custom_fields/general.encrypted')) }}</span>
                                                         @else
                                                             <span class="js-copy-{{ $field->id }} visually-hidden hidden-print"
                                                                 style="font-size: 0px;">{{ $asset->{$field->db_column_name()} }}</span>

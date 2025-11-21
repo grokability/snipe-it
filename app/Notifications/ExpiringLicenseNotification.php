@@ -5,7 +5,9 @@ namespace App\Notifications;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Symfony\Component\Mime\Email;
 
+#[AllowDynamicProperties]
 class ExpiringLicenseNotification extends Notification
 {
     use Queueable;
@@ -52,7 +54,12 @@ class ExpiringLicenseNotification extends Notification
                 'licenses'  => $this->licenses,
                 'threshold'  => $this->threshold,
             ])
-            ->subject(trans('mail.Expiring_Licenses_Report'));
+            ->subject('⏰'.trans('mail.Expiring_Licenses_Report'))
+            ->withSymfonyMessage(function (Email $message) {
+                $message->getHeaders()->addTextHeader(
+                    'X-System-Sender', 'Snipe-IT'
+                );
+            });
 
         return $message;
     }
