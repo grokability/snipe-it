@@ -122,32 +122,12 @@ class Modal extends Component
     ) {
         $this->validate();
 
-        $filter = new PredefinedFilter();;
+        $filter = new PredefinedFilter();
 
         // Enforce: only allow creation if private or groups selected
-        if (
-            $this->visibility !== FilterVisibility::Private &&
-            (empty($this->groupSelect) || count($this->groupSelect) === 0)
-        ) {
-            $this->dispatch('showNotificationInFrontend', [
-                'type' => 'error',
-                'title' => trans('general.notification_error'),
-                'message' => trans('admin/predefinedFilters/message.update.at_least_one_is_group_required_for_public_filter'),
-                'tag' => 'predefinedFilter',
-            ]);
-            return;
-        }
-
-        // mock a filter to check if userHasTheCreatePermission
         if ($this->visibility === FilterVisibility::Public) {
-            // TODO different === Public vs !== Private
 
-            // create dummy filter
-            $filter->is_public = true;
-            $filter->filter_data = [];
-            $filter->created_by = auth()->user()->id;
-
-            if (!$filter->userHasPermission(auth()->user(), 'create')) {
+            if (!$this->checkCreatePermissions()) {
                 $this->dispatch('showNotificationInFrontend', [
                     'type' => 'error',
                     'title' => trans('general.notification_error'),
@@ -156,6 +136,16 @@ class Modal extends Component
                 ]);
 
                 $this->dispatch("closePredefinedFiltersModal");
+                return;
+            }
+
+            if (empty($this->groupSelect) || count($this->groupSelect) === 0) {
+                $this->dispatch('showNotificationInFrontend', [
+                    'type' => 'error',
+                    'title' => trans('general.notification_error'),
+                    'message' => trans('admin/predefinedFilters/message.update.at_least_one_is_group_required_for_public_filter'),
+                    'tag' => 'predefinedFilter',
+                ]);
                 return;
             }
         }
@@ -202,10 +192,7 @@ class Modal extends Component
         ]);
 
         // Enforce: only allow update if private or groups selected
-        if (
-            $this->visibility !== FilterVisibility::Private &&
-            (empty($this->groupSelect) || count($this->groupSelect) === 0)
-        ) {
+        if ($this->visibility === FilterVisibility::Public && (empty($this->groupSelect) || count($this->groupSelect) === 0)) {
             $this->dispatch('showNotificationInFrontend', [
                 'type' => 'error',
                 'title' => trans('general.notification_error'),
@@ -227,31 +214,17 @@ class Modal extends Component
             return;
         }
         
-        // mock a filter to check if userHasTheCreatePermission
-        if ($this->visibility === FilterVisibility::Public) {
-
-            if (!$predefinedFilter->is_public)
-            {
-
-                $filter = new PredefinedFilter();
-                
-                // create dummy filter
-                $filter->is_public = true;
-                $filter->filter_data = [];
-                $filter->created_by = auth()->user()->id;
-                
-                if (!$filter->userHasPermission(auth()->user(), 'create')) {
-                    $this->dispatch('showNotificationInFrontend', [
-                        'type' => 'error',
-                        'title' => trans('general.notification_error'),
-                        'message' => trans('admin/predefinedFilters/message.create.not_allowed'),
-                        'tag' => 'predefinedFilter',
-                    ]);
+        if ($this->visibility === FilterVisibility::Public && !$predefinedFilter->is_public && !$this->checkCreatePermissions() ) {
+            
+            $this->dispatch('showNotificationInFrontend', [
+                'type' => 'error',
+                'title' => trans('general.notification_error'),
+                'message' => trans('admin/predefinedFilters/message.create.not_allowed'),
+                'tag' => 'predefinedFilter',
+            ]);
                     
-                    $this->dispatch("closePredefinedFiltersModal");
-                    return;
-                }
-            }
+            $this->dispatch("closePredefinedFiltersModal");
+            return;
         }
         
         if (!$predefinedFilter->userHasPermission(auth()->user(), 'edit')) {
@@ -388,5 +361,20 @@ class Modal extends Component
         }
 
         return $result;
+    }
+
+    private function checkCreatePermissions(): bool{
+        $filter = new PredefinedFilter();
+                
+        // create dummy filter
+        $filter->is_public = true;
+        $filter->filter_data = [];
+        $filter->created_by = auth()->user()->id;
+
+        if ($filter->userHasPermission(auth()->user(), 'create')) {
+            return true;
+        }
+
+        return false;
     }
 }
