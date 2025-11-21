@@ -11,6 +11,7 @@ use App\Http\Requests\UpdateAssetRequest;
 use App\Models\Actionlog;
 use App\Http\Requests\UploadFileRequest;
 use Illuminate\Support\Facades\Log;
+use App\Models\AdvancedSearch;
 use App\Models\Asset;
 use App\Models\AssetModel;
 use App\Models\CheckoutRequest;
@@ -68,6 +69,7 @@ class AssetsController extends Controller
     {
         $this->authorize('index', Asset::class);
         $company = Company::find($request->input('company_id'));
+        $user = auth()->user();
 
         $predefined_filter_id = $request->input('predefinedFilterId');
         
@@ -87,6 +89,7 @@ class AssetsController extends Controller
             }
         } 
 
+        dump(AdvancedSearch::userHasViewPermission($user));
         return view('hardware/index')->with('company', $company)
                                      ->with('predefined_filter_id', $predefined_filter_id)
                                      ->with('predefined_filter_name', $predefined_filter_name);

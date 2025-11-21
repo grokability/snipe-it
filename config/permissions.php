@@ -234,6 +234,13 @@ return [
         ],
     ],
 
+    'AdvancedSearch' => [
+        [
+            'permission' => 'advancedSearch.view',
+            'display'    => true,
+        ],
+    ],
+
     'Users' => [
         [
             'permission' => 'users.view',
