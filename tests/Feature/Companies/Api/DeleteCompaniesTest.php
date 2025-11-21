@@ -47,12 +47,9 @@ class DeleteCompaniesTest extends TestCase implements TestsPermissionsRequiremen
     {
         $company = Company::factory()->create();
 
-        $response = $this->actingAsForApi(User::factory()->deleteCompanies()->create())
-            ->deleteJson(route('api.companies.destroy', $company));
-
-        $response->dump();
-
-        $response->assertStatusMessageIs('success');
+        $this->actingAsForApi(User::factory()->deleteCompanies()->create())
+            ->deleteJson(route('api.companies.destroy', $company))
+            ->assertStatusMessageIs('success');
 
         $this->assertDatabaseMissing('companies', ['id' => $company->id]);
     }
