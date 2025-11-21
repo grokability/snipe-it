@@ -26,7 +26,7 @@ class Checkoutable
         $acceptance = $unaccepted;
 
         $assignee = $acceptance->assignedTo;
-        $company = $unaccepted_row->company ? optional($unaccepted_row->company)->present()->nameUrl() : '';
+        $company = $unaccepted_row?->company?->present()?->nameUrl() ?? '';
         $category = $model = $name = $tag = '';
         $type = $acceptance->checkoutable_item_type ?? '';
 
@@ -70,10 +70,10 @@ class Checkoutable
             acceptance: $acceptance,
             assignee: $assignee,
             //plain text for CSVs
-            plain_text_category: ($unaccepted_row->model?->category?->name ?? $unaccepted_row->license->category?->name ?? $unaccepted_row->category?->name ?? ''),
-            plain_text_model: ($unaccepted_row->model?->name ?? $unaccepted_row->model_number ?? ''),
-            plain_text_name: ($unaccepted_row->name ?? $unaccepted_row->license?->name ?? ''),
-            plain_text_company: ($unaccepted_row->company)->name ?? $unaccepted_row->license->company?->name ?? '',
+            plain_text_category: $unaccepted_row?->model?->category?->name ?? $unaccepted_row?->license?->category?->name ?? $unaccepted_row?->category?->name ?? '',
+            plain_text_model: $unaccepted_row?->model?->name ?? $unaccepted_row?->model_number ?? '',
+            plain_text_name: $unaccepted_row?->name ?? $unaccepted_row?->license?->name ?? '',
+            plain_text_company: $unaccepted_row?->company->name ?? $unaccepted_row?->license?->company?->name ?? '',
         );
     }
 }

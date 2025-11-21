@@ -19,6 +19,7 @@ use NotificationChannels\GoogleChat\Widgets\KeyValue;
 use NotificationChannels\MicrosoftTeams\MicrosoftTeamsChannel;
 use NotificationChannels\MicrosoftTeams\MicrosoftTeamsMessage;
 
+#[AllowDynamicProperties]
 class CheckoutLicenseSeatNotification extends Notification
 {
     use Queueable;

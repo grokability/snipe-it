@@ -7,7 +7,9 @@ use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Symfony\Component\Mime\Email;
 
+#[AllowDynamicProperties]
 class ExpectedCheckinNotification extends Notification
 {
     use Queueable;
@@ -58,7 +60,12 @@ class ExpectedCheckinNotification extends Notification
                 'serial' => $this->params->serial,
                 'asset_tag' => $this->params->asset_tag,
             ])
-            ->subject(($today > $this->params->expected_checkin) ? trans('mail.Expected_Checkin_Notification_Pastdue', ['name' => $this->params->display_name]) : trans('mail.Expected_Checkin_Notification', ['name' => $this->params->display_name]));
+            ->subject('⏰'. ($today > $this->params->expected_checkin) ? trans('mail.Expected_Checkin_Notification_Pastdue', ['name' => $this->params->display_name]) : trans('mail.Expected_Checkin_Notification', ['name' => $this->params->display_name]))
+            ->withSymfonyMessage(function (Email $message) {
+                $message->getHeaders()->addTextHeader(
+                    'X-System-Sender', 'Snipe-IT'
+                );
+            });
 
         return $message;
     }

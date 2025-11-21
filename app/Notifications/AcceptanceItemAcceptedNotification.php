@@ -3,13 +3,14 @@
 namespace App\Notifications;
 
 use AllowDynamicProperties;
-use App\Helpers\Helper;
 use App\Models\Setting;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Symfony\Component\Mime\Email;
 
-#[AllowDynamicProperties] class AcceptanceAssetAcceptedToUserNotification extends Notification
+#[AllowDynamicProperties]
+class AcceptanceItemAcceptedNotification extends Notification
 {
     use Queueable;
 
@@ -25,13 +26,14 @@ use Illuminate\Notifications\Notification;
         $this->item_model = $params['item_model'];
         $this->item_serial = $params['item_serial'];
         $this->item_status = $params['item_status'];
-        $this->accepted_date = Helper::getFormattedDateObject($params['accepted_date'], 'datetime', false);
+        $this->accepted_date = $params['accepted_date'];
         $this->assigned_to = $params['assigned_to'];
-        $this->note = $params['note'] ?? null;
         $this->company_name = $params['company_name'];
         $this->settings = Setting::getSettings();
         $this->file = $params['file'] ?? null;
         $this->qty = $params['qty'] ?? null;
+        $this->note = $params['note'] ?? null;
+
     }
 
     /**
@@ -49,6 +51,11 @@ use Illuminate\Notifications\Notification;
 
     }
 
+    public function shouldSend($notifiable, $channel)
+    {
+        return $this->settings->alerts_enabled && ! empty($this->settings->alert_email);
+    }
+
     /**
      * Get the mail representation of the notification.
      *
@@ -57,7 +64,6 @@ use Illuminate\Notifications\Notification;
      */
     public function toMail()
     {
-        $pdf_path = storage_path('private_uploads/eula-pdfs/'.$this->file);
         $message = (new MailMessage)->markdown('notifications.markdown.asset-acceptance',
             [
                 'item_tag'      => $this->item_tag,
@@ -70,14 +76,16 @@ use Illuminate\Notifications\Notification;
                 'assigned_to'   => $this->assigned_to,
                 'company_name'  => $this->company_name,
                 'qty' => $this->qty,
-                'intro_text'    => trans_choice('mail.acceptance_asset_accepted_to_user', $this->qty, ['qty' => $this->qty, 'site_name' => $this->settings->site_name]),
+                'intro_text'    => trans('mail.acceptance_accepted_greeting',  ['user' => $this->assigned_to, 'item' => $this->item_name]),
             ])
-            ->attach($pdf_path)
-            ->subject(trans_choice('mail.acceptance_asset_accepted_to_user', $this->qty, ['qty' => $this->qty, 'site_name' => $this->settings->site_name]));
+            ->subject('✅ '.trans('mail.acceptance_accepted', ['user' => $this->assigned_to, 'item' => $this->item_name]))
+            ->withSymfonyMessage(function (Email $message) {
+                $message->getHeaders()->addTextHeader(
+                    'X-System-Sender', 'Snipe-IT'
+                );
+            });
 
         return $message;
     }
-
-
 
 }

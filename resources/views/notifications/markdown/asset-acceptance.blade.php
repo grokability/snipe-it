@@ -1,13 +1,13 @@
 @component('mail::message')
 # {{ trans('mail.hello') }},
 
-{{ $intro_text }}.
+{{ $intro_text }}
 
 @component('mail::table')
 |        |          |
 | ------------- | ------------- |
 @if (isset($item_name))
-| **{{ trans('general.asset_name') }}** | {{ $item_name }} |
+| **{{ trans('general.item_name') }}** | {{ $item_name }} |
 @endif
 | **{{ trans('mail.user') }}** | {{ $assigned_to }} |
 @if (isset($user->location))

@@ -77,11 +77,7 @@
 @include ('partials.bootstrap-table')
 
   <script nonce="{{ csrf_token() }}">
-      function colorSqFormatter(value, row) {
-          if (value) {
-              return '<i class="fa-solid fa-square" style="color: ' + value + ';" aria-hidden="true"></i> ' + value;
-          }
-      }
+
 
       function statuslabelsAssetLinkFormatter(value, row) {
           if ((row) && (row.name)) {

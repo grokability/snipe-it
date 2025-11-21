@@ -7,9 +7,8 @@
     <span class="sr-only">{{ trans('general.copy_to_clipboard') }}</span>
 </i>
 
+{{--There must not be any spaces or line breaks between the js-copy span and the slot, or it will add a space before the copied value in Firefox :( --}}
 @if (!$slot->isEmpty())
-<span class="js-copy-{{ $copy_what }}">
-    {{ $slot }}
-</span>
+<span class="js-copy-{{ $copy_what }}">{{ $slot }}</span>
 @endif
 

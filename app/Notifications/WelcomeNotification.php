@@ -7,7 +7,9 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Password;
 use App\Models\User;
+use Symfony\Component\Mime\Email;
 
+#[AllowDynamicProperties]
 class WelcomeNotification extends Notification
 {
     use Queueable;
@@ -43,7 +45,12 @@ class WelcomeNotification extends Notification
     {
 
         return (new MailMessage())
-            ->subject(trans('mail.welcome', ['name' => $this->user->first_name.' '.$this->user->last_name]))
-            ->markdown('notifications.Welcome', $this->user->toArray());
+            ->subject('👋 '.trans('mail.welcome', ['name' => $this->user->first_name.' '.$this->user->last_name]))
+            ->markdown('notifications.Welcome', $this->user->toArray())
+            ->withSymfonyMessage(function (Email $message) {
+                $message->getHeaders()->addTextHeader(
+                    'X-System-Sender', 'Snipe-IT'
+                );
+            });
     }
 }

@@ -2,16 +2,14 @@
 
 namespace App\Notifications;
 
-use AllowDynamicProperties;
-use App\Helpers\Helper;
 use App\Models\Setting;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Notifications\Messages\SlackMessage;
 use Illuminate\Notifications\Notification;
+use Symfony\Component\Mime\Email;
 
-#[AllowDynamicProperties] class AcceptanceAssetAcceptedNotification extends Notification
+#[AllowDynamicProperties]
+class AcceptanceItemDeclinedNotification extends Notification
 {
     use Queueable;
 
@@ -22,19 +20,18 @@ use Illuminate\Notifications\Notification;
      */
     public function __construct($params)
     {
-        $this->item_tag = $params['item_tag'];
         $this->item_name = $params['item_name'];
+        $this->item_tag = $params['item_tag'];
         $this->item_model = $params['item_model'];
         $this->item_serial = $params['item_serial'];
         $this->item_status = $params['item_status'];
-        $this->accepted_date = $params['accepted_date'];
+        $this->declined_date = $params['declined_date'];
+        $this->note = $params['note'];
         $this->assigned_to = $params['assigned_to'];
         $this->company_name = $params['company_name'];
         $this->settings = Setting::getSettings();
-        $this->file = $params['file'] ?? null;
         $this->qty = $params['qty'] ?? null;
-        $this->note = $params['note'] ?? null;
-
+        $this->admin = $params['admin'] ?? null;
     }
 
     /**
@@ -43,9 +40,8 @@ use Illuminate\Notifications\Notification;
      * @param  mixed  $notifiable
      * @return array
      */
-    public function via()
+    public function via($notifiable)
     {
-
         $notifyBy = ['mail'];
 
         return $notifyBy;
@@ -63,7 +59,7 @@ use Illuminate\Notifications\Notification;
      * @param  mixed  $notifiable
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
-    public function toMail()
+    public function toMail($notifiable)
     {
         $message = (new MailMessage)->markdown('notifications.markdown.asset-acceptance',
             [
@@ -73,13 +69,19 @@ use Illuminate\Notifications\Notification;
                 'item_serial'   => $this->item_serial,
                 'item_status'   => $this->item_status,
                 'note'          => $this->note,
-                'accepted_date' => $this->accepted_date,
+                'declined_date' => $this->declined_date,
                 'assigned_to'   => $this->assigned_to,
                 'company_name'  => $this->company_name,
-                'qty' => $this->qty,
-                'intro_text'    => trans('mail.acceptance_asset_accepted'),
+                'qty'           => $this->qty,
+                'admin'         => $this->admin,
+                'intro_text'    => trans('mail.acceptance_declined_greeting'),
             ])
-            ->subject(trans('mail.acceptance_asset_accepted'));
+            ->subject('⚠️ '.trans('mail.acceptance_declined', ['user' => $this->assigned_to, 'item' => $this->item_name]))
+            ->withSymfonyMessage(function (Email $message) {
+                $message->getHeaders()->addTextHeader(
+                    'X-System-Sender', 'Snipe-IT'
+                );
+            });
 
         return $message;
     }

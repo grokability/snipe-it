@@ -5,7 +5,9 @@ namespace App\Notifications;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Symfony\Component\Mime\Email;
 
+#[AllowDynamicProperties]
 class ExpectedCheckinAdminNotification extends Notification
 {
     use Queueable;
@@ -48,7 +50,12 @@ class ExpectedCheckinAdminNotification extends Notification
             [
                 'assets'  => $this->assets,
             ])
-            ->subject(trans('mail.Expected_Checkin_Report'));
+            ->subject('⏰'.trans('mail.Expected_Checkin_Report'))
+            ->withSymfonyMessage(function (Email $message) {
+                $message->getHeaders()->addTextHeader(
+                    'X-System-Sender', 'Snipe-IT'
+                );
+            });
 
         return $message;
     }

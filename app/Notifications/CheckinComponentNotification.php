@@ -18,6 +18,7 @@ use NotificationChannels\GoogleChat\Widgets\KeyValue;
 use NotificationChannels\MicrosoftTeams\MicrosoftTeamsChannel;
 use NotificationChannels\MicrosoftTeams\MicrosoftTeamsMessage;
 
+#[AllowDynamicProperties]
 class CheckinComponentNotification extends Notification
 {
     use Queueable;

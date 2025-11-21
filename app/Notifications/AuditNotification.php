@@ -12,8 +12,10 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use NotificationChannels\MicrosoftTeams\MicrosoftTeamsChannel;
 use NotificationChannels\MicrosoftTeams\MicrosoftTeamsMessage;
+use Symfony\Component\Mime\Email;
 
-#[AllowDynamicProperties] class AuditNotification extends Notification
+#[AllowDynamicProperties]
+class AuditNotification extends Notification
 {
     use Queueable;
     /**

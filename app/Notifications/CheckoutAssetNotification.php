@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Log;
 use Osama\LaravelTeamsNotification\Logging\TeamsLoggingChannel;
 use Osama\LaravelTeamsNotification\TeamsNotification;
 
+#[AllowDynamicProperties]
 class CheckoutAssetNotification extends Notification
 {
     use Queueable;
