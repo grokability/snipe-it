@@ -1,6 +1,7 @@
 <?php
 
 namespace Database\Factories;
+
 use App\Models\Accessory;
 use App\Models\Asset;
 use App\Models\Category;
@@ -41,14 +42,7 @@ class ComponentFactory extends Factory
             'purchase_date' => $this->faker->dateTime()->format('Y-m-d'),
             'purchase_cost' => $this->faker->randomFloat(2),
             'min_amt' => $this->faker->numberBetween($min = 1, $max = 2),
-            'company_id' => function () {
-                $existingId = Company::query()->inRandomOrder()->value('id');
-                if ($existingId) {
-                    return $existingId;
-                }
-    return Company::factory()->create()->id;
-},
-
+            'company_id' => Company::factory(),
             'supplier_id' => Supplier::factory(),
             'model_number' => $this->faker->numberBetween(1000000, 50000000),
         ];
