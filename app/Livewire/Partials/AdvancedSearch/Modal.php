@@ -9,7 +9,6 @@ use Livewire\Attributes\Validate;
 use App\Models\PredefinedFilter;
 use App\Services\PredefinedFilterService;
 use App\Models\PermissionGroup;
-use Log;
 
 enum FilterVisibility: string
 {
@@ -128,7 +127,7 @@ class Modal extends Component
         // Enforce: only allow creation if private or groups selected
         if ($this->visibility === FilterVisibility::Public) {
 
-            if (!$this->createDummyFilterAndCheckCreatePermissions()) {
+            if (!$this->checkCreatePermissions()) {
                 $this->dispatch('showNotificationInFrontend', [
                     'type' => 'error',
                     'title' => trans('general.notification_error'),
@@ -215,8 +214,7 @@ class Modal extends Component
             return;
         }
         
-        // mock a filter to check if userHasTheCreatePermission
-        if ($this->visibility === FilterVisibility::Public && !$predefinedFilter->is_public && !$this->createDummyFilterAndCheckCreatePermissions() ) {
+        if ($this->visibility === FilterVisibility::Public && !$predefinedFilter->is_public && !$this->checkCreatePermissions() ) {
             
             $this->dispatch('showNotificationInFrontend', [
                 'type' => 'error',
@@ -240,9 +238,6 @@ class Modal extends Component
             $this->dispatch("closePredefinedFiltersModal");
             return;
         }
-
-        Log::error('this filterData', $this->filterData);
-        Log::error('filter_data', $predefinedFilter->filter_data);
 
         $validated = [
             'name' => $this->name ?? $predefinedFilter->name,
@@ -368,7 +363,7 @@ class Modal extends Component
         return $result;
     }
 
-    private function createDummyFilterAndCheckCreatePermissions(): bool{
+    private function checkCreatePermissions(): bool{
         $filter = new PredefinedFilter();
                 
         // create dummy filter
