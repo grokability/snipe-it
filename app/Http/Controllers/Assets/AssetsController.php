@@ -89,8 +89,8 @@ class AssetsController extends Controller
             }
         } 
 
-        dump(AdvancedSearch::userHasViewPermission($user));
         return view('hardware/index')->with('company', $company)
+                                     ->with('advanced_search_permission', AdvancedSearch::userHasViewPermission($user))
                                      ->with('predefined_filter_id', $predefined_filter_id)
                                      ->with('predefined_filter_name', $predefined_filter_name);
     }

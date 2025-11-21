@@ -51,7 +51,7 @@
                 <div class="box-body">
                     @include('partials.asset-bulk-actions', [
                         'status' => Request::get('status'),
-                        'showFiltersTogglebutton' => true,
+                        'showFiltersTogglebutton' => $advanced_search_permission,
                     ])
 
                     <table data-columns="{{ \App\Presenters\AssetPresenter::dataTableLayout() }}"
@@ -77,13 +77,18 @@
                 </div>
             </div>
         </div>
-        <livewire:partials.advancedSearch.modal />
+
+        @if($advanced_search_permission)
+            <livewire:partials.advancedSearch.modal />
+        @endif
 
     </div>
 
     <link rel="stylesheet" href="{{ mix('css/dist/advanced-search-index.min.css') }}">
 
-    <script type="module" src="{{ mix('js/dist/advanced-search-index.min.js') }}">
+    @if($advanced_search_permission)
+        <script type="module" src="{{ mix('js/dist/advanced-search-index.min.js') }}">
+    @endif        
     </script>
 @stop
 
