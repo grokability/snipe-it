@@ -118,7 +118,7 @@ class CustomFieldQueryTest extends TestCase
         $a = Asset::factory()->create(['custom_text' => 'A']);
         $b = Asset::factory()->create(['custom_text' => 'B']);
 
-        $filter = [[]];
+        $filter = [];
 
         $results = Asset::query()->byFilter($filter)->get();
 

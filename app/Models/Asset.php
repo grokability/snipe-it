@@ -1908,7 +1908,17 @@ class Asset extends Depreciable
 
     public function scopeByFilter($query, array $filters)
     {
+        // Check if the filters are in Snipe-IT's original format (key => value)
+        if ($this->isLegacyFilterFormat($filters)) {
+            return $this->applyLegacyFilters($query, $filters);
+        }
         return $this->filterService()->searchByFilter($query, $filters);
+    }
+
+    private function isLegacyFilterFormat($filters)
+    {
+        // Snipe-IT filters are simple key/value (not arrays with 'field')
+        return !isset($filters[0]['field']);
     }
 
     /**
@@ -2159,6 +2169,227 @@ class Asset extends Depreciable
      * @return \Illuminate\Database\Eloquent\Builder            Modified query builder
      */
 
+    public function applyLegacyFilters($query, $filter)
+    {
+        return $query->where(
+            function ($query) use ($filter) {
+                foreach ($filter as $key => $search_val) {
+
+                    $fieldname = str_replace('custom_fields.', '', $key);
+
+                    if ($fieldname == 'asset_tag') {
+                        $query->where('assets.asset_tag', 'LIKE', '%'.$search_val.'%');
+                    }
+
+                    if ($fieldname == 'name') {
+                        $query->where('assets.name', 'LIKE', '%'.$search_val.'%');
+                    }
 
 
+                    if ($fieldname =='serial') {
+                        $query->where('assets.serial', 'LIKE', '%'.$search_val.'%');
+                    }
+
+                    if ($fieldname == 'purchase_date') {
+                        $query->where('assets.purchase_date', 'LIKE', '%'.$search_val.'%');
+                    }
+
+                    if ($fieldname == 'purchase_cost') {
+                        $query->where('assets.purchase_cost', 'LIKE', '%'.$search_val.'%');
+                    }
+
+                    if ($fieldname == 'notes') {
+                        $query->where('assets.notes', 'LIKE', '%'.$search_val.'%');
+                    }
+
+                    if ($fieldname == 'order_number') {
+                        $query->where('assets.order_number', 'LIKE', '%'.$search_val.'%');
+                    }
+
+                    if ($fieldname == 'status_label') {
+                        $query->whereHas(
+                            'assetstatus', function ($query) use ($search_val) {
+                                $query->where('status_labels.name', 'LIKE', '%'.$search_val.'%');
+                            }
+                        );
+                    }
+
+                    if ($fieldname == 'location') {
+                        $query->whereHas(
+                            'location', function ($query) use ($search_val) {
+                                $query->where('locations.name', 'LIKE', '%'.$search_val.'%');
+                            }
+                        );
+                    }
+
+                    if ($fieldname == 'rtd_location') {
+                        $query->whereHas(
+                            'defaultLoc', function ($query) use ($search_val) {
+                                $query->where('locations.name', 'LIKE', '%'.$search_val.'%');
+                            }
+                        );
+                    }
+
+                    if ($fieldname == 'assigned_to') {
+                        $query->whereHasMorph(
+                            'assignedTo', [User::class], function ($query) use ($search_val) {
+                                $query->where(
+                                    function ($query) use ($search_val) {
+                                        $query->where('users.first_name', 'LIKE', '%'.$search_val.'%')
+                                            ->orWhere('users.last_name', 'LIKE', '%'.$search_val.'%')
+                                            ->orWhere('users.username', 'LIKE', '%'.$search_val.'%');
+                                    }
+                                );
+                            }
+                        )->orWhereHasMorph(
+                            'assignedTo', [Location::class], function ($query) use ($search_val) {
+                                $query->where('locations.name', 'LIKE', '%'.$search_val.'%');
+                            }
+                        )->orWhereHasMorph(
+                            'assignedTo', [Asset::class], function ($query) use ($search_val) {
+                            $query->where(
+                                function ($query) use ($search_val) {
+                                    // Don't use the asset table prefix here because it will pull from the original asset,
+                                    // not the subselect we're doing here to get the assigned asset
+                                    $query->where('name', 'LIKE', '%'.$search_val.'%')
+                                        ->orWhere('asset_tag', 'LIKE', '%'.$search_val.'%');
+                                }
+                            );
+                        }
+                        );
+                    }
+
+
+                    if ($fieldname == 'manufacturer') {
+                        $query->whereHas(
+                            'model', function ($query) use ($search_val) {
+                                $query->whereHas(
+                                    'manufacturer', function ($query) use ($search_val) {
+                                        $query->where(
+                                            function ($query) use ($search_val) {
+                                                $query->where('manufacturers.name', 'LIKE', '%'.$search_val.'%');
+                                            }
+                                        );
+                                    }
+                                );
+                            }
+                        );
+                    }
+
+                    if ($fieldname == 'category') {
+                        $query->whereHas(
+                            'model', function ($query) use ($search_val) {
+                                $query->whereHas(
+                                    'category', function ($query) use ($search_val) {
+                                        $query->where(
+                                            function ($query) use ($search_val) {
+                                                $query->where('categories.name', 'LIKE', '%'.$search_val.'%')
+                                                    ->orWhere('models.name', 'LIKE', '%'.$search_val.'%')
+                                                    ->orWhere('models.model_number', 'LIKE', '%'.$search_val.'%');
+                                            }
+                                        );
+                                    }
+                                );
+                            }
+                        );
+                    }
+
+                    if ($fieldname == 'model') {
+                        $query->whereHas(
+                            'model', function ($query) use ($search_val) {
+                            $query->where('models.name', 'LIKE', '%'.$search_val.'%');
+                        }
+                        );
+                    }
+
+
+                    if ($fieldname == 'model_number') {
+                        $query->whereHas(
+                            'model', function ($query) use ($search_val) {
+                            $query->where('models.model_number', 'LIKE', '%'.$search_val.'%');
+                        }
+                        );
+                    }
+
+
+                    if ($fieldname == 'company') {
+                        $query->whereHas(
+                            'company', function ($query) use ($search_val) {
+                            $query->where('companies.name', 'LIKE', '%'.$search_val.'%');
+                        }
+                        );
+                    }
+
+                    if ($fieldname == 'supplier') {
+                        $query->whereHas(
+                            'supplier', function ($query) use ($search_val) {
+                            $query->where('suppliers.name', 'LIKE', '%'.$search_val.'%');
+                        }
+                        );
+                    }
+
+                    if ($fieldname == 'status_label') {
+                        $query->whereHas(
+                            'assetstatus', function ($query) use ($search_val) {
+                            $query->where('status_labels.name', 'LIKE', '%'.$search_val.'%');
+                        }
+                        );
+                    }
+
+                    if ($fieldname == 'jobtitle') {
+                        $query->where(function ($query) use ($search_val) {
+                            if (is_array($search_val)) {
+                                $query->whereHasMorph(
+                                    'assignedTo',
+                                    [User::class],
+                                    function ($query) use ($search_val) {
+                                        $query->whereIn('users.jobtitle', $search_val);
+                                    }
+                                );
+                            } else {
+                                $query->whereHasMorph(
+                                    'assignedTo',
+                                    [User::class],
+                                    function ($query) use ($search_val) {
+                                        $query->where(function ($query) use ($search_val) {
+                                            $query->where('users.jobtitle', 'LIKE', '%' . $search_val . '%');
+                                        });
+                                    }
+                                );
+                            }
+                        });
+                    }
+
+
+                    /**
+                     * THIS CLUNKY BIT IS VERY IMPORTANT
+                     *
+                     * Although inelegant, this section matters a lot when querying against fields that do not
+                     * exist on the asset table. There's probably a better way to do this moving forward, for
+                     * example using the Schema:: methods to determine whether or not a column actually exists,
+                     * or even just using the $searchableRelations variable earlier in this file.
+                     *
+                     * In short, this set of statements tells the query builder to ONLY query against an
+                     * actual field that's being passed if it doesn't meet known relational fields. This
+                     * allows us to query custom fields directly in the assets table
+                     * (regardless of their name) and *skip* any fields that we already know can only be
+                     * searched through relational searches that we do earlier in this method.
+                     *
+                     * For example, we do not store "location" as a field on the assets table, we store
+                     * that relationship through location_id on the assets table, therefore querying
+                     * assets.location would fail, as that field doesn't exist -- plus we're already searching
+                     * against those relationships earlier in this method.
+                     *
+                     * - snipe
+                     */
+
+                    if (($fieldname!='category') && ($fieldname!='model_number') && ($fieldname!='rtd_location') && ($fieldname!='location') && ($fieldname!='supplier')
+                        && ($fieldname!='status_label') && ($fieldname!='assigned_to') && ($fieldname!='model')  && ($fieldname!='jobtitle') && ($fieldname!='company') && ($fieldname!='manufacturer')
+                    ) {
+                        $query->where('assets.'.$fieldname, 'LIKE', '%' . $search_val . '%');
+                    }
+                }
+            }
+        );
+    }
 }
