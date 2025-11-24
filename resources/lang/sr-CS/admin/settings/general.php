@@ -79,6 +79,7 @@ return [
     'generate_backup'			=> 'Generiši rezervnu kopiju',
     'google_workspaces'         => 'Google Workspaces',
     'header_color'              => 'Boja zaglavlja',
+    'header_color_help'         => 'Pomerite prikaz na vrh strane da bi ste pregledali boju zaglavlja.',
     'info'                      => 'Ova podešavanja vam omogućavaju da prilagodite određene aspekte vaše instalacije.',
     'label_logo_size'           => 'Kvadratni logotipi izgledaju najbolje – biće prikazani u gornjem desnom uglu svake oznake sredstva. ',
     'laravel'                   => 'Laravel verzija',
@@ -423,6 +424,7 @@ return [
     'redirect_url' => 'URL adresa za redirekciju',
     'client_secret' => 'Tajna klijenta',
     'client_id' => 'ID klijenta',
+    'too_many_users_to_show' => 'Broj korisnika (:count) je veći od ograničenja (:max) broja zapisa na prikazu bez stranica. Koristite alat za masovnu izmenu korisnika da bi ste upravljali članstvom u grupama.',
 
     'username_formats' => [
         'username_format'		=> 'Format korisničkog imena',

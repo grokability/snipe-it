@@ -13,6 +13,8 @@ return array(
     |
     */
 
+    'week_start_select' => 'Pasirinkite savaitės dieną',
+    'week_start' => 'Pirmoji savaitės diena',
     'today' => 'Šiandien',
     'clear' => 'Išvalyti',
     'days' => [

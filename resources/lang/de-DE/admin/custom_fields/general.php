@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Verwalten',
     'field'		                => 'Feld',
     'about_fieldsets_title'		=> 'Über Feldsätze',
-    'about_fieldsets_text'		=> 'Feldsätze erlauben es, Gruppen aus benutzerdefinierten Feldern zu erstellen, welche regelmäßig für spezifische Modelltypen benutzt werden.',
+    'about_fieldsets_text'		=> 'Feldsätze erlauben es, Gruppen aus benutzerdefinierten Feldern zu erstellen, die regelmäßig für spezifische Modelltypen benutzt werden.',
     'custom_format'             => 'Benutzerdefiniertes Regex-Format...',
     'encrypt_field'      	        => 'Den Wert dieses Feldes in der Datenbank verschlüsseln',
     'encrypt_field_help'      => 'WARNUNG: Ein verschlüsseltes Feld kann nicht durchsucht werden.',

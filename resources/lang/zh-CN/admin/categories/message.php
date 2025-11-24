@@ -20,9 +20,9 @@ return array(
     'delete' => array(
         'confirm'                => '你确定要删除这个分类吗？',
         'error'                  => '删除分类出现异常，请重试。',
-        'success'                => 'Category was deleted successfully.',
-        'bulk_success'           => 'Categories were deleted successfully.',
-        'partial_success'        => 'Category deleted successfully. See additional information below. | :count categories were deleted successfully. See additional information below.',
+        'success'                => '分类已经被成功删除。',
+        'bulk_success'           => '分类已经被成功删除。',
+        'partial_success'        => '分类已成功删除。请参阅下面的额外信息。 | :count 个类别已成功删除。请参阅下面的额外信息。',
     )
 
 );

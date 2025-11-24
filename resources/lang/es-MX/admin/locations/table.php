@@ -12,7 +12,7 @@ return [
     'create'                    => 'Crear ubicación',
     'update'                    => 'Actualizar ubicación',
     'print_assigned'            => 'Imprimir los asignados',
-    'print_inventory'           => 'Print Inventory',
+    'print_inventory'           => 'Imprimir inventario',
     'print_all_assigned'        => 'Imprimir inventario y asignar',
     'name'                      => 'Nombre de ubicación',
     'address'                   => 'Dirección',

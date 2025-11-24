@@ -79,6 +79,7 @@ return [
     'generate_backup'			=> 'Générer une sauvegarde',
     'google_workspaces'         => 'Espaces de travail Google',
     'header_color'              => 'Couleur de l\'en-tête',
+    'header_color_help'         => 'Scroll up to the top of the screen to preview the header color.',
     'info'                      => 'Ces paramètres vous permettent de personnaliser certains aspects de votre installation.',
     'label_logo_size'           => 'Les logos, de préférence carrés, sont affichés en haut à droite de chaque étiquette. ',
     'laravel'                   => 'Version de Laravel',
@@ -423,6 +424,7 @@ return [
     'redirect_url' => 'URL de redirection',
     'client_secret' => 'Client Secret',
     'client_id' => 'Client ID',
+    'too_many_users_to_show' => 'The number of users (:count) is larger than the unpaginated record limit (:max). Use the bulk user edit tool to manage group memberships.',
 
     'username_formats' => [
         'username_format'		=> 'Format du nom d\'utilisateur',

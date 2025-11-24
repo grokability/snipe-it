@@ -5,7 +5,7 @@ return [
     'manage'                    => 'គ្រប់គ្រង',
     'field'		                => 'វាល',
     'about_fieldsets_title'		=> 'អំពី Fieldsets',
-    'about_fieldsets_text'		=> 'Fieldsets អនុញ្ញាតឱ្យអ្នកបង្កើតក្រុមនៃវាលផ្ទាល់ខ្លួនដែលត្រូវបានប្រើឡើងវិញជាញឹកញាប់សម្រាប់ប្រភេទគំរូទ្រព្យសកម្មជាក់លាក់។',
+    'about_fieldsets_text'		=> 'Fieldsets allow you to create groups of custom fields that are frequently re-used used for specific asset model types.',
     'custom_format'             => 'ទម្រង់ Regex ផ្ទាល់ខ្លួន...',
     'encrypt_field'      	        => 'អ៊ិនគ្រីបតម្លៃនៃវាលនេះនៅក្នុងមូលដ្ឋានទិន្នន័យ',
     'encrypt_field_help'      => 'ការព្រមាន៖ ការអ៊ិនគ្រីបវាលធ្វើឱ្យវាមិនអាចស្វែងរកបាន។',

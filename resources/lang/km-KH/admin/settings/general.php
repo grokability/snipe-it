@@ -79,6 +79,7 @@ return [
     'generate_backup'			=> 'បង្កើតការបម្រុងទុក',
     'google_workspaces'         => 'Google Workspaces',
     'header_color'              => 'ពណ៌បឋមកថា',
+    'header_color_help'         => 'Scroll up to the top of the screen to preview the header color.',
     'info'                      => 'ការកំណត់ទាំងនេះអនុញ្ញាតឱ្យអ្នកប្ដូរទិដ្ឋភាពជាក់លាក់នៃការដំឡើងរបស់អ្នក។',
     'label_logo_size'           => 'និមិត្តសញ្ញាការ៉េមើលទៅល្អបំផុត - នឹងត្រូវបានបង្ហាញនៅខាងស្តាំខាងលើនៃស្លាកទ្រព្យសម្បត្តិនីមួយៗ។ ',
     'laravel'                   => 'កំណែ Laravel',
@@ -425,6 +426,7 @@ return [
     'redirect_url' => 'Redirect URL',
     'client_secret' => 'Client Secret',
     'client_id' => 'Client ID',
+    'too_many_users_to_show' => 'The number of users (:count) is larger than the unpaginated record limit (:max). Use the bulk user edit tool to manage group memberships.',
 
     'username_formats' => [
         'username_format'		=> 'ទម្រង់ឈ្មោះអ្នកប្រើប្រាស់',

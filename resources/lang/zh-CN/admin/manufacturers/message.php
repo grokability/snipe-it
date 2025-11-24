@@ -24,9 +24,9 @@ return array(
     'delete' => array(
         'confirm' => '确定要删除这个制造商吗？',
         'error'   => '删除制造商的过程中出现了一点儿问题，请重试。',
-        'success'                => 'Manufacturer deleted successfully.',
-        'bulk_success'           => 'Manufacturers deleted successfully.',
-        'partial_success'        => 'Manufacturer deleted successfully. See additional information below. | :count manufacturers were deleted successfully. See additional information below.',
+        'success'                => '制造商已成功删除。',
+        'bulk_success'           => '制造商已成功删除。',
+        'partial_success'        => '制造商已成功删除。请参阅下面的额外信息，| :count 制造商已成功删除。请参阅下面的额外信息。',
     )
 
 );

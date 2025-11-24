@@ -8,7 +8,7 @@ return [
     'example_manufacturer'  => 'Test Manufacturing Inc.',
     'example_model'      => 'Test Model',
     'example_supplier'   => 'Test Company Limited',
-    'labels_per_page'    => 'Labels',
+    'labels_per_page'    => '레이블',
     'support_fields'     => 'Fields',
     'support_asset_tag'  => '태그',
     'support_1d_barcode' => '1D',

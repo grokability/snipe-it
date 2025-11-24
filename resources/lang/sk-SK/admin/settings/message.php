@@ -37,7 +37,7 @@ return [
         'authentication_success' => 'Používateľ sa úspešne autentifikoval voči LDAP-u!'
     ],
     'labels' => [
-        'null_template' => 'Label template not found. Please select a template.',
+        'null_template' => 'Šablóna štítku sa nenašla. Vyberte šablónu.',
         ],
     'webhook' => [
         'sending' => 'Posielam :app testovaciu správu...',
@@ -50,10 +50,10 @@ return [
         'error_misc' => 'Niečo sa pokazilo. :( ',
         'webhook_fail' => ' webhook notifikácia zlyhala: Overte správnosť zadanej URL adresy.',
         'webhook_channel_not_found' => ' kanál webhooku nebol nájdený.',
-        'ms_teams_deprecation' => 'The selected Microsoft Teams webhook URL will be deprecated Dec 31st, 2025. Please use a workflow URL. Microsoft\'s documentation on creating a workflow can be found <a href="https://support.microsoft.com/en-us/office/create-incoming-webhooks-with-workflows-for-microsoft-teams-8ae491c7-0394-4861-ba59-055e33f75498" target="_blank"> here.</a>',
+        'ms_teams_deprecation' => 'Vybraná URL adresa webhooku pre Microsoft Teams bude 31. decembra 2025 zastaraná. Použite URL adresu pracovného postupu. Dokumentáciu spoločnosti Microsoft o vytvorení pracovného postupu nájdete <a href="https://support.microsoft.com/en-us/office/create-incoming-webhooks-with-workflows-for-microsoft-teams-8ae491c7-0394-4861-ba59-055e33f75498" target="_blank"> tu.</a>',
     ],
     'location_scoping' => [
-        'not_saved' => 'Your settings were not saved.',
-        'mismatch' => 'There is 1 item in the database that need your attention before you can enable location scoping.|There are :count items in the database that need your attention before you can enable location scoping.',
+        'not_saved' => 'Vaše nastavenia neboli uložené.',
+        'mismatch' => 'V databáze je 1 položka, ktorá vyžaduje vašu pozornosť pred povolením určenia lokality.|V databáze je :count položiek, ktoré vyžadujú vašu pozornosť pred povolením určenia lokality.',
     ],
 ];

@@ -3,38 +3,39 @@
 namespace App\Http\Controllers\Api;
 
 use App\Events\CheckoutableCheckedIn;
-use App\Http\Requests\StoreAssetRequest;
-use App\Http\Requests\UpdateAssetRequest;
-use App\Http\Traits\MigratesLegacyAssetLocations;
-use App\Http\Transformers\ComponentsTransformer;
-use App\Models\AccessoryCheckout;
-use App\Models\CheckoutAcceptance;
-use App\Models\LicenseSeat;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\Gate;
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AssetCheckoutRequest;
+use App\Http\Requests\FilterRequest;
+use App\Http\Requests\StoreAssetRequest;
+use App\Http\Requests\UpdateAssetRequest;
+use App\Http\Traits\MigratesLegacyAssetLocations;
 use App\Http\Transformers\AssetsTransformer;
+use App\Http\Transformers\ComponentsTransformer;
 use App\Http\Transformers\LicensesTransformer;
 use App\Http\Transformers\SelectlistTransformer;
+use App\Models\AccessoryCheckout;
 use App\Models\Asset;
 use App\Models\AssetModel;
+use App\Models\CheckoutAcceptance;
 use App\Models\Company;
 use App\Models\CustomField;
 use App\Models\License;
+use App\Models\LicenseSeat;
 use App\Models\Location;
 use App\Models\PredefinedFilter;
 use App\Models\Setting;
 use App\Models\User;
+use App\View\Label;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
-use App\View\Label;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
@@ -57,7 +58,7 @@ class AssetsController extends Controller
      * @param int $assetId
      * @since [v4.0]
      */
-    public function index(Request $request, $action = null, $upcoming_status = null):JsonResponse|array
+    public function index(FilterRequest $request, $action = null, $upcoming_status = null):JsonResponse|array
     {
 
 

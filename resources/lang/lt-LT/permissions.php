@@ -16,409 +16,409 @@ return array(
     */
 
     "superuser" => [
-        'name' => 'Super User',
-        'note'       => 'Determines whether the user has full access to all aspects of the admin. This setting overrides ALL more specific and restrictive permissions throughout the system. ',
+        'name' => 'Super naudotojas',
+        'note'       => 'Nustato, ar naudotojas turi visišką prieigą prie visų administratoriaus funkcijų. Šis nustatymas pakeičia VISAS konkretesnes ir ribojančias teises visoje sistemoje. ',
     ],
     'admin' => [
-        'name' => 'Admin Access',
-        'note'       => 'Determines whether the user has access to most aspects of the system EXCEPT the System Admin Settings. These users will be able to manage users, locations, categories, etc, but ARE constrained by Full Multiple Company Support if it is enabled.',
+        'name' => 'Administratoriaus prieiga',
+        'note'       => 'Nustato, ar naudotojas turi prieigą prie daugumos sistemos funkcijų, IŠSKYRUS sistemos administratoriaus nustatymus. Šie naudotojai galės valdyti naudotojus, vietas, kategorijas ir kt., tačiau jų prieiga YRA ribojama Pilno kelių įmonių palaikymo, kai jis įjungtas.',
     ],
 
     'import' => [
-        'name' => 'CSV Import',
-        'note'       => 'This will allow users to import even if access to users, assets, etc is denied elsewhere.',
+        'name' => 'CSV importavimas',
+        'note'       => 'Tai leis naudotojams importuoti duomenis, net jei prieiga prie naudotojų, turto ir pan. visur kitur yra draudžiama.',
     ],
 
     'reports' => [
-        'name' => 'Reports Access',
-        'note'       => 'Determines whether the user has access to the Reports section of the application.',
+        'name' => 'Prieiga prie ataskaitų',
+        'note'       => 'Nustato, ar naudotojas turi prieigą prie programos Ataskaitų skilties.',
     ],
 
     'assets' =>
         [
             'name' => 'Turtas',
-            'note' => 'Grants access to the Assets section of the application.',
+            'note' => 'Suteikia prieigą prie programos Turto skilties.',
     ],
 
     'assetsview' => [
-        'name' => 'View Assets',
+        'name' => 'Peržiūrėti turtą',
     ],
 
     'assetscreate' => [
-        'name' => 'Create New Assets',
+        'name' => 'Sukurti turtą',
     ],
 
     'assetsedit' => [
-        'name' => 'Edit Assets',
+        'name' => 'Redaguoti turtą',
     ],
 
     'assetsdelete' => [
-        'name' => 'Delete Assets',
+        'name' => 'Ištrinti turtą',
     ],
 
     'assetscheckin' => [
-        'name' => 'Check In',
-        'note' => 'Check assets back into inventory that are currently checked out.',
+        'name' => 'Paimti',
+        'note' => 'Paimti šiuo metu išduotą turtą ir grąžinti atgal į inventorių.',
     ],
 
     'assetscheckout' => [
-        'name' => 'Check Out',
-        'note' => 'Assign assets in inventory by checking them out.',
+        'name' => 'Išduoti',
+        'note' => 'Priskirti inventoriuje esantį turtą, jį išduodant.',
     ],
 
     'assetsaudit' => [
-        'name' => 'Audit Assets',
-        'note' => 'Allows the user to mark an asset as physically inventoried.',
+        'name' => 'Audituoti turtą',
+        'note' => 'Leidžia naudotojui pažymėti turtą kaip fiziškai inventorizuotą.',
     ],
 
     'assetsviewrequestable' => [
-        'name' => 'View Requestable Assets',
-        'note' => 'Allows the user to view assets that are marked as requestable.',
+        'name' => 'Peržiūrėti užsakomą turtą',
+        'note' => 'Leidžia naudotojui peržiūrėti turtą, kuris pažymėtas kaip užsakomas.',
     ],
 
     'assetsviewencrypted-custom-fields' => [
-        'name' => 'View Encrypted Custom Fields',
-        'note' => 'Allows the user to view and modify encrypted custom fields on assets.',
+        'name' => 'Peržiūrėti šifruotus pritaikytus laukus',
+        'note' => 'Leidžia naudotojui peržiūrėti ir redaguoti turto šifruotus pritaikytus laukus.',
     ],
 
     'accessories'   => [
         'name' => 'Priedai',
-        'note'       => 'Grants access to the Accessories section of the application.',
+        'note'       => 'Suteikia prieigą prie programos Priedų skilties.',
     ],
 
     'accessoriesview' => [
-        'name' => 'View Accessories',
+        'name' => 'Peržiūrėti priedus',
     ],
     'accessoriescreate' => [
-        'name' => 'Create New Accessories',
+        'name' => 'Sukurti priedus',
     ],
     'accessoriesedit' => [
-        'name' => 'Edit Accessories',
+        'name' => 'Redaguoti priedus',
     ],
     'accessoriesdelete' => [
-        'name' => 'Delete Accessories',
+        'name' => 'Ištrinti priedus',
     ],
     'accessoriescheckout' => [
-        'name' => 'Check Out Accessories',
-        'note' => 'Assign accessories in inventory by checking them out.',
+        'name' => 'Išduoti priedus',
+        'note' => 'Priskirti inventoriuje esančius priedus, juos išduodant.',
     ],
     'accessoriescheckin' => [
-        'name' => 'Check In Accessories',
-        'note' => 'Check accessories back into inventory that are currently checked out.',
+        'name' => 'Paimti priedus',
+        'note' => 'Paimti šiuo metu išduotus priedus ir grąžinti atgal į inventorių.',
     ],
     'accessoriesfiles' => [
-        'name' => 'Manage Accessory Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with accessories.',
+        'name' => 'Tvarkyti priedų failus',
+        'note' => 'Leidžia naudotojui įkelti, atsisiųsti ir ištrinti su priedais susijusius failus.',
     ],
     'consumables'   => [
         'name' => 'Eksploatacinės medžiagos',
-        'note'       => 'Grants access to the Consumables section of the application.',
+        'note'       => 'Suteikia prieigą prie programos Eksploatacinių medžiagų skilties.',
     ],
     'consumablesview' => [
-        'name' => 'View Consumables',
+        'name' => 'Peržiūrėti eksploatacines medžiagas',
     ],
     'consumablescreate' => [
-        'name' => 'Create New Consumables',
+        'name' => 'Sukurti eksploatacines medžiagas',
     ],
     'consumablesedit' => [
-        'name' => 'Edit Consumables',
+        'name' => 'Redaguoti eksploatacines medžiagas',
     ],
     'consumablesdelete' => [
-        'name' => 'Delete Consumables',
+        'name' => 'Ištrinti eksploatacines medžiagas',
     ],
     'consumablescheckout' => [
-        'name' => 'Check Out Consumables',
-        'note' => 'Assign consumables in inventory by checking them out.',
+        'name' => 'Išduoti eksploatacines medžiagas',
+        'note' => 'Priskirti inventoriuje esančias eksploatacines medžiagas, jas išduodant.',
     ],
     'consumablesfiles' => [
-        'name' => 'Manage Consumable Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with consumables.',
+        'name' => 'Tvarkyti eksploatacinių medžiagų failus',
+        'note' => 'Leidžia naudotojui įkelti, atsisiųsti ir ištrinti su eksploatacinėmis medžiagomis susijusius failus.',
     ],
     'licenses'   => [
         'name' => 'Licencijos',
-        'note'       => 'Grants access to the Licenses section of the application.',
+        'note'       => 'Suteikia prieigą prie programos Licencijų skilties.',
     ],
     'licensesview' => [
-        'name' => 'View Licenses',
+        'name' => 'Peržiūrėti licencijas',
     ],
     'licensescreate' => [
-        'name' => 'Create New Licenses',
+        'name' => 'Sukurti licencijas',
     ],
     'licensesedit' => [
-        'name' => 'Edit Licenses',
+        'name' => 'Redaguoti licencijas',
     ],
     'licensesdelete' => [
-        'name' => 'Delete Licenses',
+        'name' => 'Ištrinti licencijas',
     ],
     'licensescheckout' => [
-        'name' => 'Assign Licenses',
-        'note' => 'Allows the user to assign licenses to assets or users.',
+        'name' => 'Priskirti licencijas',
+        'note' => 'Leidžia naudotojui priskirti licencijas turtui arba naudotojams.',
         ],
     'licensescheckin' => [
-        'name' => 'Unassign Licenses',
-        'note' => 'Allows the user to unassign licenses from assets or users.',
+        'name' => 'Atšaukti licencijų priskyrimą',
+        'note' => 'Leidžia naudotojui atšaukti licencijų priskyrimą turtui arba naudotojams.',
     ],
     'licensesfiles' => [
-        'name' => 'Manage License Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with licenses.',
+        'name' => 'Tvarkyti licencijų failus',
+        'note' => 'Leidžia naudotojui įkelti, atsisiųsti ir ištrinti su licencijomis susijusius failus.',
     ],
     'licenseskeys' => [
-        'name' => 'Manage License Keys',
-        'note' => 'Allows the user to view product keys associated with licenses.',
+        'name' => 'Tvarkyti licencijų raktus',
+        'note' => 'Leidžia naudotojui peržiūrėti su licencijomis susietus produkto kodus.',
     ],
     'components'   => [
         'name' => 'Komponentai',
-        'note'       => 'Grants access to the Components section of the application.',
+        'note'       => 'Suteikia prieigą prie programos Komponentų skilties.',
     ],
     'componentsview' => [
-        'name' => 'View Components',
+        'name' => 'Peržiūrėti komponentus',
     ],
     'componentscreate' => [
-        'name' => 'Create New Components',
+        'name' => 'Sukurti komponentus',
     ],
     'componentsedit' => [
-        'name' => 'Edit Components',
+        'name' => 'Redaguoti komponentus',
     ],
     'componentsdelete' => [
-        'name' => 'Delete Components',
+        'name' => 'Ištrinti komponentus',
     ],
     'componentsfiles' => [
-        'name' => 'Manage Component Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with components.',
+        'name' => 'Tvarkyti komponentų failus',
+        'note' => 'Leidžia naudotojui įkelti, atsisiųsti ir ištrinti su komponentais susijusius failus.',
     ],
     'componentscheckout' => [
-        'name' => 'Check Out Components',
-        'note' => 'Assign components in inventory by checking them out.',
+        'name' => 'Išduoti komponentus',
+        'note' => 'Priskirti inventoriuje esančius komponentus, juos išduodant.',
     ],
     'componentscheckin' => [
-        'name' => 'Check In Components',
-        'note' => 'Check components back into inventory that are currently checked out.',
+        'name' => 'Paimti komponentus',
+        'note' => 'Paimti šiuo metu išduotus komponentus ir grąžinti atgal į inventorių.',
     ],
     'kits'   => [
         'name' => 'Turto rinkiniai',
-        'note'       => 'Grants access to the Predefined Kits section of the application.',
+        'note'       => 'Suteikia prieigą prie programos Turto rinkinių skilties.',
     ],
     'kitsview' => [
-        'name' => 'View Predefined Kits',
+        'name' => 'Peržiūrėti iš anksto nustatytus rinkinius',
     ],
     'kitscreate' => [
-        'name' => 'Create New Predefined Kits',
+        'name' => 'Sukurti iš anksto nustatytus rinkinius',
     ],
     'kitsedit' => [
-        'name' => 'Edit Predefined Kits',
+        'name' => 'Redaguoti iš anksto nustatytus rinkinius',
     ],
     'kitsdelete' => [
-        'name' => 'Delete Predefined Kits',
+        'name' => 'Ištrinti iš anksto nustatytus rinkinius',
     ],
     'users'   => [
         'name' => 'Naudotojai',
-        'note'       => 'Grants access to the Users section of the application.',
+        'note'       => 'Suteikia prieigą prie programos Naudotojų skilties.',
     ],
     'usersview' => [
         'name' => 'Peržiūrėti naudotojus',
     ],
     'userscreate' => [
-        'name' => 'Create New Users',
+        'name' => 'Sukurti naudotojus',
     ],
     'usersedit' => [
-        'name' => 'Edit Users',
+        'name' => 'Redaguoti naudotojus',
     ],
     'usersdelete' => [
-        'name' => 'Delete Users',
+        'name' => 'Ištrinti naudotojus',
     ],
     'models'   => [
-        'name' => 'Models',
-        'note'       => 'Grants access to the Models section of the application.',
+        'name' => 'Modeliai',
+        'note'       => 'Suteikia prieigą prie programos Modelių skilties.',
     ],
     'modelsview' => [
         'name' => 'Peržiūrėti modelius',
     ],
 
     'modelscreate' => [
-        'name' => 'Create New Models',
+        'name' => 'Sukurti modelius',
     ],
     'modelsedit' => [
-        'name' => 'Edit Models',
+        'name' => 'Redaguoti modelius',
     ],
     'modelsdelete' => [
-        'name' => 'Delete Models',
+        'name' => 'Ištrinti modelius',
     ],
     'categories'   => [
         'name' => 'Kategorijos',
-        'note'       => 'Grants access to the Categories section of the application.',
+        'note'       => 'Suteikia prieigą prie programos Kategorijų skilties.',
     ],
     'categoriesview' => [
-        'name' => 'View Categories',
+        'name' => 'Peržiūrėti kategorijas',
     ],
     'categoriescreate' => [
-        'name' => 'Create New Categories',
+        'name' => 'Sukurti kategorijas',
     ],
     'categoriesedit' => [
-        'name' => 'Edit Categories',
+        'name' => 'Redaguoti kategorijas',
     ],
     'categoriesdelete' => [
-        'name' => 'Delete Categories',
+        'name' => 'Ištrinti kategorijas',
     ],
     'departments'   => [
         'name' => 'Skyriai',
-        'note'       => 'Grants access to the Departments section of the application.',
+        'note'       => 'Suteikia prieigą prie programos Skyrių skilties.',
     ],
     'departmentsview' => [
-        'name' => 'View Departments',
+        'name' => 'Peržiūrėti skyrius',
     ],
     'departmentscreate' => [
-        'name' => 'Create New Departments',
+        'name' => 'Sukurti skyrius',
     ],
     'departmentsedit' => [
-        'name' => 'Edit Departments',
+        'name' => 'Atnaujinti skyrius',
     ],
     'departmentsdelete' => [
-        'name' => 'Delete Departments',
+        'name' => 'Ištrinti skyrius',
     ],
     'locations'   => [
         'name' => 'Vietos',
-        'note'       => 'Grants access to the Locations section of the application.',
+        'note'       => 'Suteikia prieigą prie programos Vietų skilties.',
     ],
     'locationsview' => [
-        'name' => 'View Locations',
+        'name' => 'Peržiūrėti vietas',
     ],
     'locationscreate' => [
-        'name' => 'Create New Locations',
+        'name' => 'Sukurti vietas',
     ],
     'locationsedit' => [
-        'name' => 'Edit Locations',
+        'name' => 'Redaguoti vietas',
     ],
     'locationsdelete' => [
-        'name' => 'Delete Locations',
+        'name' => 'Ištrinti vietas',
     ],
     'status-labels'   => [
         'name' => 'Būsenos žymos',
-        'note'       => 'Grants access to the Status Labels section of the application used by Assets.',
+        'note'       => 'Suteikia prieigą prie turto naudojamų Būsenos žymų skilties programoje.',
     ],
     'statuslabelsview' => [
-        'name' => 'View Status Labels',
+        'name' => 'Peržiūrėti būsenos žymas',
     ],
     'statuslabelscreate' => [
-        'name' => 'Create New Status Labels',
+        'name' => 'Sukurti būsenos žymas',
     ],
     'statuslabelsedit' => [
-        'name' => 'Edit Status Labels',
+        'name' => 'Redaguoti būsenos žymas',
     ],
     'statuslabelsdelete' => [
-        'name' => 'Delete Status Labels',
+        'name' => 'Ištrinti būsenos žymas',
     ],
     'custom-fields'   => [
         'name' => 'Pritaikyti laukai',
-        'note'       => 'Grants access to the Custom Fields section of the application used by Assets.',
+        'note'       => 'Suteikia prieigą prie programos Pritaikytų laukų skilties.',
     ],
     'customfieldsview' => [
-        'name' => 'View Custom Fields',
+        'name' => 'Peržiūrėti pritaikytus laukus',
     ],
     'customfieldscreate' => [
-        'name' => 'Create New Custom Fields',
+        'name' => 'Sukurti pritaikytus laukus',
     ],
     'customfieldsedit' => [
-        'name' => 'Edit Custom Fields',
+        'name' => 'Redaguoti pritaikytus laukus',
     ],
     'customfieldsdelete' => [
-        'name' => 'Delete Custom Fields',
+        'name' => 'Ištrinti pritaikytus laukus',
     ],
     'suppliers'   => [
         'name' => 'Tiekėjai',
-        'note'       => 'Grants access to the Suppliers section of the application.',
+        'note'       => 'Suteikia prieigą prie programos Tiekėjų skilties.',
     ],
     'suppliersview' => [
-        'name' => 'View Suppliers',
+        'name' => 'Peržiūrėti tiekėjus',
     ],
     'supplierscreate' => [
-        'name' => 'Create New Suppliers',
+        'name' => 'Sukurti tiekėją',
     ],
     'suppliersedit' => [
-        'name' => 'Edit Suppliers',
+        'name' => 'Redaguoti tiekėjus',
     ],
     'suppliersdelete' => [
-        'name' => 'Delete Suppliers',
+        'name' => 'Ištrinti tiekėjus',
     ],
     'manufacturers'   => [
         'name' => 'Gamintojai',
-        'note'       => 'Grants access to the Manufacturers section of the application.',
+        'note'       => 'Suteikia prieigą prie programos Gamintojų skilties.',
     ],
     'manufacturersview' => [
-        'name' => 'View Manufacturers',
+        'name' => 'Peržiūrėti gamintojus',
     ],
     'manufacturerscreate' => [
-        'name' => 'Create New Manufacturers',
+        'name' => 'Sukurti gamintojus',
     ],
     'manufacturersedit' => [
-        'name' => 'Edit Manufacturers',
+        'name' => 'Redaguoti gamintojus',
     ],
     'manufacturersdelete' => [
-        'name' => 'Delete Manufacturers',
+        'name' => 'Ištrinti gamintojus',
     ],
     'companies'   => [
         'name' => 'Įmonės',
-        'note'       => 'Grants access to the Companies section of the application.',
+        'note'       => 'Suteikia prieigą prie programos Įmonių skilties.',
     ],
     'companiesview' => [
-        'name' => 'View Companies',
+        'name' => 'Peržiūrėti įmones',
     ],
     'companiescreate' => [
-        'name' => 'Create New Companies',
+        'name' => 'Sukurti įmones',
     ],
     'companiesedit' => [
-        'name' => 'Edit Companies',
+        'name' => 'Redaguoti įmones',
     ],
     'companiesdelete' => [
-        'name' => 'Delete Companies',
+        'name' => 'Ištrinti įmones',
     ],
     'user-self-accounts' => [
-        'name' => 'User Self Accounts',
-        'note'       => 'Grants non-admin users the ability to manage certain aspects of their own user accounts.',
+        'name' => 'Naudotojų asmeninės paskyros',
+        'note'       => 'Administratoriaus teisių neturintiems naudotojams suteikia galimybę tvarkyti tam tikrus jų naudotojo paskyros aspektus.',
     ],
     'selftwo-factor' => [
-        'name' => 'Manage Two-Factor Authentication',
-        'note'       => 'Allows users to enable, disable, and manage two-factor authentication for their own accounts.',
+        'name' => 'Tvarkyti dviejų veiksnių autentifikaciją',
+        'note'       => 'Leidžia naudotojams įjungti, išjungti ir valdyti dviejų veiksnių autentifikavimą savo paskyroms.',
     ],
     'selfapi' => [
-        'name' => 'Manage API Tokens',
-        'note'       => 'Allows users to create, view, and revoke their own API tokens. User tokens will have the same permissions as the user who created them.',
+        'name' => 'Tvarkyti API prieigos raktus',
+        'note'       => 'Leidžia naudotojams kurti, peržiūrėti ir atšaukti savo API prieigos raktus. Naudotojo prieigos raktai turės tokias pačias teises kaip ir juos sukūręs naudotojas.',
     ],
     'selfedit-location' => [
-        'name' => 'Edit Location',
-        'note'       => 'Allows users to edit the location associated with their own user account.',
+        'name' => 'Redaguoti vietą',
+        'note'       => 'Leidžia naudotojams redaguoti su jų naudotojo paskyra susietą vietą.',
     ],
     'selfcheckout-assets' => [
-        'name' => 'Self Check Out Assets',
-        'note'       => 'Allows users to check out assets to themselves without admin intervention.',
+        'name' => 'Savarankiškai prisiskirti turtą',
+        'note'       => 'Leidžia naudotojams patiems prisiskirti turtą be administratoriaus įsikišimo.',
     ],
     'selfview-purchase-cost' => [
-        'name' => 'View Purchase Cost',
-        'note'       => 'Allows users to view the purchase cost of items in their account view.',
+        'name' => 'Peržiūrėti įsigijimo kainą',
+        'note'       => 'Leidžia naudotojams peržiūrėti įsigijimo kainą jų paskyros rodinyje.',
     ],
 
     'depreciations' => [
-        'name' => 'Depreciation Management',
-        'note'       => 'Allows users to manage and view asset depreciation details.',
+        'name' => 'Nusidėvėjimo valdymas',
+        'note'       => 'Leidžia naudotojams valdyti ir peržiūrėti turto nusidėvėjimo informaciją.',
     ],
     'depreciationsview' => [
-        'name' => 'View Depreciation Details',
+        'name' => 'Peržiūrėti nusidėvėjimo informaciją',
     ],
     'depreciationsedit' => [
-        'name' => 'Edit Depreciation Settings',
+        'name' => 'Redaguoti nusidėvėjimo nustatymus',
     ],
     'depreciationsdelete' => [
-        'name' => 'Delete Depreciation Records',
+        'name' => 'Ištrinti nusidėvėjimo įrašus',
     ],
     'depreciationscreate' => [
-        'name' => 'Create Depreciation Records',
+        'name' => 'Sukurti nusidėvėjimo įrašus',
     ],
 
-    'grant_all' => 'Grant all permissions for :area',
-    'deny_all' => 'Deny all permissions for :area',
-    'inherit_all' => 'Inherit all permissions for :area from permission groups',
-    'grant' => 'Grant Permission for :area',
-    'deny' => 'Deny Permission for :area',
-    'inherit' => 'Inherit Permission for :area from permission groups',
-    'use_groups' => 'We strongly suggest using Permission Groups instead of assigning individual permissions for easier management.'
+    'grant_all' => 'Suteikti visas teises į :area',
+    'deny_all' => 'Nesuteikti visų teisių į :area',
+    'inherit_all' => 'Paveldėti visas teises į :area iš teisių grupių',
+    'grant' => 'Suteikti teisę į :area',
+    'deny' => 'Nesuteikti teisės į :area',
+    'inherit' => 'Paveldėti teisę į :area iš teisių grupių',
+    'use_groups' => 'Siekiant lengvesnio valdymo, primygtinai rekomenduojame naudoti leidimų grupes, o ne priskirti individualius leidimus.'
 
 );

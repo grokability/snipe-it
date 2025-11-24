@@ -79,6 +79,7 @@ return [
     'generate_backup'			=> 'Vytvořit zálohu',
     'google_workspaces'         => 'Pracovní prostory Google',
     'header_color'              => 'Barva záhlaví',
+    'header_color_help'         => 'Scroll up to the top of the screen to preview the header color.',
     'info'                      => 'Tato nastavení umožňují zvolit určité prvky instalace.',
     'label_logo_size'           => 'Čtvercová loga vypadají nejlépe - zobrazí se vpravo nahoře v každém inventárním číslem. ',
     'laravel'                   => 'Verze Laravel',
@@ -424,6 +425,7 @@ Tím zabráníte systému Snipe-IT v pokusu načítat avatary z Gravataru nebo j
     'redirect_url' => 'Přesměrování URL',
     'client_secret' => 'Client Secret',
     'client_id' => 'Client ID',
+    'too_many_users_to_show' => 'The number of users (:count) is larger than the unpaginated record limit (:max). Use the bulk user edit tool to manage group memberships.',
 
     'username_formats' => [
         'username_format'		=> 'Formát uživatelského jména',

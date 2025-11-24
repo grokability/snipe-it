@@ -79,6 +79,7 @@ return [
     'generate_backup'			=> 'Genereer een backup',
     'google_workspaces'         => 'Google Workspaces',
     'header_color'              => 'Kleur van koptekst',
+    'header_color_help'         => 'Scroll up to the top of the screen to preview the header color.',
     'info'                      => 'Deze instellingen laten jou specifieke aspecten aanpassen van jou installatie.',
     'label_logo_size'           => 'Vierkante logo\'s zien er het beste uit - zullen worden weergegeven in de rechterbovenhoek van elk asset label. ',
     'laravel'                   => 'Laravel Versie',
@@ -423,6 +424,7 @@ return [
     'redirect_url' => 'Omleidings URL',
     'client_secret' => 'Client Secret',
     'client_id' => 'Client ID',
+    'too_many_users_to_show' => 'The number of users (:count) is larger than the unpaginated record limit (:max). Use the bulk user edit tool to manage group memberships.',
 
     'username_formats' => [
         'username_format'		=> 'Gebruikersnaam indeling',

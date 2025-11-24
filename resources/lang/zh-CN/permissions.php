@@ -16,68 +16,68 @@ return array(
     */
 
     "superuser" => [
-        'name' => 'Super User',
+        'name' => '超级用户',
         'note'       => 'Determines whether the user has full access to all aspects of the admin. This setting overrides ALL more specific and restrictive permissions throughout the system. ',
     ],
     'admin' => [
-        'name' => 'Admin Access',
+        'name' => '管理权限',
         'note'       => 'Determines whether the user has access to most aspects of the system EXCEPT the System Admin Settings. These users will be able to manage users, locations, categories, etc, but ARE constrained by Full Multiple Company Support if it is enabled.',
     ],
 
     'import' => [
-        'name' => 'CSV Import',
+        'name' => 'CSV 导入',
         'note'       => 'This will allow users to import even if access to users, assets, etc is denied elsewhere.',
     ],
 
     'reports' => [
-        'name' => 'Reports Access',
+        'name' => '报告访问',
         'note'       => 'Determines whether the user has access to the Reports section of the application.',
     ],
 
     'assets' =>
         [
             'name' => '资产',
-            'note' => 'Grants access to the Assets section of the application.',
+            'note' => '授予访问应用程序资产部分的权限。',
     ],
 
     'assetsview' => [
-        'name' => 'View Assets',
+        'name' => '查看资产',
     ],
 
     'assetscreate' => [
-        'name' => 'Create New Assets',
+        'name' => '新增资产',
     ],
 
     'assetsedit' => [
-        'name' => 'Edit Assets',
+        'name' => '编辑资产',
     ],
 
     'assetsdelete' => [
-        'name' => 'Delete Assets',
+        'name' => '删除资产',
     ],
 
     'assetscheckin' => [
-        'name' => 'Check In',
+        'name' => '签入',
         'note' => 'Check assets back into inventory that are currently checked out.',
     ],
 
     'assetscheckout' => [
-        'name' => 'Check Out',
-        'note' => 'Assign assets in inventory by checking them out.',
+        'name' => '签出',
+        'note' => '办理资产签出，以完成库存分配。',
     ],
 
     'assetsaudit' => [
-        'name' => 'Audit Assets',
-        'note' => 'Allows the user to mark an asset as physically inventoried.',
+        'name' => '审计资产',
+        'note' => '允许用户将资产标记为实盘。',
     ],
 
     'assetsviewrequestable' => [
-        'name' => 'View Requestable Assets',
+        'name' => '查看可请求资源',
         'note' => 'Allows the user to view assets that are marked as requestable.',
     ],
 
     'assetsviewencrypted-custom-fields' => [
-        'name' => 'View Encrypted Custom Fields',
+        'name' => '查看加密的自定义字段',
         'note' => 'Allows the user to view and modify encrypted custom fields on assets.',
     ],
 
@@ -87,27 +87,27 @@ return array(
     ],
 
     'accessoriesview' => [
-        'name' => 'View Accessories',
+        'name' => '查看配件',
     ],
     'accessoriescreate' => [
-        'name' => 'Create New Accessories',
+        'name' => '新增附件',
     ],
     'accessoriesedit' => [
-        'name' => 'Edit Accessories',
+        'name' => '编辑配件',
     ],
     'accessoriesdelete' => [
-        'name' => 'Delete Accessories',
+        'name' => '删除配件',
     ],
     'accessoriescheckout' => [
-        'name' => 'Check Out Accessories',
-        'note' => 'Assign accessories in inventory by checking them out.',
+        'name' => '签出配件',
+        'note' => '通过签出分配在库存中的配件。',
     ],
     'accessoriescheckin' => [
-        'name' => 'Check In Accessories',
+        'name' => '归还配件',
         'note' => 'Check accessories back into inventory that are currently checked out.',
     ],
     'accessoriesfiles' => [
-        'name' => 'Manage Accessory Files',
+        'name' => '管理配件文件',
         'note' => 'Allows the user to upload, download, and delete files associated with accessories.',
     ],
     'consumables'   => [
@@ -115,23 +115,23 @@ return array(
         'note'       => 'Grants access to the Consumables section of the application.',
     ],
     'consumablesview' => [
-        'name' => 'View Consumables',
+        'name' => '查看耗材',
     ],
     'consumablescreate' => [
-        'name' => 'Create New Consumables',
+        'name' => '新增消耗品',
     ],
     'consumablesedit' => [
-        'name' => 'Edit Consumables',
+        'name' => '编辑耗材',
     ],
     'consumablesdelete' => [
-        'name' => 'Delete Consumables',
+        'name' => '删除耗材',
     ],
     'consumablescheckout' => [
-        'name' => 'Check Out Consumables',
+        'name' => '签出耗材',
         'note' => 'Assign consumables in inventory by checking them out.',
     ],
     'consumablesfiles' => [
-        'name' => 'Manage Consumable Files',
+        'name' => '管理耗材文件',
         'note' => 'Allows the user to upload, download, and delete files associated with consumables.',
     ],
     'licenses'   => [
@@ -139,59 +139,59 @@ return array(
         'note'       => 'Grants access to the Licenses section of the application.',
     ],
     'licensesview' => [
-        'name' => 'View Licenses',
+        'name' => '查看许可证',
     ],
     'licensescreate' => [
-        'name' => 'Create New Licenses',
+        'name' => '新增许可证',
     ],
     'licensesedit' => [
-        'name' => 'Edit Licenses',
+        'name' => '编辑许可证',
     ],
     'licensesdelete' => [
-        'name' => 'Delete Licenses',
+        'name' => '删除许可证',
     ],
     'licensescheckout' => [
-        'name' => 'Assign Licenses',
-        'note' => 'Allows the user to assign licenses to assets or users.',
+        'name' => '分配许可证',
+        'note' => '允许用户给资产或用户分配许可证。',
         ],
     'licensescheckin' => [
-        'name' => 'Unassign Licenses',
-        'note' => 'Allows the user to unassign licenses from assets or users.',
+        'name' => '取消分配许可证',
+        'note' => '允许用户取消分配给资产或用户的许可证。',
     ],
     'licensesfiles' => [
-        'name' => 'Manage License Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with licenses.',
+        'name' => '管理许可文件',
+        'note' => '允许用户上传、下载和删除与许可证相关的文件。',
     ],
     'licenseskeys' => [
-        'name' => 'Manage License Keys',
-        'note' => 'Allows the user to view product keys associated with licenses.',
+        'name' => '管理许可证密钥',
+        'note' => '允许用户查看与许可证相关联的产品密钥。',
     ],
     'components'   => [
         'name' => '组件',
-        'note'       => 'Grants access to the Components section of the application.',
+        'note'       => '授予访问应用程序组件部分的权限。',
     ],
     'componentsview' => [
-        'name' => 'View Components',
+        'name' => '查看组件',
     ],
     'componentscreate' => [
-        'name' => 'Create New Components',
+        'name' => '新增组件',
     ],
     'componentsedit' => [
-        'name' => 'Edit Components',
+        'name' => '编辑组件',
     ],
     'componentsdelete' => [
-        'name' => 'Delete Components',
+        'name' => '删除组件',
     ],
     'componentsfiles' => [
-        'name' => 'Manage Component Files',
+        'name' => '管理组件文件',
         'note' => 'Allows the user to upload, download, and delete files associated with components.',
     ],
     'componentscheckout' => [
-        'name' => 'Check Out Components',
+        'name' => '签出组件',
         'note' => 'Assign components in inventory by checking them out.',
     ],
     'componentscheckin' => [
-        'name' => 'Check In Components',
+        'name' => '归还组件',
         'note' => 'Check components back into inventory that are currently checked out.',
     ],
     'kits'   => [
@@ -199,126 +199,126 @@ return array(
         'note'       => 'Grants access to the Predefined Kits section of the application.',
     ],
     'kitsview' => [
-        'name' => 'View Predefined Kits',
+        'name' => '查看预定义套件',
     ],
     'kitscreate' => [
-        'name' => 'Create New Predefined Kits',
+        'name' => '新增预定义套件',
     ],
     'kitsedit' => [
-        'name' => 'Edit Predefined Kits',
+        'name' => '编辑预定义套件',
     ],
     'kitsdelete' => [
-        'name' => 'Delete Predefined Kits',
+        'name' => '删除预定义套件',
     ],
     'users'   => [
         'name' => '用户',
-        'note'       => 'Grants access to the Users section of the application.',
+        'note'       => '授予应用程序用户部分的访问权限。',
     ],
     'usersview' => [
         'name' => '查看用户',
     ],
     'userscreate' => [
-        'name' => 'Create New Users',
+        'name' => '创建新用户',
     ],
     'usersedit' => [
-        'name' => 'Edit Users',
+        'name' => '编辑用户',
     ],
     'usersdelete' => [
-        'name' => 'Delete Users',
+        'name' => '删除用户',
     ],
     'models'   => [
-        'name' => 'Models',
-        'note'       => 'Grants access to the Models section of the application.',
+        'name' => '资产型号',
+        'note'       => '授予访问应用程序资产型号部分的权限。',
     ],
     'modelsview' => [
         'name' => '查看型号',
     ],
 
     'modelscreate' => [
-        'name' => 'Create New Models',
+        'name' => '新增资产型号',
     ],
     'modelsedit' => [
-        'name' => 'Edit Models',
+        'name' => '编辑资产型号',
     ],
     'modelsdelete' => [
-        'name' => 'Delete Models',
+        'name' => '删除资产型号',
     ],
     'categories'   => [
         'name' => '分类',
         'note'       => 'Grants access to the Categories section of the application.',
     ],
     'categoriesview' => [
-        'name' => 'View Categories',
+        'name' => '查看分类',
     ],
     'categoriescreate' => [
-        'name' => 'Create New Categories',
+        'name' => '新增分类',
     ],
     'categoriesedit' => [
-        'name' => 'Edit Categories',
+        'name' => '编辑分类',
     ],
     'categoriesdelete' => [
-        'name' => 'Delete Categories',
+        'name' => '删除分类',
     ],
     'departments'   => [
         'name' => '部门',
         'note'       => 'Grants access to the Departments section of the application.',
     ],
     'departmentsview' => [
-        'name' => 'View Departments',
+        'name' => '查看部门',
     ],
     'departmentscreate' => [
-        'name' => 'Create New Departments',
+        'name' => '新增部门',
     ],
     'departmentsedit' => [
-        'name' => 'Edit Departments',
+        'name' => '编辑部门',
     ],
     'departmentsdelete' => [
-        'name' => 'Delete Departments',
+        'name' => '删除部门',
     ],
     'locations'   => [
         'name' => '地理位置',
         'note'       => 'Grants access to the Locations section of the application.',
     ],
     'locationsview' => [
-        'name' => 'View Locations',
+        'name' => '查看位置',
     ],
     'locationscreate' => [
-        'name' => 'Create New Locations',
+        'name' => '新增位置',
     ],
     'locationsedit' => [
-        'name' => 'Edit Locations',
+        'name' => '编辑位置',
     ],
     'locationsdelete' => [
-        'name' => 'Delete Locations',
+        'name' => '删除位置',
     ],
     'status-labels'   => [
         'name' => '状态标签',
         'note'       => 'Grants access to the Status Labels section of the application used by Assets.',
     ],
     'statuslabelsview' => [
-        'name' => 'View Status Labels',
+        'name' => '查看状态标签',
     ],
     'statuslabelscreate' => [
-        'name' => 'Create New Status Labels',
+        'name' => '创建新状态标签',
     ],
     'statuslabelsedit' => [
-        'name' => 'Edit Status Labels',
+        'name' => '编辑状态标签',
     ],
     'statuslabelsdelete' => [
-        'name' => 'Delete Status Labels',
+        'name' => '删除状态标签',
     ],
     'custom-fields'   => [
         'name' => '自定义字段',
         'note'       => 'Grants access to the Custom Fields section of the application used by Assets.',
     ],
     'customfieldsview' => [
-        'name' => 'View Custom Fields',
+        'name' => '查看自定义字段',
     ],
     'customfieldscreate' => [
-        'name' => 'Create New Custom Fields',
+        'name' => '创建新自定义字段',
     ],
     'customfieldsedit' => [
-        'name' => 'Edit Custom Fields',
+        'name' => '编辑自定义字段',
     ],
     'customfieldsdelete' => [
         'name' => 'Delete Custom Fields',
@@ -328,96 +328,96 @@ return array(
         'note'       => 'Grants access to the Suppliers section of the application.',
     ],
     'suppliersview' => [
-        'name' => 'View Suppliers',
+        'name' => '查看供应商',
     ],
     'supplierscreate' => [
-        'name' => 'Create New Suppliers',
+        'name' => '新增供应商',
     ],
     'suppliersedit' => [
-        'name' => 'Edit Suppliers',
+        'name' => '编辑供应商',
     ],
     'suppliersdelete' => [
-        'name' => 'Delete Suppliers',
+        'name' => '删除供应商',
     ],
     'manufacturers'   => [
         'name' => '制造商',
         'note'       => 'Grants access to the Manufacturers section of the application.',
     ],
     'manufacturersview' => [
-        'name' => 'View Manufacturers',
+        'name' => '查看制造商',
     ],
     'manufacturerscreate' => [
-        'name' => 'Create New Manufacturers',
+        'name' => '创建新的制造商',
     ],
     'manufacturersedit' => [
-        'name' => 'Edit Manufacturers',
+        'name' => '编辑制造商',
     ],
     'manufacturersdelete' => [
-        'name' => 'Delete Manufacturers',
+        'name' => '删除制造商',
     ],
     'companies'   => [
         'name' => '公司',
         'note'       => 'Grants access to the Companies section of the application.',
     ],
     'companiesview' => [
-        'name' => 'View Companies',
+        'name' => '查看公司',
     ],
     'companiescreate' => [
-        'name' => 'Create New Companies',
+        'name' => '创建新公司',
     ],
     'companiesedit' => [
-        'name' => 'Edit Companies',
+        'name' => '编辑公司',
     ],
     'companiesdelete' => [
-        'name' => 'Delete Companies',
+        'name' => '删除公司',
     ],
     'user-self-accounts' => [
-        'name' => 'User Self Accounts',
-        'note'       => 'Grants non-admin users the ability to manage certain aspects of their own user accounts.',
+        'name' => '用户自己账户',
+        'note'       => '授予非管理员用户管理自己用户帐户某些方面的能力。',
     ],
     'selftwo-factor' => [
-        'name' => 'Manage Two-Factor Authentication',
+        'name' => '管理两步验证',
         'note'       => 'Allows users to enable, disable, and manage two-factor authentication for their own accounts.',
     ],
     'selfapi' => [
-        'name' => 'Manage API Tokens',
+        'name' => '管理 API 令牌',
         'note'       => 'Allows users to create, view, and revoke their own API tokens. User tokens will have the same permissions as the user who created them.',
     ],
     'selfedit-location' => [
-        'name' => 'Edit Location',
+        'name' => '编辑位置',
         'note'       => 'Allows users to edit the location associated with their own user account.',
     ],
     'selfcheckout-assets' => [
-        'name' => 'Self Check Out Assets',
+        'name' => '自我签出资产',
         'note'       => 'Allows users to check out assets to themselves without admin intervention.',
     ],
     'selfview-purchase-cost' => [
-        'name' => 'View Purchase Cost',
+        'name' => '查看购买成本',
         'note'       => 'Allows users to view the purchase cost of items in their account view.',
     ],
 
     'depreciations' => [
-        'name' => 'Depreciation Management',
-        'note'       => 'Allows users to manage and view asset depreciation details.',
+        'name' => '折旧管理',
+        'note'       => '允许用户管理和查看资产折旧详情。',
     ],
     'depreciationsview' => [
-        'name' => 'View Depreciation Details',
+        'name' => '查看详细折旧信息',
     ],
     'depreciationsedit' => [
-        'name' => 'Edit Depreciation Settings',
+        'name' => '编辑折旧设置',
     ],
     'depreciationsdelete' => [
-        'name' => 'Delete Depreciation Records',
+        'name' => '删除折旧记录',
     ],
     'depreciationscreate' => [
-        'name' => 'Create Depreciation Records',
+        'name' => '新增折旧记录',
     ],
 
-    'grant_all' => 'Grant all permissions for :area',
-    'deny_all' => 'Deny all permissions for :area',
+    'grant_all' => '为 :area 授予所有权限',
+    'deny_all' => '拒绝 :area 的所有权限',
     'inherit_all' => 'Inherit all permissions for :area from permission groups',
-    'grant' => 'Grant Permission for :area',
-    'deny' => 'Deny Permission for :area',
+    'grant' => '授予:area 权限',
+    'deny' => '拒绝 :area 的权限',
     'inherit' => 'Inherit Permission for :area from permission groups',
     'use_groups' => 'We strongly suggest using Permission Groups instead of assigning individual permissions for easier management.'
 

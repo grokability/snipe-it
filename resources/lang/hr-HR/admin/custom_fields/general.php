@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Manage',
     'field'		                => 'Polje',
     'about_fieldsets_title'		=> 'O karticama Fieldsets',
-    'about_fieldsets_text'		=> 'Fieldsets allow you to create groups of custom fields that are frequently re-used for specific asset model types.',
+    'about_fieldsets_text'		=> 'Poljaci omogućuju stvaranje grupa prilagođenih polja koja se često upotrebljavaju za određene vrste imovine.',
     'custom_format'             => 'Custom Regex format...',
     'encrypt_field'      	        => 'Šifriranje vrijednosti ovog polja u bazi podataka',
     'encrypt_field_help'      => 'UPOZORENJE: Šifriranje polja čini ga nedokučivim.',

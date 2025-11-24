@@ -20,9 +20,9 @@ return array(
         'confirm'   => '你确定要删除这个供应商吗？',
         'error'   => '删除供应商的过程中出现了一点儿问题，请重试。',
         'success' => '供应商成功被删除。',
-        'not_found'               => 'Supplier not found.',
-        'bulk_success'            => 'Suppliers were deleted successfully.',
-        'partial_success'        => 'Supplier deleted successfully. See additional information below. | :count suppliers were deleted successfully. See additional information below.',
+        'not_found'               => '找不到供应商。',
+        'bulk_success'            => '供应商已成功删除。',
+        'partial_success'        => '供应商已成功删除。请参阅下面的额外信息。 | :count 个供应商已成功删除。请参阅下面的额外信息。',
     )
 
 );

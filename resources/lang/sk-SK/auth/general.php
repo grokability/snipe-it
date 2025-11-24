@@ -14,7 +14,7 @@ return [
     'username_help_bottom'          => 'Vaše používateľské meno a e-mailová adresa <em>môžu</em> byť rovnaké, ale nemusia, v závislosti od vašej konfigurácie. Ak si nepamätáte svoje používateľské meno, obráťte sa na správcu. <br><br><strong>Používateľským menám bez priradenej e-mailovej adresy nebude odoslaný odkaz na obnovenie hesla.</strong> ',
     'google_login'                  => 'Prihlásenie s Google Workspace',
     'google_login_failed'           => 'Google prihlásenie zlyhalo, prosím skúste znovu.',
-    'invite_password_expires'       => 'This password reset link will expire on :expire_date. You can use the manual password reset link to receive a new reset token by clicking here',
+    'invite_password_expires'       => 'Platnosť tohto odkazu na obnovenie hesla vyprší dňa: dátum_expire. Nový token na obnovenie hesla môžete získať kliknutím sem pomocou odkazu na manuálne obnovenie hesla',
 
 ];
 

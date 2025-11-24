@@ -79,6 +79,7 @@ return [
     'generate_backup'			=> 'Samee kaabta',
     'google_workspaces'         => 'Goobaha shaqada Google',
     'header_color'              => 'Midabka madaxa',
+    'header_color_help'         => 'Scroll up to the top of the screen to preview the header color.',
     'info'                      => 'Dejintani waxay kuu ogolaanayaan inaad habayso qaybo ka mid ah rakibaadaada.',
     'label_logo_size'           => 'Calaamadaha labajibbaaran waxay u muuqdaan kuwa ugu fiican - waxaa lagu muujin doonaa midigta sare ee calaamad kasta oo hanti ah. ',
     'laravel'                   => 'Nooca Laravel',
@@ -423,6 +424,7 @@ return [
     'redirect_url' => 'Redirect URL',
     'client_secret' => 'Client Secret',
     'client_id' => 'Client ID',
+    'too_many_users_to_show' => 'The number of users (:count) is larger than the unpaginated record limit (:max). Use the bulk user edit tool to manage group memberships.',
 
     'username_formats' => [
         'username_format'		=> 'Qaabka magaca isticmaalaha',

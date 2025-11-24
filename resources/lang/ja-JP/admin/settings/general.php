@@ -79,6 +79,7 @@ return [
     'generate_backup'			=> 'バックアップを作成',
     'google_workspaces'         => 'Google ワークスペース',
     'header_color'              => 'ヘッダーカラー',
+    'header_color_help'         => 'Scroll up to the top of the screen to preview the header color.',
     'info'                      => 'これらの設定は、あなたの設備の特性に合わせてカスタマイズできます。',
     'label_logo_size'           => 'ロゴは各アセットラベルの右上に表示されます。形は正方形が最良です。 ',
     'laravel'                   => 'Laravelバージョン',
@@ -426,6 +427,7 @@ return [
     'redirect_url' => 'リダイレクトURL',
     'client_secret' => 'Client Secret',
     'client_id' => 'Client ID',
+    'too_many_users_to_show' => 'The number of users (:count) is larger than the unpaginated record limit (:max). Use the bulk user edit tool to manage group memberships.',
 
     'username_formats' => [
         'username_format'		=> 'ユーザー名の書式',

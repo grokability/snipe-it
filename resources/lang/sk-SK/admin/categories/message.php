@@ -20,9 +20,9 @@ return array(
     'delete' => array(
         'confirm'                => 'Ste si istý, že chceete odstrániť túto kategóriu?',
         'error'                  => 'Pri odstraňovaní kategórie sa vyskytla chyba. Skúste prosím znovu.',
-        'success'                => 'Category was deleted successfully.',
-        'bulk_success'           => 'Categories were deleted successfully.',
-        'partial_success'        => 'Category deleted successfully. See additional information below. | :count categories were deleted successfully. See additional information below.',
+        'success'                => 'Kategória bola úspešne odstránená.',
+        'bulk_success'           => 'Kategórie boli úspešne odstránené.',
+        'partial_success'        => 'Kategória bola úspešne odstránená. Podrobné informácie nižšie. | :count kategórií bolo úspešne odstránených. Podrobné informácie nižšie.',
     )
 
 );

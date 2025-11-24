@@ -291,16 +291,16 @@
 
                       <div class="col-md-12">
 
-                      <fieldset name="optional_details">
+                      <fieldset>
 
                           <x-form-legend>
-                              <h4 id="optional_details" class="remember-toggle optional_details">
-                                  <x-icon type="caret-right" class="fa-fw" id="toggle-arrow-optional_details" />
+                              <h4 id="optional_user_details" class="remember-toggle">
+                                  <x-icon type="caret-down" class="fa-fw" id="toggle-arrow-optional_user_details" />
                                   {{ trans('admin/hardware/form.optional_infos') }}
                               </h4>
                           </x-form-legend>
 
-                          <div class="col-md-12 toggle-content-optional_details" style="display:none">
+                          <div class="col-md-12 toggle-content-optional_user_details">
 
                               <!-- everything here should be what is considered optional -->
                               <br>

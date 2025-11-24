@@ -20,9 +20,9 @@ return array(
     'delete' => array(
         'confirm'                => 'Вы уверены, что хотите удалить категорию?',
         'error'                  => 'При удалении категории возникла проблема. Попробуйте снова.',
-        'success'                => 'Category was deleted successfully.',
-        'bulk_success'           => 'Categories were deleted successfully.',
-        'partial_success'        => 'Category deleted successfully. See additional information below. | :count categories were deleted successfully. See additional information below.',
+        'success'                => 'Аксессуар был успешно удалён.',
+        'bulk_success'           => 'Категория удалена.',
+        'partial_success'        => 'Категория успешно удалена. Смотрите дополнительную информацию ниже. | :count категории были успешно удалены. Смотрите дополнительную информацию ниже.',
     )
 
 );

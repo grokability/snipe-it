@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Manage',
     'field'		                => 'Талбар',
     'about_fieldsets_title'		=> 'Fieldsets-ийн тухай',
-    'about_fieldsets_text'		=> 'Fieldsets allow you to create groups of custom fields that are frequently re-used for specific asset model types.',
+    'about_fieldsets_text'		=> 'Fieldsets нь тусгай төрлийн загварт зориулж ашиглагддаг байнга ашигладаг тусгайлсан талбарын бүлгүүдийг үүсгэх боломжийг олгодог.',
     'custom_format'             => 'Custom Regex format...',
     'encrypt_field'      	        => 'Энэ талбарын утгыг мэдээллийн санд оруулна уу',
     'encrypt_field_help'      => 'АНХААРУУЛГА: Талбарыг шифрлэх нь үүнийг ойлгомжгүй болгодог.',

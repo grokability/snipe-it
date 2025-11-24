@@ -21,7 +21,7 @@
     </style>
 
 
-    <form method="POST" action="{{ route('settings.saml.save') }}" accept-charset="UTF-8" autocomplete="false"  role="form">
+    <form method="POST" action="{{ route('settings.saml.save') }}" accept-charset="UTF-8" autocomplete="false"  role="form" class="form-horizontal">
     <!-- CSRF Token -->
     {{csrf_field()}}
 

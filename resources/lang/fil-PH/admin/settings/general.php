@@ -79,6 +79,7 @@ return [
     'generate_backup'			=> 'Magsagawa ng Backup',
     'google_workspaces'         => 'Google Workspaces',
     'header_color'              => 'Ang Kulay ng Header',
+    'header_color_help'         => 'Scroll up to the top of the screen to preview the header color.',
     'info'                      => 'Ang mga settings na ito ay pwedeng magbigay paalam sa sa iyo na i-customise ng iilang mga speto ng iyong pag-iinstall.',
     'label_logo_size'           => 'Square logos look best - will be displayed in the top right of each asset label. ',
     'laravel'                   => 'Ang Laravel na Bersyon',
@@ -423,6 +424,7 @@ return [
     'redirect_url' => 'Redirect URL',
     'client_secret' => 'Client Secret',
     'client_id' => 'Client ID',
+    'too_many_users_to_show' => 'The number of users (:count) is larger than the unpaginated record limit (:max). Use the bulk user edit tool to manage group memberships.',
 
     'username_formats' => [
         'username_format'		=> 'Ang Pormat sa Pangalan ng Gumagamit',

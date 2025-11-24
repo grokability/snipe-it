@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Manage',
     'field'		                => 'களம்',
     'about_fieldsets_title'		=> 'புலங்கள் பற்றி',
-    'about_fieldsets_text'		=> 'Fieldsets allow you to create groups of custom fields that are frequently re-used for specific asset model types.',
+    'about_fieldsets_text'		=> 'குறிப்பிட்ட சொத்து மாதிரி வகைகளுக்கு அடிக்கடி பயன்படுத்தப்படும் மீண்டும் பயன்படுத்தப்படும் தனிபயன் துறைகள் குழுக்களை உருவாக்க புலங்கள் அனுமதிக்கின்றன.',
     'custom_format'             => 'Custom Regex format...',
     'encrypt_field'      	        => 'தரவுத்தளத்தில் இந்த களத்தின் மதிப்பை குறியாக்கு',
     'encrypt_field_help'      => 'எச்சரிக்கை: ஒரு புலத்தை குறியாக்காதே அது தெரியாததாக்குகிறது.',

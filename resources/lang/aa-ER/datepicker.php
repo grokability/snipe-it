@@ -13,6 +13,8 @@ return array(
     |
     */
 
+    'week_start_select' => 'crwdns14326:0crwdne14326:0',
+    'week_start' => 'crwdns14328:0crwdne14328:0',
     'today' => 'crwdns13298:0crwdne13298:0',
     'clear' => 'crwdns13300:0crwdne13300:0',
     'days' => [

@@ -93,6 +93,22 @@ class Settings
             'webhook_channel' => '#it',
         ]);
     }
+    public function enableMicrosoftTeamsWebhook(): Settings
+    {
+        return $this->update([
+            'webhook_selected' => 'microsoft',
+            'webhook_endpoint' => 'https://defaultd07ceb04416641fca1b9d3e0ac7600.84.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/1babbc7a3cdd4cf99c0fbed4367cf147/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=sVXmAYF5luz3oOEjvN-G7mJqEEvFjBTuAG8c3Qmkg',
+        ]);
+    }
+
+    public function enableGoogleChatWebhook(): Settings
+    {
+        return $this->update([
+            'webhook_selected' => 'google',
+            'webhook_botname'  => 'SnipeBot5000',
+            'webhook_endpoint' => 'https://chat.googleapis.com/v1/spaces/AAAATQckuT4/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=bZDaFDK4lO78HhHmC8BEWI6aAKkgqX2gFv2gHVAc8',
+        ]);
+    }
 
     public function disableSlackWebhook(): Settings
     {

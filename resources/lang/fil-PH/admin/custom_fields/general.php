@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Manage',
     'field'		                => 'Ang Field',
     'about_fieldsets_title'		=> 'Ang Tungkol sa Fieldsets',
-    'about_fieldsets_text'		=> 'Fieldsets allow you to create groups of custom fields that are frequently re-used for specific asset model types.',
+    'about_fieldsets_text'		=> 'Ang Fieldsets ay nagbibigay permiso sa iyo na magsagawa ng grupo ng kustom na mga fields na madalas na ginagamit muli para sa partikular na tipo ng modelo ng asset.',
     'custom_format'             => 'Custom Regex format...',
     'encrypt_field'      	        => 'I-encrypt ang balyu sa field na ito sa database',
     'encrypt_field_help'      => 'BABALA: Ang pag-encrypt ng field ay maaaring maging hindi na ito maisaliksik.',

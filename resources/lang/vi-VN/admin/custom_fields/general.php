@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Quản lý',
     'field'		                => 'Cánh đồng',
     'about_fieldsets_title'		=> 'Giới thiệu về các trường',
-    'about_fieldsets_text'		=> 'Các trường cho phép bạn tạo các nhóm trường tuỳ chỉnh thường xuyên được sử dụng lại cho các mô hình tài sản cụ thể.',
+    'about_fieldsets_text'		=> 'Các trường cho phép bạn tạo các nhóm các trường tùy chỉnh thường được sử dụng lại cho các loại mô hình tài sản cụ thể.',
     'custom_format'             => 'Định dạng tuỳ chỉnh...',
     'encrypt_field'      	        => 'Mã hóa giá trị của trường này trong cơ sở dữ liệu',
     'encrypt_field_help'      => 'CẢNH BÁO: Mã hóa một trường làm cho nó không thể tìm kiếm được.',
