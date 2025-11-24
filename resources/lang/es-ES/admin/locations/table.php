@@ -12,8 +12,8 @@ return [
     'create'                    => 'Crear ubicación',
     'update'                    => 'Actualizar ubicación',
     'print_assigned'            => 'Imprimir los asignados',
-    'print_inventory'           => 'Print Inventory',
-    'print_all_assigned'        => 'Print Inventory and Assigned',
+    'print_inventory'           => 'Imprimir inventario',
+    'print_all_assigned'        => 'Imprimir inventario y asignados',
     'name'                      => 'Nombre de ubicación',
     'address'                   => 'Dirección',
     'address2'                   => 'Dirección (línea 2)',
@@ -40,5 +40,5 @@ return [
     'signed_by_finance_auditor' => 'Firmado por (Auditor de Finanzas):',
     'signed_by_location_manager' => 'Firmado por (Supervisor de la ubicación):',
     'signed_by'                 => 'Firmado por:',
-    'clone'  					=> 'Clone Location',
+    'clone'  					=> 'Clonar localización',
 ];

@@ -174,7 +174,7 @@ return [
     'ulid' => 'El campo :attribute debe ser un ULID válido.',
     'uuid' => 'El campo :attribute debe ser un UUID válido.',
     'fmcs_location' => 'El soporte completo de múltiples empresas y el alcance de la ubicación están habilitados en la Configuración de Administración, y la ubicación seleccionada y la empresa seleccionada no son compatibles.',
-    'is_unique_across_company_and_location' => 'The :attribute must be unique within the selected company and location.',
+    'is_unique_across_company_and_location' => 'El :attribute debe ser único dentro de la empresa y localización seleccionados.',
 
     /*
     |--------------------------------------------------------------------------

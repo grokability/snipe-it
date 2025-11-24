@@ -5,7 +5,7 @@ return [
     'manage'                    => 'Gestionează',
     'field'		                => 'Camp',
     'about_fieldsets_title'		=> 'Despre câmpuri',
-    'about_fieldsets_text'		=> 'Seturile de câmpuri vă permit să grupați câmpurile personalizate care sunt frecvent utilizate pentru tipuri specifice de modele ale activelor.',
+    'about_fieldsets_text'		=> 'Seturile de câmpuri vă permit să creați grupuri de câmpuri personalizate care sunt frecvent reutilizate utilizate pentru tipurile de modele specifice de materiale.',
     'custom_format'             => 'Format Regex personalizat...',
     'encrypt_field'      	        => 'Criptați valoarea acestui câmp în baza de date',
     'encrypt_field_help'      => 'AVERTISMENT: Criptarea unui câmp o face imposibilă.',

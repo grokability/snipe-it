@@ -79,6 +79,7 @@ return [
     'generate_backup'			=> 'Генерирај резевна копија',
     'google_workspaces'         => 'Google Workspaces',
     'header_color'              => 'Боја на заглавје',
+    'header_color_help'         => 'Scroll up to the top of the screen to preview the header color.',
     'info'                      => 'Овие поставки ви овозможуваат да прилагодите одредени аспекти на вашата инсталација.',
     'label_logo_size'           => 'Квадратните логоа изгледаат најдобро - ќе бидат прикажани во горниот десен дел од секоја етикета на средства. ',
     'laravel'                   => 'Laravel верзија',
@@ -423,6 +424,7 @@ return [
     'redirect_url' => 'Пренасочување на URL-то',
     'client_secret' => 'Client Secret',
     'client_id' => 'Client ID',
+    'too_many_users_to_show' => 'The number of users (:count) is larger than the unpaginated record limit (:max). Use the bulk user edit tool to manage group memberships.',
 
     'username_formats' => [
         'username_format'		=> 'Формат на корисничко име',

@@ -32,7 +32,7 @@ return [
     'asset_model'               => '型号',
     'asset_serial'              => '序列号',
     'asset_location'            => '位置',
-    'asset_checked_out'         => '已借出',
+    'asset_checked_out'         => '已签出',
     'asset_expected_checkin'    => '预计归还日期',
     'date'                      => '日期:',
     'phone'                     => '位置电话',

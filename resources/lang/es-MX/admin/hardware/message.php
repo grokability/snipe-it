@@ -2,7 +2,7 @@
 
 return [
 
-    'undeployable' 		 => 'The following assets cannot be deployed and have been removed from checkout: :asset_tags',
+    'undeployable' 		 => 'Los siguientes activos no pueden ser asignados y han sido removidos de la lista: :asset_tags',
     'does_not_exist' 	 => 'Equipo inexistente.',
     'does_not_exist_var' => 'Activo con placa :asset_tag no encontrado.',
     'no_tag' 	         => 'No se ha proporcionado ninguna placa de activo.',
@@ -20,9 +20,9 @@ return [
         'multi_success_linked' => 'Activo con etiqueta :links fue creado exitosamente.|:count activos fueron creados correctamente. :links.',
         'partial_failure' => 'No se ha podido crear un activo: Motivo: :failures|No se pudieron crear :count activos. Motivos: :failures',
         'target_not_found' => [
-            'user' => 'The assigned user could not be found.',
-            'asset' => 'The assigned asset could not be found.',
-            'location' => 'The assigned location could not be found.',
+            'user' => 'El usuario asignado no pudo ser encontrado.',
+            'asset' => 'El activo asignado no pudo ser encontrado.',
+            'location' => 'La ubicación asignada no pudo ser encontrada.',
         ],
     ],
 

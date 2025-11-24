@@ -16,7 +16,7 @@ return [
     'restore_user'		=> 'Klicken Sie hier, um sie wiederherzustellen.',
     'last_login'        => 'Letzte Anmeldung',
     'ldap_config_text'  => 'Der ausgewählte Standort wird für ALLE importierten Benutzer festgelegt. Dies wird ihren bestehenden Standort überschreiben und ist ein ungewöhnlicher Anwendungsfall, daher ist es typischerweise am besten, diese leer zu lassen.',
-    'ldap_sync_intro'   => 'Click on the button below to manually sync your LDAP users. To learn more about configuring LDAP sync to run automatically, please see the <a href=":link" target="_blank">documentation <i class="fa fa-external-link"></i></a> .',
+    'ldap_sync_intro'   => 'Klicken Sie auf die Schaltfläche unten, um Ihre LDAP-Benutzer manuell zu synchronisieren. Um mehr über die automatische Konfiguration der LDAP-Synchronisation zu erfahren, lesen Sie bitte die <a href=":link" target="_blank">-Dokumentation <i class="fa fa-external-link"></i></a>.',
     'print_assigned'    => 'Alles zugewiesene drucken',
     'email_assigned'    => 'Alles zugewiesene per Mail zusenden',
     'user_notified'     => 'Der Benutzer hat eine Liste seiner aktuell zugewiesenen Artikel per E-Mail erhalten.',

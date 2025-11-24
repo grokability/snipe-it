@@ -79,6 +79,7 @@ return [
     'generate_backup'			=> 'Háttér létrehozása',
     'google_workspaces'         => 'Google Workspaces',
     'header_color'              => 'Fejléc színe',
+    'header_color_help'         => 'Scroll up to the top of the screen to preview the header color.',
     'info'                      => 'Ezek a beállítások lehetővé teszik a telepítés egyes szempontjainak testreszabását.',
     'label_logo_size'           => 'Négyzet alakú logok jobban néznek ki - ez a logo fog megjelenni minden címke jobb felső sarkában. ',
     'laravel'                   => 'Laravel verzió',
@@ -423,6 +424,7 @@ return [
     'redirect_url' => 'Átirányítási URL',
     'client_secret' => 'Client Secret',
     'client_id' => 'Client ID',
+    'too_many_users_to_show' => 'The number of users (:count) is larger than the unpaginated record limit (:max). Use the bulk user edit tool to manage group memberships.',
 
     'username_formats' => [
         'username_format'		=> 'Felhasználónév formátum',

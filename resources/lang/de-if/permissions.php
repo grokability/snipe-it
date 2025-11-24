@@ -155,64 +155,64 @@ return array(
         'note' => 'Ermöglicht dem Benutzer, Assets oder Benutzern Lizenzen zuzuweisen.',
         ],
     'licensescheckin' => [
-        'name' => 'Unassign Licenses',
-        'note' => 'Allows the user to unassign licenses from assets or users.',
+        'name' => 'Zuweisung von Lizenzen Aufheben',
+        'note' => 'Ermöglicht dem Benutzer, die Zuweisung von Lizenzen von Assets oder Benutzern aufzuheben.',
     ],
     'licensesfiles' => [
-        'name' => 'Manage License Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with licenses.',
+        'name' => 'Lizenzdateien Verwalten',
+        'note' => 'Ermöglicht dem Benutzer das Hochladen, Herunterladen und Löschen in Verbindung mit Lizenzen.',
     ],
     'licenseskeys' => [
-        'name' => 'Manage License Keys',
-        'note' => 'Allows the user to view product keys associated with licenses.',
+        'name' => 'Lizenzschlüssel Verwalten',
+        'note' => 'Ermöglicht dem Benutzer, Produktschlüssel anzuzeigen, die mit Lizenzen verknüpft sind.',
     ],
     'components'   => [
         'name' => 'Komponenten',
-        'note'       => 'Grants access to the Components section of the application.',
+        'note'       => 'Gewährt Zugriff auf den Bereich "Komponenten" in der Anwendung.',
     ],
     'componentsview' => [
-        'name' => 'View Components',
+        'name' => 'Komponenten Anzeigen',
     ],
     'componentscreate' => [
-        'name' => 'Create New Components',
+        'name' => 'Neue Komponenten Erstellen',
     ],
     'componentsedit' => [
-        'name' => 'Edit Components',
+        'name' => 'Komponenten Bearbeiten',
     ],
     'componentsdelete' => [
-        'name' => 'Delete Components',
+        'name' => 'Komponenten Löschen',
     ],
     'componentsfiles' => [
-        'name' => 'Manage Component Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with components.',
+        'name' => 'Komponentendateien Verwalten',
+        'note' => 'Ermöglicht dem Benutzer das Hochladen, Herunterladen und Löschen in Verbindung mit Komponenten.',
     ],
     'componentscheckout' => [
-        'name' => 'Check Out Components',
-        'note' => 'Assign components in inventory by checking them out.',
+        'name' => 'Komponenten Auschecken',
+        'note' => 'Komponenten im Inventar zuweisen, indem sie ausgecheckt werden.',
     ],
     'componentscheckin' => [
-        'name' => 'Check In Components',
-        'note' => 'Check components back into inventory that are currently checked out.',
+        'name' => 'Komponenten einchecken',
+        'note' => 'Checken Sie die derzeit ausgebuchten Komponenten wieder in das Inventar ein.',
     ],
     'kits'   => [
         'name' => 'Vordefinierte Kits',
-        'note'       => 'Grants access to the Predefined Kits section of the application.',
+        'note'       => 'Gewährt Zugriff auf den Abschnitt "Vordefinierte Kits" in der Anwendung.',
     ],
     'kitsview' => [
-        'name' => 'View Predefined Kits',
+        'name' => 'Vordefinierte Kits Anzeigen',
     ],
     'kitscreate' => [
-        'name' => 'Create New Predefined Kits',
+        'name' => 'Vordefiniertes Kits Erstellen',
     ],
     'kitsedit' => [
-        'name' => 'Edit Predefined Kits',
+        'name' => 'Vordefinierte Kits Bearbeiten',
     ],
     'kitsdelete' => [
-        'name' => 'Delete Predefined Kits',
+        'name' => 'Vordefinierte Kits Löschen',
     ],
     'users'   => [
         'name' => 'Benutzer',
-        'note'       => 'Grants access to the Users section of the application.',
+        'note'       => 'Gewährt Zugriff auf den Bereich "Benutzer" in der Anwendung.',
     ],
     'predefinedfilters'   => [
         'name' => 'Vordefinierte Filter',
@@ -234,91 +234,91 @@ return array(
         'name' => 'Benutzer anzeigen',
     ],
     'userscreate' => [
-        'name' => 'Create New Users',
+        'name' => 'Neue Benutzer Anlegen',
     ],
     'usersedit' => [
-        'name' => 'Edit Users',
+        'name' => 'Benutzer Bearbeiten',
     ],
     'usersdelete' => [
-        'name' => 'Delete Users',
+        'name' => 'Benutzer löschen',
     ],
     'models'   => [
-        'name' => 'Models',
-        'note'       => 'Grants access to the Models section of the application.',
+        'name' => 'Modelle',
+        'note'       => 'Gewährt Zugriff auf den Bereich "Modelle" in der Anwendung.',
     ],
     'modelsview' => [
         'name' => 'Modelle anzeigen',
     ],
 
     'modelscreate' => [
-        'name' => 'Create New Models',
+        'name' => 'Neue Modelle Erstellen',
     ],
     'modelsedit' => [
-        'name' => 'Edit Models',
+        'name' => 'Modelle Bearbeiten',
     ],
     'modelsdelete' => [
-        'name' => 'Delete Models',
+        'name' => 'Modelle Löschen',
     ],
     'categories'   => [
         'name' => 'Kategorien',
-        'note'       => 'Grants access to the Categories section of the application.',
+        'note'       => 'Gewährt Zugriff auf den Bereich "Kategorien" in der Anwendung.',
     ],
     'categoriesview' => [
-        'name' => 'View Categories',
+        'name' => 'Kategorien Anzeigen',
     ],
     'categoriescreate' => [
-        'name' => 'Create New Categories',
+        'name' => 'Neue Kategorien Erstellen',
     ],
     'categoriesedit' => [
-        'name' => 'Edit Categories',
+        'name' => 'Kategorien Bearbeiten',
     ],
     'categoriesdelete' => [
-        'name' => 'Delete Categories',
+        'name' => 'Kategorien Löschen',
     ],
     'departments'   => [
         'name' => 'Abteilungen',
-        'note'       => 'Grants access to the Departments section of the application.',
+        'note'       => 'Gewährt Zugriff auf den Bereich "Abteilungen" in der Anwendung.',
     ],
     'departmentsview' => [
-        'name' => 'View Departments',
+        'name' => 'Abteilungen Anzeigen',
     ],
     'departmentscreate' => [
-        'name' => 'Create New Departments',
+        'name' => 'Neue Abteilungen Erstellen',
     ],
     'departmentsedit' => [
-        'name' => 'Edit Departments',
+        'name' => 'Abteilungen Bearbeiten',
     ],
     'departmentsdelete' => [
-        'name' => 'Delete Departments',
+        'name' => 'Abteilungen Löschen',
     ],
     'locations'   => [
         'name' => 'Standorte',
-        'note'       => 'Grants access to the Locations section of the application.',
+        'note'       => 'Gewährt Zugriff auf den Bereich "Standorte" in der Anwendung.',
     ],
     'locationsview' => [
-        'name' => 'View Locations',
+        'name' => 'Standorte Anzeigen',
     ],
     'locationscreate' => [
-        'name' => 'Create New Locations',
+        'name' => 'Neue Standorte Erstellen',
     ],
     'locationsedit' => [
-        'name' => 'Edit Locations',
+        'name' => 'Standorte Bearbeiten',
     ],
     'locationsdelete' => [
-        'name' => 'Delete Locations',
+        'name' => 'Standorte Löschen',
     ],
     'status-labels'   => [
         'name' => 'Statusbezeichnungen',
-        'note'       => 'Grants access to the Status Labels section of the application used by Assets.',
+        'note'       => 'Gewährt Zugriff auf den Bereich "Statusbezeichnungen", die für Assets benutzt werden.',
     ],
     'statuslabelsview' => [
-        'name' => 'View Status Labels',
+        'name' => 'Statusbezeichnungen Anzeigen',
     ],
     'statuslabelscreate' => [
-        'name' => 'Create New Status Labels',
+        'name' => 'Neue Statusbezeichnungen Erstellen',
     ],
     'statuslabelsedit' => [
-        'name' => 'Edit Status Labels',
+        'name' => 'Statusbezeichnungen Bearbeiten',
     ],
     'statuslabelsdelete' => [
         'name' => 'Statusbezeichnung Löschen',

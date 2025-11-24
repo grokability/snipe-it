@@ -79,6 +79,7 @@ return [
     'generate_backup'			=> 'إنشاء النسخ الاحتياطي',
     'google_workspaces'         => 'مساحات عمل جوجل',
     'header_color'              => 'رأس اللون',
+    'header_color_help'         => 'Scroll up to the top of the screen to preview the header color.',
     'info'                      => 'تتيح لك هذه الإعدادات تخصيص بعض جوانب التثبيت.',
     'label_logo_size'           => 'الشعارات المربعة تبدو أفضل - سيتم عرضها في أعلى يمين كل ملصق أصل. ',
     'laravel'                   => 'نسخة لارافيل',
@@ -423,6 +424,7 @@ return [
     'redirect_url' => 'Redirect URL',
     'client_secret' => 'Client Secret',
     'client_id' => 'Client ID',
+    'too_many_users_to_show' => 'The number of users (:count) is larger than the unpaginated record limit (:max). Use the bulk user edit tool to manage group memberships.',
 
     'username_formats' => [
         'username_format'		=> 'تنسيق اسم المستخدم',

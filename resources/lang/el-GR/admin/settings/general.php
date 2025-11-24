@@ -79,6 +79,7 @@ return [
     'generate_backup'			=> 'Δημιουργία Αντίγραφου Ασφαλείας',
     'google_workspaces'         => 'Χώροι Εργασίας Google',
     'header_color'              => 'Χρώμα επικεφαλίδας',
+    'header_color_help'         => 'Scroll up to the top of the screen to preview the header color.',
     'info'                      => 'Αυτές οι ρυθμίσεις σάς επιτρέπουν να προσαρμόσετε ορισμένες πτυχές της εγκατάστασής σας.',
     'label_logo_size'           => 'Τετραγωνικά λογότυπα φαίνονται καλύτερα - θα εμφανιστεί στην επάνω δεξιά γωνία της κάθε ετικέτας περιουσιακών στοιχείων. ',
     'laravel'                   => 'Έκδοση οδηγού',
@@ -423,6 +424,7 @@ return [
     'redirect_url' => 'Redirect URL',
     'client_secret' => 'Client Secret',
     'client_id' => 'Client ID',
+    'too_many_users_to_show' => 'The number of users (:count) is larger than the unpaginated record limit (:max). Use the bulk user edit tool to manage group memberships.',
 
     'username_formats' => [
         'username_format'		=> 'Τύπος ονόματος',

@@ -79,6 +79,7 @@ return [
     'generate_backup'			=> 'Создать резервную копию',
     'google_workspaces'         => 'Рабочие области Google',
     'header_color'              => 'Цвет заголовка',
+    'header_color_help'         => 'Scroll up to the top of the screen to preview the header color.',
     'info'                      => 'Эти настройки позволяют персонализировать некоторые аспекты вашей установки.',
     'label_logo_size'           => 'Для маркировки активов лучше всего подойдут квадратные логотипы. Они будт отображаться в правом верхнем углу актива. ',
     'laravel'                   => 'Версия Laravel',
@@ -423,6 +424,7 @@ return [
     'redirect_url' => 'Ссылка переадресации',
     'client_secret' => 'Client Secret',
     'client_id' => 'Client ID',
+    'too_many_users_to_show' => 'The number of users (:count) is larger than the unpaginated record limit (:max). Use the bulk user edit tool to manage group memberships.',
 
     'username_formats' => [
         'username_format'		=> 'Формат имени пользователя',

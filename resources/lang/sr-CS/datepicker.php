@@ -13,6 +13,8 @@ return array(
     |
     */
 
+    'week_start_select' => 'Izaberite dan u nedelji',
+    'week_start' => 'Dan na koji počinje nedelja',
     'today' => 'Danas',
     'clear' => 'Obriši',
     'days' => [

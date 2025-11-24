@@ -54,6 +54,6 @@ return [
     'all_assigned_list_generation' => '生成于：',
     'email_user_creds_on_create' => '给此用户发电子邮件？',
     'department_manager' => '部门经理',
-    'generate_password' => 'Generate random password',
+    'generate_password' => '生成随机密码',
     'individual_override' => 'This user has at least one individual permission set, which may override group permissions.',
 ];

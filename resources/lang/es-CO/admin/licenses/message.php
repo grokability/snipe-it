@@ -46,12 +46,12 @@ return array(
         'not_enough_seats' => 'No hay suficientes licencias disponibles para asignar',
         'mismatch' => 'La licencia proporcionada no coincide con la licencia seleccionada',
         'unavailable' => 'Esta licencia no está disponible para ser asignada.',
-        'license_is_inactive' => 'This license is expired or terminated.',
+        'license_is_inactive' => 'Licencia caducada o cancelada.',
     ),
 
     'checkin' => array(
         'error'   => 'Hubo un problema ingresando la licencia. Por favor, inténtelo de nuevo.',
-        'not_reassignable' => 'Seat has been used',
+        'not_reassignable' => 'El asiento ha sido usado.',
         'success' => 'La licencia fue ingresada correctamente'
     ),
 

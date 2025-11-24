@@ -23,12 +23,12 @@ return [
     'append'                    => 'Append',
     'new'                       => '신규',
     'var' => [
-        'clone'     => 'Clone :item_type',
-        'edit'      => 'Edit :item_type',
-        'delete'    => 'Delete :item_type',
-        'restore'   => 'Restore :item_type',
-        'create'    => 'Create New :item_type',
-        'checkout'  => 'Checkout :item_type',
-        'checkin'   => 'Checkin :item_type',
+        'clone'     => ':item_type 복제',
+        'edit'      => ':item_type 편집',
+        'delete'    => ':item_type 삭제',
+        'restore'   => ':item_type 복원',
+        'create'    => '새 :item_type 생성',
+        'checkout'  => ':item_type 출고',
+        'checkin'   => ':item_type 입고',
     ]
 ];

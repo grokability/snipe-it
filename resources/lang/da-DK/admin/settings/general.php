@@ -79,6 +79,7 @@ return [
     'generate_backup'			=> 'Generer sikkerhedskopiering',
     'google_workspaces'         => 'Google Workspaces',
     'header_color'              => 'Hovedfarge',
+    'header_color_help'         => 'Scroll up to the top of the screen to preview the header color.',
     'info'                      => 'Disse indstillinger giver dig mulighed for at tilpasse visse aspekter af din installation.',
     'label_logo_size'           => 'Firkantede logoer ser bedst ud - vil blive vist øverst til højre på hver aktiv etiket. ',
     'laravel'                   => 'Laravel Version',
@@ -423,6 +424,7 @@ return [
     'redirect_url' => 'Redirect URL',
     'client_secret' => 'Client Secret',
     'client_id' => 'Client ID',
+    'too_many_users_to_show' => 'The number of users (:count) is larger than the unpaginated record limit (:max). Use the bulk user edit tool to manage group memberships.',
 
     'username_formats' => [
         'username_format'		=> 'Brugernavn Format',

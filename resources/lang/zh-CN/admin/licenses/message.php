@@ -46,7 +46,7 @@ return array(
         'not_enough_seats' => '没有足够的许可证席位可供签出',
         'mismatch' => '提供的许可证席位与许可证不匹配',
         'unavailable' => '这个席位不能签出。',
-        'license_is_inactive' => 'This license is expired or terminated.',
+        'license_is_inactive' => '此许可证已过期或终止。',
     ),
 
     'checkin' => array(

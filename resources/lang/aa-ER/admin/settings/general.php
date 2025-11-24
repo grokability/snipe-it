@@ -79,6 +79,7 @@ return [
     'generate_backup'			=> 'crwdns1427:0crwdne1427:0',
     'google_workspaces'         => 'crwdns12080:0crwdne12080:0',
     'header_color'              => 'crwdns1196:0crwdne1196:0',
+    'header_color_help'         => 'crwdns14334:0crwdne14334:0',
     'info'                      => 'crwdns831:0crwdne831:0',
     'label_logo_size'           => 'crwdns5866:0crwdne5866:0',
     'laravel'                   => 'crwdns1119:0crwdne1119:0',
@@ -423,6 +424,7 @@ return [
     'redirect_url' => 'crwdns14258:0crwdne14258:0',
     'client_secret' => 'crwdns14260:0crwdne14260:0',
     'client_id' => 'crwdns14262:0crwdne14262:0',
+    'too_many_users_to_show' => 'crwdns14324:0crwdne14324:0',
 
     'username_formats' => [
         'username_format'		=> 'crwdns13090:0crwdne13090:0',

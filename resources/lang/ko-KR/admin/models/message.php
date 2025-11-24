@@ -2,7 +2,7 @@
 
 return array(
 
-    'deleted' => 'Deleted asset model',
+    'deleted' => '삭제된 자산 모델',
     'does_not_exist' => '모델이 존재하지 않습니다.',
     'no_association' => 'WARNING! The asset model for this item is invalid or missing!',
     'no_association_fix' => 'This will break things in weird and horrible ways. Edit this asset now to assign it a model.',

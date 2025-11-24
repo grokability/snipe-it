@@ -79,6 +79,7 @@ return [
     'generate_backup'			=> 'காப்பு உருவாக்குதல்',
     'google_workspaces'         => 'Google Workspaces',
     'header_color'              => 'தலைப்பு வண்ணம்',
+    'header_color_help'         => 'Scroll up to the top of the screen to preview the header color.',
     'info'                      => 'உங்கள் நிறுவலின் சில அம்சங்களைத் தனிப்பயனாக்க இந்த அமைப்புகள் உங்களை அனுமதிக்கின்றன.',
     'label_logo_size'           => 'Square logos look best - will be displayed in the top right of each asset label. ',
     'laravel'                   => 'லாரேவல் பதிப்பு',
@@ -423,6 +424,7 @@ return [
     'redirect_url' => 'Redirect URL',
     'client_secret' => 'Client Secret',
     'client_id' => 'Client ID',
+    'too_many_users_to_show' => 'The number of users (:count) is larger than the unpaginated record limit (:max). Use the bulk user edit tool to manage group memberships.',
 
     'username_formats' => [
         'username_format'		=> 'பயனர்பெயர் வடிவமைப்பு',

@@ -16,94 +16,94 @@ return array(
     */
 
     "superuser" => [
-        'name' => 'Super User',
-        'note'       => 'Determines whether the user has full access to all aspects of the admin. This setting overrides ALL more specific and restrictive permissions throughout the system. ',
+        'name' => 'Superpoužívateľ',
+        'note'       => 'Určuje, či má používateľ plný prístup ku všetkým aspektom administrácie. Toto nastavenie prepíše VŠETKY špecifickejšie a reštriktívnejšie povolenia v celom systéme. ',
     ],
     'admin' => [
-        'name' => 'Admin Access',
-        'note'       => 'Determines whether the user has access to most aspects of the system EXCEPT the System Admin Settings. These users will be able to manage users, locations, categories, etc, but ARE constrained by Full Multiple Company Support if it is enabled.',
+        'name' => 'Prístup pre správcu',
+        'note'       => 'Určuje, či má používateľ prístup k väčšine aspektov systému OKREM nastavení správcu systému. Títo používatelia budú môcť spravovať používateľov, lokality, kategórie atď., ale SÚ obmedzení plnou podporou viacerých spoločností, ak je povolená.',
     ],
 
     'import' => [
-        'name' => 'CSV Import',
-        'note'       => 'This will allow users to import even if access to users, assets, etc is denied elsewhere.',
+        'name' => 'CSV import',
+        'note'       => 'To umožní používateľom importovať aj keď je prístup k používateľom, majetkom atď. inde zamietnutý.',
     ],
 
     'reports' => [
-        'name' => 'Reports Access',
-        'note'       => 'Determines whether the user has access to the Reports section of the application.',
+        'name' => 'Prístup k reportom',
+        'note'       => 'Určuje, či má používateľ prístup k sekcii Reporty v aplikácii.',
     ],
 
     'assets' =>
         [
             'name' => 'Položky majetku',
-            'note' => 'Grants access to the Assets section of the application.',
+            'note' => 'Udeľuje prístup k sekcii Majetky v aplikácii.',
     ],
 
     'assetsview' => [
-        'name' => 'View Assets',
+        'name' => 'Zobraziť Majetky',
     ],
 
     'assetscreate' => [
-        'name' => 'Create New Assets',
+        'name' => 'Vytvoriť nové majetky',
     ],
 
     'assetsedit' => [
-        'name' => 'Edit Assets',
+        'name' => 'Upraviť majetky',
     ],
 
     'assetsdelete' => [
-        'name' => 'Delete Assets',
+        'name' => 'Odstrániť majetky',
     ],
 
     'assetscheckin' => [
-        'name' => 'Check In',
-        'note' => 'Check assets back into inventory that are currently checked out.',
+        'name' => 'Prevziať',
+        'note' => 'Prevziať majetky, ktoré sú momentálne odovzdané, späť do inventára.',
     ],
 
     'assetscheckout' => [
-        'name' => 'Check Out',
-        'note' => 'Assign assets in inventory by checking them out.',
+        'name' => 'Odovzdať',
+        'note' => 'Odovzdať majetok z inventára.',
     ],
 
     'assetsaudit' => [
-        'name' => 'Audit Assets',
-        'note' => 'Allows the user to mark an asset as physically inventoried.',
+        'name' => 'Audit aktív',
+        'note' => 'Umožňuje používateľovi označiť majetok ako fyzicky inventarizovaný.',
     ],
 
     'assetsviewrequestable' => [
-        'name' => 'View Requestable Assets',
-        'note' => 'Allows the user to view assets that are marked as requestable.',
+        'name' => 'Zobraziť požadované majetky',
+        'note' => 'Umožňuje používateľovi zobraziť položky majetku, ktoré sú označené ako vyžiadateľné.',
     ],
 
     'assetsviewencrypted-custom-fields' => [
-        'name' => 'View Encrypted Custom Fields',
-        'note' => 'Allows the user to view and modify encrypted custom fields on assets.',
+        'name' => 'Zobraziť šifrované vlastné polia',
+        'note' => 'Umožňuje používateľovi zobraziť a upraviť zašifrované vlastné polia v prvkoch.',
     ],
 
     'accessories'   => [
         'name' => 'Príslušenstvo',
-        'note'       => 'Grants access to the Accessories section of the application.',
+        'note'       => 'Umožňuje prístup do sekcie Príslušenstvo v aplikácii.',
     ],
 
     'accessoriesview' => [
-        'name' => 'View Accessories',
+        'name' => 'Zobraziť príslušenstvo',
     ],
     'accessoriescreate' => [
-        'name' => 'Create New Accessories',
+        'name' => 'Vytvoriť nové príslušenstvo',
     ],
     'accessoriesedit' => [
-        'name' => 'Edit Accessories',
+        'name' => 'Upraviť príslušenstvo',
     ],
     'accessoriesdelete' => [
-        'name' => 'Delete Accessories',
+        'name' => 'Odstrániť príslušenstvo',
     ],
     'accessoriescheckout' => [
-        'name' => 'Check Out Accessories',
-        'note' => 'Assign accessories in inventory by checking them out.',
+        'name' => 'Odovzdať príslušenstvo',
+        'note' => 'Priradiť príslušenstvo odovzdaním.',
     ],
     'accessoriescheckin' => [
-        'name' => 'Check In Accessories',
+        'name' => 'Prevziať príslušenstvo',
         'note' => 'Check accessories back into inventory that are currently checked out.',
     ],
     'accessoriesfiles' => [

@@ -79,6 +79,7 @@ return [
     'generate_backup'			=> 'Membuat cadangan',
     'google_workspaces'         => 'Google Workspace',
     'header_color'              => 'Warna Header',
+    'header_color_help'         => 'Scroll up to the top of the screen to preview the header color.',
     'info'                      => 'Dengan pengaturan ini anda dapat merubah aspek tertentu pada instalasi.',
     'label_logo_size'           => 'Logo persegi/kotak terlihat sesuai - akan ditampilkan di kanan atas setiap label aset. ',
     'laravel'                   => 'Versi Laravel',
@@ -423,6 +424,7 @@ return [
     'redirect_url' => 'URL Pengalihan',
     'client_secret' => 'Client Secret',
     'client_id' => 'Client ID',
+    'too_many_users_to_show' => 'The number of users (:count) is larger than the unpaginated record limit (:max). Use the bulk user edit tool to manage group memberships.',
 
     'username_formats' => [
         'username_format'		=> 'Format pengguna',

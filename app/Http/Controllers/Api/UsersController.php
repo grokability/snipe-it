@@ -31,6 +31,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 use App\Http\Requests\DeleteUserRequest;
 use Illuminate\Http\JsonResponse;
+use App\Http\Requests\FilterRequest;
 
 class UsersController extends Controller
 {
@@ -42,7 +43,7 @@ class UsersController extends Controller
      *
      * @return array
      */
-    public function index(Request $request) : array
+    public function index(FilterRequest $request) : array
     {
         $this->authorize('view', User::class);
 

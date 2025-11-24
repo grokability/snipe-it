@@ -37,7 +37,7 @@ jobs:
           php-version: "${{ matrix.php-version }}"
           coverage: none
 
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Get Composer Cache Directory
         id: composer-cache

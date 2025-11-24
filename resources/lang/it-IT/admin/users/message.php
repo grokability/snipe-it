@@ -2,8 +2,8 @@
 
 return array(
 
-    'accepted'                  => 'You have successfully accepted this item.',
-    'declined'                  => 'You have successfully declined this item.',
+    'accepted'                  => 'Hai accettato con successo questo articolo.',
+    'declined'                  => 'Hai rifiutato con successo questo articolo.',
     'bulk_manager_warn'	        => 'I tuoi utenti sono stati aggiornati con successo, tuttavia la voce del gestore non è stata salvata perché il gestore selezionato è stato anche nell\'elenco utenti da modificare e gli utenti potrebbero non essere il proprio gestore. Seleziona nuovamente i tuoi utenti, esclusi il gestore.',
     'user_exists'               => 'Utente già esistente!',
     'user_not_found'            => 'L\'Utente non esiste, oppure non hai i permessi per visualizzarlo.',

@@ -42,7 +42,7 @@ jobs:
     steps:
       # https://github.com/actions/checkout
       - name: Checkout codebase
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       # https://github.com/docker/setup-buildx-action
       - name: Setup Docker Buildx

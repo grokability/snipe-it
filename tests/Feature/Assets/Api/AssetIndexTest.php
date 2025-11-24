@@ -171,4 +171,33 @@ class AssetIndexTest extends TestCase
             ->assertResponseDoesNotContainInRows($assetA, 'asset_tag')
             ->assertResponseContainsInRows($assetB, 'asset_tag');
     }
+
+    public function test_gracefully_handles_malformed_filter()
+    {
+        $this->actingAsForApi(User::factory()->viewAssets()->create())
+            ->getJson(route('api.assets.index', [
+                // filter should be a json encoded array and not a string
+                'filter' => 'asset_tag:12345',
+            ]))
+            ->assertStatusMessageIs('error')
+            ->assertJson(function (AssertableJson $json) {
+                $json->has('messages.filter')->etc();
+            });
+    }
+
+    public function testReturnsResultViaFilter()
+    {
+
+        Asset::factory()->count(3)->create(['name' => 'MY AWESOME ASSET NAME']);
+        $this->actingAsForApi(User::factory()->viewAssets()->create())
+            ->getJson(route('api.assets.index', [
+                'filter' => '{"name":"MY AWESOME ASSET NAME"}',
+            ]))
+            ->assertOk()
+            ->assertJsonStructure([
+                'total',
+                'rows',
+            ])
+            ->assertJson(fn(AssertableJson $json) => $json->has('rows', 3)->etc());
+    }
 }

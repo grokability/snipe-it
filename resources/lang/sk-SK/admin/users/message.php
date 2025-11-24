@@ -2,8 +2,8 @@
 
 return array(
 
-    'accepted'                  => 'You have successfully accepted this item.',
-    'declined'                  => 'You have successfully declined this item.',
+    'accepted'                  => 'Úspešne ste potvrdili prijatie majetku.',
+    'declined'                  => 'Odmietnutie majetku bolo úspešné.',
     'bulk_manager_warn'	        => 'Používatelia boli úspešné aktualizovaný, avčak položka manažér nebola uložená, pretože zvolený manažér sa taktiež nachádzal v zoznam na úpravu a používatel nemôže byť sám sebe manazérom. Prosim zvoľte Vašich používateľov znovu s vynechaním manažéera.',
     'user_exists'               => 'Používateľ už existuje!',
     'user_not_found'            => 'Používateľ neexistuje alebo nemáte oprávnenie na jeho zobrazenie.',
