@@ -34,9 +34,6 @@
 @section('content')
 
 
-
-
-
     <div class="responsive-layout">
         <!-- Filter Section -->
         <div class="filter-section hide" id="filterSection">
