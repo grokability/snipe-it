@@ -55,7 +55,6 @@ class PredefinedFilterService
             })->values();
     }
 
-    // TODO different Naming because it does more than only get a filter by ID - getFilterWithOptionalPermissionsById
     public function getFilterWithOptionalPermissionsById(int $id, bool $include_predefined_filter_groups = true)
     {
         $predefinedFilter = PredefinedFilter::find($id);
@@ -65,7 +64,7 @@ class PredefinedFilterService
         }
         
         if (!$predefinedFilter){
-            return;
+            return null;
         }
 
         $filters = $predefinedFilter->filter_data;
@@ -150,7 +149,6 @@ class PredefinedFilterService
             $predefinedFilter->filter_data = $filters;
 
             }
-            
         }
         return $predefinedFilter;
     }
@@ -256,8 +254,6 @@ class PredefinedFilterService
 
             $query->where('name', 'LIKE', '%' . trim($search) . '%');
         }
-
-
 
         $paginated = $query->orderBy('name')->paginate(50);
 
