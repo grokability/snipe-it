@@ -2,11 +2,15 @@
 
 namespace App\Services;
 
+use App\Models\Category;
 use App\Models\Company;
 use App\Models\AssetModel;
+use App\Models\Location;
+use App\Models\Manufacturer;
+use App\Models\Statuslabel;
+use App\Models\Supplier;
 use DB;
 use Exception;
-use Log;
 use Throwable;
 use App\Models\PredefinedFilter;
 use App\Services\FilterService\FilterService;
@@ -52,7 +56,7 @@ class PredefinedFilterService
     }
 
     // TODO different Naming because it does more than only get a filter by ID - getFilterWithOptionalPermissionsById
-    public function getFilterById(int $id, bool $include_predefined_filter_groups = true)
+    public function getFilterWithOptionalPermissionsById(int $id, bool $include_predefined_filter_groups = true)
     {
         $predefinedFilter = PredefinedFilter::find($id);
         if ($include_predefined_filter_groups && $predefinedFilter) {
@@ -60,31 +64,29 @@ class PredefinedFilterService
             $predefinedFilter['permissions'] = $permissions;
         }
         
+        if (!$predefinedFilter){
+            return;
+        }
+
         $filters = $predefinedFilter->filter_data;
 
         foreach ($filters as &$filter) {
-            
-            Log::error($filter['value']);
+
 
             if (!empty($filter['value']) && is_array($filter['value']) && is_int($filter['value'][0])) {
-
-                Log::error('uf');
-
                 $values =[];
-
                 foreach ($filter['value'] as $valueId){
-                    $name = null; // errorhandling
                     switch ($filter['field']) {
                         case 'company':
-                            // Log::error($filter);
-                            // $name->Company::find()->name;
+                            $company = Company::find($valueId);
+                            if ($company) {
+                                $values[] = [
+                                    'id' => $company->id,
+                                    'name' => $company->name,
+                                ];
+                            }
                             break;
                         case 'model':
-                            Log::error($filter);
-                            
-                            Log::error('triggered');
-    
-                                    
                             $model = AssetModel::find($valueId);
                             if ($model) {
                                 $values[] = [
@@ -94,49 +96,64 @@ class PredefinedFilterService
                             }
                             break;
                         case 'category':
+                            $category = Category::find($valueId);
+                            if ($category) {
+                                $values[] = [
+                                    'id' => $category->id,
+                                    'name' => $category->name,
+                                ];
+                            }
                             break;
-                        case 'status':
+                        case 'statuslabel':
+                            $status = Statuslabel::find($valueId);
+                            if ($status) {
+                                $values[] = [
+                                    'id' => $status->id,
+                                    'name' => $status->name,
+                                ];
+                            }
                             break;
                         case 'location':
-                            break;
                         case 'default_location':
+                            $location = Location::find($valueId);
+                            if ($location) {
+                                $values[] = [
+                                    'id' => $location->id,
+                                    'name' => $location->name,
+                                ];
+                            }
                             break;
                         case 'manufacturer':
+                            $manufacturer = Manufacturer::find($valueId);
+                            if ($manufacturer) {
+                                $values[] = [
+                                    'id' => $manufacturer->id,
+                                    'name' => $manufacturer->name,
+                                ];
+                            }
                             break;
                         case 'supplier':
+                            $supplier = Supplier::find($valueId);
+                            if ($supplier) {
+                                $values[] = [
+                                    'id' => $supplier->id,
+                                    'name' => $supplier->name,
+                                ];
+                            }
                             break;
                         default:
                         break;
                     }
-
                 }
 
-            Log::error($filter['value']);
-
             $filter['value'] = $values;
-
             $predefinedFilter->filter_data = $filters;
-
-            Log::error($filter['value']);
-
-            // Log::error('new');
-            // Log::error(json_encode( $predefinedFilter));
 
             }
             
         }
-
-        // Log::error('filter =>',(array)$predefinedFilter->filter_data);
-
         return $predefinedFilter;
     }
-
-    // public function getFilterData(int $id)
-    // {
-    //     $filter = $this->getFilterById($id);
-
-    //     $filter_data = 
-    // }
 
     public function createFilter($validated): PredefinedFilter
     {

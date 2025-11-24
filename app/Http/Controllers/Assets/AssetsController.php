@@ -83,7 +83,7 @@ class AssetsController extends Controller
             $predefined_filter_name = ""; // Just an empty string to not fail other stuff because it is only needed when a predefined filter is set using the url
             
             if ($predefined_filter_id !== null) {
-                $filter = $this->predefinedFilterService->getFilterById($predefined_filter_id);
+                $filter = $this->predefinedFilterService->getFilterWithOptionalPermissionsById($predefined_filter_id);
                 if (!($filter)) {
                     $predefined_filter_id = null;
                 } else {
