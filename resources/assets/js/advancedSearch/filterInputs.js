@@ -138,49 +138,32 @@ class SelectFilterInput extends FilterInput {
 
     setValue(newValues, logic, operator, type = this.getType()) {
         const requestPromises = newValues.map((newValue) => {
-            // If it's a number, fetch from backend
-            if (typeof newValue === "number") {
-                return this.apiService.fetchItemFromBackendById(type, newValue)
-                    .then((response) => {
-                        return response.json().then((responseJson) => {
-                            const $existingOption = $(this.element).find(`option[value='${responseJson.id}']`);
+            return Promise.resolve().then(() => {
+                this.setSearchOperator(logic, operator);
 
-                            if ($existingOption.length === 0) {
-                                const option = new Option(responseJson.name, responseJson.id, true, true);
-                                $(this.element).append(option);
-                            } else {
-                                $existingOption.prop('selected', true);
-                            }
+                // Normalize the newValue
+                const isObject = typeof newValue === "object" && newValue !== null;
+                const id = isObject ? newValue.id : newValue;
+                const name = isObject ? newValue.name : newValue;
 
-                            this.setSearchOperator(logic, operator);
+                const $el = $(this.element);
+                let existingOption = $el.find(`option[value='${id}']`);
 
-                            $(this.element).trigger('change');
-                            return responseJson;
-                        });
-                    });
-            } else {
-                queueMicrotask(() => {
-                    // Directly insert/select string value
-                    this.setSearchOperator(logic, operator);
-                    const existingOption = $(this.element).find(`option[value='${newValue}']`);
+                if (existingOption.length === 0) {
+                    const option = new Option(name, id, true, true);
+                    $el.append(option);
+                } else {
+                    existingOption.prop("selected", true);
+                }
 
-                    if (existingOption.length === 0) {
-                        const option = new Option(newValue, newValue, true, true);
-                        $(this.element).append(option);
-                    } else {
-                        existingOption.prop('selected', true);
-                    }
-
-                    $(this.element).trigger('change');
-
-                    // Return a resolved promise for consistency
-                    return Promise.resolve({ id: newValue, name: newValue });
-                });
-            }
+                $el.trigger("change");
+                return { id, name };
+            });
         });
 
         return Promise.all(requestPromises);
     }
+
 
 
 
@@ -340,7 +323,7 @@ class AssignedEntityFilterInput extends TextFilterInput {
             }
             resolve(newValue);
         })
-    } 
+    }
 
     clear() {
         this.element.value = "";
