@@ -2,10 +2,14 @@
 
 namespace App\Services;
 
+use App\Models\Company;
+use App\Models\AssetModel;
 use DB;
 use Exception;
+use Log;
 use Throwable;
 use App\Models\PredefinedFilter;
+use App\Services\FilterService\FilterService;
 use App\Services\PredefinedFilterPermissionService;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -20,6 +24,14 @@ class PredefinedFilterService
     public function __construct(PredefinedFilterPermissionService $predefinedFilterPermissionService)
     {
         $this->predefinedFilterPermissionService = $predefinedFilterPermissionService;
+    }
+
+    protected ?FilterService $filterService = null;
+
+    public function filterService(): FilterService
+    {
+        return $this->filterService ??= app(FilterService::class);
+
     }
 
     public function getAllViewableFilters(): Collection
@@ -47,8 +59,84 @@ class PredefinedFilterService
             $permissions = $this->predefinedFilterPermissionService->getPermissionsByPredefinedFilterId($id);
             $predefinedFilter['permissions'] = $permissions;
         }
+        
+        $filters = $predefinedFilter->filter_data;
+
+        foreach ($filters as &$filter) {
+            
+            Log::error($filter['value']);
+
+            if (!empty($filter['value']) && is_array($filter['value']) && is_int($filter['value'][0])) {
+
+                Log::error('uf');
+
+                $values =[];
+
+                foreach ($filter['value'] as $valueId){
+                    $name = null; // errorhandling
+                    switch ($filter['field']) {
+                        case 'company':
+                            // Log::error($filter);
+                            // $name->Company::find()->name;
+                            break;
+                        case 'model':
+                            Log::error($filter);
+                            
+                            Log::error('triggered');
+    
+                                    
+                            $model = AssetModel::find($valueId);
+                            if ($model) {
+                                $values[] = [
+                                    'id' => $model->id,
+                                    'name' => $model->name,
+                                ];
+                            }
+                            break;
+                        case 'category':
+                            break;
+                        case 'status':
+                            break;
+                        case 'location':
+                            break;
+                        case 'default_location':
+                            break;
+                        case 'manufacturer':
+                            break;
+                        case 'supplier':
+                            break;
+                        default:
+                        break;
+                    }
+
+                }
+
+            Log::error($filter['value']);
+
+            $filter['value'] = $values;
+
+            $predefinedFilter->filter_data = $filters;
+
+            Log::error($filter['value']);
+
+            // Log::error('new');
+            // Log::error(json_encode( $predefinedFilter));
+
+            }
+            
+        }
+
+        // Log::error('filter =>',(array)$predefinedFilter->filter_data);
+
         return $predefinedFilter;
     }
+
+    // public function getFilterData(int $id)
+    // {
+    //     $filter = $this->getFilterById($id);
+
+    //     $filter_data = 
+    // }
 
     public function createFilter($validated): PredefinedFilter
     {
