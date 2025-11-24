@@ -86,6 +86,7 @@ class AssetsController extends Controller
                 $filter = $this->predefinedFilterService->getFilterWithOptionalPermissionsById($predefined_filter_id);
                 if (!($filter)) {
                     $predefined_filter_id = null;
+                    abort(404, "Predefined filter not found");
                 } else {
                     $predefined_filter_name = $filter->name;
                 }
