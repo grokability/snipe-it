@@ -6,7 +6,7 @@ use App\Helpers\Helper;
 use Illuminate\Support\Collection;
 use App\Models\Setting;
 
-class PredefinedFiltersTransformer 
+class PredefinedFiltersTransformer
 {
     public function transformPredefinedFilters(Collection $filters, $total)
     {
@@ -15,12 +15,11 @@ class PredefinedFiltersTransformer
             $array[] = self::transformPredefinedFilter($filter);
         }
 
-        return (new DatatablesTransformer) -> transformDatatables($array, $total);
+        return (new DatatablesTransformer)->transformDatatables($array, $total);
     }
 
     public function transformPredefinedFilter($filter)
     {
-        $setting = Setting::getSettings();
 
         $array = [
             'id' => (int) $filter->id,
@@ -29,7 +28,7 @@ class PredefinedFiltersTransformer
             'is_public' => (bool)$filter->is_public,
             'object_type' => e($filter->object_type),
             'created_by' => $filter->createdBy ? [
-                'id' => (int) $filter-> createdBy ->id,
+                'id' => (int) $filter->createdBy->id,
                 'name' => $filter->createdBy->present()->nameUrl(),
             ] : null,
             'created_at' => Helper::getFormattedDateObject($filter->created_at, 'datetime'),
@@ -62,7 +61,6 @@ class PredefinedFiltersTransformer
             'update' => $filter->created_by === auth()->id() || $filter->userHasPermission(auth()->user(), 'edit'),
             'delete' => $filter->created_by === auth()->id() || $filter->userHasPermission(auth()->user(), 'delete')
         ];
-        $array += $permissions_array;
-        return $array;
+        return $array += $permissions_array;
     }
 }

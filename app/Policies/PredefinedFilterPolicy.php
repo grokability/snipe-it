@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\User;
 use App\Models\PredefinedFilter;
-use App\Policies\SnipePermissionsPolicy; 
 
 class PredefinedFilterPolicy extends SnipePermissionsPolicy
 {
@@ -23,8 +22,8 @@ class PredefinedFilterPolicy extends SnipePermissionsPolicy
 
         //Controller
         if (is_string($filter) && $filter === PredefinedFilter::class) {
-        return true;
-    }
+            return true;
+        }
 
         // Record-level permissions
         if ($filter instanceof PredefinedFilter) {

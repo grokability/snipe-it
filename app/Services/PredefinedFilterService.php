@@ -14,7 +14,6 @@ use Exception;
 use Throwable;
 use App\Models\PredefinedFilter;
 use App\Services\FilterService\FilterService;
-use App\Services\PredefinedFilterPermissionService;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
@@ -35,7 +34,6 @@ class PredefinedFilterService
     public function filterService(): FilterService
     {
         return $this->filterService ??= app(FilterService::class);
-
     }
 
     public function getAllViewableFilters(): Collection
@@ -141,7 +139,7 @@ class PredefinedFilterService
                             }
                             break;
                         default:
-                        break;
+                            break;
                     }
                 }
 

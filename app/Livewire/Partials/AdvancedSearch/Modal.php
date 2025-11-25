@@ -170,11 +170,11 @@ class Modal extends Component
         $predefinedFilterService->createFilter($validated);
 
         $this->dispatch('showNotificationInFrontend', [
-                'type' => 'success',
-                'title' => trans('general.notification_success'),
-                'message' => trans('admin/predefinedFilters/message.create.success'),
-                'tag' => 'predefinedFilter',
-            ]);
+            'type' => 'success',
+            'title' => trans('general.notification_success'),
+            'message' => trans('admin/predefinedFilters/message.create.success'),
+            'tag' => 'predefinedFilter',
+        ]);
 
         $this->dispatch("savePredefinedFiltersModalEvent");
         $this->dispatch("closePredefinedFiltersModal");

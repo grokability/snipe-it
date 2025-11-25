@@ -41,7 +41,7 @@ class PredefinedFilterPermissionController extends Controller
         ]);
     }
 
-    public function show(Request $request, int $id): JsonResponse
+    public function show(int $id): JsonResponse
     {
         $this->authorize('view', PredefinedFilter::class);
 
@@ -58,7 +58,7 @@ class PredefinedFilterPermissionController extends Controller
         return response()->json($permission);
     }
 
-    public function destroy(Request $request, int $id): JsonResponse
+    public function destroy(int $id): JsonResponse
     {
         $this->authorize('delete', PredefinedFilterPermission::class);
 

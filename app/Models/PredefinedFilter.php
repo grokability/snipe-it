@@ -8,8 +8,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Watson\Validating\ValidatingTrait;
 use Illuminate\Database\Eloquent\Builder;
 
-use App\Models\User;
-
 class PredefinedFilter extends Model
 {
     use HasFactory;
@@ -101,7 +99,7 @@ class PredefinedFilter extends Model
         foreach ($this->permissionGroups as $group) {
             if (in_array($group->id, $userGroupIds)) {
                 $permissions = json_decode($group->permissions, true);
-                if ((isset($permissions["predefinedFilter.$action"]) && $permissions["predefinedFilter.$action"] == '1')) {
+                if (isset($permissions["predefinedFilter.$action"]) && $permissions["predefinedFilter.$action"] == '1') {
                     return true;
                 }
             }
