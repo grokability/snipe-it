@@ -77,7 +77,7 @@ class Modal extends Component
             $this->modalActionType === AdvancedsearchModalAction::Edit &&
             $predefinedFilterId !== null
         ) {
-            $predefinedFilter = $predefinedFilterService->getFilterById(
+            $predefinedFilter = $predefinedFilterService->getFilterWithOptionalPermissionsById(
                 $predefinedFilterId
             );
             $this->name = $predefinedFilter["name"];
@@ -285,7 +285,7 @@ class Modal extends Component
     ) {
 
 
-        $predefinedFilter = $predefinedFilterService->getFilterById($this->filterId);
+        $predefinedFilter = $predefinedFilterService->getFilterWithOptionalPermissionsById($this->filterId);
 
         if (!isset($predefinedFilter)) {
             $this->dispatch('showNotificationInFrontend', [

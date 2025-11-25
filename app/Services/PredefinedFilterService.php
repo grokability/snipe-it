@@ -2,10 +2,18 @@
 
 namespace App\Services;
 
+use App\Models\Category;
+use App\Models\Company;
+use App\Models\AssetModel;
+use App\Models\Location;
+use App\Models\Manufacturer;
+use App\Models\Statuslabel;
+use App\Models\Supplier;
 use DB;
 use Exception;
 use Throwable;
 use App\Models\PredefinedFilter;
+use App\Services\FilterService\FilterService;
 use App\Services\PredefinedFilterPermissionService;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -20,6 +28,14 @@ class PredefinedFilterService
     public function __construct(PredefinedFilterPermissionService $predefinedFilterPermissionService)
     {
         $this->predefinedFilterPermissionService = $predefinedFilterPermissionService;
+    }
+
+    protected ?FilterService $filterService = null;
+
+    public function filterService(): FilterService
+    {
+        return $this->filterService ??= app(FilterService::class);
+
     }
 
     public function getAllViewableFilters(): Collection
@@ -39,13 +55,100 @@ class PredefinedFilterService
             })->values();
     }
 
-    // TODO different Naming because it does more than only get a filter by ID - getFilterWithOptionalPermissionsById
-    public function getFilterById(int $id, bool $include_predefined_filter_groups = true)
+    public function getFilterWithOptionalPermissionsById(int $id, bool $include_predefined_filter_groups = true)
     {
         $predefinedFilter = PredefinedFilter::find($id);
         if ($include_predefined_filter_groups && $predefinedFilter) {
             $permissions = $this->predefinedFilterPermissionService->getPermissionsByPredefinedFilterId($id);
             $predefinedFilter['permissions'] = $permissions;
+        }
+        
+        if (!$predefinedFilter){
+            return null;
+        }
+
+        $filters = $predefinedFilter->filter_data;
+
+        foreach ($filters as &$filter) {
+
+
+            if (!empty($filter['value']) && is_array($filter['value']) && is_int($filter['value'][0])) {
+                $values =[];
+                foreach ($filter['value'] as $valueId){
+                    switch ($filter['field']) {
+                        case 'company':
+                            $company = Company::find($valueId);
+                            if ($company) {
+                                $values[] = [
+                                    'id' => $company->id,
+                                    'name' => $company->name,
+                                ];
+                            }
+                            break;
+                        case 'model':
+                            $model = AssetModel::find($valueId);
+                            if ($model) {
+                                $values[] = [
+                                    'id' => $model->id,
+                                    'name' => $model->name,
+                                ];
+                            }
+                            break;
+                        case 'category':
+                            $category = Category::find($valueId);
+                            if ($category) {
+                                $values[] = [
+                                    'id' => $category->id,
+                                    'name' => $category->name,
+                                ];
+                            }
+                            break;
+                        case 'statuslabel':
+                            $status = Statuslabel::find($valueId);
+                            if ($status) {
+                                $values[] = [
+                                    'id' => $status->id,
+                                    'name' => $status->name,
+                                ];
+                            }
+                            break;
+                        case 'location':
+                        case 'default_location':
+                            $location = Location::find($valueId);
+                            if ($location) {
+                                $values[] = [
+                                    'id' => $location->id,
+                                    'name' => $location->name,
+                                ];
+                            }
+                            break;
+                        case 'manufacturer':
+                            $manufacturer = Manufacturer::find($valueId);
+                            if ($manufacturer) {
+                                $values[] = [
+                                    'id' => $manufacturer->id,
+                                    'name' => $manufacturer->name,
+                                ];
+                            }
+                            break;
+                        case 'supplier':
+                            $supplier = Supplier::find($valueId);
+                            if ($supplier) {
+                                $values[] = [
+                                    'id' => $supplier->id,
+                                    'name' => $supplier->name,
+                                ];
+                            }
+                            break;
+                        default:
+                        break;
+                    }
+                }
+
+            $filter['value'] = $values;
+            $predefinedFilter->filter_data = $filters;
+
+            }
         }
         return $predefinedFilter;
     }
@@ -151,8 +254,6 @@ class PredefinedFilterService
 
             $query->where('name', 'LIKE', '%' . trim($search) . '%');
         }
-
-
 
         $paginated = $query->orderBy('name')->paginate(50);
 

@@ -34,6 +34,11 @@ return array(
         'note'       => 'Legt fest, ob der Benutzer Zugriff auf den Berichte-Abschnitt der Anwendung hat.',
     ],
 
+    'advancedsearch' => [
+        'name' => 'Erweiterte Suche',
+        'note' => 'Erlaubt den Zugriff auf die Erweiterte Suche. Vorsicht, ein Nutzender hat damit die Rechte die Ergebnisse aller Dropdowns zu laden.'
+    ],
+
     'assets' =>
         [
             'name' => 'Assets',

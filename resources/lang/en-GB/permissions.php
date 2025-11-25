@@ -40,6 +40,11 @@ return array(
             'note' => 'Grants access to the Assets section of the application.',
     ],
 
+    'advancedsearch' => [
+        'name' => 'Advanced Search',
+        'note' => 'Grants access to the advanced search section of the Application. Be aware, a user has the rights to load all results from all dropdowns.'
+    ],
+
     'assetsview' => [
         'name' => 'View Assets',
     ],
