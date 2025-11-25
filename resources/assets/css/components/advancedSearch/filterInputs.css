@@ -48,7 +48,6 @@ When .hide is applied, the filter section is hidden.
     font-weight: 600;
     font-size: 14px;
     margin: 0;
-    color: #333;
 }
 
 /* Container for operator dropdown + input */
@@ -70,7 +69,6 @@ When .hide is applied, the filter section is hidden.
     border: 1px solid #ced4da;
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
-    background-color: #fff;
     border-right: none;
 }
 
@@ -84,7 +82,6 @@ When .hide is applied, the filter section is hidden.
     border: 1px solid #ced4da;
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
-    background-color: #fff;
 }
 
 .advancedSearch_defaultField,
@@ -117,13 +114,13 @@ When .hide is applied, the filter section is hidden.
 .filter-option:focus,
 .advancedSearch_defaultField:focus,
 .form-control:focus {
-    border-color: #6c63ff;
+    border-color: var(--button-hover);
     box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.08);
     outline: none;
 }
 
 .select2-container--default .select2-selection:focus {
-    border-color: #6c63ff;
+    border-color: var(--button-hover);
     box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.08);
     outline: none;
 }
@@ -300,7 +297,6 @@ When .hide is applied, the filter section is hidden.
     font-weight: 600;
     font-size: 14px;
     margin: 0;
-    color: #333;
 }
 
 /* Container for operator dropdown + input */
@@ -322,7 +318,6 @@ When .hide is applied, the filter section is hidden.
     border: 1px solid #ced4da;
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
-    background-color: #fff;
     border-right: none;
 }
 
@@ -336,7 +331,6 @@ When .hide is applied, the filter section is hidden.
     border: 1px solid #ced4da;
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
-    background-color: #fff;
 }
 
 .advancedSearch_defaultField,
@@ -375,13 +369,13 @@ When .hide is applied, the filter section is hidden.
 .filter-option:focus,
 .advancedSearch_defaultField:focus,
 .form-control:focus {
-    border-color: #6c63ff;
+    border-color: var(--button-hover);
     box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.08);
     outline: none;
 }
 
 .select2-container--default .select2-selection:focus {
-    border-color: #6c63ff;
+    border-color: var(--button-hover);
     box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.08);
     outline: none;
 }
