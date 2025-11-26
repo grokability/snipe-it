@@ -52,21 +52,20 @@
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background-color: var(--button-primary, #007bff);
-    color: white;
+    background-color: var(--button-primary);
+    color: var(--text-main);
     border: none;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
     transition: background 0.22s ease, transform 160ms cubic-bezier(.2,.9,.2,1);
     flex-shrink: 0;
 }
 
 .floatingButtons-fab:hover,
 .floatingButtons-fab:focus {
-    background-color: var(--button-hover, #0069d9);
+    background-color: var(--button-hover);
     transform: translateY(-3px);
     outline: none;
 }
@@ -77,10 +76,9 @@
     bottom: 70px;
     left: 50%;
     transform: translateX(38px) translateY(6px);
-    background: #fff;
-    border: 1px solid #ccc;
+    background: var(--back-main);
+    border: 1px solid var(--back-sub);
     border-radius: 8px;
-    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.12);
     display: flex;
     flex-direction: column;
     min-width: 160px;
@@ -97,13 +95,14 @@
     transform: translateX(38px) translateY(0);
     visibility: visible;
     pointer-events: auto;
+    background-color: var(--back-main, #ECF0F5);
 }
 
 .floatingButtons-menu a {
     padding: 10px 12px;
     text-decoration: none;
-    color: #333;
-    border-bottom: 1px solid #eee;
+    color: var(--button-default);
+    border-bottom: 1px solid var(--text-sub);
     font-size: 14px;
     background: transparent;
 }
@@ -114,7 +113,9 @@
 
 .floatingButtons-menu a:hover,
 .floatingButtons-menu a:focus {
-    background-color: #f8f8f8;
+    background-color: var(--button-hover);
+    color: var(--hover-link);
+    border-radius: 8px;
     outline: none;
 }
 
