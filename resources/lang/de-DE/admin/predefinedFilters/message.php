@@ -20,11 +20,9 @@ return array(
         'not_allowed_to_edit'=> "Sie haben nicht die Berechtigungen um diesen Filter zu bearbeiten",
         'success' => 'Filter erfolgreich bearbeitet.',
         'validation_error'=> 'Ein Fehler ist aufgetreten, bitte setzen Sie zumindest einen Namen, Daten zum Filtern und falls öffentlich eine Gruppe.',
-        'filterData_required' => 'Keine Daten zum Filtern gesetzt. Diese sind Vorraussetzung.'
     ),
 
     'delete' => array(
-        'confirm'   => 'Sind sie sicher, dass sie diesen Filter löschen wollen?',
         'error' => 'Ein Fehler ist aufgetreten. Bitte erneut versuchen.',
         'not_allowed_to_delete'=> "Die haben nicht die Berechtigungen um diesen Filter zu löschen",
         'success' => 'Filter erfolgreich gelöscht.'

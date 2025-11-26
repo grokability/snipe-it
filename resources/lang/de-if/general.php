@@ -53,7 +53,6 @@ return [
     'avatar_delete'         => 'Avatar löschen',
     'avatar_upload'         => 'Avatar hochladen',
     'back'      			=> 'Zurück',
-    'backend_responded_with' => 'Das Backend hat die folgende Antwort gesendet: ',
     'bad_data'      		=> 'Nichts gefunden. Möglicherweise ungültige Daten?',
     'bulkaudit'             => 'Massenprüfung',
     'bulkaudit_status'      => 'Prüfstatus',
@@ -243,9 +242,6 @@ return [
     'people'				=> 'Benutzer',
     'per_page'				=> 'Ergebnisse pro Seite',
     'predefined_filter'		=> 'Vordefinierte Filter',
-    'predefined_Filters'	=> 'Vordefinierte Filter',
-    'predefined_filter_deleted_successfully' => 'Der vordefinierte Filter wurde erfolgreich gelöscht',
-    'predefined_filter_updated_successfully' => 'Der vordefinierte Filter wurde erfolgreich aktualisiert',
     'previous'				=> 'Vorherige',
     'previous_page'			=> 'Vorherige Seite',
     'processing'			=> 'In Arbeit',
@@ -742,17 +738,13 @@ return [
         'percent' => 'Prozentsatz',
     ],
 
-    'advanced_search' => "Erweiterte Suche",
     'months_plural' => '1 Monat|:count Monate',
-
+    
+    'advanced_search' => "Erweiterte Suche",
     'search_after_filter_field' => 'Nach einem Feld suchen...',
     'predefined_filter_name' => 'Filtername',
-    'enter_predefined_filter_name' => 'Gib bitte einen Filternamen ein',
-    'visibility' => 'Sichtbarkeit',
     'public' => 'Öffentlich',
     'private' => 'Privat',
-    'validation_required' => 'Gib bitte einen Filternamen ein.',
     'can_not_save_empty_filter' => 'Du kannst keinen leeren Filter speichern.',
     'can_not_update_empty_filter' => 'Du kannst keinen leeren Filter aktualisieren.',
-    'at_least_one_is_group_required_for_public_filter' => 'Es muss mindestens eine Gruppe ausgewählt sein um einen öffentlichen Filter zu speichern',
 ];

@@ -20,11 +20,9 @@ return array(
         'not_allowed_to_edit'=> "You don't have the permissions to edit this Filter",
         'success' => 'Filter updated successfully.',
         'validation_error'=> 'Something went wrong please set at least a Name, some data to filter with and if public a group',
-        'filterData_required' => 'No Filter Data given, is required'
     ),
 
     'delete' => array(
-        'confirm'   => 'Are you sure you wish to delete this filter?',
         'error' => 'something went wrong. please try again',
         'not_allowed_to_delete'=> "You don't have the permissions to delete this Filter",
         'success' => 'The filter was deleted successfully.'

@@ -215,7 +215,7 @@ return array(
     'kitsdelete' => [
         'name' => 'Delete Predefined Kits',
     ],
-        'predefinedfilters'   => [
+    'predefinedfilters'   => [
         'name' => 'Predefined Filters',
         'note'       => 'Grants access to the Predefined Filters section of the application.',
     ],

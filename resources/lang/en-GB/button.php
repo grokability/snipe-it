@@ -10,8 +10,6 @@ return [
     'clone'    	                => 'Clone',
     'restore' 	                => 'Restore',
     'remove'                    => 'Remove',
-    'delete_search_query'       => 'Delete',
-    'search'                    => 'Search',
     'request'                   => 'Request',
     'submit'  	                => 'Submit',
     'upload'                    => 'Upload',
