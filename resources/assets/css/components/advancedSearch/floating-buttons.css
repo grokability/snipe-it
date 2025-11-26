@@ -95,13 +95,14 @@
     transform: translateX(38px) translateY(0);
     visibility: visible;
     pointer-events: auto;
+    background-color: var(--back-main, #ECF0F5);
 }
 
 .floatingButtons-menu a {
     padding: 10px 12px;
     text-decoration: none;
     color: var(--button-default);
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--text-sub);
     font-size: 14px;
     background: transparent;
 }
@@ -112,7 +113,9 @@
 
 .floatingButtons-menu a:hover,
 .floatingButtons-menu a:focus {
-    background-color: var(--back-sub);
+    background-color: var(--button-hover);
+    color: var(--nav-link);
+    border-radius: 8px;
     outline: none;
 }
 

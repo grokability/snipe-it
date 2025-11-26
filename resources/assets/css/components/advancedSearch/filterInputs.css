@@ -66,7 +66,7 @@ When .hide is applied, the filter section is hidden.
     height: 38px;
     padding: 0px 2px;
     font-size: 13px;
-    border: 1px solid #ced4da;
+    border: 1px solid var(--text-main);
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
     border-right: none;
@@ -79,7 +79,7 @@ When .hide is applied, the filter section is hidden.
     flex: 1;
     height: 38px;
     font-size: 13px;
-    border: 1px solid #ced4da;
+    border: 1px solid var(--text-main);
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
 }
