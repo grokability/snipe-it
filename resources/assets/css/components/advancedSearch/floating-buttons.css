@@ -53,7 +53,7 @@
     height: 50px;
     border-radius: 50%;
     background-color: var(--button-primary);
-    color: var(--light-link);
+    color: var(--text-main);
     border: none;
     display: flex;
     align-items: center;
@@ -114,7 +114,7 @@
 .floatingButtons-menu a:hover,
 .floatingButtons-menu a:focus {
     background-color: var(--button-hover);
-    color: var(--nav-link);
+    color: var(--hover-link);
     border-radius: 8px;
     outline: none;
 }

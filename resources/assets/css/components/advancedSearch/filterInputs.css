@@ -94,12 +94,14 @@ When .hide is applied, the filter section is hidden.
     width: auto;
     max-width: width;
     box-sizing: border-box;
+    color: green;
+    background-color: darkblue;
 }
 
 .select2-container--default .select2-selection--single,
 .select2-container--default .select2-selection--multiple {
     height: 38px;
-    border: 1px solid #ced4da;
+    border: 1px solid var(--button-hover);
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
     border-left: none;
@@ -109,6 +111,14 @@ When .hide is applied, the filter section is hidden.
     line-height: 36px;
     padding-left: 10px;
 }
+
+.select2-search--dropdown{
+    background-color: var(--hover-link, #eeeeee);
+}
+.select2-results { 
+    background-color: var(--button-main);
+}
+
 
 /* Focus states */
 .filter-option:focus,
@@ -234,18 +244,18 @@ When .hide is applied, the filter section is hidden.
 }
 
 .select2-selection--multiple::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    /*background: #f1f1f1;*/
     border-radius: 4px;
 }
 
 .select2-selection--multiple::-webkit-scrollbar-thumb {
-    background: #888;
+    /*background: #888;*/
     border-radius: 4px;
 }
 
-.select2-selection--multiple::-webkit-scrollbar-thumb:hover {
+/*.select2-selection--multiple::-webkit-scrollbar-thumb:hover {
     background: #555;
-}
+}*/
 
 /* 
 Layout container for the whole page.
@@ -354,7 +364,7 @@ When .hide is applied, the filter section is hidden.
 .select2-container--default .select2-selection--single,
 .select2-container--default .select2-selection--multiple {
     height: 38px;
-    border: 1px solid #ced4da;
+    border: 1px solid var(--text-main);
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
     border-left: none;
@@ -400,6 +410,11 @@ When .hide is applied, the filter section is hidden.
 .input-daterange .form-control:last-child {
     border-top-right-radius: 4px;
     border-bottom-right-radius: 4px;
+}
+
+.input-daterange .input-group-addon {
+    background-color: var(--back-sub, #ECF0F5);
+    color: var(--text-main);
 }
 
 .filter-option {
@@ -468,6 +483,7 @@ When .hide is applied, the filter section is hidden.
 .select2-container,
 .select2-container .select2-selection--single,
 .select2-container .select2-selection--multiple {
+    background-color:var(--back-sub, #ffffff) !important;
     transition: height 0.2s ease, min-height 0.2s ease, max-height 0.2s ease;
 }
 
@@ -482,15 +498,15 @@ When .hide is applied, the filter section is hidden.
 }
 
 .select2-selection--multiple::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    /*background: #f1f1f1;*/
     border-radius: 4px;
 }
 
 .select2-selection--multiple::-webkit-scrollbar-thumb {
-    background: #888;
+    /*background: #888;*/
     border-radius: 4px;
 }
 
-.select2-selection--multiple::-webkit-scrollbar-thumb:hover {
+/*.select2-selection--multiple::-webkit-scrollbar-thumb:hover {
     background: #555;
-}
+}*/
