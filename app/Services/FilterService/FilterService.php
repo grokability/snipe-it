@@ -284,7 +284,6 @@ class FilterService
                     $this->applyRelationalValue($r, $last, $operator, ['column' => 'users.last_name']);
                 });
             });
-
         });
     }
     protected function applyAssignedToAsset($inner, $assignedValue, $operator){
@@ -293,18 +292,18 @@ class FilterService
         $inner->where(function ($q) use ($assignedValue, $operator) {
             $q->whereNotNull('assets.assigned_to')
             ->where('assets.assigned_type', Asset::class)
-            ->whereExists(function ($sub) use ($assignedValue, $operator) {
-                $sub->from('assets as b')
+                ->whereExists(function ($sub) use ($assignedValue, $operator) {
+                    $sub->from('assets as b')
                 ->select('b.id')
-                ->whereColumn('b.id', 'assets.assigned_to')
-                ->where(function ($q2) use ($assignedValue, $operator) {
-                    if ($operator === 'equals') {
-                        $q2->where('b.asset_tag', '=', $assignedValue)
-                        ->orWhere('b.name', '=', $assignedValue);
-                    } else {
-                        $q2->where('b.asset_tag', 'LIKE', '%' . $assignedValue . '%')
-                        ->orWhere('b.name', 'LIKE', '%' . $assignedValue . '%');
-                    }
+                    ->whereColumn('b.id', 'assets.assigned_to')
+                    ->where(function ($q2) use ($assignedValue, $operator) {
+                        if ($operator === 'equals') {
+                            $q2->where('b.asset_tag', '=', $assignedValue)
+                            ->orWhere('b.name', '=', $assignedValue);
+                        } else {
+                            $q2->where('b.asset_tag', 'LIKE', '%' . $assignedValue . '%')
+                            ->orWhere('b.name', 'LIKE', '%' . $assignedValue . '%');
+                        }
                 });
             });
         });

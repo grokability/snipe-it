@@ -143,7 +143,7 @@ class PredefinedFilterController extends Controller
             'filter_data' => $updated,
         ]);
     }
-    public function destroy(Request $request, int $id)
+    public function destroy(int $id)
     {
         $user = auth()->user();
         $filter = PredefinedFilter::find($id);

@@ -21,7 +21,6 @@ class PredefinedFilterPermissionService
         }
 
         return $permission;
-
     }
 
     public function show(int $id): PredefinedFilterPermission
