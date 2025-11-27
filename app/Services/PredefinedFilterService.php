@@ -14,6 +14,7 @@ use Exception;
 use Throwable;
 use App\Models\PredefinedFilter;
 use App\Services\FilterService\FilterService;
+use App\Services\PredefinedFilterPermissionService;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
@@ -60,94 +61,82 @@ class PredefinedFilterService
             $permissions = $this->predefinedFilterPermissionService->getPermissionsByPredefinedFilterId($id);
             $predefinedFilter['permissions'] = $permissions;
         }
-        
+
+        return $predefinedFilter;
+    }
+    
+    public function getFilterWithIdAndNameValues(int $id)
+    {
+        $predefinedFilter = $this->getFilterWithOptionalPermissionsById($id);
+
         if (!$predefinedFilter){
             return null;
         }
 
+        $fieldsToLookup = [
+            'company',
+            'model',
+            'category',
+            'status_label',
+            'location',
+            'rtd_location',
+            'manufacturer',
+            'supplier'
+        ];
+    
         $filters = $predefinedFilter->filter_data;
-
+    
         foreach ($filters as &$filter) {
+    
+            $model = null;
 
-
+            if (isset($filter['field']) && !in_array($filter['field'], $fieldsToLookup)){
+                continue;
+            }
+                
             if (!empty($filter['value']) && is_array($filter['value']) && is_int($filter['value'][0])) {
+                    
                 $values =[];
+                    
                 foreach ($filter['value'] as $valueId){
                     switch ($filter['field']) {
                         case 'company':
-                            $company = Company::find($valueId);
-                            if ($company) {
-                                $values[] = [
-                                    'id' => $company->id,
-                                    'name' => $company->name,
-                                ];
-                            }
+                            $model = Company::find($valueId);
                             break;
                         case 'model':
                             $model = AssetModel::find($valueId);
-                            if ($model) {
-                                $values[] = [
-                                    'id' => $model->id,
-                                    'name' => $model->name,
-                                ];
-                            }
                             break;
                         case 'category':
-                            $category = Category::find($valueId);
-                            if ($category) {
-                                $values[] = [
-                                    'id' => $category->id,
-                                    'name' => $category->name,
-                                ];
-                            }
+                            $model = Category::find($valueId);
                             break;
-                        case 'statuslabel':
-                            $status = Statuslabel::find($valueId);
-                            if ($status) {
-                                $values[] = [
-                                    'id' => $status->id,
-                                    'name' => $status->name,
-                                ];
-                            }
+                        case 'status_label':
+                            $model = Statuslabel::find($valueId);
                             break;
                         case 'location':
-                        case 'default_location':
-                            $location = Location::find($valueId);
-                            if ($location) {
-                                $values[] = [
-                                    'id' => $location->id,
-                                    'name' => $location->name,
-                                ];
-                            }
+                        case 'rtd_location':
+                            $model = Location::find($valueId);
                             break;
                         case 'manufacturer':
-                            $manufacturer = Manufacturer::find($valueId);
-                            if ($manufacturer) {
-                                $values[] = [
-                                    'id' => $manufacturer->id,
-                                    'name' => $manufacturer->name,
-                                ];
-                            }
+                            $model = Manufacturer::find($valueId);
                             break;
                         case 'supplier':
-                            $supplier = Supplier::find($valueId);
-                            if ($supplier) {
-                                $values[] = [
-                                    'id' => $supplier->id,
-                                    'name' => $supplier->name,
-                                ];
-                            }
+                            $model = Supplier::find($valueId);
                             break;
                         default:
                             break;
                     }
+                    if ($model){
+                        $values[] = [
+                            'id'    => $model->id,
+                            'name'  => $model->name
+                        ];
+                    }
+                    $filter['value'] = $values;
                 }
-
-            $filter['value'] = $values;
-            $predefinedFilter->filter_data = $filters;
-
+                    
             }
         }
+        $predefinedFilter->filter_data = $filters;
         return $predefinedFilter;
     }
 

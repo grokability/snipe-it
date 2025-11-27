@@ -61,7 +61,7 @@ class PredefinedFilterController extends Controller
 
     public function show(int $id)
     {
-        $filter = $this->service->getFilterWithOptionalPermissionsById($id);
+        $filter = $this->service->getFilterWithIdAndNameValues($id);
         
         if (!$filter) {
             return response()->json(['message' => trans('admin/predefinedFilters/message.does_not_exist')], 404);
