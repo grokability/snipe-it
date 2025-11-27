@@ -742,9 +742,9 @@ return [
 
     'advanced_search' => "Advanced search",
     'search_after_filter_field' => 'Type here to find a field',
-    'predefined_filter_name' => 'Filter Name',
+    'predefined_filter_name' => 'Filtername',
     'public' => 'Public',
     'private' => 'Private',
-    'can_not_save_empty_filter' => 'You can not save a empty filter',
-    'can_not_update_empty_filter' => 'You can not update a empty filter',    
+    'can_not_save_empty_filter' => 'You cannot save a empty filter',
+    'can_not_update_empty_filter' => 'You cannot update a empty filter',
 ];

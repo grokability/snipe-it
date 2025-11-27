@@ -19,7 +19,7 @@ return array(
         'at_least_one_is_group_required_for_public_filter' => 'Bitte mindestens eine Gruppe auswählen oder setze den Filter auf Privat.',
         'not_allowed_to_edit'=> "Du hast nicht die Berechtigungen um diesen Filter zu bearbeiten",
         'success' => 'Filter erfolgreich bearbeitet.',
-        'validation_error'=> 'Ein Fehler ist aufgetreten, bitte setzen Sie zumindest einen Namen, Daten zum Filtern und falls öffentlich eine Gruppe.',
+        'validation_error'=> 'Ein Fehler ist aufgetreten, bitte lege zumindest einen Namen, Daten zum Filtern und falls öffentlich eine Gruppe fest.',
     ),
 
     'delete' => array(

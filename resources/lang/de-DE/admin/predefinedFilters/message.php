@@ -19,12 +19,12 @@ return array(
         'at_least_one_is_group_required_for_public_filter' => 'Bitte mindestens eine Gruppe auswählen oder setze den Filter auf Privat.',
         'not_allowed_to_edit'=> "Sie haben nicht die Berechtigungen um diesen Filter zu bearbeiten",
         'success' => 'Filter erfolgreich bearbeitet.',
-        'validation_error'=> 'Ein Fehler ist aufgetreten, bitte setzen Sie zumindest einen Namen, Daten zum Filtern und falls öffentlich eine Gruppe.',
+        'validation_error'=> 'Ein Fehler ist aufgetreten, bitte legen Sie zumindest einen Namen, Daten zum Filtern und falls öffentlich eine Gruppe fest.',
     ),
 
     'delete' => array(
         'error' => 'Ein Fehler ist aufgetreten. Bitte erneut versuchen.',
-        'not_allowed_to_delete'=> "Die haben nicht die Berechtigungen um diesen Filter zu löschen",
+        'not_allowed_to_delete'=> "Sie haben nicht die Berechtigungen um diesen Filter zu löschen",
         'success' => 'Filter erfolgreich gelöscht.'
     ),
 
