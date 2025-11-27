@@ -356,16 +356,16 @@ class PredefinedFilterFilterAssetsTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $in = Asset::factory()->create(['created_at' => '2025-01-15']);
+        $in   = Asset::factory()->create(['created_at' => '2025-01-15']);
         $out1 = Asset::factory()->create(['created_at' => '2024-12-31']);
         $out2 = Asset::factory()->create(['created_at' => '2025-02-01']);
 
         $filter = PredefinedFilter::create([
-            'name'  =>  'filter_by_date',
+            'name'       => 'filter_by_date',
             'created_by' => $user->id,
-            'filter_data' => [
+            'filter_data'=> [
                 'created_at_start' => '2025-01-01',
-                'created_at_end' => '2025-01-31',        
+                'created_at_end'   => '2025-01-31',
             ],
         ]);
 
