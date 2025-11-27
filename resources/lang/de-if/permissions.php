@@ -434,23 +434,6 @@ return array(
         'name' => 'Abschreibung erstellen',
     ],
 
-    'predefinedfilters'   => [
-        'name' => 'Vordefinierte Filter',
-        'note'       => 'Gewährt Zugriff auf Vordefinierte Filter in der App.',
-    ],
-    'predefinedfiltercreate' => [
-        'name' => 'Öffentliche vordefinierte Filter anzeigen',
-    ],
-    'predefinedfilterview' => [
-        'name' => 'Öffentliche vordefinierte Filter erstellen',
-    ],
-    'predefinedfilteredit' => [
-        'name' => 'Öffentliche vordefinierte Filter bearbeiten',
-    ],
-    'predefinedfilterdelete' => [
-        'name' => 'Öffentliche vordefinierte Filter löschen',
-    ],
-
     'grant_all' => 'Erteile alle Berechtigungen für :area',
     'deny_all' => 'Verweigere alle Berechtigungen für :area',
     'inherit_all' => 'Alle Berechtigungen für :area von Berechtigungsgruppen vererben',

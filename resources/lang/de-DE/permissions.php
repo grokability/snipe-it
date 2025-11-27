@@ -434,23 +434,6 @@ return array(
         'name' => 'Öffentliche vordefinierte Filter löschen',
     ],
 
-    'predefinedfilters'   => [
-        'name' => 'Vordefinierte Filter',
-        'note'       => 'Gewährt Zugriff auf Vordefinierte Filter in der App.',
-    ],
-    'predefinedfiltercreate' => [
-        'name' => 'Öffentliche vordefinierte Filter erstellen',
-    ],
-    'predefinedfilterview' => [
-        'name' => 'Öffentliche vordefinierte Filter anzeigen',
-    ],
-    'predefinedfilteredit' => [
-        'name' => 'Öffentliche vordefinierte Filter bearbeiten',
-    ],
-    'predefinedfilterdelete' => [
-        'name' => 'Öffentliche vordefinierte Filter löschen',
-    ],
-
     'grant_all' => 'Erteilen Sie alle Berechtigungen für :area',
     'deny_all' => 'Verweigerung aller Berechtigungen für :area',
     'inherit_all' => 'Alle Berechtigungen für :area von Berechtigungsgruppen Vererben',

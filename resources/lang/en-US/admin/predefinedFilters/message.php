@@ -19,14 +19,12 @@ return array(
         'at_least_one_is_group_required_for_public_filter' => 'You must select at least one group or set the filter to private.',
         'not_allowed_to_edit'=> "You don't have the permissions to edit this Filter",
         'success' => 'Filter updated successfully.',
-        'validation_error'=> 'Something went wrong please set at least a Name, some data to filter with and if public a group',
-        'filterData_required' => 'No Filter Data given, is required'
+        'validation_error'=> 'Something went wrong please set at least a Name, some filter-data with and if public a group',
     ),
 
     'delete' => array(
-        'confirm'   => 'Are you sure you wish to delete this filter?',
         'error' => 'something went wrong. please try again',
-        'not_allowed_to_delete'=> "You don't have the permissions to delete this Filter",
+        'not_allowed_to_delete'=> "You don't have the permissions to delete this filter",
         'success' => 'The filter was deleted successfully.'
     ),
 
