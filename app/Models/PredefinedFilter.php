@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Watson\Validating\ValidatingTrait;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
 
 class PredefinedFilter extends Model
 {
@@ -123,15 +124,47 @@ class PredefinedFilter extends Model
         }
     }
 
-    protected function applyDateRangeFilter(Builder $assets, array $filter, string $base): void
+    public function applyDateRangeFilter($query, array $filters, string $qualifiedField)
     {
-        if (!empty($filter["{$base}_start"])) {
-            $assets->whereDate("{$base}", '>=', $filter["{$base}_start"]);
+        $start = null;
+        $end   = null;
+
+        $fieldNameOnly = Str::afterLast($qualifiedField, '.');
+
+        foreach ($filters as $filter) {
+            if (!isset($filter['field'], $filter['value']) || !is_array($filter['value'])) {
+                continue;
+            }
+
+            if ($filter['field'] !== $fieldNameOnly) {
+                continue;
+            }
+
+            if (isset($filter['value']['startDate'])) {
+                $start = $filter['value']['startDate'] ?: null;
+            }
+
+            if (isset($filter['value']['endDate'])) {
+                $end = $filter['value']['endDate'] ?: null;
+            }
         }
-        if (!empty($filter["{$base}_end"])) {
-            $assets->whereDate("{$base}", '<=', $filter["{$base}_end"]);
+
+        if ($start || $end) {
+            $query->whereNotNull($qualifiedField);
         }
+
+        if (!empty($start)) {
+            $query->whereDate($qualifiedField, '>=', $start);
+        }
+
+        if (!empty($end)) {
+            $query->whereDate($qualifiedField, '<=', $end);
+        }
+
+        return $query;
     }
+
+
 
     public function filterAssets(Builder $assets)
     {
@@ -150,15 +183,15 @@ class PredefinedFilter extends Model
             $this->applyArrayOrScalarFilter($assets, $filter, 'manufacturer_id', 'models.manufacturer_id');
         }
 
-        $this->applyDateRangeFilter($assets, $filter, 'created_at');
-        $this->applyDateRangeFilter($assets, $filter, 'purchase_date');
-        $this->applyDateRangeFilter($assets, $filter, 'last_checkout');
-        $this->applyDateRangeFilter($assets, $filter, 'last_checkin');
-        $this->applyDateRangeFilter($assets, $filter, 'expected_checkin');
-        $this->applyDateRangeFilter($assets, $filter, 'asset_eol_date');
-        $this->applyDateRangeFilter($assets, $filter, 'last_audit_date');
-        $this->applyDateRangeFilter($assets, $filter, 'next_audit_date');
-        $this->applyDateRangeFilter($assets, $filter, 'updated_at');
+        $this->applyDateRangeFilter($assets, $filter, 'assets.created_at');
+        $this->applyDateRangeFilter($assets, $filter, 'assets.purchase_date');
+        $this->applyDateRangeFilter($assets, $filter, 'assets.last_checkout');
+        $this->applyDateRangeFilter($assets, $filter, 'assets.last_checkin');
+        $this->applyDateRangeFilter($assets, $filter, 'assets.expected_checkin');
+        $this->applyDateRangeFilter($assets, $filter, 'assets.asset_eol_date');
+        $this->applyDateRangeFilter($assets, $filter, 'assets.last_audit_date');
+        $this->applyDateRangeFilter($assets, $filter, 'assets.next_audit_date');
+        $this->applyDateRangeFilter($assets, $filter, 'assets.updated_at');
 
         $this->applyLikeFilter($assets, $filter, 'name', 'assets.name');
         $this->applyLikeFilter($assets, $filter, 'asset_tag', 'assets.asset_tag');

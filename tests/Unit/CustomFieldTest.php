@@ -97,7 +97,7 @@ class CustomFieldTest extends TestCase
         }
     }
 
-    public function testDbNameArabic()
+    public function testDbNameArabic()eol
     {
         $customfield = new CustomField();
         $customfield->name = 'حَوّامتي مُمْتِلئة بِأَنْقَلَيْسون';
