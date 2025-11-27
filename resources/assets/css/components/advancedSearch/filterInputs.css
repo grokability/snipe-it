@@ -94,7 +94,6 @@ When .hide is applied, the filter section is hidden.
     width: auto;
     max-width: width;
     box-sizing: border-box;
-    color: green;
     background-color: darkblue;
 }
 
