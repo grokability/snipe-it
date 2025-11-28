@@ -674,7 +674,6 @@ class Asset extends Depreciable
     {
         return $this->belongsTo(Location::class, 'assigned_to')
             ->where('assigned_type', '=', Location::class);
-            //->whereNotNull('assigned_to');
     }
 
     public function assignedToUser()

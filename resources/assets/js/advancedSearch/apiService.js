@@ -55,7 +55,6 @@ export default class ApiService {
         };
 
         return fetch(path, options);
-        //.then(res => res.json());
     }
 
 }
