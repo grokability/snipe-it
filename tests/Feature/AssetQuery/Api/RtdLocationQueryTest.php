@@ -71,8 +71,6 @@ class RtdLocationQueryTest extends TestCase
         $assetA = Asset::factory()->create(['rtd_location_id' => $locationA->id]);
         $assetB = Asset::factory()->create(['rtd_location_id' => $locationB->id]);
 
-        $filter = ['rtd_location' => $locationA->name];//
-
         $filter = [
             [
                 "field"=>"rtd_location",

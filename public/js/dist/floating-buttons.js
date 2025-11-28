@@ -224,12 +224,6 @@ export default class FloatingButtons {
             // If panel extends into the button zone, make buttons fixed; otherwise make them scrollable (absolute inside panel)
             const wouldOverlap = panelRect.bottom > buttonZoneTop;
 
-            // const minScrollableHeight = 400; // tweak as needed to match your layout
-            // if (panelRect.height < minScrollableHeight) {
-            //     this._setScrollableMode();
-            //     return;
-            // }
-
             const overlapThreshold = 50;
 
             let newMode = this._currentMode;

@@ -14,7 +14,7 @@ class UserMatrixSeeder extends Seeder
 {
     public function run(): void
     {
-        // --- Basisdaten sicherstellen ---
+        // --- create Basic Data ---
         $this->call([
             SettingsSeeder::class,
             CompanySeeder::class,
@@ -22,14 +22,14 @@ class UserMatrixSeeder extends Seeder
             GroupMatrixSeeder::class,
         ]);
 
-        // Basis-IDs für Pflichtfelder (falls notwendig)
+        // Basic-Ids for required Fields (if necessary)
         $companyId = Company::value('id');
         $deptId    = Department::value('id');
 
         $pwd = Hash::make(env('MATRIX_PWD', 'password'));
         $gid = fn(string $name) => (int) PermissionGroup::where('name', $name)->value('id');
 
-        // Helper zum Anhängen an Gruppen
+        // Helper for attaching to groups
         $attach = function (?int $userId, string $groupName) use ($gid) {
             if (!$userId) {
                 echo "skip null user for {$groupName}\n";
@@ -44,7 +44,7 @@ class UserMatrixSeeder extends Seeder
             }
         };
 
-        // --- Superuser (volle Rechte, keine Gruppen nötig) ---
+        // --- Superuser (all Permissions, no Groups necessary) ---
         $super = User::updateOrCreate(
             ['username' => 'superuser_matrix'],
             [
@@ -61,7 +61,7 @@ class UserMatrixSeeder extends Seeder
             'permissions' => json_encode(['superuser' => '1']),
         ]);
 
-        // --- User ohne Zugriffe ---
+        // --- User without Permissions ---
         $uNone = User::updateOrCreate(
             ['username' => 'user_none'],
             [
@@ -75,7 +75,7 @@ class UserMatrixSeeder extends Seeder
             ]
         );
 
-        // --- User nur mit Assets (View) ---
+        // --- User only with Assets (View) ---
         $uAssets = User::updateOrCreate(
             ['username' => 'user_assets_view'],
             [
@@ -133,7 +133,7 @@ class UserMatrixSeeder extends Seeder
         );
         $attach($uPfDel->id, 'grp_pf_delete');
 
-        // --- je Matrix-Gruppe ein eigener User ---
+        // --- Each matrix group has its own user. ---
         foreach (PermissionGroup::pluck('id', 'name') as $name => $groupId) {
             $u = User::updateOrCreate(
                 ['username' => "user_{$name}"],
@@ -153,7 +153,7 @@ class UserMatrixSeeder extends Seeder
             );
         }
 
-        // --- Kombi-User: View + Edit + Delete ---
+        // --- Combination-User: View + Edit + Delete ---
         $uVed = User::updateOrCreate(
             ['username' => 'user_combo_ved'],
             [
@@ -170,7 +170,7 @@ class UserMatrixSeeder extends Seeder
             $attach($uVed->id, $g);
         }
 
-        // --- Multi-None-User in drei leeren Gruppen ---
+        // --- Multi-None-User in three empty groups ---
         $uMultiNone = User::updateOrCreate(
             ['username' => 'user_multi_none'],
             [
