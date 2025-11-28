@@ -80,6 +80,13 @@ class Modal extends Component
             $predefinedFilter = $predefinedFilterService->getFilterWithOptionalPermissionsById(
                 $predefinedFilterId
             );
+            
+            if ($predefinedFilter === null){
+                $this->showModal = false;
+                $this->dispatchNotFoundNotification();
+                return;
+            }
+            
             $this->name = $predefinedFilter["name"];
 
             if ($predefinedFilter["is_public"] == 1) {
@@ -307,13 +314,9 @@ class Modal extends Component
 
         $predefinedFilter = $predefinedFilterService->getFilterWithOptionalPermissionsById($this->filterId);
 
-        if (!isset($predefinedFilter)) {
-            $this->dispatch('showNotificationInFrontend', [
-                'type' => 'error',
-                'title' => trans('general.notification_error'),
-                'message' => trans('admin/predefinedFilters/message.does_not_exist'),
-                'tag' => 'predefinedFilter',
-            ]);
+        if ($predefinedFilter === null){
+            $this->dispatchNotFoundNotification();
+            return;
         }
 
         if (!$predefinedFilter->userHasPermission(auth()->user(), 'delete')) {
@@ -398,6 +401,16 @@ class Modal extends Component
         return false;
     }
 
+    private function dispatchNotFoundNotification()
+    {
+        $this->dispatch('showNotificationInFrontend', [
+            'type' => 'error',
+            'title' => trans('general.notification_error'),
+            'message' => trans('admin/predefinedFilters/message.does_not_exist'),
+            'tag' => 'predefinedFilter',
+        ]);
+    }
+    
     private function validateMaxLenghtForFiltername(): bool {
         return mb_strlen($this->name) > 190;
     }
