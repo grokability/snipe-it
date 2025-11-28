@@ -80,7 +80,7 @@ class PredefinedFilterController extends Controller
         $user = auth()->user();
 
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:190',
+            'name' => 'required|string|max:191',
             'filter_data' => 'required|array',
             'is_public' => 'sometimes|boolean'
         ]);
@@ -113,7 +113,7 @@ class PredefinedFilterController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:190',
+            'name' => 'required|string|max:191',
             'filter_data' => 'required|array',
             'is_public' => 'sometimes|boolean'
         ]);

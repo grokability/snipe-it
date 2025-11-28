@@ -405,7 +405,7 @@ class PredefinedFilterControllerTest extends TestCase
                 'created_by' => 999,
             ])
             ->assertStatus(422)
-            ->assertJsonPath('messages.name.0', 'The name field must not be greater than 190 characters.');
+            ->assertJsonPath('messages.name.0', 'The name field must not be greater than 191 characters.');
     }
 
     public function test_store_creates_and_sets_owner()
@@ -591,7 +591,7 @@ class PredefinedFilterControllerTest extends TestCase
                 'created_by'  => 999,
             ])
             ->assertStatus(422)
-            ->assertJsonPath('messages.name.0', 'The name field must not be greater than 190 characters.');
+            ->assertJsonPath('messages.name.0', 'The name field must not be greater than 191 characters.');
     }
 
 

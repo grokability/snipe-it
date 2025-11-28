@@ -122,7 +122,7 @@ class Modal extends Component
     ) {
         $this->validate();
 
-        if(mb_strlen($this->name) > 190) {
+        if($this->validateMaxLenghtForFiltername()) {
             $this->dispatch('showNotificationInFrontend', [
                 'type' => 'error',
                 'title' => trans('general.notification_error'),
@@ -201,7 +201,7 @@ class Modal extends Component
             'groupSelect.*' => 'required|integer|exists:permission_groups,id',
         ]);
 
-        if(mb_strlen($this->name) > 190) {
+        if($this->validateMaxLenghtForFiltername()) {
             $this->dispatch('showNotificationInFrontend', [
                 'type' => 'error',
                 'title' => trans('general.notification_error'),
@@ -396,5 +396,9 @@ class Modal extends Component
         }
 
         return false;
+    }
+
+    private function validateMaxLenghtForFiltername(): bool {
+        return mb_strlen($this->name) > 190;
     }
 }
