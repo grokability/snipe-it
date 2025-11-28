@@ -238,14 +238,26 @@ class Component extends SnipeModel
      * @since  [v5.0]
      * @return int
      */
-    public function numCheckedOut()
+    public function numCheckedOut(bool $recalculate = false)
     {
-        $checkedout = 0;
+        /**
+         *
+         * WARNING: This method caches the result, so if you're doing something
+         * that is going to change the number of checked-out items, make sure to pass
+         * 'true' as the first parameter to force this to recalculate the number of checked-out
+         * items!!!!!
+         *
+         */
 
         // In case there are elements checked out to assets that belong to a different company
         // than this asset and full multiple company support is on we'll remove the global scope,
         // so they are included in the count.
-        return $this->uncontrainedAssets->sum('pivot.assigned_qty');
+        if (is_null($this->sum_unconstrained_assets) || $recalculate) {
+            // This, in a components-listing context, is mostly important for when it sets a 'zero' which
+            // is *not* null - so we don't have to keep recalculating for un-checked-out components
+            $this->sum_unconstrained_assets = $this->uncontrainedAssets()->sum('assigned_qty') ?? 0;
+        }
+        return $this->sum_unconstrained_assets;
     }
 
 

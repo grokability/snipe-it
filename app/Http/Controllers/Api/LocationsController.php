@@ -242,6 +242,7 @@ class LocationsController extends Controller
                 'locations.currency',
                 'locations.company_id',
                 'locations.notes',
+                'locations.tag_color',
             ])
             ->withCount('assignedAssets as assigned_assets_count')
             ->withCount('assets as assets_count')

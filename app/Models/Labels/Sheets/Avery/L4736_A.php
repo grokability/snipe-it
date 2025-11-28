@@ -95,23 +95,39 @@ class L4736_A extends L4736
             $currentX += $barcodeSize + self::BARCODE_MARGIN;
             $usableWidth -= $barcodeSize + self::BARCODE_MARGIN;
         }
+        $fields = $record->get('fields');
+        $fieldCount = count($fields);
 
-        foreach ($record->get('fields') as $field) {
+        $perFieldHeight = (self::LABEL_SIZE + self::LABEL_MARGIN)
+                       + (self::FIELD_SIZE + self::FIELD_MARGIN);
+
+        $baseHeight = $fieldCount * $perFieldHeight;
+        $scale = 1.0;
+        if ($baseHeight > $usableHeight && $baseHeight > 0) {
+            $scale = $usableHeight / $baseHeight;
+        }
+
+        $labelSize   = self::LABEL_SIZE   * $scale;
+        $labelMargin = self::LABEL_MARGIN * $scale;
+        $fieldSize   = self::FIELD_SIZE   * $scale;
+        $fieldMargin = self::FIELD_MARGIN * $scale;
+
+        foreach ($fields as $field) {
             static::writeText(
                 $pdf, $field['label'],
                 $currentX, $currentY,
-                'freesans', '', self::LABEL_SIZE, 'L',
-                $usableWidth, self::LABEL_SIZE, true, 0
+                'freesans', '', $labelSize, 'L',
+                $usableWidth, $labelSize, true, 0
             );
-            $currentY += self::LABEL_SIZE + self::LABEL_MARGIN;
+            $currentY += $labelSize + $labelMargin;
 
             static::writeText(
                 $pdf, $field['value'],
                 $currentX, $currentY,
-                'freemono', 'B', self::FIELD_SIZE, 'L',
-                $usableWidth, self::FIELD_SIZE, true, 0, 0.01
+                'freemono', 'B', $fieldSize, 'L',
+                $usableWidth, $fieldSize, true, 0, 0.01
             );
-            $currentY += self::FIELD_SIZE + self::FIELD_MARGIN;
+            $currentY += $fieldSize + $fieldMargin;
         }
 
     }

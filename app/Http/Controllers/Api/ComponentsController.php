@@ -58,8 +58,8 @@ class ComponentsController extends Controller
             ];
 
         $components = Component::select('components.*')
-            ->with('company', 'location', 'category', 'assets', 'supplier', 'adminuser', 'manufacturer', 'uncontrainedAssets')
-            ->withSum('uncontrainedAssets', 'components_assets.assigned_qty');
+            ->with('company', 'location', 'category', 'supplier', 'adminuser', 'manufacturer')
+            ->withSum('uncontrainedAssets as sum_unconstrained_assets', 'components_assets.assigned_qty');
 
         $filter = [];
 
@@ -112,7 +112,8 @@ class ComponentsController extends Controller
         }
 
         // Make sure the offset and limit are actually integers and do not exceed system limits
-        $offset = ($request->input('offset') > $components->count()) ? $components->count() : app('api_offset_value');
+        $components_count = $components->count();
+        $offset = ($request->input('offset') > $components_count) ? $components_count : app('api_offset_value');
         $limit = app('api_limit_value');
 
         $order = $request->input('order') === 'asc' ? 'asc' : 'desc';
@@ -143,7 +144,7 @@ class ComponentsController extends Controller
                 break;
         }
 
-        $total = $components->count();
+        $total = $components_count;
         $components = $components->skip($offset)->take($limit)->get();
 
         return (new ComponentsTransformer)->transformComponents($components, $total);
