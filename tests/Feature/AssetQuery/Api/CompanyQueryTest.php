@@ -20,7 +20,7 @@ class CompanyQueryTest extends TestCase
         $companyA = Company::factory()->create();
         $companyB = Company::factory()->create();
 
-        // Assets mit direkter company_id
+        // Assets with direct company_id
         $assetA = Asset::factory()->create([
             'company_id' => $companyA->id,
         ]);
@@ -71,7 +71,7 @@ class CompanyQueryTest extends TestCase
         $companyA = Company::factory()->create();
         $companyB = Company::factory()->create();
 
-        // Assets mit direkter company_id
+        // Assets with direct company_id
         $assetA = Asset::factory()->create([
             'company_id' => $companyA->id,
         ]);
@@ -120,7 +120,7 @@ class CompanyQueryTest extends TestCase
         $companyB = Company::factory()->create();
         $companyC = Company::factory()->create();
 
-        // Assets mit direkter company_id
+        // Assets with direct company_id
         $assetA = Asset::factory()->create([
             'company_id' => $companyA->id,
         ]);

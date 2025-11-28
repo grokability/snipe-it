@@ -85,8 +85,6 @@ class SqlInjectionQueryTest extends TestCase
         // Attempted SQL injection payload in the filter
         $sqlInjectionString = "' OR '1'='1";
 
-        // $filter = ['category' => $sqlInjectionString];
-
         $filter = [
             [
                 "field"=>"category",

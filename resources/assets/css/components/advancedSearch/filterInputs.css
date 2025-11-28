@@ -252,10 +252,6 @@ When .hide is applied, the filter section is hidden.
     border-radius: 4px;
 }
 
-/*.select2-selection--multiple::-webkit-scrollbar-thumb:hover {
-    background: #555;
-}*/
-
 /* 
 Layout container for the whole page.
 Uses flexbox so the filter and table sections can sit side by side on desktop, and stack on mobile.

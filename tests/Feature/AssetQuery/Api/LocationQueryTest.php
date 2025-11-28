@@ -24,8 +24,6 @@ class LocationQueryTest extends TestCase
         $assetA = Asset::factory()->create(['location_id' => $locationA->id]);
         $assetB = Asset::factory()->create(['location_id' => $locationB->id]);
 
-        //$filter = ['location' => ''];
-
         $filter = [
             [
                 'field' => 'location',
@@ -72,8 +70,6 @@ class LocationQueryTest extends TestCase
         // Assets
         $assetA = Asset::factory()->create(['location_id' => $locationA->id]);
         $assetB = Asset::factory()->create(['location_id' => $locationB->id]);
-
-        $filter = ['location' => $locationA->name];
 
         $filter = [
             [

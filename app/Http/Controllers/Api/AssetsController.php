@@ -467,7 +467,7 @@ class AssetsController extends Controller
             $id = $request->predefinedFilter;
             $predefinedFilters = PredefinedFilter::where('id', $id)
                 ->where('created_by', auth()->user()->id)
-                ->first(); // just own?
+                ->first();
 
             if ($predefinedFilters) {
                 $assets = $predefinedFilters->filterAssets($assets);
