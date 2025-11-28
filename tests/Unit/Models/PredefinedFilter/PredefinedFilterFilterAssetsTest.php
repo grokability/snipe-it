@@ -243,7 +243,8 @@ class PredefinedFilterFilterAssetsTest extends TestCase
        
         $m1 = AssetModel::factory()->create();
         $m2 = AssetModel::factory()->create();
-        $m3 = AssetModel::factory()->create();
+        // $m3 = AssetModel::factory()->create(); // Variable $m3 isn't used
+        AssetModel::factory()->create();
 
         $keepScalar = Asset::factory()->create(['model_id' => $m1->id]); 
         $dropScalar = Asset::factory()->create(['model_id' => $m2->id]); 

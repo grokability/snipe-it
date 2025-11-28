@@ -54,10 +54,10 @@ class PredefinedFilterService
             })->values();
     }
 
-    public function getFilterWithOptionalPermissionsById(int $id, bool $include_predefined_filter_groups = true)
+    public function getFilterWithOptionalPermissionsById(int $id, bool $includePredefinedFilterGroups = true)
     {
         $predefinedFilter = PredefinedFilter::find($id);
-        if ($include_predefined_filter_groups && $predefinedFilter) {
+        if ($includePredefinedFilterGroups && $predefinedFilter) {
             $permissions = $this->predefinedFilterPermissionService->getPermissionsByPredefinedFilterId($id);
             $predefinedFilter['permissions'] = $permissions;
         }
@@ -142,7 +142,7 @@ class PredefinedFilterService
 
     public function createFilter($validated): PredefinedFilter
     {
-        $filter_create_response = PredefinedFilter::create([
+        $createResponse = PredefinedFilter::create([
             'name' => $validated['name'],
             'filter_data' => $validated['filter_data'],
             'created_by' => Auth::id(),
@@ -152,12 +152,12 @@ class PredefinedFilterService
         // Set permissions
         if (array_key_exists('permissions', $validated) && count($validated['permissions']) > 0) {
             foreach ($validated['permissions'] as $permission) {
-                $permission['predefined_filter_id'] = $filter_create_response->id;
+                $permission['predefined_filter_id'] = $createResponse->id;
                 $this->predefinedFilterPermissionService->store($permission);
             }
         }
 
-        return $filter_create_response;
+        return $createResponse;
     }
 
     public function updateFilter(PredefinedFilter $filter, array $validated): PredefinedFilter
@@ -172,9 +172,9 @@ class PredefinedFilterService
 
         // Update permissions
         if (array_key_exists('permissions', $validated)) {
-            $currently_set_permssions = $this->predefinedFilterPermissionService->getPermissionsByPredefinedFilterId($filter->id);
-            $new_permissions = $validated['permissions'];
-            $permission_diff = $this->syncPermissions($currently_set_permssions->toArray(), $new_permissions);
+            $currentlySetPermssions = $this->predefinedFilterPermissionService->getPermissionsByPredefinedFilterId($filter->id);
+            $newPermissions = $validated['permissions'];
+            $permission_diff = $this->syncPermissions($currentlySetPermssions->toArray(), $newPermissions);
 
             try {
                 DB::transaction(function () use ($permission_diff, $filter) {

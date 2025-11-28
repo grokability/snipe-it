@@ -20,10 +20,10 @@ class CombinedQueryTest extends TestCase
         $locationB = Location::factory()->create();
 
         // Assets
-        $modelA_locationA = Asset::factory()->create(['model_id' => $modelA->id, 'location_id' => $locationA->id]);
-        $modelA_locationB = Asset::factory()->create(['model_id' => $modelA->id, 'location_id' => $locationB->id]);
-        $modelB_locationA = Asset::factory()->create(['model_id' => $modelB->id, 'location_id' => $locationA->id]);
-        $modelB_locationB = Asset::factory()->create(['model_id' => $modelB->id, 'location_id' => $locationB->id]);
+        $modelALocationA = Asset::factory()->create(['model_id' => $modelA->id, 'location_id' => $locationA->id]);
+        $modelALocationB = Asset::factory()->create(['model_id' => $modelA->id, 'location_id' => $locationB->id]);
+        $modelBLocationA = Asset::factory()->create(['model_id' => $modelB->id, 'location_id' => $locationA->id]);
+        $modelBLocationB = Asset::factory()->create(['model_id' => $modelB->id, 'location_id' => $locationB->id]);
 
         $filter = [
             [
@@ -42,10 +42,10 @@ class CombinedQueryTest extends TestCase
         $results = Asset::query()->byFilter($filter)->get();
 
         $this->assertCount(1, $results);
-        $this->assertTrue($results->contains($modelA_locationB));
-        $this->assertFalse($results->contains($modelA_locationA));
-        $this->assertFalse($results->contains($modelB_locationA));
-        $this->assertFalse($results->contains($modelB_locationB));
+        $this->assertTrue($results->contains($modelALocationB));
+        $this->assertFalse($results->contains($modelALocationA));
+        $this->assertFalse($results->contains($modelBLocationA));
+        $this->assertFalse($results->contains($modelBLocationB));
     }
 
     public function testFilterAssetModelLocationArray()
@@ -58,12 +58,12 @@ class CombinedQueryTest extends TestCase
         $locationC = Location::factory()->create();
 
         // Assets
-        $modelA_locationA = Asset::factory()->create(['model_id' => $modelA->id, 'location_id' => $locationA->id]);
-        $modelA_locationB = Asset::factory()->create(['model_id' => $modelA->id, 'location_id' => $locationB->id]);
-        $modelA_locationC = Asset::factory()->create(['model_id' => $modelA->id, 'location_id' => $locationC->id]);
-        $modelB_locationA = Asset::factory()->create(['model_id' => $modelB->id, 'location_id' => $locationA->id]);
-        $modelB_locationB = Asset::factory()->create(['model_id' => $modelB->id, 'location_id' => $locationB->id]);
-        $modelB_locationC = Asset::factory()->create(['model_id' => $modelA->id, 'location_id' => $locationC->id]);
+        $modelALocationA = Asset::factory()->create(['model_id' => $modelA->id, 'location_id' => $locationA->id]);
+        $modelALocationB = Asset::factory()->create(['model_id' => $modelA->id, 'location_id' => $locationB->id]);
+        $modelALocationC = Asset::factory()->create(['model_id' => $modelA->id, 'location_id' => $locationC->id]);
+        $modelBLocationA = Asset::factory()->create(['model_id' => $modelB->id, 'location_id' => $locationA->id]);
+        $modelBLocationB = Asset::factory()->create(['model_id' => $modelB->id, 'location_id' => $locationB->id]);
+        $modelBLocationC = Asset::factory()->create(['model_id' => $modelA->id, 'location_id' => $locationC->id]);
 
         $filter = [
             [
@@ -82,12 +82,12 @@ class CombinedQueryTest extends TestCase
         $results = Asset::query()->byFilter($filter)->get();
 
         $this->assertCount(2, $results);
-        $this->assertTrue($results->contains($modelB_locationA));
-        $this->assertTrue($results->contains($modelB_locationB));
-        $this->assertFalse($results->contains($modelA_locationA));
-        $this->assertFalse($results->contains($modelA_locationB));
-        $this->assertFalse($results->contains($modelA_locationC));
-        $this->assertFalse($results->contains($modelB_locationC));
+        $this->assertTrue($results->contains($modelBLocationA));
+        $this->assertTrue($results->contains($modelBLocationB));
+        $this->assertFalse($results->contains($modelALocationA));
+        $this->assertFalse($results->contains($modelALocationB));
+        $this->assertFalse($results->contains($modelALocationC));
+        $this->assertFalse($results->contains($modelBLocationC));
 
     }
 
@@ -99,10 +99,10 @@ class CombinedQueryTest extends TestCase
         $statusA = Statuslabel::factory()->create();
         $statusB = Statuslabel::factory()->create();
 
-        $modelA_statusA = Asset::factory()->create(['model_id' => $modelA->id, 'status_id' => $statusA->id]);
-        $modelA_statusB = Asset::factory()->create(['model_id' => $modelA->id, 'status_id' => $statusB->id]);
-        $modelA_statusA = Asset::factory()->create(['model_id' => $modelB->id, 'status_id' => $statusA->id]);
-        $modelA_statusA = Asset::factory()->create(['model_id' => $modelB->id, 'status_id' => $statusB->id]);
+        $modelAStatusA = Asset::factory()->create(['model_id' => $modelA->id, 'status_id' => $statusA->id]);
+        $modelAStatusB = Asset::factory()->create(['model_id' => $modelA->id, 'status_id' => $statusB->id]);
+        $modelAStatusA = Asset::factory()->create(['model_id' => $modelB->id, 'status_id' => $statusA->id]);
+        $modelAStatusA = Asset::factory()->create(['model_id' => $modelB->id, 'status_id' => $statusB->id]);
 
         $filter = [
             [
@@ -121,10 +121,10 @@ class CombinedQueryTest extends TestCase
         $results = Asset::query()->byFilter($filter)->get();
 
         $this->assertCount(1, $results);
-        $this->assertTrue($results->contains($modelA_statusB));
-        $this->assertFalse($results->contains($modelA_statusA));
-        $this->assertFalse($results->contains($modelA_statusA));
-        $this->assertFalse($results->contains($modelA_statusA));
+        $this->assertTrue($results->contains($modelAStatusB));
+        $this->assertFalse($results->contains($modelAStatusA));
+        $this->assertFalse($results->contains($modelAStatusA));
+        $this->assertFalse($results->contains($modelAStatusA));
 
     }
 
@@ -137,10 +137,10 @@ class CombinedQueryTest extends TestCase
         $statusB = Statuslabel::factory()->create();
         $statusC = Statuslabel::factory()->create();
 
-        $modelA_statusA = Asset::factory()->create(['model_id' => $modelA->id, 'status_id' => $statusA->id]);
-        $modelA_statusB = Asset::factory()->create(['model_id' => $modelA->id, 'status_id' => $statusB->id]);
-        $modelA_statusC = Asset::factory()->create(['model_id' => $modelA->id, 'status_id' => $statusC->id]);
-        $modelB_statusA = Asset::factory()->create(['model_id' => $modelB->id, 'status_id' => $statusA->id]);
+        $modelAStatusA = Asset::factory()->create(['model_id' => $modelA->id, 'status_id' => $statusA->id]);
+        $modelAStatusB = Asset::factory()->create(['model_id' => $modelA->id, 'status_id' => $statusB->id]);
+        $modelAStatusC = Asset::factory()->create(['model_id' => $modelA->id, 'status_id' => $statusC->id]);
+        $modelBStatusA = Asset::factory()->create(['model_id' => $modelB->id, 'status_id' => $statusA->id]);
 
         $filter = [
             ["field"=>"model","value"=>[$modelA->name],"operator"=>"contains","logic"=>"AND"],
@@ -152,10 +152,10 @@ class CombinedQueryTest extends TestCase
         Log::error($results);
 
         $this->assertCount(2, $results);
-        $this->assertTrue($results->contains($modelA_statusA));
-        $this->assertTrue($results->contains($modelA_statusB));
-        $this->assertFalse($results->contains($modelA_statusC));
-        $this->assertFalse($results->contains($modelB_statusA));
+        $this->assertTrue($results->contains($modelAStatusA));
+        $this->assertTrue($results->contains($modelAStatusB));
+        $this->assertFalse($results->contains($modelAStatusC));
+        $this->assertFalse($results->contains($modelBStatusA));
     }
 
 
@@ -164,28 +164,28 @@ class CombinedQueryTest extends TestCase
         $manufacturerA = Manufacturer::factory()->create();
         $manufacturerB = Manufacturer::factory()->create();
 
-        $modelA_manufacturerA = AssetModel::factory()->create(['manufacturer_id' => $manufacturerA->id]);
-        $modelC_manufacturerA = AssetModel::factory()->create(['manufacturer_id' => $manufacturerA->id]);
-        $modelC_manufacturerB = AssetModel::factory()->create(['manufacturer_id' => $manufacturerB->id]);
-        $modelD_manufacturerB = AssetModel::factory()->create(['manufacturer_id' => $manufacturerB->id]);
+        $modelAManufacturerA = AssetModel::factory()->create(['manufacturer_id' => $manufacturerA->id]);
+        $modelCManufacturerA = AssetModel::factory()->create(['manufacturer_id' => $manufacturerA->id]);
+        $modelCManufacturerB = AssetModel::factory()->create(['manufacturer_id' => $manufacturerB->id]);
+        $modelDManufacturerB = AssetModel::factory()->create(['manufacturer_id' => $manufacturerB->id]);
 
-        $asset_modelA_manufacturerA = Asset::factory()->create(['model_id' => $modelA_manufacturerA->id]);
-        $asset_modelB_manufacturerA = Asset::factory()->create(['model_id' => $modelC_manufacturerA->id]);
-        $asset_modelC_manufacturerB = Asset::factory()->create(['model_id' => $modelC_manufacturerB->id]);
-        $asset_modelD_manufacturerB = Asset::factory()->create(['model_id' => $modelD_manufacturerB->id]);
+        $assetModelAManufacturerA = Asset::factory()->create(['model_id' => $modelAManufacturerA->id]);
+        $assetModelBManufacturerA = Asset::factory()->create(['model_id' => $modelCManufacturerA->id]);
+        $assetModelCManufacturerB = Asset::factory()->create(['model_id' => $modelCManufacturerB->id]);
+        $assetModelDManufacturerB = Asset::factory()->create(['model_id' => $modelDManufacturerB->id]);
 
         $filter = [
-            ["field"=>"model",          "value"=>[$modelA_manufacturerA->name], "operator"=>"contains","logic"=>"AND"],
+            ["field"=>"model",          "value"=>[$modelAManufacturerA->name], "operator"=>"contains","logic"=>"AND"],
             ["field"=>"manufacturer",   "value"=>[$manufacturerA->name],        "operator"=>"contains","logic"=>"AND"],
         ];
 
         $results = Asset::query()->byFilter($filter)->get();
 
         $this->assertCount(1, $results);
-        $this->assertTrue($results->contains($asset_modelA_manufacturerA));
-        $this->assertFalse($results->contains($asset_modelB_manufacturerA));
-        $this->assertFalse($results->contains($asset_modelC_manufacturerB));
-        $this->assertFalse($results->contains($asset_modelD_manufacturerB));
+        $this->assertTrue($results->contains($assetModelAManufacturerA));
+        $this->assertFalse($results->contains($assetModelBManufacturerA));
+        $this->assertFalse($results->contains($assetModelCManufacturerB));
+        $this->assertFalse($results->contains($assetModelDManufacturerB));
     }
 
 
@@ -194,20 +194,20 @@ class CombinedQueryTest extends TestCase
         $manufacturerA = Manufacturer::factory()->create();
         $manufacturerB = Manufacturer::factory()->create();
 
-        $modelA_manufacturerA = AssetModel::factory()->create(['manufacturer_id' => $manufacturerA->id]);
-        $modelB_manufacturerA = AssetModel::factory()->create(['manufacturer_id' => $manufacturerA->id]);
-        $modelC_manufacturerB = AssetModel::factory()->create(['manufacturer_id' => $manufacturerB->id]);
-        $modelD_manufacturerB = AssetModel::factory()->create(['manufacturer_id' => $manufacturerB->id]);
+        $modelAManufacturerA = AssetModel::factory()->create(['manufacturer_id' => $manufacturerA->id]);
+        $modelBManufacturerA = AssetModel::factory()->create(['manufacturer_id' => $manufacturerA->id]);
+        $modelCManufacturerB = AssetModel::factory()->create(['manufacturer_id' => $manufacturerB->id]);
+        $modelDManufacturerB = AssetModel::factory()->create(['manufacturer_id' => $manufacturerB->id]);
 
-        $asset_modelA_manufacturerA = Asset::factory()->create(['model_id' => $modelA_manufacturerA->id]);
-        $asset_modelB_manufacturerA = Asset::factory()->create(['model_id' => $modelB_manufacturerA->id]);
-        $asset_modelC_manufacturerB = Asset::factory()->create(['model_id' => $modelC_manufacturerB->id]);
-        $asset_modelD_manufacturerB = Asset::factory()->create(['model_id' => $modelD_manufacturerB->id]);
+        $assetModelAManufacturerA = Asset::factory()->create(['model_id' => $modelAManufacturerA->id]);
+        $assetModelBManufacturerA = Asset::factory()->create(['model_id' => $modelBManufacturerA->id]);
+        $assetModelCManufacturerB = Asset::factory()->create(['model_id' => $modelCManufacturerB->id]);
+        $assetModelDManufacturerB = Asset::factory()->create(['model_id' => $modelDManufacturerB->id]);
 
         $filter = [
             [
                 "field"=>"model",
-                "value"=>[$modelA_manufacturerA->name, $modelC_manufacturerB->name],
+                "value"=>[$modelAManufacturerA->name, $modelCManufacturerB->name],
                 "operator"=>"contains",
                 "logic"=>"AND"
             ],[
@@ -221,10 +221,10 @@ class CombinedQueryTest extends TestCase
         $results = Asset::query()->byFilter($filter)->get();
 
         $this->assertCount(2, $results);
-        $this->assertTrue($results->contains($asset_modelA_manufacturerA));
-        $this->assertTrue($results->contains($asset_modelC_manufacturerB));
-        $this->assertFalse($results->contains($asset_modelB_manufacturerA));
-        $this->assertFalse($results->contains($asset_modelD_manufacturerB));
+        $this->assertTrue($results->contains($assetModelAManufacturerA));
+        $this->assertTrue($results->contains($assetModelCManufacturerB));
+        $this->assertFalse($results->contains($assetModelBManufacturerA));
+        $this->assertFalse($results->contains($assetModelDManufacturerB));
     }
 
 

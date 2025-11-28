@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use App\Models\User;
 use App\Models\Location;
 use App\Models\Asset;
+use UnexpectedValueException;
 
 class FilterService
 {
@@ -231,7 +232,7 @@ class FilterService
         // Check if type is valid
         $validTypes = [Asset::class, Location::class, User::class];
         if (!in_array($value['type'], $validTypes)) {
-            throw new \UnexpectedValueException('You\'ve provided an invalid type');
+            throw new UnexpectedValueException('You\'ve provided an invalid type');
         }
                 
         if ($value['value'] == '') {

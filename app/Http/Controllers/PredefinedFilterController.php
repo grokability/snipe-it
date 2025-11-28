@@ -57,11 +57,11 @@ class PredefinedFilterController extends Controller
     *
     * @param  int $Id
     */
-    public function destroy($Id) : RedirectResponse
+    public function destroy($id) : RedirectResponse
     {
         $user = auth()->user();
 
-        $filter = PredefinedFilter::find($Id);
+        $filter = PredefinedFilter::find($id);
 
         if (!$filter) {
             return redirect()->route('predefined-filters.index')
