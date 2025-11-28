@@ -34,16 +34,16 @@ class PredefinedFilterPermissionService
         $permission->delete();
     }
 
-    public function deletePermissionByFilterId($filter_id): void
+    public function deletePermissionByFilterId($filterId): void
     {
-        $permissions = PredefinedFilterPermission::where('predefined_filter_id', '=', $filter_id)->get();
+        $permissions = PredefinedFilterPermission::where('predefined_filter_id', '=', $filterId)->get();
         foreach($permissions as $permission) {
             $permission->delete();
         }
     }
 
-    public function getPermissionsByPredefinedFilterId(int $filter_id)
+    public function getPermissionsByPredefinedFilterId(int $filterId)
     {
-        return PredefinedFilterPermission::where('predefined_filter_id', '=', $filter_id)->get();
+        return PredefinedFilterPermission::where('predefined_filter_id', '=', $filterId)->get();
     }
 }

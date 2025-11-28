@@ -53,16 +53,15 @@ class PredefinedFiltersTransformer
             }
             $array['groups'] = $groups;
         } else {
-
             $array['groups'] = null;
         }
 
         $permissions_array = [];
 
-        $permissions_array['available_actions'] = [
-            'update' => $filter->userHasPermission(auth()->user(), 'edit'),
-            'delete' => $filter->userHasPermission(auth()->user(), 'delete')
+        $permissionsArray['available_actions'] = [
+            'update' => $filter->created_by === auth()->id() || $filter->userHasPermission(auth()->user(), 'edit'),
+            'delete' => $filter->created_by === auth()->id() || $filter->userHasPermission(auth()->user(), 'delete')
         ];
-        return $array += $permissions_array;
+        return $array += $permissionsArray;
     }
 }
