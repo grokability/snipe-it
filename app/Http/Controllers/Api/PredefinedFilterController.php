@@ -80,7 +80,7 @@ class PredefinedFilterController extends Controller
         $user = auth()->user();
 
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:190',
             'filter_data' => 'required|array',
             'is_public' => 'sometimes|boolean'
         ]);
@@ -88,7 +88,7 @@ class PredefinedFilterController extends Controller
         if ($validator->fails()) {
             return response()->json(Helper::formatStandardApiResponse(422, null, $validator->errors()),422);
         }
-        
+
         $validated = $validator->validated();
 
         if (!empty($validated['is_public']) && !$user->hasAccess('predefinedFilter.create')) {
@@ -113,7 +113,7 @@ class PredefinedFilterController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:190',
             'filter_data' => 'required|array',
             'is_public' => 'sometimes|boolean'
         ]);

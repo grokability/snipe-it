@@ -392,6 +392,21 @@ class PredefinedFilterControllerTest extends TestCase
             ->assertJsonPath('messages.filter_data.0', 'The filter data field is required.');
     }
 
+    public function test_store_with_too_long_name_error()
+    {
+        $u = User::factory()->create();
+        $this->grant($u, ['predefinedFilter.create' => '1']);
+
+        $this->actingAs($u, 'api')
+            ->postJson(route('api.predefined-filters.store'), [
+                'name' => 'Testing ensures software works as intended, catching hidden bugs early and preventing costly failures. It builds confidence, improves quality, and supports reliable, user-focused products overall.',
+                'filter_data' => ['status_id' => [1, 2]],
+                'is_public' => 1,
+                'created_by' => 999,
+            ])
+            ->assertStatus(422)
+            ->assertJsonPath('messages.name.0', 'The name field must not be greater than 190 characters.');->assertJsonPath('messages.name.0', 'The name field must not be greater than 190 characters.');
+    }
 
     public function test_store_creates_and_sets_owner()
     {
@@ -525,6 +540,7 @@ class PredefinedFilterControllerTest extends TestCase
             ->assertOk()
             ->assertJsonPath('filter_data.name', 'X');
     }
+
     public function test_update_404_when_missing(): void
     {
         $u = User::factory()->create();
@@ -552,6 +568,32 @@ class PredefinedFilterControllerTest extends TestCase
             ->assertJsonPath('messages.name.0', 'The name field is required.')
             ->assertJsonPath('messages.filter_data.0', 'The filter data field is required.');
     }
+
+    public function test_update_name_too_long(): void
+    {
+        $u = User::factory()->create();
+        $f = PredefinedFilter::factory()->create();
+      // First request (valid name)
+        $this->actingAs($u, 'api')
+            ->putJson(route('api.predefined-filters.update', $f->id), [
+                'name'        => 'Filter',
+                'filter_data' => ['status_id' => [1, 2]],
+                'is_public'   => 1,
+                'created_by'  => 999,
+            ]);
+    
+        // Second request (name too long)
+        $this->actingAs($u, 'api')
+            ->putJson(route('api.predefined-filters.update', $f->id), [
+                'name'        => 'Testing ensures software works as intended, catching hidden bugs early and preventing costly failures. It builds confidence, improves quality, and supports reliable, user-focused products overall.',
+                'filter_data' => ['status_id' => [1, 2]],
+                'is_public'   => 1,
+                'created_by'  => 999,
+            ])
+            ->assertStatus(422)
+            ->assertJsonPath('messages.name.0', 'The name field must not be greater than 190 characters.');
+    }
+
 
     //------DESTROY TESTS------
     public function test_destroy_non_owner_public_requires_destroy_permission()

@@ -122,6 +122,16 @@ class Modal extends Component
     ) {
         $this->validate();
 
+        if(mb_strlen($this->name) > 190) {
+            $this->dispatch('showNotificationInFrontend', [
+                'type' => 'error',
+                'title' => trans('general.notification_error'),
+                'message' => trans('admin/predefinedFilters/message.name_too_long'),
+                'tag' => 'predefinedFilter',
+            ]);
+            return;
+        }
+
         $filter = new PredefinedFilter();
 
         // Enforce: only allow creation if private or groups selected
@@ -190,6 +200,16 @@ class Modal extends Component
             'groupSelect' => 'array',
             'groupSelect.*' => 'required|integer|exists:permission_groups,id',
         ]);
+
+        if(mb_strlen($this->name) > 190) {
+            $this->dispatch('showNotificationInFrontend', [
+                'type' => 'error',
+                'title' => trans('general.notification_error'),
+                'message' => trans('admin/predefinedFilters/message.name_too_long'),
+                'tag' => 'predefinedFilter',
+            ]);
+            return;
+        }
 
         // Enforce: only allow update if private or groups selected
         if ($this->visibility === FilterVisibility::Public && (empty($this->groupSelect) || count($this->groupSelect) === 0)) {

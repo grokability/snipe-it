@@ -4,7 +4,8 @@ return array(
 
     'does_not_exist' => 'Filter does not exist.',
     'filter_duplicate_name' => 'There is already a predefined filter with the same name.',
-
+    'name_too_long' => 'Your filter cannot be stored beacuse you\'ve exceeded the the maxium lenght of 190 characters.',
+    
     'show' => array(
         'not_allowed' => "You don't have the permissions to see this filter",
     ),

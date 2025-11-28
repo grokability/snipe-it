@@ -29,7 +29,7 @@ class PredefinedFilter extends Model
     ];
 
     protected $rules = [
-        'name' => ['required', 'string', 'max:255'],
+        'name' => ['required', 'string', 'max:190'],
         'filter_data' => ['required', 'array'],
         'permissions' => ['sometimes', 'array'],
         'is_public' => 'sometimes|boolean'

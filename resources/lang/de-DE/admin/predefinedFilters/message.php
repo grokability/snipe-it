@@ -4,6 +4,7 @@ return array(
 
     'does_not_exist' => 'Filter existiert nicht.',
     'filter_duplicate_name' => 'Es gibt bereits einen Filter mit dem gleichem Namen',
+    'name_too_long' => 'Der Name eines Filters darf höchstens 190 lang sein.',
 
     'show' => array(
         'not_allowed' => "Sie haben nicht die Berechtigungen um diesen Filter anzuzeigen",
