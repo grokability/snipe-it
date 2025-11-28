@@ -8,7 +8,6 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Database\Seeders\CustomFieldsStandaloneSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -40,11 +39,7 @@ class DatabaseSeeder extends Seeder
 
         $dataset = env('TEST_DATASET', 'default');
 
-        if ($dataset === 'huge+custom') {
-            $this->call(CustomFieldsStandaloneSeeder::class);
-        } else {
-            $this->call(CustomFieldSeeder::class);
-        }
+        $this->call(CustomFieldSeeder::class);
 
         $this->call(AssetSeeder::class);
         $this->call(LicenseSeeder::class);
