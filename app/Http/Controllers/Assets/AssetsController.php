@@ -49,6 +49,7 @@ class AssetsController extends Controller
     protected $qrCodeDimensions = ['height' => 3.5, 'width' => 3.5];
     protected $barCodeDimensions = ['height' => 2, 'width' => 22];
     protected PredefinedFilterService $predefinedFilterService;
+
     public function __construct(PredefinedFilterService $predefinedFilterService)
     {
         $this->middleware('auth');
@@ -74,7 +75,7 @@ class AssetsController extends Controller
         $advancedSearchViewPermission = AdvancedSearch::userHasViewPermission($user);
         $predefined_filter_id = $request->input('predefinedFilterId');
         
-        if($advancedSearchViewPermission) {
+        if ($advancedSearchViewPermission) {
             // Validate if it's a valid integer
             if (filter_var($predefined_filter_id, FILTER_VALIDATE_INT) === false && $predefined_filter_id != null) {
                 throw new InvalidArgumentException('You provided an invalid parameter for predefinedFilterId (must be an integer).');
@@ -96,10 +97,11 @@ class AssetsController extends Controller
             $predefined_filter_name = null;
         }
 
-        return view('hardware/index')->with('company', $company)
-                                     ->with('advanced_search_permission', $advancedSearchViewPermission)
-                                     ->with('predefined_filter_id', $predefined_filter_id)
-                                     ->with('predefined_filter_name', $predefined_filter_name);
+        return view('hardware/index')
+            ->with('company', $company)
+            ->with('advanced_search_permission', $advancedSearchViewPermission)
+            ->with('predefined_filter_id', $predefined_filter_id)
+            ->with('predefined_filter_name', $predefined_filter_name);
     }
 
     /**
@@ -589,7 +591,7 @@ class AssetsController extends Controller
      * @since [v3.0]
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function getAssetByTag(Request $request, $tag = null): RedirectResponse
+    public function getAssetByTag(Request $request, $tag=null): RedirectResponse
     {
         $tag = $tag ? $tag : $request->get('assetTag');
         $topsearch = ($request->get('topsearch') == 'true');

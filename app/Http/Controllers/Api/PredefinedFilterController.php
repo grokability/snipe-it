@@ -37,9 +37,9 @@ class PredefinedFilterController extends Controller
         $sort = $request->input('sort', 'name');
         $order = $request->input('order', 'asc');
 
-        $allowed_columns = ['id', 'name', 'is_public', 'created_by'];
+        $allowedColumns = ['id', 'name', 'is_public', 'created_by'];
         
-        if (!in_array($sort, $allowed_columns)) {
+        if (!in_array($sort, $allowedColumns)) {
             $sort = 'name';
         }
 

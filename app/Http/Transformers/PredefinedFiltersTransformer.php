@@ -53,7 +53,6 @@ class PredefinedFiltersTransformer
             }
             $array['groups'] = $groups;
         } else {
-
             $array['groups'] = null;
         }
 
@@ -63,6 +62,6 @@ class PredefinedFiltersTransformer
             'update' => $filter->userHasPermission(auth()->user(), 'edit'),
             'delete' => $filter->userHasPermission(auth()->user(), 'delete')
         ];
-        return $array += $permissions_array;
+        return $array += $permissionsArray;
     }
 }

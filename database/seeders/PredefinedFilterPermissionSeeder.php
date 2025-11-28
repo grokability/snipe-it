@@ -20,10 +20,10 @@ class PredefinedFilterPermissionSeeder extends Seeder
     {
         PredefinedFilterPermission::query()->delete();
 
-        $user_to_delete = User::where("email","predefinedfilters@permission.com")->first();
+        $userToDelete = User::where("email","predefinedfilters@permission.com")->first();
 
-        if ($user_to_delete) {
-            $user_to_delete->delete();
+        if ($userToDelete) {
+            $userToDelete->delete();
         }
 
         $user = User::firstOrCreate(
