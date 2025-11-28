@@ -57,9 +57,11 @@ class PredefinedFiltersTransformer
             $array['groups'] = null;
         }
 
+        $permissions_array = [];
+
         $permissions_array['available_actions'] = [
-            'update' => $filter->created_by === auth()->id() || $filter->userHasPermission(auth()->user(), 'edit'),
-            'delete' => $filter->created_by === auth()->id() || $filter->userHasPermission(auth()->user(), 'delete')
+            'update' => $filter->userHasPermission(auth()->user(), 'edit'),
+            'delete' => $filter->userHasPermission(auth()->user(), 'delete')
         ];
         return $array += $permissions_array;
     }
