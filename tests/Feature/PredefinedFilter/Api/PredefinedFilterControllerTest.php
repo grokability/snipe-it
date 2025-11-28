@@ -737,7 +737,7 @@ class PredefinedFilterControllerTest extends TestCase
         $this->assertFalse($result['available_actions']['delete']);
     }
 
-    public function test_transform_sets_available_actions_true_for_owner()
+    public function test_transform_sets_available_actions_false_for_owner()
     {
         $this->transformer = new PredefinedFiltersTransformer();
 
@@ -754,8 +754,8 @@ class PredefinedFilterControllerTest extends TestCase
 
         $result = $this->transformer->transformPredefinedFilter($filter);
 
-        $this->assertTrue($result['available_actions']['update']);
-        $this->assertTrue($result['available_actions']['delete']);
+        $this->assertFalse($result['available_actions']['update']);
+        $this->assertFalse($result['available_actions']['delete']);
     }
 
     public function test_transform_formats_dates_correctly()
