@@ -12,11 +12,12 @@ export default function initAdvancedSearch(config = {}) {
 
     const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 
-    document.addEventListener('livewire:init', function () {
+    document.addEventListener('livewire:init', async function () {
         const tableId = config.tableId;
         const $table = $('#' + tableId);
 
         const controller = new FilterUIController($table);
+        await controller.init();
         container.register("filterUiController", controller);
         controller.bindEvents();
 

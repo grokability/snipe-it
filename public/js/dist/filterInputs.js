@@ -305,7 +305,6 @@ class AssignedEntityFilterInput extends TextFilterInput {
             type: type,
             value: value
         }
-
     }
 
     setValue(newValue, logic, operator) {
