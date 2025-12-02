@@ -54,7 +54,7 @@ class PredefinedFilterService
             })->values();
     }
 
-    public function getFilterWithOptionalPermissionsById(int $id, bool $includePredefinedFilterGroups = true)
+    public function getFilterWithOptionalPermissionsById(int $id, bool $includePredefinedFilterGroups=true)
     {
         $predefinedFilter = PredefinedFilter::find($id);
         if ($includePredefinedFilterGroups && $predefinedFilter) {
@@ -69,7 +69,7 @@ class PredefinedFilterService
     {
         $predefinedFilter = $this->getFilterWithOptionalPermissionsById($id);
 
-        if (!$predefinedFilter){
+        if (!$predefinedFilter) {
             return null;
         }
 
@@ -90,7 +90,7 @@ class PredefinedFilterService
     
             $model = null;
 
-            if (isset($filter['field']) && !in_array($filter['field'], $fieldsToLookup)){
+            if (isset($filter['field']) && !in_array($filter['field'], $fieldsToLookup)) {
                 continue;
             }
                 
@@ -98,7 +98,7 @@ class PredefinedFilterService
                     
                 $values =[];
                     
-                foreach ($filter['value'] as $valueId){
+                foreach ($filter['value'] as $valueId) {
                     switch ($filter['field']) {
                         case 'company':
                             $model = Company::find($valueId);
@@ -125,7 +125,9 @@ class PredefinedFilterService
                         default:
                             break;
                     }
-                    if ($model){
+                    // end switch
+
+                    if ($model) {
                         $values[] = [
                             'id'    => $model->id,
                             'name'  => $model->name
