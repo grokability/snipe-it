@@ -11,7 +11,7 @@ export default class FilterFormManager {
     constructor() {
         this.filters = [];
         this.inputs = [];
-        this.apiService = container.resolve("apiService");;
+        this.apiService = container.resolve("apiService");
     }
 
     async collectFilterInputs() {
@@ -114,8 +114,8 @@ export default class FilterFormManager {
     setAdvancedSearchPanelFilterEnabledState(state) {
         queueMicrotask(() => {
             const fields = document.getElementById("advancedSearchPanel").getElementsByTagName('*');
-            for (let i = 0; i < fields.length; i++) {
-                fields[i].disabled = state;
+            for (const field of fields) {
+                field.disabled = state;
             }
         });
     }

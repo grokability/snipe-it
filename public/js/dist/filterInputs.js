@@ -298,7 +298,7 @@ class AssignedEntityFilterInput extends TextFilterInput {
         const type = document.getElementById(this.element.id + "_type").value;
 
         if (!value || !type) {
-            return;
+            return null;
         }
 
         return {

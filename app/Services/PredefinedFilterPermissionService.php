@@ -38,7 +38,7 @@ class PredefinedFilterPermissionService
     public function deletePermissionByFilterId($filterId): void
     {
         $permissions = PredefinedFilterPermission::where('predefined_filter_id', '=', $filterId)->get();
-        foreach($permissions as $permission) {
+        foreach ($permissions as $permission) {
             $permission->delete();
         }
     }
