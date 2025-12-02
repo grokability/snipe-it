@@ -136,7 +136,7 @@ class SelectFilterInput extends FilterInput {
         return selectedValues;
     }
 
-    setValue(newValues, logic, operator, type = this.getType()) {
+    setValue(newValues, logic, operator) {
         const requestPromises = newValues.map((newValue) => {
             return Promise.resolve().then(() => {
                 this.setSearchOperator(logic, operator);
