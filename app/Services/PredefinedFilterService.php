@@ -194,7 +194,7 @@ class PredefinedFilterService
                 });
             } catch (Throwable $e) {
                 // If any exception occurs, the transaction is automatically rolled back.
-                throw new Exception($e->getMessage());
+                throw new Exception(esc_html($e->getMessage()));
             }
         }
 
