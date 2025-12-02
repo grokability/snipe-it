@@ -208,51 +208,52 @@ class PredefinedFilterService
     public function selectList(Request $request, bool $visibilityInName = false): LengthAwarePaginator
     {
         $user = Auth::user();
-
+    
         $filters = PredefinedFilter::with("permissionGroups")
             ->orderBy('name')
             ->get(['id', 'name', 'created_by', 'is_public']);
-
-        $viewableFilters = $filters->filter(function ($filter) use ($user) {
-            if ($filter->userHasPermission($user, 'view')) {
-                return true;
-            }
-
-            return false;
-        })->pluck('id');
-
+    
+        $viewableFilters = $filters->filter(fn($f) => $f->userHasPermission($user, 'view'))
+                                   ->pluck('id');
+    
         $query = PredefinedFilter::select(['id', 'name', 'is_public'])
             ->whereIn('id', $viewableFilters);
-
-        if ($request->filled('search')) {
-            $search = trim($request->get('search', ''));
-            $upper = strtoupper($search);
-
-            $privateTag = strtoupper(trans('general.private')) . ':';
-            $publicTag = strtoupper(trans('general.public')) . ':';
-
-            if (str_starts_with($upper, 'PRIVATE:') || str_starts_with($upper, $privateTag)) {
-                $query->where('is_public', 0);
-                $search = preg_replace('/^(PRIVATE:|' . preg_quote($privateTag, '/') . ')/i', '', $search);
-            } elseif (str_starts_with($upper, 'PUBLIC:') || str_starts_with($upper, $publicTag)) {
-                $query->where('is_public', 1);
-                $search = preg_replace('/^(PUBLIC:|' . preg_quote($publicTag, '/') . ')/i', '', $search);
-            }
-
-            $query->where('name', 'LIKE', '%' . trim($search) . '%');
-        }
+    
+        $this->applySearchFilter($query, $request);
 
         $paginated = $query->orderBy('name')->paginate(50);
 
         foreach ($paginated as $item) {
-            if ($visibilityInName === true) {
-                $item->use_text = $item->name . ' (' . $this->getVisibilityAsLocalizedString($item->is_public) . ')';
-            } else {
-                $item->use_text = $item->name;
-            }
+            $item->use_text = $visibilityInName
+                ? $item->name . ' (' . $this->getVisibilityAsLocalizedString($item->is_public) . ')'
+                : $item->name;
+        }
+    
+        return $paginated;
+    }
+
+    protected function applySearchFilter($query, Request $request): void
+    
+        if (!$request->filled('search')) {
+            return;
         }
 
-        return $paginated;
+        $search = trim($request->get('search', ''));
+        $upper = strtoupper($search);
+    
+       $private = strtoupper(trans('general.private')) . ':';
+        $public  = strtoupper(trans('general.public')) . ':';
+
+        if (str_starts_with($upper, 'PRIVATE:') || str_starts_with($upper, $private)) {
+            $query->where('is_public', 0);
+            $search = preg_replace('/^(PRIVATE:|' . preg_quote($private, '/') . ')/i', '', $search);
+    
+        } elseif (str_starts_with($upper, 'PUBLIC:') || str_starts_with($upper, $public)) {
+            $query->where('is_public', 1);
+            $search = preg_replace('/^(PUBLIC:|' . preg_quote($public, '/') . ')/i', '', $search);
+        }
+    
+        $query->where('name', 'LIKE', '%' . trim($search) . '%');
     }
 
     private function syncPermissions($currentPermissions, $newPermissions): array
