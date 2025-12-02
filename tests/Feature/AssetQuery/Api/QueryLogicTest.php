@@ -15,6 +15,18 @@ class QueryLogicTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function assertFilterResult(array $filter, $user, array $expectedIds)
+    {
+        return $this->actingAsForApi($user)
+            ->getJson(route('api.assets.index', ['filter' => json_encode($filter)]))
+            ->assertOk()
+            ->assertJson(fn(AssertableJson $json) =>
+                $json->has('total')
+                     ->has('rows', count($expectedIds))->etc()
+            )
+            ->assertJsonPath('rows.*.id', $expectedIds);
+    }
+
     public function testFilterAssetsWithModelAndManufacturerCombinations(): void
     {
         $apple = Manufacturer::factory()->create(['name' => 'Apple']);
@@ -28,7 +40,7 @@ class QueryLogicTest extends TestCase
 
         $user = User::factory()->superuser()->create();
 
-    // -- Case 1: "macbook" AND "Apple" => Returns MacBook
+        // -- Case 1: "macbook" AND "Apple" => Returns MacBook
         $filter1 = [
             [
                 'field' => 'model',
@@ -44,15 +56,7 @@ class QueryLogicTest extends TestCase
             ],
         ];
 
-        $this->actingAsForApi($user)
-            ->getJson(route('api.assets.index', ['filter' => json_encode($filter1)]))
-            ->assertOk()
-            ->assertJson(fn(AssertableJson $json) =>
-                $json->has('total')
-                     ->has('rows', 1)
-            )
-            ->assertJsonFragment(['id' => $assetMacbook->id])
-            ->assertJsonPath('rows.*.id', [$assetMacbook->id]);
+        $this->assertFilterResult($filter1, $user, (array)$assetMacbook->id);
 
         // -- Case 2: "macbook" AND NOT "Apple" =>  Returns nothing
         $filter2 = [
@@ -70,13 +74,8 @@ class QueryLogicTest extends TestCase
             ],
         ];
 
-        $this->actingAsForApi($user)
-            ->getJson(route('api.assets.index', ['filter' => json_encode($filter2)]))
-            ->assertOk()
-            ->assertJson(fn(AssertableJson $json) =>
-                $json->has('total')
-                    ->has('rows', 0)
-        );
+        $this->assertFilterResult($filter2, $user, []);
+
         // -- Case 3: "macb" AND "Apple" => Returns MacBook (partial match)
         $filter3 = [
             [
@@ -93,11 +92,7 @@ class QueryLogicTest extends TestCase
             ],
         ];
 
-        $this->actingAsForApi($user)
-            ->getJson(route('api.assets.index', ['filter' => json_encode($filter3)]))
-            ->assertOk()
-            ->assertJson(fn(AssertableJson $json) => $json->has('rows', 1)->etc())
-            ->assertJsonFragment(['id' => $assetMacbook->id])
+        $this->assertFilterResult($filter3, $user, (array)$assetMacbook->id)
             ->assertJsonMissingExact(['rows' => [['id' => $assetDell->id]]]);
 
         // -- Case 4: "macb" AND NOT "Apple" => Returns nothing
@@ -116,16 +111,8 @@ class QueryLogicTest extends TestCase
             ],
         ];
 
-        $this->actingAsForApi($user)
-            ->getJson(route('api.assets.index', ['filter' => json_encode($filter4)]))
-            ->assertOk()
-            ->assertJson(fn(AssertableJson $json) =>
-                $json->has('rows', 0)
-                ->etc()
-            );
+        $this->assertFilterResult($filter4, $user, []);
     }
-
-
 
     public function testFilterModelContainsBookButNotAppleManufacturer(): void
     {

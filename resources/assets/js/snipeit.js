@@ -227,7 +227,7 @@ $(function () {
 
                     return answer;
                 }, */
-                processResults: function (data, params) {
+                processResults: function (data) {
                     const selectedValues = this.$element.select2('data') || [];
                     const filteredResults = data.results.filter(item => !selectedValues.includes(item.id));
                     return {
