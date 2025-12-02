@@ -28,7 +28,6 @@ abstract class TestCase extends BaseTestCase
     use LazilyRefreshDatabase;
     use AssertHasActionLogs;
 
-
     private array $globallyDisabledMiddleware = [
         SecurityHeaders::class,
     ];

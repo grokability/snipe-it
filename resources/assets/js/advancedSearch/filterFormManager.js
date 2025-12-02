@@ -1,5 +1,4 @@
 import {
-    FilterInput,
     SelectFilterInput,
     AssignedEntityFilterInput,
     DateFilterInput,
@@ -25,7 +24,7 @@ export default class FilterFormManager {
                 setTimeout(() => {
                     this.inputs.push(new SelectFilterInput(el, this.apiService));
                     resolve();
-                },0);
+                }, 0);
             }));
         });
 
@@ -42,20 +41,20 @@ export default class FilterFormManager {
                 queueMicrotask(() => {
 
                     // Skip daterangefields
-                    if(el.classList.contains("input-daterange-field")) {
+                    if (el.classList.contains("input-daterange-field")) {
                         return resolve();
                     }
 
                     // AssignedTo / CheckedOutTo-fields
-                    if(el.classList.contains("advancedSearch_polymorphicItemFormatter")) {
+                    if (el.classList.contains("advancedSearch_polymorphicItemFormatter")) {
                         this.inputs.push(new AssignedEntityFilterInput(el, this.apiService));
                         return resolve();
                     }
-                
+
                     this.inputs.push(new TextFilterInput(el, this.apiService));
                     resolve();
                 });
-            
+
             }));
         });
         await Promise.all(tasks);
@@ -76,7 +75,7 @@ export default class FilterFormManager {
     clearAll() {
         //this.collectFilterData();
         this.inputs.forEach(field => {
-                field.clear();
+            field.clear();
         });
     }
 
@@ -114,8 +113,8 @@ export default class FilterFormManager {
     setAdvancedSearchPanelFilterEnabledState(state) {
         queueMicrotask(() => {
             const fields = document.getElementById("advancedSearchPanel").getElementsByTagName('*');
-            for (const field of fields) {
-                field.disabled = state;
+            for (let i = 0; i < fields.length; i++) {
+                fields[i].disabled = !!state;
             }
         });
     }
