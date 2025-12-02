@@ -400,7 +400,7 @@ class FilterService
      * @param bool    $isDateTime
      */
 
-    public function applyDateRangeFilter($query, $qualifiedField, $filters, bool $isDateTime = false)
+    public function applyDateRangeFilter($query, $qualifiedField, $filters, bool $isDateTime=false)
     {
         $start = null;
         $end = null;
