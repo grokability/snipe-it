@@ -235,7 +235,7 @@ class PredefinedFilterService
     }
 
     protected function applySearchFilter($query, Request $request): void
-    
+    {
         if (!$request->filled('search')) {
             return;
         }
@@ -243,7 +243,7 @@ class PredefinedFilterService
         $search = trim($request->get('search', ''));
         $upper = strtoupper($search);
     
-       $private = strtoupper(trans('general.private')) . ':';
+        $private = strtoupper(trans('general.private')) . ':';
         $public  = strtoupper(trans('general.public')) . ':';
 
         if (str_starts_with($upper, 'PRIVATE:') || str_starts_with($upper, $private)) {
