@@ -133,7 +133,7 @@ export default class FloatingButtons {
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') {
                     this.closeMenu();
-                    try { this.menuToggleButton.focus(); } catch (err) { }
+                    try { this.menuToggleButton.focus(); } catch (err) { /* empty */ }
                 }
             });
 
@@ -384,7 +384,7 @@ export default class FloatingButtons {
 
                     this.menuItems?.forEach(item => item.setAttribute('tabindex', '-1'));
                 }
-            } catch { };
+            } catch { /* empty */ }
         });
     }
 

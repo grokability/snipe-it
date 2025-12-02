@@ -11,7 +11,7 @@ export default class FilterFormManager {
     constructor() {
         this.filters = [];
         this.inputs = [];
-        this.apiService = container.resolve("apiService");;
+        this.apiService = container.resolve("apiService");
     }
 
     async collectFilterInputs() {
