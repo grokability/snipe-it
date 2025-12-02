@@ -124,8 +124,7 @@ class PredefinedFilterService
                             break;
                         default:
                             break;
-                    }
-                    // end switch
+                    } // end switch
 
                     if ($model) {
                         $values[] = [
