@@ -10,6 +10,7 @@ use Illuminate\Database\Seeder;
 use App\Models\User;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Support\Facades\Hash;
+use Log;
 
 class PredefinedFilterPermissionSeeder extends Seeder
 {
@@ -53,8 +54,7 @@ class PredefinedFilterPermissionSeeder extends Seeder
                 ]);
             }
         }catch (\Exception $e) {
-            echo "Error: " . $e->getMessage() . "\n";
-            echo $e->getTraceAsString();
+            Log::debug($e);
         }
     }
 }

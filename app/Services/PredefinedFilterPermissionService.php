@@ -5,6 +5,7 @@ namespace App\Services;
 use Exception;
 use App\Models\PredefinedFilterPermission;
 use Illuminate\Support\Facades\Auth;
+use Log;
 
 class PredefinedFilterPermissionService
 {
@@ -17,7 +18,7 @@ class PredefinedFilterPermissionService
         $permission->permission_group_id = $validated['permission_group_id'];
         $permission->created_by = $userId;
         if (!$permission->save()) {
-            throw new Exception($permission->getErrors());
+            Log::error($permission->getErrors());
         }
 
         return $permission;
