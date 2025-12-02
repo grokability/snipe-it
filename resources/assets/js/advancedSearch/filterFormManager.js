@@ -113,8 +113,8 @@ export default class FilterFormManager {
     setAdvancedSearchPanelFilterEnabledState(state) {
         queueMicrotask(() => {
             const fields = document.getElementById("advancedSearchPanel").getElementsByTagName('*');
-            for (let i = 0; i < fields.length; i++) {
-                fields[i].disabled = !!state;
+            for (const field of fields) {
+                field.disabled = state;
             }
         });
     }

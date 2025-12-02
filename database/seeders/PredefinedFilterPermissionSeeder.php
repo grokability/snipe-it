@@ -54,7 +54,7 @@ class PredefinedFilterPermissionSeeder extends Seeder
                     'created_by'           => $user->id,
                 ]);
             }
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             Log::debug($e);
         }
     }

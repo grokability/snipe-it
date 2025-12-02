@@ -86,7 +86,7 @@ class PredefinedFilter extends Model
 
             default:
                 return false;
-        } // end switch
+        } //end switch
     }
 
     private function checkPermissions(User $user, $action): bool
@@ -190,7 +190,7 @@ class PredefinedFilter extends Model
         return $assets;
     }
 
-    public function checkIfNameAlreadyExists(string $name, int $id = null): bool
+    public function checkIfNameAlreadyExists(string $name, int $id=null): bool
     {
         if ($id === null) {
             $query = $this->where('name', '=', $name);

@@ -27,10 +27,10 @@ class PredefinedFilterController extends Controller
 
 
     /**
-    * Show the given Predefined Filter.
-    *
-    * @param PredefinedFilter
-    */
+     * Show the given Predefined Filter.
+     *
+     * @param PredefinedFilter
+     */
     public function view(PredefinedFilter $filter) : View|RedirectResponse
     {
         $user = auth()->user();
@@ -53,10 +53,10 @@ class PredefinedFilterController extends Controller
     }
 
     /**
-    * Delete the given Predefined Filter.
-    *
-    * @param  int $id
-    */
+     * Delete the given Predefined Filter.
+     *
+     * @param  int $id
+     */
     public function destroy($id) : RedirectResponse
     {
         $user = auth()->user();

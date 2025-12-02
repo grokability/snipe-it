@@ -15,6 +15,7 @@ use App\Helpers\Helper;
 
 class PredefinedFilterController extends Controller
 {
+
     protected PredefinedFilterService $service;
 
     public function __construct(PredefinedFilterService $service)
@@ -125,7 +126,7 @@ class PredefinedFilterController extends Controller
         $validated = $validator->validated();
         
         $updatedPermission = $this->updatePermissions($validated, $filter, $user);
-        if($updatedPermission !== null) {
+        if ($updatedPermission !== null) {
             return $updatedPermission;
         }
 
@@ -170,7 +171,7 @@ class PredefinedFilterController extends Controller
 
         //create permission
         if ((!$currentIsPublic && $newIsPublic) 
-             && !$filter->userHasPermission($user, 'create')) {
+            && !$filter->userHasPermission($user, 'create')) {
             return response()->json(['message' => trans('admin/predefinedFilters/message.update.not_allowed_to_change_isPublic')], 403);
         }
 
