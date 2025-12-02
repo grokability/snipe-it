@@ -124,7 +124,7 @@ class PredefinedFilterController extends Controller
         
         $validated = $validator->validated();
         
-        $updatedPermission = updatePermissions($validated, $filter);
+        $updatedPermission = updatePermissions($validated, $filter, $user);
         if($updatedPermission !== null) {
             return $updatedPermission;
         }
@@ -160,7 +160,7 @@ class PredefinedFilterController extends Controller
         return (new SelectlistTransformer)->transformSelectlist($filters);
     }
 
-    private updatePermissions($validated, $filter) {
+    private function updatePermissions($validated, $filter, $user) {
         $newIsPublic = $validated['is_public'] ?? $filter->is_public;
         $currentIsPublic = $filter->is_public;
 
