@@ -588,8 +588,14 @@ class AssetsController extends Controller
     {
         if (
             $asset = Asset::with('assetstatus')
-                ->with('assignedTo')->withTrashed()
-                ->withCount('checkins as checkins_count', 'checkouts as checkouts_count', 'userRequests as user_requests_count')->find($id)
+                ->with('assignedTo')
+                ->withTrashed()
+                ->withCount(
+                    'checkins as checkins_count', 
+                    'checkouts as checkouts_count', 
+                    'userRequests as user_requests_count'
+                )
+                ->find($id)
         ) {
             $this->authorize('view', $asset);
 

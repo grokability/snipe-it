@@ -55,7 +55,7 @@ class PredefinedFilterController extends Controller
     /**
     * Delete the given Predefined Filter.
     *
-    * @param  int $Id
+    * @param  int $id
     */
     public function destroy($id) : RedirectResponse
     {

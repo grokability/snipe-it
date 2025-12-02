@@ -48,8 +48,9 @@ class QueryLogicTest extends TestCase
             ->getJson(route('api.assets.index', ['filter' => json_encode($filter1)]))
             ->assertOk()
             ->assertJson(fn(AssertableJson $json) =>
-                $json->has('total')
-                     ->has('rows', 1)
+                $json
+                ->has('total')
+                ->has('rows', 1)
             )
             ->assertJsonFragment(['id' => $assetMacbook->id])
             ->assertJsonPath('rows.*.id', [$assetMacbook->id]);
@@ -74,8 +75,9 @@ class QueryLogicTest extends TestCase
             ->getJson(route('api.assets.index', ['filter' => json_encode($filter2)]))
             ->assertOk()
             ->assertJson(fn(AssertableJson $json) =>
-                $json->has('total')
-                    ->has('rows', 0)
+                $json
+                ->has('total')
+                ->has('rows', 0)
         );
         // -- Case 3: "macb" AND "Apple" => Returns MacBook (partial match)
         $filter3 = [
@@ -169,9 +171,9 @@ class QueryLogicTest extends TestCase
             ->assertOk()
             ->assertJson(fn(AssertableJson $json) =>
                 $json
-                    ->has('total')
-                    ->has('rows', 2)
-                    ->etc()
+                ->has('total')
+                ->has('rows', 2)
+                ->etc()
             )
             ->assertJsonFragment(['id' => $assetSurfacebook->id])
             ->assertJsonFragment(['id' => $assetZenbook->id])

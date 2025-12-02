@@ -25,7 +25,7 @@ class PredefinedFiltersTransformer
             'id' => (int) $filter->id,
             'name'=> e($filter->name),
             'filter_data' => json_decode($filter->filter_data),
-            'is_public' => (bool)$filter->is_public,
+            'is_public' => (bool) $filter->is_public,
             'object_type' => e($filter->object_type),
             'created_by' => $filter->createdBy ? [
                 'id' => (int) $filter->createdBy->id,

@@ -66,8 +66,8 @@ class SqlInjectionQueryTest extends TestCase
         $response->assertJsonStructure(['total', 'rows']);
         $response->assertJson(fn(AssertableJson $json) =>
             $json->where('total', 0)
-                 ->where('rows', [])
-                ->etc()
+            ->where('rows', [])
+            ->etc()
         );
     }
     public function testFilterAssetsCategorySqlInjectionAttempt(): void

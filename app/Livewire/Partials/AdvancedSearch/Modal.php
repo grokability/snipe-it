@@ -25,22 +25,22 @@ enum AdvancedsearchModalAction: string
 
 class Modal extends Component
 {
-    public $showModal = false;
+    public $showModal=false;
     public AdvancedsearchModalAction $modalActionType;
 
     #[Validate("required")]
     public FilterVisibility $visibility = FilterVisibility::Private;
 
     #[Validate("required")]
-    public ?string $name = "";
+    public ?string $name="";
 
     #[Validate("sometimes")]
-    public $groupSelect = [];
+    public $groupSelect=[];
 
     #[Validate("sometimes")]
-    public array $groupSelectOtherOptions = [];
+    public array $groupSelectOtherOptions=[];
 
-    protected $listeners = ["groupSelect"];
+    protected $listeners=["groupSelect"];
 
     public ?int $filterId;
 
@@ -75,8 +75,8 @@ class Modal extends Component
         }
 
         if (
-            $this->modalActionType === AdvancedsearchModalAction::Edit &&
-            $predefinedFilterId !== null
+            $this->modalActionType === AdvancedsearchModalAction::Edit 
+            && $predefinedFilterId !== null
         ) {
             $predefinedFilter = $predefinedFilterService->getFilterWithOptionalPermissionsById(
                 $predefinedFilterId
@@ -316,7 +316,7 @@ class Modal extends Component
 
         $predefinedFilter = $predefinedFilterService->getFilterWithOptionalPermissionsById($this->filterId);
 
-        if ($predefinedFilter === null){
+        if ($predefinedFilter === null) {
             $this->dispatchNotFoundNotification();
             return;
         }
