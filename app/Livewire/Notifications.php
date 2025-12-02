@@ -58,12 +58,14 @@ class Notifications extends Component
      *
      * @var array<int, array<string,mixed>>
      */
+
     public array $liveAlerts=[];
 
     /**
      * Main notification listener.
      * We bind both 'showNotification' (your current event) and 'notify' (optional alias).
      */
+    
     #[On('showNotification')]
     #[On('notify')]
     public function notify(

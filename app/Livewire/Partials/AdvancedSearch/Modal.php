@@ -25,6 +25,7 @@ enum AdvancedsearchModalAction: string
 
 class Modal extends Component
 {
+
     public $showModal=false;
     public AdvancedsearchModalAction $modalActionType;
 
@@ -134,7 +135,7 @@ class Modal extends Component
     ) {
         $this->validate();
 
-        if(!$this->validateMaxLenghtForFiltername()) {
+        if (!$this->validateMaxLenghtForFiltername()) {
             return;
         }
 

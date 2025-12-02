@@ -22,7 +22,7 @@ class QueryLogicTest extends TestCase
             ->assertOk()
             ->assertJson(fn(AssertableJson $json) =>
                 $json->has('total')
-                     ->has('rows', count($expectedIds))->etc()
+                ->has('rows', count($expectedIds))->etc()
             )
             ->assertJsonPath('rows.*.id', $expectedIds);
     }
@@ -92,7 +92,7 @@ class QueryLogicTest extends TestCase
             ],
         ];
 
-        $this->assertFilterResult($filter3, $user, (array)$assetMacbook->id)
+        $this->assertFilterResult($filter3, $user, (array) $assetMacbook->id)
             ->assertJsonMissingExact(['rows' => [['id' => $assetDell->id]]]);
 
         // -- Case 4: "macb" AND NOT "Apple" => Returns nothing

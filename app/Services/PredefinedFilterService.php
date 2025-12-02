@@ -175,18 +175,18 @@ class PredefinedFilterService
         if (array_key_exists('permissions', $validated)) {
             $currentlySetPermssions = $this->predefinedFilterPermissionService->getPermissionsByPredefinedFilterId($filter->id);
             $newPermissions = $validated['permissions'];
-            $permission_diff = $this->syncPermissions($currentlySetPermssions->toArray(), $newPermissions);
+            $permissionDiff = $this->syncPermissions($currentlySetPermssions->toArray(), $newPermissions);
 
             try {
-                DB::transaction(function () use ($permission_diff, $filter) {
-                    if (!empty($permission_diff['to_delete'])) {
-                        foreach ($permission_diff['to_delete'] as $permission) {
+                DB::transaction(function () use ($permissionDiff, $filter) {
+                    if (!empty($permissionDiff['to_delete'])) {
+                        foreach ($permissionDiff['to_delete'] as $permission) {
                             $this->predefinedFilterPermissionService->deletePermissionByFilterId($permission['predefined_filter_id']);
                         }
                     }
 
-                    if (!empty($permission_diff['to_add'])) {
-                        foreach ($permission_diff['to_add'] as $permission) {
+                    if (!empty($permissionDiff['to_add'])) {
+                        foreach ($permissionDiff['to_add'] as $permission) {
                             $permission['predefined_filter_id'] = $filter->id;
                             $this->predefinedFilterPermissionService->store($permission);
                         }
@@ -215,7 +215,7 @@ class PredefinedFilterService
             ->get(['id', 'name', 'created_by', 'is_public']);
     
         $viewableFilters = $filters->filter(fn($f) => $f->userHasPermission($user, 'view'))
-                                   ->pluck('id');
+            ->pluck('id');
     
         $query = PredefinedFilter::select(['id', 'name', 'is_public'])
             ->whereIn('id', $viewableFilters);
@@ -249,7 +249,7 @@ class PredefinedFilterService
             $query->where('is_public', 0);
             $search = preg_replace('/^(PRIVATE:|' . preg_quote($private, '/') . ')/i', '', $search);
     
-        } elseif (str_starts_with($upper, 'PUBLIC:') || str_starts_with($upper, $public)) {
+        } else if (str_starts_with($upper, 'PUBLIC:') || str_starts_with($upper, $public)) {
             $query->where('is_public', 1);
             $search = preg_replace('/^(PUBLIC:|' . preg_quote($public, '/') . ')/i', '', $search);
         }
