@@ -14,6 +14,24 @@ class DateQueryTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function getFilteredAssets(array $filter)
+    {
+        return $this->actingAsForApi(User::factory()->superuser()->create())->getJson(
+            route('api.assets.index', [
+                'status' => '',
+                'order_number' => '',
+                'company_id' => '',
+                'status_id' => '',
+                'filter' => json_encode($filter),
+                'search' => '',
+                'sort' => 'id',
+                'order' => 'asc',
+                'offset' => '0',
+                'limit' => '50',
+            ])
+        );
+    }
+
     public function testPurchaseDateQueryStart()
     {
         Carbon::setTestNow(Carbon::create(2023, 4, 16));
@@ -124,20 +142,7 @@ class DateQueryTest extends TestCase
             ],
         ];
 
-        $response = $this->actingAsForApi(User::factory()->superuser()->create())
-            ->getJson(route('api.assets.index', [
-                'status'      => '',
-                'order_number'=> '',
-                'company_id'  => '',
-                'status_id'   => '',
-                'filter'      => json_encode($filter),
-                'search'      => '',
-                'sort'        => 'id',
-                'order'       => 'asc',
-                'offset'      => '0',
-                'limit'       => '50',
-            ]));
-
+        $response = $this->getFilteredAssets($filter);
 
         $response->assertOk()->assertJsonStructure(['total','rows']);
 

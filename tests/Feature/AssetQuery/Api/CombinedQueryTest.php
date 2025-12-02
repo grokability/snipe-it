@@ -18,6 +18,24 @@ class CombinedQueryTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function getFilteredAssets(array $filter)
+    {
+        return $this->actingAsForApi(User::factory()->superuser()->create())->getJson(
+            route('api.assets.index', [
+                'status' => '',
+                'order_number' => '',
+                'company_id' => '',
+                'status_id' => '',
+                'filter' => json_encode($filter),
+                'search' => '',
+                'sort' => 'id',
+                'order' => 'asc',
+                'offset' => '0',
+                'limit' => '50',
+            ])
+        );
+    }
+
     public function testFilterAssetModelLocationArrayManufacturerArray(): void
     {
         $modelA = AssetModel::factory()->create();
@@ -60,21 +78,7 @@ class CombinedQueryTest extends TestCase
             ],
         ];
 
-        $this->actingAsForApi(User::factory()->superuser()->create())
-            ->getJson(
-                route('api.assets.index', [
-                    'status' => '',
-                    'order_number' => '',
-                    'company_id' => '',
-                    'status_id' => '',
-                    'filter' => json_encode($filter),
-                    'search' => '',
-                    'sort' => 'id',
-                    'order' => 'asc',
-                    'offset' => '0',
-                    'limit' => '50',
-                ])
-            )
+        $this->getFilteredAssets($filter)
             ->assertOk()
             ->assertJsonStructure([
                 'total',
@@ -109,22 +113,7 @@ class CombinedQueryTest extends TestCase
             ],
         ];
 
-
-        $this->actingAsForApi(User::factory()->superuser()->create())
-            ->getJson(
-                route('api.assets.index', [
-                    'status' => '',
-                    'order_number' => '',
-                    'company_id' => '',
-                    'status_id' => '',
-                    'filter' => json_encode($filter),
-                    'search' => '',
-                    'sort' => 'id',
-                    'order' => 'asc',
-                    'offset' => '0',
-                    'limit' => '50',
-                ])
-            )
+        $this->getFilteredAssets($filter)
             ->assertOk()
             ->assertJsonStructure([
                 'total',
@@ -160,21 +149,7 @@ class CombinedQueryTest extends TestCase
             ],
         ];
 
-        $this->actingAsForApi(User::factory()->superuser()->create())
-            ->getJson(
-                route('api.assets.index', [
-                    'status' => '',
-                    'order_number' => '',
-                    'company_id' => '',
-                    'status_id' => '',
-                    'filter' => json_encode($filter),
-                    'search' => '',
-                    'sort' => 'id',
-                    'order' => 'asc',
-                    'offset' => '0',
-                    'limit' => '50',
-                ])
-            )
+        $this->getFilteredAssets($filter)
             ->assertOk()
             ->assertJsonStructure([
                 'total',
@@ -224,21 +199,7 @@ class CombinedQueryTest extends TestCase
             ],
         ];
 
-        $this->actingAsForApi(User::factory()->superuser()->create())
-            ->getJson(
-                route('api.assets.index', [
-                    'status' => '',
-                    'order_number' => '',
-                    'company_id' => '',
-                    'status_id' => '',
-                    'filter' => json_encode($filter),
-                    'search' => '',
-                    'sort' => 'id',
-                    'order' => 'asc',
-                    'offset' => '0',
-                    'limit' => '50',
-                ])
-            )
+        $this->getFilteredAssets($filter)
             ->assertOk()
             ->assertJsonStructure([
                 'total',
@@ -287,22 +248,8 @@ class CombinedQueryTest extends TestCase
                 'logic' => 'AND',
             ],
         ];
-
-        $this->actingAsForApi(User::factory()->superuser()->create())
-            ->getJson(
-                route('api.assets.index', [
-                    'status' => '',
-                    'order_number' => '',
-                    'company_id' => '',
-                    'status_id' => '',
-                    'filter' => json_encode($filter),
-                    'search' => '',
-                    'sort' => 'id',
-                    'order' => 'asc',
-                    'offset' => '0',
-                    'limit' => '50',
-                ])
-            )
+        
+        $this->getFilteredAssets($filter)
             ->assertOk()
             ->assertJsonStructure([
                 'total',
