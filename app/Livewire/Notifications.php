@@ -58,7 +58,7 @@ class Notifications extends Component
      *
      * @var array<int, array<string,mixed>>
      */
-    public array $liveAlerts = [];
+    public array $liveAlerts=[];
 
     /**
      * Main notification listener.
@@ -67,14 +67,14 @@ class Notifications extends Component
     #[On('showNotification')]
     #[On('notify')]
     public function notify(
-        $type = null,
-        $message = null,
-        $title = null,
-        $description = null,
-        $icon = null,
-        $html = null,
-        $tag = null,
-        $payload = null // wrapper form: { payload: { ... } }
+        $type=null,
+        $message=null,
+        $title=null,
+        $description=null,
+        $icon=null,
+        $html=null,
+        $tag=null,
+        $payload=null // wrapper form: { payload: { ... } }
     ): void {
         // Wrapper form: { payload: { ...full data... } }
         if (is_array($payload)) {

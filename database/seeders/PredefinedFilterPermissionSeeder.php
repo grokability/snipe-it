@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\PredefinedFilter;
 
 use App\Models\PredefinedFilterPermission;
+use Exception;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\User;
@@ -40,7 +41,7 @@ class PredefinedFilterPermissionSeeder extends Seeder
         ]);
 
         if (!$user instanceof User) {
-            throw new \Exception('user could not be created.. seeder aborting..');
+            throw new Exception('user could not be created.. seeder aborting..');
         }
 
         $filters = PredefinedFilter::limit(3)->get();       

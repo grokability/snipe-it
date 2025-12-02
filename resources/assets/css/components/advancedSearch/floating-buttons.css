@@ -126,7 +126,7 @@
 }
 
 /* Small responsive tweak */
-@media (max-width: 640px) {
+@media screen and (max-width: 640px) {
     .floating-buttons-fab-fixed-wrapper {
         left: 50% !important;
         bottom: 18px;

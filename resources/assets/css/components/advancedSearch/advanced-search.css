@@ -73,7 +73,7 @@ Makes the advanced search filters section block-level and full width.
     margin: 0;
 }
 
-.advancedSearchPanel--with-buffer {
+.advancedSearchPanel-with-buffer {
     min-height: calc(100% + 70px);
     padding-bottom: 70px; /* gives room for floating buttons */
 }
@@ -90,7 +90,7 @@ Scrollable filter panel body, with padding.
 On small screens, limit box-body max height to 75% of viewport.
 Makes scrolling manageable on mobile.
 */
-@media (max-width: 768px) {
+@media screen and (max-width: 768px) {
   .box-body {
     max-height: 75vh;
   }
@@ -99,7 +99,7 @@ Makes scrolling manageable on mobile.
 /* 
 On desktop, take up all available vertical height.
 */
-@media (min-width: 769px) {
+@media screen and (min-width: 769px) {
   .box-body {
     height: 100%;
   }
@@ -135,7 +135,7 @@ By default, hide both the desktop and mobile collapse icons.
 /* 
 Show the desktop collapse icon on desktop screens.
 */
-@media (min-width: 768px) {
+@media screen and (min-width: 768px) {
   .icon-desktop {
     display: inline;
   }
@@ -144,7 +144,7 @@ Show the desktop collapse icon on desktop screens.
 /* 
 Show the mobile collapse icon on mobile screens.
 */
-@media (max-width: 767px) {
+@media screen and (max-width: 767px) {
   .icon-mobile {
     display: inline;
   }

@@ -25,22 +25,22 @@ enum AdvancedsearchModalAction: string
 
 class Modal extends Component
 {
-    public $showModal = false;
+    public $showModal=false;
     public AdvancedsearchModalAction $modalActionType;
 
     #[Validate("required")]
     public FilterVisibility $visibility = FilterVisibility::Private;
 
     #[Validate("required")]
-    public ?string $name = "";
+    public ?string $name="";
 
     #[Validate("sometimes")]
-    public $groupSelect = [];
+    public $groupSelect=[];
 
     #[Validate("sometimes")]
-    public array $groupSelectOtherOptions = [];
+    public array $groupSelectOtherOptions=[];
 
-    protected $listeners = ["groupSelect"];
+    protected $listeners=["groupSelect"];
 
     public ?int $filterId;
 
@@ -75,42 +75,45 @@ class Modal extends Component
         }
 
         if (
-            $this->modalActionType === AdvancedsearchModalAction::Edit &&
-            $predefinedFilterId !== null
+            $this->modalActionType === AdvancedsearchModalAction::Edit 
+            && $predefinedFilterId !== null
         ) {
-            $predefinedFilter = $predefinedFilterService->getFilterWithOptionalPermissionsById(
-                $predefinedFilterId
-            );
-            
-            if ($predefinedFilter === null) {
-                $this->showModal = false;
-                $this->dispatchNotFoundNotification();
-                return;
-            }
-            
-            $this->name = $predefinedFilter["name"];
-
-            if ($predefinedFilter["is_public"] == 1) {
-                $this->visibility = FilterVisibility::Public;
-            } else {
-                $this->visibility = FilterVisibility::Private;
-            }
-
-            foreach ($predefinedFilter["permissions"] as $permission) {
-                array_push(
-                    $this->groupSelect,
-                    $permission->permission_group_id
-                );
-            }
-
-            $this->groupSelectOtherOptions = array_diff(
-                $this->groupSelectOtherOptions,
-                $this->groupSelect
-            );
+            $this->openPredefinedFiltersEditModal($predefinedFilterId);
         }
-        // end if
 
         $this->dispatch("openPredefinedFiltersModalEvent");
+    }
+
+    private function openPredefinedFiltersEditModal($predefinedFilterId) {
+        $predefinedFilter = $predefinedFilterService->getFilterWithOptionalPermissionsById(
+            $predefinedFilterId
+        );
+            
+        if ($predefinedFilter === null) {
+            $this->showModal = false;
+            $this->dispatchNotFoundNotification();
+            return;
+        }
+            
+        $this->name = $predefinedFilter["name"];
+
+        if ($predefinedFilter["is_public"] == 1) {
+            $this->visibility = FilterVisibility::Public;
+        } else {
+            $this->visibility = FilterVisibility::Private;
+        }
+
+        foreach ($predefinedFilter["permissions"] as $permission) {
+            array_push(
+                $this->groupSelect,
+                $permission->permission_group_id
+            );
+        }
+
+        $this->groupSelectOtherOptions = array_diff(
+            $this->groupSelectOtherOptions,
+            $this->groupSelect
+        );
     }
 
     #[On("closePredefinedFiltersModal")]
@@ -131,13 +134,7 @@ class Modal extends Component
     ) {
         $this->validate();
 
-        if ($this->validateMaxLenghtForFiltername()) {
-            $this->dispatch('showNotificationInFrontend', [
-                'type' => 'error',
-                'title' => trans('general.notification_error'),
-                'message' => trans('admin/predefinedFilters/message.name_too_long'),
-                'tag' => 'predefinedFilter',
-            ]);
+        if(!$this->validateMaxLenghtForFiltername()) {
             return;
         }
 
@@ -210,13 +207,7 @@ class Modal extends Component
             'groupSelect.*' => 'required|integer|exists:permission_groups,id',
         ]);
 
-        if($this->validateMaxLenghtForFiltername()) {
-            $this->dispatch('showNotificationInFrontend', [
-                'type' => 'error',
-                'title' => trans('general.notification_error'),
-                'message' => trans('admin/predefinedFilters/message.name_too_long'),
-                'tag' => 'predefinedFilter',
-            ]);
+        if(!$this->validateMaxLenghtForFiltername()) {
             return;
         }
 
@@ -316,7 +307,7 @@ class Modal extends Component
 
         $predefinedFilter = $predefinedFilterService->getFilterWithOptionalPermissionsById($this->filterId);
 
-        if ($predefinedFilter === null){
+        if ($predefinedFilter === null) {
             $this->dispatchNotFoundNotification();
             return;
         }
@@ -414,6 +405,16 @@ class Modal extends Component
     }
     
     private function validateMaxLenghtForFiltername(): bool {
-        return mb_strlen($this->name) > 190;
+        if (mb_strlen($this->name) > 190) {
+            $this->dispatch('showNotificationInFrontend', [
+                'type' => 'error',
+                'title' => trans('general.notification_error'),
+                'message' => trans('admin/predefinedFilters/message.name_too_long'),
+                'tag' => 'predefinedFilter',
+            ]);
+            return false;
+        }
+        return true;
     }
+
 }

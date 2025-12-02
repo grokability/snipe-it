@@ -156,9 +156,9 @@ class QueryLogicTest extends TestCase
             ->assertOk()
             ->assertJson(fn(AssertableJson $json) =>
                 $json
-                    ->has('total')
-                    ->has('rows', 2)
-                    ->etc()
+                ->has('total')
+                ->has('rows', 2)
+                ->etc()
             )
             ->assertJsonFragment(['id' => $assetSurfacebook->id])
             ->assertJsonFragment(['id' => $assetZenbook->id])

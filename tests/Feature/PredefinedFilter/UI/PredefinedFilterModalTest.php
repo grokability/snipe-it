@@ -15,7 +15,7 @@ class PredefinedFilterModalTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected function makeServiceMock(array $overrides = [])
+    protected function makeServiceMock(array $overrides=[])
     {
         $mock = Mockery::mock(PredefinedFilterService::class);
 
