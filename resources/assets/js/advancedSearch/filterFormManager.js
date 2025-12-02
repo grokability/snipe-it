@@ -1,5 +1,4 @@
 import {
-    FilterInput,
     SelectFilterInput,
     AssignedEntityFilterInput,
     DateFilterInput,
@@ -115,7 +114,7 @@ export default class FilterFormManager {
         queueMicrotask(() => {
             const fields = document.getElementById("advancedSearchPanel").getElementsByTagName('*');
             for (let i = 0; i < fields.length; i++) {
-                fields[i].disabled = state;
+                fields[i].disabled = !!state;
             }
         });
     }

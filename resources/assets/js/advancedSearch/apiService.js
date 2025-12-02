@@ -28,7 +28,8 @@ export default class ApiService {
             return Promise.reject(new Error(`Invalid id ${id}. Must be a positive integer.`));
         }
     
-        const path = `${this.baseUrl}/${typeMap[type]}/${id}`;
+        const safeType = String(type);
+        const path = `${this.baseUrl}/${safeType}/${id}`;
         return this.fetchFromBackend('GET', path);
     }
 

@@ -373,7 +373,7 @@ export default class FloatingButtons {
                     this.fabMenu && this.fabMenu.setAttribute('aria-hidden', 'false');
                     this.menuToggleButton?.setAttribute('aria-expanded', 'true');
 
-                    this.menuItems?.forEach((item, idx) => {
+                    this.menuItems?.forEach((item) => {
                         item.setAttribute('tabindex', '0');
                     });
                     this.menuItems?.[0]?.focus();
