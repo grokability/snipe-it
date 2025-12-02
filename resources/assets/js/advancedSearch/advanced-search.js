@@ -10,8 +10,6 @@ export default function initAdvancedSearch(config = {}) {
     container.register("filterFormManager", new FilterFormManager());
     container.register("floatingButtons", new FloatingButtons());
 
-    const sleep = (ms) => new Promise(r => setTimeout(r, ms));
-
     document.addEventListener('livewire:init', async function () {
         const tableId = config.tableId;
         const $table = $('#' + tableId);
