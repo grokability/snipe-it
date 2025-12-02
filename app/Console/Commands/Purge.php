@@ -180,11 +180,11 @@ class Purge extends Command
                 $status_label->forceDelete();
             }
 
-            $predefined_filters = PredefinedFilter::whereNotNull('deleted_at')->withTrashed()->get();
-            $this->info($predefined_filters->count().' predefined filters purged.');
-            foreach ($predefined_filters as $predefined_filter) {
-                $this->info('- Predefined Filter "'.$predefined_filter->name.'" deleted.');
-                $predefined_filter->forceDelete();
+            $predefinedFilters = PredefinedFilter::whereNotNull('deleted_at')->withTrashed()->get();
+            $this->info($predefinedFilters->count().' predefined filters purged.');
+            foreach ($predefinedFilters as $predefinedFilter) {
+                $this->info('- Predefined Filter "'.$predefinedFilter->name.'" deleted.');
+                $predefinedFilter->forceDelete();
             }
 
         } else {
