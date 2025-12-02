@@ -67,7 +67,7 @@ class PredefinedFilterController extends Controller
             return response()->json(['message' => trans('admin/predefinedFilters/message.does_not_exist')], 404);
         }
 
-        if ($filter->userHasPermission(Auth::user(), 'view')){
+        if ($filter->userHasPermission(Auth::user(), 'view')) {
             return response()->json($filter->toArray());
         }
 
@@ -127,12 +127,13 @@ class PredefinedFilterController extends Controller
         $newIsPublic = $validated['is_public'] ?? $filter->is_public;
         $currentIsPublic = $filter->is_public;
 
-        if (!$filter->userHasPermission($user, 'edit')){
+        if (!$filter->userHasPermission($user, 'edit')) {
             return response()->json(['message' => trans('admin/predefinedFilters/message.not_allowed_to_edit')], 403);
         }
 
         //create permission
-        if ((!$currentIsPublic && $newIsPublic) && !$filter->userHasPermission($user, 'create')){
+        if ((!$currentIsPublic && $newIsPublic) 
+             && !$filter->userHasPermission($user, 'create')) {
             return response()->json(['message' => trans('admin/predefinedFilters/message.update.not_allowed_to_change_isPublic')], 403);
         }
 

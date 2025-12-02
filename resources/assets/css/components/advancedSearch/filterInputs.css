@@ -39,7 +39,7 @@ Space between each filter item
     gap: 20px;
 }
 
-.advancedSearchItemContainer {
+.advanced-search-item-container {
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -66,7 +66,7 @@ Space between each filter item
     min-width: 35px;
     max-width: 42px;
     height: 38px;
-    padding: 0px 2px;
+    padding: 0 2px;
     font-size: 13px;
     border: 1px solid var(--text-main);
     border-top-right-radius: 0;
@@ -133,7 +133,7 @@ Space between each filter item
 
 .select2-container--default .select2-selection:focus {
     border-color: var(--button-hover);
-    box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.08);
+    box-shadow: 0 0 0 2px #6c63ff14;
     outline: none;
 }
 
@@ -175,7 +175,7 @@ Space between each filter item
 }
 
 /* ---------- DESKTOP Styles (screen ≥ 768px) ---------- */
-@media (min-width: 768px) {
+@media screen and (min-width: 768px) {
 
     /* 
     Filter sidebar gets 25% width, and some space on the right.
@@ -204,7 +204,7 @@ Space between each filter item
 }
 
 /* ---------- MOBILE Styles (screen < 768px) ---------- */
-@media (max-width: 767px) {
+@media screen and (max-width: 767px) {
 
     /* 
     Filter takes full width, and sits above the table section.
@@ -292,7 +292,7 @@ When .hide is applied, the filter section is hidden.
     /* Space between each filter item */
 }
 
-.advancedSearchItemContainer {
+.advanced-search-item-container {
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -422,7 +422,7 @@ When .hide is applied, the filter section is hidden.
 }
 
 /* ---------- DESKTOP Styles (screen ≥ 768px) ---------- */
-@media (min-width: 768px) {
+@media screen and (min-width: 768px) {
 
     /* 
     Filter sidebar gets 25% width, and some space on the right.
@@ -451,7 +451,7 @@ When .hide is applied, the filter section is hidden.
 }
 
 /* ---------- MOBILE Styles (screen < 768px) ---------- */
-@media (max-width: 767px) {
+@media screen and (max-width: 767px) {
 
     /* 
     Filter takes full width, and sits above the table section.
@@ -494,11 +494,9 @@ When .hide is applied, the filter section is hidden.
 }
 
 .select2-selection--multiple::-webkit-scrollbar-track {
-    /*background: #f1f1f1;*/
     border-radius: 4px;
 }
 
 .select2-selection--multiple::-webkit-scrollbar-thumb {
-    /*background: #888;*/
     border-radius: 4px;
 }

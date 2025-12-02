@@ -13,7 +13,7 @@ class PredefinedFilterPolicy extends SnipePermissionsPolicy
     }
 
     
-    public function view(User $user, $filter = null)
+    public function view(User $user, $filter=null)
     {
         // Global permission
         if (parent::view($user, $filter)) {
@@ -33,7 +33,7 @@ class PredefinedFilterPolicy extends SnipePermissionsPolicy
         return false;
     }
 
-    public function update(User $user, $filter = null)
+    public function update(User $user, $filter=null)
     {
         if (parent::update($user, $filter)) {
             return true;
@@ -46,7 +46,7 @@ class PredefinedFilterPolicy extends SnipePermissionsPolicy
         return false;
     }
 
-    public function delete(User $user, $filter = null)
+    public function delete(User $user, $filter=null)
     {
         if (parent::delete($user, $filter)) {
             return true;

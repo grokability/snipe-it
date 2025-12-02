@@ -125,18 +125,18 @@ class DateQueryTest extends TestCase
         ];
 
         $response = $this->actingAsForApi(User::factory()->superuser()->create())
-        ->getJson(route('api.assets.index', [
-            'status'      => '',
-            'order_number'=> '',
-            'company_id'  => '',
-            'status_id'   => '',
-            'filter'      => json_encode($filter),
-            'search'      => '',
-            'sort'        => 'id',
-            'order'       => 'asc',
-            'offset'      => '0',
-            'limit'       => '50',
-        ]));
+            ->getJson(route('api.assets.index', [
+                'status'      => '',
+                'order_number'=> '',
+                'company_id'  => '',
+                'status_id'   => '',
+                'filter'      => json_encode($filter),
+                'search'      => '',
+                'sort'        => 'id',
+                'order'       => 'asc',
+                'offset'      => '0',
+                'limit'       => '50',
+            ]));
 
 
         $response->assertOk()->assertJsonStructure(['total','rows']);

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 class PermissionGroupFactory extends Factory
 {
+    
     protected $model = PermissionGroup::class;
 
     public function definition()

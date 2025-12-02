@@ -47,7 +47,9 @@ use TypeError;
 class AssetsController extends Controller
 {
     protected $qrCodeDimensions = ['height' => 3.5, 'width' => 3.5];
+
     protected $barCodeDimensions = ['height' => 2, 'width' => 22];
+    
     protected PredefinedFilterService $predefinedFilterService;
 
     public function __construct(PredefinedFilterService $predefinedFilterService)
