@@ -124,17 +124,9 @@ class PredefinedFilterController extends Controller
         
         $validated = $validator->validated();
         
-        $newIsPublic = $validated['is_public'] ?? $filter->is_public;
-        $currentIsPublic = $filter->is_public;
-
-        if (!$filter->userHasPermission($user, 'edit')) {
-            return response()->json(['message' => trans('admin/predefinedFilters/message.not_allowed_to_edit')], 403);
-        }
-
-        //create permission
-        if ((!$currentIsPublic && $newIsPublic) 
-             && !$filter->userHasPermission($user, 'create')) {
-            return response()->json(['message' => trans('admin/predefinedFilters/message.update.not_allowed_to_change_isPublic')], 403);
+        $updatedPermission = updatePermissions($validated, $filter);
+        if($updatedPermission !== null) {
+            return $updatedPermission;
         }
 
         $updated = $this->service->updateFilter($filter, $validated);
@@ -144,6 +136,7 @@ class PredefinedFilterController extends Controller
             'filter_data' => $updated,
         ]);
     }
+
     public function destroy(int $id)
     {
         $user = auth()->user();
@@ -165,5 +158,22 @@ class PredefinedFilterController extends Controller
     {
         $filters = $this->service->selectList($request, true);
         return (new SelectlistTransformer)->transformSelectlist($filters);
+    }
+
+    private updatePermissions($validated, $filter) {
+        $newIsPublic = $validated['is_public'] ?? $filter->is_public;
+        $currentIsPublic = $filter->is_public;
+
+        if (!$filter->userHasPermission($user, 'edit')) {
+            return response()->json(['message' => trans('admin/predefinedFilters/message.not_allowed_to_edit')], 403);
+        }
+
+        //create permission
+        if ((!$currentIsPublic && $newIsPublic) 
+             && !$filter->userHasPermission($user, 'create')) {
+            return response()->json(['message' => trans('admin/predefinedFilters/message.update.not_allowed_to_change_isPublic')], 403);
+        }
+
+        return null;
     }
 }
