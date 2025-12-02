@@ -18,9 +18,9 @@ class DateQueryTest extends TestCase
     {
         Carbon::setTestNow(Carbon::create(2023, 4, 16));
 
-        $assetA = Asset::factory()->create(['purchase_date' => Carbon::now()->addDays(14)->toDateString()]);
-        $assetB = Asset::factory()->create(['purchase_date' => Carbon::now()->addWeeks(14)->toDateString()]);
-        $assetC = Asset::factory()->create(['purchase_date' => Carbon::now()->addMonths(14)->toDateString()]);
+        Asset::factory()->create(['purchase_date' => Carbon::now()->addDays(14)->toDateString()]); // asset A
+        $assetB = Asset::factory()->create(['purchase_date' => Carbon::now()->addWeeks(14)->toDateString()]); // asset B
+        $assetC = Asset::factory()->create(['purchase_date' => Carbon::now()->addMonths(14)->toDateString()]); // asset C
 
         $filter = [[
             'field' => 'purchase_date',

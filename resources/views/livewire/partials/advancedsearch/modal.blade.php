@@ -1,4 +1,4 @@
-<span id="advancedSearchModalContainer">
+<span id="advanced-search-modal-container">
     @push('css')
         <link rel="stylesheet" href="{{ mix('css/dist/modal.min.css') }}">
     @endpush
@@ -36,7 +36,7 @@
                         @if ($modalActionType === App\Livewire\Partials\Advancedsearch\AdvancedsearchModalAction::Create)
                             <h4 class="modal-title">{{ __("general.create") }}</h4>
                         @elseif ($modalActionType === App\Livewire\Partials\Advancedsearch\AdvancedsearchModalAction::Edit)
-                            <h4 class="modal-title capitalizeFirstLetter">{{ __("general.edit") }}</h4>
+                            <h4 class="modal-title capitalize-first-letter">{{ __("general.edit") }}</h4>
                         @elseif ($modalActionType === App\Livewire\Partials\Advancedsearch\AdvancedsearchModalAction::Delete)
                             <h4 class="modal-title">{{ __("general.delete") }}</h4>
                         @endif
@@ -133,7 +133,7 @@
                             type="button"
                             id="submitButton"
 
-                            @class(["btn", "btn-primary", "capitalizeFirstLetter"])
+                            @class(["btn", "btn-primary", "capitalize-first-letter"])
                             @click="window.advancedSearchModalSendInputToBackend('edit');"
                         >
                                 {{ trans("general.edit") }}

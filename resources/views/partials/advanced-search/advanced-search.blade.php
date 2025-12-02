@@ -37,7 +37,7 @@
         <hr class="filter-content">
         
         <!-- All Filter Fields -->
-        <div id="advancedSearchFilters" class="filter-content container">
+        <div id="advanced-search-filters" class="filter-content container">
             @php
                 $layoutJson = \App\Presenters\AssetPresenter::dataTableLayout();
                 $layout = json_decode($layoutJson);
