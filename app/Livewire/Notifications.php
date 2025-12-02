@@ -157,11 +157,21 @@ class Notifications extends Component
         if (empty($data['message'])) {
             return;
         }
+    
+        $alert = $this->buildAlert($data);
+    
+        if ($alert['tag'] !== null && $this->replaceTaggedAlert($alert)) {
+            return;
+        }
+    
+        $this->addAlert($alert);
+    }
 
+    protected function buildAlert(array $data): array
+    {
         $type = $this->normalizeType($data['type'] ?? 'info');
-
-        // Build final alert array
-        $alert = [
+    
+        return [
             'id'          => uniqid('al_', true),
             'type'        => $type,
             'tag'         => $data['tag'] ?? null,
@@ -170,21 +180,27 @@ class Notifications extends Component
             'description' => $data['description'] ?? null,
             'icon'        => $data['icon'] ?? $this->defaultIcon($type),
             'html'        => $data['html'] ?? false,
-            'created_at'  => time(),
+        'created_at'  => time(),
         ];
+    }
 
-        // Tag replacement logic if tag provided
-        if ($alert['tag'] !== null) {
-            foreach ($this->liveAlerts as $index => $liveAlert) {
-                if ($liveAlert['tag'] === $alert['tag']) {
-                    $this->liveAlerts[$index] = $alert;
-                    return;
-                }
+    protected function replaceTaggedAlert(array $alert): bool
+    {
+        foreach ($this->liveAlerts as $index => $liveAlert) {
+            if ($liveAlert['tag'] === $alert['tag']) {
+                $this->liveAlerts[$index] = $alert;
+                return true;
             }
         }
+    
+        return false;
+    }
 
+    protected function addAlert(array $alert): void
+    {
         $this->liveAlerts[] = $alert;
     }
+
 
     /**
      * Dismiss by alert unique ID.

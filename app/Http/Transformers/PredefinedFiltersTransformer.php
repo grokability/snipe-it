@@ -45,7 +45,7 @@ class PredefinedFiltersTransformer
                 'rows' => []
             ];
 
-            foreach ($permissionGroups as $group){
+            foreach ($permissionGroups as $group) {
                 $groups['rows'][] = [
                     'id' => $group->id,
                     'name' => $group->name

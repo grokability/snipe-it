@@ -43,6 +43,7 @@ class Modal extends Component
     protected $listeners = ["groupSelect"];
 
     public ?int $filterId;
+
     public $filterData;
 
     #[On("openPredefinedFiltersModal")]
@@ -81,7 +82,7 @@ class Modal extends Component
                 $predefinedFilterId
             );
             
-            if ($predefinedFilter === null){
+            if ($predefinedFilter === null) {
                 $this->showModal = false;
                 $this->dispatchNotFoundNotification();
                 return;
@@ -107,6 +108,7 @@ class Modal extends Component
                 $this->groupSelect
             );
         }
+        // end if
 
         $this->dispatch("openPredefinedFiltersModalEvent");
     }
@@ -129,7 +131,7 @@ class Modal extends Component
     ) {
         $this->validate();
 
-        if($this->validateMaxLenghtForFiltername()) {
+        if ($this->validateMaxLenghtForFiltername()) {
             $this->dispatch('showNotificationInFrontend', [
                 'type' => 'error',
                 'title' => trans('general.notification_error'),

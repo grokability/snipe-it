@@ -48,8 +48,8 @@ class QueryLogicTest extends TestCase
             ->getJson(route('api.assets.index', ['filter' => json_encode($filter1)]))
             ->assertOk()
             ->assertJson(fn(AssertableJson $json) =>
-                $json   ->has('total')
-                        ->has('rows', 1)
+                $json->has('total')
+                     ->has('rows', 1)
             )
             ->assertJsonFragment(['id' => $assetMacbook->id])
             ->assertJsonPath('rows.*.id', [$assetMacbook->id]);

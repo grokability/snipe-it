@@ -1,9 +1,9 @@
-<span class="advancedSearchWrapper">
-<span class="advancedSearchGridContainer">
+<span class="advanced-search-wrapper">
+<span class="advanced-search-grid-container">
    @foreach ($layout as $tableField)
       @if ((!empty($tableField->searchable) && $tableField->searchable === true))
             <span id="advancedSearch_{{ $tableField->field }}" class="advancedSearchItemContainer filter-item" data-filter-name="{{ strtolower($tableField->title) }}">
-               <label for="advancedSearch_{{ $tableField->field }}" class="filterFieldName">
+               <label for="advancedSearch_{{ $tableField->field }}" class="filter-field-name">
                   <b>{{ $tableField->title }}</b>
                </label>
 
@@ -18,7 +18,7 @@
 
                @if (!isset($tableField->formatter))
                   {{-- Default select if formatter is not set --}}
-                  <input class="advancedSearch_defaultField form-control" type="text" autocomplete="on" id="advancedSearch_{{ $tableField->field }}_input" placeholder="{{ $tableField->title }}" >
+                  <input class="advanced-search-default-field form-control" type="text" autocomplete="on" id="advancedSearch_{{ $tableField->field }}_input" placeholder="{{ $tableField->title }}" >
                @else
                   @switch($tableField->formatter)
                      @case('dateDisplayFormatter')
@@ -149,7 +149,7 @@
                         ])
                         @break
                      @default
-                        <input class="advancedSearch_defaultField form-control" type="text" autocomplete="on" id="advancedSearch_{{ $tableField->field }}_input" placeholder="{{ $tableField->title }}">
+                        <input class="advanced-search-default-field form-control" type="text" autocomplete="on" id="advancedSearch_{{ $tableField->field }}_input" placeholder="{{ $tableField->title }}">
                   @endswitch
                @endif
                     </div>

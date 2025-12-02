@@ -148,7 +148,7 @@ class AssetsController extends Controller
             $filter = json_decode($request->input('filter'), true);
         }
 
-        if (!isset($filter[0]['field'])){
+        if (!isset($filter[0]['field'])) {
             $filter = array_filter($filter, function ($key) use ($allowed_columns){
                 return in_array($key, $allowed_columns);
             }, ARRAY_FILTER_USE_KEY);

@@ -245,13 +245,13 @@ class FilterService
         }
 
         // === 3b. Handle assignedTo asset ===
-        elseif ($value['type'] === Asset::class) {
+        else if ($value['type'] === Asset::class) {
             $assignedValue = $value['value'];
 
             $this->applyAssignedToAsset($inner, $assignedValue, $operator);
         }
         // === 3c. Handle assignedTo user ===
-        elseif ($value['type'] === User::class) {
+        else if ($value['type'] === User::class) {
             $assignedValue = trim((string) ($value['value'] ?? ''));
 
             $this->applyAssignedToUser($inner, $assignedValue, $operator);
