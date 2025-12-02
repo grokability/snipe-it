@@ -11,6 +11,7 @@ use App\Models\Statuslabel;
 use App\Models\Supplier;
 use DB;
 use Exception;
+use Log;
 use Throwable;
 use App\Models\PredefinedFilter;
 use App\Services\FilterService\FilterService;
@@ -194,7 +195,8 @@ class PredefinedFilterService
                 });
             } catch (Throwable $e) {
                 // If any exception occurs, the transaction is automatically rolled back.
-                throw new Exception(esc_html($e->getMessage()));
+                Log::error($e->getMessage());
+
             }
         }
 
