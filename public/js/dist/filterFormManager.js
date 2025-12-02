@@ -1,5 +1,4 @@
 import {
-    FilterInput,
     SelectFilterInput,
     AssignedEntityFilterInput,
     DateFilterInput,
@@ -11,7 +10,7 @@ export default class FilterFormManager {
     constructor() {
         this.filters = [];
         this.inputs = [];
-        this.apiService = container.resolve("apiService");;
+        this.apiService = container.resolve("apiService");
     }
 
     async collectFilterInputs() {
@@ -115,7 +114,7 @@ export default class FilterFormManager {
         queueMicrotask(() => {
             const fields = document.getElementById("advancedSearchPanel").getElementsByTagName('*');
             for (let i = 0; i < fields.length; i++) {
-                fields[i].disabled = state;
+                fields[i].disabled = !!state;
             }
         });
     }

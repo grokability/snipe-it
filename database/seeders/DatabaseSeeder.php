@@ -36,9 +36,6 @@ class DatabaseSeeder extends Seeder
         $this->call(DepreciationSeeder::class);
         $this->call(StatuslabelSeeder::class);
         $this->call(AccessorySeeder::class);
-
-        $dataset = env('TEST_DATASET', 'default');
-
         $this->call(CustomFieldSeeder::class);
 
         $this->call(AssetSeeder::class);
