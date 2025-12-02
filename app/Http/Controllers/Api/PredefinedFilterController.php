@@ -124,7 +124,7 @@ class PredefinedFilterController extends Controller
         
         $validated = $validator->validated();
         
-        $updatedPermission = updatePermissions($validated, $filter, $user);
+        $updatedPermission = $this->updatePermissions($validated, $filter, $user);
         if($updatedPermission !== null) {
             return $updatedPermission;
         }
