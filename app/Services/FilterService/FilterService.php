@@ -215,7 +215,7 @@ class FilterService
                         }
                     }
                 });
-            }
+            } //end foreach
         });
     }
 

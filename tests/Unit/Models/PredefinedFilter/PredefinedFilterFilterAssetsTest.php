@@ -378,7 +378,7 @@ class PredefinedFilterFilterAssetsTest extends TestCase
     }
 
     /** @test */
-    public function it_filters_by_name_with_like_operator() {
+    public function itFiltersByNameWithLikeOperator() {
 
         $user = User::factory()->create();
 

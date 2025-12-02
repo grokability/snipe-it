@@ -14,7 +14,7 @@ class IndexPredefinedFiltersTest extends TestCase
             ->assertOk();
     }
 
-    public function test_predefined_filters_page_returns_403_for_unauthorized_user()
+    public function testPredefinedFiltersPageReturns403ForUnauthorizedUser()
     {
         $user = User::factory()->create(); // No permissions
 

@@ -164,7 +164,7 @@ class Modal extends Component
                 ]);
                 return;
             }
-        }
+        } //end if
 
         if ($filter->checkIfNameAlreadyExists($this->name)) {
             $this->dispatch('showNotificationInFrontend', [
