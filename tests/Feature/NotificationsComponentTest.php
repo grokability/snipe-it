@@ -94,7 +94,7 @@ class NotificationsComponentTest extends TestCase
             ->assertSee(values: 'alert-info');
     }
 
-    public function testLegacySessionBulk_AssetErrorsAreRendered()
+    public function testLegacySessionBulkAssetErrorsAreRendered()
     {
         Session::flash('bulk_asset_errors', [
             'row1' => ['Missing tag'],

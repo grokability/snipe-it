@@ -124,8 +124,7 @@ class PredefinedFilterService
                             break;
                         default:
                             break;
-                    }
-                    // end switch
+                    } // end switch
 
                     if ($model) {
                         $values[] = [
@@ -207,7 +206,7 @@ class PredefinedFilterService
         return $filter->delete();
     }
 
-    public function selectList(Request $request, bool $visibilityInName = false): LengthAwarePaginator
+    public function selectList(Request $request, bool $visibilityInName=false): LengthAwarePaginator
     {
         $user = Auth::user();
     
