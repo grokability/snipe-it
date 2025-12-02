@@ -92,18 +92,18 @@ export default class FloatingButtons {
         }
     }
 
-    // Wrap existing children in a .floatingButtons-inner so we can animate transforms
+    // Wrap existing children in a .floating-buttons-inner so we can animate transforms
     _ensureInnerWrapper() {
         if (!this.floatingButtonContainer) return;
 
-        const existing = this.floatingButtonContainer.querySelector('.floatingButtons-inner');
+        const existing = this.floatingButtonContainer.querySelector('.floating-buttons-inner');
         if (existing) {
             this.inner = existing;
             return;
         }
 
         const inner = document.createElement('div');
-        inner.className = 'floatingButtons-inner';
+        inner.className = 'floating-buttons-inner';
 
         while (this.floatingButtonContainer.firstChild) {
             inner.appendChild(this.floatingButtonContainer.firstChild);
@@ -143,7 +143,7 @@ export default class FloatingButtons {
                 }
             });
 
-            const menuButtonItems = document.querySelectorAll('.floatingButtons-menuButton');
+            const menuButtonItems = document.querySelectorAll('.floating-buttons-menuButton');
             menuButtonItems.forEach((item) => {
                 item.addEventListener('click', () => this.closeMenu());
             });
@@ -186,7 +186,7 @@ export default class FloatingButtons {
             const centerX = panelRect.left + (panelRect.width / 2) + scrollLeft;
 
             // Only set absolute page-based left when the container is in the document root (fixed mode).
-            if (this.floatingButtonContainer.classList.contains('floatingButtons-fab-fixed-wrapper')) {
+            if (this.floatingButtonContainer.classList.contains('floating-buttons-fab-fixed-wrapper')) {
                 this.floatingButtonContainer.style.left = `${centerX}px`;
                 this.floatingButtonContainer.style.transform = 'translateX(-50%)';
             } else {
@@ -283,8 +283,8 @@ export default class FloatingButtons {
         this.advancedSearchPanel.appendChild(this.floatingButtonContainer);
 
         // switch classes
-        this.floatingButtonContainer.classList.remove('floatingButtons-fab-fixed-wrapper');
-        this.floatingButtonContainer.classList.add('floatingButtons-fab-scrollable-wrapper');
+        this.floatingButtonContainer.classList.remove('floating-buttons-fab-fixed-wrapper');
+        this.floatingButtonContainer.classList.add('floating-buttons-fab-scrollable-wrapper');
 
         // measure natural content height and ensure there's extra space for the buttons to sit comfortably
         this.advancedSearchPanelHeight = this._getNaturalPanelHeight();
@@ -300,7 +300,7 @@ export default class FloatingButtons {
         if (!this.floatingButtonContainer) return;
 
         // if already fixed, nothing to do
-        if (this.floatingButtonContainer.classList.contains('floatingButtons-fab-fixed-wrapper')) {
+        if (this.floatingButtonContainer.classList.contains('floating-buttons-fab-fixed-wrapper')) {
             return;
         }
 
@@ -332,8 +332,8 @@ export default class FloatingButtons {
         }
 
         // switch classes
-        this.floatingButtonContainer.classList.remove('floatingButtons-fab-scrollable-wrapper');
-        this.floatingButtonContainer.classList.add('floatingButtons-fab-fixed-wrapper');
+        this.floatingButtonContainer.classList.remove('floating-buttons-fab-scrollable-wrapper');
+        this.floatingButtonContainer.classList.add('floating-buttons-fab-fixed-wrapper');
 
         // restore the panel's original inline height (if we saved one) so we don't keep a reduced height
         if (this.advancedSearchPanel) {
@@ -400,12 +400,12 @@ export default class FloatingButtons {
     }
 
     enableEditDeleteButtons() {
-        document.getElementById('updateFilterButton')?.classList.remove('floatingButtons-disabled');
-        document.getElementById('deleteFilterButton')?.classList.remove('floatingButtons-disabled');
+        document.getElementById('updateFilterButton')?.classList.remove('floating-buttons-disabled');
+        document.getElementById('deleteFilterButton')?.classList.remove('floating-buttons-disabled');
     }
 
     disableEditDeleteButtons() {
-        document.getElementById('updateFilterButton')?.classList.add('floatingButtons-disabled');
-        document.getElementById('deleteFilterButton')?.classList.add('floatingButtons-disabled');
+        document.getElementById('updateFilterButton')?.classList.add('floating-buttons-disabled');
+        document.getElementById('deleteFilterButton')?.classList.add('floating-buttons-disabled');
     }
 }

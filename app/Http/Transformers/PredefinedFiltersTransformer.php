@@ -45,7 +45,7 @@ class PredefinedFiltersTransformer
                 'rows' => []
             ];
 
-            foreach ($permissionGroups as $group){
+            foreach ($permissionGroups as $group) {
                 $groups['rows'][] = [
                     'id' => $group->id,
                     'name' => $group->name
@@ -56,9 +56,11 @@ class PredefinedFiltersTransformer
             $array['groups'] = null;
         }
 
+        $permissionsArray = [];
+
         $permissionsArray['available_actions'] = [
-            'update' => $filter->created_by === auth()->id() || $filter->userHasPermission(auth()->user(), 'edit'),
-            'delete' => $filter->created_by === auth()->id() || $filter->userHasPermission(auth()->user(), 'delete')
+            'update' => $filter->userHasPermission(auth()->user(), 'edit'),
+            'delete' => $filter->userHasPermission(auth()->user(), 'delete')
         ];
         return $array += $permissionsArray;
     }

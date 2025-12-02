@@ -5,6 +5,7 @@ class FilterUIController {
         this.$table = tableElement;
         this.apiService = container.resolve("apiService");
         this.collector = container.resolve("filterFormManager");
+        this.collector.collectFilterInputs();
         this.translations = container.resolve("advancedSearchTranslations");
 
         // store handler references so we can unbind them
@@ -18,10 +19,6 @@ class FilterUIController {
         this.handleUpdateClick = (e) => this.updatePredefinedFilterInBackend(e.target.id);
         this.handleDeleteClick = (e) => this.deletePredefinedFilterFromBackend(e.target.id);
 
-    }
-
-    async init(){
-        await this.collector.collectFilterInputs();
     }
 
     destroy() {
@@ -112,7 +109,7 @@ class FilterUIController {
 
         Livewire.dispatch('openPredefinedFiltersModal', {
             action: 'edit',
-            predefinedFilterId: parseInt(selectedFilter.id),
+            predefinedFilterId: parseInt(selectedFilter.id, 10),
             predefinedFilterData: filters
         });
     }
@@ -126,7 +123,7 @@ class FilterUIController {
 
         Livewire.dispatch('openPredefinedFiltersModal', {
             action: 'delete',
-            predefinedFilterId: parseInt(selected.id)
+            predefinedFilterId: parseInt(selected.id, 10)
         });
     }
 
