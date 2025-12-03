@@ -215,7 +215,7 @@ class FilterService
                         }
                     }
                 });
-            } //end foreach
+            }//end foreach
         });
     }
 
@@ -452,5 +452,5 @@ class FilterService
         }
 
         return $query;
-    }
+    }//end if
 }
