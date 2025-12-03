@@ -119,6 +119,9 @@ class DateQueryTest extends TestCase
             'purchase_date'  => $purchase,
             'asset_tag'      => $prefix.'-C',
         ]);
+
+        // needed because on creation there is a randomizer in the factory
+
         $assetA->update(['asset_eol_date' => $eolA]);
         $assetB->update(['asset_eol_date' => $eolB]);
         $assetC->update(['asset_eol_date' => $eolC]);
