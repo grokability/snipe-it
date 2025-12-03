@@ -79,13 +79,13 @@ class Modal extends Component
             $this->modalActionType === AdvancedsearchModalAction::Edit 
             && $predefinedFilterId !== null
         ) {
-            $this->openPredefinedFiltersEditModal($predefinedFilterId);
+            $this->openPredefinedFiltersEditModal($predefinedFilterService ,$predefinedFilterId);
         }
 
         $this->dispatch("openPredefinedFiltersModalEvent");
     }
 
-    private function openPredefinedFiltersEditModal($predefinedFilterId) {
+    private function openPredefinedFiltersEditModal(PredefinedFilterService $predefinedFilterService, $predefinedFilterId) {
         $predefinedFilter = $predefinedFilterService->getFilterWithOptionalPermissionsById(
             $predefinedFilterId
         );
