@@ -107,21 +107,21 @@ class DateQueryTest extends TestCase
         $assetA = Asset::factory()->create([
             'model_id'       => $modelA->id,
             'purchase_date'  => $purchase,
-            'asset_eol_date' => $eolA,
             'asset_tag'      => $prefix.'-A',
         ]);
         $assetB = Asset::factory()->create([
             'model_id'       => $modelB->id,
             'purchase_date'  => $purchase,
-            'asset_eol_date' => $eolB,
             'asset_tag'      => $prefix.'-B',
         ]);
         $assetC = Asset::factory()->create([
             'model_id'       => $modelC->id,
             'purchase_date'  => $purchase,
-            'asset_eol_date' => $eolC,
             'asset_tag'      => $prefix.'-C',
         ]);
+        $assetA->update(['asset_eol_date' => $eolA]);
+        $assetB->update(['asset_eol_date' => $eolB]);
+        $assetC->update(['asset_eol_date' => $eolC]);
 
         $filter = [
             [
