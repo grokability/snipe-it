@@ -23,7 +23,7 @@
 
 
   <!-- Asset Tag -->
-  <div class="form-group {{ $errors->has('asset_tag') ? ' has-error' : '' }}">
+    <div class="form-group {{ ($errors->has('asset_tag') || $errors->has('asset_tags.1')) ? ' has-error' : '' }}">
     <label for="asset_tag" class="col-md-3 control-label">{{ trans('admin/hardware/form.tag') }}</label>
 
 
@@ -39,8 +39,10 @@
       @else
           <!-- we are creating a new asset - let people use more than one asset tag -->
           <div class="col-md-7 col-sm-12">
-              <input class="form-control" type="text" name="asset_tags[1]" id="asset_tag" value="{{ old('asset_tags.1', \App\Models\Asset::autoincrement_asset()) }}" required>
-              {!! $errors->first('asset_tags', '<span class="alert-msg"><i class="fas fa-times"></i> :message</span>') !!}
+              <input class="form-control"
+                     type="text" name="asset_tags[1]" id="asset_tag"
+                     value="{{ old('asset_tags.1', \App\Models\Asset::autoincrement_asset()) }}" required>
+              {!! $errors->first('asset_tags.1', '<span class="alert-msg"><i class="fas fa-times"></i> :message</span>') !!}
               {!! $errors->first('asset_tag', '<span class="alert-msg"><i class="fas fa-times"></i> :message</span>') !!}
           </div>
           <div class="col-md-2 col-sm-12">
@@ -57,6 +59,39 @@
     @include ('partials.forms.edit.serial', ['fieldname'=> 'serials[1]', 'old_val_name' => 'serials.1', 'translated_serial' => trans('admin/hardware/form.serial')])
 
     <div class="input_fields_wrap">
+        {{-- If we're back on this screen for an error, *and* we are doing 'create multiple', then... --}}
+        @php
+            $old_tags = old('asset_tags',[]);
+            /**
+            okay, so old() comes back as:
+              (
+                [1] => 1744410541
+                [2] => 1744410542
+              )
+            */
+            if(array_key_exists('1',$old_tags)) {
+                unset($old_tags[1]); //we already handled 'asset_tag.1' - so unset it
+            }
+        @endphp
+        @foreach(array_keys($old_tags) as $i)
+            {{-- This is mostly stolen from the HTML that we add via javascript on the 'add_field_button' handler in the embedded JS below --}}
+            {{--                @include ('partials.forms.edit.serial', ['fieldname'=> 'serials['.$loop->iteration.']', 'old_val_name' => 'serials.'.$loop->iteration, 'translated_serial' => trans('admin/hardware/form.serial')])--}}
+            <span class="fields_wrapper">
+                <div class="form-group {{  $errors->has('asset_tags.'.$i) ? ' has-error' : '' }}"><label for="asset_tag"
+                                                                                                         class="col-md-3 control-label">{{ trans('admin/hardware/form.tag') }} {{ $i }}</label>
+                    <div class="col-md-7 col-sm-12 required">
+                        <input type="text" class="form-control" name="asset_tags[{{ $i }}]"
+                               value="{{ old('asset_tags.'.$i) }}"
+                               required>
+              {!! $errors->first('asset_tags.'.$i, '<span class="alert-msg"><i class="fas fa-times"></i> :message</span>') !!}
+                    </div>
+                    <div class="col-md-2 col-sm-12">
+                        <a href="#" class="remove_field btn btn-default btn-sm"><x-icon type="minus"/></a>
+                    </div>
+                </div>
+                @include ('partials.forms.edit.serial', ['fieldname'=> 'serials['.$i.']', 'old_val_name' => 'serials.'.$i, 'translated_serial' => trans('admin/hardware/form.serial')])
+            </span>
+        @endforeach
     </div>
 
     @include ('partials.forms.edit.model-select', ['translated_name' => trans('admin/hardware/form.model'), 'fieldname' => 'model_id', 'field_req' => true])
@@ -290,7 +325,7 @@
         var max_fields      = 100; //maximum input boxes allowed
         var wrapper         = $(".input_fields_wrap"); //Fields wrapper
         var add_button      = $(".add_field_button"); //Add button ID
-        var x               = 1; //initial text box count
+        var x = {{ old('asset_tags') ? count(old('asset_tags')) : 1  /* If we have old() data, use that to determine the 'next' number for 'Asset Tag 2' etc. Otherwise, use 1 */ }}; //initial text box count
 
 
 
@@ -314,6 +349,8 @@
 
                 x++; //text box increment
 
+                // NOTE - this is duplicated in the blade itself in order to re-display an attempt to insert multiple assets
+                // So if this changes, that needs to change too.
                 box_html += '<span class="fields_wrapper">';
                 box_html += '<div class="form-group"><label for="asset_tag" class="col-md-3 control-label">{{ trans('admin/hardware/form.tag') }} ' + x + '</label>';
                 box_html += '<div class="col-md-7 col-sm-12 required">';
@@ -322,7 +359,7 @@
                 box_html += '<div class="col-md-2 col-sm-12">';
                 box_html += '<a href="#" class="remove_field btn btn-default btn-sm"><x-icon type="minus" /></a>';
                 box_html += '</div>';
-                box_html += '</div>';
+                // box_html += '</div>';
                 box_html += '</div>';
                 box_html += '<div class="form-group"><label for="serial" class="col-md-3 control-label">{{ trans('admin/hardware/form.serial') }} ' + x + '</label>';
                 box_html += '<div class="col-md-7 col-sm-12">';

@@ -7,6 +7,7 @@ use App\Events\CheckoutableCheckedIn;
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ImageUploadRequest;
+use App\Http\Requests\CreateMultipleAssetRequest;
 use App\Http\Requests\UpdateAssetRequest;
 use App\Models\Actionlog;
 use App\Http\Requests\UploadFileRequest;
@@ -137,7 +138,7 @@ class AssetsController extends Controller
      * @author [A. Gianotto] [<snipe@snipe.net>]
      * @since [v1.0]
      */
-    public function store(ImageUploadRequest $request): RedirectResponse
+    public function store(CreateMultipleAssetRequest $request): RedirectResponse
     {
         $this->authorize(Asset::class);
 
@@ -174,123 +175,137 @@ class AssetsController extends Controller
         $successes = [];
         $failures = [];
 
-        for ($a = 1, $aMax = count($asset_tags); $a <= $aMax; $a++) {
-            $asset = new Asset();
+        try {
+            DB::beginTransaction();
+            for ($a = 1, $aMax = count($asset_tags); $a <= $aMax; $a++) {
+                $asset = new Asset();
 
-            $asset->model()->associate($model);
-            $asset->name = $request->input('name');
+                $asset->model()->associate($model);
+                $asset->name = $request->input('name');
 
-            // Check for a corresponding serial
-            if (($serials) && (array_key_exists($a, $serials))) {
-                $asset->serial = $serials[$a];
-            }
-
-            if (($asset_tags) && (array_key_exists($a, $asset_tags))) {
-                $asset->asset_tag = $asset_tags[$a];
-            }
-
-            $asset->company_id = $companyId;
-            $asset->model_id = $request->input('model_id');
-            $asset->order_number = $request->input('order_number');
-            $asset->notes = $request->input('notes');
-            $asset->created_by = auth()->id();
-            $asset->status_id = request('status_id');
-            $asset->warranty_months = request('warranty_months', null);
-            $asset->purchase_cost = request('purchase_cost');
-            $asset->purchase_date = request('purchase_date', null);
-            $asset->asset_eol_date = request('asset_eol_date', null);
-            $asset->assigned_to = request('assigned_to', null);
-            $asset->supplier_id = request('supplier_id', null);
-            $asset->requestable = request('requestable', 0);
-            $asset->rtd_location_id = request('rtd_location_id', null);
-            $asset->byod = request('byod', 0);
-
-            if (!empty($settings->audit_interval)) {
-                $asset->next_audit_date = Carbon::now()->addMonths((int) $settings->audit_interval)->toDateString();
-            }
-
-            // Set location_id to rtd_location_id ONLY if the asset isn't being checked out
-            if (!request('assigned_user') && !request('assigned_asset') && !request('assigned_location')) {
-                $asset->location_id = $request->input('rtd_location_id', null);
-            }
-
-            if ($request->has('use_cloned_image')) {
-                $cloned_model_img = Asset::select('image')->find($request->input('clone_image_from_id'));
-                if ($cloned_model_img) {
-                    $new_image_name = 'clone-' . date('U') . '-' . $cloned_model_img->image;
-                    $new_image = 'assets/' . $new_image_name;
-                    Storage::disk('public')->copy('assets/' . $cloned_model_img->image, $new_image);
-                    $asset->image = $new_image_name;
+                // Check for a corresponding serial
+                if (($serials) && (array_key_exists($a, $serials))) {
+                    $asset->serial = $serials[$a];
                 }
 
-            } else {
-                $asset = $request->handleImages($asset);
-            }
+                if (($asset_tags) && (array_key_exists($a, $asset_tags))) {
+                    $asset->asset_tag = $asset_tags[$a];
+                }
 
-            // Update custom fields in the database.
-            // Validation for these fields is handled through the AssetRequest form request
+                $asset->company_id = $companyId;
+                $asset->model_id = $request->input('model_id');
+                $asset->order_number = $request->input('order_number');
+                $asset->notes = $request->input('notes');
+                $asset->created_by = auth()->id();
+                $asset->status_id = request('status_id');
+                $asset->warranty_months = request('warranty_months', null);
+                $asset->purchase_cost = request('purchase_cost');
+                $asset->purchase_date = request('purchase_date', null);
+                $asset->asset_eol_date = request('asset_eol_date', null);
+                $asset->assigned_to = request('assigned_to', null);
+                $asset->supplier_id = request('supplier_id', null);
+                $asset->requestable = request('requestable', 0);
+                $asset->rtd_location_id = request('rtd_location_id', null);
+                $asset->byod = request('byod', 0);
 
-            if (($model) && ($model->fieldset)) {
-                foreach ($model->fieldset->fields as $field) {
-                    if ($field->field_encrypted == '1') {
-                        if (Gate::allows('assets.view.encrypted_custom_fields')) {
+                if (!empty($settings->audit_interval)) {
+                    $asset->next_audit_date = Carbon::now()->addMonths((int)$settings->audit_interval)->toDateString();
+                }
+
+                // Set location_id to rtd_location_id ONLY if the asset isn't being checked out
+                if (!request('assigned_user') && !request('assigned_asset') && !request('assigned_location')) {
+                    $asset->location_id = $request->input('rtd_location_id', null);
+                }
+
+                if ($request->has('use_cloned_image')) {
+                    $cloned_model_img = Asset::select('image')->find($request->input('clone_image_from_id'));
+                    if ($cloned_model_img) {
+                        $new_image_name = 'clone-' . date('U') . '-' . $cloned_model_img->image;
+                        $new_image = 'assets/' . $new_image_name;
+                        Storage::disk('public')->copy('assets/' . $cloned_model_img->image, $new_image);
+                        $asset->image = $new_image_name;
+                    }
+
+                } else {
+                    $asset = $request->handleImages($asset);
+                }
+
+                // Update custom fields in the database.
+                // Validation for these fields is handled through the AssetRequest form request
+
+                if (($model) && ($model->fieldset)) {
+                    foreach ($model->fieldset->fields as $field) {
+                        if ($field->field_encrypted == '1') {
+                            if (Gate::allows('assets.view.encrypted_custom_fields')) {
+                                if (is_array($request->input($field->db_column))) {
+                                    $asset->{$field->db_column} = Crypt::encrypt(implode(', ', $request->input($field->db_column)));
+                                } else {
+                                    $asset->{$field->db_column} = Crypt::encrypt($request->input($field->db_column));
+                                }
+                            }
+                        } else {
                             if (is_array($request->input($field->db_column))) {
-                                $asset->{$field->db_column} = Crypt::encrypt(implode(', ', $request->input($field->db_column)));
+                                $asset->{$field->db_column} = implode(', ', $request->input($field->db_column));
                             } else {
-                                $asset->{$field->db_column} = Crypt::encrypt($request->input($field->db_column));
+                                $asset->{$field->db_column} = $request->input($field->db_column);
                             }
                         }
-                    } else {
-                        if (is_array($request->input($field->db_column))) {
-                            $asset->{$field->db_column} = implode(', ', $request->input($field->db_column));
-                        } else {
-                            $asset->{$field->db_column} = $request->input($field->db_column);
+                    }
+                }
+
+                // Validate the asset before saving
+                // Note - it can be tempting to instead want to call saveOrFail(), to automatically throw when an object
+                // is invalid (and can't save). But this won't work, because Custom Fields _overrides_ the save() method
+                // to inject the Custom Field Rules into the $rules property right before invoking the _real_ save.
+                // so, instead, we have to catch failures on the 'else' clause and throw there.
+                if ($asset->isValid() && $asset->save()) {
+                    $target = null;
+                    $location = null;
+
+                    if ($userId = request('assigned_user')) {
+                        $target = User::find($userId);
+
+                        if (!$target) {
+                            return redirect()->back()->withInput()->with('error', trans('admin/hardware/message.create.target_not_found.user'));
                         }
+                        $location = $target->location_id;
+
+                    } elseif ($assetId = request('assigned_asset')) {
+                        $target = Asset::find($assetId);
+
+                        if (!$target) {
+                            return redirect()->back()->withInput()->with('error', trans('admin/hardware/message.create.target_not_found.asset'));
+                        }
+                        $location = $target->location_id;
+
+                    } elseif ($locationId = request('assigned_location')) {
+                        $target = Location::find($locationId);
+
+                        if (!$target) {
+                            return redirect()->back()->withInput()->with('error', trans('admin/hardware/message.create.target_not_found.location'));
+                        }
+                        $location = $target->id;
                     }
+
+                    if (isset($target)) {
+                        $asset->checkOut($target, auth()->user(), date('Y-m-d H:i:s'), $request->input('expected_checkin', null), 'Checked out on asset creation', $request->get('name'), $location);
+                    }
+
+                    $successes[] = "<a href='" . route('hardware.show', $asset) . "' style='color: white;'>" . e($asset->asset_tag) . "</a>";
+
+                } else {
+                    $asset->throwValidationException(); // we have to do this for the reason listed above - can't use saveOrFail()
+                    $failures[] = join(",", $asset->getErrors()->all()); //TODO - this can probably go away soon
                 }
             }
-
-            // Validate the asset before saving
-            if ($asset->isValid() && $asset->save()) {
-                $target = null;
-                $location = null;
-
-                if ($userId = request('assigned_user')) {
-                    $target = User::find($userId);
-
-                    if (!$target) {
-                        return redirect()->back()->withInput()->with('error', trans('admin/hardware/message.create.target_not_found.user'));
-                    }
-                    $location = $target->location_id;
-
-                } elseif ($assetId = request('assigned_asset')) {
-                    $target = Asset::find($assetId);
-
-                    if (!$target) {
-                        return redirect()->back()->withInput()->with('error', trans('admin/hardware/message.create.target_not_found.asset'));
-                    }
-                    $location = $target->location_id;
-
-                } elseif ($locationId = request('assigned_location')) {
-                    $target = Location::find($locationId);
-
-                    if (!$target) {
-                        return redirect()->back()->withInput()->with('error', trans('admin/hardware/message.create.target_not_found.location'));
-                    }
-                    $location = $target->id;
-                }
-
-                if (isset($target)) {
-                    $asset->checkOut($target, auth()->user(), date('Y-m-d H:i:s'), $request->input('expected_checkin', null), 'Checked out on asset creation', $request->get('name'), $location);
-                }
-
-                $successes[] = "<a href='" . route('hardware.show', $asset) . "' style='color: white;'>" . e($asset->asset_tag) . "</a>";
-
-            } else {
-                $failures[] = join(",", $asset->getErrors()->all());
-            }
+        } catch (\Throwable $e) {
+            \Log::debug("Caught exception in multi-create - rolling back: " . $e->getMessage());
+            DB::rollBack();
+            throw $e;
         }
-        if ($request->get('redirect_option') === 'back') {
+        DB::commit();
+
+        if($request->get('redirect_option') === 'back'){
             session()->put(['redirect_option' => 'index']);
         } else {
             session()->put(['redirect_option' => $request->get('redirect_option')]);

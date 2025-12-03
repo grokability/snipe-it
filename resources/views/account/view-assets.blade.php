@@ -759,7 +759,7 @@
                     data-sort-order="asc"
                     data-sort-name="name"
                     class="table table-striped snipe-table table-hover"
-                    data-url="{{ route('api.self.eulas') }}"
+                    data-url="{{ route('api.self.eulas', ['user_id' => e(request('user_id'))]) }}"
                     data-export-options='{
                     "fileName": "export-eula-{{ str_slug($user->username) }}-{{ date('Y-m-d') }}",
                     "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","delete","purchasecost", "icon"]
