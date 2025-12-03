@@ -25,7 +25,7 @@ class PredefinedFiltersTransformer
             'id' => (int) $filter->id,
             'name'=> e($filter->name),
             'filter_data' => json_decode($filter->filter_data),
-            'is_public' => (bool)$filter->is_public,
+            'is_public' => (bool) $filter->is_public,
             'object_type' => e($filter->object_type),
             'created_by' => $filter->createdBy ? [
                 'id' => (int) $filter->createdBy->id,
@@ -45,7 +45,7 @@ class PredefinedFiltersTransformer
                 'rows' => []
             ];
 
-            foreach ($permissionGroups as $group){
+            foreach ($permissionGroups as $group) {
                 $groups['rows'][] = [
                     'id' => $group->id,
                     'name' => $group->name
@@ -53,14 +53,15 @@ class PredefinedFiltersTransformer
             }
             $array['groups'] = $groups;
         } else {
-
             $array['groups'] = null;
         }
 
-        $permissions_array['available_actions'] = [
-            'update' => $filter->created_by === auth()->id() || $filter->userHasPermission(auth()->user(), 'edit'),
-            'delete' => $filter->created_by === auth()->id() || $filter->userHasPermission(auth()->user(), 'delete')
+        $permissionsArray = [];
+
+        $permissionsArray['available_actions'] = [
+            'update' => $filter->userHasPermission(auth()->user(), 'edit'),
+            'delete' => $filter->userHasPermission(auth()->user(), 'delete')
         ];
-        return $array += $permissions_array;
+        return $array += $permissionsArray;
     }
 }

@@ -20,10 +20,16 @@ export default class ApiService {
             user: "users"
         };
 
-        if (!typeMap[type]) {
+        if (!Object.prototype.hasOwnProperty.call(typeMap, type)) {
             return Promise.reject(`Invalid type ${type}`);
         }
-        const path = `${this.baseUrl}/${typeMap[type]}/${id}`;
+
+        if (!Number.isInteger(id) || id <= 0) {
+            return Promise.reject(new Error(`Invalid id ${id}. Must be a positive integer.`));
+        }
+    
+        const safeType = String(type);
+        const path = `${this.baseUrl}/${safeType}/${id}`;
         return this.fetchFromBackend('GET', path);
     }
 

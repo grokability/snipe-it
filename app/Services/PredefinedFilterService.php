@@ -11,6 +11,7 @@ use App\Models\Statuslabel;
 use App\Models\Supplier;
 use DB;
 use Exception;
+use Log;
 use Throwable;
 use App\Models\PredefinedFilter;
 use App\Services\FilterService\FilterService;
@@ -54,10 +55,10 @@ class PredefinedFilterService
             })->values();
     }
 
-    public function getFilterWithOptionalPermissionsById(int $id, bool $include_predefined_filter_groups = true)
+    public function getFilterWithOptionalPermissionsById(int $id, bool $includePredefinedFilterGroups=true)
     {
         $predefinedFilter = PredefinedFilter::find($id);
-        if ($include_predefined_filter_groups && $predefinedFilter) {
+        if ($includePredefinedFilterGroups && $predefinedFilter) {
             $permissions = $this->predefinedFilterPermissionService->getPermissionsByPredefinedFilterId($id);
             $predefinedFilter['permissions'] = $permissions;
         }
@@ -69,7 +70,7 @@ class PredefinedFilterService
     {
         $predefinedFilter = $this->getFilterWithOptionalPermissionsById($id);
 
-        if (!$predefinedFilter){
+        if (!$predefinedFilter) {
             return null;
         }
 
@@ -90,7 +91,7 @@ class PredefinedFilterService
     
             $model = null;
 
-            if (isset($filter['field']) && !in_array($filter['field'], $fieldsToLookup)){
+            if (isset($filter['field']) && !in_array($filter['field'], $fieldsToLookup)) {
                 continue;
             }
                 
@@ -98,7 +99,7 @@ class PredefinedFilterService
                     
                 $values =[];
                     
-                foreach ($filter['value'] as $valueId){
+                foreach ($filter['value'] as $valueId) {
                     switch ($filter['field']) {
                         case 'company':
                             $model = Company::find($valueId);
@@ -124,15 +125,16 @@ class PredefinedFilterService
                             break;
                         default:
                             break;
-                    }
-                    if ($model){
+                    } //end switch
+
+                    if ($model) {
                         $values[] = [
                             'id'    => $model->id,
                             'name'  => $model->name
                         ];
                     }
                     $filter['value'] = $values;
-                }
+                } // end foreach
                     
             }
         }
@@ -142,7 +144,7 @@ class PredefinedFilterService
 
     public function createFilter($validated): PredefinedFilter
     {
-        $filter_create_response = PredefinedFilter::create([
+        $createResponse = PredefinedFilter::create([
             'name' => $validated['name'],
             'filter_data' => $validated['filter_data'],
             'created_by' => Auth::id(),
@@ -152,12 +154,12 @@ class PredefinedFilterService
         // Set permissions
         if (array_key_exists('permissions', $validated) && count($validated['permissions']) > 0) {
             foreach ($validated['permissions'] as $permission) {
-                $permission['predefined_filter_id'] = $filter_create_response->id;
+                $permission['predefined_filter_id'] = $createResponse->id;
                 $this->predefinedFilterPermissionService->store($permission);
             }
         }
 
-        return $filter_create_response;
+        return $createResponse;
     }
 
     public function updateFilter(PredefinedFilter $filter, array $validated): PredefinedFilter
@@ -172,20 +174,20 @@ class PredefinedFilterService
 
         // Update permissions
         if (array_key_exists('permissions', $validated)) {
-            $currently_set_permssions = $this->predefinedFilterPermissionService->getPermissionsByPredefinedFilterId($filter->id);
-            $new_permissions = $validated['permissions'];
-            $permission_diff = $this->syncPermissions($currently_set_permssions->toArray(), $new_permissions);
+            $currentlySetPermssions = $this->predefinedFilterPermissionService->getPermissionsByPredefinedFilterId($filter->id);
+            $newPermissions = $validated['permissions'];
+            $permissionDiff = $this->syncPermissions($currentlySetPermssions->toArray(), $newPermissions);
 
             try {
-                DB::transaction(function () use ($permission_diff, $filter) {
-                    if (!empty($permission_diff['to_delete'])) {
-                        foreach ($permission_diff['to_delete'] as $permission) {
+                DB::transaction(function () use ($permissionDiff, $filter) {
+                    if (!empty($permissionDiff['to_delete'])) {
+                        foreach ($permissionDiff['to_delete'] as $permission) {
                             $this->predefinedFilterPermissionService->deletePermissionByFilterId($permission['predefined_filter_id']);
                         }
                     }
 
-                    if (!empty($permission_diff['to_add'])) {
-                        foreach ($permission_diff['to_add'] as $permission) {
+                    if (!empty($permissionDiff['to_add'])) {
+                        foreach ($permissionDiff['to_add'] as $permission) {
                             $permission['predefined_filter_id'] = $filter->id;
                             $this->predefinedFilterPermissionService->store($permission);
                         }
@@ -193,7 +195,8 @@ class PredefinedFilterService
                 });
             } catch (Throwable $e) {
                 // If any exception occurs, the transaction is automatically rolled back.
-                throw new Exception($e->getMessage());
+                Log::error($e->getMessage());
+
             }
         }
 
@@ -205,54 +208,55 @@ class PredefinedFilterService
         return $filter->delete();
     }
 
-    public function selectList(Request $request, bool $visibilityInName = false): LengthAwarePaginator
+    public function selectList(Request $request, bool $visibilityInName=false): LengthAwarePaginator
     {
         $user = Auth::user();
-
+    
         $filters = PredefinedFilter::with("permissionGroups")
             ->orderBy('name')
             ->get(['id', 'name', 'created_by', 'is_public']);
-
-        $viewableFilters = $filters->filter(function ($filter) use ($user) {
-            if ($filter->userHasPermission($user, 'view')) {
-                return true;
-            }
-
-            return false;
-        })->pluck('id');
-
+    
+        $viewableFilters = $filters->filter(fn($f) => $f->userHasPermission($user, 'view'))
+            ->pluck('id');
+    
         $query = PredefinedFilter::select(['id', 'name', 'is_public'])
             ->whereIn('id', $viewableFilters);
-
-        if ($request->filled('search')) {
-            $search = trim($request->get('search', ''));
-            $upper = strtoupper($search);
-
-            $privateTag = strtoupper(trans('general.private')) . ':';
-            $publicTag = strtoupper(trans('general.public')) . ':';
-
-            if (str_starts_with($upper, 'PRIVATE:') || str_starts_with($upper, $privateTag)) {
-                $query->where('is_public', 0);
-                $search = preg_replace('/^(PRIVATE:|' . preg_quote($privateTag, '/') . ')/i', '', $search);
-            } elseif (str_starts_with($upper, 'PUBLIC:') || str_starts_with($upper, $publicTag)) {
-                $query->where('is_public', 1);
-                $search = preg_replace('/^(PUBLIC:|' . preg_quote($publicTag, '/') . ')/i', '', $search);
-            }
-
-            $query->where('name', 'LIKE', '%' . trim($search) . '%');
-        }
+    
+        $this->applySearchFilter($query, $request);
 
         $paginated = $query->orderBy('name')->paginate(50);
 
         foreach ($paginated as $item) {
-            if ($visibilityInName === true) {
-                $item->use_text = $item->name . ' (' . $this->getVisibilityAsLocalizedString($item->is_public) . ')';
-            } else {
-                $item->use_text = $item->name;
-            }
+            $item->use_text = $visibilityInName
+                ? $item->name . ' (' . $this->getVisibilityAsLocalizedString($item->is_public) . ')'
+                : $item->name;
+        }
+    
+        return $paginated;
+    }
+
+    protected function applySearchFilter($query, Request $request): void
+    {
+        if (!$request->filled('search')) {
+            return;
         }
 
-        return $paginated;
+        $search = trim($request->get('search', ''));
+        $upper = strtoupper($search);
+    
+        $private = strtoupper(trans('general.private')) . ':';
+        $public  = strtoupper(trans('general.public')) . ':';
+
+        if (str_starts_with($upper, 'PRIVATE:') || str_starts_with($upper, $private)) {
+            $query->where('is_public', 0);
+            $search = preg_replace('/^(PRIVATE:|' . preg_quote($private, '/') . ')/i', '', $search);
+    
+        } else if (str_starts_with($upper, 'PUBLIC:') || str_starts_with($upper, $public)) {
+            $query->where('is_public', 1);
+            $search = preg_replace('/^(PUBLIC:|' . preg_quote($public, '/') . ')/i', '', $search);
+        }
+    
+        $query->where('name', 'LIKE', '%' . trim($search) . '%');
     }
 
     private function syncPermissions($currentPermissions, $newPermissions): array

@@ -5,6 +5,7 @@ namespace Tests;
 use App\Http\Middleware\SecurityHeaders;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Log;
 use RuntimeException;
 use Tests\Support\AssertsAgainstSlackNotifications;
 use Tests\Support\AssertHasActionLogs;
@@ -26,7 +27,6 @@ abstract class TestCase extends BaseTestCase
     use InitializesSettings;
     use LazilyRefreshDatabase;
     use AssertHasActionLogs;
-
 
     private array $globallyDisabledMiddleware = [
         SecurityHeaders::class,
@@ -52,7 +52,7 @@ abstract class TestCase extends BaseTestCase
             \DB::statement("SET time_zone = '+00:00'");
             
         } catch (\Throwable $e) {
-            
+            Log::debug($e);
         }
     }
 

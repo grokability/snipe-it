@@ -9,9 +9,9 @@ namespace App\Presenters;
 class PredefinedFilterPresenter extends Presenter
 {
     /**
-    * Json Column Layout for bootstrap table
-    * @return string
-    */
+     * Json Column Layout for bootstrap table
+     * @return string
+     */
 
     public static function dataTableLayout()
     {

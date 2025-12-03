@@ -5,11 +5,13 @@ namespace Database\Seeders;
 use App\Models\PredefinedFilter;
 
 use App\Models\PredefinedFilterPermission;
+use Exception;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Support\Facades\Hash;
+use Log;
 
 class PredefinedFilterPermissionSeeder extends Seeder
 {
@@ -20,10 +22,10 @@ class PredefinedFilterPermissionSeeder extends Seeder
     {
         PredefinedFilterPermission::query()->delete();
 
-        $user_to_delete = User::where("email","predefinedfilters@permission.com")->first();
+        $userToDelete = User::where("email","predefinedfilters@permission.com")->first();
 
-        if ($user_to_delete) {
-            $user_to_delete->delete();
+        if ($userToDelete) {
+            $userToDelete->delete();
         }
 
         $user = User::firstOrCreate(
@@ -39,7 +41,7 @@ class PredefinedFilterPermissionSeeder extends Seeder
         ]);
 
         if (!$user instanceof User) {
-            throw new \Exception('user could not be created.. seeder aborting..');
+            throw new Exception('user could not be created.. seeder aborting..');
         }
 
         $filters = PredefinedFilter::limit(3)->get();       
@@ -52,9 +54,8 @@ class PredefinedFilterPermissionSeeder extends Seeder
                     'created_by'           => $user->id,
                 ]);
             }
-        }catch (\Exception $e) {
-            echo "Error: " . $e->getMessage() . "\n";
-            echo $e->getTraceAsString();
+        } catch (\Exception $e) {
+            Log::debug($e);
         }
     }
 }

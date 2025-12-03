@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 
 class PredefinedFilterPermissionController extends Controller
 {
+    
     protected PredefinedFilterPermissionService $service;
 
     public function __construct(PredefinedFilterPermissionService $service)

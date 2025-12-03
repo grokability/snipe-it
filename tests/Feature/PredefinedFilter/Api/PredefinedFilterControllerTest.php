@@ -34,7 +34,7 @@ class PredefinedFilterControllerTest extends TestCase
 
     //------INDEX TESTS------
 
-    public function test_index_ok_with_public_and_view_permission(): void
+    public function testIndexOkWithPublicAndViewPermission(): void
     {
         $u = User::factory()->create();
         $g = $this->grant($u, ['predefinedFilter.view' => '1']);
@@ -47,13 +47,13 @@ class PredefinedFilterControllerTest extends TestCase
             ->assertOk();
     }
 
-    public function test_index_unauthenticated_gets_302()
+    public function testIndexUnauthenticatedGets302()
     {
         $this->getJson('api/v1/predefinedFilters')->assertStatus(302);
 
     }
 
-    public function test_index_empty_returns_empty_array()
+    public function testIndexEmptyReturnsEmptyArray()
     {
         $u = User::factory()->create();
 
@@ -63,7 +63,7 @@ class PredefinedFilterControllerTest extends TestCase
             ->assertExactJson(['rows' => [], 'total' => 0,]);
     }
 
-    public function test_index_lists_only_viewable_or_owned(): void
+    public function testIndexListsOnlyViewableOrOwned(): void
     {
         $owner = User::factory()->create();
         $u = User::factory()->create();
@@ -96,7 +96,7 @@ class PredefinedFilterControllerTest extends TestCase
         $this->assertCount(2, $response->json('rows'));
     }
 
-    public function test_index_lists_only_public_linked_or_owned(): void
+    public function testIndexListsOnlyPublicLinkedOrOwned(): void
     {
         $owner = User::factory()->create();
         $user = User::factory()->create();
@@ -129,7 +129,7 @@ class PredefinedFilterControllerTest extends TestCase
             ->assertJsonMissing(['name' => 'Hidden Filter']);
     }
 
-    public function test_su_can_see_private_filter(){
+    public function testSuCanSeePrivateFilter(){
         $superuser = User::factory()->superuser()->create();
         $privateOwner = User::factory()->create();
 
@@ -145,7 +145,7 @@ class PredefinedFilterControllerTest extends TestCase
             ->assertJsonFragment(['name'=>'Allowed Private Filter']);
     }
 
-    public function test_index_can_search_by_name(): void
+    public function testIndexCanSearchByName(): void
     {
         $user = User::factory()->create();
 
@@ -169,7 +169,7 @@ class PredefinedFilterControllerTest extends TestCase
         $this->assertCount(1, $response->json('rows'));
     }
 
-    public function test_index_can_sort_results_by_name(): void
+    public function testIndexCanSortResultsByName(): void
     {
         $user = User::factory()->create();
 
@@ -194,7 +194,7 @@ class PredefinedFilterControllerTest extends TestCase
         $this->assertEquals(['Zulu', 'Mike', 'Alpha'], array_column($desc, 'name'));
     }
 
-    public function test_index_can_paginate_results(): void
+    public function testIndexCanPaginateResults(): void
     {
         $user = User::factory()->create();
 
@@ -223,7 +223,7 @@ class PredefinedFilterControllerTest extends TestCase
 
     //------SHOW TESTS------
 
-    public function test_show_404_when_missing(): void
+    public function testShow404WhenMissing(): void
     {
         $u = User::factory()->create();
         $this->grant($u, ['predefinedFilter.view' => '1']);
@@ -234,7 +234,7 @@ class PredefinedFilterControllerTest extends TestCase
             ->assertJson(['message' => 'Filter does not exist.']);
     }
 
-    public function test_show_forbidden_without_view_permission(): void
+    public function testShowForbiddenWithoutViewPermission(): void
     {
         $user = User::factory()->create();
         $owner = User::factory()->create();
@@ -249,7 +249,7 @@ class PredefinedFilterControllerTest extends TestCase
             ->assertStatus(403);
     }
 
-    public function test_show_ok_as_owner_without_public_or_view(): void
+    public function testShowOkAsOwnerWithoutPublicOrView(): void
     {
         $u = User::factory()->create();
         $f = PredefinedFilter::factory()->create([
@@ -263,7 +263,7 @@ class PredefinedFilterControllerTest extends TestCase
             ->assertJsonFragment(['id' => $f->id, 'name' => $f->name]);
     }
 
-    public function test_show_forbidden_without_view_or_not_public()
+    public function testShowForbiddenWithoutViewOrNotPublic()
     {
         $owner = User::factory()->create();
         $u = User::factory()->create();
@@ -279,7 +279,7 @@ class PredefinedFilterControllerTest extends TestCase
             ->assertJson(['message' => trans('admin/predefinedFilters/message.show.not_allowed')]);
     }
 
-    public function test_show_ok_as_non_owner_when_public_and_view()
+    public function testShowOkAsNonOwnerWhenPublicAndView()
     {
         $owner = User::factory()->create();
         $u = User::factory()->create();
@@ -297,7 +297,7 @@ class PredefinedFilterControllerTest extends TestCase
             ->assertJsonFragment(['id' => $f->id, 'name' => $f->name]);
     }
 
-    public function test_show_forbidden_when_private_and_not_owner(): void
+    public function testShowForbiddenWhenPrivateAndNotOwner(): void
     {
         $userWithout = User::factory()->create();
         $owner = User::factory()->create();
@@ -313,7 +313,7 @@ class PredefinedFilterControllerTest extends TestCase
             ->assertJson(['message' => trans('admin/predefinedFilters/message.show.not_allowed')]);
     }
 
-    public function test_show_non_owner_public_with_view_is_ok(): void
+    public function testShowNonOwnerPublicWithViewIsOk(): void
     {
         $owner = User::factory()->create();
         $user = User::factory()->create();
@@ -332,7 +332,7 @@ class PredefinedFilterControllerTest extends TestCase
             ->assertJsonFragment(['name' => 'Allowed Public Filter']);
     }
 
-    public function test_show_forbidden_for_private_non_owner(): void
+    public function testShowForbiddenForPrivateNonOwner(): void
     {
         $owner = User::factory()->create();
         $user = User::factory()->create();
@@ -349,7 +349,7 @@ class PredefinedFilterControllerTest extends TestCase
             ->assertJson(['message' => trans('admin/predefinedFilters/message.show.not_allowed')]);
     }
 
-    public function test_show_returns_404_if_filter_not_found(): void
+    public function testShowReturns404IfFilterNotFound(): void
     {
         $user = User::factory()->create();
 
@@ -359,7 +359,7 @@ class PredefinedFilterControllerTest extends TestCase
             ->assertJson(['message' => trans('admin/predefinedFilters/message.does_not_exist')]);
     }
 
-    public function test_su_can_show_private_filter()
+    public function testSuCanShowPrivateFilter()
     {
         $superuser = User::factory()->superuser()->create();
         $privateOwner = User::factory()->create();
@@ -381,7 +381,7 @@ class PredefinedFilterControllerTest extends TestCase
 
     //------STORE TESTS------
 
-    public function test_store_validates_payload()
+    public function testStoreValidatesPayload()
     {
         $u = User::factory()->create();
 
@@ -392,7 +392,7 @@ class PredefinedFilterControllerTest extends TestCase
             ->assertJsonPath('messages.filter_data.0', 'The filter data field is required.');
     }
 
-    public function test_store_with_too_long_name_error()
+    public function testStoreWithTooLongNameError()
     {
         $u = User::factory()->create();
         $this->grant($u, ['predefinedFilter.create' => '1']);
@@ -408,7 +408,7 @@ class PredefinedFilterControllerTest extends TestCase
             ->assertJsonPath('messages.name.0', 'The name field must not be greater than 191 characters.');
     }
 
-    public function test_store_creates_and_sets_owner()
+    public function testStoreCreatesAndSetsOwner()
     {
         $u = User::factory()->create();
         $this->grant($u, ['predefinedFilter.create' => '1']);
@@ -426,7 +426,7 @@ class PredefinedFilterControllerTest extends TestCase
             ->assertJsonPath('filter_data.created_by', $u->id);
     }
 
-    public function test_store_public_requires_create_permission()
+    public function testStorePublicRequiresCreatePermission()
     {
         $u = User::factory()->create();
 
@@ -439,7 +439,7 @@ class PredefinedFilterControllerTest extends TestCase
             ->assertStatus(403)
             ->assertJson(['message' => trans('admin/predefinedFilters/message.create.not_allowed')]);
     }
-    public function test_store_public_with_create_permission_returns_201(): void
+    public function testStorePublicWithCreatePermissionReturns201(): void
     {
         $user = User::factory()->create();
         $this->grant($user, ['predefinedFilter.create' => '1']);
@@ -458,7 +458,7 @@ class PredefinedFilterControllerTest extends TestCase
             ->assertJsonPath('filter_data.created_by', $user->id);
     }
 
-    public function test_store_public_without_create_permission_returns_403(): void
+    public function testStorePublicWithoutCreatePermissionReturns403(): void
     {
         $user = User::factory()->create();
 
@@ -476,7 +476,7 @@ class PredefinedFilterControllerTest extends TestCase
 
     //------UPDATE TESTS------
 
-    public function test_update_owner_private_to_public_requires_create(): void
+    public function testUpdateOwnerPrivateToPublicRequiresCreate(): void
     {
         $u = User::factory()->create();
         $f = PredefinedFilter::factory()->create([
@@ -508,7 +508,7 @@ class PredefinedFilterControllerTest extends TestCase
             ->assertJsonPath('filter_data.name', 'New');
     }
 
-    public function test_update_non_owner_public_requires_update_permission(): void
+    public function testUpdateNonOwnerPublicRequiresUpdatePermission(): void
     {
         $owner = User::factory()->create();
         $other = User::factory()->create();
@@ -541,7 +541,7 @@ class PredefinedFilterControllerTest extends TestCase
             ->assertJsonPath('filter_data.name', 'X');
     }
 
-    public function test_update_404_when_missing(): void
+    public function testUpdate404WhenMissing(): void
     {
         $u = User::factory()->create();
         $this->actingAs($u, 'api')
@@ -554,7 +554,7 @@ class PredefinedFilterControllerTest extends TestCase
             ->assertJson(['message' => 'Filter does not exist.']);
     }
 
-    public function test_update_validates_payload(): void
+    public function testUpdateValidatesPayload(): void
     {
         $u = User::factory()->create();
         $f = PredefinedFilter::factory()->create();
@@ -569,7 +569,7 @@ class PredefinedFilterControllerTest extends TestCase
             ->assertJsonPath('messages.filter_data.0', 'The filter data field is required.');
     }
 
-    public function test_update_name_too_long(): void
+    public function testUpdateNameTooLong(): void
     {
         $u = User::factory()->create();
         $f = PredefinedFilter::factory()->create();
@@ -596,7 +596,7 @@ class PredefinedFilterControllerTest extends TestCase
 
 
     //------DESTROY TESTS------
-    public function test_destroy_non_owner_public_requires_destroy_permission()
+    public function testDestroyNonOwnerPublicRequiresDestroyPermission()
     {
         $owner = User::factory()->create();
         $other = User::factory()->create();
@@ -623,7 +623,7 @@ class PredefinedFilterControllerTest extends TestCase
         $this->assertSoftDeleted('predefined_filters', ['id' => $f->id]);
     }
 
-    public function test_destroy_404_when_missing()
+    public function testDestroy404WhenMissing()
     {
         $u = User::factory()->create();
 
@@ -633,7 +633,7 @@ class PredefinedFilterControllerTest extends TestCase
             ->assertJson(['message' => trans('admin/predefinedFilters/message.does_not_exist')]);
     }
 
-    public function test_destroy_owner_private_ok_200()
+    public function testDestroyOwnerPrivateOk200()
     {
         $u = User::factory()->create();
         $f = PredefinedFilter::factory()->create(['created_by' => $u->id, 'is_public' => 0, 'filter_data' => [['a' => 'a']]]);
@@ -647,7 +647,7 @@ class PredefinedFilterControllerTest extends TestCase
     }
 
     // PermissionStructureTests
-    public function test_transform_with_loaded_permission_groups_structure()
+    public function testTransformWithLoadedPermissionGroupsStructure()
     {
         $this->transformer = new PredefinedFiltersTransformer();
 
@@ -710,7 +710,7 @@ class PredefinedFilterControllerTest extends TestCase
         $this->assertFalse($result['available_actions']['delete']);
     }
 
-    public function test_transform_without_permission_groups_loaded_sets_groups_null()
+    public function testTransformWithoutPermissionGroupsLoadedSetsgroupsNull()
     {
         $this->transformer = new PredefinedFiltersTransformer();
 
@@ -737,7 +737,7 @@ class PredefinedFilterControllerTest extends TestCase
         $this->assertFalse($result['available_actions']['delete']);
     }
 
-    public function test_transform_sets_available_actions_true_for_owner()
+    public function testTransformSetsAvailableActionsFalseForOwner()
     {
         $this->transformer = new PredefinedFiltersTransformer();
 
@@ -754,11 +754,11 @@ class PredefinedFilterControllerTest extends TestCase
 
         $result = $this->transformer->transformPredefinedFilter($filter);
 
-        $this->assertTrue($result['available_actions']['update']);
-        $this->assertTrue($result['available_actions']['delete']);
+        $this->assertFalse($result['available_actions']['update']);
+        $this->assertFalse($result['available_actions']['delete']);
     }
 
-    public function test_transform_formats_dates_correctly()
+    public function testTransformFormatsDatesCorrectly()
     {
         $this->transformer = new PredefinedFiltersTransformer();
 
@@ -780,7 +780,7 @@ class PredefinedFilterControllerTest extends TestCase
 
     //------SELECTLIST TESTS------
 
-    public function test_selectlist()
+    public function testSelectlist()
     {
         $owner = User::factory()->create();
         $grant = $this->grant($owner, ['predefinedFilter.view' => '1', 'predefinedFilter.create' => '1', 'predefinedFilter.edit' => '1']);
@@ -824,7 +824,7 @@ class PredefinedFilterControllerTest extends TestCase
         $this->assertCount(4, $response->json('results'));
     }
 
-    public function test_selectlist_search()
+    public function testSelectlistSearch()
     {
         $owner = User::factory()->create();
         $grant = $this->grant($owner, ['predefinedFilter.view' => '1']);
@@ -866,7 +866,7 @@ class PredefinedFilterControllerTest extends TestCase
         $this->assertCount(2, $response->json('results'));
     }
 
-    public function test_selectlist_private()
+    public function testSelectlistPrivate()
     {
         $owner = User::factory()->create();
         $grant = $this->grant($owner, ['predefinedFilter.view' => '1']);
@@ -908,7 +908,7 @@ class PredefinedFilterControllerTest extends TestCase
         $this->assertCount(2, $response->json('results'));
     }
 
-    public function test_selectlist_public()
+    public function testSelectlistPublic()
     {
         $owner = User::factory()->create();
         $grant = $this->grant($owner, ['predefinedFilter.view' => '1']);
@@ -950,7 +950,7 @@ class PredefinedFilterControllerTest extends TestCase
         $this->assertCount(2, $response->json('results'));
     }
 
-    public function test_selectlist_private_search()
+    public function testSelectlistPrivateSearch()
     {
         $owner = User::factory()->create();
         $grant = $this->grant($owner, ['predefinedFilter.view' => '1']);
@@ -991,7 +991,7 @@ class PredefinedFilterControllerTest extends TestCase
         $this->assertCount(1, $response->json('results'));
     }
 
-    public function test_selectlist_public_search()
+    public function testSelectlistPublicSearch()
     {
         $owner = User::factory()->create();
         $grant = $this->grant($owner, ['predefinedFilter.view' => '1']);

@@ -14,13 +14,31 @@ class DateQueryTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function getFilteredAssets(array $filter)
+    {
+        return $this->actingAsForApi(User::factory()->superuser()->create())->getJson(
+            route('api.assets.index', [
+                'status' => '',
+                'order_number' => '',
+                'company_id' => '',
+                'status_id' => '',
+                'filter' => json_encode($filter),
+                'search' => '',
+                'sort' => 'id',
+                'order' => 'asc',
+                'offset' => '0',
+                'limit' => '50',
+            ])
+        );
+    }
+
     public function testPurchaseDateQueryStart()
     {
         Carbon::setTestNow(Carbon::create(2023, 4, 16));
 
-        $assetA = Asset::factory()->create(['purchase_date' => Carbon::now()->addDays(14)->toDateString()]);
-        $assetB = Asset::factory()->create(['purchase_date' => Carbon::now()->addWeeks(14)->toDateString()]);
-        $assetC = Asset::factory()->create(['purchase_date' => Carbon::now()->addMonths(14)->toDateString()]);
+        Asset::factory()->create(['purchase_date' => Carbon::now()->addDays(14)->toDateString()]); // asset A
+        $assetB = Asset::factory()->create(['purchase_date' => Carbon::now()->addWeeks(14)->toDateString()]); // asset B
+        $assetC = Asset::factory()->create(['purchase_date' => Carbon::now()->addMonths(14)->toDateString()]); // asset C
 
         $filter = [[
             'field' => 'purchase_date',
@@ -124,20 +142,7 @@ class DateQueryTest extends TestCase
             ],
         ];
 
-        $response = $this->actingAsForApi(User::factory()->superuser()->create())
-        ->getJson(route('api.assets.index', [
-            'status'      => '',
-            'order_number'=> '',
-            'company_id'  => '',
-            'status_id'   => '',
-            'filter'      => json_encode($filter),
-            'search'      => '',
-            'sort'        => 'id',
-            'order'       => 'asc',
-            'offset'      => '0',
-            'limit'       => '50',
-        ]));
-
+        $response = $this->getFilteredAssets($filter);
 
         $response->assertOk()->assertJsonStructure(['total','rows']);
 

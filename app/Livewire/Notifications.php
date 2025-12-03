@@ -58,23 +58,25 @@ class Notifications extends Component
      *
      * @var array<int, array<string,mixed>>
      */
-    public array $liveAlerts = [];
+
+    public array $liveAlerts=[];
 
     /**
      * Main notification listener.
      * We bind both 'showNotification' (your current event) and 'notify' (optional alias).
      */
+    
     #[On('showNotification')]
     #[On('notify')]
     public function notify(
-        $type = null,
-        $message = null,
-        $title = null,
-        $description = null,
-        $icon = null,
-        $html = null,
-        $tag = null,
-        $payload = null // wrapper form: { payload: { ... } }
+        $type=null,
+        $message=null,
+        $title=null,
+        $description=null,
+        $icon=null,
+        $html=null,
+        $tag=null,
+        $payload=null // wrapper form: { payload: { ... } }
     ): void {
         // Wrapper form: { payload: { ...full data... } }
         if (is_array($payload)) {
@@ -157,11 +159,21 @@ class Notifications extends Component
         if (empty($data['message'])) {
             return;
         }
+    
+        $alert = $this->buildAlert($data);
+    
+        if ($alert['tag'] !== null && $this->replaceTaggedAlert($alert)) {
+            return;
+        }
+    
+        $this->addAlert($alert);
+    }
 
+    protected function buildAlert(array $data): array
+    {
         $type = $this->normalizeType($data['type'] ?? 'info');
-
-        // Build final alert array
-        $alert = [
+    
+        return [
             'id'          => uniqid('al_', true),
             'type'        => $type,
             'tag'         => $data['tag'] ?? null,
@@ -170,21 +182,27 @@ class Notifications extends Component
             'description' => $data['description'] ?? null,
             'icon'        => $data['icon'] ?? $this->defaultIcon($type),
             'html'        => $data['html'] ?? false,
-            'created_at'  => time(),
+        'created_at'  => time(),
         ];
+    }
 
-        // Tag replacement logic if tag provided
-        if ($alert['tag'] !== null) {
-            foreach ($this->liveAlerts as $index => $liveAlert) {
-                if ($liveAlert['tag'] === $alert['tag']) {
-                    $this->liveAlerts[$index] = $alert;
-                    return;
-                }
+    protected function replaceTaggedAlert(array $alert): bool
+    {
+        foreach ($this->liveAlerts as $index => $liveAlert) {
+            if ($liveAlert['tag'] === $alert['tag']) {
+                $this->liveAlerts[$index] = $alert;
+                return true;
             }
         }
+    
+        return false;
+    }
 
+    protected function addAlert(array $alert): void
+    {
         $this->liveAlerts[] = $alert;
     }
+
 
     /**
      * Dismiss by alert unique ID.

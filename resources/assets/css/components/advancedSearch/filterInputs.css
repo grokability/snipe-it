@@ -25,26 +25,28 @@ When .hide is applied, the filter section is hidden.
 }
 
 /* New CSS for the advanced search layout */
-.advancedSearchWrapper {
+.advanced-search-wrapper {
     width: 100%;
     padding: 0 15px;
 }
 
-.advancedSearchGridContainer {
+/* 
+Space between each filter item
+*/
+.advanced-search-grid-container {
     display: flex;
     flex-direction: column;
     gap: 20px;
-    /* Space between each filter item */
 }
 
-.advancedSearchItemContainer {
+.advanced-search-item-container {
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
 /* Heading takes full width on its own row */
-.filterFieldName {
+.filter-field-name {
     font-weight: 600;
     font-size: 14px;
     margin: 0;
@@ -64,7 +66,7 @@ When .hide is applied, the filter section is hidden.
     min-width: 35px;
     max-width: 42px;
     height: 38px;
-    padding: 0px 2px;
+    padding: 0 2px;
     font-size: 13px;
     border: 1px solid var(--text-main);
     border-top-right-radius: 0;
@@ -73,8 +75,8 @@ When .hide is applied, the filter section is hidden.
 }
 
 /* Input field - takes remaining space */
-.advancedSearch_defaultField,
-.advancedSearchGridContainer .form-control:not(.filter-option),
+.advanced-search-default-field,
+.advanced-search-grid-container .form-control:not(.filter-option),
 .select2-container {
     flex: 1;
     height: 38px;
@@ -84,8 +86,8 @@ When .hide is applied, the filter section is hidden.
     border-bottom-left-radius: 0;
 }
 
-.advancedSearch_defaultField,
-.advancedSearchGridContainer .form-control:not(.filter-option) {
+.advanced-search-default-field,
+.advanced-search-grid-container .form-control:not(.filter-option) {
     padding: 6px 10px;
 }
 
@@ -112,8 +114,9 @@ When .hide is applied, the filter section is hidden.
 }
 
 .select2-search--dropdown{
-    background-color: var(--hover-link, #eeeeee);
+    background-color: var(--hover-link, #eee);
 }
+
 .select2-results { 
     background-color: var(--button-main);
 }
@@ -121,16 +124,16 @@ When .hide is applied, the filter section is hidden.
 
 /* Focus states */
 .filter-option:focus,
-.advancedSearch_defaultField:focus,
+.advanced-search-default-field:focus,
 .form-control:focus {
     border-color: var(--button-hover);
-    box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.08);
+    box-shadow: 0 0 0 2px #6c63ff14;
     outline: none;
 }
 
 .select2-container--default .select2-selection:focus {
     border-color: var(--button-hover);
-    box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.08);
+    box-shadow: 0 0 0 2px #6c63ff14;
     outline: none;
 }
 
@@ -172,7 +175,7 @@ When .hide is applied, the filter section is hidden.
 }
 
 /* ---------- DESKTOP Styles (screen ≥ 768px) ---------- */
-@media (min-width: 768px) {
+@media screen and (min-width: 768px) {
 
     /* 
     Filter sidebar gets 25% width, and some space on the right.
@@ -201,7 +204,7 @@ When .hide is applied, the filter section is hidden.
 }
 
 /* ---------- MOBILE Styles (screen < 768px) ---------- */
-@media (max-width: 767px) {
+@media screen and (max-width: 767px) {
 
     /* 
     Filter takes full width, and sits above the table section.
@@ -243,12 +246,10 @@ When .hide is applied, the filter section is hidden.
 }
 
 .select2-selection--multiple::-webkit-scrollbar-track {
-    /*background: #f1f1f1;*/
     border-radius: 4px;
 }
 
 .select2-selection--multiple::-webkit-scrollbar-thumb {
-    /*background: #888;*/
     border-radius: 4px;
 }
 
@@ -279,26 +280,26 @@ When .hide is applied, the filter section is hidden.
 }
 
 /* New CSS for the advanced search layout */
-.advancedSearchWrapper {
+.advanced-search-wrapper {
     width: 100%;
     padding: 0 15px;
 }
 
-.advancedSearchGridContainer {
+.advanced-search-grid-container {
     display: flex;
     flex-direction: column;
     gap: 20px;
     /* Space between each filter item */
 }
 
-.advancedSearchItemContainer {
+.advanced-search-item-container {
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
 /* Heading takes full width on its own row */
-.filterFieldName {
+.filter-field-name {
     font-weight: 600;
     font-size: 14px;
     margin: 0;
@@ -318,7 +319,7 @@ When .hide is applied, the filter section is hidden.
     min-width: 35px;
     max-width: 42px;
     height: 38px;
-    padding: 0px 2px;
+    padding: 0 2px;
     font-size: 13px;
     border: 1px solid #ced4da;
     border-top-right-radius: 0;
@@ -327,8 +328,8 @@ When .hide is applied, the filter section is hidden.
 }
 
 /* Input field - takes remaining space */
-.advancedSearch_defaultField,
-.advancedSearchGridContainer .form-control:not(.filter-option),
+.advanced-search-default-field,
+.advanced-search-grid-container .form-control:not(.filter-option),
 .select2-container {
     flex: 1;
     height: 38px;
@@ -338,8 +339,8 @@ When .hide is applied, the filter section is hidden.
     border-bottom-left-radius: 0;
 }
 
-.advancedSearch_defaultField,
-.advancedSearchGridContainer .form-control:not(.filter-option) {
+.advanced-search-default-field,
+.advanced-search-grid-container .form-control:not(.filter-option) {
     padding: 6px 10px;
 }
 
@@ -372,16 +373,16 @@ When .hide is applied, the filter section is hidden.
 
 /* Focus states */
 .filter-option:focus,
-.advancedSearch_defaultField:focus,
+.advanced-search-default-field:focus,
 .form-control:focus {
     border-color: var(--button-hover);
-    box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.08);
+    box-shadow: 0 0 0 2px #6c63ff14;
     outline: none;
 }
 
 .select2-container--default .select2-selection:focus {
     border-color: var(--button-hover);
-    box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.08);
+    box-shadow: 0 0 0 2px #6c63ff14;
     outline: none;
 }
 
@@ -421,7 +422,7 @@ When .hide is applied, the filter section is hidden.
 }
 
 /* ---------- DESKTOP Styles (screen ≥ 768px) ---------- */
-@media (min-width: 768px) {
+@media screen and (min-width: 768px) {
 
     /* 
     Filter sidebar gets 25% width, and some space on the right.
@@ -450,7 +451,7 @@ When .hide is applied, the filter section is hidden.
 }
 
 /* ---------- MOBILE Styles (screen < 768px) ---------- */
-@media (max-width: 767px) {
+@media screen and (max-width: 767px) {
 
     /* 
     Filter takes full width, and sits above the table section.
@@ -478,7 +479,7 @@ When .hide is applied, the filter section is hidden.
 .select2-container,
 .select2-container .select2-selection--single,
 .select2-container .select2-selection--multiple {
-    background-color:var(--back-sub, #ffffff) !important;
+    background-color:var(--back-sub, #fff) !important;
     transition: height 0.2s ease, min-height 0.2s ease, max-height 0.2s ease;
 }
 
@@ -493,15 +494,9 @@ When .hide is applied, the filter section is hidden.
 }
 
 .select2-selection--multiple::-webkit-scrollbar-track {
-    /*background: #f1f1f1;*/
     border-radius: 4px;
 }
 
 .select2-selection--multiple::-webkit-scrollbar-thumb {
-    /*background: #888;*/
     border-radius: 4px;
 }
-
-/*.select2-selection--multiple::-webkit-scrollbar-thumb:hover {
-    background: #555;
-}*/

@@ -22,10 +22,8 @@ class PredefinedFilterFilterAssetsTest extends TestCase
         $this->user = User::factory()->create();
     } 
 
-    //A
-
     /** @test */
-    public function test_it_returns_all_assets_when_filter_data_is_null() 
+    public function testItReturnsAllAssetsWhenFilterDataIsNull() 
     {
         $a = Asset::factory()->create();
         $b = Asset::factory()->create();
@@ -46,7 +44,7 @@ class PredefinedFilterFilterAssetsTest extends TestCase
     } 
 
     /** @test */
-    public function it_returns_all_assets_when_filter_data_is_empty_array()
+    public function itReturnsAllAssetsWhenFilterDataIsEmptyArray()
     {
         $a = Asset::factory()->create();
         $b = Asset::factory()->create();
@@ -67,7 +65,7 @@ class PredefinedFilterFilterAssetsTest extends TestCase
     }
 
     /** @test  */
-    public function it_ignores_empty_strings_nulls_and_empty_arrays_in_filter_data()
+    public function itIgnoresEmptyStringsNullsAndEmptyArraysInFilterData()
     {
         $a = Asset::factory()->create();
         $b = Asset::factory()->create();
@@ -94,7 +92,7 @@ class PredefinedFilterFilterAssetsTest extends TestCase
     } 
 
     /** @test */
-    public function it_ignores_unknown_filter_keys_without_throwing()
+    public function itIgnoresUnknownFilterKeysWithoutThrowing()
     {
         $a = Asset::factory()->create();
         $b = Asset::factory()->create();
@@ -118,7 +116,7 @@ class PredefinedFilterFilterAssetsTest extends TestCase
     }  
 
         /** @test */
-    public function it_casts_filter_data_to_array()
+    public function itCastsFilterDataToArray()
     {
         $filter = PredefinedFilter::create([
             'name'          => 'cast_check',
@@ -132,7 +130,7 @@ class PredefinedFilterFilterAssetsTest extends TestCase
 
     //B
     /** @test  */
-    public function it_filters_by_company_id_scalar()
+    public function itFiltersByCompanyIdScalar()
     {
        $user = User::factory()->create();
 
@@ -156,7 +154,7 @@ class PredefinedFilterFilterAssetsTest extends TestCase
     }  
 
     /** @test */
-    public function it_filers_by_company_id_array()
+    public function itFiltersByCompanyIdArray()
     {
         $user = User::factory()->create();
 
@@ -185,7 +183,7 @@ class PredefinedFilterFilterAssetsTest extends TestCase
     } 
     
     /** @test */
-    public function it_filters_by_status_id_scalar()
+    public function itFiltersByStatusIdScalar()
     {
         $user = User::factory()->create();
 
@@ -210,7 +208,7 @@ class PredefinedFilterFilterAssetsTest extends TestCase
     }
 
     /** @test */
-    public function it_filters_by_status_id_array()
+    public function itFiltersByStatusIdArray()
     {
         $user = User::factory()->create();
 
@@ -237,13 +235,14 @@ class PredefinedFilterFilterAssetsTest extends TestCase
         $this->assertFalse($ids->contains($drop->id));
     }
     /** @test */   
-    public function it_filters_by_model_id_scalar()
+    public function itFiltersByModelIdScalar()
     {
         $user = User::factory()->create();
        
         $m1 = AssetModel::factory()->create();
         $m2 = AssetModel::factory()->create();
-        $m3 = AssetModel::factory()->create();
+        // $m3 = AssetModel::factory()->create(); // Variable $m3 isn't used
+        AssetModel::factory()->create();
 
         $keepScalar = Asset::factory()->create(['model_id' => $m1->id]); 
         $dropScalar = Asset::factory()->create(['model_id' => $m2->id]); 
@@ -264,7 +263,7 @@ class PredefinedFilterFilterAssetsTest extends TestCase
 
     } 
     /** @test */   
-    public function it_filters_by_model_id_array(){
+    public function itFiltersByModelIdArray(){
 
         $user = User::factory()->create();
         
@@ -291,7 +290,7 @@ class PredefinedFilterFilterAssetsTest extends TestCase
     }
 
     /** @test */
-    public function it_combines_multiple_id_filters_with_and_logic()
+    public function itCombinesMultipleIdFiltersWithAndLogic()
     {
         $user = User::factory()->create();
 
@@ -324,7 +323,7 @@ class PredefinedFilterFilterAssetsTest extends TestCase
     }
 
     /** @test */
-    public function it_filters_by_manufacturer_id_with_join()
+    public function itFiltersByManufacturerIdWithJoin()
     {
        $user = User::factory()->create();
        
@@ -352,7 +351,7 @@ class PredefinedFilterFilterAssetsTest extends TestCase
     } 
     
     /** @test */
-    public function it_filters_by_created_at_date_range_insclusive()
+    public function itFiltersByCreatedAtDateRangeInsclusive()
     {
         $user = User::factory()->create();
 
@@ -379,7 +378,7 @@ class PredefinedFilterFilterAssetsTest extends TestCase
     }
 
     /** @test */
-    public function it_filters_by_name_with_like_operator() {
+    public function itFiltersByNameWithLikeOperator() {
 
         $user = User::factory()->create();
 
@@ -401,7 +400,7 @@ class PredefinedFilterFilterAssetsTest extends TestCase
     }
     
     /** @test */
-    public function it_filter_by_multiple_custom_fields_and_logic()
+    public function itFilterByMultipleCustomFieldsAndLogic()
     {
         $user = User::factory()->create();
 

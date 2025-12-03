@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 class AssetUnitTest extends TestCase
 {
 
-    public function test_zerofill()
+    public function testZerofill()
     {
         $this->assertSame('007', Asset::zerofill(7, 3));
         $this->assertSame('42', Asset::zerofill(42, 2));
@@ -19,7 +19,7 @@ class AssetUnitTest extends TestCase
         $this->assertSame('5', Asset::zerofill(5, 1));
     }
 
-    public function test_assigned_type_detection()
+    public function testAssignedTypeDetection()
     {
         $asset = new Asset;
         $this->assertNull($asset->assignedType());
@@ -38,7 +38,7 @@ class AssetUnitTest extends TestCase
 
     }
 
-    public function test_checked_out_type_helpers()
+    public function testCheckedOutTypeHelpers()
     {
         $a = new Asset;
 
@@ -58,7 +58,7 @@ class AssetUnitTest extends TestCase
         $this->assertFalse($a->checkedOutToLocation());
     }
 
-    public function test_target_show_route_mapping()
+    public function testTargetShowRouteMapping()
     {
         $a = new Asset;
 
@@ -76,7 +76,7 @@ class AssetUnitTest extends TestCase
     }
 
 
-    public function test_warranty_expires_attribute()
+    public function testWarrantyExpiresAttribute()
     {
         $asset = new Asset;
 
@@ -88,7 +88,7 @@ class AssetUnitTest extends TestCase
 
     }
 
-    public function test_warranty_expires_negative_attribute()
+    public function testWarrantyExpiresNegativeAttribute()
     {
         $asset = new Asset;
 
@@ -100,7 +100,7 @@ class AssetUnitTest extends TestCase
 
     }
 
-    public function test_date_and_bool_mutators()
+    public function testDateAndBoolMutators()
     {
         $a = new Asset;
 
@@ -128,14 +128,14 @@ class AssetUnitTest extends TestCase
         $this->assertSame(1, $a->requestable);
     }
 
-    public function test_set_expected_checkin_empty_string_becomes_null()
+    public function testSetExpectedCheckinEmptyStringBecomesNull()
     {
         $a = new Asset;
         $a->expected_checkin = '';
         $this->assertNull($a->expected_checkin);
     }
 
-    public function test_check_invalid_next_audit_date_logic()
+    public function testCheckInvalidNextAuditDateLogic()
     {
         $a = new Asset;
 
