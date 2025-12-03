@@ -53,10 +53,12 @@ class ProfileController extends Controller
         $user->last_name = $request->input('last_name');
         $user->website = $request->input('website');
         $user->gravatar = $request->input('gravatar');
-        $user->skin = $request->input('skin');
         $user->phone = $request->input('phone');
         $user->enable_sounds = $request->input('enable_sounds', false);
         $user->enable_confetti = $request->input('enable_confetti', false);
+        $user->link_light_color = $request->input('link_light_color', '#296282');
+        $user->link_dark_color = $request->input('link_dark_color', '#296282');
+        $user->nav_link_color = $request->input('nav_link_color', '#FFFFFF');
 
         if (! config('app.lock_passwords')) {
             $user->locale = $request->input('locale');

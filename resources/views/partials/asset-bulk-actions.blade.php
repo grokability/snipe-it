@@ -42,14 +42,6 @@
         @endif
     </select>
 
-    <button class="btn btn-primary" id="{{ (isset($id_button)) ? $id_button : 'bulkAssetEditButton' }}" disabled>{{ trans('button.go') }}</button>
-
-    @if(isset($showFiltersTogglebutton) && $showFiltersTogglebutton === true)
-        <!-- Toggle Button -->
-            <button type="button" class="btn btn-default" id="toggleFilterBtn">
-                <i class="fa-solid fa-filter"></i>
-                <span class="filter-btn-text">{{ trans('general.open_filters') }}</span>
-            </button>
-    @endif
+    <button class="btn btn-theme" id="{{ (isset($id_button)) ? $id_button : 'bulkAssetEditButton' }}" disabled>{{ trans('button.go') }}</button>
     </form>
 </div>

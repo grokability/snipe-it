@@ -105,7 +105,7 @@
 
             <x-form-legend>
                 <a id="optional_info">
-                    <x-icon type="caret-right" id="optional_info_icon" />
+                    <x-icon type="caret-right" class="fa-fw" id="optional_info_icon" />
                     {{ trans('admin/hardware/form.optional_infos') }}
                 </a>
             </x-form-legend>
@@ -139,7 +139,7 @@
             <fieldset name="order-info">
                 <x-form-legend>
                     <a id="order_info">
-                        <x-icon type="caret-right" id="order_info_icon" />
+                        <x-icon type="caret-right" class="fa-fw" id="order_info_icon" />
                         {{ trans('admin/hardware/form.order_details') }}
                     </a>
                 </x-form-legend>

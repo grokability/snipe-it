@@ -22,7 +22,7 @@
 
         @if($import_errors)
           <div class="col-md-12">
-            <div class="box">
+            <div class="box box-default">
                 <div class="box-body">
                     <div class="alert alert-warning">
 
@@ -60,7 +60,7 @@
 @endif
 
             <div class="col-md-9">
-                <div class="box">
+                <div class="box box-default">
                     <div class="box-body">
                         <div class="row">
 

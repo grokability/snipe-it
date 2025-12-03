@@ -13,7 +13,7 @@ class Checkoutable
         public string $name,
         public string $type,
         public object $acceptance,
-        public object $assignee,
+        public readonly User|Asset|Location|null $assignee,
         public readonly string $plain_text_category,
         public readonly string $plain_text_model,
         public readonly string $plain_text_name,
