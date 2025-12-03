@@ -125,7 +125,7 @@ class SelectFilterInput extends FilterInput {
         const selections = $(this.element).select2('data');
 
         const selectedValues = selections.map(item => {
-            const parseId = parseInt(item.id);
+            const parseId = parseInt(item.id, 10);
             return isNaN(parseId) ? item.id : parseId;
         })
 
