@@ -34,11 +34,6 @@ return array(
         'note'       => 'Legt fest, ob der Benutzer Zugriff auf den Berichte-Abschnitt der Anwendung hat.',
     ],
 
-    'advancedsearch' => [
-        'name' => 'Erweiterte Suche',
-        'note' => 'Erlaubt den Zugriff auf die Erweiterte Suche. Vorsicht, ein Nutzender hat damit die Rechte die Ergebnisse aller Dropdowns zu laden.'
-    ],
-
     'assets' =>
         [
             'name' => 'Assets',
@@ -416,22 +411,6 @@ return array(
     ],
     'depreciationscreate' => [
         'name' => 'Abschreibungs-Aufzeichnungen Erstellen',
-    ],
-    'predefinedfilters'   => [
-        'name' => 'Vordefinierte Filter',
-        'note'       => 'Gewährt Zugriff auf Vordefinierte Filter in der App.',
-    ],
-    'predefinedfiltercreate' => [
-        'name' => 'Öffentliche vordefinierte Filter erstellen',
-    ],
-    'predefinedfilterview' => [
-        'name' => 'Öffentliche vordefinierte Filter anzeigen',
-    ],
-    'predefinedfilteredit' => [
-        'name' => 'Öffentliche vordefinierte Filter bearbeiten',
-    ],
-    'predefinedfilterdelete' => [
-        'name' => 'Öffentliche vordefinierte Filter löschen',
     ],
 
     'grant_all' => 'Erteilen Sie alle Berechtigungen für :area',
