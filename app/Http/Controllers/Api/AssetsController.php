@@ -58,7 +58,7 @@ class AssetsController extends Controller
      * @param int $assetId
      * @since [v4.0]
      */
-    public function index(FilterRequest $request, $action = null, $upcoming_status = null):JsonResponse|array
+    public function index(FilterRequest $request, $action = null, $upcoming_status = null) : JsonResponse | array
     {
 
 
@@ -135,7 +135,7 @@ class AssetsController extends Controller
             'created_by',
 
         ];
-        
+
         $all_custom_fields = CustomField::all(); //used as a 'cache' of custom fields throughout this page load
 
         foreach ($all_custom_fields as $field) {
@@ -158,7 +158,6 @@ class AssetsController extends Controller
         foreach ($all_custom_fields as $field) {
             $allowed_columns[] = $field->db_column_name();
         }
-
 
         $assets = Asset::select('assets.*')
             ->with(
@@ -196,7 +195,7 @@ class AssetsController extends Controller
             }
         }
 
-        if ((!is_null($filter)) && (count($filter)) > 0) {
+        if ((! is_null($filter)) && (count($filter)) > 0) {
             $assets->ByFilter($filter);
         } elseif ($request->filled('search')) {
             $assets->TextSearch($request->input('search'));
@@ -207,7 +206,7 @@ class AssetsController extends Controller
          * Handle due and overdue audits and checkin dates
          */
         switch ($action) {
-            // Audit (singular) is left over from earlier legacy APIs
+                // Audit (singular) is left over from earlier legacy APIs
             case 'audits':
                 switch ($upcoming_status) {
                     case 'due':
@@ -300,7 +299,7 @@ class AssetsController extends Controller
                 break;
             default:
 
-                if ((!$request->filled('status_id')) && ($settings->show_archived_in_list != '1')) {
+                if ((! $request->filled('status_id')) && ($settings->show_archived_in_list != '1')) {
                     // terrible workaround for complex-query Laravel bug in fulltext
                     $assets->join('status_labels AS status_alias', function ($join) {
                         $join->on('status_alias.id', '=', 'assets.status_id')
@@ -584,7 +583,7 @@ class AssetsController extends Controller
      * @since [v4.0]
      * @return \Illuminate\Http\JsonResponse
      */
-    public function show(Request $request, $id): JsonResponse|array
+    public function show(Request $request, $id): JsonResponse | array
     {
         if (
             $asset = Asset::with('assetstatus')
@@ -636,7 +635,7 @@ class AssetsController extends Controller
         ])->with('model', 'assetstatus', 'assignedTo')
             ->NotArchived();
 
-        if ((Setting::getSettings()->full_multiple_companies_support=='1') && ($request->filled('companyId'))) {
+        if ((Setting::getSettings()->full_multiple_companies_support=='1') &&  ($request->filled('companyId'))) {
             $assets->where('assets.company_id', $request->input('companyId'));
         }
 
@@ -687,7 +686,7 @@ class AssetsController extends Controller
         $asset->model()->associate(AssetModel::find((int) $request->get('model_id')));
 
         $asset->fill($request->validated());
-        $asset->created_by = auth()->id();
+        $asset->created_by =    auth()->id();
 
         /**
          * this is here just legacy reasons. Api\AssetController
@@ -1131,6 +1130,7 @@ class AssetsController extends Controller
      * @since [v4.0]
      */
     public function audit(Request $request, Asset $asset): JsonResponse
+    
     {
         $this->authorize('audit', Asset::class);
 
@@ -1173,7 +1173,7 @@ class AssetsController extends Controller
              * Update custom fields in the database.
              * Validation for these fields is handled through the AssetRequest form request
              * $model = AssetModel::find($request->get('model_id'));
-             */
+              */
             if (($asset->model) && ($asset->model->fieldset)) {
                 $payload['custom_fields'] = [];
                 foreach ($asset->model->fieldset->fields as $field) {
@@ -1193,7 +1193,7 @@ class AssetsController extends Controller
                                 $asset->{$field->db_column} = $request->input($field->db_column);
                             }
                         }
-                        $payload['custom_fields'][$field->db_column] = $request->input($field->db_column);
+                        $payload['custom_fields'][$field->db_column] =  $request->input($field->db_column);
                     }
 
                 }
@@ -1204,7 +1204,7 @@ class AssetsController extends Controller
 
             // Validate the rest of the data before we turn off the event dispatcher
             if ($asset->isInvalid()) {
-                return response()->json(Helper::formatStandardApiResponse('error', ['asset_tag' => $asset->asset_tag], $asset->getErrors()));
+                return response()->json(Helper::formatStandardApiResponse('error', ['asset_tag' => $asset->asset_tag],  $asset->getErrors()));
             }
 
 
@@ -1225,7 +1225,7 @@ class AssetsController extends Controller
              * @see \App\Models\Asset::save()
              */
 
-            $asset->unsetEventDispatcher();
+             $asset->unsetEventDispatcher();
 
 
             /**
@@ -1241,7 +1241,7 @@ class AssetsController extends Controller
 
 
         // No matching asset for the asset tag that was passed.
-        return response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/hardware/message.does_not_exist')), 200);
+        return response()->json(Helper::formatStandardApiResponse('error', null,  trans('admin/hardware/message.does_not_exist')), 200);
 
     }
 
@@ -1396,24 +1396,20 @@ class AssetsController extends Controller
         try {
             $this->authorize('view', Asset::class);
 
-            // Validate that asset tags were provided in the request
+             // Validate that asset tags were provided in the request
             if (!$request->filled('asset_tags')) {
-                return response()->json(Helper::formatStandardApiResponse(
-                    'error',
-                    null,
+                return response()->json(Helper::formatStandardApiResponse('error', null,
                     trans('admin/hardware/message.no_assets_selected')
                 ), 400);
             }
 
-            // Convert asset tags from request into collection and fetch matching assets
+             // Convert asset tags from request into collection and fetch matching assets
             $asset_tags = collect($request->input('asset_tags'));
             $assets = Asset::whereIn('asset_tag', $asset_tags)->get();
 
-            // Return error if no assets were found for the provided tags
+             // Return error if no assets were found for the provided tags
             if ($assets->isEmpty()) {
-                return response()->json(Helper::formatStandardApiResponse(
-                    'error',
-                    null,
+                return response()->json(Helper::formatStandardApiResponse('error', null,
                     trans('admin/hardware/message.does_not_exist')
                 ), 404);
             }
@@ -1435,9 +1431,9 @@ class AssetsController extends Controller
                 // Configure label with assets and settings
                 // bulkedit=false and count=0 are default values for label generation
                 $label = $label->with('assets', $assets)
-                    ->with('settings', $settings)
-                    ->with('bulkedit', false)
-                    ->with('count', 0);
+                            ->with('settings', $settings)
+                            ->with('bulkedit', false)
+                            ->with('count', 0);
 
                 // Generate PDF using callback function
                 // The callback captures the PDF content in $pdf_content variable

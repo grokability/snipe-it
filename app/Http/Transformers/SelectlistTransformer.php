@@ -27,6 +27,7 @@ class SelectlistTransformer
                 'text' => $select_item->use_text ?: $select_item->name,
                 'image' => $select_item->use_image ?: null,
                 'tag_color' => ($select_item->tag_color) ? $select_item->tag_color : null,
+                
             ];
 
             if (!empty($select_item->type)) {
@@ -39,9 +40,9 @@ class SelectlistTransformer
         $results = [
             'results' => $items_array,
             'pagination' => [
-                'more' => ($select_items->currentPage() >= $select_items->lastPage()) ? false : true,
-                'per_page' => $select_items->perPage(),
-            ],
+                    'more' => ($select_items->currentPage() >= $select_items->lastPage()) ? false : true,
+                    'per_page' => $select_items->perPage(),
+                ],
             'total_count' => $select_items->total(),
             'page' => $select_items->currentPage(),
             'page_count' => $select_items->lastPage(),

@@ -41,7 +41,7 @@ class SettingsSeeder extends Seeder
 
         if ($user = User::where('username', '=', 'admin')->first()) {
             $user->locale = 'en-US';
-            $user->enable_sounds = 1;
+            $user->enable_sound = 1;
             $user->enable_confetti = 1;
             $user->save();
         }

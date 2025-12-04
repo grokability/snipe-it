@@ -2,15 +2,15 @@
 
 {{-- Page title --}}
 @section('title')
-{{ trans('admin/hardware/general.view') }} {{ $asset->asset_tag }}
-@parent
+    {{ trans('admin/hardware/general.view') }} {{ $asset->asset_tag }}
+    @parent
 @stop
 
 {{-- Page content --}}
 @section('content')
 
 
-<div class="row">
+    <div class="row">
 
     @if (!$asset->model)
         <div class="col-md-12">

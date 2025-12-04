@@ -21,7 +21,9 @@ class DatabaseSeeder extends Seeder
     {
         Model::unguard();
 
+       // Only create default settings if they do not exist in the db.
         if (! Setting::first()) {
+            // factory(Setting::class)->create();
             $this->call(SettingsSeeder::class);
         }
 

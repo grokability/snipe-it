@@ -1,9 +1,10 @@
 @extends('layouts/default')
 
 @section('title0')
-@if (Request::get('company_id') && $company)
+
+  @if (Request::get('company_id') && $company)
     {{ $company->name }}
-@endif
+  @endif
 
 @if (Request::get('status'))
     @switch(Request::get('status'))
@@ -18,19 +19,22 @@
         @case('byod') {{ strtoupper(trans('general.byod')) }} @break
     @endswitch
 @else
-    {{ trans('general.all') }}
-@endif
+{{ trans('general.all') }}
+  @endif
 {{ trans('general.assets') }}
 
-@if (Request::has('order_number'))
+  @if (Request::has('order_number'))
     : Order #{{ strval(Request::get('order_number')) }}
 @endif
 @stop
 
+{{-- Page title --}}
 @section('title')
-@yield('title0') @parent
+@yield('title0')  @parent
 @stop
 
+
+{{-- Page content --}}
 @section('content')
 
 

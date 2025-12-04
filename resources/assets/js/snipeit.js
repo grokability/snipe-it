@@ -23,8 +23,8 @@ require('blueimp-file-upload')
 require('bootstrap-colorpicker')
 require('bootstrap-datepicker')
 require('ekko-lightbox') //TODO - this doesn't seem jquery-ish, we might need to do something weird here
-// it *does* require Bootstrap, which requires jquery, so maybe that's OK
-// it seems to work...
+                         // it *does* require Bootstrap, which requires jquery, so maybe that's OK
+                         // it seems to work...
 require('./extensions/pGenerator.jquery'); //WEIRD, but works
 //require('chart.js') // Weirdly, this seems to "just work." Without this line, the dashboard blows up
 // but it's *HUGE* - and we only use it one place. So we're taking it out of the bundle
@@ -46,36 +46,36 @@ window.ClipboardJS = require('clipboard')
 
 lineOptions = {
 
-    legend: {
-        position: "bottom"
-    },
-    scales: {
-        yAxes: [{
-            ticks: {
-                fontColor: "rgba(0,0,0,0.5)",
-                fontStyle: "bold",
-                beginAtZero: true,
-                maxTicksLimit: 5,
-                padding: 20
-            },
-            gridLines: {
-                drawTicks: false,
-                display: false
-            }
-        }],
-        xAxes: [{
-            gridLines: {
-                zeroLineColor: "transparent"
-            },
-            ticks: {
-                padding: 20,
-                fontColor: "rgba(0,0,0,0.5)",
-                fontStyle: "bold"
-            }
-        }]
-    }
+        legend: {
+            position: "bottom"
+        },
+        scales: {
+            yAxes: [{
+                ticks: {
+                    fontColor: "rgba(0,0,0,0.5)",
+                    fontStyle: "bold",
+                    beginAtZero: true,
+                    maxTicksLimit: 5,
+                    padding: 20
+                },
+                gridLines: {
+                    drawTicks: false,
+                    display: false
+                }
+            }],
+            xAxes: [{
+                gridLines: {
+                    zeroLineColor: "transparent"
+                },
+                ticks: {
+                    padding: 20,
+                    fontColor: "rgba(0,0,0,0.5)",
+                    fontStyle: "bold"
+                }
+            }]
+        }
 
-};
+    };
 
 pieOptions = {
     //Boolean - Whether we should show a stroke on each segment
@@ -101,8 +101,8 @@ pieOptions = {
 
     //String - A legend template
     legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<segments.length; i++){%><li>" +
-        "<i class='fas fa-circle-o' style='color: <%=segments[i].fillColor%>'></i>" +
-        "<%if(segments[i].label){%><%=segments[i].label%><%}%> foo</li><%}%></ul>",
+    "<i class='fas fa-circle-o' style='color: <%=segments[i].fillColor%>'></i>" +
+    "<%if(segments[i].label){%><%=segments[i].label%><%}%> foo</li><%}%></ul>",
     //String - A tooltip template
     tooltipTemplate: "<%=value %> <%=label%> "
 };
@@ -162,15 +162,15 @@ $(function () {
 
 
 
-    /*
-    * Select2
-    */
+     /*
+     * Select2
+     */
 
-    $('select.select2:not(".select2-hidden-accessible")').each(function (i, obj) {
-        {
-            $(obj).select2();
-        }
-    });
+        $('select.select2:not(".select2-hidden-accessible")').each(function (i, obj) {
+            {
+                $(obj).select2();
+            }
+        });
 
 
     // $('.datepicker').datepicker();
@@ -179,7 +179,7 @@ $(function () {
     // $('.datepicker').datepicker();
 
     // Crazy select2 rich dropdowns with images!
-    $('.js-data-ajax').each(function (i, item) {
+    $('.js-data-ajax').each( function (i, item) {
         var link = $(item);
         var endpoint = link.data("endpoint");
         var select = link.data("select");
@@ -243,7 +243,7 @@ $(function () {
 
     });
 
-    function getSelect2Value(element) {
+	function getSelect2Value(element) {
 
         // if the passed object is not a jquery object, assuming 'element' is a selector
         if (!(element instanceof jQuery)) element = $(element);
@@ -340,10 +340,10 @@ $(function () {
             return loading_markup;
         }
 
-        var markup = '<div class="clearfix">';
+        var markup = '<div class="clearfix">' ;
         markup += '<div class="pull-left" style="padding-right: 10px;">';
         if (datalist.image) {
-            markup += "<div style='width: 30px;'><img src='" + datalist.image + "' style='max-height: 20px; max-width: 30px;' alt='" + datalist.text + "'></div>";
+            markup += "<div style='width: 30px;'><img src='" + datalist.image + "' style='max-height: 20px; max-width: 30px;' alt='" +  datalist.text + "'></div>";
         } else {
             markup += '<div style="height: 20px; width: 30px;"></div>';
         }
@@ -359,7 +359,7 @@ $(function () {
             return $('<i class="fas fa-spinner fa-spin" aria-hidden="true"></i> Loading...');
         }
 
-        var root_div = $("<div class='clearfix'>");
+        var root_div = $("<div class='clearfix'>") ;
         var left_pull = $("<div class='pull-left' style='padding-right: 10px;'>");
         if (datalist.image) {
             var inner_div = $("<div style='width: 20px;'>");
@@ -393,7 +393,7 @@ $(function () {
         root_div.append(name_div)
         var safe_html = root_div.get(0).outerHTML;
         var old_html = formatDatalist(datalist);
-        if (safe_html != old_html) {
+        if(safe_html != old_html) {
             //console.log("HTML MISMATCH: ");
             //console.log("FormatDatalistSafe: ");
             // console.dir(root_div.get(0));
@@ -405,7 +405,7 @@ $(function () {
 
     }
 
-    function formatDataSelection(datalist) {
+    function formatDataSelection (datalist) {
         // This a heinous workaround for a known bug in Select2.
         // Without this, the rich selectlists are vulnerable to XSS.
         // Many thanks to @uberbrady for this fix. It ain't pretty,
@@ -422,7 +422,7 @@ $(function () {
 
     // This handles the radio button selectors for the checkout-to-foo options
     // on asset checkout and also on asset edit
-    $(function () {
+    $(function() {
         $('input[name=checkout_to_type]').on("change", function () {
             var assignto_type = $('input[name=checkout_to_type]:checked').val();
             var userid = $('#assigned_user option:selected').val();
@@ -446,7 +446,7 @@ $(function () {
 
                 $('[name="assigned_asset"]').val('').trigger('change.select2');
                 $('[name="assigned_user"]').val('').trigger('change.select2');
-            } else {
+            } else  {
 
                 $('#assigned_asset').hide();
                 $('#assigned_user').show();
@@ -473,8 +473,8 @@ $(function () {
     // This allows linking to a tab on page load via the address bar.
     // So a URL such as, http://snipe-it.local/hardware/2/#my_tab will
     // cause the tab on that page with an ID of “my_tab” to be active.
-    if (taburl.match('#')) {
-        $('.nav-tabs a[href="#' + taburl.split('#')[1] + '"]').tab('show');
+    if (taburl.match('#') ) {
+        $('.nav-tabs a[href="#'+taburl.split('#')[1]+'"]').tab('show');
     }
 
     // Allow internal page links to activate a tab's ID.
@@ -500,7 +500,7 @@ $(function () {
     function readURL(input, $preview) {
         if (input.files && input.files[0]) {
             var reader = new FileReader();
-            reader.onload = function (e) {
+            reader.onload = function(e) {
                 $preview.attr('src', e.target.result);
             };
             reader.readAsDataURL(input.files[0]);
@@ -508,14 +508,14 @@ $(function () {
     }
 
     function formatBytes(bytes) {
-        if (bytes < 1024) return bytes + " Bytes";
-        else if (bytes < 1048576) return (bytes / 1024).toFixed(2) + " KB";
-        else if (bytes < 1073741824) return (bytes / 1048576).toFixed(2) + " MB";
+        if(bytes < 1024) return bytes + " Bytes";
+        else if(bytes < 1048576) return (bytes / 1024).toFixed(2) + " KB";
+        else if(bytes < 1073741824) return (bytes / 1048576).toFixed(2) + " MB";
         else return (bytes / 1073741824).toFixed(2) + " GB";
     }
 
     // File size validation
-    $('.js-uploadFile').bind('change', function () {
+    $('.js-uploadFile').bind('change', function() {
         var $this = $(this);
         var id = '#' + $this.attr('id');
         var status = id + '-status';
@@ -565,12 +565,12 @@ function htmlEntities(str) {
 /**
  * Toggle disabled
  */
-(function ($) {
+(function($){
 
-    $.fn.toggleDisabled = function (callback) {
-        return this.each(function () {
+    $.fn.toggleDisabled = function(callback){
+        return this.each(function(){
             var disabled, $this = $(this);
-            if ($this.attr('disabled')) {
+            if($this.attr('disabled')){
                 $this.removeAttr('disabled');
                 disabled = false;
             } else {
@@ -578,7 +578,7 @@ function htmlEntities(str) {
                 disabled = true;
             }
 
-            if (callback && typeof callback === 'function') {
+            if(callback && typeof callback === 'function'){
                 callback(this, disabled);
             }
         });
@@ -603,7 +603,7 @@ document.addEventListener('livewire:init', () => {
 
     $(document).on('select2:select', '.livewire-select2', function (event) {
         var target = $(event.target)
-        if (!event.target.name || !target.data('livewire-component')) {
+        if(!event.target.name || !target.data('livewire-component')) {
             console.error("You need to set both name (which should match a Livewire property) and data-livewire-component on your Livewire-ed select2 elements!")
             console.error("For data-livewire-component, you probably want to use $this->getId() or {{ $this->getId() }}, as appropriate")
             return false
@@ -611,7 +611,7 @@ document.addEventListener('livewire:init', () => {
         Livewire.find(target.data('livewire-component')).set(event.target.name, this.options[this.selectedIndex].value)
     });
 
-    Livewire.hook('request', ({ succeed }) => {
+    Livewire.hook('request', ({succeed}) => {
         succeed(() => {
             queueMicrotask(() => {
                 $('.livewire-select2').select2();

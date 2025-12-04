@@ -2,10 +2,8 @@
 
 namespace App\Models;
 
-use DB;
 use App\Events\CheckoutableCheckedOut;
 use App\Exceptions\CheckoutNotAllowed;
-use App\Services\FilterService\FilterService;
 use App\Helpers\Helper;
 use App\Http\Traits\UniqueUndeletedTrait;
 use App\Models\Traits\Acceptable;
@@ -16,6 +14,7 @@ use App\Models\Traits\Requestable;
 use App\Models\Traits\Searchable;
 use App\Presenters\AssetPresenter;
 use App\Presenters\Presentable;
+use App\Services\FilterService\FilterService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -23,13 +22,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
-
-use UnexpectedValueException;
 use Watson\Validating\ValidatingTrait;
-use Arr;
-use Illuminate\Support\Str;
 
 /**
  * Model for Assets.
@@ -85,7 +79,7 @@ class Asset extends Depreciable
      * Leaving this commented out, since we need to test further, but this would eager load the model relationship every single
      * time the asset model is loaded.
      */
-    // protected $with = ['model'];
+     // protected $with = ['model'];
 
     /**
      * Whether the model should inject it's identifier to the unique
@@ -104,46 +98,46 @@ class Asset extends Depreciable
         'expected_checkin' => 'datetime:m-d-Y',
         'last_audit_date' => 'datetime',
         'next_audit_date' => 'datetime:m-d-Y',
-        'model_id' => 'integer',
-        'status_id' => 'integer',
-        'company_id' => 'integer',
-        'location_id' => 'integer',
+        'model_id'       => 'integer',
+        'status_id'      => 'integer',
+        'company_id'     => 'integer',
+        'location_id'    => 'integer',
         'rtd_company_id' => 'integer',
-        'supplier_id' => 'integer',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-        'deleted_at' => 'datetime',
+        'supplier_id'    => 'integer',
+        'created_at'     => 'datetime',
+        'updated_at'     => 'datetime',
+        'deleted_at'     => 'datetime',
     ];
 
     protected $rules = [
-        'model_id' => ['required', 'integer', 'exists:models,id,deleted_at,NULL', 'not_array'],
-        'status_id' => ['required', 'integer', 'exists:status_labels,id'],
-        'asset_tag' => ['required', 'min:1', 'max:255', 'unique_undeleted:assets,asset_tag', 'not_array'],
-        'name' => ['nullable', 'max:255'],
-        'company_id' => ['nullable', 'integer', 'exists:companies,id'],
-        'warranty_months' => ['nullable', 'numeric', 'digits_between:0,240'],
-        'last_checkout' => ['nullable', 'date_format:Y-m-d H:i:s'],
-        'last_checkin' => ['nullable', 'date_format:Y-m-d H:i:s'],
-        'expected_checkin' => ['nullable', 'date'],
-        'last_audit_date' => ['nullable', 'date_format:Y-m-d H:i:s'],
-        'next_audit_date' => ['nullable', 'date'],
-        'location_id' => ['nullable', 'exists:locations,id', 'fmcs_location'],
-        'rtd_location_id' => ['nullable', 'exists:locations,id', 'fmcs_location'],
-        'purchase_date' => ['nullable', 'date', 'date_format:Y-m-d'],
-        'serial' => ['nullable', 'string', 'unique_undeleted:assets,serial'],
-        'purchase_cost' => ['nullable', 'numeric', 'gte:0', 'max:9999999999999'],
-        'supplier_id' => ['nullable', 'exists:suppliers,id'],
-        'asset_eol_date' => ['nullable', 'date'],
-        'eol_explicit' => ['nullable', 'boolean'],
-        'byod' => ['nullable', 'boolean'],
-        'order_number' => ['nullable', 'string', 'max:191'],
-        'notes' => ['nullable', 'string', 'max:65535'],
-        'assigned_to' => ['nullable', 'integer', 'required_with:assigned_type'],
-        'assigned_type' => ['nullable', 'required_with:assigned_to', 'in:' . User::class . "," . Location::class . "," . Asset::class],
-        'requestable' => ['nullable', 'boolean'],
-        'assigned_user' => ['integer', 'nullable', 'exists:users,id,deleted_at,NULL'],
+        'model_id'          => ['required', 'integer', 'exists:models,id,deleted_at,NULL', 'not_array'],
+        'status_id'         => ['required', 'integer', 'exists:status_labels,id'],
+        'asset_tag'         => ['required', 'min:1', 'max:255', 'unique_undeleted:assets,asset_tag', 'not_array'],
+        'name'              => ['nullable', 'max:255'],
+        'company_id'        => ['nullable', 'integer', 'exists:companies,id'],
+        'warranty_months'   => ['nullable', 'numeric', 'digits_between:0,240'],
+        'last_checkout'     => ['nullable', 'date_format:Y-m-d H:i:s'],
+        'last_checkin'      => ['nullable', 'date_format:Y-m-d H:i:s'],
+        'expected_checkin'  => ['nullable', 'date'],
+        'last_audit_date'   => ['nullable', 'date_format:Y-m-d H:i:s'],
+        'next_audit_date'   => ['nullable', 'date'],
+        'location_id'       => ['nullable', 'exists:locations,id', 'fmcs_location'],
+        'rtd_location_id'   => ['nullable', 'exists:locations,id', 'fmcs_location'],
+        'purchase_date'     => ['nullable', 'date', 'date_format:Y-m-d'],
+        'serial'            => ['nullable', 'string', 'unique_undeleted:assets,serial'],
+        'purchase_cost'     => ['nullable', 'numeric', 'gte:0', 'max:9999999999999'],
+        'supplier_id'       => ['nullable', 'exists:suppliers,id'],
+        'asset_eol_date'    => ['nullable', 'date'],
+        'eol_explicit'      => ['nullable', 'boolean'],
+        'byod'              => ['nullable', 'boolean'],
+        'order_number'      => ['nullable', 'string', 'max:191'],
+        'notes'             => ['nullable', 'string', 'max:65535'],
+        'assigned_to'       => ['nullable', 'integer', 'required_with:assigned_type'],
+        'assigned_type'     => ['nullable', 'required_with:assigned_to', 'in:' . User::class . "," . Location::class . "," . Asset::class],
+        'requestable'       => ['nullable', 'boolean'],
+        'assigned_user'     => ['integer', 'nullable', 'exists:users,id,deleted_at,NULL'],
         'assigned_location' => ['integer', 'nullable', 'exists:locations,id,deleted_at,NULL', 'fmcs_location'],
-        'assigned_asset' => ['integer', 'nullable', 'exists:assets,id,deleted_at,NULL']
+        'assigned_asset'    => ['integer', 'nullable', 'exists:assets,id,deleted_at,NULL']
     ];
 
 
@@ -190,21 +184,21 @@ class Asset extends Depreciable
      * @var array
      */
     protected $searchableAttributes = [
-        'name',
-        'asset_tag',
-        'serial',
-        'order_number',
-        'purchase_cost',
-        'notes',
-        'created_at',
-        'updated_at',
-        'purchase_date',
-        'expected_checkin',
-        'next_audit_date',
-        'last_audit_date',
-        'last_checkin',
-        'last_checkout',
-        'asset_eol_date',
+      'name',
+      'asset_tag',
+      'serial',
+      'order_number',
+      'purchase_cost',
+      'notes',
+      'created_at',
+      'updated_at',
+      'purchase_date',
+      'expected_checkin',
+      'next_audit_date',
+      'last_audit_date',
+      'last_checkin',
+      'last_checkout',
+      'asset_eol_date',
     ];
 
     /**
@@ -213,13 +207,13 @@ class Asset extends Depreciable
      * @var array
      */
     protected $searchableRelations = [
-        'assetstatus' => ['name'],
-        'supplier' => ['name'],
-        'company' => ['name'],
-        'defaultLoc' => ['name'],
-        'location' => ['name'],
-        'model' => ['name', 'model_number', 'eol'],
-        'model.category' => ['name'],
+        'assetstatus'        => ['name'],
+        'supplier'           => ['name'],
+        'company'            => ['name'],
+        'defaultLoc'         => ['name'],
+        'location'           => ['name'],
+        'model'              => ['name', 'model_number', 'eol'],
+        'model.category'     => ['name'],
         'model.manufacturer' => ['name'],
     ];
 
@@ -296,7 +290,7 @@ class Asset extends Depreciable
 
     protected function warrantyExpires(): Attribute
     {
-        return Attribute::make(
+        return Attribute:: make(
             get: fn(mixed $value, array $attributes) => ($attributes['warranty_months'] && $attributes['purchase_date']) ? Carbon::parse($attributes['purchase_date'])->addMonths((int) $attributes['warranty_months']) : null,
         );
     }
@@ -304,14 +298,14 @@ class Asset extends Depreciable
     protected function warrantyExpiresFormattedDate(): Attribute
     {
 
-        return Attribute::make(
-            get: fn(mixed $value, array $attributes) => Helper::getFormattedDateObject($this->warrantyExpires, 'date', false)
+        return Attribute:: make(
+             get: fn(mixed $value, array $attributes) => Helper::getFormattedDateObject($this->warrantyExpires, 'date', false)
         );
     }
 
     protected function warrantyExpiresDiff(): Attribute
     {
-        return Attribute::make(
+        return Attribute:: make(
             get: fn(mixed $value, array $attributes) => $this->warrantyExpires ? round((Carbon::now()->diffInDays($this->warrantyExpires))) : null,
         );
 
@@ -319,7 +313,7 @@ class Asset extends Depreciable
 
     protected function warrantyExpiresDiffForHumans(): Attribute
     {
-        return Attribute::make(
+        return Attribute:: make(
             get: fn(mixed $value, array $attributes) => $this->warrantyExpires ? Carbon::parse($this->warrantyExpires)->diffForHumans() : null,
         );
 
@@ -329,14 +323,14 @@ class Asset extends Depreciable
     protected function lastAuditFormattedDate(): Attribute
     {
 
-        return Attribute::make(
+        return Attribute:: make(
             get: fn(mixed $value, array $attributes) => Helper::getFormattedDateObject($this->last_audit_date, 'datetime', false)
         );
     }
 
     protected function lastAuditDiff(): Attribute
     {
-        return Attribute::make(
+        return Attribute:: make(
             get: fn(mixed $value, array $attributes) => $this->warrantyExpires ? round((Carbon::now()->diffInDays($this->warrantyExpires))) : null,
         );
 
@@ -344,7 +338,7 @@ class Asset extends Depreciable
 
     protected function lastAuditDiffForHumans(): Attribute
     {
-        return Attribute::make(
+        return Attribute:: make(
             get: fn(mixed $value, array $attributes) => $attributes['last_audit_date'] ? Carbon::parse($attributes['last_audit_date'])->diffForHumans() : null,
         );
 
@@ -353,21 +347,21 @@ class Asset extends Depreciable
     protected function nextAuditFormattedDate(): Attribute
     {
 
-        return Attribute::make(
+        return Attribute:: make(
             get: fn(mixed $value, array $attributes) => Helper::getFormattedDateObject($this->next_audit_date, 'date', false)
         );
     }
 
     protected function nextAuditDiffInDays(): Attribute
     {
-        return Attribute::make(
+        return Attribute:: make(
             get: fn(mixed $value, array $attributes) => $attributes['next_audit_date'] ? Carbon::now()->diffInDays($attributes['next_audit_date']) : null,
         );
     }
 
     protected function nextAuditDiffForHumans(): Attribute
     {
-        return Attribute::make(
+        return Attribute:: make(
             get: fn(mixed $value, array $attributes) => $attributes['next_audit_date'] ? Carbon::parse($attributes['next_audit_date'])->diffForHumans() : null,
         );
 
@@ -376,8 +370,8 @@ class Asset extends Depreciable
     protected function eolDate(): Attribute
     {
 
-        return Attribute::make(
-            get: function (mixed $value, array $attributes) {
+        return Attribute:: make(
+            get: function(mixed $value, array $attributes) {
                 if ($attributes['asset_eol_date'] && $attributes['eol_explicit'] == '1') {
                     return Carbon::parse($attributes['asset_eol_date']);
                 } elseif ($attributes['purchase_date'] && $this->model && ((int) $this->model->eol > 0)) {
@@ -390,16 +384,18 @@ class Asset extends Depreciable
 
     }
 
+
+
     protected function eolFormattedDate(): Attribute
     {
-        return Attribute::make(
+        return Attribute:: make(
             get: fn(mixed $value, array $attributes) => $this->eolDate ? Helper::getFormattedDateObject($this->eolDate, 'date', false) : null,
         );
     }
 
     protected function eolDiffInDays(): Attribute
     {
-        return Attribute::make(
+        return Attribute:: make(
             get: fn(mixed $value, array $attributes) => $this->eolDate ? round((Carbon::now()->diffInDays(Carbon::parse($this->eolDate), false, 1))) : null,
         );
 
@@ -408,7 +404,7 @@ class Asset extends Depreciable
     protected function eolDiffForHumans(): Attribute
     {
 
-        return Attribute::make(
+        return Attribute:: make(
             get: fn(mixed $value, array $attributes) => $this->eolDate ? Carbon::parse($this->eolDate)->diffForHumans() : null,
         );
 
@@ -416,7 +412,7 @@ class Asset extends Depreciable
 
     protected function expectedCheckinFormattedDate(): Attribute
     {
-        return Attribute::make(
+        return Attribute:: make(
             get: fn(mixed $value, array $attributes) => array_key_exists('expected_checkin', $attributes) ? Helper::getFormattedDateObject($attributes['expected_checkin'], 'date', false) : null,
         );
     }
@@ -452,16 +448,16 @@ class Asset extends Depreciable
      */
     public function availableForCheckout()
     {
+
         // This asset is not currently assigned to anyone and is not deleted...
-        if ((!$this->assigned_to) && (!$this->deleted_at)) {
-    
+        if ((! $this->assigned_to) && (! $this->deleted_at)) {
+
             // The asset status is not archived and is deployable
-            if (
-                ($this->assetstatus) && 
-                ($this->assetstatus->archived == '0') &&
-                ($this->assetstatus->deployable == '1')
+            if (($this->assetstatus) && ($this->assetstatus->archived == '0') 
+                && ($this->assetstatus->deployable == '1')
             ) {
                 return true;
+
             }
         }
         return false;
@@ -486,7 +482,7 @@ class Asset extends Depreciable
      */
     public function checkOut($target, $admin = null, $checkout_at = null, $expected_checkin = null, $note = null, $name = null, $location = null)
     {
-        if (!$target) {
+        if (! $target) {
             return false;
         }
         if ($this->is($target)) {
@@ -553,7 +549,7 @@ class Asset extends Depreciable
             $user_name = 'Unassigned';
         }
 
-        return $this->asset_tag . ' - ' . $this->name . ' (' . $user_name . ') ' . ($this->model) ? $this->model->name : '';
+        return $this->asset_tag .' - '.$this->name.' (' . $user_name . ') '.($this->model) ? $this->model->name : '';
     }
 
     /**
@@ -742,13 +738,13 @@ class Asset extends Depreciable
      */
     public function assetLoc($iterations = 1, $first_asset = null)
     {
-        if (!empty($this->assignedType())) {
+        if (! empty($this->assignedType())) {
             if ($this->assignedType() == self::ASSET) {
-                if (!$first_asset) {
+                if (! $first_asset) {
                     $first_asset = $this;
                 }
                 if ($iterations > 10) {
-                    throw new \Exception('Asset assignment Loop for Asset ID: ' . $first_asset->id);
+                    throw new \Exception('Asset assignment Loop for Asset ID: '.$first_asset->id);
                 }
                 $assigned_to = self::find($this->assigned_to); //have to do this this way because otherwise it errors
                 if ($assigned_to) {
@@ -800,7 +796,7 @@ class Asset extends Depreciable
     public function targetShowRoute()
     {
         $route = str_plural($this->assignedType());
-        if ($route == 'assets') {
+        if ($route=='assets') {
             return 'hardware';
         }
 
@@ -833,12 +829,12 @@ class Asset extends Depreciable
      */
     public function getImageUrl()
     {
-        if ($this->image && !empty($this->image)) {
-            return Storage::disk('public')->url(app('assets_upload_path') . e($this->image));
-        } elseif ($this->model && !empty($this->model->image)) {
-            return Storage::disk('public')->url(app('models_upload_path') . e($this->model->image));
-        } elseif ($this->model?->category && !empty($this->model->category->image)) {
-            return Storage::disk('public')->url(app('categories_upload_path') . e($this->model->category->image));
+        if ($this->image && ! empty($this->image)) {
+            return Storage::disk('public')->url(app('assets_upload_path').e($this->image));
+        } elseif ($this->model && ! empty($this->model->image)) {
+            return Storage::disk('public')->url(app('models_upload_path').e($this->model->image));
+        } elseif ($this->model?->category && ! empty($this->model->category->image)) {
+            return Storage::disk('public')->url(app('categories_upload_path').e($this->model->category->image));
         }
 
         return false;
@@ -1078,10 +1074,10 @@ class Asset extends Depreciable
 
         if ($settings->auto_increment_assets == '1') {
             if ($settings->zerofill_count > 0) {
-                return $settings->auto_increment_prefix . self::zerofill($settings->next_auto_tag_base + $additional_increment, $settings->zerofill_count);
+                return $settings->auto_increment_prefix.self::zerofill($settings->next_auto_tag_base + $additional_increment, $settings->zerofill_count);
             }
 
-            return $settings->auto_increment_prefix . ($settings->next_auto_tag_base + $additional_increment);
+            return $settings->auto_increment_prefix.($settings->next_auto_tag_base + $additional_increment);
         } else {
             return false;
         }
@@ -1195,7 +1191,7 @@ class Asset extends Depreciable
     {
         $cost = 0;
         foreach ($this->components as $component) {
-            $cost += $component->pivot->assigned_qty * $component->purchase_cost;
+            $cost += $component->pivot->assigned_qty*$component->purchase_cost;
         }
         return $cost;
     }
@@ -1219,40 +1215,40 @@ class Asset extends Depreciable
     protected function nextAuditDate(): Attribute
     {
         return Attribute::make(
-            get: fn($value) => $value ? Carbon::parse($value)->format('Y-m-d') : null,
-            set: fn($value) => $value ? Carbon::parse($value)->format('Y-m-d') : null,
+            get: fn ($value) => $value ? Carbon::parse($value)->format('Y-m-d') : null,
+            set: fn ($value) => $value ? Carbon::parse($value)->format('Y-m-d') : null,
         );
     }
 
     protected function lastAuditDate(): Attribute
     {
         return Attribute::make(
-            get: fn($value) => $value ? Carbon::parse($value)->format('Y-m-d H:i:s') : null,
-            set: fn($value) => $value ? Carbon::parse($value)->format('Y-m-d H:i:s') : null,
+            get: fn ($value) => $value ? Carbon::parse($value)->format('Y-m-d H:i:s') : null,
+            set: fn ($value) => $value ? Carbon::parse($value)->format('Y-m-d H:i:s') : null,
         );
     }
 
     protected function lastCheckout(): Attribute
     {
         return Attribute::make(
-            get: fn($value) => $value ? Carbon::parse($value)->format('Y-m-d H:i:s') : null,
-            set: fn($value) => $value ? Carbon::parse($value)->format('Y-m-d H:i:s') : null,
+            get: fn ($value) => $value ? Carbon::parse($value)->format('Y-m-d H:i:s') : null,
+            set: fn ($value) => $value ? Carbon::parse($value)->format('Y-m-d H:i:s') : null,
         );
     }
 
     protected function lastCheckin(): Attribute
     {
         return Attribute::make(
-            get: fn($value) => $value ? Carbon::parse($value)->format('Y-m-d H:i:s') : null,
-            set: fn($value) => $value ? Carbon::parse($value)->format('Y-m-d H:i:s') : null,
+            get: fn ($value) => $value ? Carbon::parse($value)->format('Y-m-d H:i:s') : null,
+            set: fn ($value) => $value ? Carbon::parse($value)->format('Y-m-d H:i:s') : null,
         );
     }
 
     protected function assetEolDate(): Attribute
     {
         return Attribute::make(
-            get: fn($value) => $value ? Carbon::parse($value)->format('Y-m-d') : null,
-            set: fn($value) => $value ? Carbon::parse($value)->format('Y-m-d') : null,
+            get: fn ($value) => $value ? Carbon::parse($value)->format('Y-m-d') : null,
+            set: fn ($value) => $value ? Carbon::parse($value)->format('Y-m-d') : null,
         );
     }
 
@@ -1295,8 +1291,7 @@ class Asset extends Depreciable
          * Assigned user
          */
         $query = $query->leftJoin(
-            'users as assets_users',
-            function ($leftJoin) {
+            'users as assets_users', function ($leftJoin) {
                 $leftJoin->on('assets_users.id', '=', 'assets.assigned_to')
                     ->where('assets.assigned_type', '=', User::class);
             }
@@ -1305,15 +1300,15 @@ class Asset extends Depreciable
         foreach ($terms as $term) {
 
             $query = $query
-                ->orWhere('assets_users.first_name', 'LIKE', '%' . $term . '%')
-                ->orWhere('assets_users.last_name', 'LIKE', '%' . $term . '%')
-                ->orWhere('assets_users.jobtitle', 'LIKE', '%' . $term . '%')
-                ->orWhere('assets_users.username', 'LIKE', '%' . $term . '%')
-                ->orWhere('assets_users.employee_num', 'LIKE', '%' . $term . '%')
+                ->orWhere('assets_users.first_name', 'LIKE', '%'.$term.'%')
+                ->orWhere('assets_users.last_name', 'LIKE', '%'.$term.'%')
+                ->orWhere('assets_users.jobtitle', 'LIKE', '%'.$term .'%')
+                ->orWhere('assets_users.username', 'LIKE', '%'.$term .'%')
+                ->orWhere('assets_users.employee_num', 'LIKE', '%'.$term.'%')
                 ->orWhereMultipleColumns(
                     [
-                        'assets_users.first_name',
-                        'assets_users.last_name',
+                    'assets_users.first_name',
+                    'assets_users.last_name',
                     ],
                     $term
                 );
@@ -1323,8 +1318,7 @@ class Asset extends Depreciable
          * Assigned location
          */
         $query = $query->leftJoin(
-            'locations as assets_locations',
-            function ($leftJoin) {
+            'locations as assets_locations', function ($leftJoin) {
                 $leftJoin->on('assets_locations.id', '=', 'assets.assigned_to')
                     ->where('assets.assigned_type', '=', Location::class);
             }
@@ -1332,7 +1326,7 @@ class Asset extends Depreciable
 
         foreach ($terms as $term) {
 
-            $query = $query->orWhere('assets_locations.name', 'LIKE', '%' . $term . '%');
+            $query = $query->orWhere('assets_locations.name', 'LIKE', '%'.$term.'%');
         }
 
         /**
@@ -1379,8 +1373,7 @@ class Asset extends Depreciable
     public function scopePending($query)
     {
         return $query->whereHas(
-            'assetstatus',
-            function ($query) {
+            'assetstatus', function ($query) {
                 $query->where('deployable', '=', 0)
                     ->where('pending', '=', 1)
                     ->where('archived', '=', 0);
@@ -1402,31 +1395,30 @@ class Asset extends Depreciable
         return $query->where(
             function ($query) use ($location) {
                 $query->whereHas(
-                    'assignedTo',
-                    function ($query) use ($location) {
+                    'assignedTo', function ($query) use ($location) {
                         $query->where(
                             [
-                                ['users.location_id', '=', $location->id],
-                                ['assets.assigned_type', '=', User::class],
+                            ['users.location_id', '=', $location->id],
+                            ['assets.assigned_type', '=', User::class],
                             ]
                         )->orWhere(
                                 [
-                                    ['locations.id', '=', $location->id],
-                                    ['assets.assigned_type', '=', Location::class],
+                                ['locations.id', '=', $location->id],
+                                ['assets.assigned_type', '=', Location::class],
                                 ]
                             )->orWhere(
                                 [
-                                    ['assets.rtd_location_id', '=', $location->id],
-                                    ['assets.assigned_type', '=', self::class],
+                                ['assets.rtd_location_id', '=', $location->id],
+                                ['assets.assigned_type', '=', self::class],
                                 ]
                             );
                     }
                 )->orWhere(
-                        function ($query) use ($location) {
-                            $query->where('assets.rtd_location_id', '=', $location->id);
-                            $query->whereNull('assets.assigned_to');
-                        }
-                    );
+                    function ($query) use ($location) {
+                        $query->where('assets.rtd_location_id', '=', $location->id);
+                        $query->whereNull('assets.assigned_to');
+                    }
+                );
             }
         );
     }
@@ -1444,11 +1436,10 @@ class Asset extends Depreciable
     {
         return $query->whereNull('assets.assigned_to')
             ->whereHas(
-                'assetstatus',
-                function ($query) {
-                    $query->where('deployable', '=', 1)
-                        ->where('pending', '=', 0)
-                        ->where('archived', '=', 0);
+                'assetstatus', function ($query) {
+                        $query->where('deployable', '=', 1)
+                            ->where('pending', '=', 0)
+                            ->where('archived', '=', 0);
                 }
             );
     }
@@ -1464,8 +1455,7 @@ class Asset extends Depreciable
     public function scopeUndeployable($query)
     {
         return $query->whereHas(
-            'assetstatus',
-            function ($query) {
+            'assetstatus', function ($query) {
                 $query->where('deployable', '=', 0)
                     ->where('pending', '=', 0)
                     ->where('archived', '=', 0);
@@ -1484,8 +1474,7 @@ class Asset extends Depreciable
     public function scopeNotArchived($query)
     {
         return $query->whereHas(
-            'assetstatus',
-            function ($query) {
+            'assetstatus', function ($query) {
                 $query->where('archived', '=', 0);
             }
         );
@@ -1570,10 +1559,10 @@ class Asset extends Depreciable
                 $query->OverdueForAudit();
             }
         )->orWhere(
-                function ($query) use ($settings) {
-                    $query->DueForAudit($settings);
-                }
-            );
+            function ($query) use ($settings) {
+                $query->DueForAudit($settings);
+            }
+        );
     }
 
 
@@ -1629,10 +1618,10 @@ class Asset extends Depreciable
                 $query->OverdueForCheckin();
             }
         )->orWhere(
-                function ($query) use ($settings) {
-                    $query->DueForCheckin($settings);
-                }
-            );
+            function ($query) use ($settings) {
+                $query->DueForCheckin($settings);
+            }
+        );
     }
 
 
@@ -1651,10 +1640,9 @@ class Asset extends Depreciable
     public function scopeAssetsForShow($query)
     {
 
-        if (Setting::getSettings()->show_archived_in_list != 1) {
+        if (Setting::getSettings()->show_archived_in_list!=1) {
             return $query->whereHas(
-                'assetstatus',
-                function ($query) {
+                'assetstatus', function ($query) {
                     $query->where('archived', '=', 0);
                 }
             );
@@ -1675,8 +1663,7 @@ class Asset extends Depreciable
     public function scopeArchived($query)
     {
         return $query->whereHas(
-            'assetstatus',
-            function ($query) {
+            'assetstatus', function ($query) {
                 $query->where('deployable', '=', 0)
                     ->where('pending', '=', 0)
                     ->where('archived', '=', 1);
@@ -1711,8 +1698,7 @@ class Asset extends Depreciable
 
         return Company::scopeCompanyables($query->where($table . '.requestable', '=', 1))
             ->whereHas(
-                'assetstatus',
-                function ($query) {
+                'assetstatus', function ($query) {
                     $query->where(
                         function ($query) {
                             $query->where('deployable', '=', 1)
@@ -1790,20 +1776,17 @@ class Asset extends Depreciable
         $search = explode(' OR ', $search);
 
         return $query->leftJoin(
-            'users as assets_users',
-            function ($leftJoin) {
+            'users as assets_users', function ($leftJoin) {
                 $leftJoin->on('assets_users.id', '=', 'assets.assigned_to')
                     ->where('assets.assigned_type', '=', User::class);
             }
         )->leftJoin(
-                'locations as assets_locations',
-                function ($leftJoin) {
+                'locations as assets_locations', function ($leftJoin) {
                     $leftJoin->on('assets_locations.id', '=', 'assets.assigned_to')
                         ->where('assets.assigned_type', '=', Location::class);
                 }
             )->leftJoin(
-                'assets as assigned_assets',
-                function ($leftJoin) {
+                'assets as assigned_assets', function ($leftJoin) {
                     $leftJoin->on('assigned_assets.id', '=', 'assets.assigned_to')
                         ->where('assets.assigned_type', '=', self::class);
                 }
@@ -1811,30 +1794,26 @@ class Asset extends Depreciable
                 function ($query) use ($search) {
                     foreach ($search as $search) {
                         $query->whereHas(
-                            'model',
-                            function ($query) use ($search) {
+                            'model', function ($query) use ($search) {
                                 $query->whereHas(
-                                    'category',
-                                    function ($query) use ($search) {
+                                    'category', function ($query) use ($search) {
                                         $query->where(
                                             function ($query) use ($search) {
-                                                $query->where('categories.name', 'LIKE', '%' . $search . '%')
-                                                    ->orWhere('models.name', 'LIKE', '%' . $search . '%')
-                                                    ->orWhere('models.model_number', 'LIKE', '%' . $search . '%');
+                                                $query->where('categories.name', 'LIKE', '%'.$search.'%')
+                                                    ->orWhere('models.name', 'LIKE', '%'.$search.'%')
+                                                    ->orWhere('models.model_number', 'LIKE', '%'.$search.'%');
                                             }
                                         );
                                     }
                                 );
                             }
                         )->orWhereHas(
-                                'model',
-                                function ($query) use ($search) {
+                                'model', function ($query) use ($search) {
                                     $query->whereHas(
-                                        'manufacturer',
-                                        function ($query) use ($search) {
+                                        'manufacturer', function ($query) use ($search) {
                                             $query->where(
                                                 function ($query) use ($search) {
-                                                    $query->where('manufacturers.name', 'LIKE', '%' . $search . '%');
+                                                    $query->where('manufacturers.name', 'LIKE', '%'.$search.'%');
                                                 }
                                             );
                                         }
@@ -1842,30 +1821,30 @@ class Asset extends Depreciable
                                 }
                             )->orWhere(
                                 function ($query) use ($search) {
-                                    $query->where('assets_users.first_name', 'LIKE', '%' . $search . '%')
-                                        ->orWhere('assets_users.last_name', 'LIKE', '%' . $search . '%')
-                                        ->orWhere('assets_users.username', 'LIKE', '%' . $search . '%')
-                                        ->orWhere('assets_users.jobtitle', 'LIKE', '%' . $search . '%')
+                                    $query->where('assets_users.first_name', 'LIKE', '%'.$search.'%')
+                                        ->orWhere('assets_users.last_name', 'LIKE', '%'.$search.'%')
+                                        ->orWhere('assets_users.username', 'LIKE', '%'.$search.'%')
+                                        ->orWhere('assets_users.jobtitle', 'LIKE', '%'.$search.'%')
                                         ->orWhereMultipleColumns(
                                             [
-                                                'assets_users.first_name',
-                                                'assets_users.last_name',
-                                                'assets_users.jobtitle',
+                                            'assets_users.first_name',
+                                            'assets_users.last_name',
+                                            'assets_users.jobtitle',
                                             ],
                                             $search
                                         )
-                                        ->orWhere('assets_locations.name', 'LIKE', '%' . $search . '%')
-                                        ->orWhere('assigned_assets.name', 'LIKE', '%' . $search . '%');
+                                        ->orWhere('assets_locations.name', 'LIKE', '%'.$search.'%')
+                                        ->orWhere('assigned_assets.name', 'LIKE', '%'.$search.'%');
                                 }
-                            )->orWhere('assets.name', 'LIKE', '%' . $search . '%')
-                            ->orWhere('assets.asset_tag', 'LIKE', '%' . $search . '%')
-                            ->orWhere('assets.serial', 'LIKE', '%' . $search . '%')
-                            ->orWhere('assets.order_number', 'LIKE', '%' . $search . '%')
-                            ->orWhere('assets.notes', 'LIKE', '%' . $search . '%');
+                            )->orWhere('assets.name', 'LIKE', '%'.$search.'%')
+                            ->orWhere('assets.asset_tag', 'LIKE', '%'.$search.'%')
+                            ->orWhere('assets.serial', 'LIKE', '%'.$search.'%')
+                            ->orWhere('assets.order_number', 'LIKE', '%'.$search.'%')
+                            ->orWhere('assets.notes', 'LIKE', '%'.$search.'%');
                     }
 
-                }
-            )->withTrashed()->whereNull('assets.deleted_at'); //workaround for laravel bug
+            }
+        )->withTrashed()->whereNull('assets.deleted_at'); //workaround for laravel bug
     }
 
     /**
@@ -1880,17 +1859,16 @@ class Asset extends Depreciable
     public function scopeCheckedOutToTargetInDepartment($query, $search)
     {
         return $query->leftJoin(
-            'users as assets_dept_users',
-            function ($leftJoin) {
+            'users as assets_dept_users', function ($leftJoin) {
                 $leftJoin->on('assets_dept_users.id', '=', 'assets.assigned_to')
                     ->where('assets.assigned_type', '=', User::class);
             }
         )->where(
-                function ($query) use ($search) {
+            function ($query) use ($search) {
                     $query->whereIn('assets_dept_users.department_id', $search);
 
-                }
-            )->withTrashed()->whereNull('assets.deleted_at'); //workaround for laravel bug
+            }
+        )->withTrashed()->whereNull('assets.deleted_at'); //workaround for laravel bug
     }
 
 
