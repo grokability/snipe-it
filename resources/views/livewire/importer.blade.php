@@ -22,7 +22,7 @@
 
         @if($import_errors)
           <div class="col-md-12">
-            <div class="box">
+            <div class="box box-default">
                 <div class="box-body">
                     <div class="alert alert-warning">
 
@@ -60,27 +60,27 @@
 @endif
 
             <div class="col-md-9">
-                <div class="box">
+                <div class="box box-default">
                     <div class="box-body">
                         <div class="row">
 
                             <div class="col-md-12">
 
                                 @if($progress != -1)
-                                    <div class="col-md-10 col-sm-5 col-xs-12" style="height: 35px;" id='progress-container'>
+                                    <div class="col-md-10 col-sm-5 col-xs-12" style="height: 33px;" id='progress-container'>
                                         <div class="progress progress-striped-active" style="height: 100%;">
-                                            <div id='progress-bar' class="progress-bar {{ $progress_bar_class }}" role="progressbar" style="width: {{ $progress }}%">
+                                            <div id='progress-bar' class="progress-bar progress-bar-striped {{ $progress_bar_class }}" role="progressbar" style="width: {{ $progress }}%">
                                                 <h4 id="progress-text">{!! $progress_message  !!}</h4>
                                             </div>
                                         </div>
                                     </div>
                                 @endif
 
-                                <div class="col-md-4 col-sm-5 col-xs-12 text-right pull-right">
+                                <div class="col-md-2 col-sm-5 col-xs-12 text-right pull-right">
 
                                     <!-- The fileinput-button span is used to style the file input field as button -->
                                     @if (!config('app.lock_passwords'))
-                                        <span class="btn btn-primary fileinput-button">
+                                        <span class="btn btn-theme btn-block fileinput-button">
                                         <span>{{ trans('button.select_file') }}</span>
                                          <!-- The file input field used as target for the file upload widget -->
                                         <label for="files[]"><span class="sr-only">{{ trans('admin/importer/general.select_file') }}</span></label>
@@ -125,7 +125,7 @@
 
                                     @foreach($this->files as $currentFile)
 
-                                    		<tr style="{{ ($this->activeFile && ($currentFile->id == $this->activeFile->id)) ? 'font-weight: bold' : '' }}" class="{{ ($this->activeFile && ($currentFile->id == $this->activeFile->id)) ? 'warning' : '' }}">
+                                    		<tr style="{{ ($this->activeFile && ($currentFile->id == $this->activeFile->id)) ? 'font-weight: bold' : '' }}" class="{{ ($this->activeFile && ($currentFile->id == $this->activeFile->id)) ? '' : '' }}">
                                     			<td>{{ $currentFile->file_path }}</td>
                                     			<td>{{ Helper::getFormattedDateObject($currentFile->created_at, 'datetime', false) }}</td>
                                                 <td>{{ ($currentFile->adminuser) ? $currentFile->adminuser->present()->fullName : '--'}}</td>
@@ -145,12 +145,12 @@
                                     		</tr>
 
                                             @if( $currentFile && $this->activeFile && ($currentFile->id == $this->activeFile->id))
-                                                <tr class="warning">
+                                                <tr class="callout" style="padding-left: 10px;">
                                                     <td colspan="5">
 
                                                         <div class="form-group">
 
-                                                                <label for="typeOfImport" class="col-md-3 col-xs-12">
+                                                                <label for="typeOfImport" class="col-md-3 col-xs-12 control-label">
                                                                     {{ trans('general.import_type') }}
                                                                 </label>
 

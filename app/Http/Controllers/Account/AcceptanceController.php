@@ -216,7 +216,7 @@ class AcceptanceController extends Controller
             try {
                 $recipient = User::find($acceptance->alert_on_response_id);
 
-                if ($recipient) {
+                if ($recipient?->email) {
                     Log::debug('Attempting to send email acceptance.');
                     Mail::to($recipient)->send(new CheckoutAcceptanceResponseMail(
                         $acceptance,

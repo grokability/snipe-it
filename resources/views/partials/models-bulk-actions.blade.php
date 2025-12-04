@@ -15,7 +15,7 @@
                     <option value="edit">{{ trans('general.bulk_edit') }}</option>
                     <option value="delete">{{ trans('general.bulk_delete') }}</option>
                 </select>
-                <button class="btn btn-primary" id="bulkModelsEditButton" disabled>{{ trans('button.go') }}</button>
+                <button class="btn btn-theme" id="bulkModelsEditButton" disabled>{{ trans('button.go') }}</button>
             </div>
         @endcan
     @endif

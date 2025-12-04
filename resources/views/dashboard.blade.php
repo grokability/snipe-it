@@ -12,7 +12,7 @@
 @if ($snipeSettings->dashboard_message!='')
 <div class="row">
     <div class="col-md-12">
-        <div class="box">
+        <div class="box box-default">
             <!-- /.box-header -->
             <div class="box-body">
                 <div class="row">
@@ -151,7 +151,7 @@
 
     <div class="row">
         <div class="col-md-12">
-            <div class="box">
+            <div class="box box-default">
                 <div class="box-header with-border">
                     <h2 class="box-title">{{ trans('general.dashboard_info') }}</h2>
                 </div>
@@ -213,7 +213,7 @@
 <!-- recent activity -->
 <div class="row">
   <div class="col-md-8">
-    <div class="box">
+    <div class="box box-default">
       <div class="box-header with-border">
         <h2 class="box-title">{{ trans('general.recent_activity') }}</h2>
         <div class="box-tools pull-right">
@@ -235,6 +235,7 @@
                     data-side-pagination="server"
                     data-id-table="dashActivityReport"
                     data-sort-order="desc"
+                    data-show-columns="false"
                     data-sort-name="created_at"
                     id="dashActivityReport"
                     class="table table-striped snipe-table"
@@ -315,6 +316,7 @@
                                     data-pagination="false"
 									data-side-pagination="server"
 									data-sort-order="desc"
+                                    data-show-columns="false"
 									data-sort-field="assets_count"
 									id="dashCompanySummary"
 									class="table table-striped snipe-table"
@@ -385,6 +387,7 @@
 									data-sort-order="desc"
 									data-sort-field="assets_count"
 									id="dashLocationSummary"
+                                    data-show-columns="false"
 									class="table table-striped snipe-table"
 									data-url="{{ route('api.locations.index', ['sort' => 'assets_count', 'order' => 'asc']) }}">
 								<thead>
@@ -444,6 +447,7 @@
                                 data-height="400"
                                 data-pagination="false"
                                 data-side-pagination="server"
+                                data-show-columns="false"
                                 data-sort-order="desc"
                                 data-sort-field="assets_count"
                                 id="dashCategorySummary"

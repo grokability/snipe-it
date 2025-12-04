@@ -9,10 +9,9 @@
                    {{   (isset($item) && (Helper::checkIfRequired($item, 'min_amt')) ? ' required' : '') }}/>
         </div>
             <div class="col-md-7" style="margin-left: -15px;">
-
-                <a href="#" data-tooltip="true" title="{{ trans('general.min_amt_help') }}">
-                    <x-icon type="info-circle" />
-                <span class="sr-only">{{ trans('general.min_amt_help') }}</span>
+                <x-form-tooltip>
+                    {{ trans('general.min_amt_help') }}
+                </x-form-tooltip>
             </a>
         </div>
         <div class="col-md-12">
