@@ -25,7 +25,7 @@ class InventoryAlert extends Notification
     public function __construct($params, $threshold)
     {
         $this->items = $params;
-        $this->threshold = $threshold;
+        $this->threshold = $threshold ?? 0;
     }
 
     /**

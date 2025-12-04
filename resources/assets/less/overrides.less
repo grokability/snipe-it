@@ -1,18 +1,3 @@
-.skin-red
-.skin-purple
-.skin-blue
-.skin-black
-.skin-orange
-.skin-yellow
-.skin-green
-.skin-red-dark
-.skin-purple-dark
-.skin-blue-dark
-.skin-black-dark
-.skin-orange-dark
-.skin-yellow-dark
-.skin-green-dark
-.skin-contrast
 .main-header
 
 .logo {
@@ -121,21 +106,7 @@ a.accordion-header {
   padding-top: 10px;
 }
 
-.skin-red
-.skin-purple
-.skin-blue
-.skin-black
-.skin-orange
-.skin-yellow
-.skin-green
-.skin-red-dark
-.skin-purple-dark
-.skin-blue-dark
-.skin-black-dark
-.skin-orange-dark
-.skin-yellow-dark
-.skin-green-dark
-.skin-contrast
+
 .main-header
 .navbar
 .dropdown-menu li a {
@@ -207,9 +178,23 @@ a.accordion-header {
   color: #dd4b39;
 }
 
-.btn-primary.btn-outline:hover, .btn-success.btn-outline:hover, .btn-info.btn-outline:hover, .btn-warning.btn-outline:hover, .btn-danger.btn-outline:hover {
-  color: #fff;
+.btn-primary:hover,
+.btn-success:hover,
+.btn-info:hover,
+.btn-warning:hover,
+.btn-primary,
+.btn-success,
+.btn-info,
+.btn-warning,
+.btn-primary.btn-outline:hover,
+.btn-success.btn-outline:hover,
+.btn-info.btn-outline:hover,
+.btn-warning.btn-outline:hover,
+.btn-danger.btn-outline:hover {
+  color: #fff !important;
 }
+
+
 
 .slideout-menu {
   position: fixed;
@@ -315,21 +300,7 @@ a.accordion-header {
   /* adjust based on your layout */
 
 }
-.skin-red
-.skin-purple
-.skin-blue
-.skin-black
-.skin-orange
-.skin-yellow
-.skin-green
-.skin-red-dark
-.skin-purple-dark
-.skin-blue-dark
-.skin-black-dark
-.skin-orange-dark
-.skin-yellow-dark
-.skin-green-dark
-.skin-contrast
+
 .main-header
 .navbar
 .dropdown-menu li a {
@@ -396,8 +367,6 @@ body {
     word-spacing:1px;
     letter-spacing:0.2px;
     font: 15px "Times New Roman", Times, serif;
-    background:white;
-    color:black;
     width: 100%;
     float: none;
   }
@@ -502,7 +471,6 @@ body {
 }
 
 .select2-selection--multiple {
-    border-color: #d2d6de !important;
     overflow-y: auto;
 }
 
@@ -653,29 +621,22 @@ h4 {
 * display for non-table data as of v6
 **/
 .row-new-striped  > .row:nth-of-type(even) {
-  background: #FFFFFF;
-  border-top: 1px solid #dddddd;
   line-height: 1.9;
   display: table-row;
 }
 
 .row-new-striped > .row:nth-of-type(odd)  {
-  background-color: #F8F8F8;
-  border-top: 1px solid #dddddd;
   display: table-row;
-  line-height: 1.9;
   padding: 2px;
 }
 
 .row-new-striped div {
   display: table-cell;
-  border-top: 1px solid #dddddd;
   padding: 6px;
 }
 
 .row-new-striped div {
   display: table-cell;
-  border-top: 1px solid #dddddd;
   padding: 6px;
 }
 
@@ -1021,7 +982,6 @@ input[type="checkbox"]::before {
   transform: scale(0);
   transition: 120ms transform ease-in-out;
   box-shadow: inset 1em 1em rgb(211, 211, 211);
-
   content: "";
   width: 1em;
   height: 1em;
@@ -1089,7 +1049,6 @@ input[type="radio"]::before {
   border-radius: 50%;
   transform: scale(0);
   transition: 120ms transform ease-in-out;
-  box-shadow: inset 1em 1em #428bca;
 }
 
 input[type="radio"]:checked::before {
@@ -1239,13 +1198,7 @@ caption.tableCaption {
   margin-left: -47px;
   margin-top: 2px;
 }
-.popover.help-popover,
-.popover.help-popover .popover-content,
-.popover.help-popover .popover-body,
-.popover.help-popover .popover-title,
-.popover.help-popover .popover-header {
-  color: #000;
-}
+
 
 .visually-hidden {
   width: 1px;
@@ -1262,15 +1215,12 @@ input[name="columnsSearch"] {
 }
 
 .callout.callout-legend {
-  background-color: #f4f4f4;
-  border-left: 5px solid #959495;
   padding: 15px 30px 15px 15px;
   font-size: 100%;
   border-radius: 0px;
 }
 
 .callout.callout-legend h4 {
-  color: #333;
   font-size: 16px;
   font-weight: bold;
   margin-top: 5px;
@@ -1278,19 +1228,12 @@ input[name="columnsSearch"] {
 }
 
 .callout.callout-legend a {
-  color: #333333;
   text-decoration: none;
   cursor: pointer;
 }
 
 p.callout-subtext {
-  color:#333;
   margin-top: 5px;
-}
-
-p.callout-subtext a:hover, p.callout-subtext a:visited, p.callout-subtext a:link {
-  color: #31708f;
-  text-decoration: none;
 }
 
 /**

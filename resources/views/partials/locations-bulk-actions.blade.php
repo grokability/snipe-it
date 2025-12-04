@@ -13,7 +13,7 @@
                 <select name="bulk_actions" class="form-control select2" style="width: 200px;" aria-label="bulk_actions">
                     <option value="delete">{{ trans('general.bulk_delete') }}</option>
                 </select>
-                <button class="btn btn-primary" id="bulkLocationsEditButton" disabled>{{ trans('button.go') }}</button>
+                <button class="btn btn-theme" id="bulkLocationsEditButton" disabled>{{ trans('button.go') }}</button>
             </div>
 
     </form>

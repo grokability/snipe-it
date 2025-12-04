@@ -29,7 +29,7 @@
                     <option value="bulkpasswordreset">{{ trans('button.send_password_link') }}</option>
                     <option value="print">{{ trans('admin/users/general.print_assigned') }}</option>
                 </select>
-                <button class="btn btn-primary" id="bulkUserEditButton" disabled>{{ trans('button.go') }}</button>
+                <button class="btn btn-theme" id="bulkUserEditButton" disabled>{{ trans('button.go') }}</button>
             </div>
             </form>
         @endif

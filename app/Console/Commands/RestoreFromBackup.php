@@ -52,7 +52,7 @@ class SQLStreamer {
             /* we *could* have made the ^INSERT INTO blah VALUES$ turn on the capturing state, and closed it with
                a ^(blahblah);$ but it's cleaner to not have to manage the state machine. We're just going to
                assume that (blahblah), or (blahblah); are values for INSERT and are always acceptable. */
-            "<^/\*!40101 SET NAMES '?[a-zA-Z0-9_-]+'? \*/;$>"                                   => false, //using weird delimiters (<,>) for readability. allow quoted or unquoted charsets
+            "<^/\*![0-9]{5} SET NAMES '?[a-zA-Z0-9_-]+'? \*/;$>" => false, //using weird delimiters (<,>) for readability. allow quoted or unquoted charsets
             "<^/\*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' \*/;$>" => false, //same, now handle zero-values
         ];
 

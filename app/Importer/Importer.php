@@ -93,6 +93,7 @@ abstract class Importer
         'min_amt' => 'minimum quantity',
         'remote' => 'remote',
         'vip' => 'vip',
+        'tag_color' => 'tag color',
     ];
     /**
      * Map of item fields->csv names

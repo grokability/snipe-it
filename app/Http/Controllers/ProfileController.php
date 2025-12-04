@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ImageUploadRequest;
 use App\Http\Transformers\ProfileTransformer;
 use App\Models\Actionlog;
+use App\Models\Asset;
 use App\Models\Setting;
 use App\Models\User;
 use App\Notifications\CurrentInventory;
@@ -53,10 +54,12 @@ class ProfileController extends Controller
         $user->last_name = $request->input('last_name');
         $user->website = $request->input('website');
         $user->gravatar = $request->input('gravatar');
-        $user->skin = $request->input('skin');
         $user->phone = $request->input('phone');
         $user->enable_sounds = $request->input('enable_sounds', false);
         $user->enable_confetti = $request->input('enable_confetti', false);
+        $user->link_light_color = $request->input('link_light_color', '#296282');
+        $user->link_dark_color = $request->input('link_dark_color', '#296282');
+        $user->nav_link_color = $request->input('nav_link_color', '#FFFFFF');
 
         if (! config('app.lock_passwords')) {
             $user->locale = $request->input('locale');
@@ -249,7 +252,10 @@ class ProfileController extends Controller
         $logentry = Actionlog::where('filename', $filename)->first();
 
         // Make sure the user has permission to view this file
-        if (auth()->id() != $logentry->target_id) {
+        // Also allow if the user (manager) able to view both users and assets
+        $allowed_to_view_users_assets = Gate::allows('view', User::class) && Gate::allows('view', Asset::class);
+
+        if (auth()->id() != $logentry->target_id && !$allowed_to_view_users_assets) {
             return redirect()->route('account')->with('error', trans('general.generic_model_not_found', ['model' => 'file']));
         }
 

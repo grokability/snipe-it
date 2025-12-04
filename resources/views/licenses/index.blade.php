@@ -13,7 +13,7 @@
 
 <div class="row">
   <div class="col-md-12">
-    <div class="box">
+    <div class="box box-default">
       <div class="box-body">
 
           <table

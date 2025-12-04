@@ -65,7 +65,7 @@
     <input type="password" name="password_fake" id="password_fake" value="" style="display:none;" />
 
     <div class="row">
-        <div class="col-md-10 col-md-offset-1">
+        <div class="col-md-8 col-md-offset-2">
 
 
             <div class="panel box box-default">
