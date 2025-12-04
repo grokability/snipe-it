@@ -34,11 +34,9 @@ use Livewire\Attributes\On;
  *   tag: 'bulk-import'
  * });
  *
- * Dismiss by tag:
- * Livewire.dispatch('dismissNotificationByTag', 'bulk-import');
- *
- * Dismiss by id (you usually call this from a close button in Blade):
- * Livewire.dispatch('dismissNotification', someId);
+ * Dismiss all notifcations:
+ * Livewire.dispatch('dismissAllNotifications');
+ * 
  */
 class Notifications extends Component
 {
@@ -201,29 +199,6 @@ class Notifications extends Component
     protected function addAlert(array $alert): void
     {
         $this->liveAlerts[] = $alert;
-    }
-
-
-    /**
-     * Dismiss by alert unique ID.
-     */
-    #[On('dismissNotification')]
-    public function dismiss(string $id): void
-    {
-        $this->liveAlerts = array_values(
-            array_filter($this->liveAlerts, fn ($a) => $a['id'] !== $id)
-        );
-    }
-
-    /**
-     * Dismiss all alerts sharing a tag.
-     */
-    #[On('dismissNotificationByTag')]
-    public function dismissByTag(string $tag): void
-    {
-        $this->liveAlerts = array_values(
-            array_filter($this->liveAlerts, fn ($a) => $a['tag'] !== $tag)
-        );
     }
 
     /**
