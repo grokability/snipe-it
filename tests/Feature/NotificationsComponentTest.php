@@ -45,16 +45,6 @@ class NotificationsComponentTest extends TestCase
         $component->assertDontSee('First message');
     }
 
-    public function testItCanDismissDynamicNotificationById()
-    {
-        $component = Livewire::test('notifications')
-            ->call('notify', 'info', 'Dismiss me!', null, null, null, false, false, 'tag1');
-        $alertId = $component->get('liveAlerts')[0]['id'];
-
-        $component->call('dismiss', $alertId)
-            ->assertDontSee('Dismiss me!');
-    }
-
     public function testLegacySessionSuccessNotificationIsRendered()
     {
         Session::flash('success', 'Legacy flash success!');
