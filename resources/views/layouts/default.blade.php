@@ -1675,8 +1675,7 @@
                             </div>
                         @endif
 
-                        {{-- @include('notifications') --}}
-                        <livewire:notifications />
+                        @include('notifications')
                     </div>
 
 
