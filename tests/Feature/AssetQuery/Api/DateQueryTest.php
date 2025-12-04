@@ -104,24 +104,26 @@ class DateQueryTest extends TestCase
         $assetA = Asset::factory()->create([
             'model_id'       => $modelA->id,
             'purchase_date'  => $purchase,
-            'asset_eol_date' => $eolA,
             'asset_tag'      => 'API-EOLEND-A',
             'created_by'     => $owner->id,
         ]);
         $assetB = Asset::factory()->create([
             'model_id'       => $modelB->id,
             'purchase_date'  => $purchase,
-            'asset_eol_date' => $eolB,
             'asset_tag'      => 'API-EOLEND-B',
             'created_by'     => $owner->id,
         ]);
         $assetC = Asset::factory()->create([
             'model_id'       => $modelC->id,
             'purchase_date'  => $purchase,
-            'asset_eol_date' => $eolC,
             'asset_tag'      => 'API-EOLEND-C',
             'created_by'     => $owner->id,
         ]);
+
+        // needed because on creation there is a randomizer in the factory
+        $assetA->update(['asset_eol_date' => $eolA]);
+        $assetB->update(['asset_eol_date' => $eolB]);
+        $assetC->update(['asset_eol_date' => $eolC]);
 
         $filter = [
             [
@@ -133,7 +135,6 @@ class DateQueryTest extends TestCase
                 'operator' => 'contains',
                 'logic'    => 'AND',
             ],
-            
             [
                 'field'    => 'created_by',
                 'value'    => [$owner->id],
