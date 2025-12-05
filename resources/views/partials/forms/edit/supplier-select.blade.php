@@ -8,8 +8,8 @@
 
     <div class="col-md-1 col-sm-1 text-left">
         @can('create', \App\Models\Supplier::class)
-            @if (!isset($hide_new) || $hide_new!='true')
-                <a href='{{ route('modal.show', 'supplier') }}' data-toggle="modal" data-target="#createModal" data-select='supplier_select' class="btn btn-sm btn-primary">{{ trans('button.new') }}</a>
+            @if ((!isset($hide_new)) || ($hide_new!='true'))
+                <a href='{{ route('modal.show', 'supplier') }}' data-toggle="modal"  data-target="#createModal" data-select='supplier_select' class="btn btn-sm btn-primary">{{ trans('button.new') }}</a>
             @endif
         @endcan
     </div>

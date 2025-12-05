@@ -1,5 +1,5 @@
 <!-- Location -->
-<div id="location_id" class="form-group{{ $errors->has('location_id') ? ' has-error' : '' }}"{!! (isset($style)) ? ' style="'.e($style).'"' : '' !!}>
+<div id="location_id" class="form-group{{ $errors->has('location_id') ? ' has-error' : '' }}"{!!  (isset($style)) ? ' style="'.e($style).'"' : '' !!}>
 
     <label for="location_id" class="col-md-3 control-label">{{ $translated_name }}</label>
     <div class="col-md-8">

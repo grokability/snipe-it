@@ -1,5 +1,5 @@
 <!-- License -->
-<div id="assigned_license" class="form-group{{ $errors->has($fieldname) ? ' has-error' : '' }}"{!! (isset($style)) ? ' style="'.e($style).'"' : ''  !!}>
+<div id="assigned_license" class="form-group{{ $errors->has($fieldname) ? ' has-error' : '' }}"{!!  (isset($style)) ? ' style="'.e($style).'"' : ''  !!}>
     <label for="{{ $fieldname }}" class="col-md-3 control-label">{{ $translated_name }}</label>
     <div class="col-md-7">
         @include('partials.select/dropdowns/license-select')
