@@ -486,11 +486,9 @@ class AssetsController extends Controller
          * Include additional associated relationships
          */
         if ($request->input('components')) {
-            $assets->loadMissing([
-                'components' => function ($query) {
+            $assets->loadMissing(['components' => function ($query) {
                     $query->orderBy('created_at', 'desc');
-                }
-            ]);
+                }]);
         }
 
         return (new $transformer)->transformAssets($assets, $total, $request);
@@ -586,8 +584,8 @@ class AssetsController extends Controller
     public function show(Request $request, $id): JsonResponse | array
     {
         if ($asset = Asset::with('assetstatus')
-                ->with('assignedTo')->withTrashed()
-                ->withCount('checkins as checkins_count', 'checkouts as checkouts_count', 'userRequests as user_requests_count')->find($id)
+            ->with('assignedTo')->withTrashed()
+            ->withCount('checkins as checkins_count', 'checkouts as checkouts_count', 'userRequests as user_requests_count')->find($id)
         ) {
             $this->authorize('view', $asset);
 
@@ -1391,7 +1389,7 @@ class AssetsController extends Controller
 
              // Validate that asset tags were provided in the request
             if (!$request->filled('asset_tags')) {
-                return response()->json(Helper::formatStandardApiResponse('error', null,
+                return response()->json(Helper::formatStandardApiResponse('error', null, 
                     trans('admin/hardware/message.no_assets_selected')), 400);
             }
 
@@ -1402,8 +1400,7 @@ class AssetsController extends Controller
              // Return error if no assets were found for the provided tags
             if ($assets->isEmpty()) {
                 return response()->json(Helper::formatStandardApiResponse('error', null,
-                    trans('admin/hardware/message.does_not_exist')
-                ), 404);
+                    trans('admin/hardware/message.does_not_exist')), 404);
             }
 
             try {
@@ -1423,9 +1420,9 @@ class AssetsController extends Controller
                 // Configure label with assets and settings
                 // bulkedit=false and count=0 are default values for label generation
                 $label = $label->with('assets', $assets)
-                          ->with('settings', $settings)
-                          ->with('bulkedit', false)
-                          ->with('count', 0);
+                      ->with('settings', $settings)
+                      ->with('bulkedit', false)
+                      ->with('count', 0);
 
                 // Generate PDF using callback function
                 // The callback captures the PDF content in $pdf_content variable

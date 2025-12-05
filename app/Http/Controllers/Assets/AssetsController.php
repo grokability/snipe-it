@@ -312,7 +312,7 @@ class AssetsController extends Controller
         }
 
         session()->put(['checkout_to_type' => $request->get('checkout_to_type'),
-            'other_redirect' => 'model']);
+                       'other_redirect' =>  'model' ]);
 
 
 
@@ -422,7 +422,7 @@ class AssetsController extends Controller
             $asset->asset_eol_date = Carbon::parse($request->input('purchase_date'))->addMonths($asset->model->eol)->format('Y-m-d');
             $asset->eol_explicit = false;
         } elseif ($request->filled('asset_eol_date')) {
-            $asset->asset_eol_date = $request->input('asset_eol_date', null);
+           $asset->asset_eol_date = $request->input('asset_eol_date', null);
             $months = (int) Carbon::parse($asset->asset_eol_date)->diffInMonths($asset->purchase_date, true);
            if($asset->model->eol) {
                if($months != $asset->model->eol > 0) {
