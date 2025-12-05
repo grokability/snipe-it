@@ -1,5 +1,5 @@
 <!-- Consumable -->
-<div id="assigned_consumable" class="form-group{{ $errors->has($fieldname) ? ' has-error' : '' }}"{!! (isset($style)) ? ' style="'.e($style).'"' : ''  !!}>
+<div id="assigned_consumable" class="form-group{{ $errors->has($fieldname) ? ' has-error' : '' }}"{!!  (isset($style)) ? ' style="'.e($style).'"' : ''  !!}>
     <label for="{{ $fieldname }}" class="col-md-3 control-label">{{ $translated_name }}</label>
     <div class="col-md-7{{ isset($required) && $required == 'true' ? ' required' : '' }}">
         @include('partials.select/dropdowns/consumable-select')
