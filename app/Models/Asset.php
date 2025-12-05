@@ -125,7 +125,7 @@ class Asset extends Depreciable
         'rtd_location_id'   => ['nullable', 'exists:locations,id', 'fmcs_location'],
         'purchase_date'     => ['nullable', 'date', 'date_format:Y-m-d'],
         'serial'            => ['nullable', 'string', 'unique_undeleted:assets,serial'],
-        'purchase_cost'     => ['nullable', 'numeric', 'gte:0', 'max:9999999999999.99'],
+        'purchase_cost'     => ['nullable', 'numeric', 'gte:0', 'max:99999999999999999.99'],
         'supplier_id'       => ['nullable', 'exists:suppliers,id'],
         'asset_eol_date'    => ['nullable', 'date'],
         'eol_explicit'      => ['nullable', 'boolean'],
@@ -1769,7 +1769,7 @@ class Asset extends Depreciable
      *
      * @return \Illuminate\Database\Query\Builder          Modified query builder
      */
-    public function scopeAssignedSearch($query, $search)
+        public function scopeAssignedSearch($query, $search)
     {
         $search = explode(' OR ', $search);
 
@@ -1800,48 +1800,47 @@ class Asset extends Depreciable
                                             $query->where('categories.name', 'LIKE', '%'.$search.'%')
                                                 ->orWhere('models.name', 'LIKE', '%'.$search.'%')
                                                 ->orWhere('models.model_number', 'LIKE', '%'.$search.'%');
-                                            }
-                                        );
-                                    }
-                                );
-                            }
-                        )->orWhereHas(
-                                'model', function ($query) use ($search) {
-                                    $query->whereHas(
-                                        'manufacturer', function ($query) use ($search) {
-                                            $query->where(
-                                                function ($query) use ($search) {
-                                                    $query->where('manufacturers.name', 'LIKE', '%'.$search.'%');
-                                                }
-                                            );
                                         }
                                     );
                                 }
-                            )->orWhere(
-                                function ($query) use ($search) {
-                                    $query->where('assets_users.first_name', 'LIKE', '%'.$search.'%')
-                                        ->orWhere('assets_users.last_name', 'LIKE', '%'.$search.'%')
-                                        ->orWhere('assets_users.username', 'LIKE', '%'.$search.'%')
-                                        ->orWhere('assets_users.jobtitle', 'LIKE', '%'.$search.'%')
-                                        ->orWhereMultipleColumns(
-                                            [
-                                            'assets_users.first_name',
-                                            'assets_users.last_name',
-                                            'assets_users.jobtitle',
-                                            ],
-                                            $search
-                                        )
-                                        ->orWhere('assets_locations.name', 'LIKE', '%'.$search.'%')
-                                        ->orWhere('assigned_assets.name', 'LIKE', '%'.$search.'%');
+                            );
+                        }
+                    )->orWhereHas(
+                        'model', function ($query) use ($search) {
+                            $query->whereHas(
+                                'manufacturer', function ($query) use ($search) {
+                                    $query->where(
+                                        function ($query) use ($search) {
+                                            $query->where('manufacturers.name', 'LIKE', '%'.$search.'%');
+                                        }
+                                    );
                                 }
+                            );
+                        }
+                    )->orWhere(
+                        function ($query) use ($search) {
+                            $query->where('assets_users.first_name', 'LIKE', '%'.$search.'%')
+                                ->orWhere('assets_users.last_name', 'LIKE', '%'.$search.'%')
+                                ->orWhere('assets_users.username', 'LIKE', '%'.$search.'%')
+                                ->orWhere('assets_users.jobtitle', 'LIKE', '%'.$search.'%')
+                                ->orWhereMultipleColumns(
+                                    [
+                                    'assets_users.first_name',
+                                    'assets_users.last_name',
+                                    'assets_users.jobtitle',
+                                    ], $search
+                                )
+                                ->orWhere('assets_locations.name', 'LIKE', '%'.$search.'%')
+                                ->orWhere('assigned_assets.name', 'LIKE', '%'.$search.'%');
+                        }
                     )->orWhere('assets.name', 'LIKE', '%'.$search.'%')
                         ->orWhere('assets.asset_tag', 'LIKE', '%'.$search.'%')
                         ->orWhere('assets.serial', 'LIKE', '%'.$search.'%')
                         ->orWhere('assets.order_number', 'LIKE', '%'.$search.'%')
                         ->orWhere('assets.notes', 'LIKE', '%'.$search.'%');
-                    }
+                }
 
-        }
+            }
         )->withTrashed()->whereNull('assets.deleted_at'); //workaround for laravel bug
     }
 
