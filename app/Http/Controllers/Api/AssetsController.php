@@ -585,16 +585,9 @@ class AssetsController extends Controller
      */
     public function show(Request $request, $id): JsonResponse | array
     {
-        if (
-            $asset = Asset::with('assetstatus')
-                ->with('assignedTo')
-                ->withTrashed()
-                ->withCount(
-                    'checkins as checkins_count', 
-                    'checkouts as checkouts_count', 
-                    'userRequests as user_requests_count'
-                )
-                ->find($id)
+        if ($asset = Asset::with('assetstatus')
+                ->with('assignedTo')->withTrashed()
+                ->withCount('checkins as checkins_count', 'checkouts as checkouts_count', 'userRequests as user_requests_count')->find($id)
         ) {
             $this->authorize('view', $asset);
 
@@ -686,7 +679,7 @@ class AssetsController extends Controller
         $asset->model()->associate(AssetModel::find((int) $request->get('model_id')));
 
         $asset->fill($request->validated());
-        $asset->created_by =    auth()->id();
+        $asset->created_by    = auth()->id();
 
         /**
          * this is here just legacy reasons. Api\AssetController
@@ -1130,7 +1123,7 @@ class AssetsController extends Controller
      * @since [v4.0]
      */
     public function audit(Request $request, Asset $asset): JsonResponse
-    
+
     {
         $this->authorize('audit', Asset::class);
 
@@ -1173,7 +1166,7 @@ class AssetsController extends Controller
              * Update custom fields in the database.
              * Validation for these fields is handled through the AssetRequest form request
              * $model = AssetModel::find($request->get('model_id'));
-              */
+            */
             if (($asset->model) && ($asset->model->fieldset)) {
                 $payload['custom_fields'] = [];
                 foreach ($asset->model->fieldset->fields as $field) {
@@ -1399,8 +1392,7 @@ class AssetsController extends Controller
              // Validate that asset tags were provided in the request
             if (!$request->filled('asset_tags')) {
                 return response()->json(Helper::formatStandardApiResponse('error', null,
-                    trans('admin/hardware/message.no_assets_selected')
-                ), 400);
+                    trans('admin/hardware/message.no_assets_selected')), 400);
             }
 
              // Convert asset tags from request into collection and fetch matching assets
@@ -1431,9 +1423,9 @@ class AssetsController extends Controller
                 // Configure label with assets and settings
                 // bulkedit=false and count=0 are default values for label generation
                 $label = $label->with('assets', $assets)
-                            ->with('settings', $settings)
-                            ->with('bulkedit', false)
-                            ->with('count', 0);
+                          ->with('settings', $settings)
+                          ->with('bulkedit', false)
+                          ->with('count', 0);
 
                 // Generate PDF using callback function
                 // The callback captures the PDF content in $pdf_content variable

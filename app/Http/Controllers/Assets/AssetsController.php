@@ -135,7 +135,7 @@ class AssetsController extends Controller
      * @author [A. Gianotto] [<snipe@snipe.net>]
      * @since [v1.0]
      */
-    public function store(ImageUploadRequest $request): RedirectResponse
+    public function store(ImageUploadRequest $request) : RedirectResponse
     {
         $this->authorize(Asset::class);
 
@@ -187,23 +187,23 @@ class AssetsController extends Controller
                 $asset->asset_tag = $asset_tags[$a];
             }
 
-            $asset->company_id = $companyId;
-            $asset->model_id = $request->input('model_id');
-            $asset->order_number = $request->input('order_number');
-            $asset->notes = $request->input('notes');
-            $asset->created_by = auth()->id();
-            $asset->status_id = request('status_id');
-            $asset->warranty_months = request('warranty_months', null);
-            $asset->purchase_cost = request('purchase_cost');
-            $asset->purchase_date = request('purchase_date', null);
-            $asset->asset_eol_date = request('asset_eol_date', null);
-            $asset->assigned_to = request('assigned_to', null);
-            $asset->supplier_id = request('supplier_id', null);
-            $asset->requestable = request('requestable', 0);
-            $asset->rtd_location_id = request('rtd_location_id', null);
-            $asset->byod = request('byod', 0);
+            $asset->company_id              = $companyId;
+            $asset->model_id                = $request->input('model_id');
+            $asset->order_number            = $request->input('order_number');
+            $asset->notes                   = $request->input('notes');
+            $asset->created_by              = auth()->id();
+            $asset->status_id               = request('status_id');
+            $asset->warranty_months         = request('warranty_months', null);
+            $asset->purchase_cost           = request('purchase_cost');
+            $asset->purchase_date           = request('purchase_date', null);
+            $asset->asset_eol_date          = request('asset_eol_date', null);
+            $asset->assigned_to             = request('assigned_to', null);
+            $asset->supplier_id             = request('supplier_id', null);
+            $asset->requestable             = request('requestable', 0);
+            $asset->rtd_location_id         = request('rtd_location_id', null);
+            $asset->byod                    = request('byod', 0);
 
-            if (!empty($settings->audit_interval)) {
+            if (! empty($settings->audit_interval)) {
                 $asset->next_audit_date = Carbon::now()->addMonths((int) $settings->audit_interval)->toDateString();
             }
 
@@ -215,9 +215,9 @@ class AssetsController extends Controller
             if ($request->has('use_cloned_image')) {
                 $cloned_model_img = Asset::select('image')->find($request->input('clone_image_from_id'));
                 if ($cloned_model_img) {
-                    $new_image_name = 'clone-' . date('U') . '-' . $cloned_model_img->image;
-                    $new_image = 'assets/' . $new_image_name;
-                    Storage::disk('public')->copy('assets/' . $cloned_model_img->image, $new_image);
+                    $new_image_name = 'clone-'.date('U').'-'.$cloned_model_img->image;
+                    $new_image = 'assets/'.$new_image_name;
+                    Storage::disk('public')->copy('assets/'.$cloned_model_img->image, $new_image);
                     $asset->image = $new_image_name;
                 }
 
@@ -288,15 +288,14 @@ class AssetsController extends Controller
                 $failures[] = join(",", $asset->getErrors()->all());
             }
         }
-        if ($request->get('redirect_option') === 'back') {
+        if($request->get('redirect_option') === 'back') {
             session()->put(['redirect_option' => 'index']);
         } else {
             session()->put(['redirect_option' => $request->get('redirect_option')]);
         }
 
         session()->put(['checkout_to_type' => $request->get('checkout_to_type'),
-            'other_redirect' => 'model'
-        ]);
+            'other_redirect' => 'model']);
 
 
 
@@ -399,14 +398,14 @@ class AssetsController extends Controller
         $asset->status_id = $request->input('status_id', null);
         $asset->warranty_months = $request->input('warranty_months', null);
         $asset->purchase_cost = $request->input('purchase_cost', null);
-        $asset->purchase_date = $request->input('purchase_date', null); 
+        $asset->purchase_date = $request->input('purchase_date', null);
         $asset->next_audit_date = $request->input('next_audit_date', null);
         if ($request->filled('purchase_date') && !$request->filled('asset_eol_date') && ($asset->model?->eol > 0)) {
-            $asset->purchase_date = $request->input('purchase_date', null);
+            $asset->purchase_date = $request->input('purchase_date', null); 
             $asset->asset_eol_date = Carbon::parse($request->input('purchase_date'))->addMonths($asset->model->eol)->format('Y-m-d');
             $asset->eol_explicit = false;
         } elseif ($request->filled('asset_eol_date')) {
-             $asset->asset_eol_date = $request->input('asset_eol_date', null);
+            $asset->asset_eol_date = $request->input('asset_eol_date', null);
             $months = (int) Carbon::parse($asset->asset_eol_date)->diffInMonths($asset->purchase_date, true);
            if($asset->model->eol) {
                if($months != $asset->model->eol > 0) {
@@ -419,7 +418,7 @@ class AssetsController extends Controller
            }
         } elseif (!$request->filled('asset_eol_date') && (($asset->model?->eol) == 0)) {
            $asset->asset_eol_date = null;
-           $asset->eol_explicit = false;
+		   $asset->eol_explicit = false;
         }
         $asset->supplier_id = $request->input('supplier_id', null);
         $asset->expected_checkin = $request->input('expected_checkin', null);
@@ -801,7 +800,7 @@ class AssetsController extends Controller
 
                 if ($isCheckinHeaderExplicit) {
                     //checkin date not empty, assume past transaction or future checkin date (expected)
-                    if (!empty(Helper::array_smart_fetch($row, 'checkin date'))) {
+                    if (! empty(Helper::array_smart_fetch($row, 'checkin date'))) {
                         $item[$asset_tag][$batch_counter]['checkin_date'] = Carbon::parse(Helper::array_smart_fetch($row, 'checkin date'))->format('Y-m-d H:i:s');
                     } else {
                         $item[$asset_tag][$batch_counter]['checkin_date'] = '';
@@ -864,7 +863,7 @@ class AssetsController extends Controller
                             'target_id' => $item[$asset_tag][$batch_counter]['user_id'],
                             'target_type' => User::class,
                             'created_at' =>  $item[$asset_tag][$batch_counter]['checkout_date'],
-                            'action_type'  => 'checkout',
+                            'action_type'   => 'checkout',
                         ]);
 
                         $checkin_date = $item[$asset_tag][$batch_counter]['checkin_date'];
@@ -874,7 +873,7 @@ class AssetsController extends Controller
                             // if checkin date header exists, assume that empty or future date is still checked out
                             // if checkin is before today's date, assume it's checked in and do not assign user ID, if checkin date is in the future or blank, this is the expected checkin date, items are checked out
 
-                            if ((strtotime($checkin_date) > strtotime(Carbon::now())) || (empty($checkin_date))) 
+                            if ((strtotime($checkin_date) > strtotime(Carbon::now())) || (empty($checkin_date)))
                             {
                                 //only do this if item is checked out
                                 $asset->assigned_to = $user->id;
@@ -983,7 +982,7 @@ class AssetsController extends Controller
     }
 
 
-    public function audit(Asset $asset) : View | RedirectResponse
+    public function audit(Asset $asset): View | RedirectResponse
     {
         $this->authorize('audit', Asset::class);
         $settings = Setting::getSettings();

@@ -71,6 +71,3 @@ storage/ldap_client_tls.key
 /storage/framework/testing
 
 /.phpunit.cache
-
-#Ignore vscode AI rules
-.github/instructions/codacy.instructions.md
