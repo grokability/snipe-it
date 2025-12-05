@@ -38,7 +38,7 @@
   <div class="col-md-3">
     <h2>{{ trans('admin/statuslabels/table.about') }}</h2>
 
-      <div class="box">
+      <div class="box box-default">
           <div class="box-body">
               <p>{!!  trans('admin/statuslabels/table.info') !!}</p>
           </div>

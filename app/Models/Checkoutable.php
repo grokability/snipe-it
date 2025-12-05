@@ -13,7 +13,7 @@ class Checkoutable
         public string $name,
         public string $type,
         public object $acceptance,
-        public object $assignee,
+        public readonly User|Asset|Location|null $assignee,
         public readonly string $plain_text_category,
         public readonly string $plain_text_model,
         public readonly string $plain_text_name,
@@ -43,8 +43,8 @@ class Checkoutable
             $name = optional($unaccepted_row->present())->nameUrl() ?? '';
         }
         if($unaccepted_row instanceof LicenseSeat){
-            $category = optional($unaccepted_row->license->category?->present())->nameUrl() ?? '';
-            $company = optional($unaccepted_row->license->company?->present())?->nameUrl() ?? '';
+            $category = optional($unaccepted_row->license?->category?->present())->nameUrl() ?? '';
+            $company = optional($unaccepted_row->license?->company?->present())?->nameUrl() ?? '';
             $model = '';
             $name = $unaccepted_row->license->present()->nameUrl() ?? '';
         }

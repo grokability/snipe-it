@@ -74,7 +74,8 @@ class AcceptanceItemDeclinedNotification extends Notification
                 'company_name'  => $this->company_name,
                 'qty'           => $this->qty,
                 'admin'         => $this->admin,
-                'intro_text'    => trans('mail.acceptance_declined_greeting'),
+                'user'          => $this->assigned_to,
+                'intro_text'    => trans('mail.acceptance_declined_greeting', ['user' => $this->assigned_to]),
             ])
             ->subject('⚠️ '.trans('mail.acceptance_declined', ['user' => $this->assigned_to, 'item' => $this->item_name]))
             ->withSymfonyMessage(function (Email $message) {

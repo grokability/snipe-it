@@ -34,14 +34,14 @@
     <div class="col-md-9 col-md-offset-3">
 
             @if (($setting->$logoVariable!='') && (Storage::disk('public')->exists(($logoPath ?? ''). $snipeSettings->$logoVariable)))
-                <div class="pull-left" style="padding-right: 20px;">
+                <div class="pull-left {{ $previewClass ?? '' }}" style="padding-right: 20px;">
                     <a href="{{ Storage::disk('public')->url(e(($logoPath ?? '').$snipeSettings->$logoVariable)) }}"{!! ($logoVariable!='favicon') ? ' data-toggle="lightbox"' : '' !!} title="Existing logo">
                         <img style="height: 80px; padding-bottom: 5px;" alt="Current logo" src="{{ Storage::disk('public')->url(e(($logoPath ?? ''). $snipeSettings->$logoVariable)) }}">
                     </a>
                 </div>
             @endif
 
-            <div id="{{ $logoId }}-previewContainer" style="display: none;">
+            <div id="{{ $logoId }}-previewContainer" style="display: none;" class="{{ $previewClass ?? '' }}">
                 <img id="{{ $logoId }}-imagePreview" style="height: 80px;" alt="Logo upload preview">
             </div>
 

@@ -86,7 +86,7 @@ class PredefinedFilter extends Model
 
             default:
                 return false;
-        } //end switch
+        }//end switch
     }
 
     private function checkPermissions(User $user, $action): bool

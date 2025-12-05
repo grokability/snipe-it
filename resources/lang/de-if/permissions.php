@@ -16,430 +16,409 @@ return array(
     */
 
     "superuser" => [
-        'name' => 'Superbenutzer',
-        'note'       => 'Legt fest, ob der Benutzer vollen Zugriff auf alle Aspekte des Administrators hat. Diese Einstellung überschreibt ALLE spezifischeren und restriktiveren Berechtigungen im gesamten System. ',
+        'name' => 'Super User',
+        'note'       => 'Determines whether the user has full access to all aspects of the admin. This setting overrides ALL more specific and restrictive permissions throughout the system. ',
     ],
     'admin' => [
-        'name' => 'Admin-Zugriff',
-        'note'       => 'Legt fest, ob der Benutzer Zugriff auf die meisten Aspekte des Systems AUSSER in den Systemeinstellungen hat. Diese Benutzer werden in der Lage sein, Benutzer, Standorte, Kategorien, etc, zu verwalten, aber SIND beschränkt durch die Volle Unterstützung für mehrere Unternehmen, wenn es aktiviert ist.',
+        'name' => 'Admin Access',
+        'note'       => 'Determines whether the user has access to most aspects of the system EXCEPT the System Admin Settings. These users will be able to manage users, locations, categories, etc, but ARE constrained by Full Multiple Company Support if it is enabled.',
     ],
 
     'import' => [
-        'name' => 'CSV-Import',
-        'note'       => 'Dies wird Benutzern erlauben zu importieren, auch wenn der Zugriff auf Benutzer, Assets, usw. an anderer Stelle verweigert wird.',
+        'name' => 'CSV Import',
+        'note'       => 'This will allow users to import even if access to users, assets, etc is denied elsewhere.',
     ],
 
     'reports' => [
-        'name' => 'Berichtszugriff',
-        'note'       => 'Legt fest, ob der Benutzer Zugriff auf den Reports-Abschnitt der Anwendung hat.',
-    ],
-
-    'advancedsearch' => [
-        'name' => 'Erweiterte Suche',
-        'note' => 'Erlaubt den Zugriff auf die Erweiterte Suche. Vorsicht, ein Nutzender hat damit die Rechte die Ergebnisse aller Dropdowns zu laden.'
+        'name' => 'Reports Access',
+        'note'       => 'Determines whether the user has access to the Reports section of the application.',
     ],
 
     'assets' =>
         [
             'name' => 'Assets',
-            'note' => 'Gewährt Zugriff auf den Abschnitt Assets der Anwendung.',
+            'note' => 'Grants access to the Assets section of the application.',
     ],
 
     'assetsview' => [
-        'name' => 'Asset ansehen',
+        'name' => 'View Assets',
     ],
 
     'assetscreate' => [
-        'name' => 'Asset erstellen',
+        'name' => 'Create New Assets',
     ],
 
     'assetsedit' => [
-        'name' => 'Asset bearbeiten',
+        'name' => 'Edit Assets',
     ],
 
     'assetsdelete' => [
-        'name' => 'Assets löschen',
+        'name' => 'Delete Assets',
     ],
 
     'assetscheckin' => [
-        'name' => 'Einchecken',
-        'note' => 'Check die Assets wieder in das derzeit ausgebuchte Inventar.',
+        'name' => 'Check In',
+        'note' => 'Check assets back into inventory that are currently checked out.',
     ],
 
     'assetscheckout' => [
-        'name' => 'Auschecken',
-        'note' => 'Assets im Inventar zuweisen, indem sie ausgecheckt werden.',
+        'name' => 'Check Out',
+        'note' => 'Assign assets in inventory by checking them out.',
     ],
 
     'assetsaudit' => [
-        'name' => 'Assets prüfen',
-        'note' => 'Ermöglicht dem Benutzer, ein Asset als physisch inventarisiert zu markieren.',
+        'name' => 'Audit Assets',
+        'note' => 'Allows the user to mark an asset as physically inventoried.',
     ],
 
     'assetsviewrequestable' => [
-        'name' => 'Anforderbare Assets anzeigen',
-        'note' => 'Ermöglicht dem Benutzer, Assets anzuzeigen, die als anforderbar markiert sind.',
+        'name' => 'View Requestable Assets',
+        'note' => 'Allows the user to view assets that are marked as requestable.',
     ],
 
     'assetsviewencrypted-custom-fields' => [
-        'name' => 'Verschlüsselte Felder anzeigen',
-        'note' => 'Ermöglicht dem Benutzer, verschlüsselte Felder auf Assets anzuzeigen und zu ändern.',
+        'name' => 'View Encrypted Custom Fields',
+        'note' => 'Allows the user to view and modify encrypted custom fields on assets.',
     ],
 
     'accessories'   => [
-        'name' => 'Zubehör',
-        'note'       => 'Gewährt Zugriff auf den Abschnitt Zubehör der Anwendung.',
+        'name' => 'Accessories',
+        'note'       => 'Grants access to the Accessories section of the application.',
     ],
 
     'accessoriesview' => [
-        'name' => 'Zubehör ansehen',
+        'name' => 'View Accessories',
     ],
     'accessoriescreate' => [
-        'name' => 'Neues Zubehör erstellen',
+        'name' => 'Create New Accessories',
     ],
     'accessoriesedit' => [
-        'name' => 'Zubehör bearbeiten',
+        'name' => 'Edit Accessories',
     ],
     'accessoriesdelete' => [
-        'name' => 'Zubehör löschen',
+        'name' => 'Delete Accessories',
     ],
     'accessoriescheckout' => [
-        'name' => 'Zubehör auschecken',
-        'note' => 'Zubehör im Inventar zuweisen, indem sie ausgecheckt werden.',
+        'name' => 'Check Out Accessories',
+        'note' => 'Assign accessories in inventory by checking them out.',
     ],
     'accessoriescheckin' => [
-        'name' => 'Zubehör einchecken',
-        'note' => 'Check das Zubehör wieder ins Inventar, dass derzeit ausgebucht ist.',
+        'name' => 'Check In Accessories',
+        'note' => 'Check accessories back into inventory that are currently checked out.',
     ],
     'accessoriesfiles' => [
-        'name' => 'Zubehördateien verwalten',
-        'note' => 'Ermöglicht dem Benutzer das Hochladen, Herunterladen und Löschen von Zubehör Dateien.',
+        'name' => 'Manage Accessory Files',
+        'note' => 'Allows the user to upload, download, and delete files associated with accessories.',
     ],
     'consumables'   => [
-        'name' => 'Verbrauchsmaterialien',
-        'note'       => 'Gewährt Zugriff auf den Bereich Verbrauchsmaterialien der Anwendung.',
+        'name' => 'Consumables',
+        'note'       => 'Grants access to the Consumables section of the application.',
     ],
     'consumablesview' => [
-        'name' => 'Verbrauchsmaterialien anzeigen',
+        'name' => 'View Consumables',
     ],
     'consumablescreate' => [
-        'name' => 'Neue Verbrauchsmaterialien erstellen',
+        'name' => 'Create New Consumables',
     ],
     'consumablesedit' => [
-        'name' => 'Verbrauchsmaterial aktualisieren',
+        'name' => 'Edit Consumables',
     ],
     'consumablesdelete' => [
-        'name' => 'Verbrauchsmaterialien löschen',
+        'name' => 'Delete Consumables',
     ],
     'consumablescheckout' => [
-        'name' => 'Verbrauchsmaterialien auschecken',
-        'note' => 'Verbrauchsmaterialien im Inventar zuweisen, indem sie ausgecheckt werden.',
+        'name' => 'Check Out Consumables',
+        'note' => 'Assign consumables in inventory by checking them out.',
     ],
     'consumablesfiles' => [
-        'name' => 'Verbrauchsdateien verwalten',
-        'note' => 'Ermöglicht dem Benutzer das Hochladen, Herunterladen und Löschen von Verbrauchsmaterialien.',
+        'name' => 'Manage Consumable Files',
+        'note' => 'Allows the user to upload, download, and delete files associated with consumables.',
     ],
     'licenses'   => [
-        'name' => 'Lizenzen',
-        'note'       => 'Gewährt Zugriff auf den Abschnitt Lizenzen der Anwendung.',
+        'name' => 'Licenses',
+        'note'       => 'Grants access to the Licenses section of the application.',
     ],
     'licensesview' => [
-        'name' => 'Lizenzen ansehen',
+        'name' => 'View Licenses',
     ],
     'licensescreate' => [
-        'name' => 'Neue Lizenzen erstellen',
+        'name' => 'Create New Licenses',
     ],
     'licensesedit' => [
-        'name' => 'Lizenzen bearbeiten',
+        'name' => 'Edit Licenses',
     ],
     'licensesdelete' => [
-        'name' => 'Lizenzen löschen',
+        'name' => 'Delete Licenses',
     ],
     'licensescheckout' => [
-        'name' => 'Lizenzen zuweisen',
-        'note' => 'Ermöglicht dem Benutzer, Assets oder Benutzern Lizenzen zuzuweisen.',
+        'name' => 'Assign Licenses',
+        'note' => 'Allows the user to assign licenses to assets or users.',
         ],
     'licensescheckin' => [
-        'name' => 'Zuweisung von Lizenzen Aufheben',
-        'note' => 'Ermöglicht dem Benutzer, die Zuweisung von Lizenzen von Assets oder Benutzern aufzuheben.',
+        'name' => 'Unassign Licenses',
+        'note' => 'Allows the user to unassign licenses from assets or users.',
     ],
     'licensesfiles' => [
-        'name' => 'Lizenzdateien Verwalten',
-        'note' => 'Ermöglicht dem Benutzer das Hochladen, Herunterladen und Löschen in Verbindung mit Lizenzen.',
+        'name' => 'Manage License Files',
+        'note' => 'Allows the user to upload, download, and delete files associated with licenses.',
     ],
     'licenseskeys' => [
-        'name' => 'Lizenzschlüssel Verwalten',
-        'note' => 'Ermöglicht dem Benutzer, Produktschlüssel anzuzeigen, die mit Lizenzen verknüpft sind.',
+        'name' => 'Manage License Keys',
+        'note' => 'Allows the user to view product keys associated with licenses.',
     ],
     'components'   => [
-        'name' => 'Komponenten',
-        'note'       => 'Gewährt Zugriff auf den Bereich "Komponenten" in der Anwendung.',
+        'name' => 'Components',
+        'note'       => 'Grants access to the Components section of the application.',
     ],
     'componentsview' => [
-        'name' => 'Komponenten Anzeigen',
+        'name' => 'View Components',
     ],
     'componentscreate' => [
-        'name' => 'Neue Komponenten Erstellen',
+        'name' => 'Create New Components',
     ],
     'componentsedit' => [
-        'name' => 'Komponenten Bearbeiten',
+        'name' => 'Edit Components',
     ],
     'componentsdelete' => [
-        'name' => 'Komponenten Löschen',
+        'name' => 'Delete Components',
     ],
     'componentsfiles' => [
-        'name' => 'Komponentendateien Verwalten',
-        'note' => 'Ermöglicht dem Benutzer das Hochladen, Herunterladen und Löschen in Verbindung mit Komponenten.',
+        'name' => 'Manage Component Files',
+        'note' => 'Allows the user to upload, download, and delete files associated with components.',
     ],
     'componentscheckout' => [
-        'name' => 'Komponenten Auschecken',
-        'note' => 'Komponenten im Inventar zuweisen, indem sie ausgecheckt werden.',
+        'name' => 'Check Out Components',
+        'note' => 'Assign components in inventory by checking them out.',
     ],
     'componentscheckin' => [
-        'name' => 'Komponenten einchecken',
-        'note' => 'Checken Sie die derzeit ausgebuchten Komponenten wieder in das Inventar ein.',
+        'name' => 'Check In Components',
+        'note' => 'Check components back into inventory that are currently checked out.',
     ],
     'kits'   => [
-        'name' => 'Vordefinierte Kits',
-        'note'       => 'Gewährt Zugriff auf den Abschnitt "Vordefinierte Kits" in der Anwendung.',
+        'name' => 'Predefined Kits',
+        'note'       => 'Grants access to the Predefined Kits section of the application.',
     ],
     'kitsview' => [
-        'name' => 'Vordefinierte Kits Anzeigen',
+        'name' => 'View Predefined Kits',
     ],
     'kitscreate' => [
-        'name' => 'Vordefiniertes Kits Erstellen',
+        'name' => 'Create New Predefined Kits',
     ],
     'kitsedit' => [
-        'name' => 'Vordefinierte Kits Bearbeiten',
+        'name' => 'Edit Predefined Kits',
     ],
     'kitsdelete' => [
-        'name' => 'Vordefinierte Kits Löschen',
+        'name' => 'Delete Predefined Kits',
     ],
     'users'   => [
-        'name' => 'Benutzer',
-        'note'       => 'Gewährt Zugriff auf den Bereich "Benutzer" in der Anwendung.',
-    ],
-    'predefinedfilters'   => [
-        'name' => 'Vordefinierte Filter',
-        'note'       => 'Gewährt Zugriff auf Vordefinierte Filter in der App.',
-    ],
-    'predefinedfiltercreate' => [
-        'name' => 'Öffentliche vordefinierte Filter erstellen',
-    ],
-    'predefinedfilterview' => [
-        'name' => 'Öffentliche vordefinierte Filter anzeigen',
-    ],
-    'predefinedfilteredit' => [
-        'name' => 'Öffentliche vordefinierte Filter bearbeiten',
-    ],
-    'predefinedfilterdelete' => [
-        'name' => 'Öffentliche vordefinierte Filter löschen',
+        'name' => 'Users',
+        'note'       => 'Grants access to the Users section of the application.',
     ],
     'usersview' => [
-        'name' => 'Benutzer anzeigen',
+        'name' => 'View Users',
     ],
     'userscreate' => [
-        'name' => 'Neue Benutzer Anlegen',
+        'name' => 'Create New Users',
     ],
     'usersedit' => [
-        'name' => 'Benutzer Bearbeiten',
+        'name' => 'Edit Users',
     ],
     'usersdelete' => [
-        'name' => 'Benutzer löschen',
+        'name' => 'Delete Users',
     ],
     'models'   => [
-        'name' => 'Modelle',
-        'note'       => 'Gewährt Zugriff auf den Bereich "Modelle" in der Anwendung.',
+        'name' => 'Models',
+        'note'       => 'Grants access to the Models section of the application.',
     ],
     'modelsview' => [
-        'name' => 'Modelle anzeigen',
+        'name' => 'View Models',
     ],
 
     'modelscreate' => [
-        'name' => 'Neue Modelle Erstellen',
+        'name' => 'Create New Models',
     ],
     'modelsedit' => [
-        'name' => 'Modelle Bearbeiten',
+        'name' => 'Edit Models',
     ],
     'modelsdelete' => [
-        'name' => 'Modelle Löschen',
+        'name' => 'Delete Models',
     ],
     'categories'   => [
-        'name' => 'Kategorien',
-        'note'       => 'Gewährt Zugriff auf den Bereich "Kategorien" in der Anwendung.',
+        'name' => 'Categories',
+        'note'       => 'Grants access to the Categories section of the application.',
     ],
     'categoriesview' => [
-        'name' => 'Kategorien Anzeigen',
+        'name' => 'View Categories',
     ],
     'categoriescreate' => [
-        'name' => 'Neue Kategorien Erstellen',
+        'name' => 'Create New Categories',
     ],
     'categoriesedit' => [
-        'name' => 'Kategorien Bearbeiten',
+        'name' => 'Edit Categories',
     ],
     'categoriesdelete' => [
-        'name' => 'Kategorien Löschen',
+        'name' => 'Delete Categories',
     ],
     'departments'   => [
-        'name' => 'Abteilungen',
-        'note'       => 'Gewährt Zugriff auf den Bereich "Abteilungen" in der Anwendung.',
+        'name' => 'Departments',
+        'note'       => 'Grants access to the Departments section of the application.',
     ],
     'departmentsview' => [
-        'name' => 'Abteilungen Anzeigen',
+        'name' => 'View Departments',
     ],
     'departmentscreate' => [
-        'name' => 'Neue Abteilungen Erstellen',
+        'name' => 'Create New Departments',
     ],
     'departmentsedit' => [
-        'name' => 'Abteilungen Bearbeiten',
+        'name' => 'Edit Departments',
     ],
     'departmentsdelete' => [
-        'name' => 'Abteilungen Löschen',
+        'name' => 'Delete Departments',
     ],
     'locations'   => [
-        'name' => 'Standorte',
-        'note'       => 'Gewährt Zugriff auf den Bereich "Standorte" in der Anwendung.',
+        'name' => 'Locations',
+        'note'       => 'Grants access to the Locations section of the application.',
     ],
     'locationsview' => [
-        'name' => 'Standorte Anzeigen',
+        'name' => 'View Locations',
     ],
     'locationscreate' => [
-        'name' => 'Neue Standorte Erstellen',
+        'name' => 'Create New Locations',
     ],
     'locationsedit' => [
-        'name' => 'Standorte Bearbeiten',
+        'name' => 'Edit Locations',
     ],
     'locationsdelete' => [
-        'name' => 'Standorte Löschen',
+        'name' => 'Delete Locations',
     ],
     'status-labels'   => [
-        'name' => 'Statusbezeichnungen',
-        'note'       => 'Gewährt Zugriff auf den Bereich "Statusbezeichnungen", die für Assets benutzt werden.',
+        'name' => 'Status Labels',
+        'note'       => 'Grants access to the Status Labels section of the application used by Assets.',
     ],
     'statuslabelsview' => [
-        'name' => 'Statusbezeichnungen Anzeigen',
+        'name' => 'View Status Labels',
     ],
     'statuslabelscreate' => [
-        'name' => 'Neue Statusbezeichnungen Erstellen',
+        'name' => 'Create New Status Labels',
     ],
     'statuslabelsedit' => [
-        'name' => 'Statusbezeichnungen Bearbeiten',
+        'name' => 'Edit Status Labels',
     ],
     'statuslabelsdelete' => [
-        'name' => 'Statusbezeichnung Löschen',
+        'name' => 'Delete Status Labels',
     ],
     'custom-fields'   => [
-        'name' => 'Benutzerdefinierte Felder',
-        'note'       => 'Gewährt Zugriff auf den Abschnitt Benutzerdefinierte Felder der Anwendung, die von Assets verwendet wird.',
+        'name' => 'Custom Fields',
+        'note'       => 'Grants access to the Custom Fields section of the application used by Assets.',
     ],
     'customfieldsview' => [
-        'name' => 'Benutzerdefinierte Felder Ansehen',
+        'name' => 'View Custom Fields',
     ],
     'customfieldscreate' => [
-        'name' => 'Neue Benutzerdefinierte Felder erstellen',
+        'name' => 'Create New Custom Fields',
     ],
     'customfieldsedit' => [
-        'name' => 'Benutzerdefinierte Felder Bearbeiten',
+        'name' => 'Edit Custom Fields',
     ],
     'customfieldsdelete' => [
-        'name' => 'Benutzerdefinierte Felder Löschen',
+        'name' => 'Delete Custom Fields',
     ],
     'suppliers'   => [
-        'name' => 'Lieferanten',
-        'note'       => 'Gewährt Zugriff auf den Abschnitt Lieferanten der Anwendung.',
+        'name' => 'Suppliers',
+        'note'       => 'Grants access to the Suppliers section of the application.',
     ],
     'suppliersview' => [
-        'name' => 'Lieferanten Ansehen',
+        'name' => 'View Suppliers',
     ],
     'supplierscreate' => [
-        'name' => 'Neue Lieferanten Erstellen',
+        'name' => 'Create New Suppliers',
     ],
     'suppliersedit' => [
-        'name' => 'Lieferanten Bearbeiten',
+        'name' => 'Edit Suppliers',
     ],
     'suppliersdelete' => [
-        'name' => 'Lieferanten Löschen',
+        'name' => 'Delete Suppliers',
     ],
     'manufacturers'   => [
-        'name' => 'Hersteller',
-        'note'       => 'Gewährt Zugriff auf den Abschnitt Hersteller der Anwendung.',
+        'name' => 'Manufacturers',
+        'note'       => 'Grants access to the Manufacturers section of the application.',
     ],
     'manufacturersview' => [
-        'name' => 'Hersteller Ansehen',
+        'name' => 'View Manufacturers',
     ],
     'manufacturerscreate' => [
-        'name' => 'Neue Hersteller Erstellen',
+        'name' => 'Create New Manufacturers',
     ],
     'manufacturersedit' => [
-        'name' => 'Hersteller Bearbeiten',
+        'name' => 'Edit Manufacturers',
     ],
     'manufacturersdelete' => [
-        'name' => 'Hersteller Löschen',
+        'name' => 'Delete Manufacturers',
     ],
     'companies'   => [
-        'name' => 'Firmen',
-        'note'       => 'Gewährt Zugriff auf den Bereich Firmen der Anwendung.',
+        'name' => 'Companies',
+        'note'       => 'Grants access to the Companies section of the application.',
     ],
     'companiesview' => [
-        'name' => 'Firmen Ansehen',
+        'name' => 'View Companies',
     ],
     'companiescreate' => [
-        'name' => 'Neue Firmen Erstellen',
+        'name' => 'Create New Companies',
     ],
     'companiesedit' => [
-        'name' => 'Firmen bearbeiten',
+        'name' => 'Edit Companies',
     ],
     'companiesdelete' => [
-        'name' => 'Firmen Löschen',
+        'name' => 'Delete Companies',
     ],
     'user-self-accounts' => [
-        'name' => 'Benutzerkonten',
-        'note'       => 'Erlaubt Nicht-Administratoren die Möglichkeit, bestimmte Aspekte ihrer eigenen Benutzerkonten zu verwalten.',
+        'name' => 'User Self Accounts',
+        'note'       => 'Grants non-admin users the ability to manage certain aspects of their own user accounts.',
     ],
     'selftwo-factor' => [
-        'name' => 'Zwei-Faktor-Authentifizierung verwalten',
-        'note'       => 'Erlaubt Benutzern die Zwei-Faktor-Authentifizierung für ihre eigenen Konten zu aktivieren, zu deaktivieren und zu verwalten.',
+        'name' => 'Manage Two-Factor Authentication',
+        'note'       => 'Allows users to enable, disable, and manage two-factor authentication for their own accounts.',
     ],
     'selfapi' => [
-        'name' => 'API-Token verwalten',
-        'note'       => 'Ermöglicht Benutzern, eigene API-Token zu erstellen, anzuschauen und zu widerrufen. Benutzer-Token haben die gleichen Berechtigungen wie der Benutzer, der sie erstellt hat.',
+        'name' => 'Manage API Tokens',
+        'note'       => 'Allows users to create, view, and revoke their own API tokens. User tokens will have the same permissions as the user who created them.',
     ],
     'selfedit-location' => [
-        'name' => 'Standort Aktualisieren',
-        'note'       => 'Ermöglicht Benutzern den Standort zu bearbeiten, der mit ihrem eigenen Benutzerkonto verknüpft ist.',
+        'name' => 'Edit Location',
+        'note'       => 'Allows users to edit the location associated with their own user account.',
     ],
     'selfcheckout-assets' => [
-        'name' => 'Assets Selbst Auschecken',
-        'note'       => 'Erlaubt es Benutzern Assets ohne Admin-Intervention selbst auszuchecken.',
+        'name' => 'Self Check Out Assets',
+        'note'       => 'Allows users to check out assets to themselves without admin intervention.',
     ],
     'selfview-purchase-cost' => [
-        'name' => 'Einkaufspreis Anzeigen',
-        'note'       => 'Ermöglicht den Benutzern, den Einkaufspreis von Artikeln in ihrer Account-Ansicht anzuzeigen.',
+        'name' => 'View Purchase Cost',
+        'note'       => 'Allows users to view the purchase cost of items in their account view.',
     ],
 
     'depreciations' => [
-        'name' => 'Abschreibungs-Management',
-        'note'       => 'Ermöglicht Benutzern das Verwalten und Anzeigen von Vermögensabschreibungsdaten.',
+        'name' => 'Depreciation Management',
+        'note'       => 'Allows users to manage and view asset depreciation details.',
     ],
     'depreciationsview' => [
-        'name' => 'Abschreibungsdetails anzeigen',
+        'name' => 'View Depreciation Details',
     ],
     'depreciationsedit' => [
-        'name' => 'Abschreibungseinstellungen bearbeiten',
+        'name' => 'Edit Depreciation Settings',
     ],
     'depreciationsdelete' => [
-        'name' => 'Abschreibungen löschen',
+        'name' => 'Delete Depreciation Records',
     ],
     'depreciationscreate' => [
-        'name' => 'Abschreibung erstellen',
+        'name' => 'Create Depreciation Records',
     ],
 
-    'grant_all' => 'Erteile alle Berechtigungen für :area',
-    'deny_all' => 'Verweigere alle Berechtigungen für :area',
-    'inherit_all' => 'Alle Berechtigungen für :area von Berechtigungsgruppen vererben',
-    'grant' => 'Erteile Berechtigungen für :area',
-    'deny' => 'Verweigere Berechtigungen für :area',
-    'inherit' => 'Alle Berechtigungen für :area von Berechtigungsgruppen vererben',
-    'use_groups' => 'Wir empfehlen dringend, Berechtigungsgruppen zu verwenden, anstatt individuelle Berechtigungen für eine einfachere Verwaltung zuzuweisen.'
+    'grant_all' => 'Grant all permissions for :area',
+    'deny_all' => 'Deny all permissions for :area',
+    'inherit_all' => 'Inherit all permissions for :area from permission groups',
+    'grant' => 'Grant Permission for :area',
+    'deny' => 'Deny Permission for :area',
+    'inherit' => 'Inherit Permission for :area from permission groups',
+    'use_groups' => 'We strongly suggest using Permission Groups instead of assigning individual permissions for easier management.'
 
 );

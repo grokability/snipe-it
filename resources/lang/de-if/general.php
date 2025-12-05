@@ -84,7 +84,6 @@ return [
     'city'  				=> 'Stadt',
     'click_here'			=> 'Hier klicken',
     'clear_selection'		=> 'Auswahl löschen',
-    'close_filters'         => 'Filter schließen',
     'companies'			    => 'Firmen',
     'company'				=> 'Firma',
     'component'			    => 'Komponente',
@@ -139,7 +138,7 @@ return [
     'exclude_archived'      => 'Archivierte Assets ausschließen',
     'exclude_deleted'       => 'Gelöschte Assets ausschließen',
     'example'				=> 'Beispiel: ',
-    'failed_to_apply_predefined_filter' => 'Der vordefinierte Filter konnte nicht eingestellt werden.',
+
     'files'                 => 'Dateien',
     'file_name'				=> 'Dateiname',
     'file_type'             => 'Dateityp',
@@ -176,7 +175,6 @@ return [
     'import_file'  			=> 'CSV-Datei importieren',
     'import_type'  			=> 'CSV-Import-Typ',
     'insufficient_permissions' => 'Fehlende Berechtigungen!',
-    'is_public'             =>  'Ist öffentlich',
     'kits'       			=> 'Vordefinierte Kits',
     'language'				=> 'Sprache',
     'last'					=> 'Letzte',
@@ -233,7 +231,6 @@ return [
     'note_deleted'            => 'Notiz gelöscht',
     'delete_note'              => 'Notiz löschen',
     'order_number'          => 'Auftragsnummer',
-    'open_filters'          => 'Filter öffnen',
     'only_deleted'          => 'Nur gelöschte Assets',
     'page_menu'				=> 'Zeige _MENU_ Einträge',
     'page_error'            => 'Vorherige Seite konnte nicht ermittelt werden. Auf Startseite weitergeleitet.',
@@ -241,7 +238,6 @@ return [
     'pending'				=> 'Ausstehende',
     'people'				=> 'Benutzer',
     'per_page'				=> 'Ergebnisse pro Seite',
-    'predefined_filter'		=> 'Vordefinierte Filter',
     'previous'				=> 'Vorherige',
     'previous_page'			=> 'Vorherige Seite',
     'processing'			=> 'In Arbeit',
@@ -280,11 +276,9 @@ return [
     'select_datasource' => 'Datenquelle auswählen',
     'select_department'     => 'Wähle eine Abteilung',
     'select_depreciation'	=> 'Wähle einen Abschreibungstyp',
-    'select_group'          => 'Gruppe auswählen',
     'select_location'		=> 'Wähle einen Standort',
     'select_manufacturer'	=> 'Wähle einen Hersteller',
     'select_model'			=> 'Wähle ein Modell',
-    'select_predefined_filter' => 'Wähle einen vordefinierten Filter aus',
     'select_supplier'		=> 'Wähle einen Lieferanten',
     'select_user'			=> 'Wähle einen Benutzer',
     'select_date'			=> 'Datum auswählen (JJJJ-MM-TT)',
@@ -739,12 +733,6 @@ return [
     ],
 
     'months_plural' => '1 Monat|:count Monate',
-    
-    'advanced_search' => "Erweiterte Suche",
-    'search_after_filter_field' => 'Nach einem Feld suchen...',
-    'predefined_filter_name' => 'Filtername',
-    'public' => 'Öffentlich',
-    'private' => 'Privat',
-    'can_not_save_empty_filter' => 'Du kannst keinen leeren Filter speichern.',
-    'can_not_update_empty_filter' => 'Du kannst keinen leeren Filter aktualisieren.',
+
+
 ];

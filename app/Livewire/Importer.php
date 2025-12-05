@@ -347,6 +347,7 @@ class Importer extends Component
 
         $this->locations_fields = [
             'id' => trans('general.id'),
+            'company' => trans('general.company'),
             'name' => trans('general.name'),
             'address' => trans('general.address'),
             'address2' => trans('general.importer.address2'),
@@ -360,6 +361,7 @@ class Importer extends Component
             'parent_location' => trans('admin/locations/table.parent'),
             'state' => trans('general.state'),
             'zip' => trans('general.zip'),
+            'tag_color' => trans('general.tag_color'),
         ];
 
         $this->suppliers_fields = [
@@ -607,6 +609,14 @@ class Importer extends Component
             'manager_username' =>
                 [
                     'Manager Username',
+                ],
+            'tag_color' =>
+                [
+                    'color',
+                    'tag color',
+                    'label color',
+                    'color code',
+                    trans('general.tag_color'),
                 ],
         ];
 

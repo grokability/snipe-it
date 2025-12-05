@@ -125,7 +125,7 @@ class PredefinedFilterService
                             break;
                         default:
                             break;
-                    } //end switch
+                    }//end switch
 
                     if ($model) {
                         $values[] = [
@@ -134,7 +134,7 @@ class PredefinedFilterService
                         ];
                     }
                     $filter['value'] = $values;
-                } // end foreach
+                }//end foreach
                     
             }
         }

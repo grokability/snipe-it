@@ -136,30 +136,7 @@ mix
     "./public/js/dist/all.js"
   ).sourceMaps(true, 'source-map', 'source-map').version();
 
-var skins = fs.readdirSync("resources/assets/less/skins");
 
-// Convert the skins to CSS
-for (var i in skins) {
-  mix.less(
-    "resources/assets/less/skins/" + skins[i],
-    "css/dist/skins"
-  )
-}
-
-var css_skins = fs.readdirSync("public/css/dist/skins");
-for (var i in css_skins) {
-  if (css_skins[i].endsWith(".min.css")) {
-    //don't minify already minified skinns
-    continue;
-  }
-  if (css_skins[i].endsWith(".css")) {
-    // only minify files ending with '.css'
-    mix.minify("public/css/dist/skins/" + css_skins[i]).version();
-  }
-  //TODO - if we only ever use the minified versions, this could be simplified down to one line (above)
-  // but it stays like this so we have the minified and non-minified versions of the skins
-  // right now the code seems to use the un-minified skins
-}
 
 /**
  * Combine bootstrap table css

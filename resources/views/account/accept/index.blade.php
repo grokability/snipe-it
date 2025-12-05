@@ -45,7 +45,7 @@
                 <td>{{ $acceptance->checkoutable_item_type }}</td>
                 <td>{{ $acceptance->qty ?? '1' }}</td>
                 <td>{{ ($acceptance->checkoutable) ? $acceptance->checkoutable->serial : '' }}</td>
-                <td><a href="{{ route('account.accept.item', $acceptance) }}" class="btn btn-default btn-sm">{{ trans('general.accept_decline') }}</a></td>
+                <td><a href="{{ route('account.accept.item', $acceptance) }}" class="btn btn-theme btn-sm">{{ trans('general.accept_decline') }}</a></td>
                 @else
                 <td> ----- </td>
                 <td> {{ trans('general.error_user_company_accept_view') }} </td>

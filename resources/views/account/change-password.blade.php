@@ -10,7 +10,7 @@
 
 
 <div class="row">
-    <div class="col-md-9">
+    <div class="col-md-6 col-md-offset-3">
     <form method="POST" action="{{ route('account.password.update') }}" accept-charset="UTF-8" class="form-horizontal" autocomplete="off">
     <!-- CSRF Token -->
         <input type="hidden" name="_token" value="{{ csrf_token() }}" />
