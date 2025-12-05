@@ -1787,19 +1787,19 @@ class Asset extends Depreciable
             'assets as assigned_assets', function ($leftJoin) {
                     $leftJoin->on('assigned_assets.id', '=', 'assets.assigned_to')
                         ->where('assets.assigned_type', '=', self::class);
-                }
-            )->where(
-                function ($query) use ($search) {
-                    foreach ($search as $search) {
-                        $query->whereHas(
-                            'model', function ($query) use ($search) {
-                                $query->whereHas(
-                                    'category', function ($query) use ($search) {
-                                        $query->where(
-                                            function ($query) use ($search) {
-                                                $query->where('categories.name', 'LIKE', '%'.$search.'%')
-                                                    ->orWhere('models.name', 'LIKE', '%'.$search.'%')
-                                                    ->orWhere('models.model_number', 'LIKE', '%'.$search.'%');
+            }
+        )->where(
+            function ($query) use ($search) {
+                foreach ($search as $search) {
+                    $query->whereHas(
+                        'model', function ($query) use ($search) {
+                            $query->whereHas(
+                                'category', function ($query) use ($search) {
+                                    $query->where(
+                                        function ($query) use ($search) {
+                                            $query->where('categories.name', 'LIKE', '%'.$search.'%')
+                                                ->orWhere('models.name', 'LIKE', '%'.$search.'%')
+                                                ->orWhere('models.model_number', 'LIKE', '%'.$search.'%');
                                             }
                                         );
                                     }
@@ -1834,14 +1834,14 @@ class Asset extends Depreciable
                                         ->orWhere('assets_locations.name', 'LIKE', '%'.$search.'%')
                                         ->orWhere('assigned_assets.name', 'LIKE', '%'.$search.'%');
                                 }
-                            )->orWhere('assets.name', 'LIKE', '%'.$search.'%')
-                            ->orWhere('assets.asset_tag', 'LIKE', '%'.$search.'%')
-                            ->orWhere('assets.serial', 'LIKE', '%'.$search.'%')
-                            ->orWhere('assets.order_number', 'LIKE', '%'.$search.'%')
-                            ->orWhere('assets.notes', 'LIKE', '%'.$search.'%');
+                    )->orWhere('assets.name', 'LIKE', '%'.$search.'%')
+                        ->orWhere('assets.asset_tag', 'LIKE', '%'.$search.'%')
+                        ->orWhere('assets.serial', 'LIKE', '%'.$search.'%')
+                        ->orWhere('assets.order_number', 'LIKE', '%'.$search.'%')
+                        ->orWhere('assets.notes', 'LIKE', '%'.$search.'%');
                     }
 
-            }
+        }
         )->withTrashed()->whereNull('assets.deleted_at'); //workaround for laravel bug
     }
 
@@ -1879,18 +1879,6 @@ class Asset extends Depreciable
      *
      * @return \Illuminate\Database\Query\Builder          Modified query builder
      */
-        /**
-     * Query builder scope to filter by a date range on a given field
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query      Query builder instance
-     * @param string                                $field      Database column name
-     * @param string                                $startKey   Filter array key for start date
-     * @param string                                $endKey     Filter array key for end date
-     * @param array                                 $filter     Filter array
-     *
-     * @return \Illuminate\Database\Eloquent\Builder            Modified query builder
-     */
-
     public function applyLegacyFilters($query, $filter)
     {
         return $query->where(
@@ -2110,7 +2098,11 @@ class Asset extends Depreciable
                     ) {
                         $query->where('assets.'.$fieldname, 'LIKE', '%' . $search_val . '%');
                     }
+
+
                 }
+
+
             }
         );
     }
@@ -2365,5 +2357,6 @@ class Asset extends Depreciable
             ->join('depreciations', 'models.depreciation_id', '=', 'depreciations.id')->where('models.depreciation_id', '=', $search);
 
     }
+
 
 }
