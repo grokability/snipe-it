@@ -56,7 +56,6 @@ class DatabaseSeeder extends Seeder
         $this->call(PredefinedFilterSeeder::class);
         $this->call(PredefinedFilterPermissionSeeder::class);
         
-
         Artisan::call('snipeit:sync-asset-locations', ['--output' => 'all']);
         $output = Artisan::output();
         Log::info($output);

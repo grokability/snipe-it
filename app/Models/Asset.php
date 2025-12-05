@@ -1769,7 +1769,7 @@ class Asset extends Depreciable
      *
      * @return \Illuminate\Database\Query\Builder          Modified query builder
      */
-        public function scopeAssignedSearch($query, $search)
+    public function scopeAssignedSearch($query, $search)
     {
         $search = explode(' OR ', $search);
 
@@ -2036,7 +2036,7 @@ class Asset extends Depreciable
                         }
                         );
                     }
-
+                    
                     if ($fieldname == 'status_label') {
                         $query->whereHas(
                             'assetstatus', function ($query) use ($search_val) {
