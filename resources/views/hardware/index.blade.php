@@ -2,25 +2,44 @@
 
 @section('title0')
 
-  @if (Request::get('company_id') && $company)
+  @if ((Request::get('company_id')) && ($company))
     {{ $company->name }}
   @endif
 
 @if (Request::get('status'))
+  @if (Request::get('status')=='Pending')
     @switch(Request::get('status'))
+    {{ trans('general.pending') }}
         @case('Pending') {{ trans('general.pending') }} @break
+  @elseif (Request::get('status')=='RTD')
         @case('RTD') {{ trans('general.ready_to_deploy') }} @break
+    {{ trans('general.ready_to_deploy') }}
         @case('Deployed') {{ trans('general.deployed') }} @break
+  @elseif (Request::get('status')=='Deployed')
         @case('Undeployable') {{ trans('general.undeployable') }} @break
+    {{ trans('general.deployed') }}
         @case('Deployable') {{ trans('general.deployed') }} @break
+  @elseif (Request::get('status')=='Undeployable')
         @case('Requestable') {{ trans('admin/hardware/general.requestable') }} @break
+    {{ trans('general.undeployable') }}
         @case('Archived') {{ trans('general.archived') }} @break
+  @elseif (Request::get('status')=='Deployable')
         @case('Deleted') {{ ucfirst(trans('general.deleted')) }} @break
+    {{ trans('general.deployed') }}
         @case('byod') {{ strtoupper(trans('general.byod')) }} @break
+  @elseif (Request::get('status')=='Requestable')
     @endswitch
+    {{ trans('admin/hardware/general.requestable') }}
+  @elseif (Request::get('status')=='Archived')
+    {{ trans('general.archived') }}
+  @elseif (Request::get('status')=='Deleted')
+    {{ ucfirst(trans('general.deleted')) }}
+  @elseif (Request::get('status')=='byod')
+    {{ strtoupper(trans('general.byod')) }}
+  @endif
 @else
 {{ trans('general.all') }}
-  @endif
+@endif
 {{ trans('general.assets') }}
 
   @if (Request::has('order_number'))

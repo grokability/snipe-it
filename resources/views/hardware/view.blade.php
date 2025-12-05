@@ -15,8 +15,7 @@
     @if (!$asset->model)
         <div class="col-md-12">
             <div class="callout callout-danger">
-                <p><strong>{{ trans('admin/models/message.no_association') }}</strong>
-                    {{ trans('admin/models/message.no_association_fix') }}</p>
+                <p><strong>{{ trans('admin/models/message.no_association') }}</strong> {{ trans('admin/models/message.no_association_fix') }}</p>
             </div>
         </div>
     @endif
@@ -24,18 +23,17 @@
     @if ($asset->checkInvalidNextAuditDate())
         <div class="col-md-12">
             <div class="callout callout-warning">
-                <p><strong>{{ trans(
-            'general.warning',
-            [
-                'warning' => trans(
-                    'admin/hardware/message.warning_audit_date_mismatch',
+                <p><strong>{{ trans('general.warning',
                     [
-                        'last_audit_date' => Helper::getFormattedDateObject($asset->last_audit_date, 'datetime', false),
-                        'next_audit_date' => Helper::getFormattedDateObject($asset->next_audit_date, 'date', false)
+                        'warning' => trans(
+                        'admin/hardware/message.warning_audit_date_mismatch',
+                            [
+                                        'last_audit_date' => Helper::getFormattedDateObject($asset->last_audit_date, 'datetime', false),
+                                        'next_audit_date' => Helper::getFormattedDateObject($asset->next_audit_date, 'date', false)
+                            ]
+                            )
                     ]
-                )
-            ]
-        ) }}</strong></p>
+                    ) }}</strong></p>
             </div>
         </div>
     @endif
