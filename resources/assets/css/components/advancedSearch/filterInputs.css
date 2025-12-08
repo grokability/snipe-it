@@ -127,13 +127,11 @@ Space between each filter item
 .advanced-search-default-field:focus,
 .form-control:focus {
     border-color: var(--button-hover);
-    box-shadow: 0 0 0 2px #6c63ff14;
     outline: none;
 }
 
 .select2-container--default .select2-selection:focus {
     border-color: var(--button-hover);
-    box-shadow: 0 0 0 2px #6c63ff14;
     outline: none;
 }
 
@@ -376,13 +374,11 @@ When .hide is applied, the filter section is hidden.
 .advanced-search-default-field:focus,
 .form-control:focus {
     border-color: var(--button-hover);
-    box-shadow: 0 0 0 2px #6c63ff14;
     outline: none;
 }
 
 .select2-container--default .select2-selection:focus {
     border-color: var(--button-hover);
-    box-shadow: 0 0 0 2px #6c63ff14;
     outline: none;
 }
 
@@ -479,7 +475,7 @@ When .hide is applied, the filter section is hidden.
 .select2-container,
 .select2-container .select2-selection--single,
 .select2-container .select2-selection--multiple {
-    border-bottom: 1.5px solid #fff;
+    border-bottom: 1.5px solid #CED4DA;
     transition: height 0.2s ease, min-height 0.2s ease, max-height 0.2s ease;
 }
 
@@ -503,5 +499,5 @@ When .hide is applied, the filter section is hidden.
 
 
 .select2-selection {
-    border-bottom: 1.5px solid #fff;
+    border-bottom: 1.5px solid #CED4DA;
 }
