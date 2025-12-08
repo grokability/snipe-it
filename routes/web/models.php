@@ -59,7 +59,10 @@ Route::group(['prefix' => 'models', 'middleware' => ['auth']], function () {
             BulkAssetModelsController::class, 
             'edit'
         ]
-    )->name('models.bulkedit.index');
+    )->name('models.bulkedit.index')
+    ->breadcrumbs(fn (Trail $trail) =>
+    $trail->parent('models.index')
+        ->push(trans('general.bulk_edit'), route('models.index')));
 
     Route::post(
         'bulksave',

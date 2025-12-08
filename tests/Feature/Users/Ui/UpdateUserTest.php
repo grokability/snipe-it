@@ -110,61 +110,53 @@ class UpdateUserTest extends TestCase
 
     public function testEditingUsersCannotEditEscalationFieldsForAdmins()
     {
-        $admin = User::factory()->editUsers()->create(['activated' => true]);
-        $hashed_original = Hash::make('!!094850394680980380kfejlskjfl');
-        $hashed_new = Hash::make('!ABCDEFGIJKL123!!!');
-        $user = User::factory()->admin()->create(['username' => 'brandnewuser', 'email'=> 'brandnewemail@example.org', 'password' => $hashed_original, 'activated' => true]);
+        $editing_user = User::factory()->editUsers()->create(['activated' => true]);
+        $hashed_original = Hash::make('my-awesome-password!!!!!12345');
+        $admin = User::factory()->admin()->create(['username' => 'TestAdminUser', 'email'=> 'admin@example.org', 'password' => $hashed_original, 'activated' => true]);
 
         $this->assertDatabaseHas('users', [
-            'id' => $user->id,
-            'username' => 'brandnewuser',
-            'email' => 'brandnewemail@example.org',
+            'id' => $admin->id,
+            'username' => 'TestAdminUser',
+            'email' => 'admin@example.org',
             'activated' => 1,
             'password' => $hashed_original,
         ]);
 
-        $this->actingAs($admin)
-            ->put(route('users.update', $user), [
+        $this->actingAs($editing_user)
+            ->put(route('users.update', $admin), [
                 'username' => 'testnewusername',
                 'email' => 'testnewemail@example.org',
                 'activated' => 0,
-                'password' => 'super-secret',
+                'password' => 'TOTALLY-DIFFERENT-awesome-password!!!!!12345',
             ]);
 
-        $this->assertDatabaseHas('users', [
-            'id' => $user->id,
-            'username' => $user->username,
-            'email' => $user->email,
-            'activated' => $user->activated,
-            'password' => $hashed_original,
-        ]);
 
-        $this->assertEquals('brandnewuser', $user->refresh()->username);
-        $this->assertEquals('brandnewemail@example.org', $user->refresh()->email);
-        $this->assertEquals(1, $user->refresh()->activated);
-        $this->assertNotEquals(Hash::check('super-secret', $user->password), $user->refresh()->password);
-        $this->assertNotEquals('testnewusername', $user->refresh()->username);
-        $this->assertNotEquals('testnewemail@example.org', $user->refresh()->email);
-        $this->assertNotEquals(0, $user->refresh()->activated);
-        $this->assertNotEquals(Hash::check('super-secret', $user->password), $user->refresh()->password);
+        $this->assertEquals('TestAdminUser', $admin->refresh()->username);
+        $this->assertEquals('admin@example.org', $admin->refresh()->email);
+        $this->assertEquals(1, $admin->refresh()->activated);
+        $this->assertNotEquals(Hash::check('super-secret', $admin->password), $admin->refresh()->password);
+        $this->assertNotEquals('testnewusername', $admin->refresh()->username);
+        $this->assertNotEquals('testnewemail@example.org', $admin->refresh()->email);
+        $this->assertNotEquals(0, $admin->refresh()->activated);
+        $this->assertNotEquals(Hash::check('TOTALLY-DIFFERENT-awesome-password!!!!!12345', $admin->password), $admin->refresh()->password);
     }
 
     public function testAdminUsersCannotEditFieldsForSuperAdmins()
     {
         $admin = User::factory()->admin()->create(['activated' => true]);
-        $hashed_original = Hash::make('my-awesome-password');
-        $user = User::factory()->superuser()->create(['username' => 'brandnewuser', 'email'=> 'brandnewemail@example.org', 'password' => $hashed_original, 'activated' => true]);
+        $hashed_original = Hash::make('my-awesome-password!!!!!12345');
+        $superuser = User::factory()->superuser()->create(['username' => 'TestSuperUser', 'email'=> 'superuser@example.org', 'password' => $hashed_original, 'activated' => true]);
 
         $this->assertDatabaseHas('users', [
-            'id' => $user->id,
-            'username' => 'brandnewuser',
-            'email' => 'brandnewemail@example.org',
+            'id' => $superuser->id,
+            'username' => 'TestSuperUser',
+            'email' => 'superuser@example.org',
             'activated' => 1,
             'password' => $hashed_original,
         ]);
 
         $this->actingAs($admin)
-            ->put(route('users.update', $user), [
+            ->put(route('users.update', $superuser), [
                 'username' => 'testnewusername',
                 'email' => 'testnewemail@example.org',
                 'activated' => 0,
@@ -172,20 +164,20 @@ class UpdateUserTest extends TestCase
             ]);
 
         $this->assertDatabaseHas('users', [
-            'id' => $user->id,
-            'username' => $user->username,
-            'email' => $user->email,
-            'activated' => $user->activated,
+            'id' => $superuser->id,
+            'username' => $superuser->username,
+            'email' => $superuser->email,
+            'activated' => $superuser->activated,
             'password' => $hashed_original,
         ]);
 
-        $this->assertEquals('brandnewuser', $user->refresh()->username);
-        $this->assertEquals('brandnewemail@example.org', $user->refresh()->email);
-        $this->assertEquals(1, $user->refresh()->activated);
-        $this->assertTrue(Hash::check('my-awesome-password', $user->password), $user->refresh()->password);
-        $this->assertNotEquals('testnewusername', $user->refresh()->username);
-        $this->assertNotEquals('testnewemail@example.org', $user->refresh()->email);
-        $this->assertNotTrue(Hash::check('super-secret-new-password', $user->password), $user->refresh()->password);
+        $this->assertEquals('TestSuperUser', $superuser->refresh()->username);
+        $this->assertEquals('superuser@example.org', $superuser->refresh()->email);
+        $this->assertEquals(1, $superuser->refresh()->activated);
+        $this->assertTrue(Hash::check('my-awesome-password!!!!!12345', $superuser->password), $superuser->refresh()->password);
+        $this->assertNotEquals('testnewusername', $superuser->refresh()->username);
+        $this->assertNotEquals('testnewemail@example.org', $superuser->refresh()->email);
+        $this->assertNotTrue(Hash::check('super-secret-new-password', $superuser->password), $superuser->refresh()->password);
     }
 
 

@@ -206,12 +206,12 @@
                 <div class="col-md-12" style="padding-top: 5px;">
 
                 @if($user->allAssignedCount() != '0') 
-                  <a href="{{ route('users.print', $user->id) }}" style="width: 100%;" class="btn btn-sm btn-primary btn-social hidden-print" target="_blank" rel="noopener">
+                  <a href="{{ route('users.print', $user->id) }}" style="width: 100%;" class="btn btn-sm btn-theme btn-social hidden-print" target="_blank" rel="noopener">
                       <x-icon type="print" />
                       {{ trans('admin/users/general.print_assigned') }}
                   </a>
                   @else
-                  <button style="width: 100%;" class="btn btn-sm btn-primary btn-social hidden-print" rel="noopener" disabled title="{{ trans('admin/users/message.user_has_no_assets_assigned') }}">
+                  <button style="width: 100%;" class="btn btn-sm btn-theme btn-social hidden-print" rel="noopener" disabled title="{{ trans('admin/users/message.user_has_no_assets_assigned') }}">
                       <x-icon type="print" />
                       {{ trans('admin/users/general.print_assigned') }}</button>
                 @endif
@@ -223,7 +223,7 @@
                   @if(!empty($user->email) && ($user->allAssignedCount() != '0'))
                     <form action="{{ route('users.email',['userId'=> $user->id]) }}" method="POST">
                       {{ csrf_field() }}
-                      <button class="btn-block btn btn-sm btn-primary btn-social hidden-print" rel="noopener">
+                      <button class="btn-block btn btn-sm btn-theme btn-social hidden-print" rel="noopener">
                           <x-icon type="email" />
                           {{ trans('admin/users/general.email_assigned') }}
                       </button>

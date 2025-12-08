@@ -78,9 +78,15 @@ class ManufacturersController extends Controller
             $manufacturers->onlyTrashed();
         }
 
+        if ($request->input('status') == 'deleted') {
+            $manufacturers->onlyTrashed();
+        }
+
         if ($request->filled('search')) {
             $manufacturers = $manufacturers->TextSearch($request->input('search'));
         }
+
+
 
         if ($request->filled('name')) {
             $manufacturers->where('name', '=', $request->input('name'));

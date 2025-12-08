@@ -143,12 +143,15 @@ Route::group(
         Route::post(
             'bulkedit',
             [BulkAssetsController::class, 'edit']
-        )->name('hardware/bulkedit');
+        )->name('hardware.bulkedit.show')
+        ->breadcrumbs(fn (Trail $trail) =>
+        $trail->parent('hardware.index')
+            ->push(trans('general.bulk_delete'), route('hardware.index')));
 
         Route::post(
             'bulkdelete',
             [BulkAssetsController::class, 'destroy']
-        )->name('hardware/bulkdelete');
+        )->name('hardware.bulkdelete.store');
 
         Route::post(
             'bulkrestore',

@@ -220,29 +220,79 @@ class UpdateUserTest extends TestCase
     {
         $hashed_original = Hash::make('!!094850394680980380kfejlskjfl');
         $hashed_new = Hash::make('!ABCDEFGIJKL123!!!');
-        $admin = User::factory()->editUsers()->create();
-        $user = User::factory()->admin()->create(['username' => 'brandnewuser', 'email'=> 'brandnewemail@example.org', 'password' => $hashed_original, 'activated' => 1]);
+
+        $editing_user = User::factory()->editUsers()->create();
+        $adminuser = User::factory()->admin()->create(['username' => 'TestAdminUser', 'email'=> 'admin@example.org', 'password' => $hashed_original, 'activated' => 1]);
 
 
+        // The admin being edited
         $this->assertDatabaseHas('users', [
-            'id' => $user->id,
-            'username' => 'brandnewuser',
-            'email' => 'brandnewemail@example.org',
+            'id' => $adminuser->id,
+            'username' => 'TestAdminUser',
+            'email' => 'admin@example.org',
             'activated' => 1,
             'password' => $hashed_original,
+            'permissions' => '{"admin":"1"}',
         ]);
 
-        $this->actingAsForApi($admin)
-            ->patch(route('api.users.update', $user), [
+        $this->actingAsForApi($editing_user)
+            ->patch(route('api.users.update', $adminuser), [
                 'username' => 'testnewusername',
                 'email' => 'testnewemail@example.org',
                 'activated' => 0,
+                'permissions' => "{'superadmin':1}",
                 'password' => $hashed_new,
             ]);
 
-        $this->assertEquals(0, $user->refresh()->activated);
+        // These should keep their old values
+        $this->assertEquals('TestAdminUser', $adminuser->refresh()->username);
+        $this->assertEquals('admin@example.org', $adminuser->refresh()->email);
+        $this->assertEquals(1, $adminuser->refresh()->activated);
+        $this->assertEquals($hashed_original, $adminuser->refresh()->password);
+        $this->assertEquals('{"admin":"1"}', $adminuser->refresh()->permissions);
 
     }
+
+    public function testAdminsCannotEditEscalationFieldsForSuperadmins()
+    {
+        $hashed_original = Hash::make('my-awesome-password!!!!!12345');
+        $hashed_new = Hash::make('!ABCDEFGIJKL123!!!');
+
+        $editing_user = User::factory()->admin()->create();
+        $superuser = User::factory()->superuser()->create(['username' => 'TestSuperUser', 'email'=> 'superuser@example.org', 'password' => $hashed_original, 'activated' => 1]);
+
+
+        // The admin being edited
+        $this->assertDatabaseHas('users', [
+            'id' => $superuser->id,
+            'username' => 'TestSuperUser',
+            'email' => 'superuser@example.org',
+            'activated' => 1,
+            'password' => $hashed_original,
+            'permissions' => '{"superuser":"1"}',
+        ]);
+
+        $this->actingAsForApi($editing_user)
+            ->patch(route('api.users.update', $superuser), [
+                'username' => 'testnewusername',
+                'email' => 'testnewemail@example.org',
+                'activated' => 0,
+                'permissions' => "{'superadmin':1}",
+                'password' => $hashed_new,
+            ]);
+
+        // These should keep their old values
+        $this->assertEquals('TestSuperUser', $superuser->refresh()->username);
+        $this->assertEquals('superuser@example.org', $superuser->refresh()->email);
+        $this->assertEquals(1, $superuser->refresh()->activated);
+        $this->assertEquals($hashed_original, $superuser->refresh()->password);
+        $this->assertEquals('{"superuser":"1"}', $superuser->refresh()->permissions);
+        $this->assertNotEquals('testnewusername', $superuser->refresh()->username);
+        $this->assertNotEquals('testnewemail@example.org', $superuser->refresh()->email);
+        $this->assertNotTrue(Hash::check('super-secret-new-password', $superuser->password), $superuser->refresh()->password);
+
+    }
+
     public function testUsersScopedToCompanyDuringUpdateWhenMultipleFullCompanySupportEnabled()
     {
         $this->settings->enableMultipleFullCompanySupport();

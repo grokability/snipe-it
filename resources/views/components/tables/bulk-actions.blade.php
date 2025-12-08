@@ -29,7 +29,7 @@
             {{ $slot }}
         </select>
 
-        <button class="btn btn-primary" id="{{ $id_button }}"
+        <button class="btn btn-theme" id="{{ $id_button }}"
                 disabled>{{ trans('button.go') }}</button>
     </form>
 </div>

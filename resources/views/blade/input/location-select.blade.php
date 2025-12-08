@@ -55,7 +55,7 @@
     <div class="col-md-1 col-sm-1 text-left">
         @unless($hideNewButton)
             @can('create', Location::class)
-                <a href='{{ route('modal.show', 'location') }}' data-toggle="modal" data-target="#createModal" data-select='{{ $name }}_location_select' class="btn btn-sm btn-primary">{{ trans('button.new') }}</a>
+                <a href='{{ route('modal.show', 'location') }}' data-toggle="modal" data-target="#createModal" data-select='{{ $name }}_location_select' class="btn btn-sm btn-theme">{{ trans('button.new') }}</a>
             @endcan
         @endunless
     </div>

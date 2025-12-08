@@ -31,7 +31,10 @@
           }
 
           .preflight-error {
-            color: red;
+            color: #b60707;
+          }
+          .preflight-info {
+              font-size: 18px;
           }
 
           .preflight-warning {
@@ -50,7 +53,26 @@
             font-size: 16px;
           }
 
+          body {
+              background-color: #ecf0f5;
+          }
 
+          .bs-wizard-info {
+              color: #959495 !important;
+          }
+
+          h4 {
+              line-height: 25px;
+          }
+
+          p, li {
+              font-size: 15px;
+              line-height: 25px;
+          }
+
+          li {
+              display: block;
+          }
         </style>
 
     </head>
@@ -58,9 +80,9 @@
           <div class="container">
               <div class="row">
                   <div class="col-lg-10 col-lg-offset-1">
-                    <h1 class="page-header">Snipe-IT {{ trans('general.pre_flight') }}</h1>
+                    <h1 class="page-header"><img src="../img/logo.png" style="height: 65px;" alt="Snipe-IT logo"> {{ trans('general.pre_flight') }}</h1>
                   </div>
-                  <div class="col-lg-11 col-lg-offset-1">
+                  <div class="col-lg-12">
 
                     <div class="row bs-wizard" style="border-bottom:0;">
 
@@ -68,13 +90,13 @@
                         <div class="text-center bs-wizard-stepnum">{{ trans('general.setup_step_1') }}</div>
                         <div class="progress"><div class="progress-bar"></div></div>
                         <a href="{{ route('setup') }}" class="bs-wizard-dot"></a>
-                        <div class="bs-wizard-info text-center">{{ trans('general.setup_config_check') }}</div>
+                        <div class="bs-wizard-info text-center" style="padding-left: 90px;">{{ trans('general.setup_config_check') }}</div>
                       </div>
 
                       <div class="col-xs-3 bs-wizard-step {{ ($step == 2) ? 'active': (($step < 2) ? 'disabled' : 'complete')  }}"><!-- complete -->
                         <div class="text-center bs-wizard-stepnum">{{ trans('general.setup_step_2') }}</div>
                         <div class="progress"><div class="progress-bar"></div></div>
-                        <a href="{{ route('setup.migrate') }}" class="bs-wizard-dot"></a>
+                        <a href="#" class="bs-wizard-dot"></a>
                         <div class="bs-wizard-info text-center">{{ trans('general.setup_create_database') }}</div>
                       </div>
 
@@ -94,24 +116,30 @@
                   </div>
                 </div>
 
+
                   <div class="col-lg-10 col-lg-offset-1" style="padding-top: 50px;">
 
 
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            {{ $section }}
+                    <div class="box box-default">
+                        <div class="box-header with-border">
+                            <h4><i class="{{ $icon ?? '' }}" style="--fa-animation-duration: 10s; --fa-animation-iteration-count: 3;"></i> {{ $section }}</h4>
                         </div>
-                        <div class="panel-body">
+                        <div class="box-body">
+
+                            @include('notifications')
+
+
                           <!-- Content -->
                           @yield('content')
                         </div>
-                        <div class="panel-footer text-right">
+                        <div class="box-footer text-right">
                             @section('button')
                             @show
-
-
                         </div>
                     </div>
+
+                      <strong>Snipe-IT {{ trans('general.version') }}</strong> {{ config('version.app_version') }} -
+                      {{ trans('general.build') }} {{ config('version.build_version') }} ({{ config('version.branch') }})
 
                   </div>
               </div>

@@ -106,7 +106,7 @@
                         <div class="form-group {{ $errors->has('link_dark_color') ? 'error' : '' }}">
                             <label for="link_dark_color" class="col-md-3 control-label">{{ trans('admin/settings/general.link_dark_color') }}</label>
                             <div class="col-md-9">
-                                <x-input.colorpicker :item="$setting" id="link_dark_color" placeholder="5fa4cc" :value="old('link_dark_color', ($setting->link_dark_color ?? '#5fa4cc'))" name="link_dark_color" />
+                                <x-input.colorpicker :item="$setting" id="link_dark_color" placeholder="#5fa4cc" :value="old('link_dark_color', ($setting->link_dark_color ?? '#5fa4cc'))" name="link_dark_color" />
                                 {!! $errors->first('link_dark_color', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
                                 <p class="help-block">{{ trans('admin/settings/general.link_dark_color_help') }}</p>
                             </div>

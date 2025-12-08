@@ -8,11 +8,6 @@
 @parent
 @stop
 
-@section('header_right')
-<a href="{{ route('kits.create') }}" class="btn btn-primary text-right">{{ trans('general.create') }}</a>
-@stop
-
-
 {{-- Content --}}
 @section('content')
 <div class="row">
@@ -27,6 +22,7 @@
                 data-sort-name="name"
                 id="kitsTable"
                 class="table table-striped snipe-table"
+                data-buttons="kitButtons"
                 data-url="{{ route('api.kits.index') }}"
                 data-export-options='{
         "fileName": "export-kits-{{ date('Y-m-d') }}",

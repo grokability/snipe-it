@@ -76,7 +76,7 @@ class BulkDeleteAssetsTest extends TestCase
         $id_array = $assets->pluck('id')->toArray();
 
         $response = $this->actingAs($user)
-            ->from(route('hardware/bulkedit'))
+            ->from(route('hardware.bulkdelete.store'))
             ->post('/hardware/bulkdelete', [
             'ids'          => $id_array,
             'bulk_actions' => 'delete',
@@ -109,7 +109,7 @@ class BulkDeleteAssetsTest extends TestCase
         $this->assertTrue($test_ran, "Test never actually ran!");
 
         $response = $this->actingAs($user)
-            ->from(route('hardware/bulkedit'))
+            ->from(route('hardware.bulkdelete.store'))
             ->post(route('hardware/bulkrestore'), [
                 'ids'          => [$asset->id],
             ])->assertStatus(302);
@@ -132,7 +132,7 @@ class BulkDeleteAssetsTest extends TestCase
         $asset = Asset::factory()->create();
 
         $this->actingAs($user)
-            ->from(route('hardware/bulkedit'))
+            ->from(route('hardware.bulkdelete.store'))
             ->post('/hardware/bulkdelete', [
                 'ids'          => [$asset->id],
                 'bulk_actions' => 'delete',
@@ -159,7 +159,7 @@ class BulkDeleteAssetsTest extends TestCase
         $asset = Asset::factory()->deleted()->create();
 
         $this->actingAs($user)
-            ->from(route('hardware/bulkedit'))
+            ->from(route('hardware.bulkdelete.store'))
             ->post(route('hardware/bulkrestore'), [
                 'ids'          => [$asset->id],
                 'bulk_actions' => 'restore',
@@ -186,7 +186,7 @@ class BulkDeleteAssetsTest extends TestCase
         ]);
 
         $response = $this->actingAs($user)
-                ->from(route('hardware/bulkedit'))
+                ->from(route('hardware.bulkdelete.store'))
                 ->post('/hardware/bulkdelete', [
                     'ids'          => [$asset->id],
                     'bulk_actions' => 'delete',
