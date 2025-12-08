@@ -49,12 +49,12 @@
 
 
 <div class="responsive-layout">
-    <!-- Filter Section -->
-    <div class="filter-section hide" id="filterSection">
-        @include('partials.advanced-search.advanced-search', [
-            'predefined_filter_id' => $predefined_filter_id,
-        ])
-    </div>
+  <!-- Filter Section -->
+  <div class="filter-section hide" id="filterSection">
+    @include('partials.advanced-search.advanced-search', [
+      'predefined_filter_id' => $predefined_filter_id,
+    ])
+  </div>
 
     <!-- Table Section -->
     <div class="table-section">
@@ -104,5 +104,6 @@
 @stop
 
 @section('moar_scripts')
-    @include('partials.bootstrap-table')
+@include('partials.bootstrap-table')
+
 @stop
