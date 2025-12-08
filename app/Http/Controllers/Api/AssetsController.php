@@ -487,8 +487,8 @@ class AssetsController extends Controller
          */
         if ($request->input('components')) {
             $assets->loadMissing(['components' => function ($query) {
-                    $query->orderBy('created_at', 'desc');
-                }]);
+                $query->orderBy('created_at', 'desc');
+            }]);
         }
 
         return (new $transformer)->transformAssets($assets, $total, $request);
@@ -1420,9 +1420,9 @@ class AssetsController extends Controller
                 // Configure label with assets and settings
                 // bulkedit=false and count=0 are default values for label generation
                 $label = $label->with('assets', $assets)
-                      ->with('settings', $settings)
-                      ->with('bulkedit', false)
-                      ->with('count', 0);
+                              ->with('settings', $settings)
+                              ->with('bulkedit', false)
+                              ->with('count', 0);
 
                 // Generate PDF using callback function
                 // The callback captures the PDF content in $pdf_content variable
