@@ -12,40 +12,39 @@
 
     <div class="row">
 
-    @if (!$asset->model)
-        <div class="col-md-12">
-            <div class="callout callout-danger">
-                <p><strong>{{ trans('admin/models/message.no_association') }}</strong> {{ trans('admin/models/message.no_association_fix') }}</p>
+        @if (!$asset->model)
+            <div class="col-md-12">
+                <div class="callout callout-danger">
+                    <p><strong>{{ trans('admin/models/message.no_association') }}</strong> {{ trans('admin/models/message.no_association_fix') }}</p>
+                </div>
             </div>
-        </div>
-    @endif
+        @endif
 
-    @if ($asset->checkInvalidNextAuditDate())
-        <div class="col-md-12">
-            <div class="callout callout-warning">
-                <p><strong>{{ trans('general.warning',
-                    [
-                        'warning' => trans(
-                        'admin/hardware/message.warning_audit_date_mismatch',
-                            [
-                                        'last_audit_date' => Helper::getFormattedDateObject($asset->last_audit_date, 'datetime', false),
-                                        'next_audit_date' => Helper::getFormattedDateObject($asset->next_audit_date, 'date', false)
-                            ]
-                            )
-                    ]
-                    ) }}</strong></p>
+        @if ($asset->checkInvalidNextAuditDate())
+            <div class="col-md-12">
+                <div class="callout callout-warning">
+                    <p><strong>{{ trans('general.warning',
+                        [
+                            'warning' => trans('admin/hardware/message.warning_audit_date_mismatch',
+                                [
+                                    'last_audit_date' => Helper::getFormattedDateObject($asset->last_audit_date, 'datetime', false),
+                                    'next_audit_date' => Helper::getFormattedDateObject($asset->next_audit_date, 'date', false)
+                                ]
+                                )
+                        ]
+                        ) }}</strong></p>
+                </div>
             </div>
-        </div>
-    @endif
+        @endif
 
-    @if ($asset->deleted_at != '')
-        <div class="col-md-12">
-            <div class="callout callout-warning">
-                <x-icon type="warning" />
-                {{ trans('general.asset_deleted_warning') }}
+        @if ($asset->deleted_at != '')
+            <div class="col-md-12">
+                <div class="callout callout-warning">
+                    <x-icon type="warning" />
+                    {{ trans('general.asset_deleted_warning') }}
+                </div>
             </div>
-        </div>
-    @endif
+        @endif
 
     <div class="col-md-12">
         <div class="nav-tabs-custom">

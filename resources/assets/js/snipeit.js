@@ -75,7 +75,7 @@ lineOptions = {
             }]
         }
 
-    };
+};
 
 pieOptions = {
     //Boolean - Whether we should show a stroke on each segment
@@ -166,7 +166,7 @@ $(function () {
      * Select2
      */
 
-        $('select.select2:not(".select2-hidden-accessible")').each(function (i, obj) {
+        $('select.select2:not(".select2-hidden-accessible")').each(function (i,obj) {
             {
                 $(obj).select2();
             }
@@ -179,7 +179,7 @@ $(function () {
     // $('.datepicker').datepicker();
 
     // Crazy select2 rich dropdowns with images!
-    $('.js-data-ajax').each( function (i, item) {
+    $('.js-data-ajax').each( function (i,item) {
         var link = $(item);
         var endpoint = link.data("endpoint");
         var select = link.data("select");
@@ -194,7 +194,7 @@ $(function () {
             allowClear: true,
             language: $('meta[name="language"]').attr('content'),
             dir: $('meta[name="language-direction"]').attr('content'),
-
+            
             ajax: {
 
                 // the baseUrl includes a trailing slash
@@ -244,97 +244,97 @@ $(function () {
     });
 
 	function getSelect2Value(element) {
+		
+		// if the passed object is not a jquery object, assuming 'element' is a selector
+		if (!(element instanceof jQuery)) element = $(element);
 
-        // if the passed object is not a jquery object, assuming 'element' is a selector
-        if (!(element instanceof jQuery)) element = $(element);
+		var select = element.data("select2");
 
-        var select = element.data("select2");
+		// There's two different locations where the select2-generated input element can be. 
+		searchElement = select.dropdown.$search || select.$container.find(".select2-search__field");
 
-        // There's two different locations where the select2-generated input element can be. 
-        searchElement = select.dropdown.$search || select.$container.find(".select2-search__field");
+		var value = searchElement.val();
+		return value;
+	}
+	
+	$(".select2-hidden-accessible").on('select2:selecting', function (e) {
+		var data = e.params.args.data;
+		var isMouseUp = false;
+		var element = $(this);
+		var value = getSelect2Value(element);
+		
+		if(e.params.args.originalEvent) isMouseUp = e.params.args.originalEvent.type == "mouseup";
+		
+		// if selected item does not match typed text, do not allow it to pass - force close for ajax.
+		if(!isMouseUp) {
+			if(value.toLowerCase() && data.text.toLowerCase().indexOf(value) < 0) {
+				e.preventDefault();
 
-        var value = searchElement.val();
-        return value;
-    }
-
-    $(".select2-hidden-accessible").on('select2:selecting', function (e) {
-        var data = e.params.args.data;
-        var isMouseUp = false;
-        var element = $(this);
-        var value = getSelect2Value(element);
-
-        if (e.params.args.originalEvent) isMouseUp = e.params.args.originalEvent.type == "mouseup";
-
-        // if selected item does not match typed text, do not allow it to pass - force close for ajax.
-        if (!isMouseUp) {
-            if (value.toLowerCase() && data.text.toLowerCase().indexOf(value) < 0) {
-                e.preventDefault();
-
-                element.select2('close');
-
-                // if it does match, we set a flag in the event (which gets passed to subsequent events), telling it not to worry about the ajax
-            } else if (value.toLowerCase() && data.text.toLowerCase().indexOf(value) > -1) {
-                e.params.args.noForceAjax = true;
-            }
-        }
-    });
-
-    $(".select2-hidden-accessible").on('select2:closing', function (e) {
-        var element = $(this);
-        var value = getSelect2Value(element);
-        var noForceAjax = false;
-        var isMouseUp = false;
-        if (e.params.args.originalSelect2Event) noForceAjax = e.params.args.originalSelect2Event.noForceAjax;
-        if (e.params.args.originalEvent) isMouseUp = e.params.args.originalEvent.type == "mouseup";
-
-        if (value && !noForceAjax && !isMouseUp) {
-            var endpoint = element.data("endpoint");
-            var assetStatusType = element.data("asset-status-type");
-            $.ajax({
-                url: baseUrl + 'api/v1/' + endpoint + '/selectlist?search=' + value + '&page=1' + (assetStatusType ? '&assetStatusType=' + assetStatusType : ''),
-                dataType: 'json',
-                headers: {
-                    "X-Requested-With": 'XMLHttpRequest',
-                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
-                },
-            }).done(function (response) {
-                var currentlySelected = element.select2('data').map(function (x) {
+				element.select2('close');
+				
+			// if it does match, we set a flag in the event (which gets passed to subsequent events), telling it not to worry about the ajax
+			} else if(value.toLowerCase() && data.text.toLowerCase().indexOf(value) > -1) {
+				e.params.args.noForceAjax = true;
+			}
+		}
+	});
+	
+	$(".select2-hidden-accessible").on('select2:closing', function (e) {
+		var element = $(this);
+		var value = getSelect2Value(element);
+		var noForceAjax = false;
+		var isMouseUp = false;
+		if(e.params.args.originalSelect2Event) noForceAjax = e.params.args.originalSelect2Event.noForceAjax;
+		if(e.params.args.originalEvent) isMouseUp = e.params.args.originalEvent.type == "mouseup";
+		
+		if(value && !noForceAjax && !isMouseUp) {
+			var endpoint = element.data("endpoint");
+			var assetStatusType = element.data("asset-status-type");
+			$.ajax({
+				url: baseUrl + 'api/v1/' + endpoint + '/selectlist?search='+value+'&page=1' + (assetStatusType ? '&assetStatusType='+assetStatusType : ''),
+				dataType: 'json',
+				headers: {
+					"X-Requested-With": 'XMLHttpRequest',
+					"X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+				},
+			}).done(function(response) {
+				var currentlySelected = element.select2('data').map(function (x){ 
                     return +x.id;
                 }).filter(function (x) {
                     return x !== 0;
                 });
+				
+				// makes sure we're not selecting the same thing twice for multiples
+				var filteredResponse = response.results.filter(function(item) {
+					return currentlySelected.indexOf(+item.id) < 0;
+				});
 
-                // makes sure we're not selecting the same thing twice for multiples
-                var filteredResponse = response.results.filter(function (item) {
-                    return currentlySelected.indexOf(+item.id) < 0;
-                });
+				var first = (currentlySelected.length > 0) ? filteredResponse[0] : response.results[0];
+				
+				if(first && first.id) {
+					first.selected = true;
+					
+					if($("option[value='" + first.id + "']", element).length < 1) {
+						var option = new Option(first.text, first.id, true, true);
+						element.append(option);
+					} else {
+						var isMultiple = element.attr("multiple") == "multiple";
+						element.val(isMultiple? element.val().concat(first.id) : element.val(first.id));
+					}
+					element.trigger('change');
 
-                var first = (currentlySelected.length > 0) ? filteredResponse[0] : response.results[0];
+					element.trigger({
+						type: 'select2:select',
+						params: {
+							data: first
+						}
+					});
+				}
+			});
+		}
+	});
 
-                if (first && first.id) {
-                    first.selected = true;
-
-                    if ($("option[value='" + first.id + "']", element).length < 1) {
-                        var option = new Option(first.text, first.id, true, true);
-                        element.append(option);
-                    } else {
-                        var isMultiple = element.attr("multiple") == "multiple";
-                        element.val(isMultiple ? element.val().concat(first.id) : element.val(first.id));
-                    }
-                    element.trigger('change');
-
-                    element.trigger({
-                        type: 'select2:select',
-                        params: {
-                            data: first
-                        }
-                    });
-                }
-            });
-        }
-    });
-
-    function formatDatalist(datalist) {
+    function formatDatalist (datalist) {
         var loading_markup = '<i class="fas fa-spinner fa-spin" aria-hidden="true"></i> Loading...';
         if (datalist.loading) {
             return loading_markup;
@@ -423,7 +423,7 @@ $(function () {
     // This handles the radio button selectors for the checkout-to-foo options
     // on asset checkout and also on asset edit
     $(function() {
-        $('input[name=checkout_to_type]').on("change", function () {
+        $('input[name=checkout_to_type]').on("change",function () {
             var assignto_type = $('input[name=checkout_to_type]:checked').val();
             var userid = $('#assigned_user option:selected').val();
 
@@ -509,12 +509,12 @@ $(function () {
 
     function formatBytes(bytes) {
         if(bytes < 1024) return bytes + " Bytes";
-        else if(bytes < 1048576) return (bytes / 1024).toFixed(2) + " KB";
-        else if(bytes < 1073741824) return (bytes / 1048576).toFixed(2) + " MB";
-        else return (bytes / 1073741824).toFixed(2) + " GB";
+        else if(bytes < 1048576) return(bytes / 1024).toFixed(2) + " KB";
+        else if(bytes < 1073741824) return(bytes / 1048576).toFixed(2) + " MB";
+        else return(bytes / 1073741824).toFixed(2) + " GB";
     }
 
-    // File size validation
+     // File size validation
     $('.js-uploadFile').bind('change', function() {
         var $this = $(this);
         var id = '#' + $this.attr('id');
@@ -544,7 +544,7 @@ $(function () {
             $status.addClass('text-danger').removeClass('help-block').prepend('<i class="badfile fas fa-times"></i> ').append('<span class="previewSize"> Upload is ' + formatBytes(total_size) + '.</span>');
         } else {
             $status.addClass('text-success').removeClass('help-block').prepend('<i class="goodfile fas fa-check"></i> ');
-            var $preview = $(id + '-imagePreview');
+            var $preview =  $(id + '-imagePreview');
             readURL(this, $preview);
             $preview.fadeIn();
             preview_container.fadeIn();
@@ -566,7 +566,7 @@ function htmlEntities(str) {
  * Toggle disabled
  */
 (function($){
-
+		
     $.fn.toggleDisabled = function(callback){
         return this.each(function(){
             var disabled, $this = $(this);
@@ -583,7 +583,7 @@ function htmlEntities(str) {
             }
         });
     };
-
+    
 })(jQuery);
 
 
