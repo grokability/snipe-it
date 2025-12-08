@@ -44,7 +44,7 @@
 
                     <!-- Body -->
                     <div @class(["modal-body"]) wire:ignore>
-                        <livewire:notifications />
+                        {{-- <livewire:notifications /> --}}
                         @if ($modalActionType !== App\Livewire\Partials\Advancedsearch\AdvancedsearchModalAction::Delete)
                         {{-- Filter name --}}
                         <div

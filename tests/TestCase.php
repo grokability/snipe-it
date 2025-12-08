@@ -35,26 +35,33 @@ abstract class TestCase extends BaseTestCase
     protected function setUp(): void
     {
         $this->guardAgainstMissingEnv();
-
+    
         parent::setUp();
-
+    
         $this->registerCustomMacros();
-
+    
         $this->withoutMiddleware($this->globallyDisabledMiddleware);
-
+    
         $this->initializeSettings();
-
+    
         config(['app.timnezone' => 'UTC']);
-        @date_default_timezone_set('UTC');
-        \Carbon::setLocale('en');
-
+    
+        // Removed @ — now handled safely
         try {
-            \DB::statement("SET time_zone = '+00:00'");
-            
+            date_default_timezone_set('UTC');
+        } catch (\Throwable $e) {
+            Log::debug('Failed to set timezone: ' . $e->getMessage());
+        }
+    
+        \Carbon::setLocale('en');
+    
+        try {
+           \DB::statement("SET time_zone = '+00:00'");
         } catch (\Throwable $e) {
             Log::debug($e);
         }
     }
+
 
     private function guardAgainstMissingEnv(): void
     {
