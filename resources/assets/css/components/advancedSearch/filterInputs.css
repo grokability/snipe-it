@@ -479,7 +479,7 @@ When .hide is applied, the filter section is hidden.
 .select2-container,
 .select2-container .select2-selection--single,
 .select2-container .select2-selection--multiple {
-    background-color:var(--back-sub, #fff) !important;
+    border-bottom: 1.5px solid #fff;
     transition: height 0.2s ease, min-height 0.2s ease, max-height 0.2s ease;
 }
 
@@ -499,4 +499,9 @@ When .hide is applied, the filter section is hidden.
 
 .select2-selection--multiple::-webkit-scrollbar-thumb {
     border-radius: 4px;
+}
+
+
+.select2-selection {
+    border-bottom: 1.5px solid #fff;
 }
