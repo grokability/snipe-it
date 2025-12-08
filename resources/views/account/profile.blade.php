@@ -8,8 +8,9 @@
 {{-- Account page content --}}
 @section('content')
 
+
 <div class="row">
-  <div class="col-md-9">
+  <div class="col-md-6 col-md-offset-3">
   <form method="POST" action="{{ route('profile.update') }}" accept-charset="UTF-8" class="form-horizontal" autocomplete="off" enctype="multipart/form-data">
   <!-- CSRF Token -->
     <input type="hidden" name="_token" value="{{ csrf_token() }}" />
@@ -20,6 +21,21 @@
               <x-form-legend>
                   {{ trans('admin/settings/general.legends.display') }}
               </x-form-legend>
+
+              <!-- Language -->
+              <div class="form-group {{ $errors->has('locale') ? 'has-error' : '' }}">
+                  <label class="col-md-3 control-label" for="locale">{{ trans('general.language') }}</label>
+                  <div class="col-md-6">
+
+                      @if (!config('app.lock_passwords'))
+                          <x-input.locale-select name="locale" :selected="old('locale', $user->locale)"/>
+                          {!! $errors->first('locale', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
+                      @else
+                          <p class="help-block">{{ trans('general.feature_disabled') }}</p>
+                      @endif
+
+                  </div>
+              </div>
 
               <!-- Nav Link color -->
               <div class="form-group {{ $errors->has('nav_link_color') ? 'error' : '' }}">
@@ -32,10 +48,10 @@
               </div>
 
               <!-- Light Link color -->
-              <div class="form-group {{ $errors->has('link_light_color') ? 'error' : '' }}">
+              <div class="form-group {{ $errors->has('link_dark_color') ? 'error' : '' }}">
                   <label for="link_light_color" class="col-md-3 control-label">{{ trans('admin/settings/general.link_light_color') }}</label>
                   <div class="col-md-9">
-                      <x-input.colorpicker :item="$user" id="link_light_color" placeholder="#296282" :value="old('link_light_color', ($user->link_light_color ?? '#296282'))" name="link_light_color" />
+                      <x-input.colorpicker :item="$user" id="link_light_color" placeholder="{{ $link_dark_color }}" :value="old('link_light_color', ($user->link_dark_color ?? $link_dark_color))" name="link_light_color" />
                       {!! $errors->first('link_light_color', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
                       <p class="help-block">{{ trans('admin/settings/general.link_light_color_help') }}</p>
                   </div>
@@ -45,9 +61,20 @@
               <div class="form-group {{ $errors->has('link_dark_color') ? 'error' : '' }}">
                   <label for="link_dark_color" class="col-md-3 control-label">{{ trans('admin/settings/general.link_dark_color') }}</label>
                   <div class="col-md-9">
-                      <x-input.colorpicker :item="$user" id="link_dark_color" placeholder="5fa4cc" :value="old('link_dark_color', ($user->link_dark_color ?? '#5fa4cc'))" name="link_dark_color" />
+                      <x-input.colorpicker :item="$user" id="link_dark_color" placeholder="{{ $link_light_color }}" :value="old('link_dark_color', $link_light_color)" name="link_dark_color" />
                       {!! $errors->first('link_dark_color', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
                       <p class="help-block">{{ trans('admin/settings/general.link_dark_color_help') }}</p>
+                  </div>
+              </div>
+
+              <div class="form-group">
+                  <label class="col-md-3 control-label" for="locale">{{ trans('general.light_dark') }}</label>
+                  <div class="col-md-9">
+                      <p class="form-control-static" style="padding-top: 7px;">
+                          <a data-theme-toggle-clear class="btn btn-default btn-sm" href="{{ route('profile') }}">
+                              {{ trans('general.system_default') }}
+                          </a>
+                      </p>
                   </div>
               </div>
 
@@ -69,14 +96,19 @@
                       </label>
                   </div>
               </div>
+
+
+
+
           </fieldset>
 
+          @can('self.profile')
 
           <fieldset name="user-preferences">
               <x-form-legend>
                   {{ trans('admin/settings/general.legends.your_details') }}
               </x-form-legend>
-          <!-- First Name -->
+                <!-- First Name -->
                     <div class="form-group {{ $errors->has('first_name') ? ' has-error' : '' }}">
                       <label for="first_name" class="col-md-3 control-label">{{ trans('general.first_name') }}
                       </label>
@@ -103,21 +135,6 @@
                     @include ('partials.forms.edit.location-profile-select', ['translated_name' => trans('general.location')])
                     @endcan
 
-
-                    <!-- Language -->
-                    <div class="form-group {{ $errors->has('locale') ? 'has-error' : '' }}">
-                      <label class="col-md-3 control-label" for="locale">{{ trans('general.language') }}</label>
-                      <div class="col-md-7">
-
-                        @if (!config('app.lock_passwords'))
-                          <x-input.locale-select name="locale" :selected="old('locale', $user->locale)"/>
-                          {!! $errors->first('locale', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
-                        @else
-                          <p class="help-block">{{ trans('general.feature_disabled') }}</p>
-                        @endif
-
-                      </div>
-                    </div>
 
                     <!-- Phone -->
                     <div class="form-group {{ $errors->has('phone') ? 'has-error' : '' }}">
@@ -151,6 +168,7 @@
                           @endif
                         </div>
                       </div>
+
                       <div class="form-group">
                         <div class="col-md-9 col-md-offset-3">
                           <img src="{{ (($user->isAvatarExternal()) ? $user->avatar : Storage::disk('public')->url(app('users_upload_path').e($user->avatar))) }}" class="img-responsive">
@@ -213,6 +231,7 @@
                     </div>
                     @endif
           </fieldset>
+          @endcan
 
 
 
@@ -237,6 +256,15 @@
 
         // This takes the color from the color picker to show a live preview
         $(function() {
+
+            /**
+             * 5. Add an event listener to toggle the reset
+             */
+            clearButton.addEventListener("click", (event) => {
+                localStorage.removeItem("theme");
+            });
+
+
 
             $('#nav-link-color').colorpicker().on('changeColor', function(e) {
                 var color = e.color.toString('rgba');

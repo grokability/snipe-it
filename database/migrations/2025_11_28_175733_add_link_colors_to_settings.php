@@ -17,13 +17,13 @@ return new class extends Migration
         Schema::table('settings', function (Blueprint $table) {
             $table->string('link_dark_color')->after('header_color')->nullable()->default(null);
             $table->string('link_light_color')->after('header_color')->nullable()->default(null);
-            $table->string('nav_link_color')->after('header_color')->nullable()->default(null);
+            $table->string('nav_link_color')->after('header_color')->nullable()->default('#ffffff');
         });
 
         Schema::table('users', function (Blueprint $table) {
             $table->string('link_dark_color')->after('skin')->nullable()->default(null);
             $table->string('link_light_color')->after('skin')->nullable()->default(null);
-            $table->string('nav_link_color')->after('skin')->nullable()->default(null);
+            $table->string('nav_link_color')->after('skin')->nullable()->default('#ffffff');
         });
 
 

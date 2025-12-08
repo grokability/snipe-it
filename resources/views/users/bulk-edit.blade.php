@@ -7,7 +7,7 @@
 
 
 @section('header_right')
-    <a href="{{ URL::previous() }}" class="btn btn-sm btn-primary pull-right">
+    <a href="{{ URL::previous() }}" class="btn btn-sm btn-theme pull-right">
         {{ trans('general.back') }}</a>
 @stop
 

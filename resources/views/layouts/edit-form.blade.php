@@ -10,13 +10,6 @@
 @parent
 @stop
 
-@section('header_right')
-<a href="{{ URL::previous() }}" class="btn btn-primary pull-right">
-    {{ trans('general.back') }}</a>
-@stop
-
-
-
 {{-- Page content --}}
 
 @section('content')

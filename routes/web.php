@@ -24,6 +24,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportTemplatesController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\SetupController;
 use App\Http\Controllers\StatuslabelsController;
 use App\Http\Controllers\SuppliersController;
 use App\Http\Controllers\ViewAssetsController;
@@ -48,7 +49,7 @@ Route::group(['middleware' => 'auth'], function () {
     ]);
 
     Route::post('categories/bulk/delete', [BulkCategoriesController::class, 'destroy'])->name('categories.bulk.delete');
-  
+
     /*
     * Labels
     */
@@ -285,15 +286,15 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'authorize:superuser
         Route::delete('delete/{filename}',
             [SettingsController::class, 'deleteFile'])->name('settings.backups.destroy');
 
-        Route::post('/', 
+        Route::post('/',
             [SettingsController::class, 'postBackups']
         )->name('settings.backups.create');
 
-        Route::post('/restore/{filename}', 
+        Route::post('/restore/{filename}',
             [SettingsController::class, 'postRestore']
         )->name('settings.backups.restore');
 
-        Route::post('/upload', 
+        Route::post('/upload',
             [SettingsController::class, 'postUploadBackup']
         )->name('settings.backups.upload');
 
@@ -415,7 +416,7 @@ Route::group(['prefix' => 'account', 'middleware' => ['auth']], function () {
         'display-sig/{filename}',
         [ProfileController::class, 'displaySig']
     )->name('profile.signature.view');
-    
+
     Route::get(
         'stored-eula-file/{filename}',
         [ProfileController::class, 'getStoredEula']
@@ -604,23 +605,24 @@ Route::get(
 Route::group(['prefix' => 'setup', 'middleware' => 'web'], function () {
     Route::get(
         'user',
-        [SettingsController::class, 'getSetupUser']
+        [SetupController::class, 'getSetupUser']
     )->name('setup.user');
 
     Route::post(
         'user',
-        [SettingsController::class, 'postSaveFirstAdmin']
+        [SetupController::class, 'postSaveFirstAdmin']
     )->name('setup.user.save');
 
 
-    Route::get(
+    Route::post(
         'migrate',
-        [SettingsController::class, 'getSetupMigrate']
+        [SetupController::class, 'SetupMigrate']
     )->name('setup.migrate');
+
 
     Route::get(
         'done',
-        [SettingsController::class, 'getSetupDone']
+        [SetupController::class, 'getSetupDone']
     )->name('setup.done');
 
     Route::get(
@@ -630,7 +632,7 @@ Route::group(['prefix' => 'setup', 'middleware' => 'web'], function () {
 
     Route::get(
         '/',
-        [SettingsController::class, 'getSetupIndex']
+        [SetupController::class, 'getSetupIndex']
     )->name('setup');
 });
 

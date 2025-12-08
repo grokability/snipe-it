@@ -8,10 +8,8 @@
     </div>
     <div class="col-md-1 col-sm-1 text-left">
         @can('create', \App\Models\Category::class)
-            @if (!isset($hide_new) || $hide_new != 'true')
-                <a href='{{ route('modal.show', ['type' => 'category', 'category_type' => isset($category_type) ? $category_type : 'assets']) }}'
-                    data-toggle="modal" data-target="#createModal" data-select='category_select_id'
-                    class="btn btn-sm btn-primary">{{ trans('button.new') }}</a>
+            @if ((!isset($hide_new)) || ($hide_new!='true'))
+                <a href='{{ route('modal.show',['type' => 'category', 'category_type' => isset($category_type) ? $category_type : 'assets' ]) }}' data-toggle="modal"  data-target="#createModal" data-select='category_select_id' class="btn btn-sm btn-theme">{{ trans('button.new') }}</a>
             @endif
         @endcan
     </div>

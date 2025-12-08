@@ -11,10 +11,6 @@
 @parent
 @stop
 
-@section('header_right')
-<a href="{{ URL::previous() }}" class="btn btn-primary pull-right">
-  {{ trans('general.back') }}</a>
-@stop
 
 {{-- Page content --}}
 @section('content')
@@ -34,7 +30,7 @@
 </style>
 
 <div class="row">
-  <div class="col-md-8 col-md-offset-2">
+  <div class="col-md-6 col-md-offset-3">
       <form class="form-horizontal" method="post" autocomplete="off"
             action="{{ (isset($user->id)) ? route('users.update', ['user' => $user->id]) : route('users.store') }}"
             enctype="multipart/form-data" id="userForm">
@@ -148,7 +144,7 @@
                   <div class="col-md-1 pull-left">
 
                     @if (Gate::allows('editableOnDemo') && (Gate::allows('canEditAuthFields', $user)) && ($user->ldap_import!='1'))
-                      <a href="#" class="text-left btn btn-default btn-sm" id="genPassword" data-tooltip="true" title="{{ trans('admin/users/general.generate_password') }}">
+                      <a href="#" class="text-left btn btn-theme btn-sm" id="genPassword" data-tooltip="true" title="{{ trans('admin/users/general.generate_password') }}">
                           <i class="fa-solid fa-wand-magic-sparkles"></i>
                       </a>
                     @endif

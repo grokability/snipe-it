@@ -46,7 +46,7 @@
               {!! $errors->first('asset_tag', '<span class="alert-msg"><i class="fas fa-times"></i> :message</span>') !!}
           </div>
           <div class="col-md-2 col-sm-12">
-              <button class="add_field_button btn btn-default btn-sm" name="add_field_button">
+              <button class="add_field_button btn btn-sm btn-theme" name="add_field_button">
                   <x-icon type="plus" />
                   <span class="sr-only">
                       {{ trans('general.new') }}
@@ -86,7 +86,7 @@
               {!! $errors->first('asset_tags.'.$i, '<span class="alert-msg"><i class="fas fa-times"></i> :message</span>') !!}
                     </div>
                     <div class="col-md-2 col-sm-12">
-                        <a href="#" class="remove_field btn btn-default btn-sm"><x-icon type="minus"/></a>
+                        <a href="#" class="remove_field btn btn-sm btn-theme"><x-icon type="minus"/></a>
                     </div>
                 </div>
                 @include ('partials.forms.edit.serial', ['fieldname'=> 'serials['.$i.']', 'old_val_name' => 'serials.'.$i, 'translated_serial' => trans('admin/hardware/form.serial')])
@@ -357,7 +357,7 @@
                 box_html += '<input type="text"  class="form-control" name="asset_tags[' + x + ']" value="{{ (($snipeSettings->auto_increment_prefix!='') && ($snipeSettings->auto_increment_assets=='1')) ? $snipeSettings->auto_increment_prefix : '' }}'+ auto_tag +'" required>';
                 box_html += '</div>';
                 box_html += '<div class="col-md-2 col-sm-12">';
-                box_html += '<a href="#" class="remove_field btn btn-default btn-sm"><x-icon type="minus" /></a>';
+                box_html += '<a href="#" class="remove_field btn btn-sm btn-theme"><x-icon type="minus" /></a>';
                 box_html += '</div>';
                 // box_html += '</div>';
                 box_html += '</div>';

@@ -22,7 +22,7 @@
             <div class="callout callout-info">
               <p>
                   {{ trans('general.seeding.manufacturers.prompt') }}
-                <button class="btn btn-sm btn-primary hidden-print" rel="noopener">
+                <button class="btn btn-sm btn-theme hidden-print" rel="noopener">
                   {{ trans('general.seeding.manufacturers.button') }}
                 </button>
               </p>
@@ -57,7 +57,7 @@
               {{-- end stuff for bulk dropdown --}}
               data-buttons="manufacturerButtons"
               class="table table-striped snipe-table"
-              data-url="{{route('api.manufacturers.index', ['deleted' => (request('deleted')=='true') ? 'true' : 'false' ]) }}"
+              data-url="{{route('api.manufacturers.index', ['status' => e(request()->input('status')) ]) }}"
               data-export-options='{
                 "fileName": "export-manufacturers-{{ date('Y-m-d') }}",
                 "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]

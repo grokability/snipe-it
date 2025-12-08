@@ -522,93 +522,99 @@ class UsersController extends Controller
     {
         $this->authorize('update', User::class);
 
-            $this->authorize('update', $user);
+        $this->authorize('update', $user);
 
-            /**
-             * This is a janky hack to prevent people from changing admin demo user data on the public demo.
-             * The $ids 1 and 2 are special since they are seeded as superadmins in the demo seeder.
-             *  Thanks, jerks. You are why we can't have nice things. - snipe
-             *
-             */
+        /**
+         * This is a janky hack to prevent people from changing admin demo user data on the public demo.
+         * The $ids 1 and 2 are special since they are seeded as superadmins in the demo seeder.
+         *  Thanks, jerks. You are why we can't have nice things. - snipe
+         *
+         */
 
         if ((($user->id == 1) || ($user->id == 2)) && (config('app.lock_passwords'))) {
-                return response()->json(Helper::formatStandardApiResponse('error', null, 'Permission denied. You cannot update user information via API on the demo.'));
+            return response()->json(Helper::formatStandardApiResponse('error', null, 'Permission denied. You cannot update user information via API on the demo.'));
+        }
+
+        // Pull out sensitive fields that require extra permission
+        $user->fill($request->except(['password', 'username', 'email', 'activated', 'permissions', 'activation_code', 'remember_token', 'two_factor_secret', 'two_factor_enrolled', 'two_factor_optin']));
+
+
+        if (auth()->user()->can('canEditAuthFields', $user) && auth()->user()->can('editableOnDemo')) {
+
+            if ($request->filled('password')) {
+                $user->password = bcrypt($request->input('password'));
             }
 
-            $user->fill($request->all());
-
-            if ($request->filled('company_id')) {
-                $user->company_id = Company::getIdForCurrentUser($request->input('company_id'));
+            if ($request->filled('username')) {
+                $user->username = $request->input('username');
             }
 
-            if ($user->id == $request->input('manager_id')) {
-                return response()->json(Helper::formatStandardApiResponse('error', null, 'You cannot be your own manager'));
+            if ($request->filled('email')) {
+                $user->email = $request->input('email');
             }
 
-            // check for permissions related fields and pull them out if the current user cannot edit them
-            if (auth()->user()->can('canEditAuthFields', $user) && auth()->user()->can('editableOnDemo')) {
-
-                if ($request->filled('password')) {
-                    $user->password = bcrypt($request->input('password'));
-                }
-
-                if ($request->filled('username')) {
-                    $user->username = $request->input('username');
-                }
-
-                if ($request->filled('display_name')) {
-                    $user->display_name = $request->input('display_name');
-                }
-
-                if ($request->filled('email')) {
-                    $user->email = $request->input('email');
-                }
-
-                if ($request->filled('activated')) {
-                    $user->activated = $request->input('activated');
-                }
-
+            if ($request->filled('activated')) {
+                $user->activated = $request->input('activated');
             }
 
-            // We need to use has()  instead of filled()
-            // here because we need to overwrite permissions
-            // if someone needs to null them out
-            if ($request->has('permissions')) {
-                $permissions_array = $request->input('permissions');
+        }
 
-                // Strip out the individual superuser permission if the API user isn't a superadmin
-                if (!auth()->user()->isSuperUser()) {
-                    unset($permissions_array['superuser']);
+        // We need to use has()  instead of filled()
+        // here because we need to overwrite permissions
+        // if someone needs to null them out
+
+        if ($request->filled('display_name')) {
+            $user->display_name = $request->input('display_name');
+        }
+
+        if ($request->filled('company_id')) {
+            $user->company_id = Company::getIdForCurrentUser($request->input('company_id'));
+        }
+
+        if ($user->id == $request->input('manager_id')) {
+            return response()->json(Helper::formatStandardApiResponse('error', null, 'You cannot be your own manager'));
+        }
+
+
+        
+        if ($request->has('permissions')) {
+            $permissions_array = $request->input('permissions');
+
+            // Strip out the individual superuser permission if the API user isn't a superadmin
+            if (!auth()->user()->isSuperUser()) {
+                unset($permissions_array['superuser']);
+            }
+
+            $user->permissions = $permissions_array;
+        }
+
+        if ($request->has('location_id')) {
+            // Update the location of any assets checked out to this user
+            Asset::where('assigned_type', User::class)
+                ->where('assigned_to', $user->id)->update(['location_id' => $request->input('location_id', null)]);
+        }
+
+
+        app('App\Http\Requests\ImageUploadRequest')->handleImages($user, 600, 'avatar', 'avatars', 'avatar');
+
+        if ($user->save()) {
+            // Check if the request has groups passed and has a value, AND that the user us a superuser
+            if (($request->has('groups')) && (auth()->user()->isSuperUser())) {
+
+                $validator = Validator::make($request->only('groups'), [
+                    'groups.*' => 'integer|exists:permission_groups,id',
+                ]);
+
+                if ($validator->fails()) {
+                    return response()->json(Helper::formatStandardApiResponse('error', null, $validator->errors()));
                 }
 
-                $user->permissions = $permissions_array;
+                // Sync the groups since the user is a superuser and the groups pass validation
+                $user->groups()->sync($request->input('groups'));
             }
-
-            if($request->has('location_id')) {
-                // Update the location of any assets checked out to this user
-                Asset::where('assigned_type', User::class)
-                    ->where('assigned_to', $user->id)->update(['location_id' => $request->input('location_id', null)]);
-            }
-            app('App\Http\Requests\ImageUploadRequest')->handleImages($user, 600, 'avatar', 'avatars', 'avatar');
-
-            if ($user->save()) {
-                // Check if the request has groups passed and has a value, AND that the user us a superuser
-                if (($request->has('groups')) && (auth()->user()->isSuperUser())) {
-
-                    $validator = Validator::make($request->only('groups'), [
-                        'groups.*' => 'integer|exists:permission_groups,id',
-                    ]);
-
-                    if ($validator->fails()) {
-                        return response()->json(Helper::formatStandardApiResponse('error', null, $validator->errors()));
-                    }
-
-                    // Sync the groups since the user is a superuser and the groups pass validation
-                    $user->groups()->sync($request->input('groups'));
-                }
-                return response()->json(Helper::formatStandardApiResponse('success', (new UsersTransformer)->transformUser($user), trans('admin/users/message.success.update')));
-            }
-            return response()->json(Helper::formatStandardApiResponse('error', null, $user->getErrors()));
+            return response()->json(Helper::formatStandardApiResponse('success', (new UsersTransformer)->transformUser($user), trans('admin/users/message.success.update')));
+        }
+        return response()->json(Helper::formatStandardApiResponse('error', null, $user->getErrors()));
     }
 
     /**

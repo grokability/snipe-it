@@ -1,0 +1,70 @@
+    /*
+    Layout container for the whole page.
+    Uses flexbox so the filter and table sections can sit side by side on desktop, and stack on mobile.
+    */
+        .responsive-layout {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+    /*
+    The filter (sidebar) section.
+    Transition allows smooth showing/hiding.
+    */
+        .filter-section {
+            transition: all 0.3s ease;
+        }
+
+    /*
+    When .hide is applied, the filter section is hidden.
+    !important ensures it's forced, even if overridden by other classes.
+    */
+        .filter-section.hide {
+            display: none !important;
+        }
+
+        /* ---------- DESKTOP Styles (screen ≥ 768px) ---------- */
+        @media screen and (min-width: 768px) {
+
+        /*
+        Filter sidebar gets 25% width, and some space on the right.
+        */
+            .filter-section {
+                flex: 0 0 25%;
+                max-width: 25%;
+                padding-right: 15px;
+            }
+
+        /*
+        Main table takes the remaining 75%.
+        */
+            .table-section {
+                flex: 0 0 75%;
+                max-width: 75%;
+            }
+
+        /*
+        If filter is hidden, the table takes full width.
+        */
+            .filter-section.hide+.table-section {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+        }
+
+        /* ---------- MOBILE Styles (screen < 768px) ---------- */
+        @media screen and (max-width: 767px) {
+
+        /*
+        Filter takes full width, and sits above the table section.
+        */
+            .filter-section {
+                width: 100%;
+                margin-bottom: 15px;
+            }
+
+            .table-section {
+                width: 100%;
+            }
+        }

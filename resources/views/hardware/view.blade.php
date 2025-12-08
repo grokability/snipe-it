@@ -233,13 +233,12 @@
                                     @endcan
 
 
-                                    @if (($asset->assetstatus) && ($asset->assetstatus->deployable == '1'))
-                                        @if (($asset->assigned_to != '') && ($asset->deleted_at == ''))
-                                            @can('checkin', $asset)
-                                                <div class="col-md-12 hidden-print" style="padding-top: 5px;">
-                                                    <span class="tooltip-wrapper" {!! (!$asset->model ? ' data-tooltip="true" title="' . trans('admin/hardware/general.model_invalid_fix') . '"' : '') !!}>
-                                                        <a role="button" href="{{ route('hardware.checkin.create', $asset->id) }}"
-                                                            class="btn btn-sm btn-primary bg-purple btn-social btn-block hidden-print{{ (!$asset->model ? ' disabled' : '') }}">
+                                @if (($asset->assetstatus) && ($asset->assetstatus->deployable=='1'))
+                                    @if (($asset->assigned_to != '') && ($asset->deleted_at==''))
+                                        @can('checkin', $asset)
+                                            <div class="col-md-12 hidden-print" style="padding-top: 5px;">
+                                                    <span class="tooltip-wrapper"{!! (!$asset->model ? ' data-tooltip="true" title="'.trans('admin/hardware/general.model_invalid_fix').'"' : '') !!}>
+                                                        <a role="button" href="{{ route('hardware.checkin.create', $asset->id) }}" class="btn btn-sm btn-theme bg-purple btn-social btn-block hidden-print{{ (!$asset->model ? ' disabled' : '') }}">
                                                             <x-icon type="checkin" />
                                                             {{ trans('admin/hardware/general.checkin') }}
                                                         </a>
@@ -261,17 +260,16 @@
                                         @endif
                                     @endif
 
-                                    <!-- Add notes -->
-                                    @can('update', \App\Models\Asset::class)
-                                        <div class="col-md-12 hidden-print" style="padding-top: 5px;">
-                                            <a href="#" style="width: 100%" data-toggle="modal" data-target="#createNoteModal"
-                                                class="btn btn-sm btn-primary btn-block btn-social hidden-print">
-                                                <x-icon type="note" />
-                                                {{ trans('general.add_note') }}
-                                            </a>
-                                            @include ('modals.add-note', ['type' => 'asset', 'id' => $asset->id])
-                                        </div>
-                                    @endcan
+                                        <!-- Add notes -->
+                                        @can('update', \App\Models\Asset::class)
+                                            <div class="col-md-12 hidden-print" style="padding-top: 5px;">
+                                                <a href="#" style="width: 100%" data-toggle="modal" data-target="#createNoteModal" class="btn btn-sm btn-theme btn-block btn-social hidden-print">
+                                                    <x-icon type="note" />
+                                                    {{ trans('general.add_note') }}
+                                                </a>
+                                                @include ('modals.add-note', ['type' => 'asset', 'id' => $asset->id])
+                                            </div>
+                                        @endcan
 
 
 
@@ -300,14 +298,20 @@
                                 @endcan
 
                                 <div class="col-md-12 hidden-print" style="padding-top: 5px;">
-                                    <form method="POST" action="{{ route('hardware/bulkedit') }}" accept-charset="UTF-8"
-                                        class="form-inline" target="_blank" id="bulkForm">
-                                        @csrf
-                                        <input type="hidden" name="bulk_actions" value="labels" />
-                                        <input type="hidden" name="ids[{{$asset->id}}]" value="{{ $asset->id }}" />
-                                        <button class="btn btn-block btn-social btn-sm btn-default" id="bulkEdit" {{ (!$asset->model ? ' disabled' : '') }}{!! (!$asset->model ? ' data-tooltip="true" title="' . trans('admin/hardware/general.model_invalid') . '"' : '') !!}>
-                                            <x-icon type="assets" />
-                                            {{ trans_choice('button.generate_labels', 1) }}</button>
+                                    <form
+                                        method="POST"
+                                        action="{{ route('hardware.bulkdelete.store') }}"
+                                        accept-charset="UTF-8"
+                                        class="form-inline"
+                                        target="_blank"
+                                        id="bulkForm"
+                                    >
+                                    @csrf
+                                    <input type="hidden" name="bulk_actions" value="labels" />
+                                    <input type="hidden" name="ids[{{$asset->id}}]" value="{{ $asset->id }}" />
+                                    <button class="btn btn-block btn-social btn-sm btn-default" id="bulkEdit"{{ (!$asset->model ? ' disabled' : '') }}{!! (!$asset->model ? ' data-tooltip="true" title="'.trans('admin/hardware/general.model_invalid').'"' : '') !!}>
+                                        <x-icon type="assets" />
+                                        {{ trans_choice('button.generate_labels', 1) }}</button>
                                     </form>
                                 </div>
 
