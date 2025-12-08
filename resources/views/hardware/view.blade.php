@@ -46,13 +46,13 @@
             </div>
         @endif
 
-<div class="col-md-12">
-    <div class="nav-tabs-custom">
-        <ul class="nav nav-tabs hidden-print">
+        <div class="col-md-12">
+            <div class="nav-tabs-custom">
+                <ul class="nav nav-tabs hidden-print">
 
-            <li class="active">
-                <a href="#details" data-toggle="tab">
-                      <span class="hidden-lg hidden-md">
+                    <li class="active">
+                        <a href="#details" data-toggle="tab">
+                          <span class="hidden-lg hidden-md">
                             <x-icon type="info-circle" class="fa-2x" />
                           </span>
                             <span class="hidden-xs hidden-sm">
@@ -74,9 +74,9 @@
                         </a>
                     </li>
 
-            <li>
-                <a href="#components" data-toggle="tab">
-                      <span class="hidden-lg hidden-md">
+                    <li>
+                        <a href="#components" data-toggle="tab">
+                          <span class="hidden-lg hidden-md">
                             <x-icon type="components" class="fa-2x" />
                           </span>
                             <span class="hidden-xs hidden-sm">
@@ -87,9 +87,9 @@
                         </a>
                     </li>
 
-            <li>
-                <a href="#assets" data-toggle="tab">
-                      <span class="hidden-lg hidden-md">
+                    <li>
+                        <a href="#assets" data-toggle="tab">
+                          <span class="hidden-lg hidden-md">
                             <x-icon type="assets" class="fa-2x" />
                           </span>
                             <span class="hidden-xs hidden-sm">
@@ -132,7 +132,7 @@
                     <li>
                         <a href="#history" data-toggle="tab">
                           <span class="hidden-lg hidden-md">
-                              <x-icon type="history" class="fa-2x " />
+                              <x-icon type="history" class="fa-2x "/>
                           </span>
                             <span class="hidden-xs hidden-sm">{{ trans('general.history') }}
                           </span>
@@ -226,18 +226,18 @@
                                     @endcan
 
 
-                                    @if (($asset->assetstatus) && ($asset->assetstatus->deployable=='1'))
-                                        @if (($asset->assigned_to!='') && ($asset->deleted_at==''))
-                                            @can('checkin', $asset)
-                                                <div class="col-md-12 hidden-print" style="padding-top: 5px;">
-                                                    <span class="tooltip-wrapper" {!! (!$asset->model ? ' data-tooltip="true" title="' . trans('admin/hardware/general.model_invalid_fix') . '"' : '') !!}>
-                                                        <a role="button" href="{{ route('hardware.checkin.create', $asset->id) }}" class="btn btn-sm btn-primary bg-purple btn-social btn-block hidden-print{{ (!$asset->model ? ' disabled' : '') }}">
+                                @if (($asset->assetstatus) && ($asset->assetstatus->deployable=='1'))
+                                    @if (($asset->assigned_to != '') && ($asset->deleted_at==''))
+                                        @can('checkin', $asset)
+                                            <div class="col-md-12 hidden-print" style="padding-top: 5px;">
+                                                    <span class="tooltip-wrapper"{!! (!$asset->model ? ' data-tooltip="true" title="'.trans('admin/hardware/general.model_invalid_fix').'"' : '') !!}>
+                                                        <a role="button" href="{{ route('hardware.checkin.create', $asset->id) }}" class="btn btn-sm btn-theme bg-purple btn-social btn-block hidden-print{{ (!$asset->model ? ' disabled' : '') }}">
                                                             <x-icon type="checkin" />
                                                             {{ trans('admin/hardware/general.checkin') }}
                                                         </a>
                                                     </span>
-                                                </div>
-                                            @endcan
+                                            </div>
+                                        @endcan
                                     @elseif (($asset->assigned_to == '') && ($asset->deleted_at==''))
                                         @can('checkout', $asset)
                                             <div class="col-md-12 hidden-print" style="padding-top: 5px;">
@@ -421,7 +421,6 @@
                                 @endif
                                 <br><br>
                             </div>
-
 
 
 
@@ -624,7 +623,7 @@
                                                                 {{ $asset->present()->dynamicUrl($asset->model->manufacturer->warranty_lookup_url) }}
 
                                                                 <x-icon type="external-link" />
-                                                                <span class="sr-only">{{ trans('admin/hardware/general.mfg_warranty_lookup', ['manufacturer' => $asset->model->manufacturer->name]) }}</span></i>
+                                                                    <span class="sr-only">{{ trans('admin/hardware/general.mfg_warranty_lookup', ['manufacturer' => $asset->model->manufacturer->name]) }}</span></i>
                                                             </a>
                                                         </li>
                                                     @endif
@@ -701,7 +700,7 @@
                                             <strong>{{ trans('general.byod') }}</strong>
                                         </div>
                                         <div class="col-md-9">
-                                            {!! ($asset->byod=='1') ? '<i class="fas fa-check text-success" aria-hidden="true"></i> '.trans('general.yes') : '<i class="fas fa-times text-danger" aria-hidden="true"></i> ' . trans('general.no')  !!}
+                                            {!! ($asset->byod=='1') ? '<i class="fas fa-check text-success" aria-hidden="true"></i> '.trans('general.yes') : '<i class="fas fa-times text-danger" aria-hidden="true"></i> '.trans('general.no')  !!}
                                         </div>
                                     </div>
 
@@ -711,7 +710,7 @@
                                             <strong>{{ trans('admin/hardware/general.requestable') }}</strong>
                                         </div>
                                         <div class="col-md-9">
-                                            {!! ($asset->requestable=='1') ? '<i class="fas fa-check text-success" aria-hidden="true"></i> '.trans('general.yes') : '<i class="fas fa-times text-danger" aria-hidden="true"></i> ' . trans('general.no')  !!}
+                                            {!! ($asset->requestable=='1') ? '<i class="fas fa-check text-success" aria-hidden="true"></i> '.trans('general.yes') : '<i class="fas fa-times text-danger" aria-hidden="true"></i> '.trans('general.no')  !!}
                                         </div>
                                     </div>
 
@@ -743,85 +742,72 @@
                                                         @if (($field->field_encrypted=='1') && ($asset->{$field->db_column_name()}!='') && (Gate::allows('assets.view.encrypted_custom_fields')))
                                                             <i class="fas fa-lock" data-tooltip="true" data-placement="top" title="{{ trans('admin/custom_fields/general.value_encrypted') }}" onclick="showHideEncValue(this)" id="text-{{ $field->id }}"></i>
                                                         @endif
-                                                        {{-- Clipboard icon --}}
-                                                        <i class="fa-regular fa-clipboard js-copy-link hidden-print"
-                                                            data-clipboard-target=".js-copy-{{ $field->id }}" aria-hidden="true"
-                                                            data-tooltip="true" data-placement="top"
-                                                            title="{{ trans('general.copy_to_clipboard') }}">
-                                                            <span class="sr-only">{{ trans('general.copy_to_clipboard') }}</span>
-                                                        </i>
-                                                    @endif
-                                                    @if (($field->field_encrypted == '1') && ($asset->{$field->db_column_name()} != '') && (Gate::allows('assets.view.encrypted_custom_fields')))
-                                                        <i class="fas fa-lock" data-tooltip="true" data-placement="top"
-                                                            title="{{ trans('admin/custom_fields/general.value_encrypted') }}"
-                                                            onclick="showHideEncValue(this)" id="text-{{ $field->id }}"></i>
-                                                    @endif
 
-                                                    @if ($field->isFieldDecryptable($asset->{$field->db_column_name()}))
-                                                        @can('assets.view.encrypted_custom_fields')
-                                                            @php
-                                                                $fieldSize = strlen(Helper::gracefulDecrypt($field, $asset->{$field->db_column_name()}))
-                                                            @endphp
-                                                            @if ($fieldSize > 0)
-                                                                <span id="text-{{ $field->id }}-to-hide">***********</span>
-                                                                @if (($field->format == 'URL') && ($asset->{$field->db_column_name()} != ''))
-                                                                    <span class="js-copy-{{ $field->id }} hidden-print"
-                                                                        id="text-{{ $field->id }}-to-show" style="font-size: 0px;">
-                                                                        <a href="{{ Helper::gracefulDecrypt($field, $asset->{$field->db_column_name()}) }}"
-                                                                            target="_new">{{ Helper::gracefulDecrypt($field, $asset->{$field->db_column_name()}) }}</a>
-                                                                    </span>
-                                                                @elseif (($field->format == 'DATE') && ($asset->{$field->db_column_name()} != ''))
-                                                                    <span class="js-copy-{{ $field->id }} hidden-print"
-                                                                        id="text-{{ $field->id }}-to-show"
-                                                                        style="font-size: 0px;">{{ \App\Helpers\Helper::gracefulDecrypt($field, \App\Helpers\Helper::getFormattedDateObject($asset->{$field->db_column_name()}, 'date', false)) }}</span>
-                                                                @else
-                                                                    <span class="js-copy-{{ $field->id }} hidden-print"
-                                                                        id="text-{{ $field->id }}-to-show"
-                                                                        style="font-size: 0px;">{{ Helper::gracefulDecrypt($field, $asset->{$field->db_column_name()}) }}</span>
+                                                        @if ($field->isFieldDecryptable($asset->{$field->db_column_name()} ))
+                                                            @can('assets.view.encrypted_custom_fields')
+                                                                @php
+                                                                    $fieldSize = strlen(Helper::gracefulDecrypt($field, $asset->{$field->db_column_name()}))
+                                                                @endphp
+                                                                @if ($fieldSize > 0)
+                                                                    <span id="text-{{ $field->id }}-to-hide">***********</span>
+                                                                        @if (($field->format=='URL') && ($asset->{$field->db_column_name()}!=''))
+                                                                            <span class="js-copy-{{ $field->id }} hidden-print"
+                                                                                  id="text-{{ $field->id }}-to-show"
+                                                                                  style="font-size: 0px;">
+                                                                                <a href="{{ Helper::gracefulDecrypt($field, $asset->{$field->db_column_name()}) }}"
+                                                                                        target="_new">{{ Helper::gracefulDecrypt($field, $asset->{$field->db_column_name()}) }}</a>
+                                                                            </span>
+                                                                        @elseif (($field->format=='DATE') && ($asset->{$field->db_column_name()}!=''))
+                                                                            <span class="js-copy-{{ $field->id }} hidden-print"
+                                                                                  id="text-{{ $field->id }}-to-show"
+                                                                                  style="font-size: 0px;">{{ \App\Helpers\Helper::gracefulDecrypt($field, \App\Helpers\Helper::getFormattedDateObject($asset->{$field->db_column_name()}, 'date', false)) }}</span>
+                                                                        @else
+                                                                            <span class="js-copy-{{ $field->id }} hidden-print"
+                                                                                  id="text-{{ $field->id }}-to-show"
+                                                                                  style="font-size: 0px;">{{ Helper::gracefulDecrypt($field, $asset->{$field->db_column_name()}) }}</span>
+                                                                        @endif
                                                                 @endif
-                                                            @endif
-                                                        @else
-                                                            {{ strtoupper(trans('admin/custom_fields/general.encrypted')) }}
-                                                        @endcan
+                                                            @else
+                                                                {{ strtoupper(trans('admin/custom_fields/general.encrypted')) }}
+                                                            @endcan
 
-                                                    @else
-                                                        @if (($field->format == 'BOOLEAN') && ($asset->{$field->db_column_name()} != ''))
-                                                            {!! ($asset->{$field->db_column_name()} == 1) ? "<span class='fas fa-check-circle' style='color:green' />" : "<span class='fas fa-times-circle' style='color:red' />" !!}
-                                                        @elseif (($field->format == 'URL') && ($asset->{$field->db_column_name()} != ''))
-                                                            <a href="{{ $asset->{$field->db_column_name()} }}"
-                                                                target="_new">{{ $asset->{$field->db_column_name()} }}</a>
-                                                        @elseif (($field->format == 'DATE') && ($asset->{$field->db_column_name()} != ''))
-                                                            {{ \App\Helpers\Helper::getFormattedDateObject($asset->{$field->db_column_name()}, 'date', false) }}
                                                         @else
-                                                            {!! nl2br(e($asset->{$field->db_column_name()})) !!}
+                                                            @if (($field->format=='BOOLEAN') && ($asset->{$field->db_column_name()}!=''))
+                                                                {!! ($asset->{$field->db_column_name()} == 1) ? "<span class='fas fa-check-circle' style='color:green' />" : "<span class='fas fa-times-circle' style='color:red' />" !!}
+                                                            @elseif (($field->format=='URL') && ($asset->{$field->db_column_name()}!=''))
+                                                                <a href="{{ $asset->{$field->db_column_name()} }}" target="_new">{{ $asset->{$field->db_column_name()} }}</a>
+                                                            @elseif (($field->format=='DATE') && ($asset->{$field->db_column_name()}!=''))
+                                                                {{ \App\Helpers\Helper::getFormattedDateObject($asset->{$field->db_column_name()}, 'date', false) }}
+                                                            @else
+                                                                {!! nl2br(e($asset->{$field->db_column_name()})) !!}
+                                                            @endif
+
                                                         @endif
 
-                                                    @endif
+                                                        @if ($asset->{$field->db_column_name()}=='')
+                                                            &nbsp;
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        @endif
 
-                                                    @if ($asset->{$field->db_column_name()} == '')
-                                                        &nbsp;
-                                                    @endif
+
+                                        @if ($asset->purchase_date)
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <strong>
+                                                        {{ trans('admin/hardware/form.date') }}
+                                                    </strong>
+                                                </div>
+                                                <div class="col-md-9">
+                                                    {{ Helper::getFormattedDateObject($asset->purchase_date, 'date', false) }}
+                                                    -
+                                                    {{ Carbon::parse($asset->purchase_date)->diffForHumans(['parts' => 3]) }}
+
                                                 </div>
                                             </div>
-                                        @endforeach
-                                    @endif
-
-
-                                    @if ($asset->purchase_date)
-                                        <div class="row">
-                                            <div class="col-md-3">
-                                                <strong>
-                                                    {{ trans('admin/hardware/form.date') }}
-                                                </strong>
-                                            </div>
-                                            <div class="col-md-9">
-                                                {{ Helper::getFormattedDateObject($asset->purchase_date, 'date', false) }}
-                                                -
-                                                {{ Carbon::parse($asset->purchase_date)->diffForHumans(['parts' => 3]) }}
-
-                                            </div>
-                                        </div>
-                                    @endif
+                                        @endif
 
                                     @if ($asset->purchase_cost)
                                         <div class="row">
