@@ -943,9 +943,7 @@
                                                 </div>
                                             </div>
 
-
                                         @endif
-
 
                                         @if (($asset->model) && ($asset->depreciation))
                                             <div class="row">
@@ -977,7 +975,6 @@
                                                 </div>
                                             </div>
                                         @endif
-
 
                                         @if (($asset->asset_eol_date) && ($asset->purchase_date))
                                             <div class="row">
@@ -1034,7 +1031,6 @@
                                                 {!! nl2br(Helper::parseEscapedMarkedownInline($asset->notes)) !!}
                                             </div>
                                         </div>
-
 
                                         @if ($asset->location)
                                             <div class="row">
@@ -1266,6 +1262,7 @@
                             </div>
                         </div> <!-- /.tab-pane components -->
 
+
                         <div class="tab-pane fade" id="assets">
                             <div class="row{{($asset->assignedAssets->count() > 0 ) ? '' : ' hidden-print'}}">
                                 <div class="col-md-12">
@@ -1450,4 +1447,3 @@
         @include ('partials.bootstrap-table')
 
     @stop
-    
