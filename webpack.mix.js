@@ -89,7 +89,7 @@ mix
 mix
   .babel("resources/assets/js/advancedSearch/search-inputs.js", "./public/js/dist/search-inputs.js")
   .minify("./public/js/dist/search-inputs.js");
-  mix
+mix
   .babel("resources/assets/js/advancedSearch/advanced-search.js", "./public/js/dist/advanced-search.js")
   .minify("./public/js/dist/advanced-search.js");
 mix

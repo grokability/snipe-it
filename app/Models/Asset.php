@@ -448,7 +448,6 @@ class Asset extends Depreciable
      */
     public function availableForCheckout()
     {
-
         // This asset is not currently assigned to anyone and is not deleted...
         if ((! $this->assigned_to) && (! $this->deleted_at)) {
 
@@ -457,7 +456,6 @@ class Asset extends Depreciable
                 && ($this->assetstatus->deployable == '1')
             ) {
                 return true;
-
             }
         }
         return false;
