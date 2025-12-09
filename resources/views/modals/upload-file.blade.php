@@ -19,7 +19,7 @@
                 <div class="row">
                     <div class="col-md-12">
 
-                        <label class="btn btn-default btn-block">
+                        <label class="btn btn-theme btn-block">
                             {{ trans('button.select_files')  }}
                             <input type="file" name="file[]" multiple class="js-uploadFile" id="uploadFile" data-maxsize="{{ Helper::file_upload_max_size() }}" accept="{{ config('filesystems.allowed_upload_mimetypes') }}" style="display:none" required>
                         </label>
@@ -46,7 +46,7 @@
             </div> <!-- /.modal-body-->
             <div class="modal-footer">
                 <a href="#" class="pull-left" data-dismiss="modal">{{ trans('button.cancel') }}</a>
-                <button type="submit" class="btn btn-primary">{{ trans('button.upload') }}</button>
+                <button type="submit" class="btn btn-theme">{{ trans('button.upload') }}</button>
             </div>
             </form>
         </div>

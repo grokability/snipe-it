@@ -9,7 +9,7 @@
 @stop
 
 @section('header_right')
-    <a href="{{ route('departments.edit', ['department' => $department->id]) }}" class="btn btn-sm btn-primary pull-right">{{ trans('admin/departments/table.update') }} </a>
+    <a href="{{ route('departments.edit', ['department' => $department->id]) }}" class="btn btn-sm btn-theme pull-right">{{ trans('admin/departments/table.update') }} </a>
 @stop
 
 {{-- Page content --}}

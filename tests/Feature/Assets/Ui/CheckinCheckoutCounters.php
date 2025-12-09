@@ -44,7 +44,7 @@ class CheckinCheckoutCounters extends TestCase
             ])->assertRedirect()->assertSessionHasNoErrors();
 
         $asset->refresh();
-
+//        dump($asset);
         $this->assertEquals(1,$asset->checkout_counter);
         $this->assertEquals(0,$asset->checkin_counter);
 
@@ -58,7 +58,7 @@ class CheckinCheckoutCounters extends TestCase
             )->assertRedirect()->assertSessionHasNoErrors();
 
         $asset->refresh();
-
+//        dump($asset);
         $this->assertEquals(1,$asset->checkout_counter);
         $this->assertEquals(1,$asset->checkin_counter);
     }

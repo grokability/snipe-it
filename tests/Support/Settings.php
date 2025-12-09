@@ -19,7 +19,7 @@ class Settings
         return new self();
     }
 
-    public function enableAlertEmail(string $email = 'notifications@afcrichmond.com'): Settings
+    public function enableAlertEmail(string $email = 'notifications@example.org'): Settings
     {
         return $this->update([
             'alert_email' => $email,
@@ -46,7 +46,7 @@ class Settings
         ]);
     }
 
-    public function enableAdminCC(string $email = 'cc@example.co'): Settings
+    public function enableAdminCC(string $email = 'cc@example.org'): Settings
     {
         return $this->update([
             'admin_cc_email' => $email,

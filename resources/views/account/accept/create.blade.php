@@ -101,7 +101,7 @@
                                         <input type="hidden" name="signature_output" id="signature_output">
                                     </div>
                                     <div class="col-md-12 col-sm-12 col-lg-12 col-xs-12 text-left">
-                                        <button type="button" class="btn btn-sm btn-default clear" data-action="clear" id="clear_button">{{trans('general.clear_signature')}}</button>
+                                        <button type="button" class="btn btn-sm btn-theme clear" data-action="clear" id="clear_button">{{trans('general.clear_signature')}}</button>
                                     </div>
                                 </div>
                             </div>

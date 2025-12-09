@@ -784,7 +784,7 @@ class Helper
 
         foreach ($consumables as $consumable) {
             $avail = $consumable->numRemaining();
-            if ($avail < ($consumable->min_amt) + $alert_threshold) {
+            if ($avail <= ($consumable->min_amt) + $alert_threshold) {
                 if ($consumable->qty > 0) {
                     $percent = number_format((($avail / $consumable->qty) * 100), 0);
                 } else {
@@ -803,7 +803,7 @@ class Helper
 
         foreach ($accessories as $accessory) {
             $avail = $accessory->qty - $accessory->checkouts_count;
-            if ($avail < ($accessory->min_amt) + $alert_threshold) {
+            if ($avail <= ($accessory->min_amt) + $alert_threshold) {
                 if ($accessory->qty > 0) {
                     $percent = number_format((($avail / $accessory->qty) * 100), 0);
                 } else {
@@ -822,7 +822,7 @@ class Helper
 
         foreach ($components as $component) {
             $avail = $component->numRemaining();
-            if ($avail < ($component->min_amt) + $alert_threshold) {
+            if ($avail <= ($component->min_amt) + $alert_threshold) {
                 if ($component->qty > 0) {
                     $percent = number_format((($avail / $component->qty) * 100), 0);
                 } else {
@@ -845,7 +845,7 @@ class Helper
             $total_owned = $asset->where('model_id', '=', $asset_model->id)->count();
             $avail = $asset->where('model_id', '=', $asset_model->id)->whereNull('assigned_to')->count();
 
-            if ($avail < ($asset_model->min_amt) + $alert_threshold) {
+            if ($avail <= ($asset_model->min_amt) + $alert_threshold) {
                 if ($avail > 0) {
                     $percent = number_format((($avail / $total_owned) * 100), 0);
                 } else {
@@ -863,7 +863,7 @@ class Helper
 
         foreach ($licenses as $license){
             $avail = $license->remaincount();
-            if ($avail < ($license->min_amt) + $alert_threshold) {
+            if ($avail <= ($license->min_amt) + $alert_threshold) {
                 if ($avail > 0) {
                     $percent = number_format((($avail / $license->min_amt) * 100), 0);
                 } else {

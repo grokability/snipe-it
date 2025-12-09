@@ -75,6 +75,7 @@ class LocationImporter extends ItemImporter
         $this->item['manager'] = trim($this->findCsvMatch($row, 'manager'));
         $this->item['manager_username'] = trim($this->findCsvMatch($row, 'manager_username'));
         $this->item['notes'] = trim($this->findCsvMatch($row, 'notes'));
+        $this->item['tag_color'] = trim($this->findCsvMatch($row, 'tag_color'));
 
 
         if ($this->findCsvMatch($row, 'parent_location')) {
@@ -96,6 +97,9 @@ class LocationImporter extends ItemImporter
             $location->update($this->sanitizeItemForUpdating($location));
         } else {
             Log::debug('Creating location');
+            if ($this->findCsvMatch($row, 'company')) {
+                $this->item['company_id'] = $this->createOrFetchCompany(trim($this->findCsvMatch($row, 'company')));
+            }
             $location->fill($this->sanitizeItemForStoring($location));
         }
 

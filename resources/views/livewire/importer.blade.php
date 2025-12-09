@@ -67,20 +67,20 @@
                             <div class="col-md-12">
 
                                 @if($progress != -1)
-                                    <div class="col-md-10 col-sm-5 col-xs-12" style="height: 35px;" id='progress-container'>
+                                    <div class="col-md-10 col-sm-5 col-xs-12" style="height: 33px;" id='progress-container'>
                                         <div class="progress progress-striped-active" style="height: 100%;">
-                                            <div id='progress-bar' class="progress-bar {{ $progress_bar_class }}" role="progressbar" style="width: {{ $progress }}%">
+                                            <div id='progress-bar' class="progress-bar progress-bar-striped {{ $progress_bar_class }}" role="progressbar" style="width: {{ $progress }}%">
                                                 <h4 id="progress-text">{!! $progress_message  !!}</h4>
                                             </div>
                                         </div>
                                     </div>
                                 @endif
 
-                                <div class="col-md-4 col-sm-5 col-xs-12 text-right pull-right">
+                                <div class="col-md-2 col-sm-5 col-xs-12 text-right pull-right">
 
                                     <!-- The fileinput-button span is used to style the file input field as button -->
                                     @if (!config('app.lock_passwords'))
-                                        <span class="btn btn-primary fileinput-button">
+                                        <span class="btn btn-theme btn-block fileinput-button">
                                         <span>{{ trans('button.select_file') }}</span>
                                          <!-- The file input field used as target for the file upload widget -->
                                         <label for="files[]"><span class="sr-only">{{ trans('admin/importer/general.select_file') }}</span></label>
@@ -125,17 +125,17 @@
 
                                     @foreach($this->files as $currentFile)
 
-                                    		<tr style="{{ ($this->activeFile && ($currentFile->id == $this->activeFile->id)) ? 'font-weight: bold' : '' }}" class="{{ ($this->activeFile && ($currentFile->id == $this->activeFile->id)) ? 'warning' : '' }}">
+                                    		<tr style="{{ ($this->activeFile && ($currentFile->id == $this->activeFile->id)) ? 'font-weight: bold' : '' }}" class="{{ ($this->activeFile && ($currentFile->id == $this->activeFile->id)) ? '' : '' }}">
                                     			<td>{{ $currentFile->file_path }}</td>
                                     			<td>{{ Helper::getFormattedDateObject($currentFile->created_at, 'datetime', false) }}</td>
                                                 <td>{{ ($currentFile->adminuser) ? $currentFile->adminuser->present()->fullName : '--'}}</td>
                                     			<td>{{ Helper::formatFilesizeUnits($currentFile->filesize) }}</td>
                                                 <td class="col-md-1 text-right" style="white-space: nowrap;">
-                                                    <button class="btn btn-sm btn-info" wire:click="selectFile({{ $currentFile->id }})" data-tooltip="true" title="{{ trans('general.import_this_file') }}">
+                                                    <button class="btn btn-sm btn-info" wire:click="selectFile({{ $currentFile->id }})" data-tooltip="true" data-title="{{ trans('general.import_this_file') }}">
                                                         <i class="fa-solid fa-list-check" aria-hidden="true"></i>
                                                         <span class="sr-only">{{ trans('general.import') }}</span>
                                                     </button>
-                                                    <a href="#" wire:click.prevent="$set('activeFileId',null)">
+                                                    <a href="#" wire:click.prevent="$set('activeFileId',null)" data-tooltip="true" data-title="{{ trans('general.delete') }}">
                                                     <button class="btn btn-sm btn-danger" wire:click="destroy({{ $currentFile->id }})">
                                                         <i class="fas fa-trash icon-white" aria-hidden="true"></i>
                                                         <span class="sr-only">{{ trans('general.delete') }}</span>
@@ -145,12 +145,12 @@
                                     		</tr>
 
                                             @if( $currentFile && $this->activeFile && ($currentFile->id == $this->activeFile->id))
-                                                <tr class="warning">
+                                                <tr>
                                                     <td colspan="5">
 
                                                         <div class="form-group">
 
-                                                                <label for="typeOfImport" class="col-md-3 col-xs-12">
+                                                                <label for="typeOfImport" class="col-md-3 col-xs-12 control-label">
                                                                     {{ trans('general.import_type') }}
                                                                 </label>
 

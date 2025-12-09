@@ -36,6 +36,13 @@ class CheckColorSettings
      */
     public function handle($request, Closure $next)
     {
+
+        // Set defaults in case this is accessed via the /setup screen
+        $nav_color = '#ffffff';
+        $link_dark_color = '#89c9ed';
+        $link_light_color = '#3c8dbc';
+
+
         if ($settings = Setting::getSettings()) {
             $nav_color = $settings->nav_link_color;
             $link_dark_color = $settings->link_dark_color;

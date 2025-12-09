@@ -1,0 +1,325 @@
+/*!
+ * Bootstrap Colorpicker v2.5.2
+ * https://itsjavi.com/bootstrap-colorpicker/
+ *
+ * Originally written by (c) 2012 Stefan Petre
+ * Licensed under the Apache License v2.0
+ * http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
+ */
+
+/*!
+ * Bootstrap v3.3.4 (http://getbootstrap.com)
+ * Copyright 2011-2015 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ */
+
+/*!
+ * Datepicker for Bootstrap v1.10.0 (https://github.com/uxsolutions/bootstrap-datepicker)
+ *
+ * Licensed under the Apache License v2.0 (https://www.apache.org/licenses/LICENSE-2.0)
+ */
+
+/*!
+ * Select2 4.0.13
+ * https://select2.github.io
+ *
+ * Released under the MIT license
+ * https://github.com/select2/select2/blob/master/LICENSE.md
+ */
+
+/*!
+ * Sizzle CSS Selector Engine v2.3.5
+ * https://sizzlejs.com/
+ *
+ * Copyright JS Foundation and other contributors
+ * Released under the MIT license
+ * https://js.foundation/
+ *
+ * Date: 2020-03-14
+ */
+
+/*!
+ * clipboard.js v2.0.11
+ * https://clipboardjs.com/
+ *
+ * Licensed MIT © Zeno Rocha
+ */
+
+/*!
+ * jQuery JavaScript Library v3.5.1
+ * https://jquery.com/
+ *
+ * Includes Sizzle.js
+ * https://sizzlejs.com/
+ *
+ * Copyright JS Foundation and other contributors
+ * Released under the MIT license
+ * https://jquery.org/license
+ *
+ * Date: 2020-05-04T22:49Z
+ */
+
+/*!
+ * jQuery UI :data 1.14.1
+ * https://jqueryui.com
+ *
+ * Copyright OpenJS Foundation and other contributors
+ * Released under the MIT license.
+ * https://jquery.org/license
+ */
+
+/*!
+ * jQuery UI Autocomplete 1.14.1
+ * https://jqueryui.com
+ *
+ * Copyright OpenJS Foundation and other contributors
+ * Released under the MIT license.
+ * https://jquery.org/license
+ */
+
+/*!
+ * jQuery UI Button 1.14.1
+ * https://jqueryui.com
+ *
+ * Copyright OpenJS Foundation and other contributors
+ * Released under the MIT license.
+ * https://jquery.org/license
+ */
+
+/*!
+ * jQuery UI Checkboxradio 1.14.1
+ * https://jqueryui.com
+ *
+ * Copyright OpenJS Foundation and other contributors
+ * Released under the MIT license.
+ * https://jquery.org/license
+ */
+
+/*!
+ * jQuery UI Controlgroup 1.14.1
+ * https://jqueryui.com
+ *
+ * Copyright OpenJS Foundation and other contributors
+ * Released under the MIT license.
+ * https://jquery.org/license
+ */
+
+/*!
+ * jQuery UI Datepicker 1.14.1
+ * https://jqueryui.com
+ *
+ * Copyright OpenJS Foundation and other contributors
+ * Released under the MIT license.
+ * https://jquery.org/license
+ */
+
+/*!
+ * jQuery UI Dialog 1.14.1
+ * https://jqueryui.com
+ *
+ * Copyright OpenJS Foundation and other contributors
+ * Released under the MIT license.
+ * https://jquery.org/license
+ */
+
+/*!
+ * jQuery UI Draggable 1.14.1
+ * https://jqueryui.com
+ *
+ * Copyright OpenJS Foundation and other contributors
+ * Released under the MIT license.
+ * https://jquery.org/license
+ */
+
+/*!
+ * jQuery UI Droppable 1.14.1
+ * https://jqueryui.com
+ *
+ * Copyright OpenJS Foundation and other contributors
+ * Released under the MIT license.
+ * https://jquery.org/license
+ */
+
+/*!
+ * jQuery UI Effects 1.14.1
+ * https://jqueryui.com
+ *
+ * Copyright OpenJS Foundation and other contributors
+ * Released under the MIT license.
+ * https://jquery.org/license
+ */
+
+/*!
+ * jQuery UI Effects Blind 1.14.1
+ * https://jqueryui.com
+ *
+ * Copyright OpenJS Foundation and other contributors
+ * Released under the MIT license.
+ * https://jquery.org/license
+ */
+
+/*!
+ * jQuery UI Focusable 1.14.1
+ * https://jqueryui.com
+ *
+ * Copyright OpenJS Foundation and other contributors
+ * Released under the MIT license.
+ * https://jquery.org/license
+ */
+
+/*!
+ * jQuery UI Form Reset Mixin 1.14.1
+ * https://jqueryui.com
+ *
+ * Copyright OpenJS Foundation and other contributors
+ * Released under the MIT license.
+ * https://jquery.org/license
+ */
+
+/*!
+ * jQuery UI Keycode 1.14.1
+ * https://jqueryui.com
+ *
+ * Copyright OpenJS Foundation and other contributors
+ * Released under the MIT license.
+ * https://jquery.org/license
+ */
+
+/*!
+ * jQuery UI Labels 1.14.1
+ * https://jqueryui.com
+ *
+ * Copyright OpenJS Foundation and other contributors
+ * Released under the MIT license.
+ * https://jquery.org/license
+ */
+
+/*!
+ * jQuery UI Legacy jQuery Core patches 1.14.1
+ * https://jqueryui.com
+ *
+ * Copyright OpenJS Foundation and other contributors
+ * Released under the MIT license.
+ * https://jquery.org/license
+ *
+ */
+
+/*!
+ * jQuery UI Mouse 1.14.1
+ * https://jqueryui.com
+ *
+ * Copyright OpenJS Foundation and other contributors
+ * Released under the MIT license.
+ * https://jquery.org/license
+ */
+
+/*!
+ * jQuery UI Position 1.14.1
+ * https://jqueryui.com
+ *
+ * Copyright OpenJS Foundation and other contributors
+ * Released under the MIT license.
+ * https://jquery.org/license
+ *
+ * https://api.jqueryui.com/position/
+ */
+
+/*!
+ * jQuery UI Progressbar 1.14.1
+ * https://jqueryui.com
+ *
+ * Copyright OpenJS Foundation and other contributors
+ * Released under the MIT license.
+ * https://jquery.org/license
+ */
+
+/*!
+ * jQuery UI Resizable 1.14.1
+ * https://jqueryui.com
+ *
+ * Copyright OpenJS Foundation and other contributors
+ * Released under the MIT license.
+ * https://jquery.org/license
+ */
+
+/*!
+ * jQuery UI Spinner 1.14.1
+ * https://jqueryui.com
+ *
+ * Copyright OpenJS Foundation and other contributors
+ * Released under the MIT license.
+ * https://jquery.org/license
+ */
+
+/*!
+ * jQuery UI Tabs 1.14.1
+ * https://jqueryui.com
+ *
+ * Copyright OpenJS Foundation and other contributors
+ * Released under the MIT license.
+ * https://jquery.org/license
+ */
+
+/*!
+ * jQuery UI Tooltip 1.14.1
+ * https://jqueryui.com
+ *
+ * Copyright OpenJS Foundation and other contributors
+ * Released under the MIT license.
+ * https://jquery.org/license
+ */
+
+/*!
+ * jQuery UI Widget 1.14.1
+ * https://jqueryui.com
+ *
+ * Copyright OpenJS Foundation and other contributors
+ * Released under the MIT license.
+ * https://jquery.org/license
+ */
+
+/*!
+ * jQuery Validation Plugin v1.21.0
+ *
+ * https://jqueryvalidation.org/
+ *
+ * Copyright (c) 2024 Jörn Zaefferer
+ * Released under the MIT license
+ */
+
+/*!
+ * pGenerator jQuery Plugin v1.0.5
+ * https://github.com/M1Sh0u/pGenerator
+ *
+ * Created by Mihai MATEI <mihai.matei@outlook.com>
+ * Released under the MIT License (Feel free to copy, modify or redistribute this plugin.)
+ */
+
+/*! AdminLTE app.js
+* ================
+* Main JS application file for AdminLTE v2. This file
+* should be included in all pages. It controls some layout
+* options and implements exclusive AdminLTE plugins.
+*
+* @author Colorlib
+* @support <https://github.com/ColorlibHQ/AdminLTE/issues>
+* @version v2.4.18
+* @repository git://github.com/ColorlibHQ/AdminLTE.git
+* @license MIT <http://opensource.org/licenses/MIT>
+*/
+
+/*! Copyright (c) 2011 Piotr Rochala (http://rocha.la)
+ * Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
+ * and GPL (http://www.opensource.org/licenses/gpl-license.php) licenses.
+ *
+ * Version: 1.3.8
+ *
+ */
+
+/*! jQuery UI - v1.14.1 - 2024-10-30
+* https://jqueryui.com
+* Includes: widget.js, position.js, data.js, disable-selection.js, effect.js, effects/effect-blind.js, effects/effect-bounce.js, effects/effect-clip.js, effects/effect-drop.js, effects/effect-explode.js, effects/effect-fade.js, effects/effect-fold.js, effects/effect-highlight.js, effects/effect-puff.js, effects/effect-pulsate.js, effects/effect-scale.js, effects/effect-shake.js, effects/effect-size.js, effects/effect-slide.js, effects/effect-transfer.js, focusable.js, form-reset-mixin.js, jquery-patch.js, keycode.js, labels.js, scroll-parent.js, tabbable.js, unique-id.js, widgets/accordion.js, widgets/autocomplete.js, widgets/button.js, widgets/checkboxradio.js, widgets/controlgroup.js, widgets/datepicker.js, widgets/dialog.js, widgets/draggable.js, widgets/droppable.js, widgets/menu.js, widgets/mouse.js, widgets/progressbar.js, widgets/resizable.js, widgets/selectable.js, widgets/selectmenu.js, widgets/slider.js, widgets/sortable.js, widgets/spinner.js, widgets/tabs.js, widgets/tooltip.js
+* Copyright OpenJS Foundation and other contributors; Licensed MIT */
+
+/*! tether 1.4.7 */

@@ -11,5 +11,5 @@
             <strong>{{ trans('admin/settings/general.scope_locations_fmcs_test_needed') }}</strong>
         @endif
     </p>
-    <button class="btn btn-sm btn-default" wire:click.prevent="check_locations">{{ trans('admin/settings/general.scope_locations_fmcs_check_button') }}</button>
+    <button class="btn btn-sm btn-theme" wire:click.prevent="check_locations">{{ trans('admin/settings/general.scope_locations_fmcs_check_button') }}</button>
 </div>

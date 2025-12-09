@@ -17,13 +17,13 @@ return new class extends Migration
         Schema::table('settings', function (Blueprint $table) {
             $table->string('link_dark_color')->after('header_color')->nullable()->default(null);
             $table->string('link_light_color')->after('header_color')->nullable()->default(null);
-            $table->string('nav_link_color')->after('header_color')->nullable()->default(null);
+            $table->string('nav_link_color')->after('header_color')->nullable()->default('#ffffff');
         });
 
         Schema::table('users', function (Blueprint $table) {
             $table->string('link_dark_color')->after('skin')->nullable()->default(null);
             $table->string('link_light_color')->after('skin')->nullable()->default(null);
-            $table->string('nav_link_color')->after('skin')->nullable()->default(null);
+            $table->string('nav_link_color')->after('skin')->nullable()->default('#ffffff');
         });
 
 
@@ -38,44 +38,44 @@ return new class extends Migration
             switch ($setting->skin) {
                 case ('green' || 'green-dark'):
                     $header_color = '#00a65a';
-                    $link_dark_color = '#00a65a';
+                    $link_dark_color = '#9ACD32';
                     $link_light_color = '#00a65a';
                     $nav_color = '#ffffff';
 
                 case ('red' || 'red-dark'):
                     $header_color = '#dd4b39';
-                    $link_dark_color = '#dd4b39';
+                    $link_dark_color = '#ed9a9a';
                     $link_light_color = '#dd4b39';
                     $nav_color = '#ffffff';
 
                 case ('orange' || 'orange-dark'):
                     $header_color = '#FF851B';
-                    $link_dark_color = '#FF851B';
-                    $link_light_color = '#FF851B';
+                    $link_dark_color = '#FFA500';
+                    $link_light_color = '#FF8C00';
                     $nav_color = '#ffffff';
 
                 case ('black' || 'black-dark'):
                     $header_color = '#000000';
-                    $link_dark_color = '#111';
-                    $link_light_color = '#111';
+                    $link_dark_color = '#d4d2d2';
+                    $link_light_color = '#454759';
                     $nav_color = '#ffffff';
 
                 case ('purple' || 'purple-dark'):
                     $header_color = '#605ca8';
-                    $link_dark_color = '#605ca8';
+                    $link_dark_color = '#AC83FF';
                     $link_light_color = '#605ca8';
                     $nav_color = '#ffffff';
 
                 case ('yellow' || 'yellow-dark') :
-                    $header_color = '#f39c12';
-                    $link_dark_color = '#f39c12';
-                    $link_light_color = '#f39c12';
+                    $header_color = '#FBCC34';
+                    $link_dark_color = '#F0E68C';
+                    $link_light_color = '#a69f08';
                     $nav_color = '#ffffff';
 
                 case 'contrast':
                     $header_color = '#001F3F';
-                    $link_dark_color = '#86cbf2';
-                    $link_light_color = '#084d73';
+                    $link_dark_color = '#a6c9ed';
+                    $link_light_color = '#2d4863';
                     $nav_color = '#ffffff';
                     break;
             }
@@ -83,7 +83,6 @@ return new class extends Migration
             // Override the header color if the settings have one
             if ($setting->header_color) {
                 $header_color = $setting->header_color;
-                \Log::debug('A header color was found, so lets use that instead: '.$setting->header_color);
             }
 
 
