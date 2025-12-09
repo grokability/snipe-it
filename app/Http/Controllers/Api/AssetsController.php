@@ -331,7 +331,7 @@ class AssetsController extends Controller
         if ($request->input('requestable') == 'true') {
             $assets->where('assets.requestable', '=', '1');
         }
-
+        
         if ($request->filled('model_id')) {
             // If model_id is already an array, just use it as-is
             if (is_array($request->input('model_id'))) {
@@ -1412,7 +1412,7 @@ class AssetsController extends Controller
 
 
                 $label = new Label();
-                
+
                 if (!$label) {
                     throw new \Exception('Label object could not be created');
                 }
