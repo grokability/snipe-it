@@ -220,7 +220,7 @@ class Label implements View
                         return $toAdd ? $myFields->push($toAdd) : $myFields;
                     }, new Collection());
 
-                (int)$emptyRowsCount = $settings->label2_empty_row_count;
+                $emptyRowsCount = (int)round($settings->label2_empty_row_count);
                 if($emptyRowsCount) {
                     // Create empty rows
                     $emptyRows = collect(range(0, $emptyRowsCount))->map(function () {
