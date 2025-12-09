@@ -115,7 +115,7 @@ class GroupsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      */
-    public function update(Request $request, $id): JsonResponse
+    public function update(Request $request, $id) : JsonResponse
     {
         $this->authorize('superadmin');
         $group = Group::findOrFail($id);
@@ -138,7 +138,7 @@ class GroupsController extends Controller
      * @since [v4.0]
      * @param  int  $id
      */
-    public function destroy($id): JsonResponse
+    public function destroy($id) : JsonResponse
     {
         $this->authorize('superadmin');
         $group = Group::findOrFail($id);

@@ -21,7 +21,9 @@ class DatabaseSeeder extends Seeder
     {
         Model::unguard();
 
+        // Only create default settings if they do not exist in the db.
         if (! Setting::first()) {
+            // factory(Setting::class)->create();
             $this->call(SettingsSeeder::class);
         }
 
@@ -53,7 +55,7 @@ class DatabaseSeeder extends Seeder
         $this->call(ActionlogSeeder::class);
         $this->call(PredefinedFilterSeeder::class);
         $this->call(PredefinedFilterPermissionSeeder::class);
-
+        
         Artisan::call('snipeit:sync-asset-locations', ['--output' => 'all']);
         $output = Artisan::output();
         Log::info($output);

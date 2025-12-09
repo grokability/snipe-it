@@ -1,5 +1,5 @@
 <!-- Location -->
-<div id="{{ $fieldname }}" class="form-group{{ $errors->has($fieldname) ? ' has-error' : '' }}"{!! isset($style) ? ' style="' . e($style) . '"' : '' !!}>
+<div id="{{ $fieldname }}" class="form-group{{ $errors->has($fieldname) ? ' has-error' : '' }}"{!!  (isset($style)) ? ' style="'.e($style).'"' : ''  !!}>
 
     <label for="{{ $fieldname }}" class="col-md-3 control-label">{{ $translated_name }}</label>
     <div class="col-md-7">
@@ -14,33 +14,30 @@
         @endcan
     </div>
 
-    {!! $errors->first(
-        $fieldname,
-        '<div class="col-md-8 col-md-offset-3"><span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span></div>',
-    ) !!}
+    {!! $errors->first($fieldname, '<div class="col-md-8 col-md-offset-3"><span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span></div>') !!}
 
     @if (isset($help_text))
-        <div class="col-md-7 col-sm-11 col-md-offset-3">
-            <p class="help-block">{{ $help_text }}</p>
-        </div>
+    <div class="col-md-7 col-sm-11 col-md-offset-3">
+        <p class="help-block">{{ $help_text }}</p>
+    </div>
     @endif
 
     @if (isset($hide_location_radio))
-        <!-- Update actual location  -->
-        <div class="form-group">
-            <div class="col-md-9 col-md-offset-3">
-                <label class="form-control">
-                    <input name="update_default_location" type="radio" value="1" checked="checked"
-                        aria-label="update_default_location" />
-                    {{ trans('admin/hardware/form.asset_location') }}
-                </label>
-                <label class="form-control">
-                    <input name="update_default_location" type="radio" value="0"
-                        aria-label="update_default_location" />
-                    {{ trans('admin/hardware/form.asset_location_update_default_current') }}
-                </label>
-            </div>
-        </div> <!--/form-group-->
-    @endif
+    <!-- Update actual location  -->
+    <div class="form-group">
+        <div class="col-md-9 col-md-offset-3">
+            <label class="form-control">
+                <input name="update_default_location" type="radio" value="1" checked="checked" aria-label="update_default_location" />
+                {{ trans('admin/hardware/form.asset_location') }}
+            </label>
+            <label class="form-control">
+                <input name="update_default_location" type="radio" value="0" aria-label="update_default_location" />
+                {{ trans('admin/hardware/form.asset_location_update_default_current') }}
+            </label>
+        </div>
+    </div> <!--/form-group-->
+@endif
 
 </div>
+
+
