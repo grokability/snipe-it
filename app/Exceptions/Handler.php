@@ -150,19 +150,19 @@ class Handler extends ExceptionHandler
             // Sigh.
             if ($route == 'assets.index') {
                 $route = 'hardware.index';
-            } else if ($route == 'reporttemplates.index') {
+            } elseif ($route == 'reporttemplates.index') {
                 $route = 'reports/custom';
-            } else if ($route == 'assetmodels.index') {
+            } elseif ($route == 'assetmodels.index') {
                 $route = 'models.index';
-            } else if ($route == 'predefinedkits.index') {
+            } elseif ($route == 'predefinedkits.index') {
                 $route = 'kits.index';
-            } else if ($route == 'assetmaintenances.index') {
+            } elseif ($route == 'assetmaintenances.index') {
                 $route = 'maintenances.index';
-            } else if ($route === 'licenseseats.index') {
+            } elseif ($route === 'licenseseats.index') {
                 $route = 'licenses.index';
-            } else if (($route === 'customfieldsets.index') || ($route === 'customfields.index')) {
+            } elseif (($route === 'customfieldsets.index') || ($route === 'customfields.index')) {
                 $route = 'fields.index';
-            } else if ($route === 'predefinedfilters.index') {
+            } elseif ($route === 'predefinedfilters.index') {
                 $route = 'predefined-filters.index';
             }
 
