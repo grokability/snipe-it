@@ -1392,7 +1392,7 @@ class AssetsController extends Controller
                 return response()->json(Helper::formatStandardApiResponse('error', null, 
                     trans('admin/hardware/message.no_assets_selected')), 400);
             }
-
+            
              // Convert asset tags from request into collection and fetch matching assets
             $asset_tags = collect($request->input('asset_tags'));
             $assets = Asset::whereIn('asset_tag', $asset_tags)->get();
