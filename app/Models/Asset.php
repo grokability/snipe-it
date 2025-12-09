@@ -457,7 +457,7 @@ class Asset extends Depreciable
                 && ($this->assetstatus->deployable == '1')
             ) {
                 return true;
-            
+
             }
         }
         return false;
