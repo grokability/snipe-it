@@ -52,7 +52,7 @@
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background-color: var(--button-primary);
+    background-color: var(--btn-theme-base);
     color: var(--text-main);
     border: none;
     display: flex;
@@ -65,7 +65,7 @@
 
 .floating-buttons-fab:hover,
 .floating-buttons-fab:focus {
-    background-color: var(--button-hover);
+    background-color: var(--btn-theme-hover);
     transform: translateY(-3px);
     outline: none;
 }
@@ -95,13 +95,13 @@
     transform: translateX(38px) translateY(0);
     visibility: visible;
     pointer-events: auto;
-    background-color: var(--back-main, #ECF0F5);
+    background-color: var(--callout-bg-color);
 }
 
 .floating-buttons-menu a {
     padding: 10px 12px;
     text-decoration: none;
-    color: var(--button-default);
+    color: var(--btn-theme-base);
     border-bottom: 1px solid var(--text-sub);
     font-size: 14px;
     background: transparent;
@@ -113,7 +113,7 @@
 
 .floating-buttons-menu a:hover,
 .floating-buttons-menu a:focus {
-    background-color: var(--button-hover);
+    background-color: var(--btn-theme-hover);
     color: var(--hover-link);
     border-radius: 8px;
     outline: none;

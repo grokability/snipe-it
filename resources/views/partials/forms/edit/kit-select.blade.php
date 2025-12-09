@@ -9,7 +9,7 @@
     <div class="col-md-1 col-sm-1 text-left">
         @can('create', \App\Models\PredefinedKit::class)
             @if ((!isset($hide_new)) || ($hide_new!='true'))
-                {{--  <a href='{{ route('modal.show, 'kit') }}' data-toggle="modal"  data-target="#createModal" data-select='kit_id_select' class="btn btn-sm btn-default">{{ trans('buttons.new') }}</a>  --}}
+                {{--  <a href='{{ route('modal.show, 'kit') }}' data-toggle="modal"  data-target="#createModal" data-select='kit_id_select' class="btn btn-sm btn-theme">{{ trans('buttons.new') }}</a>  --}}
             @endif
         @endcan
     </div>

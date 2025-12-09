@@ -49,23 +49,25 @@
 
         :root {
             color-scheme: light dark;
-            --main-theme-color: {{ $snipeSettings->header_color ?? '#5fa4cc' }};
-            --btn-theme-text-color: {{ $nav_link_color ?? 'light-dark(hsl(from var(--main-theme-color) h s calc(l + 10)),hsl(from var(--main-theme-color) h s calc(l - 10)))' }};
             --btn-theme-hover-text-color: {{ $nav_link_color ?? 'light-dark(hsl(from var(--main-theme-color) h s calc(l - 10)),hsl(from var(--main-theme-color) h s calc(l - 10)))' }};
             --btn-theme-hover: {{ $nav_link_color ?? 'light-dark(hsl(from var(--main-theme-color) h s calc(l - 10)),hsl(from var(--main-theme-color) h s calc(l - 10)))' }};
+            --btn-theme-text-color: {{ $nav_link_color ?? 'light-dark(hsl(from var(--main-theme-color) h s calc(l + 10)),hsl(from var(--main-theme-color) h s calc(l - 10)))' }};
+            --color-fg: light-dark(#373636, #ffffff);
+            --main-footer-bg-color: light-dark(#ffffff,#3d4144);
+            --main-footer-text-color: light-dark(#605e5e, #d2d6de);
+            --main-footer-top-border-color: light-dark(#d2d6de,#605e5e);
+            --main-theme-color: {{ $snipeSettings->header_color ?? '#5fa4cc' }};
+            --nav-hover-text-color: {{ $nav_link_color ?? 'light-dark(hsl(from var(--main-theme-color) h s calc(l - 10)),hsl(from var(--main-theme-color) h s calc(l - 10)))' }};
+            --nav-primary-text-color: {{ $nav_link_color ?? 'light-dark(hsl(from var(--main-theme-color) h s calc(l - 10)),hsl(from var(--main-theme-color) h s calc(l - 10)))' }};
+            --search-highlight: #e9d15b;
+            --sidenav-hover-color-bg: #4c4b4b;
             --sidenav-text-hover-color: #fff;
             --sidenav-text-nohover-color: #b8c7ce;
-            --sidenav-hover-color-bg: #4c4b4b;
-            --search-highlight: #e9d15b;
-            --color-fg: light-dark(#373636, #ffffff);
             --text-danger: light-dark(#a94442,#dd4b39);
+            --text-help: light-dark(#605e5e,#a6a4a4);
+            --text-info: light-dark(#31708f,#2baae6);
             --text-success: light-dark(#039516,#4ced61);
             --text-warning: light-dark(#da9113,#f3a51f);
-            --text-info: light-dark(#31708f,#2baae6);
-            --text-help: light-dark(#605e5e,#a6a4a4);
-            --nav-primary-text-color: {{ $nav_link_color ?? 'light-dark(hsl(from var(--main-theme-color) h s calc(l - 10)),hsl(from var(--main-theme-color) h s calc(l - 10)))' }};
-            --nav-hover-text-color: {{ $nav_link_color ?? 'light-dark(hsl(from var(--main-theme-color) h s calc(l - 10)),hsl(from var(--main-theme-color) h s calc(l - 10)))' }};
-
 
         }
 
@@ -84,18 +86,18 @@
             --callout-left-border: var(--box-header-top-border-color);
             --color-bg: #ecf0f5;
             --header-color: #000000;
+            --input-group-bg: hsl(from var(--box-bg) h s calc(l - 5));
+            --input-group-fg: hsl(from var(--input-group-bg) h s calc(l - 50));
             --link-color: {{ $link_light_color ?? '#296282' }};
             --link-hover:  hsl(from var(--link-color) h s calc(l - 10));
             --main-theme-hover: hsl(from var(--main-theme-color) h s calc(l - 10));
             --tab-bottom-border: 1px solid var(--box-header-top-border-color);
             --table-border-row-top: 1px solid #ecf0f5;
+            --table-border-row: 1px solid #ecf0f5;
             --table-stripe-bg-alt: rgba(211, 211, 211, 0.25);
             --table-stripe-bg: #ffffff;
-            --text-blue: var(--text-legend-help);
             --text-legend-help: var(--text-help);
             --text-warning: #da9113;
-            --input-group-bg: hsl(from var(--box-bg) h s calc(l - 5));
-            --input-group-fg: hsl(from var(--input-group-bg) h s calc(l - 50));
 
         }
 
@@ -114,6 +116,8 @@
             --callout-left-border: #323131;
             --color-bg: #222222;
             --header-color: #ffffff;
+            --input-group-bg: hsl(from var(--box-bg) h s calc(l + 10));
+            --input-group-fg: hsl(from var(--input-group-bg) h s calc(l + 50));
             --link-color: {{ $link_dark_color ?? '#5fa4cc' }};
             --link-hover:  hsl(from var(--link-color) h s calc(l + 15));
             --main-theme-hover: hsl(from var(--main-theme-color) h s calc(l - 10));
@@ -121,13 +125,23 @@
             --table-border-row: 1px solid #656464;
             --table-stripe-bg-alt: #323131;
             --table-stripe-bg: #494747;
-            --text-blue: var(--text-legend-help);
             --text-legend-help: #d6d6d6;
-            --input-group-bg: hsl(from var(--box-bg) h s calc(l + 10));
-            --input-group-fg: hsl(from var(--input-group-bg) h s calc(l + 50));
 
         }
 
+        .label2_fields,
+        .l2fd-main,
+        .l2fd-listitem
+        {
+            background-color: var(--box-bg) !important;
+            color: var(--color-fg) !important;
+        }
+
+        footer.main-footer {
+            color: var(--main-footer-text-color) !important;
+            background-color: var(--main-footer-bg-color) !important;
+            border-top: 1px solid var(--main-footer-top-border-color) !important;
+        }
 
         a,
         a:link,
@@ -140,6 +154,11 @@
         a:focus
         {
             color: var(--link-hover) !important;
+        }
+
+
+        .footer-links a {
+            color: light-dark(hsl(from var(--link-color) h s calc(l + 10)),hsl(from var(--link-color) h s calc(l - 32))) !important;
         }
 
         h2 small {
@@ -181,6 +200,7 @@
         input[type="text"],
         input[type="url"],
         input[type="email"],
+        input[type="password"],
         option:active,
         option[active],
         option[selected],
@@ -249,6 +269,7 @@
         input[type="date"]:focus,
         input[type="email"]:focus,
         input[type="number"]:focus,
+        input[type="password"]:focus,
         textarea:focus
         {
             border-color: hsl(from var(--main-theme-color) h s calc(l - 5)) !important;
@@ -263,8 +284,6 @@
         .content-wrapper {
             background-color: var(--color-bg);
         }
-
-
 
         .btn-anchor {
             outline: none !important;
@@ -281,25 +300,47 @@
 
         .btn-danger,
         .btn-danger:hover,
+        .btn-danger:focus,
         .btn-warning,
         .btn-warning:hover,
+        .btn-warning:focus,
+        .btn-primary,
+        .btn-primary:hover,
+        .btn-primary:focus,
         .modal-danger,
         .modal-danger h2,
         .modal-header h2,
         .modal-warning h2
+        .bg-maroon,
+        .bg-maroon:hover,
+        .bg-maroon:focus,
+        .bg-purple,
+        .bg-purple:hover,
+        .bg-purple:focus
         {
             color: white !important;
         }
 
+        .btn-selected,
+        .btn-selected a,
+        .btn-selected:hover,
+        .btn-selected:focus {
+            color: light-dark(hsl(from var(--main-theme-color) h s calc(l + 30)), hsl(from var(--main-theme-color) h s calc(l + 30))) !important;
+            background-color: light-dark(hsl(from var(--main-theme-color) h s calc(l - 20)), hsl(from var(--main-theme-color) h s calc(l - 20))) !important;
+            border-color: light-dark(hsl(from var(--main-theme-color) h s calc(l - 25)), hsl(from var(--main-theme-color) h s calc(l - 25))) !important;
 
-        body {
-            color: var(--color-bg);
         }
 
+        .btn-default,
+        .btn-default:hover
+        {
+            color: #3d4144 !important;
+        }
 
-        .footer-links a:link,
-        .text-blue {
-            color: var(--text-blue) !important;
+        body
+        {
+            background-color: var(--color-bg);
+            color: var(--color-fg);
         }
 
 
@@ -311,9 +352,6 @@
         {
             color: var(--color-fg);
         }
-
-
-
 
         .popover.right .arrow:after
         {
@@ -406,7 +444,7 @@
         .table > tbody > tr > td,
         .table > tfoot > tr > td
         {
-            border-top: var(--table-border-row);
+            border-top: var(--table-border-row) !important;
         }
 
 
@@ -508,8 +546,6 @@
         }
 
 
-
-
         .bootstrap-table .fixed-table-toolbar li.dropdown-item-marker label
         {
             color: var(--nav-primary-text-color) !important;
@@ -554,7 +590,6 @@
         .navbar-nav > .notifications-menu > .dropdown-menu > li .menu > li > a, .navbar-nav > .messages-menu > .dropdown-menu > li .menu > li > a, .navbar-nav > .tasks-menu > .dropdown-menu > li .menu > li > a {
             border-bottom: 1px solid hsl(from var(--main-theme-color) h s calc(l - 10));
         }
-
 
 
         /**
@@ -770,6 +805,10 @@
 
         .chart-responsive {
             color: var(--color-fg) !important;
+        }
+
+        .table > tbody + tbody {
+            border-top: 0px !important;
         }
 
     </style>
@@ -1063,11 +1102,14 @@
                                     </a>
                                     <ul class="dropdown-menu">
                                         <!-- User image -->
+                                        @can('self.profile')
                                         <li {!! (request()->is('account/profile') ? ' class="active"' : '') !!}>
                                             <a href="{{ route('view-assets') }}">
                                                 <x-icon type="checkmark" class="fa-fw" />
                                                 {{ trans('general.viewassets') }}
-                                            </a></li>
+                                            </a>
+                                        </li>
+
 
                                         @can('viewRequestable', \App\Models\Asset::class)
                                             <li {!! (request()->is('account/requested') ? ' class="active"' : '') !!}>
@@ -1081,18 +1123,18 @@
                                             <a href="{{ route('account.accept') }}">
                                                 <x-icon type="checkmark" class="fa-fw" />
                                                 {{ trans('general.accept_assets_menu') }}
-                                            </a></li>
+                                            </a>
+                                        </li>
 
-
-                                        @can('self.profile')
+                                        @endcan
                                         <li>
                                             <a href="{{ route('profile') }}">
                                                 <x-icon type="user" class="fa-fw" />
                                                 {{ trans('general.editprofile') }}
                                             </a>
                                         </li>
-                                        @endcan
 
+                                        @can('self.profile')
                                         @if (Auth::user()->ldap_import!='1')
                                         <li>
                                             <a href="{{ route('account.password.index') }}">
@@ -1101,9 +1143,10 @@
                                             </a>
                                         </li>
                                         @endif
+                                        @endcan
 
                                         <li>
-                                            <a type="button" data-theme-toggle aria-label="Light mode" class="btn-link btn-anchor" href=""  onclick="event.preventDefault();">
+                                            <a type="button" data-theme-toggle aria-label="Dark mode" class="btn-link btn-anchor" href=""  onclick="event.preventDefault();">
                                                 {{ trans('general.dark_mode') }}
                                             </a>
                                         </li>
@@ -1689,14 +1732,28 @@
             </div><!-- /.content-wrapper -->
             <footer class="main-footer hidden-print" style="display:grid;flex-direction:column;">
 
-                <div class="1hidden-xs pull-left">
+                <div class="hidden-xs pull-left">
                     <div class="pull-left footer-links">
                          {!! trans('general.footer_credit') !!}
+
+                        <a target="_blank" href="https://bsky.app/profile/snipeitapp.com" rel="noopener" data-tooltip="true" data-title="Join us on Bluesky">
+                            <i class="fa-brands fa-square-bluesky"></i>
+                        </a>
+                        <a target="_blank" href="https://hachyderm.io/@grokability" rel="noopener" data-tooltip="true" data-title="Join us on Github">
+                            <i class="fa-brands fa-square-github"></i>
+                        </a>
+                        <a target="_blank" href="https://hachyderm.io/@grokability" rel="noopener" data-tooltip="true" data-title="Join us on Mastodon">
+                            <i class="fa-brands fa-mastodon"></i>
+                        </a>
+                        <a target="_blank" href="https://discord.gg/yZFtShAcKk" rel="noopener" data-tooltip="true" data-title="Join us on Discord">
+                            <i class="fa-brands fa-discord"></i>
+                        </a>
+
                     </div>
                     <div class="pull-right">
                     @if ($snipeSettings->version_footer!='off')
                         @if (($snipeSettings->version_footer=='on') || (($snipeSettings->version_footer=='admin') && (Auth::user()->isSuperUser()=='1')))
-                            &nbsp; <strong>{{ trans('general.version') }}</strong> {{ config('version.app_version') }} -
+                            &nbsp; {{ trans('general.version') }} {{ config('version.app_version') }} -
                             {{ trans('general.build') }} {{ config('version.build_version') }} ({{ config('version.branch') }})
                         @endif
                     @endif
@@ -1829,7 +1886,7 @@
              */
             function updateButton({ buttonEl, isDark }) {
                 const newCta = isDark ? '<i class="fa-regular fa-sun fa-fw"></i>  {{ trans('general.light_mode') }}' : '<i class="fa-solid fa-moon fa-fw"></i>   {{ trans('general.dark_mode') }}';
-                // use an aria-label if you are omitting text on the button
+                // use an aria-label if omitting text on the button
                 // and using a sun/moon icon, for example
                 buttonEl.setAttribute("aria-label", newCta);
                 buttonEl.innerHTML = newCta;
@@ -1850,9 +1907,11 @@
             /**
              * 1. Grab what we need from the DOM and system settings on page load
              */
+
             const button = document.querySelector("[data-theme-toggle]");
             const localStorageTheme = localStorage.getItem("theme");
             const systemSettingDark = window.matchMedia("(prefers-color-scheme: dark)");
+            const clearButton = document.querySelector("[data-theme-toggle-clear]");
 
             /**
              * 2. Work out the current site settings
@@ -1860,7 +1919,7 @@
             let currentThemeSetting = calculateSettingAsThemeString({ localStorageTheme, systemSettingDark });
 
             /**
-             * 3. Update the theme setting and button text accoridng to current settings
+             * 3. Update the theme setting and button text according to current settings
              */
             updateButton({ buttonEl: button, isDark: currentThemeSetting === "dark" });
             updateThemeOnHtmlEl({ theme: currentThemeSetting });
@@ -1877,6 +1936,9 @@
 
                 currentThemeSetting = newTheme;
             });
+
+
+
 
             $.fn.datepicker.dates['{{ app()->getLocale() }}'] = {
                 days: [

@@ -35,7 +35,7 @@ class ProfileController extends Controller
      */
     public function getIndex() : View
     {
-        $this->authorize('self.profile');
+
         $user = auth()->user();
         return view('account/profile', compact('user'));
     }
@@ -48,22 +48,25 @@ class ProfileController extends Controller
      */
     public function postIndex(ImageUploadRequest $request) : RedirectResponse
     {
-        $this->authorize('self.profile');
+
         $user = auth()->user();
-        $user->first_name = $request->input('first_name');
-        $user->last_name = $request->input('last_name');
-        $user->website = $request->input('website');
-        $user->gravatar = $request->input('gravatar');
-        $user->phone = $request->input('phone');
+
+        if ((Gate::allows('self.profile')) && (! config('app.lock_passwords'))) {
+            $user->first_name = $request->input('first_name');
+            $user->last_name = $request->input('last_name');
+            $user->website = $request->input('website');
+            $user->gravatar = $request->input('gravatar');
+            $user->phone = $request->input('phone');
+        }
+
+
         $user->enable_sounds = $request->input('enable_sounds', false);
         $user->enable_confetti = $request->input('enable_confetti', false);
         $user->link_light_color = $request->input('link_light_color', '#296282');
         $user->link_dark_color = $request->input('link_dark_color', '#296282');
         $user->nav_link_color = $request->input('nav_link_color', '#FFFFFF');
+        $user->locale = $request->input('locale');
 
-        if (! config('app.lock_passwords')) {
-            $user->locale = $request->input('locale');
-        }
 
         if ((Gate::allows('self.two_factor')) && ((Setting::getSettings()->two_factor_enabled == '1') && (! config('app.lock_passwords')))) {
             $user->two_factor_optin = $request->input('two_factor_optin', '0');
