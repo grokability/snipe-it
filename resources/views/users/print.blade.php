@@ -115,21 +115,26 @@
             </h4>
         </div>
 
+
+
         <table
             class="snipe-table table table-striped inventory"
             id="AssetsAssigned"
             data-pagination="false"
-            data-id-table="AssetsAssigned"
+            data-toolbar="#assets-toolbar"
             data-search="false"
+            data-id-table="AssetsAssigned"
             data-side-pagination="client"
             data-sortable="true"
-            data-toolbar="#assets-toolbar"
+            data-show-columns="true"
             data-sort-order="desc"
             data-sort-name="created_at"
             data-show-columns="true"
             data-cookie-id-table="AssetsAssigned">
-            <thead>
-                <th data-field="asset_id" data-sortable="false" data-visible="true" data-switchable="false">#</th>
+
+
+        <thead>
+                <th data-field="asset_id" data-sortable="true" data-visible="true" data-switchable="false">#</th>
                 <th data-field="asset_image" data-sortable="true" data-visible="false" data-switchable="true">{{ trans('general.image') }}</th>
                 <th data-field="asset_tag" data-sortable="true" data-visible="true" data-switchable="false">{{ trans('admin/hardware/table.asset_tag') }}</th>
                 <th data-field="asset_name" data-sortable="true" data-visible="true">{{ trans('general.name') }}</th>
@@ -139,8 +144,16 @@
                 <th data-field="asset_location" data-sortable="true" data-visible="false">{{ trans('general.location') }}</th>
                 <th data-field="asset_serial" data-sortable="true" data-visible="true">{{ trans('admin/hardware/form.serial') }}</th>
                 <th data-field="asset_checkout_date" data-sortable="true" data-visible="true">{{ trans('admin/hardware/table.checkout_date') }}</th>
+
+                @foreach($printable_customfields as $customfield)
+                    <th data-sortable="true" data-visible="true">
+                        {{$customfield->name}}
+                    </th>
+                @endforeach
+
                 <th data-field="signature" data-sortable="false" data-visible="true">{{ trans('general.signature') }}</th>
-            </thead>
+
+        </thead>
             <tbody>
             @foreach ($show_user->assets as $asset)
                 @php
@@ -162,11 +175,19 @@
                     <td>{{ $asset->serial }}</td>
                     <td>
                         {{ Helper::getFormattedDateObject($asset->last_checkout, 'datetime', false) }}</td>
+
+                    @foreach($printable_customfields as $customfield)
+                        <td>
+                            {{ $asset->{$customfield->db_column} }}
+                        </td>
+                    @endforeach
+
                     <td>
                         @if ($asset->getLatestSignedAcceptance($show_user))
                             <img style="width:auto;height:100px;" src="{{ asset('/') }}display-sig/{{ $asset->getLatestSignedAcceptance($show_user)->accept_signature }}">
                         @endif
                     </td>
+
                 </tr>
                 @if ($settings->show_assigned_assets)
                     @php
@@ -506,12 +527,14 @@
             paginationVAlign: 'both',
             queryParams: function (params) {
                 var newParams = {};
-                for(var i in params) {
-                    if(!keyBlocked(i)) { // only send the field if it's not in blockedFields
-                        newParams[i] = params[i];
+                var keyBlocked = function () {
+                    for (var i in params) {
+                        if (!keyBlocked(i)) { // only send the field if it's not in blockedFields
+                            newParams[i] = params[i];
+                        }
                     }
+                    return newParams;
                 }
-                return newParams;
             },
             formatLoadingMessage: function () {
                 return '<h2><i class="fas fa-spinner fa-spin" aria-hidden="true"></i> {{ trans('general.loading') }} </h2>';
@@ -536,6 +559,5 @@
         });
     });
 </script>
-
 </body>
 </html>

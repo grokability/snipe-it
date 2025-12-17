@@ -60,6 +60,7 @@ return [
     'display_checkin' => 'Display in checkin forms',
     'display_checkout' => 'Display in checkout forms',
     'display_audit' => 'Display in audit forms',
+    'display_on_print_assigned' => 'Display in the assigned assets print out',
     'types' => [
         'text' => 'Text Box',
         'listbox' => 'List Box',

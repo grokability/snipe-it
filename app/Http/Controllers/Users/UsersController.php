@@ -10,6 +10,7 @@ use App\Http\Requests\SaveUserRequest;
 use App\Models\Actionlog;
 use App\Models\Asset;
 use App\Models\Company;
+use App\Models\CustomField;
 use App\Models\Group;
 use App\Models\Setting;
 use App\Models\User;
@@ -648,7 +649,11 @@ class UsersController extends Controller
 
             return view('users.print')
                 ->with('users', [$user])
-                ->with('settings', Setting::getSettings());
+                ->with('settings', Setting::getSettings())
+                ->with('printable_customfields', CustomField::all()->filter(function ($customfield) {
+                    return $customfield->display_on_print_assigned && $customfield->field_encrypted == 0;
+                    //This should make it to NOT show encrypted custom fields on the printout
+                }));
         }
 
         return redirect()->route('users.index')->with('error', trans('admin/users/message.user_not_found', compact('id')));
