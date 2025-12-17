@@ -14,6 +14,10 @@
 {{-- Page content --}}
 @section('content')
 
+
+
+
+
     <form method="POST" autocomplete="off" class="form-horizontal" role="form" id="create-form">
     <!-- CSRF Token -->
     {{csrf_field()}}
@@ -232,6 +236,25 @@
                                </div>
                            </div>
 
+
+                    <!-- login text -->
+                    <div class="form-group {{ $errors->has('login_note') ? 'error' : '' }}">
+                        <div class="col-md-3">
+                            <label for="login_note">{{ trans('admin/settings/general.login_note') }}</label>
+                        </div>
+                        <div class="col-md-9">
+                            @if (config('app.lock_passwords'))
+
+                                <textarea class="form-control disabled" name="login_note" placeholder="{{trans('admin/settings/general.login_note_placeholder')}}" rows="2" aria-label="login_note" readonly>{{ old('login_note', $setting->login_note) }}</textarea>
+                                {!! $errors->first('login_note', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
+                                <p class="text-warning"><i class="fas fa-lock"></i> {{ trans('general.feature_disabled') }}</p>
+                            @else
+                                <textarea class="form-control" name="login_note" aria-label="login_note" placeholder="{{trans('admin/settings/general.login_note_placeholder')}}" rows="2">{{ old('login_note', $setting->login_note) }}</textarea>
+                                {!! $errors->first('login_note', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
+                            @endif
+                            <p class="help-block">{!!  trans('admin/settings/general.login_note_help') !!}</p>
+                        </div>
+                    </div>
                            <!-- Show assets assigned to user's assets -->
                            <div class="form-group {{ $errors->has('show_assigned_assets') ? 'error' : '' }}">
                                <div class="col-md-8 col-md-offset-3">

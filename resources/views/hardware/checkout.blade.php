@@ -157,7 +157,7 @@
                                 {!! $errors->first('note', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
                             </div>
                         </div>
-                        
+
                         <!-- Custom fields -->
                         @include("models/custom_fields_form", [
                                 'model' => $asset->model,
@@ -165,6 +165,22 @@
                         ])
 
 
+
+
+                        @can('audit', \App\Models\Asset::class)
+                        <!-- Log an audit checkbox -->
+                        <div class="form-group">
+                            <div class="col-sm-3 control-label" ></div>
+                            <div class="col-md-8">
+                                <label class="form-control">
+                                    <input type="checkbox" value="1" name="log_audit" {{ (old('log_audit')) == '1' ? ' checked="checked"' : '' }} aria-label="log_audit">
+                                    {{ trans('admin/settings/general.log_audit') }}
+                                </label>
+                                <p class="help-block">{{ trans('admin/settings/general.log_audit_help_text')  . " " .  trans('general.checkout') . "." }}</p>
+                            </div>
+                        </div>
+                        <!-- /.form-group -->
+                        @endcan
 
                         @if ($asset->requireAcceptance() || $asset->getEula() || ($snipeSettings->webhook_endpoint!=''))
                             <div class="form-group notification-callout">
@@ -227,4 +243,27 @@
 
 @section('moar_scripts')
     @include('partials/assets-assigned')
+    <script>
+        // Only display the audit fields if the checkbox is selected
+        $(".format").change(function(){
+        $(this).find("option:selected").each(function(){
+        if ($('.format').prop("selectedIndex") == 1) {
+        $("#custom_regex").show();
+        } else{
+        $("#custom_regex").hide();
+        }
+        });
+        }).change();
+    </script>
+
+    <script>
+        //        $('#checkout_at').datepicker({
+        //            clearBtn: true,
+        //            todayHighlight: true,
+        //            endDate: '0d',
+        //            format: 'yyyy-mm-dd'
+        //        });
+
+
+    </script>
 @stop

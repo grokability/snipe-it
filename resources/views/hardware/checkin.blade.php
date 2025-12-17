@@ -127,11 +127,11 @@
                                         <div class="form-group">
                                             <div class="col-md-9 col-md-offset-3">
                                                 <label class="form-control">
-                                                    <input name="update_default_location" type="radio" value="1" checked="checked" aria-label="update_default_location" />
+                                                    {{ Form::radio('update_default_location', '1', old('update_default_location'), ['checked'=> 'checked', 'aria-label'=>'update_default_location']) }}
                                                     {{ trans('admin/hardware/form.asset_location') }}
                                                 </label>
                                                 <label class="form-control">
-                                                    <input name="update_default_location" type="radio" value="0" aria-label="update_default_location" />
+                                                    {{ Form::radio('update_default_location', '0', old('update_default_location'), ['aria-label'=>'update_default_location']) }}
                                                     {{ trans('admin/hardware/form.asset_location_update_default_current') }}
                                                 </label>
                                             </div>
@@ -139,26 +139,96 @@
 
                                         <!-- Checkout/Checkin Date -->
                                         <div class="form-group{{ $errors->has('checkin_at') ? ' has-error' : '' }}">
-                                            <label for="checkin_at" class="col-sm-3 col-xs-12 col-sm-12 control-label">
+                                            <label for="checkin_at" class="col-sm-3 control-label">
                                                 {{ trans('admin/hardware/form.checkin_date') }}
                                             </label>
 
-                                            <div class="col-md-8 col-xs-12 col-sm-12">
-                                                <div class="input-group col-xl-5 col-lg-5 col-md-7 col-sm-9 col-xs-12 required">
+                                            <div class="col-md-8">
+                                                <div class="input-group col-md-5 required">
                                                     <div class="input-group date" data-provide="datepicker"
                                                          data-date-format="yyyy-mm-dd" data-autoclose="true">
                                                         <input type="text" class="form-control"
                                                                placeholder="{{ trans('general.select_date') }}"
                                                                name="checkin_at" id="checkin_at"
                                                                value="{{ old('checkin_at', date('Y-m-d')) }}">
-                                                        <span class="input-group-addon">
-                                                            <x-icon type="calendar" />
-                                                        </span>
+                                                        <span class="input-group-addon"><i class="fas fa-calendar"
+                                                                                           aria-hidden="true"></i></span>
                                                     </div>
                                                     {!! $errors->first('checkin_at', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <!-- Custom fields -->
+                                        @include("models/custom_fields_form", [
+                                                'model' => $asset->model,
+                                                'show_display_checkin_fields' => 'true'
+                                        ])
+
+                @if($snipeSettings->audit_on_checkinout){
+                                        <!-- Show last audit date -->
+                                        <div class="form-group">
+                                            <label class="control-label col-md-3">
+                                                {{ trans('general.last_audit') }}
+                                            </label>
+                                            <div class="col-md-8">
+
+                                                <p class="form-control-static">
+                                                    @if ($asset->last_audit_date)
+                                                        {{ Helper::getFormattedDateObject($asset->last_audit_date, 'datetime', false) }}
+                                                    @else
+                                                        {{ trans('admin/settings/general.none') }}
+                                                    @endif
+                                                </p>
+                                            </div>
+                                        </div>
+
+
+                                        <!-- Next Audit -->
+                                        <div class="form-group{{ $errors->has('next_audit_date') ? ' has-error' : '' }}">
+                                            <label for="next_audit_date" class="col-sm-3 control-label">
+                                                {{ trans('general.next_audit_date') }}
+                                            </label>
+                                            <div class="col-md-8">
+                                                <div class="input-group date col-md-5" data-provide="datepicker" data-date-format="yyyy-mm-dd" data-date-clear-btn="true">
+                                                    <input type="text" class="form-control" placeholder="{{ trans('general.next_audit_date') }}" name="next_audit_date" id="next_audit_date" value="{{ old('next_audit_date', $next_audit_date) }}">
+                                                    <span class="input-group-addon"><x-icon type="calendar" /></span>
+                                                </div>
+                                                {!! $errors->first('next_audit_date', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
+                                                <p class="help-block">{!! trans('general.next_audit_date_help') !!}</p>
+                                            </div>
+                                        </div>
+
+
+} @endif
+
+
+                        <!-- Note -->
+                        <div class="form-group {{ $errors->has('note') ? 'error' : '' }}">
+                            <label for="note" class="col-md-3 control-label">
+                                {{ trans('general.notes') }}
+                            </label>
+                            <div class="col-md-8">
+                                <textarea class="col-md-6 form-control" id="note" @required($snipeSettings->require_checkinout_notes)
+                                        name="note">{{ old('note', $asset->note) }}</textarea>
+                                {!! $errors->first('note', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
+                            </div>
+                        </div>
+
+                        @can('audit', \App\Models\Asset::class)
+                        <!-- Log an audit checkbox -->
+                        <div class="form-group">
+                            <div class="col-sm-3 control-label" ></div>
+                            <div class="col-md-8">
+                                <label class="form-control">
+                                    <input type="checkbox" value="1" name="log_audit" {{ (old('log_audit')) == '1' ? ' checked="checked"' : '' }} aria-label="log_audit">
+                                    {{ trans('admin/settings/general.log_audit') }}
+                                </label>
+                                <p class="help-block">{{ trans('admin/settings/general.log_audit_help_text')  . " " .  trans('general.checkin') . "." }}</p>
+                            </div>
+                        </div>
+                        <!-- /.form-group -->
+                        @endcan
 
                                         <!-- Note -->
                                         <div class="form-group {{ $errors->has('note') ? 'error' : '' }}">
@@ -178,6 +248,34 @@
                                                 'model' => $asset->model,
                                                 'show_custom_fields_type' => 'checkin'
                                         ])
+
+
+                        <!-- Note -->
+                        <div class="form-group {{ $errors->has('note') ? 'error' : '' }}">
+                            <label for="note" class="col-md-3 control-label">
+                                {{ trans('general.notes') }}
+                            </label>
+                            <div class="col-md-8">
+                                <textarea class="col-md-6 form-control" id="note" @required($snipeSettings->require_checkinout_notes)
+                                        name="note">{{ old('note', $asset->note) }}</textarea>
+                                {!! $errors->first('note', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
+                            </div>
+                        </div>
+
+                        @can('audit', \App\Models\Asset::class)
+                        <!-- Log an audit checkbox -->
+                        <div class="form-group">
+                            <div class="col-sm-3 control-label" ></div>
+                            <div class="col-md-8">
+                                <label class="form-control">
+                                    <input type="checkbox" value="1" name="log_audit" {{ (old('log_audit')) == '1' ? ' checked="checked"' : '' }} aria-label="log_audit">
+                                    {{ trans('admin/settings/general.log_audit') }}
+                                </label>
+                                <p class="help-block">{{ trans('admin/settings/general.log_audit_help_text')  . " " .  trans('general.checkin') . "." }}</p>
+                            </div>
+                        </div>
+                        <!-- /.form-group -->
+                        @endcan
 
 
                     </div> <!--/.box-body-->

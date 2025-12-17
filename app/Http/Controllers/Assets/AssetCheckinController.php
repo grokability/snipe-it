@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Assets;
 use App\Events\CheckoutableCheckedIn;
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Assets\AssetsController;
 use App\Http\Requests\AssetCheckinRequest;
 use App\Http\Traits\MigratesLegacyAssetLocations;
 use App\Models\Asset;
@@ -14,6 +15,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Log;
 use \Illuminate\Contracts\View\View;
 use \Illuminate\Http\RedirectResponse;
+use Gate;
 use Illuminate\Support\Facades\Validator;
 
 class AssetCheckinController extends Controller
@@ -88,6 +90,13 @@ class AssetCheckinController extends Controller
 
         $this->authorize('checkin', $asset);
 
+        if ($request->filled('log_audit') == "1") {
+            $this->authorize('audit', Asset::class);
+        }
+
+        if ($asset->assignedType() == Asset::USER) {
+            $user = $asset->assignedTo;
+        }
         session()->put('checkedInFrom', $asset->assignedTo->id);
         session()->put('checkout_to_type', match ($asset->assigned_type) {
             'App\Models\User' => 'user',
@@ -151,7 +160,11 @@ class AssetCheckinController extends Controller
         $asset->customFieldsForCheckinCheckout('display_checkin');
 
         if ($asset->save()) {
-
+            if(Gate::allows('audit',$asset)) {
+                if ($request->filled('log_audit') == "1") {
+                    $asset->logAudit($request->input('note'), $request->input('location_id'));
+                }
+            }
             event(new CheckoutableCheckedIn($asset, $target, auth()->user(), $request->input('note'), $checkin_at, $originalValues));
             return Helper::getRedirectOption($request, $asset->id, 'Assets')
                 ->with('success', trans('admin/hardware/message.checkin.success'));
