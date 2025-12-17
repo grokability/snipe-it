@@ -23,6 +23,7 @@ use App\Models\CustomField;
 use App\Models\License;
 use App\Models\LicenseSeat;
 use App\Models\Location;
+use App\Models\PredefinedFilter;
 use App\Models\Setting;
 use App\Models\User;
 use App\View\Label;
@@ -145,11 +146,17 @@ class AssetsController extends Controller
 
         if ($request->filled('filter')) {
             $filter = json_decode($request->input('filter'), true);
+        }
 
-            $filter = array_filter($filter, function ($key) use ($allowed_columns) {
+        if (!isset($filter[0]['field'])) {
+            $filter = array_filter($filter, function ($key) use ($allowed_columns){
                 return in_array($key, $allowed_columns);
             }, ARRAY_FILTER_USE_KEY);
+        }
 
+        $all_custom_fields = CustomField::all(); //used as a 'cache' of custom fields throughout this page load
+        foreach ($all_custom_fields as $field) {
+            $allowed_columns[] = $field->db_column_name();
         }
 
         $assets = Asset::select('assets.*')
@@ -409,6 +416,7 @@ class AssetsController extends Controller
                 break;
             case 'location':
                 $assets->OrderLocation($order);
+                break;
             case 'rtd_location':
                 $assets->OrderRtdLocation($order);
                 break;
@@ -451,6 +459,18 @@ class AssetsController extends Controller
                     $assets->orderBy($column_sort, $order);
                 }
                 break;
+        }
+
+        // Filter with predefinedFilter if one is given
+        if (isset($request->predefinedFilter)) {
+            $id = $request->predefinedFilter;
+            $predefinedFilters = PredefinedFilter::where('id', $id)
+                ->where('created_by', auth()->user()->id)
+                ->first();
+
+            if ($predefinedFilters) {
+                $assets = $predefinedFilters->filterAssets($assets);
+            }
         }
 
 
@@ -1392,7 +1412,7 @@ class AssetsController extends Controller
 
 
                 $label = new Label();
-                
+
                 if (!$label) {
                     throw new \Exception('Label object could not be created');
                 }

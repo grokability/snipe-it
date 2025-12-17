@@ -12,6 +12,7 @@ use App\Models\Consumable;
 use App\Models\License;
 use App\Models\Location;
 use App\Models\Manufacturer;
+use App\Models\PredefinedFilter;
 use App\Models\Statuslabel;
 use App\Models\Supplier;
 use App\Models\User;
@@ -178,6 +179,14 @@ class Purge extends Command
                 $this->info('- Status Label "'.$status_label->name.'" deleted.');
                 $status_label->forceDelete();
             }
+
+            $predefinedFilters = PredefinedFilter::whereNotNull('deleted_at')->withTrashed()->get();
+            $this->info($predefinedFilters->count().' predefined filters purged.');
+            foreach ($predefinedFilters as $predefinedFilter) {
+                $this->info('- Predefined Filter "'.$predefinedFilter->name.'" deleted.');
+                $predefinedFilter->forceDelete();
+            }
+
         } else {
             $this->info('Action canceled. Nothing was purged.');
         }

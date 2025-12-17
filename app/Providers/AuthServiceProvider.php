@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Accessory;
+use App\Models\AdvancedSearch;
 use App\Models\Asset;
 use App\Models\AssetModel;
 use App\Models\Category;
@@ -16,11 +17,13 @@ use App\Models\Depreciation;
 use App\Models\License;
 use App\Models\Location;
 use App\Models\Manufacturer;
+use App\Models\PredefinedFilter;
 use App\Models\PredefinedKit;
 use App\Models\Statuslabel;
 use App\Models\Supplier;
 use App\Models\User;
 use App\Policies\AccessoryPolicy;
+use App\Policies\AdvancedSearchPolicy;
 use App\Policies\AssetModelPolicy;
 use App\Policies\AssetPolicy;
 use App\Policies\CategoryPolicy;
@@ -34,6 +37,7 @@ use App\Policies\DepreciationPolicy;
 use App\Policies\LicensePolicy;
 use App\Policies\LocationPolicy;
 use App\Policies\ManufacturerPolicy;
+use App\Policies\PredefinedFilterPolicy;
 use App\Policies\PredefinedKitPolicy;
 use App\Policies\StatuslabelPolicy;
 use App\Policies\SupplierPolicy;
@@ -54,6 +58,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         Accessory::class => AccessoryPolicy::class,
+        AdvancedSearch::class => AdvancedSearchPolicy::class,
         Asset::class => AssetPolicy::class,
         AssetModel::class => AssetModelPolicy::class,
         Category::class => CategoryPolicy::class,
@@ -71,6 +76,7 @@ class AuthServiceProvider extends ServiceProvider
         User::class => UserPolicy::class,
         Manufacturer::class => ManufacturerPolicy::class,
         Company::class => CompanyPolicy::class,
+        PredefinedFilter::class => PredefinedFilterPolicy::class,
     ];
 
     /**
@@ -287,6 +293,7 @@ class AuthServiceProvider extends ServiceProvider
                 || $user->can('create', Accessory::class)   
                 || $user->can('update', User::class)
                 || $user->can('create', User::class)
+                || ($user->hasAccess('advancedsearch'))
                 || ($user->hasAccess('reports.view'));
         });
 

@@ -234,6 +234,13 @@ return [
         ],
     ],
 
+    'AdvancedSearch' => [
+        [
+            'permission' => 'advancedSearch.view',
+            'display'    => true,
+        ],
+    ],
+
     'Users' => [
         [
             'permission' => 'users.view',
@@ -446,6 +453,24 @@ return [
         ],
     ],
 
+    'PredefinedFilters' => [
+        [
+            'permission' => 'predefinedFilter.view',
+            'display'    => true,
+        ],
+        [
+            'permission' => 'predefinedFilter.create',
+            'display'    => true,
+        ],
+        [
+            'permission' => 'predefinedFilter.edit',
+            'display'    => true,
+        ],
+        [
+            'permission' => 'predefinedFilter.delete',
+            'display'    => true,
+        ],
+    ],
 
     'User (Self) Accounts' => [
         [

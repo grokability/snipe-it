@@ -1,0 +1,145 @@
+/* Fixed wrapper: usual mode (position fixed at viewport bottom) */
+.floating-buttons-fab-fixed-wrapper {
+    position: fixed;
+    bottom: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 20px;
+    z-index: 1000;
+    pointer-events: auto;
+    padding: 0 15px;
+    justify-content: center;
+    transition: left 0.25s ease;
+}
+
+/* Scrollable wrapper: position absolute and intended to be placed inside the panel
+   so it will move with the panel's content. JS will move the container into the panel. */
+.floating-buttons-fab-scrollable-wrapper {
+    position: absolute;
+    bottom: 20px;
+    left: 50% !important;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 20px;
+    z-index: 1000;
+    pointer-events: auto;
+    transition: all 280ms cubic-bezier(.2,.9,.2,1);
+    padding: 0 15px;
+    justify-content: center;
+}
+
+/* Inner wrapper — animate transforms & opacity to make transitions feel smoother */
+.floating-buttons-inner {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    justify-content: center;
+    transition: transform 300ms cubic-bezier(.2,.9,.2,1), opacity 220ms ease;
+    will-change: transform, opacity;
+    transform-origin: center bottom;
+    opacity: 1;
+}
+
+/* Minor visual shift when scrollable (optional subtle cue) */
+.floating-buttons-fab-scrollable-wrapper .floating-buttons-inner {
+    transform: translateY(-6px) scale(0.995);
+    opacity: 0.98;
+}
+
+/* FAB style */
+.floating-buttons-fab {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: var(--btn-theme-base);
+    color: var(--text-main);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.22s ease, transform 160ms cubic-bezier(.2,.9,.2,1);
+    flex-shrink: 0;
+}
+
+.floating-buttons-fab:hover,
+.floating-buttons-fab:focus {
+    background-color: var(--btn-theme-hover);
+    transform: translateY(-3px);
+    outline: none;
+}
+
+/* Menu: positioned relative to the floating button container */
+.floating-buttons-menu {
+    position: absolute;
+    bottom: 70px;
+    left: 50%;
+    transform: translateX(38px) translateY(6px);
+    background: var(--back-main);
+    border: 1px solid var(--back-sub);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    min-width: 160px;
+    z-index: 1001;
+    transition: transform 200ms ease, opacity 180ms ease, visibility 180ms;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* "open" controlled by JS (FloatingButtons.toggleMenu) */
+.floating-buttons-menu.open {
+    opacity: 1;
+    transform: translateX(38px) translateY(0);
+    visibility: visible;
+    pointer-events: auto;
+    background-color: var(--callout-bg-color);
+}
+
+.floating-buttons-menu a {
+    padding: 10px 12px;
+    text-decoration: none;
+    color: var(--btn-theme-base);
+    border-bottom: 1px solid var(--text-sub);
+    font-size: 14px;
+    background: transparent;
+}
+
+.floating-buttons-menu a:last-child {
+    border-bottom: none;
+}
+
+.floating-buttons-menu a:hover,
+.floating-buttons-menu a:focus {
+    background-color: var(--btn-theme-hover);
+    color: var(--hover-link);
+    border-radius: 8px;
+    outline: none;
+}
+
+.floating-buttons-disabled {
+    cursor: not-allowed;
+    opacity: 0.35;
+    pointer-events: none;
+}
+
+/* Small responsive tweak */
+@media screen and (max-width: 640px) {
+    .floating-buttons-fab-fixed-wrapper {
+        left: 50% !important;
+        bottom: 18px;
+    }
+
+    .floating-buttons-fab-scrollable-wrapper {
+        left: 50% !important;
+        bottom: 18px;
+    }
+
+    .floating-buttons-menu {
+        left: 50%;
+        min-width: 140px;
+        bottom: 68px;
+    }
+}

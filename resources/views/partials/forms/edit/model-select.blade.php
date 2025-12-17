@@ -4,26 +4,7 @@
     <label for="{{ $fieldname }}" class="col-md-3 control-label">{{ $translated_name }}</label>
 
     <div class="col-md-7">
-        <select class="js-data-ajax" data-endpoint="models" data-placeholder="{{ trans('general.select_model') }}" name="{{ $fieldname }}" style="width: 100%" id="model_select_id" aria-label="{{ $fieldname }}"{{  ((isset($field_req)) || ((isset($required) && ($required =='true')))) ?  ' required' : '' }}{{ (isset($multiple) && ($multiple=='true')) ? " multiple='multiple'" : '' }}>
-            @isset ($selected)
-                @if (!is_iterable($selected))
-                    @php
-                        $selected = [$selected];
-                    @endphp
-                @endif
-                @foreach ($selected as $model_id)
-                    <option value="{{ $model_id }}" selected="selected" role="option" aria-selected="true">
-                        {{ \App\Models\AssetModel::find($model_id)->name }}
-                    </option>
-                @endforeach
-            @endisset
-            @if ($model_id = old($fieldname, ($item->{$fieldname} ?? request($fieldname) ?? '')))
-                <option value="{{ $model_id }}" selected="selected">
-                    {{ (\App\Models\AssetModel::find($model_id)) ? \App\Models\AssetModel::find($model_id)->name : '' }}
-                </option>
-            @endif
-
-        </select>
+        @include('partials.select/dropdowns/model-select')
     </div>
     <div class="col-md-1 col-sm-1 text-left">
         @can('create', \App\Models\AssetModel::class)

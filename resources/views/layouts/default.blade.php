@@ -36,6 +36,12 @@
     <link rel="stylesheet" href="{{ url(mix('css/dist/all.css')) }}">
 
     {{-- page level css --}}
+
+    <style>
+        .treeview-menu {
+            z-index: 10000 !important;
+        }
+    </style>
     @stack('css')
 
 
@@ -1506,6 +1512,14 @@
                                         <li {!! (request()->is('fields*') ? ' class="active"' : '') !!}>
                                             <a href="{{ route('fields.index') }}">
                                                 {{ trans('admin/custom_fields/general.custom_fields') }}
+                                            </a>
+                                        </li>
+                                    @endif
+
+                                    @if(Gate::allows('view', App\Models\predefinedFilters::class) || Gate::allows('view', App\Models\CustomFieldset::class))
+                                        <li {!! (request()->is('predefined-filters*') ? ' class="active"' : '') !!}>
+                                            <a href="{{ route('predefined-filters.index') }}">
+                                                {{ trans('admin/predefinedFilters/general.predefined_filter') }}
                                             </a>
                                         </li>
                                     @endif

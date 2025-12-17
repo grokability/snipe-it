@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Http\Transformers\GroupsTransformer;
+use App\Http\Transformers\SelectlistTransformer;
 use App\Models\Group;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -145,4 +146,33 @@ class GroupsController extends Controller
 
         return response()->json(Helper::formatStandardApiResponse('success', null, trans('admin/groups/message.delete.success')));
     }
+
+    /**
+     * Selectlist method that returns all groups wherere the user is member of
+     */
+    public function selectlist(Request $request): array
+    {
+        $user = auth()->user();
+
+        $this->authorize('superadmin');
+        $this->authorize('view', Group::class);
+
+        // Start with groups the user belongs to
+        $groups = Group::whereHas('users', function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })
+            ->select('id', 'name');
+
+        // Search filter
+        if ($request->filled('search')) {
+            $groups = $groups->where('permission_groups.name', 'LIKE', '%' . $request->get('search') . '%');
+        }
+
+        // Apply sorting
+        $groups = $groups->orderBy('name', 'ASC')->paginate(50);
+
+        // Transform output to match selectlist style
+        return (new SelectlistTransformer)->transformSelectlist($groups);
+    }
+
 }

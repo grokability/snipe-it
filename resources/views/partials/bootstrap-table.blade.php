@@ -1304,6 +1304,7 @@
         'groups',
         'hardware',
         'kits',
+        'predefined-filters',
         'licenses',
         'locations',
         'maintenances',
@@ -1513,6 +1514,13 @@
             return '<a href="{{ config('app.url') }}/hardware/' + row.asset.id + '">' + row.asset.serial + '</a>';
         }
         return '';
+    }
+
+    // this Links to '/hardware' with the filter id 
+    function predefinedFiltersLinkFormatter(value, row){
+        if (value && row.id){
+            return `<a href="{{ config('app.url') }}/hardware?predefinedFilterId=${row.id}">${value}</a>`;
+        } 
     }
 
     function trueFalseFormatter(value) {

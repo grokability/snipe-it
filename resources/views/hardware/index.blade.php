@@ -48,18 +48,24 @@
 @section('content')
 
 
+<div class="responsive-layout">
+  <!-- Filter Section -->
+  <div class="filter-section hide" id="filterSection">
+    @include('partials.advanced-search.advanced-search', [
+      'predefined_filter_id' => $predefined_filter_id,
+    ])
+  </div>
 
-<div class="row">
-  <div class="col-md-12">
-    <div class="box box-default">
-      <div class="box-body">
-       
-          <div class="row">
-            <div class="col-md-12">
+    <!-- Table Section -->
+    <div class="table-section">
+        <div class="box">
+            <div class="box-body">
+                @include('partials.asset-bulk-actions', [
+                    'status' => Request::get('status'),
+                    'showFiltersTogglebutton' => $advanced_search_permission,
+                ])
 
-                @include('partials.asset-bulk-actions', ['status' => Request::get('status')])
-                   
-              <table
+                <table
                 data-columns="{{ \App\Presenters\AssetPresenter::dataTableLayout() }}"
                 data-cookie-id-table="{{ request()->has('status') ? e(request()->input('status')) : ''  }}assetsListingTable"
                 data-id-table="{{ request()->has('status') ? e(request()->input('status')) : ''  }}assetsListingTable"
@@ -85,14 +91,23 @@
                 "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
                 }'>
               </table>
+            </div>
 
-            </div><!-- /.col -->
-          </div><!-- /.row -->
-        
-      </div><!-- ./box-body -->
-    </div><!-- /.box -->
-  </div>
+        </div>
+    </div>
+
+    @if($advanced_search_permission)
+        <livewire:partials.advancedSearch.modal />
+    @endif
+
 </div>
+
+<link rel="stylesheet" href="{{ mix('css/dist/advanced-search-index.min.css') }}">
+
+@if($advanced_search_permission)
+    <script type="module" src="{{ mix('js/dist/advanced-search-index.min.js') }}">
+@endif        
+</script>
 @stop
 
 @section('moar_scripts')

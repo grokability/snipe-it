@@ -227,6 +227,13 @@ $(function () {
 
                     return answer;
                 }, */
+                processResults: function (data) {
+                    const selectedValues = this.$element.select2('data') || [];
+                    const filteredResults = data.results.filter(item => !selectedValues.includes(item.id));
+                    return {
+                        results: filteredResults
+                    };
+                },
                 cache: true
             },
             //escapeMarkup: function (markup) { return markup; }, // let our custom formatter work

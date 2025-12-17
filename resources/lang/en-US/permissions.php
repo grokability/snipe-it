@@ -40,6 +40,11 @@ return array(
             'note' => 'Grants access to the Assets section of the application.',
     ],
 
+    'advancedsearch' => [
+        'name' => 'Advanced Search',
+        'note' => 'Grants access to the advanced search section of the Application. Be aware, a user has the rights to load all results from all dropdowns.'
+    ],
+
     'assetsview' => [
         'name' => 'View Assets',
     ],
@@ -209,6 +214,22 @@ return array(
     ],
     'kitsdelete' => [
         'name' => 'Delete Predefined Kits',
+    ],
+    'predefinedfilters'   => [
+        'name' => 'Predefined Filters',
+        'note'       => 'Grants access to the Predefined Filters section of the application.',
+    ],
+    'predefinedfiltercreate' => [
+        'name' => 'Create public Predefined Filters',
+    ],
+    'predefinedfilterview' => [
+        'name' => 'View New public Predefined Filters',
+    ],
+    'predefinedfilteredit' => [
+        'name' => 'Edit public Predefined Filters',
+    ],
+    'predefinedfilterdelete' => [
+        'name' => 'Delete public Predefined Filters',
     ],
     'users'   => [
         'name' => 'Users',

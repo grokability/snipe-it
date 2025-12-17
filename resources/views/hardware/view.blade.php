@@ -525,6 +525,14 @@
                                                 <x-copy-to-clipboard copy_what="serial">
                                                     {{ $asset->serial  }}
                                                 </x-copy-to-clipboard>
+                                                <span class="js-copy-serial">{{ $asset->serial  }}</span>
+
+                                                <i class="fa-regular fa-clipboard js-copy-link hidden-print"
+                                                    data-clipboard-target=".js-copy-serial" aria-hidden="true"
+                                                    data-tooltip="true" data-placement="top"
+                                                    title="{{ trans('general.copy_to_clipboard') }}">
+                                                    <span class="sr-only">{{ trans('general.copy_to_clipboard') }}</span>
+                                                </i>
                                             </div>
                                         </div>
                                     @endif

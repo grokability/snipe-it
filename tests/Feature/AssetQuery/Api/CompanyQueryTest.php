@@ -1,0 +1,171 @@
+<?php
+
+namespace Tests\Feature\AssetQuery\Api;
+
+use App\Models\Asset;
+use App\Models\AssetModel;
+use App\Models\Company;
+use App\Models\User;
+use Tests\TestCase;
+use Illuminate\Testing\Fluent\AssertableJson;
+
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
+class CompanyQueryTest extends TestCase
+{
+    use RefreshDatabase;
+
+    public function testFilterAssetsCompanyEmptyString(): void
+    {
+        $companyA = Company::factory()->create();
+        $companyB = Company::factory()->create();
+
+        // Assets with direct company_id
+        $assetA = Asset::factory()->create([
+            'company_id' => $companyA->id,
+        ]);
+        $assetB = Asset::factory()->create([
+            'company_id' => $companyB->id,
+        ]);
+
+        $filter = [
+            [
+                'field' => 'company',
+                'value' => [''],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ],
+        ];
+
+        $this->actingAsForApi(User::factory()->superuser()->create())
+            ->getJson(
+                route('api.assets.index', [
+                    'status' => '',
+                    'order_number' => '',
+                    'company_id' => '',
+                    'status_id' => '',
+                    'filter' => json_encode($filter),
+                    'search' => '',
+                    'sort' => 'id',
+                    'order' => 'asc',
+                    'offset' => '0',
+                    'limit' => '50',
+                ])
+            )
+            ->assertOk()
+            ->assertJsonStructure([
+                'total',
+                'rows',
+            ])
+            ->assertJson(fn(AssertableJson $json) => $json->has('rows', 2)->etc())
+            ->assertJsonFragment([
+                'id' => $assetA->id,
+            ])
+            ->assertJsonFragment([
+                'id' => $assetB->id,
+            ]);
+    }
+
+    public function testFilterAssetsCompanyString(): void
+    {
+        $companyA = Company::factory()->create();
+        $companyB = Company::factory()->create();
+
+        // Assets with direct company_id
+        $assetA = Asset::factory()->create([
+            'company_id' => $companyA->id,
+        ]);
+        $assetB = Asset::factory()->create([
+            'company_id' => $companyB->id,
+        ]);
+
+        $filter = [
+            [
+                'field' => 'company',
+                'value' => [$companyB->name],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ],
+        ];
+
+        $this->actingAsForApi(User::factory()->superuser()->create())
+            ->getJson(
+                route('api.assets.index', [
+                    'status' => '',
+                    'order_number' => '',
+                    'company_id' => '',
+                    'status_id' => '',
+                    'filter' => json_encode($filter),
+                    'search' => '',
+                    'sort' => 'id',
+                    'order' => 'asc',
+                    'offset' => '0',
+                    'limit' => '50',
+                ])
+            )
+            ->assertOk()
+            ->assertJsonStructure([
+                'total',
+                'rows',
+            ])
+            ->assertJson(fn(AssertableJson $json) => $json->has('rows', 1)->etc())
+            ->assertJsonFragment([
+                'id' => $assetB->id,
+            ]);
+    }
+
+    public function testFilterAssetsCompanyArray(): void
+    {
+        $companyA = Company::factory()->create();
+        $companyB = Company::factory()->create();
+        $companyC = Company::factory()->create();
+
+        // Assets with direct company_id
+        $assetA = Asset::factory()->create([
+            'company_id' => $companyA->id,
+        ]);
+        $assetB = Asset::factory()->create([
+            'company_id' => $companyB->id,
+        ]);
+        $assetC = Asset::factory()->create([
+            'company_id' => $companyC->id,
+        ]);
+
+        $filter = [
+            [
+                'field' => 'company',
+                'value' => [$companyB->id, $companyC->id],
+                'operator' => 'contains',
+                'logic' => 'AND',
+            ],
+        ];
+
+        $this->actingAsForApi(User::factory()->superuser()->create())
+            ->getJson(
+                route('api.assets.index', [
+                    'status' => '',
+                    'order_number' => '',
+                    'company_id' => '',
+                    'status_id' => '',
+                    'filter' => json_encode($filter),
+                    'search' => '',
+                    'sort' => 'id',
+                    'order' => 'asc',
+                    'offset' => '0',
+                    'limit' => '50',
+                ])
+            )
+            ->assertOk()
+            ->assertJsonStructure([
+                'total',
+                'rows',
+            ])
+            ->assertJson(fn(AssertableJson $json) => $json->has('rows', 2)->etc())
+            ->assertJsonFragment([
+                'id' => $assetB->id,
+            ])
+            ->assertJsonFragment([
+                'id' => $assetC->id,
+            ]);
+    }
+}
