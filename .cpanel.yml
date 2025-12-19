@@ -1,0 +1,9 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/inspirin/public_html/
+    - /bin/cp -r /home/inspirin/repositories/snipe-it/* $DEPLOYPATH
+    - cd $DEPLOYPATH
+    - /usr/local/bin/composer install --no-dev --optimize-autoloader
+    - php artisan config:clear
+    - php artisan config:cache
