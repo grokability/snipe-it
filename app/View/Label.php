@@ -175,7 +175,7 @@ class Label implements View
                             // Special case for mailto link
                             case 'mailto':
                                             // Get company email or fallback to default support email or from .env
-                                            $companyEmail = $asset->company->email ?? config('mail.from.address') ?? 'support@example.com';
+                                            $companyEmail = $asset->company->email ?? config('mail.from.address');
                                             $assetUrl = url("/ht/{$asset->asset_tag}");
                                             $subject = rawurlencode("Lost Asset - " . $asset->asset_tag);
                                             $bodyPlain = "Hello,\n\n"
