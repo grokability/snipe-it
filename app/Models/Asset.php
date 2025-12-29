@@ -255,6 +255,19 @@ class Asset extends Depreciable
     }
 
 
+    public function nameFieldValidationRules()
+    {
+        $nameFieldValidationRules = ['string', 'max:255'];
+
+        $settings = \App\Models\Setting::getSettings();
+        if ($settings->validate_asset_name) { array_push($nameFieldValidationRules, $settings->asset_name_regex); }
+        if ($settings->unique_asset_name) { array_push($nameFieldValidationRules, 'unique_undeleted'); }
+        if ($settings->ignore_blank_asset_name) { array_push($nameFieldValidationRules, 'nullable'); }
+
+        return $nameFieldValidationRules;
+    }
+
+
 
     /**
      * This handles the custom field validation for assets
@@ -263,7 +276,12 @@ class Asset extends Depreciable
      */
     public function save(array $params = [])
     {
-        $this->rules += $this->customFieldValidationRules();
+        $this->rules = array_merge(
+            $this->rules,
+            $this->customFieldValidationRules(),
+            ['name' => $this->nameFieldValidationRules()]
+        );
+
         return parent::save($params);
     }
 

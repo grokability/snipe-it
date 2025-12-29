@@ -129,6 +129,16 @@ class SettingsController extends Controller
         $setting->require_checkinout_notes = $request->input('require_checkinout_notes', 0);
         $setting->manager_view_enabled = $request->input('manager_view_enabled', 0);
 
+        $setting->validate_asset_name = $request->input('validate_asset_name', '0');
+        $setting->asset_name_regex = $request->input('asset_name_regex');
+        if ($setting->validate_asset_name == '1') {
+            if (empty($setting->asset_name_regex)) {
+                return redirect()->back()->withInput()->withErrors(['asset_name_regex' => trans('admin/settings/message.asset_name_regex.empty')]);
+            }
+        }
+        $setting->unique_asset_name = $request->input('unique_asset_name', '0');
+        $setting->ignore_blank_asset_name = $request->input('ignore_blank_asset_name', '0');
+
 
         if ($request->input('per_page') != '') {
             $setting->per_page = $request->input('per_page');

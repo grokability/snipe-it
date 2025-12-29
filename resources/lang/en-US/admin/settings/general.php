@@ -23,6 +23,14 @@ return [
     'allow_user_skin'           => 'Allow User Skin',
     'allow_user_skin_help_text' => 'Checking this box will allow a user to override the UI skin with a different one.',
     'asset_ids'					=> 'Asset IDs',
+    'asset_name_blank'          => 'Ignore Blank Asset Names',
+    'asset_name_blank_help'     => 'Checking this box will allow asset names to be blank, bypassing validation and uniqueness checks.',
+    'asset_name_regex'          => 'Asset Name Regex',
+    'asset_name_regex_help'     => 'This field allows you to use a regex expression for validation. It should start with "regex:". For example, to validate that the asset name conforms to the standard <code>AAAA-BBB-CCC000</code>, you would use <code>regex:/^[A-Z]{4}-[A-Z]{3}-[A-Z]{3}[0-9]{3}$/</code>.',
+    'asset_name_unique'         => 'Unique Asset Names',
+    'asset_name_unique_help'    => 'Checking this box will enforce a uniqueness constraint on asset names.',
+    'asset_name_validate'       => 'Validate Asset Names',
+    'asset_name_validate_help'  => 'Checking this box will enforce validation on asset names.',
     'audit_interval'            => 'Audit Interval',
     'audit_interval_help'       => 'If you are required to regularly physically audit your assets, enter the interval in months that you use. If you update this value, all of the "next audit dates" for assets with an upcoming audit date will be updated.',
     'audit_warning_days'        => 'Audit Warning Threshold',
@@ -492,6 +500,7 @@ return [
 
 
     'legends' => [
+        'asset_naming' => 'Asset Naming Preferences',
         'checkin' => 'Checkin Preferences',
         'colors' => 'Colors & Skins',
         'dashboard' => 'Login & Dashboard Preferences',
