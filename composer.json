@@ -60,7 +60,7 @@
     "nesbot/carbon": "^3.0",
     "nunomaduro/collision": "^8.1",
     "okvpn/clock-lts": "^1.0",
-    "onelogin/php-saml": "^3.4",
+    "onelogin/php-saml": "^3.8.1",
     "onnov/detect-encoding": "^2.0",
     "osa-eg/laravel-teams-notification": "^2.1",
     "paragonie/constant_time_encoding": "^2.3",
