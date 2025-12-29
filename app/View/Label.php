@@ -175,7 +175,12 @@ class Label implements View
                             // Special case for mailto link
                             case 'mailto':
                                             // Get company email or fallback to default support email or from .env
-                                            $companyEmail = $asset->company->email ?? config('mail.from.address');
+                                            $companyEmail = $asset->company->email ?? env('MAIL_FROM_ADDR');
+                                            // Skip qrcode generation if no email found
+                                            if (empty($companyEmail)) {
+                                            $barcode2DTarget = null;
+                                            break;
+                                            }
                                             $assetUrl = url("/ht/{$asset->asset_tag}");
                                             $subject = rawurlencode("Lost Asset - " . $asset->asset_tag);
                                             $bodyPlain = "Hello,\n\n"
