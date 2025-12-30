@@ -172,52 +172,40 @@ class Label implements View
                                     ? route('locations.show', $asset->location_id)
                                     : null;
                                 break;
-                            // Special case for mailto link
-                            case 'mailto':
-                                // Get from company email or fallback from .env
+			                case 'mailto':                                
                                 $companyEmail = $asset->company->email ?? env('MAIL_FROM_ADDR');
-                            
-                                // Skip QR code if no email found
                                 if (empty($companyEmail)) {
                                     $barcode2DTarget = null;
                                     break;
                                 }
-                            
-                                // Get url Hardware Tag
                                 $assetUrl = url("/ht/{$asset->asset_tag}");
-                            
-                                // Get text from translation file
                                 $subjectText = trans('admin/settings/general.mailto_subject', [
                                     'asset_tag' => $asset->asset_tag,
                                 ]);
-                            
+
                                 $bodyText = trans('admin/settings/general.mailto_body', [
                                     'asset_tag' => $asset->asset_tag,
                                     'asset_url' => $assetUrl,
                                 ]);
-                            
-                                // Encode for URL
+
                                 $subject = rawurlencode($subjectText);
                                 $body = rawurlencode($bodyText);
-                            
-                                // Create Mailto Link
-                                $barcode2DTarget = "mailto:{$companyEmail}?subject={$subject}";
 
+                                $barcode2DTarget = "mailto:{$companyEmail}?subject={$subject}";
                                 // If you want to include the body as well, uncomment the line below and comment the line above
-                                //$barcode2DTarget = "mailto:{$companyEmail}?subject={$subject}&body={$body}";
-                                
+                                // $barcode2DTarget = "mailto:{$companyEmail}?subject={$subject}&body={$body}";
                                 break;
-                                        case 'hardware_id':
-                                        default:
-                                            $barcode2DTarget = route('hardware.show', $asset);
-                                            break;
-                                        }
-                                        $assetData->put('barcode2d', (object)[
-                                            'type' => $barcode2DType,
-                                            'content' => $barcode2DTarget,
-                                        ]);
-                                    }
+                            case 'hardware_id':
+                                default:
+                                    $barcode2DTarget = route('hardware.show', $asset);
+                                    break;
                                 }
+                                    $assetData->put('barcode2d', (object)[
+                                    'type' => $barcode2DType,
+                                    'content' => $barcode2DTarget,
+                                    ]);
+                                }
+                            }
 
                 $fields = $fieldDefinitions
                     ->map(fn($field) => $field->toArray($asset))
