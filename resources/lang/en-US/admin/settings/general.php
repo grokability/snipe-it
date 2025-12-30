@@ -399,14 +399,6 @@ return [
     'label2_2d_prefix_help'   => 'This text will be prepended to the 2D Barcode Target value selected below when the 2D code is scanned. This can be used to prepend an external URL or any other value that you might need.',
     'label2_2d_target'        => '2D Barcode Content',
     'label2_2d_target_help'   => 'The data that will be contained in the 2D barcode. This can link to the asset directly in Snipe-IT or can be one of the non-linked field values. If you use the prefix above, it will be prepended to this value.',
-    // Custom: Mailto barcode translation
-    'mailto_option' => 'Mailto (Send Email to Company)',
-    'mailto_subject' => 'Lost Asset - :asset_tag',
-    'mailto_body' => "Hello,\n\n"
-        . "I found this asset with tag: :asset_tag\n\n"
-        . "Asset page: :asset_url\n\n"
-        . "Please contact me for retrieval.\n\n"
-        . "Thank you!",
     'select_template'         => 'Select a Template',
     'label2_fields'           => 'Field Definitions',
     'label2_fields_help'      => 'Fields can be added, removed, and reordered in the left column. For each field, multiple options for Label and DataSource can be added, removed, and reordered in the right column. Field changes made here will be reflected immediately in the preview below but must be saved for them to apply to new labels.',
