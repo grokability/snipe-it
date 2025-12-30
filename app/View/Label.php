@@ -182,18 +182,9 @@ class Label implements View
                                 $subjectText = trans('admin/settings/general.mailto_subject', [
                                     'asset_tag' => $asset->asset_tag,
                                 ]);
-
-                                $bodyText = trans('admin/settings/general.mailto_body', [
-                                    'asset_tag' => $asset->asset_tag,
-                                    'asset_url' => $assetUrl,
-                                ]);
-
+							
                                 $subject = rawurlencode($subjectText);
-                                $body = rawurlencode($bodyText);
-
                                 $barcode2DTarget = "mailto:{$companyEmail}?subject={$subject}";
-                                // If you want to include the body as well, uncomment the line below and comment the line above
-                                // $barcode2DTarget = "mailto:{$companyEmail}?subject={$subject}&body={$body}";
                                 break;
                             case 'hardware_id':
                                 default:
