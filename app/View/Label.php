@@ -178,7 +178,6 @@ class Label implements View
                                     $barcode2DTarget = null;
                                     break;
                                 }
-                                $assetUrl = url("/ht/{$asset->asset_tag}");
                                 $subjectText = trans('admin/settings/general.mailto_subject', [
                                     'asset_tag' => $asset->asset_tag,
                                 ]);
