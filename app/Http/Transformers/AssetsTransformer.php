@@ -210,6 +210,7 @@ class AssetsTransformer
             return $asset->assigned ? [
                     'id' => (int) $asset->assigned->id,
                     'username' => e($asset->assigned->username),
+                    'display_name' => e($asset->assigned->display_name),
                     'name' => e($asset->assigned->getFullNameAttribute()),
                     'first_name'=> e($asset->assigned->first_name),
                     'last_name'=> ($asset->assigned->last_name) ? e($asset->assigned->last_name) : null,
