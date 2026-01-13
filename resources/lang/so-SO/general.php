@@ -263,7 +263,7 @@ return [
     'rtd'				    => 'Diyaar u ah in la geeyo',
     'requested_date'        => 'Taariikhda la codsaday',
     'requested_assets'      => 'Hantida la codsaday',
-    'requested_assets_menu' => 'Requestable Items',
+    'requested_assets_menu' => 'Requested Items',
     'request_canceled'      => 'Codsiga waa la joojiyay',
     'request_item'          => 'Request this item',
     'external_link_tooltip' => 'External link to',

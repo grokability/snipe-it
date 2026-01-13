@@ -263,7 +263,7 @@ return [
     'rtd'				    => 'Pripravené na odovzdanie',
     'requested_date'        => 'Dátum vyžiadania',
     'requested_assets'      => 'Vyžiadaný majetok',
-    'requested_assets_menu' => 'Vyžiadateľné položky',
+    'requested_assets_menu' => 'Vyžiadané položky',
     'request_canceled'      => 'Požiadavka zrušená',
     'request_item'          => 'Požiadať o túto položku',
     'external_link_tooltip' => 'Externé odkazy',

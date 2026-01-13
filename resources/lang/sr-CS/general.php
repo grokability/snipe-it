@@ -263,7 +263,7 @@ return [
     'rtd'				    => 'Spremna za raspoređivanje',
     'requested_date'        => 'Datum zatraživanja',
     'requested_assets'      => 'Zatražena imovina',
-    'requested_assets_menu' => 'Zatraživa stavka',
+    'requested_assets_menu' => 'Zatražena stavka',
     'request_canceled'      => 'Zahtev je otkazan',
     'request_item'          => 'Zatraži ovu stavku',
     'external_link_tooltip' => 'Eksterna veza do',

@@ -263,7 +263,7 @@ return [
     'rtd'				    => 'Paruoštas naudojimui',
     'requested_date'        => 'Prašymo data',
     'requested_assets'      => 'Prašomas turtas',
-    'requested_assets_menu' => 'Užsakomi daiktai',
+    'requested_assets_menu' => 'Užsakyti daiktai',
     'request_canceled'      => 'Prašymas atšauktas',
     'request_item'          => 'Užsakyti šį daiktą',
     'external_link_tooltip' => 'Išorinė nuoroda',

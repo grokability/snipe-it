@@ -263,7 +263,7 @@ return [
     'rtd'				    => 'வரிசைப்படுத்த தயாராக உள்ளது',
     'requested_date'        => 'Requested Date',
     'requested_assets'      => 'Requested Assets',
-    'requested_assets_menu' => 'Requestable Items',
+    'requested_assets_menu' => 'Requested Items',
     'request_canceled'      => 'கோரிக்கை ரத்து செய்யப்பட்டது',
     'request_item'          => 'Request this item',
     'external_link_tooltip' => 'External link to',

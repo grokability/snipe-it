@@ -263,7 +263,7 @@ return [
     'rtd'				    => 'Klar for utlevering',
     'requested_date'        => 'Forespurt dato',
     'requested_assets'      => 'Forespurte eiendeler',
-    'requested_assets_menu' => 'Requestable Items',
+    'requested_assets_menu' => 'Requested Items',
     'request_canceled'      => 'Forespørsel avbrutt',
     'request_item'          => 'Request this item',
     'external_link_tooltip' => 'External link to',

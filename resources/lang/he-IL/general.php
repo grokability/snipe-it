@@ -263,7 +263,7 @@ return [
     'rtd'				    => 'מוכן לפריסה',
     'requested_date'        => 'התאריך המבוקש',
     'requested_assets'      => 'נכסים שנדרשו',
-    'requested_assets_menu' => 'Requestable Items',
+    'requested_assets_menu' => 'Requested Items',
     'request_canceled'      => 'הבקשה בוטלה',
     'request_item'          => 'Request this item',
     'external_link_tooltip' => 'External link to',

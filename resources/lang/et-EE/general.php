@@ -263,7 +263,7 @@ return [
     'rtd'				    => 'Kasutamine valmis',
     'requested_date'        => 'Taotletav kuupäev',
     'requested_assets'      => 'Taotletavad vahendid',
-    'requested_assets_menu' => 'Taotletavad mudelid',
+    'requested_assets_menu' => 'Taotletud mudelid',
     'request_canceled'      => 'Taotlus tühistati',
     'request_item'          => 'Taotle seda vara',
     'external_link_tooltip' => 'External link to',

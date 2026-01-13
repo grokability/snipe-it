@@ -263,7 +263,7 @@ return [
     'rtd'				    => 'Tamsaasaaf Qophiidha',
     'requested_date'        => 'Guyyaa gaafatame',
     'requested_assets'      => 'Qabeenya gaafatame',
-    'requested_assets_menu' => 'Gosoota mi\'a gaafatamuu dandahanii',
+    'requested_assets_menu' => 'Gosoota mi\'a gaafatame',
     'request_canceled'      => 'Gaaffiin Haqame',
     'request_item'          => 'Gaaffii dhiyeessi',
     'external_link_tooltip' => 'Gara geggeessituu alaatti',

@@ -263,7 +263,7 @@ return [
     'rtd'				    => 'Gata de lansare',
     'requested_date'        => 'Data solicitării',
     'requested_assets'      => 'Activele solicitate',
-    'requested_assets_menu' => 'Articole Solicitabile',
+    'requested_assets_menu' => 'Articole Solicitate',
     'request_canceled'      => 'Cerere anulată',
     'request_item'          => 'Solicită acest articol',
     'external_link_tooltip' => 'Link extern către',

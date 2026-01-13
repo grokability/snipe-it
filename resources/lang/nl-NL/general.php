@@ -263,7 +263,7 @@ return [
     'rtd'				    => 'Klaar voor uitgifte',
     'requested_date'        => 'Aangevraagde datum',
     'requested_assets'      => 'Aangevraagd activa',
-    'requested_assets_menu' => 'Aanvraagbare items',
+    'requested_assets_menu' => 'Aangevraagde items',
     'request_canceled'      => 'Aanvraag geannuleerd',
     'request_item'          => 'Dit item aanvragen',
     'external_link_tooltip' => 'Externe link naar',

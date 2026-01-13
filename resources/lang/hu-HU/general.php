@@ -263,7 +263,7 @@ return [
     'rtd'				    => 'Kiadásra kész',
     'requested_date'        => 'Kért időpont',
     'requested_assets'      => 'Kért eszközök',
-    'requested_assets_menu' => 'Igényelhető modellek',
+    'requested_assets_menu' => 'Igényelt modellek',
     'request_canceled'      => 'A kérelem törölve',
     'request_item'          => 'Igénylés',
     'external_link_tooltip' => 'Külső hivatkozás :',

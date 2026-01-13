@@ -263,7 +263,7 @@ return [
     'rtd'				    => 'Bereit zum Herausgeben',
     'requested_date'        => 'Angefordertes Datum',
     'requested_assets'      => 'Angeforderte Assets',
-    'requested_assets_menu' => 'Anforderbare Gegenstände',
+    'requested_assets_menu' => 'Angeforderte Gegenstände',
     'request_canceled'      => 'Anfrage abgebrochen',
     'request_item'          => 'Diesen Artikel anfordern',
     'external_link_tooltip' => 'Externer Link zu',

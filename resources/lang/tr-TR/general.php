@@ -266,7 +266,7 @@ Context | Request Context
     'rtd'				    => 'Atamaya Hazır',
     'requested_date'        => 'Talep Tarihi',
     'requested_assets'      => 'Talep Edilen Varlıklar',
-    'requested_assets_menu' => 'Talep Edilebilir Öğeler',
+    'requested_assets_menu' => 'Talep Edilen Öğeler',
     'request_canceled'      => 'Talep iptal edildi',
     'request_item'          => 'Ürünü Talep Et',
     'external_link_tooltip' => 'Dış bağlantı',

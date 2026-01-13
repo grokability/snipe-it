@@ -264,7 +264,7 @@ return [
     'rtd'				    => 'Ready to Deploy',
     'requested_date'        => 'Requested Date',
     'requested_assets'      => 'Requested Assets',
-    'requested_assets_menu' => 'Requestable Items',
+    'requested_assets_menu' => 'Requested Items',
     'request_canceled'      => 'Request Canceled',
     'request_item'          => 'Request this item',
     'external_link_tooltip' => 'External link to',

@@ -263,7 +263,7 @@ return [
     'rtd'				    => 'Réidh le Imscaradh',
     'requested_date'        => 'Requested Date',
     'requested_assets'      => 'Requested Assets',
-    'requested_assets_menu' => 'Requestable Items',
+    'requested_assets_menu' => 'Requested Items',
     'request_canceled'      => 'Iarratas Ar Ceal',
     'request_item'          => 'Request this item',
     'external_link_tooltip' => 'External link to',

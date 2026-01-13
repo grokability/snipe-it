@@ -263,7 +263,7 @@ return [
     'rtd'				    => 'Sẵn sàng để cấp phát',
     'requested_date'        => 'Ngày yêu cầu',
     'requested_assets'      => 'Tài sản đã yêu cầu',
-    'requested_assets_menu' => 'Requestable Items',
+    'requested_assets_menu' => 'Requested Items',
     'request_canceled'      => 'Yêu cầu Đã Hủy',
     'request_item'          => 'Request this item',
     'external_link_tooltip' => 'External link to',

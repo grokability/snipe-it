@@ -263,7 +263,7 @@ return [
     'rtd'				    => 'Подготвен за распоредување',
     'requested_date'        => 'Побаран датум',
     'requested_assets'      => 'Побарани средства',
-    'requested_assets_menu' => 'Побарливи предмети',
+    'requested_assets_menu' => 'Побарани предмети',
     'request_canceled'      => 'Барањето е откажано',
     'request_item'          => 'Побарајте оваа ставка',
     'external_link_tooltip' => 'Надворешна врска до',

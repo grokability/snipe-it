@@ -263,7 +263,7 @@ return [
     'rtd'				    => 'Готово за предоставяне',
     'requested_date'        => 'Дата на заявката',
     'requested_assets'      => 'Изискуеми активи',
-    'requested_assets_menu' => 'Изискуеми артикули',
+    'requested_assets_menu' => 'Изискани артикули',
     'request_canceled'      => 'Заявка отменена',
     'request_item'          => 'Поискайте този артикул',
     'external_link_tooltip' => 'Външна връзка към',

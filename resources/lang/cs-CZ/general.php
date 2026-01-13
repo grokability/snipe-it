@@ -263,7 +263,7 @@ return [
     'rtd'				    => 'Připraveno k přidělení',
     'requested_date'        => 'Požadované datum',
     'requested_assets'      => 'Vyžádaný majetek',
-    'requested_assets_menu' => 'Položky, o které lze požádat',
+    'requested_assets_menu' => 'Požadované položky',
     'request_canceled'      => 'Žádost zrušena',
     'request_item'          => 'Požádat o tuto položku',
     'external_link_tooltip' => 'Externí odkazy',

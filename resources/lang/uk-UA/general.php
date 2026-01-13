@@ -263,7 +263,7 @@ return [
     'rtd'				    => 'Готовий до видачі',
     'requested_date'        => 'Дата запиту',
     'requested_assets'      => 'Запитані активи',
-    'requested_assets_menu' => 'Запитувані речі',
+    'requested_assets_menu' => 'Запитані речі',
     'request_canceled'      => 'Запит скасовано',
     'request_item'          => 'Запросити цю річ',
     'external_link_tooltip' => 'Зовнішнє посилання на',

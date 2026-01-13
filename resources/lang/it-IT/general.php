@@ -263,7 +263,7 @@ return [
     'rtd'				    => 'Pronti per l\'assegnazione',
     'requested_date'        => 'Data di richiesta',
     'requested_assets'      => 'Beni richiesti',
-    'requested_assets_menu' => 'Oggetti richiedibili',
+    'requested_assets_menu' => 'Oggetti richiesti',
     'request_canceled'      => 'Richiesta annullata',
     'request_item'          => 'Richiedi questo articolo',
     'external_link_tooltip' => 'Collegamento esterno a',

@@ -263,7 +263,7 @@ return [
     'rtd'				    => 'Gatavs izvietot',
     'requested_date'        => 'Pieprasīšanas datums',
     'requested_assets'      => 'Pieprasītais inventārs',
-    'requested_assets_menu' => 'Pieprasāmās lietas',
+    'requested_assets_menu' => 'Pieprasītās lietas',
     'request_canceled'      => 'Pieprasījums atcelts',
     'request_item'          => 'Pieprasīt šo lietu',
     'external_link_tooltip' => 'Ārējā saite',

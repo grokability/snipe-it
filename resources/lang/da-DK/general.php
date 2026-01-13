@@ -263,7 +263,7 @@ return [
     'rtd'				    => 'Klar til Implementering',
     'requested_date'        => 'Anmodningsdato',
     'requested_assets'      => 'Anmodede aktiver',
-    'requested_assets_menu' => 'Requestable Items',
+    'requested_assets_menu' => 'Requested Items',
     'request_canceled'      => 'Anmodning Annulleret',
     'request_item'          => 'Request this item',
     'external_link_tooltip' => 'External link to',

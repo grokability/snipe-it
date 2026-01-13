@@ -263,7 +263,7 @@ return [
     'rtd'				    => '配備可能',
     'requested_date'        => 'リクエスト日',
     'requested_assets'      => '要求された資産',
-    'requested_assets_menu' => 'Requestable Items',
+    'requested_assets_menu' => 'Requested Items',
     'request_canceled'      => 'リクエストキャンセル',
     'request_item'          => 'Request this item',
     'external_link_tooltip' => 'External link to',

@@ -263,7 +263,7 @@ return [
     'rtd'				    => 'พร้อมใช้งาน',
     'requested_date'        => 'วันที่ขอ',
     'requested_assets'      => 'Requested Assets',
-    'requested_assets_menu' => 'Requestable Items',
+    'requested_assets_menu' => 'Requested Items',
     'request_canceled'      => 'คำขอยกเลิกแล้ว',
     'request_item'          => 'Request this item',
     'external_link_tooltip' => 'External link to',

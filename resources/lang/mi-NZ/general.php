@@ -263,7 +263,7 @@ return [
     'rtd'				    => 'Kua rite ki te Whakamahia',
     'requested_date'        => 'Requested Date',
     'requested_assets'      => 'Requested Assets',
-    'requested_assets_menu' => 'Requestable Items',
+    'requested_assets_menu' => 'Requested Items',
     'request_canceled'      => 'Tono Whakamutua',
     'request_item'          => 'Request this item',
     'external_link_tooltip' => 'External link to',

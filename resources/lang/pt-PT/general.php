@@ -263,7 +263,7 @@ return [
     'rtd'				    => 'Pronto para implementar',
     'requested_date'        => 'Data de solicitação',
     'requested_assets'      => 'Artigos solicitados',
-    'requested_assets_menu' => 'Requestable Items',
+    'requested_assets_menu' => 'Requested Items',
     'request_canceled'      => 'Pedido cancelado',
     'request_item'          => 'Solicitar esse item',
     'external_link_tooltip' => 'Link externo para',

@@ -263,7 +263,7 @@ return [
     'rtd'				    => 'Pronto para Implantar',
     'requested_date'        => 'Data da Solicitação',
     'requested_assets'      => 'Ativos Solicitados',
-    'requested_assets_menu' => 'Itens Solicitáveis',
+    'requested_assets_menu' => 'Itens Solicitados',
     'request_canceled'      => 'Solicitação Cancelada',
     'request_item'          => 'Solicitar esse item',
     'external_link_tooltip' => 'Link externo para',

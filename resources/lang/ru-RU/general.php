@@ -263,7 +263,7 @@ return [
     'rtd'				    => 'Готов к установке',
     'requested_date'        => 'Запрашиваемая дата',
     'requested_assets'      => 'Запрашиваемые активы',
-    'requested_assets_menu' => 'Запрашиваемые элементы',
+    'requested_assets_menu' => 'Запрошенные элементы',
     'request_canceled'      => 'Запрос отменен',
     'request_item'          => 'Запросить этот элемент',
     'external_link_tooltip' => 'Внешняя ссылка на',

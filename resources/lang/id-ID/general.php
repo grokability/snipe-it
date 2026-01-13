@@ -263,7 +263,7 @@ return [
     'rtd'				    => 'Siap digunakan',
     'requested_date'        => 'Tanggal Permintaan',
     'requested_assets'      => 'Aset yang Diminta',
-    'requested_assets_menu' => 'Barang Dapat Diminta',
+    'requested_assets_menu' => 'Barang yang Diminta',
     'request_canceled'      => 'Permintaan Dibatalkan',
     'request_item'          => 'Perminta barang ini',
     'external_link_tooltip' => 'Tautan eksternal ke',

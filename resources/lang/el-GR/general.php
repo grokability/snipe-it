@@ -263,7 +263,7 @@ return [
     'rtd'				    => 'Είστε έτοιμοι να αναπτύξετε',
     'requested_date'        => 'Ημερομηνία Που Ζητήθηκε',
     'requested_assets'      => 'Ζητούμενα Περιουσιακά Στοιχεία',
-    'requested_assets_menu' => 'Requestable Items',
+    'requested_assets_menu' => 'Requested Items',
     'request_canceled'      => 'Το αίτημα ακυρώθηκε',
     'request_item'          => 'Request this item',
     'external_link_tooltip' => 'External link to',

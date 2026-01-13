@@ -263,7 +263,7 @@ return [
     'rtd'				    => 'រួចរាល់អាចប្រើប្រាស់',
     'requested_date'        => 'កាលបរិច្ឆេទដែលបានស្នើសុំ',
     'requested_assets'      => 'ទ្រព្យសកម្មដែលបានស្នើសុំ',
-    'requested_assets_menu' => 'វត្ថុដែលអាចស្នើសុំបាន។',
+    'requested_assets_menu' => 'វត្ថុដែលបានស្នើសុំ',
     'request_canceled'      => 'សំណើត្រូវបានលុបចោល',
     'request_item'          => 'ស្នើសុំធាតុនេះ។',
     'external_link_tooltip' => 'តំណភ្ជាប់ទៅខាងក្រៅ',

@@ -263,7 +263,7 @@ return [
     'rtd'				    => 'Listo para asignar',
     'requested_date'        => 'Fecha de solicitud',
     'requested_assets'      => 'Activos solicitados',
-    'requested_assets_menu' => 'Artículos que se pueden solicitar',
+    'requested_assets_menu' => 'Artículos solicitados',
     'request_canceled'      => 'Solicitud cancelada',
     'request_item'          => 'Solicitar este elemento',
     'external_link_tooltip' => 'Enlace externo a',

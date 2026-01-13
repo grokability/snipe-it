@@ -283,7 +283,7 @@ return [
     'requested_date'        => 'تاریخ درخواست',
     'requested_assets'      => 'دارایی های درخواستی
 ',
-    'requested_assets_menu' => 'آیتم های قابل درخواست',
+    'requested_assets_menu' => 'آیتم های درخواست شده',
     'request_canceled'      => 'درخواست لغو شد',
     'request_item'          => 'درخواست این آیتم',
     'external_link_tooltip' => 'لینک خارجی به',

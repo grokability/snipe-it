@@ -263,7 +263,7 @@ return [
     'rtd'				    => 'მზადაა გასაცემად',
     'requested_date'        => 'მოთხოვნის თარიღი',
     'requested_assets'      => 'მოთხოვნილი ინვენტარი',
-    'requested_assets_menu' => 'მოთხოვნადი ნივთები',
+    'requested_assets_menu' => 'მოთხოვნილი ნივთები',
     'request_canceled'      => 'მოთხოვნა გაუქმდა',
     'request_item'          => 'მოთხოვნა ამ ერთეულზე',
     'external_link_tooltip' => 'გარე ბმული',

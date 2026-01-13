@@ -263,7 +263,7 @@ return [
     'rtd'				    => 'Valmis käyttöönottoon',
     'requested_date'        => 'Pyynnön päivämäärä',
     'requested_assets'      => 'Pyydetyt laitteet',
-    'requested_assets_menu' => 'Requestable Items',
+    'requested_assets_menu' => 'Requested Items',
     'request_canceled'      => 'Pyyntö peruutettu',
     'request_item'          => 'Request this item',
     'external_link_tooltip' => 'External link to',

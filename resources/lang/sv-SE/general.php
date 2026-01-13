@@ -263,7 +263,7 @@ return [
     'rtd'				    => 'Redo för leverans',
     'requested_date'        => 'Begärt datum',
     'requested_assets'      => 'Begärda tillgångar',
-    'requested_assets_menu' => 'Begärbara objekt',
+    'requested_assets_menu' => 'Begärda objekt',
     'request_canceled'      => 'Förfrågan avbruten',
     'request_item'          => 'Begär detta objekt',
     'external_link_tooltip' => 'Extern länk till',

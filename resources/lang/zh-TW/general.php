@@ -263,7 +263,7 @@ return [
     'rtd'				    => '準備部署',
     'requested_date'        => '申請日期',
     'requested_assets'      => '申請的資產',
-    'requested_assets_menu' => 'Requestable Items',
+    'requested_assets_menu' => 'Requested Items',
     'request_canceled'      => '取消申請',
     'request_item'          => 'Request this item',
     'external_link_tooltip' => '外部連結到',
