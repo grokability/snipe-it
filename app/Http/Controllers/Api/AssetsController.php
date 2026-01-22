@@ -810,7 +810,10 @@ class AssetsController extends Controller
             }
 
             if (isset($target)) {
-                $asset->checkOut($target, auth()->user(), date('Y-m-d H:i:s'), '', 'Checked out on asset update', e($request->input('name')), $location);
+                // Using `->has` preserves the asset name if the name parameter was not included in request.
+                $asset_name = request()->has('name') ? request('name') : $asset->name;
+
+                $asset->checkOut($target, auth()->user(), date('Y-m-d H:i:s'), '', 'Checked out on asset update', $asset_name, $location);
             }
 
             if ($asset->image) {
