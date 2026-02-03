@@ -13,6 +13,7 @@ use App\Models\Statuslabel;
 use Illuminate\Http\Request;
 use App\Http\Transformers\PieChartTransformer;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Validation\Rule;
 
 class StatuslabelsController extends Controller
 {
@@ -94,15 +95,14 @@ class StatuslabelsController extends Controller
         $this->authorize('create', Statuslabel::class);
         $request->except('deployable', 'pending', 'archived');
 
-        if (! $request->filled('type')) {
-
-            return response()->json(Helper::formatStandardApiResponse('error', null, ['type' => ['Status label type is required.']]));
-        }
-
         $statuslabel = new Statuslabel;
         $statuslabel->fill($request->all());
 
-        $statusType = Statuslabel::getStatuslabelTypesForDB($request->input('type'));
+        $validated = $request->validate([
+            'type' => ['required', Rule::in(['deployable','pending','archived','undeployable'])],
+        ]);
+
+        $statusType = Statuslabel::getStatuslabelTypesForDB(strtolower($validated['type']));
         $statuslabel->deployable = $statusType['deployable'];
         $statuslabel->pending = $statusType['pending'];
         $statuslabel->archived = $statusType['archived'];
@@ -153,10 +153,12 @@ class StatuslabelsController extends Controller
         if (! $request->filled('type')) {
             return response()->json(Helper::formatStandardApiResponse('error', null, 'Status label type is required.'));
         }
-
+        $validated = $request->validate([
+            'type' => ['required', Rule::in(['deployable','pending','archived', 'undeployable'])],
+        ]);
         $statuslabel->fill($request->all());
 
-        $statusType = Statuslabel::getStatuslabelTypesForDB($request->input('type'));
+        $statusType = Statuslabel::getStatuslabelTypesForDB(strtolower($validated['type']));
         $statuslabel->deployable = $statusType['deployable'];
         $statuslabel->pending = $statusType['pending'];
         $statuslabel->archived = $statusType['archived'];

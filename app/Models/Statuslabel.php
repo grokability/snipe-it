@@ -6,6 +6,7 @@ use App\Http\Traits\UniqueUndeletedTrait;
 use App\Models\Traits\Searchable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Validator;
 use Watson\Validating\ValidatingTrait;
 
 class Statuslabel extends SnipeModel
@@ -166,7 +167,22 @@ class Statuslabel extends SnipeModel
 
         return $statustype;
     }
+    public function validate()
+    {
+        $validator = Validator::make($this->attributes, $this->rules);
 
+        if ($validator->fails()) {
+            $this->errors = $validator->errors();
+            return false;
+        }
+
+        return true;
+    }
+
+    public function getErrors()
+    {
+        return $this->errors;
+    }
     public function scopeOrderByCreatedBy($query, $order)
     {
         return $query->leftJoin('users as admin_sort', 'status_labels.created_by', '=', 'admin_sort.id')->select('status_labels.*')->orderBy('admin_sort.first_name', $order)->orderBy('admin_sort.last_name', $order);
