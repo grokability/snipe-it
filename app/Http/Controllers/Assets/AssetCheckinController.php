@@ -10,6 +10,7 @@ use App\Http\Traits\MigratesLegacyAssetLocations;
 use App\Models\Asset;
 use App\Models\CheckoutAcceptance;
 use App\Models\LicenseSeat;
+use App\Models\Setting;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Log;
 use \Illuminate\Contracts\View\View;
@@ -54,7 +55,9 @@ class AssetCheckinController extends Controller
             'App\Models\Location' => trans('admin/hardware/form.redirect_to_type', ['type' => trans('general.location')]),
             default => trans('admin/hardware/form.redirect_to_type', ['type' => trans('general.user')]),
         };
-        return view('hardware/checkin', compact('asset', 'target_option'))
+
+        $setting = Setting::getSettings();
+        return view('hardware/checkin', compact('asset', 'target_option', 'setting'))
             ->with('item', $asset)
             ->with('statusLabel_list', Helper::statusLabelList())
             ->with('backto', $backto)

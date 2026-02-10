@@ -658,6 +658,7 @@ return [
     'child_locations' => 'Child Locations',
     'append' => 'Append',
     'optional' => 'OPTIONAL',
+    'checkin_confirm_title' => 'Checkin Confirmation',
 
 // Add form placeholders here
     'placeholders' => [

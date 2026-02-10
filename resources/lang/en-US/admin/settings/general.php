@@ -530,4 +530,12 @@ return [
         'notifications'     => 'alerts, email, notifications, audit, threshold, email alerts, cc',
     ],
 
+    'checkin_confirm' => 'Require Confirmation on Checkin of Assets',
+    'checkin_confirm_help_text' => 'When activating this setting users will see a pop-up when trying to checkin an asset. In this pop-up they will have to confirm a predefined text by checking a checkbox.',
+    'checkin_confirm_text' => 'Checkin Confirmation Message',
+    'checkin_confirm_text_placeholder' => 'Add your Checkin Confirmation Message',
+    'checkin_confirm_markdown' => 'This field allows <a href="https://help.github.com/articles/github-flavored-markdown/">Github flavored markdown</a>.',
+    'checkin_confirm_checkbox_text' => 'Checkin Confirmation Checkbox Message',
+    'checkin_confirm_checkbox_text_placeholder' => 'Add the message that will be displayed next to the checkbox.',
+
 ];
