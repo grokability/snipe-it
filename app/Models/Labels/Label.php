@@ -3,6 +3,7 @@
 namespace App\Models\Labels;
 
 use App\Helpers\Helper;
+use App\Models\Setting;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use TCPDF;
@@ -240,7 +241,7 @@ abstract class Label
                     return [
                     'text' => $part,
                     'text_width' => $pdf->GetStringWidth($part),
-                    'font_family' => Helper::isCjk($text) ? 'cid0cs' : $fontFamily,
+                    'font_family' => self::determineFontFamily($text, $fontFamily),
                     'font_style' => $modStyle,
                     'font_size' => $fontSizePt,
                     ];
@@ -720,7 +721,26 @@ abstract class Label
                 }
             );
     }
+    public function getLabelFont(): string
+    {
+        return Setting::getSettings()->labels_font;
+    }
 
-    
+    public function getLabelValueFont(): string
+    {
+        return Setting::getSettings()->labels_value_font;
+    }
+    private function determineFontFamily(string $text, string $fontFamily): string
+    {
+        if (Helper::determineLanguageDirection() === 'rtl') {
+            return 'dejavusans';
+        }
+
+        if (Helper::isCjk($text)) {
+            return 'cid0cs';
+        }
+
+        return $fontFamily;
+    }
 
 }

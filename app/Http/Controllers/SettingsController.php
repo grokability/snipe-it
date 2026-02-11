@@ -565,6 +565,8 @@ class SettingsController extends Controller
         $setting->labels_display_bgutter = $request->input('labels_display_bgutter');
         $setting->labels_display_sgutter = $request->input('labels_display_sgutter');
         $setting->labels_fontsize = $request->input('labels_fontsize');
+        $setting->labels_font = $request->input('labels_font');
+        $setting->labels_value_font = $request->input('labels_value_font');
         $setting->labels_pagewidth = $request->input('labels_pagewidth');
         $setting->labels_pageheight = $request->input('labels_pageheight');
         $setting->labels_display_company_name = $request->input('labels_display_company_name', '0');

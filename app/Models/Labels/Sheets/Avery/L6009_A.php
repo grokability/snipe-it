@@ -39,18 +39,6 @@ class L6009_A extends L6009
         $usableWidth = $pa->w;
         $usableHeight = $pa->h;
 
-        if ($record->has('title')) {
-            static::writeText(
-                $pdf, $record->get('title'),
-                $pa->x1, $pa->y1,
-                'freesans', '', self::TITLE_SIZE, 'C',
-                $pa->w, self::TITLE_SIZE, true, 0
-            );
-        }
-
-        $currentY += self::TITLE_SIZE + self::TITLE_MARGIN;
-        $usableHeight -= self::TITLE_SIZE + self::TITLE_MARGIN;
-
         $barcodeSize = $usableHeight;
         if ($record->has('barcode2d')) {
             static::write2DBarcode(
@@ -78,20 +66,38 @@ class L6009_A extends L6009
             labelFont: 'freesans',
         );
         foreach ($fields as $field) {
+            $rawLabel = $field['label'] ?? null;
+            $value    = (string)($field['value'] ?? '');
+
+            // No label: value takes the whole row
+            if (!is_string($rawLabel) || trim($rawLabel) === '') {
+                static::writeText(
+                    $pdf, $value,
+                    $currentX, $currentY,
+                    $this->getLabelValueFont(), 'B', $field_layout['fieldSize'], 'L',
+                    $usableWidth, $field_layout['rowAdvance'], true, 0, 0.01
+                );
+
+                $currentY += $field_layout['rowAdvance'];
+                continue;
+            }
+
+            $labelText = rtrim($field['label'], ':') . ':';
+
             static::writeText(
-                $pdf, $field['label'],
+                $pdf, $labelText,
                 $currentX, $currentY,
-                'freesans', '', $field_layout['labelSize'], 'L',
-                $field_layout['labelWidth'], $field_layout['rowAdvance'], true, 0
+                $this->getLabelFont(), '', $field_layout['labelSize'], 'L',
+                $field_layout['labelWidth'], $field_layout['rowAdvance'], true,
             );
 
             static::writeText(
                 $pdf, $field['value'],
                 $field_layout['valueX'], $currentY,
-                'freemono', 'B', $field_layout['fieldSize'], 'L',
+                $this->getLabelValueFont(), 'B', $field_layout['fieldSize'], 'L',
                 $field_layout['valueWidth'], $field_layout['rowAdvance'], true, 0, 0.01
             );
-            $currentY += $field_layout['rowAdvance'];
+            $currentY += $field_layout['rowAdvance'];;
         }
     }
 }

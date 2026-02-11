@@ -23,11 +23,11 @@ class L4736_A extends L4736
 
     public function getLabelMarginTop()
     {
-        return 0.06;
+        return 2.2;
     }
     public function getLabelMarginBottom()
     {
-        return 0.06;
+        return 2.2;
     }
     public function getLabelMarginLeft()
     {
@@ -75,18 +75,6 @@ class L4736_A extends L4736
         $currentY = $pa->y1;
         $usableWidth = $pa->w;
         $usableHeight = $pa->h;
-
-        if ($record->has('title')) {
-            static::writeText(
-                $pdf, $record->get('title'),
-                $pa->x1, $pa->y1,
-                'freesans', '', self::TITLE_SIZE, 'C',
-                $pa->w, self::TITLE_SIZE, true, 0
-            );
-
-        }
-            $currentY += self::TITLE_SIZE + self::TITLE_MARGIN;
-            $usableHeight -= self::TITLE_SIZE + self::TITLE_MARGIN;
         $barcodeSize = $usableHeight;
         if ($record->has('barcode2d')) {
             static::write2DBarcode(
@@ -97,7 +85,19 @@ class L4736_A extends L4736
             $currentX += $barcodeSize + self::BARCODE_MARGIN;
             $usableWidth -= $barcodeSize + self::BARCODE_MARGIN;
         }
+        $title = $record->has('title') ? $record->get('title') : null;
         $fields = $record->get('fields');
+        $maxFields = $this->getSupportFields();
+        $fields = collect($fields);
+        if ($title) {
+            $maxFields = max(0, $maxFields - 1); // title consumes one row’s worth of space
+        }
+
+        $fields = $fields->take($maxFields)->values();
+
+        $usableHeight = $pa->h
+            - self::TAG_SIZE           // bottom tag text
+            - self::BARCODE_MARGIN;    // gap between fields and 1D
 
         $field_layout = Helper::labelFieldLayoutScaling(
             pdf: $pdf,
@@ -108,30 +108,58 @@ class L4736_A extends L4736
             baseLabelSize: self::LABEL_SIZE,
             baseFieldSize: self::FIELD_SIZE,
             baseFieldMargin: self::FIELD_MARGIN,
+            title: $title,
+            baseTitleSize: self::TITLE_SIZE,
+            baseTitleMargin: self::TITLE_MARGIN,
             baseLabelPadding: 1.5,
             baseGap: 1.5,
             maxScale: 1.8,
             labelFont: 'freesans',
         );
 
-
-        foreach ($fields as $field) {
+        if ($field_layout['hasTitle']) {
             static::writeText(
-                $pdf, $field['label'],
+                $pdf, $title,
                 $currentX, $currentY,
-                'freesans', '', $field_layout['labelSize'], 'L',
-                $field_layout['labelWidth'], $field_layout['rowAdvance'], true, 0
+                $this->getLabelValueFont(), 'b', $field_layout['titleSize'], 'L',
+                $usableWidth, $field_layout['titleSize'], true, 0
+            );
+            $currentY += $field_layout['titleAdvance'];
+        }
+        foreach ($fields as $field) {
+            $rawLabel = $field['label'] ?? null;
+            $value = (string)($field['value'] ?? '');
+
+            // No label: value takes the whole row
+            if (!is_string($rawLabel) || trim($rawLabel) === '') {
+                static::writeText(
+                    $pdf, $value,
+                    $currentX, $currentY,
+                    $this->getLabelValueFont(), 'B', $field_layout['fieldSize'], 'L',
+                    $usableWidth, $field_layout['rowAdvance'], true, 0, 0.01
+                );
+
+                $currentY += $field_layout['rowAdvance'];
+                continue;
+            }
+
+            $labelText = rtrim($field['label'], ':') . ':';
+
+            static::writeText(
+                $pdf, $labelText,
+                $currentX, $currentY,
+                $this->getLabelFont(), '', $field_layout['labelSize'], 'L',
+                $field_layout['labelWidth'], $field_layout['rowAdvance'], true,
             );
 
             static::writeText(
                 $pdf, $field['value'],
                 $field_layout['valueX'], $currentY,
-                'freemono', 'B', $field_layout['fieldSize'], 'L',
+                $this->getLabelValueFont(), 'B', $field_layout['fieldSize'], 'L',
                 $field_layout['valueWidth'], $field_layout['rowAdvance'], true, 0, 0.01
             );
-            $currentY += $field_layout['rowAdvance'];
+            $currentY += $field_layout['rowAdvance'];;
         }
-
     }
 }
 
