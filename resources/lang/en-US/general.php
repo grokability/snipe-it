@@ -166,6 +166,7 @@ return [
     'filetypes_size_help'   => 'The maximum upload size allowed is :size.',
     'image_filetypes_help'  => 'Accepted Filetypes are jpg, webp, png, gif, svg, and avif. The maximum upload size allowed is :size.',
     'unaccepted_image_type'  => 'This image file was not readable. Accepted filetypes are jpg, webp, png, gif, and svg. The mimetype of this file is: :mimetype.',
+    'unavailable'           => 'Unavailable',
     'import'         	    => 'Import',
     'documentation'         => 'Open documentation in a new link',
     'import_this_file'      => 'Map fields and process this file',

@@ -1347,8 +1347,33 @@ class Asset extends Depreciable
             }
         );
     }
+    /**
+     * Scope a query for assets that are deployable and currently unassigned.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * * @return \Illuminate\Database\Eloquent\Builder
+     * */
 
+    public function scopeDeployableRemaining($query)
+    {
+        return $query->whereNull('assigned_to')->whereHas('assetstatus', fn ($q) => $q->where('deployable', 1));
+    }
+    /**
+     * Scope a query for assets that are unavailable but not archived.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * * @return \Illuminate\Database\Eloquent\Builder
+     * */
 
+    public function scopeUnavailable($query)
+    {
+        return $query
+            ->whereNull('assigned_to')
+            ->whereHas('assetstatus', function ($q) {
+                $q->where('deployable', 0)
+                    ->where('archived', 0);
+            });
+    }
     /**
      * Query builder scope for searching location
      *
@@ -1356,6 +1381,7 @@ class Asset extends Depreciable
      *
      * @return \Illuminate\Database\Query\Builder          Modified query builder
      */
+
 
     public function scopeAssetsByLocation($query, $location)
     {

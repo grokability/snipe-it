@@ -85,7 +85,11 @@ class AssetModelsController extends Controller
             ->withCount('assets as assets_count')
             ->withCount('availableAssets as remaining')
             ->withCount('assignedAssets as assets_assigned_count')
-            ->withCount('archivedAssets as assets_archived_count');
+            ->withCount('archivedAssets as assets_archived_count')
+            ->withCount([
+                    'assets as unavailable' => fn ($q) => $q->unavailable(),
+                    'assets as remaining' => fn ($q) => $q->deployableRemaining(),
+                    ]);
 
         $filter = [];
 
