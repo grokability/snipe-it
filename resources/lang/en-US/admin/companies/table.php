@@ -1,11 +1,11 @@
 <?php
 return array(
-    'companies' => 'Companies',
-    'create'    => 'Create Company',
-    'email'     => 'Company Email',
-    'title'     => 'Company',
-    'phone'     => 'Company Phone',
-    'update'    => 'Update Company',
-    'name'      => 'Company Name',
+    'companies' => 'Departments',
+    'create'    => 'Create Department',
+    'email'     => 'Department Email',
+    'title'     => 'Department',
+    'phone'     => 'Department Phone',
+    'update'    => 'Update Department',
+    'name'      => 'Department Name',
     'id'        => 'ID',
 );

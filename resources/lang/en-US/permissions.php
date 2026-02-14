@@ -21,7 +21,7 @@ return array(
     ],
     'admin' => [
         'name' => 'Admin Access',
-        'note'       => 'Determines whether the user has access to most aspects of the system EXCEPT the System Admin Settings. These users will be able to manage users, locations, categories, etc, but ARE constrained by Full Multiple Company Support if it is enabled.',
+        'note'       => 'Determines whether the user has access to most aspects of the system EXCEPT the System Admin Settings. These users will be able to manage users, locations, categories, etc, but ARE constrained by Full Multiple Department Support if it is enabled.',
     ],
 
     'import' => [
@@ -356,20 +356,20 @@ return array(
         'name' => 'Delete Manufacturers',
     ],
     'companies'   => [
-        'name' => 'Companies',
-        'note'       => 'Grants access to the Companies section of the application.',
+        'name' => 'Departments',
+        'note'       => 'Grants access to the Departments section of the application.',
     ],
     'companiesview' => [
-        'name' => 'View Companies',
+        'name' => 'View Departments',
     ],
     'companiescreate' => [
-        'name' => 'Create New Companies',
+        'name' => 'Create New Departments',
     ],
     'companiesedit' => [
-        'name' => 'Edit Companies',
+        'name' => 'Edit Departments',
     ],
     'companiesdelete' => [
-        'name' => 'Delete Companies',
+        'name' => 'Delete Departments',
     ],
     'user-self-accounts' => [
         'name' => 'User Self Accounts',
