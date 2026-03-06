@@ -11,7 +11,7 @@
         @csrf
         @if (request('status')!='deleted')
             @can('view', \App\Models\AssetModel::class)
-                <div style="width:100% !important;">
+                <div style="width:100% !important;" class="hidden-print">
                     <label for="bulk_actions" class="sr-only">{{ trans('general.bulk_actions') }}</label>
                     <select name="bulk_actions" class="form-control select2" style="width: 200px;" aria-label="bulk_actions">
                         @can('delete', \App\Models\AssetModel::class)

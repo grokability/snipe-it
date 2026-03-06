@@ -111,6 +111,7 @@ class DepartmentPresenter extends Presenter
                 'visible' => true,
                 'formatter' => 'departmentsActionsFormatter',
                 'printIgnore' => true,
+                'class' => 'hidden-print',
             ],
         ];
 

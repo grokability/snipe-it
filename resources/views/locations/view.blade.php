@@ -384,32 +384,15 @@
         </x-page-column>
         <x-page-column class="col-md-3">
 
-            <x-box>
+            <x-box class="side-box expanded">
                 <x-box.info-panel :infoPanelObj="$location" img_path="{{ app('locations_upload_url') }}">
 
-                    <x-slot:before_list>
-
-                        <x-button.wide-edit :item="$location" :route="route('locations.edit', $location->id)" />
-                        <x-button.wide-restore :item="$location" :route="route('locations.restore', ['location' => $location->id])" />
-
-                        @if ($location->deleted_at=='')
-
-                            <a href="{{ route('locations.print_assigned', ['locationId' => $location->id]) }}" class="btn btn-block btn-sm btn-theme btn-social hidden-print">
-                                <x-icon type="print" />
-                                {{ trans('admin/locations/table.print_inventory') }}
-                            </a>
-
-                            <a href="{{ route('locations.print_all_assigned', ['locationId' => $location->id]) }}" class="btn btn-block btn-sm btn-theme btn-social hidden-print">
-                                <x-icon type="print" />
-                                {{ trans('admin/locations/table.print_all_assigned') }}
-                            </a>
-                        @endif
-
-                        <x-button.wide-delete :item="$location" />
-
-
-                    </x-slot:before_list>
-
+                    <x-slot:buttons>
+                        <x-button.edit :item="$location" :route="route('locations.edit', $location->id)" />
+                        <x-button.clone :item="$location" :route="route('clone/location', $location->id)" />
+                        <x-button.delete :item="$location" />
+                        <x-button.restore :item="$location" :route="route('locations.restore', ['location' => $location->id])" />
+                    </x-slot:buttons>
 
                 @if ($location->ldap_ou)
                         <x-info-element icon_type="ldap">

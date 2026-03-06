@@ -26,6 +26,7 @@ class UserPresenter extends Presenter
                 'checkbox' => true,
                 'titleTooltip' => trans('general.select_all_none'),
                 'printIgnore' => true,
+                'class' => 'hidden-print',
             ],
             [
                 'field' => 'id',
@@ -432,6 +433,7 @@ class UserPresenter extends Presenter
                 'visible' => true,
                 'formatter' => 'usersActionsFormatter',
                 'printIgnore' => true,
+                'class' => 'hidden-print',
             ],
         ];
 

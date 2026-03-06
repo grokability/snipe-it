@@ -268,6 +268,7 @@ class AssetAuditPresenter extends Presenter
             'title' => trans('table.actions'),
             'formatter' => 'hardwareAuditFormatter',
             'printIgnore' => true,
+            'class' => 'hidden-print',
         ];
 
         return json_encode($layout);

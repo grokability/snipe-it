@@ -530,8 +530,6 @@ class UsersController extends Controller
      */
     public function update(SaveUserRequest $request, User $user): JsonResponse
     {
-        $this->authorize('update', User::class);
-
         $this->authorize('update', $user);
 
         /**
@@ -569,9 +567,6 @@ class UsersController extends Controller
 
         }
 
-        // We need to use has()  instead of filled()
-        // here because we need to overwrite permissions
-        // if someone needs to null them out
 
         if ($request->filled('display_name')) {
             $user->display_name = $request->input('display_name');
@@ -586,13 +581,29 @@ class UsersController extends Controller
         }
 
 
-        
+        // We need to use has()  instead of filled()
+        // here because we need to overwrite permissions
+        // if someone needs to null them out
+
         if ($request->has('permissions')) {
+
+
             $permissions_array = $request->input('permissions');
+            \Log::error(print_r($permissions_array, true));
 
             // Strip out the individual superuser permission if the API user isn't a superadmin
             if (!auth()->user()->isSuperUser()) {
-                unset($permissions_array['superuser']);
+                if (array_key_exists('superuser', $permissions_array)) {
+                    unset($permissions_array['superuser']);
+                }
+            }
+
+            // Strip out the individual admin permission if the API user isn't an admin
+            if (!auth()->user()->isAdmin()) {
+                if ((is_array($permissions_array)) && (array_key_exists('admin', $permissions_array))) {
+                    unset($permissions_array['admin']);
+                }
+
             }
 
             $user->permissions = $permissions_array;

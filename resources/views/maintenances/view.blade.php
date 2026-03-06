@@ -190,15 +190,13 @@ use Carbon\Carbon;
         </x-page-column>
 
         <x-page-column class="col-md-3">
-            <x-box>
+            <x-box class="side-box expanded">
                 <x-box.info-panel :infoPanelObj="$maintenance" img_path="{{ app('maintenances_upload_url') }}">
 
-                    <x-slot:before_list>
-
-                        <x-button.wide-edit :item="$maintenance" :route="route('maintenances.edit', $maintenance->id)" />
-                        <x-button.wide-delete :item="$maintenance" />
-
-                    </x-slot:before_list>
+                    <x-slot:buttons>
+                        <x-button.edit :item="$maintenance" :route="route('maintenances.edit', $maintenance->id)" />
+                        <x-button.delete :item="$maintenance" />
+                    </x-slot:buttons>
 
                 </x-box.info-panel>
             </x-box>

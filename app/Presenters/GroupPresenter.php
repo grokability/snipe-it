@@ -69,6 +69,7 @@ class GroupPresenter extends Presenter
                 'visible' => true,
                 'formatter' => 'groupsActionsFormatter',
                 'printIgnore' => true,
+                'class' => 'hidden-print',
             ],
         ];
 

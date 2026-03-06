@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Session;
 use Watson\Validating\ValidatingTrait;
 
@@ -157,6 +158,14 @@ class License extends Depreciable
             }
         );
     }
+
+    public function isDeletable()
+    {
+        return Gate::allows('delete', $this)
+            && ($this->free_seats_count == $this->seats)
+            && ($this->deleted_at == '');
+    }
+
 
 
     protected function terminatesFormattedDate(): Attribute
@@ -580,6 +589,23 @@ class License extends Depreciable
             ->whereNull('assigned_to')
             ->where('unreassignable_seat', '=', false)
             ->whereNull('deleted_at');
+    }
+
+    /**
+     * This is really dumb - needs to be refactored, since we have ~3 diff methods that do almost the same thing
+     *
+     * @author A. Gianotto <snipe@snipe.net>
+     * @since  [v2.0]
+     * @return \Illuminate\Database\Eloquent\Relations\Relation
+     */
+    public function numRemaining()
+    {
+        return $this->licenseSeatsRelation()
+            ->whereNull('asset_id')
+            ->whereNull('assigned_to')
+            ->where('unreassignable_seat', '=', false)
+            ->whereNull('deleted_at')
+            ->count();
     }
 
     /**

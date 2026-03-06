@@ -11,7 +11,7 @@
     <x-container>
         <x-box>
             @include('partials.locations-bulk-actions')
-
+            
             <table
                     data-columns="{{ \App\Presenters\LocationPresenter::dataTableLayout() }}"
                     data-cookie-id-table="locationTable"

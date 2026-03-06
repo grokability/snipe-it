@@ -127,15 +127,14 @@
 
         </x-page-column>
         <x-page-column class="col-md-3">
-            <x-box>
+            <x-box class="side-box expanded">
                 <x-box.info-panel :infoPanelObj="$depreciation">
 
-                    <x-slot:before_list>
+                    <x-slot:buttons>
+                        <x-button.edit :item="$depreciation" :route="route('depreciations.edit', $depreciation->id)" />
+                        <x-button.delete :item="$depreciation" />
+                    </x-slot:buttons>
 
-                        <x-button.wide-edit :item="$depreciation" :route="route('depreciations.edit', $depreciation->id)" />
-                        <x-button.wide-delete :item="$depreciation" />
-
-                    </x-slot:before_list>
                 </x-box.info-panel>
             </x-box>
 

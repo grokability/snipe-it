@@ -23,6 +23,7 @@ class AssetPresenter extends Presenter
                 'checkbox' => true,
                 'titleTooltip' => trans('general.select_all_none'),
                 'printIgnore' => true,
+                'class' => 'hidden-print'
             ], [
                 'field' => 'id',
                 'searchable' => false,
@@ -348,8 +349,9 @@ class AssetPresenter extends Presenter
                 'visible' => ($field->show_in_listview == '1') ? true : false,
             ];
         }
-
-        $layout[] = [
+      
+      
+  $layout[] = [
 	    'field' => 'checkincheckout',
 	    'searchable' => false,
 	    'sortable' => false,
@@ -381,6 +383,7 @@ class AssetPresenter extends Presenter
 	    'printIgnore' => true,
 	];
 
+        
 
         return json_encode($layout);
     }

@@ -10,7 +10,8 @@
         <x-slot:content>
             <x-table
                     show_column_search="true"
-                    fixed_right_number="3"
+                    fixed_right_number="2"
+                    fixed_number="1"
                     show_advanced_search="true"
                     buttons="accessoryButtons"
                     api_url="{{ $route }}"

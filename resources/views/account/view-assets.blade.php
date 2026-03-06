@@ -713,7 +713,6 @@
                   @can('self.view_purchase_cost')
                     <th class="col-md-6" data-footer-formatter="sumFormatter" data-fieldname="purchase_cost">{{ trans('general.purchase_cost') }}</th>
                   @endcan
-                  <th class="col-md-1 hidden-print">{{ trans('general.action') }}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -725,11 +724,7 @@
                         {!! Helper::formatCurrencyOutput($accessory->purchase_cost) !!}
                       </td>
                     @endcan
-                    <td class="hidden-print">
-                      @can('checkin', $accessory)
-                        <a href="{{ route('accessories.checkin.show', array('accessoryID'=> $accessory->pivot->id, 'backto'=>'user')) }}" class="btn btn-theme btn-sm hidden-print">{{ trans('general.checkin') }}</a>
-                      @endcan
-                    </td>
+
                   </tr>
                 @endforeach
                 </tbody>

@@ -20,8 +20,8 @@
             <x-tabs>
                 <x-slot:tabnav>
 
-                    <x-tabs.asset-tab count="{{ $supplier->assets()->AssetsForShow()->count() }}" class="active" />
-                    <x-tabs.license-tab count="{{ $supplier->licenses->count() }}" class="active" />
+                    <x-tabs.asset-tab count="{{ $supplier->assets()->AssetsForShow()->count() }}" />
+                    <x-tabs.license-tab count="{{ $supplier->licenses->count() }}" />
                     <x-tabs.accessory-tab count="{{ $supplier->accessories->count() }}" />
                     <x-tabs.consumable-tab count="{{ $supplier->consumables->count() }}" />
                     <x-tabs.component-tab count="{{ $supplier->components->count() }}" />
@@ -54,68 +54,24 @@
 
                     <!-- start assets tab pane -->
                     @can('view', \App\Models\Asset::class)
-                        <x-tabs.pane name="assets" class="in active">
-                            <x-slot:header>
-                                {{ trans('general.assets') }}
-                            </x-slot:header>
-
-                            <x-slot:bulkactions>
-                                <x-table.bulk-assets />
-                            </x-slot:bulkactions>
-
-                            <x-slot:content>
-                                <x-table
-                                        show_column_search="true"
-                                        show_advanced_search="true"
-                                        buttons="assetButtons"
-                                        api_url="{{ route('api.assets.index', ['supplier_id' => $supplier->id, 'itemtype' => 'assets']) }}"
-                                        :presenter="\App\Presenters\AssetPresenter::dataTableLayout()"
-                                        export_filename="export-{{ str_slug($supplier->name) }}-assets-{{ date('Y-m-d') }}"
-                                />
-                            </x-slot:content>
-
+                        <x-tabs.pane name="assets" count="{{ $supplier->assets()->AssetsForShow()->count() }}">
+                            <x-table.assets name="assets" :route="route('api.assets.index', ['supplier_id' => $supplier->id, 'itemtype' => 'assets'])" />
                         </x-tabs.pane>
                     @endcan
                     <!-- end assets tab pane -->
 
                     <!-- start licenses tab pane -->
                     @can('view', \App\Models\License::class)
-                        <x-tabs.pane name="licenses">
-                            <x-slot:header>
-                                {{ trans('general.licenses') }}
-                            </x-slot:header>
-
-                            <x-slot:content>
-                                <x-table
-                                        show_advanced_search="true"
-                                        buttons="licenseButtons"
-                                        api_url="{{ route('api.licenses.index', ['supplier_id' => $supplier->id]) }}"
-                                        :presenter="\App\Presenters\LicensePresenter::dataTableLayout()"
-                                        export_filename="export-{{ str_slug($supplier->name) }}-licenses-{{ date('Y-m-d') }}"
-                                />
-                            </x-slot:content>
-
+                        <x-tabs.pane name="licenses" class="{{ $supplier->licenses->count() == 0 ? 'hidden-print' : '' }}">
+                            <x-table.licenses name="licenses" :route="route('api.licenses.index', ['supplier_id' => $supplier->id])" />
                         </x-tabs.pane>
                     @endcan
                     <!-- end licenses tab pane -->
 
                     <!-- start accessories tab pane -->
                     @can('view', \App\Models\Accessory::class)
-                        <x-tabs.pane name="accessories">
-                            <x-slot:header>
-                                {{ trans('general.accessories') }}
-                            </x-slot:header>
-
-                            <x-slot:content>
-                                <x-table
-                                        show_column_search="true"
-                                        buttons="accessoryButtons"
-                                        api_url="{{ route('api.accessories.index', ['supplier_id' => $supplier->id]) }}"
-                                        :presenter="\App\Presenters\AccessoryPresenter::dataTableLayout()"
-                                        export_filename="export-{{ str_slug($supplier->name) }}-accessories-{{ date('Y-m-d') }}"
-                                />
-                            </x-slot:content>
-
+                        <x-tabs.pane name="accessories" class="{{ $supplier->accessories->count() == 0 ? 'hidden-print' : '' }}">
+                            <x-table.accessories name="accessories" :route="route('api.accessories.index', ['supplier_id' => $supplier->id])" />
                         </x-tabs.pane>
                     @endcan
                     <!-- end accessories tab pane -->
@@ -123,12 +79,12 @@
 
                     <!-- start components tab pane -->
                     @can('view', \App\Models\Component::class)
-                        <x-tabs.pane name="components">
+                        <x-tabs.pane name="components" class="{{ $supplier->components->count() == 0 ? 'hidden-print' : '' }}">
                             <x-slot:header>
                                 {{ trans('general.components') }}
                             </x-slot:header>
 
-                            <x-slot:content>
+
                                 <x-table
                                         show_advanced_search="true"
                                         buttons="componentButtons"
@@ -136,14 +92,14 @@
                                         :presenter="\App\Presenters\ComponentPresenter::dataTableLayout()"
                                         export_filename="export-{{ str_slug($supplier->name) }}-components-{{ date('Y-m-d') }}"
                                 />
-                            </x-slot:content>
+
                         </x-tabs.pane>
                     @endcan
                     <!-- end components tab pane -->
 
                     <!-- start consumables tab pane -->
                     @can('view', \App\Models\Consumable::class)
-                        <x-tabs.pane name="consumables">
+                        <x-tabs.pane name="consumables" class="{{ $supplier->consumables->count() == 0 ? 'hidden-print' : '' }}">
                             <x-slot:header>
                                 {{ trans('general.consumables') }}
                             </x-slot:header>
@@ -164,25 +120,24 @@
 
                     <!-- start consumables tab pane -->
                     @can('view', \App\Models\Asset::class)
-                        <x-tabs.pane name="maintenances">
+                        <x-tabs.pane name="maintenances" class="{{ $supplier->maintenances->count() == 0 ? 'hidden-print' : '' }}">
                             <x-slot:header>
                                 {{ trans('admin/maintenances/general.maintenances') }}
                             </x-slot:header>
 
-                            <x-slot:content>
                                 <x-table
                                         buttons="maintenanceButtons"
                                         api_url="{{ route('api.maintenances.index', ['supplier_id' => $supplier->id]) }}"
                                         :presenter="\App\Presenters\MaintenancesPresenter::dataTableLayout()"
                                         export_filename="export-{{ str_slug($supplier->name) }}-maintenances-{{ date('Y-m-d') }}"
                                 />
-                            </x-slot:content>
+
                         </x-tabs.pane>
                     @endcan
                     <!-- end consumables tab pane -->
 
                     <!-- start files tab pane -->
-                    <x-tabs.pane name="files">
+                    <x-tabs.pane name="files" class="{{ $supplier->uploads->count() == 0 ? 'hidden-print' : '' }}">
                         <x-slot:header>
                             {{ trans('general.files') }}
                         </x-slot:header>
@@ -196,17 +151,16 @@
 
             </x-tabs>
         </x-page-column>
-        <x-page-column class="col-md-3">
+        <x-page-column class="col-md-3 hidden-print">
 
-            <x-box>
+            <x-box class="side-box expanded">
                 <x-box.info-panel :infoPanelObj="$supplier" img_path="{{ app('suppliers_upload_url') }}">
 
-                    <x-slot:before_list>
+                    <x-slot:buttons>
+                        <x-button :item="$supplier" permission="update" :route="route('suppliers.edit', $supplier->id)" class="btn-warning"  />
+                        <x-button.delete :item="$supplier" />
+                    </x-slot:buttons>
 
-                        <x-button.wide-edit :item="$supplier" :route="route('suppliers.edit', $supplier->id)" />
-                        <x-button.wide-delete :item="$supplier" />
-
-                    </x-slot:before_list>
 
                 </x-box.info-panel>
             </x-box>
@@ -214,6 +168,36 @@
 
     </x-container>
 
+    <div class="visible-print">
+        <table style="margin-top: 80px;" class="signature-boxes">
+            <tr>
+                <td style="padding-right: 10px; vertical-align: top; font-weight: bold;">{{ trans('general.signed_off_by') }}:</td>
+                <td style="padding-right: 10px; vertical-align: top;">______________________________________</td>
+                <td style="padding-right: 10px; vertical-align: top;">______________________________________</td>
+                <td>_____________</td>
+            </tr>
+            <tr style="height: 80px;">
+                <td></td>
+                <td style="padding-right: 10px; vertical-align: top;">{{ trans('general.name') }}</td>
+                <td style="padding-right: 10px; vertical-align: top;">{{ trans('general.signature') }}</td>
+                <td style="padding-right: 10px; vertical-align: top;">{{ trans('general.date') }}</td>
+            </tr>
+            <tr>
+                <td style="padding-right: 10px; vertical-align: top; font-weight: bold;">{{ trans('admin/users/table.manager') }}:</td>
+                <td style="padding-right: 10px; vertical-align: top;">______________________________________</td>
+                <td style="padding-right: 10px; vertical-align: top;">______________________________________</td>
+                <td>_____________</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="padding-right: 10px; vertical-align: top;">{{ trans('general.name') }}</td>
+                <td style="padding-right: 10px; vertical-align: top;">{{ trans('general.signature') }}</td>
+                <td style="padding-right: 10px; vertical-align: top;">{{ trans('general.date') }}</td>
+                <td></td>
+            </tr>
+
+        </table>
+    </div>
 
   @can('update', \App\Models\Supplier::class)
       @include ('modals.upload-file', ['item_type' => 'supplier', 'item_id' => $supplier->id])

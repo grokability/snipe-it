@@ -181,6 +181,7 @@ class AccessoryPresenter extends Presenter
                 'title' => trans('table.actions'),
                 'formatter' => 'accessoriesActionsFormatter',
                 'printIgnore' => true,
+                'class' => 'hidden-print',
             ],
         ];
 
@@ -250,6 +251,7 @@ class AccessoryPresenter extends Presenter
                 'title' => trans('table.actions'),
                 'formatter' => 'accessoriesInOutFormatter',
                 'printIgnore' => true,
+                'class' => 'hidden-print',
             ],
         ];
 

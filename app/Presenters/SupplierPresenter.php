@@ -17,6 +17,8 @@ class SupplierPresenter extends Presenter
                 'field'        => 'checkbox',
                 'checkbox'     => true,
                 'titleTooltip' => trans('general.select_all_none'),
+                'printIgnore' => true,
+                'class' => 'hidden-print'
             ],
              [
                 'field' => 'id',
