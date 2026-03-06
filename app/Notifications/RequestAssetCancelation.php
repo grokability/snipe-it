@@ -56,19 +56,11 @@ class RequestAssetCancelation extends Notification
      * @param  mixed  $notifiable
      * @return array
      */
-    public function via()
-    {
-        $notifyBy = [];
-
-        if (Setting::getSettings()->webhook_endpoint != '') {
-            Log::debug('use webhook');
-            $notifyBy[] = 'slack';
-        }
-
-        $notifyBy[] = 'mail';
-
-        return $notifyBy;
-    }
+    
+    public function via($notifiable)
+	{
+	    return ['database'];
+	}
 
     public function toSlack()
     {
@@ -135,4 +127,20 @@ class RequestAssetCancelation extends Notification
 
         return $message;
     }
+    public function toDatabase($notifiable)
+	{
+	    return [
+		'type' => 'asset_request_canceled',
+		'title' => 'Asset request canceled',
+		'message' => "{$this->target->display_name} canceled the request for {$this->item->display_name}",
+		'item_name' => $this->item->display_name,
+		'item_id' => $this->item->id,
+		'quantity' => $this->item_quantity,
+		'canceled_by' => $this->target->display_name,
+		'canceled_by_id' => $this->target->id,
+		'requested_date' => $this->requested_date,
+		'note' => $this->note,
+		'url' => route('notifications.index'),
+	    ];
+	}
 }

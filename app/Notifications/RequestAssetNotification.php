@@ -4,129 +4,82 @@ namespace App\Notifications;
 
 use App\Helpers\Helper;
 use App\Models\Setting;
-use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Notifications\Messages\SlackMessage;
 use Illuminate\Notifications\Notification;
-use Symfony\Component\Mime\Email;
 
-#[AllowDynamicProperties]
 class RequestAssetNotification extends Notification
 {
-    /**
-     * @var
-     */
-    private $params;
-
-    /**
-     * Create a new notification instance.
-     *
-     * @param $params
-     */
     public function __construct($params)
     {
-        $this->target = $params['target'];
+        // Backwards compatible field: requester user
+        $this->target = $params['target'] ?? null;
+
+        // New explicit fields
+        $this->requester = $params['requester'] ?? $this->target;
+        $this->requested_for = $params['requested_for'] ?? null;
+
         $this->item = $params['item'];
-        $this->item_type = $params['item_type'];
-        $this->item_quantity = $params['item_quantity'];
-        $this->note = '';
-        $this->last_checkout = '';
-        $this->expected_checkin = '';
-        $this->requested_date = Helper::getFormattedDateObject($params['requested_date'], 'datetime',
-            false);
+        $this->item_type = $params['item_type'] ?? null;
+        $this->item_quantity = $params['item_quantity'] ?? 1;
+
+        $this->note = $params['note'] ?? '';
+
+        $this->requested_date = Helper::getFormattedDateObject(
+            $params['requested_date'],
+            'datetime',
+            false
+        );
+
         $this->settings = Setting::getSettings();
-
-        if (array_key_exists('note', $params)) {
-            $this->note = $params['note'];
-        }
-
-        if ($this->item->last_checkout) {
-            $this->last_checkout = Helper::getFormattedDateObject($this->item->last_checkout, 'date',
-                false);
-        }
-
-        if ($this->item->expected_checkin) {
-            $this->expected_checkin = Helper::getFormattedDateObject($this->item->expected_checkin, 'date',
-                false);
-        }
     }
 
-    /**
-     * Get the notification's delivery channels.
-     *
-     * @param  mixed  $notifiable
-     * @return array
-     */
-    public function via()
+    public function via($notifiable)
     {
-        $notifyBy = [];
-
-        if (Setting::getSettings()->webhook_endpoint != '') {
-            $notifyBy[] = 'slack';
-        }
-
-        $notifyBy[] = 'mail';
-
-        return $notifyBy;
+        return ['database'];
     }
 
-    public function toSlack()
+    public function toDatabase($notifiable)
     {
-        $target = $this->target;
-        $qty = $this->item_quantity;
-        $item = $this->item;
-        $note = $this->note;
-        $botname = ($this->settings->webhook_botname) ? $this->settings->webhook_botname : 'Snipe-Bot';
-        $channel = ($this->settings->webhook_channel) ? $this->settings->webhook_channel : '';
+        $requester = $this->requester;
 
-        $fields = [
-            'QTY' => $qty,
-            'Requested By' => '<'.$target->present()->viewUrl().'|'.$target->display_name.'>',
+        $location = $this->item->location ?? $this->item->rtdlocation ?? null;
+        $manager = $location?->manager ?? $location?->managerUser ?? null;
+
+        $itemName = $this->item->display_name ?? $this->item->name ?? 'Item';
+        $locName  = $location?->name ?? 'Unknown location';
+        $mgrName  = $manager?->display_name ?? $manager?->name ?? null;
+
+        $message = "{$requester->display_name} requested {$itemName} from {$locName}";
+
+        if ($mgrName) {
+            $message .= " (Manager: {$mgrName})";
+        }
+
+        if (!empty($this->item_quantity) && (int)$this->item_quantity > 1) {
+            $message .= " | Qty: {$this->item_quantity}";
+        }
+
+        return [
+            'type' => 'asset_request',
+
+            'title' => 'New asset request',
+            'message' => $message,
+
+            'item_name' => $itemName,
+            'item_id' => $this->item->id,
+            'item_type' => $this->item_type,
+            'quantity' => $this->item_quantity,
+
+            'requested_by' => $requester->display_name,
+            'requested_by_id' => $requester->id,
+            'requested_date' => $this->requested_date,
+            'note' => $this->note,
+
+            'location_id' => $location?->id,
+            'location_name' => $locName,
+            'location_manager_id' => $manager?->id,
+            'location_manager_name' => $mgrName,
+
+            'url' => url('/hardware/requested'),
         ];
-
-        return (new SlackMessage)
-            ->content(trans('mail.Item_Requested'))
-            ->from($botname)
-            ->to($channel)
-            ->attachment(function ($attachment) use ($item, $note, $fields) {
-                $attachment->title(htmlspecialchars_decode($item->display_name), $item->present()->viewUrl())
-                    ->fields($fields)
-                    ->content($note);
-            });
-    }
-
-    /**
-     * Get the mail representation of the notification.
-     *
-     * @return \Illuminate\Notifications\Messages\MailMessage
-     */
-    public function toMail()
-    {
-        $fields = [];
-
-        // Check if the item has custom fields associated with it
-        if (($this->item->model) && ($this->item->model->fieldset)) {
-            $fields = $this->item->model->fieldset->fields;
-        }
-
-        $message = (new MailMessage)->markdown('notifications.markdown.asset-requested',
-            [
-                'item'          => $this->item,
-                'note'          => $this->note,
-                'requested_by'  => $this->target,
-                'requested_date' => $this->requested_date,
-                'fields'        => $fields,
-                'last_checkout' => $this->last_checkout,
-                'expected_checkin'  => $this->expected_checkin,
-                'intro_text'        => trans('mail.a_user_requested'),
-                'qty'           => $this->item_quantity,
-            ])
-            ->subject('👀 '.trans('mail.Item_Requested'))
-            ->withSymfonyMessage(function (Email $message) {
-                $message->getHeaders()->addTextHeader(
-                    'X-System-Sender', 'Snipe-IT'
-                );
-            });
-
-        return $message;
     }
 }

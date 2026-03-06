@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Log;
 use \Illuminate\Contracts\View\View;
 use \Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Validator;
+use App\Models\CheckoutRequest;
+use Illuminate\Support\Facades\Schema;
 
 class AssetCheckinController extends Controller
 {
@@ -150,12 +152,30 @@ class AssetCheckinController extends Controller
         // Add any custom fields that should be included in the checkout
         $asset->customFieldsForCheckinCheckout('display_checkin');
 
-        if ($asset->save()) {
+	if ($asset->save()) {
 
-            event(new CheckoutableCheckedIn($asset, $target, auth()->user(), $request->input('note'), $checkin_at, $originalValues));
-            return Helper::getRedirectOption($request, $asset->id, 'Assets')
-                ->with('success', trans('admin/hardware/message.checkin.success'));
-        }
+	    $q = CheckoutRequest::where('requestable_type', \App\Models\Asset::class)
+		->where('requestable_id', $asset->id)
+		->whereNull('canceled_at');
+
+	    if (Schema::hasColumn('checkout_requests', 'fulfilled_at')) {
+		$q->whereNull('fulfilled_at');
+	    }
+
+	    $q->update(['canceled_at' => now()]);
+
+	    if (class_exists(\App\Models\ReturnRequest::class)) {
+		\App\Models\ReturnRequest::where('asset_id', $asset->id)
+		    ->whereNull('canceled_at')
+		    ->whereNull('received_at')
+		    ->update(['received_at' => now()]);
+	    }
+
+	    event(new CheckoutableCheckedIn($asset, $target, auth()->user(), $request->input('note'), $checkin_at, $originalValues));
+
+	    return Helper::getRedirectOption($request, $asset->id, 'Assets')
+		->with('success', trans('admin/hardware/message.checkin.success'));
+	}
         // Redirect to the asset management page with error
         return redirect()->route('hardware.index')->with('error', trans('admin/hardware/message.checkin.error').$asset->getErrors());
     }

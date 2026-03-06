@@ -7,6 +7,9 @@ use App\Models\Asset;
 use App\Models\Setting;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use App\Models\Location;
+use App\Models\Statuslabel;
+use App\Models\User;
 
 class AssetObserver
 {
@@ -165,28 +168,90 @@ class AssetObserver
      *
      * @see https://github.com/grokability/snipe-it/issues/13723#issuecomment-1761315938
      */
+     
     public function saving(Asset $asset)
-    {
-        // determine if calculated eol and then calculate it - this should only happen on a new asset
-        if (is_null($asset->asset_eol_date) && !is_null($asset->purchase_date) && ($asset->model?->eol > 0)) {
-            $asset->asset_eol_date = $asset->purchase_date->addMonths($asset->model->eol)->format('Y-m-d');
-            $asset->eol_explicit = false; 
-        } 
+	{
+	    // ΜΟΝΟ στο create (όχι edit)
+	    if (!$asset->exists) {
 
-       // determine if explicit and set eol_explicit to true
-       if (!is_null($asset->asset_eol_date) && !is_null($asset->purchase_date)) {
-           if ($asset->model?->eol > 0) {
-                $months = (int) Carbon::parse($asset->asset_eol_date)->diffInMonths($asset->purchase_date, true);
-                if($months != $asset->model->eol) {
-                    $asset->eol_explicit = true;
-                }
-            }
-       } elseif (!is_null($asset->asset_eol_date) && is_null($asset->purchase_date)) {
-           $asset->eol_explicit = true;
-       }
+		$me = Auth::user();
 
-        if ((!is_null($asset->asset_eol_date)) && (!is_null($asset->purchase_date)) && (is_null($asset->model?->eol) || ($asset->model?->eol == 0))) {
-           $asset->eol_explicit = true;
-       }
-    }
+		$warehouseGroups = ['Warehouse','Manager Archive','Archivist','Archivists'];
+
+		$isWarehouseUser = $me && (
+		    (method_exists($me,'isSuperUser') && $me->isSuperUser()) ||
+		    $me->groups()->whereIn('name',$warehouseGroups)->exists()
+		);
+
+		$archiveLocationId = \App\Models\Location::where('name','Archive')->value('id');
+
+		$statusInArchiveId = \App\Models\Statuslabel::where('name','In Archive')->value('id');
+
+		$statusWithDeptId = \App\Models\Statuslabel::where('name','With Department')->value('id');
+
+		$hasStatus   = !empty($asset->status_id);
+		$hasLocation = !empty($asset->location_id);
+
+		if ($isWarehouseUser) {
+
+		    if (!$hasStatus && $statusInArchiveId) {
+		        $asset->status_id = $statusInArchiveId;
+		    }
+
+		    if (!$hasLocation && $archiveLocationId) {
+		        $asset->location_id = $archiveLocationId;
+		    }
+
+		} else {
+
+		    if (!$hasStatus && $statusWithDeptId) {
+		        $asset->status_id = $statusWithDeptId;
+		    }
+
+		    if (!$hasLocation && $me && $me->location_id) {
+		        $asset->location_id = $me->location_id;
+		    }
+
+		    if (empty($asset->assigned_to) && $me) {
+		        $asset->assigned_to = $me->id;
+		        $asset->assigned_type = \App\Models\User::class;
+		    }
+
+		}
+	    }
+
+	    // --- EOL logic ---
+
+	    if (is_null($asset->asset_eol_date) && !is_null($asset->purchase_date) && ($asset->model?->eol > 0)) {
+		$asset->asset_eol_date = $asset->purchase_date->addMonths($asset->model->eol)->format('Y-m-d');
+		$asset->eol_explicit = false;
+	    }
+
+	    if (!is_null($asset->asset_eol_date) && !is_null($asset->purchase_date)) {
+
+		if ($asset->model?->eol > 0) {
+
+		    $months = (int) Carbon::parse($asset->asset_eol_date)
+		        ->diffInMonths($asset->purchase_date, true);
+
+		    if ($months != $asset->model->eol) {
+		        $asset->eol_explicit = true;
+		    }
+
+		}
+
+	    } elseif (!is_null($asset->asset_eol_date) && is_null($asset->purchase_date)) {
+
+		$asset->eol_explicit = true;
+
+	    }
+
+	    if ((!is_null($asset->asset_eol_date)) &&
+		(!is_null($asset->purchase_date)) &&
+		(is_null($asset->model?->eol) || ($asset->model?->eol == 0))) {
+
+		$asset->eol_explicit = true;
+
+	    }
+	}
 }

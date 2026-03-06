@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Notifications\RequestAssetNotification;
 use Illuminate\Auth\Access\AuthorizationException;
 use Log;
+use Illuminate\Support\Facades\Notification;
 
 class CreateCheckoutRequestAction
 {
@@ -26,9 +27,11 @@ class CreateCheckoutRequestAction
         if (!Company::isCurrentUserHasAccess($asset)) {
             throw new AuthorizationException();
         }
-
+	$requester = auth()->user();
         $data['item'] = $asset;
-        $data['target'] = $user;
+        $data['target'] = $requester;
+	$data['requester'] = $requester;
+	$data['requested_for'] = $user;
         $data['item_quantity'] = 1;
         $settings = Setting::getSettings();
 
@@ -36,18 +39,35 @@ class CreateCheckoutRequestAction
         $logaction->item_id = $data['asset_id'] = $asset->id;
         $logaction->item_type = $data['item_type'] = Asset::class;
         $logaction->created_at = $data['requested_date'] = date('Y-m-d H:i:s');
-        $logaction->target_id = $data['user_id'] = auth()->id();
+        $logaction->target_id = $data['user_id'] = $requester->id;
         $logaction->target_type = User::class;
         $logaction->location_id = $user->location_id ?? null;
         $logaction->logaction('requested');
 
         $asset->request();
         $asset->increment('requests_counter', 1);
+        
         try {
-            $settings->notify(new RequestAssetNotification($data));
-        } catch (\Exception $e) {
-            Log::warning($e);
-        }
+
+	    $asset->loadMissing('location');
+	    $locationId = $asset->location->id ?? null;
+
+	    if ($locationId) {
+
+		$recipients = User::where('activated', 1)
+		    ->where('location_id', $locationId)
+		    ->where('id', '!=', $requester->id)
+		    ->get();
+
+		Notification::send($recipients, new RequestAssetNotification($data));
+
+	    } else {
+		Log::warning("No location found for asset {$asset->id}");
+	    }
+
+	} catch (\Exception $e) {
+	    Log::warning($e);
+	}
 
         return true;
     }

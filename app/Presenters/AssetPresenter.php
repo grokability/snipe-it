@@ -360,15 +360,26 @@ class AssetPresenter extends Presenter
             'printIgnore' => true,
         ];
 
-        $layout[] = [
-            'field' => 'actions',
-            'searchable' => false,
-            'sortable' => false,
-            'switchable' => false,
-            'title' => trans('table.actions'),
-            'formatter' => 'hardwareActionsFormatter',
-            'printIgnore' => true,
-        ];
+        $$layout[] = [
+	    'field' => 'actions',
+	    'searchable' => false,
+	    'sortable' => false,
+	    'switchable' => false,
+	    'title' => trans('table.actions'),
+	    'formatter' => 'hardwareActionsFormatter',
+	    'printIgnore' => true,
+	];
+
+	$layout[] = [
+	    'field' => 'return_actions',
+	    'searchable' => false,
+	    'sortable' => false,
+	    'switchable' => false,
+	    'title' => 'Return Actions',
+	    'visible' => true,
+	    'formatter' => 'returnActionsFormatter',
+	    'printIgnore' => true,
+	];
 
         return json_encode($layout);
     }

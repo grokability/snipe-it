@@ -18,6 +18,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use \Illuminate\Contracts\View\View;
 use Exception;
+use Illuminate\Support\Facades\Notification;
 
 /**
  * This controller handles all actions related to the ability for users
@@ -217,7 +218,26 @@ class ViewAssetsController extends Controller
             $logaction->logaction(ActionType::RequestCanceled);
 
             if (($settings->alert_email != '') && ($settings->alerts_enabled == '1') && (! config('app.lock_passwords'))) {
-                $settings->notify(new RequestAssetCancelation($data));
+                $location = null;
+
+		if ($fullItemType === \App\Models\Asset::class) {
+		    $item->loadMissing('location');
+		    $location = $item->location;
+		} else {
+		    $location = auth()->user()->location;
+		}
+
+		if ($location) {
+		    $recipients = User::where('activated', 1)
+			->where('location_id', $location->id)
+			->where('id', '!=', auth()->id())
+			->get();
+
+		    \Illuminate\Support\Facades\Notification::send(
+			$recipients,
+			new RequestAssetCancelation($data)
+		    );
+		}
             }
 
             return redirect()->back()->with('success')->with('success', trans('admin/hardware/message.requests.canceled'));
@@ -225,7 +245,26 @@ class ViewAssetsController extends Controller
             $item->request();
             if (($settings->alert_email != '') && ($settings->alerts_enabled == '1') && (! config('app.lock_passwords'))) {
                 $logaction->logaction('requested');
-                $settings->notify(new RequestAssetNotification($data));
+                $location = null;
+
+		if ($fullItemType === \App\Models\Asset::class) {
+		    $item->loadMissing('location');
+		    $location = $item->location;
+		} else {
+		    $location = auth()->user()->location;
+		}
+
+		if ($location) {
+		    $recipients = User::where('activated', 1)
+			->where('location_id', $location->id)
+			->where('id', '!=', auth()->id())
+			->get();
+
+		    \Illuminate\Support\Facades\Notification::send(
+			$recipients,
+			new RequestAssetNotification($data)
+		    );
+		}
             }
 
             return redirect()->route('requestable-assets')->with('success')->with('success', trans('admin/hardware/message.requests.success'));

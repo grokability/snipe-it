@@ -33,6 +33,8 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use TypeError;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Schema;
 
 /**
  * This class controls all actions related to assets for
@@ -1068,16 +1070,60 @@ class AssetsController extends Controller
     }
 
     public function getRequestedIndex($user_id = null)
-    {
-        $this->authorize('index', Asset::class);
-        $requestedItems = CheckoutRequest::with('user', 'requestedItem')->whereNull('canceled_at')->with('user', 'requestedItem');
+	{
+	    $this->authorize('index', Asset::class);
 
-        if ($user_id) {
-            $requestedItems->where('user_id', $user_id)->get();
-        }
+	    if (session()->has('success') || session()->has('success-unescaped')) {
+		Session::forget('error');
+		Session::forget('errors');
+	    }
 
-        $requestedItems = $requestedItems->orderBy('created_at', 'desc')->get();
+	    $user = auth()->user();
 
-        return view('hardware/requested', compact('requestedItems'));
-    }
+	    $query = CheckoutRequest::with(['user', 'requestedItem'])
+		->whereNull('canceled_at')
+		->where('requestable_type', \App\Models\Asset::class);
+
+	    if (Schema::hasColumn('checkout_requests', 'fulfilled_at')) {
+		$query->whereNull('fulfilled_at');
+	    }
+
+	    $query->whereIn('id', function ($q) {
+
+		$q->selectRaw('MAX(id)')
+		  ->from('checkout_requests')
+		  ->whereNull('canceled_at')
+		  ->where('requestable_type', \App\Models\Asset::class)
+		  ->groupBy('requestable_id');
+
+		if (Schema::hasColumn('checkout_requests', 'fulfilled_at')) {
+		    $q->whereNull('fulfilled_at');
+		}
+	    });
+
+	    $isPrivileged = $user && $user->groups()
+		->whereIn('name', ['Admin', 'Warehouse', 'Archivist'])
+		->exists();
+
+	    if (!$isPrivileged) {
+
+		$locationId = $user->location_id;
+
+		$query->whereHasMorph(
+		    'requestedItem',
+		    [\App\Models\Asset::class],
+		    function ($q) use ($locationId) {
+		        $q->where('location_id', $locationId);
+		    }
+		);
+	    }
+
+	    if (!empty($user_id)) {
+		$query->where('user_id', $user_id);
+	    }
+
+	    $requestedItems = $query->orderByDesc('created_at')->get();
+
+	    return view('hardware/requested', compact('requestedItems'));
+	}
 }

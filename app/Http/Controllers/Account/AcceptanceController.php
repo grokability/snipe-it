@@ -25,6 +25,8 @@ use \Illuminate\Contracts\View\View;
 use \Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
 use App\Helpers\Helper;
+use App\Models\Statuslabel;
+use Illuminate\Support\Facades\Auth;
 
 class AcceptanceController extends Controller
 {
@@ -166,6 +168,20 @@ class AcceptanceController extends Controller
         ];
 
         if ($request->input('asset_acceptance') == 'accepted') {
+        
+        	if ($acceptance->checkoutable_type === \App\Models\Asset::class) {
+		    $withDeptId = Statuslabel::where('name', 'With Department')->value('id');
+
+		    if ($withDeptId) {
+			$item->status_id = $withDeptId;
+		    }
+
+		    if (auth()->user()->location_id) {
+			$item->location_id = auth()->user()->location_id;
+		    }
+
+		    $item->save();
+		}
 
 
             $pdf_filename = 'accepted-'.$acceptance->checkoutable_id.'-'.$acceptance->display_checkoutable_type.'-eula-'.date('Y-m-d-h-i-s').'.pdf';
@@ -199,6 +215,17 @@ class AcceptanceController extends Controller
 
         // Item was declined
         } else {
+        
+        	if ($acceptance->checkoutable_type === \App\Models\Asset::class) {
+
+		    $requestedId = Statuslabel::where('name', 'Requested')->value('id');
+
+		    if ($requestedId) {
+			$item->status_id = $requestedId;
+			$item->save();
+		    }
+
+		}
 
             for ($i = 0; $i < ($acceptance->qty ?? 1); $i++) {
                 $acceptance->decline($sig_filename, $request->input('note'));
@@ -230,6 +257,19 @@ class AcceptanceController extends Controller
                 Log::warning($e);
             }
         }
+        
+        if (Auth::check() && isset($item)) {
+	    Auth::user()->unreadNotifications()
+		->where('data->type', 'acceptance_required')
+		->where(function ($q) use ($item) {
+		    $q->where('data->item_id', $item->id);
+
+		    if (!empty($item->asset_tag)) {
+		        $q->orWhere('data->item_tag', $item->asset_tag);
+		    }
+		})
+		->update(['read_at' => now()]);
+	}
         return redirect()->to('account/accept')->with('success', $return_msg);
 
     }

@@ -290,7 +290,18 @@ class CheckoutableListener
         
         $acceptance->save();
 
-        return $acceptance;
+	// Send in-app notification to the user who must accept/decline
+	if ($event->checkedOutTo) {
+	    $event->checkedOutTo->notify(
+		new \App\Notifications\AcceptanceApprovalRequiredNotification([
+		    'item_name' => $event->checkoutable->display_name ?? $event->checkoutable->name ?? 'Item',
+		    'item_tag'  => $event->checkoutable->asset_tag ?? null,
+		    'message'   => 'You have received an asset. Please Accept or Decline it.',
+		])
+	    );
+	}
+
+	return $acceptance;
     }
 
     /**

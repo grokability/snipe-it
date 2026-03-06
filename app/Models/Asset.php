@@ -22,6 +22,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Watson\Validating\ValidatingTrait;
 
 /**
@@ -34,6 +36,7 @@ class Asset extends Depreciable
 
     protected $presenter = AssetPresenter::class;
     protected $with = ['model', 'adminuser'];
+    
 
     use CompanyableTrait;
     use HasUploads;
@@ -65,6 +68,12 @@ class Asset extends Depreciable
      * @var string
      */
     protected $table = 'assets';
+    
+    protected $appends = [
+    'open_return_id',
+    'open_return_in_transit_at',
+    'can_pickup',
+    ];
 
     /**
      * Leaving this commented out, since we need to test further, but this would eager load the model relationship every single
@@ -165,7 +174,8 @@ class Asset extends Depreciable
         'next_audit_date',
         'last_checkin',
         'last_checkout',
-    ];
+        ];
+        
 
     use Searchable;
 
@@ -2313,6 +2323,38 @@ class Asset extends Depreciable
             ->join('depreciations', 'models.depreciation_id', '=', 'depreciations.id')->where('models.depreciation_id', '=', $search);
 
     }
+    
+    public function getOpenReturnIdAttribute()
+	{
+	    if (!Schema::hasTable('return_requests')) {
+		return null;
+	    }
 
+	    return DB::table('return_requests')
+		->where('asset_id', $this->id)
+		->whereNull('canceled_at')
+		->whereNull('received_at')
+		->orderByDesc('id')
+		->value('id');
+	}
+
+	public function getOpenReturnInTransitAtAttribute()
+	{
+	    if (!Schema::hasTable('return_requests')) {
+		return null;
+	    }
+
+	    return DB::table('return_requests')
+		->where('asset_id', $this->id)
+		->whereNull('canceled_at')
+		->whereNull('received_at')
+		->orderByDesc('id')
+		->value('in_transit_at');
+	}
+
+	public function getCanPickupAttribute()
+	{
+	    return auth()->check();
+	}
 
 }
