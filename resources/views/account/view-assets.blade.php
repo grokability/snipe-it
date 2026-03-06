@@ -477,6 +477,9 @@
                       <th data-switchable="true" data-visible="true">
                         {{ trans('admin/hardware/table.serial') }}
                       </th>
+                      
+                      <th>Return Actions</th>
+
                       <th data-switchable="true" data-visible="false">
                         {{ trans('admin/hardware/form.default_location') }}
                       </th>
@@ -550,6 +553,26 @@
                         <td>
                           {{ $asset->serial }}
                         </td>
+                        
+                        <td class="hidden-print">
+				@if(!empty($asset->can_pickup))
+				  @if(empty($asset->open_return_id))
+				    <form method="POST" action="{{ route('returns.store', $asset->id) }}" style="display:inline;">
+				      @csrf
+				      <button type="submit" class="btn btn-xs btn-warning">Return to Archive</button>
+				    </form>
+				  @elseif(empty($asset->open_return_in_transit_at))
+				    <form method="POST" action="{{ route('returns.in-transit', $asset->open_return_id) }}" style="display:inline;">
+				      @csrf
+				      <button type="submit" class="btn btn-xs btn-primary">Mark In Transit</button>
+				    </form>
+				  @else
+				    <span class="label label-warning">In Transit</span>
+				  @endif
+				@endif
+				</td>
+
+                        
                         <td>
                             {!!  ($asset->defaultLoc) ? $asset->defaultLoc->present()->formattedNameLink : '' !!}
 
