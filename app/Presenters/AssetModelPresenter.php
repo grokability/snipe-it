@@ -17,6 +17,7 @@ class AssetModelPresenter extends Presenter
                 'checkbox' => true,
                 'titleTooltip' => trans('general.select_all_none'),
                 'printIgnore' => true,
+                'class' => 'hidden-print',
             ],
             [
                 'field' => 'id',
@@ -214,6 +215,7 @@ class AssetModelPresenter extends Presenter
             'title' => trans('table.actions'),
             'formatter' => 'modelsActionsFormatter',
             'printIgnore' => true,
+            'class' => 'hidden-print',
         ];
 
         return json_encode($layout);

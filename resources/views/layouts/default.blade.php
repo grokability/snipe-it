@@ -41,6 +41,7 @@
 
     <style>
 
+
         :root {
             color-scheme: light dark;
             --btn-theme-hover-text-color: {{ $nav_link_color ?? 'light-dark(hsl(from var(--main-theme-color) h s calc(l - 10)),hsl(from var(--main-theme-color) h s calc(l - 10)))' }};
@@ -949,6 +950,61 @@
         .bootstrap-table .fixed-table-container .table tbody tr.selected td {
             background-color: light-dark(hsl(from var(--main-theme-color) h s calc(l + 40)),hsl(from var(--main-theme-color) h s calc(l - 40))) !important;
         }
+
+        tr.success > td {
+            background-color: #00a65a !important;
+            color: white !important;
+        }
+
+        tr.danger > td {
+            background-color: var(--text-danger) !important;
+            color: white !important;
+        }
+
+        @media print {
+
+            body,
+            div.content-wrapper,
+            section.content,
+            .webui,
+            .main-panel,
+            .nav-tabs-custom,
+            .box,
+            .box-body,
+            .list-group,
+            .list-group-unbordered,
+            .list-group-item,
+            .row,
+            .tab-content
+            {
+                background: white !important;
+                color: black !important;
+            }
+            .fixed-table-toolbar,
+            .fixed-table-pagination,
+            #assetsToolBar,
+            .fixed-table-pagination
+            {
+                display: none !important;
+            }
+            .tab-pane.hidden-print {
+                display: none !important;
+                visibility: hidden !important;
+            }
+
+            h2, h3, h4 {
+                color: black !important;
+            }
+
+            .col-sm-9,
+            .main-panel
+            {
+                float: left;
+                width: 100% !important;
+            }
+
+        }
+
     </style>
 
     {{-- Custom CSS --}}
@@ -2154,27 +2210,54 @@
                  }
              }
 
-            $(function () {
 
+
+
+            function checkInfoSidePanel() {
+                var side_panel_state = localStorage.getItem("side_panel_state");
+
+                // Open side info panel
+                if (side_panel_state == 'collapsed') {
+                    collapseInfoSidePanel();
+
+                // Collapse side info panel
+                } else {
+                    expandInfoSidePanel();
+                }
+
+            }
+
+            function toggleInfoSidePanel() {
+                var side_panel_state = localStorage.getItem("side_panel_state");
+
+                if (side_panel_state == 'expanded') {
+                    localStorage.setItem("side_panel_state", 'collapsed');
+                } else {
+                    localStorage.setItem("side_panel_state", 'expanded');
+                }
+
+                checkInfoSidePanel();
+            }
+
+            function collapseInfoSidePanel() {
+                $('.side-box').removeClass('expanded').hide();
+                $('.main-panel').removeClass('col-md-9').addClass('col-md-12');
+                $("#expand-info-panel-button").addClass('fa-square-caret-left').removeClass('fa-square-caret-right');
+            }
+
+            function expandInfoSidePanel() {
+                $('.side-box').fadeIn("fast").addClass('expanded');
+                $('.main-panel').removeClass('col-md-12').addClass('col-md-9');
+                $("#expand-info-panel-button").addClass('fa-square-caret-right').removeClass('fa-square-caret-left');
+            }
+
+
+            $(document).ready(function () {
+                checkInfoSidePanel();
 
                 // Handle the info-panel
                 $("#expand-info-panel-button").click(function () {
-
-                    $('.side-box').parent('div').parent('div').parent('div').hide();
-                    $(window).on('load', function() {
-                        $('.side-box').parent('div').parent('div').parent('div').show();
-                    });
-
-                    if($('.side-box').hasClass('expanded')) {
-                        $('.main-panel').removeClass('col-md-9').addClass('col-md-12');
-                        $('.side-box').removeClass('expanded');
-                        $("#expand-info-panel-button").addClass('fa-square-caret-left').removeClass('fa-square-caret-right');
-                    } else {
-                        $('.side-box').parent('div').parent('div').parent('div').fadeToggle("fast")
-                        $('.side-box').addClass('expanded');
-                        $('.main-panel').removeClass('col-md-12').addClass('col-md-9');
-                        $("#expand-info-panel-button").addClass('fa-square-caret-right').removeClass('fa-square-caret-left');
-                    }
+                    toggleInfoSidePanel();
                 });
 
 

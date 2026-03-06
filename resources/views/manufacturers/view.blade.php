@@ -51,15 +51,13 @@
         </x-page-column>
         <x-page-column class="col-md-3">
 
-            <x-box>
+            <x-box class="side-box expanded">
                 <x-box.info-panel :infoPanelObj="$manufacturer" img_path="{{ app('manufacturers_upload_url') }}">
 
-                    <x-slot:before_list>
-
-                        <x-button.wide-edit :item="$manufacturer" :route="route('manufacturers.edit', $manufacturer->id)" />
-                        <x-button.wide-delete :item="$manufacturer" />
-
-                    </x-slot:before_list>
+                    <x-slot:buttons>
+                        <x-button.edit :item="$manufacturer" :route="route('manufacturers.edit', $manufacturer->id)" />
+                        <x-button.delete :item="$manufacturer" />
+                    </x-slot:buttons>
 
                 </x-box.info-panel>
             </x-box>

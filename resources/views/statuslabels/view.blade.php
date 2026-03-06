@@ -38,15 +38,13 @@
             </x-box>
         </x-page-column>
         <x-page-column class="col-md-3">
-            <x-box>
+            <x-box class="side-box expanded">
                 <x-box.info-panel :infoPanelObj="$statuslabel">
 
-                    <x-slot:before_list>
-
-                        <x-button.wide-edit :item="$statuslabel" :route="route('statuslabels.edit', $statuslabel->id)" />
-                        <x-button.wide-delete :item="$statuslabel" />
-
-                    </x-slot:before_list>
+                    <x-slot:buttons>
+                        <x-button.edit :item="$statuslabel" :route="route('statuslabels.edit', $statuslabel->id)" />
+                        <x-button.delete :item="$statuslabel" />
+                    </x-slot:buttons>
 
 
                 </x-box.info-panel>

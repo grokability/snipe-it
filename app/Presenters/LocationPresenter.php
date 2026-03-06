@@ -20,6 +20,7 @@ class LocationPresenter extends Presenter
                 'formatter' => 'checkboxEnabledFormatter',
                 'titleTooltip' => trans('general.select_all_none'),
                 'printIgnore' => true,
+                'class' => 'hidden-print',
             ], [
                 'field' => 'id',
                 'searchable' => false,
@@ -266,6 +267,8 @@ class LocationPresenter extends Presenter
                 'title' => trans('table.actions'),
                 'visible' => true,
                 'formatter' => 'locationsActionsFormatter',
+                'printIgnore' => true,
+                'class' => 'hidden-print',
             ],
         ];
 
@@ -334,6 +337,7 @@ class LocationPresenter extends Presenter
                 'title' => trans('table.actions'),
                 'formatter' => 'accessoriesInOutFormatter',
                 'printIgnore' => true,
+                'class' => 'hidden-print',
             ],
         ];
 

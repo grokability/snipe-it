@@ -34,7 +34,7 @@
 
                     <x-slot:tabpanes>
 
-                        <!-- start history tab pane -->
+                        <!-- start assigned tab pane -->
                         <x-tabs.pane name="assigned" class="in active">
                             <x-slot:header>
                                 {{ trans('general.checked_out') }}
@@ -47,7 +47,7 @@
                                 />
                             </x-slot:content>
                         </x-tabs.pane>
-                        <!-- end history tab pane -->
+                        <!-- end assigned tab pane -->
 
                         <!-- start history tab pane -->
                         <x-tabs.pane name="history">
@@ -88,17 +88,14 @@
         </x-page-column>
 
         <x-page-column class="col-md-3">
-            <x-box>
+            <x-box class="side-box expanded">
                 <x-box.info-panel :infoPanelObj="$accessory" img_path="{{ app('accessories_upload_url') }}">
-
-                    <x-slot:before_list>
-
-                        <x-button.wide-checkout :item="$accessory" :route="route('accessories.checkout.show', $accessory->id)" />
-                        <x-button.wide-edit :item="$accessory" :route="route('accessories.edit', $accessory->id)" />
-                        <x-button.wide-clone :item="$accessory" :route="route('clone/accessories', $accessory->id)" />
-                        <x-button.wide-delete :item="$accessory" />
-
-                    </x-slot:before_list>
+                    <x-slot:buttons>
+                        <x-button.checkout permission="checkout" :item="$accessory" :route="route('accessories.checkout.show', $accessory->id)" />
+                        <x-button.edit :item="$accessory" :route="route('accessories.edit', $accessory->id)" />
+                        <x-button.clone :item="$accessory" :route="route('clone/accessories', $accessory->id)" />
+                        <x-button.delete :item="$accessory" />
+                    </x-slot:buttons>
                 </x-box.info-panel>
             </x-box>
 

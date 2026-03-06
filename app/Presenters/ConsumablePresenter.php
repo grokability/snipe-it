@@ -181,6 +181,7 @@ class ConsumablePresenter extends Presenter
                 'visible' => true,
                 'formatter' => 'consumablesActionsFormatter',
                 'printIgnore' => true,
+                'class' => 'hidden-print',
             ],
         ];
 

@@ -6,13 +6,16 @@
 
 <!-- start side info-box -->
 <div class="box-header with-border" style="padding-top: 0;">
-    <h3 class="box-title side-box-header" style="line-height: 20px">
-        {{ $infoPanelObj->display_name }}
-    </h3>
+
+    @if (isset($buttons))
+        <div class="row" style="padding-left: 10px">
+            {{ $buttons }}
+        </div>
+    @endif
+
 </div>
 
-<div class="box-body box-profile side-box expanded">
-
+<div class="box-body box-profile">
 
     @if (($infoPanelObj->image) && ($img_path))
             <a href="{{ Storage::disk('public')->url($img_path.e($infoPanelObj->image)) }}" data-toggle="lightbox" data-type="image">
@@ -356,12 +359,12 @@
         @if ((($infoPanelObj->address!='') && ($infoPanelObj->city!='')) || ($infoPanelObj->state!='') || ($infoPanelObj->country!=''))
             <x-info-element>
                 <a class="btn btn-sm btn-theme" href="https://maps.google.com/?q={{ urlencode($infoPanelObj->address.','. $infoPanelObj->city.','.$infoPanelObj->state.','.$infoPanelObj->country.','.$infoPanelObj->zip) }}" target="_blank">
-                    {!! trans('admin/locations/message.open_map', ['map_provider_icon' => '<i class="fa-brands fa-google" aria-hidden="true"></i>']) !!}
+                    {!! trans('admin/locations/message.open_map', ['map_provider_icon' => '<i class="fa-brands fa-google hidden-print" aria-hidden="true"></i>']) !!}
                     <x-icon type="external-link"/>
                 </a>
 
                 <a class="btn btn-sm btn-theme"  href="https://maps.apple.com/?q={{ urlencode($infoPanelObj->address.','. $infoPanelObj->city.','.$infoPanelObj->state.','.$infoPanelObj->country.','.$infoPanelObj->zip) }}" target="_blank">
-                    {!! trans('admin/locations/message.open_map', ['map_provider_icon' => '<i class="fa-brands fa-apple" aria-hidden="true"></i>']) !!}
+                    {!! trans('admin/locations/message.open_map', ['map_provider_icon' => '<i class="fa-brands fa-apple hidden-print" aria-hidden="true"></i>']) !!}
                     <x-icon type="external-link"/>
                 </a>
             </x-info-element>

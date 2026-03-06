@@ -14,6 +14,8 @@
                     show_column_search="true"
                     show_advanced_search="true"
                     buttons="licenseButtons"
+                    fixed_right_number="2"
+                    fixed_number="1"
                     api_url="{{ $route }}"
                     :presenter="\App\Presenters\LicensePresenter::dataTableLayout()"
                     export_filename="export-{{ str_slug($name) }}-licenses-{{ date('Y-m-d') }}"

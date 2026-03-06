@@ -12,6 +12,7 @@ class IconHelper
             case 'checkin':
                 return 'fa-solid fa-rotate-right';
             case 'edit':
+            case 'update':
                 return 'fas fa-pencil-alt';
             case 'clone':
                 return 'far fa-clone';

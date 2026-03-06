@@ -252,10 +252,16 @@
                 {{ trans('admin/licenses/table.assigned_to') }}
               </label>
 
+
               <label class="form-control">
                   <input type="checkbox" name="username" value="1" @checked($template->checkmarkValue('username')) />
                 {{ trans('admin/users/table.username') }}
               </label>
+
+            <label class="form-control">
+                <input type="checkbox" name="user_company" value="1" @checked($template->checkmarkValue('user_company')) />
+                {{ trans('admin/reports/general.custom_export.user_company') }}
+            </label>
 
             <label class="form-control">
                 <input type="checkbox" name="email" value="1" @checked($template->checkmarkValue('email')) />
@@ -281,8 +287,6 @@
                   <input type="checkbox" name="title" value="1" @checked($template->checkmarkValue('title')) />
                 {{ trans('admin/users/table.title') }}
               </label>
-
-                <!-- new -->
 
               <label class="form-control">
                   <input type="checkbox" name="phone" value="1" @checked($template->checkmarkValue('phone')) />
@@ -313,6 +317,11 @@
                   <input type="checkbox" name="user_zip" value="1" @checked($template->checkmarkValue('user_zip')) />
                   {{ trans('general.zip') }}
               </label>
+
+            <label class="form-control">
+                <input type="checkbox" name="target_notes" value="1" @checked($template->checkmarkValue('target_notes')) />
+                {{ trans('admin/reports/general.custom_export.target_notes') }}
+            </label>
 
 
 

@@ -213,6 +213,7 @@ class LicensePresenter extends Presenter
             'title' => trans('table.actions'),
             'formatter' => 'licensesActionsFormatter',
             'printIgnore' => true,
+            'class' => 'hidden-print',
         ];
 
         return json_encode($layout);
@@ -307,6 +308,8 @@ class LicensePresenter extends Presenter
                 'title' => trans('general.checkin').'/'.trans('general.checkout'),
                 'visible' => true,
                 'formatter' => 'licenseSeatInOutFormatter',
+                'printIgnore' => true,
+                'class' => 'hidden-print',
             ],
         ];
 

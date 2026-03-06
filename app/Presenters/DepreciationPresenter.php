@@ -97,6 +97,7 @@ class DepreciationPresenter extends Presenter
                 'visible' => true,
                 'formatter' => 'depreciationsActionsFormatter',
                 'printIgnore' => true,
+                'class' => 'hidden-print',
             ],
         ];
 

@@ -227,13 +227,13 @@
 
         </x-page-column>
         <x-page-column class="col-md-3">
-            <x-box>
+            <x-box class="side-box expanded">
                 <x-box.info-panel :infoPanelObj="$company" img_path="{{ app('companies_upload_url') }}">
 
                     <x-slot:before_list>
 
-                        <x-button.wide-edit :item="$company" :route="route('companies.edit', $company->id)" />
-                        <x-button.wide-delete :item="$company" />
+                        <x-button.edit :item="$company" :route="route('companies.edit', $company->id)" />
+                        <x-button.delete :item="$company" />
 
                     </x-slot:before_list>
 

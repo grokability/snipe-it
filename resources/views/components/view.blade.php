@@ -76,17 +76,15 @@
         </x-page-column>
         <x-page-column class="col-md-3">
 
-            <x-box>
+            <x-box class="side-box expanded">
                 <x-box.info-panel :infoPanelObj="$snipe_component" img_path="{{ app('components_upload_url') }}">
 
-                    <x-slot:before_list>
-
-                        <x-button.wide-checkout :item="$snipe_component" :route="route('components.checkout.show', $snipe_component->id)" />
-                        <x-button.wide-edit :item="$snipe_component" :route="route('components.edit', $snipe_component->id)" />
-                        <x-button.wide-clone :item="$snipe_component" :route="route('components.clone.create', $snipe_component->id)" />
-                        <x-button.wide-delete :item="$snipe_component" />
-
-                    </x-slot:before_list>
+                    <x-slot:buttons>
+                        <x-button.checkout :item="$snipe_component" :route="route('components.checkout.show', $snipe_component->id)" />
+                        <x-button.edit :item="$snipe_component" :route="route('components.edit', $snipe_component->id)" />
+                        <x-button.clone :item="$snipe_component" :route="route('components.clone.create', $snipe_component->id)" />
+                        <x-button.delete :item="$snipe_component" />
+                    </x-slot:buttons>
 
                 </x-box.info-panel>
             </x-box>

@@ -152,6 +152,7 @@ class CompanyPresenter extends Presenter
                 'visible' => true,
                 'formatter' => 'companiesActionsFormatter',
                 'printIgnore' => true,
+                'class' => 'hidden-print',
             ],
         ];
 

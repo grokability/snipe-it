@@ -550,6 +550,10 @@ class ReportsController extends Controller
                 $header[] = 'Username';
             }
 
+            if ($request->filled('user_company')) {
+                $header[] = trans('admin/reports/general.custom_export.user_company');
+            }
+
             if ($request->filled('email')) {
                 $header[] = 'Email';
             }
@@ -594,6 +598,10 @@ class ReportsController extends Controller
                 $header[] = trans('admin/reports/general.custom_export.user_zip');
             }
 
+            if ($request->filled('target_notes')) {
+                $header[] = trans('admin/reports/general.custom_export.target_notes');
+            }
+            
             if ($request->filled('status')) {
                 $header[] = trans('general.status');
             }
@@ -768,7 +776,6 @@ class ReportsController extends Controller
                 $assets->onlyTrashed();
             }
 
-            Log::debug($assets->toSql());
             $assets->orderBy('assets.id', 'ASC')->chunk(500, function ($assets) use ($handle, $customfields, $request) {
             
                 $executionTime = microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'];
@@ -887,6 +894,14 @@ class ReportsController extends Controller
                         }
                     }
 
+                    if ($request->filled('user_company')) {
+                        if ($asset->checkedOutToUser()) {
+                            $row[] = ($asset->assignedto->company) ? $asset->assignedto->company->display_name : '';
+                        } else {
+                            $row[] = ''; // Empty string if unassigned
+                        }
+                    }
+
                     if ($request->filled('email')) {
                         // Only works if we're checked out to a user, not anything else.
                         if ($asset->checkedOutToUser()) {
@@ -976,6 +991,15 @@ class ReportsController extends Controller
                             $row[] = ''; // Empty string if unassigned
                         }
                     }
+
+                    if ($request->filled('target_notes')) {
+                        if ($asset->checkedOutToUser()) {
+                            $row[] = ($asset->assignedto) ? $asset->assignedto->notes : '';
+                        } else {
+                            $row[] = ''; // Empty string if unassigned
+                        }
+                    }
+
 
                     if ($request->filled('status')) {
                         $row[] = ($asset->assetstatus) ? $asset->assetstatus->name.' ('.$asset->present()->statusMeta.')' : '';

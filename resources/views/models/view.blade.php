@@ -49,15 +49,13 @@
 
         </x-page-column>
         <x-page-column class="col-md-3">
-            <x-box>
+            <x-box class="side-box expanded">
                 <x-box.info-panel :infoPanelObj="$model" img_path="{{ app('models_upload_url') }}">
-                    <x-slot:before_list>
-
-                        <x-button.wide-edit :item="$model" :route="route('models.edit', $model->id)" />
-                        <x-button.wide-clone :item="$model" :route="route('models.clone.create', $model->id)" />
-                        <x-button.wide-delete :item="$model" />
-
-                    </x-slot:before_list>
+                    <x-slot:buttons>
+                        <x-button.edit :item="$model" :route="route('models.edit', $model->id)" />
+                        <x-button.clone :item="$model" :route="route('models.clone.create', $model->id)" />
+                        <x-button.delete :item="$model" />
+                    </x-slot:buttons>
 
                 </x-box.info-panel>
             </x-box>

@@ -186,6 +186,7 @@ class ComponentPresenter extends Presenter
             'title' => trans('table.actions'),
             'formatter' => 'componentsActionsFormatter',
             'printIgnore' => true,
+            'class' => 'hidden-print',
         ];
 
         return json_encode($layout);
@@ -241,6 +242,7 @@ class ComponentPresenter extends Presenter
                 'visible' => true,
                 'formatter' => 'componentsInOutFormatter',
                 'printIgnore' => true,
+                'class' => 'hidden-print',
 
             ],
         ];

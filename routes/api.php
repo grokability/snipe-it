@@ -942,11 +942,10 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
         Route::resource('settings', 
         Api\SettingsController::class,
         ['names' => [
-                'show' => 'api.settings.show',
                 'update' => 'api.settings.update',
                 'store' => 'api.settings.store',
             ],
-        'except' => ['create', 'edit', 'index', 'destroy'],
+        'except' => ['create', 'edit', 'index', 'destroy', 'show'],
         'parameters' => ['setting' => 'setting_id'],
         ]
         ); // end settings API
