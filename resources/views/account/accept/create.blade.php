@@ -91,6 +91,10 @@
                                 <textarea id="note" name="note" rows="4" class="form-control" style="width:100%">{{ old('note') }}</textarea>
 
                         </div>
+                        
+                        <div class="col-md-12">
+			    <br>
+			</div>
 
                         @if ($snipeSettings->require_accept_signature=='1')
                             <div class="col-md-12">

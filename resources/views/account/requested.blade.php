@@ -1,5 +1,11 @@
 @extends('layouts/default')
 
+@php
+    $user = auth()->user();
+    $isAdmin = $user->isSuperUser() || $user->hasAccess('admin');
+    $userLocationId = $user->location_id;
+@endphp
+
 {{-- Page title --}}
 @section('title')
    {{ trans('general.requested_assets')}}
@@ -42,6 +48,11 @@
                                     <th data-field="custom_fields.{{ $field->db_column }}">{{ $field->name }}</th>
                                 @endif
                             @endforeach
+                            
+                            <th data-field="transfer_action" data-formatter="requestedTransferFormatter" data-switchable="false">
+    				Transfer
+			    </th>
+
                         </tr>
                         </thead>
                     </table>
@@ -53,5 +64,26 @@
 
 @stop
 @section('moar_scripts')
-    @include ('partials.bootstrap-table')
+@include ('partials.bootstrap-table')
+
+<script>
+function requestedTransferFormatter(value, row) {
+
+    const assetId = row.requested_item?.id || row.requestedItem?.id || row.asset_id || row.id;
+    const requestedUserId = row.user_id || row.user?.id;
+
+    if (!assetId || !requestedUserId) {
+        return '-';
+    }
+
+    const url =
+        `/hardware/${assetId}/checkout` +
+        `?requested_user=${requestedUserId}` +
+        `&requested_status=in-transit`;
+
+    return `<a class="btn btn-primary btn-sm" href="${url}">Checkout</a>`;
+}
+</script>
+
 @stop
+
