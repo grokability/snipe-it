@@ -350,17 +350,17 @@ class AssetPresenter extends Presenter
         }
 
         $layout[] = [
-            'field' => 'checkincheckout',
-            'searchable' => false,
-            'sortable' => false,
-            'switchable' => false,
-            'title' => trans('general.checkin').'/'.trans('general.checkout'),
-            'visible' => true,
-            'formatter' => 'hardwareInOutFormatter',
-            'printIgnore' => true,
-        ];
+	    'field' => 'checkincheckout',
+	    'searchable' => false,
+	    'sortable' => false,
+	    'switchable' => false,
+	    'title' => trans('general.checkin').'/'.trans('general.checkout'),
+	    'visible' => true,
+	    'formatter' => 'hardwareInOutFormatter',
+	    'printIgnore' => true,
+	];
 
-        $$layout[] = [
+	$layout[] = [
 	    'field' => 'actions',
 	    'searchable' => false,
 	    'sortable' => false,
@@ -380,6 +380,7 @@ class AssetPresenter extends Presenter
 	    'formatter' => 'returnActionsFormatter',
 	    'printIgnore' => true,
 	];
+
 
         return json_encode($layout);
     }
