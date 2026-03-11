@@ -39,6 +39,19 @@
     @stack('css')
 
 
+    @php
+        // Calculate if header color is light or dark to determine dropdown text color
+        $headerHex = $snipeSettings->header_color ?? '#3c8dbc';
+        $headerHex = ltrim($headerHex, '#');
+        $r = hexdec(substr($headerHex, 0, 2)) / 255;
+        $g = hexdec(substr($headerHex, 2, 2)) / 255;
+        $b = hexdec(substr($headerHex, 4, 2)) / 255;
+        $luminance = 0.2126 * $r + 0.7152 * $g + 0.0722 * $b;
+        $headerIsLight = $luminance > 0.5;
+        $dropdownTextColor = $headerIsLight ? '#333333' : ($nav_link_color ?? '#ffffff');
+        $dropdownHoverBg = $headerIsLight ? '#f5f5f5' : 'rgba(0,0,0,0.15)';
+        $dropdownBorderColor = $headerIsLight ? 'rgba(0,0,0,0.15)' : 'var(--main-theme-color)';
+    @endphp
     <style>
 
 
@@ -48,6 +61,9 @@
             --btn-theme-hover: {{ $nav_link_color ?? 'light-dark(hsl(from var(--main-theme-color) h s calc(l - 10)),hsl(from var(--main-theme-color) h s calc(l - 10)))' }};
             --btn-theme-text-color: {{ $nav_link_color ?? 'light-dark(hsl(from var(--main-theme-color) h s calc(l + 10)),hsl(from var(--main-theme-color) h s calc(l - 10)))' }};
             --color-fg: light-dark(#373636, #ffffff);
+            --dropdown-text-color: {{ $dropdownTextColor }};
+            --dropdown-hover-bg: {{ $dropdownHoverBg }};
+            --dropdown-border-color: {{ $dropdownBorderColor }};
             --main-footer-bg-color: light-dark(#ffffff,#3d4144);
             --main-footer-text-color: light-dark(#605e5e, #d2d6de);
             --main-footer-top-border-color: light-dark(#d2d6de,#605e5e);
@@ -564,7 +580,6 @@
         }
 
 
-        .dropdown-menu > li,
         .navbar,
         .navbar-nav,
         .label-default,
@@ -574,26 +589,31 @@
             color: var(--nav-primary-text-color) !important;
         }
 
+        .dropdown-menu > li
+        {
+            background-color: var(--main-theme-color);
+            color: var(--dropdown-text-color) !important;
+        }
 
         .dropdown-menu > li > a:link,
         .dropdown-menu > li > a:visited,
         .dropdown-menu > .active > a:link,
-        .dropdown-menu > .active > a:visited,
+        .dropdown-menu > .active > a:visited
+        {
+            background-color: var(--main-theme-color);
+            color: var(--dropdown-text-color) !important;
+        }
+
         .navbar-nav .open > a:link,
         .navbar-nav .open > a:visited,
         .navbar-nav > li > a:link,
         .navbar-nav > li > a:visited
         {
             background-color: var(--main-theme-color);
-            /*background-color: rgba(0,0,0,.15);*/
             color: var(--nav-primary-text-color) !important;
-            /*color: var(--nav-primary-text-color) !important;*/
 
         }
 
-        .btn-tableButton.active.focus,
-        .btn-tableButton.active:focus,
-        .btn-tableButton.active:hover,
         .dropdown-menu > .active > a:focus,
         .dropdown-menu > .active > a:hover,
         .dropdown-menu > .active > a:link,
@@ -601,7 +621,16 @@
         .dropdown-menu > li > a:focus,
         .dropdown-menu > li > a:hover,
         .dropdown-menu > li:focus,
-        .dropdown-menu > li:hover,
+        .dropdown-menu > li:hover
+        {
+            background-color: var(--dropdown-hover-bg) !important;
+            border-color: var(--dropdown-border-color) !important;
+            color: var(--dropdown-text-color) !important;
+        }
+
+        .btn-tableButton.active.focus,
+        .btn-tableButton.active:focus,
+        .btn-tableButton.active:hover,
         .navbar-nav .open  li.active > a:focus,
         .navbar-nav .open  li.active > a:hover,
         .navbar-nav .open > a:focus,
@@ -646,12 +675,15 @@
         .dropdown-menu,
         .dropdown-menu > li
         {
+            background-color: var(--main-theme-color);
             background-color: hsl(from var(--main-theme-color) h s calc(l - 5));
+            border-color: var(--dropdown-border-color);
             border-color: hsl(from var(--main-theme-color) h s calc(l - 10));
-            color: var(--nav-primary-text-color) !important;
+            color: var(--dropdown-text-color) !important;
         }
 
         .main-header .navbar .nav>.active>a {
+            background-color: var(--main-theme-color) !important;
             background-color: hsl(from var(--main-theme-color) h s calc(l - 5)) !important;
             color: var(--nav-primary-text-color) !important;
         }
@@ -666,8 +698,9 @@
         .navbar-nav > .tasks-menu > .dropdown-menu > li .menu > li:hover > a,
         .task_menu
         {
+            background-color: var(--main-theme-color) !important;
             background-color: hsl(from var(--main-theme-color) h s calc(l - 5)) !important;
-            color: var(--nav-primary-text-color) !important;
+            color: var(--dropdown-text-color) !important;
             margin-bottom: 0;
         }
 
@@ -1003,6 +1036,29 @@
                 width: 100% !important;
             }
 
+        }
+
+        /* Dropdown menu text visibility fix for light theme colors */
+        .main-header .navbar .dropdown-menu,
+        .main-header .navbar .dropdown-menu > li {
+            background-color: var(--main-theme-color) !important;
+            color: {{ $dropdownTextColor }} !important;
+        }
+        .main-header .navbar .dropdown-menu > li > a,
+        .main-header .navbar .dropdown-menu > li > a:link,
+        .main-header .navbar .dropdown-menu > li > a:visited {
+            color: {{ $dropdownTextColor }} !important;
+            background-color: transparent !important;
+        }
+        .main-header .navbar .dropdown-menu > li > a:hover,
+        .main-header .navbar .dropdown-menu > li > a:focus,
+        .main-header .navbar .dropdown-menu > li:hover,
+        .main-header .navbar .dropdown-menu > li:hover > a {
+            background-color: {{ $dropdownHoverBg }} !important;
+            color: {{ $dropdownTextColor }} !important;
+        }
+        .main-header .navbar .dropdown-menu > .divider {
+            background-color: {{ $headerIsLight ? '#e5e5e5' : 'rgba(255,255,255,0.15)' }};
         }
 
     </style>

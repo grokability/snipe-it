@@ -336,7 +336,7 @@ class LdapSync extends Command
                 $user->department_id = $department->id;
             }
             if($ldap_map["location"] != null){
-                $user->location_id = $location?->id;
+                $user->location_id = $location ? $location->id : null;
             }
 
             if($ldap_map["manager"] != null){
@@ -377,7 +377,7 @@ class LdapSync extends Command
                                 }
                             } catch (\Exception $e) {
                                 $add_manager_to_cache = false;
-                                \Log::warning('Handling ldap manager ' . $item['manager'] . ' caused an exception: ' . $e->getMessage() . '. Continuing synchronization.');
+                                Log::warning('Handling ldap manager ' . $item['manager'] . ' caused an exception: ' . $e->getMessage() . '. Continuing synchronization.');
                             }
                         }
                         if ($add_manager_to_cache) {

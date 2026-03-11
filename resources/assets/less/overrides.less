@@ -1313,3 +1313,62 @@ Radio toggle styles for permission settings and check/uncheck all
 .deleted {
   text-decoration: line-through;
 }
+
+/* Fix: Dropdown menu text visibility */
+/* Override hsl(from ...) rules in default.blade.php that may fail in some browsers */
+.main-header .navbar .dropdown-menu {
+  background-color: var(--main-theme-color) !important;
+  border-color: var(--main-theme-color) !important;
+}
+
+.main-header .navbar .dropdown-menu > li {
+  background-color: var(--main-theme-color) !important;
+}
+
+.main-header .navbar .dropdown-menu > li > a,
+.main-header .navbar .dropdown-menu > li > a:link,
+.main-header .navbar .dropdown-menu > li > a:visited {
+  color: var(--nav-primary-text-color, #fff) !important;
+  background-color: transparent !important;
+}
+
+.main-header .navbar .dropdown-menu > li > a:hover,
+.main-header .navbar .dropdown-menu > li > a:focus,
+.main-header .navbar .dropdown-menu > li:hover > a {
+  background-color: rgba(0, 0, 0, 0.15) !important;
+  color: var(--nav-primary-text-color, #fff) !important;
+}
+
+.main-header .navbar .dropdown-menu > .divider {
+  background-color: rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Fix: bootstrap-table and content area dropdown menus should have standard colors */
+.content-wrapper .dropdown-menu,
+.bootstrap-table .dropdown-menu {
+  background-color: #fff !important;
+  border-color: rgba(0, 0, 0, 0.15) !important;
+}
+
+.content-wrapper .dropdown-menu > li,
+.bootstrap-table .dropdown-menu > li {
+  background-color: #fff !important;
+}
+
+.content-wrapper .dropdown-menu > li > a,
+.content-wrapper .dropdown-menu > li > a:link,
+.content-wrapper .dropdown-menu > li > a:visited,
+.bootstrap-table .dropdown-menu > li > a,
+.bootstrap-table .dropdown-menu > li > a:link,
+.bootstrap-table .dropdown-menu > li > a:visited {
+  color: #333 !important;
+  background-color: transparent !important;
+}
+
+.content-wrapper .dropdown-menu > li > a:hover,
+.content-wrapper .dropdown-menu > li > a:focus,
+.bootstrap-table .dropdown-menu > li > a:hover,
+.bootstrap-table .dropdown-menu > li > a:focus {
+  background-color: #f5f5f5 !important;
+  color: #333 !important;
+}

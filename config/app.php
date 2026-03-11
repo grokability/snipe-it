@@ -336,6 +336,11 @@ return [
         App\Providers\SamlServiceProvider::class,
         App\Providers\BreadcrumbsServiceProvider::class,
 
+        /*
+        * Kastamonu FOM (Fabrika Operasyon Merkezi) — upstream-safe custom module
+        */
+        App\Custom\Providers\CustomServiceProvider::class,
+
     ],
 
     /*

@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 use ZipArchive;
 use Illuminate\Support\Facades\Log;
 use enshrined\svgSanitize\Sanitizer;
@@ -21,7 +22,7 @@ class SQLStreamer {
     private bool $should_guess = false;
     private bool $statement_is_permitted = false;
 
-    public function __construct($input, $output, string $prefix = null)
+    public function __construct($input, $output, ?string $prefix = null)
     {
         $this->input = $input;
         $this->output = $output;
@@ -69,7 +70,7 @@ class SQLStreamer {
                         @$this->tablenames[$matches[2]] += 1;
                         continue; //oh? FIXME
                     } else {
-                        $cleaned_tablename = \DB::getTablePrefix().preg_replace('/^'.$this->prefix.'/','',$matches[2]);
+                        $cleaned_tablename = DB::getTablePrefix().preg_replace('/^'.$this->prefix.'/','',$matches[2]);
                         $line = preg_replace($statement,'$1`'.$cleaned_tablename.'`$3' , $line);
                     }
                 } else {
@@ -486,7 +487,7 @@ class RestoreFromBackup extends Command
                     $bytes_written = fwrite($pipes[0], $buffer);
 
                     if ($bytes_written === false) {
-                        throw new Exception("Unable to write to pipe");
+                        throw new \Exception("Unable to write to pipe");
                     }
                 }
             } else {
