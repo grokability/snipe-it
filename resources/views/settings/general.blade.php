@@ -378,6 +378,60 @@
                                </div>
                        </fieldset>
 
+                        <fieldset name="asset-naming">
+                            <x-form-legend>
+                                {{ trans('admin/settings/general.legends.asset_naming') }}
+                            </x-form-legend>
+
+                            <!-- Validate Asset Names -->
+                            <div class="form-group {{ $errors->has('validate_asset_name') ? 'error' : '' }}">
+                                <div class="col-md-8 col-md-offset-3">
+                                    <label class="form-control">
+                                        <input type="checkbox" name="validate_asset_name" id="validate_asset_name" value="1" @checked(old('validate_asset_name', $setting->validate_asset_name)) />
+                                        {{ trans('admin/settings/general.asset_name_validate') }}
+                                        {!! $errors->first('validate_asset_name', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
+                                    </label>
+                                    <p class="help-block">{!! trans('admin/settings/general.asset_name_validate_help') !!}</p>
+                                </div>
+                            </div>
+
+                            <!-- Asset Name Regex -->
+                            <div class="form-group {{ $errors->has('asset_name_regex') ? 'error' : '' }}" id="asset_name_regex_container" style="display:none;">
+
+                                <label for="asset_name_regex" class="col-md-3 control-label">{{ trans('admin/settings/general.asset_name_regex') }}</label>
+
+                                <div class="col-md-8 required">
+                                    <input class="form-control" name="asset_name_regex" type="text" id="asset_name_regex" placeholder="regex:/^[A-Z]{4}-[A-Z]{3}-[A-Z]{3}[0-9]{3}$/" value="{{ old('asset_name_regex', $setting->asset_name_regex) }}" />
+                                    <p class="help-block">{!! trans('admin/settings/general.asset_name_regex_help') !!}</p>
+                                    {!! $errors->first('asset_name_regex', '<span class="alert-msg">:message</span>') !!}
+                                </div>
+                            </div>
+
+                            <!-- Unique Asset Names -->
+                            <div class="form-group {{ $errors->has('unique_asset_name') ? 'error' : '' }}">
+                                <div class="col-md-8 col-md-offset-3">
+                                    <label class="form-control">
+                                        <input type="checkbox" name="unique_asset_name" id="unique_asset_name" value="1" @checked(old('unique_asset_name', $setting->unique_asset_name)) />
+                                        {{ trans('admin/settings/general.asset_name_unique') }}
+                                        {!! $errors->first('unique_asset_name', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
+                                    </label>
+                                    <p class="help-block">{!! trans('admin/settings/general.asset_name_unique_help') !!}</p>
+                                </div>
+                            </div>
+
+                            <!-- Ignore Blank Asset Names -->
+                            <div class="form-group {{ $errors->has('ignore_blank_asset_name') ? 'error' : '' }}">
+                                <div class="col-md-8 col-md-offset-3">
+                                    <label class="form-control">
+                                        <input type="checkbox" name="ignore_blank_asset_name" id="ignore_blank_asset_name" value="1" @checked(old('ignore_blank_asset_name', $setting->ignore_blank_asset_name)) />
+                                        {{ trans('admin/settings/general.asset_name_blank') }}
+                                        {!! $errors->first('ignore_blank_asset_name', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
+                                    </label>
+                                    <p class="help-block">{!! trans('admin/settings/general.asset_name_blank_help') !!}</p>
+                                </div>
+                            </div>
+                        </fieldset>
+
 
                        <fieldset>
                            <x-form.legend>
@@ -548,6 +602,19 @@
 
 
             });
+        });
+
+        $(document).ready(function(){
+
+            // Only display the regex field if validation is checked
+            $("#validate_asset_name").change(function() {
+                if ($("#validate_asset_name").prop("checked")) {
+                    $("#asset_name_regex_container").show();
+                } else {
+                    $("#asset_name_regex_container").hide();
+                }
+            }).change();
+
         });
 
     </script>
