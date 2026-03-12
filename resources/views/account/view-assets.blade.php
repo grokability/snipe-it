@@ -570,7 +570,7 @@
 				    <span class="label label-warning">In Transit</span>
 				  @endif
 				@endif
-				</td>
+			</td>
 
                         
                         <td>
@@ -826,4 +826,26 @@
 
 @section('moar_scripts')
   @include ('partials.bootstrap-table')
+
+<script>
+function refreshUserAssetsTbody() {
+  const url = window.location.href.split('#')[0];
+
+  $.get(url, function (html) {
+    const $html = $('<div>').html(html);
+    const newTbodyHtml = $html.find('#userAssets tbody').html();
+
+    if (newTbodyHtml !== undefined) {
+      $('#userAssets tbody').html(newTbodyHtml);
+    }
+  });
+}
+
+setInterval(function () {
+  if ($('#assets').hasClass('active')) {
+    refreshUserAssetsTbody();
+  }
+}, 5000);
+</script>
+
 @stop
