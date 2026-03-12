@@ -468,10 +468,16 @@
                                                     <x-icon type="circle-solid" class="text-blue" />
                                                     {{ $asset->assetstatus->name }}
                                                     <label class="label label-default">{{ trans('general.deployed') }}</label>
-
-
+                                                    
                                                     <x-icon type="long-arrow-right" />
                                                     <x-icon type="{{ $asset->assignedType() }}" class="fa-fw" />
+                                                    {!!  $asset->assignedTo->present()->nameUrl() !!}
+                                                @elseif (($asset->assignedTo) && ($asset->accepted==null))
+                                                    <x-icon type="circle-solid" class="text-yellow" />
+                                                    {{ $asset->assetstatus->name }}
+                                                    <label class="label label-default">{{ trans('general.unaccepted') }}</label>
+                                                    <x-icon type="long-arrow-right" />
+                                                    <x-icon type="{{ $asset->assignedType() }}" class="fa-fw" /> 
                                                     {!!  $asset->assignedTo->present()->nameUrl() !!}
                                                 @else
                                                     @if (($asset->assetstatus) && ($asset->assetstatus->deployable=='1'))

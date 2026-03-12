@@ -129,6 +129,7 @@ return [
     'departments'           => 'Departments',
     'department'            => 'Department',
     'deployed'				=> 'Deployed',
+    'unaccepted'            => 'Unaccepted',
     'depreciation'			=> 'Depreciation',
     'depreciations'         => 'Depreciations',
     'depreciation_report'	=> 'Depreciation Report',

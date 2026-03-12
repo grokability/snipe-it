@@ -583,7 +583,11 @@ class AssetPresenter extends Presenter
      */
     public function statusMeta()
     {
-        if ($this->model->assigned_to) {
+        if ($this->model->assigned) {
+            // If it's assigned but not accepted 
+            if ($this->model->assigned_to != null && $this->model->accepted == null) {
+                return 'unaccepted';
+            }
             return 'deployed';
         }
 
@@ -598,6 +602,10 @@ class AssetPresenter extends Presenter
     public function statusText()
     {
         if ($this->model->assigned) {
+            // If it's assigned but not accepted
+            if ($this->model->assigned_to != null && $this->model->accepted == null) {
+                return trans('general.unaccepted');
+            }
             return trans('general.deployed');
         }
 
@@ -608,6 +616,9 @@ class AssetPresenter extends Presenter
      * @return string
      * This handles the status label "meta" status of "deployed" if
      * it's assigned. Results look like:
+     *
+     * (if assigned and not yet accepted):
+     * (Unaccepted)
      *
      * (if assigned and the status label is "Ready to Deploy"):
      * (Deployed)
@@ -622,9 +633,12 @@ class AssetPresenter extends Presenter
     {
         // Make sure the status is valid
         if ($this->assetstatus) {
-
             // If the status is assigned to someone or something...
             if ($this->model->assigned) {
+                // If it's assigned but not accepted
+                if ($this->model->assigned_to != null && $this->model->accepted == null) {
+                    return trans('general.unaccepted');
+                }
 
                 // If it's assigned and not set to the default "ready to deploy" status
                 if ($this->assetstatus->name != trans('general.ready_to_deploy')) {
