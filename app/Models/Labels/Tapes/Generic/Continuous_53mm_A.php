@@ -52,7 +52,7 @@ class Continuous_53mm_A extends Continuous_53mm
             static::writeText(
                 $pdf, $record->get('title'),
                 $pa->x1, $pa->y1,
-                'freesans', '', $this->titleSize, 'C',
+                $this->getLabelValueFont(), '', $this->titleSize, 'C',
                 $pa->w, $this->titleSize, true, 0
             );
             $currentY += $this->titleSize + $this->titleMargin;
@@ -78,7 +78,7 @@ class Continuous_53mm_A extends Continuous_53mm
                 static::writeText(
                     $pdf, $field['label'],
                     $currentX, $currentY,
-                    'freesans', '', $this->labelSize, 'L',
+                    $this->getLabelFont(), '', $this->labelSize, 'L',
                     $usableWidth, $this->labelSize, true, 0
                 );
                 $currentY += $this->labelSize + $this->labelMargin;
@@ -86,7 +86,7 @@ class Continuous_53mm_A extends Continuous_53mm
                 static::writeText(
                     $pdf, $field['value'],
                     $currentX, $currentY,
-                    'freemono', 'B', $this->fieldSize, 'L',
+                    $this->getLabelValueFont(), 'B', $this->fieldSize, 'L',
                     $usableWidth, $this->fieldSize, true, 0, 0.01
                 );
                 $currentY += $this->fieldSize + $this->fieldMargin;

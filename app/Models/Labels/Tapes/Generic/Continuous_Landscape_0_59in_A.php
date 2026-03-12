@@ -151,7 +151,7 @@ class Continuous_Landscape_0_59in_A extends Continuous_Landscape_0_59in
                     static::writeText(
                         $pdf, $valueText,
                         $currentX, $fieldY,
-                        'freemono', 'B', $this->fieldSize * 1.3, 'L', // Increased field size by 30%
+                        $this->getLabelValueFont(), 'B', $this->fieldSize * 1.3, 'L', // Increased field size by 30%
                         $fieldWidth, $fieldHeight, false, 0, 0.00
                     );
                     $fieldY += ($fieldHeight + $fieldSpacing) + 0.02; // Increased spacing after value
@@ -160,7 +160,7 @@ class Continuous_Landscape_0_59in_A extends Continuous_Landscape_0_59in
                     static::writeText(
                         $pdf, $labelText,
                         $currentX, $fieldY,
-                        'freesans', 'B', $this->labelSize * 1.2, 'L', // Increased label size by 20% and made bold
+                        $this->getLabelFont(), 'B', $this->labelSize * 1.2, 'L', // Increased label size by 20% and made bold
                         $labelWidth, $labelHeight, false, 0,
                     );
                     $fieldY += ($labelHeight + $labelSpacing) + 0.01;
@@ -169,7 +169,7 @@ class Continuous_Landscape_0_59in_A extends Continuous_Landscape_0_59in
                     static::writeText(
                         $pdf, $valueText,
                         $currentX, $fieldY, // Position value directly below label
-                        'freemono', 'B', $this->fieldSize * 1.3, 'L', // Increased field size by 30%
+                        $this->getLabelValueFont(), 'B', $this->fieldSize * 1.3, 'L', // Increased field size by 30%
                         $fieldWidth, $fieldHeight, false, 0, 0.00
                     );
                     $fieldY += ($fieldHeight + $fieldSpacing) + 0.02; // Increased spacing after value

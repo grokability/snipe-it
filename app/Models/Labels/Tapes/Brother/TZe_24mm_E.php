@@ -8,13 +8,13 @@ class TZe_24mm_E extends TZe_24mm
 {
     private const BARCODE_MARGIN =   1.75;
     private const TAG_SIZE       =   2.00;
-    private const TITLE_SIZE     =   2.80;
-    private const TITLE_MARGIN   =   0.50;
+    private const TITLE_SIZE     =   2.00;
+    private const TITLE_MARGIN   =   0.20;
     private const LABEL_SIZE     =   2.00;
     private const LABEL_MARGIN   = - 0.75;
-    private const FIELD_SIZE     =   2.80;
-    private const FIELD_MARGIN   =   0.15;
-    private const BARCODE1D_SIZE = - 2.25;
+    private const FIELD_SIZE     =   1.60;
+    private const FIELD_MARGIN   =   0.05;
+    private const BARCODE1D_SIZE = - 2.00;
 
     public function getUnit()  { return 'mm'; }
     public function getWidth() { return 45.0; }
@@ -66,7 +66,7 @@ class TZe_24mm_E extends TZe_24mm
             static::writeText(
                 $pdf, $record->get('title'),
                 $currentX, $currentY,
-                'freesans', 'B', self::TITLE_SIZE, 'L',
+                $this->getLabelValueFont(), 'B', self::TITLE_SIZE, 'L',
                 $usableWidth, self::TITLE_SIZE, true, 0
             );
             $currentY += self::TITLE_SIZE + self::TITLE_MARGIN;
@@ -90,20 +90,38 @@ class TZe_24mm_E extends TZe_24mm
         );
 
             foreach ($fields as $field) {
+                $rawLabel = $field['label'] ?? null;
+                $value    = (string)($field['value'] ?? '');
+
+                // No label: value takes the whole row
+                if (!is_string($rawLabel) || trim($rawLabel) === '') {
+                    static::writeText(
+                        $pdf, $value,
+                        $currentX, $currentY,
+                        $this->getLabelValueFont(), 'B', $field_layout['fieldSize'], 'L',
+                        $usableWidth, $field_layout['rowAdvance'], true, 0, 0.01
+                    );
+
+                    $currentY += $field_layout['rowAdvance'];
+                    continue;
+                }
+
+                $labelText = rtrim($field['label'], ':') . ':';
+
                 static::writeText(
-                    $pdf, $field['label'],
+                    $pdf, $labelText,
                     $currentX, $currentY,
-                    'freesans', '', $field_layout['labelSize'], 'L',
-                    $field_layout['labelWidth'], $field_layout['rowAdvance'], true, 0
+                    $this->getLabelFont(), '', $field_layout['labelSize'], 'L',
+                    $field_layout['labelWidth'], $field_layout['rowAdvance'], true,
                 );
 
                 static::writeText(
                     $pdf, $field['value'],
                     $field_layout['valueX'], $currentY,
-                    'freemono', 'B', $field_layout['fieldSize'], 'L',
+                    $this->getLabelValueFont(), 'B', $field_layout['fieldSize'], 'L',
                     $field_layout['valueWidth'], $field_layout['rowAdvance'], true, 0, 0.01
                 );
-                $currentY += $field_layout['rowAdvance'];
+                $currentY += $field_layout['rowAdvance'];;
             }
 
         if ($record->has('barcode1d')) {

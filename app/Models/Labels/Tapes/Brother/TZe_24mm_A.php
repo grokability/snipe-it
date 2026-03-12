@@ -7,10 +7,10 @@ class TZe_24mm_A extends TZe_24mm
     private const BARCODE_MARGIN =   1.40;
     private const TAG_SIZE       =   2.80;
     private const TITLE_SIZE     =   2.80;
-    private const TITLE_MARGIN   =   0.50;
+    private const TITLE_MARGIN   =   0.20;
     private const LABEL_SIZE     =   2.00;
     private const LABEL_MARGIN   = - 0.35;
-    private const FIELD_SIZE     =   3.20;
+    private const FIELD_SIZE     =   3.10;
     private const FIELD_MARGIN   =   0.15;
 
     public function getUnit()
@@ -87,7 +87,7 @@ class TZe_24mm_A extends TZe_24mm
             static::writeText(
                 $pdf, $record->get('title'),
                 $currentX, $currentY,
-                'freesans', '', self::TITLE_SIZE, 'L',
+                $this->getLabelValueFont(), '', self::TITLE_SIZE, 'L',
                 $usableWidth, self::TITLE_SIZE, true, 0
             );
             $currentY += self::TITLE_SIZE + self::TITLE_MARGIN;
@@ -97,7 +97,7 @@ class TZe_24mm_A extends TZe_24mm
             static::writeText(
                 $pdf, $field['label'],
                 $currentX, $currentY,
-                'freesans', '', self::LABEL_SIZE, 'L',
+                $this->getLabelFont(), '', self::LABEL_SIZE, 'L',
                 $usableWidth, self::LABEL_SIZE, true, 0, 0
             );
             $currentY += self::LABEL_SIZE + self::LABEL_MARGIN;
@@ -105,7 +105,7 @@ class TZe_24mm_A extends TZe_24mm
             static::writeText(
                 $pdf, $field['value'],
                 $currentX, $currentY,
-                'freemono', 'B', self::FIELD_SIZE, 'L',
+                $this->getLabelValueFont(), 'B', self::FIELD_SIZE, 'L',
                 $usableWidth, self::FIELD_SIZE, true, 0, 0.3
             );
             $currentY += self::FIELD_SIZE + self::FIELD_MARGIN;

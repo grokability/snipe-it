@@ -363,7 +363,71 @@
                                     {!! $errors->first('label2_empty_row_count', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
                                 </div>
                             </div>
+
+                @if(\App\Helpers\Helper::shouldAllowFontSelection())
+                    <!-- Label Font -->
+                    @php
+                        $plainFonts = [
+                            'freesans'    => 'FreeSans',
+                            'freemono'    => 'FreeMono',
+                            'helvetica'   => 'Helvetica',
+                            'dejavusans'  => 'DejaVu Sans',
+                        ];
+                    @endphp
+
+                    {{-- Label Font --}}
+                    <div class="form-group">
+                        <div class="col-md-3 text-right">
+                            <label for="labels_font" class="control-label">
+                                {{ trans('admin/settings/general.labels_font') }}
+                            </label>
+                        </div>
+
+                        <div class="col-md-3">
+                            <x-input.select
+                                    name="labels_font"
+                                    id="labels_font"
+                                    :options="$plainFonts"
+                                    :selected="old('labels_font', $setting->labels_font)"
+                                    class="form-control"
+                                    aria-label="labels_font"
+                            />
+
+                            {!! $errors->first('labels_font', '<span class="alert-msg"><i class="fas fa-times"></i> :message</span>') !!}
+                        </div>
+                        <div class="col-md-9 col-md-offset-3">
+                            <p class="help-block">{!! trans('admin/settings/general.labels_font_help') !!}</p>
+                            {!! $errors->first('labels_font', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
+                        </div>
+                    </div>
+
+                    {{-- Value Font --}}
+                    <div class="form-group">
+                        <div class="col-md-3 text-right">
+                            <label for="labels_value_font" class="control-label">
+                                {{ trans('admin/settings/general.labels_value_font') }}
+                            </label>
+                        </div>
+
+                        <div class="col-md-3">
+                            <x-input.select
+                                    name="labels_value_font"
+                                    id="labels_value_font"
+                                    :options="$plainFonts"
+                                    :selected="old('labels_value_font', $setting->labels_value_font)"
+                                    class="form-control"
+                                    aria-label="labels_value_font"
+                            />
+
+                            {!! $errors->first('labels_value_font', '<span class="alert-msg"><i class="fas fa-times"></i> :message</span>') !!}
+                        </div>
+                        <div class="col-md-9 col-md-offset-3">
+                            <p class="help-block">{!! trans('admin/settings/general.labels_value_font_help') !!}</p>
+                            {!! $errors->first('labels_value_font', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
+                        </div>
+                    </div>
                     </fieldset>
+                @endif
 
 
                         <fieldset name="field-definitions">

@@ -74,7 +74,7 @@ class TZe_18mm_A extends TZe_18mm
             static::writeText(
                 $pdf, $record->get('fields')->values()->get(0)['value'],
                 $pa->x1 + ($tagWidth), $currentY,
-                'freemono', 'b', $fontSize, 'R',
+                $this->getLabelValueFont(), 'b', $fontSize, 'R',
                 $fieldWidth, $usableHeight, true, 0, 0
             );
         }

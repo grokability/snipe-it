@@ -76,14 +76,14 @@ class TZe_241 extends TZe_18mm
             static::writeText(
                 $pdf, $field['label'],
                 $currentX, $currentY,
-                'freesans', '', $field_layout['labelSize'], 'L',
+                $this->getLabelFont(), '', $field_layout['labelSize'], 'L',
                 $field_layout['labelWidth'], $field_layout['rowAdvance'], true, 0
             );
 
             static::writeText(
                 $pdf, $field['value'],
                 $field_layout['valueX'], $currentY,
-                'freemono', 'B', $field_layout['fieldSize'], 'L',
+                $this->getLabelValueFont(), 'B', $field_layout['fieldSize'], 'L',
                 $field_layout['valueWidth'], $field_layout['rowAdvance'], true, 0, 0.01
             );
             $currentY += $field_layout['rowAdvance'];

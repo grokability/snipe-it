@@ -3,6 +3,7 @@
 namespace App\Models\Labels;
 
 use App\Helpers\Helper;
+use App\Models\Setting;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use TCPDF;
@@ -20,7 +21,7 @@ abstract class Label
     /**
      * Returns the unit of measure used
      * 'pt', 'mm', 'cm', 'in'
-     * 
+     *
      * @return string
      */
     public abstract function getUnit();
@@ -39,98 +40,98 @@ abstract class Label
 
     /**
      * Returns the label's width in getUnit() units
-     * 
+     *
      * @return float
      */
     public abstract function getWidth();
 
     /**
      * Returns the label's height in getUnit() units
-     * 
+     *
      * @return float
      */
     public abstract function getHeight();
 
     /**
      * Returns the label's top margin in getUnit() units
-     * 
+     *
      * @return float
      */
     public abstract function getMarginTop();
 
     /**
      * Returns the label's bottom margin in getUnit() units
-     * 
+     *
      * @return float
      */
     public abstract function getMarginBottom();
 
     /**
      * Returns the label's left margin in getUnit() units
-     * 
+     *
      * @return float
      */
     public abstract function getMarginLeft();
 
     /**
      * Returns the label's right margin in getUnit() units
-     * 
+     *
      * @return float
      */
     public abstract function getMarginRight();
-    
+
     /**
      * Returns whether the template supports an asset tag.
-     * 
+     *
      * @return bool
      */
     public abstract function getSupportAssetTag();
-    
+
     /**
      * Returns whether the template supports a 1D barcode.
-     * 
+     *
      * @return bool
      */
     public abstract function getSupport1DBarcode();
-    
+
     /**
      * Returns whether the template supports a 2D barcode.
-     * 
+     *
      * @return bool
      */
     public abstract function getSupport2DBarcode();
-    
+
     /**
      * Returns the number of fields the template supports.
-     * 
+     *
      * @return int
      */
     public abstract function getSupportFields();
-    
+
     /**
      * Returns whether the template supports a logo.
-     * 
+     *
      * @return bool
      */
     public abstract function getSupportLogo();
-    
+
     /**
      * Returns whether the template supports a title.
-     * 
+     *
      * @return bool
      */
     public abstract function getSupportTitle();
 
     /**
      * Make changes to the PDF properties here. OPTIONAL.
-     * 
+     *
      * @param TCPDF $pdf The TCPDF instance
      */
     public abstract function preparePDF(TCPDF $pdf);
 
     /**
      * Write single data record as content here.
-     * 
+     *
      * @param TCPDF      $pdf    The TCPDF instance
      * @param Collection $record A data record
      */
@@ -138,7 +139,7 @@ abstract class Label
 
     /**
      * Handle the data here. Override for multiple-per-page handling
-     * 
+     *
      * @param TCPDF      $pdf  The TCPDF instance
      * @param Collection $data The data
      */
@@ -194,7 +195,7 @@ abstract class Label
 
     /**
      * Write a text cell.
-     * 
+     *
      * @param TCPDF  $pdf     The TCPDF instance
      * @param string $text    The text to write. Supports 'some **bold** text'.
      * @param float  $x       X position of top-left
@@ -240,7 +241,7 @@ abstract class Label
                     return [
                     'text' => $part,
                     'text_width' => $pdf->GetStringWidth($part),
-                    'font_family' => Helper::isCjk($text) ? 'cid0cs' : $fontFamily,
+                    'font_family' => self::determineFontFamily($text, $fontFamily),
                     'font_style' => $modStyle,
                     'font_size' => $fontSizePt,
                     ];
@@ -249,7 +250,7 @@ abstract class Label
 
         $textWidth = $parts->reduce(
             function ($carry, $part) {
-                return $carry += $part['text_width']; 
+                return $carry += $part['text_width'];
             }
         );
         $cellWidth = !empty($width) ? $width : $textWidth;
@@ -273,12 +274,12 @@ abstract class Label
         }
 
         switch($align) {
-        case 'R': $startX = ($x + $cellWidth) - min($cellWidth, $textWidth); 
+        case 'R': $startX = ($x + $cellWidth) - min($cellWidth, $textWidth);
             break;
-        case 'C': $startX = ($x + ($cellWidth / 2)) - (min($cellWidth, $textWidth) / 2); 
+        case 'C': $startX = ($x + ($cellWidth / 2)) - (min($cellWidth, $textWidth) / 2);
             break;
         case 'L':
-        default: $startX = $x; 
+        default: $startX = $x;
             break;
         }
 
@@ -297,7 +298,7 @@ abstract class Label
 
     /**
      * Write an image.
-     * 
+     *
      * @param TCPDF  $pdf     The TCPDF instance
      * @param string $image   The image to write
      * @param float  $x       X position of top-left
@@ -310,7 +311,7 @@ abstract class Label
      * @param bool   $resize  Resize to fit container
      * @param bool   $stretch Stretch (vs Scale) to fit container
      * @param int    $border  Thickness of border. Default = 0.
-     * 
+     *
      * @return array   Returns the final calculated size [w,h]
      */
     public final function writeImage(TCPDF $pdf, $image, $x, $y, $width=null, $height=null, $halign='L', $valign='L', $dpi=300, $resize=false, $stretch=false, $border=0)
@@ -318,11 +319,11 @@ abstract class Label
 
         if (empty($image)) { return [0,0];
         }
-        
+
         $imageInfo = getimagesize($image);
         if (!$imageInfo) { return [0,0]; // TODO: SVG or other
         }
-        
+
         $imageWidthPx = $imageInfo[0];
         $imageHeightPx = $imageInfo[1];
         $imageType = image_type_to_extension($imageInfo[2], false);
@@ -339,11 +340,11 @@ abstract class Label
             // Assign specified parameters
             $limitWidth = $width;
             $limitHeight = $height;
-            
+
             // If not, try calculating from the other dimension
             $limitWidth = ($limitWidth > 0) ? $limitWidth : ($limitHeight / $imageRatio);
             $limitHeight = ($limitHeight > 0) ? $limitHeight : ($limitWidth * $imageRatio);
-            
+
             // If not, just use the image size
             $limitWidth = ($limitWidth > 0) ? $limitWidth : $imageWidth;
             $limitHeight = ($limitHeight > 0) ? $limitHeight : $imageHeight;
@@ -374,29 +375,29 @@ abstract class Label
 
         // Horizontal Position
         switch ($halign) {
-        case 'R': $originX = ($x + $containerWidth) - $outputWidth; 
+        case 'R': $originX = ($x + $containerWidth) - $outputWidth;
             break;
-        case 'C': $originX = ($x + ($containerWidth / 2)) - ($outputWidth / 2); 
+        case 'C': $originX = ($x + ($containerWidth / 2)) - ($outputWidth / 2);
             break;
         case 'L':
-        default: $originX = $x; 
+        default: $originX = $x;
             break;
         }
-        
+
         // Vertical Position
         switch ($valign) {
-        case 'B': $originY = ($y + $containerHeight) - $outputHeight; 
+        case 'B': $originY = ($y + $containerHeight) - $outputHeight;
             break;
-        case 'C': $originY = ($y + ($containerHeight / 2)) - ($outputHeight / 2); 
+        case 'C': $originY = ($y + ($containerHeight / 2)) - ($outputHeight / 2);
             break;
         case 'T':
-        default: $originY = $y; 
+        default: $originY = $y;
             break;
         }
 
         // Actual Image
         $pdf->Image($image, $originX, $originY, $outputWidth, $outputHeight, $imageType, '', '', true);
-        
+
         // Border
         if ($border) {
             $prevLineWidth = $pdf->getLineWidth();
@@ -404,13 +405,13 @@ abstract class Label
             $pdf->Rect($x, $y, $containerWidth, $containerHeight);
             $pdf->setLineWidth($prevLineWidth);
         }
-        
+
         return [ $outputWidth, $outputHeight ];
     }
 
     /**
      * Write a 1D barcode.
-     * 
+     *
      * @param TCPDF  $pdf    The TCPDF instance
      * @param string $value  The barcode content
      * @param string $type   The barcode type
@@ -432,7 +433,7 @@ abstract class Label
 
     /**
      * Write a 2D barcode.
-     * 
+     *
      * @param TCPDF  $pdf    The TCPDF instance
      * @param string $value  The barcode content
      * @param string $type   The barcode type
@@ -492,7 +493,7 @@ abstract class Label
                 )
             );
         }
-        
+
         $height = $this->getHeight();
         if (!is_numeric($height) || is_string($height)) {
             throw new \UnexpectedValueException(
@@ -521,7 +522,7 @@ abstract class Label
                 )
             );
         }
-        
+
         $marginBottom = $this->getMarginBottom();
         if (!is_numeric($marginBottom) || is_string($marginBottom)) {
             throw new \UnexpectedValueException(
@@ -547,7 +548,7 @@ abstract class Label
                 )
             );
         }
-        
+
         $marginRight = $this->getMarginRight();
         if (!is_numeric($marginRight) || is_string($marginRight)) {
             throw new \UnexpectedValueException(
@@ -638,11 +639,11 @@ abstract class Label
 
     /**
      * Find size of a page by its format.
-     * 
+     *
      * @param string $format      Format name (eg: 'A4', 'LETTER', etc.)
      * @param string $orientation 'L' for Landscape, 'P' for Portrait ('L' default)
      * @param string $unit        Unit of measure to return in ('mm' default)
-     * 
+     *
      * @return object  (object)[ 'width' => (float)123.4, 'height' => (float)123.4 ]
      */
     public static function fromFormat($format, $orientation='L', $unit='mm', $round=false)
@@ -665,7 +666,7 @@ abstract class Label
 
     /**
      * Find a Label by its path (or just return them all).
-     * 
+     *
      * Unlike most Models, these are defined by their existence as non-
      * abstract classes stored in Models\Labels.
      *
@@ -720,7 +721,26 @@ abstract class Label
                 }
             );
     }
+    public function getLabelFont(): string
+    {
+        return Setting::getSettings()->labels_font;
+    }
 
-    
+    public function getLabelValueFont(): string
+    {
+        return Setting::getSettings()->labels_value_font;
+    }
+    private function determineFontFamily(string $text, string $fontFamily): string
+    {
+        if (Helper::determineLanguageDirection() === 'rtl') {
+            return 'dejavusans';
+        }
+
+        if (Helper::isCjk($text)) {
+            return 'cid0cs';
+        }
+
+        return $fontFamily;
+    }
 
 }

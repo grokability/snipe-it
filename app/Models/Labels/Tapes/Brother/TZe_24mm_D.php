@@ -90,7 +90,7 @@ class TZe_24mm_D extends TZe_24mm
             static::writeText(
                 $pdf, $record->get('title'),
                 $currentX, $currentY,
-                'freesans', '', self::TITLE_SIZE, 'L',
+                $this->getLabelValueFont(), '', self::TITLE_SIZE, 'L',
                 $usableWidth, self::TITLE_SIZE, true, 0
             );
             $currentY += self::TITLE_SIZE + self::TITLE_MARGIN;
@@ -100,7 +100,7 @@ class TZe_24mm_D extends TZe_24mm
             if (!empty($field['label']) && $field['label'] !== "\u{200B}") {
                 // Write label and value on the same line
                 // Calculate label width with proportional character spacing
-                $labelWidth = $pdf->GetStringWidth($field['label'], 'freemono', '', self::LABEL_SIZE);
+                $labelWidth = $pdf->GetStringWidth($field['label'], $this->getLabelFont(), '', self::LABEL_SIZE);
                 $charCount = strlen($field['label']);
                 $spacingPerChar = 0.5;
                 $totalSpacing = $charCount * $spacingPerChar;
@@ -109,14 +109,14 @@ class TZe_24mm_D extends TZe_24mm
                 static::writeText(
                     $pdf, $field['label'],
                     $currentX, $currentY,
-                    'freemono', 'B', self::LABEL_SIZE, 'L',
+                    $this->getLabelFont(), 'B', self::LABEL_SIZE, 'L',
                     $adjustedWidth, self::LABEL_SIZE, true, 0, $spacingPerChar
                 );
 
                 static::writeText(
                     $pdf, $field['value'],
                     $currentX + $adjustedWidth + 2, $currentY,
-                    'freemono', 'B', self::FIELD_SIZE, 'L',
+                    $this->getLabelValueFont(), 'B', self::FIELD_SIZE, 'L',
                     $usableWidth - $adjustedWidth - 2, self::FIELD_SIZE, true, 0, 0.3
                 );
             } else {
@@ -125,7 +125,7 @@ class TZe_24mm_D extends TZe_24mm
                 static::writeText(
                     $pdf, $field['value'],
                     $currentX, $currentY, // No offset
-                    'freemono', 'B', self::FIELD_SIZE, 'L',
+                    $this->getLabelValueFont(), 'B', self::FIELD_SIZE, 'L',
                     $usableWidth, self::FIELD_SIZE, true, 0, 0.3
                 );
             }
