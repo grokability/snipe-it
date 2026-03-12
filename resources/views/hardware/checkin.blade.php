@@ -40,7 +40,7 @@
                                           autocomplete="off">
                                         @endif
                                         {{csrf_field()}}
-
+                                        <input type="hidden" name="asset_ids[]" value="{{ $asset->id }}">
                                         @if ($asset->company)
                                             <!-- accessory name -->
                                             <div class="form-group">
