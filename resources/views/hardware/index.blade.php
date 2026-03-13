@@ -40,8 +40,8 @@
 @endif
 {{ trans('general.assets') }}
 
-  @if (Request::has('order_number'))
-    : Order #{{ strval($requestOrderNumber) }}
+  @if ($requestOrderNumber)
+	: Order #{{ strval($requestOrderNumber) }}
   @endif
 @stop
 

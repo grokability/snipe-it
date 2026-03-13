@@ -33,6 +33,8 @@ use App\Livewire\Importer;
 use App\Models\ReportTemplate;
 use Illuminate\Support\Facades\Route;
 use Tabuna\Breadcrumbs\Trail;
+use App\Http\Controllers\NotificationsController;
+use App\Http\Controllers\ReturnsController;
 
 Route::group(['middleware' => 'auth'], function () {
     /*
@@ -476,6 +478,47 @@ Route::group(['prefix' => 'account', 'middleware' => ['auth']], function () {
 
 Route::group(['middleware' => ['auth']], function () {
     Route::post('notes', [NotesController::class, 'store'])->name('notes.store');
+});
+
+Route::middleware('auth')->group(function () {
+
+    Route::get('/notifications/unread-count', [NotificationsController::class, 'unreadCount'])
+        ->name('notifications.unread-count');
+
+    Route::get('/notifications', [NotificationsController::class, 'index'])
+        ->name('notifications.index');
+
+    Route::post('/notifications/{id}/read', [NotificationsController::class, 'markRead'])
+        ->whereUuid('id')
+        ->name('notifications.read');
+
+    Route::get('/notifications/{id}/open', [NotificationsController::class, 'open'])
+        ->whereUuid('id')
+        ->name('notifications.open');
+
+    Route::get('/notifications/dropdown', [NotificationsController::class, 'dropdown'])
+        ->name('notifications.dropdown');
+
+    Route::delete('/notifications/{id}', [NotificationsController::class, 'destroy'])
+        ->whereUuid('id')
+        ->name('notifications.destroy');
+
+});
+
+Route::middleware('auth')->group(function () {
+
+    Route::get('/returns', [ReturnsController::class, 'index'])->name('returns.index');
+
+    Route::post('/assets/{asset}/return', [ReturnsController::class, 'store'])->name('returns.store');
+
+    Route::post('/returns/{return}/in-transit', [ReturnsController::class, 'markInTransit'])->name('returns.in-transit');
+
+    Route::post('/returns/{return}/received', [ReturnsController::class, 'markReceived'])->name('returns.received');
+
+    Route::post('/returns/{return}/close', [ReturnsController::class, 'close'])->name('returns.close');
+
+    Route::get('/returns/rows', [ReturnsController::class, 'rows'])->name('returns.rows');
+
 });
 
 Route::group(['prefix' => 'reports', 'middleware' => ['auth']], function () {

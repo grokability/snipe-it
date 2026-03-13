@@ -9,6 +9,30 @@
 {{-- Page content --}}
 @section('content')
 
+@php
+$me = auth()->user();
+
+$isSecretary = $me && $me->groups()->where('name', 'Secretary')->exists();
+
+$myLocId = optional($me->location)->id;
+$assetLocId = optional($asset->location)->id;
+$assignedUserLocId = optional(optional($asset->assignedTo)->location)->id;
+
+$canSecretaryReturn = $isSecretary
+    && !empty($asset->assigned_to)
+    && is_null($asset->deleted_at)
+    && $myLocId
+    && (
+        ((int)$myLocId === (int)$assetLocId)
+        || ((int)$myLocId === (int)$assignedUserLocId)
+    );
+
+$openReturn = \App\Models\ReturnRequest::where('asset_id', $asset->id)
+    ->whereNull('canceled_at')
+    ->whereNull('closed_at')
+    ->latest('requested_at')
+    ->first();
+@endphp
 
     <div class="row">
 
@@ -238,6 +262,49 @@
                                                     </span>
                                             </div>
                                         @endcan
+                                        
+                                        {{-- Secretary Return Button --}}
+					@if($canSecretaryReturn)
+					<div class="col-md-12 hidden-print" style="padding-top:5px;">
+
+					@if(!$openReturn)
+
+					<form method="POST" action="{{ route('returns.store', $asset->id) }}">
+					@csrf
+					<button type="submit" class="btn btn-sm btn-warning btn-social btn-block">
+					Return to Archive
+					</button>
+					</form>
+
+					@else
+
+					@if($openReturn->received_at)
+					<a href="{{ route('hardware.checkin.create', $asset->id) }}"
+					   class="btn btn-sm btn-primary btn-social btn-block">
+					   Check-in Asset
+					</a>
+
+					@elseif($openReturn->in_transit_at)
+					<span class="label label-warning">In Transit</span>
+
+					@else
+
+					<span class="label label-info">Return Requested</span>
+
+					<form method="POST" action="{{ route('returns.in-transit', $openReturn->id) }}" style="margin-top:5px;">
+					@csrf
+					<button type="submit" class="btn btn-sm btn-default btn-social btn-block">
+					Mark In Transit
+					</button>
+					</form>
+
+					@endif
+
+					@endif
+
+					</div>
+					@endif
+                                        
                                     @elseif (($asset->assigned_to == '') && ($asset->deleted_at==''))
                                         @can('checkout', $asset)
                                             <div class="col-md-12 hidden-print" style="padding-top: 5px;">

@@ -228,5 +228,36 @@
 @stop
 
 @section('moar_scripts')
-    @include('partials/assets-assigned')
+@include('partials/assets-assigned')
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    // ---------- Prefill USER from request ----------
+    var requestedUserId = '{{ $requestedUserId ?? '' }}';
+
+    if (requestedUserId) {
+        var userSelect = document.querySelector('select[name="assigned_user"]');
+
+        if (userSelect) {
+            userSelect.value = requestedUserId;
+            userSelect.dispatchEvent(new Event('change'));
+        }
+    }
+
+    // ---------- Prefill LOCATION from request ----------
+    var requestedLocationId = '{{ $requestedLocationId ?? '' }}';
+
+    if (requestedLocationId) {
+        var locationSelect = document.querySelector('select[name="assigned_location"]');
+
+        if (locationSelect) {
+            locationSelect.value = requestedLocationId;
+            locationSelect.dispatchEvent(new Event('change'));
+        }
+    }
+
+});
+</script>
+
 @stop

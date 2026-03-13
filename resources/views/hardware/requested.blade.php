@@ -43,81 +43,58 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($requestedItems as $request)
+				@foreach ($requestedItems as $request)
+				@if (!$request->requestable)
+				@continue
+				@endif
 
-                                    @if ($request->requestable)
-                                    <tr>
-                                    {{ csrf_field() }}
-                                        <td>
-                                        @if (($request->itemType() == "asset") && ($request->requestable))
-                                            <a href="{{ $request->requestable->getImageUrl() }}" data-toggle="lightbox" data-type="image"><img src="{{ $request->requestable->getImageUrl() }}" style="max-height: {{ $snipeSettings->thumbnail_max_h }}px; width: auto;" class="img-responsive" alt="{{ $request->requestable->name }}"></a>
-                                        @elseif (($request->itemType() == "asset_model") && ($request->requestable))
-                                            <a href="{{ config('app.url') }}/uploads/models/{{ $request->requestable->image }}" data-toggle="lightbox" data-type="image"><img src="{{ config('app.url') }}/uploads/models/{{ $request->requestable->image }}" style="max-height: {{ $snipeSettings->thumbnail_max_h }}px; width: auto;" class="img-responsive" alt="{{ $request->requestable->name }}"></a>
-                                        @endif
-                                        </td>
-                                        <td>
+				@php
+				$me = auth()->user();
+				$reqUser = $request->requestingUser();
 
-                                            @if ($request->itemType() == "asset")
-                                                <a href="{{ config('app.url') }}/hardware/{{ $request->requestable->id }}">
-                                                    {{ $request->name() }}
-                                                </a>
-                                            @elseif ($request->itemType() == "asset_model")
-                                                <a href="{{ config('app.url') }}/models/{{ $request->requestable->id }}">
-                                                    {{ $request->name() }}
-                                                </a>
-                                            @endif
+				if ($reqUser && $me && (int)$reqUser->id === (int)$me->id) {
+				    $skip = true;
+				} else {
+				    $skip = false;
+				}
 
-                                        </td>
-                                        <td>
-                                            {{ $request->location() ? $request->location()->name : '' }}
-                                        </td>
+				$asset = $request->requestable;
 
-                                        <td>
-                                            @if ($request->itemType() == "asset")
-                                            {{ App\Helpers\Helper::getFormattedDateObject($request->requestable->expected_checkin, 'datetime', false) }}
-                                            @endif
-                                        </td>
-                                        <td>
-                                            @if ($request->requestingUser() && !$request->requestingUser()->trashed())
-                                                <a href="{{ config('app.url') }}/users/{{ $request->requestingUser()->id }}">
-                                                    {{ $request->requestingUser()->display_name }}
-                                                </a>
-                                            @else
-                                                {{ trans('admin/reports/general.deleted_user') }}
-                                            @endif
-                                        </td>
-                                        <td>
-                                            {{ App\Helpers\Helper::getFormattedDateObject($request->created_at, 'datetime', false) }}
-                                        </td>
-                                        <td>
-                                            <form
-                                            method="POST"
-                                            action="{{ route('account/request-item', [
-                                            $request->itemType(),
-                                            $request->requestable->id,
-                                            true,
-                                            $request->requestingUser()->id
-                                            ]) }}"
-                                            accept-charset="UTF-8"
-                                            >
-                                            @csrf
-                                                <button class="btn btn-warning btn-sm" data-tooltip="true" title="{{ trans('general.cancel_request') }}">{{ trans('button.cancel') }}</button>
-                                            </form>
-                                        </td>
-                                        <td>
-                                            @if ($request->itemType() == "asset")
-                                                @if ($request->requestable->assigned_to=='')
-                                                    <a href="{{ config('app.url') }}/hardware/{{ $request->requestable->id }}/checkout" class="btn btn-sm bg-maroon" data-tooltip="true" title="{{ trans('general.checkout_user_tooltip') }}">{{ trans('general.checkout') }}</a>
-                                                @else
-                                                    <a href="{{ config('app.url') }}/hardware/{{ $request->requestable->id }}/checkin" class="btn btn-sm bg-purple" data-tooltip="true" title="{{ trans('general.checkin_tooltip') }}">{{ trans('general.checkin') }}</a>
-                                                @endif
-                                            @endif
-                                        </td>
+				$assignedType = $asset->assigned_to_type ?? ($asset->assigned_type ?? null);
+				$assignedId   = (int)($asset->assigned_to ?? 0);
 
-                                    </tr>
-                                    @endif
-                                @endforeach
-                            </tbody>
+				$myUserId     = (int)($me->id ?? 0);
+				$myLocationId = (int)($me->location_id ?? 0);
+
+				$isHoldingAsUser = ($assignedType === \App\Models\User::class) && ($assignedId === $myUserId);
+
+				$isHoldingAsMyLocation =
+				    $myLocationId &&
+				    ($assignedType === \App\Models\Location::class) &&
+				    ($assignedId === $myLocationId);
+
+				$isPrivileged = $me && $me->groups()
+				->whereIn('name', ['IT GMI','Manager Archive','Warehouse','Archivist','Archivists','Admin'])
+				->exists();
+
+				$reqLocName  = $request->location() ? $request->location()->name : '';
+				$isInArchive = trim(strtolower($reqLocName)) === 'archive';
+
+				$canDoCheckout =
+				$isHoldingAsUser ||
+				$isHoldingAsMyLocation ||
+				($isInArchive && $isPrivileged);
+
+				if (!$canDoCheckout) {
+				$skip = true;
+				}
+
+				$inTransitId = \App\Models\Statuslabel::where('name', 'In Transit')->value('id');
+				@endphp
+
+				@if ($skip)
+				@continue
+				@endif
                         </table>
 
                     </div> <!-- /.col-md-12 -->

@@ -2,7 +2,7 @@
     'snipeSettings' => \App\Models\Setting::getSettings(),
 ])
 
-@if ($snipeSettings->show_alerts_in_menu=='1')
+@if (true)
 <!-- Tasks: style can be found in dropdown.less -->
 <?php
     $alert_items = \App\Helpers\Helper::checkLowInventory();
@@ -84,7 +84,4 @@
     </ul>
 </li>
 
-@if (!$slot->isEmpty())
-    {{ $slot }}
-@endif
 @endif

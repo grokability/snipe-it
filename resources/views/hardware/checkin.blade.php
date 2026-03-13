@@ -40,7 +40,10 @@
                                           autocomplete="off">
                                         @endif
                                         {{csrf_field()}}
-
+                                        @if(request()->filled('return_id'))
+					    <input type="hidden" name="return_id" value="{{ request('return_id') }}">
+					@endif
+                                        
                                         @if ($asset->company)
                                             <!-- accessory name -->
                                             <div class="form-group">
@@ -99,6 +102,9 @@
                                             </div>
                                         </div>
 
+					@php
+					    $archiveStatusId = 8;
+					@endphp
                                         <!-- Status -->
                                         <div class="form-group {{ $errors->has('status_id') ? 'error' : '' }}">
                                             <label for="status_id" class="col-sm-3 control-label">
@@ -107,6 +113,7 @@
                                             <div class="col-md-8 required">
                                                 <x-input.select
                                                     name="status_id"
+                                                    :selected="old('status_id', $archiveStatusId)"
                                                     id="modal-statuslabel_types"
                                                     :options="$statusLabel_list"
                                                     style="width: 100%"
@@ -200,3 +207,15 @@
     </div>
 
 @stop
+
+@php
+$u = auth()->user();
+$canSeeCheckin = $u && ! $u->groups()->where('name', 'Secretary')->exists();
+@endphp
+
+@if (!$canSeeCheckin)
+    <div class="alert alert-danger">
+        You do not have permission to check in assets.
+    </div>
+    @php return; @endphp
+@endif

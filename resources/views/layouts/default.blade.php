@@ -1200,11 +1200,9 @@
                                 </li>
                             @endcan
 
-                            @can('admin')
-                                <x-alert-menu />
-                            @endcan
-
-
+			    @can('admin')
+			    	@include('blade.alert-menu')
+			    @endcan
 
                             <!-- User Account: style can be found in dropdown.less -->
                             @if (Auth::check())
@@ -1350,6 +1348,16 @@
                                             </span>
                                         </a>
                                     </li>
+                                    
+                                    <li id="returns-sidenav-option">
+				    	<a href="{{ route('returns.index') }}">
+						<x-icon type="circle" class="text-grey fa-fw"/>
+						<strong>Returns</strong>
+						<span class="badge">
+						    {{ \App\Models\ReturnRequest::whereNull('closed_at')->whereNull('checked_in_at')->count() }}
+						</span>
+				    	</a>
+				    </li>
 
                                     <?php $status_navs = \App\Models\Statuslabel::where('show_in_nav', '=', 1)->withCount('assets as asset_count')->get(); ?>
                                     @if (count($status_navs) > 0)
