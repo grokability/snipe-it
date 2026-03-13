@@ -1199,7 +1199,9 @@
                                     </ul>
                                 </li>
                             @endcan
-
+                            
+                            @include('blade.notifications-menu')
+                            
 			    @can('admin')
 			    	@include('blade.alert-menu')
 			    @endcan

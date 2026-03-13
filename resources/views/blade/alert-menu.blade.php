@@ -9,7 +9,7 @@
     $deprecations = \App\Helpers\Helper::deprecationCheck();
 ?>
 
-<li class="dropdown tasks-menu">
+<li class="dropdown notifications-menu">
     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
         <x-icon type="alerts" />
         <span class="sr-only">{{ trans('general.alerts') }}</span>
