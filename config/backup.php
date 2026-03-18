@@ -119,7 +119,6 @@ return [
         'temporary_directory' => storage_path('app/backup-temp'),
 
         // 'encryption' => \ZipArchive::EM_AES_256,
-        'encryption' => null,
     ],
 
     /*
@@ -147,7 +146,11 @@ return [
         'notifiable' => Notifiable::class,
 
         'mail' => [
-            'to' => env('MAIL_BACKUP_NOTIFICATION_ADDRESS', null),
+            // it might seem weird to set an address here, but laravel-backup will crash
+            // after running "composer install" without a valid email address here. It
+            // _shouldn't_ matter, since if you don't set MAIL_BACKUP_NOTIFICATION_DRIVER
+            // then no emails will be sent at all (each notification is assigned to 'null')
+            'to' => env('MAIL_BACKUP_NOTIFICATION_ADDRESS', 'hello@example.com'),
 
             'from' => [
                 'address' => env('MAIL_FROM_ADDR', 'hello@example.com'),

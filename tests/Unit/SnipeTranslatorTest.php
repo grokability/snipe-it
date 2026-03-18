@@ -88,7 +88,7 @@ class SnipeTranslatorTest extends TestCase
         // Spatie backup *usually* uses two-character locales, but pt-BR is an exception
         $this->assertEquals(
             'Mensagem de exceção: MESSAGE',
-            trans('backup::notifications.exception_message',['message' => 'MESSAGE'],'pt-BR')
+            trans('backup::notifications.exception_message', ['message' => 'MESSAGE'], 'pt_BR')
         );
     }
 }
