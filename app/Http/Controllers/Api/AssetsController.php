@@ -1121,19 +1121,31 @@ class AssetsController extends Controller
      * @since [v4.0]
      */
     public function audit(Request $request, Asset $asset): JsonResponse
+
     {
         $this->authorize('audit', Asset::class);
 
         $settings = Setting::getSettings();
-
-        $dt = null;
-        if (! is_null($settings->audit_interval)) {
-            $dt = Carbon::now()->addMonths($settings->audit_interval)->toDateString();
-        }
+        $dt = Carbon::now()->addMonths($settings->audit_interval)->toDateString();
 
         // Allow the asset tag to be passed in the payload (legacy method)
         if ($request->filled('asset_tag')) {
-            $asset = Asset::where('asset_tag', '=', $request->input('asset_tag'))->first();
+            $asset_tag_input = $request->input('asset_tag');
+            
+            // Check if the input is a URL and extract the asset ID
+            if (preg_match('/\/hardware\/(\d+)/', $asset_tag_input, $matches)) {
+                // Extract the ID from the URL and try to find the asset by ID
+                $asset_id = $matches[1];
+                $asset = Asset::where('id', '=', $asset_id)->first();
+                
+                // If not found by ID, fall back to asset_tag lookup
+                if (!$asset) {
+                    $asset = Asset::where('asset_tag', '=', $asset_tag_input)->first();
+                }
+            } else {
+                // Regular asset tag lookup
+                $asset = Asset::where('asset_tag', '=', $asset_tag_input)->first();
+            }
         }
 
         if ($asset) {
@@ -1158,9 +1170,7 @@ class AssetsController extends Controller
             $payload = [
                 'id' => $asset->id,
                 'asset_tag' => $asset->asset_tag,
-                'note' => e($request->input('note')),
-                'status_label' => e($asset->assetstatus?->display_name),
-                'status_type' => $asset->assetstatus?->getStatuslabelType(),
+                'note' => $request->input('note'),
                 'next_audit_date' => Helper::getFormattedDateObject($asset->next_audit_date),
             ];
 
