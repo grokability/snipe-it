@@ -45,7 +45,7 @@
                                 </td>
                                 <td>
                                     @if ($printable->creator)
-                                        <a href="{{ route('users.show', $printable->creator->id) }}">{{ $printable->creator->present()->nameUrl() }}</a>
+                                        {!! $printable->creator->present()->formattedNameLink() !!}
                                     @else
                                         <span class="text-muted">{{ trans('general.na') }}</span>
                                     @endif
