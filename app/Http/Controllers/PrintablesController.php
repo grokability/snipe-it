@@ -7,8 +7,10 @@ use App\Models\Category;
 use App\Models\CustomField;
 use App\Models\Printable;
 use App\Services\PrintableService;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Gate;
 
 /**
  * This class controls all actions related to Printable HTML templates.
@@ -47,7 +49,7 @@ class PrintablesController extends Controller
         $this->authorize('create', Printable::class);
 
         $categories   = Category::where('category_type', 'asset')->orderBy('name')->get();
-        $customFields = CustomField::where('field_encrypted', 0)->orderBy('name')->get();
+        $customFields = $this->getVisibleCustomFields();
         $variables    = PrintableService::availableVariables($customFields);
 
         return view('printables.edit', [
@@ -87,7 +89,7 @@ class PrintablesController extends Controller
         $this->authorize('update', Printable::class);
 
         $categories   = Category::where('category_type', 'asset')->orderBy('name')->get();
-        $customFields = CustomField::where('field_encrypted', 0)->orderBy('name')->get();
+        $customFields = $this->getVisibleCustomFields();
         $variables    = PrintableService::availableVariables($customFields);
 
         return view('printables.edit', [
@@ -128,5 +130,16 @@ class PrintablesController extends Controller
 
         return redirect()->route('printables.index')
             ->with('success', trans('admin/printables/message.delete.success'));
+    }
+
+    private function getVisibleCustomFields(): Collection
+    {
+        $customFieldsQuery = CustomField::query();
+
+        if (Gate::denies('assets.view.encrypted_custom_fields')) {
+            $customFieldsQuery->where('field_encrypted', 0);
+        }
+
+        return $customFieldsQuery->orderBy('name')->get();
     }
 }
