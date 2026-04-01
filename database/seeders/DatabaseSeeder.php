@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         Model::unguard();
+        \Illuminate\Support\Facades\Schema::disableForeignKeyConstraints();
 
         // Only create default settings if they do not exist in the db.
         if (! Setting::first()) {
@@ -54,5 +55,7 @@ class DatabaseSeeder extends Seeder
 
         DB::table('imports')->truncate();
         DB::table('requested_assets')->truncate();
+
+        \Illuminate\Support\Facades\Schema::enableForeignKeyConstraints();
     }
 }
