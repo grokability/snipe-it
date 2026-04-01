@@ -18,6 +18,8 @@
                 {{ trans('button.bulk_actions') }}
             </span>
 
+            @php $printables = \App\Models\Printable::orderBy('name')->get(); @endphp
+
             <select name="bulk_actions" class="form-control select2" aria-label="bulk_actions" style="width: 350px !important;" id="{{ Illuminate\Support\Str::camel($name) }}BulkActions">
                 @if ((isset($status)) && ($status == 'Deleted'))
                     @can('delete', \App\Models\Asset::class)
@@ -42,7 +44,6 @@
 
                     <option value="labels">{{ trans_choice('button.generate_labels', 2) }}</option>
 
-                    @php $printables = \App\Models\Printable::orderBy('name')->get(); @endphp
                     @if ($printables->isNotEmpty())
                         <option value="printables">{{ trans_choice('button.generate_printable', 2) }}</option>
                     @endif
@@ -51,15 +52,17 @@
 
             {{-- Printable template selector – shown only when "Generate Printables" is selected --}}
             @if ($printables->isNotEmpty())
-                <select name="printable_id"
-                        id="{{ Illuminate\Support\Str::camel($name) }}PrintableSelect"
-                        class="form-control select2"
-                        aria-label="{{ trans('general.printables') }}"
-                        style="width: 200px !important; display: none; margin-left: 5px;">
-                    @foreach ($printables as $printable)
-                        <option value="{{ $printable->id }}">{{ $printable->name }}</option>
-                    @endforeach
-                </select>
+                <span id="{{ Illuminate\Support\Str::camel($name) }}PrintableWrapper" style="display: none; margin-left: 5px;">
+                    <select name="printable_id"
+                            id="{{ Illuminate\Support\Str::camel($name) }}PrintableSelect"
+                            class="form-control select2"
+                            aria-label="{{ trans('general.printables') }}"
+                            style="width: 200px !important;">
+                        @foreach ($printables as $printable)
+                            <option value="{{ $printable->id }}">{{ $printable->name }}</option>
+                        @endforeach
+                    </select>
+                </span>
             @endif
 
             <button class="btn btn-theme" id="{{ Illuminate\Support\Str::camel($name) }}Button" disabled>{{ trans('button.go') }}</button>
@@ -67,16 +70,31 @@
             </div>
     </form>
 
-@push('moar_scripts')
+@push('js')
 <script nonce="{{ csrf_token() }}">
     (function () {
-        var bulkSelect  = document.getElementById('{{ Illuminate\Support\Str::camel($name) }}BulkActions');
-        var printSel    = document.getElementById('{{ Illuminate\Support\Str::camel($name) }}PrintableSelect');
+        const bulkSelectId = '{{ Illuminate\Support\Str::camel($name) }}BulkActions';
+        const bulkSelectSelector = '#' + bulkSelectId;
+        const bulkSelect = document.getElementById(bulkSelectId);
+        const printableWrapper = document.getElementById('{{ Illuminate\Support\Str::camel($name) }}PrintableWrapper');
 
-        if (bulkSelect && printSel) {
+        if (bulkSelect && printableWrapper) {
+            const togglePrintableSelector = function (selectedAction) {
+                printableWrapper.style.display = selectedAction === 'printables' ? 'inline-block' : 'none';
+            };
+
+            togglePrintableSelector(bulkSelect.value);
+
             bulkSelect.addEventListener('change', function () {
-                printSel.style.display = (this.value === 'printables') ? 'inline-block' : 'none';
+                togglePrintableSelector(this.value);
             });
+
+            if (window.jQuery) {
+                // Select2 can fire jQuery events while the original select remains hidden.
+                window.jQuery(document).on('change select2:select select2:clear', bulkSelectSelector, function () {
+                    togglePrintableSelector(this.value);
+                });
+            }
         }
     })();
 </script>
