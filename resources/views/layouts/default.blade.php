@@ -1759,6 +1759,14 @@
                                         </li>
                                     @endcan
 
+                                    @can('view', \App\Models\Printable::class)
+                                        <li {{!! (request()->is('printables*') ? ' class="active"' : '') !!}}>
+                                            <a href="{{ route('printables.index') }}">
+                                                {{ trans('general.printables') }}
+                                            </a>
+                                        </li>
+                                    @endcan
+
                                     @can('view', \App\Models\Manufacturer::class)
                                         <li {{!! (request()->is('manufacturers*') ? ' class="active"' : '') !!}}>
                                             <a href="{{ route('manufacturers.index') }}">

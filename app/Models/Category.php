@@ -280,6 +280,16 @@ class Category extends SnipeModel
     }
 
     /**
+     * Establishes the category -> printable templates relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<Printable>
+     */
+    public function printables()
+    {
+        return $this->belongsToMany(Printable::class, 'category_printable');
+    }
+
+    /**
      * Checks for a category-specific EULA, and if that doesn't exist,
      * checks for a settings level EULA
      *

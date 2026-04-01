@@ -415,6 +415,7 @@
                         <x-button.note :item="$asset" :route="route('clone/hardware', $asset->id)"/>
                         <x-button.audit :item="$asset" :route="route('asset.audit.create', $asset->id)"/>
                         <x-button.label :item="$asset" :route="route('hardware.bulkedit.show')"/>
+                        <x-button.printable :item="$asset"/>
                         <x-button.delete :item="$asset"/>
                         <x-button.restore :item="$asset" :route="route('restore/hardware', ['asset' => $asset->id])"/>
                     </x-slot:buttons>

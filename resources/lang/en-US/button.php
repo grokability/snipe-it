@@ -16,6 +16,7 @@ return [
     'select_file' => 'Select File...',
     'select_files' => 'Select Files...',
     'generate_labels' => '{1} Generate Label|[2,*] Generate Labels',
+    'generate_printable' => '{1} Generate Printable|[2,*] Generate Printables',
     'send_password_link' => 'Send Password Reset Link',
     'go' => 'Go',
     'bulk_actions' => 'Bulk Actions',
