@@ -15,9 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->longText('content');
-            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->integer('created_by')->unsigned()->nullable();
             $table->timestamps();
             $table->softDeletes();
+            
+            $table->foreign('created_by')->references('id')->on('users')->nullOnDelete();
         });
     }
 
