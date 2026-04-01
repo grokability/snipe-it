@@ -18,6 +18,7 @@ use App\Models\Setting;
 use App\Models\Statuslabel;
 use App\Models\User;
 use App\Observers\AssetObserver;
+use App\Services\PrintableService;
 use App\View\Label;
 use Carbon\Carbon;
 use Com\Tecnick\Barcode\Barcode;
@@ -48,7 +49,7 @@ class AssetsController extends Controller
 
     protected $barCodeDimensions = ['height' => 2, 'width' => 22];
 
-    public function __construct()
+    public function __construct(private readonly PrintableService $printableService)
     {
         $this->middleware('auth');
         parent::__construct();
@@ -340,6 +341,8 @@ class AssetsController extends Controller
         $settings = Setting::getSettings();
 
         if (isset($asset)) {
+            $asset->loadMissing(['model.category.printables']);
+
             $audit_log = Actionlog::where('action_type', '=', 'audit')
                 ->where('item_id', '=', $asset->id)
                 ->where('item_type', '=', Asset::class)
@@ -1095,5 +1098,30 @@ class AssetsController extends Controller
         $requestedItems = $requestedItems->orderBy('created_at', 'desc')->get();
 
         return view('hardware/requested', compact('requestedItems'));
+    }
+
+    /**
+     * Render a Printable template populated with a single asset's data.
+     *
+     * @author [A. Gianotto] [<snipe@snipe.net>]
+     */
+    public function getPrintable(Asset $asset, \App\Models\Printable $printable): \Illuminate\Contracts\View\View|\Illuminate\Http\RedirectResponse
+    {
+        $this->authorize('view', $asset);
+
+        // Ensure the printable belongs to the asset's category
+        $categoryId = $asset->model?->category_id;
+        if (! $categoryId || ! $printable->categories->contains('id', $categoryId)) {
+            return redirect()->route('hardware.show', $asset->id)
+                ->with('error', trans('admin/printables/message.not_associated'));
+        }
+
+        $rendered = $this->printableService->render($printable, $asset);
+
+        return view('printables.show', [
+            'asset'     => $asset,
+            'printable' => $printable,
+            'rendered'  => $rendered,
+        ]);
     }
 }

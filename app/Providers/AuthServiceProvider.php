@@ -17,6 +17,7 @@ use App\Models\License;
 use App\Models\Location;
 use App\Models\Manufacturer;
 use App\Models\PredefinedKit;
+use App\Models\Printable;
 use App\Models\Statuslabel;
 use App\Models\Supplier;
 use App\Models\User;
@@ -35,6 +36,7 @@ use App\Policies\LicensePolicy;
 use App\Policies\LocationPolicy;
 use App\Policies\ManufacturerPolicy;
 use App\Policies\PredefinedKitPolicy;
+use App\Policies\PrintablePolicy;
 use App\Policies\StatuslabelPolicy;
 use App\Policies\SupplierPolicy;
 use App\Policies\UserPolicy;
@@ -69,6 +71,7 @@ class AuthServiceProvider extends ServiceProvider
         License::class => LicensePolicy::class,
         Location::class => LocationPolicy::class,
         PredefinedKit::class => PredefinedKitPolicy::class,
+        Printable::class => PrintablePolicy::class,
         Statuslabel::class => StatuslabelPolicy::class,
         Supplier::class => SupplierPolicy::class,
         User::class => UserPolicy::class,

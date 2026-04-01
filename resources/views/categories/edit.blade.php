@@ -100,5 +100,30 @@
         </div>
     </fieldset>
 
+@if (isset($printables) && $printables->isNotEmpty() && ($item->category_type == 'asset' || !$item->id))
+    {{-- Printable Templates assignment (asset categories only) --}}
+    <fieldset name="printables">
+        <x-form.legend>{{ trans('general.printables') }}</x-form.legend>
+
+        <div class="form-group">
+            <label class="col-md-3 control-label">{{ trans('admin/printables/general.categories') }}</label>
+            <div class="col-md-7">
+                @foreach ($printables as $printable)
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox"
+                                   name="printable_ids[]"
+                                   value="{{ $printable->id }}"
+                                   {{ in_array($printable->id, old('printable_ids', $item->id ? $item->printables->pluck('id')->toArray() : [])) ? 'checked' : '' }}>
+                            {{ $printable->name }}
+                        </label>
+                    </div>
+                @endforeach
+                <p class="help-block">{{ trans('admin/printables/general.categories_help') }}</p>
+            </div>
+        </div>
+    </fieldset>
+@endif
+
 
 @stop

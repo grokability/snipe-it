@@ -760,4 +760,7 @@ return [
 
     'months_plural' => '1 month|:count months',
 
+    'printable' => 'Printable',
+    'printables' => 'Printables',
+
 ];

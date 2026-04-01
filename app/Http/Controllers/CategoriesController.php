@@ -51,7 +51,8 @@ class CategoriesController extends Controller
         $this->authorize('create', Category::class);
 
         return view('categories/edit')->with('item', new Category)
-            ->with('category_types', Helper::categoryTypeList());
+            ->with('category_types', Helper::categoryTypeList())
+            ->with('printables', \App\Models\Printable::orderBy('name')->get());
     }
 
     /**
@@ -79,6 +80,8 @@ class CategoriesController extends Controller
 
         $category = $request->handleImages($category);
         if ($category->save()) {
+            $category->printables()->sync($request->input('printable_ids', []));
+
             return redirect()->route('categories.index')->with('success', trans('admin/categories/message.create.success'));
         }
 
@@ -100,8 +103,11 @@ class CategoriesController extends Controller
     {
         $this->authorize('update', Category::class);
 
+        $category->loadMissing('printables');
+
         return view('categories/edit')->with('item', $category)
-            ->with('category_types', Helper::categoryTypeList());
+            ->with('category_types', Helper::categoryTypeList())
+            ->with('printables', \App\Models\Printable::orderBy('name')->get());
     }
 
     /**
@@ -140,6 +146,8 @@ class CategoriesController extends Controller
         $category = $request->handleImages($category);
 
         if ($category->save()) {
+            $category->printables()->sync($request->input('printable_ids', []));
+
             // Redirect to the new category page
             return redirect()->route('categories.index')->with('success', trans('admin/categories/message.update.success'));
         }

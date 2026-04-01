@@ -209,6 +209,28 @@ class BulkAssetsController extends Controller
                         ->with('statuslabel_list', Helper::statusLabelList())
                         ->with('models', $models->pluck(['model']))
                         ->with('modelNames', $modelNames);
+
+                case 'printables':
+                    $this->authorize('view', Asset::class);
+
+                    $printableId = $request->input('printable_id');
+                    if (! $printableId) {
+                        return redirect()->back()->with('error', trans('admin/printables/message.no_printable_selected'));
+                    }
+
+                    $printable = \App\Models\Printable::find($printableId);
+                    if (! $printable) {
+                        return redirect()->back()->with('error', trans('admin/printables/message.does_not_exist'));
+                    }
+
+                    $service  = new \App\Services\PrintableService;
+                    $rendered = $service->renderBulk($printable, $assets);
+
+                    return view('printables.bulk-generate', [
+                        'printable' => $printable,
+                        'assets'    => $assets,
+                        'rendered'  => $rendered,
+                    ]);
             }
         }
 

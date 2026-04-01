@@ -100,6 +100,10 @@ Route::group(
             [AssetsController::class, 'getLabel']
         )->name('label/hardware');
 
+        Route::get('{asset}/printables/{printable}',
+            [AssetsController::class, 'getPrintable']
+        )->name('hardware.printable.show');
+
         Route::get('{asset}/checkout', [AssetCheckoutController::class, 'create'])
             ->name('hardware.checkout.create')
             ->breadcrumbs(fn (Trail $trail, Asset $asset) =>

@@ -9,6 +9,7 @@ use App\Http\Controllers\BulkCategoriesController;
 use App\Http\Controllers\BulkManufacturersController;
 use App\Http\Controllers\BulkSuppliersController;
 use App\Http\Controllers\CategoriesController;
+use App\Http\Controllers\PrintablesController;
 use App\Http\Controllers\CompaniesController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepartmentsController;
@@ -51,6 +52,11 @@ Route::group(['middleware' => 'auth'], function () {
     ]);
 
     Route::post('categories/bulk/delete', [BulkCategoriesController::class, 'destroy'])->name('categories.bulk.delete');
+
+    /*
+    * Printables
+    */
+    Route::resource('printables', PrintablesController::class);
 
     /*
     * Labels
