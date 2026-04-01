@@ -17,7 +17,7 @@
                     aria-expanded="false"
                     data-tooltip="true"
                     title="{{ trans_choice('button.generate_printable', 1) }}">
-                <x-icon type="assets" class="fa-fw"/>
+                <x-icon type="print" class="fa-fw"/>
                 @if ($wide == 'true')
                     {{ trans_choice('button.generate_printable', 1) }}
                 @endif
