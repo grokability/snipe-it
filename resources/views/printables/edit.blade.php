@@ -89,15 +89,28 @@
                                 <div class="well well-sm" style="margin-bottom: 10px;">
                                     <strong>{{ trans('admin/printables/general.available_variables') }}</strong>
                                     <p class="help-block" style="margin-bottom: 8px;">{{ trans('admin/printables/general.variables_help') }}</p>
-                                    <div style="display: flex; flex-wrap: wrap; gap: 4px;">
+                                    <label for="variable-insert-select" class="sr-only">{{ trans('admin/printables/general.available_variables') }}</label>
+                                    <select id="variable-insert-select" class="form-control" data-placeholder="{{ trans('general.select') }} {{ trans('admin/printables/general.available_variables') }}">
+                                        <option value="">{{ trans('general.select') }} {{ trans('admin/printables/general.available_variables') }}</option>
                                         @foreach ($variables as $placeholder => $label)
-                                            <button type="button"
-                                                    class="btn btn-xs btn-default variable-btn"
-                                                    data-variable="{{ $placeholder }}"
-                                                    title="{{ $label }}">
-                                                <code>{{ $placeholder }}</code>
-                                            </button>
+                                            <option value="{{ $placeholder }}">{{ $placeholder }} - {{ $label }}</option>
                                         @endforeach
+                                    </select>
+                                    <p class="help-block" style="margin-top: 8px; margin-bottom: 0;">
+                                        Use <code>&#123;&#123; variable &#125;&#125;</code> for variables, <code>&#123;% if condition %&#125;</code> blocks for conditionals, and <code>??</code> for fallbacks.
+                                    </p>
+                                    <h5 id="printable_conditional_example" class="remember-toggle" style="margin-top: 8px; margin-bottom: 0;">
+                                        <x-icon type="caret-down" class="fa-fw" id="toggle-arrow-printable_conditional_example" />
+                                        Conditional example
+                                    </h5>
+                                    <div class="toggle-content-printable_conditional_example" style="margin-top: 6px; white-space: pre-wrap;">
+<code>&#123;% if checked_out_user.first_name %&#125;
+    Hello &#123;&#123; checked_out_user.first_name &#125;&#125;,
+&#123;% elseif assigned_to %&#125;
+    Hello &#123;&#123; assigned_to &#125;&#125;,
+&#123;% else %&#125;
+    Hello,
+&#123;% endif %&#125;</code>
                                     </div>
                                 </div>
 
@@ -139,18 +152,30 @@
     document.addEventListener('DOMContentLoaded', function () {
         var textarea = document.getElementById('content');
         var preview  = document.getElementById('printable-preview');
+        var variableSelect = document.getElementById('variable-insert-select');
 
         function updatePreview() {
-            preview.innerHTML = textarea.value || '<span class="text-muted">{{ trans("admin/printables/general.preview") }}</span>';
+            if (!textarea.value) {
+            preview.innerHTML = '<span class="text-muted">{{ trans("admin/printables/general.preview") }}</span>';
+            } else {
+                // Create borders around variables and conditionals for better visibility in the preview
+                var rendered = textarea.value.replace(/@{{\s*(\w+(\.\w+)*)\s*}}/g, function(match, variable) {
+                    return '<span style="background-color: #f0f0f0; border: 1px solid #ccc; padding: 2px 4px; font-size: 12px; font-family: monospace;">' + variable + '</span>';
+                }).replace(/{%\s*(if|elseif|else|endif)([^%]*)%}/g, function(match, directive, condition) {
+                    return '<span style="background-color: #e8f4ff; border: 1px solid #b3d7ff; padding: 2px 4px; font-size: 12px; font-family: monospace;">' + directive + condition + '</span>';
+                });
+                preview.innerHTML = rendered;
+            }
         }
 
         textarea.addEventListener('input', updatePreview);
         updatePreview();
 
-        // Variable insertion buttons
-        document.querySelectorAll('.variable-btn').forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                var variable = btn.getAttribute('data-variable');
+        function insertVariable(variable) {
+            if (!variable) {
+                return;
+            }
+
                 var start    = textarea.selectionStart;
                 var end      = textarea.selectionEnd;
                 var before   = textarea.value.substring(0, start);
@@ -159,8 +184,26 @@
                 textarea.selectionStart = textarea.selectionEnd = start + variable.length;
                 textarea.focus();
                 updatePreview();
+        }
+
+        if (window.jQuery && window.jQuery.fn && window.jQuery.fn.select2) {
+            var $select = window.jQuery(variableSelect);
+            $select.select2({
+                width: '100%',
+                placeholder: variableSelect.getAttribute('data-placeholder'),
+                allowClear: true
             });
-        });
+
+            $select.on('select2:select', function () {
+                insertVariable($select.val());
+                $select.val('').trigger('change.select2');
+            });
+        } else {
+            variableSelect.addEventListener('change', function () {
+                insertVariable(variableSelect.value);
+                variableSelect.value = '';
+            });
+        }
     });
 </script>
 @stop

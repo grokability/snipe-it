@@ -2,37 +2,44 @@
 
 namespace App\Services;
 
+use App\Helpers\Helper;
 use App\Models\Asset;
 use App\Models\CustomField;
 use App\Models\Printable;
+use App\Models\Statuslabel;
+use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Crypt;
 
 /**
  * Service class responsible for rendering Printable HTML templates.
  *
- * Variable substitution uses `{variable_name}` placeholders.
+ * Template rendering uses expression syntax with `{{ expression }}` and
+ * `{% if %}` blocks.
  *
  * Supported core variables:
- *   {asset_tag}, {asset_name}, {serial}, {notes}, {order_number},
- *   {purchase_date}, {purchase_cost}, {warranty_months},
- *   {model_name}, {model_number},
- *   {manufacturer_name},
- *   {category_name},
- *   {location_name}, {default_location_name},
- *   {company_name},
- *   {assigned_to},
- *   {status}
+ *   {{ asset_tag }}, {{ asset_name }}, {{ serial }}, {{ notes }}, {{ order_number }},
+ *   {{ purchase_date }}, {{ purchase_cost }}, {{ warranty_months }},
+ *   {{ model_name }}, {{ model_number }},
+ *   {{ manufacturer_name }},
+ *   {{ category_name }},
+ *   {{ location_name }}, {{ default_location_name }},
+ *   {{ company_name }},
+ *   {{ assigned_to }},
+ *   {{ status }}
  *
- * Custom fields are accessible via `{custom_field_SLUG}` where SLUG is the
- * database column name of the custom field (e.g. `{custom_field__snipeit_phone_number_1}`).
+ * Expression helpers include `current_date`, `current_datetime`, and
+ * `checked_out_user.first_name|last_name|email|full_name|display_name`.
+ *
+ * Custom fields are accessible via `{{ custom_field_SLUG }}` where SLUG is the
+ * database column name of the custom field (e.g. `{{ custom_field__snipeit_phone_number_1 }}`).
  */
 class PrintableService
 {
+    public function __construct(private ?PrintableTemplateRenderer $renderer = null) {}
+
     /**
      * Render a printable template for a single asset.
-     *
-     * @param  Printable  $printable  The template to render.
-     * @param  Asset       $asset      The asset whose data will be substituted.
-     * @return string                  Rendered HTML.
      */
     public function render(Printable $printable, Asset $asset): string
     {
@@ -47,12 +54,9 @@ class PrintableService
             'model.fieldset.fields',
         ]);
 
-        $variables = $this->buildVariableMap($asset);
+        $context = $this->buildTemplateContext($asset, $this->buildVariableMap($asset));
 
-        $keys   = array_map(fn (string $k): string => '{'.$k.'}', array_keys($variables));
-        $values = array_values($variables);
-
-        return str_replace($keys, $values, $printable->content);
+        return $this->renderer()->render($printable->content, $context);
     }
 
     /**
@@ -70,6 +74,49 @@ class PrintableService
         return $assets
             ->map(fn (Asset $asset): string => '<div class="printable-asset-page">'.$this->render($printable, $asset).'</div>')
             ->implode("\n");
+    }
+
+    private function renderer(): PrintableTemplateRenderer
+    {
+        return $this->renderer ??= new PrintableTemplateRenderer;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function buildTemplateContext(Asset $asset, array $legacyPlaceholders): array
+    {
+        return array_merge($legacyPlaceholders, [
+            'current_date' => Helper::getFormattedDateObject(Carbon::now(), 'date', false) ?? '',
+            'current_datetime' => Helper::getFormattedDateObject(Carbon::now(), 'datetime', false) ?? '',
+            'checked_out_user' => $this->buildCheckedOutUserContext($asset),
+        ]);
+    }
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    private function buildCheckedOutUserContext(Asset $asset): ?array
+    {
+        if ($asset->assignedType() !== Asset::USER) {
+            return null;
+        }
+
+        $assignedTo = $asset->assignedTo instanceof User
+            ? $asset->assignedTo
+            : User::withTrashed()->find($asset->assigned_to);
+
+        if (! $assignedTo instanceof User) {
+            return null;
+        }
+
+        return [
+            'first_name' => (string) ($assignedTo->first_name ?? ''),
+            'last_name' => (string) ($assignedTo->last_name ?? ''),
+            'email' => (string) ($assignedTo->email ?? ''),
+            'full_name' => (string) ($assignedTo->getFullNameAttribute() ?? ''),
+            'display_name' => (string) ($assignedTo->display_name ?? ''),
+        ];
     }
 
     /**
@@ -111,12 +158,10 @@ class PrintableService
             'company_name'         => (string) ($asset->company?->name ?? ''),
 
             // Assigned to
-            'assigned_to'          => $asset->assignedTo
-                ? (string) ($asset->assignedTo->display_name ?? '')
-                : '',
+            'assigned_to'          => $this->resolveAssignedToName($asset),
 
             // Status
-            'status'               => (string) ($asset->assetstatus?->name ?? ''),
+            'status'               => $this->resolveStatusName($asset),
         ];
 
         // Custom fields
@@ -128,7 +173,7 @@ class PrintableService
 
                 if ($field->field_encrypted && $value) {
                     try {
-                        $value = \Illuminate\Support\Facades\Crypt::decrypt($value);
+                        $value = Crypt::decrypt($value);
                     } catch (\Exception) {
                         $value = '';
                     }
@@ -139,6 +184,34 @@ class PrintableService
         }
 
         return $map;
+    }
+
+    private function resolveAssignedToName(Asset $asset): string
+    {
+        if ($asset->assignedType() !== Asset::USER) {
+            return '';
+        }
+
+        $assignedTo = $asset->assignedTo instanceof User
+            ? $asset->assignedTo
+            : User::withTrashed()->find($asset->assigned_to);
+
+        if (! $assignedTo instanceof User) {
+            return '';
+        }
+
+        $fullName = $assignedTo->getFullNameAttribute();
+
+        return (string) ($fullName !== '' ? $fullName : ($assignedTo->display_name ?? ''));
+    }
+
+    private function resolveStatusName(Asset $asset): string
+    {
+        $status = $asset->assetstatus instanceof Statuslabel
+            ? $asset->assetstatus
+            : Statuslabel::find($asset->status_id);
+
+        return (string) ($status->name ?? '');
     }
 
     /**
@@ -152,28 +225,33 @@ class PrintableService
     public static function availableVariables(\Illuminate\Support\Collection $customFields): array
     {
         $vars = [
-            '{asset_tag}'             => trans('admin/hardware/form.tag'),
-            '{asset_name}'            => trans('admin/hardware/form.name'),
-            '{serial}'                => trans('admin/hardware/form.serial'),
-            '{notes}'                 => trans('general.notes'),
-            '{order_number}'          => trans('general.order_number'),
-            '{purchase_date}'         => trans('general.purchase_date'),
-            '{purchase_cost}'         => trans('general.purchase_cost'),
-            '{warranty_months}'       => trans('admin/hardware/form.warranty'),
-            '{model_name}'            => trans('general.asset_model'),
-            '{model_number}'          => trans('general.model_no'),
-            '{manufacturer_name}'     => trans('general.manufacturer'),
-            '{category_name}'         => trans('general.category'),
-            '{location_name}'         => trans('general.location'),
-            '{default_location_name}' => trans('admin/hardware/form.default_location'),
-            '{company_name}'          => trans('general.company'),
-            '{assigned_to}'           => trans('general.assigned_to'),
-            '{status}'                => trans('general.status'),
+            '{{ current_date }}'      => trans('general.date').' (localized current date)',
+            '{{ current_datetime }}'  => trans('general.date').' / '.trans('general.time').' (localized current datetime)',
+            '{{ checked_out_user.first_name }}' => trans('general.first_name'),
+            '{{ checked_out_user.last_name }}'  => trans('general.last_name'),
+            '{{ checked_out_user.email }}'      => trans('general.email'),
+            '{{ asset_tag }}'             => trans('admin/hardware/form.tag'),
+            '{{ asset_name }}'            => trans('admin/hardware/form.name'),
+            '{{ serial }}'                => trans('admin/hardware/form.serial'),
+            '{{ notes }}'                 => trans('general.notes'),
+            '{{ order_number }}'          => trans('general.order_number'),
+            '{{ purchase_date }}'         => trans('general.purchase_date'),
+            '{{ purchase_cost }}'         => trans('general.purchase_cost'),
+            '{{ warranty_months }}'       => trans('admin/hardware/form.warranty'),
+            '{{ model_name }}'            => trans('general.asset_model'),
+            '{{ model_number }}'          => trans('general.model_no'),
+            '{{ manufacturer_name }}'     => trans('general.manufacturer'),
+            '{{ category_name }}'         => trans('general.category'),
+            '{{ location_name }}'         => trans('general.location'),
+            '{{ default_location_name }}' => trans('admin/hardware/form.default_location'),
+            '{{ company_name }}'          => trans('general.company'),
+            '{{ assigned_to }}'           => trans('general.assigned_to'),
+            '{{ status }}'                => trans('general.status'),
         ];
 
         foreach ($customFields as $field) {
             /** @var CustomField $field */
-            $vars['{custom_field_'.$field->db_column_name().'}'] = $field->name;
+            $vars['{{ custom_field_'.$field->db_column_name().' }}'] = $field->name;
         }
 
         return $vars;

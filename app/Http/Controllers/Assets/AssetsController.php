@@ -18,6 +18,7 @@ use App\Models\Setting;
 use App\Models\Statuslabel;
 use App\Models\User;
 use App\Observers\AssetObserver;
+use App\Services\PrintableService;
 use App\View\Label;
 use Carbon\Carbon;
 use Com\Tecnick\Barcode\Barcode;
@@ -48,7 +49,7 @@ class AssetsController extends Controller
 
     protected $barCodeDimensions = ['height' => 2, 'width' => 22];
 
-    public function __construct()
+    public function __construct(private readonly PrintableService $printableService)
     {
         $this->middleware('auth');
         parent::__construct();
@@ -1115,8 +1116,7 @@ class AssetsController extends Controller
                 ->with('error', trans('admin/printables/message.not_associated'));
         }
 
-        $service     = new \App\Services\PrintableService;
-        $rendered    = $service->render($printable, $asset);
+        $rendered = $this->printableService->render($printable, $asset);
 
         return view('printables.show', [
             'asset'     => $asset,
