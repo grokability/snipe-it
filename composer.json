@@ -58,7 +58,6 @@
     "onnov/detect-encoding": "^2.0",
     "osa-eg/laravel-teams-notification": "^2.1",
     "paragonie/constant_time_encoding": "^2.3",
-    "paragonie/sodium_compat": "^1.19",
     "phpdocumentor/reflection-docblock": "^5.1",
     "phpspec/prophecy": "^1.10",
     "pragmarx/google2fa-laravel": "^1.3",
