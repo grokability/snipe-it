@@ -322,6 +322,7 @@
                                         :options="[
                                                    'hardware_id'=> config('app.url').'/hardware/{id} ('.trans('admin/settings/general.default').')',
                                                    'ht_tag'=> config('app.url').'/ht/{asset_tag}',
+                                                   'mailto' => trans('admin/settings/general.mailto_option'),
                                                    'location' => config('app.url').'/locations/{location_id}',
                                                    'plain_asset_id'=> trans('admin/settings/general.asset_id'),
                                                    'plain_asset_tag'=> trans('general.asset_tag'),

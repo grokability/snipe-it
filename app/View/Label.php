@@ -172,17 +172,30 @@ class Label implements View
                                     ? route('locations.show', $asset->location_id)
                                     : null;
                                 break;
-                            case 'hardware_id':
-                            default:
-                                $barcode2DTarget = route('hardware.show', $asset);
+			                case 'mailto':                                
+                                $companyEmail = $asset->company->email ?? env('MAIL_FROM_ADDR');
+                                if (empty($companyEmail)) {
+                                    $barcode2DTarget = null;
+                                    break;
+                                }
+                                $subjectText = trans('admin/settings/general.mailto_subject', [
+                                    'asset_tag' => $asset->asset_tag,
+                                ]);
+							
+                                $subject = rawurlencode($subjectText);
+                                $barcode2DTarget = "mailto:{$companyEmail}?subject={$subject}";
                                 break;
+                            case 'hardware_id':
+                                default:
+                                    $barcode2DTarget = route('hardware.show', $asset);
+                                    break;
+                                }
+                                    $assetData->put('barcode2d', (object)[
+                                    'type' => $barcode2DType,
+                                    'content' => $barcode2DTarget,
+                                    ]);
+                                }
                             }
-                            $assetData->put('barcode2d', (object)[
-                                'type' => $barcode2DType,
-                                'content' => $barcode2DTarget,
-                            ]);
-                        }
-                    }
 
                 $fields = $fieldDefinitions
                     ->map(fn($field) => $field->toArray($asset))
