@@ -92,6 +92,10 @@ class AssetCheckoutController extends Controller
                 $checkout_at = $request->input('checkout_at');
             }
 
+            if (is_null($asset->first_checkout_at)){
+                $asset->first_checkout_at = $checkout_at;
+            }
+
             $expected_checkin = '';
             if ($request->filled('expected_checkin')) {
                 $expected_checkin = $request->input('expected_checkin');

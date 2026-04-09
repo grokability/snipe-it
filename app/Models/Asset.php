@@ -96,6 +96,7 @@ class Asset extends Depreciable
         'last_checkout' => 'datetime',
         'last_checkin' => 'datetime',
         'expected_checkin' => 'datetime:m-d-Y',
+        'first_checkout_at' => 'datetime:m-d-Y',
         'last_audit_date' => 'datetime',
         'next_audit_date' => 'datetime:m-d-Y',
         'model_id' => 'integer',
@@ -1302,7 +1303,13 @@ class Asset extends Depreciable
             set: fn ($value) => $value ? Carbon::parse($value)->format('Y-m-d H:i:s') : null,
         );
     }
-
+    protected function firstCheckoutAt(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => $value ? Carbon::parse($value) : null,
+            set: fn ($value) => $value ? Carbon::parse($value) : null,
+        );
+    }
     protected function assetEolDate(): Attribute
     {
         return Attribute::make(
