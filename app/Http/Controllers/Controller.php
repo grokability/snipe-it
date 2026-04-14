@@ -58,18 +58,18 @@ abstract class Controller extends BaseController
     ];
 
     static $map_storage_path = [
-        'accessories' => 'private_uploads/accessories/',
-        'maintenances' => 'private_uploads/maintenances/',
-        'assets' => 'private_uploads/assets/',
-        'audits' => 'private_uploads/audits/',
-        'components' => 'private_uploads/components/',
-        'consumables' => 'private_uploads/consumables/',
-        'hardware' => 'private_uploads/assets/',
-        'licenses' => 'private_uploads/licenses/',
-        'locations' => 'private_uploads/locations/',
-        'models' => 'private_uploads/models/',
-        'suppliers' => 'private_uploads/suppliers/',
-        'users' => 'private_uploads/users/',
+        'accessories' => 'private_uploads/accessories',
+        'maintenances' => 'private_uploads/maintenances',
+        'assets' => 'private_uploads/assets',
+        'audits' => 'private_uploads/audits',
+        'components' => 'private_uploads/components',
+        'consumables' => 'private_uploads/consumables',
+        'hardware' => 'private_uploads/assets',
+        'licenses' => 'private_uploads/licenses',
+        'locations' => 'private_uploads/locations',
+        'models' => 'private_uploads/models',
+        'suppliers' => 'private_uploads/suppliers',
+        'users' => 'private_uploads/users',
     ];
 
     static $map_file_prefix= [
