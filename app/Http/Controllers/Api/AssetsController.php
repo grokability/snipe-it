@@ -154,6 +154,23 @@ class AssetsController extends Controller
         }
 
         $assets = Asset::select('assets.*')
+            ->selectSub(
+                Actionlog::query()
+                    ->selectRaw('count(*)')
+                    ->whereColumn('action_logs.item_id', 'assets.id')
+                    ->where('action_logs.item_type', Asset::class)
+                    ->where('action_logs.action_type', 'uploaded')
+                    ->whereNotNull('action_logs.filename')
+                    ->whereNotExists(function ($query) {
+                        $query->selectRaw('1')
+                            ->from('action_logs as deleted_uploads')
+                            ->whereColumn('deleted_uploads.item_id', 'action_logs.item_id')
+                            ->whereColumn('deleted_uploads.filename', 'action_logs.filename')
+                            ->where('deleted_uploads.item_type', Asset::class)
+                            ->where('deleted_uploads.action_type', 'upload deleted');
+                    }),
+                'asset_file_count'
+            )
 //            ->addSelect([
 //                'first_checkout_at' => Actionlog::query()
 //                    ->select('created_at')
@@ -163,7 +180,6 @@ class AssetsController extends Controller
 //                    ->orderBy('created_at')
 //                    ->limit(1),
 //            ])
-            ->withCount('uploads as asset_file_count')
             ->with(
                 'model',
                 'location',
