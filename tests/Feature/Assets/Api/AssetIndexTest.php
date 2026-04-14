@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Assets\Api;
 
+use App\Models\Actionlog;
 use App\Models\Asset;
 use App\Models\Company;
 use App\Models\User;
@@ -199,5 +200,46 @@ class AssetIndexTest extends TestCase
                 'rows',
             ])
             ->assertJson(fn(AssertableJson $json) => $json->has('rows', 3)->etc());
+    }
+
+    public function testAssetApiIndexReturnsAssetFileCount()
+    {
+        $assetWithFiles = Asset::factory()->create();
+        $assetWithoutFiles = Asset::factory()->create();
+
+        Actionlog::factory()->create([
+            'item_id' => $assetWithFiles->id,
+            'item_type' => Asset::class,
+            'action_type' => 'uploaded',
+            'filename' => 'asset-file-a.txt',
+        ]);
+
+        Actionlog::factory()->create([
+            'item_id' => $assetWithFiles->id,
+            'item_type' => Asset::class,
+            'action_type' => 'uploaded',
+            'filename' => 'asset-file-b.txt',
+        ]);
+
+        Actionlog::factory()->create([
+            'item_id' => $assetWithFiles->id,
+            'item_type' => Asset::class,
+            'action_type' => 'upload deleted',
+            'filename' => 'asset-file-b.txt',
+        ]);
+
+        $response = $this->actingAsForApi(User::factory()->superuser()->create())
+            ->getJson(route('api.assets.index', [
+                'sort' => 'id',
+                'order' => 'asc',
+                'offset' => '0',
+                'limit' => '20',
+            ]))
+            ->assertOk();
+
+        $rows = collect($response->json('rows'))->keyBy('id');
+
+        $this->assertSame(1, $rows[$assetWithFiles->id]['asset_file_count']);
+        $this->assertSame(0, $rows[$assetWithoutFiles->id]['asset_file_count']);
     }
 }

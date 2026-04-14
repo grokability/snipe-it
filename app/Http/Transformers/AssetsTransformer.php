@@ -113,6 +113,7 @@ class AssetsTransformer
             'checkin_counter' => (int) $asset->checkin_counter,
             'checkout_counter' => (int) $asset->checkout_counter,
             'requests_counter' => (int) $asset->requests_counter,
+            'asset_file_count' => (int) ($asset->asset_file_count ?? $asset->uploads()->count()),
             'user_can_checkout' => (bool) $asset->availableForCheckout(),
             'book_value' => Helper::formatCurrencyOutput($asset->getDepreciatedValue()),
         ];
