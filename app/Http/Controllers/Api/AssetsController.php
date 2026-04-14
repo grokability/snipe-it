@@ -163,6 +163,7 @@ class AssetsController extends Controller
 //                    ->orderBy('created_at')
 //                    ->limit(1),
 //            ])
+            ->withCount('uploads as asset_file_count')
             ->with(
                 'model',
                 'location',
