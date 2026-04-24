@@ -3,22 +3,22 @@
 return [
 
     'disabled_assoc' => [
-        'accessory' => 'This accessory cannot be deleted because it still has items, users, or locations associated with it',
-        'asset' => 'This asset cannot be deleted because it still has items associated with it',
-        'category' => 'This category cannot be deleted because it still has items associated with it',
-        'company' => 'This company cannot be deleted because it still has items or users associated with it',
-        'component' => 'This component cannot be deleted because it still has items associated with it',
-        'custom_field' => 'This custom field cannot be deleted because it is still associated with at least one fieldset',
-        'department' => 'This department cannot be deleted because it still has users associated with it',
-        'location' => 'This location cannot be deleted because it still has items or users associated with it',
-        'manufacturer' => 'This manufacturer cannot be deleted because it still has items associated with it',
-        'supplier' => 'This supplier cannot be deleted because it still has items associated with it',
-        'user' => 'This user cannot be deleted because it still has items associated with it',
-        'user_self' => 'You cannot delete yourself',
+        'accessory' => 'Este acessório não pode ser excluído porque ainda tem itens, usuários ou locais associados a ele',
+        'asset' => 'Este ativo não pode ser excluído porque ainda tem itens associados a ele',
+        'category' => 'Esta categoria não pode ser excluída porque ainda tem itens associados a ela',
+        'company' => 'Esta empresa não pode ser excluída porque ainda tem itens ou usuários associados a ela',
+        'component' => 'Este componente não pode ser excluído porque ainda tem itens associados a ele',
+        'custom_field' => 'Este campo personalizado não pode ser excluído porque ainda está associado a pelo menos um fieldset',
+        'department' => 'Este departamento não pode ser excluído porque ainda tem usuários associados a ele',
+        'location' => 'Este local não pode ser excluído porque ainda tem itens ou usuários associados a ele',
+        'manufacturer' => 'Este fabricante não pode ser excluído porque ainda tem itens associados a ele',
+        'supplier' => 'Este fornecedor não pode ser excluído porque ainda tem itens associados a ele',
+        'user' => 'Este usuário não pode ser excluído porque ainda tem itens associados a ele',
+        'user_self' => 'Você não pode se excluir',
     ],
 
     'checkin_all' => [
-        'user' => 'Checkin all items for this user and optionally delete them. You will be able to confirm this on the next page.',
+        'user' => 'Devolver todos os itens para este usuário e, opcionalmente, excluí-los. Você poderá confirmar isso na próxima página.',
     ],
 
 ];
