@@ -685,7 +685,7 @@ class UsersController extends Controller
     {
         $this->authorize('view', User::class);
 
-        $user = User::find($id);
+        $user = User::withInventoryRelations($id)->first();
 
         // Make sure they can view this particular user
         $this->authorize('view', $user);

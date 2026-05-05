@@ -231,8 +231,9 @@ class ProfileController extends Controller
      */
     public function emailAssetList(): RedirectResponse
     {
+        $user = User::withInventoryRelations(auth()->id())->first();
 
-        if (! $user = User::find(auth()->id())) {
+        if (!$user) {
             return redirect()->back()
                 ->with('error', trans('admin/users/message.user_not_found', ['id' => auth()->id()]));
         }

@@ -688,6 +688,10 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
         return $this->belongsToMany(License::class, 'license_seats', 'assigned_to', 'license_id')->withPivot('id', 'created_at', 'updated_at');
     }
 
+    public function directLicenses()
+    {
+        return $this->belongsToMany(\App\Models\License::class, 'license_seats', 'assigned_to', 'license_id')->withPivot('id', 'created_at', 'updated_at')->wherePivotNull('asset_id')->withTrashed();
+    }
     /**
      * Establishes the user -> reportTemplates relationship
      */
@@ -1350,6 +1354,47 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
             ->orWhere('users.display_name', 'LIKE', '%'.$search.'%')
             ->orwhereRaw('CONCAT(users.first_name," ",users.last_name) LIKE \''.$search.'%\'');
 
+    }
+    public function scopeWithInventoryRelations($query, int $id)
+    {
+        return $query->where('id', $id)
+            ->with([
+                'assets.log' => fn ($query) => $query->withTrashed()
+                    ->where('target_type', User::class)
+                    ->where('target_id', $id)
+                    ->where('action_type', 'accepted'),
+                'assets.defaultLoc',
+                'assets.location',
+                'assets.model.category',
+                'assets.assignedAssets.log' => fn ($query) => $query->withTrashed()
+                    ->where('target_type', User::class)
+                    ->where('target_id', $id)
+                    ->where('action_type', 'accepted'),
+                'assets.assignedAssets.assignedTo',
+                'assets.assignedAssets.defaultLoc',
+                'assets.assignedAssets.location',
+                'assets.assignedAssets.model.category',
+                'assets.components.category',
+                'assets.licenses',
+                'assets.licenses.category',
+                'assets.assignedAccessories',
+                'assets.assignedAccessories.accessory.category',
+                'accessories.log' => fn ($query) => $query->withTrashed()
+                    ->where('target_type', User::class)
+                    ->where('target_id', $id)
+                    ->where('action_type', 'accepted'),
+                'accessories.category',
+                'accessories.manufacturer',
+                'consumables.log' => fn ($query) => $query->withTrashed()
+                    ->where('target_type', User::class)
+                    ->where('target_id', $id)
+                    ->where('action_type', 'accepted'),
+                'consumables.category',
+                'consumables.manufacturer',
+                'directLicenses.category',
+                'licenses.category',
+            ])
+            ->withTrashed();
     }
 
     /**
