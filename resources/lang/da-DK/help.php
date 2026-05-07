@@ -23,13 +23,13 @@ return [
 
     'accessories' => 'Tilbehør er alt du udleverer til brugere men som ikke har et serienummer (eller som du er ligeglad med følge præcist). For eksempel, computermus eller tastaturer.',
 
-    'companies'     => 'Virksomheder kan bruges som et simpelt id-felt, eller kan bruges til at begrænse synligheden af aktiver, brugere osv, hvis fuld virksomhedssupport er aktiveret i dine Admin-indstillinger.',
+    'companies' => 'Virksomheder kan bruges som et simpelt id-felt, eller kan bruges til at begrænse synligheden af aktiver, brugere osv, hvis fuld virksomhedssupport er aktiveret i dine Admin-indstillinger.',
 
-    'components'    => 'Komponenter er elementer, der er en del af et aktiv, for eksempel HDD, RAM osv.',
+    'components' => 'Komponenter er elementer, der er en del af et aktiv, for eksempel HDD, RAM osv.',
 
-    'consumables'   => 'Forbrugsvarer er noget der købes og bruges op over tid. For eksempel printer blæk eller kopimaskine papir.',
+    'consumables' => 'Forbrugsvarer er noget der købes og bruges op over tid. For eksempel printer blæk eller kopimaskine papir.',
 
     'depreciations' => 'Du kan sætte aktivafskrivninger til at afskrive aktiver som lineære afskrivninger.',
-    
-    'empty_file'    => 'Importøren registrerer, at denne fil er tom.'
+
+    'empty_file' => 'Importøren registrerer, at denne fil er tom.',
 ];

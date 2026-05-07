@@ -5,10 +5,10 @@ namespace App\Console\Commands;
 use App\Models\Asset;
 use App\Models\CustomField;
 use App\Models\Setting;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Encryption\Encrypter;
+use Illuminate\Support\Facades\Artisan;
 
 class RotateAppKey extends Command
 {
@@ -46,12 +46,13 @@ class RotateAppKey extends Command
      */
     public function handle()
     {
-        //make sure they specify only exactly one of --emergency, or a filename. Not neither, and not both.
-        if ( (!$this->option('emergency') && !$this->argument('previous_key')) || ( $this->option('emergency') && $this->argument('previous_key'))) {
-            $this->error("Specify only one of --emergency, or an app key value, in order to rotate keys");
+        // make sure they specify only exactly one of --emergency, or a filename. Not neither, and not both.
+        if ((! $this->option('emergency') && ! $this->argument('previous_key')) || ($this->option('emergency') && $this->argument('previous_key'))) {
+            $this->error('Specify only one of --emergency, or an app key value, in order to rotate keys');
+
             return 1;
         }
-        if ( $this->option('emergency') ) {
+        if ($this->option('emergency')) {
             $msg = "\n****************************************************\nTHIS WILL MODIFY YOUR APP_KEY AND DE-CRYPT YOUR ENCRYPTED CUSTOM FIELDS AND \nRE-ENCRYPT THEM WITH A NEWLY GENERATED KEY. \n\nThere is NO undo. \n\nMake SURE you have a database backup and a backup of your .env generated BEFORE running this command. \n\nIf you do not save the newly generated APP_KEY to your .env in this process, \nyour encrypted data will no longer be decryptable. \n\nAre you SURE you wish to continue, and have confirmed you have a database backup and an .env backup? ";
         } else {
             $msg = "\n****************************************************\nTHIS WILL DE-CRYPT YOUR ENCRYPTED CUSTOM FIELDS AND RE-ENCRYPT THEM WITH YOUR\nAPP_KEY.\n\nThere is NO undo. \n\nMake SURE you have a database backup BEFORE running this command. \n\nAre you SURE you wish to continue, and have confirmed you have a database backup? ";
@@ -79,9 +80,9 @@ class RotateAppKey extends Command
                 $new_app_key = config('app.key');
             }
 
-            $this->warn('Your app cipher is: ' . $cipher);
-            $this->warn('Your old APP_KEY is: ' . $old_app_key);
-            $this->warn('Your new APP_KEY is: ' . $new_app_key);
+            $this->warn('Your app cipher is: '.$cipher);
+            $this->warn('Your old APP_KEY is: '.$old_app_key);
+            $this->warn('Your new APP_KEY is: '.$new_app_key);
 
             // Manually create an old encrypter instance using the old app key
             // and also create a new encrypter instance so we can re-crypt the field
@@ -97,12 +98,13 @@ class RotateAppKey extends Command
                 foreach ($assets as $asset) {
                     try {
                         $asset->{$field->db_column} = $oldEncrypter->decrypt($asset->{$field->db_column});
-                        $this->line('DECRYPTED: ' . $field->db_column);
+                        $this->line('DECRYPTED: '.$field->db_column);
                     } catch (DecryptException $e) {
-                        $this->line('Could not decrypt '. $field->db_column.' using "old key" - skipping...');
+                        $this->line('Could not decrypt '.$field->db_column.' using "old key" - skipping...');
+
                         continue;
                     } catch (\Exception $e) {
-                        $this->error("Error decrypting ".$field->db_column.", reason: ".$e->getMessage().". Aborting key rotation");
+                        $this->error('Error decrypting '.$field->db_column.', reason: '.$e->getMessage().'. Aborting key rotation');
                         throw $e;
                     }
                     $asset->{$field->db_column} = $newEncrypter->encrypt($asset->{$field->db_column});
@@ -119,8 +121,8 @@ class RotateAppKey extends Command
                     $setting->ldap_pword = $newEncrypter->encrypt($setting->ldap_pword);
                     $setting->save();
                     $this->warn('LDAP password has been re-encrypted.');
-                } catch(DecryptException $e) {
-                    $this->warn("Unable to decrypt old LDAP password; skipping");
+                } catch (DecryptException $e) {
+                    $this->warn('Unable to decrypt old LDAP password; skipping');
                 }
             }
         } else {

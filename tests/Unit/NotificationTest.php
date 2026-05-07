@@ -1,33 +1,34 @@
 <?php
+
 namespace Tests\Unit;
 
 use App\Mail\CheckoutAssetMail;
-use App\Models\User;
 use App\Models\Asset;
 use App\Models\AssetModel;
 use App\Models\Category;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class NotificationTest extends TestCase
 {
-    public function testAUserIsEmailedIfTheyCheckoutAnAssetWithEULA()
+    public function test_a_user_is_emailed_if_they_checkout_an_asset_with_eula()
     {
         $admin = User::factory()->superuser()->create();
         $user = User::factory()->create();
         $asset = Asset::factory()
-        ->create(
-            [
-                'model_id' => AssetModel::factory()
-                    ->create(
-                        [
-                            'category_id' => Category::factory()->assetLaptopCategory()->create()->id
-                        ]
-                )->id,
-                'warranty_months' => 24,
-                'purchase_date' =>   Carbon::createFromDate(2017, 1, 1)->hour(0)->minute(0)->second(0)->format('Y-m-d')
-            ]);
+            ->create(
+                [
+                    'model_id' => AssetModel::factory()
+                        ->create(
+                            [
+                                'category_id' => Category::factory()->assetLaptopCategory()->create()->id,
+                            ]
+                        )->id,
+                    'warranty_months' => 24,
+                    'purchase_date' => Carbon::createFromDate(2017, 1, 1)->hour(0)->minute(0)->second(0)->format('Y-m-d'),
+                ]);
 
         Mail::fake();
         $asset->checkOut($user, $admin->id);
@@ -35,7 +36,8 @@ class NotificationTest extends TestCase
             return $mail->hasTo($user->email) && $mail->hasSubject(trans('mail.Asset_Checkout_Notification', ['tag' => $asset->asset_tag]));
         });
     }
-    public function testDefaultEulaIsSentWhenSetInCategory()
+
+    public function test_default_eula_is_sent_when_set_in_category()
     {
         Mail::fake();
 
@@ -56,7 +58,7 @@ class NotificationTest extends TestCase
         Mail::assertSent(CheckoutAssetMail::class, function ($mail) use ($user) {
             return $mail->hasTo($user->email) &&
                 str_contains($mail->render(), 'My Custom EULA Text') &&
-                !str_contains($mail->render(), 'EULA Text that should not be used');
+                ! str_contains($mail->render(), 'EULA Text that should not be used');
         });
     }
 }

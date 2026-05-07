@@ -2,9 +2,6 @@
 
 namespace Tests\Feature\Checkouts\Api;
 
-use Illuminate\Support\Facades\Mail;
-use Notification;
-use PHPUnit\Framework\Attributes\DataProvider;
 use App\Events\CheckoutableCheckedOut;
 use App\Models\Asset;
 use App\Models\Location;
@@ -12,6 +9,8 @@ use App\Models\Statuslabel;
 use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
+use Notification;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class AssetCheckoutTest extends TestCase
@@ -23,7 +22,7 @@ class AssetCheckoutTest extends TestCase
         Event::fake([CheckoutableCheckedOut::class]);
     }
 
-    public function testCheckoutRequest()
+    public function test_checkout_request()
     {
         Notification::fake();
         $requestable = Asset::factory()->requestable()->create();
@@ -37,11 +36,11 @@ class AssetCheckoutTest extends TestCase
             ->post(route('api.assets.requests.store', $nonRequestable->id))
             ->assertStatusMessageIs('error');
 
-        $this->assertHasTheseActionLogs($requestable, ['create', 'requested', 'update']); //FIXME - is this right?!
+        $this->assertHasTheseActionLogs($requestable, ['create', 'requested', 'update']); // FIXME - is this right?!
 
     }
 
-    public function testCheckingOutAssetRequiresCorrectPermission()
+    public function test_checking_out_asset_requires_correct_permission()
     {
         $this->actingAsForApi(User::factory()->create())
             ->postJson(route('api.asset.checkout', Asset::factory()->create()), [
@@ -51,7 +50,7 @@ class AssetCheckoutTest extends TestCase
             ->assertForbidden();
     }
 
-    public function testNonExistentAssetCannotBeCheckedOut()
+    public function test_non_existent_asset_cannot_be_checked_out()
     {
         $this->actingAsForApi(User::factory()->checkoutAssets()->create())
             ->postJson(route('api.asset.checkout', 1000), [
@@ -61,7 +60,7 @@ class AssetCheckoutTest extends TestCase
             ->assertStatusMessageIs('error');
     }
 
-    public function testAssetNotAvailableForCheckoutCannotBeCheckedOut()
+    public function test_asset_not_available_for_checkout_cannot_be_checked_out()
     {
         $assetAlreadyCheckedOut = Asset::factory()->assignedToUser()->create();
 
@@ -73,7 +72,7 @@ class AssetCheckoutTest extends TestCase
             ->assertStatusMessageIs('error');
     }
 
-    public function testAssetCannotBeCheckedOutToItself()
+    public function test_asset_cannot_be_checked_out_to_itself()
     {
         $asset = Asset::factory()->create();
 
@@ -85,7 +84,7 @@ class AssetCheckoutTest extends TestCase
             ->assertStatusMessageIs('error');
     }
 
-    public function testValidationWhenCheckingOutAsset()
+    public function test_validation_when_checking_out_asset()
     {
         $this->actingAsForApi(User::factory()->checkoutAssets()->create())
             ->postJson(route('api.asset.checkout', Asset::factory()->create()), [])
@@ -94,7 +93,7 @@ class AssetCheckoutTest extends TestCase
         Event::assertNotDispatched(CheckoutableCheckedOut::class);
     }
 
-    public function testCannotCheckoutAcrossCompaniesWhenFullCompanySupportEnabled()
+    public function test_cannot_checkout_across_companies_when_full_company_support_enabled()
     {
         $this->markTestIncomplete('This is not implemented');
     }
@@ -116,7 +115,7 @@ class AssetCheckoutTest extends TestCase
                         'target' => $user,
                         'expected_location' => $userLocation,
                     ];
-                }
+                },
             ],
             'Checkout to User without location set' => [
                 function () {
@@ -128,7 +127,7 @@ class AssetCheckoutTest extends TestCase
                         'target' => $user,
                         'expected_location' => null,
                     ];
-                }
+                },
             ],
             'Checkout to Asset with location set' => [
                 function () {
@@ -141,7 +140,7 @@ class AssetCheckoutTest extends TestCase
                         'target' => $asset,
                         'expected_location' => $location,
                     ];
-                }
+                },
             ],
             'Checkout to Asset without location set' => [
                 function () {
@@ -153,7 +152,7 @@ class AssetCheckoutTest extends TestCase
                         'target' => $asset,
                         'expected_location' => null,
                     ];
-                }
+                },
             ],
             'Checkout to Location' => [
                 function () {
@@ -164,13 +163,13 @@ class AssetCheckoutTest extends TestCase
                         'target' => $location,
                         'expected_location' => $location,
                     ];
-                }
+                },
             ],
         ];
     }
 
     #[DataProvider('checkoutTargets')]
-    public function testAssetCanBeCheckedOut($data)
+    public function test_asset_can_be_checked_out($data)
     {
         ['checkout_type' => $type, 'target' => $target, 'expected_location' => $expectedLocation] = $data();
 
@@ -193,7 +192,7 @@ class AssetCheckoutTest extends TestCase
         $asset->refresh();
         $this->assertTrue($asset->assignedTo()->is($target));
         $this->assertEquals('Changed Name', $asset->name);
-        $this->assertTrue($asset->assetstatus->is($newStatus));
+        $this->assertTrue($asset->status->is($newStatus));
         $this->assertEquals('2024-04-01 00:00:00', $asset->last_checkout);
         $this->assertEquals('2024-04-08 00:00:00', (string) $asset->expected_checkin);
 
@@ -212,12 +211,12 @@ class AssetCheckoutTest extends TestCase
         });
     }
 
-    public function testLicenseSeatsAreAssignedToUserUponCheckout()
+    public function test_license_seats_are_assigned_to_user_upon_checkout()
     {
         $this->markTestIncomplete('This is not implemented');
     }
 
-    public function testLastCheckoutUsesCurrentDateIfNotProvided()
+    public function test_last_checkout_uses_current_date_if_not_provided()
     {
         $asset = Asset::factory()->create(['last_checkout' => now()->subMonth()]);
 
@@ -230,5 +229,36 @@ class AssetCheckoutTest extends TestCase
         $asset->refresh();
 
         $this->assertTrue((int) Carbon::parse($asset->last_checkout)->diffInSeconds(now(), true) < 2);
+    }
+
+    public function test_api_checkout_can_update_requestable_when_field_is_passed()
+    {
+        $asset = Asset::factory()->create(['requestable' => 1]);
+        $targetUser = User::factory()->create();
+
+        $this->actingAsForApi(User::factory()->checkoutAssets()->create())
+            ->postJson(route('api.asset.checkout', $asset), [
+                'checkout_to_type' => 'user',
+                'assigned_user' => $targetUser->id,
+                'requestable' => 0,
+            ])
+            ->assertStatusMessageIs('success');
+
+        $this->assertFalse((bool) $asset->fresh()->requestable);
+    }
+
+    public function test_api_checkout_leaves_requestable_unchanged_when_field_is_omitted()
+    {
+        $asset = Asset::factory()->create(['requestable' => 1]);
+        $targetUser = User::factory()->create();
+
+        $this->actingAsForApi(User::factory()->checkoutAssets()->create())
+            ->postJson(route('api.asset.checkout', $asset), [
+                'checkout_to_type' => 'user',
+                'assigned_user' => $targetUser->id,
+            ])
+            ->assertStatusMessageIs('success');
+
+        $this->assertTrue((bool) $asset->fresh()->requestable);
     }
 }

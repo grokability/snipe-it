@@ -7,48 +7,41 @@
 @stop
 
 @section('header_right')
-    <a href="{{ route('groups.edit', ['group' => $group->id]) }}" class="btn btn-primary text-right">{{ trans('admin/groups/titles.update') }} </a>
-@stop
-
+    <x-button.info-panel-toggle/>
+@endsection
 
 {{-- Page content --}}
 @section('content')
     <x-container columns="2">
-        <x-page-column class="col-md-9">
+
+    <x-page-column class="col-md-9 main-panel">
             <x-box>
-
-
-
-                                <table
-                                    data-columns="{{  \App\Presenters\UserPresenter::dataTableLayout() }}"
-                                    data-cookie-id-table="groupsUsersTable"
-                                    data-side-pagination="server"
-                                    id="groupsUsersTable"
-                                    class="table table-striped snipe-table"
-                                    data-url="{{ route('api.users.index',['group_id'=> $group->id]) }}"
-                                    data-export-options='{
-                                    "fileName": "export-{{ str_slug($group->name) }}-group-users-{{ date('Y-m-d') }}",
-                                        "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
-                                        }'>
-                                </table>
+                <x-table.users name="groupsUsersTable" :route="route('api.users.index', ['group_id' => $group->id])"/>
             </x-box>
-
         </x-page-column>
 
-        <x-page-column class="col-md-3">
+        <x-page-column class="col-md-3 hidden-print">
 
-            @if (is_array($group->decodePermissions()))
-            <ul class="list-unstyled">
-                @foreach ($group->decodePermissions() as $permission_name => $permission)
-                   <li>{!! ($permission == '1') ? '<i class="fas fa-check text-success" aria-hidden="true"></i><span class="sr-only">'.trans('general.yes').': </span>' :  '<i class="fas fa-times text-danger" aria-hidden="true"></i><span class="sr-only">'.trans('general.no').': </span>' !!} {{ e(str_replace('.', ': ', ucwords($permission_name))) }} </li>
-                @endforeach
+            <x-box class="side-box expanded">
+                <x-info-panel :infoPanelObj="$group">
 
-            </ul>
-            @else
-                <p>{{ trans('admin/groups/titles.no_permissions') }}</p>
-            @endif
+                    <x-slot:buttons>
+                        <x-button :item="$group" permission="update" :route="route('groups.edit', $group->id)" class="btn-warning"/>
+                        <x-button.delete :item="$group"/>
+                    </x-slot:buttons>
 
+                    @if (is_array($group->decodePermissions()))
+                            @foreach ($group->decodePermissions() as $permission_name => $permission)
+                                <li class="list-group-item">{!! ($permission == '1') ? '<i class="fas fa-check text-success" aria-hidden="true"></i><span class="sr-only">'.trans('general.yes').': </span>' :  '<i class="fas fa-times text-danger" aria-hidden="true"></i><span class="sr-only">'.trans('general.no').': </span>' !!} {{ e(str_replace('.', ': ', ucwords($permission_name))) }} </li>
+                            @endforeach
+                    @else
+                        <p>{{ trans('admin/groups/titles.no_permissions') }}</p>
+                    @endif
+
+                </x-info-panel>
+            </x-box>
         </x-page-column>
+
     </x-container>
 
 @stop

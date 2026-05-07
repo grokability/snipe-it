@@ -29,10 +29,10 @@ trait ProvidesDataForFullMultipleCompanySupportTesting
                         self::assertEquals($jedi->id, $model->company_id);
                     },
                 ];
-            }
+            },
         ];
 
-        yield "User without a company should result in company_id being null" => [
+        yield 'User without a company should result in company_id being null' => [
             function () {
                 $userInNoCompany = User::factory()
                     ->createAccessories()
@@ -49,10 +49,10 @@ trait ProvidesDataForFullMultipleCompanySupportTesting
                         self::assertNull($model->company_id);
                     },
                 ];
-            }
+            },
         ];
 
-        yield "Super-User assigning across companies should result in company_id being set to what was provided" => [
+        yield 'Super-User assigning across companies should result in company_id being set to what was provided' => [
             function () {
                 $superUser = User::factory()->superuser()->create(['company_id' => null]);
                 $company = Company::factory()->create();
@@ -64,7 +64,7 @@ trait ProvidesDataForFullMultipleCompanySupportTesting
                         self::assertEquals($model->company_id, $company->id);
                     },
                 ];
-            }
+            },
         ];
     }
 }

@@ -22,7 +22,7 @@ class ImportConsumablesTest extends ImportDataTestCase implements TestsPermissio
 
     protected function importFileResponse(array $parameters = []): TestResponse
     {
-        if (!array_key_exists('import-type', $parameters)) {
+        if (! array_key_exists('import-type', $parameters)) {
             $parameters['import-type'] = 'consumable';
         }
 
@@ -30,7 +30,7 @@ class ImportConsumablesTest extends ImportDataTestCase implements TestsPermissio
     }
 
     #[Test]
-    public function testRequiresPermission()
+    public function test_requires_permission()
     {
         $this->actingAsForApi(User::factory()->create());
 
@@ -38,7 +38,7 @@ class ImportConsumablesTest extends ImportDataTestCase implements TestsPermissio
     }
 
     #[Test]
-    public function userWithImportAssetsPermissionCanImportConsumables(): void
+    public function user_with_import_assets_permission_can_import_consumables(): void
     {
         $this->actingAsForApi(User::factory()->canImport()->create());
 
@@ -48,7 +48,7 @@ class ImportConsumablesTest extends ImportDataTestCase implements TestsPermissio
     }
 
     #[Test]
-    public function importConsumables(): void
+    public function import_consumables(): void
     {
         Notification::fake();
 
@@ -60,9 +60,9 @@ class ImportConsumablesTest extends ImportDataTestCase implements TestsPermissio
         $this->importFileResponse(['import' => $import->id])
             ->assertOk()
             ->assertExactJson([
-                'payload'  => null,
-                'status'   => 'success',
-                'messages' => ['redirect_url' => route('consumables.index')]
+                'payload' => null,
+                'status' => 'success',
+                'messages' => ['redirect_url' => route('consumables.index')],
             ]);
 
         $newConsumable = Consumable::query()
@@ -97,7 +97,7 @@ class ImportConsumablesTest extends ImportDataTestCase implements TestsPermissio
     }
 
     #[Test]
-    public function willIgnoreUnknownColumnsWhenFileContainsUnknownColumns(): void
+    public function will_ignore_unknown_columns_when_file_contains_unknown_columns(): void
     {
         $row = ImportFileBuilder::new()->definition();
         $row['unknownColumnInCsvFile'] = 'foo';
@@ -112,7 +112,7 @@ class ImportConsumablesTest extends ImportDataTestCase implements TestsPermissio
     }
 
     #[Test]
-    public function willNotCreateNewConsumableWhenConsumableNameAlreadyExist(): void
+    public function will_not_create_new_consumable_when_consumable_name_already_exist(): void
     {
         $consumable = Consumable::factory()->create(['name' => Str::random()]);
         $importFileBuilder = ImportFileBuilder::new(['itemName' => $consumable->name]);
@@ -130,7 +130,7 @@ class ImportConsumablesTest extends ImportDataTestCase implements TestsPermissio
     }
 
     #[Test]
-    public function willNotCreateNewCompanyWhenCompanyExists(): void
+    public function will_not_create_new_company_when_company_exists(): void
     {
         $importFileBuilder = ImportFileBuilder::times(4)->replace(['companyName' => Str::random()]);
         $import = Import::factory()->consumable()->create(['file_path' => $importFileBuilder->saveToImportsDirectory()]);
@@ -146,7 +146,7 @@ class ImportConsumablesTest extends ImportDataTestCase implements TestsPermissio
     }
 
     #[Test]
-    public function willNotCreateNewLocationWhenLocationExists(): void
+    public function will_not_create_new_location_when_location_exists(): void
     {
         $importFileBuilder = ImportFileBuilder::times(4)->replace(['location' => Str::random()]);
         $import = Import::factory()->consumable()->create(['file_path' => $importFileBuilder->saveToImportsDirectory()]);
@@ -162,7 +162,7 @@ class ImportConsumablesTest extends ImportDataTestCase implements TestsPermissio
     }
 
     #[Test]
-    public function willNotCreateNewCategoryWhenCategoryExists(): void
+    public function will_not_create_new_category_when_category_exists(): void
     {
         $importFileBuilder = ImportFileBuilder::times(4)->replace(['category' => Str::random()]);
         $import = Import::factory()->consumable()->create(['file_path' => $importFileBuilder->saveToImportsDirectory()]);
@@ -178,7 +178,7 @@ class ImportConsumablesTest extends ImportDataTestCase implements TestsPermissio
     }
 
     #[Test]
-    public function whenRequiredColumnsAreMissingInImportFile(): void
+    public function when_required_columns_are_missing_in_import_file(): void
     {
         $importFileBuilder = ImportFileBuilder::new(['category' => ''])->forget(['quantity', 'name']);
 
@@ -190,15 +190,15 @@ class ImportConsumablesTest extends ImportDataTestCase implements TestsPermissio
         $this->importFileResponse(['import' => $import->id])
             ->assertInternalServerError()
             ->assertExactJson([
-                'status'   => 'import-errors',
-                'payload'  => null,
+                'status' => 'import-errors',
+                'payload' => null,
                 'messages' => [
                     $row['itemName'] => [
                         'Consumable' => [
-                            'category_id' => ['The category id field is required.']
-                        ]
-                    ]
-                ]
+                            'category_id' => ['The category id field is required.'],
+                        ],
+                    ],
+                ],
             ]);
 
         $newConsumables = Consumable::query()
@@ -209,7 +209,7 @@ class ImportConsumablesTest extends ImportDataTestCase implements TestsPermissio
     }
 
     #[Test]
-    public function updateConsumableFromImport(): void
+    public function update_consumable_from_import(): void
     {
         $consumable = Consumable::factory()->create(['name' => Str::random()]);
         $importFileBuilder = ImportFileBuilder::new(['itemName' => $consumable->name]);
@@ -244,19 +244,19 @@ class ImportConsumablesTest extends ImportDataTestCase implements TestsPermissio
     }
 
     #[Test]
-    public function customColumnMapping(): void
+    public function custom_column_mapping(): void
     {
         $faker = ImportFileBuilder::new()->definition();
         $row = [
-            'category'     => $faker['supplier'],
-            'companyName'  => $faker['quantity'],
-            'itemName'     => $faker['purchaseDate'],
-            'location'     => $faker['purchaseCost'],
-            'orderNumber'  => $faker['orderNumber'],
+            'category' => $faker['supplier'],
+            'companyName' => $faker['quantity'],
+            'itemName' => $faker['purchaseDate'],
+            'location' => $faker['purchaseCost'],
+            'orderNumber' => $faker['orderNumber'],
             'purchaseCost' => $faker['location'],
             'purchaseDate' => $faker['companyName'],
-            'quantity'     => $faker['itemName'],
-            'supplier'     => $faker['category']
+            'quantity' => $faker['itemName'],
+            'supplier' => $faker['category'],
         ];
 
         $importFileBuilder = new ImportFileBuilder([$row]);
@@ -265,21 +265,20 @@ class ImportConsumablesTest extends ImportDataTestCase implements TestsPermissio
 
         $this->actingAsForApi(User::factory()->superuser()->create());
 
-
         // This mapping is incorrect on purpose
         $this->importFileResponse([
             'import' => $import->id,
             'column-mappings' => [
-                'Category'      => 'supplier',
-                'Company'       => 'quantity',
-                'item Name'     => 'purchase_date',
-                'Location'      => 'purchase_cost',
-                'Order Number'  => 'order_number',
+                'Category' => 'supplier',
+                'Company' => 'quantity',
+                'item Name' => 'purchase_date',
+                'Location' => 'purchase_cost',
+                'Order Number' => 'order_number',
                 'Purchase Cost' => 'location',
                 'Purchase Date' => 'company',
-                'Quantity'      => 'item_name',
-                'Supplier'      => 'category',
-            ]
+                'Quantity' => 'item_name',
+                'Supplier' => 'category',
+            ],
         ])->assertOk();
 
         $newConsumable = Consumable::query()

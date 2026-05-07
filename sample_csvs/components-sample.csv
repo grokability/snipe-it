@@ -1,2 +1,51 @@
-Item Name,Purchase Date,Purchase Cost,Location,Company,Order Number,Serial number,Category,Quantity
-RTX 4080,2024-01-01,5000.00,Austin,Grokability,2790,123456789,GPU,10
+Name,Manufacturer,Serial Number,Category,Purchase Cost,Purchase Date,Location,Company,Order Number,Quantity,Min Qty,Model Number,Notes,Supplier
+Honey-Balsamic Vinaigrette,Youfeed,967363825-X,Food - Dressing,45.45,,Boise,Quatz,6390808597645853,613,617,449760012-2,A sweet and tangy vinaigrette dressing for salads.,Skippad
+Organic Coconut Flakes,Aibox,018014925-3,Food - Baking,52.46,2025-11-22,Chengxi,Trilia,372301607813591,784,227,181527432-8,Unsweetened coconut flakes for baking and snacking.,Tagtune
+Magnetic Curtain Tiebacks,Ozu,898942621-9,Home,23.7,2025-06-08,,Rhynyx,3544615354768162,62,471,812053012-8,Easy-to-use tiebacks for curtains or drapes.,Mynte
+Almond Butter Crunch Bar,,,Food - Snacks,70.46,2026-02-06,Cilampuyang,Fliptune,5048373744227376,260,431,291983419-3,,Skyble
+Frozen Acai Bowl,Twiyo,444745577-3,Food - Frozen Foods,86.12,2026-01-31,Ranong,Divavu,502060561227882019,461,,496619509-8,Healthy frozen acai bowl with toppings.,Twinder
+Spicy Thai Chili Sauce,Avavee,,Food - Sauces,61.56,2025-10-20,Nishio,Tagfeed,3582380264266301,915,174,369746610-0,A sweet and spicy sauce for dipping or cooking.,
+Wireless Charging Pad,Skidoo,,Accessories,57.11,2025-09-05,Rivière-du-Loup,Quinu,372301145237733,302,938,666370068-5,Sleek wireless charging pad for smartphones.,Geba
+Silicone Wine Glasses,,789193327-8,Outdoor,,2025-09-08,Telsiai,Livetube,3546090096481615,45,295,047255255-4,Durable and shatterproof silicone glasses for outdoor use.,Realblab
+Faux Fur Coat,Livetube,784639175-5,Clothing - Coats,26.62,2025-12-13,,Babbleopia,3560484321434922,198,636,613192402-3,A luxurious faux fur coat that adds glamour to any outfit.,Photobean
+Portable Air Conditioner,DabZ,255769048-1,Home Appliances,60.5,2025-10-05,Laozhuang,DabZ,3583336272300648,417,559,711117036-9,,Oozz
+Scent Diffuser Oil,Voonix,552949842-6,Home,47.81,2025-04-14,Marseille,Skyvu,,621,,024713766-9,Essential oil blends for a soothing atmosphere in your home.,
+Pet Food Storage Container,Trudeo,267661197-6,Pets,44.27,2025-05-30,Jinxiang,Gigashots,5602219384769195663,985,359,651115376-2,Airtight container to keep pet food fresh.,Gabtune
+Mango Sticky Rice Dessert,Aimbo,589449997-6,Food - Frozen Desserts,41.15,2025-06-09,Chuoyuan,Blogtags,5602217062009478,114,12,933157215-8,Sweetened sticky rice served with fresh mango and coconut sauce.,Zoombeat
+Chocolate Chip Pancake Mix,Demimbu,830600482-5,Food - Bakery,44.07,2025-08-09,La Unión,Mydeo,374283821162559,998,,091045625-9,Easy-to-make pancake mix with chocolate chips included.,Skimia
+Electric Toothbrush Holder,Realfire,,Health,37.66,2025-07-22,Invermere,Babbleopia,5422953542155584,788,182,938516668-9,Sanitary holder that ensures your toothbrush stays clean.,Photolist
+Peach Yogurt,Twitterwire,,Food - Dairy,98.35,2025-11-13,Ibaan,Roombo,4913396521168849,569,,820085632-1,Creamy peach-flavored yogurt with real fruit.,Shufflester
+Wireless Charging Station,,362446250-4,Electronics,,2025-03-15,La Laguna,Centizu,3583753688040404,859,796,,Charge multiple devices with this sleek charging station.,Trudeo
+Athletic Compression Tights,Jayo,013549567-9,Clothing - Activewear,34.82,2025-02-18,Kauditan,Layo,5602214050058328,181,64,377477721-7,High-performance compression tights designed for optimal support and comfort.,Blogtag
+Water-Resistant Bluetooth Speaker,Divavu,841588879-1,Audio,3.39,,Benghazi,Meezzy,3586009022085614,597,320,,Durable speaker designed for outdoor use with water resistance.,Feedmix
+Fitness Jump Rope,Yata,696651166-8,Fitness,79.39,2025-09-28,Ōme,Devpoint,3563905798808153,628,,928071213-6,Durable jump rope for cardio workouts.,Teklist
+Oven Mitts with Pocket,Skiptube,083336296-8,Kitchen,,2025-10-19,Linamon,Layo,5007668976578951,327,390,868462966-3,Silicone oven mitts designed for safe cooking and baking.,Omba
+Roasted Red Pepper Dip,Voomm,252816356-8,Food - Snacks,32.48,2025-05-17,,Lazz,,26,165,810392115-7,"A blend of roasted red peppers and spices, perfect for dipping.",Youfeed
+Cacao Nibs,,153335698-X,Food - Baking,3.55,2025-03-08,Stulovo,Voolith,36217470859610,719,860,,"Crunchy cacao nibs, great for adding to smoothies or baking.",Voonder
+Sous Vide Cooker,Pixope,507838422-7,Kitchen,17.69,2025-02-24,Milwaukee,Geba,4917435489741241,875,155,619145318-3,Precision cooker for perfect sous vide cooking.,Wikizz
+Italian Pasta,,685790400-6,Food - Grains,66.18,2025-02-19,Lirung,Devify,6709232122116247,709,936,,"Authentic Italian pasta, perfect for a classic meal.",Quatz
+Chocolate Protein Powder,Eare,932575862-8,Food - Supplements,,2025-04-07,Arendal,Topicblab,3533378883033912,299,105,589329879-9,Rich chocolate protein powder for smoothies and baking.,
+Lemon Herb Chicken,Jaxbean,480611887-7,Food - Meat,68.58,2025-05-27,Wawu,Jetwire,5323695280026937,846,143,737321568-8,Marinated chicken grilled with lemon and herbs.,Eare
+Organic Coconut Water,,581155218-1,Food - Beverages,83.72,2026-01-08,Buerarema,Leexo,6759692634889854406,323,380,,,Skipstorm
+Pressure Washer Accessories Kit,Eire,801279674-0,Home Improvement,5.7,,Wanareja,Realcube,6372622283948139,786,602,397259024-5,Essential attachments for pressure washing.,Podcat
+Organic Brown Sugar,Skipstorm,143963552-8,Food - Baking,99.64,2025-05-07,Guanshan,Geba,374283541557500,60,856,014159145-5,Natural sweetener for baking and cooking.,Eidel
+Outdoor Camping Lantern,Yacero,778660126-0,Outdoor,62.54,2025-03-16,Tiemen,Eadel,3528791673803848,319,929,880894051-9,,Dynabox
+Cordless Water Flosser,Miboo,597634212-4,Health,73.82,2025-10-02,Walenrang,,5100133426919194,99,553,519455407-9,Rechargeable water flosser for dental hygiene.,Dablist
+Adjustable Dumbbells,Livepath,928703388-9,Fitness,53.59,2025-12-08,,,675960017725375936,309,,829601591-9,Space-saving adjustable dumbbells for strength training.,Twitterwire
+Halloween Decoration Set,Oodoo,793330873-2,Home,40.05,2025-02-22,Macroom,Twinte,3536752844699119,749,314,866031568-5,Fun decorations for Halloween to set a spooky atmosphere.,Oba
+Leather Crossbody Bag,Linkbuzz,168720078-5,Clothing - Bags,78.63,,,Jaxspan,36945026527618,862,704,064112854-1,A chic leather crossbody bag for everyday use.,Quire
+Tea Infuser Bottle,Quamba,028014884-4,Kitchen,53.0,2025-06-26,,,3574535046348061,177,887,,Bottle with infuser for brewing loose-leaf tea on the go.,Mydo
+Spinach Pizza Rolls,Mynte,329826010-X,Food - Frozen Foods,39.27,2025-02-04,Ar Rudayyif,,3583500953102462,884,519,289883268-5,"Frozen pizza rolls stuffed with spinach and cheese, perfect for snacking.",Demivee
+Fitness Jump Box,Oozz,875641635-0,Fitness,19.41,2025-04-20,,Quamba,,456,863,125675430-7,Durable and adjustable jump box for effective workouts.,Aimbu
+Waffle Maker,Skalith,747054497-6,Kitchen,59.99,2025-02-21,Magole,Skippad,201659064353501,911,379,579756688-5,,Devshare
+Roasted Garlic Butter,Quimm,495689680-8,Food - Condiments,73.25,2025-11-26,Santana do Ipanema,Feedfire,3569845768516127,807,462,484596979-3,A flavorful spread made with roasted garlic and creamy butter.,Fivebridge
+Smart Thermostat,Flashset,098770366-8,Smart Home,8.51,2025-07-13,Yuanbao,Bubbletube,5602240631852657,897,804,,Wi-Fi enabled thermostat for energy-saving temperature control.,Devify
+Bike Repair Tool Kit,Jatri,776253756-2,Outdoor,73.32,2025-07-23,,Tagfeed,56022334692246910,46,156,933188219-X,Essential tools for bike maintenance and repair.,Realpoint
+LED Strip Light Kit,Twitternation,043414923-3,Home,87.32,2025-07-26,Lianhua,Yakidoo,6304115396610608,124,959,775506201-5,Flexible light strips for creative home decor.,Rooxo
+Garlic Naan Bread,Zoombeat,825471906-3,Food - Bakery,14.58,2025-02-21,,Kwideo,633321988688526793,684,405,097530752-5,"Soft and delicious garlic-infused flatbread, perfect for dipping.",Fadeo
+Kids' Learning Tablet,Devpoint,301215999-1,Electronics,90.69,2025-04-25,Xinfeng,Edgeify,30140528159799,169,683,429028304-7,Educational tablet designed for preschool-age children.,Gabvine
+Sliced Bread,Rhynoodle,531488317-1,Food - Bakery,14.21,2025-02-17,Poretskoye,Camido,3546070565357868,695,161,899814799-8,"Soft and fresh sliced bread, perfect for sandwiches.",Digitube
+Bike Repair Tool Kit,Skyble,357407168-X,Outdoor,15.18,2025-06-08,Ziębice,,374288833042665,720,49,539021690-3,Essential tools for bike maintenance and repair.,Avamm
+Noise Cancelling Ear Muffs,Fliptune,710142486-4,Safety,20.56,2025-05-02,Đắk Mil,Fiveclub,,237,875,815312385-8,Ear protection for shooting and industrial use.,
+Peach Yogurt,Thoughtstorm,810048374-4,Food - Dairy,37.83,2025-12-30,,Divape,,894,372,529765061-5,Creamy peach-flavored yogurt with real fruit.,
+Cat Scratching Post with Toys,Browsecat,985573038-0,Pets,92.58,2025-05-27,Guzhan,Jabbercube,,854,687,317422358-X,Multi-level scratching post to keep your cat entertained.,Twitterbeat

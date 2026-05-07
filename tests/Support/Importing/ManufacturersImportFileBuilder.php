@@ -26,33 +26,33 @@ use Illuminate\Support\Str;
 class ManufacturersImportFileBuilder extends FileBuilder
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function getDictionary(): array
     {
         return [
-            'name'           => 'name',
-            'support_email'          => 'support_email',
-            'support_phone'          => 'Support Phone',
-            'notes'             => 'notes',
-            'support_fax'             => 'support_fax',
-            'support_url'             => 'support_url',
+            'name' => 'name',
+            'support_email' => 'support_email',
+            'support_phone' => 'Support Phone',
+            'notes' => 'notes',
+            'support_fax' => 'support_fax',
+            'support_url' => 'support_url',
         ];
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function definition(): array
     {
         $faker = fake();
 
         return [
-            'name'    => $faker->company,
-            'support_email'          => Str::random(32) . "@{$faker->freeEmailDomain}",
-            'support_phone'    => $faker->phoneNumber,
-            'support_fax'    => $faker->phoneNumber,
-            'support_url'    => $faker->url(),
+            'name' => $faker->company,
+            'support_email' => Str::random(32)."@{$faker->freeEmailDomain}",
+            'support_phone' => $faker->phoneNumber,
+            'support_fax' => $faker->phoneNumber,
+            'support_url' => $faker->url(),
         ];
     }
 }

@@ -20,7 +20,6 @@ class LabelsController extends Controller
     /**
      * Returns the Label view with test data
      *
-     * @param string $labelName
      * @author Grant Le Roux <grant.leroux+snipe-it@gmail.com>
      */
     public function show(string $labelName)
@@ -28,7 +27,7 @@ class LabelsController extends Controller
         $labelName = str_replace('/', '\\', $labelName);
         $template = Label::find($labelName);
 
-        $exampleAsset = new Asset();
+        $exampleAsset = new Asset;
 
         $exampleAsset->id = 999999;
         $exampleAsset->name = 'JEN-867-5309';
@@ -44,24 +43,26 @@ class LabelsController extends Controller
             'name' => trans('admin/labels/table.example_company'),
             'phone' => '1-555-555-5555',
             'email' => 'company@example.com',
+            'logo' => 'label-preview-logo.png',
         ]);
+        $exampleAsset->is_label_preview = true;
 
         $exampleAsset->setRelation('assignedTo', new User(['first_name' => 'Luke', 'last_name' => 'Skywalker']));
         $exampleAsset->defaultLoc = new Location(['name' => trans('admin/labels/table.example_defaultloc'), 'phone' => '1-555-555-5555']);
         $exampleAsset->location = new Location(['name' => trans('admin/labels/table.example_location'), 'phone' => '1-555-555-5555']);
 
-        $exampleAsset->model = new AssetModel();
+        $exampleAsset->model = new AssetModel;
         $exampleAsset->model->id = 999999;
         $exampleAsset->model->name = trans('admin/labels/table.example_model');
         $exampleAsset->model->model_number = 'MDL5678';
-        $exampleAsset->model->manufacturer = new Manufacturer();
+        $exampleAsset->model->manufacturer = new Manufacturer;
         $exampleAsset->model->manufacturer->id = 999999;
         $exampleAsset->model->manufacturer->name = trans('admin/labels/table.example_manufacturer');
         $exampleAsset->model->manufacturer->support_email = 'support@test.com';
         $exampleAsset->model->manufacturer->support_phone = '1-555-555-5555';
         $exampleAsset->model->manufacturer->support_url = 'https://example.com';
         $exampleAsset->supplier = new Supplier(['name' => trans('admin/labels/table.example_company')]);
-        $exampleAsset->model->category = new Category();
+        $exampleAsset->model->category = new Category;
         $exampleAsset->model->category->id = 999999;
         $exampleAsset->model->category->name = trans('admin/labels/table.example_category');
 
@@ -70,13 +71,13 @@ class LabelsController extends Controller
         collect(explode(';', Setting::getSettings()->label2_fields))
             ->filter()
             ->each(function ($item) use ($customFieldColumns, $exampleAsset) {
-               $pair = explode('=', $item);
-               
+                $pair = explode('=', $item);
+
                 if (array_key_exists(1, $pair)) {
-                        if ($customFieldColumns->contains($pair[1])) {
-                            $exampleAsset->{$pair[1]} = "{{$pair[0]}}";
-                        }
+                    if ($customFieldColumns->contains($pair[1])) {
+                        $exampleAsset->{$pair[1]} = "{{$pair[0]}}";
                     }
+                }
             });
 
         $settings = Setting::getSettings();
@@ -87,7 +88,7 @@ class LabelsController extends Controller
             }
         }
 
-        return (new LabelView())
+        return (new LabelView)
             ->with('assets', collect([$exampleAsset]))
             ->with('settings', $settings)
             ->with('template', $template)

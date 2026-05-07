@@ -46,7 +46,7 @@
             </div> <!-- /.modal-body-->
             <div class="modal-footer">
                 <a href="#" class="pull-left" data-dismiss="modal">{{ trans('button.cancel') }}</a>
-                <button type="submit" class="btn btn-theme">{{ trans('button.upload') }}</button>
+                <button type="submit" class="btn btn-theme" formnovalidate>{{ trans('button.upload') }}</button>
             </div>
             </form>
         </div>

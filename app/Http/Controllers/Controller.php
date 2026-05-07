@@ -1,4 +1,5 @@
 <?php
+
 /*! \mainpage Snipe-IT Code Documentation
  *
  * \section intro_sec Introduction
@@ -25,25 +26,30 @@ namespace App\Http\Controllers;
 use App\Models\Accessory;
 use App\Models\Asset;
 use App\Models\AssetModel;
+use App\Models\Company;
 use App\Models\Component;
 use App\Models\Consumable;
+use App\Models\Department;
 use App\Models\License;
 use App\Models\Location;
 use App\Models\Maintenance;
 use App\Models\Supplier;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
+use App\Traits\DisablesDebugbar;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\Auth;
 
 abstract class Controller extends BaseController
 {
-    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+    use AuthorizesRequests, DisablesDebugbar, DispatchesJobs, ValidatesRequests;
 
-    static $map_object_type = [
+    public static $map_object_type = [
         'accessories' => Accessory::class,
+        'companies' => Company::class,
+        'departments' => Department::class,
         'maintenances' => Maintenance::class,
         'assets' => Asset::class,
         'audits' => Asset::class,
@@ -57,11 +63,13 @@ abstract class Controller extends BaseController
         'users' => User::class,
     ];
 
-    static $map_storage_path = [
+    public static $map_storage_path = [
         'accessories' => 'private_uploads/accessories/',
         'maintenances' => 'private_uploads/maintenances/',
         'assets' => 'private_uploads/assets/',
         'audits' => 'private_uploads/audits/',
+        'departments' => 'private_uploads/departments/',
+        'companies' => 'private_uploads/companies/',
         'components' => 'private_uploads/components/',
         'consumables' => 'private_uploads/consumables/',
         'hardware' => 'private_uploads/assets/',
@@ -72,11 +80,13 @@ abstract class Controller extends BaseController
         'users' => 'private_uploads/users/',
     ];
 
-    static $map_file_prefix= [
+    public static $map_file_prefix = [
         'accessories' => 'accessory',
         'maintenances' => 'maintenance',
         'assets' => 'asset',
         'audits' => 'audits',
+        'companies' => 'company',
+        'departments' => 'department',
         'components' => 'component',
         'consumables' => 'consumable',
         'hardware' => 'asset',

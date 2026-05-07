@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
 
     /*
     |--------------------------------------------------------------------------
@@ -13,9 +13,9 @@ return array(
     |
     */
 
-    "password" => "Ní mór go mbeadh sé carachtair ar na focail agus an dearbhú a mheaitseáil.",
-    "user"     => "Tá ainm úsáideora nó seoladh ríomhphoist mícheart",
-    "token"    => 'This password reset token is invalid or expired, or does not match the username provided.',
-    'sent'	   => 'If a matching user with a valid email address exists in our system, a password recovery email has been sent.',
+    'password' => 'Ní mór go mbeadh sé carachtair ar na focail agus an dearbhú a mheaitseáil.',
+    'user' => 'Tá ainm úsáideora nó seoladh ríomhphoist mícheart',
+    'token' => 'This password reset token is invalid or expired, or does not match the username provided.',
+    'sent' => 'If a matching user with a valid email address exists in our system, a password recovery email has been sent.',
 
-);
+];

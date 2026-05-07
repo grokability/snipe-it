@@ -32,4 +32,3 @@ class AddCompanyIdToLocations extends Migration
         });
     }
 }
-

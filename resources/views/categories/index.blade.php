@@ -29,6 +29,7 @@
                     buttons="categoryButtons"
                     fixed_right_number="1"
                     fixed_number="1"
+                    show_advanced_search="true"
                     api_url="{{ route('api.categories.index') }}"
                     :presenter="\App\Presenters\CategoryPresenter::dataTableLayout()"
                     export_filename="export-categories-{{ date('Y-m-d') }}"

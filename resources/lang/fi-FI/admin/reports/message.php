@@ -1,16 +1,16 @@
 <?php
 
 return [
-    'about_templates' => 'About Saved Templates',
+    'about_templates' => 'Tietoja tallennetuista mallipohjista',
     'saving_templates_description' => 'Select your options, then enter the name of your template in the box above and click the \'Save Template\' button. Use the dropdown to select a previously saved template.',
-    'create'  => [
-        'success' => 'Template saved successfully',
+    'create' => [
+        'success' => 'Mallipohja tallennettiin onnistuneesti',
     ],
     'update' => [
-        'success' => 'Template updated successfully',
+        'success' => 'Mallipohja päivitettiin onnistuneesti',
     ],
     'delete' => [
-        'success' => 'Template deleted',
-        'no_delete_permission' => 'Template does not exist or you do not have permission to delete it.',
+        'success' => 'Mallipohja poistettu',
+        'no_delete_permission' => 'Mallipohjaa ei ole olemassa tai sinulla ei ole oikeuksia poistaa sitä.',
     ],
 ];

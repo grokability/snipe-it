@@ -13,7 +13,7 @@ use Tests\TestCase;
 
 class DeleteLocationsTest extends TestCase implements TestsPermissionsRequirement
 {
-    public function testRequiresPermission()
+    public function test_requires_permission()
     {
         $location = Location::factory()->create();
 
@@ -24,7 +24,7 @@ class DeleteLocationsTest extends TestCase implements TestsPermissionsRequiremen
         $this->assertNotSoftDeleted($location);
     }
 
-    public function testErrorReturnedViaApiIfLocationDoesNotExist()
+    public function test_error_returned_via_api_if_location_does_not_exist()
     {
         $this->actingAsForApi(User::factory()->superuser()->create())
             ->deleteJson(route('api.locations.destroy', 'invalid-id'))
@@ -35,7 +35,7 @@ class DeleteLocationsTest extends TestCase implements TestsPermissionsRequiremen
 
     }
 
-    public function testErrorReturnedViaApiIfLocationIsAlreadyDeleted()
+    public function test_error_returned_via_api_if_location_is_already_deleted()
     {
         $location = Location::factory()->deletedLocation()->create();
         $this->actingAsForApi(User::factory()->superuser()->create())
@@ -46,7 +46,7 @@ class DeleteLocationsTest extends TestCase implements TestsPermissionsRequiremen
             ->json();
     }
 
-    public function testDisallowLocationDeletionViaApiIfStillHasPeople()
+    public function test_disallow_location_deletion_via_api_if_still_has_people()
     {
         $location = Location::factory()->create();
         User::factory()->count(5)->create(['location_id' => $location->id]);
@@ -62,7 +62,7 @@ class DeleteLocationsTest extends TestCase implements TestsPermissionsRequiremen
         $this->assertNotSoftDeleted($location);
     }
 
-    public function testDisallowLocationDeletionViaApiIfStillHasChildLocations()
+    public function test_disallow_location_deletion_via_api_if_still_has_child_locations()
     {
         $parent = Location::factory()->create();
         Location::factory()->count(5)->create(['parent_id' => $parent->id]);
@@ -77,7 +77,7 @@ class DeleteLocationsTest extends TestCase implements TestsPermissionsRequiremen
         $this->assertNotSoftDeleted($parent);
     }
 
-    public function testDisallowLocationDeletionViaApiIfStillHasAssetsAssigned()
+    public function test_disallow_location_deletion_via_api_if_still_has_assets_assigned()
     {
         $location = Location::factory()->create();
         Asset::factory()->count(5)->assignedToLocation($location)->create();
@@ -93,7 +93,7 @@ class DeleteLocationsTest extends TestCase implements TestsPermissionsRequiremen
         $this->assertNotSoftDeleted($location);
     }
 
-    public function testDisallowLocationDeletionViaApiIfStillHasAssetsAsLocation()
+    public function test_disallow_location_deletion_via_api_if_still_has_assets_as_location()
     {
         $location = Location::factory()->create();
         Asset::factory()->count(5)->create(['location_id' => $location->id]);
@@ -109,7 +109,7 @@ class DeleteLocationsTest extends TestCase implements TestsPermissionsRequiremen
         $this->assertNotSoftDeleted($location);
     }
 
-    public function testDisallowLocationDeletionViaApiIfStillHasConsumablesAsLocation()
+    public function test_disallow_location_deletion_via_api_if_still_has_consumables_as_location()
     {
         $location = Location::factory()->create();
         Consumable::factory()->count(5)->create(['location_id' => $location->id]);
@@ -125,7 +125,7 @@ class DeleteLocationsTest extends TestCase implements TestsPermissionsRequiremen
         $this->assertNotSoftDeleted($location);
     }
 
-    public function testDisallowLocationDeletionViaApiIfStillHasComponentsAsLocation()
+    public function test_disallow_location_deletion_via_api_if_still_has_components_as_location()
     {
         $location = Location::factory()->create();
         Component::factory()->count(5)->create(['location_id' => $location->id]);
@@ -142,7 +142,7 @@ class DeleteLocationsTest extends TestCase implements TestsPermissionsRequiremen
         $this->assertNotSoftDeleted($location);
     }
 
-    public function testDisallowLocationDeletionViaApiIfStillHasAccessoriesAssigned()
+    public function test_disallow_location_deletion_via_api_if_still_has_accessories_assigned()
     {
         $location = Location::factory()->create();
         Accessory::factory()->count(5)->checkedOutToLocation($location)->create();
@@ -158,7 +158,7 @@ class DeleteLocationsTest extends TestCase implements TestsPermissionsRequiremen
         $this->assertNotSoftDeleted($location);
     }
 
-    public function testDisallowLocationDeletionViaApiIfStillHasAccessoriesAsLocation()
+    public function test_disallow_location_deletion_via_api_if_still_has_accessories_as_location()
     {
         $location = Location::factory()->create();
         Accessory::factory()->count(5)->create(['location_id' => $location->id]);
@@ -175,7 +175,7 @@ class DeleteLocationsTest extends TestCase implements TestsPermissionsRequiremen
         $this->assertNotSoftDeleted($location);
     }
 
-    public function testCanDeleteLocation()
+    public function test_can_delete_location()
     {
         $location = Location::factory()->create();
 

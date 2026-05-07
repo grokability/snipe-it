@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -14,13 +14,12 @@ return new class extends Migration
     {
         // Copy values if target columns are blank
         DB::table('settings')->whereNull('label2_2d_type')->orWhere('label2_2d_type', '')->update([
-            'label2_2d_type' => DB::raw('barcode_type')
+            'label2_2d_type' => DB::raw('barcode_type'),
         ]);
 
         DB::table('settings')->whereNull('label2_1d_type')->orWhere('label2_1d_type', '')->update([
-            'label2_1d_type' => DB::raw('alt_barcode')
+            'label2_1d_type' => DB::raw('alt_barcode'),
         ]);
-
 
         Schema::table('settings', function (Blueprint $table) {
             $table->dropColumn(['barcode_type', 'alt_barcode']);
@@ -36,11 +35,11 @@ return new class extends Migration
         });
 
         DB::table('settings')->whereNull('barcode_type')->orWhere('barcode_type', '')->update([
-            'barcode_type' => DB::raw('label2_2d_type')
+            'barcode_type' => DB::raw('label2_2d_type'),
         ]);
 
         DB::table('settings')->whereNull('alt_barcode')->orWhere('alt_barcode', '')->update([
-            'alt_barcode' => DB::raw('label2_1d_type')
+            'alt_barcode' => DB::raw('label2_1d_type'),
         ]);
     }
 };

@@ -9,7 +9,7 @@ use Tests\TestCase;
 
 class LicenseUploadTest extends TestCase
 {
-    public function testLicenseApiAcceptsFileUpload()
+    public function test_license_api_accepts_file_upload()
     {
         // Upload a file to a model
 
@@ -19,17 +19,17 @@ class LicenseUploadTest extends TestCase
         // Create a superuser to run this as
         $user = User::factory()->superuser()->create();
 
-        //Upload a file
+        // Upload a file
         $this->actingAsForApi($user)
             ->post(
                 route('api.files.store', ['object_type' => 'licenses', 'id' => $license->id]), [
-                'file' => [UploadedFile::fake()->create("test.jpg", 100)]
+                    'file' => [UploadedFile::fake()->create('test.jpg', 100)],
                 ]
             )
             ->assertOk();
     }
 
-    public function testLicenseApiListsFiles()
+    public function test_license_api_lists_files()
     {
         // List all files on a model
 
@@ -47,13 +47,13 @@ class LicenseUploadTest extends TestCase
             ->assertOk()
             ->assertJsonStructure(
                 [
-                'rows',
-                'total',
+                    'rows',
+                    'total',
                 ]
             );
     }
 
-    public function testLicenseFailsIfInvalidTypePassedInUrl()
+    public function test_license_fails_if_invalid_type_passed_in_url()
     {
         // List all files on a model
 
@@ -71,7 +71,7 @@ class LicenseUploadTest extends TestCase
             ->assertStatus(404);
     }
 
-    public function testLicenseFailsIfInvalidIdPassedInUrl()
+    public function test_license_fails_if_invalid_id_passed_in_url()
     {
         // List all files on a model
 
@@ -90,7 +90,7 @@ class LicenseUploadTest extends TestCase
             ->assertStatusMessageIs('error');
     }
 
-    public function testLicenseApiDownloadsFile()
+    public function test_license_api_downloads_file()
     {
         // Download a file from a model
 
@@ -104,14 +104,14 @@ class LicenseUploadTest extends TestCase
         $this->actingAsForApi($user)
             ->post(
                 route('api.files.store', ['object_type' => 'licenses', 'id' => $license->id]), [
-                'file' => [UploadedFile::fake()->create("test.jpg", 100)],
+                    'file' => [UploadedFile::fake()->create('test.jpg', 100)],
                 ]
             )
             ->assertOk()
             ->assertJsonStructure(
                 [
-                'status',
-                'messages',
+                    'status',
+                    'messages',
                 ]
             );
 
@@ -119,15 +119,15 @@ class LicenseUploadTest extends TestCase
         $this->actingAsForApi($user)
             ->post(
                 route('api.files.store', ['object_type' => 'licenses', 'id' => $license->id]), [
-                'file' => [UploadedFile::fake()->create("test.jpg", 100)],
-                'notes' => 'manual'
+                    'file' => [UploadedFile::fake()->create('test.jpg', 100)],
+                    'notes' => 'manual',
                 ]
             )
             ->assertOk()
             ->assertJsonStructure(
                 [
-                'status',
-                'messages',
+                    'status',
+                    'messages',
                 ]
             );
 
@@ -139,19 +139,19 @@ class LicenseUploadTest extends TestCase
             ->assertOk()
             ->assertJsonStructure(
                 [
-                'total',
-                'rows'=>[
-                    '*' => [
-                        'id',
-                        'filename',
-                        'url',
-                        'created_by',
-                        'created_at',
-                        'deleted_at',
-                        'note',
-                        'available_actions'
-                    ]
-                ]
+                    'total',
+                    'rows' => [
+                        '*' => [
+                            'id',
+                            'filename',
+                            'url',
+                            'created_by',
+                            'created_at',
+                            'deleted_at',
+                            'note',
+                            'available_actions',
+                        ],
+                    ],
                 ]
             )
             ->assertJsonPath('rows.0.note', null)
@@ -162,16 +162,16 @@ class LicenseUploadTest extends TestCase
             ->get(
                 route(
                     'api.files.show', [
-                    'object_type' => 'licenses',
-                    'id' => $license->id,
-                    'file_id' => $result->decodeResponseJson()->json()["rows"][0]["id"],
+                        'object_type' => 'licenses',
+                        'id' => $license->id,
+                        'file_id' => $result->decodeResponseJson()->json()['rows'][0]['id'],
                     ]
                 )
             )
             ->assertOk();
     }
 
-    public function testLicenseApiDeletesFile()
+    public function test_license_api_deletes_file()
     {
         // Delete a file from a model
 
@@ -181,11 +181,11 @@ class LicenseUploadTest extends TestCase
         // Create a superuser to run this as
         $user = User::factory()->superuser()->create();
 
-        //Upload a file
+        // Upload a file
         $this->actingAsForApi($user)
             ->post(
                 route('api.files.store', ['object_type' => 'licenses', 'id' => $license->id]), [
-                'file' => [UploadedFile::fake()->create("test.jpg", 100)]
+                    'file' => [UploadedFile::fake()->create('test.jpg', 100)],
                 ]
             )
             ->assertOk();
@@ -202,17 +202,17 @@ class LicenseUploadTest extends TestCase
             ->delete(
                 route(
                     'api.files.destroy', [
-                    'object_type' => 'licenses',
-                    'id' => $license->id,
-                    'file_id' => $result->decodeResponseJson()->json()["rows"][0]["id"],
+                        'object_type' => 'licenses',
+                        'id' => $license->id,
+                        'file_id' => $result->decodeResponseJson()->json()['rows'][0]['id'],
                     ]
                 )
             )
             ->assertOk()
             ->assertJsonStructure(
                 [
-                'status',
-                'messages',
+                    'status',
+                    'messages',
                 ]
             );
     }

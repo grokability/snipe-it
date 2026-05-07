@@ -14,7 +14,7 @@ class AddClientSideLDAPKeyToSettings extends Migration
     public function up()
     {
         Schema::table('settings', function (Blueprint $table) {
-            $table->text("ldap_client_tls_key")->nullable()->default(null);
+            $table->text('ldap_client_tls_key')->nullable()->default(null);
         });
     }
 
@@ -26,7 +26,7 @@ class AddClientSideLDAPKeyToSettings extends Migration
     public function down()
     {
         Schema::table('settings', function (Blueprint $table) {
-            $table->dropColumn("ldap_client_tls_key");
+            $table->dropColumn('ldap_client_tls_key');
         });
     }
 }

@@ -7,13 +7,13 @@ use Tests\TestCase;
 
 class IndexSetupTest extends TestCase
 {
-    public function testPageRenders()
+    public function test_page_renders()
     {
         $this->get(route('setup'))
             ->assertOk();
     }
 
-    public function testPageRedirectsIfNoRecordsFound()
+    public function test_page_redirects_if_no_records_found()
     {
         $this->assertDatabaseEmpty('users');
 
@@ -22,14 +22,16 @@ class IndexSetupTest extends TestCase
             ->assertRedirectToRoute('setup');
     }
 
-    public function testPageRedirectsIfRecordsFound() {
+    public function test_page_redirects_if_records_found()
+    {
         $this->actingAs(User::factory()->superuser()->create())
             ->get(route('setup'))
             ->assertStatus(302)
             ->assertRedirectToRoute('home');
     }
 
-    public function testMigrationPageRenders() {
+    public function test_migration_page_renders()
+    {
 
         $this->assertDatabaseEmpty('users');
 
@@ -38,7 +40,8 @@ class IndexSetupTest extends TestCase
 
     }
 
-    public function testCreateFirstUserPageRenders() {
+    public function test_create_first_user_page_renders()
+    {
 
         $this->assertDatabaseEmpty('users');
 
@@ -47,7 +50,8 @@ class IndexSetupTest extends TestCase
 
     }
 
-    public function testCreateFirstUserValidation() {
+    public function test_create_first_user_validation()
+    {
 
         $this->assertDatabaseEmpty('users');
 
@@ -59,7 +63,8 @@ class IndexSetupTest extends TestCase
 
     }
 
-    public function testCreateFirstUserSaved() {
+    public function test_create_first_user_saved()
+    {
 
         $this->assertDatabaseEmpty('users');
 
@@ -76,8 +81,6 @@ class IndexSetupTest extends TestCase
             ->assertRedirectToRoute('setup.done')
             ->assertStatus(302)
             ->assertSessionHas('success');
-
-
 
         $this->assertDatabaseCount('users', 1);
 

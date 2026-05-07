@@ -9,14 +9,14 @@ use Tests\TestCase;
 
 class ImporterTest extends TestCase
 {
-    public function testRendersSuccessfully()
+    public function test_renders_successfully()
     {
         Livewire::actingAs(User::factory()->canImport()->create())
             ->test(Importer::class)
             ->assertStatus(200);
     }
 
-    public function testRequiresPermission()
+    public function test_requires_permission()
     {
         Livewire::actingAs(User::factory()->create())
             ->test(Importer::class)

@@ -3,10 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Models\License;
-use App\Models\LicenseSeat;
 use App\Models\User;
 use Illuminate\Console\Command;
-use Illuminate\Database\Eloquent\Model;
 
 class CheckoutLicenseToAllUsers extends Command
 {
@@ -75,6 +73,7 @@ class CheckoutLicenseToAllUsers extends Command
 
             if ($user->licenses->where('id', '=', $license_id)->count()) {
                 $this->info($user->username.' already has this license checked out to them. Skipping... ');
+
                 continue;
             }
 

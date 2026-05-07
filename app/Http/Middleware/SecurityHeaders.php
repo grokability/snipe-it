@@ -3,14 +3,15 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Http\Request;
 
 class SecurityHeaders
 {
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
+     * @param  Request  $request
+     * @param  Closure  $next
      * @return mixed
      */
 
@@ -88,11 +89,11 @@ class SecurityHeaders
             $csp_policy[] = "object-src 'none'";
             $csp_policy[] = "font-src 'self' data:";
             $csp_policy[] = "img-src 'self' data: ".config('app.url').' '.config('app.additional_csp_urls').' '.env('PUBLIC_AWS_URL').' https://secure.gravatar.com http://gravatar.com maps.google.com maps.gstatic.com *.googleapis.com';
-	          
+
             if (config('filesystems.disks.public.driver') == 's3') {
-               $csp_policy[] = "img-src 'self' data:  ".config('filesystems.disks.public.url');
+                $csp_policy[] = "img-src 'self' data:  ".config('filesystems.disks.public.url');
             }
-            $csp_policy = join(';', $csp_policy);
+            $csp_policy = implode(';', $csp_policy);
 
             $response->headers->set('Content-Security-Policy', $csp_policy);
         }

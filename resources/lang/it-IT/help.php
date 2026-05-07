@@ -23,13 +23,13 @@ return [
 
     'accessories' => 'Gli Accessori sono elementi che puoi assegnare agli utenti, per i quali però non è necessario un tracciamento individuale. Ad esempio mouse e tastiere.',
 
-    'companies'     => 'Le aziende possono essere utilizzate come semplice campo di identificazione, oppure per limitare la visibilità dei Beni, degli Utenti ecc. quando il "supporto aziendale completo" è abilitato nelle impostazioni di amministratore.',
+    'companies' => 'Le aziende possono essere utilizzate come semplice campo di identificazione, oppure per limitare la visibilità dei Beni, degli Utenti ecc. quando il "supporto aziendale completo" è abilitato nelle impostazioni di amministratore.',
 
-    'components'    => 'I Componenti articoli che sono parti di un Bene, ad esempio HDD, RAM, ecc.',
+    'components' => 'I Componenti articoli che sono parti di un Bene, ad esempio HDD, RAM, ecc.',
 
-    'consumables'   => 'I Consumabili sono qualsiasi cosa acquistata che si esaurisce col passare del tempo. Per esempio l\'inchiostro per stampanti o la carta per fotocopiatrici.',
+    'consumables' => 'I Consumabili sono qualsiasi cosa acquistata che si esaurisce col passare del tempo. Per esempio l\'inchiostro per stampanti o la carta per fotocopiatrici.',
 
     'depreciations' => 'Puoi impostare i deprezzamenti dei Beni, per deprezzarli con criterio di calcolo lineare.',
-    
-    'empty_file'    => 'Il processo di Import rileva che questo file è vuoto.'
+
+    'empty_file' => 'Il processo di Import rileva che questo file è vuoto.',
 ];

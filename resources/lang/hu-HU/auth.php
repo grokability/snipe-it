@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
 
     /*
     |--------------------------------------------------------------------------
@@ -17,4 +17,4 @@ return array(
     'password' => 'A megadott jelszó helytelen.',
     'throttle' => 'Túl sok sikertelen bejelentkezési próbálkozás. Próbáld újra :minutes perc múlva.',
 
-);
+];

@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
     'personal_api_keys' => 'Asmeniniai API raktai',
     'personal_access_token' => 'Asmeninis prieigos raktas',
     'personal_api_keys_success' => 'Asmeninis API raktas :key sėkmingai sukurtas',
@@ -10,8 +10,8 @@ return array(
     'api_base_url_endpoint' => '/&lt;endpoint&gt;',
     'api_token_expiration_time' => 'API prieigos raktai nustos galioti:',
     'api_reference' => 'Peržiūrėkite <a href="https://snipe-it.readme.io/reference" target="_blank">API informaciją</a>, kad rastumėte konkrečius API galinius taškus ir papildomą API dokumentaciją.',
-    'profile_updated' => 'Paskyra atnaujinta sėkmingai',
+    'profile_updated' => 'Paskyra sėkmingai atnaujinta',
     'no_tokens' => 'Nesate sukūrę jokių asmeninių prieigos raktų.',
     'enable_sounds' => 'Įjungti garso efektus',
     'enable_confetti' => 'Įgalinti konfeti efektus',
-);
+];

@@ -1,5 +1,5 @@
 <?php
 
-return array(
-    'title'      				=> 'Heiti rekstrarvöru',
-);
+return [
+    'title' => 'Heiti rekstrarvöru',
+];

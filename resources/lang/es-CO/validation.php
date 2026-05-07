@@ -71,7 +71,7 @@ return [
     ],
     'hex_color' => 'El campo :attribute debe ser un color hexadecimal válido.',
     'image' => 'El campo :attribute debe ser una imagen.',
-    'import_field_empty'    => 'El valor para :fieldname no puede ser nulo.',
+    'import_field_empty' => 'El valor para :fieldname no puede ser nulo.',
     'in' => 'El :attribute seleccionado no es correcto.',
     'in_array' => 'El campo :attribute debe existir en :other.',
     'integer' => 'El campo :attribute debe ser un valor entero.',
@@ -126,7 +126,7 @@ return [
         'symbols' => 'El campo :attribute debe contener al menos un símbolo.',
         'uncompromised' => 'El valor de :attribute ha aparecido en una fuga de datos. Por favor, seleccione un valor diferente para :attribute.',
     ],
-    'percent'       => 'El mínimo de amortización debe estar entre 0 y 100 cuando el tipo de amortización es porcentual.',
+    'percent' => 'El mínimo de amortización debe estar entre 0 y 100 cuando el tipo de amortización es porcentual.',
 
     'present' => 'El campo: atributo debe estar presente.',
     'present_if' => 'El campo :attribute debe estar presente cuando :other sea :value.',
@@ -156,16 +156,16 @@ return [
         'string' => 'El campo :attribute debe ser de :size caracteres.',
     ],
     'starts_with' => 'El campo :attribute debe iniciar con uno de los siguientes: :values.',
-    'string'               => 'El atributo: debe ser una cadena.',
+    'string' => 'El atributo: debe ser una cadena.',
     'two_column_unique_undeleted' => ':attribute debe ser único entre la :table1 y :table2. ',
-    'unique_undeleted'     => ':attribute debe ser único.',
-    'non_circular'         => ':attribute no debe crear una referencia circular.',
-    'not_array'            => ':attribute no puede ser una matriz.',
+    'unique_undeleted' => ':attribute debe ser único.',
+    'non_circular' => ':attribute no debe crear una referencia circular.',
+    'not_array' => ':attribute no puede ser una matriz.',
     'disallow_same_pwd_as_user_fields' => 'La contraseña no puede ser la misma que el nombre de usuario.',
-    'letters'              => 'La contraseña debe contener al menos una letra.',
-    'numbers'              => 'La contraseña debe contener al menos un número.',
-    'case_diff'            => 'La contraseña debe usar mayúsculas y minúsculas.',
-    'symbols'              => 'La contraseña debe contener símbolos.',
+    'letters' => 'La contraseña debe contener al menos una letra.',
+    'numbers' => 'La contraseña debe contener al menos un número.',
+    'case_diff' => 'La contraseña debe usar mayúsculas y minúsculas.',
+    'symbols' => 'La contraseña debe contener símbolos.',
     'timezone' => 'El campo :attribute debe ser una zona horaria válida.',
     'unique' => ':attribute ya está en uso.',
     'uploaded' => ':attribute no se pudo cargar.',
@@ -187,38 +187,38 @@ return [
     |
     */
 
-    'email_array'      => 'Una o más direcciones de correo electrónico no son válidas.',
-    'checkboxes'           => ':attribute contiene opciones no válidas.',
-    'radio_buttons'        => ':attribute no es válido.',
-    
+    'email_array' => 'Una o más direcciones de correo electrónico no son válidas.',
+    'checkboxes' => ':attribute contiene opciones no válidas.',
+    'radio_buttons' => ':attribute no es válido.',
+
     'custom' => [
         'alpha_space' => 'El campo :attribute contiene un carácter que no está permitido.',
 
-        'hashed_pass'      => 'Su contraseña actual es incorrecta',
-        'dumbpwd'          => 'Esa contraseña es muy común.',
+        'hashed_pass' => 'Su contraseña actual es incorrecta',
+        'dumbpwd' => 'Esa contraseña es muy común.',
         'statuslabel_type' => 'Debe seleccionar un tipo de etiqueta de estado válido.',
-        'custom_field_not_found'          => 'Este campo parece que no existe, por favor, compruebe los nombres de sus campos personalizados.',
+        'custom_field_not_found' => 'Este campo parece que no existe, por favor, compruebe los nombres de sus campos personalizados.',
         'custom_field_not_found_on_model' => 'Este campo parece existir, pero no está disponible en este conjunto de campos para el modelo de activo.',
 
         // date_format validation with slightly less stupid messages. It duplicates a lot, but it gets the job done :(
         // We use this because the default error message for date_format reflects php Y-m-d, which non-PHP
         // people won't know how to format.
-        'purchase_date.date_format'     => ':attribute debe ser una fecha válida en formato AAAA-MM-DD',
-        'last_audit_date.date_format'   =>  'El campo :attribute debe ser una fecha válida en formato AAAA-MM-DD hh:mm:ss',
-        'expiration_date.date_format'   =>  ':attribute debe ser una fecha válida en formato AAAA-MM-DD',
-        'termination_date.date_format'  =>  ':attribute debe ser una fecha válida en formato AAAA-MM-DD',
-        'expected_checkin.date_format'  =>  ':attribute debe ser una fecha válida en formato AAAA-MM-DD',
-        'start_date.date_format'        =>  ':attribute debe ser una fecha válida en formato AAAA-MM-DD',
-        'end_date.date_format'          =>  ':attribute debe ser una fecha válida en formato AAAA-MM-DD',
+        'purchase_date.date_format' => ':attribute debe ser una fecha válida en formato AAAA-MM-DD',
+        'last_audit_date.date_format' => 'El campo :attribute debe ser una fecha válida en formato AAAA-MM-DD hh:mm:ss',
+        'expiration_date.date_format' => ':attribute debe ser una fecha válida en formato AAAA-MM-DD',
+        'termination_date.date_format' => ':attribute debe ser una fecha válida en formato AAAA-MM-DD',
+        'expected_checkin.date_format' => ':attribute debe ser una fecha válida en formato AAAA-MM-DD',
+        'start_date.date_format' => ':attribute debe ser una fecha válida en formato AAAA-MM-DD',
+        'end_date.date_format' => ':attribute debe ser una fecha válida en formato AAAA-MM-DD',
         'invalid_value_in_field' => 'Valor no válido incluido en este campo',
 
         'ldap_username_field' => [
-            'not_in' =>         '<code>sAMAccountName</code> (mezcla de mayúsculas y minúsculas) no funcionará. Debe utilizar <code>samaccountname</code> (minúsculas) en su lugar.'
+            'not_in' => '<code>sAMAccountName</code> (mezcla de mayúsculas y minúsculas) no funcionará. Debe utilizar <code>samaccountname</code> (minúsculas) en su lugar.',
         ],
         'ldap_auth_filter_query' => ['not_in' => '<code>uid=samaccountname</code> probablemente no es un filtro de autenticación válido Probablemente quiera <code>uid=</code> '],
         'ldap_filter' => ['regex' => 'Este valor probablemente no debería ir entre paréntesis.'],
 
-        ],
+    ],
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Attributes
@@ -230,7 +230,10 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'serials.*' => 'Número de serie',
+        'asset_tags.*' => 'Placa del activo',
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -244,6 +247,5 @@ return [
         'required' => 'El campo es obligatorio',
         'email' => 'Por favor, ingrese una dirección de correo electrónico válida.',
     ],
-
 
 ];

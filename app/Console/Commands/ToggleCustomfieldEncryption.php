@@ -17,7 +17,6 @@ class ToggleCustomfieldEncryption extends Command
     protected $signature = 'snipeit:customfield-encryption
                              {fieldname : the db_column_name of the field}';
 
-
     /**
      * The console command description.
      *
@@ -61,15 +60,15 @@ class ToggleCustomfieldEncryption extends Command
                     $field->field_encrypted = 1;
                     $field->save();
 
-                // This field is already encrypted. Do nothing.
+                    // This field is already encrypted. Do nothing.
                 } else {
-                    $this->error('The custom field ' . $field->db_column.' is already encrypted. No action was taken.');
+                    $this->error('The custom field '.$field->db_column.' is already encrypted. No action was taken.');
                 }
             });
 
-        // No matching column name found
+            // No matching column name found
         } else {
-            $this->error('No matching results for unencrypted custom fields with db_column name: ' . $fieldname.'. Please check the fieldname.');
+            $this->error('No matching results for unencrypted custom fields with db_column name: '.$fieldname.'. Please check the fieldname.');
         }
 
     }

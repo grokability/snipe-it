@@ -2,12 +2,11 @@
 
 namespace Tests\Feature\Importing\Api;
 
+use App\Models\Import;
 use App\Models\Supplier;
 use App\Models\User;
-use App\Models\Import;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\Concerns\TestsPermissionsRequirement;
@@ -21,7 +20,7 @@ class ImportSuppliersTest extends ImportDataTestCase implements TestsPermissions
 
     protected function importFileResponse(array $parameters = []): TestResponse
     {
-        if (!array_key_exists('import-type', $parameters)) {
+        if (! array_key_exists('import-type', $parameters)) {
             $parameters['import-type'] = 'supplier';
         }
 
@@ -29,7 +28,7 @@ class ImportSuppliersTest extends ImportDataTestCase implements TestsPermissions
     }
 
     #[Test]
-    public function testRequiresPermission()
+    public function test_requires_permission()
     {
         $this->actingAsForApi(User::factory()->create());
 
@@ -37,7 +36,7 @@ class ImportSuppliersTest extends ImportDataTestCase implements TestsPermissions
     }
 
     #[Test]
-    public function importSupplier(): void
+    public function import_supplier(): void
     {
         $importFileBuilder = ImportFileBuilder::new();
         $row = $importFileBuilder->firstRow();
@@ -47,9 +46,9 @@ class ImportSuppliersTest extends ImportDataTestCase implements TestsPermissions
         $this->importFileResponse(['import' => $import->id, 'send-welcome' => 0])
             ->assertOk()
             ->assertExactJson([
-                'payload'  => null,
-                'status'   => 'success',
-                'messages' => ['redirect_url' => route('suppliers.index')]
+                'payload' => null,
+                'status' => 'success',
+                'messages' => ['redirect_url' => route('suppliers.index')],
             ]);
 
         $newSupplier = Supplier::query()
@@ -61,7 +60,7 @@ class ImportSuppliersTest extends ImportDataTestCase implements TestsPermissions
     }
 
     #[Test]
-    public function willIgnoreUnknownColumnsWhenFileContainsUnknownColumns(): void
+    public function will_ignore_unknown_columns_when_file_contains_unknown_columns(): void
     {
         $row = ImportFileBuilder::new()->definition();
         $row['unknownColumnInCsvFile'] = 'foo';
@@ -75,9 +74,8 @@ class ImportSuppliersTest extends ImportDataTestCase implements TestsPermissions
         $this->importFileResponse(['import' => $import->id])->assertOk();
     }
 
-
     #[Test]
-    public function whenRequiredColumnsAreMissingInImportFile(): void
+    public function when_required_columns_are_missing_in_import_file(): void
     {
         $importFileBuilder = ImportFileBuilder::new(['name' => '']);
         $import = Import::factory()->suppliers()->create(['file_path' => $importFileBuilder->saveToImportsDirectory()]);
@@ -87,17 +85,16 @@ class ImportSuppliersTest extends ImportDataTestCase implements TestsPermissions
         $this->importFileResponse(['import' => $import->id])
             ->assertInternalServerError()
             ->assertExactJson([
-                'status'   => 'import-errors',
-                'payload'  => null,
+                'status' => 'import-errors',
+                'payload' => null,
                 'messages' => [
                     '' => [
                         'Supplier ""' => [
-                            'name' =>
-                                ['The name field is required.'],
+                            'name' => ['The name field is required.'],
                         ],
-                    ]
+                    ],
 
-                ]
+                ],
             ]);
 
         $newSupplier = Supplier::query()
@@ -107,9 +104,8 @@ class ImportSuppliersTest extends ImportDataTestCase implements TestsPermissions
         $this->assertCount(0, $newSupplier);
     }
 
-
     #[Test]
-    public function updateSupplierFromImport(): void
+    public function update_supplier_from_import(): void
     {
         $supplier = Supplier::factory()->create()->refresh();
         $importFileBuilder = ImportFileBuilder::new(['name' => $supplier->name, 'url' => $supplier->url, 'phone' => $supplier->phone, 'fax' => $supplier->fax, 'contact' => $supplier->contact, 'email' => $supplier->email]);
@@ -137,5 +133,4 @@ class ImportSuppliersTest extends ImportDataTestCase implements TestsPermissions
             Arr::except($updatedSupplier->attributesToArray(), array_merge($updatedAttributes, $supplier->getDates())),
         );
     }
-
 }

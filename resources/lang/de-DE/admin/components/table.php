@@ -1,5 +1,5 @@
 <?php
 
-return array(
-    'title'      				=> 'Komponentenname',
-);
+return [
+    'title' => 'Komponentenname',
+];

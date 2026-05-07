@@ -1,6 +1,6 @@
 <?php
 
-return array(
-    'created'   => 'Đã tạo',
+return [
+    'created' => 'Đã tạo',
     'size' => 'Kích cỡ',
-);
+];

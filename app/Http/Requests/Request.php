@@ -14,6 +14,7 @@ abstract class Request extends FormRequest
         if ($this->ajax() || $this->wantsJson()) {
             json_decode($this->getContent(), false, 512, JSON_THROW_ON_ERROR); // ignore output, just throw
         }
+
         return parent::json($key, $default);
     }
 

@@ -2,12 +2,12 @@
 
 namespace App\Mail;
 
-use App\Models\Accessory;
 use App\Models\Component;
 use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailables\Address;
+use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
@@ -48,11 +48,11 @@ class CheckinComponentMail extends BaseMailable
     {
         return new Content(
             markdown: 'mail.markdown.checkin-component',
-            with:   [
-                'item'          => $this->item,
-                'admin'         => $this->admin,
-                'note'          => $this->note,
-                'target'        => $this->target,
+            with: [
+                'item' => $this->item,
+                'admin' => $this->admin,
+                'note' => $this->note,
+                'target' => $this->target,
             ]
         );
     }
@@ -60,7 +60,7 @@ class CheckinComponentMail extends BaseMailable
     /**
      * Get the attachments for the message.
      *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+     * @return array<int, Attachment>
      */
     public function attachments(): array
     {

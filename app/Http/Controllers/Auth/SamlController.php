@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Services\Saml;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -42,8 +43,6 @@ class SamlController extends Controller
      *
      * @since 5.0.0
      *
-     * @param Request $request
-     *
      * @return Response
      */
     public function metadata(Request $request)
@@ -52,6 +51,7 @@ class SamlController extends Controller
 
         if (empty($metadata)) {
             Log::debug('SAML metadata is empty - return a 403');
+
             return response()->view('errors.403', [], 403);
         }
 
@@ -69,15 +69,12 @@ class SamlController extends Controller
      *
      * @since 5.0.0
      *
-     * @param Request $request
-     *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
     public function login(Request $request)
     {
         $auth = $this->saml->getAuth();
-        $ssoUrl = $auth->login(null, [], false, false, false, false);
-
+        $ssoUrl = $auth->login(session()->get('url.intended'), [], false, false, false, false);
         return redirect()->away($ssoUrl);
     }
 
@@ -91,26 +88,25 @@ class SamlController extends Controller
      *
      * @since 5.0.0
      *
-     * @param Request $request
-     *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
     public function acs(Request $request)
     {
         $saml = $this->saml;
         $auth = $saml->getAuth();
         $saml_exception = false;
+        session()->put('url.intended', $request->post('RelayState'));
         try {
             $auth->processResponse();
         } catch (\Exception $e) {
-            Log::warning("Exception caught in SAML login: " . $e->getMessage());
+            Log::warning('Exception caught in SAML login: '.$e->getMessage());
             $saml_exception = true;
         }
         $errors = $auth->getErrors();
 
-        if (!empty($errors) || $saml_exception) {
-            Log::warning('There was an error with SAML ACS: ' . implode(', ', $errors));
-            Log::warning('Reason: ' . $auth->getLastErrorReason());
+        if (! empty($errors) || $saml_exception) {
+            Log::warning('There was an error with SAML ACS: '.implode(', ', $errors));
+            Log::warning('Reason: '.$auth->getLastErrorReason());
 
             return redirect()->route('login')->with('error', trans('auth/message.signin.error'));
         }
@@ -130,9 +126,7 @@ class SamlController extends Controller
      *
      * @since 5.0.0
      *
-     * @param Request $request
-     *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
     public function sls(Request $request)
     {
@@ -142,18 +136,18 @@ class SamlController extends Controller
         try {
             $sloUrl = $auth->processSLO(true, null, $retrieveParametersFromServer, null, true);
         } catch (\Exception $e) {
-            Log::warning("Exception caught in SAML single-logout: " . $e->getMessage());
+            Log::warning('Exception caught in SAML single-logout: '.$e->getMessage());
             $saml_exception = true;
         }
         $errors = $auth->getErrors();
 
-        if (!empty($errors) || $saml_exception) {
-            Log::warning('There was an error with SAML SLS: ' . implode(', ', $errors));
-            Log::warning('Reason: ' . $auth->getLastErrorReason());
+        if (! empty($errors) || $saml_exception) {
+            Log::warning('There was an error with SAML SLS: '.implode(', ', $errors));
+            Log::warning('Reason: '.$auth->getLastErrorReason());
 
             return view('errors.403');
         }
 
-        return redirect()->route('logout.get')->with(['saml_logout' => true,'saml_slo_redirect_url' => $sloUrl]);
+        return redirect()->route('logout.get')->with(['saml_logout' => true, 'saml_slo_redirect_url' => $sloUrl]);
     }
 }

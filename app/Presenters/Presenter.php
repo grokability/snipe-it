@@ -2,8 +2,9 @@
 
 namespace App\Presenters;
 
+use App\Models\Asset;
+use App\Models\Setting;
 use App\Models\SnipeModel;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 
 abstract class Presenter
 {
@@ -14,14 +15,14 @@ abstract class Presenter
 
     /**
      * Presenter constructor.
-     * @param SnipeModel $model
      */
     public function __construct(SnipeModel $model)
     {
         $this->model = $model;
     }
 
-    public function displayAddress() {
+    public function displayAddress()
+    {
         $address = '';
         if ($this->model->address) {
             $address .= e($this->model->address)."\n";
@@ -99,7 +100,30 @@ abstract class Presenter
         return '';
     }
 
+    /**
+     * Used to take user created URL and dynamically fill in the needed values per item
+     *
+     * @return string
+     */
+    public function dynamicUrl($dynamic_url)
+    {
+        $url = (str_replace('{LOCALE}', Setting::getSettings()->locale, $dynamic_url));
 
+        if ($this->model instanceof Asset) {
+            $url = (str_replace('{SERIAL}', urlencode($this->model->serial), $url));
+            $url = (str_replace('{MODEL_NAME}', urlencode($this->model->model->name), $url));
+            $url = (str_replace('{MODEL_NUMBER}', urlencode($this->model->model->model_number), $url));
+
+            return $url;
+        }
+
+        $url = (str_replace('{SERIAL}', urlencode($this->serial), $url));
+        $url = (str_replace('{MODEL_NAME}', urlencode($this->model_name), $url));
+        $url = (str_replace('{MODEL_NUMBER}', urlencode($this->model_number), $url));
+
+        return $url;
+
+    }
 
     public function __get($property)
     {
@@ -114,6 +138,4 @@ abstract class Presenter
     {
         return $this->model->$method($args);
     }
-
-
 }

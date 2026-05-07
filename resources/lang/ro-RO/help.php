@@ -23,13 +23,13 @@ return [
 
     'accessories' => 'Accesoriile reprezinta produsele distribuite utilizatorilor, dar care nu au un numar serial (sau nu este de interes unica lor inregistrare). De exemplu, mausurile sau tastaturile.',
 
-    'companies'     => 'Companiile pot fi utilizate ca câmp simplu de identificare sau pot fi utilizate pentru a limita vizibilitatea activelor, a utilizatorilor etc., dacă activarea completă a companiei este activată în setările de administrator.',
+    'companies' => 'Companiile pot fi utilizate ca câmp simplu de identificare sau pot fi utilizate pentru a limita vizibilitatea activelor, a utilizatorilor etc., dacă activarea completă a companiei este activată în setările de administrator.',
 
-    'components'    => 'Componentele sunt elemente care fac parte dintr-un bun, de exemplu HDD, RAM etc.',
+    'components' => 'Componentele sunt elemente care fac parte dintr-un bun, de exemplu HDD, RAM etc.',
 
-    'consumables'   => 'Consumabilele sunt produse achiziționate care vor fi consumate în timp. De exemplu, cerneala imprimantei sau hârtia pentru copiatoare.',
+    'consumables' => 'Consumabilele sunt produse achiziționate care vor fi consumate în timp. De exemplu, cerneala imprimantei sau hârtia pentru copiatoare.',
 
     'depreciations' => 'Poti sa setezi deprecierea activelor bazat pe depreciere in linie.',
-    
-    'empty_file'    => 'Importatorul detectează că acest fișier este gol.'
+
+    'empty_file' => 'Importatorul detectează că acest fișier este gol.',
 ];

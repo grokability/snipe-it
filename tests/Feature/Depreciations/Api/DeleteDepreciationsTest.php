@@ -9,7 +9,7 @@ use Tests\TestCase;
 
 class DeleteDepreciationsTest extends TestCase implements TestsPermissionsRequirement
 {
-    public function testRequiresPermission()
+    public function test_requires_permission()
     {
         $depreciation = Depreciation::factory()->create();
 
@@ -20,7 +20,7 @@ class DeleteDepreciationsTest extends TestCase implements TestsPermissionsRequir
         $this->assertDatabaseHas('depreciations', ['id' => $depreciation->id]);
     }
 
-    public function testCannotDeleteDepreciationThatHasAssociatedModels()
+    public function test_cannot_delete_depreciation_that_has_associated_models()
     {
         $depreciation = Depreciation::factory()->hasModels()->create();
 
@@ -31,7 +31,7 @@ class DeleteDepreciationsTest extends TestCase implements TestsPermissionsRequir
         $this->assertDatabaseHas('depreciations', ['id' => $depreciation->id]);
     }
 
-    public function testCanDeleteDepreciation()
+    public function test_can_delete_depreciation()
     {
         $depreciation = Depreciation::factory()->create();
 

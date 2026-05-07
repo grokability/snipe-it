@@ -11,7 +11,7 @@ use Tests\TestCase;
 
 class DeleteAssetsTest extends TestCase implements TestsFullMultipleCompaniesSupport, TestsPermissionsRequirement
 {
-    public function testRequiresPermission()
+    public function test_requires_permission()
     {
         $asset = Asset::factory()->create();
 
@@ -22,7 +22,7 @@ class DeleteAssetsTest extends TestCase implements TestsFullMultipleCompaniesSup
         $this->assertNotSoftDeleted($asset);
     }
 
-    public function testAdheresToFullMultipleCompaniesSupportScoping()
+    public function test_adheres_to_full_multiple_companies_support_scoping()
     {
         [$companyA, $companyB] = Company::factory()->count(2)->create();
 
@@ -53,12 +53,12 @@ class DeleteAssetsTest extends TestCase implements TestsFullMultipleCompaniesSup
         $this->assertSoftDeleted($assetC);
     }
 
-    public function testCannotDeleteAssetThatIsCheckedOut()
+    public function test_cannot_delete_asset_that_is_checked_out()
     {
         $this->markTestSkipped('This behavior is not functioning yet.');
     }
 
-    public function testCanDeleteAsset()
+    public function test_can_delete_asset()
     {
         $asset = Asset::factory()->create();
 

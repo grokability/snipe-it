@@ -44,7 +44,7 @@ class RemoveExplicitEols extends Command
         }
         $endTime = microtime(true);
         $executionTime = ($endTime - $startTime);
-        $this->info('Command executed in ' . round($executionTime, 2) . ' seconds.');
+        $this->info('Command executed in '.round($executionTime, 2).' seconds.');
     }
 
     private function updateAssets($assets)
@@ -55,6 +55,6 @@ class RemoveExplicitEols extends Command
             $asset->save();
         }
 
-        $this->info($assets->count() . ' Assets updated successfully');
+        $this->info($assets->count().' Assets updated successfully');
     }
 }

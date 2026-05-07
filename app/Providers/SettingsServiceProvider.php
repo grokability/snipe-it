@@ -10,6 +10,7 @@ use Illuminate\Support\ServiceProvider;
  * some common upload path and image urls.
  *
  * PHP version 5.5.9
+ *
  * @version    v3.0
  */
 class SettingsServiceProvider extends ServiceProvider
@@ -18,7 +19,9 @@ class SettingsServiceProvider extends ServiceProvider
      * Custom email array validation
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since [v3.0]
+     *
      * @return void
      */
     public function boot()
@@ -28,7 +31,6 @@ class SettingsServiceProvider extends ServiceProvider
         view()->composer('*', function ($view) {
             $view->with('snipeSettings', Setting::getSettings());
         });
-
 
         // Make sure the limit is actually set, is an integer and does not exceed system limits
         app()->singleton('api_limit_value', function () {
@@ -45,9 +47,9 @@ class SettingsServiceProvider extends ServiceProvider
         // Make sure the offset is actually set and is an integer
         app()->singleton('api_offset_value', function () {
             $offset = intval(request('offset'));
+
             return $offset;
         });
-
 
         /**
          * Set some common variables so that they're globally available.
@@ -55,7 +57,6 @@ class SettingsServiceProvider extends ServiceProvider
          */
 
         // Model paths and URLs
-
 
         app()->singleton('eula_pdf_path', function () {
             return 'eula_pdf_path/';
@@ -85,6 +86,10 @@ class SettingsServiceProvider extends ServiceProvider
             return 'models/';
         });
 
+        app()->singleton('assets_upload_url', function () {
+            return 'assets/';
+        });
+
         app()->singleton('licenses_upload_url', function () {
             return 'licenses/';
         });
@@ -105,6 +110,24 @@ class SettingsServiceProvider extends ServiceProvider
 
         app()->singleton('locations_upload_url', function () {
             return 'locations/';
+        });
+
+        // Companies
+        app()->singleton('companies_upload_path', function () {
+            return 'companies/';
+        });
+
+        app()->singleton('companies_upload_url', function () {
+            return 'companies/';
+        });
+
+        // Departments
+        app()->singleton('departments_upload_path', function () {
+            return 'departments/';
+        });
+
+        app()->singleton('departments_upload_url', function () {
+            return 'departments/';
         });
 
         // Users
@@ -179,10 +202,18 @@ class SettingsServiceProvider extends ServiceProvider
             return 'components/';
         });
 
+        app()->singleton('maintenances_upload_url', function () {
+            return 'maintenances/';
+        });
+
+        app()->singleton('maintenances_upload_path', function () {
+            return 'maintenances/';
+        });
+
         // Set the monetary locale to the configured locale to make helper::parseFloat work.
         setlocale(LC_MONETARY, config('app.locale'));
         setlocale(LC_NUMERIC, config('app.locale'));
-        
+
     }
 
     /**
@@ -190,7 +221,5 @@ class SettingsServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function register()
-    {
-    }
+    public function register() {}
 }

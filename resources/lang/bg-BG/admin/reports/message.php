@@ -1,16 +1,16 @@
 <?php
 
 return [
-    'about_templates' => 'About Saved Templates',
-    'saving_templates_description' => 'Select your options, then enter the name of your template in the box above and click the \'Save Template\' button. Use the dropdown to select a previously saved template.',
-    'create'  => [
-        'success' => 'Template saved successfully',
+    'about_templates' => 'Отностно записани шаблони',
+    'saving_templates_description' => 'Изберете вашите настройки, след това въведете име на шаблона и изберете \'Запис на шаблон\' бутона. Използвайте падащото меню за да изберете шаблон.',
+    'create' => [
+        'success' => 'Шаблона беше записан успешно',
     ],
     'update' => [
-        'success' => 'Template updated successfully',
+        'success' => 'Шаблона беше обновен успешно',
     ],
     'delete' => [
-        'success' => 'Template deleted',
-        'no_delete_permission' => 'Template does not exist or you do not have permission to delete it.',
+        'success' => 'Шаблона е изтрит',
+        'no_delete_permission' => 'Шаблона не съществува или нямате права да го изтриете.',
     ],
 ];

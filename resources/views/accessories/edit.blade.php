@@ -25,7 +25,7 @@
 @include ('partials.forms.edit.order_number')
 @include ('partials.forms.edit.datepicker', ['translated_name' => trans('general.purchase_date'),'fieldname' => 'purchase_date'])
 @include ('partials.forms.edit.purchase_cost', ['currency_type' => $item->location->currency ?? null, 'unit_cost' => trans('general.unit_cost')])
-@include ('partials.forms.edit.quantity')
+@include ('partials.forms.edit.quantity', ['min' => 0])
 @include ('partials.forms.edit.minimum_quantity')
 @include ('partials.forms.edit.notes')
 @include ('partials.forms.edit.image-upload', ['image_path' => app('accessories_upload_path')])

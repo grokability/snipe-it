@@ -3,7 +3,6 @@
 namespace App\Notifications;
 
 use App\Models\Component;
-
 use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
@@ -19,20 +18,17 @@ use NotificationChannels\GoogleChat\Widgets\KeyValue;
 use NotificationChannels\MicrosoftTeams\MicrosoftTeamsChannel;
 use NotificationChannels\MicrosoftTeams\MicrosoftTeamsMessage;
 
-
 #[AllowDynamicProperties]
 class CheckoutComponentNotification extends Notification
 {
     use Queueable;
-    /**
-     * @var
-     */
+
     private $params;
 
     /**
      * Create a new notification instance.
      *
-     * @param $params
+     * @param  $params
      */
     public function __construct(Component $component, $checkedOutTo, User $checkedOutBy, $acceptance, $note)
     {
@@ -64,7 +60,7 @@ class CheckoutComponentNotification extends Notification
             $notifyBy[] = MicrosoftTeamsChannel::class;
         }
 
-        if (Setting::getSettings()->webhook_selected == 'slack' || Setting::getSettings()->webhook_selected == 'general' ) {
+        if (Setting::getSettings()->webhook_selected == 'slack' || Setting::getSettings()->webhook_selected == 'general') {
             $notifyBy[] = SlackWebhookChannel::class;
         }
 
@@ -97,12 +93,13 @@ class CheckoutComponentNotification extends Notification
             ->content(':arrow_up: :package: '.trans('mail.Component_checkout_notification'))
             ->from($botname)
             ->to($channel)
-            ->attachment(function ($attachment) use ($item, $note, $admin, $fields) {
+            ->attachment(function ($attachment) use ($item, $note, $fields) {
                 $attachment->title(htmlspecialchars_decode($item->display_name), $item->present()->viewUrl())
                     ->fields($fields)
                     ->content($note);
             });
     }
+
     public function toMicrosoftTeams()
     {
         $target = $this->target;
@@ -110,7 +107,7 @@ class CheckoutComponentNotification extends Notification
         $item = $this->item;
         $note = $this->note;
 
-        if(!Str::contains(Setting::getSettings()->webhook_endpoint, 'workflows')) {
+        if (! Str::contains(Setting::getSettings()->webhook_endpoint, 'workflows')) {
             return MicrosoftTeamsMessage::create()
                 ->to($this->settings->webhook_endpoint)
                 ->type('success')
@@ -118,7 +115,7 @@ class CheckoutComponentNotification extends Notification
                 ->title(trans('mail.Component_checkout_notification'))
                 ->addStartGroupToSection('activityText')
                 ->fact(htmlspecialchars_decode($item->display_name), '', 'activityTitle')
-                ->fact(trans('mail.Component_checkout_notification')." by ", $admin->display_name)
+                ->fact(trans('mail.Component_checkout_notification').' by ', $admin->display_name)
                 ->fact(trans('mail.assigned_to'), $target->display_name)
                 ->fact(trans('admin/consumables/general.remaining'), $item->numRemaining())
                 ->fact(trans('mail.notes'), $note ?: '');
@@ -133,8 +130,9 @@ class CheckoutComponentNotification extends Notification
             trans('mail.notes') => $note ?: '',
         ];
 
-        return  array($message, $details);
+        return [$message, $details];
     }
+
     public function toGoogleChat()
     {
         $target = $this->target;

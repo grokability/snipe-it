@@ -4,25 +4,22 @@ namespace Tests\Feature\Maintenances\Api;
 
 use App\Models\Asset;
 use App\Models\Maintenance;
-use App\Models\Category;
 use App\Models\Supplier;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
 
 class CreateMaintenanceTest extends TestCase
 {
-
-
-    public function testRequiresPermissionToCreateMaintenance()
+    public function test_requires_permission_to_create_maintenance()
     {
         $this->actingAsForApi(User::factory()->create())
             ->postJson(route('api.maintenances.store'))
             ->assertForbidden();
     }
-    public function testCanCreateMaintenance()
+
+    public function test_can_create_maintenance()
     {
 
         Storage::fake('public');
@@ -70,7 +67,4 @@ class CreateMaintenanceTest extends TestCase
 
         $this->assertHasTheseActionLogs($maintenance, ['create']);
     }
-
-
-
 }

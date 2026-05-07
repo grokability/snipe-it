@@ -13,7 +13,7 @@ class CreateCheckoutAcceptancesTable extends Migration
      */
     public function up()
     {
-        if (!Schema::hasTable('checkout_acceptances')) {
+        if (! Schema::hasTable('checkout_acceptances')) {
             Schema::create('checkout_acceptances', function (Blueprint $table) {
                 $table->increments('id');
 

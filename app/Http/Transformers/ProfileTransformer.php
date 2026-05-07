@@ -18,7 +18,6 @@ class ProfileTransformer
         return (new DatatablesTransformer)->transformDatatables($array, $total);
     }
 
-
     public function transformFile(Actionlog $file)
     {
         $array = [
@@ -29,7 +28,7 @@ class ProfileTransformer
                 'type' => e($file->itemType()),
             ] : null,
             'filename' => e($file->filename),
-            'signature_file'   => ($file->accept_signature) ? route('profile.signature.view', ['filename' => $file->accept_signature ]) : null,
+            'signature_file' => ($file->accept_signature) ? route('profile.signature.view', ['filename' => $file->accept_signature]) : null,
             'note' => e($file->note),
             'url' => route('profile.storedeula.download', ['filename' => $file->filename]),
             'file' => route('profile.storedeula.download', ['filename' => $file->filename]),
@@ -38,5 +37,4 @@ class ProfileTransformer
 
         return $array;
     }
-
 }

@@ -18,7 +18,7 @@ class AddLastCheckinToAssets extends Migration
         });
 
         DB::statement(
-            "UPDATE " . DB::getTablePrefix() . "assets SET last_checkin=(SELECT MAX(" . DB::getTablePrefix() . "action_logs.action_date) FROM " . DB::getTablePrefix() . "action_logs WHERE item_type='App\\\Models\\\Asset' AND " . DB::getTablePrefix() . "action_logs.item_id=" . DB::getTablePrefix() . "assets.id AND " . DB::getTablePrefix() . "action_logs.action_type='checkin from')"
+            'UPDATE '.DB::getTablePrefix().'assets SET last_checkin=(SELECT MAX('.DB::getTablePrefix().'action_logs.action_date) FROM '.DB::getTablePrefix()."action_logs WHERE item_type='App\\\Models\\\Asset' AND ".DB::getTablePrefix().'action_logs.item_id='.DB::getTablePrefix().'assets.id AND '.DB::getTablePrefix()."action_logs.action_type='checkin from')"
         );
     }
 

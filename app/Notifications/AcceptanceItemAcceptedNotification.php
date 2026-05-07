@@ -33,6 +33,7 @@ class AcceptanceItemAcceptedNotification extends Notification
         $this->file = $params['file'] ?? null;
         $this->qty = $params['qty'] ?? null;
         $this->note = $params['note'] ?? null;
+        $this->custom_fields = $params['custom_fields'] ?? [];
 
     }
 
@@ -60,23 +61,24 @@ class AcceptanceItemAcceptedNotification extends Notification
      * Get the mail representation of the notification.
      *
      * @param  mixed  $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
+     * @return MailMessage
      */
     public function toMail()
     {
         $message = (new MailMessage)->markdown('notifications.markdown.asset-acceptance',
             [
-                'item_tag'      => $this->item_tag,
-                'item_name'     => $this->item_name,
-                'item_model'    => $this->item_model,
-                'item_serial'   => $this->item_serial,
-                'item_status'   => $this->item_status,
-                'note'          => $this->note,
+                'item_tag' => $this->item_tag,
+                'item_name' => $this->item_name,
+                'item_model' => $this->item_model,
+                'item_serial' => $this->item_serial,
+                'item_status' => $this->item_status,
+                'note' => $this->note,
                 'accepted_date' => $this->accepted_date,
-                'assigned_to'   => $this->assigned_to,
-                'company_name'  => $this->company_name,
+                'assigned_to' => $this->assigned_to,
+                'company_name' => $this->company_name,
                 'qty' => $this->qty,
-                'intro_text'    => trans('mail.acceptance_accepted_greeting',  ['user' => $this->assigned_to, 'item' => $this->item_name]),
+                'custom_fields' => $this->custom_fields,
+                'intro_text' => trans('mail.acceptance_accepted_greeting', ['user' => $this->assigned_to, 'item' => $this->item_name]),
             ])
             ->subject('✅ '.trans('mail.acceptance_accepted', ['user' => $this->assigned_to, 'item' => $this->item_name]))
             ->withSymfonyMessage(function (Email $message) {
@@ -87,5 +89,4 @@ class AcceptanceItemAcceptedNotification extends Notification
 
         return $message;
     }
-
 }

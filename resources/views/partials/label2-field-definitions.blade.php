@@ -340,7 +340,7 @@
                                 <option value="model.category.name">{{trans('admin/categories/general.category_name')}}</option>
                             </optgroup>
                             <optgroup label="{{trans('general.status')}}">
-                                <option value="assetstatus.name">{{trans('admin/statuslabels/table.name')}}</option>
+                                <option value="status.name">{{trans('admin/statuslabels/table.name')}}</option>
                             </optgroup>
                             <optgroup label="{{trans('general.supplier')}}">
                                 <option value="supplier.name">{{trans('admin/suppliers/table.name')}}</option>

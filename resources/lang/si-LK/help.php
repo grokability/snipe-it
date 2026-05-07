@@ -23,13 +23,13 @@ return [
 
     'accessories' => 'Accessories are anything you issue to users but that do not have a serial number (or you do not care about tracking them uniquely). For example, computer mice or keyboards.',
 
-    'companies'     => 'Companies can be used as a simple identifier field, or can be used to limit visibility of assets, users, etc if full company support is enabled in your Admin settings.',
+    'companies' => 'Companies can be used as a simple identifier field, or can be used to limit visibility of assets, users, etc if full company support is enabled in your Admin settings.',
 
-    'components'    => 'Components are items that are part of an asset, for example HDD, RAM, etc.',
+    'components' => 'Components are items that are part of an asset, for example HDD, RAM, etc.',
 
-    'consumables'   => 'Consumables are anything purchased that will be used up over time. For example, printer ink or copier paper.',
+    'consumables' => 'Consumables are anything purchased that will be used up over time. For example, printer ink or copier paper.',
 
     'depreciations' => 'You can set up asset depreciations to depreciate assets based on straight-line depreciation.',
-    
-    'empty_file'    => 'The importer detects that this file is empty.'
+
+    'empty_file' => 'The importer detects that this file is empty.',
 ];

@@ -8,14 +8,14 @@ use Tests\TestCase;
 
 class IndexManufacturersTest extends TestCase
 {
-    public function testPageRenders()
+    public function test_page_renders()
     {
         $this->actingAs(User::factory()->superuser()->create())
             ->get(route('manufacturers.index'))
             ->assertOk();
     }
 
-    public function testCannotSeedIfManufacturersExist()
+    public function test_cannot_seed_if_manufacturers_exist()
     {
         Manufacturer::factory()->create();
 

@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
 
     /*
     |--------------------------------------------------------------------------
@@ -13,9 +13,9 @@ return array(
     |
     */
 
-    "password" => "Parool peab olema kuus tähemärki ja peab klappima kinnitusega.",
-    "user"     => "Kasutajanimi või parool on vale",
-    "token"    => 'See parooli taastamise sessioon on kehtetu, aegunud või ei vasta sisestatud kasutajanimele.',
-    'sent'	   => 'If a matching user with a valid email address exists in our system, a password recovery email has been sent.',
+    'password' => 'Parool peab olema kuus tähemärki ja peab klappima kinnitusega.',
+    'user' => 'Kasutajanimi või parool on vale',
+    'token' => 'See parooli taastamise sessioon on kehtetu, aegunud või ei vasta sisestatud kasutajanimele.',
+    'sent' => 'If a matching user with a valid email address exists in our system, a password recovery email has been sent.',
 
-);
+];

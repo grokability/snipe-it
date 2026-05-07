@@ -7,15 +7,15 @@ use Tests\TestCase;
 
 class DatabaseSslConfigurationTest extends TestCase
 {
-    public function testMysqlSslConfigurationWithPaasMode(): void
+    public function test_mysql_ssl_configuration_with_paas_mode(): void
     {
         config([
-            'database.connections.mysql.options' => null
+            'database.connections.mysql.options' => null,
         ]);
 
         // Test PAAS mode SSL configuration
         config([
-            'database.connections.mysql.options' => $this->getSslOptions(true, false, true) // isPaas=true, verifyServer=false, sslEnabled=true
+            'database.connections.mysql.options' => $this->getSslOptions(true, false, true), // isPaas=true, verifyServer=false, sslEnabled=true
         ]);
 
         $options = config('database.connections.mysql.options');
@@ -29,15 +29,15 @@ class DatabaseSslConfigurationTest extends TestCase
         $this->assertArrayNotHasKey(PDO::MYSQL_ATTR_SSL_CIPHER, $options);
     }
 
-    public function testMysqlSslConfigurationWithNonPaasMode(): void
+    public function test_mysql_ssl_configuration_with_non_paas_mode(): void
     {
         config([
-            'database.connections.mysql.options' => null
+            'database.connections.mysql.options' => null,
         ]);
 
         // Test non-PAAS mode SSL configuration
         config([
-            'database.connections.mysql.options' => $this->getSslOptions(false, false, true) // isPaas=false, verifyServer=false, sslEnabled=true
+            'database.connections.mysql.options' => $this->getSslOptions(false, false, true), // isPaas=false, verifyServer=false, sslEnabled=true
         ]);
 
         $options = config('database.connections.mysql.options');
@@ -50,15 +50,15 @@ class DatabaseSslConfigurationTest extends TestCase
         $this->assertArrayHasKey(PDO::MYSQL_ATTR_SSL_CIPHER, $options);
     }
 
-    public function testMysqlSslConfigurationWithoutSsl(): void
+    public function test_mysql_ssl_configuration_without_ssl(): void
     {
         config([
-            'database.connections.mysql.options' => null
+            'database.connections.mysql.options' => null,
         ]);
 
         // Test SSL disabled configuration
         config([
-            'database.connections.mysql.options' => $this->getSslOptions(true, false, false) // isPaas=true, verifyServer=false, sslEnabled=false
+            'database.connections.mysql.options' => $this->getSslOptions(true, false, false), // isPaas=true, verifyServer=false, sslEnabled=false
         ]);
 
         $options = config('database.connections.mysql.options');
@@ -67,7 +67,7 @@ class DatabaseSslConfigurationTest extends TestCase
         $this->assertEmpty($options);
     }
 
-    public function testSslVerifyServerDefaultsToFalse(): void
+    public function test_ssl_verify_server_defaults_to_false(): void
     {
         // Test that SSL_VERIFY_SERVER defaults to false when not explicitly set
         $options = $this->getSslOptions(true, null, true); // isPaas=true, verifyServer=null, sslEnabled=true
@@ -76,10 +76,10 @@ class DatabaseSslConfigurationTest extends TestCase
         $this->assertFalse($options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT]);
     }
 
-    private function getSslOptions(bool $isPaas, ?bool $verifyServer=false, bool $sslEnabled=true): array
+    private function getSslOptions(bool $isPaas, ?bool $verifyServer = false, bool $sslEnabled = true): array
     {
         // simulates the SSL options logic from database.php
-        if (!$sslEnabled) {
+        if (! $sslEnabled) {
             return [];
         }
 

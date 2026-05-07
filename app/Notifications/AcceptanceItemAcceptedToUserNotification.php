@@ -34,6 +34,7 @@ class AcceptanceItemAcceptedToUserNotification extends Notification
         $this->settings = Setting::getSettings();
         $this->file = $params['file'] ?? null;
         $this->qty = $params['qty'] ?? null;
+        $this->custom_fields = $params['custom_fields'] ?? [];
     }
 
     /**
@@ -55,27 +56,28 @@ class AcceptanceItemAcceptedToUserNotification extends Notification
      * Get the mail representation of the notification.
      *
      * @param  mixed  $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
+     * @return MailMessage
      */
     public function toMail()
     {
         $pdf_path = storage_path('private_uploads/eula-pdfs/'.$this->file);
         $message = (new MailMessage)->markdown('notifications.markdown.asset-acceptance',
             [
-                'item_tag'      => $this->item_tag,
-                'item_name'     => $this->item_name,
-                'item_model'    => $this->item_model,
-                'item_serial'   => $this->item_serial,
-                'item_status'   => $this->item_status,
-                'note'          => $this->note,
+                'item_tag' => $this->item_tag,
+                'item_name' => $this->item_name,
+                'item_model' => $this->item_model,
+                'item_serial' => $this->item_serial,
+                'item_status' => $this->item_status,
+                'note' => $this->note,
                 'accepted_date' => $this->accepted_date,
-                'assigned_to'   => $this->assigned_to,
-                'company_name'  => $this->company_name,
+                'assigned_to' => $this->assigned_to,
+                'company_name' => $this->company_name,
                 'qty' => $this->qty,
-                'intro_text'    => trans_choice('mail.acceptance_asset_accepted_to_user', $this->qty, ['qty' => $this->qty, 'site_name' => $this->settings->site_name]),
+                'custom_fields' => $this->custom_fields,
+                'intro_text' => trans_choice('mail.acceptance_asset_accepted_to_user', $this->qty, ['qty' => $this->qty, 'site_name' => $this->settings->site_name]),
             ])
             ->attach($pdf_path)
-            ->subject('✅ '. trans_choice('mail.acceptance_asset_accepted_to_user', $this->qty, ['qty' => $this->qty, 'site_name' => $this->settings->site_name]))
+            ->subject('✅ '.trans_choice('mail.acceptance_asset_accepted_to_user', $this->qty, ['qty' => $this->qty, 'site_name' => $this->settings->site_name]))
             ->withSymfonyMessage(function (Email $message) {
                 $message->getHeaders()->addTextHeader(
                     'X-System-Sender', 'Snipe-IT'
@@ -84,7 +86,4 @@ class AcceptanceItemAcceptedToUserNotification extends Notification
 
         return $message;
     }
-
-
-
 }

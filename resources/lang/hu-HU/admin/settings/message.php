@@ -3,30 +3,30 @@
 return [
 
     'update' => [
-        'error'                 => 'Hiba történt frissítés közben. ',
-        'success'               => 'A beállítások sikeresen frissítve.',
+        'error' => 'Hiba történt frissítés közben. ',
+        'success' => 'A beállítások sikeresen frissítve.',
     ],
     'backup' => [
-        'delete_confirm'        => 'Biztosan törölni szeretné ezt a biztonsági másolatot? Ez a művelet nem vonható vissza.',
-        'file_deleted'          => 'A biztonsági mentés sikeresen törölve lett.',
-        'generated'             => 'Új biztonsági másolatot sikerült létrehozni.',
-        'file_not_found'        => 'A biztonsági másolat nem található a kiszolgálón.',
-        'restore_warning'       => 'Igen, állítsa vissza. Tudomásul veszem, hogy ez felülírja az adatbázisban jelenleg meglévő adatokat. Ez egyben az összes meglévő felhasználó (beleértve Önt is) kijelentkezik.',
-        'restore_confirm'       => 'Biztos, hogy vissza szeretné állítani az adatbázisát a :filename -ből?'
+        'delete_confirm' => 'Biztosan törölni szeretné ezt a biztonsági másolatot? Ez a művelet nem vonható vissza.',
+        'file_deleted' => 'A biztonsági mentés sikeresen törölve lett.',
+        'generated' => 'Új biztonsági másolatot sikerült létrehozni.',
+        'file_not_found' => 'A biztonsági másolat nem található a kiszolgálón.',
+        'restore_warning' => 'Igen, állítsa vissza. Tudomásul veszem, hogy ez felülírja az adatbázisban jelenleg meglévő adatokat. Ez egyben az összes meglévő felhasználó (beleértve Önt is) kijelentkezik.',
+        'restore_confirm' => 'Biztos, hogy vissza szeretné állítani az adatbázisát a :filename -ből?',
     ],
     'restore' => [
-        'success'               => 'Rendszermentés visszaállítva. Jelentkezzen be újra.'
+        'success' => 'Rendszermentés visszaállítva. Jelentkezzen be újra.',
     ],
     'purge' => [
-        'error'     => 'Hiba történt a tisztítás során.',
-        'validation_failed'     => 'A tisztítás megerősítése helytelen. Kérjük, írja be a "DELETE" szót a megerősítő mezőbe.',
-        'success'               => 'A törölt rekordok sikeresen feltöltöttek.',
+        'error' => 'Hiba történt a tisztítás során.',
+        'validation_failed' => 'A tisztítás megerősítése helytelen. Kérjük, írja be a "DELETE" szót a megerősítő mezőbe.',
+        'success' => 'A törölt rekordok sikeresen feltöltöttek.',
     ],
     'mail' => [
         'sending' => 'Teszt e-mail küldése...',
         'success' => 'Levél elküldve!',
         'error' => 'A levelet nem lehetett elküldeni.',
-        'additional' => 'Nincs további hibaüzenet. Ellenőrizze a levelezési beállításokat és az alkalmazás naplóját.'
+        'additional' => 'Nincs további hibaüzenet. Ellenőrizze a levelezési beállításokat és az alkalmazás naplóját.',
     ],
     'ldap' => [
         'testing' => 'LDAP kapcsolat, kötés és lekérdezés tesztelése ...',
@@ -34,11 +34,11 @@ return [
         'error' => 'Valami hiba történt :(',
         'sync_success' => 'Az LDAP-kiszolgálóról visszaküldött 10 felhasználó mintája az Ön beállításai alapján:',
         'testing_authentication' => 'LDAP-hitelesítés tesztelése...',
-        'authentication_success' => 'A felhasználó sikeresen hitelesített az LDAP-nál!'
+        'authentication_success' => 'A felhasználó sikeresen hitelesített az LDAP-nál!',
     ],
     'labels' => [
         'null_template' => 'A címkesablon nem található. Kérjük, válasszon egy sablont.',
-        ],
+    ],
     'webhook' => [
         'sending' => ':app tesztüzenet küldése...',
         'success' => 'A :webhook_name integráció működik!',
@@ -55,5 +55,22 @@ return [
     'location_scoping' => [
         'not_saved' => 'A beállításai nem kerültek mentésre.',
         'mismatch' => 'Az adatbázisban 1 tétel van, amely figyelmet igényel, mielőtt engedélyezhetné a helyszín szerinti szűrést.|Az adatbázisban :count tétel van, amely figyelmet igényel, mielőtt engedélyezhetné a helyszín szerinti szűrést.',
+    ],
+    'oauth' => [
+        'token_revoked' => 'Personal access token revoked successfully.',
+        'token_unrevoked' => 'Personal access token reinstated successfully.',
+        'token_not_found' => 'That personal access token could not be found.',
+        'token_revoke_error' => 'An error occurred while revoking the token.',
+        'token_unrevoke_error' => 'An error occurred while reinstating the token.',
+        'client_created' => 'OAuth client created successfully.',
+        'client_updated' => 'OAuth client updated successfully.',
+        'client_deleted' => 'OAuth client deleted successfully.',
+        'client_revoked' => 'OAuth client revoked successfully.',
+        'client_unrevoked' => 'OAuth client reinstated successfully.',
+        'client_not_found' => 'That OAuth client could not be found.',
+        'token_deleted' => 'Token revoked successfully.',
+        'client_delete_denied' => 'You are not authorized to delete this client.',
+        'client_edit_denied' => 'You are not authorized to edit this client.',
+        'token_delete_denied' => 'You are not authorized to revoke this token.',
     ],
 ];

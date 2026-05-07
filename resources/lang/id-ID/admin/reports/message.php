@@ -3,7 +3,7 @@
 return [
     'about_templates' => 'Tentang Templat Tersimpan',
     'saving_templates_description' => 'Pilih opsi Anda, lalu masukkan nama templat Anda di kotak di atas dan klik tombol \'Simpan Templat\'. Gunakan dropdown untuk memilih templat yang sebelumnya telah disimpan.',
-    'create'  => [
+    'create' => [
         'success' => 'Templat berhasil disimpan',
     ],
     'update' => [

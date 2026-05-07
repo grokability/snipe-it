@@ -13,7 +13,7 @@ class CreateSamlNonceTable extends Migration
      */
     public function up()
     {
-        if (! Schema::hasTable('saml_nonces') ) {
+        if (! Schema::hasTable('saml_nonces')) {
             Schema::create('saml_nonces', function (Blueprint $table) {
                 $table->id();
                 $table->string('nonce')->index();

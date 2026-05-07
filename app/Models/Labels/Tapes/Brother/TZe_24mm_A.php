@@ -4,51 +4,63 @@ namespace App\Models\Labels\Tapes\Brother;
 
 class TZe_24mm_A extends TZe_24mm
 {
-    private const BARCODE_MARGIN =   1.40;
-    private const TAG_SIZE       =   2.80;
-    private const TITLE_SIZE     =   2.80;
-    private const TITLE_MARGIN   =   0.50;
-    private const LABEL_SIZE     =   2.00;
-    private const LABEL_MARGIN   = - 0.35;
-    private const FIELD_SIZE     =   3.20;
-    private const FIELD_MARGIN   =   0.15;
+    private const BARCODE_MARGIN = 1.40;
+
+    private const TAG_SIZE = 2.80;
+
+    private const TITLE_SIZE = 2.80;
+
+    private const TITLE_MARGIN = 0.50;
+
+    private const LABEL_SIZE = 2.00;
+
+    private const LABEL_MARGIN = -0.35;
+
+    private const FIELD_SIZE = 3.20;
+
+    private const FIELD_MARGIN = 0.15;
 
     public function getUnit()
     {
-        return 'mm'; 
-    }
-    public function getWidth()
-    {
-        return 65.0; 
-    }
-    public function getSupportAssetTag()
-    {
-        return true; 
-    }
-    public function getSupport1DBarcode()
-    {
-        return false; 
-    }
-    public function getSupport2DBarcode()
-    {
-        return true; 
-    }
-    public function getSupportFields()
-    {
-        return 3; 
-    }
-    public function getSupportLogo()
-    {
-        return false; 
-    }
-    public function getSupportTitle()
-    {
-        return true; 
+        return 'mm';
     }
 
-    public function preparePDF($pdf)
+    public function getWidth()
     {
+        return 65.0;
     }
+
+    public function getSupportAssetTag()
+    {
+        return true;
+    }
+
+    public function getSupport1DBarcode()
+    {
+        return false;
+    }
+
+    public function getSupport2DBarcode()
+    {
+        return true;
+    }
+
+    public function getSupportFields()
+    {
+        return 3;
+    }
+
+    public function getSupportLogo()
+    {
+        return false;
+    }
+
+    public function getSupportTitle()
+    {
+        return true;
+    }
+
+    public function preparePDF($pdf) {}
 
     public function write($pdf, $record)
     {

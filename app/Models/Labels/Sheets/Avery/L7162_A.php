@@ -2,68 +2,80 @@
 
 namespace App\Models\Labels\Sheets\Avery;
 
-
 class L7162_A extends L7162
 {
-    private const BARCODE_MARGIN =   1.60;
-    private const TAG_SIZE       =   4.60;
-    private const TITLE_SIZE     =   4.20;
-    private const TITLE_MARGIN   =   1.40;
-    private const LABEL_SIZE     =   2.20;
-    private const LABEL_MARGIN   = - 0.50;
-    private const FIELD_SIZE     =   4.60;
-    private const FIELD_MARGIN   =   0.30;
+    private const BARCODE_MARGIN = 1.60;
+
+    private const TAG_SIZE = 4.60;
+
+    private const TITLE_SIZE = 4.20;
+
+    private const TITLE_MARGIN = 1.40;
+
+    private const LABEL_SIZE = 2.20;
+
+    private const LABEL_MARGIN = -0.50;
+
+    private const FIELD_SIZE = 4.60;
+
+    private const FIELD_MARGIN = 0.30;
 
     public function getUnit()
     {
-        return 'mm'; 
+        return 'mm';
     }
 
     public function getLabelMarginTop()
     {
-        return 1.0; 
+        return 1.0;
     }
+
     public function getLabelMarginBottom()
     {
-        return 1.0; 
+        return 1.0;
     }
+
     public function getLabelMarginLeft()
     {
-        return 1.0; 
+        return 1.0;
     }
+
     public function getLabelMarginRight()
     {
-        return 1.0; 
+        return 1.0;
     }
 
     public function getSupportAssetTag()
     {
-        return true; 
-    }
-    public function getSupport1DBarcode()
-    {
-        return false; 
-    }
-    public function getSupport2DBarcode()
-    {
-        return true; 
-    }
-    public function getSupportFields()
-    {
-        return 4; 
-    }
-    public function getSupportLogo()
-    {
-        return false; 
-    }
-    public function getSupportTitle()
-    {
-        return true; 
+        return true;
     }
 
-    public function preparePDF($pdf)
+    public function getSupport1DBarcode()
     {
+        return false;
     }
+
+    public function getSupport2DBarcode()
+    {
+        return true;
+    }
+
+    public function getSupportFields()
+    {
+        return 4;
+    }
+
+    public function getSupportLogo()
+    {
+        return false;
+    }
+
+    public function getSupportTitle()
+    {
+        return true;
+    }
+
+    public function preparePDF($pdf) {}
 
     public function write($pdf, $record)
     {
@@ -100,7 +112,7 @@ class L7162_A extends L7162
             );
             $titleShiftX = $barcodeSize;
         }
-        
+
         if ($record->has('title')) {
             static::writeText(
                 $pdf, $record->get('title'),
@@ -131,6 +143,3 @@ class L7162_A extends L7162
 
     }
 }
-
-
-?>

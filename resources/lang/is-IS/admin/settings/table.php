@@ -1,6 +1,6 @@
 <?php
 
-return array(
-    'created'   => 'Stofnað',
-    'size' => 'Size',
-);
+return [
+    'created' => 'Stofnað',
+    'size' => 'Stærð',
+];

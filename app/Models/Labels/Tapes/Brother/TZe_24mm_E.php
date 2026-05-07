@@ -6,35 +6,78 @@ use App\Helpers\Helper;
 
 class TZe_24mm_E extends TZe_24mm
 {
-    private const BARCODE_MARGIN =   1.75;
-    private const TAG_SIZE       =   2.00;
-    private const TITLE_SIZE     =   2.80;
-    private const TITLE_MARGIN   =   0.50;
-    private const LABEL_SIZE     =   2.00;
-    private const LABEL_MARGIN   = - 0.75;
-    private const FIELD_SIZE     =   2.80;
-    private const FIELD_MARGIN   =   0.15;
-    private const BARCODE1D_SIZE = - 2.25;
+    private const BARCODE_MARGIN = 1.75;
 
-    public function getUnit()  { return 'mm'; }
-    public function getWidth() { return 45.0; }
-	public function getHeight() { return 15; }
-    public function getSupportAssetTag()  { return true; }
-    public function getSupport1DBarcode() { return true; }
-    public function getSupport2DBarcode() { return true; }
-    public function getSupportFields()    { return 3; }
-    public function getSupportLogo()      { return false; }
-    public function getSupportTitle()     { return true; }
+    private const TAG_SIZE = 2.00;
+
+    private const TITLE_SIZE = 2.80;
+
+    private const TITLE_MARGIN = 0.50;
+
+    private const LABEL_SIZE = 2.00;
+
+    private const LABEL_MARGIN = -0.75;
+
+    private const FIELD_SIZE = 2.80;
+
+    private const FIELD_MARGIN = 0.15;
+
+    private const BARCODE1D_SIZE = -2.25;
+
+    public function getUnit()
+    {
+        return 'mm';
+    }
+
+    public function getWidth()
+    {
+        return 45.0;
+    }
+
+    public function getHeight()
+    {
+        return 15;
+    }
+
+    public function getSupportAssetTag()
+    {
+        return true;
+    }
+
+    public function getSupport1DBarcode()
+    {
+        return true;
+    }
+
+    public function getSupport2DBarcode()
+    {
+        return true;
+    }
+
+    public function getSupportFields()
+    {
+        return 3;
+    }
+
+    public function getSupportLogo()
+    {
+        return false;
+    }
+
+    public function getSupportTitle()
+    {
+        return true;
+    }
 
     public function preparePDF($pdf) {}
 
-    public function write($pdf, $record) {
+    public function write($pdf, $record)
+    {
         $pa = $this->getPrintableArea();
 
         $currentX = $pa->x1;
-        $currentY = $pa->y1 -2;
+        $currentY = $pa->y1 - 2;
         $usableWidth = $pa->w;
-
 
         $usableHeight = $pa->h - self::BARCODE1D_SIZE;
         $barcodeSize = ($usableHeight - self::TAG_SIZE) * 1.2;
@@ -89,22 +132,25 @@ class TZe_24mm_E extends TZe_24mm
             labelFont: 'freesans',
         );
 
-            foreach ($fields as $field) {
+        foreach ($fields as $field) {
+            $hasLabel = is_string($field['label'] ?? null) && trim($field['label']) !== '';
+            if ($hasLabel) {
                 static::writeText(
                     $pdf, $field['label'],
                     $currentX, $currentY,
                     'freesans', '', $field_layout['labelSize'], 'L',
                     $field_layout['labelWidth'], $field_layout['rowAdvance'], true, 0
                 );
-
-                static::writeText(
-                    $pdf, $field['value'],
-                    $field_layout['valueX'], $currentY,
-                    'freemono', 'B', $field_layout['fieldSize'], 'L',
-                    $field_layout['valueWidth'], $field_layout['rowAdvance'], true, 0, 0.01
-                );
-                $currentY += $field_layout['rowAdvance'];
             }
+
+            static::writeText(
+                $pdf, $field['value'],
+                $hasLabel ? $field_layout['valueX'] : $field_layout['fullValueX'], $currentY,
+                'freemono', 'B', $field_layout['fieldSize'], 'L',
+                $hasLabel ? $field_layout['valueWidth'] : $field_layout['fullValueWidth'], $field_layout['rowAdvance'], true, 0, 0.01
+            );
+            $currentY += $field_layout['rowAdvance'];
+        }
 
         if ($record->has('barcode1d')) {
             static::write1DBarcode(

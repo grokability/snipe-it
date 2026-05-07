@@ -57,25 +57,25 @@ class AcceptanceItemDeclinedNotification extends Notification
      * Get the mail representation of the notification.
      *
      * @param  mixed  $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
+     * @return MailMessage
      */
     public function toMail($notifiable)
     {
         $message = (new MailMessage)->markdown('notifications.markdown.asset-acceptance',
             [
-                'item_tag'      => $this->item_tag,
-                'item_name'     => $this->item_name,
-                'item_model'    => $this->item_model,
-                'item_serial'   => $this->item_serial,
-                'item_status'   => $this->item_status,
-                'note'          => $this->note,
+                'item_tag' => $this->item_tag,
+                'item_name' => $this->item_name,
+                'item_model' => $this->item_model,
+                'item_serial' => $this->item_serial,
+                'item_status' => $this->item_status,
+                'note' => $this->note,
                 'declined_date' => $this->declined_date,
-                'assigned_to'   => $this->assigned_to,
-                'company_name'  => $this->company_name,
-                'qty'           => $this->qty,
-                'admin'         => $this->admin,
-                'user'          => $this->assigned_to,
-                'intro_text'    => trans('mail.acceptance_declined_greeting', ['user' => $this->assigned_to]),
+                'assigned_to' => $this->assigned_to,
+                'company_name' => $this->company_name,
+                'qty' => $this->qty,
+                'admin' => $this->admin,
+                'user' => $this->assigned_to,
+                'intro_text' => trans('mail.acceptance_declined_greeting', ['user' => $this->assigned_to]),
             ])
             ->subject('⚠️ '.trans('mail.acceptance_declined', ['user' => $this->assigned_to, 'item' => $this->item_name]))
             ->withSymfonyMessage(function (Email $message) {
@@ -86,5 +86,4 @@ class AcceptanceItemDeclinedNotification extends Notification
 
         return $message;
     }
-
 }

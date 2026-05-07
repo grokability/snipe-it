@@ -4,10 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\FilterRequest;
 use App\Http\Transformers\DepreciationsTransformer;
 use App\Models\Depreciation;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class DepreciationsController extends Controller
 {
@@ -15,9 +16,10 @@ class DepreciationsController extends Controller
      * Display a listing of the resource.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since [v4.0]
      */
-    public function index(Request $request) : JsonResponse | array
+    public function index(FilterRequest $request): JsonResponse|array
     {
         $this->authorize('view', Depreciation::class);
         $allowed_columns = [
@@ -32,21 +34,22 @@ class DepreciationsController extends Controller
             'licenses_count',
         ];
 
-        $depreciations = Depreciation::select('id','name','months','depreciation_min','depreciation_type','created_at','updated_at', 'created_by')
+        $depreciations = Depreciation::select(['id', 'name', 'months', 'depreciation_min', 'depreciation_type', 'created_at', 'updated_at', 'created_by'])
             ->with('adminuser')
             ->withCount('assets as assets_count')
             ->withCount('models as models_count')
             ->withCount('licenses as licenses_count');
 
-        if ($request->filled('search')) {
-            $depreciations = $depreciations->TextSearch($request->input('search'));
+        // This invokes the Searchable model trait scopeTextSearch and will handle input by search or by advanced search filter
+        if ($request->filled('filter') || $request->filled('search')) {
+            $depreciations->TextSearch($request->input('filter') ? $request->input('filter') : $request->input('search'));
         }
 
         // Make sure the offset and limit are actually integers and do not exceed system limits
         $offset = ($request->input('offset') > $depreciations->count()) ? $depreciations->count() : app('api_offset_value');
         $limit = app('api_limit_value');
         $order = $request->input('order') === 'asc' ? 'asc' : 'desc';
-        $sort_override =  $request->input('sort');
+        $sort_override = $request->input('sort');
         $column_sort = in_array($sort_override, $allowed_columns) ? $sort_override : 'created_at';
 
         switch ($sort_override) {
@@ -68,10 +71,10 @@ class DepreciationsController extends Controller
      * Store a newly created resource in storage.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since [v4.0]
-     * @param  \Illuminate\Http\Request  $request
      */
-    public function store(Request $request) : JsonResponse
+    public function store(Request $request): JsonResponse
     {
         $this->authorize('create', Depreciation::class);
         $depreciation = new Depreciation;
@@ -88,10 +91,12 @@ class DepreciationsController extends Controller
      * Display the specified resource.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since [v4.0]
+     *
      * @param  int  $id
      */
-    public function show($id) : JsonResponse | array
+    public function show($id): JsonResponse|array
     {
         $this->authorize('view', Depreciation::class);
         $depreciation = Depreciation::findOrFail($id);
@@ -103,11 +108,12 @@ class DepreciationsController extends Controller
      * Update the specified resource in storage.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since [v4.0]
-     * @param  \Illuminate\Http\Request  $request
+     *
      * @param  int  $id
      */
-    public function update(Request $request, $id) : JsonResponse
+    public function update(Request $request, $id): JsonResponse
     {
         $this->authorize('update', Depreciation::class);
         $depreciation = Depreciation::findOrFail($id);
@@ -124,10 +130,12 @@ class DepreciationsController extends Controller
      * Remove the specified resource from storage.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since [v4.0]
+     *
      * @param  int  $id
      */
-    public function destroy($id) : JsonResponse
+    public function destroy($id): JsonResponse
     {
         $this->authorize('delete', Depreciation::class);
         $depreciation = Depreciation::withCount('models as models_count')->findOrFail($id);

@@ -3,43 +3,42 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Helper;
+use App\Http\Requests\CustomAssetReportRequest;
 use App\Mail\CheckoutAccessoryMail;
 use App\Mail\CheckoutAssetMail;
 use App\Mail\CheckoutComponentMail;
 use App\Mail\CheckoutConsumableMail;
 use App\Mail\CheckoutLicenseMail;
 use App\Models\Accessory;
-use App\Models\AccessoryCheckout;
 use App\Models\Actionlog;
 use App\Models\Asset;
 use App\Models\AssetModel;
 use App\Models\Category;
 use App\Models\Checkoutable;
+use App\Models\CheckoutAcceptance;
 use App\Models\Component;
 use App\Models\Consumable;
-use App\Models\LicenseSeat;
-use App\Models\Maintenance;
-use App\Models\CheckoutAcceptance;
-use App\Models\Company;
 use App\Models\CustomField;
 use App\Models\Depreciation;
 use App\Models\License;
+use App\Models\LicenseSeat;
+use App\Models\Maintenance;
 use App\Models\ReportTemplate;
 use App\Models\Setting;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Mail\Mailable;
-use Illuminate\Support\Facades\Mail;
-use \Illuminate\Contracts\View\View;
-use League\Csv\Reader;
-use Symfony\Component\HttpFoundation\StreamedResponse;
-use League\Csv\EscapeFormula;
-use App\Http\Requests\CustomAssetReportRequest;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Mail;
+use League\Csv\EscapeFormula;
+use League\Csv\Reader;
+use League\Csv\Writer;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * This controller handles all actions related to Reports for
@@ -58,13 +57,13 @@ class ReportsController extends Controller
     }
 
     /**
-    * Returns a view that displays the accessories report.
-    *
-    * @author [A. Gianotto] [<snipe@snipe.net>]
-    * @since [v1.0]
-    * @return \Illuminate\Contracts\View\View
-    */
-    public function getAccessoryReport() : View
+     * Returns a view that displays the accessories report.
+     *
+     * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
+     * @since [v1.0]
+     */
+    public function getAccessoryReport(): View
     {
         $this->authorize('reports.view');
 
@@ -72,15 +71,16 @@ class ReportsController extends Controller
     }
 
     /**
-    * Exports the accessories to CSV
-    *
-    * @deprecated Server-side exports have been replaced by datatables export since v2.
-    * @author [A. Gianotto] [<snipe@snipe.net>]
-    * @see ManufacturersController::getDatatable() method that generates the JSON response
-    * @since [v1.0]
-    * @return \Illuminate\Http\Response
-    */
-    public function exportAccessoryReport() : Response
+     * Exports the accessories to CSV
+     *
+     * @deprecated Server-side exports have been replaced by datatables export since v2.
+     *
+     * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
+     * @see ManufacturersController::getDatatable() method that generates the JSON response
+     * @since [v1.0]
+     */
+    public function exportAccessoryReport(): Response
     {
         $this->authorize('reports.view');
         $accessories = Accessory::orderBy('created_at', 'DESC')->get();
@@ -115,33 +115,37 @@ class ReportsController extends Controller
     }
 
     /**
-    * Show depreciation report for assets.
-    *
-    * @author [A. Gianotto] [<snipe@snipe.net>]
-    * @since [v1.0]
-    */
-    public function getDeprecationReport() : View
+     * Show depreciation report for assets.
+     *
+     * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
+     * @since [v1.0]
+     */
+    public function getDeprecationReport(): View
     {
         $this->authorize('reports.view');
         $depreciations = Depreciation::get();
-        return view('reports/depreciation')->with('depreciations',$depreciations);
+
+        return view('reports/depreciation')->with('depreciations', $depreciations);
     }
 
     /**
-    * Exports the depreciations to CSV
-    *
-    * @deprecated Server-side exports have been replaced by datatables export since v2.
-    * @author [A. Gianotto] [<snipe@snipe.net>]
-    * @since [v1.0]
-    */
-    public function exportDeprecationReport() : Response
+     * Exports the depreciations to CSV
+     *
+     * @deprecated Server-side exports have been replaced by datatables export since v2.
+     *
+     * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
+     * @since [v1.0]
+     */
+    public function exportDeprecationReport(): Response
     {
         $this->authorize('reports.view');
         // Grab all the assets
-        $assets = Asset::with('model', 'assignedTo', 'assetstatus', 'defaultLoc', 'assetlog')
-                       ->orderBy('created_at', 'DESC')->get();
+        $assets = Asset::with('model', 'assignedTo', 'status', 'defaultLoc', 'assetlog')
+            ->orderBy('created_at', 'DESC')->get();
 
-        $csv = \League\Csv\Writer::createFromFileObject(new \SplTempFileObject());
+        $csv = Writer::createFromFileObject(new \SplTempFileObject);
         $csv->setOutputBOM(Reader::BOM_UTF16_BE);
 
         $rows = [];
@@ -159,7 +163,7 @@ class ReportsController extends Controller
             trans('admin/hardware/table.diff'),
         ];
 
-        //we insert the CSV header
+        // we insert the CSV header
         $csv->insertOne($header);
 
         // Create a row per asset
@@ -201,30 +205,31 @@ class ReportsController extends Controller
         }
 
         $csv->output('depreciation-report-'.date('Y-m-d').'.csv');
-        die;
+        exit;
     }
-
 
     /**
      * Displays audit report.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since [v4.0]
      */
-    public function audit() : View
+    public function audit(): View
     {
         $this->authorize('reports.view');
+
         return view('reports/audit');
     }
 
-
     /**
-    * Displays activity report.
-    *
-    * @author [A. Gianotto] [<snipe@snipe.net>]
-    * @since [v1.0]
-    */
-    public function getActivityReport() : View
+     * Displays activity report.
+     *
+     * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
+     * @since [v1.0]
+     */
+    public function getActivityReport(): View
     {
         $this->authorize('reports.view');
 
@@ -235,14 +240,16 @@ class ReportsController extends Controller
      * Exports the activity report to CSV
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since [v5.0.7]
      */
-    public function postActivityReport(Request $request) : StreamedResponse
+    public function postActivityReport(Request $request): StreamedResponse
     {
         ini_set('max_execution_time', 12000);
         $this->authorize('reports.view');
 
-        \Debugbar::disable();
+        $this->disableDebugbar();
+
         $response = new StreamedResponse(function () {
             Log::debug('Starting streamed response');
 
@@ -277,42 +284,42 @@ class ReportsController extends Controller
                 ->orderBy('created_at', 'DESC')
                 ->chunk(500, function ($actionlogs) use ($handle) {
                     $executionTime = microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'];
-                Log::debug('Walking results: '.$executionTime);
-                $count = 0;
+                    Log::debug('Walking results: '.$executionTime);
+                    $count = 0;
 
-                foreach ($actionlogs as $actionlog) {
-                    $count++;
-                    $target_name = '';
+                    foreach ($actionlogs as $actionlog) {
+                        $count++;
+                        $target_name = '';
 
-                    if ($actionlog->target) {
-                        $target_name = $actionlog->target->display_name;
+                        if ($actionlog->target) {
+                            $target_name = $actionlog->target->display_name;
+                        }
+
+                        if ($actionlog->item) {
+                            $item_name = e($actionlog->item->display_name);
+                        } else {
+                            $item_name = '';
+                        }
+
+                        $row = [
+                            $actionlog->created_at,
+                            ($actionlog->adminuser) ? $actionlog->adminuser->display_name : '',
+                            $actionlog->present()->actionType(),
+                            e($actionlog->itemType()),
+                            ($actionlog->itemType() == 'user') ? $actionlog->filename : $item_name,
+                            ($actionlog->item) ? $actionlog->item->serial : null,
+                            (($actionlog->item) && ($actionlog->item->model)) ? htmlspecialchars($actionlog->item->model->name, ENT_NOQUOTES) : null,
+                            (($actionlog->item) && ($actionlog->item->model)) ? $actionlog->item->model->model_number : null,
+                            $target_name,
+                            ($actionlog->note) ? e($actionlog->note) : '',
+                            $actionlog->remote_ip,
+                            $actionlog->user_agent,
+                            $actionlog->action_source,
+                            $actionlog->log_meta,
+                        ];
+                        fputcsv($handle, $row);
                     }
-
-                    if ($actionlog->item){
-                        $item_name = e($actionlog->item->display_name);
-                    } else {
-                        $item_name = '';
-                    }
-
-                    $row = [
-                        $actionlog->created_at,
-                        ($actionlog->adminuser) ? $actionlog->adminuser->display_name : '',
-                        $actionlog->present()->actionType(),
-                        e($actionlog->itemType()),
-                        ($actionlog->itemType() == 'user') ? $actionlog->filename : $item_name,
-                        ($actionlog->item) ? $actionlog->item->serial : null,
-                        (($actionlog->item) && ($actionlog->item->model)) ? htmlspecialchars($actionlog->item->model->name, ENT_NOQUOTES) : null,
-                        (($actionlog->item) && ($actionlog->item->model))  ? $actionlog->item->model->model_number : null,
-                        $target_name,
-                        ($actionlog->note) ? e($actionlog->note) : '',
-                        $actionlog->remote_ip,
-                        $actionlog->user_agent,
-                        $actionlog->action_source,
-                        $actionlog->log_meta,
-                    ];
-                    fputcsv($handle, $row);
-                }
-            });
+                });
 
             // Close the output stream
             fclose($handle);
@@ -323,35 +330,36 @@ class ReportsController extends Controller
             'Content-Disposition' => 'attachment; filename="activity-report-'.date('Y-m-d-his').'.csv"',
         ]);
 
-
         return $response;
     }
-
 
     /**
      * Displays license report
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since [v1.0]
      */
-    public function getLicenseReport() : View
+    public function getLicenseReport(): View
     {
         $this->authorize('reports.view');
         $licenses = License::with('depreciation')->orderBy('created_at', 'DESC')
-                           ->with('company')
-                           ->get();
+            ->with('company')
+            ->get();
 
         return view('reports/licenses', compact('licenses'));
     }
 
     /**
-    * Exports the licenses to CSV
-    *
-    * @deprecated Server-side exports have been replaced by datatables export since v2.
-    * @author [A. Gianotto] [<snipe@snipe.net>]
-    * @since [v1.0]
-    */
-    public function exportLicenseReport() : Response
+     * Exports the licenses to CSV
+     *
+     * @deprecated Server-side exports have been replaced by datatables export since v2.
+     *
+     * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
+     * @since [v1.0]
+     */
+    public function exportLicenseReport(): Response
     {
         $this->authorize('reports.view');
         $licenses = License::orderBy('created_at', 'DESC')->get();
@@ -386,8 +394,7 @@ class ReportsController extends Controller
             $rows[] = implode(',', $row);
         }
 
-
-        $csv      = implode("\n", $rows);
+        $csv = implode("\n", $rows);
         $response = response()->make($csv, 200);
         $response->header('Content-Type', 'text/csv');
         $response->header('Content-disposition', 'attachment;filename=report.csv');
@@ -396,13 +403,14 @@ class ReportsController extends Controller
     }
 
     /**
-    * Returns a form that allows the user to generate a custom CSV report.
-    *
-    * @author [A. Gianotto] [<snipe@snipe.net>]
-    * @see ReportsController::postCustomReport() method that generates the CSV
-    * @since [v1.0]
-    */
-    public function getCustomReport(Request $request) : View
+     * Returns a form that allows the user to generate a custom CSV report.
+     *
+     * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
+     * @see ReportsController::postCustomReport() method that generates the CSV
+     * @since [v1.0]
+     */
+    public function getCustomReport(Request $request): View
     {
         $this->authorize('reports.view');
         $customfields = CustomField::get();
@@ -429,16 +437,17 @@ class ReportsController extends Controller
      * Exports the custom report to CSV
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @see ReportsController::getCustomReport() method that generates form view
      * @since [v1.0]
      */
-    public function postCustom(CustomAssetReportRequest $request) : StreamedResponse
+    public function postCustom(CustomAssetReportRequest $request): StreamedResponse
     {
-        ini_set('max_execution_time', env('REPORT_TIME_LIMIT', 12000)); //12000 seconds = 200 minutes
+        ini_set('max_execution_time', env('REPORT_TIME_LIMIT', 12000)); // 12000 seconds = 200 minutes
         $this->authorize('reports.view');
 
+        $this->disableDebugbar();
 
-        \Debugbar::disable();
         $customfields = CustomField::get();
         $response = new StreamedResponse(function () use ($customfields, $request) {
             Log::debug('Starting streamed response');
@@ -451,6 +460,10 @@ class ReportsController extends Controller
             fprintf($handle, chr(0xEF).chr(0xBB).chr(0xBF));
 
             $header = [];
+
+            if ($request->filled('is_shared')) {
+                $header[] = trans('admin/reports/general.share_template');
+            }
 
             if ($request->filled('id')) {
                 $header[] = trans('general.id');
@@ -530,7 +543,7 @@ class ReportsController extends Controller
             if ($request->filled('rtd_location')) {
                 $header[] = trans('admin/hardware/form.default_location');
             }
-            
+
             if ($request->filled('rtd_location_address')) {
                 $header[] = trans('general.address');
                 $header[] = trans('general.address');
@@ -547,6 +560,14 @@ class ReportsController extends Controller
 
             if ($request->filled('username')) {
                 $header[] = 'Username';
+            }
+
+            if ($request->filled('user_company')) {
+                $header[] = trans('admin/reports/general.custom_export.user_company');
+            }
+
+            if ($request->filled('email')) {
+                $header[] = 'Email';
             }
 
             if ($request->filled('employee_num')) {
@@ -587,6 +608,10 @@ class ReportsController extends Controller
 
             if ($request->filled('user_zip')) {
                 $header[] = trans('admin/reports/general.custom_export.user_zip');
+            }
+
+            if ($request->filled('target_notes')) {
+                $header[] = trans('admin/reports/general.custom_export.target_notes');
             }
 
             if ($request->filled('status')) {
@@ -633,7 +658,6 @@ class ReportsController extends Controller
                 $header[] = trans('general.url');
             }
 
-
             foreach ($customfields as $customfield) {
                 if ($request->input($customfield->db_column_name()) == '1') {
                     $header[] = $customfield->name;
@@ -646,10 +670,15 @@ class ReportsController extends Controller
             $executionTime = microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'];
             Log::debug('Added headers: '.$executionTime);
 
+            if ($request->filled('is_shared')) {
+                // to fill with logic for the report template and NOT the assets retrieved by the query
+                // do we scope here or??
+            }
+
             $assets = Asset::select('assets.*')->with(
-                'location', 'assetstatus', 'company', 'defaultLoc', 'assignedTo',
+                'location', 'status', 'company', 'defaultLoc', 'assignedTo',
                 'model.category', 'model.manufacturer', 'supplier');
-            
+
             if ($request->filled('by_location_id')) {
                 $assets->whereIn('assets.location_id', $request->input('by_location_id'));
             }
@@ -698,7 +727,7 @@ class ReportsController extends Controller
                 if ($request->filled('purchase_cost_end')) {
                     $assets->whereBetween('assets.purchase_cost', [$request->input('purchase_cost_start'), $request->input('purchase_cost_end')]);
                 } else {
-                    $assets->where('assets.purchase_cost', ">", $request->input('purchase_cost_start'));
+                    $assets->where('assets.purchase_cost', '>', $request->input('purchase_cost_start'));
                 }
             }
 
@@ -711,27 +740,27 @@ class ReportsController extends Controller
 
             if (($request->filled('checkout_date_start')) && ($request->filled('checkout_date_end'))) {
                 $checkout_start = Carbon::parse($request->input('checkout_date_start'))->startOfDay();
-                $checkout_end = Carbon::parse($request->input('checkout_date_end',now()))->endOfDay();
+                $checkout_end = Carbon::parse($request->input('checkout_date_end', now()))->endOfDay();
 
-                $actionlogassets = Actionlog::where('action_type','=', 'checkout')
-                                              ->where('item_type', 'LIKE', '%Asset%',)
-                                              ->whereBetween('action_date',[$checkout_start, $checkout_end])
-                                                  ->pluck('item_id');
+                $actionlogassets = Actionlog::where('action_type', '=', 'checkout')
+                    ->where('item_type', 'LIKE', '%Asset%')
+                    ->whereBetween('action_date', [$checkout_start, $checkout_end])
+                    ->pluck('item_id');
 
-                $assets->whereIn('assets.id',$actionlogassets);
+                $assets->whereIn('assets.id', $actionlogassets);
             }
 
             if (($request->filled('checkin_date_start'))) {
                 $checkin_start = Carbon::parse($request->input('checkin_date_start'))->startOfDay();
-                        // use today's date is `checkin_date_end` is not provided
+                // use today's date is `checkin_date_end` is not provided
                 $checkin_end = Carbon::parse($request->input('checkin_date_end', now()))->endOfDay();
 
-                $assets->whereBetween('assets.last_checkin', [$checkin_start, $checkin_end ]);
+                $assets->whereBetween('assets.last_checkin', [$checkin_start, $checkin_end]);
             }
-            //last checkin is exporting, but currently is a date and not a datetime in the custom report ONLY.
+            // last checkin is exporting, but currently is a date and not a datetime in the custom report ONLY.
 
             if (($request->filled('expected_checkin_start')) && ($request->filled('expected_checkin_end'))) {
-                    $assets->whereBetween('assets.expected_checkin', [$request->input('expected_checkin_start'), $request->input('expected_checkin_end')]);
+                $assets->whereBetween('assets.expected_checkin', [$request->input('expected_checkin_start'), $request->input('expected_checkin_end')]);
             }
 
             if (($request->filled('asset_eol_date_start')) && ($request->filled('asset_eol_date_end'))) {
@@ -739,10 +768,10 @@ class ReportsController extends Controller
             }
 
             if (($request->filled('last_audit_start')) && ($request->filled('last_audit_end'))) {
-                    $last_audit_start = Carbon::parse($request->input('last_audit_start'))->startOfDay();
-                    $last_audit_end = Carbon::parse($request->input('last_audit_end'))->endOfDay();
+                $last_audit_start = Carbon::parse($request->input('last_audit_start'))->startOfDay();
+                $last_audit_end = Carbon::parse($request->input('last_audit_end'))->endOfDay();
 
-                    $assets->whereBetween('assets.last_audit_date', [$last_audit_start, $last_audit_end]);
+                $assets->whereBetween('assets.last_audit_date', [$last_audit_start, $last_audit_end]);
             }
 
             if (($request->filled('next_audit_start')) && ($request->filled('next_audit_end'))) {
@@ -753,9 +782,15 @@ class ReportsController extends Controller
                 $assets->whereBetween('assets.updated_at', [$request->input('last_updated_start'), $request->input('last_updated_end')]);
             }
 
+            if (($request->filled('last_updated_before'))) {
+                $last_updated_window = Carbon::parse(today()->subDays($request->input('last_updated_before')));
+                $assets->where('assets.updated_at', '<', $last_updated_window);
+            }
+
             if ($request->filled('exclude_archived')) {
                 $assets->notArchived();
             }
+
             if ($request->input('deleted_assets') == 'include_deleted') {
                 $assets->withTrashed();
             }
@@ -763,14 +798,21 @@ class ReportsController extends Controller
                 $assets->onlyTrashed();
             }
 
-            Log::debug($assets->toSql());
+            if ($request->input('assignment_status') === 'assigned') {
+                $assets->whereNotNull('assets.assigned_to');
+            }
+
+            if ($request->input('assignment_status') === 'unassigned') {
+                $assets->whereNull('assets.assigned_to');
+            }
+
             $assets->orderBy('assets.id', 'ASC')->chunk(500, function ($assets) use ($handle, $customfields, $request) {
-            
+
                 $executionTime = microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'];
                 Log::debug('Walking results: '.$executionTime);
                 $count = 0;
 
-                $formatter = new EscapeFormula("`");
+                $formatter = new EscapeFormula('`');
 
                 foreach ($assets as $asset) {
                     $count++;
@@ -841,7 +883,7 @@ class ReportsController extends Controller
                     if ($request->filled('supplier')) {
                         $row[] = ($asset->supplier) ? $asset->supplier->name : '';
                     }
-                    
+
                     if ($request->filled('location')) {
                         $row[] = ($asset->location) ? $asset->location->display_name : '';
                     }
@@ -877,6 +919,23 @@ class ReportsController extends Controller
                         // Only works if we're checked out to a user, not anything else.
                         if ($asset->checkedOutToUser()) {
                             $row[] = ($asset->assignedto) ? $asset->assignedto->username : '';
+                        } else {
+                            $row[] = ''; // Empty string if unassigned
+                        }
+                    }
+
+                    if ($request->filled('user_company')) {
+                        if ($asset->checkedOutToUser()) {
+                            $row[] = ($asset->assignedto?->company) ? $asset->assignedto?->company?->display_name : '';
+                        } else {
+                            $row[] = ''; // Empty string if unassigned
+                        }
+                    }
+
+                    if ($request->filled('email')) {
+                        // Only works if we're checked out to a user, not anything else.
+                        if ($asset->checkedOutToUser()) {
+                            $row[] = ($asset->assignedto) ? $asset->assignedto->email : '';
                         } else {
                             $row[] = ''; // Empty string if unassigned
                         }
@@ -963,8 +1022,16 @@ class ReportsController extends Controller
                         }
                     }
 
+                    if ($request->filled('target_notes')) {
+                        if ($asset->checkedOutToUser()) {
+                            $row[] = ($asset->assignedto) ? $asset->assignedto->notes : '';
+                        } else {
+                            $row[] = ''; // Empty string if unassigned
+                        }
+                    }
+
                     if ($request->filled('status')) {
-                        $row[] = ($asset->assetstatus) ? $asset->assetstatus->name.' ('.$asset->present()->statusMeta.')' : '';
+                        $row[] = ($asset->status) ? $asset->status->name.' ('.$asset->present()->statusMeta.')' : '';
                     }
 
                     if ($request->filled('checkout_date')) {
@@ -1006,22 +1073,27 @@ class ReportsController extends Controller
                     }
 
                     if ($request->filled('url')) {
-                        $row[] = config('app.url').'/hardware/'.$asset->id ;
+                        $row[] = config('app.url').'/hardware/'.$asset->id;
                     }
 
                     foreach ($customfields as $customfield) {
                         $column_name = $customfield->db_column_name();
                         if ($request->filled($customfield->db_column_name())) {
-                            $row[] = $asset->$column_name;
+                            $value = $asset->$column_name;
+
+                            if (($customfield->field_encrypted == '1') && Gate::allows('assets.view.encrypted_custom_fields')) {
+                                $value = Helper::gracefulDecrypt($customfield, $value);
+                            }
+
+                            $row[] = $value;
                         }
                     }
 
-                    
                     // CSV_ESCAPE_FORMULAS is set to false in the .env
                     if (config('app.escape_formulas') === false) {
                         fputcsv($handle, $row);
 
-                   // CSV_ESCAPE_FORMULAS is set to true or is not set in the .env
+                        // CSV_ESCAPE_FORMULAS is set to true or is not set in the .env
                     } else {
                         fputcsv($handle, $formatter->escapeRecord($row));
                     }
@@ -1047,9 +1119,10 @@ class ReportsController extends Controller
      * getImprovementsReport
      *
      * @author  Vincent Sposato <vincent.sposato@gmail.com>
+     *
      * @version v1.0
      */
-    public function getMaintenancesReport() : View
+    public function getMaintenancesReport(): View
     {
         $this->authorize('reports.view');
 
@@ -1060,15 +1133,16 @@ class ReportsController extends Controller
      * exportImprovementsReport
      *
      * @author  Vincent Sposato <vincent.sposato@gmail.com>
+     *
      * @version v1.0
      */
-    public function exportMaintenancesReport() : Response
+    public function exportMaintenancesReport(): Response
     {
         $this->authorize('reports.view');
         // Grab all the improvements
         $Maintenances = Maintenance::with('asset', 'supplier')
-                                             ->orderBy('created_at', 'DESC')
-                                             ->get();
+            ->orderBy('created_at', 'DESC')
+            ->get();
 
         $rows = [];
 
@@ -1102,13 +1176,13 @@ class ReportsController extends Controller
             } else {
                 $improvementTime = (int) $maintenance->asset_maintenance_time;
             }
-            $row[]  = $improvementTime;
-            $row[]  = trans('general.currency') . Helper::formatCurrencyOutput($maintenance->cost);
+            $row[] = $improvementTime;
+            $row[] = trans('general.currency').Helper::formatCurrencyOutput($maintenance->cost);
             $rows[] = implode(',', $row);
         }
 
         // spit out a csv
-        $csv      = implode("\n", $rows);
+        $csv = implode("\n", $rows);
         $response = response()->make($csv, 200);
         $response->header('Content-Type', 'text/csv');
         $response->header('Content-disposition', 'attachment;filename=report.csv');
@@ -1120,9 +1194,10 @@ class ReportsController extends Controller
      * getAssetAcceptanceReport
      *
      * @author  Vincent Sposato <vincent.sposato@gmail.com>
+     *
      * @version v1.0
      */
-    public function getAssetAcceptanceReport($deleted = false) : View
+    public function getAssetAcceptanceReport($deleted = false): View
     {
         $this->authorize('reports.view');
         $showDeleted = $deleted == 'deleted';
@@ -1132,17 +1207,16 @@ class ReportsController extends Controller
                 'checkoutable' => function (MorphTo $query) {
                     $query->withTrashed()->morphWith([
                         Asset::class => ['model.category', 'assignedTo', 'company'],
-                        Accessory::class => ['category','checkouts', 'company'],
+                        Accessory::class => ['category', 'checkouts', 'company'],
                         LicenseSeat::class => ['user', 'license'],
                         Component::class => ['assignedTo', 'company'],
                         Consumable::class => ['company'],
                     ]);
                 },
-                'assignedTo' => function($query){
-                         $query->withTrashed();
-                    }
+                'assignedTo' => function ($query) {
+                    $query->withTrashed();
+                },
             ])->orderByDesc('checkout_acceptances.created_at');
-
 
         if ($showDeleted) {
             $query->withTrashed();
@@ -1152,16 +1226,17 @@ class ReportsController extends Controller
             ->filter(fn ($unaccepted) => $unaccepted->checkoutable)
             ->map(fn ($unaccepted) => Checkoutable::fromAcceptance($unaccepted));
 
-        return view('reports/unaccepted_assets', compact('itemsForReport','showDeleted' ));
+        return view('reports/unaccepted_assets', compact('itemsForReport', 'showDeleted'));
     }
 
     /**
      * sentAssetAcceptanceReminder
      *
-     * @param integer|null $acceptanceId
+     * @param  int|null  $acceptanceId
+     *
      * @version v1.0
      */
-    public function sentAssetAcceptanceReminder(Request $request) : RedirectResponse
+    public function sentAssetAcceptanceReminder(Request $request): RedirectResponse
     {
         $this->authorize('reports.view');
         $id = $request->input('acceptance_id');
@@ -1169,41 +1244,43 @@ class ReportsController extends Controller
             ->with([
                 'checkoutable' => function (MorphTo $query) {
                     $query->withTrashed()->morphWith([
-                        Asset::class       => ['model.category', 'assignedTo', 'company', 'checkouts'],
-                        Accessory::class   => ['category', 'company', 'checkouts'],
+                        Asset::class => ['model.category', 'assignedTo', 'company', 'checkouts'],
+                        Accessory::class => ['category', 'company', 'checkouts'],
                         LicenseSeat::class => ['user', 'license', 'checkouts'],
-                        Component::class   => ['assignedTo', 'company', 'checkouts'],
-                        Consumable::class  => ['company', 'checkouts'],
+                        Component::class => ['assignedTo', 'company', 'checkouts'],
+                        Consumable::class => ['company', 'checkouts'],
                     ]);
                 },
                 'assignedTo' => fn ($q) => $q->withTrashed(),
             ])
             ->pending();
         $acceptance = $query->find($id);
-        if (!$acceptance) {
+        if (! $acceptance) {
             Log::debug('No pending acceptances');
+
             // Redirect to the unaccepted items report page with error
             return redirect()->route('reports/unaccepted_assets')->with('error', trans('general.bad_data'));
         }
-        $item      = $acceptance->checkoutable;
-        $assignee  = $acceptance->assignedTo ?? $item->assignedTo ?? null;
-        $email     = $assignee?->email;
-        $locale    = $assignee?->locale;
+        $item = $acceptance->checkoutable;
+        $assignee = $acceptance->assignedTo ?? $item->assignedTo ?? null;
+        $email = $assignee?->email;
+        $locale = $assignee?->locale;
 
         Log::debug(print_r($acceptance, true));
 
-        if (is_null($acceptance->created_at)){
+        if (is_null($acceptance->created_at)) {
             Log::debug('No acceptance created_at');
+
             return redirect()->route('reports/unaccepted_assets')->with('error', trans('general.bad_data'));
         } else {
-            if($item instanceof LicenseSeat){
+            if ($item instanceof LicenseSeat) {
                 $logItem_res = $item->license->checkouts()->with('adminuser')->where('created_at', '=', $acceptance->created_at)->get();
-            }
-            else{
+            } else {
                 $logItem_res = $item->checkouts()->with('adminuser')->where('created_at', '=', $acceptance->created_at)->get();
-                }
-            if ($logItem_res->isEmpty()){
+            }
+            if ($logItem_res->isEmpty()) {
                 Log::debug('Acceptance date mismatch');
+
                 return redirect()->route('reports/unaccepted_assets')->with('error', trans('general.bad_data'));
             }
             $logItem = $logItem_res[0];
@@ -1217,7 +1294,8 @@ class ReportsController extends Controller
 
         return redirect()->route('reports/unaccepted_assets')->with('success', trans('admin/reports/general.reminder_sent'));
     }
-    private function getCheckoutMailType(CheckoutAcceptance $acceptance, $logItem) : Mailable
+
+    private function getCheckoutMailType(CheckoutAcceptance $acceptance, $logItem): Mailable
     {
         $lookup = [
             Accessory::class => CheckoutAccessoryMail::class,
@@ -1226,31 +1304,35 @@ class ReportsController extends Controller
             Consumable::class => CheckoutConsumableMail::class,
             Component::class => CheckoutComponentMail::class,
         ];
-        $mailable= $lookup[get_class($acceptance->checkoutable)];
+        $mailable = $lookup[get_class($acceptance->checkoutable)];
 
-        return new $mailable($acceptance->checkoutable,
+        return new $mailable(
+            $acceptance->checkoutable,
             $acceptance->checkedOutTo ?? $acceptance->assignedTo,
             $logItem->adminuser,
             $acceptance,
-            $acceptance->note);
-
+            $acceptance->note,
+            firstTimeSending: false,
+        );
     }
+
     /**
      * sentAssetAcceptanceReminder
      *
-     * @param integer|null $acceptanceId
+     * @param  int|null  $acceptanceId
+     *
      * @version v1.0
      */
-    public function deleteAssetAcceptance($acceptanceId = null) : RedirectResponse
+    public function deleteAssetAcceptance($acceptanceId = null): RedirectResponse
     {
         $this->authorize('reports.view');
 
-        if (!$acceptance = CheckoutAcceptance::pending()->find($acceptanceId)) {
+        if (! $acceptance = CheckoutAcceptance::pending()->find($acceptanceId)) {
             // Redirect to the unaccepted assets report page with error
             return redirect()->route('reports/unaccepted_assets')->with('error', trans('general.bad_data'));
         }
 
-        if($acceptance->delete()) {
+        if ($acceptance->delete()) {
             return redirect()->route('reports/unaccepted_assets')->with('success', trans('admin/reports/general.acceptance_deleted'));
         } else {
             return redirect()->route('reports/unaccepted_assets')->with('error', trans('general.deletion_failed'));
@@ -1261,38 +1343,38 @@ class ReportsController extends Controller
      * Exports the AssetAcceptance report to CSV
      *
      * @author  Vincent Sposato <vincent.sposato@gmail.com>
+     *
      * @version v1.0
      */
-    public function postAssetAcceptanceReport($deleted = false) : Response
+    public function postAssetAcceptanceReport($deleted = false): Response
     {
         $this->authorize('reports.view');
-        $showDeleted = request('deleted') === 'deleted';;
+        $showDeleted = request('deleted') === 'deleted';
 
         /**
          * Get all assets with pending checkout acceptances
          */
+        $acceptances = CheckoutAcceptance::pending()
+            ->with([
+                'checkoutable' => function (MorphTo $acceptance) {
+                    $acceptance->withTrashed()->morphWith([
+                        Asset::class => ['model.category', 'assignedTo', 'company'],
+                        Accessory::class => ['category', 'checkouts', 'company'],
+                        LicenseSeat::class => ['user', 'license'],
+                        Component::class => ['assignedTo', 'company'],
+                        Consumable::class => ['company'],
+                    ]);
+                },
+                'assignedTo',
+            ])->orderByDesc('checkout_acceptances.created_at');
 
-            $acceptances = CheckoutAcceptance::pending()
-                ->with([
-                    'checkoutable' => function (MorphTo $acceptance) {
-                        $acceptance->withTrashed()->morphWith([
-                            Asset::class => ['model.category', 'assignedTo', 'company'],
-                            Accessory::class => ['category','checkouts', 'company'],
-                            LicenseSeat::class => ['user', 'license'],
-                            Component::class => ['assignedTo', 'company'],
-                            Consumable::class => ['company'],
-                        ]);
-                    },
-                    'assignedTo',
-                ])->orderByDesc('checkout_acceptances.created_at');
-
-            if ($showDeleted) {
-                $acceptances->withTrashed();
-            }
+        if ($showDeleted) {
+            $acceptances->withTrashed();
+        }
 
         $itemsForReport = $acceptances->get()
-                ->filter(fn ($unaccepted) => $unaccepted->checkoutable)
-                ->map(fn ($unaccepted) => Checkoutable::fromAcceptance($unaccepted));
+            ->filter(fn ($unaccepted) => $unaccepted->checkoutable)
+            ->map(fn ($unaccepted) => Checkoutable::fromAcceptance($unaccepted));
 
         $rows = [];
 
@@ -1312,23 +1394,23 @@ class ReportsController extends Controller
 
         foreach ($itemsForReport as $item) {
 
-            if ($item != null){
-            
-                $row    = [ ];
-                $row[]  = str_replace(',', '', $item->acceptance->created_at);
-                $row[]  = str_replace(',', '', $item->type);
-                $row[]  = str_replace(',', '', $item->plain_text_company);
-                $row[]  = str_replace(',', '', $item->plain_text_category);
-                $row[]  = str_replace(',', '', $item->plain_text_model);
-                $row[]  = str_replace(',', '', $item->plain_text_name);
-                $row[]  = str_replace(',', '', $item->asset_tag);
-                $row[]  = str_replace(',', '', ($item->acceptance->assignedto) ? $item->acceptance->assignedto->display_name : trans('admin/reports/general.deleted_user'));
+            if ($item != null) {
+
+                $row = [];
+                $row[] = str_replace(',', '', $item->acceptance->created_at);
+                $row[] = str_replace(',', '', $item->type);
+                $row[] = str_replace(',', '', $item->plain_text_company);
+                $row[] = str_replace(',', '', $item->plain_text_category);
+                $row[] = str_replace(',', '', $item->plain_text_model);
+                $row[] = str_replace(',', '', $item->plain_text_name);
+                $row[] = str_replace(',', '', $item->asset_tag);
+                $row[] = str_replace(',', '', ($item->acceptance->assignedto) ? $item->acceptance->assignedto->display_name : trans('admin/reports/general.deleted_user'));
                 $rows[] = implode(',', $row);
             }
         }
 
         // spit out a csv
-        $csv      = implode("\n", $rows);
+        $csv = implode("\n", $rows);
         $response = response()->make($csv, 200);
         $response->header('Content-Type', 'text/csv');
         $response->header('Content-disposition', 'attachment;filename=report.csv');
@@ -1339,20 +1421,21 @@ class ReportsController extends Controller
     /**
      * getCheckedOutAssetsRequiringAcceptance
      *
-     * @param $modelsInCategoriesThatRequireAcceptance
      *
      * @return array
+     *
      * @author  Vincent Sposato <vincent.sposato@gmail.com>
+     *
      * @version v1.0
      */
-    protected function getCheckedOutAssetsRequiringAcceptance($modelsInCategoriesThatRequireAcceptance) : View
+    protected function getCheckedOutAssetsRequiringAcceptance($modelsInCategoriesThatRequireAcceptance): View
     {
         $this->authorize('reports.view');
         $assets = Asset::deployed()
-                        ->inModelList($modelsInCategoriesThatRequireAcceptance)
-                        ->select('id')
-                        ->get()
-                        ->toArray();
+            ->inModelList($modelsInCategoriesThatRequireAcceptance)
+            ->select('id')
+            ->get()
+            ->toArray();
 
         return array_pluck($assets, 'id');
     }
@@ -1360,45 +1443,45 @@ class ReportsController extends Controller
     /**
      * getModelsInCategoriesThatRequireAcceptance
      *
-     * @param $assetCategoriesRequiringAcceptance
-     * @return array
      * @author  Vincent Sposato <vincent.sposato@gmail.com>
+     *
      * @version v1.0
      */
-    protected function getModelsInCategoriesThatRequireAcceptance($assetCategoriesRequiringAcceptance) : array
+    protected function getModelsInCategoriesThatRequireAcceptance($assetCategoriesRequiringAcceptance): array
     {
         $this->authorize('reports.view');
 
         return array_pluck(AssetModel::inCategory($assetCategoriesRequiringAcceptance)
-                                 ->select('id')
-                                 ->get()
-                                 ->toArray(), 'id');
+            ->select('id')
+            ->get()
+            ->toArray(), 'id');
     }
 
     /**
      * getCategoriesThatRequireAcceptance
      *
-     * @return array
      * @author  Vincent Sposato <vincent.sposato@gmail.com>
+     *
      * @version v1.0
      */
-    protected function getCategoriesThatRequireAcceptance() : array
+    protected function getCategoriesThatRequireAcceptance(): array
     {
         $this->authorize('reports.view');
 
         return array_pluck(Category::requiresAcceptance()
-                                    ->select('id')
-                                    ->get()
-                                    ->toArray(), 'id');
+            ->select('id')
+            ->get()
+            ->toArray(), 'id');
     }
 
     /**
      * getAssetsCheckedOutRequiringAcceptance
      *
      * @author  Vincent Sposato <vincent.sposato@gmail.com>
+     *
      * @version v1.0
      */
-    protected function getAssetsCheckedOutRequiringAcceptance() : array
+    protected function getAssetsCheckedOutRequiringAcceptance(): array
     {
         $this->authorize('reports.view');
 

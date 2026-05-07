@@ -22,7 +22,7 @@ class ImportComponentsTest extends ImportDataTestCase implements TestsPermission
 
     protected function importFileResponse(array $parameters = []): TestResponse
     {
-        if (!array_key_exists('import-type', $parameters)) {
+        if (! array_key_exists('import-type', $parameters)) {
             $parameters['import-type'] = 'component';
         }
 
@@ -30,7 +30,7 @@ class ImportComponentsTest extends ImportDataTestCase implements TestsPermission
     }
 
     #[Test]
-    public function testRequiresPermission()
+    public function test_requires_permission()
     {
         $this->actingAsForApi(User::factory()->create());
 
@@ -38,7 +38,7 @@ class ImportComponentsTest extends ImportDataTestCase implements TestsPermission
     }
 
     #[Test]
-    public function userWithImportAssetsPermissionCanImportComponents(): void
+    public function user_with_import_assets_permission_can_import_components(): void
     {
         $this->actingAsForApi(User::factory()->canImport()->create());
 
@@ -48,7 +48,7 @@ class ImportComponentsTest extends ImportDataTestCase implements TestsPermission
     }
 
     #[Test]
-    public function importComponents(): void
+    public function import_components(): void
     {
         Notification::fake();
 
@@ -60,9 +60,9 @@ class ImportComponentsTest extends ImportDataTestCase implements TestsPermission
         $this->importFileResponse(['import' => $import->id])
             ->assertOk()
             ->assertExactJson([
-                'payload'  => null,
-                'status'   => 'success',
-                'messages' => ['redirect_url' => route('components.index')]
+                'payload' => null,
+                'status' => 'success',
+                'messages' => ['redirect_url' => route('components.index')],
             ]);
 
         $newComponent = Component::query()
@@ -95,7 +95,7 @@ class ImportComponentsTest extends ImportDataTestCase implements TestsPermission
     }
 
     #[Test]
-    public function willIgnoreUnknownColumnsWhenFileContainsUnknownColumns(): void
+    public function will_ignore_unknown_columns_when_file_contains_unknown_columns(): void
     {
         $row = ImportFileBuilder::new()->firstRow();
         $row['unknownColumnInCsvFile'] = 'foo';
@@ -110,13 +110,13 @@ class ImportComponentsTest extends ImportDataTestCase implements TestsPermission
     }
 
     #[Test]
-    public function willNotCreateNewComponentWhenComponentWithNameAndSerialNumberExists(): void
+    public function will_not_create_new_component_when_component_with_name_and_serial_number_exists(): void
     {
         $component = Component::factory()->create();
 
         $importFileBuilder = ImportFileBuilder::times(4)->replace([
-            'itemName'     => $component->name,
-            'serialNumber' => $component->serial
+            'itemName' => $component->name,
+            'serialNumber' => $component->serial,
         ]);
 
         $import = Import::factory()->component()->create(['file_path' => $importFileBuilder->saveToImportsDirectory()]);
@@ -134,7 +134,7 @@ class ImportComponentsTest extends ImportDataTestCase implements TestsPermission
     }
 
     #[Test]
-    public function willNotCreateNewCompanyWhenCompanyExists(): void
+    public function will_not_create_new_company_when_company_exists(): void
     {
         $importFileBuilder = ImportFileBuilder::times(4)->replace(['companyName' => Str::random()]);
         $import = Import::factory()->component()->create(['file_path' => $importFileBuilder->saveToImportsDirectory()]);
@@ -150,7 +150,7 @@ class ImportComponentsTest extends ImportDataTestCase implements TestsPermission
     }
 
     #[Test]
-    public function willNotCreateNewLocationWhenLocationExists(): void
+    public function will_not_create_new_location_when_location_exists(): void
     {
         $importFileBuilder = ImportFileBuilder::times(4)->replace(['location' => Str::random()]);
         $import = Import::factory()->component()->create(['file_path' => $importFileBuilder->saveToImportsDirectory()]);
@@ -166,7 +166,7 @@ class ImportComponentsTest extends ImportDataTestCase implements TestsPermission
     }
 
     #[Test]
-    public function willNotCreateNewCategoryWhenCategoryExists(): void
+    public function will_not_create_new_category_when_category_exists(): void
     {
         $importFileBuilder = ImportFileBuilder::times(4)->replace(['category' => $this->faker->company]);
         $import = Import::factory()->component()->create(['file_path' => $importFileBuilder->saveToImportsDirectory()]);
@@ -182,7 +182,7 @@ class ImportComponentsTest extends ImportDataTestCase implements TestsPermission
     }
 
     #[Test]
-    public function whenRequiredColumnsAreMissingInImportFile(): void
+    public function when_required_columns_are_missing_in_import_file(): void
     {
         $importFileBuilder = ImportFileBuilder::new()
             ->replace(['category' => ''])
@@ -196,16 +196,16 @@ class ImportComponentsTest extends ImportDataTestCase implements TestsPermission
         $this->importFileResponse(['import' => $import->id])
             ->assertInternalServerError()
             ->assertExactJson([
-                'status'   => 'import-errors',
-                'payload'  => null,
+                'status' => 'import-errors',
+                'payload' => null,
                 'messages' => [
                     $row['itemName'] => [
                         'Component' => [
                             'qty' => ['The qty field must be at least 1.'],
-                            'category_id' => ['The category id field is required.']
-                        ]
-                    ]
-                ]
+                            'category_id' => ['The category id field is required.'],
+                        ],
+                    ],
+                ],
             ]);
 
         $newComponents = Component::query()
@@ -216,12 +216,12 @@ class ImportComponentsTest extends ImportDataTestCase implements TestsPermission
     }
 
     #[Test]
-    public function updateComponentFromImport(): void
+    public function update_component_from_import(): void
     {
         $component = Component::factory()->create();
         $importFileBuilder = ImportFileBuilder::new([
-            'itemName'     => $component->name,
-            'serialNumber' => $component->serial
+            'itemName' => $component->name,
+            'serialNumber' => $component->serial,
         ]);
 
         $row = $importFileBuilder->firstRow();
@@ -250,19 +250,19 @@ class ImportComponentsTest extends ImportDataTestCase implements TestsPermission
     }
 
     #[Test]
-    public function customColumnMapping(): void
+    public function custom_column_mapping(): void
     {
         $faker = ImportFileBuilder::new()->definition();
         $row = [
-            'category'     => $faker['serialNumber'],
-            'companyName'  => $faker['quantity'],
-            'itemName'     => $faker['purchaseDate'],
-            'location'     => $faker['purchaseCost'],
-            'orderNumber'  => $faker['orderNumber'],
+            'category' => $faker['serialNumber'],
+            'companyName' => $faker['quantity'],
+            'itemName' => $faker['purchaseDate'],
+            'location' => $faker['purchaseCost'],
+            'orderNumber' => $faker['orderNumber'],
             'purchaseCost' => $faker['category'],
             'purchaseDate' => $faker['companyName'],
-            'quantity'     => $faker['itemName'],
-            'serialNumber' => $faker['location']
+            'quantity' => $faker['itemName'],
+            'serialNumber' => $faker['location'],
         ];
 
         $importFileBuilder = new ImportFileBuilder([$row]);
@@ -273,16 +273,16 @@ class ImportComponentsTest extends ImportDataTestCase implements TestsPermission
         $this->importFileResponse([
             'import' => $import->id,
             'column-mappings' => [
-                'Category'      => 'serial',
-                'Company'       => 'quantity',
-                'item Name'     => 'purchase_date',
-                'Location'      => 'purchase_cost',
-                'Order Number'  => 'order_number',
+                'Category' => 'serial',
+                'Company' => 'quantity',
+                'item Name' => 'purchase_date',
+                'Location' => 'purchase_cost',
+                'Order Number' => 'order_number',
                 'Purchase Cost' => 'category',
                 'Purchase Date' => 'company',
-                'Quantity'      => 'item_name',
+                'Quantity' => 'item_name',
                 'Serial number' => 'location',
-            ]
+            ],
         ])->assertOk();
 
         $newComponent = Component::query()

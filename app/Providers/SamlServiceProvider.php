@@ -17,8 +17,8 @@ class SamlServiceProvider extends ServiceProvider
     {
         $this->app->singleton(Saml::class, Saml::class);
 
-        Route::group(['namespace'=> 'App\Http\Controllers'], function () {
-            Route::group(['prefix'=> 'saml'], function () {
+        Route::group(['namespace' => 'App\Http\Controllers'], function () {
+            Route::group(['prefix' => 'saml'], function () {
                 Route::get(
                     'metadata',
                     [
@@ -57,7 +57,5 @@ class SamlServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function register()
-    {
-    }
+    public function register() {}
 }

@@ -3,30 +3,30 @@
 return [
 
     'update' => [
-        'error'                 => 'Se ha producido un error al actualizar. ',
-        'success'               => 'Configuración actualizada correctamente.',
+        'error' => 'Se ha producido un error al actualizar. ',
+        'success' => 'Configuración actualizada correctamente.',
     ],
     'backup' => [
-        'delete_confirm'        => '¿Está seguro de que desea eliminar este archivo de respaldo? Esta acción no puede se puede deshacer. ',
-        'file_deleted'          => 'El archivo de copia de seguridad se ha eliminado correctamente. ',
-        'generated'             => 'Se ha creado correctamente un nuevo archivo de copia de seguridad.',
-        'file_not_found'        => 'Ese archivo de copia de seguridad no se pudo encontrar en el servidor.',
-        'restore_warning'       => 'Sí, restaurarlo. Reconozco que esto sobrescribirá cualquier dato existente actualmente en la base de datos. Esto también cerrará la sesión de todos sus usuarios existentes (incluido usted).',
-        'restore_confirm'       => '¿Está seguro que desea restaurar su base de datos desde :filename?'
+        'delete_confirm' => '¿Está seguro de que desea eliminar este archivo de respaldo? Esta acción no puede se puede deshacer. ',
+        'file_deleted' => 'El archivo de copia de seguridad se ha eliminado correctamente. ',
+        'generated' => 'Se ha creado correctamente un nuevo archivo de copia de seguridad.',
+        'file_not_found' => 'Ese archivo de copia de seguridad no se pudo encontrar en el servidor.',
+        'restore_warning' => 'Sí, restaurarlo. Reconozco que esto sobrescribirá cualquier dato existente actualmente en la base de datos. Esto también cerrará la sesión de todos sus usuarios existentes (incluido usted).',
+        'restore_confirm' => '¿Está seguro que desea restaurar su base de datos desde :filename?',
     ],
     'restore' => [
-        'success'               => 'Se ha restaurado la copia de seguridad de su sistema. Por favor, vuelva a iniciar sesión.'
+        'success' => 'Se ha restaurado la copia de seguridad de su sistema. Por favor, vuelva a iniciar sesión.',
     ],
     'purge' => [
-        'error'     => 'Ha ocurrido un error mientras se realizaba el purgado. ',
-        'validation_failed'     => 'Su confirmación de purga es incorrecta. Por favor, escriba la palabra "DELETE" en el cuadro de confirmación.',
-        'success'               => 'Los registros eliminados se han purgado correctamente.',
+        'error' => 'Ha ocurrido un error mientras se realizaba el purgado. ',
+        'validation_failed' => 'Su confirmación de purga es incorrecta. Por favor, escriba la palabra "DELETE" en el cuadro de confirmación.',
+        'success' => 'Los registros eliminados se han purgado correctamente.',
     ],
     'mail' => [
         'sending' => 'Enviando correo electrónico de prueba...',
         'success' => '¡Correo enviado!',
         'error' => 'El correo no pudo ser enviado.',
-        'additional' => 'No se proporciona ningún mensaje de error adicional. Compruebe la configuración de su correo y el registro de errores de la aplicación.'
+        'additional' => 'No se proporciona ningún mensaje de error adicional. Compruebe la configuración de su correo y el registro de errores de la aplicación.',
     ],
     'ldap' => [
         'testing' => 'Probando conexión al LDAP, Binding & Query ...',
@@ -34,11 +34,11 @@ return [
         'error' => 'Algo salió mal :(',
         'sync_success' => 'Una muestra de 10 usuarios devueltos desde el servidor LDAP basado en su configuración:',
         'testing_authentication' => 'Probando autenticación LDAP...',
-        'authentication_success' => 'Usuario autenticado contra LDAP con éxito!'
+        'authentication_success' => 'Usuario autenticado contra LDAP con éxito!',
     ],
     'labels' => [
-        'null_template' => 'Label template not found. Please select a template.',
-        ],
+        'null_template' => 'Plantilla de etiqueta no encontrada. Por favor, seleccione una plantilla.',
+    ],
     'webhook' => [
         'sending' => 'Enviando mensaje de prueba :app...',
         'success' => '¡Su integración :webhook_name funciona!',
@@ -53,7 +53,24 @@ return [
         'ms_teams_deprecation' => 'The selected Microsoft Teams webhook URL will be deprecated Dec 31st, 2025. Please use a workflow URL. Microsoft\'s documentation on creating a workflow can be found <a href="https://support.microsoft.com/en-us/office/create-incoming-webhooks-with-workflows-for-microsoft-teams-8ae491c7-0394-4861-ba59-055e33f75498" target="_blank"> here.</a>',
     ],
     'location_scoping' => [
-        'not_saved' => 'Your settings were not saved.',
+        'not_saved' => 'Tus ajustes no han sido guardados.',
         'mismatch' => 'There is 1 item in the database that need your attention before you can enable location scoping.|There are :count items in the database that need your attention before you can enable location scoping.',
+    ],
+    'oauth' => [
+        'token_revoked' => 'Personal access token revoked successfully.',
+        'token_unrevoked' => 'Personal access token reinstated successfully.',
+        'token_not_found' => 'That personal access token could not be found.',
+        'token_revoke_error' => 'An error occurred while revoking the token.',
+        'token_unrevoke_error' => 'Ocurrió un error mientras se restablecía el token.',
+        'client_created' => 'Cliente OAuth creado correctamente.',
+        'client_updated' => 'Cliente OAuth actualizado correctamente.',
+        'client_deleted' => 'Cliente OAuth eliminado correctamente.',
+        'client_revoked' => 'Cliente OAuth revocado correctamente.',
+        'client_unrevoked' => 'Cliente OAuth restablecido con éxito.',
+        'client_not_found' => 'El cliente OAuth no ha podido ser encontrado.',
+        'token_deleted' => 'Token revocado correctamente.',
+        'client_delete_denied' => 'No estás autorizado para eliminar este cliente.',
+        'client_edit_denied' => 'No estás autorizado para editar este cliente.',
+        'token_delete_denied' => 'No estás autorizado a revocar este token.',
     ],
 ];

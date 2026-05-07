@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
     'personal_api_keys' => '个人API密钥',
     'personal_access_token' => '个人访问令牌',
     'personal_api_keys_success' => '个人API密钥 :key已成功创建',
@@ -14,4 +14,4 @@ return array(
     'no_tokens' => '您还没有创建任何个人访问令牌。',
     'enable_sounds' => '启用声音效果',
     'enable_confetti' => '启用彩屑效果',
-);
+];

@@ -23,13 +23,13 @@ return [
 
     'accessories' => 'Ko nga mea katoa ka hoatu e koe ki nga kaiwhakamahi, engari kaore he tau rangahau (kaore ranei koe e whakaaro ana ki te aroturuki i a raatau). Hei tauira, nga kiore rorohiko me nga papapātuhi ranei.',
 
-    'companies'     => 'Ka taea te whakamahi i nga Kamupene hei mahinga tautuhi maatau, ka taea te whakamahi hei whakaiti i te tirohanga o nga rawa, nga kaiwhakamahi, mehemea ka taea te tautoko o te kamupene katoa i roto i to tautuhinga Kaiwhakahaere.',
+    'companies' => 'Ka taea te whakamahi i nga Kamupene hei mahinga tautuhi maatau, ka taea te whakamahi hei whakaiti i te tirohanga o nga rawa, nga kaiwhakamahi, mehemea ka taea te tautoko o te kamupene katoa i roto i to tautuhinga Kaiwhakahaere.',
 
-    'components'    => 'Ko nga waahanga he mea waahanga o te taonga, hei tauira HDD, RAM, me etahi atu.',
+    'components' => 'Ko nga waahanga he mea waahanga o te taonga, hei tauira HDD, RAM, me etahi atu.',
 
-    'consumables'   => 'Ko nga taonga e hokona ana ka hokona i runga ake i te wa. Hei tauira, he pene reta, he pepa tuhi ranei.',
+    'consumables' => 'Ko nga taonga e hokona ana ka hokona i runga ake i te wa. Hei tauira, he pene reta, he pepa tuhi ranei.',
 
     'depreciations' => 'Ka taea e koe te whakarite i nga whakahekenga o te rawa ki te whakaiti i nga rawa i runga i te toenga o te raina tika.',
-    
-    'empty_file'    => 'The importer detects that this file is empty.'
+
+    'empty_file' => 'The importer detects that this file is empty.',
 ];

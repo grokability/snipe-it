@@ -2,9 +2,9 @@
 
 namespace App\Models\Traits;
 
-use Illuminate\Support\Facades\Auth;
 use App\Models\CheckoutRequest;
 use App\Models\User;
+use Carbon\Carbon;
 
 // $asset->requests
 // $asset->isRequestedBy($user)
@@ -44,10 +44,10 @@ trait Requestable
 
     public function cancelRequest($user_id = null)
     {
-        if (!$user_id) {
+        if (! $user_id) {
             $user_id = auth()->id();
         }
 
-        $this->requests()->where('user_id', $user_id)->update(['canceled_at' => \Carbon\Carbon::now()]);
+        $this->requests()->where('user_id', $user_id)->update(['canceled_at' => Carbon::now()]);
     }
 }

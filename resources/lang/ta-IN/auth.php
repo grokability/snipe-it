@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
 
     /*
     |--------------------------------------------------------------------------
@@ -17,4 +17,4 @@ return array(
     'password' => 'உள்ளிடப்பட்ட கடவுச்சொல் தவறானது.',
     'throttle' => 'Too many login attempts. Please try again in :minutes minute(s).',
 
-);
+];

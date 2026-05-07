@@ -1,9 +1,9 @@
 <?php
 
-return array(
+return [
 
-    'id'         => '编号',
-    'name'       => '名称',
-    'users'      => '# 的用户',
+    'id' => '编号',
+    'name' => '名称',
+    'users' => '# 的用户',
 
-);
+];

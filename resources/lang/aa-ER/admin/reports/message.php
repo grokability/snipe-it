@@ -3,7 +3,7 @@
 return [
     'about_templates' => 'crwdns12806:0crwdne12806:0',
     'saving_templates_description' => 'crwdns12808:0crwdne12808:0',
-    'create'  => [
+    'create' => [
         'success' => 'crwdns12810:0crwdne12810:0',
     ],
     'update' => [

@@ -7,27 +7,37 @@ use App\Models\Labels\RectangleSheet;
 
 abstract class L4736 extends RectangleSheet
 {
+    private const PAPER_FORMAT = 'A4';
 
-    private const PAPER_FORMAT      = 'A4';
     private const PAPER_ORIENTATION = 'P';
 
     /* Data in pt from Word Template */
-	private const COLUMN1_X =  31.70;
-	private const COLUMN2_X = 167.92;
-	private const ROW1_Y    =  53.00;
-	private const ROW2_Y    = 112.8;
-	private const LABEL_W   = 122.24;	
-	private const LABEL_H   =  66.5; 
+    private const COLUMN1_X = 31.70;
+
+    private const COLUMN2_X = 167.92;
+
+    private const ROW1_Y = 53.00;
+
+    private const ROW2_Y = 112.8;
+
+    private const LABEL_W = 122.24;
+
+    private const LABEL_H = 66.5;
 
     private float $pageWidth;
+
     private float $pageHeight;
+
     private float $pageMarginLeft;
+
     private float $pageMarginTop;
 
     private float $columnSpacing;
+
     private float $rowSpacing;
 
     private float $labelWidth;
+
     private float $labelHeight;
 
     public function __construct()
@@ -52,6 +62,7 @@ abstract class L4736 extends RectangleSheet
     {
         return $this->pageWidth;
     }
+
     public function getPageHeight()
     {
         return $this->pageHeight;
@@ -61,14 +72,17 @@ abstract class L4736 extends RectangleSheet
     {
         return $this->pageMarginTop;
     }
+
     public function getPageMarginBottom()
     {
         return $this->pageMarginTop;
     }
+
     public function getPageMarginLeft()
     {
         return $this->pageMarginLeft;
     }
+
     public function getPageMarginRight()
     {
         return $this->pageMarginLeft;
@@ -78,6 +92,7 @@ abstract class L4736 extends RectangleSheet
     {
         return 4;
     }
+
     public function getRows()
     {
         return 12;
@@ -87,6 +102,7 @@ abstract class L4736 extends RectangleSheet
     {
         return $this->columnSpacing;
     }
+
     public function getLabelRowSpacing()
     {
         return $this->rowSpacing;
@@ -96,6 +112,7 @@ abstract class L4736 extends RectangleSheet
     {
         return $this->labelWidth;
     }
+
     public function getLabelHeight()
     {
         return $this->labelHeight;
@@ -106,5 +123,3 @@ abstract class L4736 extends RectangleSheet
         return 0;
     }
 }
-
-?>

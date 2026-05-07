@@ -40,22 +40,22 @@ class AddLabelSettingsToSettings extends Migration
     {
         Schema::table('settings', function ($table) {
             $table->dropColumn(
-          'labels_per_page',
-          'labels_width',
-          'labels_height',
-          'labels_pmargin_left',
-          'labels_pmargin_right',
-          'labels_pmargin_top',
-          'labels_pmargin_bottom',
-          'labels_display_bgutter',
-          'labels_display_sgutter',
-          'labels_fontsize',
-          'labels_pagewidth',
-          'labels_pageheight',
-          'labels_display_name',
-          'labels_display_serial',
-          'labels_display_tag'
-        );
+                'labels_per_page',
+                'labels_width',
+                'labels_height',
+                'labels_pmargin_left',
+                'labels_pmargin_right',
+                'labels_pmargin_top',
+                'labels_pmargin_bottom',
+                'labels_display_bgutter',
+                'labels_display_sgutter',
+                'labels_fontsize',
+                'labels_pagewidth',
+                'labels_pageheight',
+                'labels_display_name',
+                'labels_display_serial',
+                'labels_display_tag'
+            );
         });
     }
 }

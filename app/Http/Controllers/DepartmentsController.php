@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ImageUploadRequest;
-use App\Models\Department;
 use App\Models\Company;
-use Illuminate\Http\Request;
+use App\Models\Department;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use \Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class DepartmentsController extends Controller
 {
@@ -24,11 +24,11 @@ class DepartmentsController extends Controller
      * the content for the assets listing, which is generated in getDatatable.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @see AssetController::getDatatable() method that generates the JSON response
      * @since [v4.0]
-     * @param Request $request
      */
-    public function index(Request $request) : View
+    public function index(Request $request): View
     {
         $this->authorize('index', Department::class);
         $company = null;
@@ -43,10 +43,10 @@ class DepartmentsController extends Controller
      * Store a newly created resource in storage.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since [v4.0]
-     * @param ImageUploadRequest $request
      */
-    public function store(ImageUploadRequest $request) : RedirectResponse
+    public function store(ImageUploadRequest $request): RedirectResponse
     {
         $this->authorize('create', Department::class);
         $department = new Department;
@@ -54,8 +54,8 @@ class DepartmentsController extends Controller
         $department->created_by = auth()->id();
         $department->manager_id = ($request->filled('manager_id') ? $request->input('manager_id') : null);
         $department->location_id = ($request->filled('location_id') ? $request->input('location_id') : null);
-        $department->company_id = ($request->filled('company_id') ? $request->input('company_id') : null);
-        $department->tag_color  = $request->input('tag_color');
+        $department->company_id = ($request->filled('company_id') ? Company::getIdForCurrentUser($request->input('company_id')) : null);
+        $department->tag_color = $request->input('tag_color');
         $department->notes = $request->input('notes');
         $department = $request->handleImages($department);
 
@@ -71,12 +71,15 @@ class DepartmentsController extends Controller
      * the content for the department detail page.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @param int $id
+     *
+     * @param  int  $id
+     *
      * @since [v4.0]
      */
-    public function show(Department $department) : View | RedirectResponse
+    public function show(Department $department): View|RedirectResponse
     {
         $this->authorize('view', $department);
+
         return view('departments/view', compact('department'));
     }
 
@@ -84,10 +87,11 @@ class DepartmentsController extends Controller
      * Returns a form view used to create a new department.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @see DepartmentsController::postCreate() method that validates and stores the data
      * @since [v4.0]
      */
-    public function create() : View
+    public function create(): View
     {
         $this->authorize('create', Department::class);
 
@@ -98,15 +102,13 @@ class DepartmentsController extends Controller
      * Validates and deletes selected department.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @param int $locationId
+     *
+     * @param  int  $locationId
+     *
      * @since [v4.0]
      */
-    public function destroy($id) : RedirectResponse
+    public function destroy(Department $department): RedirectResponse
     {
-        if (is_null($department = Department::find($id))) {
-            return redirect()->to(route('departments.index'))->with('error', trans('admin/departments/message.not_found'));
-        }
-
         $this->authorize('delete', $department);
 
         if ($department->users->count() > 0) {
@@ -129,13 +131,17 @@ class DepartmentsController extends Controller
      * Makes a form view to edit Department information.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @see LocationsController::postCreate() method that validates and stores
-     * @param int $departmentId
+     *
+     * @param  int  $departmentId
+     *
      * @since [v1.0]
      */
-    public function edit(Department $department) : View | RedirectResponse
+    public function edit(Department $department): View|RedirectResponse
     {
         $this->authorize('update', $department);
+
         return view('departments/edit')->with('item', $department);
     }
 
@@ -143,11 +149,14 @@ class DepartmentsController extends Controller
      * Save updated Department information.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @see LocationsController::postCreate() method that validates and stores
-     * @param int $departmentId
+     *
+     * @param  int  $departmentId
+     *
      * @since [v1.0]
      */
-    public function update(ImageUploadRequest $request, Department $department) : RedirectResponse
+    public function update(ImageUploadRequest $request, Department $department): RedirectResponse
     {
 
         $this->authorize('update', $department);
@@ -155,10 +164,10 @@ class DepartmentsController extends Controller
         $department->fill($request->all());
         $department->manager_id = ($request->filled('manager_id') ? $request->input('manager_id') : null);
         $department->location_id = ($request->filled('location_id') ? $request->input('location_id') : null);
-        $department->company_id = ($request->filled('company_id') ? $request->input('company_id') : null);
+        $department->company_id = ($request->filled('company_id') ? Company::getIdForCurrentUser($request->input('company_id')) : null);
         $department->phone = $request->input('phone');
         $department->fax = $request->input('fax');
-        $department->tag_color  = $request->input('tag_color');
+        $department->tag_color = $request->input('tag_color');
         $department->notes = $request->input('notes');
         $department = $request->handleImages($department);
 

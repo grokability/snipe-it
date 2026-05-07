@@ -1,11 +1,11 @@
 <?php
 
-return array(
+return [
 
-    'id'                        => 'ID',
-    'name'                      => 'Departement Naam',
-    'manager'                   => 'Bestuurder',
-    'location'                  => 'plek',
-    'create'                    => 'Skep Departement',
-    'update'                    => 'Update Departement',
-    );
+    'id' => 'ID',
+    'name' => 'Departement Naam',
+    'manager' => 'Bestuurder',
+    'location' => 'plek',
+    'create' => 'Skep Departement',
+    'update' => 'Update Departement',
+];

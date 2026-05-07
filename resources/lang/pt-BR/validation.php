@@ -71,7 +71,7 @@ return [
     ],
     'hex_color' => 'The :attribute field must be a valid hexadecimal color.',
     'image' => 'The :attribute field must be an image.',
-    'import_field_empty'    => 'O valor para :fieldname não pode ser nulo.',
+    'import_field_empty' => 'O valor para :fieldname não pode ser nulo.',
     'in' => 'O :attribute selecionado é inválido.',
     'in_array' => 'The :attribute field must exist in :other.',
     'integer' => 'The :attribute field must be an integer.',
@@ -126,7 +126,7 @@ return [
         'symbols' => 'The :attribute field must contain at least one symbol.',
         'uncompromised' => 'The given :attribute has appeared in a data leak. Please choose a different :attribute.',
     ],
-    'percent'       => 'A depreciação mínima deve estar entre 0 e 100 quando o tipo de depreciação for percentual.',
+    'percent' => 'A depreciação mínima deve estar entre 0 e 100 quando o tipo de depreciação for percentual.',
 
     'present' => 'O campo:attribute deve estar presente.',
     'present_if' => 'The :attribute field must be present when :other is :value.',
@@ -156,16 +156,16 @@ return [
         'string' => 'The :attribute field must be :size characters.',
     ],
     'starts_with' => 'The :attribute field must start with one of the following: :values.',
-    'string'               => 'O :attribute deve ser string.',
+    'string' => 'O :attribute deve ser string.',
     'two_column_unique_undeleted' => 'O :attribute deve ser único entre :table1 e :table2. ',
-    'unique_undeleted'     => 'O :attribute deve ser único.',
-    'non_circular'         => 'O :attribute não pode criar uma referência circular.',
-    'not_array'            => ':attribute não pode ser um array.',
+    'unique_undeleted' => 'O :attribute deve ser único.',
+    'non_circular' => 'O :attribute não pode criar uma referência circular.',
+    'not_array' => ':attribute não pode ser um array.',
     'disallow_same_pwd_as_user_fields' => 'A senha não pode ser igual ao nome de usuário.',
-    'letters'              => 'A senha deve conter pelo menos uma letra.',
-    'numbers'              => 'A senha deve conter pelo menos um número.',
-    'case_diff'            => 'A senha deve conter letras maiúsculas e minusculas.',
-    'symbols'              => 'A senha deve conter símbolos.',
+    'letters' => 'A senha deve conter pelo menos uma letra.',
+    'numbers' => 'A senha deve conter pelo menos um número.',
+    'case_diff' => 'A senha deve conter letras maiúsculas e minusculas.',
+    'symbols' => 'A senha deve conter símbolos.',
     'timezone' => 'The :attribute field must be a valid timezone.',
     'unique' => 'O :attribute já foi tomado.',
     'uploaded' => 'O :attribute falhou no upload.',
@@ -187,38 +187,38 @@ return [
     |
     */
 
-    'email_array'      => 'Um ou mais e-mails sõ invalidos.',
-    'checkboxes'           => ':attribute contém opções inválidas.',
-    'radio_buttons'        => ':attribute é inválido.',
-    
+    'email_array' => 'Um ou mais e-mails sõ invalidos.',
+    'checkboxes' => ':attribute contém opções inválidas.',
+    'radio_buttons' => ':attribute é inválido.',
+
     'custom' => [
         'alpha_space' => 'O campo :attribute contém um caractere que não é permitido.',
 
-        'hashed_pass'      => 'Sua senha atual está incorreta',
-        'dumbpwd'          => 'Essa senha é muito comum.',
+        'hashed_pass' => 'Sua senha atual está incorreta',
+        'dumbpwd' => 'Essa senha é muito comum.',
         'statuslabel_type' => 'Você deve selecionar um tipo de etiqueta de situação válida',
-        'custom_field_not_found'          => 'Este campo parece não existir, verifique novamente os nomes dos seus campos personalizados.',
+        'custom_field_not_found' => 'Este campo parece não existir, verifique novamente os nomes dos seus campos personalizados.',
         'custom_field_not_found_on_model' => 'This field seems to exist, but is not available on this Asset Model\'s fieldset.',
 
         // date_format validation with slightly less stupid messages. It duplicates a lot, but it gets the job done :(
         // We use this because the default error message for date_format reflects php Y-m-d, which non-PHP
         // people won't know how to format.
-        'purchase_date.date_format'     => 'O :attribute deve ser uma data válida em formato DD-MM-YYYY',
-        'last_audit_date.date_format'   =>  'O :attribute deve ser uma data válida em formato DD-MM-YYYY hh:mm:ss',
-        'expiration_date.date_format'   =>  'O :attribute deve ser uma data válida em formato DD-MM-YYYY',
-        'termination_date.date_format'  =>  'O :attribute deve ser uma data válida em formato DD-MM-YYYY',
-        'expected_checkin.date_format'  =>  'O :attribute deve ser uma data válida em formato DD-MM-YYYY',
-        'start_date.date_format'        =>  'O :attribute deve ser uma data válida em formato DD-MM-YYYY',
-        'end_date.date_format'          =>  'O :attribute deve ser uma data válida em formato DD-MM-YYYY',
+        'purchase_date.date_format' => 'O :attribute deve ser uma data válida em formato DD-MM-YYYY',
+        'last_audit_date.date_format' => 'O :attribute deve ser uma data válida em formato DD-MM-YYYY hh:mm:ss',
+        'expiration_date.date_format' => 'O :attribute deve ser uma data válida em formato DD-MM-YYYY',
+        'termination_date.date_format' => 'O :attribute deve ser uma data válida em formato DD-MM-YYYY',
+        'expected_checkin.date_format' => 'O :attribute deve ser uma data válida em formato DD-MM-YYYY',
+        'start_date.date_format' => 'O :attribute deve ser uma data válida em formato DD-MM-YYYY',
+        'end_date.date_format' => 'O :attribute deve ser uma data válida em formato DD-MM-YYYY',
         'invalid_value_in_field' => 'Valor inválido incluído neste campo',
 
         'ldap_username_field' => [
-            'not_in' =>         '<code>sAMAccountName</code> (mixed case) will likely not work. You should use <code>samaccountname</code> (lowercase) instead.'
+            'not_in' => '<code>sAMAccountName</code> (mixed case) will likely not work. You should use <code>samaccountname</code> (lowercase) instead.',
         ],
         'ldap_auth_filter_query' => ['not_in' => '<code>uid=samaccountname</code> is probably not a valid auth filter. You probably want <code>uid=</code> '],
         'ldap_filter' => ['regex' => 'This value should probably not be wrapped in parentheses.'],
 
-        ],
+    ],
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Attributes
@@ -230,7 +230,10 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'serials.*' => 'Número de Série',
+        'asset_tags.*' => 'Marcação do Ativo',
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -244,6 +247,5 @@ return [
         'required' => 'Este campo é obrigatório',
         'email' => 'Please enter a valid email address',
     ],
-
 
 ];

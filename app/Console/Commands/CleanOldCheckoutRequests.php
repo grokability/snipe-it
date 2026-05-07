@@ -8,6 +8,7 @@ use Illuminate\Console\Command;
 class CleanOldCheckoutRequests extends Command
 {
     private int $deletions = 0;
+
     private int $skips = 0;
 
     /**
@@ -44,12 +45,14 @@ class CleanOldCheckoutRequests extends Command
             if ($this->shouldForceDelete($request)) {
                 $request->forceDelete();
                 $this->deletions++;
+
                 return;
             }
 
             if ($this->shouldSoftDelete($request)) {
                 $request->delete();
                 $this->deletions++;
+
                 return;
             }
 
@@ -64,7 +67,7 @@ class CleanOldCheckoutRequests extends Command
     private function shouldForceDelete(CheckoutRequest $request)
     {
         // check if the requestable or user relationship is null
-        return !$request->requestable || !$request->user;
+        return ! $request->requestable || ! $request->user;
     }
 
     private function shouldSoftDelete(CheckoutRequest $request)

@@ -23,13 +23,13 @@ return [
 
     'accessories' => 'Dodatki so vse stvari, ki se izdajajo uporabnikom, vendar niso vodeni kot osnovna sredstva (oziroma nimajo serijskih številk). Na primer, računalniške miške ali tipkovnice.',
 
-    'companies'     => 'Podjetja je mogoče uporabiti kot polje za preprosto identifikacijo ali se jih lahko uporabi za omejitev prepoznavnosti sredstev, uporabnikov itd., če je v vaših skrbniških nastavitvah omogočena popolna podpora podjetja.',
+    'companies' => 'Podjetja je mogoče uporabiti kot polje za preprosto identifikacijo ali se jih lahko uporabi za omejitev prepoznavnosti sredstev, uporabnikov itd., če je v vaših skrbniških nastavitvah omogočena popolna podpora podjetja.',
 
-    'components'    => 'Komponente so stvari, ki so del sredstva. Na primer trdi disk, RAM, ipd.',
+    'components' => 'Komponente so stvari, ki so del sredstva. Na primer trdi disk, RAM, ipd.',
 
-    'consumables'   => 'Potrošni materiali so na primer karrtuše ali kopirni papir.',
+    'consumables' => 'Potrošni materiali so na primer karrtuše ali kopirni papir.',
 
     'depreciations' => 'Za amortizacijo sredstev lahko določite amortizacijo sredstev, ki temelji na enakomerni amortizaciji.',
-    
-    'empty_file'    => 'Uvoznik zazna, da je ta datoteka prazna.'
+
+    'empty_file' => 'Uvoznik zazna, da je ta datoteka prazna.',
 ];

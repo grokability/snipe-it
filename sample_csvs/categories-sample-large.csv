@@ -1,0 +1,1931 @@
+Name,Tag Color,EULA,Use Default EULA,Require Acceptance,Alert on Response,Category Type,Send Checkin Email,Notes
+Computer Accessories,#ffe2d2,"Pellentesque at nulla. Suspendisse potenti. Cras in purus eu magna vulputate luctus.
+
+Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus vestibulum sagittis sapien. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",false,true,true,license,true,Progressive
+Accessories,#fe6b4d,"Fusce posuere felis sed lacus. Morbi sem mauris, laoreet ut, rhoncus aliquet, pulvinar sed, nisl. Nunc rhoncus dui vel sem.
+
+Sed sagittis. Nam congue, risus semper porta volutpat, quam pede lobortis ligula, sit amet eleifend pede libero quis orci. Nullam molestie nibh in lectus.",false,true,true,asset,true,Multi-layered
+Granola & Muesli,#780ce5,,false,true,true,accessory,false,Exclusive
+Headwear,#280434,,true,false,true,component,false,database
+Soups & Broths,#e73c4b,"In hac habitasse platea dictumst. Etiam faucibus cursus urna. Ut tellus.
+
+Nulla ut erat id mauris vulputate elementum. Nullam varius. Nulla facilisi.",false,false,false,accessory,true,exuding
+Food Preparation Tools,#1040b0,,false,true,true,license,true,Graphic Interface
+Sweaters,#dc99df,"In congue. Etiam justo. Etiam pretium iaculis justo.
+
+In hac habitasse platea dictumst. Etiam faucibus cursus urna. Ut tellus.
+
+Nulla ut erat id mauris vulputate elementum. Nullam varius. Nulla facilisi.",true,false,true,consumable,false,functionalities
+Nut Butters,#9faa80,"Duis bibendum, felis sed interdum venenatis, turpis enim blandit mi, in porttitor pede justo eu massa. Donec dapibus. Duis at velit eu est congue elementum.",true,false,true,component,false,disintermediate
+Frozen Meals,#91a95c,,true,true,true,license,false,scalable
+Yoga Equipment,#f3b170,,true,true,true,component,false,neural-net
+Baking Ingredients,#0078be,"Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus vestibulum sagittis sapien. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+
+Etiam vel augue. Vestibulum rutrum rutrum neque. Aenean auctor gravida sem.
+
+Praesent id massa id nisl venenatis lacinia. Aenean sit amet justo. Morbi ut odio.",true,false,false,asset,true,national
+Soups & Broths,#672bc1,"Aenean fermentum. Donec ut mauris eget massa tempor convallis. Nulla neque libero, convallis eget, eleifend luctus, ultricies eu, nibh.
+
+Quisque id justo sit amet sapien dignissim vestibulum. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nulla dapibus dolor vel est. Donec odio justo, sollicitudin ut, suscipit a, feugiat et, eros.",true,true,false,accessory,false,hub
+Mirrors,#245de4,"Curabitur in libero ut massa volutpat convallis. Morbi odio odio, elementum eu, interdum eu, tincidunt in, leo. Maecenas pulvinar lobortis est.
+
+Phasellus sit amet erat. Nulla tempus. Vivamus in felis eu sapien cursus vestibulum.
+
+Proin eu mi. Nulla ac enim. In tempor, turpis nec euismod scelerisque, quam turpis adipiscing lorem, vitae mattis nibh ligula nec sem.",true,false,false,accessory,false,data-warehouse
+Safety and Emergency Supplies,#348ac6,,true,true,false,consumable,true,Triple-buffered
+Poultry,#bb31c8,"Donec diam neque, vestibulum eget, vulputate ut, ultrices vel, augue. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec pharetra, magna vestibulum aliquet ultrices, erat tortor sollicitudin mi, sit amet lobortis sapien sapien non mi. Integer ac neque.
+
+Duis bibendum. Morbi non quam nec dui luctus rutrum. Nulla tellus.
+
+In sagittis dui vel nisl. Duis ac nibh. Fusce lacus purus, aliquet at, feugiat non, pretium quis, lectus.",true,true,true,asset,true,composite
+Outdoor Play Toys,#4e4db5,Cras non velit nec nisi vulputate nonummy. Maecenas tincidunt lacus at velit. Vivamus vel nulla eget eros elementum pellentesque.,true,false,true,accessory,false,eco-centric
+Specialty Soups,#34d12e,,false,false,false,component,false,cohesive
+Herb Blends,#efd613,,true,false,true,asset,false,Reverse-engineered
+Frozen Desserts,#1c08c4,,true,true,false,license,true,Innovative
+Casual Shirts,#6780d6,"Proin interdum mauris non ligula pellentesque ultrices. Phasellus id sapien in sapien iaculis congue. Vivamus metus arcu, adipiscing molestie, hendrerit at, vulputate vitae, nisl.",true,false,false,asset,false,workforce
+Outdoor Footwear,#add29f,"Curabitur at ipsum ac tellus semper interdum. Mauris ullamcorper purus sit amet nulla. Quisque arcu libero, rutrum ac, lobortis vel, dapibus at, diam.",false,false,true,component,false,ability
+Leggings,#d6d0da,,true,false,true,accessory,false,knowledge user
+Dog Toys,#041c90,Nullam sit amet turpis elementum ligula vehicula consequat. Morbi a ipsum. Integer a nibh.,false,true,true,component,false,middleware
+Nuts and Trail Mix,#675d0e,,false,false,false,license,true,task-force
+Frozen Appetizers,#84a0c4,"In congue. Etiam justo. Etiam pretium iaculis justo.
+
+In hac habitasse platea dictumst. Etiam faucibus cursus urna. Ut tellus.",true,true,true,license,false,global
+Frozen Pasta Dishes,#cddba0,"Curabitur gravida nisi at nibh. In hac habitasse platea dictumst. Aliquam augue quam, sollicitudin vitae, consectetuer eget, rutrum at, lorem.",true,true,false,license,false,neural-net
+Bedding & Linens,#36e083,,true,true,false,accessory,true,standardization
+Home Decor,#eac3aa,"Proin interdum mauris non ligula pellentesque ultrices. Phasellus id sapien in sapien iaculis congue. Vivamus metus arcu, adipiscing molestie, hendrerit at, vulputate vitae, nisl.
+
+Aenean lectus. Pellentesque eget nunc. Donec quis orci eget orci vehicula condimentum.",true,true,false,consumable,true,Profound
+Garden Tools,#22634b,"Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus vestibulum sagittis sapien. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",false,true,false,consumable,false,even-keeled
+Fresh Cut Vegetables,#d7bd04,,false,false,false,asset,false,maximized
+Marinated Poultry,#909008,"Proin eu mi. Nulla ac enim. In tempor, turpis nec euismod scelerisque, quam turpis adipiscing lorem, vitae mattis nibh ligula nec sem.",true,true,true,component,false,upward-trending
+Camping Equipment,#db3e26,"Maecenas leo odio, condimentum id, luctus nec, molestie sed, justo. Pellentesque viverra pede ac diam. Cras pellentesque volutpat dui.
+
+Maecenas tristique, est et tempus semper, est quam pharetra magna, ac consequat metus sapien ut nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris viverra diam vitae quam. Suspendisse potenti.
+
+Nullam porttitor lacus at turpis. Donec posuere metus vitae ipsum. Aliquam non mauris.",true,true,false,consumable,true,mobile
+Graphic Tees,#eb243f,"Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus vestibulum sagittis sapien. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",false,true,false,license,true,Triple-buffered
+Camping Equipment,#3ef5e5,,true,false,false,accessory,true,composite
+Headwear,,,false,false,false,license,true,Team-oriented
+Herbs and Spices,#7be331,,false,true,false,consumable,true,ability
+Women's Footwear,#985ef7,"Phasellus sit amet erat. Nulla tempus. Vivamus in felis eu sapien cursus vestibulum.
+
+Proin eu mi. Nulla ac enim. In tempor, turpis nec euismod scelerisque, quam turpis adipiscing lorem, vitae mattis nibh ligula nec sem.",true,false,true,asset,false,heuristic
+Garden Supplies,#e61c90,"Sed ante. Vivamus tortor. Duis mattis egestas metus.
+
+Aenean fermentum. Donec ut mauris eget massa tempor convallis. Nulla neque libero, convallis eget, eleifend luctus, ultricies eu, nibh.
+
+Quisque id justo sit amet sapien dignissim vestibulum. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nulla dapibus dolor vel est. Donec odio justo, sollicitudin ut, suscipit a, feugiat et, eros.",false,true,true,component,true,directional
+Flours & Meals,#f7e2e8,,true,false,false,asset,false,internet solution
+Wraps/Rolls,#1668c8,,true,true,false,license,true,paradigm
+Salads,#08923a,,true,true,false,license,true,Down-sized
+Pasta,#859542,"Morbi non lectus. Aliquam sit amet diam in magna bibendum imperdiet. Nullam orci pede, venenatis non, sodales sed, tincidunt eu, felis.",false,false,true,consumable,true,explicit
+Lighting & Lamps,#1f5257,"Suspendisse potenti. In eleifend quam a odio. In hac habitasse platea dictumst.
+
+Maecenas ut massa quis augue luctus tincidunt. Nulla mollis molestie lorem. Quisque ut erat.",true,false,false,license,false,Organized
+Seasonings & Mixes,#be70a1,"Proin eu mi. Nulla ac enim. In tempor, turpis nec euismod scelerisque, quam turpis adipiscing lorem, vitae mattis nibh ligula nec sem.",false,false,true,consumable,true,Reduced
+Herb Blends,#3b9789,,true,true,false,license,false,Optional
+Nut-Based Snacks,#4ee381,"Proin eu mi. Nulla ac enim. In tempor, turpis nec euismod scelerisque, quam turpis adipiscing lorem, vitae mattis nibh ligula nec sem.
+
+Duis aliquam convallis nunc. Proin at turpis a pede posuere nonummy. Integer non velit.
+
+Donec diam neque, vestibulum eget, vulputate ut, ultrices vel, augue. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec pharetra, magna vestibulum aliquet ultrices, erat tortor sollicitudin mi, sit amet lobortis sapien sapien non mi. Integer ac neque.",false,true,false,asset,false,didactic
+Processed Meats,#ba9870,"In hac habitasse platea dictumst. Morbi vestibulum, velit id pretium iaculis, diam erat fermentum justo, nec condimentum neque sapien placerat ante. Nulla justo.",false,true,false,accessory,false,Mandatory
+Food Storage Solutions,#44305d,,true,true,false,component,false,process improvement
+Savory Snacks,#ac3242,"Sed sagittis. Nam congue, risus semper porta volutpat, quam pede lobortis ligula, sit amet eleifend pede libero quis orci. Nullam molestie nibh in lectus.",false,true,false,consumable,false,client-driven
+Sweet Snacks,#4b8ad6,"Cras mi pede, malesuada in, imperdiet et, commodo vulputate, justo. In blandit ultrices enim. Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+
+Proin interdum mauris non ligula pellentesque ultrices. Phasellus id sapien in sapien iaculis congue. Vivamus metus arcu, adipiscing molestie, hendrerit at, vulputate vitae, nisl.
+
+Aenean lectus. Pellentesque eget nunc. Donec quis orci eget orci vehicula condimentum.",true,true,true,component,true,Progressive
+Soups & Broths,#0899e7,,true,true,false,asset,true,executive
+Instant Breakfast,#62cc30,"Vestibulum quam sapien, varius ut, blandit non, interdum in, ante. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Duis faucibus accumsan odio. Curabitur convallis.
+
+Duis consequat dui nec nisi volutpat eleifend. Donec ut dolor. Morbi vel lectus in quam fringilla rhoncus.",true,false,false,component,true,cohesive
+Baking Accessories,#e3554f,"Sed sagittis. Nam congue, risus semper porta volutpat, quam pede lobortis ligula, sit amet eleifend pede libero quis orci. Nullam molestie nibh in lectus.",true,false,true,license,false,Decentralized
+Frozen Meals,#bff203,,true,false,true,accessory,true,clear-thinking
+Grills and Smokers,#785d03,,false,true,false,accessory,true,infrastructure
+Dressing,#d2c796,,false,true,false,component,false,policy
+Frozen Vegetarian Meals,,"Duis consequat dui nec nisi volutpat eleifend. Donec ut dolor. Morbi vel lectus in quam fringilla rhoncus.
+
+Mauris enim leo, rhoncus sed, vestibulum sit amet, cursus id, turpis. Integer aliquet, massa id lobortis convallis, tortor risus dapibus augue, vel accumsan tellus nisi eu orci. Mauris lacinia sapien quis libero.",true,false,false,asset,true,Self-enabling
+Salsas,,,true,false,false,accessory,true,modular
+Lip Care,#a1059d,Fusce consequat. Nulla nisl. Nunc nisl.,true,false,true,component,true,challenge
+Vegetarian Salads,#7652e9,,false,false,false,license,false,Mandatory
+Mustards,#c32538,"Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus vestibulum sagittis sapien. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",false,false,true,consumable,true,3rd generation
+Frozen Pasta Dishes,#a501a0,Cras non velit nec nisi vulputate nonummy. Maecenas tincidunt lacus at velit. Vivamus vel nulla eget eros elementum pellentesque.,true,false,false,component,true,regional
+Healthy Snacks,#cbaf0d,"Maecenas ut massa quis augue luctus tincidunt. Nulla mollis molestie lorem. Quisque ut erat.
+
+Curabitur gravida nisi at nibh. In hac habitasse platea dictumst. Aliquam augue quam, sollicitudin vitae, consectetuer eget, rutrum at, lorem.",true,true,false,consumable,true,needs-based
+Travel Accessories,#2c4737,,false,false,true,asset,false,parallelism
+Home Accessories,#ca2052,,false,false,true,asset,true,optimal
+Frozen Vegetables,#72f02f,,true,true,false,component,false,analyzing
+Lighting & Lamps,#ab8558,,false,false,true,asset,false,fault-tolerant
+Mobile Accessories,#6b32b6,,false,false,true,accessory,true,standardization
+Marinades and Sauces,#c55385,,true,false,true,component,false,Vision-oriented
+Inflation Equipment,#72ce24,Maecenas ut massa quis augue luctus tincidunt. Nulla mollis molestie lorem. Quisque ut erat.,true,false,false,license,false,frame
+Granola & Muesli,#c7d0e8,"In hac habitasse platea dictumst. Morbi vestibulum, velit id pretium iaculis, diam erat fermentum justo, nec condimentum neque sapien placerat ante. Nulla justo.
+
+Aliquam quis turpis eget elit sodales scelerisque. Mauris sit amet eros. Suspendisse accumsan tortor quis turpis.",false,false,true,consumable,false,artificial intelligence
+Outdoor Footwear,#5196ea,"Morbi porttitor lorem id ligula. Suspendisse ornare consequat lectus. In est risus, auctor sed, tristique in, tempus sit amet, sem.
+
+Fusce consequat. Nulla nisl. Nunc nisl.",false,false,false,component,false,Front-line
+Small Appliances,#40e6ec,"Sed sagittis. Nam congue, risus semper porta volutpat, quam pede lobortis ligula, sit amet eleifend pede libero quis orci. Nullam molestie nibh in lectus.",false,true,true,consumable,true,Synchronised
+Eco-Friendly Accessories,#48f28c,,false,false,true,component,true,bandwidth-monitored
+Vinaigrettes,#906b3e,"Phasellus sit amet erat. Nulla tempus. Vivamus in felis eu sapien cursus vestibulum.
+
+Proin eu mi. Nulla ac enim. In tempor, turpis nec euismod scelerisque, quam turpis adipiscing lorem, vitae mattis nibh ligula nec sem.
+
+Duis aliquam convallis nunc. Proin at turpis a pede posuere nonummy. Integer non velit.",false,false,false,accessory,true,portal
+Kitchen Storage & Organization,#2ab6e7,,true,false,true,license,true,concept
+Dairy Spreads,#e3525f,,false,false,true,accessory,false,Cloned
+Plant-Based Cheese,#2fbeed,"Phasellus sit amet erat. Nulla tempus. Vivamus in felis eu sapien cursus vestibulum.
+
+Proin eu mi. Nulla ac enim. In tempor, turpis nec euismod scelerisque, quam turpis adipiscing lorem, vitae mattis nibh ligula nec sem.",true,true,true,component,false,functionalities
+Cooking Tools & Utensils,#ed6b75,Cras non velit nec nisi vulputate nonummy. Maecenas tincidunt lacus at velit. Vivamus vel nulla eget eros elementum pellentesque.,true,true,false,license,false,capability
+Home Organization,#737a5d,,false,false,false,asset,true,knowledge base
+Salsa/Dips,#84e9ce,"Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Proin risus. Praesent lectus.
+
+Vestibulum quam sapien, varius ut, blandit non, interdum in, ante. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Duis faucibus accumsan odio. Curabitur convallis.",false,true,true,asset,false,Extended
+Board Games,#0529bd,,false,false,true,asset,false,website
+Coffee Equipment,#b4f2ab,In hac habitasse platea dictumst. Etiam faucibus cursus urna. Ut tellus.,true,false,true,accessory,false,hardware
+Granola/Cereal,#821b97,"Proin interdum mauris non ligula pellentesque ultrices. Phasellus id sapien in sapien iaculis congue. Vivamus metus arcu, adipiscing molestie, hendrerit at, vulputate vitae, nisl.",true,true,false,asset,true,framework
+Home Organization,#3f1134,"Maecenas tristique, est et tempus semper, est quam pharetra magna, ac consequat metus sapien ut nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris viverra diam vitae quam. Suspendisse potenti.
+
+Nullam porttitor lacus at turpis. Donec posuere metus vitae ipsum. Aliquam non mauris.
+
+Morbi non lectus. Aliquam sit amet diam in magna bibendum imperdiet. Nullam orci pede, venenatis non, sodales sed, tincidunt eu, felis.",true,true,true,accessory,true,success
+Breads,#63c141,"Praesent id massa id nisl venenatis lacinia. Aenean sit amet justo. Morbi ut odio.
+
+Cras mi pede, malesuada in, imperdiet et, commodo vulputate, justo. In blandit ultrices enim. Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+
+Proin interdum mauris non ligula pellentesque ultrices. Phasellus id sapien in sapien iaculis congue. Vivamus metus arcu, adipiscing molestie, hendrerit at, vulputate vitae, nisl.",false,false,true,consumable,false,migration
+Travel Accessories,#95eeca,"Curabitur gravida nisi at nibh. In hac habitasse platea dictumst. Aliquam augue quam, sollicitudin vitae, consectetuer eget, rutrum at, lorem.
+
+Integer tincidunt ante vel ipsum. Praesent blandit lacinia erat. Vestibulum sed magna at nunc commodo placerat.",true,true,false,consumable,false,Devolved
+Small Appliances,#42c45a,"Maecenas ut massa quis augue luctus tincidunt. Nulla mollis molestie lorem. Quisque ut erat.
+
+Curabitur gravida nisi at nibh. In hac habitasse platea dictumst. Aliquam augue quam, sollicitudin vitae, consectetuer eget, rutrum at, lorem.",true,true,false,asset,true,focus group
+Garden Supplies,#4bdb68,"Quisque id justo sit amet sapien dignissim vestibulum. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nulla dapibus dolor vel est. Donec odio justo, sollicitudin ut, suscipit a, feugiat et, eros.",false,true,false,component,true,Re-contextualized
+Office Supplies,#2c5fd1,"Morbi non lectus. Aliquam sit amet diam in magna bibendum imperdiet. Nullam orci pede, venenatis non, sodales sed, tincidunt eu, felis.
+
+Fusce posuere felis sed lacus. Morbi sem mauris, laoreet ut, rhoncus aliquet, pulvinar sed, nisl. Nunc rhoncus dui vel sem.
+
+Sed sagittis. Nam congue, risus semper porta volutpat, quam pede lobortis ligula, sit amet eleifend pede libero quis orci. Nullam molestie nibh in lectus.",true,true,false,component,false,definition
+Seasonings & Mixes,#dfac5e,"In congue. Etiam justo. Etiam pretium iaculis justo.
+
+In hac habitasse platea dictumst. Etiam faucibus cursus urna. Ut tellus.
+
+Nulla ut erat id mauris vulputate elementum. Nullam varius. Nulla facilisi.",false,false,false,asset,true,Business-focused
+Blenders & Juicers,#535b71,,false,true,true,asset,true,methodology
+Frozen Vegetables,,,true,false,false,asset,true,Adaptive
+Health Drinks,#9cacd6,Suspendisse potenti. In eleifend quam a odio. In hac habitasse platea dictumst.,false,true,false,consumable,true,logistical
+Bottoms,#658242,"Proin leo odio, porttitor id, consequat in, consequat ut, nulla. Sed accumsan felis. Ut at dolor quis odio consequat varius.
+
+Integer ac leo. Pellentesque ultrices mattis odio. Donec vitae nisi.",true,false,false,component,false,approach
+Wellness & Relaxation,#a3eb32,,true,false,false,asset,true,Automated
+Sparkling Beverages,#51d35f,"Duis bibendum. Morbi non quam nec dui luctus rutrum. Nulla tellus.
+
+In sagittis dui vel nisl. Duis ac nibh. Fusce lacus purus, aliquet at, feugiat non, pretium quis, lectus.",true,false,true,license,true,Ergonomic
+Nut-Based Snacks,#b7c068,"Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla. Nunc purus.
+
+Phasellus in felis. Donec semper sapien a libero. Nam dui.",false,false,true,asset,false,User-friendly
+Sweet Snacks,#31176a,"Duis bibendum, felis sed interdum venenatis, turpis enim blandit mi, in porttitor pede justo eu massa. Donec dapibus. Duis at velit eu est congue elementum.",true,false,false,accessory,true,Streamlined
+Leggings,#1a9a79,In quis justo. Maecenas rhoncus aliquam lacus. Morbi quis tortor id nulla ultrices aliquet.,false,false,true,consumable,true,Public-key
+Prepared Seafood,,,false,false,true,component,false,Front-line
+Wraps and Flatbreads,#deec2a,,false,false,true,asset,true,interface
+Loungewear,#aef7fa,,true,false,false,license,true,emulation
+Educational Toys,#466309,"Maecenas leo odio, condimentum id, luctus nec, molestie sed, justo. Pellentesque viverra pede ac diam. Cras pellentesque volutpat dui.",false,false,true,asset,true,Total
+Marinated Poultry,#c17770,,true,false,true,license,false,initiative
+Breads,#c78bda,,false,false,false,license,true,Decentralized
+Home Organization,#24a0a5,"Curabitur in libero ut massa volutpat convallis. Morbi odio odio, elementum eu, interdum eu, tincidunt in, leo. Maecenas pulvinar lobortis est.
+
+Phasellus sit amet erat. Nulla tempus. Vivamus in felis eu sapien cursus vestibulum.",false,false,false,asset,false,website
+Cooking Tools & Utensils,#bf0288,"Duis aliquam convallis nunc. Proin at turpis a pede posuere nonummy. Integer non velit.
+
+Donec diam neque, vestibulum eget, vulputate ut, ultrices vel, augue. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec pharetra, magna vestibulum aliquet ultrices, erat tortor sollicitudin mi, sit amet lobortis sapien sapien non mi. Integer ac neque.
+
+Duis bibendum. Morbi non quam nec dui luctus rutrum. Nulla tellus.",true,false,true,consumable,false,background
+Drink Mixes,#c2b426,,true,false,true,license,false,Enterprise-wide
+Bedding & Linens,#f7cc94,,false,false,false,component,true,budgetary management
+Breads,#af5c26,"Duis bibendum, felis sed interdum venenatis, turpis enim blandit mi, in porttitor pede justo eu massa. Donec dapibus. Duis at velit eu est congue elementum.",false,true,true,license,false,task-force
+Footwear - Boots,,,false,false,true,license,true,even-keeled
+Plant-Based Yogurt,#76e247,"In hac habitasse platea dictumst. Morbi vestibulum, velit id pretium iaculis, diam erat fermentum justo, nec condimentum neque sapien placerat ante. Nulla justo.
+
+Aliquam quis turpis eget elit sodales scelerisque. Mauris sit amet eros. Suspendisse accumsan tortor quis turpis.
+
+Sed ante. Vivamus tortor. Duis mattis egestas metus.",false,false,true,component,true,paradigm
+Legumes,#1a571b,,true,true,true,accessory,true,definition
+Italian Sauces,#0c8f75,Sed ante. Vivamus tortor. Duis mattis egestas metus.,false,false,false,accessory,false,eco-centric
+Outerwear,#789953,"Integer ac leo. Pellentesque ultrices mattis odio. Donec vitae nisi.
+
+Nam ultrices, libero non mattis pulvinar, nulla pede ullamcorper augue, a suscipit nulla elit ac nulla. Sed vel enim sit amet nunc viverra dapibus. Nulla suscipit ligula in lacus.",true,false,true,consumable,false,hierarchy
+Frozen Meals,,,true,true,true,accessory,true,capacity
+Baking Mixes,#4ab0dc,,true,false,false,asset,false,Advanced
+Dessert Toppings,#cfc1e2,"Aliquam quis turpis eget elit sodales scelerisque. Mauris sit amet eros. Suspendisse accumsan tortor quis turpis.
+
+Sed ante. Vivamus tortor. Duis mattis egestas metus.",true,true,false,accessory,false,Upgradable
+Camping Equipment,#d43d2b,"Suspendisse potenti. In eleifend quam a odio. In hac habitasse platea dictumst.
+
+Maecenas ut massa quis augue luctus tincidunt. Nulla mollis molestie lorem. Quisque ut erat.",false,false,true,asset,true,impactful
+Eco-Friendly Kitchen Products,#a1441d,,true,true,false,consumable,false,heuristic
+Lighting & Lamps,#925e79,,true,true,true,accessory,true,radical
+Leggings,#3dd107,"Phasellus in felis. Donec semper sapien a libero. Nam dui.
+
+Proin leo odio, porttitor id, consequat in, consequat ut, nulla. Sed accumsan felis. Ut at dolor quis odio consequat varius.
+
+Integer ac leo. Pellentesque ultrices mattis odio. Donec vitae nisi.",true,false,true,license,true,Synchronised
+Office Accessories,#28509f,"In sagittis dui vel nisl. Duis ac nibh. Fusce lacus purus, aliquet at, feugiat non, pretium quis, lectus.
+
+Suspendisse potenti. In eleifend quam a odio. In hac habitasse platea dictumst.
+
+Maecenas ut massa quis augue luctus tincidunt. Nulla mollis molestie lorem. Quisque ut erat.",true,true,false,license,false,middleware
+Savory Snacks,#7c8789,Sed ante. Vivamus tortor. Duis mattis egestas metus.,false,false,false,license,false,Enterprise-wide
+Frozen Meals,#277343,,true,false,false,license,true,5th generation
+Citrus Seasonings,,,false,true,false,license,true,challenge
+Pastries,#9502dd,,true,false,true,license,true,Business-focused
+Frozen Snacks,#45d53d,"Duis bibendum. Morbi non quam nec dui luctus rutrum. Nulla tellus.
+
+In sagittis dui vel nisl. Duis ac nibh. Fusce lacus purus, aliquet at, feugiat non, pretium quis, lectus.
+
+Suspendisse potenti. In eleifend quam a odio. In hac habitasse platea dictumst.",false,false,true,component,false,dynamic
+Camping Equipment,#08bcb9,,false,false,false,consumable,true,foreground
+Travel Souvenirs,#f45cca,,true,false,true,asset,true,emulation
+Tabletop Games,#c4b33d,,false,true,true,accessory,true,policy
+Pet Accessories,#2f2418,,false,false,true,asset,true,Triple-buffered
+Canned Vegetables,#d0e80c,Aenean lectus. Pellentesque eget nunc. Donec quis orci eget orci vehicula condimentum.,true,true,true,asset,true,De-engineered
+Athletic Footwear,#b7f879,"Quisque id justo sit amet sapien dignissim vestibulum. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nulla dapibus dolor vel est. Donec odio justo, sollicitudin ut, suscipit a, feugiat et, eros.
+
+Vestibulum ac est lacinia nisi venenatis tristique. Fusce congue, diam id ornare imperdiet, sapien urna pretium nisl, ut volutpat sapien arcu sed augue. Aliquam erat volutpat.",true,true,true,accessory,true,Advanced
+Dried Fruits,#5ac0ac,"Aenean fermentum. Donec ut mauris eget massa tempor convallis. Nulla neque libero, convallis eget, eleifend luctus, ultricies eu, nibh.",false,true,false,consumable,false,focus group
+Frozen Pizza,#ecfe4a,"Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla. Nunc purus.
+
+Phasellus in felis. Donec semper sapien a libero. Nam dui.
+
+Proin leo odio, porttitor id, consequat in, consequat ut, nulla. Sed accumsan felis. Ut at dolor quis odio consequat varius.",false,false,true,license,false,24 hour
+Condiments,,,true,false,false,component,false,forecast
+Robotics Toys,#7f5762,,false,true,false,component,false,responsive
+Jumpsuits,#098bef,Pellentesque at nulla. Suspendisse potenti. Cras in purus eu magna vulputate luctus.,true,true,true,license,true,framework
+Frozen Chicken Wings,#c6a343,"Quisque id justo sit amet sapien dignissim vestibulum. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nulla dapibus dolor vel est. Donec odio justo, sollicitudin ut, suscipit a, feugiat et, eros.
+
+Vestibulum ac est lacinia nisi venenatis tristique. Fusce congue, diam id ornare imperdiet, sapien urna pretium nisl, ut volutpat sapien arcu sed augue. Aliquam erat volutpat.",true,false,true,consumable,false,secondary
+Sweeteners,#061964,,true,false,false,license,false,definition
+Evening Wear,#8eab4f,,false,false,false,asset,true,standardization
+Cheese,#8dd5bc,,true,false,false,license,false,matrices
+Safety and Emergency Supplies,#ff5975,In congue. Etiam justo. Etiam pretium iaculis justo.,true,false,false,asset,false,eco-centric
+Frozen Chicken Wings,#c08503,"In sagittis dui vel nisl. Duis ac nibh. Fusce lacus purus, aliquet at, feugiat non, pretium quis, lectus.",false,false,true,consumable,true,user-facing
+Fruits,#e8f64d,,true,true,false,accessory,false,installation
+Travel Accessories,#ad518f,"Mauris enim leo, rhoncus sed, vestibulum sit amet, cursus id, turpis. Integer aliquet, massa id lobortis convallis, tortor risus dapibus augue, vel accumsan tellus nisi eu orci. Mauris lacinia sapien quis libero.",true,false,true,consumable,true,standardization
+Cookware,#17115d,,false,false,false,consumable,true,demand-driven
+Small Appliances,#dfb016,"Aliquam quis turpis eget elit sodales scelerisque. Mauris sit amet eros. Suspendisse accumsan tortor quis turpis.
+
+Sed ante. Vivamus tortor. Duis mattis egestas metus.
+
+Aenean fermentum. Donec ut mauris eget massa tempor convallis. Nulla neque libero, convallis eget, eleifend luctus, ultricies eu, nibh.",false,false,false,accessory,true,productivity
+Dried Fruits,#dc7db2,,true,true,true,asset,true,groupware
+Cookbooks & Nutrition,#605da4,"Aenean fermentum. Donec ut mauris eget massa tempor convallis. Nulla neque libero, convallis eget, eleifend luctus, ultricies eu, nibh.
+
+Quisque id justo sit amet sapien dignissim vestibulum. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nulla dapibus dolor vel est. Donec odio justo, sollicitudin ut, suscipit a, feugiat et, eros.",true,false,false,consumable,false,alliance
+Savory Snacks,#da5cd3,,true,false,false,asset,true,conglomeration
+Emergency Preparedness & First Aid,,"Donec diam neque, vestibulum eget, vulputate ut, ultrices vel, augue. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec pharetra, magna vestibulum aliquet ultrices, erat tortor sollicitudin mi, sit amet lobortis sapien sapien non mi. Integer ac neque.",true,true,true,component,true,frame
+Garden Supplies,,Phasellus in felis. Donec semper sapien a libero. Nam dui.,true,false,false,accessory,false,Future-proofed
+Shirts,#f7e81e,,true,false,false,component,false,Upgradable
+Drawing Supplies,#9dc805,"Vestibulum ac est lacinia nisi venenatis tristique. Fusce congue, diam id ornare imperdiet, sapien urna pretium nisl, ut volutpat sapien arcu sed augue. Aliquam erat volutpat.
+
+In congue. Etiam justo. Etiam pretium iaculis justo.
+
+In hac habitasse platea dictumst. Etiam faucibus cursus urna. Ut tellus.",true,true,true,accessory,true,hierarchy
+Phone Accessories,#cb7722,,true,true,true,consumable,true,Implemented
+Home Organization,#90d2e2,,false,true,true,accessory,true,orchestration
+Fresh Fruits,,,false,false,true,consumable,true,system engine
+Lighting & Lamps,#8c30b2,,false,true,false,component,true,asynchronous
+Sauces,#9b739a,"Cras non velit nec nisi vulputate nonummy. Maecenas tincidunt lacus at velit. Vivamus vel nulla eget eros elementum pellentesque.
+
+Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla. Nunc purus.",false,true,true,license,false,analyzer
+Training Supplies,#cada56,"Cras non velit nec nisi vulputate nonummy. Maecenas tincidunt lacus at velit. Vivamus vel nulla eget eros elementum pellentesque.
+
+Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla. Nunc purus.
+
+Phasellus in felis. Donec semper sapien a libero. Nam dui.",true,false,true,license,false,pricing structure
+Bags,#530adb,,true,true,false,component,true,Multi-channelled
+Healthy Snacks,#844027,,true,false,true,accessory,false,Persistent
+Savory Snacks,#8a1564,,true,false,false,accessory,true,solution
+Granola/Cereal,#8b1b4b,"Proin interdum mauris non ligula pellentesque ultrices. Phasellus id sapien in sapien iaculis congue. Vivamus metus arcu, adipiscing molestie, hendrerit at, vulputate vitae, nisl.
+
+Aenean lectus. Pellentesque eget nunc. Donec quis orci eget orci vehicula condimentum.
+
+Curabitur in libero ut massa volutpat convallis. Morbi odio odio, elementum eu, interdum eu, tincidunt in, leo. Maecenas pulvinar lobortis est.",true,false,false,accessory,false,internet solution
+Board Games,,,false,false,false,consumable,false,asymmetric
+Meat Alternatives,#08d7a5,"Quisque id justo sit amet sapien dignissim vestibulum. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nulla dapibus dolor vel est. Donec odio justo, sollicitudin ut, suscipit a, feugiat et, eros.",true,false,true,accessory,true,Balanced
+Safety and Emergency Supplies,#c267be,,true,false,false,accessory,false,multimedia
+Bath & Body,,,true,true,false,license,true,system-worthy
+Baking Ingredients,#f3f415,Sed ante. Vivamus tortor. Duis mattis egestas metus.,false,false,true,asset,true,cohesive
+Frozen Entrees,#9c9472,,true,true,false,consumable,false,multi-state
+Healthy Salads,#abb02e,Maecenas ut massa quis augue luctus tincidunt. Nulla mollis molestie lorem. Quisque ut erat.,true,false,false,consumable,false,groupware
+Bedding & Linens,#440277,"Nam ultrices, libero non mattis pulvinar, nulla pede ullamcorper augue, a suscipit nulla elit ac nulla. Sed vel enim sit amet nunc viverra dapibus. Nulla suscipit ligula in lacus.",true,true,true,consumable,false,discrete
+Home Fragrance & Accessories,#a0c749,,true,true,false,asset,false,Universal
+Candle & Soap Making Supplies,#df2bbd,"Donec diam neque, vestibulum eget, vulputate ut, ultrices vel, augue. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec pharetra, magna vestibulum aliquet ultrices, erat tortor sollicitudin mi, sit amet lobortis sapien sapien non mi. Integer ac neque.
+
+Duis bibendum. Morbi non quam nec dui luctus rutrum. Nulla tellus.",true,true,true,license,true,Adaptive
+Camping Equipment,,Cras non velit nec nisi vulputate nonummy. Maecenas tincidunt lacus at velit. Vivamus vel nulla eget eros elementum pellentesque.,false,true,false,accessory,false,workforce
+Decorative Wall Art & Accessories,#b5cac4,,false,true,false,component,true,fault-tolerant
+Cookbooks & Nutrition,#c92385,,true,false,true,asset,true,Graphical User Interface
+Air Quality & Purification,#661005,"Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus vestibulum sagittis sapien. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",true,true,false,license,false,Integrated
+Healthy Snacks,#71e978,,false,true,false,consumable,true,toolset
+Frozen Chicken Meals,#df184a,,false,true,false,license,true,Future-proofed
+Blenders & Juicers,#af7cb0,"Mauris enim leo, rhoncus sed, vestibulum sit amet, cursus id, turpis. Integer aliquet, massa id lobortis convallis, tortor risus dapibus augue, vel accumsan tellus nisi eu orci. Mauris lacinia sapien quis libero.",false,false,false,consumable,true,maximized
+Frozen Appetizers,#1c154c,,false,true,false,accessory,false,Configurable
+Grooming Supplies,#871429,,false,false,true,component,true,dynamic
+Croutons,,"Phasellus in felis. Donec semper sapien a libero. Nam dui.
+
+Proin leo odio, porttitor id, consequat in, consequat ut, nulla. Sed accumsan felis. Ut at dolor quis odio consequat varius.",false,false,false,asset,true,productivity
+Baking Mixes,#803d69,,false,true,true,component,true,systemic
+Oral Care & Hygiene,#248df4,"Maecenas leo odio, condimentum id, luctus nec, molestie sed, justo. Pellentesque viverra pede ac diam. Cras pellentesque volutpat dui.",false,true,true,component,false,Automated
+Portable Power Solutions,#0121d0,,false,false,false,consumable,true,Synergistic
+Kitchen Accessories,#dc2d16,Etiam vel augue. Vestibulum rutrum rutrum neque. Aenean auctor gravida sem.,true,false,false,accessory,true,Stand-alone
+Automotive Tools,#f00450,,false,true,true,license,true,value-added
+Loungewear,#91bb3d,,false,true,true,component,true,zero administration
+Vegetarian Meals,#792633,"Mauris enim leo, rhoncus sed, vestibulum sit amet, cursus id, turpis. Integer aliquet, massa id lobortis convallis, tortor risus dapibus augue, vel accumsan tellus nisi eu orci. Mauris lacinia sapien quis libero.
+
+Nullam sit amet turpis elementum ligula vehicula consequat. Morbi a ipsum. Integer a nibh.",false,true,true,consumable,true,help-desk
+Hand Tools,#2d4adb,,false,true,true,license,true,strategy
+Oils,#a467c6,"Proin interdum mauris non ligula pellentesque ultrices. Phasellus id sapien in sapien iaculis congue. Vivamus metus arcu, adipiscing molestie, hendrerit at, vulputate vitae, nisl.
+
+Aenean lectus. Pellentesque eget nunc. Donec quis orci eget orci vehicula condimentum.
+
+Curabitur in libero ut massa volutpat convallis. Morbi odio odio, elementum eu, interdum eu, tincidunt in, leo. Maecenas pulvinar lobortis est.",false,true,true,license,true,contingency
+Breads,#8997d0,,false,true,true,consumable,false,interface
+Savory Snacks,#6eee19,,false,true,true,component,true,multimedia
+Household Supplies,#3e6583,,false,true,true,consumable,false,context-sensitive
+Prepared Meals,#50781d,,true,true,false,accessory,false,system engine
+Dressing,#cccc28,,false,true,false,component,false,encryption
+Fishing Equipment,#bf4e87,,true,false,true,asset,true,3rd generation
+Camping Equipment,,"Praesent blandit. Nam nulla. Integer pede justo, lacinia eget, tincidunt eget, tempus vel, pede.
+
+Morbi porttitor lorem id ligula. Suspendisse ornare consequat lectus. In est risus, auctor sed, tristique in, tempus sit amet, sem.
+
+Fusce consequat. Nulla nisl. Nunc nisl.",true,false,true,asset,false,Mandatory
+Prepared Vegetables,#19311c,"Etiam vel augue. Vestibulum rutrum rutrum neque. Aenean auctor gravida sem.
+
+Praesent id massa id nisl venenatis lacinia. Aenean sit amet justo. Morbi ut odio.",false,false,true,component,true,matrices
+Camping Equipment,#acee8d,,true,true,false,component,true,ability
+Drinkware,#de31e7,,false,false,false,accessory,false,Reactive
+Portable Power Solutions,#c5d5bb,,false,false,true,consumable,false,Monitored
+Juice,#4a709f,"Maecenas leo odio, condimentum id, luctus nec, molestie sed, justo. Pellentesque viverra pede ac diam. Cras pellentesque volutpat dui.
+
+Maecenas tristique, est et tempus semper, est quam pharetra magna, ac consequat metus sapien ut nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris viverra diam vitae quam. Suspendisse potenti.",false,false,true,license,true,groupware
+Baking Ingredients,#195881,"Aliquam quis turpis eget elit sodales scelerisque. Mauris sit amet eros. Suspendisse accumsan tortor quis turpis.
+
+Sed ante. Vivamus tortor. Duis mattis egestas metus.",true,false,false,component,true,Mandatory
+Poultry,,,false,true,false,asset,false,methodology
+Granola,#2fc53e,,false,true,false,asset,true,Devolved
+Cooking Oils,#051be9,,false,true,true,asset,true,national
+Sustainable Fashion,#11af96,,true,false,false,license,false,Ameliorated
+Cycling Accessories,#a0233b,,true,false,true,asset,true,algorithm
+Audio & Video Accessories,,,true,false,false,license,true,Total
+Portable Projectors,,"Nullam sit amet turpis elementum ligula vehicula consequat. Morbi a ipsum. Integer a nibh.
+
+In quis justo. Maecenas rhoncus aliquam lacus. Morbi quis tortor id nulla ultrices aliquet.
+
+Maecenas leo odio, condimentum id, luctus nec, molestie sed, justo. Pellentesque viverra pede ac diam. Cras pellentesque volutpat dui.",true,false,true,asset,true,data-warehouse
+Power Tools,#3a7faf,"Morbi porttitor lorem id ligula. Suspendisse ornare consequat lectus. In est risus, auctor sed, tristique in, tempus sit amet, sem.
+
+Fusce consequat. Nulla nisl. Nunc nisl.",true,false,false,component,true,intranet
+Cooking Tools & Utensils,#1e2608,"In hac habitasse platea dictumst. Morbi vestibulum, velit id pretium iaculis, diam erat fermentum justo, nec condimentum neque sapien placerat ante. Nulla justo.
+
+Aliquam quis turpis eget elit sodales scelerisque. Mauris sit amet eros. Suspendisse accumsan tortor quis turpis.",false,true,false,component,true,productivity
+Wearable Technology,#e2861f,"Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla. Nunc purus.",false,true,true,component,true,content-based
+Oatmeal,#f2c2dd,,false,true,false,accessory,true,internet solution
+Yogurt,#e1db21,,false,false,true,license,true,application
+Jigsaw Puzzles,,,false,true,false,consumable,false,object-oriented
+Refrigerators,#cbbba2,,false,true,true,asset,false,needs-based
+Casual Footwear,#3252a3,"Duis consequat dui nec nisi volutpat eleifend. Donec ut dolor. Morbi vel lectus in quam fringilla rhoncus.
+
+Mauris enim leo, rhoncus sed, vestibulum sit amet, cursus id, turpis. Integer aliquet, massa id lobortis convallis, tortor risus dapibus augue, vel accumsan tellus nisi eu orci. Mauris lacinia sapien quis libero.
+
+Nullam sit amet turpis elementum ligula vehicula consequat. Morbi a ipsum. Integer a nibh.",false,false,true,asset,false,Versatile
+Emergency Preparedness & First Aid,#c43e3f,"Curabitur gravida nisi at nibh. In hac habitasse platea dictumst. Aliquam augue quam, sollicitudin vitae, consectetuer eget, rutrum at, lorem.
+
+Integer tincidunt ante vel ipsum. Praesent blandit lacinia erat. Vestibulum sed magna at nunc commodo placerat.
+
+Praesent blandit. Nam nulla. Integer pede justo, lacinia eget, tincidunt eget, tempus vel, pede.",true,false,true,asset,false,well-modulated
+Hydration Gear,#06de84,,false,true,true,consumable,false,intermediate
+Cooking Appliances,#1c1062,"Duis bibendum. Morbi non quam nec dui luctus rutrum. Nulla tellus.
+
+In sagittis dui vel nisl. Duis ac nibh. Fusce lacus purus, aliquet at, feugiat non, pretium quis, lectus.",true,true,false,consumable,false,6th generation
+Coffee Equipment,#f6dd8a,,false,false,false,license,false,Adaptive
+Nuts,#89ea27,"Sed ante. Vivamus tortor. Duis mattis egestas metus.
+
+Aenean fermentum. Donec ut mauris eget massa tempor convallis. Nulla neque libero, convallis eget, eleifend luctus, ultricies eu, nibh.",false,true,true,accessory,false,policy
+Desserts,#75c7ff,,false,true,false,license,true,Switchable
+Indoor Gardening Supplies,#54bee4,,false,true,true,consumable,true,demand-driven
+Office Supplies,#40fdd9,"In congue. Etiam justo. Etiam pretium iaculis justo.
+
+In hac habitasse platea dictumst. Etiam faucibus cursus urna. Ut tellus.
+
+Nulla ut erat id mauris vulputate elementum. Nullam varius. Nulla facilisi.",true,true,false,consumable,true,Extended
+Processed Meats,#49a218,,true,true,false,license,true,Balanced
+Fermented Condiments,#ae72d6,"Aliquam quis turpis eget elit sodales scelerisque. Mauris sit amet eros. Suspendisse accumsan tortor quis turpis.
+
+Sed ante. Vivamus tortor. Duis mattis egestas metus.
+
+Aenean fermentum. Donec ut mauris eget massa tempor convallis. Nulla neque libero, convallis eget, eleifend luctus, ultricies eu, nibh.",true,true,false,consumable,false,standardization
+Herbs and Spices,#244de3,"Proin leo odio, porttitor id, consequat in, consequat ut, nulla. Sed accumsan felis. Ut at dolor quis odio consequat varius.",false,false,false,consumable,false,Visionary
+Home Organization,#12ab5b,,true,false,false,license,false,zero defect
+Camping Equipment,#cb1873,"Maecenas ut massa quis augue luctus tincidunt. Nulla mollis molestie lorem. Quisque ut erat.
+
+Curabitur gravida nisi at nibh. In hac habitasse platea dictumst. Aliquam augue quam, sollicitudin vitae, consectetuer eget, rutrum at, lorem.
+
+Integer tincidunt ante vel ipsum. Praesent blandit lacinia erat. Vestibulum sed magna at nunc commodo placerat.",false,true,false,accessory,true,capacity
+Granola & Muesli,#c1b45c,,false,false,false,accessory,false,analyzing
+Healthy Snacks,#48538b,"Curabitur in libero ut massa volutpat convallis. Morbi odio odio, elementum eu, interdum eu, tincidunt in, leo. Maecenas pulvinar lobortis est.",false,false,false,consumable,false,hardware
+Indoor Gardening Supplies,,,true,false,false,accessory,true,Business-focused
+Outdoor Accessories,#a4a69e,Fusce consequat. Nulla nisl. Nunc nisl.,false,false,false,license,true,knowledge base
+Casual Dresses,#e6b016,,false,true,true,consumable,false,Secured
+Wearable Technology,#1d631c,,true,true,true,asset,true,flexibility
+Meal Kits,#cd9475,"Sed ante. Vivamus tortor. Duis mattis egestas metus.
+
+Aenean fermentum. Donec ut mauris eget massa tempor convallis. Nulla neque libero, convallis eget, eleifend luctus, ultricies eu, nibh.",false,true,true,asset,true,application
+Salsas and Dips,#2bca2a,,true,true,false,accessory,true,transitional
+Hearing Protection,#674faa,"Fusce posuere felis sed lacus. Morbi sem mauris, laoreet ut, rhoncus aliquet, pulvinar sed, nisl. Nunc rhoncus dui vel sem.",false,true,false,asset,false,adapter
+Outerwear,#acb111,In hac habitasse platea dictumst. Etiam faucibus cursus urna. Ut tellus.,true,false,false,accessory,false,multi-state
+Canned Legumes,#c70b1a,"Vestibulum ac est lacinia nisi venenatis tristique. Fusce congue, diam id ornare imperdiet, sapien urna pretium nisl, ut volutpat sapien arcu sed augue. Aliquam erat volutpat.
+
+In congue. Etiam justo. Etiam pretium iaculis justo.",false,false,false,accessory,true,Extended
+Hydration Gear,#016575,,true,false,true,asset,true,Profound
+Vegetarian Meals,#b14ff4,,true,false,false,consumable,false,capability
+Disaster Preparedness,#21993e,,true,true,false,component,true,Profit-focused
+Salads,#599850,"Nam ultrices, libero non mattis pulvinar, nulla pede ullamcorper augue, a suscipit nulla elit ac nulla. Sed vel enim sit amet nunc viverra dapibus. Nulla suscipit ligula in lacus.",true,true,false,consumable,false,forecast
+Pain Relief,#136ca3,"Duis bibendum. Morbi non quam nec dui luctus rutrum. Nulla tellus.
+
+In sagittis dui vel nisl. Duis ac nibh. Fusce lacus purus, aliquet at, feugiat non, pretium quis, lectus.
+
+Suspendisse potenti. In eleifend quam a odio. In hac habitasse platea dictumst.",true,false,true,asset,false,Inverse
+Mobile Accessories,#70f557,Pellentesque at nulla. Suspendisse potenti. Cras in purus eu magna vulputate luctus.,false,false,false,consumable,true,knowledge user
+Savory Snacks,#436a44,"Mauris enim leo, rhoncus sed, vestibulum sit amet, cursus id, turpis. Integer aliquet, massa id lobortis convallis, tortor risus dapibus augue, vel accumsan tellus nisi eu orci. Mauris lacinia sapien quis libero.
+
+Nullam sit amet turpis elementum ligula vehicula consequat. Morbi a ipsum. Integer a nibh.",false,false,true,license,false,tangible
+Lighting,#c1a420,"Aliquam quis turpis eget elit sodales scelerisque. Mauris sit amet eros. Suspendisse accumsan tortor quis turpis.
+
+Sed ante. Vivamus tortor. Duis mattis egestas metus.",true,false,true,accessory,false,toolset
+Outdoor Accessories,#0abc94,"Maecenas tristique, est et tempus semper, est quam pharetra magna, ac consequat metus sapien ut nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris viverra diam vitae quam. Suspendisse potenti.
+
+Nullam porttitor lacus at turpis. Donec posuere metus vitae ipsum. Aliquam non mauris.",false,false,true,license,true,implementation
+Baking Kits,#20ca64,"Fusce consequat. Nulla nisl. Nunc nisl.
+
+Duis bibendum, felis sed interdum venenatis, turpis enim blandit mi, in porttitor pede justo eu massa. Donec dapibus. Duis at velit eu est congue elementum.
+
+In hac habitasse platea dictumst. Morbi vestibulum, velit id pretium iaculis, diam erat fermentum justo, nec condimentum neque sapien placerat ante. Nulla justo.",true,true,true,accessory,false,holistic
+Canned Fruits,#a36d0b,"Aenean fermentum. Donec ut mauris eget massa tempor convallis. Nulla neque libero, convallis eget, eleifend luctus, ultricies eu, nibh.
+
+Quisque id justo sit amet sapien dignissim vestibulum. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nulla dapibus dolor vel est. Donec odio justo, sollicitudin ut, suscipit a, feugiat et, eros.
+
+Vestibulum ac est lacinia nisi venenatis tristique. Fusce congue, diam id ornare imperdiet, sapien urna pretium nisl, ut volutpat sapien arcu sed augue. Aliquam erat volutpat.",true,false,true,asset,true,asymmetric
+Mixes,#f51480,"Vestibulum quam sapien, varius ut, blandit non, interdum in, ante. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Duis faucibus accumsan odio. Curabitur convallis.
+
+Duis consequat dui nec nisi volutpat eleifend. Donec ut dolor. Morbi vel lectus in quam fringilla rhoncus.
+
+Mauris enim leo, rhoncus sed, vestibulum sit amet, cursus id, turpis. Integer aliquet, massa id lobortis convallis, tortor risus dapibus augue, vel accumsan tellus nisi eu orci. Mauris lacinia sapien quis libero.",true,false,false,license,false,archive
+Fruit Chutneys,#31ce61,Nulla ut erat id mauris vulputate elementum. Nullam varius. Nulla facilisi.,false,false,true,license,true,Secured
+Nuts and Seeds,#3a7445,In congue. Etiam justo. Etiam pretium iaculis justo.,true,false,false,asset,false,upward-trending
+Car Interior Accessories,#82721a,"Proin interdum mauris non ligula pellentesque ultrices. Phasellus id sapien in sapien iaculis congue. Vivamus metus arcu, adipiscing molestie, hendrerit at, vulputate vitae, nisl.
+
+Aenean lectus. Pellentesque eget nunc. Donec quis orci eget orci vehicula condimentum.
+
+Curabitur in libero ut massa volutpat convallis. Morbi odio odio, elementum eu, interdum eu, tincidunt in, leo. Maecenas pulvinar lobortis est.",true,false,false,license,false,asynchronous
+Grooming Supplies,#369b0a,"Quisque id justo sit amet sapien dignissim vestibulum. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nulla dapibus dolor vel est. Donec odio justo, sollicitudin ut, suscipit a, feugiat et, eros.
+
+Vestibulum ac est lacinia nisi venenatis tristique. Fusce congue, diam id ornare imperdiet, sapien urna pretium nisl, ut volutpat sapien arcu sed augue. Aliquam erat volutpat.
+
+In congue. Etiam justo. Etiam pretium iaculis justo.",true,false,false,component,false,secondary
+Household Supplies,#472fa4,,false,true,false,component,false,structure
+Kitchen Storage & Organization,#398656,,true,true,false,asset,true,next generation
+Pet Health and Care,,,true,true,false,component,true,Universal
+Whole Grains,#6889d6,,false,true,true,consumable,true,approach
+Breads,#fa1b5b,,false,false,true,asset,false,hub
+Outdoor Accessories,#0c0330,,true,false,false,asset,true,tangible
+Outdoor Cleaning,#230fee,,true,false,true,consumable,false,user-facing
+Frozen Vegetables,#e96ccb,"In hac habitasse platea dictumst. Etiam faucibus cursus urna. Ut tellus.
+
+Nulla ut erat id mauris vulputate elementum. Nullam varius. Nulla facilisi.",true,true,false,component,false,Multi-layered
+Asian Sauces,#bacfad,,true,false,false,license,false,budgetary management
+Baking Mixes,#e601a8,,false,true,false,asset,true,dedicated
+Eco-Friendly Toys,#aa650b,,true,true,false,asset,false,leading edge
+Power Accessories,#9769b6,"Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus vestibulum sagittis sapien. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",false,true,false,license,true,implementation
+Automotive Accessories,#f9cfcf,"Vestibulum quam sapien, varius ut, blandit non, interdum in, ante. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Duis faucibus accumsan odio. Curabitur convallis.",true,false,true,license,true,value-added
+Canned Fruits,#cf6c05,"Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus vestibulum sagittis sapien. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",false,true,false,asset,true,Automated
+Miniature Sports Games,#bafba8,"Sed sagittis. Nam congue, risus semper porta volutpat, quam pede lobortis ligula, sit amet eleifend pede libero quis orci. Nullam molestie nibh in lectus.",true,true,false,consumable,false,concept
+Vegetarian Salads,,"Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus vestibulum sagittis sapien. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+
+Etiam vel augue. Vestibulum rutrum rutrum neque. Aenean auctor gravida sem.",false,true,true,asset,true,architecture
+Poultry,#d590d1,,true,false,false,accessory,true,Exclusive
+Herbs and Spices,#166572,"Aenean fermentum. Donec ut mauris eget massa tempor convallis. Nulla neque libero, convallis eget, eleifend luctus, ultricies eu, nibh.
+
+Quisque id justo sit amet sapien dignissim vestibulum. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nulla dapibus dolor vel est. Donec odio justo, sollicitudin ut, suscipit a, feugiat et, eros.
+
+Vestibulum ac est lacinia nisi venenatis tristique. Fusce congue, diam id ornare imperdiet, sapien urna pretium nisl, ut volutpat sapien arcu sed augue. Aliquam erat volutpat.",true,false,false,license,true,product
+Cooking Tools & Utensils,,,false,false,false,accessory,false,Assimilated
+Smart Lighting,#417257,,true,false,true,component,false,Open-architected
+Board Games,#1afbd2,"Sed sagittis. Nam congue, risus semper porta volutpat, quam pede lobortis ligula, sit amet eleifend pede libero quis orci. Nullam molestie nibh in lectus.
+
+Pellentesque at nulla. Suspendisse potenti. Cras in purus eu magna vulputate luctus.",false,true,false,consumable,false,data-warehouse
+Fitness Equipment,#bb3d34,Etiam vel augue. Vestibulum rutrum rutrum neque. Aenean auctor gravida sem.,true,true,true,component,false,didactic
+Storage Devices,#68c10a,"In quis justo. Maecenas rhoncus aliquam lacus. Morbi quis tortor id nulla ultrices aliquet.
+
+Maecenas leo odio, condimentum id, luctus nec, molestie sed, justo. Pellentesque viverra pede ac diam. Cras pellentesque volutpat dui.
+
+Maecenas tristique, est et tempus semper, est quam pharetra magna, ac consequat metus sapien ut nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris viverra diam vitae quam. Suspendisse potenti.",false,true,true,component,false,Compatible
+Dressing,#b7650d,,true,false,true,consumable,false,info-mediaries
+Savory Breakfast Options,#2fc1ed,"Maecenas ut massa quis augue luctus tincidunt. Nulla mollis molestie lorem. Quisque ut erat.
+
+Curabitur gravida nisi at nibh. In hac habitasse platea dictumst. Aliquam augue quam, sollicitudin vitae, consectetuer eget, rutrum at, lorem.
+
+Integer tincidunt ante vel ipsum. Praesent blandit lacinia erat. Vestibulum sed magna at nunc commodo placerat.",false,false,true,license,true,Polarised
+Indoor Gardening Supplies,#357552,,false,false,false,consumable,true,Realigned
+Camping Equipment,#94ae6c,,true,false,false,asset,true,content-based
+Productivity,#595ec5,"Cras mi pede, malesuada in, imperdiet et, commodo vulputate, justo. In blandit ultrices enim. Lorem ipsum dolor sit amet, consectetuer adipiscing elit.",true,true,true,license,false,Reactive
+Cycling Accessories,#403a65,,true,true,false,consumable,true,database
+Marinades and Sauces,#423a19,,false,false,false,asset,true,multimedia
+Lighting,,,false,true,true,license,false,didactic
+Kitchen Gadgets,#0a412c,"Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Proin risus. Praesent lectus.",false,true,true,asset,false,incremental
+Wellness & Relaxation,#2a8c50,"Duis consequat dui nec nisi volutpat eleifend. Donec ut dolor. Morbi vel lectus in quam fringilla rhoncus.
+
+Mauris enim leo, rhoncus sed, vestibulum sit amet, cursus id, turpis. Integer aliquet, massa id lobortis convallis, tortor risus dapibus augue, vel accumsan tellus nisi eu orci. Mauris lacinia sapien quis libero.
+
+Nullam sit amet turpis elementum ligula vehicula consequat. Morbi a ipsum. Integer a nibh.",false,true,false,component,true,Ergonomic
+Pain Relief & Therapy,#aff523,"Duis bibendum, felis sed interdum venenatis, turpis enim blandit mi, in porttitor pede justo eu massa. Donec dapibus. Duis at velit eu est congue elementum.
+
+In hac habitasse platea dictumst. Morbi vestibulum, velit id pretium iaculis, diam erat fermentum justo, nec condimentum neque sapien placerat ante. Nulla justo.",true,true,false,accessory,true,Down-sized
+Rice Dishes,#d97389,"Proin eu mi. Nulla ac enim. In tempor, turpis nec euismod scelerisque, quam turpis adipiscing lorem, vitae mattis nibh ligula nec sem.",false,true,true,license,false,Digitized
+Wearable Technology,#43e92f,,true,false,false,consumable,true,contextually-based
+Sparkling Beverages,#2f0ad7,"Proin eu mi. Nulla ac enim. In tempor, turpis nec euismod scelerisque, quam turpis adipiscing lorem, vitae mattis nibh ligula nec sem.",true,false,false,asset,true,non-volatile
+Seasoning Blends,#6d5ad7,In quis justo. Maecenas rhoncus aliquam lacus. Morbi quis tortor id nulla ultrices aliquet.,false,true,false,asset,false,encoding
+Mobile Accessories,#6c7c51,,false,true,false,component,true,emulation
+Training Supplies,#eeec37,,false,false,true,accessory,true,focus group
+Women's Tops,#7554f8,In hac habitasse platea dictumst. Etiam faucibus cursus urna. Ut tellus.,true,false,false,component,false,Expanded
+Small Appliances,,,true,false,false,license,true,Universal
+Office Supplies,#1416c5,"Aliquam quis turpis eget elit sodales scelerisque. Mauris sit amet eros. Suspendisse accumsan tortor quis turpis.
+
+Sed ante. Vivamus tortor. Duis mattis egestas metus.
+
+Aenean fermentum. Donec ut mauris eget massa tempor convallis. Nulla neque libero, convallis eget, eleifend luctus, ultricies eu, nibh.",false,true,true,component,true,local area network
+Cheese,#b01fdf,"Duis bibendum, felis sed interdum venenatis, turpis enim blandit mi, in porttitor pede justo eu massa. Donec dapibus. Duis at velit eu est congue elementum.",true,false,false,consumable,true,content-based
+Leggings,#a5c00b,,false,false,false,asset,false,modular
+Camping Equipment,#3a2a33,In congue. Etiam justo. Etiam pretium iaculis justo.,true,false,true,accessory,true,internet solution
+Healthy Desserts,#e0aad7,,false,true,true,accessory,true,Devolved
+Baking Accessories,#6641f6,,false,false,true,accessory,false,Synergized
+Nutritional Supplements,#9c0541,,false,false,true,consumable,false,secondary
+Coffee Accessories,#07a6d5,,true,false,false,component,false,Up-sized
+Food Storage Solutions,#c356df,"Donec diam neque, vestibulum eget, vulputate ut, ultrices vel, augue. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec pharetra, magna vestibulum aliquet ultrices, erat tortor sollicitudin mi, sit amet lobortis sapien sapien non mi. Integer ac neque.",false,false,true,consumable,false,Optional
+Wraps/Rolls,#a25a60,,true,true,false,asset,false,dedicated
+Outdoor Accessories,#d7e64e,,true,false,true,license,true,knowledge base
+Nuts and Seeds,#f65e52,Duis bibendum. Morbi non quam nec dui luctus rutrum. Nulla tellus.,false,false,false,accessory,false,national
+Soups & Broths,,Maecenas ut massa quis augue luctus tincidunt. Nulla mollis molestie lorem. Quisque ut erat.,true,false,true,license,false,Front-line
+Soccer,#88087c,"Nullam sit amet turpis elementum ligula vehicula consequat. Morbi a ipsum. Integer a nibh.
+
+In quis justo. Maecenas rhoncus aliquam lacus. Morbi quis tortor id nulla ultrices aliquet.
+
+Maecenas leo odio, condimentum id, luctus nec, molestie sed, justo. Pellentesque viverra pede ac diam. Cras pellentesque volutpat dui.",false,false,false,component,false,Digitized
+Prepared Seafood,#6371eb,"Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla. Nunc purus.",true,true,false,license,true,needs-based
+Frozen Appetizers,#1aeb2f,"In sagittis dui vel nisl. Duis ac nibh. Fusce lacus purus, aliquet at, feugiat non, pretium quis, lectus.
+
+Suspendisse potenti. In eleifend quam a odio. In hac habitasse platea dictumst.
+
+Maecenas ut massa quis augue luctus tincidunt. Nulla mollis molestie lorem. Quisque ut erat.",true,false,false,accessory,true,reciprocal
+Drinkware,#b43d7a,,true,true,false,component,false,Grass-roots
+Frozen Snacks,#fab9ce,"Phasellus sit amet erat. Nulla tempus. Vivamus in felis eu sapien cursus vestibulum.
+
+Proin eu mi. Nulla ac enim. In tempor, turpis nec euismod scelerisque, quam turpis adipiscing lorem, vitae mattis nibh ligula nec sem.
+
+Duis aliquam convallis nunc. Proin at turpis a pede posuere nonummy. Integer non velit.",false,true,true,license,false,motivating
+Gaming Accessories,#cae711,"Nullam sit amet turpis elementum ligula vehicula consequat. Morbi a ipsum. Integer a nibh.
+
+In quis justo. Maecenas rhoncus aliquam lacus. Morbi quis tortor id nulla ultrices aliquet.
+
+Maecenas leo odio, condimentum id, luctus nec, molestie sed, justo. Pellentesque viverra pede ac diam. Cras pellentesque volutpat dui.",false,true,true,accessory,false,productivity
+STEM Learning Toys,#b88939,,false,false,true,asset,false,24/7
+Gourmet Rice,#a885b9,,false,true,false,asset,false,Managed
+Oral Care & Hygiene,#4f92cc,"Curabitur gravida nisi at nibh. In hac habitasse platea dictumst. Aliquam augue quam, sollicitudin vitae, consectetuer eget, rutrum at, lorem.
+
+Integer tincidunt ante vel ipsum. Praesent blandit lacinia erat. Vestibulum sed magna at nunc commodo placerat.",false,false,true,license,true,Devolved
+Bedding & Linens,#33077e,,true,false,true,asset,true,Versatile
+Mixes,#0c98f9,"Nam ultrices, libero non mattis pulvinar, nulla pede ullamcorper augue, a suscipit nulla elit ac nulla. Sed vel enim sit amet nunc viverra dapibus. Nulla suscipit ligula in lacus.
+
+Curabitur at ipsum ac tellus semper interdum. Mauris ullamcorper purus sit amet nulla. Quisque arcu libero, rutrum ac, lobortis vel, dapibus at, diam.",true,true,true,asset,false,multi-state
+Lighting,#cd8bfd,,true,false,true,component,false,empowering
+Ice Cream Flavors,#a37627,,false,true,false,license,false,asymmetric
+Pork,#e3e634,"Proin eu mi. Nulla ac enim. In tempor, turpis nec euismod scelerisque, quam turpis adipiscing lorem, vitae mattis nibh ligula nec sem.
+
+Duis aliquam convallis nunc. Proin at turpis a pede posuere nonummy. Integer non velit.
+
+Donec diam neque, vestibulum eget, vulputate ut, ultrices vel, augue. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec pharetra, magna vestibulum aliquet ultrices, erat tortor sollicitudin mi, sit amet lobortis sapien sapien non mi. Integer ac neque.",true,false,true,accessory,true,full-range
+Garden Supplies,#21f2fc,"Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Proin risus. Praesent lectus.
+
+Vestibulum quam sapien, varius ut, blandit non, interdum in, ante. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Duis faucibus accumsan odio. Curabitur convallis.",false,true,true,accessory,false,web-enabled
+Small Appliances,#1568fc,Etiam vel augue. Vestibulum rutrum rutrum neque. Aenean auctor gravida sem.,true,true,true,license,true,internet solution
+Travel Accessories,,"Cras mi pede, malesuada in, imperdiet et, commodo vulputate, justo. In blandit ultrices enim. Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+
+Proin interdum mauris non ligula pellentesque ultrices. Phasellus id sapien in sapien iaculis congue. Vivamus metus arcu, adipiscing molestie, hendrerit at, vulputate vitae, nisl.",false,false,true,asset,true,Realigned
+Prepared Meals,#98bea8,,true,true,false,consumable,false,Customizable
+Marinades and Sauces,#33f7b2,,false,true,true,asset,false,Monitored
+Asian Sauces,#de6c58,"Maecenas leo odio, condimentum id, luctus nec, molestie sed, justo. Pellentesque viverra pede ac diam. Cras pellentesque volutpat dui.
+
+Maecenas tristique, est et tempus semper, est quam pharetra magna, ac consequat metus sapien ut nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris viverra diam vitae quam. Suspendisse potenti.",false,true,false,consumable,false,neural-net
+Travel Accessories,#c56e5b,Nulla ut erat id mauris vulputate elementum. Nullam varius. Nulla facilisi.,false,false,true,component,true,database
+Accessories,#0d9dac,,false,true,true,consumable,true,Down-sized
+Cookware,#c95f18,,true,true,true,asset,true,toolset
+Beverage Appliances,,"Pellentesque at nulla. Suspendisse potenti. Cras in purus eu magna vulputate luctus.
+
+Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus vestibulum sagittis sapien. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+
+Etiam vel augue. Vestibulum rutrum rutrum neque. Aenean auctor gravida sem.",true,false,true,asset,false,Graphical User Interface
+Chocolate Desserts,#36e054,"In hac habitasse platea dictumst. Etiam faucibus cursus urna. Ut tellus.
+
+Nulla ut erat id mauris vulputate elementum. Nullam varius. Nulla facilisi.
+
+Cras non velit nec nisi vulputate nonummy. Maecenas tincidunt lacus at velit. Vivamus vel nulla eget eros elementum pellentesque.",false,false,true,asset,true,solution
+Oral Care & Hygiene,#2484af,,false,true,false,consumable,true,task-force
+Herbs and Spices,#3c1d84,"Maecenas leo odio, condimentum id, luctus nec, molestie sed, justo. Pellentesque viverra pede ac diam. Cras pellentesque volutpat dui.",true,false,false,component,true,Multi-channelled
+Frozen Appetizers,#52d9ee,,false,true,true,asset,true,intranet
+Small Appliances,#8704d9,"Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla. Nunc purus.",false,false,false,asset,false,artificial intelligence
+Lighting & Lamps,#86e284,,true,false,true,component,true,dynamic
+Lighting,#d9a3f3,,true,false,false,accessory,true,24/7
+Cooking Appliances,#0e23ff,,true,true,false,accessory,false,leverage
+Hydration Gear,#8a1895,"Fusce consequat. Nulla nisl. Nunc nisl.
+
+Duis bibendum, felis sed interdum venenatis, turpis enim blandit mi, in porttitor pede justo eu massa. Donec dapibus. Duis at velit eu est congue elementum.",false,false,true,component,true,Robust
+Seasonings & Mixes,#842393,"Aliquam quis turpis eget elit sodales scelerisque. Mauris sit amet eros. Suspendisse accumsan tortor quis turpis.
+
+Sed ante. Vivamus tortor. Duis mattis egestas metus.",true,true,true,asset,true,high-level
+Sustainable Tableware,#44cf54,"Sed sagittis. Nam congue, risus semper porta volutpat, quam pede lobortis ligula, sit amet eleifend pede libero quis orci. Nullam molestie nibh in lectus.
+
+Pellentesque at nulla. Suspendisse potenti. Cras in purus eu magna vulputate luctus.",false,true,true,accessory,true,workforce
+Regional Seasoning Blends,#3cc353,"Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Proin risus. Praesent lectus.
+
+Vestibulum quam sapien, varius ut, blandit non, interdum in, ante. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Duis faucibus accumsan odio. Curabitur convallis.
+
+Duis consequat dui nec nisi volutpat eleifend. Donec ut dolor. Morbi vel lectus in quam fringilla rhoncus.",false,false,true,license,true,bandwidth-monitored
+Candy,#2e5b11,"Proin eu mi. Nulla ac enim. In tempor, turpis nec euismod scelerisque, quam turpis adipiscing lorem, vitae mattis nibh ligula nec sem.",true,false,false,component,false,heuristic
+Phone Accessories,,,true,false,true,asset,true,multi-tasking
+Office Supplies,#b56224,"Quisque id justo sit amet sapien dignissim vestibulum. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nulla dapibus dolor vel est. Donec odio justo, sollicitudin ut, suscipit a, feugiat et, eros.
+
+Vestibulum ac est lacinia nisi venenatis tristique. Fusce congue, diam id ornare imperdiet, sapien urna pretium nisl, ut volutpat sapien arcu sed augue. Aliquam erat volutpat.
+
+In congue. Etiam justo. Etiam pretium iaculis justo.",true,true,false,consumable,true,mission-critical
+Seasonal Home Decor,#b4d236,"Proin interdum mauris non ligula pellentesque ultrices. Phasellus id sapien in sapien iaculis congue. Vivamus metus arcu, adipiscing molestie, hendrerit at, vulputate vitae, nisl.
+
+Aenean lectus. Pellentesque eget nunc. Donec quis orci eget orci vehicula condimentum.
+
+Curabitur in libero ut massa volutpat convallis. Morbi odio odio, elementum eu, interdum eu, tincidunt in, leo. Maecenas pulvinar lobortis est.",true,true,false,asset,false,client-driven
+Fitness Monitors,#81fef7,"Curabitur at ipsum ac tellus semper interdum. Mauris ullamcorper purus sit amet nulla. Quisque arcu libero, rutrum ac, lobortis vel, dapibus at, diam.",false,false,true,asset,true,info-mediaries
+Nuts and Trail Mix,#8854cf,Nulla ut erat id mauris vulputate elementum. Nullam varius. Nulla facilisi.,true,true,true,component,false,model
+Women's Tops,#434bd1,,true,false,false,asset,false,support
+Soups & Broths,#95690a,,false,false,false,license,false,Multi-tiered
+Pet Accessories,#81c255,"Morbi non lectus. Aliquam sit amet diam in magna bibendum imperdiet. Nullam orci pede, venenatis non, sodales sed, tincidunt eu, felis.",false,false,false,license,true,bandwidth-monitored
+Outdoor Furniture,#b21973,,false,true,false,asset,false,Innovative
+Camping Equipment,#2f0891,,true,true,true,consumable,false,Streamlined
+Skincare,#a0727e,,false,true,false,accessory,true,middleware
+Coffee Equipment,#49e7ef,,true,true,false,consumable,false,regional
+Vegetarian Meals,#35e708,"Nam ultrices, libero non mattis pulvinar, nulla pede ullamcorper augue, a suscipit nulla elit ac nulla. Sed vel enim sit amet nunc viverra dapibus. Nulla suscipit ligula in lacus.",true,true,true,accessory,true,Extended
+Kitchen Gadgets,#3d55e7,,true,true,false,asset,false,product
+Snacks,,"Duis bibendum, felis sed interdum venenatis, turpis enim blandit mi, in porttitor pede justo eu massa. Donec dapibus. Duis at velit eu est congue elementum.
+
+In hac habitasse platea dictumst. Morbi vestibulum, velit id pretium iaculis, diam erat fermentum justo, nec condimentum neque sapien placerat ante. Nulla justo.
+
+Aliquam quis turpis eget elit sodales scelerisque. Mauris sit amet eros. Suspendisse accumsan tortor quis turpis.",true,false,true,component,true,support
+Cheese Spreads,#002332,,false,false,true,license,true,productivity
+Sweet Snacks,#e6fcb7,,false,false,true,accessory,true,Implemented
+Solar Power Accessories,#d78d89,,false,true,false,accessory,true,Face to face
+Sweet Snacks,#b84dd7,,false,true,true,license,false,benchmark
+Frozen Meat Products,#5e391d,,true,true,true,asset,false,discrete
+Board Games,#d62260,"Cras non velit nec nisi vulputate nonummy. Maecenas tincidunt lacus at velit. Vivamus vel nulla eget eros elementum pellentesque.
+
+Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla. Nunc purus.
+
+Phasellus in felis. Donec semper sapien a libero. Nam dui.",false,true,false,license,true,emulation
+Garden Tools,#2aaf43,,true,false,false,accessory,true,Multi-layered
+Grilling Accessories,#659479,,false,false,true,license,false,Total
+Camping Equipment,#f8e95d,"In hac habitasse platea dictumst. Morbi vestibulum, velit id pretium iaculis, diam erat fermentum justo, nec condimentum neque sapien placerat ante. Nulla justo.",false,false,true,accessory,false,ability
+Meat Products,#58ba89,"Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Proin risus. Praesent lectus.
+
+Vestibulum quam sapien, varius ut, blandit non, interdum in, ante. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Duis faucibus accumsan odio. Curabitur convallis.
+
+Duis consequat dui nec nisi volutpat eleifend. Donec ut dolor. Morbi vel lectus in quam fringilla rhoncus.",false,false,false,component,true,Streamlined
+Baking Accessories,#29f775,,false,true,true,license,true,systemic
+Home Organization,#82a520,"Duis bibendum, felis sed interdum venenatis, turpis enim blandit mi, in porttitor pede justo eu massa. Donec dapibus. Duis at velit eu est congue elementum.
+
+In hac habitasse platea dictumst. Morbi vestibulum, velit id pretium iaculis, diam erat fermentum justo, nec condimentum neque sapien placerat ante. Nulla justo.
+
+Aliquam quis turpis eget elit sodales scelerisque. Mauris sit amet eros. Suspendisse accumsan tortor quis turpis.",true,false,true,consumable,true,Public-key
+Small Appliances,#985820,,false,true,false,accessory,false,Reactive
+Mustards,#612bbc,"Mauris enim leo, rhoncus sed, vestibulum sit amet, cursus id, turpis. Integer aliquet, massa id lobortis convallis, tortor risus dapibus augue, vel accumsan tellus nisi eu orci. Mauris lacinia sapien quis libero.
+
+Nullam sit amet turpis elementum ligula vehicula consequat. Morbi a ipsum. Integer a nibh.
+
+In quis justo. Maecenas rhoncus aliquam lacus. Morbi quis tortor id nulla ultrices aliquet.",true,false,true,accessory,false,architecture
+Natural Beverages,,,false,true,true,component,false,focus group
+Decorative Wall Art & Accessories,#528056,,true,true,false,consumable,false,Diverse
+Coffee Accessories,#d8b7f7,"In hac habitasse platea dictumst. Morbi vestibulum, velit id pretium iaculis, diam erat fermentum justo, nec condimentum neque sapien placerat ante. Nulla justo.
+
+Aliquam quis turpis eget elit sodales scelerisque. Mauris sit amet eros. Suspendisse accumsan tortor quis turpis.",false,true,false,consumable,true,bandwidth-monitored
+Salsas & Dips,#7a7229,,false,false,true,consumable,false,middleware
+Baking Ingredients,#18c78e,,true,false,false,license,false,Reduced
+Salads,#3f2a8c,"Quisque id justo sit amet sapien dignissim vestibulum. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nulla dapibus dolor vel est. Donec odio justo, sollicitudin ut, suscipit a, feugiat et, eros.
+
+Vestibulum ac est lacinia nisi venenatis tristique. Fusce congue, diam id ornare imperdiet, sapien urna pretium nisl, ut volutpat sapien arcu sed augue. Aliquam erat volutpat.
+
+In congue. Etiam justo. Etiam pretium iaculis justo.",false,false,true,license,false,tangible
+Seafood,#40236e,,false,false,false,license,true,dynamic
+Mixes,#fdb0a0,,true,true,false,consumable,true,Virtual
+Audio Accessories,#a32468,"Quisque id justo sit amet sapien dignissim vestibulum. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nulla dapibus dolor vel est. Donec odio justo, sollicitudin ut, suscipit a, feugiat et, eros.",true,false,false,consumable,false,hybrid
+Kitchen Accessories,#b166b0,"In hac habitasse platea dictumst. Etiam faucibus cursus urna. Ut tellus.
+
+Nulla ut erat id mauris vulputate elementum. Nullam varius. Nulla facilisi.",false,true,true,asset,false,bandwidth-monitored
+Bread & Rolls,#07990e,,false,true,true,accessory,true,Ameliorated
+Specialty Rice,#8b1c0d,"Vestibulum quam sapien, varius ut, blandit non, interdum in, ante. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Duis faucibus accumsan odio. Curabitur convallis.
+
+Duis consequat dui nec nisi volutpat eleifend. Donec ut dolor. Morbi vel lectus in quam fringilla rhoncus.
+
+Mauris enim leo, rhoncus sed, vestibulum sit amet, cursus id, turpis. Integer aliquet, massa id lobortis convallis, tortor risus dapibus augue, vel accumsan tellus nisi eu orci. Mauris lacinia sapien quis libero.",false,true,true,component,true,function
+Pet Accessories,#bd7785,"Proin interdum mauris non ligula pellentesque ultrices. Phasellus id sapien in sapien iaculis congue. Vivamus metus arcu, adipiscing molestie, hendrerit at, vulputate vitae, nisl.
+
+Aenean lectus. Pellentesque eget nunc. Donec quis orci eget orci vehicula condimentum.",true,true,false,license,true,methodical
+Educational Toys,,,true,false,false,component,false,implementation
+Frozen Vegetables,#0285bb,,false,true,true,accessory,false,product
+Bedding & Linens,#91bc3d,"Sed ante. Vivamus tortor. Duis mattis egestas metus.
+
+Aenean fermentum. Donec ut mauris eget massa tempor convallis. Nulla neque libero, convallis eget, eleifend luctus, ultricies eu, nibh.
+
+Quisque id justo sit amet sapien dignissim vestibulum. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nulla dapibus dolor vel est. Donec odio justo, sollicitudin ut, suscipit a, feugiat et, eros.",true,false,false,license,true,secondary
+Sweet Snacks,#abe102,"Aliquam quis turpis eget elit sodales scelerisque. Mauris sit amet eros. Suspendisse accumsan tortor quis turpis.
+
+Sed ante. Vivamus tortor. Duis mattis egestas metus.",false,false,true,component,false,object-oriented
+Sauces,#a5f482,,false,false,true,license,false,utilisation
+Kitchen Accessories,#a349a7,,false,false,true,accessory,false,Sharable
+Dips and Spreads,#e7975f,,false,false,true,accessory,false,stable
+Regional Seasoning Blends,#edb6b0,,false,false,false,asset,true,interactive
+Camping Equipment,#c2fa57,,false,false,false,license,false,well-modulated
+Portable Power Solutions,#f743e5,,false,true,true,accessory,true,Optional
+Noodles,#c79c42,"Cras non velit nec nisi vulputate nonummy. Maecenas tincidunt lacus at velit. Vivamus vel nulla eget eros elementum pellentesque.
+
+Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla. Nunc purus.",true,true,false,license,false,User-centric
+BBQ Sauces,,"Curabitur in libero ut massa volutpat convallis. Morbi odio odio, elementum eu, interdum eu, tincidunt in, leo. Maecenas pulvinar lobortis est.
+
+Phasellus sit amet erat. Nulla tempus. Vivamus in felis eu sapien cursus vestibulum.",false,true,false,component,true,Programmable
+Decorative Wall Art & Accessories,#46c7a4,"Proin eu mi. Nulla ac enim. In tempor, turpis nec euismod scelerisque, quam turpis adipiscing lorem, vitae mattis nibh ligula nec sem.
+
+Duis aliquam convallis nunc. Proin at turpis a pede posuere nonummy. Integer non velit.
+
+Donec diam neque, vestibulum eget, vulputate ut, ultrices vel, augue. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec pharetra, magna vestibulum aliquet ultrices, erat tortor sollicitudin mi, sit amet lobortis sapien sapien non mi. Integer ac neque.",false,true,false,asset,true,knowledge user
+Poultry,#d2488c,,false,true,false,component,false,needs-based
+Food Storage Solutions,#0ac3e4,"Duis bibendum, felis sed interdum venenatis, turpis enim blandit mi, in porttitor pede justo eu massa. Donec dapibus. Duis at velit eu est congue elementum.",false,true,true,asset,true,needs-based
+Frozen Vegetables,#ab9852,,false,false,false,license,true,dynamic
+Canned Fruits,#465e94,"Cras non velit nec nisi vulputate nonummy. Maecenas tincidunt lacus at velit. Vivamus vel nulla eget eros elementum pellentesque.
+
+Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla. Nunc purus.
+
+Phasellus in felis. Donec semper sapien a libero. Nam dui.",true,false,true,accessory,true,cohesive
+Salads,#1a900d,,false,true,false,component,false,orchestration
+Fresh Vegetables,#6d7301,"Mauris enim leo, rhoncus sed, vestibulum sit amet, cursus id, turpis. Integer aliquet, massa id lobortis convallis, tortor risus dapibus augue, vel accumsan tellus nisi eu orci. Mauris lacinia sapien quis libero.",false,true,true,asset,false,real-time
+Garden Tools,#a8c956,"Aliquam quis turpis eget elit sodales scelerisque. Mauris sit amet eros. Suspendisse accumsan tortor quis turpis.
+
+Sed ante. Vivamus tortor. Duis mattis egestas metus.",false,false,false,component,false,Decentralized
+Plant-Based Proteins,#9667bd,"Phasellus in felis. Donec semper sapien a libero. Nam dui.
+
+Proin leo odio, porttitor id, consequat in, consequat ut, nulla. Sed accumsan felis. Ut at dolor quis odio consequat varius.
+
+Integer ac leo. Pellentesque ultrices mattis odio. Donec vitae nisi.",false,true,false,accessory,false,Inverse
+Calendars,#a71f26,"Suspendisse potenti. In eleifend quam a odio. In hac habitasse platea dictumst.
+
+Maecenas ut massa quis augue luctus tincidunt. Nulla mollis molestie lorem. Quisque ut erat.",true,false,true,component,false,Total
+Coffee,#58de65,,false,true,false,asset,false,hub
+Outdoor Accessories,#54b248,"Etiam vel augue. Vestibulum rutrum rutrum neque. Aenean auctor gravida sem.
+
+Praesent id massa id nisl venenatis lacinia. Aenean sit amet justo. Morbi ut odio.",false,false,false,accessory,false,matrices
+Frozen Pasta Dishes,#16758e,,false,true,true,component,true,Visionary
+Casual Footwear,#fad44f,"Sed ante. Vivamus tortor. Duis mattis egestas metus.
+
+Aenean fermentum. Donec ut mauris eget massa tempor convallis. Nulla neque libero, convallis eget, eleifend luctus, ultricies eu, nibh.",true,true,true,consumable,true,logistical
+Rubs and Seasonings,#6fdf2e,,true,true,false,license,true,portal
+Jerky,#25e328,"Duis bibendum, felis sed interdum venenatis, turpis enim blandit mi, in porttitor pede justo eu massa. Donec dapibus. Duis at velit eu est congue elementum.",true,false,true,asset,true,standardization
+Frozen Snacks,,Maecenas ut massa quis augue luctus tincidunt. Nulla mollis molestie lorem. Quisque ut erat.,false,true,true,license,true,Reverse-engineered
+Bagels,#33ca53,,true,false,false,component,true,Progressive
+Savory Snacks,#29f7bc,"In hac habitasse platea dictumst. Etiam faucibus cursus urna. Ut tellus.
+
+Nulla ut erat id mauris vulputate elementum. Nullam varius. Nulla facilisi.
+
+Cras non velit nec nisi vulputate nonummy. Maecenas tincidunt lacus at velit. Vivamus vel nulla eget eros elementum pellentesque.",false,false,false,license,false,Customizable
+Emergency Preparedness & First Aid,#38a803,,true,false,true,license,true,24/7
+Rice,#bccc85,,true,false,true,component,false,Triple-buffered
+Grooming Supplies,#d5e7eb,,false,true,false,component,false,zero tolerance
+Natural Beverages,#0263de,"Curabitur gravida nisi at nibh. In hac habitasse platea dictumst. Aliquam augue quam, sollicitudin vitae, consectetuer eget, rutrum at, lorem.
+
+Integer tincidunt ante vel ipsum. Praesent blandit lacinia erat. Vestibulum sed magna at nunc commodo placerat.
+
+Praesent blandit. Nam nulla. Integer pede justo, lacinia eget, tincidunt eget, tempus vel, pede.",false,false,true,consumable,false,well-modulated
+Smart Lighting,#ad0e16,"In hac habitasse platea dictumst. Morbi vestibulum, velit id pretium iaculis, diam erat fermentum justo, nec condimentum neque sapien placerat ante. Nulla justo.
+
+Aliquam quis turpis eget elit sodales scelerisque. Mauris sit amet eros. Suspendisse accumsan tortor quis turpis.
+
+Sed ante. Vivamus tortor. Duis mattis egestas metus.",true,true,true,component,true,archive
+Gourmet Snacks,#8afdd8,"Integer ac leo. Pellentesque ultrices mattis odio. Donec vitae nisi.
+
+Nam ultrices, libero non mattis pulvinar, nulla pede ullamcorper augue, a suscipit nulla elit ac nulla. Sed vel enim sit amet nunc viverra dapibus. Nulla suscipit ligula in lacus.",false,false,true,license,true,Progressive
+Camping Equipment,#fe58d8,,true,false,true,consumable,true,Synergistic
+Camping Equipment,#65bf3c,Phasellus sit amet erat. Nulla tempus. Vivamus in felis eu sapien cursus vestibulum.,true,true,false,component,true,Streamlined
+Evening Wear,#d274f3,,false,true,false,license,true,methodical
+Seating,#862551,,false,false,false,component,false,complexity
+Sleep & Relaxation,#c3d2d6,,false,false,true,license,false,fault-tolerant
+Sparkling Beverages,#8c8965,,true,false,false,asset,false,Fundamental
+Automotive Accessories,#7b05a2,,false,true,true,consumable,false,real-time
+Kitchen Gadgets,#b72f6f,"Curabitur gravida nisi at nibh. In hac habitasse platea dictumst. Aliquam augue quam, sollicitudin vitae, consectetuer eget, rutrum at, lorem.",false,true,false,consumable,false,Stand-alone
+Educational Toys,#18ae44,"Praesent id massa id nisl venenatis lacinia. Aenean sit amet justo. Morbi ut odio.
+
+Cras mi pede, malesuada in, imperdiet et, commodo vulputate, justo. In blandit ultrices enim. Lorem ipsum dolor sit amet, consectetuer adipiscing elit.",false,false,false,asset,false,Multi-channelled
+Frozen Veggie Snacks,#33b55c,,false,false,true,component,true,global
+Vegetable Mixes,,Nullam sit amet turpis elementum ligula vehicula consequat. Morbi a ipsum. Integer a nibh.,false,true,false,component,false,Advanced
+Garden Supplies,#53039a,,true,true,true,component,false,fresh-thinking
+Healthy Snacks,#a77b2f,,true,true,true,component,true,synergy
+Frozen Fruits,#1973fb,"Proin leo odio, porttitor id, consequat in, consequat ut, nulla. Sed accumsan felis. Ut at dolor quis odio consequat varius.
+
+Integer ac leo. Pellentesque ultrices mattis odio. Donec vitae nisi.",false,false,true,consumable,false,Graphic Interface
+Vegetables,#20aeef,,false,true,true,asset,true,database
+Fitness Equipment,#891ffd,"Nullam sit amet turpis elementum ligula vehicula consequat. Morbi a ipsum. Integer a nibh.
+
+In quis justo. Maecenas rhoncus aliquam lacus. Morbi quis tortor id nulla ultrices aliquet.",false,true,false,asset,true,Face to face
+Power Accessories,#15c798,"Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla. Nunc purus.
+
+Phasellus in felis. Donec semper sapien a libero. Nam dui.
+
+Proin leo odio, porttitor id, consequat in, consequat ut, nulla. Sed accumsan felis. Ut at dolor quis odio consequat varius.",false,false,false,license,true,definition
+Frozen Fruits,#a0f002,,false,true,false,consumable,true,24 hour
+Pet Supplies,,"Aliquam quis turpis eget elit sodales scelerisque. Mauris sit amet eros. Suspendisse accumsan tortor quis turpis.
+
+Sed ante. Vivamus tortor. Duis mattis egestas metus.
+
+Aenean fermentum. Donec ut mauris eget massa tempor convallis. Nulla neque libero, convallis eget, eleifend luctus, ultricies eu, nibh.",true,true,true,license,false,Total
+Baking Ingredients,#dc6cb0,"Nullam sit amet turpis elementum ligula vehicula consequat. Morbi a ipsum. Integer a nibh.
+
+In quis justo. Maecenas rhoncus aliquam lacus. Morbi quis tortor id nulla ultrices aliquet.",true,true,true,consumable,true,modular
+Baking Kits,#256e46,,false,true,true,accessory,false,solution-oriented
+Ready-to-Eat Salads,#e04dde,,true,false,false,component,true,Configurable
+Headwear,#228e1c,"Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Proin risus. Praesent lectus.",true,false,true,consumable,true,directional
+Cooking Appliances,#d0f4bf,"Phasellus in felis. Donec semper sapien a libero. Nam dui.
+
+Proin leo odio, porttitor id, consequat in, consequat ut, nulla. Sed accumsan felis. Ut at dolor quis odio consequat varius.
+
+Integer ac leo. Pellentesque ultrices mattis odio. Donec vitae nisi.",true,false,false,license,true,tertiary
+Activewear,#0ff8ca,,false,true,true,component,true,Face to face
+Sleepwear,#673660,,true,false,true,consumable,false,Proactive
+Berries,#81df8a,,false,false,true,asset,true,ability
+Home Fragrance & Accessories,#2d1881,,false,true,false,consumable,false,Adaptive
+Fruit Sauces,#b9ce70,"Pellentesque at nulla. Suspendisse potenti. Cras in purus eu magna vulputate luctus.
+
+Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus vestibulum sagittis sapien. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+
+Etiam vel augue. Vestibulum rutrum rutrum neque. Aenean auctor gravida sem.",false,true,false,license,true,Realigned
+Marinades and Sauces,#785bed,,true,true,true,license,true,superstructure
+Nut-Based Snacks,,,false,true,true,asset,true,methodology
+Pancake and Waffle Mixes,#45cf8d,,true,false,true,accessory,false,impactful
+Trousers,,"Pellentesque at nulla. Suspendisse potenti. Cras in purus eu magna vulputate luctus.
+
+Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus vestibulum sagittis sapien. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",true,false,false,component,false,policy
+Vegetables,#928697,,false,true,false,consumable,true,tangible
+Home Decor,#47214c,,true,false,true,accessory,false,Horizontal
+Emergency Preparedness & First Aid,,,true,true,false,asset,false,24/7
+Pet Waste Management,#44c16a,"Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Proin risus. Praesent lectus.",false,true,false,accessory,false,demand-driven
+Remote Control Drones,#1b3392,"Integer tincidunt ante vel ipsum. Praesent blandit lacinia erat. Vestibulum sed magna at nunc commodo placerat.
+
+Praesent blandit. Nam nulla. Integer pede justo, lacinia eget, tincidunt eget, tempus vel, pede.
+
+Morbi porttitor lorem id ligula. Suspendisse ornare consequat lectus. In est risus, auctor sed, tristique in, tempus sit amet, sem.",false,true,false,consumable,false,data-warehouse
+Vegetables,#80f8dd,,false,false,true,asset,true,uniform
+Small Appliances,#34957a,,false,true,true,component,false,Phased
+Mobile Accessories,#6443de,"Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus vestibulum sagittis sapien. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+
+Etiam vel augue. Vestibulum rutrum rutrum neque. Aenean auctor gravida sem.",true,false,false,accessory,true,Adaptive
+Vegetable Mixes,#cb60d5,,true,true,true,accessory,true,coherent
+Garden Supplies,#8a36ca,"Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla. Nunc purus.",true,false,false,accessory,false,Cross-platform
+Outdoor Play Toys,#46f2e0,"In sagittis dui vel nisl. Duis ac nibh. Fusce lacus purus, aliquet at, feugiat non, pretium quis, lectus.
+
+Suspendisse potenti. In eleifend quam a odio. In hac habitasse platea dictumst.",true,false,false,accessory,false,analyzer
+Dressing,#d784a1,,true,false,true,asset,false,internet solution
+Frozen Chicken Meals,#e084dd,"Curabitur gravida nisi at nibh. In hac habitasse platea dictumst. Aliquam augue quam, sollicitudin vitae, consectetuer eget, rutrum at, lorem.",true,false,false,license,false,implementation
+Training Supplies,#78ead4,"In quis justo. Maecenas rhoncus aliquam lacus. Morbi quis tortor id nulla ultrices aliquet.
+
+Maecenas leo odio, condimentum id, luctus nec, molestie sed, justo. Pellentesque viverra pede ac diam. Cras pellentesque volutpat dui.",true,true,false,accessory,false,4th generation
+Smart Lighting,#6f7416,Nullam sit amet turpis elementum ligula vehicula consequat. Morbi a ipsum. Integer a nibh.,true,false,true,accessory,false,4th generation
+Travel Accessories,#202118,"In quis justo. Maecenas rhoncus aliquam lacus. Morbi quis tortor id nulla ultrices aliquet.
+
+Maecenas leo odio, condimentum id, luctus nec, molestie sed, justo. Pellentesque viverra pede ac diam. Cras pellentesque volutpat dui.",false,true,false,accessory,false,web-enabled
+Comfort Accessories,#95cbbd,Fusce consequat. Nulla nisl. Nunc nisl.,true,false,true,asset,true,archive
+Wraps and Flatbreads,#da42a4,Duis bibendum. Morbi non quam nec dui luctus rutrum. Nulla tellus.,true,true,false,asset,true,zero defect
+Sweet Snacks,#afc744,,true,true,true,license,true,Quality-focused
+Rice Dishes,#124eb3,"Morbi non lectus. Aliquam sit amet diam in magna bibendum imperdiet. Nullam orci pede, venenatis non, sodales sed, tincidunt eu, felis.
+
+Fusce posuere felis sed lacus. Morbi sem mauris, laoreet ut, rhoncus aliquet, pulvinar sed, nisl. Nunc rhoncus dui vel sem.",false,true,false,accessory,false,Open-source
+Frozen Fruits,#de4083,,false,false,false,component,true,Quality-focused
+Recovery Tools,#40e14f,"Donec diam neque, vestibulum eget, vulputate ut, ultrices vel, augue. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec pharetra, magna vestibulum aliquet ultrices, erat tortor sollicitudin mi, sit amet lobortis sapien sapien non mi. Integer ac neque.",true,false,true,accessory,true,eco-centric
+Travel Accessories,#1c0fdc,,false,true,false,license,true,Object-based
+Running Shorts,#484203,,true,true,false,license,true,responsive
+Granola,#a06d60,,true,false,true,asset,true,value-added
+Jigsaw Puzzles,#49ec0c,,false,false,true,consumable,true,matrices
+Salsas,,,true,true,true,asset,true,Switchable
+Frozen Meals,#176329,"Aenean fermentum. Donec ut mauris eget massa tempor convallis. Nulla neque libero, convallis eget, eleifend luctus, ultricies eu, nibh.
+
+Quisque id justo sit amet sapien dignissim vestibulum. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nulla dapibus dolor vel est. Donec odio justo, sollicitudin ut, suscipit a, feugiat et, eros.
+
+Vestibulum ac est lacinia nisi venenatis tristique. Fusce congue, diam id ornare imperdiet, sapien urna pretium nisl, ut volutpat sapien arcu sed augue. Aliquam erat volutpat.",false,true,false,component,true,exuding
+Pet Accessories,#20b70e,Duis consequat dui nec nisi volutpat eleifend. Donec ut dolor. Morbi vel lectus in quam fringilla rhoncus.,false,true,false,license,true,Assimilated
+Seasonal Items,#800798,"Morbi non lectus. Aliquam sit amet diam in magna bibendum imperdiet. Nullam orci pede, venenatis non, sodales sed, tincidunt eu, felis.
+
+Fusce posuere felis sed lacus. Morbi sem mauris, laoreet ut, rhoncus aliquet, pulvinar sed, nisl. Nunc rhoncus dui vel sem.",false,true,true,consumable,false,Sharable
+Massage Therapy,#2988b8,,false,false,false,license,false,frame
+Artisan Bread,#236547,"Duis aliquam convallis nunc. Proin at turpis a pede posuere nonummy. Integer non velit.
+
+Donec diam neque, vestibulum eget, vulputate ut, ultrices vel, augue. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec pharetra, magna vestibulum aliquet ultrices, erat tortor sollicitudin mi, sit amet lobortis sapien sapien non mi. Integer ac neque.
+
+Duis bibendum. Morbi non quam nec dui luctus rutrum. Nulla tellus.",true,true,false,license,true,service-desk
+Home Organization,#23185d,,true,false,true,consumable,false,analyzer
+Healthy Snacks,#b4cbf2,,true,false,false,accessory,false,Profit-focused
+Instant Meals,#3eaac5,,true,true,false,license,true,composite
+Hiking Accessories,#b13c34,,true,false,true,component,true,Advanced
+Seasonal Home Decor,#a3daae,,false,true,false,component,false,focus group
+Frozen Snacks,#d883e3,"Cras non velit nec nisi vulputate nonummy. Maecenas tincidunt lacus at velit. Vivamus vel nulla eget eros elementum pellentesque.
+
+Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla. Nunc purus.",false,false,true,consumable,false,static
+Kitchen Storage & Organization,#4a77f0,"Phasellus in felis. Donec semper sapien a libero. Nam dui.
+
+Proin leo odio, porttitor id, consequat in, consequat ut, nulla. Sed accumsan felis. Ut at dolor quis odio consequat varius.
+
+Integer ac leo. Pellentesque ultrices mattis odio. Donec vitae nisi.",true,true,false,accessory,false,Adaptive
+Home Fragrance & Accessories,#c4b869,"Cras mi pede, malesuada in, imperdiet et, commodo vulputate, justo. In blandit ultrices enim. Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+
+Proin interdum mauris non ligula pellentesque ultrices. Phasellus id sapien in sapien iaculis congue. Vivamus metus arcu, adipiscing molestie, hendrerit at, vulputate vitae, nisl.
+
+Aenean lectus. Pellentesque eget nunc. Donec quis orci eget orci vehicula condimentum.",true,true,true,accessory,true,Ergonomic
+Instant Breakfast,#be69ce,"Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla. Nunc purus.",false,true,true,consumable,false,capacity
+Savory Snacks,#146e99,Phasellus in felis. Donec semper sapien a libero. Nam dui.,true,true,false,consumable,true,discrete
+Salsas and Dips,#df1822,Praesent id massa id nisl venenatis lacinia. Aenean sit amet justo. Morbi ut odio.,false,false,true,license,true,6th generation
+Camping Equipment,#3176d9,"Vestibulum ac est lacinia nisi venenatis tristique. Fusce congue, diam id ornare imperdiet, sapien urna pretium nisl, ut volutpat sapien arcu sed augue. Aliquam erat volutpat.
+
+In congue. Etiam justo. Etiam pretium iaculis justo.
+
+In hac habitasse platea dictumst. Etiam faucibus cursus urna. Ut tellus.",true,true,true,license,true,mission-critical
+Seasonal Home Decor,#68f27b,"Phasellus sit amet erat. Nulla tempus. Vivamus in felis eu sapien cursus vestibulum.
+
+Proin eu mi. Nulla ac enim. In tempor, turpis nec euismod scelerisque, quam turpis adipiscing lorem, vitae mattis nibh ligula nec sem.",true,false,false,component,true,help-desk
+Fitness Equipment,,,false,false,true,component,false,Operative
+Camping Equipment,#fa5341,,true,false,true,consumable,true,explicit
+BBQ Sauces,,,false,true,false,component,true,Organic
+Baking Ingredients,#778252,In congue. Etiam justo. Etiam pretium iaculis justo.,true,false,false,consumable,false,actuating
+Frozen Meat Products,#b61bc7,,false,false,false,consumable,true,context-sensitive
+Robotic Cleaners,#4ea27c,,true,false,true,consumable,false,synergy
+Vegetarian Soups,#b0d0fc,"Proin interdum mauris non ligula pellentesque ultrices. Phasellus id sapien in sapien iaculis congue. Vivamus metus arcu, adipiscing molestie, hendrerit at, vulputate vitae, nisl.
+
+Aenean lectus. Pellentesque eget nunc. Donec quis orci eget orci vehicula condimentum.
+
+Curabitur in libero ut massa volutpat convallis. Morbi odio odio, elementum eu, interdum eu, tincidunt in, leo. Maecenas pulvinar lobortis est.",false,true,false,license,true,demand-driven
+Drones & Accessories,#5f8e1e,,true,false,true,license,true,forecast
+Granola/Cereal,#6db83f,Maecenas ut massa quis augue luctus tincidunt. Nulla mollis molestie lorem. Quisque ut erat.,false,true,true,consumable,false,Synergized
+Granola,#33c33a,"Mauris enim leo, rhoncus sed, vestibulum sit amet, cursus id, turpis. Integer aliquet, massa id lobortis convallis, tortor risus dapibus augue, vel accumsan tellus nisi eu orci. Mauris lacinia sapien quis libero.
+
+Nullam sit amet turpis elementum ligula vehicula consequat. Morbi a ipsum. Integer a nibh.",false,false,false,accessory,true,Versatile
+Seasonal Items,#df27d9,"Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla. Nunc purus.
+
+Phasellus in felis. Donec semper sapien a libero. Nam dui.
+
+Proin leo odio, porttitor id, consequat in, consequat ut, nulla. Sed accumsan felis. Ut at dolor quis odio consequat varius.",true,true,true,component,false,functionalities
+Kitchen Accessories,#998701,,true,true,true,component,false,Graphical User Interface
+Candle & Soap Making Supplies,#91d7d6,,true,true,false,component,false,Ergonomic
+Laptop Accessories,,,false,true,true,asset,false,eco-centric
+Gardening Accessories,#2e8a93,"Nam ultrices, libero non mattis pulvinar, nulla pede ullamcorper augue, a suscipit nulla elit ac nulla. Sed vel enim sit amet nunc viverra dapibus. Nulla suscipit ligula in lacus.",true,false,true,component,true,budgetary management
+Granola and Muesli,#c16dd2,,false,false,true,asset,false,Future-proofed
+Travel Accessories,#fa26b8,"Cras non velit nec nisi vulputate nonummy. Maecenas tincidunt lacus at velit. Vivamus vel nulla eget eros elementum pellentesque.
+
+Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla. Nunc purus.",false,true,true,component,false,analyzing
+Frozen Appetizers,#dae83f,,false,false,false,consumable,true,Digitized
+Poultry,#6bef68,,false,true,false,license,false,Assimilated
+Nuts and Seeds,#944eff,"Sed ante. Vivamus tortor. Duis mattis egestas metus.
+
+Aenean fermentum. Donec ut mauris eget massa tempor convallis. Nulla neque libero, convallis eget, eleifend luctus, ultricies eu, nibh.",true,false,true,component,true,Up-sized
+Kitchen Gadgets,,,true,false,true,consumable,true,Organized
+Travel Accessories,#d7018c,,false,false,false,component,true,Face to face
+Frozen Vegan Meals,#15215b,"Quisque id justo sit amet sapien dignissim vestibulum. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nulla dapibus dolor vel est. Donec odio justo, sollicitudin ut, suscipit a, feugiat et, eros.
+
+Vestibulum ac est lacinia nisi venenatis tristique. Fusce congue, diam id ornare imperdiet, sapien urna pretium nisl, ut volutpat sapien arcu sed augue. Aliquam erat volutpat.",true,false,false,asset,true,budgetary management
+Frozen Meals,,"Vestibulum quam sapien, varius ut, blandit non, interdum in, ante. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Duis faucibus accumsan odio. Curabitur convallis.",true,false,false,license,false,implementation
+Grooming Supplies,,"Proin eu mi. Nulla ac enim. In tempor, turpis nec euismod scelerisque, quam turpis adipiscing lorem, vitae mattis nibh ligula nec sem.
+
+Duis aliquam convallis nunc. Proin at turpis a pede posuere nonummy. Integer non velit.",true,false,true,consumable,false,monitoring
+Dried Fruits,#9eba63,,false,false,false,component,true,Visionary
+Mixes,,,false,true,true,consumable,false,utilisation
+Breads,#805633,,true,true,true,asset,true,data-warehouse
+Trousers,#8e7386,,false,true,true,consumable,true,explicit
+Portable Projectors,#09f34d,"Duis consequat dui nec nisi volutpat eleifend. Donec ut dolor. Morbi vel lectus in quam fringilla rhoncus.
+
+Mauris enim leo, rhoncus sed, vestibulum sit amet, cursus id, turpis. Integer aliquet, massa id lobortis convallis, tortor risus dapibus augue, vel accumsan tellus nisi eu orci. Mauris lacinia sapien quis libero.
+
+Nullam sit amet turpis elementum ligula vehicula consequat. Morbi a ipsum. Integer a nibh.",true,true,true,component,false,Profound
+Smart Home & Security,#2cb856,"Quisque id justo sit amet sapien dignissim vestibulum. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nulla dapibus dolor vel est. Donec odio justo, sollicitudin ut, suscipit a, feugiat et, eros.",true,false,true,component,true,Expanded
+Casual Shirts,#aad994,"Pellentesque at nulla. Suspendisse potenti. Cras in purus eu magna vulputate luctus.
+
+Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus vestibulum sagittis sapien. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",true,true,false,asset,true,homogeneous
+Travel Accessories,#963afb,"Vestibulum ac est lacinia nisi venenatis tristique. Fusce congue, diam id ornare imperdiet, sapien urna pretium nisl, ut volutpat sapien arcu sed augue. Aliquam erat volutpat.",true,true,true,asset,false,Customer-focused
+Hot Sauces,#879bb7,"Nulla ut erat id mauris vulputate elementum. Nullam varius. Nulla facilisi.
+
+Cras non velit nec nisi vulputate nonummy. Maecenas tincidunt lacus at velit. Vivamus vel nulla eget eros elementum pellentesque.",false,false,true,component,false,Optimized
+Sweet Snacks,#6293d5,,true,false,true,license,false,object-oriented
+Desserts,#b7cdb6,,false,true,false,consumable,false,attitude
+Salad Kits,#2acdef,,false,false,true,license,false,4th generation
+Dairy Spreads,#b4ac40,"Duis aliquam convallis nunc. Proin at turpis a pede posuere nonummy. Integer non velit.
+
+Donec diam neque, vestibulum eget, vulputate ut, ultrices vel, augue. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec pharetra, magna vestibulum aliquet ultrices, erat tortor sollicitudin mi, sit amet lobortis sapien sapien non mi. Integer ac neque.
+
+Duis bibendum. Morbi non quam nec dui luctus rutrum. Nulla tellus.",true,false,false,consumable,true,initiative
+Home Organization,#c14ecd,,false,true,false,component,true,contextually-based
+Baking Ingredients,#e4692a,,false,true,false,component,false,multi-state
+Wellness & Relaxation,#300c00,,true,false,false,accessory,false,toolset
+Camping Equipment,#6ed515,Praesent id massa id nisl venenatis lacinia. Aenean sit amet justo. Morbi ut odio.,true,true,false,license,false,Multi-tiered
+ smoothies,,Sed ante. Vivamus tortor. Duis mattis egestas metus.,true,true,false,accessory,false,orchestration
+Ice Cream,#f876cc,"Integer tincidunt ante vel ipsum. Praesent blandit lacinia erat. Vestibulum sed magna at nunc commodo placerat.
+
+Praesent blandit. Nam nulla. Integer pede justo, lacinia eget, tincidunt eget, tempus vel, pede.
+
+Morbi porttitor lorem id ligula. Suspendisse ornare consequat lectus. In est risus, auctor sed, tristique in, tempus sit amet, sem.",false,false,false,asset,true,protocol
+Flavored Yogurt,#cf7a13,"Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla. Nunc purus.
+
+Phasellus in felis. Donec semper sapien a libero. Nam dui.
+
+Proin leo odio, porttitor id, consequat in, consequat ut, nulla. Sed accumsan felis. Ut at dolor quis odio consequat varius.",true,true,false,license,true,Vision-oriented
+Cooking Oils,,,true,true,false,component,true,knowledge user
+Kitchen Accessories,#55a9f9,,false,true,true,consumable,false,global
+Flours & Meals,#df9c59,"In hac habitasse platea dictumst. Morbi vestibulum, velit id pretium iaculis, diam erat fermentum justo, nec condimentum neque sapien placerat ante. Nulla justo.",true,false,true,license,true,knowledge base
+Fitness & Nutrition,#896dab,Nullam porttitor lacus at turpis. Donec posuere metus vitae ipsum. Aliquam non mauris.,false,false,true,consumable,false,dedicated
+Gardening Tools,#d1328a,,true,false,false,license,true,encoding
+Nut Butters,#b55401,"Duis bibendum, felis sed interdum venenatis, turpis enim blandit mi, in porttitor pede justo eu massa. Donec dapibus. Duis at velit eu est congue elementum.
+
+In hac habitasse platea dictumst. Morbi vestibulum, velit id pretium iaculis, diam erat fermentum justo, nec condimentum neque sapien placerat ante. Nulla justo.
+
+Aliquam quis turpis eget elit sodales scelerisque. Mauris sit amet eros. Suspendisse accumsan tortor quis turpis.",true,false,false,consumable,true,methodical
+Nail Care,#68ae27,,false,true,true,license,true,success
+Feeding Accessories,#57cbe0,,true,true,false,accessory,false,Stand-alone
+Kids' Bags,,Duis bibendum. Morbi non quam nec dui luctus rutrum. Nulla tellus.,false,false,false,license,false,intranet
+Savory Snacks,#1ebe6d,,true,true,true,component,false,static
+Frozen Vegetables,#d889a7,"Morbi non lectus. Aliquam sit amet diam in magna bibendum imperdiet. Nullam orci pede, venenatis non, sodales sed, tincidunt eu, felis.
+
+Fusce posuere felis sed lacus. Morbi sem mauris, laoreet ut, rhoncus aliquet, pulvinar sed, nisl. Nunc rhoncus dui vel sem.
+
+Sed sagittis. Nam congue, risus semper porta volutpat, quam pede lobortis ligula, sit amet eleifend pede libero quis orci. Nullam molestie nibh in lectus.",true,true,true,asset,true,conglomeration
+Home Fragrance & Accessories,#7d2b06,,false,true,false,asset,false,analyzer
+Sustainable Stationery,#d702d2,,false,false,false,consumable,false,secondary
+Marinated Poultry,#176221,,false,false,false,asset,false,regional
+Ice Cream Flavors,#6beb0e,"Maecenas ut massa quis augue luctus tincidunt. Nulla mollis molestie lorem. Quisque ut erat.
+
+Curabitur gravida nisi at nibh. In hac habitasse platea dictumst. Aliquam augue quam, sollicitudin vitae, consectetuer eget, rutrum at, lorem.",true,false,false,license,true,client-driven
+Frozen Vegetables,#5673b1,,false,true,true,consumable,false,Extended
+Pancakes & Waffles,#1521f4,,false,false,false,accessory,true,model
+Frozen Appetizers,,"In hac habitasse platea dictumst. Etiam faucibus cursus urna. Ut tellus.
+
+Nulla ut erat id mauris vulputate elementum. Nullam varius. Nulla facilisi.
+
+Cras non velit nec nisi vulputate nonummy. Maecenas tincidunt lacus at velit. Vivamus vel nulla eget eros elementum pellentesque.",false,true,false,component,false,local area network
+Breads,#143a32,,false,true,false,consumable,true,non-volatile
+Home Organization,#405cb0,"Integer ac leo. Pellentesque ultrices mattis odio. Donec vitae nisi.
+
+Nam ultrices, libero non mattis pulvinar, nulla pede ullamcorper augue, a suscipit nulla elit ac nulla. Sed vel enim sit amet nunc viverra dapibus. Nulla suscipit ligula in lacus.
+
+Curabitur at ipsum ac tellus semper interdum. Mauris ullamcorper purus sit amet nulla. Quisque arcu libero, rutrum ac, lobortis vel, dapibus at, diam.",false,false,false,license,true,database
+Floor Care Appliances,,,true,false,true,license,true,asymmetric
+Home Automation,#f5b239,,false,true,false,accessory,true,circuit
+Cookies & Biscuits,#864ade,"Sed sagittis. Nam congue, risus semper porta volutpat, quam pede lobortis ligula, sit amet eleifend pede libero quis orci. Nullam molestie nibh in lectus.",true,false,false,accessory,false,impactful
+Travel Accessories,#2c1b40,"Maecenas leo odio, condimentum id, luctus nec, molestie sed, justo. Pellentesque viverra pede ac diam. Cras pellentesque volutpat dui.
+
+Maecenas tristique, est et tempus semper, est quam pharetra magna, ac consequat metus sapien ut nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris viverra diam vitae quam. Suspendisse potenti.
+
+Nullam porttitor lacus at turpis. Donec posuere metus vitae ipsum. Aliquam non mauris.",false,false,false,license,true,orchestration
+Decorative Wall Art & Accessories,#f83ba5,,true,false,true,consumable,false,parallelism
+Seasoning Mixes,#35e218,,true,false,true,consumable,false,Fundamental
+Office Accessories,#d534cd,"Fusce posuere felis sed lacus. Morbi sem mauris, laoreet ut, rhoncus aliquet, pulvinar sed, nisl. Nunc rhoncus dui vel sem.
+
+Sed sagittis. Nam congue, risus semper porta volutpat, quam pede lobortis ligula, sit amet eleifend pede libero quis orci. Nullam molestie nibh in lectus.
+
+Pellentesque at nulla. Suspendisse potenti. Cras in purus eu magna vulputate luctus.",false,false,false,asset,true,encoding
+Bottoms,#7969a0,,false,false,true,license,false,Focused
+Travel Accessories,#0a81a2,,false,true,false,consumable,false,Pre-emptive
+Athletic Footwear,#8304b4,"In sagittis dui vel nisl. Duis ac nibh. Fusce lacus purus, aliquet at, feugiat non, pretium quis, lectus.",true,false,false,consumable,false,User-centric
+Kitchen Storage & Organization,#b68322,"Curabitur at ipsum ac tellus semper interdum. Mauris ullamcorper purus sit amet nulla. Quisque arcu libero, rutrum ac, lobortis vel, dapibus at, diam.",false,false,true,license,false,Configurable
+Pork,#e4487e,Phasellus in felis. Donec semper sapien a libero. Nam dui.,false,false,true,asset,false,Quality-focused
+Rice,#e091e9,Nulla ut erat id mauris vulputate elementum. Nullam varius. Nulla facilisi.,false,true,true,license,true,even-keeled
+Plant-Based Yogurt,#e77735,,false,true,true,component,false,matrix
+Decorative Wall Art & Accessories,#9badc3,In quis justo. Maecenas rhoncus aliquam lacus. Morbi quis tortor id nulla ultrices aliquet.,true,true,true,component,true,concept
+Cheese,#095705,,false,true,true,consumable,true,Managed
+Baking Accessories,#635d7e,"Vestibulum quam sapien, varius ut, blandit non, interdum in, ante. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Duis faucibus accumsan odio. Curabitur convallis.
+
+Duis consequat dui nec nisi volutpat eleifend. Donec ut dolor. Morbi vel lectus in quam fringilla rhoncus.
+
+Mauris enim leo, rhoncus sed, vestibulum sit amet, cursus id, turpis. Integer aliquet, massa id lobortis convallis, tortor risus dapibus augue, vel accumsan tellus nisi eu orci. Mauris lacinia sapien quis libero.",true,true,true,license,true,bi-directional
+Yoga Equipment,#470574,"Curabitur gravida nisi at nibh. In hac habitasse platea dictumst. Aliquam augue quam, sollicitudin vitae, consectetuer eget, rutrum at, lorem.
+
+Integer tincidunt ante vel ipsum. Praesent blandit lacinia erat. Vestibulum sed magna at nunc commodo placerat.",false,false,true,accessory,false,hub
+Flavored Yogurt,#abb946,,true,false,true,asset,false,Persistent
+Casual Dresses,#7e2c74,,false,false,true,license,true,pricing structure
+Chewy Candies,#5f0e1d,"Aenean lectus. Pellentesque eget nunc. Donec quis orci eget orci vehicula condimentum.
+
+Curabitur in libero ut massa volutpat convallis. Morbi odio odio, elementum eu, interdum eu, tincidunt in, leo. Maecenas pulvinar lobortis est.",false,true,true,asset,false,regional
+Miniature Sports Games,#5d58aa,"Praesent blandit. Nam nulla. Integer pede justo, lacinia eget, tincidunt eget, tempus vel, pede.
+
+Morbi porttitor lorem id ligula. Suspendisse ornare consequat lectus. In est risus, auctor sed, tristique in, tempus sit amet, sem.",true,true,false,asset,false,methodical
+Natural Sweeteners,#911d5a,"Proin eu mi. Nulla ac enim. In tempor, turpis nec euismod scelerisque, quam turpis adipiscing lorem, vitae mattis nibh ligula nec sem.
+
+Duis aliquam convallis nunc. Proin at turpis a pede posuere nonummy. Integer non velit.
+
+Donec diam neque, vestibulum eget, vulputate ut, ultrices vel, augue. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec pharetra, magna vestibulum aliquet ultrices, erat tortor sollicitudin mi, sit amet lobortis sapien sapien non mi. Integer ac neque.",true,false,true,component,false,high-level
+Tripods & Accessories,#d6c7dc,,false,false,true,accessory,true,impactful
+Home Footwear,#d56333,,false,true,false,consumable,true,moderator
+Camping Equipment,#f81abd,In quis justo. Maecenas rhoncus aliquam lacus. Morbi quis tortor id nulla ultrices aliquet.,false,false,false,component,false,moderator
+Sleepwear,#77058c,"Vestibulum ac est lacinia nisi venenatis tristique. Fusce congue, diam id ornare imperdiet, sapien urna pretium nisl, ut volutpat sapien arcu sed augue. Aliquam erat volutpat.",true,false,false,accessory,true,Balanced
+Frozen Meals,#98d163,,true,false,true,accessory,true,customer loyalty
+Outerwear,#157544,,false,true,true,component,false,Multi-layered
+Aromatherapy & Wellness,#0d7759,Phasellus sit amet erat. Nulla tempus. Vivamus in felis eu sapien cursus vestibulum.,true,false,true,component,true,throughput
+Accessories,#61405c,,false,false,false,accessory,true,Re-contextualized
+Granola/Cereal,#f14bf0,,true,true,false,accessory,true,ability
+Mustards,#18c3af,"Nullam sit amet turpis elementum ligula vehicula consequat. Morbi a ipsum. Integer a nibh.
+
+In quis justo. Maecenas rhoncus aliquam lacus. Morbi quis tortor id nulla ultrices aliquet.
+
+Maecenas leo odio, condimentum id, luctus nec, molestie sed, justo. Pellentesque viverra pede ac diam. Cras pellentesque volutpat dui.",false,false,false,license,false,ability
+Office Supplies,#cb5378,,true,false,false,accessory,false,architecture
+Grilling Accessories,#688232,,true,false,false,asset,false,well-modulated
+Vegetarian Soups,#ace7a6,"Proin interdum mauris non ligula pellentesque ultrices. Phasellus id sapien in sapien iaculis congue. Vivamus metus arcu, adipiscing molestie, hendrerit at, vulputate vitae, nisl.",false,false,true,license,false,encoding
+Whole Grains,#5a1b46,"Etiam vel augue. Vestibulum rutrum rutrum neque. Aenean auctor gravida sem.
+
+Praesent id massa id nisl venenatis lacinia. Aenean sit amet justo. Morbi ut odio.",true,false,false,license,false,context-sensitive
+Pickles,#4014a9,,true,false,false,asset,false,core
+Pretend Play Toys,#b1e45e,,true,false,true,license,false,frame
+Home Automation Accessories,#513b53,"Proin interdum mauris non ligula pellentesque ultrices. Phasellus id sapien in sapien iaculis congue. Vivamus metus arcu, adipiscing molestie, hendrerit at, vulputate vitae, nisl.
+
+Aenean lectus. Pellentesque eget nunc. Donec quis orci eget orci vehicula condimentum.",true,true,false,component,true,bi-directional
+Dips & Spreads,#d714fb,,true,false,true,consumable,false,Mandatory
+Personal Care,#109c12,"Cras non velit nec nisi vulputate nonummy. Maecenas tincidunt lacus at velit. Vivamus vel nulla eget eros elementum pellentesque.
+
+Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla. Nunc purus.",true,false,true,component,true,Mandatory
+Wireless Speakers,#baa76f,,true,true,true,asset,false,value-added
+Dressing,#fcac9a,"Cras non velit nec nisi vulputate nonummy. Maecenas tincidunt lacus at velit. Vivamus vel nulla eget eros elementum pellentesque.
+
+Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla. Nunc purus.",true,false,true,accessory,false,conglomeration
+Baking Mixes,#c06840,"Cras mi pede, malesuada in, imperdiet et, commodo vulputate, justo. In blandit ultrices enim. Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+
+Proin interdum mauris non ligula pellentesque ultrices. Phasellus id sapien in sapien iaculis congue. Vivamus metus arcu, adipiscing molestie, hendrerit at, vulputate vitae, nisl.",true,false,false,consumable,true,motivating
+Loungewear,#7c0a6a,,true,true,false,consumable,false,alliance
+Pies & Quiches,#b076c1,,true,true,false,asset,false,Function-based
+Gardening Tools,#09876b,Integer ac leo. Pellentesque ultrices mattis odio. Donec vitae nisi.,true,true,false,accessory,true,Right-sized
+Grain Salads,#a23b8f,,true,false,true,license,true,frame
+Sauces & Condiments,#d24306,,false,false,true,consumable,true,transitional
+Tank Tops,#c95a2e,"Proin interdum mauris non ligula pellentesque ultrices. Phasellus id sapien in sapien iaculis congue. Vivamus metus arcu, adipiscing molestie, hendrerit at, vulputate vitae, nisl.",false,true,false,component,true,object-oriented
+Frozen Meals,#fefa2e,Nullam porttitor lacus at turpis. Donec posuere metus vitae ipsum. Aliquam non mauris.,true,false,true,component,false,Intuitive
+Asian Sauces,#5bacb7,"Phasellus in felis. Donec semper sapien a libero. Nam dui.
+
+Proin leo odio, porttitor id, consequat in, consequat ut, nulla. Sed accumsan felis. Ut at dolor quis odio consequat varius.
+
+Integer ac leo. Pellentesque ultrices mattis odio. Donec vitae nisi.",true,false,true,asset,true,Vision-oriented
+Outdoor Furniture,#7f1be3,"In hac habitasse platea dictumst. Morbi vestibulum, velit id pretium iaculis, diam erat fermentum justo, nec condimentum neque sapien placerat ante. Nulla justo.",false,true,false,asset,false,Ergonomic
+Solar Power Accessories,,,false,false,true,component,false,structure
+Sweet Snacks,#2d9d06,,true,false,true,consumable,true,encoding
+Pretend Play Toys,#14a4b8,"Aenean fermentum. Donec ut mauris eget massa tempor convallis. Nulla neque libero, convallis eget, eleifend luctus, ultricies eu, nibh.
+
+Quisque id justo sit amet sapien dignissim vestibulum. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nulla dapibus dolor vel est. Donec odio justo, sollicitudin ut, suscipit a, feugiat et, eros.",true,true,true,component,false,frame
+Sustainable Stationery,#800e0e,"Curabitur gravida nisi at nibh. In hac habitasse platea dictumst. Aliquam augue quam, sollicitudin vitae, consectetuer eget, rutrum at, lorem.",true,true,true,license,false,client-driven
+Cooking Appliances,#b23ebb,,false,true,true,component,true,adapter
+Frozen Pasta Dishes,#a5e6f6,,true,false,true,license,true,Robust
+Craft Supplies,#8d3f62,"Maecenas tristique, est et tempus semper, est quam pharetra magna, ac consequat metus sapien ut nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris viverra diam vitae quam. Suspendisse potenti.
+
+Nullam porttitor lacus at turpis. Donec posuere metus vitae ipsum. Aliquam non mauris.",false,false,true,asset,true,scalable
+Computer Accessories,#b61a67,,false,false,false,license,false,Progressive
+Puzzles,#37d530,"Phasellus in felis. Donec semper sapien a libero. Nam dui.
+
+Proin leo odio, porttitor id, consequat in, consequat ut, nulla. Sed accumsan felis. Ut at dolor quis odio consequat varius.",true,true,false,asset,false,capability
+Dips and Spreads,#a04baf,"Praesent blandit. Nam nulla. Integer pede justo, lacinia eget, tincidunt eget, tempus vel, pede.",true,true,true,consumable,false,attitude
+Blenders & Juicers,#3db62c,,true,true,false,asset,false,budgetary management
+Pork,,"Vestibulum ac est lacinia nisi venenatis tristique. Fusce congue, diam id ornare imperdiet, sapien urna pretium nisl, ut volutpat sapien arcu sed augue. Aliquam erat volutpat.
+
+In congue. Etiam justo. Etiam pretium iaculis justo.",false,false,true,license,true,knowledge base
+Protein Snacks,#aa48d5,"Integer tincidunt ante vel ipsum. Praesent blandit lacinia erat. Vestibulum sed magna at nunc commodo placerat.
+
+Praesent blandit. Nam nulla. Integer pede justo, lacinia eget, tincidunt eget, tempus vel, pede.
+
+Morbi porttitor lorem id ligula. Suspendisse ornare consequat lectus. In est risus, auctor sed, tristique in, tempus sit amet, sem.",true,false,true,accessory,false,contingency
+Plant-Based Meats,#3d46b4,"Integer ac leo. Pellentesque ultrices mattis odio. Donec vitae nisi.
+
+Nam ultrices, libero non mattis pulvinar, nulla pede ullamcorper augue, a suscipit nulla elit ac nulla. Sed vel enim sit amet nunc viverra dapibus. Nulla suscipit ligula in lacus.
+
+Curabitur at ipsum ac tellus semper interdum. Mauris ullamcorper purus sit amet nulla. Quisque arcu libero, rutrum ac, lobortis vel, dapibus at, diam.",true,false,false,asset,false,focus group
+Herbal Tea,#589d48,,false,true,true,component,true,moderator
+Spicy Sauces,#e477e0,"Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Proin risus. Praesent lectus.",false,false,false,asset,false,open architecture
+Furniture,#1d6152,"Vestibulum quam sapien, varius ut, blandit non, interdum in, ante. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Duis faucibus accumsan odio. Curabitur convallis.
+
+Duis consequat dui nec nisi volutpat eleifend. Donec ut dolor. Morbi vel lectus in quam fringilla rhoncus.
+
+Mauris enim leo, rhoncus sed, vestibulum sit amet, cursus id, turpis. Integer aliquet, massa id lobortis convallis, tortor risus dapibus augue, vel accumsan tellus nisi eu orci. Mauris lacinia sapien quis libero.",false,false,false,accessory,true,Cross-group
+Kitchen Storage & Organization,#7023c5,"In sagittis dui vel nisl. Duis ac nibh. Fusce lacus purus, aliquet at, feugiat non, pretium quis, lectus.
+
+Suspendisse potenti. In eleifend quam a odio. In hac habitasse platea dictumst.",false,true,true,asset,true,Virtual
+Nut-Based Snacks,#693839,,true,true,true,license,false,intangible
+T-Shirts,#32d208,"Nam ultrices, libero non mattis pulvinar, nulla pede ullamcorper augue, a suscipit nulla elit ac nulla. Sed vel enim sit amet nunc viverra dapibus. Nulla suscipit ligula in lacus.
+
+Curabitur at ipsum ac tellus semper interdum. Mauris ullamcorper purus sit amet nulla. Quisque arcu libero, rutrum ac, lobortis vel, dapibus at, diam.",true,false,false,consumable,false,model
+Cheese,#cd489f,,false,false,false,consumable,false,Reverse-engineered
+Vegetable Snacks,#52b50c,,false,false,false,asset,true,clear-thinking
+Tech Accessories,#c5e1d7,"Nullam porttitor lacus at turpis. Donec posuere metus vitae ipsum. Aliquam non mauris.
+
+Morbi non lectus. Aliquam sit amet diam in magna bibendum imperdiet. Nullam orci pede, venenatis non, sodales sed, tincidunt eu, felis.",false,false,false,license,true,explicit
+Kitchen Accessories,#45d88c,"Duis bibendum. Morbi non quam nec dui luctus rutrum. Nulla tellus.
+
+In sagittis dui vel nisl. Duis ac nibh. Fusce lacus purus, aliquet at, feugiat non, pretium quis, lectus.
+
+Suspendisse potenti. In eleifend quam a odio. In hac habitasse platea dictumst.",true,true,true,accessory,false,Upgradable
+Bikes & Cycling Equipment,#0edf4c,"Proin interdum mauris non ligula pellentesque ultrices. Phasellus id sapien in sapien iaculis congue. Vivamus metus arcu, adipiscing molestie, hendrerit at, vulputate vitae, nisl.",true,true,false,asset,true,asymmetric
+Baking Accessories,#b36211,,false,false,true,asset,true,forecast
+Nuts,#e9c378,,true,true,false,component,true,needs-based
+Vegetarian Salads,#15d285,,false,true,true,license,true,Ergonomic
+Gardening Accessories,,Sed ante. Vivamus tortor. Duis mattis egestas metus.,true,true,true,consumable,false,Managed
+Dressing,#f928e8,,true,false,true,component,true,Distributed
+Headphones,,,false,false,false,asset,false,zero administration
+Board Games,#ec8921,"Maecenas ut massa quis augue luctus tincidunt. Nulla mollis molestie lorem. Quisque ut erat.
+
+Curabitur gravida nisi at nibh. In hac habitasse platea dictumst. Aliquam augue quam, sollicitudin vitae, consectetuer eget, rutrum at, lorem.",true,false,false,consumable,true,Self-enabling
+Strength Training Equipment,#1d881a,,true,false,false,license,false,zero defect
+Power Accessories,,,false,false,false,asset,false,leading edge
+Boots,#8943bb,,false,true,true,asset,false,mission-critical
+Frozen Desserts,,,false,false,false,accessory,true,24 hour
+Flours & Meals,,"In quis justo. Maecenas rhoncus aliquam lacus. Morbi quis tortor id nulla ultrices aliquet.
+
+Maecenas leo odio, condimentum id, luctus nec, molestie sed, justo. Pellentesque viverra pede ac diam. Cras pellentesque volutpat dui.
+
+Maecenas tristique, est et tempus semper, est quam pharetra magna, ac consequat metus sapien ut nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris viverra diam vitae quam. Suspendisse potenti.",false,false,false,component,true,Operative
+Bedding & Linens,#3704f4,"Sed sagittis. Nam congue, risus semper porta volutpat, quam pede lobortis ligula, sit amet eleifend pede libero quis orci. Nullam molestie nibh in lectus.
+
+Pellentesque at nulla. Suspendisse potenti. Cras in purus eu magna vulputate luctus.
+
+Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus vestibulum sagittis sapien. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",false,false,true,consumable,false,archive
+Outdoor Play Toys,#c0dbe0,Nullam sit amet turpis elementum ligula vehicula consequat. Morbi a ipsum. Integer a nibh.,false,true,true,consumable,true,encompassing
+Home Organization,#0bc801,"In sagittis dui vel nisl. Duis ac nibh. Fusce lacus purus, aliquet at, feugiat non, pretium quis, lectus.
+
+Suspendisse potenti. In eleifend quam a odio. In hac habitasse platea dictumst.
+
+Maecenas ut massa quis augue luctus tincidunt. Nulla mollis molestie lorem. Quisque ut erat.",false,true,false,license,true,user-facing
+Protein Snacks,#fd4ab5,Nulla ut erat id mauris vulputate elementum. Nullam varius. Nulla facilisi.,false,true,false,license,false,matrices
+Bedding & Linens,#4ca874,"Nulla ut erat id mauris vulputate elementum. Nullam varius. Nulla facilisi.
+
+Cras non velit nec nisi vulputate nonummy. Maecenas tincidunt lacus at velit. Vivamus vel nulla eget eros elementum pellentesque.",false,true,true,accessory,false,demand-driven
+Poultry,#15bc4d,"Aliquam quis turpis eget elit sodales scelerisque. Mauris sit amet eros. Suspendisse accumsan tortor quis turpis.
+
+Sed ante. Vivamus tortor. Duis mattis egestas metus.",true,true,false,component,false,dynamic
+Outdoor Accessories,#773952,,true,true,true,accessory,true,Business-focused
+Knitwear,#b573f2,,false,false,true,license,true,moratorium
+Hand Tools,#347132,,false,false,false,component,true,Virtual
+Casual Footwear,#3f0e0d,"Vestibulum quam sapien, varius ut, blandit non, interdum in, ante. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Duis faucibus accumsan odio. Curabitur convallis.
+
+Duis consequat dui nec nisi volutpat eleifend. Donec ut dolor. Morbi vel lectus in quam fringilla rhoncus.
+
+Mauris enim leo, rhoncus sed, vestibulum sit amet, cursus id, turpis. Integer aliquet, massa id lobortis convallis, tortor risus dapibus augue, vel accumsan tellus nisi eu orci. Mauris lacinia sapien quis libero.",false,false,false,consumable,true,mobile
+Bottoms,#ac196c,"Praesent blandit. Nam nulla. Integer pede justo, lacinia eget, tincidunt eget, tempus vel, pede.",false,false,false,asset,false,executive
+Home Appliances,#475ced,,true,false,true,license,false,system engine
+Coffee,#69f84f,,false,true,true,component,true,productivity
+Kitchen Accessories,#691c79,"Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Proin risus. Praesent lectus.
+
+Vestibulum quam sapien, varius ut, blandit non, interdum in, ante. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Duis faucibus accumsan odio. Curabitur convallis.",true,true,true,accessory,true,Profound
+Yogurt,#081d9f,,false,true,true,consumable,true,database
+Processed Meats,#ebd643,,false,false,true,accessory,true,matrices
+Outdoor Accessories,#785a96,,true,false,true,license,false,hierarchy
+Bottoms,#90035a,,false,true,false,consumable,false,background
+Fitness Monitors,#48e819,,true,true,true,accessory,true,Organic
+Prepared Seafood,#eb53b5,,true,false,false,accessory,true,tangible
+Fruits,#0c3635,"Curabitur in libero ut massa volutpat convallis. Morbi odio odio, elementum eu, interdum eu, tincidunt in, leo. Maecenas pulvinar lobortis est.
+
+Phasellus sit amet erat. Nulla tempus. Vivamus in felis eu sapien cursus vestibulum.
+
+Proin eu mi. Nulla ac enim. In tempor, turpis nec euismod scelerisque, quam turpis adipiscing lorem, vitae mattis nibh ligula nec sem.",true,true,false,accessory,true,customer loyalty
+Specialty Pasta,#e8bbb1,,false,false,true,license,false,bi-directional
+Cookware Accessories,#02ec3b,"Vestibulum ac est lacinia nisi venenatis tristique. Fusce congue, diam id ornare imperdiet, sapien urna pretium nisl, ut volutpat sapien arcu sed augue. Aliquam erat volutpat.
+
+In congue. Etiam justo. Etiam pretium iaculis justo.",false,false,true,consumable,false,array
+Cat Furniture,#264849,Duis consequat dui nec nisi volutpat eleifend. Donec ut dolor. Morbi vel lectus in quam fringilla rhoncus.,false,true,true,consumable,false,Virtual
+Houseplants,#ca2524,"Praesent id massa id nisl venenatis lacinia. Aenean sit amet justo. Morbi ut odio.
+
+Cras mi pede, malesuada in, imperdiet et, commodo vulputate, justo. In blandit ultrices enim. Lorem ipsum dolor sit amet, consectetuer adipiscing elit.",true,true,true,component,false,interface
+Safety & Protection,#5cf9dd,,true,false,true,component,true,hardware
+Robotic Cleaners,#f628cc,"Duis aliquam convallis nunc. Proin at turpis a pede posuere nonummy. Integer non velit.
+
+Donec diam neque, vestibulum eget, vulputate ut, ultrices vel, augue. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec pharetra, magna vestibulum aliquet ultrices, erat tortor sollicitudin mi, sit amet lobortis sapien sapien non mi. Integer ac neque.",false,false,true,asset,false,instruction set
+Soups & Broths,#e1e92b,,true,false,true,license,false,user-facing
+Floor Care Appliances,#dba01e,"Aenean fermentum. Donec ut mauris eget massa tempor convallis. Nulla neque libero, convallis eget, eleifend luctus, ultricies eu, nibh.",false,false,true,asset,true,fault-tolerant
+Frozen Vegetables,#dfc19f,"Proin interdum mauris non ligula pellentesque ultrices. Phasellus id sapien in sapien iaculis congue. Vivamus metus arcu, adipiscing molestie, hendrerit at, vulputate vitae, nisl.
+
+Aenean lectus. Pellentesque eget nunc. Donec quis orci eget orci vehicula condimentum.",true,true,true,license,false,Vision-oriented
+Digital Cameras,#7f6229,,false,false,false,accessory,true,asynchronous
+Dips & Spreads,#272b9e,"Fusce consequat. Nulla nisl. Nunc nisl.
+
+Duis bibendum, felis sed interdum venenatis, turpis enim blandit mi, in porttitor pede justo eu massa. Donec dapibus. Duis at velit eu est congue elementum.",false,false,true,license,false,Universal
+Pet Safety Gear,#ac6b5a,Fusce consequat. Nulla nisl. Nunc nisl.,false,true,false,component,false,Visionary
+Protein Supplements,#9be82a,,true,false,true,asset,true,eco-centric
+Vegetarian Meals,#687a8d,"In sagittis dui vel nisl. Duis ac nibh. Fusce lacus purus, aliquet at, feugiat non, pretium quis, lectus.
+
+Suspendisse potenti. In eleifend quam a odio. In hac habitasse platea dictumst.
+
+Maecenas ut massa quis augue luctus tincidunt. Nulla mollis molestie lorem. Quisque ut erat.",true,true,false,component,false,systemic
+Gourmet Ice Cream,#79380b,"Praesent id massa id nisl venenatis lacinia. Aenean sit amet justo. Morbi ut odio.
+
+Cras mi pede, malesuada in, imperdiet et, commodo vulputate, justo. In blandit ultrices enim. Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+
+Proin interdum mauris non ligula pellentesque ultrices. Phasellus id sapien in sapien iaculis congue. Vivamus metus arcu, adipiscing molestie, hendrerit at, vulputate vitae, nisl.",true,true,true,component,false,5th generation
+Decorative Wall Art & Accessories,#4ec32a,"Sed ante. Vivamus tortor. Duis mattis egestas metus.
+
+Aenean fermentum. Donec ut mauris eget massa tempor convallis. Nulla neque libero, convallis eget, eleifend luctus, ultricies eu, nibh.
+
+Quisque id justo sit amet sapien dignissim vestibulum. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nulla dapibus dolor vel est. Donec odio justo, sollicitudin ut, suscipit a, feugiat et, eros.",true,true,true,consumable,false,responsive
+Instant Soups,#42c973,"Nulla ut erat id mauris vulputate elementum. Nullam varius. Nulla facilisi.
+
+Cras non velit nec nisi vulputate nonummy. Maecenas tincidunt lacus at velit. Vivamus vel nulla eget eros elementum pellentesque.
+
+Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla. Nunc purus.",false,false,true,accessory,false,circuit
+Camping Equipment,#5e450c,"In hac habitasse platea dictumst. Morbi vestibulum, velit id pretium iaculis, diam erat fermentum justo, nec condimentum neque sapien placerat ante. Nulla justo.
+
+Aliquam quis turpis eget elit sodales scelerisque. Mauris sit amet eros. Suspendisse accumsan tortor quis turpis.
+
+Sed ante. Vivamus tortor. Duis mattis egestas metus.",false,false,true,consumable,true,Ergonomic
+Fruits,#396864,"Integer ac leo. Pellentesque ultrices mattis odio. Donec vitae nisi.
+
+Nam ultrices, libero non mattis pulvinar, nulla pede ullamcorper augue, a suscipit nulla elit ac nulla. Sed vel enim sit amet nunc viverra dapibus. Nulla suscipit ligula in lacus.",false,true,true,license,true,analyzer
+Home Organization,#45ddb6,"Mauris enim leo, rhoncus sed, vestibulum sit amet, cursus id, turpis. Integer aliquet, massa id lobortis convallis, tortor risus dapibus augue, vel accumsan tellus nisi eu orci. Mauris lacinia sapien quis libero.",false,false,false,asset,true,Assimilated
+Camping Equipment,#06f26a,,true,true,true,consumable,false,artificial intelligence
+Workbenches,#864b13,,true,false,true,accessory,false,middleware
+Baking Ingredients,#d74a27,,false,false,false,license,true,zero defect
+Food Storage Solutions,#d6e1eb,,false,true,true,component,false,artificial intelligence
+Dress Shirts,#f8755b,"Maecenas ut massa quis augue luctus tincidunt. Nulla mollis molestie lorem. Quisque ut erat.
+
+Curabitur gravida nisi at nibh. In hac habitasse platea dictumst. Aliquam augue quam, sollicitudin vitae, consectetuer eget, rutrum at, lorem.
+
+Integer tincidunt ante vel ipsum. Praesent blandit lacinia erat. Vestibulum sed magna at nunc commodo placerat.",false,true,false,component,true,Upgradable
+Lighting,#1f1001,Nullam porttitor lacus at turpis. Donec posuere metus vitae ipsum. Aliquam non mauris.,true,true,false,license,false,Networked
+Breads,,"Nullam porttitor lacus at turpis. Donec posuere metus vitae ipsum. Aliquam non mauris.
+
+Morbi non lectus. Aliquam sit amet diam in magna bibendum imperdiet. Nullam orci pede, venenatis non, sodales sed, tincidunt eu, felis.",true,false,true,consumable,true,mission-critical
+Cat Furniture,#071d83,Nulla ut erat id mauris vulputate elementum. Nullam varius. Nulla facilisi.,false,false,false,consumable,true,Enterprise-wide
+Camera Accessories,#f8b99e,,true,true,true,component,false,access
+Cheese,#06ae6a,,true,false,true,consumable,true,Object-based
+Canned Soups,#86f5db,,true,true,true,license,true,knowledge base
+Nut-Based Snacks,,,true,true,true,consumable,true,Cross-platform
+Cameras & Photography,#88d936,Maecenas ut massa quis augue luctus tincidunt. Nulla mollis molestie lorem. Quisque ut erat.,false,false,false,license,false,asymmetric
+Garden Tools,#f848ac,"Proin leo odio, porttitor id, consequat in, consequat ut, nulla. Sed accumsan felis. Ut at dolor quis odio consequat varius.
+
+Integer ac leo. Pellentesque ultrices mattis odio. Donec vitae nisi.
+
+Nam ultrices, libero non mattis pulvinar, nulla pede ullamcorper augue, a suscipit nulla elit ac nulla. Sed vel enim sit amet nunc viverra dapibus. Nulla suscipit ligula in lacus.",true,false,false,asset,true,array
+Personal Protective Equipment (PPE) & Disaster Preparedness,#b56c76,,true,true,false,asset,false,Focused
+Spicy Sauces,#badced,Praesent id massa id nisl venenatis lacinia. Aenean sit amet justo. Morbi ut odio.,false,true,false,license,false,object-oriented
+Decorative Wall Art & Accessories,#249285,,true,true,true,license,true,framework
+Savory Snacks,#3556d4,"Suspendisse potenti. In eleifend quam a odio. In hac habitasse platea dictumst.
+
+Maecenas ut massa quis augue luctus tincidunt. Nulla mollis molestie lorem. Quisque ut erat.
+
+Curabitur gravida nisi at nibh. In hac habitasse platea dictumst. Aliquam augue quam, sollicitudin vitae, consectetuer eget, rutrum at, lorem.",false,false,true,license,true,cohesive
+Outdoor Recreation,#446e53,,false,true,false,asset,true,Devolved
+Pet Supplies,#9c73c6,,false,true,false,consumable,true,intranet
+Specialty Pasta,#d4f731,,true,false,false,accessory,false,complexity
+Nut-Based Snacks,#d86665,"Maecenas tristique, est et tempus semper, est quam pharetra magna, ac consequat metus sapien ut nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris viverra diam vitae quam. Suspendisse potenti.",false,false,false,accessory,true,Mandatory
+Canned Fruits,#76e504,,false,false,true,asset,false,Ameliorated
+Dairy Alternatives,#fbd07a,In congue. Etiam justo. Etiam pretium iaculis justo.,false,true,false,component,false,Cloned
+Bikes & Cycling Equipment,#4c134a,,true,false,false,accessory,false,Devolved
+Knitwear,#bf3b36,,false,false,false,component,true,homogeneous
+Sauces,#7bc881,,true,true,true,consumable,false,bandwidth-monitored
+Office Accessories,#dbf86c,,true,true,true,license,true,ability
+Juice,#82e08a,"Maecenas leo odio, condimentum id, luctus nec, molestie sed, justo. Pellentesque viverra pede ac diam. Cras pellentesque volutpat dui.
+
+Maecenas tristique, est et tempus semper, est quam pharetra magna, ac consequat metus sapien ut nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris viverra diam vitae quam. Suspendisse potenti.
+
+Nullam porttitor lacus at turpis. Donec posuere metus vitae ipsum. Aliquam non mauris.",true,false,true,consumable,false,challenge
+Rice,#3881a1,In hac habitasse platea dictumst. Etiam faucibus cursus urna. Ut tellus.,true,false,true,license,true,methodology
+Camping Equipment,#c9761c,Nulla ut erat id mauris vulputate elementum. Nullam varius. Nulla facilisi.,false,true,true,consumable,false,fresh-thinking
+Outdoor Accessories,,,false,false,true,asset,false,Optional
+Healthy Breakfast Options,#5d922c,,false,false,true,consumable,true,maximized
+Seasoning Blends,#c70a96,"Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus vestibulum sagittis sapien. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+
+Etiam vel augue. Vestibulum rutrum rutrum neque. Aenean auctor gravida sem.
+
+Praesent id massa id nisl venenatis lacinia. Aenean sit amet justo. Morbi ut odio.",false,false,false,license,true,clear-thinking
+Inflation Equipment,,Duis bibendum. Morbi non quam nec dui luctus rutrum. Nulla tellus.,false,false,true,accessory,true,Versatile
+Rice Dishes,#0983ca,Integer tincidunt ante vel ipsum. Praesent blandit lacinia erat. Vestibulum sed magna at nunc commodo placerat.,true,true,false,asset,false,5th generation
+Houseplants,#598011,,false,false,true,accessory,false,bifurcated
+Frozen Asian Meals,,"Phasellus sit amet erat. Nulla tempus. Vivamus in felis eu sapien cursus vestibulum.
+
+Proin eu mi. Nulla ac enim. In tempor, turpis nec euismod scelerisque, quam turpis adipiscing lorem, vitae mattis nibh ligula nec sem.",true,true,false,consumable,true,capability
+Tea,#230f74,,false,true,false,license,false,info-mediaries
+Meal Kits,#731a13,"Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus vestibulum sagittis sapien. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+
+Etiam vel augue. Vestibulum rutrum rutrum neque. Aenean auctor gravida sem.
+
+Praesent id massa id nisl venenatis lacinia. Aenean sit amet justo. Morbi ut odio.",false,true,false,accessory,true,Self-enabling
+Graphic Tees,#574b89,"Praesent blandit. Nam nulla. Integer pede justo, lacinia eget, tincidunt eget, tempus vel, pede.",true,true,true,asset,true,intranet
+Outdoor Recreation,,In hac habitasse platea dictumst. Etiam faucibus cursus urna. Ut tellus.,true,false,false,license,false,intranet
+Food Storage Solutions,#e212e6,Duis bibendum. Morbi non quam nec dui luctus rutrum. Nulla tellus.,true,true,true,consumable,true,hierarchy
+Houseplants,#38a0c3,"Morbi porttitor lorem id ligula. Suspendisse ornare consequat lectus. In est risus, auctor sed, tristique in, tempus sit amet, sem.",false,true,true,license,true,implementation
+Garden Decor,#7c807a,"Morbi non lectus. Aliquam sit amet diam in magna bibendum imperdiet. Nullam orci pede, venenatis non, sodales sed, tincidunt eu, felis.
+
+Fusce posuere felis sed lacus. Morbi sem mauris, laoreet ut, rhoncus aliquet, pulvinar sed, nisl. Nunc rhoncus dui vel sem.
+
+Sed sagittis. Nam congue, risus semper porta volutpat, quam pede lobortis ligula, sit amet eleifend pede libero quis orci. Nullam molestie nibh in lectus.",false,false,true,accessory,false,Fully-configurable
+Massage Therapy,#ac7c37,"Curabitur in libero ut massa volutpat convallis. Morbi odio odio, elementum eu, interdum eu, tincidunt in, leo. Maecenas pulvinar lobortis est.",false,true,false,accessory,true,contingency
+Decorative Wall Art & Accessories,,"Nam ultrices, libero non mattis pulvinar, nulla pede ullamcorper augue, a suscipit nulla elit ac nulla. Sed vel enim sit amet nunc viverra dapibus. Nulla suscipit ligula in lacus.",false,true,true,component,true,directional
+Nutritional Supplements,#31212a,,true,true,false,component,true,discrete
+Specialty Soups,#7ec8eb,,false,true,true,consumable,true,orchestration
+Frozen Pasta Dishes,,"Mauris enim leo, rhoncus sed, vestibulum sit amet, cursus id, turpis. Integer aliquet, massa id lobortis convallis, tortor risus dapibus augue, vel accumsan tellus nisi eu orci. Mauris lacinia sapien quis libero.",false,true,false,consumable,false,cohesive
+Cheese Spreads,#be2578,"Cras mi pede, malesuada in, imperdiet et, commodo vulputate, justo. In blandit ultrices enim. Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+
+Proin interdum mauris non ligula pellentesque ultrices. Phasellus id sapien in sapien iaculis congue. Vivamus metus arcu, adipiscing molestie, hendrerit at, vulputate vitae, nisl.
+
+Aenean lectus. Pellentesque eget nunc. Donec quis orci eget orci vehicula condimentum.",false,false,false,license,true,contingency
+Storage Devices,#43b59d,"Praesent blandit. Nam nulla. Integer pede justo, lacinia eget, tincidunt eget, tempus vel, pede.",false,false,false,consumable,true,24/7
+Cardio Equipment,#b373fe,"Nullam sit amet turpis elementum ligula vehicula consequat. Morbi a ipsum. Integer a nibh.
+
+In quis justo. Maecenas rhoncus aliquam lacus. Morbi quis tortor id nulla ultrices aliquet.
+
+Maecenas leo odio, condimentum id, luctus nec, molestie sed, justo. Pellentesque viverra pede ac diam. Cras pellentesque volutpat dui.",false,false,false,accessory,true,Future-proofed
+Rice,,"Curabitur in libero ut massa volutpat convallis. Morbi odio odio, elementum eu, interdum eu, tincidunt in, leo. Maecenas pulvinar lobortis est.",false,false,true,asset,true,paradigm
+Cookies,#633960,Aenean lectus. Pellentesque eget nunc. Donec quis orci eget orci vehicula condimentum.,true,true,true,license,true,fresh-thinking
+Salad Mixes,,"Nulla ut erat id mauris vulputate elementum. Nullam varius. Nulla facilisi.
+
+Cras non velit nec nisi vulputate nonummy. Maecenas tincidunt lacus at velit. Vivamus vel nulla eget eros elementum pellentesque.
+
+Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla. Nunc purus.",false,false,false,component,true,Focused
+Sauces,#2173c6,"Quisque id justo sit amet sapien dignissim vestibulum. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nulla dapibus dolor vel est. Donec odio justo, sollicitudin ut, suscipit a, feugiat et, eros.
+
+Vestibulum ac est lacinia nisi venenatis tristique. Fusce congue, diam id ornare imperdiet, sapien urna pretium nisl, ut volutpat sapien arcu sed augue. Aliquam erat volutpat.",false,false,true,asset,false,responsive
+Juice,#228f42,,false,false,false,license,true,Realigned
+Painting Kits,#24d27e,,true,true,true,asset,true,bottom-line
+Sauces,#95e374,"Donec diam neque, vestibulum eget, vulputate ut, ultrices vel, augue. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec pharetra, magna vestibulum aliquet ultrices, erat tortor sollicitudin mi, sit amet lobortis sapien sapien non mi. Integer ac neque.
+
+Duis bibendum. Morbi non quam nec dui luctus rutrum. Nulla tellus.",true,true,false,license,true,eco-centric
+Syrups,#0d8f2f,"Integer ac leo. Pellentesque ultrices mattis odio. Donec vitae nisi.
+
+Nam ultrices, libero non mattis pulvinar, nulla pede ullamcorper augue, a suscipit nulla elit ac nulla. Sed vel enim sit amet nunc viverra dapibus. Nulla suscipit ligula in lacus.",false,true,true,consumable,false,Extended
+Home Organization,#d9b746,Sed ante. Vivamus tortor. Duis mattis egestas metus.,true,true,true,component,false,Switchable
+Tech Accessories,#a553b9,,true,true,true,component,false,zero defect
+Coffee Equipment,#6626d6,,false,true,false,component,true,knowledge base
+Processed Meats,#fe7034,"Nullam sit amet turpis elementum ligula vehicula consequat. Morbi a ipsum. Integer a nibh.
+
+In quis justo. Maecenas rhoncus aliquam lacus. Morbi quis tortor id nulla ultrices aliquet.",false,true,true,license,false,synergy
+Storage Devices,#1c988f,"Duis bibendum, felis sed interdum venenatis, turpis enim blandit mi, in porttitor pede justo eu massa. Donec dapibus. Duis at velit eu est congue elementum.
+
+In hac habitasse platea dictumst. Morbi vestibulum, velit id pretium iaculis, diam erat fermentum justo, nec condimentum neque sapien placerat ante. Nulla justo.",false,true,true,consumable,false,Devolved
+Trousers,#b119a9,"Etiam vel augue. Vestibulum rutrum rutrum neque. Aenean auctor gravida sem.
+
+Praesent id massa id nisl venenatis lacinia. Aenean sit amet justo. Morbi ut odio.",true,false,false,asset,false,initiative
+Sauces & Condiments,#411036,,true,false,false,accessory,true,Vision-oriented
+Healthy Snacks,#ca592b,"Aenean fermentum. Donec ut mauris eget massa tempor convallis. Nulla neque libero, convallis eget, eleifend luctus, ultricies eu, nibh.",true,false,false,accessory,true,Mandatory
+Gardening Tools,#b1dab6,,true,false,false,component,false,web-enabled
+Grain Salads,#9b705b,"Mauris enim leo, rhoncus sed, vestibulum sit amet, cursus id, turpis. Integer aliquet, massa id lobortis convallis, tortor risus dapibus augue, vel accumsan tellus nisi eu orci. Mauris lacinia sapien quis libero.
+
+Nullam sit amet turpis elementum ligula vehicula consequat. Morbi a ipsum. Integer a nibh.",true,true,false,consumable,true,projection
+Home Fragrance & Accessories,#c9e7ac,,true,true,false,component,true,structure
+Pasta & Couscous,#40ba60,"Praesent blandit. Nam nulla. Integer pede justo, lacinia eget, tincidunt eget, tempus vel, pede.
+
+Morbi porttitor lorem id ligula. Suspendisse ornare consequat lectus. In est risus, auctor sed, tristique in, tempus sit amet, sem.
+
+Fusce consequat. Nulla nisl. Nunc nisl.",true,false,true,license,true,hierarchy
+Frozen Meals,#be1d98,"Integer tincidunt ante vel ipsum. Praesent blandit lacinia erat. Vestibulum sed magna at nunc commodo placerat.
+
+Praesent blandit. Nam nulla. Integer pede justo, lacinia eget, tincidunt eget, tempus vel, pede.
+
+Morbi porttitor lorem id ligula. Suspendisse ornare consequat lectus. In est risus, auctor sed, tristique in, tempus sit amet, sem.",false,false,false,consumable,true,background
+Breads,#3863b8,,true,false,true,accessory,true,actuating
+Lighting,,"Phasellus in felis. Donec semper sapien a libero. Nam dui.
+
+Proin leo odio, porttitor id, consequat in, consequat ut, nulla. Sed accumsan felis. Ut at dolor quis odio consequat varius.
+
+Integer ac leo. Pellentesque ultrices mattis odio. Donec vitae nisi.",true,false,false,license,true,Robust
+Dips,#48fd9c,"Maecenas tristique, est et tempus semper, est quam pharetra magna, ac consequat metus sapien ut nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris viverra diam vitae quam. Suspendisse potenti.
+
+Nullam porttitor lacus at turpis. Donec posuere metus vitae ipsum. Aliquam non mauris.
+
+Morbi non lectus. Aliquam sit amet diam in magna bibendum imperdiet. Nullam orci pede, venenatis non, sodales sed, tincidunt eu, felis.",false,false,true,consumable,true,encryption
+BBQ Sauces,#b51d1b,"Aenean lectus. Pellentesque eget nunc. Donec quis orci eget orci vehicula condimentum.
+
+Curabitur in libero ut massa volutpat convallis. Morbi odio odio, elementum eu, interdum eu, tincidunt in, leo. Maecenas pulvinar lobortis est.",true,true,false,consumable,true,Enterprise-wide
+Frozen Vegetables,,"Duis consequat dui nec nisi volutpat eleifend. Donec ut dolor. Morbi vel lectus in quam fringilla rhoncus.
+
+Mauris enim leo, rhoncus sed, vestibulum sit amet, cursus id, turpis. Integer aliquet, massa id lobortis convallis, tortor risus dapibus augue, vel accumsan tellus nisi eu orci. Mauris lacinia sapien quis libero.",true,true,true,accessory,false,utilisation
+Specialty Pasta,#ba3bbb,,true,false,true,asset,false,utilisation
+Mustards,#ff6d05,Pellentesque at nulla. Suspendisse potenti. Cras in purus eu magna vulputate luctus.,true,true,true,component,true,Open-source
+Office Supplies,#8f1625,,false,true,false,license,true,internet solution
+Vegetable Dishes,#fc8812,,false,false,false,accessory,false,Synchronised
+Sweaters,#9a77c0,"Vestibulum quam sapien, varius ut, blandit non, interdum in, ante. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Duis faucibus accumsan odio. Curabitur convallis.
+
+Duis consequat dui nec nisi volutpat eleifend. Donec ut dolor. Morbi vel lectus in quam fringilla rhoncus.",false,false,false,asset,false,Future-proofed
+Seasoning Blends,#d24565,"Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla. Nunc purus.",false,true,true,component,true,Virtual
+Chocolate Snacks,#a894c8,,false,false,true,asset,true,Public-key
+Mobile Accessories,#1fa82a,,true,true,true,license,false,Fully-configurable
+Cuisine - Italian,#c181df,"In hac habitasse platea dictumst. Etiam faucibus cursus urna. Ut tellus.
+
+Nulla ut erat id mauris vulputate elementum. Nullam varius. Nulla facilisi.",true,false,true,component,true,Polarised
+Drinkware,#c70767,"Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus vestibulum sagittis sapien. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+
+Etiam vel augue. Vestibulum rutrum rutrum neque. Aenean auctor gravida sem.
+
+Praesent id massa id nisl venenatis lacinia. Aenean sit amet justo. Morbi ut odio.",false,false,false,accessory,false,core
+Outerwear,#cc4a18,Pellentesque at nulla. Suspendisse potenti. Cras in purus eu magna vulputate luctus.,true,true,true,license,true,composite
+Health Devices,#2f5ca2,"Maecenas tristique, est et tempus semper, est quam pharetra magna, ac consequat metus sapien ut nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris viverra diam vitae quam. Suspendisse potenti.",true,true,true,accessory,false,Triple-buffered
+Sauces & Condiments,#a03625,,true,false,false,asset,false,upward-trending
+Healthy Snacks,#890a4f,,true,false,true,consumable,false,Focused
+Outdoor Furniture,#31eb54,"Quisque id justo sit amet sapien dignissim vestibulum. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nulla dapibus dolor vel est. Donec odio justo, sollicitudin ut, suscipit a, feugiat et, eros.",true,true,true,accessory,false,Diverse
+Power Tools,#65f5c4,"Morbi porttitor lorem id ligula. Suspendisse ornare consequat lectus. In est risus, auctor sed, tristique in, tempus sit amet, sem.
+
+Fusce consequat. Nulla nisl. Nunc nisl.",false,true,true,license,true,infrastructure
+Furniture,#bc4738,"In quis justo. Maecenas rhoncus aliquam lacus. Morbi quis tortor id nulla ultrices aliquet.
+
+Maecenas leo odio, condimentum id, luctus nec, molestie sed, justo. Pellentesque viverra pede ac diam. Cras pellentesque volutpat dui.
+
+Maecenas tristique, est et tempus semper, est quam pharetra magna, ac consequat metus sapien ut nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris viverra diam vitae quam. Suspendisse potenti.",true,true,true,asset,false,portal
+Prepared Seafood,#1b8589,Nullam porttitor lacus at turpis. Donec posuere metus vitae ipsum. Aliquam non mauris.,false,false,true,component,true,asymmetric
+Salsas,,,true,false,false,license,true,Automated
+Specialty Soups,#032810,"Aenean lectus. Pellentesque eget nunc. Donec quis orci eget orci vehicula condimentum.
+
+Curabitur in libero ut massa volutpat convallis. Morbi odio odio, elementum eu, interdum eu, tincidunt in, leo. Maecenas pulvinar lobortis est.",false,true,false,consumable,false,Operative
+Frozen Meals,,,true,false,true,license,true,flexibility
+Fishing Equipment,#963f64,"Mauris enim leo, rhoncus sed, vestibulum sit amet, cursus id, turpis. Integer aliquet, massa id lobortis convallis, tortor risus dapibus augue, vel accumsan tellus nisi eu orci. Mauris lacinia sapien quis libero.",false,false,false,asset,false,global
+Nut Butters,,"In hac habitasse platea dictumst. Morbi vestibulum, velit id pretium iaculis, diam erat fermentum justo, nec condimentum neque sapien placerat ante. Nulla justo.
+
+Aliquam quis turpis eget elit sodales scelerisque. Mauris sit amet eros. Suspendisse accumsan tortor quis turpis.",false,true,true,consumable,false,hardware
+Healthy Snacks,#4df393,,false,true,true,component,false,Customizable
+Cardio Equipment,#8c6ad5,,false,true,true,consumable,true,asymmetric
+Outdoor Accessories,#6123e7,,true,true,true,consumable,false,radical
+Frozen Chicken Wings,#585539,"Duis consequat dui nec nisi volutpat eleifend. Donec ut dolor. Morbi vel lectus in quam fringilla rhoncus.
+
+Mauris enim leo, rhoncus sed, vestibulum sit amet, cursus id, turpis. Integer aliquet, massa id lobortis convallis, tortor risus dapibus augue, vel accumsan tellus nisi eu orci. Mauris lacinia sapien quis libero.
+
+Nullam sit amet turpis elementum ligula vehicula consequat. Morbi a ipsum. Integer a nibh.",true,false,false,asset,false,algorithm
+Granola/Cereal,#8aa091,"Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus vestibulum sagittis sapien. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+
+Etiam vel augue. Vestibulum rutrum rutrum neque. Aenean auctor gravida sem.
+
+Praesent id massa id nisl venenatis lacinia. Aenean sit amet justo. Morbi ut odio.",true,false,false,consumable,true,zero administration
+Office Supplies,#9343d6,"Nulla ut erat id mauris vulputate elementum. Nullam varius. Nulla facilisi.
+
+Cras non velit nec nisi vulputate nonummy. Maecenas tincidunt lacus at velit. Vivamus vel nulla eget eros elementum pellentesque.",false,false,false,consumable,true,Virtual
+Health Devices,,,false,false,false,license,true,homogeneous
+Healthy Snacks,#8f9b67,,false,true,true,asset,false,attitude
+Baking Ingredients,#124665,,true,false,false,component,true,firmware
+Frozen Meals,#5fd2d3,,false,true,true,asset,false,client-driven
+Small Appliances,#f60eac,"Vestibulum ac est lacinia nisi venenatis tristique. Fusce congue, diam id ornare imperdiet, sapien urna pretium nisl, ut volutpat sapien arcu sed augue. Aliquam erat volutpat.
+
+In congue. Etiam justo. Etiam pretium iaculis justo.
+
+In hac habitasse platea dictumst. Etiam faucibus cursus urna. Ut tellus.",false,false,false,component,true,data-warehouse
+Meat Snacks,#0f2a91,"Suspendisse potenti. In eleifend quam a odio. In hac habitasse platea dictumst.
+
+Maecenas ut massa quis augue luctus tincidunt. Nulla mollis molestie lorem. Quisque ut erat.
+
+Curabitur gravida nisi at nibh. In hac habitasse platea dictumst. Aliquam augue quam, sollicitudin vitae, consectetuer eget, rutrum at, lorem.",true,true,true,component,true,analyzing
+Pet Accessories,#1af82b,"Proin leo odio, porttitor id, consequat in, consequat ut, nulla. Sed accumsan felis. Ut at dolor quis odio consequat varius.
+
+Integer ac leo. Pellentesque ultrices mattis odio. Donec vitae nisi.
+
+Nam ultrices, libero non mattis pulvinar, nulla pede ullamcorper augue, a suscipit nulla elit ac nulla. Sed vel enim sit amet nunc viverra dapibus. Nulla suscipit ligula in lacus.",false,true,true,license,false,Digitized
+Self-Defense Tools,#cdf800,,true,false,false,component,false,Upgradable
+Yogurt,#e4e5ed,"Praesent blandit. Nam nulla. Integer pede justo, lacinia eget, tincidunt eget, tempus vel, pede.
+
+Morbi porttitor lorem id ligula. Suspendisse ornare consequat lectus. In est risus, auctor sed, tristique in, tempus sit amet, sem.",true,true,false,accessory,false,model
+Natural Sauces,#ade65b,,false,true,false,accessory,true,tangible
+Kitchen Gadgets,#a047f7,"Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus vestibulum sagittis sapien. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",false,true,true,component,false,adapter
+Frozen Vegetables,,,false,false,false,component,false,multi-tasking
+Savory Snacks,#4dff55,"Cras non velit nec nisi vulputate nonummy. Maecenas tincidunt lacus at velit. Vivamus vel nulla eget eros elementum pellentesque.
+
+Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla. Nunc purus.
+
+Phasellus in felis. Donec semper sapien a libero. Nam dui.",true,false,true,accessory,true,encompassing
+Dry Sauces,,"Maecenas tristique, est et tempus semper, est quam pharetra magna, ac consequat metus sapien ut nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris viverra diam vitae quam. Suspendisse potenti.
+
+Nullam porttitor lacus at turpis. Donec posuere metus vitae ipsum. Aliquam non mauris.
+
+Morbi non lectus. Aliquam sit amet diam in magna bibendum imperdiet. Nullam orci pede, venenatis non, sodales sed, tincidunt eu, felis.",true,true,true,component,false,secondary
+Meat Snacks,#4e4a2e,,false,false,false,license,true,Public-key
+Pet Accessories,#45327f,"Proin eu mi. Nulla ac enim. In tempor, turpis nec euismod scelerisque, quam turpis adipiscing lorem, vitae mattis nibh ligula nec sem.
+
+Duis aliquam convallis nunc. Proin at turpis a pede posuere nonummy. Integer non velit.
+
+Donec diam neque, vestibulum eget, vulputate ut, ultrices vel, augue. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec pharetra, magna vestibulum aliquet ultrices, erat tortor sollicitudin mi, sit amet lobortis sapien sapien non mi. Integer ac neque.",true,false,true,asset,false,coherent
+Storage Devices,#d412a3,,true,true,false,consumable,true,capability
+Baking Ingredients,#2fab0c,"Integer ac leo. Pellentesque ultrices mattis odio. Donec vitae nisi.
+
+Nam ultrices, libero non mattis pulvinar, nulla pede ullamcorper augue, a suscipit nulla elit ac nulla. Sed vel enim sit amet nunc viverra dapibus. Nulla suscipit ligula in lacus.
+
+Curabitur at ipsum ac tellus semper interdum. Mauris ullamcorper purus sit amet nulla. Quisque arcu libero, rutrum ac, lobortis vel, dapibus at, diam.",true,false,false,component,true,transitional
+Camping Equipment,#87a0b4,Phasellus in felis. Donec semper sapien a libero. Nam dui.,true,true,false,accessory,false,clear-thinking
+Healthy Breakfast Options,#f9df2f,,false,false,false,consumable,false,Enterprise-wide
+Canned Vegetables,#042d77,,false,false,false,consumable,false,orchestration
+Mobile Accessories,#8af444,"Cras mi pede, malesuada in, imperdiet et, commodo vulputate, justo. In blandit ultrices enim. Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+
+Proin interdum mauris non ligula pellentesque ultrices. Phasellus id sapien in sapien iaculis congue. Vivamus metus arcu, adipiscing molestie, hendrerit at, vulputate vitae, nisl.",true,true,true,asset,false,Graphical User Interface
+Rice,#eb6ac4,"Donec diam neque, vestibulum eget, vulputate ut, ultrices vel, augue. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec pharetra, magna vestibulum aliquet ultrices, erat tortor sollicitudin mi, sit amet lobortis sapien sapien non mi. Integer ac neque.",true,true,true,license,true,toolset
+Instant Meals,#25cecd,"Duis aliquam convallis nunc. Proin at turpis a pede posuere nonummy. Integer non velit.
+
+Donec diam neque, vestibulum eget, vulputate ut, ultrices vel, augue. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec pharetra, magna vestibulum aliquet ultrices, erat tortor sollicitudin mi, sit amet lobortis sapien sapien non mi. Integer ac neque.",false,false,false,component,false,Universal
+Vegetable Snacks,#748174,,false,true,true,license,false,success
+Rice,#070b7d,"Morbi non lectus. Aliquam sit amet diam in magna bibendum imperdiet. Nullam orci pede, venenatis non, sodales sed, tincidunt eu, felis.",true,false,false,accessory,true,core
+Wireless Video Transmission,#62e50e,"Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Proin risus. Praesent lectus.
+
+Vestibulum quam sapien, varius ut, blandit non, interdum in, ante. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Duis faucibus accumsan odio. Curabitur convallis.
+
+Duis consequat dui nec nisi volutpat eleifend. Donec ut dolor. Morbi vel lectus in quam fringilla rhoncus.",false,true,true,consumable,false,Upgradable
+Wraps/Rolls,#5645c0,,true,false,true,component,true,Automated
+Hand Tools,,"Morbi non lectus. Aliquam sit amet diam in magna bibendum imperdiet. Nullam orci pede, venenatis non, sodales sed, tincidunt eu, felis.
+
+Fusce posuere felis sed lacus. Morbi sem mauris, laoreet ut, rhoncus aliquet, pulvinar sed, nisl. Nunc rhoncus dui vel sem.
+
+Sed sagittis. Nam congue, risus semper porta volutpat, quam pede lobortis ligula, sit amet eleifend pede libero quis orci. Nullam molestie nibh in lectus.",false,false,false,component,false,Graphic Interface
+Frozen Meals,#0129c2,,false,true,false,consumable,false,zero defect
+Portable Power Solutions,#cda082,"Proin leo odio, porttitor id, consequat in, consequat ut, nulla. Sed accumsan felis. Ut at dolor quis odio consequat varius.
+
+Integer ac leo. Pellentesque ultrices mattis odio. Donec vitae nisi.",true,false,true,license,true,Re-contextualized
+Creative Arts & Crafts,#bbee41,"In quis justo. Maecenas rhoncus aliquam lacus. Morbi quis tortor id nulla ultrices aliquet.
+
+Maecenas leo odio, condimentum id, luctus nec, molestie sed, justo. Pellentesque viverra pede ac diam. Cras pellentesque volutpat dui.",false,true,false,consumable,true,database
+Gourmet Snacks,#4856f4,"Vestibulum ac est lacinia nisi venenatis tristique. Fusce congue, diam id ornare imperdiet, sapien urna pretium nisl, ut volutpat sapien arcu sed augue. Aliquam erat volutpat.
+
+In congue. Etiam justo. Etiam pretium iaculis justo.
+
+In hac habitasse platea dictumst. Etiam faucibus cursus urna. Ut tellus.",false,true,false,consumable,true,methodical
+Camping Equipment,#a49f40,,true,true,true,accessory,false,background
+Leafy Greens,#f081e2,"Proin eu mi. Nulla ac enim. In tempor, turpis nec euismod scelerisque, quam turpis adipiscing lorem, vitae mattis nibh ligula nec sem.",false,false,false,asset,true,Multi-tiered
+Home Appliances,#073209,"Vestibulum ac est lacinia nisi venenatis tristique. Fusce congue, diam id ornare imperdiet, sapien urna pretium nisl, ut volutpat sapien arcu sed augue. Aliquam erat volutpat.",false,true,false,license,false,open system
+Kitchen Accessories,#587304,"Praesent blandit. Nam nulla. Integer pede justo, lacinia eget, tincidunt eget, tempus vel, pede.
+
+Morbi porttitor lorem id ligula. Suspendisse ornare consequat lectus. In est risus, auctor sed, tristique in, tempus sit amet, sem.",false,false,false,accessory,false,Progressive
+Mobile Accessories,#cc91f4,"Proin interdum mauris non ligula pellentesque ultrices. Phasellus id sapien in sapien iaculis congue. Vivamus metus arcu, adipiscing molestie, hendrerit at, vulputate vitae, nisl.
+
+Aenean lectus. Pellentesque eget nunc. Donec quis orci eget orci vehicula condimentum.
+
+Curabitur in libero ut massa volutpat convallis. Morbi odio odio, elementum eu, interdum eu, tincidunt in, leo. Maecenas pulvinar lobortis est.",true,true,false,consumable,true,access
+Vinegars,#e53656,"Proin eu mi. Nulla ac enim. In tempor, turpis nec euismod scelerisque, quam turpis adipiscing lorem, vitae mattis nibh ligula nec sem.",false,true,true,asset,false,mobile
+Hot Sauces,#59b309,,false,false,false,consumable,false,migration
+Computer Accessories,#de6e7f,,true,false,false,component,true,Centralized
+Dressing,,"Nulla ut erat id mauris vulputate elementum. Nullam varius. Nulla facilisi.
+
+Cras non velit nec nisi vulputate nonummy. Maecenas tincidunt lacus at velit. Vivamus vel nulla eget eros elementum pellentesque.",false,true,false,asset,false,methodology
+Granola/Cereal,#47c526,"Proin interdum mauris non ligula pellentesque ultrices. Phasellus id sapien in sapien iaculis congue. Vivamus metus arcu, adipiscing molestie, hendrerit at, vulputate vitae, nisl.
+
+Aenean lectus. Pellentesque eget nunc. Donec quis orci eget orci vehicula condimentum.",true,true,true,asset,true,Open-architected
+Outdoor Accessories,#d80813,"Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla. Nunc purus.",false,true,false,license,false,access
+Prepared Poultry,#a65b91,,true,true,true,accessory,true,Virtual
+Decorative Wall Art & Accessories,#59b934,"Curabitur in libero ut massa volutpat convallis. Morbi odio odio, elementum eu, interdum eu, tincidunt in, leo. Maecenas pulvinar lobortis est.
+
+Phasellus sit amet erat. Nulla tempus. Vivamus in felis eu sapien cursus vestibulum.",false,true,true,consumable,true,workforce
+Garden Tools,,,false,false,true,accessory,true,Monitored
+Baking Ingredients,#e9c09a,,true,true,false,consumable,false,initiative
+Outdoor Accessories,#e8df81,,true,true,false,license,true,dynamic
+Savory Snacks,#039108,,true,false,true,accessory,false,algorithm
+Dressing,#6f72bd,,true,false,false,accessory,true,Grass-roots
+Processed Meats,#c9772e,,false,true,false,asset,true,even-keeled
+Cooking Tools & Utensils,#ad3d08,"Curabitur in libero ut massa volutpat convallis. Morbi odio odio, elementum eu, interdum eu, tincidunt in, leo. Maecenas pulvinar lobortis est.
+
+Phasellus sit amet erat. Nulla tempus. Vivamus in felis eu sapien cursus vestibulum.
+
+Proin eu mi. Nulla ac enim. In tempor, turpis nec euismod scelerisque, quam turpis adipiscing lorem, vitae mattis nibh ligula nec sem.",true,true,false,component,false,reciprocal
+Plant-Based Meats,#fb9d5b,"Proin interdum mauris non ligula pellentesque ultrices. Phasellus id sapien in sapien iaculis congue. Vivamus metus arcu, adipiscing molestie, hendrerit at, vulputate vitae, nisl.",true,false,true,component,false,architecture
+Grooming Supplies,#dc47f3,,true,true,true,accessory,true,strategy
+Furniture,#d3ef3b,Aliquam quis turpis eget elit sodales scelerisque. Mauris sit amet eros. Suspendisse accumsan tortor quis turpis.,true,false,false,consumable,false,motivating
+Plant-Based Proteins,#56dc37,Phasellus in felis. Donec semper sapien a libero. Nam dui.,false,false,true,license,false,object-oriented
+Food Preparation Tools,#c8b504,In hac habitasse platea dictumst. Etiam faucibus cursus urna. Ut tellus.,true,false,true,license,true,client-driven
+Swimwear Accessories,#0f19f2,,true,false,true,license,false,Pre-emptive
+Smart Home & Security,#40fda3,"Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus vestibulum sagittis sapien. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+
+Etiam vel augue. Vestibulum rutrum rutrum neque. Aenean auctor gravida sem.
+
+Praesent id massa id nisl venenatis lacinia. Aenean sit amet justo. Morbi ut odio.",false,false,true,accessory,true,circuit
+Formal Pants,#ae8195,,false,false,true,asset,true,website
+Craft Kits,#a7ec9b,,false,false,false,accessory,true,implementation
+Training Supplies,#915697,"Duis bibendum, felis sed interdum venenatis, turpis enim blandit mi, in porttitor pede justo eu massa. Donec dapibus. Duis at velit eu est congue elementum.",false,true,true,consumable,false,infrastructure
+Mobile Accessories,#f06c38,"Morbi non lectus. Aliquam sit amet diam in magna bibendum imperdiet. Nullam orci pede, venenatis non, sodales sed, tincidunt eu, felis.
+
+Fusce posuere felis sed lacus. Morbi sem mauris, laoreet ut, rhoncus aliquet, pulvinar sed, nisl. Nunc rhoncus dui vel sem.",true,true,true,component,true,Sharable
+Herbal Tea,#d3ff68,,false,false,false,consumable,true,24/7
+Pickles,#800371,,false,false,false,asset,false,national
+Camping Equipment,,Integer tincidunt ante vel ipsum. Praesent blandit lacinia erat. Vestibulum sed magna at nunc commodo placerat.,false,false,true,component,true,local area network
+Pork,#8cdb70,,false,true,true,consumable,true,regional
+Fruit Spreads,#4d12fb,"Proin eu mi. Nulla ac enim. In tempor, turpis nec euismod scelerisque, quam turpis adipiscing lorem, vitae mattis nibh ligula nec sem.
+
+Duis aliquam convallis nunc. Proin at turpis a pede posuere nonummy. Integer non velit.
+
+Donec diam neque, vestibulum eget, vulputate ut, ultrices vel, augue. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec pharetra, magna vestibulum aliquet ultrices, erat tortor sollicitudin mi, sit amet lobortis sapien sapien non mi. Integer ac neque.",false,false,false,asset,true,client-driven
+Savory Snacks,#2b1144,,false,false,true,accessory,false,Reverse-engineered
+Salads,#65fd66,,false,false,true,license,true,Inverse
+Oral Care & Hygiene,#ded584,,false,true,false,consumable,true,Secured
+Instant Breakfast,#b4d95b,,true,false,false,license,true,Realigned
+Garden Tools,#958366,"Fusce posuere felis sed lacus. Morbi sem mauris, laoreet ut, rhoncus aliquet, pulvinar sed, nisl. Nunc rhoncus dui vel sem.
+
+Sed sagittis. Nam congue, risus semper porta volutpat, quam pede lobortis ligula, sit amet eleifend pede libero quis orci. Nullam molestie nibh in lectus.",true,false,false,consumable,true,leverage
+Mustards,#cc5aec,,false,false,false,license,false,fresh-thinking
+Yoga Equipment,#ff48c2,,false,false,true,license,false,Integrated
+Breakfast Meats,,,true,false,true,consumable,false,systemic
+Frozen Vegetables,#bce376,"Duis bibendum. Morbi non quam nec dui luctus rutrum. Nulla tellus.
+
+In sagittis dui vel nisl. Duis ac nibh. Fusce lacus purus, aliquet at, feugiat non, pretium quis, lectus.",true,true,false,consumable,true,workforce
+Cheese,#32aca2,"In hac habitasse platea dictumst. Morbi vestibulum, velit id pretium iaculis, diam erat fermentum justo, nec condimentum neque sapien placerat ante. Nulla justo.
+
+Aliquam quis turpis eget elit sodales scelerisque. Mauris sit amet eros. Suspendisse accumsan tortor quis turpis.
+
+Sed ante. Vivamus tortor. Duis mattis egestas metus.",false,false,false,accessory,false,6th generation
+Frozen Desserts,#0ebcab,,true,false,true,accessory,true,Focused
+Specialty Soups,#eeb50d,"Proin eu mi. Nulla ac enim. In tempor, turpis nec euismod scelerisque, quam turpis adipiscing lorem, vitae mattis nibh ligula nec sem.
+
+Duis aliquam convallis nunc. Proin at turpis a pede posuere nonummy. Integer non velit.
+
+Donec diam neque, vestibulum eget, vulputate ut, ultrices vel, augue. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec pharetra, magna vestibulum aliquet ultrices, erat tortor sollicitudin mi, sit amet lobortis sapien sapien non mi. Integer ac neque.",false,true,false,consumable,false,interactive
+Small Appliances,#ccabca,"Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus vestibulum sagittis sapien. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",false,true,false,asset,true,optimal
+Rubs and Seasonings,#e7ce66,Etiam vel augue. Vestibulum rutrum rutrum neque. Aenean auctor gravida sem.,false,false,false,accessory,false,Programmable
+Vegetables,#809f37,"Proin interdum mauris non ligula pellentesque ultrices. Phasellus id sapien in sapien iaculis congue. Vivamus metus arcu, adipiscing molestie, hendrerit at, vulputate vitae, nisl.",true,true,false,consumable,true,Graphic Interface
+Canned Soups,#009f5a,,true,false,true,asset,false,Seamless
+Nut-Based Snacks,#7dda7d,"Curabitur gravida nisi at nibh. In hac habitasse platea dictumst. Aliquam augue quam, sollicitudin vitae, consectetuer eget, rutrum at, lorem.
+
+Integer tincidunt ante vel ipsum. Praesent blandit lacinia erat. Vestibulum sed magna at nunc commodo placerat.",false,true,false,asset,true,incremental
+Mixes,#1e6fff,"Integer ac leo. Pellentesque ultrices mattis odio. Donec vitae nisi.
+
+Nam ultrices, libero non mattis pulvinar, nulla pede ullamcorper augue, a suscipit nulla elit ac nulla. Sed vel enim sit amet nunc viverra dapibus. Nulla suscipit ligula in lacus.",true,false,false,accessory,true,time-frame
+Canned Vegetables,#8add3e,,true,false,false,consumable,false,Distributed
+Savory Snacks,#1d6e4b,"Nullam porttitor lacus at turpis. Donec posuere metus vitae ipsum. Aliquam non mauris.
+
+Morbi non lectus. Aliquam sit amet diam in magna bibendum imperdiet. Nullam orci pede, venenatis non, sodales sed, tincidunt eu, felis.",false,true,true,accessory,true,Virtual
+Audio Equipment,#abd448,,false,false,true,consumable,false,open architecture
+Lighting & Lamps,#460460,"Nam ultrices, libero non mattis pulvinar, nulla pede ullamcorper augue, a suscipit nulla elit ac nulla. Sed vel enim sit amet nunc viverra dapibus. Nulla suscipit ligula in lacus.",false,true,true,component,true,24 hour
+Ethnic Sauces,#06f89f,"Morbi porttitor lorem id ligula. Suspendisse ornare consequat lectus. In est risus, auctor sed, tristique in, tempus sit amet, sem.
+
+Fusce consequat. Nulla nisl. Nunc nisl.",false,false,true,accessory,false,Synergized
+Granola & Muesli,#af06f6,"Quisque id justo sit amet sapien dignissim vestibulum. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nulla dapibus dolor vel est. Donec odio justo, sollicitudin ut, suscipit a, feugiat et, eros.",false,false,true,asset,false,Proactive
+Frozen Meals,#cadc55,"Nullam sit amet turpis elementum ligula vehicula consequat. Morbi a ipsum. Integer a nibh.
+
+In quis justo. Maecenas rhoncus aliquam lacus. Morbi quis tortor id nulla ultrices aliquet.",true,true,false,asset,true,standardization
+Oils,#bde60d,Duis bibendum. Morbi non quam nec dui luctus rutrum. Nulla tellus.,true,true,false,asset,true,Synchronised
+Small Appliances,#761ef3,,false,false,true,component,false,human-resource
+Nuts and Seeds,#9a10fb,,false,true,false,accessory,false,help-desk
+Jerky,#af093c,"Duis bibendum, felis sed interdum venenatis, turpis enim blandit mi, in porttitor pede justo eu massa. Donec dapibus. Duis at velit eu est congue elementum.
+
+In hac habitasse platea dictumst. Morbi vestibulum, velit id pretium iaculis, diam erat fermentum justo, nec condimentum neque sapien placerat ante. Nulla justo.",false,true,false,accessory,true,projection
+Vegetable Dips,#294697,,false,true,true,accessory,true,hub
+Yogurt,#7c6203,,false,false,false,asset,true,Cross-platform
+Garden Decor,#b69e9f,,false,false,false,accessory,false,architecture
+Frozen Snacks,#418141,"Etiam vel augue. Vestibulum rutrum rutrum neque. Aenean auctor gravida sem.
+
+Praesent id massa id nisl venenatis lacinia. Aenean sit amet justo. Morbi ut odio.",false,false,false,license,true,grid-enabled
+Specialty Pasta,#48d512,,true,false,true,asset,false,Horizontal
+Car Interior Accessories,#2e387f,,true,true,false,license,true,Diverse
+Juice,#3b74c8,"Proin leo odio, porttitor id, consequat in, consequat ut, nulla. Sed accumsan felis. Ut at dolor quis odio consequat varius.
+
+Integer ac leo. Pellentesque ultrices mattis odio. Donec vitae nisi.",false,false,true,license,true,high-level
+Canned Fruits,#0a08ba,,false,true,false,component,false,Upgradable
+Herbal Tea,#abbe13,,false,true,false,consumable,true,empowering
+Frozen Smoothies,#329f9b,"Cras non velit nec nisi vulputate nonummy. Maecenas tincidunt lacus at velit. Vivamus vel nulla eget eros elementum pellentesque.
+
+Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla. Nunc purus.
+
+Phasellus in felis. Donec semper sapien a libero. Nam dui.",true,true,true,accessory,false,forecast
+Prepared Seafood,#626445,"Proin interdum mauris non ligula pellentesque ultrices. Phasellus id sapien in sapien iaculis congue. Vivamus metus arcu, adipiscing molestie, hendrerit at, vulputate vitae, nisl.
+
+Aenean lectus. Pellentesque eget nunc. Donec quis orci eget orci vehicula condimentum.",true,true,false,consumable,true,Monitored
+Baking Accessories,#cf957c,,true,true,false,component,true,complexity
+Boots,#a2e2d3,,false,false,false,component,false,Operative
+Pet Supplies,#dd417f,,false,false,false,consumable,false,multi-state
+Jewelry Storage,#cdc6f8,,false,true,false,license,true,Future-proofed
+Tortilla Chips,#2deb83,,false,false,false,asset,false,customer loyalty
+Bedding & Linens,#8f7011,,false,false,true,component,false,attitude-oriented
+Frozen Fruits,#9c48e0,"Duis bibendum. Morbi non quam nec dui luctus rutrum. Nulla tellus.
+
+In sagittis dui vel nisl. Duis ac nibh. Fusce lacus purus, aliquet at, feugiat non, pretium quis, lectus.",true,false,true,accessory,true,Secured
+Cardio Equipment,#8ec206,"Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Proin risus. Praesent lectus.",false,true,true,component,true,neutral
+Canned Fruits,#7d828c,"Vestibulum ac est lacinia nisi venenatis tristique. Fusce congue, diam id ornare imperdiet, sapien urna pretium nisl, ut volutpat sapien arcu sed augue. Aliquam erat volutpat.
+
+In congue. Etiam justo. Etiam pretium iaculis justo.
+
+In hac habitasse platea dictumst. Etiam faucibus cursus urna. Ut tellus.",true,true,false,asset,true,Customer-focused
+Game Accessories,#465024,"Duis bibendum. Morbi non quam nec dui luctus rutrum. Nulla tellus.
+
+In sagittis dui vel nisl. Duis ac nibh. Fusce lacus purus, aliquet at, feugiat non, pretium quis, lectus.",false,false,true,accessory,false,Phased
+Mixes,#36ee8c,"Maecenas tristique, est et tempus semper, est quam pharetra magna, ac consequat metus sapien ut nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris viverra diam vitae quam. Suspendisse potenti.",false,false,false,component,false,Devolved
+Outdoor Accessories,#53c1a6,,true,false,true,asset,false,migration
+Strength Training Equipment,,"Maecenas tristique, est et tempus semper, est quam pharetra magna, ac consequat metus sapien ut nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris viverra diam vitae quam. Suspendisse potenti.",true,true,false,consumable,false,policy
+Pet Safety Gear,#9fd662,,true,false,true,license,false,hybrid
+Small Appliances,#a15ae6,,false,true,true,asset,false,Cross-group
+Poultry,#bcfa92,,true,false,false,asset,false,De-engineered
+Sweet Snacks,#e278e8,,true,true,true,consumable,true,firmware
+Cheese,,"Maecenas tristique, est et tempus semper, est quam pharetra magna, ac consequat metus sapien ut nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris viverra diam vitae quam. Suspendisse potenti.
+
+Nullam porttitor lacus at turpis. Donec posuere metus vitae ipsum. Aliquam non mauris.",true,false,true,component,false,Multi-tiered
+Travel Accessories,#a8c492,,true,true,false,component,false,interface
+Outdoor Recreation,,Duis consequat dui nec nisi volutpat eleifend. Donec ut dolor. Morbi vel lectus in quam fringilla rhoncus.,false,false,true,asset,true,superstructure
+Muffins,#283fd6,,true,false,false,asset,false,Cross-platform
+Canned Legumes,#45e78d,,false,false,true,accessory,true,Progressive
+Smart Security,,Sed ante. Vivamus tortor. Duis mattis egestas metus.,false,false,false,component,true,knowledge user
+Bathrobes,#961cf4,,false,true,false,consumable,false,customer loyalty
+Lighting & Lamps,#8bea28,,true,true,false,license,true,Right-sized
+Home Appliances,#2d1503,"In quis justo. Maecenas rhoncus aliquam lacus. Morbi quis tortor id nulla ultrices aliquet.
+
+Maecenas leo odio, condimentum id, luctus nec, molestie sed, justo. Pellentesque viverra pede ac diam. Cras pellentesque volutpat dui.",false,true,true,asset,false,mission-critical
+Sustainable Tableware,#211bb9,,true,true,false,asset,false,uniform
+Savory Snacks,#a34349,Duis bibendum. Morbi non quam nec dui luctus rutrum. Nulla tellus.,true,true,true,accessory,false,Function-based
+Pet Accessories,#73c43a,"Sed sagittis. Nam congue, risus semper porta volutpat, quam pede lobortis ligula, sit amet eleifend pede libero quis orci. Nullam molestie nibh in lectus.
+
+Pellentesque at nulla. Suspendisse potenti. Cras in purus eu magna vulputate luctus.
+
+Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus vestibulum sagittis sapien. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",false,false,true,license,true,Proactive
+Oils,#a540d2,"Proin eu mi. Nulla ac enim. In tempor, turpis nec euismod scelerisque, quam turpis adipiscing lorem, vitae mattis nibh ligula nec sem.
+
+Duis aliquam convallis nunc. Proin at turpis a pede posuere nonummy. Integer non velit.
+
+Donec diam neque, vestibulum eget, vulputate ut, ultrices vel, augue. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec pharetra, magna vestibulum aliquet ultrices, erat tortor sollicitudin mi, sit amet lobortis sapien sapien non mi. Integer ac neque.",true,true,false,consumable,false,multi-tasking
+Cuisine - Asian,#988e8e,,true,true,false,accessory,false,Fully-configurable
+Coffee Equipment,#fdf04b,,false,false,false,asset,true,middleware
+Pet Safety Gear,#f08f88,,false,false,false,license,false,architecture
+Sauces,#5cc017,,true,true,false,asset,true,clear-thinking
+Frozen Vegetarian Meals,,,false,false,true,license,false,methodical
+Salt & Seasoning,,"Mauris enim leo, rhoncus sed, vestibulum sit amet, cursus id, turpis. Integer aliquet, massa id lobortis convallis, tortor risus dapibus augue, vel accumsan tellus nisi eu orci. Mauris lacinia sapien quis libero.
+
+Nullam sit amet turpis elementum ligula vehicula consequat. Morbi a ipsum. Integer a nibh.",false,false,false,asset,true,throughput
+Smart Lighting,#fac06d,"Curabitur in libero ut massa volutpat convallis. Morbi odio odio, elementum eu, interdum eu, tincidunt in, leo. Maecenas pulvinar lobortis est.",true,false,false,accessory,true,initiative
+Headwear,#9a9c01,,true,true,false,accessory,true,attitude-oriented
+Beverage Appliances,#3ed8b6,,true,true,false,accessory,false,Triple-buffered
+Office Accessories,#f2c5ae,"Cras mi pede, malesuada in, imperdiet et, commodo vulputate, justo. In blandit ultrices enim. Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+
+Proin interdum mauris non ligula pellentesque ultrices. Phasellus id sapien in sapien iaculis congue. Vivamus metus arcu, adipiscing molestie, hendrerit at, vulputate vitae, nisl.
+
+Aenean lectus. Pellentesque eget nunc. Donec quis orci eget orci vehicula condimentum.",true,false,true,asset,true,info-mediaries
+Swimwear Accessories,#530a2f,"Aenean lectus. Pellentesque eget nunc. Donec quis orci eget orci vehicula condimentum.
+
+Curabitur in libero ut massa volutpat convallis. Morbi odio odio, elementum eu, interdum eu, tincidunt in, leo. Maecenas pulvinar lobortis est.
+
+Phasellus sit amet erat. Nulla tempus. Vivamus in felis eu sapien cursus vestibulum.",true,true,true,consumable,false,next generation
+Sparkling Beverages,#e3a0b4,"Curabitur in libero ut massa volutpat convallis. Morbi odio odio, elementum eu, interdum eu, tincidunt in, leo. Maecenas pulvinar lobortis est.",false,true,false,component,true,Pre-emptive
+Gourmet Snacks,#1b622c,"Praesent blandit. Nam nulla. Integer pede justo, lacinia eget, tincidunt eget, tempus vel, pede.",true,false,false,consumable,true,protocol
+Outdoor Accessories,#74b1e4,"In sagittis dui vel nisl. Duis ac nibh. Fusce lacus purus, aliquet at, feugiat non, pretium quis, lectus.
+
+Suspendisse potenti. In eleifend quam a odio. In hac habitasse platea dictumst.
+
+Maecenas ut massa quis augue luctus tincidunt. Nulla mollis molestie lorem. Quisque ut erat.",false,false,false,asset,true,Graphic Interface
+Home Organization,#01d6da,,true,true,false,accessory,false,eco-centric
+T-shirts,#955d66,,false,true,true,license,false,discrete
+Eco-Friendly Home Products,#d508e8,"Cras mi pede, malesuada in, imperdiet et, commodo vulputate, justo. In blandit ultrices enim. Lorem ipsum dolor sit amet, consectetuer adipiscing elit.",true,true,false,asset,false,mobile
+Granola/Cereal,,,false,true,true,consumable,false,Synergized
+Game Accessories,#75122c,"Duis bibendum. Morbi non quam nec dui luctus rutrum. Nulla tellus.
+
+In sagittis dui vel nisl. Duis ac nibh. Fusce lacus purus, aliquet at, feugiat non, pretium quis, lectus.
+
+Suspendisse potenti. In eleifend quam a odio. In hac habitasse platea dictumst.",false,false,false,consumable,false,Progressive
+Flours & Meals,#ea1054,"Duis consequat dui nec nisi volutpat eleifend. Donec ut dolor. Morbi vel lectus in quam fringilla rhoncus.
+
+Mauris enim leo, rhoncus sed, vestibulum sit amet, cursus id, turpis. Integer aliquet, massa id lobortis convallis, tortor risus dapibus augue, vel accumsan tellus nisi eu orci. Mauris lacinia sapien quis libero.",false,false,true,asset,true,middleware
+Meat Snacks,#054e67,,false,false,true,accessory,false,bandwidth-monitored
+Nuts and Seeds,#738a08,,false,true,false,consumable,false,Organic
+Savory Breakfast Options,,,true,true,false,accessory,false,regional
+Fruit Spreads,#debcfc,,true,false,false,consumable,false,Future-proofed
+Food Storage Solutions,#f24750,"Proin interdum mauris non ligula pellentesque ultrices. Phasellus id sapien in sapien iaculis congue. Vivamus metus arcu, adipiscing molestie, hendrerit at, vulputate vitae, nisl.
+
+Aenean lectus. Pellentesque eget nunc. Donec quis orci eget orci vehicula condimentum.
+
+Curabitur in libero ut massa volutpat convallis. Morbi odio odio, elementum eu, interdum eu, tincidunt in, leo. Maecenas pulvinar lobortis est.",false,false,false,consumable,false,encryption
+Coffee Equipment,#a5c0a3,,true,true,true,license,true,pricing structure
+Seafood,#0ed7b7,,true,false,true,component,false,upward-trending
+Sauces & Condiments,#306da6,"Duis aliquam convallis nunc. Proin at turpis a pede posuere nonummy. Integer non velit.
+
+Donec diam neque, vestibulum eget, vulputate ut, ultrices vel, augue. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec pharetra, magna vestibulum aliquet ultrices, erat tortor sollicitudin mi, sit amet lobortis sapien sapien non mi. Integer ac neque.",false,true,false,component,true,actuating
+Grooming Supplies,#61bde3,,false,false,false,consumable,true,demand-driven
+Scarves,#1e9cdc,"Maecenas tristique, est et tempus semper, est quam pharetra magna, ac consequat metus sapien ut nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris viverra diam vitae quam. Suspendisse potenti.
+
+Nullam porttitor lacus at turpis. Donec posuere metus vitae ipsum. Aliquam non mauris.
+
+Morbi non lectus. Aliquam sit amet diam in magna bibendum imperdiet. Nullam orci pede, venenatis non, sodales sed, tincidunt eu, felis.",true,false,true,accessory,false,task-force
+Injury Prevention & Recovery,#eae502,"Etiam vel augue. Vestibulum rutrum rutrum neque. Aenean auctor gravida sem.
+
+Praesent id massa id nisl venenatis lacinia. Aenean sit amet justo. Morbi ut odio.",true,true,false,accessory,false,global
+Pain Relief,#563c23,Nullam sit amet turpis elementum ligula vehicula consequat. Morbi a ipsum. Integer a nibh.,false,true,true,license,true,local area network
+Camping Equipment,#d82fab,,false,false,true,license,false,contingency
+Outdoor Recreation,#1e277b,,true,true,false,asset,true,attitude-oriented
+Vinaigrettes,,"In sagittis dui vel nisl. Duis ac nibh. Fusce lacus purus, aliquet at, feugiat non, pretium quis, lectus.
+
+Suspendisse potenti. In eleifend quam a odio. In hac habitasse platea dictumst.
+
+Maecenas ut massa quis augue luctus tincidunt. Nulla mollis molestie lorem. Quisque ut erat.",true,true,true,license,true,extranet
+Casual Pants,#da928b,,true,true,true,consumable,true,flexibility
+Cat Care,#e68791,,false,false,true,consumable,true,Sharable
+Herbal Butters,#d32310,,true,true,false,accessory,false,Managed
+Mobile Accessories,#a5e6c2,"Pellentesque at nulla. Suspendisse potenti. Cras in purus eu magna vulputate luctus.
+
+Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus vestibulum sagittis sapien. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",true,true,true,accessory,false,executive
+Marinades and Sauces,#8e62fa,Cras non velit nec nisi vulputate nonummy. Maecenas tincidunt lacus at velit. Vivamus vel nulla eget eros elementum pellentesque.,false,false,true,component,false,Automated
+Tripods & Accessories,,,true,false,true,license,false,homogeneous
+Candle & Soap Making Supplies,#ffabf9,"Nullam porttitor lacus at turpis. Donec posuere metus vitae ipsum. Aliquam non mauris.
+
+Morbi non lectus. Aliquam sit amet diam in magna bibendum imperdiet. Nullam orci pede, venenatis non, sodales sed, tincidunt eu, felis.
+
+Fusce posuere felis sed lacus. Morbi sem mauris, laoreet ut, rhoncus aliquet, pulvinar sed, nisl. Nunc rhoncus dui vel sem.",false,false,false,asset,true,content-based
+Gardening Accessories,#c9e3c8,"Duis bibendum, felis sed interdum venenatis, turpis enim blandit mi, in porttitor pede justo eu massa. Donec dapibus. Duis at velit eu est congue elementum.
+
+In hac habitasse platea dictumst. Morbi vestibulum, velit id pretium iaculis, diam erat fermentum justo, nec condimentum neque sapien placerat ante. Nulla justo.
+
+Aliquam quis turpis eget elit sodales scelerisque. Mauris sit amet eros. Suspendisse accumsan tortor quis turpis.",true,false,true,accessory,false,exuding

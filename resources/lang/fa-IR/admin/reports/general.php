@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'info'   => 'گزینه ای را که برای گزارش دارایی خود میخواهید انتخاب کنید .',
+    'info' => 'گزینه ای را که برای گزارش دارایی خود میخواهید انتخاب کنید .',
     'deleted_user' => 'حذف کاربر',
     'send_reminder' => 'ارسال يادآوری',
     'cannot_send_reminder' => 'User has been deleted or does not have an email address so cannot receive a reminder',
@@ -12,14 +12,20 @@ return [
     'acceptance_request' => 'قبول درخواست',
     'custom_export' => [
         'user_address' => 'آدرس کاربر',
+        'user_company' => 'User Company',
         'user_city' => 'شهر کاربر',
         'user_state' => 'وضعیت کاربر',
         'user_country' => 'کشوور کاربر',
-        'user_zip' => 'کد پستی کاربر'
+        'user_zip' => 'کد پستی کاربر',
+        'target_notes' => 'نت ها',
     ],
     'open_saved_template' => 'باز کردن قالب ذخیره شده',
-    'save_template' =>  'ذخیره‌ قالب',
+    'save_template' => 'ذخیره‌ قالب',
     'select_a_template' => 'انتخاب قالب',
     'template_name' => 'نام قالب',
     'update_template' => 'به روز رسانی قالب',
+    'share_template' => 'Share This Template',
+    'template_shared' => 'Template shared with you',
+    'template_shared_with_others' => 'Template shared with others',
+    'template_not_shared' => 'Template not shared with others',
 ];

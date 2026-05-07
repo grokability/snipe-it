@@ -7,7 +7,7 @@ use Tests\TestCase;
 
 class LoginTest extends TestCase
 {
-    public function testLogsFailedLoginAttempt()
+    public function test_logs_failed_login_attempt()
     {
 
         User::factory()->create(['username' => 'username_here']);
@@ -28,17 +28,16 @@ class LoginTest extends TestCase
         ]);
     }
 
-
-    public function testLoginThrottleConfigIsRespected()
+    public function test_login_throttle_config_is_respected()
     {
 
-       $this->markTestIncomplete("This test is flaky and needs to be fixed. Passes and fails seemingly at random.");
-       User::factory()->create(['username' => 'username_here']);
+        $this->markTestIncomplete('This test is flaky and needs to be fixed. Passes and fails seemingly at random.');
+        User::factory()->create(['username' => 'username_here']);
 
-       config(['auth.passwords.users.throttle.max_attempts' => 1]);
-       config(['auth.passwords.users.throttle.lockout_duration' => 1]);
+        config(['auth.passwords.users.throttle.max_attempts' => 1]);
+        config(['auth.passwords.users.throttle.lockout_duration' => 1]);
 
-        for ($i = 0; $i < 2; ++$i) {
+        for ($i = 0; $i < 2; $i++) {
             $this->from('/login')
                 ->withServerVariables(['REMOTE_ADDR' => '127.0.0.100'])
                 ->post('/login', [
@@ -46,7 +45,6 @@ class LoginTest extends TestCase
                     'password' => 'invalid password',
                 ]);
         }
-
 
         $response = $this->from('/login')
             ->withServerVariables(['REMOTE_ADDR' => '127.0.0.100'])
@@ -61,9 +59,9 @@ class LoginTest extends TestCase
         $this->followRedirects($response)->assertSee(trans('auth.throttle', ['minutes' => 1]));
     }
 
-    public function testLogsSuccessfulLogin()
+    public function test_logs_successful_login()
     {
-        $this->markTestIncomplete("This test is flaky and needs to be fixed. Passes and fails seemingly at random.");
+        $this->markTestIncomplete('This test is flaky and needs to be fixed. Passes and fails seemingly at random.');
         User::factory()->create(['username' => 'username_here']);
 
         $this->withServerVariables(['REMOTE_ADDR' => '127.0.0.100'])

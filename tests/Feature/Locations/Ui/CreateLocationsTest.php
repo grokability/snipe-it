@@ -2,31 +2,31 @@
 
 namespace Tests\Feature\Locations\Ui;
 
-use App\Models\Location;
 use App\Models\Company;
+use App\Models\Location;
 use App\Models\User;
 use Tests\TestCase;
 
 class CreateLocationsTest extends TestCase
 {
-    public function testPermissionRequiredToCreateLocation()
+    public function test_permission_required_to_create_location()
     {
         $this->actingAs(User::factory()->create())
             ->post(route('locations.store'), [
                 'name' => 'Test Location',
-                'company_id' => Company::factory()->create()->id
+                'company_id' => Company::factory()->create()->id,
             ])
             ->assertForbidden();
     }
 
-    public function testPageRenders()
+    public function test_page_renders()
     {
         $this->actingAs(User::factory()->superuser()->create())
             ->get(route('locations.create'))
             ->assertOk();
     }
 
-    public function testUserCanCreateLocations()
+    public function test_user_can_create_locations()
     {
         $this->assertFalse(Location::where('name', 'Test Location')->exists());
 
@@ -40,7 +40,7 @@ class CreateLocationsTest extends TestCase
         $this->assertTrue(Location::where('name', 'Test Location')->where('notes', 'Test Note')->exists());
     }
 
-    public function testUserCannotCreateLocationsWithInvalidParent()
+    public function test_user_cannot_create_locations_with_invalid_parent()
     {
         $this->assertFalse(Location::where('name', 'Test Location')->exists());
 
@@ -48,11 +48,10 @@ class CreateLocationsTest extends TestCase
             ->from(route('locations.create'))
             ->post(route('locations.store'), [
                 'name' => 'Test Location',
-                'parent_id' => '100000000'
+                'parent_id' => '100000000',
             ])
             ->assertRedirect(route('locations.create'));
 
         $this->assertFalse(Location::where('name', 'Test Location')->exists());
     }
-
 }

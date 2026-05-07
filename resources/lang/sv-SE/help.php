@@ -23,13 +23,13 @@ return [
 
     'accessories' => 'Tillbehör är sådant som tilldelas användare men som inte har något unikt serienummer (eller inte kräver att de registreras som en unik enhet). Till exempel datormöss eller tangentbord.',
 
-    'companies'     => 'Företag kan användas som ett enkelt identifieringsfält eller för att begränsa synligheten av tillgångar, användare osv. under förutsättning att fullständigt företagsstöd är aktiverat i dina administratörsinställningar.',
+    'companies' => 'Företag kan användas som ett enkelt identifieringsfält eller för att begränsa synligheten av tillgångar, användare osv. under förutsättning att fullständigt företagsstöd är aktiverat i dina administratörsinställningar.',
 
-    'components'    => 'Komponenter är objekt som ingår i en tillgång, till exempel HDD, RAM, osv.',
+    'components' => 'Komponenter är objekt som ingår i en tillgång, till exempel HDD, RAM, osv.',
 
-    'consumables'   => 'Förbrukningsvaror är allt som köps som kommer att användas och förbrukas över tid, t.ex. skrivarbläck eller kopieringspapper.',
+    'consumables' => 'Förbrukningsvaror är allt som köps som kommer att användas och förbrukas över tid, t.ex. skrivarbläck eller kopieringspapper.',
 
     'depreciations' => 'Du kan ställa in värdeminskningar för att avskriva tillgångar baserat på linjär värdeminskning.',
-    
-    'empty_file'    => 'Importeringsverktyget har upptäckt att denna fil är tom.'
+
+    'empty_file' => 'Importeringsverktyget har upptäckt att denna fil är tom.',
 ];

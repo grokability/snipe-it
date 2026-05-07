@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Actions\Suppliers\DestroySupplierAction;
 use App\Exceptions\ItemStillHasAccessories;
+use App\Exceptions\ItemStillHasAssets;
 use App\Exceptions\ItemStillHasComponents;
 use App\Exceptions\ItemStillHasConsumables;
-use App\Exceptions\ItemStillHasMaintenances;
-use App\Exceptions\ItemStillHasAssets;
 use App\Exceptions\ItemStillHasLicenses;
+use App\Exceptions\ItemStillHasMaintenances;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 
@@ -25,6 +25,7 @@ class BulkSuppliersController extends Controller
             $supplier = Supplier::find($id);
             if (is_null($supplier)) {
                 $errors[] = trans('admin/suppliers/message.delete.not_found');
+
                 continue;
             }
             try {
@@ -50,6 +51,7 @@ class BulkSuppliersController extends Controller
             if ($success_count > 0) {
                 return redirect()->route('suppliers.index')->with('success', trans_choice('admin/suppliers/message.delete.partial_success', $success_count, ['count' => $success_count]))->with('multi_error_messages', $errors);
             }
+
             return redirect()->route('suppliers.index')->with('multi_error_messages', $errors);
         } else {
             return redirect()->route('suppliers.index')->with('success', trans('admin/suppliers/message.delete.bulk_success'));

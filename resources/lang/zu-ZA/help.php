@@ -23,13 +23,13 @@ return [
 
     'accessories' => 'Izesekeli yilokho okukhipha kubasebenzisi kodwa ezingenayo inombolo ye-serial (noma awunandaba nokulandelela ngokuhlukile). Isibonelo, amagundane wekhompiyutha noma amakhibhodi.',
 
-    'companies'     => 'Izinkampani zingasetshenziswa njengensimu yokuhlonza elula, noma ingasetshenziselwa ukunciphisa ukubonakala kwamafa, abasebenzisi, njll uma ukusekelwa okugcwele kwenkampani kunikwe amandla kuzilungiselelo zakho zoMlawuli.',
+    'companies' => 'Izinkampani zingasetshenziswa njengensimu yokuhlonza elula, noma ingasetshenziselwa ukunciphisa ukubonakala kwamafa, abasebenzisi, njll uma ukusekelwa okugcwele kwenkampani kunikwe amandla kuzilungiselelo zakho zoMlawuli.',
 
-    'components'    => 'Izingxenye kukhona izinto eziyingxenye yefa, isibonelo i-HDD, i-RAM, njll.',
+    'components' => 'Izingxenye kukhona izinto eziyingxenye yefa, isibonelo i-HDD, i-RAM, njll.',
 
-    'consumables'   => 'Amakhomikhali ayithengiwe azosetshenziswa ngaphezulu kwesikhathi. Isibonelo, iphepha lephrinta noma iphepha lokukopisha.',
+    'consumables' => 'Amakhomikhali ayithengiwe azosetshenziswa ngaphezulu kwesikhathi. Isibonelo, iphepha lephrinta noma iphepha lokukopisha.',
 
     'depreciations' => 'Ungasetha ukwehla kwefa ukuze wehlise izimpahla ezisuselwe ekunciphiseni komugqa oqondile.',
-    
-    'empty_file'    => 'The importer detects that this file is empty.'
+
+    'empty_file' => 'The importer detects that this file is empty.',
 ];

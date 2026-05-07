@@ -2,69 +2,82 @@
 
 namespace App\Models\Labels\Sheets\Avery;
 
-
 class _5520_B extends _5520
 {
-    private const BARCODE_SIZE   =   0.20;
-    private const BARCODE_MARGIN =   1.40;
-    private const TAG_SIZE       =   0.125;
-    private const TITLE_SIZE     =   0.140;
-    private const TITLE_MARGIN   =   0.025;
-    private const LABEL_SIZE     =   0.090;
-    private const LABEL_MARGIN   =  -0.015;
-    private const FIELD_SIZE     =   0.150;
-    private const FIELD_MARGIN   =   0.012;
+    private const BARCODE_SIZE = 0.20;
+
+    private const BARCODE_MARGIN = 1.40;
+
+    private const TAG_SIZE = 0.125;
+
+    private const TITLE_SIZE = 0.140;
+
+    private const TITLE_MARGIN = 0.025;
+
+    private const LABEL_SIZE = 0.090;
+
+    private const LABEL_MARGIN = -0.015;
+
+    private const FIELD_SIZE = 0.150;
+
+    private const FIELD_MARGIN = 0.012;
 
     public function getUnit()
     {
-        return 'in'; 
+        return 'in';
     }
 
     public function getLabelMarginTop()
     {
-        return 0.06; 
+        return 0.06;
     }
+
     public function getLabelMarginBottom()
     {
-        return 0.06; 
+        return 0.06;
     }
+
     public function getLabelMarginLeft()
     {
-        return 0.06; 
+        return 0.06;
     }
+
     public function getLabelMarginRight()
     {
-        return 0.06; 
+        return 0.06;
     }
 
     public function getSupportAssetTag()
     {
-        return false; 
-    }
-    public function getSupport1DBarcode()
-    {
-        return true; 
-    }
-    public function getSupport2DBarcode()
-    {
-        return false; 
-    }
-    public function getSupportFields()
-    {
-        return 2; 
-    }
-    public function getSupportLogo()
-    {
-        return false; 
-    }
-    public function getSupportTitle()
-    {
-        return true; 
+        return false;
     }
 
-    public function preparePDF($pdf)
+    public function getSupport1DBarcode()
     {
+        return true;
     }
+
+    public function getSupport2DBarcode()
+    {
+        return false;
+    }
+
+    public function getSupportFields()
+    {
+        return 2;
+    }
+
+    public function getSupportLogo()
+    {
+        return false;
+    }
+
+    public function getSupportTitle()
+    {
+        return true;
+    }
+
+    public function preparePDF($pdf) {}
 
     public function write($pdf, $record)
     {
@@ -89,7 +102,7 @@ class _5520_B extends _5520
         if ($record->has('barcode1d')) {
             static::write1DBarcode(
                 $pdf, $record->get('barcode1d')->content, $record->get('barcode1d')->type,
-                $pa->x1, $pa->y2 - self::BARCODE_SIZE, 
+                $pa->x1, $pa->y2 - self::BARCODE_SIZE,
                 $usableWidth, self::BARCODE_SIZE
             );
             $usableHeight -= self::BARCODE_SIZE + self::BARCODE_MARGIN;
@@ -115,6 +128,3 @@ class _5520_B extends _5520
 
     }
 }
-
-
-?>

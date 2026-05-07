@@ -1,16 +1,16 @@
 <?php
 
 return [
-    'about_templates' => 'About Saved Templates',
-    'saving_templates_description' => 'Select your options, then enter the name of your template in the box above and click the \'Save Template\' button. Use the dropdown to select a previously saved template.',
-    'create'  => [
-        'success' => 'Template saved successfully',
+    'about_templates' => 'Kayıtlı Şablonlar Hakkında',
+    'saving_templates_description' => 'Seçeneklerinizi belirleyin, ardından yukarıdaki kutuya şablonunuzun adını girin ve “Şablonu Kaydet” butonuna tıklayın. Önceden kaydedilmiş bir şablonu seçmek için açılır menüyü kullanın.',
+    'create' => [
+        'success' => 'Şablon başarıyla kaydedildi',
     ],
     'update' => [
-        'success' => 'Template updated successfully',
+        'success' => 'Şablon başarıyla güncellendi',
     ],
     'delete' => [
-        'success' => 'Template deleted',
-        'no_delete_permission' => 'Template does not exist or you do not have permission to delete it.',
+        'success' => 'Şablon silindi',
+        'no_delete_permission' => 'Şablon mevcut değil veya silme yetkiniz yok.',
     ],
 ];

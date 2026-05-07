@@ -23,13 +23,13 @@ return [
 
     'accessories' => 'Is éard atá i gceist le hábhair a eiseoidh tú d\'úsáideoirí ach nach bhfuil sraithuimhir acu (nó nach bhfuil cúram ort faoi iad a rianú uathúil). Mar shampla, lucha ríomhaire nó méarchláir.',
 
-    'companies'     => 'Is féidir cuideachtaí a úsáid mar réimse simplí aitheantóra, nó is féidir iad a úsáid chun infheictheacht na sócmhainní, na n-úsáideoirí, srl a theorannú má tá tacaíocht iomlán na cuideachta cumasaithe i do shocruithe Riaracháin.',
+    'companies' => 'Is féidir cuideachtaí a úsáid mar réimse simplí aitheantóra, nó is féidir iad a úsáid chun infheictheacht na sócmhainní, na n-úsáideoirí, srl a theorannú má tá tacaíocht iomlán na cuideachta cumasaithe i do shocruithe Riaracháin.',
 
-    'components'    => 'Is iad na comhpháirteanna míreanna atá mar chuid de shócmhainn, mar shampla HDD, RAM, etc.',
+    'components' => 'Is iad na comhpháirteanna míreanna atá mar chuid de shócmhainn, mar shampla HDD, RAM, etc.',
 
-    'consumables'   => 'Déantar aon ní a cheannach a úsáidfear le himeacht ama. Mar shampla, dúch printéir nó páipéar cóipeála.',
+    'consumables' => 'Déantar aon ní a cheannach a úsáidfear le himeacht ama. Mar shampla, dúch printéir nó páipéar cóipeála.',
 
     'depreciations' => 'Is féidir leat dímheasanna sócmhainní a bhunú chun sócmhainní a dhímheas bunaithe ar dhímheas díreach líne.',
-    
-    'empty_file'    => 'The importer detects that this file is empty.'
+
+    'empty_file' => 'The importer detects that this file is empty.',
 ];

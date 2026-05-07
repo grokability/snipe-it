@@ -71,7 +71,7 @@ return [
     ],
     'hex_color' => ':attribute lauke turi būti teisinga šešioliktainė spalva.',
     'image' => ':attribute lauke turi būti atvaizdas.',
-    'import_field_empty'    => ':fieldname reikšmė negali būti tuščia.',
+    'import_field_empty' => ':fieldname reikšmė negali būti tuščia.',
     'in' => 'Pasirinktas :attribute neteisingas.',
     'in_array' => ':attribute laukas turi egzistuoti :other.',
     'integer' => ':attribute lauke turi būti sveikasis skaičius.',
@@ -126,7 +126,7 @@ return [
         'symbols' => ':attribute lauke turi būti bent vienas simbolis.',
         'uncompromised' => 'Pateiktas :attribute buvo rastas tarp nutekėjusių duomenų. Pasirinkite kitą :attribute.',
     ],
-    'percent'       => 'Nusidėvėjimo minimumas turi būti nuo 0 iki 100, kai nusidėvėjimo tipas yra procentinis.',
+    'percent' => 'Nusidėvėjimo minimumas turi būti nuo 0 iki 100, kai nusidėvėjimo tipas yra procentinis.',
 
     'present' => ':attribute laukas turi būti esamas.',
     'present_if' => ':attribute laukas turi egzistuoti, kai :other yra :value.',
@@ -156,16 +156,16 @@ return [
         'string' => ':attribute lauke turi būti :size simboliai (-ių).',
     ],
     'starts_with' => ':attribute laukas turi prasidėti vienu iš šių: :values.',
-    'string'               => ':attribute turi būti eilutė.',
+    'string' => ':attribute turi būti eilutė.',
     'two_column_unique_undeleted' => ':attribute turi būti unikalus :table1 ir :table2. ',
-    'unique_undeleted'     => ':attribute turi būti unikalus.',
-    'non_circular'         => ':attribute neturi kurti žiedinės nuorodos.',
-    'not_array'            => ':attribute negali būti masyvas.',
+    'unique_undeleted' => ':attribute turi būti unikalus.',
+    'non_circular' => ':attribute neturi kurti žiedinės nuorodos.',
+    'not_array' => ':attribute negali būti masyvas.',
     'disallow_same_pwd_as_user_fields' => 'Slaptažodis negali sutapti su naudotojo vardu.',
-    'letters'              => 'Slaptažodyje turi būti bent viena raidė.',
-    'numbers'              => 'Slaptažodyje turi būti bent vienas skaičius.',
-    'case_diff'            => 'Slaptažodyje turi būti naudojamos didžiosios ir mažosios raidės.',
-    'symbols'              => 'Slaptažodyje turi būti simbolių.',
+    'letters' => 'Slaptažodyje turi būti bent viena raidė.',
+    'numbers' => 'Slaptažodyje turi būti bent vienas skaičius.',
+    'case_diff' => 'Slaptažodyje turi būti naudojamos didžiosios ir mažosios raidės.',
+    'symbols' => 'Slaptažodyje turi būti simbolių.',
     'timezone' => ':attribute lauke turi būti teisinga laiko juosta.',
     'unique' => ':attribute jau užimtas.',
     'uploaded' => ':attribute įkelti nepavyko.',
@@ -187,38 +187,38 @@ return [
     |
     */
 
-    'email_array'      => 'Vienas ar keli el. pašto adresai yra neteisingi.',
-    'checkboxes'           => ':attribute yra neteisingų parinkčių.',
-    'radio_buttons'        => ':atributas yra neteisingas.',
-    
+    'email_array' => 'Vienas ar keli el. pašto adresai yra neteisingi.',
+    'checkboxes' => ':attribute yra neteisingų parinkčių.',
+    'radio_buttons' => ':atributas yra neteisingas.',
+
     'custom' => [
         'alpha_space' => 'Lauke :attribute yra simbolis, kurio negalima naudoti.',
 
-        'hashed_pass'      => 'Jūsų dabartinis slaptažodis yra neteisingas',
-        'dumbpwd'          => 'Šis slaptažodis yra per dažnas.',
+        'hashed_pass' => 'Jūsų dabartinis slaptažodis yra neteisingas',
+        'dumbpwd' => 'Šis slaptažodis yra per dažnas.',
         'statuslabel_type' => 'Turite pasirinkti tinkamą būsenos žymos tipą',
-        'custom_field_not_found'          => 'Panašu, kad tokio lauko nėra. Patikrinkite savo pritaikytų laukų pavadinimus.',
+        'custom_field_not_found' => 'Panašu, kad tokio lauko nėra. Patikrinkite savo pritaikytų laukų pavadinimus.',
         'custom_field_not_found_on_model' => 'Panašu, kad šis laukas egzistuoja, tačiau jo nėra šio turto modelio laukų rinkinyje.',
 
         // date_format validation with slightly less stupid messages. It duplicates a lot, but it gets the job done :(
         // We use this because the default error message for date_format reflects php Y-m-d, which non-PHP
         // people won't know how to format.
-        'purchase_date.date_format'     => ':attribute turi būti galiojanti data YYYY-MM-DD formatu',
-        'last_audit_date.date_format'   =>  ':attribute turi būti galiojanti data YYYY-MM-DD hh:mm:ss formatu',
-        'expiration_date.date_format'   =>  ':attribute turi būti galiojanti data YYYY-MM-DD formatu',
-        'termination_date.date_format'  =>  ':attribute turi būti galiojanti data YYYY-MM-DD formatu',
-        'expected_checkin.date_format'  =>  ':attribute turi būti galiojanti data YYYY-MM-DD formatu',
-        'start_date.date_format'        =>  ':attribute turi būti galiojanti data YYYY-MM-DD formatu',
-        'end_date.date_format'          =>  ':attribute turi būti galiojanti data YYYY-MM-DD formatu',
+        'purchase_date.date_format' => ':attribute turi būti galiojanti data YYYY-MM-DD formatu',
+        'last_audit_date.date_format' => ':attribute turi būti galiojanti data YYYY-MM-DD hh:mm:ss formatu',
+        'expiration_date.date_format' => ':attribute turi būti galiojanti data YYYY-MM-DD formatu',
+        'termination_date.date_format' => ':attribute turi būti galiojanti data YYYY-MM-DD formatu',
+        'expected_checkin.date_format' => ':attribute turi būti galiojanti data YYYY-MM-DD formatu',
+        'start_date.date_format' => ':attribute turi būti galiojanti data YYYY-MM-DD formatu',
+        'end_date.date_format' => ':attribute turi būti galiojanti data YYYY-MM-DD formatu',
         'invalid_value_in_field' => 'Šiame lauke yra neteisinga reikšmė',
 
         'ldap_username_field' => [
-            'not_in' =>         'Tikėtina, kad <code>sAMAccountName</code> (didžiosios ir mažosios raidės) neveiks. Vietoj to turėtumėte naudoti <code>samaccountname</code> (mažąsias raides).'
+            'not_in' => 'Tikėtina, kad <code>sAMAccountName</code> (didžiosios ir mažosios raidės) neveiks. Vietoj to turėtumėte naudoti <code>samaccountname</code> (mažąsias raides).',
         ],
         'ldap_auth_filter_query' => ['not_in' => '<code>uid=samaccountname</code> tikriausiai nėra tinkamas autentifikavimo filtras. Tikriausiai jums reikia <code>uid=</code> '],
         'ldap_filter' => ['regex' => 'Šios reikšmės tikriausiai nereikėtų rašyti skliausteliuose.'],
 
-        ],
+    ],
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Attributes
@@ -230,7 +230,10 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'serials.*' => 'Serijinis numeris',
+        'asset_tags.*' => 'Inventorinis numeris',
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -244,6 +247,5 @@ return [
         'required' => 'Šis laukas yra privalomas',
         'email' => 'Įveskite galiojantį el. pašto adresą',
     ],
-
 
 ];

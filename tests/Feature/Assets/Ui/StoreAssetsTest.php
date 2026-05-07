@@ -2,21 +2,38 @@
 
 namespace Tests\Feature\Assets\Ui;
 
-use App\Models\Asset;
 use App\Models\AssetModel;
+use App\Models\Statuslabel;
 use App\Models\User;
 use Tests\TestCase;
 
 class StoreAssetsTest extends TestCase
 {
-    public function testPageRenders()
+    public function test_permission_required_to_view_create_asset_page()
+    {
+        $this->actingAs(User::factory()->create())
+            ->get(route('hardware.create'))
+            ->assertForbidden();
+    }
+
+    public function test_permission_required_to_store_asset()
+    {
+        $this->actingAs(User::factory()->create())
+            ->post(route('hardware.store'), [
+                'model_id' => AssetModel::factory()->create()->id,
+                'status_id' => Statuslabel::factory()->create()->id,
+            ])
+            ->assertForbidden();
+    }
+
+    public function test_create_asset_page_renders()
     {
         $this->actingAs(User::factory()->superuser()->create())
             ->get(route('hardware.create'))
             ->assertOk();
     }
 
-    public function testAssetCanBeStoredWithSerialRequiredAndSerialProvided()
+    public function test_asset_can_be_stored_with_serial_required_and_serial_provided()
     {
         $user = User::factory()->superuser()->create();
         $this->actingAs($user);
@@ -28,7 +45,7 @@ class StoreAssetsTest extends TestCase
         $response = $this->post(route('hardware.store'), [
             'model_id' => $model->id,
             'serials' => [1 => 'ABC123'],
-            'asset_tags' =>[1 => '1234'],
+            'asset_tags' => [1 => '1234'],
             'status_id' => 1,
             // other required fields...
         ]);
@@ -45,10 +62,9 @@ class StoreAssetsTest extends TestCase
             'asset_tag' => '1234',
         ]);
 
-
     }
 
-    public function testAssetCannotBeStoredIfSerialRequiredAndMissing()
+    public function test_asset_cannot_be_stored_if_serial_required_and_missing()
     {
         $user = User::factory()->superuser()->create();
         $this->actingAs($user);

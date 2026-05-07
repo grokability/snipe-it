@@ -142,7 +142,7 @@
 
                                 <x-input.select
                                     name="digit_separator"
-                                    :options="['1,234.56', '1.234,56']"
+                                    :options="['1,234.56' => '1,234.56', '1.234,56'=> '1.234,56']"
                                     :selected="old('digit_separator', $setting->digit_separator)"
                                     style="min-width:120px"
                                 />

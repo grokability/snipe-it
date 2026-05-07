@@ -1,9 +1,7 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use App\Models\CustomField;
+use Illuminate\Database\Migrations\Migration;
 
 class FixUnescapedCustomfieldsFormat extends Migration
 {
@@ -16,7 +14,7 @@ class FixUnescapedCustomfieldsFormat extends Migration
     {
         $customfields = CustomField::where('format', 'LIKE', '%&%')->get();
 
-        foreach($customfields as $customfield){
+        foreach ($customfields as $customfield) {
             $customfield->update(['format' => html_entity_decode($customfield->format)]);
         }
     }

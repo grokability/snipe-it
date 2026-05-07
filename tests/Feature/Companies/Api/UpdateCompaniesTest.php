@@ -8,7 +8,7 @@ use Tests\TestCase;
 
 class UpdateCompaniesTest extends TestCase
 {
-    public function testRequiresPermissionToPatchCompany()
+    public function test_requires_permission_to_patch_company()
     {
         $company = Company::factory()->create();
 
@@ -17,7 +17,7 @@ class UpdateCompaniesTest extends TestCase
             ->assertForbidden();
     }
 
-    public function testValidationForPatchingCompany()
+    public function test_validation_for_patching_company()
     {
         $company = Company::factory()->create();
 
@@ -34,7 +34,7 @@ class UpdateCompaniesTest extends TestCase
             ]);
     }
 
-    public function testCanPatchCompany()
+    public function test_can_patch_company()
     {
         $company = Company::factory()->create();
 
@@ -51,7 +51,7 @@ class UpdateCompaniesTest extends TestCase
         $this->assertEquals('A Changed Note', $company->notes);
     }
 
-    public function testAdheresToFullMultipleCompaniesSupportScoping()
+    public function test_adheres_to_full_multiple_companies_support_scoping()
     {
 
         $this->settings->enableMultipleFullCompanySupport();
@@ -84,7 +84,7 @@ class UpdateCompaniesTest extends TestCase
                 'notes' => 'Yet Another Changed Note',
             ])
             ->assertJson([
-                'messages' =>  'Company not found'
+                'messages' => 'Company not found',
             ])
             ->assertStatusMessageIs('error')
             ->assertStatus(200);

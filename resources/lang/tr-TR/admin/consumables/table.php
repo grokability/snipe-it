@@ -1,5 +1,5 @@
 <?php
 
-return array(
-    'title'      				=> 'Sarf Malzemesi Adı',
-);
+return [
+    'title' => 'Sarf Malzemesi Adı',
+];

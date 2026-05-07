@@ -2,15 +2,14 @@
 
 namespace Tests\Feature\Consumables\Api;
 
-use App\Models\Consumable;
 use App\Models\Category;
+use App\Models\Consumable;
 use App\Models\User;
 use Tests\TestCase;
 
 class ConsumableUpdateTest extends TestCase
 {
-
-    public function testCanUpdateConsumableViaPatchWithoutCategoryType()
+    public function test_can_update_consumable_via_patch_without_category_type()
     {
         $consumable = Consumable::factory()->create();
 
@@ -25,10 +24,9 @@ class ConsumableUpdateTest extends TestCase
 
         $consumable->refresh();
         $this->assertEquals('Test Consumable', $consumable->name, 'Name was not updated');
-
     }
 
-    public function testCannotUpdateConsumableViaPatchWithInvalidCategoryType()
+    public function test_cannot_update_consumable_via_patch_with_invalid_category_type()
     {
         $category = Category::factory()->create(['category_type' => 'asset']);
         $consumable = Consumable::factory()->create();
@@ -43,10 +41,8 @@ class ConsumableUpdateTest extends TestCase
             ->assertStatus(200)
             ->json();
 
-        $category->refresh();
+        $consumable->refresh();
         $this->assertNotEquals('Test Consumable', $consumable->name, 'Name was not updated');
         $this->assertNotEquals('consumable', $consumable->category_id, 'Category was not updated');
-
     }
-
 }

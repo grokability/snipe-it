@@ -23,9 +23,9 @@ class DepreciationFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->unique()->catchPhrase(),
             'created_by' => User::factory()->superuser(),
             'months' => 36,
+            'name' => $this->faker->unique()->catchPhrase(),
         ];
     }
 

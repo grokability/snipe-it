@@ -8,16 +8,14 @@ use Tests\TestCase;
 
 class CreateManufacturersTest extends TestCase
 {
-
-
-    public function testRequiresPermissionToCreateDepartment()
+    public function test_requires_permission_to_create_manufacturer()
     {
         $this->actingAsForApi(User::factory()->create())
-            ->postJson(route('api.departments.store'))
+            ->postJson(route('api.manufacturers.store'))
             ->assertForbidden();
     }
 
-    public function testCanCreateManufacturer()
+    public function test_can_create_manufacturer()
     {
         $response = $this->actingAsForApi(User::factory()->superuser()->create())
             ->postJson(route('api.manufacturers.store'), [
@@ -35,5 +33,4 @@ class CreateManufacturersTest extends TestCase
         $this->assertEquals('Test Manufacturer', $manufacturer->name);
         $this->assertEquals('Test Note', $manufacturer->notes);
     }
-
 }

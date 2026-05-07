@@ -1,5 +1,5 @@
 <?php
 
-return array(
-    'title'      				=> 'Nama yang boleh digunakan',
-);
+return [
+    'title' => 'Nama yang boleh digunakan',
+];

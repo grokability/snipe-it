@@ -14,7 +14,7 @@ class AddMinAmtToModelsTable extends Migration
     public function up()
     {
         Schema::table('models', function (Blueprint $table) {
-            $table->integer('min_amt')->after('model_number')->default(null);;
+            $table->integer('min_amt')->after('model_number')->default(null);
         });
     }
 

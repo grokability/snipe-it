@@ -1,11 +1,11 @@
 <?php
 
-return array(
+return [
 
-    'id'                        => 'ID',
-    'name'                      => 'Bölüm Adı',
-    'manager'                   => 'Yönetici',
-    'location'                  => 'Konum',
-    'create'                    => 'Bölüm Oluştur',
-    'update'                    => 'Bölümü Güncelle',
-    );
+    'id' => 'ID',
+    'name' => 'Bölüm Adı',
+    'manager' => 'Yönetici',
+    'location' => 'Konum',
+    'create' => 'Bölüm Oluştur',
+    'update' => 'Bölümü Güncelle',
+];

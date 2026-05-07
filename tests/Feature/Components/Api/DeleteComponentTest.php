@@ -11,7 +11,7 @@ use Tests\TestCase;
 
 class DeleteComponentTest extends TestCase implements TestsFullMultipleCompaniesSupport, TestsPermissionsRequirement
 {
-    public function testRequiresPermission()
+    public function test_requires_permission()
     {
         $component = Component::factory()->create();
 
@@ -22,7 +22,7 @@ class DeleteComponentTest extends TestCase implements TestsFullMultipleCompanies
         $this->assertNotSoftDeleted($component);
     }
 
-    public function testAdheresToFullMultipleCompaniesSupportScoping()
+    public function test_adheres_to_full_multiple_companies_support_scoping()
     {
         [$companyA, $companyB] = Company::factory()->count(2)->create();
 
@@ -53,7 +53,7 @@ class DeleteComponentTest extends TestCase implements TestsFullMultipleCompanies
         $this->assertSoftDeleted($componentC);
     }
 
-    public function testCanDeleteComponents()
+    public function test_can_delete_components()
     {
         $component = Component::factory()->create();
 
@@ -64,7 +64,7 @@ class DeleteComponentTest extends TestCase implements TestsFullMultipleCompanies
         $this->assertSoftDeleted($component);
     }
 
-    public function testCannotDeleteComponentIfCheckedOut()
+    public function test_cannot_delete_component_if_checked_out()
     {
         $component = Component::factory()->checkedOutToAsset()->create();
 

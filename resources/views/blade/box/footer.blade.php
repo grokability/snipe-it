@@ -1,5 +1,5 @@
 @props([
-    'cancel_route' => null,
+    'cancel_route' => url()->previous(),
 ])
 
 <!-- Start box footer component -->

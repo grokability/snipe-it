@@ -22,36 +22,36 @@ use Illuminate\Support\Str;
 class AssetModelsImportFileBuilder extends FileBuilder
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function getDictionary(): array
     {
         return [
-            'name'           => 'Name',
-            'category'       => 'Category',
-            'manufacturer'   => 'Manufacturer',
-            'model_number'   => 'Model Number',
-            'fieldset'       => 'Fieldset',
-            'eol'            => 'EOL',
-            'min_amt'        => 'Min Amount',
-            'notes'          => 'Notes',
-            'requestable'    => 'Requestable',
+            'name' => 'Name',
+            'category' => 'Category',
+            'manufacturer' => 'Manufacturer',
+            'model_number' => 'Model Number',
+            'fieldset' => 'Fieldset',
+            'eol' => 'EOL',
+            'min_amt' => 'Min Amount',
+            'notes' => 'Notes',
+            'requestable' => 'Requestable',
 
         ];
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function definition(): array
     {
         $faker = fake();
 
         return [
-            'name'            => $faker->catchPhrase,
-            'category'        => Str::random(),
-            'model_number'    => $faker->creditCardNumber(),
-            'notes'           => 'Created by demo seeder',
+            'name' => $faker->catchPhrase,
+            'category' => Str::random(),
+            'model_number' => $faker->creditCardNumber(),
+            'notes' => 'Created by demo seeder',
         ];
     }
 }

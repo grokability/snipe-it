@@ -1,5 +1,5 @@
 <?php
 
-return array(
-    'title'      				=> 'Ainm Inchaite',
-);
+return [
+    'title' => 'Ainm Inchaite',
+];

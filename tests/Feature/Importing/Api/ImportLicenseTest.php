@@ -21,7 +21,7 @@ class ImportLicenseTest extends ImportDataTestCase implements TestsPermissionsRe
 
     protected function importFileResponse(array $parameters = []): TestResponse
     {
-        if (!array_key_exists('import-type', $parameters)) {
+        if (! array_key_exists('import-type', $parameters)) {
             $parameters['import-type'] = 'license';
         }
 
@@ -29,7 +29,7 @@ class ImportLicenseTest extends ImportDataTestCase implements TestsPermissionsRe
     }
 
     #[Test]
-    public function testRequiresPermission()
+    public function test_requires_permission()
     {
         $this->actingAsForApi(User::factory()->create());
 
@@ -37,7 +37,7 @@ class ImportLicenseTest extends ImportDataTestCase implements TestsPermissionsRe
     }
 
     #[Test]
-    public function userWithImportAssetsPermissionCanImportLicenses(): void
+    public function user_with_import_assets_permission_can_import_licenses(): void
     {
         $this->actingAsForApi(User::factory()->canImport()->create());
 
@@ -47,7 +47,7 @@ class ImportLicenseTest extends ImportDataTestCase implements TestsPermissionsRe
     }
 
     #[Test]
-    public function importLicenses(): void
+    public function import_licenses(): void
     {
         $importFileBuilder = ImportFileBuilder::new();
         $row = $importFileBuilder->firstRow();
@@ -57,9 +57,9 @@ class ImportLicenseTest extends ImportDataTestCase implements TestsPermissionsRe
         $this->importFileResponse(['import' => $import->id])
             ->assertOk()
             ->assertExactJson([
-                'payload'  => null,
-                'status'   => 'success',
-                'messages' => ['redirect_url' => route('licenses.index')]
+                'payload' => null,
+                'status' => 'success',
+                'messages' => ['redirect_url' => route('licenses.index')],
             ]);
 
         $newLicense = License::query()
@@ -98,7 +98,7 @@ class ImportLicenseTest extends ImportDataTestCase implements TestsPermissionsRe
     }
 
     #[Test]
-    public function willIgnoreUnknownColumnsWhenFileContainsUnknownColumns(): void
+    public function will_ignore_unknown_columns_when_file_contains_unknown_columns(): void
     {
         $row = ImportFileBuilder::new()->definition();
         $row['unknownColumnInCsvFile'] = 'foo';
@@ -113,13 +113,13 @@ class ImportLicenseTest extends ImportDataTestCase implements TestsPermissionsRe
     }
 
     #[Test]
-    public function willNotCreateNewLicenseWhenNameAndSerialNumberAlreadyExist(): void
+    public function will_not_create_new_license_when_name_and_serial_number_already_exist(): void
     {
         $license = License::factory()->create();
 
         $importFileBuilder = ImportFileBuilder::times(4)->replace([
-            'itemName'     => $license->name,
-            'serialNumber' => $license->serial
+            'itemName' => $license->name,
+            'serialNumber' => $license->serial,
         ]);
 
         $import = Import::factory()->license()->create(['file_path' => $importFileBuilder->saveToImportsDirectory()]);
@@ -136,10 +136,10 @@ class ImportLicenseTest extends ImportDataTestCase implements TestsPermissionsRe
     }
 
     #[Test]
-    public function formatAttributes(): void
+    public function format_attributes(): void
     {
         $importFileBuilder = ImportFileBuilder::new([
-            'expirationDate' => '2022/10/10'
+            'expirationDate' => '2022/10/10',
         ]);
 
         $import = Import::factory()->license()->create(['file_path' => $importFileBuilder->saveToImportsDirectory()]);
@@ -155,7 +155,7 @@ class ImportLicenseTest extends ImportDataTestCase implements TestsPermissionsRe
     }
 
     #[Test]
-    public function willNotCreateNewCompanyWhenCompanyExists(): void
+    public function will_not_create_new_company_when_company_exists(): void
     {
         $importFileBuilder = ImportFileBuilder::times(4)->replace(['companyName' => Str::random()]);
         $import = Import::factory()->license()->create(['file_path' => $importFileBuilder->saveToImportsDirectory()]);
@@ -171,7 +171,7 @@ class ImportLicenseTest extends ImportDataTestCase implements TestsPermissionsRe
     }
 
     #[Test]
-    public function willNotCreateNewManufacturerWhenManufacturerExists(): void
+    public function will_not_create_new_manufacturer_when_manufacturer_exists(): void
     {
         $importFileBuilder = ImportFileBuilder::times(4)->replace(['manufacturerName' => Str::random()]);
         $import = Import::factory()->license()->create(['file_path' => $importFileBuilder->saveToImportsDirectory()]);
@@ -187,7 +187,7 @@ class ImportLicenseTest extends ImportDataTestCase implements TestsPermissionsRe
     }
 
     #[Test]
-    public function willNotCreateNewCategoryWhenCategoryExists(): void
+    public function will_not_create_new_category_when_category_exists(): void
     {
         $importFileBuilder = ImportFileBuilder::times(4)->replace(['category' => $this->faker->company]);
         $import = Import::factory()->license()->create(['file_path' => $importFileBuilder->saveToImportsDirectory()]);
@@ -203,7 +203,7 @@ class ImportLicenseTest extends ImportDataTestCase implements TestsPermissionsRe
     }
 
     #[Test]
-    public function whenRequiredColumnsAreMissingInImportFile(): void
+    public function when_required_columns_are_missing_in_import_file(): void
     {
         $importFileBuilder = ImportFileBuilder::times()
             ->replace(['name' => ''])
@@ -217,15 +217,15 @@ class ImportLicenseTest extends ImportDataTestCase implements TestsPermissionsRe
         $this->importFileResponse(['import' => $import->id])
             ->assertInternalServerError()
             ->assertExactJson([
-                'status'   => 'import-errors',
-                'payload'  => null,
+                'status' => 'import-errors',
+                'payload' => null,
                 'messages' => [
                     $row['licenseName'] => [
                         "License \"{$row['licenseName']}\"" => [
                             'seats' => ['The seats field is required.'],
-                        ]
-                    ]
-                ]
+                        ],
+                    ],
+                ],
             ]);
 
         $newLicenses = License::query()
@@ -236,12 +236,12 @@ class ImportLicenseTest extends ImportDataTestCase implements TestsPermissionsRe
     }
 
     #[Test]
-    public function updateLicenseFromImport(): void
+    public function update_license_from_import(): void
     {
         $license = License::factory()->create();
         $importFileBuilder = ImportFileBuilder::new([
-            'licenseName'  => $license->name,
-            'serialNumber' => $license->serial
+            'licenseName' => $license->name,
+            'serialNumber' => $license->serial,
         ]);
 
         $row = $importFileBuilder->firstRow();
@@ -278,26 +278,26 @@ class ImportLicenseTest extends ImportDataTestCase implements TestsPermissionsRe
     }
 
     #[Test]
-    public function customColumnMapping(): void
+    public function custom_column_mapping(): void
     {
         $faker = ImportFileBuilder::times()->definition();
         $row = [
-            'category'         => $faker['supplierName'],
-            'companyName'      => $faker['serialNumber'],
-            'expirationDate'   => $faker['seats'],
-            'isMaintained'     => $faker['purchaseDate'],
-            'isReassignAble'   => $faker['purchaseCost'],
-            'licensedToName'   => $faker['orderNumber'],
-            'licensedToEmail'  => $faker['notes'],
-            'licenseName'      => $faker['licenseName'],
+            'category' => $faker['supplierName'],
+            'companyName' => $faker['serialNumber'],
+            'expirationDate' => $faker['seats'],
+            'isMaintained' => $faker['purchaseDate'],
+            'isReassignAble' => $faker['purchaseCost'],
+            'licensedToName' => $faker['orderNumber'],
+            'licensedToEmail' => $faker['notes'],
+            'licenseName' => $faker['licenseName'],
             'manufacturerName' => $faker['category'],
-            'notes'            => $faker['companyName'],
-            'orderNumber'      => $faker['expirationDate'],
-            'purchaseCost'     => $faker['isMaintained'],
-            'purchaseDate'     => $faker['isReassignAble'],
-            'seats'            => $faker['licensedToName'],
-            'serialNumber'     => $faker['licensedToEmail'],
-            'supplierName'     => $faker['manufacturerName']
+            'notes' => $faker['companyName'],
+            'orderNumber' => $faker['expirationDate'],
+            'purchaseCost' => $faker['isMaintained'],
+            'purchaseDate' => $faker['isReassignAble'],
+            'seats' => $faker['licensedToName'],
+            'serialNumber' => $faker['licensedToEmail'],
+            'supplierName' => $faker['manufacturerName'],
         ];
 
         $importFileBuilder = new ImportFileBuilder([$row]);
@@ -308,23 +308,23 @@ class ImportLicenseTest extends ImportDataTestCase implements TestsPermissionsRe
         $this->importFileResponse([
             'import' => $import->id,
             'column-mappings' => [
-                'Category'         => 'supplier',
-                'Company'          => 'serial',
-                'expiration date'  => 'seats',
-                'maintained'       => 'purchase_date',
-                'reassignable'     => 'purchase_cost',
+                'Category' => 'supplier',
+                'Company' => 'serial',
+                'expiration date' => 'seats',
+                'maintained' => 'purchase_date',
+                'reassignable' => 'purchase_cost',
                 'Licensed To Name' => 'order_number',
                 'Licensed To Email' => 'notes',
-                'licenseName'      => 'name',
-                'manufacturer'     => 'category',
-                'Notes'            => 'company',
-                'Serial number'    => 'license_email',
-                'Order Number'     => 'expiration_date',
-                'purchase Cost'    => 'maintained',
-                'purchase Date'    => 'reassignable',
-                'seats'            => 'license_name',
-                'supplier'         => 'manufacturer'
-            ]
+                'licenseName' => 'name',
+                'manufacturer' => 'category',
+                'Notes' => 'company',
+                'Serial number' => 'license_email',
+                'Order Number' => 'expiration_date',
+                'purchase Cost' => 'maintained',
+                'purchase Date' => 'reassignable',
+                'seats' => 'license_name',
+                'supplier' => 'manufacturer',
+            ],
         ])->assertOk();
 
         $newLicense = License::query()

@@ -4,8 +4,8 @@ namespace App\Console\Commands;
 
 use App\Models\Asset;
 use App\Models\Setting;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Artisan;
 
 class RegenerateAssetTags extends Command
 {

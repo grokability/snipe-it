@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Feature\Notifications\Webhooks;
 
 use App\Models\Asset;
@@ -7,7 +8,6 @@ use App\Notifications\AuditNotification;
 use Illuminate\Support\Facades\Notification;
 use PHPUnit\Framework\Attributes\Group;
 use Tests\TestCase;
-use Tests\Support\Settings;
 
 #[Group('notifications')]
 class NotificationTests extends TestCase
@@ -18,7 +18,8 @@ class NotificationTests extends TestCase
 
         Notification::fake();
     }
-    public function testAuditNotificationThrowsWhenItemIsNull()
+
+    public function test_audit_notification_throws_when_item_is_null()
     {
         try {
             new AuditNotification([
@@ -31,17 +32,17 @@ class NotificationTests extends TestCase
         }
     }
 
-    public function testAuditNotificationFires()
+    public function test_audit_notification_fires()
     {
         $webhook_options = [
             'enableSlackWebhook',
             'enableMicrosoftTeamsWebhook',
-            'enableGoogleChatWebhook'
+            'enableGoogleChatWebhook',
         ];
 
         Notification::fake();
-        //tests every webhook option
-        foreach($webhook_options as $option) {
+        // tests every webhook option
+        foreach ($webhook_options as $option) {
 
             $this->settings->{$option}();
 
@@ -49,13 +50,13 @@ class NotificationTests extends TestCase
             $item = Asset::factory()->create();
 
             try {
-                $user->notify(new \App\Notifications\AuditNotification([
-                    'item'  => $item,
+                $user->notify(new AuditNotification([
+                    'item' => $item,
                 ]));
             } catch (\InvalidArgumentException $e) {
                 $this->fail("AuditNotification threw for [{$option}]: {$e->getMessage()}");
             }
         }
-            Notification::assertSentTimes(AuditNotification::class, count($webhook_options));
+        Notification::assertSentTimes(AuditNotification::class, count($webhook_options));
     }
 }

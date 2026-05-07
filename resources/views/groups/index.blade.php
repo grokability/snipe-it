@@ -6,9 +6,7 @@
 @parent
 @stop
 
-@section('header_right')
-<a href="{{ route('groups.create') }}" class="btn btn-primary text-right"> {{ trans('general.create') }}</a>
-@stop
+
 
 
 {{-- Page content --}}

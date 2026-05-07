@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
     'personal_api_keys' => 'Személyes API kulcsok',
     'personal_access_token' => 'Személyes token',
     'personal_api_keys_success' => 'Személyes API-kulcs :key létrehozva',
@@ -14,4 +14,4 @@ return array(
     'no_tokens' => 'Nincsenek létrehozott személyes tokenek.',
     'enable_sounds' => 'Hangeffektek engedélyezése',
     'enable_confetti' => 'Konfetti-effektek engedélyezése',
-);
+];

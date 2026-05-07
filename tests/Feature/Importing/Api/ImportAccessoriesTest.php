@@ -6,11 +6,11 @@ use App\Models\Accessory;
 use App\Models\Actionlog;
 use App\Models\Import;
 use App\Models\User;
-use Illuminate\Support\Str;
-use PHPUnit\Framework\Attributes\Test;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\Concerns\TestsPermissionsRequirement;
 use Tests\Support\Importing\AccessoriesImportFileBuilder as ImportFileBuilder;
 use Tests\Support\Importing\CleansUpImportFiles;
@@ -22,7 +22,7 @@ class ImportAccessoriesTest extends ImportDataTestCase implements TestsPermissio
 
     protected function importFileResponse(array $parameters = []): TestResponse
     {
-        if (!array_key_exists('import-type', $parameters)) {
+        if (! array_key_exists('import-type', $parameters)) {
             $parameters['import-type'] = 'accessory';
         }
 
@@ -30,7 +30,7 @@ class ImportAccessoriesTest extends ImportDataTestCase implements TestsPermissio
     }
 
     #[Test]
-    public function testRequiresPermission()
+    public function test_requires_permission()
     {
         $this->actingAsForApi(User::factory()->create());
 
@@ -38,7 +38,7 @@ class ImportAccessoriesTest extends ImportDataTestCase implements TestsPermissio
     }
 
     #[Test]
-    public function userWithImportAccessoryPermissionCanImportAccessories(): void
+    public function user_with_import_accessory_permission_can_import_accessories(): void
     {
         $this->actingAsForApi(User::factory()->canImport()->create());
 
@@ -48,7 +48,7 @@ class ImportAccessoriesTest extends ImportDataTestCase implements TestsPermissio
     }
 
     #[Test]
-    public function importAccessory(): void
+    public function import_accessory(): void
     {
         $importFileBuilder = ImportFileBuilder::new();
         $row = $importFileBuilder->firstRow();
@@ -58,11 +58,11 @@ class ImportAccessoriesTest extends ImportDataTestCase implements TestsPermissio
         $this->importFileResponse(['import' => $import->id])
             ->assertOk()
             ->assertExactJson([
-                'payload'  => null,
-                'status'   => 'success',
+                'payload' => null,
+                'status' => 'success',
                 'messages' => [
-                    'redirect_url' => route('accessories.index')
-                ]
+                    'redirect_url' => route('accessories.index'),
+                ],
             ]);
 
         $newAccessory = Accessory::query()
@@ -98,7 +98,7 @@ class ImportAccessoriesTest extends ImportDataTestCase implements TestsPermissio
     }
 
     #[Test]
-    public function whenImportFileContainsUnknownColumns(): void
+    public function when_import_file_contains_unknown_columns(): void
     {
         $row = ImportFileBuilder::new()->definition();
         $row['unknownColumn'] = $this->faker->word;
@@ -113,7 +113,7 @@ class ImportAccessoriesTest extends ImportDataTestCase implements TestsPermissio
     }
 
     #[Test]
-    public function willFormatDate(): void
+    public function will_format_date(): void
     {
         $importFileBuilder = ImportFileBuilder::new(['purchaseDate' => '2022/10/10']);
         $import = Import::factory()->accessory()->create(['file_path' => $importFileBuilder->saveToImportsDirectory()]);
@@ -129,7 +129,7 @@ class ImportAccessoriesTest extends ImportDataTestCase implements TestsPermissio
     }
 
     #[Test]
-    public function willNotCreateNewCategoryWhenCategoryExists(): void
+    public function will_not_create_new_category_when_category_exists(): void
     {
         $importFileBuilder = ImportFileBuilder::times(4)->replace(['category' => Str::random()]);
         $import = Import::factory()->accessory()->create(['file_path' => $importFileBuilder->saveToImportsDirectory()]);
@@ -145,7 +145,7 @@ class ImportAccessoriesTest extends ImportDataTestCase implements TestsPermissio
     }
 
     #[Test]
-    public function willNotCreateNewAccessoryWhenAccessoryWithNameExists(): void
+    public function will_not_create_new_accessory_when_accessory_with_name_exists(): void
     {
         $accessory = Accessory::factory()->create(['name' => Str::random()]);
         $importFileBuilder = ImportFileBuilder::times(2)->replace(['itemName' => $accessory->name]);
@@ -163,7 +163,7 @@ class ImportAccessoriesTest extends ImportDataTestCase implements TestsPermissio
     }
 
     #[Test]
-    public function willNotCreateNewCompanyWhenCompanyAlreadyExists(): void
+    public function will_not_create_new_company_when_company_already_exists(): void
     {
         $importFileBuilder = ImportFileBuilder::times(4)->replace(['companyName' => Str::random()]);
         $import = Import::factory()->accessory()->create(['file_path' => $importFileBuilder->saveToImportsDirectory()]);
@@ -179,7 +179,7 @@ class ImportAccessoriesTest extends ImportDataTestCase implements TestsPermissio
     }
 
     #[Test]
-    public function willNotCreateNewLocationWhenLocationAlreadyExists(): void
+    public function will_not_create_new_location_when_location_already_exists(): void
     {
         $importFileBuilder = ImportFileBuilder::times(4)->replace(['location' => Str::random()]);
         $import = Import::factory()->accessory()->create(['file_path' => $importFileBuilder->saveToImportsDirectory()]);
@@ -195,7 +195,7 @@ class ImportAccessoriesTest extends ImportDataTestCase implements TestsPermissio
     }
 
     #[Test]
-    public function willNotCreateNewManufacturerWhenManufacturerAlreadyExists(): void
+    public function will_not_create_new_manufacturer_when_manufacturer_already_exists(): void
     {
         $importFileBuilder = ImportFileBuilder::times(4)->replace(['manufacturerName' => $this->faker->company]);
         $import = Import::factory()->accessory()->create(['file_path' => $importFileBuilder->saveToImportsDirectory()]);
@@ -211,7 +211,7 @@ class ImportAccessoriesTest extends ImportDataTestCase implements TestsPermissio
     }
 
     #[Test]
-    public function willNotCreateNewSupplierWhenSupplierAlreadyExists(): void
+    public function will_not_create_new_supplier_when_supplier_already_exists(): void
     {
         $importFileBuilder = ImportFileBuilder::times(4)->replace(['supplierName' => $this->faker->company]);
         $import = Import::factory()->accessory()->create(['file_path' => $importFileBuilder->saveToImportsDirectory()]);
@@ -227,7 +227,7 @@ class ImportAccessoriesTest extends ImportDataTestCase implements TestsPermissio
     }
 
     #[Test]
-    public function whenColumnsAreMissingInImportFile(): void
+    public function when_columns_are_missing_in_import_file(): void
     {
         $importFileBuilder = ImportFileBuilder::new()->forget(['minimumAmount', 'purchaseCost', 'purchaseDate']);
         $import = Import::factory()->accessory()->create(['file_path' => $importFileBuilder->saveToImportsDirectory()]);
@@ -245,9 +245,9 @@ class ImportAccessoriesTest extends ImportDataTestCase implements TestsPermissio
     }
 
     #[Test]
-    public function whenRequiredColumnsAreMissingInImportFile(): void
+    public function when_required_columns_are_missing_in_import_file(): void
     {
-        $importFileBuilder = ImportFileBuilder::new()->forget(['itemName', 'quantity', 'category']);
+        $importFileBuilder = ImportFileBuilder::new()->forget(['itemName', 'category']);
         $import = Import::factory()->accessory()->create(['file_path' => $importFileBuilder->saveToImportsDirectory()]);
 
         $this->actingAsForApi(User::factory()->superuser()->create());
@@ -259,17 +259,16 @@ class ImportAccessoriesTest extends ImportDataTestCase implements TestsPermissio
                 'messages' => [
                     '' => [
                         'Accessory' => [
+                            'category_id' => ['The category id field is required.'],
                             'name' => ['The name field is required.'],
-                            'qty' => ['The qty field must be at least 1.'],
-                            'category_id' => ['The category id field is required.']
-                        ]
-                    ]
-                ]
+                        ],
+                    ],
+                ],
             ]);
     }
 
     #[Test]
-    public function updateAccessoryFromImport(): void
+    public function update_accessory_from_import(): void
     {
         $accessory = Accessory::factory()->create(['name' => Str::random()])->refresh();
         $importFileBuilder = ImportFileBuilder::new(['itemName' => $accessory->name]);
@@ -283,7 +282,7 @@ class ImportAccessoriesTest extends ImportDataTestCase implements TestsPermissio
         $updatedAttributes = [
             'name', 'company_id', 'qty', 'purchase_date', 'purchase_cost',
             'order_number', 'notes', 'category_id', 'manufacturer_id', 'supplier_id',
-            'location_id', 'model_number', 'updated_at'
+            'location_id', 'model_number', 'updated_at',
         ];
 
         $this->assertEquals($row['itemName'], $updatedAccessory->name);
@@ -307,26 +306,25 @@ class ImportAccessoriesTest extends ImportDataTestCase implements TestsPermissio
     }
 
     #[Test]
-    public function whenImportFileContainsEmptyValues(): void
+    public function when_import_file_contains_empty_values(): void
     {
         $accessory = Accessory::factory()->create(['name' => Str::random()]);
         $accessory->refresh();
 
         $importFileBuilder = ImportFileBuilder::new([
-            'companyName'      => ' ',
-            'purchaseDate'     => '  ',
-            'purchaseCost'     => '',
-            'location'         => '',
-            'companyName'      => '',
-            'orderNumber'      => '',
-            'category'         => '',
-            'quantity'         => '',
+            'companyName' => ' ',
+            'purchaseDate' => '  ',
+            'purchaseCost' => '',
+            'location' => '',
+            'orderNumber' => '',
+            'category' => '',
+            'quantity' => '',
             'manufacturerName' => '',
-            'supplierName'     => '',
-            'notes'            => '',
-            'requestAble'      => '',
-            'minimumAmount'    => '',
-            'modelNumber'      => ''
+            'supplierName' => '',
+            'notes' => '',
+            'requestAble' => '',
+            'minimumAmount' => '',
+            'modelNumber' => '',
         ]);
 
         $import = Import::factory()->accessory()->create(['file_path' => $importFileBuilder->saveToImportsDirectory()]);
@@ -340,11 +338,10 @@ class ImportAccessoriesTest extends ImportDataTestCase implements TestsPermissio
                 'messages' => [
                     $importFileBuilder->firstRow()['itemName'] => [
                         'Accessory' => [
-                            'qty' => ['The qty field must be at least 1.'],
-                            'category_id' => ['The category id field is required.']
-                        ]
-                    ]
-                ]
+                            'category_id' => ['The category id field is required.'],
+                        ],
+                    ],
+                ],
             ]);
 
         $importFileBuilder->replace(['itemName' => $accessory->name]);
@@ -360,22 +357,22 @@ class ImportAccessoriesTest extends ImportDataTestCase implements TestsPermissio
     }
 
     #[Test]
-    public function customColumnMapping(): void
+    public function custom_column_mapping(): void
     {
         $faker = ImportFileBuilder::new()->definition();
         $row = [
-            'itemName'         => $faker['modelNumber'],
-            'purchaseDate'     => $faker['notes'],
-            'purchaseCost'     => $faker['location'],
-            'location'         => $faker['purchaseCost'],
-            'companyName'      => $faker['orderNumber'],
-            'orderNumber'      => $faker['companyName'],
-            'category'         => $faker['manufacturerName'],
+            'itemName' => $faker['modelNumber'],
+            'purchaseDate' => $faker['notes'],
+            'purchaseCost' => $faker['location'],
+            'location' => $faker['purchaseCost'],
+            'companyName' => $faker['orderNumber'],
+            'orderNumber' => $faker['companyName'],
+            'category' => $faker['manufacturerName'],
             'manufacturerName' => $faker['category'],
-            'notes'            => $faker['purchaseDate'],
-            'minimumAmount'    => $faker['supplierName'],
-            'modelNumber'      => $faker['itemName'],
-            'quantity'         => $faker['quantity']
+            'notes' => $faker['purchaseDate'],
+            'minimumAmount' => $faker['supplierName'],
+            'modelNumber' => $faker['itemName'],
+            'quantity' => $faker['quantity'],
         ];
 
         $importFileBuilder = new ImportFileBuilder([$row]);
@@ -385,20 +382,20 @@ class ImportAccessoriesTest extends ImportDataTestCase implements TestsPermissio
         $this->importFileResponse([
             'import' => $import->id,
             'column-mappings' => [
-                'Item Name'     => 'model_number',
+                'Item Name' => 'model_number',
                 'Purchase Date' => 'notes',
                 'Purchase Cost' => 'location',
-                'Location'      => 'purchase_cost',
-                'Company'       => 'order_number',
-                'Order Number'  => 'company',
-                'Category'      => 'manufacturer',
-                'Manufacturer'  => 'category',
-                'Supplier'      => 'min_amt',
-                'Notes'         => 'purchase_date',
-                'Min QTY'       => 'supplier',
-                'Model Number'  => 'item_name',
-                'Quantity'      => 'quantity'
-            ]
+                'Location' => 'purchase_cost',
+                'Company' => 'order_number',
+                'Order Number' => 'company',
+                'Category' => 'manufacturer',
+                'Manufacturer' => 'category',
+                'Supplier' => 'min_amt',
+                'Notes' => 'purchase_date',
+                'Min QTY' => 'supplier',
+                'Model Number' => 'item_name',
+                'Quantity' => 'quantity',
+            ],
         ])->assertOk();
 
         $newAccessory = Accessory::query()

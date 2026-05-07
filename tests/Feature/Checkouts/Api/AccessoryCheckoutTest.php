@@ -6,23 +6,20 @@ use App\Mail\CheckoutAccessoryMail;
 use App\Models\Accessory;
 use App\Models\Actionlog;
 use App\Models\User;
-use App\Notifications\CheckoutAccessoryNotification;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Notification;
 use Tests\Concerns\TestsPermissionsRequirement;
 use Tests\TestCase;
 
 class AccessoryCheckoutTest extends TestCase implements TestsPermissionsRequirement
 {
-
-    public function testRequiresPermission()
+    public function test_requires_permission()
     {
         $this->actingAsForApi(User::factory()->create())
             ->postJson(route('api.accessories.checkout', Accessory::factory()->create()))
             ->assertForbidden();
     }
 
-    public function testValidationWhenCheckingOutAccessory()
+    public function test_validation_when_checking_out_accessory()
     {
         $this->actingAsForApi(User::factory()->checkoutAccessories()->create())
             ->postJson(route('api.accessories.checkout', Accessory::factory()->create()), [
@@ -31,29 +28,27 @@ class AccessoryCheckoutTest extends TestCase implements TestsPermissionsRequirem
             ->assertStatusMessageIs('error');
     }
 
-    public function testAccessoryMustBeAvailableWhenCheckingOut()
+    public function test_accessory_must_be_available_when_checking_out()
     {
         $this->actingAsForApi(User::factory()->checkoutAccessories()->create())
             ->postJson(route('api.accessories.checkout', Accessory::factory()->withoutItemsRemaining()->create()), [
                 'assigned_user' => User::factory()->create()->id,
-                'checkout_to_type' => 'user'
+                'checkout_to_type' => 'user',
             ])
             ->assertOk()
             ->assertStatusMessageIs('error')
             ->assertJson(
                 [
-                'status' => 'error',
-                'messages' =>
-                    [
-                        'checkout_qty' =>
-                            [
-                                trans_choice('admin/accessories/message.checkout.checkout_qty.lte', 0,
-                                    [
-                                        'number_currently_remaining' => 0,
-                                        'checkout_qty' => 1,
-                                        'number_remaining_after_checkout' => 0
-                                    ])
-                            ],
+                    'status' => 'error',
+                    'messages' => [
+                        'checkout_qty' => [
+                            trans_choice('admin/accessories/message.checkout.checkout_qty.lte', 0,
+                                [
+                                    'number_currently_remaining' => 0,
+                                    'checkout_qty' => 1,
+                                    'number_remaining_after_checkout' => 0,
+                                ]),
+                        ],
 
                     ],
                     'payload' => null,
@@ -62,7 +57,7 @@ class AccessoryCheckoutTest extends TestCase implements TestsPermissionsRequirem
             ->json();
     }
 
-    public function testAccessoryCanBeCheckedOutWithoutQty()
+    public function test_accessory_can_be_checked_out_without_qty()
     {
         $accessory = Accessory::factory()->create();
         $user = User::factory()->create();
@@ -71,12 +66,12 @@ class AccessoryCheckoutTest extends TestCase implements TestsPermissionsRequirem
         $this->actingAsForApi($admin)
             ->postJson(route('api.accessories.checkout', $accessory), [
                 'assigned_user' => $user->id,
-                'checkout_to_type' => 'user'
+                'checkout_to_type' => 'user',
             ])
             ->assertOk()
             ->assertStatusMessageIs('success')
             ->assertStatus(200)
-            ->assertJson(['messages' =>  trans('admin/accessories/message.checkout.success')])
+            ->assertJson(['messages' => trans('admin/accessories/message.checkout.success')])
             ->json();
 
         $this->assertTrue($accessory->checkouts()->where('assigned_type', User::class)->where('assigned_to', $user->id)->count() > 0);
@@ -90,12 +85,12 @@ class AccessoryCheckoutTest extends TestCase implements TestsPermissionsRequirem
                 'item_id' => $accessory->id,
                 'item_type' => Accessory::class,
                 'created_by' => $admin->id,
-            ])->count(),'Log entry either does not exist or there are more than expected'
+            ])->count(), 'Log entry either does not exist or there are more than expected'
         );
         $this->assertHasTheseActionLogs($accessory, ['create', 'checkout']);
     }
 
-    public function testAccessoryCanBeCheckedOutWithQty()
+    public function test_accessory_can_be_checked_out_with_qty()
     {
         $accessory = Accessory::factory()->create(['qty' => 20]);
         $user = User::factory()->create();
@@ -110,7 +105,7 @@ class AccessoryCheckoutTest extends TestCase implements TestsPermissionsRequirem
             ->assertOk()
             ->assertStatusMessageIs('success')
             ->assertStatus(200)
-            ->assertJson(['messages' =>  trans('admin/accessories/message.checkout.success')])
+            ->assertJson(['messages' => trans('admin/accessories/message.checkout.success')])
             ->json();
 
         $this->assertTrue($accessory->checkouts()->where('assigned_type', User::class)->where('assigned_to', $user->id)->count() > 0);
@@ -128,7 +123,7 @@ class AccessoryCheckoutTest extends TestCase implements TestsPermissionsRequirem
         $this->assertHasTheseActionLogs($accessory, ['create', 'checkout']);
     }
 
-    public function testAccessoryCannotBeCheckedOutToInvalidUser()
+    public function test_accessory_cannot_be_checked_out_to_invalid_user()
     {
         $accessory = Accessory::factory()->create();
         $user = User::factory()->create();
@@ -144,10 +139,10 @@ class AccessoryCheckoutTest extends TestCase implements TestsPermissionsRequirem
             ->assertStatus(200)
             ->json();
 
-            $this->assertFalse($accessory->checkouts()->where('assigned_type', User::class)->where('assigned_to', $user->id)->count() > 0);
+        $this->assertFalse($accessory->checkouts()->where('assigned_type', User::class)->where('assigned_to', $user->id)->count() > 0);
     }
 
-    public function testUserSentNotificationUponCheckout()
+    public function test_user_sent_notification_upon_checkout()
     {
         Mail::fake();
 
@@ -165,7 +160,7 @@ class AccessoryCheckoutTest extends TestCase implements TestsPermissionsRequirem
         });
     }
 
-    public function testActionLogCreatedUponCheckout()
+    public function test_action_log_created_upon_checkout()
     {
         $accessory = Accessory::factory()->create();
         $actor = User::factory()->checkoutAccessories()->create();

@@ -32,6 +32,10 @@ class SettingFactory extends Factory
             'locale' => 'en-US',
             'pwd_secure_min' => 10, // Match web setup
             'email_domain' => 'example.org',
+            'header_color' => '#3c8dbc',
+            'link_dark_color' => '#5fa4cc',
+            'link_light_color' => '#296282;',
+            'nav_link_color' => '#FFFFFF',
         ];
     }
 }

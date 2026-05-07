@@ -71,7 +71,7 @@ return [
     ],
     'hex_color' => 'The :attribute field must be a valid hexadecimal color.',
     'image' => 'The :attribute field must be an image.',
-    'import_field_empty'    => 'Valoarea pentru :field name nu poate fi null.',
+    'import_field_empty' => 'Valoarea pentru :field name nu poate fi null.',
     'in' => ':attribute selectat nu este valid.',
     'in_array' => 'The :attribute field must exist in :other.',
     'integer' => 'The :attribute field must be an integer.',
@@ -126,7 +126,7 @@ return [
         'symbols' => 'The :attribute field must contain at least one symbol.',
         'uncompromised' => 'The given :attribute has appeared in a data leak. Please choose a different :attribute.',
     ],
-    'percent'       => 'The depreciation minimum must be between 0 and 100 when depreciation type is percentage.',
+    'percent' => 'The depreciation minimum must be between 0 and 100 when depreciation type is percentage.',
 
     'present' => 'Câmpul atributului trebuie să fie prezent.',
     'present_if' => 'The :attribute field must be present when :other is :value.',
@@ -156,16 +156,16 @@ return [
         'string' => 'The :attribute field must be :size characters.',
     ],
     'starts_with' => 'The :attribute field must start with one of the following: :values.',
-    'string'               => 'Atributul: trebuie să fie un șir.',
+    'string' => 'Atributul: trebuie să fie un șir.',
     'two_column_unique_undeleted' => ':attribute trebuie să fie unic în :table1 și :table2. ',
-    'unique_undeleted'     => 'Atributul: trebuie să fie unic.',
-    'non_circular'         => ':attribute nu trebuie să creeze o referință circulară.',
-    'not_array'            => ':attribute nu poate fi un array.',
+    'unique_undeleted' => 'Atributul: trebuie să fie unic.',
+    'non_circular' => ':attribute nu trebuie să creeze o referință circulară.',
+    'not_array' => ':attribute nu poate fi un array.',
     'disallow_same_pwd_as_user_fields' => 'Parola nu poate fi identică cu numele de utilizator.',
-    'letters'              => 'Parola trebuie să conțină cel puțin o literă.',
-    'numbers'              => 'Parola trebuie să conțină cel puțin un număr.',
-    'case_diff'            => 'Parola trebuie să fie utilizată cu majuscule.',
-    'symbols'              => 'Parola trebuie să conțină simboluri.',
+    'letters' => 'Parola trebuie să conțină cel puțin o literă.',
+    'numbers' => 'Parola trebuie să conțină cel puțin un număr.',
+    'case_diff' => 'Parola trebuie să fie utilizată cu majuscule.',
+    'symbols' => 'Parola trebuie să conțină simboluri.',
     'timezone' => 'The :attribute field must be a valid timezone.',
     'unique' => ':attribute este deja folosit.',
     'uploaded' => 'Atributul: nu a reușit să se încarce.',
@@ -187,38 +187,38 @@ return [
     |
     */
 
-    'email_array'      => 'Una sau mai multe adrese de e-mail este nevalidă.',
-    'checkboxes'           => ':attribute conține opțiuni invalide.',
-    'radio_buttons'        => ':attribute nu este valid.',
-    
+    'email_array' => 'Una sau mai multe adrese de e-mail este nevalidă.',
+    'checkboxes' => ':attribute conține opțiuni invalide.',
+    'radio_buttons' => ':attribute nu este valid.',
+
     'custom' => [
         'alpha_space' => 'Câmpul atributului: conține un caracter care nu este permis.',
 
-        'hashed_pass'      => 'Parola curentă este incorectă',
-        'dumbpwd'          => 'Această parolă este prea obișnuită.',
+        'hashed_pass' => 'Parola curentă este incorectă',
+        'dumbpwd' => 'Această parolă este prea obișnuită.',
         'statuslabel_type' => 'Trebuie să selectați un tip de etichetă de stare validă',
-        'custom_field_not_found'          => 'This field does not seem to exist, please double check your custom field names.',
+        'custom_field_not_found' => 'This field does not seem to exist, please double check your custom field names.',
         'custom_field_not_found_on_model' => 'This field seems to exist, but is not available on this Asset Model\'s fieldset.',
 
         // date_format validation with slightly less stupid messages. It duplicates a lot, but it gets the job done :(
         // We use this because the default error message for date_format reflects php Y-m-d, which non-PHP
         // people won't know how to format.
-        'purchase_date.date_format'     => ':attribute trebuie să fie o dată validă în formatul AAAA-LL-ZZ',
-        'last_audit_date.date_format'   =>  ':attribute trebuie să fie o dată validă în AAAA-LL-ZZ hh:mm:ss format',
-        'expiration_date.date_format'   =>  ':attribute trebuie să fie o dată validă în formatul AAAA-LL-ZZ',
-        'termination_date.date_format'  =>  ':attribute trebuie să fie o dată validă în formatul AAAA-LL-ZZ',
-        'expected_checkin.date_format'  =>  ':attribute trebuie să fie o dată validă în formatul AAAA-LL-ZZ',
-        'start_date.date_format'        =>  ':attribute trebuie să fie o dată validă în formatul AAAA-LL-ZZ',
-        'end_date.date_format'          =>  ':attribute trebuie să fie o dată validă în formatul AAAA-LL-ZZ',
+        'purchase_date.date_format' => ':attribute trebuie să fie o dată validă în formatul AAAA-LL-ZZ',
+        'last_audit_date.date_format' => ':attribute trebuie să fie o dată validă în AAAA-LL-ZZ hh:mm:ss format',
+        'expiration_date.date_format' => ':attribute trebuie să fie o dată validă în formatul AAAA-LL-ZZ',
+        'termination_date.date_format' => ':attribute trebuie să fie o dată validă în formatul AAAA-LL-ZZ',
+        'expected_checkin.date_format' => ':attribute trebuie să fie o dată validă în formatul AAAA-LL-ZZ',
+        'start_date.date_format' => ':attribute trebuie să fie o dată validă în formatul AAAA-LL-ZZ',
+        'end_date.date_format' => ':attribute trebuie să fie o dată validă în formatul AAAA-LL-ZZ',
         'invalid_value_in_field' => 'Valoare nevalidă inclusă în acest câmp',
 
         'ldap_username_field' => [
-            'not_in' =>         '<code>sAMAccountName</code> (mixed case) will likely not work. You should use <code>samaccountname</code> (lowercase) instead.'
+            'not_in' => '<code>sAMAccountName</code> (mixed case) will likely not work. You should use <code>samaccountname</code> (lowercase) instead.',
         ],
         'ldap_auth_filter_query' => ['not_in' => '<code>uid=samaccountname</code> is probably not a valid auth filter. You probably want <code>uid=</code> '],
         'ldap_filter' => ['regex' => 'This value should probably not be wrapped in parentheses.'],
 
-        ],
+    ],
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Attributes
@@ -230,7 +230,10 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'serials.*' => 'Număr de serie',
+        'asset_tags.*' => 'Eticheta activ',
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -244,6 +247,5 @@ return [
         'required' => 'This field is required',
         'email' => 'Please enter a valid email address',
     ],
-
 
 ];

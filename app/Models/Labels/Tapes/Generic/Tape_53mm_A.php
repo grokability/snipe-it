@@ -4,55 +4,60 @@ namespace App\Models\Labels\Tapes\Generic;
 
 class Tape_53mm_A extends Tape_53mm
 {
-
     public function __construct()
     {
         parent::__construct(40.0, true, 0.0);
     }
-    
+
     public function getUnit()
     {
-        return 'mm'; 
+        return 'mm';
     }
+
     public function getSupportAssetTag()
     {
-        return false; 
+        return false;
     }
+
     public function getSupport1DBarcode()
     {
-        return false; 
+        return false;
     }
+
     public function getSupport2DBarcode()
     {
-        return true; 
+        return true;
     }
+
     public function getSupportFields()
     {
-        return 5; 
+        return 5;
     }
+
     public function getSupportLogo()
     {
-        return false; 
+        return false;
     }
+
     public function getSupportTitle()
     {
-        return true; 
+        return true;
     }
-    
+
     public function preparePDF($pdf)
     {
         $pdf->SetAutoPageBreak(false);
     }
-    
+
     public function write($pdf, $record)
     {
         $pa = $this->getPrintableArea();
-        
+
         $currentX = $pa->x1;
         $currentY = $pa->y1;
         $usableWidth = $pa->w;
         $usableHeight = $pa->h;
-        
+
         if ($record->has('title')) {
             static::writeText(
                 $pdf, $record->get('title'),
@@ -63,13 +68,13 @@ class Tape_53mm_A extends Tape_53mm
             $currentY += $this->titleSize + $this->titleMargin;
             $usableHeight -= $this->titleSize + $this->titleMargin;
         }
-        
+
         // Make the barcode as large as possible while still leaving room for fields
         $barcodeSize = min($usableHeight * 0.8, $usableWidth * $this->getBarcodeRatio());
-        
+
         if ($record->has('barcode2d')) {
             $barcodeX = $pa->x1 + ($usableWidth - $barcodeSize) / 2;
-            
+
             static::write2DBarcode(
                 $pdf, $record->get('barcode2d')->content, $record->get('barcode2d')->type,
                 $barcodeX, $currentY,
@@ -77,7 +82,7 @@ class Tape_53mm_A extends Tape_53mm
             );
             $currentY += $barcodeSize + $this->barcodeMargin;
         }
-        
+
         if ($record->has('fields')) {
             foreach ($record->get('fields') as $field) {
                 static::writeText(
@@ -87,7 +92,7 @@ class Tape_53mm_A extends Tape_53mm
                     $usableWidth, $this->labelSize, true, 0
                 );
                 $currentY += $this->labelSize + $this->labelMargin;
-                
+
                 static::writeText(
                     $pdf, $field['value'],
                     $currentX, $currentY,

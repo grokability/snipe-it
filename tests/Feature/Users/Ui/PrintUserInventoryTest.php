@@ -8,14 +8,14 @@ use Tests\TestCase;
 
 class PrintUserInventoryTest extends TestCase
 {
-    public function testPermissionRequiredToPrintUserInventory()
+    public function test_permission_required_to_print_user_inventory()
     {
         $this->actingAs(User::factory()->create())
             ->get(route('users.print', User::factory()->create()))
             ->assertStatus(403);
     }
 
-    public function testCanPrintUserInventory()
+    public function test_can_print_user_inventory()
     {
         $actor = User::factory()->viewUsers()->create();
 
@@ -25,7 +25,7 @@ class PrintUserInventoryTest extends TestCase
             ->assertStatus(200);
     }
 
-    public function testCannotPrintUserInventoryFromAnotherCompany()
+    public function test_cannot_print_user_inventory_from_another_company()
     {
         $this->settings->enableMultipleFullCompanySupport();
 

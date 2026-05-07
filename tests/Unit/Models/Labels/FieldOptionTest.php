@@ -9,7 +9,7 @@ use Tests\TestCase;
 
 class FieldOptionTest extends TestCase
 {
-    public function testItDisplaysAssignedToProperly()
+    public function test_it_displays_assigned_to_properly()
     {
         // "assignedTo" is a "special" value that can be used in the new label engine
         $fieldOption = FieldOption::fromString('Assigned To=assignedTo');

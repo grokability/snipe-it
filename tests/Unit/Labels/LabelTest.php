@@ -7,6 +7,7 @@ use App\Models\Location;
 use App\Models\Setting;
 use App\View\Label;
 use Tests\TestCase;
+
 use function Livewire\invade;
 
 class LabelTest extends TestCase

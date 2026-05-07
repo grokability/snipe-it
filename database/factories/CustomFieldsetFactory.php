@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Models\CustomFieldset;
 use App\Models\CustomField;
+use App\Models\CustomFieldset;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CustomFieldsetFactory extends Factory
@@ -45,7 +45,7 @@ class CustomFieldsetFactory extends Factory
         });
     }
 
-    public function hasEncryptedCustomField(CustomField $field = null)
+    public function hasEncryptedCustomField(?CustomField $field = null)
     {
         return $this->afterCreating(function (CustomFieldset $fieldset) use ($field) {
             $field = $field ?? CustomField::factory()->testEncrypted()->create();
@@ -54,17 +54,17 @@ class CustomFieldsetFactory extends Factory
         });
     }
 
-    public function hasMultipleCustomFields(array $fields = null): self
+    public function hasMultipleCustomFields(?array $fields = null): self
     {
         return $this->afterCreating(function (CustomFieldset $fieldset) use ($fields) {
             if (empty($fields)) {
-                    $mac_address = CustomField::factory()->macAddress()->create();
-                    $ram = CustomField::factory()->ram()->create();
-                    $cpu = CustomField::factory()->cpu()->create();
+                $mac_address = CustomField::factory()->macAddress()->create();
+                $ram = CustomField::factory()->ram()->create();
+                $cpu = CustomField::factory()->cpu()->create();
 
-                    $fieldset->fields()->attach($mac_address, ['order' => '1', 'required' => false]);
-                    $fieldset->fields()->attach($ram, ['order' => '2', 'required' => false]);
-                    $fieldset->fields()->attach($cpu, ['order' => '3', 'required' => false]);
+                $fieldset->fields()->attach($mac_address, ['order' => '1', 'required' => false]);
+                $fieldset->fields()->attach($ram, ['order' => '2', 'required' => false]);
+                $fieldset->fields()->attach($cpu, ['order' => '3', 'required' => false]);
             } else {
                 foreach ($fields as $field) {
                     $fieldset->fields()->attach($field, ['order' => '1', 'required' => false]);

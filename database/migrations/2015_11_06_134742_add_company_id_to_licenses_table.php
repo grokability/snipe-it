@@ -14,7 +14,7 @@ class AddCompanyIdToLicensesTable extends Migration
     {
         Schema::table('licenses', function (Blueprint $table) {
             $table->integer('company_id')->unsigned()->nullable();
-            //$table->foreign('company_id')->references('id')->on('companies');
+            // $table->foreign('company_id')->references('id')->on('companies');
         });
     }
 
@@ -26,7 +26,7 @@ class AddCompanyIdToLicensesTable extends Migration
     public function down()
     {
         Schema::table('licenses', function (Blueprint $table) {
-            //$table->dropForeign('licenses_company_id_foreign');
+            // $table->dropForeign('licenses_company_id_foreign');
             $table->dropColumn('company_id');
         });
     }

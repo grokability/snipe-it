@@ -6,7 +6,9 @@ use App\Http\Requests\SetupUserRequest;
 use App\Models\Setting;
 use App\Models\User;
 use App\Notifications\FirstAdminNotification;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
@@ -15,8 +17,6 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
-use \Illuminate\Contracts\View\View;
-
 
 /**
  * This controller handles all actions related to Settings for
@@ -34,9 +34,9 @@ class SetupController extends Controller
      *
      * @since [v3.0]
      *
-     * @return \Illuminate\Contracts\View\View | \Illuminate\Http\Response
+     * @return View | Response
      */
-    public function getSetupIndex() : View
+    public function getSetupIndex(): View
     {
         $start_settings['php_version_min'] = false;
 
@@ -55,22 +55,22 @@ class SetupController extends Controller
             $start_settings['db_error'] = $e->getMessage();
         }
 
-        $start_settings['url_config'] = trim(config('app.url'), '/'). '/setup';
-        $start_settings['real_url']  = request()->url();
+        $start_settings['url_config'] = trim(config('app.url'), '/').'/setup';
+        $start_settings['real_url'] = request()->url();
         $start_settings['url_valid'] = $start_settings['url_config'] === $start_settings['real_url'];
         $start_settings['php_version_min'] = true;
 
         // Curl the .env file to make sure it's not accessible via a browser
         $start_settings['env_exposed'] = $this->dotEnvFileIsExposed();
 
-        if (App::Environment('production') && (true == config('app.debug'))) {
+        if (App::Environment('production') && (config('app.debug') == true)) {
             $start_settings['debug_exposed'] = true;
         } else {
             $start_settings['debug_exposed'] = false;
         }
 
         $environment = app()->environment();
-        if ('production' != $environment) {
+        if ($environment != 'production') {
             $start_settings['env'] = $environment;
             $start_settings['prod'] = false;
         } else {
@@ -109,9 +109,9 @@ class SetupController extends Controller
      * Determine if the .env file accessible via a browser.
      *
      * @return bool This method will return true when exceptions (such as curl exception) is thrown.
-     * Check the log files to see more details about the exception.
+     *              Check the log files to see more details about the exception.
      */
-    protected function dotEnvFileIsExposed() : bool
+    protected function dotEnvFileIsExposed(): bool
     {
         try {
             return Http::withoutVerifying()->timeout(10)
@@ -120,6 +120,7 @@ class SetupController extends Controller
                 ->successful();
         } catch (\Exception $e) {
             Log::debug($e->getMessage());
+
             return true;
         }
     }
@@ -129,11 +130,11 @@ class SetupController extends Controller
      */
     protected function storagePathIsWritable(): bool
     {
-        return File::isWritable(storage_path())                  &&
-            File::isWritable(storage_path('framework'))          &&
-            File::isWritable(storage_path('framework/cache'))    &&
+        return File::isWritable(storage_path()) &&
+            File::isWritable(storage_path('framework')) &&
+            File::isWritable(storage_path('framework/cache')) &&
             File::isWritable(storage_path('framework/sessions')) &&
-            File::isWritable(storage_path('framework/views'))    &&
+            File::isWritable(storage_path('framework/views')) &&
             File::isWritable(storage_path('logs'));
     }
 
@@ -141,13 +142,13 @@ class SetupController extends Controller
      * Save the first admin user from Setup.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @since [v3.0]
      *
+     * @since [v3.0]
      */
-    public function postSaveFirstAdmin(SetupUserRequest $request) : RedirectResponse
+    public function postSaveFirstAdmin(SetupUserRequest $request): RedirectResponse
     {
 
-        $user = new User();
+        $user = new User;
         $user->first_name = $data['first_name'] = $request->input('first_name');
         $user->last_name = $request->input('last_name');
         $user->email = $data['email'] = $request->input('email');
@@ -158,7 +159,7 @@ class SetupController extends Controller
         $user->password = bcrypt($request->input('password'));
         $data['password'] = $request->input('password');
 
-        $settings = new Setting();
+        $settings = new Setting;
         $settings->full_multiple_companies_support = $request->input('full_multiple_companies_support', 0);
         $settings->site_name = $request->input('site_name');
         $settings->alert_email = $request->input('email');
@@ -210,7 +211,7 @@ class SetupController extends Controller
      *
      * @since [v3.0]
      */
-    public function getSetupUser() : View
+    public function getSetupUser(): View
     {
         return view('setup/user')
             ->with('step', 3)
@@ -225,7 +226,7 @@ class SetupController extends Controller
      *
      * @since [v3.0]
      */
-    public function getSetupDone() : View
+    public function getSetupDone(): View
     {
         return view('setup/done')
             ->with('success', trans('general.create_admin_success'))
@@ -233,8 +234,6 @@ class SetupController extends Controller
             ->with('icon', 'fa-solid fa-champagne-glasses fa-shake')
             ->with('section', trans('general.setup_done'));
     }
-
-
 
     /**
      * Migrate the database tables, and return the output
@@ -260,11 +259,4 @@ class SetupController extends Controller
             ->with('section', trans('general.setup_create_database'))
             ->with('icon', 'fa-solid fa-database');
     }
-
-
-
-
-
-
-
 }

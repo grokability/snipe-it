@@ -3,6 +3,7 @@
 namespace App\Presenters;
 
 use App\Helpers\Helper;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * Class AssetModelPresenter
@@ -17,6 +18,7 @@ class AssetModelPresenter extends Presenter
                 'checkbox' => true,
                 'titleTooltip' => trans('general.select_all_none'),
                 'printIgnore' => true,
+                'class' => 'hidden-print',
             ],
             [
                 'field' => 'id',
@@ -70,7 +72,7 @@ class AssetModelPresenter extends Presenter
             ],
             [
                 'field' => 'min_amt',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,
                 'title' => trans('mail.min_QTY'),
@@ -81,7 +83,7 @@ class AssetModelPresenter extends Presenter
 
             [
                 'field' => 'assets_count',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,
                 'title' => trans('admin/models/table.numassets'),
@@ -91,7 +93,7 @@ class AssetModelPresenter extends Presenter
             ],
             [
                 'field' => 'assets_assigned_count',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,
                 'title' => trans('general.assigned'),
@@ -101,7 +103,7 @@ class AssetModelPresenter extends Presenter
             ],
             [
                 'field' => 'remaining',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,
                 'title' => trans('general.remaining'),
@@ -110,8 +112,17 @@ class AssetModelPresenter extends Presenter
                 'footerFormatter' => 'qtySumFormatter',
             ],
             [
-                'field' => 'assets_archived_count',
+                'field' => 'percent_remaining',
                 'searchable' => false,
+                'sortable' => true,
+                'switchable' => true,
+                'title' => '% '.trans('general.remaining'),
+                'visible' => true,
+                'formatter' => 'progressBarFormatter',
+            ],
+            [
+                'field' => 'assets_archived_count',
+                'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,
                 'title' => trans('general.archived'),
@@ -121,7 +132,7 @@ class AssetModelPresenter extends Presenter
             ],
             [
                 'field' => 'depreciation',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,
                 'title' => trans('general.depreciation'),
@@ -147,7 +158,7 @@ class AssetModelPresenter extends Presenter
             ],
             [
                 'field' => 'fieldset',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,
                 'title' => trans('admin/models/general.fieldset'),
@@ -181,7 +192,7 @@ class AssetModelPresenter extends Presenter
             ],
             [
                 'field' => 'created_by',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'title' => trans('general.created_by'),
                 'visible' => false,
@@ -214,6 +225,7 @@ class AssetModelPresenter extends Presenter
             'title' => trans('table.actions'),
             'formatter' => 'modelsActionsFormatter',
             'printIgnore' => true,
+            'class' => 'hidden-print',
         ];
 
         return json_encode($layout);
@@ -221,6 +233,7 @@ class AssetModelPresenter extends Presenter
 
     /**
      * Formatted note for this model
+     *
      * @return string
      */
     public function note()
@@ -241,6 +254,7 @@ class AssetModelPresenter extends Presenter
 
     /**
      * Pretty name for this model
+     *
      * @return string
      */
     public function modelName()
@@ -260,21 +274,25 @@ class AssetModelPresenter extends Presenter
 
     /**
      * Standard url for use to view page.
+     *
      * @return string
      */
     public function nameUrl()
     {
-        return  (string) link_to_route('models.show', $this->name, $this->id);
+        return '<a href="'.route('models.show', $this->id).'">'.e($this->name).'</a>';
     }
 
     /**
      * Generate img tag to this models image.
+     *
      * @return string
      */
     public function imageUrl()
     {
         if (! empty($this->image)) {
-            return '<img src="'.config('app.url').'/uploads/models/'.$this->image.'" alt="'.$this->name.'" height="50" width="50">';
+            $url = Storage::disk('public')->url(app('models_upload_path').e($this->image));
+
+            return '<img src="'.$url.'" alt="'.e($this->name).'" height="50" width="50">';
         }
 
         return '';
@@ -282,12 +300,13 @@ class AssetModelPresenter extends Presenter
 
     /**
      * Generate img tag to this models image.
+     *
      * @return string
      */
     public function imageSrc()
     {
         if (! empty($this->image)) {
-            return config('app.url').'/uploads/models/'.$this->image;
+            return Storage::disk('public')->url(app('models_upload_path').e($this->image));
         }
 
         return '';
@@ -295,6 +314,7 @@ class AssetModelPresenter extends Presenter
 
     /**
      * Url to view this item.
+     *
      * @return string
      */
     public function viewUrl()
@@ -302,12 +322,13 @@ class AssetModelPresenter extends Presenter
         return route('models.show', $this->id);
     }
 
-    public function formattedNameLink() {
+    public function formattedNameLink()
+    {
 
-        if (auth()->user()->can('models.view', $this)) {
-            return '<a href="'.route('models.show', e($this->id)).'">'.e($this->name).'</a>';
+        if (auth()->user()->can('view', ['\App\Models\AssetModel', $this])) {
+            return '<a href="'.route('models.show', e($this->id)).'" class="'.(($this->deleted_at != '') ? 'deleted' : '').'">'.e($this->display_name).'</a>';
         }
 
-        return $this->name;
+        return '<span class="'.(($this->deleted_at != '') ? 'deleted' : '').'">'.e($this->display_name).'</span>';
     }
 }

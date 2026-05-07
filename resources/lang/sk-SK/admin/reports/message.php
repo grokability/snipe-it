@@ -3,7 +3,7 @@
 return [
     'about_templates' => 'O uložených šablónach',
     'saving_templates_description' => 'Vyberte vaše voľby, potom zadefinujte názov šablóny do políčka hore a kliknite na tlačidlo Uložiť šablónu\'. Použite políčko na výber pre opätovné použitie uloženej šablóny.',
-    'create'  => [
+    'create' => [
         'success' => 'Šablóna bola úspešne uložená',
     ],
     'update' => [

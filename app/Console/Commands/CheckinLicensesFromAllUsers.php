@@ -4,9 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\License;
 use App\Models\LicenseSeat;
-use App\Models\User;
 use Illuminate\Console\Command;
-use Illuminate\Database\Eloquent\Model;
 
 class CheckinLicensesFromAllUsers extends Command
 {

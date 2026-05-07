@@ -10,7 +10,7 @@ use Tests\TestCase;
 
 class DeleteCustomFieldsTest extends TestCase implements TestsPermissionsRequirement
 {
-    public function testRequiresPermission()
+    public function test_requires_permission()
     {
         $this->markIncompleteIfMySQL('Custom Fields tests do not work on MySQL');
 
@@ -23,7 +23,7 @@ class DeleteCustomFieldsTest extends TestCase implements TestsPermissionsRequire
         $this->assertDatabaseHas('custom_fields', ['id' => $customField->id]);
     }
 
-    public function testCustomFieldsCannotBeDeletedIfTheyHaveAssociatedFieldsets()
+    public function test_custom_fields_cannot_be_deleted_if_they_have_associated_fieldsets()
     {
         $this->markIncompleteIfMySQL('Custom Fields tests do not work on MySQL');
 
@@ -39,7 +39,7 @@ class DeleteCustomFieldsTest extends TestCase implements TestsPermissionsRequire
         $this->assertDatabaseHas('custom_fields', ['id' => $customField->id]);
     }
 
-    public function testCustomFieldsCanBeDeleted()
+    public function test_custom_fields_can_be_deleted()
     {
         $this->markIncompleteIfMySQL('Custom Fields tests do not work on MySQL');
 

@@ -19,11 +19,6 @@
 
       <div class="box-header with-border">
         <h2 class="box-title">{{ trans('admin/custom_fields/general.fieldsets') }}</h2>
-        <div class="box-tools pull-right">
-          @can('create', \App\Models\CustomFieldset::class)
-          <a href="{{ route('fieldsets.create') }}" class="btn btn-sm btn-theme" data-tooltip="true" title="{{ trans('admin/custom_fields/general.create_fieldset_title') }}">{{ trans('admin/custom_fields/general.create_fieldset') }}</a>
-          @endcan
-        </div>
       </div><!-- /.box-header -->
 
       <div class="box-body">
@@ -56,7 +51,7 @@
             @foreach($custom_fieldsets AS $fieldset)
             <tr>
               <td>
-                {{ link_to_route("fieldsets.show",$fieldset->name,['fieldset' => $fieldset->id]) }}
+                <a href="{{ route('fieldsets.show', ['fieldset' => $fieldset->id]) }}">{{ $fieldset->name }}</a>
               </td>
               <td>
                 {{ $fieldset->fields->count() }}
@@ -73,13 +68,8 @@
 
                 @can('update', $fieldset)
 
-                  <a href="{{ route('fieldsets.show', ['fieldset' => $fieldset->id]) }}" data-tooltip="true" title="{{ trans('general.edit_fieldset') }}">
-                    <button type="submit" class="btn btn-info btn-sm">
-                      <i class="fa-regular fa-rectangle-list"></i>
-                    </button>
-                  </a>
 
-                  <a href="{{ route('fieldsets.edit', $fieldset->id) }}" class="btn btn-warning btn-sm" data-tooltip="true" title="{{ trans('general.update') }}">
+                  <a href="{{ route('fieldsets.show', $fieldset->id) }}" class="btn btn-warning btn-sm" data-tooltip="true" title="{{ trans('general.update') }}">
                     <i class="fas fa-pencil-alt" aria-hidden="true"></i>
                     <span class="sr-only">{{ trans('button.edit') }}</span>
                   </a>
@@ -114,12 +104,6 @@
     <div class="box box-default">
       <div class="box-header with-border">
         <h2 class="box-title">{{ trans('admin/custom_fields/general.custom_fields') }}</h2>
-        <div class="box-tools pull-right">
-          @can('create', \App\Models\CustomField::class)
-          <a href="{{ route('fields.create') }}" class="btn btn-sm btn-theme" data-tooltip="true" title="{{ trans('admin/custom_fields/general.create_field_title') }}">{{ trans('admin/custom_fields/general.create_field') }}</a>
-          @endcan
-        </div>
-
       </div><!-- /.box-header -->
       <div class="box-body">
 

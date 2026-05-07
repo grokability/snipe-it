@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Helpers\Helper;
 use App\Models\Asset;
 use App\Models\Recipients\AlertRecipient;
 use App\Models\Setting;
@@ -10,7 +11,6 @@ use App\Notifications\ExpectedCheckinNotification;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Notification;
-use App\Helpers\Helper;
 
 class SendExpectedCheckinAlerts extends Command
 {
@@ -49,7 +49,7 @@ class SendExpectedCheckinAlerts extends Command
         $interval_date = $today->copy()->addDays($interval);
         $count = 0;
 
-        if (!$this->option('with-output')) {
+        if (! $this->option('with-output')) {
             $this->info('Run this command with the --with-output option to see the full list in the console.');
         }
 
@@ -57,9 +57,8 @@ class SendExpectedCheckinAlerts extends Command
 
         $this->info($assets->count().' assets must be checked on or before '.Helper::getFormattedDateObject($interval_date, 'date', false));
 
-
         foreach ($assets as $asset) {
-            if ($asset->assignedTo && (isset($asset->assignedTo->email)) && ($asset->assignedTo->email!='') && $asset->checkedOutToUser()) {
+            if ($asset->assignedTo && (isset($asset->assignedTo->email)) && ($asset->assignedTo->email != '') && $asset->checkedOutToUser()) {
                 $asset->assignedTo->notify((new ExpectedCheckinNotification($asset)));
                 $count++;
             }
@@ -76,13 +75,13 @@ class SendExpectedCheckinAlerts extends Command
                         trans('general.purchase_date'),
                         trans('admin/hardware/form.expected_checkin'),
                     ],
-                    $assets->map(fn($assets) => [
+                    $assets->map(fn ($assets) => [
                         trans('general.id') => $assets->id,
                         trans('admin/hardware/form.tag') => $assets->asset_tag,
                         trans('admin/hardware/form.model') => $assets->model->name,
                         trans('general.model_no') => $assets->model->model_number,
                         trans('general.purchase_date') => $assets->purchase_date_formatted,
-                        trans('admin/hardware/form.eol_date') => $assets->expected_checkin_formattedDate ? $assets->expected_checkin_formattedDate . ' (' . $assets->expected_checkin_diff_for_humans . ')' : '',
+                        trans('admin/hardware/form.eol_date') => $assets->expected_checkin_formattedDate ? $assets->expected_checkin_formattedDate.' ('.$assets->expected_checkin_diff_for_humans.')' : '',
                     ])
                 );
             }
@@ -96,7 +95,7 @@ class SendExpectedCheckinAlerts extends Command
             Notification::send($recipients, new ExpectedCheckinAdminNotification($assets));
 
         }
-        
+
         $this->info('Sent checkin reminders to to '.$count.' users.');
 
     }

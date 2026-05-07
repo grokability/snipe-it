@@ -11,14 +11,14 @@ use Tests\TestCase;
 
 class DeleteAssetTest extends TestCase
 {
-    public function testPermissionNeededToDeleteAsset()
+    public function test_permission_needed_to_delete_asset()
     {
         $this->actingAs(User::factory()->create())
             ->delete(route('hardware.destroy', Asset::factory()->create()))
             ->assertForbidden();
     }
 
-    public function testCanDeleteAsset()
+    public function test_can_delete_asset()
     {
         $asset = Asset::factory()->create();
 
@@ -30,7 +30,7 @@ class DeleteAssetTest extends TestCase
         $this->assertSoftDeleted($asset);
     }
 
-    public function testActionLogEntryMadeWhenAssetDeleted()
+    public function test_action_log_entry_made_when_asset_deleted()
     {
         $actor = User::factory()->deleteAssets()->create();
 
@@ -48,7 +48,7 @@ class DeleteAssetTest extends TestCase
         ]);
     }
 
-    public function testActionLogsActionDateIsPopulatedWhenAssetDeleted()
+    public function test_action_logs_action_date_is_populated_when_asset_deleted()
     {
         $actor = User::factory()->deleteAssets()->create();
 
@@ -71,7 +71,7 @@ class DeleteAssetTest extends TestCase
 
     }
 
-    public function testAssetIsCheckedInWhenDeleted()
+    public function test_asset_is_checked_in_when_deleted()
     {
         Event::fake();
 
@@ -95,7 +95,7 @@ class DeleteAssetTest extends TestCase
         Event::assertDispatched(CheckoutableCheckedIn::class);
     }
 
-    public function testImageIsDeletedWhenAssetDeleted()
+    public function test_image_is_deleted_when_asset_deleted()
     {
         Storage::fake('public');
 

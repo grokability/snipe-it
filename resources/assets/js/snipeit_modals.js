@@ -70,7 +70,7 @@ $(function () {
                         var data = {
                             search: params.term,
                             page: params.page || 1,
-                            assetStatusType: link.data("asset-status-type"),
+                            statusType: link.data("asset-status-type"),
                         };
                         return data;
                     },

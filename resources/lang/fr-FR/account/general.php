@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
     'personal_api_keys' => 'Clés personnelles d\'API',
     'personal_access_token' => 'Jeton d\'accès personnel',
     'personal_api_keys_success' => 'Clé d\'API personnelle :key créée avec succès',
@@ -14,4 +14,4 @@ return array(
     'no_tokens' => 'Vous n\'avez pas encore créé de jeton d\'accès personnel.',
     'enable_sounds' => 'Activer les effets sonores',
     'enable_confetti' => 'Effets confettis !',
-);
+];

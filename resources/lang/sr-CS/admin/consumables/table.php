@@ -1,5 +1,5 @@
 <?php
 
-return array(
-    'title'      				=> 'Naziv potrošnog materijala',
-);
+return [
+    'title' => 'Naziv potrošnog materijala',
+];

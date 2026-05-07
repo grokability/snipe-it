@@ -1,17 +1,17 @@
 <?php
 
-return array(
+return [
     'personal_api_keys' => 'Kişisel API Anahtarları',
-    'personal_access_token' => 'Personal Access Token',
-    'personal_api_keys_success' => 'Personal API Key :key created sucessfully',
-    'here_is_api_key' => 'Here is your new personal access token. This is the only time it will be shown so do not lose it! You may now use this token to make API requests.',
+    'personal_access_token' => 'Kişisel Erişim Belirteci',
+    'personal_api_keys_success' => 'Kişisel API Anahtarı :key başarıyla oluşturuldu',
+    'here_is_api_key' => 'İşte yeni kişisel erişim belirteciniz. Bu yalnızca bir kez gösterilecektir, bu yüzden kaybetmeyin! Artık bu belirteci API istekleri yapmak için kullanabilirsiniz.',
     'api_key_warning' => 'API token üretildiğinde hemen farklı bir yere kopyalayın. Sonra bir daha göremeyeceksiniz.',
     'api_base_url' => 'API\'nizin temel URL\'si şurada bulunur:',
     'api_base_url_endpoint' => '/&lt;uçnokta&gt;',
     'api_token_expiration_time' => 'API jetonlarınız şu süre içinde sona erecek şekilde ayarlanmıştır:',
-    'api_reference' => 'Please check the <a href="https://snipe-it.readme.io/reference" target="_blank">API reference</a> to find specific API endpoints and additional API documentation.',
-    'profile_updated' => 'Account successfully updated',
-    'no_tokens' => 'You have not created any personal access tokens.',
-    'enable_sounds' => 'Enable sound effects',
-    'enable_confetti' => 'Enable confetti effects',
-);
+    'api_reference' => 'Belirli API uç noktalarını ve ek API belgelerini bulmak için lütfen <a href="https://snipe-it.readme.io/reference" target="_blank">API referansını</a> inceleyin.',
+    'profile_updated' => 'Hesap başarıyla güncellendi',
+    'no_tokens' => 'Henüz herhangi bir kişisel erişim belirteci oluşturmadınız',
+    'enable_sounds' => 'Ses efektlerini etkinleştir',
+    'enable_confetti' => 'Konfeti efektlerini etkinleştir',
+];

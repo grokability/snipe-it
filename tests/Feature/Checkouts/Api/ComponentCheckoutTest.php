@@ -14,7 +14,7 @@ use Tests\TestCase;
 
 class ComponentCheckoutTest extends TestCase implements TestsFullMultipleCompaniesSupport, TestsPermissionsRequirement
 {
-    public function testRequiresPermission()
+    public function test_requires_permission()
     {
         $component = Component::factory()->create();
 
@@ -23,7 +23,7 @@ class ComponentCheckoutTest extends TestCase implements TestsFullMultipleCompani
             ->assertForbidden();
     }
 
-    public function testCannotCheckoutNonExistentComponent()
+    public function test_cannot_checkout_non_existent_component()
     {
         $this->actingAsForApi(User::factory()->checkoutComponents()->create())
             ->postJson(route('api.components.checkout', 1000))
@@ -32,7 +32,7 @@ class ComponentCheckoutTest extends TestCase implements TestsFullMultipleCompani
             ->assertMessagesAre('Component does not exist.');
     }
 
-    public function testCheckingOutComponentRequiresValidFields()
+    public function test_checking_out_component_requires_valid_fields()
     {
         $component = Component::factory()->create();
 
@@ -46,7 +46,7 @@ class ComponentCheckoutTest extends TestCase implements TestsFullMultipleCompani
             ->assertPayloadContains('assigned_qty');
     }
 
-    public function testCannotCheckoutComponentIfRequestedAmountIsMoreThanComponentQuantity()
+    public function test_cannot_checkout_component_if_requested_amount_is_more_than_component_quantity()
     {
         $asset = Asset::factory()->create();
         $component = Component::factory()->create(['qty' => 2]);
@@ -61,7 +61,7 @@ class ComponentCheckoutTest extends TestCase implements TestsFullMultipleCompani
             ->assertMessagesAre(trans('admin/components/message.checkout.unavailable', ['remaining' => 2, 'requested' => 3]));
     }
 
-    public function testCannotCheckoutComponentIfRequestedAmountIsMoreThanWhatIsRemaining()
+    public function test_cannot_checkout_component_if_requested_amount_is_more_than_what_is_remaining()
     {
         $asset = Asset::factory()->create();
         $component = Component::factory()->create(['qty' => 2]);
@@ -81,7 +81,7 @@ class ComponentCheckoutTest extends TestCase implements TestsFullMultipleCompani
             ->assertStatusMessageIs('error');
     }
 
-    public function testCanCheckoutComponent()
+    public function test_can_checkout_component()
     {
         $user = User::factory()->checkoutComponents()->create();
         $asset = Asset::factory()->create();
@@ -99,7 +99,7 @@ class ComponentCheckoutTest extends TestCase implements TestsFullMultipleCompani
         $this->assertHasTheseActionLogs($component, ['create', 'checkout']);
     }
 
-    public function testComponentCheckoutIsLogged()
+    public function test_component_checkout_is_logged()
     {
         $user = User::factory()->checkoutComponents()->create();
         $location = Location::factory()->create();
@@ -124,7 +124,7 @@ class ComponentCheckoutTest extends TestCase implements TestsFullMultipleCompani
         ]);
     }
 
-    public function testAdheresToFullMultipleCompaniesSupportScoping()
+    public function test_adheres_to_full_multiple_companies_support_scoping()
     {
         [$companyA, $companyB] = Company::factory()->count(2)->create();
 

@@ -10,7 +10,6 @@ class SettingObserver
     /**
      * Listen to the Setting saved event.
      *
-     * @param Setting $setting
      *
      * @return void
      */

@@ -3,30 +3,30 @@
 return [
 
     'update' => [
-        'error'                 => 'En feil oppstod under oppdatering. ',
-        'success'               => 'Oppdatering av innstillinger vellykket.',
+        'error' => 'En feil oppstod under oppdatering. ',
+        'success' => 'Oppdatering av innstillinger vellykket.',
     ],
     'backup' => [
-        'delete_confirm'        => 'Er du sikker på at du vil slette denne sikkerhetskopien? Denne handlingen kan ikke angres. ',
-        'file_deleted'          => 'Den Sikkerhetskopierte filen ble slettet. ',
-        'generated'             => 'En ny sikkerhetskopi fil ble opprettet.',
-        'file_not_found'        => 'Den backup-filen ble ikke funnet på serveren.',
-        'restore_warning'       => 'Ja, kjør gjenoppretting. Jeg forstår at dette vil overskive alle eksisterende data som er i databasen. Dette vil også logge ut alle eksisterende brukere (inkludert meg selv).',
-        'restore_confirm'       => 'Er du sikker på at du vil gjenopprette databasen fra :filename?'
+        'delete_confirm' => 'Er du sikker på at du vil slette denne sikkerhetskopien? Denne handlingen kan ikke angres. ',
+        'file_deleted' => 'Den Sikkerhetskopierte filen ble slettet. ',
+        'generated' => 'En ny sikkerhetskopi fil ble opprettet.',
+        'file_not_found' => 'Den backup-filen ble ikke funnet på serveren.',
+        'restore_warning' => 'Ja, kjør gjenoppretting. Jeg forstår at dette vil overskive alle eksisterende data som er i databasen. Dette vil også logge ut alle eksisterende brukere (inkludert meg selv).',
+        'restore_confirm' => 'Er du sikker på at du vil gjenopprette databasen fra :filename?',
     ],
     'restore' => [
-        'success'               => 'Your system backup has been restored. Please log in again.'
+        'success' => 'Your system backup has been restored. Please log in again.',
     ],
     'purge' => [
-        'error'     => 'Det oppstod en feil under fjerning. ',
-        'validation_failed'     => 'Din fjerningsbekreftelse er feil. Vennligst skriv inn ordet "DELETE" i bekreftelsesboksen.',
-        'success'               => 'Slettede rader ble fjernet.',
+        'error' => 'Det oppstod en feil under fjerning. ',
+        'validation_failed' => 'Din fjerningsbekreftelse er feil. Vennligst skriv inn ordet "DELETE" i bekreftelsesboksen.',
+        'success' => 'Slettede rader ble fjernet.',
     ],
     'mail' => [
         'sending' => 'Sender e-post...',
         'success' => 'E-post er sendt!',
         'error' => 'E-post kunne ikke sendes.',
-        'additional' => 'Ingen ytterligere feilmelding oppgitt. Sjekk e-postinnstillingene og loggen.'
+        'additional' => 'Ingen ytterligere feilmelding oppgitt. Sjekk e-postinnstillingene og loggen.',
     ],
     'ldap' => [
         'testing' => 'Tester LDAP-tilkobling, binding og spørring ...',
@@ -34,11 +34,11 @@ return [
         'error' => 'Noe gikk galt :(',
         'sync_success' => 'Et utvalg på 10 brukere som returneres fra LDAP-serveren basert på innstillingene:',
         'testing_authentication' => 'Tester LDAP-autentisering...',
-        'authentication_success' => 'Brukeren ble autentisert mot LDAP!'
+        'authentication_success' => 'Brukeren ble autentisert mot LDAP!',
     ],
     'labels' => [
         'null_template' => 'Label template not found. Please select a template.',
-        ],
+    ],
     'webhook' => [
         'sending' => 'Sender :app test melding...',
         'success' => 'Ditt :webhook_name integrasjon fungerer!',
@@ -55,5 +55,22 @@ return [
     'location_scoping' => [
         'not_saved' => 'Your settings were not saved.',
         'mismatch' => 'There is 1 item in the database that need your attention before you can enable location scoping.|There are :count items in the database that need your attention before you can enable location scoping.',
+    ],
+    'oauth' => [
+        'token_revoked' => 'Personal access token revoked successfully.',
+        'token_unrevoked' => 'Personal access token reinstated successfully.',
+        'token_not_found' => 'That personal access token could not be found.',
+        'token_revoke_error' => 'An error occurred while revoking the token.',
+        'token_unrevoke_error' => 'An error occurred while reinstating the token.',
+        'client_created' => 'OAuth client created successfully.',
+        'client_updated' => 'OAuth client updated successfully.',
+        'client_deleted' => 'OAuth client deleted successfully.',
+        'client_revoked' => 'OAuth client revoked successfully.',
+        'client_unrevoked' => 'OAuth client reinstated successfully.',
+        'client_not_found' => 'That OAuth client could not be found.',
+        'token_deleted' => 'Token revoked successfully.',
+        'client_delete_denied' => 'You are not authorized to delete this client.',
+        'client_edit_denied' => 'You are not authorized to edit this client.',
+        'token_delete_denied' => 'You are not authorized to revoke this token.',
     ],
 ];

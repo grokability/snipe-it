@@ -9,14 +9,14 @@ use Tests\TestCase;
 
 class ShowAccessoryTest extends TestCase
 {
-    public function testRequiresPermissionToViewAccessory()
+    public function test_requires_permission_to_view_accessory()
     {
         $this->actingAs(User::factory()->create())
             ->get(route('accessories.show', Accessory::factory()->create()))
             ->assertForbidden();
     }
 
-    public function testCannotViewAccessoryFromAnotherCompany()
+    public function test_cannot_view_accessory_from_another_company()
     {
         $this->settings->enableMultipleFullCompanySupport();
 
@@ -29,7 +29,7 @@ class ShowAccessoryTest extends TestCase
             ->assertStatus(302);
     }
 
-    public function testCanViewAccessory()
+    public function test_can_view_accessory()
     {
         $accessory = Accessory::factory()->create();
 
@@ -39,8 +39,8 @@ class ShowAccessoryTest extends TestCase
             ->assertViewIs('accessories.view')
             ->assertViewHas(['accessory' => $accessory]);
     }
-  
-    public function testPageRenders()
+
+    public function test_page_renders()
     {
         $this->actingAs(User::factory()->superuser()->create())
             ->get(route('accessories.show', Accessory::factory()->create()))
@@ -48,7 +48,7 @@ class ShowAccessoryTest extends TestCase
 
     }
 
-    public function testHandlesAccessoryCreatorNotExisting()
+    public function test_handles_accessory_creator_not_existing()
     {
         $accessory = Accessory::factory()->create(['created_by' => 999999]);
 

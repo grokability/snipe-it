@@ -71,7 +71,7 @@ return [
     ],
     'hex_color' => 'The :attribute field must be a valid hexadecimal color.',
     'image' => 'The :attribute field must be an image.',
-    'import_field_empty'    => ':fieldname の値は null にはできません。',
+    'import_field_empty' => ':fieldname の値は null にはできません。',
     'in' => '選択された :attribute は不正です。',
     'in_array' => 'The :attribute field must exist in :other.',
     'integer' => 'The :attribute field must be an integer.',
@@ -126,7 +126,7 @@ return [
         'symbols' => 'The :attribute field must contain at least one symbol.',
         'uncompromised' => 'The given :attribute has appeared in a data leak. Please choose a different :attribute.',
     ],
-    'percent'       => 'The depreciation minimum must be between 0 and 100 when depreciation type is percentage.',
+    'percent' => 'The depreciation minimum must be between 0 and 100 when depreciation type is percentage.',
 
     'present' => ':attribute フィールドは必須です。',
     'present_if' => 'The :attribute field must be present when :other is :value.',
@@ -156,16 +156,16 @@ return [
         'string' => 'The :attribute field must be :size characters.',
     ],
     'starts_with' => 'The :attribute field must start with one of the following: :values.',
-    'string'               => ':attribute は文字列にして下さい。',
+    'string' => ':attribute は文字列にして下さい。',
     'two_column_unique_undeleted' => ':attributeは:table1と:table2で一意である必要があります。 ',
-    'unique_undeleted'     => ':attribute は 一意の値である必要があります。',
-    'non_circular'         => ':attribute は、循環参照を作成してはいけません。',
-    'not_array'            => ':attributeには配列を指定できません。',
+    'unique_undeleted' => ':attribute は 一意の値である必要があります。',
+    'non_circular' => ':attribute は、循環参照を作成してはいけません。',
+    'not_array' => ':attributeには配列を指定できません。',
     'disallow_same_pwd_as_user_fields' => 'パスワードはユーザー名と同じにすることはできません。',
-    'letters'              => 'パスワードには英字が1文字以上必要です。',
-    'numbers'              => 'パスワードには数字が1つ以上必要です。',
-    'case_diff'            => 'パスワードは英字と数字を混在させる必要があります。',
-    'symbols'              => 'パスワードには記号を含める必要があります',
+    'letters' => 'パスワードには英字が1文字以上必要です。',
+    'numbers' => 'パスワードには数字が1つ以上必要です。',
+    'case_diff' => 'パスワードは英字と数字を混在させる必要があります。',
+    'symbols' => 'パスワードには記号を含める必要があります',
     'timezone' => 'The :attribute field must be a valid timezone.',
     'unique' => ':attribute は、取得済みです。',
     'uploaded' => ':attribute のアップロードに失敗しました。',
@@ -187,38 +187,38 @@ return [
     |
     */
 
-    'email_array'      => '1 つまたは複数の電子メール アドレスが無効です。',
-    'checkboxes'           => ':attribute に無効なオプションが含まれています。',
-    'radio_buttons'        => ':attribute は不正です。',
-    
+    'email_array' => '1 つまたは複数の電子メール アドレスが無効です。',
+    'checkboxes' => ':attribute に無効なオプションが含まれています。',
+    'radio_buttons' => ':attribute は不正です。',
+
     'custom' => [
         'alpha_space' => ':attribute フィールドに、禁止文字列が含まれています。',
 
-        'hashed_pass'      => '現在のパスワードが正しくありません。',
-        'dumbpwd'          => 'そのパスワードはあまりにも脆弱です。',
+        'hashed_pass' => '現在のパスワードが正しくありません。',
+        'dumbpwd' => 'そのパスワードはあまりにも脆弱です。',
         'statuslabel_type' => '有効なステータスラベルの種類を選択する必要があります。',
-        'custom_field_not_found'          => 'This field does not seem to exist, please double check your custom field names.',
+        'custom_field_not_found' => 'This field does not seem to exist, please double check your custom field names.',
         'custom_field_not_found_on_model' => 'This field seems to exist, but is not available on this Asset Model\'s fieldset.',
 
         // date_format validation with slightly less stupid messages. It duplicates a lot, but it gets the job done :(
         // We use this because the default error message for date_format reflects php Y-m-d, which non-PHP
         // people won't know how to format.
-        'purchase_date.date_format'     => ':attribute は YYYY-MM-DD 形式の有効な日付にして下さい',
-        'last_audit_date.date_format'   =>  ':attribute は YYYY-MM-DD hh:mm:ss 形式の有効な日時にして下さい',
-        'expiration_date.date_format'   =>  ':attribute は YYYY-MM-DD 形式の有効な日付にして下さい',
-        'termination_date.date_format'  =>  ':attribute は YYYY-MM-DD 形式の有効な日付にして下さい',
-        'expected_checkin.date_format'  =>  ':attribute は YYYY-MM-DD 形式の有効な日付にして下さい',
-        'start_date.date_format'        =>  ':attribute は YYYY-MM-DD 形式の有効な日付にして下さい',
-        'end_date.date_format'          =>  ':attribute は YYYY-MM-DD 形式の有効な日付にして下さい',
+        'purchase_date.date_format' => ':attribute は YYYY-MM-DD 形式の有効な日付にして下さい',
+        'last_audit_date.date_format' => ':attribute は YYYY-MM-DD hh:mm:ss 形式の有効な日時にして下さい',
+        'expiration_date.date_format' => ':attribute は YYYY-MM-DD 形式の有効な日付にして下さい',
+        'termination_date.date_format' => ':attribute は YYYY-MM-DD 形式の有効な日付にして下さい',
+        'expected_checkin.date_format' => ':attribute は YYYY-MM-DD 形式の有効な日付にして下さい',
+        'start_date.date_format' => ':attribute は YYYY-MM-DD 形式の有効な日付にして下さい',
+        'end_date.date_format' => ':attribute は YYYY-MM-DD 形式の有効な日付にして下さい',
         'invalid_value_in_field' => 'このフィールドに含まれる値が無効です',
 
         'ldap_username_field' => [
-            'not_in' =>         '<code>sAMAccountName</code> (mixed case) will likely not work. You should use <code>samaccountname</code> (lowercase) instead.'
+            'not_in' => '<code>sAMAccountName</code> (mixed case) will likely not work. You should use <code>samaccountname</code> (lowercase) instead.',
         ],
         'ldap_auth_filter_query' => ['not_in' => '<code>uid=samaccountname</code> is probably not a valid auth filter. You probably want <code>uid=</code> '],
         'ldap_filter' => ['regex' => 'This value should probably not be wrapped in parentheses.'],
 
-        ],
+    ],
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Attributes
@@ -230,7 +230,10 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'serials.*' => 'シリアルナンバー',
+        'asset_tags.*' => '資産タグ',
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -244,6 +247,5 @@ return [
         'required' => 'This field is required',
         'email' => 'Please enter a valid email address',
     ],
-
 
 ];

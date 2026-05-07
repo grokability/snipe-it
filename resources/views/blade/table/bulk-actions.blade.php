@@ -4,7 +4,7 @@
     ])
 @aware(['name'])
 
-<div id="{{ Illuminate\Support\Str::camel($name) }}Form" style="min-width:400px">
+<div id="{{ Illuminate\Support\Str::camel($name) }}Form" style="min-width:400px" class="hidden-print">
     <form
             method="POST"
             action="{{ $action_route }}"

@@ -8,7 +8,7 @@ use Tests\TestCase;
 
 class ShowCompanyTest extends TestCase
 {
-    public function testPageRenders()
+    public function test_page_renders()
     {
         $this->actingAs(User::factory()->superuser()->create())
             ->get(route('companies.show', Company::factory()->create()))

@@ -4,8 +4,8 @@ namespace App\Http\Transformers;
 
 use App\Helpers\Helper;
 use App\Models\Department;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
 class DepartmentsTransformer
@@ -20,25 +20,25 @@ class DepartmentsTransformer
         return (new DatatablesTransformer)->transformDatatables($array, $total);
     }
 
-    public function transformDepartment(Department $department = null)
+    public function transformDepartment(?Department $department = null)
     {
         if ($department) {
             $array = [
                 'id' => (int) $department->id,
                 'name' => e($department->name),
-                'phone' => ($department->phone!='') ? e($department->phone): null,
-                'fax' => ($department->fax!='') ? e($department->fax): null,
-                'image' =>   ($department->image) ? Storage::disk('public')->url(app('departments_upload_url').e($department->image)) : null,
+                'phone' => ($department->phone != '') ? e($department->phone) : null,
+                'fax' => ($department->fax != '') ? e($department->fax) : null,
+                'image' => ($department->image) ? Storage::disk('public')->url(app('departments_upload_url').e($department->image)) : null,
                 'company' => ($department->company) ? [
                     'id' => (int) $department->company->id,
-                    'name'=> e($department->company->name),
+                    'name' => e($department->company->name),
                     'tag_color' => $department->company->tag_color ? e($department->company->tag_color) : null,
                 ] : null,
                 'manager' => ($department->manager) ? [
                     'id' => (int) $department->manager->id,
                     'name' => e($department->manager->display_name),
-                    'first_name'=> e($department->manager->first_name),
-                    'last_name'=> e($department->manager->last_name),
+                    'first_name' => e($department->manager->first_name),
+                    'last_name' => e($department->manager->last_name),
                 ] : null,
                 'location' => ($department->location) ? [
                     'id' => (int) $department->location->id,

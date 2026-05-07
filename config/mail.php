@@ -10,7 +10,6 @@
 
 return [
 
-
     /*
     | ***************************************************************************
     | DO NOT MAKE CHANGES DIRECTLY TO THIS FILE.
@@ -46,7 +45,7 @@ return [
     |
     */
 
-    'default' =>  env('MAIL_DRIVER') != null ? env('MAIL_DRIVER') : env('MAIL_MAILER', 'smtp'),
+    'default' => env('MAIL_DRIVER') != null ? env('MAIL_DRIVER') : env('MAIL_MAILER', 'smtp'),
 
     /*
     |--------------------------------------------------------------------------
@@ -82,7 +81,6 @@ return [
             |
             */
             'host' => env('MAIL_HOST', 'smtp.mailgun.org'),
-
 
             /*
             |--------------------------------------------------------------------------

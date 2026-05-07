@@ -1,5 +1,5 @@
 <?php
 
-return array(
-    'title'      				=> 'A fogyóeszköz neve',
-);
+return [
+    'title' => 'A fogyóeszköz neve',
+];

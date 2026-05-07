@@ -38,7 +38,7 @@ class RemoveInvalidUploadDeleteActionLogItems extends Command
             return 0;
         }
 
-        $this->table(['ID', 'Action Type', 'Item Type', 'Item ID', 'Created At', 'Deleted At'], $invalidLogs->map(fn($log) => [
+        $this->table(['ID', 'Action Type', 'Item Type', 'Item ID', 'Created At', 'Deleted At'], $invalidLogs->map(fn ($log) => [
             $log->id,
             $log->action_type,
             $log->item_type,
@@ -48,7 +48,7 @@ class RemoveInvalidUploadDeleteActionLogItems extends Command
         ])->toArray());
 
         if ($this->confirm("Do you wish to remove {$invalidLogs->count()} log items?")) {
-            $invalidLogs->each(fn($log) => $log->forceDelete());
+            $invalidLogs->each(fn ($log) => $log->forceDelete());
         }
 
         return 0;

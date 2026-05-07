@@ -1,5 +1,7 @@
 <?php
 
+use PragmaRX\Google2FALaravel\Support\Constants;
+
 return [
 
     /*
@@ -38,7 +40,7 @@ return [
     /*
      * One Time Password request input name.
      */
-    'otp_input' => 'one_time_password', //should this be 'two_factor_secret'?
+    'otp_input' => 'one_time_password', // should this be 'two_factor_secret'?
 
     /*
      * One Time Password Window.
@@ -58,15 +60,15 @@ return [
     /*
      * One Time Password View.
      */
-    'view' => 'google2fa.index', //should this be 'auth.two_factor_enroll'?
+    'view' => 'google2fa.index', // should this be 'auth.two_factor_enroll'?
 
     /*
      * One Time Password error message.
      */
     'error_messages' => [
-        'wrong_otp'       => "The 'One Time Password' typed was wrong.",
+        'wrong_otp' => "The 'One Time Password' typed was wrong.",
         'cannot_be_empty' => 'One Time Password cannot be empty.',
-        'unknown'         => 'An unknown error has occurred. Please try again.',
+        'unknown' => 'An unknown error has occurred. Please try again.',
     ],
 
     /*
@@ -79,6 +81,6 @@ return [
      *
      * Supports imagemagick, svg and eps
      */
-    'qrcode_image_backend' => \PragmaRX\Google2FALaravel\Support\Constants::QRCODE_IMAGE_BACKEND_SVG,
+    'qrcode_image_backend' => Constants::QRCODE_IMAGE_BACKEND_SVG,
 
 ];

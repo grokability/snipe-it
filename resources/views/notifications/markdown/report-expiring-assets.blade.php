@@ -21,8 +21,8 @@
 @if ($asset->supplier)
 | **{{ trans('mail.supplier') }}** | {{ ($asset->supplier ? e($asset->supplier->name) : '') }} |
 @endif
-@if ($asset->assignedTo)
-| **{{ trans('mail.assigned_to') }}** | {{ e($asset->assignedTo->present()->display_name) }} |
+@if ($asset->assigned)
+| **{{ trans('mail.assigned_to') }}** | {{ e($asset->assigned->present()->display_name) }} |
 @endif
 | <hr> | <hr> |
 @endforeach

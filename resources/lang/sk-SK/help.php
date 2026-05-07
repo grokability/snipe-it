@@ -23,13 +23,13 @@ return [
 
     'accessories' => 'Príslušenstvom je všetko čo je odovzdávané používateľom a nedisponuje sériovým číslom (alebo nezáleží na sledovaní každého kusu individuálne). Príkladom je počítačová myš alebo klávesnica.',
 
-    'companies'     => 'Spoločnosti môžu byť použité ako jednoduchý identifikátor alebo môžu byť využité na obmedzenie viditeľnosti majetku, používateľov, atď. ak je zapnutý mód plnej podpory spoločností v Admin nastaveniach.',
+    'companies' => 'Spoločnosti môžu byť použité ako jednoduchý identifikátor alebo môžu byť využité na obmedzenie viditeľnosti majetku, používateľov, atď. ak je zapnutý mód plnej podpory spoločností v Admin nastaveniach.',
 
-    'components'    => 'Komponenty sú položky ktoré sú súčasťou majetku, napríklad HDD, RAM, atď.',
+    'components' => 'Komponenty sú položky ktoré sú súčasťou majetku, napríklad HDD, RAM, atď.',
 
-    'consumables'   => 'Spotrebný materiál je čokoľvek zakúpené čo sa spotrebuje v čase. Napríklad tonery alebo papiere.',
+    'consumables' => 'Spotrebný materiál je čokoľvek zakúpené čo sa spotrebuje v čase. Napríklad tonery alebo papiere.',
 
     'depreciations' => 'Môžete nastaviť odpisovanie majetku, aby dochádzalo k rovnomernému odpisovaniu.',
-    
-    'empty_file'    => 'Importovací nástroj zistil, že tento súbor je prázdny.'
+
+    'empty_file' => 'Importovací nástroj zistil, že tento súbor je prázdny.',
 ];

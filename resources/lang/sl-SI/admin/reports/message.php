@@ -3,7 +3,7 @@
 return [
     'about_templates' => 'O shranjenih predlogah',
     'saving_templates_description' => 'Izberite možnosti, nato v zgornje polje vnesite ime predloge in kliknite gumb »Shrani predlogo«. V spustnem meniju izberite že shranjeno predlogo.',
-    'create'  => [
+    'create' => [
         'success' => 'Predloga je uspešno shranjena',
     ],
     'update' => [

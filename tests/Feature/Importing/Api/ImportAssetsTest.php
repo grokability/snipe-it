@@ -2,18 +2,14 @@
 
 namespace Tests\Feature\Importing\Api;
 
-use App\Mail\CheckoutAssetMail;
 use App\Models\Actionlog as ActionLog;
 use App\Models\Asset;
 use App\Models\CustomField;
 use App\Models\Import;
 use App\Models\User;
-use App\Notifications\CheckoutAssetNotification;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
 use PHPUnit\Framework\Attributes\Test;
@@ -28,7 +24,7 @@ class ImportAssetsTest extends ImportDataTestCase implements TestsPermissionsReq
 
     protected function importFileResponse(array $parameters = []): TestResponse
     {
-        if (!array_key_exists('import-type', $parameters)) {
+        if (! array_key_exists('import-type', $parameters)) {
             $parameters['import-type'] = 'asset';
         }
 
@@ -36,7 +32,7 @@ class ImportAssetsTest extends ImportDataTestCase implements TestsPermissionsReq
     }
 
     #[Test]
-    public function testRequiresPermission()
+    public function test_requires_permission()
     {
         $this->actingAsForApi(User::factory()->create());
 
@@ -44,7 +40,7 @@ class ImportAssetsTest extends ImportDataTestCase implements TestsPermissionsReq
     }
 
     #[Test]
-    public function userWithImportAssetsPermissionCanImportAssets(): void
+    public function user_with_import_assets_permission_can_import_assets(): void
     {
         $this->actingAsForApi(User::factory()->canImport()->create());
 
@@ -54,7 +50,7 @@ class ImportAssetsTest extends ImportDataTestCase implements TestsPermissionsReq
     }
 
     #[Test]
-    public function importAsset(): void
+    public function import_asset(): void
     {
 
         $importFileBuilder = ImportFileBuilder::new();
@@ -65,13 +61,13 @@ class ImportAssetsTest extends ImportDataTestCase implements TestsPermissionsReq
         $this->importFileResponse(['import' => $import->id])
             ->assertOk()
             ->assertExactJson([
-                'payload'  => null,
-                'status'   => 'success',
-                'messages' => ['redirect_url' => route('hardware.index')]
+                'payload' => null,
+                'status' => 'success',
+                'messages' => ['redirect_url' => route('hardware.index')],
             ]);
 
         $newAsset = Asset::query()
-            ->with(['location', 'supplier', 'company', 'assignedAssets', 'defaultLoc', 'assetStatus', 'model.category', 'model.manufacturer'])
+            ->with(['location', 'supplier', 'company', 'assignedAssets', 'defaultLoc', 'status', 'model.category', 'model.manufacturer'])
             ->where('serial', $row['serialNumber'])
             ->sole();
 
@@ -116,7 +112,7 @@ class ImportAssetsTest extends ImportDataTestCase implements TestsPermissionsReq
         $this->assertEquals('', $newAsset->image);
         $this->assertNull($newAsset->user_id);
         $this->assertEquals(1, $newAsset->physical);
-        $this->assertEquals($row['status'], $newAsset->assetStatus->name);
+        $this->assertEquals($row['status'], $newAsset->status->name);
         $this->assertEquals(0, $newAsset->archived);
         $this->assertEquals($row['warrantyInMonths'], $newAsset->warranty_months);
         $this->assertNull($newAsset->deprecate);
@@ -137,13 +133,13 @@ class ImportAssetsTest extends ImportDataTestCase implements TestsPermissionsReq
         $this->assertEquals(0, $newAsset->requests_counter);
         $this->assertEquals(0, $newAsset->byod);
 
-        //Notes is never read.
+        // Notes is never read.
         // $this->assertEquals($row['notes'], $newAsset->notes);
 
     }
 
     #[Test]
-    public function willIgnoreUnknownColumnsWhenFileContainsUnknownColumns(): void
+    public function will_ignore_unknown_columns_when_file_contains_unknown_columns(): void
     {
         $row = ImportFileBuilder::new()->definition();
         $row['unknownColumnInCsvFile'] = 'foo';
@@ -158,7 +154,7 @@ class ImportAssetsTest extends ImportDataTestCase implements TestsPermissionsReq
     }
 
     #[Test]
-    public function willNotCreateNewAssetWhenAssetWithSameTagAlreadyExists(): void
+    public function will_not_create_new_asset_when_asset_with_same_tag_already_exists(): void
     {
         $asset = Asset::factory()->create(['asset_tag' => $this->faker->uuid]);
         $importFileBuilder = ImportFileBuilder::times(4)->replace(['tag' => $asset->asset_tag]);
@@ -174,11 +170,11 @@ class ImportAssetsTest extends ImportDataTestCase implements TestsPermissionsReq
                     '' => [
                         'asset_tag' => [
                             'asset_tag' => [
-                                "An asset with the asset tag {$asset->asset_tag} already exists and an update was not requested. No change was made."
-                            ]
-                        ]
-                    ]
-                ]
+                                "An asset with the asset tag {$asset->asset_tag} already exists and an update was not requested. No change was made.",
+                            ],
+                        ],
+                    ],
+                ],
             ]);
 
         $assetsWithSameTag = Asset::query()->where('asset_tag', $asset->asset_tag)->get();
@@ -187,7 +183,7 @@ class ImportAssetsTest extends ImportDataTestCase implements TestsPermissionsReq
     }
 
     #[Test]
-    public function willNotCreateNewCompanyWhenCompanyExists(): void
+    public function will_not_create_new_company_when_company_exists(): void
     {
         $importFileBuilder = ImportFileBuilder::times(4)->replace(['companyName' => Str::random()]);
         $import = Import::factory()->asset()->create(['file_path' => $importFileBuilder->saveToImportsDirectory()]);
@@ -203,7 +199,7 @@ class ImportAssetsTest extends ImportDataTestCase implements TestsPermissionsReq
     }
 
     #[Test]
-    public function willNotCreateNewLocationWhenLocationExists(): void
+    public function will_not_create_new_location_when_location_exists(): void
     {
         $importFileBuilder = ImportFileBuilder::times(4)->replace(['location' => Str::random()]);
         $import = Import::factory()->asset()->create(['file_path' => $importFileBuilder->saveToImportsDirectory()]);
@@ -219,7 +215,7 @@ class ImportAssetsTest extends ImportDataTestCase implements TestsPermissionsReq
     }
 
     #[Test]
-    public function willNotCreateNewSupplierWhenSupplierExists(): void
+    public function will_not_create_new_supplier_when_supplier_exists(): void
     {
         $importFileBuilder = ImportFileBuilder::times(4)->replace(['supplierName' => $this->faker->company]);
         $import = Import::factory()->asset()->create(['file_path' => $importFileBuilder->saveToImportsDirectory()]);
@@ -235,7 +231,7 @@ class ImportAssetsTest extends ImportDataTestCase implements TestsPermissionsReq
     }
 
     #[Test]
-    public function willNotCreateNewManufacturerWhenManufacturerExists(): void
+    public function will_not_create_new_manufacturer_when_manufacturer_exists(): void
     {
         $importFileBuilder = ImportFileBuilder::times(4)->replace(['manufacturerName' => $this->faker->company]);
         $import = Import::factory()->asset()->create(['file_path' => $importFileBuilder->saveToImportsDirectory()]);
@@ -252,7 +248,7 @@ class ImportAssetsTest extends ImportDataTestCase implements TestsPermissionsReq
     }
 
     #[Test]
-    public function willNotCreateCategoryWhenCategoryExists(): void
+    public function will_not_create_category_when_category_exists(): void
     {
         $importFileBuilder = ImportFileBuilder::times(4)->replace(['category' => $this->faker->company]);
         $import = Import::factory()->asset()->create(['file_path' => $importFileBuilder->saveToImportsDirectory()]);
@@ -269,7 +265,7 @@ class ImportAssetsTest extends ImportDataTestCase implements TestsPermissionsReq
     }
 
     #[Test]
-    public function willNotCreateNewAssetModelWhenAssetModelExists(): void
+    public function will_not_create_new_asset_model_when_asset_model_exists(): void
     {
         $importFileBuilder = ImportFileBuilder::times(4)->replace(['model' => Str::random()]);
         $import = Import::factory()->asset()->create(['file_path' => $importFileBuilder->saveToImportsDirectory()]);
@@ -286,12 +282,12 @@ class ImportAssetsTest extends ImportDataTestCase implements TestsPermissionsReq
     }
 
     #[Test]
-    public function whenColumnsAreMissingInImportFile(): void
+    public function when_columns_are_missing_in_import_file(): void
     {
         $importFileBuilder = ImportFileBuilder::times()->forget([
             'purchaseCost',
             'purchaseDate',
-            'status'
+            'status',
         ]);
 
         $import = Import::factory()->asset()->create(['file_path' => $importFileBuilder->saveToImportsDirectory()]);
@@ -300,21 +296,21 @@ class ImportAssetsTest extends ImportDataTestCase implements TestsPermissionsReq
         $this->importFileResponse(['import' => $import->id])->assertOk();
 
         $newAsset = Asset::query()
-            ->with(['assetStatus'])
+            ->with(['status'])
             ->where('serial', $importFileBuilder->firstRow()['serialNumber'])
             ->sole();
 
-        $this->assertEquals('Ready to Deploy', $newAsset->assetStatus->name);
+        $this->assertEquals('Ready to Deploy', $newAsset->status->name);
         $this->assertNull($newAsset->purchase_date);
         $this->assertNull($newAsset->purchase_cost);
     }
 
     #[Test]
-    public function willFormatValues(): void
+    public function will_format_values(): void
     {
         $importFileBuilder = ImportFileBuilder::new([
             'warrantyInMonths' => '3 months',
-            'purchaseDate'    => '2022/10/10'
+            'purchaseDate' => '2022/10/10',
         ]);
 
         $import = Import::factory()->asset()->create(['file_path' => $importFileBuilder->saveToImportsDirectory()]);
@@ -331,7 +327,7 @@ class ImportAssetsTest extends ImportDataTestCase implements TestsPermissionsReq
     }
 
     #[Test]
-    public function whenRequiredColumnsAreMissingInImportFile(): void
+    public function when_required_columns_are_missing_in_import_file(): void
     {
         $importFileBuilder = ImportFileBuilder::times(2)
             ->forget(['tag'])
@@ -353,9 +349,9 @@ class ImportAssetsTest extends ImportDataTestCase implements TestsPermissionsReq
                                 'The asset tag field must be at least 1 characters.',
                             ],
                             'model_id' => [
-                                'The model id field is required.'
-                            ]
-                        ]
+                                'The model id field is required.',
+                            ],
+                        ],
                     ],
                     $rows[1]['itemName'] => [
                         "Asset \"{$rows[1]['itemName']}\"" => [
@@ -363,11 +359,11 @@ class ImportAssetsTest extends ImportDataTestCase implements TestsPermissionsReq
                                 'The asset tag field must be at least 1 characters.',
                             ],
                             'model_id' => [
-                                'The model id field is required.'
-                            ]
-                        ]
-                    ]
-                ]
+                                'The model id field is required.',
+                            ],
+                        ],
+                    ],
+                ],
             ]);
 
         $newAssets = Asset::query()
@@ -378,7 +374,7 @@ class ImportAssetsTest extends ImportDataTestCase implements TestsPermissionsReq
     }
 
     #[Test]
-    public function updateAssetFromImport(): void
+    public function update_asset_from_import(): void
     {
         $asset = Asset::factory()->create()->refresh();
         $importFileBuilder = ImportFileBuilder::times(1)->replace(['tag' => $asset->asset_tag]);
@@ -389,7 +385,7 @@ class ImportAssetsTest extends ImportDataTestCase implements TestsPermissionsReq
         $this->importFileResponse(['import' => $import->id, 'import-update' => true])->assertOk();
 
         $updatedAsset = Asset::query()
-            ->with(['location', 'supplier', 'company', 'defaultLoc', 'assetStatus', 'model.category', 'model.manufacturer'])
+            ->with(['location', 'supplier', 'company', 'defaultLoc', 'status', 'model.category', 'model.manufacturer'])
             ->find($asset->id);
 
         $assignee = User::query()->find($updatedAsset->assigned_to, ['id', 'first_name', 'last_name', 'email', 'username']);
@@ -398,7 +394,7 @@ class ImportAssetsTest extends ImportDataTestCase implements TestsPermissionsReq
             'category', 'manufacturer_id', 'name', 'tag', 'model_id',
             'model_number', 'purchase_date', 'purchase_cost', 'warranty_months', 'supplier_id',
             'location_id', 'company_id', 'serial', 'assigned_to', 'status_id', 'rtd_location_id',
-            'last_checkout', 'requestable', 'updated_at', 'checkout_counter', 'assigned_type'
+            'last_checkout', 'requestable', 'updated_at', 'checkout_counter', 'assigned_type',
         ];
 
         $this->assertEquals($row['assigneeFullName'], "{$assignee->first_name} {$assignee->last_name}");
@@ -413,16 +409,16 @@ class ImportAssetsTest extends ImportDataTestCase implements TestsPermissionsReq
         $this->assertEquals($row['modelNumber'], $updatedAsset->model->model_number);
         $this->assertEquals($row['purchaseDate'], $updatedAsset->purchase_date->toDateString());
         $this->assertEquals($row['purchaseCost'], $updatedAsset->purchase_cost);
-        $this->assertEquals($row['status'], $updatedAsset->assetStatus->name);
+        $this->assertEquals($row['status'], $updatedAsset->status->name);
         $this->assertEquals($row['warrantyInMonths'], $updatedAsset->warranty_months);
         $this->assertEquals($row['supplierName'], $updatedAsset->supplier->name);
         $this->assertEquals($row['location'], $updatedAsset->defaultLoc->name);
         $this->assertEquals($row['companyName'], $updatedAsset->company->name);
         $this->assertEquals($row['location'], $updatedAsset->location->name);
         $this->assertEquals(1, $updatedAsset->checkout_counter);
-        $this->assertEquals(user::class, $updatedAsset->assigned_type);
+        $this->assertEquals(User::class, $updatedAsset->assigned_type);
 
-        //RequestAble is always updated regardless of initial value.
+        // RequestAble is always updated regardless of initial value.
         // $this->assertEquals($asset->requestable, $updatedAsset->requestable);
 
         $this->assertEquals(
@@ -432,28 +428,28 @@ class ImportAssetsTest extends ImportDataTestCase implements TestsPermissionsReq
     }
 
     #[Test]
-    public function customColumnMapping(): void
+    public function custom_column_mapping(): void
     {
         $faker = ImportFileBuilder::new()->definition();
         $row = [
-            'assigneeFullName'    => $faker['supplierName'],
-            'assigneeEmail'       => $faker['manufacturerName'],
-            'assigneeUsername'    => $faker['serialNumber'],
-            'category'            => $faker['location'],
-            'companyName'         => $faker['purchaseCost'],
-            'itemName'            => $faker['modelNumber'],
-            'location'            => $faker['assigneeUsername'],
-            'manufacturerName'    => $faker['status'],
-            'model'               => $faker['itemName'],
-            'modelNumber'         => $faker['category'],
-            'notes'               => $faker['notes'],
-            'purchaseCost'        => $faker['model'],
-            'purchaseDate'        => $faker['companyName'],
-            'serialNumber'        => $faker['tag'],
-            'supplierName'        => $faker['purchaseDate'],
-            'status'              => $faker['warrantyInMonths'],
-            'tag'                 => $faker['assigneeEmail'],
-            'warrantyInMonths'    => $faker['assigneeFullName'],
+            'assigneeFullName' => $faker['supplierName'],
+            'assigneeEmail' => $faker['manufacturerName'],
+            'assigneeUsername' => $faker['serialNumber'],
+            'category' => $faker['location'],
+            'companyName' => $faker['purchaseCost'],
+            'itemName' => $faker['modelNumber'],
+            'location' => $faker['assigneeUsername'],
+            'manufacturerName' => $faker['status'],
+            'model' => $faker['itemName'],
+            'modelNumber' => $faker['category'],
+            'notes' => $faker['notes'],
+            'purchaseCost' => $faker['model'],
+            'purchaseDate' => $faker['companyName'],
+            'serialNumber' => $faker['tag'],
+            'supplierName' => $faker['purchaseDate'],
+            'status' => $faker['warrantyInMonths'],
+            'tag' => $faker['assigneeEmail'],
+            'warrantyInMonths' => $faker['assigneeFullName'],
         ];
 
         $importFileBuilder = new ImportFileBuilder([$row]);
@@ -464,29 +460,29 @@ class ImportAssetsTest extends ImportDataTestCase implements TestsPermissionsReq
         $this->importFileResponse([
             'import' => $import->id,
             'column-mappings' => [
-                'Asset Tag'     => 'email',
-                'Category'      => 'location',
-                'Company'       => 'purchase_cost',
-                'Email'         => 'manufacturer',
-                'Full Name'     => 'supplier',
-                'Item Name'     => 'model_number',
-                'Location'      => 'username',
-                'Manufacturer'  => 'status',
-                'Model name'    => 'item_name',
-                'Model Number'  => 'category',
-                'Notes'         => 'asset_notes',
+                'Asset Tag' => 'email',
+                'Category' => 'location',
+                'Company' => 'purchase_cost',
+                'Email' => 'manufacturer',
+                'Full Name' => 'supplier',
+                'Item Name' => 'model_number',
+                'Location' => 'username',
+                'Manufacturer' => 'status',
+                'Model name' => 'item_name',
+                'Model Number' => 'category',
+                'Notes' => 'asset_notes',
                 'Purchase Cost' => 'asset_model',
                 'Purchase Date' => 'company',
                 'Serial number' => 'asset_tag',
-                'Status'        => 'warranty_months',
-                'Supplier'      => 'purchase_date',
-                'Username'      => 'serial',
-                'Warranty'      => 'full_name',
-            ]
+                'Status' => 'warranty_months',
+                'Supplier' => 'purchase_date',
+                'Username' => 'serial',
+                'Warranty' => 'full_name',
+            ],
         ])->assertOk();
 
         $asset = Asset::query()
-            ->with(['location', 'supplier', 'company', 'assignedAssets', 'defaultLoc', 'assetStatus', 'model.category', 'model.manufacturer'])
+            ->with(['location', 'supplier', 'company', 'assignedAssets', 'defaultLoc', 'status', 'model.category', 'model.manufacturer'])
             ->where('serial', $row['assigneeUsername'])
             ->sole();
 
@@ -504,7 +500,7 @@ class ImportAssetsTest extends ImportDataTestCase implements TestsPermissionsReq
         $this->assertEquals($row['itemName'], $asset->model->model_number);
         $this->assertEquals($row['supplierName'], $asset->purchase_date->toDateString());
         $this->assertEquals($row['companyName'], $asset->purchase_cost);
-        $this->assertEquals($row['manufacturerName'], $asset->assetStatus->name);
+        $this->assertEquals($row['manufacturerName'], $asset->status->name);
         $this->assertEquals($row['status'], $asset->warranty_months);
         $this->assertEquals($row['assigneeFullName'], $asset->supplier->name);
         $this->assertEquals($row['category'], $asset->defaultLoc->name);
@@ -534,7 +530,7 @@ class ImportAssetsTest extends ImportDataTestCase implements TestsPermissionsReq
     }
 
     #[Test]
-    public function customFields(): void
+    public function custom_fields(): void
     {
         $macAddress = $this->faker->macAddress;
 
@@ -544,7 +540,7 @@ class ImportAssetsTest extends ImportDataTestCase implements TestsPermissionsReq
         $importFileBuilder = new ImportFileBuilder([$row]);
         $customField = CustomField::query()->where('name', 'Mac Address')->firstOrNew();
 
-        if (!$customField->exists) {
+        if (! $customField->exists) {
             $customField = CustomField::factory()->macAddress()->create(['db_column' => '_snipeit_mac_address_1']);
         }
 
@@ -564,7 +560,7 @@ class ImportAssetsTest extends ImportDataTestCase implements TestsPermissionsReq
     }
 
     #[Test]
-    public function willEncryptCustomFields(): void
+    public function will_encrypt_custom_fields(): void
     {
         $macAddress = $this->faker->macAddress;
         $row = ImportFileBuilder::new()->definition();
@@ -574,11 +570,11 @@ class ImportAssetsTest extends ImportDataTestCase implements TestsPermissionsReq
         $importFileBuilder = new ImportFileBuilder([$row]);
         $customField = CustomField::query()->where('name', 'Mac Address')->firstOrNew();
 
-        if (!$customField->exists) {
+        if (! $customField->exists) {
             $customField = CustomField::factory()->macAddress()->create();
         }
 
-        if (!$customField->field_encrypted) {
+        if (! $customField->field_encrypted) {
             $customField->field_encrypted = 1;
             $customField->save();
         }

@@ -2,12 +2,12 @@
 
 namespace App\Http\Traits;
 
-use Illuminate\Validation\ValidationException;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 trait ConvertsBase64ToFiles
 {
@@ -30,13 +30,13 @@ trait ConvertsBase64ToFiles
         Collection::make($flattened)->each(function ($filename, $key) {
             rescue(function () use ($key, $filename) {
                 // dont process plain files
-                if ( $this->file($key)){
+                if ($this->file($key)) {
                     return;
                 }
 
                 $base64Contents = $this->input($key);
 
-                if (!$base64Contents) {
+                if (! $base64Contents) {
                     return;
                 }
 
@@ -59,14 +59,14 @@ trait ConvertsBase64ToFiles
 
                 $uploadedFile = new UploadedFile($tempFilePath, $filename, null, null, true);
 
-                Log::debug("Trait: uploadedfile ". $tempFilePath);
-                $this->offsetUnset($key);                                                                                                                                                                                                                                                                                                                                               
-                Log::debug("Trait: encoded field \"$key\" removed" );
-                
-                //Inserting new file  to $this-files does not work so have to deal this after
-                $this->offsetSet($key,$uploadedFile);
-                Log::debug("Trait:  field \"$key\" inserted as UplodedFile" );
-    
+                Log::debug('Trait: uploadedfile '.$tempFilePath);
+                $this->offsetUnset($key);
+                Log::debug("Trait: encoded field \"$key\" removed");
+
+                // Inserting new file  to $this-files does not work so have to deal this after
+                $this->offsetSet($key, $uploadedFile);
+                Log::debug("Trait:  field \"$key\" inserted as UplodedFile");
+
             }, null, false);
         });
     }

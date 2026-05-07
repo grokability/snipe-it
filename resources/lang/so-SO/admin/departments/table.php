@@ -1,11 +1,11 @@
 <?php
 
-return array(
+return [
 
-    'id'                        => 'Aqoonsi',
-    'name'                      => 'Magaca Waaxda',
-    'manager'                   => 'Maareeyaha',
-    'location'                  => 'Goobta',
-    'create'                    => 'Abuur Waax',
-    'update'                    => 'Cusbooneysii Waaxda',
-    );
+    'id' => 'Aqoonsi',
+    'name' => 'Magaca Waaxda',
+    'manager' => 'Maareeyaha',
+    'location' => 'Goobta',
+    'create' => 'Abuur Waax',
+    'update' => 'Cusbooneysii Waaxda',
+];

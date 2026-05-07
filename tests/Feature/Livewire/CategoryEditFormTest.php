@@ -8,7 +8,7 @@ use Tests\TestCase;
 
 class CategoryEditFormTest extends TestCase
 {
-    public function testTheComponentCanRender()
+    public function test_the_component_can_render()
     {
         Livewire::test(CategoryEditForm::class, [
             'sendCheckInEmail' => true,
@@ -16,7 +16,7 @@ class CategoryEditFormTest extends TestCase
         ])->assertStatus(200);
     }
 
-    public function testEulaFieldEnabledOnLoadWhenNotUsingDefaultEula()
+    public function test_eula_field_enabled_on_load_when_not_using_default_eula()
     {
         Livewire::test(CategoryEditForm::class, [
             'sendCheckInEmail' => false,

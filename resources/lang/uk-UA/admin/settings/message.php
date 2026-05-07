@@ -3,30 +3,30 @@
 return [
 
     'update' => [
-        'error'                 => 'При оновленні сталася помилка. ',
-        'success'               => 'Налаштування успішно оновлено.',
+        'error' => 'При оновленні сталася помилка. ',
+        'success' => 'Налаштування успішно оновлено.',
     ],
     'backup' => [
-        'delete_confirm'        => 'Ви впевнені, що хочете видалити цей файл резервної копії? Цю дію неможливо скасувати. ',
-        'file_deleted'          => 'Файл резервної копії успішно видалений. ',
-        'generated'             => 'Новий файл резервної копії успішно створено.',
-        'file_not_found'        => 'Цей файл резервної копії не знайдено на сервері.',
-        'restore_warning'       => 'Так, відновити її. Я підтверджую, що це перезапише будь-які наявні дані в базі даних. Це також закриє всіх існуючих користувачів (включаючи вас).',
-        'restore_confirm'       => 'Ви дійсно бажаєте відновити базу даних з :filename?'
+        'delete_confirm' => 'Ви впевнені, що хочете видалити цей файл резервної копії? Цю дію неможливо скасувати. ',
+        'file_deleted' => 'Файл резервної копії успішно видалений. ',
+        'generated' => 'Новий файл резервної копії успішно створено.',
+        'file_not_found' => 'Цей файл резервної копії не знайдено на сервері.',
+        'restore_warning' => 'Так, відновити її. Я підтверджую, що це перезапише будь-які наявні дані в базі даних. Це також закриє всіх існуючих користувачів (включаючи вас).',
+        'restore_confirm' => 'Ви дійсно бажаєте відновити базу даних з :filename?',
     ],
     'restore' => [
-        'success'               => 'Ваше резервне копіювання відновлено. Будь ласка, увійдіть в систему знову.'
+        'success' => 'Ваше резервне копіювання відновлено. Будь ласка, увійдіть в систему знову.',
     ],
     'purge' => [
-        'error'     => 'Під час очищення сталася помилка. ',
-        'validation_failed'     => 'Ваша чистка підтвердження неправильна. Будь ласка, введіть слово "DELETE" у полі підтвердження.',
-        'success'               => 'Видалені записи успішно очищені.',
+        'error' => 'Під час очищення сталася помилка. ',
+        'validation_failed' => 'Ваша чистка підтвердження неправильна. Будь ласка, введіть слово "DELETE" у полі підтвердження.',
+        'success' => 'Видалені записи успішно очищені.',
     ],
     'mail' => [
         'sending' => 'Надсилання тестового листа...',
         'success' => 'Повідомлення відправлено!',
         'error' => 'Повідомлення не може бути надіслано.',
-        'additional' => 'Немає додаткового повідомлення про помилку. Перевірте налаштування пошти та журнал програми.'
+        'additional' => 'Немає додаткового повідомлення про помилку. Перевірте налаштування пошти та журнал програми.',
     ],
     'ldap' => [
         'testing' => 'Тестування LDAP-підключення, Пов\'язування та запиту ...',
@@ -34,11 +34,11 @@ return [
         'error' => 'Щось пішло не так :(',
         'sync_success' => 'Приклад 10 користувачів, які повернулися з сервера LDAP на основі ваших налаштувань:',
         'testing_authentication' => 'Тестування авторизації LDAP...',
-        'authentication_success' => 'Користувач успішно пройшов перевірку на зв\'язку з LDAP!'
+        'authentication_success' => 'Користувач успішно пройшов перевірку на зв\'язку з LDAP!',
     ],
     'labels' => [
         'null_template' => 'Ярличок не знайдено. Будь ласка, виберіть шаблон.',
-        ],
+    ],
     'webhook' => [
         'sending' => 'Відправка :app тестове повідомлення...',
         'success' => 'Ваша функція з інтеграцією :webhook_name!',
@@ -50,10 +50,27 @@ return [
         'error_misc' => 'Щось пішло не так. :( ',
         'webhook_fail' => 'не вдалося надіслати повідомлення webhook для перевірки: Переконайтесь, що посилання ще дійсне.',
         'webhook_channel_not_found' => ' канал webhook не знайдено.',
-        'ms_teams_deprecation' => 'The selected Microsoft Teams webhook URL will be deprecated Dec 31st, 2025. Please use a workflow URL. Microsoft\'s documentation on creating a workflow can be found <a href="https://support.microsoft.com/en-us/office/create-incoming-webhooks-with-workflows-for-microsoft-teams-8ae491c7-0394-4861-ba59-055e33f75498" target="_blank"> here.</a>',
+        'ms_teams_deprecation' => 'Вибраний URL вебхука Microsoft Teams застаріє 31 грудня 2025 року. Будь ласка, використовуйте URL робочого процесу (workflow). Документацію Microsoft щодо створення робочих процесів можна знайти <a href="https://support.microsoft.com/en-us/office/create-incoming-webhooks-with-workflows-for-microsoft-teams-8ae491c7-0394-4861-ba59-055e33f75498" target="_blank">тут.</a>',
     ],
     'location_scoping' => [
         'not_saved' => 'Ваші налаштування не були збережені.',
         'mismatch' => 'Є 1 елемент у базі даних, який потребує вашої уваги перед тим, як ви зможете увімкнути визначення місцезнаходження. Є :count елементи в базі даних, які потребують вашої уваги перед тим, як ви зможете увімкнути визначення місцезнаходжень.',
+    ],
+    'oauth' => [
+        'token_revoked' => 'Personal access token revoked successfully.',
+        'token_unrevoked' => 'Personal access token reinstated successfully.',
+        'token_not_found' => 'That personal access token could not be found.',
+        'token_revoke_error' => 'An error occurred while revoking the token.',
+        'token_unrevoke_error' => 'An error occurred while reinstating the token.',
+        'client_created' => 'OAuth client created successfully.',
+        'client_updated' => 'OAuth client updated successfully.',
+        'client_deleted' => 'OAuth client deleted successfully.',
+        'client_revoked' => 'OAuth client revoked successfully.',
+        'client_unrevoked' => 'OAuth client reinstated successfully.',
+        'client_not_found' => 'That OAuth client could not be found.',
+        'token_deleted' => 'Token revoked successfully.',
+        'client_delete_denied' => 'You are not authorized to delete this client.',
+        'client_edit_denied' => 'You are not authorized to edit this client.',
+        'token_delete_denied' => 'You are not authorized to revoke this token.',
     ],
 ];

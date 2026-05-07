@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
     'personal_api_keys' => 'Персональные API ключи',
     'personal_access_token' => 'Персональный токен доступа',
     'personal_api_keys_success' => 'Ключ персонального API :key создан успешно',
@@ -14,4 +14,4 @@ return array(
     'no_tokens' => 'Вы не создали никаких персональных токенов доступа.',
     'enable_sounds' => 'Включить звуковые эффекты',
     'enable_confetti' => 'Включить эффект конфетти',
-);
+];

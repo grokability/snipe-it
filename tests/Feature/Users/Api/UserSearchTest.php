@@ -9,7 +9,7 @@ use Tests\TestCase;
 
 class UserSearchTest extends TestCase
 {
-    public function testCanSearchByUserFirstAndLastName()
+    public function test_can_search_by_user_first_and_last_name()
     {
         User::factory()->create(['first_name' => 'Luke', 'last_name' => 'Skywalker']);
         User::factory()->create(['first_name' => 'Darth', 'last_name' => 'Vader']);
@@ -20,11 +20,11 @@ class UserSearchTest extends TestCase
         $results = collect($response->json('rows'));
 
         $this->assertEquals(1, $results->count());
-        $this->assertTrue($results->pluck('name')->contains(fn($text) => str_contains($text, 'Luke')));
-        $this->assertFalse($results->pluck('name')->contains(fn($text) => str_contains($text, 'Darth')));
+        $this->assertTrue($results->pluck('name')->contains(fn ($text) => str_contains($text, 'Luke')));
+        $this->assertFalse($results->pluck('name')->contains(fn ($text) => str_contains($text, 'Darth')));
     }
 
-    public function testResultsWhenSearchingForActiveUsers()
+    public function test_results_when_searching_for_active_users()
     {
         User::factory()->create(['first_name' => 'Active', 'last_name' => 'User']);
         User::factory()->create(['first_name' => 'Deleted', 'last_name' => 'User'])->delete();
@@ -53,7 +53,7 @@ class UserSearchTest extends TestCase
         );
     }
 
-    public function testResultsWhenSearchingForDeletedUsers()
+    public function test_results_when_searching_for_deleted_users()
     {
         User::factory()->create(['first_name' => 'Active', 'last_name' => 'User']);
         User::factory()->create(['first_name' => 'Deleted', 'last_name' => 'User'])->delete();
@@ -82,7 +82,7 @@ class UserSearchTest extends TestCase
         );
     }
 
-    public function testUsersScopedToCompanyWhenMultipleFullCompanySupportEnabled()
+    public function test_users_scoped_to_company_when_multiple_full_company_support_enabled()
     {
         $this->settings->enableMultipleFullCompanySupport();
 
@@ -101,16 +101,16 @@ class UserSearchTest extends TestCase
         $results = collect($response->json('rows'));
 
         $this->assertTrue(
-            $results->pluck('name')->contains(fn($text) => str_contains($text, 'Company A')),
+            $results->pluck('name')->contains(fn ($text) => str_contains($text, 'Company A')),
             'User index does not contain expected user'
         );
         $this->assertFalse(
-            $results->pluck('name')->contains(fn($text) => str_contains($text, 'Company B')),
+            $results->pluck('name')->contains(fn ($text) => str_contains($text, 'Company B')),
             'User index contains unexpected user from another company'
         );
     }
 
-    public function testUsersScopedToCompanyDuringSearchWhenMultipleFullCompanySupportEnabled()
+    public function test_users_scoped_to_company_during_search_when_multiple_full_company_support_enabled()
     {
         $this->settings->enableMultipleFullCompanySupport();
 
@@ -136,16 +136,16 @@ class UserSearchTest extends TestCase
         $results = collect($response->json('rows'));
 
         $this->assertTrue(
-            $results->pluck('name')->contains(fn($text) => str_contains($text, 'Company A')),
+            $results->pluck('name')->contains(fn ($text) => str_contains($text, 'Company A')),
             'User index does not contain expected user'
         );
         $this->assertFalse(
-            $results->pluck('name')->contains(fn($text) => str_contains($text, 'Company B')),
+            $results->pluck('name')->contains(fn ($text) => str_contains($text, 'Company B')),
             'User index contains unexpected user from another company'
         );
     }
 
-    public function testUsersIndexWhenInvalidSortFieldIsPassed()
+    public function test_users_index_when_invalid_sort_field_is_passed()
     {
         $this->markIncompleteIfSqlite('This test is not compatible with SQLite');
 

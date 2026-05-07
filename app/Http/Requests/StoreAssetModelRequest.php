@@ -4,17 +4,17 @@ namespace App\Http\Requests;
 
 use App\Models\AssetModel;
 use App\Models\Category;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\Gate;
 
 class StoreAssetModelRequest extends ImageUploadRequest
 {
-
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return Gate::allows('create', new AssetModel);
+        return Gate::allows('create', AssetModel::class);
     }
 
     public function prepareForValidation(): void
@@ -34,7 +34,7 @@ class StoreAssetModelRequest extends ImageUploadRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
@@ -47,6 +47,7 @@ class StoreAssetModelRequest extends ImageUploadRequest
     public function messages(): array
     {
         $messages = ['category_type.in' => trans('admin/models/message.invalid_category_type')];
+
         return $messages;
     }
 

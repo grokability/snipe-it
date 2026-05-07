@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Helpers\Helper;
 use App\Models\AssetModel;
-use Illuminate\Http\Request;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use \Illuminate\Contracts\View\View;
+use Illuminate\Http\Request;
 
 class BulkAssetModelsController extends Controller
 {
@@ -14,10 +14,10 @@ class BulkAssetModelsController extends Controller
      * Returns a view that allows the user to bulk edit model attrbutes
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since [v1.7]
-     * @param Request $request
      */
-    public function edit(Request $request) : View | RedirectResponse
+    public function edit(Request $request): View|RedirectResponse
     {
         $models_raw_array = $request->input('ids');
 
@@ -58,20 +58,20 @@ class BulkAssetModelsController extends Controller
      * Returns a view that allows the user to bulk edit model attrbutes
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since [v1.7]
-     * @param Request $request
      */
-    public function update(Request $request): View | RedirectResponse
+    public function update(Request $request): View|RedirectResponse
     {
         $this->authorize('update', AssetModel::class);
-      
+
         $models_raw_array = $request->input('ids');
         $update_array = [];
 
         if (($request->filled('manufacturer_id') && ($request->input('manufacturer_id') != 'NC'))) {
             $update_array['manufacturer_id'] = $request->input('manufacturer_id');
         }
-        
+
         if (($request->filled('category_id') && ($request->input('category_id') != 'NC'))) {
             $update_array['category_id'] = $request->input('category_id');
         }
@@ -112,12 +112,13 @@ class BulkAssetModelsController extends Controller
      * cannot be deleted if there are associated assets.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since [v1.0]
      */
-    public function destroy(Request $request) : RedirectResponse
+    public function destroy(Request $request): RedirectResponse
     {
         $this->authorize('delete', AssetModel::class);
-      
+
         $models_raw_array = $request->input('ids');
 
         if ((is_array($models_raw_array)) && (count($models_raw_array) > 0)) {
@@ -137,11 +138,11 @@ class BulkAssetModelsController extends Controller
 
             if ($del_error_count == 0) {
                 return redirect()->route('models.index')
-                    ->with('success', trans('admin/models/message.bulkdelete.success', ['success_count'=> $del_count]));
+                    ->with('success', trans('admin/models/message.bulkdelete.success', ['success_count' => $del_count]));
             }
 
             return redirect()->route('models.index')
-                ->with('warning', trans('admin/models/message.bulkdelete.success_partial', ['fail_count'=>$del_error_count, 'success_count'=> $del_count]));
+                ->with('warning', trans('admin/models/message.bulkdelete.success_partial', ['fail_count' => $del_error_count, 'success_count' => $del_count]));
         }
 
         return redirect()->route('models.index')

@@ -2,18 +2,17 @@
 
 namespace Tests\Feature\Importing\Api;
 
-use App\Models\Category;
 use App\Models\AssetModel;
-use App\Models\User;
+use App\Models\Category;
 use App\Models\Import;
+use App\Models\User;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\Concerns\TestsPermissionsRequirement;
-use Tests\Support\Importing\CleansUpImportFiles;
 use Tests\Support\Importing\AssetModelsImportFileBuilder as ImportFileBuilder;
+use Tests\Support\Importing\CleansUpImportFiles;
 
 class ImportAssetModelsTest extends ImportDataTestCase implements TestsPermissionsRequirement
 {
@@ -22,7 +21,7 @@ class ImportAssetModelsTest extends ImportDataTestCase implements TestsPermissio
 
     protected function importFileResponse(array $parameters = []): TestResponse
     {
-        if (!array_key_exists('import-type', $parameters)) {
+        if (! array_key_exists('import-type', $parameters)) {
             $parameters['import-type'] = 'assetModel';
         }
 
@@ -30,15 +29,15 @@ class ImportAssetModelsTest extends ImportDataTestCase implements TestsPermissio
     }
 
     #[Test]
-    public function testRequiresPermission()
+    public function test_requires_permission()
     {
         $this->actingAsForApi(User::factory()->create());
 
         $this->importFileResponse(['import' => 44])->assertForbidden();
     }
-    
+
     #[Test]
-    public function importAssetModels(): void
+    public function import_asset_models(): void
     {
         $importFileBuilder = ImportFileBuilder::new();
         $row = $importFileBuilder->firstRow();
@@ -48,9 +47,9 @@ class ImportAssetModelsTest extends ImportDataTestCase implements TestsPermissio
         $this->importFileResponse(['import' => $import->id, 'send-welcome' => 0])
             ->assertOk()
             ->assertExactJson([
-                'payload'  => null,
-                'status'   => 'success',
-                'messages' => ['redirect_url' => route('models.index')]
+                'payload' => null,
+                'status' => 'success',
+                'messages' => ['redirect_url' => route('models.index')],
             ]);
 
         $newAssetModel = AssetModel::query()
@@ -64,7 +63,7 @@ class ImportAssetModelsTest extends ImportDataTestCase implements TestsPermissio
     }
 
     #[Test]
-    public function willIgnoreUnknownColumnsWhenFileContainsUnknownColumns(): void
+    public function will_ignore_unknown_columns_when_file_contains_unknown_columns(): void
     {
         $row = ImportFileBuilder::new()->definition();
         $row['unknownColumnInCsvFile'] = 'foo';
@@ -78,9 +77,8 @@ class ImportAssetModelsTest extends ImportDataTestCase implements TestsPermissio
         $this->importFileResponse(['import' => $import->id])->assertOk();
     }
 
-
     #[Test]
-    public function whenRequiredColumnsAreMissingInImportFile(): void
+    public function when_required_columns_are_missing_in_import_file(): void
     {
         $importFileBuilder = ImportFileBuilder::new(['name' => '']);
         $import = Import::factory()->assetmodel()->create(['file_path' => $importFileBuilder->saveToImportsDirectory()]);
@@ -90,16 +88,15 @@ class ImportAssetModelsTest extends ImportDataTestCase implements TestsPermissio
         $this->importFileResponse(['import' => $import->id])
             ->assertInternalServerError()
             ->assertExactJson([
-                'status'   => 'import-errors',
-                'payload'  => null,
+                'status' => 'import-errors',
+                'payload' => null,
                 'messages' => [
                     '' => [
                         'name' => [
-                            'name' =>
-                                ['The name field is required.'],
+                            'name' => ['The name field is required.'],
                         ],
-                    ]
-                ]
+                    ],
+                ],
             ]);
 
         $newAssetModels = AssetModel::query()
@@ -109,9 +106,8 @@ class ImportAssetModelsTest extends ImportDataTestCase implements TestsPermissio
         $this->assertCount(0, $newAssetModels);
     }
 
-
     #[Test]
-    public function updateAssetModelFromImport(): void
+    public function update_asset_model_from_import(): void
     {
         $assetmodel = AssetModel::factory()->create();
         $category = Category::find($assetmodel->category_id);
@@ -124,9 +120,9 @@ class ImportAssetModelsTest extends ImportDataTestCase implements TestsPermissio
         $this->importFileResponse(['import' => $import->id, 'import-update' => true])
             ->assertOk()
             ->assertExactJson([
-                'payload'  => null,
-                'status'   => 'success',
-                'messages' => ['redirect_url' => route('models.index')]
+                'payload' => null,
+                'status' => 'success',
+                'messages' => ['redirect_url' => route('models.index')],
             ]);
 
         $updatedAssetmodel = AssetModel::query()->find($assetmodel->id);
@@ -135,6 +131,4 @@ class ImportAssetModelsTest extends ImportDataTestCase implements TestsPermissio
         $this->assertEquals($row['name'], $updatedAssetmodel->name);
 
     }
-
-
 }

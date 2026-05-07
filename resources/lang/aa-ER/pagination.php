@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
 
     /*
     |--------------------------------------------------------------------------
@@ -15,6 +15,6 @@ return array(
 
     'previous' => 'crwdns1017:0crwdne1017:0',
 
-    'next'     => 'crwdns1018:0crwdne1018:0',
+    'next' => 'crwdns1018:0crwdne1018:0',
 
-);
+];

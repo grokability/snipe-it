@@ -6,7 +6,7 @@ use App\Models\User;
 
 class GeneralImportTest extends ImportDataTestCase
 {
-    public function testRequiresExistingImport()
+    public function test_requires_existing_import()
     {
         $this->actingAsForApi(User::factory()->canImport()->create());
 

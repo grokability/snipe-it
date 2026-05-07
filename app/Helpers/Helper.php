@@ -1,8 +1,8 @@
 <?php
 
 namespace App\Helpers;
+
 use App\Models\Accessory;
-use App\Models\Actionlog;
 use App\Models\Asset;
 use App\Models\AssetModel;
 use App\Models\Component;
@@ -10,30 +10,26 @@ use App\Models\Consumable;
 use App\Models\CustomField;
 use App\Models\CustomFieldset;
 use App\Models\Depreciation;
-use App\Models\Setting;
-use App\Models\Statuslabel;
 use App\Models\License;
 use App\Models\Location;
-use Illuminate\Database\Eloquent\Collection;
+use App\Models\Setting;
+use App\Models\Statuslabel;
+use Carbon\Carbon;
+use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Crypt;
-use Illuminate\Contracts\Encryption\DecryptException;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Intervention\Image\ImageManagerStatic as Image;
-use Illuminate\Support\Facades\Session;
 
 class Helper
 {
-
-
     /**
      * This is only used for reversing the migration that updates the locale to the 5-6 letter codes from two
      * letter codes. The normal dropdowns use the autoglossonyms in the language files located
      * in resources/en-US/localizations.php.
      */
-    public static $language_map =  [
+    public static $language_map = [
         'af' => 'af-ZA', // Afrikaans
         'am' => 'am-ET', // Amharic
         'ar' => 'ar-SA', // Arabic
@@ -88,12 +84,14 @@ class Helper
      * Simple helper to invoke the markdown parser
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since [v2.0]
+     *
      * @return string
      */
     public static function parseEscapedMarkedown($str = null)
     {
-        $Parsedown = new \Parsedown();
+        $Parsedown = new \Parsedown;
         $Parsedown->setSafeMode(true);
 
         if ($str) {
@@ -103,7 +101,7 @@ class Helper
 
     public static function parseEscapedMarkedownInline($str = null)
     {
-        $Parsedown = new \Parsedown();
+        $Parsedown = new \Parsedown;
         $Parsedown->setSafeMode(true);
 
         if ($str) {
@@ -117,28 +115,33 @@ class Helper
      * If it's a number, format it as a string.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since [v2.0]
+     *
      * @return string
      */
     public static function formatCurrencyOutput($cost)
     {
         if (is_numeric($cost)) {
 
-            if (Setting::getSettings()->digit_separator=='1.234,56') {
+            if (Setting::getSettings()->digit_separator == '1.234,56') {
                 return number_format($cost, 2, ',', '.');
             }
+
             return number_format($cost, 2, '.', ',');
         }
+
         // It's already been parsed.
         return $cost;
     }
-
 
     /**
      * Static colors for pie charts.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since [v3.3]
+     *
      * @return string
      */
     public static function defaultChartColors(int $index = 0)
@@ -421,15 +424,14 @@ class Helper
         if ($index >= $total_colors) {
 
             Log::info('Status label count is '.$index.' and exceeds the allowed count of 266.');
-            //patch fix for array key overflow (color count starts at 1, array starts at 0)
+            // patch fix for array key overflow (color count starts at 1, array starts at 0)
             $index = $index - $total_colors - 1;
 
-            //constraints to keep result in 0-265 range. This should never be needed, but if something happens
-            //to create this many status labels and it DOES happen, this will keep it from failing at least.
-            if($index < 0) {
+            // constraints to keep result in 0-265 range. This should never be needed, but if something happens
+            // to create this many status labels and it DOES happen, this will keep it from failing at least.
+            if ($index < 0) {
                 $index = 0;
-            }
-            elseif($index >($total_colors - 1)) {
+            } elseif ($index > ($total_colors - 1)) {
                 $index = $total_colors - 1;
             }
         }
@@ -439,39 +441,44 @@ class Helper
 
     /**
      * Check if a string has any RTL characters
-     * @param $value
+     *
+     * @param  $value
      * @return bool
      */
-    public static function hasRtl($string) {
+    public static function hasRtl($string)
+    {
         $rtlChar = '/[\x{0590}-\x{083F}]|[\x{08A0}-\x{08FF}]|[\x{FB1D}-\x{FDFF}]|[\x{FE70}-\x{FEFF}]/u';
+
         return preg_match($rtlChar, $string) != 0;
     }
 
     // is chinese, japanese or korean language
-    public static function isCjk($string) {
+    public static function isCjk($string)
+    {
         return Helper::isChinese($string) || Helper::isJapanese($string) || Helper::isKorean($string);
     }
 
-    public static function isChinese($string) {
+    public static function isChinese($string)
+    {
         return preg_match("/\p{Han}+/u", $string);
     }
 
-    public static function isJapanese($string) {
+    public static function isJapanese($string)
+    {
         return preg_match('/[\x{4E00}-\x{9FBF}\x{3040}-\x{309F}\x{30A0}-\x{30FF}]/u', $string);
     }
 
-    public static function isKorean($string) {
+    public static function isKorean($string)
+    {
         return preg_match('/[\x{3130}-\x{318F}\x{AC00}-\x{D7AF}]/u', $string);
     }
-
 
     /**
      * Increases or decreases the brightness of a color by a percentage of the current brightness.
      *
-     * @param   string  $hexCode        Supported formats: `#FFF`, `#FFFFFF`, `FFF`, `FFFFFF`
-     * @param   float   $adjustPercent  A number between -1 and 1. E.g. 0.3 = 30% lighter; -0.4 = 40% darker.
-     *
-     * @return  string
+     * @param  string  $hexCode  Supported formats: `#FFF`, `#FFFFFF`, `FFF`, `FFFFFF`
+     * @param  float  $adjustPercent  A number between -1 and 1. E.g. 0.3 = 30% lighter; -0.4 = 40% darker.
+     * @return string
      */
     public static function adjustBrightness($hexCode, $adjustPercent)
     {
@@ -498,7 +505,9 @@ class Helper
      * This is inelegant, and could be refactored later.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since [v3.2]
+     *
      * @return array
      */
     public static function chartBackgroundColors()
@@ -519,28 +528,29 @@ class Helper
         return $colors;
     }
 
-
     /**
      * Format currency using comma for thousands until local info is property used.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since [v2.7]
+     *
      * @return string
      */
     public static function ParseFloat($floatString)
     {
         /*******
-         * 
+         *
          * WARNING: This does conversions based on *locale* - a Unix-ey-like thing.
-         * 
+         *
          * Everything else in the system tends to convert based on the Snipe-IT settings
-         * 
+         *
          * So it's very likely this is *not* what you want - instead look for the new
-         * 
+         *
          * ParseCurrency($currencyString)
-         * 
+         *
          * Which should be directly below here
-         * 
+         *
          */
         $LocaleInfo = localeconv();
         $floatString = str_replace(',', '', $floatString);
@@ -556,24 +566,28 @@ class Helper
 
         return floatval($floatString);
     }
-    
+
     /**
      * Format currency using comma or period for thousands, and period or comma for decimal, based on settings.
-     * 
+     *
      * @author [B. Wetherington] [<bwetherington@grokability.com>]
+     *
      * @since [v5.2]
-     * @return Float
+     *
+     * @return float
      */
-    public static function ParseCurrency($currencyString) {
-        $without_currency = str_replace(Setting::getSettings()->default_currency, '', $currencyString); //generally shouldn't come up, since we don't do this in fields, but just in case it does...
-        if(Setting::getSettings()->digit_separator=='1.234,56') {
-            //EU format
+    public static function ParseCurrency($currencyString)
+    {
+        $without_currency = str_replace(Setting::getSettings()->default_currency, '', $currencyString); // generally shouldn't come up, since we don't do this in fields, but just in case it does...
+        if (Setting::getSettings()->digit_separator == '1.234,56') {
+            // EU format
             $without_thousands = str_replace('.', '', $without_currency);
             $corrected_decimal = str_replace(',', '.', $without_thousands);
         } else {
             $without_thousands = str_replace(',', '', $without_currency);
             $corrected_decimal = $without_thousands;  // decimal is already OK
         }
+
         return floatval($corrected_decimal);
     }
 
@@ -581,13 +595,15 @@ class Helper
      * Get the list of status labels in an array to make a dropdown menu
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since [v2.5]
+     *
      * @return array
      */
     public static function statusLabelList()
     {
         $statuslabel_list = ['' => trans('general.select_statuslabel')] + Statuslabel::orderBy('default_label', 'desc')->orderBy('name', 'asc')->orderBy('deployable', 'desc')
-                ->pluck('name', 'id')->toArray();
+            ->pluck('name', 'id')->toArray();
 
         return $statuslabel_list;
     }
@@ -600,15 +616,17 @@ class Helper
      * the status_id submitted is actually really deployable.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since [v5.1.0]
+     *
      * @return array
      */
     public static function deployableStatusLabelList()
     {
         $statuslabel_list = Statuslabel::where('deployable', '=', '1')->orderBy('default_label', 'desc')
-                ->orderBy('name', 'asc')
-                ->orderBy('deployable', 'desc')
-                ->pluck('name', 'id')->toArray();
+            ->orderBy('name', 'asc')
+            ->orderBy('deployable', 'desc')
+            ->pluck('name', 'id')->toArray();
 
         return $statuslabel_list;
     }
@@ -617,7 +635,9 @@ class Helper
      * Get the list of status label types in an array to make a dropdown menu
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since [v2.5]
+     *
      * @return array
      */
     public static function statusTypeList()
@@ -636,13 +656,15 @@ class Helper
      * Get the list of depreciations in an array to make a dropdown menu
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since [v2.5]
+     *
      * @return array
      */
     public static function depreciationList()
     {
         $depreciation_list = ['' => 'Do Not Depreciate'] + Depreciation::orderBy('name', 'asc')
-                ->pluck('name', 'id')->toArray();
+            ->pluck('name', 'id')->toArray();
 
         return $depreciation_list;
     }
@@ -651,10 +673,12 @@ class Helper
      * Get the list of category types in an array to make a dropdown menu
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since [v2.5]
+     *
      * @return array
      */
-    public static function categoryTypeList($selection=null)
+    public static function categoryTypeList($selection = null)
     {
         $category_types = [
             '' => '',
@@ -665,31 +689,36 @@ class Helper
             'license' => trans('general.license'),
         ];
 
-        if ($selection != null){
+        if ($selection != null) {
             return $category_types[strtolower($selection)];
+        } else {
+            return $category_types;
         }
-        else
-        return $category_types;
     }
+
     /**
      * Get the list of custom fields in an array to make a dropdown menu
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since [v2.5]
+     *
      * @return array
      */
     public static function customFieldsetList()
     {
         $customfields = ['' => trans('admin/models/general.no_custom_field')] + CustomFieldset::pluck('name', 'id')->toArray();
 
-        return  $customfields;
+        return $customfields;
     }
 
     /**
      * Get the list of custom field formats in an array to make a dropdown menu
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since [v3.4]
+     *
      * @return array
      */
     public static function predefined_formats()
@@ -704,7 +733,9 @@ class Helper
      * Get the list of barcode dimensions
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since [v3.3]
+     *
      * @return array
      */
     public static function barcodeDimensions($barcode_type = 'QRCODE')
@@ -727,7 +758,9 @@ class Helper
      * Generates a random string
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since [v3.0]
+     *
      * @return array
      */
     public static function generateRandomString($length = 10)
@@ -741,27 +774,30 @@ class Helper
 
         return $randomString;
     }
+
     /**
      * A method to be used to handle deprecations notifications, currently handling MS Teams. more can be added when needed.
      *
      *
      * @author [Godfrey Martinez]
+     *
      * @since [v7.0.14]
-     * @return array
      */
-    public static function deprecationCheck()  : array {
+    public static function deprecationCheck(): array
+    {
         // The check and message that the user is still using the deprecated version
         $deprecations = [
-            'ms_teams_deprecated' => array(
-            'check' => !Str::contains(Setting::getSettings()->webhook_endpoint, 'workflows') && (Setting::getSettings()->webhook_selected === 'microsoft'),
-            'message' => 'The Microsoft Teams webhook URL being used will be deprecated Dec 31st, 2025. <a class="btn btn-primary" href="' . route('settings.slack.index') . '">Change webhook endpoint</a>'),
+            'ms_teams_deprecated' => [
+                'check' => ! Str::contains(Setting::getSettings()->webhook_endpoint, 'workflows') && (Setting::getSettings()->webhook_selected === 'microsoft'),
+                'message' => 'The Microsoft Teams webhook URL being used will be deprecated Dec 31st, 2025. <a class="btn btn-primary" href="'.route('settings.slack.index').'">Change webhook endpoint</a>'],
         ];
 
         // if item of concern is being used and its being used with the deprecated values return the notification array.
-        if(Setting::getSettings()->webhook_selected === 'microsoft' && $deprecations['ms_teams_deprecated']['check']) {
+        if (Setting::getSettings()->webhook_selected === 'microsoft' && $deprecations['ms_teams_deprecated']['check']) {
             return $deprecations;
         }
-            return [];
+
+        return [];
     }
 
     /**
@@ -769,17 +805,19 @@ class Helper
      * alert dropdown
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since [v3.0]
+     *
      * @return array
      */
     public static function checkLowInventory()
     {
-        $alert_threshold = \App\Models\Setting::getSettings()->alert_threshold;
-        $consumables = Consumable::withCount('consumableAssignments as consumable_assignments_count')->whereNotNull('min_amt')->get();
+        $alert_threshold = Setting::getSettings()->alert_threshold;
+        $consumables = Consumable::withCount('consumableAssignments as consumables_users_count')->whereNotNull('min_amt')->get();
         $accessories = Accessory::withCount('checkouts as checkouts_count')->whereNotNull('min_amt')->get();
-        $components = Component::whereNotNull('min_amt')->get();
-        $asset_models = AssetModel::where('min_amt', '>', 0)->get();
-        $licenses = License::where('min_amt', '>', 0)->get();
+        $components = Component::withCount('assets as sum_unconstrained_assets')->whereNotNull('min_amt')->get();
+        $asset_models = AssetModel::where('min_amt', '>', 0)->withCount(['availableAssets', 'assets'])->get();
+        $licenses = License::withCount('availCount as licenses_available')->where('min_amt', '>', 0)->get();
 
         $items_array = [];
         $all_count = 0;
@@ -841,11 +879,11 @@ class Helper
             }
         }
 
-        foreach ($asset_models as $asset_model){
+        foreach ($asset_models as $asset_model) {
 
-            $asset = new Asset();
-            $total_owned = $asset->where('model_id', '=', $asset_model->id)->count();
-            $avail = $asset->where('model_id', '=', $asset_model->id)->whereNull('assigned_to')->count();
+            $asset = new Asset;
+            $total_owned = $asset_model->assets_count; // requires the withCount() clause in the initial query!
+            $avail = $asset_model->available_assets_count; // requires the withCount() clause in the initial query!
 
             if ($avail <= ($asset_model->min_amt) + $alert_threshold) {
                 if ($avail > 0) {
@@ -863,7 +901,7 @@ class Helper
             }
         }
 
-        foreach ($licenses as $license){
+        foreach ($licenses as $license) {
             $avail = $license->remaincount();
             if ($avail <= ($license->min_amt) + $alert_threshold) {
                 if ($avail > 0) {
@@ -890,9 +928,11 @@ class Helper
      * Check if the file is an image, so we can show a preview
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since [v3.0]
-     * @param File $file
-     * @return string | Boolean
+     *
+     * @param  File  $file
+     * @return string | bool
      */
     public static function checkUploadIsImage($file)
     {
@@ -910,9 +950,11 @@ class Helper
     /**
      * Check if the file is a video, so we can show a preview
      *
-     * @param File $file
-     * @return string | Boolean
+     * @param  File  $file
+     * @return string | bool
+     *
      * @author [B. Wetherington] [<bwetherington@grokability.com>]
+     *
      * @since [v8.1.18]
      */
     public static function checkUploadIsVideo($file)
@@ -931,9 +973,11 @@ class Helper
     /**
      * Check if the file is audio, so we can show a preview
      *
-     * @param File $file
-     * @return string | Boolean
+     * @param  File  $file
+     * @return string | bool
+     *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since [v3.0]
      */
     public static function checkUploadIsAudio($file)
@@ -961,9 +1005,12 @@ class Helper
      * if that group/user has been granted that permission.
      *
      * @author [A. Gianotto] [<snipe@snipe.net]
-     * @param array $permissions
-     * @param array $selected_arr
+     *
+     * @param  array  $permissions
+     * @param  array  $selected_arr
+     *
      * @since [v1.0]
+     *
      * @return array
      */
     public static function selectedPermissionsArray($permissions, $selected_arr = [])
@@ -1009,7 +1056,9 @@ class Helper
      * This does not currently handle form request validation requiredness :(
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since [v3.0]
+     *
      * @return bool
      */
     public static function checkIfRequired($class, $field)
@@ -1019,19 +1068,20 @@ class Helper
             if ($rule_name == $field) {
                 if (is_array($rule)) {
                     if (in_array('required', $rule)) {
-                       return true;
+                        return true;
                     } else {
                         return false;
                     }
                 } else {
                     if (strpos($rule, 'required') === false) {
-                            return false;
-                        } else {
-                            return true;
-                        }
+                        return false;
+                    } else {
+                        return true;
                     }
+                }
             }
         }
+
         return false;
     }
 
@@ -1039,10 +1089,12 @@ class Helper
      * Check to see if the given key exists in the array, and trim excess white space before returning it
      *
      * @author Daniel Melzter
+     *
      * @since 3.0
-     * @param $array array
-     * @param $key string
-     * @param $default string
+     *
+     * @param  $array  array
+     * @param  $key  string
+     * @param  $default  string
      * @return string
      */
     public static function array_smart_fetch(array $array, $key, $default = '')
@@ -1058,9 +1110,10 @@ class Helper
      * @todo allow this to handle more than just strings (arrays, etc)
      *
      * @author A. Gianotto
+     *
      * @since 3.6
-     * @param CustomField $field
-     * @param string $string
+     *
+     * @param  string  $string
      * @return string
      */
     public static function gracefulDecrypt(CustomField $field, $string)
@@ -1073,12 +1126,12 @@ class Helper
             } catch (DecryptException $e) {
                 return 'Error Decrypting: '.$e->getMessage();
             }
-            }
+        }
 
         return $string;
     }
-    public static function formatStandardApiResponse($status, $payload = null, $messages = null)
 
+    public static function formatStandardApiResponse($status, $payload = null, $messages = null)
     {
         $array['status'] = $status;
         $array['messages'] = $messages;
@@ -1102,12 +1155,8 @@ class Helper
      * Return an array (or null) of the the raw and formatted date object for easy use in
      * the API and the bootstrap table listings.
      *
-     * @param $date
-     * @param $type
-     * @param $array
      * @return array|string|null
      */
-
     public static function getFormattedDateObject($date, $type = 'datetime', $array = true)
     {
         if ($date == '') {
@@ -1125,10 +1174,7 @@ class Helper
          * it is a possible scenario that a custom field could be created as an "ANY" field, data gets
          * added, and then the custom field format gets edited later. If someone put bad data in the
          * database before then - or if they manually edited the field's value - it will crash.
-         *
          */
-
-
         try {
             $tmp_date = new Carbon($date);
 
@@ -1148,6 +1194,7 @@ class Helper
 
         } catch (\Exception $e) {
             Log::warning($e);
+
             return $date.' (Invalid '.$type.' value.)';
         }
 
@@ -1220,49 +1267,49 @@ class Helper
 
         $allowedExtensionMap = [
             // Images
-            'jpg'   => 'far fa-image',
-            'jpeg'   => 'far fa-image',
-            'gif'   => 'far fa-image',
-            'png'   => 'far fa-image',
-            'webp'   => 'far fa-image',
-            'avif'   => 'far fa-image',
+            'jpg' => 'far fa-image',
+            'jpeg' => 'far fa-image',
+            'gif' => 'far fa-image',
+            'png' => 'far fa-image',
+            'webp' => 'far fa-image',
+            'avif' => 'far fa-image',
             'svg' => 'fas fa-vector-square',
 
             // word
-            'doc'   => 'far fa-file-word',
-            'docx'   => 'far fa-file-word',
+            'doc' => 'far fa-file-word',
+            'docx' => 'far fa-file-word',
 
             // Excel
-            'xls'   => 'far fa-file-excel',
-            'xlsx'   => 'far fa-file-excel',
-            'ods'   => 'far fa-file-excel',
+            'xls' => 'far fa-file-excel',
+            'xlsx' => 'far fa-file-excel',
+            'ods' => 'far fa-file-excel',
 
             // Presentation
-            'ppt'   => 'far fa-file-powerpoint',
-            'odp'   => 'far fa-file-powerpoint',
+            'ppt' => 'far fa-file-powerpoint',
+            'odp' => 'far fa-file-powerpoint',
 
             // archive
-            'zip'   => 'fas fa-file-archive',
-            'rar'   => 'fas fa-file-archive',
+            'zip' => 'fas fa-file-archive',
+            'rar' => 'fas fa-file-archive',
 
-            //Text
-            'odt'   => 'far fa-file-alt',
-            'txt'   => 'far fa-file-alt',
-            'rtf'   => 'far fa-file-alt',
-            'xml'   => 'fas fa-code',
+            // Text
+            'odt' => 'far fa-file-alt',
+            'txt' => 'far fa-file-alt',
+            'rtf' => 'far fa-file-alt',
+            'xml' => 'fas fa-code',
 
             // Misc
-            'pdf'   => 'far fa-file-pdf',
-            'lic'   => 'far fa-save',
+            'pdf' => 'far fa-file-pdf',
+            'lic' => 'far fa-save',
 
             // video
-            'mov'   => 'fa-solid fa-video',
-            'mp4'   => 'fa-solid fa-video',
+            'mov' => 'fa-solid fa-video',
+            'mp4' => 'fa-solid fa-video',
 
             // audio
-            'ogg'   => 'fa-solid fa-file-audio',
-            'mp3'   => 'fa-solid fa-file-audio',
-            'wav'   => 'fa-solid fa-file-audio',
+            'ogg' => 'fa-solid fa-file-audio',
+            'mp3' => 'fa-solid fa-file-audio',
+            'wav' => 'fa-solid fa-file-audio',
         ];
 
         if ($extension && array_key_exists($extension, $allowedExtensionMap)) {
@@ -1272,16 +1319,12 @@ class Helper
         return 'far fa-file';
     }
 
-
-
     /**
      * Get a random unencrypted password.
      *
      * @author Steffen Buehl <sb@sbuehl.com>
      *
      * @since 5.0.0
-     *
-     * @return string
      */
     public static function generateUnencryptedPassword(): string
     {
@@ -1298,11 +1341,11 @@ class Helper
     /**
      * Process base64 encoded image data and save it on supplied path
      *
-     * @param string $image_data base64 encoded image data with mime type
-     * @param string $save_path path to a folder where the image should be saved
+     * @param  string  $image_data  base64 encoded image data with mime type
+     * @param  string  $save_path  path to a folder where the image should be saved
      * @return string path to uploaded image or false if something went wrong
      */
-    public static function processUploadedImage(String $image_data, String $save_path)
+    public static function processUploadedImage(string $image_data, string $save_path)
     {
         if ($image_data == null || $save_path == null) {
             return false;
@@ -1338,39 +1381,28 @@ class Helper
         return $file_name;
     }
 
-
     /**
      * Universal helper to show file size in human-readable formats
      *
      * @author A. Gianotto <snipe@snipe.net>
+     *
      * @since 5.0
      *
      * @return string[]
      */
     public static function formatFilesizeUnits($bytes)
     {
-        if ($bytes >= 1073741824)
-        {
-            $bytes = number_format($bytes / 1073741824, 2) . ' GB';
-        }
-        elseif ($bytes >= 1048576)
-        {
-            $bytes = number_format($bytes / 1048576, 2) . ' MB';
-        }
-        elseif ($bytes >= 1024)
-        {
-            $bytes = number_format($bytes / 1024, 2) . ' KB';
-        }
-        elseif ($bytes > 1)
-        {
-            $bytes = $bytes . ' bytes';
-        }
-        elseif ($bytes == 1)
-        {
-            $bytes = $bytes . ' byte';
-        }
-        else
-        {
+        if ($bytes >= 1073741824) {
+            $bytes = number_format($bytes / 1073741824, 2).' GB';
+        } elseif ($bytes >= 1048576) {
+            $bytes = number_format($bytes / 1048576, 2).' MB';
+        } elseif ($bytes >= 1024) {
+            $bytes = number_format($bytes / 1024, 2).' KB';
+        } elseif ($bytes > 1) {
+            $bytes = $bytes.' bytes';
+        } elseif ($bytes == 1) {
+            $bytes = $bytes.' byte';
+        } else {
             $bytes = '0 bytes';
         }
 
@@ -1381,12 +1413,14 @@ class Helper
      * This is weird but used by the side nav to determine which URL to point the user to
      *
      * @author A. Gianotto <snipe@snipe.net>
+     *
      * @since 5.0
      *
      * @return string[]
      */
-    public static function SettingUrls(){
-        $settings=[
+    public static function SettingUrls()
+    {
+        $settings = [
             '#',
             'fields*',
             'statuslabels*',
@@ -1397,101 +1431,70 @@ class Helper
             'departments*',
             'locations*',
             'companies*',
-            'depreciations*'
+            'depreciations*',
         ];
 
         return $settings;
-        }
-
-
-    /**
-     * Generic helper (largely used by livewire right now) that returns the font-awesome icon
-     * for the object type.
-     *
-     * @author A. Gianotto <snipe@snipe.net>
-     * @since 6.1.0
-     *
-     * @return string
-     */
-    public static function iconTypeByItem($item) {
-
-        switch ($item) {
-            case 'asset':
-                return 'fas fa-barcode';
-            case 'accessory':
-                return 'fas fa-keyboard';
-            case 'component':
-                return 'fas fa-hdd';
-            case 'consumable':
-                return 'fas fa-tint';
-            case 'license':
-                return 'far fa-save';
-            case 'location':
-                return 'fas fa-map-marker-alt';
-            case 'user':
-                return 'fas fa-user';
-            case 'supplier':
-                return 'fa-solid fa-store';
-            case 'manufacturer':
-                return 'fa-solid fa-building';
-            case 'category':
-                return 'fa-solid fa-table-columns';
-        }
-
     }
 
-
-     /*
-     * This is a shorter way to see if the app is in demo mode.
-     *
-     * This makes it cleanly available in blades and in controllers, e.g.
-     *
-     * Blade:
-     * {{ Helper::isDemoMode() ? ' disabled' : ''}} for form blades where we need to disable a form
-     *
-     * Controller:
-     * if (Helper::isDemoMode()) {
-     *      // don't allow the thing
-     * }
-     * @todo - use this everywhere else in the app where we have very long if/else config('app.lock_passwords') stuff
-     */
-    public static function isDemoMode() {
+    /*
+    * This is a shorter way to see if the app is in demo mode.
+    *
+    * This makes it cleanly available in blades and in controllers, e.g.
+    *
+    * Blade:
+    * {{ Helper::isDemoMode() ? ' disabled' : ''}} for form blades where we need to disable a form
+    *
+    * Controller:
+    * if (Helper::isDemoMode()) {
+    *      // don't allow the thing
+    * }
+    * @todo - use this everywhere else in the app where we have very long if/else config('app.lock_passwords') stuff
+    */
+    public static function isDemoMode()
+    {
         if (config('app.lock_passwords') === true) {
             return true;
             Log::debug('app locked!');
         }
-        
+
         return false;
     }
 
-  
     /**
      * Conversion between units of measurement
      *
      * @author Grant Le Roux <grant.leroux+snipe-it@gmail.com>
+     *
      * @since 5.0
-     * @param float  $value    Measurement value to convert
-     * @param string $srcUnit  Source unit of measurement
-     * @param string $dstUnit  Destination unit of measurement
-     * @param int    $round    Round the result to decimals (Default false - No rounding)
+     *
+     * @param  float  $value  Measurement value to convert
+     * @param  string  $srcUnit  Source unit of measurement
+     * @param  string  $dstUnit  Destination unit of measurement
+     * @param  int  $round  Round the result to decimals (Default false - No rounding)
      * @return float
      */
-    public static function convertUnit($value, $srcUnit, $dstUnit, $round=false) {
+    public static function convertUnit($value, $srcUnit, $dstUnit, $round = false)
+    {
         $srcFactor = static::getUnitConversionFactor($srcUnit);
         $dstFactor = static::getUnitConversionFactor($dstUnit);
         $output = $value * $srcFactor / $dstFactor;
+
         return ($round !== false) ? round($output, $round) : $output;
     }
-  
+
     /**
      * Get conversion factor from unit of measurement to mm
      *
      * @author Grant Le Roux <grant.leroux+snipe-it@gmail.com>
+     *
      * @since 5.0
-     * @param string $unit  Unit of measurement
+     *
+     * @param  string  $unit  Unit of measurement
      * @return float
      */
-    public static function getUnitConversionFactor($unit) {
+    public static function getUnitConversionFactor($unit)
+    {
         switch (strtolower($unit)) {
             case 'mm':
                 return 1.0;
@@ -1508,23 +1511,22 @@ class Helper
             case 'pt':
                 return (1 / 72) * static::getUnitConversionFactor('in');
             default:
-                throw new \InvalidArgumentException('Unit: \'' . $unit . '\' is not supported');
+                throw new \InvalidArgumentException('Unit: '.e($unit).' is not supported');
 
                 return false;
         }
     }
 
-
     /*
      * I know it's gauche to return a shitty HTML string, but this is just a helper and since it will be the same every single time,
      * it seemed pretty safe to do here. Don't you judge me.
      */
-    public static function showDemoModeFieldWarning() {
+    public static function showDemoModeFieldWarning()
+    {
         if (Helper::isDemoMode()) {
-            return "<p class=\"text-warning\"><i class=\"fas fa-lock\"></i>" . trans('general.feature_disabled') . "</p>";
+            return '<p class="text-warning"><i class="fas fa-lock"></i>'.trans('general.feature_disabled').'</p>';
         }
     }
-
 
     /**
      * Ah, legacy code.
@@ -1536,10 +1538,11 @@ class Helper
      * In this array, we ONLY include the older languages where we weren't using the correct locale codes.
      *
      * @see public static $language_map in this file
+     *
      * @author A. Gianotto <snipe@snipe.net>
+     *
      * @since 6.3.0
      *
-     * @param $language_code
      * @return string []
      */
     public static function mapLegacyLocale($language_code = null)
@@ -1563,7 +1566,7 @@ class Helper
     {
 
         if (strlen($new_locale) <= 4) {
-            return $new_locale; //"new locale" apparently wasn't quite so new
+            return $new_locale; // "new locale" apparently wasn't quite so new
         }
 
         // This does a *reverse* search against our new language map array - given the value, find the *key* for it
@@ -1572,30 +1575,32 @@ class Helper
         if ($legacy_locale !== false) {
             return $legacy_locale;
         }
+
         return $new_locale; // better that you have some weird locale that doesn't fit into our mappings anywhere than 'void'
     }
 
-    public static function determineLanguageDirection() {
+    public static function determineLanguageDirection()
+    {
         return in_array(app()->getLocale(),
             [
                 'ar-SA',
                 'fa-IR',
-                'he-IL'
+                'he-IL',
             ]) ? 'rtl' : 'ltr';
     }
 
-    static public function getRedirectOption($request, $id, $table, $item_id = null) : RedirectResponse
+    public static function getRedirectOption($request, $id, $table, $item_id = null): RedirectResponse
     {
 
-        $redirect_option = Session::get('redirect_option') ?? $request->redirect_option;
-        $checkout_to_type = Session::get('checkout_to_type') ?? null;
-        $checkedInFrom = Session::get('checkedInFrom');
-        $other_redirect = Session::get('other_redirect');
-        $backUrl = Session::pull('back_url', route('home'));
+        $redirect_option = session('redirect_option') ?? $request->redirect_option;
+        $checkout_to_type = session('checkout_to_type') ?? null;
+        $checkedInFrom = session('checkedInFrom');
+        $other_redirect = session('other_redirect');
+        $backUrl = session()->pull('url.intended', 'home');
 
-       // return to previous page
-        if ($redirect_option === 'back') {
-            return redirect()->to($backUrl);
+        // return to previous page
+        if ($redirect_option == 'back') {
+            return redirect()->intended($backUrl);
         }
 
         // return to index
@@ -1613,21 +1618,31 @@ class Helper
         // return to thing being assigned
         if ($redirect_option == 'item') {
             return match ($table) {
-                'Assets'      => redirect()->route('hardware.show', $id ?? $item_id),
-                'Users'       => redirect()->route('users.show', $id ?? $item_id),
-                'Licenses'    => redirect()->route('licenses.show', $id ?? $item_id),
+                'Assets' => redirect()->route('hardware.show', $id ?? $item_id),
+                'Users' => redirect()->route('users.show', $id ?? $item_id),
+                'Licenses' => redirect()->route('licenses.show', $id ?? $item_id),
                 'Accessories' => redirect()->route('accessories.show', $id ?? $item_id),
-                'Components'  => redirect()->route('components.show', $id ?? $item_id),
+                'Components' => redirect()->route('components.show', $id ?? $item_id),
                 'Consumables' => redirect()->route('consumables.show', $id ?? $item_id),
             };
         }
 
         // return to assignment target
         if ($redirect_option == 'target') {
+            $userId = $request->assigned_user ?? $checkedInFrom;
+            $locationId = $request->assigned_location ?? $checkedInFrom;
+            $assetId = $request->assigned_asset ?? $checkedInFrom;
+
             return match ($checkout_to_type) {
-                'user'     => redirect()->route('users.show', $request->assigned_user ?? $checkedInFrom),
-                'location' => redirect()->route('locations.show', $request->assigned_location ?? $checkedInFrom),
-                'asset'    => redirect()->route('hardware.show', $request->assigned_asset ?? $checkedInFrom),
+                'user' => $userId
+                    ? redirect()->route('users.show', $userId)
+                    : redirect()->route('users.index'),
+                'location' => $locationId
+                    ? redirect()->route('locations.show', $locationId)
+                    : redirect()->route('locations.index'),
+                'asset' => $assetId
+                    ? redirect()->route('hardware.show', $assetId)
+                    : redirect()->route('hardware.index'),
             };
         }
 
@@ -1648,14 +1663,16 @@ class Helper
      * If there are locations with different companies than related objects unforseen problems could arise
      *
      * @author T. Regnery <tobias.regnery@gmail.com>
+     *
      * @since 7.0
      *
-     * @param $artisan          when false, bail out on first inconsistent entry
-     * @param $location_id      when set, only test this specific location
-     * @param $new_company_id   in case of updating a location, this is the newly requested company_id
+     * @param  $artisan  when false, bail out on first inconsistent entry
+     * @param  $location_id  when set, only test this specific location
+     * @param  $new_company_id  in case of updating a location, this is the newly requested company_id
      * @return string []
      */
-    static public function test_locations_fmcs($artisan, $location_id = null, $new_company_id = null) {
+    public static function test_locations_fmcs($artisan, $location_id = null, $new_company_id = null)
+    {
         $mismatched = [];
 
         if ($location_id) {
@@ -1672,7 +1689,7 @@ class Helper
             return [];
         }
 
-        foreach($locations as $location) {
+        foreach ($locations as $location) {
             // in case of an update of a single location, use the newly requested company_id
             if ($new_company_id) {
                 $location_company = $new_company_id;
@@ -1683,19 +1700,19 @@ class Helper
             // Depending on the relationship, we must use different operations to retrieve the objects
             $keywords_relation = [
                 'many' => [
-                            'accessories',
-                            'assets',
-                            'assignedAccessories',
-                            'assignedAssets',
-                            'components',
-                            'consumables',
-                            'rtd_assets',
-                            'users',
-                        ],
-                    'one'  => [
-                        'manager',
-                        'parent',
-                    ]];
+                    'accessories',
+                    'assets',
+                    'assignedAccessories',
+                    'assignedAssets',
+                    'components',
+                    'consumables',
+                    'rtd_assets',
+                    'users',
+                ],
+                'one' => [
+                    'manager',
+                    'parent',
+                ]];
 
             // In case of a single location, the children must be checked as well, because we don't walk every location
             if ($location_id) {
@@ -1703,7 +1720,7 @@ class Helper
             }
 
             foreach ($keywords_relation as $relation => $keywords) {
-                foreach($keywords as $keyword) {
+                foreach ($keywords as $keyword) {
                     if ($relation == 'many') {
                         $items = $location->{$keyword}->all();
                     } else {
@@ -1713,42 +1730,41 @@ class Helper
                     $count = 0;
                     foreach ($items as $item) {
 
-
                         if ($item && $item->company_id != $location_company) {
 
                             $mismatched[] = [
-                                    class_basename(get_class($item)),
-                                    $item->id,
-                                    $item->name ?? $item->asset_tag ?? $item->serial ?? $item->username,
-                                    $item->assigned_type ? str_replace('App\\Models\\', '', $item->assigned_type) : null,
-                                    $item->company_id ?? null,
-                                    $item->company->name ?? null,
-//                                    $item->defaultLoc->id ?? null,
-//                                    $item->defaultLoc->name ?? null,
-//                                    $item->defaultLoc->company->id ?? null,
-//                                    $item->defaultLoc->company->name ?? null,
-                                    $item->location->name ?? null,
-                                    $item->location->company->name ?? null,
-                                    $location_company ?? null,
-                                ];
+                                class_basename(get_class($item)),
+                                $item->id,
+                                $item->name ?? $item->asset_tag ?? $item->serial ?? $item->username,
+                                $item->assigned_type ? str_replace('App\\Models\\', '', $item->assigned_type) : null,
+                                $item->company_id ?? null,
+                                $item->company->name ?? null,
+                                //                                    $item->defaultLoc->id ?? null,
+                                //                                    $item->defaultLoc->name ?? null,
+                                //                                    $item->defaultLoc->company->id ?? null,
+                                //                                    $item->defaultLoc->company->name ?? null,
+                                $item->location->name ?? null,
+                                $item->location->company->name ?? null,
+                                $location_company ?? null,
+                            ];
 
                             $count++;
 
                             // Bail early if this is not being run via artisan
-                            if ((!$artisan) && ($count > 0)) {
+                            if ((! $artisan) && ($count > 0)) {
                                 return $mismatched;
                             }
-
-
 
                         }
                     }
                 }
             }
         }
+
         return $mismatched;
     }
-    static public function labelFieldLayoutScaling(
+
+    public static function labelFieldLayoutScaling(
         $pdf,
         iterable|\Closure $fields,
         float $currentX,
@@ -1757,16 +1773,15 @@ class Helper
         float $baseLabelSize,
         float $baseFieldSize,
         float $baseFieldMargin,
-        ?string $title            = null,
-        float $baseTitleSize      = 0.0,
-        float $baseTitleMargin    = 0.0,
+        ?string $title = null,
+        float $baseTitleSize = 0.0,
+        float $baseTitleMargin = 0.0,
         float $baseLabelPadding = 1.5,
-        float $baseGap          = 1.5,
-        float $maxScale         = 1.8,
-        string $labelFont       = 'freesans',
+        float $baseGap = 1.5,
+        float $maxScale = 1.8,
+        string $labelFont = 'freesans',
 
-    )  : array
-    {
+    ): array {
         $fieldCount = count($fields);
         $perFieldHeight = max($baseLabelSize, $baseFieldSize) + $baseFieldMargin;
         $baseFieldsHeight = $fieldCount * $perFieldHeight;
@@ -1786,7 +1801,7 @@ class Helper
         $fieldMargin = $baseFieldMargin * $scale;
 
         $rowAdvance = max($labelSize, $fieldSize) + $fieldMargin;
-        $titleSize   = $hasTitle ? ($baseTitleSize   * $scale) : 0.0;
+        $titleSize = $hasTitle ? ($baseTitleSize * $scale) : 0.0;
         $titleMargin = $hasTitle ? ($baseTitleMargin * $scale) : 0.0;
         $titleAdvance = $hasTitle ? ($titleSize + $titleMargin) : 0.0;
 
@@ -1797,10 +1812,10 @@ class Helper
             $rawLabel = $field['label'] ?? null;
 
             // If no label, do not include it in label-column sizing
-            if (!is_string($rawLabel) || trim($rawLabel) === '') {
+            if (! is_string($rawLabel) || trim($rawLabel) === '') {
                 continue;
             }
-            $label = rtrim($field['label'], ':') . ':';
+            $label = rtrim($field['label'], ':').':';
             $width = $pdf->GetStringWidth($label);
             $maxLabelWidthPerUnit = max($maxLabelWidthPerUnit, $width / $baseLabelSize);
         }
@@ -1811,6 +1826,8 @@ class Helper
         $labelWidth = ($maxLabelWidthPerUnit * $labelSize) + $labelPadding;
         $valueX = $currentX + $labelWidth + $gap;
         $valueWidth = $usableWidth - $labelWidth - $gap;
+        $fullValueX = $currentX;
+        $fullValueWidth = $usableWidth;
 
         return compact(
             'scale',
@@ -1824,7 +1841,19 @@ class Helper
             'rowAdvance',
             'labelWidth',
             'valueX',
-            'valueWidth'
+            'valueWidth',
+            'fullValueX',
+            'fullValueWidth',
         );
+    }
+
+    public static function normalizeFullModelName($model): string
+    {
+        if (str_contains($model, 'App\\Models\\')) {
+            return $model;
+        }
+
+        return 'App\\Models\\'.ucwords($model);
+
     }
 }

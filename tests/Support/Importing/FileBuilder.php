@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Support\Importing;
 
-use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use League\Csv\Reader;
 use OutOfBoundsException;
 
@@ -29,7 +29,7 @@ abstract class FileBuilder
     abstract public function definition();
 
     /**
-     * @param array<Row> $rows
+     * @param  array<Row>  $rows
      */
     public function __construct(array $rows = [])
     {
@@ -39,8 +39,7 @@ abstract class FileBuilder
     /**
      * Get a new file builder instance.
      *
-     * @param Row $attributes
-     *
+     * @param  Row  $attributes
      * @return static
      */
     public static function new(array $attributes = [])
@@ -66,7 +65,7 @@ abstract class FileBuilder
         foreach ($reader->getRecords() as $key => $record) {
             $row = [];
 
-            //Skip header.
+            // Skip header.
             if ($key === 0) {
                 continue;
             }
@@ -74,8 +73,8 @@ abstract class FileBuilder
             foreach ($record as $index => $value) {
                 $columnNameInImportFile = $importFileHeaders[$index];
 
-                //Try to map the value to a dictionary  or use the file's
-                //column if the key is not defined in the dictionary.
+                // Try to map the value to a dictionary  or use the file's
+                // column if the key is not defined in the dictionary.
                 $row[$dictionary[$columnNameInImportFile] ?? $columnNameInImportFile] = $value;
             }
 
@@ -114,13 +113,12 @@ abstract class FileBuilder
     /**
      * Add a new row.
      *
-     * @param Row $row
-     *
+     * @param  Row  $row
      * @return $this
      */
     public function push(array $row)
     {
-        if (!empty($row)) {
+        if (! empty($row)) {
             $this->rows->push($row);
         }
 
@@ -138,15 +136,14 @@ abstract class FileBuilder
     /**
      * Replace the keys in each row with the values of the given replacement if they exist.
      *
-     * @param array<Row> $replacement
-     *
+     * @param  array<Row>  $replacement
      * @return $this
      */
     public function replace(array $replacement)
     {
         $this->rows = $this->rows->map(function (array $row) use ($replacement) {
             foreach ($replacement as $key => $value) {
-                if (!array_key_exists($key, $row)) {
+                if (! array_key_exists($key, $row)) {
                     continue;
                 }
 
@@ -162,8 +159,7 @@ abstract class FileBuilder
     /**
      * Remove the the given keys from all rows.
      *
-     * @param string|array<string> $keys
-     *
+     * @param  string|array<string>  $keys
      * @return $this
      */
     public function forget(array|string $keys)
@@ -208,10 +204,10 @@ abstract class FileBuilder
      */
     public function saveToImportsDirectory(?string $filename = null, ?string $locale = null): string
     {
-        $filename ??= Str::random(40) . '.csv';
+        $filename ??= Str::random(40).'.csv';
 
         try {
-            $stream = fopen(config('app.private_uploads') . "/imports/{$filename}", 'w');
+            $stream = fopen(config('app.private_uploads')."/imports/{$filename}", 'w');
 
             foreach ($this->toCsv() as $row) {
                 if ($locale) {
@@ -223,6 +219,7 @@ abstract class FileBuilder
                 }
                 fputcsv($stream, $row);
             }
+
             return $filename;
         } finally {
             if (is_resource($stream)) {
@@ -234,9 +231,10 @@ abstract class FileBuilder
     /**
      * Get the first row of the import file.
      *
-     * @throws OutOfBoundsException
      *
      * @return Row
+     *
+     * @throws OutOfBoundsException
      */
     public function firstRow(): array
     {

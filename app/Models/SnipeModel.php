@@ -7,7 +7,8 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Facades\Storage;
 
 class SnipeModel extends Model
 {
@@ -20,45 +21,40 @@ class SnipeModel extends Model
         $this->attributes['purchase_date'] = $value;
     }
 
-
     protected function purchaseDateFormatted(): Attribute
     {
-        return Attribute:: make(
-            get: fn(mixed $value, array $attributes) => $attributes['purchase_date']  ? Helper::getFormattedDateObject(Carbon::parse($attributes['purchase_date']), 'date', false) : null,
+        return Attribute::make(
+            get: fn (mixed $value, array $attributes) => $attributes['purchase_date'] ? Helper::getFormattedDateObject(Carbon::parse($attributes['purchase_date']), 'date', false) : null,
         );
     }
-
 
     protected function expiresDiffInDays(): Attribute
     {
-        return Attribute:: make(
-            get: fn(mixed $value, array $attributes) => array_key_exists('expiration_date', $attributes) ? Carbon::now()->diffInDays($attributes['expiration_date']) : null,
+        return Attribute::make(
+            get: fn (mixed $value, array $attributes) => array_key_exists('expiration_date', $attributes) ? Carbon::now()->diffInDays($attributes['expiration_date']) : null,
         );
     }
 
-
     protected function expiresDiffForHumans(): Attribute
     {
-        return Attribute:: make(
-            get: fn(mixed $value, array $attributes) => array_key_exists('expiration_date', $attributes) ? Carbon::parse($attributes['expiration_date'])->diffForHumans() : null,
+        return Attribute::make(
+            get: fn (mixed $value, array $attributes) => array_key_exists('expiration_date', $attributes) ? Carbon::parse($attributes['expiration_date'])->diffForHumans() : null,
         );
     }
 
     protected function expiresFormattedDate(): Attribute
     {
-        return Attribute:: make(
-            get: fn(mixed $value, array $attributes) => array_key_exists('expiration_date', $attributes) ? Helper::getFormattedDateObject($attributes['expiration_date'], 'date', false) : null,
+        return Attribute::make(
+            get: fn (mixed $value, array $attributes) => array_key_exists('expiration_date', $attributes) ? Helper::getFormattedDateObject($attributes['expiration_date'], 'date', false) : null,
         );
     }
 
-    /**
-     * @param $value
-     */
     public function setPurchaseCostAttribute($value)
     {
         if (is_numeric($value)) {
-            //value is *already* a floating-point number. Just assign it directly
+            // value is *already* a floating-point number. Just assign it directly
             $this->attributes['purchase_cost'] = $value;
+
             return;
         }
         $value = Helper::ParseCurrency($value);
@@ -83,7 +79,6 @@ class SnipeModel extends Model
             $value = null;
         }
         $this->attributes['category_id'] = $value;
-        // dd($this->attributes);
     }
 
     public function setSupplierIdAttribute($value)
@@ -193,25 +188,21 @@ class SnipeModel extends Model
     /**
      * Applies offset (from request) and limit to query.
      *
-     * @param  Builder  $query
-     * @param  int  $total
      * @return void
      */
     public function scopeApplyOffsetAndLimit(Builder $query, int $total)
     {
-        $offset = (Request::input('offset') > $total) ? $total : app('api_offset_value');
+        $offset = (request()->input('offset') > $total) ? $total : app('api_offset_value');
         $limit = app('api_limit_value');
-
         $query->skip($offset)->take($limit);
     }
 
     protected function displayName(): Attribute
     {
-        return Attribute:: make(
-            get: fn(mixed $value) => $this->name,
+        return Attribute::make(
+            get: fn (mixed $value) => $this->name,
         );
     }
-
 
     public function getEula()
     {
@@ -225,7 +216,7 @@ class SnipeModel extends Model
             } else {
                 return false;
             }
-        // For everything else, just check the category for EULA info
+            // For everything else, just check the category for EULA info
         } elseif (($this->category) && ($this->category->eula_text)) {
             return $this->category->eula_text;
         } elseif ((Setting::getSettings()->default_eula_text) && (($this->category) && ($this->category->use_default_eula == '1'))) {
@@ -235,5 +226,78 @@ class SnipeModel extends Model
         return null;
     }
 
+    public function getImageUrl($path = null)
+    {
+        // If there is a consumable image, use that
+        if ($this->image) {
+            return Storage::disk('public')->url($path.$this->image);
+        }
 
+        return false;
+    }
+
+    public function actionlog()
+    {
+        return $this->hasMany(Actionlog::class, 'target_id')->where('target_type', '=', self::class);
+    }
+
+    /**
+     * Establishes the object -> admin user relationship
+     *
+     * @return Relation
+     *
+     * @since  [v3.0]
+     *
+     * @author [A. Gianotto] [<snipe@snipe.net>]
+     */
+    public function adminuser()
+    {
+        return $this->belongsTo(User::class, 'created_by')->withTrashed();
+    }
+
+    public function showCheckoutButton($item)
+    {
+
+        if (method_exists($item, 'numRemaining')) {
+            if ($item->numRemaining() > 0) {
+                return 'show-active';
+            }
+
+            return 'show-disabled';
+        }
+
+        if (method_exists($item, 'availableForCheckout')) {
+
+            if ($item->availableForCheckout()) {
+                return 'show-active';
+            }
+
+            return 'show-disabled';
+        }
+
+        return false;
+
+    }
+
+    public function showCheckinButton($item)
+    {
+        if (method_exists($item, 'numRemaining')) {
+            if ($item->numRemaining() <= 0) {
+                return 'show-active';
+            }
+
+            return 'show-disabled';
+        }
+
+        if (method_exists($item, 'availableForCheckout')) {
+            if ($item->availableForCheckIn()) {
+                return 'show-active';
+            }
+
+            return 'show-disabled';
+        }
+
+        return false;
+
+    }
 }

@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 
 class AddSoftDeletedToLog extends Migration
 {
@@ -12,8 +11,8 @@ class AddSoftDeletedToLog extends Migration
      */
     public function up()
     {
-        //$platform = Schema::getConnection()->getDoctrineSchemaManager()->getDatabasePlatform();
-        //$platform->registerDoctrineTypeMapping('enum', 'string');
+        // $platform = Schema::getConnection()->getDoctrineSchemaManager()->getDatabasePlatform();
+        // $platform->registerDoctrineTypeMapping('enum', 'string');
 
         Schema::table('asset_logs', function ($table) {
             $table->string('asset_type', 100)->nullable()->change();
@@ -24,7 +23,7 @@ class AddSoftDeletedToLog extends Migration
         // Schema::table('asset_logs', function ($table) {
         // 	$table->renameColumn('added_on', 'created_at');
         // 	$table->timestamp('updated_at');
-    //         $table->softDeletes();
+        //         $table->softDeletes();
         // });
     }
 

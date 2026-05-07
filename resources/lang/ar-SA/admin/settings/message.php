@@ -3,30 +3,30 @@
 return [
 
     'update' => [
-        'error'                 => 'حدث خطأ أثناء التحديث. ',
-        'success'               => 'تم تحديث الإعدادات بنجاح.',
+        'error' => 'حدث خطأ أثناء التحديث. ',
+        'success' => 'تم تحديث الإعدادات بنجاح.',
     ],
     'backup' => [
-        'delete_confirm'        => 'هل تريد بالتأكيد حذف ملف النسخة الاحتياطية هذا؟ لا يمكن التراجع عن هذا الإجراء.',
-        'file_deleted'          => 'تم حذف ملف النسخ الاحتياطي بنجاح.',
-        'generated'             => 'تم إنشاء ملف نسخ احتياطي جديد بنجاح.',
-        'file_not_found'        => 'تعذر العثور على ملف النسخ الاحتياطي هذا على الملقم.',
-        'restore_warning'       => 'نعم، استعادة. أقر بأن هذا سوف يستبدل أي بيانات موجودة حاليا في قاعدة البيانات. سيؤدي هذا أيضا إلى تسجيل جميع المستخدمين الحاليين (بما في ذلك أنت).',
-        'restore_confirm'       => 'هل أنت متأكد من رغبتك في استعادة قاعدة البيانات الخاصة بك من :filename؟'
+        'delete_confirm' => 'هل تريد بالتأكيد حذف ملف النسخة الاحتياطية هذا؟ لا يمكن التراجع عن هذا الإجراء.',
+        'file_deleted' => 'تم حذف ملف النسخ الاحتياطي بنجاح.',
+        'generated' => 'تم إنشاء ملف نسخ احتياطي جديد بنجاح.',
+        'file_not_found' => 'تعذر العثور على ملف النسخ الاحتياطي هذا على الملقم.',
+        'restore_warning' => 'نعم، استعادة. أقر بأن هذا سوف يستبدل أي بيانات موجودة حاليا في قاعدة البيانات. سيؤدي هذا أيضا إلى تسجيل جميع المستخدمين الحاليين (بما في ذلك أنت).',
+        'restore_confirm' => 'هل أنت متأكد من رغبتك في استعادة قاعدة البيانات الخاصة بك من :filename؟',
     ],
     'restore' => [
-        'success'               => 'Your system backup has been restored. Please log in again.'
+        'success' => 'Your system backup has been restored. Please log in again.',
     ],
     'purge' => [
-        'error'     => 'حدث خطأ أثناء التطهير.',
-        'validation_failed'     => 'تأكيد التطهير غير صحيح. الرجاء كتابة الكلمة "ديليت" في مربع التأكيد.',
-        'success'               => 'تمت إزالة السجلات المحذوفة بنجاح.',
+        'error' => 'حدث خطأ أثناء التطهير.',
+        'validation_failed' => 'تأكيد التطهير غير صحيح. الرجاء كتابة الكلمة "ديليت" في مربع التأكيد.',
+        'success' => 'تمت إزالة السجلات المحذوفة بنجاح.',
     ],
     'mail' => [
         'sending' => 'جارٍ إرسال بريد إلكتروني تجريبي...',
         'success' => 'تم إرسال البريد!',
         'error' => 'تعذر إرسال البريد.',
-        'additional' => 'لم يتم توفير أي رسالة خطأ إضافية. تحقق من إعدادات البريد الخاص بك وسجل التطبيقات الخاص بك.'
+        'additional' => 'لم يتم توفير أي رسالة خطأ إضافية. تحقق من إعدادات البريد الخاص بك وسجل التطبيقات الخاص بك.',
     ],
     'ldap' => [
         'testing' => 'اختبار اتصال LDAP ، ربط واستعلام ...',
@@ -34,11 +34,11 @@ return [
         'error' => 'حدث خطأ ما :(',
         'sync_success' => 'عينة من 10 مستخدمين عادت من خادم LDAP بناء على الإعدادات الخاصة بك:',
         'testing_authentication' => 'اختبار مصادقة LDAP...',
-        'authentication_success' => 'تمت المصادقة على المستخدم ضد LDAP بنجاح!'
+        'authentication_success' => 'تمت المصادقة على المستخدم ضد LDAP بنجاح!',
     ],
     'labels' => [
         'null_template' => 'Label template not found. Please select a template.',
-        ],
+    ],
     'webhook' => [
         'sending' => 'إرسال رسالة اختبار :app ...',
         'success' => 'يعمل تكامل :webhook_name الخاص بك!',
@@ -55,5 +55,22 @@ return [
     'location_scoping' => [
         'not_saved' => 'Your settings were not saved.',
         'mismatch' => 'There is 1 item in the database that need your attention before you can enable location scoping.|There are :count items in the database that need your attention before you can enable location scoping.',
+    ],
+    'oauth' => [
+        'token_revoked' => 'Personal access token revoked successfully.',
+        'token_unrevoked' => 'Personal access token reinstated successfully.',
+        'token_not_found' => 'That personal access token could not be found.',
+        'token_revoke_error' => 'An error occurred while revoking the token.',
+        'token_unrevoke_error' => 'An error occurred while reinstating the token.',
+        'client_created' => 'OAuth client created successfully.',
+        'client_updated' => 'OAuth client updated successfully.',
+        'client_deleted' => 'OAuth client deleted successfully.',
+        'client_revoked' => 'OAuth client revoked successfully.',
+        'client_unrevoked' => 'OAuth client reinstated successfully.',
+        'client_not_found' => 'That OAuth client could not be found.',
+        'token_deleted' => 'Token revoked successfully.',
+        'client_delete_denied' => 'You are not authorized to delete this client.',
+        'client_edit_denied' => 'You are not authorized to edit this client.',
+        'token_delete_denied' => 'You are not authorized to revoke this token.',
     ],
 ];

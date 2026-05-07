@@ -25,6 +25,11 @@ Route::group(['prefix' => 'components', 'middleware' => ['auth']], function () {
         [Components\ComponentCheckinController::class, 'store']
     )->name('components.checkin.store');
 
+    Route::get('{component}/clone',
+        [Components\ComponentsController::class, 'getClone']
+    )->name('components.clone.create');
+
+
 
 });
 

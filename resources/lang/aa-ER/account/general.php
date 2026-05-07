@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
     'personal_api_keys' => 'crwdns6798:0crwdne6798:0',
     'personal_access_token' => 'crwdns12312:0crwdne12312:0',
     'personal_api_keys_success' => 'crwdns12314:0crwdne12314:0',
@@ -14,4 +14,4 @@ return array(
     'no_tokens' => 'crwdns12318:0crwdne12318:0',
     'enable_sounds' => 'crwdns12658:0crwdne12658:0',
     'enable_confetti' => 'crwdns12664:0crwdne12664:0',
-);
+];

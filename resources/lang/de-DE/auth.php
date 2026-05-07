@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
 
     /*
     |--------------------------------------------------------------------------
@@ -17,4 +17,4 @@ return array(
     'password' => 'Das angegebene Passwort ist ungültig.',
     'throttle' => 'Zu viele Anmeldeversuche. Bitte versuchen Sie es in :minutes Minute(n) erneut.',
 
-);
+];

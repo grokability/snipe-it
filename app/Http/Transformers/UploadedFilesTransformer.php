@@ -6,6 +6,7 @@ use App\Helpers\Helper;
 use App\Helpers\StorageHelper;
 use App\Models\Actionlog;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
@@ -21,10 +22,20 @@ class UploadedFilesTransformer
         return (new DatatablesTransformer)->transformDatatables($array, $total);
     }
 
-
     public function transformFile(Actionlog $file)
     {
         $snipeModel = $file->item_type;
+        $item = null;
+
+        if (is_string($snipeModel) && class_exists($snipeModel)) {
+            $itemQuery = $snipeModel::query();
+
+            if (in_array(SoftDeletes::class, class_uses_recursive($snipeModel), true)) {
+                $itemQuery->withTrashed();
+            }
+
+            $item = $itemQuery->find($file->item_id);
+        }
 
         $array = [
             'id' => (int) $file->id,
@@ -38,10 +49,10 @@ class UploadedFilesTransformer
             'filetype' => StorageHelper::getFiletype($file->uploads_file_path()),
             'mediatype' => StorageHelper::getMediaType($file->uploads_file_path()),
             'url' => $file->uploads_file_url(),
-            'note' =>  ($file->note) ? e($file->note) : null,
+            'note' => ($file->note) ? e($file->note) : null,
             'created_by' => ($file->adminuser) ? [
                 'id' => (int) $file->adminuser->id,
-                'name'=> e($file->adminuser->present()->fullName),
+                'name' => e($file->adminuser->display_name),
             ] : null,
             'created_at' => Helper::getFormattedDateObject($file->created_at, 'datetime'),
             'deleted_at' => Helper::getFormattedDateObject($file->deleted_at, 'datetime'),
@@ -50,12 +61,11 @@ class UploadedFilesTransformer
         ];
 
         $permissions_array['available_actions'] = [
-            'delete' => (Gate::allows('update', $snipeModel) && ($file->deleted_at == '')),
+            'delete' => (Gate::allows('update', $item ?? $snipeModel) && ($file->deleted_at == '')),
         ];
 
         $array += $permissions_array;
+
         return $array;
     }
-
-
 }

@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
 
     /*
     |--------------------------------------------------------------------------
@@ -17,4 +17,4 @@ return array(
     'password' => 'Vneseno geslo je napačno.',
     'throttle' => 'Preveč poskusov prijave. Poskusite znova čez :minutes minut.',
 
-);
+];

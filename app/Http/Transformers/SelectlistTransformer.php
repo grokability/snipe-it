@@ -2,6 +2,7 @@
 
 namespace App\Http\Transformers;
 
+use Illuminate\Http\Response;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
@@ -11,8 +12,10 @@ use Illuminate\Pagination\LengthAwarePaginator;
  * the rich (text and images) Select2 javascript.
  *
  * @author [A. Gianotto] [<snipe@snipe.net>]
+ *
  * @since [v4.0.16]
- * @return \Illuminate\Http\Response
+ *
+ * @return Response
  */
 class SelectlistTransformer
 {
@@ -34,9 +37,9 @@ class SelectlistTransformer
         $results = [
             'results' => $items_array,
             'pagination' => [
-                    'more' => ($select_items->currentPage() >= $select_items->lastPage()) ? false : true,
-                    'per_page' => $select_items->perPage(),
-                ],
+                'more' => ($select_items->currentPage() >= $select_items->lastPage()) ? false : true,
+                'per_page' => $select_items->perPage(),
+            ],
             'total_count' => $select_items->total(),
             'page' => $select_items->currentPage(),
             'page_count' => $select_items->lastPage(),

@@ -23,13 +23,13 @@ return [
 
     'accessories' => 'Příslušenství je cokoliv, co předáte uživatelům, ale nemá to sériové číslo (nebo je neevidujete), např. myš, nebo klávesnice.',
 
-    'companies'     => 'Společnost může být použita jen jako běžná vlastnost majetku, nebo také k omezení viditelnosti majetku, uživatelů atd., pakliže je v nastavení administrátora povolena plná podpora společností.',
+    'companies' => 'Společnost může být použita jen jako běžná vlastnost majetku, nebo také k omezení viditelnosti majetku, uživatelů atd., pakliže je v nastavení administrátora povolena plná podpora společností.',
 
-    'components'    => 'Díly jsou položky, které jsou součástí majetku, jako např. HDD, RAM atp.',
+    'components' => 'Díly jsou položky, které jsou součástí majetku, jako např. HDD, RAM atp.',
 
-    'consumables'   => 'Spotřební materiál jsou takové položky, které jsou v čase spotřebovávány, jako např. toner, inkoust či papír do tiskáren.',
+    'consumables' => 'Spotřební materiál jsou takové položky, které jsou v čase spotřebovávány, jako např. toner, inkoust či papír do tiskáren.',
 
     'depreciations' => 'Můžete nastavit amortizaci majetku pro jeho rovnoměrné odepisování.',
-    
-    'empty_file'    => 'Dovozce zjistí, že tento soubor je prázdný.'
+
+    'empty_file' => 'Dovozce zjistí, že tento soubor je prázdný.',
 ];

@@ -71,7 +71,7 @@ return [
     ],
     'hex_color' => 'Полето :attribute мора да биде валидна хексадецимална боја.',
     'image' => 'Полето :attribute мора да биде слика.',
-    'import_field_empty'    => 'Вредноста :fieldname неможе да биде нула.',
+    'import_field_empty' => 'Вредноста :fieldname неможе да биде нула.',
     'in' => 'Избраниот :attribute не е валиден.',
     'in_array' => 'Полето :attribute мора да се содржи во :other.',
     'integer' => 'Полето :attribute мора да биде цел број.',
@@ -126,7 +126,7 @@ return [
         'symbols' => 'Полето :attribute мора да содржи најмалку еден симбол.',
         'uncompromised' => 'Полето во дадениот :attribute се појавува во протекување на податоци. Ве молиме изберете различен :attribute.',
     ],
-    'percent'       => 'Полето амортизација минимум мора да биде помеѓу 0 и 100 кога амортизацијата е во проценти.',
+    'percent' => 'Полето амортизација минимум мора да биде помеѓу 0 и 100 кога амортизацијата е во проценти.',
 
     'present' => 'Полето :attribute е задолжително.',
     'present_if' => 'Полето :attribute мора да биде присутно кога :other е :value.',
@@ -156,16 +156,16 @@ return [
         'string' => 'Полето :attribute мора да биде :size карактери.',
     ],
     'starts_with' => 'Полето :attribute мора да почнува со една од следните: :values.',
-    'string'               => ':attribute мора да биде стринг.',
+    'string' => ':attribute мора да биде стринг.',
     'two_column_unique_undeleted' => 'Полето :attribute мора да биде уникатно низ :table1 и :table2. ',
-    'unique_undeleted'     => ':attribute мора да биде уникатен.',
-    'non_circular'         => 'Полето :attribute не смее да создава циркуларна референца.',
-    'not_array'            => ':attribute не смее да биде низа.',
+    'unique_undeleted' => ':attribute мора да биде уникатен.',
+    'non_circular' => 'Полето :attribute не смее да создава циркуларна референца.',
+    'not_array' => ':attribute не смее да биде низа.',
     'disallow_same_pwd_as_user_fields' => 'Лозинката не смее да биде иста со корисничкото име.',
-    'letters'              => 'Лозинката мора да содржи најмалку една буква.',
-    'numbers'              => 'Лозинката мора да содржи најмалку еден број.',
-    'case_diff'            => 'Лозинката мора да содржи мали и големи букви.',
-    'symbols'              => 'Лозинката мора да содржи симболи.',
+    'letters' => 'Лозинката мора да содржи најмалку една буква.',
+    'numbers' => 'Лозинката мора да содржи најмалку еден број.',
+    'case_diff' => 'Лозинката мора да содржи мали и големи букви.',
+    'symbols' => 'Лозинката мора да содржи симболи.',
     'timezone' => 'Полето :attribute мора да биде валидна временска зона.',
     'unique' => ':attribute е веќе зафатен.',
     'uploaded' => ':attribute не е прикачен.',
@@ -187,38 +187,38 @@ return [
     |
     */
 
-    'email_array'      => 'Една или повеќе е-пошти не се валидни.',
-    'checkboxes'           => ':attribute содржи невалидни опции.',
-    'radio_buttons'        => ':attribute не е валиден.',
-    
+    'email_array' => 'Една или повеќе е-пошти не се валидни.',
+    'checkboxes' => ':attribute содржи невалидни опции.',
+    'radio_buttons' => ':attribute не е валиден.',
+
     'custom' => [
         'alpha_space' => 'Полето :attribute содржи знак што не е дозволен.',
 
-        'hashed_pass'      => 'Вашата тековна лозинка е неточна',
-        'dumbpwd'          => 'Таа лозинка е премногу честа.',
+        'hashed_pass' => 'Вашата тековна лозинка е неточна',
+        'dumbpwd' => 'Таа лозинка е премногу честа.',
         'statuslabel_type' => 'Мора да изберете валидна етикета за статус',
-        'custom_field_not_found'          => 'Полето изгледа дека непостои, ве молиме проверете го името на корисничкото поле.',
+        'custom_field_not_found' => 'Полето изгледа дека непостои, ве молиме проверете го името на корисничкото поле.',
         'custom_field_not_found_on_model' => 'Полето изгледа дека постои, но не е достапно во овој модел на средство\\a.',
 
         // date_format validation with slightly less stupid messages. It duplicates a lot, but it gets the job done :(
         // We use this because the default error message for date_format reflects php Y-m-d, which non-PHP
         // people won't know how to format.
-        'purchase_date.date_format'     => 'Полето :attribute мора да биде валиден датум во YYYY-MM-DD формат',
-        'last_audit_date.date_format'   =>  'Полето :attribute мора да биде валиден датум во YYYY-MM-DD hh:mm:ss формат',
-        'expiration_date.date_format'   =>  'Полето :attribute мора да биде валиден датум во YYYY-MM-DD формат',
-        'termination_date.date_format'  =>  'Полето :attribute мора да биде валиден датум во YYYY-MM-DD формат',
-        'expected_checkin.date_format'  =>  'Полето :attribute мора да биде валиден датум во YYYY-MM-DD формат',
-        'start_date.date_format'        =>  'Полето :attribute мора да биде валиден датум во YYYY-MM-DD формат',
-        'end_date.date_format'          =>  'Полето :attribute мора да биде валиден датум во YYYY-MM-DD fформат',
+        'purchase_date.date_format' => 'Полето :attribute мора да биде валиден датум во YYYY-MM-DD формат',
+        'last_audit_date.date_format' => 'Полето :attribute мора да биде валиден датум во YYYY-MM-DD hh:mm:ss формат',
+        'expiration_date.date_format' => 'Полето :attribute мора да биде валиден датум во YYYY-MM-DD формат',
+        'termination_date.date_format' => 'Полето :attribute мора да биде валиден датум во YYYY-MM-DD формат',
+        'expected_checkin.date_format' => 'Полето :attribute мора да биде валиден датум во YYYY-MM-DD формат',
+        'start_date.date_format' => 'Полето :attribute мора да биде валиден датум во YYYY-MM-DD формат',
+        'end_date.date_format' => 'Полето :attribute мора да биде валиден датум во YYYY-MM-DD fформат',
         'invalid_value_in_field' => 'Невалидна вредност вклучена во полето',
 
         'ldap_username_field' => [
-            'not_in' =>         '<code>sAMAccountName</code> (mixed case) will likely not work. You should use <code>samaccountname</code> (lowercase) instead.'
+            'not_in' => '<code>sAMAccountName</code> (mixed case) will likely not work. You should use <code>samaccountname</code> (lowercase) instead.',
         ],
         'ldap_auth_filter_query' => ['not_in' => '<code>uid=samaccountname</code> is probably not a valid auth filter. You probably want <code>uid=</code> '],
         'ldap_filter' => ['regex' => 'This value should probably not be wrapped in parentheses.'],
 
-        ],
+    ],
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Attributes
@@ -230,7 +230,10 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'serials.*' => 'Сериски број',
+        'asset_tags.*' => 'Код на основното средство',
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -244,6 +247,5 @@ return [
         'required' => 'Полето е задолжително',
         'email' => 'Ве молиме внесете валидна адреса на Е-пошта',
     ],
-
 
 ];

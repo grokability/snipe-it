@@ -1,11 +1,11 @@
 <?php
 
-return array(
+return [
 
-    'id'                        => 'ID',
-    'name'                      => 'Name der Abteilung',
-    'manager'                   => 'Manager',
-    'location'                  => 'Standort',
-    'create'                    => 'Abteilung erstellen',
-    'update'                    => 'Abteilung aktualisieren',
-    );
+    'id' => 'ID',
+    'name' => 'Name der Abteilung',
+    'manager' => 'Manager',
+    'location' => 'Standort',
+    'create' => 'Abteilung erstellen',
+    'update' => 'Abteilung aktualisieren',
+];

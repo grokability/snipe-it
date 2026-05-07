@@ -9,15 +9,14 @@ use Tests\TestCase;
 
 class DeleteCustomFieldsTest extends TestCase
 {
-    public function testPermissionNeededToDeleteField()
+    public function test_permission_needed_to_delete_field()
     {
         $this->actingAs(User::factory()->create())
             ->delete(route('fields.destroy', CustomField::factory()->create()))
             ->assertForbidden();
     }
 
-
-    public function testCanDeleteCustomField()
+    public function test_can_delete_custom_field()
     {
         $field = CustomField::factory()->create();
         $this->assertDatabaseHas('custom_fields', ['id' => $field->id]);
@@ -31,7 +30,7 @@ class DeleteCustomFieldsTest extends TestCase
         $this->assertDatabaseMissing('custom_fields', ['id' => $field->id]);
     }
 
-    public function testCannotDeleteCustomFieldThatDoesNotExist()
+    public function test_cannot_delete_custom_field_that_does_not_exist()
     {
 
         $response = $this->actingAs(User::factory()->viewCustomFields()->deleteCustomFields()->create())
@@ -44,7 +43,7 @@ class DeleteCustomFieldsTest extends TestCase
 
     }
 
-    public function testCannotDeleteFieldThatIsAssociatedWithFieldsets()
+    public function test_cannot_delete_field_that_is_associated_with_fieldsets()
     {
         $field = CustomField::factory()->create();
         $fieldset = CustomFieldset::factory()->create();

@@ -1,28 +1,27 @@
 <?php
 
-return array(
+return [
 
     'deleted' => 'Proveedor eliminado',
     'does_not_exist' => 'El proveedor no existe.',
 
+    'create' => [
+        'error' => 'El proveedor no fue creado, por favor inténtelo de nuevo.',
+        'success' => 'Proveedor creado con éxito.',
+    ],
 
-    'create' => array(
-        'error'   => 'El proveedor no fue creado, por favor inténtelo de nuevo.',
-        'success' => 'Proveedor creado con éxito.'
-    ),
+    'update' => [
+        'error' => 'El proveedor no fue actualizado, por favor inténtelo de nuevo',
+        'success' => 'Proveedor actualizado.',
+    ],
 
-    'update' => array(
-        'error'   => 'El proveedor no fue actualizado, por favor inténtelo de nuevo',
-        'success' => 'Proveedor actualizado.'
-    ),
-
-    'delete' => array(
-        'confirm'   => '¿Está seguro de que desea eliminar este proveedor?',
-        'error'   => 'Hubo un problema al eliminar el proveedor, por favor inténtelo de nuevo.',
+    'delete' => [
+        'confirm' => '¿Está seguro de que desea eliminar este proveedor?',
+        'error' => 'Hubo un problema al eliminar el proveedor, por favor inténtelo de nuevo.',
         'success' => 'Proveedor eliminado correctamente.',
-        'not_found'               => 'Supplier not found.',
-        'bulk_success'            => 'Suppliers were deleted successfully.',
-        'partial_success'        => 'Supplier deleted successfully. See additional information below. | :count suppliers were deleted successfully. See additional information below.',
-    )
+        'not_found' => 'Proveedor no encontrado.',
+        'bulk_success' => 'Proveedor eliminado correctamente.',
+        'partial_success' => '.',
+    ],
 
-);
+];

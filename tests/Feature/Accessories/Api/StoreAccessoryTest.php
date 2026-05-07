@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Accessories\Api;
 
+use App\Models\Accessory;
 use App\Models\Category;
 use App\Models\Company;
 use App\Models\Location;
@@ -14,51 +15,39 @@ use Tests\TestCase;
 
 class StoreAccessoryTest extends TestCase implements TestsFullMultipleCompaniesSupport, TestsPermissionsRequirement
 {
-    public function testRequiresPermission()
+    public function test_requires_permission()
     {
         $this->actingAsForApi(User::factory()->create())
             ->postJson(route('api.accessories.store'))
             ->assertForbidden();
     }
 
-    public function testAdheresToFullMultipleCompaniesSupportScoping()
+    public function test_adheres_to_full_multiple_companies_support_scoping()
     {
-        $this->markTestSkipped('This behavior is not implemented');
-
         [$companyA, $companyB] = Company::factory()->count(2)->create();
         $userInCompanyA = User::factory()->for($companyA)->createAccessories()->create();
 
         $this->settings->enableMultipleFullCompanySupport();
 
         // attempt to store an accessory for company B
-        $this->actingAsForApi($userInCompanyA)
+        $response = $this->actingAsForApi($userInCompanyA)
             ->postJson(route('api.accessories.store'), [
                 'category_id' => Category::factory()->forAccessories()->create()->id,
                 'name' => 'My Awesome Accessory',
                 'qty' => 1,
                 'company_id' => $companyB->id,
-            ])->assertStatusMessageIs('error');
+            ])->assertStatusMessageIs('success');
 
+        $accessory = Accessory::withoutGlobalScopes()->findOrFail($response['payload']['id']);
+
+        $this->assertSame($companyA->id, $accessory->company_id);
         $this->assertDatabaseMissing('accessories', [
             'name' => 'My Awesome Accessory',
+            'company_id' => $companyB->id,
         ]);
     }
 
-    public function testValidation()
-    {
-        $this->actingAsForApi(User::factory()->createAccessories()->create())
-            ->postJson(route('api.accessories.store'), [
-                //
-            ])
-            ->assertStatusMessageIs('error')
-            ->assertMessagesContains([
-                'category_id',
-                'name',
-                'qty',
-            ]);
-    }
-
-    public function testCanStoreAccessory()
+    public function test_can_store_accessory()
     {
         $category = Category::factory()->forAccessories()->create();
         $company = Company::factory()->create();

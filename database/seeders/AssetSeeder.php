@@ -15,7 +15,9 @@ use Illuminate\Support\Facades\Storage;
 class AssetSeeder extends Seeder
 {
     private $admin;
+
     private $locationIds;
+
     private $supplierIds;
 
     public function run()
@@ -52,9 +54,9 @@ class AssetSeeder extends Seeder
 
         $del_files = Storage::files('assets');
         foreach ($del_files as $del_file) { // iterate files
-            Log::debug('Deleting: ' . $del_files);
+            Log::debug('Deleting: '.$del_files);
             try {
-                Storage::disk('public')->delete('assets' . '/' . $del_files);
+                Storage::disk('public')->delete('assets'.'/'.$del_files);
             } catch (\Exception $e) {
                 Log::debug($e);
             }
@@ -79,7 +81,7 @@ class AssetSeeder extends Seeder
 
     private function getState()
     {
-        return fn($sequence) => [
+        return fn ($sequence) => [
             'rtd_location_id' => $this->locationIds->random(),
             'supplier_id' => $this->supplierIds->random(),
             'created_by' => $this->adminuser->id,

@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
 
     /*
     |--------------------------------------------------------------------------
@@ -15,410 +15,449 @@ return array(
     |---------------------------------------------------------------------------
     */
 
-    "superuser" => [
-        'name' => 'Super User',
-        'note'       => 'Determines whether the user has full access to all aspects of the admin. This setting overrides ALL more specific and restrictive permissions throughout the system. ',
+    'superuser' => [
+        'name' => 'Супер Администратор',
+        'note' => 'Определя дали потребителят има пълен достъп до всички аспекти на администраторския панел. Тази настройка отменя ВСИЧКИ по-специфични и ограничителни разрешения в системата. ',
     ],
     'admin' => [
-        'name' => 'Admin Access',
-        'note'       => 'Determines whether the user has access to most aspects of the system EXCEPT the System Admin Settings. These users will be able to manage users, locations, categories, etc, but ARE constrained by Full Multiple Company Support if it is enabled.',
+        'name' => 'Администраторски достъп',
+        'note' => 'Определя дали потребителят има достъп до повечето аспекти на системата, ОСВЕН настройките на системния администратор. Тези потребители ще могат да управляват потребители, местоположения, категории и др., но СА ограничени от пълната поддръжка за множество компании, ако е активирана.',
     ],
 
     'import' => [
-        'name' => 'CSV Import',
-        'note'       => 'This will allow users to import even if access to users, assets, etc is denied elsewhere.',
+        'name' => 'CVS Импорт',
+        'note' => 'Това ще позволи импортиране на потребители, дори и ако достъпа до списък с потребители или активи и др. е забранен на друго място.',
     ],
 
     'reports' => [
-        'name' => 'Reports Access',
-        'note'       => 'Determines whether the user has access to the Reports section of the application.',
+        'name' => 'Достъп Спавки',
+        'note' => 'Определя дали потребителя има достъп до справките в програмата.',
     ],
 
-    'assets' =>
-        [
-            'name' => 'Активи',
-            'note' => 'Grants access to the Assets section of the application.',
+    'assets' => [
+        'name' => 'Активи',
+        'note' => 'Дава достъп до раздел активи в програмата.',
     ],
 
     'assetsview' => [
-        'name' => 'View Assets',
+        'name' => 'Преглед на активи',
     ],
 
     'assetscreate' => [
-        'name' => 'Create New Assets',
+        'name' => 'Създаване на нови активи',
     ],
 
     'assetsedit' => [
-        'name' => 'Edit Assets',
+        'name' => 'Редакция на активи',
     ],
 
     'assetsdelete' => [
-        'name' => 'Delete Assets',
+        'name' => 'Изтриване на активи',
     ],
 
     'assetscheckin' => [
-        'name' => 'Check In',
-        'note' => 'Check assets back into inventory that are currently checked out.',
+        'name' => 'Вписване',
+        'note' => 'Дава достъп за вписване на активи обраното в системата.',
     ],
 
     'assetscheckout' => [
-        'name' => 'Check Out',
-        'note' => 'Assign assets in inventory by checking them out.',
+        'name' => 'Изписване',
+        'note' => 'Дава достъп за изписване на активи към потребители.',
     ],
 
     'assetsaudit' => [
-        'name' => 'Audit Assets',
-        'note' => 'Allows the user to mark an asset as physically inventoried.',
+        'name' => 'Инвентаризация на активи',
+        'note' => 'Дава достъп на потребителя да прави инвентаризация.',
     ],
 
     'assetsviewrequestable' => [
-        'name' => 'View Requestable Assets',
-        'note' => 'Allows the user to view assets that are marked as requestable.',
+        'name' => 'Вижда активите за поискване',
+        'note' => 'Дава достъп на потребителя да вижда активите, които са разрешени за поискване.',
     ],
 
     'assetsviewencrypted-custom-fields' => [
-        'name' => 'View Encrypted Custom Fields',
-        'note' => 'Allows the user to view and modify encrypted custom fields on assets.',
+        'name' => 'Вижда криптирани полета',
+        'note' => 'Дава достъп на потребителя да вижда и да модифицира криптираните полета на активите.',
     ],
 
-    'accessories'   => [
+    'accessories' => [
         'name' => 'Аксесоари',
-        'note'       => 'Grants access to the Accessories section of the application.',
+        'note' => 'Дава достъп до раздел аксесоари в програмата.',
     ],
 
     'accessoriesview' => [
-        'name' => 'View Accessories',
+        'name' => 'Вижда аксесоарите',
     ],
     'accessoriescreate' => [
-        'name' => 'Create New Accessories',
+        'name' => 'Създава нови аксесоари',
     ],
     'accessoriesedit' => [
-        'name' => 'Edit Accessories',
+        'name' => 'Редактира аксесоарите',
     ],
     'accessoriesdelete' => [
-        'name' => 'Delete Accessories',
+        'name' => 'Изтрива аксесоарите',
     ],
     'accessoriescheckout' => [
-        'name' => 'Check Out Accessories',
-        'note' => 'Assign accessories in inventory by checking them out.',
+        'name' => 'Изписва аксесоарите',
+        'note' => 'Дава достъп за изписване на аскесоарите към потребители.',
     ],
     'accessoriescheckin' => [
-        'name' => 'Check In Accessories',
-        'note' => 'Check accessories back into inventory that are currently checked out.',
+        'name' => 'Вписва аксесоари',
+        'note' => 'Дава достъп за вписване на аксесоари обратно в системата.',
     ],
     'accessoriesfiles' => [
-        'name' => 'Manage Accessory Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with accessories.',
+        'name' => 'Управление на файловете на аксесоарите',
+        'note' => 'Allows the user to upload, download, and delete files associated with accessories. (This only makes sense with view privileges or higher.)',
     ],
-    'consumables'   => [
+
+    'assetsfiles' => [
+        'name' => 'Manage Asset Files',
+        'note' => 'Allows the user to upload, download, and delete files associated with assets. (This only makes sense with view privileges or higher.)',
+    ],
+
+    'usersfiles' => [
+        'name' => 'Manage User Files',
+        'note' => 'Allows the user to upload, download, and delete files associated with users. (This only makes sense with view privileges or higher.)',
+    ],
+
+    'modelsfiles' => [
+        'name' => 'Manage Model Files',
+        'note' => 'Allows the user to upload, download, and delete files associated with asset models on both the model view and the asset view screens. (This only makes sense with view privileges or higher.)',
+    ],
+
+    'departmentsfiles' => [
+        'name' => 'Manage Department Files',
+        'note' => 'Allows the user to upload, download, and delete files associated with departments. (This only makes sense with view privileges or higher.)',
+    ],
+
+    'suppliersfiles' => [
+        'name' => 'Manage Supplier Files',
+        'note' => 'Allows the user to upload, download, and delete files associated with suppliers. (This only makes sense with view privileges or higher.)',
+    ],
+
+    'locationsfiles' => [
+        'name' => 'Manage Location Files',
+        'note' => 'Allows the user to upload, download, and delete files associated with locations.(This only makes sense with view privileges or higher.)',
+    ],
+
+    'companiesfiles' => [
+        'name' => 'Manage Company Files',
+        'note' => 'Allows the user to upload, download, and delete files associated with companies. (This only makes sense with view privileges or higher.)',
+    ],
+
+    'consumablesfiles' => [
+        'name' => 'Управление на файловете на консумативите',
+        'note' => 'Allows the user to upload, download, and delete files associated with consumables. (This only makes sense with view privileges or higher.)',
+    ],
+
+    'consumables' => [
         'name' => 'Консумативи',
-        'note'       => 'Grants access to the Consumables section of the application.',
+        'note' => 'Дава достъп до раздел консумативи в програмата.',
     ],
     'consumablesview' => [
-        'name' => 'View Consumables',
+        'name' => 'Вижда консумативи',
     ],
     'consumablescreate' => [
-        'name' => 'Create New Consumables',
+        'name' => 'Създава консумативи',
     ],
     'consumablesedit' => [
-        'name' => 'Edit Consumables',
+        'name' => 'Редактира консумативи',
     ],
     'consumablesdelete' => [
-        'name' => 'Delete Consumables',
+        'name' => 'Изтрива консумативи',
     ],
     'consumablescheckout' => [
-        'name' => 'Check Out Consumables',
-        'note' => 'Assign consumables in inventory by checking them out.',
+        'name' => 'Изписва консумативи',
+        'note' => 'Дава достъп за изписване на консумативи към потребители.',
     ],
-    'consumablesfiles' => [
-        'name' => 'Manage Consumable Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with consumables.',
-    ],
-    'licenses'   => [
+
+    'licenses' => [
         'name' => 'Лицензи',
-        'note'       => 'Grants access to the Licenses section of the application.',
+        'note' => 'Дава достъп до раздел лицензи в програмата.',
     ],
     'licensesview' => [
-        'name' => 'View Licenses',
+        'name' => 'Вижда лицензи',
     ],
     'licensescreate' => [
-        'name' => 'Create New Licenses',
+        'name' => 'Създава лицензи',
     ],
     'licensesedit' => [
-        'name' => 'Edit Licenses',
+        'name' => 'Редактира лицензи',
     ],
     'licensesdelete' => [
-        'name' => 'Delete Licenses',
+        'name' => 'Изтрива лицензи',
     ],
     'licensescheckout' => [
-        'name' => 'Assign Licenses',
-        'note' => 'Allows the user to assign licenses to assets or users.',
-        ],
+        'name' => 'Изписва лицензи',
+        'note' => 'Дава достъп за изписване на лицензи към потребители.',
+    ],
     'licensescheckin' => [
-        'name' => 'Unassign Licenses',
-        'note' => 'Allows the user to unassign licenses from assets or users.',
+        'name' => 'Вписва лицензи',
+        'note' => 'Дава достъп за вписване на лицензи обратно в системата.',
     ],
     'licensesfiles' => [
-        'name' => 'Manage License Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with licenses.',
-    ],
-    'licenseskeys' => [
-        'name' => 'Manage License Keys',
-        'note' => 'Allows the user to view product keys associated with licenses.',
-    ],
-    'components'   => [
-        'name' => 'Компоненти',
-        'note'       => 'Grants access to the Components section of the application.',
-    ],
-    'componentsview' => [
-        'name' => 'View Components',
-    ],
-    'componentscreate' => [
-        'name' => 'Create New Components',
-    ],
-    'componentsedit' => [
-        'name' => 'Edit Components',
-    ],
-    'componentsdelete' => [
-        'name' => 'Delete Components',
+        'name' => 'Управление на файловете на лицензите',
+        'note' => 'Дава достъп за качване, сваляне и изтриване на файлове към лицензите.',
     ],
     'componentsfiles' => [
-        'name' => 'Manage Component Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with components.',
+        'name' => 'Управлява файловете за компоненти',
+        'note' => 'Дава достъп за качване, сваляне и изтриване на файлове към компонентите.',
     ],
+
+    'licenseskeys' => [
+        'name' => 'Управление на лицензионни ключове',
+        'note' => 'Дава достъп на потребителя да вижда лицензионни ключове към лицензите.',
+    ],
+    'components' => [
+        'name' => 'Компоненти',
+        'note' => 'Дава достъп до раздел компоненти в програмата.',
+    ],
+    'componentsview' => [
+        'name' => 'Вижда компоненти',
+    ],
+    'componentscreate' => [
+        'name' => 'Създава компоненти',
+    ],
+    'componentsedit' => [
+        'name' => 'Редактира компоненти',
+    ],
+    'componentsdelete' => [
+        'name' => 'Изтрива компоненти',
+    ],
+
     'componentscheckout' => [
-        'name' => 'Check Out Components',
-        'note' => 'Assign components in inventory by checking them out.',
+        'name' => 'Изписване на компоненти',
+        'note' => 'Дава достъп за изписване на компоненти към потребители.',
     ],
     'componentscheckin' => [
-        'name' => 'Check In Components',
-        'note' => 'Check components back into inventory that are currently checked out.',
+        'name' => 'Вписване на компоненти',
+        'note' => 'Дава достъп за вписване на компоненти обратно в системата.',
     ],
-    'kits'   => [
+    'kits' => [
         'name' => 'Комплекти',
-        'note'       => 'Grants access to the Predefined Kits section of the application.',
+        'note' => 'Дава достъп до раздел комплекти в програмата.',
     ],
     'kitsview' => [
-        'name' => 'View Predefined Kits',
+        'name' => 'Вижда комплекти',
     ],
     'kitscreate' => [
-        'name' => 'Create New Predefined Kits',
+        'name' => 'Създава комплекти',
     ],
     'kitsedit' => [
-        'name' => 'Edit Predefined Kits',
+        'name' => 'Редактира комплекти',
     ],
     'kitsdelete' => [
-        'name' => 'Delete Predefined Kits',
+        'name' => 'Изтрива комплекти',
     ],
-    'users'   => [
+    'users' => [
         'name' => 'Потребители',
-        'note'       => 'Grants access to the Users section of the application.',
+        'note' => 'Дава достъп до раздел потребители в програмата.',
     ],
     'usersview' => [
         'name' => 'Преглед на потребителите',
     ],
     'userscreate' => [
-        'name' => 'Create New Users',
+        'name' => 'Създава нови потребители',
     ],
     'usersedit' => [
-        'name' => 'Edit Users',
+        'name' => 'Редактира потребители',
     ],
     'usersdelete' => [
-        'name' => 'Delete Users',
+        'name' => 'Изтрива потребители',
     ],
-    'models'   => [
-        'name' => 'Models',
-        'note'       => 'Grants access to the Models section of the application.',
+    'models' => [
+        'name' => 'Модели',
+        'note' => 'Дава достъп до раздел модели в програмата.',
     ],
     'modelsview' => [
         'name' => 'Преглед на моделите',
     ],
 
     'modelscreate' => [
-        'name' => 'Create New Models',
+        'name' => 'Създава нови модели',
     ],
     'modelsedit' => [
-        'name' => 'Edit Models',
+        'name' => 'Редактира модели',
     ],
     'modelsdelete' => [
-        'name' => 'Delete Models',
+        'name' => 'Изтрива модели',
     ],
-    'categories'   => [
+    'categories' => [
         'name' => 'Категории',
-        'note'       => 'Grants access to the Categories section of the application.',
+        'note' => 'Дава достъп до раздел категорий в програмата.',
     ],
     'categoriesview' => [
-        'name' => 'View Categories',
+        'name' => 'Вижда категорий',
     ],
     'categoriescreate' => [
-        'name' => 'Create New Categories',
+        'name' => 'Създава нови категорий',
     ],
     'categoriesedit' => [
-        'name' => 'Edit Categories',
+        'name' => 'Редактира категорий',
     ],
     'categoriesdelete' => [
-        'name' => 'Delete Categories',
+        'name' => 'Изтрива категорий',
     ],
-    'departments'   => [
-        'name' => 'Катедри',
-        'note'       => 'Grants access to the Departments section of the application.',
+    'departments' => [
+        'name' => 'Отдели',
+        'note' => 'Дава достъп до раздел отдели в програмата.',
     ],
     'departmentsview' => [
-        'name' => 'View Departments',
+        'name' => 'Вижда отдели',
     ],
     'departmentscreate' => [
-        'name' => 'Create New Departments',
+        'name' => 'Създава нови отдели',
     ],
     'departmentsedit' => [
-        'name' => 'Edit Departments',
+        'name' => 'Редактира отдели',
     ],
     'departmentsdelete' => [
-        'name' => 'Delete Departments',
+        'name' => 'Изтрива отдели',
     ],
-    'locations'   => [
+    'locations' => [
         'name' => 'Местоположения',
-        'note'       => 'Grants access to the Locations section of the application.',
+        'note' => 'Дава достъп до раздел местоположения в програмата.',
     ],
     'locationsview' => [
-        'name' => 'View Locations',
+        'name' => 'Вижда местоположения',
     ],
     'locationscreate' => [
-        'name' => 'Create New Locations',
+        'name' => 'Създава нови местоположения',
     ],
     'locationsedit' => [
-        'name' => 'Edit Locations',
+        'name' => 'Редактира местоположения',
     ],
     'locationsdelete' => [
-        'name' => 'Delete Locations',
+        'name' => 'Изтрива местоположения',
     ],
-    'status-labels'   => [
-        'name' => 'Заглавия на статуси',
-        'note'       => 'Grants access to the Status Labels section of the application used by Assets.',
+    'status-labels' => [
+        'name' => 'Статус Етикети',
+        'note' => 'Дава достъп до раздел статус етикети в програмата.',
     ],
     'statuslabelsview' => [
-        'name' => 'View Status Labels',
+        'name' => 'Вижда статус етикети',
     ],
     'statuslabelscreate' => [
-        'name' => 'Create New Status Labels',
+        'name' => 'Създава нови статус етикети',
     ],
     'statuslabelsedit' => [
-        'name' => 'Edit Status Labels',
+        'name' => 'Редактира статус етикети',
     ],
     'statuslabelsdelete' => [
-        'name' => 'Delete Status Labels',
+        'name' => 'Изтрива статус етикети',
     ],
-    'custom-fields'   => [
+    'custom-fields' => [
         'name' => 'Потребителски полета',
-        'note'       => 'Grants access to the Custom Fields section of the application used by Assets.',
+        'note' => 'Дава достъп до раздел потребителски полета в програмата.',
     ],
     'customfieldsview' => [
-        'name' => 'View Custom Fields',
+        'name' => 'Вижда потребителски полета',
     ],
     'customfieldscreate' => [
-        'name' => 'Create New Custom Fields',
+        'name' => 'Създава нови потребителски полета',
     ],
     'customfieldsedit' => [
-        'name' => 'Edit Custom Fields',
+        'name' => 'Редактира потребителски полета',
     ],
     'customfieldsdelete' => [
-        'name' => 'Delete Custom Fields',
+        'name' => 'Изтрива потребителски полета',
     ],
-    'suppliers'   => [
+    'suppliers' => [
         'name' => 'Доставчици',
-        'note'       => 'Grants access to the Suppliers section of the application.',
+        'note' => 'Дава достъп до раздел доставчици в програмата.',
     ],
     'suppliersview' => [
-        'name' => 'View Suppliers',
+        'name' => 'Вижда доставчици',
     ],
     'supplierscreate' => [
-        'name' => 'Create New Suppliers',
+        'name' => 'Създава нови доставчици',
     ],
     'suppliersedit' => [
-        'name' => 'Edit Suppliers',
+        'name' => 'Редактира доставчици',
     ],
     'suppliersdelete' => [
-        'name' => 'Delete Suppliers',
+        'name' => 'Изтрива доставчици',
     ],
-    'manufacturers'   => [
+    'manufacturers' => [
         'name' => 'Производители',
-        'note'       => 'Grants access to the Manufacturers section of the application.',
+        'note' => 'Дава достъп до раздел производители в програмата.',
     ],
     'manufacturersview' => [
-        'name' => 'View Manufacturers',
+        'name' => 'Вижда производители',
     ],
     'manufacturerscreate' => [
-        'name' => 'Create New Manufacturers',
+        'name' => 'Създава нови производители',
     ],
     'manufacturersedit' => [
-        'name' => 'Edit Manufacturers',
+        'name' => 'Редактира производители',
     ],
     'manufacturersdelete' => [
-        'name' => 'Delete Manufacturers',
+        'name' => 'Изтрива производители',
     ],
-    'companies'   => [
+    'companies' => [
         'name' => 'Компании',
-        'note'       => 'Grants access to the Companies section of the application.',
+        'note' => 'Дава достъп до раздел компании в програмата.',
     ],
     'companiesview' => [
-        'name' => 'View Companies',
+        'name' => 'Вижда компании',
     ],
     'companiescreate' => [
-        'name' => 'Create New Companies',
+        'name' => 'Създава нови компании',
     ],
     'companiesedit' => [
-        'name' => 'Edit Companies',
+        'name' => 'Редактира компании',
     ],
     'companiesdelete' => [
-        'name' => 'Delete Companies',
+        'name' => 'Изтрива компании',
     ],
     'user-self-accounts' => [
-        'name' => 'User Self Accounts',
-        'note'       => 'Grants non-admin users the ability to manage certain aspects of their own user accounts.',
+        'name' => 'Собствен потребителски акаунт',
+        'note' => 'Дава достъп на потребителя да редактира информация за техния собствен акаунт.',
     ],
     'selftwo-factor' => [
-        'name' => 'Manage Two-Factor Authentication',
-        'note'       => 'Allows users to enable, disable, and manage two-factor authentication for their own accounts.',
+        'name' => 'Двуфакторно удостоверяване',
+        'note' => 'Позволява на потребителите да включват, изключват и управляват двуфакторно удостоверяване на техните акаунти.',
     ],
     'selfapi' => [
-        'name' => 'Manage API Tokens',
-        'note'       => 'Allows users to create, view, and revoke their own API tokens. User tokens will have the same permissions as the user who created them.',
+        'name' => 'Управление на API ключове',
+        'note' => 'Дава достъп на потребителите да създават, виждат и премахват техни лични API ключове. Ключовете ще имат същите права, като потребите от който са създадени.',
     ],
     'selfedit-location' => [
-        'name' => 'Edit Location',
-        'note'       => 'Allows users to edit the location associated with their own user account.',
+        'name' => 'Редактира местоположение',
+        'note' => 'Дава достъп на потребителя да редактира местоположението на техния потребителски акаунт.',
     ],
     'selfcheckout-assets' => [
-        'name' => 'Self Check Out Assets',
-        'note'       => 'Allows users to check out assets to themselves without admin intervention.',
+        'name' => 'Изписване на активи',
+        'note' => 'Дава достъп за изписване на активи без намесата на админ.',
     ],
     'selfview-purchase-cost' => [
-        'name' => 'View Purchase Cost',
-        'note'       => 'Allows users to view the purchase cost of items in their account view.',
+        'name' => 'Вижда цена на закупуване',
+        'note' => 'Дава достъп на потребителя да вижда цената на която е закупен артикула.',
     ],
 
     'depreciations' => [
-        'name' => 'Depreciation Management',
-        'note'       => 'Allows users to manage and view asset depreciation details.',
+        'name' => 'Управление Амортизации',
+        'note' => 'Дава достъп на потребителя да вижда информация за амортизации на активите.',
     ],
     'depreciationsview' => [
-        'name' => 'View Depreciation Details',
+        'name' => 'Вижда Амортизации',
     ],
     'depreciationsedit' => [
-        'name' => 'Edit Depreciation Settings',
+        'name' => 'Редактира настройки на Амортизации',
     ],
     'depreciationsdelete' => [
-        'name' => 'Delete Depreciation Records',
+        'name' => 'Изтрива записи на Амортизации',
     ],
     'depreciationscreate' => [
-        'name' => 'Create Depreciation Records',
+        'name' => 'Създава записи на Амортизации',
     ],
 
-    'grant_all' => 'Grant all permissions for :area',
-    'deny_all' => 'Deny all permissions for :area',
-    'inherit_all' => 'Inherit all permissions for :area from permission groups',
-    'grant' => 'Grant Permission for :area',
-    'deny' => 'Deny Permission for :area',
-    'inherit' => 'Inherit Permission for :area from permission groups',
-    'use_groups' => 'We strongly suggest using Permission Groups instead of assigning individual permissions for easier management.'
+    'grant_all' => 'Всички права за :area',
+    'deny_all' => 'Без права за :area',
+    'inherit_all' => 'Наследяване на всички права за :area от група',
+    'grant' => 'Права за :area',
+    'deny' => 'Без права за :area',
+    'inherit' => 'Наследяване на права за :area от група',
+    'use_groups' => 'Силно се препоръчва да се използват групи за достъп вместо даване на индивидуални права за по лесно управление.',
 
-);
+];

@@ -25,6 +25,7 @@ class BulkCategoriesController extends Controller
             $category = Category::find($id);
             if (is_null($category)) {
                 $errors[] = trans('admin/categories/message.does_not_exist');
+
                 continue;
             }
             try {
@@ -41,7 +42,7 @@ class BulkCategoriesController extends Controller
             } catch (ItemStillHasConsumables) {
                 $errors[] = trans('general.bulk_delete_associations.assoc_consumables_no_count', ['item_name' => $category->name, 'item' => trans('general.category')]);
             } catch (ItemStillHasLicenses) {
-                $errors[] = trans('general.bulk_delete_associations.assoc_licenses_no_count', ['item_name' => $category->name, 'item' => trans('general.category')]);;
+                $errors[] = trans('general.bulk_delete_associations.assoc_licenses_no_count', ['item_name' => $category->name, 'item' => trans('general.category')]);
             } catch (\Exception $e) {
                 report($e);
                 $errors[] = trans('general.something_went_wrong');
@@ -51,6 +52,7 @@ class BulkCategoriesController extends Controller
             if ($success_count > 0) {
                 return redirect()->route('categories.index')->with('success', trans_choice('admin/categories/message.delete.partial_success', $success_count, ['count' => $success_count]))->with('multi_error_messages', $errors);
             }
+
             return redirect()->route('categories.index')->with('multi_error_messages', $errors);
         } else {
             return redirect()->route('categories.index')->with('success', trans('admin/categories/message.delete.bulk_success'));

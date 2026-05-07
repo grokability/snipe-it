@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
 
     /*
     |--------------------------------------------------------------------------
@@ -15,29 +15,28 @@ return array(
     |---------------------------------------------------------------------------
     */
 
-    "superuser" => [
+    'superuser' => [
         'name' => 'Super naudotojas',
-        'note'       => 'Nustato, ar naudotojas turi visišką prieigą prie visų administratoriaus funkcijų. Šis nustatymas pakeičia VISAS konkretesnes ir ribojančias teises visoje sistemoje. ',
+        'note' => 'Nustato, ar naudotojas turi visišką prieigą prie visų administratoriaus funkcijų. Šis nustatymas pakeičia VISAS konkretesnes ir ribojančias teises visoje sistemoje. ',
     ],
     'admin' => [
         'name' => 'Administratoriaus prieiga',
-        'note'       => 'Nustato, ar naudotojas turi prieigą prie daugumos sistemos funkcijų, IŠSKYRUS sistemos administratoriaus nustatymus. Šie naudotojai galės valdyti naudotojus, vietas, kategorijas ir kt., tačiau jų prieiga YRA ribojama Pilno kelių įmonių palaikymo, kai jis įjungtas.',
+        'note' => 'Nustato, ar naudotojas turi prieigą prie daugumos sistemos funkcijų, IŠSKYRUS sistemos administratoriaus nustatymus. Šie naudotojai galės valdyti naudotojus, vietas, kategorijas ir kt., tačiau jų prieiga YRA ribojama Pilno kelių įmonių palaikymo, kai jis įjungtas.',
     ],
 
     'import' => [
         'name' => 'CSV importavimas',
-        'note'       => 'Tai leis naudotojams importuoti duomenis, net jei prieiga prie naudotojų, turto ir pan. visur kitur yra draudžiama.',
+        'note' => 'Tai leis naudotojams importuoti duomenis, net jei prieiga prie naudotojų, turto ir pan. visur kitur yra draudžiama.',
     ],
 
     'reports' => [
         'name' => 'Prieiga prie ataskaitų',
-        'note'       => 'Nustato, ar naudotojas turi prieigą prie programos Ataskaitų skilties.',
+        'note' => 'Nustato, ar naudotojas turi prieigą prie programos Ataskaitų skilties.',
     ],
 
-    'assets' =>
-        [
-            'name' => 'Turtas',
-            'note' => 'Suteikia prieigą prie programos Turto skilties.',
+    'assets' => [
+        'name' => 'Turtas',
+        'note' => 'Suteikia prieigą prie programos Turto skilties.',
     ],
 
     'assetsview' => [
@@ -81,9 +80,9 @@ return array(
         'note' => 'Leidžia naudotojui peržiūrėti ir redaguoti turto šifruotus pritaikytus laukus.',
     ],
 
-    'accessories'   => [
+    'accessories' => [
         'name' => 'Priedai',
-        'note'       => 'Suteikia prieigą prie programos Priedų skilties.',
+        'note' => 'Suteikia prieigą prie programos Priedų skilties.',
     ],
 
     'accessoriesview' => [
@@ -108,11 +107,52 @@ return array(
     ],
     'accessoriesfiles' => [
         'name' => 'Tvarkyti priedų failus',
-        'note' => 'Leidžia naudotojui įkelti, atsisiųsti ir ištrinti su priedais susijusius failus.',
+        'note' => 'Leidžia naudotojui įkelti, atsisiųsti ir ištrinti su priedais susietus failus. (Tai turi prasmę tik tada, kai suteiktos peržiūros ar aukštesnės teisės.)',
     ],
-    'consumables'   => [
+
+    'assetsfiles' => [
+        'name' => 'Tvarkyti turto failus',
+        'note' => 'Leidžia naudotojui įkelti, atsisiųsti ir ištrinti su turtu susietus failus. (Tai turi prasmę tik tada, kai suteiktos peržiūros ar aukštesnės teisės.)',
+    ],
+
+    'usersfiles' => [
+        'name' => 'Tvarkyti naudotojų failus',
+        'note' => 'Leidžia naudotojui įkelti, atsisiųsti ir ištrinti su naudotojais susietus failus. (Tai turi prasmę tik tada, kai suteiktos peržiūros ar aukštesnės teisės.)',
+    ],
+
+    'modelsfiles' => [
+        'name' => 'Tvarkyti modelių failus',
+        'note' => 'Leidžia naudotojui įkelti, atsisiųsti ir ištrinti su turto modeliais susietus failus tiek modelio rodinyje, tiek turto rodinio ekranuose. (Tai turi prasmę tik tada, kai suteiktos peržiūros ar aukštesnės teisės.)',
+    ],
+
+    'departmentsfiles' => [
+        'name' => 'Tvarkyti skyrių failus',
+        'note' => 'Leidžia naudotojui įkelti, atsisiųsti ir ištrinti su skyriais susietus failus. (Tai turi prasmę tik tada, kai suteiktos peržiūros ar aukštesnės teisės.)',
+    ],
+
+    'suppliersfiles' => [
+        'name' => 'Tvarkyti tiekėjų failus',
+        'note' => 'Leidžia naudotojui įkelti, atsisiųsti ir ištrinti su tiekėjais susietus failus. (Tai turi prasmę tik tada, kai suteiktos peržiūros ar aukštesnės teisės.)',
+    ],
+
+    'locationsfiles' => [
+        'name' => 'Tvarkyti vietų failus',
+        'note' => 'Leidžia naudotojui įkelti, atsisiųsti ir ištrinti su vietomis susietus failus. (Tai turi prasmę tik tada, kai suteiktos peržiūros ar aukštesnės teisės.)',
+    ],
+
+    'companiesfiles' => [
+        'name' => 'Tvarkyti įmonės failus',
+        'note' => 'Leidžia naudotojui įkelti, atsisiųsti ir ištrinti su įmone susietus failus. (Tai turi prasmę tik tada, kai suteiktos peržiūros ar aukštesnės teisės.)',
+    ],
+
+    'consumablesfiles' => [
+        'name' => 'Tvarkyti eksploatacinių medžiagų failus',
+        'note' => 'Leidžia naudotojui įkelti, atsisiųsti ir ištrinti su eksploatacinėmis medžiagomis susietus failus. (Tai turi prasmę tik tada, kai suteiktos peržiūros ar aukštesnės teisės.)',
+    ],
+
+    'consumables' => [
         'name' => 'Eksploatacinės medžiagos',
-        'note'       => 'Suteikia prieigą prie programos Eksploatacinių medžiagų skilties.',
+        'note' => 'Suteikia prieigą prie programos Eksploatacinių medžiagų skilties.',
     ],
     'consumablesview' => [
         'name' => 'Peržiūrėti eksploatacines medžiagas',
@@ -130,13 +170,10 @@ return array(
         'name' => 'Išduoti eksploatacines medžiagas',
         'note' => 'Priskirti inventoriuje esančias eksploatacines medžiagas, jas išduodant.',
     ],
-    'consumablesfiles' => [
-        'name' => 'Tvarkyti eksploatacinių medžiagų failus',
-        'note' => 'Leidžia naudotojui įkelti, atsisiųsti ir ištrinti su eksploatacinėmis medžiagomis susijusius failus.',
-    ],
-    'licenses'   => [
+
+    'licenses' => [
         'name' => 'Licencijos',
-        'note'       => 'Suteikia prieigą prie programos Licencijų skilties.',
+        'note' => 'Suteikia prieigą prie programos Licencijų skilties.',
     ],
     'licensesview' => [
         'name' => 'Peržiūrėti licencijas',
@@ -153,22 +190,27 @@ return array(
     'licensescheckout' => [
         'name' => 'Priskirti licencijas',
         'note' => 'Leidžia naudotojui priskirti licencijas turtui arba naudotojams.',
-        ],
+    ],
     'licensescheckin' => [
         'name' => 'Atšaukti licencijų priskyrimą',
         'note' => 'Leidžia naudotojui atšaukti licencijų priskyrimą turtui arba naudotojams.',
     ],
     'licensesfiles' => [
         'name' => 'Tvarkyti licencijų failus',
-        'note' => 'Leidžia naudotojui įkelti, atsisiųsti ir ištrinti su licencijomis susijusius failus.',
+        'note' => 'Leidžia naudotojui įkelti, atsisiųsti ir ištrinti su licencijomis susietus failus.',
     ],
+    'componentsfiles' => [
+        'name' => 'Tvarkyti komponentų failus',
+        'note' => 'Leidžia naudotojui įkelti, atsisiųsti ir ištrinti su komponentais susietus failus.',
+    ],
+
     'licenseskeys' => [
         'name' => 'Tvarkyti licencijų raktus',
         'note' => 'Leidžia naudotojui peržiūrėti su licencijomis susietus produkto kodus.',
     ],
-    'components'   => [
+    'components' => [
         'name' => 'Komponentai',
-        'note'       => 'Suteikia prieigą prie programos Komponentų skilties.',
+        'note' => 'Suteikia prieigą prie programos Komponentų skilties.',
     ],
     'componentsview' => [
         'name' => 'Peržiūrėti komponentus',
@@ -182,10 +224,7 @@ return array(
     'componentsdelete' => [
         'name' => 'Ištrinti komponentus',
     ],
-    'componentsfiles' => [
-        'name' => 'Tvarkyti komponentų failus',
-        'note' => 'Leidžia naudotojui įkelti, atsisiųsti ir ištrinti su komponentais susijusius failus.',
-    ],
+
     'componentscheckout' => [
         'name' => 'Išduoti komponentus',
         'note' => 'Priskirti inventoriuje esančius komponentus, juos išduodant.',
@@ -194,9 +233,9 @@ return array(
         'name' => 'Paimti komponentus',
         'note' => 'Paimti šiuo metu išduotus komponentus ir grąžinti atgal į inventorių.',
     ],
-    'kits'   => [
+    'kits' => [
         'name' => 'Turto rinkiniai',
-        'note'       => 'Suteikia prieigą prie programos Turto rinkinių skilties.',
+        'note' => 'Suteikia prieigą prie programos Turto rinkinių skilties.',
     ],
     'kitsview' => [
         'name' => 'Peržiūrėti iš anksto nustatytus rinkinius',
@@ -210,9 +249,9 @@ return array(
     'kitsdelete' => [
         'name' => 'Ištrinti iš anksto nustatytus rinkinius',
     ],
-    'users'   => [
+    'users' => [
         'name' => 'Naudotojai',
-        'note'       => 'Suteikia prieigą prie programos Naudotojų skilties.',
+        'note' => 'Suteikia prieigą prie programos Naudotojų skilties.',
     ],
     'usersview' => [
         'name' => 'Peržiūrėti naudotojus',
@@ -226,9 +265,9 @@ return array(
     'usersdelete' => [
         'name' => 'Ištrinti naudotojus',
     ],
-    'models'   => [
+    'models' => [
         'name' => 'Modeliai',
-        'note'       => 'Suteikia prieigą prie programos Modelių skilties.',
+        'note' => 'Suteikia prieigą prie programos Modelių skilties.',
     ],
     'modelsview' => [
         'name' => 'Peržiūrėti modelius',
@@ -243,9 +282,9 @@ return array(
     'modelsdelete' => [
         'name' => 'Ištrinti modelius',
     ],
-    'categories'   => [
+    'categories' => [
         'name' => 'Kategorijos',
-        'note'       => 'Suteikia prieigą prie programos Kategorijų skilties.',
+        'note' => 'Suteikia prieigą prie programos Kategorijų skilties.',
     ],
     'categoriesview' => [
         'name' => 'Peržiūrėti kategorijas',
@@ -259,9 +298,9 @@ return array(
     'categoriesdelete' => [
         'name' => 'Ištrinti kategorijas',
     ],
-    'departments'   => [
+    'departments' => [
         'name' => 'Skyriai',
-        'note'       => 'Suteikia prieigą prie programos Skyrių skilties.',
+        'note' => 'Suteikia prieigą prie programos Skyrių skilties.',
     ],
     'departmentsview' => [
         'name' => 'Peržiūrėti skyrius',
@@ -275,9 +314,9 @@ return array(
     'departmentsdelete' => [
         'name' => 'Ištrinti skyrius',
     ],
-    'locations'   => [
+    'locations' => [
         'name' => 'Vietos',
-        'note'       => 'Suteikia prieigą prie programos Vietų skilties.',
+        'note' => 'Suteikia prieigą prie programos Vietų skilties.',
     ],
     'locationsview' => [
         'name' => 'Peržiūrėti vietas',
@@ -291,9 +330,9 @@ return array(
     'locationsdelete' => [
         'name' => 'Ištrinti vietas',
     ],
-    'status-labels'   => [
+    'status-labels' => [
         'name' => 'Būsenos žymos',
-        'note'       => 'Suteikia prieigą prie turto naudojamų Būsenos žymų skilties programoje.',
+        'note' => 'Suteikia prieigą prie turto naudojamų Būsenos žymų skilties programoje.',
     ],
     'statuslabelsview' => [
         'name' => 'Peržiūrėti būsenos žymas',
@@ -307,9 +346,9 @@ return array(
     'statuslabelsdelete' => [
         'name' => 'Ištrinti būsenos žymas',
     ],
-    'custom-fields'   => [
+    'custom-fields' => [
         'name' => 'Pritaikyti laukai',
-        'note'       => 'Suteikia prieigą prie programos Pritaikytų laukų skilties.',
+        'note' => 'Suteikia prieigą prie programos Pritaikytų laukų skilties.',
     ],
     'customfieldsview' => [
         'name' => 'Peržiūrėti pritaikytus laukus',
@@ -323,9 +362,9 @@ return array(
     'customfieldsdelete' => [
         'name' => 'Ištrinti pritaikytus laukus',
     ],
-    'suppliers'   => [
+    'suppliers' => [
         'name' => 'Tiekėjai',
-        'note'       => 'Suteikia prieigą prie programos Tiekėjų skilties.',
+        'note' => 'Suteikia prieigą prie programos Tiekėjų skilties.',
     ],
     'suppliersview' => [
         'name' => 'Peržiūrėti tiekėjus',
@@ -339,9 +378,9 @@ return array(
     'suppliersdelete' => [
         'name' => 'Ištrinti tiekėjus',
     ],
-    'manufacturers'   => [
+    'manufacturers' => [
         'name' => 'Gamintojai',
-        'note'       => 'Suteikia prieigą prie programos Gamintojų skilties.',
+        'note' => 'Suteikia prieigą prie programos Gamintojų skilties.',
     ],
     'manufacturersview' => [
         'name' => 'Peržiūrėti gamintojus',
@@ -355,9 +394,9 @@ return array(
     'manufacturersdelete' => [
         'name' => 'Ištrinti gamintojus',
     ],
-    'companies'   => [
+    'companies' => [
         'name' => 'Įmonės',
-        'note'       => 'Suteikia prieigą prie programos Įmonių skilties.',
+        'note' => 'Suteikia prieigą prie programos Įmonių skilties.',
     ],
     'companiesview' => [
         'name' => 'Peržiūrėti įmones',
@@ -373,32 +412,32 @@ return array(
     ],
     'user-self-accounts' => [
         'name' => 'Naudotojų asmeninės paskyros',
-        'note'       => 'Administratoriaus teisių neturintiems naudotojams suteikia galimybę tvarkyti tam tikrus jų naudotojo paskyros aspektus.',
+        'note' => 'Administratoriaus teisių neturintiems naudotojams suteikia galimybę tvarkyti tam tikrus jų naudotojo paskyros aspektus.',
     ],
     'selftwo-factor' => [
         'name' => 'Tvarkyti dviejų veiksnių autentifikaciją',
-        'note'       => 'Leidžia naudotojams įjungti, išjungti ir valdyti dviejų veiksnių autentifikavimą savo paskyroms.',
+        'note' => 'Leidžia naudotojams įjungti, išjungti ir valdyti dviejų veiksnių autentifikavimą savo paskyroms.',
     ],
     'selfapi' => [
         'name' => 'Tvarkyti API prieigos raktus',
-        'note'       => 'Leidžia naudotojams kurti, peržiūrėti ir atšaukti savo API prieigos raktus. Naudotojo prieigos raktai turės tokias pačias teises kaip ir juos sukūręs naudotojas.',
+        'note' => 'Leidžia naudotojams kurti, peržiūrėti ir atšaukti savo API prieigos raktus. Naudotojo prieigos raktai turės tokias pačias teises kaip ir juos sukūręs naudotojas.',
     ],
     'selfedit-location' => [
         'name' => 'Redaguoti vietą',
-        'note'       => 'Leidžia naudotojams redaguoti su jų naudotojo paskyra susietą vietą.',
+        'note' => 'Leidžia naudotojams redaguoti su jų naudotojo paskyra susietą vietą.',
     ],
     'selfcheckout-assets' => [
         'name' => 'Savarankiškai prisiskirti turtą',
-        'note'       => 'Leidžia naudotojams patiems prisiskirti turtą be administratoriaus įsikišimo.',
+        'note' => 'Leidžia naudotojams patiems prisiskirti turtą be administratoriaus įsikišimo.',
     ],
     'selfview-purchase-cost' => [
         'name' => 'Peržiūrėti įsigijimo kainą',
-        'note'       => 'Leidžia naudotojams peržiūrėti įsigijimo kainą jų paskyros rodinyje.',
+        'note' => 'Leidžia naudotojams peržiūrėti įsigijimo kainą jų paskyros rodinyje.',
     ],
 
     'depreciations' => [
         'name' => 'Nusidėvėjimo valdymas',
-        'note'       => 'Leidžia naudotojams valdyti ir peržiūrėti turto nusidėvėjimo informaciją.',
+        'note' => 'Leidžia naudotojams valdyti ir peržiūrėti turto nusidėvėjimo informaciją.',
     ],
     'depreciationsview' => [
         'name' => 'Peržiūrėti nusidėvėjimo informaciją',
@@ -417,8 +456,8 @@ return array(
     'deny_all' => 'Nesuteikti visų teisių į :area',
     'inherit_all' => 'Paveldėti visas teises į :area iš teisių grupių',
     'grant' => 'Suteikti teisę į :area',
-    'deny' => 'Nesuteikti teisės į :area',
+    'deny' => 'Nesuteikti teisės „:area“',
     'inherit' => 'Paveldėti teisę į :area iš teisių grupių',
-    'use_groups' => 'Siekiant lengvesnio valdymo, primygtinai rekomenduojame naudoti leidimų grupes, o ne priskirti individualius leidimus.'
+    'use_groups' => 'Siekiant lengvesnio valdymo, primygtinai rekomenduojame naudoti leidimų grupes, o ne priskirti individualius leidimus.',
 
-);
+];

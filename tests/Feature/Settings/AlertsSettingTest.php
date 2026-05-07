@@ -2,20 +2,19 @@
 
 namespace Tests\Feature\Settings;
 
-use Tests\TestCase;
 use App\Models\User;
-
+use Tests\TestCase;
 
 class AlertsSettingTest extends TestCase
 {
-    public function testPermissionRequiredToViewAlertSettings()
+    public function test_permission_required_to_view_alert_settings()
     {
         $this->actingAs(User::factory()->create())
             ->get(route('settings.alerts.index'))
             ->assertForbidden();
     }
 
-    public function testAdminCCEmailArrayCanBeSaved()
+    public function test_admin_cc_email_array_can_be_saved()
     {
         $response = $this->actingAs(User::factory()->superuser()->create())
             ->post(route('settings.alerts.save', [

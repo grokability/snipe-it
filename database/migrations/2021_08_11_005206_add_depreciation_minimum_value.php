@@ -14,7 +14,7 @@ class AddDepreciationMinimumValue extends Migration
     public function up()
     {
         Schema::table('depreciations', function (Blueprint $table) {
-            $table->decimal('depreciation_min', 8,2)->after('months')->nullable();
+            $table->decimal('depreciation_min', 8, 2)->after('months')->nullable();
         });
     }
 

@@ -10,7 +10,7 @@ use Tests\TestCase;
 
 class DeleteAssetModelsTest extends TestCase implements TestsPermissionsRequirement
 {
-    public function testRequiresPermission()
+    public function test_requires_permission()
     {
         $assetModel = AssetModel::factory()->create();
 
@@ -21,7 +21,7 @@ class DeleteAssetModelsTest extends TestCase implements TestsPermissionsRequirem
         $this->assertNotSoftDeleted($assetModel);
     }
 
-    public function testCannotDeleteAssetModelThatStillHasAssociatedAssets()
+    public function test_cannot_delete_asset_model_that_still_has_associated_assets()
     {
         $assetModel = Asset::factory()->create()->model;
 
@@ -32,7 +32,7 @@ class DeleteAssetModelsTest extends TestCase implements TestsPermissionsRequirem
         $this->assertNotSoftDeleted($assetModel);
     }
 
-    public function testCanDeleteAssetModel()
+    public function test_can_delete_asset_model()
     {
         $assetModel = AssetModel::factory()->create();
 

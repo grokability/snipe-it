@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
 
     /*
     |--------------------------------------------------------------------------
@@ -17,4 +17,4 @@ return array(
     'password' => 'Kata sandi yang diberikan salah.',
     'throttle' => 'Too many login attempts. Please try again in :minutes minute(s).',
 
-);
+];

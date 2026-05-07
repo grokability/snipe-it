@@ -29,46 +29,46 @@ use Illuminate\Support\Str;
 class AccessoriesImportFileBuilder extends FileBuilder
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function getDictionary(): array
     {
         return [
-            'category'         => 'Category',
-            'companyName'      => 'Company',
-            'itemName'         => 'Item Name',
-            'location'         => 'Location',
+            'category' => 'Category',
+            'companyName' => 'Company',
+            'itemName' => 'Item Name',
+            'location' => 'Location',
             'manufacturerName' => 'Manufacturer',
-            'modelNumber'      => 'Model Number',
-            'notes'            => 'Notes',
-            'orderNumber'      => 'Order Number',
-            'purchaseCost'     => 'Purchase Cost',
-            'purchaseDate'     => 'Purchase Date',
-            'quantity'         => 'Quantity',
-            'supplierName'     => 'Supplier',
+            'modelNumber' => 'Model Number',
+            'notes' => 'Notes',
+            'orderNumber' => 'Order Number',
+            'purchaseCost' => 'Purchase Cost',
+            'purchaseDate' => 'Purchase Date',
+            'quantity' => 'Quantity',
+            'supplierName' => 'Supplier',
         ];
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function definition(): array
     {
         $faker = fake();
 
         return [
-            'category'         => Str::random(),
-            'companyName'      => Str::random(),
-            'itemName'         => Str::random(),
-            'location'         => "{$faker->city}, {$faker->country}",
+            'category' => Str::random(),
+            'companyName' => Str::random(),
+            'itemName' => Str::random(),
+            'location' => "{$faker->city}, {$faker->country}",
             'manufacturerName' => $faker->company,
-            'modelNumber'      => Str::random(),
-            'notes'            => $faker->sentence,
-            'orderNumber'      => Str::random(),
-            'purchaseDate'     => $faker->date(),
-            'purchaseCost'     => rand(1, 100),
-            'quantity'         => rand(1, 100),
-            'supplierName'     => $faker->company,
+            'modelNumber' => Str::random(),
+            'notes' => $faker->sentence,
+            'orderNumber' => Str::random(),
+            'purchaseDate' => $faker->date(),
+            'purchaseCost' => rand(1, 100),
+            'quantity' => rand(1, 100),
+            'supplierName' => $faker->company,
         ];
     }
 }

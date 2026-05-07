@@ -12,7 +12,6 @@ use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Queue\SerializesModels;
 
 class CheckoutAssetMail extends BaseMailable
@@ -23,9 +22,10 @@ class CheckoutAssetMail extends BaseMailable
 
     /**
      * Create a new message instance.
+     *
      * @throws \Exception
      */
-    public function __construct(Asset $asset, $checkedOutTo, User $checkedOutBy, $acceptance, $note, bool $firstTimeSending = true)
+    public function __construct(Asset $asset, $checkedOutTo, ?User $checkedOutBy, $acceptance, $note, bool $firstTimeSending = true)
     {
         $this->item = $asset;
         $this->admin = $checkedOutBy;
@@ -68,47 +68,61 @@ class CheckoutAssetMail extends BaseMailable
      * Get the mail representation of the notification.
      *
      * @param  mixed  $notifiable
-     * @return Content
      */
     public function content(): Content
     {
-        $this->item->load('assetstatus');
+        $this->item->load('status');
         $eula = method_exists($this->item, 'getEula') ? $this->item->getEula() : '';
         $req_accept = $this->requiresAcceptance();
         $fields = [];
+        $customFields = [];
         $name = null;
 
-        if($this->target instanceof User){
+        if ($this->target instanceof User) {
             $name = $this->target->display_name;
-        }
-        else if($this->target instanceof Asset){
-            $name  = $this->target->assignedto?->display_name;
-        }
-        else if($this->target instanceof Location){
-            $name  = $this->target->manager?->name;
+        } elseif ($this->target instanceof Asset) {
+            $name = $this->target->assignedto?->display_name;
+        } elseif ($this->target instanceof Location) {
+            $name = $this->target->manager?->name;
         }
 
         // Check if the item has custom fields associated with it
         if (($this->item->model) && ($this->item->model->fieldset)) {
             $fields = $this->item->model->fieldset->fields;
+
+            foreach ($fields as $field) {
+                if (! $field->show_in_email || $field->field_encrypted == '1') {
+                    continue;
+                }
+
+                $value = $this->item->{$field->db_column_name()};
+
+                if (! is_null($value) && $value !== '') {
+                    $customFields[] = [
+                        'label' => $field->name,
+                        'value' => $value,
+                    ];
+                }
+            }
         }
 
         $accept_url = is_null($this->acceptance) ? null : route('account.accept.item', $this->acceptance);
 
         return new Content(
             markdown: 'mail.markdown.checkout-asset',
-            with:  [
-                'item'          => $this->item,
-                'admin'         => $this->admin,
-                'status'        => $this->item->assetstatus?->name,
-                'note'          => $this->note,
-                'target'        => $name,
-                'fields'        => $fields,
-                'eula'          => $eula,
-                'req_accept'    => $req_accept,
-                'accept_url'    => $accept_url,
+            with: [
+                'item' => $this->item,
+                'admin' => $this->admin,
+                'status' => $this->item->status?->name,
+                'note' => $this->note,
+                'target' => $name,
+                'fields' => $fields,
+                'custom_fields' => $customFields,
+                'eula' => $eula,
+                'req_accept' => $req_accept,
+                'accept_url' => $accept_url,
                 'last_checkout' => $this->last_checkout,
-                'expected_checkin'  => $this->expected_checkin,
+                'expected_checkin' => $this->expected_checkin,
                 'introduction_line' => $this->introductionLine(),
             ],
         );
@@ -135,6 +149,9 @@ class CheckoutAssetMail extends BaseMailable
 
     private function introductionLine(): string
     {
+        if (is_null($this->acceptance)) {
+            return trans_choice('mail.new_item_checked', 1);
+        }
         if ($this->firstTimeSending && $this->target instanceof Location) {
             return trans_choice('mail.new_item_checked_location', 1, ['location' => $this->target->name]);
         }
@@ -143,16 +160,16 @@ class CheckoutAssetMail extends BaseMailable
             return trans_choice('mail.new_item_checked_with_acceptance', 1);
         }
 
-        if ($this->firstTimeSending && !$this->requiresAcceptance()) {
+        if ($this->firstTimeSending && ! $this->requiresAcceptance()) {
             return trans_choice('mail.new_item_checked', 1);
         }
 
-        if (!$this->firstTimeSending && $this->requiresAcceptance()) {
+        if (! $this->firstTimeSending && $this->requiresAcceptance()) {
             return trans('mail.recent_item_checked');
         }
 
         // we shouldn't get here but let's send a default message just in case
-        return trans('new_item_checked');
+        return trans('mail.new_item_checked');
     }
 
     private function requiresAcceptance(): int|bool

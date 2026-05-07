@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
 
     /*
     |--------------------------------------------------------------------------
@@ -17,4 +17,4 @@ return array(
     'password' => 'Furaha sirta ah ee la bixiyay waa khalad.',
     'throttle' => 'Too many login attempts. Please try again in :minutes minute(s).',
 
-);
+];

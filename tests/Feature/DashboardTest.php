@@ -12,14 +12,14 @@ use Tests\TestCase;
 
 class DashboardTest extends TestCase
 {
-    public function testUsersWithoutAdminAccessAreRedirected()
+    public function test_users_without_admin_access_are_redirected()
     {
         $this->actingAs(User::factory()->create())
             ->get(route('home'))
             ->assertRedirect(route('view-assets'));
     }
 
-    public function testCountsAreLoadedCorrectlyForAdmins()
+    public function test_counts_are_loaded_correctly_for_admins()
     {
         Asset::factory()->count(2)->create();
         Accessory::factory()->count(2)->create();

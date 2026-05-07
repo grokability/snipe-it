@@ -23,13 +23,13 @@ return [
 
     'accessories' => 'Tilbehør er ting du leverer ut som ikke har serienummer (eller som du ikke sporer enkeltvis), for eksempel datamus og tastaturer.',
 
-    'companies'     => 'Firma kan brukes som et enkelt identifikatorfelt, eller det kan brukes til å begrense eksponeringen av eiendeler, brukere, etc hvis full firmastøtte er aktivert i innstillingene.',
+    'companies' => 'Firma kan brukes som et enkelt identifikatorfelt, eller det kan brukes til å begrense eksponeringen av eiendeler, brukere, etc hvis full firmastøtte er aktivert i innstillingene.',
 
-    'components'    => 'Komponenter er ting som er del av en eiendel, f. eks. internminne, disk o. l.',
+    'components' => 'Komponenter er ting som er del av en eiendel, f. eks. internminne, disk o. l.',
 
-    'consumables'   => 'Forbruksvarer er alle varer som blir brukt opp over tid. For eksempel skrivertoner eller kopipapir.',
+    'consumables' => 'Forbruksvarer er alle varer som blir brukt opp over tid. For eksempel skrivertoner eller kopipapir.',
 
     'depreciations' => 'Du kan sette opp avskrivninger for å kostnadsføre eiendeler basert på en lineær avskrivning i perioden.',
-    
-    'empty_file'    => 'Importbehandleren registrerer at filen er tom.'
+
+    'empty_file' => 'Importbehandleren registrerer at filen er tom.',
 ];

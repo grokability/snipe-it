@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'info'   => 'Vælg de ønskede muligheder for din aktivrapport.',
+    'info' => 'Vælg de ønskede muligheder for din aktivrapport.',
     'deleted_user' => 'Slettet bruger',
     'send_reminder' => 'Send påmindelse',
     'cannot_send_reminder' => 'User has been deleted or does not have an email address so cannot receive a reminder',
@@ -10,14 +10,20 @@ return [
     'acceptance_request' => 'Anmodning om accept',
     'custom_export' => [
         'user_address' => 'Bruger Adresse',
+        'user_company' => 'User Company',
         'user_city' => 'Bruger By',
         'user_state' => 'Bruger Status',
         'user_country' => 'Bruger Land',
-        'user_zip' => 'Bruger Zip'
+        'user_zip' => 'Bruger Zip',
+        'target_notes' => 'Noter',
     ],
     'open_saved_template' => 'Open Saved Template',
-    'save_template' =>  'Save Template',
+    'save_template' => 'Save Template',
     'select_a_template' => 'Select a Template',
     'template_name' => 'Template Name',
     'update_template' => 'Update Template',
+    'share_template' => 'Share This Template',
+    'template_shared' => 'Template shared with you',
+    'template_shared_with_others' => 'Template shared with others',
+    'template_not_shared' => 'Template not shared with others',
 ];

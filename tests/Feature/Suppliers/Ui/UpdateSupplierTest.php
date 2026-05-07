@@ -8,7 +8,7 @@ use Tests\TestCase;
 
 class UpdateSupplierTest extends TestCase
 {
-    public function testPageRenders()
+    public function test_page_renders()
     {
         $this->actingAs(User::factory()->superuser()->create())
             ->get(route('suppliers.edit', Supplier::factory()->create()->id))

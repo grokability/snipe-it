@@ -9,6 +9,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Messages\SlackMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use NotificationChannels\GoogleChat\Card;
 use NotificationChannels\GoogleChat\GoogleChatChannel;
@@ -17,7 +18,6 @@ use NotificationChannels\GoogleChat\Section;
 use NotificationChannels\GoogleChat\Widgets\KeyValue;
 use NotificationChannels\MicrosoftTeams\MicrosoftTeamsChannel;
 use NotificationChannels\MicrosoftTeams\MicrosoftTeamsMessage;
-use Illuminate\Support\Facades\Log;
 use Symfony\Component\Mime\Email;
 
 #[AllowDynamicProperties]
@@ -57,7 +57,7 @@ class CheckoutAccessoryNotification extends Notification
             $notifyBy[] = MicrosoftTeamsChannel::class;
         }
 
-        if (Setting::getSettings()->webhook_selected == 'slack' || Setting::getSettings()->webhook_selected == 'general' ) {
+        if (Setting::getSettings()->webhook_selected == 'slack' || Setting::getSettings()->webhook_selected == 'general') {
             $notifyBy[] = 'slack';
         }
 
@@ -118,12 +118,13 @@ class CheckoutAccessoryNotification extends Notification
             ->content(':arrow_up: :keyboard: Accessory Checked Out')
             ->from($botname)
             ->to($channel)
-            ->attachment(function ($attachment) use ($item, $note, $admin, $fields) {
+            ->attachment(function ($attachment) use ($item, $note, $fields) {
                 $attachment->title(htmlspecialchars_decode($this->checkout_qty.' x '.$item->display_name), $item->present()->viewUrl())
                     ->fields($fields)
                     ->content($note);
             });
     }
+
     public function toMicrosoftTeams()
     {
         $target = $this->target;
@@ -131,7 +132,7 @@ class CheckoutAccessoryNotification extends Notification
         $item = $this->item;
         $note = $this->note;
 
-        if(!Str::contains(Setting::getSettings()->webhook_endpoint, 'workflows')) {
+        if (! Str::contains(Setting::getSettings()->webhook_endpoint, 'workflows')) {
             return MicrosoftTeamsMessage::create()
                 ->to($this->settings->webhook_endpoint)
                 ->type('success')
@@ -142,7 +143,7 @@ class CheckoutAccessoryNotification extends Notification
                 ->fact(trans('mail.assigned_to'), $target->display_name)
                 ->fact(trans('general.qty'), $this->checkout_qty)
                 ->fact(trans('mail.checkedout_from'), $item->location->name ? $item->location->name : '')
-                ->fact(trans('mail.Accessory_Checkout_Notification') . " by ", $admin->display_name)
+                ->fact(trans('mail.Accessory_Checkout_Notification').' by ', $admin->display_name)
                 ->fact(trans('admin/consumables/general.remaining'), $item->numRemaining())
                 ->fact(trans('mail.notes'), $note ?: '');
         }
@@ -153,12 +154,14 @@ class CheckoutAccessoryNotification extends Notification
             trans('mail.accessory_name') => htmlspecialchars_decode($item->display_name),
             trans('general.qty') => $this->checkout_qty,
             trans('mail.checkedout_from') => $item->location->name ? $item->location->name : '',
-            trans('mail.Accessory_Checkout_Notification'). ' by' => $admin->display_name,
-            trans('admin/consumables/general.remaining')=> $item->numRemaining(),
+            trans('mail.Accessory_Checkout_Notification').' by' => $admin->display_name,
+            trans('admin/consumables/general.remaining') => $item->numRemaining(),
             trans('mail.notes') => $note ?: '',
         ];
-        return  array($message, $details);
+
+        return [$message, $details];
     }
+
     public function toGoogleChat()
     {
         $target = $this->target;
@@ -178,7 +181,7 @@ class CheckoutAccessoryNotification extends Notification
                             KeyValue::create(
                                 trans('mail.assigned_to') ?: '',
                                 $target->present()->name ?: '',
-                                trans('admin/consumables/general.remaining').": ". $item->numRemaining(),
+                                trans('admin/consumables/general.remaining').': '.$item->numRemaining(),
                             )
                                 ->onClick(route('users.show', $target->id))
                         )
@@ -187,11 +190,10 @@ class CheckoutAccessoryNotification extends Notification
 
     }
 
-
     /**
      * Get the mail representation of the notification.
      *
-     * @return \Illuminate\Notifications\Messages\MailMessage
+     * @return MailMessage
      */
     public function toMail()
     {
@@ -203,14 +205,14 @@ class CheckoutAccessoryNotification extends Notification
 
         return (new MailMessage)->markdown('notifications.markdown.checkout-accessory',
             [
-                'item'          => $this->item,
-                'admin'         => $this->admin,
-                'note'          => $this->note,
-                'target'        => $this->target,
-                'eula'          => $eula,
-                'req_accept'    => $req_accept,
-                'accept_url'    => $accept_url,
-                'checkout_qty'  => $this->checkout_qty,
+                'item' => $this->item,
+                'admin' => $this->admin,
+                'note' => $this->note,
+                'target' => $this->target,
+                'eula' => $eula,
+                'req_accept' => $req_accept,
+                'accept_url' => $accept_url,
+                'checkout_qty' => $this->checkout_qty,
             ])
             ->subject(trans('mail.Confirm_accessory_delivery'))
             ->withSymfonyMessage(function (Email $message) {

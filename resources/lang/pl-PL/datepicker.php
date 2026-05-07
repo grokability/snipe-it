@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
 
     /*
     |--------------------------------------------------------------------------
@@ -13,38 +13,38 @@ return array(
     |
     */
 
-    'week_start_select' => 'Select Day of Week',
-    'week_start' => 'Day the Week Starts On',
+    'week_start_select' => 'Wybierz dzień tygodnia',
+    'week_start' => 'Tydzień zaczyna się w',
     'today' => 'Dzisiaj',
     'clear' => 'Wyczyść',
     'days' => [
         'sunday' => 'Niedziela',
         'monday' => 'Poniedziałek',
         'tuesday' => 'Wtorek',
-        'wednesday' =>  'Środa',
-        'thursday' =>  'Czwartek',
-        'friday' =>  'Piątek',
-        'saturday' =>  'Sobota',
-        ],
+        'wednesday' => 'Środa',
+        'thursday' => 'Czwartek',
+        'friday' => 'Piątek',
+        'saturday' => 'Sobota',
+    ],
 
     'short_days' => [
         'sunday' => 'Nd',
         'monday' => 'Pon',
         'tuesday' => 'Wt',
-        'wednesday' =>  'Śr',
-        'thursday' =>  'Czw',
-        'friday' =>  'Pt',
-        'saturday' =>  'Sob',
+        'wednesday' => 'Śr',
+        'thursday' => 'Czw',
+        'friday' => 'Pt',
+        'saturday' => 'Sob',
     ],
 
     'min_days' => [
         'sunday' => 'Ni',
         'monday' => 'Po',
         'tuesday' => 'Wt',
-        'wednesday' =>  'Śr',
-        'thursday' =>  'Cz',
-        'friday' =>  'Pt',
-        'saturday' =>  'So',
+        'wednesday' => 'Śr',
+        'thursday' => 'Cz',
+        'friday' => 'Pt',
+        'saturday' => 'So',
     ],
 
     'months' => [
@@ -77,4 +77,4 @@ return array(
         'december' => 'Gru',
     ],
 
-);
+];

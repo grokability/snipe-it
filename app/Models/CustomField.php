@@ -6,37 +6,38 @@ use App\Http\Traits\UniqueUndeletedTrait;
 use EasySlugger\Utf8Slugger;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Validation\Rule;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Validation\Rule;
 use Watson\Validating\ValidatingTrait;
+
 class CustomField extends Model
 {
     use HasFactory;
-    use ValidatingTrait,
-        UniqueUndeletedTrait;
+    use UniqueUndeletedTrait,
+        ValidatingTrait;
 
     /**
-     *
      * Custom field predfined formats
      *
      * @var array
      */
     public const PREDEFINED_FORMATS = [
-            'ANY'           => '',
-            'CUSTOM REGEX'  => '',
-            'ALPHA'         => 'alpha',
-            'ALPHA-DASH'    => 'alpha_dash',
-            'NUMERIC'       => 'numeric',
-            'ALPHA-NUMERIC' => 'alpha_num',
-            'EMAIL'         => 'email',
-            'DATE'          => 'date',
-            'URL'           => 'url',
-            'IP'            => 'ip',
-            'IPV4'          => 'ipv4',
-            'IPV6'          => 'ipv6',
-            'MAC'           => 'regex:/^[a-fA-F0-9]{2}:[a-fA-F0-9]{2}:[a-fA-F0-9]{2}:[a-fA-F0-9]{2}:[a-fA-F0-9]{2}:[a-fA-F0-9]{2}$/',
-            'BOOLEAN'       => 'boolean',
-        ];
+        'ANY' => '',
+        'CUSTOM REGEX' => '',
+        'ALPHA' => 'alpha',
+        'ALPHA-DASH' => 'alpha_dash',
+        'NUMERIC' => 'numeric',
+        'ALPHA-NUMERIC' => 'alpha_num',
+        'EMAIL' => 'email',
+        'DATE' => 'date',
+        'URL' => 'url',
+        'IP' => 'ip',
+        'IPV4' => 'ipv4',
+        'IPV6' => 'ipv6',
+        'MAC' => 'regex:/^[a-fA-F0-9]{2}:[a-fA-F0-9]{2}:[a-fA-F0-9]{2}:[a-fA-F0-9]{2}:[a-fA-F0-9]{2}:[a-fA-F0-9]{2}$/',
+        'BOOLEAN' => 'boolean',
+    ];
 
     public $guarded = [
         'id',
@@ -56,10 +57,11 @@ class CustomField extends Model
         'show_in_listview' => 'boolean',
         'show_in_requestable_list' => 'boolean',
         'show_in_email' => 'boolean',
+        'format' => 'nullable|string|max:191',
     ];
 
     protected $casts = [
-        'show_in_requestable_list'  => 'boolean',
+        'show_in_requestable_list' => 'boolean',
     ];
 
     /**
@@ -87,12 +89,37 @@ class CustomField extends Model
     ];
 
     /**
+     * The attributes that should be included when searching the model.
+     *
+     * @var array
+     */
+    protected $searchableAttributes = [
+        'name',
+        'format',
+        'element',
+        'db_column',
+        'help_text',
+    ];
+
+    /**
+     * The relations and their attributes that should be included when searching the model.
+     *
+     * @var array
+     */
+    protected $searchableRelations = [
+        'fieldset' => ['name'],
+        'assetModels' => ['name'],
+        'adminuser' => ['first_name', 'last_name', 'display_name'],
+    ];
+
+    /**
      * This is confusing, since it's actually the custom fields table that
      * we're usually modifying, but since we alter the assets table, we have to
      * say that here, otherwise the new fields get added onto the custom fields
      * table instead of the assets table.
      *
      * @author [Brady Wetherington] [<uberbrady@gmail.com>]
+     *
      * @since  [v3.0]
      */
     public static $table_name = 'assets';
@@ -104,7 +131,9 @@ class CustomField extends Model
      * do with previously existing values. - @snipe
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since  [v3.4]
+     *
      * @return string
      */
     public static function name_to_db_name($name)
@@ -121,7 +150,9 @@ class CustomField extends Model
      * to do it in the controllers.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since  [v3.4]
+     *
      * @return bool
      */
     public static function boot()
@@ -192,12 +223,14 @@ class CustomField extends Model
      * Establishes the customfield -> fieldset relationship
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since  [v3.0]
-     * @return \Illuminate\Database\Eloquent\Relations\Relation
+     *
+     * @return Relation
      */
     public function fieldset()
     {
-        return $this->belongsToMany(\App\Models\CustomFieldset::class);
+        return $this->belongsToMany(CustomFieldset::class);
     }
 
     public function displayFieldInCheckinForm()
@@ -205,6 +238,7 @@ class CustomField extends Model
         if ($this->display_checkin == '1') {
             return true;
         }
+
         return false;
     }
 
@@ -213,6 +247,7 @@ class CustomField extends Model
         if ($this->display_checkout == '1') {
             return true;
         }
+
         return false;
     }
 
@@ -221,56 +256,60 @@ class CustomField extends Model
         if ($this->display_audit == '1') {
             return true;
         }
+
         return false;
     }
 
     public function displayFieldInCurrentForm($form_type = null)
     {
         switch ($form_type) {
-        case 'audit':
-            return $this->displayFieldInAuditForm();
-        case 'checkin':
-            return $this->displayFieldInCheckinForm();
-        case 'checkout':
-            return $this->displayFieldInCheckoutForm();
+            case 'audit':
+                return $this->displayFieldInAuditForm();
+            case 'checkin':
+                return $this->displayFieldInCheckinForm();
+            case 'checkout':
+                return $this->displayFieldInCheckoutForm();
         }
     }
 
-
     public function assetModels()
     {
-        return $this->fieldset()->with('models')->get()->pluck('models')->flatten()->unique('id'); 
+        return $this->fieldset()->with('models')->get()->pluck('models')->flatten()->unique('id');
     }
 
     /**
      * Establishes the customfield -> admin user relationship
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since  [v3.0]
-     * @return \Illuminate\Database\Eloquent\Relations\Relation
+     *
+     * @return Relation
      */
     public function user()
     {
-        return $this->belongsTo(\App\Models\User::class);
+        return $this->belongsTo(User::class);
     }
 
     /**
      * Establishes the customfield -> default values relationship
      *
      * @author Hannah Tinkler
+     *
      * @since  [v3.0]
-     * @return \Illuminate\Database\Eloquent\Relations\Relation
+     *
+     * @return Relation
      */
     public function defaultValues()
     {
-        return $this->belongsToMany(\App\Models\AssetModel::class, 'models_custom_fields')->withPivot('default_value');
+        return $this->belongsToMany(AssetModel::class, 'models_custom_fields')->withPivot('default_value');
     }
 
     /**
      * Returns the default value for a given model using the defaultValues
      * relationship
      *
-     * @param  int $modelId
+     * @param  int  $modelId
      * @return string
      */
     public function defaultValue($modelId)
@@ -290,8 +329,11 @@ class CustomField extends Model
      * Checks the format of the attribute
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     * @param  $value string
+     *
+     * @param  $value  string
+     *
      * @since  [v3.0]
+     *
      * @return bool
      */
     public function check_format($value)
@@ -303,7 +345,9 @@ class CustomField extends Model
      * Gets the DB column name.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since  [v3.0]
+     *
      * @return string
      */
     public function db_column_name()
@@ -319,7 +363,9 @@ class CustomField extends Model
      * user-friendly text in the dropdowns, and in the custom fields display.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since  [v3.4]
+     *
      * @return string
      */
     public function getFormatAttribute($value)
@@ -337,7 +383,9 @@ class CustomField extends Model
      * Format a value string as an array for select boxes and checkboxes.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since  [v3.4]
+     *
      * @return array
      */
     public function setFormatAttribute($value)
@@ -353,7 +401,9 @@ class CustomField extends Model
      * Format a value string as an array for select boxes and checkboxes.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since  [v3.4]
+     *
      * @return array
      */
     public function formatFieldValuesAsArray()
@@ -383,7 +433,9 @@ class CustomField extends Model
      * Check whether the field is encrypted
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since  [v3.4]
+     *
      * @return bool
      */
     public function isFieldDecryptable($string)
@@ -400,7 +452,9 @@ class CustomField extends Model
      * won't break the database.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since  [v3.4]
+     *
      * @return string
      */
     public function convertUnicodeDbSlug($original = null)
@@ -409,7 +463,7 @@ class CustomField extends Model
         $id = $this->id ? $this->id : 'xx';
 
         if (! function_exists('transliterator_transliterate')) {
-            $long_slug = '_snipeit_'.str_slug(mb_convert_encoding(trim($name), "UTF-8"), '_');
+            $long_slug = '_snipeit_'.str_slug(mb_convert_encoding(trim($name), 'UTF-8'), '_');
         } else {
             $long_slug = '_snipeit_'.Utf8Slugger::slugify($name, '_');
         }
@@ -421,8 +475,11 @@ class CustomField extends Model
      * Get validation rules for custom fields to use with Validator
      *
      * @author [V. Cordes] [<volker@fdatek.de>]
-     * @param  int $id
+     *
+     * @param  int  $id
+     *
      * @since  [v4.1.10]
+     *
      * @return array
      */
     public function validationRules($regex_format = null)
@@ -430,7 +487,7 @@ class CustomField extends Model
         return [
             'format' => [
                 Rule::in(array_merge(array_keys(self::PREDEFINED_FORMATS), self::PREDEFINED_FORMATS, [$regex_format])),
-            ]
+            ],
         ];
     }
 

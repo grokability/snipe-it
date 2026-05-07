@@ -9,7 +9,7 @@ use Tests\TestCase;
 
 class ComponentFileTest extends TestCase
 {
-    public function testComponentApiAcceptsFileUpload()
+    public function test_component_api_accepts_file_upload()
     {
         // Create a model to work with
         $component = Component::factory()->create();
@@ -17,17 +17,17 @@ class ComponentFileTest extends TestCase
         // Create a superuser to run this as
         $user = User::factory()->superuser()->create();
 
-        //Upload a file
+        // Upload a file
         $this->actingAsForApi($user)
             ->post(
                 route('api.files.store', ['object_type' => 'components', 'id' => $component->id]), [
-                'file' => [UploadedFile::fake()->create("test.jpg", 100)]
+                    'file' => [UploadedFile::fake()->create('test.jpg', 100)],
                 ]
             )
             ->assertOk();
     }
 
-    public function testComponentApiListsFiles()
+    public function test_component_api_lists_files()
     {
         // List all files on a model
 
@@ -45,13 +45,13 @@ class ComponentFileTest extends TestCase
             ->assertOk()
             ->assertJsonStructure(
                 [
-                'rows',
-                'total',
+                    'rows',
+                    'total',
                 ]
             );
     }
 
-    public function testComponentFailsIfInvalidTypePassedInUrl()
+    public function test_component_fails_if_invalid_type_passed_in_url()
     {
         // List all files on a model
 
@@ -69,7 +69,7 @@ class ComponentFileTest extends TestCase
             ->assertStatus(404);
     }
 
-    public function testComponentFailsIfInvalidIdPassedInUrl()
+    public function test_component_fails_if_invalid_id_passed_in_url()
     {
         // List all files on a model
 
@@ -88,7 +88,7 @@ class ComponentFileTest extends TestCase
             ->assertStatusMessageIs('error');
     }
 
-    public function testComponentApiDownloadsFile()
+    public function test_component_api_downloads_file()
     {
         // Download a file from a model
 
@@ -102,14 +102,14 @@ class ComponentFileTest extends TestCase
         $this->actingAsForApi($user)
             ->post(
                 route('api.files.store', ['object_type' => 'components', 'id' => $component->id]), [
-                'file' => [UploadedFile::fake()->create("test.jpg", 100)],
+                    'file' => [UploadedFile::fake()->create('test.jpg', 100)],
                 ]
             )
             ->assertOk()
             ->assertJsonStructure(
                 [
-                'status',
-                'messages',
+                    'status',
+                    'messages',
                 ]
             );
 
@@ -117,15 +117,15 @@ class ComponentFileTest extends TestCase
         $this->actingAsForApi($user)
             ->post(
                 route('api.files.store', ['object_type' => 'components', 'id' => $component->id]), [
-                'file' => [UploadedFile::fake()->create("test.jpg", 100)],
-                'notes' => 'manual'
+                    'file' => [UploadedFile::fake()->create('test.jpg', 100)],
+                    'notes' => 'manual',
                 ]
             )
             ->assertOk()
             ->assertJsonStructure(
                 [
-                'status',
-                'messages',
+                    'status',
+                    'messages',
                 ]
             );
 
@@ -137,19 +137,19 @@ class ComponentFileTest extends TestCase
             ->assertOk()
             ->assertJsonStructure(
                 [
-                'total',
-                'rows'=>[
-                    '*' => [
-                        'id',
-                        'filename',
-                        'url',
-                        'created_by',
-                        'created_at',
-                        'deleted_at',
-                        'note',
-                        'available_actions'
-                    ]
-                ]
+                    'total',
+                    'rows' => [
+                        '*' => [
+                            'id',
+                            'filename',
+                            'url',
+                            'created_by',
+                            'created_at',
+                            'deleted_at',
+                            'note',
+                            'available_actions',
+                        ],
+                    ],
                 ]
             )
             ->assertJsonPath('rows.0.note', null)
@@ -160,16 +160,16 @@ class ComponentFileTest extends TestCase
             ->get(
                 route(
                     'api.files.show', [
-                    'object_type' => 'components',
-                    'id' => $component->id,
-                    'file_id' => $result->decodeResponseJson()->json()["rows"][0]["id"],
+                        'object_type' => 'components',
+                        'id' => $component->id,
+                        'file_id' => $result->decodeResponseJson()->json()['rows'][0]['id'],
                     ]
                 )
             )
             ->assertOk();
     }
 
-    public function testComponentApiDeletesFile()
+    public function test_component_api_deletes_file()
     {
         // Delete a file from a model
 
@@ -179,11 +179,11 @@ class ComponentFileTest extends TestCase
         // Create a superuser to run this as
         $user = User::factory()->superuser()->create();
 
-        //Upload a file
+        // Upload a file
         $this->actingAsForApi($user)
             ->post(
                 route('api.files.store', ['object_type' => 'components', 'id' => $component->id]), [
-                'file' => [UploadedFile::fake()->create("test.jpg", 100)]
+                    'file' => [UploadedFile::fake()->create('test.jpg', 100)],
                 ]
             )
             ->assertOk();
@@ -200,17 +200,17 @@ class ComponentFileTest extends TestCase
             ->delete(
                 route(
                     'api.files.destroy', [
-                    'object_type' => 'components',
-                    'id' => $component->id,
-                    'file_id' => $result->decodeResponseJson()->json()["rows"][0]["id"],
+                        'object_type' => 'components',
+                        'id' => $component->id,
+                        'file_id' => $result->decodeResponseJson()->json()['rows'][0]['id'],
                     ]
                 )
             )
             ->assertOk()
             ->assertJsonStructure(
                 [
-                'status',
-                'messages',
+                    'status',
+                    'messages',
                 ]
             );
     }

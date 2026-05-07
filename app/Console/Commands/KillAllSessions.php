@@ -38,22 +38,23 @@ class KillAllSessions extends Command
     public function handle()
     {
 
-        if (!$this->option('force') && !$this->confirm("****************************************************\nTHIS WILL FORCE A LOGIN FOR ALL LOGGED IN USERS.\n\nAre you SURE you wish to continue? ")) {
-            return $this->error("Session loss not confirmed");
+        if (! $this->option('force') && ! $this->confirm("****************************************************\nTHIS WILL FORCE A LOGIN FOR ALL LOGGED IN USERS.\n\nAre you SURE you wish to continue? ")) {
+            return $this->error('Session loss not confirmed');
         }
 
-        $session_files = glob(storage_path("framework/sessions/*"));
+        $session_files = glob(storage_path('framework/sessions/*'));
 
         $count = 0;
         foreach ($session_files as $file) {
 
-            if (is_file($file))
+            if (is_file($file)) {
                 unlink($file);
-                $count++;
+            }
+            $count++;
         }
         \DB::table('users')->update(['remember_token' => null]);
 
-        $this->info($count. ' sessions cleared!');
+        $this->info($count.' sessions cleared!');
 
     }
 }

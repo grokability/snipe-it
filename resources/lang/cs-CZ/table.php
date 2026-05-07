@@ -1,11 +1,11 @@
 <?php
 
-return array(
+return [
 
-    'actions'	 	        => 'Akce',
-    'action' 		        => 'Akce',
-    'by'      		        => 'Vytvořil',
-    'item' 			        => 'Položka',
-    'no_matching_records'   => 'Nebyly nalezeny žádné odpovídající záznamy',
+    'actions' => 'Akce',
+    'action' => 'Akce',
+    'by' => 'Vytvořil',
+    'item' => 'Položka',
+    'no_matching_records' => 'Nebyly nalezeny žádné odpovídající záznamy',
 
-);
+];

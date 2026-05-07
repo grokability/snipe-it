@@ -22,12 +22,12 @@ class SetupUserRequest extends Request
     public function rules()
     {
         return [
-          'site_name' => 'required|string|min:1',
-          'first_name' => 'required|string|min:1',
-          'last_name' => 'required|string|min:1',
-          'username' => 'required|string|min:2|unique:users,username,NULL,deleted_at',
-          'email' => 'email|unique:users,email',
-          'password' => 'required|min:8|confirmed',
+            'site_name' => 'required|string|min:1',
+            'first_name' => 'required|string|min:1',
+            'last_name' => 'required|string|min:1',
+            'username' => 'required|string|min:2|unique:users,username,NULL,deleted_at',
+            'email' => 'email|unique:users,email',
+            'password' => 'required|min:8|confirmed',
         ];
     }
 

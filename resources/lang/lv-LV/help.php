@@ -23,13 +23,13 @@ return [
 
     'accessories' => 'Aksesuāri ir jebkas, ko jūs izsniedzat lietotājiem, bet kuriem nav sērijas numura (vai arī jums nav svarīgi, vai tie ir unikāli izsekojami). Piemēram, datoru peles vai tastatūras.',
 
-    'companies'     => 'Uzņēmumus var izmantot kā vienkāršu identifikatora lauku vai tos var izmantot, lai ierobežotu aktīvu, lietotāju utt. Redzamību, ja jūsu Admin iestatījumos ir iespējots pilnīgs uzņēmuma atbalsts.',
+    'companies' => 'Uzņēmumus var izmantot kā vienkāršu identifikatora lauku vai tos var izmantot, lai ierobežotu aktīvu, lietotāju utt. Redzamību, ja jūsu Admin iestatījumos ir iespējots pilnīgs uzņēmuma atbalsts.',
 
-    'components'    => 'Komponenti ir priekšmeti, kas ir aktīva sastāvdaļa, piemēram, cietais disks, RAM un citi.',
+    'components' => 'Komponenti ir priekšmeti, kas ir aktīva sastāvdaļa, piemēram, cietais disks, RAM un citi.',
 
-    'consumables'   => 'Izlietojamie materiāli ir kaut kas iegādāts, kas laika gaitā tiks izlietots. Piemēram, printera tinte vai kopētāja papīrs.',
+    'consumables' => 'Izlietojamie materiāli ir kaut kas iegādāts, kas laika gaitā tiks izlietots. Piemēram, printera tinte vai kopētāja papīrs.',
 
     'depreciations' => 'Jūs varat izveidot aktīvu nolietojumu, lai nolietotu aktīvus, pamatojoties uz lineāro nolietojumu.',
-    
-    'empty_file'    => 'The importer detects that this file is empty.'
+
+    'empty_file' => 'The importer detects that this file is empty.',
 ];

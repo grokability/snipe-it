@@ -1,0 +1,33 @@
+<?php
+
+return [
+    'asset_categories' => 'Ակտիվի կատեգորիան',
+    'category_name' => 'Կատեգորիայի անվանումը',
+    'email_to_user_upon_checkin' => 'Checkin-ի ժամանակ օգտատիրոջը ուղարկել էլ․ նամակ։',
+    'email_to_user_upon_checkin_and_checkout' => 'Checkin/Checkout-ի ժամանակ օգտատիրոջը ուղարկել էլ․ նամակ։',
+    'email_to_initiator' => 'Ուղարկել էլ․ նամակ ձեզ, երբ օգտատերը ընդունում կամ մերժում է checkout-ը։',
+    'checkin_email_notification' => 'Checkin/checkout-ի ժամանակ այս օգտատիրոջը կուղարկվի էլ․ նամակ։',
+    'clone' => 'Կրկնօրինակել կատեգորիան',
+    'create' => 'Ստեղծել կատեգորիա',
+    'edit' => 'Խմբագրել կատեգորիան',
+    'email_will_be_sent_due_to_global_eula' => 'Checkout-ի ժամանակ օգտատիրոջը կուղարկվի էլ․ նամակ, քանի որ օգտագործվում է գլոբալ EULA-ն։',
+    'email_will_be_sent_due_to_category_eula' => 'Checkout-ի ժամանակ օգտատիրոջը կուղարկվի էլ․ նամակ, քանի որ այս կատեգորիայի համար սահմանված է EULA։',
+    'eula_text' => 'Կատեգորիա EULA',
+    'eula_text_help' => 'Անհատականացրեք EULA-ները ակտիվների տեսակների համար. Եթե ունեք միայն մեկ EULA, ընտրեք ստորև նշված վանդակը՝ օգտագործելու հիմնականը։',
+    'name' => 'Կատեգորիայի անվանումը',
+    'require_acceptance' => 'Պահանջել օգտատերերի հաստատումը այս կատեգորիայի ակտիվների համար։',
+    'required_acceptance' => 'Այս օգտատիրոջը կուղարկվի էլ․ նամակ՝ տվյալ տարրի ընդունումը հաստատելու հղումով։',
+    'global_signature_required_notice' => 'User signatures are currently required globally via the admin settings, so signatures will still be required regardless of this category setting if the item is checked out to a user (versus a location, etc).',
+    'required_eula' => 'Այս օգտատիրոջը կուղարկվի EULA-ի պատճենը էլ․ նամակով',
+    'no_default_eula' => 'Առաջնային EULA չկա. Ավելացրեք Կարգավորումների միջոցով։',
+    'update' => 'Թարմացնել կատեգորիան',
+    'use_default_eula' => 'Օգտագործել <a href="#" data-toggle="modal" data-target="#eulaModal">առաջնային EULA</a>-ն։',
+    'use_default_eula_disabled' => '<del>Օգտագործել առջնային EULA-ն</del> Առաջնային EULA չկա. Ավելացրեք Կարգավորումների միջոցով։',
+    'use_default_eula_column' => 'Օգտագործել լռելյայն EULA',
+    'import_require_acceptance' => 'Պահանջել հաստատում',
+    'import_checkin_email' => 'Ուղարկել Checkin էլ․ նամակ',
+    'import_eula_text' => 'EULA տեքստ',
+    'import_category_type' => 'Կատեգորիայի տեսակ',
+    'import_alert_on_response' => 'Ծանուցում պատասխանի դեպքում',
+
+];

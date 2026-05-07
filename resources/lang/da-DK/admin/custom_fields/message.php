@@ -1,64 +1,59 @@
 <?php
 
-return array(
+return [
 
-    'field' => array(
-        'invalid'   => 'Dette felt findes ikke.',
-        'already_added'   => 'Feltet allerede tilføjet',
-        'none_selected'   => 'No field selected',
+    'field' => [
+        'invalid' => 'Dette felt findes ikke.',
+        'already_added' => 'Feltet allerede tilføjet',
+        'none_selected' => 'No field selected',
 
-        'create' => array(
-            'error'   => 'Feltet blev ikke oprettet, prøve igen.',
+        'create' => [
+            'error' => 'Feltet blev ikke oprettet, prøve igen.',
             'success' => 'Feltet oprettet.',
-            'assoc_success' => 'Felt tilføjet til feltsættet.'
-        ),
+            'assoc_success' => 'Felt tilføjet til feltsættet.',
+        ],
 
-        'update' => array(
-            'error'   => 'Feltet blev ikke opdateret, prøv igen',
-            'success' => 'Feltet opdateret.'
-        ),
+        'update' => [
+            'error' => 'Feltet blev ikke opdateret, prøv igen',
+            'success' => 'Feltet opdateret.',
+        ],
 
-        'delete' => array(
-            'confirm'   	=> 'Er du sikker på du ønsker at slette feltet?',
-            'error'   => 'Der opstod et problem under sletning af feltet. Prøv venligst igen.',
+        'delete' => [
+            'confirm' => 'Er du sikker på du ønsker at slette feltet?',
+            'error' => 'Der opstod et problem under sletning af feltet. Prøv venligst igen.',
             'success' => 'Feltet blev slettet.',
-            'in_use'   => 'Feltet er stadig i brug.',
-        )
+            'in_use' => 'Feltet er stadig i brug.',
+        ],
 
-    ),
+    ],
 
-    'fieldset' => array(
+    'fieldset' => [
 
         'does_not_exist' => 'Feltsættet findes ikke',
 
-        'create' => array(
-            'error'   => 'Feltsættet blev ikke opdateret, prøv igen.',
-            'success' => 'Feltsættet oprettet.'
-        ),
+        'create' => [
+            'error' => 'Feltsættet blev ikke opdateret, prøv igen.',
+            'success' => 'Feltsættet oprettet.',
+        ],
 
-        'update' => array(
-            'error'   => 'Feltsættet blev ikke opdateret, prøv igen',
-            'success' => 'Feltsættet opdateret.'
-        ),
+        'update' => [
+            'error' => 'Feltsættet blev ikke opdateret, prøv igen',
+            'success' => 'Feltsættet opdateret.',
+        ],
 
-        'delete' => array(
-            'confirm'   	=> 'Er du sikker på du vil slette dette feltsæt?',
-            'error'   => 'Der opstod et problem under sletning af feltsættet. Prøv venligst igen.',
+        'delete' => [
+            'confirm' => 'Er du sikker på du vil slette dette feltsæt?',
+            'error' => 'Der opstod et problem under sletning af feltsættet. Prøv venligst igen.',
             'success' => 'Feltsættet blev slettet.',
-            'in_use'   => 'Feltsættet er stadig i brug.',
-        )
+            'in_use' => 'Feltsættet er stadig i brug.',
+        ],
 
-    ),
+    ],
 
-    'fieldset_default_value' => array(
+    'fieldset_default_value' => [
 
         'error' => 'Fejl under validering af standard feltsæt-værdier.',
 
-    ),
+    ],
 
-
-
-
-
-
-);
+];

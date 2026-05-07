@@ -76,7 +76,7 @@ class CheckoutResponseEmailTest extends TestCase
     private function assertEmailSentTo(User $user, string $type): void
     {
         Mail::assertSent(CheckoutAcceptanceResponseMail::class, function (CheckoutAcceptanceResponseMail $mail) use ($type, $user) {
-            return $mail->hasTo($user->email) && $mail->assertHasSubject('A checkout you initiated was ' . $type);
+            return $mail->hasTo($user->email) && $mail->assertHasSubject('A checkout you initiated was '.$type);
         });
     }
 

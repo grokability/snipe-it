@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
     'personal_api_keys' => 'Lični API kključevi',
     'personal_access_token' => 'Lični token za pristup',
     'personal_api_keys_success' => 'Lični API ključ :key je uspešno napravljen',
@@ -14,4 +14,4 @@ return array(
     'no_tokens' => 'Još uvek niste napravili nijedan lični token za pristup.',
     'enable_sounds' => 'Omogući zvučne efekte',
     'enable_confetti' => 'Omogući efekat konfeta',
-);
+];

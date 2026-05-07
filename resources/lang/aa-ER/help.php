@@ -23,13 +23,13 @@ return [
 
     'accessories' => 'crwdns5800:0crwdne5800:0',
 
-    'companies'     => 'crwdns5802:0crwdne5802:0',
+    'companies' => 'crwdns5802:0crwdne5802:0',
 
-    'components'    => 'crwdns5804:0crwdne5804:0',
+    'components' => 'crwdns5804:0crwdne5804:0',
 
-    'consumables'   => 'crwdns5806:0crwdne5806:0',
+    'consumables' => 'crwdns5806:0crwdne5806:0',
 
     'depreciations' => 'crwdns5808:0crwdne5808:0',
-    
-    'empty_file'    => 'crwdns11850:0crwdne11850:0'
+
+    'empty_file' => 'crwdns11850:0crwdne11850:0',
 ];

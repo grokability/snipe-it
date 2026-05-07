@@ -2,9 +2,9 @@
 
 namespace Tests\Feature\Importing\Api;
 
+use App\Models\Import;
 use App\Models\Manufacturer;
 use App\Models\User;
-use App\Models\Import;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Arr;
 use Illuminate\Testing\TestResponse;
@@ -20,7 +20,7 @@ class ImportManufacturersTest extends ImportDataTestCase implements TestsPermiss
 
     protected function importFileResponse(array $parameters = []): TestResponse
     {
-        if (!array_key_exists('import-type', $parameters)) {
+        if (! array_key_exists('import-type', $parameters)) {
             $parameters['import-type'] = 'manufacturer';
         }
 
@@ -28,7 +28,7 @@ class ImportManufacturersTest extends ImportDataTestCase implements TestsPermiss
     }
 
     #[Test]
-    public function testRequiresPermission()
+    public function test_requires_permission()
     {
         $this->actingAsForApi(User::factory()->create());
 
@@ -36,7 +36,7 @@ class ImportManufacturersTest extends ImportDataTestCase implements TestsPermiss
     }
 
     #[Test]
-    public function importManufacturer(): void
+    public function import_manufacturer(): void
     {
         $importFileBuilder = ImportFileBuilder::new();
         $row = $importFileBuilder->firstRow();
@@ -46,9 +46,9 @@ class ImportManufacturersTest extends ImportDataTestCase implements TestsPermiss
         $this->importFileResponse(['import' => $import->id, 'send-welcome' => 0])
             ->assertOk()
             ->assertExactJson([
-                'payload'  => null,
-                'status'   => 'success',
-                'messages' => ['redirect_url' => route('manufacturers.index')]
+                'payload' => null,
+                'status' => 'success',
+                'messages' => ['redirect_url' => route('manufacturers.index')],
             ]);
 
         $newManufacturer = Manufacturer::query()
@@ -60,7 +60,7 @@ class ImportManufacturersTest extends ImportDataTestCase implements TestsPermiss
     }
 
     #[Test]
-    public function willIgnoreUnknownColumnsWhenFileContainsUnknownColumns(): void
+    public function will_ignore_unknown_columns_when_file_contains_unknown_columns(): void
     {
         $row = ImportFileBuilder::new()->definition();
         $row['unknownColumnInCsvFile'] = 'foo';
@@ -74,9 +74,8 @@ class ImportManufacturersTest extends ImportDataTestCase implements TestsPermiss
         $this->importFileResponse(['import' => $import->id])->assertOk();
     }
 
-
     #[Test]
-    public function whenRequiredColumnsAreMissingInImportFile(): void
+    public function when_required_columns_are_missing_in_import_file(): void
     {
         $importFileBuilder = ImportFileBuilder::new(['name' => '']);
         $import = Import::factory()->manufacturers()->create(['file_path' => $importFileBuilder->saveToImportsDirectory()]);
@@ -86,17 +85,16 @@ class ImportManufacturersTest extends ImportDataTestCase implements TestsPermiss
         $this->importFileResponse(['import' => $import->id])
             ->assertInternalServerError()
             ->assertExactJson([
-                'status'   => 'import-errors',
-                'payload'  => null,
+                'status' => 'import-errors',
+                'payload' => null,
                 'messages' => [
                     '' => [
                         'Manufacturer ""' => [
-                            'name' =>
-                                ['The name field is required.'],
+                            'name' => ['The name field is required.'],
                         ],
-                    ]
+                    ],
 
-                ]
+                ],
             ]);
 
         $newManufacturer = Manufacturer::query()
@@ -106,9 +104,8 @@ class ImportManufacturersTest extends ImportDataTestCase implements TestsPermiss
         $this->assertCount(0, $newManufacturer);
     }
 
-
     #[Test]
-    public function updateManufacturerFromImport(): void
+    public function update_manufacturer_from_import(): void
     {
         $manufacturer = Manufacturer::factory()->create()->refresh();
         $importFileBuilder = ImportFileBuilder::new(['name' => $manufacturer->name, 'support_url' => $manufacturer->support_url, 'support_phone' => $manufacturer->support_phone, 'support_email' => $manufacturer->support_email]);
@@ -134,5 +131,4 @@ class ImportManufacturersTest extends ImportDataTestCase implements TestsPermiss
             Arr::except($updatedManufacturer->attributesToArray(), array_merge($updatedAttributes, $manufacturer->getDates())),
         );
     }
-
 }

@@ -33,54 +33,54 @@ use Illuminate\Support\Str;
 class LicensesImportFileBuilder extends FileBuilder
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function getDictionary(): array
     {
         return [
-            'category'         => 'Category',
-            'companyName'      => 'Company',
-            'expirationDate'   => 'expiration date',
-            'isMaintained'     => 'maintained',
-            'isReassignAble'   => 'reassignable',
-            'licensedToName'   => 'Licensed To Name',
-            'licensedToEmail'  => 'Licensed to Email',
-            'licenseName'      => 'Item name',
+            'category' => 'Category',
+            'companyName' => 'Company',
+            'expirationDate' => 'expiration date',
+            'isMaintained' => 'maintained',
+            'isReassignAble' => 'reassignable',
+            'licensedToName' => 'Licensed To Name',
+            'licensedToEmail' => 'Licensed to Email',
+            'licenseName' => 'Item name',
             'manufacturerName' => 'manufacturer',
-            'notes'            => 'notes',
-            'orderNumber'      => 'Order Number',
-            'purchaseCost'     => 'Purchase Cost',
-            'purchaseDate'     => 'Purchase Date',
-            'seats'            => 'seats',
-            'serialNumber'     => 'Serial number',
-            'supplierName'     => 'supplier',
+            'notes' => 'notes',
+            'orderNumber' => 'Order Number',
+            'purchaseCost' => 'Purchase Cost',
+            'purchaseDate' => 'Purchase Date',
+            'seats' => 'seats',
+            'serialNumber' => 'Serial number',
+            'supplierName' => 'supplier',
         ];
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function definition(): array
     {
         $faker = fake();
 
         return [
-            'category'         => Str::random(),
-            'companyName'      => Str::random() . " {$faker->companySuffix}",
-            'expirationDate'   => $faker->date,
-            'isMaintained'     => $faker->randomElement(['TRUE', 'FALSE']),
-            'isReassignAble'   => $faker->randomElement(['TRUE', 'FALSE']),
-            'licensedToName'   => $faker->name,
-            'licensedToEmail'  => $faker->email,
-            'licenseName'      => $faker->company,
+            'category' => Str::random(),
+            'companyName' => Str::random()." {$faker->companySuffix}",
+            'expirationDate' => $faker->date,
+            'isMaintained' => $faker->randomElement(['TRUE', 'FALSE']),
+            'isReassignAble' => $faker->randomElement(['TRUE', 'FALSE']),
+            'licensedToName' => $faker->name,
+            'licensedToEmail' => $faker->email,
+            'licenseName' => $faker->company,
             'manufacturerName' => $faker->company,
-            'notes'            => $faker->sentence,
-            'orderNumber'      => "ON:LIC:{$faker->uuid}",
-            'purchaseCost'     => rand(1, 100_000),
-            'purchaseDate'     => $faker->date,
-            'seats'            => rand(1, 10),
-            'serialNumber'     => 'SN:LIC:' . Str::random(),
-            'supplierName'     => $faker->company,
+            'notes' => $faker->sentence,
+            'orderNumber' => "ON:LIC:{$faker->uuid}",
+            'purchaseCost' => rand(1, 100_000),
+            'purchaseDate' => $faker->date,
+            'seats' => rand(1, 10),
+            'serialNumber' => 'SN:LIC:'.Str::random(),
+            'supplierName' => $faker->company,
         ];
     }
 }

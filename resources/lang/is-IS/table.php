@@ -1,11 +1,11 @@
 <?php
 
-return array(
+return [
 
-    'actions'	 	        => 'Aðgerðir',
-    'action' 		        => 'Aðgerð',
-    'by'      		        => 'Eftir',
-    'item' 			        => 'Atriði',
-    'no_matching_records'   => 'No matching records found',
+    'actions' => 'Aðgerðir',
+    'action' => 'Aðgerð',
+    'by' => 'Eftir',
+    'item' => 'Atriði',
+    'no_matching_records' => 'Engar færslur fundust',
 
-);
+];

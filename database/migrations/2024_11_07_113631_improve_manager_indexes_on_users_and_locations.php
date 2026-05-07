@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::table('locations', function (Blueprint $table) {
             $table->dropIndex(['manager_id']);
-            $table->index(['manager_id','deleted_at']);
+            $table->index(['manager_id', 'deleted_at']);
         });
         Schema::table('users', function (Blueprint $table) {
             $table->dropIndex(['manager_id']);
-            $table->index(['manager_id','deleted_at']);
+            $table->index(['manager_id', 'deleted_at']);
         });
 
     }
@@ -28,11 +28,11 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('locations', function (Blueprint $table) {
-            $table->dropIndex(['manager_id','deleted_at']);
+            $table->dropIndex(['manager_id', 'deleted_at']);
             $table->index(['manager_id']);
         });
         Schema::table('users', function (Blueprint $table) {
-            $table->dropIndex(['manager_id','deleted_at']);
+            $table->dropIndex(['manager_id', 'deleted_at']);
             $table->index(['manager_id']);
         });
     }

@@ -3,19 +3,18 @@
 namespace App\Actions\Suppliers;
 
 use App\Exceptions\ItemStillHasAccessories;
+use App\Exceptions\ItemStillHasAssets;
 use App\Exceptions\ItemStillHasComponents;
 use App\Exceptions\ItemStillHasConsumables;
-use App\Models\Supplier;
-use App\Exceptions\ItemStillHasAssets;
-use App\Exceptions\ItemStillHasMaintenances;
 use App\Exceptions\ItemStillHasLicenses;
+use App\Exceptions\ItemStillHasMaintenances;
+use App\Models\Supplier;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class DestroySupplierAction
 {
     /**
-     *
      * @throws ItemStillHasLicenses
      * @throws ItemStillHasAssets
      * @throws ItemStillHasMaintenances
@@ -23,7 +22,7 @@ class DestroySupplierAction
      * @throws ItemStillHasConsumables
      * @throws ItemStillHasComponents
      */
-    static function run(Supplier $supplier): bool
+    public static function run(Supplier $supplier): bool
     {
         $supplier->loadCount([
             'maintenances as maintenances_count',

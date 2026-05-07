@@ -3,30 +3,30 @@
 return [
 
     'update' => [
-        'error'                 => 'Παρουσιάστηκε ένα σφάλμα κατά την ενημέρωση. ',
-        'success'               => 'Οι ρυθμίσεις αναβαθμίστηκαν επιτυχώς.',
+        'error' => 'Παρουσιάστηκε ένα σφάλμα κατά την ενημέρωση. ',
+        'success' => 'Οι ρυθμίσεις αναβαθμίστηκαν επιτυχώς.',
     ],
     'backup' => [
-        'delete_confirm'        => 'Είστε βέβαιοι ότι θέλετε να διαγράψετε αυτό το αρχείο αντιγράφων ασφαλείας; Αυτή η ενέργεια δεν μπορεί να αναιρεθεί. ',
-        'file_deleted'          => 'Το αντίγραφο ασφαλείας διαγράφηκε επιτυχώς. ',
-        'generated'             => 'Δημιουργήθηκε με επιτυχία ένα νέο αρχείο δημιουργίας αντιγράφων ασφαλείας.',
-        'file_not_found'        => 'Αυτό το αρχείο αντιγράφων ασφαλείας δεν βρέθηκε στο διακομιστή.',
-        'restore_warning'       => 'Ναι, να το αποκαταστήσω, αναγνωρίζω ότι αυτό θα αντικαταστήσει όλα τα υπάρχοντα δεδομένα που υπάρχουν αυτή τη στιγμή στη βάση δεδομένων. Αυτό θα αποσυνδεθεί επίσης από όλους τους υπάρχοντες χρήστες (συμπεριλαμβανομένων και εσείς).',
-        'restore_confirm'       => 'Είστε βέβαιοι ότι θέλετε να επαναφέρετε τη βάση δεδομένων σας από :filename?'
+        'delete_confirm' => 'Είστε βέβαιοι ότι θέλετε να διαγράψετε αυτό το αρχείο αντιγράφων ασφαλείας; Αυτή η ενέργεια δεν μπορεί να αναιρεθεί. ',
+        'file_deleted' => 'Το αντίγραφο ασφαλείας διαγράφηκε επιτυχώς. ',
+        'generated' => 'Δημιουργήθηκε με επιτυχία ένα νέο αρχείο δημιουργίας αντιγράφων ασφαλείας.',
+        'file_not_found' => 'Αυτό το αρχείο αντιγράφων ασφαλείας δεν βρέθηκε στο διακομιστή.',
+        'restore_warning' => 'Ναι, να το αποκαταστήσω, αναγνωρίζω ότι αυτό θα αντικαταστήσει όλα τα υπάρχοντα δεδομένα που υπάρχουν αυτή τη στιγμή στη βάση δεδομένων. Αυτό θα αποσυνδεθεί επίσης από όλους τους υπάρχοντες χρήστες (συμπεριλαμβανομένων και εσείς).',
+        'restore_confirm' => 'Είστε βέβαιοι ότι θέλετε να επαναφέρετε τη βάση δεδομένων σας από :filename?',
     ],
     'restore' => [
-        'success'               => 'Your system backup has been restored. Please log in again.'
+        'success' => 'Your system backup has been restored. Please log in again.',
     ],
     'purge' => [
-        'error'     => 'Παρουσιάστηκε ένα σφάλμα κατά την εκκαθάριση. ',
-        'validation_failed'     => 'Η επιβεβαίωση καθαρισμού είναι εσφαλμένη. Παρακαλούμε πληκτρολογήστε τη λέξη «Διαγραφή» στο πλαίσιο επιβεβαίωσης.',
-        'success'               => 'Οι διαγραμμένες εγγραφές καθαρίστηκαν με επιτυχία.',
+        'error' => 'Παρουσιάστηκε ένα σφάλμα κατά την εκκαθάριση. ',
+        'validation_failed' => 'Η επιβεβαίωση καθαρισμού είναι εσφαλμένη. Παρακαλούμε πληκτρολογήστε τη λέξη «Διαγραφή» στο πλαίσιο επιβεβαίωσης.',
+        'success' => 'Οι διαγραμμένες εγγραφές καθαρίστηκαν με επιτυχία.',
     ],
     'mail' => [
         'sending' => 'Αποστολή Δοκιμής Email...',
         'success' => 'Η αλληλογραφία στάλθηκε!',
         'error' => 'Δεν ήταν δυνατή η αποστολή του ταχυδρομείου.',
-        'additional' => 'Δεν δόθηκε κανένα πρόσθετο μήνυμα σφάλματος. Ελέγξτε τις ρυθμίσεις αλληλογραφίας και το αρχείο καταγραφής της εφαρμογής σας.'
+        'additional' => 'Δεν δόθηκε κανένα πρόσθετο μήνυμα σφάλματος. Ελέγξτε τις ρυθμίσεις αλληλογραφίας και το αρχείο καταγραφής της εφαρμογής σας.',
     ],
     'ldap' => [
         'testing' => 'Δοκιμή Σύνδεσης Ldap, Δεσμεύσεων & Ερωτήματος...',
@@ -34,11 +34,11 @@ return [
         'error' => 'Κάτι πήγε στραβά :(',
         'sync_success' => 'Ένα δείγμα 10 χρηστών που επιστρέφονται από το διακομιστή LDAP με βάση τις ρυθμίσεις σας:',
         'testing_authentication' => 'Δοκιμή Πιστοποίησης Ldap...',
-        'authentication_success' => 'Ο χρήστης πιστοποιήθηκε με επιτυχία στο LDAP!'
+        'authentication_success' => 'Ο χρήστης πιστοποιήθηκε με επιτυχία στο LDAP!',
     ],
     'labels' => [
         'null_template' => 'Label template not found. Please select a template.',
-        ],
+    ],
     'webhook' => [
         'sending' => 'Αποστολή δοκιμαστικού μηνύματος :app...',
         'success' => 'Το :webhook_name σας λειτουργεί!',
@@ -55,5 +55,22 @@ return [
     'location_scoping' => [
         'not_saved' => 'Your settings were not saved.',
         'mismatch' => 'There is 1 item in the database that need your attention before you can enable location scoping.|There are :count items in the database that need your attention before you can enable location scoping.',
+    ],
+    'oauth' => [
+        'token_revoked' => 'Personal access token revoked successfully.',
+        'token_unrevoked' => 'Personal access token reinstated successfully.',
+        'token_not_found' => 'That personal access token could not be found.',
+        'token_revoke_error' => 'An error occurred while revoking the token.',
+        'token_unrevoke_error' => 'An error occurred while reinstating the token.',
+        'client_created' => 'OAuth client created successfully.',
+        'client_updated' => 'OAuth client updated successfully.',
+        'client_deleted' => 'OAuth client deleted successfully.',
+        'client_revoked' => 'OAuth client revoked successfully.',
+        'client_unrevoked' => 'OAuth client reinstated successfully.',
+        'client_not_found' => 'That OAuth client could not be found.',
+        'token_deleted' => 'Token revoked successfully.',
+        'client_delete_denied' => 'You are not authorized to delete this client.',
+        'client_edit_denied' => 'You are not authorized to edit this client.',
+        'token_delete_denied' => 'You are not authorized to revoke this token.',
     ],
 ];

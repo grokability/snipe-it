@@ -1,6 +1,6 @@
 <?php
 
-return array(
-    'created'   => 'Cruthaithe',
+return [
+    'created' => 'Cruthaithe',
     'size' => 'Size',
-);
+];

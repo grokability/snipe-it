@@ -9,7 +9,7 @@ use Tests\TestCase;
 
 class AssetFilesTest extends TestCase
 {
-    public function testAssetApiAcceptsFileUpload()
+    public function test_asset_api_accepts_file_upload()
     {
         // Upload a file to an asset
 
@@ -19,17 +19,17 @@ class AssetFilesTest extends TestCase
         // Create a superuser to run this as
         $user = User::factory()->superuser()->create();
 
-        //Upload a file
+        // Upload a file
         $this->actingAsForApi($user)
             ->post(
                 route('api.files.store', ['object_type' => 'assets', 'id' => $asset->id]), [
-                'file' => [UploadedFile::fake()->create("test.jpg", 100)]
+                    'file' => [UploadedFile::fake()->create('test.jpg', 100)],
                 ]
             )
             ->assertOk();
     }
 
-    public function testAssetApiListsFiles()
+    public function test_asset_api_lists_files()
     {
         // List all files on an asset
 
@@ -45,13 +45,13 @@ class AssetFilesTest extends TestCase
             ->assertOk()
             ->assertJsonStructure(
                 [
-                'rows',
-                'total',
+                    'rows',
+                    'total',
                 ]
             );
     }
 
-    public function testAssetApiDownloadsFile()
+    public function test_asset_api_downloads_file()
     {
         // Download a file from an asset
 
@@ -61,11 +61,11 @@ class AssetFilesTest extends TestCase
         // Create a superuser to run this as
         $user = User::factory()->superuser()->create();
 
-        //Upload a file
+        // Upload a file
         $this->actingAsForApi($user)
             ->post(
                 route('api.files.store', ['object_type' => 'assets', 'id' => $asset->id]), [
-                'file' => [UploadedFile::fake()->create("test.jpg", 100)]
+                    'file' => [UploadedFile::fake()->create('test.jpg', 100)],
                 ]
             )
             ->assertOk();
@@ -76,7 +76,7 @@ class AssetFilesTest extends TestCase
             ->assertOk();
     }
 
-    public function testAssetApiDeletesFile()
+    public function test_asset_api_deletes_file()
     {
         // Delete a file from an asset
 
@@ -86,11 +86,11 @@ class AssetFilesTest extends TestCase
         // Create a superuser to run this as
         $user = User::factory()->superuser()->create();
 
-        //Upload a file
+        // Upload a file
         $this->actingAsForApi($user)
             ->post(
                 route('api.files.store', ['object_type' => 'assets', 'id' => $asset->id]), [
-                'file' => [UploadedFile::fake()->create("test.jpg", 100)]
+                    'file' => [UploadedFile::fake()->create('test.jpg', 100)],
                 ]
             )
             ->assertOk();

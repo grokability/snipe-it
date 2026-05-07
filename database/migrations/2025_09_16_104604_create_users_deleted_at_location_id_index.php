@@ -15,7 +15,7 @@ return new class extends Migration
             // We are doing 'deleted_at' *first* here because that way this index can do double-duty -
             // handling queries for 'all undeleted users' as well as 'users who are deleted in this location'
             // and 'users who are not-deleted in this location'
-            $table->index(['deleted_at','location_id']);
+            $table->index(['deleted_at', 'location_id']);
         });
     }
 
@@ -25,7 +25,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropIndex(['deleted_at','location_id']);
+            $table->dropIndex(['deleted_at', 'location_id']);
         });
     }
 };

@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\RedirectResponse;
+use App\Models\Setting;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Two\InvalidStateException;
-use App\Models\Setting;
-use Illuminate\Support\Facades\Log;
 
 class GoogleAuthController extends Controller
 {
@@ -30,38 +30,39 @@ class GoogleAuthController extends Controller
         return Socialite::driver('google')->redirect();
     }
 
-    public function handleGoogleCallback() : RedirectResponse
+    public function handleGoogleCallback(): RedirectResponse
     {
         try {
             $socialUser = Socialite::driver('google')->user();
             Log::debug('Google user found in Google Workspace');
         } catch (InvalidStateException $exception) {
             Log::debug('Google user NOT found in Google Workspace');
+
             return redirect()->route('login')
                 ->withErrors(
                     [
                         'username' => [
-                           trans('auth/general.google_login_failed')
+                            trans('auth/general.google_login_failed'),
                         ],
                     ]
                 );
         }
 
-
         $user = User::where('username', $socialUser->getEmail())->first();
-
 
         if ($user) {
             Log::debug('Google user '.$socialUser->getEmail().' found in Snipe-IT');
             $user->update([
-                'avatar'   => $socialUser->avatar,
+                'avatar' => $socialUser->avatar,
             ]);
 
             Auth::login($user, true);
+
             return redirect()->route('home');
         }
 
         Log::debug('Google user '.$socialUser->getEmail().' NOT found in Snipe-IT');
+
         return redirect()->route('login')
             ->withErrors(
                 [

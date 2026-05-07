@@ -3,15 +3,15 @@
 namespace Tests\Feature\Importing\Api;
 
 use App\Models\Category;
-use App\Models\User;
 use App\Models\Import;
+use App\Models\User;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Arr;
 use Illuminate\Testing\TestResponse;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\Concerns\TestsPermissionsRequirement;
-use Tests\Support\Importing\CleansUpImportFiles;
 use Tests\Support\Importing\CategoriesImportFileBuilder as ImportFileBuilder;
+use Tests\Support\Importing\CleansUpImportFiles;
 
 class ImportCategoriesTest extends ImportDataTestCase implements TestsPermissionsRequirement
 {
@@ -20,7 +20,7 @@ class ImportCategoriesTest extends ImportDataTestCase implements TestsPermission
 
     protected function importFileResponse(array $parameters = []): TestResponse
     {
-        if (!array_key_exists('import-type', $parameters)) {
+        if (! array_key_exists('import-type', $parameters)) {
             $parameters['import-type'] = 'category';
         }
 
@@ -28,7 +28,7 @@ class ImportCategoriesTest extends ImportDataTestCase implements TestsPermission
     }
 
     #[Test]
-    public function testRequiresPermission()
+    public function test_requires_permission()
     {
         $this->actingAsForApi(User::factory()->create());
 
@@ -36,7 +36,7 @@ class ImportCategoriesTest extends ImportDataTestCase implements TestsPermission
     }
 
     #[Test]
-    public function importCategory(): void
+    public function import_category(): void
     {
         $importFileBuilder = ImportFileBuilder::new();
         $row = $importFileBuilder->firstRow();
@@ -46,9 +46,9 @@ class ImportCategoriesTest extends ImportDataTestCase implements TestsPermission
         $this->importFileResponse(['import' => $import->id, 'send-welcome' => 0])
             ->assertOk()
             ->assertExactJson([
-                'payload'  => null,
-                'status'   => 'success',
-                'messages' => ['redirect_url' => route('categories.index')]
+                'payload' => null,
+                'status' => 'success',
+                'messages' => ['redirect_url' => route('categories.index')],
             ]);
 
         $newCategory = Category::query()
@@ -60,7 +60,7 @@ class ImportCategoriesTest extends ImportDataTestCase implements TestsPermission
     }
 
     #[Test]
-    public function willIgnoreUnknownColumnsWhenFileContainsUnknownColumns(): void
+    public function will_ignore_unknown_columns_when_file_contains_unknown_columns(): void
     {
         $row = ImportFileBuilder::new()->definition();
         $row['unknownColumnInCsvFile'] = 'foo';
@@ -74,9 +74,8 @@ class ImportCategoriesTest extends ImportDataTestCase implements TestsPermission
         $this->importFileResponse(['import' => $import->id])->assertOk();
     }
 
-
     #[Test]
-    public function whenRequiredColumnsAreMissingInImportFile(): void
+    public function when_required_columns_are_missing_in_import_file(): void
     {
         $importFileBuilder = ImportFileBuilder::new(['name' => '']);
         $import = Import::factory()->categories()->create(['file_path' => $importFileBuilder->saveToImportsDirectory()]);
@@ -86,17 +85,16 @@ class ImportCategoriesTest extends ImportDataTestCase implements TestsPermission
         $this->importFileResponse(['import' => $import->id])
             ->assertInternalServerError()
             ->assertExactJson([
-                'status'   => 'import-errors',
-                'payload'  => null,
+                'status' => 'import-errors',
+                'payload' => null,
                 'messages' => [
                     '' => [
                         'Category ""' => [
-                            'name' =>
-                                ['The name field is required.'],
+                            'name' => ['The name field is required.'],
                         ],
-                    ]
+                    ],
 
-                ]
+                ],
             ]);
 
         $newCategory = Category::query()
@@ -106,9 +104,8 @@ class ImportCategoriesTest extends ImportDataTestCase implements TestsPermission
         $this->assertCount(0, $newCategory);
     }
 
-
     #[Test]
-    public function updateCategoryFromImport(): void
+    public function update_category_from_import(): void
     {
         $category = Category::factory()->create()->refresh();
         $importFileBuilder = ImportFileBuilder::new(['name' => $category->name, 'category_type' => 'asset', 'notes' => $category->notes, 'use_default_eula' => 0, 'require_acceptance' => 0, 'checkin_email' => 0]);
@@ -131,5 +128,4 @@ class ImportCategoriesTest extends ImportDataTestCase implements TestsPermission
             Arr::except($updatedCategory->attributesToArray(), array_merge($updatedAttributes, $category->getDates())),
         );
     }
-
 }

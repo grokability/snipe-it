@@ -1,5 +1,5 @@
 <?php
 
-return array(
-    'title'      				=> 'Όνομα στοιχείου',
-);
+return [
+    'title' => 'Όνομα στοιχείου',
+];

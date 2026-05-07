@@ -2,32 +2,31 @@
 
 namespace Tests\Feature\Departments\Ui;
 
-use App\Models\Component;
-use App\Models\Department;
 use App\Models\Company;
+use App\Models\Department;
 use App\Models\User;
 use Tests\TestCase;
 
 class CreateDepartmentsTest extends TestCase
 {
-    public function testPageRenders()
+    public function test_page_renders()
     {
         $this->actingAs(User::factory()->superuser()->create())
             ->get(route('departments.create'))
             ->assertOk();
     }
 
-    public function testPermissionRequiredToCreateDepartment()
+    public function test_permission_required_to_create_department()
     {
         $this->actingAs(User::factory()->create())
             ->post(route('departments.store'), [
                 'name' => 'Test Department',
-                'company_id' => Company::factory()->create()->id
+                'company_id' => Company::factory()->create()->id,
             ])
             ->assertForbidden();
     }
 
-    public function testUserCanCreateDepartments()
+    public function test_user_can_create_departments()
     {
         $this->assertFalse(Department::where('name', 'Test Department')->exists());
 
@@ -41,6 +40,4 @@ class CreateDepartmentsTest extends TestCase
 
         $this->assertTrue(Department::where('name', 'Test Department')->where('notes', 'Test Note')->exists());
     }
-
-
 }

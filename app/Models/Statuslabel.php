@@ -4,25 +4,34 @@ namespace App\Models;
 
 use App\Http\Traits\UniqueUndeletedTrait;
 use App\Models\Traits\Searchable;
+use App\Presenters\Presentable;
+use App\Presenters\StatusLabelPresenter;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Facades\Gate;
 use Watson\Validating\ValidatingTrait;
 
 class Statuslabel extends SnipeModel
 {
     use HasFactory;
+    use Presentable;
     use SoftDeletes;
-    use ValidatingTrait;
     use UniqueUndeletedTrait;
+    use ValidatingTrait;
 
     protected $injectUniqueIdentifier = true;
 
     protected $table = 'status_labels';
+
     protected $hidden = ['user_id', 'deleted_at'];
 
+    protected $presenter = StatusLabelPresenter::class;
+
     protected $rules = [
-        'name'  => 'required|max:255|string|unique_undeleted',
-        'notes'   => 'string|nullable',
+        'name' => 'required|max:255|string|unique_undeleted',
+        'notes' => 'string|nullable',
         'deployable' => 'required',
         'pending' => 'required',
         'archived' => 'required',
@@ -52,28 +61,39 @@ class Statuslabel extends SnipeModel
      */
     protected $searchableRelations = [];
 
+    public function isDeletable()
+    {
+        return Gate::allows('delete', $this)
+            && (($this->assets_count ?? $this->assets()->count()) === 0)
+            && ($this->deleted_at == '');
+    }
+
     /**
      * Establishes the status label -> assets relationship
      *
      * @author A. Gianotto <snipe@snipe.net>
+     *
      * @since  [v1.0]
-     * @return \Illuminate\Database\Eloquent\Relations\Relation
+     *
+     * @return Relation
      */
     public function assets()
     {
-        return $this->hasMany(\App\Models\Asset::class, 'status_id');
+        return $this->hasMany(Asset::class, 'status_id');
     }
 
     public function adminuser()
     {
-        return $this->belongsTo(\App\Models\User::class, 'created_by');
+        return $this->belongsTo(User::class, 'created_by')->withTrashed();
     }
 
     /**
      * Gets the status label type
      *
      * @author A. Gianotto <snipe@snipe.net>
+     *
      * @since  [v1.0]
+     *
      * @return string
      */
     public function getStatuslabelType()
@@ -92,7 +112,7 @@ class Statuslabel extends SnipeModel
     /**
      * Query builder scope to for pending status types
      *
-     * @return \Illuminate\Database\Query\Builder Modified query builder
+     * @return Builder Modified query builder
      */
     public function scopePending()
     {
@@ -104,7 +124,7 @@ class Statuslabel extends SnipeModel
     /**
      * Query builder scope for archived status types
      *
-     * @return \Illuminate\Database\Query\Builder Modified query builder
+     * @return Builder Modified query builder
      */
     public function scopeArchived()
     {
@@ -116,7 +136,7 @@ class Statuslabel extends SnipeModel
     /**
      * Query builder scope for deployable status types
      *
-     * @return \Illuminate\Database\Query\Builder Modified query builder
+     * @return Builder Modified query builder
      */
     public function scopeDeployable()
     {
@@ -128,7 +148,7 @@ class Statuslabel extends SnipeModel
     /**
      * Query builder scope for undeployable status types
      *
-     * @return \Illuminate\Database\Query\Builder Modified query builder
+     * @return Builder Modified query builder
      */
     public function scopeUndeployable()
     {
@@ -141,7 +161,9 @@ class Statuslabel extends SnipeModel
      * Helper function to determine type attributes
      *
      * @author A. Gianotto <snipe@snipe.net>
+     *
      * @since  [v1.0]
+     *
      * @return string
      */
     public static function getStatuslabelTypesForDB($type)

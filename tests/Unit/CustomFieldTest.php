@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Unit;
 
 use App\Models\CustomField;
@@ -10,34 +11,34 @@ use Tests\TestCase;
  */
 class CustomFieldTest extends TestCase
 {
-    public function testFormat()
+    public function test_format()
     {
         $customfield = CustomField::factory()->make(['format' => 'IP']);
-        $this->assertEquals($customfield->getAttributes()['format'], CustomField::PREDEFINED_FORMATS['IP']); //this seems undocumented...
+        $this->assertEquals($customfield->getAttributes()['format'], CustomField::PREDEFINED_FORMATS['IP']); // this seems undocumented...
         $this->assertEquals($customfield->format, 'IP');
     }
 
-    public function testDbNameAscii()
+    public function test_db_name_ascii()
     {
-        $customfield = new CustomField();
+        $customfield = new CustomField;
         $customfield->name = 'My hovercraft is full of eels';
         $customfield->id = 1337;
         $this->assertEquals($customfield->convertUnicodeDbSlug(), '_snipeit_my_hovercraft_is_full_of_eels_1337');
     }
 
     // Western Europe
-    public function testDbNameLatin()
+    public function test_db_name_latin()
     {
-        $customfield = new CustomField();
+        $customfield = new CustomField;
         $customfield->name = 'My hovercraft is full of eels';
         $customfield->id = 1337;
         $this->assertEquals($customfield->convertUnicodeDbSlug(), '_snipeit_my_hovercraft_is_full_of_eels_1337');
     }
 
     // Asian
-    public function testDbNameChinese()
+    public function test_db_name_chinese()
     {
-        $customfield = new CustomField();
+        $customfield = new CustomField;
         $customfield->name = '我的氣墊船裝滿了鱔魚';
         $customfield->id = 1337;
         if (function_exists('transliterator_transliterate')) {
@@ -47,9 +48,9 @@ class CustomFieldTest extends TestCase
         }
     }
 
-    public function testDbNameJapanese()
+    public function test_db_name_japanese()
     {
-        $customfield = new CustomField();
+        $customfield = new CustomField;
         $customfield->name = '私のホバークラフトは鰻でいっぱいです';
         $customfield->id = 1337;
         if (function_exists('transliterator_transliterate')) {
@@ -59,9 +60,9 @@ class CustomFieldTest extends TestCase
         }
     }
 
-    public function testDbNameKorean()
+    public function test_db_name_korean()
     {
-        $customfield = new CustomField();
+        $customfield = new CustomField;
         $customfield->name = '내 호버크라프트는 장어로 가득 차 있어요';
         $customfield->id = 1337;
         if (function_exists('transliterator_transliterate')) {
@@ -72,9 +73,9 @@ class CustomFieldTest extends TestCase
     }
 
     // Nordic languages
-    public function testDbNameNonLatinEuro()
+    public function test_db_name_non_latin_euro()
     {
-        $customfield = new CustomField();
+        $customfield = new CustomField;
         $customfield->name = 'Mój poduszkowiec jest pełen węgorzy';
         $customfield->id = 1337;
         if (function_exists('transliterator_transliterate')) {
@@ -85,9 +86,9 @@ class CustomFieldTest extends TestCase
     }
 
     //
-    public function testDbNameTurkish()
+    public function test_db_name_turkish()
     {
-        $customfield = new CustomField();
+        $customfield = new CustomField;
         $customfield->name = 'Hoverkraftım yılan balığı dolu';
         $customfield->id = 1337;
         if (function_exists('transliterator_transliterate')) {
@@ -97,9 +98,9 @@ class CustomFieldTest extends TestCase
         }
     }
 
-    public function testDbNameArabic()
+    public function test_db_name_arabic()
     {
-        $customfield = new CustomField();
+        $customfield = new CustomField;
         $customfield->name = 'حَوّامتي مُمْتِلئة بِأَنْقَلَيْسون';
         $customfield->id = 1337;
         if (function_exists('transliterator_transliterate')) {

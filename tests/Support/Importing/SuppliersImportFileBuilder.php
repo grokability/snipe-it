@@ -26,41 +26,41 @@ use Illuminate\Support\Str;
 class SuppliersImportFileBuilder extends FileBuilder
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function getDictionary(): array
     {
         return [
-            'name'           => 'name',
-            'email'          => 'email',
-            'contact'          => 'contact',
-            'phone'          => 'Phone',
-            'address'             => 'address',
-            'address2'             => 'address2',
-            'city'             => 'city',
-            'state'             => 'state',
-            'country'             => 'country',
-            'zip'             => 'zip',
-            'notes'             => 'notes',
-            'fax'             => 'fax',
-            'url'             => 'url',
+            'name' => 'name',
+            'email' => 'email',
+            'contact' => 'contact',
+            'phone' => 'Phone',
+            'address' => 'address',
+            'address2' => 'address2',
+            'city' => 'city',
+            'state' => 'state',
+            'country' => 'country',
+            'zip' => 'zip',
+            'notes' => 'notes',
+            'fax' => 'fax',
+            'url' => 'url',
         ];
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function definition(): array
     {
         $faker = fake();
 
         return [
-            'name'    => $faker->company,
-            'email'          => Str::random(32) . "@{$faker->freeEmailDomain}",
-            'contact'       => $faker->firstName,
-            'phone'    => $faker->phoneNumber,
-            'fax'    => $faker->phoneNumber,
-            'url'    => $faker->url(),
+            'name' => $faker->company,
+            'email' => Str::random(32)."@{$faker->freeEmailDomain}",
+            'contact' => $faker->firstName,
+            'phone' => $faker->phoneNumber,
+            'fax' => $faker->phoneNumber,
+            'url' => $faker->url(),
         ];
     }
 }

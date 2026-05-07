@@ -3,30 +3,30 @@
 return [
 
     'update' => [
-        'error'                 => '\'N Fout het voorgekom tydens opdatering.',
-        'success'               => 'Stellings suksesvol opgedateer.',
+        'error' => '\'N Fout het voorgekom tydens opdatering.',
+        'success' => 'Stellings suksesvol opgedateer.',
     ],
     'backup' => [
-        'delete_confirm'        => 'Is jy seker jy wil hierdie rugsteunlêer uitvee? Hierdie handeling kan nie ongedaan gemaak word nie.',
-        'file_deleted'          => 'Die rugsteunlêer is suksesvol verwyder.',
-        'generated'             => '\'N Nuwe rugsteunlêer is suksesvol geskep.',
-        'file_not_found'        => 'Daardie rugsteunlêer kon nie op die bediener gevind word nie.',
-        'restore_warning'       => 'Yes, restore it. I acknowledge that this will overwrite any existing data currently in the database. This will also log out all of your existing users (including you).',
-        'restore_confirm'       => 'Are you sure you wish to restore your database from :filename?'
+        'delete_confirm' => 'Is jy seker jy wil hierdie rugsteunlêer uitvee? Hierdie handeling kan nie ongedaan gemaak word nie.',
+        'file_deleted' => 'Die rugsteunlêer is suksesvol verwyder.',
+        'generated' => '\'N Nuwe rugsteunlêer is suksesvol geskep.',
+        'file_not_found' => 'Daardie rugsteunlêer kon nie op die bediener gevind word nie.',
+        'restore_warning' => 'Yes, restore it. I acknowledge that this will overwrite any existing data currently in the database. This will also log out all of your existing users (including you).',
+        'restore_confirm' => 'Are you sure you wish to restore your database from :filename?',
     ],
     'restore' => [
-        'success'               => 'Your system backup has been restored. Please log in again.'
+        'success' => 'Your system backup has been restored. Please log in again.',
     ],
     'purge' => [
-        'error'     => '\'N Fout het voorgekom tydens suiwering.',
-        'validation_failed'     => 'Jou skoonmaakbevestiging is verkeerd. Tik asseblief die woord "DELETE" in die bevestigingsboks.',
-        'success'               => 'Geskrapte rekords verwyder.',
+        'error' => '\'N Fout het voorgekom tydens suiwering.',
+        'validation_failed' => 'Jou skoonmaakbevestiging is verkeerd. Tik asseblief die woord "DELETE" in die bevestigingsboks.',
+        'success' => 'Geskrapte rekords verwyder.',
     ],
     'mail' => [
         'sending' => 'Sending Test Email...',
         'success' => 'Mail sent!',
         'error' => 'Mail could not be sent.',
-        'additional' => 'No additional error message provided. Check your mail settings and your app log.'
+        'additional' => 'No additional error message provided. Check your mail settings and your app log.',
     ],
     'ldap' => [
         'testing' => 'Testing LDAP Connection, Binding & Query ...',
@@ -34,11 +34,11 @@ return [
         'error' => 'Something went wrong :(',
         'sync_success' => 'A sample of 10 users returned from the LDAP server based on your settings:',
         'testing_authentication' => 'Testing LDAP Authentication...',
-        'authentication_success' => 'User authenticated against LDAP successfully!'
+        'authentication_success' => 'User authenticated against LDAP successfully!',
     ],
     'labels' => [
         'null_template' => 'Label template not found. Please select a template.',
-        ],
+    ],
     'webhook' => [
         'sending' => 'Sending :app test message...',
         'success' => 'Your :webhook_name Integration works!',
@@ -55,5 +55,22 @@ return [
     'location_scoping' => [
         'not_saved' => 'Your settings were not saved.',
         'mismatch' => 'There is 1 item in the database that need your attention before you can enable location scoping.|There are :count items in the database that need your attention before you can enable location scoping.',
+    ],
+    'oauth' => [
+        'token_revoked' => 'Personal access token revoked successfully.',
+        'token_unrevoked' => 'Personal access token reinstated successfully.',
+        'token_not_found' => 'That personal access token could not be found.',
+        'token_revoke_error' => 'An error occurred while revoking the token.',
+        'token_unrevoke_error' => 'An error occurred while reinstating the token.',
+        'client_created' => 'OAuth client created successfully.',
+        'client_updated' => 'OAuth client updated successfully.',
+        'client_deleted' => 'OAuth client deleted successfully.',
+        'client_revoked' => 'OAuth client revoked successfully.',
+        'client_unrevoked' => 'OAuth client reinstated successfully.',
+        'client_not_found' => 'That OAuth client could not be found.',
+        'token_deleted' => 'Token revoked successfully.',
+        'client_delete_denied' => 'You are not authorized to delete this client.',
+        'client_edit_denied' => 'You are not authorized to edit this client.',
+        'token_delete_denied' => 'You are not authorized to revoke this token.',
     ],
 ];

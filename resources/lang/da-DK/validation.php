@@ -71,7 +71,7 @@ return [
     ],
     'hex_color' => 'The :attribute field must be a valid hexadecimal color.',
     'image' => 'The :attribute field must be an image.',
-    'import_field_empty'    => 'Værdien for :fieldname kan ikke være null.',
+    'import_field_empty' => 'Værdien for :fieldname kan ikke være null.',
     'in' => 'Det valgte :attribute er ugyldigt.',
     'in_array' => 'The :attribute field must exist in :other.',
     'integer' => 'The :attribute field must be an integer.',
@@ -126,7 +126,7 @@ return [
         'symbols' => 'The :attribute field must contain at least one symbol.',
         'uncompromised' => 'The given :attribute has appeared in a data leak. Please choose a different :attribute.',
     ],
-    'percent'       => 'The depreciation minimum must be between 0 and 100 when depreciation type is percentage.',
+    'percent' => 'The depreciation minimum must be between 0 and 100 when depreciation type is percentage.',
 
     'present' => 'Attributfeltet skal være til stede.',
     'present_if' => 'The :attribute field must be present when :other is :value.',
@@ -156,16 +156,16 @@ return [
         'string' => 'The :attribute field must be :size characters.',
     ],
     'starts_with' => 'The :attribute field must start with one of the following: :values.',
-    'string'               => 'Attributten skal være en streng.',
+    'string' => 'Attributten skal være en streng.',
     'two_column_unique_undeleted' => 'Attributten skal være unik på tværs af :table1 og: table2. ',
-    'unique_undeleted'     => ':attribute skal være unik.',
-    'non_circular'         => ':attribute må ikke oprette en cirkulær reference.',
-    'not_array'            => ':attribute kan ikke være et array.',
+    'unique_undeleted' => ':attribute skal være unik.',
+    'non_circular' => ':attribute må ikke oprette en cirkulær reference.',
+    'not_array' => ':attribute kan ikke være et array.',
     'disallow_same_pwd_as_user_fields' => 'Adgangskoden må ikke være det samme som brugernavnet.',
-    'letters'              => 'Adgangskoden skal indeholde mindst ét bogstav.',
-    'numbers'              => 'Adgangskoden skal indeholde mindst ét tal.',
-    'case_diff'            => 'Adgangskoden skal bruge både store og små bogstaver.',
-    'symbols'              => 'Adgangskoden skal indeholde specialtegn.',
+    'letters' => 'Adgangskoden skal indeholde mindst ét bogstav.',
+    'numbers' => 'Adgangskoden skal indeholde mindst ét tal.',
+    'case_diff' => 'Adgangskoden skal bruge både store og små bogstaver.',
+    'symbols' => 'Adgangskoden skal indeholde specialtegn.',
     'timezone' => 'The :attribute field must be a valid timezone.',
     'unique' => ':attribute er allerede taget.',
     'uploaded' => 'Attributtet kunne ikke uploades.',
@@ -187,38 +187,38 @@ return [
     |
     */
 
-    'email_array'      => 'En eller flere email-adresser er ugyldige.',
-    'checkboxes'           => ':attribute indeholder ugyldige indstillinger.',
-    'radio_buttons'        => ':attribute er ugyldig.',
-    
+    'email_array' => 'En eller flere email-adresser er ugyldige.',
+    'checkboxes' => ':attribute indeholder ugyldige indstillinger.',
+    'radio_buttons' => ':attribute er ugyldig.',
+
     'custom' => [
         'alpha_space' => 'Attributfeltet indeholder et tegn, der ikke er tilladt.',
 
-        'hashed_pass'      => 'Din nuværende adgangskode er forkert',
-        'dumbpwd'          => 'Denne adgangskode er for almindelig.',
+        'hashed_pass' => 'Din nuværende adgangskode er forkert',
+        'dumbpwd' => 'Denne adgangskode er for almindelig.',
         'statuslabel_type' => 'Du skal vælge en gyldig statusetiketype',
-        'custom_field_not_found'          => 'This field does not seem to exist, please double check your custom field names.',
+        'custom_field_not_found' => 'This field does not seem to exist, please double check your custom field names.',
         'custom_field_not_found_on_model' => 'This field seems to exist, but is not available on this Asset Model\'s fieldset.',
 
         // date_format validation with slightly less stupid messages. It duplicates a lot, but it gets the job done :(
         // We use this because the default error message for date_format reflects php Y-m-d, which non-PHP
         // people won't know how to format.
-        'purchase_date.date_format'     => ':attribute skal være en gyldig dato i YYYY-MM-DD format',
-        'last_audit_date.date_format'   =>  ':attribute skal være en gyldig dato i YYYY-MM-DD hh:mm:ss format',
-        'expiration_date.date_format'   =>  ':attribute skal være en gyldig dato i YYYY-MM-DD format',
-        'termination_date.date_format'  =>  ':attribute skal være en gyldig dato i YYYY-MM-DD format',
-        'expected_checkin.date_format'  =>  ':attribute skal være en gyldig dato i YYYY-MM-DD format',
-        'start_date.date_format'        =>  ':attribute skal være en gyldig dato i YYYY-MM-DD format',
-        'end_date.date_format'          =>  ':attribute skal være en gyldig dato i YYYY-MM-DD format',
+        'purchase_date.date_format' => ':attribute skal være en gyldig dato i YYYY-MM-DD format',
+        'last_audit_date.date_format' => ':attribute skal være en gyldig dato i YYYY-MM-DD hh:mm:ss format',
+        'expiration_date.date_format' => ':attribute skal være en gyldig dato i YYYY-MM-DD format',
+        'termination_date.date_format' => ':attribute skal være en gyldig dato i YYYY-MM-DD format',
+        'expected_checkin.date_format' => ':attribute skal være en gyldig dato i YYYY-MM-DD format',
+        'start_date.date_format' => ':attribute skal være en gyldig dato i YYYY-MM-DD format',
+        'end_date.date_format' => ':attribute skal være en gyldig dato i YYYY-MM-DD format',
         'invalid_value_in_field' => 'Ugyldig værdi inkluderet i dette felt',
 
         'ldap_username_field' => [
-            'not_in' =>         '<code>sAMAccountName</code> (mixed case) will likely not work. You should use <code>samaccountname</code> (lowercase) instead.'
+            'not_in' => '<code>sAMAccountName</code> (mixed case) will likely not work. You should use <code>samaccountname</code> (lowercase) instead.',
         ],
         'ldap_auth_filter_query' => ['not_in' => '<code>uid=samaccountname</code> is probably not a valid auth filter. You probably want <code>uid=</code> '],
         'ldap_filter' => ['regex' => 'This value should probably not be wrapped in parentheses.'],
 
-        ],
+    ],
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Attributes
@@ -230,7 +230,10 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'serials.*' => 'Serienummer',
+        'asset_tags.*' => 'Aktiv mærkat',
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -244,6 +247,5 @@ return [
         'required' => 'This field is required',
         'email' => 'Please enter a valid email address',
     ],
-
 
 ];

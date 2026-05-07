@@ -8,7 +8,7 @@ use Tests\TestCase;
 
 class IconComponentTest extends TestCase
 {
-    public function testIconComponentDoesNotEndInNewline()
+    public function test_icon_component_does_not_end_in_newline()
     {
         $renderedTemplateString = View::make('blade.icon', ['type' => 'checkout'])->render();
 

@@ -9,6 +9,7 @@ class CompanyPresenter extends Presenter
 {
     /**
      * Json Column Layout for bootstrap table
+     *
      * @return string
      */
     public static function dataTableLayout()
@@ -36,7 +37,7 @@ class CompanyPresenter extends Presenter
                 'switchable' => true,
                 'title' => trans('admin/users/table.phone'),
                 'visible' => false,
-                'formatter'    => 'phoneFormatter',
+                'formatter' => 'phoneFormatter',
             ], [
                 'field' => 'fax',
                 'searchable' => true,
@@ -44,7 +45,7 @@ class CompanyPresenter extends Presenter
                 'switchable' => true,
                 'title' => trans('admin/suppliers/table.fax'),
                 'visible' => false,
-                'formatter'    => 'phoneFormatter',
+                'formatter' => 'phoneFormatter',
             ], [
                 'field' => 'email',
                 'searchable' => true,
@@ -52,7 +53,7 @@ class CompanyPresenter extends Presenter
                 'switchable' => true,
                 'title' => trans('admin/suppliers/table.email'),
                 'visible' => true,
-				'formatter' => 'emailFormatter',
+                'formatter' => 'emailFormatter',
             ], [
                 'field' => 'image',
                 'searchable' => false,
@@ -152,6 +153,7 @@ class CompanyPresenter extends Presenter
                 'visible' => true,
                 'formatter' => 'companiesActionsFormatter',
                 'printIgnore' => true,
+                'class' => 'hidden-print',
             ],
         ];
 
@@ -160,12 +162,13 @@ class CompanyPresenter extends Presenter
 
     /**
      * Link to this companies name
+     *
      * @return string
      */
     public function nameUrl()
     {
         if (auth()->user()->can('view', ['\App\Models\Company', $this])) {
-            return (string)link_to_route('companies.show', e($this->display_name), $this->id);
+            return '<a href="'.route('companies.show', $this->id).'">'.e($this->display_name).'</a>';
         } else {
             return e($this->display_name);
         }
@@ -173,6 +176,7 @@ class CompanyPresenter extends Presenter
 
     /**
      * Url to view this item.
+     *
      * @return string
      */
     public function viewUrl()
@@ -180,7 +184,8 @@ class CompanyPresenter extends Presenter
         return route('companies.show', $this->id);
     }
 
-    public function formattedNameLink() {
+    public function formattedNameLink()
+    {
 
         if (auth()->user()->can('view', ['\App\Models\Company', $this])) {
             return ($this->tag_color ? "<i class='fa-solid fa-fw fa-square' style='color: ".e($this->tag_color)."' aria-hidden='true'></i>" : '').'<a href="'.route('companies.show', e($this->id)).'">'.e($this->display_name).'</a>';

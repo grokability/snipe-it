@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
 
     /*
     |--------------------------------------------------------------------------
@@ -17,4 +17,4 @@ return array(
     'password' => 'Naudotojo slaptažodis neteisingas.',
     'throttle' => 'Per daug nesėkmingų bandymų prisijungti. Bandykite dar kartą po :minutes minutės (-čių).',
 
-);
+];

@@ -6,15 +6,13 @@ use App\Events\CheckoutableCheckedIn;
 use App\Mail\CheckinAccessoryMail;
 use App\Models\Accessory;
 use App\Models\User;
-use App\Notifications\CheckinAccessoryNotification;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
 class AccessoryCheckinTest extends TestCase
 {
-    public function testCheckingInAccessoryRequiresCorrectPermission()
+    public function test_checking_in_accessory_requires_correct_permission()
     {
         $accessory = Accessory::factory()->checkedOutToUser()->create();
 
@@ -23,7 +21,7 @@ class AccessoryCheckinTest extends TestCase
             ->assertForbidden();
     }
 
-    public function testPageRenders()
+    public function test_page_renders()
     {
         $accessory = Accessory::factory()->checkedOutToUser()->create();
 
@@ -32,7 +30,7 @@ class AccessoryCheckinTest extends TestCase
             ->assertOk();
     }
 
-    public function testAccessoryCanBeCheckedIn()
+    public function test_accessory_can_be_checked_in()
     {
         Event::fake([CheckoutableCheckedIn::class]);
 
@@ -49,7 +47,7 @@ class AccessoryCheckinTest extends TestCase
         Event::assertDispatched(CheckoutableCheckedIn::class, 1);
     }
 
-    public function testEmailSentToUserIfSettingEnabled()
+    public function test_email_sent_to_user_if_setting_enabled()
     {
         Mail::fake();
 
@@ -64,13 +62,13 @@ class AccessoryCheckinTest extends TestCase
             User::factory()->checkinAccessories()->create(),
             '',
         ));
-        Mail::assertSent(CheckinAccessoryMail::class, function (CheckinAccessoryMail $mail) use ( $accessory, $user) {
+        Mail::assertSent(CheckinAccessoryMail::class, function (CheckinAccessoryMail $mail) use ($user) {
             return $mail->hasTo($user->email);
 
         });
     }
 
-    public function testEmailNotSentToUserIfSettingDisabled()
+    public function test_email_not_sent_to_user_if_setting_disabled()
     {
         Mail::fake();
 
@@ -78,9 +76,9 @@ class AccessoryCheckinTest extends TestCase
         $accessory = Accessory::factory()->checkedOutToUser($user)->create();
 
         $accessory->category->update([
-             'checkin_email' => false,
-             'require_acceptance' => false,
-             'eula_text' => null
+            'checkin_email' => false,
+            'require_acceptance' => false,
+            'eula_text' => null,
         ]);
 
         event(new CheckoutableCheckedIn(

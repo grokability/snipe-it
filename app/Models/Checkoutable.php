@@ -18,7 +18,7 @@ class Checkoutable
         public readonly string $plain_text_model,
         public readonly string $plain_text_name,
         public readonly string $plain_text_company,
-    ){}
+    ) {}
 
     public static function fromAcceptance(CheckoutAcceptance $unaccepted): self
     {
@@ -30,33 +30,32 @@ class Checkoutable
         $category = $model = $name = $tag = '';
         $type = $acceptance->checkoutable_item_type ?? '';
 
-
-        if($unaccepted_row instanceof Asset){
+        if ($unaccepted_row instanceof Asset) {
             $category = optional($unaccepted_row->model?->category?->present())->nameUrl() ?? '';
             $model = optional($unaccepted_row->present())->modelUrl() ?? '';
             $name = optional($unaccepted_row->present())->nameUrl() ?? '';
             $tag = (string) ($unaccepted_row->asset_tag ?? '');
-         }
-        if($unaccepted_row instanceof Accessory){
+        }
+        if ($unaccepted_row instanceof Accessory) {
             $category = optional($unaccepted_row->category?->present())->nameUrl() ?? '';
             $model = $unaccepted_row->model_number ?? '';
             $name = optional($unaccepted_row->present())->nameUrl() ?? '';
         }
-        if($unaccepted_row instanceof LicenseSeat){
+        if ($unaccepted_row instanceof LicenseSeat) {
             $category = optional($unaccepted_row->license?->category?->present())->nameUrl() ?? '';
             $company = optional($unaccepted_row->license?->company?->present())?->nameUrl() ?? '';
             $model = '';
-            $name = $unaccepted_row->license->present()->nameUrl() ?? '';
+            $name = $unaccepted_row->license?->present()->nameUrl() ?? '';
         }
-        if($unaccepted_row instanceof Consumable){
+        if ($unaccepted_row instanceof Consumable) {
             $category = optional($unaccepted_row->category?->present())->nameUrl() ?? '';
             $model = $unaccepted_row->model_number ?? '';
             $name = $unaccepted_row?->present()?->nameUrl() ?? '';
         }
-        if($unaccepted_row instanceof Component){
+        if ($unaccepted_row instanceof Component) {
             $category = optional($unaccepted_row->category?->present())->nameUrl() ?? '';
             $model = $unaccepted_row->model_number ?? '';
-            $name = $unaccepted_row?->present()?->nameUrl()  ?? '';
+            $name = $unaccepted_row?->present()?->nameUrl() ?? '';
         }
 
         return new self(
@@ -69,7 +68,7 @@ class Checkoutable
             type: $type,
             acceptance: $acceptance,
             assignee: $assignee,
-            //plain text for CSVs
+            // plain text for CSVs
             plain_text_category: $unaccepted_row?->model?->category?->name ?? $unaccepted_row?->license?->category?->name ?? $unaccepted_row?->category?->name ?? '',
             plain_text_model: $unaccepted_row?->model?->name ?? $unaccepted_row?->model_number ?? '',
             plain_text_name: $unaccepted_row?->name ?? $unaccepted_row?->license?->name ?? '',

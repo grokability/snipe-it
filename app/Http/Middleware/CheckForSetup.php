@@ -7,10 +7,9 @@ use Closure;
 
 class CheckForSetup
 {
-
     protected $except = [
         '_debugbar*',
-        'health'
+        'health',
     ];
 
     public function handle($request, Closure $next, $guard = null)
@@ -19,7 +18,7 @@ class CheckForSetup
         /**
          * Skip this middleware for the debugbar and health check
          */
-        if ($request->is($this->except))  {
+        if ($request->is($this->except)) {
             return $next($request);
         }
 

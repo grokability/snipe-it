@@ -28,11 +28,12 @@ class CategoryImporter extends ItemImporter
 
     /**
      * Create a category if a duplicate does not exist.
+     *
      * @todo Investigate how this should interact with Importer::createCategoryIfNotExists
      *
      * @author A. Gianotto
+     *
      * @since 6.1.0
-     * @param array $row
      */
     public function createCategoryIfNotExists(array $row)
     {
@@ -41,16 +42,16 @@ class CategoryImporter extends ItemImporter
 
         $category = Category::where('name', '=', $this->findCsvMatch($row, 'name'))->first();
 
-        if ($this->findCsvMatch($row, 'id')!='') {
+        if ($this->findCsvMatch($row, 'id') != '') {
             // Override category if an ID was given
             \Log::debug('Finding category by ID: '.$this->findCsvMatch($row, 'id'));
             $category = Category::find($this->findCsvMatch($row, 'id'));
         }
 
-
         if ($category) {
             if (! $this->updating) {
                 $this->log('A matching Category '.$this->item['name'].' already exists');
+
                 return;
             }
 
@@ -70,11 +71,10 @@ class CategoryImporter extends ItemImporter
         $this->item['use_default_eula'] = trim(($this->fetchHumanBoolean($this->findCsvMatch($row, 'use_default_eula'))) == 1) ? 1 : 0;
         $this->item['require_acceptance'] = trim(($this->fetchHumanBoolean($this->findCsvMatch($row, 'require_acceptance'))) == 1) ? 1 : 0;
         $this->item['checkin_email'] = trim(($this->fetchHumanBoolean($this->findCsvMatch($row, 'checkin_email'))) == 1) ? 1 : 0;
-
+        $this->item['tag_color'] = trim($this->findCsvMatch($row, 'tag_color'));
 
         Log::debug('Item array is: ');
         Log::debug(print_r($this->item, true));
-
 
         if ($editingCategory) {
             Log::debug('Updating existing category');
@@ -86,14 +86,15 @@ class CategoryImporter extends ItemImporter
 
         if ($category->save()) {
             $this->log('Category '.$category->name.' created or updated from CSV import');
+
             return $category;
 
         } else {
             Log::debug($category->getErrors());
             $this->logError($category, 'Category "'.$this->item['name'].'"');
+
             return $category->errors;
         }
-
 
     }
 }

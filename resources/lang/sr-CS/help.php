@@ -23,13 +23,13 @@ return [
 
     'accessories' => 'Dodatna oprema je sve ono čime zadužujete korisnike ali koja ne poseduje serijske brojeve (ili vas ne zanima da ih jedinstveno pratite). Primer su računarski miševi ili tastature.',
 
-    'companies'     => 'Kompanije se mogu koristiti kao jednostavno informativno polje, ili se mogu koristiti za ograničavanje vidljivosti imovine, korisnika i sl. ako je omogućena puna kompanijska podrška u administratorskim podešavanjima.',
+    'companies' => 'Kompanije se mogu koristiti kao jednostavno informativno polje, ili se mogu koristiti za ograničavanje vidljivosti imovine, korisnika i sl. ako je omogućena puna kompanijska podrška u administratorskim podešavanjima.',
 
-    'components'    => 'Komponente su stavke koje su deo imovine, kao na primer hard diskovi, memorija itd.',
+    'components' => 'Komponente su stavke koje su deo imovine, kao na primer hard diskovi, memorija itd.',
 
-    'consumables'   => 'Potrošni materijal je sve što će se vremenom istrošiti. Na primer, toner za štampač ili papir za štampanje.',
+    'consumables' => 'Potrošni materijal je sve što će se vremenom istrošiti. Na primer, toner za štampač ili papir za štampanje.',
 
     'depreciations' => 'Možete postaviti amortizaciju imovine na osnovu linearne amortizacije.',
-    
-    'empty_file'    => 'Uvoznik je utvrdio da je ova datoteka prazna.'
+
+    'empty_file' => 'Uvoznik je utvrdio da je ova datoteka prazna.',
 ];

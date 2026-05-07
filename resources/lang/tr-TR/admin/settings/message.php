@@ -3,30 +3,30 @@
 return [
 
     'update' => [
-        'error'                 => 'Güncelleme yapılırken bir hata oluştu. ',
-        'success'               => 'Ayarlar güncellendi.',
+        'error' => 'Güncelleme yapılırken bir hata oluştu. ',
+        'success' => 'Ayarlar güncellendi.',
     ],
     'backup' => [
-        'delete_confirm'        => 'Bu yedek dosyayı silmek istediğinizden emin misiniz? Bu eylem geri alınamaz. ',
-        'file_deleted'          => 'Yedek dosyası başarıyla silindi.',
-        'generated'             => 'Yeni bir yedekleme dosyası başarıyla oluşturuldu.',
-        'file_not_found'        => 'Bu yedek dosyası sunucuda bulunamadı.',
-        'restore_warning'       => 'Evet, geri yükleyin. Bunun, şu anda veritabanında bulunan mevcut verilerin üzerine yazılacağını kabul ediyorum. Bu aynı zamanda (siz dahil) tüm mevcut kullanıcılarınızın oturumunu kapatacaktır.',
-        'restore_confirm'       => 'Veritabanınızı :filename\'den geri yüklemek istediğinizden emin misiniz?'
+        'delete_confirm' => 'Bu yedek dosyayı silmek istediğinizden emin misiniz? Bu eylem geri alınamaz. ',
+        'file_deleted' => 'Yedek dosyası başarıyla silindi.',
+        'generated' => 'Yeni bir yedekleme dosyası başarıyla oluşturuldu.',
+        'file_not_found' => 'Bu yedek dosyası sunucuda bulunamadı.',
+        'restore_warning' => 'Evet, geri yükleyin. Bunun, şu anda veritabanında bulunan mevcut verilerin üzerine yazılacağını kabul ediyorum. Bu aynı zamanda (siz dahil) tüm mevcut kullanıcılarınızın oturumunu kapatacaktır.',
+        'restore_confirm' => 'Veritabanınızı :filename\'den geri yüklemek istediğinizden emin misiniz?',
     ],
     'restore' => [
-        'success'               => 'Sistem yedeğiniz geri yüklendi. Lütfen tekrar giriş yapın.'
+        'success' => 'Sistem yedeğiniz geri yüklendi. Lütfen tekrar giriş yapın.',
     ],
     'purge' => [
-        'error'     => 'Temizleme sırasında bir hata oluştu. ',
-        'validation_failed'     => 'Temizle onay kodu yanlıştır. Lütfen onay kutusuna "DELETE" yazın.',
-        'success'               => 'Silinen kayıtları başarıyla temizlendi.',
+        'error' => 'Temizleme sırasında bir hata oluştu. ',
+        'validation_failed' => 'Temizle onay kodu yanlıştır. Lütfen onay kutusuna "DELETE" yazın.',
+        'success' => 'Silinen kayıtları başarıyla temizlendi.',
     ],
     'mail' => [
         'sending' => 'Test maili gönderiliyor...',
         'success' => 'Mail gönder!',
         'error' => 'Mail gönderilemedi.',
-        'additional' => 'Ek hata mesajı sağlanmadı. Posta ayarlarınızı ve uygulama günlüğünüzü kontrol edin.'
+        'additional' => 'Ek hata mesajı sağlanmadı. Posta ayarlarınızı ve uygulama günlüğünüzü kontrol edin.',
     ],
     'ldap' => [
         'testing' => 'LDAP bağlantısı deneniyor, bağlanılıyor ve sorgulanıyor ...',
@@ -34,11 +34,11 @@ return [
         'error' => 'Bir şeyler yanlış gitti :(',
         'sync_success' => 'Ayarlarınıza göre LDAP sunucusundan döndürülen 10 kullanıcıdan oluşan bir örnek:',
         'testing_authentication' => 'LDAP kimlik doğrulaması deneniyor...',
-        'authentication_success' => 'LDAP kullanıcı kimliği başarıyla doğrulandı!'
+        'authentication_success' => 'LDAP kullanıcı kimliği başarıyla doğrulandı!',
     ],
     'labels' => [
         'null_template' => 'Etiket şablonu bulunamadı. Lütfen bir şablon seçin.',
-        ],
+    ],
     'webhook' => [
         'sending' => ':app test mesajı gönderiliyor...',
         'success' => ':webhook_name entegrasyonunuz çalışıyor!',
@@ -55,5 +55,22 @@ return [
     'location_scoping' => [
         'not_saved' => 'Ayarlarınız kaydedilemedi.',
         'mismatch' => 'Konum kapsamını etkinleştirmeden önce veritabanında dikkat etmeniz gereken 1 öğe var.|Konum kapsamını etkinleştirmeden önce veritabanında dikkat etmeniz gereken :count öğe var.',
+    ],
+    'oauth' => [
+        'token_revoked' => 'Kişisel erişim anahtarı başarıyla iptal edildi',
+        'token_unrevoked' => 'Kişisel erişim anahtarı başarıyla yeniden etkinleştirildi',
+        'token_not_found' => 'Bu kişisel erişim anahtarı bulunamadı',
+        'token_revoke_error' => 'Token iptal edilirken bir hata oluştu',
+        'token_unrevoke_error' => 'Token yeniden etkinleştirilirken bir hata oluştu',
+        'client_created' => 'OAuth istemcisi başarıyla oluşturuldu',
+        'client_updated' => 'OAuth istemcisi başarıyla güncellendi',
+        'client_deleted' => 'OAuth istemcisi başarıyla silindi',
+        'client_revoked' => 'OAuth istemcisi başarıyla iptal edildi',
+        'client_unrevoked' => 'OAuth istemcisi başarıyla yeniden etkinleştirildi',
+        'client_not_found' => 'Bu OAuth istemcisi bulunamadı',
+        'token_deleted' => 'Token başarıyla iptal edildi',
+        'client_delete_denied' => 'Bu istemciyi silme yetkiniz yok.',
+        'client_edit_denied' => 'Bu istemciyi düzenleme yetkiniz yok.',
+        'token_delete_denied' => 'Bu tokenı iptal etme yetkiniz yok.',
     ],
 ];

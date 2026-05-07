@@ -31,7 +31,7 @@ return [
         'numeric' => 'Pole :attribute musi być pomiędzy :min a :max.',
         'string' => 'Pole :attribute musi zawierać się między :min a :max znaków.',
     ],
-    'valid_regex' => 'The regular expression is invalid.',
+    'valid_regex' => 'Wyrażenie regularne jest niepoprawne.',
     'boolean' => 'Pole atrybutu: musi być prawdziwe lub fałszywe.',
     'can' => 'Pole :attribute zawiera nieautoryzowaną wartość.',
     'confirmed' => 'Potwierdzenie pola :attribute nie pasuje.',
@@ -71,7 +71,7 @@ return [
     ],
     'hex_color' => 'Pole :attribute musi być prawidłowym kolorem szesnastkowym.',
     'image' => 'Pole :attribute musi być obrazem.',
-    'import_field_empty'    => 'Wartość dla :fieldname nie może być pusta.',
+    'import_field_empty' => 'Wartość dla :fieldname nie może być pusta.',
     'in' => 'Wybrane :attribute jest niewłaściwe.',
     'in_array' => 'Pole :attribute musi istnieć w :other.',
     'integer' => 'Pole :attribute musi być liczbą całkowitą.',
@@ -126,7 +126,7 @@ return [
         'symbols' => 'Pole :attribute musi zawierać co najmniej jeden symbol.',
         'uncompromised' => 'Podany :attribute pojawił się w wycieku danych. Proszę wybrać inny :attribute.',
     ],
-    'percent'       => 'Minimalna amortyzacja musi wynosić od 0 do 100 w przypadku gdy wartość procentowa amortyzacji jest wyrażona w procentach.',
+    'percent' => 'Minimalna amortyzacja musi wynosić od 0 do 100 w przypadku gdy wartość procentowa amortyzacji jest wyrażona w procentach.',
 
     'present' => ':attribute nie może być puste.',
     'present_if' => 'Pole :attribute musi być obecne, gdy :other jest :value.',
@@ -156,16 +156,16 @@ return [
         'string' => 'Pole :attribute musi mieć :size znaków.',
     ],
     'starts_with' => 'Pole :attribute musi zaczynać się od jednego z następujących: :values.',
-    'string'               => 'Atrybut: atrybut musi być ciągiem.',
+    'string' => 'Atrybut: atrybut musi być ciągiem.',
     'two_column_unique_undeleted' => ':attribute musi być unikalny pomiędzy :table1 i :table2. ',
-    'unique_undeleted'     => 'Wartość :attribute musi być unikalna.',
-    'non_circular'         => ':attribute nie może tworzyć odwołań cyklicznych.',
-    'not_array'            => ':attribute nie może być tablicą.',
+    'unique_undeleted' => 'Wartość :attribute musi być unikalna.',
+    'non_circular' => ':attribute nie może tworzyć odwołań cyklicznych.',
+    'not_array' => ':attribute nie może być tablicą.',
     'disallow_same_pwd_as_user_fields' => 'Hasło nie może być takie samo jak nazwa użytkownika.',
-    'letters'              => 'Hasło musi zawierać co najmniej jedną literę.',
-    'numbers'              => 'Hasło musi zawierać co najmniej jedną cyfrę.',
-    'case_diff'            => 'Hasło musi zawierać małe i wielkie litery.',
-    'symbols'              => 'Hasło musi zawierać znaki specjalne.',
+    'letters' => 'Hasło musi zawierać co najmniej jedną literę.',
+    'numbers' => 'Hasło musi zawierać co najmniej jedną cyfrę.',
+    'case_diff' => 'Hasło musi zawierać małe i wielkie litery.',
+    'symbols' => 'Hasło musi zawierać znaki specjalne.',
     'timezone' => 'Pole :attribute musi być poprawną strefą czasową.',
     'unique' => ':attribute został już wzięty.',
     'uploaded' => 'Nie udało się przesłać atrybutu:.',
@@ -174,7 +174,7 @@ return [
     'ulid' => 'Pole :attribute musi być poprawnym ULID.',
     'uuid' => 'Pole :attribute musi być prawidłowym UUID.',
     'fmcs_location' => 'Pełna obsługa wielu firm i zakres lokalizacji są włączone w Ustawieniach Administratora, a wybrane lokalizacja i firma nie są zgodne.',
-    'is_unique_across_company_and_location' => 'The :attribute must be unique within the selected company and location.',
+    'is_unique_across_company_and_location' => ':attribute musi być unikalny w wybranej firmie i lokalizacji.',
 
     /*
     |--------------------------------------------------------------------------
@@ -187,38 +187,38 @@ return [
     |
     */
 
-    'email_array'      => 'Jeden lub więcej wprowadzonych adresów jest nieprawidłowy.',
-    'checkboxes'           => ':attribute zawiera nieprawidłowe opcje.',
-    'radio_buttons'        => ':attribute jest nieprawidłowy.',
-    
+    'email_array' => 'Jeden lub więcej wprowadzonych adresów jest nieprawidłowy.',
+    'checkboxes' => ':attribute zawiera nieprawidłowe opcje.',
+    'radio_buttons' => ':attribute jest nieprawidłowy.',
+
     'custom' => [
         'alpha_space' => 'Pole: attribute zawiera znak, który nie jest dozwolony.',
 
-        'hashed_pass'      => 'Twoje bieżące hasło jest niepoprawne',
-        'dumbpwd'          => 'To hasło jest zbyt powszechne.',
+        'hashed_pass' => 'Twoje bieżące hasło jest niepoprawne',
+        'dumbpwd' => 'To hasło jest zbyt powszechne.',
         'statuslabel_type' => 'Musisz wybrać odpowiedni typ etykiety statusu',
-        'custom_field_not_found'          => 'To pole nie istnieje, sprawdź dokładnie nazwy pól niestandardowych.',
+        'custom_field_not_found' => 'To pole nie istnieje, sprawdź dokładnie nazwy pól niestandardowych.',
         'custom_field_not_found_on_model' => 'To pole wydaje się istnieć, ale nie jest dostępne w tym zestawie pól Modelu Zasobów.',
 
         // date_format validation with slightly less stupid messages. It duplicates a lot, but it gets the job done :(
         // We use this because the default error message for date_format reflects php Y-m-d, which non-PHP
         // people won't know how to format.
-        'purchase_date.date_format'     => ':attribute musi być prawidłową datą w formacie YYYY-MM-DD',
-        'last_audit_date.date_format'   =>  ':attribute musi być prawidłową datą w formacie YYYY-MM-DD hh:mm:ss',
-        'expiration_date.date_format'   =>  ':attribute musi być prawidłową datą w formacie YYYY-MM-DD',
-        'termination_date.date_format'  =>  ':attribute musi być prawidłową datą w formacie YYYY-MM-DD',
-        'expected_checkin.date_format'  =>  ':attribute musi być prawidłową datą w formacie YYYY-MM-DD',
-        'start_date.date_format'        =>  ':attribute musi być prawidłową datą w formacie YYYY-MM-DD',
-        'end_date.date_format'          =>  ':attribute musi być prawidłową datą w formacie YYYY-MM-DD',
+        'purchase_date.date_format' => ':attribute musi być prawidłową datą w formacie YYYY-MM-DD',
+        'last_audit_date.date_format' => ':attribute musi być prawidłową datą w formacie YYYY-MM-DD hh:mm:ss',
+        'expiration_date.date_format' => ':attribute musi być prawidłową datą w formacie YYYY-MM-DD',
+        'termination_date.date_format' => ':attribute musi być prawidłową datą w formacie YYYY-MM-DD',
+        'expected_checkin.date_format' => ':attribute musi być prawidłową datą w formacie YYYY-MM-DD',
+        'start_date.date_format' => ':attribute musi być prawidłową datą w formacie YYYY-MM-DD',
+        'end_date.date_format' => ':attribute musi być prawidłową datą w formacie YYYY-MM-DD',
         'invalid_value_in_field' => 'Nieprawidłowa wartość dołączona do tego pola',
 
         'ldap_username_field' => [
-            'not_in' =>         '<code>sAMAccountName</code> (przypadek mieszany) prawdopodobnie nie zadziała. Zamiast tego powinieneś użyć <code>samaccountname</code> (małe przypadki).'
+            'not_in' => '<code>sAMAccountName</code> (przypadek mieszany) prawdopodobnie nie zadziała. Zamiast tego powinieneś użyć <code>samaccountname</code> (małe przypadki).',
         ],
         'ldap_auth_filter_query' => ['not_in' => '<code>uid=samaccountname</code> prawdopodobnie nie jest prawidłowym filtrem uwierzytelniającym. Prawdopodobnie chcesz <code>uid=</code> '],
         'ldap_filter' => ['regex' => 'Ta wartość prawdopodobnie nie powinna być zawijana w nawiasy.'],
 
-        ],
+    ],
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Attributes
@@ -230,7 +230,10 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'serials.*' => 'Numer seryjny',
+        'asset_tags.*' => 'Numer środka',
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -244,6 +247,5 @@ return [
         'required' => 'To pole jest wymagane',
         'email' => 'Podaj poprawny adres e-mail',
     ],
-
 
 ];

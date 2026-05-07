@@ -1,5 +1,5 @@
 <?php
 
-return array(
-    'title'      				=> 'Name des Verbrauchsmaterials',
-);
+return [
+    'title' => 'Name des Verbrauchsmaterials',
+];

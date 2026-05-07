@@ -8,14 +8,14 @@ use Tests\TestCase;
 
 class CreateCompaniesTest extends TestCase implements TestsPermissionsRequirement
 {
-    public function testRequiresPermission()
+    public function test_requires_permission()
     {
         $this->actingAsForApi(User::factory()->create())
             ->postJson(route('api.companies.store'))
             ->assertForbidden();
     }
 
-    public function testValidationForCreatingCompany()
+    public function test_validation_for_creating_company()
     {
         $this->actingAsForApi(User::factory()->createCompanies()->create())
             ->postJson(route('api.companies.store'))
@@ -28,7 +28,7 @@ class CreateCompaniesTest extends TestCase implements TestsPermissionsRequiremen
             ]);
     }
 
-    public function testCanCreateCompany()
+    public function test_can_create_company()
     {
         $this->actingAsForApi(User::factory()->createCompanies()->create())
             ->postJson(route('api.companies.store'), [

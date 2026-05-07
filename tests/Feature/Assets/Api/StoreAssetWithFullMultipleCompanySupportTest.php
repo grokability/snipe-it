@@ -17,7 +17,7 @@ class StoreAssetWithFullMultipleCompanySupportTest extends TestCase
      * @link https://github.com/grokability/snipe-it/issues/15654
      */
     #[DataProvider('dataForFullMultipleCompanySupportTesting')]
-    public function testAdheresToFullMultipleCompaniesSupportScoping($data)
+    public function test_adheres_to_full_multiple_companies_support_scoping($data)
     {
         ['actor' => $actor, 'company_attempting_to_associate' => $company, 'assertions' => $assertions] = $data();
 
@@ -37,7 +37,7 @@ class StoreAssetWithFullMultipleCompanySupportTest extends TestCase
     }
 
     #[DataProvider('dataForFullMultipleCompanySupportTesting')]
-    public function testHandlesCompanyIdBeingString($data)
+    public function test_handles_company_id_being_string($data)
     {
         ['actor' => $actor, 'company_attempting_to_associate' => $company, 'assertions' => $assertions] = $data();
 

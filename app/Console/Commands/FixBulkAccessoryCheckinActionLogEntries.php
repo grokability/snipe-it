@@ -24,6 +24,7 @@ class FixBulkAccessoryCheckinActionLogEntries extends Command
     protected $description = 'This script attempts to fix timestamps and missing created_by values for bulk checkin entries in the log table';
 
     private bool $dryrun = false;
+
     private bool $skipBackup = false;
 
     /**
@@ -50,10 +51,11 @@ class FixBulkAccessoryCheckinActionLogEntries extends Command
 
         if ($logs->isEmpty()) {
             $this->info('No logs found with incorrect timestamps.');
+
             return 0;
         }
 
-        $this->info('Found ' . $logs->count() . ' logs with incorrect timestamps:');
+        $this->info('Found '.$logs->count().' logs with incorrect timestamps:');
 
         $this->table(
             ['ID', 'Created By', 'Created At', 'Updated At'],
@@ -67,11 +69,11 @@ class FixBulkAccessoryCheckinActionLogEntries extends Command
             })
         );
 
-        if (!$this->dryrun && !$this->confirm('Update these logs?')) {
+        if (! $this->dryrun && ! $this->confirm('Update these logs?')) {
             return 0;
         }
 
-        if (!$this->dryrun && !$this->skipBackup) {
+        if (! $this->dryrun && ! $this->skipBackup) {
             $this->info('Backing up the database before making changes...');
             $this->call('snipeit:backup');
         }
@@ -83,7 +85,7 @@ class FixBulkAccessoryCheckinActionLogEntries extends Command
 
         foreach ($logs as $log) {
             $this->newLine();
-            $this->info('Processing log id:' . $log->id);
+            $this->info('Processing log id:'.$log->id);
 
             // created_by was not being set for accessory bulk checkins
             // so let's see if there was another bulk checkin log
@@ -106,7 +108,7 @@ class FixBulkAccessoryCheckinActionLogEntries extends Command
             $this->line(vsprintf('Updating log id:%s from %s to %s', [$log->id, $log->created_at, $log->updated_at]));
             $log->created_at = $log->updated_at;
 
-            if (!$this->dryrun) {
+            if (! $this->dryrun) {
                 Model::withoutTimestamps(function () use ($log) {
                     $log->saveQuietly();
                 });
@@ -129,7 +131,7 @@ class FixBulkAccessoryCheckinActionLogEntries extends Command
      * This method attempts to find a bulk check in log that was
      * created at the same time as the log passed in.
      */
-    private function getCreatedByAttributeFromSimilarLog(Actionlog $log): null|int
+    private function getCreatedByAttributeFromSimilarLog(Actionlog $log): ?int
     {
         $similarLog = Actionlog::query()
             ->whereNotNull('created_by')

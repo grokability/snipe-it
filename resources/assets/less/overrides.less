@@ -1313,3 +1313,82 @@ Radio toggle styles for permission settings and check/uncheck all
 .deleted {
   text-decoration: line-through;
 }
+
+
+//css to add hamburger and create dropdown on small screens
+@nav-link-hover-bg: #eeeeee;
+@border-radius-base: 5px;
+@screen-xs-max: 767px;
+
+.nav-tabs.nav-tabs-dropdown,
+.nav-tabs-dropdown {
+  @media (max-width: @screen-xs-max) {
+    overflow: hidden;
+    position: relative;
+
+    &::after {
+      content: "☰";
+      position: absolute;
+      font-size: 35px;
+      top: 0;
+      right: 15px;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    &.open {
+      a {
+        position: relative;
+        display: block;
+      }
+
+      > li.active > a {
+        background-color: @nav-link-hover-bg;
+
+      }
+    }
+
+    li.snipetab {
+      margin-right: 0 !important;
+    }
+
+    li {
+      display: block;
+      padding: 0;
+      vertical-align: bottom;
+      white-space: nowrap !important;
+    }
+
+    > li > a {
+      position: absolute;
+      top: 0;
+      left: 0;
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      display: inline-block;
+      border-color: transparent;
+
+      &:focus,
+      &:hover,
+      &:active {
+        border-color: transparent;
+        border-right: 0 !important;
+      }
+    }
+
+    > li.active > a {
+      display: block;
+      border-color: transparent !important;
+      position: relative;
+      z-index: 1;
+
+      &:focus,
+      &:hover,
+      &:active {
+        border-color: transparent !important;
+      }
+
+    }
+  }
+}

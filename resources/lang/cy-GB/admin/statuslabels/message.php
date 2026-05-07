@@ -4,29 +4,29 @@ return [
 
     'does_not_exist' => 'Nid ywr label Statws yma yn bodoli.',
     'deleted_label' => 'Deleted Status Label',
-    'assoc_assets'	 => 'Mae\'r label statws yma wedi perthnasu i oleiaf un ased a nid yw\'n bosib dileu. Diweddarwch eich asedau i beidio cyfeirio at y label yma ac yna ceisiwch eto. ',
+    'assoc_assets' => 'Mae\'r label statws yma wedi perthnasu i oleiaf un ased a nid yw\'n bosib dileu. Diweddarwch eich asedau i beidio cyfeirio at y label yma ac yna ceisiwch eto. ',
 
     'create' => [
-        'error'   => 'Ni crewyd y label statws, ceisiwch eto o. g. y. dd.',
+        'error' => 'Ni crewyd y label statws, ceisiwch eto o. g. y. dd.',
         'success' => 'Label wedi creu yn llwyddiannus.',
     ],
 
     'update' => [
-        'error'   => 'Ni diweddarwyd y label statws, ceisiwch eto o. g. y. dd',
+        'error' => 'Ni diweddarwyd y label statws, ceisiwch eto o. g. y. dd',
         'success' => 'Label wedi diweddaru yn llwyddiannus.',
     ],
 
     'delete' => [
-        'confirm'   => 'Ydych chi\'n sicr eich bod eisiau dileu\'r label yma?',
-        'error'   => 'Nid oedd yn bosib dileu\'r label statws. Ceisiwch eto o. g. y. dd.',
+        'confirm' => 'Ydych chi\'n sicr eich bod eisiau dileu\'r label yma?',
+        'error' => 'Nid oedd yn bosib dileu\'r label statws. Ceisiwch eto o. g. y. dd.',
         'success' => 'Label wedi dileu\'n llwyddiannus.',
     ],
 
     'help' => [
-        'undeployable'   => 'Nid yw\'n bosib clustnodi\'r ased yma I ddefnyddwyr.',
-        'deployable'   => 'Mae\'r asedau yma ar gael i\'w defnyddio. Unwaith y cânt eu haseinio, byddant yn cymryd statws meta <i class="fas fa-circle text-blue"></i> <strong>Mewn Defnydd</strong>.',
-        'archived'   => 'Ni ellir newid statws yr asedau hyn, dim ond yn yr olygfa archifedig y byddant yn ymddangos. Mae hyn yn ddefnyddiol ar gyfer cadw gwybodaeth am asedau at ddibenion cyllidebu / hanesyddol ond eu cadw allan o\'r rhestr asedau o ddydd i ddydd.',
-        'pending'   => 'Ni ellir aseinio\'r asedau hyn i unrhyw un eto, ddefnyddir yn aml ar gyfer eitemau sydd allan i\'w hatgyweirio, ond y disgwylir iddynt ddychwelyd i\'w cylchrediad.',
+        'undeployable' => 'Nid yw\'n bosib clustnodi\'r ased yma I ddefnyddwyr.',
+        'deployable' => 'Mae\'r asedau yma ar gael i\'w defnyddio. Unwaith y cânt eu haseinio, byddant yn cymryd statws meta <i class="fas fa-circle text-blue"></i> <strong>Mewn Defnydd</strong>.',
+        'archived' => 'Ni ellir newid statws yr asedau hyn, dim ond yn yr olygfa archifedig y byddant yn ymddangos. Mae hyn yn ddefnyddiol ar gyfer cadw gwybodaeth am asedau at ddibenion cyllidebu / hanesyddol ond eu cadw allan o\'r rhestr asedau o ddydd i ddydd.',
+        'pending' => 'Ni ellir aseinio\'r asedau hyn i unrhyw un eto, ddefnyddir yn aml ar gyfer eitemau sydd allan i\'w hatgyweirio, ond y disgwylir iddynt ddychwelyd i\'w cylchrediad.',
     ],
 
 ];

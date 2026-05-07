@@ -22,7 +22,7 @@ class FixDefaultsAccessories extends Migration
 
         //
         // DB::statement('ALTER TABLE `'.DB::getTablePrefix().'accessories` MODIFY `order_number` varchar(255) DEFAULT NULL;');
-    //
+        //
         // DB::statement('ALTER TABLE `'.DB::getTablePrefix().'consumables` MODIFY `order_number` varchar(255) DEFAULT NULL;');
     }
 

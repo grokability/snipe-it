@@ -1,38 +1,37 @@
 <?php
 
-return array(
+return [
 
     'does_not_exist' => 'Tokio komponento nėra.',
 
-    'create' => array(
-        'error'   => 'Komponentas nebuvo sukurtas, bandykite dar kartą.',
-        'success' => 'Komponentas sukurtas sėkmingai.'
-    ),
+    'create' => [
+        'error' => 'Komponentas nebuvo sukurtas, bandykite dar kartą.',
+        'success' => 'Komponentas sėkmingai sukurtas.',
+    ],
 
-    'update' => array(
-        'error'   => 'Komponentas nebuvo atnaujintas, bandykite dar kartą',
-        'success' => 'Komponentas atnaujintas sėkmingai.'
-    ),
+    'update' => [
+        'error' => 'Komponentas nebuvo atnaujintas, bandykite dar kartą',
+        'success' => 'Komponentas sėkmingai atnaujintas.',
+    ],
 
-    'delete' => array(
-        'confirm'   => 'Ar tikrai norite panaikinti šį komponentą?',
-        'error'   => 'Bandant panaikinti komponentą įvyko klaida. Bandykite dar kartą.',
-        'success' => 'Komponentas panaikintas sėkmingai.',
-        'error_qty'   => 'Kai kurie šio tipo komponentai vis dar yra išduoti. Paimkite juos ir bandykite dar kartą.',
-    ),
+    'delete' => [
+        'confirm' => 'Ar tikrai norite panaikinti šį komponentą?',
+        'error' => 'Bandant panaikinti komponentą įvyko klaida. Bandykite dar kartą.',
+        'success' => 'Komponentas sėkmingai panaikintas.',
+        'error_qty' => 'Kai kurie šio tipo komponentai vis dar yra išduoti. Paimkite juos ir bandykite dar kartą.',
+    ],
 
-     'checkout' => array(
-        'error'   		=> 'Komponentas nebuvo išduotas, bandykite dar kartą',
-        'success' 		=> 'Komponentas išduotas sėkmingai.',
+    'checkout' => [
+        'error' => 'Komponentas nebuvo išduotas, bandykite dar kartą',
+        'success' => 'Komponentas sėkmingai išduotas.',
         'user_does_not_exist' => 'Neteisingas naudotojas. Bandykite dar kartą.',
-        'unavailable'      => 'Nepakanka komponentų: yra :remaining, o prašoma :requested ',
-    ),
+        'unavailable' => 'Nepakanka komponentų: yra :remaining, o prašoma :requested ',
+    ],
 
-    'checkin' => array(
-        'error'   		=> 'Komponentas nebuvo paimtas, bandykite dar kartą',
-        'success' 		=> 'Komponentas paimtas sėkmingai.',
-        'user_does_not_exist' => 'Neteisingas naudotojas. Bandykite dar kartą.'
-    )
+    'checkin' => [
+        'error' => 'Komponentas nebuvo paimtas, bandykite dar kartą',
+        'success' => 'Komponentas sėkmingai paimtas.',
+        'user_does_not_exist' => 'Neteisingas naudotojas. Bandykite dar kartą.',
+    ],
 
-
-);
+];

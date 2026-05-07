@@ -1,7 +1,7 @@
 <?php
 
+use App\Models\CustomField;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 
 class FixCustomFieldsRegexes extends Migration
 {
@@ -12,7 +12,7 @@ class FixCustomFieldsRegexes extends Migration
      */
     public function up()
     {
-        foreach (\App\Models\CustomField::all() as $custom_field) {
+        foreach (CustomField::all() as $custom_field) {
             switch ($custom_field->format) {
 
                 case '[a-zA-Z]*':
@@ -27,7 +27,7 @@ class FixCustomFieldsRegexes extends Migration
                     $custom_field->format = 'IP';
                     break;
 
-                //ANYTHING ELSE.
+                    // ANYTHING ELSE.
                 default:
                     $custom_field->format = 'regex:/^'.$custom_field->format.'$/';
             }

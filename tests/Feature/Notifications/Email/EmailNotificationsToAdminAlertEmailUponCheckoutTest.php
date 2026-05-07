@@ -16,8 +16,11 @@ use Tests\TestCase;
 class EmailNotificationsToAdminAlertEmailUponCheckoutTest extends TestCase
 {
     private Asset $asset;
+
     private AssetModel $assetModel;
+
     private Category $category;
+
     private User $user;
 
     protected function setUp(): void
@@ -48,7 +51,7 @@ class EmailNotificationsToAdminAlertEmailUponCheckoutTest extends TestCase
         $this->fireCheckoutEvent();
 
         Mail::assertSent(CheckoutAssetMail::class, function (CheckoutAssetMail $mail) {
-            return $mail->hasTo('cc@example.com');
+            return $mail->hasCc('cc@example.com');
         });
     }
 

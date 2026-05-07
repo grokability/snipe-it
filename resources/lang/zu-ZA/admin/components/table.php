@@ -1,5 +1,5 @@
 <?php
 
-return array(
-    'title'      				=> 'Igama lesakhiwo',
-);
+return [
+    'title' => 'Igama lesakhiwo',
+];

@@ -13,7 +13,7 @@ class AddsLdapManager extends Migration
      */
     public function up()
     {
-        //Updates the Settings Table
+        // Updates the Settings Table
         Schema::table('settings', function (Blueprint $table) {
             $table->string('ldap_manager')->after('ldap_jobtitle')->nullable();
         });

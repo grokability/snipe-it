@@ -71,7 +71,7 @@ return [
     ],
     'hex_color' => 'Pole :attribute musí obsahovat platnou barvu ve formátu hexadecimálního kódu.',
     'image' => 'Pole :attribute musí být obrázek.',
-    'import_field_empty'    => 'Hodnota pro :fieldname nemůže být null.',
+    'import_field_empty' => 'Hodnota pro :fieldname nemůže být null.',
     'in' => 'Zvolený :attribute je neplatný.',
     'in_array' => 'Hodnota pole :attribute musí existovat v poli :other.',
     'integer' => 'Pole :attribute musí být celé číslo.',
@@ -126,7 +126,7 @@ return [
         'symbols' => 'Pole :attribute musí obsahovat alespoň jeden symbol.',
         'uncompromised' => 'Zadané :attribute bylo nalezeno v úniku dat. Vyberte prosím jiné :attribute.',
     ],
-    'percent'       => 'Minimální hodnota odpisu musí být mezi 0 a 100, pokud je typ odpisu procentuální.',
+    'percent' => 'Minimální hodnota odpisu musí být mezi 0 a 100, pokud je typ odpisu procentuální.',
 
     'present' => 'Pole atributu musí být přítomno.',
     'present_if' => 'Pole :attribute musí být vyplněné, pokud je :other nastaveno na :value.',
@@ -156,16 +156,16 @@ return [
         'string' => 'Pole :attribute musí mít :size znaků.',
     ],
     'starts_with' => 'Pole :attribute musí začínat jedním z následujících: :values.',
-    'string'               => 'Atribut: musí být řetězec.',
+    'string' => 'Atribut: musí být řetězec.',
     'two_column_unique_undeleted' => ':attribute musí být unikátní napříč :table1 a :table2. ',
-    'unique_undeleted'     => 'Je třeba, aby se :attribute neopakoval.',
-    'non_circular'         => ':attribute nesmí vytvořit kruhový odkaz.',
-    'not_array'            => ':attribute nemůže být pole.',
+    'unique_undeleted' => 'Je třeba, aby se :attribute neopakoval.',
+    'non_circular' => ':attribute nesmí vytvořit kruhový odkaz.',
+    'not_array' => ':attribute nemůže být pole.',
     'disallow_same_pwd_as_user_fields' => 'Heslo nemůže být stejné jako uživatelské jméno.',
-    'letters'              => 'Heslo musí obsahovat nejméně jedno písmeno.',
-    'numbers'              => 'Heslo musí obsahovat alespoň jednu číslici.',
-    'case_diff'            => 'Heslo musí použít smíšené znaky.',
-    'symbols'              => 'Heslo musí obsahovat symboly.',
+    'letters' => 'Heslo musí obsahovat nejméně jedno písmeno.',
+    'numbers' => 'Heslo musí obsahovat alespoň jednu číslici.',
+    'case_diff' => 'Heslo musí použít smíšené znaky.',
+    'symbols' => 'Heslo musí obsahovat symboly.',
     'timezone' => 'Pole :attribute musí být platná časová zóna.',
     'unique' => ':attribute byl již vybrán.',
     'uploaded' => 'Atribut: se nepodařilo nahrát.',
@@ -187,38 +187,38 @@ return [
     |
     */
 
-    'email_array'      => 'Jedna nebo více e-mailových adres je neplatná.',
-    'checkboxes'           => ':attribute obsahuje neplatné možnosti.',
-    'radio_buttons'        => ':attribute je neplatný.',
-    
+    'email_array' => 'Jedna nebo více e-mailových adres je neplatná.',
+    'checkboxes' => ':attribute obsahuje neplatné možnosti.',
+    'radio_buttons' => ':attribute je neplatný.',
+
     'custom' => [
         'alpha_space' => 'Pole atributu: atribut obsahuje znak, který není povolen.',
 
-        'hashed_pass'      => 'Vaše současné heslo je nesprávné',
-        'dumbpwd'          => 'Toto heslo je příliš běžné.',
+        'hashed_pass' => 'Vaše současné heslo je nesprávné',
+        'dumbpwd' => 'Toto heslo je příliš běžné.',
         'statuslabel_type' => 'Musíte vybrat platný typ štítku stavu',
-        'custom_field_not_found'          => 'Vypadá to, že toto pole neexistuje, zkontrolujte prosím své vlastní názvy polí.',
+        'custom_field_not_found' => 'Vypadá to, že toto pole neexistuje, zkontrolujte prosím své vlastní názvy polí.',
         'custom_field_not_found_on_model' => 'Zdá se, že toto pole existuje, ale není dostupné na tomto poli Modelového modelu.',
 
         // date_format validation with slightly less stupid messages. It duplicates a lot, but it gets the job done :(
         // We use this because the default error message for date_format reflects php Y-m-d, which non-PHP
         // people won't know how to format.
-        'purchase_date.date_format'     => ':attribute musí být platné datum ve formátu RRRR-MM-DD',
-        'last_audit_date.date_format'   =>  ':attribute musí být platné datum ve formátu RRRR-MM-DD hh:mm:ss',
-        'expiration_date.date_format'   =>  ':attribute musí být platné datum ve formátu RRRR-MM-DD',
-        'termination_date.date_format'  =>  ':attribute musí být platné datum ve formátu RRRR-MM-DD',
-        'expected_checkin.date_format'  =>  ':attribute musí být platné datum ve formátu RRRR-MM-DD',
-        'start_date.date_format'        =>  ':attribute musí být platné datum ve formátu RRRR-MM-DD',
-        'end_date.date_format'          =>  ':attribute musí být platné datum ve formátu RRRR-MM-DD',
+        'purchase_date.date_format' => ':attribute musí být platné datum ve formátu RRRR-MM-DD',
+        'last_audit_date.date_format' => ':attribute musí být platné datum ve formátu RRRR-MM-DD hh:mm:ss',
+        'expiration_date.date_format' => ':attribute musí být platné datum ve formátu RRRR-MM-DD',
+        'termination_date.date_format' => ':attribute musí být platné datum ve formátu RRRR-MM-DD',
+        'expected_checkin.date_format' => ':attribute musí být platné datum ve formátu RRRR-MM-DD',
+        'start_date.date_format' => ':attribute musí být platné datum ve formátu RRRR-MM-DD',
+        'end_date.date_format' => ':attribute musí být platné datum ve formátu RRRR-MM-DD',
         'invalid_value_in_field' => 'Neplatná hodnota zahrnutá v tomto poli',
 
         'ldap_username_field' => [
-            'not_in' =>         '<code>sAMAccountName</code> (smíšená velikost písmen) pravděpodobně nebude fungovat. Místo toho bys měl použít <code>samaccountname</code> (malá písmena).'
+            'not_in' => '<code>sAMAccountName</code> (smíšená velikost písmen) pravděpodobně nebude fungovat. Místo toho bys měl použít <code>samaccountname</code> (malá písmena).',
         ],
         'ldap_auth_filter_query' => ['not_in' => '<code>uid=samaccountname</code> pravděpodobně není platný autentizační filtr. Pravděpodobně chceš <code>uid=</code>'],
         'ldap_filter' => ['regex' => 'Tato hodnota pravděpodobně nemá být uzavřena v závorkách.'],
 
-        ],
+    ],
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Attributes
@@ -230,7 +230,10 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'serials.*' => 'Pořadové číslo',
+        'asset_tags.*' => 'Označení majetku',
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -244,6 +247,5 @@ return [
         'required' => 'Toto pole je povinné',
         'email' => 'Prosím zadej platnou emailovou adresu',
     ],
-
 
 ];

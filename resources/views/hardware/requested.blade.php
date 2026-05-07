@@ -52,7 +52,7 @@
                                         @if (($request->itemType() == "asset") && ($request->requestable))
                                             <a href="{{ $request->requestable->getImageUrl() }}" data-toggle="lightbox" data-type="image"><img src="{{ $request->requestable->getImageUrl() }}" style="max-height: {{ $snipeSettings->thumbnail_max_h }}px; width: auto;" class="img-responsive" alt="{{ $request->requestable->name }}"></a>
                                         @elseif (($request->itemType() == "asset_model") && ($request->requestable))
-                                            <a href="{{ config('app.url') }}/uploads/models/{{ $request->requestable->image }}" data-toggle="lightbox" data-type="image"><img src="{{ config('app.url') }}/uploads/models/{{ $request->requestable->image }}" style="max-height: {{ $snipeSettings->thumbnail_max_h }}px; width: auto;" class="img-responsive" alt="{{ $request->requestable->name }}"></a>
+                                            <a href="{{ Storage::disk('public')->url(app('models_upload_path') . $request->requestable->image) }}" data-toggle="lightbox" data-type="image"><img src="{{ Storage::disk('public')->url(app('models_upload_path') . $request->requestable->image) }}" style="max-height: {{ $snipeSettings->thumbnail_max_h }}px; width: auto;" class="img-responsive" alt="{{ $request->requestable->name }}"></a>
                                         @endif
                                         </td>
                                         <td>
@@ -109,7 +109,7 @@
                                                 @if ($request->requestable->assigned_to=='')
                                                     <a href="{{ config('app.url') }}/hardware/{{ $request->requestable->id }}/checkout" class="btn btn-sm bg-maroon" data-tooltip="true" title="{{ trans('general.checkout_user_tooltip') }}">{{ trans('general.checkout') }}</a>
                                                 @else
-                                                    <a href="{{ config('app.url') }}/hardware/{{ $request->requestable->id }}/checkin" class="btn btn-sm bg-purple" data-tooltip="true" title="{{ trans('general.checkin_toolip') }}">{{ trans('general.checkin') }}</a>
+                                                    <a href="{{ config('app.url') }}/hardware/{{ $request->requestable->id }}/checkin" class="btn btn-sm bg-purple" data-tooltip="true" title="{{ trans('general.checkin_tooltip') }}">{{ trans('general.checkin') }}</a>
                                                 @endif
                                             @endif
                                         </td>

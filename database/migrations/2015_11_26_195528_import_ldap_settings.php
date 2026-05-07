@@ -1,7 +1,7 @@
 <?php
 
+use App\Models\Setting;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 
 class ImportLdapSettings extends Migration
 {
@@ -12,7 +12,7 @@ class ImportLdapSettings extends Migration
      */
     public function up()
     {
-        $settings = \App\Models\Setting::first();
+        $settings = Setting::first();
 
         // Only update the settings record if there IS an LDAP Config
         // AND the Settings table doesn't already have LDAP settings in it

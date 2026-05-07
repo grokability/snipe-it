@@ -8,14 +8,14 @@ use Tests\TestCase;
 
 class CreateGroupTest extends TestCase
 {
-    public function testPageRenders()
+    public function test_page_renders()
     {
         $this->actingAs(User::factory()->superuser()->create())
             ->get(route('groups.create'))
             ->assertOk();
     }
 
-    public function testUserCanCreateGroup()
+    public function test_user_can_create_group()
     {
         $this->assertFalse(Group::where('name', 'Test Group')->exists());
 

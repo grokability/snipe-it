@@ -71,7 +71,7 @@ return [
     ],
     'hex_color' => 'The :attribute field must be a valid hexadecimal color.',
     'image' => 'The :attribute field must be an image.',
-    'import_field_empty'    => 'The value for :fieldname cannot be null.',
+    'import_field_empty' => 'The value for :fieldname cannot be null.',
     'in' => '선택한 :attribute 가 부정확 합니다.',
     'in_array' => 'The :attribute field must exist in :other.',
     'integer' => 'The :attribute field must be an integer.',
@@ -126,7 +126,7 @@ return [
         'symbols' => 'The :attribute field must contain at least one symbol.',
         'uncompromised' => 'The given :attribute has appeared in a data leak. Please choose a different :attribute.',
     ],
-    'percent'       => 'The depreciation minimum must be between 0 and 100 when depreciation type is percentage.',
+    'percent' => 'The depreciation minimum must be between 0 and 100 when depreciation type is percentage.',
 
     'present' => ':attribute 항목이 있어야 합니다.',
     'present_if' => 'The :attribute field must be present when :other is :value.',
@@ -156,16 +156,16 @@ return [
         'string' => 'The :attribute field must be :size characters.',
     ],
     'starts_with' => 'The :attribute field must start with one of the following: :values.',
-    'string'               => ':attribute는 글자여야 합니다.',
+    'string' => ':attribute는 글자여야 합니다.',
     'two_column_unique_undeleted' => 'The :attribute must be unique across :table1 and :table2. ',
-    'unique_undeleted'     => ':attribute 는 고유의 값만 가져야 합니다.',
-    'non_circular'         => 'The :attribute must not create a circular reference.',
-    'not_array'            => ':attribute cannot be an array.',
+    'unique_undeleted' => ':attribute 는 고유의 값만 가져야 합니다.',
+    'non_circular' => 'The :attribute must not create a circular reference.',
+    'not_array' => ':attribute cannot be an array.',
     'disallow_same_pwd_as_user_fields' => 'Password cannot be the same as the username.',
-    'letters'              => 'Password must contain at least one letter.',
-    'numbers'              => 'Password must contain at least one number.',
-    'case_diff'            => 'Password must use mixed case.',
-    'symbols'              => 'Password must contain symbols.',
+    'letters' => 'Password must contain at least one letter.',
+    'numbers' => 'Password must contain at least one number.',
+    'case_diff' => 'Password must use mixed case.',
+    'symbols' => 'Password must contain symbols.',
     'timezone' => 'The :attribute field must be a valid timezone.',
     'unique' => ':attribute 는 이미 획득하였습니다.',
     'uploaded' => ':attribute는 업로드 하지 못했습니다.',
@@ -187,38 +187,38 @@ return [
     |
     */
 
-    'email_array'      => '하나 이상의 이메일 주소가 유효하지 않습니다.',
-    'checkboxes'           => ':attribute contains invalid options.',
-    'radio_buttons'        => ':attribute is invalid.',
-    
+    'email_array' => '하나 이상의 이메일 주소가 유효하지 않습니다.',
+    'checkboxes' => ':attribute contains invalid options.',
+    'radio_buttons' => ':attribute is invalid.',
+
     'custom' => [
         'alpha_space' => ':attribute 항목에는 문자를 입력할 수 없습니다.',
 
-        'hashed_pass'      => '현재 비밀번호가 잘못되었습니다.',
-        'dumbpwd'          => '그 비밀번호는 너무 일반적입니다.',
+        'hashed_pass' => '현재 비밀번호가 잘못되었습니다.',
+        'dumbpwd' => '그 비밀번호는 너무 일반적입니다.',
         'statuslabel_type' => '유효한 상태 라벨 형식을 선택해 주셔야 합니다',
-        'custom_field_not_found'          => 'This field does not seem to exist, please double check your custom field names.',
+        'custom_field_not_found' => 'This field does not seem to exist, please double check your custom field names.',
         'custom_field_not_found_on_model' => 'This field seems to exist, but is not available on this Asset Model\'s fieldset.',
 
         // date_format validation with slightly less stupid messages. It duplicates a lot, but it gets the job done :(
         // We use this because the default error message for date_format reflects php Y-m-d, which non-PHP
         // people won't know how to format.
-        'purchase_date.date_format'     => 'The :attribute must be a valid date in YYYY-MM-DD format',
-        'last_audit_date.date_format'   =>  'The :attribute must be a valid date in YYYY-MM-DD hh:mm:ss format',
-        'expiration_date.date_format'   =>  'The :attribute must be a valid date in YYYY-MM-DD format',
-        'termination_date.date_format'  =>  'The :attribute must be a valid date in YYYY-MM-DD format',
-        'expected_checkin.date_format'  =>  'The :attribute must be a valid date in YYYY-MM-DD format',
-        'start_date.date_format'        =>  'The :attribute must be a valid date in YYYY-MM-DD format',
-        'end_date.date_format'          =>  'The :attribute must be a valid date in YYYY-MM-DD format',
+        'purchase_date.date_format' => 'The :attribute must be a valid date in YYYY-MM-DD format',
+        'last_audit_date.date_format' => 'The :attribute must be a valid date in YYYY-MM-DD hh:mm:ss format',
+        'expiration_date.date_format' => 'The :attribute must be a valid date in YYYY-MM-DD format',
+        'termination_date.date_format' => 'The :attribute must be a valid date in YYYY-MM-DD format',
+        'expected_checkin.date_format' => 'The :attribute must be a valid date in YYYY-MM-DD format',
+        'start_date.date_format' => 'The :attribute must be a valid date in YYYY-MM-DD format',
+        'end_date.date_format' => 'The :attribute must be a valid date in YYYY-MM-DD format',
         'invalid_value_in_field' => 'Invalid value included in this field',
 
         'ldap_username_field' => [
-            'not_in' =>         '<code>sAMAccountName</code> (mixed case) will likely not work. You should use <code>samaccountname</code> (lowercase) instead.'
+            'not_in' => '<code>sAMAccountName</code> (mixed case) will likely not work. You should use <code>samaccountname</code> (lowercase) instead.',
         ],
         'ldap_auth_filter_query' => ['not_in' => '<code>uid=samaccountname</code> is probably not a valid auth filter. You probably want <code>uid=</code> '],
         'ldap_filter' => ['regex' => 'This value should probably not be wrapped in parentheses.'],
 
-        ],
+    ],
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Attributes
@@ -230,7 +230,10 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'serials.*' => 'Serial Number',
+        'asset_tags.*' => '자산 태그',
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -244,6 +247,5 @@ return [
         'required' => 'This field is required',
         'email' => 'Please enter a valid email address',
     ],
-
 
 ];

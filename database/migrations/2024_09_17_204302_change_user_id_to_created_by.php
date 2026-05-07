@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         foreach ($this->add_to_table_list() as $add_table) {
-            if (!Schema::hasColumn($add_table, 'created_by')) {
+            if (! Schema::hasColumn($add_table, 'created_by')) {
                 Schema::table($add_table, function (Blueprint $add_table) {
                     $add_table->unsignedBigInteger('created_by')->nullable()->before('created_at');
                 });
@@ -50,7 +50,8 @@ return new class extends Migration
         }
     }
 
-    public function existing_table_list() {
+    public function existing_table_list()
+    {
         return [
             'accessories',
             'accessories_checkout',
@@ -78,7 +79,8 @@ return new class extends Migration
         ];
     }
 
-    public function add_to_table_list() {
+    public function add_to_table_list()
+    {
         return [
             'companies',
             'imports',

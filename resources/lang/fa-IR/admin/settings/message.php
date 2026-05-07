@@ -3,26 +3,26 @@
 return [
 
     'update' => [
-        'error'                 => 'در حین به روزرسانی خطایی رخ داد. ',
-        'success'               => 'تنظیمات با موفقیت به روزرسانی شد.',
+        'error' => 'در حین به روزرسانی خطایی رخ داد. ',
+        'success' => 'تنظیمات با موفقیت به روزرسانی شد.',
     ],
     'backup' => [
-        'delete_confirm'        => 'آیا شما مطمئن هستید که می خواهید این فایل پشتیبانی را حذف کنید؟ این کار برگشت ناپذیر است. ',
-        'file_deleted'          => 'فایل پشتیبانی با موفقیت حذف شد. ',
-        'generated'             => 'یک فایل پشتیبانی جدید با موفقیت ساخته شد.',
-        'file_not_found'        => 'فایل پشتیبانی بر روی سرور یافت نمی شود.',
-        'restore_warning'       => 'بله، آن را بازیابی کنید. من تصدیق می‌کنم که با این کار تمام داده‌های موجود در پایگاه داده بازنویسی می‌شود. با این کار همه کاربران فعلی شما (از جمله شما) نیز از سیستم خارج می شوند.
+        'delete_confirm' => 'آیا شما مطمئن هستید که می خواهید این فایل پشتیبانی را حذف کنید؟ این کار برگشت ناپذیر است. ',
+        'file_deleted' => 'فایل پشتیبانی با موفقیت حذف شد. ',
+        'generated' => 'یک فایل پشتیبانی جدید با موفقیت ساخته شد.',
+        'file_not_found' => 'فایل پشتیبانی بر روی سرور یافت نمی شود.',
+        'restore_warning' => 'بله، آن را بازیابی کنید. من تصدیق می‌کنم که با این کار تمام داده‌های موجود در پایگاه داده بازنویسی می‌شود. با این کار همه کاربران فعلی شما (از جمله شما) نیز از سیستم خارج می شوند.
 ',
-        'restore_confirm'       => 'آیا مطمئن هستید که می خواهید پایگاه داده خود را از :filename بازیابی کنید؟
-'
+        'restore_confirm' => 'آیا مطمئن هستید که می خواهید پایگاه داده خود را از :filename بازیابی کنید؟
+',
     ],
     'restore' => [
-        'success'               => 'Your system backup has been restored. Please log in again.'
+        'success' => 'Your system backup has been restored. Please log in again.',
     ],
     'purge' => [
-        'error'     => 'در حین پاکسازی خطایی رخ داد. ',
-        'validation_failed'     => 'تایید پاکسازی ناصحیح است. لطفا کلمه ی "حذف" را در جعبه ی تاییدیه تایپ کنید.',
-        'success'               => 'سوابق حذف شده با موفقیت پاکسازی شده اند.',
+        'error' => 'در حین پاکسازی خطایی رخ داد. ',
+        'validation_failed' => 'تایید پاکسازی ناصحیح است. لطفا کلمه ی "حذف" را در جعبه ی تاییدیه تایپ کنید.',
+        'success' => 'سوابق حذف شده با موفقیت پاکسازی شده اند.',
     ],
     'mail' => [
         'sending' => 'ارسال ایمیل تست',
@@ -30,7 +30,7 @@ return [
 ',
         'error' => 'خطا در ارسال ایمیل',
         'additional' => 'پیغام خطای اضافی ارائه نشده است. تنظیمات ایمیل و گزارش برنامه خود را بررسی کنید.
-'
+',
     ],
     'ldap' => [
         'testing' => 'تست اتصال LDAP، Binding و Query ...
@@ -43,11 +43,11 @@ return [
         'testing_authentication' => 'تست احراز هویت LDAP...
 ',
         'authentication_success' => 'کاربر در برابر LDAP با موفقیت احراز هویت شد!
-'
+',
     ],
     'labels' => [
         'null_template' => 'Label template not found. Please select a template.',
-        ],
+    ],
     'webhook' => [
         'sending' => 'Sending :app test message...',
         'success' => 'Your :webhook_name Integration works!',
@@ -66,5 +66,22 @@ return [
     'location_scoping' => [
         'not_saved' => 'Your settings were not saved.',
         'mismatch' => 'There is 1 item in the database that need your attention before you can enable location scoping.|There are :count items in the database that need your attention before you can enable location scoping.',
+    ],
+    'oauth' => [
+        'token_revoked' => 'Personal access token revoked successfully.',
+        'token_unrevoked' => 'Personal access token reinstated successfully.',
+        'token_not_found' => 'That personal access token could not be found.',
+        'token_revoke_error' => 'An error occurred while revoking the token.',
+        'token_unrevoke_error' => 'An error occurred while reinstating the token.',
+        'client_created' => 'OAuth client created successfully.',
+        'client_updated' => 'OAuth client updated successfully.',
+        'client_deleted' => 'OAuth client deleted successfully.',
+        'client_revoked' => 'OAuth client revoked successfully.',
+        'client_unrevoked' => 'OAuth client reinstated successfully.',
+        'client_not_found' => 'That OAuth client could not be found.',
+        'token_deleted' => 'Token revoked successfully.',
+        'client_delete_denied' => 'You are not authorized to delete this client.',
+        'client_edit_denied' => 'You are not authorized to edit this client.',
+        'token_delete_denied' => 'You are not authorized to revoke this token.',
     ],
 ];

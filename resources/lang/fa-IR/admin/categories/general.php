@@ -1,33 +1,35 @@
 <?php
 
-return array(
-    'asset_categories' 					=> 'دسته بندی های دارایی',
-    'category_name'  					=> 'نام دسته بندی',
+return [
+    'asset_categories' => 'دسته بندی های دارایی',
+    'category_name' => 'نام دسته بندی',
     'email_to_user_upon_checkin' => 'Send email to user upon checkin.',
     'email_to_user_upon_checkin_and_checkout' => 'Send email to user upon checkin/checkout.',
-    'email_to_initiator'                => 'Send email to you when user accepts or declines checkout.',
-    'checkin_email_notification'        => 'به این کاربر در تحویل و استرداد ایمیل ارسال خواهد شد.',
-    'clone'                             => 'دسته بندی کلون',
-    'create'  							=> 'ایجاد دسته جدید',
-    'edit'                              => 'ویرایش دسته‌ بندی',
+    'email_to_initiator' => 'Send email to you when user accepts or declines checkout.',
+    'checkin_email_notification' => 'به این کاربر در تحویل و استرداد ایمیل ارسال خواهد شد.',
+    'clone' => 'دسته بندی کلون',
+    'create' => 'ایجاد دسته جدید',
+    'edit' => 'ویرایش دسته‌ بندی',
     'email_will_be_sent_due_to_global_eula' => 'An email will be sent to the user upon checkout because the global EULA is being used.',
     'email_will_be_sent_due_to_category_eula' => 'An email will be sent to the user upon checkout because a EULA is set for this category.',
-    'eula_text'							=> 'دسته بندی EULA',
-    'eula_text_help'					=> 'این فید به امکان این را میدهد که EULA های خود را با توجه به دارایی سفارشی سازی کنید. اگر شما فقط یک EULA برای تمام دارایی خود دارید،میتوانید گزینه زیر را فعال کنید تا از پیشفرض اولیه استفاده کنید.',
-    'name'                              => 'نام دسته',
-    'require_acceptance'				=> 'نیاز به کاربرانی جهت تایید پذیرش دارایی ها در این دسته بندی.',
-    'required_acceptance'				=> 'این کاربر با یک لینک به پذیرش این مورد تایید فرستاده می شود.',
-    'required_eula'						=> 'به این کاربر کپی EULA فرستاده می شود',
-    'no_default_eula'					=> 'هیچ EULA اولیه پیشفرضی یافت نشد.در تنظیمات اضافه کنید',
-    'update'  							=> 'به روزرسانی دسته‌ بندی',
-    'use_default_eula'					=> 'از Use the <a href="#" data-toggle="modal" data-target="#eulaModal">EULA پیشفرض اولیه</a> instead.
+    'eula_text' => 'دسته بندی EULA',
+    'eula_text_help' => 'این فید به امکان این را میدهد که EULA های خود را با توجه به دارایی سفارشی سازی کنید. اگر شما فقط یک EULA برای تمام دارایی خود دارید،میتوانید گزینه زیر را فعال کنید تا از پیشفرض اولیه استفاده کنید.',
+    'name' => 'نام دسته',
+    'require_acceptance' => 'نیاز به کاربرانی جهت تایید پذیرش دارایی ها در این دسته بندی.',
+    'required_acceptance' => 'این کاربر با یک لینک به پذیرش این مورد تایید فرستاده می شود.',
+    'global_signature_required_notice' => 'User signatures are currently required globally via the admin settings, so signatures will still be required regardless of this category setting if the item is checked out to a user (versus a location, etc).',
+    'required_eula' => 'به این کاربر کپی EULA فرستاده می شود',
+    'no_default_eula' => 'هیچ EULA اولیه پیشفرضی یافت نشد.در تنظیمات اضافه کنید',
+    'update' => 'به روزرسانی دسته‌ بندی',
+    'use_default_eula' => 'از Use the <a href="#" data-toggle="modal" data-target="#eulaModal">EULA پیشفرض اولیه</a> instead.
  استفاده کنید',
-    'use_default_eula_disabled'			=> 'از پیشفرض اولیه EULA استفاده کنید.<del>هیچ پیشفرضی اولیه ای تنظیم نشده است</del>
+    'use_default_eula_disabled' => 'از پیشفرض اولیه EULA استفاده کنید.<del>هیچ پیشفرضی اولیه ای تنظیم نشده است</del>
 در تنظیمات اضافه کنید.',
-    'use_default_eula_column'			=> 'استفاده توافق نامه پیشفرض',
-    'import_require_acceptance'         => 'Require Acceptance',
-    'import_checkin_email'              => 'Send Checkin Email',
-    'import_eula_text'                  => 'EULA text',
-    'import_category_type'              => 'Category Type',
+    'use_default_eula_column' => 'استفاده توافق نامه پیشفرض',
+    'import_require_acceptance' => 'Require Acceptance',
+    'import_checkin_email' => 'Send Checkin Email',
+    'import_eula_text' => 'EULA text',
+    'import_category_type' => 'Category Type',
+    'import_alert_on_response' => 'Alert on Response',
 
-);
+];

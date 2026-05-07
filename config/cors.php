@@ -15,15 +15,12 @@
  * set it to * to allow all. If there is a value, either a single url or a comma-delimited
  * list of urls, explode that out into an array to whitelist just those urls.
  */
-
 $allowed_origins = env('CORS_ALLOWED_ORIGINS') !== null ?
     explode(',', env('CORS_ALLOWED_ORIGINS')) : [];
 
 /**
  * Original Laravel CORS package config file modifications end here
- *
  */
-
 
 return [
 
@@ -36,7 +33,7 @@ return [
     | to accept any value.
     |
     */
-   
+
     'supports_credentials' => false,
     'allowed_origins' => $allowed_origins,
     'allowed_origins_patterns' => [],

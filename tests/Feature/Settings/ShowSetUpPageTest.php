@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\Settings;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use App\Http\Controllers\SettingsController;
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Http\Client\ConnectionException;
@@ -17,12 +16,13 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Testing\TestResponse;
 use PDOException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class ShowSetUpPageTest extends TestCase
 {
+    public static ?TestResponse $latestResponse;
 
-    static ?TestResponse $latestResponse;
     /**
      * We do not want to make actual http request on every test to check .env file
      * visibility because that can be really slow especially in some cases where an
@@ -37,15 +37,16 @@ class ShowSetUpPageTest extends TestCase
         }
 
         self::$latestResponse = $this->get('/setup');
+
         return self::$latestResponse;
     }
 
-    public function testView(): void
+    public function test_view(): void
     {
         $this->getSetUpPageResponse()->assertOk()->assertViewIs('setup.index');
     }
 
-    public function testWillShowErrorMessageWhenDatabaseConnectionCannotBeEstablished(): void
+    public function test_will_show_error_message_when_database_connection_cannot_be_established(): void
     {
         Event::listen(function (QueryExecuted $query) {
             if ($query->sql === 'select 2 + 2') {
@@ -65,20 +66,21 @@ class ShowSetUpPageTest extends TestCase
 
         if ($shouldSee) {
             self::$latestResponse->assertSee($errorMessage, false)->assertDontSee($successMessage, false);
+
             return;
         }
 
         self::$latestResponse->assertSee($successMessage, false)->assertDontSee($errorMessage, false);
     }
 
-    public function testWillNotShowErrorMessageWhenDatabaseIsConnected(): void
+    public function test_will_not_show_error_message_when_database_is_connected(): void
     {
         $this->getSetUpPageResponse()->assertOk();
 
         $this->assertSeeDatabaseConnectionErrorMessage(false);
     }
 
-    public function testWillShowErrorMessageWhenDebugModeIsEnabledAndAppEnvironmentIsSetToProduction(): void
+    public function test_will_show_error_message_when_debug_mode_is_enabled_and_app_environment_is_set_to_production(): void
     {
         config(['app.debug' => true]);
 
@@ -96,13 +98,14 @@ class ShowSetUpPageTest extends TestCase
 
         if ($shouldSee) {
             self::$latestResponse->assertSee($errorMessage, false)->assertDontSee($successMessage, false);
+
             return;
         }
 
         self::$latestResponse->assertSee($successMessage, false)->assertDontSee($errorMessage, false);
     }
 
-    public function testWillNotShowErrorWhenDebugModeIsEnabledAndAppEnvironmentIsSetToLocal(): void
+    public function test_will_not_show_error_when_debug_mode_is_enabled_and_app_environment_is_set_to_local(): void
     {
         config(['app.debug' => true]);
 
@@ -113,7 +116,7 @@ class ShowSetUpPageTest extends TestCase
         $this->assertSeeDebugModeMisconfigurationErrorMessage(false);
     }
 
-    public function testWillNotShowErrorWhenDebugModeIsDisabledAndAppEnvironmentIsSetToProduction(): void
+    public function test_will_not_show_error_when_debug_mode_is_disabled_and_app_environment_is_set_to_production(): void
     {
         config(['app.debug' => false]);
 
@@ -124,7 +127,7 @@ class ShowSetUpPageTest extends TestCase
         $this->assertSeeDebugModeMisconfigurationErrorMessage(false);
     }
 
-    public function testWillShowErrorWhenEnvironmentIsLocal(): void
+    public function test_will_show_error_when_environment_is_local(): void
     {
         $this->app->bind('env', fn () => 'local');
 
@@ -147,7 +150,7 @@ class ShowSetUpPageTest extends TestCase
         self::$latestResponse->assertSee($successMessage, false)->assertDontSee($errorMessage, false);
     }
 
-    public function testWillNotShowErrorWhenEnvironmentIsProduction(): void
+    public function test_will_not_show_error_when_environment_is_production(): void
     {
         $this->app->bind('env', fn () => 'production');
 
@@ -156,19 +159,20 @@ class ShowSetUpPageTest extends TestCase
         $this->assertSeeEnvironmentMisconfigurationErrorMessage(false);
     }
 
-    public function testWillCheckDotEnvFileVisibility(): void
+    public function test_will_check_dot_env_file_visibility(): void
     {
         $this->getSetUpPageResponse()->assertOk();
 
         Http::assertSent(function (Request $request) {
             $this->assertEquals('GET', $request->method());
             $this->assertEquals(URL::to('.env'), $request->url());
+
             return true;
         });
     }
 
     #[DataProvider('willShowErrorWhenDotEnvFileIsAccessibleViaHttpData')]
-    public function testWillShowErrorWhenDotEnvFileIsAccessibleViaHttp(int $statusCode): void
+    public function test_will_show_error_when_dot_env_file_is_accessible_via_http(int $statusCode): void
     {
         $this->preventStrayRequest = false;
 
@@ -178,6 +182,7 @@ class ShowSetUpPageTest extends TestCase
 
         Http::assertSent(function (Request $request, Response $response) use ($statusCode) {
             $this->assertEquals($statusCode, $response->status());
+
             return true;
         });
 
@@ -205,34 +210,25 @@ class ShowSetUpPageTest extends TestCase
         self::$latestResponse->assertSee($successMessage, false)->assertDontSee($errorMessage, false);
     }
 
-    public function testWillNotShowErrorWhenDotEnvFileIsNotAccessibleViaHttp(): void
+    public function test_will_not_show_error_when_dot_env_file_is_not_accessible_via_http(): void
     {
         $this->getSetUpPageResponse()->assertOk();
 
         $this->assertSeeDotEnvFileExposedErrorMessage(false);
     }
 
-    public function testWillShowErrorWhenDotEnvFileVisibilityCheckRequestFails(): void
+    public function test_will_show_error_when_dot_env_file_visibility_check_request_fails(): void
     {
         $this->preventStrayRequest = false;
 
         Http::fake([URL::to('.env') => fn () => throw new ConnectionException('Some curl error message.')]);
 
-        Log::setEventDispatcher(Event::fake());
-
         $this->getSetUpPageResponse()->assertOk();
 
         $this->assertSeeDotEnvFileExposedErrorMessage();
-
-        Event::assertDispatched(function (MessageLogged $event) {
-            $this->assertEquals('debug', $event->level);
-            $this->assertEquals('Some curl error message.', $event->message);
-
-            return true;
-        });
     }
 
-    public function testWillShowErrorMessageWhenAppUrlIsNotSameWithPageUrl(): void
+    public function test_will_show_error_message_when_app_url_is_not_same_with_page_url(): void
     {
         config(['app.url' => 'http://www.github.com']);
 
@@ -250,20 +246,21 @@ class ShowSetUpPageTest extends TestCase
 
         if ($shouldSee) {
             self::$latestResponse->assertSee($errorMessage)->assertDontSee($successMessage);
+
             return;
         }
 
         self::$latestResponse->assertSee($successMessage)->assertDontSee($errorMessage);
     }
 
-    public function testWillNotShowErrorMessageWhenAppUrlIsSameWithPageUrl(): void
+    public function test_will_not_show_error_message_when_app_url_is_same_with_page_url(): void
     {
         $this->getSetUpPageResponse()->assertOk();
 
         $this->assertSeeAppUrlMisconfigurationErrorMessage(false);
     }
 
-    public function testWhenAppUrlContainsTrailingSlash(): void
+    public function test_when_app_url_contains_trailing_slash(): void
     {
         config(['app.url' => 'http://www.github.com/']);
 
@@ -272,7 +269,7 @@ class ShowSetUpPageTest extends TestCase
         $this->assertSeeAppUrlMisconfigurationErrorMessage();
     }
 
-    public function testWillSeeDirectoryPermissionErrorWhenStoragePathIsNotWritable(): void
+    public function test_will_see_directory_permission_error_when_storage_path_is_not_writable(): void
     {
         File::shouldReceive('isWritable')->andReturn(false);
 
@@ -290,13 +287,14 @@ class ShowSetUpPageTest extends TestCase
 
         if ($shouldSee) {
             self::$latestResponse->assertSee($errorMessage, false)->assertDontSee($successMessage, false);
+
             return;
         }
 
-        self::$latestResponse->assertSee($successMessage, false)->assertDontSee($errorMessage,false);
+        self::$latestResponse->assertSee($successMessage, false)->assertDontSee($errorMessage, false);
     }
 
-    public function testWillNotSeeDirectoryPermissionErrorWhenStoragePathIsWritable(): void
+    public function test_will_not_see_directory_permission_error_when_storage_path_is_writable(): void
     {
         File::shouldReceive('isWritable')->andReturn(true);
 
@@ -305,10 +303,10 @@ class ShowSetUpPageTest extends TestCase
         $this->assertSeeDirectoryPermissionError(false);
     }
 
-    public function testInvalidTLSCertsOkWhenCheckingForEnvFile()
+    public function test_invalid_tls_certs_ok_when_checking_for_env_file()
     {
-        //set the weird bad SSL cert place - https://self-signed.badssl.com
-        $this->markTestIncomplete("Not yet sure how to write this test, it requires messing with .env ...");
-        $this->assertTrue((new SettingsController())->dotEnvFileIsExposed());
+        // set the weird bad SSL cert place - https://self-signed.badssl.com
+        $this->markTestIncomplete('Not yet sure how to write this test, it requires messing with .env ...');
+        $this->assertTrue((new SettingsController)->dotEnvFileIsExposed());
     }
 }

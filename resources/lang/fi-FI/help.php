@@ -23,13 +23,13 @@ return [
 
     'accessories' => 'Oheistarvikkeet ovat laitteita joita annetaan käyttäjille, mutta joilla ei ole omia tunnisteita tai sarjanumeroita. Kuten vaikkapa hiiret ja näppäimistöt.',
 
-    'companies'     => 'Yrityksiä voidaan käyttää yksinkertaisesti tunnisteena tai niitä voidaan käyttää rajoittamaan laitteiden näkyvyyttä käyttäjille, jne, jos täysi yritystuki on käytössä Admin asetuksissa.',
+    'companies' => 'Yrityksiä voidaan käyttää yksinkertaisesti tunnisteena tai niitä voidaan käyttää rajoittamaan laitteiden näkyvyyttä käyttäjille, jne, jos täysi yritystuki on käytössä Admin asetuksissa.',
 
-    'components'    => 'Komponentit ovat nimikkeitä, jotka ovat osa laitetta, esimerkiksi kiintolevyjä, RAM-muistia jne.',
+    'components' => 'Komponentit ovat nimikkeitä, jotka ovat osa laitetta, esimerkiksi kiintolevyjä, RAM-muistia jne.',
 
-    'consumables'   => 'Kulutustarvikkeet ovat kohteita jotka kuluvat ajan myötä. Esimerkiksi tulostimen muste tai kopiopaperi.',
+    'consumables' => 'Kulutustarvikkeet ovat kohteita jotka kuluvat ajan myötä. Esimerkiksi tulostimen muste tai kopiopaperi.',
 
     'depreciations' => 'Voit määrittää laitteille poistoja poistaaksesi omaisuuden arvoa suoraviivaisesti laskien.',
-    
-    'empty_file'    => 'Maahantuoja havaitsee, että tämä tiedosto on tyhjä.'
+
+    'empty_file' => 'Maahantuoja havaitsee, että tämä tiedosto on tyhjä.',
 ];

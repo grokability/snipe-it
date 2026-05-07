@@ -9,7 +9,7 @@ use Tests\TestCase;
 
 class DeleteCompaniesTest extends TestCase implements TestsPermissionsRequirement
 {
-    public function testRequiresPermission()
+    public function test_requires_permission()
     {
         $company = Company::factory()->create();
 
@@ -20,7 +20,7 @@ class DeleteCompaniesTest extends TestCase implements TestsPermissionsRequiremen
         $this->assertDatabaseHas('companies', ['id' => $company->id]);
     }
 
-    public function testCannotDeleteCompanyThatHasAssociatedItems()
+    public function test_cannot_delete_company_that_has_associated_items()
     {
         $companyWithAssets = Company::factory()->hasAssets()->create();
         $companyWithAccessories = Company::factory()->hasAccessories()->create();
@@ -43,7 +43,7 @@ class DeleteCompaniesTest extends TestCase implements TestsPermissionsRequiremen
         $this->assertDatabaseHas('companies', ['id' => $companyWithUsers->id]);
     }
 
-    public function testCanDeleteCompany()
+    public function test_can_delete_company()
     {
         $company = Company::factory()->create();
 
@@ -51,10 +51,10 @@ class DeleteCompaniesTest extends TestCase implements TestsPermissionsRequiremen
             ->deleteJson(route('api.companies.destroy', $company))
             ->assertStatusMessageIs('success');
 
-        $this->assertDatabaseMissing('companies', ['id' => $company->id]);
+        $this->assertSoftDeleted($company);
     }
 
-    public function testAdheresToFullMultipleCompaniesSupportScoping()
+    public function test_adheres_to_full_multiple_companies_support_scoping()
     {
 
         $this->settings->enableMultipleFullCompanySupport();

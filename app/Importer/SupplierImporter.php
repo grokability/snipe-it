@@ -28,11 +28,12 @@ class SupplierImporter extends ItemImporter
 
     /**
      * Create a supplier if a duplicate does not exist.
+     *
      * @todo Investigate how this should interact with Importer::createSupplierIfNotExists
      *
      * @author A. Gianotto
+     *
      * @since 6.1.0
-     * @param array $row
      */
     public function createSupplierIfNotExists(array $row)
     {
@@ -41,16 +42,16 @@ class SupplierImporter extends ItemImporter
 
         $supplier = Supplier::where('name', '=', $this->findCsvMatch($row, 'name'))->first();
 
-        if ($this->findCsvMatch($row, 'id')!='') {
+        if ($this->findCsvMatch($row, 'id') != '') {
             // Override supplier if an ID was given
             \Log::debug('Finding supplier by ID: '.$this->findCsvMatch($row, 'id'));
             $supplier = Supplier::find($this->findCsvMatch($row, 'id'));
         }
 
-
         if ($supplier) {
             if (! $this->updating) {
                 $this->log('A matching Supplier '.$this->item['name'].' already exists');
+
                 return;
             }
 
@@ -76,11 +77,10 @@ class SupplierImporter extends ItemImporter
         $this->item['contact'] = trim($this->findCsvMatch($row, 'contact'));
         $this->item['url'] = trim($this->findCsvMatch($row, 'url'));
         $this->item['notes'] = trim($this->findCsvMatch($row, 'notes'));
-
+        $this->item['tag_color'] = trim($this->findCsvMatch($row, 'tag_color'));
 
         Log::debug('Item array is: ');
         Log::debug(print_r($this->item, true));
-
 
         if ($editingSupplier) {
             Log::debug('Updating existing supplier');
@@ -92,14 +92,15 @@ class SupplierImporter extends ItemImporter
 
         if ($supplier->save()) {
             $this->log('Supplier '.$supplier->name.' created or updated from CSV import');
+
             return $supplier;
 
         } else {
             Log::debug($supplier->getErrors());
             $this->logError($supplier, 'Supplier "'.$this->item['name'].'"');
+
             return $supplier->errors;
         }
-
 
     }
 }

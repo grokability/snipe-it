@@ -33,14 +33,30 @@ class AddLabel2Settings extends Migration
     public function down()
     {
         Schema::table('settings', function (Blueprint $table) {
-            if (Schema::hasColumn('settings', 'label2_enable'))     $table->dropColumn('label2_enable');
-            if (Schema::hasColumn('settings', 'label2_template'))   $table->dropColumn('label2_template');
-            if (Schema::hasColumn('settings', 'label2_title'))      $table->dropColumn('label2_title');
-            if (Schema::hasColumn('settings', 'label2_asset_logo')) $table->dropColumn('label2_asset_logo');
-            if (Schema::hasColumn('settings', 'label2_1d_type'))    $table->dropColumn('label2_1d_type');
-            if (Schema::hasColumn('settings', 'label2_2d_type'))    $table->dropColumn('label2_2d_type');
-            if (Schema::hasColumn('settings', 'label2_2d_target'))  $table->dropColumn('label2_2d_target');
-            if (Schema::hasColumn('settings', 'label2_fields'))     $table->dropColumn('label2_fields');
+            if (Schema::hasColumn('settings', 'label2_enable')) {
+                $table->dropColumn('label2_enable');
+            }
+            if (Schema::hasColumn('settings', 'label2_template')) {
+                $table->dropColumn('label2_template');
+            }
+            if (Schema::hasColumn('settings', 'label2_title')) {
+                $table->dropColumn('label2_title');
+            }
+            if (Schema::hasColumn('settings', 'label2_asset_logo')) {
+                $table->dropColumn('label2_asset_logo');
+            }
+            if (Schema::hasColumn('settings', 'label2_1d_type')) {
+                $table->dropColumn('label2_1d_type');
+            }
+            if (Schema::hasColumn('settings', 'label2_2d_type')) {
+                $table->dropColumn('label2_2d_type');
+            }
+            if (Schema::hasColumn('settings', 'label2_2d_target')) {
+                $table->dropColumn('label2_2d_target');
+            }
+            if (Schema::hasColumn('settings', 'label2_fields')) {
+                $table->dropColumn('label2_fields');
+            }
         });
     }
 }

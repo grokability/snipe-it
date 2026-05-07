@@ -55,29 +55,33 @@
                 @endif
 
                 @if (request()->routeIs('report-templates.edit'))
-                    <div class="row">
-                        <div class="col-md-7 col-md-offset-4">
-                            <div class="{{ $errors->has('name') ? ' has-error' : '' }}">
-                                <label
-                                    for="name"
-                                    class="col-md-4 control-label"
-                                >
-                                    {{ trans('admin/reports/general.template_name') }}
-                                </label>
-                                <div class="col-md-8">
-                                    <input
-                                        class="form-control"
-                                        placeholder=""
-                                        name="name"
-                                        type="text"
-                                        id="name"
-                                        value="{{ $template->name }}"
-                                        required
-                                    >
-                                </div>
-                                {!! $errors->first('name', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
-                            </div>
+                    <div class="form-group {{ $errors->has('name') ? ' has-error' : '' }}">
+                        <label
+                            for="name"
+                            class="col-md-2 control-label"
+                        >
+                            {{ trans('admin/reports/general.template_name') }}
+                        </label>
+                        <div class="col-md-5">
+                            <input
+                                class="form-control"
+                                placeholder=""
+                                name="name"
+                                type="text"
+                                id="name"
+                                value="{{ $template->name }}"
+                                required
+                            >
+                            {!! $errors->first('name', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
                         </div>
+                        @if ($template->created_by == auth()->id())
+                            <div class="col-md-3">
+                                <label class="form-control">
+                                    <input type="checkbox" name="is_shared" value="1" @checked($template->is_shared) />
+                                    {{ trans('admin/reports/general.share_template') }}
+                                </label>
+                            </div>
+                        @endif
                     </div>
                 @endif
 
@@ -252,10 +256,21 @@
                 {{ trans('admin/licenses/table.assigned_to') }}
               </label>
 
+
               <label class="form-control">
                   <input type="checkbox" name="username" value="1" @checked($template->checkmarkValue('username')) />
                 {{ trans('admin/users/table.username') }}
               </label>
+
+            <label class="form-control">
+                <input type="checkbox" name="user_company" value="1" @checked($template->checkmarkValue('user_company')) />
+                {{ trans('admin/reports/general.custom_export.user_company') }}
+            </label>
+
+            <label class="form-control">
+                <input type="checkbox" name="email" value="1" @checked($template->checkmarkValue('email')) />
+                {{ trans('admin/users/table.email') }}
+            </label>
 
               <label class="form-control">
                   <input type="checkbox" name="employee_num" value="1" @checked($template->checkmarkValue('employee_num')) />
@@ -276,8 +291,6 @@
                   <input type="checkbox" name="title" value="1" @checked($template->checkmarkValue('title')) />
                 {{ trans('admin/users/table.title') }}
               </label>
-
-                <!-- new -->
 
               <label class="form-control">
                   <input type="checkbox" name="phone" value="1" @checked($template->checkmarkValue('phone')) />
@@ -308,6 +321,11 @@
                   <input type="checkbox" name="user_zip" value="1" @checked($template->checkmarkValue('user_zip')) />
                   {{ trans('general.zip') }}
               </label>
+
+            <label class="form-control">
+                <input type="checkbox" name="target_notes" value="1" @checked($template->checkmarkValue('target_notes')) />
+                {{ trans('admin/reports/general.custom_export.target_notes') }}
+            </label>
 
 
 
@@ -581,7 +599,21 @@
                           {!! $errors->first('last_updated_end', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
                       </div>
                   @endif
+              </div>
 
+              <!-- Last Updated before -->
+              <div class="form-group">
+                  <label for="last_updated_before" class="col-md-3 control-label">{{ trans('general.updated_before') }}</label>
+                        <div class="input-group col-md-2">
+                             <input class="form-control input-group" type="number" min="0" name="last_updated_before" value="{{ $template->textValue('last_updated_before', old('last_updated_before')) }}" aria-label="last_updated_before">
+                            {{ trans('general.days_ago') }}
+                        </div>
+
+                  @if ($errors->has('last_updated_before'))
+                      <div class="col-md-9 col-lg-offset-3">
+                          {!! $errors->first('last_updated_before', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
+                      </div>
+                  @endif
               </div>
 
             <div class="col-md-9 col-md-offset-3">
@@ -596,6 +628,42 @@
                 {{ trans('general.bom_remark') }}
               </label>
             </div>
+
+              <div class="col-md-9 col-md-offset-3">
+                  <label class="form-control">
+                      <input
+                          name="assignment_status"
+                          id="assignment_status_all"
+                          type="radio"
+                          value="all"
+                          @checked($template->radioValue('assignment_status', 'all', true))
+                          aria-label="assignment_status"
+                      >
+                      {{ trans('general.all') }} {{ trans('general.assigned') }} / {{ trans('general.unassigned') }}
+                  </label>
+                  <label class="form-control">
+                      <input
+                          name="assignment_status"
+                          id="assignment_status_assigned"
+                          type="radio"
+                          value="assigned"
+                          @checked($template->radioValue('assignment_status', 'assigned'))
+                          aria-label="assignment_status"
+                      >
+                      {{ trans('general.assigned') }}
+                  </label>
+                  <label class="form-control">
+                      <input
+                          name="assignment_status"
+                          id="assignment_status_unassigned"
+                          type="radio"
+                          value="unassigned"
+                          @checked($template->radioValue('assignment_status', 'unassigned'))
+                          aria-label="assignment_status"
+                      >
+                      {{ trans('general.unassigned') }}
+                  </label>
+              </div>
 
               <div class="col-md-9 col-md-offset-3">
                   <label class="form-control">
@@ -636,9 +704,9 @@
 
         </div> <!-- /.box-body-->
             <div class="box-footer text-right">
-                @if (request()->routeIs('report-templates.edit'))
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-check icon-white" aria-hidden="true"></i>
+                @if(request()->routeIs('report-templates.edit'))
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-download icon-white" aria-hidden="true"></i>
                         {{ trans('general.save') }}
                     </button>
                 @else
@@ -677,36 +745,45 @@
 
             <div class="row">
                 <div class="col-md-12">
-                @if (request()->routeIs('report-templates.show'))
-                        <a
+
+                    <div style="margin-bottom: 5px;">
+                        @if($template->name)
+                            @if($template->created_by == auth()->id())
+                                <span class="text-center">{!!  ($template->is_shared ? '<i class="fa fa-users"></i>'." ".(trans('admin/reports/general.template_shared_with_others')) : '<i class="fa fa-user"></i>'." ".(trans('admin/reports/general.template_not_shared')) )!!}</span>
+                            @else
+                                <span class="text-center">{!!  ($template->is_shared ? '<i class="fa fa-users"></i>'." ".(trans('admin/reports/general.template_shared')) : '<i class="fa fa-user"></i>'." ".(trans('admin/reports/general.template_not_shared')) )!!}</span>
+                            @endif
+                        @endif
+                    </div>
+
+
+                    @if($template->created_by == auth()->id())
+                        @if (request()->routeIs('report-templates.show'))
+                            <a
                                 href="{{ route('report-templates.edit', $template) }}"
                                 class="btn btn-sm btn-warning btn-social btn-block"
                                 data-tooltip="true"
                                 title="{{ trans('admin/reports/general.update_template') }}"
                                 style="margin-bottom: 5px;"
-                        >
-                            <x-icon type="edit" />
-                            {{ trans('general.update') }}
-                        </a>
-
-                    <span data-tooltip="true" title="{{ trans('general.delete') }}">
-                        <a href="#"
+                            >
+                                <x-icon type="edit" />
+                                {{ trans('general.update') }}
+                            </a>
+                        <span data-tooltip="true" title="{{ trans('general.delete') }}">
+                            <a href="#"
                                 class="btn btn-sm btn-danger btn-social btn-block delete-asset"
                                 data-toggle="modal"
                                 data-title="{{ trans('general.delete') }}"
                                 data-content="{{ trans('general.delete_confirm', ['item' => $template->name]) }}"
                                 data-target="#dataConfirmModal"
                                 type="button"
-                        >
-
+                            >
                                 <x-icon type="delete" />
                                 {{ trans('general.delete') }}
-
-                        </a>
-                    </span>
-
-
-                @endif
+                            </a>
+                        </span>
+                       @endif
+                    @endif
                 </div>
             </div>
         @endif

@@ -1,5 +1,5 @@
 <?php
 
-return array(
-    'title'      				=> 'Nom du consommable',
-);
+return [
+    'title' => 'Nom du consommable',
+];

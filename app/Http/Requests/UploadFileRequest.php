@@ -2,15 +2,16 @@
 
 namespace App\Http\Requests;
 
+use App\Helpers\Helper;
 use App\Http\Traits\ConvertsBase64ToFiles;
 use enshrined\svgSanitize\Sanitizer;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
-use \App\Helpers\Helper;
+use Illuminate\Support\Facades\Storage;
 
 class UploadFileRequest extends Request
 {
     use ConvertsBase64ToFiles;
+
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -63,18 +64,16 @@ class UploadFileRequest extends Request
 
     public function handleSVG($file)
     {
-        $sanitizer = new Sanitizer();
+        $sanitizer = new Sanitizer;
         $dirtySVG = file_get_contents($file->getRealPath());
+
         return $sanitizer->sanitize($dirtySVG);
     }
-
 
     /**
      * Get the validation error messages that apply to the request, but
      * replace the attribute name with the name of the file that was attempted and failed
      * to make it clearer to the user which file is the bad one.
-     *
-     * @return array
      */
     public function attributes(): array
     {

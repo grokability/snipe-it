@@ -4,12 +4,12 @@ namespace App\Http\Transformers;
 
 use App\Helpers\Helper;
 use App\Models\Group;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Gate;
 
 class GroupsTransformer
 {
-    public function transformGroups (Collection $groups, $total = null)
+    public function transformGroups(Collection $groups, $total = null)
     {
         $array = [];
         foreach ($groups as $group) {
@@ -29,7 +29,7 @@ class GroupsTransformer
             'notes' => Helper::parseEscapedMarkedownInline($group->notes),
             'created_by' => ($group->adminuser) ? [
                 'id' => (int) $group->adminuser->id,
-                'name'=> e($group->adminuser->display_name),
+                'name' => e($group->adminuser->display_name),
             ] : null,
             'created_at' => Helper::getFormattedDateObject($group->created_at, 'datetime'),
             'updated_at' => Helper::getFormattedDateObject($group->updated_at, 'datetime'),
@@ -37,7 +37,7 @@ class GroupsTransformer
 
         $permissions_array['available_actions'] = [
             'update' => Gate::allows('superadmin') ? true : false,
-            'delete' => Gate::allows('superadmin') ? true : false,
+            'delete' => $group->isDeletable() ? true : false,
         ];
 
         $array += $permissions_array;

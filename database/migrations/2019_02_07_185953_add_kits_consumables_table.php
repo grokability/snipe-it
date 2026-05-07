@@ -1,8 +1,7 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\Schema;
 
 class AddKitsConsumablesTable extends Migration
 {
@@ -13,11 +12,11 @@ class AddKitsConsumablesTable extends Migration
      */
     public function up()
     {
-        if (!Schema::hasTable('kits_consumables')) {
+        if (! Schema::hasTable('kits_consumables')) {
             Schema::create('kits_consumables', function ($table) {
                 $table->increments('id');
-                $table->integer('kit_id')->nullable()->default(NULL); 
-                $table->integer('consumable_id')->nullable()->default(NULL);    
+                $table->integer('kit_id')->nullable()->default(null);
+                $table->integer('consumable_id')->nullable()->default(null);
                 $table->integer('quantity')->default(1);
                 $table->timestamps();
             });

@@ -5,6 +5,7 @@ namespace App\Presenters;
 use App\Models\CustomField;
 use Carbon\CarbonImmutable;
 use DateTime;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * Class AssetPresenter
@@ -13,6 +14,7 @@ class AssetPresenter extends Presenter
 {
     /**
      * Json Column Layout for bootstrap table
+     *
      * @return string
      */
     public static function dataTableLayout()
@@ -23,6 +25,7 @@ class AssetPresenter extends Presenter
                 'checkbox' => true,
                 'titleTooltip' => trans('general.select_all_none'),
                 'printIgnore' => true,
+                'class' => 'hidden-print',
             ], [
                 'field' => 'id',
                 'searchable' => false,
@@ -58,10 +61,10 @@ class AssetPresenter extends Presenter
                 'searchable' => false,
                 'sortable' => true,
                 'switchable' => true,
-                'title' => trans('admin/hardware/table.image'),
+                'title' => trans('general.image'),
                 'visible' => true,
                 'formatter' => 'imageFormatter',
-            ],[
+            ], [
                 'field' => 'serial',
                 'searchable' => true,
                 'sortable' => true,
@@ -89,13 +92,14 @@ class AssetPresenter extends Presenter
                 'visible' => true,
                 'formatter' => 'categoriesLinkObjFormatter',
             ], [
-                'field' => 'status_label',
+                'field' => 'status',
                 'searchable' => true,
                 'sortable' => true,
                 'title' => trans('admin/hardware/table.status'),
                 'visible' => true,
                 'formatter' => 'statuslabelsLinkObjFormatter',
-            ], [
+            ],
+            [
                 'field' => 'assigned_to',
                 'searchable' => true,
                 'sortable' => true,
@@ -109,7 +113,7 @@ class AssetPresenter extends Presenter
                 'title' => trans('general.employee_number'),
                 'visible' => false,
                 'formatter' => 'employeeNumFormatter',
-            ],[
+            ], [
                 'field' => 'jobtitle',
                 'searchable' => true,
                 'sortable' => true,
@@ -151,14 +155,15 @@ class AssetPresenter extends Presenter
                 'visible' => false,
                 'title' => trans('general.purchase_date'),
                 'formatter' => 'dateDisplayFormatter',
-            ], [
-                'field' => 'first_checkout',
-                'searchable' => true,
-                'sortable' => true,
-                'visible' => false,
-                'title' => trans('general.first_checkout'),
-                'formatter' => 'dateDisplayFormatter',
             ],
+            //            [
+            //                'field' => 'first_checkout',
+            //                'searchable' => true,
+            //                'sortable' => true,
+            //                'visible' => false,
+            //                'title' => trans('general.first_checkout'),
+            //                'formatter' => 'dateDisplayFormatter',
+            //            ],
             [
                 'field' => 'age',
                 'searchable' => false,
@@ -173,13 +178,13 @@ class AssetPresenter extends Presenter
                 'footerFormatter' => 'sumFormatter',
                 'class' => 'text-right',
             ], [
-                "field" => "book_value",
-                "searchable" => false,
-                "sortable" => false,
-                "title" => trans('admin/hardware/table.book_value'),
-                "footerFormatter" => 'sumFormatter',
-                "class" => "text-right",
-            ],[
+                'field' => 'book_value',
+                'searchable' => false,
+                'sortable' => false,
+                'title' => trans('admin/hardware/table.book_value'),
+                'footerFormatter' => 'sumFormatter',
+                'class' => 'text-right',
+            ], [
                 'field' => 'order_number',
                 'searchable' => true,
                 'sortable' => true,
@@ -341,7 +346,7 @@ class AssetPresenter extends Presenter
                 'sortable' => true,
                 'switchable' => true,
                 'title' => $field->name,
-                'formatter'=> 'customFieldsFormatter',
+                'formatter' => 'customFieldsFormatter',
                 'escape' => true,
                 'class' => ($field->field_encrypted == '1') ? 'css-padlock' : '',
                 'visible' => ($field->show_in_listview == '1') ? true : false,
@@ -357,6 +362,7 @@ class AssetPresenter extends Presenter
             'visible' => true,
             'formatter' => 'hardwareInOutFormatter',
             'printIgnore' => true,
+            'class' => 'hidden-print',
         ];
 
         $layout[] = [
@@ -367,11 +373,11 @@ class AssetPresenter extends Presenter
             'title' => trans('table.actions'),
             'formatter' => 'hardwareActionsFormatter',
             'printIgnore' => true,
+            'class' => 'hidden-print',
         ];
 
         return json_encode($layout);
     }
-
 
     public static function assignedAccessoriesDataTableLayout()
     {
@@ -443,12 +449,13 @@ class AssetPresenter extends Presenter
 
     /**
      * Generate html link to this items name.
+     *
      * @return string
      */
     public function nameUrl()
     {
         if (auth()->user()->can('view', ['\App\Models\Asset', $this])) {
-            return (string)link_to_route('hardware.show', e($this->display_name), $this->id);
+            return '<a href="'.route('hardware.show', $this->id).'">'.e($this->display_name).'</a>';
         } else {
             return e($this->display_name);
         }
@@ -465,11 +472,13 @@ class AssetPresenter extends Presenter
 
     /**
      * Generate img tag to this items image.
+     *
      * @return mixed|string
      */
     public function imageUrl()
     {
         $imagePath = '';
+        $imageAlt = '';
         if ($this->image && ! empty($this->image)) {
             $imagePath = $this->image;
             $imageAlt = $this->name;
@@ -477,9 +486,9 @@ class AssetPresenter extends Presenter
             $imagePath = $this->model->image;
             $imageAlt = $this->model->name;
         }
-        $url = config('app.url');
         if (! empty($imagePath)) {
-            $imagePath = '<img src="'.$url.'/uploads/assets/'.$imagePath.' height="50" width="50" alt="'.$imageAlt.'">';
+            $url = Storage::disk('public')->url(app('assets_upload_path').e($imagePath));
+            $imagePath = '<img src="'.$url.'" height="50" width="50" alt="'.e($imageAlt).'">';
         }
 
         return $imagePath;
@@ -487,6 +496,7 @@ class AssetPresenter extends Presenter
 
     /**
      * Generate img tag to this items image.
+     *
      * @return mixed|string
      */
     public function imageSrc()
@@ -498,7 +508,7 @@ class AssetPresenter extends Presenter
             $imagePath = $this->model->image;
         }
         if (! empty($imagePath)) {
-            return config('app.url').'/uploads/assets/'.$imagePath;
+            return Storage::disk('public')->url(app('assets_upload_path').e($imagePath));
         }
 
         return $imagePath;
@@ -506,6 +516,7 @@ class AssetPresenter extends Presenter
 
     /**
      * Get Displayable Name
+     *
      * @return string
      *
      * @todo this should be factored out - it should be subsumed by fullName (below)
@@ -518,6 +529,7 @@ class AssetPresenter extends Presenter
 
     /**
      * Helper for notification polymorphism.
+     *
      * @return mixed
      */
     public function fullName()
@@ -544,6 +556,7 @@ class AssetPresenter extends Presenter
 
     /**
      * Returns the date this item hits EOL.
+     *
      * @return false|string
      */
     public function eol_date()
@@ -555,6 +568,7 @@ class AssetPresenter extends Presenter
 
     /**
      * How many months until this asset hits EOL.
+     *
      * @return null
      */
     public function months_until_eol()
@@ -574,8 +588,8 @@ class AssetPresenter extends Presenter
 
     /**
      * @return string
-     * This handles the status label "meta" status of "deployed" if
-     * it's assigned. Should maybe deprecate.
+     *                This handles the status label "meta" status of "deployed" if
+     *                it's assigned. Should maybe deprecate.
      */
     public function statusMeta()
     {
@@ -583,13 +597,13 @@ class AssetPresenter extends Presenter
             return 'deployed';
         }
 
-        return $this->model->assetstatus->getStatuslabelType();
+        return $this->model->status->getStatuslabelType();
     }
 
     /**
      * @return string
-     * This handles the status label "meta" status of "deployed" if
-     * it's assigned. Should maybe deprecate.
+     *                This handles the status label "meta" status of "deployed" if
+     *                it's assigned. Should maybe deprecate.
      */
     public function statusText()
     {
@@ -597,13 +611,13 @@ class AssetPresenter extends Presenter
             return trans('general.deployed');
         }
 
-        return $this->model->assetstatus->name;
+        return $this->model->status->name;
     }
 
     /**
      * @return string
-     * This handles the status label "meta" status of "deployed" if
-     * it's assigned. Results look like:
+     *                This handles the status label "meta" status of "deployed" if
+     *                it's assigned. Results look like:
      *
      * (if assigned and the status label is "Ready to Deploy"):
      * (Deployed)
@@ -617,14 +631,14 @@ class AssetPresenter extends Presenter
     public function fullStatusText()
     {
         // Make sure the status is valid
-        if ($this->assetstatus) {
+        if ($this->status) {
 
             // If the status is assigned to someone or something...
             if ($this->model->assigned) {
 
                 // If it's assigned and not set to the default "ready to deploy" status
-                if ($this->assetstatus->name != trans('general.ready_to_deploy')) {
-                    return trans('general.deployed').' ('.$this->model->assetstatus->name.')';
+                if ($this->status->name != trans('general.ready_to_deploy')) {
+                    return trans('general.deployed').' ('.$this->model->status->name.')';
                 }
 
                 // If it's assigned to the default "ready to deploy" status, just
@@ -634,7 +648,7 @@ class AssetPresenter extends Presenter
             }
 
             // Return just the status name
-            return $this->model->assetstatus->name;
+            return $this->model->status->name;
         }
 
         // This status doesn't seem valid - either data has been manually edited or
@@ -644,6 +658,7 @@ class AssetPresenter extends Presenter
 
     /**
      * Date the warranty expires.
+     *
      * @return false|string
      */
     public function warranty_expires()
@@ -659,20 +674,8 @@ class AssetPresenter extends Presenter
     }
 
     /**
-     * Used to take user created URL and dynamically fill in the needed values per asset
-     * @return string
-     */
-    public function dynamicUrl($dynamic_url)
-    {
-        $url = (str_replace('{LOCALE}',\App\Models\Setting::getSettings()->locale, $dynamic_url));
-        $url = (str_replace('{SERIAL}', urlencode($this->model->serial), $url));
-        $url = (str_replace('{MODEL_NAME}', urlencode($this->model->model->name), $url));
-        $url = (str_replace('{MODEL_NUMBER}', urlencode($this->model->model->model_number), $url));
-        return $url;
-    }
-
-    /**
      * Url to view this item.
+     *
      * @return string
      */
     public function viewUrl()

@@ -6,83 +6,85 @@
  |--------------------------------------------------------------------------
 */
 
-
 return [
 
     'Superuser' => [
         [
             'permission' => 'superuser',
-            'display'    => true,
+            'display' => true,
         ],
     ],
 
     'Admin' => [
         [
             'permission' => 'admin',
-            'display'    => true,
+            'display' => true,
         ],
     ],
 
     'Import' => [
         [
             'permission' => 'import',
-            'display'    => true,
+            'display' => true,
         ],
     ],
 
     'Reports' => [
         [
             'permission' => 'reports.view',
-            'display'    => true,
+            'display' => true,
         ],
     ],
 
     'Assets' => [
         [
             'permission' => 'assets.view',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'assets.create',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'assets.edit',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'assets.delete',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'assets.checkout',
-            'display'    => false,
+            'display' => false,
         ],
 
         [
             'permission' => 'assets.checkin',
-            'display'    => true,
+            'display' => true,
         ],
 
         [
             'permission' => 'assets.checkout',
-            'display'    => true,
+            'display' => true,
         ],
 
         [
             'permission' => 'assets.audit',
-            'display'    => true,
+            'display' => true,
         ],
-
 
         [
             'permission' => 'assets.view.requestable',
-            'display'    => true,
+            'display' => true,
         ],
 
         [
             'permission' => 'assets.view.encrypted_custom_fields',
-            'display'    => true,
+            'display' => true,
+        ],
+        [
+            'permission' => 'assets.files',
+            'display' => true,
         ],
 
     ],
@@ -90,31 +92,31 @@ return [
     'Accessories' => [
         [
             'permission' => 'accessories.view',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'accessories.create',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'accessories.edit',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'accessories.delete',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'accessories.checkout',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'accessories.checkin',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'accessories.files',
-            'display'    => true,
+            'display' => true,
         ],
 
     ],
@@ -122,95 +124,93 @@ return [
     'Consumables' => [
         [
             'permission' => 'consumables.view',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'consumables.create',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'consumables.edit',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'consumables.delete',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'consumables.checkout',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'consumables.files',
-            'display'    => true,
+            'display' => true,
         ],
     ],
-
 
     'Licenses' => [
         [
             'permission' => 'licenses.view',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'licenses.create',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'licenses.edit',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'licenses.delete',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'licenses.checkout',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'licenses.checkin',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'licenses.keys',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'licenses.files',
-            'display'    => true,
+            'display' => true,
         ],
     ],
-
 
     'Components' => [
         [
             'permission' => 'components.view',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'components.create',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'components.edit',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'components.delete',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'components.checkout',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'components.checkin',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'components.files',
-            'display'    => true,
+            'display' => true,
         ],
 
     ],
@@ -218,38 +218,42 @@ return [
     'Kits' => [
         [
             'permission' => 'kits.view',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'kits.create',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'kits.edit',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'kits.delete',
-            'display'    => true,
+            'display' => true,
         ],
     ],
 
     'Users' => [
         [
             'permission' => 'users.view',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'users.create',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'users.edit',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'users.delete',
-            'display'    => true,
+            'display' => true,
+        ],
+        [
+            'permission' => 'users.files',
+            'display' => true,
         ],
 
     ],
@@ -257,19 +261,23 @@ return [
     'Models' => [
         [
             'permission' => 'models.view',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'models.create',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'models.edit',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'models.delete',
-            'display'    => true,
+            'display' => true,
+        ],
+        [
+            'permission' => 'models.files',
+            'display' => true,
         ],
 
     ],
@@ -277,200 +285,214 @@ return [
     'Categories' => [
         [
             'permission' => 'categories.view',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'categories.create',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'categories.edit',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'categories.delete',
-            'display'    => true,
+            'display' => true,
         ],
     ],
 
     'Departments' => [
         [
             'permission' => 'departments.view',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'departments.create',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'departments.edit',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'departments.delete',
-            'display'    => true,
+            'display' => true,
+        ],
+        [
+            'permission' => 'departments.files',
+            'display' => true,
         ],
     ],
 
     'Status Labels' => [
         [
             'permission' => 'statuslabels.view',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'statuslabels.create',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'statuslabels.edit',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'statuslabels.delete',
-            'display'    => true,
+            'display' => true,
         ],
     ],
 
     'Custom Fields' => [
         [
             'permission' => 'customfields.view',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'customfields.create',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'customfields.edit',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'customfields.delete',
-            'display'    => true,
+            'display' => true,
         ],
     ],
 
     'Suppliers' => [
         [
             'permission' => 'suppliers.view',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'suppliers.create',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'suppliers.edit',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'suppliers.delete',
-            'display'    => true,
+            'display' => true,
+        ],
+        [
+            'permission' => 'suppliers.files',
+            'display' => true,
         ],
     ],
-
 
     'Manufacturers' => [
         [
             'permission' => 'manufacturers.view',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'manufacturers.create',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'manufacturers.edit',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'manufacturers.delete',
-            'display'    => true,
+            'display' => true,
         ],
     ],
 
     'Depreciations' => [
         [
             'permission' => 'depreciations.view',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'depreciations.create',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'depreciations.edit',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'depreciations.delete',
-            'display'    => true,
+            'display' => true,
         ],
     ],
 
     'Locations' => [
         [
             'permission' => 'locations.view',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'locations.create',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'locations.edit',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'locations.delete',
-            'display'    => true,
+            'display' => true,
+        ],
+        [
+            'permission' => 'locations.files',
+            'display' => true,
         ],
     ],
 
     'Companies' => [
         [
             'permission' => 'companies.view',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'companies.create',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'companies.edit',
-            'display'    => true,
+            'display' => true,
         ],
         [
             'permission' => 'companies.delete',
-            'display'    => true,
+            'display' => true,
+        ],
+        [
+            'permission' => 'companies.files',
+            'display' => true,
         ],
     ],
-
 
     'User (Self) Accounts' => [
         [
             'permission' => 'self.two_factor',
-            'display'    => true,
+            'display' => true,
         ],
 
         [
             'permission' => 'self.api',
-            'display'    => true,
+            'display' => true,
         ],
 
         [
             'permission' => 'self.edit_location',
-            'display'    => true,
+            'display' => true,
         ],
 
         [
             'permission' => 'self.checkout_assets',
-            'display'    => true,
+            'display' => true,
         ],
 
         [
             'permission' => 'self.view_purchase_cost',
-            'display'    => true,
+            'display' => true,
         ],
 
     ],

@@ -13,6 +13,7 @@ class ActionlogPresenter extends Presenter
             if (empty($user->deleted_at)) {
                 return $user->present()->nameUrl();
             }
+
             // The user was deleted
             return '<del>'.$user->display_name.'</del> (deleted)';
         }
@@ -22,13 +23,11 @@ class ActionlogPresenter extends Presenter
 
     public function item()
     {
-        if ($this->action_type == 'uploaded') {
-            return (string) link_to_route('show/userfile', $this->model->filename, [$this->model->item->id, $this->model->id]);
-        }
         if ($item = $this->model->item) {
             if (empty($item->deleted_at)) {
                 return $this->model->item->present()->nameUrl();
             }
+
             // The item was deleted
             return '<del>'.$item->name.'</del> (deleted)';
         }
@@ -70,7 +69,7 @@ class ActionlogPresenter extends Presenter
                 return 'fa-solid fa-user-pen';
             }
 
-             return 'fa-solid fa-user';
+            return 'fa-solid fa-user';
         }
 
         // Everything else

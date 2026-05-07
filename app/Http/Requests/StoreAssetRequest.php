@@ -6,22 +6,21 @@ use App\Http\Requests\Traits\MayContainCustomFields;
 use App\Models\Asset;
 use App\Models\Company;
 use App\Models\Setting;
+use App\Rules\AssetCannotBeCheckedOutToNondeployableStatus;
 use Carbon\Carbon;
 use Carbon\Exceptions\InvalidFormatException;
 use Illuminate\Support\Facades\Gate;
-use App\Rules\AssetCannotBeCheckedOutToNondeployableStatus;
 
 class StoreAssetRequest extends ImageUploadRequest
 {
     use MayContainCustomFields;
+
     /**
      * Determine if the user is authorized to make this request.
-     *
-     * @return bool
      */
     public function authorize(): bool
     {
-        return Gate::allows('create', new Asset);
+        return Gate::allows('create', Asset::class);
     }
 
     public function prepareForValidation(): void
@@ -45,8 +44,6 @@ class StoreAssetRequest extends ImageUploadRequest
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array
      */
     public function rules(): array
     {
@@ -63,7 +60,7 @@ class StoreAssetRequest extends ImageUploadRequest
 
         return array_merge(
             $modelRules,
-            ['status_id' => [new AssetCannotBeCheckedOutToNondeployableStatus()]],
+            ['status_id' => [new AssetCannotBeCheckedOutToNondeployableStatus]],
             parent::rules(),
         );
     }

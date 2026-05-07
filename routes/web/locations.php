@@ -18,7 +18,7 @@ Route::group(['prefix' => 'locations', 'middleware' => ['auth']], function () {
     Route::post(
     '{location}/restore',
     [LocationsController::class, 'postRestore']
-    )->name('locations.restore');
+    )->name('locations.restore')->withTrashed();
 
     Route::get('{locationId}/clone',
     [LocationsController::class, 'getClone']

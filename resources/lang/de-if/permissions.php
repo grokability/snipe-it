@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
 
     /*
     |--------------------------------------------------------------------------
@@ -15,29 +15,28 @@ return array(
     |---------------------------------------------------------------------------
     */
 
-    "superuser" => [
+    'superuser' => [
         'name' => 'Superbenutzer',
-        'note'       => 'Legt fest, ob der Benutzer vollen Zugriff auf alle Aspekte des Administrators hat. Diese Einstellung überschreibt ALLE spezifischeren und restriktiveren Berechtigungen im gesamten System. ',
+        'note' => 'Legt fest, ob der Benutzer vollen Zugriff auf alle Aspekte des Administrators hat. Diese Einstellung überschreibt ALLE spezifischeren und restriktiveren Berechtigungen im gesamten System. ',
     ],
     'admin' => [
         'name' => 'Admin-Zugriff',
-        'note'       => 'Legt fest, ob der Benutzer Zugriff auf die meisten Aspekte des Systems AUSSER in den Systemeinstellungen hat. Diese Benutzer werden in der Lage sein, Benutzer, Standorte, Kategorien, etc, zu verwalten, aber SIND beschränkt durch die Volle Unterstützung für mehrere Unternehmen, wenn es aktiviert ist.',
+        'note' => 'Legt fest, ob der Benutzer Zugriff auf die meisten Aspekte des Systems AUSSER in den Systemeinstellungen hat. Diese Benutzer werden in der Lage sein, Benutzer, Standorte, Kategorien, etc, zu verwalten, aber SIND beschränkt durch die Volle Unterstützung für mehrere Unternehmen, wenn es aktiviert ist.',
     ],
 
     'import' => [
         'name' => 'CSV-Import',
-        'note'       => 'Dies wird Benutzern erlauben zu importieren, auch wenn der Zugriff auf Benutzer, Assets, usw. an anderer Stelle verweigert wird.',
+        'note' => 'Dies wird Benutzern erlauben zu importieren, auch wenn der Zugriff auf Benutzer, Assets, usw. an anderer Stelle verweigert wird.',
     ],
 
     'reports' => [
         'name' => 'Berichtszugriff',
-        'note'       => 'Legt fest, ob der Benutzer Zugriff auf den Reports-Abschnitt der Anwendung hat.',
+        'note' => 'Legt fest, ob der Benutzer Zugriff auf den Reports-Abschnitt der Anwendung hat.',
     ],
 
-    'assets' =>
-        [
-            'name' => 'Assets',
-            'note' => 'Gewährt Zugriff auf den Abschnitt Assets der Anwendung.',
+    'assets' => [
+        'name' => 'Assets',
+        'note' => 'Gewährt Zugriff auf den Abschnitt Assets der Anwendung.',
     ],
 
     'assetsview' => [
@@ -81,9 +80,9 @@ return array(
         'note' => 'Ermöglicht dem Benutzer, verschlüsselte Felder auf Assets anzuzeigen und zu ändern.',
     ],
 
-    'accessories'   => [
+    'accessories' => [
         'name' => 'Zubehör',
-        'note'       => 'Gewährt Zugriff auf den Abschnitt Zubehör der Anwendung.',
+        'note' => 'Gewährt Zugriff auf den Abschnitt Zubehör der Anwendung.',
     ],
 
     'accessoriesview' => [
@@ -108,11 +107,52 @@ return array(
     ],
     'accessoriesfiles' => [
         'name' => 'Zubehördateien verwalten',
-        'note' => 'Ermöglicht dem Benutzer das Hochladen, Herunterladen und Löschen von Zubehör Dateien.',
+        'note' => 'Allows the user to upload, download, and delete files associated with accessories. (This only makes sense with view privileges or higher.)',
     ],
-    'consumables'   => [
+
+    'assetsfiles' => [
+        'name' => 'Manage Asset Files',
+        'note' => 'Allows the user to upload, download, and delete files associated with assets. (This only makes sense with view privileges or higher.)',
+    ],
+
+    'usersfiles' => [
+        'name' => 'Manage User Files',
+        'note' => 'Allows the user to upload, download, and delete files associated with users. (This only makes sense with view privileges or higher.)',
+    ],
+
+    'modelsfiles' => [
+        'name' => 'Manage Model Files',
+        'note' => 'Allows the user to upload, download, and delete files associated with asset models on both the model view and the asset view screens. (This only makes sense with view privileges or higher.)',
+    ],
+
+    'departmentsfiles' => [
+        'name' => 'Manage Department Files',
+        'note' => 'Allows the user to upload, download, and delete files associated with departments. (This only makes sense with view privileges or higher.)',
+    ],
+
+    'suppliersfiles' => [
+        'name' => 'Manage Supplier Files',
+        'note' => 'Allows the user to upload, download, and delete files associated with suppliers. (This only makes sense with view privileges or higher.)',
+    ],
+
+    'locationsfiles' => [
+        'name' => 'Manage Location Files',
+        'note' => 'Allows the user to upload, download, and delete files associated with locations.(This only makes sense with view privileges or higher.)',
+    ],
+
+    'companiesfiles' => [
+        'name' => 'Manage Company Files',
+        'note' => 'Allows the user to upload, download, and delete files associated with companies. (This only makes sense with view privileges or higher.)',
+    ],
+
+    'consumablesfiles' => [
+        'name' => 'Verbrauchsdateien verwalten',
+        'note' => 'Allows the user to upload, download, and delete files associated with consumables. (This only makes sense with view privileges or higher.)',
+    ],
+
+    'consumables' => [
         'name' => 'Verbrauchsmaterialien',
-        'note'       => 'Gewährt Zugriff auf den Bereich Verbrauchsmaterialien der Anwendung.',
+        'note' => 'Gewährt Zugriff auf den Bereich Verbrauchsmaterialien der Anwendung.',
     ],
     'consumablesview' => [
         'name' => 'Verbrauchsmaterialien anzeigen',
@@ -130,13 +170,10 @@ return array(
         'name' => 'Verbrauchsmaterialien auschecken',
         'note' => 'Verbrauchsmaterialien im Inventar zuweisen, indem sie ausgecheckt werden.',
     ],
-    'consumablesfiles' => [
-        'name' => 'Verbrauchsdateien verwalten',
-        'note' => 'Ermöglicht dem Benutzer das Hochladen, Herunterladen und Löschen von Verbrauchsmaterialien.',
-    ],
-    'licenses'   => [
+
+    'licenses' => [
         'name' => 'Lizenzen',
-        'note'       => 'Gewährt Zugriff auf den Abschnitt Lizenzen der Anwendung.',
+        'note' => 'Gewährt Zugriff auf den Abschnitt Lizenzen der Anwendung.',
     ],
     'licensesview' => [
         'name' => 'Lizenzen ansehen',
@@ -153,7 +190,7 @@ return array(
     'licensescheckout' => [
         'name' => 'Lizenzen zuweisen',
         'note' => 'Ermöglicht dem Benutzer, Assets oder Benutzern Lizenzen zuzuweisen.',
-        ],
+    ],
     'licensescheckin' => [
         'name' => 'Zuweisung von Lizenzen Aufheben',
         'note' => 'Ermöglicht dem Benutzer, die Zuweisung von Lizenzen von Assets oder Benutzern aufzuheben.',
@@ -162,13 +199,18 @@ return array(
         'name' => 'Lizenzdateien Verwalten',
         'note' => 'Ermöglicht dem Benutzer das Hochladen, Herunterladen und Löschen in Verbindung mit Lizenzen.',
     ],
+    'componentsfiles' => [
+        'name' => 'Komponentendateien Verwalten',
+        'note' => 'Ermöglicht dem Benutzer das Hochladen, Herunterladen und Löschen in Verbindung mit Komponenten.',
+    ],
+
     'licenseskeys' => [
         'name' => 'Lizenzschlüssel Verwalten',
         'note' => 'Ermöglicht dem Benutzer, Produktschlüssel anzuzeigen, die mit Lizenzen verknüpft sind.',
     ],
-    'components'   => [
+    'components' => [
         'name' => 'Komponenten',
-        'note'       => 'Gewährt Zugriff auf den Bereich "Komponenten" in der Anwendung.',
+        'note' => 'Gewährt Zugriff auf den Bereich "Komponenten" in der Anwendung.',
     ],
     'componentsview' => [
         'name' => 'Komponenten Anzeigen',
@@ -182,10 +224,7 @@ return array(
     'componentsdelete' => [
         'name' => 'Komponenten Löschen',
     ],
-    'componentsfiles' => [
-        'name' => 'Komponentendateien Verwalten',
-        'note' => 'Ermöglicht dem Benutzer das Hochladen, Herunterladen und Löschen in Verbindung mit Komponenten.',
-    ],
+
     'componentscheckout' => [
         'name' => 'Komponenten Auschecken',
         'note' => 'Komponenten im Inventar zuweisen, indem sie ausgecheckt werden.',
@@ -194,9 +233,9 @@ return array(
         'name' => 'Komponenten einchecken',
         'note' => 'Checken Sie die derzeit ausgebuchten Komponenten wieder in das Inventar ein.',
     ],
-    'kits'   => [
+    'kits' => [
         'name' => 'Vordefinierte Kits',
-        'note'       => 'Gewährt Zugriff auf den Abschnitt "Vordefinierte Kits" in der Anwendung.',
+        'note' => 'Gewährt Zugriff auf den Abschnitt "Vordefinierte Kits" in der Anwendung.',
     ],
     'kitsview' => [
         'name' => 'Vordefinierte Kits Anzeigen',
@@ -210,9 +249,9 @@ return array(
     'kitsdelete' => [
         'name' => 'Vordefinierte Kits Löschen',
     ],
-    'users'   => [
+    'users' => [
         'name' => 'Benutzer',
-        'note'       => 'Gewährt Zugriff auf den Bereich "Benutzer" in der Anwendung.',
+        'note' => 'Gewährt Zugriff auf den Bereich "Benutzer" in der Anwendung.',
     ],
     'usersview' => [
         'name' => 'Benutzer anzeigen',
@@ -226,9 +265,9 @@ return array(
     'usersdelete' => [
         'name' => 'Benutzer löschen',
     ],
-    'models'   => [
+    'models' => [
         'name' => 'Modelle',
-        'note'       => 'Gewährt Zugriff auf den Bereich "Modelle" in der Anwendung.',
+        'note' => 'Gewährt Zugriff auf den Bereich "Modelle" in der Anwendung.',
     ],
     'modelsview' => [
         'name' => 'Modelle anzeigen',
@@ -243,9 +282,9 @@ return array(
     'modelsdelete' => [
         'name' => 'Modelle Löschen',
     ],
-    'categories'   => [
+    'categories' => [
         'name' => 'Kategorien',
-        'note'       => 'Gewährt Zugriff auf den Bereich "Kategorien" in der Anwendung.',
+        'note' => 'Gewährt Zugriff auf den Bereich "Kategorien" in der Anwendung.',
     ],
     'categoriesview' => [
         'name' => 'Kategorien Anzeigen',
@@ -259,9 +298,9 @@ return array(
     'categoriesdelete' => [
         'name' => 'Kategorien Löschen',
     ],
-    'departments'   => [
+    'departments' => [
         'name' => 'Abteilungen',
-        'note'       => 'Gewährt Zugriff auf den Bereich "Abteilungen" in der Anwendung.',
+        'note' => 'Gewährt Zugriff auf den Bereich "Abteilungen" in der Anwendung.',
     ],
     'departmentsview' => [
         'name' => 'Abteilungen Anzeigen',
@@ -275,9 +314,9 @@ return array(
     'departmentsdelete' => [
         'name' => 'Abteilungen Löschen',
     ],
-    'locations'   => [
+    'locations' => [
         'name' => 'Standorte',
-        'note'       => 'Gewährt Zugriff auf den Bereich "Standorte" in der Anwendung.',
+        'note' => 'Gewährt Zugriff auf den Bereich "Standorte" in der Anwendung.',
     ],
     'locationsview' => [
         'name' => 'Standorte Anzeigen',
@@ -291,9 +330,9 @@ return array(
     'locationsdelete' => [
         'name' => 'Standorte Löschen',
     ],
-    'status-labels'   => [
+    'status-labels' => [
         'name' => 'Statusbezeichnungen',
-        'note'       => 'Gewährt Zugriff auf den Bereich "Statusbezeichnungen", die für Assets benutzt werden.',
+        'note' => 'Gewährt Zugriff auf den Bereich "Statusbezeichnungen", die für Assets benutzt werden.',
     ],
     'statuslabelsview' => [
         'name' => 'Statusbezeichnungen Anzeigen',
@@ -307,9 +346,9 @@ return array(
     'statuslabelsdelete' => [
         'name' => 'Statusbezeichnung Löschen',
     ],
-    'custom-fields'   => [
+    'custom-fields' => [
         'name' => 'Benutzerdefinierte Felder',
-        'note'       => 'Gewährt Zugriff auf den Abschnitt Benutzerdefinierte Felder der Anwendung, die von Assets verwendet wird.',
+        'note' => 'Gewährt Zugriff auf den Abschnitt Benutzerdefinierte Felder der Anwendung, die von Assets verwendet wird.',
     ],
     'customfieldsview' => [
         'name' => 'Benutzerdefinierte Felder Ansehen',
@@ -323,9 +362,9 @@ return array(
     'customfieldsdelete' => [
         'name' => 'Benutzerdefinierte Felder Löschen',
     ],
-    'suppliers'   => [
+    'suppliers' => [
         'name' => 'Lieferanten',
-        'note'       => 'Gewährt Zugriff auf den Abschnitt Lieferanten der Anwendung.',
+        'note' => 'Gewährt Zugriff auf den Abschnitt Lieferanten der Anwendung.',
     ],
     'suppliersview' => [
         'name' => 'Lieferanten Ansehen',
@@ -339,9 +378,9 @@ return array(
     'suppliersdelete' => [
         'name' => 'Lieferanten Löschen',
     ],
-    'manufacturers'   => [
+    'manufacturers' => [
         'name' => 'Hersteller',
-        'note'       => 'Gewährt Zugriff auf den Abschnitt Hersteller der Anwendung.',
+        'note' => 'Gewährt Zugriff auf den Abschnitt Hersteller der Anwendung.',
     ],
     'manufacturersview' => [
         'name' => 'Hersteller Ansehen',
@@ -355,9 +394,9 @@ return array(
     'manufacturersdelete' => [
         'name' => 'Hersteller Löschen',
     ],
-    'companies'   => [
+    'companies' => [
         'name' => 'Firmen',
-        'note'       => 'Gewährt Zugriff auf den Bereich Firmen der Anwendung.',
+        'note' => 'Gewährt Zugriff auf den Bereich Firmen der Anwendung.',
     ],
     'companiesview' => [
         'name' => 'Firmen Ansehen',
@@ -373,32 +412,32 @@ return array(
     ],
     'user-self-accounts' => [
         'name' => 'Benutzerkonten',
-        'note'       => 'Erlaubt Nicht-Administratoren die Möglichkeit, bestimmte Aspekte ihrer eigenen Benutzerkonten zu verwalten.',
+        'note' => 'Erlaubt Nicht-Administratoren die Möglichkeit, bestimmte Aspekte ihrer eigenen Benutzerkonten zu verwalten.',
     ],
     'selftwo-factor' => [
         'name' => 'Zwei-Faktor-Authentifizierung verwalten',
-        'note'       => 'Erlaubt Benutzern die Zwei-Faktor-Authentifizierung für ihre eigenen Konten zu aktivieren, zu deaktivieren und zu verwalten.',
+        'note' => 'Erlaubt Benutzern die Zwei-Faktor-Authentifizierung für ihre eigenen Konten zu aktivieren, zu deaktivieren und zu verwalten.',
     ],
     'selfapi' => [
         'name' => 'API-Token verwalten',
-        'note'       => 'Ermöglicht Benutzern, eigene API-Token zu erstellen, anzuschauen und zu widerrufen. Benutzer-Token haben die gleichen Berechtigungen wie der Benutzer, der sie erstellt hat.',
+        'note' => 'Ermöglicht Benutzern, eigene API-Token zu erstellen, anzuschauen und zu widerrufen. Benutzer-Token haben die gleichen Berechtigungen wie der Benutzer, der sie erstellt hat.',
     ],
     'selfedit-location' => [
         'name' => 'Standort Aktualisieren',
-        'note'       => 'Ermöglicht Benutzern den Standort zu bearbeiten, der mit ihrem eigenen Benutzerkonto verknüpft ist.',
+        'note' => 'Ermöglicht Benutzern den Standort zu bearbeiten, der mit ihrem eigenen Benutzerkonto verknüpft ist.',
     ],
     'selfcheckout-assets' => [
         'name' => 'Assets Selbst Auschecken',
-        'note'       => 'Erlaubt es Benutzern Assets ohne Admin-Intervention selbst auszuchecken.',
+        'note' => 'Erlaubt es Benutzern Assets ohne Admin-Intervention selbst auszuchecken.',
     ],
     'selfview-purchase-cost' => [
         'name' => 'Einkaufspreis Anzeigen',
-        'note'       => 'Ermöglicht den Benutzern, den Einkaufspreis von Artikeln in ihrer Account-Ansicht anzuzeigen.',
+        'note' => 'Ermöglicht den Benutzern, den Einkaufspreis von Artikeln in ihrer Account-Ansicht anzuzeigen.',
     ],
 
     'depreciations' => [
         'name' => 'Abschreibungs-Management',
-        'note'       => 'Ermöglicht Benutzern das Verwalten und Anzeigen von Vermögensabschreibungsdaten.',
+        'note' => 'Ermöglicht Benutzern das Verwalten und Anzeigen von Vermögensabschreibungsdaten.',
     ],
     'depreciationsview' => [
         'name' => 'Abschreibungsdetails anzeigen',
@@ -419,6 +458,6 @@ return array(
     'grant' => 'Erteile Berechtigungen für :area',
     'deny' => 'Verweigere Berechtigungen für :area',
     'inherit' => 'Alle Berechtigungen für :area von Berechtigungsgruppen vererben',
-    'use_groups' => 'Wir empfehlen dringend, Berechtigungsgruppen zu verwenden, anstatt individuelle Berechtigungen für eine einfachere Verwaltung zuzuweisen.'
+    'use_groups' => 'Wir empfehlen dringend, Berechtigungsgruppen zu verwenden, anstatt individuelle Berechtigungen für eine einfachere Verwaltung zuzuweisen.',
 
-);
+];

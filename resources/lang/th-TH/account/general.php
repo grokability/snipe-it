@@ -1,17 +1,17 @@
 <?php
 
-return array(
-    'personal_api_keys' => 'Personal API Keys',
+return [
+    'personal_api_keys' => 'API keys ส่วนตัว',
     'personal_access_token' => 'โทเค็นการเข้าถึงส่วนบุคคล',
-    'personal_api_keys_success' => 'Personal API Key :key created sucessfully',
-    'here_is_api_key' => 'Here is your new personal access token. This is the only time it will be shown so do not lose it! You may now use this token to make API requests.',
-    'api_key_warning' => 'When generating an API token, be sure to copy it down immediately as they will not be visible to you again.',
-    'api_base_url' => 'Your API base url is located at:',
+    'personal_api_keys_success' => 'API keys ส่วนตัวได้ถูกสร้างแล้ว',
+    'here_is_api_key' => 'นี่คือโทเค็นการเข้าถึงส่วนบุคคลใหม่ของคุณ นี่จะเป็นครั้งเดียวเท่านั้น ดังนั้นอย่าทำหาย! ตอนนี้คุณสามารถใช้โทเค็นนี้เพื่อส่งคำขอไปยัง API ได้แล้ว',
+    'api_key_warning' => 'เมื่อสร้างโทเค็น API แล้ว โปรดคัดลอกโทเค็นนั้นทันที เนื่องจากคุณจะไม่เห็นโทเค็นนั้นอีก',
+    'api_base_url' => 'API base url ของคุณอยู่ที่:',
     'api_base_url_endpoint' => '/&lt;endpoint&gt;',
-    'api_token_expiration_time' => 'API tokens are set to expire in:',
-    'api_reference' => 'Please check the <a href="https://snipe-it.readme.io/reference" target="_blank">API reference</a> to find specific API endpoints and additional API documentation.',
+    'api_token_expiration_time' => 'โทเค็น API จะหมดอายุใน:',
+    'api_reference' => 'โปรดตรวจสอบ <a href="https://snipe-it.readme.io/reference" target="_blank">เอกสารอ้างอิง API</a> เพื่อค้นหาเอนด์พอยต์ API เฉพาะและเอกสารประกอบ API เพิ่มเติม',
     'profile_updated' => 'อัปเดตบัญชีสำเร็จแล้ว',
     'no_tokens' => 'คุณไม่ได้สร้างโทเค็น การเข้าถึงส่วนตัวใด ๆ',
     'enable_sounds' => 'เปิดใช้งานเอฟเฟกต์เสียง',
-    'enable_confetti' => 'Enable confetti effects',
-);
+    'enable_confetti' => 'เปิดใช้งาน confetti effects',
+];

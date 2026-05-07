@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
     'personal_api_keys' => 'Chaves Pessoais de API',
     'personal_access_token' => 'Token de Acesso Pessoal',
     'personal_api_keys_success' => 'Chave de API pessoal :key criada com sucesso',
@@ -14,4 +14,4 @@ return array(
     'no_tokens' => 'Não criou nenhum token de acesso pessoal.',
     'enable_sounds' => 'Ativar efeitos sonoros',
     'enable_confetti' => 'Habilitar efeitos de confete',
-);
+];

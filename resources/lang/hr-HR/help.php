@@ -23,13 +23,13 @@ return [
 
     'accessories' => 'Pribor je sve što izdajete korisnicima, ali nemaju serijski broj (ili vas ne zanima njihovo jedinstveno praćenje). Na primjer, računalni miševi ili tipkovnice.',
 
-    'companies'     => 'Tvrtke se mogu upotrebljavati kao polje jednostavnog identifikatora ili se mogu koristiti za ograničavanje vidljivosti imovine, korisnika itd., Ako je omogućena potpuna podrška tvrtke u administratorskim postavkama.',
+    'companies' => 'Tvrtke se mogu upotrebljavati kao polje jednostavnog identifikatora ili se mogu koristiti za ograničavanje vidljivosti imovine, korisnika itd., Ako je omogućena potpuna podrška tvrtke u administratorskim postavkama.',
 
-    'components'    => 'Komponente su stavke koje su dio imovine, na primjer HDD, RAM itd.',
+    'components' => 'Komponente su stavke koje su dio imovine, na primjer HDD, RAM itd.',
 
-    'consumables'   => 'Potrošni materijali su sve što se kupuje, a to će biti iskorišteno tijekom vremena. Na primjer, pisač tinte ili fotokopirni papir.',
+    'consumables' => 'Potrošni materijali su sve što se kupuje, a to će biti iskorišteno tijekom vremena. Na primjer, pisač tinte ili fotokopirni papir.',
 
     'depreciations' => 'Možete postaviti amortizaciju imovine za amortizaciju imovine na temelju linearne amortizacije.',
-    
-    'empty_file'    => 'The importer detects that this file is empty.'
+
+    'empty_file' => 'The importer detects that this file is empty.',
 ];

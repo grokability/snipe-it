@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Http\Request;
 
 class NoSessionStore
 {
@@ -13,8 +14,7 @@ class NoSessionStore
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \Closure $next
+     * @param  Request  $request
      * @return mixed
      */
     public function handle($request, Closure $next)

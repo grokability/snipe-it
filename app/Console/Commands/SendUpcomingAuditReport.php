@@ -49,11 +49,10 @@ class SendUpcomingAuditReport extends Command
 
         $assets_query = Asset::whereNull('deleted_at')->dueOrOverdueForAudit($settings)->orderBy('assets.next_audit_date', 'asc')->with('supplier');
         $asset_count = $assets_query->count();
-        $this->info(number_format($asset_count) . ' assets must be audited on or before ' . $interval_date);
-        if (!$this->option('with-output')) {
+        $this->info(number_format($asset_count).' assets must be audited on or before '.$interval_date);
+        if (! $this->option('with-output')) {
             $this->info('Run this command with the --with-output option to see the full list in the console.');
         }
-
 
         if ($asset_count > 0) {
 
@@ -63,21 +62,18 @@ class SendUpcomingAuditReport extends Command
             if ($settings->alert_email != '') {
 
                 $recipients = collect(explode(',', $settings->alert_email))
-                    ->map(fn($item) => trim($item))
-                    ->filter(fn($item) => !empty($item))
+                    ->map(fn ($item) => trim($item))
+                    ->filter(fn ($item) => ! empty($item))
                     ->all();
 
                 Mail::to($recipients)->send(new SendUpcomingAuditMail($assets_for_email, $settings->audit_warning_days, $asset_count));
-                $this->info('Audit notification sent to: ' . $settings->alert_email);
+                $this->info('Audit notification sent to: '.$settings->alert_email);
 
             } else {
                 $this->info('There is no admin alert email set so no email will be sent.');
             }
 
-
-
             if ($this->option('with-output')) {
-
 
                 // Get the full list if the user wants output in the console
                 $assets_for_output = $assets_query->limit(null)->get();
@@ -93,7 +89,7 @@ class SendUpcomingAuditReport extends Command
                         trans('mail.assigned_to'),
 
                     ],
-                    $assets_for_output->map(fn($item) => [
+                    $assets_for_output->map(fn ($item) => [
                         trans('general.id') => $item->id,
                         trans('general.name') => $item->display_name,
                         trans('general.last_audit') => $item->last_audit_formatted_date,
@@ -106,10 +102,8 @@ class SendUpcomingAuditReport extends Command
             }
 
         } else {
-            $this->info('There are no assets due for audit in the next ' . $interval . ' days.');
+            $this->info('There are no assets due for audit in the next '.$interval.' days.');
         }
-
-
 
     }
 }

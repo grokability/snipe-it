@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
     'personal_api_keys' => 'Khóa API cá nhân',
     'personal_access_token' => 'Mã truy cập cá nhân',
     'personal_api_keys_success' => 'Khóa API cá nhân :key đã được tạo thành công',
@@ -14,4 +14,4 @@ return array(
     'no_tokens' => 'Bạn chưa tạo mã truy cập cá nhân',
     'enable_sounds' => 'Hiệu ứng âm thanh',
     'enable_confetti' => 'Hiệu ứng hoa giấy',
-);
+];

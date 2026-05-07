@@ -7,11 +7,10 @@ use Tests\TestCase;
 
 class DepreciationsIndexTest extends TestCase
 {
-    public function testViewingDepreciationIndexRequiresPermission()
+    public function test_viewing_depreciation_index_requires_permission()
     {
         $this->actingAsForApi(User::factory()->create())
-            ->getJson(route('api.departments.index'))
+            ->getJson(route('api.depreciations.index'))
             ->assertForbidden();
     }
-
 }

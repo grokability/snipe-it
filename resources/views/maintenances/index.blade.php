@@ -12,21 +12,14 @@
     <x-container>
         <x-box>
 
-              <table
-                  data-columns="{{ \App\Presenters\MaintenancesPresenter::dataTableLayout() }}"
-                  data-cookie-id-table="maintenancesTable"
-                  data-side-pagination="server"
-                  data-show-footer="true"
-                  data-advanced-search="false"
-                  id="maintenancesTable"
-                  data-buttons="maintenanceButtons"
-                  class="table table-striped snipe-table"
-                  data-url="{{route('api.maintenances.index') }}"
-                  data-export-options='{
-                    "fileName": "export-maintenances-{{ date('Y-m-d') }}",
-                        "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
-                  }'>
-            </table>
+        <x-table
+            name="maintenances"
+            fixed_right_number="1"
+            buttons="maintenanceButtons"
+                api_url="{{ route('api.maintenances.index') }}"
+                :presenter="\App\Presenters\MaintenancesPresenter::dataTableLayout()"
+                export_filename="export-maintenances-{{ date('Y-m-d') }}"
+            />
 
         </x-box>
     </x-container>

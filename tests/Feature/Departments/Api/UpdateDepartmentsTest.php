@@ -3,14 +3,12 @@
 namespace Tests\Feature\Departments\Api;
 
 use App\Models\Department;
-use App\Models\Category;
 use App\Models\User;
 use Tests\TestCase;
 
 class UpdateDepartmentsTest extends TestCase
 {
-
-    public function testRequiresPermissionToEditDepartment()
+    public function test_requires_permission_to_edit_department()
     {
         $department = Department::factory()->create();
         $this->actingAsForApi(User::factory()->create())
@@ -18,7 +16,7 @@ class UpdateDepartmentsTest extends TestCase
             ->assertForbidden();
     }
 
-    public function testCanUpdateDepartmentViaPatch()
+    public function test_can_update_department_via_patch()
     {
         $department = Department::factory()->create();
 
@@ -37,7 +35,4 @@ class UpdateDepartmentsTest extends TestCase
         $this->assertEquals('Test Note', $department->notes, 'Note was not updated');
 
     }
-
-
-
 }

@@ -11,6 +11,7 @@ use Illuminate\Validation\Rule;
 class UpdateAssetRequest extends ImageUploadRequest
 {
     use MayContainCustomFields;
+
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -37,7 +38,7 @@ class UpdateAssetRequest extends ImageUploadRequest
             // Confusingly, this skips the unique_undeleted validator at the model level (and therefore the UniqueUndeletedTrait), so we have to re-add those
             // rules here without the requiredness, since those values will already exist if you're updating an existing asset.
             [
-                'model_id'  => ['integer', 'exists:models,id,deleted_at,NULL', 'not_array'],
+                'model_id' => ['integer', 'exists:models,id,deleted_at,NULL', 'not_array'],
                 'status_id' => ['integer', 'exists:status_labels,id'],
                 'asset_tag' => [
                     'min:1', 'max:255', 'not_array',
@@ -45,7 +46,7 @@ class UpdateAssetRequest extends ImageUploadRequest
                 ],
                 'serial' => [
                     'string', 'max:255', 'not_array',
-                    $setting->unique_serial=='1' ? Rule::unique('assets', 'serial')->ignore($this->asset)->withoutTrashed() : 'nullable',
+                    $setting->unique_serial == '1' ? Rule::unique('assets', 'serial')->ignore($this->asset)->withoutTrashed() : 'nullable',
                 ],
             ],
         );

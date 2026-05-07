@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\Traits\Loggable;
+use App\Presenters\CustomFieldsetPresenter;
 use App\Presenters\Presentable;
 use App\Rules\AlphaEncrypted;
 use App\Rules\BooleanEncrypted;
@@ -18,15 +18,16 @@ use App\Rules\UrlEncrypted;
 use Gate;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Watson\Validating\ValidatingTrait;
 
 class CustomFieldset extends SnipeModel
 {
     use HasFactory;
-    use ValidatingTrait;
     use Presentable;
+    use ValidatingTrait;
 
-    protected $presenter = \App\Presenters\CustomFieldsetPresenter::class;
+    protected $presenter = CustomFieldsetPresenter::class;
 
     protected $guarded = ['id'];
 
@@ -52,36 +53,42 @@ class CustomFieldset extends SnipeModel
      * Establishes the fieldset -> field relationship
      *
      * @author [Brady Wetherington] [<uberbrady@gmail.com>]
+     *
      * @since  [v3.0]
-     * @return \Illuminate\Database\Eloquent\Relations\Relation
+     *
+     * @return Relation
      */
     public function fields()
     {
-        return $this->belongsToMany(\App\Models\CustomField::class)->withPivot(['required', 'order'])->orderBy('pivot_order');
+        return $this->belongsToMany(CustomField::class)->withPivot(['required', 'order'])->orderBy('pivot_order');
     }
 
     /**
      * Establishes the fieldset -> models relationship
      *
      * @author [Brady Wetherington] [<uberbrady@gmail.com>]
+     *
      * @since  [v3.0]
-     * @return \Illuminate\Database\Eloquent\Relations\Relation
+     *
+     * @return Relation
      */
     public function models()
     {
-        return $this->hasMany(\App\Models\AssetModel::class, 'fieldset_id');
+        return $this->hasMany(AssetModel::class, 'fieldset_id');
     }
 
     /**
      * Establishes the fieldset -> admin user relationship
      *
      * @author [Brady Wetherington] [<uberbrady@gmail.com>]
+     *
      * @since  [v3.0]
-     * @return \Illuminate\Database\Eloquent\Relations\Relation
+     *
+     * @return Relation
      */
     public function user()
     {
-        return $this->belongsTo(\App\Models\User::class); //WARNING - not all CustomFieldsets have a User!!
+        return $this->belongsTo(User::class); // WARNING - not all CustomFieldsets have a User!!
     }
 
     public function displayAnyFieldsInForm($form_type = null)
@@ -89,14 +96,14 @@ class CustomFieldset extends SnipeModel
         if ($this->fields) {
 
             switch ($form_type) {
-            case 'audit':
-                return $this->fields->where('display_audit', '1')->count() > 0;
-            case 'checkin':
-                return $this->fields->where('display_checkin', '1')->count() > 0;
-            case 'checkout':
-                return $this->fields->where('display_checkout', '1')->count() > 0;
-            default:
-                return true;
+                case 'audit':
+                    return $this->fields->where('display_audit', '1')->count() > 0;
+                case 'checkin':
+                    return $this->fields->where('display_checkin', '1')->count() > 0;
+                case 'checkout':
+                    return $this->fields->where('display_checkout', '1')->count() > 0;
+                default:
+                    return true;
             }
         }
 
@@ -108,8 +115,8 @@ class CustomFieldset extends SnipeModel
      * custom field format
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since  [v3.0]
-     * @return array
      */
     public function validation_rules(): array
     {
@@ -117,17 +124,17 @@ class CustomFieldset extends SnipeModel
         foreach ($this->fields as $field) {
             $rule = [];
 
-            if (($field->field_encrypted != '1') 
+            if (($field->field_encrypted != '1')
                 || (($field->field_encrypted == '1') && (Gate::allows('admin')))
             ) {
-                    $rule[] = ($field->pivot->required == '1') ? 'required' : 'nullable';
+                $rule[] = ($field->pivot->required == '1') ? 'required' : 'nullable';
             }
 
             if ($field->is_unique == '1') {
-                    $rule[] = 'unique_undeleted';
+                $rule[] = 'unique_undeleted';
             }
 
-            if ($field->attributes['format']!='') {
+            if ($field->attributes['format'] != '') {
                 array_push($rule, $field->attributes['format']);
             }
 
@@ -191,7 +198,6 @@ class CustomFieldset extends SnipeModel
                         break;
                 }
             }
-
 
             // add not_array to rules for all fields but checkboxes
             if ($field->element != 'checkbox') {

@@ -8,7 +8,7 @@
 @stop
 
 @section('header_right')
-    <i class="fa-regular fa-2x fa-square-caret-right pull-right" id="expand-info-panel-button" data-tooltip="true" title="{{ trans('button.show_hide_info') }}"></i>
+    <x-button.info-panel-toggle/>
 @endsection
 
 {{-- Page content --}}
@@ -27,130 +27,53 @@
         <x-page-column class="col-md-9 main-panel">
             <x-tabs>
                 <x-slot:tabnav>
-                    @can('view', \App\Models\Asset::class)
-                        <x-tabs.nav-item
-                                name="assets"
-                                class="active"
-                                icon="fas fa-barcode fa-fw"
-                                label="{{ trans('general.assets') }}"
-                                count="{{ $model->assets()->AssetsForShow()->count() }}"
-                        />
-                    @endcan
-
-                        <x-tabs.nav-item
-                                name="files"
-                                icon="fa-solid fa-file-contract fa-fw"
-                                label="{{ trans('general.files') }}"
-                                count="{{ $model->uploads()->count() }}"
-                        />
-
-                        @can('update', $model)
-                            <x-tabs.nav-item-upload />
-                        @endcan
+                    <x-tabs.asset-tab count="{{ $model->assets()->AssetsForShow()->count() }}" />
+                    <x-tabs.files-tab :item="$model" count="{{ $model->uploads()->count() }}"/>
+                    <x-tabs.history-tab count="{{ $model->history()->count() }}" :model="$model"/>
+                    <x-tabs.upload-tab :item="$model"/>
                 </x-slot:tabnav>
 
 
                 <x-slot:tabpanes>
-                    <!-- start assets tab pane -->
-                    @can('view', \App\Models\Asset::class)
-                        <x-tabs.pane name="assets" class="in active">
-                            <x-slot:header>
-                                {{ trans('general.assets') }}
-                            </x-slot:header>
+                    <x-tabs.pane name="assets">
+                        <x-table.assets :route="route('api.assets.index', ['model_id' => $model->id, 'status' => $model->deleted_at!='' ? 'Deleted' : ''])" />
+                    </x-tabs.pane>
 
-                            <x-slot:bulkactions>
-                                <x-table.bulk-assets />
-                            </x-slot:bulkactions>
+                    <!-- start history tab pane -->
+                    <x-tabs.pane name="history">
+                        <x-table.history :model="$model" :route="route('api.models.history', $model)"/>
+                    </x-tabs.pane>
+                    <!-- end history tab pane -->
 
-                            <x-slot:content>
-                                <x-table
-                                        show_column_search="true"
-                                        show_advanced_search="true"
-                                        buttons="assetButtons"
-                                        api_url="{{ route('api.assets.index', ['model_id' => $model->id]) }}"
-                                        :presenter="\App\Presenters\AssetPresenter::dataTableLayout()"
-                                        export_filename="export-{{ str_slug($model->name) }}-assets-{{ date('Y-m-d') }}"
-                                />
-                            </x-slot:content>
-                        </x-tabs.pane>
-
-                        <!-- start files tab pane -->
-                        <x-tabs.pane name="files">
-                            <x-slot:header>
-                                {{ trans('general.files') }}
-                            </x-slot:header>
-                            <x-slot:content>
-                                <x-filestable object_type="models" :object="$model" />
-                            </x-slot:content>
-                        </x-tabs.pane>
-                        <!-- end files tab pane -->
-
-                @endcan
-
+                    <x-tabs.pane name="files">
+                        <x-table.files :object="$model" object_type="models" />
+                    </x-tabs.pane>
                 </x-slot:tabpanes>
             </x-tabs>
 
         </x-page-column>
         <x-page-column class="col-md-3">
-            <x-box>
-                <x-box.info-panel :contact="$model" img_path="{{ app('models_upload_url') }}">
-                    <x-slot:before_list>
+            <x-box class="side-box expanded">
+                <x-info-panel :infoPanelObj="$model" img_path="{{ app('models_upload_url') }}">
+                    <x-slot:buttons>
+                        <x-button.edit :item="$model" :route="route('models.edit', $model->id)" />
+                        <x-button.add :item="\App\Models\Asset::class" :tooltip="trans('general.new_asset')" :route="route('hardware.create', ['model_id' => $model->id])"/>
+                        <x-button.restore :item="$model" :route="route('models.restore.store', $model->id)" />
+                        <x-button.clone :item="$model" :route="route('models.clone.create', $model->id)" />
+                        <x-button.delete :item="$model" />
+                    </x-slot:buttons>
 
-                        @can('update', \App\Models\AssetModel::class)
-                                <a href="{{ ($model->deleted_at=='') ? route('models.edit', $model->id) : '#' }}" class="btn btn-block btn-sm btn-warning btn-social hidden-print{{ ($model->deleted_at!='') ? ' disabled' : '' }}">
-                                    <x-icon type="edit" />
-                                    {{ trans('admin/models/table.edit') }}
-                                </a>
-
-                        @endcan
-
-                        @can('create', \App\Models\AssetModel::class)
-                                <a href="{{ route('models.clone.create', $model->id) }}" class="btn btn-block btn-sm btn-warning btn-social hidden-print">
-                                    <x-icon type="clone" />
-                                    {{ trans('admin/models/table.clone') }}
-                                </a>
-                        @endcan
-
-                        @can('delete', \App\Models\AssetModel::class)
-
-                                @if ($model->deleted_at!='')
-                                    <form method="POST" action="{{ route('models.restore.store', $model->id) }}" style="padding-top: 5px">
-                                        @csrf
-                                        <button style="width: 100%;" class="btn btn-block btn-sm btn-warning btn-social hidden-print">
-                                            <x-icon type="restore" />
-                                            {{ trans('button.restore') }}
-                                        </button>
-                                    </form>
-
-                                @elseif ($model->assets()->count() > 0)
-                                    <button class="btn btn-block btn-sm btn-danger btn-social hidden-print disabled" data-tooltip="true"  data-placement="top" data-title="{{ trans('general.cannot_be_deleted') }}">
-                                        <x-icon type="delete" />
-                                        {{ trans('general.delete') }}
-                                    </button>
-                                @else
-                                    <button class="btn btn-block btn-sm btn-danger btn-social delete-asset" data-toggle="modal" title="{{ trans('general.delete_what', ['item'=> trans('general.asset_model')]) }}" data-content="{{ trans('general.sure_to_delete_var', ['item' => $model->name]) }}" data-target="#dataConfirmModal" data-tooltip="true" data-icon="fa fa-trash" data-placement="top" data-title="{{ trans('general.delete_what', ['item'=> trans('general.asset_model')]) }}" onClick="return false;">
-                                        <x-icon type="delete" />
-                                        {{ trans('general.delete') }}
-                                    </button>
-                        @endif
-                        @endcan
-
-                    </x-slot:before_list>
-
-                </x-box.info-panel>
+                </x-info-panel>
             </x-box>
         </x-page-column>
     </x-container>
 
-
-
-@can('update', \App\Models\AssetModel::class)
-    @include ('modals.upload-file', ['item_type' => 'models', 'item_id' => $model->id])
-@endcan
-@stop
+@endsection
 
 @section('moar_scripts')
+    @can('files', $model)
+        @include ('modals.upload-file', ['item_type' => 'models', 'item_id' => $model->id])
+    @endcan
 
-    @include ('partials.bootstrap-table', ['exportFile' => 'manufacturer' . $model->name . '-export', 'search' => false])
-
-@stop
+    @include ('partials.bootstrap-table', ['exportFile' => 'models-' . $model->name . '-export', 'search' => false])
+@endsection

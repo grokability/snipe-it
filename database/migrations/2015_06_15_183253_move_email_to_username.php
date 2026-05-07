@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 
 class MoveEmailToUsername extends Migration
 {
@@ -24,6 +23,6 @@ class MoveEmailToUsername extends Migration
     public function down()
     {
         //
-        //DB::statement('ALTER TABLE `users` MODIFY `notes` varchar(255);');
+        // DB::statement('ALTER TABLE `users` MODIFY `notes` varchar(255);');
     }
 }

@@ -1,9 +1,7 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use App\Models\Setting;
+use Illuminate\Database\Migrations\Migration;
 
 class UpdateSlackSetting extends Migration
 {
@@ -20,7 +18,7 @@ class UpdateSlackSetting extends Migration
          */
         $settings = Setting::where('webhook_selected', '=', 'Slack')->get();
 
-        foreach($settings as $setting){
+        foreach ($settings as $setting) {
             $setting->webhook_selected = 'slack';
             $setting->save();
         }

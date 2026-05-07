@@ -23,13 +23,13 @@ return [
 
     'accessories' => 'Aksesoris adalah Aset yang tidak memiliki nomor seri (atau Anda tidak peduli tentang pelacakan mereka secara unik). Misalnya, mouse komputer atau keyboard.',
 
-    'companies'     => 'Cabang dapat digunakan untuk identitas atau untuk mengatur akses terhadap aset, user, dll.',
+    'companies' => 'Cabang dapat digunakan untuk identitas atau untuk mengatur akses terhadap aset, user, dll.',
 
-    'components'    => 'Komponen adalah bagian dari aset, contoh HDD, RAM, dll.',
+    'components' => 'Komponen adalah bagian dari aset, contoh HDD, RAM, dll.',
 
-    'consumables'   => 'Consumables adalah sesuatu yang dibeli yang akan digunakan dari waktu ke waktu. Misalnya, tinta printer atau kertas fotokopi.',
+    'consumables' => 'Consumables adalah sesuatu yang dibeli yang akan digunakan dari waktu ke waktu. Misalnya, tinta printer atau kertas fotokopi.',
 
     'depreciations' => 'Anda dapat mengatur depresiasi aset berdasarkan straight-line depreciation.',
-    
-    'empty_file'    => 'The importer detects that this file is empty.'
+
+    'empty_file' => 'The importer detects that this file is empty.',
 ];

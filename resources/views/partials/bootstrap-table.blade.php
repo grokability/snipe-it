@@ -1,5 +1,6 @@
 @push('css')
     <link rel="stylesheet" href="{{ url(mix('css/dist/bootstrap-table.css')) }}">
+
 @endpush
 
 @push('js')
@@ -13,6 +14,413 @@
 <script nonce="{{ csrf_token() }}">
     $(function () {
 
+        if (!$.fn.bootstrapTable || $.fn.bootstrapTable.__snipeAdvancedSearchPatched) {
+            return;
+        }
+
+        $.fn.bootstrapTable.__snipeAdvancedSearchPatched = true;
+
+        var BootstrapTable = $.BootstrapTable;
+        var baseBootstrapTablePrototype = Object.getPrototypeOf(BootstrapTable.prototype);
+        var baseInitSearch = baseBootstrapTablePrototype.initSearch;
+        var defaultAdvancedSearchOperator = 'and';
+        var advancedSearchSearchText = @json(trans('general.search'));
+
+        var advancedSearchOperatorLabel = @json(trans('general.search_operator'));
+        var advancedSearchAndText = @json(trans('general.and'));
+        var advancedSearchOrText = @json(trans('general.or'));
+        var advancedSearchOperatorStorageKey = 'snipeit.bs.table.advancedSearchOperator';
+
+        var normalizeAdvancedSearchOperator = function (operator) {
+            return (operator || defaultAdvancedSearchOperator).toString().toLowerCase() === 'or' ? 'or' : 'and';
+        };
+
+        var getStoredAdvancedSearchOperator = function () {
+            try {
+                var storedOperator = localStorage.getItem(advancedSearchOperatorStorageKey);
+
+                return storedOperator ? normalizeAdvancedSearchOperator(storedOperator) : null;
+            } catch (error) {
+                return null;
+            }
+        };
+
+        var storeAdvancedSearchOperator = function (operator) {
+            try {
+                localStorage.setItem(advancedSearchOperatorStorageKey, normalizeAdvancedSearchOperator(operator));
+            } catch (error) {
+                // Ignore storage errors (private mode/quota), fallback remains in-memory.
+            }
+        };
+
+            var escapeAdvancedSearchValue = function (value) {
+                return $('<div/>').text(value == null ? '' : value).html();
+            };
+
+            Object.assign($.fn.bootstrapTable.locales, {
+                formatAdvancedCloseButton: function () {
+                    return advancedSearchSearchText;
+                },
+                formatAdvancedCancelButton: function () {
+                    return $.fn.bootstrapTable.defaults.formatClearSearch();
+                },
+                formatAdvancedSearchOperator: function () {
+                    return advancedSearchOperatorLabel;
+                }
+            });
+
+            Object.assign($.fn.bootstrapTable.defaults, {
+                advancedSearchOperator: defaultAdvancedSearchOperator,
+                formatAdvancedCloseButton: $.fn.bootstrapTable.locales.formatAdvancedCloseButton,
+                formatAdvancedCancelButton: $.fn.bootstrapTable.locales.formatAdvancedCancelButton,
+                formatAdvancedSearchOperator: $.fn.bootstrapTable.locales.formatAdvancedSearchOperator
+            });
+
+            BootstrapTable.prototype.getAdvancedSearchOperator = function () {
+                var operator = this.advancedSearchOperator || this.options.advancedSearchOperator || this.$el.data('advanced-search-filter-operator') || getStoredAdvancedSearchOperator() || defaultAdvancedSearchOperator;
+
+                return normalizeAdvancedSearchOperator(operator);
+            };
+
+            BootstrapTable.prototype.setAdvancedSearchOperator = function (operator) {
+                this.advancedSearchOperator = normalizeAdvancedSearchOperator(operator);
+                this.$el.data('advanced-search-filter-operator', this.advancedSearchOperator);
+                storeAdvancedSearchOperator(this.advancedSearchOperator);
+            };
+
+            BootstrapTable.prototype.collectAdvancedSearchFormData = function () {
+                var filters = {};
+                var operator = defaultAdvancedSearchOperator;
+
+                $.each(this.$toolbarModal.find('.toolbar-model-form').serializeArray(), function (index, field) {
+                    var value = $.trim(field.value);
+
+                    if (field.name === '__advanced_search_operator') {
+                        operator = value.toLowerCase() === 'or' ? 'or' : 'and';
+
+                        return;
+                    }
+
+                    if (value !== '') {
+                        filters[field.name] = value;
+                    }
+                });
+
+                return {
+                    filters: filters,
+                    operator: operator
+                };
+            };
+
+            BootstrapTable.prototype.getAdvancedSearchFieldTitle = function (fieldName) {
+                for (var i = 0; i < this.columns.length; i++) {
+                    var column = this.columns[i];
+
+                    if (column.field === fieldName) {
+                        return $('<div/>').html(column.title || fieldName).text().trim();
+                    }
+                }
+
+                return fieldName;
+            };
+
+            BootstrapTable.prototype.getAdvancedSearchTagsContainer = function () {
+                var $tableWrapper = this.$el.closest('.bootstrap-table');
+
+                if (!$tableWrapper.length) {
+                    return $();
+                }
+
+                var $container = $tableWrapper.children('.snipe-advanced-search-tags');
+
+                if (!$container.length) {
+                    $container = $('<div class="snipe-advanced-search-tags" style="margin: 8px 0;"></div>');
+
+                    if ($tableWrapper.children('.fixed-table-container').length) {
+                        $container.insertBefore($tableWrapper.children('.fixed-table-container').first());
+                    } else {
+                        $container.insertBefore(this.$el);
+                    }
+                }
+
+                return $container;
+            };
+
+            BootstrapTable.prototype.getAdvancedSearchButton = function () {
+                var $tableWrapper = this.$el.closest('.bootstrap-table');
+
+                if (!$tableWrapper.length) {
+                    return $();
+                }
+
+                // Try to find the button by data attribute first (most reliable)
+                var $button = $tableWrapper.find('button[data-toggle="advanced-search"]').first();
+
+                // Fallback: look in toolbar by the fa-search-plus icon
+                if (!$button.length) {
+                    $button = $tableWrapper.find('button:has(.fa-search-plus)').first();
+                }
+
+                return $button;
+            };
+
+            BootstrapTable.prototype.updateAdvancedSearchButtonState = function () {
+                var hasFilters = !$.isEmptyObject(this.filterColumnsPartial);
+                var $button = this.getAdvancedSearchButton();
+
+                if ($button.length) {
+                    $button.toggleClass('active', hasFilters);
+                }
+            };
+
+            BootstrapTable.prototype.renderAdvancedSearchTags = function () {
+                var _this = this;
+                var filters = this.filterColumnsPartial;
+                var $tagContainer = this.getAdvancedSearchTagsContainer();
+
+                if ($.isEmptyObject(filters)) {
+                    $tagContainer.empty();
+                    this.updateAdvancedSearchButtonState();
+                    return;
+                }
+
+                var colMap = {};
+                this.columns.forEach(c => colMap[c.field] = c.title);
+                var op = this.getAdvancedSearchOperator();
+                var html = '<span class="label label-warning" style="margin-right:6px;display:inline-block;margin-bottom:6px;">' +
+                    advancedSearchOperatorLabel + ': ' + (op === 'or' ? advancedSearchOrText : advancedSearchAndText) + '</span>';
+
+                Object.keys(filters).forEach(f => {
+                    html += '<span class="label label-primary" style="margin-right:6px;display:inline-block;margin-bottom:6px;"><b>' +
+                        (colMap[f] || f).replace(/<[^>]*>/g, '') + ':</b> ' + escapeAdvancedSearchValue(filters[f]) +
+                        ' <a href="javascript:void(0)" class="snipe-advanced-search-tag-remove" data-field="' + f +
+                        '" style="color:#fff;margin-left:6px;text-decoration:none;">&times;</a></span>';
+                });
+
+                $tagContainer
+                    .html(html)
+                    .off('click.snipeAdvancedSearchTags')
+                    .on('click.snipeAdvancedSearchTags', '.snipe-advanced-search-tag-remove', function (e) {
+                        e.preventDefault();
+                        var field = $(this).data('field');
+                        if (field && _this.filterColumnsPartial) {
+                            delete _this.filterColumnsPartial[field];
+                            _this.options.pageNumber = 1;
+                            _this.initSearch();
+                            _this.updatePagination();
+                            _this.trigger('column-advanced-search', _this.filterColumnsPartial, _this.getAdvancedSearchOperator());
+
+                            _this.renderAdvancedSearchTags();
+                        }
+                    });
+
+                this.updateAdvancedSearchButtonState();
+            };
+
+            BootstrapTable.prototype.applyAdvancedSearch = function () {
+                var toolbarState = this.collectAdvancedSearchFormData();
+
+                this.filterColumnsPartial = toolbarState.filters;
+                this.setAdvancedSearchOperator(toolbarState.operator);
+
+                if (this.options.sidePagination !== 'server') {
+                    this.options.pageNumber = 1;
+                    this.initSearch();
+                    this.updatePagination();
+                    this.trigger('column-advanced-search', this.filterColumnsPartial, this.getAdvancedSearchOperator());
+                }
+
+                this.renderAdvancedSearchTags();
+                this.updateAdvancedSearchButtonState();
+
+                this.hideToolbarModal();
+            };
+
+            BootstrapTable.prototype.cancelAdvancedSearch = function () {
+                this.filterColumnsPartial = {};
+                this.options.pageNumber = 1;
+                this.initSearch();
+                this.updatePagination();
+                this.trigger('column-advanced-search', this.filterColumnsPartial, this.getAdvancedSearchOperator());
+                this.renderAdvancedSearchTags();
+                this.updateAdvancedSearchButtonState();
+                // Reset the form inputs so the fields appear empty when re-opened
+                if (this.$toolbarModal) {
+                    this.$toolbarModal.find('.toolbar-model-form')[0] && this.$toolbarModal.find('.toolbar-model-form')[0].reset();
+                    this.$toolbarModal.find('input[type="text"]').val('');
+                }
+                this.hideToolbarModal();
+            };
+
+            BootstrapTable.prototype.createToolbarForm = function () {
+                var filterColumnsPartial = this.filterColumnsPartial || {};
+                var html = [`<form class="form-horizontal toolbar-model-form" action="${this.options.actionForm}">`];
+                var operator = this.getAdvancedSearchOperator();
+
+                html.push('<div class="form-group row"><div class="col-sm-12"><p class="help-block"><i class="fa fa-solid fa-lightbulb text-info" aria-hidden="true"></i> {!! trans('general.search_tip') !!}</p></div></div>');
+
+                html.push(`
+                    <div class="form-group row">
+                        <label class="col-sm-4 control-label">${this.options.formatAdvancedSearchOperator()}</label>
+                        <div class="col-sm-6">
+                            <select class="form-control ${this.constants.classes.input}" name="__advanced_search_operator">
+                                <option value="and"${operator === 'and' ? ' selected' : ''}>${advancedSearchAndText}</option>
+                                <option value="or"${operator === 'or' ? ' selected' : ''}>${advancedSearchOrText}</option>
+                            </select>
+                        </div>
+                    </div>
+                `);
+
+                for (var columnIndex = 0; columnIndex < this.columns.length; columnIndex++) {
+                    var column = this.columns[columnIndex];
+
+                    if (!column.checkbox && column.visible && column.searchable) {
+                        var title = $('<div/>').html(column.title).text().trim();
+                        var value = filterColumnsPartial[column.field] || '';
+
+                        html.push(`
+                            <div class="form-group row">
+                                <label class="col-sm-4 control-label">${title}</label>
+                                <div class="col-sm-6">
+                                    <input
+                                        type="text"
+                                        class="form-control ${this.constants.classes.input}"
+                                        name="${column.field}"
+                                        placeholder="${escapeAdvancedSearchValue(title)}"
+                                        value="${escapeAdvancedSearchValue(value)}"
+                                    >
+                                </div>
+                            </div>
+                        `);
+                    }
+                }
+
+                html.push('</form>');
+
+                return html.join('');
+            };
+
+            BootstrapTable.prototype.initAdvancedSearchFooter = function () {
+                var _this = this;
+                var $footer = this.$toolbarModal.find('.toolbar-modal-footer');
+                var $templateButton = $footer.find('.toolbar-modal-close').first();
+
+                if (!this._advancedSearchFooterButtonTagName) {
+                    this._advancedSearchFooterButtonTagName = ($templateButton.prop('tagName') || $footer.find('button,a').first().prop('tagName') || 'button').toLowerCase();
+                }
+
+                if (!this._advancedSearchFooterButtonBaseClass) {
+                    var buttonClassSource = ($templateButton.attr('class') || $footer.find('button,a').first().attr('class') || '');
+
+                    this._advancedSearchFooterButtonBaseClass = buttonClassSource
+                        .replace(/\btoolbar-modal-close\b/g, '')
+                        .replace(/\btoolbar-modal-cancel\b/g, '')
+                        .replace(/\btoolbar-modal-search\b/g, '')
+                        .replace(/\bpull-left\b/g, '')
+                        .trim();
+                }
+
+                var tagName = this._advancedSearchFooterButtonTagName;
+                var baseClass = this._advancedSearchFooterButtonBaseClass;
+
+                var createFooterButton = function (text, extraClass) {
+                    var $button = $('<' + tagName + '>').addClass($.trim(baseClass + ' ' + extraClass)).html(text);
+
+                    if (tagName === 'button') {
+                        $button.attr('type', 'button');
+                    }
+
+                    if (tagName === 'a') {
+                        $button.attr('href', 'javascript:void(0)');
+                    }
+
+                    return $button;
+                };
+
+                var $cancelButton = createFooterButton(this.options.formatAdvancedCancelButton(), 'toolbar-modal-cancel');
+                var $searchButton = createFooterButton(this.options.formatAdvancedCloseButton(), 'toolbar-modal-search');
+
+                // Keep cancel on the left for clearer primary/secondary action separation.
+                $cancelButton.addClass('pull-left');
+
+                $footer.empty().append($cancelButton, $searchButton);
+
+                $cancelButton.off('click').on('click', function (event) {
+                    event.preventDefault();
+                    _this.cancelAdvancedSearch();
+                });
+
+                $searchButton.off('click').on('click', function (event) {
+                    event.preventDefault();
+                    _this.applyAdvancedSearch();
+                });
+            };
+
+            BootstrapTable.prototype.initToolbarModalBody = function () {
+                var _this = this;
+
+                this.$toolbarModal.find('.toolbar-modal-title').html(this.options.formatAdvancedSearch());
+                this.$toolbarModal.find('.toolbar-modal-body')
+                    .html(this.createToolbarForm())
+                    .off('submit', '.toolbar-model-form')
+                    .on('submit', '.toolbar-model-form', function (event) {
+                        event.preventDefault();
+                        _this.applyAdvancedSearch();
+                    });
+
+                this.initAdvancedSearchFooter();
+            };
+
+            BootstrapTable.prototype.initSearch = function () {
+                var _this = this;
+
+                baseInitSearch.apply(this, arguments);
+
+                if (!this.options.advancedSearch || this.options.sidePagination === 'server') {
+                    return;
+                }
+
+                var filters = $.isEmptyObject(this.filterColumnsPartial) ? null : this.filterColumnsPartial;
+
+                if (!filters) {
+                    return;
+                }
+
+                var operator = this.getAdvancedSearchOperator();
+
+                this.data = this.data.filter(function (item, index) {
+                    var matches = [];
+                    var matchFound = false;
+                    var allMatched = true;
+
+                    $.each(filters, function (key, value) {
+                        var searchValue = value.toLowerCase();
+                        var formattedValue = item[key];
+                        var headerIndex = _this.header.fields.indexOf(key);
+                        var isMatch;
+
+                        formattedValue = $.fn.bootstrapTable.utils.calculateObjectValue(_this.header, _this.header.formatters[headerIndex], [formattedValue, item, index], formattedValue);
+
+                        if (_this.header.formatters[headerIndex]) {
+                            formattedValue = $('<div>').html(formattedValue).text();
+                        }
+
+                        isMatch = headerIndex !== -1 && (typeof formattedValue === 'string' || typeof formattedValue === 'number') && "".concat(formattedValue).toLowerCase().includes(searchValue);
+
+                        matches.push(isMatch);
+                        matchFound = matchFound || isMatch;
+                        allMatched = allMatched && isMatch;
+                    });
+
+                    if (!matches.length) {
+                        return true;
+                    }
+
+                    return operator === 'or' ? matchFound : allMatched;
+                });
+
+                this.unsortedData = this.data.slice();
+            };
 
         var blockedFields = "searchable,sortable,switchable,title,visible,formatter,class".split(",");
 
@@ -24,6 +432,36 @@
             }
             return false;
         }
+
+        /** This handles the responsive tab UI on v iew detail pages **/
+        function resize() {
+            if ($(window).width() < 767) {
+                $('.nav-tabs-dropdown').addClass('nav-justified');
+                $('.uploadtab').removeClass('pull-right');
+
+            }
+            else {
+                $('.nav-tabs-dropdown').removeClass('nav-justified');
+                $('.uploadtab').addClass('pull-right');
+            }
+        }
+
+        // Run once on initial ready (already inside top-level ready block)
+        resize();
+
+        // Watch for window resize events
+        $(window).on('resize', function () {
+            resize();
+        });
+
+        //open and close tab menu
+        $('.nav-tabs-dropdown').on("click", "li:not('.active') a", function (event) {
+            $(this).closest('ul').removeClass("open");
+        }).on("click", "li.active a", function (event) {
+            $(this).closest('ul').toggleClass("open");
+        });
+
+        /** End handling the responsive tab UI on view detail pages **/
 
         $('.snipe-table').bootstrapTable('destroy').each(function () {
 
@@ -61,6 +499,10 @@
 
 
 
+            var initialAdvancedSearchOperator = getStoredAdvancedSearchOperator() || normalizeAdvancedSearchOperator(data_with_default('advanced-search-operator', defaultAdvancedSearchOperator));
+
+            $(this).data('advanced-search-filter-operator', initialAdvancedSearchOperator);
+
             $(this).bootstrapTable({
 
                 ajaxOptions: {
@@ -72,6 +514,7 @@
                 // buttonsPrefix: "btn",
                 addrbar: {{ (config('session.bs_table_addrbar') == 'true') ? 'true' : 'false'}}, // deeplink search phrases, sorting, etc
                 advancedSearch: data_with_default('advanced-search', true),
+                advancedSearchOperator: initialAdvancedSearchOperator,
                 buttonsClass: "tableButton tableButton btn-theme hidden-print",
                 buttonsOrder: [
                     'columns',
@@ -102,6 +545,7 @@
                 paginationNextText: "{{ trans('general.next') }}",
                 paginationPreText: "{{ trans('general.previous') }}",
                 search: data_with_default('search', true),
+                searchText: "{{ request()->get('assetTag') ?? session()->get('search') }}", // this is needed so that people who incorrectly use the topsearch as an omnibar will not have an additional filter from BS tables
                 searchHighlight: data_with_default('search-highlight', true),
                 showColumns: data_with_default('show-columns', true),
                 showColumnsToggleAll: data_with_default('show-columns-toggle-all', true),
@@ -129,10 +573,24 @@
                             newParams[i] = params[i];
                         }
                     }
+
+                    if (newParams.filter) {
+                        newParams.filter_operator = $(table).data('advanced-search-filter-operator') || data_with_default('advanced-search-operator', 'and');
+                    }
+
                     return newParams;
                 },
                 formatLoadingMessage: function () {
                     return '<h2><x-icon type="spinner" /> {{ trans('general.loading') }} </h2>';
+                },
+                formatAdvancedCloseButton: function () {
+                    return advancedSearchSearchText;
+                },
+                formatAdvancedCancelButton: function () {
+                    return $.fn.bootstrapTable.defaults.formatClearSearch();
+                },
+                formatAdvancedSearchOperator: function () {
+                    return advancedSearchOperatorLabel;
                 },
                 icons: {
                     advancedSearchIcon: 'fas fa-search-plus',
@@ -213,7 +671,35 @@
 
             });
 
+            var bootstrapTableInstance = $(this).data('bootstrap.table');
+
+            if (bootstrapTableInstance && typeof bootstrapTableInstance.renderAdvancedSearchTags === 'function') {
+                bootstrapTableInstance.renderAdvancedSearchTags();
+            }
+
+            // Add btn-advanced-search class to the advanced search button for styling
+            if (bootstrapTableInstance) {
+                // Use a small delay to ensure toolbar is fully rendered
+                setTimeout(function () {
+                    var $advancedSearchBtn = bootstrapTableInstance.getAdvancedSearchButton();
+                    if ($advancedSearchBtn.length) {
+                        $advancedSearchBtn.addClass('btn-advanced-search');
+
+                        // Add data attribute if not present
+                        if (!$advancedSearchBtn.attr('data-toggle')) {
+                            $advancedSearchBtn.attr('data-toggle', 'advanced-search');
+                        }
+
+                        // Initialize button state
+                        bootstrapTableInstance.updateAdvancedSearchButtonState();
+                    }
+                }, 50);
+            }
+
         });
+
+        bindBulkEditSelectionHandler();
+        initializeBootstrapTableSearchUi();
     });
 
 
@@ -270,6 +756,28 @@
                 title: '{{ (request()->input('status') == "deleted") ? trans('admin/users/table.show_current') : trans('admin/users/table.show_deleted') }}',
 
             }
+        },
+
+    }); // end user table buttons
+
+    // Oauth table buttons
+    window.oauthButtons = () => ({
+
+        btnAdd: {
+            text: '{{ (request()->input('status') == "deleted") ? trans('admin/users/table.show_current') : trans('admin/users/table.show_deleted') }}',
+            icon: 'fa fa-plus',
+            attributes: {
+                event() {
+                    wire:click = "$dispatch('openModal')"
+                    onclick = "$('#modal-create-client').modal('show');"
+                },
+
+                title: '{{ trans('general.create') }}',
+                class: 'btn-warning',
+                @if ($snipeSettings->shortcuts_enabled == 1)
+                accesskey: 'n'
+                @endif
+            },
         },
 
     }); // end user table buttons
@@ -364,14 +872,14 @@
         },
 
         btnShowDeleted: {
-            text: '{{ (request()->input('status') == "Deleted") ? trans('general.list_all') : trans('general.deleted') }}',
+            text: '{{ (request()->input('status_type') == "Deleted") ? trans('general.list_all') : trans('general.deleted') }}',
             icon: 'fa-solid fa-trash',
             event () {
-                window.location.href = '{{ (request()->input('status') == "Deleted") ? route('hardware.index') : route('hardware.index', ['status' => 'Deleted']) }}';
+                window.location.href = '{{ (request()->input('status_type') == "Deleted") ? route('hardware.index') : route('hardware.index', ['status_type' => 'Deleted']) }}';
             },
             attributes: {
-                class: '{{ (request()->input('status') == "Deleted") ? 'btn-selected' : '' }}',
-                title: '{{ (request()->input('status') == "Deleted") ? trans('general.list_all') : trans('general.deleted') }}',
+                class: '{{ (request()->input('status_type') == "Deleted") ? 'btn-selected' : '' }}',
+                title: '{{ (request()->input('status_type') == "Deleted") ? trans('general.list_all') : trans('general.deleted') }}',
 
             }
         },
@@ -396,14 +904,14 @@
         },
 
         btnShowDeleted: {
-            text: '{{ (request()->input('status') == "deleted") ? trans('admin/users/table.show_current') : trans('admin/users/table.show_deleted') }}',
+            text: '{{ (request()->input('status') == "deleted") ? trans('general.show_current') : trans('general.show_deleted') }}',
             icon: 'fa-solid fa-trash',
             event () {
                 window.location.href = '{{ (request()->input('status') == "deleted") ? route('locations.index') : route('locations.index', ['status' => 'deleted']) }}';
             },
             attributes: {
                 class: '{{ (request()->input('status') == "deleted") ? 'btn-selected' : '' }}',
-                title: '{{ (request()->input('status') == "deleted") ? trans('admin/users/table.show_current') : trans('admin/users/table.show_deleted') }}',
+                title: '{{ (request()->input('status') == "deleted") ? trans('general.show_current') : trans('general.show_deleted') }}',
 
             }
         },
@@ -935,7 +1443,7 @@
             }
 
             if (value) {
-                return tag_icon + '<a href="{{ config('app.url') }}/' + destination + '/' + row.id + '">' + value + '</a>';
+                return '<span style="white-space:nowrap;">' + tag_icon + '<a href="{{ config('app.url') }}/' + destination + '/' + row.id + '">' + value + '</a></span>';
             }
         };
     }
@@ -957,6 +1465,21 @@
                 return '<a href="{{ config('app.url') }}/users/' + row.id + '">' + value + '</a>';
             }
 
+    }
+
+    function progressBarFormatter(value) {
+        var bar_color = 'danger';
+
+        if (value <= 25) {
+            bar_color = 'danger';
+        }
+        else if (value <= 75) {
+            bar_color = 'warning';
+        }
+        else if (value <= 100) {
+            bar_color = 'success';
+        }
+        return '<div class="progress progress-sm" data-tooltip="true" title="' + value + '%"><div class="progress-bar progress-bar-' + bar_color + '" role="progressbar" aria-valuenow="' + value + '" aria-valuemin="0" aria-valuemax="100" style="width: ' + value + '%; min-width: 0em;"></div></div>';
     }
 
     // Use this when we're introspecting into a column object and need to link
@@ -1042,7 +1565,7 @@
 
 
     function hardwareAuditFormatter(value, row) {
-        return '<a href="{{ config('app.url') }}/hardware/' + row.id + '/audit" class="actions btn btn-sm btn-primary" data-tooltip="true" title="{{ trans('general.audit') }}"><x-icon type="audit" /><span class="sr-only">{{ trans('general.audit') }}</span></a>&nbsp;';
+        return '<a href="{{ config('app.url') }}/hardware/' + row.id + '/audit" class="actions btn btn-sm btn-primary hidden-print" data-tooltip="true" title="{{ trans('general.audit') }}"><x-icon type="audit" /><span class="sr-only">{{ trans('general.audit') }}</span></a>&nbsp;';
     }
 
 
@@ -1070,16 +1593,20 @@
                 dest = dest + '/' + row.owner_id + '/' + element_name;
             }
 
+            if ((row.available_actions) && (row.available_actions.create_asset === true)) {
+                actions += '<a href="{{ config('app.url') }}/hardware/create?model_id=' + row.id + '" class="actions btn btn-sm btn-info hidden-print" data-tooltip="true" title="{{ trans('general.new_asset') }}"><x-icon type="plus" class="fa-fw" /><span class="sr-only">{{ trans('general.new_asset') }}</span></a>&nbsp;';
+            }
+
             if ((row.available_actions) && (row.available_actions.clone === true)) {
-                actions += '<a href="{{ config('app.url') }}/' + dest + '/' + row.id + '/clone" class="actions btn btn-sm btn-info" data-tooltip="true" title="{{ trans('general.clone_item') }}"><x-icon type="clone" class="fa-fw" /><span class="sr-only">{{ trans('general.clone_item') }}</span></a>&nbsp;';
+                actions += '<a href="{{ config('app.url') }}/' + dest + '/' + row.id + '/clone" class="actions btn btn-sm btn-info hidden-print" data-tooltip="true" title="{{ trans('general.clone_item') }}"><x-icon type="clone" class="fa-fw" /><span class="sr-only">{{ trans('general.clone_item') }}</span></a>&nbsp;';
             }
 
             if ((row.available_actions) && (row.available_actions.audit === true)) {
-                actions += '<a href="{{ config('app.url') }}/' + dest + '/' + row.id + '/audit" class="actions btn btn-sm btn-primary" data-tooltip="true" title="{{ trans('general.audit') }}"><x-icon type="audit" class="fa-fw" /><span class="sr-only">{{ trans('general.audit') }}</span></a>&nbsp;';
+                actions += '<a href="{{ config('app.url') }}/' + dest + '/' + row.id + '/audit" class="actions btn btn-sm btn-primary hidden-print" data-tooltip="true" title="{{ trans('general.audit') }}"><x-icon type="audit" class="fa-fw" /><span class="sr-only">{{ trans('general.audit') }}</span></a>&nbsp;';
             }
 
             if ((row.available_actions) && (row.available_actions.update === true)) {
-                actions += '<a href="{{ config('app.url') }}/' + dest + '/' + row.id + '/edit" class="actions btn btn-sm btn-warning" data-tooltip="true" title="{{ trans('general.update') }}"><x-icon type="edit" class="fa-fw" /><span class="sr-only">{{ trans('general.update') }}</span></a>&nbsp;';
+                actions += '<a href="{{ config('app.url') }}/' + dest + '/' + row.id + '/edit" class="actions btn btn-sm btn-warning hidden-print" data-tooltip="true" title="{{ trans('general.update') }}"><x-icon type="edit" class="fa-fw" /><span class="sr-only">{{ trans('general.update') }}</span></a>&nbsp;';
             } else {
                 if ((row.available_actions) && (row.available_actions.update != true)) {
                     actions += '<span data-tooltip="true" title="{{ trans('general.cannot_be_edited') }}"><a class="btn btn-warning btn-sm disabled" onClick="return false;"><x-icon type="edit" class="fa-fw" /></a></span>&nbsp;';
@@ -1099,7 +1626,7 @@
 
                 
                 actions += '<a href="{{ config('app.url') }}/' + dest + '/' + row.id + '" '
-                    + ' class="actions btn btn-danger btn-sm delete-asset" data-tooltip="true"  '
+                    + ' class="actions btn btn-danger btn-sm delete-asset hidden-print" data-tooltip="true"  '
                     + ' data-toggle="modal" data-icon="fa-trash"'
                     + ' data-content="{{ trans('general.sure_to_delete') }}: ' + name_for_box + '?" '
                     + ' data-title="{{  trans('general.delete') }}" onClick="return false;">'
@@ -1107,7 +1634,7 @@
             } else {
                 // Do not show the delete button on things that are already deleted
                 if ((row.available_actions) && (row.available_actions.restore != true)) {
-                    actions += '<span data-tooltip="true" title="{{ trans('general.cannot_be_deleted') }}"><a class="btn btn-danger btn-sm delete-asset disabled" onClick="return false;"><x-icon type="delete" class="fa-fw" /><span class="sr-only">{{ trans('general.cannot_be_deleted') }}</span></a></span>&nbsp;';
+                    actions += '<span data-tooltip="true" title="{{ trans('general.cannot_be_deleted') }}"><a class="btn btn-danger btn-sm delete-asset disabled hidden-print" onClick="return false;"><x-icon type="delete" class="fa-fw" /><span class="sr-only">{{ trans('general.cannot_be_deleted') }}</span></a></span>&nbsp;';
                 }
 
             }
@@ -1166,6 +1693,11 @@
             // display the username if it's checked out to a user, but don't do it if the username's there already
             if (value.username && !value.name.match('\\(') && !value.name.match('\\)')) {
                 value.name = value.name + ' (' + value.username + ')';
+            }
+
+            // Show as strikethrough if it's been deleted
+            if (value.deleted_at && value.deleted_at != '') {
+                return '<nobr><span class="text-muted" data-tooltip="true" title="{{ trans('general.deleted') }} ' + value.type + '"><del><i class="' + item_icon + ' fa-fw"></i> ' + value.name + '</del></span></nobr>';
             }
 
             return '<nobr><a href="{{ config('app.url') }}/' + item_destination +'/' + value.id + '" data-tooltip="true" title="' + value.type + '"><i class="' + item_icon + ' fa-fw"></i> ' + value.name + '</a></nobr>';
@@ -1402,7 +1934,7 @@
 
     function changeLogFormatter(value) {
 
-        var result = '';
+        var result = '<div style="word-break: break-word;">';
         var pretty_index = '';
 
             for (var index in value) {
@@ -1420,7 +1952,7 @@
                 result += extra_pretty_index + ': <del>' + value[index].old + '</del>  <x-icon type="long-arrow-right" /> ' + value[index].new + '<br>'
             }
 
-        return result;
+        return result+'</div>';
 
     }
 
@@ -1670,7 +2202,7 @@
         if ((value) && (value.url) && (value.inlineable)) {
 
             if (value.mediatype == 'image') {
-                return '<a href="' + value.url + '" data-toggle="lightbox" data-type="image"><img src="' + value.url + '" style="max-height: {{ $snipeSettings->thumbnail_max_h }}px; width: auto;" class="img-responsive" alt=""></a>';
+                return '<a href="' + value.url + '?inline=true" data-toggle="lightbox" data-type="image"><img src="' + value.url + '" style="max-height: {{ $snipeSettings->thumbnail_max_h }}px; width: auto;" class="img-responsive" alt=""></a>';
             } else if (value.mediatype == 'video') {
                 return '<a href="' + value.url + '?inline=true" data-toggle="lightbox" data-type="video"><video style="max-height: {{ $snipeSettings->thumbnail_max_h }}px; width: auto;" class="img-responsive"><source src="' + value.url + '?inline=true"></video></a>';
             } else if (value.mediatype == 'audio') {
@@ -1913,7 +2445,7 @@
         return value
     }
 
-    $(function () {
+    function bindBulkEditSelectionHandler() {
         $('#bulkEdit').click(function () {
             var selectedIds = $('.snipe-table').bootstrapTable('getSelections');
             $.each(selectedIds, function(key,value) {
@@ -1921,9 +2453,9 @@
             });
 
         });
-    });
+    }
 
-    $(function() {
+    function initializeBootstrapTableSearchUi() {
 
         // This handles the search box highlighting on both ajax and client-side
         // bootstrap tables
@@ -1941,20 +2473,33 @@
             });
         };
 
+        $("[name='clearSearch']").click(function () {
+
+            // This hacks around a stupid issue in BS tables where the search text would get remembered for way too long even after it was cleared
+            for (storedSearch in localStorage) {
+                if (storedSearch.endsWith('.bs.table.searchText')) {
+                    localStorage.removeItem(storedSearch);
+                }
+            }
+
+            $('.search-input').each(function (index, element) {
+                $(element).val('');
+            });
+        });
+
         $('.search button[name=clearSearch]').click(searchboxHighlighter);
         searchboxHighlighter({ name:'pageload'});
         $('.search-input').keyup(searchboxHighlighter);
 
         //  This is necessary to make the bootstrap tooltips work inside of the
         // wenzhixin/bootstrap-table formatters
-        $('#table').on('post-body.bs.table', function () {
+        $(document).on('post-body.bs.table', '.snipe-table', function () {
             $('[data-tooltip="true"]').tooltip({
                 container: 'body'
             });
-
-
         });
-    });
+    }
+
 
 </script>
     

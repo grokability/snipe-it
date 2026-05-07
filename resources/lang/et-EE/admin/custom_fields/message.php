@@ -1,64 +1,59 @@
 <?php
 
-return array(
+return [
 
-    'field' => array(
-        'invalid'   => 'Seda välja ei eksisteeri.',
-        'already_added'   => 'Väli on juba lisatud',
-        'none_selected'   => 'No field selected',
+    'field' => [
+        'invalid' => 'Seda välja ei eksisteeri.',
+        'already_added' => 'Väli on juba lisatud',
+        'none_selected' => 'No field selected',
 
-        'create' => array(
-            'error'   => 'Väli ei loodud, proovige uuesti.',
+        'create' => [
+            'error' => 'Väli ei loodud, proovige uuesti.',
             'success' => 'Väli loodi edukalt.',
-            'assoc_success' => 'Väli edukalt lisatud fieldset\'i.'
-        ),
+            'assoc_success' => 'Väli edukalt lisatud fieldset\'i.',
+        ],
 
-        'update' => array(
-            'error'   => 'Väli ei värskendatud, proovige uuesti',
-            'success' => 'Väli värskendati edukalt.'
-        ),
+        'update' => [
+            'error' => 'Väli ei värskendatud, proovige uuesti',
+            'success' => 'Väli värskendati edukalt.',
+        ],
 
-        'delete' => array(
-            'confirm'   	=> 'Kas olete kindel, et soovite kustutada selle välja?',
-            'error'   => 'Välja jäeti välja küsimus. Palun proovi uuesti.',
+        'delete' => [
+            'confirm' => 'Kas olete kindel, et soovite kustutada selle välja?',
+            'error' => 'Välja jäeti välja küsimus. Palun proovi uuesti.',
             'success' => 'Väli kustutati edukalt.',
-            'in_use'   => 'Väli on endiselt kasutusel.',
-        )
+            'in_use' => 'Väli on endiselt kasutusel.',
+        ],
 
-    ),
+    ],
 
-    'fieldset' => array(
+    'fieldset' => [
 
         'does_not_exist' => 'Fieldset ei ole olemas',
 
-        'create' => array(
-            'error'   => 'Fieldset ei loodud, proovige uuesti.',
-            'success' => 'Fieldset loodud edukalt.'
-        ),
+        'create' => [
+            'error' => 'Fieldset ei loodud, proovige uuesti.',
+            'success' => 'Fieldset loodud edukalt.',
+        ],
 
-        'update' => array(
-            'error'   => 'Fieldset ei värskendatud, proovige uuesti',
-            'success' => 'Fieldset uuendati edukalt.'
-        ),
+        'update' => [
+            'error' => 'Fieldset ei värskendatud, proovige uuesti',
+            'success' => 'Fieldset uuendati edukalt.',
+        ],
 
-        'delete' => array(
-            'confirm'   	=> 'Kas olete kindel, et soovite kustutada selle väljadestiivi?',
-            'error'   => 'Väljaku seade kustutati. Palun proovi uuesti.',
+        'delete' => [
+            'confirm' => 'Kas olete kindel, et soovite kustutada selle väljadestiivi?',
+            'error' => 'Väljaku seade kustutati. Palun proovi uuesti.',
             'success' => 'Väljatrükk on edukalt kustutatud.',
-            'in_use'   => 'Fieldset on endiselt kasutusel.',
-        )
+            'in_use' => 'Fieldset on endiselt kasutusel.',
+        ],
 
-    ),
+    ],
 
-    'fieldset_default_value' => array(
+    'fieldset_default_value' => [
 
         'error' => 'Error validating default fieldset values.',
 
-    ),
+    ],
 
-
-
-
-
-
-);
+];

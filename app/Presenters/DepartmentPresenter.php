@@ -7,9 +7,9 @@ namespace App\Presenters;
  */
 class DepartmentPresenter extends Presenter
 {
-
     /**
      * Json Column Layout for bootstrap table
+     *
      * @return string
      */
     public static function dataTableLayout()
@@ -37,7 +37,7 @@ class DepartmentPresenter extends Presenter
                 'switchable' => true,
                 'title' => trans('general.company'),
                 'visible' => false,
-                'formatter' => 'companiesLinkObjFormatter'
+                'formatter' => 'companiesLinkObjFormatter',
             ], [
                 'field' => 'image',
                 'searchable' => false,
@@ -54,7 +54,7 @@ class DepartmentPresenter extends Presenter
                 'title' => trans('admin/departments/table.manager'),
                 'visible' => true,
                 'formatter' => 'usersLinkObjFormatter',
-            ],[
+            ], [
                 'field' => 'location',
                 'searchable' => false,
                 'sortable' => true,
@@ -67,8 +67,8 @@ class DepartmentPresenter extends Presenter
                 'searchable' => false,
                 'sortable' => true,
                 'switchable' => true,
-                'title' =>  trans('general.people'),
-                'titleTooltip' =>  trans('general.people'),
+                'title' => trans('general.people'),
+                'titleTooltip' => trans('general.people'),
                 'visible' => true,
                 'class' => 'css-house-user',
             ],  [
@@ -102,7 +102,7 @@ class DepartmentPresenter extends Presenter
                 'title' => trans('general.created_by'),
                 'visible' => false,
                 'formatter' => 'usersLinkObjFormatter',
-            ],[
+            ], [
                 'field' => 'actions',
                 'searchable' => false,
                 'sortable' => false,
@@ -111,32 +111,43 @@ class DepartmentPresenter extends Presenter
                 'visible' => true,
                 'formatter' => 'departmentsActionsFormatter',
                 'printIgnore' => true,
+                'class' => 'hidden-print',
             ],
         ];
 
         return json_encode($layout);
     }
 
-
     /**
      * Url to view this item.
+     *
      * @return string
      */
     public function viewUrl()
     {
-        if (auth()->user()->can('view', ['\App\Models\Location', $this])) {
-            return (string)link_to_route('locations.show', $this->display_name, $this->id);
+        if (auth()->user()->can('view', ['\App\Models\Department', $this])) {
+            return '<a href="'.route('departments.show', $this->id).'">'.e($this->display_name).'</a>';
         } else {
             return $this->display_name;
         }
     }
 
-    public function formattedNameLink() {
+    public function formattedNameLink()
+    {
 
         if (auth()->user()->can('view', ['\App\Models\Department', $this])) {
             return ($this->tag_color ? "<i class='fa-solid fa-fw fa-square' style='color: ".e($this->tag_color)."' aria-hidden='true'></i>" : '').'<a href="'.route('departments.show', e($this->id)).'">'.e($this->name).'</a>';
         }
 
         return ($this->tag_color ? "<i class='fa-solid fa-fw fa-square' style='color: ".e($this->tag_color)."' aria-hidden='true'></i>" : '').$this->name;
+    }
+
+    public function nameUrl()
+    {
+        if (auth()->user()->can('view', ['\App\Models\Department', $this])) {
+            return '<a href="'.route('departments.show', $this->id).'">'.e($this->display_name).'</a>';
+        } else {
+            return e($this->display_name);
+        }
     }
 }

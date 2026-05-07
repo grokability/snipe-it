@@ -1,28 +1,27 @@
 <?php
 
-return array(
+return [
 
     'deleted' => 'Избришан добавувач',
     'does_not_exist' => 'Добавувачот не постои.',
 
+    'create' => [
+        'error' => 'Добавувачот не е креиран, обидете се повторно.',
+        'success' => 'Добавувачот е креиран.',
+    ],
 
-    'create' => array(
-        'error'   => 'Добавувачот не е креиран, обидете се повторно.',
-        'success' => 'Добавувачот е креиран.'
-    ),
+    'update' => [
+        'error' => 'Добавувачот не е ажуриран, обидете се повторно',
+        'success' => 'Добавувачот е ажуриран.',
+    ],
 
-    'update' => array(
-        'error'   => 'Добавувачот не е ажуриран, обидете се повторно',
-        'success' => 'Добавувачот е ажуриран.'
-    ),
-
-    'delete' => array(
-        'confirm'   => 'Дали сте сигурни дека сакате да го избришете добавувачот?',
-        'error'   => 'Имаше проблем со бришење на добавувачот. Обидете се повторно.',
+    'delete' => [
+        'confirm' => 'Дали сте сигурни дека сакате да го избришете добавувачот?',
+        'error' => 'Имаше проблем со бришење на добавувачот. Обидете се повторно.',
         'success' => 'Добавувачот е избришан.',
-        'not_found'               => 'Supplier not found.',
-        'bulk_success'            => 'Suppliers were deleted successfully.',
-        'partial_success'        => 'Supplier deleted successfully. See additional information below. | :count suppliers were deleted successfully. See additional information below.',
-    )
+        'not_found' => 'Supplier not found.',
+        'bulk_success' => 'Suppliers were deleted successfully.',
+        'partial_success' => '.',
+    ],
 
-);
+];

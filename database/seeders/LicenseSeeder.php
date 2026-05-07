@@ -23,15 +23,15 @@ class LicenseSeeder extends Seeder
 
         $categories = Category::where('category_type', 'license')->get();
 
-        $graphicsSoftwareCategory = $categories->first(fn($category) => $category->name === 'Graphics Software');
-        $officeSoftwareCategory = $categories->first(fn($category) => $category->name === 'Office Software');
+        $graphicsSoftwareCategory = $categories->first(fn ($category) => $category->name === 'Graphics Software');
+        $officeSoftwareCategory = $categories->first(fn ($category) => $category->name === 'Office Software');
 
-        if (!$graphicsSoftwareCategory) {
+        if (! $graphicsSoftwareCategory) {
             Log::info('Graphics Software category not created. Using random category for seeding.');
             $graphicsSoftwareCategory = Category::inRandomOrder()->first();
         }
 
-        if (!$officeSoftwareCategory) {
+        if (! $officeSoftwareCategory) {
             Log::info('Office Software category not created. Using random category for seeding.');
             $officeSoftwareCategory = Category::inRandomOrder()->first();
         }

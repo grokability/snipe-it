@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
 
     /*
     |--------------------------------------------------------------------------
@@ -13,9 +13,9 @@ return array(
     |
     */
 
-    "password" => "Zaporke moraju imati šest znakova i odgovarati potvrdi.",
-    "user"     => "Korisničko ime ili e-adresa nisu točni",
-    "token"    => 'Token za poništavanje zaporke nije valjan, istekao je ili ne odgovara navedenom korisničkom računu.',
-    'sent'	   => 'Ako odgovarajući korisnik s valjanom adresom e-pošte postoji u sustavu, poslan je email za oporavak lozinke.',
+    'password' => 'Zaporke moraju imati šest znakova i odgovarati potvrdi.',
+    'user' => 'Korisničko ime ili e-adresa nisu točni',
+    'token' => 'Token za poništavanje zaporke nije valjan, istekao je ili ne odgovara navedenom korisničkom računu.',
+    'sent' => 'Ako odgovarajući korisnik s valjanom adresom e-pošte postoji u sustavu, poslan je email za oporavak lozinke.',
 
-);
+];

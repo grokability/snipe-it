@@ -43,6 +43,13 @@
 @if (isset($qty))
 | **{{ trans('general.qty') }}** | {{ $qty }} |
 @endif
+@if (!empty($custom_fields))
+@foreach($custom_fields as $customField)
+@if (!empty($customField['label']) && array_key_exists('value', $customField) && $customField['value'] !== '')
+| **{{ $customField['label'] }}** | {{ $customField['value'] }} |
+@endif
+@endforeach
+@endif
 @endcomponent
 
 {{ trans('mail.best_regards') }}

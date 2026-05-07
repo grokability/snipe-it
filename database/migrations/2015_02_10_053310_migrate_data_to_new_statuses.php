@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 
 class MigrateDataToNewStatuses extends Migration
 {
@@ -34,7 +33,7 @@ class MigrateDataToNewStatuses extends Migration
         $rtds = DB::table('assets')->where('status_id', 0)->where('physical', '1')->get();
 
         foreach ($rtds as $rtd) {
-            //DB::update('update users set votes = 100 where name = ?', array('John'));
+            // DB::update('update users set votes = 100 where name = ?', array('John'));
             DB::update('update '.DB::getTablePrefix().'assets set status_id = ? where status_id = 0 AND physical=1', $rtd_id);
         }
     }

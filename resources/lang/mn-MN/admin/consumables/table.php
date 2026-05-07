@@ -1,5 +1,5 @@
 <?php
 
-return array(
-    'title'      				=> 'Боломжийн нэр',
-);
+return [
+    'title' => 'Боломжийн нэр',
+];

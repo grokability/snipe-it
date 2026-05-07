@@ -1,19 +1,19 @@
 <?php
 
 return [
-    'example_company'    => 'Test Company Limited',
-    'example_defaultloc' => 'Building 1',
-    'example_category'   => 'Test Category',
-    'example_location'   => 'Building 2',
-    'example_manufacturer'  => 'Test Manufacturing Inc.',
-    'example_model'      => 'Test Model',
-    'example_supplier'   => 'Test Company Limited',
-    'labels_per_page'    => 'Labels',
-    'support_fields'     => 'Fields',
-    'support_asset_tag'  => 'แท็ก',
-    'support_1d_barcode' => '1D',
-    'support_2d_barcode' => '2D',
-    'support_logo'       => 'โลโก้',
-    'support_title'      => 'หัวเรื่อง',
+    'example_company' => 'บริษัท ทดสอบ จำกัด',
+    'example_defaultloc' => 'อาคาร 1',
+    'example_category' => 'ทดสอบหมวดหมู่',
+    'example_location' => 'อาคาร 2',
+    'example_manufacturer' => 'บริษัท ผู้ผลิตตัวอย่าง จำกัด',
+    'example_model' => 'รุ่นทดสอบ',
+    'example_supplier' => 'บริษัท ทดสอบ จำกัด',
+    'labels_per_page' => 'ป้ายกำกับ',
+    'support_fields' => 'ฟิลด์',
+    'support_asset_tag' => 'แท็ก',
+    'support_1d_barcode' => 'บาร์โค้ด',
+    'support_2d_barcode' => 'QR โค้ด',
+    'support_logo' => 'โลโก้',
+    'support_title' => 'หัวเรื่อง',
 
 ];

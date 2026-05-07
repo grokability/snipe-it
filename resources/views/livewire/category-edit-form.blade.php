@@ -2,10 +2,10 @@
     <!-- EULA text -->
     <div class="form-group {{ $errors->has('eula_text') ? 'error' : '' }}">
         <label for="eula_text" class="col-md-3 control-label">{{ trans('admin/categories/general.eula_text') }}</label>
-        <div class="col-md-7">
+        <div class="col-md-8">
             <x-input.textarea
                 name="eula_text"
-                wire:model.live="eulaText"
+                wire:model.live.change.live="eulaText"
                 aria-label="eula_text"
                 :disabled="$this->eulaTextDisabled"
             />
@@ -20,7 +20,7 @@
 
     <!-- Use default checkbox -->
     <div class="form-group">
-        <div class="col-md-9 col-md-offset-3">
+        <div class="col-md-8 col-md-offset-3">
             @if ($defaultEulaText!='')
                 <label class="form-control">
                     <input
@@ -50,7 +50,7 @@
 
     <!-- Require Acceptance -->
     <div class="form-group">
-        <div class="col-md-9 col-md-offset-3">
+        <div class="col-md-8 col-md-offset-3">
             <label class="form-control">
                 <input
                     type="checkbox"
@@ -61,12 +61,19 @@
                 />
                 {{ trans('admin/categories/general.require_acceptance') }}
             </label>
+            @if ($this->isGlobalSignatureRequired)
+                <p class="help-block">
+                    <x-icon type="tip"/>
+                    {{ trans('admin/categories/general.global_signature_required_notice') }}
+                </p>
+
+            @endif
         </div>
     </div>
 
     @if ($requireAcceptance)
         <div class="form-group">
-            <div class="col-md-9 col-md-offset-3">
+            <div class="col-md-8 col-md-offset-3">
                 <label class="form-control">
                     <input
                         type="checkbox"
@@ -82,7 +89,7 @@
 
     <!-- Email on Checkin -->
     <div class="form-group">
-        <div class="col-md-9 col-md-offset-3">
+        <div class="col-md-8 col-md-offset-3">
             <label class="form-control">
                 <input
                     type="checkbox"

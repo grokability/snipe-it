@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
 
     /*
     |--------------------------------------------------------------------------
@@ -17,4 +17,4 @@ return array(
     'password' => 'Unešena lozinka nije ispravna.',
     'throttle' => 'Previše pokušaja prijave. Pokušajte ponovo za :minutes minuta.',
 
-);
+];

@@ -11,7 +11,7 @@ use Tests\TestCase;
 
 class AccessoryCheckinTest extends TestCase implements TestsFullMultipleCompaniesSupport, TestsPermissionsRequirement
 {
-    public function testRequiresPermission()
+    public function test_requires_permission()
     {
         $accessory = Accessory::factory()->checkedOutToUser()->create();
         $accessoryCheckout = $accessory->checkouts->first();
@@ -21,7 +21,7 @@ class AccessoryCheckinTest extends TestCase implements TestsFullMultipleCompanie
             ->assertForbidden();
     }
 
-    public function testAdheresToFullMultipleCompaniesSupportScoping()
+    public function test_adheres_to_full_multiple_companies_support_scoping()
     {
         [$companyA, $companyB] = Company::factory()->count(2)->create();
 
@@ -48,7 +48,7 @@ class AccessoryCheckinTest extends TestCase implements TestsFullMultipleCompanie
         $this->assertHasTheseActionLogs($anotherAccessoryForCompanyB, ['create', 'checkin from']);
     }
 
-    public function testCanCheckinAccessory()
+    public function test_can_checkin_accessory()
     {
         $accessory = Accessory::factory()->checkedOutToUser()->create();
 
@@ -61,10 +61,10 @@ class AccessoryCheckinTest extends TestCase implements TestsFullMultipleCompanie
             ->assertStatusMessageIs('success');
 
         $this->assertEquals(0, $accessory->fresh()->checkouts->count(), 'Accessory should be checked in');
-        $this->assertHasTheseActionLogs($accessory, ['create'/*, 'checkout'*/, 'checkin from']); // TODO - should be the 3 events!
+        $this->assertHasTheseActionLogs($accessory, ['create'/* , 'checkout' */, 'checkin from']); // TODO - should be the 3 events!
     }
 
-    public function testCheckinIsLogged()
+    public function test_checkin_is_logged()
     {
         $user = User::factory()->create();
         $actor = User::factory()->checkinAccessories()->create();

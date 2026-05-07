@@ -17,48 +17,48 @@ class DropForeignKeys extends Migration
             Schema::table('accessories', function (Blueprint $table) {
                 $table->dropForeign(['company_id']);
             });
-        } catch (\Exception $e) {
-            //echo $e;
+        } catch (Exception $e) {
+            // echo $e;
         }
 
         try {
             Schema::table('users', function (Blueprint $table) {
                 $table->dropForeign(['company_id']);
             });
-        } catch (\Exception $e) {
-            //echo $e;
+        } catch (Exception $e) {
+            // echo $e;
         }
 
         try {
             Schema::table('assets', function (Blueprint $table) {
                 $table->dropForeign(['company_id']);
             });
-        } catch (\Exception $e) {
-            //echo $e;
+        } catch (Exception $e) {
+            // echo $e;
         }
 
         try {
             Schema::table('components', function (Blueprint $table) {
                 $table->dropForeign(['company_id']);
             });
-        } catch (\Exception $e) {
-            //echo $e;
+        } catch (Exception $e) {
+            // echo $e;
         }
 
         try {
             Schema::table('consumables', function (Blueprint $table) {
                 $table->dropForeign(['company_id']);
             });
-        } catch (\Exception $e) {
-            //echo $e;
+        } catch (Exception $e) {
+            // echo $e;
         }
 
         try {
             Schema::table('licenses', function (Blueprint $table) {
                 $table->dropForeign(['company_id']);
             });
-        } catch (\Exception $e) {
-            //echo $e;
+        } catch (Exception $e) {
+            // echo $e;
         }
     }
 

@@ -3,17 +3,16 @@
 namespace Tests\Feature\Console;
 
 use App\Models\Accessory;
+use App\Models\Actionlog;
 use App\Models\Asset;
 use App\Models\Consumable;
 use App\Models\LicenseSeat;
 use App\Models\User;
-use App\Models\Actionlog;
 use Tests\TestCase;
-
 
 class MergeUsersTest extends TestCase
 {
-    public function testAssetsAreTransferredOnUserMerge()
+    public function test_assets_are_transferred_on_user_merge()
     {
         $user1 = User::factory()->create(['username' => 'user1']);
         $user_to_merge_into = User::factory()->create(['username' => 'user1@example.com']);
@@ -28,7 +27,7 @@ class MergeUsersTest extends TestCase
 
     }
 
-    public function testLicensesAreTransferredOnUserMerge(): void
+    public function test_licenses_are_transferred_on_user_merge(): void
     {
         $user1 = User::factory()->create(['username' => 'user1']);
         $user_to_merge_into = User::factory()->create(['username' => 'user1@example.com']);
@@ -45,7 +44,7 @@ class MergeUsersTest extends TestCase
 
     }
 
-    public function testAccessoriesTransferredOnUserMerge(): void
+    public function test_accessories_transferred_on_user_merge(): void
     {
         $user1 = User::factory()->create(['username' => 'user1']);
         $user_to_merge_into = User::factory()->create(['username' => 'user1@example.com']);
@@ -62,7 +61,7 @@ class MergeUsersTest extends TestCase
 
     }
 
-    public function testConsumablesTransferredOnUserMerge(): void
+    public function test_consumables_transferred_on_user_merge(): void
     {
         $user1 = User::factory()->create(['username' => 'user1']);
         $user_to_merge_into = User::factory()->create(['username' => 'user1@example.com']);
@@ -79,7 +78,7 @@ class MergeUsersTest extends TestCase
 
     }
 
-    public function testFilesAreTransferredOnUserMerge(): void
+    public function test_files_are_transferred_on_user_merge(): void
     {
         $user1 = User::factory()->create(['username' => 'user1']);
         $user_to_merge_into = User::factory()->create(['username' => 'user1@example.com']);
@@ -96,7 +95,7 @@ class MergeUsersTest extends TestCase
 
     }
 
-    public function testAcceptancesAreTransferredOnUserMerge(): void
+    public function test_acceptances_are_transferred_on_user_merge(): void
     {
         $user1 = User::factory()->create(['username' => 'user1']);
         $user_to_merge_into = User::factory()->create(['username' => 'user1@example.com']);
@@ -113,7 +112,7 @@ class MergeUsersTest extends TestCase
 
     }
 
-    public function testUserUpdateHistoryIsTransferredOnUserMerge(): void
+    public function test_user_update_history_is_transferred_on_user_merge(): void
     {
         $user1 = User::factory()->create(['username' => 'user1']);
         $user_to_merge_into = User::factory()->create(['username' => 'user1@example.com']);
@@ -130,6 +129,4 @@ class MergeUsersTest extends TestCase
         $this->assertEquals(1, $user1->refresh()->userlog->count());
 
     }
-
-
 }

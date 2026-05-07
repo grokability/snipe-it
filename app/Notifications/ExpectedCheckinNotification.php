@@ -13,15 +13,11 @@ use Symfony\Component\Mime\Email;
 class ExpectedCheckinNotification extends Notification
 {
     use Queueable;
-    /**
-     * @var
-     */
+
     private $params;
 
     /**
      * Create a new notification instance.
-     *
-     * @param $params
      */
     public function __construct($params)
     {
@@ -46,11 +42,11 @@ class ExpectedCheckinNotification extends Notification
     /**
      * Get the mail representation of the notification.
      *
-     * @return \Illuminate\Notifications\Messages\MailMessage
+     * @return MailMessage
      */
     public function toMail()
     {
-        $today    = Carbon::today();
+        $today = Carbon::today();
         $expected = Carbon::parse($this->params->expected_checkin)->startOfDay();
 
         $subjectText = $today->greaterThan($expected)
@@ -65,7 +61,7 @@ class ExpectedCheckinNotification extends Notification
                 'serial' => $this->params->serial,
                 'asset_tag' => $this->params->asset_tag,
             ])
-            ->subject('⏰'. $subjectText)
+            ->subject('⏰'.$subjectText)
             ->withSymfonyMessage(function (Email $message) {
                 $message->getHeaders()->addTextHeader(
                     'X-System-Sender', 'Snipe-IT'

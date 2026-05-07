@@ -1,6 +1,6 @@
 <?php
 
-return array(
-    'created'   => 'Criado',
+return [
+    'created' => 'Criado',
     'size' => 'Tamanho',
-);
+];

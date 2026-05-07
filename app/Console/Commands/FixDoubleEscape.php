@@ -2,6 +2,21 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Accessory;
+use App\Models\Asset;
+use App\Models\AssetModel;
+use App\Models\Company;
+use App\Models\Component;
+use App\Models\Consumable;
+use App\Models\Department;
+use App\Models\Depreciation;
+use App\Models\Group;
+use App\Models\License;
+use App\Models\Location;
+use App\Models\Manufacturer;
+use App\Models\Statuslabel;
+use App\Models\Supplier;
+use App\Models\User;
 use Illuminate\Console\Command;
 
 class FixDoubleEscape extends Command
@@ -38,21 +53,21 @@ class FixDoubleEscape extends Command
     public function handle()
     {
         $tables = [
-            \App\Models\Asset::class => ['name'],
-            \App\Models\License::class => ['name'],
-            \App\Models\Consumable::class => ['name'],
-            \App\Models\Accessory::class => ['name'],
-            \App\Models\Component::class => ['name'],
-            \App\Models\Company::class => ['name'],
-            \App\Models\Manufacturer::class => ['name'],
-            \App\Models\Supplier::class => ['name'],
-            \App\Models\Statuslabel::class => ['name'],
-            \App\Models\Depreciation::class => ['name'],
-            \App\Models\AssetModel::class => ['name'],
-            \App\Models\Group::class => ['name'],
-            \App\Models\Department::class => ['name'],
-            \App\Models\Location::class => ['name'],
-            \App\Models\User::class => ['first_name', 'last_name'],
+            Asset::class => ['name'],
+            License::class => ['name'],
+            Consumable::class => ['name'],
+            Accessory::class => ['name'],
+            Component::class => ['name'],
+            Company::class => ['name'],
+            Manufacturer::class => ['name'],
+            Supplier::class => ['name'],
+            Statuslabel::class => ['name'],
+            Depreciation::class => ['name'],
+            AssetModel::class => ['name'],
+            Group::class => ['name'],
+            Department::class => ['name'],
+            Location::class => ['name'],
+            User::class => ['first_name', 'last_name'],
         ];
 
         $count = [];

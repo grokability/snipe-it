@@ -9,7 +9,7 @@ use Tests\TestCase;
 
 class DeleteGroupsTest extends TestCase implements TestsPermissionsRequirement
 {
-    public function testRequiresPermission()
+    public function test_requires_permission()
     {
         $group = Group::factory()->create();
 
@@ -20,7 +20,7 @@ class DeleteGroupsTest extends TestCase implements TestsPermissionsRequirement
         $this->assertDatabaseHas('permission_groups', ['id' => $group->id]);
     }
 
-    public function testCanDeleteGroup()
+    public function test_can_delete_group()
     {
         $group = Group::factory()->create();
 

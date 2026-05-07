@@ -1,9 +1,9 @@
 <?php
 
-return array(
+return [
 
-    'id'         => 'Rhif Unigryw',
-    'name'       => 'Enw',
-    'users'      => '# o defnyddwyr',
+    'id' => 'Rhif Unigryw',
+    'name' => 'Enw',
+    'users' => '# o defnyddwyr',
 
-);
+];

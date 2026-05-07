@@ -4,6 +4,4 @@ namespace App\Exceptions;
 
 use Exception;
 
-class AssetNotRequestable extends Exception
-{
-}
+class AssetNotRequestable extends Exception {}

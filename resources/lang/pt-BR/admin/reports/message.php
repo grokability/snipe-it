@@ -3,7 +3,7 @@
 return [
     'about_templates' => 'Sobre os Modelos Salvos',
     'saving_templates_description' => 'Selecione as opções desejadas, em seguida, digite o nome do seu modelo na caixa acima e clique no botão "Salvar modelo". Use o menu suspenso para usar um modelo salvo anteriormente.',
-    'create'  => [
+    'create' => [
         'success' => 'Modelo salvo com sucesso',
     ],
     'update' => [

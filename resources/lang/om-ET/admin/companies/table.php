@@ -1,11 +1,12 @@
 <?php
-return array(
+
+return [
     'companies' => 'Dhaabbattoota',
-    'create'    => 'Dhaabbata Hundeessi',
-    'email'     => 'Imeeyilii Dhaabbataa',
-    'title'     => 'Dhaabbata',
-    'phone'     => 'Bilbila Dhaabbataa',
-    'update'    => 'Dhaabbata Sirreessi',
-    'name'      => 'Maqaa Dhaabbataa',
-    'id'        => 'Eenyumeessituu',
-);
+    'create' => 'Dhaabbata Hundeessi',
+    'email' => 'Imeeyilii Dhaabbataa',
+    'title' => 'Dhaabbata',
+    'phone' => 'Bilbila Dhaabbataa',
+    'update' => 'Dhaabbata Sirreessi',
+    'name' => 'Maqaa Dhaabbataa',
+    'id' => 'Eenyumeessituu',
+];

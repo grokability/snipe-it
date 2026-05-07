@@ -9,7 +9,7 @@ use Tests\TestCase;
 
 class AssetsForSelectListTest extends TestCase
 {
-    public function testAssetsCanBeSearchedForByAssetTag()
+    public function test_assets_can_be_searched_for_by_asset_tag()
     {
         Asset::factory()->create(['asset_tag' => '0001']);
         Asset::factory()->create(['asset_tag' => '0002']);
@@ -21,11 +21,11 @@ class AssetsForSelectListTest extends TestCase
         $results = collect($response->json('results'));
 
         $this->assertEquals(2, $results->count());
-        $this->assertTrue($results->pluck('text')->contains(fn($text) => str_contains($text, '0001')));
-        $this->assertTrue($results->pluck('text')->contains(fn($text) => str_contains($text, '0002')));
+        $this->assertTrue($results->pluck('text')->contains(fn ($text) => str_contains($text, '0001')));
+        $this->assertTrue($results->pluck('text')->contains(fn ($text) => str_contains($text, '0002')));
     }
 
-    public function testAssetsAreScopedToCompanyWhenMultipleCompanySupportEnabled()
+    public function test_assets_are_scoped_to_company_when_multiple_company_support_enabled()
     {
         [$companyA, $companyB] = Company::factory()->count(2)->create();
 

@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
 
     /*
     |--------------------------------------------------------------------------
@@ -13,9 +13,9 @@ return array(
     |
     */
 
-    "password" => "Gesla morajo biti dolga vsaj šest znakov in ustrezati potrditvi.",
-    "user"     => "Uporabniško ime ali e-poštni naslov je napačno",
-    "token"    => 'Ta žeton za ponastavitev gesla je neveljaven ali potekel oziroma se ne ujema z navedenim uporabniškim imenom.',
-    'sent'	   => 'Če v našem sistemu obstaja ujemajoči se uporabnik z veljavnim e-poštnim naslovom, je bilo poslano e-poštno sporočilo za obnovitev gesla.',
+    'password' => 'Gesla morajo biti dolga vsaj šest znakov in ustrezati potrditvi.',
+    'user' => 'Uporabniško ime ali e-poštni naslov je napačno',
+    'token' => 'Ta žeton za ponastavitev gesla je neveljaven ali potekel oziroma se ne ujema z navedenim uporabniškim imenom.',
+    'sent' => 'Če v našem sistemu obstaja ujemajoči se uporabnik z veljavnim e-poštnim naslovom, je bilo poslano e-poštno sporočilo za obnovitev gesla.',
 
-);
+];

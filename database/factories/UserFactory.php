@@ -5,7 +5,6 @@ namespace Database\Factories;
 use App\Models\Company;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use \Auth;
 
 /**
  * @extends Factory<User>
@@ -25,22 +24,22 @@ class UserFactory extends Factory
             'city' => $this->faker->city(),
             'company_id' => Company::factory(),
             'country' => $this->faker->country(),
+            'created_by' => 1,
+            'display_name' => null,
             'email' => $this->faker->safeEmail(),
             'employee_num' => $this->faker->numberBetween(3500, 35050),
             'first_name' => $this->faker->firstName(),
-            'last_name' => $this->faker->lastName(),
-            'display_name' => null,
             'jobtitle' => $this->faker->jobTitle(),
+            'last_name' => $this->faker->lastName(),
             'locale' => 'en-US',
+            'mobile' => $this->faker->phoneNumber(),
             'notes' => 'Created by DB seeder',
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'permissions' => '{}',
             'phone' => $this->faker->phoneNumber(),
-            'mobile' => $this->faker->phoneNumber(),
             'state' => $this->faker->stateAbbr(),
             'username' => $this->faker->unique()->username(),
             'zip' => $this->faker->postcode(),
-            'created_by' => 1,
         ];
     }
 
@@ -52,7 +51,6 @@ class UserFactory extends Factory
             ];
         });
     }
-
 
     public function firstAdmin()
     {
@@ -115,6 +113,41 @@ class UserFactory extends Factory
     public function viewAssets()
     {
         return $this->appendPermission(['assets.view' => '1']);
+    }
+
+    public function viewAssetHistory()
+    {
+        return $this->appendPermission(['assets.view' => '1']);
+    }
+
+    public function viewUserHistory()
+    {
+        return $this->appendPermission(['users.view' => '1']);
+    }
+
+    public function viewLocationHistory()
+    {
+        return $this->appendPermission(['locations.view' => '1']);
+    }
+
+    public function viewAccessoryHistory()
+    {
+        return $this->appendPermission(['accessories.view' => '1']);
+    }
+
+    public function viewLicenseHistory()
+    {
+        return $this->appendPermission(['licenses.view' => '1']);
+    }
+
+    public function viewComponentHistory()
+    {
+        return $this->appendPermission(['components.view' => '1']);
+    }
+
+    public function viewConsumableHistory()
+    {
+        return $this->appendPermission(['consumables.view' => '1']);
     }
 
     public function createAssets()
@@ -362,7 +395,6 @@ class UserFactory extends Factory
         return $this->appendPermission(['customfields.view' => '1']);
     }
 
-
     public function deleteCustomFields()
     {
         return $this->appendPermission(['customfields.delete' => '1']);
@@ -407,7 +439,6 @@ class UserFactory extends Factory
     {
         return $this->appendPermission(['assets.audit' => '1']);
     }
-
 
     private function appendPermission(array $permission)
     {

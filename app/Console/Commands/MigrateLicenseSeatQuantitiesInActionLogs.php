@@ -5,7 +5,6 @@ namespace App\Console\Commands;
 use App\Enums\ActionType;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class MigrateLicenseSeatQuantitiesInActionLogs extends Command
@@ -51,9 +50,9 @@ class MigrateLicenseSeatQuantitiesInActionLogs extends Command
         if ($this->option('no-interaction') || $this->confirm('Update quantities in the action log?')) {
             $query->chunk(50, function ($logs) {
                 $logs->each(function ($log) {
-                    $quantityFromNote = Str::between($log->note, "ed ", " seats");
+                    $quantityFromNote = Str::between($log->note, 'ed ', ' seats');
 
-                    if (!is_numeric($quantityFromNote)) {
+                    if (! is_numeric($quantityFromNote)) {
                         $this->error('Could not parse quantity from ID: {id}', ['id' => $log->id]);
                     }
 

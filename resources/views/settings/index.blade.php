@@ -292,6 +292,8 @@
               </a>
               </h5>
               <p class="index-block">{{  trans('admin/settings/general.oauth_help') }}</p>
+                <span class="keywords" aria-hidden="true" style="display:none">{{ trans('admin/settings/general.keywords.oauth') }}</span>
+
             </div>
           </div>
         </div>

@@ -17,29 +17,24 @@ use NotificationChannels\GoogleChat\Section;
 use NotificationChannels\GoogleChat\Widgets\KeyValue;
 use NotificationChannels\MicrosoftTeams\MicrosoftTeamsChannel;
 use NotificationChannels\MicrosoftTeams\MicrosoftTeamsMessage;
-use Symfony\Component\Mime\Email;
 
 #[AllowDynamicProperties]
 class AuditNotification extends Notification
 {
     use Queueable;
-    /**
-     * @var
-     */
+
     private $params;
 
     /**
      * Create a new notification instance.
-     *
-     * @param $params
      */
     public function __construct($params)
     {
         //
         $this->settings = Setting::getSettings();
         $this->params = $params;
-        $item =  $params['item'];
-        if (!$item || !is_object($item)) {
+        $item = $params['item'];
+        if (! $item || ! is_object($item)) {
             throw new \InvalidArgumentException('Notification requires a valid item.');
         }
     }
@@ -52,7 +47,7 @@ class AuditNotification extends Notification
     public function via()
     {
         $notifyBy = [];
-        if (Setting::getSettings()->webhook_selected == 'slack' || Setting::getSettings()->webhook_selected == 'general' ) {
+        if (Setting::getSettings()->webhook_selected == 'slack' || Setting::getSettings()->webhook_selected == 'general') {
             Log::debug('use webhook');
             $notifyBy[] = SlackWebhookChannel::class;
         }
@@ -64,12 +59,14 @@ class AuditNotification extends Notification
             Log::debug('using google webhook');
             $notifyBy[] = GoogleChatChannel::class;
         }
+
         return $notifyBy;
     }
 
     public function toSlack()
     {
         $channel = ($this->settings->webhook_channel) ? $this->settings->webhook_channel : '';
+
         return (new SlackMessage)
             ->success()
             ->content(class_basename(get_class($this->params['item'])).' '.trans('general.audited'))
@@ -97,43 +94,46 @@ class AuditNotification extends Notification
         $location = $params['location'] ?? '';
         $setting = Setting::getSettings();
 
-        //if somehow a notification triggers without an item, bail out.
-        if(!$item || !is_object($item)){
+        // if somehow a notification triggers without an item, bail out.
+        if (! $item || ! is_object($item)) {
             return null;
         }
 
-        if(!Str::contains($setting->webhook_endpoint, 'workflows')) {
+        if (! Str::contains($setting->webhook_endpoint, 'workflows')) {
             return MicrosoftTeamsMessage::create()
                 ->to($setting->webhook_endpoint)
                 ->type('success')
                 ->title(class_basename($item).' '.trans('general.audited'))
                 ->addStartGroupToSection('activityText')
                 ->fact(trans('mail.asset'), $item)
-                ->fact(trans('general.administrator'), $admin_user->present()->viewUrl() . '|' . $admin_user->display_name);
+                ->fact(trans('general.administrator'), $admin_user->present()->viewUrl().'|'.$admin_user->display_name);
         }
-            $message = class_basename(get_class($params['item'])) . trans('general.audited_by').' '.$admin_user->display_name;
-            $details = [
-                trans('mail.asset') => htmlspecialchars_decode($item->display_name),
-                trans('mail.notes') => $note ?: '',
-                trans('general.location') => $location ?: '',
-                ];
-            return [$message, $details];
+        $message = class_basename(get_class($params['item'])).trans('general.audited_by').' '.$admin_user->display_name;
+        $details = [
+            trans('mail.asset') => htmlspecialchars_decode($item->display_name),
+            trans('mail.notes') => $note ?: '',
+            trans('general.location') => $location ?: '',
+        ];
+
+        return [$message, $details];
     }
+
     public function toGoogleChat()
     {
-        $item      = $this->params['item']  ?? null;
+        $item = $this->params['item'] ?? null;
         $admin_user = $this->params['admin'] ?? null;
-        $note      = $this->params['note']  ?? '';
-        $setting   = $this->settings ?? Setting::getSettings();
+        $note = $this->params['note'] ?? '';
+        $setting = $this->settings ?? Setting::getSettings();
 
-        $title    = '<strong>' . class_basename($item) . ' ' . trans('general.audited') . '</strong>';
+        $title = '<strong>'.class_basename($item).' '.trans('general.audited').'</strong>';
         $subtitle = htmlspecialchars_decode($item->display_name ?? '');
         \Log::debug('Google Chat audit payload', [
-            'title'    => $title,
+            'title' => $title,
             'subtitle' => $subtitle,
-            'admin'    => $admin_user->display_name,
-            'note'     => $note,
+            'admin' => $admin_user->display_name,
+            'note' => $note,
         ]);
+
         return GoogleChatMessage::create()
             ->to($setting->webhook_endpoint)
             ->card(

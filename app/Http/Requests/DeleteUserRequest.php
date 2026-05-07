@@ -2,16 +2,14 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
-
+use Illuminate\Validation\Rule;
 
 class DeleteUserRequest extends FormRequest
 {
-
     protected $redirectRoute = 'users.index';
 
     /**
@@ -43,13 +41,13 @@ class DeleteUserRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
-            'user' =>  Rule::notIn([auth()->id()]),
-            'managed_users' =>  Rule::in([0]),
+            'user' => Rule::notIn([auth()->id()]),
+            'managed_users' => Rule::in([0]),
             'managed_locations' => Rule::in([0]),
             'assigned_assets' => Rule::in([0]),
             'assigned_licenses' => Rule::in([0]),
@@ -79,7 +77,6 @@ class DeleteUserRequest extends FormRequest
 
                 // managed locations is not 0
                 'managed_locations.in' => trans_choice('admin/users/message.error.delete_has_locations_var', $user_to_delete->managedLocations()->count(), ['count' => $user_to_delete->managedLocations()->count()]),
-
 
                 // assigned_assets is not 0
                 'assigned_assets.in' => trans_choice('admin/users/message.error.delete_has_assets_var', $user_to_delete->assets()->count(), ['count' => $user_to_delete->assets()->count()]),

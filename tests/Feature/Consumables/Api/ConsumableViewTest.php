@@ -9,7 +9,7 @@ use Tests\TestCase;
 
 class ConsumableViewTest extends TestCase
 {
-    public function testConsumableViewAdheresToCompanyScoping()
+    public function test_consumable_view_adheres_to_company_scoping()
     {
         [$companyA, $companyB] = Company::factory()->count(2)->create();
 

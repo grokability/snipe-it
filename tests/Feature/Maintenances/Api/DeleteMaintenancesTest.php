@@ -2,8 +2,8 @@
 
 namespace Tests\Feature\Maintenances\Api;
 
-use App\Models\Maintenance;
 use App\Models\Company;
+use App\Models\Maintenance;
 use App\Models\User;
 use Tests\Concerns\TestsFullMultipleCompaniesSupport;
 use Tests\Concerns\TestsPermissionsRequirement;
@@ -11,7 +11,7 @@ use Tests\TestCase;
 
 class DeleteMaintenancesTest extends TestCase implements TestsFullMultipleCompaniesSupport, TestsPermissionsRequirement
 {
-    public function testRequiresPermission()
+    public function test_requires_permission()
     {
         $maintenance = Maintenance::factory()->create();
 
@@ -22,7 +22,7 @@ class DeleteMaintenancesTest extends TestCase implements TestsFullMultipleCompan
         $this->assertNotSoftDeleted($maintenance);
     }
 
-    public function testAdheresToFullMultipleCompaniesSupportScoping()
+    public function test_adheres_to_full_multiple_companies_support_scoping()
     {
         [$companyA, $companyB] = Company::factory()->count(2)->create();
 
@@ -58,7 +58,7 @@ class DeleteMaintenancesTest extends TestCase implements TestsFullMultipleCompan
         $this->assertHasTheseActionLogs($maintenanceC, ['create', 'delete']);
     }
 
-    public function testCanDeleteMaintenance()
+    public function test_can_delete_maintenance()
     {
         $maintenance = Maintenance::factory()->create();
 

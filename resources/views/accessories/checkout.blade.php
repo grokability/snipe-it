@@ -98,7 +98,7 @@
              </div>
 
 
-             @if ($accessory->requireAcceptance() || $accessory->getEula() || ($snipeSettings->webhook_endpoint!=''))
+             @if ($accessory->requireAcceptance() || (string) $snipeSettings->require_accept_signature === '1' || $accessory->getEula() || ($snipeSettings->webhook_endpoint!=''))
                  <div class="form-group notification-callout">
                      <div class="col-md-8 col-md-offset-3">
                          <div class="callout callout-info">
@@ -121,6 +121,19 @@
                              @endif
                          </div>
                      </div>
+
+                     <!-- Sign in place checkbox -->
+                     @if ($accessory->requireAcceptance() || (string) $snipeSettings->require_accept_signature === '1')
+                     <div id="sign_in_place_div" class="col-md-7 col-md-offset-3">
+                         <label class="form-control">
+                             <input type="checkbox" value="1" name="sign_in_place" @checked(old('sign_in_place', session('sign_in_place', false))) aria-label="sign_in_place">
+                             {{ trans('general.sign_in_place') }}
+                         </label>
+                         <p class="help-block">
+                             {{ trans('general.sign_in_place_help') }}
+                         </p>
+                     </div>
+                     @endif
                  </div>
              @endif
           <!-- Note -->

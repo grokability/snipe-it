@@ -4,20 +4,22 @@ namespace App\Http\Controllers\Api;
 
 use App\Actions\Suppliers\DestroySupplierAction;
 use App\Exceptions\ItemStillHasAccessories;
+use App\Exceptions\ItemStillHasAssets;
 use App\Exceptions\ItemStillHasComponents;
 use App\Exceptions\ItemStillHasConsumables;
-use App\Exceptions\ItemStillHasMaintenances;
-use App\Exceptions\ItemStillHasAssets;
 use App\Exceptions\ItemStillHasLicenses;
+use App\Exceptions\ItemStillHasMaintenances;
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\FilterRequest;
+use App\Http\Requests\ImageUploadRequest;
 use App\Http\Transformers\SelectlistTransformer;
 use App\Http\Transformers\SuppliersTransformer;
 use App\Models\Supplier;
-use Illuminate\Http\Request;
-use App\Http\Requests\ImageUploadRequest;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Storage;
 
 class SuppliersController extends Controller
 {
@@ -25,10 +27,12 @@ class SuppliersController extends Controller
      * Display a listing of the resource.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since [v4.0]
-     * @return \Illuminate\Http\Response
+     *
+     * @return Response
      */
-    public function index(Request $request): array
+    public function index(FilterRequest $request): array
     {
         $this->authorize('view', Supplier::class);
         $allowed_columns = [
@@ -54,21 +58,20 @@ class SuppliersController extends Controller
             'url',
             'notes',
         ];
-        
+
         $suppliers = Supplier::select(
-                ['id', 'name', 'address', 'address2', 'city', 'state', 'country', 'fax', 'phone', 'email', 'contact', 'created_at', 'created_by', 'updated_at', 'deleted_at', 'image', 'notes', 'url', 'zip', 'tag_color'])
-                    ->withCount('assets as assets_count')
-                    ->withCount('licenses as licenses_count')
-                    ->withCount('accessories as accessories_count')
-                    ->withCount('components as components_count')
-                    ->withCount('consumables as consumables_count')
-                    ->with('adminuser');
+            ['id', 'name', 'address', 'address2', 'city', 'state', 'country', 'fax', 'phone', 'email', 'contact', 'created_at', 'created_by', 'updated_at', 'deleted_at', 'image', 'notes', 'url', 'zip', 'tag_color'])
+            ->withCount('assets as assets_count')
+            ->withCount('licenses as licenses_count')
+            ->withCount('accessories as accessories_count')
+            ->withCount('components as components_count')
+            ->withCount('consumables as consumables_count')
+            ->with('adminuser');
 
-
-        if ($request->filled('search')) {
-            $suppliers->TextSearch($request->input('search'));
+        // This invokes the Searchable model trait scopeTextSearch and will handle input by search or by advanced search filter
+        if ($request->filled('filter') || $request->filled('search')) {
+            $suppliers->TextSearch($request->input('filter') ? $request->input('filter') : $request->input('search'));
         }
-
 
         if ($request->filled('name')) {
             $suppliers->where('name', '=', $request->input('name'));
@@ -132,15 +135,14 @@ class SuppliersController extends Controller
         return (new SuppliersTransformer)->transformSuppliers($suppliers, $total);
     }
 
-
     /**
      * Store a newly created resource in storage.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since [v4.0]
-     * @param  \App\Http\Requests\ImageUploadRequest  $request
      */
-    public function store(ImageUploadRequest $request) : JsonResponse
+    public function store(ImageUploadRequest $request): JsonResponse
     {
         $this->authorize('create', Supplier::class);
         $supplier = new Supplier;
@@ -150,6 +152,7 @@ class SuppliersController extends Controller
         if ($supplier->save()) {
             return response()->json(Helper::formatStandardApiResponse('success', $supplier, trans('admin/suppliers/message.create.success')));
         }
+
         return response()->json(Helper::formatStandardApiResponse('error', null, $supplier->getErrors()));
 
     }
@@ -158,10 +161,12 @@ class SuppliersController extends Controller
      * Display the specified resource.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since [v4.0]
+     *
      * @param  int  $id
      */
-    public function show($id) : array
+    public function show($id): array
     {
         $this->authorize('view', Supplier::class);
         $supplier = Supplier::findOrFail($id);
@@ -169,16 +174,16 @@ class SuppliersController extends Controller
         return (new SuppliersTransformer)->transformSupplier($supplier);
     }
 
-
     /**
      * Update the specified resource in storage.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since [v4.0]
-     * @param  \App\Http\Requests\ImageUploadRequest  $request
+     *
      * @param  int  $id
      */
-    public function update(ImageUploadRequest $request, $id) : JsonResponse
+    public function update(ImageUploadRequest $request, $id): JsonResponse
     {
         $this->authorize('update', Supplier::class);
         $supplier = Supplier::findOrFail($id);
@@ -196,7 +201,9 @@ class SuppliersController extends Controller
      * Remove the specified resource from storage.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since [v4.0]
+     *
      * @param  int  $id
      */
     public function destroy(Supplier $supplier): JsonResponse
@@ -206,30 +213,31 @@ class SuppliersController extends Controller
             DestroySupplierAction::run(supplier: $supplier);
         } catch (ItemStillHasAssets $e) {
             return response()->json(Helper::formatStandardApiResponse('error', null, trans('general.bulk_delete_associations.assoc_assets', [
-                'asset_count' => (int) $supplier->assets_count, 'item' => trans('general.supplier')
+                'asset_count' => (int) $supplier->assets_count, 'item' => trans('general.supplier'),
             ])));
         } catch (ItemStillHasMaintenances $e) {
             return response()->json(Helper::formatStandardApiResponse('error', null, trans('general.bulk_delete_associations.assoc_maintenances', [
-                'asset_maintenances_count' => $supplier->asset_maintenances_count, 'item' => trans('general.supplier')
+                'asset_maintenances_count' => $supplier->asset_maintenances_count, 'item' => trans('general.supplier'),
             ])));
         } catch (ItemStillHasLicenses $e) {
             return response()->json(Helper::formatStandardApiResponse('error', null, trans('general.bulk_delete_associations.assoc_licenses', [
-                'licenses_count' => (int) $supplier->licenses_count, 'item' => trans('general.supplier')
+                'licenses_count' => (int) $supplier->licenses_count, 'item' => trans('general.supplier'),
             ])));
         } catch (ItemStillHasAccessories $e) {
             return response()->json(Helper::formatStandardApiResponse('error', null, trans('general.bulk_delete_associations.assoc_accessories', [
-                'accessories_count' => (int) $supplier->accessories_count, 'item' => trans('general.supplier')
+                'accessories_count' => (int) $supplier->accessories_count, 'item' => trans('general.supplier'),
             ])));
         } catch (ItemStillHasConsumables $e) {
             return response()->json(Helper::formatStandardApiResponse('error', null, trans('general.bulk_delete_associations.assoc_consumables', [
-                'consumables_count' => (int) $supplier->consumables_count, 'item' => trans('general.supplier')
+                'consumables_count' => (int) $supplier->consumables_count, 'item' => trans('general.supplier'),
             ])));
         } catch (ItemStillHasComponents $e) {
             return response()->json(Helper::formatStandardApiResponse('error', null, trans('general.bulk_delete_associations.assoc_components', [
-                'components_count' => (int) $supplier->components_count, 'item' => trans('general.supplier')
+                'components_count' => (int) $supplier->components_count, 'item' => trans('general.supplier'),
             ])));
         } catch (\Exception $e) {
             report($e);
+
             return response()->json(Helper::formatStandardApiResponse('error', null, trans('general.something_went_wrong')));
         }
 
@@ -240,10 +248,11 @@ class SuppliersController extends Controller
      * Gets a paginated collection for the select2 menus
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since [v4.0.16]
-     * @see \App\Http\Transformers\SelectlistTransformer
+     * @see SelectlistTransformer
      */
-    public function selectlist(Request $request) : array
+    public function selectlist(Request $request): array
     {
 
         $this->authorize('view.selectlists');

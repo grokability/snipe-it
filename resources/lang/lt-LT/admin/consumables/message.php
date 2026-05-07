@@ -1,38 +1,37 @@
 <?php
 
-return array(
+return [
 
     'invalid_category_type' => 'Kategorija turi būti eksploatacinių medžiagų kategorija.',
     'does_not_exist' => 'Tokios eksploatacinės medžiagos nėra.',
 
-    'create' => array(
-        'error'   => 'Eksploatacinė medžiaga nebuvo sukurta, bandykite dar kartą.',
-        'success' => 'Eksploatacinė medžiaga sukurta sėkmingai.'
-    ),
+    'create' => [
+        'error' => 'Eksploatacinė medžiaga nebuvo sukurta, bandykite dar kartą.',
+        'success' => 'Eksploatacinė medžiaga sėkmingai sukurta.',
+    ],
 
-    'update' => array(
-        'error'   => 'Eksploatacinė medžiaga nebuvo atnaujinta, bandykite dar kartą',
-        'success' => 'Eksploatacinė medžiaga atnaujinta sėkmingai.'
-    ),
+    'update' => [
+        'error' => 'Eksploatacinė medžiaga nebuvo atnaujinta, bandykite dar kartą',
+        'success' => 'Eksploatacinė medžiaga sėkmingai atnaujinta.',
+    ],
 
-    'delete' => array(
-        'confirm'   => 'Ar tikrai norite panaikinti šią eksploatacinę medžiagą?',
-        'error'   => 'Bandant panaikinti eksploatacinę medžiagą įvyko klaida. Bandykite dar kartą.',
-        'success' => 'Eksploatacinė medžiaga panaikinta sėkmingai.'
-    ),
+    'delete' => [
+        'confirm' => 'Ar tikrai norite panaikinti šią eksploatacinę medžiagą?',
+        'error' => 'Bandant panaikinti eksploatacinę medžiagą įvyko klaida. Bandykite dar kartą.',
+        'success' => 'Eksploatacinė medžiaga sėkmingai panaikinta.',
+    ],
 
-     'checkout' => array(
-        'error'   		=> 'Eksploatacinė medžiaga nebuvo išduota, bandykite dar kartą',
-        'success' 		=> 'Eksploatacinė medžiaga išduota sėkmingai.',
+    'checkout' => [
+        'error' => 'Eksploatacinė medžiaga nebuvo išduota, bandykite dar kartą',
+        'success' => 'Eksploatacinė medžiaga sėkmingai išduota.',
         'user_does_not_exist' => 'Neteisingas naudotojas. Bandykite dar kartą.',
-         'unavailable'      => 'Šiam išdavimui nepakanka eksploatacinių medžiagų. Patikrinkite likutį. ',
-    ),
+        'unavailable' => 'Šiam išdavimui nepakanka eksploatacinių medžiagų. Patikrinkite likutį. ',
+    ],
 
-    'checkin' => array(
-        'error'   		=> 'Eksploatacinė medžiaga nebuvo paimta, bandykite dar kartą',
-        'success' 		=> 'Eksploatacinė medžiaga paimta sėkmingai.',
-        'user_does_not_exist' => 'Neteisingas naudotojas. Bandykite dar kartą.'
-    )
+    'checkin' => [
+        'error' => 'Eksploatacinė medžiaga nebuvo paimta, bandykite dar kartą',
+        'success' => 'Eksploatacinė medžiaga sėkmingai paimta.',
+        'user_does_not_exist' => 'Neteisingas naudotojas. Bandykite dar kartą.',
+    ],
 
-
-);
+];

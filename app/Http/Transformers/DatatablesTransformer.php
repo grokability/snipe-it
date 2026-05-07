@@ -4,7 +4,6 @@ namespace App\Http\Transformers;
 
 class DatatablesTransformer
 {
-
     /**
      * Transform data for bootstrap tables and API responses for lists of things
      **/

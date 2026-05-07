@@ -23,13 +23,13 @@ return [
 
     'accessories' => 'A tartozékok mindazok, amelyeket a felhasználóknak ad ki, de amelyek nem rendelkeznek sorozatszámmal (vagy nem törődik azok egyedi nyomon követésével). Például számítógépes egerek vagy billentyűzetek.',
 
-    'companies'     => 'A cégek használhatók egyszerű azonosító mezőként, vagy az eszközök, felhasználók stb. láthatóságának korlátozására, ha a teljes cégtámogatás engedélyezve van a rendszergazdai beállításokban.',
+    'companies' => 'A cégek használhatók egyszerű azonosító mezőként, vagy az eszközök, felhasználók stb. láthatóságának korlátozására, ha a teljes cégtámogatás engedélyezve van a rendszergazdai beállításokban.',
 
-    'components'    => 'Az alkatrészek olyan elemek, amelyek egy eszköz részét képezik, például HDD, RAM stb.',
+    'components' => 'Az alkatrészek olyan elemek, amelyek egy eszköz részét képezik, például HDD, RAM stb.',
 
-    'consumables'   => 'A fogyasztási cikkek minden olyan megvásárolt dolog, amely idővel elhasználódik. Például nyomtatótinta vagy fénymásolópapír.',
+    'consumables' => 'A fogyasztási cikkek minden olyan megvásárolt dolog, amely idővel elhasználódik. Például nyomtatótinta vagy fénymásolópapír.',
 
     'depreciations' => 'Az eszközök értékcsökkenését beállíthatja úgy, hogy az eszközök értékcsökkenése lineáris értékcsökkenés alapján történjen.',
-    
-    'empty_file'    => 'Az importáló szerint ez a fájl üres.'
+
+    'empty_file' => 'Az importáló szerint ez a fájl üres.',
 ];

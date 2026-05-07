@@ -55,61 +55,67 @@
 
 
           <!-- Purchase Date -->
-          <div class="form-group {{ $errors->has('purchase_date') ? ' has-error' : '' }}">
-            <label for="purchase_date" class="col-md-3 control-label">{{ trans('admin/hardware/form.date') }}</label>
-            <div class="col-md-4">
-              <div class="input-group date" data-provide="datepicker" data-date-format="yyyy-mm-dd"  data-autoclose="true">
-                <input type="text" class="form-control" placeholder="{{ trans('general.select_date') }}" name="purchase_date" id="purchase_date" value="{{ old('purchase_date') }}">
-                <span class="input-group-addon"><x-icon type="calendar" /></span>
-              </div>
-              {!! $errors->first('purchase_date', '<span class="alert-msg"><i class="fas fa-times"></i> :message</span>') !!}
-            </div>
-            <div class="col-md-5">
-              <label class="form-control">
-                <input type="checkbox" name="null_purchase_date" value="1">
-                {{ trans_choice('general.set_to_null', count($assets),['selection_count' => count($assets)]) }}
-              </label>
-            </div>
-          </div>
 
-          <!-- Expected Checkin Date -->
-          <div class="form-group {{ $errors->has('expected_checkin') ? ' has-error' : '' }}">
-             <label for="expected_checkin" class="col-md-3 control-label">{{ trans('admin/hardware/form.expected_checkin') }}</label>
-             <div class="col-md-4">
-                  <div class="input-group date" data-provide="datepicker" data-date-format="yyyy-mm-dd"  data-autoclose="true">
-                      <input type="text" class="form-control" placeholder="{{ trans('general.select_date') }}" name="expected_checkin" id="expected_checkin" value="{{ old('expected_checkin') }}">
-                      <span class="input-group-addon"><x-icon type="calendar" /></span>
-                 </div>
+            <div class="form-group{{ $errors->has('purchase_date') ? ' has-error' : '' }}">
+                <label for="purchase_date" class="col-md-3 control-label">{{ trans('admin/hardware/form.date') }}</label>
+                <div class="col-md-4">
+                    <x-input.datepicker
+                        name="purchase_date"
+                        value="{{ old('purchase_date') }}"
+                        placeholder="{{ trans('general.select_date') }}"
+                    />
+                    {!! $errors->first('purchase_date', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
+                </div>
+                <div class="col-md-5">
+                    <label class="form-control">
+                        <input type="checkbox" name="null_purchase_date" value="1">
+                        {{ trans_choice('general.set_to_null', count($assets),['selection_count' => count($assets)]) }}
+                    </label>
+                </div>
+            </div>
 
-                 {!! $errors->first('expected_checkin', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
-             </div>
-              <div class="col-md-5">
-                <label class="form-control">
-                  <input type="checkbox" name="null_expected_checkin_date" value="1">
-                  {{ trans_choice('general.set_to_null', count($assets), ['selection_count' => count($assets)]) }}
-                </label>
-              </div>
-          </div>
+
+            <!-- Expected Checkin Date -->
+            <div class="form-group{{ $errors->has('expected_checkin') ? ' has-error' : '' }}">
+                <label for="expected_checkin" class="col-md-3 control-label">{{ trans('admin/hardware/form.expected_checkin') }}</label>
+                <div class="col-md-4">
+                    <x-input.datepicker
+                        name="expected_checkin"
+                        value="{{ old('expected_checkin') }}"
+                        placeholder="{{ trans('general.select_date') }}"
+                    />
+                    {!! $errors->first('expected_checkin', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
+                </div>
+                <div class="col-md-5">
+                    <label class="form-control">
+                        <input type="checkbox" name="null_expected_checkin" value="1">
+                        {{ trans_choice('general.set_to_null', count($assets),['selection_count' => count($assets)]) }}
+                    </label>
+                </div>
+            </div>
 
           <!-- EOL Date -->
-          <div class="form-group {{ $errors->has('asset_eol_date') ? ' has-error' : '' }}">
-            <label for="eol_date" class="col-md-3 control-label">{{ trans('admin/hardware/form.eol_date') }}</label>
-            <div class="col-md-4">
-              <div class="input-group date" data-provide="datepicker" data-date-format="yyyy-mm-dd"  data-autoclose="true">
-                <input type="text" class="form-control" placeholder="{{ trans('general.select_date') }}" name="asset_eol_date" id="asset_eol_date" value="{{ old('asset_eol_date') }}">
-                <span class="input-group-addon"><x-icon type="calendar" /></span>
-              </div>
-              {!! $errors->first('asset_eol_date', '<span class="alert-msg"><i class="fas fa-times"></i> :message</span>') !!}
-            </div>
-            <div class="col-md-5">
-              <label class="form-control">
-                <input type="checkbox" name="null_asset_eol_date" value="1">
-                {{ trans_choice('general.set_to_null', count($assets),['selection_count' => count($assets)]) }}
-              </label>
-            </div>
-          </div>
 
-          <div class="form-group">
+            <div class="form-group{{ $errors->has('asset_eol_date') ? ' has-error' : '' }}">
+                <label for="asset_eol_date" class="col-md-3 control-label">{{ trans('admin/hardware/form.eol_date') }}</label>
+                <div class="col-md-4">
+                    <x-input.datepicker
+                        name="asset_eol_date"
+                        value="{{ old('asset_eol_date') }}"
+                        placeholder="{{ trans('general.select_date') }}"
+                    />
+                    {!! $errors->first('asset_eol_date', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
+                </div>
+                <div class="col-md-5">
+                    <label class="form-control">
+                        <input type="checkbox" name="null_asset_eol_date" value="1">
+                        {{ trans_choice('general.set_to_null', count($assets),['selection_count' => count($assets)]) }}
+                    </label>
+                </div>
+            </div>
+
+
+            <div class="form-group">
             <div class="col-md-9 col-md-offset-3">
               <label class="form-control">
                 <input type="checkbox" name="calc_eol" value="1">
@@ -133,6 +139,7 @@
                   aria-label="status_id"
               />
               <p class="help-block">{{ trans('general.status_compatibility') }}</p>
+                <p id="selected_status_status" style="display:none;"></p>
               {!! $errors->first('status_id', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
             </div>
           </div>
@@ -206,31 +213,30 @@
           </div>
 
           <!-- Next audit Date -->
-          <div class="form-group {{ $errors->has('next_audit_date') ? ' has-error' : '' }}">
-            <label for="next_audit_date" class="col-md-3 control-label">{{ trans('general.next_audit_date') }}</label>
-            <div class="col-md-4">
-              <div class="input-group date" data-provide="datepicker" data-date-format="yyyy-mm-dd"  data-autoclose="true">
-                <input type="text" class="form-control" placeholder="{{ trans('general.select_date') }}" name="next_audit_date" id="next_audit_date" value="{{ old('next_audit_date') }}">
-                <span class="input-group-addon"><x-icon type="calendar" /></span>
-              </div>
 
-              {!! $errors->first('next_audit_date', '<span class="alert-msg" aria-hidden="true">
-                <i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
-
-
+            <div class="form-group{{ $errors->has('next_audit_date') ? ' has-error' : '' }}">
+                <label for="next_audit_date" class="col-md-3 control-label">{{ trans('general.next_audit_date') }}</label>
+                <div class="col-md-4">
+                    <x-input.datepicker
+                        name="next_audit_date"
+                        value="{{ old('next_audit_date') }}"
+                        placeholder="{{ trans('general.select_date') }}"
+                    />
+                    {!! $errors->first('next_audit_date', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
+                </div>
+                <div class="col-md-5">
+                    <label class="form-control">
+                        <input type="checkbox" name="null_next_audit_date" value="1">
+                        {{ trans_choice('general.set_to_null', count($assets),['selection_count' => count($assets)]) }}
+                    </label>
+                </div>
+                <div class="col-md-8 col-md-offset-3">
+                    <p class="help-block">{!! trans('general.next_audit_date_help') !!}</p>
+                </div>
             </div>
-            <div class="col-md-5">
-              <label class="form-control">
-                <input type="checkbox" name="null_next_audit_date" value="1">
-                {{ trans_choice('general.set_to_null', count($assets), ['selection_count' => count($assets)]) }}
-              </label>
-            </div>
-            <div class="col-md-8 col-md-offset-3">
-              <p class="help-block">{!! trans('general.next_audit_date_help') !!}</p>
-            </div>
-          </div>
 
-          <!-- Requestable -->
+
+            <!-- Requestable -->
           <div class="form-group {{ $errors->has('requestable') ? ' has-error' : '' }}">
             <div class="control-label col-md-3">
               <strong>{{ trans('admin/hardware/form.requestable') }}</strong>
@@ -288,5 +294,40 @@
         });
       });
     });
+    function status_check() {
+        var status_id = $('select[name="status_id"]').val();
+        if (status_id != '') {
+            $(".status_spinner").css("display", "inline");
+            $.ajax({
+                url: "{{config('app.url') }}/api/v1/statuslabels/" + status_id + "/deployable",
+                headers: {
+                    "X-Requested-With": 'XMLHttpRequest',
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function (data) {
+                    $(".status_spinner").css("display", "none");
+                    $("#selected_status_status").fadeIn();
+
+                    if (data == true) {
+                        $("#selected_status_status").removeClass('text-danger');
+                        $("#selected_status_status").addClass('text-success');
+                        $("#selected_status_status").html('<x-icon type="checkmark" /> {{ trans_choice('admin/hardware/form.asset_deployable', 2)}}');
+
+
+                    } else {
+                        $("#assignto_selector").hide();
+                        $("#selected_status_status").removeClass('text-success');
+                        $("#selected_status_status").addClass('text-danger');
+                        $("#selected_status_status").html("<x-icon type=\"warning\" /> {{ trans_choice('admin/hardware/form.asset_not_deployable_checkin', 2) }} ");
+
+                    }
+                }
+            });
+        }
+    }
+    $(function () {
+        $('select[name="status_id"]').on('change', status_check);
+    });
+
   </script>
 @endsection

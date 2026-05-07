@@ -2,14 +2,14 @@
 
 namespace Tests\Feature\Locations\Api;
 
-use App\Models\Location;
 use App\Models\Asset;
+use App\Models\Location;
 use App\Models\User;
 use Tests\TestCase;
 
 class LocationsViewTest extends TestCase
 {
-    public function testViewingLocationRequiresPermission()
+    public function test_viewing_location_requires_permission()
     {
         $location = Location::factory()->create();
         $this->actingAsForApi(User::factory()->create())
@@ -17,7 +17,7 @@ class LocationsViewTest extends TestCase
             ->assertForbidden();
     }
 
-    public function testViewingLocationAssetIndexRequiresPermission()
+    public function test_viewing_location_asset_index_requires_permission()
     {
         $location = Location::factory()->create();
         $this->actingAsForApi(User::factory()->create())
@@ -25,7 +25,7 @@ class LocationsViewTest extends TestCase
             ->assertForbidden();
     }
 
-    public function testViewingLocationAssetIndex()
+    public function test_viewing_location_asset_index()
     {
         $location = Location::factory()->create();
         Asset::factory()->count(3)->create(['location_id' => $location->id]);
@@ -42,7 +42,7 @@ class LocationsViewTest extends TestCase
             ]);
     }
 
-    public function testViewingAssignedLocationAssetIndex()
+    public function test_viewing_assigned_location_asset_index()
     {
         $location = Location::factory()->create();
         Asset::factory()->count(3)->assignedToLocation($location)->create();

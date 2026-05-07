@@ -23,6 +23,6 @@ return [
     |
     */
 
-    'driver' =>  env('IMAGE_LIB', 'gd'),
+    'driver' => env('IMAGE_LIB', 'gd'),
 
 ];

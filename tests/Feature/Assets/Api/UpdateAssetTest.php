@@ -5,24 +5,24 @@ namespace Tests\Feature\Assets\Api;
 use App\Models\Asset;
 use App\Models\AssetModel;
 use App\Models\Company;
+use App\Models\CustomField;
 use App\Models\Location;
 use App\Models\Statuslabel;
 use App\Models\Supplier;
 use App\Models\User;
-use App\Models\CustomField;
 use Illuminate\Support\Facades\Crypt;
 use Tests\TestCase;
 
 class UpdateAssetTest extends TestCase
 {
-    public function testThatANonExistentAssetIdReturnsError()
+    public function test_that_a_non_existent_asset_id_returns_error()
     {
         $this->actingAsForApi(User::factory()->editAssets()->createAssets()->create())
             ->patchJson(route('api.assets.update', 123456789))
             ->assertStatusMessageIs('error');
     }
 
-    public function testRequiresPermissionToUpdateAsset()
+    public function test_requires_permission_to_update_asset()
     {
         $asset = Asset::factory()->create();
 
@@ -31,19 +31,18 @@ class UpdateAssetTest extends TestCase
             ->assertForbidden();
     }
 
-    public function testGivenPermissionUpdateAssetIsAllowed()
-
+    public function test_given_permission_update_asset_is_allowed()
     {
         $asset = Asset::factory()->create();
 
         $this->actingAsForApi(User::factory()->editAssets()->create())
             ->patchJson(route('api.assets.update', $asset->id), [
-                'name' => 'test'
+                'name' => 'test',
             ])
             ->assertOk();
     }
 
-    public function testAllAssetAttributesAreStored()
+    public function test_all_asset_attributes_are_stored()
     {
         $asset = Asset::factory()->create();
         $user = User::factory()->editAssets()->create();
@@ -96,14 +95,14 @@ class UpdateAssetTest extends TestCase
         $this->assertEquals('1', $updatedAsset->requestable);
         $this->assertTrue($updatedAsset->defaultLoc->is($rtdLocation));
         $this->assertEquals('1234567890', $updatedAsset->serial);
-        $this->assertTrue($updatedAsset->assetstatus->is($status));
+        $this->assertTrue($updatedAsset->status->is($status));
         $this->assertTrue($updatedAsset->supplier->is($supplier));
         $this->assertEquals(10, $updatedAsset->warranty_months);
-        //$this->assertEquals('2023-09-03 00:00:00', $updatedAsset->last_audit_date->format('Y-m-d H:i:s'));
+        // $this->assertEquals('2023-09-03 00:00:00', $updatedAsset->last_audit_date->format('Y-m-d H:i:s'));
         $this->assertEquals('2023-09-03 00:00:00', $updatedAsset->last_audit_date);
     }
 
-    public function testUpdatesPeriodAsCommaSeparatorForPurchaseCost()
+    public function test_updates_period_as_comma_separator_for_purchase_cost()
     {
         $this->settings->set([
             'default_currency' => 'EUR',
@@ -127,7 +126,7 @@ class UpdateAssetTest extends TestCase
         $this->assertEquals(1112.34, $asset->purchase_cost);
     }
 
-    public function testUpdatesFloatForPurchaseCost()
+    public function test_updates_float_for_purchase_cost()
     {
         $this->settings->set([
             'default_currency' => 'EUR',
@@ -151,7 +150,7 @@ class UpdateAssetTest extends TestCase
         $this->assertEquals(12.34, $asset->purchase_cost);
     }
 
-    public function testUpdatesUSDecimalForPurchaseCost()
+    public function test_updates_us_decimal_for_purchase_cost()
     {
         $this->settings->set([
             'default_currency' => 'EUR',
@@ -166,7 +165,7 @@ class UpdateAssetTest extends TestCase
                 'model_id' => AssetModel::factory()->create()->id,
                 'status_id' => Statuslabel::factory()->create()->id,
                 // API also accepts string for comma separated values
-                'purchase_cost' => '5412.34', //NOTE - you cannot use thousands-separator here!!!!
+                'purchase_cost' => '5412.34', // NOTE - you cannot use thousands-separator here!!!!
             ])
             ->assertStatusMessageIs('success');
 
@@ -175,7 +174,7 @@ class UpdateAssetTest extends TestCase
         $this->assertEquals(5412.34, $asset->purchase_cost);
     }
 
-    public function testUpdatesFloatUSDecimalForPurchaseCost()
+    public function test_updates_float_us_decimal_for_purchase_cost()
     {
         $this->settings->set([
             'default_currency' => 'EUR',
@@ -199,7 +198,7 @@ class UpdateAssetTest extends TestCase
         $this->assertEquals(12.34, $asset->purchase_cost);
     }
 
-    public function testAssetEolDateIsCalculatedIfPurchaseDateUpdated()
+    public function test_asset_eol_date_is_calculated_if_purchase_date_updated()
     {
         $asset = Asset::factory()->laptopMbp()->noPurchaseOrEolDate()->create();
 
@@ -216,14 +215,14 @@ class UpdateAssetTest extends TestCase
         $this->assertEquals('2024-01-01', $asset->asset_eol_date);
     }
 
-    public function testAssetEolDateIsNotCalculatedIfPurchaseDateNotSet()
+    public function test_asset_eol_date_is_not_calculated_if_purchase_date_not_set()
     {
         $asset = Asset::factory()->laptopMbp()->noPurchaseOrEolDate()->create();
 
         $this->actingAsForApi(User::factory()->editAssets()->create())
             ->patchJson(route('api.assets.update', $asset->id), [
                 'name' => 'test asset',
-                'asset_eol_date' => '2022-01-01'
+                'asset_eol_date' => '2022-01-01',
             ])
             ->assertOk()
             ->assertStatusMessageIs('success')
@@ -234,7 +233,7 @@ class UpdateAssetTest extends TestCase
         $this->assertEquals('2022-01-01', $asset->asset_eol_date);
     }
 
-    public function testAssetEolExplicitIsSetIfAssetEolDateIsExplicitlySet()
+    public function test_asset_eol_explicit_is_set_if_asset_eol_date_is_explicitly_set()
     {
         $asset = Asset::factory()->laptopMbp()->create();
 
@@ -252,7 +251,7 @@ class UpdateAssetTest extends TestCase
         $this->assertTrue($asset->eol_explicit);
     }
 
-    public function testAssetTagCannotUpdateToNullValue()
+    public function test_asset_tag_cannot_update_to_null_value()
     {
         $asset = Asset::factory()->laptopMbp()->create();
 
@@ -264,77 +263,77 @@ class UpdateAssetTest extends TestCase
             ->assertStatusMessageIs('error');
     }
 
-    public function testAssetTagCannotUpdateToEmptyStringValue()
+    public function test_asset_tag_cannot_update_to_empty_string_value()
     {
         $asset = Asset::factory()->laptopMbp()->create();
 
         $this->actingAsForApi(User::factory()->editAssets()->create())
             ->patchJson(route('api.assets.update', $asset->id), [
-                'asset_tag' => "",
+                'asset_tag' => '',
             ])
             ->assertOk()
             ->assertStatusMessageIs('error');
     }
 
-    public function testModelIdCannotUpdateToNullValue()
+    public function test_model_id_cannot_update_to_null_value()
     {
         $asset = Asset::factory()->laptopMbp()->create();
 
         $this->actingAsForApi(User::factory()->editAssets()->create())
             ->patchJson(route('api.assets.update', $asset->id), [
-                'model_id' => null
+                'model_id' => null,
             ])
             ->assertOk()
             ->assertStatusMessageIs('error');
     }
 
-    public function testModelIdCannotUpdateToEmptyStringValue()
+    public function test_model_id_cannot_update_to_empty_string_value()
     {
         $asset = Asset::factory()->laptopMbp()->create();
 
         $this->actingAsForApi(User::factory()->editAssets()->create())
             ->patchJson(route('api.assets.update', $asset->id), [
-                'model_id' => ""
+                'model_id' => '',
             ])
             ->assertOk()
             ->assertStatusMessageIs('error');
     }
 
-    public function testStatusIdCannotUpdateToNullValue()
+    public function test_status_id_cannot_update_to_null_value()
     {
         $asset = Asset::factory()->laptopMbp()->create();
 
         $this->actingAsForApi(User::factory()->editAssets()->create())
             ->patchJson(route('api.assets.update', $asset->id), [
-                'status_id' => null
+                'status_id' => null,
             ])
             ->assertOk()
             ->assertStatusMessageIs('error');
     }
 
-    public function testStatusIdCannotUpdateToEmptyStringValue()
+    public function test_status_id_cannot_update_to_empty_string_value()
     {
         $asset = Asset::factory()->laptopMbp()->create();
 
         $this->actingAsForApi(User::factory()->editAssets()->create())
             ->patchJson(route('api.assets.update', $asset->id), [
-                'status_id' => ""
+                'status_id' => '',
             ])
             ->assertOk()
             ->assertStatusMessageIs('error');
     }
 
-    public function testIfRtdLocationIdIsSetWithoutLocationIdAssetReturnsToDefault()
+    public function test_if_rtd_location_id_is_set_without_location_id_asset_returns_to_default()
     {
         $location = Location::factory()->create();
         $asset = Asset::factory()->laptopMbp()->create([
-            'location_id' => $location->id
+            'location_id' => $location->id,
         ]);
         $rtdLocation = Location::factory()->create();
 
         $this->actingAsForApi(User::factory()->editAssets()->create())
             ->patchJson(route('api.assets.update', $asset->id), [
-                'rtd_location_id' => $rtdLocation->id
+                'rtd_location_id' => $rtdLocation->id,
             ]);
 
         $asset->refresh();
@@ -343,7 +342,7 @@ class UpdateAssetTest extends TestCase
         $this->assertTrue($asset->location->is($rtdLocation));
     }
 
-    public function testIfLocationAndRtdLocationAreSetLocationIdIsLocation()
+    public function test_if_location_and_rtd_location_are_set_location_id_is_location()
     {
         $location = Location::factory()->create();
         $asset = Asset::factory()->laptopMbp()->create();
@@ -352,7 +351,7 @@ class UpdateAssetTest extends TestCase
         $this->actingAsForApi(User::factory()->editAssets()->create())
             ->patchJson(route('api.assets.update', $asset->id), [
                 'rtd_location_id' => $rtdLocation->id,
-                'location_id' => $location->id
+                'location_id' => $location->id,
             ]);
 
         $asset->refresh();
@@ -361,7 +360,7 @@ class UpdateAssetTest extends TestCase
         $this->assertTrue($asset->location->is($location));
     }
 
-    public function testEncryptedCustomFieldCanBeUpdated()
+    public function test_encrypted_custom_field_can_be_updated()
     {
         $this->markIncompleteIfMySQL('Custom Fields tests do not work on MySQL');
 
@@ -371,7 +370,7 @@ class UpdateAssetTest extends TestCase
 
         $this->actingAsForApi($superuser)
             ->patchJson(route('api.assets.update', $asset->id), [
-                $field->db_column_name() => 'This is encrypted field'
+                $field->db_column_name() => 'This is encrypted field',
             ])
             ->assertStatusMessageIs('success')
             ->assertOk();
@@ -380,7 +379,7 @@ class UpdateAssetTest extends TestCase
         $this->assertEquals('This is encrypted field', Crypt::decrypt($asset->{$field->db_column_name()}));
     }
 
-    public function testPermissionNeededToUpdateEncryptedField()
+    public function test_permission_needed_to_update_encrypted_field()
     {
         $this->markIncompleteIfMySQL('Custom Fields tests do not work on MySQL');
 
@@ -388,23 +387,23 @@ class UpdateAssetTest extends TestCase
         $asset = Asset::factory()->hasEncryptedCustomField($field)->create();
         $normal_user = User::factory()->editAssets()->create();
 
-        $asset->{$field->db_column_name()} = Crypt::encrypt("encrypted value should not change");
+        $asset->{$field->db_column_name()} = Crypt::encrypt('encrypted value should not change');
         $asset->save();
 
         // test that a 'normal' user *cannot* change the encrypted custom field
         $this->actingAsForApi($normal_user)
             ->patchJson(route('api.assets.update', $asset->id), [
-                $field->db_column_name() => 'Some Other Value Entirely!'
+                $field->db_column_name() => 'Some Other Value Entirely!',
             ])
             ->assertStatusMessageIs('success')
             ->assertOk()
             ->assertMessagesAre('Asset updated successfully, but encrypted custom fields were not due to permissions');
 
         $asset->refresh();
-        $this->assertEquals("encrypted value should not change", Crypt::decrypt($asset->{$field->db_column_name()}));
+        $this->assertEquals('encrypted value should not change', Crypt::decrypt($asset->{$field->db_column_name()}));
     }
 
-    public function testCheckoutToUserOnAssetUpdate()
+    public function test_checkout_to_user_on_asset_update()
     {
         $asset = Asset::factory()->create();
         $user = User::factory()->editAssets()->create();
@@ -423,7 +422,7 @@ class UpdateAssetTest extends TestCase
         $this->assertEquals($asset->assigned_type, 'App\Models\User');
     }
 
-    public function testCheckoutToUserWithAssignedToAndAssignedType()
+    public function test_checkout_to_user_with_assigned_to_and_assigned_type()
     {
         $asset = Asset::factory()->create();
         $user = User::factory()->editAssets()->create();
@@ -432,7 +431,7 @@ class UpdateAssetTest extends TestCase
         $response = $this->actingAsForApi($user)
             ->patchJson(route('api.assets.update', $asset->id), [
                 'assigned_to' => $assigned_user->id,
-                'assigned_type' => User::class
+                'assigned_type' => User::class,
             ])
             ->assertOk()
             ->assertStatusMessageIs('success')
@@ -443,7 +442,7 @@ class UpdateAssetTest extends TestCase
         $this->assertEquals($asset->assigned_type, 'App\Models\User');
     }
 
-    public function testCheckoutToUserWithAssignedToWithoutAssignedType()
+    public function test_checkout_to_user_with_assigned_to_without_assigned_type()
     {
         $asset = Asset::factory()->create();
         $user = User::factory()->editAssets()->create();
@@ -452,7 +451,7 @@ class UpdateAssetTest extends TestCase
         $response = $this->actingAsForApi($user)
             ->patchJson(route('api.assets.update', $asset->id), [
                 'assigned_to' => $assigned_user->id,
-//                'assigned_type' => User::class //deliberately omit assigned_type
+                //                'assigned_type' => User::class //deliberately omit assigned_type
             ])
             ->assertOk()
             ->assertStatusMessageIs('error');
@@ -463,7 +462,7 @@ class UpdateAssetTest extends TestCase
         $this->assertNotNull($response->json('messages.assigned_type'));
     }
 
-    public function testCheckoutToUserWithAssignedToWithBadAssignedType()
+    public function test_checkout_to_user_with_assigned_to_with_bad_assigned_type()
     {
         $asset = Asset::factory()->create();
         $user = User::factory()->editAssets()->create();
@@ -471,8 +470,8 @@ class UpdateAssetTest extends TestCase
 
         $response = $this->actingAsForApi($user)
             ->patchJson(route('api.assets.update', $asset->id), [
-                'assigned_to'   => $assigned_user->id,
-                'assigned_type' => 'more_deliberate_nonsense' //deliberately bad assigned_type
+                'assigned_to' => $assigned_user->id,
+                'assigned_type' => 'more_deliberate_nonsense', // deliberately bad assigned_type
             ])
             ->assertOk()
             ->assertStatusMessageIs('error');
@@ -483,7 +482,7 @@ class UpdateAssetTest extends TestCase
         $this->assertNotNull($response->json('messages.assigned_type'));
     }
 
-    public function testCheckoutToUserWithoutAssignedToWithAssignedType()
+    public function test_checkout_to_user_without_assigned_to_with_assigned_type()
     {
         $asset = Asset::factory()->create();
         $user = User::factory()->editAssets()->create();
@@ -491,8 +490,8 @@ class UpdateAssetTest extends TestCase
 
         $response = $this->actingAsForApi($user)
             ->patchJson(route('api.assets.update', $asset->id), [
-                //'assigned_to'   => $assigned_user->id, // deliberately omit assigned_to
-                'assigned_type' => User::class
+                // 'assigned_to'   => $assigned_user->id, // deliberately omit assigned_to
+                'assigned_type' => User::class,
             ])
             ->assertOk()
             ->assertStatusMessageIs('error');
@@ -503,7 +502,7 @@ class UpdateAssetTest extends TestCase
         $this->assertNotNull($response->json('messages.assigned_to'));
     }
 
-    public function testCheckoutToDeletedUserFailsOnAssetUpdate()
+    public function test_checkout_to_deleted_user_fails_on_asset_update()
     {
         $asset = Asset::factory()->create();
         $user = User::factory()->editAssets()->create();
@@ -522,7 +521,7 @@ class UpdateAssetTest extends TestCase
         $this->assertNull($asset->assigned_type);
     }
 
-    public function testCheckoutToLocationOnAssetUpdate()
+    public function test_checkout_to_location_on_asset_update()
     {
         $asset = Asset::factory()->create();
         $user = User::factory()->editAssets()->create();
@@ -542,7 +541,7 @@ class UpdateAssetTest extends TestCase
 
     }
 
-    public function testCheckoutToDeletedLocationFailsOnAssetUpdate()
+    public function test_checkout_to_deleted_location_fails_on_asset_update()
     {
         $asset = Asset::factory()->create();
         $user = User::factory()->editAssets()->create();
@@ -561,7 +560,7 @@ class UpdateAssetTest extends TestCase
         $this->assertNull($asset->assigned_type);
     }
 
-    public function testCheckoutAssetOnAssetUpdate()
+    public function test_checkout_asset_on_asset_update()
     {
         $asset = Asset::factory()->create();
         $user = User::factory()->editAssets()->create();
@@ -569,7 +568,7 @@ class UpdateAssetTest extends TestCase
 
         $this->actingAsForApi($user)
             ->patchJson(route('api.assets.update', $asset->id), [
-                'assigned_asset'   => $assigned_asset->id,
+                'assigned_asset' => $assigned_asset->id,
                 'checkout_to_type' => 'user',
             ])
             ->assertOk()
@@ -582,7 +581,7 @@ class UpdateAssetTest extends TestCase
 
     }
 
-    public function testCheckoutToDeletedAssetFailsOnAssetUpdate()
+    public function test_checkout_to_deleted_asset_fails_on_asset_update()
     {
         $asset = Asset::factory()->create();
         $user = User::factory()->editAssets()->create();
@@ -601,7 +600,7 @@ class UpdateAssetTest extends TestCase
         $this->assertNull($asset->assigned_type);
     }
 
-    public function testAssetCannotBeUpdatedByUserInSeparateCompany()
+    public function test_asset_cannot_be_updated_by_user_in_separate_company()
     {
         $this->settings->enableMultipleFullCompanySupport();
 
@@ -614,24 +613,24 @@ class UpdateAssetTest extends TestCase
             'company_id' => $companyB->id,
         ]);
         $asset = Asset::factory()->create([
-            'created_by'    => $userA->id,
+            'created_by' => $userA->id,
             'company_id' => $companyA->id,
         ]);
 
         $this->actingAsForApi($userB)
             ->patchJson(route('api.assets.update', $asset->id), [
-                'name' => 'test name'
+                'name' => 'test name',
             ])
             ->assertStatusMessageIs('error');
 
         $this->actingAsForApi($userA)
             ->patchJson(route('api.assets.update', $asset->id), [
-                'name' => 'test name'
+                'name' => 'test name',
             ])
             ->assertStatusMessageIs('success');
     }
 
-    public function testCustomFieldCannotBeUpdatedIfNotOnCurrentAssetModel()
+    public function test_custom_field_cannot_be_updated_if_not_on_current_asset_model()
     {
         $this->markIncompleteIfMySQL('Custom Field Tests do not work in MySQL');
 

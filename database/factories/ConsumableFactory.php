@@ -6,10 +6,10 @@ use App\Models\Category;
 use App\Models\Company;
 use App\Models\Consumable;
 use App\Models\Manufacturer;
+use App\Models\Supplier;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use App\Models\Supplier;
 
 class ConsumableFactory extends Factory
 {
@@ -28,16 +28,16 @@ class ConsumableFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->words(3, true),
             'category_id' => Category::factory(),
+            'company_id' => Company::factory(),
             'created_by' => User::factory()->superuser(),
             'item_no' => $this->faker->numberBetween(1000000, 50000000),
-            'order_number' => $this->faker->numberBetween(1000000, 50000000),
-            'purchase_date' => $this->faker->dateTimeBetween('-1 years', 'now', date_default_timezone_get())->format('Y-m-d'),
-            'purchase_cost' => $this->faker->randomFloat(2, 1, 50),
-            'qty' => $this->faker->numberBetween(5, 10),
             'min_amt' => $this->faker->numberBetween($min = 1, $max = 2),
-            'company_id' => Company::factory(),
+            'name' => $this->faker->words(3, true),
+            'order_number' => $this->faker->numberBetween(1000000, 50000000),
+            'purchase_cost' => $this->faker->randomFloat(2, 1, 50),
+            'purchase_date' => $this->faker->dateTimeBetween('-1 years', 'now', date_default_timezone_get())->format('Y-m-d'),
+            'qty' => $this->faker->numberBetween(5, 10),
             'supplier_id' => Supplier::factory(),
         ];
     }
@@ -118,7 +118,7 @@ class ConsumableFactory extends Factory
         });
     }
 
-    public function checkedOutToUser(User $user = null)
+    public function checkedOutToUser(?User $user = null)
     {
         return $this->afterCreating(function (Consumable $consumable) use ($user) {
             $consumable->users()->attach($consumable->id, [

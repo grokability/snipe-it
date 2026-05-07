@@ -2,19 +2,25 @@
 
 namespace App\Models\Labels\Sheets\Avery;
 
-
 use App\Helpers\Helper;
 
 class L4736_A extends L4736
 {
-    private const BARCODE_MARGIN =   1.80;
-    private const TAG_SIZE       =   4.80;
-    private const TITLE_SIZE     =   3.00;
-    private const TITLE_MARGIN   =   1.80;
-    private const LABEL_SIZE     =   2.8;
-    private const LABEL_MARGIN   = - 0.45;
-    private const FIELD_SIZE     =   3.80;
-    private const FIELD_MARGIN   =   0.20;
+    private const BARCODE_MARGIN = 1.80;
+
+    private const TAG_SIZE = 4.80;
+
+    private const TITLE_SIZE = 3.00;
+
+    private const TITLE_MARGIN = 1.80;
+
+    private const LABEL_SIZE = 2.8;
+
+    private const LABEL_MARGIN = -0.45;
+
+    private const FIELD_SIZE = 3.80;
+
+    private const FIELD_MARGIN = 0.20;
 
     public function getUnit()
     {
@@ -25,14 +31,17 @@ class L4736_A extends L4736
     {
         return 0.06;
     }
+
     public function getLabelMarginBottom()
     {
         return 0.06;
     }
+
     public function getLabelMarginLeft()
     {
         return 0.06;
     }
+
     public function getLabelMarginRight()
     {
         return 0.06;
@@ -42,30 +51,33 @@ class L4736_A extends L4736
     {
         return true;
     }
+
     public function getSupport1DBarcode()
     {
         return false;
     }
+
     public function getSupport2DBarcode()
     {
         return true;
     }
+
     public function getSupportFields()
     {
         return 4;
     }
+
     public function getSupportLogo()
     {
         return false;
     }
+
     public function getSupportTitle()
     {
         return true;
     }
 
-    public function preparePDF($pdf)
-    {
-    }
+    public function preparePDF($pdf) {}
 
     public function write($pdf, $record)
     {
@@ -85,8 +97,8 @@ class L4736_A extends L4736
             );
 
         }
-            $currentY += self::TITLE_SIZE + self::TITLE_MARGIN;
-            $usableHeight -= self::TITLE_SIZE + self::TITLE_MARGIN;
+        $currentY += self::TITLE_SIZE + self::TITLE_MARGIN;
+        $usableHeight -= self::TITLE_SIZE + self::TITLE_MARGIN;
         $barcodeSize = $usableHeight;
         if ($record->has('barcode2d')) {
             static::write2DBarcode(
@@ -114,7 +126,6 @@ class L4736_A extends L4736
             labelFont: 'freesans',
         );
 
-
         foreach ($fields as $field) {
             static::writeText(
                 $pdf, $field['label'],
@@ -134,6 +145,3 @@ class L4736_A extends L4736
 
     }
 }
-
-
-?>

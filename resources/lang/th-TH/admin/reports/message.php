@@ -1,16 +1,16 @@
 <?php
 
 return [
-    'about_templates' => 'About Saved Templates',
-    'saving_templates_description' => 'Select your options, then enter the name of your template in the box above and click the \'Save Template\' button. Use the dropdown to select a previously saved template.',
-    'create'  => [
-        'success' => 'Template saved successfully',
+    'about_templates' => 'เกี่ยวกับเทมเพลตที่บันทึก',
+    'saving_templates_description' => 'เลือกตัวเลือกของคุณ จากนั้นป้อนชื่อเทมเพลตของคุณในช่องด้านบน แล้วคลิกปุ่ม \'บันทึกเทมเพลต\' ใช้เมนูแบบเลื่อนลงเพื่อเลือกเทมเพลตที่บันทึกไว้ก่อนหน้านี้',
+    'create' => [
+        'success' => 'บันทึกเทมเพลตแล้ว',
     ],
     'update' => [
-        'success' => 'Template updated successfully',
+        'success' => 'อัพเดทเทมเพลตแล้ว',
     ],
     'delete' => [
-        'success' => 'Template deleted',
-        'no_delete_permission' => 'Template does not exist or you do not have permission to delete it.',
+        'success' => 'ลบเทมเพลตแล้ว',
+        'no_delete_permission' => 'ไม่มีเทมเพลตอยู่ หรือคุณไม่มีสิทธิ์ลบเทมเพลตนั้น',
     ],
 ];

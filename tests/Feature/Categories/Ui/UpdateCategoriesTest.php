@@ -2,32 +2,32 @@
 
 namespace Tests\Feature\Categories\Ui;
 
-use App\Models\Category;
 use App\Models\Asset;
+use App\Models\Category;
 use App\Models\User;
 use Tests\TestCase;
 
 class UpdateCategoriesTest extends TestCase
 {
-    public function testPermissionRequiredToStoreCategory()
+    public function test_permission_required_to_store_category()
     {
         $this->actingAs(User::factory()->create())
             ->post(route('categories.store'), [
                 'name' => 'Test Category',
-                'category_type' => 'asset'
+                'category_type' => 'asset',
             ])
             ->assertStatus(403)
             ->assertForbidden();
     }
 
-    public function testPageRenders()
+    public function test_page_renders()
     {
         $this->actingAs(User::factory()->superuser()->create())
             ->get(route('categories.edit', Category::factory()->create()))
             ->assertOk();
     }
 
-    public function testUserCanCreateCategories()
+    public function test_user_can_create_categories()
     {
         $this->actingAs(User::factory()->superuser()->create())
             ->post(route('categories.store'), [
@@ -41,7 +41,7 @@ class UpdateCategoriesTest extends TestCase
         $this->assertTrue(Category::where('name', 'Test Category')->exists());
     }
 
-    public function testUserCanEditAssetCategory()
+    public function test_user_can_edit_asset_category()
     {
         $category = Category::factory()->forAssets()->create([
             'name' => 'Test Category',
@@ -72,7 +72,7 @@ class UpdateCategoriesTest extends TestCase
         ]);
     }
 
-    public function testUserCanChangeCategoryTypeIfNoAssetsAssociated()
+    public function test_user_can_change_category_type_if_no_assets_associated()
     {
         $category = Category::factory()->forAssets()->create(['name' => 'Test Category']);
         $this->assertTrue(Category::where('name', 'Test Category')->exists());
@@ -93,7 +93,7 @@ class UpdateCategoriesTest extends TestCase
 
     }
 
-    public function testUserCannotChangeCategoryTypeIfAssetsAreAssociated()
+    public function test_user_cannot_change_category_type_if_assets_are_associated()
     {
         Asset::factory()->count(5)->laptopMbp()->create();
         $category = Category::where('name', 'Laptops')->first();

@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
 
     /*
     |--------------------------------------------------------------------------
@@ -13,9 +13,9 @@ return array(
     |
     */
 
-    "password" => "crwdns969:0crwdne969:0",
-    "user"     => "crwdns970:0crwdne970:0",
-    "token"    => 'crwdns10480:0crwdne10480:0',
-    'sent'	   => 'crwdns10482:0crwdne10482:0',
+    'password' => 'crwdns969:0crwdne969:0',
+    'user' => 'crwdns970:0crwdne970:0',
+    'token' => 'crwdns10480:0crwdne10480:0',
+    'sent' => 'crwdns10482:0crwdne10482:0',
 
-);
+];

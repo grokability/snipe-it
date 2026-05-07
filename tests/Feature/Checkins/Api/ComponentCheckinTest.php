@@ -14,7 +14,7 @@ use Tests\TestCase;
 
 class ComponentCheckinTest extends TestCase implements TestsFullMultipleCompaniesSupport, TestsPermissionsRequirement
 {
-    public function testRequiresPermission()
+    public function test_requires_permission()
     {
         $component = Component::factory()->checkedOutToAsset()->create();
 
@@ -23,7 +23,7 @@ class ComponentCheckinTest extends TestCase implements TestsFullMultipleCompanie
             ->assertForbidden();
     }
 
-    public function testHandlesNonExistentPivotId()
+    public function test_handles_non_existent_pivot_id()
     {
         $this->actingAsForApi(User::factory()->checkinComponents()->create())
             ->postJson(route('api.components.checkin', 1000), [
@@ -33,7 +33,7 @@ class ComponentCheckinTest extends TestCase implements TestsFullMultipleCompanie
             ->assertStatusMessageIs('error');
     }
 
-    public function testHandlesNonExistentComponent()
+    public function test_handles_non_existent_component()
     {
         $component = Component::factory()->checkedOutToAsset()->create();
         $pivotId = $component->assets->first()->pivot->id;
@@ -47,7 +47,7 @@ class ComponentCheckinTest extends TestCase implements TestsFullMultipleCompanie
             ->assertStatusMessageIs('error');
     }
 
-    public function testCannotCheckinMoreThanCheckedOut()
+    public function test_cannot_checkin_more_than_checked_out()
     {
         $component = Component::factory()->checkedOutToAsset()->create();
 
@@ -62,7 +62,7 @@ class ComponentCheckinTest extends TestCase implements TestsFullMultipleCompanie
             ->assertStatusMessageIs('error');
     }
 
-    public function testCanCheckinComponent()
+    public function test_can_checkin_component()
     {
         Event::fake([CheckoutableCheckedIn::class]);
 
@@ -71,7 +71,6 @@ class ComponentCheckinTest extends TestCase implements TestsFullMultipleCompanie
         $component = Component::factory()->checkedOutToAsset()->create();
         $pivot = $component->assets->first()->pivot;
         $pivot->update(['assigned_qty' => 3]);
-
 
         $this->actingAsForApi($user)
             ->postJson(route('api.components.checkin', $component->assets->first()->pivot->id), [
@@ -82,8 +81,7 @@ class ComponentCheckinTest extends TestCase implements TestsFullMultipleCompanie
             ->assertStatusMessageIs('success');
 
         $this->assertEquals(1, $component->fresh()->assets->first()->pivot->assigned_qty);
-        $this->assertHasTheseActionLogs($component, ['create']); //FIXME?
-
+        $this->assertHasTheseActionLogs($component, ['create']); // FIXME?
 
         Event::assertDispatched(function (CheckoutableCheckedIn $event) use ($user, $component) {
             return $event->checkoutable->is($component)
@@ -93,7 +91,7 @@ class ComponentCheckinTest extends TestCase implements TestsFullMultipleCompanie
         });
     }
 
-    public function testCheckingInEntireAssignedQuantityClearsThePivotRecordFromTheDatabase()
+    public function test_checking_in_entire_assigned_quantity_clears_the_pivot_record_from_the_database()
     {
         Event::fake([CheckoutableCheckedIn::class]);
 
@@ -121,7 +119,7 @@ class ComponentCheckinTest extends TestCase implements TestsFullMultipleCompanie
         });
     }
 
-    public function testAdheresToFullMultipleCompaniesSupportScoping()
+    public function test_adheres_to_full_multiple_companies_support_scoping()
     {
         $this->settings->enableMultipleFullCompanySupport();
 
@@ -139,7 +137,7 @@ class ComponentCheckinTest extends TestCase implements TestsFullMultipleCompanie
             ->assertStatusMessageIs('error');
     }
 
-    public function testCheckinIsLogged()
+    public function test_checkin_is_logged()
     {
         $user = User::factory()->checkinComponents()->create();
 
@@ -162,6 +160,6 @@ class ComponentCheckinTest extends TestCase implements TestsFullMultipleCompanie
             'item_id' => $component->id,
             'item_type' => Component::class,
         ]);
-        $this->assertHasTheseActionLogs($component, ['create', /*'checkout',*/ 'checkin from']); //FIXME?
+        $this->assertHasTheseActionLogs($component, ['create', /* 'checkout', */ 'checkin from']); // FIXME?
     }
 }

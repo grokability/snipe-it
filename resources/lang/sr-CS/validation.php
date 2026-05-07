@@ -71,7 +71,7 @@ return [
     ],
     'hex_color' => 'Polje :attribute mora biti ispravna heksadecimalna boja.',
     'image' => 'Polje :attribute mora biti slika.',
-    'import_field_empty'    => 'Vrednost za :fieldname ne može biti prazna.',
+    'import_field_empty' => 'Vrednost za :fieldname ne može biti prazna.',
     'in' => 'Odabrani :attribute nije korektan.',
     'in_array' => 'Polje :attribute mora da postoji u :other.',
     'integer' => 'Polje :attribute mora biti celobrojna vrednost.',
@@ -126,7 +126,7 @@ return [
         'symbols' => 'Polje :attribute mora da sadrži najmanje jedan simbol.',
         'uncompromised' => 'Uneto :attribute se pojavilo među procurelim podacima. Molim vas unesite drugo :attribute.',
     ],
-    'percent'       => 'Minimum amortizacije mora biti između 0 i 100 kada je vrsta amortizacije procentna vrednost.',
+    'percent' => 'Minimum amortizacije mora biti između 0 i 100 kada je vrsta amortizacije procentna vrednost.',
 
     'present' => ':attribute polje mora biti prisutno.',
     'present_if' => 'Polje :attribute mora imati vrednost kada :other sadrži :value.',
@@ -156,16 +156,16 @@ return [
         'string' => 'Polje :attribute mora da sadrži :size karaktera.',
     ],
     'starts_with' => 'Polje :attribute mora da počne sa jednim od sledećih: :values.',
-    'string'               => ':attribute mora biti :string.',
+    'string' => ':attribute mora biti :string.',
     'two_column_unique_undeleted' => ':attribute mora biti jedinstven kako u :table1 tako i u :table2. ',
-    'unique_undeleted'     => ':attribute mora biti jedinstven.',
-    'non_circular'         => ':attribute ne sme da kreira cirkularnu referencu.',
-    'not_array'            => ':attribute ne može biti niz.',
+    'unique_undeleted' => ':attribute mora biti jedinstven.',
+    'non_circular' => ':attribute ne sme da kreira cirkularnu referencu.',
+    'not_array' => ':attribute ne može biti niz.',
     'disallow_same_pwd_as_user_fields' => 'Lozinka ne može biti ista kao korisničko ime.',
-    'letters'              => 'Lozinka mora da sadrži barem jedno slovo.',
-    'numbers'              => 'Lozinka mora da sadrži barem jednu cifru.',
-    'case_diff'            => 'Lozinka mora da sadrži malo i veliko slovo.',
-    'symbols'              => 'Lozinka mora da sadrži simbole.',
+    'letters' => 'Lozinka mora da sadrži barem jedno slovo.',
+    'numbers' => 'Lozinka mora da sadrži barem jednu cifru.',
+    'case_diff' => 'Lozinka mora da sadrži malo i veliko slovo.',
+    'symbols' => 'Lozinka mora da sadrži simbole.',
     'timezone' => 'Polje :attribute mora biti ispravna vremenska zona.',
     'unique' => ':attribute je već zauzet.',
     'uploaded' => ':attribute nije prenet.',
@@ -187,38 +187,38 @@ return [
     |
     */
 
-    'email_array'      => 'Jedna ili više adresa e-pošte nisu ispravne.',
-    'checkboxes'           => ':attribute sadrži neispravne opcije.',
-    'radio_buttons'        => ':attribute je neispravan.',
-    
+    'email_array' => 'Jedna ili više adresa e-pošte nisu ispravne.',
+    'checkboxes' => ':attribute sadrži neispravne opcije.',
+    'radio_buttons' => ':attribute je neispravan.',
+
     'custom' => [
         'alpha_space' => ':attribute polje sadrži znak koji nije dozvoljen.',
 
-        'hashed_pass'      => 'Vaša lozinka je neispravna',
-        'dumbpwd'          => 'Lozinka nije sigurna.',
+        'hashed_pass' => 'Vaša lozinka je neispravna',
+        'dumbpwd' => 'Lozinka nije sigurna.',
         'statuslabel_type' => 'Morate odabrati ispravnu vrstu oznake statusa',
-        'custom_field_not_found'          => 'Izgleda da ovo polje ne postoji. Molim vas proverite imena vaših prilagođenih polja.',
+        'custom_field_not_found' => 'Izgleda da ovo polje ne postoji. Molim vas proverite imena vaših prilagođenih polja.',
         'custom_field_not_found_on_model' => 'Izgleda da ovo polje postoji, ali nije dostupno za grupu polja ovog modela imovine.',
 
         // date_format validation with slightly less stupid messages. It duplicates a lot, but it gets the job done :(
         // We use this because the default error message for date_format reflects php Y-m-d, which non-PHP
         // people won't know how to format.
-        'purchase_date.date_format'     => ':attribute mora biti ispravan datum u YYYY-MM-DD formatu',
-        'last_audit_date.date_format'   =>  ':attribute mora biti ispravan datum u YYYY-MM-DD hh:mm:ss formatu',
-        'expiration_date.date_format'   =>  ':attribute mora biti ispravan datum u YYYY-MM-DD formatu',
-        'termination_date.date_format'  =>  ':attribute mora biti ispravan datum u YYYY-MM-DD formatu',
-        'expected_checkin.date_format'  =>  ':attribute mora biti ispravan datum u YYYY-MM-DD formatu',
-        'start_date.date_format'        =>  ':attribute mora biti ispravan datum u YYYY-MM-DD formatu',
-        'end_date.date_format'          =>  ':attribute mora biti ispravan datum u YYYY-MM-DD formatu',
+        'purchase_date.date_format' => ':attribute mora biti ispravan datum u YYYY-MM-DD formatu',
+        'last_audit_date.date_format' => ':attribute mora biti ispravan datum u YYYY-MM-DD hh:mm:ss formatu',
+        'expiration_date.date_format' => ':attribute mora biti ispravan datum u YYYY-MM-DD formatu',
+        'termination_date.date_format' => ':attribute mora biti ispravan datum u YYYY-MM-DD formatu',
+        'expected_checkin.date_format' => ':attribute mora biti ispravan datum u YYYY-MM-DD formatu',
+        'start_date.date_format' => ':attribute mora biti ispravan datum u YYYY-MM-DD formatu',
+        'end_date.date_format' => ':attribute mora biti ispravan datum u YYYY-MM-DD formatu',
         'invalid_value_in_field' => 'Neispravna vrednost je sadržana u ovom polju',
 
         'ldap_username_field' => [
-            'not_in' =>         '<code>sAMAccountName</code> (mala i velika slova) verovatno neće raditi. Trebalo bi da umesto toga koristite <code>samaccountname</code> (mala slova).'
+            'not_in' => '<code>sAMAccountName</code> (mala i velika slova) verovatno neće raditi. Trebalo bi da umesto toga koristite <code>samaccountname</code> (mala slova).',
         ],
         'ldap_auth_filter_query' => ['not_in' => '<code>uid=samaccountname</code> verovatno nije ispravan filter za autentifikaciju. Verovatno želite <code>uid=</code> '],
         'ldap_filter' => ['regex' => 'Ova vrednost verovatno ne bi trebalo da bude u zagradi.'],
 
-        ],
+    ],
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Attributes
@@ -230,7 +230,10 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'serials.*' => 'Serijski broj',
+        'asset_tags.*' => 'Oznaka imovine',
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -244,6 +247,5 @@ return [
         'required' => 'Ovo polje je obavezno',
         'email' => 'Molim vas unesite ispravnu adresu e-pošte',
     ],
-
 
 ];

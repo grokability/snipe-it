@@ -17,22 +17,21 @@ use Tests\TestCase;
 class CheckinCheckoutCounters extends TestCase
 {
     #[Test]
-    function counters()
+    public function counters()
     {
-        //make an admin who can check in and out stuff
+        // make an admin who can check in and out stuff
         $admin = User::factory()->superuser()->create();
 
-        //make a user
+        // make a user
         $user = User::factory()->create();
 
-        //need a model for the asset
+        // need a model for the asset
         $model = AssetModel::factory()->create();
 
-        //need a status for the asset, too
+        // need a status for the asset, too
         $status = Statuslabel::factory()->readyToDeploy()->create();
 
-
-        //make an asset using the API (this is for the API after all!)
+        // make an asset using the API (this is for the API after all!)
         $response = $this->actingAsForApi($admin)
             ->postJson(route('api.assets.store'), [
                 'asset_tag' => 'random_string',
@@ -41,14 +40,13 @@ class CheckinCheckoutCounters extends TestCase
             ])->assertOk()
             ->assertStatusMessageIs('success')
             ->json();
-        \Log::error(print_r($response, true));
 
-        //check the counters
+        // check the counters
         $asset = Asset::find($response['payload']['id']);
         $this->assertEquals(0, $asset->checkin_counter);
         $this->assertEquals(0, $asset->checkout_counter);
 
-        //do a checkout
+        // do a checkout
         $this->actingAsForApi($admin)
             ->postJson(route('api.asset.checkout', $asset), [
                 'checkout_to_type' => 'user',
@@ -61,11 +59,11 @@ class CheckinCheckoutCounters extends TestCase
             ->assertOk();
 
         $asset->refresh();
-        //check the counters. both.
+        // check the counters. both.
         $this->assertEquals(0, $asset->checkin_counter);
-        $this->assertEquals(1, $asset->checkout_counter); //why does _this_ fail?!
+        $this->assertEquals(1, $asset->checkout_counter); // why does _this_ fail?!
 
-        //do a checkin
+        // do a checkin
         $this->actingAsForApi(User::factory()->checkinAssets()->create())
             ->postJson(route('api.asset.checkin', $asset), [
                 'name' => 'Changed Name',
@@ -73,9 +71,9 @@ class CheckinCheckoutCounters extends TestCase
             ])
             ->assertOk();
 
-        //check the counters, again.
+        // check the counters, again.
         $asset->refresh();
-        $this->assertEquals(1, $asset->checkin_counter); //wait, _this_ fails too?! WTH?
-        $this->assertEquals(1, $asset->checkout_counter); //okay, _nothing_ works. Now I'm confused.
+        $this->assertEquals(1, $asset->checkin_counter); // wait, _this_ fails too?! WTH?
+        $this->assertEquals(1, $asset->checkout_counter); // okay, _nothing_ works. Now I'm confused.
     }
 }

@@ -11,7 +11,7 @@ class ReCreateLicensesTable extends Migration
      */
     public function up()
     {
-        if (!Schema::hasTable('licenses')) {
+        if (! Schema::hasTable('licenses')) {
             Schema::create('licenses', function ($table) {
                 $table->increments('id');
                 $table->string('name');

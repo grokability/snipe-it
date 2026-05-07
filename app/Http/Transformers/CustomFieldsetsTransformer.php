@@ -26,8 +26,8 @@ class CustomFieldsetsTransformer
 
         foreach ($models as $model) {
             $modelsArray[] = [
-              'id' => $model->id,
-              'name' => e($model->name),
+                'id' => $model->id,
+                'name' => e($model->name),
             ];
         }
 

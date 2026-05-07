@@ -7,8 +7,8 @@ use App\Models\Department;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class UserSeeder extends Seeder
 {
@@ -34,42 +34,42 @@ class UserSeeder extends Seeder
         $departmentIds = Department::all()->pluck('id');
 
         User::factory()->count(1)->firstAdmin()
-            ->state(new Sequence(fn($sequence) => [
+            ->state(new Sequence(fn ($sequence) => [
                 'company_id' => $companyIds->random(),
                 'department_id' => $departmentIds->random(),
             ]))
             ->create();
 
         User::factory()->count(1)->snipeAdmin()
-            ->state(new Sequence(fn($sequence) => [
+            ->state(new Sequence(fn ($sequence) => [
                 'company_id' => $companyIds->random(),
                 'department_id' => $departmentIds->random(),
             ]))
             ->create();
 
         User::factory()->count(1)->testAdmin()
-            ->state(new Sequence(fn($sequence) => [
+            ->state(new Sequence(fn ($sequence) => [
                 'company_id' => $companyIds->random(),
                 'department_id' => $departmentIds->random(),
             ]))
             ->create();
 
         User::factory()->count(3)->superuser()
-            ->state(new Sequence(fn($sequence) => [
+            ->state(new Sequence(fn ($sequence) => [
                 'company_id' => $companyIds->random(),
                 'department_id' => $departmentIds->random(),
             ]))
             ->create();
 
         User::factory()->count(3)->admin()
-            ->state(new Sequence(fn($sequence) => [
+            ->state(new Sequence(fn ($sequence) => [
                 'company_id' => $companyIds->random(),
                 'department_id' => $departmentIds->random(),
             ]))
             ->create();
 
         User::factory()->count(2000)->viewAssets()
-            ->state(new Sequence(fn($sequence) => [
+            ->state(new Sequence(fn ($sequence) => [
                 'company_id' => $companyIds->random(),
                 'department_id' => $departmentIds->random(),
             ]))
@@ -109,8 +109,6 @@ class UserSeeder extends Seeder
             $user->save();
             $file_number++;
         }
-        
-
 
     }
 }

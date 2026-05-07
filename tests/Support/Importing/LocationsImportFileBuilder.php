@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Support\Importing;
 
-use Illuminate\Support\Str;
-
 /**
  * Build a users import file at runtime for testing.
  *
@@ -26,33 +24,33 @@ use Illuminate\Support\Str;
 class LocationsImportFileBuilder extends FileBuilder
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function getDictionary(): array
     {
         return [
-            'name'           => 'name',
-            'phone'          => 'Phone',
-            'address'             => 'address',
-            'address2'             => 'address2',
-            'city'             => 'city',
-            'state'             => 'state',
-            'country'             => 'country',
-            'zip'             => 'zip',
-            'notes'             => 'notes',
+            'name' => 'name',
+            'phone' => 'Phone',
+            'address' => 'address',
+            'address2' => 'address2',
+            'city' => 'city',
+            'state' => 'state',
+            'country' => 'country',
+            'zip' => 'zip',
+            'notes' => 'notes',
         ];
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function definition(): array
     {
         $faker = fake();
 
         return [
-            'name'    => $faker->company,
-            'phone'    => $faker->phoneNumber,
+            'name' => $faker->company,
+            'phone' => $faker->phoneNumber,
         ];
     }
 }

@@ -2,7 +2,6 @@
 
 use App\Models\Group;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 
 class UpdateGroupFieldForReporting extends Migration
 {

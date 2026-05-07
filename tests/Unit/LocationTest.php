@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Unit;
 
 use App\Models\Location;
@@ -6,7 +7,7 @@ use Tests\TestCase;
 
 class LocationTest extends TestCase
 {
-    public function testPassesIfNotSelfParent()
+    public function test_passes_if_not_self_parent()
     {
         $a = Location::factory()->make([
             'name' => 'Test Location',
@@ -17,7 +18,7 @@ class LocationTest extends TestCase
         $this->assertTrue($a->isValid());
     }
 
-    public function testFailsIfSelfParent()
+    public function test_fails_if_self_parent()
     {
         $a = Location::factory()->make([
             'name' => 'Test Location',

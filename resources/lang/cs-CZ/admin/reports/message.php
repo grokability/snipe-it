@@ -3,7 +3,7 @@
 return [
     'about_templates' => 'O uložených šablonách',
     'saving_templates_description' => 'Vyberte své možnosti, poté zadejte název šablony do pole výše a klikněte na tlačítko „Uložit šablonu“. Pomocí rozbalovací nabídky můžete vybrat dříve uloženou šablonu.',
-    'create'  => [
+    'create' => [
         'success' => 'Šablona úspěšně uložena',
     ],
     'update' => [

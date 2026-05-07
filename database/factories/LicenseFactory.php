@@ -1,4 +1,5 @@
 <?php
+
 namespace Database\Factories;
 
 use App\Models\Category;
@@ -25,19 +26,19 @@ class LicenseFactory extends Factory
     public function definition()
     {
         return [
-            'created_by' => User::factory()->superuser(),
-            'name' => $this->faker->name(),
-            'license_email' => $this->faker->safeEmail(),
-            'serial' => $this->faker->uuid(),
-            'notes'   => 'Created by DB seeder',
-            'seats' => $this->faker->numberBetween(1, 10),
-            'purchase_date' => $this->faker->dateTimeBetween('-1 years', 'now', date_default_timezone_get())->format('Y-m-d'),
-            'order_number' => $this->faker->numberBetween(1000000, 50000000),
-            'expiration_date' => null,
-            'reassignable' => $this->faker->boolean(),
-            'termination_date' => null,
-            'supplier_id' => Supplier::factory(),
             'category_id' => Category::factory(),
+            'created_by' => User::factory()->superuser(),
+            'expiration_date' => null,
+            'license_email' => $this->faker->safeEmail(),
+            'name' => $this->faker->name(),
+            'notes' => 'Created by DB seeder',
+            'order_number' => $this->faker->numberBetween(1000000, 50000000),
+            'purchase_date' => $this->faker->dateTimeBetween('-1 years', 'now', date_default_timezone_get())->format('Y-m-d'),
+            'reassignable' => $this->faker->boolean(),
+            'seats' => $this->faker->numberBetween(1, 10),
+            'serial' => $this->faker->uuid(),
+            'supplier_id' => Supplier::factory(),
+            'termination_date' => null,
         ];
     }
 
@@ -95,7 +96,6 @@ class LicenseFactory extends Factory
                     return Category::where('name', 'Graphics Software')->first() ?? Category::factory()->licenseGraphicsCategory();
                 },
             ];
-    
 
             return $data;
         });

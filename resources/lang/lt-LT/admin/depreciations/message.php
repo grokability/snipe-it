@@ -1,25 +1,24 @@
 <?php
 
-return array(
+return [
 
     'does_not_exist' => 'Nėra tokios nusidėvėjimo klasės.',
-    'assoc_users'	 => 'Šis nusidėvėjimas šiuo metu yra susietas su vienu ar keliais modeliais ir negali būti panaikintas. Panaikinkite susietus modelius ir bandykite iš naujo. ',
+    'assoc_users' => 'Šis nusidėvėjimas šiuo metu yra susietas su vienu ar keliais modeliais ir negali būti panaikintas. Panaikinkite susietus modelius ir bandykite iš naujo. ',
 
+    'create' => [
+        'error' => 'Nusidėvėjimo klasė nebuvo sukurta, badykite dar kartą.',
+        'success' => 'Nusidėvėjimo grupė sėkmingai sukurta. :)',
+    ],
 
-    'create' => array(
-        'error'   => 'Nusidėvėjimo klasė nebuvo sukurta, badykite dar kartą.',
-        'success' => 'Nusidėvėjimo klasė sukurta sėkmingai.'
-    ),
+    'update' => [
+        'error' => 'Nusidėvėjimo klasė nebuvo atnaujinta, bandykite dar kartą.',
+        'success' => 'Nusidėvėjimo klasė sėkmingai atnaujinta.',
+    ],
 
-    'update' => array(
-        'error'   => 'Nusidėvėjimo klasė nebuvo atnaujinta, bandykite dar kartą.',
-        'success' => 'Nusidėvėjimo klasė atnaujinta sėkmingai.'
-    ),
+    'delete' => [
+        'confirm' => 'Ar tikrai norite panaikinti šią nusidėvėjimo klasę?',
+        'error' => 'Bandant panaikinti nusidėvėjimo klasę įvyko klaida. Bandykite dar kartą.',
+        'success' => 'Nusidėvėjimo klasė sėkmingai panaikinta.',
+    ],
 
-    'delete' => array(
-        'confirm'   => 'Ar tikrai norite panaikinti šią nusidėvėjimo klasę?',
-        'error'   => 'Bandant panaikinti nusidėvėjimo klasę įvyko klaida. Bandykite dar kartą.',
-        'success' => 'Nusidėvėjimo klasė panaikinta sėkmingai.'
-    )
-
-);
+];

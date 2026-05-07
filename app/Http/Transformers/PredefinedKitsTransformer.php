@@ -6,13 +6,14 @@ use App\Helpers\Helper;
 use App\Models\Asset;
 use App\Models\PredefinedKit;
 use App\Models\SnipeModel;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Gate;
 
 /**
  * transforms collection of models to array with simple typres
  *
  * @author [D. Minaev] [<dmitriy.minaev.v@gmail.com>]
+ *
  * @return array
  */
 class PredefinedKitsTransformer
@@ -34,7 +35,7 @@ class PredefinedKitsTransformer
             'name' => e($kit->name),
             'created_by' => ($kit->adminuser) ? [
                 'id' => (int) $kit->adminuser->id,
-                'name'=> e($kit->adminuser->display_name),
+                'name' => e($kit->adminuser->display_name),
             ] : null,
             'created_at' => Helper::getFormattedDateObject($kit->created_at, 'datetime'),
             'updated_at' => Helper::getFormattedDateObject($kit->updated_at, 'datetime'),
@@ -55,6 +56,7 @@ class PredefinedKitsTransformer
 
     /**
      * transform collection of any elemets attached to kit
+     *
      * @return array
      */
     public function transformElements(Collection $elements, $total)

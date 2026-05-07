@@ -4,12 +4,17 @@ namespace App\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Artisan; // Note that this is awful close to 'Users' the namespace above; be careful
+use Illuminate\Support\Facades\Artisan;
+
+// Note that this is awful close to 'Users' the namespace above; be careful
 
 class LDAPImportController extends Controller
 {
-     /**
+    /**
      * Return view for LDAP import.
      *
      * @author Aladin Alaily
@@ -17,16 +22,16 @@ class LDAPImportController extends Controller
      *
      * @since 5.0.0
      *
-     * @return \Illuminate\Contracts\View\View
+     * @return View
      *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     public function create()
     {
         // I guess this prolly oughtta... I dunno. Do something?
         $this->authorize('update', User::class);
         try {
-            //$this->ldap->connect(); I don't think this actually exists in LdapAd.php, and we don't really 'persist' LDAP connections anyways...right?
+            // $this->ldap->connect(); I don't think this actually exists in LdapAd.php, and we don't really 'persist' LDAP connections anyways...right?
         } catch (\Exception $e) {
             return redirect()->route('users.index')->with('error', $e->getMessage());
         }
@@ -43,7 +48,7 @@ class LDAPImportController extends Controller
      *
      * @since 5.0.0
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
     public function store(Request $request)
     {
@@ -55,7 +60,7 @@ class LDAPImportController extends Controller
         // Collect and parse JSON summary.
         $ldap_results_json = Artisan::output();
         $ldap_results = json_decode($ldap_results_json, true);
-        if (!$ldap_results) {
+        if (! $ldap_results) {
             return redirect()->back()->withInput()->with('error', trans('general.no_results'));
         }
 

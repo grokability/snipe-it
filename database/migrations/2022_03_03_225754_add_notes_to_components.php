@@ -14,7 +14,7 @@ class AddNotesToComponents extends Migration
     public function up()
     {
         Schema::table('components', function (Blueprint $table) {
-            $table->text("notes")->nullable()->default(null);
+            $table->text('notes')->nullable()->default(null);
         });
     }
 

@@ -10,7 +10,7 @@
 @stop
 
 @section('header_right')
-    <i class="fa-regular fa-2x fa-square-caret-right pull-right" id="expand-info-panel-button" data-tooltip="true" title="{{ trans('button.show_hide_info') }}"></i>
+    <x-button.info-panel-toggle/>
 @endsection
 
 {{-- Page content --}}
@@ -19,63 +19,15 @@
         <x-page-column class="col-md-9 main-panel">
             <x-tabs>
                 <x-slot:tabnav>
-                    @can('view', \App\Models\Asset::class)
-                        <x-tabs.nav-item
-                            name="assets"
-                            class="active"
-                            icon="fas fa-barcode fa-fw"
-                            label="{{ trans('general.assets') }}"
-                            count="{{ $supplier->assets()->AssetsForShow()->count() }}"
-                        />
-                    @endcan
 
-                    @can('view', \App\Models\Accessory::class)
-                        <x-tabs.nav-item
-                                name="accessories"
-                                icon="far fa-keyboard fa-fw"
-                                label="{{ trans('general.accessories') }}"
-                                count="{{ $supplier->accessories()->count() }}"
-                        />
-                    @endcan
-
-
-                    @can('view', \App\Models\Consumable::class)
-                        <x-tabs.nav-item
-                                name="consumables"
-                                icon="fas fa-tint fa-fw"
-                                label="{{ trans('general.consumables') }}"
-                                count="{{ $supplier->consumables()->count() }}"
-                        />
-                    @endcan
-
-                    @can('view', \App\Models\Component::class)
-                        <x-tabs.nav-item
-                                name="components"
-                                icon="fas fa-hdd fa-fw"
-                                label="{{ trans('general.components') }}"
-                                count="{{ $supplier->components->count() }}"
-                        />
-                    @endcan
-
-                    @can('view', \App\Models\AssetMaintenance::class)
-                        <x-tabs.nav-item
-                                name="maintenances"
-                                icon="fa-solid fa-screwdriver-wrench"
-                                label="{{ trans('general.maintenances') }}"
-                                count="{{ $supplier->maintenances->count() }}"
-                        />
-                    @endcan
-
-                <x-tabs.nav-item
-                    name="files"
-                    icon="fa-solid fa-file-contract fa-fw"
-                    label="{{ trans('general.files') }}"
-                    count="{{ $supplier->uploads()->count() }}"
-                />
-
-                @can('update', $supplier)
-                    <x-tabs.nav-item-upload />
-                @endcan
+                    <x-tabs.asset-tab count="{{ $supplier->assets()->AssetsForShow()->count() }}" />
+                    <x-tabs.license-tab count="{{ $supplier->licenses->count() }}" />
+                    <x-tabs.accessory-tab count="{{ $supplier->accessories->count() }}" />
+                    <x-tabs.consumable-tab count="{{ $supplier->consumables->count() }}" />
+                    <x-tabs.component-tab count="{{ $supplier->components->count() }}" />
+                    <x-tabs.maintenance-tab count="{{ $supplier->maintenances->count() }}"/>
+                    <x-tabs.files-tab :item="$supplier" count="{{ $supplier->uploads()->count() }}"/>
+                    <x-tabs.upload-tab :item="$supplier"/>
 
                 </x-slot:tabnav>
 
@@ -84,142 +36,58 @@
                 <x-slot:tabpanes>
 
                     <!-- start assets tab pane -->
-                    @can('view', \App\Models\Asset::class)
-                        <x-tabs.pane name="assets" class="in active">
-                            <x-slot:header>
-                                {{ trans('general.assets') }}
-                            </x-slot:header>
-
-                            <x-slot:bulkactions>
-                                <x-table.bulk-users />
-                            </x-slot:bulkactions>
-
-                            <x-slot:content>
-                                <x-table
-                                        show_column_search="true"
-                                        show_advanced_search="true"
-                                        buttons="assetButtons"
-                                        api_url="{{ route('api.assets.index', ['supplier_id' => $supplier->id, 'itemtype' => 'assets']) }}"
-                                        :presenter="\App\Presenters\AssetPresenter::dataTableLayout()"
-                                        export_filename="export-{{ str_slug($supplier->name) }}-assets-{{ date('Y-m-d') }}"
-                                />
-                            </x-slot:content>
-
-                        </x-tabs.pane>
-                    @endcan
+                    <x-tabs.pane name="assets">
+                        <x-table.assets name="assets" :route="route('api.assets.index', ['supplier_id' => $supplier->id, 'itemtype' => 'assets'])"/>
+                    </x-tabs.pane>
                     <!-- end assets tab pane -->
 
 
-                    <!-- start accessories tab pane -->
-                    @can('view', \App\Models\Accessory::class)
-                        <x-tabs.pane name="accessories">
-                            <x-slot:header>
-                                {{ trans('general.accessories') }}
-                            </x-slot:header>
-
-                            <x-slot:content>
-                                <x-table
-                                        show_column_search="true"
-                                        buttons="accessoryButtons"
-                                        api_url="{{ route('api.accessories.index', ['supplier_id' => $supplier->id]) }}"
-                                        :presenter="\App\Presenters\AccessoryPresenter::dataTableLayout()"
-                                        export_filename="export-{{ str_slug($supplier->name) }}-accessories-{{ date('Y-m-d') }}"
-                                />
-                            </x-slot:content>
-
-                        </x-tabs.pane>
-                    @endcan
-                    <!-- end accessories tab pane -->
-
                     <!-- start licenses tab pane -->
-                    @can('view', \App\Models\License::class)
-                        <x-tabs.pane name="licenses">
-                            <x-slot:header>
-                                {{ trans('general.licenses') }}
-                            </x-slot:header>
-
-                            <x-slot:content>
-                                <x-table
-                                        show_advanced_search="true"
-                                        buttons="licenseButtons"
-                                        api_url="{{ route('api.licenses.index', ['supplier_id' => $supplier->id]) }}"
-                                        :presenter="\App\Presenters\LicensePresenter::dataTableLayout()"
-                                        export_filename="export-{{ str_slug($supplier->name) }}-licenses-{{ date('Y-m-d') }}"
-                                />
-                            </x-slot:content>
-
-                        </x-tabs.pane>
-                    @endcan
+                    <x-tabs.pane name="licenses">
+                        <x-table.licenses :name="$supplier->name" :route="route('api.licenses.index', ['supplier_id' => $supplier->id])"/>
+                    </x-tabs.pane>
                     <!-- end licenses tab pane -->
 
-                    <!-- start components tab pane -->
-                    @can('view', \App\Models\Component::class)
-                        <x-tabs.pane name="components">
-                            <x-slot:header>
-                                {{ trans('general.components') }}
-                            </x-slot:header>
+                    <!-- start accessories tab pane -->
+                    <x-tabs.pane name="accessories">
+                        <x-table.accessories :name="$supplier->name" :route="route('api.accessories.index', ['supplier_id' => $supplier->id])"/>
+                    </x-tabs.pane>
+                    <!-- end accessories tab pane -->
 
-                            <x-slot:content>
-                                <x-table
-                                        show_advanced_search="true"
-                                        buttons="componentButtons"
-                                        api_url="{{ route('api.components.index', ['supplier_id' => $supplier->id]) }}"
-                                        :presenter="\App\Presenters\ComponentPresenter::dataTableLayout()"
-                                        export_filename="export-{{ str_slug($supplier->name) }}-components-{{ date('Y-m-d') }}"
-                                />
-                            </x-slot:content>
-                        </x-tabs.pane>
-                    @endcan
+                    <!-- start components tab pane -->
+                    <x-tabs.pane name="components">
+                        <x-table.accessories :name="$supplier->name" :route="route('api.components.index', ['supplier_id' => $supplier->id])"/>
+                    </x-tabs.pane>
                     <!-- end components tab pane -->
 
                     <!-- start consumables tab pane -->
-                    @can('view', \App\Models\Consumable::class)
-                        <x-tabs.pane name="consumables">
-                            <x-slot:header>
-                                {{ trans('general.consumables') }}
-                            </x-slot:header>
-
-                            <x-slot:content>
-                                <x-table
-                                        show_advanced_search="true"
-                                        buttons="consumableButtons"
-                                        api_url="{{ route('api.consumables.index', ['supplier_id' => $supplier->id]) }}"
-                                        :presenter="\App\Presenters\ConsumablePresenter::dataTableLayout()"
-                                        export_filename="export-{{ str_slug($supplier->name) }}-consumables-{{ date('Y-m-d') }}"
-                                />
-                            </x-slot:content>
-                        </x-tabs.pane>
-                    @endcan
+                    <x-tabs.pane name="consumables">
+                        <x-table.consumables :name="$supplier->name" :route="route('api.consumables.index', ['supplier_id' => $supplier->id])"/>
+                    </x-tabs.pane>
                     <!-- end consumables tab pane -->
 
 
                     <!-- start consumables tab pane -->
                     @can('view', \App\Models\Asset::class)
-                        <x-tabs.pane name="maintenances">
-                            <x-slot:header>
+                        <x-tabs.pane name="maintenances" class="{{ $supplier->maintenances->count() == 0 ? 'hidden-print' : '' }}">
+                            <x-slot:table_header>
                                 {{ trans('admin/maintenances/general.maintenances') }}
-                            </x-slot:header>
+                            </x-slot:table_header>
 
-                            <x-slot:content>
                                 <x-table
                                         buttons="maintenanceButtons"
                                         api_url="{{ route('api.maintenances.index', ['supplier_id' => $supplier->id]) }}"
                                         :presenter="\App\Presenters\MaintenancesPresenter::dataTableLayout()"
                                         export_filename="export-{{ str_slug($supplier->name) }}-maintenances-{{ date('Y-m-d') }}"
                                 />
-                            </x-slot:content>
+
                         </x-tabs.pane>
                     @endcan
                     <!-- end consumables tab pane -->
 
                     <!-- start files tab pane -->
-                    <x-tabs.pane name="files">
-                        <x-slot:header>
-                            {{ trans('general.files') }}
-                        </x-slot:header>
-                        <x-slot:content>
-                            <x-filestable object_type="suppliers" :object="$supplier" />
-                        </x-slot:content>
+                    <x-tabs.pane name="files" class="{{ $supplier->uploads->count() == 0 ? 'hidden-print' : '' }}">
+                        <x-table.files object_type="suppliers" :object="$supplier"/>
                     </x-tabs.pane>
                     <!-- end files tab pane -->
 
@@ -227,26 +95,61 @@
 
             </x-tabs>
         </x-page-column>
-        <x-page-column class="col-md-3">
+        <x-page-column class="col-md-3 hidden-print">
 
-            <x-box>
-                <x-box.info-panel :contact="$supplier" img_path="{{ app('suppliers_upload_url') }}">
-                </x-box.info-panel>
+            <x-box class="side-box expanded">
+                <x-info-panel :infoPanelObj="$supplier" img_path="{{ app('suppliers_upload_url') }}">
+
+                    <x-slot:buttons>
+                        <x-button :item="$supplier" permission="update" :route="route('suppliers.edit', $supplier->id)" class="btn-warning"  />
+                        <x-button.delete :item="$supplier" />
+                    </x-slot:buttons>
+
+
+                </x-info-panel>
             </x-box>
         </x-page-column>
 
     </x-container>
 
+    <div class="visible-print">
+        <table style="margin-top: 80px;" class="signature-boxes">
+            <tr>
+                <td style="padding-right: 10px; vertical-align: top; font-weight: bold;">{{ trans('general.signed_off_by') }}:</td>
+                <td style="padding-right: 10px; vertical-align: top;">______________________________________</td>
+                <td style="padding-right: 10px; vertical-align: top;">______________________________________</td>
+                <td>_____________</td>
+            </tr>
+            <tr style="height: 80px;">
+                <td></td>
+                <td style="padding-right: 10px; vertical-align: top;">{{ trans('general.name') }}</td>
+                <td style="padding-right: 10px; vertical-align: top;">{{ trans('general.signature') }}</td>
+                <td style="padding-right: 10px; vertical-align: top;">{{ trans('general.date') }}</td>
+            </tr>
+            <tr>
+                <td style="padding-right: 10px; vertical-align: top; font-weight: bold;">{{ trans('admin/users/table.manager') }}:</td>
+                <td style="padding-right: 10px; vertical-align: top;">______________________________________</td>
+                <td style="padding-right: 10px; vertical-align: top;">______________________________________</td>
+                <td>_____________</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="padding-right: 10px; vertical-align: top;">{{ trans('general.name') }}</td>
+                <td style="padding-right: 10px; vertical-align: top;">{{ trans('general.signature') }}</td>
+                <td style="padding-right: 10px; vertical-align: top;">{{ trans('general.date') }}</td>
+                <td></td>
+            </tr>
 
-  @can('update', \App\Models\Supplier::class)
-      @include ('modals.upload-file', ['item_type' => 'supplier', 'item_id' => $supplier->id])
-  @endcan
-@stop
+        </table>
+    </div>
+
+@endsection
 
 @section('moar_scripts')
-  @include ('partials.bootstrap-table', [
-      'exportFile' => 'locations-export',
-      'search' => true
-   ])
+    @can('files', $supplier)
+        @include ('modals.upload-file', ['item_type' => 'suppliers', 'item_id' => $supplier->id])
+    @endcan
 
-@stop
+    @include ('partials.bootstrap-table', ['exportFile' => 'suppliers-' . $supplier->name . '-export', 'search' => false])
+@endsection
+

@@ -23,13 +23,13 @@ return [
 
     'accessories' => 'Acessórios são qualquer coisa que você emitir para os usuários, mas que não tem um número de série (ou você não se importa com o seu rastreamento único). Por exemplo, mouse ou teclados de computador.',
 
-    'companies'     => 'Empresas podem ser utilizadas como um campo para simples identificação, ou pode ser utilizada para limitar a visualização dos ativos, usuários, etc. Elas ficam disponíveis para uso, se estiver configurado nas opções de Administração.',
+    'companies' => 'Empresas podem ser utilizadas como um campo para simples identificação, ou pode ser utilizada para limitar a visualização dos ativos, usuários, etc. Elas ficam disponíveis para uso, se estiver configurado nas opções de Administração.',
 
-    'components'    => 'Componentes são itens que fazem parte de ativos, como por exemplo HDD, RAM, etc.',
+    'components' => 'Componentes são itens que fazem parte de ativos, como por exemplo HDD, RAM, etc.',
 
-    'consumables'   => 'Consumíveis é todo e qualquer item comprado que será usado ao longo do tempo, por exemplo, papel ou tinta de impressora.',
+    'consumables' => 'Consumíveis é todo e qualquer item comprado que será usado ao longo do tempo, por exemplo, papel ou tinta de impressora.',
 
     'depreciations' => 'Você pode configurar depreciações para depreciar ativos baseados na depreciação linear.',
-    
-    'empty_file'    => 'O importador detectou que este arquivo está vazio.'
+
+    'empty_file' => 'O importador detectou que este arquivo está vazio.',
 ];

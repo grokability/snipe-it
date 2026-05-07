@@ -32,7 +32,13 @@
 
                 <div class="dynamic-form-row">
                     <div class="col-md-3 col-xs-12 country"><label for="modal-country">{{ trans('general.country') }}:</label></div>
-                    <div class="col-md-9 col-xs-12">{!! Form::countries('country', old('country'), 'select2 country',"modal-country") !!}</div>
+                    <div class="col-md-9 col-xs-12">
+                        <x-input.country-select
+                            name="country"
+                            :selected="old('country')"
+                            id="modal-country"
+                        />
+                    </div>
                 </div>
             </form>
         </div>

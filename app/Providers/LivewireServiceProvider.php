@@ -25,14 +25,14 @@ class LivewireServiceProvider extends ServiceProvider
         if ($prefix === '') {
             $prefix = trim((string) parse_url(config('app.url'), PHP_URL_PATH), '/');
         }
-        $prefix = $prefix === '' ? '' : '/' . $prefix;
+        $prefix = $prefix === '' ? '' : '/'.$prefix;
 
         Livewire::setUpdateRoute(function ($handle) use ($prefix) {
-            return Route::post($prefix . '/livewire/update', $handle);
+            return Route::post($prefix.'/livewire/update', $handle);
         });
 
         Livewire::setScriptRoute(function ($handle) use ($prefix) {
-            return Route::get($prefix . '/livewire/livewire.js', $handle);
+            return Route::get($prefix.'/livewire/livewire.js', $handle);
         });
     }
 }

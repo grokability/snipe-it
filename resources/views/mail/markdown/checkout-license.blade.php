@@ -1,7 +1,7 @@
 @component('mail::message')
 # {{ trans('mail.hello').' '.$target.','}}
 
-{{ trans_choice('mail.new_item_checked', 1) }}
+{{ $introduction_line }}
 
 @component('mail::table')
 |        |          |

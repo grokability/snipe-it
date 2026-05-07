@@ -205,6 +205,16 @@
                                 </div>
                             </div>
 
+                            <!-- Alerts Enabled -->
+                            <div class="form-group {{ $errors->has('update_existing_dates') ? 'error' : '' }}">
+                                <div class="col-md-9 col-md-offset-3">
+                                    <label class="form-control">
+                                        <input type="checkbox" name="update_existing_dates" value="1" @checked(old('update_existing_dates'))>
+                                        {{  trans('admin/settings/general.update_existing_dates') }}
+                                    </label>
+                                </div>
+                            </div>
+
                         </fieldset>
 
                         </div>

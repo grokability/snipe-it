@@ -71,7 +71,7 @@ return [
     ],
     'hex_color' => ':attribute ველი უნდა იყოს სწორი ჰექსადეციმალური ფერის კოდი.',
     'image' => ':attribute ველი უნდა იყოს სურათი.',
-    'import_field_empty'    => ':fieldname ველის მნიშვნელობა ვერ იქნება ცარიელი.',
+    'import_field_empty' => ':fieldname ველის მნიშვნელობა ვერ იქნება ცარიელი.',
     'in' => 'არჩეული :attribute არასწორია.',
     'in_array' => ':attribute ველი უნდა არსებობდეს :other-ში.',
     'integer' => ':attribute ველი უნდა იყოს მთელი რიცხვი.',
@@ -126,7 +126,7 @@ return [
         'symbols' => ':attribute ველში უნდა არსებობდეს მინიმუმ ერთი სიმბოლო.',
         'uncompromised' => 'ნაპოვნია მონაცემთა გაჟონვისას გამოყენებული :attribute. გთხოვთ, აირჩიოთ სხვა :attribute.',
     ],
-    'percent'       => 'ამორტიზაციის მინიმალური პროცენტი უნდა იყოს 0-იდან 100-მდე, როდესაც ამორტიზაციის ტიპი არის პროცენტული.',
+    'percent' => 'ამორტიზაციის მინიმალური პროცენტი უნდა იყოს 0-იდან 100-მდე, როდესაც ამორტიზაციის ტიპი არის პროცენტული.',
 
     'present' => ':attribute ველი აუცილებელია.',
     'present_if' => ':attribute ველი აუცილებელია, როდესაც :other არის :value.',
@@ -156,16 +156,16 @@ return [
         'string' => ':attribute ველში უნდა იყოს ზუსტად :size სიმბოლო.',
     ],
     'starts_with' => ':attribute ველი უნდა იწყებოდეს ერთ-ერთ შემდეგიდან: :values.',
-    'string'               => ':attribute უნდა იყოს ტექსტური (სტრიქონი).',
+    'string' => ':attribute უნდა იყოს ტექსტური (სტრიქონი).',
     'two_column_unique_undeleted' => ':attribute უნდა იყოს უნიკალური ორივე ცხრილში: :table1 და :table2.',
-    'unique_undeleted'     => ':attribute უნდა იყოს უნიკალური.',
-    'non_circular'         => ':attribute არ უნდა გამოიწვიოს ციკლური რეფერენცია.',
-    'not_array'            => ':attribute ველი არ შეიძლება იყოს მასივი.',
+    'unique_undeleted' => ':attribute უნდა იყოს უნიკალური.',
+    'non_circular' => ':attribute არ უნდა გამოიწვიოს ციკლური რეფერენცია.',
+    'not_array' => ':attribute ველი არ შეიძლება იყოს მასივი.',
     'disallow_same_pwd_as_user_fields' => 'პაროლი არ შეიძლება ემთხვეოდეს მომხმარებლის სახელს.',
-    'letters'              => 'პაროლი უნდა შეიცავდეს მინიმუმ ერთ ასოს.',
-    'numbers'              => 'პაროლი უნდა შეიცავდეს მინიმუმ ერთ რიცხვს.',
-    'case_diff'            => 'პაროლი უნდა შეიცავდეს დიდ და პატარა ასოებს.',
-    'symbols'              => 'პაროლი უნდა შეიცავდეს სიმბოლოებს.',
+    'letters' => 'პაროლი უნდა შეიცავდეს მინიმუმ ერთ ასოს.',
+    'numbers' => 'პაროლი უნდა შეიცავდეს მინიმუმ ერთ რიცხვს.',
+    'case_diff' => 'პაროლი უნდა შეიცავდეს დიდ და პატარა ასოებს.',
+    'symbols' => 'პაროლი უნდა შეიცავდეს სიმბოლოებს.',
     'timezone' => ':attribute ველი უნდა შეიცავდეს ვალიდურ დროის ზონას.',
     'unique' => ':attribute უკვე დაკავებულია.',
     'uploaded' => ':attribute-ის ატვირთვა ჩაიშალა.',
@@ -187,38 +187,38 @@ return [
     |
     */
 
-    'email_array'      => 'ერთზე მეტი ელ.ფოსტის მისამართი არის არავალიდური.',
-    'checkboxes'           => ':attribute ველი შეიცავს არასწორ არჩევანს.',
-    'radio_buttons'        => ':attribute არ არის ვალიდური.',
-    
+    'email_array' => 'ერთზე მეტი ელ.ფოსტის მისამართი არის არავალიდური.',
+    'checkboxes' => ':attribute ველი შეიცავს არასწორ არჩევანს.',
+    'radio_buttons' => ':attribute არ არის ვალიდური.',
+
     'custom' => [
         'alpha_space' => ':attribute ველი შეიცავს დაუშვებელ სიმბოლოს.',
 
-        'hashed_pass'      => 'თქვენი მიმდინარე პაროლი არასწორია.',
-        'dumbpwd'          => 'ეს პაროლი ძალიან ხშირია და დაუშვებელია.',
+        'hashed_pass' => 'თქვენი მიმდინარე პაროლი არასწორია.',
+        'dumbpwd' => 'ეს პაროლი ძალიან ხშირია და დაუშვებელია.',
         'statuslabel_type' => 'საჭიროა ვალიდური სტატუსის ეტიკეტის ტიპის არჩევა.',
-        'custom_field_not_found'          => 'ეს ველი არ არსებობს. გთხოვთ გადაამოწმოთ "Custom" ველების სახელები.',
+        'custom_field_not_found' => 'ეს ველი არ არსებობს. გთხოვთ გადაამოწმოთ "Custom" ველების სახელები.',
         'custom_field_not_found_on_model' => 'ეს ველი არსებობს, თუმცა ამ ინვენტარის მოდელის ველების ნაკრებში ხელმისაწვდომი არ არის.',
 
         // date_format validation with slightly less stupid messages. It duplicates a lot, but it gets the job done :(
         // We use this because the default error message for date_format reflects php Y-m-d, which non-PHP
         // people won't know how to format.
-        'purchase_date.date_format'     => ':ველი უნდა იყოს ვალიდური თარიღის ფორმატში YYYY-MM-DD',
-        'last_audit_date.date_format'   =>  ':ველი უნდა იყოს ვალიდური თარიღის ფორმატში YYYY-MM-DD hh:mm:ss',
-        'expiration_date.date_format'   =>  ':ველი უნდა იყოს ვალიდური თარიღის ფორმატში YYYY-MM-DD',
-        'termination_date.date_format'  =>  ':ველი უნდა იყოს ვალიდური თარიღის ფორმატში YYYY-MM-DD',
-        'expected_checkin.date_format'  =>  ':ველი უნდა იყოს ვალიდური თარიღის ფორმატში YYYY-MM-DD',
-        'start_date.date_format'        =>  ':ველი უნდა იყოს ვალიდური თარიღის ფორმატში YYYY-MM-DD',
-        'end_date.date_format'          =>  ':ველი უნდა იყოს ვალიდური თარიღის ფორმატში YYYY-MM-DD',
+        'purchase_date.date_format' => ':ველი უნდა იყოს ვალიდური თარიღის ფორმატში YYYY-MM-DD',
+        'last_audit_date.date_format' => ':ველი უნდა იყოს ვალიდური თარიღის ფორმატში YYYY-MM-DD hh:mm:ss',
+        'expiration_date.date_format' => ':ველი უნდა იყოს ვალიდური თარიღის ფორმატში YYYY-MM-DD',
+        'termination_date.date_format' => ':ველი უნდა იყოს ვალიდური თარიღის ფორმატში YYYY-MM-DD',
+        'expected_checkin.date_format' => ':ველი უნდა იყოს ვალიდური თარიღის ფორმატში YYYY-MM-DD',
+        'start_date.date_format' => ':ველი უნდა იყოს ვალიდური თარიღის ფორმატში YYYY-MM-DD',
+        'end_date.date_format' => ':ველი უნდა იყოს ვალიდური თარიღის ფორმატში YYYY-MM-DD',
         'invalid_value_in_field' => 'ველში შეტანილია არასწორი მნიშვნელობა',
 
         'ldap_username_field' => [
-            'not_in' =>         '<code>sAMAccountName</code> (შერეული რეგისტრი) დიდი ალბათობით არ იმუშავებს. ამის ნაცვლად უნდა გამოიყენოთ <code>samaccountname</code> (პატარა ასოებით).'
+            'not_in' => '<code>sAMAccountName</code> (შერეული რეგისტრი) დიდი ალბათობით არ იმუშავებს. ამის ნაცვლად უნდა გამოიყენოთ <code>samaccountname</code> (პატარა ასოებით).',
         ],
         'ldap_auth_filter_query' => ['not_in' => '<code>uid=samaccountname</code> არ არის ვალიდური ავტორიზაციის ფილტრი. სავარაუდოდ უნდა გამოიყენოთ <code>uid=</code> '],
         'ldap_filter' => ['regex' => 'ეს მნიშვნელობა, სავარაუდოდ, არ უნდა იყოს მოცულული ფრჩხილებში.'],
 
-        ],
+    ],
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Attributes
@@ -230,7 +230,10 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'serials.*' => 'სერიული ნომერი',
+        'asset_tags.*' => 'ინვენტარის ნომერი',
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -244,6 +247,5 @@ return [
         'required' => 'ველი აუცილებელია',
         'email' => 'გთხოვთ, შეიყვანოთ ვალიდური ელექტრონული ფოსტის მისამართი',
     ],
-
 
 ];

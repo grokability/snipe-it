@@ -23,13 +23,13 @@ return [
 
     'accessories' => 'Mae ategolion yn unrhyw offer sydd yn cael eu ddosbarthu i defnyddwyr ond ddim hefo rhif cofrestru. (Neu nid oes angen tracio). Er enghraifft, llygod, ategolion.',
 
-    'companies'     => 'Defnyddir cwmniau fel maes syml, neu i rheoli mynediad at grwpiau o offer, defnyddwyr os ydi cefnogaeth cwmniau wedi alluogi.',
+    'companies' => 'Defnyddir cwmniau fel maes syml, neu i rheoli mynediad at grwpiau o offer, defnyddwyr os ydi cefnogaeth cwmniau wedi alluogi.',
 
-    'components'    => 'Mae cydrannau yn darnau sydd yn rhan o ased, er enghraifft cof, disg caled, ayyb.',
+    'components' => 'Mae cydrannau yn darnau sydd yn rhan o ased, er enghraifft cof, disg caled, ayyb.',
 
-    'consumables'   => 'Mae unrhwy eitem sydd yn cael eu defnyddio i fyny dros amser yn nwydd traul. Er enghraifft, inc neu paper argraffydd.',
+    'consumables' => 'Mae unrhwy eitem sydd yn cael eu defnyddio i fyny dros amser yn nwydd traul. Er enghraifft, inc neu paper argraffydd.',
 
     'depreciations' => 'Cewch creu mathau o dibrisiant i dibrisio asedau yn seiliedig ar dibrisiant llinell syth.',
-    
-    'empty_file'    => 'The importer detects that this file is empty.'
+
+    'empty_file' => 'The importer detects that this file is empty.',
 ];

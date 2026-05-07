@@ -1,11 +1,12 @@
 <?php
-return array(
+
+return [
     'companies' => 'Izinkampani',
-    'create'    => 'Dala iNkampani',
-    'email'     => 'Company Email',
-    'title'     => 'Inkampani',
-    'phone'     => 'Company Phone',
-    'update'    => 'Buyekeza Inkampani',
-    'name'      => 'Igama Lenkampani',
-    'id'        => 'ID',
-);
+    'create' => 'Dala iNkampani',
+    'email' => 'Company Email',
+    'title' => 'Inkampani',
+    'phone' => 'Company Phone',
+    'update' => 'Buyekeza Inkampani',
+    'name' => 'Igama Lenkampani',
+    'id' => 'ID',
+];

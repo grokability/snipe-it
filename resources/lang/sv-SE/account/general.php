@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
     'personal_api_keys' => 'Personliga API-nycklar',
     'personal_access_token' => 'Personligt Access Token',
     'personal_api_keys_success' => 'Personlig API-nyckel skapad',
@@ -14,4 +14,4 @@ return array(
     'no_tokens' => 'Du har inte skapat några personliga åtkomsttokens.',
     'enable_sounds' => 'Aktivera ljudeffekter',
     'enable_confetti' => 'Aktivera konfettieffekter',
-);
+];

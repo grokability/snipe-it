@@ -63,16 +63,14 @@ class SyncAssetCounters extends Command
 
                     }
 
-            } else {
-                $this->info('No assets to sync');
-            }
-        });
-        
+                } else {
+                    $this->info('No assets to sync');
+                }
+            });
 
         $bar->finish();
         $time_elapsed_secs = microtime(true) - $start;
         $this->info("\nSync of ".$assets_count.' assets executed in '.$time_elapsed_secs.' seconds');
-
 
     }
 }

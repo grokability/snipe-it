@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
 
     /*
     |--------------------------------------------------------------------------
@@ -17,4 +17,4 @@ return array(
     'password' => 'crwdns6846:0crwdne6846:0',
     'throttle' => 'crwdns13001:0crwdne13001:0',
 
-);
+];

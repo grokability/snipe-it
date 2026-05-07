@@ -23,13 +23,13 @@ return [
 
     'accessories' => 'Aksesuarlar kullanıcılara verdiğiniz ekipmanlardır; fakat seri numaraları yoktur (ya da siz tek tek takip etmeyi önemsemiyorsunuzdur). Örneğin fare, klavye vs.',
 
-    'companies'     => 'Şirketler basit bir tanımlayıcı alanı olarak kullanılabilir veya Yönetici ayarlarınızda tam şirket desteğinin etkinleştirilmesi durumunda varlıkların, kullanıcıların vb. görünürlüklerini sınırlamak için kullanılabilir.',
+    'companies' => 'Şirketler basit bir tanımlayıcı alanı olarak kullanılabilir veya Yönetici ayarlarınızda tam şirket desteğinin etkinleştirilmesi durumunda varlıkların, kullanıcıların vb. görünürlüklerini sınırlamak için kullanılabilir.',
 
-    'components'    => 'Bileşenler, bir demirbaşın parçası olan öğelerdir, örneğin HDD, RAM vb.',
+    'components' => 'Bileşenler, bir demirbaşın parçası olan öğelerdir, örneğin HDD, RAM vb.',
 
-    'consumables'   => 'Sarf malzemeleri satın alınan ve zamanla tüketilen ürünlerdir. Örneğin yazıcı kartuşu, fotokopi kağıdı vs.',
+    'consumables' => 'Sarf malzemeleri satın alınan ve zamanla tüketilen ürünlerdir. Örneğin yazıcı kartuşu, fotokopi kağıdı vs.',
 
     'depreciations' => 'Demirbaş amortismanını sabit bir oran ile düşecek şekilde ayarlayabilirsiniz.',
-    
-    'empty_file'    => 'İthalatçı bu dosyanın boş olduğunu tespit eder.'
+
+    'empty_file' => 'İthalatçı bu dosyanın boş olduğunu tespit eder.',
 ];

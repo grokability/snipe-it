@@ -1,5 +1,5 @@
 <?php
 
-return array(
-    'title'      				=> 'Magaca la isticmaali karo',
-);
+return [
+    'title' => 'Magaca la isticmaali karo',
+];

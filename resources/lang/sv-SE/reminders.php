@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
 
     /*
     |--------------------------------------------------------------------------
@@ -13,9 +13,9 @@ return array(
     |
     */
 
-    "password" => "Lösenord måste vara sex tecken och matcha lösenordsbekräftelsen.",
-    "user"     => "Användarnamnet eller e-postadressen är felaktigt",
-    "token"    => 'Detta återställningstoken för lösenord är ogiltigt, har löpt ut eller matchar inte det angivna användarnamnet.',
-    'sent'	   => 'Om en matchande användare med en giltig e-postadress finns i systemet har ett e-postmeddelande om lösenordsåterställning skickats.',
+    'password' => 'Lösenord måste vara sex tecken och matcha lösenordsbekräftelsen.',
+    'user' => 'Användarnamnet eller e-postadressen är felaktigt',
+    'token' => 'Detta återställningstoken för lösenord är ogiltigt, har löpt ut eller matchar inte det angivna användarnamnet.',
+    'sent' => 'Om en matchande användare med en giltig e-postadress finns i systemet har ett e-postmeddelande om lösenordsåterställning skickats.',
 
-);
+];

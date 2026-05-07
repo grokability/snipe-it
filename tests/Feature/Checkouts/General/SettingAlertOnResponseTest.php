@@ -13,6 +13,7 @@ use Tests\TestCase;
 class SettingAlertOnResponseTest extends TestCase
 {
     private User $actor;
+
     private User $assignedUser;
 
     protected function setUp(): void

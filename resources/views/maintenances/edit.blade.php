@@ -182,6 +182,7 @@
 
 
         @include ('partials.forms.edit.image-upload', ['image_path' => app('maintenances_path')])
+        @include ('partials.forms.edit.file-upload', ['input_id' => 'maintenanceFileUpload'])
 
 
         <!-- Notes -->

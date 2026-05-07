@@ -21,7 +21,7 @@ return new class extends Migration
     {
         $schema = Schema::connection($this->getConnection());
 
-        if (! Schema::hasTable('telescope_entries') ) {
+        if (! Schema::hasTable('telescope_entries')) {
             $schema->create('telescope_entries', function (Blueprint $table) {
                 $table->bigIncrements('sequence');
                 $table->uuid('uuid');
@@ -40,7 +40,7 @@ return new class extends Migration
             });
         }
 
-        if (! Schema::hasTable('telescope_entries_tags') ) {
+        if (! Schema::hasTable('telescope_entries_tags')) {
             $schema->create('telescope_entries_tags', function (Blueprint $table) {
                 $table->uuid('entry_uuid');
                 $table->string('tag');
@@ -55,7 +55,7 @@ return new class extends Migration
             });
         }
 
-        if (! Schema::hasTable('telescope_monitoring') ) {
+        if (! Schema::hasTable('telescope_monitoring')) {
             $schema->create('telescope_monitoring', function (Blueprint $table) {
                 $table->string('tag')->primary();
             });

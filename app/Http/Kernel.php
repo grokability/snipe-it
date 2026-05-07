@@ -2,7 +2,38 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\AssetCountForSidebar;
+use App\Http\Middleware\CheckColorSettings;
+use App\Http\Middleware\CheckForDebug;
+use App\Http\Middleware\CheckForSetup;
+use App\Http\Middleware\CheckForTwoFactor;
+use App\Http\Middleware\CheckLocale;
+use App\Http\Middleware\CheckPermissions;
+use App\Http\Middleware\CheckUserIsActivated;
+use App\Http\Middleware\EncryptCookies;
+use App\Http\Middleware\LogAuthedUserHeader;
+use App\Http\Middleware\NoSessionStore;
+use App\Http\Middleware\PreventBackHistory;
+use App\Http\Middleware\RedirectIfAuthenticated;
+use App\Http\Middleware\SecurityHeaders;
+use App\Http\Middleware\SetAPIResponseHeaders;
+use App\Http\Middleware\TrimStrings;
+use App\Http\Middleware\TrustProxies;
+use App\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Auth\Middleware\Authenticate;
+use Illuminate\Auth\Middleware\AuthenticateWithBasicAuth;
+use Illuminate\Auth\Middleware\Authorize;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
+use Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull;
+use Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance;
+use Illuminate\Http\Middleware\HandleCors;
+use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminate\Routing\Middleware\ThrottleRequests;
+use Illuminate\Session\Middleware\AuthenticateSession;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Laravel\Passport\Http\Middleware\CreateFreshApiToken;
 
 class Kernel extends HttpKernel
 {
@@ -14,18 +45,18 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $middleware = [
-        \App\Http\Middleware\TrustProxies::class,
-        \App\Http\Middleware\NoSessionStore::class,
-        \Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance::class,
-        \Illuminate\Session\Middleware\StartSession::class,
-        \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-        \App\Http\Middleware\CheckForSetup::class,
-        \App\Http\Middleware\CheckForDebug::class,
-        \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
-        \App\Http\Middleware\TrimStrings::class,
-        \App\Http\Middleware\SecurityHeaders::class,
-        \App\Http\Middleware\PreventBackHistory::class,
-        \Illuminate\Http\Middleware\HandleCors::class,
+        TrustProxies::class,
+        NoSessionStore::class,
+        PreventRequestsDuringMaintenance::class,
+        StartSession::class,
+        ShareErrorsFromSession::class,
+        CheckForSetup::class,
+        CheckForDebug::class,
+        ConvertEmptyStringsToNull::class,
+        TrimStrings::class,
+        SecurityHeaders::class,
+        PreventBackHistory::class,
+        HandleCors::class,
 
     ];
 
@@ -36,23 +67,24 @@ class Kernel extends HttpKernel
      */
     protected $middlewareGroups = [
         'web' => [
-            \App\Http\Middleware\EncryptCookies::class,
-            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
-            \App\Http\Middleware\VerifyCsrfToken::class,
-            \App\Http\Middleware\CheckLocale::class,
-            \App\Http\Middleware\CheckUserIsActivated::class,
-            \App\Http\Middleware\CheckForTwoFactor::class,
-            \Laravel\Passport\Http\Middleware\CreateFreshApiToken::class,
-            \App\Http\Middleware\AssetCountForSidebar::class,
-            \App\Http\Middleware\CheckColorSettings::class,
-            \Illuminate\Session\Middleware\AuthenticateSession::class,
-            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            EncryptCookies::class,
+            AddQueuedCookiesToResponse::class,
+            VerifyCsrfToken::class,
+            CheckLocale::class,
+            CheckUserIsActivated::class,
+            CheckForTwoFactor::class,
+            CreateFreshApiToken::class,
+            AssetCountForSidebar::class,
+            CheckColorSettings::class,
+            AuthenticateSession::class,
+            SubstituteBindings::class,
         ],
 
         'api' => [
             'auth:api',
-            \App\Http\Middleware\CheckLocale::class,
-            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            CheckLocale::class,
+            LogAuthedUserHeader::class,
+            SubstituteBindings::class,
         ],
 
         'health' => [
@@ -68,13 +100,13 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $routeMiddleware = [
-        'auth' => \Illuminate\Auth\Middleware\Authenticate::class,
-        'authorize' => \App\Http\Middleware\CheckPermissions::class,
-        'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
-        'can' => \Illuminate\Auth\Middleware\Authorize::class,
-        'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
-        'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
-        'api-throttle' => \App\Http\Middleware\SetAPIResponseHeaders::class,
+        'auth' => Authenticate::class,
+        'authorize' => CheckPermissions::class,
+        'auth.basic' => AuthenticateWithBasicAuth::class,
+        'can' => Authorize::class,
+        'guest' => RedirectIfAuthenticated::class,
+        'throttle' => ThrottleRequests::class,
+        'api-throttle' => SetAPIResponseHeaders::class,
         'health' => null,
     ];
 }

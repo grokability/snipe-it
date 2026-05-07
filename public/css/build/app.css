@@ -1570,6 +1570,78 @@ Radio toggle styles for permission settings and check/uncheck all
 .deleted {
   text-decoration: line-through;
 }
+@media (max-width: 767px) {
+  .nav-tabs.nav-tabs-dropdown,
+  .nav-tabs-dropdown {
+    overflow: hidden;
+    position: relative;
+  }
+  .nav-tabs.nav-tabs-dropdown::after,
+  .nav-tabs-dropdown::after {
+    content: "☰";
+    position: absolute;
+    font-size: 35px;
+    top: 0;
+    right: 15px;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .nav-tabs.nav-tabs-dropdown.open a,
+  .nav-tabs-dropdown.open a {
+    position: relative;
+    display: block;
+  }
+  .nav-tabs.nav-tabs-dropdown.open > li.active > a,
+  .nav-tabs-dropdown.open > li.active > a {
+    background-color: #eeeeee;
+  }
+  .nav-tabs.nav-tabs-dropdown li.snipetab,
+  .nav-tabs-dropdown li.snipetab {
+    margin-right: 0 !important;
+  }
+  .nav-tabs.nav-tabs-dropdown li,
+  .nav-tabs-dropdown li {
+    display: block;
+    padding: 0;
+    vertical-align: bottom;
+    white-space: nowrap !important;
+  }
+  .nav-tabs.nav-tabs-dropdown > li > a,
+  .nav-tabs-dropdown > li > a {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    display: inline-block;
+    border-color: transparent;
+  }
+  .nav-tabs.nav-tabs-dropdown > li > a:focus,
+  .nav-tabs-dropdown > li > a:focus,
+  .nav-tabs.nav-tabs-dropdown > li > a:hover,
+  .nav-tabs-dropdown > li > a:hover,
+  .nav-tabs.nav-tabs-dropdown > li > a:active,
+  .nav-tabs-dropdown > li > a:active {
+    border-color: transparent;
+    border-right: 0 !important;
+  }
+  .nav-tabs.nav-tabs-dropdown > li.active > a,
+  .nav-tabs-dropdown > li.active > a {
+    display: block;
+    border-color: transparent !important;
+    position: relative;
+    z-index: 1;
+  }
+  .nav-tabs.nav-tabs-dropdown > li.active > a:focus,
+  .nav-tabs-dropdown > li.active > a:focus,
+  .nav-tabs.nav-tabs-dropdown > li.active > a:hover,
+  .nav-tabs-dropdown > li.active > a:hover,
+  .nav-tabs.nav-tabs-dropdown > li.active > a:active,
+  .nav-tabs-dropdown > li.active > a:active {
+    border-color: transparent !important;
+  }
+}
 
 
 /*# sourceMappingURL=app.css.map*/

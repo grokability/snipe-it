@@ -149,13 +149,13 @@ class Purge extends Command
                 $filenames = Actionlog::where('action_type', 'uploaded')
                     ->where('item_id', $user->id)
                     ->pluck('filename');
-                foreach($filenames as $filename) {
+                foreach ($filenames as $filename) {
                     try {
-                        if (Storage::exists($rel_path . '/' . $filename)) {
-                            Storage::delete($rel_path . '/' . $filename);
+                        if (Storage::exists($rel_path.'/'.$filename)) {
+                            Storage::delete($rel_path.'/'.$filename);
                         }
                     } catch (\Exception $e) {
-                        Log::info('An error occurred while deleting files: ' . $e->getMessage());
+                        Log::info('An error occurred while deleting files: '.$e->getMessage());
                     }
                 }
                 $this->info('- User "'.$user->username.'" deleted.');

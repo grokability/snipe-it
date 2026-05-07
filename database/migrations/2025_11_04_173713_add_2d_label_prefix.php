@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('settings', function (Blueprint $table) {
-            if (!Schema::hasColumn('settings', 'label2_2d_prefix')) {
+            if (! Schema::hasColumn('settings', 'label2_2d_prefix')) {
                 $table->char('label2_2d_prefix', 191)->after('label2_2d_type')->nullable()->default(null);
             }
         });

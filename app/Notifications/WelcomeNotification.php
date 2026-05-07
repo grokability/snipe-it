@@ -2,11 +2,11 @@
 
 namespace App\Notifications;
 
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Password;
-use App\Models\User;
 use Symfony\Component\Mime\Email;
 
 #[AllowDynamicProperties]
@@ -15,6 +15,7 @@ class WelcomeNotification extends Notification
     use Queueable;
 
     public $expire_date;
+
     /**
      * Create a new notification instance.
      *
@@ -39,12 +40,12 @@ class WelcomeNotification extends Notification
     /**
      * Get the mail representation of the notification.
      *
-     * @return \Illuminate\Notifications\Messages\MailMessage
+     * @return MailMessage
      */
     public function toMail()
     {
 
-        return (new MailMessage())
+        return (new MailMessage)
             ->subject('👋 '.trans('mail.welcome', ['name' => $this->user->first_name.' '.$this->user->last_name]))
             ->markdown('notifications.Welcome', $this->user->toArray())
             ->withSymfonyMessage(function (Email $message) {

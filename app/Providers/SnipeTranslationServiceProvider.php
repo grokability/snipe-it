@@ -14,7 +14,7 @@ class SnipeTranslationServiceProvider extends TranslationServiceProvider
      */
     public function register()
     {
-        //This is almost an *EXACT* carbon-copy of the TranslationServiceProvider, except with a modified Translator
+        // This is almost an *EXACT* carbon-copy of the TranslationServiceProvider, except with a modified Translator
         $this->registerLoader();
 
         $this->app->singleton('translator', function ($app) {
@@ -25,7 +25,7 @@ class SnipeTranslationServiceProvider extends TranslationServiceProvider
             // configuration so we can easily get both of these values from there.
             $locale = $app['config']['app.locale'];
 
-            $trans = new SnipeTranslator($loader, $locale); //the ONLY changed line
+            $trans = new SnipeTranslator($loader, $locale); // the ONLY changed line
 
             $trans->setFallback($app['config']['app.fallback_locale']);
 

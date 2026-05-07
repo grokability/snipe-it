@@ -13,15 +13,10 @@ use Symfony\Component\Mime\Email;
 #[AllowDynamicProperties]
 class RequestAssetCancelation extends Notification
 {
-    /**
-     * @var
-     */
     private $params;
 
     /**
      * Create a new notification instance.
-     *
-     * @param $params
      */
     public function __construct($params)
     {
@@ -103,7 +98,7 @@ class RequestAssetCancelation extends Notification
      * Get the mail representation of the notification.
      *
      * @param  mixed  $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
+     * @return MailMessage
      */
     public function toMail()
     {
@@ -116,15 +111,15 @@ class RequestAssetCancelation extends Notification
 
         $message = (new MailMessage)->markdown('notifications.markdown.asset-requested',
             [
-                'item'          => $this->item,
-                'note'          => $this->note,
-                'requested_by'  => $this->target,
+                'item' => $this->item,
+                'note' => $this->note,
+                'requested_by' => $this->target,
                 'requested_date' => $this->requested_date,
-                'fields'        => $fields,
-                'qty'           => $this->item_quantity,
+                'fields' => $fields,
+                'qty' => $this->item_quantity,
                 'last_checkout' => $this->last_checkout,
-                'expected_checkin'  => $this->expected_checkin,
-                'intro_text'        => trans('mail.a_user_canceled'),
+                'expected_checkin' => $this->expected_checkin,
+                'intro_text' => trans('mail.a_user_canceled'),
             ])
             ->subject('⚠️ '.trans('general.request_canceled'))
             ->withSymfonyMessage(function (Email $message) {

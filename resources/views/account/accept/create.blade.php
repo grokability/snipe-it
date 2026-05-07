@@ -47,20 +47,32 @@
             <div class="col-sm-12 col-sm-offset-1 col-md-10 col-md-offset-1">
                 <div class="panel box box-default">
                     <div class="box-header with-border">
-                        <h2 class="box-title">
+                        <h2 class="box-title" style="line-height: 25px;">
                             {{ $acceptance->checkoutable->display_name }}
                             @if ($acceptance->qty > 1)
                                 <strong>×{{ $acceptance->qty }}</strong>
                             @endif
 
-                            {!!  (($acceptance->checkoutable) && ($acceptance->checkoutable->serial)) ? '<br>'.trans('general.serial_number').': '.e($acceptance->checkoutable->serial) : '' !!}
+                            @if (($acceptance->checkoutable) && ($acceptance->checkoutable->serial))
+                                <br>{{ trans('general.serial_number') }}: {{ $acceptance->checkoutable->serial }}
+                            @endif
 
                         </h2>
                     </div>
                     <div class="box-body">
-                        @if ($acceptance->checkoutable->getEula())
+                        <div class="col-md-12" style="padding-bottom: 12px;">
+                            <p class="text-muted" style="margin-bottom: 4px;">
+                                <strong>{{ trans('general.assigned_date') }}:</strong> {{ $checkedOutAt }}
+                            </p>
+                            <p class="text-muted" style="margin-bottom: 0;">
+                                <strong>{{ trans('general.created_by') }}
+                                    :</strong> {{ $checkedOutBy ?? trans('general.unknown_admin') }}
+                            </p>
+                        </div>
+
+                    @if ($acceptance->checkoutable->getEula())
                             <div class="col-md-12" style="padding-top: 5px; padding-bottom: 15px;">
-                                <div style="background-color: rgba(211,211,211,0.25); padding: 0px 10px 10px 10px; border: lightgrey 1px solid;">
+                                <div style="background-color: rgba(211,211,211,0.25); padding: 10px; border: var(--box-header-bottom-border-color) 1px solid;">
                                     {!!  str_replace('<p>', '<p dir="auto">', Helper::parseEscapedMarkedown($acceptance->checkoutable->getEula())) !!}
                                 </div>
                             </div>
@@ -112,11 +124,11 @@
                     <div class="box-footer" style="display: none;" id="showSubmit">
                         <div class="row">
                             <div class="col-md-7">
-                                @if (auth()->user()->email!='')
+                                @if ($acceptance->assignedTo?->email)
                                     <div class="col-md-12" style="display: none;" id="showEmailBox">
                                         <label class="form-control">
                                             <input type="checkbox" value="1" name="send_copy" id="send_copy" checked="checked" aria-label="send_copy">
-                                            {{ trans('mail.send_pdf_copy') }} ({{ auth()->user()->email }})
+                                            {{ trans('mail.send_pdf_copy') }} ({{ $acceptance->assignedTo->email }})
                                         </label>
                                     </div>
                                 @endif
@@ -146,8 +158,6 @@
         @if ($snipeSettings->require_accept_signature=='1')
 
         var wrapper = document.getElementById("signature-pad"),
-            clearButton = wrapper.querySelector("[data-action=clear]"),
-            saveButton = wrapper.querySelector("[data-action=save]"),
             canvas = wrapper.querySelector("canvas"),
             signaturePad;
 
@@ -198,7 +208,7 @@
                 $("#showEmailBox").show();
                 $("#showSubmit").show();
                 $("#submit-button").removeClass("btn-danger").addClass("btn-success").show();
-                $("#submitIcon").removeClass("fa-check").addClass("fa-check");
+                $("#submitIcon").removeClass("fa-times").addClass("fa-check");
                 $("#buttonText").text('{{ trans_choice('general.i_accept_item', $acceptance->qty ?? 1) }}');
                 $("#note").prop('required', false);
             }

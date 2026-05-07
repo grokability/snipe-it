@@ -10,7 +10,7 @@ use Tests\TestCase;
 
 class EmailAssignedToUserTest extends TestCase
 {
-    public function testUserWithoutCompanyPermissionsCannotSendInventory()
+    public function test_user_without_company_permissions_cannot_send_inventory()
     {
         Notification::fake();
 

@@ -2,17 +2,17 @@
 
 namespace Tests\Unit;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use App\Models\Accessory;
 use App\Models\Asset;
-use App\Models\Maintenance;
 use App\Models\Company;
 use App\Models\Component;
 use App\Models\Consumable;
 use App\Models\License;
 use App\Models\LicenseSeat;
+use App\Models\Maintenance;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class CompanyScopingTest extends TestCase
@@ -29,7 +29,7 @@ class CompanyScopingTest extends TestCase
     }
 
     #[DataProvider('models')]
-    public function testCompanyScoping($model)
+    public function test_company_scoping($model)
     {
         [$companyA, $companyB] = Company::factory()->count(2)->create();
 
@@ -69,7 +69,7 @@ class CompanyScopingTest extends TestCase
         $this->assertCanSee($modelB);
     }
 
-    public function testMaintenanceCompanyScoping()
+    public function test_maintenance_company_scoping()
     {
         [$companyA, $companyB] = Company::factory()->count(2)->create();
 
@@ -109,7 +109,7 @@ class CompanyScopingTest extends TestCase
         $this->assertCanSee($maintenanceForCompanyB);
     }
 
-    public function testLicenseSeatCompanyScoping()
+    public function test_license_seat_company_scoping()
     {
         [$companyA, $companyB] = Company::factory()->count(2)->create();
 

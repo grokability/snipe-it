@@ -1,5 +1,5 @@
 <?php
 
-return array(
-    'title'      				=> 'Alkatrész név',
-);
+return [
+    'title' => 'Alkatrész név',
+];

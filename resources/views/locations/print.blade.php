@@ -36,13 +36,13 @@
 
         <h3>
         @if ($snipeSettings->acceptance_pdf_logo!='')
-            <img class="print-logo" src="{{ config('app.url') }}/uploads/{{ $snipeSettings->acceptance_pdf_logo }}">
+            <img class="print-logo" src="{{ Storage::disk('public')->url($snipeSettings->acceptance_pdf_logo) }}">
         @endif
         {{ $snipeSettings->site_name }}
         </h3>
     @elseif ($snipeSettings->brand == '2')
         @if ($snipeSettings->acceptance_pdf_logo!='')
-            <img class="print-logo" src="{{ config('app.url') }}/uploads/{{ $snipeSettings->acceptance_pdf_logo }}">
+            <img class="print-logo" src="{{ Storage::disk('public')->url($snipeSettings->acceptance_pdf_logo) }}">
         @endif
     @else
       <h3>{{ $snipeSettings->site_name }}</h3>
@@ -175,7 +175,7 @@
 
     @foreach ($assets as $asset)
         @php
-            if($snipeSettings->show_archived_in_list != 1 && $asset->assetstatus?->archived == 1){
+            if($snipeSettings->show_archived_in_list != 1 && $asset->status?->archived == 1){
                 continue;
             }
         @endphp
@@ -227,7 +227,7 @@
 
             @foreach ($assignedAssets as $asset)
                 @php
-                    if($snipeSettings->show_archived_in_list != 1 && $asset->assetstatus?->archived == 1){
+                    if($snipeSettings->show_archived_in_list != 1 && $asset->status?->archived == 1){
                         continue;
                     }
                 @endphp

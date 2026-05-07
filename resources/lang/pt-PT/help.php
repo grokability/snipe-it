@@ -23,13 +23,13 @@ return [
 
     'accessories' => 'Um acessório é algo que se aloca aos utilizadores, e que não têm número de série (ou que não se preocupa em acompanhar de forma exclusiva). Por exemplo, ratos ou teclados.',
 
-    'companies'     => 'Empresas podem ser usadas como um simples identificador, ou podem ser usadas para limitar a visibilidade dos artigos, utilizadores, etc se o completo suporte a multi-empresa é activado nas configurações do Admin.',
+    'companies' => 'Empresas podem ser usadas como um simples identificador, ou podem ser usadas para limitar a visibilidade dos artigos, utilizadores, etc se o completo suporte a multi-empresa é activado nas configurações do Admin.',
 
-    'components'    => 'Componentes são itens que fazem parte de artigos, como, por exemplo, HDD, RAM, etc.',
+    'components' => 'Componentes são itens que fazem parte de artigos, como, por exemplo, HDD, RAM, etc.',
 
-    'consumables'   => 'Consumíveis são todo e qualquer item comprado que será usado ao longo do tempo. Por exemplo, papel ou tinta de impressora.',
+    'consumables' => 'Consumíveis são todo e qualquer item comprado que será usado ao longo do tempo. Por exemplo, papel ou tinta de impressora.',
 
     'depreciations' => 'Pode configurar as depreciações dos equipamentos baseadas numa depreciação constante temporalmente.',
-    
-    'empty_file'    => 'O importador detecta que este arquivo está vazio.'
+
+    'empty_file' => 'O importador detecta que este arquivo está vazio.',
 ];

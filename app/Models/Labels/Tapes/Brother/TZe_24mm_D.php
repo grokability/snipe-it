@@ -4,52 +4,65 @@ namespace App\Models\Labels\Tapes\Brother;
 
 class TZe_24mm_D extends TZe_24mm
 {
-    private const BARCODE_MARGIN =   1.40;
-    private const TAG_SIZE       =   2.80;
-    private const TITLE_SIZE     =   2.80;
-    private const TITLE_MARGIN   =   0.50;
-    private const LABEL_SIZE     =   2.50;
-    private const LABEL_MARGIN   = - 0.35;
-    private const FIELD_SIZE     =   2.50;
-    private const FIELD_MARGIN   =   0.35;
-    private const BARCODE1D_SIZE =   3.00;  // Size for the C128 barcode at bottom
+    private const BARCODE_MARGIN = 1.40;
+
+    private const TAG_SIZE = 2.80;
+
+    private const TITLE_SIZE = 2.80;
+
+    private const TITLE_MARGIN = 0.50;
+
+    private const LABEL_SIZE = 2.50;
+
+    private const LABEL_MARGIN = -0.35;
+
+    private const FIELD_SIZE = 2.50;
+
+    private const FIELD_MARGIN = 0.35;
+
+    private const BARCODE1D_SIZE = 3.00;  // Size for the C128 barcode at bottom
 
     public function getUnit()
     {
-        return 'mm'; 
-    }
-    public function getWidth()
-    {
-        return 65.0; 
-    }
-    public function getSupportAssetTag()
-    {
-        return true; 
-    }
-    public function getSupport1DBarcode()
-    {
-        return true; 
-    }
-    public function getSupport2DBarcode()
-    {
-        return true; 
-    }
-    public function getSupportFields()
-    {
-        return 3; 
-    }
-    public function getSupportLogo()
-    {
-        return false; 
-    }
-    public function getSupportTitle()
-    {
-        return true; 
+        return 'mm';
     }
 
-    public function preparePDF($pdf)
+    public function getWidth()
     {
+        return 65.0;
     }
+
+    public function getSupportAssetTag()
+    {
+        return true;
+    }
+
+    public function getSupport1DBarcode()
+    {
+        return true;
+    }
+
+    public function getSupport2DBarcode()
+    {
+        return true;
+    }
+
+    public function getSupportFields()
+    {
+        return 3;
+    }
+
+    public function getSupportLogo()
+    {
+        return false;
+    }
+
+    public function getSupportTitle()
+    {
+        return true;
+    }
+
+    public function preparePDF($pdf) {}
 
     public function write($pdf, $record)
     {
@@ -97,7 +110,7 @@ class TZe_24mm_D extends TZe_24mm
         }
 
         foreach ($record->get('fields') as $field) {
-            if (!empty($field['label']) && $field['label'] !== "\u{200B}") {
+            if (! empty($field['label']) && $field['label'] !== "\u{200B}") {
                 // Write label and value on the same line
                 // Calculate label width with proportional character spacing
                 $labelWidth = $pdf->GetStringWidth($field['label'], 'freemono', '', self::LABEL_SIZE);

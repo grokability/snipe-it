@@ -14,7 +14,7 @@ class AddNotesToConsumables extends Migration
     public function up()
     {
         Schema::table('consumables', function (Blueprint $table) {
-            $table->text("notes")->nullable()->default(null);
+            $table->text('notes')->nullable()->default(null);
         });
     }
 

@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
-
 use App\Models\Labels\Label;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
@@ -21,7 +21,7 @@ class StoreLabelSettings extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
@@ -36,21 +36,21 @@ class StoreLabelSettings extends FormRequest
         }
 
         return [
-            'labels_per_page'                     => 'numeric',
-            'labels_width'                        => 'numeric|min:0.1',
-            'labels_height'                       => 'numeric|min:0.1',
-            'labels_pmargin_left'                 => 'numeric|nullable',
-            'labels_pmargin_right'                => 'numeric|nullable',
-            'labels_pmargin_top'                  => 'numeric|nullable',
-            'labels_pmargin_bottom'               => 'numeric|nullable',
-            'labels_display_bgutter'              => 'numeric|nullable',
-            'labels_display_sgutter'              => 'numeric|nullable',
-            'labels_fontsize'                     => 'numeric|min:5',
-            'labels_pagewidth'                    => 'numeric|nullable',
-            'labels_pageheight'                   => 'numeric|nullable',
-            'qr_text'                             => 'max:31|nullable',
-            'label2_2d_prefix'                    => 'nullable|max:191',
-            'label2_template'                     => [
+            'labels_per_page' => 'numeric',
+            'labels_width' => 'numeric|min:0.1',
+            'labels_height' => 'numeric|min:0.1',
+            'labels_pmargin_left' => 'numeric|nullable',
+            'labels_pmargin_right' => 'numeric|nullable',
+            'labels_pmargin_top' => 'numeric|nullable',
+            'labels_pmargin_bottom' => 'numeric|nullable',
+            'labels_display_bgutter' => 'numeric|nullable',
+            'labels_display_sgutter' => 'numeric|nullable',
+            'labels_fontsize' => 'numeric|min:5',
+            'labels_pagewidth' => 'numeric|nullable',
+            'labels_pageheight' => 'numeric|nullable',
+            'qr_text' => 'max:31|nullable',
+            'label2_2d_prefix' => 'nullable|max:191',
+            'label2_template' => [
                 'required',
                 Rule::in($names),
             ],

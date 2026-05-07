@@ -4,13 +4,14 @@ namespace App\Http\Controllers\Api;
 
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\FilterRequest;
+use App\Http\Requests\ImageUploadRequest;
 use App\Http\Transformers\CompaniesTransformer;
 use App\Http\Transformers\SelectlistTransformer;
 use App\Models\Company;
-use Illuminate\Http\Request;
-use App\Http\Requests\ImageUploadRequest;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class CompaniesController extends Controller
 {
@@ -18,9 +19,10 @@ class CompaniesController extends Controller
      * Display a listing of the resource.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since [v4.0]
      */
-    public function index(Request $request) : JsonResponse | array
+    public function index(FilterRequest $request): JsonResponse|array
     {
         $this->authorize('view', Company::class);
 
@@ -42,22 +44,22 @@ class CompaniesController extends Controller
             'notes',
         ];
 
-        $companies = Company::withCount(['assets as assets_count'  => function ($query) {
+        $companies = Company::withCount(['assets as assets_count' => function ($query) {
             $query->AssetsForShow();
         }])
             ->with('adminuser')
             ->withCount('licenses as licenses_count', 'accessories as accessories_count', 'consumables as consumables_count', 'components as components_count', 'users as users_count');
 
-
-        if ($request->filled('search')) {
-            $companies->TextSearch($request->input('search'));
+        // This invokes the Searchable model trait scopeTextSearch and will handle input by search or by advanced search filter
+        if ($request->filled('filter') || $request->filled('search')) {
+            $companies->TextSearch($request->input('filter') ? $request->input('filter') : $request->input('search'));
         }
 
         if ($request->filled('name')) {
             $companies->where('name', '=', $request->input('name'));
         }
 
-		if ($request->filled('email')) {
+        if ($request->filled('email')) {
             $companies->where('email', '=', $request->input('email'));
         }
 
@@ -69,13 +71,11 @@ class CompaniesController extends Controller
             $companies->where('tag_color', '=', $request->input('tag_color'));
         }
 
-
-
         // Make sure the offset and limit are actually integers and do not exceed system limits
         $offset = ($request->input('offset') > $companies->count()) ? $companies->count() : app('api_offset_value');
         $limit = app('api_limit_value');
         $order = $request->input('order') === 'asc' ? 'asc' : 'desc';
-        $sort_override =  $request->input('sort');
+        $sort_override = $request->input('sort');
         $column_sort = in_array($sort_override, $allowed_columns) ? $sort_override : 'created_at';
 
         switch ($sort_override) {
@@ -90,25 +90,25 @@ class CompaniesController extends Controller
         $total = $companies->count();
 
         $companies = $companies->skip($offset)->take($limit)->get();
+
         return (new CompaniesTransformer)->transformCompanies($companies, $total);
 
     }
-
 
     /**
      * Store a newly created resource in storage.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since [v4.0]
-     * @param  \App\Http\Requests\ImageUploadRequest $request
      */
-    public function store(ImageUploadRequest $request) : JsonResponse
+    public function store(ImageUploadRequest $request): JsonResponse
     {
         $this->authorize('create', Company::class);
         $company = new Company;
         $company->fill($request->all());
         $company = $request->handleImages($company);
-        
+
         if ($company->save()) {
             return response()->json(Helper::formatStandardApiResponse('success', (new CompaniesTransformer)->transformCompany($company), trans('admin/companies/message.create.success')));
         }
@@ -121,28 +121,31 @@ class CompaniesController extends Controller
      * Display the specified resource.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since [v4.0]
+     *
      * @param  int  $id
      */
-    public function show($id) : array
+    public function show($id): array
     {
         $this->authorize('view', Company::class);
         $company = Company::findOrFail($id);
         $this->authorize('view', $company);
+
         return (new CompaniesTransformer)->transformCompany($company);
 
     }
-
 
     /**
      * Update the specified resource in storage.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since [v4.0]
-     * @param  \App\Http\Requests\ImageUploadRequest  $request
+     *
      * @param  int  $id
      */
-    public function update(ImageUploadRequest $request, $id) : JsonResponse
+    public function update(ImageUploadRequest $request, $id): JsonResponse
     {
         $this->authorize('update', Company::class);
         $company = Company::findOrFail($id);
@@ -163,10 +166,12 @@ class CompaniesController extends Controller
      * Remove the specified resource from storage.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since [v4.0]
+     *
      * @param  int  $id
      */
-    public function destroy($id) : JsonResponse
+    public function destroy($id): JsonResponse
     {
         $this->authorize('delete', Company::class);
         $company = Company::findOrFail($id);
@@ -174,7 +179,7 @@ class CompaniesController extends Controller
 
         if (! $company->isDeletable()) {
             return response()
-                    ->json(Helper::formatStandardApiResponse('error', null, trans('admin/companies/message.assoc_users')));
+                ->json(Helper::formatStandardApiResponse('error', null, trans('admin/companies/message.assoc_users')));
         }
         $company->delete();
 
@@ -186,10 +191,11 @@ class CompaniesController extends Controller
      * Gets a paginated collection for the select2 menus
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since [v4.0.16]
-     * @see \App\Http\Transformers\SelectlistTransformer
+     * @see SelectlistTransformer
      */
-    public function selectlist(Request $request) : array
+    public function selectlist(Request $request): array
     {
         $this->authorize('view.selectlists');
         $companies = Company::select([
@@ -199,7 +205,6 @@ class CompaniesController extends Controller
             'companies.image',
             'companies.tag_color',
         ]);
-
 
         if ($request->filled('search')) {
             $companies = $companies->where('companies.name', 'LIKE', '%'.$request->input('search').'%');

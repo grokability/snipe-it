@@ -57,21 +57,32 @@
                                     <fieldset name="login" aria-label="login">
 
                                         <div class="form-group{{ $errors->has('username') ? ' has-error' : '' }}">
-                                            <label for="username">
+                                            <label for="username" class="control-label">
                                                 <x-icon type="user" />
                                                 {{ trans('admin/users/table.username')  }}
                                             </label>
-                                            <input class="form-control" placeholder="{{ trans('admin/users/table.username')  }}" name="username" type="text" id="username" autocomplete="{{ (config('auth.login_autocomplete') === true) ? 'on' : 'off'  }}" autofocus>
+                                            <input class="form-control" placeholder="{{ trans('admin/users/table.username')  }}" name="username" type="text" id="username" autocomplete="{{ (config('auth.login_autocomplete') === true) ? 'on' : 'off'  }}" autocapitalize="off" spellcheck="false" autofocus>
                                             {!! $errors->first('username', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
                                         </div>
+
+
                                         <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
-                                            <label for="password">
+                                            <label for="password" class="control-label">
                                                 <x-icon type="password" />
                                                 {{ trans('admin/users/table.password')  }}
                                             </label>
-                                            <input class="form-control" placeholder="{{ trans('admin/users/table.password')  }}" name="password" type="password" id="password" autocomplete="{{ (config('auth.login_autocomplete') === true) ? 'on' : 'off'  }}">
+
+                                            <div class="input-group">
+                                                <input class="form-control" placeholder="{{ trans('admin/users/table.password')  }}" name="password" type="password" id="password-field" autocomplete="{{ (config('auth.login_autocomplete') === true) ? 'on' : 'off'  }}" autocorrect="off" autocapitalize="off" spellcheck="false">
+                                                <span class="input-group-addon">
+                                                   <i data-toggle="#password-field" class="fa fa-fw fa-eye toggle-password" aria-hidden="true"></i>
+                                                    <span class="sr-only">Toggle password visibility</span>
+                                                </span>
+                                            </div>
+
                                             {!! $errors->first('password', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
                                         </div>
+
                                         <div class="form-group">
                                             <label class="form-control">
                                                 <input name="remember" type="checkbox" value="1" id="remember"> {{ trans('auth/general.remember_me')  }}

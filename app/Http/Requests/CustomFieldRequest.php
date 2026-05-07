@@ -32,29 +32,27 @@ class CustomFieldRequest extends FormRequest
 
             // Brand new
             case 'POST':
-            {
+
                 $rules['name'] = 'required|unique:custom_fields';
                 break;
-            }
 
-            // Save all fields
+                // Save all fields
             case 'PUT':
                 $rules['name'] = 'required';
                 break;
 
-            // Save only what's passed
+                // Save only what's passed
             case 'PATCH':
-            {
+
                 $rules['name'] = 'required';
                 break;
-            }
 
             default:break;
         }
 
         $rules['custom_format'] = 'valid_regex';
 
-        return  $rules;
+        return $rules;
     }
 
     public function messages()

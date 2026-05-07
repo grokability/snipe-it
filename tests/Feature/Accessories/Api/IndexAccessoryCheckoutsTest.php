@@ -11,7 +11,7 @@ use Tests\TestCase;
 
 class IndexAccessoryCheckoutsTest extends TestCase implements TestsFullMultipleCompaniesSupport, TestsPermissionsRequirement
 {
-    public function testRequiresPermission()
+    public function test_requires_permission()
     {
         $accessory = Accessory::factory()->create();
 
@@ -20,7 +20,7 @@ class IndexAccessoryCheckoutsTest extends TestCase implements TestsFullMultipleC
             ->assertForbidden();
     }
 
-    public function testAdheresToFullMultipleCompaniesSupportScoping()
+    public function test_adheres_to_full_multiple_companies_support_scoping()
     {
         [$companyA, $companyB] = Company::factory()->count(2)->create();
 
@@ -46,7 +46,7 @@ class IndexAccessoryCheckoutsTest extends TestCase implements TestsFullMultipleC
             ->assertOk();
     }
 
-    public function testCanGetAccessoryCheckouts()
+    public function test_can_get_accessory_checkouts()
     {
         [$userA, $userB] = User::factory()->count(2)->create();
 
@@ -62,7 +62,7 @@ class IndexAccessoryCheckoutsTest extends TestCase implements TestsFullMultipleC
             ->assertJsonPath('rows.1.assigned_to.id', $userB->id);
     }
 
-    public function testCanGetAccessoryCheckoutsWithOffsetAndLimitInQueryString()
+    public function test_can_get_accessory_checkouts_with_offset_and_limit_in_query_string()
     {
         [$userA, $userB, $userC] = User::factory()->count(3)->create();
 

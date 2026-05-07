@@ -3,16 +3,12 @@
 namespace Tests\Feature\Users\Api;
 
 use App\Models\Company;
-use App\Models\LicenseSeat;
-use App\Models\Location;
 use App\Models\User;
 use Tests\TestCase;
 
 class RestoreUserTest extends TestCase
 {
-
-
-    public function testErrorReturnedViaApiIfUserDoesNotExist()
+    public function test_error_returned_via_api_if_user_does_not_exist()
     {
         $this->actingAsForApi(User::factory()->deleteUsers()->create())
             ->postJson(route('api.users.restore', 'invalid-id'))
@@ -22,7 +18,7 @@ class RestoreUserTest extends TestCase
             ->json();
     }
 
-    public function testErrorReturnedViaApiIfUserIsNotDeleted()
+    public function test_error_returned_via_api_if_user_is_not_deleted()
     {
         $user = User::factory()->create();
         $this->actingAsForApi(User::factory()->deleteUsers()->create())
@@ -33,8 +29,7 @@ class RestoreUserTest extends TestCase
             ->json();
     }
 
-
-    public function testDeniedPermissionsForRestoringUserViaApi()
+    public function test_denied_permissions_for_restoring_user_via_api()
     {
         $this->actingAsForApi(User::factory()->create())
             ->postJson(route('api.users.restore', User::factory()->deletedUser()->create()))
@@ -42,7 +37,7 @@ class RestoreUserTest extends TestCase
             ->json();
     }
 
-    public function testSuccessPermissionsForRestoringUserViaApi()
+    public function test_success_permissions_for_restoring_user_via_api()
     {
         $deleted_user = User::factory()->deletedUser()->create();
 
@@ -57,7 +52,7 @@ class RestoreUserTest extends TestCase
         $this->assertNull($deleted_user->deleted_at);
     }
 
-    public function testPermissionsForRestoringIfNotInSameCompanyAndNotSuperadmin()
+    public function test_permissions_for_restoring_if_not_in_same_company_and_not_superadmin()
     {
         $this->settings->enableMultipleFullCompanySupport();
 
@@ -98,8 +93,4 @@ class RestoreUserTest extends TestCase
         $this->assertNull($userFromA->deleted_at);
 
     }
-
-
-
-
 }

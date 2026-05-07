@@ -11,7 +11,7 @@ use Tests\TestCase;
 
 class UpdateAssetModelsTest extends TestCase
 {
-    public function testPermissionRequiredToStoreAssetModel()
+    public function test_permission_required_to_update_asset_model()
     {
         $this->actingAs(User::factory()->create())
             ->put(route('models.update', ['model' => AssetModel::factory()->create()]), [
@@ -21,14 +21,14 @@ class UpdateAssetModelsTest extends TestCase
             ->assertForbidden();
     }
 
-    public function testPageRenders()
+    public function test_page_renders()
     {
         $this->actingAs(User::factory()->superuser()->create())
             ->get(route('models.edit', AssetModel::factory()->create()))
             ->assertOk();
     }
 
-    public function testUserCanEditAssetModels()
+    public function test_user_can_edit_asset_models()
     {
         $category = Category::factory()->forAssets()->create();
         $model = AssetModel::factory()->create(['name' => 'Test Model', 'category_id' => $category->id]);
@@ -48,7 +48,7 @@ class UpdateAssetModelsTest extends TestCase
 
     }
 
-    public function testUserCannotChangeAssetModelCategoryType()
+    public function test_user_cannot_change_asset_model_category_type()
     {
         $category = Category::factory()->forAssets()->create();
         $model = AssetModel::factory()->create(['name' => 'Test Model', 'category_id' => $category->id]);

@@ -20,6 +20,6 @@ class BladeServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Blade::anonymousComponentPath(__DIR__ . '/../../resources/views/blade');
+        Blade::anonymousComponentPath(__DIR__.'/../../resources/views/blade');
     }
 }

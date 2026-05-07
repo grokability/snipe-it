@@ -1,9 +1,9 @@
 <?php
 
-return array(
+return [
 
-    'id'         => 'Id',
-    'name'       => 'Nosaukums',
-    'users'      => 'Lietotāju skaits',
+    'id' => 'Id',
+    'name' => 'Nosaukums',
+    'users' => 'Lietotāju skaits',
 
-);
+];

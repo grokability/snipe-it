@@ -250,43 +250,46 @@
 
 
                         <!-- Start Date -->
-                        <div class="form-group {{ $errors->has('start_date') ? ' has-error' : '' }}">
+                        <div class="form-group{{ $errors->has('start_date') ? ' has-error' : '' }}">
                             <label for="start_date" class="col-md-3 control-label">{{ trans('general.start_date') }}</label>
                             <div class="col-md-4">
-                                <div class="input-group date" data-provide="datepicker" data-date-format="yyyy-mm-dd"  data-autoclose="true">
-                                    <input type="text" class="form-control" placeholder="{{ trans('general.start_date') }}" name="start_date" id="start_date" value="{{ old('start_date') }}">
-                                    <span class="input-group-addon"><x-icon type="calendar" /></span>
-                                </div>
-                                {!! $errors->first('start_date', '<span class="alert-msg"><i class="fas fa-times"></i> :message</span>') !!}
+                                <x-input.datepicker
+                                    name="start_date"
+                                    value="{{ old('start_date') }}"
+                                    placeholder="{{ trans('general.select_date') }}"
+                                />
+                                {!! $errors->first('start_date', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
                             </div>
                             <div class="col-md-5">
                                 <label class="form-control">
-                                    <input type="checkbox" name="null_start_date" value="1" />
+                                    <input type="checkbox" name="null_start_date" value="1">
                                     {{ trans_choice('general.set_to_null', count($users),['selection_count' => count($users)]) }}
                                 </label>
                             </div>
                         </div>
+
 
                         <!-- End Date -->
-                        <div class="form-group {{ $errors->has('end_date') ? ' has-error' : '' }}">
+                        <div class="form-group{{ $errors->has('end_date') ? ' has-error' : '' }}">
                             <label for="end_date" class="col-md-3 control-label">{{ trans('general.end_date') }}</label>
                             <div class="col-md-4">
-                                <div class="input-group date" data-provide="datepicker" data-date-format="yyyy-mm-dd"  data-autoclose="true">
-                                    <input type="text" class="form-control" placeholder="{{ trans('general.end_date') }}" name="end_date" id="end_date" value="{{ old('end_date') }}">
-                                    <span class="input-group-addon"><x-icon type="calendar" /></span>
-                                </div>
-                                {!! $errors->first('end_date', '<span class="alert-msg"><i class="fas fa-times"></i> :message</span>') !!}
+                                <x-input.datepicker
+                                    name="end_date"
+                                    value="{{ old('end_date') }}"
+                                    placeholder="{{ trans('general.select_date') }}"
+                                />
+                                {!! $errors->first('end_date', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
                             </div>
                             <div class="col-md-5">
                                 <label class="form-control">
-                                    <input type="checkbox" name="null_end_date" value="1" />
+                                    <input type="checkbox" name="null_end_date" value="1">
                                     {{ trans_choice('general.set_to_null', count($users),['selection_count' => count($users)]) }}
                                 </label>
                             </div>
                         </div>
 
 
-                        @foreach ($users as $user)
+                    @foreach ($users as $user)
                             <input type="hidden" name="ids[{{ $user->id }}]" value="{{ $user->id }}">
                         @endforeach
                     </div> <!--/.box-body-->

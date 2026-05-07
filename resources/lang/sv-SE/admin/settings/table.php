@@ -1,6 +1,6 @@
 <?php
 
-return array(
-    'created'   => 'Skapad',
+return [
+    'created' => 'Skapad',
     'size' => 'Storlek',
-);
+];

@@ -23,13 +23,13 @@ return [
 
     'accessories' => 'Aksessuaarid on kõik, mida kasutajad teate, kuid kellel ei ole seerianumbrit (või te ei hooli nende jälgimisest unikaalselt). Näiteks arvutihiirid või klaviatuurid.',
 
-    'companies'     => 'Ettevõtteid saab kasutada kui lihtsa identifikaatorina või kui vahendite, kasutajate jms nähtavuse piiramiseks kui täielik ettevõtete tugi on seadetes peale keeratud.',
+    'companies' => 'Ettevõtteid saab kasutada kui lihtsa identifikaatorina või kui vahendite, kasutajate jms nähtavuse piiramiseks kui täielik ettevõtete tugi on seadetes peale keeratud.',
 
-    'components'    => 'Komponendid on asjad, mis on vahendite osadeks. Näiteks HDD, RAM jne.',
+    'components' => 'Komponendid on asjad, mis on vahendite osadeks. Näiteks HDD, RAM jne.',
 
-    'consumables'   => 'Kuluvahendid on kõik asjad, mis peale ostmist kasutatakse lõplikult ära. Näiteks printeritint või koopiapaber.',
+    'consumables' => 'Kuluvahendid on kõik asjad, mis peale ostmist kasutatakse lõplikult ära. Näiteks printeritint või koopiapaber.',
 
     'depreciations' => 'Sa saad seadistada vahendite amortisatsiooni, et neid amortiseeritakse lineaarse amortisatsiooni alusel.',
-    
-    'empty_file'    => 'The importer detects that this file is empty.'
+
+    'empty_file' => 'The importer detects that this file is empty.',
 ];

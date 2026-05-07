@@ -4,53 +4,67 @@ namespace App\Models\Labels\Tapes\Brother;
 
 class TZe_24mm_C extends TZe_24mm
 {
-    private const BARCODE_MARGIN =   1.40;
-    private const TAG_SIZE       =   4.00;
-    private const LOGO_MAX_WIDTH =  13.50;
-    private const LOGO_MARGIN    =   2.20;
-    private const TITLE_SIZE     =   2.80;
-    private const TITLE_MARGIN   =   0.50;
-    private const LABEL_SIZE     =   2.00;
-    private const LABEL_MARGIN   = - 0.35;
-    private const FIELD_SIZE     =   3.20;
-    private const FIELD_MARGIN   =   0.15;
+    private const BARCODE_MARGIN = 1.40;
+
+    private const TAG_SIZE = 4.00;
+
+    private const LOGO_MAX_WIDTH = 13.50;
+
+    private const LOGO_MARGIN = 2.20;
+
+    private const TITLE_SIZE = 2.80;
+
+    private const TITLE_MARGIN = 0.50;
+
+    private const LABEL_SIZE = 2.00;
+
+    private const LABEL_MARGIN = -0.35;
+
+    private const FIELD_SIZE = 3.20;
+
+    private const FIELD_MARGIN = 0.15;
 
     public function getUnit()
     {
-        return 'mm'; 
-    }
-    public function getWidth()
-    {
-        return 34.0; 
-    }
-    public function getSupportAssetTag()
-    {
-        return true; 
-    }
-    public function getSupport1DBarcode()
-    {
-        return false; 
-    }
-    public function getSupport2DBarcode()
-    {
-        return true; 
-    }
-    public function getSupportFields()
-    {
-        return 0; 
-    }
-    public function getSupportLogo()
-    {
-        return true; 
-    }
-    public function getSupportTitle()
-    {
-        return false; 
+        return 'mm';
     }
 
-    public function preparePDF($pdf)
+    public function getWidth()
     {
+        return 34.0;
     }
+
+    public function getSupportAssetTag()
+    {
+        return true;
+    }
+
+    public function getSupport1DBarcode()
+    {
+        return false;
+    }
+
+    public function getSupport2DBarcode()
+    {
+        return true;
+    }
+
+    public function getSupportFields()
+    {
+        return 0;
+    }
+
+    public function getSupportLogo()
+    {
+        return true;
+    }
+
+    public function getSupportTitle()
+    {
+        return false;
+    }
+
+    public function preparePDF($pdf) {}
 
     public function write($pdf, $record)
     {
@@ -88,7 +102,7 @@ class TZe_24mm_C extends TZe_24mm
 
         $usableWidth -= self::LOGO_MAX_WIDTH - self::LOGO_MARGIN;
 
-        $currentX += $usableWidth - (self::LOGO_MARGIN/2);
+        $currentX += $usableWidth - (self::LOGO_MARGIN / 2);
 
         if ($record->has('logo')) {
             $logoSize = static::writeImage(

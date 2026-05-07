@@ -13,7 +13,7 @@ trait CleansUpImportFiles
 
         Import::created(function (Import $import) {
             $this->beforeApplicationDestroyed(function () use ($import) {
-                Storage::delete('private_uploads/imports/' . $import->file_path);
+                Storage::delete('private_uploads/imports/'.$import->file_path);
             });
         });
     }

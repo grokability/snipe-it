@@ -13,7 +13,7 @@ class StoreConsumableWithFullMultipleCompanySupportTest extends TestCase
     use ProvidesDataForFullMultipleCompanySupportTesting;
 
     #[DataProvider('dataForFullMultipleCompanySupportTesting')]
-    public function testAdheresToFullMultipleCompaniesSupportScoping($data)
+    public function test_adheres_to_full_multiple_companies_support_scoping($data)
     {
         ['actor' => $actor, 'company_attempting_to_associate' => $company, 'assertions' => $assertions] = $data();
 

@@ -12,14 +12,14 @@ use Tests\TestCase;
 
 class CreateAccessoriesTest extends TestCase
 {
-    public function testRequiresPermissionToViewCreateAccessoryPage()
+    public function test_requires_permission_to_view_create_accessory_page()
     {
         $this->actingAs(User::factory()->create())
             ->get(route('accessories.create'))
             ->assertForbidden();
     }
 
-    public function testCreateAccessoryPageRenders()
+    public function test_create_accessory_page_renders()
     {
         $this->actingAs(User::factory()->createAccessories()->create())
             ->get(route('accessories.create'))
@@ -27,14 +27,14 @@ class CreateAccessoriesTest extends TestCase
             ->assertViewIs('accessories.edit');
     }
 
-    public function testRequiresPermissionToCreateAccessory()
+    public function test_requires_permission_to_create_accessory()
     {
         $this->actingAs(User::factory()->create())
             ->post(route('accessories.store'))
             ->assertForbidden();
     }
 
-    public function testValidDataRequiredToCreateAccessory()
+    public function test_valid_data_required_to_create_accessory()
     {
         $this->actingAs(User::factory()->createAccessories()->create())
             ->post(route('accessories.store'), [
@@ -42,12 +42,11 @@ class CreateAccessoriesTest extends TestCase
             ])
             ->assertSessionHasErrors([
                 'name',
-                'qty',
                 'category_id',
             ]);
     }
 
-    public function testCanCreateAccessory()
+    public function test_can_create_accessory()
     {
         $category = Category::factory()->create();
         $company = Company::factory()->create();

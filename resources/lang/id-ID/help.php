@@ -23,13 +23,13 @@ return [
 
     'accessories' => 'Aksesoris apapun yang Anda keluarkan untuk pengguna, yang tidak memiliki nomor seri (atau Anda tidak peduli untuk dilacak). Misalnya, mouse komputer atau keyboard.',
 
-    'companies'     => 'Perusahaan dapat digunakan sebagai kolom pengenal, atau dapat digunakan untuk membatasi visibilitas aset, pengguna, dll jika dukungan penuh perusahaan diaktifkan pada pengaturan Admin anda.',
+    'companies' => 'Perusahaan dapat digunakan sebagai kolom pengenal, atau dapat digunakan untuk membatasi visibilitas aset, pengguna, dll jika dukungan penuh perusahaan diaktifkan pada pengaturan Admin anda.',
 
-    'components'    => 'Komponen adalah bagian dari aset, contoh HDD, RAM, dan sebagainya.',
+    'components' => 'Komponen adalah bagian dari aset, contoh HDD, RAM, dan sebagainya.',
 
-    'consumables'   => 'Barang Habis Pakai adalah segala sesuatu yang dibeli dan nantinya akan habis terpakai. Sebagai contoh, tinta printer atau kertas untuk mesin fotokopi.',
+    'consumables' => 'Barang Habis Pakai adalah segala sesuatu yang dibeli dan nantinya akan habis terpakai. Sebagai contoh, tinta printer atau kertas untuk mesin fotokopi.',
 
     'depreciations' => 'Anda dapat mengatur penyusutan aset dengan perhitungan penyusutan garis lurus.',
-    
-    'empty_file'    => 'Pengimpor mendeteksi bahwa berkas ini kosong.'
+
+    'empty_file' => 'Pengimpor mendeteksi bahwa berkas ini kosong.',
 ];

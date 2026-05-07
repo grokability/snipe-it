@@ -76,12 +76,32 @@
                 </div>
             </div>
 
+            <div class="form-group {{ $errors->has('set_not_requestable') ? 'error' : '' }}">
+                <label for="set_not_requestable" class="col-md-3 control-label">
+                    {{ trans('admin/hardware/form.requestable') }}
+                </label>
+                <div class="col-md-7">
+                    <x-input.select
+                        name="set_not_requestable"
+                        id="set_not_requestable"
+                        :options="[
+                            '' => trans('general.do_not_change'),
+                            '1' => trans('admin/hardware/general.not_requestable'),
+                        ]"
+                        :selected="old('set_not_requestable', '')"
+                        style="width: 100%;"
+                        aria-label="set_not_requestable"
+                    />
+                    {!! $errors->first('set_not_requestable', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
+                </div>
+            </div>
+
 
             <!-- Checkout selector -->
 
 
           @include ('partials.forms.checkout-selector', ['user_select' => 'true','asset_select' => 'true', 'location_select' => 'true'])
-          @include ('partials.forms.edit.user-select', ['translated_name' => trans('general.user'), 'fieldname' => 'assigned_user', 'style' => session('checkout_to_type') == 'user' ? '' : 'display: none;'])
+            @include ('partials.forms.edit.user-select', ['translated_name' => trans('general.user'), 'fieldname' => 'assigned_user', 'style' => session('checkout_to_type') == 'user' ? '' : ''])
             <!-- We have to pass unselect here so that we don't default to the asset that's being checked out. We want that asset to be pre-selected everywhere else. -->
           @include ('partials.forms.edit.asset-select', ['translated_name' => trans('general.asset'), 'asset_selector_div_id' => 'assigned_asset', 'fieldname' => 'assigned_asset', 'unselect' => 'true', 'style' => session('checkout_to_type') == 'asset' ? '' : 'display: none;'])
           @include ('partials.forms.edit.location-select', ['translated_name' => trans('general.location'), 'fieldname' => 'assigned_location', 'style' => session('checkout_to_type') == 'location' ? '' : 'display: none;'])

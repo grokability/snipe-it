@@ -1,6 +1,6 @@
 <?php
 
-return array(
-    'created'   => 'สร้างแล้ว',
-    'size' => 'Size',
-);
+return [
+    'created' => 'สร้างแล้ว',
+    'size' => 'ขนาด',
+];

@@ -11,75 +11,66 @@ Route::group(['prefix' => 'users', 'middleware' => ['auth']], function () {
     Route::get(
         'ldap',
         [
-            Users\LDAPImportController::class, 
-            'create'
+            Users\LDAPImportController::class,
+            'create',
         ]
     )->name('ldap/user')
-        ->breadcrumbs(fn (Trail $trail) =>
-        $trail->parent('users.index')
+        ->breadcrumbs(fn (Trail $trail) => $trail->parent('users.index')
             ->push(trans('general.ldap_user_sync'), route('ldap/user')));
 
     Route::post(
         'ldap',
         [
-            Users\LDAPImportController::class, 
-            'store'
+            Users\LDAPImportController::class,
+            'store',
         ]
     );
 
     Route::get(
         'export',
         [
-            Users\UsersController::class, 
-            'getExportUserCsv'
+            Users\UsersController::class,
+            'getExportUserCsv',
         ]
     )->name('users.export');
 
     Route::get(
         '{user}/clone',
         [
-            Users\UsersController::class, 
-            'getClone'
+            Users\UsersController::class,
+            'getClone',
         ]
     )->name('users.clone.show')->withTrashed();
 
     Route::post(
         '{user}/clone',
         [
-            Users\UsersController::class, 
-            'postCreate'
+            Users\UsersController::class,
+            'postCreate',
         ]
     )->name('users.clone.store')->withTrashed();
 
     Route::post(
-        '{userId}/restore',
+        '{user}/restore',
         [
-            Users\UsersController::class, 
-            'getRestore'
+            Users\UsersController::class,
+            'getRestore',
         ]
-    )->name('users.restore.store');
-
-    Route::get(
-        '{userId}/unsuspend',
-        [
-            Users\UsersController::class, 
-            'getUnsuspend'
-        ]
-    )->name('unsuspend/user');
+    )->name('users.restore.store')->withTrashed();
 
     Route::post(
         '{userId}/password',
         [
-            Users\UsersController::class, 
-            'sendPasswordReset'
+            Users\UsersController::class,
+            'sendPasswordReset',
         ]
     )->name('users.password');
 
     Route::get(
         '{userId}/print',
         [
-            Users\UsersController::class, 
-            'printInventory'
+            Users\UsersController::class,
+            'printInventory',
         ]
     )->name('users.print');
 
@@ -87,48 +78,54 @@ Route::group(['prefix' => 'users', 'middleware' => ['auth']], function () {
         '{userId}/email',
         [
             Users\UsersController::class,
-            'emailAssetList'
+            'emailAssetList',
         ]
     )->name('users.email');
 
     Route::post(
+        '{user}/acceptance-reminder',
+        [
+            Users\UsersController::class,
+            'resendAcceptanceReminder',
+        ]
+    )->name('users.acceptance_reminder')->withTrashed();
+
+    Route::post(
         'bulkedit',
         [
-            Users\BulkUsersController::class, 
-            'edit'
+            Users\BulkUsersController::class,
+            'edit',
         ]
     )->name('users/bulkedit')
-        ->breadcrumbs(fn (Trail $trail) =>
-        $trail->parent('users.index')
+        ->breadcrumbs(fn (Trail $trail) => $trail->parent('users.index')
             ->push(trans('general.bulk_checkin_delete'), route('users.index')));
 
     Route::post(
         'merge',
         [
             Users\BulkUsersController::class,
-            'merge'
+            'merge',
         ]
     )->name('users.merge.save');
-
 
     Route::post(
         'bulksave',
         [
-            Users\BulkUsersController::class, 
-            'destroy'
+            Users\BulkUsersController::class,
+            'destroy',
         ]
     )->name('users/bulksave');
 
     Route::post(
         'bulkeditsave',
         [
-            Users\BulkUsersController::class, 
-            'update'
+            Users\BulkUsersController::class,
+            'update',
         ]
     )->name('users/bulkeditsave');
 
 });
 
 Route::resource('users', Users\UsersController::class, [
-    'middleware' => ['auth']
+    'middleware' => ['auth'],
 ])->withTrashed();

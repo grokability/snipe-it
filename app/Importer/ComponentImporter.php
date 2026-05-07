@@ -22,6 +22,7 @@ class ComponentImporter extends ItemImporter
      * Create a component if a duplicate does not exist
      *
      * @author Daniel Melzter
+     *
      * @since 3.0
      */
     public function createComponentIfNotExists()
@@ -29,8 +30,8 @@ class ComponentImporter extends ItemImporter
         $component = null;
         $this->log('Creating Component');
         $component = Component::where('name', trim($this->item['name']))
-                        ->where('serial', trim($this->item['serial']))
-                        ->first();
+            ->where('serial', trim($this->item['serial']))
+            ->first();
 
         if ($component) {
             $this->log('A matching Component '.$this->item['name'].' with serial '.$this->item['serial'].' already exists.  ');

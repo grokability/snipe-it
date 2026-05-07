@@ -12,7 +12,7 @@ use Tests\TestCase;
 
 class ComponentsCheckoutTest extends TestCase
 {
-    public function testCheckingOutComponentRequiresCorrectPermission()
+    public function test_checking_out_component_requires_correct_permission()
     {
         $this->actingAs(User::factory()->create())
             ->post(route('components.checkout.store', [
@@ -21,7 +21,7 @@ class ComponentsCheckoutTest extends TestCase
             ->assertForbidden();
     }
 
-    public function testPageRenders()
+    public function test_page_renders()
     {
         $this->actingAs(User::factory()->superuser()->create())
             ->get(route('components.checkout.show', Component::factory()->create()->id))
@@ -49,7 +49,7 @@ class ComponentsCheckoutTest extends TestCase
         Event::assertNotDispatched(CheckoutableCheckedOut::class);
     }
 
-    public function testComponentCheckoutPagePostIsRedirectedIfRedirectSelectionIsIndex()
+    public function test_component_checkout_page_post_is_redirected_if_redirect_selection_is_index()
     {
         $component = Component::factory()->create();
 
@@ -65,14 +65,14 @@ class ComponentsCheckoutTest extends TestCase
         $this->assertHasTheseActionLogs($component, ['create', 'checkout']);
     }
 
-    public function testComponentCheckoutPagePostIsRedirectedIfRedirectSelectionIsItem()
+    public function test_component_checkout_page_post_is_redirected_if_redirect_selection_is_item()
     {
         $component = Component::factory()->create();
 
         $this->actingAs(User::factory()->admin()->create())
             ->from(route('components.index'))
-            ->post(route('components.checkout.store' , $component), [
-                'asset_id' =>  Asset::factory()->create()->id,
+            ->post(route('components.checkout.store', $component), [
+                'asset_id' => Asset::factory()->create()->id,
                 'redirect_option' => 'item',
                 'assigned_qty' => 1,
             ])
@@ -81,14 +81,14 @@ class ComponentsCheckoutTest extends TestCase
         $this->assertHasTheseActionLogs($component, ['create', 'checkout']);
     }
 
-    public function testComponentCheckoutPagePostIsRedirectedIfRedirectSelectionIsTarget()
+    public function test_component_checkout_page_post_is_redirected_if_redirect_selection_is_target()
     {
         $asset = Asset::factory()->create();
         $component = Component::factory()->create();
 
         $this->actingAs(User::factory()->admin()->create())
             ->from(route('components.index'))
-            ->post(route('components.checkout.store' , $component), [
+            ->post(route('components.checkout.store', $component), [
                 'asset_id' => $asset->id,
                 'redirect_option' => 'target',
                 'assigned_qty' => 1,

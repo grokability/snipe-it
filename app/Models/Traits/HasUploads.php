@@ -6,7 +6,6 @@ use App\Models\Actionlog;
 
 trait HasUploads
 {
-
     public function uploads()
     {
         return $this->hasMany(Actionlog::class, 'item_id')
@@ -21,6 +20,4 @@ trait HasUploads
                     ->where('item_id', $this->id);
             });
     }
-
-
 }

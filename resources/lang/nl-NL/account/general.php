@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
     'personal_api_keys' => 'Persoonlijke API-sleutels',
     'personal_access_token' => 'Persoonlijke toegangs-token',
     'personal_api_keys_success' => 'Persoonlijke API-sleutel :key succesvol gemaakt',
@@ -14,4 +14,4 @@ return array(
     'no_tokens' => 'Je hebt geen persoonlijke toegangs-tokens aangemaakt.',
     'enable_sounds' => 'Zet geluid effecten aan',
     'enable_confetti' => 'Zet confetti effecten aan',
-);
+];

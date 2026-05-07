@@ -23,7 +23,7 @@
     <label for="seats" class="col-md-3 control-label">{{ trans('admin/licenses/form.seats') }}</label>
     <div class="col-md-7 col-sm-12">
         <div class="col-md-12" style="padding-left:0px">
-            <input class="form-control" type="text" name="seats" id="seats" value="{{ old('seats', $item->seats) }}" minlength="1" required style="width: 97px;">
+            <input class="form-control" type="number" min="0" name="seats" id="seats" value="{{ old('seats', $item->seats) }}" minlength="1" required style="width: 97px;">
         </div>
     </div>
     {!! $errors->first('seats', '<div class="col-md-8 col-md-offset-3"><span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span></div>') !!}

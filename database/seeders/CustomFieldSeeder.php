@@ -37,7 +37,6 @@ class CustomFieldSeeder extends Seeder
         CustomField::factory()->count(1)->testCheckbox()->create();
         CustomField::factory()->count(1)->testRadio()->create();
 
-
         DB::table('custom_field_custom_fieldset')->insert([
             [
                 'custom_field_id' => '1',

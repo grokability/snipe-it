@@ -28,6 +28,7 @@ jobs:
           - "8.2"
           - "8.3"
           - "8.4"
+          - "8.5"
 
     name: PHP ${{ matrix.php-version }}
 
@@ -82,7 +83,7 @@ jobs:
 
       - name: Upload Laravel logs as artifacts
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: laravel-logs-php-${{ matrix.php-version }}-run-${{ github.run_attempt }}
           path: |

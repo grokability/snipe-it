@@ -1,8 +1,7 @@
 <?php
 
+use App\Models\Setting;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 
 class FixBadLdapServerUrlForV5 extends Migration
 {
@@ -22,7 +21,7 @@ class FixBadLdapServerUrlForV5 extends Migration
     public function up()
     {
         // UPDATE settings SET ldap_server = CONCAT('ldap://',ldap_server) WHERE ldap_server NOT LIKE 'ldap://%' AND ldap_server NOT LIKE 'ldaps://%'
-        $settings = App\Models\Setting::where('ldap_server', 'not like', 'ldap://%')->where('ldap_server', 'not like', 'ldaps://%');
+        $settings = Setting::where('ldap_server', 'not like', 'ldap://%')->where('ldap_server', 'not like', 'ldaps://%');
         foreach ($settings->get() as $setting) { // we don't formally support having multiple settings records, but just in case they come up...
             $setting->ldap_server = 'ldap://'.$setting->ldap_server;
             $setting->save();

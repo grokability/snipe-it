@@ -1,5 +1,5 @@
 <?php
 
-return array(
-    'title'      				=> 'Tên thành phần',
-);
+return [
+    'title' => 'Tên thành phần',
+];

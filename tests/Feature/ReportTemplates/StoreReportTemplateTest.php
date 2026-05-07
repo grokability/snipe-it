@@ -11,14 +11,14 @@ use Tests\TestCase;
 #[Group('custom-reporting')]
 class StoreReportTemplateTest extends TestCase implements TestsPermissionsRequirement
 {
-    public function testRequiresPermission()
+    public function test_requires_permission()
     {
         $this->actingAs(User::factory()->create())
             ->post(route('report-templates.store'))
             ->assertForbidden();
     }
 
-    public function testSavingReportTemplateRequiresValidFields()
+    public function test_saving_report_template_requires_valid_fields()
     {
         $this->actingAs(User::factory()->canViewReports()->create())
             ->post(route('report-templates.store'), [
@@ -27,7 +27,7 @@ class StoreReportTemplateTest extends TestCase implements TestsPermissionsRequir
             ->assertSessionHasErrors('name');
     }
 
-    public function testRedirectingAfterValidationErrorRestoresInputs()
+    public function test_redirecting_after_validation_error_restores_inputs()
     {
         $this->actingAs(User::factory()->canViewReports()->create())
             // start on the custom report page
@@ -37,13 +37,13 @@ class StoreReportTemplateTest extends TestCase implements TestsPermissionsRequir
                 'name' => '',
                 // set some values to ensure they are still present
                 // when returning to the custom report page.
-                'by_company_id' => [2, 3]
+                'by_company_id' => [2, 3],
             ])->assertViewHas(['template' => function (ReportTemplate $reportTemplate) {
                 return data_get($reportTemplate, 'options.by_company_id') === [2, 3];
             }]);
     }
 
-    public function testCanSaveAReportTemplate()
+    public function test_can_save_a_report_template()
     {
         $user = User::factory()->canViewReports()->create();
 

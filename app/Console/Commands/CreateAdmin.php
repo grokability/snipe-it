@@ -2,31 +2,28 @@
 
 namespace App\Console\Commands;
 
+use App\Models\User;
 use Illuminate\Console\Command;
-use \App\Models\User;
-
+use Illuminate\Support\Carbon;
 
 class CreateAdmin extends Command
 {
-
     /** @mixin User **/
     /**
      * App\Console\CreateAdmin
+     *
      * @property mixed $first_name
      * @property string $last_name
      * @property string $username
      * @property string $email
      * @property string $permissions
      * @property string $password
-     * @property boolean $activated
-     * @property boolean $show_in_list
-     * @property boolean $autoassign_licenses
-     * @property \Illuminate\Support\Carbon|null $created_at
+     * @property bool $activated
+     * @property bool $show_in_list
+     * @property bool $autoassign_licenses
+     * @property Carbon|null $created_at
      * @property mixed $created_by
      */
-
-
-
     protected $signature = 'snipeit:create-admin {--first_name=} {--last_name=}  {--email=}  {--username=}  {--password=} {show_in_list?} {autoassign_licenses?}';
 
     /**
@@ -46,7 +43,6 @@ class CreateAdmin extends Command
         parent::__construct();
     }
 
-
     public function handle()
     {
         $first_name = $this->option('first_name');
@@ -56,8 +52,6 @@ class CreateAdmin extends Command
         $password = $this->option('password');
         $show_in_list = $this->argument('show_in_list');
         $autoassign_licenses = $this->argument('autoassign_licenses');
-
-
 
         if (($first_name == '') || ($last_name == '') || ($username == '') || ($email == '') || ($password == '')) {
             $this->info('ERROR: All fields are required.');

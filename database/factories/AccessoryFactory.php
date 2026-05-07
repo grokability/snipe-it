@@ -144,7 +144,7 @@ class AccessoryFactory extends Factory
         });
     }
 
-    public function checkedOutToUser(User $user = null)
+    public function checkedOutToUser(?User $user = null)
     {
         return $this->afterCreating(function (Accessory $accessory) use ($user) {
             $accessory->checkouts()->create([
@@ -172,7 +172,7 @@ class AccessoryFactory extends Factory
         });
     }
 
-    public function checkedOutToAsset(Asset $asset = null)
+    public function checkedOutToAsset(?Asset $asset = null)
     {
         return $this->afterCreating(function (Accessory $accessory) use ($asset) {
             $accessory->checkouts()->create([
@@ -185,7 +185,7 @@ class AccessoryFactory extends Factory
         });
     }
 
-    public function checkedOutToLocation(Location $location = null)
+    public function checkedOutToLocation(?Location $location = null)
     {
         return $this->afterCreating(function (Accessory $accessory) use ($location) {
             $accessory->checkouts()->create([

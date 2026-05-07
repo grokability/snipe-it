@@ -20,7 +20,7 @@ class DeleteManufacturerAction
      * @throws ItemStillHasLicenses
      * @throws ItemStillHasConsumables
      */
-    static function run(Manufacturer $manufacturer): bool
+    public static function run(Manufacturer $manufacturer): bool
     {
         $manufacturer->loadCount([
             'assets as assets_count',
@@ -55,9 +55,8 @@ class DeleteManufacturerAction
         }
 
         $manufacturer->delete();
-        //dd($manufacturer);
+        // dd($manufacturer);
 
         return true;
     }
-
 }

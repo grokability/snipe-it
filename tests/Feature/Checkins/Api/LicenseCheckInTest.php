@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Feature\Checkins\Api;
 
 use App\Models\License;
@@ -6,8 +7,9 @@ use App\Models\LicenseSeat;
 use App\Models\User;
 use Tests\TestCase;
 
-class LicenseCheckInTest extends TestCase {
-    public function testLicenseCheckin()
+class LicenseCheckInTest extends TestCase
+{
+    public function test_license_checkin()
     {
         $authUser = User::factory()->superuser()->create();
         $this->actingAsForApi($authUser);
@@ -17,12 +19,12 @@ class LicenseCheckInTest extends TestCase {
 
         $licenseSeat = LicenseSeat::factory()->for($license)->create([
             'assigned_to' => $oldUser->id,
-            'notes'       => 'Previously checked out',
+            'notes' => 'Previously checked out',
         ]);
 
         $payload = [
             'assigned_to' => null,
-            'asset_id'  => null,
+            'asset_id' => null,
             'notes' => 'Checking in the seat',
         ];
 
@@ -41,6 +43,6 @@ class LicenseCheckInTest extends TestCase {
         $this->assertNull($licenseSeat->asset_id);
 
         $this->assertEquals('Checking in the seat', $licenseSeat->notes);
-        $this->assertHasTheseActionLogs($license, ['add seats', 'create', 'checkin from']); //FIXME - bad order!
+        $this->assertHasTheseActionLogs($license, ['add seats', 'create', 'checkin from']); // FIXME - bad order!
     }
 }

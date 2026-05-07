@@ -3,30 +3,30 @@
 return [
 
     'update' => [
-        'error'                 => '更新時にエラーが発生しました。 ',
-        'success'               => '更新に成功しました。',
+        'error' => '更新時にエラーが発生しました。 ',
+        'success' => '更新に成功しました。',
     ],
     'backup' => [
-        'delete_confirm'        => 'このバックアップファイルを削除してもよろしいですか？この操作は、もとに戻すことは出来ません。 ',
-        'file_deleted'          => 'バックアップファイルの削除に成功しました。 ',
-        'generated'             => '新しいバックアップファイルが作成されました。',
-        'file_not_found'        => 'そのバックアップファイルをサーバー上に見つけることが出来ませんでした。',
-        'restore_warning'       => '復元を行います。現在データベースにある既存のデータを上書きします。 これにより、既存のすべてのユーザー(あなたを含む) もログアウトします。',
-        'restore_confirm'       => ':filename からデータベースを復元してもよろしいですか？'
+        'delete_confirm' => 'このバックアップファイルを削除してもよろしいですか？この操作は、もとに戻すことは出来ません。 ',
+        'file_deleted' => 'バックアップファイルの削除に成功しました。 ',
+        'generated' => '新しいバックアップファイルが作成されました。',
+        'file_not_found' => 'そのバックアップファイルをサーバー上に見つけることが出来ませんでした。',
+        'restore_warning' => '復元を行います。現在データベースにある既存のデータを上書きします。 これにより、既存のすべてのユーザー(あなたを含む) もログアウトします。',
+        'restore_confirm' => ':filename からデータベースを復元してもよろしいですか？',
     ],
     'restore' => [
-        'success'               => 'システムバックアップが復元されました。もう一度ログインしてください。'
+        'success' => 'システムバックアップが復元されました。もう一度ログインしてください。',
     ],
     'purge' => [
-        'error'     => 'パージ中にエラーが発生しました。 ',
-        'validation_failed'     => 'パージの確定方法が正しくありません。入力してください、単語「削除」確認ボックス。',
-        'success'               => 'パージによりレコードは削除されました',
+        'error' => 'パージ中にエラーが発生しました。 ',
+        'validation_failed' => 'パージの確定方法が正しくありません。入力してください、単語「削除」確認ボックス。',
+        'success' => 'パージによりレコードは削除されました',
     ],
     'mail' => [
         'sending' => 'テストメールを送信しています...',
         'success' => 'メール送信完了',
         'error' => 'メールが送信できません',
-        'additional' => '追加のエラーメッセージはありません。メール設定とアプリのログを確認してください。'
+        'additional' => '追加のエラーメッセージはありません。メール設定とアプリのログを確認してください。',
     ],
     'ldap' => [
         'testing' => 'LDAP接続のテスト中…バインディングとクエリを行っています…',
@@ -34,11 +34,11 @@ return [
         'error' => '問題が発生しました。',
         'sync_success' => '設定に基づいてLDAPサーバーから返された10人のユーザーのサンプル:',
         'testing_authentication' => 'LDAP認証のテスト中...',
-        'authentication_success' => 'LDAPによるユーザー認証に成功しました！'
+        'authentication_success' => 'LDAPによるユーザー認証に成功しました！',
     ],
     'labels' => [
         'null_template' => 'Label template not found. Please select a template.',
-        ],
+    ],
     'webhook' => [
         'sending' => ':app テストメッセージを送信しています...',
         'success' => 'あなたの:webhook_name連携は動作します！',
@@ -55,5 +55,22 @@ return [
     'location_scoping' => [
         'not_saved' => '設定は保存されませんでした。',
         'mismatch' => '位置情報を有効にする前に対応が必要な項目が、データベースに 1 件あります。|位置情報を有効にする前に対応が必要な項目が、データベースに :count 件あります。',
+    ],
+    'oauth' => [
+        'token_revoked' => 'Personal access token revoked successfully.',
+        'token_unrevoked' => 'Personal access token reinstated successfully.',
+        'token_not_found' => 'That personal access token could not be found.',
+        'token_revoke_error' => 'An error occurred while revoking the token.',
+        'token_unrevoke_error' => 'An error occurred while reinstating the token.',
+        'client_created' => 'OAuth client created successfully.',
+        'client_updated' => 'OAuth client updated successfully.',
+        'client_deleted' => 'OAuth client deleted successfully.',
+        'client_revoked' => 'OAuth client revoked successfully.',
+        'client_unrevoked' => 'OAuth client reinstated successfully.',
+        'client_not_found' => 'That OAuth client could not be found.',
+        'token_deleted' => 'Token revoked successfully.',
+        'client_delete_denied' => 'You are not authorized to delete this client.',
+        'client_edit_denied' => 'You are not authorized to edit this client.',
+        'token_delete_denied' => 'You are not authorized to revoke this token.',
     ],
 ];

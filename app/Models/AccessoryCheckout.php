@@ -2,16 +2,12 @@
 
 namespace App\Models;
 
-use App\Helpers\Helper;
-use App\Models\Traits\Acceptable;
 use App\Models\Traits\Searchable;
-use App\Presenters\Presentable;
+use App\Presenters\AccessoryPresenter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Storage;
-use Watson\Validating\ValidatingTrait;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 /**
  * Model for Accessories.
@@ -20,52 +16,61 @@ use Watson\Validating\ValidatingTrait;
  */
 class AccessoryCheckout extends Model
 {
+    use HasFactory;
     use Searchable;
 
     protected $fillable = [
         'accessory_id',
         'assigned_to',
         'assigned_type',
-        'note'
+        'note',
     ];
 
-    protected $presenter = \App\Presenters\AccessoryPresenter::class;
+    protected $presenter = AccessoryPresenter::class;
+
     protected $table = 'accessories_checkout';
-    
+
     /**
      * Establishes the accessory checkout -> accessory relationship
      *
      * @author [A. Kroeger]
+     *
      * @since  [v7.0.9]
-     * @return \Illuminate\Database\Eloquent\Relations\Relation
+     *
+     * @return Relation
      */
     public function accessory()
     {
-        return $this->hasOne(Accessory::class, 'id', 'accessory_id');
+        return $this->belongsTo(Accessory::class);
     }
 
     public function accessories()
     {
         return $this->hasMany(Accessory::class, 'id', 'accessory_id');
     }
+
     /**
      * Establishes the accessory checkout -> user relationship
      *
      * @author [A. Kroeger]
+     *
      * @since  [v7.0.9]
-     * @return \Illuminate\Database\Eloquent\Relations\Relation
+     *
+     * @return Relation
      */
     public function adminuser()
     {
-        return $this->hasOne(\App\Models\User::class, 'id', 'created_by');
+        return $this->belongsTo(User::class, 'created_by')->withTrashed();
     }
 
     /**
      * Get the target this asset is checked out to
      *
      * @author [A. Kroeger]
+     *
      * @since  [v7.0]
-     * @return \Illuminate\Database\Eloquent\Relations\Relation
+     *
+     * @return Relation
      */
     public function assignedTo()
     {
@@ -76,7 +81,9 @@ class AccessoryCheckout extends Model
      * Gets the lowercased name of the type of target the asset is assigned to
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      * @since  [v4.0]
+     *
      * @return string
      */
     public function assignedType()
@@ -91,6 +98,7 @@ class AccessoryCheckout extends Model
      * this method is an easy way of seeing if we are checked out to a user.
      *
      * @author [A. Kroeger]
+     *
      * @since  [v7.0]
      */
     public function checkedOutToUser(): bool
@@ -126,9 +134,8 @@ class AccessoryCheckout extends Model
     /**
      * Run additional, advanced searches.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder $query
-     * @param  array                                 $terms The search terms
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @param  array  $terms  The search terms
+     * @return Builder
      */
     public function advancedTextSearch(Builder $query, array $terms)
     {
@@ -136,7 +143,7 @@ class AccessoryCheckout extends Model
         $userQuery = User::where(
             function ($query) use ($terms) {
                 foreach ($terms as $term) {
-                    $search_str = '%' . $term . '%';
+                    $search_str = '%'.$term.'%';
                     $query->where('first_name', 'like', $search_str)
                         ->orWhere('last_name', 'like', $search_str)
                         ->orWhere('note', 'like', $search_str);
@@ -147,7 +154,7 @@ class AccessoryCheckout extends Model
         $locationQuery = Location::where(
             function ($query) use ($terms) {
                 foreach ($terms as $term) {
-                    $search_str = '%' . $term . '%';
+                    $search_str = '%'.$term.'%';
                     $query->where('name', 'like', $search_str);
                 }
             }
@@ -156,7 +163,7 @@ class AccessoryCheckout extends Model
         $assetQuery = Asset::where(
             function ($query) use ($terms) {
                 foreach ($terms as $term) {
-                    $search_str = '%' . $term . '%';
+                    $search_str = '%'.$term.'%';
                     $query->where('name', 'like', $search_str);
                 }
             }
@@ -180,7 +187,7 @@ class AccessoryCheckout extends Model
         )->orWhere(
             function ($query) use ($terms) {
                 foreach ($terms as $term) {
-                    $search_str = '%' . $term . '%';
+                    $search_str = '%'.$term.'%';
                     $query->where('note', 'like', $search_str);
                 }
             }
@@ -188,6 +195,4 @@ class AccessoryCheckout extends Model
 
         return $query;
     }
-
-
 }

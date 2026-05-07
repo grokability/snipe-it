@@ -1,8 +1,7 @@
 <?php
 
+use App\Models\Setting;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 
 class UpdateMinPassword extends Migration
 {
@@ -22,7 +21,7 @@ class UpdateMinPassword extends Migration
      */
     public function up()
     {
-        App\Models\Setting::where('pwd_secure_min', '<', '8')
+        Setting::where('pwd_secure_min', '<', '8')
             ->update(['pwd_secure_min' => '8']);
     }
 

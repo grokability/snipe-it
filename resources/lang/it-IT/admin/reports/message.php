@@ -3,7 +3,7 @@
 return [
     'about_templates' => 'Info sui Modelli Salvati',
     'saving_templates_description' => 'Selezionare le opzioni, poi inserire il nome del modello nel riquadro sopra e fare clic sul pulsante \'Salva Modello\'. Usare il menu a tendina per selezionare un modello salvato in precedenza.',
-    'create'  => [
+    'create' => [
         'success' => 'Modello salvato correttamente',
     ],
     'update' => [

@@ -13,14 +13,14 @@ use Tests\TestCase;
 
 class CreateConsumableTest extends TestCase implements TestsPermissionsRequirement
 {
-    public function testRequiresPermission()
+    public function test_requires_permission()
     {
         $this->actingAs(User::factory()->create())
             ->get(route('consumables.create'))
             ->assertForbidden();
     }
 
-    public function testCanRenderCreateConsumablePage()
+    public function test_can_render_create_consumable_page()
     {
         $this->actingAs(User::factory()->createConsumables()->create())
             ->get(route('consumables.create'))
@@ -28,7 +28,7 @@ class CreateConsumableTest extends TestCase implements TestsPermissionsRequireme
             ->assertViewIs('consumables.edit');
     }
 
-    public function testCanCreateConsumable()
+    public function test_can_create_consumable()
     {
         $data = [
             'company_id' => Company::factory()->create()->id,
@@ -49,15 +49,15 @@ class CreateConsumableTest extends TestCase implements TestsPermissionsRequireme
 
         $this->actingAs(User::factory()->createConsumables()->create())
             ->post(route('consumables.store'), $data + [
-                    'redirect_option' => 'index',
-                    'category_type' => 'consumable',
-                ])
+                'redirect_option' => 'index',
+                'category_type' => 'consumable',
+            ])
             ->assertRedirect(route('consumables.index'));
 
         $this->assertDatabaseHas('consumables', $data);
     }
 
-    public function testPageRenders()
+    public function test_page_renders()
     {
         $this->actingAs(User::factory()->superuser()->create())
             ->get(route('consumables.create'))

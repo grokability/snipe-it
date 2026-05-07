@@ -71,7 +71,7 @@ return [
     ],
     'hex_color' => 'The :attribute field must be a valid hexadecimal color.',
     'image' => 'The :attribute field must be an image.',
-    'import_field_empty'    => 'Qiimaha :fieldname ma noqon karo waxba.',
+    'import_field_empty' => 'Qiimaha :fieldname ma noqon karo waxba.',
     'in' => 'Xulashada :attribute waa mid aan sax ahayn.',
     'in_array' => 'The :attribute field must exist in :other.',
     'integer' => 'The :attribute field must be an integer.',
@@ -126,7 +126,7 @@ return [
         'symbols' => 'The :attribute field must contain at least one symbol.',
         'uncompromised' => 'The given :attribute has appeared in a data leak. Please choose a different :attribute.',
     ],
-    'percent'       => 'The depreciation minimum must be between 0 and 100 when depreciation type is percentage.',
+    'percent' => 'The depreciation minimum must be between 0 and 100 when depreciation type is percentage.',
 
     'present' => 'Sumadda :astaanta liiska waa iney goobjoog ahaataa.',
     'present_if' => 'The :attribute field must be present when :other is :value.',
@@ -156,16 +156,16 @@ return [
         'string' => 'The :attribute field must be :size characters.',
     ],
     'starts_with' => 'The :attribute field must start with one of the following: :values.',
-    'string'               => 'Sumadda :astaanta waa iney noqoto silsilad.',
+    'string' => 'Sumadda :astaanta waa iney noqoto silsilad.',
     'two_column_unique_undeleted' => 'Waa iney :noqotaa qeybtan mid fariid ah :jadwal1 and :jadwal2. ',
-    'unique_undeleted'     => 'Sumadda :astaanta waa iney ahaataa mid gaar ah.',
-    'non_circular'         => 'Sumadda :astaanta waa ineysan abuurin tixraac wareeg ah.',
-    'not_array'            => ':suurogal maahan iney saf noqoto.',
+    'unique_undeleted' => 'Sumadda :astaanta waa iney ahaataa mid gaar ah.',
+    'non_circular' => 'Sumadda :astaanta waa ineysan abuurin tixraac wareeg ah.',
+    'not_array' => ':suurogal maahan iney saf noqoto.',
     'disallow_same_pwd_as_user_fields' => 'Password-ku lama mid noqon karo magaca user-ka.',
-    'letters'              => 'Furaha waa in uu ka kooban yahay ugu yaraan hal xaraf.',
-    'numbers'              => 'Furaha waa in uu ka kooban yahay ugu yaraan hal lambar.',
-    'case_diff'            => 'Furaha waa in uu isticmaalo kiis isku dhafan.',
-    'symbols'              => 'Erayga sirta ah waa inuu ka kooban yahay calaamado.',
+    'letters' => 'Furaha waa in uu ka kooban yahay ugu yaraan hal xaraf.',
+    'numbers' => 'Furaha waa in uu ka kooban yahay ugu yaraan hal lambar.',
+    'case_diff' => 'Furaha waa in uu isticmaalo kiis isku dhafan.',
+    'symbols' => 'Erayga sirta ah waa inuu ka kooban yahay calaamado.',
     'timezone' => 'The :attribute field must be a valid timezone.',
     'unique' => 'Sumadda :astaanta waxaa la qaatay mar hore.',
     'uploaded' => 'Sumadda :astaanta waa lagu guul dareystay in lasoo rafciyo.',
@@ -187,38 +187,38 @@ return [
     |
     */
 
-    'email_array'      => 'Hal ama ka badan ciwaanka iimaylka waa mid aan shaqayn.',
-    'checkboxes'           => ':attribute contains invalid options.',
-    'radio_buttons'        => ':attribute is invalid.',
-    
+    'email_array' => 'Hal ama ka badan ciwaanka iimaylka waa mid aan shaqayn.',
+    'checkboxes' => ':attribute contains invalid options.',
+    'radio_buttons' => ':attribute is invalid.',
+
     'custom' => [
         'alpha_space' => 'Goobta :attribute waxay ka kooban tahay xarfo aan la oggolayn.',
 
-        'hashed_pass'      => 'Eraygaaga hadda jira waa khalad',
-        'dumbpwd'          => 'Furahaas aad buu u badan yahay.',
+        'hashed_pass' => 'Eraygaaga hadda jira waa khalad',
+        'dumbpwd' => 'Furahaas aad buu u badan yahay.',
         'statuslabel_type' => 'Waa inaad doorataa nooca summada heerka ansax ah',
-        'custom_field_not_found'          => 'This field does not seem to exist, please double check your custom field names.',
+        'custom_field_not_found' => 'This field does not seem to exist, please double check your custom field names.',
         'custom_field_not_found_on_model' => 'This field seems to exist, but is not available on this Asset Model\'s fieldset.',
 
         // date_format validation with slightly less stupid messages. It duplicates a lot, but it gets the job done :(
         // We use this because the default error message for date_format reflects php Y-m-d, which non-PHP
         // people won't know how to format.
-        'purchase_date.date_format'     => 'Sumadda :astaanta waa inuu ahaado taariikh saxan oo u qaabeysan YYY-MM-DD',
-        'last_audit_date.date_format'   =>  'Sumadda :astaanta waa iney ahaato taariikh saxan oo u qaabeysan hannaanka YYY-MM-DD hh:mm:ss',
-        'expiration_date.date_format'   =>  'Sumadda :astaanta waa iney ahaato taariikh saxan oo u qaabeysan hannaanka YYY-MM-DD',
-        'termination_date.date_format'  =>  'Sumadda :astaanta waa iney ahaato taariikh saxan oo u qaabeysan hannaanka qaabaysan YYY-MM-DD',
-        'expected_checkin.date_format'  =>  'Sumadda :astaanta waa iney ahaato taariikh saxan oo u qaabeysan hannaanka YYY-MM-DD',
-        'start_date.date_format'        =>  'Sumadda :astaanta waa iney ahaato taariikh saxan oo u qaabeysan hannaanka YYY-MM-DD',
-        'end_date.date_format'          =>  'Sumadda :astaanta waa iney ahaato taariikh saxan oo u qaabeysan YYY-MM-DD',
+        'purchase_date.date_format' => 'Sumadda :astaanta waa inuu ahaado taariikh saxan oo u qaabeysan YYY-MM-DD',
+        'last_audit_date.date_format' => 'Sumadda :astaanta waa iney ahaato taariikh saxan oo u qaabeysan hannaanka YYY-MM-DD hh:mm:ss',
+        'expiration_date.date_format' => 'Sumadda :astaanta waa iney ahaato taariikh saxan oo u qaabeysan hannaanka YYY-MM-DD',
+        'termination_date.date_format' => 'Sumadda :astaanta waa iney ahaato taariikh saxan oo u qaabeysan hannaanka qaabaysan YYY-MM-DD',
+        'expected_checkin.date_format' => 'Sumadda :astaanta waa iney ahaato taariikh saxan oo u qaabeysan hannaanka YYY-MM-DD',
+        'start_date.date_format' => 'Sumadda :astaanta waa iney ahaato taariikh saxan oo u qaabeysan hannaanka YYY-MM-DD',
+        'end_date.date_format' => 'Sumadda :astaanta waa iney ahaato taariikh saxan oo u qaabeysan YYY-MM-DD',
         'invalid_value_in_field' => 'Invalid value included in this field',
 
         'ldap_username_field' => [
-            'not_in' =>         '<code>sAMAccountName</code> (mixed case) will likely not work. You should use <code>samaccountname</code> (lowercase) instead.'
+            'not_in' => '<code>sAMAccountName</code> (mixed case) will likely not work. You should use <code>samaccountname</code> (lowercase) instead.',
         ],
         'ldap_auth_filter_query' => ['not_in' => '<code>uid=samaccountname</code> is probably not a valid auth filter. You probably want <code>uid=</code> '],
         'ldap_filter' => ['regex' => 'This value should probably not be wrapped in parentheses.'],
 
-        ],
+    ],
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Attributes
@@ -230,7 +230,10 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'serials.*' => 'Nambarada taxan',
+        'asset_tags.*' => 'Hantida Tag',
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -244,6 +247,5 @@ return [
         'required' => 'This field is required',
         'email' => 'Please enter a valid email address',
     ],
-
 
 ];

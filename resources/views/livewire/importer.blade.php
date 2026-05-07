@@ -243,7 +243,7 @@
                                                                 <div class="form-group col-md-12">
                                                                     <hr style="border-top: 1px solid lightgray">
                                                                     <h3>
-                                                                        <i class="{{ Helper::iconTypeByItem($typeOfImport) }}">
+                                                                        <i class="{{ \App\Helpers\IconHelper::icon($typeOfImport) }}">
                                                                         </i>
                                                                         {{ trans('general.map_fields', ['item_type' => ucwords($typeOfImport)]) }}
                                                                        </h3>
@@ -324,11 +324,9 @@
                                                                     </div>
                                                                 </div>
                                                             @endif {{-- end of if ... $typeOfImport --}}
-
-                                                        </div><!-- /div v-show -->                                                    </td>
+                                                        </td>
                                                 </tr>
                                             @endif
-                                            </tr>
                                     @endforeach
                                 </table>
                             </div>

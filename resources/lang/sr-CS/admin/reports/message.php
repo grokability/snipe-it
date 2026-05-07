@@ -3,7 +3,7 @@
 return [
     'about_templates' => 'O sačuvanim šablonima',
     'saving_templates_description' => 'Izaberite vaše opcije, zatim unesite naziv šablona u polje iznad i kliknite na dugme \'Sačuvaj šablon\'. Koristite padajući meni da bi ste izabrali prethodno sačuvani šablon.',
-    'create'  => [
+    'create' => [
         'success' => 'Šablon je uspešno sačuvan',
     ],
     'update' => [

@@ -1,9 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -13,7 +11,8 @@ return new class extends Migration
     public function up(): void
     {
         //
-        Artisan::call("snipeit:clean-checkout-acceptances");
+        //Artisan::call('snipeit:clean-checkout-acceptances');
+	// Commenting this out to prevent crashing due to a missing deleted_at clause
     }
 
     /**

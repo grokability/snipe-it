@@ -2,56 +2,65 @@
 
 namespace App\Models\Labels\Tapes\Dymo;
 
-
 class LabelWriter_30252 extends LabelWriter
 {
-    private const BARCODE_MARGIN =   1.80;
-    private const TAG_SIZE       =   2.80;
-    private const TITLE_SIZE     =   2.80;
-    private const TITLE_MARGIN   =   0.50;
-    private const LABEL_SIZE     =   2.00;
-    private const LABEL_MARGIN   = - 0.35;
-    private const FIELD_SIZE     =   3.20;
-    private const FIELD_MARGIN   =   0.15;
+    private const BARCODE_MARGIN = 1.80;
 
+    private const TAG_SIZE = 2.80;
 
+    private const TITLE_SIZE = 2.80;
+
+    private const TITLE_MARGIN = 0.50;
+
+    private const LABEL_SIZE = 2.00;
+
+    private const LABEL_MARGIN = -0.35;
+
+    private const FIELD_SIZE = 3.20;
+
+    private const FIELD_MARGIN = 0.15;
 
     public function getUnit()
     {
-        return 'mm'; 
-    }
-    public function getWidth()
-    {
-        return 96.52; 
-    }
-    public function getSupportAssetTag()
-    {
-        return true; 
-    }
-    public function getSupport1DBarcode()
-    {
-        return true; 
-    }
-    public function getSupport2DBarcode()
-    {
-        return true; 
-    }
-    public function getSupportFields()
-    {
-        return 3; 
-    }
-    public function getSupportLogo()
-    {
-        return false; 
-    }
-    public function getSupportTitle()
-    {
-        return true; 
+        return 'mm';
     }
 
-    public function preparePDF($pdf)
+    public function getWidth()
     {
+        return 96.52;
     }
+
+    public function getSupportAssetTag()
+    {
+        return true;
+    }
+
+    public function getSupport1DBarcode()
+    {
+        return true;
+    }
+
+    public function getSupport2DBarcode()
+    {
+        return true;
+    }
+
+    public function getSupportFields()
+    {
+        return 3;
+    }
+
+    public function getSupportLogo()
+    {
+        return false;
+    }
+
+    public function getSupportTitle()
+    {
+        return true;
+    }
+
+    public function preparePDF($pdf) {}
 
     public function write($pdf, $record)
     {
@@ -114,5 +123,4 @@ class LabelWriter_30252 extends LabelWriter
             );
         }
     }
-
 }

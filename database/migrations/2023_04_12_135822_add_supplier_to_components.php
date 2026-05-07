@@ -14,13 +14,13 @@ class AddSupplierToComponents extends Migration
     public function up()
     {
         Schema::table('components', function (Blueprint $table) {
-            if (!Schema::hasColumn('components', 'supplier_id')) {
+            if (! Schema::hasColumn('components', 'supplier_id')) {
                 $table->integer('supplier_id')->after('user_id')->nullable()->default(null);
             }
         });
 
         Schema::table('consumables', function (Blueprint $table) {
-            if (!Schema::hasColumn('consumables', 'supplier_id')) {
+            if (! Schema::hasColumn('consumables', 'supplier_id')) {
                 $table->integer('supplier_id')->after('user_id')->nullable()->default(null);
             }
         });

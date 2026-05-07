@@ -86,13 +86,13 @@ $style = [
 
                                 @if ($snipeSettings->brand == '3')
                                     @if ($logo!='')
-                                        <img class="navbar-brand-img logo" style="max-width: 50px;" src="{{ config('app.url') }}/uploads/{{ $logo }}">
+                                        <img class="navbar-brand-img logo" style="max-width: 50px;" src="{{ Storage::disk('public')->url($logo) }}">
                                     @endif
                                     {{ $snipeSettings->site_name }}
 
                                 @elseif ($snipeSettings->brand == '2')
                                     @if ($logo!='')
-                                        <img class="navbar-brand-img logo" style="max-width: 50px;" src="{{ config('app.url') }}/uploads/{{ $logo }}">
+                                        <img class="navbar-brand-img logo" style="max-width: 50px;" src="{{ Storage::disk('public')->url($logo) }}">
                                     @endif
                                 @else
                                     {{ $snipeSettings->site_name }}

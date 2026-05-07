@@ -13,8 +13,8 @@ class SetNullvaluesForUser extends Migration
     {
         //
         // $prefix = DB::getTablePrefix();
-    //     DB::statement('ALTER TABLE '.$prefix.'users MODIFY phone varchar(20) null');
-    //     DB::statement('ALTER TABLE '.$prefix.'users MODIFY jobtitle varchar(50) null');
+        //     DB::statement('ALTER TABLE '.$prefix.'users MODIFY phone varchar(20) null');
+        //     DB::statement('ALTER TABLE '.$prefix.'users MODIFY jobtitle varchar(50) null');
     }
 
     /**

@@ -9,11 +9,12 @@ use App\Models\Group;
 use App\Models\Location;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class UpdateUserTest extends TestCase
 {
-    public function testCanUpdateUserViaPatch()
+    public function test_can_update_user_via_patch()
     {
         $admin = User::factory()->superuser()->create();
         $manager = User::factory()->create();
@@ -51,6 +52,7 @@ class UpdateUserTest extends TestCase
                 'vip' => true,
                 'start_date' => '2021-08-01',
                 'end_date' => '2025-12-31',
+                'avatar' => 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAZAAAAEsAQMAAADXeXeBAAAABlBMVEX+AAD///+KQee0AAAACXBIWXMAAAsSAAALEgHS3X78AAAAB3RJTUUH5QQbCAoNcoiTQAAAACZJREFUaN7twTEBAAAAwqD1T20JT6AAAAAAAAAAAAAAAAAAAICnATvEAAEnf54JAAAAAElFTkSuQmCC',
             ])
             ->assertOk()
             ->assertStatus(200)
@@ -80,6 +82,12 @@ class UpdateUserTest extends TestCase
         $this->assertEquals('2021-08-01', $user->start_date, 'Start date was not updated');
         $this->assertEquals('2025-12-31', $user->end_date, 'End date was not updated');
 
+        // assert against resized hash
+        $this->assertEquals(
+            'db2e13ba04318c99058ca429d67777322f48566b',
+            sha1(Storage::disk('public')->get(app('users_upload_path').$user->avatar))
+        );
+
         // `groups` can be an id or array or ids
         $this->patch(route('api.users.update', $user), ['groups' => [$groupA->id, $groupB->id]]);
 
@@ -88,7 +96,7 @@ class UpdateUserTest extends TestCase
         $this->assertTrue($user->groups->contains($groupB), 'Not part of expected group');
     }
 
-    public function testCanUpdateUserViaPut()
+    public function test_can_update_user_via_put()
     {
         $admin = User::factory()->superuser()->create();
         $manager = User::factory()->create();
@@ -110,7 +118,7 @@ class UpdateUserTest extends TestCase
                 'username' => 'mabel',
                 'password' => 'super-secret',
                 'password_confirmation' => 'super-secret',
-                'email' => 'mabel@onlymurderspod.com',
+                'email' => 'mabel@example.org',
                 'permissions' => '{"a.new.permission":"1"}',
                 'activated' => true,
                 'phone' => '619-555-5555',
@@ -127,6 +135,7 @@ class UpdateUserTest extends TestCase
                 'vip' => true,
                 'start_date' => '2021-08-01',
                 'end_date' => '2025-12-31',
+                'avatar' => 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAZAAAAEsAQMAAADXeXeBAAAABlBMVEX+AAD///+KQee0AAAACXBIWXMAAAsSAAALEgHS3X78AAAAB3RJTUUH5QQbCAoNcoiTQAAAACZJREFUaN7twTEBAAAAwqD1T20JT6AAAAAAAAAAAAAAAAAAAICnATvEAAEnf54JAAAAAElFTkSuQmCC',
             ])
             ->assertOk()
             ->assertStatus(200)
@@ -138,7 +147,7 @@ class UpdateUserTest extends TestCase
         $this->assertEquals('Mora', $user->last_name, 'Last name was not updated');
         $this->assertEquals('mabel', $user->username, 'Username was not updated');
         $this->assertTrue(Hash::check('super-secret', $user->password), 'Password was not updated');
-        $this->assertEquals('mabel@onlymurderspod.com', $user->email, 'Email was not updated');
+        $this->assertEquals('mabel@example.org', $user->email, 'Email was not updated');
         $this->assertArrayHasKey('a.new.permission', $user->decodePermissions(), 'Permissions were not updated');
         $this->assertTrue((bool) $user->activated, 'User not marked as activated');
         $this->assertEquals('619-555-5555', $user->phone, 'Phone was not updated');
@@ -156,6 +165,12 @@ class UpdateUserTest extends TestCase
         $this->assertEquals('2021-08-01', $user->start_date, 'Start date was not updated');
         $this->assertEquals('2025-12-31', $user->end_date, 'End date was not updated');
 
+        // assert against resized hash
+        $this->assertEquals(
+            'db2e13ba04318c99058ca429d67777322f48566b',
+            sha1(Storage::disk('public')->get(app('users_upload_path').$user->avatar))
+        );
+
         // `groups` can be an id or array or ids
         $this->patch(route('api.users.update', $user), ['groups' => [$groupA->id, $groupB->id]]);
 
@@ -164,7 +179,7 @@ class UpdateUserTest extends TestCase
         $this->assertTrue($user->groups->contains($groupB), 'Not part of expected group');
     }
 
-    public function testApiUsersCanBeActivatedWithNumber()
+    public function test_api_users_can_be_activated_with_number()
     {
         $admin = User::factory()->editUsers()->create();
         $user = User::factory()->create(['activated' => 0]);
@@ -177,7 +192,7 @@ class UpdateUserTest extends TestCase
         $this->assertEquals(1, $user->refresh()->activated);
     }
 
-    public function testApiUsersCanBeActivatedWithBooleanTrue()
+    public function test_api_users_can_be_activated_with_boolean_true()
     {
         $admin = User::factory()->editUsers()->create();
         $user = User::factory()->create(['activated' => false]);
@@ -190,7 +205,7 @@ class UpdateUserTest extends TestCase
         $this->assertEquals(1, $user->refresh()->activated);
     }
 
-    public function testApiUsersCanBeDeactivatedWithNumber()
+    public function test_api_users_can_be_deactivated_with_number()
     {
         $admin = User::factory()->editUsers()->create();
         $user = User::factory()->create(['activated' => true]);
@@ -203,7 +218,7 @@ class UpdateUserTest extends TestCase
         $this->assertEquals(0, $user->refresh()->activated);
     }
 
-    public function testApiUsersCanBeDeactivatedWithBooleanFalse()
+    public function test_api_users_can_be_deactivated_with_boolean_false()
     {
         $admin = User::factory()->editUsers()->create();
         $user = User::factory()->create(['activated' => true]);
@@ -216,14 +231,13 @@ class UpdateUserTest extends TestCase
         $this->assertEquals(0, $user->refresh()->activated);
     }
 
-    public function testEditingUsersCannotEditEscalationFieldsForAdmins()
+    public function test_editing_users_cannot_edit_escalation_fields_for_admins()
     {
         $hashed_original = Hash::make('!!094850394680980380kfejlskjfl');
         $hashed_new = Hash::make('!ABCDEFGIJKL123!!!');
 
         $editing_user = User::factory()->editUsers()->create();
-        $adminuser = User::factory()->admin()->create(['username' => 'TestAdminUser', 'email'=> 'admin@example.org', 'password' => $hashed_original, 'activated' => 1]);
-
+        $adminuser = User::factory()->admin()->create(['username' => 'TestAdminUser', 'email' => 'admin@example.org', 'password' => $hashed_original, 'activated' => 1]);
 
         // The admin being edited
         $this->assertDatabaseHas('users', [
@@ -253,14 +267,13 @@ class UpdateUserTest extends TestCase
 
     }
 
-    public function testAdminsCannotEditEscalationFieldsForSuperadmins()
+    public function test_admins_cannot_deescalate_superadmins()
     {
         $hashed_original = Hash::make('my-awesome-password!!!!!12345');
         $hashed_new = Hash::make('!ABCDEFGIJKL123!!!');
 
         $editing_user = User::factory()->admin()->create();
-        $superuser = User::factory()->superuser()->create(['username' => 'TestSuperUser', 'email'=> 'superuser@example.org', 'password' => $hashed_original, 'activated' => 1]);
-
+        $superuser = User::factory()->superuser()->create(['username' => 'TestSuperUser', 'email' => 'superuser@example.org', 'password' => $hashed_original, 'activated' => 1]);
 
         // The admin being edited
         $this->assertDatabaseHas('users', [
@@ -277,7 +290,7 @@ class UpdateUserTest extends TestCase
                 'username' => 'testnewusername',
                 'email' => 'testnewemail@example.org',
                 'activated' => 0,
-                'permissions' => "{'superadmin':1}",
+                'permissions' => '{"admin":"1"}',
                 'password' => $hashed_new,
             ]);
 
@@ -293,12 +306,12 @@ class UpdateUserTest extends TestCase
 
     }
 
-    public function testUsersScopedToCompanyDuringUpdateWhenMultipleFullCompanySupportEnabled()
+    public function test_users_scoped_to_company_during_update_when_multiple_full_company_support_enabled()
     {
         $this->settings->enableMultipleFullCompanySupport();
 
-        $companyA = Company::factory()->create(['name'=>'Company A']);
-        $companyB = Company::factory()->create(['name'=>'Company B']);
+        $companyA = Company::factory()->create(['name' => 'Company A']);
+        $companyB = Company::factory()->create(['name' => 'Company B']);
 
         $adminA = User::factory(['company_id' => $companyA->id])->admin()->create();
         $adminB = User::factory(['company_id' => $companyB->id])->admin()->create();
@@ -382,7 +395,7 @@ class UpdateUserTest extends TestCase
             ->json();
     }
 
-    public function testUserGroupsAreOnlyUpdatedIfAuthenticatedUserIsSuperUser()
+    public function test_user_groups_are_only_updated_if_authenticated_user_is_super_user()
     {
         $groupToJoin = Group::factory()->create();
 
@@ -409,7 +422,7 @@ class UpdateUserTest extends TestCase
         $this->assertTrue($userToUpdateByToUserBySuperuser->refresh()->groups->contains($groupToJoin));
     }
 
-    public function testUserGroupsCanBeClearedBySuperUser()
+    public function test_user_groups_can_be_cleared_by_super_user()
     {
         $normalUser = User::factory()->editUsers()->create();
         $superUser = User::factory()->superuser()->create();
@@ -435,7 +448,7 @@ class UpdateUserTest extends TestCase
         $this->assertFalse($anotherUserToUpdate->refresh()->groups->contains($joinedGroup));
     }
 
-    public function testNonSuperuserCannotUpdateOwnGroups()
+    public function test_non_superuser_cannot_update_own_groups()
     {
         $groupToJoin = Group::factory()->create();
         $user = User::factory()->editUsers()->create();
@@ -451,7 +464,7 @@ class UpdateUserTest extends TestCase
 
     }
 
-    public function testNonSuperuserCannotUpdateGroups()
+    public function test_non_superuser_cannot_update_groups()
     {
         $user = User::factory()->editUsers()->create();
         $group = Group::factory()->create();
@@ -463,7 +476,6 @@ class UpdateUserTest extends TestCase
                 'groups' => [$newGroupToJoin->id],
             ]);
 
-
         $this->assertFalse($user->refresh()->groups->contains($newGroupToJoin),
             'Non-super-user was able to modify user group membership'
         );
@@ -472,7 +484,7 @@ class UpdateUserTest extends TestCase
 
     }
 
-    public function testUsersGroupsAreNotClearedIfNoGroupPassedBySuperUser()
+    public function test_users_groups_are_not_cleared_if_no_group_passed_by_super_user()
     {
         $user = User::factory()->create();
         $superUser = User::factory()->superuser()->create();
@@ -486,13 +498,13 @@ class UpdateUserTest extends TestCase
         $this->assertTrue($user->refresh()->groups->contains($group));
     }
 
-    public function testMultipleGroupsUpdateBySuperUser()
+    public function test_multiple_groups_update_by_super_user()
     {
         $user = User::factory()->create();
         $superUser = User::factory()->superuser()->create();
 
-        $groupA = Group::factory()->create(['name'=>'Group A']);
-        $groupB = Group::factory()->create(['name'=>'Group B']);
+        $groupA = Group::factory()->create(['name' => 'Group A']);
+        $groupB = Group::factory()->create(['name' => 'Group B']);
 
         $this->actingAsForApi($superUser)
             ->patchJson(route('api.users.update', $user), [
@@ -503,7 +515,7 @@ class UpdateUserTest extends TestCase
         $this->assertTrue($user->refresh()->groups->contains($groupB));
     }
 
-    public function testMultiCompanyUserCannotBeMovedIfHasAssetInDifferentCompany()
+    public function test_multi_company_user_cannot_be_moved_if_has_asset_in_different_company()
     {
         $this->settings->enableMultipleFullCompanySupport();
 
@@ -521,13 +533,13 @@ class UpdateUserTest extends TestCase
 
         // no assets assigned, therefore success
         $this->actingAsForApi($superUser)->patchJson(route('api.users.update', $user), [
-            'username'   => 'test',
+            'username' => 'test',
             'company_id' => $companyB->id,
         ])->assertStatusMessageIs('success');
 
         // same test but PUT
         $this->actingAsForApi($superUser)->putJson(route('api.users.update', $user), [
-            'username'   => 'test',
+            'username' => 'test',
             'first_name' => 'Test',
             'company_id' => $companyB->id,
         ])->assertStatusMessageIs('success');
@@ -536,19 +548,19 @@ class UpdateUserTest extends TestCase
 
         // asset assigned, therefore error
         $this->actingAsForApi($superUser)->patchJson(route('api.users.update', $user), [
-            'username'   => 'test',
+            'username' => 'test',
             'company_id' => $companyB->id,
         ])->assertStatusMessageIs('error');
 
         // same test but PUT
         $this->actingAsForApi($superUser)->putJson(route('api.users.update', $user), [
-            'username'   => 'test',
+            'username' => 'test',
             'first_name' => 'Test',
             'company_id' => $companyB->id,
         ])->assertStatusMessageIs('error');
     }
 
-    public function testMultiCompanyUserCanBeUpdatedIfHasAssetInSameCompany()
+    public function test_multi_company_user_can_be_updated_if_has_asset_in_same_company()
     {
         $this->settings->enableMultipleFullCompanySupport();
 
@@ -566,13 +578,13 @@ class UpdateUserTest extends TestCase
 
         // no assets assigned from other company, therefore success
         $this->actingAsForApi($superUser)->patchJson(route('api.users.update', $user), [
-            'username'   => 'test',
+            'username' => 'test',
             'company_id' => $companyB->id,
         ])->assertStatusMessageIs('success');
 
         // same test but PUT
         $this->actingAsForApi($superUser)->putJson(route('api.users.update', $user), [
-            'username'   => 'test',
+            'username' => 'test',
             'first_name' => 'Test',
             'company_id' => $companyB->id,
         ])->assertStatusMessageIs('success');
@@ -581,16 +593,68 @@ class UpdateUserTest extends TestCase
 
         // asset assigned from other company, therefore error
         $this->actingAsForApi($superUser)->patchJson(route('api.users.update', $user), [
-            'username'   => 'test',
+            'username' => 'test',
             'company_id' => $companyB->id,
         ])->assertStatusMessageIs('error');
 
         // same test but PUT
         $this->actingAsForApi($superUser)->putJson(route('api.users.update', $user), [
-            'username'   => 'test',
+            'username' => 'test',
             'first_name' => 'Test',
             'company_id' => $companyB->id,
         ])->assertStatusMessageIs('error');
     }
 
+    public function test_edit_users_permission_cannot_escalate_empty_permissions_user_to_admin_or_superuser_via_api()
+    {
+        $editingUser = User::factory()->editUsers()->create();
+        $targetUser = User::factory()->create([
+            'permissions' => null,
+        ]);
+
+        $this->actingAsForApi($editingUser)
+            ->putJson(route('api.users.update', $targetUser), [
+                'first_name' => $targetUser->first_name,
+                'username' => $targetUser->username,
+                'permissions' => [
+                    'admin' => '1',
+                    'superuser' => '1',
+                    'users.view' => '1',
+                ],
+            ])
+            ->assertOk()
+            ->assertStatusMessageIs('success');
+
+        $decoded = (array) $targetUser->refresh()->decodePermissions();
+
+        $this->assertArrayNotHasKey('admin', $decoded, 'Non-admin user should not be able to grant admin');
+        $this->assertArrayNotHasKey('superuser', $decoded, 'Non-admin user should not be able to grant superuser');
+        $this->assertEquals(1, $decoded['users.view'] ?? null, 'Non-privileged permissions should still be updateable');
+    }
+
+    public function test_admin_cannot_escalate_empty_permissions_user_to_superuser_via_api()
+    {
+        $adminUser = User::factory()->admin()->create();
+        $targetUser = User::factory()->create([
+            'permissions' => null,
+        ]);
+
+        $this->actingAsForApi($adminUser)
+            ->putJson(route('api.users.update', $targetUser), [
+                'first_name' => $targetUser->first_name,
+                'username' => $targetUser->username,
+                'permissions' => [
+                    'admin' => '1',
+                    'superuser' => '1',
+                ],
+            ])
+            ->assertOk()
+            ->assertStatusMessageIs('success');
+
+        $decoded = (array) $targetUser->refresh()->decodePermissions();
+
+        $this->assertArrayHasKey('admin', $decoded, 'Admin should be able to grant admin');
+        $this->assertSame('1', (string) $decoded['admin']);
+        $this->assertArrayNotHasKey('superuser', $decoded, 'Admin should not be able to grant superuser');
+    }
 }

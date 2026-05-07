@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
 
     /*
     |--------------------------------------------------------------------------
@@ -13,9 +13,9 @@ return array(
     |
     */
 
-    "password" => "Нууц үг дор хаяж 6 тэмдэгт урттай бөгөөд давхар баталгаажуулж оруулсантайгаа таарч байх ёстой.",
-    "user"     => "Хэрэглэгчийн нэр эсвэл имэйл хаяг буруу байна",
-    "token"    => 'This password reset token is invalid or expired, or does not match the username provided.',
-    'sent'	   => 'If a matching user with a valid email address exists in our system, a password recovery email has been sent.',
+    'password' => 'Нууц үг дор хаяж 6 тэмдэгт урттай бөгөөд давхар баталгаажуулж оруулсантайгаа таарч байх ёстой.',
+    'user' => 'Хэрэглэгчийн нэр эсвэл имэйл хаяг буруу байна',
+    'token' => 'This password reset token is invalid or expired, or does not match the username provided.',
+    'sent' => 'If a matching user with a valid email address exists in our system, a password recovery email has been sent.',
 
-);
+];

@@ -9,14 +9,14 @@ use Tests\TestCase;
 
 class UpdateLicenseTest extends TestCase
 {
-    public function testPageRenders()
+    public function test_page_renders()
     {
         $this->actingAs(User::factory()->superuser()->create())
             ->get(route('licenses.edit', License::factory()->create()->id))
             ->assertOk();
     }
 
-    public function testCanUpdateLicenseSeats()
+    public function test_can_update_license_seats()
     {
         $admin = User::factory()->superuser()->create();
         $license_category = Category::factory()->forLicenses()->create()->id;
@@ -44,7 +44,7 @@ class UpdateLicenseTest extends TestCase
         $this->assertEquals($license->licenseseats()->count(), 19999);
     }
 
-    public function testCannotUpdateLicenseSeatsTooMuch()
+    public function test_cannot_update_license_seats_too_much()
     {
         $admin = User::factory()->superuser()->create();
         $license_category = Category::factory()->forLicenses()->create()->id;
@@ -72,7 +72,7 @@ class UpdateLicenseTest extends TestCase
         $this->assertEquals($license->licenseseats()->count(), 9999);
     }
 
-    public function testCanRemoveLicenseSeats()
+    public function test_can_remove_license_seats()
     {
         $admin = User::factory()->superuser()->create();
         $license_category = Category::factory()->forLicenses()->create()->id;
@@ -99,6 +99,4 @@ class UpdateLicenseTest extends TestCase
         $this->assertEquals($license->licenseseats()->count(), $license->seats);
         $this->assertEquals($license->licenseseats()->count(), 5000);
     }
-
-
 }

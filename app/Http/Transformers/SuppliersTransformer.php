@@ -4,8 +4,8 @@ namespace App\Http\Transformers;
 
 use App\Helpers\Helper;
 use App\Models\Supplier;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
 class SuppliersTransformer
@@ -20,13 +20,13 @@ class SuppliersTransformer
         return (new DatatablesTransformer)->transformDatatables($array, $total);
     }
 
-    public function transformSupplier(Supplier $supplier = null)
+    public function transformSupplier(?Supplier $supplier = null)
     {
         if ($supplier) {
             $array = [
                 'id' => (int) $supplier->id,
                 'name' => e($supplier->name),
-                'image' =>   ($supplier->image) ? Storage::disk('public')->url('suppliers/'.e($supplier->image)) : null,
+                'image' => ($supplier->image) ? Storage::disk('public')->url('suppliers/'.e($supplier->image)) : null,
                 'url' => e($supplier->url),
                 'address' => e($supplier->address),
                 'address2' => e($supplier->address2),
@@ -48,15 +48,15 @@ class SuppliersTransformer
                 'created_at' => Helper::getFormattedDateObject($supplier->created_at, 'datetime'),
                 'created_by' => $supplier->adminuser ? [
                     'id' => (int) $supplier->adminuser->id,
-                    'name'=> e($supplier->adminuser->present()->fullName),
-                ]: null,
+                    'name' => e($supplier->adminuser->present()->fullName),
+                ] : null,
                 'updated_at' => Helper::getFormattedDateObject($supplier->updated_at, 'datetime'),
 
             ];
 
             $permissions_array['available_actions'] = [
                 'update' => Gate::allows('update', Supplier::class),
-                'delete' => (Gate::allows('delete', Supplier::class) && ($supplier->assets_count == 0) && ($supplier->licenses_count == 0) && ($supplier->accessories_count == 0)),
+                'delete' => (Gate::allows('delete', Supplier::class) && ($supplier->isDeletable())),
             ];
 
             $array += $permissions_array;

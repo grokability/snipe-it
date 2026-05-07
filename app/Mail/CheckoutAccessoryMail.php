@@ -9,6 +9,7 @@ use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailables\Address;
+use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
@@ -18,10 +19,12 @@ class CheckoutAccessoryMail extends BaseMailable
 {
     use Queueable, SerializesModels;
 
+    private bool $firstTimeSending;
+
     /**
      * Create a new message instance.
      */
-    public function __construct(Accessory $accessory, $checkedOutTo, User $checkedOutBy, $acceptance, $note)
+    public function __construct(Accessory $accessory, $checkedOutTo, User $checkedOutBy, $acceptance, $note, bool $firstTimeSending = true)
     {
         $this->item = $accessory;
         $this->admin = $checkedOutBy;
@@ -29,6 +32,7 @@ class CheckoutAccessoryMail extends BaseMailable
         $this->checkout_qty = $accessory->checkout_qty;
         $this->target = $checkedOutTo;
         $this->acceptance = $acceptance;
+        $this->firstTimeSending = $firstTimeSending;
         $this->settings = Setting::getSettings();
     }
 
@@ -41,7 +45,7 @@ class CheckoutAccessoryMail extends BaseMailable
 
         return new Envelope(
             from: $from,
-            subject: trans_choice('mail.Accessory_Checkout_Notification', $this->checkout_qty),
+            subject: $this->getSubject(),
         );
     }
 
@@ -56,27 +60,25 @@ class CheckoutAccessoryMail extends BaseMailable
         $accept_url = is_null($this->acceptance) ? null : route('account.accept.item', $this->acceptance);
         $name = null;
 
-        if($this->target instanceof User){
+        if ($this->target instanceof User) {
             $name = $this->target->display_name;
-        }
-        else if($this->target instanceof Asset){
-            $name  = $this->target->assignedto?->display_name;
-        }
-        else if($this->target instanceof Location){
-            $name  = $this->target->manager->name;
+        } elseif ($this->target instanceof Asset) {
+            $name = $this->target->assignedto?->display_name;
+        } elseif ($this->target instanceof Location) {
+            $name = $this->target->manager->name;
         }
 
         return new Content(
             markdown: 'mail.markdown.checkout-accessory',
-            with:   [
-                'item'          => $this->item,
-                'admin'         => $this->admin,
-                'note'          => $this->note,
-                'target'        => $name,
-                'eula'          => $eula,
-                'req_accept'    => $req_accept,
-                'accept_url'    => $accept_url,
-                'checkout_qty'  => $this->checkout_qty,
+            with: [
+                'item' => $this->item,
+                'admin' => $this->admin,
+                'note' => $this->note,
+                'target' => $name,
+                'eula' => $eula,
+                'req_accept' => $req_accept,
+                'accept_url' => $accept_url,
+                'checkout_qty' => $this->checkout_qty,
                 'introduction_line' => $this->introductionLine(),
             ],
         );
@@ -88,17 +90,22 @@ class CheckoutAccessoryMail extends BaseMailable
             return trans_choice('mail.new_item_checked_location', $this->checkout_qty, ['location' => $this->target->name]);
         }
 
-        if ($this->requiresAcceptance()) {
+        if ($this->firstTimeSending && $this->requiresAcceptance()) {
             return trans_choice('mail.new_item_checked_with_acceptance', $this->checkout_qty);
         }
 
-        if (!$this->requiresAcceptance()) {
+        if ($this->firstTimeSending && ! $this->requiresAcceptance()) {
             return trans_choice('mail.new_item_checked', $this->checkout_qty);
+        }
+
+        if (! $this->firstTimeSending && $this->requiresAcceptance()) {
+            return trans('mail.recent_item_checked');
         }
 
         // we shouldn't get here but let's send a default message just in case
         return trans('new_item_checked');
     }
+
     private function requiresAcceptance(): int|bool
     {
         return method_exists($this->item, 'requireAcceptance') ? $this->item->requireAcceptance() : 0;
@@ -107,10 +114,19 @@ class CheckoutAccessoryMail extends BaseMailable
     /**
      * Get the attachments for the message.
      *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+     * @return array<int, Attachment>
      */
     public function attachments(): array
     {
         return [];
+    }
+
+    private function getSubject(): string
+    {
+        if ($this->firstTimeSending) {
+            return trans_choice('mail.Accessory_Checkout_Notification', $this->checkout_qty);
+        }
+
+        return trans('mail.unaccepted_asset_reminder');
     }
 }

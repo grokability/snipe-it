@@ -5,38 +5,41 @@ return [
 ',
     'activated_disabled_help_text' => 'شما نمی توانید وضعیت فعال سازی را برای حساب خود ویرایش کنید.
 ',
-    'assets_user'       => 'دارایی ها محول شده به :',
-    'bulk_update_warn'	=> 'شما در حال خواندن مشخصات خواص کاربر user_count هستید. لطفا توجه داشته باشید که نمیتوانید ویژگیهای کاربر خود را با استفاده از این فرم تغییر دهید و باید به صورت جداگانه به کاربر خود ویرایش کنید.',
-    'bulk_update_help'	=> 'این فرم به شما امکان می دهد چندین بار در یک بار به روز کنید. فقط فیلمی را که باید تغییر دهید را پر کنید. هر فیلدی که خالی باقی می ماند بدون تغییر باقی خواهد ماند.',
-    'current_assets'    => 'دارایی های اکنون  برای این کاربر بیرون کشیده شد',
-    'clone'             => 'کلون کاربر',
-    'contact_user'      => 'تماس با:',
-    'edit'              => 'ویرایش کاربر',
-    'filetype_info'     => 'پسوند های مجاز:png, gif, jpg, jpeg, doc, docx, pdf, txt, zip,Rar',
-    'history_user'      => 'تاریخچه برای:',
-    'info'				=> 'اطلاعات',
-    'restore_user'		=> 'برای بازسازی آنها اینجا کلیک کنید.',
-    'last_login'        => 'آخرین ورود',
-    'ldap_config_text'  => 'The selected location will be set for ALL imported users. This will overwrite their existing location, and is an unusual use-case, so leaving this blank is typically best.',
-    'ldap_sync_intro'   => 'Click on the button below to manually sync your LDAP users. To learn more about configuring LDAP sync to run automatically, please see the <a href=":link" target="_blank">documentation <i class="fa fa-external-link"></i></a> .',
-    'print_assigned'    => 'چاپ همه موارد واگذار شده',
-    'email_assigned'    => 'لیست ایمیل همه اختصاص داده شده
+    'assets_user' => 'دارایی ها محول شده به :',
+    'bulk_update_warn' => 'شما در حال خواندن مشخصات خواص کاربر user_count هستید. لطفا توجه داشته باشید که نمیتوانید ویژگیهای کاربر خود را با استفاده از این فرم تغییر دهید و باید به صورت جداگانه به کاربر خود ویرایش کنید.',
+    'bulk_update_help' => 'این فرم به شما امکان می دهد چندین بار در یک بار به روز کنید. فقط فیلمی را که باید تغییر دهید را پر کنید. هر فیلدی که خالی باقی می ماند بدون تغییر باقی خواهد ماند.',
+    'current_assets' => 'دارایی های اکنون  برای این کاربر بیرون کشیده شد',
+    'current_items' => ':item currently checked out to this user',
+    'clone' => 'کلون کاربر',
+    'contact_user' => 'تماس با:',
+    'edit' => 'ویرایش کاربر',
+    'filetype_info' => 'پسوند های مجاز:png, gif, jpg, jpeg, doc, docx, pdf, txt, zip,Rar',
+    'history_user' => 'تاریخچه برای:',
+    'info' => 'اطلاعات',
+    'send_acceptance_reminder' => 'Send Reminder',
+    'unaccepted_items' => ':count Unaccepted Items',
+    'restore_user' => 'برای بازسازی آنها اینجا کلیک کنید.',
+    'last_login' => 'آخرین ورود',
+    'ldap_config_text' => 'The selected location will be set for ALL imported users. This will overwrite their existing location, and is an unusual use-case, so leaving this blank is typically best.',
+    'ldap_sync_intro' => 'Click on the button below to manually sync your LDAP users. To learn more about configuring LDAP sync to run automatically, please see the <a href=":link" target="_blank">documentation <i class="fa fa-external-link"></i></a> .',
+    'print_assigned' => 'چاپ همه موارد واگذار شده',
+    'email_assigned' => 'لیست ایمیل همه اختصاص داده شده
 ',
-    'user_notified'     => 'لیستی از موارد اختصاص داده شده فعلی به کاربر ایمیل شده است.
+    'user_notified' => 'لیستی از موارد اختصاص داده شده فعلی به کاربر ایمیل شده است.
 ',
-    'users_notified'    => 'The user has been emailed a list of their currently assigned items.|:count users have been emailed a list of their currently assigned items.',
+    'users_notified' => 'The user has been emailed a list of their currently assigned items.|:count users have been emailed a list of their currently assigned items.',
     'users_notified_warning' => ':count user has been emailed a list of their currently assigned items, however :no_email users did not have an email address so could not be emailed.|:count users have been emailed a list of their currently assigned items, however :no_email user(s) did not have an email address so could not be emailed.',
     'auto_assign_label' => 'Include this user when auto-assigning eligible licenses',
-    'auto_assign_help'  => 'Skip this user in auto assignment of licenses',
-    'software_user'     => 'برنامه چک شد برای:',
-    'view_user'         => 'نمایش کاربر :',
-    'usercsv'           => 'فایل CSV',
+    'auto_assign_help' => 'Skip this user in auto assignment of licenses',
+    'software_user' => 'برنامه چک شد برای:',
+    'view_user' => 'نمایش کاربر :',
+    'usercsv' => 'فایل CSV',
     'two_factor_admin_optin_help' => 'تنظیمات مدیریت فعلی شما اجازه اجرای مجدد احراز هویت دو عامل را می دهد.',
     'two_factor_enrolled' => 'دستگاه 2FA ثبت شده است',
-    'two_factor_active'   => '2FA فعال',
-    'user_deactivated'  => 'کاربر نمی تواند وارد شود
+    'two_factor_active' => '2FA فعال',
+    'user_deactivated' => 'کاربر نمی تواند وارد شود
 ',
-    'user_activated'  => 'کاربر می تواند وارد شود
+    'user_activated' => 'کاربر می تواند وارد شود
 ',
     'activation_status_warning' => 'وضعیت فعال سازی را تغییر ندهید
 ',
@@ -48,15 +51,14 @@ return [
 ',
     'remove_group_memberships' => 'حذف عضویت در گروه
 ',
-    'warning_deletion_information' => 'شما در شرف بررسی همه موارد از کاربر(های) :count فهرست شده در زیر هستید. نام های فوق ادمین با رنگ قرمز مشخص شده اند.
-',
+    'warning_deletion_information' => 'You are about to checkin ALL items from the :count user(s) listed below.',
     'update_user_assets_status' => 'همه دارایی های این کاربران را به این وضعیت به روز کنید
 ',
     'checkin_user_properties' => 'تمام ویژگی های مرتبط با این کاربران را بررسی کنید
 ',
-    'remote_label'   => 'این یک کاربر از راه دور است
+    'remote_label' => 'این یک کاربر از راه دور است
 ',
-    'remote'   => 'از دور',
+    'remote' => 'از دور',
     'remote_help' => 'اگر نیاز به فیلتر کردن توسط کاربران راه دوری که هرگز یا به ندرت به مکان های فیزیکی شما نمی آیند، می تواند مفید باشد.
 ',
     'not_remote_label' => 'این یک کاربر راه دور نیست

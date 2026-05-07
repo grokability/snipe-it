@@ -11,7 +11,7 @@ use Tests\TestCase;
 
 class DeleteCategoriesTest extends TestCase implements TestsPermissionsRequirement
 {
-    public function testRequiresPermission()
+    public function test_requires_permission()
     {
         $category = Category::factory()->create();
 
@@ -22,7 +22,7 @@ class DeleteCategoriesTest extends TestCase implements TestsPermissionsRequireme
         $this->assertNotSoftDeleted($category);
     }
 
-    public function testCannotDeleteCategoryThatStillHasAssociatedAssets()
+    public function test_cannot_delete_category_that_still_has_associated_assets()
     {
         $asset = Asset::factory()->create();
         $category = $asset->model->category;
@@ -34,7 +34,7 @@ class DeleteCategoriesTest extends TestCase implements TestsPermissionsRequireme
         $this->assertNotSoftDeleted($category);
     }
 
-    public function testCannotDeleteCategoryThatStillHasAssociatedModels()
+    public function test_cannot_delete_category_that_still_has_associated_models()
     {
         $model = AssetModel::factory()->create();
         $category = $model->category;
@@ -46,7 +46,7 @@ class DeleteCategoriesTest extends TestCase implements TestsPermissionsRequireme
         $this->assertNotSoftDeleted($category);
     }
 
-    public function testCanDeleteCategory()
+    public function test_can_delete_category()
     {
         $category = Category::factory()->create();
 

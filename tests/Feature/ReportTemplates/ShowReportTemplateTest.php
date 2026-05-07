@@ -11,14 +11,14 @@ use Tests\TestCase;
 #[Group('custom-reporting')]
 class ShowReportTemplateTest extends TestCase implements TestsPermissionsRequirement
 {
-    public function testRequiresPermission()
+    public function test_requires_permission()
     {
         $this->actingAs(User::factory()->create())
             ->get(route('report-templates.show', ReportTemplate::factory()->create()))
-            ->assertStatus(302);
+            ->assertRedirectToRoute('reports/custom');
     }
 
-    public function testCanLoadASavedReportTemplate()
+    public function test_can_load_a_saved_report_template()
     {
         $user = User::factory()->canViewReports()->create();
         $reportTemplate = ReportTemplate::factory()->make(['name' => 'My Awesome Template']);
@@ -32,12 +32,29 @@ class ShowReportTemplateTest extends TestCase implements TestsPermissionsRequire
             }]);
     }
 
-    public function testCannotLoadAnotherUsersSavedReportTemplate()
+    public function test_cannot_load_another_users_saved_report_template_if_not_shared()
     {
         $reportTemplate = ReportTemplate::factory()->create();
 
         $this->actingAs(User::factory()->canViewReports()->create())
             ->get(route('report-templates.show', $reportTemplate))
-            ->assertStatus(302);
+            ->assertRedirectToRoute('reports/custom')
+            ->assertSessionHas('error', trans('general.generic_model_not_found', ['model' => 'report template']));
+    }
+
+    public function test_can_load_another_users_saved_report_template_if_shared()
+    {
+        $user = User::factory()->canViewReports()->create();
+        $reportTemplate = ReportTemplate::factory()->shared()->make(['name' => 'My Awesome Template']);
+        $user->reportTemplates()->save($reportTemplate);
+
+        $this->actingAs(User::factory()->canViewReports()->create())
+            ->get(route('report-templates.show', $reportTemplate))
+            ->assertOk()
+            ->assertViewHas([
+                'template' => function (ReportTemplate $templatePassedToView) use ($reportTemplate) {
+                    return $templatePassedToView->is($reportTemplate);
+                },
+            ]);
     }
 }

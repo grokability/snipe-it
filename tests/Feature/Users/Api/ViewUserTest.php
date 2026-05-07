@@ -2,16 +2,12 @@
 
 namespace Tests\Feature\Users\Api;
 
-use App\Models\Company;
 use App\Models\User;
-use Illuminate\Testing\Fluent\AssertableJson;
-use Laravel\Passport\Passport;
 use Tests\TestCase;
 
 class ViewUserTest extends TestCase
 {
-
-    public function testCanReturnUser()
+    public function test_can_return_user()
     {
         $user = User::factory()->create();
 
@@ -19,5 +15,4 @@ class ViewUserTest extends TestCase
             ->getJson(route('api.users.show', $user))
             ->assertOk();
     }
-
 }

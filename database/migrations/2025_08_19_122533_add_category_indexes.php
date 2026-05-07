@@ -15,19 +15,19 @@ return new class extends Migration
             $table->index(['deleted_at']);
         });
         Schema::table('accessories', function (Blueprint $table) {
-            $table->index(['deleted_at','category_id']);
+            $table->index(['deleted_at', 'category_id']);
         });
         Schema::table('consumables', function (Blueprint $table) {
-            $table->index(['deleted_at','category_id']);
+            $table->index(['deleted_at', 'category_id']);
         });
         Schema::table('components', function (Blueprint $table) {
-            $table->index(['deleted_at','category_id']);
+            $table->index(['deleted_at', 'category_id']);
         });
         Schema::table('licenses', function (Blueprint $table) {
-            $table->index(['deleted_at','category_id']);
+            $table->index(['deleted_at', 'category_id']);
         });
         Schema::table('models', function (Blueprint $table) {
-            $table->index(['deleted_at','category_id']);
+            $table->index(['deleted_at', 'category_id']);
         });
 
     }
@@ -41,19 +41,19 @@ return new class extends Migration
             $table->dropIndex(['deleted_at']);
         });
         Schema::table('accessories', function (Blueprint $table) {
-            $table->dropIndex(['deleted_at','category_id']);
+            $table->dropIndex(['deleted_at', 'category_id']);
         });
         Schema::table('consumables', function (Blueprint $table) {
-            $table->dropIndex(['deleted_at','category_id']);
+            $table->dropIndex(['deleted_at', 'category_id']);
         });
         Schema::table('components', function (Blueprint $table) {
-            $table->dropIndex(['deleted_at','category_id']);
+            $table->dropIndex(['deleted_at', 'category_id']);
         });
         Schema::table('licenses', function (Blueprint $table) {
-            $table->dropIndex(['deleted_at','category_id']);
+            $table->dropIndex(['deleted_at', 'category_id']);
         });
         Schema::table('models', function (Blueprint $table) {
-            $table->dropIndex(['deleted_at','category_id']);
+            $table->dropIndex(['deleted_at', 'category_id']);
         });
     }
 };

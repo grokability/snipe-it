@@ -6,24 +6,19 @@ use App\Helpers\Helper;
 use App\Models\Asset;
 use App\Models\Setting;
 use App\Models\User;
-use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Channels\SlackWebhookChannel;
 use Illuminate\Notifications\Messages\SlackMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use NotificationChannels\GoogleChat\Card;
-use NotificationChannels\GoogleChat\Enums\Icon;
-use NotificationChannels\GoogleChat\Enums\ImageStyle;
 use NotificationChannels\GoogleChat\GoogleChatChannel;
 use NotificationChannels\GoogleChat\GoogleChatMessage;
 use NotificationChannels\GoogleChat\Section;
 use NotificationChannels\GoogleChat\Widgets\KeyValue;
 use NotificationChannels\MicrosoftTeams\MicrosoftTeamsChannel;
 use NotificationChannels\MicrosoftTeams\MicrosoftTeamsMessage;
-use Illuminate\Support\Facades\Log;
-use Osama\LaravelTeamsNotification\Logging\TeamsLoggingChannel;
-use Osama\LaravelTeamsNotification\TeamsNotification;
 
 #[AllowDynamicProperties]
 class CheckoutAssetNotification extends Notification
@@ -33,7 +28,7 @@ class CheckoutAssetNotification extends Notification
     /**
      * Create a new notification instance.
      *
-     * @param $params
+     * @param  $params
      */
     public function __construct(Asset $asset, $checkedOutTo, User $checkedOutBy, $acceptance, $note)
     {
@@ -55,6 +50,7 @@ class CheckoutAssetNotification extends Notification
                 false);
         }
     }
+
     /**
      * Get the notification's delivery channels.
      *
@@ -74,8 +70,7 @@ class CheckoutAssetNotification extends Notification
             $notifyBy[] = MicrosoftTeamsChannel::class;
         }
 
-
-        if (Setting::getSettings()->webhook_selected === 'slack' || Setting::getSettings()->webhook_selected === 'general' ) {
+        if (Setting::getSettings()->webhook_selected === 'slack' || Setting::getSettings()->webhook_selected === 'general') {
 
             Log::debug('use webhook');
             $notifyBy[] = SlackWebhookChannel::class;
@@ -84,7 +79,7 @@ class CheckoutAssetNotification extends Notification
         return $notifyBy;
     }
 
-    public function toSlack() :SlackMessage
+    public function toSlack(): SlackMessage
     {
         $target = $this->target;
         $admin = $this->admin;
@@ -114,7 +109,7 @@ class CheckoutAssetNotification extends Notification
             ->content(':arrow_up: :computer: '.trans('mail.Asset_Checkout_Notification', ['tag' => '']))
             ->from($botname)
             ->to($channel)
-            ->attachment(function ($attachment) use ($item, $note, $admin, $fields) {
+            ->attachment(function ($attachment) use ($item, $note, $fields) {
                 $attachment->title(htmlspecialchars_decode($item->display_name), $item->present()->viewUrl())
                     ->fields($fields)
                     ->content($note);
@@ -128,7 +123,7 @@ class CheckoutAssetNotification extends Notification
         $item = $this->item;
         $note = $this->note;
 
-        if(!Str::contains(Setting::getSettings()->webhook_endpoint, 'workflows')) {
+        if (! Str::contains(Setting::getSettings()->webhook_endpoint, 'workflows')) {
             return MicrosoftTeamsMessage::create()
                 ->to($this->settings->webhook_endpoint)
                 ->type('success')
@@ -147,9 +142,11 @@ class CheckoutAssetNotification extends Notification
             trans('general.administrator') => $admin->display_name,
             trans('mail.notes') => $note ?: '',
         ];
-       return  array($message, $details);
+
+        return [$message, $details];
     }
-public function toGoogleChat()
+
+    public function toGoogleChat()
     {
         $target = $this->target;
         $item = $this->item;

@@ -10,14 +10,14 @@ use Tests\TestCase;
 
 class DeleteAccessoryTest extends TestCase
 {
-    public function testRequiresPermissionToDeleteAccessory()
+    public function test_requires_permission_to_delete_accessory()
     {
         $this->actingAs(User::factory()->create())
             ->delete(route('accessories.destroy', Accessory::factory()->create()->id))
             ->assertForbidden();
     }
 
-    public function testCannotDeleteAccessoryFromAnotherCompany()
+    public function test_cannot_delete_accessory_from_another_company()
     {
         $this->settings->enableMultipleFullCompanySupport();
 
@@ -32,13 +32,13 @@ class DeleteAccessoryTest extends TestCase
 
     public static function checkedOutAccessories()
     {
-        yield 'checked out to user' => [fn() => Accessory::factory()->checkedOutToUser()->create()];
-        yield 'checked out to asset' => [fn() => Accessory::factory()->checkedOutToAsset()->create()];
-        yield 'checked out to location' => [fn() => Accessory::factory()->checkedOutToLocation()->create()];
+        yield 'checked out to user' => [fn () => Accessory::factory()->checkedOutToUser()->create()];
+        yield 'checked out to asset' => [fn () => Accessory::factory()->checkedOutToAsset()->create()];
+        yield 'checked out to location' => [fn () => Accessory::factory()->checkedOutToLocation()->create()];
     }
 
     #[DataProvider('checkedOutAccessories')]
-    public function testCannotDeleteAccessoryThatHasCheckouts($data)
+    public function test_cannot_delete_accessory_that_has_checkouts($data)
     {
         $accessory = $data();
 
@@ -50,7 +50,7 @@ class DeleteAccessoryTest extends TestCase
         $this->assertFalse($accessory->refresh()->trashed(), 'Accessory should not be deleted');
     }
 
-    public function testCanDeleteAccessory()
+    public function test_can_delete_accessory()
     {
 
         $accessory = Accessory::factory()->create();

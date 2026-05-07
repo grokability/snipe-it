@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
     'personal_api_keys' => '個人用APIキー',
     'personal_access_token' => 'Personal Access Token',
     'personal_api_keys_success' => 'Personal API Key :key created sucessfully',
@@ -14,4 +14,4 @@ return array(
     'no_tokens' => 'You have not created any personal access tokens.',
     'enable_sounds' => '効果音を有効にする',
     'enable_confetti' => 'Enable confetti effects',
-);
+];

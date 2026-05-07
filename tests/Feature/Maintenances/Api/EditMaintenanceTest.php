@@ -2,7 +2,8 @@
 
 namespace Tests\Feature\Maintenances\Api;
 
-use App\Models\Asset;
+use App\Models\Actionlog;
+use App\Models\Company;
 use App\Models\Maintenance;
 use App\Models\Supplier;
 use App\Models\User;
@@ -12,15 +13,14 @@ use Tests\TestCase;
 
 class EditMaintenanceTest extends TestCase
 {
-    public function testPageRenders()
+    public function test_page_renders()
     {
         $this->actingAs(User::factory()->superuser()->create())
             ->get(route('maintenances.update', Maintenance::factory()->create()->id))
             ->assertOk();
     }
 
-
-    public function testCanEditMaintenance()
+    public function test_can_edit_maintenance()
     {
         Storage::fake('public');
         $actor = User::factory()->superuser()->create();
@@ -29,7 +29,7 @@ class EditMaintenanceTest extends TestCase
 
         $response = $this->actingAs($actor)
             ->followingRedirects()
-            ->patch(route('maintenances.update',  $maintenance), [
+            ->patch(route('maintenances.update', $maintenance), [
                 'name' => 'Test Maintenance',
                 'supplier_id' => $supplier->id,
                 'asset_maintenance_type' => 'Maintenance',
@@ -48,7 +48,6 @@ class EditMaintenanceTest extends TestCase
         // Assert file was stored...
         Storage::disk('public')->assertExists(app('maintenances_path').$maintenance->image);
 
-
         $this->assertDatabaseHas('maintenances', [
             'supplier_id' => $supplier->id,
             'asset_maintenance_type' => 'Maintenance',
@@ -63,5 +62,38 @@ class EditMaintenanceTest extends TestCase
         ]);
 
         $this->assertHasTheseActionLogs($maintenance, ['create', 'update']);
+
+        $updateLog = Actionlog::query()
+            ->where('item_type', Maintenance::class)
+            ->where('item_id', $maintenance->id)
+            ->where('action_type', 'update')
+            ->latest('id')
+            ->first();
+
+        $this->assertNotNull($updateLog);
+        $this->assertNotNull($updateLog->log_meta);
+        $this->assertArrayHasKey('name', json_decode($updateLog->log_meta, true));
+    }
+
+    public function test_user_cannot_edit_maintenance_for_another_company_when_fmcs_enabled()
+    {
+        $this->settings->enableMultipleFullCompanySupport();
+
+        [$companyA, $companyB] = Company::factory()->count(2)->create();
+
+        $userInCompanyA = $companyA->users()->save(User::factory()->editAssets()->make());
+        $maintenanceForCompanyB = Maintenance::factory()->create();
+        $maintenanceForCompanyB->asset->update(['company_id' => $companyB->id]);
+
+        $this->actingAsForApi($userInCompanyA)
+            ->putJson(route('api.maintenances.update', $maintenanceForCompanyB), [
+                'name' => 'Should Not Update',
+            ])
+            ->assertStatusMessageIs('error');
+
+        $this->assertDatabaseMissing('maintenances', [
+            'id' => $maintenanceForCompanyB->id,
+            'name' => 'Should Not Update',
+        ]);
     }
 }

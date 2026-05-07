@@ -1,64 +1,59 @@
 <?php
 
-return array(
+return [
 
-    'field' => array(
-        'invalid'   => 'שדה זה אינו קיים.',
-        'already_added'   => 'השדה כבר נוסף',
-        'none_selected'   => 'No field selected',
+    'field' => [
+        'invalid' => 'שדה זה אינו קיים.',
+        'already_added' => 'השדה כבר נוסף',
+        'none_selected' => 'No field selected',
 
-        'create' => array(
-            'error'   => 'שדה לא נוצר, נסה שוב.',
+        'create' => [
+            'error' => 'שדה לא נוצר, נסה שוב.',
             'success' => 'שדה נוצר בהצלחה.',
-            'assoc_success' => 'שדה נוסף בהצלחה ל- fieldset.'
-        ),
+            'assoc_success' => 'שדה נוסף בהצלחה ל- fieldset.',
+        ],
 
-        'update' => array(
-            'error'   => 'השדה לא עודכן, נסה שוב',
-            'success' => 'שדה עודכן בהצלחה.'
-        ),
+        'update' => [
+            'error' => 'השדה לא עודכן, נסה שוב',
+            'success' => 'שדה עודכן בהצלחה.',
+        ],
 
-        'delete' => array(
-            'confirm'   	=> 'האם אתה בטוח שברצונך למחוק שדה זה?',
-            'error'   => 'הייתה בעיה במחיקת השדה. בבקשה נסה שוב.',
+        'delete' => [
+            'confirm' => 'האם אתה בטוח שברצונך למחוק שדה זה?',
+            'error' => 'הייתה בעיה במחיקת השדה. בבקשה נסה שוב.',
             'success' => 'השדה נמחק בהצלחה.',
-            'in_use'   => 'שדה עדיין בשימוש.',
-        )
+            'in_use' => 'שדה עדיין בשימוש.',
+        ],
 
-    ),
+    ],
 
-    'fieldset' => array(
+    'fieldset' => [
 
         'does_not_exist' => 'Fieldset אינו קיים',
 
-        'create' => array(
-            'error'   => 'Fieldset לא נוצר, נסה שוב.',
-            'success' => 'Fieldset נוצר בהצלחה.'
-        ),
+        'create' => [
+            'error' => 'Fieldset לא נוצר, נסה שוב.',
+            'success' => 'Fieldset נוצר בהצלחה.',
+        ],
 
-        'update' => array(
-            'error'   => 'Fieldset לא עודכן, נסה שוב',
-            'success' => 'Fieldset עודכן בהצלחה.'
-        ),
+        'update' => [
+            'error' => 'Fieldset לא עודכן, נסה שוב',
+            'success' => 'Fieldset עודכן בהצלחה.',
+        ],
 
-        'delete' => array(
-            'confirm'   	=> 'האם אתה בטוח שברצונך למחוק את השדה הזה?',
-            'error'   => 'היתה בעיה במחיקת השדה. בבקשה נסה שוב.',
+        'delete' => [
+            'confirm' => 'האם אתה בטוח שברצונך למחוק את השדה הזה?',
+            'error' => 'היתה בעיה במחיקת השדה. בבקשה נסה שוב.',
             'success' => 'ה- fieldset נמחק בהצלחה.',
-            'in_use'   => 'Fieldset עדיין בשימוש.',
-        )
+            'in_use' => 'Fieldset עדיין בשימוש.',
+        ],
 
-    ),
+    ],
 
-    'fieldset_default_value' => array(
+    'fieldset_default_value' => [
 
         'error' => 'Error validating default fieldset values.',
 
-    ),
+    ],
 
-
-
-
-
-
-);
+];

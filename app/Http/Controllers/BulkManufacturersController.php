@@ -4,9 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Actions\Manufacturers\DeleteManufacturerAction;
 use App\Exceptions\ItemStillHasAccessories;
-use App\Exceptions\ItemStillHasAssetModels;
 use App\Exceptions\ItemStillHasAssets;
-use App\Exceptions\ItemStillHasChildren;
 use App\Exceptions\ItemStillHasComponents;
 use App\Exceptions\ItemStillHasConsumables;
 use App\Exceptions\ItemStillHasLicenses;
@@ -25,6 +23,7 @@ class BulkManufacturersController extends Controller
             $manufacturer = Manufacturer::find($id);
             if (is_null($manufacturer)) {
                 $errors[] = trans('admin/manufacturers/message.does_not_exist');
+
                 continue;
             }
             try {
@@ -39,7 +38,7 @@ class BulkManufacturersController extends Controller
             } catch (ItemStillHasComponents $e) {
                 $errors[] = trans('general.bulk_delete_associations.assoc_components_no_count', ['item_name' => $manufacturer->name, 'item' => trans('general.manufacturer')]);
             } catch (ItemStillHasLicenses $e) {
-                $errors[] = trans('general.bulk_delete_associations.assoc_licenses_no_count', ['item_name' => $manufacturer->name, 'item' => trans('general.manufacturer')]);;
+                $errors[] = trans('general.bulk_delete_associations.assoc_licenses_no_count', ['item_name' => $manufacturer->name, 'item' => trans('general.manufacturer')]);
             } catch (\Exception $e) {
                 report($e);
                 $errors[] = trans('general.something_went_wrong');
@@ -49,6 +48,7 @@ class BulkManufacturersController extends Controller
             if ($success_count > 0) {
                 return redirect()->route('manufacturers.index')->with('success', trans_choice('admin/manufacturers/message.delete.partial_success', $success_count, ['count' => $success_count]))->with('multi_error_messages', $errors);
             }
+
             return redirect()->route('manufacturers.index')->with('multi_error_messages', $errors);
         } else {
             return redirect()->route('manufacturers.index')->with('success', trans('admin/manufacturers/message.delete.bulk_success'));

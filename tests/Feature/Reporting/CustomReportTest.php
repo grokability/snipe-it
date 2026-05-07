@@ -4,12 +4,12 @@ namespace Tests\Feature\Reporting;
 
 use App\Models\Asset;
 use App\Models\Company;
+use App\Models\CustomField;
 use App\Models\ReportTemplate;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Testing\TestResponse;
+use Illuminate\Support\Facades\Crypt;
 use League\Csv\Reader;
-use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\Group;
 use Tests\Concerns\TestsPermissionsRequirement;
 use Tests\TestCase;
@@ -17,45 +17,14 @@ use Tests\TestCase;
 #[Group('custom-reporting')]
 class CustomReportTest extends TestCase implements TestsPermissionsRequirement
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        TestResponse::macro(
-            'assertSeeTextInStreamedResponse',
-            function (string $needle) {
-                Assert::assertTrue(
-                    collect(Reader::createFromString($this->streamedContent())->getRecords())
-                        ->pluck(0)
-                        ->contains($needle)
-                );
-
-                return $this;
-            }
-        );
-
-        TestResponse::macro(
-            'assertDontSeeTextInStreamedResponse',
-            function (string $needle) {
-                Assert::assertFalse(
-                    collect(Reader::createFromString($this->streamedContent())->getRecords())
-                        ->pluck(0)
-                        ->contains($needle)
-                );
-
-                return $this;
-            }
-        );
-    }
-
-    public function testRequiresPermission()
+    public function test_requires_permission()
     {
         $this->actingAs(User::factory()->create())
             ->get(route('reports/custom'))
             ->assertForbidden();
     }
 
-    public function testCanLoadCustomReportPage()
+    public function test_can_load_custom_report_page()
     {
         $this->actingAs(User::factory()->canViewReports()->create())
             ->get(route('reports/custom'))
@@ -64,11 +33,11 @@ class CustomReportTest extends TestCase implements TestsPermissionsRequirement
                 'template' => function (ReportTemplate $template) {
                     // the view should have an empty report by default
                     return $template->exists() === false;
-                }
+                },
             ]);
     }
 
-    public function testSavedTemplatesOnPageAreScopedToTheUser()
+    public function test_saved_templates_on_page_are_scoped_to_the_user()
     {
         // Given there is a saved template for one user
         ReportTemplate::factory()->create(['name' => 'Report A']);
@@ -84,12 +53,11 @@ class CustomReportTest extends TestCase implements TestsPermissionsRequirement
             ->assertViewHas([
                 'report_templates' => function (Collection $reports) {
                     return $reports->pluck('name')->doesntContain('Report A');
-                }
+                },
             ]);
     }
 
-
-    public function testCustomAssetReport()
+    public function test_custom_asset_report()
     {
         Asset::factory()->create(['name' => 'Asset A']);
         Asset::factory()->create(['name' => 'Asset B']);
@@ -100,12 +68,12 @@ class CustomReportTest extends TestCase implements TestsPermissionsRequirement
                 'asset_tag' => '1',
                 'serial' => '1',
             ])->assertOk()
-            ->assertHeader('content-type', 'text/csv; charset=UTF-8')
+            ->assertHeader('content-type', 'text/csv; charset=utf-8')
             ->assertSeeTextInStreamedResponse('Asset A')
             ->assertSeeTextInStreamedResponse('Asset B');
     }
 
-    public function testCustomAssetReportAdheresToCompanyScoping()
+    public function test_custom_asset_report_adheres_to_company_scoping()
     {
         [$companyA, $companyB] = Company::factory()->count(2)->create();
 
@@ -120,30 +88,26 @@ class CustomReportTest extends TestCase implements TestsPermissionsRequirement
 
         $this->actingAs($superUser)
             ->post('reports/custom', ['asset_name' => '1', 'asset_tag' => '1', 'serial' => '1'])
-            ->assertSeeTextInStreamedResponse('Asset A')
-            ->assertSeeTextInStreamedResponse('Asset B');
+            ->assertSeeTextInStreamedResponse(['Asset A', 'Asset B']);
 
         $this->actingAs($userInCompanyA)
             ->post('reports/custom', ['asset_name' => '1', 'asset_tag' => '1', 'serial' => '1'])
-            ->assertSeeTextInStreamedResponse('Asset A')
-            ->assertSeeTextInStreamedResponse('Asset B');
+            ->assertSeeTextInStreamedResponse(['Asset A', 'Asset B']);
 
         $this->actingAs($userInCompanyB)
             ->post('reports/custom', ['asset_name' => '1', 'asset_tag' => '1', 'serial' => '1'])
-            ->assertSeeTextInStreamedResponse('Asset A')
-            ->assertSeeTextInStreamedResponse('Asset B');
+            ->assertSeeTextInStreamedResponse(['Asset A', 'Asset B']);
 
         $this->settings->enableMultipleFullCompanySupport();
 
         $this->actingAs($superUser)
             ->post('reports/custom', ['asset_name' => '1', 'asset_tag' => '1', 'serial' => '1'])
-            ->assertSeeTextInStreamedResponse('Asset A')
-            ->assertSeeTextInStreamedResponse('Asset B');
+            ->assertSeeTextInStreamedResponse(['Asset A', 'Asset B']);
 
         $this->actingAs($userInCompanyA)
             ->post('reports/custom', ['asset_name' => '1', 'asset_tag' => '1', 'serial' => '1'])
             ->assertSeeTextInStreamedResponse('Asset A')
-            ->assertDontSeeTextInStreamedResponse('Asset B');
+            ->assertDontSeeTextInStreamedResponse(['Asset B']);
 
         $this->actingAs($userInCompanyB)
             ->post('reports/custom', ['asset_name' => '1', 'asset_tag' => '1', 'serial' => '1'])
@@ -151,7 +115,7 @@ class CustomReportTest extends TestCase implements TestsPermissionsRequirement
             ->assertSeeTextInStreamedResponse('Asset B');
     }
 
-    public function testCanLimitAssetsByLastCheckIn()
+    public function test_can_limit_assets_by_last_check_in()
     {
         Asset::factory()->create(['name' => 'Asset A', 'last_checkin' => '2023-08-01']);
         Asset::factory()->create(['name' => 'Asset B', 'last_checkin' => '2023-08-02']);
@@ -168,11 +132,72 @@ class CustomReportTest extends TestCase implements TestsPermissionsRequirement
                 'checkin_date_start' => '2023-08-02',
                 'checkin_date_end' => '2023-08-04',
             ])->assertOk()
-            ->assertHeader('content-type', 'text/csv; charset=UTF-8')
+            ->assertHeader('content-type', 'text/csv; charset=utf-8')
             ->assertDontSeeTextInStreamedResponse('Asset A')
             ->assertSeeTextInStreamedResponse('Asset B')
             ->assertSeeTextInStreamedResponse('Asset C')
             ->assertSeeTextInStreamedResponse('Asset D')
             ->assertDontSeeTextInStreamedResponse('Asset E');
+    }
+
+    public function test_can_limit_custom_report_to_assigned_assets(): void
+    {
+        Asset::factory()->assignedToUser()->create(['name' => 'Assigned Asset']);
+        Asset::factory()->create(['name' => 'Unassigned Asset']);
+
+        $this->actingAs(User::factory()->canViewReports()->create())
+            ->post('reports/custom', [
+                'asset_name' => '1',
+                'assignment_status' => 'assigned',
+            ])
+            ->assertOk()
+            ->assertSeeTextInStreamedResponse('Assigned Asset')
+            ->assertDontSeeTextInStreamedResponse('Unassigned Asset');
+    }
+
+    public function test_can_limit_custom_report_to_unassigned_assets(): void
+    {
+        Asset::factory()->assignedToUser()->create(['name' => 'Assigned Asset']);
+        Asset::factory()->create(['name' => 'Unassigned Asset']);
+
+        $this->actingAs(User::factory()->canViewReports()->create())
+            ->post('reports/custom', [
+                'asset_name' => '1',
+                'assignment_status' => 'unassigned',
+            ])
+            ->assertOk()
+            ->assertDontSeeTextInStreamedResponse('Assigned Asset')
+            ->assertSeeTextInStreamedResponse('Unassigned Asset');
+    }
+
+    public function test_custom_report_decrypts_encrypted_custom_fields_when_user_has_permission(): void
+    {
+        $customField = CustomField::factory()->encrypt()->create();
+        $columnName = $customField->db_column_name();
+
+        $asset = Asset::factory()->create(['name' => 'Encrypted Asset']);
+        $asset->{$columnName} = Crypt::encrypt('super-secret-value');
+        $asset->save();
+
+        $user = User::factory()->create([
+            'permissions' => json_encode([
+                'reports.view' => '1',
+                'assets.view.encrypted_custom_fields' => '1',
+            ]),
+        ]);
+
+        $response = $this->actingAs($user)
+            ->post('reports/custom', [
+                'asset_name' => '1',
+                $columnName => '1',
+            ])
+            ->assertOk()
+            ->assertHeader('content-type', 'text/csv; charset=utf-8');
+
+        $records = collect(Reader::createFromString($response->streamedContent())->getRecords())
+            ->flatten()
+            ->filter();
+
+        $this->assertTrue($records->contains('super-secret-value'));
     }
 }

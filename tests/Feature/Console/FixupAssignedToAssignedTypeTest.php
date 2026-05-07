@@ -8,14 +8,14 @@ use Tests\TestCase;
 
 class FixupAssignedToAssignedTypeTest extends TestCase
 {
-    public function testEmptyAssignedType()
+    public function test_empty_assigned_type()
     {
         $asset = Asset::factory()->create();
         $user = User::factory()->create();
         $admin = User::factory()->admin()->create();
 
         $asset->checkOut($user, $admin);
-        $asset->assigned_type=null; //blank out the assigned type
+        $asset->assigned_type = null; // blank out the assigned type
         $asset->save();
 
         $this->artisan('snipeit:assigned-to-fixup --debug')->assertExitCode(0);
@@ -23,7 +23,7 @@ class FixupAssignedToAssignedTypeTest extends TestCase
         $this->assertEquals(User::class, $asset->fresh()->assigned_type);
     }
 
-    public function testInvalidAssignedTo()
+    public function test_invalid_assigned_to()
     {
         $this->markTestIncomplete();
         $asset = Asset::factory()->create();
@@ -31,11 +31,11 @@ class FixupAssignedToAssignedTypeTest extends TestCase
         $admin = User::factory()->admin()->create();
 
         $asset->checkOut($user, $admin);
-        $asset->assigned_type=null;
-        $asset->assigned_to=null;
-        $asset->saveOrFail(); //*should* generate a 'checkin'?
+        $asset->assigned_type = null;
+        $asset->assigned_to = null;
+        $asset->saveOrFail(); // *should* generate a 'checkin'?
 
-        $asset->assigned_to=$user->id; //incorrectly mark asset as partially checked-out
+        $asset->assigned_to = $user->id; // incorrectly mark asset as partially checked-out
         $asset->saveOrFail();
 
         $this->artisan('snipeit:assigned-to-fixup --debug')->assertExitCode(0);

@@ -8,7 +8,7 @@ trait UniqueUndeletedTrait
      * Prepare a unique_ids rule, adding a model identifier if required.
      *
      * @param  array  $parameters
-     * @param  string $field
+     * @param  string  $field
      * @return string
      */
     protected function prepareUniqueUndeletedRule($parameters, $field)

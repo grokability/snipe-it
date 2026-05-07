@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
 
     /*
     |--------------------------------------------------------------------------
@@ -15,29 +15,28 @@ return array(
     |---------------------------------------------------------------------------
     */
 
-    "superuser" => [
+    'superuser' => [
         'name' => 'Super User',
-        'note'       => 'Determines whether the user has full access to all aspects of the admin. This setting overrides ALL more specific and restrictive permissions throughout the system. ',
+        'note' => 'Determines whether the user has full access to all aspects of the admin. This setting overrides ALL more specific and restrictive permissions throughout the system. ',
     ],
     'admin' => [
         'name' => 'Admin Access',
-        'note'       => 'Determines whether the user has access to most aspects of the system EXCEPT the System Admin Settings. These users will be able to manage users, locations, categories, etc, but ARE constrained by Full Multiple Company Support if it is enabled.',
+        'note' => 'Determines whether the user has access to most aspects of the system EXCEPT the System Admin Settings. These users will be able to manage users, locations, categories, etc, but ARE constrained by Full Multiple Company Support if it is enabled.',
     ],
 
     'import' => [
         'name' => 'CSV Import',
-        'note'       => 'This will allow users to import even if access to users, assets, etc is denied elsewhere.',
+        'note' => 'This will allow users to import even if access to users, assets, etc is denied elsewhere.',
     ],
 
     'reports' => [
         'name' => 'Reports Access',
-        'note'       => 'Determines whether the user has access to the Reports section of the application.',
+        'note' => 'Determines whether the user has access to the Reports section of the application.',
     ],
 
-    'assets' =>
-        [
-            'name' => 'Assets',
-            'note' => 'Grants access to the Assets section of the application.',
+    'assets' => [
+        'name' => 'Assets',
+        'note' => 'Grants access to the Assets section of the application.',
     ],
 
     'assetsview' => [
@@ -81,9 +80,9 @@ return array(
         'note' => 'Allows the user to view and modify encrypted custom fields on assets.',
     ],
 
-    'accessories'   => [
+    'accessories' => [
         'name' => 'Accessories',
-        'note'       => 'Grants access to the Accessories section of the application.',
+        'note' => 'Grants access to the Accessories section of the application.',
     ],
 
     'accessoriesview' => [
@@ -108,11 +107,52 @@ return array(
     ],
     'accessoriesfiles' => [
         'name' => 'Manage Accessory Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with accessories.',
+        'note' => 'Allows the user to upload, download, and delete files associated with accessories. (This only makes sense with view privileges or higher.)',
     ],
-    'consumables'   => [
+
+    'assetsfiles' => [
+        'name' => 'Manage Asset Files',
+        'note' => 'Allows the user to upload, download, and delete files associated with assets. (This only makes sense with view privileges or higher.)',
+    ],
+
+    'usersfiles' => [
+        'name' => 'Manage User Files',
+        'note' => 'Allows the user to upload, download, and delete files associated with users. (This only makes sense with view privileges or higher.)',
+    ],
+
+    'modelsfiles' => [
+        'name' => 'Manage Model Files',
+        'note' => 'Allows the user to upload, download, and delete files associated with asset models on both the model view and the asset view screens. (This only makes sense with view privileges or higher.)',
+    ],
+
+    'departmentsfiles' => [
+        'name' => 'Manage Department Files',
+        'note' => 'Allows the user to upload, download, and delete files associated with departments. (This only makes sense with view privileges or higher.)',
+    ],
+
+    'suppliersfiles' => [
+        'name' => 'Manage Supplier Files',
+        'note' => 'Allows the user to upload, download, and delete files associated with suppliers. (This only makes sense with view privileges or higher.)',
+    ],
+
+    'locationsfiles' => [
+        'name' => 'Manage Location Files',
+        'note' => 'Allows the user to upload, download, and delete files associated with locations.(This only makes sense with view privileges or higher.)',
+    ],
+
+    'companiesfiles' => [
+        'name' => 'Manage Company Files',
+        'note' => 'Allows the user to upload, download, and delete files associated with companies. (This only makes sense with view privileges or higher.)',
+    ],
+
+    'consumablesfiles' => [
+        'name' => 'Manage Consumable Files',
+        'note' => 'Allows the user to upload, download, and delete files associated with consumables. (This only makes sense with view privileges or higher.)',
+    ],
+
+    'consumables' => [
         'name' => 'Consumables',
-        'note'       => 'Grants access to the Consumables section of the application.',
+        'note' => 'Grants access to the Consumables section of the application.',
     ],
     'consumablesview' => [
         'name' => 'View Consumables',
@@ -130,13 +170,10 @@ return array(
         'name' => 'Check Out Consumables',
         'note' => 'Assign consumables in inventory by checking them out.',
     ],
-    'consumablesfiles' => [
-        'name' => 'Manage Consumable Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with consumables.',
-    ],
-    'licenses'   => [
+
+    'licenses' => [
         'name' => 'Licenses',
-        'note'       => 'Grants access to the Licenses section of the application.',
+        'note' => 'Grants access to the Licenses section of the application.',
     ],
     'licensesview' => [
         'name' => 'View Licenses',
@@ -153,7 +190,7 @@ return array(
     'licensescheckout' => [
         'name' => 'Assign Licenses',
         'note' => 'Allows the user to assign licenses to assets or users.',
-        ],
+    ],
     'licensescheckin' => [
         'name' => 'Unassign Licenses',
         'note' => 'Allows the user to unassign licenses from assets or users.',
@@ -162,13 +199,18 @@ return array(
         'name' => 'Manage License Files',
         'note' => 'Allows the user to upload, download, and delete files associated with licenses.',
     ],
+    'componentsfiles' => [
+        'name' => 'Manage Component Files',
+        'note' => 'Allows the user to upload, download, and delete files associated with components.',
+    ],
+
     'licenseskeys' => [
         'name' => 'Manage License Keys',
         'note' => 'Allows the user to view product keys associated with licenses.',
     ],
-    'components'   => [
+    'components' => [
         'name' => 'Components',
-        'note'       => 'Grants access to the Components section of the application.',
+        'note' => 'Grants access to the Components section of the application.',
     ],
     'componentsview' => [
         'name' => 'View Components',
@@ -182,10 +224,7 @@ return array(
     'componentsdelete' => [
         'name' => 'Delete Components',
     ],
-    'componentsfiles' => [
-        'name' => 'Manage Component Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with components.',
-    ],
+
     'componentscheckout' => [
         'name' => 'Check Out Components',
         'note' => 'Assign components in inventory by checking them out.',
@@ -194,9 +233,9 @@ return array(
         'name' => 'Check In Components',
         'note' => 'Check components back into inventory that are currently checked out.',
     ],
-    'kits'   => [
+    'kits' => [
         'name' => 'Predefined Kits',
-        'note'       => 'Grants access to the Predefined Kits section of the application.',
+        'note' => 'Grants access to the Predefined Kits section of the application.',
     ],
     'kitsview' => [
         'name' => 'View Predefined Kits',
@@ -210,9 +249,9 @@ return array(
     'kitsdelete' => [
         'name' => 'Delete Predefined Kits',
     ],
-    'users'   => [
+    'users' => [
         'name' => 'Users',
-        'note'       => 'Grants access to the Users section of the application.',
+        'note' => 'Grants access to the Users section of the application.',
     ],
     'usersview' => [
         'name' => 'View Users',
@@ -226,9 +265,9 @@ return array(
     'usersdelete' => [
         'name' => 'Delete Users',
     ],
-    'models'   => [
+    'models' => [
         'name' => 'Models',
-        'note'       => 'Grants access to the Models section of the application.',
+        'note' => 'Grants access to the Models section of the application.',
     ],
     'modelsview' => [
         'name' => 'View Models',
@@ -243,9 +282,9 @@ return array(
     'modelsdelete' => [
         'name' => 'Delete Models',
     ],
-    'categories'   => [
+    'categories' => [
         'name' => 'Categories',
-        'note'       => 'Grants access to the Categories section of the application.',
+        'note' => 'Grants access to the Categories section of the application.',
     ],
     'categoriesview' => [
         'name' => 'View Categories',
@@ -259,9 +298,9 @@ return array(
     'categoriesdelete' => [
         'name' => 'Delete Categories',
     ],
-    'departments'   => [
+    'departments' => [
         'name' => 'Departments',
-        'note'       => 'Grants access to the Departments section of the application.',
+        'note' => 'Grants access to the Departments section of the application.',
     ],
     'departmentsview' => [
         'name' => 'View Departments',
@@ -275,9 +314,9 @@ return array(
     'departmentsdelete' => [
         'name' => 'Delete Departments',
     ],
-    'locations'   => [
+    'locations' => [
         'name' => 'Locations',
-        'note'       => 'Grants access to the Locations section of the application.',
+        'note' => 'Grants access to the Locations section of the application.',
     ],
     'locationsview' => [
         'name' => 'View Locations',
@@ -291,9 +330,9 @@ return array(
     'locationsdelete' => [
         'name' => 'Delete Locations',
     ],
-    'status-labels'   => [
+    'status-labels' => [
         'name' => 'Status Labels',
-        'note'       => 'Grants access to the Status Labels section of the application used by Assets.',
+        'note' => 'Grants access to the Status Labels section of the application used by Assets.',
     ],
     'statuslabelsview' => [
         'name' => 'View Status Labels',
@@ -307,9 +346,9 @@ return array(
     'statuslabelsdelete' => [
         'name' => 'Delete Status Labels',
     ],
-    'custom-fields'   => [
+    'custom-fields' => [
         'name' => 'Custom Fields',
-        'note'       => 'Grants access to the Custom Fields section of the application used by Assets.',
+        'note' => 'Grants access to the Custom Fields section of the application used by Assets.',
     ],
     'customfieldsview' => [
         'name' => 'View Custom Fields',
@@ -323,9 +362,9 @@ return array(
     'customfieldsdelete' => [
         'name' => 'Delete Custom Fields',
     ],
-    'suppliers'   => [
+    'suppliers' => [
         'name' => 'Suppliers',
-        'note'       => 'Grants access to the Suppliers section of the application.',
+        'note' => 'Grants access to the Suppliers section of the application.',
     ],
     'suppliersview' => [
         'name' => 'View Suppliers',
@@ -339,9 +378,9 @@ return array(
     'suppliersdelete' => [
         'name' => 'Delete Suppliers',
     ],
-    'manufacturers'   => [
+    'manufacturers' => [
         'name' => 'Manufacturers',
-        'note'       => 'Grants access to the Manufacturers section of the application.',
+        'note' => 'Grants access to the Manufacturers section of the application.',
     ],
     'manufacturersview' => [
         'name' => 'View Manufacturers',
@@ -355,9 +394,9 @@ return array(
     'manufacturersdelete' => [
         'name' => 'Delete Manufacturers',
     ],
-    'companies'   => [
+    'companies' => [
         'name' => 'Companies',
-        'note'       => 'Grants access to the Companies section of the application.',
+        'note' => 'Grants access to the Companies section of the application.',
     ],
     'companiesview' => [
         'name' => 'View Companies',
@@ -373,32 +412,32 @@ return array(
     ],
     'user-self-accounts' => [
         'name' => 'User Self Accounts',
-        'note'       => 'Grants non-admin users the ability to manage certain aspects of their own user accounts.',
+        'note' => 'Grants non-admin users the ability to manage certain aspects of their own user accounts.',
     ],
     'selftwo-factor' => [
         'name' => 'Manage Two-Factor Authentication',
-        'note'       => 'Allows users to enable, disable, and manage two-factor authentication for their own accounts.',
+        'note' => 'Allows users to enable, disable, and manage two-factor authentication for their own accounts.',
     ],
     'selfapi' => [
         'name' => 'Manage API Tokens',
-        'note'       => 'Allows users to create, view, and revoke their own API tokens. User tokens will have the same permissions as the user who created them.',
+        'note' => 'Allows users to create, view, and revoke their own API tokens. User tokens will have the same permissions as the user who created them.',
     ],
     'selfedit-location' => [
         'name' => 'Edit Location',
-        'note'       => 'Allows users to edit the location associated with their own user account.',
+        'note' => 'Allows users to edit the location associated with their own user account.',
     ],
     'selfcheckout-assets' => [
         'name' => 'Self Check Out Assets',
-        'note'       => 'Allows users to check out assets to themselves without admin intervention.',
+        'note' => 'Allows users to check out assets to themselves without admin intervention.',
     ],
     'selfview-purchase-cost' => [
         'name' => 'View Purchase Cost',
-        'note'       => 'Allows users to view the purchase cost of items in their account view.',
+        'note' => 'Allows users to view the purchase cost of items in their account view.',
     ],
 
     'depreciations' => [
         'name' => 'Depreciation Management',
-        'note'       => 'Allows users to manage and view asset depreciation details.',
+        'note' => 'Allows users to manage and view asset depreciation details.',
     ],
     'depreciationsview' => [
         'name' => 'View Depreciation Details',
@@ -419,6 +458,6 @@ return array(
     'grant' => 'Grant Permission for :area',
     'deny' => 'Deny Permission for :area',
     'inherit' => 'Inherit Permission for :area from permission groups',
-    'use_groups' => 'We strongly suggest using Permission Groups instead of assigning individual permissions for easier management.'
+    'use_groups' => 'We strongly suggest using Permission Groups instead of assigning individual permissions for easier management.',
 
-);
+];

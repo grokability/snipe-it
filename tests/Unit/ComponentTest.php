@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Unit;
 
 use App\Models\Asset;
@@ -11,35 +12,34 @@ use Tests\TestCase;
 
 class ComponentTest extends TestCase
 {
-    public function testAComponentBelongsToACompany()
+    public function test_a_component_belongs_to_a_company()
     {
         $component = Component::factory()
             ->create(
-                    [
-                        'company_id' => Company::factory()->create()->id
-                    ]
-                );
+                [
+                    'company_id' => Company::factory()->create()->id,
+                ]
+            );
         $this->assertInstanceOf(Company::class, $component->company);
     }
 
-    public function testAComponentHasALocation()
+    public function test_a_component_has_a_location()
     {
         $component = Component::factory()
             ->create(['location_id' => Location::factory()->create()->id]);
         $this->assertInstanceOf(Location::class, $component->location);
     }
 
-    public function testAComponentBelongsToACategory()
+    public function test_a_component_belongs_to_a_category()
     {
         $component = Component::factory()->ramCrucial4()
             ->create(
                 [
-                    'category_id' => 
-                        Category::factory()->create(
-                            [
-                                'category_type' => 'component'
-                            ]
-                )->id]);
+                    'category_id' => Category::factory()->create(
+                        [
+                            'category_type' => 'component',
+                        ]
+                    )->id]);
         $this->assertInstanceOf(Category::class, $component->category);
         $this->assertEquals('component', $component->category->category_type);
     }
@@ -96,5 +96,55 @@ class ComponentTest extends TestCase
 
         $this->actingAs(User::factory()->for($companyA)->create());
         $this->assertEquals(1, $componentForCompanyA->fresh()->numRemaining());
+    }
+
+    public function test_percent_remaining_returns_zero_when_quantity_is_zero()
+    {
+        $component = new class extends Component
+        {
+            public int $remaining = 99;
+
+            public function numRemaining()
+            {
+                return $this->remaining;
+            }
+        };
+        $component->qty = 0;
+
+        $this->assertEquals(0, $component->percentRemaining());
+    }
+
+    public function test_percent_remaining_returns_expected_available_ratio()
+    {
+        $component = new class extends Component
+        {
+            public int $remaining = 3;
+
+            public function numRemaining()
+            {
+                return $this->remaining;
+            }
+        };
+        $component->qty = 8;
+
+        $this->assertEquals(37.5, $component->percentRemaining());
+    }
+
+    public function test_percent_remaining_clamps_to_bounds()
+    {
+        $component = new class extends Component
+        {
+            public int $remaining = -5;
+
+            public function numRemaining()
+            {
+                return $this->remaining;
+            }
+        };
+        $component->qty = 10;
+        $this->assertEquals(0.0, $component->percentRemaining());
+
+        $component->remaining = 15;
+        $this->assertEquals(100.0, $component->percentRemaining());
     }
 }

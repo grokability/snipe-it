@@ -10,11 +10,11 @@ use Tests\TestCase;
 
 class BulkDeleteSuppliersTest extends TestCase implements TestsPermissionsRequirement
 {
-    public function testRequiresPermission()
+    public function test_requires_permission()
     {
         $this->actingAs(User::factory()->create())
             ->post(route('suppliers.bulk.delete'), [
-                'ids' => [1, 2, 3]
+                'ids' => [1, 2, 3],
             ])
             ->assertForbidden();
     }
@@ -23,12 +23,12 @@ class BulkDeleteSuppliersTest extends TestCase implements TestsPermissionsRequir
     {
         $supplier = Supplier::factory()->create();
         Asset::factory()->create(['supplier_id' => $supplier->id]);
-        
+
         $this->actingAs(User::factory()->deleteSuppliers()->create())
             ->post(route('suppliers.bulk.delete'), [
-                'ids' => [$supplier->id]
+                'ids' => [$supplier->id],
             ]);
-            
+
         $this->assertModelExists($supplier);
         $this->assertNotSoftDeleted($supplier);
     }
@@ -41,7 +41,7 @@ class BulkDeleteSuppliersTest extends TestCase implements TestsPermissionsRequir
 
         $this->actingAs(User::factory()->deleteSuppliers()->create())
             ->post(route('suppliers.bulk.delete'), [
-                'ids' => [$supplier1->id, $supplier2->id, $supplier3->id]
+                'ids' => [$supplier1->id, $supplier2->id, $supplier3->id],
             ])
             ->assertRedirect(route('suppliers.index'));
 

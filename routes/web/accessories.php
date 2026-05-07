@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
  */
 Route::group(['prefix' => 'accessories', 'middleware' => ['auth']], function () {
     Route::get(
-        '{accessoryID}/checkout',
+        '{accessory}/checkout',
         [Accessories\AccessoryCheckoutController::class, 'create']
     )->name('accessories.checkout.show');
 
@@ -31,7 +31,7 @@ Route::group(['prefix' => 'accessories', 'middleware' => ['auth']], function () 
             [Accessories\AccessoriesController::class, 'getClone']
         )->name('clone/accessories');
 
-    Route::post('{accessoryId}/clone', 
+    Route::post('{accessory}/clone',
         [Accessories\AccessoriesController::class, 'postCreate']
     );
 

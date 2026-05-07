@@ -2,68 +2,80 @@
 
 namespace App\Models\Labels\Sheets\Avery;
 
-
 class _3490_A extends _3490
 {
-    private const BARCODE_MARGIN =   0.075;
-    private const TAG_SIZE       =   0.125;
-    private const TITLE_SIZE     =   0.140;
-    private const TITLE_MARGIN   =   0.040;
-    private const LABEL_SIZE     =   0.090;
-    private const LABEL_MARGIN   =  -0.015;
-    private const FIELD_SIZE     =   0.150;
-    private const FIELD_MARGIN   =   0.012;
+    private const BARCODE_MARGIN = 0.075;
+
+    private const TAG_SIZE = 0.125;
+
+    private const TITLE_SIZE = 0.140;
+
+    private const TITLE_MARGIN = 0.040;
+
+    private const LABEL_SIZE = 0.090;
+
+    private const LABEL_MARGIN = -0.015;
+
+    private const FIELD_SIZE = 0.150;
+
+    private const FIELD_MARGIN = 0.012;
 
     public function getUnit()
     {
-        return 'in'; 
+        return 'in';
     }
 
     public function getLabelMarginTop()
     {
-        return 0.06; 
+        return 0.06;
     }
+
     public function getLabelMarginBottom()
     {
-        return 0.06; 
+        return 0.06;
     }
+
     public function getLabelMarginLeft()
     {
-        return 0.06; 
+        return 0.06;
     }
+
     public function getLabelMarginRight()
     {
-        return 0.06; 
+        return 0.06;
     }
 
     public function getSupportAssetTag()
     {
-        return false; 
-    }
-    public function getSupport1DBarcode()
-    {
-        return false; 
-    }
-    public function getSupport2DBarcode()
-    {
-        return true; 
-    }
-    public function getSupportFields()
-    {
-        return 3; 
-    }
-    public function getSupportLogo()
-    {
-        return false; 
-    }
-    public function getSupportTitle()
-    {
-        return true; 
+        return false;
     }
 
-    public function preparePDF($pdf)
+    public function getSupport1DBarcode()
     {
+        return false;
     }
+
+    public function getSupport2DBarcode()
+    {
+        return true;
+    }
+
+    public function getSupportFields()
+    {
+        return 3;
+    }
+
+    public function getSupportLogo()
+    {
+        return false;
+    }
+
+    public function getSupportTitle()
+    {
+        return true;
+    }
+
+    public function preparePDF($pdf) {}
 
     public function write($pdf, $record)
     {
@@ -116,6 +128,3 @@ class _3490_A extends _3490
 
     }
 }
-
-
-?>

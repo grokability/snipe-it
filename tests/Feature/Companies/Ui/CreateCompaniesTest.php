@@ -7,14 +7,14 @@ use Tests\TestCase;
 
 class CreateCompaniesTest extends TestCase
 {
-    public function testRequiresPermissionToViewCreateCompanyPage()
+    public function test_requires_permission_to_view_create_company_page()
     {
         $this->actingAs(User::factory()->create())
             ->get(route('companies.create'))
             ->assertForbidden();
     }
 
-    public function testCreateCompanyPageRenders()
+    public function test_create_company_page_renders()
     {
         $this->actingAs(User::factory()->createCompanies()->create())
             ->get(route('companies.create'))
@@ -22,14 +22,14 @@ class CreateCompaniesTest extends TestCase
             ->assertViewIs('companies.edit');
     }
 
-    public function testRequiresPermissionToCreateCompany()
+    public function test_requires_permission_to_create_company()
     {
         $this->actingAs(User::factory()->create())
             ->post(route('companies.store'))
             ->assertForbidden();
     }
 
-    public function testValidDataRequiredToCreateCompany()
+    public function test_valid_data_required_to_create_company()
     {
         $this->actingAs(User::factory()->createCompanies()->create())
             ->post(route('companies.store'), [
@@ -40,7 +40,7 @@ class CreateCompaniesTest extends TestCase
             ]);
     }
 
-    public function testCanCreateCompany()
+    public function test_can_create_company()
     {
         $data = [
             'email' => 'email@example.com',

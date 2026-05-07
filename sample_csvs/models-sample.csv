@@ -1,21 +1,11 @@
-﻿Name,Category,Manufacturer,Model Notes,Model Number,Fieldset,Requestable,EOL,Min Qty
-Test Model 2,Laptops,"Botsford, Boyle and Herzog",ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae mauris viverra diam vitae quam suspendisse potenti nullam,9351IS25A51,Laptops and Desktops,Y,36,50
-Test Model 3,Laptops,Pollich LLC,,9929FR08W85,Laptops and Desktops,Y,36,30
-Test Model 5,Laptops,Berge Inc,turpis adipiscing lorem vitae mattis nibh ligula nec sem duis aliquam convallis nunc proin at turpis a pede,0910VB28Q61,Laptops and Desktops,Y,36,0
-Test Model 6,Laptops,"Heaney, Altenwerth and Emmerich",,7375EM02N97,Laptops and Desktops,Y,36,100
-Test Model 7,Desktops,"Romaguera, Goldner and Crooks",Test Updated Text,,Laptops and Desktops,Y,36,100
-Test Model 8,Laptops,Watsica LLC,sapien urna pretium nisl ut volutpat sapien arcu sed augue aliquam erat volutpat in,,Laptops and Desktops,Y,36,100
-Test Model 9,Laptops,"Fritsch, Sauer and Conn",orci luctus et ultrices posuere cubilia curae duis faucibus accumsan odio curabitur,,Laptops and Desktops,Y,36,100
-Test Model 10,Laptops,"Upton, Feil and Jast",velit vivamus vel nulla eget eros elementum pellentesque quisque porta volutpat,,Laptops and Desktops,Y,36,100
-Test Model 11,Laptops,Berge Inc,sed nisl nunc rhoncus dui vel sem sed sagittis nam congue risus semper porta volutpat quam pede lobortis ligula sit,,Laptops and Desktops,Y,36,100
-Test Model 12,Laptops,"Kutch, Johnson and Olson",curae mauris viverra diam vitae quam suspendisse potenti nullam porttitor lacus at turpis donec posuere metus vitae ipsum aliquam non,,Laptops and Desktops,Y,36,100
-Test Model 13,Laptops,Mosciski Inc,molestie hendrerit at vulputate vitae nisl aenean lectus pellentesque eget nunc donec quis orci,,Laptops and Desktops,Y,36,100
-Test Model 14,Laptops,Mosciski Inc,egestas metus aenean fermentum donec ut mauris eget massa tempor convallis nulla neque libero convallis eget eleifend,,Laptops and Desktops,N,36,100
-Test Model 15,Laptops,"Upton, Feil and Jast",,,Laptops and Desktops,N,36,100
-Test Model 16,Laptops,"Romaguera, Goldner and Crooks",dui luctus rutrum nulla tellus in sagittis dui vel nisl duis ac nibh fusce,2315CN41G71,Laptops and Desktops,N,36,100
-Test Model 17,Laptops,Abernathy-Stamm,maecenas pulvinar lobortis est phasellus sit amet erat nulla tempus,6080UE59E09,Laptops and Desktops,N,36,100
-Test Model 18,Laptops,Mosciski Inc,,5505YF23M46,Laptops and Desktops,N,36,100
-Test Model 19,Laptops,Walker-Towne,,8673QP30R80,Laptops and Desktops,Y,36,100
-Test Model 20,Mobile Phones,"Heaney, Altenwerth and Emmerich",nisl ut volutpat sapien arcu sed augue aliquam erat volutpat in congue etiam justo etiam pretium,9088XV67Q94,Mobile Devices,Y,12,100
-Test One,Mobile Phones,Okuneva Group,quis libero nullam sit amet turpis elementum ligula vehicula consequat morbi a ipsum integer a nibh in quis,,Mobile Devices,Y,12,100
-Final Test,Mobile Phones,Walker-Towne,"Sphinx of black quartz, judge my vow",,Mobile Devices,Y,36,15
+Name,Model Number,Minimum Amount,Manufacturer,Category,Require Serial,Depreciation,EOL,Notes,Fieldset,Requestable
+Sharp GX17,907256155-4,67,Layo,Food - Deli,true,justo nec condimentum neque sapien,,Customer-focused,Laptops and Desktops,false
+Huawei P40 Pro,053748423-X,356,Blognation,Food - Condiments,false,cras in,191,frame,Laptops and Desktops,true
+alcatel OT-202,562855245-3,151,Twitterbeat,Electronics,true,mi,31,Team-oriented,Mobile Devices,false
+Plum Z710,089298795-2,300,Tekfly,Food - Meat,false,tempus semper,160,Up-sized,Mobile Devices,true
+vivo NEX 3S 5G,259040851-X,125,Eadel,Food - Frozen Meals,false,quis augue luctus tincidunt nulla,44,software,Laptops and Desktops,false
+Asus Fonepad Note FHD6,209112897-X,304,Voolia,Food - Condiments,true,amet nunc,178,Object-based,Mobile Devices,false
+ZTE Axon M,996666326-6,50,Midel,Kitchen,false,duis at velit eu,220,Ergonomic,Mobile Devices,false
+Samsung T219,869365429-2,122,Skyba,Food - Breakfast,true,magna vestibulum aliquet,135,hub,Laptops and Desktops,false
+Panasonic X68/X77,193470835-6,73,Devify,Pets,true,et magnis dis parturient montes,104,24 hour,Laptops and Desktops,false
+verykool sl5029 Bolt Pro LTE,275088473-X,377,Oyonder,Food - Condiments,true,vehicula consequat morbi,47,,Mobile Devices,false

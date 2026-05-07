@@ -1,5 +1,5 @@
 <?php
 
-return array(
-    'title'      				=> 'نام های مصرفی',
-);
+return [
+    'title' => 'نام های مصرفی',
+];

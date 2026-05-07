@@ -6,54 +6,71 @@ class TZe_62mm_Landscape_A extends TZe_62mm_Landscape
 {
     public function getUnit()
     {
-        return 'mm'; 
+        return 'mm';
     }
+
     public function getHeight()
     {
-        return 31.50; 
+        return 31.50;
     }
+
     public function getSupportAssetTag()
     {
-        return true; 
+        return true;
     }
+
     public function getSupport1DBarcode()
     {
-        return true; 
+        return true;
     }
+
     public function getSupport2DBarcode()
     {
-        return true; 
+        return true;
     }
+
     public function getSupportFields()
     {
-        return 2; 
+        return 2;
     }
+
     public function getSupportLogo()
     {
-        return true; 
+        return true;
     }
+
     public function getSupportTitle()
     {
-        return true; 
+        return true;
     }
 
-    private const BARCODE1D_HEIGHT =   3.00;
-    private const BARCODE1D_MARGIN =   3.00;
-    private const BARCODE2D_SIZE   =  20.00;
-    private const BARCODE2D_MARGIN =   1.50;
-    private const TAG_SIZE         =   3.00;
-    private const LOGO_HEIGHT      =  10.00;
-    private const LOGO_MARGIN      =   1.50;
-    private const TITLE_SIZE       =   3.00;
-    private const TITLE_MARGIN     =   0.50;
-    private const LABEL_SIZE       =   2.00;
-    private const LABEL_MARGIN     = - 0.35;
-    private const FIELD_SIZE       =   3.00;
-    private const FIELD_MARGIN     =   0.10;
+    private const BARCODE1D_HEIGHT = 3.00;
 
-    public function preparePDF($pdf)
-    {
-    }
+    private const BARCODE1D_MARGIN = 3.00;
+
+    private const BARCODE2D_SIZE = 20.00;
+
+    private const BARCODE2D_MARGIN = 1.50;
+
+    private const TAG_SIZE = 3.00;
+
+    private const LOGO_HEIGHT = 10.00;
+
+    private const LOGO_MARGIN = 1.50;
+
+    private const TITLE_SIZE = 3.00;
+
+    private const TITLE_MARGIN = 0.50;
+
+    private const LABEL_SIZE = 2.00;
+
+    private const LABEL_MARGIN = -0.35;
+
+    private const FIELD_SIZE = 3.00;
+
+    private const FIELD_MARGIN = 0.10;
+
+    public function preparePDF($pdf) {}
 
     public function write($pdf, $record)
     {

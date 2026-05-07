@@ -2,19 +2,14 @@
 
 namespace Tests\Feature\Departments\Api;
 
-use App\Models\AssetModel;
 use App\Models\Company;
 use App\Models\Department;
-use App\Models\Category;
 use App\Models\Location;
 use App\Models\User;
-use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
 
 class CreateDepartmentsTest extends TestCase
 {
-
-
     public function test_requires_permission_to_create_department()
     {
         $this->actingAsForApi(User::factory()->create())
@@ -30,13 +25,13 @@ class CreateDepartmentsTest extends TestCase
         $user = User::factory()->superuser()->create();
         $response = $this->actingAsForApi($user)
             ->postJson(route('api.departments.store'), [
-                'name'       => 'Test Department',
+                'name' => 'Test Department',
                 'company_id' => $company->id,
                 'location_id' => $location->id,
                 'manager_id' => $manager->id,
-                'notes'      => 'Test Note',
-                'phone'      => '1234567890',
-                'fax'        => '1234567890',
+                'notes' => 'Test Note',
+                'phone' => '1234567890',
+                'fax' => '1234567890',
             ])
             ->assertOk()
             ->assertStatusMessageIs('success')
@@ -49,14 +44,14 @@ class CreateDepartmentsTest extends TestCase
         $this->assertEquals('Test Note', $department->notes);
 
         $this->assertDatabaseHas('departments', [
-            'name'        => 'Test Department',
-            'company_id'  => $company->id,
+            'name' => 'Test Department',
+            'company_id' => $company->id,
             'location_id' => $location->id,
-            'manager_id'  => $manager->id,
-            'notes'       => 'Test Note',
-            'phone'       => '1234567890',
-            'fax'         => '1234567890',
-            'created_by'  => $user->id,
+            'manager_id' => $manager->id,
+            'notes' => 'Test Note',
+            'phone' => '1234567890',
+            'fax' => '1234567890',
+            'created_by' => $user->id,
         ]);
     }
 
@@ -84,7 +79,7 @@ class CreateDepartmentsTest extends TestCase
     {
         $response = $this->actingAsForApi(User::factory()->superuser()->create())
             ->postJson(route('api.departments.store'), [
-                'name'       => 'Test Department',
+                'name' => 'Test Department',
                 'company_id' => [1, 2],
             ])
             ->assertOk()
@@ -95,13 +90,10 @@ class CreateDepartmentsTest extends TestCase
     {
         $response = $this->actingAsForApi(User::factory()->superuser()->create())
             ->postJson(route('api.departments.store'), [
-                'name'       => 'Test Department',
+                'name' => 'Test Department',
                 'company_id' => ['1', '2'],
             ])
             ->assertOk()
             ->assertStatusMessageIs('error');
     }
-
-
-
 }

@@ -15,7 +15,7 @@ class MigrateDenormedAssetLocations extends Migration
         // I know its gross to edit a migration, but we had to do this for support purposes. - @snipe
         Artisan::call('snipeit:sync-asset-locations', ['--output' => 'all']);
         $output = Artisan::output();
-        \Log::info($output);
+        Log::info($output);
     }
 
     /**

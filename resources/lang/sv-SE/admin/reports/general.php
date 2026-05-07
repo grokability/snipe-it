@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'info'   => 'Välj de alternativ du vill ha för din tillgångsrapport.',
+    'info' => 'Välj de alternativ du vill ha för din tillgångsrapport.',
     'deleted_user' => 'Raderad användare',
     'send_reminder' => 'Skicka påminnelse',
     'cannot_send_reminder' => 'User has been deleted or does not have an email address so cannot receive a reminder',
@@ -10,14 +10,20 @@ return [
     'acceptance_request' => 'Begäran om godkännande',
     'custom_export' => [
         'user_address' => 'Användarens adress',
+        'user_company' => 'User Company',
         'user_city' => 'Användarens stad',
         'user_state' => 'Användarens län',
         'user_country' => 'Användarens land',
-        'user_zip' => 'Användarens postnummer'
+        'user_zip' => 'Användarens postnummer',
+        'target_notes' => 'Anteckningar',
     ],
     'open_saved_template' => 'Öppna sparad mall',
-    'save_template' =>  'Spara mall',
+    'save_template' => 'Spara mall',
     'select_a_template' => 'Välj mall',
     'template_name' => 'Mallnamn',
     'update_template' => 'Uppdatera mall',
+    'share_template' => 'Share This Template',
+    'template_shared' => 'Template shared with you',
+    'template_shared_with_others' => 'Template shared with others',
+    'template_not_shared' => 'Template not shared with others',
 ];

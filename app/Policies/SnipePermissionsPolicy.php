@@ -5,6 +5,8 @@ namespace App\Policies;
 use App\Models\Company;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Gate;
 
 /**
  * SnipePermissionsPolicy provides methods for handling the granular permissions used throughout Snipe-IT.
@@ -47,7 +49,6 @@ abstract class SnipePermissionsPolicy
          *
          * @see https://snipe-it.readme.io/docs/permissions
          */
-
         if ($user->hasAccess('admin')) {
             return true;
         }
@@ -57,26 +58,23 @@ abstract class SnipePermissionsPolicy
          * via $this→authorize('something', Model::class) then calling Company:: isCurrentUserHasAccess($item) gets weird.
          * Bail out here by returning "nothing" and allow the relevant method lower in this class to be called and handle authorization.
          */
-        if (!$item instanceof Model){
+        if (! $item instanceof Model) {
             return;
         }
-
 
         /**
          * The Company::isCurrentUserHasAccess() method from the company model handles the check for FMCS already so we
          * don't have to do that here.
          */
-        if (!Company::isCurrentUserHasAccess($item)) {
+        if (! Company::isCurrentUserHasAccess($item)) {
             return false;
         }
 
     }
 
-
     /**
      * These methods handle the generic view/create/edit/delete permissions for the model.
      *
-     * @param User $user
      * @return bool
      */
     public function index(User $user)
@@ -87,12 +85,21 @@ abstract class SnipePermissionsPolicy
     /**
      * Determine whether the user can view the model.
      *
-     * @param  \App\Models\User  $user
      * @return mixed
      */
     public function view(User $user, $item = null)
     {
         return $user->hasAccess($this->columnName().'.view');
+    }
+
+    public function history(User $user, $item = null)
+    {
+        return Gate::allows('view', $item) || $user->hasAccess('activity.view');
+    }
+
+    public function journal(User $user, $item = null)
+    {
+        return Gate::allows('view', $item) || $user->hasAccess('activity.view');
     }
 
     public function files(User $user, $item = null)
@@ -103,7 +110,6 @@ abstract class SnipePermissionsPolicy
     /**
      * Determine whether the user can create model.
      *
-     * @param  \App\Models\User  $user
      * @return mixed
      */
     public function create(User $user)
@@ -114,7 +120,6 @@ abstract class SnipePermissionsPolicy
     /**
      * Determine whether the user can update the model.
      *
-     * @param  \App\Models\User  $user
      * @return mixed
      */
     public function update(User $user, $item = null)
@@ -122,11 +127,9 @@ abstract class SnipePermissionsPolicy
         return $user->hasAccess($this->columnName().'.edit');
     }
 
-
     /**
      * Determine whether the user can update the model.
      *
-     * @param  \App\Models\User  $user
      * @return mixed
      */
     public function checkout(User $user, $item = null)
@@ -137,7 +140,6 @@ abstract class SnipePermissionsPolicy
     /**
      * Determine whether the user can delete the model.
      *
-     * @param  \App\Models\User  $user
      * @return mixed
      */
     public function delete(User $user, $item = null)
@@ -153,7 +155,6 @@ abstract class SnipePermissionsPolicy
     /**
      * Determine whether the user can manage the model.
      *
-     * @param  \App\Models\User  $user
      * @return mixed
      */
     public function manage(User $user, $item = null)

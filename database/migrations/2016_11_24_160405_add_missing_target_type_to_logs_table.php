@@ -1,7 +1,7 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 
 class AddMissingTargetTypeToLogsTable extends Migration
@@ -16,8 +16,8 @@ class AddMissingTargetTypeToLogsTable extends Migration
         // Get list of action logs with a target id but not a target type.  This fixes missing target_type in accept_asset
         DB::table('action_logs')->where('target_type', null)->where(function ($query) {
             $query->where('action_type', 'accepted')
-            ->orWhere('action_type', 'declined');
-        })->update(['target_type'=> \App\Models\User::class]);
+                ->orWhere('action_type', 'declined');
+        })->update(['target_type' => User::class]);
     }
 
     /**

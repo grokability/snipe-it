@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Helpers\Helper;
 use App\Mail\ExpiringAssetsMail;
 use App\Mail\ExpiringLicenseMail;
 use App\Models\Asset;
@@ -15,7 +14,7 @@ class SendExpirationAlerts extends Command
 {
     /**
      * The name and signature of the console command.
- *
+     *
      * @var string
      */
     protected $signature = 'snipeit:expiring-alerts {--expired-licenses}';
@@ -49,8 +48,8 @@ class SendExpirationAlerts extends Command
 
             // Send a rollup to the admin, if settings dictate
             $recipients = collect(explode(',', $settings->alert_email))
-                ->map(fn($item) => trim($item)) // Trim each email
-                ->filter(fn($item) => !empty($item))
+                ->map(fn ($item) => trim($item)) // Trim each email
+                ->filter(fn ($item) => ! empty($item))
                 ->all();
             // Expiring Assets
             $assets = Asset::getExpiringWarrantyOrEol($alert_interval);
@@ -72,23 +71,22 @@ class SendExpirationAlerts extends Command
                         trans('admin/hardware/form.eol_date'),
                         trans('admin/hardware/form.warranty_expires'),
                     ],
-                    $assets->map(fn($item) =>
-                    [
-                        trans('general.id')  => $item->id,
+                    $assets->map(fn ($item) => [
+                        trans('general.id') => $item->id,
                         trans('admin/hardware/form.tag') => $item->asset_tag,
                         trans('admin/hardware/form.model') => $item->model->name,
                         trans('general.model_no') => $item->model->model_number,
                         trans('general.purchase_date') => $item->purchase_date_formatted,
-                        trans('admin/hardware/form.eol_rate')  => $item->model->eol,
-                        trans('admin/hardware/form.eol_date') => $item->eol_date ? $item->eol_formatted_date .' ('.$item->eol_diff_for_humans.')' : '',
-                        trans('admin/hardware/form.warranty_expires') => $item->warranty_expires ? $item->warranty_expires_formatted_date .' ('.$item->warranty_expires_diff_for_humans.')' : '',
-                   ])
-                   );
+                        trans('admin/hardware/form.eol_rate') => $item->model->eol,
+                        trans('admin/hardware/form.eol_date') => $item->eol_date ? $item->eol_formatted_date.' ('.$item->eol_diff_for_humans.')' : '',
+                        trans('admin/hardware/form.warranty_expires') => $item->warranty_expires ? $item->warranty_expires_formatted_date.' ('.$item->warranty_expires_diff_for_humans.')' : '',
+                    ])
+                );
             }
 
             // Expiring licenses
             $licenses = License::query()->ExpiringLicenses($alert_interval, $this->option('expired-licenses'))
-                ->with('manufacturer','category')
+                ->with('manufacturer', 'category')
                 ->orderBy('expiration_date', 'ASC')
                 ->orderBy('termination_date', 'ASC')
                 ->get();
@@ -104,14 +102,14 @@ class SendExpirationAlerts extends Command
                         trans('mail.expires'),
                         trans('admin/licenses/form.termination_date'),
                         trans('mail.terminates')],
-                    $licenses->map(fn($item) => [
+                    $licenses->map(fn ($item) => [
                         trans('general.id') => $item->id,
                         trans('general.name') => $item->name,
                         trans('general.purchase_date') => $item->purchase_date_formatted,
                         trans('admin/licenses/form.expiration') => $item->expires_formatted_date,
                         trans('mail.expires') => $item->expires_formatted_date ? $item->expires_diff_for_humans : '',
                         trans('admin/licenses/form.termination_date') => $item->terminates_formatted_date,
-                        trans('mail.terminates') => $item->terminates_diff_for_humans
+                        trans('mail.terminates') => $item->terminates_diff_for_humans,
                     ])
                 );
             }
@@ -120,12 +118,10 @@ class SendExpirationAlerts extends Command
             $this->info(trans_choice('mail.assets_warrantee_alert', $assets->count(), ['count' => $assets->count(), 'threshold' => $alert_interval]));
             $this->info(trans_choice('mail.license_expiring_alert', $licenses->count(), ['count' => $licenses->count(), 'threshold' => $alert_interval]));
 
-
-
         } else {
             if ($settings->alert_email == '') {
                 $this->error('Could not send email. No alert email configured in settings');
-            } elseif (1 != $settings->alerts_enabled) {
+            } elseif ($settings->alerts_enabled != 1) {
                 $this->info('Alerts are disabled in the settings. No mail will be sent');
             }
         }

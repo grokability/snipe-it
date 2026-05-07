@@ -1,11 +1,11 @@
 <?php
 
-return array(
+return [
 
-    'id'                        => 'ID',
-    'name'                      => 'Department Name',
-    'manager'                   => 'Manager',
-    'location'                  => 'Location',
-    'create'                    => 'Create Department',
-    'update'                    => 'Update Department',
-    );
+    'id' => 'आईडी',
+    'name' => 'विभागको नाम',
+    'manager' => 'प्रबन्धक',
+    'location' => 'स्थान',
+    'create' => 'विभाग सिर्जना गर्ने',
+    'update' => 'विभाग अपडेट',
+];

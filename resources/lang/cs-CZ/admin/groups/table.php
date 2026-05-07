@@ -1,9 +1,9 @@
 <?php
 
-return array(
+return [
 
-    'id'         => 'ID',
-    'name'       => 'Název',
-    'users'      => '# z uživatelů',
+    'id' => 'ID',
+    'name' => 'Název',
+    'users' => '# z uživatelů',
 
-);
+];

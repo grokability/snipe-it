@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('models', function (Blueprint $table) {
-            $table->boolean( 'require_serial')->after('category_id')->default(0);
+            $table->boolean('require_serial')->after('category_id')->default(0);
         });
     }
 

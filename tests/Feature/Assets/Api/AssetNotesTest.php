@@ -9,31 +9,31 @@ use Tests\TestCase;
 
 class AssetNotesTest extends TestCase
 {
-    public function testThatANonExistentAssetIdReturnsError()
-    {   
+    public function test_that_a_non_existent_asset_id_returns_error()
+    {
         $this->actingAsForApi(User::factory()->editAssets()->create())
             ->postJson(route('api.notes.store', ['asset' => 123456789]))
             ->assertStatusMessageIs('error');
     }
 
-    public function testRequiresPermissionToAddNoteToAssetAsset()
+    public function test_requires_permission_to_add_note_to_asset_asset()
     {
         $asset = Asset::factory()->create();
 
         $this->actingAsForApi(User::factory()->create())
             ->postJson(route('api.notes.store', $asset), [
-                'note' => 'test'
+                'note' => 'test',
             ])
             ->assertForbidden();
     }
 
-    public function testAssetNoteIsSaved()
+    public function test_asset_note_is_saved()
     {
         $asset = Asset::factory()->create();
 
         $this->actingAsForApi(User::factory()->editAssets()->create())
             ->postJson(route('api.notes.store', $asset), [
-                'note' => 'This is a test note.'
+                'note' => 'This is a test note.',
             ])
             ->assertStatusMessageIs('success')
             ->assertJson([
@@ -45,7 +45,7 @@ class AssetNotesTest extends TestCase
             ])
             ->assertStatus(200);
 
-        $note = ActionLog::where('item_id', $asset->id)
+        $note = Actionlog::where('item_id', $asset->id)
             ->where('action_type', 'note added')
             ->first();
 
@@ -53,7 +53,7 @@ class AssetNotesTest extends TestCase
         $this->assertEquals('This is a test note.', $note->note, 'The note content does not match.');
     }
 
-    public function testAssetNotesAreRetrievable()
+    public function test_asset_notes_are_retrievable()
     {
         $asset = Asset::factory()->create();
 
@@ -80,8 +80,8 @@ class AssetNotesTest extends TestCase
                             'item_id' => $assetNote->item_id,
                             'item_type' => Asset::class,
                             'action_type' => 'note added',
-                        ]
-                    ]
+                        ],
+                    ],
                 ],
             ]);
     }

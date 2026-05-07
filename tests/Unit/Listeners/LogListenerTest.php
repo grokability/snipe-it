@@ -10,7 +10,7 @@ use Tests\TestCase;
 
 class LogListenerTest extends TestCase
 {
-    public function testLogsEntryOnCheckoutableCheckedOut()
+    public function test_logs_entry_on_checkoutable_checked_out()
     {
         $asset = Asset::factory()->create();
         $checkedOutTo = User::factory()->create();
@@ -19,7 +19,7 @@ class LogListenerTest extends TestCase
         // Simply to ensure `created_by` is set in the action log
         $this->actingAs($checkedOutBy);
 
-        (new LogListener())->onCheckoutableCheckedOut(new CheckoutableCheckedOut(
+        (new LogListener)->onCheckoutableCheckedOut(new CheckoutableCheckedOut(
             $asset,
             $checkedOutTo,
             $checkedOutBy,
@@ -36,5 +36,4 @@ class LogListenerTest extends TestCase
             'note' => 'A simple note...',
         ]);
     }
-
 }

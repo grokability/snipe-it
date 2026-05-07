@@ -23,13 +23,13 @@ return [
 
     'accessories' => 'Priedai – viskas, ką išduodate naudotojams, bet be serijinio numerio (arba jums nėra aktualu šiuos daiktus sekti individualiai). Pavyzdžiui, kompiuterių pelės ar klaviatūros.',
 
-    'companies'     => 'Galite naudoti įmones kaip paprastą informacinį lauką arba siekdami apriboti turto, naudotojų ir kt. matomumą, Administratoriaus nustatymuose įjungę „Pilną kelių įmonių palaikymą“.',
+    'companies' => 'Galite naudoti įmones kaip paprastą informacinį lauką arba siekdami apriboti turto, naudotojų ir kt. matomumą, Administratoriaus nustatymuose įjungę „Pilną kelių įmonių palaikymą“.',
 
-    'components'    => 'Komponentai yra turto sudedamosios dalys, pvz., HDD/SSD diskai, RAM atminties moduliai ir kt.',
+    'components' => 'Komponentai yra turto sudedamosios dalys, pvz., HDD/SSD diskai, RAM atminties moduliai ir kt.',
 
-    'consumables'   => 'Eksploatacinės medžiagos – viskas, kas įsigyta ir laikui bėgant bus sunaudota. Pavyzdžiui, spausdintuvo rašalas arba kopijavimo popierius.',
+    'consumables' => 'Eksploatacinės medžiagos – viskas, kas įsigyta ir laikui bėgant bus sunaudota. Pavyzdžiui, spausdintuvo rašalas arba kopijavimo popierius.',
 
     'depreciations' => 'Jūs galite nustatyti turto nusidėvėjimą pagal tiesinį nusidėvėjimo modelį.',
-    
-    'empty_file'    => 'Importavimo vedlys aptiko, kad šis failas yra tuščias.'
+
+    'empty_file' => 'Importavimo vedlys aptiko, kad šis failas yra tuščias.',
 ];

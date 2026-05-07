@@ -59,7 +59,7 @@ class SendInventoryAlerts extends Command
         } else {
             if ($settings->alert_email == '') {
                 $this->error('Could not send email. No alert email configured in settings');
-            } elseif (1 != $settings->alerts_enabled) {
+            } elseif ($settings->alerts_enabled != 1) {
                 $this->info('Alerts are disabled in the settings. No mail will be sent');
             }
         }

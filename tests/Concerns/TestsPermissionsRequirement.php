@@ -4,5 +4,5 @@ namespace Tests\Concerns;
 
 interface TestsPermissionsRequirement
 {
-    public function testRequiresPermission();
+    public function test_requires_permission();
 }

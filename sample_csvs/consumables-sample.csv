@@ -1,4 +1,11 @@
-Company,Name,Category,Supplier,Manufacturer,QTY,Location,Order Number,Min Amount,Model Number,Item Number,Notes,Purchase Date,Purchase Cost
-Simonis and Sons,Dragline,Soft Flooring and Base,Towne Group Two,McLaughlin-Wisozk,50,Cherven Bryag,529027385-9,100,3533069599460644,6381392801995066,tortor sollicitudin mi sit amet lobortis sapien sapien non mi integer ac neque duis bibendum morbi non quam nec,11/5/22,35.2
-Bruen-Hagenes,Trencher,Sitework & Site Utilities,Hoeger and Sons,"Davis, Koelpin and Lockman",54,Pampas,009135228-2,92,5602248408566255894,3563525570373877,fusce lacus purus aliquet at feugiat non pretium quis lectus suspendisse potenti in eleifend quam a odio in hac habitasse,9/17/22,53.1
-Tremblay Inc,Crawler,Drywall & Acoustical (FED),"Cormier, Ryan and Cummerata","Morar, Stracke and Gusikowski",97,Penteado,492530513-1,20,56022484085662558554,3555797000872238,massa tempor convallis nulla neque libero convallis eget eleifend luctus ultricies eu,2/5/23,25.08
+Name,Category,Location,Supplier,Company,Quantity,Minimum Quantity,Model Number,Item Number,Notes,Manufacturer,Purchase Date,Purchase Cost,Order Number
+Organic Baby Spinach,Food - Produce,,Demivee,Trudoo,5,55,883583296-9,028242181-5,"Fresh baby spinach leaves, great for salads and smoothies.",Voolith,2025-05-12,47.81,071121963
+Juice Extractor,Kitchen,Xinwan,Viva,,9,40,028310766-9,075603430-2,Efficient juicer for fresh fruit and vegetable juices.,Gigazoom,2026-01-21,66.85,064101673
+Portable Charger with Solar Panel,Electronics,Neofbaun,Wikizz,Jetwire,79,87,325056853-8,708119213-0,,Yodo,2025-09-10,43.92,063211726
+Cucumber,Food - Produce,Ringin Kembar,Skibox,Skinte,20,19,307089206-X,309818522-8,,Skinder,2025-05-07,99.82,091001322
+Scented Candle Set,Home,Luján,Npath,Kwinu,23,74,444763378-7,265535717-5,Set of soothing scented candles for relaxation and ambiance.,Quimba,,47.03,284272780
+Baked Falafel Balls,Food - Frozen Vegetables,Tatebayashi,Livepath,Divape,31,70,,840631382-X,"Frozen falafel balls made from chickpeas and herbs, perfect for quick meals or salads.",Wikizz,2025-11-21,87.88,
+Electric Hot Water Dispenser,Kitchen,,Yakidoo,Edgeclub,74,83,548103391-7,524997287-X,Instant hot water dispenser for tea and cooking.,InnoZ,2025-06-14,95.27,
+Toy Building Set,Toys,,Bubblemix,Devpulse,75,25,317959667-8,512147821-6,,,2025-05-28,63.26,067013700
+Over-Ear Headphones,Audio,Chóra,Jabbersphere,Twinder,87,66,,109936885-5,Comfortable over-ear headphones with deep bass.,Tanoodle,2025-05-21,41.88,267091250
+Rice Noodles,Food - Grains,Novovasylivka,Photobean,Skiba,71,23,698609219-9,930631559-7,"Thin rice noodles, ideal for stir-fries and soups.",Divavu,2025-05-25,2.16,061212727

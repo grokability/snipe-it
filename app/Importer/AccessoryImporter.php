@@ -21,6 +21,7 @@ class AccessoryImporter extends ItemImporter
      * Create an accessory if a duplicate does not exist
      *
      * @author Daniel Melzter
+     *
      * @since 3.0
      */
     public function createAccessoryIfNotExists($row)
@@ -34,17 +35,17 @@ class AccessoryImporter extends ItemImporter
             }
 
             $this->log('Updating Accessory');
-            $this->item['model_number'] = trim($this->findCsvMatch($row, "model_number"));
+            $this->item['model_number'] = trim($this->findCsvMatch($row, 'model_number'));
             $accessory->update($this->sanitizeItemForUpdating($accessory));
             $accessory->save();
 
             return;
         }
         $this->log('No Matching Accessory, Creating a new one');
-        $accessory = new Accessory();
+        $accessory = new Accessory;
         $accessory->created_by = auth()->id();
-        $this->item['model_number'] = $this->findCsvMatch($row, "model_number");
-        $this->item['min_amt'] = $this->findCsvMatch($row, "min_amt");
+        $this->item['model_number'] = $this->findCsvMatch($row, 'model_number');
+        $this->item['min_amt'] = $this->findCsvMatch($row, 'min_amt');
         $accessory->fill($this->sanitizeItemForStoring($accessory));
 
         // This sets an attribute on the Loggable trait for the action log

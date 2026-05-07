@@ -1,9 +1,13 @@
 <?php
 
+use App\Models\Accessory;
 use App\Models\Actionlog;
+use App\Models\Asset;
+use App\Models\Component;
+use App\Models\Consumable;
+use App\Models\License;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 
 class MigrateAssetLogToActionLog extends Migration
 {
@@ -26,20 +30,20 @@ class MigrateAssetLogToActionLog extends Migration
             if (! is_null($log->asset_id)) {
                 $a->item_id = $log->asset_id;
                 if ($log->asset_type == 'hardware') {
-                    $a->item_type = \App\Models\Asset::class;
+                    $a->item_type = Asset::class;
                 } else {
-                    $a->item_type = \App\Models\License::class;
+                    $a->item_type = License::class;
                 }
             }
             if (! is_null($log->accessory_id)) {
                 $a->item_id = $log->accessory_id;
-                $a->item_type = \App\Models\Accessory::class;
+                $a->item_type = Accessory::class;
             } elseif (! is_null($log->consumable_id)) {
                 $a->item_id = $log->consumable_id;
-                $a->item_type = \App\Models\Consumable::class;
+                $a->item_type = Consumable::class;
             } elseif (! is_null($log->component_id)) {
                 $a->item_id = $log->component_id;
-                $a->item_type = \App\Models\Component::class;
+                $a->item_type = Component::class;
             }
             $a->action_type = $log->action_type;
             // $a->checkout_to = $log->checkout_to;

@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
 
     /*
     |--------------------------------------------------------------------------
@@ -15,6 +15,6 @@ return array(
 
     'failed' => 'Bu kimlik bilgileri kayıtlarımızla eşleşmiyor.',
     'password' => 'Sağlanan parola yanlış.',
-    'throttle' => 'Too many login attempts. Please try again in :minutes minute(s).',
+    'throttle' => 'Çok fazla giriş denemesi. Lütfen :minutes dakika sonra tekrar deneyin.',
 
-);
+];

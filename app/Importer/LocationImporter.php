@@ -28,11 +28,12 @@ class LocationImporter extends ItemImporter
 
     /**
      * Create a location if a duplicate does not exist.
+     *
      * @todo Investigate how this should interact with Importer::createLocationIfNotExists
      *
      * @author A. Gianotto
+     *
      * @since 6.1.0
-     * @param array $row
      */
     public function createLocationIfNotExists(array $row)
     {
@@ -41,16 +42,16 @@ class LocationImporter extends ItemImporter
 
         $location = Location::where('name', '=', $this->findCsvMatch($row, 'name'))->first();
 
-        if ($this->findCsvMatch($row, 'id')!='') {
+        if ($this->findCsvMatch($row, 'id') != '') {
             // Override location if an ID was given
             \Log::debug('Finding location by ID: '.$this->findCsvMatch($row, 'id'));
             $location = Location::find($this->findCsvMatch($row, 'id'));
         }
 
-
         if ($location) {
             if (! $this->updating) {
                 $this->log('A matching Location '.$this->item['name'].' already exists');
+
                 return;
             }
 
@@ -77,12 +78,11 @@ class LocationImporter extends ItemImporter
         $this->item['notes'] = trim($this->findCsvMatch($row, 'notes'));
         $this->item['tag_color'] = trim($this->findCsvMatch($row, 'tag_color'));
 
-
         if ($this->findCsvMatch($row, 'parent_location')) {
             $this->item['parent_id'] = $this->createOrFetchLocation(trim($this->findCsvMatch($row, 'parent_location')));
         }
 
-        if (!empty($this->item['manager'])) {
+        if (! empty($this->item['manager'])) {
             if ($manager = $this->createOrFetchUser($row, 'manager')) {
                 $this->item['manager_id'] = $manager->id;
             }
@@ -90,7 +90,6 @@ class LocationImporter extends ItemImporter
 
         Log::debug('Item array is: ');
         Log::debug(print_r($this->item, true));
-
 
         if ($editingLocation) {
             Log::debug('Updating existing location');
@@ -105,14 +104,15 @@ class LocationImporter extends ItemImporter
 
         if ($location->save()) {
             $this->log('Location '.$location->name.' created or updated from CSV import');
+
             return $location;
 
         } else {
             Log::debug($location->getErrors());
             $this->logError($location, 'Location "'.$this->item['name'].'"');
+
             return $location->errors;
         }
-
 
     }
 }

@@ -11,7 +11,7 @@ use Tests\TestCase;
 #[Group('custom-reporting')]
 class ReportTemplateParsingValuesTest extends TestCase
 {
-    public function testParsingValuesOnNonExistentReportTemplate()
+    public function test_parsing_values_on_non_existent_report_template()
     {
         $unsavedTemplate = new ReportTemplate;
 
@@ -35,7 +35,7 @@ class ReportTemplateParsingValuesTest extends TestCase
         $this->assertEquals('', $unsavedTemplate->selectValue('value_on_unsaved_template'));
     }
 
-    public function testParsingCheckmarkValue()
+    public function test_parsing_checkmark_value()
     {
         $template = ReportTemplate::factory()->create([
             'options' => [
@@ -52,7 +52,7 @@ class ReportTemplateParsingValuesTest extends TestCase
         $this->assertEquals('0', (new ReportTemplate)->checkmarkValue('non_existent_key_that_is_overwritten_to_default_to_zero', '0'));
     }
 
-    public function testParsingTextValue()
+    public function test_parsing_text_value()
     {
         $template = ReportTemplate::factory()->create([
             'options' => [
@@ -67,7 +67,7 @@ class ReportTemplateParsingValuesTest extends TestCase
         $this->assertEquals('my fallback', (new ReportTemplate)->textValue('non_existent_key', 'my fallback'));
     }
 
-    public function testParsingRadioValue()
+    public function test_parsing_radio_value()
     {
         $template = ReportTemplate::factory()->create([
             'options' => ['property_that_exists' => '1'],
@@ -82,7 +82,7 @@ class ReportTemplateParsingValuesTest extends TestCase
         $this->assertTrue($template->radioValue('non_existent_property', 'doesnt_matter', true));
     }
 
-    public function testParsingSelectValue()
+    public function test_parsing_select_value()
     {
         $template = ReportTemplate::factory()->create([
             'options' => [
@@ -96,7 +96,7 @@ class ReportTemplateParsingValuesTest extends TestCase
         $this->assertNull($template->selectValue('contains_a_null_value'));
     }
 
-    public function testParsingSelectValues()
+    public function test_parsing_select_values()
     {
         $template = ReportTemplate::factory()->create([
             'options' => [
@@ -112,7 +112,7 @@ class ReportTemplateParsingValuesTest extends TestCase
         $this->assertEquals([], $template->selectValues('non_existent_key'));
     }
 
-    public function testSelectValueDoesNotIncludeDeletedOrNonExistentModels()
+    public function test_select_value_does_not_include_deleted_or_non_existent_models()
     {
         [$locationA, $locationB] = Location::factory()->count(2)->create();
         $invalidId = 10000;
@@ -140,7 +140,7 @@ class ReportTemplateParsingValuesTest extends TestCase
         $this->assertNull((new ReportTemplate)->selectValue('value_on_unsaved_template', Location::class));
     }
 
-    public function testSelectValuesDoNotIncludeDeletedOrNonExistentModels()
+    public function test_select_values_do_not_include_deleted_or_non_existent_models()
     {
         [$locationA, $locationB] = Location::factory()->count(2)->create();
         $invalidId = 10000;
@@ -164,7 +164,7 @@ class ReportTemplateParsingValuesTest extends TestCase
         $this->assertNotContains($invalidId, $parsedValues);
     }
 
-    public function testGracefullyHandlesSingleSelectBecomingMultiSelect()
+    public function test_gracefully_handles_single_select_becoming_multi_select()
     {
         $department = Department::factory()->create();
 
@@ -187,7 +187,7 @@ class ReportTemplateParsingValuesTest extends TestCase
         $this->assertEquals([], $templateWithNull->selectValues('by_dept_id'));
     }
 
-    public function testGracefullyHandlesMultiSelectBecomingSingleSelectBySelectingTheFirstValue()
+    public function test_gracefully_handles_multi_select_becoming_single_select_by_selecting_the_first_value()
     {
         [$departmentA, $departmentB] = Department::factory()->count(2)->create();
 

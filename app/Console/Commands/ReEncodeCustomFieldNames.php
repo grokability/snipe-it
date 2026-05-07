@@ -82,10 +82,10 @@ class ReEncodeCustomFieldNames extends Command
                 if ($field->db_column == $field->convertUnicodeDbSlug() && \Schema::hasColumn('assets', $field->convertUnicodeDbSlug())) {
                     $this->info('-- ✓ This field exists on the assets table and the value for db_column matches in the custom_fields table.');
 
-                /**
-                 * There is a mismatch between the fieldname on the assets table and
-                 * what $field->convertUnicodeDbSlug() is *now* expecting.
-                 */
+                    /**
+                     * There is a mismatch between the fieldname on the assets table and
+                     * what $field->convertUnicodeDbSlug() is *now* expecting.
+                     */
                 } else {
 
                     if ($field->db_column != $field->convertUnicodeDbSlug()) {
@@ -95,7 +95,6 @@ class ReEncodeCustomFieldNames extends Command
                         $this->error('-- ✘ Field mismatch: '.$field->name.' column should be '.$field->convertUnicodeDbSlug().' but is '.$custom_field_columns[$field->id].' on the assets table.');
 
                     }
-
 
                     /** Make sure the custom_field_columns array has the ID */
                     if (array_key_exists($field->id, $custom_field_columns)) {
@@ -113,7 +112,6 @@ class ReEncodeCustomFieldNames extends Command
 
                         $field->db_column = $field->convertUnicodeDbSlug();
                         $field->save();
-
 
                     } else {
                         $this->warn('-- ✘ WARNING: There is no field on the assets table ending in  '.$field->id.'. This may require more in-depth investigation and may mean the schema was altered manually.');

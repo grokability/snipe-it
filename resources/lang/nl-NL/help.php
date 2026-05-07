@@ -23,13 +23,13 @@ return [
 
     'accessories' => 'Accessoires zijn alles wat je uitgeeft aan gebruikers, maar die geen serienummer hebben (of u maakt het niet uit om ze uniek te volgen). Bijvoorbeeld computermuizen of toetsenborden.',
 
-    'companies'     => 'Bedrijven kunnen worden gebruikt als een eenvoudig identificatieveld of kunnen worden gebruikt om de zichtbaarheid van assets, gebruikers, etc te beperken als volledige bedrijfsondersteuning is ingeschakeld in uw Admin instellingen.',
+    'companies' => 'Bedrijven kunnen worden gebruikt als een eenvoudig identificatieveld of kunnen worden gebruikt om de zichtbaarheid van assets, gebruikers, etc te beperken als volledige bedrijfsondersteuning is ingeschakeld in uw Admin instellingen.',
 
-    'components'    => 'Componenten zijn onderdelen van een asset zoals een harde schijf, geheugen, etc.',
+    'components' => 'Componenten zijn onderdelen van een asset zoals een harde schijf, geheugen, etc.',
 
-    'consumables'   => 'Verbruiksartikelen zijn alles wat gekocht is en wat na verloop van tijd opraakt. Bijvoorbeeld printer inkt of kopieer papier.',
+    'consumables' => 'Verbruiksartikelen zijn alles wat gekocht is en wat na verloop van tijd opraakt. Bijvoorbeeld printer inkt of kopieer papier.',
 
     'depreciations' => 'Je kunt de asset-afschrijving instellen om assets af te schrijven op basis van lineaire afschrijving.',
-    
-    'empty_file'    => 'De importeur detecteert dat dit bestand leeg is.'
+
+    'empty_file' => 'De importeur detecteert dat dit bestand leeg is.',
 ];

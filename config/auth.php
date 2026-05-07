@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\User;
+
 return [
 
     /*
@@ -68,7 +70,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\Models\User::class,
+            'model' => User::class,
         ],
 
         // 'users' => [
@@ -98,21 +100,14 @@ return [
             'email' => 'auth.emails.password',
             'table' => 'password_resets',
             'expire' => env('RESET_PASSWORD_LINK_EXPIRES', 900),
-            'throttle' => [
-                'max_attempts' => env('LOGIN_MAX_ATTEMPTS', 5),
-                'lockout_duration' => env('LOGIN_LOCKOUT_DURATION', 60),
-            ]
-
+            'throttle' => env('LOGIN_MAX_ATTEMPTS', 5),
         ],
 
         'invites' => [
             'provider' => 'users',
             'table' => 'password_resets',
             'expire' => env('INVITE_PASSWORD_LINK_EXPIRES', 2880),
-            'throttle' => [
-                'max_attempts' => env('LOGIN_MAX_ATTEMPTS', 5),
-                'lockout_duration' => env('LOGIN_LOCKOUT_DURATION', 60),
-            ]
+            'throttle' => env('LOGIN_MAX_ATTEMPTS', 5),
         ],
     ],
 
@@ -124,10 +119,8 @@ return [
     |
     */
     'password_reset' => [
-       'max_attempts_per_min' => env('PASSWORD_RESET_MAX_ATTEMPTS_PER_MIN', 50),
+        'max_attempts_per_min' => env('PASSWORD_RESET_MAX_ATTEMPTS_PER_MIN', 50),
     ],
-
-
 
     /*
     |--------------------------------------------------------------------------
@@ -140,8 +133,7 @@ return [
     |
     */
 
-    'password_timeout' =>  env('PASSWORD_CONFIRM_TIMEOUT', 10800),
-
+    'password_timeout' => env('PASSWORD_CONFIRM_TIMEOUT', 10800),
 
     /*
     |--------------------------------------------------------------------------

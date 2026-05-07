@@ -10,7 +10,7 @@ use Tests\TestCase;
 
 class AccessoriesForSelectListTest extends TestCase implements TestsFullMultipleCompaniesSupport
 {
-    public function testAdheresToFullMultipleCompaniesSupportScoping()
+    public function test_adheres_to_full_multiple_companies_support_scoping()
     {
         [$companyA, $companyB] = Company::factory()->count(2)->create();
 
@@ -45,7 +45,7 @@ class AccessoriesForSelectListTest extends TestCase implements TestsFullMultiple
             ->assertResponseContainsInResults($accessoryB);
     }
 
-    public function testCanGetAccessoriesForSelectList()
+    public function test_can_get_accessories_for_select_list()
     {
         [$accessoryA, $accessoryB] = Accessory::factory()->count(2)->create();
 

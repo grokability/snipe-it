@@ -4,20 +4,18 @@ namespace Tests\Feature\Companies\Api;
 
 use App\Models\Company;
 use App\Models\User;
-use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
 
 class IndexCompaniesTest extends TestCase
 {
-
-    public function testViewingCompanyIndexRequiresPermission()
+    public function test_viewing_company_index_requires_permission()
     {
         $this->actingAsForApi(User::factory()->create())
             ->getJson(route('api.companies.index'))
             ->assertForbidden();
     }
 
-    public function testCompanyIndexReturnsExpectedSearchResults()
+    public function test_company_index_returns_expected_search_results()
     {
         Company::factory()->count(10)->create();
         Company::factory()->create(['name' => 'My Test Company']);
@@ -42,7 +40,7 @@ class IndexCompaniesTest extends TestCase
 
     }
 
-    public function testAdheresToFullMultipleCompaniesSupportScoping()
+    public function test_adheres_to_full_multiple_companies_support_scoping()
     {
 
         $this->settings->enableMultipleFullCompanySupport();
@@ -71,6 +69,4 @@ class IndexCompaniesTest extends TestCase
             ->assertResponseContainsInRows($companyA)
             ->assertResponseContainsInRows($companyB);
     }
-
-
 }

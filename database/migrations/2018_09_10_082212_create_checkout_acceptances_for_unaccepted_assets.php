@@ -1,10 +1,9 @@
 <?php
 
-use App\Models\Actionlog;
+use App\Models\Asset;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 
 class CreateCheckoutAcceptancesForUnacceptedAssets extends Migration
 {
@@ -16,15 +15,15 @@ class CreateCheckoutAcceptancesForUnacceptedAssets extends Migration
     public function up()
     {
         // Get all assets not accepted
-        $assets = DB::table('assets')->where('assigned_type', \App\Models\User::class)->where('accepted', 'pending')->get();
+        $assets = DB::table('assets')->where('assigned_type', User::class)->where('accepted', 'pending')->get();
 
         $acceptances = [];
 
         foreach ($assets as $asset) {
             $acceptances[] = [
-                'checkoutable_type' => \App\Models\Asset::class,
-                'checkoutable_id'   => $asset->id,
-                'assigned_to_id'    => $asset->assigned_to,
+                'checkoutable_type' => Asset::class,
+                'checkoutable_id' => $asset->id,
+                'assigned_to_id' => $asset->assigned_to,
             ];
         }
 

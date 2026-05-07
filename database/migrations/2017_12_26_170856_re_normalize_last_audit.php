@@ -3,7 +3,6 @@
 use App\Models\Actionlog;
 use App\Models\Asset;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 class ReNormalizeLastAudit extends Migration

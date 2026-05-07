@@ -27,6 +27,6 @@ class FixUpAssignedTypeWithoutAssignedTo extends Command
     public function handle()
     {
         DB::table('assets')->whereNotNull('assigned_type')->whereNull('assigned_to')->update(['assigned_type' => null]);
-        $this->info("Assets with an assigned_type but no assigned_to are fixed");
+        $this->info('Assets with an assigned_type but no assigned_to are fixed');
     }
 }

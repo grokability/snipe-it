@@ -3,30 +3,30 @@
 return [
 
     'update' => [
-        'error'                 => 'Došlo je do pogreške prilikom ažuriranja. ',
-        'success'               => 'Postavke su uspešno ažurirane.',
+        'error' => 'Došlo je do pogreške prilikom ažuriranja. ',
+        'success' => 'Postavke su uspešno ažurirane.',
     ],
     'backup' => [
-        'delete_confirm'        => 'Jeste li sigurni da želite izbrisati tu backup datoteku? Ova se akcija ne može poništiti. ',
-        'file_deleted'          => 'Sigurnosna kopija datoteke je uspešno izbrisana. ',
-        'generated'             => 'Nova sigurnosna kopija datoteke uspešno je kreirana.',
-        'file_not_found'        => 'Sigurnosna kopija datoteke nije na serveru.',
-        'restore_warning'       => 'Da, vrati. Potvrđujem da će ovo zameniti sve postojeće podatke koji se trenutno nalaze u bazi podataka. Ovo će takođe odjaviti sve vaše postojeće korisnike (uključujući i Vas).',
-        'restore_confirm'       => 'Da li ste sigurni da želite da vratite svoju bazu podataka sa :filename?'
+        'delete_confirm' => 'Jeste li sigurni da želite izbrisati tu backup datoteku? Ova se akcija ne može poništiti. ',
+        'file_deleted' => 'Sigurnosna kopija datoteke je uspešno izbrisana. ',
+        'generated' => 'Nova sigurnosna kopija datoteke uspešno je kreirana.',
+        'file_not_found' => 'Sigurnosna kopija datoteke nije na serveru.',
+        'restore_warning' => 'Da, vrati. Potvrđujem da će ovo zameniti sve postojeće podatke koji se trenutno nalaze u bazi podataka. Ovo će takođe odjaviti sve vaše postojeće korisnike (uključujući i Vas).',
+        'restore_confirm' => 'Da li ste sigurni da želite da vratite svoju bazu podataka sa :filename?',
     ],
     'restore' => [
-        'success'               => 'Rezervna kopija vašeg sistema je povraćena. Molim vas prijavite se ponovo.'
+        'success' => 'Rezervna kopija vašeg sistema je povraćena. Molim vas prijavite se ponovo.',
     ],
     'purge' => [
-        'error'     => 'Došlo je do pogreške prilikom brisanja. ',
-        'validation_failed'     => 'Vaša potvrda o brisanju nije ispravna. Upišite reč "DELETE" u okvir potvrde.',
-        'success'               => 'Zapisi su uspešno i trajno obrisani.',
+        'error' => 'Došlo je do pogreške prilikom brisanja. ',
+        'validation_failed' => 'Vaša potvrda o brisanju nije ispravna. Upišite reč "DELETE" u okvir potvrde.',
+        'success' => 'Zapisi su uspešno i trajno obrisani.',
     ],
     'mail' => [
         'sending' => 'Slanje test e-pošte...',
         'success' => 'Pošta poslata!',
         'error' => 'Pošta ne može biti poslata.',
-        'additional' => 'Nije navedena dodatna poruka o grešci. Proverite podešavanja pošte i dnevnik aplikacije.'
+        'additional' => 'Nije navedena dodatna poruka o grešci. Proverite podešavanja pošte i dnevnik aplikacije.',
     ],
     'ldap' => [
         'testing' => 'Testiranje LDAP veze, vezivanja i upita...',
@@ -34,11 +34,11 @@ return [
         'error' => 'Nešto nije u redu :(',
         'sync_success' => 'Uzorak od 10 korisnika vraćenih sa LDAP servera na osnovu vaših podešavanja:',
         'testing_authentication' => 'Testiranje LDAP autentifikacije...',
-        'authentication_success' => 'Autentifikacija korisnika na LDAP-u je uspešna!'
+        'authentication_success' => 'Autentifikacija korisnika na LDAP-u je uspešna!',
     ],
     'labels' => [
         'null_template' => 'Nije pronađen šablon oznake. Molim vas izaberite šablon.',
-        ],
+    ],
     'webhook' => [
         'sending' => 'Slanje :app probne poruke...',
         'success' => 'Vaša :webhook_name integracija funkcioniše!',
@@ -55,5 +55,22 @@ return [
     'location_scoping' => [
         'not_saved' => 'Vaša podešavanja nisu sačuvana.',
         'mismatch' => 'Postoji 1 stavka u bazi podataka koja iziskuje vašu pažnju pre uključivanja opsega lokacije.|Postoji :count stavki u bazi podataka koje iziskuju vašu pažnju pre uključivanja opsega lokacije.',
+    ],
+    'oauth' => [
+        'token_revoked' => 'Lični token za pristup je uspešno poništen.',
+        'token_unrevoked' => 'Lični token za pristup je uspešno ponovno izdat.',
+        'token_not_found' => 'Taj lični token za pristup nije mogao biti pronađen.',
+        'token_revoke_error' => 'Dogodila se greška tokom poništavanja tokena.',
+        'token_unrevoke_error' => 'Dogodila se greška tokom ponovnog izdavanja tokena.',
+        'client_created' => 'OAuth klijent je uspešno kreiran.',
+        'client_updated' => 'OAuth klijent je uspešno ažuriran.',
+        'client_deleted' => 'OAuth klijent je uspešno izbrisan.',
+        'client_revoked' => 'OAuth klijent je uspešno poništen.',
+        'client_unrevoked' => 'OAuth klijent je uspešno ponovno izdat.',
+        'client_not_found' => 'Taj OAuth klijent nije mogao biti pronađen.',
+        'token_deleted' => 'Token je uspešno poništen.',
+        'client_delete_denied' => 'Niste ovlašćeni da izbrišete ovog klijenta.',
+        'client_edit_denied' => 'Niste ovlašćeni da izmenite ovog klijenta.',
+        'token_delete_denied' => 'Niste ovlašćeni da poništite ovog klijenta.',
     ],
 ];

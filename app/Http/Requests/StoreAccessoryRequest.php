@@ -4,17 +4,17 @@ namespace App\Http\Requests;
 
 use App\Models\Accessory;
 use App\Models\Category;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\Gate;
 
 class StoreAccessoryRequest extends ImageUploadRequest
 {
-
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return Gate::allows('create', new Accessory);
+        return Gate::allows('create', Accessory::class);
     }
 
     public function prepareForValidation(): void
@@ -34,7 +34,7 @@ class StoreAccessoryRequest extends ImageUploadRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
@@ -47,6 +47,7 @@ class StoreAccessoryRequest extends ImageUploadRequest
     public function messages(): array
     {
         $messages = ['category_type.in' => trans('admin/accessories/message.invalid_category_type')];
+
         return $messages;
     }
 

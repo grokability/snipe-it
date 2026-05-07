@@ -12,7 +12,7 @@ use Tests\TestCase;
 class CheckinCheckoutCounters extends TestCase
 {
     #[Test]
-    function counters()
+    public function counters()
     {
         $admin = User::factory()->admin()->create();
         $user = User::factory()->create();
@@ -27,11 +27,11 @@ class CheckinCheckoutCounters extends TestCase
 
         $asset = Asset::where('asset_tag', '1234')->sole();
 
-        //ensure counters are initialized properly
-        $this->assertEquals(0,$asset->checkout_counter);
-        $this->assertEquals(0,$asset->checkin_counter);
+        // ensure counters are initialized properly
+        $this->assertEquals(0, $asset->checkout_counter);
+        $this->assertEquals(0, $asset->checkin_counter);
 
-        //perform a checkout
+        // perform a checkout
         $this->actingAs($admin)
             ->post(route('hardware.checkout.store', $asset), [
                 'checkout_to_type' => 'user',
@@ -44,11 +44,11 @@ class CheckinCheckoutCounters extends TestCase
             ])->assertRedirect()->assertSessionHasNoErrors();
 
         $asset->refresh();
-//        dump($asset);
-        $this->assertEquals(1,$asset->checkout_counter);
-        $this->assertEquals(0,$asset->checkin_counter);
+        //        dump($asset);
+        $this->assertEquals(1, $asset->checkout_counter);
+        $this->assertEquals(0, $asset->checkin_counter);
 
-        //perform a check-in
+        // perform a check-in
         $this->actingAs($admin)
             ->post(
                 route('hardware.checkin.store', [$asset]),
@@ -58,8 +58,8 @@ class CheckinCheckoutCounters extends TestCase
             )->assertRedirect()->assertSessionHasNoErrors();
 
         $asset->refresh();
-//        dump($asset);
-        $this->assertEquals(1,$asset->checkout_counter);
-        $this->assertEquals(1,$asset->checkin_counter);
+        //        dump($asset);
+        $this->assertEquals(1, $asset->checkout_counter);
+        $this->assertEquals(1, $asset->checkin_counter);
     }
 }

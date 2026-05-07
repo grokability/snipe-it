@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
 
     /*
     |--------------------------------------------------------------------------
@@ -21,30 +21,30 @@ return array(
         'sunday' => 'Dimanche',
         'monday' => 'Lundi',
         'tuesday' => 'Mardi',
-        'wednesday' =>  'Mercredi',
-        'thursday' =>  'Thursday',
-        'friday' =>  'Friday',
-        'saturday' =>  'Saturday',
-        ],
+        'wednesday' => 'Mercredi',
+        'thursday' => 'Thursday',
+        'friday' => 'Friday',
+        'saturday' => 'Saturday',
+    ],
 
     'short_days' => [
         'sunday' => 'Sun',
         'monday' => 'Mon',
         'tuesday' => 'Tue',
-        'wednesday' =>  'Mer.',
-        'thursday' =>  'Jeu.',
-        'friday' =>  'Ven.',
-        'saturday' =>  'Sam.',
+        'wednesday' => 'Mer.',
+        'thursday' => 'Jeu.',
+        'friday' => 'Ven.',
+        'saturday' => 'Sam.',
     ],
 
     'min_days' => [
         'sunday' => 'Su',
         'monday' => 'Mo',
         'tuesday' => 'Tu',
-        'wednesday' =>  'We',
-        'thursday' =>  'Th',
-        'friday' =>  'Fr',
-        'saturday' =>  'Sa',
+        'wednesday' => 'We',
+        'thursday' => 'Th',
+        'friday' => 'Fr',
+        'saturday' => 'Sa',
     ],
 
     'months' => [
@@ -77,4 +77,4 @@ return array(
         'december' => 'Déc',
     ],
 
-);
+];

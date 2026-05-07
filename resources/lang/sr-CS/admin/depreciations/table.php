@@ -2,10 +2,10 @@
 
 return [
 
-    'id'      => 'ID',
-    'months'   => 'Meseci',
-    'term'   => 'Termin',
-    'title'      => 'Naziv ',
+    'id' => 'ID',
+    'months' => 'Meseci',
+    'term' => 'Termin',
+    'title' => 'Naziv ',
     'depreciation_min' => 'Vrednost',
 
 ];

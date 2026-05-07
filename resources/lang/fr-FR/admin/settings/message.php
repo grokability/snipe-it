@@ -3,30 +3,30 @@
 return [
 
     'update' => [
-        'error'                 => 'Une erreur a eu lieu pendant la mise à jour. ',
-        'success'               => 'Les paramètres ont été mis à jour avec succès.',
+        'error' => 'Une erreur a eu lieu pendant la mise à jour. ',
+        'success' => 'Les paramètres ont été mis à jour avec succès.',
     ],
     'backup' => [
-        'delete_confirm'        => 'Êtes-vous certain de vouloir supprimer ce fichier de sauvegarde ? Cette action ne peut pas être annulée. ',
-        'file_deleted'          => 'Le fichier de sauvegarde a été supprimé correctement. ',
-        'generated'             => 'Un nouveau fichier de sauvegarde a été créé correctement.',
-        'file_not_found'        => 'Ce fichier de sauvegarde n\'a pas pu être trouvé sur le serveur .',
-        'restore_warning'       => 'Oui, restaurez-le. Je reconnais que cela écrasera toutes les données existantes actuellement dans la base de données. Cela déconnectera également tous vos utilisateurs existants (vous y compris).',
-        'restore_confirm'       => 'Êtes-vous sûr de vouloir restaurer votre base de données à partir de :filename ?'
+        'delete_confirm' => 'Êtes-vous certain de vouloir supprimer ce fichier de sauvegarde ? Cette action ne peut pas être annulée. ',
+        'file_deleted' => 'Le fichier de sauvegarde a été supprimé correctement. ',
+        'generated' => 'Un nouveau fichier de sauvegarde a été créé correctement.',
+        'file_not_found' => 'Ce fichier de sauvegarde n\'a pas pu être trouvé sur le serveur .',
+        'restore_warning' => 'Oui, restaurez-le. Je reconnais que cela écrasera toutes les données existantes actuellement dans la base de données. Cela déconnectera également tous vos utilisateurs existants (vous y compris).',
+        'restore_confirm' => 'Êtes-vous sûr de vouloir restaurer votre base de données à partir de :filename ?',
     ],
     'restore' => [
-        'success'               => 'Your system backup has been restored. Please log in again.'
+        'success' => 'Your system backup has been restored. Please log in again.',
     ],
     'purge' => [
-        'error'     => 'Une erreur est survenue durant la purge. ',
-        'validation_failed'     => 'Votre confirmation de purge est incorrecte. Merci d\'écrire le mot "DELETE" dans la fenêtre de confirmation.',
-        'success'               => 'Les enregistrements supprimés ont bien été purgés.',
+        'error' => 'Une erreur est survenue durant la purge. ',
+        'validation_failed' => 'Votre confirmation de purge est incorrecte. Merci d\'écrire le mot "DELETE" dans la fenêtre de confirmation.',
+        'success' => 'Les enregistrements supprimés ont bien été purgés.',
     ],
     'mail' => [
         'sending' => 'Envoi du message électronique de test...',
         'success' => 'Courrier électronique envoyé !',
         'error' => 'Le courrier électronique n\'a pas pu être envoyé.',
-        'additional' => 'Aucun message d\'erreur supplémentaire disponible. Veuillez vérifier vos paramètres de messagerie et le journal d\'erreur de l\'application.'
+        'additional' => 'Aucun message d\'erreur supplémentaire disponible. Veuillez vérifier vos paramètres de messagerie et le journal d\'erreur de l\'application.',
     ],
     'ldap' => [
         'testing' => 'Test de la connexion, de la liaison et de la requête LDAP ...',
@@ -34,11 +34,11 @@ return [
         'error' => 'Une erreur est survenue :(',
         'sync_success' => 'Un échantillon de 10 utilisateurs a été renvoyé depuis le serveur LDAP en fonction de vos réglages:',
         'testing_authentication' => 'Test de l\'authentification LDAP...',
-        'authentication_success' => 'Utilisateur authentifié contre LDAP avec succès !'
+        'authentication_success' => 'Utilisateur authentifié contre LDAP avec succès !',
     ],
     'labels' => [
         'null_template' => 'Label template not found. Please select a template.',
-        ],
+    ],
     'webhook' => [
         'sending' => 'Envoi du message de test :app...',
         'success' => 'Votre intégration :webhook_name fonctionne !',
@@ -55,5 +55,22 @@ return [
     'location_scoping' => [
         'not_saved' => 'Your settings were not saved.',
         'mismatch' => 'There is 1 item in the database that need your attention before you can enable location scoping.|There are :count items in the database that need your attention before you can enable location scoping.',
+    ],
+    'oauth' => [
+        'token_revoked' => 'Personal access token revoked successfully.',
+        'token_unrevoked' => 'Personal access token reinstated successfully.',
+        'token_not_found' => 'That personal access token could not be found.',
+        'token_revoke_error' => 'An error occurred while revoking the token.',
+        'token_unrevoke_error' => 'An error occurred while reinstating the token.',
+        'client_created' => 'OAuth client created successfully.',
+        'client_updated' => 'OAuth client updated successfully.',
+        'client_deleted' => 'OAuth client deleted successfully.',
+        'client_revoked' => 'OAuth client revoked successfully.',
+        'client_unrevoked' => 'OAuth client reinstated successfully.',
+        'client_not_found' => 'That OAuth client could not be found.',
+        'token_deleted' => 'Token revoked successfully.',
+        'client_delete_denied' => 'You are not authorized to delete this client.',
+        'client_edit_denied' => 'You are not authorized to edit this client.',
+        'token_delete_denied' => 'You are not authorized to revoke this token.',
     ],
 ];

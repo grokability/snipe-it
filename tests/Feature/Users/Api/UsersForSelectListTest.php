@@ -10,7 +10,7 @@ use Tests\TestCase;
 
 class UsersForSelectListTest extends TestCase
 {
-    public function testUsersAreReturned()
+    public function test_users_are_returned()
     {
         $users = User::factory()->superuser()->count(3)->create();
 
@@ -24,10 +24,10 @@ class UsersForSelectListTest extends TestCase
                 'page',
                 'page_count',
             ])
-            ->assertJson(fn(AssertableJson $json) => $json->has('results', 3)->etc());
+            ->assertJson(fn (AssertableJson $json) => $json->has('results', 3)->etc());
     }
 
-    public function testUsersCanBeSearchedByFirstAndLastName()
+    public function test_users_can_be_searched_by_first_and_last_name()
     {
         User::factory()->create(['first_name' => 'Luke', 'last_name' => 'Skywalker']);
 
@@ -37,10 +37,10 @@ class UsersForSelectListTest extends TestCase
         $results = collect($response->json('results'));
 
         $this->assertEquals(1, $results->count());
-        $this->assertTrue($results->pluck('text')->contains(fn($text) => str_contains($text, 'Luke')));
+        $this->assertTrue($results->pluck('text')->contains(fn ($text) => str_contains($text, 'Luke')));
     }
 
-    public function testUsersCanBeSearchedByEmail()
+    public function test_users_can_be_searched_by_email()
     {
         User::factory()->create(['first_name' => 'Luke', 'last_name' => 'Skywalker', 'email' => 'luke@jedis.org']);
 
@@ -50,10 +50,10 @@ class UsersForSelectListTest extends TestCase
         $results = collect($response->json('results'));
 
         $this->assertEquals(1, $results->count());
-        $this->assertTrue($results->pluck('text')->contains(fn($text) => str_contains($text, 'Luke')));
+        $this->assertTrue($results->pluck('text')->contains(fn ($text) => str_contains($text, 'Luke')));
     }
 
-    public function testUsersScopedToCompanyWhenMultipleFullCompanySupportEnabled()
+    public function test_users_scoped_to_company_when_multiple_full_company_support_enabled()
     {
         $this->settings->enableMultipleFullCompanySupport();
 
@@ -74,14 +74,14 @@ class UsersForSelectListTest extends TestCase
 
         $this->assertEquals(3, $results->count());
         $this->assertTrue(
-            $results->pluck('text')->contains(fn($text) => str_contains($text, 'Luke'))
+            $results->pluck('text')->contains(fn ($text) => str_contains($text, 'Luke'))
         );
         $this->assertFalse(
-            $results->pluck('text')->contains(fn($text) => str_contains($text, 'Darth'))
+            $results->pluck('text')->contains(fn ($text) => str_contains($text, 'Darth'))
         );
     }
 
-    public function testUsersScopedToCompanyDuringSearchWhenMultipleFullCompanySupportEnabled()
+    public function test_users_scoped_to_company_during_search_when_multiple_full_company_support_enabled()
     {
         $this->settings->enableMultipleFullCompanySupport();
 
@@ -101,8 +101,8 @@ class UsersForSelectListTest extends TestCase
         $results = collect($response->json('results'));
 
         $this->assertEquals(3, $results->count());
-        $this->assertTrue($results->pluck('text')->contains(fn($text) => str_contains($text, 'Luke')));
-        $this->assertTrue($results->pluck('text')->contains(fn($text) => str_contains($text, 'Anakin')));
+        $this->assertTrue($results->pluck('text')->contains(fn ($text) => str_contains($text, 'Luke')));
+        $this->assertTrue($results->pluck('text')->contains(fn ($text) => str_contains($text, 'Anakin')));
 
         $response = $this->getJson(route('api.users.selectlist', ['search' => 'dvader']))->assertOk();
         $this->assertEquals(0, collect($response->json('results'))->count());

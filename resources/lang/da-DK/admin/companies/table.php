@@ -1,11 +1,12 @@
 <?php
-return array(
+
+return [
     'companies' => 'Virksomheder',
-    'create'    => 'Oprette virksomhed',
-    'email'     => 'Virksomhedens E-Mail',
-    'title'     => 'Virksomheden',
-    'phone'     => 'Firma Telefon',
-    'update'    => 'Opdater virksomhed',
-    'name'      => 'Virksomhedens navn',
-    'id'        => 'ID',
-);
+    'create' => 'Oprette virksomhed',
+    'email' => 'Virksomhedens E-Mail',
+    'title' => 'Virksomheden',
+    'phone' => 'Firma Telefon',
+    'update' => 'Opdater virksomhed',
+    'name' => 'Virksomhedens navn',
+    'id' => 'ID',
+];

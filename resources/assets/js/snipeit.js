@@ -149,8 +149,8 @@ $(function () {
         // deleteForm is the ID of the modal form itself
         $('#deleteForm').attr('action', href);
         $dataConfirmModal.find('.modal-header-icon').addClass(headericon);
-        $dataConfirmModal.find('.modal-title').text(title).prepend('<i class="fa ' + headericon + '"></i> ');
-        $dataConfirmModal.find('.modal-body').text(message);
+        $dataConfirmModal.find('.modal-title').text('').text(title).prepend('<i class="fa ' + headericon + '"></i> ');
+        $dataConfirmModal.find('.modal-body').text('').text(message);
         $dataConfirmModal.attr('action', href);
 
         // Fire the modal
@@ -209,7 +209,7 @@ $(function () {
                     var data = {
                         search: params.term,
                         page: params.page || 1,
-                        assetStatusType: link.data("asset-status-type"),
+                        statusType: link.data("asset-status-type"),
                         companyId: link.data("company-id"),
                     };
                     return data;
@@ -282,9 +282,9 @@ $(function () {
 		
 		if(value && !noForceAjax && !isMouseUp) {
 			var endpoint = element.data("endpoint");
-			var assetStatusType = element.data("asset-status-type");
+            var statusType = element.data("asset-status-type");
 			$.ajax({
-				url: baseUrl + 'api/v1/' + endpoint + '/selectlist?search='+value+'&page=1' + (assetStatusType ? '&assetStatusType='+assetStatusType : ''),
+                url: baseUrl + 'api/v1/' + endpoint + '/selectlist?search=' + value + '&page=1' + (statusType ? '&statusType=' + statusType : ''),
 				dataType: 'json',
 				headers: {
 					"X-Requested-With": 'XMLHttpRequest',
@@ -416,7 +416,13 @@ $(function () {
     // This handles the radio button selectors for the checkout-to-foo options
     // on asset checkout and also on asset edit
     $(function() {
-        $('input[name=checkout_to_type]').on("change",function () {
+        var checkoutToTypeInputs = $('input[name=checkout_to_type]');
+
+        if (!checkoutToTypeInputs.length) {
+            return;
+        }
+
+        function syncCheckoutToTypeUi(resetSelections) {
             var assignto_type = $('input[name=checkout_to_type]:checked').val();
             var userid = $('#assigned_user option:selected').val();
 
@@ -427,9 +433,10 @@ $(function () {
                 $('#assigned_location').hide();
                 $('.notification-callout').fadeOut();
 
-                $('[name="assigned_location"]').val('').trigger('change.select2');
-                $('[name="assigned_user"]').val('').trigger('change.select2');
-
+                if (resetSelections) {
+                    $('[name="assigned_location"]').val('').trigger('change.select2');
+                    $('[name="assigned_user"]').val('').trigger('change.select2');
+                }
             } else if (assignto_type == 'location') {
                 $('#current_assets_box').fadeOut();
                 $('#assigned_asset').hide();
@@ -437,10 +444,11 @@ $(function () {
                 $('#assigned_location').show();
                 $('.notification-callout').fadeOut();
 
-                $('[name="assigned_asset"]').val('').trigger('change.select2');
-                $('[name="assigned_user"]').val('').trigger('change.select2');
-            } else  {
-
+                if (resetSelections) {
+                    $('[name="assigned_asset"]').val('').trigger('change.select2');
+                    $('[name="assigned_user"]').val('').trigger('change.select2');
+                }
+            } else {
                 $('#assigned_asset').hide();
                 $('#assigned_user').show();
                 $('#assigned_location').hide();
@@ -449,10 +457,19 @@ $(function () {
                 }
                 $('.notification-callout').fadeIn();
 
-                $('[name="assigned_asset"]').val('').trigger('change.select2');
-                $('[name="assigned_location"]').val('').trigger('change.select2');
+                if (resetSelections) {
+                    $('[name="assigned_asset"]').val('').trigger('change.select2');
+                    $('[name="assigned_location"]').val('').trigger('change.select2');
+                }
             }
+        }
+
+        checkoutToTypeInputs.on('change', function () {
+            syncCheckoutToTypeUi(true);
         });
+
+        // Apply the current radio selection on initial render.
+        syncCheckoutToTypeUi(false);
     });
 
 
@@ -604,13 +621,15 @@ document.addEventListener('livewire:init', () => {
         Livewire.find(target.data('livewire-component')).set(event.target.name, this.options[this.selectedIndex].value)
     });
 
-    Livewire.hook('request', ({succeed}) => {
-        succeed(() => {
-            queueMicrotask(() => {
-                $('.livewire-select2').select2();
-            });
+  Livewire.interceptMessage(({ onFinish }) => {
+    onFinish(() => {
+      // Runs after DOM morph completes (or on error/cancel)
+        queueMicrotask(() => {
+          $(".livewire-select2").select2();
         });
-    });
+      });
+    }
+  );
 });
 
 

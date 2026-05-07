@@ -9,7 +9,9 @@ use Livewire\Component;
 class LocationScopeCheck extends Component
 {
     public $mismatched = [];
+
     public $setting;
+
     public $is_tested = false;
 
     public function check_locations()
@@ -18,7 +20,8 @@ class LocationScopeCheck extends Component
         $this->is_tested = true;
     }
 
-    public function mount() {
+    public function mount()
+    {
         $this->setting = Setting::getSettings();
     }
 

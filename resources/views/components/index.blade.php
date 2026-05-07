@@ -11,19 +11,7 @@
 @section('content')
     <x-container>
         <x-box>
-
-            <x-table
-                    show_column_search="false"
-                    show_advanced_search="true"
-                    show_footer="true"
-                    buttons="componentButtons"
-                    fixed_right_number="2"
-                    fixed_number="1"
-                    api_url="{{ route('api.components.index') }}"
-                    :presenter="\App\Presenters\ComponentPresenter::dataTableLayout()"
-                    export_filename="export-components-{{ date('Y-m-d') }}"
-            />
-
+            <x-table.components :route="route('api.components.index')" />
         </x-box>
     </x-container>
 @stop

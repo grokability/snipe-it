@@ -22,7 +22,7 @@ class AddLdapFieldsToSettings extends Migration
             $table->string('ldap_username_field')->nullable()->default('samaccountname');
             $table->string('ldap_lname_field')->nullable()->default('sn');
             $table->string('ldap_fname_field')->nullable()->default('givenname');
-			$table->string('ldap_auth_filter_query')->nullable()->default('uid=');
+            $table->string('ldap_auth_filter_query')->nullable()->default('uid=');
             $table->integer('ldap_version')->nullable()->default(3);
             $table->string('ldap_active_flag')->nullable()->default(null);
             $table->string('ldap_emp_num')->nullable()->default(null);

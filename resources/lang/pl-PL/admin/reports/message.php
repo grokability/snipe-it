@@ -3,7 +3,7 @@
 return [
     'about_templates' => 'O zapisanych szablonach',
     'saving_templates_description' => 'Wybierz swoje opcje, a następnie wprowadź nazwę szablonu w polu powyżej i kliknij przycisk \'Zapisz szablon\'. Użyj listy rozwijanej, aby wybrać wcześniej zapisany szablon.',
-    'create'  => [
+    'create' => [
         'success' => 'Pomyślnie zapisano szablon',
     ],
     'update' => [

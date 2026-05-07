@@ -21,7 +21,7 @@ class DestroyCategoryAction
      * @throws ItemStillHasLicenses
      * @throws ItemStillHasConsumables
      */
-    static function run(Category $category): bool
+    public static function run(Category $category): bool
     {
         $category->loadCount([
             'assets as assets_count',
@@ -29,7 +29,7 @@ class DestroyCategoryAction
             'consumables as consumables_count',
             'components as components_count',
             'licenses as licenses_count',
-            'models as models_count'
+            'models as models_count',
         ]);
 
         if ($category->assets_count > 0) {

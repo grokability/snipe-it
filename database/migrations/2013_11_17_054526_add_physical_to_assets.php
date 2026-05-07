@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 
 class AddPhysicalToAssets extends Migration
 {
@@ -14,7 +13,7 @@ class AddPhysicalToAssets extends Migration
     {
         //
         Schema::table('assets', function ($table) {
-            //$table->boolean('physical')->default(1);
+            // $table->boolean('physical')->default(1);
             $table->dropColumn('checkedout_to');
         });
     }

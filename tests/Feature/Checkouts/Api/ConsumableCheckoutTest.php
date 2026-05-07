@@ -6,21 +6,19 @@ use App\Mail\CheckoutConsumableMail;
 use App\Models\Actionlog;
 use App\Models\Consumable;
 use App\Models\User;
-use App\Notifications\CheckoutConsumableNotification;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
 class ConsumableCheckoutTest extends TestCase
 {
-    public function testCheckingOutConsumableRequiresCorrectPermission()
+    public function test_checking_out_consumable_requires_correct_permission()
     {
         $this->actingAsForApi(User::factory()->create())
             ->postJson(route('api.consumables.checkout', Consumable::factory()->create()))
             ->assertForbidden();
     }
 
-    public function testValidationWhenCheckingOutConsumable()
+    public function test_validation_when_checking_out_consumable()
     {
         $this->actingAsForApi(User::factory()->checkoutConsumables()->create())
             ->postJson(route('api.consumables.checkout', Consumable::factory()->create()), [
@@ -29,7 +27,7 @@ class ConsumableCheckoutTest extends TestCase
             ->assertStatusMessageIs('error');
     }
 
-    public function testConsumableMustBeAvailableWhenCheckingOut()
+    public function test_consumable_must_be_available_when_checking_out()
     {
         $this->actingAsForApi(User::factory()->checkoutConsumables()->create())
             ->postJson(route('api.consumables.checkout', Consumable::factory()->withoutItemsRemaining()->create()), [
@@ -38,7 +36,7 @@ class ConsumableCheckoutTest extends TestCase
             ->assertStatusMessageIs('error');
     }
 
-    public function testConsumableCanBeCheckedOut()
+    public function test_consumable_can_be_checked_out()
     {
         $consumable = Consumable::factory()->create();
         $user = User::factory()->create();
@@ -52,7 +50,7 @@ class ConsumableCheckoutTest extends TestCase
         $this->assertHasTheseActionLogs($consumable, ['create', 'checkout']);
     }
 
-    public function testConsumableCanBeCheckedOutWithQuantity()
+    public function test_consumable_can_be_checked_out_with_quantity()
     {
         $consumable = Consumable::factory()->create();
         $user = User::factory()->create();
@@ -73,7 +71,7 @@ class ConsumableCheckoutTest extends TestCase
         ]);
     }
 
-    public function testUserSentNotificationUponCheckout()
+    public function test_user_sent_notification_upon_checkout()
     {
         Mail::fake();
 
@@ -86,13 +84,14 @@ class ConsumableCheckoutTest extends TestCase
                 'assigned_to' => $user->id,
             ]);
 
-        Mail::assertSent(CheckoutConsumableMail::class, function ($mail) use ($consumable, $user) {
+        Mail::assertSent(CheckoutConsumableMail::class, function ($mail) use ($user) {
             return $mail->hasTo($user->email);
         });
     }
 
-    public function testActionLogCreatedUponCheckout()
-    {$consumable = Consumable::factory()->create();
+    public function test_action_log_created_upon_checkout()
+    {
+        $consumable = Consumable::factory()->create();
         $actor = User::factory()->checkoutConsumables()->create();
         $user = User::factory()->create();
 

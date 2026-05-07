@@ -7,27 +7,75 @@ use App\Helpers\Helper;
 class L6009_A extends L6009
 {
     private const BARCODE_MARGIN = 1.80;
-    private const TAG_SIZE       = 4.80;
-    private const TITLE_SIZE     = 3.00;
-    private const TITLE_MARGIN   = 1.80;
-    private const LABEL_SIZE     = 2.8;
-    private const LABEL_MARGIN   = -0.45;
-    private const FIELD_SIZE     = 3.80;
-    private const FIELD_MARGIN   = 0.20;
 
-    public function getUnit() { return 'mm'; }
+    private const TAG_SIZE = 4.80;
 
-    public function getLabelMarginTop()    { return 0.06; }
-    public function getLabelMarginBottom() { return 0.06; }
-    public function getLabelMarginLeft()   { return 0.06; }
-    public function getLabelMarginRight()  { return 0.06; }
+    private const TITLE_SIZE = 3.00;
 
-    public function getSupportAssetTag() { return true; }
-    public function getSupport1DBarcode() { return false; }
-    public function getSupport2DBarcode() { return true; }
-    public function getSupportFields() { return 4; }
-    public function getSupportLogo() { return false; }
-    public function getSupportTitle() { return false; }
+    private const TITLE_MARGIN = 1.80;
+
+    private const LABEL_SIZE = 2.8;
+
+    private const LABEL_MARGIN = -0.45;
+
+    private const FIELD_SIZE = 3.80;
+
+    private const FIELD_MARGIN = 0.20;
+
+    public function getUnit()
+    {
+        return 'mm';
+    }
+
+    public function getLabelMarginTop()
+    {
+        return 0.06;
+    }
+
+    public function getLabelMarginBottom()
+    {
+        return 0.06;
+    }
+
+    public function getLabelMarginLeft()
+    {
+        return 0.06;
+    }
+
+    public function getLabelMarginRight()
+    {
+        return 0.06;
+    }
+
+    public function getSupportAssetTag()
+    {
+        return true;
+    }
+
+    public function getSupport1DBarcode()
+    {
+        return false;
+    }
+
+    public function getSupport2DBarcode()
+    {
+        return true;
+    }
+
+    public function getSupportFields()
+    {
+        return 4;
+    }
+
+    public function getSupportLogo()
+    {
+        return false;
+    }
+
+    public function getSupportTitle()
+    {
+        return false;
+    }
 
     public function preparePDF($pdf) {}
 
@@ -95,5 +143,3 @@ class L6009_A extends L6009
         }
     }
 }
-
-?>

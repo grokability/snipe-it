@@ -14,11 +14,13 @@ class SupplierPresenter extends Presenter
     {
         $layout = [
             [
-                'field'        => 'checkbox',
-                'checkbox'     => true,
+                'field' => 'checkbox',
+                'checkbox' => true,
                 'titleTooltip' => trans('general.select_all_none'),
+                'printIgnore' => true,
+                'class' => 'hidden-print',
             ],
-             [
+            [
                 'field' => 'id',
                 'searchable' => false,
                 'sortable' => true,
@@ -48,8 +50,8 @@ class SupplierPresenter extends Presenter
                 'searchable' => false,
                 'sortable' => true,
                 'switchable' => true,
-                'title' =>  trans('general.assets'),
-                'titleTooltip' =>  trans('general.assets'),
+                'title' => trans('general.assets'),
+                'titleTooltip' => trans('general.assets'),
                 'visible' => true,
                 'class' => 'css-barcode',
             ],  [
@@ -57,8 +59,8 @@ class SupplierPresenter extends Presenter
                 'searchable' => false,
                 'sortable' => true,
                 'switchable' => true,
-                'title' =>  trans('general.accessories'),
-                'titleTooltip' =>  trans('general.accessories'),
+                'title' => trans('general.accessories'),
+                'titleTooltip' => trans('general.accessories'),
                 'visible' => true,
                 'class' => 'css-accessory',
             ],
@@ -67,8 +69,8 @@ class SupplierPresenter extends Presenter
                 'searchable' => false,
                 'sortable' => true,
                 'switchable' => true,
-                'title' =>  trans('general.licenses'),
-                'titleTooltip' =>  trans('general.licenses'),
+                'title' => trans('general.licenses'),
+                'titleTooltip' => trans('general.licenses'),
                 'visible' => true,
                 'class' => 'css-license',
             ], [
@@ -76,8 +78,8 @@ class SupplierPresenter extends Presenter
                 'searchable' => false,
                 'sortable' => true,
                 'switchable' => true,
-                'title' =>  trans('general.components'),
-                'titleTooltip' =>  trans('general.components'),
+                'title' => trans('general.components'),
+                'titleTooltip' => trans('general.components'),
                 'visible' => true,
                 'class' => 'css-component',
             ], [
@@ -85,8 +87,8 @@ class SupplierPresenter extends Presenter
                 'searchable' => false,
                 'sortable' => true,
                 'switchable' => true,
-                'title' =>  trans('general.consumables'),
-                'titleTooltip' =>  trans('general.consumables'),
+                'title' => trans('general.consumables'),
+                'titleTooltip' => trans('general.consumables'),
                 'visible' => true,
                 'class' => 'css-consumable',
             ], [
@@ -102,42 +104,42 @@ class SupplierPresenter extends Presenter
                 'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,
-                'title' =>  trans('admin/locations/table.address'),
+                'title' => trans('admin/locations/table.address'),
                 'visible' => true,
             ], [
                 'field' => 'address2',
                 'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,
-                'title' =>  trans('admin/locations/table.address2'),
+                'title' => trans('admin/locations/table.address2'),
                 'visible' => false,
             ], [
                 'field' => 'city',
                 'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,
-                'title' =>  trans('admin/locations/table.city'),
+                'title' => trans('admin/locations/table.city'),
                 'visible' => true,
             ], [
                 'field' => 'state',
                 'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,
-                'title' =>  trans('admin/locations/table.state'),
+                'title' => trans('admin/locations/table.state'),
                 'visible' => true,
             ], [
                 'field' => 'zip',
                 'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,
-                'title' =>  trans('admin/locations/table.zip'),
+                'title' => trans('admin/locations/table.zip'),
                 'visible' => false,
             ], [
                 'field' => 'country',
                 'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,
-                'title' =>  trans('admin/locations/table.country'),
+                'title' => trans('admin/locations/table.country'),
                 'visible' => false,
             ], [
                 'field' => 'phone',
@@ -146,7 +148,7 @@ class SupplierPresenter extends Presenter
                 'switchable' => true,
                 'title' => trans('admin/users/table.phone'),
                 'visible' => false,
-                'formatter'    => 'phoneFormatter',
+                'formatter' => 'phoneFormatter',
             ], [
                 'field' => 'fax',
                 'searchable' => true,
@@ -154,7 +156,7 @@ class SupplierPresenter extends Presenter
                 'switchable' => true,
                 'title' => trans('admin/suppliers/table.fax'),
                 'visible' => false,
-                'formatter'    => 'phoneFormatter',
+                'formatter' => 'phoneFormatter',
             ], [
                 'field' => 'tag_color',
                 'searchable' => true,
@@ -163,7 +165,7 @@ class SupplierPresenter extends Presenter
                 'title' => trans('general.tag_color'),
                 'visible' => false,
                 'formatter' => 'colorTagFormatter',
-            ],[
+            ], [
                 'field' => 'notes',
                 'searchable' => true,
                 'sortable' => true,
@@ -199,16 +201,16 @@ class SupplierPresenter extends Presenter
 
         return json_encode($layout);
     }
-    
 
     /**
      * Link to this supplier name
+     *
      * @return string
      */
     public function nameUrl()
     {
         if (auth()->user()->can('view', ['\App\Models\Supplier', $this])) {
-            return (string)link_to_route('suppliers.show', e($this->display_name), $this->id);
+            return '<a href="'.route('suppliers.show', $this->id).'">'.e($this->display_name).'</a>';
         } else {
             return e($this->display_name);
         }
@@ -216,6 +218,7 @@ class SupplierPresenter extends Presenter
 
     /**
      * Getter for Polymorphism.
+     *
      * @return mixed
      */
     public function name()
@@ -225,12 +228,13 @@ class SupplierPresenter extends Presenter
 
     /**
      * Url to view this item.
+     *
      * @return string
      */
     public function viewUrl()
     {
         if (auth()->user()->can('view', ['\App\Models\Supplier', $this])) {
-            return (string)link_to_route('suppliers.show', $this->display_name, $this->id);
+            return '<a href="'.route('suppliers.show', $this->id).'">'.e($this->display_name).'</a>';
         } else {
             return e($this->display_name);
         }
@@ -246,7 +250,8 @@ class SupplierPresenter extends Presenter
         return $this->name;
     }
 
-    public function formattedNameLink() {
+    public function formattedNameLink()
+    {
 
         if (auth()->user()->can('view', ['\App\Models\Supplier', $this])) {
             return ($this->tag_color ? "<i class='fa-solid fa-square fa-fw' style='color: ".e($this->tag_color)."' aria-hidden='true'></i> " : '').'<a href="'.route('suppliers.show', e($this->id)).'">'.e($this->name).'</a>';

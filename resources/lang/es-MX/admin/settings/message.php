@@ -3,30 +3,30 @@
 return [
 
     'update' => [
-        'error'                 => 'Ha ocurrido un error al actualizar. ',
-        'success'               => 'Parámetros actualizados correctamente.',
+        'error' => 'Ha ocurrido un error al actualizar. ',
+        'success' => 'Parámetros actualizados correctamente.',
     ],
     'backup' => [
-        'delete_confirm'        => '¿Está seguro de que desea eliminar este archivo de respaldo? Esta acción no puede se puede deshacer. ',
-        'file_deleted'          => 'El archivo de respaldo fue eliminado satisfactoriamente. ',
-        'generated'             => 'Se ha creado correctamente un nuevo archivo de copia de seguridad.',
-        'file_not_found'        => 'Ese archivo de copia de seguridad no se pudo encontrar en el servidor.',
-        'restore_warning'       => 'Sí, restaurarlo. Entiendo que esto sobrescribirá cualquier dato existente actualmente en la base de datos. Esto también cerrará la sesión de todos sus usuarios existentes (incluido usted).',
-        'restore_confirm'       => '¿Está seguro que desea restaurar su base de datos desde :filename?'
+        'delete_confirm' => '¿Está seguro de que desea eliminar este archivo de respaldo? Esta acción no puede se puede deshacer. ',
+        'file_deleted' => 'El archivo de respaldo fue eliminado satisfactoriamente. ',
+        'generated' => 'Se ha creado correctamente un nuevo archivo de copia de seguridad.',
+        'file_not_found' => 'Ese archivo de copia de seguridad no se pudo encontrar en el servidor.',
+        'restore_warning' => 'Sí, restaurarlo. Entiendo que esto sobrescribirá cualquier dato existente actualmente en la base de datos. Esto también cerrará la sesión de todos sus usuarios existentes (incluido usted).',
+        'restore_confirm' => '¿Está seguro que desea restaurar su base de datos desde :filename?',
     ],
     'restore' => [
-        'success'               => 'Se ha restaurado la copia de seguridad de su sistema. Por favor, vuelva a iniciar sesión.'
+        'success' => 'Se ha restaurado la copia de seguridad de su sistema. Por favor, vuelva a iniciar sesión.',
     ],
     'purge' => [
-        'error'     => 'Ha ocurrido un error mientras se realizaba el purgado. ',
-        'validation_failed'     => 'Su confirmación de purga es incorrecta. Por favor, escriba la palabra "DELETE" en el cuadro de confirmación.',
-        'success'               => 'Registros eliminados correctamente purgados.',
+        'error' => 'Ha ocurrido un error mientras se realizaba el purgado. ',
+        'validation_failed' => 'Su confirmación de purga es incorrecta. Por favor, escriba la palabra "DELETE" en el cuadro de confirmación.',
+        'success' => 'Registros eliminados correctamente purgados.',
     ],
     'mail' => [
         'sending' => 'Enviando correo electrónico de prueba...',
         'success' => 'Correo enviado!',
         'error' => 'El correo no puede ser enviado.',
-        'additional' => 'No se proporciona ningún mensaje de error adicional. Compruebe la configuración de su correo y el registro de errores de la aplicación.'
+        'additional' => 'No se proporciona ningún mensaje de error adicional. Compruebe la configuración de su correo y el registro de errores de la aplicación.',
     ],
     'ldap' => [
         'testing' => 'Probando conexión LDAP, Enlace & Consulta ...',
@@ -34,11 +34,11 @@ return [
         'error' => 'Algo salió mal :(',
         'sync_success' => 'Una muestra de 10 usuarios devueltos desde el servidor LDAP basado en su configuración:',
         'testing_authentication' => 'Probando autenticación LDAP...',
-        'authentication_success' => 'Usuario autenticado contra LDAP con éxito!'
+        'authentication_success' => 'Usuario autenticado contra LDAP con éxito!',
     ],
     'labels' => [
         'null_template' => 'Plantilla de etiqueta no encontrada. Por favor, seleccione una plantilla.',
-        ],
+    ],
     'webhook' => [
         'sending' => 'Enviando mensaje de prueba a :app...',
         'success' => '¡Su integración :webhook_name funciona!',
@@ -55,5 +55,22 @@ return [
     'location_scoping' => [
         'not_saved' => 'Tu configuración no ha sido guardada.',
         'mismatch' => 'Hay 1 elemento en la base de datos que necesita su atención antes de poder habilitar el alcance de la ubicación. Hay :count elementos en la base de datos que necesitan tu atención antes de poder habilitar el alcance de ubicación.',
+    ],
+    'oauth' => [
+        'token_revoked' => 'Personal access token revoked successfully.',
+        'token_unrevoked' => 'Personal access token reinstated successfully.',
+        'token_not_found' => 'That personal access token could not be found.',
+        'token_revoke_error' => 'An error occurred while revoking the token.',
+        'token_unrevoke_error' => 'Ocurrió un error mientras se restablecía el token.',
+        'client_created' => 'Cliente OAuth creado correctamente.',
+        'client_updated' => 'Cliente OAuth actualizado correctamente.',
+        'client_deleted' => 'Cliente OAuth eliminado correctamente.',
+        'client_revoked' => 'Cliente OAuth revocado correctamente.',
+        'client_unrevoked' => 'Cliente OAuth restablecido con éxito.',
+        'client_not_found' => 'El cliente OAuth no ha podido ser encontrado.',
+        'token_deleted' => 'Token revocado correctamente.',
+        'client_delete_denied' => 'No estás autorizado para eliminar este cliente.',
+        'client_edit_denied' => 'No estás autorizado para editar este cliente.',
+        'token_delete_denied' => 'No estás autorizado a revocar este token.',
     ],
 ];

@@ -3,6 +3,6 @@
 ])
 
 <!-- Start column component -->
-<div class="{{ $class }}">
+<div class="{{ $class }}" {{ $attributes->merge(['style' => '']) }}>
     {{ $slot }}
 </div>

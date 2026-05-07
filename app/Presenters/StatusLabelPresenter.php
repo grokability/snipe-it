@@ -9,6 +9,7 @@ class StatusLabelPresenter extends Presenter
 {
     /**
      * Json Column Layout for bootstrap table
+     *
      * @return string
      */
     public static function dataTableLayout()
@@ -29,7 +30,7 @@ class StatusLabelPresenter extends Presenter
                 'title' => trans('general.name'),
                 'visible' => true,
                 'formatter' => 'statuslabelsLinkFormatter',
-            ],[
+            ], [
                 'field' => 'type',
                 'searchable' => false,
                 'sortable' => false,
@@ -68,7 +69,7 @@ class StatusLabelPresenter extends Presenter
                 'title' => trans('admin/statuslabels/table.default_label'),
                 'visible' => true,
                 'formatter' => 'trueFalseFormatter',
-            ],[
+            ], [
                 'field' => 'notes',
                 'searchable' => true,
                 'sortable' => true,
@@ -111,6 +112,4 @@ class StatusLabelPresenter extends Presenter
 
         return json_encode($layout);
     }
-
-
 }

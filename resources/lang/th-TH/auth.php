@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
 
     /*
     |--------------------------------------------------------------------------
@@ -15,6 +15,6 @@ return array(
 
     'failed' => 'ข้อมูลที่ใช้ในการยืนยันตัวตนไม่ถูกต้อง',
     'password' => 'รหัสผ่านนี้ไม่ถูกต้อง',
-    'throttle' => 'Too many login attempts. Please try again in :minutes minute(s).',
+    'throttle' => 'กรอกข้อมูลผิดบ่อยครั้ง กรุณาลองใหม่ใน :minutes นาที',
 
-);
+];

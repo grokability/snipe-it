@@ -3,6 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Models\Asset;
+use App\Models\Location;
+use App\Models\User;
 use Illuminate\Console\Command;
 
 class SyncAssetLocations extends Command
@@ -57,7 +59,7 @@ class SyncAssetLocations extends Command
             $bar->advance();
         }
 
-        $assigned_user_assets = Asset::where('assigned_type', \App\Models\User::class)->whereNotNull('assigned_to')->whereNull('deleted_at')->get();
+        $assigned_user_assets = Asset::where('assigned_type', User::class)->whereNotNull('assigned_to')->whereNull('deleted_at')->get();
         $output['info'][] = 'There are '.$assigned_user_assets->count().' assets checked out to users.';
         foreach ($assigned_user_assets as $assigned_user_asset) {
             if (($assigned_user_asset->assignedTo) && ($assigned_user_asset->assignedTo->userLoc)) {
@@ -73,7 +75,7 @@ class SyncAssetLocations extends Command
             $bar->advance();
         }
 
-        $assigned_location_assets = Asset::where('assigned_type', \App\Models\Location::class)
+        $assigned_location_assets = Asset::where('assigned_type', Location::class)
             ->whereNotNull('assigned_to')->whereNull('deleted_at')->get();
         $output['info'][] = 'There are '.$assigned_location_assets->count().' assets checked out to locations.';
 
@@ -90,13 +92,13 @@ class SyncAssetLocations extends Command
         }
 
         // Assigned to assets
-        $assigned_asset_assets = Asset::where('assigned_type', \App\Models\Asset::class)
+        $assigned_asset_assets = Asset::where('assigned_type', Asset::class)
             ->whereNotNull('assigned_to')->whereNull('deleted_at')->get();
         $output['info'][] = 'Asset-assigned assets: '.$assigned_asset_assets->count();
 
         foreach ($assigned_asset_assets as $assigned_asset_asset) {
 
-                // Check to make sure there aren't any invalid relationships
+            // Check to make sure there aren't any invalid relationships
             if ($assigned_asset_asset->assetLoc()) {
                 $assigned_asset_asset->location_id = $assigned_asset_asset->assetLoc()->id;
                 $output['info'][] = 'Setting Asset Assigned asset '.$assigned_asset_asset->assetLoc()->id.' ('.$assigned_asset_asset->asset_tag.') location to: '.$assigned_asset_asset->assetLoc()->id;

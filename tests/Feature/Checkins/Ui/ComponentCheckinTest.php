@@ -9,8 +9,7 @@ use Tests\TestCase;
 
 class ComponentCheckinTest extends TestCase
 {
-
-    public function testCheckingInComponentRequiresCorrectPermission()
+    public function test_checking_in_component_requires_correct_permission()
     {
         $component = Component::factory()->checkedOutToAsset()->create();
 
@@ -21,7 +20,7 @@ class ComponentCheckinTest extends TestCase
             ->assertForbidden();
     }
 
-    public function testPageRenders()
+    public function test_page_renders()
     {
         $component = Component::factory()->checkedOutToAsset()->create();
 
@@ -32,7 +31,7 @@ class ComponentCheckinTest extends TestCase
             ->assertOk();
     }
 
-    public function testComponentCheckinPagePostIsRedirectedIfRedirectSelectionIsIndex()
+    public function test_component_checkin_page_post_is_redirected_if_redirect_selection_is_index()
     {
         $component = Component::factory()->checkedOutToAsset()->create();
 
@@ -51,7 +50,7 @@ class ComponentCheckinTest extends TestCase
         $this->assertHasTheseActionLogs($component, ['create', 'checkin from']);
     }
 
-    public function testComponentCheckinPagePostIsRedirectedIfRedirectSelectionIsItem()
+    public function test_component_checkin_page_post_is_redirected_if_redirect_selection_is_item()
     {
         $component = Component::factory()->checkedOutToAsset()->create();
 

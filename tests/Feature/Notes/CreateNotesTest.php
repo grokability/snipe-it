@@ -8,14 +8,14 @@ use Tests\TestCase;
 
 class CreateNotesTest extends TestCase
 {
-    public function testRequiresPermission()
+    public function test_requires_permission()
     {
         $this->actingAs(User::factory()->create())
             ->post(route('notes.store'))
             ->assertForbidden();
     }
 
-    public function testValidation()
+    public function test_validation()
     {
         $asset = Asset::factory()->create();
 
@@ -27,7 +27,7 @@ class CreateNotesTest extends TestCase
             ->assertSessionHas('errors');
     }
 
-    public function testAssetMustExist()
+    public function test_asset_must_exist()
     {
         $this->actingAs(User::factory()->editAssets()->create())
             ->post(route('notes.store'), [
@@ -38,7 +38,7 @@ class CreateNotesTest extends TestCase
             ->assertStatus(302);
     }
 
-    public function testCanCreateNoteForAsset()
+    public function test_can_create_note_for_asset()
     {
         $actor = User::factory()->editAssets()->create();
 
@@ -52,7 +52,7 @@ class CreateNotesTest extends TestCase
                 'type' => 'asset',
                 'note' => 'my special note',
             ])
-            ->assertRedirect(route('hardware.show', $asset->id) . '#history')
+            ->assertRedirect(route('hardware.show', $asset->id).'#history')
             ->assertSessionHas('success', trans('general.note_added'));
 
         $this->assertDatabaseHas('action_logs', [

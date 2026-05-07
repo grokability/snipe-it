@@ -23,13 +23,13 @@ return [
 
     'accessories' => 'Les accessoires sont tout ce que vous envoyez aux utilisateurs, mais qui n\'ont pas de numéro de série (ou vous n\'avez pas à les suivre de façon unique). Par exemple, souris ou claviers.',
 
-    'companies'     => 'Les sociétés peuvent être utilisées comme simple champ d\'identification, ou bien afin de limité la visibilité des matériels, utilisateurs etc... Si le support complet de la société est activé dans les paramètres d\'administration.',
+    'companies' => 'Les sociétés peuvent être utilisées comme simple champ d\'identification, ou bien afin de limité la visibilité des matériels, utilisateurs etc... Si le support complet de la société est activé dans les paramètres d\'administration.',
 
-    'components'    => 'Les composants sont des éléments constitutifs d\'un matériel, par exemple HDD, RAM, etc.',
+    'components' => 'Les composants sont des éléments constitutifs d\'un matériel, par exemple HDD, RAM, etc.',
 
-    'consumables'   => 'Les consommables sont tout ce qui est acheté et qui sera utilisé au fil du temps. Par exemple, l\'encre de l\'imprimante ou le papier de copieur.',
+    'consumables' => 'Les consommables sont tout ce qui est acheté et qui sera utilisé au fil du temps. Par exemple, l\'encre de l\'imprimante ou le papier de copieur.',
 
     'depreciations' => 'Vous pouvez mettre en place des amortissements d’actifs pour déprécier les matériels en fonction de la dépréciation linéaire.',
-    
-    'empty_file'    => 'L\'importateur détecte que ce fichier est vide.'
+
+    'empty_file' => 'L\'importateur détecte que ce fichier est vide.',
 ];

@@ -71,7 +71,7 @@ return [
     ],
     'hex_color' => 'Isian kolom :attribute harus berupa kode warna heksadesimal yang valid.',
     'image' => 'Isian kolom :attribute harus berupa gambar.',
-    'import_field_empty'    => 'Nilai untuk :fieldname tidak boleh kosong.',
+    'import_field_empty' => 'Nilai untuk :fieldname tidak boleh kosong.',
     'in' => ':attribute yang di pilih tidak benar.',
     'in_array' => 'Isian kolom :attribute harus ada di :other.',
     'integer' => 'Isian kolom :attribute harus berupa bilangan bulat.',
@@ -126,7 +126,7 @@ return [
         'symbols' => 'Isian kolom :attribute harus berisi minimal satu simbol.',
         'uncompromised' => ' :attribute yang diberikan telah muncul dalam daftar kebocoran data. Silakan pilih :attribute yang berbeda',
     ],
-    'percent'       => 'Nilai minimum depresiasi harus antara 0 dan 100 ketika tipe depresiasi adalah persentase.',
+    'percent' => 'Nilai minimum depresiasi harus antara 0 dan 100 ketika tipe depresiasi adalah persentase.',
 
     'present' => 'Bidang atribut: harus ada.',
     'present_if' => 'Isian kolom :attribute harus ada ketika :other adalah :value.',
@@ -156,16 +156,16 @@ return [
         'string' => 'Panjang isian kolom :attribute harus :size karakter.',
     ],
     'starts_with' => 'Isian kolom :attribute harus dimulai dengan salah satu dari berikut ini: :values.',
-    'string'               => 'The: atribut harus berupa string.',
+    'string' => 'The: atribut harus berupa string.',
     'two_column_unique_undeleted' => ':attribute harus unik di antara :table1 dan :table2.',
-    'unique_undeleted'     => ':attribute harus unik.',
-    'non_circular'         => ':attribute tidak boleh membuat referensi melingkar.',
-    'not_array'            => ':attribute tidak boleh berupa array.',
+    'unique_undeleted' => ':attribute harus unik.',
+    'non_circular' => ':attribute tidak boleh membuat referensi melingkar.',
+    'not_array' => ':attribute tidak boleh berupa array.',
     'disallow_same_pwd_as_user_fields' => 'Kata sandi tidak boleh sama dengan nama pengguna.',
-    'letters'              => 'Kata sandi harus terdiri dari minimal satu huruf.',
-    'numbers'              => 'Kata sandi harus terdiri dari minimal satu angka.',
-    'case_diff'            => 'Kata sandi harus menggunakan kombinasi huruf besar dan kecil.',
-    'symbols'              => 'Kata sandi harus berisi simbol.',
+    'letters' => 'Kata sandi harus terdiri dari minimal satu huruf.',
+    'numbers' => 'Kata sandi harus terdiri dari minimal satu angka.',
+    'case_diff' => 'Kata sandi harus menggunakan kombinasi huruf besar dan kecil.',
+    'symbols' => 'Kata sandi harus berisi simbol.',
     'timezone' => 'Isian kolom :attribute harus berupa zona waktu yang valid.',
     'unique' => ':attribute sudah digunakan.',
     'uploaded' => 'Atribut: gagal diupload.',
@@ -187,38 +187,38 @@ return [
     |
     */
 
-    'email_array'      => 'Satu atau lebih alamat email tidak benar.',
-    'checkboxes'           => ':attribute berisi opsi yang tidak valid.',
-    'radio_buttons'        => ':attribute tidak valid.',
-    
+    'email_array' => 'Satu atau lebih alamat email tidak benar.',
+    'checkboxes' => ':attribute berisi opsi yang tidak valid.',
+    'radio_buttons' => ':attribute tidak valid.',
+
     'custom' => [
         'alpha_space' => 'Bidang atribut: berisi karakter yang tidak diizinkan.',
 
-        'hashed_pass'      => 'Kata sandi Anda saat ini salah',
-        'dumbpwd'          => 'Password itu terlalu umum',
+        'hashed_pass' => 'Kata sandi Anda saat ini salah',
+        'dumbpwd' => 'Password itu terlalu umum',
         'statuslabel_type' => 'Anda harus memilih jenis label status yang valid',
-        'custom_field_not_found'          => 'Kolom ini tampaknya tidak ada, harap periksa kembali nama kolom kustom Anda.',
+        'custom_field_not_found' => 'Kolom ini tampaknya tidak ada, harap periksa kembali nama kolom kustom Anda.',
         'custom_field_not_found_on_model' => 'Kolom ini tampaknya ada, tetapi tidak tersedia pada set kolom Model Aset ini.',
 
         // date_format validation with slightly less stupid messages. It duplicates a lot, but it gets the job done :(
         // We use this because the default error message for date_format reflects php Y-m-d, which non-PHP
         // people won't know how to format.
-        'purchase_date.date_format'     => ' :attribute harus berupa tanggal yang valid dalam format YYYY-MM-DD',
-        'last_audit_date.date_format'   =>  ':attribute harus berupa tanggal yang valid dalam format YYYY-MM-DD hh:mm:ss',
-        'expiration_date.date_format'   =>  ':attribute harus berupa tanggal yang valid dalam format YYYY-MM-DD',
-        'termination_date.date_format'  =>  ' :attribute harus berupa tanggal yang valid dalam format YYYY-MM-DD',
-        'expected_checkin.date_format'  =>  ':attribute harus berupa tanggal yang valid dalam format YYYY-MM-DD',
-        'start_date.date_format'        =>  ':attribute harus berupa tanggal yang valid dalam format YYYY-MM-DD',
-        'end_date.date_format'          =>  ':attribute harus berupa tanggal yang valid dalam format YYYY-MM-DD',
+        'purchase_date.date_format' => ' :attribute harus berupa tanggal yang valid dalam format YYYY-MM-DD',
+        'last_audit_date.date_format' => ':attribute harus berupa tanggal yang valid dalam format YYYY-MM-DD hh:mm:ss',
+        'expiration_date.date_format' => ':attribute harus berupa tanggal yang valid dalam format YYYY-MM-DD',
+        'termination_date.date_format' => ' :attribute harus berupa tanggal yang valid dalam format YYYY-MM-DD',
+        'expected_checkin.date_format' => ':attribute harus berupa tanggal yang valid dalam format YYYY-MM-DD',
+        'start_date.date_format' => ':attribute harus berupa tanggal yang valid dalam format YYYY-MM-DD',
+        'end_date.date_format' => ':attribute harus berupa tanggal yang valid dalam format YYYY-MM-DD',
         'invalid_value_in_field' => 'Nilai tidak valid disertakan dalam isian kolom ini',
 
         'ldap_username_field' => [
-            'not_in' =>         '<code>sAMAccountName</code> (kombinasi huruf besar dan kecil) kemungkinan tidak akan berfungsi. Anda sebaiknya menggunakan <code>samaccountname</code> (huruf kecil) sebagai gantinya.'
+            'not_in' => '<code>sAMAccountName</code> (kombinasi huruf besar dan kecil) kemungkinan tidak akan berfungsi. Anda sebaiknya menggunakan <code>samaccountname</code> (huruf kecil) sebagai gantinya.',
         ],
         'ldap_auth_filter_query' => ['not_in' => '<code>uid=samaccountname</code> mungkin bukan filter autentikasi yang valid. Anda mungkin menginginkan <code>uid=<code>'],
         'ldap_filter' => ['regex' => 'Nilai ini sebaiknya tidak berada dalam tanda kurung.'],
 
-        ],
+    ],
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Attributes
@@ -230,7 +230,10 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'serials.*' => 'Nomor Seri',
+        'asset_tags.*' => 'Tag Aset',
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -244,6 +247,5 @@ return [
         'required' => 'Kolom ini wajib diisi',
         'email' => 'Silakan masukkan alamat email yang valid',
     ],
-
 
 ];

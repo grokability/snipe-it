@@ -23,13 +23,13 @@ return [
 
     'accessories' => 'Phụ kiện là bất cứ thứ gì bạn cấp cho người dùng nhưng không có số sê-ri (hoặc bạn không quan tâm đến việc theo dõi chúng duy nhất). Ví dụ, chuột máy tính hoặc bàn phím.',
 
-    'companies'     => 'Danh mục các công ty có thể được sử dụng như là một trường định danh đơn giản hoặc có thể được sử dụng để lọc ra số lượng hạn chế các tài sản, người dùng, v. v nếu như hỗ chợ công ty được kích hoạt trong thiết lập quản trị (Admin settings) của bạn.',
+    'companies' => 'Danh mục các công ty có thể được sử dụng như là một trường định danh đơn giản hoặc có thể được sử dụng để lọc ra số lượng hạn chế các tài sản, người dùng, v. v nếu như hỗ chợ công ty được kích hoạt trong thiết lập quản trị (Admin settings) của bạn.',
 
-    'components'    => 'Linh kiện là các mục thuộc một tài sản, ví dụ như ổ cứng HDD, RAM, v.v.',
+    'components' => 'Linh kiện là các mục thuộc một tài sản, ví dụ như ổ cứng HDD, RAM, v.v.',
 
-    'consumables'   => 'Vật phẩm tiêu hao là bất cứ thứ gì đã mua sẽ được sử dụng hết theo thời gian. Ví dụ: mực máy in hoặc giấy máy photocopy.',
+    'consumables' => 'Vật phẩm tiêu hao là bất cứ thứ gì đã mua sẽ được sử dụng hết theo thời gian. Ví dụ: mực máy in hoặc giấy máy photocopy.',
 
     'depreciations' => 'Bạn có thể thiết lập khấu hao tài sản để khấu hao tài sản dựa trên khấu hao đường thẳng.',
-    
-    'empty_file'    => 'The importer detects that this file is empty.'
+
+    'empty_file' => 'The importer detects that this file is empty.',
 ];

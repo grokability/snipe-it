@@ -18,7 +18,7 @@ class CreateDepreciationsTable extends Migration
             $table->timestamps();
             $table->integer('user_id')->nullable();
             $table->engine = 'InnoDB';
-            //$table->foreign('user_id')->references('id')->on('users');
+            // $table->foreign('user_id')->references('id')->on('users');
         });
     }
 

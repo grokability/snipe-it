@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-
 use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Console\Command;
@@ -50,8 +49,9 @@ class ResetDemoSettings extends Command
         $settings->alert_email = 'service@snipe-it.io';
         $settings->login_note = 'Use `admin` / `password` to login to the demo.';
         $settings->header_color = '#3c8dbc';
-        $settings->link_dark_color = '#86cbf2';
-        $settings->link_light_color = '#084d73;';
+        $settings->link_dark_color = '#5fa4cc';
+        $settings->link_light_color = '#296282;';
+        $settings->nav_link_color = '#FFFFFF';
         $settings->label2_2d_type = 'QRCODE';
         $settings->default_currency = 'USD';
         $settings->brand = 2;
@@ -76,7 +76,6 @@ class ResetDemoSettings extends Command
         $settings->saml_custom_settings = null;
         $settings->default_avatar = 'default.png';
 
-
         $settings->save();
 
         if ($user = User::where('username', '=', 'admin')->first()) {
@@ -90,5 +89,4 @@ class ResetDemoSettings extends Command
         \Storage::disk('public')->put('snipe-logo-lg.png', file_get_contents(public_path('img/demo/snipe-logo-lg.png')));
 
     }
-
 }

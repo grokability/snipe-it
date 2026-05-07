@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
     'personal_api_keys' => 'کلیدهای API شخصی',
     'personal_access_token' => 'Personal Access Token',
     'personal_api_keys_success' => 'Personal API Key :key created sucessfully',
@@ -16,4 +16,4 @@ return array(
     'no_tokens' => 'You have not created any personal access tokens.',
     'enable_sounds' => 'Enable sound effects',
     'enable_confetti' => 'Enable confetti effects',
-);
+];

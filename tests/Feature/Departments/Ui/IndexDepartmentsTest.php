@@ -2,27 +2,26 @@
 
 namespace Tests\Feature\Departments\Ui;
 
-use App\Models\Component;
 use App\Models\User;
 use Tests\TestCase;
 
 class IndexDepartmentsTest extends TestCase
 {
-    public function testPermissionRequiredToViewDepartmentsList()
+    public function test_permission_required_to_view_departments_list()
     {
         $this->actingAs(User::factory()->create())
             ->get(route('departments.index'))
             ->assertForbidden();
     }
 
-    public function testPageRenders()
+    public function test_page_renders()
     {
         $this->actingAs(User::factory()->superuser()->create())
-            ->get(route('components.index'))
+            ->get(route('departments.index'))
             ->assertOk();
     }
 
-    public function testUserCanListDepartments()
+    public function test_user_can_list_departments()
     {
         $this->actingAs(User::factory()->superuser()->create())
             ->get(route('departments.index'))

@@ -1,6 +1,6 @@
 <?php
 
-return array(
-    'created'   => 'ایجاد شده',
+return [
+    'created' => 'ایجاد شده',
     'size' => 'اندازه',
-);
+];

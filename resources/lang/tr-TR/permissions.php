@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
 
     /*
     |--------------------------------------------------------------------------
@@ -15,410 +15,449 @@ return array(
     |---------------------------------------------------------------------------
     */
 
-    "superuser" => [
-        'name' => 'Super User',
-        'note'       => 'Determines whether the user has full access to all aspects of the admin. This setting overrides ALL more specific and restrictive permissions throughout the system. ',
+    'superuser' => [
+        'name' => 'Süper Kullanıcı',
+        'note' => 'Yöneticinin tüm özelliklerine kullanıcının tam erişimi olup olmadığını belirler. Bu ayar, sistem genelindeki TÜM daha spesifik ve kısıtlayıcı izinleri geçersiz kılar.',
     ],
     'admin' => [
-        'name' => 'Admin Access',
-        'note'       => 'Determines whether the user has access to most aspects of the system EXCEPT the System Admin Settings. These users will be able to manage users, locations, categories, etc, but ARE constrained by Full Multiple Company Support if it is enabled.',
+        'name' => 'Yönetici Erişimi',
+        'note' => 'Kullanıcının Sistem Yönetici Ayarları HARİÇ sistemin çoğu bölümüne erişimi olup olmadığını belirler. Bu kullanıcılar kullanıcıları, konumları, kategorileri vb. yönetebilir, ancak etkinse Tam Çoklu Şirket Desteği tarafından SINIRLANDIRILIR.',
     ],
 
     'import' => [
-        'name' => 'CSV Import',
-        'note'       => 'This will allow users to import even if access to users, assets, etc is denied elsewhere.',
+        'name' => 'CSV İçe Aktarma',
+        'note' => 'Bu, başka yerlerde kullanıcılar, varlıklar vb. erişimi engellenmiş olsa bile kullanıcıların içe aktarma yapmasına izin verir.',
     ],
 
     'reports' => [
-        'name' => 'Reports Access',
-        'note'       => 'Determines whether the user has access to the Reports section of the application.',
+        'name' => 'Raporlara Erişim',
+        'note' => 'Kullanıcının uygulamanın Raporlar bölümüne erişimi olup olmadığını belirler.',
     ],
 
-    'assets' =>
-        [
-            'name' => 'Demirbaşlar',
-            'note' => 'Grants access to the Assets section of the application.',
+    'assets' => [
+        'name' => 'Varlıklar',
+        'note' => 'Uygulamanın Varlıklar bölümüne erişim sağlar.',
     ],
 
     'assetsview' => [
-        'name' => 'View Assets',
+        'name' => 'Varlıkları Görüntüle',
     ],
 
     'assetscreate' => [
-        'name' => 'Create New Assets',
+        'name' => 'Yeni Varlık Oluştur',
     ],
 
     'assetsedit' => [
-        'name' => 'Edit Assets',
+        'name' => 'Varlıkları Düzenle',
     ],
 
     'assetsdelete' => [
-        'name' => 'Delete Assets',
+        'name' => 'Varlıkları Sil',
     ],
 
     'assetscheckin' => [
-        'name' => 'Check In',
-        'note' => 'Check assets back into inventory that are currently checked out.',
+        'name' => 'Teslim Al',
+        'note' => 'Şu anda zimmette olan varlıkları tekrar envantere geri al.',
     ],
 
     'assetscheckout' => [
-        'name' => 'Check Out',
-        'note' => 'Assign assets in inventory by checking them out.',
+        'name' => 'Zimmete Ver',
+        'note' => 'Envanterdeki varlıkları zimmete vererek atama yap.',
     ],
 
     'assetsaudit' => [
-        'name' => 'Audit Assets',
-        'note' => 'Allows the user to mark an asset as physically inventoried.',
+        'name' => 'Varlıkları Denetle',
+        'note' => 'Kullanıcının bir varlığı fiziksel olarak sayılmış (envanteri yapılmış) olarak işaretlemesine izin verir.',
     ],
 
     'assetsviewrequestable' => [
-        'name' => 'View Requestable Assets',
-        'note' => 'Allows the user to view assets that are marked as requestable.',
+        'name' => 'Talep Edilebilir Varlıkları Görüntüle',
+        'note' => 'Kullanıcının talep edilebilir olarak işaretlenmiş varlıkları görüntülemesine izin verir.',
     ],
 
     'assetsviewencrypted-custom-fields' => [
-        'name' => 'View Encrypted Custom Fields',
-        'note' => 'Allows the user to view and modify encrypted custom fields on assets.',
+        'name' => 'Şifrelenmiş Özel Alanları Görüntüle',
+        'note' => 'Kullanıcının varlıklar üzerindeki şifrelenmiş özel alanları görüntülemesine ve düzenlemesine izin verir.',
     ],
 
-    'accessories'   => [
+    'accessories' => [
         'name' => 'Aksesuarlar',
-        'note'       => 'Grants access to the Accessories section of the application.',
+        'note' => 'Uygulamanın Aksesuarlar bölümüne erişim sağlar.',
     ],
 
     'accessoriesview' => [
-        'name' => 'View Accessories',
+        'name' => 'Aksesuarları Görüntüle',
     ],
     'accessoriescreate' => [
-        'name' => 'Create New Accessories',
+        'name' => 'Yeni Aksesuar Oluştur',
     ],
     'accessoriesedit' => [
-        'name' => 'Edit Accessories',
+        'name' => 'Aksesuarları Düzenle',
     ],
     'accessoriesdelete' => [
-        'name' => 'Delete Accessories',
+        'name' => 'Aksesuarları Sil',
     ],
     'accessoriescheckout' => [
-        'name' => 'Check Out Accessories',
-        'note' => 'Assign accessories in inventory by checking them out.',
+        'name' => 'Aksesuarları Zimmete Ver',
+        'note' => 'Envanterdeki aksesuarları zimmete vererek atama yap.',
     ],
     'accessoriescheckin' => [
-        'name' => 'Check In Accessories',
-        'note' => 'Check accessories back into inventory that are currently checked out.',
+        'name' => 'Aksesuarları Teslim Al',
+        'note' => 'Şu anda zimmette olan aksesuarları tekrar envantere geri al.',
     ],
     'accessoriesfiles' => [
-        'name' => 'Manage Accessory Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with accessories.',
+        'name' => 'Aksesuar Dosyalarını Yönet',
+        'note' => 'Kullanıcının aksesuarlarla ilişkili dosyaları yüklemesine, indirmesine ve silmesine izin verir. (Bu yalnızca görüntüleme yetkisi veya daha üstüyle anlamlıdır.)',
     ],
-    'consumables'   => [
+
+    'assetsfiles' => [
+        'name' => 'Varlık Dosyalarını Yönet',
+        'note' => 'Kullanıcının varlıklarla ilişkili dosyaları yüklemesine, indirmesine ve silmesine izin verir. (Bu yalnızca görüntüleme yetkisi veya daha üstüyle anlamlıdır.)',
+    ],
+
+    'usersfiles' => [
+        'name' => 'Kullanıcı Dosyalarını Yönet',
+        'note' => 'Kullanıcının kullanıcılarla ilişkili dosyaları yüklemesine, indirmesine ve silmesine izin verir. (Bu yalnızca görüntüleme yetkisi veya daha üstüyle anlamlıdır.)',
+    ],
+
+    'modelsfiles' => [
+        'name' => 'Model Dosyalarını Yönet',
+        'note' => 'Kullanıcının hem model görünümü hem de varlık görünümü ekranlarında, varlık modelleriyle ilişkili dosyaları yüklemesine, indirmesine ve silmesine olanak tanır. (Bu özellik yalnızca görüntüleme veya daha yüksek yetkilerle anlamlıdır.)',
+    ],
+
+    'departmentsfiles' => [
+        'name' => 'Departman Dosyalarını Yönet',
+        'note' => 'Kullanıcının departmanlarla ilişkili dosyaları yüklemesine, indirmesine ve silmesine olanak tanır. (Bu özellik yalnızca görüntüleme veya daha yüksek yetkilerle anlamlıdır.)',
+    ],
+
+    'suppliersfiles' => [
+        'name' => 'Tedarikçi Dosyalarını Yönet',
+        'note' => 'Kullanıcının tedarikçilerle ilişkili dosyaları yüklemesine, indirmesine ve silmesine olanak tanır. (Bu özellik yalnızca görüntüleme veya daha yüksek yetkilerle anlamlıdır.)',
+    ],
+
+    'locationsfiles' => [
+        'name' => 'Lokasyon Dosyalarını Yönet',
+        'note' => 'Kullanıcının lokasyonlarla ilişkili dosyaları yüklemesine, indirmesine ve silmesine olanak tanır. (Bu özellik yalnızca görüntüleme veya daha yüksek yetkilerle anlamlıdır.)',
+    ],
+
+    'companiesfiles' => [
+        'name' => 'Şirket Dosyalarını Yönet',
+        'note' => 'Kullanıcının şirketlerle ilişkili dosyaları yüklemesine, indirmesine ve silmesine olanak tanır. (Bu özellik yalnızca görüntüleme veya daha yüksek yetkilerle anlamlıdır.)',
+    ],
+
+    'consumablesfiles' => [
+        'name' => 'Sarf Malzemesi Dosyalarını Yönet',
+        'note' => 'Kullanıcının sarf malzemeleriyle ilişkili dosyaları yüklemesine, indirmesine ve silmesine olanak tanır. (Bu özellik yalnızca görüntüleme veya daha yüksek yetkilerle anlamlıdır.)',
+    ],
+
+    'consumables' => [
         'name' => 'Sarf Malzemeleri',
-        'note'       => 'Grants access to the Consumables section of the application.',
+        'note' => 'Uygulamanın Sarf Malzemeleri bölümüne erişim sağlar.',
     ],
     'consumablesview' => [
-        'name' => 'View Consumables',
+        'name' => 'Sarf Malzemelerini Görüntüle',
     ],
     'consumablescreate' => [
-        'name' => 'Create New Consumables',
+        'name' => 'Yeni Sarf Malzemesi Oluştur',
     ],
     'consumablesedit' => [
-        'name' => 'Edit Consumables',
+        'name' => 'Sarf Malzemelerini Düzenle',
     ],
     'consumablesdelete' => [
-        'name' => 'Delete Consumables',
+        'name' => 'Sarf Malzemelerini Sil',
     ],
     'consumablescheckout' => [
-        'name' => 'Check Out Consumables',
-        'note' => 'Assign consumables in inventory by checking them out.',
+        'name' => 'Sarf Malzemelerini Ödünç Ver (Zimmetle)',
+        'note' => 'Envanterdeki sarf malzemelerini ödünç vererek (zimmetleyerek) ata.',
     ],
-    'consumablesfiles' => [
-        'name' => 'Manage Consumable Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with consumables.',
-    ],
-    'licenses'   => [
+
+    'licenses' => [
         'name' => 'Lisanslar',
-        'note'       => 'Grants access to the Licenses section of the application.',
+        'note' => 'Uygulamanın Lisanslar bölümüne erişim sağlar.',
     ],
     'licensesview' => [
-        'name' => 'View Licenses',
+        'name' => 'Lisansları Görüntüle',
     ],
     'licensescreate' => [
-        'name' => 'Create New Licenses',
+        'name' => 'Yeni Lisanslar Oluştur',
     ],
     'licensesedit' => [
-        'name' => 'Edit Licenses',
+        'name' => 'Lisansları Düzenle',
     ],
     'licensesdelete' => [
-        'name' => 'Delete Licenses',
+        'name' => 'Lisansları Sil',
     ],
     'licensescheckout' => [
-        'name' => 'Assign Licenses',
-        'note' => 'Allows the user to assign licenses to assets or users.',
-        ],
+        'name' => 'Lisansları Ata',
+        'note' => 'Kullanıcının lisansları varlıklara veya kullanıcılara atamasına izin verir.',
+    ],
     'licensescheckin' => [
-        'name' => 'Unassign Licenses',
-        'note' => 'Allows the user to unassign licenses from assets or users.',
+        'name' => 'Lisans Atamasını Kaldır',
+        'note' => 'Kullanıcının lisansların varlıklar veya kullanıcılar üzerindeki atamasını kaldırmasına izin verir.',
     ],
     'licensesfiles' => [
-        'name' => 'Manage License Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with licenses.',
-    ],
-    'licenseskeys' => [
-        'name' => 'Manage License Keys',
-        'note' => 'Allows the user to view product keys associated with licenses.',
-    ],
-    'components'   => [
-        'name' => 'Bileşenler',
-        'note'       => 'Grants access to the Components section of the application.',
-    ],
-    'componentsview' => [
-        'name' => 'View Components',
-    ],
-    'componentscreate' => [
-        'name' => 'Create New Components',
-    ],
-    'componentsedit' => [
-        'name' => 'Edit Components',
-    ],
-    'componentsdelete' => [
-        'name' => 'Delete Components',
+        'name' => 'Lisans Dosyalarını Yönet',
+        'note' => 'Kullanıcının lisanslarla ilişkili dosyaları yüklemesine, indirmesine ve silmesine izin verir.',
     ],
     'componentsfiles' => [
-        'name' => 'Manage Component Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with components.',
+        'name' => 'Bileşen Dosyalarını Yönet',
+        'note' => 'Kullanıcının bileşenlerle ilişkili dosyaları yüklemesine, indirmesine ve silmesine izin verir.',
     ],
+
+    'licenseskeys' => [
+        'name' => 'Lisans Anahtarlarını Yönet',
+        'note' => 'Kullanıcının lisanslarla ilişkili ürün anahtarlarını görüntülemesine izin verir.',
+    ],
+    'components' => [
+        'name' => 'Bileşenler',
+        'note' => 'Uygulamanın Bileşenler bölümüne erişim sağlar.',
+    ],
+    'componentsview' => [
+        'name' => 'Bileşenleri Görüntüle',
+    ],
+    'componentscreate' => [
+        'name' => 'Yeni Bileşenler Oluştur',
+    ],
+    'componentsedit' => [
+        'name' => 'Bileşenleri Düzenle',
+    ],
+    'componentsdelete' => [
+        'name' => 'Bileşenleri Sil',
+    ],
+
     'componentscheckout' => [
-        'name' => 'Check Out Components',
-        'note' => 'Assign components in inventory by checking them out.',
+        'name' => 'Bileşenleri Çıkış Yap',
+        'note' => 'Envanterdeki bileşenleri çıkış yaparak atar.',
     ],
     'componentscheckin' => [
-        'name' => 'Check In Components',
-        'note' => 'Check components back into inventory that are currently checked out.',
+        'name' => 'Bileşenleri Geri Al',
+        'note' => 'Şu anda çıkış yapılmış olan bileşenleri tekrar envantere alır.',
     ],
-    'kits'   => [
+    'kits' => [
         'name' => 'Ön Tanımlı Setler',
-        'note'       => 'Grants access to the Predefined Kits section of the application.',
+        'note' => 'Uygulamanın Ön Tanımlı Kitler bölümüne erişim sağlar.',
     ],
     'kitsview' => [
-        'name' => 'View Predefined Kits',
+        'name' => 'Ön Tanımlı Kitleri Görüntüle',
     ],
     'kitscreate' => [
-        'name' => 'Create New Predefined Kits',
+        'name' => 'Yeni Ön Tanımlı Kitler Oluştur',
     ],
     'kitsedit' => [
-        'name' => 'Edit Predefined Kits',
+        'name' => 'Ön Tanımlı Kitleri Düzenle',
     ],
     'kitsdelete' => [
-        'name' => 'Delete Predefined Kits',
+        'name' => 'Ön Tanımlı Kitleri Sil',
     ],
-    'users'   => [
+    'users' => [
         'name' => 'Kullanıcılar',
-        'note'       => 'Grants access to the Users section of the application.',
+        'note' => 'Uygulamanın Kullanıcılar bölümüne erişim sağlar.',
     ],
     'usersview' => [
         'name' => 'Kullanıcıları Görüntüle',
     ],
     'userscreate' => [
-        'name' => 'Create New Users',
+        'name' => 'Yeni Kullanıcılar Oluştur',
     ],
     'usersedit' => [
-        'name' => 'Edit Users',
+        'name' => 'Kullanıcıları Düzenle',
     ],
     'usersdelete' => [
-        'name' => 'Delete Users',
+        'name' => 'Kullanıcıları Sil',
     ],
-    'models'   => [
-        'name' => 'Models',
-        'note'       => 'Grants access to the Models section of the application.',
+    'models' => [
+        'name' => 'Modeller',
+        'note' => 'Uygulamanın Modeller bölümüne erişim sağlar.',
     ],
     'modelsview' => [
         'name' => 'Modelleri görüntüle',
     ],
 
     'modelscreate' => [
-        'name' => 'Create New Models',
+        'name' => 'Yeni Modeller Oluştur',
     ],
     'modelsedit' => [
-        'name' => 'Edit Models',
+        'name' => 'Modelleri Düzenle',
     ],
     'modelsdelete' => [
-        'name' => 'Delete Models',
+        'name' => 'Modelleri Sil',
     ],
-    'categories'   => [
+    'categories' => [
         'name' => 'Kategoriler',
-        'note'       => 'Grants access to the Categories section of the application.',
+        'note' => 'Uygulamanın Kategoriler bölümüne erişim sağlar.',
     ],
     'categoriesview' => [
-        'name' => 'View Categories',
+        'name' => 'Kategorileri Görüntüle',
     ],
     'categoriescreate' => [
-        'name' => 'Create New Categories',
+        'name' => 'Yeni Kategoriler Oluştur',
     ],
     'categoriesedit' => [
-        'name' => 'Edit Categories',
+        'name' => 'Kategorileri Düzenle',
     ],
     'categoriesdelete' => [
-        'name' => 'Delete Categories',
+        'name' => 'Kategorileri Sil',
     ],
-    'departments'   => [
+    'departments' => [
         'name' => 'Bölümler',
-        'note'       => 'Grants access to the Departments section of the application.',
+        'note' => 'Uygulamanın Departmanlar bölümüne erişim sağlar.',
     ],
     'departmentsview' => [
-        'name' => 'View Departments',
+        'name' => 'Departmanları Görüntüle',
     ],
     'departmentscreate' => [
-        'name' => 'Create New Departments',
+        'name' => 'Yeni Departmanlar Oluştur',
     ],
     'departmentsedit' => [
-        'name' => 'Edit Departments',
+        'name' => 'Departmanları Düzenle',
     ],
     'departmentsdelete' => [
-        'name' => 'Delete Departments',
+        'name' => 'Departmanları Sil',
     ],
-    'locations'   => [
+    'locations' => [
         'name' => 'Konumlar',
-        'note'       => 'Grants access to the Locations section of the application.',
+        'note' => 'Uygulamanın Lokasyonlar bölümüne erişim sağlar.',
     ],
     'locationsview' => [
-        'name' => 'View Locations',
+        'name' => 'Lokasyonları Görüntüle',
     ],
     'locationscreate' => [
-        'name' => 'Create New Locations',
+        'name' => 'Yeni Lokasyonlar Oluştur',
     ],
     'locationsedit' => [
-        'name' => 'Edit Locations',
+        'name' => 'Lokasyonları Düzenle',
     ],
     'locationsdelete' => [
-        'name' => 'Delete Locations',
+        'name' => 'Lokasyonları Sil',
     ],
-    'status-labels'   => [
+    'status-labels' => [
         'name' => 'Durum Etiketleri',
-        'note'       => 'Grants access to the Status Labels section of the application used by Assets.',
+        'note' => 'Varlıklar tarafından kullanılan uygulamanın Durum Etiketleri bölümüne erişim sağlar.',
     ],
     'statuslabelsview' => [
-        'name' => 'View Status Labels',
+        'name' => 'Durum Etiketlerini Görüntüle',
     ],
     'statuslabelscreate' => [
-        'name' => 'Create New Status Labels',
+        'name' => 'Yeni Durum Etiketleri Oluştur',
     ],
     'statuslabelsedit' => [
-        'name' => 'Edit Status Labels',
+        'name' => 'Durum Etiketlerini Düzenle',
     ],
     'statuslabelsdelete' => [
-        'name' => 'Delete Status Labels',
+        'name' => 'Durum Etiketlerini Sil',
     ],
-    'custom-fields'   => [
+    'custom-fields' => [
         'name' => 'Özel alanlar',
-        'note'       => 'Grants access to the Custom Fields section of the application used by Assets.',
+        'note' => 'Varlıklar tarafından kullanılan uygulamanın Özel Alanlar bölümüne erişim sağlar.',
     ],
     'customfieldsview' => [
-        'name' => 'View Custom Fields',
+        'name' => 'Özel Alanları Görüntüle',
     ],
     'customfieldscreate' => [
-        'name' => 'Create New Custom Fields',
+        'name' => 'Yeni Özel Alanlar Oluştur',
     ],
     'customfieldsedit' => [
-        'name' => 'Edit Custom Fields',
+        'name' => 'Özel Alanları Düzenle',
     ],
     'customfieldsdelete' => [
-        'name' => 'Delete Custom Fields',
+        'name' => 'Özel Alanları Sil',
     ],
-    'suppliers'   => [
+    'suppliers' => [
         'name' => 'Tedarikçiler',
-        'note'       => 'Grants access to the Suppliers section of the application.',
+        'note' => 'Uygulamanın Tedarikçiler bölümüne erişim sağlar.',
     ],
     'suppliersview' => [
-        'name' => 'View Suppliers',
+        'name' => 'Tedarikçileri Görüntüle',
     ],
     'supplierscreate' => [
-        'name' => 'Create New Suppliers',
+        'name' => 'Yeni Tedarikçiler Oluştur',
     ],
     'suppliersedit' => [
-        'name' => 'Edit Suppliers',
+        'name' => 'Tedarikçileri Düzenle',
     ],
     'suppliersdelete' => [
-        'name' => 'Delete Suppliers',
+        'name' => 'Tedarikçileri Sil',
     ],
-    'manufacturers'   => [
+    'manufacturers' => [
         'name' => 'Üreticiler',
-        'note'       => 'Grants access to the Manufacturers section of the application.',
+        'note' => 'Uygulamanın Üreticiler bölümüne erişim sağlar.',
     ],
     'manufacturersview' => [
-        'name' => 'View Manufacturers',
+        'name' => 'Üreticileri Görüntüle',
     ],
     'manufacturerscreate' => [
-        'name' => 'Create New Manufacturers',
+        'name' => 'Yeni Üreticiler Oluştur',
     ],
     'manufacturersedit' => [
-        'name' => 'Edit Manufacturers',
+        'name' => 'Üreticileri Düzenle',
     ],
     'manufacturersdelete' => [
-        'name' => 'Delete Manufacturers',
+        'name' => 'Üreticileri Sil',
     ],
-    'companies'   => [
+    'companies' => [
         'name' => 'Şirketler',
-        'note'       => 'Grants access to the Companies section of the application.',
+        'note' => 'Uygulamanın Şirketler bölümüne erişim sağlar.',
     ],
     'companiesview' => [
-        'name' => 'View Companies',
+        'name' => 'Şirketleri Görüntüle',
     ],
     'companiescreate' => [
-        'name' => 'Create New Companies',
+        'name' => 'Yeni Şirketler Oluştur',
     ],
     'companiesedit' => [
-        'name' => 'Edit Companies',
+        'name' => 'Şirketleri Düzenle',
     ],
     'companiesdelete' => [
-        'name' => 'Delete Companies',
+        'name' => 'Şirketleri Sil',
     ],
     'user-self-accounts' => [
-        'name' => 'User Self Accounts',
-        'note'       => 'Grants non-admin users the ability to manage certain aspects of their own user accounts.',
+        'name' => 'Kullanıcı Kendi Hesapları',
+        'note' => 'Yönetici olmayan kullanıcılara kendi kullanıcı hesaplarının belirli yönlerini yönetme yetkisi verir.',
     ],
     'selftwo-factor' => [
-        'name' => 'Manage Two-Factor Authentication',
-        'note'       => 'Allows users to enable, disable, and manage two-factor authentication for their own accounts.',
+        'name' => 'İki Faktörlü Kimlik Doğrulamayı Yönet',
+        'note' => 'Kullanıcıların kendi hesapları için iki faktörlü kimlik doğrulamayı etkinleştirmesine, devre dışı bırakmasına ve yönetmesine olanak tanır.',
     ],
     'selfapi' => [
-        'name' => 'Manage API Tokens',
-        'note'       => 'Allows users to create, view, and revoke their own API tokens. User tokens will have the same permissions as the user who created them.',
+        'name' => 'API Tokenlarını Yönet',
+        'note' => 'Kullanıcıların kendi API tokenlarını oluşturmasına, görüntülemesine ve iptal etmesine olanak tanır. Kullanıcı tokenları, onları oluşturan kullanıcı ile aynı yetkilere sahip olacaktır.',
     ],
     'selfedit-location' => [
-        'name' => 'Edit Location',
-        'note'       => 'Allows users to edit the location associated with their own user account.',
+        'name' => 'Lokasyonu Düzenle',
+        'note' => 'Kullanıcıların kendi kullanıcı hesaplarıyla ilişkilendirilmiş lokasyonu düzenlemesine olanak tanır.',
     ],
     'selfcheckout-assets' => [
-        'name' => 'Self Check Out Assets',
-        'note'       => 'Allows users to check out assets to themselves without admin intervention.',
+        'name' => 'Varlıkları Kendine Teslim Alma',
+        'note' => 'Kullanıcıların yönetici müdahalesi olmadan varlıkları kendilerine teslim almasına olanak tanır.',
     ],
     'selfview-purchase-cost' => [
-        'name' => 'View Purchase Cost',
-        'note'       => 'Allows users to view the purchase cost of items in their account view.',
+        'name' => 'Satın Alma Maliyetini Görüntüle',
+        'note' => 'Kullanıcıların hesap görünümlerinde öğelerin satın alma maliyetini görüntülemesine olanak tanır.',
     ],
 
     'depreciations' => [
-        'name' => 'Depreciation Management',
-        'note'       => 'Allows users to manage and view asset depreciation details.',
+        'name' => 'Amortisman Yönetimi',
+        'note' => 'Kullanıcıların varlık amortisman detaylarını yönetmesine ve görüntülemesine olanak tanır.',
     ],
     'depreciationsview' => [
-        'name' => 'View Depreciation Details',
+        'name' => 'Amortisman Detaylarını Görüntüle',
     ],
     'depreciationsedit' => [
-        'name' => 'Edit Depreciation Settings',
+        'name' => 'Amortisman Ayarlarını Düzenle',
     ],
     'depreciationsdelete' => [
-        'name' => 'Delete Depreciation Records',
+        'name' => 'Amortisman Kayıtlarını Sil',
     ],
     'depreciationscreate' => [
-        'name' => 'Create Depreciation Records',
+        'name' => 'Amortisman Kayıtları Oluştur',
     ],
 
-    'grant_all' => 'Grant all permissions for :area',
-    'deny_all' => 'Deny all permissions for :area',
-    'inherit_all' => 'Inherit all permissions for :area from permission groups',
-    'grant' => 'Grant Permission for :area',
-    'deny' => 'Deny Permission for :area',
-    'inherit' => 'Inherit Permission for :area from permission groups',
-    'use_groups' => 'We strongly suggest using Permission Groups instead of assigning individual permissions for easier management.'
+    'grant_all' => ':area için tüm izinleri ver',
+    'deny_all' => ':area için tüm izinleri reddet',
+    'inherit_all' => ':area için tüm izinleri izin gruplarından devral',
+    'grant' => ':area için izin ver',
+    'deny' => ':area için izni reddet',
+    'inherit' => ':area için izni izin gruplarından devral',
+    'use_groups' => 'Daha kolay yönetim için tek tek izin atamak yerine İzin Grupları kullanmanızı şiddetle öneririz.',
 
-);
+];

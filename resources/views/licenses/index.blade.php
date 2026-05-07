@@ -12,17 +12,13 @@
     <x-container>
         <x-box>
 
-            <x-table
-                    show_column_search="false"
-                    show_advanced_search="true"
-                    show_footer="true"
-                    buttons="licenseButtons"
-                    fixed_right_number="2"
-                    fixed_number="1"
-                    api_url="{{ route('api.licenses.index', ['status' => e(request('status'))]) }}"
-                    :presenter="\App\Presenters\LicensePresenter::dataTableLayout()"
-                    export_filename="export-licenses-{{ date('Y-m-d') }}"
-            />
+            <x-table.licenses
+                fixed_right_number="2"
+                fixed_number="1"
+                show_footer="true"
+                show_advanced_search="true"
+                name="licenses"
+                :route="route('api.licenses.index', ['status' => e(request('status'))])"/>
 
         </x-box>
     </x-container>

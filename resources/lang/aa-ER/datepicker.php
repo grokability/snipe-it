@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
 
     /*
     |--------------------------------------------------------------------------
@@ -21,30 +21,30 @@ return array(
         'sunday' => 'crwdns13302:0crwdne13302:0',
         'monday' => 'crwdns13304:0crwdne13304:0',
         'tuesday' => 'crwdns13306:0crwdne13306:0',
-        'wednesday' =>  'crwdns13308:0crwdne13308:0',
-        'thursday' =>  'crwdns13310:0crwdne13310:0',
-        'friday' =>  'crwdns13312:0crwdne13312:0',
-        'saturday' =>  'crwdns13314:0crwdne13314:0',
-        ],
+        'wednesday' => 'crwdns13308:0crwdne13308:0',
+        'thursday' => 'crwdns13310:0crwdne13310:0',
+        'friday' => 'crwdns13312:0crwdne13312:0',
+        'saturday' => 'crwdns13314:0crwdne13314:0',
+    ],
 
     'short_days' => [
         'sunday' => 'crwdns13316:0crwdne13316:0',
         'monday' => 'crwdns13318:0crwdne13318:0',
         'tuesday' => 'crwdns13320:0crwdne13320:0',
-        'wednesday' =>  'crwdns13322:0crwdne13322:0',
-        'thursday' =>  'crwdns13324:0crwdne13324:0',
-        'friday' =>  'crwdns13326:0crwdne13326:0',
-        'saturday' =>  'crwdns13328:0crwdne13328:0',
+        'wednesday' => 'crwdns13322:0crwdne13322:0',
+        'thursday' => 'crwdns13324:0crwdne13324:0',
+        'friday' => 'crwdns13326:0crwdne13326:0',
+        'saturday' => 'crwdns13328:0crwdne13328:0',
     ],
 
     'min_days' => [
         'sunday' => 'crwdns13330:0crwdne13330:0',
         'monday' => 'crwdns13332:0crwdne13332:0',
         'tuesday' => 'crwdns13334:0crwdne13334:0',
-        'wednesday' =>  'crwdns13336:0crwdne13336:0',
-        'thursday' =>  'crwdns13338:0crwdne13338:0',
-        'friday' =>  'crwdns13340:0crwdne13340:0',
-        'saturday' =>  'crwdns13342:0crwdne13342:0',
+        'wednesday' => 'crwdns13336:0crwdne13336:0',
+        'thursday' => 'crwdns13338:0crwdne13338:0',
+        'friday' => 'crwdns13340:0crwdne13340:0',
+        'saturday' => 'crwdns13342:0crwdne13342:0',
     ],
 
     'months' => [
@@ -77,4 +77,4 @@ return array(
         'december' => 'crwdns13390:0crwdne13390:0',
     ],
 
-);
+];

@@ -35,17 +35,17 @@ class MailTest extends Notification
     /**
      * Get the mail representation of the notification.
      *
-     * @return \Illuminate\Notifications\Messages\MailMessage
+     * @return MailMessage
      */
     public function toMail()
     {
         return (new MailMessage)
-        ->subject('👋 '.trans('mail.test_email'))
-        ->markdown('notifications.Test')
-        ->withSymfonyMessage(function (Email $message) {
-            $message->getHeaders()->addTextHeader(
-                'X-System-Sender', 'Snipe-IT'
-            );
-        });
+            ->subject('👋 '.trans('mail.test_email'))
+            ->markdown('notifications.Test')
+            ->withSymfonyMessage(function (Email $message) {
+                $message->getHeaders()->addTextHeader(
+                    'X-System-Sender', 'Snipe-IT'
+                );
+            });
     }
 }

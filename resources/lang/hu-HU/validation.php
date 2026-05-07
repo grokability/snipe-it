@@ -14,28 +14,28 @@ return [
     */
 
     'accepted' => 'A :attribute el kell fogadni.',
-    'accepted_if' => 'The :attribute field must be accepted when :other is :value.',
-    'active_url' => 'The :attribute field must be a valid URL.',
-    'after' => 'The :attribute field must be a date after :date.',
-    'after_or_equal' => 'The :attribute field must be a date after or equal to :date.',
-    'alpha' => 'The :attribute field must only contain letters.',
-    'alpha_dash' => 'The :attribute field must only contain letters, numbers, dashes, and underscores.',
-    'alpha_num' => 'The :attribute field must only contain letters and numbers.',
-    'array' => 'The :attribute field must be an array.',
-    'ascii' => 'The :attribute field must only contain single-byte alphanumeric characters and symbols.',
-    'before' => 'The :attribute field must be a date before :date.',
-    'before_or_equal' => 'The :attribute field must be a date before or equal to :date.',
+    'accepted_if' => 'A :attribute mezőt el kell fogadni amikor :other értéke :value.',
+    'active_url' => 'A :attribute nem egy valós dátum.',
+    'after' => 'Az :attribute ezután a dátum után kell, hogy legyen :date.',
+    'after_or_equal' => 'A :attribútumnak dátumnak kell lennie, vagy egyenlőnek kell lennie: date.',
+    'alpha' => 'A :attribute csak betűket tartalmazhat.',
+    'alpha_dash' => 'A :attribute csak betűket, számokat és perjelet tartalmazhat.',
+    'alpha_num' => 'A :attribute csak betűket, számokat tartalmazhat.',
+    'array' => 'A(z) :attribute mező nem lehet tömb.',
+    'ascii' => 'A :attribute mező csak egybájtos alfanumerikus karaktereket és szimbólumokat tartalmazhat.',
+    'before' => 'Az :attribute ezután a dátum után kell, hogy legyen :date.',
+    'before_or_equal' => 'A: attribútumnak dátumnak kell lennie, vagy egyenlőnek kell lennie: date.',
     'between' => [
-        'array' => 'The :attribute field must have between :min and :max items.',
-        'file' => 'The :attribute field must be between :min and :max kilobytes.',
-        'numeric' => 'The :attribute field must be between :min and :max.',
-        'string' => 'The :attribute field must be between :min and :max characters.',
+        'array' => 'A :attribute mezőnek :min és :max közötti számú elemet kell tartalmaznia.',
+        'file' => 'A :attribute mező méretének :min és :max kilobájt között kell lennie.',
+        'numeric' => 'A :attribute mező értékének :min és :max között kell lennie.',
+        'string' => 'A :attribute mező hossza :min és :max karakter között kell legyen.',
     ],
-    'valid_regex' => 'The regular expression is invalid.',
+    'valid_regex' => 'A reguláris kifejezés érvénytelen.',
     'boolean' => 'Az :attribute igaznak vagy hamisnak kell lennie.',
-    'can' => 'The :attribute field contains an unauthorized value.',
-    'confirmed' => 'The :attribute field confirmation does not match.',
-    'contains' => 'The :attribute field is missing a required value.',
+    'can' => 'A :attribute mező jogosulatlan értéket tartalmaz.',
+    'confirmed' => 'A :attribute mező megerősítése nem egyezik.',
+    'contains' => 'A :attribute mezőből hiányzik egy kötelező érték.',
     'current_password' => 'Érvénytelen jelszó.',
     'date' => 'A :attribute nem egy valós dátum.',
     'date_equals' => 'The :attribute field must be a date equal to :date.',
@@ -71,7 +71,7 @@ return [
     ],
     'hex_color' => 'The :attribute field must be a valid hexadecimal color.',
     'image' => 'The :attribute field must be an image.',
-    'import_field_empty'    => 'A :fieldname mező értéke nem lehet üres.',
+    'import_field_empty' => 'A :fieldname mező értéke nem lehet üres.',
     'in' => 'A kiválasztott :attribute étvénytelen.',
     'in_array' => 'The :attribute field must exist in :other.',
     'integer' => 'The :attribute field must be an integer.',
@@ -126,7 +126,7 @@ return [
         'symbols' => 'The :attribute field must contain at least one symbol.',
         'uncompromised' => 'The given :attribute has appeared in a data leak. Please choose a different :attribute.',
     ],
-    'percent'       => 'Értékcsökkenés százalékos típusánál a minimum értéknek 0 és 100 között kell lennie.',
+    'percent' => 'Értékcsökkenés százalékos típusánál a minimum értéknek 0 és 100 között kell lennie.',
 
     'present' => 'A: attribútum mezőnek jelen kell lennie.',
     'present_if' => 'The :attribute field must be present when :other is :value.',
@@ -156,21 +156,21 @@ return [
         'string' => 'The :attribute field must be :size characters.',
     ],
     'starts_with' => 'The :attribute field must start with one of the following: :values.',
-    'string'               => 'A: attribútumnak stringnek kell lennie.',
+    'string' => 'A: attribútumnak stringnek kell lennie.',
     'two_column_unique_undeleted' => 'The :attribute must be unique across :table1 and :table2. ',
-    'unique_undeleted'     => 'A(z) :attribute egyedinek kell lennie.',
-    'non_circular'         => 'A(z) :attribute nem hozhat létre körkörös hivatkozást.',
-    'not_array'            => ':attribute cannot be an array.',
+    'unique_undeleted' => 'A(z) :attribute egyedinek kell lennie.',
+    'non_circular' => 'A(z) :attribute nem hozhat létre körkörös hivatkozást.',
+    'not_array' => ':attribute cannot be an array.',
     'disallow_same_pwd_as_user_fields' => 'A jelszó nem lehet azonos a felhasználónévvel.',
-    'letters'              => 'A jelszónak tartalmaznia kell legalább egy betűt.',
-    'numbers'              => 'A jelszónak tartalmaznia kell legalább egy számot.',
-    'case_diff'            => 'A jelszónak tartalmaznia kell kis- és nagybetűket.',
-    'symbols'              => 'A jelszónak tartalmaznia kell legalább egy szimbólumot.',
+    'letters' => 'A jelszónak tartalmaznia kell legalább egy betűt.',
+    'numbers' => 'A jelszónak tartalmaznia kell legalább egy számot.',
+    'case_diff' => 'A jelszónak tartalmaznia kell kis- és nagybetűket.',
+    'symbols' => 'A jelszónak tartalmaznia kell legalább egy szimbólumot.',
     'timezone' => 'The :attribute field must be a valid timezone.',
     'unique' => 'A :attribute már foglalt.',
     'uploaded' => 'A: attribútum nem sikerült feltölteni.',
     'uppercase' => 'The :attribute field must be uppercase.',
-    'url' => 'The :attribute field must be a valid URL.',
+    'url' => 'A :attribute nem egy valós dátum.',
     'ulid' => 'The :attribute field must be a valid ULID.',
     'uuid' => 'The :attribute field must be a valid UUID.',
     'fmcs_location' => 'Full multiple company support and location scoping is enabled in the Admin Settings, and the selected location and selected company are not compatible.',
@@ -187,38 +187,38 @@ return [
     |
     */
 
-    'email_array'      => 'Egy vagy több email cím érvénytelen.',
-    'checkboxes'           => ':attribute contains invalid options.',
-    'radio_buttons'        => ':attribute is invalid.',
-    
+    'email_array' => 'Egy vagy több email cím érvénytelen.',
+    'checkboxes' => ':attribute contains invalid options.',
+    'radio_buttons' => ':attribute is invalid.',
+
     'custom' => [
         'alpha_space' => 'A: attribútum mező olyan karaktert tartalmaz, amely nem megengedett.',
 
-        'hashed_pass'      => 'A jelenlegi jelszava helytelen',
-        'dumbpwd'          => 'Ez a jelszó túl gyakori.',
+        'hashed_pass' => 'A jelenlegi jelszava helytelen',
+        'dumbpwd' => 'Ez a jelszó túl gyakori.',
         'statuslabel_type' => 'Meg kell határoznia egy érvényes állapotcímke típust',
-        'custom_field_not_found'          => 'This field does not seem to exist, please double check your custom field names.',
+        'custom_field_not_found' => 'This field does not seem to exist, please double check your custom field names.',
         'custom_field_not_found_on_model' => 'This field seems to exist, but is not available on this Asset Model\'s fieldset.',
 
         // date_format validation with slightly less stupid messages. It duplicates a lot, but it gets the job done :(
         // We use this because the default error message for date_format reflects php Y-m-d, which non-PHP
         // people won't know how to format.
-        'purchase_date.date_format'     => ':attribute mező értékének érvényes dátumnak kell lennie YYYY-MM-DD formátumban',
-        'last_audit_date.date_format'   =>  ':attribute mező értékének érvényes dátumnak kell lennie YYYY-MM-DD hh:mm:ss formátumban',
-        'expiration_date.date_format'   =>  ':attribute mező értékének érvényes dátumnak kell lennie YYYY-MM-DD formátumban',
-        'termination_date.date_format'  =>  ':attribute mező értékének érvényes dátumnak kell lennie YYYY-MM-DD formátumban',
-        'expected_checkin.date_format'  =>  ':attribute mező értékének érvényes dátumnak kell lennie YYYY-MM-DD formátumban',
-        'start_date.date_format'        =>  ':attribute mező értékének érvényes dátumnak kell lennie YYYY-MM-DD formátumban',
-        'end_date.date_format'          =>  ':attribute mező értékének érvényes dátumnak kell lennie YYYY-MM-DD formátumban',
+        'purchase_date.date_format' => ':attribute mező értékének érvényes dátumnak kell lennie YYYY-MM-DD formátumban',
+        'last_audit_date.date_format' => ':attribute mező értékének érvényes dátumnak kell lennie YYYY-MM-DD hh:mm:ss formátumban',
+        'expiration_date.date_format' => ':attribute mező értékének érvényes dátumnak kell lennie YYYY-MM-DD formátumban',
+        'termination_date.date_format' => ':attribute mező értékének érvényes dátumnak kell lennie YYYY-MM-DD formátumban',
+        'expected_checkin.date_format' => ':attribute mező értékének érvényes dátumnak kell lennie YYYY-MM-DD formátumban',
+        'start_date.date_format' => ':attribute mező értékének érvényes dátumnak kell lennie YYYY-MM-DD formátumban',
+        'end_date.date_format' => ':attribute mező értékének érvényes dátumnak kell lennie YYYY-MM-DD formátumban',
         'invalid_value_in_field' => 'Invalid value included in this field',
 
         'ldap_username_field' => [
-            'not_in' =>         '<code>sAMAccountName</code> (mixed case) will likely not work. You should use <code>samaccountname</code> (lowercase) instead.'
+            'not_in' => '<code>sAMAccountName</code> (mixed case) will likely not work. You should use <code>samaccountname</code> (lowercase) instead.',
         ],
         'ldap_auth_filter_query' => ['not_in' => '<code>uid=samaccountname</code> is probably not a valid auth filter. You probably want <code>uid=</code> '],
         'ldap_filter' => ['regex' => 'This value should probably not be wrapped in parentheses.'],
 
-        ],
+    ],
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Attributes
@@ -230,7 +230,10 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'serials.*' => 'Sorozatszám',
+        'asset_tags.*' => 'Eszköz azonosító',
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -244,6 +247,5 @@ return [
         'required' => 'This field is required',
         'email' => 'Please enter a valid email address',
     ],
-
 
 ];

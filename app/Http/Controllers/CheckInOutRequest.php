@@ -12,7 +12,7 @@ trait CheckInOutRequest
     /**
      * Find target for checkout
      */
-    protected function determineCheckoutTarget() : ?SnipeModel
+    protected function determineCheckoutTarget(): ?SnipeModel
     {
         // This item is checked out to a location
         switch (request('checkout_to_type')) {
@@ -29,11 +29,12 @@ trait CheckInOutRequest
 
     /**
      * Update the location of the asset passed in.
-     * @param  Asset $asset Asset being updated
-     * @param  SnipeModel $target Target with location
-     * @return Asset        Asset being updated
+     *
+     * @param  Asset  $asset  Asset being updated
+     * @param  SnipeModel  $target  Target with location
+     * @return Asset Asset being updated
      */
-    protected function updateAssetLocation($asset, $target) : Asset
+    protected function updateAssetLocation($asset, $target): Asset
     {
         switch (request('checkout_to_type')) {
             case 'location':
@@ -49,8 +50,8 @@ trait CheckInOutRequest
                 }
                 break;
             case 'user':
-                    $asset->location_id = $target->location_id;
-                    break;
+                $asset->location_id = $target->location_id;
+                break;
         }
 
         return $asset;

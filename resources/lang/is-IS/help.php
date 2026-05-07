@@ -23,13 +23,13 @@ return [
 
     'accessories' => 'Aukabúnaður er allur sá búnaður sem hefur ekki raðnúmer eða það sem þarf ekki að halda utan um. T.d. tölvumús eða lyklaborð.',
 
-    'companies'     => 'Companies can be used as a simple identifier field, or can be used to limit visibility of assets, users, etc if full company support is enabled in your Admin settings.',
+    'companies' => 'Companies can be used as a simple identifier field, or can be used to limit visibility of assets, users, etc if full company support is enabled in your Admin settings.',
 
-    'components'    => 'Components are items that are part of an asset, for example HDD, RAM, etc.',
+    'components' => 'Components are items that are part of an asset, for example HDD, RAM, etc.',
 
-    'consumables'   => 'Rekstrarvörur er allt það sem eyðist eða rýrist við notkun, til dæmis blek í prentara eða ljósritunarpappír.',
+    'consumables' => 'Rekstrarvörur er allt það sem eyðist eða rýrist við notkun, til dæmis blek í prentara eða ljósritunarpappír.',
 
     'depreciations' => 'Þú getur búið til mismunandi fyrningarflokka til að afskrifa eignir eftir línulegu afskriftarferli.',
-    
-    'empty_file'    => 'The importer detects that this file is empty.'
+
+    'empty_file' => 'The importer detects that this file is empty.',
 ];

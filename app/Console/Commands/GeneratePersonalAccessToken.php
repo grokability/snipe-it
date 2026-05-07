@@ -2,14 +2,13 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Models\User;
-use Laravel\Passport\TokenRepository;
+use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Laravel\Passport\TokenRepository;
 
 class GeneratePersonalAccessToken extends Command
 {
-
     /**
      * The name and signature of the console command.
      *
@@ -27,14 +26,12 @@ class GeneratePersonalAccessToken extends Command
      */
     protected $description = 'This console command allows you to generate Personal API tokens to be used with the Snipe-IT JSON REST API on behalf of a user.';
 
-
     /**
      * The token repository implementation.
      *
-     * @var \Laravel\Passport\TokenRepository
+     * @var TokenRepository
      */
     protected $tokenRepository;
-
 
     /**
      * Create a new command instance.
@@ -56,11 +53,11 @@ class GeneratePersonalAccessToken extends Command
     {
 
         $accessTokenName = $this->option('name');
-        if ($accessTokenName=='') {
+        if ($accessTokenName == '') {
             $accessTokenName = 'CLI Auth Token';
         }
 
-        if ($this->option('user_id')=='') {
+        if ($this->option('user_id') == '') {
             return $this->error('ERROR: user_id cannot be blank.');
         }
 
@@ -75,7 +72,7 @@ class GeneratePersonalAccessToken extends Command
 
                 $this->warn('Your API Token has been created. Be sure to copy this token now, as it WILL NOT be accessible again.');
 
-                if ($token = DB::table('oauth_access_tokens')->where('user_id', '=', $user->id)->where('name','=',$accessTokenName)->orderBy('created_at', 'desc')->first()) {
+                if ($token = DB::table('oauth_access_tokens')->where('user_id', '=', $user->id)->where('name', '=', $accessTokenName)->orderBy('created_at', 'desc')->first()) {
                     $this->info('API Token ID: '.$token->id);
                 }
 
@@ -84,11 +81,8 @@ class GeneratePersonalAccessToken extends Command
                 $this->info('API Token: '.$createAccessToken);
             }
         } else {
-           return $this->error('ERROR: Invalid user. API key was not created.');
+            return $this->error('ERROR: Invalid user. API key was not created.');
         }
-
-
-
 
     }
 }

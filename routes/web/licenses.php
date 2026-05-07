@@ -10,10 +10,6 @@ use Tabuna\Breadcrumbs\Trail;
 Route::group(['prefix' => 'licenses', 'middleware' => ['auth']], function () {
     Route::get('{licenseId}/clone', [Licenses\LicensesController::class, 'getClone'])->name('clone/license');
 
-    Route::get('{licenseId}/freecheckout',
-        [Licenses\LicensesController::class, 'getFreeLicense']
-    )->name('licenses.freecheckout');
-
     Route::get('{license}/checkout/{seatId?}', [Licenses\LicenseCheckoutController::class, 'create'])
         ->name('licenses.checkout')
         ->breadcrumbs(fn (Trail $trail, License $license) =>

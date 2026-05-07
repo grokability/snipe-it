@@ -71,7 +71,7 @@ return [
     ],
     'hex_color' => 'The :attribute field must be a valid hexadecimal color.',
     'image' => 'The :attribute field must be an image.',
-    'import_field_empty'    => 'Η τιμή για :fieldname δεν μπορεί να είναι μηδενική.',
+    'import_field_empty' => 'Η τιμή για :fieldname δεν μπορεί να είναι μηδενική.',
     'in' => 'Το χαρακτηριστικό επιλεγμένο: δεν είναι έγκυρο.',
     'in_array' => 'The :attribute field must exist in :other.',
     'integer' => 'The :attribute field must be an integer.',
@@ -126,7 +126,7 @@ return [
         'symbols' => 'The :attribute field must contain at least one symbol.',
         'uncompromised' => 'The given :attribute has appeared in a data leak. Please choose a different :attribute.',
     ],
-    'percent'       => 'The depreciation minimum must be between 0 and 100 when depreciation type is percentage.',
+    'percent' => 'The depreciation minimum must be between 0 and 100 when depreciation type is percentage.',
 
     'present' => 'Πρέπει να υπάρχει το πεδίο ιδιοτήτων: attribute.',
     'present_if' => 'The :attribute field must be present when :other is :value.',
@@ -156,16 +156,16 @@ return [
         'string' => 'The :attribute field must be :size characters.',
     ],
     'starts_with' => 'The :attribute field must start with one of the following: :values.',
-    'string'               => 'Το χαρακτηριστικό πρέπει να είναι μια συμβολοσειρά.',
+    'string' => 'Το χαρακτηριστικό πρέπει να είναι μια συμβολοσειρά.',
     'two_column_unique_undeleted' => 'Το :attribute πρέπει να είναι μοναδικό σε :table1 και :table2. ',
-    'unique_undeleted'     => 'Το :χαρακτηριστικό πρέπει να είναι μοναδικό.',
-    'non_circular'         => 'Το χαρακτηριστικό: δεν πρέπει να δημιουργήσει μια κυκλική αναφορά.',
-    'not_array'            => ':attribute δεν μπορεί να είναι ένας πίνακας.',
+    'unique_undeleted' => 'Το :χαρακτηριστικό πρέπει να είναι μοναδικό.',
+    'non_circular' => 'Το χαρακτηριστικό: δεν πρέπει να δημιουργήσει μια κυκλική αναφορά.',
+    'not_array' => ':attribute δεν μπορεί να είναι ένας πίνακας.',
     'disallow_same_pwd_as_user_fields' => 'Ο κωδικός πρόσβασης δεν μπορεί να είναι ο ίδιος με το όνομα χρήστη.',
-    'letters'              => 'Ο κωδικός πρόσβασης πρέπει να περιέχει τουλάχιστον ένα γράμμα.',
-    'numbers'              => 'Ο κωδικός πρόσβασης πρέπει να περιέχει τουλάχιστον έναν αριθμό.',
-    'case_diff'            => 'Ο κωδικός πρόσβασης πρέπει να χρησιμοποιεί κεφαλαία μικτά.',
-    'symbols'              => 'Ο κωδικός πρόσβασης πρέπει να περιέχει σύμβολα.',
+    'letters' => 'Ο κωδικός πρόσβασης πρέπει να περιέχει τουλάχιστον ένα γράμμα.',
+    'numbers' => 'Ο κωδικός πρόσβασης πρέπει να περιέχει τουλάχιστον έναν αριθμό.',
+    'case_diff' => 'Ο κωδικός πρόσβασης πρέπει να χρησιμοποιεί κεφαλαία μικτά.',
+    'symbols' => 'Ο κωδικός πρόσβασης πρέπει να περιέχει σύμβολα.',
     'timezone' => 'The :attribute field must be a valid timezone.',
     'unique' => 'Το χαρακτηριστικό: έχει ήδη ληφθεί.',
     'uploaded' => 'Το χαρακτηριστικό:: απέτυχε να μεταφορτωθεί.',
@@ -187,38 +187,38 @@ return [
     |
     */
 
-    'email_array'      => 'Μία ή περισσότερες διευθύνσεις ηλεκτρονικού ταχυδρομείου δεν είναι έγκυρες.',
-    'checkboxes'           => ':attribute περιέχει μη έγκυρες επιλογές.',
-    'radio_buttons'        => ':attribute δεν είναι έγκυρο.',
-    
+    'email_array' => 'Μία ή περισσότερες διευθύνσεις ηλεκτρονικού ταχυδρομείου δεν είναι έγκυρες.',
+    'checkboxes' => ':attribute περιέχει μη έγκυρες επιλογές.',
+    'radio_buttons' => ':attribute δεν είναι έγκυρο.',
+
     'custom' => [
         'alpha_space' => 'Το πεδίο ιδιοτήτων: περιέχει ένα χαρακτήρα που δεν επιτρέπεται.',
 
-        'hashed_pass'      => 'Ο τρέχων κωδικός πρόσβασης είναι εσφαλμένος',
-        'dumbpwd'          => 'Αυτός ο κωδικός πρόσβασης είναι πολύ συνηθισμένος.',
+        'hashed_pass' => 'Ο τρέχων κωδικός πρόσβασης είναι εσφαλμένος',
+        'dumbpwd' => 'Αυτός ο κωδικός πρόσβασης είναι πολύ συνηθισμένος.',
         'statuslabel_type' => 'Πρέπει να επιλέξετε έναν έγκυρο τύπο ετικέτας κατάστασης',
-        'custom_field_not_found'          => 'This field does not seem to exist, please double check your custom field names.',
+        'custom_field_not_found' => 'This field does not seem to exist, please double check your custom field names.',
         'custom_field_not_found_on_model' => 'This field seems to exist, but is not available on this Asset Model\'s fieldset.',
 
         // date_format validation with slightly less stupid messages. It duplicates a lot, but it gets the job done :(
         // We use this because the default error message for date_format reflects php Y-m-d, which non-PHP
         // people won't know how to format.
-        'purchase_date.date_format'     => 'Το χαρακτηριστικό: πρέπει να είναι έγκυρη ημερομηνία σε μορφή YYYY-MM-DD',
-        'last_audit_date.date_format'   =>  'Το :attribute πρέπει να είναι έγκυρη ημερομηνία σε μορφή YYYY-MM-DD hh:mm:ss',
-        'expiration_date.date_format'   =>  'Το χαρακτηριστικό: πρέπει να είναι έγκυρη ημερομηνία σε μορφή YYYY-MM-DD',
-        'termination_date.date_format'  =>  'Το χαρακτηριστικό: πρέπει να είναι έγκυρη ημερομηνία σε μορφή YYYY-MM-DD',
-        'expected_checkin.date_format'  =>  'Το χαρακτηριστικό: πρέπει να είναι έγκυρη ημερομηνία σε μορφή YYYY-MM-DD',
-        'start_date.date_format'        =>  'Το χαρακτηριστικό: πρέπει να είναι έγκυρη ημερομηνία σε μορφή YYYY-MM-DD',
-        'end_date.date_format'          =>  'Το χαρακτηριστικό: πρέπει να είναι έγκυρη ημερομηνία σε μορφή YYYY-MM-DD',
+        'purchase_date.date_format' => 'Το χαρακτηριστικό: πρέπει να είναι έγκυρη ημερομηνία σε μορφή YYYY-MM-DD',
+        'last_audit_date.date_format' => 'Το :attribute πρέπει να είναι έγκυρη ημερομηνία σε μορφή YYYY-MM-DD hh:mm:ss',
+        'expiration_date.date_format' => 'Το χαρακτηριστικό: πρέπει να είναι έγκυρη ημερομηνία σε μορφή YYYY-MM-DD',
+        'termination_date.date_format' => 'Το χαρακτηριστικό: πρέπει να είναι έγκυρη ημερομηνία σε μορφή YYYY-MM-DD',
+        'expected_checkin.date_format' => 'Το χαρακτηριστικό: πρέπει να είναι έγκυρη ημερομηνία σε μορφή YYYY-MM-DD',
+        'start_date.date_format' => 'Το χαρακτηριστικό: πρέπει να είναι έγκυρη ημερομηνία σε μορφή YYYY-MM-DD',
+        'end_date.date_format' => 'Το χαρακτηριστικό: πρέπει να είναι έγκυρη ημερομηνία σε μορφή YYYY-MM-DD',
         'invalid_value_in_field' => 'Μη έγκυρη τιμή που περιλαμβάνεται σε αυτό το πεδίο',
 
         'ldap_username_field' => [
-            'not_in' =>         '<code>sAMAccountName</code> (mixed case) will likely not work. You should use <code>samaccountname</code> (lowercase) instead.'
+            'not_in' => '<code>sAMAccountName</code> (mixed case) will likely not work. You should use <code>samaccountname</code> (lowercase) instead.',
         ],
         'ldap_auth_filter_query' => ['not_in' => '<code>uid=samaccountname</code> is probably not a valid auth filter. You probably want <code>uid=</code> '],
         'ldap_filter' => ['regex' => 'This value should probably not be wrapped in parentheses.'],
 
-        ],
+    ],
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Attributes
@@ -230,7 +230,10 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'serials.*' => 'Σειριακός Αριθμός',
+        'asset_tags.*' => 'Ετικέτα πόρων',
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -244,6 +247,5 @@ return [
         'required' => 'This field is required',
         'email' => 'Please enter a valid email address',
     ],
-
 
 ];

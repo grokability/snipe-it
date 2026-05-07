@@ -23,13 +23,13 @@ return [
 
     'accessories' => 'Ang mga aksesorya ay tumutukoy sa anumang bagay na iyong inisyusa mga gumagamit ngunit wala itong serial number (o wala kang pakialam sa paghahanap basi sa kaibahan nito). Halimbawa, ang mga mouse ng kompyuter o mga keyboards.',
 
-    'companies'     => 'Ang mga kumpanya ay maaaring magamit bilang isang simpleng field ng pag-identify, o ito rin ay maaring magamit para i-limita ang bisibiliti ng mga asset, mga gumagamit, atbp kung pinagana ang buong suporta ng kumpanya sa iyong mga setting ng Admin.',
+    'companies' => 'Ang mga kumpanya ay maaaring magamit bilang isang simpleng field ng pag-identify, o ito rin ay maaring magamit para i-limita ang bisibiliti ng mga asset, mga gumagamit, atbp kung pinagana ang buong suporta ng kumpanya sa iyong mga setting ng Admin.',
 
-    'components'    => 'Ang mga komponent ay mga aytem na bahagi ng isang asset, halimbawa HDD, RAM, atbp.',
+    'components' => 'Ang mga komponent ay mga aytem na bahagi ng isang asset, halimbawa HDD, RAM, atbp.',
 
-    'consumables'   => 'Ang mga Consumable ay tumutukoy sa anumang binili na pwedeng maubos sa paglipas ng panahon. Halimbawa nito ay, printer ink or papel ng copier.',
+    'consumables' => 'Ang mga Consumable ay tumutukoy sa anumang binili na pwedeng maubos sa paglipas ng panahon. Halimbawa nito ay, printer ink or papel ng copier.',
 
     'depreciations' => 'Pwede kang mag-set up ng depresasyon para mai-depreciate ang mga asset basi sa straight-line depreciation.',
-    
-    'empty_file'    => 'The importer detects that this file is empty.'
+
+    'empty_file' => 'The importer detects that this file is empty.',
 ];

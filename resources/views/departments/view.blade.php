@@ -9,77 +9,59 @@
 @stop
 
 @section('header_right')
-    <i class="fa-regular fa-2x fa-square-caret-right pull-right" id="expand-info-panel-button" data-tooltip="true" title="{{ trans('button.show_hide_info') }}"></i>
+    <x-button.info-panel-toggle/>
 @endsection
 
 {{-- Page content --}}
 @section('content')
     <x-container columns="2">
         <x-page-column class="col-md-9 main-panel">
-            <x-box>
+            <x-tabs>
+                <x-slot:tabnav>
+                    <x-tabs.user-tab count="{{ $department->users->count() }}"/>
+                    <x-tabs.files-tab :item="$department" count="{{ $department->uploads()->count() }}"/>
+                    <x-tabs.upload-tab :item="$department"/>
+                </x-slot:tabnav>
 
-                <x-slot:bulkactions>
-                    <x-table.bulk-users />
-                </x-slot:bulkactions>
+                <x-slot:tabpanes>
+                    <!-- start users tab pane -->
+                    <x-tabs.pane name="users">
+                        <x-table.users name="users" :route="route('api.users.index', ['department_id' => $department->id])"/>
+                    </x-tabs.pane>
+                    <!-- end users tab pane -->
 
-                <x-table
-                        show_column_search="true"
-                        show_advanced_search="true"
-                        fixed_right_number="1"
-                        fixed_number="2"
-                        buttons="licenseButtons"
-                        api_url="{{ route('api.users.index', ['department_id' => $department->id]) }}"
-                        :presenter="\App\Presenters\UserPresenter::dataTableLayout()"
-                        export_filename="export-{{ str_slug($department->name) }}-users-{{ date('Y-m-d') }}"
-                />
-            </x-box>
+                    <!-- start files tab pane -->
+                    <x-tabs.pane name="files">
+                        <x-table.files object_type="departments" :object="$department"/>
+                    </x-tabs.pane>
+                    <!-- end files tab pane -->
+
+                </x-slot:tabpanes>
+
+            </x-tabs>
 
         </x-page-column>
-
         <x-page-column class="col-md-3">
-            <x-box>
-                <x-box.info-panel :contact="$department" img_path="{{ app('users_upload_url') }}">
+            <x-box class="side-box expanded">
+                <x-info-panel :infoPanelObj="$department" img_path="{{ app('departments_upload_url') }}">
 
-                    <x-slot:before_list>
+                    <x-slot:buttons>
+                        <x-button.edit :item="$department" :route="route('departments.edit', $department->id)"/>
+                        <x-button.delete :item="$department"/>
+                    </x-slot:buttons>
 
-                        @can('update', \App\Models\Department::class)
-                            <a href="{{ ($department->deleted_at=='') ? route('departments.edit', $department->id) : '#' }}" class="btn btn-block btn-sm btn-warning btn-social hidden-print{{ ($department->deleted_at!='') ? ' disabled' : '' }}">
-                                <x-icon type="edit" />
-                                {{ trans('general.update') }}
-                            </a>
-                        @endcan
-
-                        @can('delete', \App\Models\Department::class)
-
-                            @if ($department->users()->count() > 0)
-                                <button class="btn btn-block btn-sm btn-danger btn-social hidden-print disabled" data-tooltip="true"  data-placement="top" data-title="{{ trans('general.cannot_be_deleted') }}">
-                                    <x-icon type="delete" />
-                                    {{ trans('general.delete') }}
-                                </button>
-                            @else
-                                <button class="btn btn-block btn-sm btn-danger btn-social delete-asset" data-toggle="modal" title="{{ trans('general.delete_what', ['item'=> trans('general.department')]) }}" data-content="{{ trans('general.sure_to_delete_var', ['item' => $department->name]) }}" data-target="#dataConfirmModal" data-tooltip="true" data-icon="fa fa-trash" data-placement="top" data-title="{{ trans('general.delete_what', ['item'=> trans('general.department')]) }}" onClick="return false;">
-                                    <x-icon type="delete" />
-                                    {{ trans('general.delete') }}
-                                </button>
-                            @endif
-                        @endcan
-
-                    </x-slot:before_list>
-
-                </x-box.info-panel>
+                </x-info-panel>
             </x-box>
         </x-page-column>
-
-
     </x-container>
 
-@stop
+@endsection
 
 @section('moar_scripts')
-    @include ('partials.bootstrap-table',
-    ['exportFile' => 'departments-users-export',
-    'search' => true,
-    'columns' => \App\Presenters\UserPresenter::dataTableLayout()
-])
+    @can('files', $department)
+        @include ('modals.upload-file', ['item_type' => 'departments', 'item_id' => $department->id])
+    @endcan
 
-@stop
+    @include ('partials.bootstrap-table', ['exportFile' => 'department-' . $department->name . '-export', 'search' => false])
+@endsection
+

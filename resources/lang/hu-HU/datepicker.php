@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
 
     /*
     |--------------------------------------------------------------------------
@@ -21,30 +21,30 @@ return array(
         'sunday' => 'Vasárnap',
         'monday' => 'Hétfő',
         'tuesday' => 'Kedd',
-        'wednesday' =>  'Szerda',
-        'thursday' =>  'Csütörtök',
-        'friday' =>  'Péntek',
-        'saturday' =>  'Szombat',
-        ],
+        'wednesday' => 'Szerda',
+        'thursday' => 'Csütörtök',
+        'friday' => 'Péntek',
+        'saturday' => 'Szombat',
+    ],
 
     'short_days' => [
         'sunday' => 'Vas',
         'monday' => 'H',
         'tuesday' => 'K',
-        'wednesday' =>  'Sze',
-        'thursday' =>  'Csüt',
-        'friday' =>  'P',
-        'saturday' =>  'Szo',
+        'wednesday' => 'Sze',
+        'thursday' => 'Csüt',
+        'friday' => 'P',
+        'saturday' => 'Szo',
     ],
 
     'min_days' => [
         'sunday' => 'V',
         'monday' => 'H',
         'tuesday' => 'K',
-        'wednesday' =>  'Sze',
-        'thursday' =>  'Cs',
-        'friday' =>  'P',
-        'saturday' =>  'Szo',
+        'wednesday' => 'Sze',
+        'thursday' => 'Cs',
+        'friday' => 'P',
+        'saturday' => 'Szo',
     ],
 
     'months' => [
@@ -77,4 +77,4 @@ return array(
         'december' => 'Dec',
     ],
 
-);
+];

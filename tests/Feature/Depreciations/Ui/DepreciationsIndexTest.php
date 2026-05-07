@@ -7,14 +7,14 @@ use Tests\TestCase;
 
 class DepreciationsIndexTest extends TestCase
 {
-    public function testPermissionRequiredToViewDepreciationsList()
+    public function test_permission_required_to_view_depreciations_list()
     {
         $this->actingAs(User::factory()->create())
             ->get(route('depreciations.index'))
             ->assertForbidden();
     }
 
-    public function testUserCanListDepreciations()
+    public function test_user_can_list_depreciations()
     {
         $this->actingAs(User::factory()->admin()->create())
             ->get(route('depreciations.index'))

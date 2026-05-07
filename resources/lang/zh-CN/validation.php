@@ -71,7 +71,7 @@ return [
     ],
     'hex_color' => ':attribute 必须是一个有效的十六进制颜色。',
     'image' => ':attribute 字段必须是一个图像。',
-    'import_field_empty'    => ':fieldname 的值不能为空。',
+    'import_field_empty' => ':fieldname 的值不能为空。',
     'in' => '选择的 :attribute 无效',
     'in_array' => ':attribute 字段必须在 :other 中存在。',
     'integer' => ':attribute 字段必须是整数。',
@@ -126,7 +126,7 @@ return [
         'symbols' => ':attribute 字段必须至少包含一个符号。',
         'uncompromised' => '给定的 :attribute 字段出现在数据泄漏中。请选择一个不同的 :attribute 。',
     ],
-    'percent'       => '当折旧类型为百分比时，折旧的最小值必须在0到100之间。',
+    'percent' => '当折旧类型为百分比时，折旧的最小值必须在0到100之间。',
 
     'present' => ':attribute 字段必填',
     'present_if' => '当 :other 为 :value 时，:attribute 字段必须存在。',
@@ -156,16 +156,16 @@ return [
         'string' => ':attribute 字段必须是 :size 个字符。',
     ],
     'starts_with' => ':attribute 字段必须以下列之一开始：:values 。',
-    'string'               => ':attribute 必须是字符串。',
+    'string' => ':attribute 必须是字符串。',
     'two_column_unique_undeleted' => ':attribute 在 :table1 和 :table2 中必须是唯一的。 ',
-    'unique_undeleted'     => ':attribute 属性必须唯一。',
-    'non_circular'         => ':attribute 不能创建循环引用。',
-    'not_array'            => ':attribute 不能是一个数组。',
+    'unique_undeleted' => ':attribute 属性必须唯一。',
+    'non_circular' => ':attribute 不能创建循环引用。',
+    'not_array' => ':attribute 不能是一个数组。',
     'disallow_same_pwd_as_user_fields' => '密码不能和用户名相同。',
-    'letters'              => '密码必须包含至少一个字母。',
-    'numbers'              => '密码必须包含至少一个数字。',
-    'case_diff'            => '密码必须使用混合大小写。',
-    'symbols'              => '密码必须包含符号。',
+    'letters' => '密码必须包含至少一个字母。',
+    'numbers' => '密码必须包含至少一个数字。',
+    'case_diff' => '密码必须使用混合大小写。',
+    'symbols' => '密码必须包含符号。',
     'timezone' => ':attribute 字段必须是一个有效的时区。',
     'unique' => ':attribute 已经被采用',
     'uploaded' => ':attribute 无法上传。',
@@ -187,38 +187,38 @@ return [
     |
     */
 
-    'email_array'      => '一个或多个电子邮件地址无效。',
-    'checkboxes'           => ':attribute 包含无效的选项。',
-    'radio_buttons'        => ':attribute 无效。',
-    
+    'email_array' => '一个或多个电子邮件地址无效。',
+    'checkboxes' => ':attribute 包含无效的选项。',
+    'radio_buttons' => ':attribute 无效。',
+
     'custom' => [
         'alpha_space' => ':attribute 字段包含不允许的字符。',
 
-        'hashed_pass'      => '您当前的密码不正确',
-        'dumbpwd'          => '那个密码太常见了。',
+        'hashed_pass' => '您当前的密码不正确',
+        'dumbpwd' => '那个密码太常见了。',
         'statuslabel_type' => '您必须选择有效的状态标签类型',
-        'custom_field_not_found'          => '此字段似乎不存在，请重新检查您的自定义字段名称。',
+        'custom_field_not_found' => '此字段似乎不存在，请重新检查您的自定义字段名称。',
         'custom_field_not_found_on_model' => '此字段似乎存在，但在此资产型号的字段集上不可用。',
 
         // date_format validation with slightly less stupid messages. It duplicates a lot, but it gets the job done :(
         // We use this because the default error message for date_format reflects php Y-m-d, which non-PHP
         // people won't know how to format.
-        'purchase_date.date_format'     => ':attribute 必须是 YYYY-MM-DD 格式的有效日期',
-        'last_audit_date.date_format'   =>  ':attribute 必须是 YYYY-MM-DD hh:mm:ss 格式的有效日期',
-        'expiration_date.date_format'   =>  ':attribute 必须是 YYYY-MM-DD 格式的有效日期',
-        'termination_date.date_format'  =>  ':attribute 必须是 YYYY-MM-DD 格式的有效日期',
-        'expected_checkin.date_format'  =>  ':attribute 必须是 YYYY-MM-DD 格式的有效日期',
-        'start_date.date_format'        =>  ':attribute 必须是 YYYY-MM-DD 格式的有效日期',
-        'end_date.date_format'          =>  ':attribute 必须是 YYYY-MM-DD 格式的有效日期',
+        'purchase_date.date_format' => ':attribute 必须是 YYYY-MM-DD 格式的有效日期',
+        'last_audit_date.date_format' => ':attribute 必须是 YYYY-MM-DD hh:mm:ss 格式的有效日期',
+        'expiration_date.date_format' => ':attribute 必须是 YYYY-MM-DD 格式的有效日期',
+        'termination_date.date_format' => ':attribute 必须是 YYYY-MM-DD 格式的有效日期',
+        'expected_checkin.date_format' => ':attribute 必须是 YYYY-MM-DD 格式的有效日期',
+        'start_date.date_format' => ':attribute 必须是 YYYY-MM-DD 格式的有效日期',
+        'end_date.date_format' => ':attribute 必须是 YYYY-MM-DD 格式的有效日期',
         'invalid_value_in_field' => '此字段中包含的值无效',
 
         'ldap_username_field' => [
-            'not_in' =>         '<code>sAMAccountName</code>(混合大小写) 可能不起作用。您应该改用<code>samaccountname</code>(小写)。'
+            'not_in' => '<code>sAMAccountName</code>(混合大小写) 可能不起作用。您应该改用<code>samaccountname</code>(小写)。',
         ],
         'ldap_auth_filter_query' => ['not_in' => '<code>uid=samaccountname</code>可能不是有效的身份验证过滤器。您可能需要<code>uid=</code> '],
         'ldap_filter' => ['regex' => '这个值可能不应该用括号括起来。'],
 
-        ],
+    ],
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Attributes
@@ -230,7 +230,10 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'serials.*' => '序列号',
+        'asset_tags.*' => '资产标签',
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -244,6 +247,5 @@ return [
         'required' => '此字段是必填项',
         'email' => '请输入一个有效的电子邮件地址',
     ],
-
 
 ];

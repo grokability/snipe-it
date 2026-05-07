@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
     'personal_api_keys' => 'Osobní API klíče',
     'personal_access_token' => 'Osobní přístupový token',
     'personal_api_keys_success' => 'Osobní API klíč :key byl úspěšně vytvořen',
@@ -14,4 +14,4 @@ return array(
     'no_tokens' => 'Nevytvořili jste žádné osobní přístupové tokeny.',
     'enable_sounds' => 'Povolit zvukové efekty',
     'enable_confetti' => 'Povolit efekty confetti',
-);
+];

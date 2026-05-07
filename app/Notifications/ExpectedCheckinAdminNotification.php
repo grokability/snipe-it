@@ -11,15 +11,11 @@ use Symfony\Component\Mime\Email;
 class ExpectedCheckinAdminNotification extends Notification
 {
     use Queueable;
-    /**
-     * @var
-     */
+
     private $params;
 
     /**
      * Create a new notification instance.
-     *
-     * @param $params
      */
     public function __construct($params)
     {
@@ -42,13 +38,13 @@ class ExpectedCheckinAdminNotification extends Notification
     /**
      * Get the mail representation of the notification.
      *
-     * @return \Illuminate\Notifications\Messages\MailMessage
+     * @return MailMessage
      */
     public function toMail()
     {
         $message = (new MailMessage)->markdown('notifications.markdown.report-expected-checkins',
             [
-                'assets'  => $this->assets,
+                'assets' => $this->assets,
             ])
             ->subject('⏰'.trans('mail.Expected_Checkin_Report'))
             ->withSymfonyMessage(function (Email $message) {

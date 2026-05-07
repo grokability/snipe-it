@@ -23,8 +23,8 @@ class CreateCheckoutRequestAction
         if (is_null(Asset::RequestableAssets()->find($asset->id))) {
             throw new AssetNotRequestable($asset);
         }
-        if (!Company::isCurrentUserHasAccess($asset)) {
-            throw new AuthorizationException();
+        if (! Company::isCurrentUserHasAccess($asset)) {
+            throw new AuthorizationException;
         }
 
         $data['item'] = $asset;
@@ -32,7 +32,7 @@ class CreateCheckoutRequestAction
         $data['item_quantity'] = 1;
         $settings = Setting::getSettings();
 
-        $logaction = new Actionlog();
+        $logaction = new Actionlog;
         $logaction->item_id = $data['asset_id'] = $asset->id;
         $logaction->item_type = $data['item_type'] = Asset::class;
         $logaction->created_at = $data['requested_date'] = date('Y-m-d H:i:s');
@@ -44,7 +44,7 @@ class CreateCheckoutRequestAction
         $asset->request();
         $asset->increment('requests_counter', 1);
         try {
-            $settings->notify(new RequestAssetNotification($data));
+            $settings->notify((new RequestAssetNotification($data))->locale($settings->locale));
         } catch (\Exception $e) {
             Log::warning($e);
         }

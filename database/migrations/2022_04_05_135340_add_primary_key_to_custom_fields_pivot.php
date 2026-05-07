@@ -16,7 +16,7 @@ class AddPrimaryKeyToCustomFieldsPivot extends Migration
 
         // Check if the ID primary key already exists, if not, add it
         Schema::table('custom_field_custom_fieldset', function (Blueprint $table) {
-            if (!Schema::hasColumn('custom_field_custom_fieldset', 'id')) {
+            if (! Schema::hasColumn('custom_field_custom_fieldset', 'id')) {
                 $table->bigIncrements('id')->first();
             }
         });

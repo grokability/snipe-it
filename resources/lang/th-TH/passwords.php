@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'sent'	        => 'If a matching user with a valid email address exists in our system, a password recovery email has been sent.',
-    'user'			=> 'If a matching user with a valid email address exists in our system, a password recovery email has been sent.',
-    'token'         => 'This password reset token is invalid or expired, or does not match the username provided.',
-    'reset'         => 'Your password has been reset!',
-    'password_change'  => 'Your password has been updated!',
+    'sent' => 'หากชื่อผู้ใช้งานตรงกับอีเมล์ที่มีอยู่ในระบบ อีเมล์ในการกู้คืนรหัสผ่านจะถูกส่งไปที่อีเมล์นั้น',
+    'user' => 'หากชื่อผู้ใช้งานตรงกับอีเมล์ที่มีอยู่ในระบบ อีเมล์ในการกู้คืนรหัสผ่านจะถูกส่งไปที่อีเมล์นั้น',
+    'token' => 'ไม่มีโทเคนสำหรับการรีเซ็ทรหัสผ่าน, โทเคนหมดอายุ หรือไม่ตรงกับชื่อผู้ใช้งาน',
+    'reset' => 'รหัสผ่านของคุณถูกรีเซ็ทแล้ว',
+    'password_change' => 'รหัสผ่านของคุณถูกเปลี่ยนแล้ว',
 ];

@@ -1,5 +1,5 @@
 <?php
 
-return array(
-    'title'      				=> 'Bileşen adı',
-);
+return [
+    'title' => 'Bileşen adı',
+];

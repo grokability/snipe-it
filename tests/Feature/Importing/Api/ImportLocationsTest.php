@@ -2,9 +2,9 @@
 
 namespace Tests\Feature\Importing\Api;
 
+use App\Models\Import;
 use App\Models\Location;
 use App\Models\User;
-use App\Models\Import;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Arr;
 use Illuminate\Testing\TestResponse;
@@ -20,7 +20,7 @@ class ImportLocationsTest extends ImportDataTestCase implements TestsPermissions
 
     protected function importFileResponse(array $parameters = []): TestResponse
     {
-        if (!array_key_exists('import-type', $parameters)) {
+        if (! array_key_exists('import-type', $parameters)) {
             $parameters['import-type'] = 'location';
         }
 
@@ -28,7 +28,7 @@ class ImportLocationsTest extends ImportDataTestCase implements TestsPermissions
     }
 
     #[Test]
-    public function testRequiresPermission()
+    public function test_requires_permission()
     {
         $this->actingAsForApi(User::factory()->create());
 
@@ -36,7 +36,7 @@ class ImportLocationsTest extends ImportDataTestCase implements TestsPermissions
     }
 
     #[Test]
-    public function importLocation(): void
+    public function import_location(): void
     {
         $importFileBuilder = ImportFileBuilder::new();
         $row = $importFileBuilder->firstRow();
@@ -46,9 +46,9 @@ class ImportLocationsTest extends ImportDataTestCase implements TestsPermissions
         $this->importFileResponse(['import' => $import->id, 'send-welcome' => 0])
             ->assertOk()
             ->assertExactJson([
-                'payload'  => null,
-                'status'   => 'success',
-                'messages' => ['redirect_url' => route('locations.index')]
+                'payload' => null,
+                'status' => 'success',
+                'messages' => ['redirect_url' => route('locations.index')],
             ]);
 
         $newLocation = Location::query()
@@ -60,7 +60,7 @@ class ImportLocationsTest extends ImportDataTestCase implements TestsPermissions
     }
 
     #[Test]
-    public function willIgnoreUnknownColumnsWhenFileContainsUnknownColumns(): void
+    public function will_ignore_unknown_columns_when_file_contains_unknown_columns(): void
     {
         $row = ImportFileBuilder::new()->definition();
         $row['unknownColumnInCsvFile'] = 'foo';
@@ -74,9 +74,8 @@ class ImportLocationsTest extends ImportDataTestCase implements TestsPermissions
         $this->importFileResponse(['import' => $import->id])->assertOk();
     }
 
-
     #[Test]
-    public function whenRequiredColumnsAreMissingInImportFile(): void
+    public function when_required_columns_are_missing_in_import_file(): void
     {
         $importFileBuilder = ImportFileBuilder::new(['name' => '']);
         $import = Import::factory()->locations()->create(['file_path' => $importFileBuilder->saveToImportsDirectory()]);
@@ -86,17 +85,16 @@ class ImportLocationsTest extends ImportDataTestCase implements TestsPermissions
         $this->importFileResponse(['import' => $import->id])
             ->assertInternalServerError()
             ->assertExactJson([
-                'status'   => 'import-errors',
-                'payload'  => null,
+                'status' => 'import-errors',
+                'payload' => null,
                 'messages' => [
                     '' => [
                         'Location ""' => [
-                            'name' =>
-                                ['The name field is required.'],
+                            'name' => ['The name field is required.'],
                         ],
-                    ]
+                    ],
 
-                ]
+                ],
             ]);
 
         $newLocation = Location::query()
@@ -106,9 +104,8 @@ class ImportLocationsTest extends ImportDataTestCase implements TestsPermissions
         $this->assertCount(0, $newLocation);
     }
 
-
     #[Test]
-    public function updateLocationFromImport(): void
+    public function update_location_from_import(): void
     {
         $location = Location::factory()->create()->refresh();
         $importFileBuilder = ImportFileBuilder::new(['name' => $location->name, 'phone' => $location->phone]);
@@ -132,5 +129,4 @@ class ImportLocationsTest extends ImportDataTestCase implements TestsPermissions
             Arr::except($updatedLocation->attributesToArray(), array_merge($updatedAttributes, $location->getDates())),
         );
     }
-
 }

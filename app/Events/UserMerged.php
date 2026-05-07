@@ -2,9 +2,9 @@
 
 namespace App\Events;
 
+use App\Models\User;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use App\Models\User;
 
 class UserMerged
 {
@@ -17,8 +17,8 @@ class UserMerged
      */
     public function __construct(User $from_user, User $to_user, ?User $admin)
     {
-        $this->merged_from        = $from_user;
-        $this->merged_to      = $to_user;
-        $this->admin            = $admin;
+        $this->merged_from = $from_user;
+        $this->merged_to = $to_user;
+        $this->admin = $admin;
     }
 }

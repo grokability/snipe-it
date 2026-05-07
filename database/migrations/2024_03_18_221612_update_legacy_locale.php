@@ -24,7 +24,6 @@ class UpdateLegacyLocale extends Migration
             $table->string('locale', 10)->nullable()->default('en-US')->change();
         });
 
-
     }
 
     /**

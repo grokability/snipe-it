@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
     'personal_api_keys' => 'مفاتيح API الشخصية',
     'personal_access_token' => 'Personal Access Token',
     'personal_api_keys_success' => 'Personal API Key :key created sucessfully',
@@ -14,4 +14,4 @@ return array(
     'no_tokens' => 'لم تقم بإنشاء أي رموز خاصة للوصول الشخصي.',
     'enable_sounds' => 'تمكين المؤثرات الصوتية',
     'enable_confetti' => 'Enable confetti effects',
-);
+];

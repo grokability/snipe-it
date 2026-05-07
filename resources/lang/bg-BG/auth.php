@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
 
     /*
     |--------------------------------------------------------------------------
@@ -15,6 +15,6 @@ return array(
 
     'failed' => 'Неуспешно удостоверяване на потребител.',
     'password' => 'Невалидна парола.',
-    'throttle' => 'Too many login attempts. Please try again in :minutes minute(s).',
+    'throttle' => 'Твърде много грешни опити. Моля опитайте отново след :minutes минути.',
 
-);
+];

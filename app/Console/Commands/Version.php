@@ -87,7 +87,7 @@ class Version extends Command
             $app_version = 'v'."$maj.".($min + 1).".$patch";
         } elseif ($use_type == 'patch') {
             $app_version = 'v'."$maj.$min.".($patch + 1);
-        // If nothing is passed, leave the version as it is, just increment the build
+            // If nothing is passed, leave the version as it is, just increment the build
         } else {
             $app_version = 'v'."$maj.$min.".$patch;
         }

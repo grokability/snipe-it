@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
 
     /*
     |--------------------------------------------------------------------------
@@ -13,38 +13,38 @@ return array(
     |
     */
 
-    'week_start_select' => 'Select Day of Week',
-    'week_start' => 'Day the Week Starts On',
+    'week_start_select' => 'Vyberte den v týdnu',
+    'week_start' => 'Týden začíná dnem',
     'today' => 'Dnes',
     'clear' => 'Vyprázdnit',
     'days' => [
         'sunday' => 'Neděle',
         'monday' => 'Pondělí',
         'tuesday' => 'Úterý',
-        'wednesday' =>  'Středa',
-        'thursday' =>  'Čtvrtek',
-        'friday' =>  'Pátek',
-        'saturday' =>  'Sobota',
-        ],
+        'wednesday' => 'Středa',
+        'thursday' => 'Čtvrtek',
+        'friday' => 'Pátek',
+        'saturday' => 'Sobota',
+    ],
 
     'short_days' => [
         'sunday' => 'Ne',
         'monday' => 'Po',
         'tuesday' => 'Út',
-        'wednesday' =>  'St',
-        'thursday' =>  'Čt',
-        'friday' =>  'Pá',
-        'saturday' =>  'So',
+        'wednesday' => 'St',
+        'thursday' => 'Čt',
+        'friday' => 'Pá',
+        'saturday' => 'So',
     ],
 
     'min_days' => [
         'sunday' => 'Ne',
         'monday' => 'Po',
         'tuesday' => 'Út',
-        'wednesday' =>  'St',
-        'thursday' =>  'Čt',
-        'friday' =>  'Pá',
-        'saturday' =>  'So',
+        'wednesday' => 'St',
+        'thursday' => 'Čt',
+        'friday' => 'Pá',
+        'saturday' => 'So',
     ],
 
     'months' => [
@@ -77,4 +77,4 @@ return array(
         'december' => 'Pro',
     ],
 
-);
+];

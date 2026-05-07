@@ -4,8 +4,8 @@ namespace App\Http\Transformers;
 
 use App\Helpers\Helper;
 use App\Models\Accessory;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
 class AccessoriesTransformer
@@ -28,32 +28,33 @@ class AccessoriesTransformer
             'image' => ($accessory->image) ? Storage::disk('public')->url('accessories/'.e($accessory->image)) : null,
             'company' => ($accessory->company) ? [
                 'id' => $accessory->company->id,
-                'name'=> e($accessory->company->name),
-                'tag_color'=> ($accessory->company->tag_color) ? e($accessory->company->tag_color) : null,
+                'name' => e($accessory->company->name),
+                'tag_color' => ($accessory->company->tag_color) ? e($accessory->company->tag_color) : null,
             ] : null,
             'manufacturer' => ($accessory->manufacturer) ? [
                 'id' => $accessory->manufacturer->id,
-                'name'=> e($accessory->manufacturer->name),
-                'tag_color'=> ($accessory->manufacturer->tag_color) ? e($accessory->manufacturer->tag_color) : null,
+                'name' => e($accessory->manufacturer->name),
+                'tag_color' => ($accessory->manufacturer->tag_color) ? e($accessory->manufacturer->tag_color) : null,
             ] : null,
             'supplier' => ($accessory->supplier) ? [
                 'id' => $accessory->supplier->id,
-                'name'=> e($accessory->supplier->name),
-                'tag_color'=> ($accessory->supplier->tag_color) ? e($accessory->supplier->tag_color) : null,
+                'name' => e($accessory->supplier->name),
+                'tag_color' => ($accessory->supplier->tag_color) ? e($accessory->supplier->tag_color) : null,
             ] : null,
             'model_number' => ($accessory->model_number) ? e($accessory->model_number) : null,
             'category' => ($accessory->category) ? [
                 'id' => $accessory->category->id,
-                'name'=> e($accessory->category->name),
-                'tag_color'=> ($accessory->category->tag_color) ? e($accessory->category->tag_color) : null,
+                'name' => e($accessory->category->name),
+                'tag_color' => ($accessory->category->tag_color) ? e($accessory->category->tag_color) : null,
             ] : null,
             'location' => ($accessory->location) ? [
                 'id' => $accessory->location->id,
-                'name'=> e($accessory->location->name),
-                'tag_color'=> ($accessory->location->tag_color) ? e($accessory->location->tag_color) : null,
+                'name' => e($accessory->location->name),
+                'tag_color' => ($accessory->location->tag_color) ? e($accessory->location->tag_color) : null,
             ] : null,
             'notes' => ($accessory->notes) ? Helper::parseEscapedMarkedownInline($accessory->notes) : null,
             'qty' => ($accessory->qty) ? (int) $accessory->qty : null,
+            'percent_remaining' => round($accessory->percentRemaining()),
             'purchase_date' => ($accessory->purchase_date) ? Helper::getFormattedDateObject($accessory->purchase_date, 'date') : null,
             'purchase_cost' => Helper::formatCurrencyOutput($accessory->purchase_cost),
             'total_cost' => Helper::formatCurrencyOutput($accessory->totalCostSum()),
@@ -62,10 +63,10 @@ class AccessoriesTransformer
             'min_amt' => ($accessory->min_amt) ? (int) $accessory->min_amt : null,
             'remaining_qty' => (int) ($accessory->qty - $accessory->checkouts_count), // Legacy - should phase out - replaced by below, for the bootstrap table formatter
             'remaining' => (int) ($accessory->qty - $accessory->checkouts_count),
-            'checkouts_count' =>  $accessory->checkouts_count,
+            'checkouts_count' => $accessory->checkouts_count,
             'created_by' => ($accessory->adminuser) ? [
                 'id' => (int) $accessory->adminuser->id,
-                'name'=> e($accessory->adminuser->display_name),
+                'name' => e($accessory->adminuser->display_name),
             ] : null,
             'created_at' => Helper::getFormattedDateObject($accessory->created_at, 'datetime'),
             'updated_at' => Helper::getFormattedDateObject($accessory->updated_at, 'datetime'),
@@ -74,11 +75,11 @@ class AccessoriesTransformer
 
         $permissions_array['available_actions'] = [
             'checkout' => Gate::allows('checkout', Accessory::class),
-            'checkin' =>  false,
+            'checkin' => false,
             'update' => Gate::allows('update', Accessory::class),
             'delete' => $accessory->checkouts_count === 0 && Gate::allows('delete', Accessory::class),
             'clone' => Gate::allows('create', Accessory::class),
-            
+
         ];
 
         $permissions_array['user_can_checkout'] = false;
@@ -103,8 +104,8 @@ class AccessoriesTransformer
                 'note' => $checkout->note ? e($checkout->note) : null,
                 'created_by' => $checkout->adminuser ? [
                     'id' => (int) $checkout->adminuser->id,
-                    'name'=> e($checkout->adminuser->present()->fullName),
-                ]: null,
+                    'name' => e($checkout->adminuser->present()->fullName),
+                ] : null,
                 'created_at' => Helper::getFormattedDateObject($checkout->created_at, 'datetime'),
                 'available_actions' => Gate::allows('checkout', Accessory::class) ? ['checkin' => true] : ['checkin' => false],
             ];
@@ -122,9 +123,9 @@ class AccessoriesTransformer
         if ($accessoryCheckout->checkedOutToUser()) {
             return (new UsersTransformer)->transformUserCompact($accessoryCheckout->assigned);
         } elseif ($accessoryCheckout->checkedOutToLocation()) {
-            return (new LocationsTransformer())->transformLocationCompact($accessoryCheckout->assigned);
+            return (new LocationsTransformer)->transformLocationCompact($accessoryCheckout->assigned);
         } elseif ($accessoryCheckout->checkedOutToAsset()) {
-            return (new AssetsTransformer())->transformAssetCompact($accessoryCheckout->assigned);
+            return (new AssetsTransformer)->transformAssetCompact($accessoryCheckout->assigned);
         }
     }
 }

@@ -3,9 +3,10 @@
 return [
 
     'invalid_return_count' => 'ការរាប់មិនត្រឹមត្រូវបានត្រឡប់មកវិញពី: ឈ្មោះ។ រំពឹងទុក : រំពឹងទុក ទទួលបាន : ជាក់ស្តែង។',
-    'invalid_return_type'  => 'ប្រភេទ​មិន​ត្រឹមត្រូវ​បាន​ត្រឡប់​មក​ពី:name។ រំពឹងទុក : រំពឹងទុក ទទួលបាន : ជាក់ស្តែង។',
+    'invalid_return_type' => 'ប្រភេទ​មិន​ត្រឹមត្រូវ​បាន​ត្រឡប់​មក​ពី:name។ រំពឹងទុក : រំពឹងទុក ទទួលបាន : ជាក់ស្តែង។',
     'invalid_return_value' => 'តម្លៃ​មិន​ត្រឹមត្រូវ​បាន​ត្រឡប់​មក​ពី :name ។ រំពឹងទុក : រំពឹងទុក ទទួលបាន : ជាក់ស្តែង។',
 
     'does_not_exist' => 'ស្លាកមិនមានទេ។',
-    
+    'use_new_label_engine_for_api' => 'Enable the New Label Engine to load labels via the API',
+    'label_not_created' => 'Label object could not be created',
 ];

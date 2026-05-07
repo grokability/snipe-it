@@ -2,25 +2,22 @@
 
 namespace Tests\Feature\Categories\Ui;
 
-use App\Events\CheckoutableCheckedIn;
 use App\Models\Asset;
 use App\Models\AssetModel;
-use App\Models\User;
 use App\Models\Category;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Storage;
+use App\Models\User;
 use Tests\TestCase;
 
 class DeleteCategoriesTest extends TestCase
 {
-    public function testPermissionNeededToDeleteCategory()
+    public function test_permission_needed_to_delete_category()
     {
         $this->actingAs(User::factory()->create())
             ->delete(route('categories.destroy', Category::factory()->create()))
             ->assertForbidden();
     }
 
-    public function testCanDeleteCategory()
+    public function test_can_delete_category()
     {
         $category = Category::factory()->create();
 
@@ -32,7 +29,7 @@ class DeleteCategoriesTest extends TestCase
         $this->assertSoftDeleted($category);
     }
 
-    public function testCannotDeleteCategoryThatStillHasAssociatedModels()
+    public function test_cannot_delete_category_that_still_has_associated_models()
     {
         $model = AssetModel::factory()->create();
         $category = $model->category;
@@ -44,7 +41,7 @@ class DeleteCategoriesTest extends TestCase
         $this->assertNotSoftDeleted($category);
     }
 
-    public function testCannotDeleteCategoryThatStillHasAssociatedAssets()
+    public function test_cannot_delete_category_that_still_has_associated_assets()
     {
         $asset = Asset::factory()->create();
         $category = $asset->model->category;
@@ -56,5 +53,4 @@ class DeleteCategoriesTest extends TestCase
 
         $this->assertNotSoftDeleted($category);
     }
-
 }

@@ -109,10 +109,30 @@
                                                     name="status_id"
                                                     id="modal-statuslabel_types"
                                                     :options="$statusLabel_list"
+                                                    :selected="old('status_id')"
                                                     style="width: 100%"
                                                     aria-label="status_id"
                                                 />
                                                 {!! $errors->first('status_id', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
+                                            </div>
+                                        </div>
+
+                                        <div
+                                            class="form-group"
+                                            id="set-requestable-wrapper"
+                                            @if (! $show_requestable_toggle) style="display: none;" @endif
+                                        >
+                                            <div class="col-md-9 col-md-offset-3">
+                                                <label class="form-control" for="set_requestable">
+                                                    <input
+                                                        type="checkbox"
+                                                        value="1"
+                                                        name="set_requestable"
+                                                        id="set_requestable"
+                                                        @checked((bool) old('set_requestable', false))
+                                                    />
+                                                    {{ trans('admin/hardware/general.requestable') }}
+                                                </label>
                                             </div>
                                         </div>
 
@@ -203,11 +223,50 @@
         </div>
     </div>
 
-@stop
+@section('moar_scripts')
+    <script nonce="{{ csrf_token() }}">
+        const initializeRequestableToggle = function () {
+            const deployableStatusIds = @json($deployable_status_ids);
+            const statusSelect = document.getElementById('modal-statuslabel_types')
+                ?? document.querySelector('select[name="status_id"]');
+            const requestableWrapper = document.getElementById('set-requestable-wrapper');
+            const requestableCheckbox = document.getElementById('set_requestable');
 
-@if ($snipeSettings->checkin_confirm)
-    @section('moar_scripts')
-        @parent
+            if (!statusSelect || !requestableWrapper) {
+                return;
+            }
+
+            const toggleRequestable = function () {
+                const selectedStatusValue = statusSelect.value;
+                const selectedStatusId = Number.parseInt(selectedStatusValue, 10);
+                const isDeployable = selectedStatusValue !== ''
+                    && Number.isInteger(selectedStatusId)
+                    && deployableStatusIds.includes(selectedStatusId);
+
+                requestableWrapper.style.display = isDeployable ? '' : 'none';
+
+                if (!isDeployable && requestableCheckbox) {
+                    requestableCheckbox.checked = false;
+                }
+            };
+
+            statusSelect.addEventListener('change', toggleRequestable);
+
+            if (window.jQuery) {
+                window.jQuery(statusSelect).on('select2:select select2:clear', toggleRequestable);
+            }
+
+            toggleRequestable();
+        };
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeRequestableToggle);
+        } else {
+            initializeRequestableToggle();
+        }
+    </script>
+    
+    @if ($snipeSettings->checkin_confirm)
         <script nonce="{{ csrf_token() }}">
             (function () {
                 let confirmed = false;
@@ -261,5 +320,5 @@
                 });
             })();
         </script>
-    @endsection
-@endif
+    @endif
+@stop

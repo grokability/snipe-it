@@ -8,9 +8,9 @@ use App\Exceptions\AssetNotRequestable;
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Models\Asset;
+use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
-use Exception;
 
 class CheckoutRequest extends Controller
 {
@@ -18,6 +18,7 @@ class CheckoutRequest extends Controller
     {
         try {
             CreateCheckoutRequestAction::run($asset, auth()->user());
+
             return response()->json(Helper::formatStandardApiResponse('success', null, trans('admin/hardware/message.requests.success')));
         } catch (AssetNotRequestable $e) {
             return response()->json(Helper::formatStandardApiResponse('error', 'Asset is not requestable'));
@@ -25,6 +26,7 @@ class CheckoutRequest extends Controller
             return response()->json(Helper::formatStandardApiResponse('error', null, trans('general.insufficient_permissions')));
         } catch (Exception $e) {
             report($e);
+
             return response()->json(Helper::formatStandardApiResponse('error', null, trans('general.something_went_wrong')));
         }
     }
@@ -33,11 +35,13 @@ class CheckoutRequest extends Controller
     {
         try {
             CancelCheckoutRequestAction::run($asset, auth()->user());
+
             return response()->json(Helper::formatStandardApiResponse('success', null, trans('admin/hardware/message.requests.canceled')));
         } catch (AuthorizationException $e) {
             return response()->json(Helper::formatStandardApiResponse('error', null, trans('general.insufficient_permissions')));
         } catch (Exception $e) {
             report($e);
+
             return response()->json(Helper::formatStandardApiResponse('error', null, trans('general.something_went_wrong')));
         }
     }

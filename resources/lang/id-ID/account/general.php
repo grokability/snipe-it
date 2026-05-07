@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
     'personal_api_keys' => 'Kunci API Pribadi',
     'personal_access_token' => 'Token Akses Pribadi',
     'personal_api_keys_success' => 'API Key Pribadi :key berhasil dibuat',
@@ -14,4 +14,4 @@ return array(
     'no_tokens' => 'Anda belum membuat token akses pribadi.',
     'enable_sounds' => 'Aktifkan efek suara',
     'enable_confetti' => 'Aktifkan efek confetti',
-);
+];

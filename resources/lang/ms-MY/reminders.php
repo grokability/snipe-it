@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
 
     /*
     |--------------------------------------------------------------------------
@@ -13,9 +13,9 @@ return array(
     |
     */
 
-    "password" => "Kata Kunci mesti terdiri dari 6 huruf dan sama dengan pengesahan.",
-    "user"     => "Kata Laluan atau alamat e-mel tidak betul. ",
-    "token"    => 'This password reset token is invalid or expired, or does not match the username provided.',
-    'sent'	   => 'If a matching user with a valid email address exists in our system, a password recovery email has been sent.',
+    'password' => 'Kata Kunci mesti terdiri dari 6 huruf dan sama dengan pengesahan.',
+    'user' => 'Kata Laluan atau alamat e-mel tidak betul. ',
+    'token' => 'This password reset token is invalid or expired, or does not match the username provided.',
+    'sent' => 'If a matching user with a valid email address exists in our system, a password recovery email has been sent.',
 
-);
+];

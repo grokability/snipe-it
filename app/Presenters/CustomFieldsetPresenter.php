@@ -7,16 +7,12 @@ namespace App\Presenters;
  */
 class CustomFieldsetPresenter extends Presenter
 {
-
-   
     public function nameUrl()
     {
         if (auth()->user()->can('view', ['\App\Models\CustomFieldset', $this])) {
-            return (string)link_to_route('fieldsets.show', e($this->display_name), $this->id);
+            return '<a href="'.route('fieldsets.show', $this->id).'">'.e($this->display_name).'</a>';
         } else {
             return e($this->display_name);
         }
     }
-
-
 }

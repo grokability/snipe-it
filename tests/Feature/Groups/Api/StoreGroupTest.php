@@ -9,14 +9,14 @@ use Tests\TestCase;
 
 class StoreGroupTest extends TestCase
 {
-    public function testStoringGroupRequiresSuperAdminPermission()
+    public function test_storing_group_requires_super_admin_permission()
     {
         $this->actingAsForApi(User::factory()->create())
             ->postJson(route('api.groups.store'))
             ->assertForbidden();
     }
 
-    public function testCanStoreGroupWithPermissionsPassed()
+    public function test_can_store_group_with_permissions_passed()
     {
         $this->actingAsForApi(User::factory()->superuser()->create())
             ->postJson(route('api.groups.store'), [
@@ -38,12 +38,12 @@ class StoreGroupTest extends TestCase
         $this->assertEquals('0', $group->decodePermissions()['reports.view']);
     }
 
-    public function testStoringGroupWithoutPermissionPassed()
+    public function test_storing_group_without_permission_passed()
     {
         $superuser = User::factory()->superuser()->create();
         $this->actingAsForApi($superuser)
             ->postJson(route('api.groups.store'), [
-                'name' => 'My Awesome Group'
+                'name' => 'My Awesome Group',
             ])
             ->assertOk();
 
@@ -58,11 +58,11 @@ class StoreGroupTest extends TestCase
         );
 
         $this->actingAsForApi($superuser)
-            ->getJson(route('api.groups.show',  ['group' => $group]))
+            ->getJson(route('api.groups.show', ['group' => $group]))
             ->assertOk();
     }
 
-    public function testStoringGroupWithInvalidPermissionDropsBadPermission()
+    public function test_storing_group_with_invalid_permission_drops_bad_permission()
     {
         $this->actingAsForApi(User::factory()->superuser()->create())
             ->postJson(route('api.groups.store'), [

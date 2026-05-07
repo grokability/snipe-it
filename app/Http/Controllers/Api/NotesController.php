@@ -6,7 +6,6 @@ use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Models\Actionlog;
 use App\Models\Asset;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -25,16 +24,15 @@ class NotesController extends Controller
      * and fetches related action log entries of type 'note added', including
      * user information for each note. Returns a JSON response with the notes or errors.
      *
-     * @param  \Illuminate\Http\Request  $request  The incoming HTTP request.
+     * @param  Request  $request  The incoming HTTP request.
      * @param  Asset  $asset  The ID of the asset whose notes to retrieve.
-     * @return \Illuminate\Http\JsonResponse
      */
     public function index(Asset $asset): JsonResponse
     {
         $this->authorize('view', $asset);
 
         // Get the manual notes for the asset
-        $notes = ActionLog::with('user:id,username')
+        $notes = Actionlog::with('user:id,username')
             ->where('item_type', Asset::class)
             ->where('item_id', $asset->id)
             ->where('action_type', 'note added')
@@ -57,7 +55,7 @@ class NotesController extends Controller
         // Return a success response
         return response()->json(Helper::formatStandardApiResponse('success', ['notes' => $notesArray, 'asset_id' => $asset->id]));
     }
-    
+
     /**
      * Store a manual note on a specified asset and log the action.
      *
@@ -65,9 +63,8 @@ class NotesController extends Controller
      * attempts to find the asset by ID, and creates a new ActionLog entry if successful.
      * Returns JSON responses indicating success or failure with appropriate HTTP status codes.
      *
-     * @param  \Illuminate\Http\Request  $request  The incoming HTTP request containing the 'note'.
+     * @param  Request  $request  The incoming HTTP request containing the 'note'.
      * @param  Asset  $asset  The ID of the asset to attach the note to.
-     * @return \Illuminate\Http\JsonResponse
      */
     public function store(Request $request, Asset $asset): JsonResponse
     {
@@ -78,7 +75,7 @@ class NotesController extends Controller
         }
 
         // Create the note
-        $logaction = new ActionLog();
+        $logaction = new Actionlog;
         $logaction->item_type = get_class($asset);
         $logaction->created_by = Auth::id();
         $logaction->item_id = $asset->id;

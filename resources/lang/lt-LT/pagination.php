@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
 
     /*
     |--------------------------------------------------------------------------
@@ -15,6 +15,6 @@ return array(
 
     'previous' => '&laquo; Ankstesnis',
 
-    'next'     => 'Kitas &raquo;',
+    'next' => 'Kitas &raquo;',
 
-);
+];

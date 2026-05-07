@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
 
     /*
     |--------------------------------------------------------------------------
@@ -13,53 +13,53 @@ return array(
     |
     */
 
-    'week_start_select' => 'Select Day of Week',
-    'week_start' => 'Day the Week Starts On',
-    'today' => 'Today',
-    'clear' => 'Clear',
+    'week_start_select' => 'Veldu vikudag',
+    'week_start' => 'Dagurinn sem vika hefst á',
+    'today' => 'Í dag',
+    'clear' => 'Hreinsa',
     'days' => [
-        'sunday' => 'Sunday',
-        'monday' => 'Monday',
-        'tuesday' => 'Tuesday',
-        'wednesday' =>  'Wednesday',
-        'thursday' =>  'Thursday',
-        'friday' =>  'Friday',
-        'saturday' =>  'Saturday',
-        ],
+        'sunday' => 'Sunnudagur',
+        'monday' => 'Mánudagur',
+        'tuesday' => 'Þriðjudagur',
+        'wednesday' => 'Miðvikudagur',
+        'thursday' => 'Fimmtudagur',
+        'friday' => 'Föstudagur',
+        'saturday' => 'Laugardagur',
+    ],
 
     'short_days' => [
         'sunday' => 'Sun',
-        'monday' => 'Mon',
-        'tuesday' => 'Tue',
-        'wednesday' =>  'Wed',
-        'thursday' =>  'Thu',
-        'friday' =>  'Fri',
-        'saturday' =>  'Sat',
+        'monday' => 'Mán',
+        'tuesday' => 'Þri',
+        'wednesday' => 'Mið',
+        'thursday' => 'Fim',
+        'friday' => 'Fös',
+        'saturday' => 'Lau',
     ],
 
     'min_days' => [
         'sunday' => 'Su',
-        'monday' => 'Mo',
-        'tuesday' => 'Tu',
-        'wednesday' =>  'We',
-        'thursday' =>  'Th',
-        'friday' =>  'Fr',
-        'saturday' =>  'Sa',
+        'monday' => 'Má',
+        'tuesday' => 'Þr',
+        'wednesday' => 'Mi',
+        'thursday' => 'Fi',
+        'friday' => 'Fö',
+        'saturday' => 'La',
     ],
 
     'months' => [
-        'january' => 'January',
-        'february' => 'February',
-        'march' => 'March',
-        'april' => 'April',
-        'may' => 'May',
-        'june' => 'June',
-        'july' => 'July',
-        'august' => 'August',
+        'january' => 'Janúar',
+        'february' => 'Febrúar',
+        'march' => 'Mars',
+        'april' => 'Apríl',
+        'may' => 'Maí',
+        'june' => 'Júní',
+        'july' => 'Júlí',
+        'august' => 'Ágúst',
         'september' => 'September',
-        'october' => 'October',
-        'november' => 'November',
-        'december' => 'December',
+        'october' => 'Október',
+        'november' => 'Nóvember',
+        'december' => 'Desember',
     ],
 
     'months_short' => [
@@ -67,14 +67,14 @@ return array(
         'february' => 'Feb',
         'march' => 'Mar',
         'april' => 'Apr',
-        'may' => 'May',
-        'june' => 'Jun',
-        'july' => 'Jul',
-        'august' => 'Aug',
+        'may' => 'Maí',
+        'june' => 'Jún',
+        'july' => 'Júl',
+        'august' => 'Ágú',
         'september' => 'Sep',
-        'october' => 'Oct',
-        'november' => 'Nov',
-        'december' => 'Dec',
+        'october' => 'Okt',
+        'november' => 'Nóv',
+        'december' => 'Des',
     ],
 
-);
+];

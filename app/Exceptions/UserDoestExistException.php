@@ -4,7 +4,4 @@ namespace App\Exceptions;
 
 use Exception;
 
-class UserDoestExistException extends Exception
-{
-
-}
+class UserDoestExistException extends Exception {}

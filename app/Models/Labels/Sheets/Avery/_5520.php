@@ -7,28 +7,37 @@ use App\Models\Labels\RectangleSheet;
 
 abstract class _5520 extends RectangleSheet
 {
+    private const PAPER_FORMAT = 'LETTER';
 
-    private const PAPER_FORMAT      = 'LETTER';
     private const PAPER_ORIENTATION = 'P';
 
     /* Data in pt from Word Template */
-    private const COLUMN1_X =  13.55;
-    private const COLUMN2_X = 211.55;
-    private const ROW1_Y    =  36.10;
-    private const ROW2_Y    = 108.10;
-    private const LABEL_W   = 189.35;
-    private const LABEL_H   =  72.00;
+    private const COLUMN1_X = 13.55;
 
+    private const COLUMN2_X = 211.55;
+
+    private const ROW1_Y = 36.10;
+
+    private const ROW2_Y = 108.10;
+
+    private const LABEL_W = 189.35;
+
+    private const LABEL_H = 72.00;
 
     private float $pageWidth;
+
     private float $pageHeight;
+
     private float $pageMarginLeft;
+
     private float $pageMarginTop;
 
     private float $columnSpacing;
+
     private float $rowSpacing;
 
     private float $labelWidth;
+
     private float $labelHeight;
 
     public function __construct()
@@ -51,61 +60,66 @@ abstract class _5520 extends RectangleSheet
 
     public function getPageWidth()
     {
-        return $this->pageWidth; 
+        return $this->pageWidth;
     }
+
     public function getPageHeight()
     {
-        return $this->pageHeight; 
+        return $this->pageHeight;
     }
 
     public function getPageMarginTop()
     {
-        return $this->pageMarginTop; 
+        return $this->pageMarginTop;
     }
+
     public function getPageMarginBottom()
     {
-        return $this->pageMarginTop; 
+        return $this->pageMarginTop;
     }
+
     public function getPageMarginLeft()
     {
-        return $this->pageMarginLeft; 
+        return $this->pageMarginLeft;
     }
+
     public function getPageMarginRight()
     {
-        return $this->pageMarginLeft; 
+        return $this->pageMarginLeft;
     }
 
     public function getColumns()
     {
-        return 3; 
+        return 3;
     }
+
     public function getRows()
     {
-        return 10; 
+        return 10;
     }
 
     public function getLabelColumnSpacing()
     {
-        return $this->columnSpacing; 
+        return $this->columnSpacing;
     }
+
     public function getLabelRowSpacing()
     {
-        return $this->rowSpacing; 
+        return $this->rowSpacing;
     }
 
     public function getLabelWidth()
     {
-        return $this->labelWidth; 
+        return $this->labelWidth;
     }
+
     public function getLabelHeight()
     {
-        return $this->labelHeight; 
+        return $this->labelHeight;
     }
 
     public function getLabelBorder()
     {
-        return 0; 
+        return 0;
     }
 }
-
-?>

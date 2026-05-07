@@ -15,6 +15,7 @@ use App\Models\Department;
 use App\Models\Depreciation;
 use App\Models\License;
 use App\Models\Location;
+use App\Models\Maintenance;
 use App\Models\Manufacturer;
 use App\Models\PredefinedKit;
 use App\Models\Statuslabel;
@@ -33,6 +34,7 @@ use App\Policies\DepartmentPolicy;
 use App\Policies\DepreciationPolicy;
 use App\Policies\LicensePolicy;
 use App\Policies\LocationPolicy;
+use App\Policies\MaintenancePolicy;
 use App\Policies\ManufacturerPolicy;
 use App\Policies\PredefinedKitPolicy;
 use App\Policies\StatuslabelPolicy;
@@ -41,6 +43,9 @@ use App\Policies\UserPolicy;
 use Carbon\Carbon;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
+use Laravel\Passport\Console\ClientCommand;
+use Laravel\Passport\Console\InstallCommand;
+use Laravel\Passport\Console\KeysCommand;
 use Laravel\Passport\Passport;
 
 class AuthServiceProvider extends ServiceProvider
@@ -65,6 +70,7 @@ class AuthServiceProvider extends ServiceProvider
         Depreciation::class => DepreciationPolicy::class,
         License::class => LicensePolicy::class,
         Location::class => LocationPolicy::class,
+        Maintenance::class => MaintenancePolicy::class,
         PredefinedKit::class => PredefinedKitPolicy::class,
         Statuslabel::class => StatuslabelPolicy::class,
         Supplier::class => SupplierPolicy::class,
@@ -81,25 +87,23 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->commands([
-            \Laravel\Passport\Console\InstallCommand::class,
-            \Laravel\Passport\Console\ClientCommand::class,
-            \Laravel\Passport\Console\KeysCommand::class,
+            InstallCommand::class,
+            ClientCommand::class,
+            KeysCommand::class,
         ]);
 
         $this->registerPolicies();
-        Passport::tokensExpireIn(Carbon::now()->addYears((int)config('passport.expiration_years')));
-        Passport::refreshTokensExpireIn(Carbon::now()->addYears((int)config('passport.expiration_years')));
-        Passport::personalAccessTokensExpireIn(Carbon::now()->addYears((int)config('passport.expiration_years')));
+        Passport::tokensExpireIn(Carbon::now()->addYears((int) config('passport.expiration_years')));
+        Passport::refreshTokensExpireIn(Carbon::now()->addYears((int) config('passport.expiration_years')));
+        Passport::personalAccessTokensExpireIn(Carbon::now()->addYears((int) config('passport.expiration_years')));
 
         Passport::cookie(config('passport.cookie_name'));
-
 
         /**
          * BEFORE ANYTHING ELSE
          *
          * If this condition is true, ANYTHING else below will be assumed to be true.
          * This is where we set the superadmin permission to allow superadmins to be able to do everything within the system.
-         *
          */
         Gate::before(function ($user, $ability) {
 
@@ -113,26 +117,23 @@ class AuthServiceProvider extends ServiceProvider
             }
         });
 
-
-
-
         /**
          * GENERAL GATES
          *
          * These control general sections of the admin. These definitions are used in our blades via @can('blah) and also
          * use in our controllers to determine if a user has access to a certain area.
          */
-
         Gate::define('canEditAuthFields', function ($user, $item) {
 
             if ($item instanceof User) {
 
                 // if they can only edit users, deny them if the user is admin or superadmin
-                if (!$user->isAdmin()) {
+                if (! $user->isAdmin()) {
 
                     if ($item->isAdmin() || $item->isSuperUser()) {
                         return false;
                     }
+
                     return true;
                 }
 
@@ -151,7 +152,6 @@ class AuthServiceProvider extends ServiceProvider
             return false;
         });
 
-
         /**
          * Define the demo mode gate so we have an easy way to use @can and Gate::allows()
          */
@@ -159,29 +159,12 @@ class AuthServiceProvider extends ServiceProvider
             if (config('app.lock_passwords')) {
                 return false;
             }
+
             return true;
         });
 
         Gate::define('admin', function ($user) {
             if ($user->hasAccess('admin')) {
-                return true;
-            }
-        });
-
-        Gate::define('accessories.files', function ($user) {
-            if ($user->hasAccess('accessories.files')) {
-                return true;
-            }
-        });
-
-        Gate::define('components.files', function ($user) {
-            if ($user->hasAccess('components.files')) {
-                return true;
-            }
-        });
-
-        Gate::define('consumables.files', function ($user) {
-            if ($user->hasAccess('consumables.files')) {
                 return true;
             }
         });
@@ -193,15 +176,8 @@ class AuthServiceProvider extends ServiceProvider
             }
         });
 
-
-        Gate::define('licenses.files', function ($user) {
-            if ($user->hasAccess('licenses.files')) {
-                return true;
-            }
-        });
-
         Gate::define('assets.view.encrypted_custom_fields', function ($user) {
-            if($user->hasAccess('assets.view.encrypted_custom_fields')){
+            if ($user->hasAccess('assets.view.encrypted_custom_fields')) {
                 return true;
             }
         });
@@ -249,7 +225,7 @@ class AuthServiceProvider extends ServiceProvider
             return $user->hasAccess('self.view_purchase_cost');
         });
 
-        // This is largely used to determine whether to display the gear icon sidenav 
+        // This is largely used to determine whether to display the gear icon sidenav
         // in the left-side navigation
         Gate::define('backend.interact', function ($user) {
             return $user->can('view', Statuslabel::class)
@@ -266,36 +242,33 @@ class AuthServiceProvider extends ServiceProvider
                 || $user->can('view', Depreciation::class);
         });
 
-
         // This  determines whether or not an API user should be able to get the selectlists.
         // This can seem a little confusing, since view properties may not have been granted
-        // to the logged in API user, but creating assets, licenses, etc won't work 
+        // to the logged in API user, but creating assets, licenses, etc won't work
         // if the user can't view and interact with the select lists.
         Gate::define('view.selectlists', function ($user) {
-            return $user->can('update', Asset::class) 
-                || $user->can('create', Asset::class)    
+            return $user->can('update', Asset::class)
+                || $user->can('create', Asset::class)
                 || $user->can('checkout', Asset::class)
                 || $user->can('checkin', Asset::class)
-                || $user->can('audit', Asset::class)       
-                || $user->can('update', License::class)   
-                || $user->can('create', License::class)   
+                || $user->can('audit', Asset::class)
+                || $user->can('update', License::class)
+                || $user->can('create', License::class)
                 || $user->can('update', Component::class)
-                || $user->can('create', Component::class)   
-                || $user->can('update', Consumable::class)   
-                || $user->can('create', Consumable::class)   
+                || $user->can('create', Component::class)
+                || $user->can('update', Consumable::class)
+                || $user->can('create', Consumable::class)
                 || $user->can('update', Accessory::class)
-                || $user->can('create', Accessory::class)   
+                || $user->can('create', Accessory::class)
                 || $user->can('update', User::class)
                 || $user->can('create', User::class)
                 || ($user->hasAccess('reports.view'));
         });
 
-
         // This determines whether the user can edit their profile based on the setting in Admin > General
         Gate::define('self.profile', function ($user) {
             return $user->canEditProfile();
         });
-
 
     }
 }

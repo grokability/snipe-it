@@ -9,7 +9,7 @@ use Tests\TestCase;
 
 class DepreciationReportTransformerTest extends TestCase
 {
-    public function testHandlesModelDepreciationMonthsBeingZero()
+    public function test_handles_model_depreciation_months_being_zero()
     {
         $asset = Asset::factory()->create();
         $depreciation = Depreciation::factory()->create(['months' => 0]);

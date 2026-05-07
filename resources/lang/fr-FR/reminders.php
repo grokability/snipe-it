@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
 
     /*
     |--------------------------------------------------------------------------
@@ -13,9 +13,9 @@ return array(
     |
     */
 
-    "password" => "Les mots de passe doivent contenir six caractères et correspondre à la confirmation.",
-    "user"     => "Le nom d'utilisateur ou l'e-mail est incorrect",
-    "token"    => 'Ce jeton de réinitialisation de mot de passe est invalide ou expiré, ou ne correspond pas au nom d\'utilisateur fourni.',
-    'sent'	   => 'Si un utilisateur ayant une adresse e-mail valide existe dans notre système, un e-mail de récupération de mot de passe lui a été envoyé.',
+    'password' => 'Les mots de passe doivent contenir six caractères et correspondre à la confirmation.',
+    'user' => 'Le nom d\'utilisateur ou l\'e-mail est incorrect',
+    'token' => 'Ce jeton de réinitialisation de mot de passe est invalide ou expiré, ou ne correspond pas au nom d\'utilisateur fourni.',
+    'sent' => 'Si un utilisateur ayant une adresse e-mail valide existe dans notre système, un e-mail de récupération de mot de passe lui a été envoyé.',
 
-);
+];

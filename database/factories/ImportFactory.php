@@ -3,8 +3,8 @@
 namespace Database\Factories;
 
 use App\Models\Import;
-use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 use Tests\Support\Importing;
 
 /**
@@ -13,19 +13,19 @@ use Tests\Support\Importing;
 class ImportFactory extends Factory
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected $model = Import::class;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function definition()
     {
         return [
-            'name'     => $this->faker->company,
+            'name' => $this->faker->company,
             'file_path' => Str::random().'.csv',
-            'filesize'  => $this->faker->randomDigitNotNull(),
+            'filesize' => $this->faker->randomDigitNotNull(),
             'field_map' => null,
         ];
     }
@@ -106,7 +106,7 @@ class ImportFactory extends Factory
         });
     }
 
-     /**
+    /**
      * Create a license import type.
      *
      * @return static
@@ -143,8 +143,6 @@ class ImportFactory extends Factory
             return $attributes;
         });
     }
-
-
 
     /**
      * Create an asset model import type.
@@ -231,6 +229,4 @@ class ImportFactory extends Factory
             return $attributes;
         });
     }
-
-
 }

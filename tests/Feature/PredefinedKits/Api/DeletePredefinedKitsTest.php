@@ -10,7 +10,7 @@ use Tests\TestCase;
 
 class DeletePredefinedKitsTest extends TestCase implements TestsPermissionsRequirement
 {
-    public function testRequiresPermission()
+    public function test_requires_permission()
     {
         $predefinedKit = PredefinedKit::factory()->create();
 
@@ -21,7 +21,7 @@ class DeletePredefinedKitsTest extends TestCase implements TestsPermissionsRequi
         $this->assertDatabaseHas('kits', ['id' => $predefinedKit->id]);
     }
 
-    public function testCanDeletePredefinedKits()
+    public function test_can_delete_predefined_kits()
     {
         $predefinedKit = PredefinedKit::factory()->create();
 
@@ -33,7 +33,7 @@ class DeletePredefinedKitsTest extends TestCase implements TestsPermissionsRequi
         $this->assertDatabaseMissing('kits', ['id' => $predefinedKit->id]);
     }
 
-    public function testAssociatedDataDetachedWhenPredefinedKitDeleted()
+    public function test_associated_data_detached_when_predefined_kit_deleted()
     {
         $predefinedKit = PredefinedKit::factory()
             ->hasAccessories()

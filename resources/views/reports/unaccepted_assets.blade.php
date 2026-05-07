@@ -42,6 +42,8 @@
                 data-sort-name="created_at"
                 data-advanced-search="false"
                 id="unacceptedAssetsReport"
+                data-fixed-number="false"
+                data-fixed-right-number="false"
                 class="table table-striped snipe-table"
                 data-export-options='{
                     "fileName": "maintenance-report-{{ date('Y-m-d') }}",
@@ -71,7 +73,7 @@
                           {{-- Item Type --}}
                           <td>{{ $item->type }}</td>
                           {{-- Company name --}}
-                          <td>{{ $item->company }}</td>
+                          <td>{{ $item->plain_text_company }}</td>
 
                           {{-- Category --}}
                           <td>{{ $item->plain_text_category }}</td>

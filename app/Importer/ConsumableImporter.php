@@ -21,7 +21,9 @@ class ConsumableImporter extends ItemImporter
      * Create a consumable if a duplicate does not exist
      *
      * @author Daniel Melzter
-     * @param  array $row CSV Row Being parsed.
+     *
+     * @param  array  $row  CSV Row Being parsed.
+     *
      * @since 3.0
      */
     public function createConsumableIfNotExists($row)
@@ -31,6 +33,7 @@ class ConsumableImporter extends ItemImporter
 
             if (! $this->updating) {
                 $this->log('A matching Consumable '.$this->item['name'].' already exists.  ');
+
                 return;
             }
             $this->log('Updating Consumable');
@@ -41,7 +44,7 @@ class ConsumableImporter extends ItemImporter
         }
 
         $this->log('No matching consumable, creating one');
-        $consumable = new Consumable();
+        $consumable = new Consumable;
         $consumable->created_by = auth()->id();
         $consumable->fill($this->sanitizeItemForStoring($consumable));
 

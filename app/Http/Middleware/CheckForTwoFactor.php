@@ -3,8 +3,9 @@
 namespace App\Http\Middleware;
 
 use App\Models\Setting;
-use Illuminate\Support\Facades\Auth;
 use Closure;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CheckForTwoFactor
 {
@@ -16,9 +17,7 @@ class CheckForTwoFactor
     /**
      * Handle an incoming request.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \Closure                 $next
-     *
+     * @param  Request  $request
      * @return mixed
      */
     public function handle($request, Closure $next)
@@ -38,7 +37,7 @@ class CheckForTwoFactor
         if ($settings = Setting::getSettings()) {
             if (Auth::check() && ($settings->two_factor_enabled != '')) {
                 // This user is already 2fa-authed
-                if ($request->session()->get('2fa_authed')==auth()->id()) {
+                if ($request->session()->get('2fa_authed') == auth()->id()) {
                     return $next($request);
                 }
 
@@ -47,6 +46,7 @@ class CheckForTwoFactor
                     return $next($request);
                 }
 
+                redirect()->setIntendedUrl(url()->full()); // save the 'current' URL so we can send the user back to it?
                 // Otherwise make sure they're enrolled and show them the 2FA code screen
                 if ((auth()->user()->two_factor_secret != '') && (auth()->user()->two_factor_enrolled == '1')) {
                     return redirect()->route('two-factor')->with('info', trans('auth/message.two_factor.enter_two_factor_code'));

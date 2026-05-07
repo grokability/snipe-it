@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Actionlog;
 use App\Models\Asset;
+use App\Models\User;
 use Illuminate\Console\Command;
 
 class FixMismatchedAssetsAndLogs extends Command
@@ -56,26 +57,26 @@ class FixMismatchedAssetsAndLogs extends Command
 
         $mismatch_count = 0;
         $assets = Asset::whereNotNull('assigned_to')
-            ->where('assigned_type', '=', \App\Models\User::class)
+            ->where('assigned_type', '=', User::class)
             ->orderBy('id', 'ASC')->get();
         foreach ($assets as $asset) {
 
             // get the last checkout of the asset
-            if ($checkout_log = Actionlog::where('target_type', '=', \App\Models\User::class)
+            if ($checkout_log = Actionlog::where('target_type', '=', User::class)
                 ->where('action_type', '=', 'checkout')
                 ->where('item_id', '=', $asset->id)
                 ->orderBy('created_at', 'DESC')
                 ->first()) {
 
-                    // Now check for a subsequent checkin log - we want to ignore those
-                if (! $checkin_log = Actionlog::where('target_type', '=', \App\Models\User::class)
-                        ->where('action_type', '=', 'checkin from')
-                        ->where('item_id', '=', $asset->id)
-                        ->whereDate('created_at', '>', $checkout_log->created_at)
-                        ->orderBy('created_at', 'DESC')
-                        ->first()) {
+                // Now check for a subsequent checkin log - we want to ignore those
+                if (! $checkin_log = Actionlog::where('target_type', '=', User::class)
+                    ->where('action_type', '=', 'checkin from')
+                    ->where('item_id', '=', $asset->id)
+                    ->whereDate('created_at', '>', $checkout_log->created_at)
+                    ->orderBy('created_at', 'DESC')
+                    ->first()) {
 
-                        //print_r($asset);
+                    // print_r($asset);
                     if ($checkout_log->target_id != $asset->assigned_to) {
                         $this->error('Log ID: '.$checkout_log->id.' -- Asset ID '.$checkout_log->item_id.' SHOULD BE checked out to User '.$checkout_log->target_id.' but its assigned_to is '.$asset->assigned_to);
 
@@ -90,7 +91,7 @@ class FixMismatchedAssetsAndLogs extends Command
                         $mismatch_count++;
                     }
                 } else {
-                    //$this->info('Asset ID '.$asset->id.': There is a checkin '.$checkin_log->created_at.' after this checkout '.$checkout_log->created_at);
+                    // $this->info('Asset ID '.$asset->id.': There is a checkin '.$checkin_log->created_at.' after this checkout '.$checkout_log->created_at);
                 }
             }
         }

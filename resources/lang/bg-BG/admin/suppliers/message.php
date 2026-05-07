@@ -1,28 +1,27 @@
 <?php
 
-return array(
+return [
 
     'deleted' => 'Изтрит доставчик',
     'does_not_exist' => 'Несъществуващ доставчик.',
 
+    'create' => [
+        'error' => 'Доставчикът не беше създаден. Моля, опитайте отново.',
+        'success' => 'Доставчикът е създаден.',
+    ],
 
-    'create' => array(
-        'error'   => 'Доставчикът не беше създаден. Моля, опитайте отново.',
-        'success' => 'Доставчикът е създаден.'
-    ),
+    'update' => [
+        'error' => 'Достъвчикът не беше обновен. Моля, опитайте отново',
+        'success' => 'Доставчикът е обновен.',
+    ],
 
-    'update' => array(
-        'error'   => 'Достъвчикът не беше обновен. Моля, опитайте отново',
-        'success' => 'Доставчикът е обновен.'
-    ),
-
-    'delete' => array(
-        'confirm'   => 'Сигурни ли сте, че искате да изтриете този доставчик?',
-        'error'   => 'Възникна проблем при изтриване на доставчика. Моля, опитайте отново.',
+    'delete' => [
+        'confirm' => 'Сигурни ли сте, че искате да изтриете този доставчик?',
+        'error' => 'Възникна проблем при изтриване на доставчика. Моля, опитайте отново.',
         'success' => 'Доставчикът е изтрит.',
-        'not_found'               => 'Supplier not found.',
-        'bulk_success'            => 'Suppliers were deleted successfully.',
-        'partial_success'        => 'Supplier deleted successfully. See additional information below. | :count suppliers were deleted successfully. See additional information below.',
-    )
+        'not_found' => 'Доставчика не е намерен.',
+        'bulk_success' => 'Доставчиците бяха изтрити успешно.',
+        'partial_success' => '.',
+    ],
 
-);
+];

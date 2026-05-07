@@ -3,30 +3,30 @@
 return [
 
     'update' => [
-        'error'                 => 'Med posodabljanjem je prišlo do napake. ',
-        'success'               => 'Nastavitve so bile posodobljene uspešno.',
+        'error' => 'Med posodabljanjem je prišlo do napake. ',
+        'success' => 'Nastavitve so bile posodobljene uspešno.',
     ],
     'backup' => [
-        'delete_confirm'        => 'Ali ste prepričani, da želite izbrisati to varnostno datoteko? To dejanje ni mogoče razveljaviti. ',
-        'file_deleted'          => 'Varnostna datoteka je bila uspešno izbrisana. ',
-        'generated'             => 'Ustvarjena je bila nova varnostna kopija.',
-        'file_not_found'        => 'To varnostno datoteko ni bilo mogoče najti na strežniku.',
-        'restore_warning'       => 'Da, obnovi. Potrjujem, da bo to prepisalo vse obstoječe podatke, ki so trenutno v zbirki podatkov. S tem se bodo odjavili tudi vsi vaši obstoječi uporabniki (vključno z vami).',
-        'restore_confirm'       => 'Ali ste prepričani, da želite obnoviti svojo bazo podatkov iz :filename?'
+        'delete_confirm' => 'Ali ste prepričani, da želite izbrisati to varnostno datoteko? To dejanje ni mogoče razveljaviti. ',
+        'file_deleted' => 'Varnostna datoteka je bila uspešno izbrisana. ',
+        'generated' => 'Ustvarjena je bila nova varnostna kopija.',
+        'file_not_found' => 'To varnostno datoteko ni bilo mogoče najti na strežniku.',
+        'restore_warning' => 'Da, obnovi. Potrjujem, da bo to prepisalo vse obstoječe podatke, ki so trenutno v zbirki podatkov. S tem se bodo odjavili tudi vsi vaši obstoječi uporabniki (vključno z vami).',
+        'restore_confirm' => 'Ali ste prepričani, da želite obnoviti svojo bazo podatkov iz :filename?',
     ],
     'restore' => [
-        'success'               => 'Varnostna kopija vašega sistema je bila obnovljena. Prosimo, prijavite se znova.'
+        'success' => 'Varnostna kopija vašega sistema je bila obnovljena. Prosimo, prijavite se znova.',
     ],
     'purge' => [
-        'error'     => 'Pri čiščenju je prišlo do napake. ',
-        'validation_failed'     => 'Vaša potrditev čiščenja je napačna. V polje za potrditev vnesite besedo »DELETE«.',
-        'success'               => 'Izbrisani zapisi so bili uspešno počiščeni.',
+        'error' => 'Pri čiščenju je prišlo do napake. ',
+        'validation_failed' => 'Vaša potrditev čiščenja je napačna. V polje za potrditev vnesite besedo »DELETE«.',
+        'success' => 'Izbrisani zapisi so bili uspešno počiščeni.',
     ],
     'mail' => [
         'sending' => 'Pošiljanje testnega e-maila...',
         'success' => 'Pošta poslana!',
         'error' => 'Pošte ni bilo mogoče poslati.',
-        'additional' => 'Ni bilo prikazanih dodatnih sporočil o napaki. Preverite nastavitve pošte in dnevnik aplikacije.'
+        'additional' => 'Ni bilo prikazanih dodatnih sporočil o napaki. Preverite nastavitve pošte in dnevnik aplikacije.',
     ],
     'ldap' => [
         'testing' => 'Testing LDAP Connection, Binding & Query ...',
@@ -34,11 +34,11 @@ return [
         'error' => 'Nekaj je šlo narobe :(',
         'sync_success' => 'Vzorec 10 uporabnikov, vrnjenih s strežnika LDAP na podlagi vaših nastavitev:',
         'testing_authentication' => 'Testiranje LDAP Avtentikacije...',
-        'authentication_success' => 'Uporabnik se je uspešno avtoriziral z LDAP!'
+        'authentication_success' => 'Uporabnik se je uspešno avtoriziral z LDAP!',
     ],
     'labels' => [
         'null_template' => 'Predloge oznake ni bilo mogoče najti. Izberite predlogo.',
-        ],
+    ],
     'webhook' => [
         'sending' => 'Pošiljanje :apikacija testirno sporočilo...',
         'success' => 'Tvoj :ime_webhooka integracija deluje!',
@@ -55,5 +55,22 @@ return [
     'location_scoping' => [
         'not_saved' => 'Vaše nastavitve niso bile shranjene.',
         'mismatch' => 'V zbirki podatkov je 1 element, ki potrebuje vašo pozornost, preden lahko omogočite določanje obsega lokacije.|V zbirki podatkov je :count elementov, ki potrebujejo vašo pozornost, preden lahko omogočite določanje obsega lokacije.',
+    ],
+    'oauth' => [
+        'token_revoked' => 'Personal access token revoked successfully.',
+        'token_unrevoked' => 'Personal access token reinstated successfully.',
+        'token_not_found' => 'That personal access token could not be found.',
+        'token_revoke_error' => 'An error occurred while revoking the token.',
+        'token_unrevoke_error' => 'An error occurred while reinstating the token.',
+        'client_created' => 'OAuth client created successfully.',
+        'client_updated' => 'OAuth client updated successfully.',
+        'client_deleted' => 'OAuth client deleted successfully.',
+        'client_revoked' => 'OAuth client revoked successfully.',
+        'client_unrevoked' => 'OAuth client reinstated successfully.',
+        'client_not_found' => 'That OAuth client could not be found.',
+        'token_deleted' => 'Token revoked successfully.',
+        'client_delete_denied' => 'You are not authorized to delete this client.',
+        'client_edit_denied' => 'You are not authorized to edit this client.',
+        'token_delete_denied' => 'You are not authorized to revoke this token.',
     ],
 ];

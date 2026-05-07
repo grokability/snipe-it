@@ -11,7 +11,7 @@ use Tests\TestCase;
 
 class DeleteConsumablesTest extends TestCase implements TestsFullMultipleCompaniesSupport, TestsPermissionsRequirement
 {
-    public function testRequiresPermission()
+    public function test_requires_permission()
     {
         $consumable = Consumable::factory()->create();
 
@@ -22,7 +22,7 @@ class DeleteConsumablesTest extends TestCase implements TestsFullMultipleCompani
         $this->assertNotSoftDeleted($consumable);
     }
 
-    public function testAdheresToFullMultipleCompaniesSupportScoping()
+    public function test_adheres_to_full_multiple_companies_support_scoping()
     {
         [$companyA, $companyB] = Company::factory()->count(2)->create();
 
@@ -53,7 +53,7 @@ class DeleteConsumablesTest extends TestCase implements TestsFullMultipleCompani
         $this->assertSoftDeleted($consumableC);
     }
 
-    public function testCanDeleteConsumables()
+    public function test_can_delete_consumables()
     {
         $consumable = Consumable::factory()->create();
 

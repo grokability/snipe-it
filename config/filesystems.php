@@ -65,8 +65,8 @@ $config = [
             'url' => env('PUBLIC_AWS_URL'),
             'endpoint' => env('PUBLIC_AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('PUBLIC_AWS_PATH_STYLE'),
-            'root'   => env('PUBLIC_AWS_BUCKET_ROOT'),
-            'visibility' => 'public'
+            'root' => env('PUBLIC_AWS_BUCKET_ROOT'),
+            'visibility' => 'public',
         ],
 
         's3_private' => [
@@ -82,36 +82,48 @@ $config = [
             'url' => env('PRIVATE_AWS_URL'),
             'endpoint' => env('PRIVATE_AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('PRIVATE_AWS_PATH_STYLE'),
-            'root'   => env('PRIVATE_AWS_BUCKET_ROOT'),
-            'visibility' => 'private'
+            'root' => env('PRIVATE_AWS_BUCKET_ROOT'),
+            'visibility' => 'private',
         ],
 
         'rackspace' => [
-            'driver'    => 'rackspace',
-            'username'  => env('RACKSPACE_USERNAME'),
-            'key'       => env('RACKSPACE_KEY'),
+            'driver' => 'rackspace',
+            'username' => env('RACKSPACE_USERNAME'),
+            'key' => env('RACKSPACE_KEY'),
             'container' => env('RACKSPACE_CONTAINER'),
-            'endpoint'  => 'https://identity.api.rackspacecloud.com/v2.0/',
-            'region'    => env('RACKSPACE_REGION'),
-            'url_type'  => env('RACKSPACE_URL_TYPE'),
+            'endpoint' => 'https://identity.api.rackspacecloud.com/v2.0/',
+            'region' => env('RACKSPACE_REGION'),
+            'url_type' => env('RACKSPACE_URL_TYPE'),
         ],
 
         'backup' => [
-            'driver' => env('PRIVATE_FILESYSTEM_DISK', 'local'),
-            'root' => storage_path('app'),
+            'driver' => env('BACKUP_FILESYSTEM_DRIVER', 'local'),
+            'key' => env('PRIVATE_AWS_ACCESS_KEY_ID'),
+            'secret' => env('PRIVATE_AWS_SECRET_ACCESS_KEY'),
+            'region' => env('PRIVATE_AWS_DEFAULT_REGION'),
+            'bucket' => env('PRIVATE_AWS_BUCKET'),
+            'root'   => env('BACKUP_FILESYSTEM_ROOT', storage_path('app')),
+            'visibility' => 'private',
         ],
 
     ],
-
 
 ];
 
 // copy the selected PUBLIC_FILESYSTEM_DISK's configuration to the 'public' key for easy use
 // (by default, the PUBLIC_FILESYSTEM DISK is 'local_public', in the public/uploads directory)
-$config['disks']['public'] = $config['disks'][env('PUBLIC_FILESYSTEM_DISK','local_public')];
+$config['disks']['public'] = $config['disks'][env('PUBLIC_FILESYSTEM_DISK', 'local_public')];
+
+// When PUBLIC_S3_PROXY is enabled, all "public" uploads are served through the application
+// instead of being accessed directly from S3. This allows using a single private S3 bucket
+// for all storage, with the app proxying requests for public files (images, logos, avatars).
+if (env('PUBLIC_S3_PROXY', false)) {
+    $config['disks']['public']['visibility'] = 'private';
+    $config['disks']['public']['url'] = env('APP_URL').'/storage-proxy';
+}
 
 // This is used to determine which files to accept, and also to populate the language strings for the upload-file blade
-$config['allowed_upload_extensions_array']  = [
+$config['allowed_upload_extensions_array'] = [
     'avif',
     'doc',
     'doc',
@@ -145,7 +157,6 @@ $config['allowed_upload_extensions_array']  = [
     'xml',
     'zip',
 ];
-
 
 // https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/MIME_types/Common_types
 $config['allowed_upload_mimetypes_array'] = [

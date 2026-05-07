@@ -4,14 +4,12 @@ namespace App\Observers;
 
 use App\Models\Actionlog;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
 
 class UserObserver
 {
     /**
      * Listen to the User updating event. This fires automatically every time an existing asset is saved.
      *
-     * @param  User  $user
      * @return void
      */
     public function updating(User $user)
@@ -50,9 +48,9 @@ class UserObserver
             'autoassign_licenses',
             'vip',
             'password',
-            'permissions'
+            'permissions',
         ];
-        
+
         $changed = [];
 
         foreach ($user->getRawOriginal() as $key => $value) {
@@ -78,7 +76,7 @@ class UserObserver
         }
 
         if (count($changed) > 0) {
-            $logAction = new Actionlog();
+            $logAction = new Actionlog;
             $logAction->item_type = User::class;
             $logAction->item_id = $user->id;
             $logAction->target_type = User::class; // can we instead say $logAction->item = $asset ?
@@ -89,7 +87,6 @@ class UserObserver
             $logAction->logaction('update');
         }
 
-
     }
 
     /**
@@ -97,12 +94,11 @@ class UserObserver
      * the next_auto_tag_base value in the settings table when i
      * a new asset is created.
      *
-     * @param  User $user
      * @return void
      */
     public function created(User $user)
     {
-        $logAction = new Actionlog();
+        $logAction = new Actionlog;
         $logAction->item_type = User::class; // can we instead say $logAction->item = $asset ?
         $logAction->item_id = $user->id;
         $logAction->created_at = date('Y-m-d H:i:s');
@@ -113,12 +109,11 @@ class UserObserver
     /**
      * Listen to the User deleting event.
      *
-     * @param  User $user
      * @return void
      */
     public function deleting(User $user)
     {
-        $logAction = new Actionlog();
+        $logAction = new Actionlog;
         $logAction->item_type = User::class;
         $logAction->item_id = $user->id;
         $logAction->target_type = User::class; // can we instead say $logAction->item = $asset ?
@@ -131,12 +126,11 @@ class UserObserver
     /**
      * Listen to the User deleting event.
      *
-     * @param  User $user
      * @return void
      */
     public function restoring(User $user)
     {
-        $logAction = new Actionlog();
+        $logAction = new Actionlog;
         $logAction->item_type = User::class;
         $logAction->item_id = $user->id;
         $logAction->target_type = User::class; // can we instead say $logAction->item = $asset ?
@@ -145,6 +139,4 @@ class UserObserver
         $logAction->created_by = auth()->id();
         $logAction->logaction('restore');
     }
-
-
 }

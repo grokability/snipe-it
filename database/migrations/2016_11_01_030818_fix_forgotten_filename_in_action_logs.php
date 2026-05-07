@@ -18,11 +18,11 @@ class FixForgottenFilenameInActionLogs extends Migration
             //
             foreach ($logs as $log) {
                 $matching_action_log = Actionlog::where('item_id', $log->asset_id)
-                                          ->where('created_at', $log->created_at)
-                                          ->where('note', $log->note)
-                                          ->where('filename', null)
-                                          ->withTrashed()
-                                          ->get()->first();
+                    ->where('created_at', $log->created_at)
+                    ->where('note', $log->note)
+                    ->where('filename', null)
+                    ->withTrashed()
+                    ->get()->first();
 
                 if ($matching_action_log) {
                     $matching_action_log->filename = $log->filename;

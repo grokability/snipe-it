@@ -3,7 +3,7 @@
 return [
     'about_templates' => 'Om sparade mallar',
     'saving_templates_description' => 'Gör dina val, skriv sedan in namnet på din mall i rutan ovanför och tryck på "Spara mall"-knappen. Använd listrutan för att välja en tidigare sparad mall.',
-    'create'  => [
+    'create' => [
         'success' => 'Mall sparad',
     ],
     'update' => [

@@ -3,7 +3,6 @@
 namespace App\Presenters;
 
 use App\Models\CustomField;
-use DateTime;
 
 /**
  * Class AssetPresenter
@@ -12,18 +11,19 @@ class AssetAuditPresenter extends Presenter
 {
     /**
      * Json Column Layout for bootstrap table
+     *
      * @return string
      */
     public static function dataTableLayout()
     {
         $layout = [
-             [
+            [
                 'field' => 'checkbox',
                 'checkbox' => true,
                 'titleTooltip' => trans('general.select_all_none'),
-                 'printIgnore' => true,
-             ],
-             [
+                'printIgnore' => true,
+            ],
+            [
                 'field' => 'id',
                 'searchable' => false,
                 'sortable' => true,
@@ -50,7 +50,7 @@ class AssetAuditPresenter extends Presenter
                 'searchable' => false,
                 'sortable' => true,
                 'switchable' => true,
-                'title' => trans('admin/hardware/table.image'),
+                'title' => trans('general.image'),
                 'visible' => false,
                 'formatter' => 'auditImageFormatter',
             ], [
@@ -268,6 +268,7 @@ class AssetAuditPresenter extends Presenter
             'title' => trans('table.actions'),
             'formatter' => 'hardwareAuditFormatter',
             'printIgnore' => true,
+            'class' => 'hidden-print',
         ];
 
         return json_encode($layout);
