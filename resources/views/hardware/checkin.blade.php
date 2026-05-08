@@ -222,6 +222,7 @@
             </div>
         </div>
     </div>
+@stop
 
 @section('moar_scripts')
     <script nonce="{{ csrf_token() }}">

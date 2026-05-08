@@ -64,7 +64,7 @@ class AssetCheckinController extends Controller
         $showRequestableToggle = is_numeric($selectedStatusId)
             && in_array((int) $selectedStatusId, $deployableStatusIds, true);
 
-        return view('hardware/checkin', compact('asset', 'target_option'))
+        return view('hardware/checkin', compact('asset', 'target_option', 'setting'))
             ->with('item', $asset)
             ->with('statusLabel_list', Helper::statusLabelList())
             ->with('deployable_status_ids', $deployableStatusIds)
