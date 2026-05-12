@@ -29,6 +29,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Passport\Passport;
 use Rollbar\Laravel\RollbarServiceProvider;
 
 /**
@@ -62,6 +63,12 @@ class AppServiceProvider extends ServiceProvider
         if ((strpos(env('APP_URL'), 'https://') === 0) || (env('APP_FORCE_TLS'))) {
             $url->forceScheme('https');
         }
+
+        Passport::enablePasswordGrant();
+
+        Passport::authorizationView(function ($parameters) {
+            return view('mcp.authorize', $parameters);
+        });
 
         // TODO - isn't it somehow 'gauche' to check the environment directly; shouldn't we be using config() somehow?
         if (! env('APP_ALLOW_INSECURE_HOSTS')) {  // unless you set APP_ALLOW_INSECURE_HOSTS, you should PROHIBIT forging domain parts of URL via Host: headers

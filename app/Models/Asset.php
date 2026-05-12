@@ -6,6 +6,7 @@ use App\Events\CheckoutableCheckedOut;
 use App\Exceptions\CheckoutNotAllowed;
 use App\Helpers\Helper;
 use App\Http\Traits\UniqueUndeletedTrait;
+use App\Models\Builders\AssetBuilder;
 use App\Models\Traits\Acceptable;
 use App\Models\Traits\CompanyableTrait;
 use App\Models\Traits\HasUploads;
@@ -231,6 +232,18 @@ class Asset extends Depreciable
         'model_number' => 'model',
         'rtd_location' => 'defaultLoc',
     ];
+
+    /**
+     * Create a new Eloquent query builder for the model.
+     * (We will be moving the query scopes below to the new builders eventually)
+     *
+     * @param  \Illuminate\Database\Query\Builder  $query
+     * @return AssetBuilder
+     */
+    public function newEloquentBuilder($query)
+    {
+        return new AssetBuilder($query);
+    }
 
     protected static function booted(): void
     {

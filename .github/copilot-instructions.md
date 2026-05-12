@@ -1,6 +1,7 @@
 # GitHub Copilot Custom Instructions for Snipe-IT
 
-These instructions guide Copilot to generate code that aligns with modern Laravel 11 standards, PHP 8.2/8.4 features, software engineering principles, and industry best practices to improve software quality, maintainability, and security.
+These instructions guide Copilot to generate code that aligns with modern Laravel 12 standards, PHP 8.2/8.4 features,
+software engineering principles, and industry best practices to improve software quality, maintainability, and security.
 
 ## ✅ General Coding Standards
 
@@ -22,7 +23,7 @@ These instructions guide Copilot to generate code that aligns with modern Larave
 - Adopt **final classes** where extension is not intended.
 - Use **Named Arguments** for improved clarity when calling functions with multiple parameters.
 
-## ✅ Laravel 11 Project Structure & Conventions
+## ✅ Laravel 12 Project Structure & Conventions
 
 - Follow the official Laravel project structure:
     - `app/Http/Controllers` - Controllers
@@ -32,6 +33,7 @@ These instructions guide Copilot to generate code that aligns with modern Larave
     - `app/Enums` - Enums
     - `app/Actions` - Single-responsibility action classes
     - `app/Policies` - Authorization logic
+  - `app/Models/Builders` - Query scoping logic
 
 - Controllers must:
     - Use dependency injection.

@@ -1,0 +1,83 @@
+<?php
+
+namespace App\Mcp\Tools;
+
+use App\Models\Department;
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Illuminate\Support\Facades\Gate;
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
+use Laravel\Mcp\ResponseFactory;
+use Laravel\Mcp\Server\Attributes\Description;
+use Laravel\Mcp\Server\Attributes\Name;
+use Laravel\Mcp\Server\Attributes\Title;
+use Laravel\Mcp\Server\Tool;
+
+#[Name('delete_department')]
+#[Title('Delete Department')]
+#[Description('Soft-delete a Snipe-IT department. The department must have no users assigned to it.')]
+class DeleteDepartmentTool extends Tool
+{
+    public function handle(Request $request): ResponseFactory
+    {
+        $request->validate([
+            'id' => 'nullable|integer',
+            'name' => 'nullable|string|max:255',
+        ]);
+
+        $department = $this->resolveDepartment($request);
+
+        if (! $department) {
+            return Response::make(Response::error(trans('mcp.department_not_found')));
+        }
+
+        if (! Gate::allows('delete', $department)) {
+            return Response::make(Response::error(trans('mcp.unauthorized')));
+        }
+
+        if ($department->users->count() > 0) {
+            return Response::make(Response::error(trans('mcp.department_has_users')));
+        }
+
+        $name = $department->name;
+
+        $department->delete();
+
+        return Response::make(
+            Response::text(trans('mcp.department_deleted', ['name' => $name]))
+        )->withStructuredContent([
+            'success' => true,
+            'message' => trans('mcp.department_deleted', ['name' => $name]),
+            'name' => $name,
+        ]);
+    }
+
+    private function resolveDepartment(Request $request): ?Department
+    {
+        if ($request->filled('id')) {
+            return Department::find($request->get('id'));
+        }
+        if ($request->filled('name')) {
+            return Department::where('name', $request->get('name'))->first();
+        }
+
+        return null;
+    }
+
+    public function schema(JsonSchema $schema): array
+    {
+        return [
+            'id' => $schema->number()->description('Numeric ID of the department to delete'),
+            'name' => $schema->string()->description('Name of the department to delete'),
+        ];
+    }
+
+    public function outputSchema(JsonSchema $schema): array
+    {
+        return [
+            'success' => $schema->boolean()->description('True if the deletion succeeded'),
+            'message' => $schema->string()->description('Human-readable result message')->required(),
+            'name' => $schema->string()->description('Name of the deleted department'),
+        ];
+    }
+}
