@@ -30,8 +30,8 @@
                     <div class="alert alert-danger" id="modal_error_msg" style="display:none">
                     </div>
                     <!-- Setup of default company, taken from asset creator -->
-					@if ($user->company)
-						<input type="hidden" name="company_id" id='modal-company' value='{{ $user->company->id }}' class="form-control">
+					@if ($user->companies->isNotEmpty())
+						<input type="hidden" name="company_id" id='modal-company' value='{{ $user->companies->first()->id }}' class="form-control">
 					@endif
 					
 					<!-- Select company, only for users with multicompany access - replace default company -->
