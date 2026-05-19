@@ -5,7 +5,7 @@
         <label for="{{ $fieldname }}" class="col-md-3 control-label">{{ $translated_name }}</label>
         <div class="col-md-6">
             <select class="js-data-ajax" disabled data-endpoint="companies"
-                    data-placeholder="{{ trans('general.select_company') }}" name="{{ $fieldname }}" style="width: 100%"
+                    data-placeholder="{{ trans('general.select_company') }}" name="{{ $fieldname }}{{ (isset($multiple) && ($multiple=='true')) ? '[]' : '' }}" style="width: 100%"
                     aria-label="{{ $fieldname }}"{{ (isset($multiple) && ($multiple=='true')) ? " multiple='multiple'" : '' }}>
                 @if ($company_id = old($fieldname, (isset($item)) ? $item->{$fieldname} : ''))
                     <option value="{{ $company_id }}" selected="selected" role="option" aria-selected="true"  role="option">
@@ -22,8 +22,8 @@
     <!-- full company support is enabled or this user is a superadmin -->
     <div id="{{ $fieldname }}" class="form-group{{ $errors->has($fieldname) ? ' has-error' : '' }}">
         <label for="{{ $fieldname }}" class="col-md-3 control-label">{{ $translated_name }}</label>
-        <div class="col-md-8">
-            <select class="js-data-ajax" data-endpoint="companies" data-placeholder="{{ trans('general.select_company') }}" name="{{ $fieldname }}" style="width: 100%"{{ (isset($multiple) && ($multiple=='true')) ? " multiple='multiple'" : '' }}>
+        <div class="col-md-6">
+            <select class="js-data-ajax" data-endpoint="companies" data-placeholder="{{ trans('general.select_company') }}" name="{{ $fieldname }}{{ (isset($multiple) && ($multiple=='true')) ? '[]' : '' }}" style="width: 100%"{{ (isset($multiple) && ($multiple=='true')) ? " multiple='multiple'" : '' }}>
                 @isset ($selected)
                     @foreach ($selected as $company_id)
                         <option value="{{ $company_id }}" selected="selected" role="option" aria-selected="true">
