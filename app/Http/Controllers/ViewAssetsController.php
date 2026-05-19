@@ -121,6 +121,7 @@ class ViewAssetsController extends Controller
             'consumables',
             'accessories',
             'licenses',
+            'companies',
         ])->find($selectedUserId);
 
         // If the user to view couldn't be found (shouldn't happen with proper logic), redirect with error
