@@ -89,7 +89,7 @@
 
         <div class="box-body">
 
-            <div class="col-md-4" id="included_fields_wrapper">
+            <div class="col-md-3" id="included_fields_wrapper">
 
                 <label class="form-control">
                     <input type="checkbox" id="checkAll" checked="checked">
@@ -344,7 +344,7 @@
             @endif
           </div> <!-- /.col-md-4-->
 
-          <div class="col-md-8">
+            <div class="col-md-9">
 
             <p>
                 {!! trans('general.report_fields_info') !!}
