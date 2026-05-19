@@ -18,6 +18,7 @@ use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -58,6 +59,13 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
     protected $table = 'users';
 
     protected $injectUniqueIdentifier = true;
+
+    /**
+     * Transient (non-persisted) ID of the Actionlog entry written by UserObserver::updating()
+     * during the current request. syncCompaniesWithLogging() merges company changes into this
+     * entry instead of creating a separate one, so a single edit session produces one log row.
+     */
+    public ?int $currentUpdateLogId = null;
 
     protected $fillable = [
         'activated',
@@ -166,7 +174,7 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
         'userloc' => ['name', 'address', 'address2', 'city', 'state', 'zip'],
         'department' => ['name'],
         'groups' => ['name'],
-        'company' => ['name'],
+        'companies' => ['name'],
         'manager' => ['first_name', 'last_name', 'username', 'display_name'],
         'adminuser' => ['first_name', 'last_name', 'display_name'],
     ];
@@ -244,6 +252,15 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
 
     protected static function booted(): void
     {
+        // Bridge for factories/seeders that still set company_id directly: ensure
+        // that company appears in the pivot so FMCS scoping works correctly.
+        // Application code (controllers, importers) writes only to the pivot.
+        static::created(function (User $user) {
+            if ($user->company_id) {
+                $user->companies()->syncWithoutDetaching([$user->company_id]);
+            }
+        });
+
         static::forceDeleted(function (User $user) {
             CheckoutRequest::where(['user_id' => $user->id])->forceDelete();
             $user->purgeAssociatedPassportTokens();
@@ -603,6 +620,51 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
         return $this->belongsTo(Company::class, 'company_id');
     }
 
+    public function companies(): BelongsToMany
+    {
+        return $this->belongsToMany(Company::class, 'company_user');
+    }
+
+    /**
+     * Sync company pivot membership and log the change if the set of companies changed.
+     *
+     * When called after $user->save() in the same request, UserObserver::updating() will
+     * have already written an Actionlog row and stored its ID in $this->currentUpdateLogId.
+     * In that case we merge the company change into that existing entry so that a single
+     * edit session (field changes + company changes) produces one log row, not two.
+     */
+    public function syncCompaniesWithLogging(array $companyIds): void
+    {
+        $oldIds = $this->companies()->orderBy('companies.id')->pluck('companies.id')->toArray();
+        $this->companies()->sync($companyIds);
+        $newIds = $this->companies()->orderBy('companies.id')->pluck('companies.id')->toArray();
+
+        if ($oldIds === $newIds) {
+            return;
+        }
+
+        $companyChange = ['companies' => ['old' => $oldIds, 'new' => $newIds]];
+
+        if ($this->currentUpdateLogId && ($existing = Actionlog::find($this->currentUpdateLogId))) {
+            $meta = json_decode($existing->log_meta ?? '{}', true) ?: [];
+            $existing->log_meta = json_encode(array_merge($meta, $companyChange));
+            $existing->save();
+            $this->currentUpdateLogId = null;
+
+            return;
+        }
+
+        $logAction = new Actionlog;
+        $logAction->item_type = static::class;
+        $logAction->item_id = $this->id;
+        $logAction->target_type = static::class;
+        $logAction->target_id = $this->id;
+        $logAction->created_at = date('Y-m-d H:i:s');
+        $logAction->created_by = auth()->id();
+        $logAction->log_meta = json_encode($companyChange);
+        $logAction->logaction('update');
+    }
+
     /**
      * Establishes the user -> department relationship
      *
@@ -725,9 +787,10 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
     {
         return $this->belongsToMany(License::class, 'license_seats', 'assigned_to', 'license_id')->withPivot('id', 'created_at', 'updated_at');
     }
+
     public function directLicenses()
     {
-        return $this->belongsToMany(\App\Models\License::class, 'license_seats', 'assigned_to', 'license_id')->withPivot('id', 'created_at', 'updated_at')->wherePivotNull('asset_id')->withTrashed();
+        return $this->belongsToMany(License::class, 'license_seats', 'assigned_to', 'license_id')->withPivot('id', 'created_at', 'updated_at')->wherePivotNull('asset_id')->withTrashed();
     }
 
     /**
@@ -1338,7 +1401,14 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
      */
     public function scopeOrderCompany($query, $order)
     {
-        return $query->leftJoin('companies as companies_user', 'users.company_id', '=', 'companies_user.id')->orderBy('companies_user.name', $order);
+        $sub = DB::table('company_user')
+            ->join('companies', 'companies.id', '=', 'company_user.company_id')
+            ->select('company_user.user_id', DB::raw('MIN(companies.name) as min_company_name'))
+            ->groupBy('company_user.user_id');
+
+        return $query
+            ->leftJoinSub($sub, 'companies_sort', 'companies_sort.user_id', '=', 'users.id')
+            ->orderBy('companies_sort.min_company_name', $order);
     }
 
     /**
@@ -1393,6 +1463,7 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
             ->orwhereRaw('CONCAT(users.first_name," ",users.last_name) LIKE \''.$search.'%\'');
 
     }
+
     public function scopeWithInventoryRelations($query, int $id)
     {
         return $query->where('id', $id)
@@ -1434,6 +1505,7 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
             ])
             ->withTrashed();
     }
+
     /**
      * Get all direct and indirect subordinates for this user.
      *
