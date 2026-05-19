@@ -106,14 +106,11 @@ class UserImporter extends ItemImporter
         }
 
         // Resolve pipe-separated company names (e.g. "Acme Corp|Widget Inc") into IDs.
-        // parent::handle() already ran createOrFetchCompany() on the raw unsplit string, so
-        // we override company_id here with the correct first-company ID and keep all IDs for
-        // pivot sync after save.
+        // company_id is a legacy column — company membership is managed via the pivot.
+        // Unset whatever the parent set so it is not written to the DB.
         $companyRaw = trim($this->findCsvMatch($row, 'company'));
         $companyIds = $this->resolveCompanyIds($companyRaw);
-        if (! empty($companyIds)) {
-            $this->item['company_id'] = $companyIds[0];
-        }
+        unset($this->item['company_id']);
 
         if (is_null($this->item['username']) || $this->item['username'] == '') {
             $user_full_name = $this->item['first_name'].' '.$this->item['last_name'];
