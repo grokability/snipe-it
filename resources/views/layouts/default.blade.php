@@ -44,6 +44,7 @@
 
         :root {
             color-scheme: light dark;
+            --color-bg: light-dark(#ecf0f5, #222222);
             --btn-theme-hover-text-color: {{ $nav_link_color ?? 'light-dark(hsl(from var(--main-theme-color) h s calc(l - 10)),hsl(from var(--main-theme-color) h s calc(l - 10)))' }};
             --btn-theme-hover: {{ $nav_link_color ?? 'light-dark(hsl(from var(--main-theme-color) h s calc(l - 10)),hsl(from var(--main-theme-color) h s calc(l - 10)))' }};
             --btn-theme-text-color: {{ $nav_link_color ?? 'light-dark(hsl(from var(--main-theme-color) h s calc(l + 10)),hsl(from var(--main-theme-color) h s calc(l - 10)))' }};
@@ -69,6 +70,10 @@
             --text-success: light-dark(#039516,#4ced61);
             --text-warning: light-dark(#da9113,#f3a51f);
             --input-border-color: light-dark(#d2d6de,#656464);
+            --default-label-link-bg: var(--color-bg);
+            --default-label-link-text: light-dark({{ $link_light_color ?? '#296282' }}, {{ $link_dark_color ?? '#5fa4cc' }});
+            --default-label-link-border: 1px solid light-dark(#b8c7ce, #494747);
+
         }
 
         [data-theme="light"] {
@@ -84,7 +89,6 @@
             --btn-theme-hover: var(--main-theme-hover);
             --callout-bg-color: var(--box-header-bottom-border-color);
             --callout-left-border: var(--box-header-top-border-color);
-            --color-bg: #ecf0f5;
             --header-color: #000000;
             --input-group-bg: hsl(from var(--box-bg) h s calc(l - 5));
             --input-group-fg: hsl(from var(--input-group-bg) h s calc(l - 50));
@@ -109,7 +113,6 @@
             --btn-theme-hover: var(--main-theme-hover);
             --callout-bg-color: var(--box-header-top-border-color);
             --callout-left-border: #323131;
-            --color-bg: #222222;
             --header-color: #ffffff;
             --input-group-bg: hsl(from var(--box-bg) h s calc(l + 10));
             --input-group-fg: hsl(from var(--input-group-bg) h s calc(l + 50));
@@ -577,6 +580,34 @@
         {
             background-color: var(--main-theme-color);
             color: var(--nav-primary-text-color) !important;
+        }
+
+        .label-light {
+            background-color: var(--default-label-link-bg) !important;
+            color: var(--color-fg) !important;
+            font-size: 12px !important;
+            font-weight: normal !important;
+            line-height: 25px;
+            border: var(--default-label-link-border);
+
+        }
+
+        a.label-light {
+            background-color: var(--default-label-link-bg) !important;
+            color: var(--link-color) !important;
+            font-size: 12px !important;
+            font-weight: normal !important;
+            line-height: 25px;
+            border: var(--default-label-link-border);
+        }
+
+        a.label-light:hover {
+            background-color: var(--default-label-link-bg) !important;
+            color: var(--link-hover) !important;
+            font-size: 12px !important;
+            font-weight: normal !important;
+            line-height: 25px;
+            border: var(--default-label-link-border);
         }
 
 
