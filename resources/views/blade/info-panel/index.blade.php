@@ -221,10 +221,30 @@
         @endif
 
 
-        @if ($infoPanelObj->company)
+        @if ($infoPanelObj->companies)
+            @if ($infoPanelObj->companies->count() > 1)
+                <x-info-element icon_type="company" title="{{ trans('general.companies') }}">
+                    {{ trans('general.companies') }}
+                    <x-info-element class="subitem">
+                        <x-copy-to-clipboard class="pull-right" copy_what="companies">
+                            @foreach ($infoPanelObj->companies as $company)
+                                {!!  $company->present()->formattedNameLink !!}<br>
+                            @endforeach
+                        </x-copy-to-clipboard>
+                    </x-info-element>
+                </x-info-element>
+            @else
+                <x-info-element icon_type="company" icon_color="{{ $infoPanelObj->companies->first()->tag_color }}" title="{{ trans('general.company') }}">
+                    <x-copy-to-clipboard class="pull-right" copy_what="company">
+                        {!!  $infoPanelObj->companies->first()->present()->formattedNameLink !!}
+                    </x-copy-to-clipboard>
+                </x-info-element>
+            @endif
+
+        @elseif ($infoPanelObj->company)
             <x-info-element icon_type="company" icon_color="{{ $infoPanelObj->company->tag_color }}" title="{{ trans('general.company') }}">
                 <x-copy-to-clipboard class="pull-right" copy_what="company">
-                {!!  $infoPanelObj->company->present()->nameUrl !!}
+                    {!!  $infoPanelObj->company->present()->formattedNameLink !!}
                 </x-copy-to-clipboard>
             </x-info-element>
         @endif
