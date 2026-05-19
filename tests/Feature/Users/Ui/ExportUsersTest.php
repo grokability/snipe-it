@@ -4,6 +4,7 @@ namespace Tests\Feature\Users\Ui;
 
 use App\Models\Accessory;
 use App\Models\Asset;
+use App\Models\Company;
 use App\Models\Consumable;
 use App\Models\Group;
 use App\Models\LicenseSeat;
@@ -128,6 +129,26 @@ class ExportUsersTest extends TestCase
                 trans('general.created_by') => 'Han Solo',
                 trans('general.start_date') => '2020-01-01',
                 trans('general.end_date') => '2030-12-31',
+            ]);
+    }
+
+    public function test_multi_company_user_exports_pipe_separated_company_names()
+    {
+        [$companyA, $companyB] = Company::factory()->sequence(
+            ['name' => 'Rebel Alliance'],
+            ['name' => 'Galactic Senate'],
+        )->count(2)->create();
+
+        $user = User::factory()->create(['company_id' => $companyA->id]);
+        $user->companies()->sync([$companyA->id, $companyB->id]);
+
+        $this->actingAs(User::factory()->viewUsers()->create())
+            ->get(route('users.export'))
+            ->assertOk()
+            ->assertCsvHeader()
+            ->assertSeePairsInStreamedResponse([
+                trans('admin/users/table.first_name') => $user->first_name,
+                trans('admin/companies/table.title') => 'Rebel Alliance|Galactic Senate',
             ]);
     }
 }
