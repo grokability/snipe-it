@@ -82,11 +82,17 @@ class UsersTransformer
             'consumables_count' => (int) $user->consumables_count,
             'manages_users_count' => (int) $user->manages_users_count,
             'manages_locations_count' => (int) $user->manages_locations_count,
-            'company' => ($user->company) ? [
-                'id' => (int) $user->company->id,
-                'name' => e($user->company->name),
-                'tag_color' => ($user->company->tag_color) ? e($user->company->tag_color) : null,
+            // Legacy field — kept for backward API compatibility; use `companies` for multi-company support.
+            'company' => $user->companies->isNotEmpty() ? [
+                'id' => (int) $user->companies->first()->id,
+                'name' => e($user->companies->first()->name),
+                'tag_color' => ($user->companies->first()->tag_color) ? e($user->companies->first()->tag_color) : null,
             ] : null,
+            'companies' => $user->companies->map(fn ($c) => [
+                'id' => (int) $c->id,
+                'name' => e($c->name),
+                'tag_color' => $c->tag_color ? e($c->tag_color) : null,
+            ])->values(),
             'created_by' => ($user->createdBy) ? [
                 'id' => (int) $user->createdBy->id,
                 'name' => e($user->createdBy->display_name),

@@ -293,6 +293,28 @@ class ActionlogsTransformer
             $clean_meta[trans('general.company')] = $clean_meta['company_id'];
             unset($clean_meta['company_id']);
         }
+
+        if (array_key_exists('companies', $clean_meta)) {
+            // clean_field() JSON-encodes array values into a string (e.g. "[14,15]").
+            // Decode them back to integer arrays before resolving names.
+            // Use withoutGlobalScopes so FMCS does not hide companies from the log viewer.
+            $resolveCompanyNames = function ($rawValue): string {
+                $ids = json_decode($rawValue, true);
+                if (empty($ids) || ! is_array($ids)) {
+                    return trans('general.unassigned');
+                }
+
+                return collect($ids)
+                    ->map(fn ($id) => Company::withoutGlobalScopes()->withTrashed()->find($id))
+                    ->map(fn ($c) => $c ? e($c->name) : trans('general.deleted'))
+                    ->join(', ');
+            };
+
+            $clean_meta['companies']['old'] = $resolveCompanyNames($clean_meta['companies']['old']);
+            $clean_meta['companies']['new'] = $resolveCompanyNames($clean_meta['companies']['new']);
+            $clean_meta[trans('general.companies')] = $clean_meta['companies'];
+            unset($clean_meta['companies']);
+        }
         if (array_key_exists('supplier_id', $clean_meta)) {
 
             $oldSupplier = $supplier->find($clean_meta['supplier_id']['old']);
