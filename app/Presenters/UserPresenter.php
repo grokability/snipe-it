@@ -87,7 +87,7 @@ class UserPresenter extends Presenter
                 'searchable' => true,
                 'sortable' => false,
                 'switchable' => true,
-                'title' => trans('admin/companies/table.title'),
+                'title' => trans('general.companies'),
                 'visible' => false,
                 'formatter' => 'companiesArrayLinkFormatter',
             ],
