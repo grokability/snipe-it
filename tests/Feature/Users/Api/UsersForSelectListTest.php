@@ -114,4 +114,54 @@ class UsersForSelectListTest extends TestCase
         $response = $this->getJson(route('api.users.selectlist', ['search' => 'dvader']))->assertOk();
         $this->assertEquals(0, collect($response->json('results'))->count());
     }
+
+    public function test_users_are_filtered_by_company_id_parameter_when_full_company_support_is_enabled()
+    {
+        $this->settings->enableMultipleFullCompanySupport();
+
+        [$companyA, $companyB] = Company::factory()->count(2)->create();
+
+        $userInA = User::factory()->create(['first_name' => 'Luke', 'last_name' => 'Skywalker', 'username' => 'lskywalker_fmcs1']);
+        $companyA->users()->attach($userInA);
+
+        $userInB = User::factory()->create(['first_name' => 'Darth', 'last_name' => 'Vader', 'username' => 'dvader_fmcs1']);
+        $companyB->users()->attach($userInB);
+
+        $actor = User::factory()->superuser()->create();
+
+        $response = $this->actingAsForApi($actor)
+            ->getJson(route('api.users.selectlist', ['companyId' => $companyA->id]))
+            ->assertOk();
+
+        $results = collect($response->json('results'));
+        $this->assertTrue($results->pluck('text')->contains(fn ($t) => str_contains($t, 'Luke')));
+        $this->assertFalse($results->pluck('text')->contains(fn ($t) => str_contains($t, 'Darth')));
+    }
+
+    public function test_users_are_filtered_by_multiple_comma_separated_company_ids_when_full_company_support_is_enabled()
+    {
+        $this->settings->enableMultipleFullCompanySupport();
+
+        [$companyA, $companyB, $companyC] = Company::factory()->count(3)->create();
+
+        $userInA = User::factory()->create(['first_name' => 'Luke', 'last_name' => 'Skywalker', 'username' => 'lskywalker_fmcs2']);
+        $companyA->users()->attach($userInA);
+
+        $userInB = User::factory()->create(['first_name' => 'Obi-Wan', 'last_name' => 'Kenobi', 'username' => 'okenobi_fmcs2']);
+        $companyB->users()->attach($userInB);
+
+        $userInC = User::factory()->create(['first_name' => 'Darth', 'last_name' => 'Vader', 'username' => 'dvader_fmcs2']);
+        $companyC->users()->attach($userInC);
+
+        $actor = User::factory()->superuser()->create();
+
+        $response = $this->actingAsForApi($actor)
+            ->getJson(route('api.users.selectlist', ['companyId' => $companyA->id.','.$companyB->id]))
+            ->assertOk();
+
+        $results = collect($response->json('results'));
+        $this->assertTrue($results->pluck('text')->contains(fn ($t) => str_contains($t, 'Luke')));
+        $this->assertTrue($results->pluck('text')->contains(fn ($t) => str_contains($t, 'Obi-Wan')));
+        $this->assertFalse($results->pluck('text')->contains(fn ($t) => str_contains($t, 'Darth')));
+    }
 }

@@ -219,6 +219,15 @@ class AccessoryPresenter extends Presenter
                 'formatter' => 'polymorphicItemFormatter',
             ],
             [
+                'field' => 'assigned_to.companies',
+                'searchable' => true,
+                'sortable' => false,
+                'switchable' => true,
+                'title' => trans('general.companies'),
+                'visible' => true,
+                'formatter' => 'companiesArrayLinkFormatter',
+            ],
+            [
                 'field' => 'note',
                 'searchable' => false,
                 'sortable' => false,

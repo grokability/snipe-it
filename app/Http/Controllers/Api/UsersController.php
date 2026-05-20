@@ -22,6 +22,7 @@ use App\Models\Asset;
 use App\Models\Company;
 use App\Models\Consumable;
 use App\Models\License;
+use App\Models\Setting;
 use App\Models\User;
 use App\Notifications\CurrentInventory;
 use App\Notifications\WelcomeNotification;

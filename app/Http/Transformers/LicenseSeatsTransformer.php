@@ -38,13 +38,11 @@ class LicenseSeatsTransformer
                             'tag_color' => $seat->user->department->tag_color ? e($seat->user->department->tag_color) : null,
 
                         ] : null,
-                'company' => ($seat->user->companies->isNotEmpty()) ?
-                    [
-                        'id' => (int) $seat->user->companies->first()->id,
-                        'name' => e($seat->user->companies->first()->name),
-                        'tag_color' => $seat->user->companies->first()->tag_color ? e($seat->user->companies->first()->tag_color) : null,
-
-                    ] : null,
+                'companies' => $seat->user->companies->map(fn ($c) => [
+                    'id' => (int) $c->id,
+                    'name' => e($c->name),
+                    'tag_color' => $c->tag_color ? e($c->tag_color) : null,
+                ])->values(),
                 'created_at' => Helper::getFormattedDateObject($seat->created_at, 'datetime'),
             ] : null,
             'assigned_asset' => ($seat->asset) ? [

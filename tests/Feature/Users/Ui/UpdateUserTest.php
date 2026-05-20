@@ -337,6 +337,10 @@ class UpdateUserTest extends TestCase
             'id' => $id,
             'first_name' => 'test',
             'username' => 'test',
+        ]);
+
+        $this->assertDatabaseHas('company_user', [
+            'user_id' => $id,
             'company_id' => $companyB->id,
         ]);
     }

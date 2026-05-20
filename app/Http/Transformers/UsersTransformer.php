@@ -150,6 +150,11 @@ class UsersTransformer
             'last_name' => e($user->last_name),
             'username' => e($user->username),
             'display_name' => e($user->display_name),
+            'companies' => $user->companies->map(fn ($c) => [
+                'id' => (int) $c->id,
+                'name' => e($c->name),
+                'tag_color' => $c->tag_color ? e($c->tag_color) : null,
+            ])->values(),
             'created_by' => $user->adminuser ? [
                 'id' => (int) $user->adminuser->id,
                 'name' => e($user->adminuser->present()->fullName),

@@ -16,8 +16,8 @@
                 </div>
 
                 <!-- Setup of default company, taken from asset creator if scoped locations are activated in the settings -->
-				@if (($snipeSettings->scope_locations_fmcs == '1') && ($user->company))
-					<input type="hidden" name="company_id" id='modal-company' value='{{ $user->company->id }}' class="form-control">
+				@if (($snipeSettings->scope_locations_fmcs == '1') && ($user->companies->isNotEmpty()))
+					<input type="hidden" name="company_id" id='modal-company' value='{{ $user->companies->first()->id }}' class="form-control">
 				@endif
 
 				<!-- Select company, only for users with multicompany access - replace default company -->

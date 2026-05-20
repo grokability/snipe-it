@@ -77,4 +77,23 @@ class AssetsForSelectListTest extends TestCase
             ->assertResponseDoesNotContainInResults($assetA)
             ->assertResponseContainsInResults($assetB);
     }
+
+    public function test_assets_are_filtered_by_multiple_comma_separated_company_ids_when_full_company_support_is_enabled()
+    {
+        $this->settings->enableMultipleFullCompanySupport();
+
+        [$companyA, $companyB, $companyC] = Company::factory()->count(3)->create();
+
+        $assetA = Asset::factory()->for($companyA)->create(['asset_tag' => 'A001']);
+        $assetB = Asset::factory()->for($companyB)->create(['asset_tag' => 'B001']);
+        $assetC = Asset::factory()->for($companyC)->create(['asset_tag' => 'C001']);
+
+        $actor = User::factory()->superuser()->create();
+
+        $this->actingAsForApi($actor)
+            ->getJson(route('assets.selectlist', ['companyId' => $companyA->id.','.$companyB->id]))
+            ->assertResponseContainsInResults($assetA)
+            ->assertResponseContainsInResults($assetB)
+            ->assertResponseDoesNotContainInResults($assetC);
+    }
 }

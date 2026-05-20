@@ -69,7 +69,7 @@ class ImportUsersTest extends ImportDataTestCase implements TestsPermissionsRequ
             ]);
 
         $newUser = User::query()
-            ->with(['company', 'location'])
+            ->with(['companies', 'location'])
             ->where('username', $row['username'])
             ->sole();
 
@@ -80,7 +80,7 @@ class ImportUsersTest extends ImportDataTestCase implements TestsPermissionsRequ
         $this->assertEquals($row['lastName'], $newUser->last_name);
         $this->assertEquals($row['displayName'], $newUser->display_name);
         $this->assertEquals($row['employeeNumber'], $newUser->employee_num);
-        $this->assertEquals($row['companyName'], $newUser->company->name);
+        $this->assertEquals($row['companyName'], $newUser->companies->first()->name);
         $this->assertEquals($row['location'], $newUser->location->name);
         $this->assertEquals($row['phoneNumber'], $newUser->phone);
         $this->assertEquals($row['position'], $newUser->jobtitle);
@@ -229,16 +229,14 @@ class ImportUsersTest extends ImportDataTestCase implements TestsPermissionsRequ
         $this->actingAsForApi(User::factory()->superuser()->create());
         $this->importFileResponse(['import' => $import->id, 'import-update' => true])->assertOk();
 
-        $updatedUser = User::query()->with(['company', 'location'])->find($user->id);
+        $updatedUser = User::query()->with(['companies', 'location'])->find($user->id);
         $updatedAttributes = [
             'first_name',
             'display_name',
             'email',
             'last_name',
             'employee_num',
-            'company',
             'location_id',
-            'company_id',
             'updated_at',
             'phone',
             'jobtitle',
@@ -249,7 +247,7 @@ class ImportUsersTest extends ImportDataTestCase implements TestsPermissionsRequ
         $this->assertEquals($row['displayName'], $updatedUser->display_name);
         $this->assertEquals($row['lastName'], $updatedUser->last_name);
         $this->assertEquals($row['employeeNumber'], $updatedUser->employee_num);
-        $this->assertEquals($row['companyName'], $updatedUser->company->name);
+        $this->assertEquals($row['companyName'], $updatedUser->companies->first()->name);
         $this->assertEquals($row['location'], $updatedUser->location->name);
         $this->assertEquals($row['phoneNumber'], $updatedUser->phone);
         $this->assertEquals($row['position'], $updatedUser->jobtitle);
@@ -346,7 +344,7 @@ class ImportUsersTest extends ImportDataTestCase implements TestsPermissionsRequ
             ->json();
 
         $newUser = User::query()
-            ->with(['company', 'location'])
+            ->with(['companies', 'location'])
             ->where('username', $row['companyName'])
             ->sole();
 
@@ -356,7 +354,7 @@ class ImportUsersTest extends ImportDataTestCase implements TestsPermissionsRequ
         $this->assertEquals($row['dumbName'], $newUser->display_name);
         $this->assertEquals($row['email'], $newUser->jobtitle);
         $this->assertEquals($row['phoneNumber'], $newUser->employee_num);
-        $this->assertEquals($row['username'], $newUser->company->name);
+        $this->assertEquals($row['username'], $newUser->companies->first()->name);
         $this->assertEquals($row['firstName'], $newUser->location->name);
         $this->assertEquals($row['employeeNumber'], $newUser->phone);
         $this->assertFalse(Hash::isHashed($newUser->password));

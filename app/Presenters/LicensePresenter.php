@@ -280,13 +280,13 @@ class LicensePresenter extends Presenter
             'formatter' => 'emailFormatter',
         ],
             [
-                'field' => 'assigned_user.company',
+                'field' => 'assigned_user.companies',
                 'searchable' => false,
                 'sortable' => false,
                 'switchable' => true,
-                'title' => trans('general.company'),
+                'title' => trans('general.companies'),
                 'visible' => true,
-                'formatter' => 'companiesLinkObjFormatter',
+                'formatter' => 'companiesArrayLinkFormatter',
             ],
             [
                 'field' => 'assigned_user.department',
