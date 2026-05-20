@@ -3,7 +3,7 @@
     <label for="{{ $fieldname }}" class="col-md-3 control-label">{{ $translated_name }}</label>
 
     <div class="col-md-7">
-        <select class="js-data-ajax" data-endpoint="users" data-placeholder="{{ trans('general.select_user') }}" name="{{ $fieldname }}" style="width: 100%" id="assigned_user_select" aria-label="{{ $fieldname }}"{{  ((isset($required)) && ($required=='true')) ? ' required' : '' }}>
+        <select class="js-data-ajax" data-endpoint="users" data-placeholder="{{ trans('general.select_user') }}" name="{{ $fieldname }}" style="width: 100%" id="assigned_user_select" aria-label="{{ $fieldname }}"{{  ((isset($required)) && ($required=='true')) ? ' required' : '' }}{!! (!empty($company_id)) ? ' data-company-ids="'.e($company_id).'"' : '' !!}>
             @if ($user_id = old($fieldname, (isset($item)) ? $item->{$fieldname} : ''))
                 <option value="{{ $user_id }}" selected="selected" role="option" aria-selected="true"  role="option">
                     {{ (\App\Models\User::find($user_id)) ? \App\Models\User::find($user_id)->present()->fullName : '' }}
