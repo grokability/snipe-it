@@ -353,10 +353,15 @@ class ValidationServiceProvider extends ServiceProvider
         Validator::extend('fmcs_location', function ($attribute, $value, $parameters, $validator) {
             $settings = Setting::getSettings();
             if ($settings->full_multiple_companies_support == '1' && $settings->scope_locations_fmcs == '1') {
-                $company_id = array_get($validator->getData(), 'company_id');
+                $data = $validator->getData();
+                // Support both multi-company (company_ids[]) and single-company (company_id) requests
+                $companyIds = array_filter(array_unique(array_merge(
+                    (array) ($data['company_ids'] ?? []),
+                    [$data['company_id'] ?? null]
+                )));
                 $location = Location::find($value);
 
-                if (($location) && ($company_id != $location->company_id)) {
+                if ($location && ! in_array($location->company_id, $companyIds)) {
                     return false;
                 }
             }
