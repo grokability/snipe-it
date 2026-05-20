@@ -357,7 +357,10 @@
                                           <label class="col-md-3 control-label" for="locale">{{ trans('general.company') }}</label>
                                           <div class="col-md-6">
                                               <p class="form-control-static">
-                                                  {{ $user->companies->pluck('name')->join(', ') }}
+                                                  @foreach ($user->companies as $company)
+                                                      <span class="label label-light">{!! $company->present()->formattedNameLink !!}</span>
+                                                  @endforeach
+
                                               </p>
                                           </div>
                                       </div>
