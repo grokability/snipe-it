@@ -27,7 +27,7 @@ class LicenseSeatsController extends Controller
         if ($license = License::find($licenseId)) {
             $this->authorize('view', $license);
 
-            $seats = LicenseSeat::with('license', 'user', 'asset', 'user.department', 'user.company', 'asset.company')
+            $seats = LicenseSeat::with('license', 'user', 'asset', 'user.department', 'user.companies', 'asset.company')
                 ->where('license_seats.license_id', $licenseId);
 
             if ($request->input('status') == 'available') {
@@ -152,7 +152,7 @@ class LicenseSeatsController extends Controller
                 return response()->json(Helper::formatStandardApiResponse('error', null, 'Target not found'));
             }
 
-            if ((Setting::getSettings()->full_multiple_companies_support == '1') && ($license->company_id !== $targetUser->company_id)) {
+            if ((Setting::getSettings()->full_multiple_companies_support == '1') && (! $targetUser->companies()->where('companies.id', $license->company_id)->exists())) {
                 return response()->json(Helper::formatStandardApiResponse('error', null, trans('general.error_user_company')));
             }
         }

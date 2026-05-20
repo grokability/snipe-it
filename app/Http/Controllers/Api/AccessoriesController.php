@@ -234,6 +234,10 @@ class AccessoriesController extends Controller
         $total = $accessory_checkouts->count();
         $accessory_checkouts = $accessory_checkouts->skip($offset)->take($limit)->get();
 
+        $accessory_checkouts->loadMorph('assignedTo', [
+            User::class => ['companies'],
+        ]);
+
         return (new AccessoriesTransformer)->transformCheckedoutAccessory($accessory_checkouts, $total);
     }
 
@@ -303,7 +307,7 @@ class AccessoriesController extends Controller
         $this->authorize('checkout', $accessory);
         $target = $this->determineCheckoutTarget();
 
-        if ((Setting::getSettings()->full_multiple_companies_support == '1') && ($accessory->company_id !== $target->company_id)) {
+        if ((Setting::getSettings()->full_multiple_companies_support == '1') && (! $target->companies()->where('companies.id', $accessory->company_id)->exists())) {
             return response()->json(Helper::formatStandardApiResponse('error', null, trans('general.error_user_company')));
         }
 

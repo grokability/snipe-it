@@ -603,8 +603,11 @@ class AssetsController extends Controller
         ])->with('model', 'status', 'assignedTo')
             ->NotArchived();
 
-        if ((Setting::getSettings()->full_multiple_companies_support == '1') && ($request->filled('companyId'))) {
-            $assets->where('assets.company_id', $request->input('companyId'));
+        if ((Setting::getSettings()->full_multiple_companies_support == '1') && $request->filled('companyId')) {
+            $companyIds = array_values(array_filter(array_map('intval', explode(',', $request->input('companyId')))));
+            if (! empty($companyIds)) {
+                $assets->whereIn('assets.company_id', $companyIds);
+            }
         }
 
         if ($request->filled('statusType') && $request->input('statusType') === 'RTD') {
