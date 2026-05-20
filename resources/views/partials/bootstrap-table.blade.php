@@ -2178,6 +2178,14 @@
         }
     }
 
+    function companiesLinkObjFormatter(value, row) {
+        if (!value) {
+            return '';
+        }
+        var icon = (value.tag_color) ? '<i class="fa-solid fa-square" style="color: ' + value.tag_color + ';" aria-hidden="true"></i> ' : '';
+        return '<a href="{{ config('app.url') }}/companies/' + value.id + '" class="label label-light">' + icon + value.name + '</a>';
+    }
+
     function companiesArrayLinkFormatter(value, row) {
         if (!value || !value.length) {
             return '';
