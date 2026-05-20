@@ -588,6 +588,9 @@
             font-size: 12px !important;
             font-weight: normal !important;
             line-height: 25px;
+            margin-left: 0px;
+            padding-left: 3px;
+
         }
 
         a.label-light,
