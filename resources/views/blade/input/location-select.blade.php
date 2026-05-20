@@ -9,6 +9,7 @@
     'multiple' => false,
     'helpText' => null,
     'hideNewButton' => false,
+    'companyId' => null,
 ])
 
 @php
@@ -40,6 +41,9 @@
             @required($required)
             @if ($multiple)
                 multiple
+            @endif
+            @if ($companyId)
+                data-company-id="{{ $companyId }}"
             @endif
         >
             <option value=""></option>

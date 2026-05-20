@@ -67,7 +67,7 @@
                         @endif
 
                         <!-- Locations -->
-                    @include ('partials.forms.edit.location-select', ['translated_name' => trans('general.location'), 'fieldname' => 'location_id'])
+                    @include ('partials.forms.edit.location-select', ['translated_name' => trans('general.location'), 'fieldname' => 'location_id', 'company_id' => $asset->company_id])
 
                     <!-- Update location -->
                         <div class="form-group">

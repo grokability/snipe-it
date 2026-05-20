@@ -427,6 +427,10 @@ class LocationsController extends Controller
             $locations = Company::scopeCompanyables($locations);
         }
 
+        if ((Setting::getSettings()->full_multiple_companies_support == '1') && $request->filled('companyId')) {
+            $locations->where('locations.company_id', $request->input('companyId'));
+        }
+
         $page = 1;
         if ($request->filled('page')) {
             $page = $request->input('page');
