@@ -588,28 +588,12 @@
             font-size: 12px !important;
             font-weight: normal !important;
             line-height: 25px;
-            border: var(--default-label-link-border);
-
         }
 
-        a.label-light {
-            background-color: var(--default-label-link-bg) !important;
-            color: var(--link-color) !important;
-            font-size: 12px !important;
-            font-weight: normal !important;
-            line-height: 25px;
-            border: var(--default-label-link-border);
-        }
-
+        a.label-light,
         a.label-light:hover {
-            background-color: var(--default-label-link-bg) !important;
-            color: var(--link-hover) !important;
-            font-size: 12px !important;
-            font-weight: normal !important;
-            line-height: 25px;
-            border: var(--default-label-link-border);
+            color: var(--link-color) !important;
         }
-
 
         .dropdown-menu > li > a,
         .dropdown-menu > li > a:link,
