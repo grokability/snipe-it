@@ -88,7 +88,6 @@ class CancelRequestTest extends TestCase
         );
     }
 
-<<<<<<< HEAD
     public function test_superuser_can_cancel_another_users_request_via_cancel_by_admin(): void
     {
         $asset = Asset::factory()->create();
@@ -171,19 +170,13 @@ class CancelRequestTest extends TestCase
         Log::shouldHaveReceived('warning')->once();
     }
 
-=======
->>>>>>> 6f25f80260 (Added test)
     public function test_admin_can_cancel_another_users_request_via_cancel_by_admin(): void
     {
         $asset = Asset::factory()->create();
         $victim = User::factory()->create();
         CheckoutRequest::factory()->create(['requestable_id' => $asset->id, 'requestable_type' => Asset::class, 'user_id' => $victim->id]);
 
-<<<<<<< HEAD
         $this->actingAs(User::factory()->admin()->create())
-=======
-        $this->actingAs(User::factory()->viewAssets()->create())
->>>>>>> 6f25f80260 (Added test)
             ->post(route('account/request-item', [
                 'itemType' => 'asset',
                 'itemId' => $asset->id,
