@@ -2,11 +2,8 @@
 
 namespace Tests\Feature\Users\Ui\BulkActions;
 
-<<<<<<< HEAD
 use App\Models\Group;
-=======
 use App\Models\Asset;
->>>>>>> 28b3e34a84 (Disallow ldap_import and activated in bulk editing users if user doesn’t have permission)
 use App\Models\User;
 use Tests\TestCase;
 
