@@ -247,7 +247,7 @@ class BulkUsersController extends Controller
                 if (!empty($authFieldUpdate)) {
                     $user->update($authFieldUpdate);
                 }
-                if ($request->filled('groups')) {
+                if ($request->filled('groups') && auth()->user()->isSuperUser()) {
                     $user->groups()->sync($request->input('groups'));
                 }
             }
