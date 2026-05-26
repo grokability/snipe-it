@@ -129,11 +129,11 @@ class BulkEditUsersTest extends TestCase
         $target = User::factory()->create();
 
         $this->actingAs(User::factory()->superuser()->create())
-            ->post(route('users/bulkeditsave'), [
-                'ids' => [$target->id],
-                'groups' => [$group->id],
+            ->post(route(‘users / bulkeditsave’), [
+                ‘ids’ => [$target->id],
+                ‘groups’ => [$group->id],
             ])
-            ->assertRedirect(route('users.index'));
+            ->assertRedirect(route(‘users . index’));
 
         $this->assertTrue($target->fresh()->groups->contains($group));
     }
@@ -144,11 +144,11 @@ class BulkEditUsersTest extends TestCase
         $target = User::factory()->create();
 
         $this->actingAs(User::factory()->editUsers()->create())
-            ->post(route('users/bulkeditsave'), [
-                'ids' => [$target->id],
-                'groups' => [$group->id],
+            ->post(route(‘users / bulkeditsave’), [
+                ‘ids’ => [$target->id],
+                ‘groups’ => [$group->id],
             ])
-            ->assertRedirect(route('users.index'));
+            ->assertRedirect(route(‘users . index’));
 
         $this->assertFalse($target->fresh()->groups->contains($group));
     }
