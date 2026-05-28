@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snipe-IT - Pruebas de Software (Hito 1)</title>
+    <meta name="description" content="Landing page académica para el Hito 1 del curso Pruebas de Software, enfocado en el análisis de arquitectura y calidad de Snipe-IT.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+
+    <!-- Header / Navbar -->
+    <header class="main-header">
+        <div class="header-container">
+            <a href="#home" class="logo">
+                <span class="logo-icon">📊</span>
+                <span class="logo-text">Snipe-IT <span class="logo-sub">QA</span></span>
+            </a>
+            
+            <button class="nav-toggle" id="nav-toggle" aria-label="Abrir menú de navegación">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+
+            <nav class="nav-menu" id="nav-menu">
+                <ul>
+                    <li><a href="#resumen">Resumen</a></li>
+                    <li><a href="#informacion">General</a></li>
+                    <li><a href="#stack">Stack</a></li>
+                    <li><a href="#arquitectura">Arquitectura</a></li>
+                    <li><a href="#repositorio">Estructura</a></li>
+                    <li><a href="#modulos">Módulos</a></li>
+                    <li><a href="#devops">DevOps</a></li>
+                    <li><a href="#criticos">Riesgos</a></li>
+                    <li><a href="#timeline">Hitos</a></li>
+                    <li><a href="#enlaces" class="nav-cta">Enlaces</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        
+        <!-- Hero Section -->
+        <section id="home" class="hero-section">
+            <div class="hero-bg-glow"></div>
+            <div class="container hero-container">
+                <div class="hero-content">
+                    <span class="hero-badge">🎓 Hito 1 — Pruebas de Software</span>
+                    <h1 class="hero-title">Análisis de Arquitectura & Calidad en <span class="text-gradient">Snipe-IT</span></h1>
+                    <p class="hero-subtitle">Proyecto Académico: Proceso de Pruebas de Software aplicado a un Producto Open Source de clase mundial.</p>
+                    
+                    <div class="hero-meta">
+                        <div class="meta-item">
+                            <span class="meta-icon">👤</span>
+                            <div class="meta-text">
+                                <span class="meta-label">Rol del Estudiante</span>
+                                <span class="meta-value">Integrante 2 — Analista de Producto / Arquitectura</span>
+                            </div>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-icon">🏷️</span>
+                            <div class="meta-text">
+                                <span class="meta-label">Versión Analizada</span>
+                                <span class="meta-value">v8.5.1-pre (build 22844, master)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="hero-actions">
+                        <a href="#resumen" class="btn btn-primary">Explorar Análisis</a>
+                        <a href="https://github.com/grokability/snipe-it" target="_blank" rel="noopener" class="btn btn-secondary">
+                            <svg class="btn-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                            </svg>
+                            Repo Original
+                        </a>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <!-- Elegant CSS dynamic dashboard mockup -->
+                    <div class="dashboard-mockup">
+                        <div class="mockup-header">
+                            <span class="dot red"></span>
+                            <span class="dot yellow"></span>
+                            <span class="dot green"></span>
+                            <span class="mockup-title">snipe-it-fork / qa-dashboard</span>
+                        </div>
+                        <div class="mockup-body">
+                            <div class="mockup-sidebar">
+                                <div class="side-item active"></div>
+                                <div class="side-item"></div>
+                                <div class="side-item"></div>
+                                <div class="side-item"></div>
+                            </div>
+                            <div class="mockup-content">
+                                <div class="mockup-grid">
+                                    <div class="mockup-card">
+                                        <div class="card-bar primary"></div>
+                                        <span class="mockup-card-title">Assets</span>
+                                        <span class="mockup-card-val">12,480</span>
+                                    </div>
+                                    <div class="mockup-card">
+                                        <div class="card-bar warning"></div>
+                                        <span class="mockup-card-title">Licenses</span>
+                                        <span class="mockup-card-val">452</span>
+                                    </div>
+                                </div>
+                                <div class="mockup-chart">
+                                    <div class="chart-line"></div>
+                                    <div class="chart-dots">
+                                        <span class="dot-p dot-1"></span>
+                                        <span class="dot-p dot-2"></span>
+                                        <span class="dot-p dot-3"></span>
+                                    </div>
+                                </div>
+                                <div class="mockup-status">
+                                    <span class="status-badge success">● DevOps CI/CD: Passed</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Resumen del Proyecto -->
+        <section id="resumen" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">Introducción</span>
+                    <h2>Resumen del Proyecto</h2>
+                    <div class="accent-line"></div>
+                </div>
+                
+                <div class="grid grid-3">
+                    <div class="card card-hover">
+                        <div class="card-icon-wrapper">
+                            <span class="card-icon">🚀</span>
+                        </div>
+                        <h3>¿Qué es Snipe-IT?</h3>
+                        <p>Es una aplicación web de código abierto líder en la industria, diseñada específicamente para la **Gestión de Activos de TI** (IT Asset Management - ITAM). Desarrollada por Grokability, Inc., simplifica el seguimiento integral del hardware, licencias y periféricos en una organización.</p>
+                    </div>
+
+                    <div class="card card-hover">
+                        <div class="card-icon-wrapper">
+                            <span class="card-icon">🎯</span>
+                        </div>
+                        <h3>Problema que Resuelve</h3>
+                        <p>Reemplaza los obsoletos y propensos a errores registros manuales (hojas de cálculo de Excel) por una solución autoalojable centralizada. Permite auditar y controlar quién posee cada laptop, cuándo expira una licencia de software y optimizar la depreciación financiera.</p>
+                    </div>
+
+                    <div class="card card-hover">
+                        <div class="card-icon-wrapper">
+                            <span class="card-icon">🔍</span>
+                        </div>
+                        <h3>¿Por qué se seleccionó para Pruebas?</h3>
+                        <p>Posee una arquitectura empresarial real con alta complejidad: autenticación avanzada (2FA, SAML, LDAP), base de datos con más de 400 migraciones, y un sistema rígido de permisos y checkins. Su análisis representa un desafío académico idóneo para el testing automatizado.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Información General -->
+        <section id="informacion" class="section bg-light">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">Especificaciones</span>
+                    <h2>Información General del Producto</h2>
+                    <div class="accent-line"></div>
+                </div>
+
+                <div class="info-layout">
+                    <div class="info-details">
+                        <div class="info-card">
+                            <div class="info-row">
+                                <div class="info-label-group">
+                                    <span class="info-icon">📦</span>
+                                    <div>
+                                        <span class="info-title">Versión Analizada</span>
+                                        <span class="info-desc">v8.5.1-pre (build 22844, rama master)</span>
+                                    </div>
+                                </div>
+                                <span class="badge badge-primary">Latest Study</span>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label-group">
+                                    <span class="info-icon">⚡</span>
+                                    <div>
+                                        <span class="info-title">Framework Core</span>
+                                        <span class="info-desc">Laravel 12 (PHP 8.2+)</span>
+                                    </div>
+                                </div>
+                                <span class="badge badge-success">Modern PHP</span>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label-group">
+                                    <span class="info-icon">📜</span>
+                                    <div>
+                                        <span class="info-title">Licencia de Uso</span>
+                                        <span class="info-desc">GNU Affero General Public License v3.0 (AGPL-3.0-or-later)</span>
+                                    </div>
+                                </div>
+                                <span class="badge badge-warning">Copyleft Fuerte</span>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label-group">
+                                    <span class="info-icon">🏢</span>
+                                    <div>
+                                        <span class="info-title">Tipo de Sistema</span>
+                                        <span class="info-desc">Web Cliente-Servidor / Multiusuario / Multiempresa (ITAM)</span>
+                                    </div>
+                                </div>
+                                <span class="badge badge-info">Enterprise</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-community card">
+                        <h3>Comunidad Open Source</h3>
+                        <p>Snipe-IT cuenta con un ecosistema maduro y activo de colaboración global:</p>
+                        <ul class="community-list">
+                            <li><span class="list-bullet">✓</span> <strong>+331 Contribuidores</strong> activos en el núcleo del sistema.</li>
+                            <li><span class="list-bullet">✓</span> <strong>Releases frecuentes</strong> que aseguran parches de seguridad y estabilidad.</li>
+                            <li><span class="list-bullet">✓</span> <strong>Comunidad activa</strong> en Discord, foros y repositorios.</li>
+                            <li><span class="list-bullet">✓</span> <strong>Internacionalización</strong> robusta integrada con la plataforma Crowdin.</li>
+                            <li><span class="list-bullet">✓</span> <strong>Imágenes Docker oficiales</strong> para despliegues estandarizados.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stack Tecnológico -->
+        <section id="stack" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">Tecnologías</span>
+                    <h2>Stack Tecnológico Completo</h2>
+                    <div class="accent-line"></div>
+                </div>
+
+                <div class="tech-grid">
+                    <div class="tech-category">
+                        <h3 class="category-title">Backend & Core</h3>
+                        <div class="tech-items">
+                            <div class="tech-item"><span class="tech-badge-dot php"></span> PHP 8.2+</div>
+                            <div class="tech-item"><span class="tech-badge-dot laravel"></span> Laravel 12 Framework</div>
+                            <div class="tech-item"><span class="tech-badge-dot orm"></span> Eloquent ORM</div>
+                            <div class="tech-item"><span class="tech-badge-dot api"></span> API REST JSON & OAuth2</div>
+                        </div>
+                    </div>
+
+                    <div class="tech-category">
+                        <h3 class="category-title">Frontend & UI</h3>
+                        <div class="tech-items">
+                            <div class="tech-item"><span class="tech-badge-dot blade"></span> Blade Templates</div>
+                            <div class="tech-item"><span class="tech-badge-dot adminlte"></span> AdminLTE Theme</div>
+                            <div class="tech-item"><span class="tech-badge-dot bootstrap"></span> Bootstrap 3</div>
+                            <div class="tech-item"><span class="tech-badge-dot jquery"></span> jQuery & plugins</div>
+                            <div class="tech-item"><span class="tech-badge-dot mix"></span> Laravel Mix (Webpack)</div>
+                        </div>
+                    </div>
+
+                    <div class="tech-category">
+                        <h3 class="category-title">Base de Datos</h3>
+                        <div class="tech-items">
+                            <div class="tech-item"><span class="tech-badge-dot db"></span> MySQL / MariaDB</div>
+                            <div class="tech-item"><span class="tech-badge-dot db"></span> PostgreSQL</div>
+                            <div class="tech-item"><span class="tech-badge-dot db"></span> SQLite</div>
+                            <div class="tech-item flex-between"><span>Total Migraciones:</span> <strong class="text-primary">444</strong></div>
+                        </div>
+                    </div>
+
+                    <div class="tech-category">
+                        <h3 class="category-title">DevOps & Testing</h3>
+                        <div class="tech-items">
+                            <div class="tech-item"><span class="tech-badge-dot phpunit"></span> PHPUnit Suite</div>
+                            <div class="tech-item"><span class="tech-badge-dot docker"></span> Docker & Docker Compose</div>
+                            <div class="tech-item"><span class="tech-badge-dot actions"></span> GitHub Actions (CI/CD)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dependencias Clave -->
+                <div class="dependencies-section card">
+                    <h3>Dependencias Críticas del Sistema</h3>
+                    <div class="grid grid-2">
+                        <div>
+                            <h4 class="sub-title">Dependencias Backend (Composer)</h4>
+                            <div class="dep-list">
+                                <span class="dep-tag">laravel/framework</span>
+                                <span class="dep-tag">laravel/passport</span>
+                                <span class="dep-tag">livewire/livewire</span>
+                                <span class="dep-tag">doctrine/dbal</span>
+                                <span class="dep-tag">intervention/image</span>
+                                <span class="dep-tag">pragmarx/google2fa-laravel</span>
+                                <span class="dep-tag">onelogin/php-saml</span>
+                                <span class="dep-tag">spatie/laravel-backup</span>
+                                <span class="dep-tag">tcpdf</span>
+                                <span class="dep-tag">bacon-qr-code</span>
+                                <span class="dep-tag">guzzlehttp/guzzle</span>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="sub-title">Dependencias Frontend (NPM)</h4>
+                            <div class="dep-list">
+                                <span class="dep-tag tag-front">bootstrap</span>
+                                <span class="dep-tag tag-front">jquery</span>
+                                <span class="dep-tag tag-front">select2</span>
+                                <span class="dep-tag tag-front">chart.js</span>
+                                <span class="dep-tag tag-front">bootstrap-table</span>
+                                <span class="dep-tag tag-front">fontawesome</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Arquitectura del Sistema -->
+        <section id="arquitectura" class="section bg-light">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">Diseño Técnico</span>
+                    <h2>Arquitectura del Sistema</h2>
+                    <div class="accent-line"></div>
+                </div>
+
+                <div class="arch-content">
+                    <div class="card card-full">
+                        <h3>Flujo de Control MVC</h3>
+                        <p class="arch-intro">Snipe-IT se fundamenta en una arquitectura MVC desacoplada, donde el flujo de las peticiones sigue un camino estructurado de seguridad y procesamiento:</p>
+                        
+                        <!-- Visual representation of the Flow -->
+                        <div class="flow-diagram">
+                            <div class="flow-step">
+                                <div class="flow-box accent">Cliente Web/API</div>
+                            </div>
+                            <div class="flow-arrow">➔</div>
+                            <div class="flow-step">
+                                <div class="flow-box">Middleware <span class="small-text">(Filtros/2FA/SAML)</span></div>
+                            </div>
+                            <div class="flow-arrow">➔</div>
+                            <div class="flow-step">
+                                <div class="flow-box">Routes <span class="small-text">(Web & API)</span></div>
+                            </div>
+                            <div class="flow-arrow">➔</div>
+                            <div class="flow-step">
+                                <div class="flow-box">Controllers <span class="small-text">(Web & API)</span></div>
+                            </div>
+                            <div class="flow-arrow">➔</div>
+                            <div class="flow-step">
+                                <div class="flow-box">Models & Policies <span class="small-text">(Eloquent/Rules)</span></div>
+                            </div>
+                            <div class="flow-arrow">➔</div>
+                            <div class="flow-step">
+                                <div class="flow-box database">Database <span class="small-text">(MySQL/PG)</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-2 mt-4">
+                        <div class="card">
+                            <h3>Componentes del Código</h3>
+                            <ul class="arch-list">
+                                <li>
+                                    <strong>Modelos (<code>app/Models/</code>):</strong>
+                                    Representan las entidades lógicas como <code>Asset</code>, <code>User</code>, <code>License</code>, <code>Accessory</code>, <code>Consumable</code>, y <code>Component</code>. Contienen las relaciones Eloquent y las reglas de negocio base.
+                                </li>
+                                <li>
+                                    <strong>Controladores (<code>app/Http/Controllers/</code>):</strong>
+                                    Divididos en controladores Web (para renderizado de plantillas Blade) y controladores API (ubicados en el namespace de la API para devolver respuestas JSON estructuradas).
+                                </li>
+                                <li>
+                                    <strong>Vistas (<code>resources/views/</code>):</strong>
+                                    Construidas sobre Blade y extendidas con el layout AdminLTE y estilos responsivos basados en Bootstrap 3.
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card">
+                            <h3>Filtros de Seguridad & API</h3>
+                            <ul class="arch-list">
+                                <li>
+                                    <strong>Middleware:</strong>
+                                    Encargado de la seguridad perimetral del sistema. Controla la autenticación de sesión, protección CSRF, localización de lenguaje dinámica, políticas de autenticación en dos factores (2FA), y herencia de permisos.
+                                </li>
+                                <li>
+                                    <strong>API REST v1 (<code>/api/v1/</code>):</strong>
+                                    Expone endpoints seguros para interactuar programáticamente con los recursos de hardware, usuarios, licencias, accesorios, consumibles, y reportes.
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Estructura del Repositorio -->
+        <section id="repositorio" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">Código Fuente</span>
+                    <h2>Estructura del Repositorio</h2>
+                    <div class="accent-line"></div>
+                </div>
+
+                <div class="repo-layout">
+                    <div class="repo-tree-card">
+                        <h3>Árbol de Directorios Simplificado</h3>
+                        <div class="code-block">
+<pre>
+snipe-it/
+├── 📁 app/                    <span class="code-comment"># Lógica de negocio (Models, Controllers, Providers)</span>
+├── 📁 routes/                 <span class="code-comment"># Definición de endpoints Web y API (/api/v1)</span>
+├── 📁 resources/              <span class="code-comment"># Frontend (Vistas Blade, Assets CSS/JS sin compilar)</span>
+├── 📁 database/               <span class="code-comment"># Estructura (444 Migraciones, Seeders, Factories)</span>
+├── 📁 tests/                  <span class="code-comment"># Pruebas automatizadas (Unitarias y de Integración)</span>
+├── 📁 config/                 <span class="code-comment"># Archivos de configuración del framework</span>
+├── 📁 public/                 <span class="code-comment"># Directorio raíz del servidor web (index.php)</span>
+├── 📁 storage/                <span class="code-comment"># Archivos generados, logs de ejecución y uploads</span>
+├── 📁 docker/                 <span class="code-comment"># Archivos de configuración de contenedores</span>
+├── 📁 .github/workflows/      <span class="code-comment"># Pipelines de Integración Continua (GitHub Actions)</span>
+├── 📄 composer.json           <span class="code-comment"># Gestión de dependencias PHP (Backend)</span>
+├── 📄 package.json            <span class="code-comment"># Gestión de dependencias JS (Frontend)</span>
+├── 📄 docker-compose.yml      <span class="code-comment"># Orquestación de contenedores local</span>
+└── 📄 phpunit.xml             <span class="code-comment"># Configuración del motor de pruebas PHPUnit</span>
+</pre>
+                        </div>
+                    </div>
+
+                    <div class="repo-details">
+                        <div class="card full-height">
+                            <h3>Carpetas Clave para Control de Calidad</h3>
+                            <div class="key-folder">
+                                <span class="folder-icon">📂 app/</span>
+                                <p>Contiene toda la lógica que será sujeta a pruebas de backend. Es el núcleo analizado en búsqueda de vulnerabilidades y defectos lógicos.</p>
+                            </div>
+                            <div class="key-folder">
+                                <span class="folder-icon">📂 database/</span>
+                                <p>Vital para las pruebas unitarias y de integración. Contiene las fábricas de datos (Factories) y semillas (Seeders) que inicializan la DB en entornos limpios.</p>
+                            </div>
+                            <div class="key-folder">
+                                <span class="folder-icon">📂 tests/</span>
+                                <p>Directorio clave para la ejecución del plan de pruebas. Alberga los test suites unitarios e integrales ejecutables con PHPUnit.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Módulos Principales -->
+        <section id="modulos" class="section bg-light">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">Funcionalidades</span>
+                    <h2>Módulos del Sistema & Riesgo Asociado</h2>
+                    <div class="accent-line"></div>
+                </div>
+
+                <div class="grid grid-3">
+                    <!-- Assets -->
+                    <div class="card module-card card-hover border-red">
+                        <div class="card-header-flex">
+                            <span class="module-icon">💻</span>
+                            <span class="risk-badge risk-critical">Muy Alto</span>
+                        </div>
+                        <h3>Assets (Activos)</h3>
+                        <p class="module-desc">Gestión integral de hardware. Permite el CRUD, auditoría de campo, depreciación financiera, check-in/check-out y asignación de historial.</p>
+                    </div>
+
+                    <!-- Users -->
+                    <div class="card module-card card-hover border-red">
+                        <div class="card-header-flex">
+                            <span class="module-icon">👥</span>
+                            <span class="risk-badge risk-critical">Muy Alto</span>
+                        </div>
+                        <h3>Users (Usuarios)</h3>
+                        <p class="module-desc">Gestión de identidades y accesos. Controla los roles, permisos granulares, sincronización LDAP, OAuth2, SAML y 2FA.</p>
+                    </div>
+
+                    <!-- Licenses -->
+                    <div class="card module-card card-hover border-orange">
+                        <div class="card-header-flex">
+                            <span class="module-icon">🔑</span>
+                            <span class="risk-badge risk-high">Alto</span>
+                        </div>
+                        <h3>Licenses (Licencias)</h3>
+                        <p class="module-desc">Control de licencias de software, administración de asientos (seats), monitoreo de cumplimiento legal y alertas de expiración.</p>
+                    </div>
+
+                    <!-- Accessories -->
+                    <div class="card module-card card-hover border-yellow">
+                        <div class="card-header-flex">
+                            <span class="module-icon">🖱️</span>
+                            <span class="risk-badge risk-medium">Medio</span>
+                        </div>
+                        <h3>Accessories (Accesorios)</h3>
+                        <p class="module-desc">Gestión de periféricos (teclados, mouse, cables). Rastreable en volumen, sin necesidad de números de serie únicos.</p>
+                    </div>
+
+                    <!-- Consumables -->
+                    <div class="card module-card card-hover border-yellow">
+                        <div class="card-header-flex">
+                            <span class="module-icon">🖨️</span>
+                            <span class="risk-badge risk-medium">Medio</span>
+                        </div>
+                        <h3>Consumables (Consumibles)</h3>
+                        <p class="module-desc">Administración de materiales consumibles (tóner, hojas). Flujo de control simple para stock mínimo y reabastecimiento.</p>
+                    </div>
+
+                    <!-- Components -->
+                    <div class="card module-card card-hover border-yellow">
+                        <div class="card-header-flex">
+                            <span class="module-icon">💾</span>
+                            <span class="risk-badge risk-medium">Medio</span>
+                        </div>
+                        <h3>Components (Componentes)</h3>
+                        <p class="module-desc">Gestión de hardware interno (memorias RAM, discos SSD) que se instalan y asocian directamente a un Activo principal.</p>
+                    </div>
+
+                    <!-- Reports -->
+                    <div class="card module-card card-hover border-orange card-span-3">
+                        <div class="card-header-flex">
+                            <span class="module-icon">📈</span>
+                            <span class="risk-badge risk-high">Alto</span>
+                        </div>
+                        <h3>Reports (Reportes)</h3>
+                        <p class="module-desc">Generación de informes operativos, contables y de auditoría. Soporta exportaciones en formato PDF y hojas de cálculo (CSV/Excel) con cálculos de depreciación dinámicos.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Arquitectura DevOps -->
+        <section id="devops" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">Despliegue e Integración</span>
+                    <h2>Arquitectura DevOps</h2>
+                    <div class="accent-line"></div>
+                </div>
+
+                <div class="devops-layout">
+                    <div class="devops-info">
+                        <div class="card">
+                            <h3>Contenedores & Ambientes</h3>
+                            <ul class="devops-list">
+                                <li>
+                                    <strong>Configuración Docker:</strong>
+                                    El proyecto provee un <code>Dockerfile</code> y archivos de orquestación <code>docker-compose.yml</code> multiplataforma que levantan el entorno completo en segundos.
+                                </li>
+                                <li>
+                                    <strong>Imágenes Soportadas:</strong>
+                                    Uso de distribuciones basadas en Ubuntu y Alpine optimizadas para PHP, asegurando consistencia de ambientes.
+                                </li>
+                                <li>
+                                    <strong>Variables de Entorno Clave (.env):</strong>
+                                    Controla aspectos críticos como <code>APP_ENV</code>, la conexión de DB (<code>DB_CONNECTION</code>), pasarelas de correo (<code>MAIL_HOST</code>), motores de caché, límites de API (<code>API_THROTTLE</code>), y adaptadores de SAML/LDAP.
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="card mt-4">
+                            <h3>Pruebas y Automatización</h3>
+                            <ul class="devops-list">
+                                <li>
+                                    <strong>PHPUnit Suite:</strong>
+                                    Configurado para orquestar pruebas bajo dos suites principales: <code>Unit</code> (pruebas lógicas aisladas) y <code>Feature</code> (pruebas de integración de punta a punta en base de datos in-memory SQLite).
+                                </li>
+                                <li>
+                                    <strong>GitHub Actions Pipelines:</strong>
+                                    Pipelines robustos que ejecutan pruebas paralelas en diferentes motores de base de datos y validan vulnerabilidades.
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="devops-pipeline card">
+                        <h3>Visualización de Pipelines (CI/CD)</h3>
+                        <p class="pipeline-desc">Proceso automatizado disparado ante cada Commit o Pull Request en el repositorio fork:</p>
+                        
+                        <div class="pipeline-flow">
+                            <div class="pipeline-node node-success">
+                                <div class="node-icon">✓</div>
+                                <div class="node-title">Checkout Code</div>
+                                <div class="node-meta">GitHub Runner</div>
+                            </div>
+                            <div class="pipeline-connector active"></div>
+                            
+                            <div class="pipeline-node node-success">
+                                <div class="node-icon">✓</div>
+                                <div class="node-title">CodeQL Security</div>
+                                <div class="node-meta">Análisis de Código</div>
+                            </div>
+                            <div class="pipeline-connector active"></div>
+
+                            <div class="pipeline-node node-success">
+                                <div class="node-icon">⚙</div>
+                                <div class="node-title">Build Test Matrix</div>
+                                <div class="node-meta">PHP 8.2+ Setup</div>
+                            </div>
+                            <div class="pipeline-connector active"></div>
+
+                            <div class="pipeline-node node-running">
+                                <div class="node-icon-running">↻</div>
+                                <div class="node-title">DB Matrix Tests</div>
+                                <div class="node-meta">MySQL / Postgres / SQLite</div>
+                            </div>
+                            <div class="pipeline-connector"></div>
+
+                            <div class="pipeline-node">
+                                <div class="node-icon">🔒</div>
+                                <div class="node-title">Docker Build</div>
+                                <div class="node-meta">Ubuntu & Alpine</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Componentes Críticos y Riesgos -->
+        <section id="criticos" class="section bg-light">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">Análisis de Riesgos</span>
+                    <h2>Componentes Críticos para Pruebas</h2>
+                    <div class="accent-line"></div>
+                </div>
+
+                <div class="grid grid-2">
+                    <div class="card card-dark">
+                        <h3>Componentes con Mayor Nivel de Crítica</h3>
+                        <p>Hemos priorizado el esfuerzo de diseño de casos de prueba sobre los componentes cuya falla afectaría críticamente la integridad o confidencialidad de la aplicación:</p>
+                        
+                        <div class="critical-item">
+                            <span class="crit-num">1</span>
+                            <div>
+                                <h4>Autenticación & 2FA</h4>
+                                <p>Riesgo de escalamiento de privilegios, bypass de doble factor y fallos de comunicación en los proveedores LDAP/SAML.</p>
+                            </div>
+                        </div>
+                        <div class="critical-item">
+                            <span class="crit-num">2</span>
+                            <div>
+                                <h4>Proceso Checkout / Checkin</h4>
+                                <p>Integridad lógica de la base de datos: validación de asignaciones duplicadas de hardware, y registro inquebrantable de historial de transacciones.</p>
+                            </div>
+                        </div>
+                        <div class="critical-item">
+                            <span class="crit-num">3</span>
+                            <div>
+                                <h4>Permisos del Sistema</h4>
+                                <p>Fugas de acceso a datos multi-company (multi-tenant lógico) y asimilación de herencias de roles administrativos.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>Tabla Resumen de Riesgos Académicos</h3>
+                        <div class="table-responsive">
+                            <table class="table-qa">
+                                <thead>
+                                    <tr>
+                                        <th>Componente Crítico</th>
+                                        <th>Nivel de Riesgo</th>
+                                        <th>Prioridad de Pruebas</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Autenticación</strong></td>
+                                        <td><span class="table-badge badge-red">🔴 Alto</span></td>
+                                        <td><strong>P1 (Crítica)</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Checkout / Checkin</strong></td>
+                                        <td><span class="table-badge badge-red">🔴 Alto</span></td>
+                                        <td><strong>P1 (Crítica)</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Permisos & Roles</strong></td>
+                                        <td><span class="table-badge badge-red">🔴 Alto</span></td>
+                                        <td><strong>P1 (Crítica)</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>API REST v1</strong></td>
+                                        <td><span class="table-badge badge-orange">🟠 Medio-Alto</span></td>
+                                        <td><strong>P2 (Media)</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Inventariado Base</strong></td>
+                                        <td><span class="table-badge badge-orange">🟠 Medio-Alto</span></td>
+                                        <td><strong>P2 (Media)</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Generación de Reportes</strong></td>
+                                        <td><span class="table-badge badge-yellow">🟡 Medio</span></td>
+                                        <td><strong>P3 (Baja)</strong></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Línea de Tiempo e Hitos -->
+        <section id="timeline" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">Cronograma</span>
+                    <h2>Plan de Trabajo del Semestre</h2>
+                    <div class="accent-line"></div>
+                </div>
+
+                <div class="timeline-container">
+                    <!-- Hito 1 -->
+                    <div class="timeline-card active">
+                        <div class="timeline-indicator">1</div>
+                        <div class="timeline-content">
+                            <span class="timeline-date">28 / 29 de Mayo, 2026</span>
+                            <h3>Hito 1: Planificación y Análisis</h3>
+                            <p>Establecimiento de tableros Kanban/Scrum, presentación de la arquitectura del producto seleccionado (Snipe-IT), plan inicial de pruebas unitarias, preparación de repositorio de trabajo y documentación.</p>
+                            <span class="timeline-status in-progress">En Progreso / Completado</span>
+                        </div>
+                    </div>
+
+                    <!-- Hito 2 -->
+                    <div class="timeline-card">
+                        <div class="timeline-indicator">2</div>
+                        <div class="timeline-content">
+                            <span class="timeline-date">10 de Junio, 2026</span>
+                            <h3>Hito 2: Pruebas Unitarias e Integración</h3>
+                            <p>Desarrollo y ejecución sistemática del conjunto de pruebas unitarias y de integración sobre los módulos priorizados. Montaje de tuberías (Pipelines) de CI/CD para automatizar las pruebas unitarias.</p>
+                            <span class="timeline-status waiting">Próximamente</span>
+                        </div>
+                    </div>
+
+                    <!-- Hito 3 -->
+                    <div class="timeline-card">
+                        <div class="timeline-indicator">3</div>
+                        <div class="timeline-content">
+                            <span class="timeline-date">08 de Julio, 2026</span>
+                            <h3>Hito 3: Pruebas de Sistema y Aceptación</h3>
+                            <p>Implementación de pruebas del sistema, análisis de cobertura, pruebas no funcionales de rendimiento/accesibilidad, y automatización del despliegue final continuo a producción.</p>
+                            <span class="timeline-status waiting">Próximamente</span>
+                        </div>
+                    </div>
+
+                    <!-- Sustentación -->
+                    <div class="timeline-card">
+                        <div class="timeline-indicator">🎓</div>
+                        <div class="timeline-content">
+                            <span class="timeline-date">16 / 17 de Julio, 2026</span>
+                            <h3>Sustentación Final</h3>
+                            <p>Presentación oral y defensa del proyecto de pruebas de software ante el jurado, sustentación de las métricas de calidad y demostración de las tuberías DevOps automatizadas.</p>
+                            <span class="timeline-status waiting">Cierre</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Enlaces del Proyecto -->
+        <section id="enlaces" class="section bg-light-gradient">
+            <div class="container">
+                <div class="section-header text-center">
+                    <span class="section-tag">Recursos</span>
+                    <h2>Enlaces y Accesos Directos</h2>
+                    <div class="accent-line center"></div>
+                </div>
+
+                <div class="links-grid">
+                    <a href="https://github.com/grokability/snipe-it" target="_blank" rel="noopener" class="link-card">
+                        <span class="link-icon">🐙</span>
+                        <h3>Repositorio Original</h3>
+                        <p>Código base oficial de Snipe-IT en GitHub administrado por Grokability.</p>
+                        <span class="link-action">Visitar sitio ↗</span>
+                    </a>
+
+                    <a href="https://github.com/JhossepV/SO_FinalProyect" target="_blank" rel="noopener" class="link-card">
+                        <span class="link-icon">🔱</span>
+                        <h3>Fork del Grupo</h3>
+                        <p>Repositorio del equipo de desarrollo con las configuraciones e hitos del curso.</p>
+                        <span class="link-action">Explorar código ↗</span>
+                    </a>
+
+                    <a href="#" class="link-card disabled">
+                        <span class="link-icon">📋</span>
+                        <h3>GitHub Project</h3>
+                        <p>Tablero de control y organización Kanban/Scrum para el equipo.</p>
+                        <span class="link-action">Configurando...</span>
+                    </a>
+
+                    <a href="#" class="link-card disabled">
+                        <span class="link-icon">📖</span>
+                        <h3>GitHub Wiki</h3>
+                        <p>Documentación técnica detallada construida colaborativamente por el grupo.</p>
+                        <span class="link-action">Configurando...</span>
+                    </a>
+
+                    <a href="#" class="link-card disabled">
+                        <span class="link-icon">⚙️</span>
+                        <h3>GitHub Actions</h3>
+                        <p>Pipelines de integración y testing configurados en el fork.</p>
+                        <span class="link-action">Próximamente en Hito 2</span>
+                    </a>
+
+                    <a href="#" class="link-card disabled">
+                        <span class="link-icon">🌐</span>
+                        <h3>GitHub Pages</h3>
+                        <p>Página de despliegue y estado de pruebas académicas del proyecto.</p>
+                        <span class="link-action">Este sitio (Docs/Pages)</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container footer-container">
+            <div class="footer-brand">
+                <span class="brand-text">Pruebas de Software — Snipe-IT</span>
+                <p>Análisis y plan de aseguramiento de la calidad de software para sistemas de gestión de activos.</p>
+            </div>
+            <div class="footer-meta-info">
+                <div class="meta-row"><strong>Curso:</strong> Pruebas de Software</div>
+                <div class="meta-row"><strong>Semestre:</strong> 2026-A</div>
+                <div class="meta-row"><strong>Elaborado por:</strong> Integrante 2 — Analista del Producto / Arquitectura</div>
+                <div class="meta-row"><strong>Fecha:</strong> Mayo 2026</div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="container text-center">
+                <p>&copy; 2026 - Universidad Fork Snipe-IT QA Group. Licencia de sitio bajo términos de documentación libre.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Script para comportamiento responsive básico de lproyecto-->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const navToggle = document.getElementById('nav-toggle');
+            const navMenu = document.getElementById('nav-menu');
+            const navLinks = document.querySelectorAll('.nav-menu a');
+
+            navToggle.addEventListener('click', function() {
+                navMenu.classList.toggle('active');
+                navToggle.classList.toggle('active');
+            });
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    navMenu.classList.remove('active');
+                    navToggle.classList.remove('active');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
