@@ -58,13 +58,7 @@
                     <p class="hero-subtitle">Proyecto Académico: Proceso de Pruebas de Software aplicado a un Producto Open Source de clase mundial.</p>
                     
                     <div class="hero-meta">
-                        <div class="meta-item">
-                            <span class="meta-icon">👤</span>
-                            <div class="meta-text">
-                                <span class="meta-label">Rol del Estudiante</span>
-                                <span class="meta-value">Integrante 2 — Analista de Producto / Arquitectura</span>
-                            </div>
-                        </div>
+                        
                         <div class="meta-item">
                             <span class="meta-icon">🏷️</span>
                             <div class="meta-text">
@@ -146,7 +140,8 @@
                             <span class="card-icon">🚀</span>
                         </div>
                         <h3>¿Qué es Snipe-IT?</h3>
-                        <p>Es una aplicación web de código abierto líder en la industria, diseñada específicamente para la **Gestión de Activos de TI** (IT Asset Management - ITAM). Desarrollada por Grokability, Inc., simplifica el seguimiento integral del hardware, licencias y periféricos en una organización.</p>
+                        <p>Snipe-IT es una aplicación web de código abierto, desarrollada y mantenida por la empresa Grokability, Inc., que se ha consolidado como una de las soluciones líderes a nivel mundial para la <strong>Gestión de Activos de Tecnologías de la Información</strong> (IT Asset Management — ITAM). Su propósito fundamental es permitir a las organizaciones llevar un control completo y centralizado sobre todos los recursos tecnológicos que poseen.</p>
+                        <p style="margin-top: 12px;">En la práctica, el sistema permite registrar, rastrear y administrar activos de diversa naturaleza, tales como: <strong>laptops, monitores, impresoras, teclados, mouse, servidores, teléfonos IP, proyectores</strong>, así como <strong>licencias de software</strong> (por ejemplo, Microsoft Office o Adobe Creative Cloud). Cada activo queda vinculado a un usuario responsable, una ubicación física y un historial completo de movimientos y asignaciones.</p>
                     </div>
 
                     <div class="card card-hover">
@@ -154,7 +149,8 @@
                             <span class="card-icon">🎯</span>
                         </div>
                         <h3>Problema que Resuelve</h3>
-                        <p>Reemplaza los obsoletos y propensos a errores registros manuales (hojas de cálculo de Excel) por una solución autoalojable centralizada. Permite auditar y controlar quién posee cada laptop, cuándo expira una licencia de software y optimizar la depreciación financiera.</p>
+                        <p>En muchas instituciones —universidades, empresas, hospitales— el inventario de equipos tecnológicos se gestiona de forma manual mediante hojas de cálculo o registros en papel. Este método es <strong>propenso a errores humanos, duplicaciones y pérdida de información</strong>. Cuando un equipo se avería, se pierde o cambia de manos, no existe un registro confiable que indique quién lo tiene, cuándo fue asignado o cuándo expira su garantía.</p>
+                        <p style="margin-top: 12px;">Snipe-IT reemplaza esos procesos obsoletos por una <strong>plataforma web centralizada y autoalojable</strong>, donde cualquier movimiento de activos —asignaciones, devoluciones, mantenimientos— queda registrado automáticamente. Además, incorpora funcionalidades avanzadas como el cálculo de depreciación financiera, alertas de vencimiento de licencias y generación de reportes auditables para cumplimiento normativo.</p>
                     </div>
 
                     <div class="card card-hover">
@@ -162,7 +158,58 @@
                             <span class="card-icon">🔍</span>
                         </div>
                         <h3>¿Por qué se seleccionó para Pruebas?</h3>
-                        <p>Posee una arquitectura empresarial real con alta complejidad: autenticación avanzada (2FA, SAML, LDAP), base de datos con más de 400 migraciones, y un sistema rígido de permisos y checkins. Su análisis representa un desafío académico idóneo para el testing automatizado.</p>
+                        <p>
+                            El sistema <strong>Snipe-IT</strong> fue seleccionado como objeto de estudio para el presente trabajo porque cumple satisfactoriamente con los criterios establecidos en el proyecto del curso de Pruebas de Software. La plataforma representa un entorno empresarial real que permite aplicar metodologías de aseguramiento de calidad, automatización de pruebas y prácticas DevOps dentro de un contexto académico controlado.
+                        </p>
+
+                        <p style="margin-top: 12px;">
+                            En primer lugar,el proyecto utiliza la licencia 
+                            <strong>GNU Affero General Public License v3.0 (AGPL-3.0)</strong>, la cual permite realizar fork, modificación, distribución y uso académico del sistema sin restricciones para fines educativos.
+                        </p>
+
+                        <p style="margin-top: 12px;">
+                            En segundo lugar, Snipe-IT cumple con el criterio de dominio empresarial solicitado en el curso, ya que se trata de un sistema de gestión de activos tecnológicos.
+                        </p>
+
+                        <ul class="feature-list">
+                            <li>
+                                Laptops, computadoras de escritorio, monitores e impresoras, etc.
+                            </li>
+                        </ul>
+
+                        <p style="margin-top: 12px;">
+                            Asimismo, el proyecto posee un <strong>stack tecnológico moderno</strong> y ampliamente utilizado en la industria del desarrollo de software:
+                        </p>
+
+                        <ul class="tech-stack-list">
+                            <li><strong>Backend:</strong> PHP 8.2 y Laravel 12</li>
+                            <li><strong>Base de datos:</strong> MySQL, MariaDB y PostgreSQL</li>
+                            <li><strong>Frontend:</strong> Blade, Bootstrap y JavaScript</li>
+                            <li><strong>Arquitectura:</strong> API REST y patrón MVC</li>
+                            <li><strong>Contenedores:</strong> Docker y Docker Compose</li>
+                            <li><strong>CI/CD:</strong> GitHub Actions</li>
+                        </ul>
+
+                        <p style="margin-top: 12px;">
+                            De igual manera, Snipe-IT cumple con el nivel de complejidad media-alta requerido por el curso, debido a que posee más de <strong>40 modelos</strong>, más de <strong>400 migraciones</strong>
+                        </p>
+
+                        <p style="margin-top: 12px;">
+                            Finalmente, el sistema incorpora una infraestructura DevOps adaptable que facilita la automatización del proceso de pruebas y la integración continua:
+                        </p>
+
+                        <ul class="devops-list">
+                            <li>Docker Compose para despliegue local</li>
+                            <li>GitHub Actions para pipelines CI/CD</li>
+                            <li>PHPUnit para pruebas automatizadas</li>
+                            <li>Pipelines de testing automatizado</li>
+                            <li>Herramientas de análisis estático de código</li>
+                        </ul>
+
+                        <p style="margin-top: 12px;">
+                            En consecuencia, Snipe-IT representa un caso de estudio adecuado para implementar y evaluar pruebas unitarias, pruebas de integración y prácticas de calidad de software utilizando metodologías ágiles Scrum y procesos DevOps automatizados.
+                        </p>
+
                     </div>
                 </div>
             </div>
