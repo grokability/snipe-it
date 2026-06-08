@@ -193,9 +193,12 @@ class BulkAssetsController extends Controller
                 case 'labels':
                     $this->authorize('view', Asset::class);
 
+                    $offset = max(0, (int) $request->input('offset', 0));
+
                     return (new Label)
                         ->with('assets', $assets)
                         ->with('settings', Setting::getSettings())
+                        ->with('offset', $offset)
                         ->with('bulkedit', true)
                         ->with('count', 0);
 

@@ -12,6 +12,9 @@ $settings->labels_width = $settings->labels_width - $settings->labels_display_sg
 $settings->labels_height = $settings->labels_height - $settings->labels_display_bgutter;
 // Leave space on bottom for 1D barcode if necessary
 $qr_size = ($settings->alt_barcode_enabled=='1') && ($settings->label2_1d_type!='') ? $settings->labels_height - .3 : $settings->labels_height - 0.1;
+$offset = max(0, (int) ($offset ?? 0));
+$count = (int) ($count ?? 0);
+$total_labels = count($assets) + $offset;
 ?>
 
 <style>
@@ -106,6 +109,16 @@ $qr_size = ($settings->alt_barcode_enabled=='1') && ($settings->label2_1d_type!=
     @endif
 </style>
 
+@for ($i = 0; $i < $offset; $i++)
+    <?php $count++; ?>
+    <div class="label"></div>
+
+    @if (($count % $settings->labels_per_page == 0) && $count!=$total_labels)
+    <div class="page-break"></div>
+    <div class="next-padding">&nbsp;</div>
+    @endif
+@endfor
+
 @foreach ($assets as $asset)
     <?php $count++; ?>
     <div class="label">
@@ -166,7 +179,7 @@ $qr_size = ($settings->alt_barcode_enabled=='1') && ($settings->label2_1d_type!=
 
     </div>
 
-    @if (($count % $settings->labels_per_page == 0) && $count!=count($assets))
+    @if (($count % $settings->labels_per_page == 0) && $count!=$total_labels)
     <div class="page-break"></div>
     <div class="next-padding">&nbsp;</div>
     @endif
