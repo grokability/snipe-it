@@ -279,7 +279,60 @@ class AssetCheckoutTest extends TestCase
 
     public function test_license_seats_are_assigned_to_user_upon_checkout()
     {
-        $this->markTestIncomplete('This is not implemented');
+        $admin = User::factory()->checkoutAssets()->create();
+        $targetUser = User::factory()->create();
+
+        // Crear un asset disponible para checkout
+        $asset = Asset::factory()->create();
+
+        // Crear una licencia con 3 seats y asignar uno al asset
+        $this->actingAs($admin);
+        $license = \App\Models\License::factory()->create(['seats' => 3]);
+
+        // Obtener el primer seat libre y asignarlo al asset
+        $seat = $license->freeSeat();
+        $this->assertNotNull($seat, 'Debe haber un seat libre para este test');
+
+        $seat->asset_id = $asset->id;
+        $seat->save();
+
+        // Hacer checkout del asset al usuario
+
+        $this->actingAsForApi($admin)
+            ->postJson(route('api.asset.checkout', $asset), [
+                'checkout_to_type' => 'user',
+                'assigned_user'    => $targetUser->id,
+            ])
+            ->assertOk()
+            ->assertStatusMessageIs('success');
+
+        // Verificar persistencia correcta en base de datos
+
+        // 1. El asset queda asignado al usuario
+        $asset->refresh();
+        $this->assertEquals($targetUser->id, $asset->assigned_to);
+        $this->assertEquals(\App\Models\User::class, $asset->assigned_type);
+
+        // 2. El LicenseSeat sigue vinculado al asset
+        $seat->refresh();
+        $this->assertEquals($asset->id, $seat->asset_id);
+
+        // 3. El action_log registra el checkout del asset
+        $this->assertDatabaseHas('action_logs', [
+            'action_type' => 'checkout',
+            'target_type' => \App\Models\User::class,
+            'target_id'   => $targetUser->id,
+            'item_type'   => \App\Models\Asset::class,
+            'item_id'     => $asset->id,
+        ]);
+
+        // 4. Las relaciones se mantienen íntegras
+        $this->assertDatabaseHas('license_seats', [
+            'id'         => $seat->id,
+            'license_id' => $license->id,
+            'asset_id'   => $asset->id,
+            'deleted_at' => null,
+        ]);
     }
 
     public function test_last_checkout_uses_current_date_if_not_provided()
