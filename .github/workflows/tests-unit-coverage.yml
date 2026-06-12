@@ -1,0 +1,115 @@
+name: Unit Tests + Coverage (SQLite in-memory, PCOV)
+
+# Integrante 2 (DevOps / CI-CD) — Sprint 2
+# Ejecuta SOLO la suite Unit sobre SQLite in-memory (conexion `sqlite_testing`)
+# y publica cobertura en Clover XML + HTML como artefactos.
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+      - dev_J
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  unit-coverage:
+    runs-on: ubuntu-latest
+
+    strategy:
+      # No abortar toda la matriz si una version de PHP falla.
+      fail-fast: false
+      matrix:
+        # composer.json exige php ^8.2; estas tres versiones estan soportadas
+        # por el proyecto (ya se prueban en los workflows MySQL/Postgres).
+        php-version:
+          - "8.2"
+          - "8.3"
+          - "8.4"
+
+    name: PHP ${{ matrix.php-version }} - Unit + Coverage
+
+    steps:
+      - name: Setup PHP with PCOV
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "${{ matrix.php-version }}"
+          # Extensiones requeridas por composer.json + driver SQLite para los tests.
+          extensions: mbstring, pdo, pdo_sqlite, sqlite3, bcmath, gd, intl, zip, curl, fileinfo, iconv, json
+          # PCOV: driver de cobertura rapido (mas que Xdebug) compatible con PHP 8.2-8.4.
+          coverage: pcov
+          ini-values: pcov.enabled=1, memory_limit=-1, error_reporting=E_ALL
+          tools: composer:v2
+
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Get Composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v5
+        # Un fallo de cache NO debe romper el job.
+        continue-on-error: true
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-php${{ matrix.php-version }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php${{ matrix.php-version }}-composer-
+            ${{ runner.os }}-composer-
+
+      - name: Prepare testing environment files
+        # TestCase::guardAgainstMissingEnv() aborta la suite si falta .env.testing.
+        run: |
+          cp -v .env.testing.example .env
+          cp -v .env.testing.example .env.testing
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist --no-scripts --no-ansi
+
+      - name: Generate application key
+        run: php artisan key:generate
+
+      - name: Generate Passport keys
+        # Tolerante: si las claves ya existen no debe tumbar el job.
+        run: php artisan passport:keys --force --no-interaction || true
+
+      - name: Set directory permissions
+        run: chmod -R 777 storage bootstrap/cache
+
+      - name: Create coverage output directory
+        run: mkdir -p coverage
+
+      - name: Run Unit test suite with coverage (Clover + HTML)
+        env:
+          APP_ENV: testing
+          # SQLite en memoria: conexion definida en config/database.php (sqlite_testing => :memory:).
+          DB_CONNECTION: sqlite_testing
+          LOG_CHANNEL: single
+          LOG_LEVEL: debug
+        run: |
+          vendor/bin/phpunit \
+            --testsuite Unit \
+            --coverage-clover coverage/clover.xml \
+            --coverage-html coverage/html \
+            --log-junit coverage/junit.xml
+
+      - name: Upload coverage report (Clover + HTML)
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-php-${{ matrix.php-version }}
+          path: coverage/
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Upload Laravel logs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: laravel-logs-php-${{ matrix.php-version }}
+          path: storage/logs/*.log
+          if-no-files-found: ignore
+          retention-days: 7
