@@ -29,17 +29,15 @@
 name: EthicalCheck-Workflow
 
 # Controls when the workflow will run
+#
+# DESACTIVADO (Sprint 2 - CI/CD): la accion de terceros
+# `apisec-inc/ethicalcheck-action` ya no existe ("Unable to resolve action ...,
+# not found"), por lo que este job fallaba en cada push/PR a master.
+# Apunta ademas a una API demo ajena al proyecto (netbanking.apisec.ai).
+# Se neutralizan los disparadores automaticos (push/pull_request/schedule) y se
+# deja solo ejecucion manual. NO se elimina el archivo para conservar el historial.
 on:
-  # Triggers the workflow on push or pull request events but only for the "master" branch
-  # Customize trigger events based on your DevSecOps processes.
-  push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
-  schedule:
-    - cron: '35 17 * * 6'
-
-  # Allows you to run this workflow manually from the Actions tab
+  # Solo ejecucion manual desde la pestania Actions.
   workflow_dispatch:
 
 permissions:
