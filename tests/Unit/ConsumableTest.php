@@ -36,4 +36,26 @@ class ConsumableTest extends TestCase
 
         $this->assertEqualsWithDelta(-66.66666666666667, $consumable->percentRemaining(), 0.0000000001);
     }
+
+    public function test_num_remaining_returns_correct_value()
+    {
+        $consumable = new Consumable([
+            'qty' => 20,
+        ]);
+
+        $consumable->consumables_users_count = 5;
+
+        $this->assertEquals(15, $consumable->numRemaining());
+    }
+
+    public function test_num_remaining_returns_zero_when_all_items_are_checked_out()
+    {
+        $consumable = new Consumable([
+            'qty' => 10,
+        ]);
+
+        $consumable->consumables_users_count = 10;
+
+        $this->assertEquals(0, $consumable->numRemaining());
+    }
 }
