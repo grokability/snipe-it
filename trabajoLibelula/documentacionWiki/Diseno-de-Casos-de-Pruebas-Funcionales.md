@@ -5,8 +5,8 @@
 | Campo | Detalle |
 |-------|---------|
 | **Documento** | Diseño de Casos de Pruebas Funcionales — Snipe-IT |
-| **Versión** | **2.0 (reescritura por requisito, verificada contra el repositorio)** |
-| **Reemplaza a** | v1.0 (lista plana de casos CPF-01…CPF-11) |
+| **Versión** | **2.1 (amplía el alcance de usuario: + RF-09 Login, RF-10 Usuarios, RF-11 Accesorios)** |
+| **Reemplaza a** | v2.0 (8 requisitos) · v1.0 (lista plana CPF-01…CPF-11) |
 | **Hito / Sprint** | Hito 2 / Sprint 2 |
 | **Tipo de prueba** | Funcional / Caja negra / Manual |
 | **Ambiente de ejecución** | QA (despliegue único compartido por el equipo) |
@@ -58,7 +58,9 @@ A diferencia de la v1.0, cada requisito de esta versión se ancló al **comporta
 
 ## 3. Matriz de requisitos funcionales
 
-> **Delimitación de alcance.** Estos 8 requisitos cubren los **5 subsistemas núcleo** seleccionados como alcance académico en [Hito 1 — Presentación del Producto](Hito-1-Presentacion-del-Producto) §4 (Activos, Licencias, Inventario, Usuarios y Checkout). **No** representan la totalidad funcional de Snipe-IT, que comprende ~20 subsistemas (accesorios, componentes, mantenimientos, importación, reportes, custom fields, etc.). La selección es deliberada y se sostiene a lo largo de los tres hitos.
+> **Delimitación de alcance.** Estos 11 requisitos cubren los **subsistemas núcleo de cara al usuario** seleccionados como alcance académico en [Hito 1 — Presentación del Producto](Hito-1-Presentacion-del-Producto) §4 (Acceso, Activos, Licencias, Inventario, Usuarios, Accesorios y Checkout). **No** representan la totalidad funcional de Snipe-IT, que comprende ~20 subsistemas (componentes, mantenimientos, importación, reportes, custom fields, etc.). La selección es deliberada y se sostiene a lo largo de los tres hitos.
+>
+> **Nota de la v2.1:** la v2.0 declaraba "Usuarios" dentro del alcance pero **ningún requisito lo probaba realmente**. Esta versión corrige esa incoherencia añadiendo **RF-10 (gestión de usuarios)**, e incorpora **RF-09 (autenticación)** —la primera acción que ejecuta cualquier usuario— y **RF-11 (checkout/checkin de accesorio)** —para cubrir el patrón de asignación en un segundo módulo de inventario.
 
 | ID Req. | Requisito funcional | Subsistema | Ruta / acción verificada | Técnicas de caja negra seleccionadas |
 |---------|---------------------|------------|---------------------------|--------------------------------------|
@@ -70,6 +72,9 @@ A diferencia de la v1.0, cada requisito de esta versión se ancló al **comporta
 | **RF-06** | Descontar stock de un consumible al asignarlo | Inventario | `consumables.checkout.store` | AVL + PE |
 | **RF-07** | Impedir la eliminación de una categoría con elementos asociados | Categorías | `categories.destroy` | TD |
 | **RF-08** | Reflejar la disponibilidad del activo según su *status label* | Activos | `availableForCheckout()` / `getStatuslabelType()` | TD |
+| **RF-09** | Autenticar a un usuario (login / logout) | Acceso | `login` (POST) / `logout` | PE + TE + caso negativo |
+| **RF-10** | Registrar y editar un usuario | Usuarios | `users.store` / `users.update` | PE + AVL |
+| **RF-11** | Asignar y devolver un accesorio (checkout/checkin) | Accesorios / Checkout | `accessories.checkout.store` / `accessories.checkin.store` | TE + PE + AVL |
 
 **Leyenda de técnicas:** PE = Partición de equivalencia · AVL = Análisis de valores límite · TD = Tabla de decisión · TE = Transición de estados.
 
@@ -420,6 +425,123 @@ Cobertura: CPF-03 (transición directa), CPF-04 (transición inversa), CPF-05 (r
 
 ---
 
+### RF-09 — Autenticar a un usuario (login / logout)
+
+**Contexto del requisito:** el acceso a Snipe-IT exige autenticación. El usuario inicia sesión con **usuario + contraseña**; con credenciales válidas y cuenta activada queda autenticado y se registra el evento; con credenciales inválidas se rechaza y se registra el intento fallido. Existe **límite de intentos** (throttling) configurable que bloquea tras N fallos. El *logout* cierra la sesión.
+
+**Comportamiento corroborado en:** `tests/Feature/Authentication/LoginTest.php` (`test_logs_successful_login`, `test_logs_failed_login_attempt`, `test_login_throttle_config_is_respected`).
+
+**Técnicas de prueba aplicadas y justificación:**
+- **TE** porque la autenticación es una **transición de estado de sesión** (Anónimo → Autenticado → Anónimo tras logout).
+- **PE** para particionar credenciales válidas / inválidas.
+- **Caso negativo** para el bloqueo por exceso de intentos.
+
+#### CPF-12 — Inicio de sesión con credenciales válidas
+| Campo | Detalle |
+|-------|---------|
+| **Funcionalidad** | Autenticación |
+| **Descripción** | Iniciar sesión con un usuario activo y contraseña correcta |
+| **Precondiciones** | Existe un usuario activado (`activated=1`) con contraseña conocida |
+| **Datos de entrada** | `username` válido; `password` correcta |
+| **Pasos** | 1) Ir a *Login*. 2) Ingresar usuario y contraseña. 3) *Login* |
+| **Técnicas** | TE / PE |
+| **Prioridad** | Alta |
+| **Resultado esperado** | El usuario queda **autenticado**, es redirigido al *dashboard* y se registra el inicio de sesión exitoso |
+| **Evidencia** | ⟦PENDIENTE-QA⟧ |
+
+#### Subcasos derivados de RF-09
+| Subcaso | Técnica | Condición de entrada | Resultado esperado |
+|---------|---------|----------------------|--------------------|
+| **CPF-12.1** Credenciales inválidas | PE inválida / caso negativo | `password` incorrecta | **Rechazo**: no autentica, muestra error y registra intento fallido |
+| **CPF-12.2** Bloqueo por throttling | Caso negativo (borde) | Superar el nº máximo de intentos fallidos | El sistema **bloquea** temporalmente nuevos intentos |
+| **CPF-12.3** Cierre de sesión (logout) | TE | Usuario autenticado pulsa *Logout* | La sesión se cierra; el acceso a páginas internas vuelve a exigir login |
+| **CPF-12.4** Acceso sin autenticar | PE inválida | Solicitar una página interna sin sesión | **Redirección** a la pantalla de login |
+
+---
+
+### RF-10 — Registrar y editar un usuario
+
+**Contexto del requisito:** un administrador puede crear y editar usuarios. El alta exige **nombre** (`first_name → required|min:1`) y **usuario** (`username → required` salvo importación LDAP); la **contraseña** debe cumplir las reglas de complejidad y venir **confirmada** (`confirmed`). Crear/editar exige permiso; un usuario sin permiso recibe 403. Un no-administrador no puede otorgar permisos de admin/superusuario ni asignar grupos.
+
+**Comportamiento corroborado en:** `tests/Feature/Users/Ui/CreateUserTest.php` (`test_can_create_user`, `test_permission_required_to_create_user`, `test_non_admin_cannot_grant_admin_or_superuser_permissions_when_creating_user_via_ui`) y `tests/Feature/Users/Ui/UpdateUserTest.php`.
+
+**Técnicas de prueba aplicadas y justificación:**
+- **PE** para clases válidas/inválidas de los campos obligatorios y del permiso.
+- **AVL** sobre la longitud mínima del nombre/usuario (`min:1`).
+
+#### CPF-13 — Alta de usuario válido
+| Campo | Detalle |
+|-------|---------|
+| **Funcionalidad** | Registro de usuario |
+| **Descripción** | Crear un usuario con nombre, usuario y contraseña válidos |
+| **Precondiciones** | Ejecutor con permiso de creación de usuarios |
+| **Datos de entrada** | `first_name="Jane"`; `username="jdoe"`; `password` y `password_confirmation` que cumplen la complejidad |
+| **Pasos** | 1) People → *Create New*. 2) Completar nombre, usuario y contraseña. 3) *Save* |
+| **Técnicas** | PE |
+| **Prioridad** | Alta |
+| **Resultado esperado** | El usuario se crea, redirige con mensaje de éxito y aparece en el listado |
+| **Evidencia** | ⟦PENDIENTE-QA⟧ |
+
+#### Subcasos derivados de RF-10
+| Subcaso | Técnica | Condición de entrada | Resultado esperado |
+|---------|---------|----------------------|--------------------|
+| **CPF-13.1** Nombre ausente | PE/AVL inválida | `first_name=""` | **Rechazo** con error en `first_name` (`required\|min:1`) |
+| **CPF-13.2** Contraseña sin confirmar | PE inválida | `password` sin `password_confirmation` coincidente | **Rechazo** con error de confirmación |
+| **CPF-13.3** Sin permiso de creación | PE inválida | Usuario sin permiso | Acceso **prohibido** (403) |
+| **CPF-13.4** Edición de usuario | PE válida | Modificar `first_name`/`jobtitle` de un usuario existente | Cambios guardados; mensaje de éxito |
+| **CPF-13.5** No-admin intenta otorgar superusuario | PE inválida (escalada) | Usuario no-admin marca `superuser=1` al crear | El permiso de superusuario **no** se concede |
+
+---
+
+### RF-11 — Asignar y devolver un accesorio (checkout / checkin)
+
+**Contexto del requisito:** un accesorio con unidades disponibles puede **asignarse** (checkout) a un usuario, ubicación u otro activo, descontando la cantidad entregada; cuando no quedan unidades disponibles, el sistema **impide** la asignación. El **checkin** devuelve la unidad y la vuelve a poner disponible. Ambas acciones exigen permiso (`checkoutAccessories` / `checkinAccessories`) y registran la acción en el historial.
+
+**Comportamiento corroborado en:** `tests/Feature/Checkouts/Ui/AccessoryCheckoutTest.php` (`test_accessory_can_be_checked_out_with_quantity`, `test_accessory_must_have_available_items_for_checkout_when_checking_out`, `test_checking_out_accessory_requires_correct_permission`, `test_validation_when_checking_out_accessory`) y `tests/Feature/Checkins/Ui/AccessoryCheckinTest.php` (`test_accessory_can_be_checked_in`, `test_checking_in_accessory_requires_correct_permission`).
+
+**Técnicas de prueba aplicadas y justificación:**
+- **TE** porque el accesorio transita entre disponible y asignado (checkout ⇄ checkin).
+- **PE** para el destino (usuario/ubicación/activo) y la validación de entradas.
+- **AVL** para el borde de disponibilidad (última unidad / sin unidades).
+
+#### CPF-14 — Checkout de accesorio a un usuario
+| Campo | Detalle |
+|-------|---------|
+| **Funcionalidad** | Asignación de accesorio |
+| **Descripción** | Asignar una unidad de un accesorio con stock a un usuario |
+| **Precondiciones** | Accesorio con unidades disponibles; ejecutor con permiso `checkoutAccessories` |
+| **Datos de entrada** | `checkout_to_type=user`; `assigned_to={id}`; `checkout_qty=1` |
+| **Pasos** | 1) Accessory → *Checkout*. 2) Elegir usuario y cantidad. 3) *Checkout* |
+| **Técnicas** | TE / PE |
+| **Prioridad** | Alta |
+| **Resultado esperado** | El accesorio queda asignado; las unidades disponibles disminuyen en la cantidad entregada; se registra la acción *checkout* y se notifica al usuario |
+| **Evidencia** | ⟦PENDIENTE-QA⟧ |
+
+#### CPF-15 — Checkin de accesorio
+| Campo | Detalle |
+|-------|---------|
+| **Funcionalidad** | Devolución de accesorio |
+| **Descripción** | Registrar la devolución de una unidad de accesorio asignada |
+| **Precondiciones** | Accesorio asignado a un usuario (CPF-14); ejecutor con permiso `checkinAccessories` |
+| **Datos de entrada** | Identificador de la asignación de accesorio |
+| **Pasos** | 1) Accessory → *Checkin*. 2) Confirmar. 3) *Checkin* |
+| **Técnicas** | TE |
+| **Prioridad** | Alta |
+| **Resultado esperado** | La unidad vuelve a estar **disponible**; el accesorio deja de figurar asignado a ese usuario; se registra la acción *checkin* |
+| **Evidencia** | ⟦PENDIENTE-QA⟧ |
+
+#### Subcasos derivados de RF-11
+| Subcaso | Técnica | Condición de entrada | Resultado esperado |
+|---------|---------|----------------------|--------------------|
+| **CPF-14.1** Checkout a ubicación | PE/TE | `checkout_to_type=location`; ubicación válida | Accesorio asignado a la ubicación |
+| **CPF-14.2** Checkout a activo | PE/TE | `checkout_to_type=asset`; activo válido | Accesorio asignado al activo |
+| **CPF-14.3** Sin unidades disponibles | AVL (bajo borde) | Accesorio con 0 unidades disponibles | **Rechazo**: no se permite la asignación |
+| **CPF-14.4** Destino ausente | PE inválida | Checkout sin `assigned_to` | **Rechazo** con error de validación |
+| **CPF-14.5** Sin permiso | PE inválida | Usuario sin `checkoutAccessories` | Acceso **prohibido** (403) |
+| **CPF-15.1** Checkin sin permiso | PE inválida | Usuario sin `checkinAccessories` | Acceso **prohibido** (403) |
+
+---
+
 ## 6. Catálogo consolidado de casos diseñados
 
 | Caso | Requisito | Técnica(s) | Prioridad | Tipo | Cobertura automatizada de referencia |
@@ -435,13 +557,17 @@ Cobertura: CPF-03 (transición directa), CPF-04 (transición inversa), CPF-05 (r
 | CPF-09 (+.1….5) | RF-06 | AVL/PE | Media-Alta | Positivo + límites | `ConsumableCheckoutTest` |
 | CPF-10 (+.1) | RF-07 | TD | Alta | Negativo | `DeleteCategoriesTest` |
 | CPF-11 | RF-07 | TD | Media | Positivo | `DeleteCategoriesTest` |
+| CPF-12 (+.1….4) | RF-09 | TE/PE | Alta | Positivo + negativos | `LoginTest` |
+| CPF-13 (+.1….5) | RF-10 | PE/AVL | Alta | Positivo + negativos | `Users/Ui/CreateUserTest`, `UpdateUserTest` |
+| CPF-14 (+.1….5) | RF-11 | TE/PE/AVL | Alta | Positivo + negativos | `Checkouts/Ui/AccessoryCheckoutTest` |
+| CPF-15 (+.1) | RF-11 | TE | Alta | Positivo + negativo | `Checkins/Ui/AccessoryCheckinTest` |
 
 ---
 
 ## 7. Trazabilidad
 
-Cada caso `CPF-XX` (y sus subcasos `CPF-XX.n`) se vincula a su requisito `RF-XX` y a su evidencia de ejecución en la [Matriz de Trazabilidad](Matriz-de-Trazabilidad) y en el [Informe de Casos de Pruebas Funcionales](Informe-de-Casos-de-Pruebas-Funcionales). La cobertura directa (requisito → caso) e inversa (caso → requisito) queda asegurada: los 8 requisitos RF-01…RF-08 tienen al menos un caso funcional diseñado.
+Cada caso `CPF-XX` (y sus subcasos `CPF-XX.n`) se vincula a su requisito `RF-XX` y a su evidencia de ejecución en la [Matriz de Trazabilidad](Matriz-de-Trazabilidad) y en el [Informe de Casos de Pruebas Funcionales](Informe-de-Casos-de-Pruebas-Funcionales). La cobertura directa (requisito → caso) e inversa (caso → requisito) queda asegurada: los 11 requisitos RF-01…RF-11 tienen al menos un caso funcional diseñado.
 
 ---
 
-*Fin del documento — Diseño de Casos de Pruebas Funcionales v2.0.*
+*Fin del documento — Diseño de Casos de Pruebas Funcionales v2.1.*

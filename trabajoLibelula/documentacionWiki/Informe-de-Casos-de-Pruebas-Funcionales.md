@@ -5,8 +5,8 @@
 | Campo | Detalle |
 |-------|---------|
 | **Documento** | Informe de Casos de Pruebas Funcionales — Snipe-IT |
-| **Versión** | **2.0 (alineado al diseño por requisito v2.0)** |
-| **Diseño asociado** | [Diseño de Casos de Pruebas Funcionales](Diseno-de-Casos-de-Pruebas-Funcionales) v2.0 |
+| **Versión** | **2.1 (alineado al diseño v2.1: + RF-09 Login, RF-10 Usuarios, RF-11 Accesorios)** |
+| **Diseño asociado** | [Diseño de Casos de Pruebas Funcionales](Diseno-de-Casos-de-Pruebas-Funcionales) v2.1 |
 | **Hito / Sprint** | Hito 2 / Sprint 2 |
 | **Tipo** | Funcional / Caja negra / Manual |
 | **Ambiente** | QA (despliegue compartido) |
@@ -43,10 +43,10 @@ Este informe distingue de forma estricta tres tipos de información:
 
 | Métrica | Valor |
 |---------|-------|
-| Requisitos funcionales cubiertos | 8 (RF-01 a RF-08) |
-| Casos principales diseñados | 11 (CPF-01 a CPF-11) |
-| Subcasos derivados diseñados | 30 (CPF-XX.n) |
-| Casos con cobertura automatizada de referencia | 9 de 11 (CPF-05 y CPF-08 sin cobertura automatizada) |
+| Requisitos funcionales cubiertos | 11 (RF-01 a RF-11) |
+| Casos principales diseñados | 15 (CPF-01 a CPF-15) |
+| Subcasos derivados diseñados | 46 (CPF-XX.n) |
+| Casos con cobertura automatizada de referencia | 13 de 15 (CPF-05 y CPF-08 sin cobertura automatizada) |
 | Casos ejecutados manualmente en QA | `⟦PENDIENTE-QA⟧` |
 | Conformes | `⟦PENDIENTE-QA⟧` |
 | No conformes | `⟦PENDIENTE-QA⟧` |
@@ -147,6 +147,43 @@ Este informe distingue de forma estricta tres tipos de información:
 
 - **Estado:** `⟦PENDIENTE-QA⟧` · **Defectos:** — · **Observaciones:** no existe prueba automatizada que bloquee el POST de checkout para un estado *archived/undeployable*; la verificación es **manual** y se apoya en la regla `availableForCheckout()`. Diseñar las tres variantes (*pending*, *archived*, *undeployable*) con estados creados explícitamente.
 
+### RF-09 — Autenticar a un usuario (login / logout)
+
+| Caso | Resultado esperado (resumen) | Cobertura automatizada de referencia | Veredicto manual | Evidencia |
+|------|------------------------------|--------------------------------------|------------------|-----------|
+| CPF-12 | Login válido → autenticado, evento registrado | `LoginTest::test_logs_successful_login` | `⟦PENDIENTE-QA⟧` | `⟦captura⟧` |
+| CPF-12.1 | Credenciales inválidas → rechazo + intento registrado | `LoginTest::test_logs_failed_login_attempt` | `⟦PENDIENTE-QA⟧` | `⟦captura⟧` |
+| CPF-12.2 | Exceso de intentos → bloqueo (throttling) | `LoginTest::test_login_throttle_config_is_respected` | `⟦PENDIENTE-QA⟧` | `⟦captura⟧` |
+| CPF-12.3 / .4 | Logout / acceso sin sesión → redirección a login | (middleware `auth`) | `⟦PENDIENTE-QA⟧` | `⟦captura⟧` |
+
+- **Estado:** `⟦PENDIENTE-QA⟧` · **Defectos:** — · **Observaciones:** el throttling en QA depende de `LOGIN_MAX_ATTEMPTS`/`LOGIN_LOCKOUT_DURATION`; usar valores bajos para poder observar el bloqueo en una sesión manual razonable.
+
+### RF-10 — Registrar y editar un usuario
+
+| Caso | Resultado esperado (resumen) | Cobertura automatizada de referencia | Veredicto manual | Evidencia |
+|------|------------------------------|--------------------------------------|------------------|-----------|
+| CPF-13 | Usuario creado con datos válidos | `Users/Ui/CreateUserTest::test_can_create_user` | `⟦PENDIENTE-QA⟧` | `⟦captura⟧` |
+| CPF-13.1 | `first_name` vacío → rechazo | Regla `first_name: required\|min:1` | `⟦PENDIENTE-QA⟧` | `⟦captura⟧` |
+| CPF-13.2 | Contraseña sin confirmar → rechazo | Regla `password: …\|confirmed` | `⟦PENDIENTE-QA⟧` | `⟦captura⟧` |
+| CPF-13.3 | Sin permiso → 403 | `test_permission_required_to_create_user` | `⟦PENDIENTE-QA⟧` | `⟦captura⟧` |
+| CPF-13.4 | Edición de usuario → cambios guardados | `Users/Ui/UpdateUserTest` | `⟦PENDIENTE-QA⟧` | `⟦captura⟧` |
+| CPF-13.5 | No-admin no escala a superusuario | `test_non_admin_cannot_grant_admin_or_superuser_permissions_when_creating_user_via_ui` | `⟦PENDIENTE-QA⟧` | `⟦captura⟧` |
+
+- **Estado:** `⟦PENDIENTE-QA⟧` · **Defectos:** — · **Observaciones:** la complejidad de contraseña depende de los ajustes de seguridad (`Setting::passwordComplexityRulesSaving`); fijar una política conocida en QA antes de ejecutar CPF-13.2.
+
+### RF-11 — Asignar y devolver un accesorio (checkout / checkin)
+
+| Caso | Resultado esperado (resumen) | Cobertura automatizada de referencia | Veredicto manual | Evidencia |
+|------|------------------------------|--------------------------------------|------------------|-----------|
+| CPF-14 | Accesorio asignado; unidades −cantidad; historial | `Checkouts/Ui/AccessoryCheckoutTest::test_accessory_can_be_checked_out_with_quantity` | `⟦PENDIENTE-QA⟧` | `⟦captura⟧` |
+| CPF-14.1 / .2 | Checkout a ubicación / activo | `test_accessory_can_be_checked_out_to_location_with_quantity` · `..._to_asset_with_quantity` | `⟦PENDIENTE-QA⟧` | `⟦captura⟧` |
+| CPF-14.3 | Sin unidades disponibles → rechazo | `test_accessory_must_have_available_items_for_checkout_when_checking_out` | `⟦PENDIENTE-QA⟧` | `⟦captura⟧` |
+| CPF-14.4 | Destino ausente → error de validación | `test_validation_when_checking_out_accessory` | `⟦PENDIENTE-QA⟧` | `⟦captura⟧` |
+| CPF-14.5 | Sin permiso → 403 | `test_checking_out_accessory_requires_correct_permission` | `⟦PENDIENTE-QA⟧` | `⟦captura⟧` |
+| CPF-15 / .1 | Checkin de accesorio / sin permiso → 403 | `Checkins/Ui/AccessoryCheckinTest::test_accessory_can_be_checked_in` · `test_checking_in_accessory_requires_correct_permission` | `⟦PENDIENTE-QA⟧` | `⟦captura⟧` |
+
+- **Estado:** `⟦PENDIENTE-QA⟧` · **Defectos:** — · **Observaciones:** la notificación al usuario en el checkout (`test_user_sent_notification_upon_checkout`) y el correo de checkin (`test_email_sent_to_user_if_setting_enabled`) dependen de la configuración de correo en QA.
+
 ---
 
 ## 5. Defectos funcionales encontrados
@@ -171,6 +208,9 @@ Los defectos se registran en **GitHub Issues** con etiqueta `bug` y se enlazan e
 | RF-06 | CPF-09 | .1 … .5 | `⟦captura⟧` | `⟦PENDIENTE-QA⟧` |
 | RF-07 | CPF-10, CPF-11 | .1 | `⟦captura⟧` | `⟦PENDIENTE-QA⟧` |
 | RF-08 | CPF-05 | .1 .2 .3 | `⟦captura⟧` | `⟦PENDIENTE-QA⟧` |
+| RF-09 | CPF-12 | .1 … .4 | `⟦captura⟧` | `⟦PENDIENTE-QA⟧` |
+| RF-10 | CPF-13 | .1 … .5 | `⟦captura⟧` | `⟦PENDIENTE-QA⟧` |
+| RF-11 | CPF-14, CPF-15 | .1 … .5 / .1 | `⟦captura⟧` | `⟦PENDIENTE-QA⟧` |
 
 La trazabilidad consolidada (con los niveles unitario e integración) se mantiene en la [Matriz de Trazabilidad](Matriz-de-Trazabilidad).
 
@@ -178,10 +218,10 @@ La trazabilidad consolidada (con los niveles unitario e integración) se mantien
 
 ## 7. Conclusión
 
-El **diseño** de pruebas funcionales está **cerrado y verificado** contra el comportamiento real del producto: 11 casos principales y 30 subcasos cubren los 8 requisitos RF-01…RF-08 mediante una combinación de técnicas seleccionada por requisito (partición de equivalencia, valores límite, tablas de decisión y transición de estados). Nueve de los once casos principales cuentan con **cobertura automatizada de referencia** que respalda el resultado esperado.
+El **diseño** de pruebas funcionales está **cerrado y verificado** contra el comportamiento real del producto: 15 casos principales y 46 subcasos cubren los 11 requisitos RF-01…RF-11 mediante una combinación de técnicas seleccionada por requisito (partición de equivalencia, valores límite, tablas de decisión y transición de estados). La v2.1 amplió el alcance de cara al usuario con **RF-09 (login)**, **RF-10 (gestión de usuarios)** —que además corrige la incoherencia de la v2.0, que declaraba "Usuarios" en el alcance sin probarlo— y **RF-11 (checkout/checkin de accesorio)**. Trece de los quince casos principales cuentan con **cobertura automatizada de referencia** que respalda el resultado esperado.
 
 La actividad **se cierra formalmente** cuando se ejecute la sesión manual en QA y se completen los campos `⟦PENDIENTE-QA⟧` con veredicto y evidencia. Dos casos —**CPF-05** (disponibilidad por status label) y **CPF-08** (agotamiento de asientos)— **carecen de cobertura automatizada** y requieren verificación manual obligatoria; se han marcado explícitamente como **pendientes de validación** para no consignar resultados no ejecutados.
 
 ---
 
-*Fin del documento — Informe de Casos de Pruebas Funcionales v2.0.*
+*Fin del documento — Informe de Casos de Pruebas Funcionales v2.1.*
