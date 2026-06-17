@@ -93,4 +93,32 @@ class LoggableTest extends TestCase
 
         $this->assertNull($asset->getLatestSignedAcceptance($user));
     }
+
+    public function test_history_relation_returns_logs(): void
+    {
+        $asset = Asset::factory()->create();
+        $asset->logCreate('seed');
+
+        $this->assertGreaterThanOrEqual(1, $asset->history()->count());
+    }
+
+    public function test_log_checkin_with_original_values(): void
+    {
+        $asset = Asset::factory()->create();
+        $target = User::factory()->create();
+
+        $log = $asset->logCheckin($target, 'devuelto', null, ['name' => 'old']);
+
+        $this->assertNotNull($log->id);
+    }
+
+    public function test_log_audit_with_location(): void
+    {
+        $asset = Asset::factory()->create();
+        $location = \App\Models\Location::factory()->create();
+
+        $log = $asset->logAudit('auditado', $location->id);
+
+        $this->assertEquals('audit', $log->action_type);
+    }
 }

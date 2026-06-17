@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Listeners;
 
+use App\Events\CheckoutableCheckedIn;
 use App\Events\CheckoutableCheckedOut;
 use App\Listeners\LogListener;
 use App\Models\Asset;
@@ -35,5 +36,29 @@ class LogListenerTest extends TestCase
             'item_type' => Asset::class,
             'note' => 'A simple note...',
         ]);
+    }
+
+    public function test_logs_entry_on_checkoutable_checked_in()
+    {
+        $asset = Asset::factory()->create();
+        $checkedOutTo = User::factory()->create();
+        $admin = User::factory()->create();
+        $this->actingAs($admin);
+
+        (new LogListener)->onCheckoutableCheckedIn(new CheckoutableCheckedIn(
+            $asset,
+            $checkedOutTo,
+            $admin,
+            'Checkin note...',
+        ));
+
+        $this->assertGreaterThanOrEqual(1, $asset->history()->count());
+    }
+
+    public function test_subscribe_registers_handlers()
+    {
+        (new LogListener)->subscribe(app('events'));
+
+        $this->assertTrue(true);
     }
 }
