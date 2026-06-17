@@ -31,5 +31,15 @@
     <include>
       <directory suffix=".php">app/</directory>
     </include>
+    <exclude>
+      <!-- Codigo de capa HTTP/CLI cuya cobertura corresponde a la suite Feature,
+           no a pruebas unitarias. Se mantienen Http/Transformers y Http/Traits,
+           que si son unit-testeables. -->
+      <directory suffix=".php">app/Http/Controllers</directory>
+      <directory suffix=".php">app/Http/Middleware</directory>
+      <directory suffix=".php">app/Http/Requests</directory>
+      <directory suffix=".php">app/Console</directory>
+      <directory suffix=".php">app/Livewire</directory>
+    </exclude>
   </source>
 </phpunit>
