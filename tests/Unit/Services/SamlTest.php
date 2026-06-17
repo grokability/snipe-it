@@ -39,4 +39,26 @@ class SamlTest extends TestCase
     {
         $this->assertIsBool((new Saml)->isAuthenticated());
     }
+
+    public function test_simple_getters_without_saml_response(): void
+    {
+        $saml = new Saml;
+
+        // Sin respuesta SAML, los getters devuelven sus valores por defecto sin lanzar excepcion.
+        $this->assertTrue(is_array($saml->getAttributes()) || is_null($saml->getAttributes()));
+        $this->assertTrue(is_array($saml->getAttributesWithFriendlyName()) || is_null($saml->getAttributesWithFriendlyName()));
+        $this->assertNull($saml->getNameId());
+        $this->assertNull($saml->getNameIdFormat());
+        $this->assertNull($saml->getNameIdNameQualifier());
+        $this->assertNull($saml->getNameIdSPNameQualifier());
+        $this->assertNull($saml->getSessionIndex());
+        $this->assertNull($saml->getSessionExpiration());
+    }
+
+    public function test_get_auth_throws_when_disabled(): void
+    {
+        // getAuth() lanza 403 cuando SAML no esta habilitado.
+        $this->expectException(\Symfony\Component\HttpKernel\Exception\HttpException::class);
+        (new Saml)->getAuth();
+    }
 }

@@ -53,6 +53,8 @@ class CheckinAssetNotification extends Notification
      */
     public function via()
     {
+        $notifyBy = [];
+
         if (Setting::getSettings()->webhook_selected == 'google' && Setting::getSettings()->webhook_endpoint) {
 
             $notifyBy[] = GoogleChatChannel::class;

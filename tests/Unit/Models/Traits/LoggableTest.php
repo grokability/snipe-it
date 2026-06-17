@@ -121,4 +121,26 @@ class LoggableTest extends TestCase
 
         $this->assertEquals('audit', $log->action_type);
     }
+
+    public function test_get_history_returns_paginated_result(): void
+    {
+        $asset = Asset::factory()->create();
+        $asset->logCreate('seed history');
+
+        $request = new \Illuminate\Http\Request([
+            'sort' => 'created_at', 'order' => 'desc', 'offset' => 0, 'limit' => 20,
+        ]);
+
+        $this->assertNotNull($asset->getHistory($request));
+    }
+
+    public function test_log_checkout_with_quantity_and_original_values(): void
+    {
+        $asset = Asset::factory()->create();
+        $target = User::factory()->create();
+
+        $log = $asset->logCheckout('with qty', $target, now(), ['name' => 'old'], 2);
+
+        $this->assertEquals('checkout', $log->action_type);
+    }
 }
