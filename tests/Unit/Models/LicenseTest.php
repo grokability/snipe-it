@@ -539,6 +539,10 @@ class LicenseTest extends TestCase
 
         $license = License::factory()->create(['seats' => 2]);
 
+        // isDeletable() compara free_seats_count (atributo de withCount) con seats,
+        // por lo que hay que cargar el conteo antes de evaluar.
+        $license->loadCount('freeSeats');
+
         // Todos los seats sin asignar (estado inicial)
         $this->assertTrue($license->isDeletable());
     }

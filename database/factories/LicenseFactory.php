@@ -42,6 +42,11 @@ class LicenseFactory extends Factory
         ];
     }
 
+    public function withSeats(int $seats)
+    {
+        return $this->state(['seats' => $seats]);
+    }
+
     public function photoshop()
     {
         return $this->state(function () {
