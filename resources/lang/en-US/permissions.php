@@ -23,6 +23,10 @@ return [
         'name' => 'Admin Access',
         'note' => 'Determines whether the user has access to most aspects of the system EXCEPT the System Admin Settings. These users will be able to manage users, locations, categories, etc, but ARE constrained by Full Multiple Company Support if it is enabled.',
     ],
+    'multicompany' => [
+        'name' => 'All Companies Access',
+        'note' => 'This will allow users to access for all companies in FMCS mode.',
+    ],
 
     'import' => [
         'name' => 'CSV Import',
