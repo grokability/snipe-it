@@ -211,7 +211,7 @@ class CompaniesController extends Controller
         // When FMCS is enabled and the user is not a superuser, restrict the list to
         // companies they belong to (primary company_id + pivot companies). This lets
         // non-superusers select a company from their own set when creating assets, etc.
-        if (Setting::getSettings()->full_multiple_companies_support == '1' && ! auth()->user()->isSuperUser()) {
+        if (Setting::getSettings()->full_multiple_companies_support == '1' && ! (auth()->user()->isSuperUser() || auth()->user()->isMultiCompany())) {
             $userCompanyIds = auth()->user()->allCompanies()->pluck('id');
             if ($userCompanyIds->isNotEmpty()) {
                 $companies->whereIn('companies.id', $userCompanyIds);
