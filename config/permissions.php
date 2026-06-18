@@ -22,6 +22,13 @@ return [
         ],
     ],
 
+    'Multicompany' => [
+        [
+            'permission' => 'multicompany',
+            'display' => true,
+        ],
+    ],
+
     'Import' => [
         [
             'permission' => 'import',
