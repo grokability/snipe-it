@@ -566,6 +566,11 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
         return $this->checkPermissionSection('admin');
     }
 
+    public function isMultiCompany()
+    {
+        return $this->checkPermissionSection('multicompany');
+    }
+
     /**
      * Checks if the user can edit their own profile
      *
