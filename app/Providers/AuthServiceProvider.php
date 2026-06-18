@@ -173,6 +173,12 @@ class AuthServiceProvider extends ServiceProvider
             }
         });
 
+        Gate::define('multicompany', function ($user) {
+            if ($user->hasAccess('multicompany')) {
+                return true;
+            }
+        });
+
         // Can the user import CSVs?
         Gate::define('import', function ($user) {
             if ($user->hasAccess('import')) {
