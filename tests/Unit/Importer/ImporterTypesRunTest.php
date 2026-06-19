@@ -46,7 +46,7 @@ class ImporterTypesRunTest extends TestCase
     public function test_category_import(): void
     {
         $before = Category::count();
-        $this->runImport(new CategoryImporter("Item Name,Category Type\nCategoria Uno,asset\n"));
+        $this->runImport(new CategoryImporter("Name,category_type\nCategoria Uno,asset\n"));
         $this->assertGreaterThan($before, Category::count());
     }
 

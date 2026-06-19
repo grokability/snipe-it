@@ -1,7 +1,7 @@
 # Plan y Progreso — Cobertura Pruebas Unitarias >85 % (Snipe-IT)
 
 > **Documento vivo / contexto para retomar.** Resume el estado real de la cobertura unitaria,
-> el entorno necesario, la estrategia que funciona y los próximos pasos. Última actualización: 2026-06-17.
+> el entorno necesario, la estrategia que funciona y los próximos pasos. Última actualización: 2026-06-19.
 
 ---
 
@@ -9,12 +9,20 @@
 
 | Métrica | Inicio sesión | **Ahora** |
 |---|---|---|
-| **Cobertura de líneas (métrica Opción A)** | 8.49 % (sin Opción A) | **81.51 %** (16 195 / 19 868) |
-| Cobertura de métodos | ~16 % | **68.11 %** (1 388 / 2 038) |
-| Tests Unit | 315 | **~1 400** |
+| **Cobertura de líneas (métrica Opción A)** | 8.49 % (sin Opción A) | **83.73 %** (16 636 / 19 868) |
+| Cobertura de métodos | ~16 % | **69.77 %** (1 422 / 2 038) |
+| Tests Unit | 315 | **~1 430** |
 | Fallos | 8 | **0** ✅ |
 | Bugs reales de producción corregidos | — | **3** |
-| Meta | **≥ 85 %** de líneas | faltan ~3.5 pts (≈ 692 líneas) |
+| Meta | **≥ 85 %** de líneas | faltan ~1.27 pts (≈ **252 líneas**) |
+
+> **Tandas 2026-06-19 (hechas, 0 fallos):**
+> - `ValidationRulesBranchesTest` — ramas de error de reglas custom (non_circular, valid_regex catch, checkboxes, is_unique con id). ValidationServiceProvider ahora 99.35 %.
+> - `SearchableFilterMatrixTest` — matriz operador×destino vía `->toSql()`. Searchable: 135 → 19 sin cubrir (las 19 son código muerto/MySQL-only/Guzzle).
+> - `LoggableBranchesTest` — getHistory filtros, logCheckout targets+fieldset, logCheckin fieldset, resolveLoggableCompanyId (LicenseSeat/ICompanyableChild/directo), rutas LicenseSeat, webhook Teams. Loggable: 77 → 27 (resto código muerto / catch Guzzle específicos).
+> - Fix: `ImporterTypesRunTest` quedó **bloqueado por antivirus (Avast)** (no se puede recrear ese nombre exacto); se reemplazó por `ImporterTypesImportTest` con el CSV corregido (`Name,category_type` — findCsvMatch usa esas claves exactas). El original aparece como `D` en git (rename de facto).
+>
+> **⚠️ Entorno:** `herd/bin/php.bat` desapareció (Avast). Usar el binario directo: **`PHP="/c/Users/danie/.config/herd/bin/php84/php.exe"`**.
 
 > **Etiquetas YA cubiertas** vía el motor real `App\View\Label` (`LabelRenderingTest`): renderizar el PDF con TCPDF en tests ejecuta el `write()` de cada Tape/Sheet. Subió +4.78 pts.
 > **Última tanda en curso (verificar que pase):** `ImporterTypesRunTest`, `CheckoutableFromAcceptanceTest`, `LabelsAndMaintenancesTransformerTest`, `AcceptanceItemAcceptedToUserNotificationTest`. La de importers se ajustó a aserción por conteo (CategoryImporter mapea el nombre por la columna "Item Name", no "Name"). **Falta correr ese archivo una vez para confirmar verde.**
