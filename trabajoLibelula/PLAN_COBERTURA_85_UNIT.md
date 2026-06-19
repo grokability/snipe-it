@@ -9,16 +9,27 @@
 
 | Métrica | Inicio sesión | **Ahora** |
 |---|---|---|
-| **Cobertura de líneas (métrica Opción A)** | 8.49 % (sin Opción A) | **79.44 %** (15 783 / 19 868) |
-| Cobertura de métodos | ~16 % | **66.39 %** (1 353 / 2 038) |
-| Tests Unit | 315 | **~1 360** |
+| **Cobertura de líneas (métrica Opción A)** | 8.49 % (sin Opción A) | **81.51 %** (16 195 / 19 868) |
+| Cobertura de métodos | ~16 % | **68.11 %** (1 388 / 2 038) |
+| Tests Unit | 315 | **~1 400** |
 | Fallos | 8 | **0** ✅ |
 | Bugs reales de producción corregidos | — | **3** |
-| Meta | **≥ 85 %** de líneas | faltan ~5.6 pts (≈ 1 100 líneas) |
+| Meta | **≥ 85 %** de líneas | faltan ~3.5 pts (≈ 692 líneas) |
 
-> **Etiquetas YA cubiertas** vía el motor real `App\View\Label` (`LabelRenderingTest`): renderizar el PDF con TCPDF en tests ejecuta el `write()` de cada Tape/Sheet. Subió +4.78 pts de golpe.
-> **Pendiente testeable:** `Label.php` base (178, ramas writeText/writeImage/validate), `Searchable` (135, límites SQLite), `CheckoutableListener` (102), `Loggable` (75), `Ldap` (66), `License` (52), `LogListener` (51), `StorageHelper` (46), `LocationsTransformer` (46), `Actionlog` (46), `Importer` (45), `BuildAcceptanceBreadcrumbs` (44).
-> **No testeable (~390 líneas):** `SnipeSCIMConfig` (249, SCIM), `Saml` (75), `Exceptions/Handler` (67).
+> **Etiquetas YA cubiertas** vía el motor real `App\View\Label` (`LabelRenderingTest`): renderizar el PDF con TCPDF en tests ejecuta el `write()` de cada Tape/Sheet. Subió +4.78 pts.
+> **Última tanda en curso (verificar que pase):** `ImporterTypesRunTest`, `CheckoutableFromAcceptanceTest`, `LabelsAndMaintenancesTransformerTest`, `AcceptanceItemAcceptedToUserNotificationTest`. La de importers se ajustó a aserción por conteo (CategoryImporter mapea el nombre por la columna "Item Name", no "Name"). **Falta correr ese archivo una vez para confirmar verde.**
+>
+> **Pendiente testeable para cruzar 85 % (~692 líneas necesarias):**
+> - `Searchable` trait (135, varias ramas chocan con SQLite — usar `->toSql()`)
+> - `Loggable` trait (75 restantes), `User.php` (62), `Asset.php` (60)
+> - `AuthServiceProvider` (60, define Gates — testear vía `Gate::has`/`Gate::allows`)
+> - `BreadcrumbsServiceProvider` (56), `SettingsServiceProvider` (36)
+> - `AssetsTransformer` (46 restantes), `CustomField.php` (32), `Actionlog.php` (35 restantes)
+> - `PredefinedKitCheckoutService` (37)
+>
+> **NO testeable en unit (~390 líneas, NO perseguir):** `SnipeSCIMConfig` (249, SCIM), `Saml` (75, SAML real), `Exceptions/Handler` (67), `BuildAcceptanceBreadcrumbs` (44, requiere registro de breadcrumbs/rutas → dominio Feature), métodos de conexión LDAP real en `Ldap.php`.
+>
+> **Herramientas de análisis creadas en `trabajoLibelula/`:** `parse_clover.php` (lista archivos con más líneas sin cubrir) y `uncovered_lines.php <ruta>` (rangos de líneas sin cubrir de un archivo). Regenerar `clover.xml` con: `"$PHP" -d memory_limit=-1 vendor/bin/phpunit --testsuite Unit --coverage-clover trabajoLibelula/clover.xml`.
 
 > El denominador **19 868** es el de la **Opción A** (ver §2): solo el código unit-testeable.
 > Comando de medición: `php -d memory_limit=-1 vendor/bin/phpunit --testsuite Unit --coverage-text`.
