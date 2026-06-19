@@ -9,12 +9,16 @@
 
 | Métrica | Inicio sesión | **Ahora** |
 |---|---|---|
-| **Cobertura de líneas (métrica Opción A)** | 8.49 % (sin Opción A) | **69.47 %** (13 803 / 19 868) |
-| Cobertura de métodos | ~16 % | **61.87 %** (1 261 / 2 038) |
-| Tests Unit | 315 | **1 137** |
+| **Cobertura de líneas (métrica Opción A)** | 8.49 % (sin Opción A) | **79.44 %** (15 783 / 19 868) |
+| Cobertura de métodos | ~16 % | **66.39 %** (1 353 / 2 038) |
+| Tests Unit | 315 | **~1 360** |
 | Fallos | 8 | **0** ✅ |
 | Bugs reales de producción corregidos | — | **3** |
-| Meta | **≥ 85 %** de líneas | faltan ~15.5 pts (≈ 3 100 líneas) |
+| Meta | **≥ 85 %** de líneas | faltan ~5.6 pts (≈ 1 100 líneas) |
+
+> **Etiquetas YA cubiertas** vía el motor real `App\View\Label` (`LabelRenderingTest`): renderizar el PDF con TCPDF en tests ejecuta el `write()` de cada Tape/Sheet. Subió +4.78 pts de golpe.
+> **Pendiente testeable:** `Label.php` base (178, ramas writeText/writeImage/validate), `Searchable` (135, límites SQLite), `CheckoutableListener` (102), `Loggable` (75), `Ldap` (66), `License` (52), `LogListener` (51), `StorageHelper` (46), `LocationsTransformer` (46), `Actionlog` (46), `Importer` (45), `BuildAcceptanceBreadcrumbs` (44).
+> **No testeable (~390 líneas):** `SnipeSCIMConfig` (249, SCIM), `Saml` (75), `Exceptions/Handler` (67).
 
 > El denominador **19 868** es el de la **Opción A** (ver §2): solo el código unit-testeable.
 > Comando de medición: `php -d memory_limit=-1 vendor/bin/phpunit --testsuite Unit --coverage-text`.
