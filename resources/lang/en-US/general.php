@@ -708,6 +708,7 @@ return [
     'child_locations' => 'Child Locations',
     'append' => 'Append',
     'optional' => 'OPTIONAL',
+    'checkin_confirm_title' => 'Checkin Confirmation',
     'audit_by_field' => 'Audit by Field',
     'audit_by_field_help' => 'Auditing by scanning serial numbers is only an available option if serial numbers are required to be unique in the Admin Settings.',
     'audit_key' => 'Asset',

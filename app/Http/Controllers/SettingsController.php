@@ -131,6 +131,9 @@ class SettingsController extends Controller
         $setting->profile_edit = $request->input('profile_edit', 0);
         $setting->require_checkinout_notes = $request->input('require_checkinout_notes', 0);
         $setting->manager_view_enabled = $request->input('manager_view_enabled', 0);
+        $setting->checkin_confirm_text = $request->input('checkin_confirm_text');
+        $setting->checkin_confirm = $request->input('checkin_confirm', 0);
+        $setting->checkin_confirm_checkbox_text = $request->input('checkin_confirm_checkbox_text');
 
         if ($request->input('per_page') != '') {
             $setting->per_page = $request->input('per_page');

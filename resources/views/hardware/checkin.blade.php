@@ -33,11 +33,11 @@
                         @if ($backto == 'user')
                             <form class="form-horizontal" method="post"
                                   action="{{ route('hardware.checkin.store', array('assetId'=> $asset->id, 'backto'=>'user')) }}"
-                                  autocomplete="off">
+                                  autocomplete="off" id="checkin-form">
                                 @else
                                     <form class="form-horizontal" method="post"
                                           action="{{ route('hardware.checkin.store', array('assetId'=> $asset->id)) }}"
-                                          autocomplete="off">
+                                          autocomplete="off" id="checkin-form">
                                         @endif
                                         {{csrf_field()}}
 
@@ -216,10 +216,13 @@
                 />
                 </form>
 
+                @if ($snipeSettings->checkin_confirm)
+                    @include('modals.checkin-confirm')
+                @endif
+
             </div>
         </div>
     </div>
-
 @stop
 
 @section('moar_scripts')
@@ -264,5 +267,60 @@
             initializeRequestableToggle();
         }
     </script>
-@stop
+    
+    @if ($snipeSettings->checkin_confirm)
+        <script nonce="{{ csrf_token() }}">
+            (function () {
+                let confirmed = false;
+                function ready(fn){
+                    if (document.readyState !== 'loading') {
+                        fn();
+                    } else {
+                        document.addEventListener('DOMContentLoaded', fn);
+                    }
+                }
+                
+                ready(function () {
+                    const form = document.getElementById('checkin-form');
+                    const checkbox = document.getElementById('checkin-confirm');
+                    const modalButton = document.getElementById('checkin-confirm-ok');
 
+                    if (checkbox && modalButton) {
+                            modalButton.disabled = !checkbox.checked;
+                            checkbox.addEventListener('change', () => {
+                                modalButton.disabled = !checkbox.checked;
+                            });
+                    }
+                    
+                    if (!form) return;
+
+                    form.addEventListener('submit', function (e) {
+                        if (confirmed) return;
+                        e.preventDefault();
+                        if (window.jQuery && $('#checkin-confirm-modal').length) {
+                            $('#checkin-confirm-modal').modal('show');
+                        } else {
+                            confirmed = true;
+                            form.submit();
+                        }
+                    });
+
+                    modalButton.addEventListener('click', function () {
+                        if (!checkbox || !checkbox.checked) {
+                            return;
+                        }
+                        confirmed = true;
+                        if (window.jQuery) $('#checkin-confirm-modal').modal('hide');
+                        setTimeout(function () {
+                        if (typeof form.requestSubmit === 'function') {    
+                            form.requestSubmit();
+                        } else {
+                            form.submit();
+                        }
+                    }, 0);
+                    });
+                });
+            })();
+        </script>
+    @endif
+@stop

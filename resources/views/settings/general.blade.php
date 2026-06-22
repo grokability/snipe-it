@@ -335,6 +335,47 @@
                                    </div>
                                </div>
 
+                               <!-- Checkin Confirm enable / main setting -->
+                               <div class="form-group">
+                                   <div class="col-md-8 col-md-offset-3">
+                                       <label class="form-control">
+                                           <input type="checkbox" value="1" id="checkin_confirm" name="checkin_confirm" {{ (old('checkin_confirm', $setting->checkin_confirm)) == '1' ? ' checked="checked"' : '' }} aria-label="checkin_confirm">
+                                           {{ trans('admin/settings/general.checkin_confirm') }}
+                                       </label>
+                                           <p class="help-block">{{ trans('admin/settings/general.checkin_confirm_help_text') }}</p>
+                                   </div>
+                               </div>
+                               
+                               <!-- Checkin Confirm dependentant settings -->
+                               <div id="checkin_confirm_settings">
+                                   <!-- Checkin Confirm Text -->
+                                   <div class="form-group {{ $errors->has('checkin_confirm_text') ? 'error' : '' }}" id="checkin_confirm_text">
+                                       <label for="checkin_confirm_text" class="col-md-3 control-label">{{ trans('admin/settings/general.checkin_confirm_text') }}</label>
+                                       <div class="col-md-8">
+                                           <x-input.textarea
+                                               name="checkin_confirm_text"
+                                               :value="old('checkin_confirm_text', $setting->checkin_confirm_text)"
+                                               placeholder="{{ trans('admin/settings/general.checkin_confirm_text_placeholder') }}"
+                                           />
+                                           {!! $errors->first('checkin_confirm_text', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
+                                           <p class="help-block">{!! trans('admin/settings/general.checkin_confirm_markdown') !!}</p>
+                                       </div>
+                                   </div>
+                                
+                                   <!-- Checkin Confirm Checkbox Text -->
+                                   <div class="form-group {{ $errors->has('checkin_confirm_checkbox_text') ? 'error' : '' }}" id="checkin_confirm_checkbox_text">
+                                       <label for="checkin_confirm_checkbox_text" class="col-md-3 control-label">{{ trans('admin/settings/general.checkin_confirm_checkbox_text') }}</label>
+                                       <div class="col-md-8">
+                                           <x-input.textarea
+                                               name="checkin_confirm_checkbox_text"
+                                               :value="old('checkin_confirm_checkbox_text', $setting->checkin_confirm_checkbox_text)"
+                                               placeholder="{{ trans('admin/settings/general.checkin_confirm_checkbox_text_placeholder') }}"
+                                           />
+                                           {!! $errors->first('checkin_confirm_checkbox_text', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
+                                           <p class="help-block">{!! trans('admin/settings/general.checkin_confirm_markdown') !!}</p>
+                                       </div>
+                                   </div>
+                               </div>
 
                        </fieldset>
 
@@ -573,6 +614,36 @@
 
             });
         });
+
+        // Show/Hide Checkin Confirmation settings dynamically
+        (function () {
+            function ready(fn){
+                if (document.readyState !== 'loading') {
+                    fn();
+                } else {
+                    document.addEventListener('DOMContentLoaded', fn);
+                }
+            }
+
+            ready(function () {
+                const checkin_confirm = document.getElementById('checkin_confirm');
+                const checkin_confirm_settings = document.getElementById('checkin_confirm_settings');
+                
+                if (!checkin_confirm || !checkin_confirm_settings) return;
+                
+                function sync() {
+                    let showElements = checkin_confirm.checked;
+                    checkin_confirm_settings.hidden = !showElements;
+                    let inputFields = checkin_confirm_settings.querySelectorAll('textarea');
+                    for (let i = 0; i < inputFields.length; i++) {
+                        inputFields[i].disabled = !showElements;
+                    }
+                }
+                
+                checkin_confirm.addEventListener('change', sync);
+                sync();
+            });
+        })();
 
     </script>
 @stop

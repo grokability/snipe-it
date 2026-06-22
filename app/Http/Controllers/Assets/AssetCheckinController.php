@@ -10,6 +10,7 @@ use App\Http\Traits\MigratesLegacyAssetLocations;
 use App\Models\Asset;
 use App\Models\CheckoutAcceptance;
 use App\Models\LicenseSeat;
+use App\Models\Setting;
 use App\Models\Statuslabel;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
@@ -56,13 +57,14 @@ class AssetCheckinController extends Controller
             'App\Models\Location' => trans('admin/hardware/form.redirect_to_type', ['type' => trans('general.location')]),
             default => trans('admin/hardware/form.redirect_to_type', ['type' => trans('general.user')]),
         };
-
+      
+        $setting = Setting::getSettings();
         $deployableStatusIds = array_map('intval', array_keys(Helper::deployableStatusLabelList()));
         $selectedStatusId = old('status_id');
         $showRequestableToggle = is_numeric($selectedStatusId)
             && in_array((int) $selectedStatusId, $deployableStatusIds, true);
 
-        return view('hardware/checkin', compact('asset', 'target_option'))
+        return view('hardware/checkin', compact('asset', 'target_option', 'setting'))
             ->with('item', $asset)
             ->with('statusLabel_list', Helper::statusLabelList())
             ->with('deployable_status_ids', $deployableStatusIds)
