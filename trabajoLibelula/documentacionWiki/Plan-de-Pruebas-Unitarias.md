@@ -161,14 +161,13 @@ El `phpunit.xml` mide cobertura sobre **todo `app/`** (91 controladores, transfo
 ### 7.1 Patrón AAA (Arrange–Act–Assert)
 Todo caso se estructura en preparación de datos, ejecución del método bajo prueba y verificación del resultado.
 
-### 7.2 Técnicas de caja blanca aplicadas
+### 7.2 Técnicas de caja negra aplicadas
 
 | Técnica | Aplicación representativa |
 |---------|----------------------------|
 | Partición de equivalencia | `percentRemaining()`: sin stock / parcial / completo |
 | Análisis de valores límite | 0 %, 50 %, 100 % exactos; `qty = 0` |
-| Tabla de decisión | `getStatuslabelType()` (combinaciones pending/archived/deployable) |
-| Cobertura de ramas | `isDeletable()` con y sin items |
+| Tabla de decisión y transicion de estados| `getStatuslabelType()` (combinaciones pending/archived/deployable) |
 | Manejo de nulos | `totalCostSum()` con `purchase_cost = null` |
 
 ### 7.3 Aislamiento de base de datos
