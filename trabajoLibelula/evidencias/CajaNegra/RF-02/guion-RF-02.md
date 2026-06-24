@@ -138,6 +138,7 @@ Verificación UI: la ficha muestra “Checked out to” y la pestaña **History*
 - **Acción:** pulsar Checkout sin elegir destino, dejar Status vacío / fecha inválida
 - **Esperado:** errores de validación (destino, status, fecha)
 - **Veredicto:** ☐ Conforme ☐ No conforme ☐ Bloqueado — Evidencia: `CPF-03-5.png`
+- **Observacion:** bloquea fecha invalida y status 
 
 ### CPF-03.6 — Sin permiso de checkout
 - **Acción:** cerrar sesión, entrar con `alimitada` / `Password123!`, intentar checkout de cualquier activo
@@ -145,11 +146,12 @@ Verificación UI: la ficha muestra “Checked out to” y la pestaña **History*
 - **Veredicto:** ☐ Conforme ☐ No conforme ☐ Bloqueado — Evidencia: `CPF-03-6.png`
 
 ### CPF-03.7 — Checkout cruzado entre empresas (FMCS)
-- **Precondición:** FMCS ON; `QA-A-001` en `Empresa Alfa`; `cbeta` en `Empresa Beta`
+- **Precondición:** FMCS ON: http://localhost:8000/settings/general;`QA-A-001` en `Empresa Alfa`; `cbeta` en `Empresa Beta`
 - **Activo:** `QA-A-001`
 - **Formulario:** Checkout to = **User** → `cbeta`
 - **Esperado:** rechazo; no se ejecuta la asignación
 - **Veredicto:** ☐ Conforme ☐ No conforme ☐ Bloqueado — Evidencia: `CPF-03-7.png`
+
 
 ---
 
