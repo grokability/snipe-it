@@ -13,7 +13,7 @@ Este documento describe **dónde se encuentra cada artefacto** del Hito 2 y las 
 | TURPO HUANCA WILSON JOSUE | 70 % |
 | ANETTE ISABEL GALLEGOS CONDORI | 40 % |
 | Huamani Condori Jeanpiero Sixto | 50 % |
-| Zeballos Perez Juan Sergio| 40 % |
+| JHERSON DAVID INCA MONCCA| 30 % |
 
 > ⚠️ Si el porcentaje de esfuerzo es CERO, el estudiante no participó en ninguna tarea de este hito.
 
