@@ -160,27 +160,44 @@ Cada falla que revele un defecto se documenta con la **plantilla de Reporte de I
 
 ### 5.2 Ejecución recomendada — contenedor Docker (Opción A)
 
-> Para asegurar **paridad total** entre integrantes (mismo PHP, extensiones y BD que el CI), la ejecución oficial del grupo es vía un **runner Docker efímero**. No requiere levantar la app ni MariaDB: usa SQLite en memoria y se autodestruye al terminar.
+> Para asegurar **paridad total** entre integrantes (mismo PHP, extensiones y BD), la ejecución oficial del grupo es vía un **runner Docker efímero** (`docker-compose.test.yml`). No requiere levantar la app: se autodestruye al terminar. Tiene **dos variantes**:
 
-| Opción | Qué es | Paridad con CI | Esfuerzo |
-|--------|--------|----------------|----------|
-| **A. Servicio Docker de tests (recomendada)** | `docker-compose.test.yml` con imagen PHP fijada que corre `php artisan test` sobre SQLite `:memory:`. Cada integrante hace `docker compose -f ... run --rm test`. | 🟢 Idéntica al CI | Bajo |
-| B. Local con Herd | `php -d memory_limit=-1 artisan test --testsuite=Feature` | 🟡 Depende del PHP local | Muy bajo |
+| Variante | BD | Cuándo usarla | Comando (`run --rm <servicio>`) |
+|----------|----|--------------|--------------------------------|
+| `test` | SQLite `:memory:` | Día a día (rápida). Cubre ~99.7 % | `... run --rm test` |
+| **`test-mysql`** | **MariaDB 11.4.7** (efímera, `tmpfs`) | **Corrida oficial 100 % de dialecto** (igual que producción/CI) | `... run --rm test-mysql` |
 
-**Comando oficial (desde la raíz del repo, con Docker Desktop abierto):**
+**Comandos (desde la raíz del repo, con Docker Desktop abierto):**
 ```bash
+# Rápido (SQLite)
 docker compose -f trabajoLibelula/HITO-3/Integracion/docker-compose.test.yml run --rm test
+# Oficial (MariaDB, paridad con producción)
+docker compose -f trabajoLibelula/HITO-3/Integracion/docker-compose.test.yml run --rm test-mysql
+# Apagar la BD efímera de la variante MySQL al terminar
+docker compose -f trabajoLibelula/HITO-3/Integracion/docker-compose.test.yml down
 ```
-Atajo Windows: `\trabajoLibelula\HITO-3\Integracion\correr-tests.ps1`.
-Detalle de uso y FAQ: `trabajoLibelula/HITO-3/Integracion/README-ENTORNO-DOCKER.md`.
+Atajo Windows: `\trabajoLibelula\HITO-3\Integracion\correr-tests.ps1`. Detalle y FAQ: `README-ENTORNO-DOCKER.md`.
 
-**Alternativa local (Opción B):**
+**Alternativa local (Opción B, Herd):**
 ```bash
 php -d memory_limit=-1 artisan test --testsuite=Feature      # suite completa
 php artisan test tests/Feature/Checkouts                      # por subsistema
 ```
 
-> **Nota (incidencia resuelta):** el error de "memoria insuficiente" al correr toda la suite **no** proviene de SQLite ni del hardware, sino del `memory_limit` de PHP local (por defecto 128M) al ejecutar ~1509 métodos en un solo proceso. Tanto el CI como el runner Docker usan `memory_limit=-1`.
+> **Incidencia de memoria (resuelta):** el error de "memoria insuficiente" **no** proviene de SQLite ni del hardware, sino del `memory_limit` de PHP (128M por defecto) al correr ~1509 métodos en un solo proceso. El fix definitivo es fijar `memory_limit=-1` en el **`php.ini`** (no basta `php -d`, porque `artisan test` lanza PHPUnit en un subproceso). El runner Docker ya lo trae fijado.
+
+### 5.3 Resultado de la corrida de verificación (2026-07-04)
+
+Ejecución completa de `--testsuite=Feature` en el runner Docker:
+
+| BD | Passed | Failed | Observación |
+|----|-------:|-------:|-------------|
+| SQLite `:memory:` | 1649 | 4 | 3 fallos por **dialecto** (`HAVING` sobre alias no agregado) + 1 test del grupo |
+| **MariaDB** (variante) | +3 recuperados | 1 | Los 3 de dialecto **pasan**; queda 1 fallo real en ambas BD |
+
+**Fallo persistente (no es dialecto):** `Checkouts/Api/AssetCheckoutTest::test_license_seats_are_assigned_to_user_upon_checkout` (test **añadido por el grupo**, commit `acb91d61`). Falla en SQLite **y** MariaDB en la aserción del `action_log` de checkout → requiere revisión del grupo (posible aserción incorrecta o defecto a documentar como incidente). Evidencia: `HITO-3/Integracion/Evidencias/RESULTADO-CORRIDA-DOCKER-Feature.md`.
+
+> Confirma el **riesgo RI-03**: la variante MariaDB elimina las diferencias de dialecto; se recomienda usar `test-mysql` para la **corrida oficial** del Hito 3.
 
 ---
 

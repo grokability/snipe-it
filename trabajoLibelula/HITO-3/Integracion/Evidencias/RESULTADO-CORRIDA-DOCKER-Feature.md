@@ -43,6 +43,25 @@ SQLSTATE[HY000]: General error: 1 HAVING clause on a non-aggregate query
 ```
 MySQL/MariaDB **sí** permiten `HAVING` sobre un alias no agregado; SQLite no. Por eso estos tests **pasan en la matriz MySQL/Postgres del CI** (`tests-mysql.yml`, `tests-postgres.yml`) y fallan solo en SQLite.
 
+## 3.b Verificación en MariaDB (variante `test-mysql`)
+
+Se creó la variante `test-mysql` (MariaDB 11.4.7 efímera) y se reejecutaron los 4 archivos que fallaban:
+
+```bash
+docker compose -f trabajoLibelula/HITO-3/Integracion/docker-compose.test.yml run --rm test-mysql \
+  bash -lc "php artisan test <los 4 archivos>"
+# Resultado: 38 passed, 1 failed (238 aserciones)
+```
+
+| # | Test | SQLite | MariaDB | Veredicto |
+|---|------|:------:|:-------:|-----------|
+| 1 | `IndexAccessoryTest > can filter accessories by searchable count alias` | ❌ | ✅ | Dialecto (resuelto en MySQL) |
+| 2 | `IndexAssetModelsTest > ...computed count aliases` | ❌ | ✅ | Dialecto (resuelto en MySQL) |
+| 3 | `ImportConsumablesTest > will not create new category when category exists` | ❌ | ✅ | Dialecto (resuelto en MySQL) |
+| 4 | `AssetCheckoutTest > license seats are assigned to user upon checkout` | ❌ | ❌ | **Fallo real** (ambas BD) — test del grupo |
+
+**Sobre el caso 4:** es un test **añadido por el grupo** (Anette-Gallegos, commit `acb91d61`, 2026-06-12). Falla la aserción del `action_log` de checkout (`tests/Feature/Checkouts/Api/AssetCheckoutTest.php:321`) en **SQLite y MariaDB**. El checkout API sí responde `success` y el activo queda asignado (líneas 306-318 pasan); lo que no cuadra es el registro esperado en `action_logs`. → **Requiere revisión del grupo**: corregir la aserción del test o documentarlo como incidente si es un defecto real del sistema.
+
 ## 4. Conclusión (para el Plan y el Informe)
 
 - El **runner Docker con SQLite `:memory:`** es válido, rápido y reproducible para **~99.7 %** de la suite (1649/1653 casos efectivos).

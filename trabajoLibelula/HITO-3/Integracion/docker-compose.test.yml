@@ -1,16 +1,22 @@
 # =============================================================================
 # Entorno de PRUEBAS efímero (one-shot) para la suite Feature (integración).
-# NO es la app: no expone puertos, no usa MariaDB, no deja nada corriendo.
-# La base de datos es SQLite EN MEMORIA (dentro del propio proceso de test).
+# Dos variantes:
+#   - `test`        → SQLite EN MEMORIA. Rápido; para el día a día. ~99.7% verde
+#                     (4 tests usan SQL que solo soporta MySQL → dialecto).
+#   - `test-mysql`  → MariaDB real (igual que producción/CI). Corrida OFICIAL
+#                     100% verde. Levanta una BD efímera (tmpfs) y la borra.
 #
-# Uso (desde la RAÍZ del repositorio snipe-it):
+# Uso (desde la RAÍZ del repositorio snipe-it, con Docker Desktop abierto):
+#   # Rápido (SQLite):
 #   docker compose -f trabajoLibelula/HITO-3/Integracion/docker-compose.test.yml run --rm test
+#   # Oficial (MariaDB):
+#   docker compose -f trabajoLibelula/HITO-3/Integracion/docker-compose.test.yml run --rm test-mysql
 #
-# Correr un subconjunto:
-#   docker compose -f trabajoLibelula/HITO-3/Integracion/docker-compose.test.yml run --rm test \
-#     bash -lc "php -d memory_limit=-1 artisan test tests/Feature/Checkouts"
+# Al terminar, apagar la BD de la variante MySQL:
+#   docker compose -f trabajoLibelula/HITO-3/Integracion/docker-compose.test.yml down
 # =============================================================================
 services:
+  # --- Variante SQLite en memoria (rápida) ---------------------------------
   test:
     build:
       context: .
@@ -21,8 +27,50 @@ services:
     volumes:
       # Monta la raíz del repo (3 niveles arriba de esta carpeta) dentro de /app.
       - ../../../:/app
-    # Por defecto: si falta vendor/ lo instala, y corre TODA la suite Feature
-    # con memory_limit=-1 (evita el error de "memoria insuficiente").
+    # Si falta vendor/ lo instala, y corre TODA la suite Feature.
+    # memory_limit=-1 ya está fijado en el php.ini de la imagen (Dockerfile.test).
     command: >
       bash -lc "([ -d vendor ] || composer install --no-interaction --prefer-dist --no-progress);
-      php -d memory_limit=-1 artisan test --testsuite=Feature"
+      php artisan test --testsuite=Feature"
+
+  # --- Base de datos MariaDB efímera (para la variante oficial) ------------
+  db-test:
+    image: mariadb:11.4.7
+    environment:
+      MYSQL_DATABASE: snipeit_test
+      MYSQL_USER: snipeit
+      MYSQL_PASSWORD: changeme1234
+      MYSQL_ROOT_PASSWORD: changeme1234
+    # tmpfs = datos en RAM: rápido y sin volumen persistente (se borra al bajar).
+    tmpfs:
+      - /var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 2s
+      retries: 15
+
+  # --- Variante MariaDB (oficial, 100% verde, paridad con producción/CI) ---
+  test-mysql:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    working_dir: /app
+    depends_on:
+      db-test:
+        condition: service_healthy
+    environment:
+      APP_ENV: testing
+      # Estas variables (env real) tienen prioridad sobre .env.testing en Laravel,
+      # así que la suite corre contra MariaDB en vez de SQLite.
+      DB_CONNECTION: mysql
+      DB_HOST: db-test
+      DB_PORT: "3306"
+      DB_DATABASE: snipeit_test
+      DB_USERNAME: snipeit
+      DB_PASSWORD: changeme1234
+    volumes:
+      - ../../../:/app
+    command: >
+      bash -lc "([ -d vendor ] || composer install --no-interaction --prefer-dist --no-progress);
+      php artisan test --testsuite=Feature"

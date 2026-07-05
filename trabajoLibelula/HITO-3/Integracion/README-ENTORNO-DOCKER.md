@@ -33,10 +33,17 @@ Desde la **raíz** del repositorio `snipe-it`:
 .\trabajoLibelula\HITO-3\Integracion\correr-tests.ps1
 ```
 
-**Opción directa (docker compose):**
+**Opción directa (docker compose) — dos variantes de BD:**
 ```powershell
+# a) Rápida — SQLite en memoria (día a día, ~99.7% verde)
 docker compose -f trabajoLibelula/HITO-3/Integracion/docker-compose.test.yml run --rm test
+
+# b) Oficial — MariaDB real (paridad con producción/CI; sin fallos de dialecto)
+docker compose -f trabajoLibelula/HITO-3/Integracion/docker-compose.test.yml run --rm test-mysql
+docker compose -f trabajoLibelula/HITO-3/Integracion/docker-compose.test.yml down   # apaga la BD efímera
 ```
+
+> **¿SQLite o MariaDB?** SQLite es más rápida, pero ~4 tests usan SQL que solo soporta MySQL (`HAVING` sobre alias) y fallan por **dialecto**, no por defecto. La variante `test-mysql` los ejecuta contra MariaDB (igual que producción) y quedan verdes. Usa `test-mysql` para la **corrida oficial** del Hito 3.
 
 - **La 1ª vez:** construye la imagen (descarga PHP + extensiones). Tarda unos minutos. **Solo una vez.**
 - **Siguientes veces:** usa la imagen cacheada → arranca en segundos.
