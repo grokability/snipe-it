@@ -5,7 +5,7 @@
 | Campo | Detalle |
 |-------|---------|
 | **Documento** | Plan de Pruebas de Integración — Snipe-IT |
-| **Versión** | 1.1 |
+| **Versión** | 1.2 |
 | **Hito / Sprint** | Hito 2 / Sprint 2 (plan) → ejecución en Hito 3 |
 | **Nivel de prueba** | Integración (componentes e interfaces) — alcance *Small* (subsistemas internos) |
 | **Herramienta** | PHPUnit (suite `Feature`) sobre SQLite en memoria — equivalente en el stack PHP/Laravel a Supertest (pruebas de integración HTTP por código, versionadas en el repo); Postman/Newman como complemento para el contrato de la API v1 |
@@ -186,18 +186,14 @@ php artisan test tests/Feature/Checkouts                      # por subsistema
 
 > **Incidencia de memoria (resuelta):** el error de "memoria insuficiente" **no** proviene de SQLite ni del hardware, sino del `memory_limit` de PHP (128M por defecto) al correr ~1509 métodos en un solo proceso. El fix definitivo es fijar `memory_limit=-1` en el **`php.ini`** (no basta `php -d`, porque `artisan test` lanza PHPUnit en un subproceso). El runner Docker ya lo trae fijado.
 
-### 5.3 Resultado de la corrida de verificación (2026-07-04)
+### 5.3 Verificación del entorno (parte del criterio de entrada)
 
-Ejecución completa de `--testsuite=Feature` en el runner Docker:
+> Solo se confirma que el **entorno de ejecución** está operativo. Los **resultados de ejecución, defectos e incidencias NO van en este Plan**: se documentan en el **Informe de Integración** (Test Completion Report, ISO 29119-3).
 
-| BD | Passed | Failed | Observación |
-|----|-------:|-------:|-------------|
-| SQLite `:memory:` | 1649 | 4 | 3 fallos por **dialecto** (`HAVING` sobre alias no agregado) + 1 test del grupo |
-| **MariaDB** (variante) | +3 recuperados | 1 | Los 3 de dialecto **pasan**; queda 1 fallo real en ambas BD |
-
-**Fallo persistente (no es dialecto):** `Checkouts/Api/AssetCheckoutTest::test_license_seats_are_assigned_to_user_upon_checkout` (test **añadido por el grupo**, commit `acb91d61`). Falla en SQLite **y** MariaDB en la aserción del `action_log` de checkout → requiere revisión del grupo (posible aserción incorrecta o defecto a documentar como incidente). Evidencia: `HITO-3/Integracion/Evidencias/RESULTADO-CORRIDA-DOCKER-Feature.md`.
-
-> Confirma el **riesgo RI-03**: la variante MariaDB elimina las diferencias de dialecto; se recomienda usar `test-mysql` para la **corrida oficial** del Hito 3.
+- ✅ Runner Docker operativo en ambas variantes: `test` (SQLite) y `test-mysql` (MariaDB). La imagen construye y ejecuta `--testsuite=Feature`.
+- ✅ Incidencia de memoria resuelta (`memory_limit=-1` fijado en el `php.ini` de la imagen).
+- ✅ La variante **`test-mysql`** elimina las diferencias de dialecto SQLite (mitiga el riesgo **RI-03**) → es la recomendada para la **corrida oficial**.
+- 📄 **Resultados de la corrida de verificación:** ver `HITO-3/Integracion/Evidencias/RESULTADO-CORRIDA-DOCKER-Feature.md` y el futuro **Informe de Integración**.
 
 ---
 
@@ -243,6 +239,7 @@ Los flujos INT-XX se vinculan a los requisitos funcionales (RF-XX) y a los casos
 |---------|-------|---------|
 | 1.0 | 2026-06-12 | Plan inicial (Hito 2). |
 | 1.1 | 2026-07-04 | Cifra corregida (1509 métodos); §2.4 matriz heredado/aporte; §3 terminología Modelo-V (Small/Bottom-Up/mocks); §4.1 fallas de interfaz; §4.2 casos en formato del grupo; §5 entorno común + fix de memoria; flujos INT-11/12/13; criterios de salida y riesgo RI-05. |
+| 1.2 | 2026-07-04 | Añadida variante Docker `test-mysql` (MariaDB) en §5.2. **Separación Plan/Informe:** el §5.3 deja de contener resultados de ejecución (movidos al Informe/evidencia) y pasa a ser verificación de entorno. Los resultados y defectos se reportan en el Informe de Integración. |
 
 ---
 

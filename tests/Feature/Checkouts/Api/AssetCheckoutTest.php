@@ -317,14 +317,15 @@ class AssetCheckoutTest extends TestCase
         $seat->refresh();
         $this->assertEquals($asset->id, $seat->asset_id);
 
-        // 3. El action_log registra el checkout del asset
-        $this->assertDatabaseHas('action_logs', [
-            'action_type' => 'checkout',
-            'target_type' => \App\Models\User::class,
-            'target_id'   => $targetUser->id,
-            'item_type'   => \App\Models\Asset::class,
-            'item_id'     => $asset->id,
-        ]);
+        // 3. El evento de checkout se despachó con el activo y el usuario correctos.
+        //    El action_log lo crea LogListener al reaccionar a CheckoutableCheckedOut;
+        //    como esta clase falsea ese evento en setUp(), el listener no corre y no
+        //    se escribe la fila en action_logs. Por eso se verifica el EVENTO (patrón
+        //    del resto de la clase), no la fila de action_logs.
+        Event::assertDispatched(CheckoutableCheckedOut::class, 1);
+        Event::assertDispatched(function (CheckoutableCheckedOut $event) use ($asset, $targetUser) {
+            return $event->checkoutable->is($asset) && $event->checkedOutTo->is($targetUser);
+        });
 
         // 4. Las relaciones se mantienen íntegras
         $this->assertDatabaseHas('license_seats', [

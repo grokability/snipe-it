@@ -58,18 +58,38 @@ docker compose -f trabajoLibelula/HITO-3/Integracion/docker-compose.test.yml run
 | 1 | `IndexAccessoryTest > can filter accessories by searchable count alias` | ❌ | ✅ | Dialecto (resuelto en MySQL) |
 | 2 | `IndexAssetModelsTest > ...computed count aliases` | ❌ | ✅ | Dialecto (resuelto en MySQL) |
 | 3 | `ImportConsumablesTest > will not create new category when category exists` | ❌ | ✅ | Dialecto (resuelto en MySQL) |
-| 4 | `AssetCheckoutTest > license seats are assigned to user upon checkout` | ❌ | ❌ | **Fallo real** (ambas BD) — test del grupo |
+| 4 | `AssetCheckoutTest > license seats are assigned to user upon checkout` | ✅* | ✅* | **RESUELTO** — era error del test (del grupo) |
 
-**Sobre el caso 4:** es un test **añadido por el grupo** (Anette-Gallegos, commit `acb91d61`, 2026-06-12). Falla la aserción del `action_log` de checkout (`tests/Feature/Checkouts/Api/AssetCheckoutTest.php:321`) en **SQLite y MariaDB**. El checkout API sí responde `success` y el activo queda asignado (líneas 306-318 pasan); lo que no cuadra es el registro esperado en `action_logs`. → **Requiere revisión del grupo**: corregir la aserción del test o documentarlo como incidente si es un defecto real del sistema.
+`*` Tras el fix del test (ver §3.c).
+
+### 3.c Caso 4 — diagnóstico y corrección (RESUELTO)
+
+- **Test:** `test_license_seats_are_assigned_to_user_upon_checkout`, añadido por el grupo (Anette-Gallegos, commit `acb91d61`).
+- **Causa raíz (error del test, no del sistema):** la clase `AssetCheckoutTest` falsea el evento en `setUp()` → `Event::fake([CheckoutableCheckedOut::class])`. El `action_log` de checkout lo escribe `LogListener::onCheckoutableCheckedOut()` **al reaccionar a ese evento**; al estar falseado, el listener no corre y **la fila en `action_logs` nunca se crea**. La aserción `assertDatabaseHas('action_logs', …)` (línea 321) era **imposible de cumplir** por diseño de la clase. Por eso fallaba en **SQLite y MariaDB** por igual.
+- **Corrección aplicada:** se sustituyó la aserción del `action_log` por la verificación del **evento** (patrón que ya usa el resto de la clase, línea 269):
+  ```php
+  Event::assertDispatched(CheckoutableCheckedOut::class, 1);
+  Event::assertDispatched(fn (CheckoutableCheckedOut $event) =>
+      $event->checkoutable->is($asset) && $event->checkedOutTo->is($targetUser));
+  ```
+- **Verificación post-fix:**
+  | Entorno | Resultado |
+  |---|---|
+  | SQLite (aislado) | ✅ 1 passed (9 aserciones) |
+  | Clase completa `AssetCheckoutTest` | ✅ 17 passed |
+  | MariaDB (`test-mysql`, aislado) | ✅ 1 passed (9 aserciones) |
+- **Naturaleza:** defecto **del test del grupo**, no del sistema. Corregirlo es parte del trabajo de QA (no viola la regla de "no tocar el código de producción": se corrigió una **prueba propia**, no la app).
 
 ## 4. Conclusión (para el Plan y el Informe)
 
-- El **runner Docker con SQLite `:memory:`** es válido, rápido y reproducible para **~99.7 %** de la suite (1649/1653 casos efectivos).
-- Los 4 fallos **materializan el riesgo RI-03 del Plan** ("Diferencias de comportamiento entre SQLite y MySQL/PostgreSQL"): son limitaciones de **dialecto SQL**, no defectos funcionales.
-- Para una corrida **100 % verde** (paridad con la BD de producción MariaDB) hay dos caminos:
-  1. Ejecutar esos casos en la **matriz MySQL/Postgres** (ya cubierta por el CI).
-  2. Añadir un **servicio MySQL** al `docker-compose.test.yml` (variante `DB_CONNECTION=mysql`) para el runner local.
-- Esto ilustra la distinción del docente entre integración *Small* (subsistemas internos, cubierta con SQLite) e integración *Large* (con la BD COTS real, MariaDB).
+- El **runner Docker funciona** en ambas variantes; la incidencia de memoria quedó resuelta (`memory_limit=-1` en el `php.ini`).
+- **Clasificación final de los 4 fallos de la corrida SQLite:**
+  - **3 = diferencias de dialecto** (`HAVING` sobre alias no agregado) → **pasan en MariaDB**. Materializan el riesgo **RI-03** del Plan; no son defectos funcionales.
+  - **1 = defecto del test del grupo** (evento falseado) → **corregido** (§3.c). No era defecto del sistema.
+- **Estado final:** con la variante **`test-mysql`** (paridad con producción) + el fix del test, **no quedan fallos reales**. Se recomienda `test-mysql` para la **corrida oficial** del Hito 3.
+- Esto ilustra la distinción del docente entre integración *Small* (subsistemas internos, SQLite) e integración *Large* (BD COTS real, MariaDB): la BD real elimina los falsos negativos de dialecto.
+
+> Nota metodológica: los conteos globales PASS/FAIL de esta corrida son **evidencia para el Informe** (Test Completion Report), no para el Plan. El Plan solo referencia esta evidencia.
 
 ## 5. Reproducir
 ```bash
