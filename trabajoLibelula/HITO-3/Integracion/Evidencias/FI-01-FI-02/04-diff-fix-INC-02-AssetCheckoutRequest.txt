@@ -1,0 +1,15 @@
+﻿diff --git a/app/Http/Requests/AssetCheckoutRequest.php b/app/Http/Requests/AssetCheckoutRequest.php
+index 35e972d1c..d84f3c674 100644
+--- a/app/Http/Requests/AssetCheckoutRequest.php
++++ b/app/Http/Requests/AssetCheckoutRequest.php
+@@ -38,6 +38,10 @@ class AssetCheckoutRequest extends Request
+             'expected_checkin' => [
+                 'nullable',
+                 'date',
++                // INC-02: la devolución esperada no puede ser anterior a la fecha de entrega.
++                // Solo se compara si la petición trae checkout_at (cuando falta, el
++                // controlador usa la fecha actual y no hay valor contra el cual validar).
++                ...$this->filled('checkout_at') ? ['after_or_equal:checkout_at'] : [],
+             ],
+             'requestable' => 'nullable|boolean',
+             'set_not_requestable' => 'nullable|boolean',
