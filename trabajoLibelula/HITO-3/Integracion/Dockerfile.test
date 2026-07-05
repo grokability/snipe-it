@@ -1,0 +1,20 @@
+# Imagen de PRUEBAS para Snipe-IT (entorno común del grupo).
+# PHP CLI + extensiones que exige composer.json + SQLite + PCOV + Composer.
+# Se construye UNA sola vez (queda en caché); luego cada corrida es rápida.
+FROM php:8.3-cli
+
+# Instalador rápido de extensiones PHP (una capa, cacheada en la imagen).
+COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/bin/
+RUN install-php-extensions \
+      pdo_sqlite pdo_mysql gd intl zip bcmath exif ldap \
+      mbstring curl fileinfo iconv pcov
+
+# Composer (por si algún integrante no tiene vendor/ instalado).
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+# memory_limit=-1 en php.ini (igual que el CI). IMPRESCINDIBLE: `artisan test`
+# lanza PHPUnit en un SUBPROCESO que NO hereda `php -d memory_limit=-1`, por eso
+# el límite debe fijarse en la config, no por línea de comandos.
+RUN echo "memory_limit=-1" > /usr/local/etc/php/conf.d/zz-memory-limit.ini
+
+WORKDIR /app

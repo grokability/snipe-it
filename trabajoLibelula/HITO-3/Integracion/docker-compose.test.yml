@@ -1,0 +1,28 @@
+# =============================================================================
+# Entorno de PRUEBAS efímero (one-shot) para la suite Feature (integración).
+# NO es la app: no expone puertos, no usa MariaDB, no deja nada corriendo.
+# La base de datos es SQLite EN MEMORIA (dentro del propio proceso de test).
+#
+# Uso (desde la RAÍZ del repositorio snipe-it):
+#   docker compose -f trabajoLibelula/HITO-3/Integracion/docker-compose.test.yml run --rm test
+#
+# Correr un subconjunto:
+#   docker compose -f trabajoLibelula/HITO-3/Integracion/docker-compose.test.yml run --rm test \
+#     bash -lc "php -d memory_limit=-1 artisan test tests/Feature/Checkouts"
+# =============================================================================
+services:
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    working_dir: /app
+    environment:
+      APP_ENV: testing
+    volumes:
+      # Monta la raíz del repo (3 niveles arriba de esta carpeta) dentro de /app.
+      - ../../../:/app
+    # Por defecto: si falta vendor/ lo instala, y corre TODA la suite Feature
+    # con memory_limit=-1 (evita el error de "memoria insuficiente").
+    command: >
+      bash -lc "([ -d vendor ] || composer install --no-interaction --prefer-dist --no-progress);
+      php -d memory_limit=-1 artisan test --testsuite=Feature"

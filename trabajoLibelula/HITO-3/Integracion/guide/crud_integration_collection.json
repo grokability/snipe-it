@@ -1,0 +1,120 @@
+{
+	"info": {
+		"_postman_id": "c7b3e1a2-45d6-4e89-b712-efab34567cba",
+		"name": "Flujo CRUD - Integración Completa",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Crear Producto",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 201 - Producto Creado\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"const res = pm.response.json();",
+							"pm.test(\"Trae un ID válido\", function () {",
+							"    pm.expect(res).to.have.property(\"id\");",
+							"});",
+							"",
+							"pm.environment.set(\"productoId\", res.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"nombre\": \"Teclado Mecánico RGB\",\n  \"precio\": 85.50\n}"
+				},
+				"url": { "raw": "http://localhost:3000/api/productos" }
+			}
+		},
+		{
+			"name": "2. Leer Producto",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 200 - Producto Encontrado\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"const res = pm.response.json();",
+							"pm.test(\"Los datos coinciden\", function () {",
+							"    pm.expect(res.id).to.eql(pm.environment.get(\"productoId\"));",
+							"    pm.expect(res.nombre).to.eql(\"Teclado Mecánico RGB\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"url": { "raw": "http://localhost:3000/api/productos/{{productoId}}" }
+			}
+		},
+		{
+			"name": "3. Actualizar Producto",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 200 - Actualización Exitosa\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"const res = pm.response.json();",
+							"pm.test(\"Campos actualizados correctamente\", function () {",
+							"    pm.expect(res.nombre).to.eql(\"Teclado Mecánico RGB Pro\");",
+							"    pm.expect(res.precio).to.eql(99.99);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"nombre\": \"Teclado Mecánico RGB Pro\",\n  \"precio\": 99.99\n}"
+				},
+				"url": { "raw": "http://localhost:3000/api/productos/{{productoId}}" }
+			}
+		},
+		{
+			"name": "4. Eliminar Producto",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 200 - Producto Eliminado\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.environment.unset(\"productoId\");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"url": { "raw": "http://localhost:3000/api/productos/{{productoId}}" }
+			}
+		}
+	]
+}
