@@ -52,6 +52,11 @@ class StoreAssetRequest extends ImageUploadRequest
     {
         $modelRules = (new Asset)->getRules();
 
+        // assigned_to / assigned_type are intentionally excluded: they must only
+        // be written via assigned_user / assigned_asset / assigned_location (which
+        // route through checkOut() and produce the required audit-log entry).
+        unset($modelRules['assigned_to'], $modelRules['assigned_type']);
+
         return array_merge(
             $modelRules,
             ['status_id' => [new AssetCannotBeCheckedOutToNondeployableStatus]],

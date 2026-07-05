@@ -9,7 +9,7 @@ return [
     'edit' => '編輯配件',
     'eula_text' => '類別的最終使用者許可協議',
     'eula_text_help' => '此欄位允許您為特定資產自定EULA（最終使用者許可協議）。如果您所有資產只有一個EULA（最終使用者許可協議），您可以勾選下方選項設為預設。',
-    'require_acceptance' => 'Require users to confirm acceptance of item in this category.',
+    'require_acceptance' => '要求使用者確認接受此類別中的項目。',
     'no_default_eula' => '沒有找到預設EULA（最終使用者許可協議）。請在設定中增加一個。',
     'total' => '總計',
     'remaining' => '可用',

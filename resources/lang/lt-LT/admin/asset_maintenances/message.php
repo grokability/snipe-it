@@ -3,7 +3,7 @@
 return [
     'not_found' => 'Jūsų ieškomas turto aptarnavimas nebuvo rastas!',
     'delete' => [
-        'confirm' => 'Ar tikrai norite panaikinti šį turto aptarnavimą?',
+        'confirm' => 'Ar tikrai norite ištrinti šį turto aptarnavimą?',
         'error' => 'Bandant panaikinti turto aptarnavimą įvyko klaida. Bandykite dar kartą.',
         'success' => 'Turto aptarnavimo įrašas sėkmingai panaikintas.',
     ],

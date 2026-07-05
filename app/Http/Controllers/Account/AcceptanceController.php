@@ -339,7 +339,7 @@ class AcceptanceController extends Controller
             ->where('item_id', $itemId)
             ->where('target_type', User::class)
             ->where('target_id', $acceptance->assigned_to_id)
-            ->where('created_at', '<=', $acceptance->created_at->copy()->addMinutes(5))
+            ->when($acceptance->created_at, fn ($q) => $q->where('created_at', '<=', $acceptance->created_at->copy()->addMinutes(5)))
             ->latest('id')
             ->first();
 

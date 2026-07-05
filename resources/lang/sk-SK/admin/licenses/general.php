@@ -31,6 +31,11 @@ return [
             'log_msg' => 'Hromadne prevziať v rozhraní pre správu licencií',
         ],
 
+        'checkin_selected' => [
+            'success' => ':count seat checked in successfully. | :count seats checked in successfully.',
+            'no_seats_selected' => 'No seats were selected.',
+        ],
+
         'checkout_all' => [
             'button' => 'Odovzdať všetky sloty',
             'modal' => 'Táto akcia odovzdá jeden slot prvému dostupnému používateľovi. | Táto akcia odovzdá všetkých :available_seats_count slotov prvých dostupných používateľom. Používateľ je považovaný za dostupného v prípade, ak mu ešte nebola odovzdaná táto licencia a daný používateľ ma povolené automatické priradzovanie licencií.',

@@ -89,17 +89,22 @@ class LocationsController extends Controller
         $location->fax = request('fax');
         $location->tag_color = $request->input('tag_color');
         $location->notes = $request->input('notes');
-        $location->company_id = Company::getIdForCurrentUser($request->input('company_id'));
-
-        // Only scope the location if the setting is enabled
         if (Setting::getSettings()->scope_locations_fmcs) {
             $location->company_id = Company::getIdForCurrentUser($request->input('company_id'));
-            // check if parent is set and has a different company
-            if ($location->parent_id && Location::find($location->parent_id)->company_id != $location->company_id) {
-                return redirect()->back()->withInput()->withInput()->with('error', 'different company than parent');
-            }
         } else {
             $location->company_id = $request->input('company_id');
+        }
+
+        // Parent company check applies whenever FMCS is on, independent of scope_locations_fmcs.
+        if (Setting::getSettings()->full_multiple_companies_support) {
+            $parent = $location->parent_id ? Location::find($location->parent_id) : null;
+            if ($parent && $parent->company_id != $location->company_id) {
+                return redirect()->back()->withInput()->with('error', trans('general.error_location_parent_company', [
+                    'parent' => $parent->name,
+                    'parent_company' => $parent->company?->name ?? trans('general.unassigned'),
+                    'location_company' => $location->company?->name ?? trans('general.unassigned'),
+                ]));
+            }
         }
 
         if ($request->has('use_cloned_image')) {
@@ -171,15 +176,32 @@ class LocationsController extends Controller
         $location->tag_color = $request->input('tag_color');
         $location->notes = $request->input('notes');
 
-        // Only scope the location if the setting is enabled
         if (Setting::getSettings()->scope_locations_fmcs) {
             $location->company_id = Company::getIdForCurrentUser($request->input('company_id'));
             // check if there are related objects with different company
-            if (Helper::test_locations_fmcs(false, $location->id, $location->company_id)) {
-                return redirect()->back()->withInput()->withInput()->with('error', 'error scoped locations');
+            if ($mismatched = Helper::test_locations_fmcs(false, $location->id, $location->company_id)) {
+                $first = $mismatched[0];
+
+                return redirect()->back()->withInput()->with('error', trans('general.error_location_scoped_items', [
+                    'item_type' => trans('general.'.strtolower($first[0])),
+                    'item_name' => $first[2],
+                    'item_company' => $first[5] ?? trans('general.unassigned'),
+                ]));
             }
         } else {
             $location->company_id = $request->input('company_id');
+        }
+
+        // Parent company check applies whenever FMCS is on, independent of scope_locations_fmcs.
+        if (Setting::getSettings()->full_multiple_companies_support) {
+            $parent = $location->parent_id ? Location::find($location->parent_id) : null;
+            if ($parent && $parent->company_id != $location->company_id) {
+                return redirect()->back()->withInput()->with('error', trans('general.error_location_parent_company', [
+                    'parent' => $parent->name,
+                    'parent_company' => $parent->company?->name ?? trans('general.unassigned'),
+                    'location_company' => $location->company?->name ?? trans('general.unassigned'),
+                ]));
+            }
         }
 
         $location = $request->handleImages($location);
@@ -277,7 +299,7 @@ class LocationsController extends Controller
                 ->with('assignedAssets', $location->assignedAssets)
                 ->with('accessories', $location->accessories)
                 ->with('assignedAccessories', $location->assignedAccessories)
-                ->with('users', $location->users)
+                ->with('users', $location->users()->with('companies')->get())
                 ->with('location', $location)
                 ->with('consumables', $location->consumables)
                 ->with('components', $location->components)
@@ -297,7 +319,7 @@ class LocationsController extends Controller
                 ->with('assignedAssets', $location->assignedAssets)
                 ->with('accessories', $location->accessories)
                 ->with('assignedAccessories', $location->assignedAccessories)
-                ->with('users', $location->users)
+                ->with('users', $location->users()->with('companies')->get())
                 ->with('location', $location)
                 ->with('consumables', $location->consumables)
                 ->with('components', $location->components)

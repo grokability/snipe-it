@@ -12,6 +12,7 @@ use ArieTimmerman\Laravel\SCIMServer\Attribute\Meta;
 use ArieTimmerman\Laravel\SCIMServer\Attribute\MutableCollection;
 use ArieTimmerman\Laravel\SCIMServer\Attribute\Schema as AttributeSchema;
 use ArieTimmerman\Laravel\SCIMServer\Exceptions\SCIMException;
+use ArieTimmerman\Laravel\SCIMServer\Parser\Parser;
 use ArieTimmerman\Laravel\SCIMServer\Parser\Path;
 use ArieTimmerman\Laravel\SCIMServer\SCIM\Schema;
 use Illuminate\Database\Eloquent\Model;
@@ -31,11 +32,158 @@ function eloquent($name, $attribute = null): Attribute
     return new Eloquent($name, $attribute);
 }
 
-class EloquentWithRemove extends Eloquent
+// Extends Complex to handle schema-qualified attribute keys in PATCH add/replace operations.
+// Azure Entra ID sends PATCH without a "path" field, putting the full URN as the value dict key
+// e.g. {"op":"add","value":{"urn:...grokability...:location":"Head Office"}}.
+// The upstream library's add() only searches the default (core) schema, silently dropping grokability attrs.
+class SnipeRootComplex extends Complex
 {
-    public function remove($value, Model &$object, ?Path $path = null)
+    private function findInSchema(string $schemaUrn, string $attrName): ?object
     {
-        $object->{$this->attribute} = null;
+        $schemaNode = $this->getSubNode($schemaUrn);
+
+        return ($schemaNode instanceof AttributeSchema) ? $schemaNode->getSubNode($attrName) : null;
+    }
+
+    public function add($value, Model &$object)
+    {
+        $match = false;
+        $this->dirty = true;
+
+        if ($this->mutability == 'readOnly') {
+            return;
+        }
+
+        foreach ($value as $key => $v) {
+            if (is_numeric($key)) {
+                throw new SCIMException('Invalid key: '.$key.' for complex object '.$this->getFullKey());
+            }
+
+            $path = Parser::parse($key);
+
+            if ($path->isNotEmpty()) {
+                $attributeNames = $path->getAttributePathAttributes();
+                $schema = $path->getAttributePath()?->path?->schema;
+                $path = $path->shiftAttributePathAttributes();
+
+                $subNode = ($schema !== null) ? $this->findInSchema($schema, $attributeNames[0]) : null;
+                if ($subNode === null) {
+                    $subNode = $this->getSubNode($attributeNames[0]);
+                }
+
+                $match = true;
+
+                $newValue = $v;
+                if ($path->isNotEmpty()) {
+                    $newValue = [implode('.', $path->getAttributePathAttributes()) => $v];
+                }
+
+                if ($subNode !== null) {
+                    $subNode->add($newValue, $object);
+                }
+            }
+        }
+
+        if (! $match && $this->parent == null) {
+            foreach ($this->subAttributes as $attribute) {
+                if ($attribute instanceof AttributeSchema) {
+                    $attribute->add($value, $object);
+                }
+            }
+        }
+    }
+
+    public function replace($value, Model &$object, ?Path $path = null, $removeIfNotSet = false)
+    {
+        $this->dirty = true;
+
+        if ($this->mutability == 'readOnly') {
+            return;
+        }
+
+        foreach ($value as $key => $v) {
+            if (is_numeric($key)) {
+                throw new SCIMException('Invalid key: '.$key.' for complex object '.$this->getFullKey());
+            }
+
+            $subNode = null;
+            $path = null;
+            $key = trim($key);
+
+            if (strpos($key, ':') !== false) {
+                $parsed = Parser::parse($key);
+                $schemaUrn = $parsed->getAttributePath()?->path?->schema;
+                $attrName = $parsed->getAttributePathAttributes()[0] ?? null;
+                if ($schemaUrn !== null && $attrName !== null) {
+                    $subNode = $this->findInSchema($schemaUrn, $attrName);
+                }
+                if ($subNode === null) {
+                    $subNode = $this->getSubNode($key);
+                }
+            } else {
+                $path = Parser::parse($key);
+                if ($path->isNotEmpty()) {
+                    $attributeNames = $path->getAttributePathAttributes();
+                    $path = $path->shiftAttributePathAttributes();
+                    $subNode = $this->getSubNode($attributeNames[0] ?? $path->getAttributePath()?->path?->schema);
+                }
+            }
+
+            if ($subNode !== null) {
+                $newValue = $v;
+                if ($path !== null && $path->isNotEmpty()) {
+                    $newValue = [implode('.', $path->getAttributePathAttributes()) => $v];
+                }
+                $subNode->replace($newValue, $object, $path);
+            }
+        }
+
+        if ($subNode == null && $this->parent == null) {
+            foreach ($this->subAttributes as $attribute) {
+                if ($attribute instanceof AttributeSchema) {
+                    $attribute->replace($value, $object, $path);
+                }
+            }
+        }
+
+        if ($removeIfNotSet) {
+            foreach ($this->subAttributes as $attribute) {
+                if (! $attribute->isDirty()) {
+                    $attribute->remove(null, $object);
+                }
+            }
+        }
+    }
+}
+
+// Azure Entra ID sends op=replace with path=members and only the single user being provisioned,
+// not the full member list. Using sync() would wipe all other members on every user update.
+// Override replace() to use syncWithoutDetaching() so it behaves like add(); op=remove with a
+// filter path still handles explicit removals correctly.
+class SnipeMutableCollection extends MutableCollection
+{
+    public function replace($value, Model &$object, ?Path $path = null)
+    {
+        $this->add($value, $object);
+    }
+
+    // POST /scim/v2/Groups with an initial `members` array arrives here with
+    // an unsaved parent: the SCIM library runs attribute mappers before it
+    // calls save() on the new resource. Letting parent::add() fire on an
+    // unsaved model makes Eloquent's pivot INSERT bind NULL for group_id
+    // (since $parent->getKey() is null) and blow up with a MySQL 23000 integrity
+    // violation. Persist first so the pivot row has a real parent id, then
+    // stash the object into the request so the displayName uniqueness closure
+    // (which re-runs after mapping) can recognize its own row instead of
+    // treating it as an existing name collision.
+    public function add($value, Model &$object)
+    {
+        if (! $object->exists) {
+            $object->save();
+            request()->attributes->set('scim_in_flight_resource', $object);
+        }
+
+        parent::add($value, $object);
     }
 }
 
@@ -46,8 +194,8 @@ class MappedTable extends Attribute
         private string $relationship_name,
         private string $relationship_class,
         private string $relationship_id_field,
-        private string $relationship_field)
-    {
+        private string $relationship_field
+    ) {
         parent::__construct($this->scim_attribute_name);
     }
 
@@ -69,6 +217,50 @@ class MappedTable extends Attribute
     public function patch($operation, $value, Model &$object, ?Path $path = null, $removeIfNotSet = false)
     {
         $object->{$this->relationship_id_field} = $value ? $this->relationship_class::firstOrCreate([$this->relationship_field => $value])->id : null;
+    }
+}
+
+// Company is stored only in the company_user pivot, not company_id. Read from the pivot
+// and sync it on write. For new users (not yet saved) defer the sync via a saved() callback.
+class SCIMCompanyAttribute extends MappedTable
+{
+    protected function doRead(&$object, $attributes = [])
+    {
+        return $object->companies->first()?->name;
+    }
+
+    private function applyCompany(?int $companyId, Model &$object): void
+    {
+        $ids = $companyId ? [$companyId] : [];
+
+        if ($object->exists) {
+            $object->companies()->sync($ids);
+        } else {
+            $object->saved(fn () => $object->companies()->sync($ids));
+        }
+    }
+
+    public function add($value, Model &$object)
+    {
+        $this->applyCompany($value ? Company::firstOrCreate(['name' => $value])->id : null, $object);
+    }
+
+    public function replace($value, Model &$object, $path = null, $removeIfNotSet = false)
+    {
+        $this->applyCompany($value ? Company::firstOrCreate(['name' => $value])->id : null, $object);
+    }
+
+    public function patch($operation, $value, Model &$object, ?Path $path = null, $removeIfNotSet = false)
+    {
+        $this->applyCompany($value ? Company::firstOrCreate(['name' => $value])->id : null, $object);
+    }
+}
+
+class EloquentWithRemove extends Eloquent
+{
+    public function remove($value, Model &$object, ?Path $path = null)
+    {
+        $object->{$this->attribute} = null;
     }
 }
 
@@ -132,7 +324,7 @@ class SnipeSCIMConfig
             'withRelations' => [],
             'description' => 'User Account',
 
-            'map' => complex()->withSubAttributes(
+            'map' => (new SnipeRootComplex)->withSubAttributes(
                 new class('schemas', ['urn:ietf:params:scim:schemas:core:2.0:User', self::ENTERPRISE, self::GROKABILITY]) extends Constant
                 {
                     public function replace($value, &$object, $path = null)
@@ -190,7 +382,11 @@ class SnipeSCIMConfig
                         {
                             if ($value) {
                                 try {
-                                    $object->email = $value[0]['value'];
+                                    if (is_string($value)) {
+                                        $object->email = $value; // Weird MS-SCIM stuff :/
+                                    } else {
+                                        $object->email = $value[0]['value'];
+                                    }
                                 } catch (\Throwable $e) {
                                     \Log::debug($e);
                                     throw new SCIMException("Unknown email object:  '".print_r($value, true)."'", 422);
@@ -299,7 +495,7 @@ class SnipeSCIMConfig
                                 $address['primary'] = true;
                             }
 
-                            return $address;
+                            return [$address];
                         }
 
                         public function doWrite($operation, $subop, $value, Model &$object, ?Path $path = null, $removeIfNotSet = false)
@@ -422,7 +618,7 @@ class SnipeSCIMConfig
                 ),
                 (new AttributeSchema(self::GROKABILITY, false))->withSubAttributes(
                     new MappedTable('location', 'location', Location::class, 'location_id', 'name'),
-                    new MappedTable('company', 'company', Company::class, 'company_id', 'name'),
+                    new SCIMCompanyAttribute('company', 'company', Company::class, 'company_id', 'name'),
                 )
             ),
         ];
@@ -467,11 +663,25 @@ class SnipeSCIMConfig
                     eloquent('displayName', 'name')->ensure('required', 'min:3', function ($attribute, $value, $fail) {
                         // check if group does not exist or if it exists, it is the same group
                         $group = $this->getGroupClass()::where('name', $value)->first();
-                        if ($group && (request()->route('resourceObject') == null || $group->id != request()->route('resourceObject')->id)) {
-                            $fail('The name has already been taken.');
+                        if (! $group) {
+                            return;
                         }
+                        // PATCH/PUT: the group being edited is route-bound.
+                        $routeResource = request()->route('resourceObject');
+                        if ($routeResource && $group->id == $routeResource->id) {
+                            return;
+                        }
+                        // POST create with an initial members[] triggers SnipeMutableCollection
+                        // to save the parent early (so the pivot INSERT has a valid group_id),
+                        // which puts a row in the DB before this closure re-runs. Recognize the
+                        // just-saved row as ours so validation doesn't false-positive.
+                        $inFlight = request()->attributes->get('scim_in_flight_resource');
+                        if ($inFlight && $group->id == $inFlight->id) {
+                            return;
+                        }
+                        $fail('The name has already been taken.');
                     }),
-                    (new MutableCollection('members'))->withSubAttributes(
+                    (new SnipeMutableCollection('members'))->withSubAttributes(
                         eloquent('value', 'id')->ensure('required'),
                         (new class('$ref') extends Eloquent
                         {

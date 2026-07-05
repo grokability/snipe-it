@@ -64,4 +64,6 @@ return [
     'optional_infos' => 'Informacje opcjonalne',
     'order_details' => 'Informacje związane z zamówieniem',
     'calc_eol' => 'W przypadku unieważnienia daty wycofania z eksploatacji, użyj automatycznego obliczenia wycofania z eksploatacji w oparciu o datę zakupu i czas wycofania z eksploatacji.',
+    'checkin_licenses' => 'Checkin associated license seats',
+    'checkin_child_assets' => 'Checkin associated assets',
 ];

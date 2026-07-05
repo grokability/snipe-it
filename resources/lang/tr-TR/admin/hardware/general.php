@@ -8,6 +8,7 @@ return [
     'bulk_checkout' => 'Toplu Teslim Et',
     'bulk_checkin' => 'Toplu Teslim Al',
     'checkin' => 'Demirbaş Girişi Yap',
+    'checkin_assets' => 'Demirbaş Girişi Yap',
     'checkout' => 'Ödenme Öğe',
     'clear' => 'Temizle',
     'clone' => 'Demirbaşı Kopyala',

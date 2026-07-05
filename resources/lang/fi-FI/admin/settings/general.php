@@ -307,7 +307,7 @@ return [
     'two_factor_enter_code' => 'Syötä MFA koodi',
     'two_factor_config_complete' => 'Lähetä koodi',
     'two_factor_enabled_edit_not_allowed' => 'Järjestelmänvalvoja ei salli sinun muokata tätä asetusta.',
-    'two_factor_enrollment_text' => 'Kaksivaiheinen tunnistautuminen vaaditaan, mutta et ole rekisteröinyt itsellesi laitetta. Avaa Google Authenticator -sovellus ja skannaa alla oleva QR-koodi rekisteröidäksesi laitteesi. Kun olet rekisteröinyt laitteesi, kirjoita koodi',
+    'two_factor_enrollment_text' => "Kaksivaiheinen tunnistautuminen vaaditaan, mutta et ole rekisteröinyt itsellesi laitetta. Avaa Google Authenticator -sovellus ja skannaa alla oleva QR-koodi rekisteröidäksesi laitteesi. Kun olet rekisteröinyt laitteesi, kirjoita koodi",
     'require_accept_signature' => 'Vaadi allekirjoitus',
     'require_accept_signature_help_text' => 'Enabling this feature will require users to physically sign off on accepting items. This will override any category-specific signature requirements.',
     'require_checkinout_notes' => 'Require Notes on Checkin/Checkout',

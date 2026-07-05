@@ -64,8 +64,10 @@ return [
         'text' => 'Caja de texto',
         'listbox' => 'Lista',
         'textarea' => 'Caja de texto (multi-línea)',
+        'markdown-textarea' => 'Markdown Textarea',
         'checkbox' => 'Casilla de verificación',
         'radio' => 'Botones de radio',
     ],
+    'markdown_supported' => 'Markdown is supported',
     'general_help_text' => 'Los campos personalizados almacenan informacion que no está cubierta por los campos de activos por defecto. <a href="https://snipe-it.readme.io/docs/custom-fields#/"><i class="fa fa-external-link"></i></a>.',
 ];

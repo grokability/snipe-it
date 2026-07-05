@@ -3,6 +3,7 @@
 namespace Tests\Feature\Accessories\Ui;
 
 use App\Models\Accessory;
+use App\Models\Actionlog;
 use App\Models\Category;
 use App\Models\Company;
 use App\Models\Location;
@@ -123,5 +124,68 @@ class UpdateAccessoryTest extends TestCase
             'min_amt' => '10',
             'notes' => 'A new note',
         ]);
+    }
+
+    public function test_update_logs_changed_fields_in_log_meta()
+    {
+        $accessory = Accessory::factory()->create([
+            'qty' => 5,
+            'name' => 'Old Name',
+            'model_number' => null,
+            'location_id' => null,
+        ]);
+
+        $this->actingAs(User::factory()->editAccessories()->create())
+            ->put(route('accessories.update', $accessory), [
+                'redirect_option' => 'index',
+                'name' => 'New Name',
+                'qty' => '10',
+                'category_id' => (string) $accessory->category_id,
+            ]);
+
+        $log = Actionlog::where('item_type', Accessory::class)
+            ->where('item_id', $accessory->id)
+            ->where('action_type', 'update')
+            ->latest()
+            ->first();
+
+        $this->assertNotNull($log, 'No update log entry was created');
+        $this->assertNotNull($log->log_meta, 'log_meta was not stored');
+
+        $meta = json_decode($log->log_meta, true);
+        $this->assertEquals('5', $meta['qty']['old']);
+        $this->assertEquals('10', $meta['qty']['new']);
+        $this->assertEquals('Old Name', $meta['name']['old']);
+        $this->assertEquals('New Name', $meta['name']['new']);
+    }
+
+    public function test_no_op_update_does_not_create_log_entry()
+    {
+        $accessory = Accessory::factory()->create([
+            'qty' => 5,
+            'name' => 'Same Name',
+            'model_number' => null,
+            'location_id' => null,
+        ]);
+
+        $before = Actionlog::where('item_type', Accessory::class)
+            ->where('item_id', $accessory->id)
+            ->where('action_type', 'update')
+            ->count();
+
+        $this->actingAs(User::factory()->editAccessories()->create())
+            ->put(route('accessories.update', $accessory), [
+                'redirect_option' => 'index',
+                'name' => 'Same Name',
+                'qty' => '5',
+                'category_id' => (string) $accessory->category_id,
+            ]);
+
+        $after = Actionlog::where('item_type', Accessory::class)
+            ->where('item_id', $accessory->id)
+            ->where('action_type', 'update')
+            ->count();
+
+        $this->assertEquals($before, $after, 'A spurious log entry was created for a no-op update');
     }
 }

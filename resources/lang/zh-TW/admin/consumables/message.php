@@ -2,7 +2,7 @@
 
 return [
 
-    'invalid_category_type' => 'The category must be a consumable category.',
+    'invalid_category_type' => '此類別必須是耗材類別。',
     'does_not_exist' => '耗材不存在。',
 
     'create' => [

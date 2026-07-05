@@ -64,4 +64,6 @@ return [
     'optional_infos' => 'Papildoma informacija',
     'order_details' => 'Su užsakymu susijusi informacija',
     'calc_eol' => 'Jei EOL data nustatoma iš naujo, naudoti automatinį EOL apskaičiavimą pagal įsigijimo datą ir nusidėvėjimo laipsnį.',
+    'checkin_licenses' => 'Paimti priskirtas licencijų vietas',
+    'checkin_child_assets' => 'Paimti priskirtą turtą',
 ];

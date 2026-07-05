@@ -19,6 +19,7 @@ return [
     'required_acceptance' => 'Tomuto používateľovi bude zaslaný mailom odkaz na potvrdenie prijatia tejto položky.',
     'global_signature_required_notice' => 'User signatures are currently required globally via the admin settings, so signatures will still be required regardless of this category setting if the item is checked out to a user (versus a location, etc).',
     'required_eula' => 'Tomuto používateľovi bude zaslaná kópia dokumentu EULA',
+    'required_signature' => 'This user will be required to sign to confirm acceptance of this item.',
     'no_default_eula' => 'Žiaden predvolený EULA dokument nebol nájdený. Pridajte nový v Nastaveniach.',
     'update' => 'Upraviť kategóriu',
     'use_default_eula' => 'Použiť <a href="#" data-toggle="modal" data-target="#eulaModal">predvolený dokument EULA</a> namiesto toho.',

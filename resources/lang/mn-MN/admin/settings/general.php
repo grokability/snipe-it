@@ -307,7 +307,7 @@ return [
     'two_factor_enter_code' => 'Хоёр хүчин зүйлийн кодыг оруулна уу',
     'two_factor_config_complete' => 'Код илгээх',
     'two_factor_enabled_edit_not_allowed' => 'Таны админ энэ тохиргоог засахыг зөвшөөрөхгүй.',
-    'two_factor_enrollment_text' => 'Хоёр хүчин зүйлийг баталгаажуулах шаардлагатай боловч таны төхөөрөмж одоогоор бүртгэгдээгүй байна. Google Authenticator аппликейшнийг нээж, төхөөрөмжөө бүртгүүлэхийн тулд доорх QR кодыг хайна уу. Та төхөөрөмжөө бүртгүүлснийхээ дараа доорх кодыг оруулна уу',
+    'two_factor_enrollment_text' => "Хоёр хүчин зүйлийг баталгаажуулах шаардлагатай боловч таны төхөөрөмж одоогоор бүртгэгдээгүй байна. Google Authenticator аппликейшнийг нээж, төхөөрөмжөө бүртгүүлэхийн тулд доорх QR кодыг хайна уу. Та төхөөрөмжөө бүртгүүлснийхээ дараа доорх кодыг оруулна уу",
     'require_accept_signature' => 'Гарын үсэг зурах шаардлагатай',
     'require_accept_signature_help_text' => 'Enabling this feature will require users to physically sign off on accepting items. This will override any category-specific signature requirements.',
     'require_checkinout_notes' => 'Require Notes on Checkin/Checkout',

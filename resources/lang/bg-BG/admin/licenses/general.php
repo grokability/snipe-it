@@ -31,6 +31,11 @@ return [
             'log_msg' => 'Вписване чрез групово лиценз вписване в GUI',
         ],
 
+        'checkin_selected' => [
+            'success' => ':count seat checked in successfully. | :count seats checked in successfully.',
+            'no_seats_selected' => 'No seats were selected.',
+        ],
+
         'checkout_all' => [
             'button' => 'Изпиши всички бройки',
             'modal' => 'Това ще изпише един лиценз на първия наличен потребител. | Това ще изпише вички :available_seats_count лиценза на първите налични потребители. Потребителя се смята за наличен, ако те нямат зачислен лиценз вече и настройката за автоматично зачисляване е включена в техния акаунт.',

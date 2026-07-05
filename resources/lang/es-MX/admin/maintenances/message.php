@@ -18,4 +18,9 @@ return [
     'asset_maintenance_incomplete' => 'Aún no se ha completado',
     'warranty' => 'Garantía',
     'not_warranty' => 'Sin garantía',
+    'complete' => [
+        'confirm' => '¿Está seguro de que desea marcar este mantenimiento como completado? Esto no se puede deshacer.',
+        'success' => 'Mantenimiento marcado como completado.',
+        'error' => 'Hubo un problema al marcar este mantenimiento como completado. Por favor, inténtalo de nuevo.',
+    ],
 ];

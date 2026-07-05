@@ -94,6 +94,12 @@ return [
         'success' => 'Środek wydany pomyślnie.|Środki wydane pomyślnie.',
     ],
 
+    'multi-checkin' => [
+        'error' => 'Asset was not checked in, please try again|Assets were not checked in, please try again',
+        'success' => 'Asset checked in successfully.|Assets checked in successfully.',
+        'no_assets_selected' => 'Musisz wybrać co najmniej jeden środek z listy',
+    ],
+
     'checkin' => [
         'error' => 'Środek nie został przyjęty, proszę spróbować ponownie',
         'success' => 'Pomyślnie przyjęto środek.',

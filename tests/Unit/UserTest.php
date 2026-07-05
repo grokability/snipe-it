@@ -208,4 +208,76 @@ class UserTest extends TestCase
         $user = User::generateFormattedNameFromFullName($fullname, 'firstnamelastinitial');
         $this->assertEquals($expected_email, $user['username'].'@example.com');
     }
+
+    public function test_link_light_color_attribute()
+    {
+        // if global branding and user are not set we use the app default defined in the accessor:
+        $this->settings->set(['link_light_color' => null]);
+        $this->assertEquals(
+            '#296282',
+            User::factory()->create()->link_light_color
+        );
+
+        // nothing set on user we use global branding:
+        $this->settings->set(['link_light_color' => '#ff6700']);
+        $this->assertEquals(
+            '#ff6700',
+            User::factory()->create()->link_light_color
+        );
+
+        // user has it set we use it:
+        $user = User::factory()->create(['link_light_color' => '#61b329']);
+        $this->assertEquals(
+            '#61b329',
+            $user->link_light_color
+        );
+    }
+
+    public function test_link_dark_color_attribute()
+    {
+        // if global branding and user are not set we use the app default defined in the accessor:
+        $this->settings->set(['link_dark_color' => null]);
+        $this->assertEquals(
+            '#5fa4cc',
+            User::factory()->create()->link_dark_color
+        );
+
+        // nothing set on user we use global branding:
+        $this->settings->set(['link_dark_color' => '#ff6700']);
+        $this->assertEquals(
+            '#ff6700',
+            User::factory()->create()->link_dark_color
+        );
+
+        // user has it set we use it:
+        $user = User::factory()->create(['link_dark_color' => '#61b329']);
+        $this->assertEquals(
+            '#61b329',
+            $user->link_dark_color
+        );
+    }
+
+    public function test_nav_link_color_attribute()
+    {
+        // if global branding and user are not set we use the app default defined in the accessor:
+        $this->settings->set(['nav_link_color' => null]);
+        $this->assertEquals(
+            '#ffffff',
+            User::factory()->create()->nav_link_color
+        );
+
+        // nothing set on user we use global branding:
+        $this->settings->set(['nav_link_color' => '#ff6700']);
+        $this->assertEquals(
+            '#ff6700',
+            User::factory()->create()->nav_link_color
+        );
+
+        // user has it set we use it:
+        $user = User::factory()->create(['nav_link_color' => '#61b329']);
+        $this->assertEquals(
+            '#61b329',
+            $user->nav_link_color
+        );
+    }
 }

@@ -94,6 +94,12 @@ return [
         'success' => 'Актива е изписан успешно.|Активите са изписани успешно.',
     ],
 
+    'multi-checkin' => [
+        'error' => 'Asset was not checked in, please try again|Assets were not checked in, please try again',
+        'success' => 'Asset checked in successfully.|Assets checked in successfully.',
+        'no_assets_selected' => 'Трябва да изберете поне един елемент към списъка',
+    ],
+
     'checkin' => [
         'error' => 'Активът не беше вписан. Моля опитайте отново.',
         'success' => 'Активът вписан успешно.',

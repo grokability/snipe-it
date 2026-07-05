@@ -14,6 +14,7 @@ use App\Models\Setting;
 use App\Models\Statuslabel;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class AssetTest extends TestCase
@@ -247,11 +248,16 @@ class AssetTest extends TestCase
 
     public function test_assigned_type_without_assign_to()
     {
+        // Model-level rule: assigned_type is required_with:assigned_to.
+        // assigned_to is not in $fillable so we use a raw DB write to simulate
+        // legacy / inconsistent data, then verify the model treats the row as invalid.
         $user = User::factory()->create();
-        $asset = Asset::factory()->create([
-            'assigned_to' => $user->id,
-        ]);
-        $this->assertModelMissing($asset);
+        $asset = Asset::factory()->create();
+
+        DB::table('assets')->where('id', $asset->id)->update(['assigned_to' => $user->id, 'assigned_type' => null]);
+        $asset->refresh();
+
+        $this->assertFalse($asset->isValid());
     }
 
     public function test_get_image_url_method()

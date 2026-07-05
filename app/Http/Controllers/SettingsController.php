@@ -19,6 +19,7 @@ use App\Models\Group;
 use App\Models\Setting;
 use App\Models\User;
 use App\Notifications\MailTest;
+use App\Rules\CssColor;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -92,10 +93,12 @@ class SettingsController extends Controller
         $old_locations_fmcs = $setting->scope_locations_fmcs;
         $setting->full_multiple_companies_support = $request->input('full_multiple_companies_support', '0');
         $setting->scope_locations_fmcs = $request->input('scope_locations_fmcs', '0');
+        $setting->null_company_is_floater = $request->input('null_company_is_floater', '0');
 
-        // Backward compatibility for locations makes no sense without FullMultipleCompanySupport
+        // These options make no sense without FullMultipleCompanySupport
         if (! $setting->full_multiple_companies_support) {
             $setting->scope_locations_fmcs = '0';
+            $setting->null_company_is_floater = '0';
         }
 
         // check for inconsistencies when activating scoped locations
@@ -188,6 +191,13 @@ class SettingsController extends Controller
             if ($request->has('site_name')) {
                 $request->validate(['site_name' => 'required']);
             }
+
+            $request->validate([
+                'header_color' => ['nullable', new CssColor],
+                'link_light_color' => ['nullable', new CssColor],
+                'link_dark_color' => ['nullable', new CssColor],
+                'nav_link_color' => ['nullable', new CssColor],
+            ]);
 
             $setting->header_color = $request->input('header_color', '#3c8dbc');
             $setting->link_light_color = $request->input('link_light_color', '#296282');
@@ -1141,9 +1151,53 @@ class SettingsController extends Controller
             ->where('oauth_clients.personal_access_client', true)
             ->count();
 
+        $setting = Setting::getSettings();
+        $blockApiUserAgents = (bool) old('block_api_user_agents', $setting?->block_api_user_agents);
+        $blockedApiUserAgents = old(
+            'blocked_api_user_agents',
+            $setting?->blocked_api_user_agents ?? implode("\n", Setting::DEFAULT_BLOCKED_API_USER_AGENTS),
+        );
+        $blockBlankApiUserAgents = (bool) old('block_blank_api_user_agents', $setting?->block_blank_api_user_agents);
+
         return view('settings.api', [
             'personalAccessTokenCount' => $personalAccessTokenCount,
+            'setting' => $setting,
+            'blockApiUserAgents' => $blockApiUserAgents,
+            'blockedApiUserAgents' => $blockedApiUserAgents,
+            'blockBlankApiUserAgents' => $blockBlankApiUserAgents,
         ]);
+    }
+
+    /**
+     * Persist the API request-filter settings (User-Agent allow/block list)
+     * from the API settings page.
+     */
+    public function postApiRequestFilters(Request $request): RedirectResponse
+    {
+        if (is_null($setting = Setting::getSettings())) {
+            return redirect()->to('admin')->with('error', trans('admin/settings/message.update.error'));
+        }
+
+        // Check we're not on the public demo, and redirect without saving if we are.
+        // Otherwise this could mess with the demo API explorer
+        if (config('app.lock_passwords')) {
+            return redirect()
+                ->to(route('settings.oauth.index').'#api-request-filters')
+                ->with('error', trans('general.feature_disabled'));
+        }
+
+        $setting->block_api_user_agents = $request->boolean('block_api_user_agents');
+        $blockedUserAgents = trim((string) $request->input('blocked_api_user_agents', ''));
+        $setting->blocked_api_user_agents = $blockedUserAgents === '' ? null : $blockedUserAgents;
+        $setting->block_blank_api_user_agents = $request->boolean('block_blank_api_user_agents');
+
+        if ($setting->save()) {
+            return redirect()
+                ->to(route('settings.oauth.index').'#api-request-filters')
+                ->with('success', trans('admin/settings/message.update.success'));
+        }
+
+        return redirect()->back()->withInput()->withErrors($setting->getErrors());
     }
 
     /**

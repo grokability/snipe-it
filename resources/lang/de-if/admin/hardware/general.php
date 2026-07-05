@@ -8,6 +8,7 @@ return [
     'bulk_checkout' => 'Massenherausgabe',
     'bulk_checkin' => 'Massen-Rücknahme',
     'checkin' => 'Asset zurücknehmen',
+    'checkin_assets' => 'Assets zurücknehmen',
     'checkout' => 'Asset herausgeben',
     'clear' => 'Zurücksetzen',
     'clone' => 'Asset duplizieren',

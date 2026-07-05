@@ -80,4 +80,6 @@ return [
     'order_details' => 'اطلاعات مربوط به سفارش
 ',
     'calc_eol' => 'If nulling the EOL date, use automatic EOL calculation based on the purchase date and EOL rate.',
+    'checkin_licenses' => 'Checkin associated license seats',
+    'checkin_child_assets' => 'Checkin associated assets',
 ];

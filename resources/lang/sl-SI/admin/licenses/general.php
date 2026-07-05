@@ -31,6 +31,11 @@ return [
             'log_msg' => 'Checked in via bulk license checkin in license GUI',
         ],
 
+        'checkin_selected' => [
+            'success' => ':count seat checked in successfully. | :count seats checked in successfully.',
+            'no_seats_selected' => 'No seats were selected.',
+        ],
+
         'checkout_all' => [
             'button' => 'Checkout All Seats',
             'modal' => 'To dejanje bo rezerviralo en sedež prvemu razpoložljivemu uporabniku. | To dejanje bo rezerviralo vse :available_seats_count sedeže prvim razpoložljivim uporabnikom. Uporabnik se šteje za razpoložljivega za ta sedež, če te licence še ni rezervirane in če je v njegovem uporabniškem računu omogočena lastnost Samodejno dodeljevanje licenc.',

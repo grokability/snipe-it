@@ -19,6 +19,7 @@ return [
     'required_acceptance' => 'Korisniku će se poslati veza za potvrdu prihvaćanja ove stavke.',
     'global_signature_required_notice' => 'User signatures are currently required globally via the admin settings, so signatures will still be required regardless of this category setting if the item is checked out to a user (versus a location, etc).',
     'required_eula' => 'Ovaj će korisnik biti poslana kopijom EULA',
+    'required_signature' => 'This user will be required to sign to confirm acceptance of this item.',
     'no_default_eula' => 'Nisu pronađeni primarni standardni EULA. Dodajte jednu u Postavke.',
     'update' => 'Kategorija ažuriranja',
     'use_default_eula' => 'Umjesto toga upotrijebite <a href="#" data-toggle="modal" data-target="#eulaModal">primarnu postavku EULA</a>.',

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use UnhandledMatchError;
 use Watson\Validating\ValidatingTrait;
 
 class ReportTemplate extends Model
@@ -26,12 +27,17 @@ class ReportTemplate extends Model
 
     protected $fillable = [
         'created_by',
+        'type',
         'name',
         'options',
         'is_shared',
     ];
 
     protected $rules = [
+        'type' => [
+            'required',
+            'in:asset,component',
+        ],
         'name' => [
             'required',
             'string',
@@ -196,5 +202,16 @@ class ReportTemplate extends Model
     public function getDisplayNameAttribute()
     {
         return $this->name;
+    }
+
+    /**
+     * @throws UnhandledMatchError
+     */
+    public function getViewPath(): string
+    {
+        return match ($this->type) {
+            'asset' => 'reports.custom.asset',
+            'component' => 'reports.custom.component',
+        };
     }
 }

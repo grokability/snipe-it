@@ -48,9 +48,18 @@ class GoogleAuthController extends Controller
                 );
         }
 
-        $user = User::where('username', $socialUser->getEmail())->first();
+        $user = User::where('username', $socialUser->getEmail())
+            ->whereNull('deleted_at')
+            ->first();
 
         if ($user) {
+            if (! $user->activated) {
+                Log::debug('Google user '.$socialUser->getEmail().' is deactivated in Snipe-IT');
+
+                return redirect()->route('login')
+                    ->withErrors(['username' => [trans('auth/message.account_not_activated')]]);
+            }
+
             Log::debug('Google user '.$socialUser->getEmail().' found in Snipe-IT');
             $user->update([
                 'avatar' => $socialUser->avatar,

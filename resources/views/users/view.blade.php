@@ -33,6 +33,7 @@
                     <x-tabs.license-tab count="{{ $user->licenses()->count() }}"/>
                     <x-tabs.accessory-tab count="{{ $user->accessories()->count() }}"/>
                     <x-tabs.consumable-tab count="{{ $user->consumables()->count() }}"/>
+                    <x-tabs.maintenance-tab count="{{ $user->assignedMaintenances()->count() }}"/>
                     <x-tabs.files-tab :item="$user" count="{{ $user->uploads()->count() }}"/>
                     <x-tabs.eula-tab count="{{ $user->eulas()->count() }}"/>
                     <x-tabs.location-tab count="{{ $user->managedLocations()->count() }}"/>
@@ -182,7 +183,6 @@
                                     </x-data-row>
                                 @endif
 
-
                             </x-page-data>
 
                             <!-- ./ definition list column -->
@@ -194,7 +194,7 @@
                         <x-page-column class="col-md-4 col-sm-12">
 
 
-                            @if($user->getUserTotalCost()->total_user_cost > 0)
+                            @if ($user->getUserTotalCost()->total_user_cost > 0)
                                 <x-well class="well-sm">
 
                                     <div class="well-display">
@@ -209,6 +209,15 @@
 
                                         <x-data-row icon_type="accessories" label="{{ trans('general.accessories') }}" align="right">
                                             {{ Helper::formatCurrencyOutput($user->getUserTotalCost()->accessory_cost)}}
+                                        </x-data-row>
+
+                                        {{-- Sum across complete + active maintenances tied
+                                             to this user — used to surface "which users
+                                             cost the most maintenance over time" as a glance.
+                                             The current-active count lives on the tab badge
+                                             above so we don't duplicate it here. --}}
+                                        <x-data-row icon_type="maintenances" :label="trans('general.maintenance_cost')" align="right">
+                                            {{ Helper::formatCurrencyOutput($user->getUserTotalCost()->maintenance_cost) }}
                                         </x-data-row>
 
                                         <x-data-row icon_type="cost" label=" {{ trans('admin/users/table.total_assets_cost') }}" align="right">
@@ -303,6 +312,11 @@
 
                             @endif
 
+                                @if ($snipeSettings->isQrEnabled())
+                                    <div class="col-md-12 text-center user-qr-img" style="padding-top: 15px;">
+                                        <img src="{{ route('qr_code/common', ['object_type' => 'users', 'id' => $user->id]) }}" class="img-thumbnail" style="height: 150px; width: 150px; margin-right: 10px;" alt="QR code for {{ $user->display_name }}">
+                                    </div>
+                                @endif
 
                         </x-page-column>
                         <!-- end side stats well column-->
@@ -328,6 +342,7 @@
                         </x-slot:bulkactions>
                         @endcan
 
+                        @can('view', \App\Models\License::class)
                         <table
                             data-cookie-id-table="userLicenseTable"
                             data-id-table="userLicenseTable"
@@ -391,6 +406,7 @@
                                 @endforeach
                             </tbody>
                         </table>
+                        @endcan
 
                     </x-tabs.pane>
 
@@ -403,6 +419,7 @@
                             {{ trans('general.accessories_assigned') }}
                         </x-slot:table_header>
 
+                        @can('view', \App\Models\Accessory::class)
                         <table
                             data-cookie-id-table="userAccessoryTable"
                             data-id-table="userAccessoryTable"
@@ -444,10 +461,12 @@
                                 @endforeach
                             </tbody>
                         </table>
+                        @endcan
 
                     </x-tabs.pane>
 
                     <x-tabs.pane name="consumables" :count="$user->consumables()->count()">
+                        @can('view', \App\Models\Consumable::class)
                         <table
                             data-cookie-id-table="userConsumableTable"
                             data-id-table="userConsumableTable"
@@ -482,7 +501,19 @@
                                 @endforeach
                             </tbody>
                         </table>
+                        @endcan
 
+                    </x-tabs.pane>
+
+                    {{-- Maintenances tab: every maintenance whose underlying
+                         asset was checked out to this user. Shows open and
+                         closed; the tab badge only counts the open ones
+                         (see assignedMaintenances()->active() above). --}}
+                    <x-tabs.pane name="maintenances" :count="$user->assignedMaintenances()->count()">
+                        <x-table.maintenances
+                            :route="route('api.maintenances.index', ['checked_out_to_id' => $user->id, 'checked_out_to_type' => \App\Models\User::class])"
+                            export_filename="export-maintenances-{{ str_slug($user->username) }}-{{ date('Y-m-d') }}"
+                        />
                     </x-tabs.pane>
 
                     <x-tabs.pane name="managed-users" :count="$user->managesUsers()->count()">

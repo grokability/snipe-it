@@ -8,6 +8,7 @@ return [
     'bulk_checkout' => 'Massutcheckning',
     'bulk_checkin' => 'Bulk Checkin',
     'checkin' => 'Checka in tillgång',
+    'checkin_assets' => 'Checka in tillgångar',
     'checkout' => 'Checka ut tillgång',
     'clear' => 'Clear',
     'clone' => 'Kopiera tillgång',

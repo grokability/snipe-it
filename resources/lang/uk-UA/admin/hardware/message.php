@@ -94,6 +94,12 @@ return [
         'success' => 'Актив успішно перевірено. | Активи успішно перевірені.',
     ],
 
+    'multi-checkin' => [
+        'error' => 'Asset was not checked in, please try again|Assets were not checked in, please try again',
+        'success' => 'Asset checked in successfully.|Assets checked in successfully.',
+        'no_assets_selected' => 'Ви повинні вибрати хоча б один медіафайл зі списку',
+    ],
+
     'checkin' => [
         'error' => 'Актив не був перевірений, будь ласка, спробуйте ще раз',
         'success' => 'Актив успішно перевірено.',

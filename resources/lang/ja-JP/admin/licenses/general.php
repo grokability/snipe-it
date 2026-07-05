@@ -31,6 +31,11 @@ return [
             'log_msg' => 'Checked in via bulk license checkin in license GUI',
         ],
 
+        'checkin_selected' => [
+            'success' => ':count seat checked in successfully. | :count seats checked in successfully.',
+            'no_seats_selected' => 'No seats were selected.',
+        ],
+
         'checkout_all' => [
             'button' => 'すべてのシートをチェックアウト',
             'modal' => 'このアクションは、最初の利用可能なユーザーに1つのシートをチェックアウトします。 | このアクションは、最初の利用可能なユーザーにすべての:available_seats_countシートをチェックアウトします。 ユーザーがこのライセンスをチェックアウトしていない場合、このシートで利用可能とみなされます。 そして、format@@0 プロパティがユーザーアカウントで有効になります。',

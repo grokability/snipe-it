@@ -234,6 +234,26 @@ return [
 
     /*
    |--------------------------------------------------------------------------
+   | ALLOW INTERNAL WEBHOOK TARGETS
+   |--------------------------------------------------------------------------
+   |
+   | By default the webhook endpoint validator refuses URLs that resolve to
+   | loopback, link-local, RFC-1918, or otherwise-non-public IPs. This
+   | prevents a super-admin (or someone who has taken over a super-admin
+   | account) from turning the outbound notification path into an SSRF
+   | primitive against internal services or cloud metadata endpoints.
+   |
+   | Some operators legitimately run their own webhook receiver on the same
+   | private network as Snipe-IT (self-hosted Mattermost, Rocket.Chat, an
+   | internal ChatOps bot, etc.). Setting this to true re-enables outbound
+   | requests to those addresses. Scheme restrictions (http/https only) are
+   | still enforced. Leave this off unless you know you need it.
+   |
+   */
+    'webhook_allow_internal_targets' => env('WEBHOOK_ALLOW_INTERNAL_TARGETS', false),
+
+    /*
+   |--------------------------------------------------------------------------
    | LOG AUTHED USER HEADER
    |--------------------------------------------------------------------------
    |

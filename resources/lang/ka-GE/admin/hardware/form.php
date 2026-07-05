@@ -64,4 +64,6 @@ return [
     'optional_infos' => 'არასავალდებულო ინფორმაცია',
     'order_details' => 'შეკვეთასთან დაკავშირებული ინფორმაცია',
     'calc_eol' => 'თუ ვადების განულებას გადაწყვეტთ, საბოლოო ვადა ავტომატურად გამოითვლება შეძენის თარიღისა და ჩამოწერის კოეფიციენტის მიხედვით.',
+    'checkin_licenses' => 'Checkin associated license seats',
+    'checkin_child_assets' => 'Checkin associated assets',
 ];

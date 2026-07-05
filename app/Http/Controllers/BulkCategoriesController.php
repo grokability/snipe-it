@@ -55,7 +55,7 @@ class BulkCategoriesController extends Controller
 
             return redirect()->route('categories.index')->with('multi_error_messages', $errors);
         } else {
-            return redirect()->route('categories.index')->with('success', trans('admin/categories/message.delete.bulk_success'));
+            return redirect()->route('categories.index')->with('success', trans_choice('admin/categories/message.delete.bulk_success', $success_count, ['count' => $success_count]));
         }
     }
 }

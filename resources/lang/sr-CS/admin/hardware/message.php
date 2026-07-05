@@ -94,6 +94,12 @@ return [
         'success' => 'Imovina je uspešno zadužena.|Imovine su uspešno zadužene.',
     ],
 
+    'multi-checkin' => [
+        'error' => 'Imovina nije razdužena, molim vas pokušajte ponovo|Imovine nisu razdužene, molim vas pokušajte ponovo',
+        'success' => 'Imovina je uspešno razdužena.|Imovine su uspešno razdužene.',
+        'no_assets_selected' => 'Morate odabrati barem jednu imovinu s popisa',
+    ],
+
     'checkin' => [
         'error' => 'Imovina nije prijavljena. Pokušajte ponovo',
         'success' => 'Imovina je uspešno prijavljena.',

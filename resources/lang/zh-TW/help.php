@@ -31,5 +31,5 @@ return [
 
     'depreciations' => '您可以設定資產折舊以根據直線折舊法對資產進行折舊。',
 
-    'empty_file' => 'The importer detects that this file is empty.',
+    'empty_file' => '匯入程式偵測到此檔案為空。',
 ];

@@ -36,10 +36,10 @@
                 @endif
 
 
-                    @if  ($manufacturer->warranty_lookup_url)
+                @if ($manufacturer->warranty_lookup_url)
                     <x-icon type="external-link" class="fa-fw"/>
                     <x-info-element.url>
-                        {{ $manufacturer->present()->dynamicUrl($manufacturer->warranty_lookup_url) }}
+                        {{ $infoPanelObj->present()->dynamicUrl($manufacturer->warranty_lookup_url) }}
                     </x-info-element.url>
                     <br>
                 @endif
@@ -52,10 +52,10 @@
                     <br>
                 @endif
 
-                    @if($manufacturer->support_url)
+                @if($manufacturer->support_url)
                     <x-icon type="external-link" class="fa-fw"/>
                     <x-info-element.url>
-                         {{ $manufacturer->present()->dynamicUrl($manufacturer->support_url) }}
+                        {{ $infoPanelObj->present()->dynamicUrl($manufacturer->support_url) }}
                     </x-info-element.url>
                     <br>
                 @endif

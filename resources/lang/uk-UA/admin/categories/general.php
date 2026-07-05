@@ -19,6 +19,7 @@ return [
     'required_acceptance' => 'Користувачу відправиться email з лінком щоб він підтвердив прийняття активу.',
     'global_signature_required_notice' => 'User signatures are currently required globally via the admin settings, so signatures will still be required regardless of this category setting if the item is checked out to a user (versus a location, etc).',
     'required_eula' => 'Цей користувач буде відправлений на пошту копії EULA',
+    'required_signature' => 'This user will be required to sign to confirm acceptance of this item.',
     'no_default_eula' => 'Основна EULA не знайдена. Додайте одненьку в налаштуваннях.',
     'update' => 'Оновити категорію',
     'use_default_eula' => 'Використовувати <a href="#" data-toggle="modal" data-target="#eulaModal">основну EULA</a>.',

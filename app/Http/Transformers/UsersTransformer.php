@@ -21,7 +21,6 @@ class UsersTransformer
 
     public function transformUser(User $user)
     {
-
         $role = null;
         if ($user->isSuperUser()) {
             $role = 'superadmin';
@@ -31,6 +30,7 @@ class UsersTransformer
         $array = [
             'id' => (int) $user->id,
             'avatar' => e($user->present()->gravatar) ?? null,
+            'qr_code_url' => route('qr_code/common', ['object_type' => 'users', 'id' => $user->id]),
             'name' => e($user->getFullNameAttribute()) ?? null,
             'first_name' => e($user->first_name) ?? null,
             'last_name' => e($user->last_name) ?? null,
@@ -82,11 +82,18 @@ class UsersTransformer
             'consumables_count' => (int) $user->consumables_count,
             'manages_users_count' => (int) $user->manages_users_count,
             'manages_locations_count' => (int) $user->manages_locations_count,
-            'company' => ($user->company) ? [
-                'id' => (int) $user->company->id,
-                'name' => e($user->company->name),
-                'tag_color' => ($user->company->tag_color) ? e($user->company->tag_color) : null,
+            'assigned_maintenances_count' => (int) $user->assigned_maintenances_count,
+            // Legacy field — kept for backward API compatibility; use `companies` for multi-company support.
+            'company' => $user->companies->isNotEmpty() ? [
+                'id' => (int) $user->companies->first()->id,
+                'name' => e($user->companies->first()->name),
+                'tag_color' => ($user->companies->first()->tag_color) ? e($user->companies->first()->tag_color) : null,
             ] : null,
+            'companies' => $user->companies->map(fn ($c) => [
+                'id' => (int) $c->id,
+                'name' => e($c->name),
+                'tag_color' => $c->tag_color ? e($c->tag_color) : null,
+            ])->values(),
             'created_by' => ($user->createdBy) ? [
                 'id' => (int) $user->createdBy->id,
                 'name' => e($user->createdBy->display_name),
@@ -144,6 +151,11 @@ class UsersTransformer
             'last_name' => e($user->last_name),
             'username' => e($user->username),
             'display_name' => e($user->display_name),
+            'companies' => $user->companies->map(fn ($c) => [
+                'id' => (int) $c->id,
+                'name' => e($c->name),
+                'tag_color' => $c->tag_color ? e($c->tag_color) : null,
+            ])->values(),
             'created_by' => $user->adminuser ? [
                 'id' => (int) $user->adminuser->id,
                 'name' => e($user->adminuser->present()->fullName),

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Locations\Api;
 
+use App\Models\Company;
 use App\Models\Location;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
@@ -213,5 +214,58 @@ class LocationFileTest extends TestCase
                     'messages',
                 ]
             );
+    }
+
+    public function test_non_superuser_can_list_location_files_with_fmcs_enabled()
+    {
+        // A location in the user's own company: upload logs get company_id = location.company_id.
+        // Verify that FMCS scoping does not hide those logs from the owning user.
+        $this->settings->enableMultipleFullCompanySupport();
+
+        $company = Company::factory()->create();
+        $location = Location::factory()->create(['company_id' => $company->id]);
+
+        $superUser = User::factory()->superuser()->create();
+        $normalUser = User::factory()
+            ->manageLocationFiles()
+            ->create(['company_id' => $company->id]);
+
+        $this->actingAsForApi($superUser)
+            ->post(
+                route('api.files.store', ['object_type' => 'locations', 'id' => $location->id]),
+                ['file' => [UploadedFile::fake()->create('test.jpg', 100)]]
+            )
+            ->assertOk();
+
+        $this->actingAsForApi($normalUser)
+            ->getJson(route('api.files.index', ['object_type' => 'locations', 'id' => $location->id]))
+            ->assertOk()
+            ->assertJsonPath('total', 1);
+    }
+
+    public function test_user_in_different_company_cannot_access_location_files_with_fmcs_enabled()
+    {
+        // The policy must block a user from listing files for a location that belongs to a different company.
+        $this->settings->enableMultipleFullCompanySupport();
+
+        $companyA = Company::factory()->create();
+        $companyB = Company::factory()->create();
+        $location = Location::factory()->create(['company_id' => $companyA->id]);
+
+        $superUser = User::factory()->superuser()->create();
+        $userInCompanyB = User::factory()
+            ->manageLocationFiles()
+            ->create(['company_id' => $companyB->id]);
+
+        $this->actingAsForApi($superUser)
+            ->post(
+                route('api.files.store', ['object_type' => 'locations', 'id' => $location->id]),
+                ['file' => [UploadedFile::fake()->create('test.jpg', 100)]]
+            )
+            ->assertOk();
+
+        $this->actingAsForApi($userInCompanyB)
+            ->getJson(route('api.files.index', ['object_type' => 'locations', 'id' => $location->id]))
+            ->assertForbidden();
     }
 }

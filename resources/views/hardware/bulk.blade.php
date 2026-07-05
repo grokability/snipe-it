@@ -88,7 +88,7 @@
                 </div>
                 <div class="col-md-5">
                     <label class="form-control">
-                        <input type="checkbox" name="null_expected_checkin" value="1">
+                        <input type="checkbox" name="null_expected_checkin_date" value="1">
                         {{ trans_choice('general.set_to_null', count($assets),['selection_count' => count($assets)]) }}
                     </label>
                 </div>

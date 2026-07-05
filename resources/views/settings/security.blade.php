@@ -129,7 +129,7 @@
                         </fieldset>
 
                         <fieldset name="remote-login">
-                            <x-form.legend>
+                            <x-form.legend help_text="{{ trans('admin/settings/general.remote_user_legend_warning') }}" icon="warning" class="text-danger">
                                 {{ trans('admin/settings/general.login_remote_user_text') }}
                             </x-form.legend>
 
@@ -163,7 +163,8 @@
                                         <input class="form-control" name="login_remote_user_header_name" type="text" value="{{ old('login_remote_user_header_name', $setting->login_remote_user_header_name) }}" id="login_remote_user_header_name">
                                         {!! $errors->first('login_remote_user_header_name', '<span class="alert-msg">:message</span>') !!}
                                         <p class="help-block">
-                                            {{ trans('admin/settings/general.login_remote_user_header_name_help') }}
+                                            <x-icon type="warning" class="text-danger"/>
+                                            {!! trans('admin/settings/general.login_remote_user_header_name_help') !!}
                                         </p>
                                 </div>
                             </div>

@@ -8,6 +8,7 @@ return [
     'bulk_checkout' => 'اخراج متعدد',
     'bulk_checkin' => 'Bulk Checkin',
     'checkin' => 'ادخال الأصل',
+    'checkin_assets' => 'ادخال الأصل',
     'checkout' => 'اخراج الأصل',
     'clear' => 'Clear',
     'clone' => 'استنساخ الأصل',

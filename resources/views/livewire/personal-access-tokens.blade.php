@@ -101,7 +101,7 @@
                             <div class="col-md-6">
                                 <input id="create-token-name" type="text" aria-label="name" class="form-control"
                                        name="name"
-                                       wire:keydown.enter="createToken(name)"
+                                       wire:keydown.enter="createToken"
                                        wire:model="name"
                                        autofocus
                                        required
@@ -116,7 +116,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn primary" data-dismiss="modal">{{ trans('general.close') }}</button>
 
-                    <button type="button" class="btn btn-primary" wire:click="createToken(name)">
+                    <button type="button" class="btn btn-primary" wire:click="createToken">
                         {{ trans('general.create') }}
                     </button>
                 </div>

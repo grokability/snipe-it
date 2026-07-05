@@ -13,7 +13,7 @@ return [
         'success' => 'Įmonė sėkmingai atnaujinta.',
     ],
     'delete' => [
-        'confirm' => 'Ar tikrai norite panaikinti šią įmonę?',
+        'confirm' => 'Ar tikrai norite ištrinti šią įmonę?',
         'error' => 'Bandant panaikinti įmonę įvyko klaida. Bandykite dar kartą.',
         'success' => 'Įmonė sėkmingai panaikinta.',
     ],

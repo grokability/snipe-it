@@ -31,6 +31,11 @@ return [
             'log_msg' => 'Checked in via bulk license checkin in license GUI',
         ],
 
+        'checkin_selected' => [
+            'success' => ':count seat checked in successfully. | :count seats checked in successfully.',
+            'no_seats_selected' => 'No seats were selected.',
+        ],
+
         'checkout_all' => [
             'button' => 'Sjekk ut alle seter',
             'modal' => 'Denne handlingen vil utsjekke ett sete til den første tilgjengelige brukeren. | Denne handlingen vil kassere alle :available_seats_count seter til de første tilgjengelige brukerne. En bruker anses som tilgjengelig for dette setet hvis de ikke allerede har sjekket ut denne lisensen til dem, og Auto-Assign License egenskapen er aktivert på deres brukerkonto.',

@@ -64,4 +64,6 @@ return [
     'optional_infos' => 'Додаткова інформація',
     'order_details' => 'Пов\'язані відомості про замовлення',
     'calc_eol' => 'Якщо необхідно обнулити дату EOL, використовуйте автоматичний розрахунок EOL на основі дати покупки й дати EOL.',
+    'checkin_licenses' => 'Checkin associated license seats',
+    'checkin_child_assets' => 'Checkin associated assets',
 ];

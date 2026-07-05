@@ -112,7 +112,7 @@ $qr_size = ($settings->alt_barcode_enabled=='1') && ($settings->label2_1d_type!=
 
         @if ($settings->qr_code=='1')
             <div class="qr_img">
-                <img src="{{ config('app.url') }}/hardware/{{ $asset->id }}/qr_code" class="qr_img">
+                <img src="{{ route('qr_code/common', ['object_type' => 'hardware', 'id' => $asset->id]) }}" class="qr_img">
             </div>
         @endif
 
@@ -166,7 +166,7 @@ $qr_size = ($settings->alt_barcode_enabled=='1') && ($settings->label2_1d_type!=
 
     </div>
 
-    @if (($count % $settings->labels_per_page == 0) && $count!=count($assets))
+    @if ($settings->labels_per_page > 0 && ($count % $settings->labels_per_page == 0) && $count != count($assets))
     <div class="page-break"></div>
     <div class="next-padding">&nbsp;</div>
     @endif

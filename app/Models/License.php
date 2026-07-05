@@ -59,7 +59,7 @@ class License extends Depreciable
         'license_name' => 'string|nullable|max:100',
         'notes' => 'string|nullable',
         'category_id' => 'required|exists:categories,id',
-        'company_id' => 'integer|nullable',
+        'company_id' => 'integer|nullable|exists:companies,id',
         'purchase_cost' => 'numeric|nullable|gte:0|max:99999999999999999.99',
         'purchase_date' => 'date_format:Y-m-d|nullable|max:10|required_with:depreciation_id',
         'expiration_date' => 'date_format:Y-m-d|nullable|max:10',
@@ -92,7 +92,6 @@ class License extends Depreciable
         'serial',
         'supplier_id',
         'termination_date',
-        'created_by',
         'min_amt',
     ];
 
@@ -803,7 +802,7 @@ class License extends Depreciable
      *
      * @return mixed
      */
-    public function freeSeat()
+    public function freeSeat(bool $lock = false)
     {
         return $this->licenseseats()
             ->whereNull('deleted_at')
@@ -813,6 +812,7 @@ class License extends Depreciable
                     ->whereNull('asset_id');
             })
             ->orderBy('id', 'asc')
+            ->when($lock, fn ($q) => $q->lockForUpdate())
             ->first();
     }
 

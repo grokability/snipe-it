@@ -31,6 +31,11 @@ return [
             'log_msg' => 'Über die Massenrückgabe in der Lizenz-Benutzeroberfläche eingebucht',
         ],
 
+        'checkin_selected' => [
+            'success' => ':count seat checked in successfully. | :count seats checked in successfully.',
+            'no_seats_selected' => 'No seats were selected.',
+        ],
+
         'checkout_all' => [
             'button' => 'Alle Plätze herausgeben',
             'modal' => 'Diese Aktion wird einen Platz für den ersten verfügbaren Benutzer herausgeben. | Diese Aktion wird alle :available_seats_count Plätze an die ersten verfügbaren Benutzer herausgeben. Ein Benutzer wird als verfügbar für diesen Platz betrachtet, wenn er diese Lizenz noch nicht zugewiesen hat und die "Lizenzen automatisch zuweisen" Eigenschaft auf dem Benutzerkonto aktiviert ist.',

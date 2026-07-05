@@ -2,7 +2,7 @@
 
 return [
 
-    'select_language' => 'Select a Language',
+    'select_language' => 'Vælg sprog',
     'languages' => [
         'en-US' => 'Engelsk (US)',
         'en-GB' => 'Engelsk (UK)',

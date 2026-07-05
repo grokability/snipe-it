@@ -102,6 +102,19 @@ class Settings
         return $this;
     }
 
+    public function enableFloaterMode(): Settings
+    {
+        return $this->update([
+            'full_multiple_companies_support' => 1,
+            'null_company_is_floater' => 1,
+        ]);
+    }
+
+    public function disableFloaterMode(): Settings
+    {
+        return $this->update(['null_company_is_floater' => 0]);
+    }
+
     public function enableSlackWebhook(): Settings
     {
         return $this->update([

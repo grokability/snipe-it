@@ -7,80 +7,78 @@ use Tabuna\Breadcrumbs\Trail;
 
 // Asset Model Management
 
-
 Route::group(['prefix' => 'models', 'middleware' => ['auth']], function () {
 
     Route::get(
         '{model}/clone',
         [
-            AssetModelsController::class, 
-            'getClone'
+            AssetModelsController::class,
+            'getClone',
         ]
     )->name('models.clone.create')->withTrashed()
-        ->breadcrumbs(fn (Trail $trail) =>
-        $trail->parent('models.index')
+        ->breadcrumbs(fn (Trail $trail) => $trail->parent('models.index')
             ->push(trans('admin/models/table.clone'), route('models.index')));
 
     Route::post(
         '{model}/clone',
         [
-            AssetModelsController::class, 
-            'postCreate'
+            AssetModelsController::class,
+            'postCreate',
         ]
     )->name('models.clone.store')->withTrashed();
 
+    // Legacy URL — predates Route::resource below, which already provides
+    // models.show at GET /models/{model}. Kept (pointing at the same controller
+    // method) so old bookmarks / external links don't 404.
     Route::get(
-        '{modelId}/view',
+        '{model}/view',
         [
-            AssetModelsController::class, 
-            'getView'
+            AssetModelsController::class,
+            'show',
         ]
     )->name('view/model');
 
     Route::post(
         '{modelID}/restore',
         [
-            AssetModelsController::class, 
-            'getRestore'
+            AssetModelsController::class,
+            'getRestore',
         ]
     )->name('models.restore.store');
 
     Route::get(
         '{modelId}/custom_fields',
         [
-            AssetModelsController::class, 
-            'getCustomFields'
+            AssetModelsController::class,
+            'getCustomFields',
         ]
     )->name('custom_fields/model');
 
     Route::post(
         'bulkedit',
         [
-            BulkAssetModelsController::class, 
-            'edit'
+            BulkAssetModelsController::class,
+            'edit',
         ]
     )->name('models.bulkedit.index')
-    ->breadcrumbs(fn (Trail $trail) =>
-    $trail->parent('models.index')
-        ->push(trans('general.bulk_edit'), route('models.index')));
+        ->breadcrumbs(fn (Trail $trail) => $trail->parent('models.index')
+            ->push(trans('general.bulk_edit'), route('models.index')));
 
     Route::post(
         'bulksave',
         [
-            BulkAssetModelsController::class, 
-            'update'
+            BulkAssetModelsController::class,
+            'update',
         ]
     )->name('models.bulkedit.store');
 
     Route::post(
         'bulkdelete',
         [
-            BulkAssetModelsController::class, 
-            'destroy'
+            BulkAssetModelsController::class,
+            'destroy',
         ]
     )->name('models.bulkdelete.store');
-
-
 
 });
 

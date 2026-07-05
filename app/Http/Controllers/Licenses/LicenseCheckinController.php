@@ -36,7 +36,7 @@ class LicenseCheckinController extends Controller
     {
         // Check if the asset exists
         $license = License::find($licenseSeat->license_id);
-        $this->authorize('checkout', $license);
+        $this->authorize('checkin', $license);
 
         return view('licenses/checkin', compact('licenseSeat'))->with('backto', $backTo);
     }
@@ -70,7 +70,7 @@ class LicenseCheckinController extends Controller
             return redirect()->route('licenses.index')->with('error', trans('admin/licenses/message.checkin.error'));
         }
 
-        $this->authorize('checkout', $license);
+        $this->authorize('checkin', $license);
 
         // Declare the rules for the form validation
         $rules = [

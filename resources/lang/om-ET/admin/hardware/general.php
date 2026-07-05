@@ -8,6 +8,7 @@ return [
     'bulk_checkout' => 'Checkout Giga',
     'bulk_checkin' => 'Bulk Checkin',
     'checkin' => 'Checkin Asset',
+    'checkin_assets' => 'Checkin Assets',
     'checkout' => 'Checkout Asset',
     'clear' => 'Clear',
     'clone' => 'Clone Asset',

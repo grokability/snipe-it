@@ -358,7 +358,7 @@ class AssetsController extends Controller
 
             $qr_code = (object) [
                 'display' => $settings->qr_code == '1',
-                'url' => route('qr_code/hardware', $asset),
+                'url' => route('qr_code/common', ['object_type' => 'hardware', 'id' => $asset->id]),
             ];
 
             $total_maintenance_cost = $asset->maintenances?->sum('cost');
@@ -369,6 +369,22 @@ class AssetsController extends Controller
 
             $total_cost_for_asset = $asset->purchase_cost + $total_maintenance_cost + $total_asset_cost + $total_license_cost + $total_accessory_cost + $total_component_cost;
 
+            $audit_custom_field_columns = [];
+            if ($asset->model && $asset->model->fieldset) {
+                $audit_custom_field_columns = $asset->model->fieldset->fields
+                    ->where('display_audit', '1')
+                    ->map(fn ($field) => [
+                        'field' => $field->db_column,
+                        'searchable' => false,
+                        'sortable' => false,
+                        'switchable' => true,
+                        'title' => e($field->name),
+                        'visible' => true,
+                    ])
+                    ->values()
+                    ->all();
+            }
+
             return view('hardware/view', compact('asset', 'qr_code', 'settings'))
                 ->with('total_maintenance_cost', $total_maintenance_cost)
                 ->with('total_asset_cost', $total_asset_cost)
@@ -377,7 +393,8 @@ class AssetsController extends Controller
                 ->with('total_component_cost', $total_component_cost)
                 ->with('total_cost_for_asset', $total_cost_for_asset)
                 ->with('use_currency', $use_currency)
-                ->with('audit_log', $audit_log);
+                ->with('audit_log', $audit_log)
+                ->with('audit_custom_field_columns', $audit_custom_field_columns);
         }
 
         return redirect()->route('hardware.index')->with('error', trans('admin/hardware/message.does_not_exist'));
@@ -443,7 +460,7 @@ class AssetsController extends Controller
 
         if ($request->filled('image_delete')) {
             try {
-                unlink(public_path().'/uploads/assets/'.$asset->image);
+                unlink(public_path().'/uploads/assets/'.basename($asset->image));
                 $asset->image = '';
             } catch (\Exception $e) {
                 Log::info($e);
@@ -549,7 +566,7 @@ class AssetsController extends Controller
 
         if ($asset->image) {
             try {
-                Storage::disk('public')->delete('assets'.'/'.$asset->image);
+                Storage::disk('public')->delete('assets/'.basename($asset->image));
             } catch (\Exception $e) {
                 Log::debug($e);
             }
@@ -567,11 +584,12 @@ class AssetsController extends Controller
      *
      * @since [v3.0]
      */
-    public function getAssetBySerial(Request $request): RedirectResponse
+    public function getAssetBySerial(Request $request, $serial = null): RedirectResponse
     {
+        $serial = $serial ?: $request->input('serial');
         $topsearch = ($request->input('topsearch') == 'true');
 
-        if (! $asset = Asset::where('serial', '=', $request->input('serial'))->first()) {
+        if (! $asset = Asset::where('serial', '=', $serial)->first()) {
             return redirect()->route('hardware.index')->with('error', trans('admin/hardware/message.does_not_exist'));
         }
         $this->authorize('view', $asset);
@@ -1102,13 +1120,21 @@ class AssetsController extends Controller
     public function getRequestedIndex($user_id = null)
     {
         $this->authorize('index', Asset::class);
-        $requestedItems = CheckoutRequest::with('user', 'requestedItem')->whereNull('canceled_at')->with('user', 'requestedItem');
+
+        $requestedItems = CheckoutRequest::with('user', 'requestedItem')->whereNull('canceled_at');
 
         if ($user_id) {
-            $requestedItems->where('user_id', $user_id)->get();
+            $requestedItems->where('user_id', $user_id);
         }
 
         $requestedItems = $requestedItems->orderBy('created_at', 'desc')->get();
+
+        if (Company::isFullMultipleCompanySupportEnabled() && ! auth()->user()->isSuperUser()) {
+            $requestedItems = $requestedItems->filter(
+                fn (CheckoutRequest $request) => $request->requestable
+                    && Company::isCurrentUserHasAccess($request->requestable)
+            )->values();
+        }
 
         return view('hardware/requested', compact('requestedItems'));
     }

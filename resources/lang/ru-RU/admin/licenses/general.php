@@ -31,6 +31,11 @@ return [
             'log_msg' => 'Возвращено через массовый отзыв лицензий в GUI',
         ],
 
+        'checkin_selected' => [
+            'success' => ':count seat checked in successfully. | :count seats checked in successfully.',
+            'no_seats_selected' => 'No seats were selected.',
+        ],
+
         'checkout_all' => [
             'button' => 'Выдать все места',
             'modal' => 'Это действие выдаст одно место первому доступному пользователю. | Это действие выдаст все :available_seats_count мест первым доступным пользователям. Пользователь считается доступным для этого места, если ему еще не выдана эта лицензия и свойство автоназначения лицензий включено в его учетной записи.',

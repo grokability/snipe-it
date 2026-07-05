@@ -31,6 +31,11 @@ return [
             'log_msg' => 'Checked in via bulk license checkin in license GUI',
         ],
 
+        'checkin_selected' => [
+            'success' => ':count seat checked in successfully. | :count seats checked in successfully.',
+            'no_seats_selected' => 'No seats were selected.',
+        ],
+
         'checkout_all' => [
             'button' => 'Hubi Dhammaan Kuraasta',
             'modal' => 'Tallaabadani waxay hubin doontaa hal kursi isticmaalayaasha ugu horreeya ee jira. | Tallaabadani waxay hubin doontaa dhammaan :available_seats_count kuraasta isticmaalayaasha ugu horreeya ee la heli karo. Isticmaale waxa loo tixgalinayaa inuu u diyaar yahay kursigan haddii aanu horeba u haysan shatigan iyaga la hubiyay, iyo shatiga Auto-Assign-ka waxa loo ogolyahay akoonkiisa isticmaale.',

@@ -48,6 +48,7 @@ class AssetModelsTransformer
                 'tag_color' => ($assetmodel->manufacturer->tag_color) ? e($assetmodel->manufacturer->tag_color) : null,
             ] : null,
             'image' => ($assetmodel->image != '') ? Storage::disk('public')->url('models/'.e($assetmodel->image)) : null,
+            'qr_code_url' => route('qr_code/common', ['object_type' => 'models', 'id' => $assetmodel->id]),
             'model_number' => ($assetmodel->model_number ? e($assetmodel->model_number) : null),
             'min_amt' => ($assetmodel->min_amt) ? (int) $assetmodel->min_amt : null,
 

@@ -14,4 +14,10 @@ return [
     'hardware_support' => 'Donanım Desteği',
     'configuration_change' => 'Yapılandırma Değişikliği',
     'pat_test' => 'PAT Test',
+    'checked_out_to_help' => 'Varlığın bakım oluşturulduğu sırada zimmetlendiği kullanıcı vb. bilgiler. Bu geçmişe dönük referans içindir ve varlığın mevcut zimmet durumunu etkilemez.',
+    'show_completed' => 'Tamamlananları Göster',
+    'show_active' => 'Aktifleri Göster',
+    'due' => 'Vadesi Dolan / Teslim Tarihi Gelen',
+    'overdue' => 'Gecikmiş / Süresi Geçmiş',
+    'completed' => 'Tamamlandı',
 ];

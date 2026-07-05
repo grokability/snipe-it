@@ -32,7 +32,7 @@ return [
     'show_deleted' => 'Show Deleted Users',
     'title' => 'Title',
     'to_restore_them' => 'to restore them.',
-    'total_assets_cost' => 'Total Assets Cost',
+    'total_assets_cost' => 'Total Cost',
     'updateuser' => 'Update User',
     'username' => 'Username',
     'display_name' => 'Display Name',

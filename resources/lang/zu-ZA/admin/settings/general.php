@@ -307,7 +307,7 @@ return [
     'two_factor_enter_code' => 'Faka i-Code-Two Factor',
     'two_factor_config_complete' => 'Thumela ikhodi',
     'two_factor_enabled_edit_not_allowed' => 'Umlawuli wakho akakakuvumeli ukuhlela lesi silungiselelo.',
-    'two_factor_enrollment_text' => 'Ukuqinisekiswa okubili kokubili kuyadingeka, noma ngabe idivayisi yakho ayibhalisile okwamanje. Vula uhlelo lwakho lokusebenza lwe-Google Authenticator bese uskena ikhodi ye-QR ngezansi ukuze ubhalise idivayisi yakho. Uma usubhalisile idivayisi yakho, faka ikhodi ngezansi',
+    'two_factor_enrollment_text' => "Ukuqinisekiswa okubili kokubili kuyadingeka, noma ngabe idivayisi yakho ayibhalisile okwamanje. Vula uhlelo lwakho lokusebenza lwe-Google Authenticator bese uskena ikhodi ye-QR ngezansi ukuze ubhalise idivayisi yakho. Uma usubhalisile idivayisi yakho, faka ikhodi ngezansi",
     'require_accept_signature' => 'Kudinga isignesha',
     'require_accept_signature_help_text' => 'Enabling this feature will require users to physically sign off on accepting items. This will override any category-specific signature requirements.',
     'require_checkinout_notes' => 'Require Notes on Checkin/Checkout',

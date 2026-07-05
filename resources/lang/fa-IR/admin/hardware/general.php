@@ -8,6 +8,8 @@ return [
     'bulk_checkout' => 'پرداخت بزرگ',
     'bulk_checkin' => 'Bulk Checkin',
     'checkin' => 'دارایی checkin',
+    'checkin_assets' => 'دارایی های ثبت نام
+',
     'checkout' => 'دارایی پرداخت',
     'clear' => 'Clear',
     'clone' => 'دارایی شگرف',

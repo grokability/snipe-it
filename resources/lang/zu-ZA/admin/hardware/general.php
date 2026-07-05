@@ -8,6 +8,7 @@ return [
     'bulk_checkout' => 'Ukuhlola okuningi',
     'bulk_checkin' => 'Bulk Checkin',
     'checkin' => 'I-Checkin Asset',
+    'checkin_assets' => 'Checkin Assets',
     'checkout' => 'I-Asset ye-Checkout',
     'clear' => 'Clear',
     'clone' => 'Clone Asset',

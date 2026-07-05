@@ -307,7 +307,7 @@ return [
     'two_factor_enter_code' => 'Entre le code à deux facteurs',
     'two_factor_config_complete' => 'Soumettre le code',
     'two_factor_enabled_edit_not_allowed' => 'Votre administrateur ne vous permet pas de modifier ce paramètre.',
-    'two_factor_enrollment_text' => 'L’authentification à deux facteurs est nécessaire, mais votre appareil n’a pas encore été inscrit. Ouvrez votre application Google Authenticator et scanner le code QR ci-dessous pour inscrire votre appareil. Une fois que vous avez inscrit votre appareil, saisissez le code ci-dessous',
+    'two_factor_enrollment_text' => "L’authentification à deux facteurs est nécessaire, mais votre appareil n’a pas encore été inscrit. Ouvrez votre application Google Authenticator et scanner le code QR ci-dessous pour inscrire votre appareil. Une fois que vous avez inscrit votre appareil, saisissez le code ci-dessous",
     'require_accept_signature' => 'Exiger la signature',
     'require_accept_signature_help_text' => 'Enabling this feature will require users to physically sign off on accepting items. This will override any category-specific signature requirements.',
     'require_checkinout_notes' => 'Require Notes on Checkin/Checkout',

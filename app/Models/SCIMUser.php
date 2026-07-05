@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+
 class SCIMUser extends User
 {
     protected $table = 'users';
@@ -19,6 +21,11 @@ class SCIMUser extends User
     public function groups()
     {
         return $this->belongsToMany(\App\Models\Group::class, 'users_groups', 'user_id', 'group_id');
+    }
+
+    public function companies(): BelongsToMany
+    {
+        return $this->belongsToMany(Company::class, 'company_user', 'user_id', 'company_id');
     }
 
 }

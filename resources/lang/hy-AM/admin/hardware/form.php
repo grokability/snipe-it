@@ -67,4 +67,6 @@ return [
     'optional_infos' => 'Հավելայլ տեղեկություններ',
     'order_details' => 'Պատվերի հետ կապված տեղեկություններ',
     'calc_eol' => 'Եթե EOL ամսաթիվը դատարկվում է, օգտագործել ավտոմատ EOL հաշվարկ՝ հիմնված գնման ամսաթվի և EOL տոկոսադրույքի վրա։',
+    'checkin_licenses' => 'Checkin associated license seats',
+    'checkin_child_assets' => 'Checkin associated assets',
 ];

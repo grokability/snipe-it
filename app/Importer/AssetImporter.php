@@ -111,7 +111,7 @@ class AssetImporter extends ItemImporter
         }
 
         $this->item['notes'] = trim($this->findCsvMatch($row, 'asset_notes'));
-        $this->item['image'] = trim($this->findCsvMatch($row, 'image'));
+        $this->item['image'] = basename(trim($this->findCsvMatch($row, 'image')));
         $this->item['requestable'] = trim(($this->fetchHumanBoolean($this->findCsvMatch($row, 'requestable'))) == 1) ? '1' : 0;
         $asset->requestable = $this->item['requestable'];
         $this->item['warranty_months'] = intval(trim($this->findCsvMatch($row, 'warranty_months')));
@@ -214,16 +214,25 @@ class AssetImporter extends ItemImporter
             // -- the class that needs to use it (command importer or GUI importer inside the project).
             if (isset($target) && ($target !== false)) {
                 $asset = $asset->fresh();
-                $targetType = get_class($target);
-                $alreadyCheckedOutToTarget = ($asset->assigned_to == $target->id) && ($asset->assigned_type === $targetType);
 
-                // Skip duplicate checkout noise when update mode keeps the same assignment target.
-                if (! $alreadyCheckedOutToTarget) {
-                    if (! is_null($asset->assigned_to)) {
-                        event(new CheckoutableCheckedIn($asset, $asset->assigned, auth()->user(), 'Checkin from CSV Importer', $checkin_date));
+                if (! $asset->canCheckoutTo($target)) {
+                    $this->log(trans('general.error_checkout_company_mismatch', [
+                        'item' => trans('general.asset').' "'.$asset->display_name.'"',
+                        'item_company' => $asset->company?->name ?? trans('general.unassigned'),
+                        'target' => ($target->name ?? $target->username ?? $target->id),
+                    ]));
+                } else {
+                    $targetType = get_class($target);
+                    $alreadyCheckedOutToTarget = ($asset->assigned_to == $target->id) && ($asset->assigned_type === $targetType);
+
+                    // Skip duplicate checkout noise when update mode keeps the same assignment target.
+                    if (! $alreadyCheckedOutToTarget) {
+                        if (! is_null($asset->assigned_to)) {
+                            event(new CheckoutableCheckedIn($asset, $asset->assigned, auth()->user(), 'Checkin from CSV Importer', $checkin_date));
+                        }
+
+                        $asset->checkOut($target, $this->created_by, $checkout_date, null, 'Checkout from CSV Importer', $asset->name);
                     }
-
-                    $asset->checkOut($target, $this->created_by, $checkout_date, null, 'Checkout from CSV Importer', $asset->name);
                 }
             }
 

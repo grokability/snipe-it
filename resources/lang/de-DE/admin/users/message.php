@@ -15,7 +15,7 @@ return [
     'user_deleted_warning' => 'Dieser Benutzer wurde gelöscht. Sie müssen ihn wiederherstellen, um ihn zu bearbeiten oder neue Assets zuzuweisen.',
     'ldap_not_configured' => 'LDAP Integration wurde für diese Installation nicht konfiguriert.',
     'password_resets_sent' => 'Den ausgewählten Benutzern, die aktiviert sind und eine gültige E-Mail-Adresse haben, wurde ein Link zum Zurücksetzen des Passworts gesendet.',
-    'not_activated' => 'This user cannot login, so they cannot accept assets via email.',
+    'not_activated' => 'Dieser Benutzer kann sich nicht einloggen, daher kann er keine Assets per E-Mail annehmen.',
     'password_reset_sent' => 'Der Link zum Zurücksetzen des Passworts wurde an :email gesendet!',
     'user_has_no_email' => 'Dieser Benutzer hat keine E-Mail-Adresse in seinem Profil.',
     'log_record_not_found' => 'Ein passender Logeintrag für diesen Benutzer konnte nicht gefunden werden.',
@@ -46,7 +46,7 @@ return [
         'delete_has_users_var' => 'Dieser Benutzer verwaltet noch einen anderen Benutzer. Bitte wählen Sie zuerst einen anderen Manager für diesen Benutzer.|Dieser Benutzer verwaltet noch :count Benutzer. Bitte wählen Sie zuerst einen anderen Manager.',
         'unsuspend' => 'Es gab ein Problem beim reaktivieren des Benutzers. Bitte versuche es erneut.',
         'import' => 'Es gab ein Problem beim importieren der Benutzer. Bitte noch einmal versuchen.',
-        'asset_already_accepted' => 'This item has already been accepted.',
+        'asset_already_accepted' => 'Dieser Artikel wurde bereits akzeptiert.',
         'accept_or_decline' => 'Sie müssen diesen Gegenstand entweder annehmen oder ablehnen.',
         'cannot_delete_yourself' => 'Wir würden uns wirklich schlecht fühlen, wenn Sie sich selbst löschen würden. Überlegen Sie es sich bitte noch einmal.',
         'incorrect_user_accepted' => 'Das Asset, welches Sie versuchen zu aktivieren, wurde nicht für Sie ausgebucht.',
@@ -56,7 +56,7 @@ return [
         'ldap_could_not_get_entries' => 'Konnte keine Einträge vom LDAP Server abrufen. Bitte LDAP Einstellungen in der LDAP Konfigurationsdatei prüfen. <br>Fehler vom LDAP Server:',
         'password_ldap' => 'Das Passwort für diesen Account wird vom LDAP/Active Directory verwaltet. Bitte kontaktieren Sie Ihre IT-Abteilung, um Ihr Passwort zu ändern. ',
         'multi_company_items_assigned' => 'Diesem Benutzer sind Dinge zugewiesen, die zu einer anderen Firma gehören. Bitte checken Sie sie ein oder bearbeiten Sie Ihre Firma.',
-        'no_pending_acceptances' => 'This user has no pending acceptances to remind them about.',
+        'no_pending_acceptances' => 'Dieser Benutzer hat keine ausstehenden Übernahmen, an die er erinnert werden könnte.',
     ],
 
     'deletefile' => [

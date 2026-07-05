@@ -19,6 +19,8 @@ return [
         'confirm' => 'Are you sure you wish to delete this depreciation class?',
         'error' => 'There was an issue deleting the depreciation class. Please try again.',
         'success' => 'The depreciation class was deleted successfully.',
+        'bulk_success' => 'Depreciation class deleted successfully.|:count depreciation classes were deleted successfully.',
+        'partial_success' => 'Depreciation class deleted successfully. See additional information below.|:count depreciation classes were deleted successfully. See additional information below.',
     ],
 
 ];

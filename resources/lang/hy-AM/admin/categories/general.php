@@ -19,6 +19,7 @@ return [
     'required_acceptance' => 'Այս օգտատիրոջը կուղարկվի էլ․ նամակ՝ տվյալ տարրի ընդունումը հաստատելու հղումով։',
     'global_signature_required_notice' => 'User signatures are currently required globally via the admin settings, so signatures will still be required regardless of this category setting if the item is checked out to a user (versus a location, etc).',
     'required_eula' => 'Այս օգտատիրոջը կուղարկվի EULA-ի պատճենը էլ․ նամակով',
+    'required_signature' => 'This user will be required to sign to confirm acceptance of this item.',
     'no_default_eula' => 'Առաջնային EULA չկա. Ավելացրեք Կարգավորումների միջոցով։',
     'update' => 'Թարմացնել կատեգորիան',
     'use_default_eula' => 'Օգտագործել <a href="#" data-toggle="modal" data-target="#eulaModal">առաջնային EULA</a>-ն։',

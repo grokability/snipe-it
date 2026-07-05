@@ -173,6 +173,7 @@ return [
     'url' => ':attribute 字段必须是一个有效的 URL。',
     'ulid' => ':attribute 字段必须是个有效的 ULID。',
     'uuid' => ':attribute 字段必须是一个有效的 UUID。',
+    'valid_css_color' => 'The :attribute field must be a valid CSS color (hex, rgb, rgba, hsl, or hsla).',
     'fmcs_location' => '管理设置中已启用完整的多公司支持及位置范围限定功能，但当前选择的位置与公司不兼容。',
     'is_unique_across_company_and_location' => '在所选的公司和地点范围内，:attribute 必须是唯一的。',
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Consumables;
 
+use App\Actions\Acceptances\CreateCheckoutAcceptanceAction;
 use App\Events\CheckoutableCheckedOut;
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
@@ -96,6 +97,14 @@ class ConsumableCheckoutController extends Controller
             return redirect()->route('consumables.checkout.show', $consumable)->with('error', trans('admin/consumables/message.checkout.user_does_not_exist'))->withInput();
         }
 
+        if (! $consumable->canCheckoutTo($user)) {
+            return redirect()->back()->with('error', trans('general.error_checkout_company_mismatch', [
+                'item' => trans('general.consumable').' "'.$consumable->name.'"',
+                'item_company' => $consumable->company?->name ?? trans('general.unassigned'),
+                'target' => trans('general.user').' "'.$user->username.'"',
+            ]));
+        }
+
         // Update the consumable data
         $consumable->assigned_to = e($request->input('assigned_to'));
 
@@ -141,11 +150,7 @@ class ConsumableCheckoutController extends Controller
 
             // If requireAcceptance() is false the listener won't have created one; create it now.
             if (! $acceptance) {
-                $acceptance = new CheckoutAcceptance;
-                $acceptance->checkoutable()->associate($consumable);
-                $acceptance->assignedTo()->associate($user);
-                $acceptance->qty = $quantity;
-                $acceptance->save();
+                $acceptance = CreateCheckoutAcceptanceAction::run($consumable, $user, $quantity);
             }
 
             session([

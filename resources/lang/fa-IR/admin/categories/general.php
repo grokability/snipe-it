@@ -19,6 +19,7 @@ return [
     'required_acceptance' => 'این کاربر با یک لینک به پذیرش این مورد تایید فرستاده می شود.',
     'global_signature_required_notice' => 'User signatures are currently required globally via the admin settings, so signatures will still be required regardless of this category setting if the item is checked out to a user (versus a location, etc).',
     'required_eula' => 'به این کاربر کپی EULA فرستاده می شود',
+    'required_signature' => 'This user will be required to sign to confirm acceptance of this item.',
     'no_default_eula' => 'هیچ EULA اولیه پیشفرضی یافت نشد.در تنظیمات اضافه کنید',
     'update' => 'به روزرسانی دسته‌ بندی',
     'use_default_eula' => 'از Use the <a href="#" data-toggle="modal" data-target="#eulaModal">EULA پیشفرض اولیه</a> instead.

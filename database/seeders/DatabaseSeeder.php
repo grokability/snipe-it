@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         Model::unguard();
+        DB::statement('SET FOREIGN_KEY_CHECKS=0');
 
         // Only create default settings if they do not exist in the db.
         if (! Setting::first()) {
@@ -51,6 +52,7 @@ class DatabaseSeeder extends Seeder
         Log::info($output);
 
         Model::reguard();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1');
 
         DB::table('imports')->truncate();
         DB::table('requested_assets')->truncate();

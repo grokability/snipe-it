@@ -47,5 +47,5 @@ return [
     'kit_deleted' => '套件已成功刪除',
     'kit_model_updated' => '型號成功更新',
     'kit_model_detached' => '型號成功分離',
-    'model_already_attached' => 'Model already attached to kit',
+    'model_already_attached' => '型號已附加至套件',
 ];

@@ -19,6 +19,7 @@ return [
     'required_acceptance' => 'Тухайн хөрөнгийг хүлээж авсныг баталгаажуулах холбоосыг хэрэглэгч уруу имэйлээр илгээнэ.',
     'global_signature_required_notice' => 'User signatures are currently required globally via the admin settings, so signatures will still be required regardless of this category setting if the item is checked out to a user (versus a location, etc).',
     'required_eula' => 'Хэрэглэгч уруу EULA-г имэйлээр явуулна',
+    'required_signature' => 'This user will be required to sign to confirm acceptance of this item.',
     'no_default_eula' => 'Стандарт EULA тодорхойлж өгөөгүй байна. Тохиргоо хэсэгт нэмж оруулна уу.',
     'update' => 'Ангилал шинэчлэх',
     'use_default_eula' => 'Үүний оронд <a href="#" data-toggle="modal" data-target="#eulaModal">үндсэн стандарт EULA</a> -г ашиглана уу.',

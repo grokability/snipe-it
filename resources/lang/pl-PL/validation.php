@@ -173,6 +173,7 @@ return [
     'url' => 'Pole :attribute musi być prawidłowym adresem URL.',
     'ulid' => 'Pole :attribute musi być poprawnym ULID.',
     'uuid' => 'Pole :attribute musi być prawidłowym UUID.',
+    'valid_css_color' => 'The :attribute field must be a valid CSS color (hex, rgb, rgba, hsl, or hsla).',
     'fmcs_location' => 'Pełna obsługa wielu firm i zakres lokalizacji są włączone w Ustawieniach Administratora, a wybrane lokalizacja i firma nie są zgodne.',
     'is_unique_across_company_and_location' => ':attribute musi być unikalny w wybranej firmie i lokalizacji.',
 

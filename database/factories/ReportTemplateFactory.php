@@ -15,6 +15,7 @@ class ReportTemplateFactory extends Factory
     public function definition()
     {
         return [
+            'type' => 'asset',
             'name' => $this->faker->word(),
             'options' => [
                 'id' => '1',

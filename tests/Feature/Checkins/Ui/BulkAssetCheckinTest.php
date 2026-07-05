@@ -5,6 +5,7 @@ namespace Tests\Feature\Checkins\Ui;
 use App\Events\CheckoutableCheckedIn;
 use App\Models\Asset;
 use App\Models\CheckoutAcceptance;
+use App\Models\Company;
 use App\Models\LicenseSeat;
 use App\Models\Location;
 use App\Models\Statuslabel;
@@ -135,6 +136,97 @@ class BulkAssetCheckinTest extends TestCase
 
         $assets->each(function (Asset $asset) use ($rtdLocation) {
             $this->assertEquals($rtdLocation->id, $asset->fresh()->location_id);
+        });
+    }
+
+    public function test_bulk_checkin_rejects_nonexistent_location_id()
+    {
+        $rtdLocation = Location::factory()->create();
+        $assets = Asset::factory()->assignedToUser()->count(2)->create(['rtd_location_id' => $rtdLocation->id]);
+
+        $this->actingAs(User::factory()->checkinAssets()->create())
+            ->post(route('hardware.bulkcheckin.store'), [
+                'selected_assets' => $assets->pluck('id')->toArray(),
+                'location_id' => PHP_INT_MAX,
+            ])
+            ->assertRedirectToRoute('hardware.bulkcheckin.show')
+            ->assertSessionHas('error');
+
+        $assets->each(function (Asset $asset) {
+            $this->assertNotNull($asset->fresh()->assigned_to);
+        });
+    }
+
+    public function test_bulk_checkin_rejects_location_from_another_company_under_fmcs()
+    {
+        $this->settings->enableMultipleFullCompanySupport();
+
+        [$companyA, $companyB] = Company::factory()->count(2)->create();
+
+        $foreignLocation = Location::factory()->create(['company_id' => $companyB->id]);
+        $rtdLocation = Location::factory()->create(['company_id' => $companyA->id]);
+        $assets = Asset::factory()->assignedToUser()->count(2)->create([
+            'company_id' => $companyA->id,
+            'rtd_location_id' => $rtdLocation->id,
+        ]);
+        $actor = User::factory()->checkinAssets()->viewAssets()->create(['company_id' => $companyA->id]);
+
+        $this->actingAs($actor)
+            ->post(route('hardware.bulkcheckin.store'), [
+                'selected_assets' => $assets->pluck('id')->toArray(),
+                'location_id' => $foreignLocation->id,
+            ])
+            ->assertRedirectToRoute('hardware.bulkcheckin.show')
+            ->assertSessionHas('error');
+
+        $assets->each(function (Asset $asset) {
+            $this->assertNotNull($asset->fresh()->assigned_to);
+        });
+    }
+
+    public function test_submitted_location_overrides_rtd_location_without_updating_default()
+    {
+        $rtdLocation = Location::factory()->create();
+        $submittedLocation = Location::factory()->create();
+
+        $assets = Asset::factory()->assignedToUser()->count(2)->create([
+            'rtd_location_id' => $rtdLocation->id,
+        ]);
+
+        $this->actingAs(User::factory()->checkinAssets()->create())
+            ->post(route('hardware.bulkcheckin.store'), [
+                'selected_assets' => $assets->pluck('id')->toArray(),
+                'location_id' => $submittedLocation->id,
+                'update_default_location' => '1',
+            ]);
+
+        $assets->each(function (Asset $asset) use ($submittedLocation, $rtdLocation) {
+            $fresh = $asset->fresh();
+            $this->assertEquals($submittedLocation->id, $fresh->location_id);
+            $this->assertEquals($rtdLocation->id, $fresh->rtd_location_id);
+        });
+    }
+
+    public function test_submitted_location_updates_both_current_and_default_when_radio_set_to_zero()
+    {
+        $rtdLocation = Location::factory()->create();
+        $submittedLocation = Location::factory()->create();
+
+        $assets = Asset::factory()->assignedToUser()->count(2)->create([
+            'rtd_location_id' => $rtdLocation->id,
+        ]);
+
+        $this->actingAs(User::factory()->checkinAssets()->create())
+            ->post(route('hardware.bulkcheckin.store'), [
+                'selected_assets' => $assets->pluck('id')->toArray(),
+                'location_id' => $submittedLocation->id,
+                'update_default_location' => '0',
+            ]);
+
+        $assets->each(function (Asset $asset) use ($submittedLocation) {
+            $fresh = $asset->fresh();
+            $this->assertEquals($submittedLocation->id, $fresh->location_id);
+            $this->assertEquals($submittedLocation->id, $fresh->rtd_location_id);
         });
     }
 

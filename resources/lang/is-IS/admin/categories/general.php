@@ -19,6 +19,7 @@ return [
     'required_acceptance' => 'Þessi notandi fær töluvpóst með hlekk til að staðfesta móttöku á þessum hlut.',
     'global_signature_required_notice' => 'User signatures are currently required globally via the admin settings, so signatures will still be required regardless of this category setting if the item is checked out to a user (versus a location, etc).',
     'required_eula' => 'Þessi notandi fær tölvupóst með notendaskilmálum',
+    'required_signature' => 'This user will be required to sign to confirm acceptance of this item.',
     'no_default_eula' => 'Fann enga sjálfgefna notendaskilmála. Vinsamlegast bættu þeim við í undir "Stillingar"',
     'update' => 'Breyta vöruflokk',
     'use_default_eula' => 'Notaðu frekar <a href="#" data-toggle="modal" data-target="#eulaModal">',

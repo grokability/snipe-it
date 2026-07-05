@@ -8,5 +8,5 @@ return [
     'remaining' => '剩餘',
     'total' => '總計',
     'update' => '更新耗材',
-    'inventory_warning' => 'The inventory of this consumable is below the minimum amount of :min_count',
+    'inventory_warning' => '此耗材的庫存低於最低數量 :min_count',
 ];

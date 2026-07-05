@@ -70,7 +70,15 @@
                             </div>
                         </div>
 
-
+                        <!-- Clear Name -->
+                        <div class="form-group">
+                            <div class="col-sm-offset-3 col-md-9">
+                                <label class="form-control">
+                                    <input type="checkbox" value="1" name="clear_name">
+                                    <span>{{ trans('general.clear_name') }}</span>
+                                </label>
+                            </div>
+                        </div>
 
                 </div> <!--/.box-body-->
                 <div class="box-footer">

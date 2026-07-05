@@ -4,6 +4,7 @@ namespace Tests\Feature\Assets\Api;
 
 use App\Models\Asset;
 use App\Models\Company;
+use App\Models\CustomField;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Testing\Fluent\AssertableJson;
@@ -166,6 +167,27 @@ class AssetIndexTest extends TestCase
             ->getJson(route('api.assets.index'))
             ->assertResponseDoesNotContainInRows($assetA, 'asset_tag')
             ->assertResponseContainsInRows($assetB, 'asset_tag');
+    }
+
+    public function test_assets_can_be_filtered_by_custom_field()
+    {
+        $field = CustomField::factory()->create();
+
+        $matchingAssets = Asset::factory()->count(3)->hasMultipleCustomFields([$field])->create();
+        foreach ($matchingAssets as $asset) {
+            $asset->{$field->db_column_name()} = 'target-value';
+            $asset->save();
+        }
+
+        // These assets have a null value for the custom field column and should not be returned
+        Asset::factory()->count(2)->create();
+
+        $this->actingAsForApi(User::factory()->superuser()->create())
+            ->getJson(route('api.assets.index', [
+                $field->db_column_name() => 'target-value',
+            ]))
+            ->assertOk()
+            ->assertJson(fn (AssertableJson $json) => $json->has('rows', 3)->etc());
     }
 
     public function test_gracefully_handles_malformed_filter()

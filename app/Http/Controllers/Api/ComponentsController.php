@@ -85,7 +85,13 @@ class ComponentsController extends Controller
         }
 
         if ($request->filled('company_id')) {
-            $components->where('components.company_id', '=', $request->input('company_id'));
+            // expand_company_hierarchy=1 opts the company show-page tabs into the
+            // parent/child rollup so a child shows items inherited from its parent.
+            if ($request->boolean('expand_company_hierarchy')) {
+                $components->whereIn('components.company_id', Company::reachableCompanyIds($request->input('company_id')));
+            } else {
+                $components->where('components.company_id', '=', $request->input('company_id'));
+            }
         }
 
         if ($request->filled('order_number')) {

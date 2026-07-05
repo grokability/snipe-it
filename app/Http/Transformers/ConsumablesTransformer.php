@@ -25,6 +25,7 @@ class ConsumablesTransformer
             'id' => (int) $consumable->id,
             'name' => e($consumable->name),
             'image' => ($consumable->getImageUrl()) ? ($consumable->getImageUrl()) : null,
+            'qr_code_url' => route('qr_code/common', ['object_type' => 'consumables', 'id' => $consumable->id]),
             'category' => ($consumable->category) ? [
                 'id' => $consumable->category->id,
                 'name' => e($consumable->category->name),

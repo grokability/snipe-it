@@ -31,6 +31,11 @@ return [
             'log_msg' => 'Incheckad via massincheckning av licenser i licensgränssnittet',
         ],
 
+        'checkin_selected' => [
+            'success' => ':count seat checked in successfully. | :count seats checked in successfully.',
+            'no_seats_selected' => 'No seats were selected.',
+        ],
+
         'checkout_all' => [
             'button' => 'Checka ut alla säten',
             'modal' => 'Denna åtgärd kommer att checka ut ett säte till den första tillgängliga användaren. | Den här åtgärden kommer att checka ut alla :available_seats_count platser till de första tillgängliga användarna. En användare anses vara tillgänglig för detta säte om de inte redan har denna licens utcheckad till dem, och auto-tilldela licensegenskaper är aktiverad på deras användarkonto.',

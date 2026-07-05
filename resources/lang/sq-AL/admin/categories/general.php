@@ -19,6 +19,7 @@ return [
     'required_acceptance' => 'This user will be emailed with a link to confirm acceptance of this item.',
     'global_signature_required_notice' => 'User signatures are currently required globally via the admin settings, so signatures will still be required regardless of this category setting if the item is checked out to a user (versus a location, etc).',
     'required_eula' => 'This user will be emailed a copy of the EULA',
+    'required_signature' => 'This user will be required to sign to confirm acceptance of this item.',
     'no_default_eula' => 'Nuk u gjet asnjë EULA. Shtoni një te Cilësimet.',
     'update' => 'Update Category',
     'use_default_eula' => 'Përdor <a href="#" data-toggle="modal" data-target="#eulaModal"> EULA-ja kryesore </a> në vend të kësaj.',

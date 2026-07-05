@@ -94,6 +94,12 @@ return [
         'success' => 'Az eszköz sikeresen kivéve.|Az eszközök sikeresen kivéve.',
     ],
 
+    'multi-checkin' => [
+        'error' => 'Asset was not checked in, please try again|Assets were not checked in, please try again',
+        'success' => 'Asset checked in successfully.|Assets checked in successfully.',
+        'no_assets_selected' => 'Ki kell választania legalább egy elemet a listából',
+    ],
+
     'checkin' => [
         'error' => 'Az eszköz nem lett bejelölve, próbálkozzon újra',
         'success' => 'Az Asset sikeresen ellenőrzött.',

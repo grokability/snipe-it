@@ -14,6 +14,7 @@ use App\Models\Asset;
 use App\Models\Company;
 use App\Models\Maintenance;
 use App\Models\Setting;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -52,6 +53,18 @@ class MaintenancesController extends Controller
 
         if ($request->filled('asset_id')) {
             $maintenances->where('asset_id', '=', $request->input('asset_id'));
+        }
+
+        // Polymorphic filter — used by the user detail Maintenances tab to
+        // pull every maintenance where the underlying asset was checked out
+        // to a specific user. Defaults to type=User when only the id is
+        // supplied; pass `checked_out_to_type=<fqcn>` to target locations
+        // or assets if/when those tabs land.
+        if ($request->filled('checked_out_to_id')) {
+            $type = $request->input('checked_out_to_type', User::class);
+            $maintenances
+                ->where('maintenances.checked_out_to_id', $request->input('checked_out_to_id'))
+                ->where('maintenances.checked_out_to_type', $type);
         }
 
         if ($request->filled('supplier_id')) {
@@ -102,7 +115,7 @@ class MaintenancesController extends Controller
         }
 
         // Make sure the offset and limit are actually integers and do not exceed system limits
-        $offset = ($request->input('offset') > $maintenances->count()) ? $maintenances->count() : abs($request->input('offset'));
+        $offset = ($request->input('offset') > $maintenances->count()) ? $maintenances->count() : app('api_offset_value');
         $limit = app('api_limit_value');
 
         $allowed_columns = [
@@ -269,17 +282,33 @@ class MaintenancesController extends Controller
 
         if ($maintenance = Maintenance::with('asset')->find($id)) {
 
-            // Can this user manage this asset?
-            if (! Company::isCurrentUserHasAccess($maintenance->asset)) {
-                return response()->json(Helper::formatStandardApiResponse('error', null, trans('general.action_permission_denied', ['item_type' => trans('admin/maintenances/general.maintenance'), 'id' => $id, 'action' => trans('general.edit')])));
-            }
-
-            // The asset this miantenance is attached to is not valid or has been deleted
+            // The asset this maintenance is attached to is not valid or has been deleted
             if (! $maintenance->asset) {
                 return response()->json(Helper::formatStandardApiResponse('error', null, trans('general.item_not_found', ['item_type' => trans('general.asset'), 'id' => $id])));
             }
 
-            $maintenance->fill($request->all());
+            // Can this user manage the existing asset?
+            if (! Company::isCurrentUserHasAccess($maintenance->asset)) {
+                return response()->json(Helper::formatStandardApiResponse('error', null, trans('general.action_permission_denied', ['item_type' => trans('admin/maintenances/general.maintenance'), 'id' => $id, 'action' => trans('general.edit')])));
+            }
+
+            // If the request changes asset_id, verify the new asset is accessible
+            if ($request->filled('asset_id') && (int) $request->input('asset_id') !== $maintenance->asset_id) {
+                $newAsset = Asset::find($request->input('asset_id'));
+
+                if (! $newAsset) {
+                    return response()->json(Helper::formatStandardApiResponse('error', null, trans('general.item_not_found', ['item_type' => trans('general.asset'), 'id' => $request->input('asset_id')])));
+                }
+
+                if (! Company::isCurrentUserHasAccess($newAsset)) {
+                    return response()->json(Helper::formatStandardApiResponse('error', null, trans('general.action_permission_denied', ['item_type' => trans('general.asset'), 'id' => $request->input('asset_id'), 'action' => trans('general.edit')])), 403);
+                }
+
+                $maintenance->fill($request->except('asset_id'));
+                $maintenance->asset_id = $newAsset->id;
+            } else {
+                $maintenance->fill($request->except('asset_id'));
+            }
 
             if ($maintenance->save()) {
                 return response()->json(Helper::formatStandardApiResponse('success', $maintenance, trans('admin/maintenances/message.edit.success')));

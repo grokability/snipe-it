@@ -146,7 +146,8 @@ class AccessoryCheckout extends Model
                     $search_str = '%'.$term.'%';
                     $query->where('first_name', 'like', $search_str)
                         ->orWhere('last_name', 'like', $search_str)
-                        ->orWhere('note', 'like', $search_str);
+                        ->orWhere('note', 'like', $search_str)
+                        ->orWhereHas('companies', fn ($q) => $q->where('companies.name', 'like', $search_str));
                 }
             }
         )->select('id');

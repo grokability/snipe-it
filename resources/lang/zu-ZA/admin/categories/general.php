@@ -19,6 +19,7 @@ return [
     'required_acceptance' => 'Lo msebenzisi uzothunyelwa nge-imeyili ngesixhumanisi sokuqinisekisa ukwamukela le nto.',
     'global_signature_required_notice' => 'User signatures are currently required globally via the admin settings, so signatures will still be required regardless of this category setting if the item is checked out to a user (versus a location, etc).',
     'required_eula' => 'Lo msebenzisi uzothunyelwa nge-imeyili ikhophi ye-EULA',
+    'required_signature' => 'This user will be required to sign to confirm acceptance of this item.',
     'no_default_eula' => 'Ayikho i-EULA eyimfihlo eyatholakala. Engeza eyodwa kuzilungiselelo.',
     'update' => 'Isigaba sokuvuselela',
     'use_default_eula' => 'Sebenzisa okungu-<a href="#" data-toggle="modal" data-target="#eulaModal">kuzenzakalela okuzenzakalelayo ku-EULA</a> kunalokho.',

@@ -64,4 +64,6 @@ return [
     'optional_infos' => 'Opcione informacije',
     'order_details' => 'Informacije o nabavci',
     'calc_eol' => 'Ako nulirate datum isteka, koristite automatsko izračunavanje isteka na osnovu datuma kupovine i stope isticanja.',
+    'checkin_licenses' => 'Razduži sedišta povezana sa licencom',
+    'checkin_child_assets' => 'Razduži povezanu imovinu',
 ];

@@ -94,6 +94,12 @@ return [
         'success' => 'Asset checked out successfully.|Assets checked out successfully.',
     ],
 
+    'multi-checkin' => [
+        'error' => 'Asset was not checked in, please try again|Assets were not checked in, please try again',
+        'success' => 'Asset checked in successfully.|Assets checked in successfully.',
+        'no_assets_selected' => 'リストから少なくとも1つの資産を選択する必要があります',
+    ],
+
     'checkin' => [
         'error' => '資産はチェックインされませんでした。もう一度、やり直して下さい。',
         'success' => '資産は正常にチェックインされました。',

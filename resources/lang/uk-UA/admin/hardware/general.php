@@ -8,6 +8,7 @@ return [
     'bulk_checkout' => 'Масово видати',
     'bulk_checkin' => 'Масово видати',
     'checkin' => 'Прийняти актив',
+    'checkin_assets' => 'Checkin Assets',
     'checkout' => 'Видати актив',
     'clear' => 'Очистити',
     'clone' => 'Клонувати актив',

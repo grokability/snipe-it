@@ -27,9 +27,14 @@ return [
             'modal' => '此操作將歸還一個授權數量。| 此操作將歸還全部 :checkedout_seats_count 個授權數量。',
             'enabled_tooltip' => '從使用者和資產中歸還此授權的所有名額',
             'disabled_tooltip' => '此功能已停用，因為目前沒有名額在借出中',
-            'disabled_tooltip_reassignable' => 'This is disabled because the License is not reassignable',
+            'disabled_tooltip_reassignable' => '此功能已停用，因為授權不可重新分配',
             'success' => '授權成功歸還！| 所有授權都成功歸還！',
-            'log_msg' => 'Checked in via bulk license checkin in license GUI',
+            'log_msg' => '透過授權圖形化介面的批次繳回功能繳回',
+        ],
+
+        'checkin_selected' => [
+            'success' => ':count 個授權數量已成功繳回。|:count 個授權數量已成功繳回。',
+            'no_seats_selected' => '未選取任何授權數量。',
         ],
 
         'checkout_all' => [
@@ -46,6 +51,6 @@ return [
         ],
     ],
 
-    'below_threshold' => 'There are only :remaining_count seats left for this license with a minimum quantity of :min_amt. You may want to consider purchasing more seats.',
-    'below_threshold_short' => 'This item is below the minimum required quantity.',
+    'below_threshold' => '此授權的最低數量要求為 :min_amt，目前只剩 :remaining_count 個名額。您可能需要考慮購買更多名額。',
+    'below_threshold_short' => '此項目低於最低需求數量。',
 ];

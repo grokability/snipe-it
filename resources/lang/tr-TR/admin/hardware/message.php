@@ -94,6 +94,12 @@ return [
         'success' => 'Varlık başarıyla çıkış yapıldı.|Varlıklar başarıyla çıkış yaptı.',
     ],
 
+    'multi-checkin' => [
+        'error' => 'Varlık zimmetten düşülemedi, lütfen tekrar deneyin|Varlıklar zimmetten düşülemedi, lütfen tekrar deneyin',
+        'success' => 'Varlık başarıyla zimmetten düşüldü.|Varlıklar başarıyla zimmetten düşüldü.',
+        'no_assets_selected' => 'Listeden en az bir varlık seçmelisiniz',
+    ],
+
     'checkin' => [
         'error' => 'Demirbaş girişi yapılamadı. Lütfen tekrar deneyin',
         'success' => 'Demirbaş girişi yapıldı.',

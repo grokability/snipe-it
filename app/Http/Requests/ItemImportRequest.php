@@ -41,7 +41,7 @@ class ItemImportRequest extends FormRequest
         $classString = "App\\Importer\\{$class}Importer";
         $importer = new $classString($filename);
         $import->field_map = request('column-mappings');
-        $import->created_by = auth()->id();
+        $import->created_by = $import->created_by ?? auth()->id();
         $import->save();
         $fieldMappings = [];
 

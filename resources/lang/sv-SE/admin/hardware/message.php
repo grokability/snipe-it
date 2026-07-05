@@ -94,6 +94,12 @@ return [
         'success' => 'Utcheckning av tillgången lyckades.|Utcheckning av tillgångarna lyckades.',
     ],
 
+    'multi-checkin' => [
+        'error' => 'Asset was not checked in, please try again|Assets were not checked in, please try again',
+        'success' => 'Asset checked in successfully.|Assets checked in successfully.',
+        'no_assets_selected' => 'Du måste välja minst en tillgång från listan',
+    ],
+
     'checkin' => [
         'error' => 'Tillgången kunde inte checkas in, försök igen',
         'success' => 'Tillgången har checkats in.',

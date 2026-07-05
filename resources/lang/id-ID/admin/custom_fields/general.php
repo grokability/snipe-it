@@ -64,8 +64,10 @@ return [
         'text' => 'Kotak teks',
         'listbox' => 'Kotak list',
         'textarea' => 'Area teks (beberapa baris)',
+        'markdown-textarea' => 'Markdown Textarea',
         'checkbox' => 'Kotak check',
         'radio' => 'Tombol radio',
     ],
+    'markdown_supported' => 'Markdown is supported',
     'general_help_text' => 'Bidang kustom menyimpan informasi tambahan yang tidak tercakup aset default.. <a href="https://snipe-it.readme.io/docs/custom-fields#/"><i class="fa fa-external-link"></i></a>.',
 ];

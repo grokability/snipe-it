@@ -294,6 +294,38 @@ class AccessoryCheckoutTest extends TestCase
 
         $this->assertNotNull($acceptance);
         $this->assertEquals(2, $acceptance->qty);
+        $this->assertDatabaseCount('checkout_acceptances', 1);
+
+        $response->assertStatus(302)
+            ->assertRedirect(route('account.accept.item', $acceptance));
+    }
+
+    public function test_accessory_sign_in_place_creates_acceptance_when_acceptance_not_required()
+    {
+        $targetUser = User::factory()->create();
+        $accessory = Accessory::factory()->notRequiringAcceptance()->create(['qty' => 5]);
+
+        $response = $this->actingAs(User::factory()->admin()->create())
+            ->from(route('accessories.checkout.show', $accessory))
+            ->post(route('accessories.checkout.store', $accessory), [
+                'assigned_user' => $targetUser->id,
+                'checkout_to_type' => 'user',
+                'redirect_option' => 'index',
+                'checkout_qty' => 2,
+                'sign_in_place' => 1,
+            ]);
+
+        $acceptance = CheckoutAcceptance::query()
+            ->where('checkoutable_type', Accessory::class)
+            ->where('checkoutable_id', $accessory->id)
+            ->where('assigned_to_id', $targetUser->id)
+            ->pending()
+            ->latest()
+            ->first();
+
+        $this->assertNotNull($acceptance);
+        $this->assertEquals(2, $acceptance->qty);
+        $this->assertDatabaseCount('checkout_acceptances', 1);
 
         $response->assertStatus(302)
             ->assertRedirect(route('account.accept.item', $acceptance));

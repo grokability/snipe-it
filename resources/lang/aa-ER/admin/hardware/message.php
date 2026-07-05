@@ -94,6 +94,12 @@ return [
         'success' => 'crwdns12770:0crwdne12770:0',
     ],
 
+    'multi-checkin' => [
+        'error' => 'crwdns14885:0crwdne14885:0',
+        'success' => 'crwdns14887:0crwdne14887:0',
+        'no_assets_selected' => 'crwdns14889:0crwdne14889:0',
+    ],
+
     'checkin' => [
         'error' => 'crwdns752:0crwdne752:0',
         'success' => 'crwdns753:0crwdne753:0',

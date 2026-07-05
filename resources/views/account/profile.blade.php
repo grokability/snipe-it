@@ -48,10 +48,10 @@
               </div>
 
               <!-- Light Link color -->
-              <div class="form-group {{ $errors->has('link_dark_color') ? 'error' : '' }}">
+              <div class="form-group {{ $errors->has('link_light_color') ? 'error' : '' }}">
                   <label for="link_light_color" class="col-md-3 control-label">{{ trans('admin/settings/general.link_light_color') }}</label>
                   <div class="col-md-9">
-                      <x-input.colorpicker :item="$user" id="link_light_color" placeholder="{{ $link_dark_color }}" :value="old('link_light_color', ($user->link_dark_color ?? $link_dark_color))" name="link_light_color" />
+                      <x-input.colorpicker :item="$user" id="link_light_color" placeholder="{{ $link_light_color }}" :value="old('link_light_color', ($user->link_light_color ?? $link_light_color))" name="link_light_color" />
                       {!! $errors->first('link_light_color', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
                       <p class="help-block">{{ trans('admin/settings/general.link_light_color_help') }}</p>
                   </div>

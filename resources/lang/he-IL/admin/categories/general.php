@@ -19,6 +19,7 @@ return [
     'required_acceptance' => 'משתמש זה ישלח בדוא"ל עם קישור לאישור הקבלה של פריט זה.',
     'global_signature_required_notice' => 'User signatures are currently required globally via the admin settings, so signatures will still be required regardless of this category setting if the item is checked out to a user (versus a location, etc).',
     'required_eula' => 'משתמש זה ישלח בדואר אלקטרוני עותק של הסכם הרישיון למשתמש קצה (EULA)',
+    'required_signature' => 'This user will be required to sign to confirm acceptance of this item.',
     'no_default_eula' => 'לא נמצאה ברירת מחדל EULA ברירת מחדל. הוסף אחד בהגדרות.',
     'update' => 'עדכון קטגוריה',
     'use_default_eula' => 'במקום זאת, השתמש ב- <a href="#" data-toggle="modal" data-target="#eulaModal"> ברירת המחדל הראשית EULA</a>.',

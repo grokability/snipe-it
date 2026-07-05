@@ -3,9 +3,9 @@
 return [
     'companies' => '公司',
     'create' => '新增公司',
-    'email' => 'Company Email',
+    'email' => '公司電子郵件',
     'title' => '公司',
-    'phone' => 'Company Phone',
+    'phone' => '公司電話',
     'update' => '更新公司',
     'name' => '公司名稱',
     'id' => 'ID',

@@ -8,6 +8,7 @@ return [
     'bulk_checkout' => 'Saída em massa',
     'bulk_checkin' => 'Entrada em massa',
     'checkin' => 'Retornar Ativo',
+    'checkin_assets' => 'Check-in de Ativo',
     'checkout' => 'Checkout de Ativo',
     'clear' => 'Limpar',
     'clone' => 'Clonar Ativo',

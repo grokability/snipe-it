@@ -35,6 +35,19 @@ class LocationsForSelectListTest extends TestCase
             ->assertJson(fn (AssertableJson $json) => $json->has('results', 1)->etc());
     }
 
+    public function test_location_is_excluded_from_selectlist_when_exclude_id_matches()
+    {
+        [$locationA, $locationB] = Location::factory()->count(2)->create();
+
+        $this->actingAsForApi(User::factory()->createUsers()->create())
+            ->getJson(route('api.locations.selectlist', ['excludeId' => $locationA->id]))
+            ->assertOk()
+            ->assertJson(fn (AssertableJson $json) => $json->where('results', fn ($results) => collect($results)->doesntContain('id', $locationA->id) &&
+                    collect($results)->contains('id', $locationB->id)
+            )->etc()
+            );
+    }
+
     public function test_locations_are_returned_when_user_is_updating_their_profile_and_has_permission_to_update_location()
     {
         $this->actingAsForApi(User::factory()->canEditOwnLocation()->create())

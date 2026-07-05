@@ -19,6 +19,7 @@ return [
     'required_acceptance' => 'Käyttäjälle lähetetään sähköpostitse linkki nimikkeen hyväksymistä varten.',
     'global_signature_required_notice' => 'User signatures are currently required globally via the admin settings, so signatures will still be required regardless of this category setting if the item is checked out to a user (versus a location, etc).',
     'required_eula' => 'Käyttäjälle lähetetään sähköpostitse kopio käyttöehdoista',
+    'required_signature' => 'This user will be required to sign to confirm acceptance of this item.',
     'no_default_eula' => 'Yleisiä käyttöehtoja ei löytynyt. Voit lisätä ne sovelluksen asetuksista.',
     'update' => 'Päivitä kategoria',
     'use_default_eula' => 'Käytä <a href="#" data-toggle="modal" data-target="#eulaModal"> yleisiä käyttöehtoja</a>.',

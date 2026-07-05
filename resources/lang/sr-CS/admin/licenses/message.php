@@ -37,9 +37,9 @@ return [
         'confirm' => 'Jeste li sigurni da želite izbrisati ovu licencu?',
         'error' => 'Došlo je do problema sa brisanjem licence. Molim pokušajte ponovo.',
         'success' => 'Licenca je uspešno obrisana.',
-        'bulk_success' => 'The selected licenses were deleted successfully.',
-        'partial_success' => 'License deleted successfully. See additional information below. | :count licenses were deleted successfully. See additional information below.',
-        'bulk_checkout_warning' => ':license_name has seats that are currently checked out and cannot be deleted. Please check in all seats before deleting.',
+        'bulk_success' => 'Izabrane licence su uspešno izbrisane.',
+        'partial_success' => 'Licenca je uspešno izbrisana. Pogledajte dodatne informacije ispod. | :count licenci je uspešno izbrisano. Pogledajte dodatne informacije ispod.',
+        'bulk_checkout_warning' => ':license_name ima sedišta koja su trenutno zadužena i ne može biti izbrisana. Molim vas razdužite sva sedišta pre brisanja.',
     ],
 
     'checkout' => [

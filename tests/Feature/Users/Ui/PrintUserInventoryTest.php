@@ -2,7 +2,11 @@
 
 namespace Tests\Feature\Users\Ui;
 
+use App\Models\Accessory;
 use App\Models\Company;
+use App\Models\Consumable;
+use App\Models\License;
+use App\Models\LicenseSeat;
 use App\Models\User;
 use Tests\TestCase;
 
@@ -50,5 +54,89 @@ class PrintUserInventoryTest extends TestCase
                 'bulk_actions' => 'print',
             ])
             ->assertOk();
+    }
+
+    public function test_user_without_licenses_view_cannot_see_assigned_licenses_in_print()
+    {
+        $subject = User::factory()->create();
+        $license = License::factory()->create(['name' => 'Unique License XYZ123']);
+        LicenseSeat::factory()->for($license)->assignedToUser($subject)->create();
+
+        $actor = User::factory()->viewUsers()->create();
+
+        $this->actingAs($actor)
+            ->get(route('users.print', $subject))
+            ->assertOk()
+            ->assertDontSee('Unique License XYZ123');
+    }
+
+    public function test_user_with_licenses_view_can_see_assigned_licenses_in_print()
+    {
+        $subject = User::factory()->create();
+        $license = License::factory()->create(['name' => 'Unique License XYZ123']);
+        LicenseSeat::factory()->for($license)->assignedToUser($subject)->create();
+
+        $actor = User::factory()->viewUsers()->viewLicenses()->create();
+
+        $this->actingAs($actor)
+            ->get(route('users.print', $subject))
+            ->assertOk()
+            ->assertSee('Unique License XYZ123');
+    }
+
+    public function test_user_without_accessories_view_cannot_see_assigned_accessories_in_print()
+    {
+        $subject = User::factory()->create();
+        $accessory = Accessory::factory()->create(['name' => 'Unique Accessory ABC789']);
+        $accessory->checkouts()->create(['assigned_to' => $subject->id, 'assigned_type' => User::class]);
+
+        $actor = User::factory()->viewUsers()->create();
+
+        $this->actingAs($actor)
+            ->get(route('users.print', $subject))
+            ->assertOk()
+            ->assertDontSee('Unique Accessory ABC789');
+    }
+
+    public function test_user_with_accessories_view_can_see_assigned_accessories_in_print()
+    {
+        $subject = User::factory()->create();
+        $accessory = Accessory::factory()->create(['name' => 'Unique Accessory ABC789']);
+        $accessory->checkouts()->create(['assigned_to' => $subject->id, 'assigned_type' => User::class]);
+
+        $actor = User::factory()->viewUsers()->viewAccessories()->create();
+
+        $this->actingAs($actor)
+            ->get(route('users.print', $subject))
+            ->assertOk()
+            ->assertSee('Unique Accessory ABC789');
+    }
+
+    public function test_user_without_consumables_view_cannot_see_assigned_consumables_in_print()
+    {
+        $subject = User::factory()->create();
+        $consumable = Consumable::factory()->create(['name' => 'Unique Consumable DEF456']);
+        $subject->consumables()->attach($consumable->id, ['created_by' => $subject->id]);
+
+        $actor = User::factory()->viewUsers()->create();
+
+        $this->actingAs($actor)
+            ->get(route('users.print', $subject))
+            ->assertOk()
+            ->assertDontSee('Unique Consumable DEF456');
+    }
+
+    public function test_user_with_consumables_view_can_see_assigned_consumables_in_print()
+    {
+        $subject = User::factory()->create();
+        $consumable = Consumable::factory()->create(['name' => 'Unique Consumable DEF456']);
+        $subject->consumables()->attach($consumable->id, ['created_by' => $subject->id]);
+
+        $actor = User::factory()->viewUsers()->viewConsumables()->create();
+
+        $this->actingAs($actor)
+            ->get(route('users.print', $subject))
+            ->assertOk()
+            ->assertSee('Unique Consumable DEF456');
     }
 }

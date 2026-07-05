@@ -19,6 +19,7 @@ return [
     'required_acceptance' => 'Användaren kommer att få e-post med en länk för att bekräfta mottagande av detta objekt.',
     'global_signature_required_notice' => 'User signatures are currently required globally via the admin settings, so signatures will still be required regardless of this category setting if the item is checked out to a user (versus a location, etc).',
     'required_eula' => 'Användaren kommer att få e-post med en kopia av licensavtalet, EULA',
+    'required_signature' => 'This user will be required to sign to confirm acceptance of this item.',
     'no_default_eula' => 'Ingen standard-licensavtal, EULA, hittades. Lägg till en under Inställningar.',
     'update' => 'Uppdatera kategori',
     'use_default_eula' => 'Använd <a href="#" data-toggle="modal" data-target="#eulaModal">standard-licensavtal, EULA</a> istället.',

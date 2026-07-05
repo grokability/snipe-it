@@ -14,4 +14,10 @@ return [
     'hardware_support' => 'crwdns13576:0crwdne13576:0',
     'configuration_change' => 'crwdns13578:0crwdne13578:0',
     'pat_test' => 'crwdns13580:0crwdne13580:0',
+    'checked_out_to_help' => 'crwdns14823:0crwdne14823:0',
+    'show_completed' => 'crwdns14825:0crwdne14825:0',
+    'show_active' => 'crwdns14827:0crwdne14827:0',
+    'due' => 'crwdns14829:0crwdne14829:0',
+    'overdue' => 'crwdns14831:0crwdne14831:0',
+    'completed' => 'crwdns14833:0crwdne14833:0',
 ];

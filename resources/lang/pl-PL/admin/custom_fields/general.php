@@ -64,8 +64,10 @@ return [
         'text' => 'Pole tekstowe',
         'listbox' => 'Lista',
         'textarea' => 'Pole tekstowe (wiele linii)',
+        'markdown-textarea' => 'Markdown Textarea',
         'checkbox' => 'Checkbox',
         'radio' => 'Radio Buttons',
     ],
+    'markdown_supported' => 'Markdown is supported',
     'general_help_text' => 'Pola niestandardowe przechowują informacje, które nie są ujęte w domyślnie dostępnych polach. <a href="https://snipe-it.readme.io/docs/custom-fields#/"><i class="fa fa-external-link"></i></a>.',
 ];

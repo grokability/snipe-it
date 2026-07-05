@@ -9,7 +9,7 @@ class HistoryPresenter extends Presenter
      *
      * @return string
      */
-    public static function dataTableLayout($hide_fields = [])
+    public static function dataTableLayout($hide_fields = [], $extra_columns = [])
     {
         $layout = [];
 
@@ -230,6 +230,6 @@ class HistoryPresenter extends Presenter
                 ]);
         }
 
-        return json_encode($layout);
+        return json_encode(array_merge($layout, $extra_columns));
     }
 }

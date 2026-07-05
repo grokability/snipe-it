@@ -485,6 +485,50 @@ class LicenseSeatUpdateTest extends TestCase
         ]);
     }
 
+    public function test_user_in_same_company_can_be_assigned_license_seat_when_full_company_support_is_enabled()
+    {
+        $this->settings->enableMultipleFullCompanySupport();
+
+        $company = Company::factory()->create();
+        $license = License::factory()->for($company)->create();
+        $seat = LicenseSeat::factory()->create(['license_id' => $license->id, 'assigned_to' => null, 'asset_id' => null]);
+        $target = $company->users()->save(User::factory()->make());
+        $actor = User::factory()->superuser()->create();
+
+        $this->actingAsForApi($actor)
+            ->patchJson($this->route($seat), ['assigned_to' => $target->id])
+            ->assertOk()
+            ->assertStatusMessageIs('success');
+
+        $this->assertEquals($target->id, $seat->fresh()->assigned_to);
+    }
+
+    public function test_user_in_multiple_companies_can_be_assigned_license_from_any_of_their_companies_when_full_company_support_is_enabled()
+    {
+        $this->settings->enableMultipleFullCompanySupport();
+
+        [$companyA, $companyB] = Company::factory()->count(2)->create();
+        $target = User::factory()->create();
+        $target->companies()->sync([$companyA->id, $companyB->id]);
+        $actor = User::factory()->superuser()->create();
+
+        $licenseInA = License::factory()->for($companyA)->create();
+        $seatInA = LicenseSeat::factory()->create(['license_id' => $licenseInA->id, 'assigned_to' => null, 'asset_id' => null]);
+
+        $licenseInB = License::factory()->for($companyB)->create();
+        $seatInB = LicenseSeat::factory()->create(['license_id' => $licenseInB->id, 'assigned_to' => null, 'asset_id' => null]);
+
+        $this->actingAsForApi($actor)
+            ->patchJson($this->route($seatInA), ['assigned_to' => $target->id])
+            ->assertOk()
+            ->assertStatusMessageIs('success');
+
+        $this->actingAsForApi($actor)
+            ->patchJson($this->route($seatInB), ['assigned_to' => $target->id])
+            ->assertOk()
+            ->assertStatusMessageIs('success');
+    }
+
     private function route(LicenseSeat $licenseSeat)
     {
         return route('api.licenses.seats.update', [$licenseSeat->license->id, $licenseSeat->id]);

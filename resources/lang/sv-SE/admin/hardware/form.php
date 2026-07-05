@@ -64,4 +64,6 @@ return [
     'optional_infos' => 'Valfri information',
     'order_details' => 'Beställningsrelaterad information',
     'calc_eol' => 'Vid nollställning av EOL-datum, använd den automatiserade EOL-uträkningen baserat på inköpingsdatum och EOL-datum.',
+    'checkin_licenses' => 'Checkin associated license seats',
+    'checkin_child_assets' => 'Checkin associated assets',
 ];

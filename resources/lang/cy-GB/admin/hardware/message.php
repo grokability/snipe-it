@@ -94,6 +94,12 @@ return [
         'success' => 'Asset checked out successfully.|Assets checked out successfully.',
     ],
 
+    'multi-checkin' => [
+        'error' => 'Asset was not checked in, please try again|Assets were not checked in, please try again',
+        'success' => 'Asset checked in successfully.|Assets checked in successfully.',
+        'no_assets_selected' => 'Rhaid i chi ddewis o leiaf un ased o\'r rhestr',
+    ],
+
     'checkin' => [
         'error' => 'Ased heb ei nodi i mewn, ceisiwch eto o. g. y. dd',
         'success' => 'Ased wedi nodi i mewn yn llwyddiannus.',

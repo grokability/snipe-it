@@ -25,13 +25,20 @@ class SelectlistTransformer
 
         // Loop through the paginated collection to set the array values
         foreach ($select_items as $select_item) {
-            $items_array[] = [
+            $row = [
                 'id' => (int) $select_item->id,
                 'text' => ($select_item->use_text) ? $select_item->use_text : $select_item->name,
                 'image' => ($select_item->use_image) ? $select_item->use_image : null,
                 'tag_color' => ($select_item->tag_color) ? $select_item->tag_color : null,
-
             ];
+
+            // Optional: when set, select2 renders the option as un-selectable.
+            // Used to enforce hierarchy / membership constraints up-front.
+            if (! empty($select_item->use_disabled)) {
+                $row['disabled'] = true;
+            }
+
+            $items_array[] = $row;
         }
 
         $results = [

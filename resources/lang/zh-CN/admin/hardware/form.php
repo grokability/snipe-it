@@ -64,4 +64,6 @@ return [
     'optional_infos' => '可选信息',
     'order_details' => '订单相关信息',
     'calc_eol' => '如果将 EOL 日期设为零，则根据购买日期和 报废率 自动计算 EOL。',
+    'checkin_licenses' => 'Checkin associated license seats',
+    'checkin_child_assets' => 'Checkin associated assets',
 ];

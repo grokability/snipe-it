@@ -31,6 +31,11 @@ return [
             'log_msg' => 'Devolvido via devolução em massa de licenças na interface gráfica de licença (GUI)',
         ],
 
+        'checkin_selected' => [
+            'success' => ':count seat checked in successfully. | :count seats checked in successfully.',
+            'no_seats_selected' => 'No seats were selected.',
+        ],
+
         'checkout_all' => [
             'button' => 'Checkout de todas as vagas',
             'modal' => 'Esta ação verificará um lugar para o primeiro usuário disponível. | Esta ação verificará todos os :available_seats_count lugares para os primeiros usuários disponíveis. Um usuário é considerado disponível para esta vaga se ele ainda não tiver essa licença reservada para ele, e a propriedade de Autoatribuição de Licenças está ativada na sua conta de usuário.',

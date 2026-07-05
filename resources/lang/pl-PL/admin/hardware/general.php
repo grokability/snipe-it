@@ -8,6 +8,7 @@ return [
     'bulk_checkout' => 'Zbiorcze wydanie',
     'bulk_checkin' => 'Zbiorcze przyjęcie',
     'checkin' => 'Przyjęcie środka',
+    'checkin_assets' => 'Przyjmij aktywa',
     'checkout' => 'Wydaj środek',
     'clear' => 'Wyczyść',
     'clone' => 'Powiel środek',

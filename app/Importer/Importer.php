@@ -9,6 +9,7 @@ use App\Models\User;
 use Carbon\CarbonImmutable;
 use ForceUTF8\Encoding;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use League\Csv\Reader;
@@ -393,6 +394,18 @@ abstract class Importer
         }
 
         // No luck finding a user on username or first name, let's create one.
+
+        // Floater-mode escalation guard (#19200). A side-effect of an asset
+        // import is that referenced users get minted with no company pivot —
+        // under floater mode that promotes them to system-wide visibility.
+        // Refuse to create the user when the importer's actor isn't trusted
+        // to grant floater status. Same guard the User CSV importer uses.
+        if (Auth::check() && ! auth()->user()->canGrantFloaterStatus()) {
+            $this->log('Skipping creation of referenced user "'.($user_array['username'] ?? '').'": cannot create a user with no company assignment while floater mode is enabled (#19200).');
+
+            return false;
+        }
+
         $user = new User;
 
         $user->first_name = $user_array['first_name'];

@@ -77,7 +77,7 @@ class CategoryPresenter extends Presenter
                 'searchable' => false,
                 'sortable' => true,
                 'class' => 'css-envelope',
-                'title' => 'Send Email',
+                'title' => trans('general.send_email'),
                 'visible' => true,
                 'formatter' => 'trueFalseFormatter',
             ], [

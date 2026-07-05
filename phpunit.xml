@@ -23,7 +23,7 @@
     <env name="CACHE_DRIVER" value="array"/>
     <env name="MAIL_FROM_ADDR" value="app@example.com"/>
     <env name="MAIL_MAILER" value="array"/>
-    <env name="QUEUE_DRIVER" value="sync"/>
+    <env name="QUEUE_CONNECTION" value="sync"/>
     <env name="SESSION_DRIVER" value="array"/>
     <ini name="display_errors" value="true"/>
   </php>

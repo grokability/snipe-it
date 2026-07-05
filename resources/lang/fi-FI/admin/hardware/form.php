@@ -64,4 +64,6 @@ return [
     'optional_infos' => 'Valinnaiset tiedot',
     'order_details' => 'Tilaukseen liityvät tiedot',
     'calc_eol' => 'If nulling the EOL date, use automatic EOL calculation based on the purchase date and EOL rate.',
+    'checkin_licenses' => 'Checkin associated license seats',
+    'checkin_child_assets' => 'Checkin associated assets',
 ];

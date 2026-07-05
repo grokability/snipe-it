@@ -14,4 +14,10 @@ return [
     'hardware_support' => 'ការគាំទ្រផ្នែករឹង',
     'configuration_change' => 'ការផ្លាស់ប្តូរការកំណត់រចនាសម្ព័ន្ធ',
     'pat_test' => 'តេស្ត PAT',
+    'checked_out_to_help' => 'The user, etc that the asset was checked out to at the time of maintenance creation. This is for historical reference and does not affect the current checkout status of the asset.',
+    'show_completed' => 'Show Completed',
+    'show_active' => 'Show Active',
+    'due' => 'Due',
+    'overdue' => 'Overdue',
+    'completed' => 'Completed',
 ];

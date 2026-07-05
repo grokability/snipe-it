@@ -61,7 +61,7 @@
         <x-page-column class="col-md-3">
 
             <x-box class="side-box expanded">
-                <x-info-panel :infoPanelObj="$snipe_component" img_path="{{ app('components_upload_url') }}">
+                <x-info-panel :infoPanelObj="$snipe_component" img_path="{{ app('components_upload_url') }}" :qr_code_url="route('qr_code/common', ['object_type' => 'components', 'id' => $snipe_component->id])">
 
                     <x-slot:buttons>
                         <x-button.edit :item="$snipe_component" :route="route('components.edit', $snipe_component->id)"/>

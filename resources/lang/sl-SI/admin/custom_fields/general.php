@@ -64,8 +64,10 @@ return [
         'text' => 'Text Box',
         'listbox' => 'List Box',
         'textarea' => 'Besedilno polje (večvrstično)',
+        'markdown-textarea' => 'Markdown Textarea',
         'checkbox' => 'Potrdilno polje',
         'radio' => 'Radio gumbi',
     ],
+    'markdown_supported' => 'Markdown is supported',
     'general_help_text' => 'Custom fields store additional information not covered by the default asset fields. <a href="https://snipe-it.readme.io/docs/custom-fields#/"><i class="fa fa-external-link"></i></a>.',
 ];

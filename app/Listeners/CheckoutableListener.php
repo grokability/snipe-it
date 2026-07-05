@@ -2,6 +2,7 @@
 
 namespace App\Listeners;
 
+use App\Actions\Acceptances\CreateCheckoutAcceptanceAction;
 use App\Events\CheckoutableCheckedOut;
 use App\Mail\CheckinAccessoryMail;
 use App\Mail\CheckinAssetMail;
@@ -286,25 +287,15 @@ class CheckoutableListener
             return null;
         }
 
-        $acceptance = new CheckoutAcceptance;
-        $acceptance->checkoutable()->associate($event->checkoutable);
-        $acceptance->assignedTo()->associate($event->checkedOutTo);
-
-        $acceptance->qty = 1;
-
-        if (isset($event->checkoutable->checkout_qty)) {
-            $acceptance->qty = $event->checkoutable->checkout_qty;
-        }
-
         $category = $this->getCategoryFromCheckoutable($event->checkoutable);
+        $alertOnResponseId = $category?->alert_on_response ? auth()->id() : null;
 
-        if ($category?->alert_on_response) {
-            $acceptance->alert_on_response_id = auth()->id();
-        }
-
-        $acceptance->save();
-
-        return $acceptance;
+        return CreateCheckoutAcceptanceAction::run(
+            $event->checkoutable,
+            $event->checkedOutTo,
+            $event->checkoutable->checkout_qty ?? 1,
+            $alertOnResponseId,
+        );
     }
 
     /**

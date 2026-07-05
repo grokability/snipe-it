@@ -173,6 +173,7 @@ return [
     'url' => ':attribute lauke turi būti galiojantis URL adresas.',
     'ulid' => ':attribute lauke turi būti galiojantis ULID identifikatorius.',
     'uuid' => ':attribute lauke turi būti galiojantis UUID identifikatorius.',
+    'valid_css_color' => ':attribute laukas turi būti galiojanti CSS spalva (hex, rgb, rgba, hsl arba hsla).',
     'fmcs_location' => 'Administratoriaus nustatymuose yra įjungtas pilnas kelių įmonių palaikymas ir vietos susiejimas, o pasirinkta vieta ir pasirinkta įmonė yra nesuderinamos.',
     'is_unique_across_company_and_location' => ':attribute turi būti unikalus pasirinktai įmonei ir vietai.',
 

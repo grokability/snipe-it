@@ -430,6 +430,11 @@ class UserFactory extends Factory
         return $this->appendPermission(['kits.delete' => '1']);
     }
 
+    public function editPredefinedKits()
+    {
+        return $this->appendPermission(['kits.edit' => '1']);
+    }
+
     public function viewPredefinedKits()
     {
         return $this->appendPermission(['kits.view' => '1']);
@@ -448,6 +453,26 @@ class UserFactory extends Factory
     public function auditAssets()
     {
         return $this->appendPermission(['assets.audit' => '1']);
+    }
+
+    public function manageModelFiles()
+    {
+        return $this->appendPermission(['models.files' => '1']);
+    }
+
+    public function manageLocationFiles()
+    {
+        return $this->appendPermission(['locations.files' => '1']);
+    }
+
+    public function manageCompanyFiles()
+    {
+        return $this->appendPermission(['companies.files' => '1']);
+    }
+
+    public function manageSupplierFiles()
+    {
+        return $this->appendPermission(['suppliers.files' => '1']);
     }
 
     private function appendPermission(array $permission)

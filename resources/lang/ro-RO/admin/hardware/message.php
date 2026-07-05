@@ -94,6 +94,12 @@ return [
         'success' => 'Asset checked out successfully.|Assets checked out successfully.',
     ],
 
+    'multi-checkin' => [
+        'error' => 'Asset was not checked in, please try again|Assets were not checked in, please try again',
+        'success' => 'Asset checked in successfully.|Assets checked in successfully.',
+        'no_assets_selected' => 'Trebuie să selectați cel puțin un articol din lista',
+    ],
+
     'checkin' => [
         'error' => 'Activul nu a fost primit, va rugam incercati iar',
         'success' => 'Activul a fost primit.',

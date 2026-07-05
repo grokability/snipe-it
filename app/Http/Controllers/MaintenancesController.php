@@ -305,6 +305,8 @@ class MaintenancesController extends Controller
      */
     public function show(Maintenance $maintenance): View|RedirectResponse
     {
+        $this->authorize('view', $maintenance->asset);
+
         return view('maintenances.view')->with('maintenance', $maintenance);
     }
 }

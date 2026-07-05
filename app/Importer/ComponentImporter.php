@@ -59,13 +59,21 @@ class ComponentImporter extends ItemImporter
 
             // If we have an asset tag, checkout to that asset.
             if (isset($this->item['asset_tag']) && ($asset = Asset::where('asset_tag', $this->item['asset_tag'])->first())) {
-                $component->assets()->attach($component->id, [
-                    'component_id' => $component->id,
-                    'created_by' => auth()->id(),
-                    'created_at' => date('Y-m-d H:i:s'),
-                    'assigned_qty' => 1, // Only assign the first one to the asset
-                    'asset_id' => $asset->id,
-                ]);
+                if (! $component->canCheckoutTo($asset)) {
+                    $this->log(trans('general.error_checkout_company_mismatch', [
+                        'item' => trans('general.component').' "'.$component->name.'"',
+                        'item_company' => $component->company?->name ?? trans('general.unassigned'),
+                        'target' => trans('general.asset').' "'.$asset->display_name.'"',
+                    ]));
+                } else {
+                    $component->assets()->attach($component->id, [
+                        'component_id' => $component->id,
+                        'created_by' => auth()->id(),
+                        'created_at' => date('Y-m-d H:i:s'),
+                        'assigned_qty' => 1, // Only assign the first one to the asset
+                        'asset_id' => $asset->id,
+                    ]);
+                }
             }
 
             return;

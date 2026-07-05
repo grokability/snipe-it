@@ -3,6 +3,7 @@
 namespace Tests\Feature\Maintenances\Api;
 
 use App\Models\Actionlog;
+use App\Models\Asset;
 use App\Models\Company;
 use App\Models\Maintenance;
 use App\Models\MaintenanceType;
@@ -96,6 +97,78 @@ class EditMaintenanceTest extends TestCase
         $this->assertDatabaseMissing('maintenances', [
             'id' => $maintenanceForCompanyB->id,
             'name' => 'Should Not Update',
+        ]);
+    }
+
+    public function test_can_update_maintenance_without_changing_asset_id()
+    {
+        $this->settings->enableMultipleFullCompanySupport();
+
+        $company = Company::factory()->create();
+        $user = $company->users()->save(User::factory()->editAssets()->make());
+        $asset = Asset::factory()->create(['company_id' => $company->id]);
+        $maintenance = Maintenance::factory()->create(['asset_id' => $asset->id]);
+
+        $this->actingAsForApi($user)
+            ->patchJson(route('api.maintenances.update', $maintenance), [
+                'name' => 'Updated Name',
+                'start_date' => '2024-01-01',
+            ])
+            ->assertStatusMessageIs('success');
+
+        $this->assertDatabaseHas('maintenances', [
+            'id' => $maintenance->id,
+            'asset_id' => $asset->id,
+            'name' => 'Updated Name',
+        ]);
+    }
+
+    public function test_can_update_maintenance_to_another_asset_in_same_company()
+    {
+        $this->settings->enableMultipleFullCompanySupport();
+
+        $company = Company::factory()->create();
+        $user = $company->users()->save(User::factory()->editAssets()->make());
+        $assetA = Asset::factory()->create(['company_id' => $company->id]);
+        $assetB = Asset::factory()->create(['company_id' => $company->id]);
+        $maintenance = Maintenance::factory()->create(['asset_id' => $assetA->id]);
+
+        $this->actingAsForApi($user)
+            ->patchJson(route('api.maintenances.update', $maintenance), [
+                'name' => 'Moved Maintenance',
+                'asset_id' => $assetB->id,
+                'start_date' => '2024-01-01',
+            ])
+            ->assertStatusMessageIs('success');
+
+        $this->assertDatabaseHas('maintenances', [
+            'id' => $maintenance->id,
+            'asset_id' => $assetB->id,
+        ]);
+    }
+
+    public function test_cannot_reparent_maintenance_to_asset_in_another_company()
+    {
+        $this->settings->enableMultipleFullCompanySupport();
+
+        [$companyA, $companyB] = Company::factory()->count(2)->create();
+
+        $user = $companyA->users()->save(User::factory()->editAssets()->make());
+        $assetA = Asset::factory()->create(['company_id' => $companyA->id]);
+        $assetB = Asset::factory()->create(['company_id' => $companyB->id]);
+        $maintenance = Maintenance::factory()->create(['asset_id' => $assetA->id]);
+
+        $this->actingAsForApi($user)
+            ->patchJson(route('api.maintenances.update', $maintenance), [
+                'name' => 'Cross-company reparent attempt',
+                'asset_id' => $assetB->id,
+                'start_date' => '2024-01-01',
+            ])
+            ->assertStatusMessageIs('error');
+
+        $this->assertDatabaseHas('maintenances', [
+            'id' => $maintenance->id,
+            'asset_id' => $assetA->id,
         ]);
     }
 }

@@ -64,4 +64,6 @@ return [
     'optional_infos' => 'crwdns10490:0crwdne10490:0',
     'order_details' => 'crwdns10492:0crwdne10492:0',
     'calc_eol' => 'crwdns12782:0crwdne12782:0',
+    'checkin_licenses' => 'crwdns14891:0crwdne14891:0',
+    'checkin_child_assets' => 'crwdns14893:0crwdne14893:0',
 ];

@@ -7,6 +7,7 @@ use App\Models\Actionlog;
 use App\Models\Asset;
 use App\Models\AssetModel;
 use App\Models\Category;
+use App\Models\Company;
 use App\Models\Component;
 use App\Models\Consumable;
 use App\Models\License;
@@ -53,7 +54,10 @@ class Purge extends Command
     public function handle()
     {
         $force = $this->option('force');
-        if (($this->confirm("\n****************************************************\nTHIS WILL PURGE ALL SOFT-DELETED ITEMS IN YOUR SYSTEM. \nThere is NO undo. This WILL permanently destroy \nALL of your deleted data. \n****************************************************\n\nDo you wish to continue? No backsies! [y|N]")) || $force == 'true') {
+        // Short-circuit on --force so the confirm() prompt isn't rendered
+        // (and isn't required by the test harness) when the operator has
+        // already opted in from the command line.
+        if ($force == 'true' || $this->confirm("\n****************************************************\nTHIS WILL PURGE ALL SOFT-DELETED ITEMS IN YOUR SYSTEM. \nThere is NO undo. This WILL permanently destroy \nALL of your deleted data. \n****************************************************\n\nDo you wish to continue? No backsies! [y|N]")) {
 
             /**
              * Delete assets
@@ -138,6 +142,13 @@ class Purge extends Command
             foreach ($suppliers as $supplier) {
                 $this->info('- Supplier "'.$supplier->name.'" deleted.');
                 $supplier->forceDelete();
+            }
+
+            $companies = Company::whereNotNull('deleted_at')->withTrashed()->get();
+            $this->info($companies->count().' companies purged.');
+            foreach ($companies as $company) {
+                $this->info('- Company "'.$company->name.'" deleted.');
+                $company->forceDelete();
             }
 
             $users = User::whereNotNull('deleted_at')->where('show_in_list', '!=', '0')->withTrashed()->get();

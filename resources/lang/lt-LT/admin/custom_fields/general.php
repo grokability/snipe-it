@@ -64,8 +64,10 @@ return [
         'text' => 'Teksto laukas',
         'listbox' => 'Sąrašo laukas',
         'textarea' => 'Teksto sritis (kelių eilučių)',
+        'markdown-textarea' => '„Markdown“ teksto laukas',
         'checkbox' => 'Žymimasis langelis',
         'radio' => 'Akutės',
     ],
+    'markdown_supported' => 'Palaikomas „Markdown“',
     'general_help_text' => 'Pritaikytuose laukuose saugoma papildoma informacija, kurios neapima standartiniai turto laukai. <a href="https://snipe-it.readme.io/docs/custom-fields#/"><i class="fa fa-external-link"></i></a>.',
 ];

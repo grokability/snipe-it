@@ -2,7 +2,7 @@
 
 return [
 
-    'deleted' => 'Deleted supplier',
+    'deleted' => '已刪除的供應商',
     'does_not_exist' => '供應商不存在',
 
     'create' => [
@@ -19,8 +19,8 @@ return [
         'confirm' => '您確定要刪除此供應商嗎？',
         'error' => '刪除供應商失敗，請重試',
         'success' => '刪除供應商成功。',
-        'not_found' => 'Supplier not found.',
-        'bulk_success' => 'Suppliers were deleted successfully.',
+        'not_found' => '找不到供應商。',
+        'bulk_success' => '供應商已成功刪除。',
         'partial_success' => '.',
     ],
 

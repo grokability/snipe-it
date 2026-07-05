@@ -2,117 +2,81 @@
 
 {{-- Page title --}}
 @section('title')
- {{ trans('admin/components/general.checkout') }}
-@parent
+    {{ trans('admin/components/general.checkout') }}
+    @parent
 @stop
 
 {{-- Page content --}}
 @section('content')
 
-<div class="row">
-  <div class="col-md-8">
-    <form class="form-horizontal" id="checkout_form" method="post" action="" autocomplete="off">
-      <!-- CSRF Token -->
-      {{ csrf_field() }}
+<x-container class="col-md-8">
 
-      <div class="box box-default">
-        @if ($component->id)
-        <div class="box-header with-border">
-          <div class="box-heading">
-            <h2 class="box-title">{{ $component->name }}  ({{ $component->numRemaining()  }}  {{ trans('admin/components/general.remaining') }})</h2>
-          </div>
-        </div><!-- /.box-header -->
-        @endif
+    <x-form route="{{ route('components.checkout.store', $snipe_component->id) }}" id="checkout_form">
 
-        <div class="box-body">
+        <x-box header="{{ $snipe_component->name }} ({{ $snipe_component->numRemaining() }} {{ trans('admin/components/general.remaining') }})">
 
-            @if ($component->company)
-                <!-- accessory name -->
-                <div class="form-group">
-                    <label class="col-sm-3 control-label">{{ trans('general.company') }}</label>
-                    <div class="col-md-6">
-                        <p class="form-control-static">{!! $component->company->present()->formattedNameLink  !!}</p>
+            @if ($snipe_component->company)
+                <x-form.static :label="trans('general.company')">{!! $snipe_component->company->present()->formattedNameLink !!}</x-form.static>
+            @endif
+
+            @if ($snipe_component->category)
+                <x-form.static :label="trans('general.category')">{!! $snipe_component->category->present()->formattedNameLink !!}</x-form.static>
+            @endif
+
+            @include ('partials.forms.edit.asset-select', ['translated_name' => trans('general.select_asset'), 'fieldname' => 'asset_id', 'company_id' => $snipe_component->company_id, 'required' => 'true', 'value' => old('asset_id')])
+
+            <x-input.quantity
+                name="assigned_qty"
+                :value="1"
+                :min="1"
+                :max="$snipe_component->numRemaining()"
+                :label="trans('general.qty')"
+            />
+
+            @if ($snipe_component->requireAcceptance() || $snipe_component->getEula() || ($snipeSettings->webhook_endpoint != ''))
+                <div class="form-group notification-callout">
+                    <div class="col-md-8 col-md-offset-3">
+                        <div class="callout callout-info">
+                            @if ($snipe_component->category->require_acceptance == '1')
+                                <i class="far fa-envelope" aria-hidden="true"></i>
+                                {{ trans('admin/categories/general.required_acceptance') }}<br>
+                            @endif
+                            @if ($snipe_component->getEula())
+                                <i class="far fa-envelope" aria-hidden="true"></i>
+                                {{ trans('admin/categories/general.required_eula') }}<br>
+                            @endif
+                            @if ($snipeSettings->webhook_endpoint != '')
+                                <i class="fab fa-slack" aria-hidden="true"></i>
+                                {{ trans('general.webhook_msg_note') }}
+                            @endif
+                        </div>
                     </div>
                 </div>
             @endif
 
+            <x-form.row
+                :label="trans('admin/hardware/form.notes')"
+                :item="$snipe_component"
+                name="note"
+                type="textarea"
+            />
 
-            @if ($component->category)
-                <!-- accessory name -->
-                <div class="form-group">
-                    <label class="col-sm-3 control-label">{{ trans('general.category') }}</label>
-                    <div class="col-md-6">
-                        <p class="form-control-static">{!! $component->category->present()->formattedNameLink  !!}</p>
-                    </div>
-                </div>
-            @endif
+            <x-slot:customfooter>
+                <x-redirect_submit_options
+                    index_route="components.index"
+                    :button_label="trans('general.checkout')"
+                    :options="[
+                        'index' => trans('admin/hardware/form.redirect_to_all', ['type' => trans('general.components')]),
+                        'item' => trans('admin/hardware/form.redirect_to_type', ['type' => trans('general.component')]),
+                        'target' => trans('admin/hardware/form.redirect_to_checked_out_to'),
+                    ]"
+                />
+            </x-slot:customfooter>
 
-          <!-- Asset -->
-            @include ('partials.forms.edit.asset-select', ['translated_name' => trans('general.select_asset'), 'fieldname' => 'asset_id', 'company_id' => $component->company_id, 'required' => 'true', 'value' => old('asset_id')])
+        </x-box>
 
-            <div class="form-group {{ $errors->has('assigned_qty') ? ' has-error' : '' }}">
-              <label for="assigned_qty" class="col-md-3 control-label">
-                {{ trans('general.qty') }}
-              </label>
-              <div class="col-md-2 col-sm-5 col-xs-5">
-                  <input class="form-control" type="number" name="assigned_qty" id="assigned_qty" value="1" min="1" max="{{ old('assigned_qty') ?? $component->numRemaining()}}" maxlength="999999"/>
-              </div>
-              @if ($errors->first('assigned_qty'))
-                <div class="col-md-9 col-md-offset-3">
-                  {!! $errors->first('assigned_qty', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
-                </div>
-              @endif
-            </div>
-            @if ($component->requireAcceptance() || $component->getEula() || ($snipeSettings->webhook_endpoint!=''))
-              <div class="form-group notification-callout">
-                <div class="col-md-8 col-md-offset-3">
-                  <div class="callout callout-info">
+    </x-form>
 
-                    @if ($component->category->require_acceptance=='1')
-                      <i class="far fa-envelope"></i>
-                      {{ trans('admin/categories/general.required_acceptance') }}
-                      <br>
-                    @endif
-
-                    @if ($component->getEula())
-                      <i class="far fa-envelope"></i>
-                      {{ trans('admin/categories/general.required_eula') }}
-                      <br>
-                    @endif
-
-                    @if ($snipeSettings->webhook_endpoint!='')
-                      <i class="fab fa-slack"></i>
-                      {{ trans('general.webhook_msg_note') }}
-                    @endif
-                  </div>
-                </div>
-              </div>
-            @endif
-
-            <!-- Note -->
-            <div class="form-group{{ $errors->has('note') ? ' error' : '' }}">
-              <label for="note" class="col-md-3 control-label">{{ trans('admin/hardware/form.notes') }}</label>
-              <div class="col-md-7">
-                <textarea class="col-md-6 form-control" id="note" name="note">{{ old('note', $component->note) }}</textarea>
-                {!! $errors->first('note', '<span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
-              </div>
-            </div>
-
-
-        </div> <!-- .BOX-BODY-->
-          <x-redirect_submit_options
-                  index_route="components.index"
-                  :button_label="trans('general.checkout')"
-                  :options="[
-                                'index' => trans('admin/hardware/form.redirect_to_all', ['type' => trans('general.components')]),
-                                'item' => trans('admin/hardware/form.redirect_to_type', ['type' => trans('general.component')]),
-                                'target' => trans('admin/hardware/form.redirect_to_checked_out_to'),
-
-                               ]"
-          />
-      </div> <!-- .box-default-->
-    </form>
-  </div> <!-- .col-md-9-->
-</div> <!-- .row -->
+</x-container>
 
 @stop

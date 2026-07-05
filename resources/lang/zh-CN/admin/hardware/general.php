@@ -8,6 +8,7 @@ return [
     'bulk_checkout' => '批量签出',
     'bulk_checkin' => '批量归还',
     'checkin' => '归还资产',
+    'checkin_assets' => '归还资产',
     'checkout' => '签出资产',
     'clear' => '清空',
     'clone' => '克隆资产',

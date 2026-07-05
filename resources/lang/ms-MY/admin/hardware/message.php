@@ -94,6 +94,12 @@ return [
         'success' => 'Asset checked out successfully.|Assets checked out successfully.',
     ],
 
+    'multi-checkin' => [
+        'error' => 'Asset was not checked in, please try again|Assets were not checked in, please try again',
+        'success' => 'Asset checked in successfully.|Assets checked in successfully.',
+        'no_assets_selected' => 'Anda mesti memilih sekurang-kurangnya satu aset dari senarai',
+    ],
+
     'checkin' => [
         'error' => 'Harta tidak diterima, sila cuba lagi',
         'success' => 'Harta berjaya diterima.',

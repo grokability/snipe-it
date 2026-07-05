@@ -19,6 +19,7 @@ return [
     'required_acceptance' => 'Mangyaring magkaroon ng email ang user sa link para magkomperma ng pagtanggap sa aytem na ito.',
     'global_signature_required_notice' => 'User signatures are currently required globally via the admin settings, so signatures will still be required regardless of this category setting if the item is checked out to a user (versus a location, etc).',
     'required_eula' => 'Ang user ay mabigyan ng email para sa kopya ng EULA',
+    'required_signature' => 'This user will be required to sign to confirm acceptance of this item.',
     'no_default_eula' => 'Walang natagpuang pangunahing default ng EULA. Magdagdag ng isa sa mga setting.',
     'update' => 'I-update ang Katergorya',
     'use_default_eula' => 'Sa halip ay gamitin ang <a href="#" data-toggle="modal" data-target="#eulaModal">ang pangunahing default ng EULA</a>.',

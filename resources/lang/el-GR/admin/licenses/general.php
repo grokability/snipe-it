@@ -31,6 +31,11 @@ return [
             'log_msg' => 'Checked in via bulk license checkin in license GUI',
         ],
 
+        'checkin_selected' => [
+            'success' => ':count seat checked in successfully. | :count seats checked in successfully.',
+            'no_seats_selected' => 'No seats were selected.',
+        ],
+
         'checkout_all' => [
             'button' => 'Ολοκλήρωση Παραγγελίας Όλων Των Καθισμάτων',
             'modal' => 'Αυτή η ενέργεια θα κάνει check-out μία θέση στον πρώτο διαθέσιμο χρήστη. "Αυτή η ενέργεια θα κάνει checkout όλα τα :available_seats_count καθίσματα στους πρώτους διαθέσιμους χρήστες. Ένας χρήστης θεωρείται διαθέσιμος για αυτή τη θέση εάν δεν έχει ήδη την άδεια αυτή ελεγχθεί σε αυτούς, και η ιδιότητα "Αυτόματη Ανάθεση Άδειας Χρήσης" είναι ενεργοποιημένη στο λογαριασμό χρήστη της.',

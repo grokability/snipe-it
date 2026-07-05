@@ -8,6 +8,7 @@ return [
     'bulk_checkout' => 'ការបញ្ចេញច្រើន',
     'bulk_checkin' => 'Bulk Checkin',
     'checkin' => 'Checkin Asset',
+    'checkin_assets' => 'Checkin Assets',
     'checkout' => 'Checkout Asset',
     'clear' => 'Clear',
     'clone' => 'ក្លូន ទ្រព្យសកម្ម',

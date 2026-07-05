@@ -17,7 +17,7 @@ class AssetPresenter extends Presenter
      *
      * @return string
      */
-    public static function dataTableLayout()
+    public static function dataTableLayout($hide_fields = [])
     {
         $layout = [
             [
@@ -278,7 +278,23 @@ class AssetPresenter extends Presenter
                 'title' => trans('general.updated_at'),
                 'visible' => false,
                 'formatter' => 'dateDisplayFormatter',
-            ], [
+            ],
+        ];
+
+        if (! in_array('deleted_at', $hide_fields)) {
+            $layout[] = [
+                'field' => 'deleted_at',
+                'searchable' => false,
+                'sortable' => true,
+                'switchable' => true,
+                'title' => trans('general.deleted_at'),
+                'visible' => true,
+                'formatter' => 'dateDisplayFormatter',
+            ];
+        }
+
+        $layout = array_merge($layout, [
+            [
                 'field' => 'last_checkout',
                 'searchable' => false,
                 'sortable' => true,
@@ -294,7 +310,7 @@ class AssetPresenter extends Presenter
                 'formatter' => 'dateDisplayFormatter',
             ], [
                 'field' => 'expected_checkin',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'visible' => false,
                 'title' => trans('admin/hardware/form.expected_checkin'),
@@ -323,7 +339,7 @@ class AssetPresenter extends Presenter
                 'formatter' => 'trueFalseFormatter',
 
             ],
-        ];
+        ]);
 
         // This looks complicated, but we have to confirm that the custom fields exist in custom fieldsets
         // *and* those fieldsets are associated with models, otherwise we'll trigger
@@ -335,17 +351,14 @@ class AssetPresenter extends Presenter
         $fields = CustomField::whereHas('fieldset', function ($query) {
             $query->whereHas('models');
         })->get();
-
-        // Note: We do not need to e() escape the field names here, as they are already escaped when
-        // they are presented in the blade view. If we escape them here, custom fields with quotes in their
-        // name can break the listings page. - snipe
+        
         foreach ($fields as $field) {
             $layout[] = [
                 'field' => $field->db_column,
                 'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,
-                'title' => $field->name,
+                'title' => e($field->name),
                 'formatter' => 'customFieldsFormatter',
                 'escape' => true,
                 'class' => ($field->field_encrypted == '1') ? 'css-padlock' : '',

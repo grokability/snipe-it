@@ -8,14 +8,17 @@ use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AssetCheckoutRequest;
 use App\Http\Traits\CheckInOutTrait;
+use App\Http\Traits\MigratesLegacyAssetLocations;
 use App\Models\Asset;
 use App\Models\AssetModel;
 use App\Models\CheckoutAcceptance;
 use App\Models\Company;
 use App\Models\CustomField;
 use App\Models\LicenseSeat;
+use App\Models\Location;
 use App\Models\Setting;
 use App\Models\Statuslabel;
+use App\Models\User;
 use App\View\Label;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
@@ -32,6 +35,7 @@ use Illuminate\Support\Facades\Log;
 class BulkAssetsController extends Controller
 {
     use CheckInOutTrait;
+    use MigratesLegacyAssetLocations;
 
     /**
      * Display the bulk edit page.
@@ -687,18 +691,25 @@ class BulkAssetsController extends Controller
                     ->with('error', trans('general.error_assets_already_checked_out'));
             }
 
-            // Prevent checking out assets across companies if FMCS enabled
-            if (Setting::getSettings()->full_multiple_companies_support && $target->company_id) {
-                $company_ids = $assets->pluck('company_id')->unique();
+            // Prevent checking out assets across companies if FMCS enabled.
+            if (Setting::getSettings()->full_multiple_companies_support) {
+                $company_ids = $assets->pluck('company_id')->filter()->unique();
 
-                // if there is more than one unique company id or the singular company id does not match
-                // then the checkout is invalid
-                if ($company_ids->count() > 1 || $company_ids->first() != $target->company_id) {
-                    // re-add the asset ids so the assets select is re-populated
-                    $request->session()->flashInput(['selected_assets' => $asset_ids]);
+                if ($company_ids->isNotEmpty()) {
+                    if ($company_ids->count() > 1) {
+                        // Selected assets span multiple companies; bulk checkout can't satisfy all of them.
+                        $mismatch = true;
+                    } else {
+                        // All assets share the same company; let the model enforce the checkout rules.
+                        $mismatch = ! $assets->first()->canCheckoutTo($target);
+                    }
 
-                    return redirect(route('hardware.bulkcheckout.show'))
-                        ->with('error', trans('general.error_user_company_multiple'));
+                    if ($mismatch) {
+                        $request->session()->flashInput(['selected_assets' => $asset_ids]);
+
+                        return redirect(route('hardware.bulkcheckout.show'))
+                            ->with('error', trans('general.error_user_company_multiple'));
+                    }
                 }
             }
 
@@ -783,7 +794,7 @@ class BulkAssetsController extends Controller
         $notAssigned = collect();
 
         if (old('selected_assets') && is_array(old('selected_assets'))) {
-            $assets = Asset::findMany(old('selected_assets'));
+            $assets = Asset::withTrashed()->findMany(old('selected_assets'));
 
             [$assigned, $notAssigned] = $assets->partition(function (Asset $asset) {
                 return $asset->assigned_to;
@@ -814,7 +825,19 @@ class BulkAssetsController extends Controller
 
         $asset_ids = array_filter($request->input('selected_assets'));
 
-        $assets = Asset::findOrFail($asset_ids);
+        $assets = Asset::withTrashed()->findOrFail($asset_ids);
+
+        // Resolve via the scoped Location query so non-existent IDs and IDs the actor
+        // cannot see under FMCS are rejected before we touch any asset.
+        $submittedLocation = null;
+        if ($request->filled('location_id')) {
+            $submittedLocation = Location::find($request->input('location_id'));
+
+            if (! $submittedLocation) {
+                return redirect()->route('hardware.bulkcheckin.show')->withInput()
+                    ->with('error', trans('admin/hardware/message.create.target_not_found.location'));
+            }
+        }
 
         $checkin_at = date('Y-m-d H:i:s');
         if ($request->filled('checkin_at') && $request->input('checkin_at') != date('Y-m-d')) {
@@ -824,7 +847,7 @@ class BulkAssetsController extends Controller
         $errors = [];
         $admin = auth()->user();
 
-        DB::transaction(function () use ($assets, $admin, $checkin_at, $request, &$errors) {
+        DB::transaction(function () use ($assets, $admin, $checkin_at, $request, $submittedLocation, &$errors) {
             foreach ($assets as $asset) {
                 $this->authorize('checkin', $asset);
 
@@ -843,7 +866,21 @@ class BulkAssetsController extends Controller
                     $asset->status_id = $request->input('status_id');
                 }
 
+                $this->migrateLegacyLocations($asset);
+
                 $asset->location_id = $asset->rtd_location_id;
+
+                if ($request->has('location_id')) {
+                    if ($submittedLocation) {
+                        $asset->location_id = $submittedLocation->id;
+                        if ($request->input('update_default_location') == 0) {
+                            $asset->rtd_location_id = $submittedLocation->id;
+                        }
+                    } else {
+                        $asset->location_id = null;
+                    }
+                }
+
                 $asset->last_checkin = $checkin_at;
 
                 if ($request->boolean('checkin_licenses')) {

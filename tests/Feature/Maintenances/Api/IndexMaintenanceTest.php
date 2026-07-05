@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Maintenances\Api;
 
+use App\Models\Asset;
 use App\Models\Maintenance;
 use App\Models\MaintenanceType;
 use App\Models\User;
@@ -14,6 +15,43 @@ class IndexMaintenanceTest extends TestCase
         $this->actingAsForApi(User::factory()->create())
             ->getJson(route('api.maintenances.index'))
             ->assertForbidden();
+    }
+
+    public function test_checked_out_to_id_filter_returns_only_matching_polymorphic_target()
+    {
+        // Used by the user detail Maintenances tab — pulls every maintenance
+        // whose underlying asset was checked out to a specific user. Type
+        // defaults to App\Models\User when only the id is supplied.
+        //
+        // MaintenanceObserver::creating() copies checked_out_to_* from the
+        // asset's assigned_to/_type at insert time (so the maintenance pins
+        // *who had it when the maintenance was opened*, not whoever has it
+        // now). Tests therefore must check the asset out to the target user
+        // first — passing checked_out_to_* directly to the factory would be
+        // silently overwritten.
+        $actor = User::factory()->superuser()->create();
+        $alice = User::factory()->create();
+        $bob = User::factory()->create();
+
+        $aliceAsset = Asset::factory()->assignedToUser($alice)->create();
+        $bobAsset = Asset::factory()->assignedToUser($bob)->create();
+        $unassignedAsset = Asset::factory()->create();
+
+        $aliceM = Maintenance::factory()->create(['asset_id' => $aliceAsset->id]);
+        $bobM = Maintenance::factory()->create(['asset_id' => $bobAsset->id]);
+        $unassigned = Maintenance::factory()->create(['asset_id' => $unassignedAsset->id]);
+
+        $response = $this->actingAsForApi($actor)
+            ->getJson(route('api.maintenances.index', [
+                'checked_out_to_id' => $alice->id,
+                'checked_out_to_type' => User::class,
+            ]))
+            ->assertOk();
+
+        $ids = collect($response->json('rows'))->pluck('id');
+        $this->assertContains($aliceM->id, $ids);
+        $this->assertNotContains($bobM->id, $ids, 'Different-user maintenances must be filtered out');
+        $this->assertNotContains($unassigned->id, $ids, 'Unassigned maintenances must be filtered out');
     }
 
     public function test_completed_filter_returns_only_completed_maintenances()

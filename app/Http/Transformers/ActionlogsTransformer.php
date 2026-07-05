@@ -66,6 +66,7 @@ class ActionlogsTransformer
         }
 
         // This is necessary since we can't escape special characters within a JSON object
+        $meta_array = null;
         if (($actionlog->log_meta) && ($actionlog->log_meta != '')) {
             $meta_array = json_decode($actionlog->log_meta);
 
@@ -74,6 +75,11 @@ class ActionlogsTransformer
             if ($meta_array) {
 
                 foreach ($meta_array as $fieldname => $fieldata) {
+
+                    // Snapshot of audit-visible custom field values — handled separately below.
+                    if ($fieldname === '_audit_snapshot') {
+                        continue;
+                    }
 
                     $clean_meta[$fieldname]['old'] = $this->clean_field($fieldata->old);
                     $clean_meta[$fieldname]['new'] = $this->clean_field($fieldata->new);
@@ -193,8 +199,26 @@ class ActionlogsTransformer
             'action_date' => ($actionlog->action_date) ? Helper::getFormattedDateObject($actionlog->action_date, 'datetime') : Helper::getFormattedDateObject($actionlog->created_at, 'datetime'),
         ];
 
-        //        Log::info("Clean Meta is: ".print_r($clean_meta,true));
-        // dd($array);
+        // Expose audit-visible custom field values as top-level keys so the
+        // audits datatable can bind each column directly to its field name.
+        if ($actionlog->action_type === 'audit' && isset($meta_array->_audit_snapshot)) {
+            foreach ($meta_array->_audit_snapshot as $fieldname => $value) {
+                $field = $custom_fields->firstWhere('db_column', $fieldname);
+                if ($field && $field->field_encrypted == '1') {
+                    if (Gate::allows('assets.view.encrypted_custom_fields')) {
+                        try {
+                            $array[$fieldname] = e(Crypt::decryptString($value));
+                        } catch (\Exception $e) {
+                            $array[$fieldname] = '************';
+                        }
+                    } else {
+                        $array[$fieldname] = '************';
+                    }
+                } else {
+                    $array[$fieldname] = e($value);
+                }
+            }
+        }
 
         return $array;
     }
@@ -292,6 +316,28 @@ class ActionlogsTransformer
             $clean_meta['company_id']['new'] = $clean_meta['company_id']['new'] ? '[id: '.$clean_meta['company_id']['new'].'] '.$newCompanyName : trans('general.unassigned');
             $clean_meta[trans('general.company')] = $clean_meta['company_id'];
             unset($clean_meta['company_id']);
+        }
+
+        if (array_key_exists('companies', $clean_meta)) {
+            // clean_field() JSON-encodes array values into a string (e.g. "[14,15]").
+            // Decode them back to integer arrays before resolving names.
+            // Use withoutGlobalScopes so FMCS does not hide companies from the log viewer.
+            $resolveCompanyNames = function ($rawValue): string {
+                $ids = json_decode($rawValue, true);
+                if (empty($ids) || ! is_array($ids)) {
+                    return trans('general.unassigned');
+                }
+
+                return collect($ids)
+                    ->map(fn ($id) => Company::withoutGlobalScopes()->withTrashed()->find($id))
+                    ->map(fn ($c) => $c ? e($c->name) : trans('general.deleted'))
+                    ->join(', ');
+            };
+
+            $clean_meta['companies']['old'] = $resolveCompanyNames($clean_meta['companies']['old']);
+            $clean_meta['companies']['new'] = $resolveCompanyNames($clean_meta['companies']['new']);
+            $clean_meta[trans('general.companies')] = $clean_meta['companies'];
+            unset($clean_meta['companies']);
         }
         if (array_key_exists('supplier_id', $clean_meta)) {
 

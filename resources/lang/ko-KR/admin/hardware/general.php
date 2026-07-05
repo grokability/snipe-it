@@ -8,6 +8,7 @@ return [
     'bulk_checkout' => '대량 반출',
     'bulk_checkin' => 'Bulk Checkin',
     'checkin' => '반입 자산',
+    'checkin_assets' => '반입 자산들',
     'checkout' => '반출 자산',
     'clear' => 'Clear',
     'clone' => '자산 복제',

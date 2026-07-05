@@ -19,6 +19,7 @@ return [
     'required_acceptance' => '用户会收到一封邮件，邮件中包含一个确认接收的链接。',
     'global_signature_required_notice' => 'User signatures are currently required globally via the admin settings, so signatures will still be required regardless of this category setting if the item is checked out to a user (versus a location, etc).',
     'required_eula' => '用户将会从邮件收到 EULA（最终用户许可协议）的副本',
+    'required_signature' => 'This user will be required to sign to confirm acceptance of this item.',
     'no_default_eula' => '未找到默认的 EULA（最终用户许可协议），请在设置中添加一个。',
     'update' => '更新分类',
     'use_default_eula' => '使用<a href="#" data-toggle="modal" data-target="#eulaModal">默认 EULA（最终用户许可协议）</a>进行替换。',

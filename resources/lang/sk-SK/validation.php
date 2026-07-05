@@ -173,6 +173,7 @@ return [
     'url' => 'Pole :attribute musí obsahovať správnu URL adresu.',
     'ulid' => 'Pole :attribute musí obsahovať platný ULID.',
     'uuid' => 'Pole :attribute musí obsahovať platný ULID.',
+    'valid_css_color' => 'The :attribute field must be a valid CSS color (hex, rgb, rgba, hsl, or hsla).',
     'fmcs_location' => 'V nastaveniach je povolená plná podpora viacerých spoločností a zvolená lokalita a spoločnosť nie sú kompatibilné.',
     'is_unique_across_company_and_location' => 'Atribút :attribute musí byť jedinečný v rámci vybranej spoločnosti a lokality.',
 

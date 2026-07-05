@@ -9,7 +9,7 @@ return [
     'edit' => 'Editar accesorio',
     'eula_text' => 'Acuerdo de uso de la categoría',
     'eula_text_help' => 'Este campo permite personalizar los acuerdos de uso para tipos específicos de activos. Si solo tiene un acuerdo de uso para todos sus activos, puede seleccionar la siguiente opción para usar el valor predeterminado.',
-    'require_acceptance' => 'Require users to confirm acceptance of item in this category.',
+    'require_acceptance' => 'Requerir a los usuarios que confirmen la aceptación de los artículos en esta categoría.',
     'no_default_eula' => 'No se encontró el acuerdo de uso predeterminado. Agregue unos en Configuración.',
     'total' => 'Total ',
     'remaining' => 'Disponibles',

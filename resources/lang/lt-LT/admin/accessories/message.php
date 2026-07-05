@@ -4,7 +4,7 @@ return [
 
     'does_not_exist' => 'Priedas [:id] neegzistuoja.',
     'not_found' => 'Priedas nerastas.',
-    'assoc_users' => 'Naudotojams išduotų šio priedo vienetų skaičius - :count. Susigrąžinkite išduotus priedus ir bandykite dar kartą. ',
+    'assoc_users' => 'Naudotojams išduotų šio priedo vienetų skaičius - :count. Paimkite išduotus priedus ir bandykite dar kartą. ',
 
     'create' => [
         'error' => 'Priedas nebuvo sukurtas, bandykite dar kartą.',

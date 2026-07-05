@@ -45,10 +45,9 @@ return [
 ',
     'group_memberships_helpblock' => 'فقط سوپرادمین ها می توانند عضویت های گروه را ویرایش کنند.
 ',
-    'superadmin_permission_warning' => 'فقط superadmin ها می توانند به کاربر اجازه دسترسی superadmin را بدهند.
-',
-    'admin_permission_warning' => 'فقط کاربران با حقوق سرپرست یا بیشتر می توانند به کاربر اجازه دسترسی سرپرست بدهند.
-',
+    'superadmin_permission_warning' => 'Only superadmins may grant or revoke superadmin access.',
+    'self_permission_warning' => 'Only superadmins may edit their own permissions.',
+    'admin_permission_warning' => 'Only users with admins rights or greater may grant or revoke admin access.',
     'remove_group_memberships' => 'حذف عضویت در گروه
 ',
     'warning_deletion_information' => 'You are about to checkin ALL items from the :count user(s) listed below.',

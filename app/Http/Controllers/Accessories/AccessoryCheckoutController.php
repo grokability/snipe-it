@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Accessories;
 
+use App\Actions\Acceptances\CreateCheckoutAcceptanceAction;
 use App\Events\CheckoutableCheckedOut;
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
@@ -66,6 +67,20 @@ class AccessoryCheckoutController extends Controller
         $target = $this->determineCheckoutTarget();
         session()->put(['checkout_to_type' => $target]);
 
+        if (! $accessory->canCheckoutTo($target)) {
+            $targetType = match (class_basename($target)) {
+                'User' => trans('general.user'),
+                'Location' => trans('general.location'),
+                default => trans('general.asset'),
+            };
+
+            return redirect()->back()->with('error', trans('general.error_checkout_company_mismatch', [
+                'item' => trans('general.accessory').' "'.$accessory->name.'"',
+                'item_company' => $accessory->company?->name ?? trans('general.unassigned'),
+                'target' => $targetType.' "'.($target->name ?? $target->username ?? $target->id).'"',
+            ]));
+        }
+
         $accessory->checkout_qty = $request->input('checkout_qty', 1);
 
         for ($i = 0; $i < $accessory->checkout_qty; $i++) {
@@ -120,11 +135,7 @@ class AccessoryCheckoutController extends Controller
 
             // If requireAcceptance() is false the listener won't have created one; create it now.
             if (! $acceptance) {
-                $acceptance = new CheckoutAcceptance;
-                $acceptance->checkoutable()->associate($accessory);
-                $acceptance->assignedTo()->associate($targetUser);
-                $acceptance->qty = $accessory->checkout_qty;
-                $acceptance->save();
+                $acceptance = CreateCheckoutAcceptanceAction::run($accessory, $targetUser, $accessory->checkout_qty);
             }
 
             session([

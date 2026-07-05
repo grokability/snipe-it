@@ -4,6 +4,7 @@
     'table_header' => trans('general.history'),
     'model' => null,
     'hide_fields' => [],
+    'extra_columns' => [],
 ])
 
 <!-- start history tab pane -->
@@ -13,7 +14,7 @@
     </x-slot:table_header>
 
     <x-table
-        :presenter="\App\Presenters\HistoryPresenter::dataTableLayout($hide_fields)"
+        :presenter="\App\Presenters\HistoryPresenter::dataTableLayout($hide_fields, $extra_columns)"
         show_advanced_search="false"
         api_url="{{ $route }}"
         fixed_number="false"

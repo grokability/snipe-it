@@ -64,8 +64,10 @@ return [
         'text' => 'Textfeld',
         'listbox' => 'Listenfeld',
         'textarea' => 'Textbereich (multi-Zeilen)',
+        'markdown-textarea' => 'Markdown Textarea',
         'checkbox' => 'Auswahlfeld',
         'radio' => 'Auswahlknöpfe',
     ],
+    'markdown_supported' => 'Markdown is supported',
     'general_help_text' => 'Benutzerdefinierte Felder speichern zusätzliche Informationen, die nicht von den Standard-Asset-Feldern abgedeckt sind. <a href="https://snipe-it.readme.io/docs/custom-fields#/"><i class="fa fa-external-link"></i></a>.',
 ];

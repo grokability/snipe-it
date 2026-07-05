@@ -64,4 +64,6 @@ return [
     'optional_infos' => 'Nem kötelező információk',
     'order_details' => 'Megrendeléssel kapcsolatos információk',
     'calc_eol' => 'Ha az EOL dátum üres, számítsa automatikusan a beszerzés és az EOL ráta alapján.',
+    'checkin_licenses' => 'Checkin associated license seats',
+    'checkin_child_assets' => 'Checkin associated assets',
 ];

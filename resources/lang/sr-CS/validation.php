@@ -173,6 +173,7 @@ return [
     'url' => 'Polje :attribute mora biti ispravna URL adresa.',
     'ulid' => 'Polje :attribute mora biti ispravan ULID.',
     'uuid' => 'Polje :attribute mora biti ispravan UUID.',
+    'valid_css_color' => ':attribute polje mora biti ispravna CSS boja (hex, rgb, rgba, hsl, ili hsla).',
     'fmcs_location' => 'Puna podrška za višestruko kompanija i opsezi lokacija je omogućeno u administratorskim podešavanjima, a izabrana lokacija i kompanija nisu kompatibilne.',
     'is_unique_across_company_and_location' => ':attribute mora biti jedinstven u okviru izabrane kompanije i lokacije.',
 

@@ -48,7 +48,7 @@ return [
     'asset_tag' => 'Oznaka imovine',
     'assets_warrantee_alert' => 'Postoji :count imovina sa garancijom koja uskoro ističe ili kojoj ističe životni vek u narednih :threshold dana.|Postoji :count imovine sa garancijom koja uskoro ističe ili kojoj ističe životni vek u narednih :threshold dana.',
     'assigned_to' => 'Dodijeljena',
-    'assigned_to_assets' => 'Assignments to Assets',
+    'assigned_to_assets' => 'Dodele imovinama',
     'eol' => 'EOL',
     'best_regards' => 'Srdačan pozdrav',
     'canceled' => 'Otkazano',

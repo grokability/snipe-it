@@ -49,4 +49,25 @@ class BulkDeleteCategoriesTest extends TestCase implements TestsPermissionsRequi
         $this->assertSoftDeleted($category2);
         $this->assertSoftDeleted($category3);
     }
+
+    public function test_bulk_success_message_pluralizes_by_count()
+    {
+        $solo = Category::factory()->create();
+
+        $this->actingAs(User::factory()->deleteCategories()->create())
+            ->post(route('categories.bulk.delete'), [
+                'ids' => [$solo->id],
+            ])
+            ->assertSessionHas('success', trans_choice('admin/categories/message.delete.bulk_success', 1, ['count' => 1]));
+
+        $a = Category::factory()->create();
+        $b = Category::factory()->create();
+        $c = Category::factory()->create();
+
+        $this->actingAs(User::factory()->deleteCategories()->create())
+            ->post(route('categories.bulk.delete'), [
+                'ids' => [$a->id, $b->id, $c->id],
+            ])
+            ->assertSessionHas('success', trans_choice('admin/categories/message.delete.bulk_success', 3, ['count' => 3]));
+    }
 }

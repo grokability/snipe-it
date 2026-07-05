@@ -14,12 +14,27 @@ class LicenseObserver
      */
     public function updated(License $license)
     {
-        $logAction = new Actionlog;
-        $logAction->item_type = License::class;
-        $logAction->item_id = $license->id;
-        $logAction->created_at = date('Y-m-d H:i:s');
-        $logAction->created_by = auth()->id();
-        $logAction->logaction('update');
+        $changed = [];
+
+        foreach ($license->getRawOriginal() as $key => $value) {
+            if ($key === 'updated_at') {
+                continue;
+            }
+            if ($license->getRawOriginal()[$key] != $license->getAttributes()[$key]) {
+                $changed[$key]['old'] = $license->getRawOriginal()[$key];
+                $changed[$key]['new'] = $license->getAttributes()[$key];
+            }
+        }
+
+        if (count($changed) > 0) {
+            $logAction = new Actionlog;
+            $logAction->item_type = License::class;
+            $logAction->item_id = $license->id;
+            $logAction->created_at = date('Y-m-d H:i:s');
+            $logAction->created_by = auth()->id();
+            $logAction->log_meta = json_encode($changed);
+            $logAction->logaction('update');
+        }
     }
 
     /**

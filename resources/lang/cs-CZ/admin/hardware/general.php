@@ -8,6 +8,7 @@ return [
     'bulk_checkout' => 'Hromadný výdej',
     'bulk_checkin' => 'Hromadné převzetí',
     'checkin' => 'Převzít majetek',
+    'checkin_assets' => 'Převzít majetek',
     'checkout' => 'Pokladní majetek',
     'clear' => 'Vyprázdnit',
     'clone' => 'Klonovat majetek',

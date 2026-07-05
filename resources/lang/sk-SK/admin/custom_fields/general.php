@@ -64,8 +64,10 @@ return [
         'text' => 'Textové pole',
         'listbox' => 'Pole so zoznamom',
         'textarea' => 'Textové pole (viacriadkové)',
+        'markdown-textarea' => 'Markdown Textarea',
         'checkbox' => 'Zaškrtávacie políčko',
         'radio' => 'Prepínače',
     ],
+    'markdown_supported' => 'Markdown is supported',
     'general_help_text' => 'Vlastné polia ukladajú dodatočné informácie, ktoré nie sú zahrnuté v predvolených poliach majetkov. <a href="https://snipe-it.readme.io/docs/custom-fields#/"><i class="fa fa-external-link"></i></a>.',
 ];

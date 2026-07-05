@@ -94,6 +94,12 @@ return [
         'success' => 'Актив успешно выдан.|Активы успешно выданы.',
     ],
 
+    'multi-checkin' => [
+        'error' => 'Asset was not checked in, please try again|Assets were not checked in, please try again',
+        'success' => 'Asset checked in successfully.|Assets checked in successfully.',
+        'no_assets_selected' => 'Вы должны выбрать хотя бы один актив из списка',
+    ],
+
     'checkin' => [
         'error' => 'Актив не был отвязан, пожалуйста попробуйте снова',
         'success' => 'Актив успешно отвязан.',

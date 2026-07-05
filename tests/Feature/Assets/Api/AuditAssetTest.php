@@ -162,4 +162,33 @@ class AuditAssetTest extends TestCase
         $asset->refresh();
         $this->assertNull($asset->next_audit_date);
     }
+
+    public function test_asset_name_is_cleared_on_audit_when_clear_name_is_set()
+    {
+        $asset = Asset::factory()->create(['name' => 'My Asset Name']);
+
+        $this->actingAsForApi(User::factory()->auditAssets()->create())
+            ->postJson(route('api.asset.audit.legacy'), [
+                'asset_tag' => $asset->asset_tag,
+                'clear_name' => '1',
+            ])
+            ->assertStatusMessageIs('success')
+            ->assertStatus(200);
+
+        $this->assertNull($asset->refresh()->name);
+    }
+
+    public function test_asset_name_is_not_cleared_on_audit_when_clear_name_is_not_set()
+    {
+        $asset = Asset::factory()->create(['name' => 'My Asset Name']);
+
+        $this->actingAsForApi(User::factory()->auditAssets()->create())
+            ->postJson(route('api.asset.audit.legacy'), [
+                'asset_tag' => $asset->asset_tag,
+            ])
+            ->assertStatusMessageIs('success')
+            ->assertStatus(200);
+
+        $this->assertEquals('My Asset Name', $asset->refresh()->name);
+    }
 }

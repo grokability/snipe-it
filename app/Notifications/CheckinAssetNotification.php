@@ -141,23 +141,22 @@ class CheckinAssetNotification extends Notification
         $target = $this->target;
         $item = $this->item;
         $note = $this->note;
-
+//
         return GoogleChatMessage::create()
             ->to($this->settings->webhook_endpoint)
             ->card(
                 Card::create()
                     ->header(
-                        '<strong>'.trans('mail.Asset_Checkin_Notification', ['tag' => '']).'</strong>' ?: '',
+                        '<strong>' . trans('mail.Asset_Checkin_Notification', ['tag' => '']) . '</strong>' ?: '',
                         htmlspecialchars_decode($item->display_name) ?: '',
                     )
                     ->section(
                         Section::create(
                             KeyValue::create(
                                 trans('mail.checked_into') ?: '',
-                                ($item->location) ? $item->location->name : '',
-                                trans('admin/hardware/form.status').': '.$item->status?->name,
-                            )
-                                ->onClick(route('hardware.show', $item->id))
+                                ($item->location) ? $item->location?->name : '',
+                                trans('admin/hardware/form.status') . ': ' . $item->status?->name
+                            )->onClick(route('hardware.show', $item->id))
                         )
                     )
             );

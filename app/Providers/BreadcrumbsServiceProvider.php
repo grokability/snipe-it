@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Accessory;
+use App\Models\AccessoryCheckout;
 use App\Models\Asset;
 use App\Models\AssetModel;
 use App\Models\Category;
@@ -22,6 +23,7 @@ use App\Models\PredefinedKit;
 use App\Models\Statuslabel;
 use App\Models\Supplier;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
 use Tabuna\Breadcrumbs\Breadcrumbs;
 use Tabuna\Breadcrumbs\Trail;
@@ -119,6 +121,24 @@ class BreadcrumbsServiceProvider extends ServiceProvider
             ->push(trans('general.update'))
         );
 
+        Breadcrumbs::for('accessories.checkout.show', fn (Trail $trail, Accessory $accessory) => $trail->parent('accessories.show', $accessory)
+            ->push(trans('general.checkout'))
+        );
+
+        Breadcrumbs::for('accessories.checkin.show', function (Trail $trail, int $accessoryID) {
+            $checkout = AccessoryCheckout::find($accessoryID);
+            $accessory = $checkout ? Accessory::find($checkout->accessory_id) : null;
+            $trail->parent('accessories.index');
+            if ($accessory) {
+                $trail->push($accessory->name, route('accessories.show', $accessory));
+            }
+            $trail->push(trans('general.checkin'));
+        });
+
+        Breadcrumbs::for('clone/accessories', fn (Trail $trail, Accessory $accessory) => $trail->parent('accessories.show', $accessory)
+            ->push(trans('general.clone'))
+        );
+
         /**
          * Categories Breadcrumbs
          */
@@ -150,14 +170,16 @@ class BreadcrumbsServiceProvider extends ServiceProvider
             ->push(trans('general.create'), route('companies.create'))
         );
 
-        Breadcrumbs::for('companies.show', fn (Trail $trail, Company $company) => $trail->parent('companies.index', route('companies.index'))
-            ->push($company->name, route('companies.show', $company))
-        );
+        Breadcrumbs::for('companies.show', function (Trail $trail, Company $company) {
+            $trail->parent('companies.index', route('companies.index'));
+            $this->pushCompanyHierarchy($trail, $company);
+        });
 
-        Breadcrumbs::for('companies.edit', fn (Trail $trail, Company $company) => $trail->parent('companies.index', route('companies.index'))
-            ->push($company->display_name, route('companies.show', $company))
-            ->push(trans('general.update'))
-        );
+        Breadcrumbs::for('companies.edit', function (Trail $trail, Company $company) {
+            $trail->parent('companies.index', route('companies.index'));
+            $this->pushCompanyHierarchy($trail, $company);
+            $trail->push(trans('general.update'));
+        });
 
         /**
          * Components Breadcrumbs
@@ -184,6 +206,25 @@ class BreadcrumbsServiceProvider extends ServiceProvider
             ->push(trans('general.clone'), route('components.create'))
         );
 
+        Breadcrumbs::for('components.checkout.show', function (Trail $trail, int $componentID) {
+            $component = Component::find($componentID);
+            $trail->parent('components.index');
+            if ($component) {
+                $trail->push($component->name, route('components.show', $component));
+            }
+            $trail->push(trans('general.checkout'));
+        });
+
+        Breadcrumbs::for('components.checkin.show', function (Trail $trail, int $componentAssetId) {
+            $componentAsset = DB::table('components_assets')->find($componentAssetId);
+            $component = $componentAsset ? Component::find($componentAsset->component_id) : null;
+            $trail->parent('components.index');
+            if ($component) {
+                $trail->push($component->name, route('components.show', $component));
+            }
+            $trail->push(trans('general.checkin'));
+        });
+
         /**
          * Consumables Breadcrumbs
          */
@@ -202,6 +243,19 @@ class BreadcrumbsServiceProvider extends ServiceProvider
         Breadcrumbs::for('consumables.edit', fn (Trail $trail, Consumable $consumable) => $trail->parent('consumables.index', route('consumables.index'))
             ->push($consumable->display_name, route('consumables.show', $consumable))
             ->push(trans('general.update'))
+        );
+
+        Breadcrumbs::for('consumables.checkout.show', function (Trail $trail, $consumablesID) {
+            $consumable = Consumable::find($consumablesID);
+            $trail->parent('consumables.index');
+            if ($consumable) {
+                $trail->push($consumable->name, route('consumables.show', $consumable));
+            }
+            $trail->push(trans('general.checkout'));
+        });
+
+        Breadcrumbs::for('consumables.clone.create', fn (Trail $trail, Consumable $consumable) => $trail->parent('consumables.show', $consumable)
+            ->push(trans('general.clone'))
         );
 
         /**
@@ -538,5 +592,19 @@ class BreadcrumbsServiceProvider extends ServiceProvider
         foreach ($ancestorChain as $node) {
             $trail->push($node->name, route('locations.show', $node));
         }
+    }
+
+    /**
+     * Append parent -> child breadcrumbs for a company. The one-level-deep
+     * validator on parent_id caps the chain at depth 2, so this is always
+     * either [company] or [parent, company].
+     */
+    private function pushCompanyHierarchy(Trail $trail, Company $company): void
+    {
+        if ($company->parent) {
+            $trail->push($company->parent->name, route('companies.show', $company->parent));
+        }
+
+        $trail->push($company->display_name, route('companies.show', $company));
     }
 }

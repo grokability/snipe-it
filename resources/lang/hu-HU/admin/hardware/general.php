@@ -8,6 +8,7 @@ return [
     'bulk_checkout' => 'Bulk Checkout',
     'bulk_checkin' => 'Tömeges visszavétel',
     'checkin' => 'Eszköz visszavétele',
+    'checkin_assets' => 'Eszköz visszavétele',
     'checkout' => 'Checkout Asset',
     'clear' => 'Kiürítés',
     'clone' => 'Eszköz klónozása',

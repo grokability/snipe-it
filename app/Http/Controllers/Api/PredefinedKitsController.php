@@ -6,6 +6,9 @@ use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Http\Transformers\PredefinedKitsTransformer;
 use App\Http\Transformers\SelectlistTransformer;
+use App\Models\Accessory;
+use App\Models\Consumable;
+use App\Models\License;
 use App\Models\PredefinedKit;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -183,6 +186,9 @@ class PredefinedKitsController extends Controller
         }
 
         $license_id = $request->input('license');
+        $license = License::findOrFail($license_id);
+        $this->authorize('view', $license);
+
         $relation = $kit->licenses();
         if ($relation->find($license_id)) {
             return response()->json(Helper::formatStandardApiResponse('error', null, ['license' => trans('admin/kits/general.license_error')]));
@@ -329,6 +335,9 @@ class PredefinedKitsController extends Controller
         }
 
         $consumable_id = $request->input('consumable');
+        $consumable = Consumable::findOrFail($consumable_id);
+        $this->authorize('view', $consumable);
+
         $relation = $kit->consumables();
         if ($relation->find($consumable_id)) {
             return response()->json(Helper::formatStandardApiResponse('error', null, ['consumable' => trans('admin/kits/general.consumable_error')]));
@@ -402,6 +411,9 @@ class PredefinedKitsController extends Controller
         }
 
         $accessory_id = $request->input('accessory');
+        $accessory = Accessory::findOrFail($accessory_id);
+        $this->authorize('view', $accessory);
+
         $relation = $kit->accessories();
         if ($relation->find($accessory_id)) {
             return response()->json(Helper::formatStandardApiResponse('error', null, ['accessory' => trans('admin/kits/general.accessory_error')]));

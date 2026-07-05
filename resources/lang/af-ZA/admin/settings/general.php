@@ -307,7 +307,7 @@ return [
     'two_factor_enter_code' => 'Voer twee-faktor kode in',
     'two_factor_config_complete' => 'Dien kode in',
     'two_factor_enabled_edit_not_allowed' => 'Jou administrateur laat jou nie toe om hierdie instelling te wysig nie.',
-    'two_factor_enrollment_text' => 'Twee faktor verifikasie is nodig, maar jou toestel is nog nie ingeskryf nie. Maak jou Google Authenticator-program oop en scan die QR-kode hieronder om jou toestel in te skryf. Sodra jy jou toestel ingeskryf het, voer die kode hieronder in',
+    'two_factor_enrollment_text' => "Twee faktor verifikasie is nodig, maar jou toestel is nog nie ingeskryf nie. Maak jou Google Authenticator-program oop en scan die QR-kode hieronder om jou toestel in te skryf. Sodra jy jou toestel ingeskryf het, voer die kode hieronder in",
     'require_accept_signature' => 'Vereis Handtekening',
     'require_accept_signature_help_text' => 'Enabling this feature will require users to physically sign off on accepting items. This will override any category-specific signature requirements.',
     'require_checkinout_notes' => 'Require Notes on Checkin/Checkout',

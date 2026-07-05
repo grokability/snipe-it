@@ -64,4 +64,6 @@ return [
     'optional_infos' => 'Neobvezne informacije',
     'order_details' => 'Informacije povezane z naročilom',
     'calc_eol' => 'Če datum konca življenjske dobe EOL ničelno določite, uporabite samodejni izračun EOL na podlagi datuma nakupa in stopnje EOL.',
+    'checkin_licenses' => 'Checkin associated license seats',
+    'checkin_child_assets' => 'Checkin associated assets',
 ];

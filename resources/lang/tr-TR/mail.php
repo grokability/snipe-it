@@ -33,7 +33,7 @@ return [
     'Low_Inventory_Report' => 'Düşük Stok Raporu',
     'a_user_canceled' => 'Bir kullanıcı web sitede öğe talebinden vazgeçti',
     'a_user_requested' => 'Bir kullanıcı websitede bir öğe talebinde bulundu',
-    'acceptance_asset_accepted_to_user' => ':size_name tarafından size atanan bir öğeyi kabul ettiniz|:site_name tarafından size atanan :qty öğeyi kabul ettiniz',
+    'acceptance_asset_accepted_to_user' => ':site_name tarafından size atanan bir öğeyi kabul ettiniz|:site_name tarafından size atanan :qty öğeyi kabul ettiniz',
     'acceptance_accepted' => 'KABUL EDİLDİ: :user, :item öğesini kabul etti',
     'acceptance_declined' => 'REDDEDİLDİ: :user, :item öğesini reddetti',
     'acceptance_accepted_greeting' => ':user bir öğeyi kabul etti:',

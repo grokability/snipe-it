@@ -109,7 +109,7 @@ Route::group(
 
         Route::get('{asset}/checkin/{backto?}',
             [AssetCheckinController::class, 'create']
-        )->name('hardware.checkin.create')
+        )->name('hardware.checkin.create')->withTrashed()
             ->breadcrumbs(fn (Trail $trail, Asset $asset) => $trail->parent('hardware.show', $asset)
                 ->push(trans('admin/hardware/general.checkin'), route('hardware.index'))
             );
@@ -122,10 +122,6 @@ Route::group(
         Route::get('{assetId}/view', function ($assetId) {
             return redirect()->route('hardware.show', $assetId);
         });
-
-        Route::get('{asset}/qr_code',
-            [AssetsController::class, 'getQrCode']
-        )->name('qr_code/hardware')->withTrashed();
 
         Route::get('{asset}/barcode',
             [AssetsController::class, 'getBarCode']

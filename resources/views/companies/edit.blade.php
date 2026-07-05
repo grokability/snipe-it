@@ -1,50 +1,84 @@
-@extends('layouts/edit-form', [
-    'createText' => trans('admin/companies/table.create') ,
-    'updateText' => trans('admin/companies/table.update'),
-    'helpPosition'  => 'right',
-    'helpText' => trans('help.companies'),
-    'formAction' => (isset($item->id)) ? route('companies.update', ['company' => $item->id]) : route('companies.store'),
-])
+@extends('layouts/default')
+
+{{-- Page title --}}
+@section('title')
+    @if ($item->id)
+        {{ trans('admin/companies/table.update') }}
+    @else
+        {{ trans('admin/companies/table.create') }}
+    @endif
+    @parent
+@stop
 
 {{-- Page content --}}
-@section('inputFields')
-@include ('partials.forms.edit.name', ['translated_name' => trans('admin/companies/table.name')])
-@include ('partials.forms.edit.phone')
-@include ('partials.forms.edit.fax')
-@include ('partials.forms.edit.email')
-@include ('partials.forms.edit.image-upload', ['image_path' => app('companies_upload_path')])
+@section('content')
 
-<div class="form-group{!! $errors->has('notes') ? ' has-error' : '' !!}">
-    <label for="notes" class="col-md-3 control-label">{{ trans('general.notes') }}</label>
-    <div class="col-md-8">
+<x-container class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
 
-        <x-input.textarea
+    <x-form :$item route="{{ isset($item->id) ? route('companies.update', ['company' => $item->id]) : route('companies.store') }}">
+
+        <x-box>
+
+            <x-form.row
+                :label="trans('admin/companies/table.name')"
+                :$item
+                name="name"
+            />
+
+            @include('partials.forms.edit.company-select', [
+                'translated_name' => trans('admin/companies/table.parent'),
+                'fieldname' => 'parent_id',
+                'only_top_level' => true,
+                'exclude_id' => $item->id ?? null,
+            ])
+
+            <x-form.row
+                :label="trans('admin/suppliers/table.phone')"
+                :$item
+                name="phone"
+            />
+
+            <x-form.row
+                :label="trans('admin/suppliers/table.fax')"
+                :$item
+                name="fax"
+            />
+
+            <x-form.row
+                :label="trans('admin/suppliers/table.email')"
+                :$item
+                name="email"
+                type="email"
+            />
+
+            <x-form.row
+                :label="trans('general.notes')"
+                :$item
                 name="notes"
-                id="notes"
-                :value="old('notes', $item->notes)"
-                placeholder="{{ trans('general.placeholders.notes') }}"
-                aria-label="notes"
-                rows="5"
-        />
+                type="textarea"
+                :placeholder="trans('general.placeholders.notes')"
+            />
 
-    </div>
-</div>
+            @include ('partials.forms.edit.image-upload', ['image_path' => app('companies_upload_path')])
 
-<fieldset name="color-preferences">
-    <x-form.legend help_text="{{ trans('general.tag_color_help') }}">
-        {{ trans('general.tag_color') }}
-    </x-form.legend>
-    <!--  color -->
-    <div class="form-group {{ $errors->has('tag_color') ? 'error' : '' }}">
-        <label for="tag_color" class="col-md-3 control-label">
-            {{ trans('general.tag_color') }}
-        </label>
-        <div class="col-md-9">
-            <x-input.colorpicker :item="$item" id="tag_color" :value="old('tag_color', ($item->tag_color ?? '#f4f4f4'))" name="tag_color" id="tag_color" />
-            {!! $errors->first('tag_color', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
-        </div>
-    </div>
-</fieldset>
+            <fieldset name="color-preferences">
+                <x-form.legend help_text="{{ trans('general.tag_color_help') }}">
+                    {{ trans('general.tag_color') }}
+                </x-form.legend>
 
+                <div class="form-group {{ $errors->has('tag_color') ? 'has-error' : '' }}">
+                    <label for="tag_color" class="col-md-3 control-label">{{ trans('general.tag_color') }}</label>
+                    <div class="col-md-9">
+                        <x-input.colorpicker :item="$item" id="tag_color" :value="old('tag_color', ($item->tag_color ?? '#f4f4f4'))" name="tag_color" />
+                        {!! $errors->first('tag_color', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
+                    </div>
+                </div>
+            </fieldset>
+
+        </x-box>
+
+    </x-form>
+
+</x-container>
 
 @stop

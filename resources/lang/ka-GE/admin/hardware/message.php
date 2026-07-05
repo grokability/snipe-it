@@ -94,6 +94,12 @@ return [
         'success' => 'ინვენტარის გაცემა წარმატებით განხორციელდა.',
     ],
 
+    'multi-checkin' => [
+        'error' => 'Asset was not checked in, please try again|Assets were not checked in, please try again',
+        'success' => 'Asset checked in successfully.|Assets checked in successfully.',
+        'no_assets_selected' => 'უნდა აირჩიოთ მინიმუმ ერთი ინვენტარი აღნიშნული სიიდან.',
+    ],
+
     'checkin' => [
         'error' => 'ინვენტარი არ დაბრუნებულა, გთხოვთ სცადოთ თავიდან.',
         'success' => 'ინვენტარი გაცემა წარმატებით განხორციელდა.',

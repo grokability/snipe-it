@@ -310,7 +310,7 @@ return [
     'two_factor_enter_code' => '二段階認証コードを入力',
     'two_factor_config_complete' => '送信',
     'two_factor_enabled_edit_not_allowed' => '管理者はこの設定を編集することを許可していません。',
-    'two_factor_enrollment_text' => '二段階認証の登録が必要ですが、あなたのデバイスはまだ登録されていません。Google Authenticatorアプリを開き、下のQRコードをスキャンして端末を登録してください。端末を登録したら以下のコードを入力してください。',
+    'two_factor_enrollment_text' => "二段階認証の登録が必要ですが、あなたのデバイスはまだ登録されていません。Google Authenticatorアプリを開き、下のQRコードをスキャンして端末を登録してください。端末を登録したら以下のコードを入力してください。",
     'require_accept_signature' => 'シグネチャリクエスト',
     'require_accept_signature_help_text' => 'Enabling this feature will require users to physically sign off on accepting items. This will override any category-specific signature requirements.',
     'require_checkinout_notes' => 'Require Notes on Checkin/Checkout',

@@ -14,4 +14,10 @@ return [
     'hardware_support' => '硬件支持',
     'configuration_change' => '配置更改',
     'pat_test' => '便携式设备测试',
+    'checked_out_to_help' => 'The user, etc that the asset was checked out to at the time of maintenance creation. This is for historical reference and does not affect the current checkout status of the asset.',
+    'show_completed' => 'Show Completed',
+    'show_active' => 'Show Active',
+    'due' => 'Due',
+    'overdue' => 'Overdue',
+    'completed' => 'Completed',
 ];

@@ -104,7 +104,7 @@
 
         <x-page-column class="col-md-3">
             <x-box class="side-box expanded">
-                <x-info-panel :infoPanelObj="$license" img_path="{{ app('licenses_upload_url') }}">
+                <x-info-panel :infoPanelObj="$license" img_path="{{ app('licenses_upload_url') }}" :qr_code_url="route('qr_code/common', ['object_type' => 'licenses', 'id' => $license->id])">
 
 
                     <x-slot:buttons>

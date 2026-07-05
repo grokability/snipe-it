@@ -64,8 +64,10 @@ return [
         'text' => 'Metin Kutusu',
         'listbox' => 'Seçenek Listesi',
         'textarea' => 'Metin Alanı',
+        'markdown-textarea' => 'Markdown Metin Alanı',
         'checkbox' => 'Onay Kutusu',
         'radio' => 'Radyo Butonları',
     ],
+    'markdown_supported' => 'Markdown desteklenmektedir',
     'general_help_text' => 'Özel alanlar, varsayılan varlık alanlarının kapsamadığı ek bilgileri saklar. <a href="https://snipe-it.readme.io/docs/custom-fields#/"><i class="fa fa-external-link"></i></a>.',
 ];

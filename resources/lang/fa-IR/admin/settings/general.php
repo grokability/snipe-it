@@ -397,7 +397,7 @@ return [
     'two_factor_enter_code' => 'کد دو فاکتور را وارد کنید',
     'two_factor_config_complete' => 'ارسال کد',
     'two_factor_enabled_edit_not_allowed' => 'سرپرست شما اجازه نمی دهد که این تنظیم را ویرایش کنید.',
-    'two_factor_enrollment_text' => 'احراز هویت دو عامل لازم است، اما دستگاه شما هنوز ثبت نشده است. برنامه Google Authenticator خود را باز کنید و کد QR زیر را برای ثبت نام دستگاه خود اسکن کنید. هنگامی که دستگاه خود را ثبت نام کردید، کد زیر را وارد کنید',
+    'two_factor_enrollment_text' => "احراز هویت دو عامل لازم است، اما دستگاه شما هنوز ثبت نشده است. برنامه Google Authenticator خود را باز کنید و کد QR زیر را برای ثبت نام دستگاه خود اسکن کنید. هنگامی که دستگاه خود را ثبت نام کردید، کد زیر را وارد کنید",
     'require_accept_signature' => 'امضا لازم است',
     'require_accept_signature_help_text' => 'Enabling this feature will require users to physically sign off on accepting items. This will override any category-specific signature requirements.',
     'require_checkinout_notes' => 'Require Notes on Checkin/Checkout',

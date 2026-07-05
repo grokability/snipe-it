@@ -7,6 +7,7 @@ use App\Models\ReportTemplate;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use UnhandledMatchError;
 
 class ReportTemplatesController extends Controller
 {
@@ -18,6 +19,7 @@ class ReportTemplatesController extends Controller
         $validated = $request->validate(Arr::except((new ReportTemplate)->getRules(), 'options'));
 
         $report = $request->user()->reportTemplates()->create([
+            'type' => $validated['type'],
             'name' => $validated['name'],
             'options' => $request->except(['_token', 'name', 'is_shared']),
             'is_shared' => $request->has('is_shared'),
@@ -33,11 +35,17 @@ class ReportTemplatesController extends Controller
         $this->authorize('reports.view');
 
         $customfields = CustomField::get();
-        $report_templates = ReportTemplate::orderBy('name')->get();
 
-        return view('reports/custom', [
+        try {
+            $view = $reportTemplate->getViewPath();
+        } catch (UnhandledMatchError $e) {
+            return redirect()
+                ->route('reports.index')
+                ->with('error', 'Saved template type is not valid.');
+        }
+
+        return view($view, [
             'customfields' => $customfields,
-            'report_templates' => $report_templates,
             'template' => $reportTemplate,
         ]);
     }
@@ -52,7 +60,15 @@ class ReportTemplatesController extends Controller
                 ->withError(trans('general.report_not_editable'));
         }
 
-        return view('reports/custom', [
+        try {
+            $view = $reportTemplate->getViewPath();
+        } catch (UnhandledMatchError $e) {
+            return redirect()
+                ->route('reports.index')
+                ->with('error', 'Saved template type is not valid.');
+        }
+
+        return view($view, [
             'customfields' => CustomField::get(),
             'template' => $reportTemplate,
         ]);

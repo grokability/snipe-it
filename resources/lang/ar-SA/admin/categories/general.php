@@ -19,6 +19,7 @@ return [
     'required_acceptance' => 'سيتم إرسال رسالة إلكترونية تتضمن رابط إلى هذا المستخدم لتأكيد قبول هذا الأصل.',
     'global_signature_required_notice' => 'User signatures are currently required globally via the admin settings, so signatures will still be required regardless of this category setting if the item is checked out to a user (versus a location, etc).',
     'required_eula' => 'سيتم إرسال نسخة إلكترونية من إتفاقية الترخيص الى المستخدم',
+    'required_signature' => 'This user will be required to sign to confirm acceptance of this item.',
     'no_default_eula' => 'لم يتم العثور على (اتفاقية ترخيص المستخدم) الأساسية. قم بإضافة واحدة من الإعدادات.',
     'update' => 'تحديث التصنيف',
     'use_default_eula' => 'قم باستعمال <a href="#" data-toggle="modal" data-target="#eulaModal">إتفاقية الترخيص الإفتراضية</a>.',

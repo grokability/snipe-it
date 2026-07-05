@@ -64,4 +64,6 @@ return [
     'optional_infos' => 'Thông tin bổ sung',
     'order_details' => 'Thông tin đơn hàng',
     'calc_eol' => 'Nếu để trống ngày hết vòng đời (EOL), hệ thống sẽ tự động tính toán dựa trên ngày mua và tỷ lệ EOL.',
+    'checkin_licenses' => 'Checkin associated license seats',
+    'checkin_child_assets' => 'Checkin associated assets',
 ];

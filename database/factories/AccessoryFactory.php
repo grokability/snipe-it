@@ -144,6 +144,13 @@ class AccessoryFactory extends Factory
         });
     }
 
+    public function notRequiringAcceptance()
+    {
+        return $this->afterCreating(function ($accessory) {
+            $accessory->category->update(['require_acceptance' => 0]);
+        });
+    }
+
     public function checkedOutToUser(?User $user = null)
     {
         return $this->afterCreating(function (Accessory $accessory) use ($user) {

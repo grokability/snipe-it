@@ -3,6 +3,8 @@
 namespace Tests\Feature\Importing\Api;
 
 use App\Models\Actionlog as ActionLog;
+use App\Models\Asset;
+use App\Models\Company;
 use App\Models\Component;
 use App\Models\Import;
 use App\Models\User;
@@ -347,5 +349,89 @@ class ImportComponentsTest extends ImportDataTestCase implements TestsPermission
         $this->assertNull($newComponent->min_amt);
         $this->assertNull($newComponent->image);
         $this->assertNull($newComponent->notes);
+    }
+
+    #[Test]
+    public function import_component_checkout_to_asset_is_blocked_when_fmcs_companies_differ(): void
+    {
+        [$companyA, $companyB] = Company::factory()->count(2)->create();
+        $asset = Asset::factory()->for($companyB)->create();
+        $this->settings->enableMultipleFullCompanySupport();
+
+        $importFileBuilder = ImportFileBuilder::new([
+            'companyName' => $companyA->name,
+            'assetTag' => $asset->asset_tag,
+        ]);
+
+        $import = Import::factory()->component()->create(['file_path' => $importFileBuilder->saveToImportsDirectory()]);
+
+        $this->actingAsForApi(User::factory()->superuser()->create());
+        $this->importFileResponse(['import' => $import->id])->assertOk();
+
+        $newComponent = Component::where('serial', $importFileBuilder->firstRow()['serialNumber'])->sole();
+        $this->assertEquals(0, $newComponent->assets()->count(), 'Component should not be checked out when item and asset companies differ under FMCS');
+    }
+
+    #[Test]
+    public function import_component_checkout_to_asset_is_allowed_when_fmcs_companies_match(): void
+    {
+        $company = Company::factory()->create();
+        $asset = Asset::factory()->for($company)->create();
+        $this->settings->enableMultipleFullCompanySupport();
+
+        $importFileBuilder = ImportFileBuilder::new([
+            'companyName' => $company->name,
+            'assetTag' => $asset->asset_tag,
+        ]);
+
+        $import = Import::factory()->component()->create(['file_path' => $importFileBuilder->saveToImportsDirectory()]);
+
+        $this->actingAsForApi(User::factory()->superuser()->create());
+        $this->importFileResponse(['import' => $import->id])->assertOk();
+
+        $newComponent = Component::where('serial', $importFileBuilder->firstRow()['serialNumber'])->sole();
+        $this->assertEquals(1, $newComponent->assets()->count(), 'Component should be checked out when companies match under FMCS');
+    }
+
+    #[Test]
+    public function import_component_checkout_to_asset_is_blocked_when_floater_disabled_and_asset_has_no_company(): void
+    {
+        $company = Company::factory()->create();
+        $asset = Asset::factory()->create(['company_id' => null]);
+        $this->settings->enableMultipleFullCompanySupport()->disableFloaterMode();
+
+        $importFileBuilder = ImportFileBuilder::new([
+            'companyName' => $company->name,
+            'assetTag' => $asset->asset_tag,
+        ]);
+
+        $import = Import::factory()->component()->create(['file_path' => $importFileBuilder->saveToImportsDirectory()]);
+
+        $this->actingAsForApi(User::factory()->superuser()->create());
+        $this->importFileResponse(['import' => $import->id])->assertOk();
+
+        $newComponent = Component::where('serial', $importFileBuilder->firstRow()['serialNumber'])->sole();
+        $this->assertEquals(0, $newComponent->assets()->count(), 'Component should not be checked out to a no-company asset when floater mode is off');
+    }
+
+    #[Test]
+    public function import_component_checkout_to_asset_is_allowed_when_floater_enabled_and_asset_has_no_company(): void
+    {
+        $company = Company::factory()->create();
+        $asset = Asset::factory()->create(['company_id' => null]);
+        $this->settings->enableFloaterMode();
+
+        $importFileBuilder = ImportFileBuilder::new([
+            'companyName' => $company->name,
+            'assetTag' => $asset->asset_tag,
+        ]);
+
+        $import = Import::factory()->component()->create(['file_path' => $importFileBuilder->saveToImportsDirectory()]);
+
+        $this->actingAsForApi(User::factory()->superuser()->create());
+        $this->importFileResponse(['import' => $import->id])->assertOk();
+
+        $newComponent = Component::where('serial', $importFileBuilder->firstRow()['serialNumber'])->sole();
+        $this->assertEquals(1, $newComponent->assets()->count(), 'Component should be checked out to a no-company asset when floater mode is on');
     }
 }

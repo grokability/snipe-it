@@ -64,4 +64,6 @@ return [
     'optional_infos' => 'Optionale Informationen',
     'order_details' => 'Bestellinformationen',
     'calc_eol' => 'Wenn Sie das EOL-Datum auf Null setzen, dann verwenden Sie die automatische EOL-Berechnung basierend auf dem Kaufdatum und der EOL-Rate.',
+    'checkin_licenses' => 'Checkin associated license seats',
+    'checkin_child_assets' => 'Checkin associated assets',
 ];

@@ -7,7 +7,7 @@ return [
         'success' => 'Nustatymai sėkmingai atnaujinti.',
     ],
     'backup' => [
-        'delete_confirm' => 'Ar tikrai norite ištrinti atsarginę kopiją? Šis veiksmas negrįžtamas. ',
+        'delete_confirm' => 'Ar tikrai norite ištrinti šią atsarginę kopiją? Šis veiksmas negrįžtamas. ',
         'file_deleted' => 'Atsarginė kopija sėkmingai ištrinta. ',
         'generated' => 'Atsarginė kopija sėkmingai sukurta.',
         'file_not_found' => 'Šio atsarginės kopijos failo serveryje rasti nepavyko.',
@@ -54,7 +54,7 @@ return [
     ],
     'location_scoping' => [
         'not_saved' => 'Jūsų nustatymai nebuvo išsaugoti.',
-        'mismatch' => 'Duomenų bazėje yra 1 elementas, į kurį reikia atkreipti dėmesį, prieš įjungiant vietų susiejimą.|Duomenų bazėje yra :count elementai (-ų), į kuriuos reikia atkreipti dėmesį, prieš įjungiant vietų susiejimą.',
+        'mismatch' => 'Duomenų bazėje yra 1 elementas, į kurį reikia atkreipti dėmesį, prieš įjungiant vietų susiejimą.|Duomenų bazėje yra elementai (:count), į kuriuos reikia atkreipti dėmesį, prieš įjungiant vietų susiejimą.',
     ],
     'oauth' => [
         'token_revoked' => 'Asmeninis prieigos raktas sėkmingai atšauktas.',

@@ -67,9 +67,20 @@ a.accordion-header {
   color: #333;
 }
 
+// Mirrors BS3's .form-group spacing (margin-bottom: 15px, no padding)
+// with a clearfix so floated col-md-* children don't leak past the
+// wrapper when the row's floats add up to less than 12 cols.
 .dynamic-form-row {
-  padding: 10px;
-  margin: 20px;
+  margin-bottom: 15px;
+
+  &::before,
+  &::after {
+    content: " ";
+    display: table;
+  }
+  &::after {
+    clear: both;
+  }
 }
 
 .handle {

@@ -19,6 +19,7 @@ return [
     'required_acceptance' => 'Deze gebruiker ontvangt een e-mail met een link om de acceptatie van dit item te bevestigen.',
     'global_signature_required_notice' => 'User signatures are currently required globally via the admin settings, so signatures will still be required regardless of this category setting if the item is checked out to a user (versus a location, etc).',
     'required_eula' => 'Deze gebruiker ontvangt een e-mail met een kopie van de gebruikersovereenkomst',
+    'required_signature' => 'This user will be required to sign to confirm acceptance of this item.',
     'no_default_eula' => 'Standaard gebruikersovereenkomst niet gevonden. Ga naar Instellingen en voeg er één toe.',
     'update' => 'Categorie bijwerken',
     'use_default_eula' => 'Gebruik de <a href="#" data-toggle="modal" data-target="#eulaModal"> standaard gebruikersovereenkomst</a>.',

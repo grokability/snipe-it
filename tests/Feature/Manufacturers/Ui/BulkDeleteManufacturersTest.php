@@ -48,4 +48,25 @@ class BulkDeleteManufacturersTest extends TestCase implements TestsPermissionsRe
         $this->assertSoftDeleted($manufacturer2);
         $this->assertSoftDeleted($manufacturer3);
     }
+
+    public function test_bulk_success_message_pluralizes_by_count()
+    {
+        $solo = Manufacturer::factory()->create();
+
+        $this->actingAs(User::factory()->deleteManufacturers()->create())
+            ->post(route('manufacturers.bulk.delete'), [
+                'ids' => [$solo->id],
+            ])
+            ->assertSessionHas('success', trans_choice('admin/manufacturers/message.delete.bulk_success', 1, ['count' => 1]));
+
+        $a = Manufacturer::factory()->create();
+        $b = Manufacturer::factory()->create();
+        $c = Manufacturer::factory()->create();
+
+        $this->actingAs(User::factory()->deleteManufacturers()->create())
+            ->post(route('manufacturers.bulk.delete'), [
+                'ids' => [$a->id, $b->id, $c->id],
+            ])
+            ->assertSessionHas('success', trans_choice('admin/manufacturers/message.delete.bulk_success', 3, ['count' => 3]));
+    }
 }

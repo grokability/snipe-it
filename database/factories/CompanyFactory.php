@@ -28,4 +28,9 @@ class CompanyFactory extends Factory
             'tag_color' => $this->faker->hexColor(),
         ];
     }
+
+    public function childOf(Company $parent): static
+    {
+        return $this->state(['parent_id' => $parent->id]);
+    }
 }

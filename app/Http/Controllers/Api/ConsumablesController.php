@@ -73,7 +73,13 @@ class ConsumablesController extends Controller
         }
 
         if ($request->filled('company_id')) {
-            $consumables->where('consumables.company_id', '=', $request->input('company_id'));
+            // expand_company_hierarchy=1 opts the company show-page tabs into the
+            // parent/child rollup so a child shows items inherited from its parent.
+            if ($request->boolean('expand_company_hierarchy')) {
+                $consumables->whereIn('consumables.company_id', Company::reachableCompanyIds($request->input('company_id')));
+            } else {
+                $consumables->where('consumables.company_id', '=', $request->input('company_id'));
+            }
         }
 
         if ($request->filled('order_number')) {
@@ -315,7 +321,7 @@ class ConsumablesController extends Controller
             return response()->json(Helper::formatStandardApiResponse('error', null, 'No user found'));
         }
 
-        if ((Setting::getSettings()->full_multiple_companies_support == '1') && ($consumable->company_id !== $user->company_id)) {
+        if ((Setting::getSettings()->full_multiple_companies_support == '1') && (! $user->companies()->where('companies.id', $consumable->company_id)->exists())) {
             return response()->json(Helper::formatStandardApiResponse('error', null, trans('general.error_user_company')));
         }
 

@@ -27,6 +27,30 @@ class ShowMaintenanceTest extends TestCase
             ->assertSee(route('api.maintenances.history', $maintenance), false);
     }
 
+    public function test_user_without_asset_view_permission_cannot_view_maintenance()
+    {
+        $maintenance = Maintenance::factory()->create();
+
+        $this->actingAs(User::factory()->create())
+            ->get(route('maintenances.show', $maintenance))
+            ->assertForbidden();
+    }
+
+    public function test_user_without_asset_view_permission_cannot_view_maintenance_for_another_company_when_fmcs_enabled()
+    {
+        $this->settings->enableMultipleFullCompanySupport();
+
+        [$companyA, $companyB] = Company::factory()->count(2)->create();
+
+        $userInCompanyA = $companyA->users()->save(User::factory()->create());
+        $maintenanceForCompanyB = Maintenance::factory()->create();
+        $maintenanceForCompanyB->asset->update(['company_id' => $companyB->id]);
+
+        $this->actingAs($userInCompanyA)
+            ->get(route('maintenances.show', $maintenanceForCompanyB))
+            ->assertRedirectToRoute('maintenances.index');
+    }
+
     public function test_user_cannot_view_maintenance_for_another_company_when_fmcs_enabled()
     {
         $this->settings->enableMultipleFullCompanySupport();

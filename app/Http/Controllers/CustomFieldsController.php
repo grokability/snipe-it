@@ -67,6 +67,7 @@ class CustomFieldsController extends Controller
      */
     public function create(Request $request): View
     {
+        $this->authorize('view', CustomField::class);
         $this->authorize('create', CustomField::class);
         $fieldsets = CustomFieldset::get();
 
@@ -89,6 +90,7 @@ class CustomFieldsController extends Controller
      */
     public function store(CustomFieldRequest $request): RedirectResponse
     {
+        $this->authorize('view', CustomField::class);
         $this->authorize('create', CustomField::class);
 
         $show_in_email = $request->input('show_in_email', 0);

@@ -154,4 +154,15 @@ class CustomFieldFactory extends Factory
             ];
         });
     }
+
+    public function testMarkdownTextarea()
+    {
+        return $this->state(function () {
+            return [
+                'name' => 'Notes',
+                'help_text' => 'Additional notes about this asset. Markdown is supported.',
+                'element' => 'markdown-textarea',
+            ];
+        });
+    }
 }

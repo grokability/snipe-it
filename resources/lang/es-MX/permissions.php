@@ -274,17 +274,17 @@ return [
     ],
 
     'modelscreate' => [
-        'name' => 'Create New Models',
+        'name' => 'Crear nuevos modelos',
     ],
     'modelsedit' => [
-        'name' => 'Edit Models',
+        'name' => 'Editar Modelos',
     ],
     'modelsdelete' => [
-        'name' => 'Delete Models',
+        'name' => 'Eliminar Modelos',
     ],
     'categories' => [
         'name' => 'Categorías',
-        'note' => 'Grants access to the Categories section of the application.',
+        'note' => 'Dar acceso a la sección de Categorías de la aplicación.',
     ],
     'categoriesview' => [
         'name' => 'Ver categorias',

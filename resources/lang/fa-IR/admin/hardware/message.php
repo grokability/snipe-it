@@ -96,6 +96,12 @@ return [
         'success' => 'Asset checked out successfully.|Assets checked out successfully.',
     ],
 
+    'multi-checkin' => [
+        'error' => 'Asset was not checked in, please try again|Assets were not checked in, please try again',
+        'success' => 'Asset checked in successfully.|Assets checked in successfully.',
+        'no_assets_selected' => 'شما حداقل باید یک دارایی از لیست انتخاب کنید',
+    ],
+
     'checkin' => [
         'error' => 'دارایی در بررسی نیست، لطفا دوباره امتحان کنید',
         'success' => 'دارایی ها با موفقیت در بررسی.',

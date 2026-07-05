@@ -97,7 +97,9 @@ class Ldap extends Model
         ldap_set_option($connection, LDAP_OPT_NETWORK_TIMEOUT, 20);
 
         if ($ldap_use_tls == '1') {
-            ldap_start_tls($connection);
+            if (!ldap_start_tls($connection)) {
+                throw new Exception('STARTTLS Failed.');
+            }
         }
 
         return $connection;

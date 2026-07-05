@@ -64,8 +64,10 @@ return [
         'text' => 'Տեքստային դաշտ',
         'listbox' => 'Ցանկի դաշտ',
         'textarea' => 'Բազմատող տեքստային դաշտ',
+        'markdown-textarea' => 'Markdown Textarea',
         'checkbox' => 'Նշման վանդակ',
         'radio' => 'Ռադիո կոճակներ',
     ],
+    'markdown_supported' => 'Markdown is supported',
     'general_help_text' => 'Հատուկ դաշտերը պահում են լրացուցիչ տեղեկություններ, որոնք ներառված չեն ակտիվի լռելյայն դաշտերում։',
 ];

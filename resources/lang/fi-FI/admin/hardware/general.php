@@ -8,6 +8,7 @@ return [
     'bulk_checkout' => 'Luovuta useita',
     'bulk_checkin' => 'Bulk Checkin',
     'checkin' => 'Palauta laite',
+    'checkin_assets' => 'Palauta laitteita',
     'checkout' => 'Luovuta laite',
     'clear' => 'Tyhjennä',
     'clone' => 'Monista laite',

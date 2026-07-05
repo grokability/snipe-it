@@ -102,7 +102,7 @@ $config = [
             'secret' => env('PRIVATE_AWS_SECRET_ACCESS_KEY'),
             'region' => env('PRIVATE_AWS_DEFAULT_REGION'),
             'bucket' => env('PRIVATE_AWS_BUCKET'),
-            'root'   => env('BACKUP_FILESYSTEM_ROOT', storage_path('app')),
+            'root' => env('BACKUP_FILESYSTEM_ROOT', storage_path('app')),
             'visibility' => 'private',
         ],
 
@@ -126,11 +126,10 @@ if (env('PUBLIC_S3_PROXY', false)) {
 $config['allowed_upload_extensions_array'] = [
     'avif',
     'doc',
-    'doc',
-    'docx',
     'docx',
     'gif',
     'ico',
+    'jfif',
     'jpeg',
     'jpg',
     'json',
@@ -182,5 +181,29 @@ $config['allowed_upload_mimetypes_array'] = [
 $config['allowed_upload_mimetypes'] = implode(',', $config['allowed_upload_mimetypes_array']);
 $config['allowed_upload_extensions_for_validator'] = implode(',', $config['allowed_upload_extensions_array']);
 $config['allowed_upload_extensions'] = '.'.implode(', .', $config['allowed_upload_extensions_array']);
+
+// Strict subset of the upload allowlist that is safe to return with
+// Content-Disposition: inline. The extension gates entry; the server-detected
+// MIME must also match one of the values below before StorageHelper::allowSafeInline
+// hands the response back inline. Anything else falls through to an attachment
+// response so an uploaded XML/HTML/XSLT can't be rendered as active content in the
+// Snipe-IT origin. Keep this list narrower than allowed_upload_extensions_array on
+// purpose: we accept broader file types for storage than we're willing to render.
+$config['allowed_inline_display'] = [
+    'avif' => ['image/avif'],
+    'gif' => ['image/gif'],
+    'jpg' => ['image/jpeg'],
+    'jpeg' => ['image/jpeg'],
+    'mov' => ['video/quicktime'],
+    'mp3' => ['audio/mpeg', 'audio/mp3'],
+    'mp4' => ['video/mp4'],
+    'ogg' => ['audio/ogg', 'video/ogg', 'application/ogg'],
+    'pdf' => ['application/pdf'],
+    'png' => ['image/png'],
+    'svg' => ['image/svg+xml'],
+    'wav' => ['audio/wav', 'audio/x-wav', 'audio/wave', 'audio/vnd.wave'],
+    'webm' => ['video/webm', 'audio/webm'],
+    'webp' => ['image/webp'],
+];
 
 return $config;

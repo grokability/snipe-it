@@ -7,11 +7,11 @@ use App\Models\PredefinedKit;
 use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 /**
  * Class incapsulates checkout logic for reuse in different controllers
+ *
  * @author [D. Minaev.] [<dmitriy.minaev.v@gmail.com>]
  */
 class PredefinedKitCheckoutService
@@ -19,9 +19,9 @@ class PredefinedKitCheckoutService
     use AuthorizesRequests;
 
     /**
-     * @param Request $request, this function works with fields: checkout_at, expected_checkin, note
-     * @param PredefinedKit $kit kit for checkout
-     * @param User $user checkout target
+     * @param  Request  $request,  this function works with fields: checkout_at, expected_checkin, note
+     * @param  PredefinedKit  $kit  kit for checkout
+     * @param  User  $user  checkout target
      * @return array Empty array if all ok, else [string_error1, string_error2...]
      */
     public function checkout(Request $request, PredefinedKit $kit, User $user)
@@ -93,7 +93,7 @@ class PredefinedKitCheckoutService
                 }
             }
             if ($quantity > 0) {
-                $errors[] = trans('admin/kits/general.none_models', ['model'=> $model->name, 'qty' => $model->pivot->quantity]);
+                $errors[] = trans('admin/kits/general.none_models', ['model' => $model->name, 'qty' => $model->pivot->quantity]);
             }
         }
 
@@ -107,9 +107,10 @@ class PredefinedKitCheckoutService
             ->with('freeSeats')
             ->get();
         foreach ($licenses as $license) {
+            $this->authorize('checkout', $license);
             $quantity = $license->pivot->quantity;
             if ($quantity > count($license->freeSeats)) {
-                $errors[] = trans('admin/kits/general.none_licenses', ['license'=> $license->name, 'qty' => $license->pivot->quantity]);
+                $errors[] = trans('admin/kits/general.none_licenses', ['license' => $license->name, 'qty' => $license->pivot->quantity]);
             }
             for ($i = 0; $i < $quantity; $i++) {
                 $seats_to_add[] = $license->freeSeats[$i];
@@ -123,8 +124,9 @@ class PredefinedKitCheckoutService
     {
         $consumables = $kit->consumables()->with('users')->get();
         foreach ($consumables as $consumable) {
+            $this->authorize('checkout', $consumable);
             if ($consumable->numRemaining() < $consumable->pivot->quantity) {
-                $errors[] = trans('admin/kits/general.none_consumables', ['consumable'=> $consumable->name, 'qty' => $consumable->pivot->quantity]);
+                $errors[] = trans('admin/kits/general.none_consumables', ['consumable' => $consumable->name, 'qty' => $consumable->pivot->quantity]);
             }
         }
 
@@ -135,8 +137,9 @@ class PredefinedKitCheckoutService
     {
         $accessories = $kit->accessories()->with('users')->get();
         foreach ($accessories as $accessory) {
+            $this->authorize('checkout', $accessory);
             if ($accessory->numRemaining() < $accessory->pivot->quantity) {
-                $errors[] = trans('admin/kits/general.none_accessory', ['accessory'=> $accessory->name, 'qty' => $accessory->pivot->quantity]);
+                $errors[] = trans('admin/kits/general.none_accessory', ['accessory' => $accessory->name, 'qty' => $accessory->pivot->quantity]);
             }
         }
 
@@ -175,7 +178,7 @@ class PredefinedKitCheckoutService
                     ]);
                     event(new CheckoutableCheckedOut($consumable, $user, $admin, $note));
                 }
-                //accessories
+                // accessories
                 foreach ($accessories_to_add as $accessory) {
                     $accessory->assigned_to = $user->id;
                     $accessory->users()->attach($accessory->id, [

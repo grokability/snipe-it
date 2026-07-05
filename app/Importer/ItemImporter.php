@@ -5,6 +5,7 @@ namespace App\Importer;
 use App\Models\AssetModel;
 use App\Models\Category;
 use App\Models\Company;
+use App\Models\CompanyableScope;
 use App\Models\Location;
 use App\Models\Manufacturer;
 use App\Models\Statuslabel;
@@ -82,6 +83,7 @@ class ItemImporter extends Importer
         $this->item['qty'] = $this->findCsvMatch($row, 'quantity');
         $this->item['requestable'] = $this->findCsvMatch($row, 'requestable');
         $this->item['created_by'] = auth()->id();
+        $this->item['asset_tag'] = $this->findCsvMatch($row, 'asset_tag');
         $this->item['serial'] = $this->findCsvMatch($row, 'serial');
         $this->item['item_no'] = trim($this->findCsvMatch($row, 'item_no'));
 
@@ -336,7 +338,14 @@ class ItemImporter extends Importer
      */
     public function createOrFetchCompany($asset_company_name)
     {
-        $company = Company::where(['name' => $asset_company_name])->first();
+        // Bypass CompanyableScope so the lookup can see companies the
+        // importer's user isn't FMCS-allowed to see — otherwise the
+        // SELECT misses an existing row, the code falls through to the
+        // INSERT path, and the unique index on companies.name rejects
+        // it (which is what the customer's stack trace shows).
+        $company = Company::withoutGlobalScope(CompanyableScope::class)
+            ->where('name', $asset_company_name)
+            ->first();
         if ($company) {
             $this->log('A matching Company '.$asset_company_name.' already exists');
 
@@ -489,7 +498,14 @@ class ItemImporter extends Importer
             return null;
         }
 
-        $location = Location::where(['name' => $asset_location])->first();
+        // Bypass CompanyableScope so the lookup can see locations the
+        // importer's user isn't FMCS-allowed to see — same shape as the
+        // Company fix in createOrFetchCompany(). Without this, a hidden
+        // existing location forces the INSERT path and trips the unique
+        // index on locations.name.
+        $location = Location::withoutGlobalScope(CompanyableScope::class)
+            ->where('name', $asset_location)
+            ->first();
 
         if ($location) {
             $this->log('Location '.$asset_location.' already exists');

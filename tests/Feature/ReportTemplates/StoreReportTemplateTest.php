@@ -22,9 +22,10 @@ class StoreReportTemplateTest extends TestCase implements TestsPermissionsRequir
     {
         $this->actingAs(User::factory()->canViewReports()->create())
             ->post(route('report-templates.store'), [
+                'type' => 'something-else',
                 'name' => '',
             ])
-            ->assertSessionHasErrors('name');
+            ->assertSessionHasErrors(['type', 'name']);
     }
 
     public function test_redirecting_after_validation_error_restores_inputs()
@@ -43,24 +44,49 @@ class StoreReportTemplateTest extends TestCase implements TestsPermissionsRequir
             }]);
     }
 
-    public function test_can_save_a_report_template()
+    public function test_can_save_an_asset_report_template()
     {
         $user = User::factory()->canViewReports()->create();
 
-        $this->actingAs($user)
+        $response = $this->actingAs($user)
             ->post(route('report-templates.store'), [
+                'type' => 'asset',
                 'name' => 'My Awesome Template',
                 'company' => '1',
                 'by_company_id' => ['1', '2'],
-            ])
-            ->assertRedirect();
+            ]);
 
         $template = $user->reportTemplates->first(function ($report) {
             return $report->name === 'My Awesome Template';
         });
 
         $this->assertNotNull($template);
+        $this->assertEquals('asset', $template->type);
         $this->assertEquals('1', $template->options['company']);
         $this->assertEquals(['1', '2'], $template->options['by_company_id']);
+        $response->assertRedirect(route('report-templates.show', $template));
+    }
+
+    public function test_can_save_a_component_report_template()
+    {
+        $user = User::factory()->canViewReports()->create();
+
+        $response = $this->actingAs($user)
+            ->post(route('report-templates.store'), [
+                'type' => 'component',
+                'name' => 'My Awesome Template',
+                'company' => '1',
+                'by_company_id' => ['1', '2'],
+            ]);
+
+        $template = $user->reportTemplates->first(function ($report) {
+            return $report->name === 'My Awesome Template';
+        });
+
+        $this->assertNotNull($template);
+        $this->assertEquals('component', $template->type);
+        $this->assertEquals('1', $template->options['company']);
+        $this->assertEquals(['1', '2'], $template->options['by_company_id']);
+        $response->assertRedirect(route('report-templates.show', $template));
     }
 }

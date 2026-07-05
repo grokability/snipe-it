@@ -307,7 +307,7 @@ return [
     'two_factor_enter_code' => 'I-enter ang Two-Factor Code',
     'two_factor_config_complete' => 'I-submit ang Code',
     'two_factor_enabled_edit_not_allowed' => 'Ang iyong tagapangasiwa ay hindi magpapahintulot sa iyo na i-edit ang mga setting na ito.',
-    'two_factor_enrollment_text' => 'Ang Two factor authentication ay kinakailangan, gayunpaman ang iyong device ay hindi ma na-enroll. Buksan mo ang itong Google Authenticator app at i-scan ang QR code sa ibaba para ma-enroll ang iyong device. Kapag na-enroll na ang device. i-enter ang code sa ibaba',
+    'two_factor_enrollment_text' => "Ang Two factor authentication ay kinakailangan, gayunpaman ang iyong device ay hindi ma na-enroll. Buksan mo ang itong Google Authenticator app at i-scan ang QR code sa ibaba para ma-enroll ang iyong device. Kapag na-enroll na ang device. i-enter ang code sa ibaba",
     'require_accept_signature' => 'Nangangailangan ng Pag-lagda',
     'require_accept_signature_help_text' => 'Enabling this feature will require users to physically sign off on accepting items. This will override any category-specific signature requirements.',
     'require_checkinout_notes' => 'Require Notes on Checkin/Checkout',

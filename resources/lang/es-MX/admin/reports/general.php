@@ -10,7 +10,7 @@ return [
     'acceptance_request' => 'Solicitud de aceptación',
     'custom_export' => [
         'user_address' => 'Dirección de usuario',
-        'user_company' => 'User Company',
+        'user_company' => 'Compañía de Usuario',
         'user_city' => 'Ciudad del usuario',
         'user_state' => 'Estado del usuario',
         'user_country' => 'País del usuario',
@@ -22,8 +22,8 @@ return [
     'select_a_template' => 'Seleccione una plantilla',
     'template_name' => 'Nombre de la plantilla',
     'update_template' => 'Actualizar plantilla',
-    'share_template' => 'Share This Template',
-    'template_shared' => 'Template shared with you',
-    'template_shared_with_others' => 'Template shared with others',
-    'template_not_shared' => 'Template not shared with others',
+    'share_template' => 'Compartir esta plantilla',
+    'template_shared' => 'Plantilla compartida con usted',
+    'template_shared_with_others' => 'Plantilla compartida con otros',
+    'template_not_shared' => 'Plantilla no compartida con otros',
 ];

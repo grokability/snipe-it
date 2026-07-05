@@ -94,6 +94,12 @@ return [
         'success' => 'Majetok bol úspešne odovzdaný.|Majetky boli úspešne odovzdané.',
     ],
 
+    'multi-checkin' => [
+        'error' => 'Asset was not checked in, please try again|Assets were not checked in, please try again',
+        'success' => 'Asset checked in successfully.|Assets checked in successfully.',
+        'no_assets_selected' => 'Musíte vybrať najmenej jednu položku majetku zo zoznamu',
+    ],
+
     'checkin' => [
         'error' => 'Majetok sa nepodarilo prevziať, skúste prosím znovu',
         'success' => 'Majetok bol úspešne prevzatý.',

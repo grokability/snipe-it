@@ -4,7 +4,7 @@ return [
 
     'assigned_to' => '分配給',
     'checkout' => '進/出',
-    'deleted_at' => 'Deleted at',
+    'deleted_at' => '刪除時間',
     'id' => 'ID',
     'license_email' => '授權信箱',
     'license_name' => '授權給',

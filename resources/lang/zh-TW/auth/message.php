@@ -12,8 +12,8 @@ return [
         'success' => '您已成功登入',
         'code_required' => '需要雙重驗證碼',
         'invalid_code' => '兩階段驗證碼無效',
-        'enter_two_factor_code' => 'Please enter your two-factor authentication code.',
-        'please_enroll' => 'Please enroll a device in two-factor authentication.',
+        'enter_two_factor_code' => '請輸入您的雙因素驗證碼。',
+        'please_enroll' => '請登記裝置以啟用雙因素驗證。',
     ],
 
     'signin' => [

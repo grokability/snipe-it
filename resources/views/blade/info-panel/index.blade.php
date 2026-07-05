@@ -1,6 +1,7 @@
 @props([
     'infoPanelObj' => null,
     'img_path' => null,
+    'qr_code_url' => null,
     'snipeSettings' => \App\Models\Setting::getSettings()
 ])
 
@@ -221,10 +222,30 @@
         @endif
 
 
-        @if ($infoPanelObj->company)
+        @if ($infoPanelObj->companies)
+            @if ($infoPanelObj->companies->count() > 1)
+                <x-info-element icon_type="company" title="{{ trans('general.companies') }}">
+                    {{ trans('general.companies') }}
+                    <x-info-element class="subitem">
+                        <x-copy-to-clipboard class="pull-right" copy_what="companies">
+                            @foreach ($infoPanelObj->companies as $company)
+                                {!!  $company->present()->formattedNameLink !!}<br>
+                            @endforeach
+                        </x-copy-to-clipboard>
+                    </x-info-element>
+                </x-info-element>
+            @elseif ($infoPanelObj->companies->isNotEmpty())
+                <x-info-element icon_type="company" icon_color="{{ $infoPanelObj->companies->first()->tag_color }}" title="{{ trans('general.company') }}">
+                    <x-copy-to-clipboard class="pull-right" copy_what="company">
+                        {!!  $infoPanelObj->companies->first()->present()->nameUrl !!}
+                    </x-copy-to-clipboard>
+                </x-info-element>
+            @endif
+
+        @elseif ($infoPanelObj->company)
             <x-info-element icon_type="company" icon_color="{{ $infoPanelObj->company->tag_color }}" title="{{ trans('general.company') }}">
                 <x-copy-to-clipboard class="pull-right" copy_what="company">
-                {!!  $infoPanelObj->company->present()->nameUrl !!}
+                    {!!  $infoPanelObj->company->present()->nameUrl !!}
                 </x-copy-to-clipboard>
             </x-info-element>
         @endif
@@ -276,7 +297,7 @@
         <x-info-panel.supplier :infoPanelObj="$infoPanelObj"/>
         <x-info-panel.manufacturer :infoPanelObj="$infoPanelObj" :manufacturer="($infoPanelObj->manufacturer ?? $infoPanelObj->model?->manufacturer)"/>
 
-        @if ((isset($infoPanelObj->parent)) && ($infoPanelObj->parent))
+        @if (($infoPanelObj instanceof \App\Models\Location) && (isset($infoPanelObj->parent)) && ($infoPanelObj->parent))
             @php
                 $locationAncestors = [];
                 $ancestorCursor = $infoPanelObj->parent;
@@ -567,6 +588,12 @@
     </ul>
         @if (isset($after_list))
             {{ $after_list }}
+        @endif
+
+        @if ($qr_code_url && $snipeSettings->isQrEnabled())
+            <div class="col-md-12 text-center asset-qr-img" style="padding-top: 15px;">
+                <img src="{{ $qr_code_url }}" class="img-thumbnail" style="height: 150px; width: 150px; margin-right: 10px;" alt="QR code for {{ $infoPanelObj->name }}">
+            </div>
         @endif
 
 </div>

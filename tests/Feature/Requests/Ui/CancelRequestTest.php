@@ -143,7 +143,7 @@ class CancelRequestTest extends TestCase
 
     public function test_new_request_succeeds_and_logs_warning_when_notification_throws(): void
     {
-        $asset = Asset::factory()->create();
+        $asset = Asset::factory()->requestable()->create();
         $user = User::factory()->create();
 
         $this->settings->enableAlertEmail();

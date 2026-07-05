@@ -8,6 +8,7 @@ return [
     'bulk_checkout' => 'יציאה גורפת',
     'bulk_checkin' => 'Bulk Checkin',
     'checkin' => 'רכוש',
+    'checkin_assets' => 'החזר נכסים לזמינות',
     'checkout' => 'רכוש Checkout',
     'clear' => 'Clear',
     'clone' => 'נכס משוכפל',

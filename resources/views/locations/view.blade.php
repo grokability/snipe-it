@@ -216,7 +216,7 @@
         <x-page-column class="col-md-3">
 
             <x-box class="side-box expanded">
-                <x-info-panel :infoPanelObj="$location" img_path="{{ app('locations_upload_url') }}">
+                <x-info-panel :infoPanelObj="$location" img_path="{{ app('locations_upload_url') }}" :qr_code_url="route('qr_code/common', ['object_type' => 'locations', 'id' => $location->id])">
 
                     <x-slot:buttons>
                         <x-button.edit :item="$location" :route="route('locations.edit', $location->id)" />

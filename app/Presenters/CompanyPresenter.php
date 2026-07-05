@@ -16,6 +16,13 @@ class CompanyPresenter extends Presenter
     {
         $layout = [
             [
+                'field' => 'checkbox',
+                'checkbox' => true,
+                'formatter' => 'checkboxEnabledFormatter',
+                'titleTooltip' => trans('general.select_all_none'),
+                'printIgnore' => true,
+                'class' => 'hidden-print',
+            ], [
                 'field' => 'id',
                 'searchable' => false,
                 'sortable' => true,
@@ -30,6 +37,21 @@ class CompanyPresenter extends Presenter
                 'title' => trans('admin/companies/table.name'),
                 'visible' => true,
                 'formatter' => 'companiesLinkFormatter',
+            ], [
+                'field' => 'parent',
+                'searchable' => false,
+                'sortable' => true,
+                'switchable' => true,
+                'title' => trans('admin/companies/table.parent'),
+                'visible' => true,
+                'formatter' => 'companiesLinkObjFormatter',
+            ], [
+                'field' => 'children_count',
+                'searchable' => false,
+                'sortable' => true,
+                'switchable' => true,
+                'title' => trans('admin/companies/table.children'),
+                'visible' => true,
             ], [
                 'field' => 'phone',
                 'searchable' => true,

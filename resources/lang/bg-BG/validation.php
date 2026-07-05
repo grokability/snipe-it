@@ -173,6 +173,7 @@ return [
     'url' => 'Полето :attribute трябва да съдържа валиден URL.',
     'ulid' => 'Полето :attribute трябва да бъде валиден ULID.',
     'uuid' => 'Полето :attribute трябва да съдържа валиден UUID.',
+    'valid_css_color' => 'The :attribute field must be a valid CSS color (hex, rgb, rgba, hsl, or hsla).',
     'fmcs_location' => 'Пълна поддръжка за множество компаний и местоположения е включена в админ настройките, но избраната локация и компания не са съвместими.',
     'is_unique_across_company_and_location' => ':attribute трябва да бъде уникален за тази фирма и локация.',
 

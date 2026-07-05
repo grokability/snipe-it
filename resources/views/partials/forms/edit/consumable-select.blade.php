@@ -15,6 +15,14 @@
             @endif
         </select>
     </div>
+    @if ($snipeSettings->full_multiple_companies_support == '1')
+        @cannot('superadmin')
+            <div class="col-md-7 col-md-offset-3">
+                <p class="help-block"><x-icon type="tip" /> {{ trans('general.fmcs_select_note') }}</p>
+            </div>
+        @endcannot
+    @endif
+
     {!! $errors->first($fieldname, '<div class="col-md-8 col-md-offset-3"><span class="alert-msg"><i class="fas fa-times"></i> :message</span></div>') !!}
 
 </div>

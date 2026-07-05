@@ -18,17 +18,22 @@
         <x-page-column class="col-md-9 main-panel">
             <x-tabs>
                 <x-slot:tabnav>
+                    {{-- Method-style ->blah()->count() so we issue a
+                             SELECT count(*) instead of hydrating the full
+                             collection just to read its size. --}}
+
                     @if ($category->category_type=='asset')
                         <x-tabs.asset-tab count="{{ $category->showableAssets()->count() }}"/>
-                        <x-tabs.model-tab count="{{ $category->models->count() }}"/>
+                        <x-tabs.model-tab count="{{ $category->models()->count() }}"/>
                     @elseif ($category->category_type=='accessory')
-                        <x-tabs.accessory-tab count="{{ $category->accessories->count() }}"/>
+
+                    <x-tabs.accessory-tab count="{{ $category->accessories()->count() }}"/>
                     @elseif ($category->category_type=='license')
-                        <x-tabs.license-tab count="{{ $category->licenses->count() }}"/>
+                        <x-tabs.license-tab count="{{ $category->licenses()->count() }}"/>
                     @elseif ($category->category_type=='consumable')
-                        <x-tabs.consumable-tab count="{{ $category->consumables->count() }}"/>
+                        <x-tabs.consumable-tab count="{{ $category->consumables()->count() }}"/>
                     @elseif ($category->category_type=='component')
-                        <x-tabs.component-tab count="{{ $category->components->count() }}"/>
+                        <x-tabs.component-tab count="{{ $category->components()->count() }}"/>
                     @endif
 
                 </x-slot:tabnav>

@@ -19,6 +19,7 @@ return [
     'required_acceptance' => 'Šiam naudotojui bus išsiųstas el. laiškas su nuoroda šio daikto gavimo patvirtinimui.',
     'global_signature_required_notice' => 'Šiuo metu naudotojų parašai yra privalomi visur, kaip nustatyta administratoriaus nustatymuose, todėl, jei daiktas išduodamas naudotojui (o ne vietai ar pan.), parašai bus reikalaujami nepriklausomai nuo šio kategorijos nustatymo.',
     'required_eula' => 'Šiam naudotojui bus išsiųsta licencinio sutikimo (EULA) kopija',
+    'required_signature' => 'Šis naudotojas turės pasirašyti, kad patvirtintų šio daikto gavimą.',
     'no_default_eula' => 'Nerastas pirminis numatytasis licencinis sutikimas (EULA). Pridėkite jį nustatymuose.',
     'update' => 'Atnaujinti kategoriją',
     'use_default_eula' => 'Naudoti <a href="#" data-toggle="modal" data-target="#eulaModal"> pirminį numatytąjį licencinį sutikimą (EULA)</a>.',

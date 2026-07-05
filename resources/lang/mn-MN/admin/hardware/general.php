@@ -8,6 +8,7 @@ return [
     'bulk_checkout' => 'Бөөнөөр Тооцоо хийх',
     'bulk_checkin' => 'Bulk Checkin',
     'checkin' => 'Checkin Asset',
+    'checkin_assets' => 'Checkin Assets',
     'checkout' => 'Тооцоот Хөрөнгийн',
     'clear' => 'Clear',
     'clone' => 'Clone Asset',

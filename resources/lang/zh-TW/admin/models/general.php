@@ -16,7 +16,7 @@ return [
     'no_custom_field' => '沒有自訂欄位',
     'add_default_values' => '新增預設值',
     'importer' => [
-        'require_serial' => 'Require Serial',
-        'serial_required' => 'Serial Required',
+        'require_serial' => '要求序號',
+        'serial_required' => '序號為必填',
     ],
 ];

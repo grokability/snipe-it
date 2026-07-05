@@ -94,6 +94,12 @@ return [
         'success' => 'Asset checked out successfully.|Assets checked out successfully.',
     ],
 
+    'multi-checkin' => [
+        'error' => 'Asset was not checked in, please try again|Assets were not checked in, please try again',
+        'success' => 'Asset checked in successfully.|Assets checked in successfully.',
+        'no_assets_selected' => 'You must select at least one asset from the list',
+    ],
+
     'checkin' => [
         'error' => 'சொத்து சரிபார்க்கப்படவில்லை, மீண்டும் முயற்சிக்கவும்',
         'success' => 'சொத்து வெற்றிகரமாக சரிபார்க்கப்பட்டது.',

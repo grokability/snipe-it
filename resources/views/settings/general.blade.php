@@ -61,6 +61,21 @@
                             </div>
                             <!-- /.form-group -->
 
+                            <!-- Null Company Is Floater -->
+                            <div class="form-group {{ $errors->has('null_company_is_floater') ? 'error' : '' }}">
+                                <div class="col-md-8 col-md-offset-3">
+                                    <label class="form-control">
+                                        <input type="checkbox" name="null_company_is_floater" value="1" @checked(old('null_company_is_floater', $setting->null_company_is_floater)) aria-label="null_company_is_floater" @disabled(! $setting->full_multiple_companies_support) />
+                                        {{ trans('admin/settings/general.null_company_is_floater_text') }}
+                                    </label>
+                                    {!! $errors->first('null_company_is_floater', '<span class="alert-msg" aria-hidden="true">:message</span>') !!}
+                                    <p class="help-block">
+                                        {{ trans('admin/settings/general.null_company_is_floater_help_text') }}
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- /.form-group -->
+
                        </fieldset>
 
                        <fieldset>
@@ -190,9 +205,9 @@
 
                            <!-- Model List prefs -->
                            <div class="form-group {{ $errors->has('show_in_model_list') ? 'error' : '' }}">
-                               <div class="col-md-3">
+                               <x-form.label class="col-md-3">
                                    <strong>{{ trans('admin/settings/general.show_in_model_list') }}</strong>
-                               </div>
+                               </x-form.label>
                                <div class="col-md-8">
                                    <label class="form-control">
                                        <input type="checkbox" name="show_in_model_list[]" value="image" @checked(old('show_in_model_list', $snipeSettings->modellistCheckedValue('image'))) aria-label="show_in_model_list"/>
@@ -304,7 +319,7 @@
                        </fieldset>
 
 
-                       <fieldset name="checkin-preferences"">
+                       <fieldset name="checkin-preferences">
                            <x-form.legend>
                                {{ trans('admin/settings/general.legends.checkin') }}
                            </x-form.legend>
@@ -381,7 +396,8 @@
                                        @endif
                                        <p class="help-block">
                                            {{ trans('admin/settings/general.dashboard_message_help') }}
-                                           {!!  trans('general.github_markdown') !!}</p>
+                                           <i class="fab fa-markdown" aria-hidden="true"></i> {!!  trans('general.github_markdown') !!}
+                                       </p>
                                    </div>
                                </div>
                        </fieldset>

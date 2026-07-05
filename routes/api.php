@@ -726,6 +726,20 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
             ]
         )->name('api.licenses.history')->withTrashed();
 
+        Route::post('{license_id}/checkout',
+            [
+                Api\LicensesController::class,
+                'checkout',
+            ]
+        )->name('api.licenses.checkout');
+
+        Route::post('{license_id}/checkin',
+            [
+                Api\LicensesController::class,
+                'checkin',
+            ]
+        )->name('api.licenses.checkin');
+
     });
 
     Route::resource('licenses',

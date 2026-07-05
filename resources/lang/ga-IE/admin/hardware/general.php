@@ -8,6 +8,7 @@ return [
     'bulk_checkout' => 'Seiceáil Bulc',
     'bulk_checkin' => 'Bulk Checkin',
     'checkin' => 'Sócmhainn Checkin',
+    'checkin_assets' => 'Checkin Assets',
     'checkout' => 'Seiceáil Seiceáil',
     'clear' => 'Clear',
     'clone' => 'Sócmhainn Clón',

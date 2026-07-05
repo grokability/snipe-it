@@ -54,6 +54,7 @@ class MaintenanceFileTest extends TestCase
         $company = Company::factory()->create();
 
         $user = User::factory()
+            ->viewAssets()
             ->editAssets()
             ->create(['company_id' => $company->id]);
 

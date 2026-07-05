@@ -19,6 +19,7 @@ return [
     'required_acceptance' => 'Pengguna ini akan dikirimkan melalui email dengan link untuk mengkonfirmasi penerimaan item ini.',
     'global_signature_required_notice' => 'User signatures are currently required globally via the admin settings, so signatures will still be required regardless of this category setting if the item is checked out to a user (versus a location, etc).',
     'required_eula' => 'Pengguna ini akan dikirimkan melalui email salinan EULA',
+    'required_signature' => 'This user will be required to sign to confirm acceptance of this item.',
     'no_default_eula' => 'Tidak ada EULA standar utama yang ditemukan. Tambahkan satu di Settings.',
     'update' => 'Update Kategori',
     'use_default_eula' => 'Gunakan <a href="#" data-toggle="modal" data-target="#eulaModal"> standar primer EULA </a> gantinya.',

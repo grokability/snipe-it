@@ -10,6 +10,7 @@ use App\Http\Traits\MigratesLegacyAssetLocations;
 use App\Models\Asset;
 use App\Models\CheckoutAcceptance;
 use App\Models\LicenseSeat;
+use App\Models\Location;
 use App\Models\Statuslabel;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
@@ -84,7 +85,7 @@ class AssetCheckinController extends Controller
     public function store(AssetCheckinRequest $request, $assetId = null, $backto = null): RedirectResponse
     {
         // Check if the asset exists
-        if (is_null($asset = Asset::find($assetId))) {
+        if (is_null($asset = Asset::withTrashed()->find($assetId))) {
             // Redirect to the asset management page with error
             return redirect()->route('hardware.index')->with('error', trans('admin/hardware/message.does_not_exist'));
         }
@@ -137,10 +138,19 @@ class AssetCheckinController extends Controller
 
         if ($request->has('location_id')) {
             if ($request->filled('location_id')) {
-                Log::debug('NEW Location ID: '.$request->input('location_id'));
-                $asset->location_id = $request->input('location_id');
+                // Resolve via the scoped Location query so non-existent IDs and IDs the actor
+                // cannot see under FMCS are rejected before we write them to the asset.
+                $submittedLocation = Location::find($request->input('location_id'));
+
+                if (! $submittedLocation) {
+                    return redirect()->back()->withInput()
+                        ->with('error', trans('admin/hardware/message.create.target_not_found.location'));
+                }
+
+                Log::debug('NEW Location ID: '.$submittedLocation->id);
+                $asset->location_id = $submittedLocation->id;
                 if ($request->input('update_default_location') == 0) {
-                    $asset->rtd_location_id = $request->input('location_id');
+                    $asset->rtd_location_id = $submittedLocation->id;
                 }
             } else {
                 // Explicitly submitted as empty — clear the location

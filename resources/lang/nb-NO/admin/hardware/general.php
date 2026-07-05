@@ -8,6 +8,7 @@ return [
     'bulk_checkout' => 'Masseutsjekk',
     'bulk_checkin' => 'Bulk Checkin',
     'checkin' => 'Sjekk inn eiendel',
+    'checkin_assets' => 'Sjekk inn ressurser',
     'checkout' => 'Sjekk ut asset',
     'clear' => 'Clear',
     'clone' => 'Klon eiendel',

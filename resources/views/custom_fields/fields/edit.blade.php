@@ -10,10 +10,6 @@
 @parent
 @stop
 
-@section('content')
-
-
-
 {{-- Page content --}}
 @section('content')
 
@@ -63,6 +59,7 @@
                     'text' => trans('admin/custom_fields/general.types.text'),
                     'listbox' => trans('admin/custom_fields/general.types.listbox'),
                     'textarea' => trans('admin/custom_fields/general.types.textarea'),
+                    'markdown-textarea' => trans('admin/custom_fields/general.types.markdown-textarea'),
                     'checkbox' => trans('admin/custom_fields/general.types.checkbox'),
                     'radio' => trans('admin/custom_fields/general.types.radio'),
                 ]"
@@ -347,7 +344,7 @@
         // and don't display encryption option for checkbox or radio
         $(".field_element").change(function(){
             $(this).find("option:selected").each(function(){
-                if (($(this).attr("value")!="text") && ($(this).attr("value")!="textarea")){
+                if (($(this).attr("value") != "text") && ($(this).attr("value") != "textarea") && ($(this).attr("value") != "markdown-textarea")) {
                     $("#field_values_text").show();
                 if ($(this).attr("value") == "checkbox" || $(this).attr("value") == "radio") {
                     $("#encryption_section").hide();

@@ -19,6 +19,7 @@ return [
     'required_acceptance' => 'Αυτός ο χρήστης θα στείλει μήνυμα ηλεκτρονικού ταχυδρομείου με έναν σύνδεσμο για να επιβεβαιώσει την αποδοχή αυτού του στοιχείου.',
     'global_signature_required_notice' => 'User signatures are currently required globally via the admin settings, so signatures will still be required regardless of this category setting if the item is checked out to a user (versus a location, etc).',
     'required_eula' => 'Αυτός ο χρήστης θα λάβει μέσω ηλεκτρονικού ταχυδρομείου αντίγραφο της Άδειας EULA',
+    'required_signature' => 'This user will be required to sign to confirm acceptance of this item.',
     'no_default_eula' => 'Δεν βρέθηκε αρχική προεπιλεγμένη ΑΔΕΙΑ. Προσθέστε μία από τις Ρυθμίσεις.',
     'update' => 'Ενημέρωση Κατηγορίας',
     'use_default_eula' => 'Χρησιμοποιήστε την προεπιλεγμένη <a href="#" data-toggle="modal" data-target="#eulaModal">primary EULA</a>.',

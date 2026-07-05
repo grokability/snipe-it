@@ -64,4 +64,6 @@ return [
     'optional_infos' => 'Volitelné informace',
     'order_details' => 'Informace související s objednávkou',
     'calc_eol' => 'Pokud není datum konce životnosti vyplněno, vypočítá se automaticky podle data nákupu a odpisové sazby.',
+    'checkin_licenses' => 'Checkin associated license seats',
+    'checkin_child_assets' => 'Checkin associated assets',
 ];

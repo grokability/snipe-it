@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Assets;
 
+use App\Actions\Acceptances\CreateCheckoutAcceptanceAction;
 use App\Exceptions\CheckoutNotAllowed;
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
@@ -9,7 +10,6 @@ use App\Http\Requests\AssetCheckoutRequest;
 use App\Http\Traits\CheckInOutTrait;
 use App\Models\Asset;
 use App\Models\CheckoutAcceptance;
-use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -119,13 +119,18 @@ class AssetCheckoutController extends Controller
             // Add any custom fields that should be included in the checkout
             $asset->customFieldsForCheckinCheckout('display_checkout');
 
-            $settings = Setting::getSettings();
+            if (! $asset->canCheckoutTo($target)) {
+                $targetType = match (class_basename($target)) {
+                    'User' => trans('general.user'),
+                    'Location' => trans('general.location'),
+                    default => trans('general.asset'),
+                };
 
-            // We have to check whether $target->company_id is null here since locations don't have a company yet
-            if (($settings->full_multiple_companies_support) && ((! is_null($target->company_id)) && (! is_null($asset->company_id)))) {
-                if ($target->company_id != $asset->company_id) {
-                    return redirect()->route('hardware.checkout.create', $asset)->with('error', trans('general.error_user_company'));
-                }
+                return redirect()->route('hardware.checkout.create', $asset)->with('error', trans('general.error_checkout_company_mismatch', [
+                    'item' => trans('general.asset').' "'.$asset->display_name.'"',
+                    'item_company' => $asset->company?->name ?? trans('general.unassigned'),
+                    'target' => $targetType.' "'.($target->name ?? $target->username ?? $target->id).'"',
+                ]));
             }
 
             session()->put([
@@ -149,10 +154,7 @@ class AssetCheckoutController extends Controller
 
                     // If requireAcceptance() is false the listener won't have created one; create it now.
                     if (! $acceptance) {
-                        $acceptance = new CheckoutAcceptance;
-                        $acceptance->checkoutable()->associate($asset);
-                        $acceptance->assignedTo()->associate($target);
-                        $acceptance->save();
+                        $acceptance = CreateCheckoutAcceptanceAction::run($asset, $target);
                     }
 
                     session([

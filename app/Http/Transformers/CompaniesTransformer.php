@@ -30,6 +30,12 @@ class CompaniesTransformer
                 'fax' => ($company->fax != '') ? e($company->fax) : null,
                 'email' => ($company->email != '') ? e($company->email) : null,
                 'image' => ($company->image) ? Storage::disk('public')->url('companies/'.e($company->image)) : null,
+                'qr_code_url' => route('qr_code/common', ['object_type' => 'companies', 'id' => $company->id]),
+                'parent' => ($company->parent) ? [
+                    'id' => (int) $company->parent->id,
+                    'name' => e($company->parent->name),
+                ] : null,
+                'children_count' => (int) ($company->children_count ?? $company->children()->count()),
                 'assets_count' => (int) $company->assets_count,
                 'licenses_count' => (int) $company->licenses_count,
                 'accessories_count' => (int) $company->accessories_count,
@@ -49,6 +55,9 @@ class CompaniesTransformer
             $permissions_array['available_actions'] = [
                 'update' => Gate::allows('update', Company::class),
                 'delete' => $company->isDeletable(),
+                'bulk_selectable' => [
+                    'delete' => $company->isDeletable(),
+                ],
             ];
 
             $array += $permissions_array;

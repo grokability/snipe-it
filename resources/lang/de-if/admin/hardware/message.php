@@ -94,6 +94,12 @@ return [
         'success' => 'Asset erfolgreich ausgecheckt.|Assets erfolgreich ausgecheckt.',
     ],
 
+    'multi-checkin' => [
+        'error' => 'Asset was not checked in, please try again|Assets were not checked in, please try again',
+        'success' => 'Asset checked in successfully.|Assets checked in successfully.',
+        'no_assets_selected' => 'Du musst mindestens ein Asset aus der Liste auswählen',
+    ],
+
     'checkin' => [
         'error' => 'Asset konnte nicht zurückgenommen werden. Bitte versuche es erneut',
         'success' => 'Asset wurde erfolgreich zurückgenommen.',

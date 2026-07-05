@@ -19,6 +19,7 @@ return [
     'required_acceptance' => 'இந்த உருப்படியை ஏற்றுக்கொள்வதை உறுதிப்படுத்துவதற்கான இணைப்புடன் இந்த பயனர் மின்னஞ்சல் அனுப்பப்படும்.',
     'global_signature_required_notice' => 'User signatures are currently required globally via the admin settings, so signatures will still be required regardless of this category setting if the item is checked out to a user (versus a location, etc).',
     'required_eula' => 'இந்த பயனர் EULA இன் ஒரு நகலை மின்னஞ்சல் செய்யப்படும்',
+    'required_signature' => 'This user will be required to sign to confirm acceptance of this item.',
     'no_default_eula' => 'முதன்மை இயல்புநிலை EULA இல்லை. அமைப்புகளில் ஒன்றைச் சேர்.',
     'update' => 'பகுப்பு புதுப்பிக்கவும்',
     'use_default_eula' => 'பதிலாக <a href="#" data-toggle="modal" data-target="#eulaModal">primary இயல்புநிலை EULA</a> ஐப் பயன்படுத்துக.',

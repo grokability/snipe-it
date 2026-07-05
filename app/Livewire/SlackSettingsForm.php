@@ -4,8 +4,11 @@ namespace App\Livewire;
 
 use App\Helpers\Helper;
 use App\Models\Setting;
+use App\Rules\ExternalUrl;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Osama\LaravelTeamsNotification\TeamsNotification;
@@ -42,11 +45,19 @@ class SlackSettingsForm extends Component
 
     public $webhook_endpoint_rules;
 
-    protected $rules = [
-        'webhook_endpoint' => 'required_with:webhook_channel|starts_with:http://,https://,ftp://,irc://,https://hooks.slack.com/services/|url|nullable',
-        'webhook_channel' => 'required_with:webhook_endpoint|starts_with:#|nullable',
-        'webhook_botname' => 'string|nullable',
-    ];
+    protected function rules(): array
+    {
+        return [
+            'webhook_endpoint' => [
+                'nullable',
+                'required_with:webhook_channel',
+                'url',
+                new ExternalUrl,
+            ],
+            'webhook_channel' => 'required_with:webhook_endpoint|starts_with:#|nullable',
+            'webhook_botname' => 'string|nullable',
+        ];
+    }
 
     public function mount()
     {
@@ -109,7 +120,7 @@ class SlackSettingsForm extends Component
     public function updated($field)
     {
 
-        $this->validateOnly($field, $this->rules);
+        $this->validateOnly($field);
 
     }
 
@@ -157,6 +168,9 @@ class SlackSettingsForm extends Component
 
     public function testWebhook()
     {
+        if ($fail = $this->guardWebhookEndpoint()) {
+            return $fail;
+        }
 
         $webhook = new Client([
             'base_url' => e($this->webhook_endpoint),
@@ -187,11 +201,7 @@ class SlackSettingsForm extends Component
             return session()->flash('success', trans('admin/settings/message.webhook.success', ['webhook_name' => $this->webhook_name]));
 
         } catch (\Exception $e) {
-
-            $this->isDisabled = 'disabled';
-            $this->save_button = trans('admin/settings/general.webhook_presave');
-
-            return session()->flash('error', trans('admin/settings/message.webhook.error', ['error_message' => $e->getMessage(), 'app' => $this->webhook_name]));
+            return $this->handleWebhookFailure($e);
         }
 
         return session()->flash('error', trans('admin/settings/message.webhook.error_misc'));
@@ -222,7 +232,7 @@ class SlackSettingsForm extends Component
         if (Helper::isDemoMode()) {
             session()->flash('error', trans('general.feature_disabled'));
         } else {
-            $this->validate($this->rules);
+            $this->validate();
 
             $this->setting->webhook_selected = $this->webhook_selected;
             $this->setting->webhook_endpoint = $this->webhook_endpoint;
@@ -238,6 +248,9 @@ class SlackSettingsForm extends Component
 
     public function googleWebhookTest()
     {
+        if ($fail = $this->guardWebhookEndpoint()) {
+            return $fail;
+        }
 
         $payload = [
             'text' => trans('general.webhook_test_msg', ['app' => $this->webhook_name]),
@@ -246,8 +259,9 @@ class SlackSettingsForm extends Component
         try {
             $response = Http::withHeaders([
                 'content-type' => 'application/json',
-            ])->post($this->webhook_endpoint,
-                $payload)->throw();
+            ])->withOptions(['allow_redirects' => false])
+                ->post($this->webhook_endpoint, $payload)
+                ->throw();
 
             if (($response->getStatusCode() == 302) || ($response->getStatusCode() == 301)) {
                 return session()->flash('error', trans('admin/settings/message.webhook.error_redirect', ['endpoint' => $this->webhook_endpoint]));
@@ -259,16 +273,15 @@ class SlackSettingsForm extends Component
             return session()->flash('success', trans('admin/settings/message.webhook.success', ['webhook_name' => $this->webhook_name]));
 
         } catch (\Exception $e) {
-
-            $this->isDisabled = 'disabled';
-            $this->save_button = trans('admin/settings/general.webhook_presave');
-
-            return session()->flash('error', trans('admin/settings/message.webhook.error', ['error_message' => $e->getMessage(), 'app' => $this->webhook_name]));
+            return $this->handleWebhookFailure($e);
         }
     }
 
     public function msTeamTestWebhook()
     {
+        if ($fail = $this->guardWebhookEndpoint()) {
+            return $fail;
+        }
 
         try {
 
@@ -284,8 +297,9 @@ class SlackSettingsForm extends Component
                     ];
                 $response = Http::withHeaders([
                     'content-type' => 'application/json',
-                ])->post($this->webhook_endpoint,
-                    $payload)->throw();
+                ])->withOptions(['allow_redirects' => false])
+                    ->post($this->webhook_endpoint, $payload)
+                    ->throw();
             } else {
                 $notification = new TeamsNotification($this->webhook_endpoint);
                 $message = trans('general.webhook_test_msg', ['app' => $this->webhook_name]);
@@ -293,7 +307,8 @@ class SlackSettingsForm extends Component
 
                 $response = Http::withHeaders([
                     'content-type' => 'application/json',
-                ])->post($this->webhook_endpoint);
+                ])->withOptions(['allow_redirects' => false])
+                    ->post($this->webhook_endpoint);
             }
 
             if (($response->getStatusCode() == 302) || ($response->getStatusCode() == 301)) {
@@ -305,13 +320,63 @@ class SlackSettingsForm extends Component
             return session()->flash('success', trans('admin/settings/message.webhook.success', ['webhook_name' => $this->webhook_name]));
 
         } catch (\Exception $e) {
-
-            $this->isDisabled = 'disabled';
-            $this->save_button = trans('admin/settings/general.webhook_presave');
-
-            return session()->flash('error', trans('admin/settings/message.webhook.error', ['error_message' => $e->getMessage(), 'app' => $this->webhook_name]));
+            return $this->handleWebhookFailure($e);
         }
 
         return session()->flash('error', trans('admin/settings/message.webhook.error_misc'));
+    }
+
+    /**
+     * Re-validate the currently-entered endpoint immediately before an
+     * outbound request. This is defense-in-depth on top of the save-time
+     * ExternalUrl rule: it stops a super-admin from typing an internal
+     * URL, clicking Test, and having the server dial it before the value
+     * is ever persisted. Returns a flash-response on failure, null on pass.
+     */
+    private function guardWebhookEndpoint()
+    {
+        $validator = Validator::make(
+            ['webhook_endpoint' => $this->webhook_endpoint],
+            ['webhook_endpoint' => ['required', 'url', new ExternalUrl]],
+        );
+
+        if ($validator->fails()) {
+            $this->isDisabled = 'disabled';
+            $this->save_button = trans('admin/settings/general.webhook_presave');
+
+            return session()->flash('error', $validator->errors()->first('webhook_endpoint'));
+        }
+
+        return null;
+    }
+
+    /**
+     * Uniform failure path for outbound webhook tests. The exception message
+     * used to be a port-scanning oracle back when the endpoint field accepted
+     * internal URLs; now that the ExternalUrl rule rejects those before we
+     * ever dial anything, the connect-level error can only describe an
+     * external host the admin explicitly typed, so we surface it back into
+     * the flash. Full exception context still lands in the log for audit
+     * and for cases where the flash message is too short to be useful (SSL
+     * chain problems, proxy failures, etc.).
+     */
+    private function handleWebhookFailure(\Throwable $e)
+    {
+        Log::warning('Webhook test failed', [
+            'endpoint' => $this->webhook_endpoint,
+            'app' => $this->webhook_name,
+            'exception' => $e::class,
+            'message' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+        ]);
+
+        $this->isDisabled = 'disabled';
+        $this->save_button = trans('admin/settings/general.webhook_presave');
+
+        return session()->flash('error', trans('admin/settings/message.webhook.error', [
+            'error_message' => $e->getMessage(),
+            'app' => $this->webhook_name,
+        ]));
     }
 }

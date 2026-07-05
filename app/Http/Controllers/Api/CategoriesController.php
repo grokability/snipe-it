@@ -160,6 +160,7 @@ class CategoriesController extends Controller
         $this->authorize('create', Category::class);
         $category = new Category;
         $category->fill($request->all());
+        $category->created_by = auth()->id();
         $category->category_type = strtolower($request->input('category_type'));
         $category = $request->handleImages($category);
 

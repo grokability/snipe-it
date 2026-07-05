@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use App\Helpers\Helper;
+use App\Rules\CssColor;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
@@ -71,6 +73,44 @@ class Setting extends Model
         'label2_asset_logo' => 'boolean',
         'require_checkinout_notes' => 'boolean',
         'manager_view_enabled' => 'boolean',
+        'block_api_user_agents' => 'boolean',
+        'block_blank_api_user_agents' => 'boolean',
+        // tinyInteger with no cast was leaking 0 (int) into call sites that
+        // use loose-equality string checks like `== '1'` and `== ''`. Under
+        // PHP 8 `0 == ''` is false, so checks expecting "disabled" misfired.
+        // Normalize on read so every consumer sees a consistent string mode.
+        'two_factor_enabled' => 'string',
+    ];
+
+    /**
+     * Suggested defaults for the "blocked API User-Agent patterns" textarea.
+     *
+     * Substrings (matched case-insensitively against the request's User-Agent)
+     * that identify common scripted or default HTTP clients. New installs see
+     * this list as the pre-filled textarea value; admins can add, remove, or
+     * blank it out entirely. Browser-driven AJAX (snipeit.js, datatables,
+     * select2, etc.) carries the browser's own User-Agent and is unaffected.
+     */
+    public const DEFAULT_BLOCKED_API_USER_AGENTS = [
+        'curl/',
+        'wget/',
+        'python-requests/',
+        'python-urllib',
+        'PostmanRuntime/',
+        'insomnia/',
+        'Go-http-client/',
+        'okhttp/',
+        'HTTPie/',
+        'Apache-HttpClient/',
+        'Java/',
+        'Faraday',
+        'http.rb/',
+        'libwww-perl/',
+        'Ruby',
+        'node-fetch/',
+        'axios/',
+        'GuzzleHttp/',
+        'RestSharp/',
     ];
 
     /**
@@ -173,6 +213,34 @@ class Setting extends Model
      *
      * @author A. Gianotto <snipe@snipe.net>
      */
+    protected function headerColor(): Attribute
+    {
+        return Attribute::make(
+            get: fn (?string $value) => CssColor::sanitize($value, '#3c8dbc'),
+        );
+    }
+
+    protected function linkLightColor(): Attribute
+    {
+        return Attribute::make(
+            get: fn (?string $value) => CssColor::sanitize($value, '#296282'),
+        );
+    }
+
+    protected function linkDarkColor(): Attribute
+    {
+        return Attribute::make(
+            get: fn (?string $value) => CssColor::sanitize($value, '#5fa4cc'),
+        );
+    }
+
+    protected function navLinkColor(): Attribute
+    {
+        return Attribute::make(
+            get: fn (?string $value) => CssColor::sanitize($value, '#ffffff'),
+        );
+    }
+
     public function show_custom_css(): string
     {
         $custom_css = self::getSettings()->custom_css;
@@ -184,6 +252,11 @@ class Setting extends Model
         $custom_css = str_replace('&quot;', '"', $custom_css);
 
         return $custom_css;
+    }
+
+    public function isQrEnabled(): bool
+    {
+        return $this->qr_code == '1' || $this->label2_2d_type !== 'none';
     }
 
     /**

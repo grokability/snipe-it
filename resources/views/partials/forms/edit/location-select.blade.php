@@ -3,7 +3,7 @@
 
     <label for="{{ $fieldname }}" class="col-md-3 control-label">{{ $translated_name }}</label>
     <div class="col-md-7">
-        <select class="js-data-ajax" data-endpoint="locations" data-placeholder="{{ trans('general.select_location') }}" name="{{ $fieldname }}" style="width: 100%" id="{{ $fieldname }}_location_select" aria-label="{{ $fieldname }}"{{ (isset($multiple) && ($multiple=='true')) ? " multiple='multiple'" : '' }}{!!  ((isset($item)) && (Helper::checkIfRequired($item, $fieldname))) ? ' required ' : '' !!}>
+        <select class="js-data-ajax" data-endpoint="locations" data-placeholder="{{ trans('general.select_location') }}" name="{{ $fieldname }}" style="width: 100%" id="{{ $fieldname }}_location_select" aria-label="{{ $fieldname }}"{{ (isset($multiple) && ($multiple=='true')) ? " multiple='multiple'" : '' }}{!!  ((isset($item)) && (Helper::checkIfRequired($item, $fieldname))) ? ' required ' : '' !!}{!! (!empty($company_id)) ? ' data-company-id="'.e($company_id).'"' : '' !!}{!! (!empty($exclude_id)) ? ' data-exclude-id="'.e($exclude_id).'"' : '' !!}>
             @isset($selected)
                 @foreach($selected as $location_id)
                     <option value="{{ $location_id }}" selected="selected" role="option" aria-selected="true"  role="option">
@@ -28,6 +28,14 @@
     </div>
 
     {!! $errors->first($fieldname, '<div class="col-md-8 col-md-offset-3"><span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span></div>') !!}
+
+    @if ($snipeSettings->full_multiple_companies_support == '1' && $snipeSettings->scope_locations_fmcs == '1')
+        @cannot('superadmin')
+            <div class="col-md-7 col-md-offset-3">
+                <p class="help-block"><x-icon type="tip" /> {{ trans('general.fmcs_location_select_note') }}</p>
+            </div>
+        @endcannot
+    @endif
 
     @if (isset($help_text))
     <div class="col-md-7 col-sm-11 col-md-offset-3">

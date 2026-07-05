@@ -17,6 +17,8 @@ return [
         'confirm' => 'Are you sure you wish to delete this department?',
         'error' => 'There was an issue deleting the department. Please try again.',
         'success' => 'The department was deleted successfully.',
+        'bulk_success' => 'Department deleted successfully.|:count departments were deleted successfully.',
+        'partial_success' => 'Department deleted successfully. See additional information below. | :count departments were deleted successfully. See additional information below.',
     ],
 
 ];

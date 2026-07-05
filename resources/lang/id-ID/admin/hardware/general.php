@@ -8,6 +8,7 @@ return [
     'bulk_checkout' => 'check-out masal',
     'bulk_checkin' => 'Check-in Massal beberapa',
     'checkin' => 'Pengembalian aset',
+    'checkin_assets' => 'Tandai Aset Masuk ',
     'checkout' => 'Aset Checkout',
     'clear' => 'Bersih',
     'clone' => 'Klon Aset',

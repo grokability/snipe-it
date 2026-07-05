@@ -55,13 +55,15 @@
 @section('content')
     <x-container>
         <x-box name="assets">
-            <x-table.assets :route="route('api.assets.index',
-                array(
+            <x-table.assets
+                :route="route('api.assets.index', array(
                     'status_type' => is_scalar($requestStatusType) ? $requestStatusType : null,
                     'order_number' => is_scalar($requestOrderNumber) ? strval($requestOrderNumber) : null,
                     'company_id' => is_scalar($requestCompanyId) ? $requestCompanyId : null,
                     'status_id' => is_scalar($requestStatusTypeId) ? $requestStatusTypeId : null,
-                ))"/>
+                ))"
+                :status_type="is_scalar($requestStatusType) ? $requestStatusType : null"
+            />
         </x-box>
     </x-container>
 @stop

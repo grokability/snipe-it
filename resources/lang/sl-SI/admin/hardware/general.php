@@ -8,6 +8,7 @@ return [
     'bulk_checkout' => 'Množična izdaja',
     'bulk_checkin' => 'Bulk Checkin',
     'checkin' => 'Sprejem sredstev',
+    'checkin_assets' => 'Checkin Assets',
     'checkout' => 'Izdaja sredstev',
     'clear' => 'Počisti',
     'clone' => 'Klonska sredstvo',

@@ -170,14 +170,13 @@ class Location extends SnipeModel
      */
     public function assets()
     {
+        // Pluck IDs then whereIn — do NOT replace with whereHas. whereHas generates a correlated EXISTS per row and causes severe slowdowns in withCount contexts.
+        $ids = Statuslabel::where(function ($q) {
+            $q->where('deployable', 1)->orWhere('pending', 1)->orWhere('archived', 0);
+        })->whereNull('deleted_at')->pluck('id');
+
         return $this->hasMany(Asset::class, 'location_id')
-            ->whereHas(
-                'status', function ($query) {
-                    $query->where('status_labels.deployable', '=', 1)
-                        ->orWhere('status_labels.pending', '=', 1)
-                        ->orWhere('status_labels.archived', '=', 0);
-                }
-            );
+            ->whereIn('assets.status_id', $ids->isEmpty() ? [0] : $ids);
     }
 
     public function countAllTheThings()
@@ -265,6 +264,28 @@ class Location extends SnipeModel
     }
 
     /**
+     * Walk up the parent chain to find the nearest ancestor with a company_id.
+     * Used by FMCS checkout validation so that assets can be checked out to
+     * child locations whose company is only set on a parent location.
+     */
+    public function effectiveFmcsCompanyId(): ?int
+    {
+        if ($this->company_id) {
+            return (int) $this->company_id;
+        }
+
+        $ancestor = $this->parent()->withoutGlobalScopes()->first();
+        while ($ancestor) {
+            if ($ancestor->company_id) {
+                return (int) $ancestor->company_id;
+            }
+            $ancestor = $ancestor->parent()->withoutGlobalScopes()->first();
+        }
+
+        return null;
+    }
+
+    /**
      * Establishes the locations -> company relationship
      *
      * @author [T. Regnery] [<tobias.regnery@gmail.com>]
@@ -347,7 +368,12 @@ class Location extends SnipeModel
      * @param  text  $order  Order
      * @return Illuminate\Database\Query\Builder Modified query builder
      */
-    public static function indenter($locations_with_children, $parent_id = null, $prefix = '')
+    /**
+     * The map's keys are parent_id values, with `0` used for "no parent / top-
+     * level". Using 0 (not null) avoids PHP 8.4's deprecation of null array
+     * offsets when callers build the map from `$location->parent_id`.
+     */
+    public static function indenter($locations_with_children, int $parent_id = 0, $prefix = '')
     {
         $results = [];
 

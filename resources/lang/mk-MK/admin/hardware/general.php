@@ -8,6 +8,7 @@ return [
     'bulk_checkout' => 'Масовно задолжување',
     'bulk_checkin' => 'Bulk Checkin',
     'checkin' => 'Раздолжи основно средство',
+    'checkin_assets' => 'Раздолжо основно средство',
     'checkout' => 'Задолжи основно средство',
     'clear' => 'Clear',
     'clone' => 'Клонирај основно средство',

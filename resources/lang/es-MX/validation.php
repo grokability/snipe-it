@@ -173,6 +173,7 @@ return [
     'url' => 'El campo :attribute debe ser una URL válida.',
     'ulid' => 'El campo :attribute debe ser un ULID válido.',
     'uuid' => 'El campo :attribute debe ser un UUID válido.',
+    'valid_css_color' => 'El campo :attribute debe ser un color CSS válido (hex, rgb, rgba, hsl, o hsla).',
     'fmcs_location' => 'El soporte completo de múltiples empresas y el alcance de la ubicación están habilitados en la Configuración de Administración, y la ubicación seleccionada y la empresa seleccionada no son compatibles.',
     'is_unique_across_company_and_location' => 'El campo :attribute debe ser único en la compañía y ubicación seleccionadas.',
 

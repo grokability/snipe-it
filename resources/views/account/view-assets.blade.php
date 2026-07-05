@@ -219,14 +219,19 @@
 
 
                   <!-- company -->
-                  @if (!is_null($user->company))
+                    @if ($user->companies->isNotEmpty())
                     <div class="row">
 
                       <div class="col-md-3">
-                        {{ trans('general.company') }}
+                          {{ trans_choice('general.companies_var', $user->companies->count()) }}
                       </div>
                       <div class="col-md-9">
-                          {!!  $user->company->present()->formattedNameLink !!}
+                          @foreach ($user->companies as $userCompany)
+                              <span class="label label-light">{!! $userCompany->present()->formattedNameLink !!}</span>
+                              @if (!$loop->last)
+                                  &nbsp;
+                              @endif
+                          @endforeach
                       </div>
 
                     </div>

@@ -12,14 +12,9 @@
     <x-container>
         <x-box>
 
-        <x-table
-            name="maintenances"
-            fixed_right_number="1"
-            buttons="maintenanceButtons"
-                api_url="{{ route('api.maintenances.index') }}?completed={{ request()->input('completed', 'false') }}&upcoming_status={{ request()->input('upcoming_status', '') }}"
-                :presenter="\App\Presenters\MaintenancesPresenter::dataTableLayout()"
-                export_filename="export-maintenances-{{ date('Y-m-d') }}"
-            />
+        <x-table.maintenances
+            :route="route('api.maintenances.index').'?completed='.request()->input('completed', 'false').'&upcoming_status='.request()->input('upcoming_status', '')"
+        />
 
         </x-box>
     </x-container>

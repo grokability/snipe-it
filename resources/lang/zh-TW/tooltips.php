@@ -3,22 +3,22 @@
 return [
 
     'disabled_assoc' => [
-        'accessory' => 'This accessory cannot be deleted because it still has items, users, or locations associated with it',
-        'asset' => 'This asset cannot be deleted because it still has items associated with it',
-        'category' => 'This category cannot be deleted because it still has items associated with it',
-        'company' => 'This company cannot be deleted because it still has items or users associated with it',
-        'component' => 'This component cannot be deleted because it still has items associated with it',
-        'custom_field' => 'This custom field cannot be deleted because it is still associated with at least one fieldset',
-        'department' => 'This department cannot be deleted because it still has users associated with it',
-        'location' => 'This location cannot be deleted because it still has items or users associated with it',
-        'manufacturer' => 'This manufacturer cannot be deleted because it still has items associated with it',
-        'supplier' => 'This supplier cannot be deleted because it still has items associated with it',
-        'user' => 'This user cannot be deleted because it still has items associated with it',
-        'user_self' => 'You cannot delete yourself',
+        'accessory' => '此配件無法刪除，因為它仍有項目、使用者或位置與其關聯',
+        'asset' => '此資產無法刪除，因為它仍有項目與其關聯',
+        'category' => '此類別無法刪除，因為它仍有項目與其關聯',
+        'company' => '此公司無法刪除，因為它仍有項目或使用者與其關聯',
+        'component' => '此組件無法刪除，因為它仍有項目與其關聯',
+        'custom_field' => '此自訂欄位無法刪除，因為它仍與至少一個欄位集關聯',
+        'department' => '此部門無法刪除，因為它仍有使用者與其關聯',
+        'location' => '此位置無法刪除，因為它仍有項目或使用者與其關聯',
+        'manufacturer' => '此製造商無法刪除，因為它仍有項目與其關聯',
+        'supplier' => '此供應商無法刪除，因為它仍有項目與其關聯',
+        'user' => '此使用者無法刪除，因為它仍有項目與其關聯',
+        'user_self' => '您無法刪除自己',
     ],
 
     'checkin_all' => [
-        'user' => 'Checkin all items for this user and optionally delete them. You will be able to confirm this on the next page.',
+        'user' => '繳回此使用者的所有項目，並可選擇性地刪除帳戶。您可以在下一頁確認此操作。',
     ],
 
 ];

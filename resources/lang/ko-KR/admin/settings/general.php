@@ -307,7 +307,7 @@ return [
     'two_factor_enter_code' => '2중 코드 입력',
     'two_factor_config_complete' => '코드 제출',
     'two_factor_enabled_edit_not_allowed' => '관리자가 이 설정의 수정을 허용하지 않았습니다.',
-    'two_factor_enrollment_text' => '2중 인증은 필수입니다만, 당신의 장치는 아직 등록되지 않았습니다. 구글 인증 앱을 실행하고 등록할 장치 아래의 QR 코드를 스캔하세요. 당신의 장치가 등록됐다면, 아래 코드를 입력하세요',
+    'two_factor_enrollment_text' => "2중 인증은 필수입니다만, 당신의 장치는 아직 등록되지 않았습니다. 구글 인증 앱을 실행하고 등록할 장치 아래의 QR 코드를 스캔하세요. 당신의 장치가 등록됐다면, 아래 코드를 입력하세요",
     'require_accept_signature' => '서명 필수',
     'require_accept_signature_help_text' => 'Enabling this feature will require users to physically sign off on accepting items. This will override any category-specific signature requirements.',
     'require_checkinout_notes' => 'Require Notes on Checkin/Checkout',

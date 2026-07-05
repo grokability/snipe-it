@@ -18,4 +18,9 @@ return [
     'asset_maintenance_incomplete' => 'Henüz Tamamlanmadı',
     'warranty' => 'Garanti',
     'not_warranty' => 'Garanti Yok',
+    'complete' => [
+        'confirm' => 'Bu bakımı tamamlandı olarak işaretlemek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
+        'success' => 'Bakım tamamlandı olarak işaretlendi.',
+        'error' => 'Bu bakımı tamamlandı olarak işaretlerken bir sorun oluştu. Lütfen tekrar deneyin.',
+    ],
 ];

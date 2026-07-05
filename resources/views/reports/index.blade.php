@@ -25,6 +25,12 @@
         </div>
 
         <div class="col-md-3 col-sm-6">
+            <a href="{{ route('reports.custom.component') }}" class="btn btn-theme btn-block" style="margin-bottom: 10px; white-space: normal;">
+                <x-icon type="reports"/> {{ trans('general.custom_component_report') }}
+            </a>
+        </div>
+
+        <div class="col-md-3 col-sm-6">
             <a href="{{ route('reports.audit') }}" class="btn btn-theme btn-block" style="margin-bottom: 10px; white-space: normal;">
                 <x-icon type="audit"/> {{ trans('general.audit_report') }}
             </a>

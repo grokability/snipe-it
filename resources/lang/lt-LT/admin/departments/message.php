@@ -14,7 +14,7 @@ return [
         'success' => 'Skyrius sėkmingai atnaujintas.',
     ],
     'delete' => [
-        'confirm' => 'Ar tikrai norite panaikinti šį skyrių?',
+        'confirm' => 'Ar tikrai norite ištrinti šį skyrių?',
         'error' => 'Bandant panaikinti skyrių įvyko klaida. Bandykite dar kartą.',
         'success' => 'Skyrius sėkmingai panaikintas.',
     ],

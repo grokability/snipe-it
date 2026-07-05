@@ -19,7 +19,7 @@ Route::group(['prefix' => 'licenses', 'middleware' => ['auth']], function () {
     Route::post(
         '{licenseId}/checkout/{seatId?}',
         [Licenses\LicenseCheckoutController::class, 'store']
-    ); // name() would duplicate here, so we skip it.
+    )->name('licenses.checkout.save');
 
     Route::get('{licenseSeat}/checkin/{backto?}', [Licenses\LicenseCheckinController::class, 'create'])
         ->name('licenses.checkin')

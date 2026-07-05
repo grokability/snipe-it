@@ -8,6 +8,7 @@ return [
     'bulk_checkout' => 'Comenzi în numerar',
     'bulk_checkin' => 'Bulk Checkin',
     'checkin' => 'Verifica activ',
+    'checkin_assets' => 'Checkin Assets',
     'checkout' => 'Checkout Asset',
     'clear' => 'Clear',
     'clone' => 'Cloneaza activ',

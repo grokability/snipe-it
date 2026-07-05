@@ -8,6 +8,7 @@ return [
     'bulk_checkout' => 'Nodi swmp allan',
     'bulk_checkin' => 'Bulk Checkin',
     'checkin' => 'Nodi Asedau I Mewn',
+    'checkin_assets' => 'Checkin Assets',
     'checkout' => 'Nodi Asedau Allan',
     'clear' => 'Clear',
     'clone' => 'Dyblygu Ased',

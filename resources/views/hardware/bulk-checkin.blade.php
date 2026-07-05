@@ -74,6 +74,26 @@
                 </div>
             </div>
 
+            <x-input.location-select
+                :label="trans('general.location')"
+                name="location_id"
+                :selected="old('location_id')"
+            />
+
+            <!-- Update actual location -->
+            <div class="form-group">
+                <div class="col-md-9 col-md-offset-3">
+                    <label class="form-control">
+                        <input name="update_default_location" type="radio" value="1" @checked(old('update_default_location', '1') == '1') aria-label="update_default_location" />
+                        {{ trans('admin/hardware/form.asset_location') }}
+                    </label>
+                    <label class="form-control">
+                        <input name="update_default_location" type="radio" value="0" @checked(old('update_default_location') === '0') aria-label="update_default_location" />
+                        {{ trans('admin/hardware/form.asset_location_update_default_current') }}
+                    </label>
+                </div>
+            </div>
+
             <!-- Checkin Date -->
             <div class="form-group {{ $errors->has('checkin_at') ? 'error' : '' }}">
                 <label for="checkin_at" class="col-sm-3 control-label">

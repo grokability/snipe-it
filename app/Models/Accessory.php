@@ -80,7 +80,7 @@ class Accessory extends SnipeModel
         'name' => 'required|max:255',
         'qty' => 'nullable|integer|min:0',
         'category_id' => 'required|integer|exists:categories,id',
-        'company_id' => 'integer|nullable',
+        'company_id' => 'integer|nullable|exists:companies,id',
         'location_id' => 'exists:locations,id|nullable|fmcs_location',
         'min_amt' => 'integer|min:0|nullable',
         'purchase_cost' => 'numeric|nullable|gte:0|max:99999999999999999.99',

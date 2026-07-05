@@ -147,6 +147,36 @@ class LicenseCheckoutTest extends TestCase
             ->first();
 
         $this->assertNotNull($acceptance);
+        $this->assertDatabaseCount('checkout_acceptances', 1);
+
+        $response->assertStatus(302)
+            ->assertRedirect(route('account.accept.item', $acceptance));
+    }
+
+    public function test_license_sign_in_place_creates_acceptance_when_acceptance_not_required()
+    {
+        $targetUser = User::factory()->create();
+        $seat = LicenseSeat::factory()->create();
+
+        $response = $this->actingAs(User::factory()->admin()->create())
+            ->from(route('licenses.checkout', $seat->license))
+            ->post(route('licenses.checkout', $seat->license), [
+                'assigned_to' => $targetUser->id,
+                'redirect_option' => 'index',
+                'sign_in_place' => 1,
+            ]);
+
+        $acceptance = CheckoutAcceptance::query()
+            ->where('checkoutable_type', LicenseSeat::class)
+            ->where('assigned_to_id', $targetUser->id)
+            ->pending()
+            ->latest()
+            ->first();
+
+        $this->assertNotNull($acceptance);
+        // The fallback does not set qty, so it stays null (the column default).
+        $this->assertNull($acceptance->qty);
+        $this->assertDatabaseCount('checkout_acceptances', 1);
 
         $response->assertStatus(302)
             ->assertRedirect(route('account.accept.item', $acceptance));

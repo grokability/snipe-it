@@ -17,8 +17,8 @@ return [
         'error' => 'Turto sukurti nepavyko, bandykite dar kartą.',
         'success' => 'Turtas sėkmingai sukurtas. :)',
         'success_linked' => 'Turtas su žyma :tag sėkmingai sukurtas. <strong><a href=":link" style="color: white;">Spustelėkite čia, kad peržiūrėtumėte</a></strong>.',
-        'multi_success_linked' => 'Turtas su inventoriniu numeriu :links sėkmingai sukurtas.|:count turto vienetai(-ų) sėkmingai sukurti. :links.',
-        'partial_failure' => 'Nepavyko sukurti turto. Priežastis: :failures|:count turto vienetų nepavyko sukurti. Priežastys: :failures',
+        'multi_success_linked' => 'Turtas su inventoriniu numeriu :links sėkmingai sukurtas.|Turto vienetai (:count) sėkmingai sukurti. :links.',
+        'partial_failure' => 'Nepavyko sukurti turto. Priežastis: :failures|Turto vienetų (:count) nepavyko sukurti. Priežastys: :failures',
         'target_not_found' => [
             'user' => 'Priskirto naudotojo rasti nepavyko.',
             'asset' => 'Priskirto turto rasti nepavyko.',
@@ -92,6 +92,12 @@ return [
     'multi-checkout' => [
         'error' => 'Turtas nebuvo išduotas, bandykite dar kartą|Turtas nebuvo išduotas, bandykite dar kartą',
         'success' => 'Turtas sėkmingai išduotas.|Turtas sėkmingai išduotas.',
+    ],
+
+    'multi-checkin' => [
+        'error' => 'Turtas nebuvo paimtas, bandykite dar kartą|Turtas nebuvo paimtas, bandykite dar kartą',
+        'success' => 'Turtas sėkmingai paimtas.|Turtas sėkmingai paimtas.',
+        'no_assets_selected' => 'Turite pasirinkti bent vieną turto vienetą iš sąrašo',
     ],
 
     'checkin' => [

@@ -118,6 +118,13 @@ class ConsumableFactory extends Factory
         });
     }
 
+    public function notRequiringAcceptance()
+    {
+        return $this->afterCreating(function (Consumable $consumable) {
+            $consumable->category->update(['require_acceptance' => 0]);
+        });
+    }
+
     public function checkedOutToUser(?User $user = null)
     {
         return $this->afterCreating(function (Consumable $consumable) use ($user) {

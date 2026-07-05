@@ -64,4 +64,6 @@ return [
     'optional_infos' => 'Information facultative',
     'order_details' => 'Information liée à l\'achat',
     'calc_eol' => 'If nulling the EOL date, use automatic EOL calculation based on the purchase date and EOL rate.',
+    'checkin_licenses' => 'Checkin associated license seats',
+    'checkin_child_assets' => 'Checkin associated assets',
 ];

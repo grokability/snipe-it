@@ -307,7 +307,7 @@ return [
     'two_factor_enter_code' => 'أدخل رمز عاملين',
     'two_factor_config_complete' => 'إرسال الرمز',
     'two_factor_enabled_edit_not_allowed' => 'لا يسمح لك المشرف بتعديل هذا الإعداد.',
-    'two_factor_enrollment_text' => 'التوثيق ذو العاملين 2FA اجباري، ولكن لم يتم تسجيل جهازك بعد. افتح تطبيق غوغل للتوثيق Google Authenticator وافحص رمز الاستجابة السريعة QR أدناه لتسجيل جهازك. بعد تسجيل جهازك، أدخل الرمز أدناه',
+    'two_factor_enrollment_text' => "التوثيق ذو العاملين 2FA اجباري، ولكن لم يتم تسجيل جهازك بعد. افتح تطبيق غوغل للتوثيق Google Authenticator وافحص رمز الاستجابة السريعة QR أدناه لتسجيل جهازك. بعد تسجيل جهازك، أدخل الرمز أدناه",
     'require_accept_signature' => 'يتطلب التوقيع',
     'require_accept_signature_help_text' => 'Enabling this feature will require users to physically sign off on accepting items. This will override any category-specific signature requirements.',
     'require_checkinout_notes' => 'Require Notes on Checkin/Checkout',

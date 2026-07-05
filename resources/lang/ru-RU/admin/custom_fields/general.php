@@ -64,8 +64,10 @@ return [
         'text' => 'Текстовое поле',
         'listbox' => 'Список',
         'textarea' => 'Многострочный текст',
+        'markdown-textarea' => 'Markdown Textarea',
         'checkbox' => 'Флажок',
         'radio' => 'Переключатель',
     ],
+    'markdown_supported' => 'Markdown is supported',
     'general_help_text' => 'Custom fields store additional information not covered by the default asset fields. <a href="https://snipe-it.readme.io/docs/custom-fields#/"><i class="fa fa-external-link"></i></a>.',
 ];

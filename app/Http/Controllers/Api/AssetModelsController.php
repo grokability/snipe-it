@@ -133,7 +133,8 @@ class AssetModelsController extends Controller
         }
 
         // Make sure the offset and limit are actually integers and do not exceed system limits
-        $offset = ($request->input('offset') > $assetmodels->count()) ? $assetmodels->count() : abs($request->input('offset'));
+        $total = $assetmodels->count();
+        $offset = ($request->input('offset') > $total) ? $total : app('api_offset_value');
         $limit = app('api_limit_value');
 
         $order = $request->input('order') === 'asc' ? 'asc' : 'desc';
@@ -152,12 +153,14 @@ class AssetModelsController extends Controller
             case 'created_by':
                 $assetmodels->OrderByCreatedByName($order);
                 break;
+            case 'depreciation':
+                $assetmodels->leftJoin('depreciations as depreciation_sort', 'models.depreciation_id', '=', 'depreciation_sort.id')->orderBy('depreciation_sort.name', $order);
+                break;
             default:
                 $assetmodels->orderBy($sort, $order);
                 break;
         }
 
-        $total = $assetmodels->count();
         $assetmodels = $assetmodels->skip($offset)->take($limit)->get();
 
         return (new AssetModelsTransformer)->transformAssetModels($assetmodels, $total);

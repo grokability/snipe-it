@@ -8,6 +8,7 @@ return [
     'bulk_checkout' => '一括チェックアウト',
     'bulk_checkin' => 'Bulk Checkin',
     'checkin' => '資産をチェックイン',
+    'checkin_assets' => '資産をチェックイン',
     'checkout' => '資産をチェックアウト',
     'clear' => 'Clear',
     'clone' => '資産を複製',

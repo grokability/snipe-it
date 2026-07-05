@@ -25,6 +25,24 @@ class UpdateUserTest extends TestCase
             ->assertOk();
     }
 
+    public function test_uncompanied_user_can_edit_their_own_record_with_fmcs_on_and_floater_off()
+    {
+        // Regression: with FMCS on + floater off, the CompanyableScope lets an
+        // uncompanied non-superuser see themselves in the users list, but the
+        // policy used to 403 the edit because the bypass required the legacy
+        // scalar users.company_id column to also be null. Actors are always
+        // allowed to access their own record.
+        $this->settings->enableMultipleFullCompanySupport();
+        $this->settings->disableFloaterMode();
+
+        $self = User::factory()->editUsers()->create(['company_id' => null]);
+        $self->companies()->sync([]);
+
+        $this->actingAs($self)
+            ->get(route('users.edit', $self))
+            ->assertOk();
+    }
+
     public function test_can_view_edit_page_for_soft_deleted_user()
     {
         $user = User::factory()->trashed()->create();
@@ -337,6 +355,10 @@ class UpdateUserTest extends TestCase
             'id' => $id,
             'first_name' => 'test',
             'username' => 'test',
+        ]);
+
+        $this->assertDatabaseHas('company_user', [
+            'user_id' => $id,
             'company_id' => $companyB->id,
         ]);
     }

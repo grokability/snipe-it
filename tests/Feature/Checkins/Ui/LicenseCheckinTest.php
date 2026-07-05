@@ -20,14 +20,14 @@ class LicenseCheckinTest extends TestCase
             ->assertForbidden();
     }
 
-    public function test_non_reassignable_license_seat_cant_be_checked_out()
+    public function test_non_reassignable_seat_remains_unreassignable_after_checkin()
     {
         $licenseSeat = LicenseSeat::factory()
             ->notReassignable()
             ->assignedToUser()
             ->create();
 
-        $this->actingAs(User::factory()->checkoutLicenses()->create())
+        $this->actingAs(User::factory()->checkinLicenses()->create())
             ->post(route('licenses.checkin.save', $licenseSeat));
 
         $licenseSeat->refresh();
@@ -44,7 +44,7 @@ class LicenseCheckinTest extends TestCase
         $this->assertNull($licenseSeat->assigned_to);
         $this->assertNull($licenseSeat->asset_id);
 
-        $this->actingAs(User::factory()->checkoutLicenses()->create())
+        $this->actingAs(User::factory()->checkinLicenses()->create())
             ->post(route('licenses.checkin.save', $licenseSeat), [
                 'notes' => 'my note',
                 'redirect_option' => 'index',
@@ -63,7 +63,7 @@ class LicenseCheckinTest extends TestCase
             ->assignedToAsset($asset)
             ->create();
 
-        $actor = User::factory()->checkoutLicenses()->create();
+        $actor = User::factory()->checkinLicenses()->create();
 
         $this->actingAs($actor)
             ->post(route('licenses.checkin.save', $licenseSeat), [
@@ -96,7 +96,7 @@ class LicenseCheckinTest extends TestCase
             ->assignedToUser($user)
             ->create();
 
-        $actor = User::factory()->checkoutLicenses()->create();
+        $actor = User::factory()->checkinLicenses()->create();
 
         $this->actingAs($actor)
             ->post(route('licenses.checkin.save', $licenseSeat), [

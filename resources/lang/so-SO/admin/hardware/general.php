@@ -8,6 +8,7 @@ return [
     'bulk_checkout' => 'Hubinta Buuxda',
     'bulk_checkin' => 'Bulk Checkin',
     'checkin' => 'Hubi Hantida',
+    'checkin_assets' => 'Hubi Hantida',
     'checkout' => 'Hubi Hantida',
     'clear' => 'Clear',
     'clone' => 'Hantida Clone',

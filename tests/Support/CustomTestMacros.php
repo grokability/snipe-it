@@ -233,6 +233,19 @@ trait CustomTestMacros
         );
 
         TestResponse::macro(
+            'assertRowCountInStreamedResponse',
+            function (int $expectedCount) {
+                Assert::assertCount(
+                    $expectedCount,
+                    collect(Reader::fromString($this->streamedContent())->getRecords()),
+                    "Response did not contain the expected number of rows: {$expectedCount}"
+                );
+
+                return $this;
+            }
+        );
+
+        TestResponse::macro(
             'assertCsvHeader',
             function () {
                 $this->assertHeader('content-type', 'text/csv; charset=utf-8');

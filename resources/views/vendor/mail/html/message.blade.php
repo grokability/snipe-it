@@ -68,9 +68,9 @@
 @slot('footer')
 @component('mail::footer')
 @if($snipeSettings::setupCompleted())
-© {{ date('Y') }} {{ $snipeSettings->site_name }}. All rights reserved.
+© {{ date('Y') }} {{ $snipeSettings->site_name }}. {{ trans('mail.rights_reserved') }}
 @else
-© {{ date('Y') }} Snipe-IT. All rights reserved.
+© {{ date('Y') }} Snipe-IT. {{ trans('mail.rights_reserved') }}
 @endif
 
 @if ($snipeSettings->privacy_policy_link!='')

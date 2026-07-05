@@ -173,6 +173,7 @@ return [
     'url' => 'Il campo :attribute deve essere un URL valido.',
     'ulid' => 'Il campo :attribute deve essere un ULID valido.',
     'uuid' => 'Il campo :attribute deve essere un UUID valido.',
+    'valid_css_color' => 'Il campo :attribute deve essere un colore CSS valido (hex, rgb, rgba, hsl o hsla).',
     'fmcs_location' => 'Nelle Impostazioni Admin è abilitato il supporto completo multi aziendale con restrizione per le Sedi, e la Sede selezionata non è compatibile con l\'Azienda scelta.',
     'is_unique_across_company_and_location' => 'L\' :attributo deve essere univoco all\'interno dell\'azienda e della sede selezionata.',
 

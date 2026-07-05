@@ -52,7 +52,7 @@ class UploadedFilesController extends Controller
         $uploads = self::$map_object_type[$object_type]::withTrashed()->find($id)->uploads()
             ->with('adminuser');
 
-        $offset = ($request->input('offset') > $uploads->count()) ? $uploads->count() : abs($request->input('offset'));
+        $offset = ($request->input('offset') > $uploads->count()) ? $uploads->count() : app('api_offset_value');
         $limit = app('api_limit_value');
         $order = $request->input('order') === 'asc' ? 'asc' : 'desc';
         $sort = in_array($request->input('sort'), $allowed_columns) ? $request->input('sort') : 'created_at';
@@ -158,11 +158,19 @@ class UploadedFilesController extends Controller
         }
 
         if (request('inline') == 'true') {
-            $headers = [
-                'Content-Disposition' => 'inline',
-            ];
+            $path = self::$map_storage_path[$object_type];
 
-            return Storage::download(self::$map_storage_path[$object_type].$log->filename, $log->filename, $headers);
+            // Only allowlisted extensions may be served inline. Everything
+            // else (including XML, which can pull an XSLT stylesheet and
+            // execute script in-origin) falls through to a download response.
+            if (! StorageHelper::allowSafeInline($path.$log->filename)) {
+                return StorageHelper::downloader($path.$log->filename);
+            }
+
+            return Storage::download($path.$log->filename, $log->filename, [
+                'Content-Disposition' => 'inline',
+                'X-Content-Type-Options' => 'nosniff',
+            ]);
         }
 
         return StorageHelper::downloader(self::$map_storage_path[$object_type].$log->filename);

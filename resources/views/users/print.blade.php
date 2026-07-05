@@ -176,6 +176,7 @@
         </table>
     @endif
 
+    @can('view', \App\Models\License::class)
     @if ($show_user->licenses->count() > 0)
         <div id="licenses-toolbar">
             <h4>{{ trans_choice('general.countable.licenses', $show_user->licenses->count(), ['count' => $show_user->licenses->count()]) }}</h4>
@@ -236,8 +237,10 @@
             @endforeach
         </table>
     @endif
+    @endcan
 
 
+    @can('view', \App\Models\Accessory::class)
     @if ($show_user->accessories->count() > 0)
         <div id="accessories-toolbar">
             <h4>{{ trans_choice('general.countable.accessories', $show_user->accessories->count(), ['count' => $show_user->accessories->count()]) }}</h4>
@@ -301,7 +304,9 @@
             @endforeach
         </table>
     @endif
+    @endcan
 
+    @can('view', \App\Models\Consumable::class)
     @if ($show_user->consumables->count() > 0)
         <div id="consumables-toolbar">
             <h4>{{ trans_choice('general.countable.consumables', $show_user->consumables->count(), ['count' => $show_user->consumables->count()]) }}</h4>
@@ -365,6 +370,7 @@
             @endforeach
         </table>
     @endif
+    @endcan
     @if(($indirectItemsCount ?? 0) > 0 && $settings->show_assigned_assets)
         <div id="indirect-assignments-toolbar">
             <h4>{{ $indirectItemsCount.' '.trans('mail.assigned_to_assets') }}</h4>
@@ -409,6 +415,7 @@
                         $indirectAssignmentsCounter++
                     @endphp
                 @endforeach
+                @can('view', \App\Models\License::class)
                 @foreach ($asset->licenses as $indirectLicense)
                     @if($indirectLicense)
                         <tr>
@@ -423,6 +430,7 @@
                     $indirectAssignmentsCounter ++
                     @endphp
                 @endforeach
+                @endcan
                 @foreach ($asset->components as $component)
                     @if($component)
                         <tr>
@@ -437,6 +445,7 @@
                         $indirectAssignmentsCounter ++
                     @endphp
                 @endforeach
+                @can('view', \App\Models\Accessory::class)
                 @foreach ($asset->assignedAccessories as $indirectAccessory)
                     @if($indirectAccessory)
                         <tr>
@@ -451,6 +460,7 @@
                         $indirectAssignmentsCounter ++
                     @endphp
                 @endforeach
+                @endcan
             @endforeach
         </table>
     @endif
@@ -583,7 +593,7 @@
             },
             exportOptions: export_options,
 
-            exportTypes: ['xlsx', 'excel', 'csv', 'pdf','json', 'xml', 'txt', 'sql', 'doc' ],
+            exportTypes: ['xlsx', 'csv', 'pdf', 'json', 'xml', 'txt', 'sql', 'doc'],
             onLoadSuccess: function () {
                 $('[data-tooltip="true"]').tooltip(); // Needed to attach tooltips after ajax call
             }

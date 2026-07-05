@@ -94,6 +94,12 @@ return [
         'success' => 'Ativo registrado com sucesso. | Ativos registrados com sucesso.',
     ],
 
+    'multi-checkin' => [
+        'error' => 'Asset was not checked in, please try again|Assets were not checked in, please try again',
+        'success' => 'Asset checked in successfully.|Assets checked in successfully.',
+        'no_assets_selected' => 'Você deve selecionar pelo menos um recurso da lista',
+    ],
+
     'checkin' => [
         'error' => 'Ativo não foi retornado, favor tentar novamente',
         'success' => 'Ativo retornado com sucesso.',

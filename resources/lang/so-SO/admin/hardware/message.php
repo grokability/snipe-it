@@ -94,6 +94,12 @@ return [
         'success' => 'Asset checked out successfully.|Assets checked out successfully.',
     ],
 
+    'multi-checkin' => [
+        'error' => 'Asset was not checked in, please try again|Assets were not checked in, please try again',
+        'success' => 'Asset checked in successfully.|Assets checked in successfully.',
+        'no_assets_selected' => 'Waa inaad liiska ka doorataa ugu yaraan hal hanti',
+    ],
+
     'checkin' => [
         'error' => 'Hantida lama hubin, fadlan isku day mar kale',
         'success' => 'Hantida si guul leh ayaa loo hubiyay.',

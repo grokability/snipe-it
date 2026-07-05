@@ -8,6 +8,7 @@ return [
     'bulk_checkout' => 'Զանգվածային հանձնում/դուրս գրում',
     'bulk_checkin' => 'Զանգվածային հանձնում',
     'checkin' => 'Հանձնվող ակտիվ',
+    'checkin_assets' => 'Checkin Assets',
     'checkout' => 'Տրամադրվող ակտիվ',
     'clear' => 'Մաքրել',
     'clone' => 'Կրկնօրինակել ակտիվը',

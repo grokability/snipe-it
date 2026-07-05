@@ -8,6 +8,7 @@ return [
     'bulk_checkout' => 'Checkout เป็นกลุ่ม',
     'bulk_checkin' => 'ส่งคืนแบบหลายรายการ',
     'checkin' => 'เช็คอินสินทรัพย์',
+    'checkin_assets' => 'Checkin Assets',
     'checkout' => 'ตรวจสอบสินทรัพย์',
     'clear' => 'ล้างค่า',
     'clone' => 'คัดลอกแบบสินทรัพย์',

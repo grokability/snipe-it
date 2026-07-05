@@ -30,7 +30,7 @@ class Supplier extends SnipeModel
         'fax' => 'min:7|max:35|nullable',
         'phone' => 'min:7|max:35|nullable',
         'contact' => 'max:100|nullable',
-        'notes' => 'max:191|nullable', // Default string length is 191 characters..
+        'notes' => 'max:16383|nullable', // text is 65535 but each character can take up to 4 bytes in utf8mb4
         'email' => 'email|max:150|nullable',
         'address' => 'max:250|nullable',
         'address2' => 'max:250|nullable',

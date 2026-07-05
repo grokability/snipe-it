@@ -3,8 +3,8 @@
     'icon' => null,
 ])
 <!-- Form Legend Component -->
-<legend class="callout callout-legend">
-    <h4>
+<legend {{ $attributes->merge(['class' => 'callout callout-legend']) }}>
+    <h4 {{ $attributes->merge(['class' => '']) }}>
        {{ $slot }}
     </h4>
 

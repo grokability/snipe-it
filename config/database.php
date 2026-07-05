@@ -11,11 +11,15 @@
 // This is used by the mysql dump options in spatie backup
 $dump_options = [
     'dump_binary_path' => env('DB_DUMP_PATH', '/usr/local/bin'),  // only the path, so without 'mysqldump'
-    'use_single_transaction' => false,
     'timeout' => 60 * 5, // 5 minute timeout
     // 'exclude_tables' => ['table1', 'table2'],
     // 'add_extra_option' => '--optionname=optionvalue',
 ];
+
+// Default to false (preserves original behavior for non-RDS installs).
+// Set DB_DUMP_SINGLE_TRANSACTION=true in .env for RDS or other environments
+// that require --single-transaction (e.g. no LOCK TABLES privilege).
+$dump_options['use_single_transaction'] = (env('DB_DUMP_SINGLE_TRANSACTION', 'false') === 'true');
 
 // For modern versions of mysqldump, use --ssl-mode=DISABLED
 if (env('DB_DUMP_SKIP_SSL') == 'true') {

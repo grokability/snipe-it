@@ -210,7 +210,13 @@ $(function () {
                         search: params.term,
                         page: params.page || 1,
                         statusType: link.data("asset-status-type"),
-                        companyId: link.data("company-id"),
+                        companyId: link.data("company-ids") || link.data("company-id"),
+                        excludeId: link.data("exclude-id"),
+                        // When true, the companies selectlist marks child companies
+                        // (those with a parent of their own) as disabled — used by
+                        // the parent-company picker so users can't choose options
+                        // that would fail the parent_must_be_top_level validator.
+                        onlyTopLevel: link.data("only-top-level"),
                     };
                     return data;
                 },
@@ -468,8 +474,24 @@ $(function () {
             syncCheckoutToTypeUi(true);
         });
 
-        // Apply the current radio selection on initial render.
-        syncCheckoutToTypeUi(false);
+        // Expose so pages that reveal #assignto_selector later (asset edit's
+        // user_add() flow, etc.) can trigger the sync once the selector is
+        // visible. Standalone checkout pages don't need to call this — the
+        // initial-render block below handles them.
+        window.snipeitSyncCheckoutToTypeUi = syncCheckoutToTypeUi;
+
+        // Apply the current radio selection on initial render unless the page
+        // has explicitly hidden the selector via an inline style="display:none"
+        // (asset create/edit start that way and reveal it from user_add() after
+        // a deployability AJAX call). Using getAttribute('style') instead of
+        // jQuery's :visible avoids false negatives on pages like the standalone
+        // /hardware/{id}/checkout, where the selector is visible from the start
+        // but :visible can transiently return false during select2 boot — that
+        // was what hid the acceptance-options callout until a radio was toggled.
+        var selectorStyle = ($('#assignto_selector').attr('style') || '').toLowerCase();
+        if (selectorStyle.indexOf('display:none') === -1 && selectorStyle.indexOf('display: none') === -1) {
+            syncCheckoutToTypeUi(false);
+        }
     });
 
 

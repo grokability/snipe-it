@@ -31,6 +31,11 @@ return [
             'log_msg' => 'Associée via l\'interface d\'attribution de licence en volumes',
         ],
 
+        'checkin_selected' => [
+            'success' => ':count seat checked in successfully. | :count seats checked in successfully.',
+            'no_seats_selected' => 'No seats were selected.',
+        ],
+
         'checkout_all' => [
             'button' => 'Associer tous les sièges',
             'modal' => 'Cette action associera un siège au premier utilisateur disponible. | Cette action associera :available_seats_count sièges aux premiers utilisateurs disponibles. Un·e utilisateur·trice est considéré·e disponible pour un siège si iel n\'a pas déjà cette licence associée à son profil, et que l\'auto-association de licence est active sur son compte.',

@@ -1,16 +1,16 @@
 <?php
 
 return [
-    'about_templates' => 'About Saved Templates',
-    'saving_templates_description' => 'Select your options, then enter the name of your template in the box above and click the \'Save Template\' button. Use the dropdown to select a previously saved template.',
+    'about_templates' => '關於已儲存的範本',
+    'saving_templates_description' => '選擇您的選項，然後在上方的框中輸入範本名稱，並點擊「儲存範本」按鈕。使用下拉選單選擇之前儲存的範本。',
     'create' => [
-        'success' => 'Template saved successfully',
+        'success' => '範本已成功儲存',
     ],
     'update' => [
-        'success' => 'Template updated successfully',
+        'success' => '範本已成功更新',
     ],
     'delete' => [
-        'success' => 'Template deleted',
-        'no_delete_permission' => 'Template does not exist or you do not have permission to delete it.',
+        'success' => '範本已刪除',
+        'no_delete_permission' => '範本不存在或您沒有刪除的權限。',
     ],
 ];

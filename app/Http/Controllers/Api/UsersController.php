@@ -22,6 +22,7 @@ use App\Models\Asset;
 use App\Models\Company;
 use App\Models\Consumable;
 use App\Models\License;
+use App\Models\Setting;
 use App\Models\User;
 use App\Notifications\CurrentInventory;
 use App\Notifications\WelcomeNotification;
@@ -51,7 +52,6 @@ class UsersController extends Controller
             'users.address',
             'users.avatar',
             'users.city',
-            'users.company_id',
             'users.country',
             'users.created_by',
             'users.created_at',
@@ -89,7 +89,7 @@ class UsersController extends Controller
         ])->with('manager')
             ->with('groups')
             ->with('userloc')
-            ->with('company')
+            ->with('companies')
             ->with('department')
             ->with('createdBy')
             ->withCount([
@@ -101,6 +101,10 @@ class UsersController extends Controller
                 'consumables as consumables_count',
                 'managesUsers as manages_users_count',
                 'managedLocations as manages_locations_count',
+                // Count of maintenances whose polymorphic checked_out_to points
+                // at this user. Used by the users index sort + filter and by
+                // the user detail Maintenances tab badge.
+                'assignedMaintenances as assigned_maintenances_count',
             ]);
 
         $allowed_columns =
@@ -125,6 +129,7 @@ class UsersController extends Controller
                 'accessories_count',
                 'manages_users_count',
                 'manages_locations_count',
+                'assigned_maintenances_count',
                 'phone',
                 'mobile',
                 'address',
@@ -191,7 +196,15 @@ class UsersController extends Controller
         }
 
         if ($request->filled('company_id')) {
-            $users = $users->where('users.company_id', '=', $request->input('company_id'));
+            // When the caller is the company show-page (expand_company_hierarchy=1),
+            // include users who belong to the company's parent or any of its
+            // direct children — they inherit access via the one-level hierarchy.
+            // Other callers (select2 dropdowns, etc.) keep exact-id semantics.
+            $companyIds = $request->boolean('expand_company_hierarchy')
+                ? Company::reachableCompanyIds($request->input('company_id'))
+                : [(int) $request->input('company_id')];
+
+            $users = $users->whereHas('companies', fn ($q) => $q->whereIn('companies.id', $companyIds));
         }
 
         if ($request->filled('phone')) {
@@ -306,6 +319,10 @@ class UsersController extends Controller
             $users->has('accessories', '=', $request->input('accessories_count'));
         }
 
+        if ($request->filled('assigned_maintenances_count')) {
+            $users->has('assignedMaintenances', '=', $request->input('assigned_maintenances_count'));
+        }
+
         if ($request->filled('manages_users_count')) {
             $users->has('managesUsers', '=', $request->input('manages_users_count'));
         }
@@ -396,6 +413,28 @@ class UsersController extends Controller
             ]
         )->where('show_in_list', '=', '1');
 
+        // When FMCS is enabled, automatically scope to companies the acting user belongs to.
+        // scopeCompanyables is a no-op for superusers and when FMCS is disabled.
+        $users = Company::scopeCompanyables($users, 'company_id', 'users');
+
+        // Allow further narrowing to a specific company passed via data-company-ids on the select.
+        // Superusers MUST bypass this filter — they manage across companies and need to see every
+        // user on checkout dropdowns. Scoping superusers to the item's company breaks the umbrella-
+        // corp / service-provider workflow where one admin checks items out to users in any sub-company.
+        // See: https://github.com/snipe/snipe-it/issues/ (v8.6.3 regression report)
+        if ((Setting::getSettings()->full_multiple_companies_support == '1')
+            && $request->filled('companyId')
+            && ! auth()->user()->isSuperUser()) {
+            $companyIds = array_values(array_filter(array_map('intval', explode(',', $request->input('companyId')))));
+            if (! empty($companyIds)) {
+                $users = Company::scopeUsersByCompanyIds($users, $companyIds);
+            }
+        }
+
+        if ($request->filled('excludeId')) {
+            $users->where('users.id', '!=', (int) $request->input('excludeId'));
+        }
+
         if ($request->filled('search')) {
             $users = $users->where(function ($query) use ($request) {
                 $query->SimpleNameSearch($request->input('search'))
@@ -443,7 +482,6 @@ class UsersController extends Controller
         $authenticatedUser = auth()->user();
         $user = new User;
         $user->fill($request->all());
-        $user->company_id = Company::getIdForCurrentUser($request->input('company_id'));
         $user->created_by = auth()->id();
 
         if ($request->has('permissions')) {
@@ -488,6 +526,12 @@ class UsersController extends Controller
                 $user->groups()->sync($request->input('groups'));
             }
 
+            // Sync company memberships from company_ids[] or fall back to scalar company_id
+            $companyIds = array_filter(
+                (array) ($request->input('company_ids') ?? ($request->filled('company_id') ? [$request->input('company_id')] : []))
+            );
+            $user->syncCompaniesWithLogging(Company::getIdsForCurrentUser(array_map('intval', $companyIds)));
+
             return response()->json(Helper::formatStandardApiResponse('success', (new UsersTransformer)->transformUser($user), trans('admin/users/message.success.create')));
         }
 
@@ -505,7 +549,7 @@ class UsersController extends Controller
     {
         $this->authorize('view', User::class);
 
-        if ($user = User::withCount('assets as assets_count', 'licenses as licenses_count', 'accessories as accessories_count', 'consumables as consumables_count', 'managesUsers as manages_users_count', 'managedLocations as manages_locations_count')->find($id)) {
+        if ($user = User::withCount('assets as assets_count', 'licenses as licenses_count', 'accessories as accessories_count', 'consumables as consumables_count', 'managesUsers as manages_users_count', 'managedLocations as manages_locations_count', 'assignedMaintenances as assigned_maintenances_count')->find($id)) {
             $this->authorize('view', $user);
 
             return (new UsersTransformer)->transformUser($user);
@@ -577,10 +621,6 @@ class UsersController extends Controller
 
         }
 
-        if ($request->filled('company_id')) {
-            $user->company_id = Company::getIdForCurrentUser($request->input('company_id'));
-        }
-
         if ($user->id == $request->input('manager_id')) {
             return response()->json(Helper::formatStandardApiResponse('error', null, 'You cannot be your own manager'));
         }
@@ -607,6 +647,18 @@ class UsersController extends Controller
 
                 // Sync the groups since the user is a superuser and the groups pass validation
                 $user->groups()->sync($request->input('groups'));
+            }
+
+            // company_ids (new format) = full replacement sync.
+            // Legacy company_id = add without removing other associations.
+            if ($request->has('company_ids')) {
+                $companyIds = array_filter(array_map('intval', (array) $request->input('company_ids')));
+                $user->syncCompaniesWithLogging(Company::getIdsForCurrentUser($companyIds));
+            } elseif ($request->filled('company_id')) {
+                $filtered = Company::getIdsForCurrentUser([(int) $request->input('company_id')]);
+                if (! empty($filtered)) {
+                    $user->companies()->syncWithoutDetaching($filtered);
+                }
             }
 
             return response()->json(Helper::formatStandardApiResponse('success', (new UsersTransformer)->transformUser($user), trans('admin/users/message.success.update')));
@@ -864,7 +916,7 @@ class UsersController extends Controller
      */
     public function eulas(User $user, ActionlogsTransformer $transformer)
     {
-        $this->authorize('view', User::class);
+        $this->authorize('view', $user);
 
         $eulas = $user->eulas;
 

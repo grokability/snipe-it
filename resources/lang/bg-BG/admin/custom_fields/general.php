@@ -64,8 +64,10 @@ return [
         'text' => 'Текстово поле',
         'listbox' => 'Падащо меню',
         'textarea' => 'Текстово поле (много редове)',
+        'markdown-textarea' => 'Markdown Textarea',
         'checkbox' => 'Чекбокс',
         'radio' => 'Радио бутони',
     ],
+    'markdown_supported' => 'Markdown is supported',
     'general_help_text' => 'Потребителски полета съхраняват допълнителна инфомация, която не се покрива от полетата по подразбиране за артикула. <a href="https://snipe-it.readme.io/docs/custom-fields#/"><i class="fa fa-external-link"></i></a>.',
 ];

@@ -173,6 +173,7 @@ return [
     'url' => ':attribute alanı geçerli bir URL olmalıdır.',
     'ulid' => ':attribute alanı geçerli bir ULID olmalıdır.',
     'uuid' => ':attribute alanı geçerli bir UUID olmalıdır.',
+    'valid_css_color' => ':attribute alanı geçerli bir CSS rengi olmalıdır (hex, rgb, rgba, hsl veya hsla).',
     'fmcs_location' => 'Tam çoklu şirket desteği ve konum kapsamı Yönetici Ayarları’nda etkinleştirilmiştir ve seçilen konum ile seçilen şirket birbiriyle uyumlu değildir.',
     'is_unique_across_company_and_location' => ':attribute, seçilen şirket ve konum içinde benzersiz olmalıdır.',
 

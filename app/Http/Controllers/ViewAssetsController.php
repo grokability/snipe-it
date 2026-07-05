@@ -121,6 +121,7 @@ class ViewAssetsController extends Controller
             'consumables',
             'accessories',
             'licenses',
+            'companies',
         ])->find($selectedUserId);
 
         // If the user to view couldn't be found (shouldn't happen with proper logic), redirect with error
@@ -221,6 +222,10 @@ class ViewAssetsController extends Controller
 
             return redirect()->back()->with('success')->with('success', trans('admin/hardware/message.requests.canceled'));
         } else {
+            if ($fullItemType === Asset::class && is_null(Asset::RequestableAssets()->find($item->id))) {
+                return redirect()->back()->with('error', trans('admin/hardware/message.requests.error'));
+            }
+
             $item->request();
             if (($settings->alert_email != '') && ($settings->alerts_enabled == '1') && (! config('app.lock_passwords'))) {
                 $logaction->logaction('requested');

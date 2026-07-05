@@ -64,4 +64,6 @@ return [
     'optional_infos' => 'Nepovinné informácie',
     'order_details' => 'Informácie súvisiace s objednávkou',
     'calc_eol' => 'Ak odstránite EOL dátum použite sa automatická EOL kalkulácia vychádzajúca z dátumu nákupu a EOL periody.',
+    'checkin_licenses' => 'Checkin associated license seats',
+    'checkin_child_assets' => 'Checkin associated assets',
 ];

@@ -19,7 +19,7 @@ return [
         ],
 
         'delete' => [
-            'confirm' => 'Ar tikrai norite panaikinti šį lauką?',
+            'confirm' => 'Ar tikrai norite ištrinti šį lauką?',
             'error' => 'Bandant panaikinti lauką įvyko klaida. Bandykite dar kartą.',
             'success' => 'Laukas sėkmingai panaikintas.',
             'in_use' => 'Laukas yra naudojamas.',
@@ -42,7 +42,7 @@ return [
         ],
 
         'delete' => [
-            'confirm' => 'Ar tikrai norite panaikinti šį laukų rinkinį?',
+            'confirm' => 'Ar tikrai norite ištrinti šį laukų rinkinį?',
             'error' => 'Bandant panaikinti laukų rinkinį įvyko klaida. Bandykite dar kartą.',
             'success' => 'Laukų rinkinys sėkmingai panaikintas.',
             'in_use' => 'Laukų rinkinys yra naudojamas.',

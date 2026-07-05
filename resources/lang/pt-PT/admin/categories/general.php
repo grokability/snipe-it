@@ -19,6 +19,7 @@ return [
     'required_acceptance' => 'Será enviado um email ao utilizador com um link para confirmar a aceitação deste item.',
     'global_signature_required_notice' => 'User signatures are currently required globally via the admin settings, so signatures will still be required regardless of this category setting if the item is checked out to a user (versus a location, etc).',
     'required_eula' => 'Será enviada uma cópia dos EULA a este utilizador',
+    'required_signature' => 'This user will be required to sign to confirm acceptance of this item.',
     'no_default_eula' => 'Não foi encontrado o EULA padrão. Defina um nas Configurações.',
     'update' => 'Actualizar Categoria',
     'use_default_eula' => 'Em vez disso, utilize o <a href="#" data-toggle="modal" data-target="#eulaModal">EULA padrão</a>.',

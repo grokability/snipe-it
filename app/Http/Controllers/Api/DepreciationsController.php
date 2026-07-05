@@ -99,7 +99,13 @@ class DepreciationsController extends Controller
     public function show($id): JsonResponse|array
     {
         $this->authorize('view', Depreciation::class);
-        $depreciation = Depreciation::findOrFail($id);
+        // Match index()'s eager load so isDeletable() (via available_actions.delete
+        // and bulk_selectable.delete) reads the preloaded counts instead of firing
+        // three fallback ->count() queries per show call.
+        $depreciation = Depreciation::withCount('assets as assets_count')
+            ->withCount('models as models_count')
+            ->withCount('licenses as licenses_count')
+            ->findOrFail($id);
 
         return (new DepreciationsTransformer)->transformDepreciation($depreciation);
     }

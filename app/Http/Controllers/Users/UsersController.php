@@ -10,11 +10,14 @@ use App\Http\Requests\DeleteUserRequest;
 use App\Http\Requests\ImageUploadRequest;
 use App\Http\Requests\SaveUserRequest;
 use App\Mail\UnacceptedAssetReminderMail;
+use App\Models\Accessory;
 use App\Models\Actionlog;
 use App\Models\Asset;
 use App\Models\CheckoutAcceptance;
 use App\Models\Company;
+use App\Models\Consumable;
 use App\Models\Group;
+use App\Models\License;
 use App\Models\Setting;
 use App\Models\User;
 use App\Notifications\CurrentInventory;
@@ -123,7 +126,7 @@ class UsersController extends Controller
         $user->mobile = $request->input('mobile');
         $user->location_id = $request->input('location_id', null);
         $user->department_id = $request->input('department_id', null);
-        $user->company_id = Company::getIdForUser($request->input('company_id', null));
+        $companyIds = array_filter(array_map('intval', (array) ($request->input('company_ids') ?? ($request->filled('company_id') ? [$request->input('company_id')] : []))));
         $user->manager_id = $request->input('manager_id', null);
         $user->notes = $request->input('notes');
         $user->address = $request->input('address', null);
@@ -153,6 +156,7 @@ class UsersController extends Controller
         }
 
         if ($user->save()) {
+            $user->syncCompaniesWithLogging(Company::getIdsForCurrentUser($companyIds));
 
             if (($user->activated == '1') && ($user->email != '') && ($request->input('send_welcome') == '1')) {
 
@@ -275,7 +279,7 @@ class UsersController extends Controller
         $user->phone = $request->input('phone');
         $user->mobile = $request->input('mobile');
         $user->location_id = $request->input('location_id', null);
-        $user->company_id = Company::getIdForUser($request->input('company_id', null));
+        $companyIds = array_filter(array_map('intval', (array) ($request->input('company_ids') ?? ($request->filled('company_id') ? [$request->input('company_id')] : []))));
         $user->manager_id = $request->input('manager_id', null);
         $user->notes = $request->input('notes');
         $user->department_id = $request->input('department_id', null);
@@ -336,6 +340,8 @@ class UsersController extends Controller
         session()->put(['redirect_option' => $request->input('redirect_option')]);
 
         if ($user->save()) {
+            $user->syncCompaniesWithLogging(Company::getIdsForCurrentUser($companyIds));
+
             // Redirect to the user page
             return Helper::getRedirectOption($request, $user->id, 'Users')
                 ->with('success', trans('admin/users/message.success.update'));
@@ -480,7 +486,7 @@ class UsersController extends Controller
         $permissions = $request->input('permissions', []);
         app('request')->request->set('permissions', $permissions);
 
-        $user_to_clone = User::with('userloc')->withTrashed()->find($user->id);
+        $user_to_clone = User::with('userloc', 'companies')->withTrashed()->find($user->id);
         // Make sure they can view this particular user
         $this->authorize('view', $user_to_clone);
 
@@ -598,7 +604,7 @@ class UsersController extends Controller
                 'manager',
                 'groups',
                 'userloc',
-                'company',
+                'companies',
                 'createdBy'
             )->withCount(['managesUsers as manages_users_count', 'managedLocations as manages_locations_count'])
                 ->orderBy('created_at', 'DESC')
@@ -620,7 +626,7 @@ class UsersController extends Controller
                         // Add a new row with data
                         $values = [
                             $user->id,
-                            ($user->company) ? $user->company->name : '',
+                            $user->companies->pluck('name')->implode('|'),
                             $user->jobtitle,
                             $user->employee_num,
                             $user->first_name,
@@ -699,9 +705,17 @@ class UsersController extends Controller
     {
         $this->authorize('view', User::class);
 
-        $user = User::withInventoryRelations($id)->first();
+        $actor = auth()->user();
+        $canViewLicenses = $actor->can('view', License::class);
+        $canViewAccessories = $actor->can('view', Accessory::class);
+        $canViewConsumables = $actor->can('view', Consumable::class);
 
-        $indirectItemsCount = $user?->assets?->flatMap->assignedAssets->count() + $user?->assets?->flatMap->components->count() + $user?->assets?->flatMap->licenses->count() + $user?->assets?->flatMap->assignedAccessories->count();
+        $user = User::withInventoryRelations($id, $canViewLicenses, $canViewAccessories, $canViewConsumables)->first();
+
+        $indirectItemsCount = $user?->assets?->flatMap->assignedAssets->count()
+            + $user?->assets?->flatMap->components->count()
+            + ($canViewLicenses ? $user?->assets?->flatMap->licenses->count() : 0)
+            + ($canViewAccessories ? $user?->assets?->flatMap->assignedAccessories->count() : 0);
 
         if ($user) {
             $this->authorize('view', $user);

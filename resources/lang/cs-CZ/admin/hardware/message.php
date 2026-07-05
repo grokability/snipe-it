@@ -97,6 +97,12 @@ return [
         'success' => 'Zařízení bylo úspěšně zapůjčeno.|Zařízení byla úspěšně zapůjčena.',
     ],
 
+    'multi-checkin' => [
+        'error' => 'Asset was not checked in, please try again|Assets were not checked in, please try again',
+        'success' => 'Asset checked in successfully.|Assets checked in successfully.',
+        'no_assets_selected' => 'Je třeba vybrat ze seznamu alespoň jeden majetek',
+    ],
+
     'checkin' => [
         'error' => 'Majetek nebyl převzat. Zkuste to prosím znovu',
         'success' => 'Majetek byl v pořádku převzat.',

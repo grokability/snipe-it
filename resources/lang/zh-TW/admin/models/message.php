@@ -2,12 +2,12 @@
 
 return [
 
-    'deleted' => 'Deleted asset model',
+    'deleted' => '已刪除的資產型號',
     'does_not_exist' => '樣板不存在',
     'no_association' => '警告！此項目的資產型號無效或遺失！',
     'no_association_fix' => '這將以奇怪和可怕的方式損壞事物。立即編輯此資產以分配型號。',
     'assoc_users' => '至少還有一個資產與此樣板關聯，目前不能被删除，請在刪除資產後重試。 ',
-    'invalid_category_type' => 'This category must be an asset category.',
+    'invalid_category_type' => '此類別必須是資產類別。',
 
     'create' => [
         'error' => '新增樣板失敗，請重試。',
@@ -34,7 +34,7 @@ return [
     'bulkedit' => [
         'error' => '沒有欄位被更改，因此沒有更新任何內容。',
         'success' => '成功更新型號。|成功更新 :model_count 個型號。',
-        'warn' => 'You are about to update the properties of the following model:|You are about to edit the properties of the following :model_count models:',
+        'warn' => '您即將更新以下型號的屬性：|您即將編輯以下 :model_count 個型號的屬性：',
 
     ],
 

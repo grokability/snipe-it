@@ -64,4 +64,6 @@ return [
     'optional_infos' => 'Opsiyonel Bilgi',
     'order_details' => 'Sipariş Bilgileri',
     'calc_eol' => 'EOL tarihini null yapılırsa, satın alma tarihi ve EOL oranına göre otomatik EOL hesaplaması kullanın.',
+    'checkin_licenses' => 'Lisans koltuklarının ilişiğini kes / Zimmetten düş',
+    'checkin_child_assets' => 'İlişkili varlıkları zimmetten düş / Geri al',
 ];

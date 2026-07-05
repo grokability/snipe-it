@@ -19,6 +19,7 @@ return [
     'required_acceptance' => 'អ្នក​ប្រើ​នេះ​នឹង​ត្រូវ​បាន​ផ្ញើ​អ៊ីមែល​ជាមួយ​តំណ​ដើម្បី​បញ្ជាក់​ការ​ទទួល​យក​ធាតុ​នេះ។',
     'global_signature_required_notice' => 'User signatures are currently required globally via the admin settings, so signatures will still be required regardless of this category setting if the item is checked out to a user (versus a location, etc).',
     'required_eula' => 'អ្នកប្រើប្រាស់នេះនឹងត្រូវបានផ្ញើអ៊ីមែលច្បាប់ចម្លងនៃ EULA',
+    'required_signature' => 'This user will be required to sign to confirm acceptance of this item.',
     'no_default_eula' => 'រកមិនឃើញ EULA លំនាំដើមចម្បងទេ។ បន្ថែមមួយនៅក្នុងការកំណត់។',
     'update' => 'ធ្វើបច្ចុប្បន្នភាពប្រភេទ',
     'use_default_eula' => 'ប្រើ <a href="#" data-toggle="modal" data-target="#eulaModal">លំនាំដើមចម្បង EULA</a> ជំនួសវិញ។',

@@ -103,5 +103,11 @@ class RouteServiceProvider extends ServiceProvider
             return Limit::perMinute(config('auth.password_reset.max_attempts_per_min'))->by(optional($request->user())->id ?: $request->ip());
         });
 
+        // Rate limiter for two-factor authentication — keyed on user ID since the user is already
+        // password-authenticated at this stage, preventing distributed brute force across IPs.
+        RateLimiter::for('two_factor', function (Request $request) {
+            return Limit::perMinute(config('auth.two_factor.max_attempts_per_min'))->by(optional($request->user())->id ?: $request->ip());
+        });
+
     }
 }

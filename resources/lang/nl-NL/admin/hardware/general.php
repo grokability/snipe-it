@@ -8,6 +8,7 @@ return [
     'bulk_checkout' => 'Bulk uitlevering',
     'bulk_checkin' => 'Bulk Checkin',
     'checkin' => 'Asset inchecken',
+    'checkin_assets' => 'Activa innemen',
     'checkout' => 'Asset uitchecken',
     'clear' => 'Clear',
     'clone' => 'Dupliceer Asset',

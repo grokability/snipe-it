@@ -149,6 +149,90 @@ class CompanyScopingTest extends TestCase
         $this->assertCanSee($licenseSeatB);
     }
 
+    #[DataProvider('models')]
+    public function test_company_user_cannot_see_null_company_items_in_strict_mode($model)
+    {
+        $company = Company::factory()->create();
+        $nullCompanyItem = $model::factory()->create(['company_id' => null]);
+        $companyItem = $model::factory()->for($company)->create();
+        $companyUser = $company->users()->save(User::factory()->make());
+
+        $this->settings->enableMultipleFullCompanySupport();
+
+        $this->actingAs($companyUser);
+        $this->assertCannotSee($nullCompanyItem);
+        $this->assertCanSee($companyItem);
+    }
+
+    #[DataProvider('models')]
+    public function test_company_user_can_see_null_company_items_in_floater_mode($model)
+    {
+        $company = Company::factory()->create();
+        $nullCompanyItem = $model::factory()->create(['company_id' => null]);
+        $companyItem = $model::factory()->for($company)->create();
+        $companyUser = $company->users()->save(User::factory()->make());
+
+        $this->settings->enableFloaterMode();
+
+        $this->actingAs($companyUser);
+        $this->assertCanSee($nullCompanyItem);
+        $this->assertCanSee($companyItem);
+    }
+
+    #[DataProvider('models')]
+    public function test_null_company_user_cannot_see_company_items_in_strict_mode($model)
+    {
+        $company = Company::factory()->create();
+        $nullCompanyItem = $model::factory()->create(['company_id' => null]);
+        $companyItem = $model::factory()->for($company)->create();
+        $nullCompanyUser = User::factory()->create(['company_id' => null]);
+
+        $this->settings->enableMultipleFullCompanySupport();
+
+        $this->actingAs($nullCompanyUser);
+        $this->assertCanSee($nullCompanyItem);
+        $this->assertCannotSee($companyItem);
+    }
+
+    #[DataProvider('models')]
+    public function test_null_company_user_can_see_all_items_in_floater_mode($model)
+    {
+        $company = Company::factory()->create();
+        $nullCompanyItem = $model::factory()->create(['company_id' => null]);
+        $companyItem = $model::factory()->for($company)->create();
+        $nullCompanyUser = User::factory()->create(['company_id' => null]);
+
+        $this->settings->enableFloaterMode();
+
+        $this->actingAs($nullCompanyUser);
+        $this->assertCanSee($nullCompanyItem);
+        $this->assertCanSee($companyItem);
+    }
+
+    public function test_company_scoped_user_can_see_null_company_users_in_floater_mode()
+    {
+        $company = Company::factory()->create();
+        $companyUser = $company->users()->save(User::factory()->make());
+        $nullCompanyUser = User::factory()->create(['company_id' => null]);
+
+        $this->settings->enableFloaterMode();
+
+        $this->actingAs($companyUser);
+        $this->assertCanSee($nullCompanyUser);
+    }
+
+    public function test_company_scoped_user_cannot_see_null_company_users_in_strict_mode()
+    {
+        $company = Company::factory()->create();
+        $companyUser = $company->users()->save(User::factory()->make());
+        $nullCompanyUser = User::factory()->create(['company_id' => null]);
+
+        $this->settings->enableMultipleFullCompanySupport();
+
+        $this->actingAs($companyUser);
+        $this->assertCannotSee($nullCompanyUser);
+    }
+
     private function assertCanSee(Model $model)
     {
         $this->assertTrue(

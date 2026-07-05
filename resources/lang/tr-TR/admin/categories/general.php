@@ -19,6 +19,7 @@ return [
     'required_acceptance' => 'Kullanıcıya bü ürün ile ilgili kabul bağlantısı içeren bir e-posta gönderilmiştir.',
     'global_signature_required_notice' => 'Kullanıcı imzaları şu anda yönetici ayarları üzerinden genel olarak zorunlu tutulmaktadır; bu nedenle öğe bir kullanıcıya zimmetlenmişse (bir konuma vb. yerine), bu kategori ayarına bakılmaksızın imzalar yine de zorunlu olacaktır.',
     'required_eula' => 'Kullanıcıya Son Kullanıcı Lisans Sözleşmesi\'nin bir kopyası e-posta ile gönderilmiştir',
+    'required_signature' => 'Bu kullanıcının bu öğeyi kabul ettiğini onaylamak için imza atması gerekecek.',
     'no_default_eula' => 'Varsayılan sözleşme bulunamadı. Lütfen Ayarlar\'dan ekleyiniz.',
     'update' => 'Kategori güncelle',
     'use_default_eula' => '<a href="#" data-toggle="modal" data-target="#eulaModal">\'yı Varsayılan Sözleşme</a> yerine kullan.',

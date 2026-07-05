@@ -51,11 +51,15 @@ class AccessoriesController extends Controller
                 'model_number',
                 'eol',
                 'notes',
+                'purchase_cost',
+                'purchase_date',
                 'created_at',
+                'updated_at',
                 'min_amt',
                 'company_id',
                 'notes',
                 'checkouts_count',
+                'image',
                 'order_number',
                 'qty',
                 // These are *relationships* so we wouldn't normally include them in this array,
@@ -79,7 +83,13 @@ class AccessoriesController extends Controller
         }
 
         if ($request->filled('company_id')) {
-            $accessories->where('accessories.company_id', '=', $request->input('company_id'));
+            // expand_company_hierarchy=1 opts the company show-page tabs into the
+            // parent/child rollup so a child shows items inherited from its parent.
+            if ($request->boolean('expand_company_hierarchy')) {
+                $accessories->whereIn('accessories.company_id', Company::reachableCompanyIds($request->input('company_id')));
+            } else {
+                $accessories->where('accessories.company_id', '=', $request->input('company_id'));
+            }
         }
 
         if ($request->filled('order_number')) {
@@ -107,7 +117,7 @@ class AccessoriesController extends Controller
         }
 
         // Make sure the offset and limit are actually integers and do not exceed system limits
-        $offset = ($request->input('offset') > $accessories->count()) ? $accessories->count() : abs($request->input('offset'));
+        $offset = ($request->input('offset') > $accessories->count()) ? $accessories->count() : app('api_offset_value');
         $limit = app('api_limit_value');
 
         $order = $request->input('order') === 'asc' ? 'asc' : 'desc';
@@ -132,6 +142,9 @@ class AccessoriesController extends Controller
                 break;
             case 'created_by':
                 $accessories = $accessories->OrderByCreatedByName($order);
+                break;
+            case 'total_cost':
+                $accessories = $accessories->orderByRaw('COALESCE(purchase_cost, 0) * qty '.$order);
                 break;
             default:
                 $accessories = $accessories->orderBy($column_sort, $order);
@@ -234,6 +247,10 @@ class AccessoriesController extends Controller
         $total = $accessory_checkouts->count();
         $accessory_checkouts = $accessory_checkouts->skip($offset)->take($limit)->get();
 
+        $accessory_checkouts->loadMorph('assignedTo', [
+            User::class => ['companies'],
+        ]);
+
         return (new AccessoriesTransformer)->transformCheckedoutAccessory($accessory_checkouts, $total);
     }
 
@@ -303,7 +320,7 @@ class AccessoriesController extends Controller
         $this->authorize('checkout', $accessory);
         $target = $this->determineCheckoutTarget();
 
-        if ((Setting::getSettings()->full_multiple_companies_support == '1') && ($accessory->company_id !== $target->company_id)) {
+        if ((Setting::getSettings()->full_multiple_companies_support == '1') && (! $target->companies()->where('companies.id', $accessory->company_id)->exists())) {
             return response()->json(Helper::formatStandardApiResponse('error', null, trans('general.error_user_company')));
         }
 

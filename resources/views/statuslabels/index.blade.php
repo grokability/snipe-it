@@ -13,6 +13,18 @@
         <x-page-column class="col-md-9">
             <x-box>
 
+                <x-slot:bulkactions>
+                    <x-table.bulk-actions
+                            name='statuslabel'
+                            action_route="{{ route('statuslabels.bulk.delete') }}"
+                            model_name="statuslabel"
+                    >
+                        @can('delete', App\Models\Statuslabel::class)
+                            <option>{{ trans('general.delete') }}</option>
+                        @endcan
+                    </x-table.bulk-actions>
+                </x-slot:bulkactions>
+
                 <x-table
                     name="statuslabel"
                     buttons="statuslabelButtons"

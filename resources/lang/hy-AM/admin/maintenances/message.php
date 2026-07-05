@@ -18,4 +18,9 @@ return [
     'asset_maintenance_incomplete' => 'Դեռ չի ավարտվել',
     'warranty' => 'Երաշխիքային ժամկետ',
     'not_warranty' => 'Ոչ երաշխիքային',
+    'complete' => [
+        'confirm' => 'Are you sure you want to mark this maintenance as complete? This cannot be undone.',
+        'success' => 'Maintenance marked as complete.',
+        'error' => 'There was an issue marking this maintenance as complete. Please try again.',
+    ],
 ];

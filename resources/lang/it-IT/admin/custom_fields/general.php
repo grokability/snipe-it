@@ -64,8 +64,10 @@ return [
         'text' => 'Casella di testo',
         'listbox' => 'Casella elenco',
         'textarea' => 'Area di testo (multi-riga)',
+        'markdown-textarea' => 'Area di testo Markdown',
         'checkbox' => 'Casella di spunta',
         'radio' => 'Pulsanti di opzione',
     ],
+    'markdown_supported' => 'Markdown supportato',
     'general_help_text' => 'I campi personalizzati memorizzano informazioni aggiuntive non coperte dai campi predefiniti del Bene. <a href="https://snipe-it.readme.io/docs/custom-fields#/"><i class="fa fa-external-link"></i></a>.',
 ];

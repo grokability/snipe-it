@@ -19,6 +19,7 @@ return [
     'required_acceptance' => 'Ennek a felhasználónak küldünk egy elfogadó linket e-mailben.',
     'global_signature_required_notice' => 'User signatures are currently required globally via the admin settings, so signatures will still be required regardless of this category setting if the item is checked out to a user (versus a location, etc).',
     'required_eula' => 'Ennek a felhasználónak küldünk egy elfogadó linket e-mailben.',
+    'required_signature' => 'This user will be required to sign to confirm acceptance of this item.',
     'no_default_eula' => 'Nincs alapértelmezett EULA. Adjon hozzá egyet a Beállításokban.',
     'update' => 'Kategória módosítása',
     'use_default_eula' => 'Használja inkább az <a href="#" data-toggle="modal" data-target="#eulaModal">alapértelmezett EULA</a>-t.',

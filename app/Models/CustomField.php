@@ -51,7 +51,7 @@ class CustomField extends Model
      */
     protected $rules = [
         'name' => 'required|unique:custom_fields',
-        'element' => 'required|in:text,listbox,textarea,checkbox,radio',
+        'element' => 'required|in:text,listbox,textarea,markdown-textarea,checkbox,radio',
         'field_encrypted' => 'nullable|boolean',
         'auto_add_to_fieldsets' => 'boolean',
         'show_in_listview' => 'boolean',

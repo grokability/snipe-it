@@ -46,7 +46,7 @@ return [
         'delete_has_users_var' => 'Este usuario todavía supervisa a otro usuario. Por favor primero seleccione otro supervisor para ese usuario.|Este usuario todavía supervisa :count usuarios. Por favor primero seleccione otro supervisor para ellos.',
         'unsuspend' => 'Hubo un problema marcando como no suspendido al usuario. Por favor, inténtelo de nuevo.',
         'import' => 'Ha habido un problema importando los usuarios. Por favor intente nuevamente.',
-        'asset_already_accepted' => 'This item has already been accepted.',
+        'asset_already_accepted' => 'Este artículo ya ha sido aceptado.',
         'accept_or_decline' => 'Debe aceptar o rechazar este equipo.',
         'cannot_delete_yourself' => 'Nos sentiríamos muy mal si usted se eliminara, por favor reconsidérelo.',
         'incorrect_user_accepted' => 'El elemento que ha intentado aceptar no fue asignado a usted.',

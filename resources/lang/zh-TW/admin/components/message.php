@@ -18,7 +18,7 @@ return [
         'confirm' => '您確定要刪除此組件嗎？',
         'error' => '刪除組件時發生問題。請再試一次。',
         'success' => '刪除組件成功。',
-        'error_qty' => 'Some components of this type are still checked out. Please check them in and try again.',
+        'error_qty' => '此類型的部分組件仍在借出中。請先繳回後再試一次。',
     ],
 
     'checkout' => [

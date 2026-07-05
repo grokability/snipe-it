@@ -15,6 +15,8 @@ class ComponentObserver
     public function updated(Component $component)
     {
 
+        $changed = [];
+
         foreach ($component->getRawOriginal() as $key => $value) {
             // Check and see if the value changed
             if ($component->getRawOriginal()[$key] != $component->getAttributes()[$key]) {

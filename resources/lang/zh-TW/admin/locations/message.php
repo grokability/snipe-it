@@ -3,12 +3,12 @@
 return [
 
     'does_not_exist' => '地點不存在.',
-    'assoc_users' => 'This location is not currently deletable because it is the location of record for at least one item or user, has assets assigned to it, or is the parent location of another location. Please update your records to no longer reference this location and try again ',
+    'assoc_users' => '此位置目前無法刪除，因為它是至少一個項目或使用者的記錄位置、有資產分配至此，或是另一個位置的上層位置。請更新您的記錄，移除對此位置的參照後再試一次。',
     'assoc_assets' => '至少還有一個資產與此位置關聯，目前不能被删除，請檢查後重試。 ',
     'assoc_child_loc' => '至少還有一個子項目與此位置關聯，目前不能被删除，請檢查後重試。 ',
     'assigned_assets' => '已分配資產',
     'current_location' => '目前位置',
-    'deleted_warning' => 'This location has been deleted. Please restore it before attempting to make any changes.',
+    'deleted_warning' => '此位置已被刪除。請先還原後再進行任何變更。',
 
     'create' => [
         'error' => '新增位置失敗，請重試。',
@@ -21,8 +21,8 @@ return [
     ],
 
     'restore' => [
-        'error' => 'Location was not restored, please try again',
-        'success' => 'Location restored successfully.',
+        'error' => '位置還原失敗，請重試。',
+        'success' => '位置還原成功。',
     ],
 
     'delete' => [

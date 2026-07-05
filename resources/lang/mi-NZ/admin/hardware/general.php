@@ -8,6 +8,7 @@ return [
     'bulk_checkout' => 'Putea Poaka',
     'bulk_checkin' => 'Bulk Checkin',
     'checkin' => 'Tirohia te Ahua',
+    'checkin_assets' => 'Checkin Assets',
     'checkout' => 'Whakaritehia te Ahua',
     'clear' => 'Clear',
     'clone' => 'Te Tino Tae',

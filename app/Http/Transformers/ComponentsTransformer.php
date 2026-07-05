@@ -26,6 +26,7 @@ class ComponentsTransformer
             'id' => (int) $component->id,
             'name' => e($component->name),
             'image' => ($component->image) ? Storage::disk('public')->url('components/'.e($component->image)) : null,
+            'qr_code_url' => route('qr_code/common', ['object_type' => 'components', 'id' => $component->id]),
             'serial' => ($component->serial) ? e($component->serial) : null,
             'location' => ($component->location) ? [
                 'id' => (int) $component->location->id,

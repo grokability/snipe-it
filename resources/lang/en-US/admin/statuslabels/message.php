@@ -20,6 +20,8 @@ return [
         'confirm' => 'Are you sure you wish to delete this Status Label?',
         'error' => 'There was an issue deleting the Status Label. Please try again.',
         'success' => 'The Status Label was deleted successfully.',
+        'bulk_success' => 'Status Label deleted successfully.|:count status labels were deleted successfully.',
+        'partial_success' => 'Status Label deleted successfully. See additional information below. | :count status labels were deleted successfully. See additional information below.',
     ],
 
     'help' => [

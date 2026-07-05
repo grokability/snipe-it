@@ -1,10 +1,10 @@
 @props([
     'route' => route('api.assets.index'),
     'name' => 'default',
-    'presenter' => \App\Presenters\AssetPresenter::dataTableLayout(),
     'fixed_right_number' => 2,
     'fixed_number' => 1,
     'table_header' => trans('general.assets'),
+    'status_type' => null,
 ])
 
 @aware(['name'])
@@ -18,11 +18,11 @@
     </x-slot:table_header>
 
     <x-slot:bulkactions>
-        <x-table.bulk-assets/>
+        <x-table.bulk-assets :status_type="$status_type"/>
     </x-slot:bulkactions>
-    
+
     <x-table
-        :$presenter
+        :presenter="\App\Presenters\AssetPresenter::dataTableLayout($status_type !== 'Deleted' ? ['deleted_at'] : [])"
         :$fixed_right_number
         :$fixed_number
         show_column_search="true"

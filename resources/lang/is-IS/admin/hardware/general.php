@@ -8,6 +8,7 @@ return [
     'bulk_checkout' => 'Ráðstafa mörgum eignum',
     'bulk_checkin' => 'Skila mörgum eignum',
     'checkin' => 'Skila eign',
+    'checkin_assets' => 'Skrá inn eignir',
     'checkout' => 'Ráðstafa eign',
     'clear' => 'Hreinsa',
     'clone' => 'Klóna eign',

@@ -19,6 +19,7 @@ return [
     'required_acceptance' => 'L\'utilisateur·trice recevra un courriel avec un lien d\'acceptation de cet article.',
     'global_signature_required_notice' => 'User signatures are currently required globally via the admin settings, so signatures will still be required regardless of this category setting if the item is checked out to a user (versus a location, etc).',
     'required_eula' => 'L\'utilisateur·trice recevra par courriel une copie de la licence d\'utilisation',
+    'required_signature' => 'This user will be required to sign to confirm acceptance of this item.',
     'no_default_eula' => 'Il n\'y a pas de licence d\'utilisation par défaut. Veuillez en ajouter une dans Préférences.',
     'update' => 'Mettre à jour la catégorie',
     'use_default_eula' => 'Utiliser la <a href="#" data-toggle="modal" data-target="#eulaModal">license primaire par défaut </a> à la place.',

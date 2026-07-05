@@ -89,7 +89,15 @@ class ImageUploadRequest extends Request
 
         }
 
-        if (! Storage::disk('public')->exists($path)) {
+        // SettingsController passes '' to mean "disk root".
+        // Normalize and use a single prefix so we never have a leading-slash
+        // key (S3 stores `/foo.png` and `foo.png` as distinct objects) and
+        // never HEAD an empty key (which S3's HeadObject validator rejects
+        // outright — the bug behind #18267).
+        $path = trim((string) $path, '/');
+        $prefix = $path === '' ? '' : $path.'/';
+
+        if ($path !== '' && ! Storage::disk('public')->exists($path)) {
             Storage::disk('public')->makeDirectory($path);
         }
 
@@ -107,7 +115,7 @@ class ImageUploadRequest extends Request
             if (($image->getMimeType() == 'image/vnd.microsoft.icon') || ($image->getMimeType() == 'image/x-icon') || ($image->getMimeType() == 'image/avif') || ($image->getMimeType() == 'image/webp')) {
                 // If the file is an icon, webp or avif, we need to just move it since gd doesn't support resizing
                 // icons or avif, and webp support and needs to be compiled into gd for resizing to be available
-                Storage::disk('public')->put($path.'/'.$file_name, file_get_contents($image));
+                Storage::disk('public')->put($prefix.$file_name, file_get_contents($image));
 
             } elseif ($image->getMimeType() == 'image/svg+xml') {
                 // If the file is an SVG, we need to clean it and NOT encode it
@@ -116,7 +124,7 @@ class ImageUploadRequest extends Request
                 $cleanSVG = $sanitizer->sanitize($dirtySVG);
 
                 try {
-                    Storage::disk('public')->put($path.'/'.$file_name, $cleanSVG);
+                    Storage::disk('public')->put($prefix.$file_name, $cleanSVG);
                 } catch (\Exception $e) {
                     Log::debug($e);
                 }
@@ -137,7 +145,7 @@ class ImageUploadRequest extends Request
                 }
 
                 // This requires a string instead of an object, so we use ($string)
-                Storage::disk('public')->put($path.'/'.$file_name, (string) $upload->encode());
+                Storage::disk('public')->put($prefix.$file_name, (string) $upload->encode());
 
             }
 
@@ -158,7 +166,12 @@ class ImageUploadRequest extends Request
 
         if ($item->{$db_fieldname} != '') {
             try {
-                Storage::disk('public')->delete($path.'/'.$item->{$db_fieldname});
+                // Same path normalization as handleImages — branding callers
+                // pass '' for the disk root, and we don't want to produce a
+                // leading-slash key on S3.
+                $path = trim((string) $path, '/');
+                $key = $path === '' ? $item->{$db_fieldname} : $path.'/'.$item->{$db_fieldname};
+                Storage::disk('public')->delete($key);
                 $item->{$db_fieldname} = null;
             } catch (\Exception $e) {
                 Log::debug($e);

@@ -41,9 +41,9 @@ return [
     'user_activated' => 'Օգտատերը կարող է մուտք գործել',
     'activation_status_warning' => 'Չփոխել ակտիվացման կարգավիճակը',
     'group_memberships_helpblock' => 'Խմբի անդամությունները կարող են խմբագրել միայն գերադմինները։',
-    'superadmin_permission_warning' => 'Օգտատիրոջը գերադմինի հասանելիություն կարող են տրամադրել միայն գերադմինները։
-',
-    'admin_permission_warning' => 'Օգտատիրոջը ադմինի հասանելիություն կարող են տրամադրել միայն ադմինի կամ ավելի բարձր իրավունքներ ունեցող օգտատերերը։',
+    'superadmin_permission_warning' => 'Only superadmins may grant or revoke superadmin access.',
+    'self_permission_warning' => 'Only superadmins may edit their own permissions.',
+    'admin_permission_warning' => 'Only users with admins rights or greater may grant or revoke admin access.',
     'remove_group_memberships' => 'Հեռացնել խմբի անդամությունները',
     'warning_deletion_information' => 'Դուք պատրաստվում եք վերադարձնել ստորև նշված :count օգտատիրոջ ԲՈԼՈՐ տարրերը։',
     'update_user_assets_status' => 'Թարմացնել այս օգտատերերի բոլոր ակտիվները այս կարգավիճակով

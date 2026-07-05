@@ -8,6 +8,7 @@ return [
     'bulk_checkout' => 'მასობრივი გაცემა',
     'bulk_checkin' => 'მასობრივი დაბრუნება',
     'checkin' => 'ინვენტარის დაბრუნება',
+    'checkin_assets' => 'Checkin Assets',
     'checkout' => 'ინვენტარის გაცემა',
     'clear' => 'გასუფთავება',
     'clone' => 'ინვენტარის კლონირება',

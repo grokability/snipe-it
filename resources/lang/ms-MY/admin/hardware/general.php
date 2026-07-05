@@ -8,6 +8,7 @@ return [
     'bulk_checkout' => 'Checkout Pukal',
     'bulk_checkin' => 'Bulk Checkin',
     'checkin' => 'Terima Harta',
+    'checkin_assets' => 'Checkin Assets',
     'checkout' => 'Aset Checkout',
     'clear' => 'Clear',
     'clone' => 'Pendua Harta',

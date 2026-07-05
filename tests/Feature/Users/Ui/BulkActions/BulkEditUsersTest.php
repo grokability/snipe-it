@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Users\Ui\BulkActions;
 
+use App\Models\Actionlog;
 use App\Models\Group;
 use App\Models\User;
 use Tests\TestCase;
@@ -150,5 +151,119 @@ class BulkEditUsersTest extends TestCase
             ->assertRedirect(route('users.index'));
 
         $this->assertFalse($target->fresh()->groups->contains($group));
+    }
+
+    public function test_bulk_edit_logs_general_field_changes_to_activity_report()
+    {
+        $target = User::factory()->create(['city' => 'Springfield', 'jobtitle' => 'Engineer']);
+
+        $existingLogIds = Actionlog::where('item_type', User::class)
+            ->where('item_id', $target->id)
+            ->pluck('id');
+
+        $this->actingAs(User::factory()->superuser()->create())
+            ->post(route('users/bulkeditsave'), [
+                'ids' => [$target->id],
+                'city' => 'Shelbyville',
+                'jobtitle' => 'Senior Engineer',
+            ])
+            ->assertRedirect(route('users.index'));
+
+        $log = Actionlog::where('item_type', User::class)
+            ->where('item_id', $target->id)
+            ->where('action_type', 'update')
+            ->whereNotIn('id', $existingLogIds)
+            ->first();
+
+        $this->assertNotNull($log, 'Bulk edit should produce an activity log entry');
+
+        $meta = json_decode($log->log_meta, true);
+        $this->assertArrayHasKey('city', $meta);
+        $this->assertEquals('Springfield', $meta['city']['old']);
+        $this->assertEquals('Shelbyville', $meta['city']['new']);
+        $this->assertArrayHasKey('jobtitle', $meta);
+        $this->assertEquals('Engineer', $meta['jobtitle']['old']);
+        $this->assertEquals('Senior Engineer', $meta['jobtitle']['new']);
+    }
+
+    public function test_bulk_edit_logs_null_clear_operations_to_activity_report()
+    {
+        $target = User::factory()->create(['notes' => 'Some notes', 'phone' => '555-1234']);
+
+        $existingLogIds = Actionlog::where('item_type', User::class)
+            ->where('item_id', $target->id)
+            ->pluck('id');
+
+        $this->actingAs(User::factory()->superuser()->create())
+            ->post(route('users/bulkeditsave'), [
+                'ids' => [$target->id],
+                'null_notes' => '1',
+                'null_phone' => '1',
+            ])
+            ->assertRedirect(route('users.index'));
+
+        $log = Actionlog::where('item_type', User::class)
+            ->where('item_id', $target->id)
+            ->where('action_type', 'update')
+            ->whereNotIn('id', $existingLogIds)
+            ->first();
+
+        $this->assertNotNull($log, 'Bulk clear should produce an activity log entry');
+
+        $meta = json_decode($log->log_meta, true);
+        $this->assertArrayHasKey('notes', $meta);
+        $this->assertNull($meta['notes']['new']);
+        $this->assertArrayHasKey('phone', $meta);
+        $this->assertNull($meta['phone']['new']);
+    }
+
+    public function test_bulk_edit_logs_auth_field_changes_for_eligible_users()
+    {
+        $target = User::factory()->create(['activated' => 1]);
+
+        $existingLogIds = Actionlog::where('item_type', User::class)
+            ->where('item_id', $target->id)
+            ->pluck('id');
+
+        $this->actingAs(User::factory()->superuser()->create())
+            ->post(route('users/bulkeditsave'), [
+                'ids' => [$target->id],
+                'activated' => '0',
+                'city' => 'Portland',
+            ])
+            ->assertRedirect(route('users.index'));
+
+        $logs = Actionlog::where('item_type', User::class)
+            ->where('item_id', $target->id)
+            ->where('action_type', 'update')
+            ->whereNotIn('id', $existingLogIds)
+            ->get();
+
+        $this->assertCount(1, $logs, 'All changes should appear in a single log entry');
+
+        $meta = json_decode($logs->first()->log_meta, true);
+        $this->assertArrayHasKey('activated', $meta, 'activated change should be logged');
+        $this->assertArrayHasKey('city', $meta, 'city change should be logged');
+    }
+
+    public function test_bulk_edit_creates_one_log_entry_per_user()
+    {
+        $targets = User::factory()->count(3)->create(['city' => 'Old City']);
+
+        $this->actingAs(User::factory()->superuser()->create())
+            ->post(route('users/bulkeditsave'), [
+                'ids' => $targets->pluck('id')->all(),
+                'city' => 'New City',
+            ])
+            ->assertRedirect(route('users.index'));
+
+        foreach ($targets as $target) {
+            $count = Actionlog::where('item_type', User::class)
+                ->where('item_id', $target->id)
+                ->where('action_type', 'update')
+                ->count();
+
+            $this->assertEquals(1, $count, "User {$target->id} should have exactly one update log entry");
+        }
     }
 }

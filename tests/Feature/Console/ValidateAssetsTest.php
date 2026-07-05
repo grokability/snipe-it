@@ -5,6 +5,7 @@ namespace Tests\Feature\Console;
 use App\Models\Asset;
 use App\Models\User;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 
@@ -51,14 +52,20 @@ class ValidateAssetsTest extends TestCase
             'serial' => 'GOOD-SERIAL-'.$tagSuffix,
         ]);
 
+        // assigned_to is not in $fillable, so we create the asset normally then
+        // inject the inconsistent state directly via DB to simulate legacy data.
         $invalidAsset = Asset::factory()
             ->canBeInvalidUponCreation()
             ->create([
                 'asset_tag' => 'BROKEN-ASSET-'.$tagSuffix,
                 'serial' => 'BROKEN-SERIAL-'.$tagSuffix,
-                'assigned_to' => User::factory()->create()->id,
-                'assigned_type' => null,
             ]);
+
+        DB::table('assets')->where('id', $invalidAsset->id)->update([
+            'assigned_to' => User::factory()->create()->id,
+            'assigned_type' => null,
+        ]);
+        $invalidAsset->refresh();
 
         return [$validAsset, $invalidAsset];
     }

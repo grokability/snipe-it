@@ -101,11 +101,13 @@ class UploadedFilesController extends Controller
         }
 
         if (request('inline') == 'true') {
-            $headers = [
-                'Content-Disposition' => 'inline',
-            ];
+            $path = self::$map_storage_path[$object_type];
 
-            return Storage::download(self::$map_storage_path[$object_type].$log->filename, $log->filename, $headers);
+            if (! StorageHelper::allowSafeInline($path.$log->filename)) {
+                return StorageHelper::downloader($path.$log->filename);
+            }
+
+            return Storage::download($path.$log->filename, $log->filename, ['Content-Disposition' => 'inline']);
         }
 
         return StorageHelper::downloader(self::$map_storage_path[$object_type].$log->filename);

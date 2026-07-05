@@ -8,6 +8,7 @@ return [
     'bulk_checkout' => 'மொத்த புதுப்பிப்பு',
     'bulk_checkin' => 'Bulk Checkin',
     'checkin' => 'சரிபார்ப்பு சொத்து',
+    'checkin_assets' => 'Checkin Assets',
     'checkout' => 'சரிபார்ப்புச் சொத்து',
     'clear' => 'Clear',
     'clone' => 'குளோன் சொத்து',

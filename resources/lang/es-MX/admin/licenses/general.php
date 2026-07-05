@@ -31,6 +31,11 @@ return [
             'log_msg' => 'Ingresada mediante ingreso masivo en página de licencias',
         ],
 
+        'checkin_selected' => [
+            'success' => ':count seat checked in successfully. | :count seats checked in successfully.',
+            'no_seats_selected' => 'No seats were selected.',
+        ],
+
         'checkout_all' => [
             'button' => 'Asignar todas las licencias',
             'modal' => 'Esta acción asignará una licencia para el primer usuario disponible. | Esta acción asignará todas las :available_seats_count licencias a los primeros usuarios disponibles. Se considera que un usuario está disponible si aún no tiene esta licencia asignada y la propiedad "Autoasignación de licencia" está habilitada en su cuenta de usuario.',

@@ -8,6 +8,7 @@ return [
     'bulk_checkout' => 'Bulk Checkout',
     'bulk_checkin' => 'Bulk Checkin',
     'checkin' => 'Reģistrēšanās aktīvs',
+    'checkin_assets' => 'Checkin Assets',
     'checkout' => 'Checkout Asset',
     'clear' => 'Clear',
     'clone' => 'Clone Asset',

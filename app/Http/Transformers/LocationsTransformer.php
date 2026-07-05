@@ -39,6 +39,7 @@ class LocationsTransformer
                 'id' => (int) $location->id,
                 'name' => e($location->name),
                 'image' => ($location->image) ? Storage::disk('public')->url('locations/'.e($location->image)) : null,
+                'qr_code_url' => route('qr_code/common', ['object_type' => 'locations', 'id' => $location->id]),
                 'address' => ($location->address) ? e($location->address) : null,
                 'address2' => ($location->address2) ? e($location->address2) : null,
                 'city' => ($location->city) ? e($location->city) : null,

@@ -8,6 +8,7 @@ return [
     'bulk_checkout' => 'Thanh toán hàng loạt',
     'bulk_checkin' => 'Bulk Checkin',
     'checkin' => 'Checkin tài sản',
+    'checkin_assets' => 'Thu hồi tài sản',
     'checkout' => 'Tài sản thanh toán',
     'clear' => 'Clear',
     'clone' => 'Nhân đôi tài sản',

@@ -122,6 +122,10 @@ return [
         'max_attempts_per_min' => env('PASSWORD_RESET_MAX_ATTEMPTS_PER_MIN', 50),
     ],
 
+    'two_factor' => [
+        'max_attempts_per_min' => env('TWO_FACTOR_MAX_ATTEMPTS_PER_MIN', 5),
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Password Confirmation Timeout

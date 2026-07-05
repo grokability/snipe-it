@@ -8,6 +8,7 @@ return [
     'bulk_checkout' => 'Hromadné odovzdanie',
     'bulk_checkin' => 'Hromadné prevzatie',
     'checkin' => 'Prevziať majetok',
+    'checkin_assets' => 'Prevziať položky majetku',
     'checkout' => 'Odovzdať majetok',
     'clear' => 'Vyčistiť',
     'clone' => 'Duplikovať majetok',

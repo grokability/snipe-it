@@ -55,6 +55,9 @@ class DepartmentsTransformer
             $permissions_array['available_actions'] = [
                 'update' => Gate::allows('update', Department::class),
                 'delete' => (Gate::allows('delete', Department::class) && ($department->users_count == 0)),
+                'bulk_selectable' => [
+                    'delete' => $department->users_count == 0,
+                ],
             ];
 
             $array += $permissions_array;

@@ -19,6 +19,7 @@ return [
     'required_acceptance' => 'На корисникот ќе му биде испратена врска по е-пошта за да потврди прифаќање на ова средство.',
     'global_signature_required_notice' => 'User signatures are currently required globally via the admin settings, so signatures will still be required regardless of this category setting if the item is checked out to a user (versus a location, etc).',
     'required_eula' => 'На корисникот ќе му бидат испратени Условите за користење по е-пошта',
+    'required_signature' => 'This user will be required to sign to confirm acceptance of this item.',
     'no_default_eula' => 'Не се пронајдени стандардни Услови за користење. Внесете го во Поставки.',
     'update' => 'Уреди категорија',
     'use_default_eula' => 'Наместо ова, користете <a href="#" data-toggle="modal" data-target="#eulaModal">стандардни Услови за користење</a>.',

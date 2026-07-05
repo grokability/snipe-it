@@ -176,6 +176,7 @@ Match / Size / Format',
     'url' => '«:attribute» դաշտը պետք է լինի ամսաթիվ :date-ից հետո։',
     'ulid' => ':attribute դաշտը պետք է լինի վավեր ULID։',
     'uuid' => ':attribute դաշտը պետք է լինի վավեր UUID։',
+    'valid_css_color' => 'The :attribute field must be a valid CSS color (hex, rgb, rgba, hsl, or hsla).',
     'fmcs_location' => 'Admin Settings-ում միացված է բազմակի ընկերությունների աջակցությունը և տեղադրության սահմանափակումը, և ընտրված տեղադրությունը և ընկերությունը համատեղելի չեն։',
     'is_unique_across_company_and_location' => ':attribute-ը պետք է եզակի լինի ընտրված ընկերության և տեղադրության շրջանակում։',
 

@@ -98,6 +98,7 @@ class AssetsTransformer
                 'tag_color' => ($asset->defaultLoc->tag_color) ? e($asset->defaultLoc->tag_color) : null,
             ] : null,
             'image' => ($asset->getImageUrl()) ? $asset->getImageUrl() : null,
+            'qr_code_url' => route('qr_code/common', ['object_type' => 'hardware', 'id' => $asset->id]),
             'qr' => ($setting->qr_code == '1') ? Storage::disk('public')->url('barcodes/qr-'.str_slug($asset->asset_tag).'-'.str_slug($asset->id).'.png') : null,
             'alt_barcode' => ($setting->alt_barcode_enabled == '1') ? Storage::disk('public')->url('barcodes/'.str_slug($setting->alt_barcode).'-'.str_slug($asset->asset_tag).'.png') : null,
             'assigned_to' => $this->transformAssignedTo($asset),
@@ -144,7 +145,7 @@ class AssetsTransformer
 
                     $fields_array[$field->name] = [
                         'field' => e($field->db_column),
-                        'value' => e($value),
+                        'value' => ($field->element == 'markdown-textarea' && Gate::allows('assets.view.encrypted_custom_fields')) ? Helper::renderMarkdown($value) : e($value),
                         'field_format' => $field->format,
                         'element' => $field->element,
                     ];
@@ -158,7 +159,7 @@ class AssetsTransformer
 
                     $fields_array[$field->name] = [
                         'field' => e($field->db_column),
-                        'value' => e($value),
+                        'value' => ($field->element == 'markdown-textarea') ? Helper::renderMarkdown($value) : e($value),
                         'field_format' => $field->format,
                         'element' => $field->element,
                     ];
@@ -274,7 +275,7 @@ class AssetsTransformer
                         $value = Helper::getFormattedDateObject($value, 'date', false);
                     }
 
-                    $fields_array[$field->db_column] = e($value);
+                    $fields_array[$field->db_column] = ($field->element == 'markdown-textarea') ? Helper::renderMarkdown($value) : e($value);
                 }
 
                 $array['custom_fields'] = $fields_array;

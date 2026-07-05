@@ -103,6 +103,12 @@ return [
         'success' => 'Ակտիվը հաջողությամբ հանձնվել է։|Ակտիվները հաջողությամբ հանձնվել են։',
     ],
 
+    'multi-checkin' => [
+        'error' => 'Asset was not checked in, please try again|Assets were not checked in, please try again',
+        'success' => 'Asset checked in successfully.|Assets checked in successfully.',
+        'no_assets_selected' => 'Դուք պետք է ցանկից ընտրեք առնվազն մեկ ակտիվ։',
+    ],
+
     'checkin' => [
         'error' => 'Ակտիվը չի վերադարձվել, խնդրում ենք կրկին փորձել։',
         'success' => 'Ակտիվը հաջողությամբ վերադարձվել է։',

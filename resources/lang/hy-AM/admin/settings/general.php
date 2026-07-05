@@ -35,7 +35,7 @@ return [
     'backups_help' => 'Ստեղծել, ներբեռնել և վերականգնել պահուստային պատճենները ',
     'backups_restoring' => 'Վերականգնում պահուստային պատճենից',
     'backups_clean' => 'Մաքրել պահուստավորված տվյալների բազան մինչև վերականգնումը',
-    'backups_clean_helptext' => 'Սա կարող է օգտակար լինել, եթե փոխում եք մինչև',
+    'backups_clean_helptext' => "Սա կարող է օգտակար լինել, եթե փոխում եք մինչև",
     'backups_upload' => 'Վերբեռնել պահուստային պատճենը',
     'backups_path' => 'Սերվերում պահուստային պատճենները պահվում են <code>:path</code> ուղու մեջ
 ',
@@ -313,7 +313,7 @@ return [
     'two_factor_enter_code' => 'Մուտքագրեք երկքայլ կոդը',
     'two_factor_config_complete' => 'Ուղարկել կոդը',
     'two_factor_enabled_edit_not_allowed' => 'Ձեր ադմինիստրատորը թույլ չի տալիս փոփոխել այս կարգավորումը։',
-    'two_factor_enrollment_text' => 'Երկքայլ նույնականացումը պարտադիր է, սակայն ձեր սարքը դեռ գրանցված չէ։ Բացեք ձեր Google Authenticator հավելվածը և սկանավորեք ստորև գտնվող QR կոդը՝ ձեր սարքը գրանցելու համար։ Սարքը գրանցելուց հետո մուտքագրեք ստորև գտնվող կոդը',
+    'two_factor_enrollment_text' => "Երկքայլ նույնականացումը պարտադիր է, սակայն ձեր սարքը դեռ գրանցված չէ։ Բացեք ձեր Google Authenticator հավելվածը և սկանավորեք ստորև գտնվող QR կոդը՝ ձեր սարքը գրանցելու համար։ Սարքը գրանցելուց հետո մուտքագրեք ստորև գտնվող կոդը",
     'require_accept_signature' => 'Պահանջել ստորագրություն',
     'require_accept_signature_help_text' => 'Enabling this feature will require users to physically sign off on accepting items. This will override any category-specific signature requirements.',
     'require_checkinout_notes' => 'Պահանջել նշում Checkin/Checkout-ի ժամանակ',

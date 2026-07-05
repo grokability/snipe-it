@@ -18,4 +18,9 @@ return [
     'asset_maintenance_incomplete' => 'crwdns13552:0crwdne13552:0',
     'warranty' => 'crwdns13554:0crwdne13554:0',
     'not_warranty' => 'crwdns13556:0crwdne13556:0',
+    'complete' => [
+        'confirm' => 'crwdns14817:0crwdne14817:0',
+        'success' => 'crwdns14819:0crwdne14819:0',
+        'error' => 'crwdns14821:0crwdne14821:0',
+    ],
 ];

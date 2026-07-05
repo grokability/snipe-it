@@ -14,9 +14,18 @@ class StorageHelper
         if ($disk == 'default') {
             $disk = config('filesystems.default');
         }
+
+        // Neutralize the response so a browser can't be tricked into treating
+        // an uploaded file as active content: force a generic content type,
+        // stop MIME sniffing, and keep the attachment disposition.
+        $safeHeaders = [
+            'Content-Type' => 'application/octet-stream',
+            'X-Content-Type-Options' => 'nosniff',
+        ];
+
         switch (config("filesystems.disks.$disk.driver")) {
             case 'local':
-                return response()->download(Storage::disk($disk)->path($filename)); // works for PRIVATE or public?!
+                return response()->download(Storage::disk($disk)->path($filename), null, $safeHeaders);
 
             case 's3':
                 Storage::disk($disk)->temporaryUrl(
@@ -29,7 +38,7 @@ class StorageHelper
                 );
 
             default:
-                return Storage::disk($disk)->download($filename);
+                return Storage::disk($disk)->download($filename, null, $safeHeaders);
         }
     }
 
@@ -87,31 +96,29 @@ class StorageHelper
      */
     public static function allowSafeInline($file_with_path)
     {
+        // Extension is the coarse gate; the server-detected MIME must also
+        // land in the extension's allowed set (config/filesystems.php →
+        // allowed_inline_display), so a .png that is actually XML/HTML/XSLT
+        // can't ride the extension check into an inline response.
+        $allowed_inline = config('filesystems.allowed_inline_display', []);
 
-        $allowed_inline = [
-            'avif',
-            'gif',
-            'gif',
-            'jpg',
-            'mov',
-            'mp3',
-            'mp4',
-            'ogg',
-            'pdf',
-            'png',
-            'svg',
-            'wav',
-            'webm',
-            'webp',
-        ];
-
-        // The file exists and is allowed to be displayed inline
-        if (Storage::exists($file_with_path) && (in_array(pathinfo($file_with_path, PATHINFO_EXTENSION), $allowed_inline))) {
-            return true;
+        if (! Storage::exists($file_with_path)) {
+            return false;
         }
 
-        return false;
+        $extension = strtolower(pathinfo($file_with_path, PATHINFO_EXTENSION));
 
+        if (! isset($allowed_inline[$extension])) {
+            return false;
+        }
+
+        try {
+            $detected = Storage::mimeType($file_with_path);
+        } catch (\Throwable) {
+            return false;
+        }
+
+        return $detected && in_array($detected, $allowed_inline[$extension], true);
     }
 
     public static function getFiletype($file_with_path)

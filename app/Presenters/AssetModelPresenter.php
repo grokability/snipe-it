@@ -30,7 +30,7 @@ class AssetModelPresenter extends Presenter
             ], [
                 'field' => 'company',
                 'searchable' => true,
-                'sortable' => true,
+                'sortable' => false,
                 'switchable' => true,
                 'title' => trans('admin/companies/table.title'),
                 'visible' => false,

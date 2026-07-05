@@ -8,6 +8,7 @@ return [
     'bulk_checkout' => 'Assegnazione Massiva',
     'bulk_checkin' => 'Check-in massivo',
     'checkin' => 'Restituzione Bene',
+    'checkin_assets' => 'Restituzione Beni',
     'checkout' => 'Assegnazione Bene',
     'clear' => 'Pulisci',
     'clone' => 'Copia Bene',

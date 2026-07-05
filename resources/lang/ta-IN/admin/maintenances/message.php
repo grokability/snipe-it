@@ -18,4 +18,9 @@ return [
     'asset_maintenance_incomplete' => 'இதுவரையிலும் முடிக்கப்படவில்லை',
     'warranty' => 'உத்தரவாதத்தை',
     'not_warranty' => 'உத்தரவாதம் இல்லை',
+    'complete' => [
+        'confirm' => 'Are you sure you want to mark this maintenance as complete? This cannot be undone.',
+        'success' => 'Maintenance marked as complete.',
+        'error' => 'There was an issue marking this maintenance as complete. Please try again.',
+    ],
 ];

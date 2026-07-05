@@ -44,6 +44,7 @@
 
         :root {
             color-scheme: light dark;
+            --color-bg: light-dark(#ecf0f5, #222222);
             --btn-theme-hover-text-color: {{ $nav_link_color ?? 'light-dark(hsl(from var(--main-theme-color) h s calc(l - 10)),hsl(from var(--main-theme-color) h s calc(l - 10)))' }};
             --btn-theme-hover: {{ $nav_link_color ?? 'light-dark(hsl(from var(--main-theme-color) h s calc(l - 10)),hsl(from var(--main-theme-color) h s calc(l - 10)))' }};
             --btn-theme-text-color: {{ $nav_link_color ?? 'light-dark(hsl(from var(--main-theme-color) h s calc(l + 10)),hsl(from var(--main-theme-color) h s calc(l - 10)))' }};
@@ -69,6 +70,10 @@
             --text-success: light-dark(#039516,#4ced61);
             --text-warning: light-dark(#da9113,#f3a51f);
             --input-border-color: light-dark(#d2d6de,#656464);
+            --default-label-link-bg: var(--color-bg);
+            --default-label-link-text: light-dark({{ $link_light_color ?? '#296282' }}, {{ $link_dark_color ?? '#5fa4cc' }});
+            --default-label-link-border: 1px solid light-dark(#b8c7ce, #494747);
+
         }
 
         [data-theme="light"] {
@@ -84,7 +89,6 @@
             --btn-theme-hover: var(--main-theme-hover);
             --callout-bg-color: var(--box-header-bottom-border-color);
             --callout-left-border: var(--box-header-top-border-color);
-            --color-bg: #ecf0f5;
             --header-color: #000000;
             --input-group-bg: hsl(from var(--box-bg) h s calc(l - 5));
             --input-group-fg: hsl(from var(--input-group-bg) h s calc(l - 50));
@@ -109,7 +113,6 @@
             --btn-theme-hover: var(--main-theme-hover);
             --callout-bg-color: var(--box-header-top-border-color);
             --callout-left-border: #323131;
-            --color-bg: #222222;
             --header-color: #ffffff;
             --input-group-bg: hsl(from var(--box-bg) h s calc(l + 10));
             --input-group-fg: hsl(from var(--input-group-bg) h s calc(l + 50));
@@ -231,6 +234,18 @@
         }
 
         /**
+        Safari ignores option[selected] styling on plain <select multiple> until
+        the user interacts with the list, so pre-selected options render with
+        the browser's default light highlight. Force a lighter background on the
+        whole select in dark mode so pre-selected items stay readable.
+         */
+        [data-theme="dark"] select[multiple],
+        [data-theme="dark"] select[multiple] option {
+            background-color: #d2d6de !important;
+            color: #373636 !important;
+        }
+
+        /**
         Multiselect maybe?
          */
         .select2-results__option[aria-selected=true]
@@ -301,6 +316,7 @@
         input[type="radio"]:disabled,
         input[readonly],
         textarea[readonly],
+        textarea:disabled,
         .select2-container--default.select2-container--disabled .select2-selection--single,
         .select2-container--default.select2-container--disabled .select2-selection--multiple,
         .select2-container--default.select2-container--disabled .select2-selection__rendered,
@@ -579,6 +595,21 @@
             color: var(--nav-primary-text-color) !important;
         }
 
+        .label-light {
+            background-color: var(--default-label-link-bg) !important;
+            color: var(--color-fg) !important;
+            font-size: 12px !important;
+            font-weight: normal !important;
+            line-height: 25px;
+            margin-left: 0px;
+            padding-left: 3px;
+
+        }
+
+        a.label-light,
+        a.label-light:hover {
+            color: var(--link-color) !important;
+        }
 
         .dropdown-menu > li > a,
         .dropdown-menu > li > a:link,
@@ -1851,6 +1882,11 @@
                                             {{ trans('general.custom_report') }}
                                         </a>
                                     </li>
+                                    <li {{!! (request()->is('reports.custom.component') ? ' class="active"' : '') !!}}>
+                                        <a href="{{ route('reports.custom.component') }}">
+                                            {{ trans('general.custom_component_report') }}
+                                        </a>
+                                    </li>
                                     <li {{!! (request()->is('reports/audit') ? ' class="active"' : '') !!}}>
                                         <a href="{{ route('reports.audit') }}">
                                             {{ trans('general.audit_report') }}</a>
@@ -2359,6 +2395,8 @@
                 // Use element id to find the text element to hide / show
                 var targetElement = e.id+"-to-show";
                 var hiddenElement = e.id+"-to-hide";
+                var targetEl = document.getElementById(targetElement);
+                var isMarkdown = targetEl && targetEl.dataset.markdown;
                 var audio = new Audio('{{ config('app.url') }}/sounds/lock.mp3');
                 if($(e).hasClass('fa-lock')) {
                     @if ((isset($user)) && ($user->enable_sounds))
@@ -2366,7 +2404,11 @@
                     @endif
                     $(e).removeClass('fa-lock').addClass('fa-unlock');
                     // Show the encrypted custom value and hide the element with asterisks
-                    document.getElementById(targetElement).style.fontSize = "100%";
+                    if (isMarkdown) {
+                        targetEl.style.display = "block";
+                    } else {
+                        targetEl.style.fontSize = "100%";
+                    }
                     document.getElementById(hiddenElement).style.display = "none";
 
                 } else {
@@ -2375,7 +2417,12 @@
                     @endif
                     $(e).removeClass('fa-unlock').addClass('fa-lock');
                     // ClipboardJS can't copy display:none elements so use a trick to hide the value
-                    document.getElementById(targetElement).style.fontSize = "0px";
+                    if (isMarkdown) {
+                        targetEl.style.display = "none";
+                    } else {
+                        // ClipboardJS can't copy display:none elements so use a trick to hide the value
+                        targetEl.style.fontSize = "0px";
+                    }
                     document.getElementById(hiddenElement).style.display = "";
 
                  }
@@ -2497,23 +2544,34 @@
 
                 // Function to add original value to elements
                 function addValue($element) {
-                    // Get original value of the element
-                    var originalValue = $element.text().trim();
+                    var originalHtml = $element.html().trim();
+                    var originalText = $element.text().trim();
+                    var hasHtmlContent = originalHtml !== '' && originalHtml !== originalText;
 
-                    // Show asterisks only for not empty values
-                    if (originalValue !== '') {
-                        // This is necessary to avoid loop because value is generated dynamically
-                        if (originalValue !== '' && originalValue !== asterisks) $element.attr('value', originalValue);
+                    // Show asterisks only for non-empty values
+                    if (originalText !== '') {
+                        var asterisks = '*'.repeat(11);
+                        // Avoid reprocessing already-asterisked elements
+                        if (originalText !== asterisks) {
+                            if (hasHtmlContent) {
+                                $element.data('encrypted-html', originalHtml);
+                            }
+                            $element.attr('value', originalText);
+                        }
 
-                        // Hide the original value and show asterisks of the same length
-                        var asterisks = '*'.repeat(originalValue.length);
+                        // Hide the original value and show a fixed-length asterisk placeholder
                         $element.text(asterisks);
 
-                        // Add click event to show original text
+                        // Add click event to show original value
                         $element.click(function() {
                             var $this = $(this);
                             if ($this.text().trim() === asterisks) {
-                                $this.text($this.attr('value'));
+                                var savedHtml = $this.data('encrypted-html');
+                                if (savedHtml) {
+                                    $this.html(savedHtml);
+                                } else {
+                                    $this.text($this.attr('value'));
+                                }
                             } else {
                                 $this.text(asterisks);
                             }

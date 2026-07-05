@@ -19,6 +19,7 @@ return [
     'required_acceptance' => 'Ka tukuna tenei kaiwhakamahi ki te hono ki te whakauru i tenei waahanga.',
     'global_signature_required_notice' => 'User signatures are currently required globally via the admin settings, so signatures will still be required regardless of this category setting if the item is checked out to a user (versus a location, etc).',
     'required_eula' => 'Ka tukuna tenei kaiwhakamahi i te kape o te EULA',
+    'required_signature' => 'This user will be required to sign to confirm acceptance of this item.',
     'no_default_eula' => 'Karekau he taunga tuatahi taunoa EULA. Tāpirihia tetahi i te Tautuhinga.',
     'update' => 'Whakahōuhia te Kāwai',
     'use_default_eula' => 'Whakamahia te taunoa 123_57__321primary taunoa EULA</a> hei utu mo tenei.',

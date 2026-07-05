@@ -18,7 +18,9 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Intervention\Image\Exception\NotSupportedException;
 use JsonException;
+use Laravel\Passport\Exceptions\OAuthServerException as PassportOAuthServerException;
 use League\OAuth2\Server\Exception\OAuthServerException;
+use Livewire\Exceptions\ComponentNotFoundException;
 use Livewire\Exceptions\PublicPropertyNotFoundException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Throwable;
@@ -39,10 +41,12 @@ class Handler extends ExceptionHandler
         ValidationException::class,
         NotSupportedException::class,
         OAuthServerException::class,
+        PassportOAuthServerException::class,
         JsonException::class,
         SCIMException::class, // these generally don't need to be reported
         InvalidFormatException::class,
         PublicPropertyNotFoundException::class,
+        ComponentNotFoundException::class,
     ];
 
     /**
@@ -76,6 +80,12 @@ class Handler extends ExceptionHandler
         // Livewire tried to set a property that doesn't exist (e.g. stale browser state sending a bare "0" as a property name)
         if ($e instanceof PublicPropertyNotFoundException) {
             return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        // A request named a Livewire component that doesn't exist in this app (e.g. bots probing
+        // for Filament endpoints). Return 404 so it doesn't surface as a 500.
+        if ($e instanceof ComponentNotFoundException) {
+            return response()->json(['message' => 'Component not found.'], 404);
         }
 
         // CSRF token mismatch error

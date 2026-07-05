@@ -6,6 +6,7 @@ use App\Http\Requests\SetupUserRequest;
 use App\Models\Setting;
 use App\Models\User;
 use App\Notifications\FirstAdminNotification;
+use App\Rules\CssColor;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
@@ -166,6 +167,12 @@ class SetupController extends Controller
         $settings->alerts_enabled = 1;
         $settings->pwd_secure_min = 10;
         $settings->brand = 1;
+        $request->validate([
+            'link_light_color' => ['nullable', new CssColor],
+            'link_dark_color' => ['nullable', new CssColor],
+            'nav_link_color' => ['nullable', new CssColor],
+        ]);
+
         $settings->link_light_color = $request->input('link_light_color', '#296282');
         $settings->link_dark_color = $request->input('link_dark_color', '#296282');
         $settings->nav_link_color = $request->input('nav_link_color', '#FFFFFF');

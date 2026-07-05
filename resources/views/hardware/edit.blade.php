@@ -100,9 +100,9 @@
     @include ('partials.forms.edit.status', [ 'required' => 'true'])
     @if (!$item->id)
         @include ('partials.forms.checkout-selector', ['user_select' => 'true','asset_select' => 'true', 'location_select' => 'true', 'style' => 'display:none;'])
-        @include ('partials.forms.edit.user-select', ['translated_name' => trans('admin/hardware/form.checkout_to'), 'fieldname' => 'assigned_user', 'style' => 'display:none;', 'required' => 'false'])
-        @include ('partials.forms.edit.asset-select', ['translated_name' => trans('admin/hardware/form.checkout_to'), 'fieldname' => 'assigned_asset', 'style' => 'display:none;', 'required' => 'false'])
-        @include ('partials.forms.edit.location-select', ['translated_name' => trans('admin/hardware/form.checkout_to'), 'fieldname' => 'assigned_location', 'style' => 'display:none;', 'required' => 'false'])
+        @include ('partials.forms.edit.user-select', ['translated_name' => trans('general.user'), 'fieldname' => 'assigned_user', 'style' => 'display:none;', 'required' => 'false'])
+        @include ('partials.forms.edit.asset-select', ['translated_name' => trans('general.asset'), 'fieldname' => 'assigned_asset', 'style' => 'display:none;', 'required' => 'false'])
+        @include ('partials.forms.edit.location-select', ['translated_name' => trans('general.location'), 'fieldname' => 'assigned_location', 'style' => 'display:none;', 'required' => 'false'])
     @endif
 
     @include ('partials.forms.edit.notes')
@@ -282,19 +282,24 @@
                     $("#selected_status_status").fadeIn();
 
                     if (data == true) {
+                        var checkoutType = $('input[name=checkout_to_type]:checked').val() || 'user';
                         $("#assignto_selector").show();
-                        $("#assigned_user").show();
+                        $("#assigned_user").toggle(checkoutType === 'user');
+                        $("#assigned_asset").toggle(checkoutType === 'asset');
+                        $("#assigned_location").toggle(checkoutType === 'location');
 
                         $("#selected_status_status").removeClass('text-danger');
                         $("#selected_status_status").addClass('text-success');
                         $("#selected_status_status").html('<x-icon type="checkmark" /> {{ trans_choice('admin/hardware/form.asset_deployable', 1)}}');
 
-
                     } else {
                         $("#assignto_selector").hide();
+                        $("#assigned_user").hide();
+                        $("#assigned_asset").hide();
+                        $("#assigned_location").hide();
                         $("#selected_status_status").removeClass('text-success');
                         $("#selected_status_status").addClass('text-danger');
-                        $("#selected_status_status").html('<x-icon type="warning" /> {{ (($item->assigned_to!='') && ($item->assigned_type!='') && ($item->deleted_at == '')) ? trans('admin/hardware/form.asset_not_deployable_checkin') : trans('admin/hardware/form.asset_not_deployable')  }} ');
+                        $("#selected_status_status").html('<x-icon type="warning" /> {{ (($item->assigned_to!='') && ($item->assigned_type!='') && ($item->deleted_at == '')) ? trans_choice('admin/hardware/form.asset_not_deployable_checkin', 1) : trans('admin/hardware/form.asset_not_deployable')  }} ');
                     }
                 }
             });
@@ -314,6 +319,9 @@
             user_add($(".status_id").val());
         });
 
+        @if (isset($cloned_model))
+        $('input[name="serials[1]"]').trigger('focus');
+        @endif
     });
 
 

@@ -31,6 +31,11 @@ return [
             'log_msg' => 'crwdns12570:0crwdne12570:0',
         ],
 
+        'checkin_selected' => [
+            'success' => 'crwdns14899:0crwdne14899:0',
+            'no_seats_selected' => 'crwdns14901:0crwdne14901:0',
+        ],
+
         'checkout_all' => [
             'button' => 'crwdns11561:0crwdne11561:0',
             'modal' => 'crwdns11563:0crwdne11563:0',

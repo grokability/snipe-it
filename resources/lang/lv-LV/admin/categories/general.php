@@ -19,6 +19,7 @@ return [
     'required_acceptance' => 'Šis lietotājs tiks nosūtīts pa e-pastu ar saiti, lai apstiprinātu šī vienuma pieņemšanu.',
     'global_signature_required_notice' => 'User signatures are currently required globally via the admin settings, so signatures will still be required regardless of this category setting if the item is checked out to a user (versus a location, etc).',
     'required_eula' => 'Šis lietotājs saņems EULA kopiju',
+    'required_signature' => 'This user will be required to sign to confirm acceptance of this item.',
     'no_default_eula' => 'Nav atrasta galvenā noklusējuma EULA. Pievienot vienu sadaļā Iestatījumi.',
     'update' => 'Atjaunināt kategoriju',
     'use_default_eula' => 'Tā vietā izmantojiet <a href="#" data-toggle="modal" data-target="#eulaModal">pirmo noklusējuma EULA</a>.',

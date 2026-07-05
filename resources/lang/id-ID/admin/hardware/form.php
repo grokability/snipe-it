@@ -64,4 +64,6 @@ return [
     'optional_infos' => 'Informasi Tambahan',
     'order_details' => 'Informasi Pesanan',
     'calc_eol' => 'Jika mengosongkan tanggal EOL, gunakan perhitungan EOL otomatis berdasarkan tanggal pembelian dan tarif EOL.',
+    'checkin_licenses' => 'Checkin associated license seats',
+    'checkin_child_assets' => 'Checkin associated assets',
 ];

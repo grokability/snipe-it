@@ -4,6 +4,7 @@ namespace Tests;
 
 use App\Http\Middleware\SecurityHeaders;
 use App\Models\Asset;
+use App\Models\Company;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use RuntimeException;
@@ -44,6 +45,12 @@ abstract class TestCase extends BaseTestCase
         // Flush the custom field filter map cache between tests so that
         // dynamically-created custom fields are always picked up fresh.
         Asset::flushCustomFieldFilterMap();
+
+        // Per-request memoization keyed by user id leaks across tests because
+        // RefreshDatabase rolls back the DB but not PHP static state. Auto-
+        // increment may hand the same id to a different test's user with a
+        // different pivot set.
+        Company::flushCompanyIdsCache();
     }
 
     // ...existing code...

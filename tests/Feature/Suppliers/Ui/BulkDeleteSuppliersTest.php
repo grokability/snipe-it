@@ -49,4 +49,25 @@ class BulkDeleteSuppliersTest extends TestCase implements TestsPermissionsRequir
         $this->assertSoftDeleted($supplier2);
         $this->assertSoftDeleted($supplier3);
     }
+
+    public function test_bulk_success_message_pluralizes_by_count()
+    {
+        $solo = Supplier::factory()->create();
+
+        $this->actingAs(User::factory()->deleteSuppliers()->create())
+            ->post(route('suppliers.bulk.delete'), [
+                'ids' => [$solo->id],
+            ])
+            ->assertSessionHas('success', trans_choice('admin/suppliers/message.delete.bulk_success', 1, ['count' => 1]));
+
+        $a = Supplier::factory()->create();
+        $b = Supplier::factory()->create();
+        $c = Supplier::factory()->create();
+
+        $this->actingAs(User::factory()->deleteSuppliers()->create())
+            ->post(route('suppliers.bulk.delete'), [
+                'ids' => [$a->id, $b->id, $c->id],
+            ])
+            ->assertSessionHas('success', trans_choice('admin/suppliers/message.delete.bulk_success', 3, ['count' => 3]));
+    }
 }

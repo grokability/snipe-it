@@ -94,6 +94,12 @@ return [
         'success' => 'Asset checked out successfully.|Assets checked out successfully.',
     ],
 
+    'multi-checkin' => [
+        'error' => 'Asset was not checked in, please try again|Assets were not checked in, please try again',
+        'success' => 'Asset checked in successfully.|Assets checked in successfully.',
+        'no_assets_selected' => 'Dapat kang pumili ng kahit isang asset mula sa listahan',
+    ],
+
     'checkin' => [
         'error' => 'Ang asset ay hindi nai-check in, mangyaring subukang muli',
         'success' => 'Ang asset ay matagumpay na nai-check in.',

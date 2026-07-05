@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
+use App\Http\Middleware\CheckForTwoFactor;
 use App\Http\Transformers\ActionlogsTransformer;
 use App\Http\Transformers\ProfileTransformer;
 use App\Models\CheckoutRequest;
@@ -102,6 +103,13 @@ class ProfileController extends Controller
             abort(403);
         }
 
+        // Refuse to issue tokens for a session that hasn't cleared 2FA, even
+        // if it picked up a Passport cookie elsewhere. Closes the bypass
+        // chain "password → /two-factor cookie → mint token → use forever".
+        if (! CheckForTwoFactor::isComplete($request)) {
+            abort(403, trans('auth/message.two_factor.enter_two_factor_code'));
+        }
+
         $accessTokenName = $request->input('name', 'Auth Token');
 
         if ($accessToken = auth()->user()->createToken($accessTokenName)->accessToken) {
@@ -133,6 +141,10 @@ class ProfileController extends Controller
             abort(403);
         }
 
+        if (! CheckForTwoFactor::isComplete(request())) {
+            abort(403, trans('auth/message.two_factor.enter_two_factor_code'));
+        }
+
         $token = $this->tokenRepository->findForUser(
             $tokenId, auth()->user()->getAuthIdentifier()
         );
@@ -159,6 +171,10 @@ class ProfileController extends Controller
 
         if (! Gate::allows('self.api')) {
             abort(403);
+        }
+
+        if (! CheckForTwoFactor::isComplete(request())) {
+            abort(403, trans('auth/message.two_factor.enter_two_factor_code'));
         }
 
         $tokens = $this->tokenRepository->forUser(auth()->user()->getAuthIdentifier());

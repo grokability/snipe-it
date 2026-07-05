@@ -81,4 +81,33 @@ class IndexAccessoryCheckoutsTest extends TestCase implements TestsFullMultipleC
             ->assertJsonPath('rows.0.assigned_to.id', $userB->id)
             ->assertJsonPath('rows.1.assigned_to.id', $userC->id);
     }
+
+    public function test_checkout_search_by_company_name_returns_matching_users()
+    {
+        $company = Company::factory()->create(['name' => 'Jedi Order']);
+        $jedi = User::factory()->create();
+        $company->users()->attach($jedi);
+        $sith = User::factory()->create();
+
+        $accessory = Accessory::factory()->checkedOutToUsers([$jedi, $sith])->create();
+
+        $this->actingAsForApi(User::factory()->viewAccessories()->create())
+            ->getJson(route('api.accessories.checkedout', ['accessory' => $accessory->id, 'search' => 'Jedi Order']))
+            ->assertOk()
+            ->assertJsonPath('total', 1)
+            ->assertJsonPath('rows.0.assigned_to.id', $jedi->id);
+    }
+
+    public function test_checkout_search_by_company_name_does_not_return_users_in_other_companies()
+    {
+        Company::factory()->create(['name' => 'Jedi Order']);
+        $sith = User::factory()->create();
+
+        $accessory = Accessory::factory()->checkedOutToUsers([$sith])->create();
+
+        $this->actingAsForApi(User::factory()->viewAccessories()->create())
+            ->getJson(route('api.accessories.checkedout', ['accessory' => $accessory->id, 'search' => 'Jedi Order']))
+            ->assertOk()
+            ->assertJsonPath('total', 0);
+    }
 }

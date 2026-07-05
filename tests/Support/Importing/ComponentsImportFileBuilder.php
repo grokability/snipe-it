@@ -31,6 +31,7 @@ class ComponentsImportFileBuilder extends FileBuilder
     protected function getDictionary(): array
     {
         return [
+            'assetTag' => 'Asset Tag',
             'category' => 'Category',
             'companyName' => 'Company',
             'itemName' => 'item Name',
@@ -51,6 +52,7 @@ class ComponentsImportFileBuilder extends FileBuilder
         $faker = fake();
 
         return [
+            'assetTag' => '',
             'category' => Str::random(),
             'companyName' => Str::random()." {$faker->companySuffix}",
             'itemName' => Str::random(),

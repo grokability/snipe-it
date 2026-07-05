@@ -166,13 +166,17 @@ class StoreAssetTest extends TestCase
         $this->assertNotNull($response->json('messages.status_id'));
     }
 
-    public function test_save_with_assigned_to_checks_out()
+    public function test_raw_assigned_to_pair_is_ignored_on_store()
     {
-        $user = User::factory()->create();
+        // Security regression: sending assigned_to + assigned_type on create must
+        // not bypass checkOut() — the asset must be created unassigned with only a
+        // 'create' log entry. Use assigned_user / assigned_asset / assigned_location
+        // instead (those go through the proper checkout workflow).
+        $target = User::factory()->create();
         $response = $this->actingAsForApi(User::factory()->superuser()->create())
             ->postJson(route('api.assets.store'), [
                 'asset_tag' => '1235',
-                'assigned_to' => $user->id,
+                'assigned_to' => $target->id,
                 'assigned_type' => User::class,
                 'model_id' => AssetModel::factory()->create()->id,
                 'status_id' => Statuslabel::factory()->readyToDeploy()->create()->id,
@@ -181,55 +185,64 @@ class StoreAssetTest extends TestCase
             ->assertStatusMessageIs('success');
 
         $asset = Asset::find($response->json()['payload']['id']);
-        $this->assertEquals($user->id, $asset->assigned_to);
-        $this->assertEquals('Asset created successfully. :)', $response->json('messages'));
-
-        $this->assertHasTheseActionLogs($asset, ['create'/* , 'checkout' */]); // TODO - this _should_ be the two actions
+        $this->assertNull($asset->assigned_to, 'assigned_to must not be set via the raw pair');
+        $this->assertHasTheseActionLogs($asset, ['create']);
+        $this->assertDatabaseMissing('action_logs', [
+            'item_type'   => Asset::class,
+            'item_id'     => $asset->id,
+            'action_type' => 'checkout',
+        ]);
     }
 
-    public function test_save_with_no_assigned_type_returns_validation_error()
+    public function test_raw_assigned_to_without_assigned_type_is_ignored_on_store()
     {
         $response = $this->actingAsForApi(User::factory()->superuser()->create())
             ->postJson(route('api.assets.store'), [
                 'asset_tag' => '1235',
                 'assigned_to' => '1',
-                //                'assigned_type' => User::class, //deliberately omit assigned_type
+                // 'assigned_type' => User::class — deliberately omit
                 'model_id' => AssetModel::factory()->create()->id,
                 'status_id' => Statuslabel::factory()->readyToDeploy()->create()->id,
             ])
             ->assertOk()
-            ->assertStatusMessageIs('error');
-        $this->assertNotNull($response->json('messages.assigned_type'));
+            ->assertStatusMessageIs('success');
+
+        $asset = Asset::find($response->json()['payload']['id']);
+        $this->assertNull($asset->assigned_to);
     }
 
-    public function test_save_with_bad_assigned_type_returns_validation_error()
+    public function test_raw_assigned_to_with_bad_assigned_type_is_ignored_on_store()
     {
         $response = $this->actingAsForApi(User::factory()->superuser()->create())
             ->postJson(route('api.assets.store'), [
                 'asset_tag' => '1235',
                 'assigned_to' => '1',
-                'assigned_type' => 'nonsense_string', // deliberately bad assigned_type
+                'assigned_type' => 'nonsense_string',
                 'model_id' => AssetModel::factory()->create()->id,
                 'status_id' => Statuslabel::factory()->readyToDeploy()->create()->id,
             ])
             ->assertOk()
-            ->assertStatusMessageIs('error');
-        $this->assertNotNull($response->json('messages.assigned_type'));
+            ->assertStatusMessageIs('success');
+
+        $asset = Asset::find($response->json()['payload']['id']);
+        $this->assertNull($asset->assigned_to);
     }
 
-    public function test_save_with_assigned_type_and_no_assigned_to_returns_validation_error()
+    public function test_raw_assigned_type_without_assigned_to_is_ignored_on_store()
     {
         $response = $this->actingAsForApi(User::factory()->superuser()->create())
             ->postJson(route('api.assets.store'), [
                 'asset_tag' => '1235',
-                // 'assigned_to'   => '1', //deliberately omit assigned_to
+                // 'assigned_to' => '1' — deliberately omit
                 'assigned_type' => User::class,
                 'model_id' => AssetModel::factory()->create()->id,
                 'status_id' => Statuslabel::factory()->readyToDeploy()->create()->id,
             ])
             ->assertOk()
-            ->assertStatusMessageIs('error');
-        $this->assertNotNull($response->json('messages.assigned_to'));
+            ->assertStatusMessageIs('success');
+
+        $asset = Asset::find($response->json()['payload']['id']);
+        $this->assertNull($asset->assigned_to);
     }
 
     public function test_save_with_pending_status_without_user_is_successful()

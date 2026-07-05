@@ -31,6 +31,11 @@ return [
             'log_msg' => 'Visszaadva a licenc GUI-ban végzett tömeges licenchely-visszaadással.”',
         ],
 
+        'checkin_selected' => [
+            'success' => ':count seat checked in successfully. | :count seats checked in successfully.',
+            'no_seats_selected' => 'No seats were selected.',
+        ],
+
         'checkout_all' => [
             'button' => 'Minden licenchely kadása',
             'modal' => 'Ez a művelet egy licenchelyt ad ki az első elérhető felhasználónak. | Ez a művelet az összes, :available_seats_count licenchelyt kiosztja az első elérhető felhasználóknak. Egy felhasználó az adott licenchelyre elérhetőnek számít, ha még nincs hozzá kiosztva, és az Automatikus licenckiosztás beállítás engedélyezve van a felhasználói fiókjában.',

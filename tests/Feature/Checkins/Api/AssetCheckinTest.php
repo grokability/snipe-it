@@ -191,4 +191,28 @@ class AssetCheckinTest extends TestCase
                 && $event->note === 'hi there';
         }, 1);
     }
+
+    public function test_asset_name_is_cleared_on_checkin_when_clear_name_is_set()
+    {
+        $asset = Asset::factory()->assignedToUser()->create(['name' => 'My Asset Name']);
+
+        $this->actingAsForApi(User::factory()->checkinAssets()->create())
+            ->postJson(route('api.asset.checkin', $asset), ['clear_name' => '1'])
+            ->assertOk()
+            ->assertStatusMessageIs('success');
+
+        $this->assertNull($asset->refresh()->name);
+    }
+
+    public function test_asset_name_is_not_cleared_on_checkin_when_clear_name_is_not_set()
+    {
+        $asset = Asset::factory()->assignedToUser()->create(['name' => 'My Asset Name']);
+
+        $this->actingAsForApi(User::factory()->checkinAssets()->create())
+            ->postJson(route('api.asset.checkin', $asset))
+            ->assertOk()
+            ->assertStatusMessageIs('success');
+
+        $this->assertEquals('My Asset Name', $asset->refresh()->name);
+    }
 }

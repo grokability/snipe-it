@@ -21,7 +21,7 @@ return [
     'Expected_Checkin_Date' => 'Ihr ausgechecktes Asset ist fällig zur Rückgabe am :date.',
     'Expected_Checkin_Date_Past' => 'Ein an Sie ausgechecktes Asset sollte am :date erneut eingecheckt werden.',
     'Expected_Checkin_Notification' => 'Erinnerung: :name Rückgabedatum nähert sich',
-    'Expected_Checkin_Notification_Pastdue' => 'ÜBERFÄlliG: :name ist überfällig für den Check-in',
+    'Expected_Checkin_Notification_Pastdue' => 'ÜBERFÄLLIG: :name ist überfällig für den Check-in',
     'Expected_Checkin_Report' => 'Bericht über erwartete Asset Rückgaben',
     'Expiring_Assets_Report' => 'Bericht über ablaufende Gegenstände',
     'Expiring_Licenses_Report' => 'Bericht über ablaufende Lizenzen',

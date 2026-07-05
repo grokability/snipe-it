@@ -173,6 +173,7 @@ return [
     'url' => 'Polje :attribute mora biti veljaven URL.',
     'ulid' => 'Polje :attribute mora biti veljaven ULID.',
     'uuid' => 'Polje :attribute mora biti veljaven UUID.',
+    'valid_css_color' => 'The :attribute field must be a valid CSS color (hex, rgb, rgba, hsl, or hsla).',
     'fmcs_location' => 'V skrbniških nastavitvah je omogočena polna podpora za več podjetij in določanje obsega lokacij, izbrana lokacija in izbrano podjetje pa nista združljiva.',
     'is_unique_across_company_and_location' => 'The :attribute must be unique within the selected company and location.',
 

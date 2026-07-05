@@ -13,6 +13,7 @@ return [
     'pending' => 'Pending',
     'status_type' => 'Status Type',
     'show_in_nav' => 'Show in side nav',
+    'status_label' => 'Status Label',
     'title' => 'Status Labels',
     'undeployable' => 'Undeployable',
     'update' => 'Update Status Label',

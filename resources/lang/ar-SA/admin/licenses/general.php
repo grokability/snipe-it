@@ -31,6 +31,11 @@ return [
             'log_msg' => 'Checked in via bulk license checkin in license GUI',
         ],
 
+        'checkin_selected' => [
+            'success' => ':count seat checked in successfully. | :count seats checked in successfully.',
+            'no_seats_selected' => 'No seats were selected.',
+        ],
+
         'checkout_all' => [
             'button' => 'إخراج جميع المقاعد',
             'modal' => 'سيؤدي هذا الإجراء إلى دفع مقعد واحد إلى أول مستخدم متاح. <unk> سيؤدي هذا الإجراء إلى دفع جميع مقاعد :available_seats_count إلى أول مستخدمين متاحين. يعتبر المستخدم متوفراً لهذا المقعد إذا لم يكن لديك بالفعل هذا الترخيص الذي تم إخراجه إليهم. ويتم تمكين خاصية ترخيص التعيين التلقائي على حساب المستخدم الخاص بهم.',

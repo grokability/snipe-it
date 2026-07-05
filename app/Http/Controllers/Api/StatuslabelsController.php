@@ -35,6 +35,7 @@ class StatuslabelsController extends Controller
             'color',
             'notes',
             'default_label',
+            'show_in_nav',
         ];
 
         $statuslabels = Statuslabel::with('adminuser')->withCount('assets as assets_count');
@@ -131,7 +132,10 @@ class StatuslabelsController extends Controller
     public function show($id): array
     {
         $this->authorize('view', Statuslabel::class);
-        $statuslabel = Statuslabel::findOrFail($id);
+        // Match index()'s eager load so isDeletable() (via available_actions.delete
+        // and bulk_selectable.delete) reads the preloaded count instead of firing
+        // a fallback assets()->count() query.
+        $statuslabel = Statuslabel::withCount('assets as assets_count')->findOrFail($id);
 
         return (new StatuslabelsTransformer)->transformStatuslabel($statuslabel);
     }

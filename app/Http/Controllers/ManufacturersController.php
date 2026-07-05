@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\Manufacturers\DeleteManufacturerAction;
+use App\Actions\Manufacturers\DestroyManufacturerAction;
 use App\Exceptions\ItemStillHasChildren;
 use App\Http\Requests\ImageUploadRequest;
 use App\Models\Actionlog;
@@ -176,7 +176,7 @@ class ManufacturersController extends Controller
     {
         $this->authorize('delete', $manufacturer);
         try {
-            DeleteManufacturerAction::run($manufacturer);
+            DestroyManufacturerAction::run($manufacturer);
         } catch (ItemStillHasChildren $e) {
             return redirect()->route('manufacturers.index')->with('error', trans('general.bulk_delete_associations.general_assoc_warning', ['item' => trans('general.manufacturer')]));
         } catch (\Exception $e) {

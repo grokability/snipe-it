@@ -43,7 +43,8 @@ class ComponentCheckinController extends Controller
             }
             $this->authorize('checkin', $component);
 
-            return view('components/checkin', compact('component_assets', 'component', 'asset'));
+            return view('components/checkin', compact('component_assets', 'component', 'asset'))
+                ->with('snipe_component', $component);
         }
 
         return redirect()->route('components.index')->with('error', trans('admin/components/messages.not_found'));

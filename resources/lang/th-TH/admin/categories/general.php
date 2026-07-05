@@ -19,6 +19,7 @@ return [
     'required_acceptance' => 'ผู้ใช้นี้จะสามารถส่งอีเมล ด้วยลิงค์เพื่อการยืนยันยอมรับรายการนี้',
     'global_signature_required_notice' => 'User signatures are currently required globally via the admin settings, so signatures will still be required regardless of this category setting if the item is checked out to a user (versus a location, etc).',
     'required_eula' => 'ผู้ใช้นี้จะส่งอีเมลสำเนาของ EULA',
+    'required_signature' => 'This user will be required to sign to confirm acceptance of this item.',
     'no_default_eula' => 'ไม่พบข้อกำหนดการใช้งานหลักใดๆ ในการตั้งค่า',
     'update' => 'ปรับปรุงแก้ไขหมวดหมู่',
     'use_default_eula' => 'ใช้<a href="#" data-toggle="modal" data-target="#eulaModal">เป็นข้อกำหนดการใช้งานหลัก</a>แทน.',

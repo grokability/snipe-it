@@ -31,6 +31,11 @@ return [
             'log_msg' => 'Checked in via bulk license checkin in license GUI',
         ],
 
+        'checkin_selected' => [
+            'success' => ':count seat checked in successfully. | :count seats checked in successfully.',
+            'no_seats_selected' => 'No seats were selected.',
+        ],
+
         'checkout_all' => [
             'button' => 'Luovuta kaikki paikat',
             'modal' => 'Tämä toiminto luovuttaa yhden paikan ensimmäiselle käytettävissä olevalle käyttäjälle. - Tämä toiminto luovuttaa kaikki :available_seats_count paikat ensimmäisille saatavilla oleville käyttäjille. Käyttäjää pidetään saatavilla tälle paikalle, jos hänellä ei ole jo tätä lisenssiä luovutettuna heille, ja lisenssien automaattinen luovuttaminen on käytössä heidän käyttäjätilillään.',

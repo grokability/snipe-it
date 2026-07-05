@@ -173,6 +173,7 @@ return [
     'url' => ':attribute ველი უნდა იყოს ვალიდური URL მისამართი.',
     'ulid' => ':attribute ველი უნდა იყოს ვალიდური ULID.',
     'uuid' => ':attribute ველი უნდა იყოს ვალიდური UUID.',
+    'valid_css_color' => 'The :attribute field must be a valid CSS color (hex, rgb, rgba, hsl, or hsla).',
     'fmcs_location' => 'ადმინისტრატორის პარამეტრებში ჩართულია კომპანიის მრავალმხრივი მხარდაჭერა და ლოკაციის გამორკვევა, ხოლო არჩეული ლოკაცია და კომპანია ერთმანეთთან შეუთავსებელია.',
     'is_unique_across_company_and_location' => 'The :attribute must be unique within the selected company and location.',
 

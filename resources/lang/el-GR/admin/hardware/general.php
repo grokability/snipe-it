@@ -8,6 +8,7 @@ return [
     'bulk_checkout' => 'Μαζικός έλεγχος',
     'bulk_checkin' => 'Bulk Checkin',
     'checkin' => 'Checkin Asset',
+    'checkin_assets' => 'Checkin Assets',
     'checkout' => 'Ταμείο ελέγχου',
     'clear' => 'Clear',
     'clone' => 'Κλώνος χρήστη',

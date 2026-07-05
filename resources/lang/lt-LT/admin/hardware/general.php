@@ -8,6 +8,7 @@ return [
     'bulk_checkout' => 'Išduoti kelis',
     'bulk_checkin' => 'Paimti kelis',
     'checkin' => 'Paimti turtą',
+    'checkin_assets' => 'Paimti turtą',
     'checkout' => 'Išduoti turtą',
     'clear' => 'Išvalyti',
     'clone' => 'Klonuoti turtą',

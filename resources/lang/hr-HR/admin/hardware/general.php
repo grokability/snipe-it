@@ -8,6 +8,7 @@ return [
     'bulk_checkout' => 'Skupno Zaduživanje/Izdavanje',
     'bulk_checkin' => 'Skupno Razduživanje/Povrat',
     'checkin' => 'Provjera imovine',
+    'checkin_assets' => 'Checkin Assets',
     'checkout' => 'Asset Checkout',
     'clear' => 'Očisti',
     'clone' => 'Klonska imovina',

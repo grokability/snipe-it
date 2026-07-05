@@ -1,7 +1,6 @@
 @props([
     'box_style' => 'default',
     'header' => false,
-    'footer' => false,
 ])
 @aware(['name', 'route'])
 
@@ -32,13 +31,16 @@
             </div>
         @endif
 
-            @if (($slot) && (!$slot->isEmpty()))
-                {{ $slot }}
-            @endif
+            {{-- Render slot unconditionally — ComponentSlot::isEmpty()
+                 materializes the slot to inspect it, doubling every DB call
+                 inside. An empty slot renders nothing visible. --}}
+            {{ $slot }}
 
     </div>
 
-    @if ($route)
+    @if (isset($customfooter))
+        {{ $customfooter }}
+    @elseif ($route)
         <x-box.footer />
     @endif
 </div>

@@ -48,10 +48,10 @@ class CheckoutAcceptanceFactory extends Factory
             }
 
             if ($acceptance->checkoutable instanceof Asset && $acceptance->assignedTo instanceof User) {
-                $acceptance->checkoutable->update([
-                    'assigned_to' => $acceptance->assigned_to_id,
-                    'assigned_type' => get_class($acceptance->assignedTo),
-                ]);
+                $asset = $acceptance->checkoutable;
+                $asset->assigned_to = $acceptance->assigned_to_id;
+                $asset->assigned_type = get_class($acceptance->assignedTo);
+                $asset->save();
             }
         });
     }

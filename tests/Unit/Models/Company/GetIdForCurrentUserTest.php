@@ -4,6 +4,7 @@ namespace Tests\Unit\Models\Company;
 
 use App\Models\Company;
 use App\Models\User;
+use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
 
 class GetIdForCurrentUserTest extends TestCase
@@ -24,12 +25,13 @@ class GetIdForCurrentUserTest extends TestCase
         $this->assertEquals(2000, Company::getIdForCurrentUser(2000));
     }
 
-    public function test_returns_non_super_users_company_id_when_full_company_support_enabled()
+    public function test_throws_when_non_super_user_submits_company_they_do_not_belong_to()
     {
         $this->settings->enableMultipleFullCompanySupport();
 
         $this->actingAs(User::factory()->forCompany(['id' => 2000])->create());
-        $this->assertEquals(2000, Company::getIdForCurrentUser(1000));
+        $this->expectException(ValidationException::class);
+        Company::getIdForCurrentUser(1000);
     }
 
     public function test_returns_null_for_non_super_user_without_company_id_when_full_company_support_enabled()

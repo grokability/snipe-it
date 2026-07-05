@@ -47,8 +47,11 @@ class AssetImportCreatedAtTest extends TestCase
         $csv = "asset tag,item name,category,status\n";
         $csv .= "TEST-001,Test Asset Updated,{$category->name},{$statusLabel->name}\n";
 
-        // Perform import with update flag
-        $this->actingAsForApi(User::factory()->canImport()->create())
+        // Perform import with update flag. The same user has to upload and
+        // process, because the process endpoint scopes to the file's uploader.
+        $importer = User::factory()->canImport()->create();
+
+        $this->actingAsForApi($importer)
             ->postJson(route('api.imports.store'), [
                 'files' => [
                     $this->createFakeUploadedFile('test.csv', $csv),
@@ -58,7 +61,7 @@ class AssetImportCreatedAtTest extends TestCase
 
         // Import the file
         $import = Import::latest()->first();
-        $this->actingAsForApi(User::factory()->canImport()->create())
+        $this->actingAsForApi($importer)
             ->postJson(route('api.imports.importFile', $import->id), [
                 'import-type' => 'asset',
                 'import-update' => true,
@@ -118,7 +121,11 @@ class AssetImportCreatedAtTest extends TestCase
             $csv .= "{$asset->asset_tag},{$asset->name},{$category->name},{$statusLabel->name}\n";
         }
 
-        $this->actingAsForApi(User::factory()->canImport()->create())
+        // Same user has to upload and process, because the process endpoint
+        // scopes to the file's uploader.
+        $importer = User::factory()->canImport()->create();
+
+        $this->actingAsForApi($importer)
             ->postJson(route('api.imports.store'), [
                 'files' => [
                     $this->createFakeUploadedFile('test1.csv', $csv),
@@ -127,7 +134,7 @@ class AssetImportCreatedAtTest extends TestCase
             ->assertSuccessful();
 
         $import1 = Import::latest()->first();
-        $this->actingAsForApi(User::factory()->canImport()->create())
+        $this->actingAsForApi($importer)
             ->postJson(route('api.imports.importFile', $import1->id), [
                 'import-type' => 'asset',
                 'import-update' => true,
@@ -141,7 +148,7 @@ class AssetImportCreatedAtTest extends TestCase
             ->assertSuccessful();
 
         // Perform second import update
-        $this->actingAsForApi(User::factory()->canImport()->create())
+        $this->actingAsForApi($importer)
             ->postJson(route('api.imports.store'), [
                 'files' => [
                     $this->createFakeUploadedFile('test2.csv', $csv),
@@ -150,7 +157,7 @@ class AssetImportCreatedAtTest extends TestCase
             ->assertSuccessful();
 
         $import2 = Import::latest()->first();
-        $this->actingAsForApi(User::factory()->canImport()->create())
+        $this->actingAsForApi($importer)
             ->postJson(route('api.imports.importFile', $import2->id), [
                 'import-type' => 'asset',
                 'import-update' => true,

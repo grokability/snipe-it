@@ -16,6 +16,14 @@
 
     {!! $errors->first('location_id', '<div class="col-md-8 col-md-offset-3"><span class="alert-msg" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i> :message</span></div>') !!}
 
+    @if ($snipeSettings->full_multiple_companies_support == '1' && $snipeSettings->scope_locations_fmcs == '1')
+        @cannot('superadmin')
+            <div class="col-md-8 col-md-offset-3">
+                <p class="help-block"><x-icon type="tip" /> {{ trans('general.fmcs_location_select_note') }}</p>
+            </div>
+        @endcannot
+    @endif
+
 </div>
 
 

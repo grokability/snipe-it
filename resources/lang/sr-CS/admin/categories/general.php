@@ -19,6 +19,7 @@ return [
     'required_acceptance' => 'Korisniku će biti poslati email sa linkom za potvrdu prihvatanja ove stavke.',
     'global_signature_required_notice' => 'Potpisi korisnika su trenutno globalno obavezujući putem administratorskih postavki, tako da će potpisi biti neophodni bez obzira od postavke ove kategorije ako je stavka zadužena korisniku (u odnosu na lokaciju, itd.).',
     'required_eula' => 'Korisniku će biti poslat email sa kopijom EULA',
+    'required_signature' => 'Ovaj korisnik će biti u obavezi da se prijavi i potvrdi prihvatanje ove stavke.',
     'no_default_eula' => 'Nije pronadjena default EULA. Dodajte jednu u Postavkama, (Settings).',
     'update' => 'Ažuriraj Kategoriju',
     'use_default_eula' => 'Umesto toga upotrebite <a href="#" data-toggle="modal" data-target="#eulaModal">primarnu, default postavku EULA</a>.',

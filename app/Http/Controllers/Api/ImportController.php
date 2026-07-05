@@ -28,9 +28,17 @@ class ImportController extends Controller
     public function index(): JsonResponse|array
     {
         $this->authorize('import');
-        $imports = Import::with('adminuser')->latest()->get();
 
-        return (new ImportsTransformer)->transformImports($imports);
+        // Silently scope to the caller's own imports unless they're a superuser.
+        // The `import` permission is grantable to any user, but a stored import
+        // file (and the first CSV row exposed by the transformer) is only meant
+        // for whoever uploaded it. Superusers keep the full view.
+        $query = Import::with('adminuser')->latest();
+        if (! auth()->user()->isSuperUser()) {
+            $query->where('created_by', auth()->id());
+        }
+
+        return (new ImportsTransformer)->transformImports($query->get());
     }
 
     /**
@@ -205,7 +213,11 @@ class ImportController extends Controller
 
         $import = Import::find($import_id);
 
-        if (is_null($import)) {
+        // Non-owners get the same "not found" branch as a missing record so we
+        // don't leak existence of another user's uploaded import file, and so
+        // an attacker with the `import` permission can't replay a stored file
+        // by guessing its (sequential) ID. Superusers can process any import.
+        if (is_null($import) || ($import->created_by !== auth()->id() && ! auth()->user()->isSuperUser())) {
             $error[0][0] = trans('validation.exists', ['attribute' => 'file']);
 
             return response()->json(Helper::formatStandardApiResponse('import-errors', null, $error), 500);

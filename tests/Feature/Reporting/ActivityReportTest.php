@@ -4,8 +4,10 @@ namespace Tests\Feature\Reporting;
 
 use App\Models\Actionlog;
 use App\Models\Asset;
+use App\Models\AssetModel;
 use App\Models\Company;
 use App\Models\User;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
 
@@ -56,6 +58,76 @@ class ActivityReportTest extends TestCase
                 'rows',
             ])
             ->assertJson(fn (AssertableJson $json) => $json->has('rows', 2)->etc());
+    }
+
+    public function test_null_company_upload_logs_visible_in_activity_report_with_fmcs_enabled()
+    {
+        // AssetModel and Company objects have no company_id column, so their upload logs always
+        // get company_id = null. With FMCS active the scope previously applied
+        // WHERE company_id IN (...) which excluded NULLs, hiding these logs from the activity report.
+        $this->settings->enableMultipleFullCompanySupport();
+
+        $company = Company::factory()->create();
+        $superUser = User::factory()->superuser()->create();
+
+        $viewingUser = User::factory()
+            ->canViewReports()
+            ->create(['company_id' => $company->id]);
+
+        $model = AssetModel::factory()->create();
+
+        // Superuser uploads a file to the AssetModel (log gets company_id = null)
+        $this->actingAsForApi($superUser)
+            ->post(
+                route('api.files.store', ['object_type' => 'models', 'id' => $model->id]),
+                ['file' => [UploadedFile::fake()->create('test.jpg', 100)]]
+            )
+            ->assertOk();
+
+        // Non-superuser with activity.view (reports.view) should see the uploaded log
+        $this->actingAsForApi($viewingUser)
+            ->getJson(route('api.activity.index', [
+                'action_type' => 'uploaded',
+                'item_type' => 'AssetModel',
+                'item_id' => $model->id,
+            ]))
+            ->assertOk()
+            ->assertJson(fn (AssertableJson $json) => $json->has('rows', 1)->etc());
+    }
+
+    public function test_upload_logs_for_another_companys_asset_not_visible_in_activity_report_with_fmcs()
+    {
+        // Our null-company fix adds OR company_id IS NULL to action_log queries.
+        // Verify this does NOT leak logs that have a real company_id belonging to a different company.
+        $this->settings->enableMultipleFullCompanySupport();
+
+        $companyA = Company::factory()->create();
+        $companyB = Company::factory()->create();
+
+        $superUser = User::factory()->superuser()->create();
+        $assetInCompanyA = Asset::factory()->create(['company_id' => $companyA->id]);
+
+        $viewerInCompanyB = User::factory()
+            ->canViewReports()
+            ->create(['company_id' => $companyB->id]);
+
+        // Superuser uploads a file to company A's asset (log gets company_id = companyA->id)
+        $this->actingAsForApi($superUser)
+            ->post(
+                route('api.files.store', ['object_type' => 'hardware', 'id' => $assetInCompanyA->id]),
+                ['file' => [UploadedFile::fake()->create('test.jpg', 100)]]
+            )
+            ->assertOk();
+
+        // User in company B should not see the upload log for company A's asset
+        $this->actingAsForApi($viewerInCompanyB)
+            ->getJson(route('api.activity.index', [
+                'action_type' => 'uploaded',
+                'item_type' => 'asset',
+                'item_id' => $assetInCompanyA->id,
+            ]))
+            ->assertOk()
+            ->assertJson(fn (AssertableJson $json) => $json->has('rows', 0)->etc());
     }
 
     public function test_records_are_scoped_to_company_when_multiple_company_support_enabled()

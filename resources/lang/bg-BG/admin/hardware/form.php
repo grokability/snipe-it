@@ -64,4 +64,6 @@ return [
     'optional_infos' => 'Допълнителна информация',
     'order_details' => 'Информация за състоянието на поръчка',
     'calc_eol' => 'Ако нулирате EOL датата, ще се използва EOL дата базирана на дата на закупуване + EOL норма.',
+    'checkin_licenses' => 'Checkin associated license seats',
+    'checkin_child_assets' => 'Checkin associated assets',
 ];

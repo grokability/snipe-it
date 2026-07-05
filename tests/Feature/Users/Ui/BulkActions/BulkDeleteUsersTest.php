@@ -80,7 +80,7 @@ class BulkDeleteUsersTest extends TestCase
                 'delete_user' => '1',
             ])
             ->assertRedirect(route('users.index'))
-            ->assertSessionHas('success', trans('general.bulk_checkin_delete_success'));
+            ->assertSessionHas('error', trans('general.insufficient_permissions'));
 
         $this->assertNotSoftDeleted($admin);
     }
@@ -112,7 +112,7 @@ class BulkDeleteUsersTest extends TestCase
         $this->attachAccessoryToUsers($accessoryA, [$userA, $userB, $userC]);
         $this->attachAccessoryToUsers($accessoryB, [$userA, $userB]);
 
-        $this->actingAs(User::factory()->editUsers()->create())
+        $this->actingAs(User::factory()->editUsers()->checkinAccessories()->create())
             ->post(route('users/bulksave'), [
                 'ids' => [
                     $userA->id,
@@ -141,7 +141,7 @@ class BulkDeleteUsersTest extends TestCase
         $lonelyAsset = $this->assignAssetToUser($userB);
         $assetForUserC = $this->assignAssetToUser($userC);
 
-        $this->actingAs(User::factory()->editUsers()->create())
+        $this->actingAs(User::factory()->editUsers()->checkinAssets()->create())
             ->post(route('users/bulksave'), [
                 'ids' => [
                     $userA->id,
@@ -196,7 +196,7 @@ class BulkDeleteUsersTest extends TestCase
         $lonelyLicenseSeat = LicenseSeat::factory()->assignedToUser($userB)->create();
         $licenseSeatForUserC = LicenseSeat::factory()->assignedToUser($userC)->create();
 
-        $this->actingAs(User::factory()->editUsers()->create())
+        $this->actingAs(User::factory()->editUsers()->checkinLicenses()->create())
             ->post(route('users/bulksave'), [
                 'ids' => [
                     $userA->id,

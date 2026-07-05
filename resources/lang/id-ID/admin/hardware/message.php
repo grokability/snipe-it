@@ -94,6 +94,12 @@ return [
         'success' => 'Aset berhasil dipinjamkan.|Aset berhasil dipinjamkan.',
     ],
 
+    'multi-checkin' => [
+        'error' => 'Asset was not checked in, please try again|Assets were not checked in, please try again',
+        'success' => 'Asset checked in successfully.|Assets checked in successfully.',
+        'no_assets_selected' => 'Anda harus memilih setidaknya satu aset dari daftar',
+    ],
+
     'checkin' => [
         'error' => 'Aset gagal di terima, silahkan coba kembali',
         'success' => 'Sukses menerima aset.',

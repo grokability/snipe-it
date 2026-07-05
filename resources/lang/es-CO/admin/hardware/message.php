@@ -94,6 +94,12 @@ return [
         'success' => 'El activo fue asignado correctamente|Los activos fueron asignados correctamente.',
     ],
 
+    'multi-checkin' => [
+        'error' => 'Asset was not checked in, please try again|Assets were not checked in, please try again',
+        'success' => 'Asset checked in successfully.|Assets checked in successfully.',
+        'no_assets_selected' => 'Debe seleccionar al menos un activo de la lista',
+    ],
+
     'checkin' => [
         'error' => 'El activo no se pudo ingresar, por favor inténtelo de nuevo',
         'success' => 'El activo fue ingresado exitosamente.',

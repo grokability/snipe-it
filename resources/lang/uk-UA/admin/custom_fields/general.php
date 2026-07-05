@@ -64,8 +64,10 @@ return [
         'text' => 'Текстовий блок',
         'listbox' => 'Список',
         'textarea' => 'Текстове поле (багаторядкове)',
+        'markdown-textarea' => 'Markdown Textarea',
         'checkbox' => 'Галочка',
         'radio' => 'Перемикач',
     ],
+    'markdown_supported' => 'Markdown is supported',
     'general_help_text' => 'Користувацькі поля зберігають додаткову інформацію, не охоплену стандартними полями активів. <a href="https://snipe-it.readme.io/docs/custom-fields#/"><i class="fa fa-external-link"></i></a>.',
 ];

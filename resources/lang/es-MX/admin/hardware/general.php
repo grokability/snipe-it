@@ -8,6 +8,7 @@ return [
     'bulk_checkout' => 'Asignación masiva',
     'bulk_checkin' => 'Devolución masiva',
     'checkin' => 'Ingresar activo',
+    'checkin_assets' => 'Ingresar activos',
     'checkout' => 'Asignar activo',
     'clear' => 'Despejar',
     'clone' => 'Clonar activo',

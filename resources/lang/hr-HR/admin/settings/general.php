@@ -307,7 +307,7 @@ return [
     'two_factor_enter_code' => 'Unesite dvoznamenkasti kôd',
     'two_factor_config_complete' => 'Pošaljite šifru',
     'two_factor_enabled_edit_not_allowed' => 'Vaš administrator vam ne dopušta uređivanje ove postavke.',
-    'two_factor_enrollment_text' => 'Potrebna je autentikacija dva faktora, međutim vaš uređaj još nije upisan. Otvorite aplikaciju Google autentifikator i skenirajte QR kôd u nastavku da biste registrirali svoj uređaj. Nakon što upišete uređaj, unesite kôd u nastavku',
+    'two_factor_enrollment_text' => "Potrebna je autentikacija dva faktora, međutim vaš uređaj još nije upisan. Otvorite aplikaciju Google autentifikator i skenirajte QR kôd u nastavku da biste registrirali svoj uređaj. Nakon što upišete uređaj, unesite kôd u nastavku",
     'require_accept_signature' => 'Potražite potpis',
     'require_accept_signature_help_text' => 'Enabling this feature will require users to physically sign off on accepting items. This will override any category-specific signature requirements.',
     'require_checkinout_notes' => 'Require Notes on Checkin/Checkout',

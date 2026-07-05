@@ -160,11 +160,22 @@ class AssetModel extends SnipeModel
 
     public function percentRemaining()
     {
-        if ($this->availableAssets()->count() == 0) {
+        // Prefer the pre-loaded withCount attributes — Api\AssetModelsController
+        // ::index already eager-loads these as `remaining` (available count)
+        // and `assets_count` (total) via correlated subqueries on the parent
+        // models SELECT. Reading them here avoids re-running the same counts
+        // as N+1 queries per model in the transformer loop. Read straight off
+        // getAttributes() rather than via __get so we don't accidentally
+        // trigger a relation load when the attribute isn't there.
+        $raw = $this->getAttributes();
+        $available = $raw['remaining'] ?? $this->availableAssets()->count();
+        if ($available === 0) {
             return 0;
         }
 
-        return $this->availableAssets()->count() / $this->assets()->count() * 100;
+        $total = $raw['assets_count'] ?? $this->assets()->count();
+
+        return $available / $total * 100;
     }
 
     /**

@@ -9,6 +9,7 @@
     'multiple' => false,
     'helpText' => null,
     'hideNewButton' => false,
+    'companyId' => null,
 ])
 
 @php
@@ -41,12 +42,15 @@
             @if ($multiple)
                 multiple
             @endif
+            @if ($companyId)
+                data-company-id="{{ $companyId }}"
+            @endif
         >
             <option value=""></option>
             @if ($selected)
                 @foreach(Arr::wrap($selected) as $value)
                     <option value="{{ $value }}" selected="selected" role="option" aria-selected="true"  role="option">
-                        {{ optional(Location::find($value))->name }}
+                        {{ Location::find($value)?->name }}
                     </option>
                 @endforeach
             @endif

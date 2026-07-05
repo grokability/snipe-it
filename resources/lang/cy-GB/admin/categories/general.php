@@ -19,6 +19,7 @@ return [
     'required_acceptance' => 'Fe geith y defnyddiwr yma ebost hefo linc i cofnodi derbyn yr eitem yma.',
     'global_signature_required_notice' => 'User signatures are currently required globally via the admin settings, so signatures will still be required regardless of this category setting if the item is checked out to a user (versus a location, etc).',
     'required_eula' => 'Fe geith y defnyddiwr yma copi o\'r CTDT trwy ebost',
+    'required_signature' => 'This user will be required to sign to confirm acceptance of this item.',
     'no_default_eula' => 'Wedi methu darganfod CTDT, Ychwanegwch un yn gosodiadau.',
     'update' => 'Diweddaru Categori',
     'use_default_eula' => 'Defnyddio\'r <a href="#" data-toggle="modal" data-target="#eulaModal">prif CTDT diofyn</a> yn lle.',

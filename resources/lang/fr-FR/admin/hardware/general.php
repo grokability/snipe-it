@@ -8,6 +8,7 @@ return [
     'bulk_checkout' => 'Attribution par lot',
     'bulk_checkin' => 'Bulk Checkin',
     'checkin' => 'Retour des Biens',
+    'checkin_assets' => 'Restitution d\'actifs',
     'checkout' => 'Associer l\'actif',
     'clear' => 'Clear',
     'clone' => 'Cloner le Bien',

@@ -53,9 +53,23 @@ a.accordion-header {
   color: #333;
 }
 
+// Mirror BS3's .form-group spacing — same margin-bottom, no padding —
+// plus a clearfix so floated col-md-* children don't leak past the
+// wrapper. Without the clearfix, a row whose floats don't fill the full
+// 12 cols (e.g. password_confirmation at 3 + 8) leaves a gap on the
+// right edge that pulls the next row's first child up alongside it,
+// visually offsetting that row's label/input.
 .dynamic-form-row {
-  padding: 10px;
-  margin: 20px;
+  margin-bottom: 15px;
+
+  &::before,
+  &::after {
+    content: " ";
+    display: table;
+  }
+  &::after {
+    clear: both;
+  }
 }
 
 
@@ -338,6 +352,12 @@ body {
 
 .bootstrap-table .fixed-table-container .fixed-table-body .fixed-table-loading {
   z-index: 0 !important;
+}
+
+// Clip the absolutely-positioned fixed-column overlays so they cannot
+// bleed past the container's bottom edge into the pagination area.
+.bootstrap-table .fixed-table-container {
+  overflow: hidden;
 }
 
 @media print {
@@ -695,21 +715,22 @@ h4 {
 
  See https://github.com/grokability/snipe-it/issues/7989
  */
-th.css-accessory > .th-inner,
-th.css-accessory-alt > .th-inner,
-th.css-barcode > .th-inner,
-th.css-component > .th-inner,
-th.css-consumable > .th-inner,
-th.css-envelope > .th-inner,
-th.css-house-flag > .th-inner,
-th.css-house-laptop > .th-inner,
-th.css-house-user > .th-inner,
-th.css-license > .th-inner,
-th.css-location > .th-inner,
-th.css-users > .th-inner,
-th.css-currency > .th-inner,
-th.css-child-locations > .th-inner,
-th.css-history > .th-inner
+thead th.css-accessory > .th-inner,
+thead th.css-accessory-alt > .th-inner,
+thead th.css-barcode > .th-inner,
+thead th.css-component > .th-inner,
+thead th.css-consumable > .th-inner,
+thead th.css-envelope > .th-inner,
+thead th.css-house-flag > .th-inner,
+thead th.css-house-laptop > .th-inner,
+thead th.css-house-user > .th-inner,
+thead th.css-license > .th-inner,
+thead th.css-location > .th-inner,
+thead th.css-maintenances > .th-inner,
+thead th.css-users > .th-inner,
+thead th.css-currency > .th-inner,
+thead th.css-child-locations > .th-inner,
+thead th.css-history > .th-inner
 {
   font-size: 0px;
   line-height: 0.75 !important;
@@ -720,22 +741,23 @@ th.css-history > .th-inner
 }
 
 
-th.css-location > .th-inner::before,
-th.css-accessory > .th-inner::before,
-th.css-accessory-alt > .th-inner::before,
-th.css-barcode > .th-inner::before,
-th.css-component > .th-inner::before,
-th.css-consumable > .th-inner::before,
-th.css-envelope > .th-inner::before,
-th.css-house-flag > .th-inner::before,
-th.css-house-laptop > .th-inner::before,
-th.css-house-user > .th-inner::before,
-th.css-license > .th-inner::before,
-th.css-location > .th-inner::before,
-th.css-users > .th-inner::before,
-th.css-currency > .th-inner::before,
-th.css-child-locations > .th-inner::before,
-th.css-history > .th-inner::before
+thead th.css-location > .th-inner::before,
+thead th.css-accessory > .th-inner::before,
+thead th.css-accessory-alt > .th-inner::before,
+thead th.css-barcode > .th-inner::before,
+thead th.css-component > .th-inner::before,
+thead th.css-consumable > .th-inner::before,
+thead th.css-envelope > .th-inner::before,
+thead th.css-house-flag > .th-inner::before,
+thead th.css-house-laptop > .th-inner::before,
+thead th.css-house-user > .th-inner::before,
+thead th.css-license > .th-inner::before,
+thead th.css-location > .th-inner::before,
+thead th.css-maintenances > .th-inner::before,
+thead th.css-users > .th-inner::before,
+thead th.css-currency > .th-inner::before,
+thead th.css-child-locations > .th-inner::before,
+thead th.css-history > .th-inner::before
 {
   display: inline-block;
   font-size: 20px;
@@ -747,91 +769,98 @@ th.css-history > .th-inner::before
 BEGIN ICON TABLE HEADERS
 Set the font-weight css property as 900 (For Solid), 400 (Regular or Brands), 300 (Light for pro icons).
 **/
-th.css-barcode > .th-inner::before
+thead th.css-barcode > .th-inner::before
 {
   content: "\f02a"; font-family: "Font Awesome 5 Free"; font-weight: 900;
 }
 
-th.css-license > .th-inner::before
+thead th.css-license > .th-inner::before
 {
   content: "\f0c7"; font-family: "Font Awesome 5 Free"; font-weight: 400;
 }
 
-th.css-consumable > .th-inner::before
+thead th.css-consumable > .th-inner::before
 {
   content: "\f043"; font-family: "Font Awesome 5 Free"; font-weight: 900;
 }
 
-th.css-envelope > .th-inner::before
+thead th.css-envelope > .th-inner::before
 {
   content: "\f0e0"; font-family: "Font Awesome 5 Free"; font-weight: 400;
 }
 
-th.css-accessory > .th-inner::before
+thead th.css-accessory > .th-inner::before
 {
   content: "\f11c"; font-family: "Font Awesome 5 Free"; font-weight: 400;
 }
 
-th.css-users > .th-inner::before {
+thead th.css-users > .th-inner::before {
   content: "\f0c0"; font-family: "Font Awesome 5 Free"; font-size: 15px;
 }
 
-th.css-location > .th-inner::before {
+thead th.css-location > .th-inner::before {
   content: "\f3c5"; font-family: "Font Awesome 5 Free"; font-size: 19px; margin-bottom: 0px;
 }
 
-th.css-component > .th-inner::before
+// fa-screwdriver-wrench — matches the icon used by the maintenance tab and
+// the user-well maintenance-cost row, so the users-index column header
+// stays visually consistent with the rest of the maintenance surface.
+thead th.css-maintenances > .th-inner::before {
+  content: "\f7d9"; font-family: "Font Awesome 5 Free"; font-size: 18px; margin-bottom: 0px;
+}
+
+thead th.css-component > .th-inner::before
 {
   content: "\f0a0"; font-family: "Font Awesome 5 Free"; font-weight: 500;
 }
 
-th.css-padlock > .th-inner::before
+thead th.css-padlock > .th-inner::before
 {
   content: "\f023"; font-family: "Font Awesome 5 Free";
   font-weight: 800;
   padding-right: 3px;
 }
 
-th.css-house-user > .th-inner::before {
+thead th.css-house-user > .th-inner::before {
   content: "\e1b0";
   font-family: "Font Awesome 5 Free";
   font-size: 19px;
   margin-bottom: 0px;
 }
-th.css-house-flag > .th-inner::before {
+thead th.css-house-flag > .th-inner::before {
   content: "\e50d";
   font-family: "Font Awesome 5 Free";
   font-size: 19px;
   margin-bottom: 0px;
 }
-th.css-house-laptop > .th-inner::before {
+thead th.css-house-laptop > .th-inner::before {
   content: "\e066";
   font-family: "Font Awesome 5 Free";
   font-size: 19px;
   margin-bottom: 0px;
 }
-th.css-accessory-alt > .th-inner::before {
+thead th.css-accessory-alt > .th-inner::before {
   content: "\f11c";
   font-family: "Font Awesome 5 Free";
   font-size: 19px;
   margin-bottom: 0px;
 }
 
-th.css-child-locations > .th-inner::before {
+thead th.css-child-locations > .th-inner::before {
   content: "\f64f"; // change this to f51e for coins
   font-family: "Font Awesome 5 Free";
   font-size: 19px;
   margin-bottom: 0px;
 }
 
-th.css-currency > .th-inner::before {
+thead th.css-currency > .th-inner::before {
   content: "\24"; // change this to f51e for coins
   font-family: "Font Awesome 5 Free";
   font-size: 19px;
   margin-bottom: 0px;
 }
 
-th.css-history > .th-inner::before {
+thead th.css-history > .th-inner::before {
   content: "\f1da"; // change this to f51e for coins
   font-family: "Font Awesome 5 Free";
   font-size: 19px;
@@ -1186,6 +1215,19 @@ caption.tableCaption {
   padding-left: 8px;
 }
 
+
+.markdown-field-content {
+  h1 { font-size: 22px; font-weight: 700; margin: 6px 0 4px; }
+  h2 { font-size: 20px; font-weight: 700; margin: 6px 0 4px; }
+  h3 { font-size: 18px; font-weight: 700; margin: 6px 0 4px; }
+  h4 { font-size: 16px; font-weight: 700; margin: 4px 0 4px; }
+  h5, h6 { font-size: 14px; font-weight: 700; margin: 4px 0 4px; }
+  p { margin: 0 0 4px; }
+  p:last-child { margin-bottom: 0; }
+  ul, ol { margin: 0 0 4px; padding-left: 20px; }
+  > *:first-child { margin-top: 0; }
+}
+
 // via https://github.com/grokability/snipe-it/issues/11754
 .sidebar-toggle.btn {
   border-radius: 3px;
@@ -1307,6 +1349,7 @@ Radio toggle styles for permission settings and check/uncheck all
 }
 
 .js-copy-link {
+  float: left;
   color: grey;
 }
 
@@ -1391,4 +1434,18 @@ Radio toggle styles for permission settings and check/uncheck all
 
     }
   }
+
+// Advanced-search "Clear all" pill. AdminLTE's default anchor styles pull the
+// color toward the theme's link tint on :hover / :focus, which reads black on
+// the red pill background. Pin white in every interactive state so the pill
+// stays legible.
+.snipe-advanced-search-tags-clear-all,
+.snipe-advanced-search-tags-clear-all:link,
+.snipe-advanced-search-tags-clear-all:visited,
+.snipe-advanced-search-tags-clear-all:hover,
+.snipe-advanced-search-tags-clear-all:focus,
+.snipe-advanced-search-tags-clear-all:active {
+  color: #fff !important;
+  text-decoration: none;
+}
 }

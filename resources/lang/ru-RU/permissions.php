@@ -147,7 +147,7 @@ return [
 
     'consumablesfiles' => [
         'name' => 'Manage Consumable Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with consumables. (This only makes sense with view privileges or higher.)',
+        'note' => 'Позволяет пользователю загружать, скачивать и удалять файлы, связанные с расходными материалами. (Это имеет смысл только при наличии прав на просмотр или выше.)',
     ],
 
     'consumables' => [

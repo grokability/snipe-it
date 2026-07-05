@@ -436,20 +436,20 @@ return [
     ],
 
     'depreciations' => [
-        'name' => 'Gestione degli ammortamenti',
-        'note' => 'Consente agli utenti di gestire e visualizzare i dettagli dell\'ammortamento degli asset.',
+        'name' => 'Gestione dei deprezzamenti',
+        'note' => 'Consente agli utenti di gestire e visualizzare i dettagli del deprezzamento dei Beni.',
     ],
     'depreciationsview' => [
-        'name' => 'Visualizza Dettagli Di Ammortamento',
+        'name' => 'Visualizza Dettagli Deprezzamento',
     ],
     'depreciationsedit' => [
-        'name' => 'Modifica Impostazioni Di Ammortamento',
+        'name' => 'Modifica Impostazioni Deprezzamento',
     ],
     'depreciationsdelete' => [
-        'name' => 'Elimina Record Di Ammortamento',
+        'name' => 'Elimina Record Deprezzamento',
     ],
     'depreciationscreate' => [
-        'name' => 'Crea Record Di Ammortamento',
+        'name' => 'Crea Record Deprezzamento',
     ],
 
     'grant_all' => 'Concedi tutti i permessi per :area',

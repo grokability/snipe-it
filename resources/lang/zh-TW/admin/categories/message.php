@@ -20,9 +20,9 @@ return [
     'delete' => [
         'confirm' => '您確定要刪除此類別嗎？',
         'error' => '刪除類別時發生問題。請再試一次。',
-        'success' => 'Category was deleted successfully.',
-        'bulk_success' => 'Categories were deleted successfully.',
-        'partial_success' => 'Category deleted successfully. See additional information below. | :count categories were deleted successfully. See additional information below.',
+        'success' => '類別已經被成功刪除。',
+        'bulk_success' => '類別已經被成功刪除。',
+        'partial_success' => '類別已成功刪除。請見下方詳細資訊。 | :count 個類別已成功刪除。請見下方詳細資訊。',
     ],
 
 ];

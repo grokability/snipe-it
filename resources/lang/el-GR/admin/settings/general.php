@@ -307,7 +307,7 @@ return [
     'two_factor_enter_code' => 'Εισαγάγετε τον κωδικό δύο συντελεστών',
     'two_factor_config_complete' => 'Υποβολή Κωδικού',
     'two_factor_enabled_edit_not_allowed' => 'Ο διαχειριστής σας δεν σας επιτρέπει να επεξεργαστείτε αυτήν τη ρύθμιση.',
-    'two_factor_enrollment_text' => 'Απαιτείται έλεγχος ταυτότητας δύο παραγόντων, ωστόσο η συσκευή σας δεν έχει εγγραφεί ακόμα. Ανοίξτε την εφαρμογή Google Authenticator και σαρώστε τον παρακάτω κωδικό QR για να εγγραφείτε στη συσκευή σας. Μόλις εγγραφείτε στη συσκευή σας, πληκτρολογήστε τον παρακάτω κώδικα',
+    'two_factor_enrollment_text' => "Απαιτείται έλεγχος ταυτότητας δύο παραγόντων, ωστόσο η συσκευή σας δεν έχει εγγραφεί ακόμα. Ανοίξτε την εφαρμογή Google Authenticator και σαρώστε τον παρακάτω κωδικό QR για να εγγραφείτε στη συσκευή σας. Μόλις εγγραφείτε στη συσκευή σας, πληκτρολογήστε τον παρακάτω κώδικα",
     'require_accept_signature' => 'Απαιτείται υπογραφή',
     'require_accept_signature_help_text' => 'Enabling this feature will require users to physically sign off on accepting items. This will override any category-specific signature requirements.',
     'require_checkinout_notes' => 'Require Notes on Checkin/Checkout',

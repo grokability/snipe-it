@@ -36,7 +36,7 @@ return [
 
     'assets' => [
         'name' => 'Activos',
-        'note' => 'Grants access to the Assets section of the application.',
+        'note' => 'Dar acceso a la sección de Activos de la aplicación.',
     ],
 
     'assetsview' => [
@@ -72,7 +72,7 @@ return [
 
     'assetsviewrequestable' => [
         'name' => 'Ver activos solicitados',
-        'note' => 'Allows the user to view assets that are marked as requestable.',
+        'note' => 'Permite al usuario ver los activos marcados como solicitados.',
     ],
 
     'assetsviewencrypted-custom-fields' => [
@@ -155,16 +155,16 @@ return [
         'note' => 'Grants access to the Consumables section of the application.',
     ],
     'consumablesview' => [
-        'name' => 'View Consumables',
+        'name' => 'Ver Comsumibles',
     ],
     'consumablescreate' => [
         'name' => 'Crear nuevos consumibles',
     ],
     'consumablesedit' => [
-        'name' => 'Edit Consumables',
+        'name' => 'Editar Consumibles',
     ],
     'consumablesdelete' => [
-        'name' => 'Delete Consumables',
+        'name' => 'Eliminar Consumibles',
     ],
     'consumablescheckout' => [
         'name' => 'Check Out Consumables',
@@ -274,17 +274,17 @@ return [
     ],
 
     'modelscreate' => [
-        'name' => 'Create New Models',
+        'name' => 'Crear nuevos modelos',
     ],
     'modelsedit' => [
-        'name' => 'Edit Models',
+        'name' => 'Editar Modelos',
     ],
     'modelsdelete' => [
-        'name' => 'Delete Models',
+        'name' => 'Eliminar Modelos',
     ],
     'categories' => [
         'name' => 'Categorías',
-        'note' => 'Grants access to the Categories section of the application.',
+        'note' => 'Dar acceso a la sección de Categorías de la aplicación.',
     ],
     'categoriesview' => [
         'name' => 'Ver categorias',

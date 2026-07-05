@@ -198,6 +198,37 @@ class ConsumableCheckoutTest extends TestCase
 
         $this->assertNotNull($acceptance);
         $this->assertEquals(2, $acceptance->qty);
+        $this->assertDatabaseCount('checkout_acceptances', 1);
+
+        $response->assertStatus(302)
+            ->assertRedirect(route('account.accept.item', $acceptance));
+    }
+
+    public function test_consumable_sign_in_place_creates_acceptance_when_acceptance_not_required()
+    {
+        $targetUser = User::factory()->create();
+        $consumable = Consumable::factory()->notRequiringAcceptance()->create(['qty' => 5]);
+
+        $response = $this->actingAs(User::factory()->admin()->create())
+            ->from(route('consumables.checkout.show', $consumable))
+            ->post(route('consumables.checkout.store', $consumable), [
+                'assigned_to' => $targetUser->id,
+                'redirect_option' => 'index',
+                'checkout_qty' => 2,
+                'sign_in_place' => 1,
+            ]);
+
+        $acceptance = CheckoutAcceptance::query()
+            ->where('checkoutable_type', Consumable::class)
+            ->where('checkoutable_id', $consumable->id)
+            ->where('assigned_to_id', $targetUser->id)
+            ->pending()
+            ->latest()
+            ->first();
+
+        $this->assertNotNull($acceptance);
+        $this->assertEquals(2, $acceptance->qty);
+        $this->assertDatabaseCount('checkout_acceptances', 1);
 
         $response->assertStatus(302)
             ->assertRedirect(route('account.accept.item', $acceptance));

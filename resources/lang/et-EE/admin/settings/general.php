@@ -307,7 +307,7 @@ return [
     'two_factor_enter_code' => 'Sisestage kahe faktori kood',
     'two_factor_config_complete' => 'Esita koodeks',
     'two_factor_enabled_edit_not_allowed' => 'Teie administraator ei luba seda sätet muuta.',
-    'two_factor_enrollment_text' => 'Vaja on kahte tegurit, kuid teie seadet ei ole veel registreeritud. Avage oma Google Authenticatori rakendus ja skannige oma seadme registreerimiseks allolevat QR-koodi. Kui olete oma seadme sisestanud, sisestage allolev kood',
+    'two_factor_enrollment_text' => "Vaja on kahte tegurit, kuid teie seadet ei ole veel registreeritud. Avage oma Google Authenticatori rakendus ja skannige oma seadme registreerimiseks allolevat QR-koodi. Kui olete oma seadme sisestanud, sisestage allolev kood",
     'require_accept_signature' => 'Nõuda allkirja',
     'require_accept_signature_help_text' => 'Enabling this feature will require users to physically sign off on accepting items. This will override any category-specific signature requirements.',
     'require_checkinout_notes' => 'Require Notes on Checkin/Checkout',
