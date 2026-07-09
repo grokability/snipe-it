@@ -2030,7 +2030,7 @@
                             </div>
                         @endif
 
-                        @include('notifications')
+                        <livewire:notifications />
                     </div>
 
 
