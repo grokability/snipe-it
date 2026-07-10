@@ -2177,7 +2177,7 @@
                 }
 
 
-                
+
                 actions += '<a href="{{ config('app.url') }}/' + dest + '/' + row.id + '" '
                     + ' class="actions btn btn-danger btn-sm delete-asset hidden-print" data-tooltip="true"  '
                     + ' data-toggle="modal" data-icon="fa-trash"'
@@ -2187,7 +2187,12 @@
             } else {
                 // Do not show the delete button on things that are already deleted
                 if ((row.available_actions) && (row.available_actions.restore != true)) {
-                    actions += '<span data-tooltip="true" title="{{ trans('general.cannot_be_deleted') }}"><a class="btn btn-danger btn-sm delete-asset disabled hidden-print" onClick="return false;"><x-icon type="delete" class="fa-fw" /><span class="sr-only">{{ trans('general.cannot_be_deleted') }}</span></a></span>&nbsp;';
+                    var message = "{{trans('general.cannot_be_deleted')}}";
+                    //or when there are other assets assigned to the asset
+                    if(row.child_asset_count > 0){
+                        message = "{{trans('general.cannot_delete_parent_asset')}}";
+                    }
+                    actions += '<span data-tooltip="true" title="'+message+'"><a class="btn btn-danger btn-sm delete-asset disabled" onClick="return false;"><x-icon type="delete" /><span class="sr-only">{{ trans('general.cannot_be_deleted') }}</span></a></span>&nbsp;';
                 }
 
             }
@@ -2542,7 +2547,7 @@
     function minAmtFormatter(row, value) {
 
         if ((row) && (row!=undefined)) {
-            
+
             if (value.remaining <= value.min_amt) {
                 return  '<span class="text-danger text-bold" data-tooltip="true" title="{{ trans('admin/licenses/general.below_threshold_short') }}"><x-icon type="warning" class="text-yellow" /> ' + value.min_amt + '</span>';
             }
@@ -2551,7 +2556,7 @@
         return '--';
     }
 
-    
+
 
     // Create a linked phone number in the table list
     function phoneFormatter(value) {

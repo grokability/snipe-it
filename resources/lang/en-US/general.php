@@ -580,6 +580,7 @@ return [
     'modal_confirm_generic' => 'Are you sure?',
     'cannot_be_deleted' => 'This item cannot be deleted',
     'cannot_be_edited' => 'This item cannot be edited.',
+    'cannot_delete_parent_asset' => 'Cannot delete asset until assigned assets are checked in.',
     'undeployable_tooltip' => 'This item cannot be checked out. Check the quantity remaining.',
     'serial_number' => 'Serial Number',
     'item_notes' => ':item Notes',

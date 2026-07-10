@@ -434,7 +434,16 @@ class Asset extends Depreciable
     {
 
         return Gate::allows('delete', $this)
-            && ($this->deleted_at == '');
+            && ($this->deleted_at == '') && ($this->assignedAssets()->count() == 0);
+    }
+
+    public function getDeleteErrorMessage(): ?string
+    {
+        if ($this->assignedAssets()->count() > 0) {
+            return trans('general.cannot_delete_parent_asset');
+        }
+
+        return null;
     }
 
     /**

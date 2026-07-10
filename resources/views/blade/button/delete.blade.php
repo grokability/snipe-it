@@ -1,3 +1,8 @@
+@php
+    $error = method_exists($item, 'getDeleteErrorMessage')
+        ? $item->getDeleteErrorMessage()
+        : trans('general.cannot_be_deleted');
+@endphp
 @props([
     'item' => null,
     'route' => null,
@@ -10,7 +15,8 @@
     <!-- start delete button component -->
     @if ((method_exists($item, 'isDeletable')) && ($item->deleted_at==''))
         @if (!$item->isDeletable())
-            <button class="pull-right btn btn-sm btn-danger hidden-print disabled {{ $wide == 'true' ? ' btn-block btn-social' : '' }}" style="margin-right: 8px;" data-tooltip="true" data-placement="top" data-title="{{ trans('general.cannot_be_deleted') }}">
+            <button class="pull-right btn btn-sm btn-danger hidden-print disabled {{ $wide == 'true' ? ' btn-block btn-social' : '' }}"
+                    style="margin-right: 8px;" data-tooltip="true" data-placement="top" data-title="{{ $error }}">
                 <x-icon type="delete" class="fa-fw"  />
             </button>
         @else

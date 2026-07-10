@@ -43,6 +43,7 @@ class AssetsTransformer
             ] : null,
             'byod' => ($asset->byod ? true : false),
             'requestable' => ($asset->requestable ? true : false),
+            'child_asset_count' => $asset->assignedAssets->count(),
             'model_number' => (($asset->model) && ($asset->model->model_number)) ? e($asset->model->model_number) : null,
             'eol' => (($asset->asset_eol_date != '') && ($asset->purchase_date != '')) ? (int) Carbon::parse($asset->asset_eol_date)->diffInMonths($asset->purchase_date, true).' months' : null,
             'asset_eol_date' => ($asset->asset_eol_date != '') ? Helper::getFormattedDateObject($asset->asset_eol_date, 'date') : null,
@@ -178,7 +179,7 @@ class AssetsTransformer
             'restore' => ($asset->deleted_at != '' && Gate::allows('create', Asset::class)) ? true : false,
             'update' => ($asset->deleted_at == '' && Gate::allows('update', Asset::class)) ? true : false,
             'audit' => Gate::allows('audit', Asset::class) ? true : false,
-            'delete' => ($asset->deleted_at == '' && $asset->assigned_to == '' && Gate::allows('delete', Asset::class) && ($asset->deleted_at == '')) ? true : false,
+            'delete' => ($asset->deleted_at == '' && $asset->assigned_to == '' && Gate::allows('delete', Asset::class) && ($asset->deleted_at == '') && ($asset->assignedAssets->count() === 0)) ? true : false,
         ];
 
         if (request('components') == 'true') {
