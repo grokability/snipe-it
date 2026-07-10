@@ -109,11 +109,10 @@
         <button type="button" class="close" data-dismiss="alert" aria-label="{{ trans('general.close') }}"><span aria-hidden="true">&times;</span></button>
         <i class="fas fa-exclamation-triangle faa-pulse animated" aria-hidden="true"></i>
         <strong>{{ trans('general.error') }}: </strong>
-        {{ $message }}
+        <span style="white-space: pre-line;">{{ $message }}</span>
     </div>
 </div>
 @endif
-
 
 @if ($messages = session()->get('error_messages'))
 @foreach ($messages as $message)

@@ -613,13 +613,28 @@ class BulkAssetsController extends Controller
             return redirect($bulk_back_url)->with('error', trans('admin/hardware/message.delete.nothing_updated'));
         }
 
-        $assignedAssets = Asset::whereIn('id', $assetIds)->whereNotNull('assigned_to')->get();
-        if ($assignedAssets->isNotEmpty()) {
+        $parentAssets = Asset::whereIn('id', $assetIds)
+            ->whereHas('assignedAssets')
+            ->get();
 
-            // if assets are checked out, return a list of asset tags that would need to be checked in first.
-            $assetTags = $assignedAssets->pluck('asset_tag')->implode(', ');
+        $assignedAssets = Asset::whereIn('id', $assetIds)
+            ->whereNotNull('assigned_to')
+            ->get();
 
-            return redirect($bulk_back_url)->with('error', trans_choice('admin/hardware/message.delete.assigned_to_error', $assignedAssets->count(), ['asset_tag' => $assetTags]));
+        $problemAssets = $parentAssets
+            ->merge($assignedAssets)
+            ->unique('id');
+
+        if ($problemAssets->isNotEmpty()) {
+
+            $assetList = $problemAssets
+                ->pluck('asset_tag')
+                ->map(fn($tag) => '- ' . e($tag))
+                ->implode("\n");
+
+            $message = trans('admin/hardware/message.delete.bulk_blocked') . "\n\n" . $assetList;
+
+            return redirect($bulk_back_url)->with('error', $message);
         }
 
         foreach (Asset::wherein('id', $assetIds)->get() as $asset) {
