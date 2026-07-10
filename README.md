@@ -37,6 +37,10 @@ For instructions on installing and configuring Snipe-IT on your server, check ou
 
 If you're having trouble with the installation, please check the [Common Issues](https://snipe-it.readme.io/docs/common-issues) and [Getting Help](https://snipe-it.readme.io/docs/getting-help) documentation, and search this repository's open *and* closed issues for help.
 
+Prefer not to run a server yourself? Snipe-IT is also available as one-click managed hosting, no server required:
+
+[![Deploy with Zenith](https://cdn.zenith.hosting/buttons/deploy-with-zenith.svg)](https://zenith.hosting/host/snipe-it)
+
 -----
 ### User's Manual
 For help using Snipe-IT, check out the [user's manual](https://snipe-it.readme.io/docs/overview).
