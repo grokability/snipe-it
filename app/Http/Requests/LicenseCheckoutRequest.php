@@ -2,9 +2,7 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-
-class LicenseCheckoutRequest extends FormRequest
+class LicenseCheckoutRequest extends UploadFileRequest
 {
     /**
      * Determine if the user is authorized to make this request.

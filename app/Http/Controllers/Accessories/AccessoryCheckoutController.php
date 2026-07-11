@@ -97,6 +97,11 @@ class AccessoryCheckoutController extends Controller
             $accessory_checkout->save();
         }
 
+        $file_name = null;
+        if ($request->hasFile('file')) {
+            $file_name = $request->handleFile('private_uploads/accessories/', 'checkout-'.$accessory->id, $request->file('file'));
+        }
+
         event(new CheckoutableCheckedOut(
             $accessory,
             $target,
@@ -105,6 +110,7 @@ class AccessoryCheckoutController extends Controller
             [],
             $accessory->checkout_qty,
             $request->boolean('sign_in_place'),
+            $file_name,
         ));
 
         $request->request->add(['checkout_to_type' => request('checkout_to_type')]);

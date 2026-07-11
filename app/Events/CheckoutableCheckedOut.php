@@ -24,12 +24,14 @@ class CheckoutableCheckedOut
 
     public bool $signInPlace;
 
+    public ?string $filename;
+
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($checkoutable, $checkedOutTo, User $checkedOutBy, $note, $originalValues = [], $quantity = 1, bool $signInPlace = false)
+    public function __construct($checkoutable, $checkedOutTo, User $checkedOutBy, $note, $originalValues = [], $quantity = 1, bool $signInPlace = false, ?string $filename = null)
     {
         $this->checkoutable = $checkoutable;
         $this->checkedOutTo = $checkedOutTo;
@@ -38,5 +40,6 @@ class CheckoutableCheckedOut
         $this->originalValues = $originalValues;
         $this->quantity = $quantity;
         $this->signInPlace = $signInPlace;
+        $this->filename = $filename;
     }
 }

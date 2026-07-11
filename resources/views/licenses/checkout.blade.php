@@ -16,7 +16,7 @@
 <div class="row">
         <!-- left column -->
     <div class="col-md-7">
-        <form class="form-horizontal" method="post" action="" autocomplete="off">
+        <form class="form-horizontal" method="post" action="" autocomplete="off" enctype="multipart/form-data">
             {{csrf_field()}}
 
             <div class="box box-default">
@@ -85,6 +85,9 @@
                             {!! $errors->first('note', '<span class="alert-msg" role="alert" aria-live="assertive"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
                         </div>
                     </div>
+
+                    <x-input.file-upload name="file" />
+
                 </div>
 
 

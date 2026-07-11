@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Licenses;
 use App\Events\CheckoutableCheckedIn;
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UploadFileRequest;
 use App\Models\Asset;
 use App\Models\License;
 use App\Models\LicenseSeat;
@@ -55,7 +56,7 @@ class LicenseCheckinController extends Controller
      *
      * @throws AuthorizationException
      */
-    public function store(Request $request, $seatId = null, $backTo = null)
+    public function store(UploadFileRequest $request, $seatId = null, $backTo = null)
     {
         // Check if the asset exists
         if (is_null($licenseSeat = LicenseSeat::find($seatId))) {
@@ -108,9 +109,14 @@ class LicenseCheckinController extends Controller
             session()->put(['checkout_to_type' => 'user']);
         }
 
+        $file_name = null;
+        if ($request->hasFile('file')) {
+            $file_name = $request->handleFile('private_uploads/licenses/', 'checkin-'.$licenseSeat->license_id, $request->file('file'));
+        }
+
         // Was the asset updated?
         if ($licenseSeat->save()) {
-            event(new CheckoutableCheckedIn($licenseSeat, $return_to, auth()->user(), $licenseSeat->notes));
+            event(new CheckoutableCheckedIn($licenseSeat, $return_to, auth()->user(), $licenseSeat->notes, null, [], $file_name));
 
             return Helper::getRedirectOption($request, $license->id, 'Licenses')
                 ->with('success', trans('admin/licenses/message.checkin.success'));

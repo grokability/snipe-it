@@ -119,18 +119,23 @@ class LicenseCheckoutController extends Controller
             }
         }
 
+        $file_name = null;
+        if ($request->hasFile('file')) {
+            $file_name = $request->handleFile('private_uploads/licenses/', 'checkout-'.$license->id, $request->file('file'));
+        }
+
         $licenseSeat = null;
         $checkoutTarget = null;
 
-        DB::transaction(function () use ($request, $license, $seatId, &$licenseSeat, &$checkoutTarget): void {
+        DB::transaction(function () use ($request, $license, $seatId, $file_name, &$licenseSeat, &$checkoutTarget): void {
             $licenseSeat = $this->findLicenseSeatToCheckout($license, $seatId, lock: true);
             $licenseSeat->created_by = auth()->id();
             $licenseSeat->notes = $request->input('notes');
 
             if ($request->filled('asset_id')) {
-                $checkoutTarget = $this->checkoutToAsset($licenseSeat);
+                $checkoutTarget = $this->checkoutToAsset($licenseSeat, $file_name);
             } elseif ($request->filled('assigned_to')) {
-                $checkoutTarget = $this->checkoutToUser($licenseSeat);
+                $checkoutTarget = $this->checkoutToUser($licenseSeat, $file_name);
             }
         });
 
@@ -207,7 +212,7 @@ class LicenseCheckoutController extends Controller
         return $licenseSeat;
     }
 
-    protected function checkoutToAsset($licenseSeat)
+    protected function checkoutToAsset($licenseSeat, ?string $file_name = null)
     {
         if (is_null($target = Asset::find(request('asset_id')))) {
             return redirect()->route('licenses.index')->with('error', trans('admin/licenses/message.asset_does_not_exist'));
@@ -219,7 +224,7 @@ class LicenseCheckoutController extends Controller
             $licenseSeat->assigned_to = $target->assigned_to;
         }
         if ($licenseSeat->save()) {
-            event(new CheckoutableCheckedOut($licenseSeat, $target, auth()->user(), request('notes'), [], 1, request()->boolean('sign_in_place')));
+            event(new CheckoutableCheckedOut($licenseSeat, $target, auth()->user(), request('notes'), [], 1, request()->boolean('sign_in_place'), $file_name));
 
             return $target;
         }
@@ -227,7 +232,7 @@ class LicenseCheckoutController extends Controller
         return false;
     }
 
-    protected function checkoutToUser($licenseSeat)
+    protected function checkoutToUser($licenseSeat, ?string $file_name = null)
     {
         // Fetch the target and set the license user
         if (is_null($target = User::find(request('assigned_to')))) {
@@ -236,7 +241,7 @@ class LicenseCheckoutController extends Controller
         $licenseSeat->assigned_to = request('assigned_to');
 
         if ($licenseSeat->save()) {
-            event(new CheckoutableCheckedOut($licenseSeat, $target, auth()->user(), request('notes'), [], 1, request()->boolean('sign_in_place')));
+            event(new CheckoutableCheckedOut($licenseSeat, $target, auth()->user(), request('notes'), [], 1, request()->boolean('sign_in_place'), $file_name));
 
             return $target;
         }

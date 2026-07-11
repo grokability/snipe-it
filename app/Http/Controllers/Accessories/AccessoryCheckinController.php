@@ -5,11 +5,11 @@ namespace App\Http\Controllers\Accessories;
 use App\Events\CheckoutableCheckedIn;
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UploadFileRequest;
 use App\Models\Accessory;
 use App\Models\AccessoryCheckout;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class AccessoryCheckinController extends Controller
@@ -53,7 +53,7 @@ class AccessoryCheckinController extends Controller
      * @param  null  $accessoryCheckoutId
      * @param  string  $backto
      */
-    public function store(Request $request, $accessoryCheckoutId = null, $backto = null): RedirectResponse
+    public function store(UploadFileRequest $request, $accessoryCheckoutId = null, $backto = null): RedirectResponse
     {
         if (is_null($accessory_checkout = AccessoryCheckout::find($accessoryCheckoutId))) {
             return redirect()->route('accessories.index')->with('error', trans('admin/accessories/message.does_not_exist'));
@@ -75,9 +75,14 @@ class AccessoryCheckinController extends Controller
             $checkin_at = $request->input('checkin_at').' '.$checkin_hours;
         }
 
+        $file_name = null;
+        if ($request->hasFile('file')) {
+            $file_name = $request->handleFile('private_uploads/accessories/', 'checkin-'.$accessory->id, $request->file('file'));
+        }
+
         // Was the accessory updated?
         if ($accessory_checkout->delete()) {
-            event(new CheckoutableCheckedIn($accessory, $accessory_checkout->assignedTo, auth()->user(), $request->input('note'), $checkin_at));
+            event(new CheckoutableCheckedIn($accessory, $accessory_checkout->assignedTo, auth()->user(), $request->input('note'), $checkin_at, [], $file_name));
 
             session()->put(['redirect_option' => $request->input('redirect_option')]);
 

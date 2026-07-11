@@ -30,6 +30,8 @@
                 type="textarea"
             />
 
+            <x-input.file-upload name="file" />
+
             <!-- Checkin date -->
             <div class="form-group {{ $errors->has('checkin_at') ? 'has-error' : '' }}">
                 <label for="checkin_at" class="col-md-3 control-label">{{ trans('admin/hardware/form.checkin_date') }}</label>

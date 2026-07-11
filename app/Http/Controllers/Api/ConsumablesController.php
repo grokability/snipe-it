@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\FilterRequest;
 use App\Http\Requests\ImageUploadRequest;
 use App\Http\Requests\StoreConsumableRequest;
+use App\Http\Requests\UploadFileRequest;
 use App\Http\Transformers\ActionlogsTransformer;
 use App\Http\Transformers\ConsumablesTransformer;
 use App\Http\Transformers\SelectlistTransformer;
@@ -288,7 +289,7 @@ class ConsumablesController extends Controller
      *
      * @since [v4.9.5]
      */
-    public function checkout(Request $request, $id): JsonResponse
+    public function checkout(UploadFileRequest $request, $id): JsonResponse
     {
         // Check if the consumable exists
         if (! $consumable = Consumable::with('users')->find($id)) {
@@ -328,8 +329,13 @@ class ConsumablesController extends Controller
         // Update the consumable data
         $consumable->assigned_to = $request->input('assigned_to');
 
+        $file_name = null;
+        if ($request->hasFile('file')) {
+            $file_name = $request->handleFile('private_uploads/consumables/', 'checkout-'.$consumable->id, $request->file('file'));
+        }
+
         // Keep pivot writes and checkout log/event atomic to avoid partial checkout state.
-        DB::transaction(function () use ($consumable, $request, $user): void {
+        DB::transaction(function () use ($consumable, $request, $user, $file_name): void {
             for ($i = 0; $i < $consumable->checkout_qty; $i++) {
                 $consumable->users()->attach($consumable->id,
                     [
@@ -348,6 +354,8 @@ class ConsumablesController extends Controller
                 $request->input('note'),
                 [],
                 $consumable->checkout_qty,
+                false,
+                $file_name,
             ));
         });
 

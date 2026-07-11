@@ -15,7 +15,7 @@ trait HasUploads
         return $this->hasMany(Actionlog::class, 'item_id')
             ->withoutGlobalScope(CompanyableScope::class)
             ->where('item_type', self::class)
-            ->where('action_type', '=', 'uploaded')
+            ->whereIn('action_type', ['uploaded', 'checkout', 'checkin', 'audit'])
             ->whereNotNull('filename')
             ->whereNotIn('filename', function ($query) {
                 $query->select('filename')

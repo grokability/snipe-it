@@ -17,7 +17,7 @@
     <div class="row">
         <!-- left column -->
         <div class="col-md-8">
-            <form class="form-horizontal" method="post" action="{{ route('licenses.checkin.save', ['licenseId'=>$licenseSeat->id, 'backTo'=>$backto] ) }}" autocomplete="off">
+            <form class="form-horizontal" method="post" action="{{ route('licenses.checkin.save', ['licenseId'=>$licenseSeat->id, 'backTo'=>$backto] ) }}" autocomplete="off" enctype="multipart/form-data">
                 {{csrf_field()}}
 
                 <div class="box box-default">
@@ -79,6 +79,9 @@
                     {!! $errors->first('notes', '<span class="alert-msg" role="alert" aria-live="assertive"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
                 </div>
             </div>
+
+            <x-input.file-upload name="file" />
+
                         <x-redirect_submit_options
                                 index_route="licenses.index"
                                 :button_label="trans('general.checkin')"

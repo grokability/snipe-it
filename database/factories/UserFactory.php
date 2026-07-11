@@ -562,6 +562,31 @@ class UserFactory extends Factory
         return $this->appendPermission(['suppliers.files' => '1']);
     }
 
+    public function assetsFiles()
+    {
+        return $this->appendPermission(['assets.files' => '1']);
+    }
+
+    public function accessoriesFiles()
+    {
+        return $this->appendPermission(['accessories.files' => '1']);
+    }
+
+    public function licensesFiles()
+    {
+        return $this->appendPermission(['licenses.files' => '1']);
+    }
+
+    public function componentsFiles()
+    {
+        return $this->appendPermission(['components.files' => '1']);
+    }
+
+    public function consumablesFiles()
+    {
+        return $this->appendPermission(['consumables.files' => '1']);
+    }
+
     private function appendPermission(array $permission)
     {
         return $this->state(function ($currentState) use ($permission) {

@@ -5,12 +5,12 @@ namespace App\Http\Controllers\Components;
 use App\Events\CheckoutableCheckedOut;
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UploadFileRequest;
 use App\Models\Asset;
 use App\Models\Component;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class ComponentCheckoutController extends Controller
@@ -72,7 +72,7 @@ class ComponentCheckoutController extends Controller
      *
      * @throws AuthorizationException
      */
-    public function store(Request $request, $componentId)
+    public function store(UploadFileRequest $request, $componentId)
     {
         // Check if the component exists
         if (! $component = Component::find($componentId)) {
@@ -124,6 +124,11 @@ class ComponentCheckoutController extends Controller
             'note' => $request->input('note'),
         ]);
 
+        $file_name = null;
+        if ($request->hasFile('file')) {
+            $file_name = $request->handleFile('private_uploads/components/', 'checkout-'.$component->id, $request->file('file'));
+        }
+
         event(new CheckoutableCheckedOut(
             $component,
             $asset,
@@ -131,6 +136,8 @@ class ComponentCheckoutController extends Controller
             $request->input('note'),
             [],
             $component->checkout_qty,
+            false,
+            $file_name,
         ));
 
         $request->request->add(['checkout_to_type' => 'asset']);

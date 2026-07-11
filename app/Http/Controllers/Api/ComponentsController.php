@@ -7,6 +7,7 @@ use App\Exceptions\MissingLogTarget;
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ImageUploadRequest;
+use App\Http\Requests\UploadFileRequest;
 use App\Http\Transformers\ActionlogsTransformer;
 use App\Http\Transformers\ComponentsTransformer;
 use App\Models\Asset;
@@ -18,6 +19,7 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
@@ -297,7 +299,7 @@ class ComponentsController extends Controller
      *
      * @param  int  $componentId
      */
-    public function checkout(Request $request, $componentId): JsonResponse
+    public function checkout(UploadFileRequest $request, $componentId): JsonResponse
     {
         // Check if the component exists
         if (! $component = Component::find($componentId)) {
@@ -334,6 +336,11 @@ class ComponentsController extends Controller
                 return response()->json(Helper::formatStandardApiResponse('error', null, trans('general.error_user_company')));
             }
 
+            $file_name = null;
+            if ($request->hasFile('file')) {
+                $file_name = $request->handleFile('private_uploads/components/', 'checkout-'.$component->id, $request->file('file'));
+            }
+
             // Keep pivot + action log in one transaction so checkout is all-or-nothing.
             try {
                 DB::transaction(function () use ($component, $request, $asset): void {
@@ -366,6 +373,10 @@ class ComponentsController extends Controller
                 return response()->json(Helper::formatStandardApiResponse('error', null, 'Target not found'), 422);
             }
 
+            if ($file_name && Gate::allows('files', $component)) {
+                $component->logUpload($file_name, null);
+            }
+
             return response()->json(Helper::formatStandardApiResponse('success', null, trans('admin/components/message.checkout.success')));
         }
 
@@ -379,7 +390,7 @@ class ComponentsController extends Controller
      *
      * @since [v5.1.8]
      */
-    public function checkin(Request $request, $component_asset_id): JsonResponse
+    public function checkin(UploadFileRequest $request, $component_asset_id): JsonResponse
     {
         if ($component_assets = DB::table('components_assets')->find($component_asset_id)) {
             if (is_null($component = Component::find($component_assets->component_id))) {
@@ -417,7 +428,12 @@ class ComponentsController extends Controller
 
             $asset = Asset::find($component_assets->asset_id);
 
-            event(new CheckoutableCheckedIn($component, $asset, auth()->user(), $request->input('note'), Carbon::now()));
+            $file_name = null;
+            if ($request->hasFile('file')) {
+                $file_name = $request->handleFile('private_uploads/components/', 'checkin-'.$component->id, $request->file('file'));
+            }
+
+            event(new CheckoutableCheckedIn($component, $asset, auth()->user(), $request->input('note'), Carbon::now(), [], $file_name));
 
             return response()->json(Helper::formatStandardApiResponse('success', null, trans('admin/components/message.checkin.success')));
         }

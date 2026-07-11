@@ -37,6 +37,8 @@
                 type="textarea"
             />
 
+            <x-input.file-upload name="file" />
+
             <x-slot:customfooter>
                 <x-redirect_submit_options
                     index_route="components.index"

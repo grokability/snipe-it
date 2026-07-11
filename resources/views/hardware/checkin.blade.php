@@ -33,11 +33,11 @@
                         @if ($backto == 'user')
                             <form class="form-horizontal" method="post"
                                   action="{{ route('hardware.checkin.store', array('assetId'=> $asset->id, 'backto'=>'user')) }}"
-                                  autocomplete="off">
+                                  autocomplete="off" enctype="multipart/form-data">
                                 @else
                                     <form class="form-horizontal" method="post"
                                           action="{{ route('hardware.checkin.store', array('assetId'=> $asset->id)) }}"
-                                          autocomplete="off">
+                                          autocomplete="off" enctype="multipart/form-data">
                                         @endif
                                         {{csrf_field()}}
 
@@ -189,6 +189,8 @@
                                             </div>
                                         </div>
 
+
+                                        <x-input.file-upload name="file" />
 
                                         <!-- Custom fields -->
                                         @include("models/custom_fields_form", [

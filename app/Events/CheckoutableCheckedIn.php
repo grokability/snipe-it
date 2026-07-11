@@ -22,12 +22,14 @@ class CheckoutableCheckedIn
 
     public $originalValues;
 
+    public ?string $filename;
+
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($checkoutable, $checkedOutTo, User $checkedInBy, $note, $action_date = null, $originalValues = [])
+    public function __construct($checkoutable, $checkedOutTo, User $checkedInBy, $note, $action_date = null, $originalValues = [], ?string $filename = null)
     {
         $this->checkoutable = $checkoutable;
         $this->checkedOutTo = $checkedOutTo;
@@ -35,5 +37,6 @@ class CheckoutableCheckedIn
         $this->note = $note;
         $this->action_date = $action_date ?? date('Y-m-d H:i:s');
         $this->originalValues = $originalValues;
+        $this->filename = $filename;
     }
 }

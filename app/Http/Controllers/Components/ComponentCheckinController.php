@@ -5,12 +5,12 @@ namespace App\Http\Controllers\Components;
 use App\Events\CheckoutableCheckedIn;
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UploadFileRequest;
 use App\Models\Asset;
 use App\Models\Component;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -62,7 +62,7 @@ class ComponentCheckinController extends Controller
      *
      * @throws AuthorizationException
      */
-    public function store(Request $request, $component_asset_id, $backto = null)
+    public function store(UploadFileRequest $request, $component_asset_id, $backto = null)
     {
         if ($component_assets = DB::table('components_assets')->find($component_asset_id)) {
             if (is_null($component = Component::find($component_assets->component_id))) {
@@ -101,7 +101,12 @@ class ComponentCheckinController extends Controller
 
             $asset = Asset::find($component_assets->asset_id);
 
-            event(new CheckoutableCheckedIn($component, $asset, auth()->user(), $request->input('note'), Carbon::now()));
+            $file_name = null;
+            if ($request->hasFile('file')) {
+                $file_name = $request->handleFile('private_uploads/components/', 'checkin-'.$component->id, $request->file('file'));
+            }
+
+            event(new CheckoutableCheckedIn($component, $asset, auth()->user(), $request->input('note'), Carbon::now(), [], $file_name));
 
             session()->put(['redirect_option' => $request->input('redirect_option')]);
 

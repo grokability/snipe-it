@@ -13,7 +13,7 @@ use Illuminate\Validation\ValidationException;
 use Intervention\Image\Exception\NotReadableException;
 use Intervention\Image\Facades\Image;
 
-class ImageUploadRequest extends Request
+class ImageUploadRequest extends UploadFileRequest
 {
     use ConvertsBase64ToFiles;
 

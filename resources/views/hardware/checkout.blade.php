@@ -20,7 +20,7 @@
         <!-- left column -->
         <div class="col-md-7">
             <div class="box box-default">
-                <form class="form-horizontal" method="post" action="" autocomplete="off">
+                <form class="form-horizontal" method="post" action="" autocomplete="off" enctype="multipart/form-data">
                     <div class="box-header with-border">
                         <h2 class="box-title"> {{ trans('admin/hardware/form.tag') }} {{ $asset->asset_tag }}</h2>
                     </div>
@@ -173,6 +173,8 @@
                                 {!! $errors->first('note', '<span class="alert-msg" role="alert" aria-live="assertive"><i class="fas fa-times" aria-hidden="true"></i> :message</span>') !!}
                             </div>
                         </div>
+
+                        <x-input.file-upload name="file" />
 
                         <!-- Custom fields -->
                         @include("models/custom_fields_form", [

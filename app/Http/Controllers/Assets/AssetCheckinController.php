@@ -192,13 +192,18 @@ class AssetCheckinController extends Controller
         // Add any custom fields that should be included in the checkout
         $asset->customFieldsForCheckinCheckout('display_checkin');
 
+        $file_name = null;
+        if ($request->hasFile('file')) {
+            $file_name = $request->handleFile('private_uploads/assets/', 'checkin-'.$asset->id, $request->file('file'));
+        }
+
         if ($asset->save()) {
             // Update the location of any child assets
             Asset::where('assigned_type', Asset::class)
                 ->where('assigned_to', $asset->id)
                 ->update(['location_id' => $asset->location_id]);
 
-            event(new CheckoutableCheckedIn($asset, $target, auth()->user(), $request->input('note'), $checkin_at, $originalValues));
+            event(new CheckoutableCheckedIn($asset, $target, auth()->user(), $request->input('note'), $checkin_at, $originalValues, $file_name));
 
             return Helper::getRedirectOption($request, $asset->id, 'Assets')
                 ->with('success', trans('admin/hardware/message.checkin.success'));

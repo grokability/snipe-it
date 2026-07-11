@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\Setting;
 
-class AssetCheckinRequest extends Request
+class AssetCheckinRequest extends UploadFileRequest
 {
     /**
      * Determine if the user is authorized to make this request.

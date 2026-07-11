@@ -7,6 +7,7 @@ use App\Events\CheckoutableCheckedOut;
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\FilterRequest;
+use App\Http\Requests\UploadFileRequest;
 use App\Http\Transformers\ActionlogsTransformer;
 use App\Http\Transformers\LicenseSeatsTransformer;
 use App\Http\Transformers\LicensesTransformer;
@@ -299,7 +300,7 @@ class LicensesController extends Controller
      *
      * @param  int  $licenseId
      */
-    public function checkout(Request $request, $licenseId): JsonResponse
+    public function checkout(UploadFileRequest $request, $licenseId): JsonResponse
     {
         $license = License::findOrFail($licenseId);
         $this->authorize('checkout', $license);
@@ -316,11 +317,16 @@ class LicensesController extends Controller
             return response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/licenses/message.checkout.license_is_inactive')));
         }
 
+        $file_name = null;
+        if ($request->hasFile('file')) {
+            $file_name = $request->handleFile('private_uploads/licenses/', 'checkout-'.$license->id, $request->file('file'));
+        }
+
         $errorResponse = null;
         $updatedSeat = null;
         $target = null;
 
-        DB::transaction(function () use ($license, $validated, &$errorResponse, &$updatedSeat, &$target): void {
+        DB::transaction(function () use ($license, $validated, $file_name, &$errorResponse, &$updatedSeat, &$target): void {
             $seatId = $validated['seat_id'] ?? null;
 
             $licenseSeat = $seatId
@@ -386,7 +392,7 @@ class LicensesController extends Controller
                 return;
             }
 
-            event(new CheckoutableCheckedOut($licenseSeat, $target, auth()->user(), $validated['notes'] ?? null));
+            event(new CheckoutableCheckedOut($licenseSeat, $target, auth()->user(), $validated['notes'] ?? null, [], 1, false, $file_name));
             $updatedSeat = $licenseSeat->load('license', 'user', 'asset');
         });
 
@@ -408,7 +414,7 @@ class LicensesController extends Controller
      *
      * @param  int  $licenseId
      */
-    public function checkin(Request $request, $licenseId): JsonResponse
+    public function checkin(UploadFileRequest $request, $licenseId): JsonResponse
     {
         $license = License::findOrFail($licenseId);
         $this->authorize('checkin', $license);
@@ -444,7 +450,12 @@ class LicensesController extends Controller
             return response()->json(Helper::formatStandardApiResponse('error', null, $licenseSeat->getErrors()));
         }
 
-        event(new CheckoutableCheckedIn($licenseSeat, $target, auth()->user(), $licenseSeat->notes));
+        $file_name = null;
+        if ($request->hasFile('file')) {
+            $file_name = $request->handleFile('private_uploads/licenses/', 'checkin-'.$license->id, $request->file('file'));
+        }
+
+        event(new CheckoutableCheckedIn($licenseSeat, $target, auth()->user(), $licenseSeat->notes, null, [], $file_name));
 
         return response()->json(Helper::formatStandardApiResponse('success', (new LicenseSeatsTransformer)->transformLicenseSeat($licenseSeat->load('license', 'user', 'asset')), trans('admin/licenses/message.checkin.success')));
     }
