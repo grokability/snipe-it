@@ -1,5 +1,10 @@
 @push('css')
-    <link rel="stylesheet" href="{{ url(mix('css/dist/bootstrap-table.css')) }}">
+    {{-- Bootstrap-table CSS + JS are emitted together by @vite(). This one
+         directive replaces the earlier mix('css/dist/bootstrap-table.css'),
+         mix('js/dist/bootstrap-table.js'), plus the two locale <script>s
+         (locale-all + en-US), which are now import()'d inside the JS entry
+         itself so they still self-register in the correct order. --}}
+    @vite(['resources/assets/less/vite-bootstrap-table.less', 'resources/assets/js/bootstrap-table.js'])
 
     {{-- Bootstrap's default a:hover paints links Bootstrap-blue on hover.
          For the advanced-search "clear all" pill and the individual
@@ -20,11 +25,26 @@
 
 @push('js')
 
-<script src="{{ url(mix('js/dist/bootstrap-table.js')) }}"></script>
-<script src="{{ url(mix('js/dist/bootstrap-table-locale-all.min.js')) }}"></script>
+{{-- Bootstrap-table JS + locale files are loaded by @vite() up in @push('css'). --}}
 
-<!-- load english again here, even though it's in the all.js file, because if BS table doesn't have the translation, it otherwise defaults to chinese. See https://bootstrap-table.com/docs/api/table-options/#locale -->
-<script src="{{ url(mix('js/dist/bootstrap-table-en-US.min.js')) }}"></script>
+{{-- Legacy jQuery plugin blobs that assume `this === window` at module
+     top level. Under Vite's ESM strict mode top-level `this` is undefined,
+     which trips $jscomp.getGlobal / bare `jQuery` fallbacks and hard-kills
+     the module during load. Loading them as classic <script> tags keeps
+     `this === window` so their internal polyfills initialize.
+
+     Load order matters:
+       1. tableExport — registers $.fn.tableExport
+       2. jsPDF — populates window.jspdf
+       3. DejaVu font loader — MUST come after jsPDF (reaches into
+          window.jspdf.jsPDF.API.events at load time)
+       4. FileSaver, xlsx — standalone
+--}}
+<script src="{{ url('build/vendor/tableExport.min.js') }}"></script>
+<script src="{{ url('build/vendor/jspdf.umd.min.js') }}"></script>
+<script src="{{ url('build/vendor/jspdf-dejavu-fonts.js') }}"></script>
+<script src="{{ url('build/vendor/FileSaver.min.js') }}"></script>
+<script src="{{ url('build/vendor/xlsx.core.min.js') }}"></script>
 
 <script nonce="{{ csrf_token() }}">
     $(function () {

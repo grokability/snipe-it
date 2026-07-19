@@ -8,8 +8,11 @@
 
     <title>{{ config('app.name') }} - Authorization</title>
 
-    {{-- stylesheets --}}
-    <link rel="stylesheet" href="{{ url(mix('css/dist/all.css')) }}">
+    {{-- Blocking jQuery + moment before @vite — see default.blade.php. --}}
+    <script src="{{ url('build/vendor/jquery.min.js') }}"></script>
+    <script src="{{ url('build/vendor/moment-with-locales.min.js') }}"></script>
+
+    @vite(['resources/assets/less/vite-main.less', 'resources/assets/js/app.js'])
     <style>
         .passport-authorize .container {
             margin-top: 30px;

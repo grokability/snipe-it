@@ -1,0 +1,119 @@
+{
+  "_jquery-window-shim.js": {
+    "file": "assets/jquery-window-shim.js",
+    "name": "jquery-window-shim"
+  },
+  "node_modules/@fortawesome/fontawesome-free/webfonts/fa-brands-400.ttf": {
+    "file": "assets/fa-brands-400.ttf",
+    "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-brands-400.ttf"
+  },
+  "node_modules/@fortawesome/fontawesome-free/webfonts/fa-brands-400.woff2": {
+    "file": "assets/fa-brands-400.woff2",
+    "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-brands-400.woff2"
+  },
+  "node_modules/@fortawesome/fontawesome-free/webfonts/fa-regular-400.ttf": {
+    "file": "assets/fa-regular-400.ttf",
+    "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-regular-400.ttf"
+  },
+  "node_modules/@fortawesome/fontawesome-free/webfonts/fa-regular-400.woff2": {
+    "file": "assets/fa-regular-400.woff2",
+    "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-regular-400.woff2"
+  },
+  "node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.ttf": {
+    "file": "assets/fa-solid-900.ttf",
+    "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.ttf"
+  },
+  "node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.woff2": {
+    "file": "assets/fa-solid-900.woff2",
+    "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.woff2"
+  },
+  "node_modules/@fortawesome/fontawesome-free/webfonts/fa-v4compatibility.ttf": {
+    "file": "assets/fa-v4compatibility.ttf",
+    "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-v4compatibility.ttf"
+  },
+  "node_modules/@fortawesome/fontawesome-free/webfonts/fa-v4compatibility.woff2": {
+    "file": "assets/fa-v4compatibility.woff2",
+    "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-v4compatibility.woff2"
+  },
+  "node_modules/blueimp-file-upload/img/loading.gif": {
+    "file": "assets/loading.gif",
+    "src": "node_modules/blueimp-file-upload/img/loading.gif"
+  },
+  "node_modules/blueimp-file-upload/img/progressbar.gif": {
+    "file": "assets/progressbar.gif",
+    "src": "node_modules/blueimp-file-upload/img/progressbar.gif"
+  },
+  "node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.eot": {
+    "file": "assets/glyphicons-halflings-regular.eot",
+    "src": "node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.eot"
+  },
+  "node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.svg": {
+    "file": "assets/glyphicons-halflings-regular.svg",
+    "src": "node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.svg"
+  },
+  "node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.ttf": {
+    "file": "assets/glyphicons-halflings-regular.ttf",
+    "src": "node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.ttf"
+  },
+  "node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.woff": {
+    "file": "assets/glyphicons-halflings-regular.woff",
+    "src": "node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.woff"
+  },
+  "node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.woff2": {
+    "file": "assets/glyphicons-halflings-regular.woff2",
+    "src": "node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.woff2"
+  },
+  "resources/assets/js/app.js": {
+    "file": "assets/app.js",
+    "name": "app",
+    "src": "resources/assets/js/app.js",
+    "isEntry": true,
+    "imports": [
+      "_jquery-window-shim.js"
+    ]
+  },
+  "resources/assets/js/bootstrap-table.js": {
+    "file": "assets/bootstrap-table.js",
+    "name": "bootstrap-table",
+    "src": "resources/assets/js/bootstrap-table.js",
+    "isEntry": true,
+    "imports": [
+      "_jquery-window-shim.js"
+    ]
+  },
+  "resources/assets/less/vite-bootstrap-table.less": {
+    "file": "assets/vite-bootstrap-table.css",
+    "name": "vite-bootstrap-table",
+    "names": [
+      "vite-bootstrap-table.css"
+    ],
+    "src": "resources/assets/less/vite-bootstrap-table.less",
+    "isEntry": true
+  },
+  "resources/assets/less/vite-main.less": {
+    "file": "assets/vite-main.css",
+    "name": "vite-main",
+    "names": [
+      "vite-main.css"
+    ],
+    "src": "resources/assets/less/vite-main.less",
+    "isEntry": true,
+    "assets": [
+      "assets/glyphicons-halflings-regular.eot",
+      "assets/glyphicons-halflings-regular.woff2",
+      "assets/glyphicons-halflings-regular.woff",
+      "assets/glyphicons-halflings-regular.ttf",
+      "assets/glyphicons-halflings-regular.svg",
+      "assets/fa-brands-400.woff2",
+      "assets/fa-brands-400.ttf",
+      "assets/fa-regular-400.woff2",
+      "assets/fa-regular-400.ttf",
+      "assets/fa-solid-900.woff2",
+      "assets/fa-solid-900.ttf",
+      "assets/fa-v4compatibility.woff2",
+      "assets/fa-v4compatibility.ttf",
+      "assets/progressbar.gif",
+      "assets/loading.gif"
+    ]
+  }
+}

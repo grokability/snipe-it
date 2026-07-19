@@ -7,7 +7,11 @@
          Snipe-IT {{ trans('general.setup') }}
         @show
       </title>
-        <link rel="stylesheet" href="{{ url(mix('css/dist/all.css')) }}">
+        {{-- Blocking jQuery + moment before @vite — see default.blade.php. --}}
+        <script src="{{ url('build/vendor/jquery.min.js') }}"></script>
+        <script src="{{ url('build/vendor/moment-with-locales.min.js') }}"></script>
+
+        @vite(['resources/assets/less/vite-main.less', 'resources/assets/js/app.js'])
 
 
 
@@ -145,9 +149,7 @@
               </div>
           </main>
 
-        {{-- Javascript files --}}
-          <script src="{{ url('js/dist/all.js') }}" nonce="{{ csrf_token() }}"></script>
-
+        {{-- Main JS bundle is emitted by @vite() in <head>. --}}
         <script nonce="{{ csrf_token() }}">
             $(function () {
                 $(".select2").select2();

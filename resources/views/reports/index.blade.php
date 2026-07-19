@@ -362,7 +362,8 @@
 
 
 @push('js')
-<script src="{{ url(mix('js/dist/Chart.min.js')) }}"></script>
+{{-- Chart.js UMD — static-copied to public/build/vendor/ by vite.config.js. --}}
+<script src="{{ url('build/vendor/Chart.min.js') }}"></script>
 <script nonce="{{ csrf_token() }}">
 
 var charts = {};

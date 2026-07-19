@@ -156,24 +156,7 @@
 
                     <!-- Avatar -->
                     @if (($user->avatar) && ($user->avatar!=''))
-                      <div class="form-group{{ $errors->has('image_delete') ? ' has-error' : '' }}">
-                        <div class="col-md-9 col-md-offset-3">
-                          @if (!$user->isAvatarExternal())
-                          <label for="image_delete" class="form-control">
-                            <input type="checkbox" name="image_delete" id="image_delete" value="1" @checked(old('image_delete')) aria-label="image_delete">
-                            {{ trans('general.image_delete') }}
-                          </label>
-                          <x-form.error name="image_delete" />
-                          @endif
-                        </div>
-                      </div>
-
-                      <div class="form-group">
-                        <div class="col-md-9 col-md-offset-3">
-                          <img src="{{ (($user->isAvatarExternal()) ? $user->avatar : Storage::disk('public')->url(app('users_upload_path').e($user->avatar))) }}" class="img-responsive" alt="{{ $user->display_name }} avatar image">
-                          <x-form.error name="image_delete" />
-                        </div>
-                      </div>
+                  <x-input.image-upload :item="$user" fieldname="avatar" :imagePath="app('users_upload_path')"/>
 
                       @else
                       <!-- Gravatar Email -->
@@ -193,8 +176,6 @@
 
                     @endif
 
-
-                    <x-input.image-upload :item="$user" fieldname="avatar" :imagePath="app('users_upload_path')" />
 
 
                     <!-- Two factor opt in -->
@@ -258,10 +239,20 @@
 
             /**
              * 5. Add an event listener to toggle the reset
+             *
+             * The default layout's inline block used to declare
+             * `const clearButton = document.querySelector(...)` at classic-
+             * script scope, and this file re-read that binding by bare
+             * identifier. Once the layout's block moved inside
+             * $(function () { ... }) that cross-script scope went away,
+             * so we resolve the element locally here.
              */
-            clearButton.addEventListener("click", (event) => {
-                localStorage.removeItem("theme");
-            });
+            const clearButton = document.querySelector("[data-theme-toggle-clear]");
+            if (clearButton) {
+                clearButton.addEventListener("click", (event) => {
+                    localStorage.removeItem("theme");
+                });
+            }
 
             $('#enable_sounds').on("click",function () {
                 if ($('#enable_sounds').is(":checked")) {

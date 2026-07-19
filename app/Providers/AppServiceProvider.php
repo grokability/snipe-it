@@ -25,6 +25,7 @@ use App\Observers\SettingObserver;
 use App\Observers\UserObserver;
 use App\View\Composers\ImpersonationBannerComposer;
 use App\View\Composers\SidebarComposer;
+use Illuminate\Foundation\Vite;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Routing\UrlGenerator;
 use Illuminate\Support\Facades\Log;
@@ -77,6 +78,13 @@ class AppServiceProvider extends ServiceProvider
         }
 
         Paginator::useBootstrap();
+
+        // Every hand-authored inline <script> in the layout carries
+        // nonce="{{ csrf_token() }}". Tell @vite() to do the same so Vite's
+        // emitted <script>/<link> tags don't become the only unnonced tags
+        // on the page — if the CSP in SecurityHeaders.php ever tightens off
+        // 'unsafe-inline', those tags need the nonce to keep loading.
+        app(Vite::class)->useCspNonce(csrf_token());
 
         View::composer('layouts.default', SidebarComposer::class);
         View::composer('partials.impersonation-banner', ImpersonationBannerComposer::class);

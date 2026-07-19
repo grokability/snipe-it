@@ -474,7 +474,14 @@
 
             /**
              * 5. Add an event listener to toggle the reset
+             *
+             * Same fix as account/profile.blade.php: the default layout's
+             * `const clearButton` is no longer at classic-script scope
+             * (it's inside $(function () { ... })), so we resolve the
+             * element locally here.
              */
+            const clearButton = document.querySelector("[data-theme-toggle-clear]");
+            if (!clearButton) return;
             clearButton.addEventListener("click", (event) => {
 
                 var header_color = '#3c8dbc';

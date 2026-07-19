@@ -46,7 +46,12 @@ window.ClipboardJS = require('clipboard')
  * @return {IIFE}          Immediately invoked. Returns self.
  */
 
-lineOptions = {
+// Under laravel-mix's classic-script bundle, undeclared variables at the top
+// level of snipeit.js became implicit globals. Under Vite / ESM every module
+// runs in strict mode, so a bare `lineOptions = {}` throws ReferenceError.
+// Attach explicitly to window so the dashboard chart code (which reads
+// window.lineOptions at chart-init time) still finds them.
+window.lineOptions = {
 
         legend: {
             position: "bottom"
@@ -79,7 +84,7 @@ lineOptions = {
 
 };
 
-pieOptions = {
+window.pieOptions = {
     //Boolean - Whether we should show a stroke on each segment
     segmentShowStroke: true,
     //String - The colour of each segment stroke
@@ -251,8 +256,8 @@ $(function () {
 
 		var select = element.data("select2");
 
-		// There's two different locations where the select2-generated input element can be. 
-		searchElement = select.dropdown.$search || select.$container.find(".select2-search__field");
+		// There's two different locations where the select2-generated input element can be.
+		var searchElement = select.dropdown.$search || select.$container.find(".select2-search__field");
 
 		var value = searchElement.val();
 		return value;
@@ -787,8 +792,8 @@ document.addEventListener('livewire:init', () => {
 
 // Check/Uncheck all radio buttons in the permissions group
 $('.header-row input:radio').change(function() {
-    value = $(this).attr('value');
-    area = $(this).data('checker-group');
+    var value = $(this).attr('value');
+    var area = $(this).data('checker-group');
     $('.radiochecker-'+area+'[value='+value+']').prop('checked', true);
 });
 
@@ -809,7 +814,7 @@ $(".remember-toggle").on("click",function(){
 var all_cookies = document.cookie.split(';')
 for (var i in all_cookies) {
     var trimmed_cookie = all_cookies[i].trim(' ')
-    elems = trimmed_cookie.split('=', 2);
+    var elems = trimmed_cookie.split('=', 2);
 
     // We have to do more here since we don't know the name of the selector
     if (trimmed_cookie.startsWith('toggle_state_')) {

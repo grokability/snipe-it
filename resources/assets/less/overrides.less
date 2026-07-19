@@ -346,6 +346,72 @@ body {
   white-space: normal;
 }
 
+// AdminLTE 2 relies on its skin CSS files (skin-blue, skin-black, etc.)
+// to give the sidebar's section-header <li class="header"> rows and the
+// .treeview-menu popover a solid dark background. Snipe-IT's build only
+// compiles AdminLTE.less itself — no skin files, since the color palette
+// is driven by inline CSS variables + a <style> block in default.blade.php
+// instead. Without an explicit background these two elements read the
+// page's default (transparent), which makes the sidebar section
+// separators disappear against the sidebar background AND makes the
+// treeview-menu popover in sidebar-mini/compact hover mode look see-
+// through. Match the palette used in default.blade.php's inline styles.
+.sidebar-menu > li.header {
+  background-color: #1a2226;
+  color: #4b646f;
+}
+
+.sidebar-menu > li > .treeview-menu {
+  background-color: #2c3b41;
+}
+
+// <li class="divider"> between items inside .treeview-menu. Bootstrap 3
+// styles `.dropdown-menu .divider` as a 1px horizontal rule, but that
+// selector doesn't match the sidebar treeview usage. Without an explicit
+// rule the divider LI is a zero-height transparent element, so the
+// "quickscan" sub-menu on the sidebar shows no visual separator between
+// its normal items and the divider-marked section below.
+//
+// The LI itself is opaque and colored to match the sibling menu items
+// (#2c3b41 — set on `.treeview-menu > li` in default.blade.php's inline
+// styles), so the divider block reads as one continuous surface with the
+// items above and below. A ::before pseudo-element paints the 1px line
+// centered vertically, slightly lighter than the surrounding tone.
+.treeview-menu > li.divider,
+.sidebar-menu > li.divider {
+  position: relative;
+  height: 17px;
+  margin: 0;
+  padding: 0;
+  background-color: #2c3b41;
+  border: 0;
+  list-style: none;
+  overflow: hidden;
+  font-size: 0;
+  line-height: 0;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 8px;
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.18);
+  }
+}
+
+// Compact-mode hover popover: AdminLTE positions the label <span> at
+// `top: 0` and the .treeview-menu popover at `top: 44px`. If the label's
+// natural height falls short of 44px (varies with font/locale), the
+// space between them shows the page background straight through. Force
+// the span to fill the full 44px so it butts up against the treeview
+// popover with no gap.
+.sidebar-mini:not(.sidebar-mini-expand-feature).sidebar-collapse .sidebar-menu > li:hover > a > span {
+  min-height: 44px;
+  box-sizing: border-box;
+}
+
 .modal-warning .modal-help {
   color: #fff8af;
 }

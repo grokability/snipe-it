@@ -26,6 +26,7 @@
         </x-alert>
     </div>
     @include ('partials.confetti-js')
+    @include ('partials.success-sound-js')
 @endif
 
 
@@ -37,6 +38,7 @@
         </x-alert>
     </div>
     @include ('partials.confetti-js')
+    @include ('partials.success-sound-js')
 @endif
 
 

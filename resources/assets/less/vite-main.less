@@ -1,0 +1,40 @@
+/*
+ * Vite entry for the main CSS bundle. Import order matches webpack.mix.js's
+ * .styles([...]) call exactly — later files intentionally override earlier
+ * ones (see overrides.less, which is dead last on purpose).
+ *
+ * Chain in webpack.mix.js:
+ *   bootstrap → fontawesome → AdminLTE (LESS-compiled) → eonasdan
+ *   datetimepicker → bootstrap-colorpicker → blueimp file-upload (×2) →
+ *   ekko-lightbox → bootstrap-table core → app.less → select2 → overrides
+ */
+
+// 1) Bootstrap 3
+@import (less) '../../../node_modules/bootstrap/dist/css/bootstrap.css';
+
+// 2) Font Awesome
+@import (less) '../../../node_modules/@fortawesome/fontawesome-free/css/all.css';
+
+// 3) AdminLTE (source .less; webpack.mix.js compiled this via its own
+// .less() step; Vite handles it inline). Also brings in AdminLTE's plugin
+// styles.
+@import '../../../node_modules/admin-lte/build/less/AdminLTE.less';
+
+// 4) Widget CSS
+@import (less) '../../../node_modules/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css';
+@import (less) '../../../node_modules/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.css';
+@import (less) '../../../node_modules/blueimp-file-upload/css/jquery.fileupload.css';
+@import (less) '../../../node_modules/blueimp-file-upload/css/jquery.fileupload-ui.css';
+@import (less) '../../../node_modules/ekko-lightbox/dist/ekko-lightbox.css';
+@import (less) '../../../node_modules/bootstrap-table/dist/bootstrap-table.css';
+
+// 5) App-specific
+@import './app.less';
+
+// 6) select2 (must come after app.less so app styles don't override its
+// dropdown positioning fixes, and before overrides.less which does).
+@import (less) '../../../node_modules/select2/dist/css/select2.css';
+
+// 7) Overrides — must be last so its rules win over every vendor + app rule
+// above.
+@import './overrides.less';

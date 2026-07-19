@@ -505,7 +505,9 @@
 @push('js')
 
 
-        <script src="{{ url(mix('js/dist/Chart.min.js')) }}"></script>
+        {{-- Chart.js is a UMD blob we don't touch — vite.config.js's static-copy
+             plugin drops it at public/build/vendor/Chart.min.js at build time. --}}
+        <script src="{{ url('build/vendor/Chart.min.js') }}"></script>
 <script nonce="{{ csrf_token() }}">
     // ---------------------------
     // - ASSET STATUS CHART -

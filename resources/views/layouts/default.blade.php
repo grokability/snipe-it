@@ -32,8 +32,20 @@
         window.Laravel = {csrfToken: '{{ csrf_token() }}'};
     </script>
 
-    {{-- stylesheets --}}
-    <link rel="stylesheet" href="{{ url(mix('css/dist/all.css')) }}">
+    {{-- jQuery + moment are loaded as blocking classic <script>s so they're
+         on window BEFORE the inline scripts scattered through this file
+         and its included partials run. @vite emits its <script type="module">
+         AFTER these tags but the browser defers module execution to after
+         document parse, so without the blocking loads the inline scripts
+         would throw "Can't find variable: jQuery". See vite.config.js. --}}
+    <script src="{{ url('build/vendor/jquery.min.js') }}"></script>
+    <script src="{{ url('build/vendor/moment-with-locales.min.js') }}"></script>
+
+    {{-- Vite: emits both the CSS <link> and JS <script> tags for the main
+         bundle. Bootstrap-table gets its own @vite() call inside
+         partials/bootstrap-table.blade.php since it's only needed on
+         table pages. --}}
+    @vite(['resources/assets/less/vite-main.less', 'resources/assets/js/app.js'])
 
     {{-- page level css --}}
     @stack('css')
@@ -2274,9 +2286,19 @@
 
 
 
-        {{-- Javascript files --}}
-        <script src="{{ url(mix('js/dist/all.js')) }}" nonce="{{ csrf_token() }}"></script>
-        <script src="{{ url('js/select2/i18n/'.Helper::mapBackToLegacyLocale(app()->getLocale()).'.js') }}"></script>
+        {{-- The select2 i18n script does `$.fn.select2.amd.define(...)`,
+             which requires select2 to already be attached to jQuery — and
+             select2 is registered inside the deferred Vite module bundle.
+             Ordering between `type="module"` and plain `<script defer>`
+             tags isn't reliable across browsers, so we don't fight it:
+             we load the locale file dynamically inside jQuery's ready
+             callback, which fires at DOMContentLoaded — AFTER all
+             deferred/module scripts have finished executing. --}}
+        <script nonce="{{ csrf_token() }}">
+            $(function () {
+                $.getScript(@json(url('build/select2/i18n/'.Helper::mapBackToLegacyLocale(app()->getLocale()).'.js')));
+            });
+        </script>
 
         {{-- Page level javascript --}}
         @stack('js')
@@ -2286,6 +2308,15 @@
 
 
         <script nonce="{{ csrf_token() }}">
+        // The whole block is wrapped in $(function () { ... }) — jQuery's
+        // .ready() shorthand — because it calls plugin methods (colorpicker,
+        // select2, jquery-validation, etc.) that are registered by the
+        // deferred Vite module bundle. Inline classic scripts run
+        // synchronously as the parser reaches them; module scripts run
+        // AFTER document parse. .ready() fires at DOMContentLoaded, which
+        // happens after deferred/module scripts finish, so by the time this
+        // block runs every plugin is available.
+        $(function () {
 
             // Handle the first selected tabs regardless of permissions
             if ($('li.snipetab').is(':first-of-type')) {
@@ -2348,7 +2379,16 @@
             const button = document.querySelector("[data-theme-toggle]");
             const localStorageTheme = localStorage.getItem("theme");
             const systemSettingDark = window.matchMedia("(prefers-color-scheme: dark)");
-            const clearButton = document.querySelector("[data-theme-toggle-clear]");
+            // Attached to `window` because two other pages (account/profile
+            // and settings/branding) reference `clearButton` from their
+            // own inline <script> blocks. Under mix, a top-level `const`
+            // in one classic <script> was visible from every other classic
+            // <script> via the shared Script scope. Once this whole block
+            // moved inside `$(function () { ... })` (see wrapping intro at
+            // top of the ready callback), that cross-script visibility went
+            // away — hence the explicit window assignment.
+            window.clearButton = document.querySelector("[data-theme-toggle-clear]");
+            const clearButton = window.clearButton;
 
             /**
              * 2. Work out the current site settings
@@ -2377,7 +2417,16 @@
 
 
 
-            $.fn.datepicker.dates['{{ app()->getLocale() }}'] = {
+            {{-- bootstrap-datepicker was removed from the JS bundle in commit
+                 e281416cf6 ("Removed bs datepicker from js"), but this locale
+                 registration block still expects `$.fn.datepicker.dates` to
+                 exist. Under the classic-script mix bundle the missing dep
+                 was masked by execution order; under Vite/ESM it throws a
+                 hard error. Guard the assignment behind a truthy check so
+                 the block is a no-op when bootstrap-datepicker isn't
+                 loaded. If bootstrap-datepicker gets reintroduced this
+                 guard becomes a pass-through. --}}
+            if ($.fn.datepicker && $.fn.datepicker.dates) $.fn.datepicker.dates['{{ app()->getLocale() }}'] = {
                 days: [
                     "{{ trans('datepicker.days.sunday') }}",
                     "{{ trans('datepicker.days.monday') }}",
@@ -2806,11 +2855,14 @@
             });
 
 
+        });
         </script>
 
         @if ((session()->get('topsearch')=='true') || (request()->is('/')))
             <script nonce="{{ csrf_token() }}">
-                $("#tagSearch").focus();
+                $(function () {
+                    $("#tagSearch").focus();
+                });
             </script>
         @endif
 

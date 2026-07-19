@@ -1,0 +1,10 @@
+/*
+ * Vite entry for the bootstrap-table CSS bundle. Mirrors the .combine()
+ * block in webpack.mix.js. Order matches original — dragtable.css is last
+ * so its cursor overrides beat bootstrap-table's default header cursors.
+ */
+
+@import (less) '../../../node_modules/bootstrap-table/dist/bootstrap-table.css';
+@import (less) '../../../node_modules/bootstrap-table/dist/extensions/sticky-header/bootstrap-table-sticky-header.css';
+@import (less) '../../../node_modules/bootstrap-table/dist/extensions/fixed-columns/bootstrap-table-fixed-columns.css';
+@import (less) '../css/dragtable.css';

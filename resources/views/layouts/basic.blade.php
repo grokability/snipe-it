@@ -9,8 +9,12 @@
     <title>{{ ($snipeSettings) && ($snipeSettings->site_name) ? $snipeSettings->site_name : 'Snipe-IT' }}</title>
 
     <link rel="shortcut icon" type="image/ico" href="{{ ($snipeSettings) && ($snipeSettings->favicon!='') ?  Storage::disk('public')->url(e($snipeSettings->favicon)) : config('app.url').'/favicon.ico' }}">
-    {{-- stylesheets --}}
-    <link rel="stylesheet" href="{{ url(mix('css/dist/all.css')) }}">
+    {{-- Blocking jQuery + moment before @vite — see default.blade.php for
+         why. Login/setup pages have inline scripts too. --}}
+    <script src="{{ url('build/vendor/jquery.min.js') }}"></script>
+    <script src="{{ url('build/vendor/moment-with-locales.min.js') }}"></script>
+
+    @vite(['resources/assets/less/vite-main.less', 'resources/assets/js/app.js'])
 
     <script nonce="{{ csrf_token() }}">
         window.snipeit = {
@@ -65,9 +69,7 @@
     @endif
     </div>
 
-    {{-- Javascript files --}}
-    <script src="{{ url(mix('js/dist/all.js')) }}" nonce="{{ csrf_token() }}"></script>
-
+    {{-- Main JS bundle is emitted by @vite() in <head>. --}}
     @stack('js')
 </body>
 

@@ -10,10 +10,27 @@
 
     <link rel="shortcut icon" type="image/ico" href="{{ ($snipeSettings) && ($snipeSettings->favicon!='') ?  Storage::disk('public')->url(e($snipeSettings->favicon)) : config('app.url').'/favicon.ico' }}">
 
-    <link rel="stylesheet" href="{{ url(mix('css/dist/bootstrap-table.css')) }}">
+    {{-- Blocking jQuery + moment before @vite — see default.blade.php. --}}
+    <script src="{{ url('build/vendor/jquery.min.js') }}"></script>
+    <script src="{{ url('build/vendor/moment-with-locales.min.js') }}"></script>
 
-    {{-- stylesheets --}}
-    <link rel="stylesheet" href="{{ url(mix('css/dist/all.css')) }}">
+    {{-- Vite: main bundle + bootstrap-table bundle (both needed on the print
+         view because it renders the assigned-items table). --}}
+    @vite([
+        'resources/assets/less/vite-main.less',
+        'resources/assets/js/app.js',
+        'resources/assets/less/vite-bootstrap-table.less',
+        'resources/assets/js/bootstrap-table.js',
+    ])
+
+    {{-- Legacy IIFEs that need `this === window` at module top — kept out
+         of the Vite bundle. See partials/bootstrap-table.blade.php for the
+         full explanation and load-order requirements. --}}
+    <script src="{{ url('build/vendor/tableExport.min.js') }}"></script>
+    <script src="{{ url('build/vendor/jspdf.umd.min.js') }}"></script>
+    <script src="{{ url('build/vendor/jspdf-dejavu-fonts.js') }}"></script>
+    <script src="{{ url('build/vendor/FileSaver.min.js') }}"></script>
+    <script src="{{ url('build/vendor/xlsx.core.min.js') }}"></script>
 
     <script nonce="{{ csrf_token() }}">
         window.snipeit = {
@@ -518,14 +535,10 @@
     </table>
 @endforeach
 
-{{-- Javascript files --}}
-<script src="{{ url(mix('js/dist/all.js')) }}" nonce="{{ csrf_token() }}"></script>
-
-<script src="{{ url(mix('js/dist/bootstrap-table.js')) }}"></script>
-<script src="{{ url(mix('js/dist/bootstrap-table-locale-all.min.js')) }}"></script>
-
-<!-- load english again here, even though it's in the all.js file, because if BS table doesn't have the translation, it otherwise defaults to chinese. See https://bootstrap-table.com/docs/api/table-options/#locale -->
-<script src="{{ url(mix('js/dist/bootstrap-table-en-US.min.js')) }}"></script>
+{{-- All JS is emitted by the @vite() directive up in <head>. Bootstrap-table
+     locale files are import()'d inside resources/assets/js/bootstrap-table.js
+     so they still self-register in the right order (locale-all first, en-US
+     last, so en-US wins the fallback race per the bootstrap-table docs). --}}
 
 <script>
     $('.snipe-table').bootstrapTable('destroy').each(function () {

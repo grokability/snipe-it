@@ -4,9 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Stack
 
-- **PHP 8.2+** / **Laravel 12** (framework), **Laravel Mix** (webpack) for frontend assets
-- **AdminLTE 2** / **Bootstrap 3** UI — Blade views, no Livewire/Inertia
-- **Chart.js v2.9.4** — bundled at `public/js/dist/Chart.min.js`; use `horizontalBar` type (v2 API, not v3)
+- **PHP 8.2+** / **Laravel 12** (framework), **Vite 8** (`vite.config.js`) for frontend assets — replaces laravel-mix as of the Vite migration
+- **AdminLTE 2** / **Bootstrap 3** UI — Blade views, jQuery-driven with select Livewire components
+- **Chart.js v2.9.4** — static-copied to `public/build/vendor/Chart.min.js` by the vite-plugin-static-copy target; use `horizontalBar` type (v2 API, not v3)
 
 ## Common Commands
 
@@ -22,14 +22,11 @@ php artisan test tests/Feature/Assets/AssetsTest.php
 # Run a specific test method
 php artisan test --filter testSomeMethod
 
-# Build frontend assets (dev)
+# Vite dev server (HMR — supersedes `mix watch`)
 npm run dev
 
-# Build for production
-npm run prod
-
-# Laravel Mix watch
-npm run watch
+# Production build (writes hashed assets + manifest to public/build/)
+npm run build
 
 # Tinker / REPL
 php artisan tinker
@@ -37,6 +34,34 @@ php artisan tinker
 # Clear caches after config/route changes
 php artisan optimize:clear
 ```
+
+## Frontend build layout
+
+Vite entry files live under `resources/assets/`:
+
+- `resources/assets/js/app.js` — main JS entry. Establishes `window.jQuery`
+  and `window.moment` globals BEFORE any plugin imports, then imports
+  Bootstrap 3, AdminLTE, select2, colorpicker, eonasdan-bootstrap-datetimepicker,
+  ekko-lightbox, signature pad, jquery-validation, list.js, clipboard,
+  canvas-confetti, then `./snipeit.js` and `./snipeit_modals.js`.
+- `resources/assets/less/vite-main.less` — CSS entry. `@import`s bootstrap
+  → fontawesome → AdminLTE.less → widget CSS → app.less → select2 → overrides.less
+  in that order (order matters; overrides.less is last on purpose).
+- `resources/assets/js/bootstrap-table.js` + `vite-bootstrap-table.less` —
+  separate bundle for the bootstrap-table stack (+ 8 extensions + jsPDF +
+  DejaVu font loader). Loaded only on pages that include
+  `resources/views/partials/bootstrap-table.blade.php`.
+
+Blade layouts consume the bundles via the `@vite([...])` directive.
+
+Static passthroughs (kept out of the JS bundles):
+
+- `public/build/vendor/Chart.min.js` — Chart.js is a UMD blob, only used on
+  the dashboard + reports/index. Copied by `vite-plugin-static-copy` from
+  `node_modules/chart.js/dist/`.
+- `public/build/select2/i18n/*.js` — one locale JS file per language. The
+  default layout loads the current locale at render time via a plain
+  `<script src>`.
 
 Dev server is served via **Laravel Herd** (`herd coverage` for coverage reports).
 
