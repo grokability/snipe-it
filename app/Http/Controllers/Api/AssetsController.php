@@ -1970,6 +1970,7 @@ class AssetsController extends Controller
                 // bulkedit=false and count=0 are default values for label generation
                 $label = $label->with('assets', $assets)
                     ->with('settings', $settings)
+                    ->with('offset', max(0, (int) $request->input('offset', 0)))
                     ->with('bulkedit', false)
                     ->with('count', 0);
 

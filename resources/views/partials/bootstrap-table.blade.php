@@ -1997,7 +1997,29 @@
            domnode.elements.order.value = order;
        }
     });
+            
 
+    function updateLabelOffsetInputState($form) {
+        var action = $form.find('select[name="bulk_actions"]').val();
+        var $offsetInput = $form.find('.js-label-offset');
+        var $offsetToggles = $form.find('.js-label-offset-toggle');
+
+        if ($offsetInput.length === 0) {
+            return;
+        }
+
+        var enabled = action === 'labels';
+        $offsetInput.prop('disabled', !enabled);
+        $offsetToggles.toggle(enabled);
+    }
+
+    $(document).on('change', 'form select[name="bulk_actions"]', function () {
+        updateLabelOffsetInputState($(this).closest('form'));
+    });
+
+    $('form').each(function () {
+        updateLabelOffsetInputState($(this));
+    });
 
     // This specifies the footer columns that should have special styles associated
     // (usually numbers)
