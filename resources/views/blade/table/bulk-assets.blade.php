@@ -64,7 +64,7 @@
                 step="1"
                 style="width: 120px;"
                 aria-label="label offset"
-                title="Skip this many labels before printing"
+                title="{{ trans('general.label_print_offset') }}"
             >
 
             <button class="btn btn-theme" id="{{ Illuminate\Support\Str::camel($name) }}Button" disabled>{{ trans('button.go') }}</button>

@@ -192,6 +192,7 @@ return [
     'import_type' => 'CSV import type',
     'insufficient_permissions' => 'Insufficient permissions!',
     'kits' => 'Predefined Kits',
+    'label_print_offset' => 'Number of labels to skip when generating the print sheet',
     'language' => 'Language',
     'last' => 'Last',
     'last_login' => 'Last Login',

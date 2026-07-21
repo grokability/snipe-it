@@ -55,7 +55,7 @@
         step="1"
         style="width: 120px;"
         aria-label="label offset"
-        title="Skip this many labels before printing"
+        title="{{ trans('general.label_print_offset') }}"
     >
 
 
