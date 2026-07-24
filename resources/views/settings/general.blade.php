@@ -409,7 +409,7 @@
                                        <x-input.select
                                            name="depreciation_method"
                                            id="depreciation_method"
-                                           :options="['default' => trans('admin/depreciations/general.linear_depreciation'), 'half_1' => trans('admin/depreciations/general.half_1'), 'half_2' => trans('admin/depreciations/general.half_2')]"
+                                           :options="['default' => trans('admin/depreciations/general.linear_depreciation'), 'diminish' => trans('admin/depreciations/general.diminishing_depreciation'), 'half_1' => trans('admin/depreciations/general.half_1'), 'half_2' => trans('admin/depreciations/general.half_2')]"
                                            :selected="old('depreciation_method', $setting->depreciation_method)"
                                            style="width: 80%"
                                        />
