@@ -194,7 +194,7 @@ return [
     'insufficient_permissions' => 'Insufficient permissions!',
     'kits' => 'Predefined Kits',
     'labels_offset' => 'Labels Offset',
-    'label_print_offset' => 'Number of labels to skip when generating the print sheet',
+    'labels_offset_info' => 'Number of labels to skip when generating the print sheet',
     'language' => 'Language',
     'last' => 'Last',
     'last_login' => 'Last Login',

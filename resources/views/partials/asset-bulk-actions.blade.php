@@ -43,7 +43,7 @@
     </select>
 
     <label for="asset-label-offset" class="js-label-offset-toggle" style="margin-left: 8px; margin-right: 6px;">
-        Offset
+        {{trans('general.labels_offset')}}
     </label>
     <input
         id="asset-label-offset"
@@ -55,7 +55,7 @@
         step="1"
         style="width: 120px;"
         aria-label="label offset"
-        title="{{ trans('general.label_print_offset') }}"
+        title="{{ trans('general.labels_offset_info') }}"
     >
 
 

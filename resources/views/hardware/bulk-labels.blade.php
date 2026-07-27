@@ -43,7 +43,7 @@
                                 name="labels_offset"
                                 id="labels_offset"
                                 type="number"
-                                :title="{{trans('general.label_print_offset')}}"
+                                :title="{{trans('general.labels_offset_info')}}"
                                 step="1"
                                 min="0"
                                 input_div_class="col-md-4"
