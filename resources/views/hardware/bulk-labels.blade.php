@@ -44,6 +44,7 @@
                                 id="labels_offset"
                                 type="number"
                                 :title="{{trans('general.labels_offset_info')}}"
+                                value="0"
                                 step="1"
                                 min="0"
                                 input_div_class="col-md-4"
