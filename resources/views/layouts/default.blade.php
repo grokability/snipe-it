@@ -1791,6 +1791,14 @@
                                         </li>
                                     @endcan
 
+                                    @can('admin')
+                                        <li id="bulk-labels-sidenav-option" {!! (request()->is('hardware/bulklabels') ? ' class="active" aria-current="page"' : '') !!}>
+                                            <a href="{{ url('hardware/bulklabels') }}">
+                                                {{ trans('general.bulk_labels') }}
+                                            </a>
+                                        </li>
+                                    @endcan
+                                    
                                 </ul>
                             </li>
                         @endcan
