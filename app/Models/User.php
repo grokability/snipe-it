@@ -1248,6 +1248,13 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
      *
      * @since  [v6.2.0]
      *
+     * Stored raw (not bcrypted) on users who have no meaningful password
+     * on file — created deactivated via the UI, imported without a
+     * password, synced from LDAP/SCIM, or otherwise. Because it is stored
+     * as a plain string, Hash::check at login will never return true no
+     * matter what the input is, so there is no possible authentication
+     * path against this placeholder.
+     *
      * @return string
      */
     public function noPassword()
@@ -1724,31 +1731,57 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
 
     }
 
-    public function scopeWithInventoryRelations($query, int $id, bool $withLicenses = true, bool $withAccessories = true, bool $withConsumables = true)
-    {
-        $with = [
-            'assets.log' => fn ($query) => $query->withTrashed()
-                ->where('target_type', User::class)
-                ->where('target_id', $id)
-                ->where('action_type', 'accepted'),
-            'assets.defaultLoc',
-            'assets.location',
-            'assets.model.category',
-            'assets.assignedAssets.log' => fn ($query) => $query->withTrashed()
-                ->where('target_type', User::class)
-                ->where('target_id', $id)
-                ->where('action_type', 'accepted'),
-            'assets.assignedAssets.assignedTo',
-            'assets.assignedAssets.defaultLoc',
-            'assets.assignedAssets.location',
-            'assets.assignedAssets.model.category',
-            'assets.components.category',
-        ];
+    public function scopeWithInventoryRelations(
+        $query,
+        int $id,
+        bool $withAssets = true,
+        bool $withLicenses = true,
+        bool $withAccessories = true,
+        bool $withConsumables = true,
+        bool $withComponents = true,
+    ) {
+        $with = [];
+
+        if ($withAssets) {
+            $with = array_merge($with, [
+                'assets.log' => fn ($query) => $query->withTrashed()
+                    ->where('target_type', User::class)
+                    ->where('target_id', $id)
+                    ->where('action_type', 'accepted'),
+                'assets.defaultLoc',
+                'assets.location',
+                'assets.model.category',
+                'assets.assignedAssets.log' => fn ($query) => $query->withTrashed()
+                    ->where('target_type', User::class)
+                    ->where('target_id', $id)
+                    ->where('action_type', 'accepted'),
+                'assets.assignedAssets.assignedTo',
+                'assets.assignedAssets.defaultLoc',
+                'assets.assignedAssets.location',
+                'assets.assignedAssets.model.category',
+            ]);
+
+            if ($withComponents) {
+                $with[] = 'assets.components.category';
+            }
+
+            if ($withLicenses) {
+                $with = array_merge($with, [
+                    'assets.licenses',
+                    'assets.licenses.category',
+                ]);
+            }
+
+            if ($withAccessories) {
+                $with = array_merge($with, [
+                    'assets.assignedAccessories',
+                    'assets.assignedAccessories.accessory.category',
+                ]);
+            }
+        }
 
         if ($withLicenses) {
             $with = array_merge($with, [
-                'assets.licenses',
-                'assets.licenses.category',
                 'directLicenses.category',
                 'licenses.category',
             ]);
@@ -1756,8 +1789,6 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
 
         if ($withAccessories) {
             $with = array_merge($with, [
-                'assets.assignedAccessories',
-                'assets.assignedAccessories.accessory.category',
                 'accessories.log' => fn ($query) => $query->withTrashed()
                     ->where('target_type', User::class)
                     ->where('target_id', $id)

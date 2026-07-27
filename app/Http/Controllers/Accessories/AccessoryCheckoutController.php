@@ -16,6 +16,7 @@ use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AccessoryCheckoutController extends Controller
 {
@@ -82,18 +83,41 @@ class AccessoryCheckoutController extends Controller
 
         $accessory->checkout_qty = $request->input('checkout_qty', 1);
 
-        for ($i = 0; $i < $accessory->checkout_qty; $i++) {
+        // Concurrency guard. AccessoryCheckoutRequest's
+        // number_remaining_after_checkout rule runs on an unlocked read of
+        // numRemaining(), so two simultaneous checkout requests could both
+        // pass validation, both attach rows, and land the register at -1.
+        // Re-fetch the parent row under lockForUpdate INSIDE a transaction,
+        // re-check availability against the locked snapshot, and only then
+        // write. Mirrors the License checkout locking pattern.
+        $overAllocated = false;
 
-            $accessory_checkout = new AccessoryCheckout([
-                'accessory_id' => $accessory->id,
-                'created_at' => Carbon::now(),
-                'assigned_to' => $target->id,
-                'assigned_type' => $target::class,
-                'note' => $request->input('note'),
-            ]);
+        DB::transaction(function () use ($accessory, $request, $target, &$overAllocated): void {
+            $locked = Accessory::whereKey($accessory->id)->lockForUpdate()->first();
 
-            $accessory_checkout->created_by = auth()->id();
-            $accessory_checkout->save();
+            if (! $locked || $locked->numRemaining() < $accessory->checkout_qty) {
+                $overAllocated = true;
+
+                return;
+            }
+
+            for ($i = 0; $i < $accessory->checkout_qty; $i++) {
+
+                $accessory_checkout = new AccessoryCheckout([
+                    'accessory_id' => $accessory->id,
+                    'created_at' => Carbon::now(),
+                    'assigned_to' => $target->id,
+                    'assigned_type' => $target::class,
+                    'note' => $request->input('note'),
+                ]);
+
+                $accessory_checkout->created_by = auth()->id();
+                $accessory_checkout->save();
+            }
+        });
+
+        if ($overAllocated) {
+            return redirect()->back()->with('error', trans('admin/accessories/message.checkout.unavailable'));
         }
 
         event(new CheckoutableCheckedOut(

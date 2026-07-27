@@ -371,7 +371,7 @@
                             buttons="accessoryButtons"
                             api_url="{{ route('api.assets.assigned_accessories', ['asset' => $asset]) }}"
                             :presenter="\App\Presenters\AssetPresenter::assignedAccessoriesDataTableLayout()"
-                            export_filename="export-maintenances-{{ str_slug($asset->name) }}-{{ date('Y-m-d') }}"
+                            export_filename="export-accessories-{{ str_slug($asset->name) }}-{{ date('Y-m-d') }}"
                         />
                     </x-tabs.pane>
 
@@ -469,6 +469,7 @@
         @include ('modals.add-note', ['type' => 'asset', 'id' => $asset->id])
     @endcan
         @include ('partials.bootstrap-table')
+        <x-modals.maintenance-complete />
     @endsection
 
 @stop

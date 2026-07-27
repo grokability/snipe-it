@@ -3,7 +3,6 @@
 namespace App\Helpers;
 
 use App\Models\Accessory;
-use App\Models\Asset;
 use App\Models\AssetModel;
 use App\Models\Component;
 use App\Models\Consumable;
@@ -846,113 +845,140 @@ class Helper
      */
     public static function checkLowInventory()
     {
-        $alert_threshold = Setting::getSettings()->alert_threshold;
-        $consumables = Consumable::withCount('consumableAssignments as consumables_users_count')->whereNotNull('min_amt')->get();
-        $accessories = Accessory::withCount('checkouts as checkouts_count')->whereNotNull('min_amt')->get();
-        $components = Component::withCount('assets as sum_unconstrained_assets')->whereNotNull('min_amt')->get();
-        $asset_models = AssetModel::where('min_amt', '>', 0)->withCount(['availableAssets', 'assets'])->get();
-        $licenses = License::withCount('availCount as licenses_available')->where('min_amt', '>', 0)->get();
+        $alert_threshold = (int) Setting::getSettings()->alert_threshold;
+
+        // Push the "below threshold" filter into SQL via havingRaw on the
+        // withCount alias, so only rows that will actually alert get
+        // hydrated. Previous shape loaded every row with min_amt set and
+        // filtered in PHP — on a 1000-item deployment with 5 low-inventory
+        // items that meant 200× more rows than needed. Also select only
+        // the columns the foreach uses (id / name / qty / min_amt),
+        // avoiding hydration of long text columns like License::serial.
+        // select() must come BEFORE withCount(): withCount uses addSelect
+        // under the hood, so a select() after would wipe the count alias.
+        // GROUP BY primary key satisfies SQLite's strict "HAVING requires
+        // an aggregated query" check — MariaDB allows bare HAVING but the
+        // test suite runs SQLite. Grouping by a unique key is a no-op for
+        // row cardinality (functional dependency), so nothing else shifts.
+        $consumables = Consumable::select('id', 'name', 'qty', 'min_amt')
+            ->withCount('consumableAssignments as consumables_users_count')
+            ->whereNotNull('min_amt')
+            ->groupBy('consumables.id')
+            ->havingRaw('(qty - consumables_users_count) < (min_amt + ?)', [$alert_threshold])
+            ->get();
+
+        $accessories = Accessory::select('id', 'name', 'qty', 'min_amt')
+            ->withCount('checkouts as checkouts_count')
+            ->whereNotNull('min_amt')
+            ->groupBy('accessories.id')
+            ->havingRaw('(qty - checkouts_count) < (min_amt + ?)', [$alert_threshold])
+            ->get();
+
+        $components = Component::select('id', 'name', 'qty', 'min_amt')
+            ->withCount('assets as sum_unconstrained_assets')
+            ->whereNotNull('min_amt')
+            ->groupBy('components.id')
+            ->havingRaw('(qty - sum_unconstrained_assets) < (min_amt + ?)', [$alert_threshold])
+            ->get();
+
+        $asset_models = AssetModel::select('id', 'name', 'min_amt')
+            ->where('min_amt', '>', 0)
+            ->withCount(['availableAssets', 'assets'])
+            ->groupBy('models.id')
+            ->havingRaw('available_assets_count < (min_amt + ?)', [$alert_threshold])
+            ->get();
+
+        // Use the licenses_available withCount alias directly in the
+        // foreach below rather than $license->remaincount(). remaincount()
+        // fires two extra queries per row (licenseSeatsCount via
+        // getLicenseSeatsCountAttribute() and assigned_seats_count via
+        // getAssignedSeatsCountAttribute()), plus a third
+        // unReassignableCount() query for non-reassignable licenses —
+        // classic N+1 on a licenses-with-min_amt list.
+        $licenses = License::select('id', 'name', 'min_amt')
+            ->withCount('availCount as licenses_available')
+            ->where('min_amt', '>', 0)
+            ->groupBy('licenses.id')
+            ->havingRaw('licenses_available < (min_amt + ?)', [$alert_threshold])
+            ->get();
 
         $items_array = [];
         $all_count = 0;
 
         foreach ($consumables as $consumable) {
-            $avail = $consumable->numRemaining();
-            if ($avail < ($consumable->min_amt) + $alert_threshold) {
-                if ($consumable->qty > 0) {
-                    $percent = number_format((($avail / $consumable->qty) * 100), 0);
-                } else {
-                    $percent = 100;
-                }
+            $avail = $consumable->qty - $consumable->consumables_users_count;
+            $percent = $consumable->qty > 0
+                ? number_format((($avail / $consumable->qty) * 100), 0)
+                : 100;
 
-                $items_array[$all_count]['id'] = $consumable->id;
-                $items_array[$all_count]['name'] = $consumable->name;
-                $items_array[$all_count]['type'] = 'consumables';
-                $items_array[$all_count]['percent'] = $percent;
-                $items_array[$all_count]['remaining'] = $avail;
-                $items_array[$all_count]['min_amt'] = $consumable->min_amt;
-                $all_count++;
-            }
+            $items_array[$all_count]['id'] = $consumable->id;
+            $items_array[$all_count]['name'] = $consumable->name;
+            $items_array[$all_count]['type'] = 'consumables';
+            $items_array[$all_count]['percent'] = $percent;
+            $items_array[$all_count]['remaining'] = $avail;
+            $items_array[$all_count]['min_amt'] = $consumable->min_amt;
+            $all_count++;
         }
 
         foreach ($accessories as $accessory) {
             $avail = $accessory->qty - $accessory->checkouts_count;
-            if ($avail < ($accessory->min_amt) + $alert_threshold) {
-                if ($accessory->qty > 0) {
-                    $percent = number_format((($avail / $accessory->qty) * 100), 0);
-                } else {
-                    $percent = 100;
-                }
+            $percent = $accessory->qty > 0
+                ? number_format((($avail / $accessory->qty) * 100), 0)
+                : 100;
 
-                $items_array[$all_count]['id'] = $accessory->id;
-                $items_array[$all_count]['name'] = $accessory->name;
-                $items_array[$all_count]['type'] = 'accessories';
-                $items_array[$all_count]['percent'] = $percent;
-                $items_array[$all_count]['remaining'] = $avail;
-                $items_array[$all_count]['min_amt'] = $accessory->min_amt;
-                $all_count++;
-            }
+            $items_array[$all_count]['id'] = $accessory->id;
+            $items_array[$all_count]['name'] = $accessory->name;
+            $items_array[$all_count]['type'] = 'accessories';
+            $items_array[$all_count]['percent'] = $percent;
+            $items_array[$all_count]['remaining'] = $avail;
+            $items_array[$all_count]['min_amt'] = $accessory->min_amt;
+            $all_count++;
         }
 
         foreach ($components as $component) {
-            $avail = $component->numRemaining();
-            if ($avail < ($component->min_amt) + $alert_threshold) {
-                if ($component->qty > 0) {
-                    $percent = number_format((($avail / $component->qty) * 100), 0);
-                } else {
-                    $percent = 100;
-                }
+            $avail = $component->qty - $component->sum_unconstrained_assets;
+            $percent = $component->qty > 0
+                ? number_format((($avail / $component->qty) * 100), 0)
+                : 100;
 
-                $items_array[$all_count]['id'] = $component->id;
-                $items_array[$all_count]['name'] = $component->name;
-                $items_array[$all_count]['type'] = 'components';
-                $items_array[$all_count]['percent'] = $percent;
-                $items_array[$all_count]['remaining'] = $avail;
-                $items_array[$all_count]['min_amt'] = $component->min_amt;
-                $all_count++;
-            }
+            $items_array[$all_count]['id'] = $component->id;
+            $items_array[$all_count]['name'] = $component->name;
+            $items_array[$all_count]['type'] = 'components';
+            $items_array[$all_count]['percent'] = $percent;
+            $items_array[$all_count]['remaining'] = $avail;
+            $items_array[$all_count]['min_amt'] = $component->min_amt;
+            $all_count++;
         }
 
         foreach ($asset_models as $asset_model) {
+            $total_owned = $asset_model->assets_count;
+            $avail = $asset_model->available_assets_count;
+            $percent = $avail > 0
+                ? number_format((($avail / $total_owned) * 100), 0)
+                : 100;
 
-            $asset = new Asset;
-            $total_owned = $asset_model->assets_count; // requires the withCount() clause in the initial query!
-            $avail = $asset_model->available_assets_count; // requires the withCount() clause in the initial query!
-
-            if ($avail < ($asset_model->min_amt) + $alert_threshold) {
-                if ($avail > 0) {
-                    $percent = number_format((($avail / $total_owned) * 100), 0);
-                } else {
-                    $percent = 100;
-                }
-                $items_array[$all_count]['id'] = $asset_model->id;
-                $items_array[$all_count]['name'] = $asset_model->name;
-                $items_array[$all_count]['type'] = 'models';
-                $items_array[$all_count]['percent'] = $percent;
-                $items_array[$all_count]['remaining'] = $avail;
-                $items_array[$all_count]['min_amt'] = $asset_model->min_amt;
-                $all_count++;
-            }
+            $items_array[$all_count]['id'] = $asset_model->id;
+            $items_array[$all_count]['name'] = $asset_model->name;
+            $items_array[$all_count]['type'] = 'models';
+            $items_array[$all_count]['percent'] = $percent;
+            $items_array[$all_count]['remaining'] = $avail;
+            $items_array[$all_count]['min_amt'] = $asset_model->min_amt;
+            $all_count++;
         }
 
         foreach ($licenses as $license) {
-            $avail = $license->remaincount();
-            if ($avail < ($license->min_amt) + $alert_threshold) {
-                if ($avail > 0) {
-                    $percent = number_format((($avail / $license->min_amt) * 100), 0);
-                } else {
-                    $percent = 100;
-                }
+            $avail = $license->licenses_available;
+            $percent = $avail > 0
+                ? number_format((($avail / $license->min_amt) * 100), 0)
+                : 100;
 
-                $items_array[$all_count]['id'] = $license->id;
-                $items_array[$all_count]['name'] = $license->name;
-                $items_array[$all_count]['type'] = 'licenses';
-                $items_array[$all_count]['percent'] = $percent;
-                $items_array[$all_count]['remaining'] = $avail;
-                $items_array[$all_count]['min_amt'] = $license->min_amt;
-                $all_count++;
-            }
-
+            $items_array[$all_count]['id'] = $license->id;
+            $items_array[$all_count]['name'] = $license->name;
+            $items_array[$all_count]['type'] = 'licenses';
+            $items_array[$all_count]['percent'] = $percent;
+            $items_array[$all_count]['remaining'] = $avail;
+            $items_array[$all_count]['min_amt'] = $license->min_amt;
+            $all_count++;
         }
 
         return $items_array;
@@ -1111,20 +1137,55 @@ class Helper
                 if (is_array($rule)) {
                     if (in_array('required', $rule)) {
                         return true;
-                    } else {
-                        return false;
                     }
-                } else {
-                    if (strpos($rule, 'required') === false) {
-                        return false;
-                    } else {
+                    if (in_array('fmcs_company', $rule) && self::fmcsCompanyIsCurrentlyRequired()) {
                         return true;
                     }
+
+                    return false;
+                } else {
+                    if (strpos($rule, 'required') !== false) {
+                        return true;
+                    }
+                    if (strpos($rule, 'fmcs_company') !== false && self::fmcsCompanyIsCurrentlyRequired()) {
+                        return true;
+                    }
+
+                    return false;
                 }
             }
         }
 
         return false;
+    }
+
+    /**
+     * Mirror of the fmcs_company validator's runtime condition, used by
+     * checkIfRequired() so Blade fields render the "required" indicator
+     * (asterisk / aria-required) in the same conditions the backend will
+     * reject a blank submission. See ValidationServiceProvider.
+     */
+    protected static function fmcsCompanyIsCurrentlyRequired(): bool
+    {
+        $settings = \App\Models\Setting::getSettings();
+        if (! $settings->full_multiple_companies_support) {
+            return false;
+        }
+        if ((bool) $settings->null_company_is_floater) {
+            return false;
+        }
+        if (! auth()->check()) {
+            return false;
+        }
+        $actor = auth()->user();
+        if ($actor->isSuperUser()) {
+            return false;
+        }
+
+        // Uncompanied users work in the null pseudo-company namespace
+        // under strict mode; null IS a valid company id for them, so
+        // don't render the field as required.
+        return $actor->companies()->exists();
     }
 
     /**
@@ -1685,14 +1746,27 @@ class Helper
 
         // return to index
         if ($redirect_option == 'index') {
-            return match ($table) {
-                'Assets' => redirect()->route('hardware.index'),
-                'Users' => redirect()->route('users.index'),
-                'Licenses' => redirect()->route('licenses.index'),
-                'Accessories' => redirect()->route('accessories.index'),
-                'Components' => redirect()->route('components.index'),
-                'Consumables' => redirect()->route('consumables.index'),
+            $indexUrl = match ($table) {
+                'Assets' => route('hardware.index'),
+                'Users' => route('users.index'),
+                'Licenses' => route('licenses.index'),
+                'Accessories' => route('accessories.index'),
+                'Components' => route('components.index'),
+                'Consumables' => route('consumables.index'),
             };
+
+            // #15214: preserve query-string filters when the user came
+            // from a filtered view of the same index they're being sent
+            // back to (side-nav status filter, category filter, etc.).
+            // Without this the plain index route drops the caller's
+            // context and the user has to re-select their side-nav
+            // filter after every edit. $backUrl was already vetted for
+            // off-site hosts above.
+            if ($backUrl && parse_url($backUrl, PHP_URL_PATH) === parse_url($indexUrl, PHP_URL_PATH)) {
+                return redirect($backUrl);
+            }
+
+            return redirect($indexUrl);
         }
 
         // return to thing being assigned

@@ -161,6 +161,19 @@ Route::group(['prefix' => 'users', 'middleware' => ['auth']], function () {
         ]
     )->name('users/bulkeditsave');
 
+    Route::get(
+        '{user}/transfer',
+        [Users\UserItemTransferController::class, 'show'],
+    )->name('users.transfer.show')
+        ->breadcrumbs(fn (Trail $trail, $user) => $trail
+            ->parent('users.show', $user)
+            ->push(trans('admin/users/general.transfer.title'), route('users.transfer.show', $user)));
+
+    Route::post(
+        '{user}/transfer',
+        [Users\UserItemTransferController::class, 'store'],
+    )->name('users.transfer.store');
+
 });
 
 Route::resource('users', Users\UsersController::class, [

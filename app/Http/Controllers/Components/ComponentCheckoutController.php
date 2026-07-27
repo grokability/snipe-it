@@ -11,6 +11,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class ComponentCheckoutController extends Controller
@@ -113,16 +114,40 @@ class ComponentCheckoutController extends Controller
 
         $component->checkout_qty = $request->input('assigned_qty');
 
-        // Update the component data
-        $component->asset_id = $request->input('asset_id');
-        $component->assets()->attach($component->id, [
-            'component_id' => $component->id,
-            'created_by' => auth()->user()->id,
-            'created_at' => date('Y-m-d H:i:s'),
-            'assigned_qty' => $component->checkout_qty,
-            'asset_id' => $request->input('asset_id'),
-            'note' => $request->input('note'),
-        ]);
+        // Concurrency guard. The numRemaining() check above is an unlocked
+        // read, so two simultaneous checkout requests could both pass, both
+        // attach a pivot row, and land the register at -1. Re-fetch the
+        // parent under lockForUpdate INSIDE a transaction, re-check against
+        // the locked snapshot, then write. Mirrors the License checkout
+        // locking pattern.
+        $overAllocated = false;
+
+        DB::transaction(function () use ($component, $request, &$overAllocated): void {
+            $locked = Component::whereKey($component->id)->lockForUpdate()->first();
+
+            if (! $locked || $locked->numRemaining() < $component->checkout_qty) {
+                $overAllocated = true;
+
+                return;
+            }
+
+            $component->asset_id = $request->input('asset_id');
+            $component->assets()->attach($component->id, [
+                'component_id' => $component->id,
+                'created_by' => auth()->user()->id,
+                'created_at' => date('Y-m-d H:i:s'),
+                'assigned_qty' => $component->checkout_qty,
+                'asset_id' => $request->input('asset_id'),
+                'note' => $request->input('note'),
+            ]);
+        });
+
+        if ($overAllocated) {
+            return redirect()->back()->withInput()->with('error', trans('admin/components/message.checkout.unavailable', [
+                'remaining' => $component->fresh()->numRemaining(),
+                'requested' => $component->checkout_qty,
+            ]));
+        }
 
         event(new CheckoutableCheckedOut(
             $component,

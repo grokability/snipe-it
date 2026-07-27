@@ -1025,6 +1025,43 @@ class AssetsController extends Controller
             ];
         }
 
+        // The PATCH/PUT update path accepts assigned_user / assigned_asset /
+        // assigned_location for backwards compatibility with older callers,
+        // but that meant a role with only assets.edit (and an explicit deny
+        // on assets.checkout) could still trigger $asset->checkOut() and
+        // record a checkout event, bypassing the permission entirely.
+        // Enforce the same authorization the dedicated checkout endpoint
+        // requires whenever the update payload asks for a checkout.
+        if ($requestedCheckout && ! Gate::allows('checkout', $asset)) {
+            return [
+                'success' => false,
+                'asset' => null,
+                'message' => null,
+                'errors' => null,
+                'encrypted_field_warning' => false,
+                'error_response_key' => 'general.unauthorized',
+            ];
+        }
+
+        // Same as the dedicated checkout endpoint: an asset is only eligible
+        // for checkout when it is not currently assigned to anyone and its
+        // status is deployable / not archived. Rejecting here blocks
+        //   (a) reassigning an already-checked-out asset without an
+        //       intervening checkin (which the pre-fix code allowed and
+        //       recorded as two consecutive checkout events), and
+        //   (b) checking out an asset in a Pending / non-deployable status.
+        // availableForCheckout() covers both. See App\Models\Asset::availableForCheckout.
+        if ($requestedCheckout && ! $asset->availableForCheckout()) {
+            return [
+                'success' => false,
+                'asset' => null,
+                'message' => null,
+                'errors' => null,
+                'encrypted_field_warning' => false,
+                'error_response_key' => 'admin/hardware/message.checkout.not_available',
+            ];
+        }
+
         $updated = DB::transaction(function () use ($asset, $request, $target, $requestedCheckout): bool {
             if (! $asset->save()) {
                 return false;

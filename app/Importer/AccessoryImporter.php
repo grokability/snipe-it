@@ -2,7 +2,9 @@
 
 namespace App\Importer;
 
+use App\Events\CheckoutableCheckedOut;
 use App\Models\Accessory;
+use App\Models\AccessoryCheckout;
 
 class AccessoryImporter extends ItemImporter
 {
@@ -31,6 +33,8 @@ class AccessoryImporter extends ItemImporter
             if (! $this->updating) {
                 $this->log('A matching Accessory '.$this->item['name'].' already exists.  ');
 
+                $this->maybeCheckoutAccessory($accessory);
+
                 return;
             }
 
@@ -39,6 +43,8 @@ class AccessoryImporter extends ItemImporter
             $accessory->update($this->sanitizeItemForUpdating($accessory));
             // update() already saves the model, no need to call save() again while Model::unguard() is active
             $accessory->setImported(true);
+
+            $this->maybeCheckoutAccessory($accessory);
 
             return;
         }
@@ -54,8 +60,65 @@ class AccessoryImporter extends ItemImporter
         if ($accessory->save()) {
             $this->log('Accessory '.$this->item['name'].' was created');
 
+            $this->maybeCheckoutAccessory($accessory);
+
             return;
         }
         $this->logError($accessory, 'Accessory');
+    }
+
+    /**
+     * If the CSV row identified a checkout target (User/Location/Asset via
+     * ItemImporter::determineCheckout), attach one AccessoryCheckout row
+     * and fire the standard CheckoutableCheckedOut event so the actionlog
+     * and notification paths behave the same as a UI-driven checkout.
+     * Skips silently when there's no target, no free stock, or the
+     * target fails the company-match check.
+     */
+    private function maybeCheckoutAccessory(Accessory $accessory): void
+    {
+        $target = $this->item['checkout_target'] ?? null;
+        if (! $target) {
+            return;
+        }
+
+        if ($accessory->numRemaining() < 1) {
+            $this->log('Accessory '.$accessory->name.' has no free units - skipping checkout');
+
+            return;
+        }
+
+        if (! $accessory->canCheckoutTo($target)) {
+            $this->log(trans('general.error_checkout_company_mismatch', [
+                'item' => trans('general.accessory').' "'.$accessory->name.'"',
+                'item_company' => $accessory->company?->name ?? trans('general.unassigned'),
+                'target' => ($target->name ?? $target->username ?? $target->id),
+            ]));
+
+            return;
+        }
+
+        $checkout = new AccessoryCheckout([
+            'accessory_id' => $accessory->id,
+            'assigned_to' => $target->id,
+            'assigned_type' => $target::class,
+            'note' => 'Checkout from CSV Importer',
+        ]);
+        $checkout->created_by = $this->created_by;
+
+        if ($checkout->save()) {
+            event(new CheckoutableCheckedOut(
+                $accessory,
+                $target,
+                auth()->user(),
+                'Checkout from CSV Importer',
+                [],
+                1,
+                false,
+            ));
+            $this->log('Accessory '.$accessory->name.' checked out to '.($target->name ?? $target->username ?? $target->id));
+        } else {
+            $this->logError($checkout, 'AccessoryCheckout');
+        }
     }
 }

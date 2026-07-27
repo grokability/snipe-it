@@ -103,15 +103,29 @@ class MaintenancesController extends Controller
             $maintenance->maintenance_type_id = $request->input('maintenance_type_id');
             $maintenance->name = $request->input('name');
             $maintenance->start_date = $request->input('start_date');
-            $maintenance->completion_date = $request->input('completion_date');
+            $maintenance->expected_completion_date = $request->input('expected_completion_date', $request->input('completion_date'));
             $maintenance->responsible_party_id = $request->input('responsible_party_id') ?: auth()->id();
             $maintenance->created_by = auth()->id();
+
+            // Backfilled completion: user is recording a maintenance that
+            // was already finished. Same transition logic as update() —
+            // null-blank submissions stay null, a supplied date marks the
+            // row complete and stamps who did it plus how long it took.
+            $shouldLogComplete = $this->applyCompletionState(
+                $maintenance,
+                $request->filled('completed_at') ? $request->input('completed_at') : null,
+                wasCompletedBefore: false,
+            );
 
             $request->handleImages($maintenance);
 
             // Was the asset maintenance created?
             if (! $maintenance->save()) {
                 return redirect()->back()->withInput()->withErrors($maintenance->getErrors());
+            }
+
+            if ($shouldLogComplete) {
+                $this->logMaintenanceCompleteAction($maintenance);
             }
 
             $this->storeUploadedFiles($request, $maintenance);
@@ -174,19 +188,88 @@ class MaintenancesController extends Controller
         $maintenance->maintenance_type_id = $request->input('maintenance_type_id');
         $maintenance->name = $request->input('name');
         $maintenance->start_date = $request->input('start_date');
-        $maintenance->completion_date = $request->input('completion_date');
+        $maintenance->expected_completion_date = $request->input('expected_completion_date', $request->input('completion_date'));
         $maintenance->responsible_party_id = $request->input('responsible_party_id');
         $maintenance->url = $request->input('url');
         $request->handleImages($maintenance);
 
+        $shouldLogComplete = $this->applyCompletionState(
+            $maintenance,
+            $request->filled('completed_at') ? $request->input('completed_at') : null,
+            wasCompletedBefore: $maintenance->completed_at !== null,
+        );
+
         if ($maintenance->save()) {
             $this->storeUploadedFiles($request, $maintenance);
+
+            if ($shouldLogComplete) {
+                $this->logMaintenanceCompleteAction($maintenance);
+            }
 
             return redirect()->route('maintenances.index')
                 ->with('success', trans('admin/maintenances/message.edit.success'));
         }
 
         return redirect()->back()->withInput()->withErrors($maintenance->getErrors());
+    }
+
+    /**
+     * Apply the null / date / cleared transitions of `completed_at` on
+     * either create or edit. Returns true when the transition is
+     * "not-completed → completed" so the caller knows to fire the
+     * MaintenanceComplete action log AFTER the row is saved (and thus
+     * has an id).
+     *
+     * asset_maintenance_time uses start_date → completed_at (not
+     * created_at → completed_at). For a real-time completion the two are
+     * effectively the same; for a backfill (start_date well in the past,
+     * created_at just now) using start_date is the truthful duration of
+     * the actual maintenance work.
+     */
+    private function applyCompletionState(Maintenance $maintenance, ?string $submittedCompletedAt, bool $wasCompletedBefore): bool
+    {
+        if ($submittedCompletedAt !== null) {
+            $maintenance->completed_at = $submittedCompletedAt;
+            if (! $wasCompletedBefore) {
+                $maintenance->completed_by = auth()->id();
+                $maintenance->asset_maintenance_time = $this->computeMaintenanceDurationDays($maintenance);
+
+                return true;
+            }
+
+            return false;
+        }
+
+        $maintenance->completed_at = null;
+        $maintenance->completed_by = null;
+        $maintenance->asset_maintenance_time = null;
+
+        return false;
+    }
+
+    /**
+     * Days between start_date and completed_at, absolute so ordering of
+     * inputs doesn't matter. Falls back to now() for start_date when the
+     * caller somehow submitted a completion without a start (shouldn't
+     * happen — start_date is required by the model — but guards against
+     * a null-deref if a future validation change lets one through).
+     */
+    private function computeMaintenanceDurationDays(Maintenance $maintenance): int
+    {
+        $start = $maintenance->start_date ?? now();
+
+        return (int) $start->diffInDays($maintenance->completed_at, true);
+    }
+
+    private function logMaintenanceCompleteAction(Maintenance $maintenance): void
+    {
+        $logAction = new Actionlog;
+        $logAction->item_type = Maintenance::class;
+        $logAction->item_id = $maintenance->id;
+        $logAction->target_type = Asset::class;
+        $logAction->target_id = $maintenance->asset_id;
+        $logAction->created_by = auth()->id();
+        $logAction->logaction(ActionType::MaintenanceComplete);
     }
 
     /**

@@ -174,7 +174,7 @@ class MaintenancesPresenter extends Presenter
                 'title' => trans('admin/maintenances/form.start_date'),
                 'formatter' => 'dateDisplayFormatter',
             ], [
-                'field' => 'completion_date',
+                'field' => 'expected_completion_date',
                 'scope' => 'col',
                 'searchable' => true,
                 'sortable' => true,
@@ -379,7 +379,7 @@ class MaintenancesPresenter extends Presenter
                 'title' => trans('admin/maintenances/form.start_date'),
                 'formatter' => 'dateDisplayFormatter',
             ], [
-                'field' => 'completion_date',
+                'field' => 'expected_completion_date',
                 'scope' => 'col',
                 'searchable' => true,
                 'sortable' => true,

@@ -7,14 +7,12 @@
 @stop
 
 @section('header_right')
-    <a href="{{ route('settings.index') }}" class="btn btn-default pull-right" style="margin-left: 5px;">
-      {{ trans('general.back') }}
-    </a>
-
-    <form method="POST" style="display: inline">
-            @csrf
-            <button class="btn btn-primary {{ (config('app.lock_passwords')) ? ' disabled': '' }}">{{ trans('admin/settings/general.generate_backup') }}</button>
-      </form>
+    <form method="POST" action="{{ route('settings.backups.create') }}" style="display: inline">
+        @csrf
+        <button class="btn btn-primary" @disabled(config('app.lock_passwords'))>
+            {{ trans('admin/settings/general.generate_backup') }}
+        </button>
+    </form>
 
 @stop
 
@@ -95,38 +93,35 @@
               <td>
 
                   @can('superadmin')
-                      @if (config('app.allow_backup_delete')=='true')
-                      <a data-html="false"
-                         class="btn delete-asset btn-danger btn-sm {{ (config('app.lock_passwords')) ? ' disabled': '' }}"
-                         data-toggle="modal" href="{{ route('settings.backups.destroy', $file['filename']) }}"
-                         data-content="{{ trans('admin/settings/message.backup.delete_confirm') }}"
-                         data-title="{{ trans('general.delete') }}  {{ e($file['filename']) }}?"
-                         onClick="return false;">
-                          <i class="fas fa-trash icon-white" aria-hidden="true"></i>
-                          <span class="sr-only">{{ trans('general.delete') }}</span>
-                      </a>
+                      @if (config('app.allow_backup_delete') == 'true')
+                          <button type="button"
+                                  class="btn delete-asset btn-danger btn-sm"
+                                  data-toggle="modal"
+                                  data-href="{{ route('settings.backups.destroy', $file['filename']) }}"
+                                  data-content="{{ trans('admin/settings/message.backup.delete_confirm') }}"
+                                  data-title="{{ trans('general.delete') }}  {{ e($file['filename']) }}?"
+                                  @disabled(config('app.lock_passwords'))>
+                              <x-icon type="delete" class="icon-white" />
+                              <span class="sr-only">{{ trans('general.delete') }}</span>
+                          </button>
                       @else
                           <span data-tooltip="true" title="{{ trans('admin/settings/message.backup.delete_disabled_help') }}">
-                              <a href="#"
-                                 class="btn delete-asset btn-danger btn-sm disabled"
-                                 aria-disabled="true"
-                                 onClick="return false;">
-                                  <i class="fas fa-trash icon-white" aria-hidden="true"></i>
+                              <button type="button" class="btn btn-danger btn-sm" disabled aria-disabled="true">
+                                  <x-icon type="delete" class="icon-white" />
                                   <span class="sr-only">{{ trans('general.delete') }} ({{ trans('admin/settings/message.backup.delete_disabled_help') }})</span>
-                              </a>
+                              </button>
                           </span>
                       @endif
 
-                          <a data-html="true"
-                             href="{{ route('settings.backups.restore', $file['filename']) }}"
-                             class="btn btn-warning btn-sm restore-backup {{ (config('app.lock_passwords')) ? ' disabled': '' }}"
-                             data-target="#backupRestoreModal"
-                             data-title="{{ trans('admin/settings/message.backup.restore_confirm', array('filename' => e($file['filename']))) }}"
-                             onClick="return false;">
-                      <i class="fas fa-retweet" aria-hidden="true"></i>
-                      <span class="sr-only">{{ trans('general.restore') }}</span>
-                    </a>
-                     
+                      <button type="button"
+                              class="btn btn-warning btn-sm restore-backup"
+                              data-href="{{ route('settings.backups.restore', $file['filename']) }}"
+                              data-target="#backupRestoreModal"
+                              data-title="{{ trans('admin/settings/message.backup.restore_confirm', ['filename' => e($file['filename'])]) }}"
+                              @disabled(config('app.lock_passwords'))>
+                          <x-icon type="restore" />
+                          <span class="sr-only">{{ trans('general.restore') }}</span>
+                      </button>
                   @endcan
               </td>
             </tr>
@@ -157,9 +152,9 @@
           {!! trans('admin/settings/general.backups_path', ['path'=> 'storage/app/backups']) !!}
         </p>
 
-        @if (config('app.lock_passwords')===true)
-        <x-alert type="warning"><i class="fas fa-lock"></i> {{ trans('general.feature_disabled') }}</x-alert>
-          @else
+        @if (config('app.lock_passwords'))
+            <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
+        @else
 
       <form method="POST" action="{{ route('settings.backups.upload') }}" accept-charset="UTF-8" class="form-horizontal" enctype="multipart/form-data">
         @csrf
@@ -266,7 +261,7 @@
           event.preventDefault();
           var modal = $('#backupRestoreModal');
           modal.find('.modal-title').text($(this).data('title'));
-          modal.find('form').attr('action', $(this).attr('href'));
+          modal.find('form').attr('action', $(this).data('href'));
           modal.modal({
               show: true
           });

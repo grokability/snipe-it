@@ -50,8 +50,13 @@ class DeleteComponentTest extends TestCase implements TestsFullMultipleCompanies
             ->assertRedirect(route('components.index'));
     }
 
-    public function test_deleting_component_removes_component_image()
+    public function test_deleting_component_preserves_component_image()
     {
+        // Soft-deleting a component preserves its image on disk so a
+        // restored component still has one. The image is only removed
+        // for good by `snipeit:purge` when the row is force-deleted.
+        // Coverage for that permanent-removal path lives in
+        // `tests/Feature/Console/Commands/PurgeTest.php`.
         Storage::fake('public');
 
         $component = Component::factory()->create(['image' => 'component-image.jpg']);
@@ -62,7 +67,7 @@ class DeleteComponentTest extends TestCase implements TestsFullMultipleCompanies
 
         $this->actingAs(User::factory()->deleteComponents()->create())->delete(route('components.destroy', $component->id));
 
-        Storage::disk('public')->assertMissing('components/component-image.jpg');
+        Storage::disk('public')->assertExists('components/component-image.jpg');
     }
 
     public function test_deleting_component_is_logged()

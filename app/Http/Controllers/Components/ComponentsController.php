@@ -11,8 +11,6 @@ use App\Models\Component;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 
 /**
  * This class controls all actions related to Components for
@@ -151,7 +149,7 @@ class ComponentsController extends Controller
     public function update(UpdateComponentRequest $request, Component $component)
     {
         $this->authorize('update', $component);
-        
+
         // Update the component data
         $component->name = $request->input('name');
         $component->category_id = $request->input('category_id');
@@ -200,15 +198,11 @@ class ComponentsController extends Controller
 
         $this->authorize('delete', $component);
 
-        // Remove the image if one exists
-        if ($component->image && Storage::disk('public')->exists('components/'.$component->image)) {
-            try {
-                Storage::disk('public')->delete('components/'.$component->image);
-            } catch (\Exception $e) {
-                Log::debug($e);
-            }
-        }
-
+        // Note: the image file is deliberately preserved across this
+        // soft-delete. Snipe-IT's `snipeit:purge` command permanently
+        // removes it later when the row is force-deleted. Keeping the
+        // file here means a restored soft-deleted row still has its
+        // image.
         if ($component->numCheckedOut() > 0) {
             return redirect()->route('components.index')->with('error', trans('admin/components/message.delete.error_qty'));
         }

@@ -48,6 +48,23 @@ class UpdateAssetRequest extends ImageUploadRequest
         // route through checkOut() and produce the required audit-log entry).
         unset($assetRules['assigned_to'], $assetRules['assigned_type']);
 
+        // Strip fmcs_company from the request-level company_id rule. It's an
+        // implicit rule (fires on null/absent) which is right for the
+        // model-level ValidatingTrait check on save, but wrong at the
+        // request-level PATCH context — omitting company_id means "don't
+        // change it," not "set to null." The model-level rule still
+        // catches a genuine null-value save. StoreAssetRequest and
+        // BulkUpdateAssetsRequest inherit from this indirectly via
+        // parent classes; the store path keeps the rule (create should
+        // require Company), the bulk update path is already covered by
+        // this strip since it extends UpdateAssetRequest.
+        if (isset($assetRules['company_id']) && is_array($assetRules['company_id'])) {
+            $assetRules['company_id'] = array_values(array_filter(
+                $assetRules['company_id'],
+                fn ($rule) => $rule !== 'fmcs_company',
+            ));
+        }
+
         // On the singular endpoint we can tell Rule::unique to ignore the
         // asset being updated. Bulk (BulkUpdateAssetsRequest) overrides this
         // to null because it would have to ignore N different ids at once,

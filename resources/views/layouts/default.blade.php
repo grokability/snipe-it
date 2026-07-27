@@ -523,6 +523,8 @@
         .modal-warning h2,
         .modal-danger h4,
         .modal-warning h4,
+        .box-solid.box-danger > .box-header,
+        .box-solid.box-danger > .box-header .box-title,
         .bg-maroon,
         .bg-maroon:hover,
         .bg-maroon:focus,
@@ -593,6 +595,20 @@
 
         .box {
             border-top: 3px solid;
+        }
+
+        /* .bs-wizard's connecting line background (.progress = #f5f5f5) and
+           inactive-step dots (#f5f5f5) both wash out against the dark-mode
+           body. Bump to the theme's mid-gray so wizard steps stay visible
+           on setup, importer modal, and the LDAP settings wizard. Selector
+           uses [data-theme="dark"] — the actual attribute Snipe-IT toggles
+           for dark mode. Disabled variant is called out explicitly because
+           .bs-wizard-step.disabled > .bs-wizard-dot is a same-specificity
+           rule from AdminLTE — the extra .disabled class ensures we win. */
+        [data-theme="dark"] .bs-wizard-step .progress,
+        [data-theme="dark"] .bs-wizard-step > .bs-wizard-dot,
+        [data-theme="dark"] .bs-wizard-step.disabled > .bs-wizard-dot {
+            background-color: #605e5e;
         }
 
         .box.box-default {
@@ -1292,7 +1308,8 @@
     <script nonce="{{ csrf_token() }}">
         window.snipeit = {
             settings: {
-                "per_page": {{ $snipeSettings->per_page }}
+                "per_page": {{ $snipeSettings->per_page }},
+                "first_day_of_week": {{ (int) $snipeSettings->week_start }}
             }
         };
     </script>
@@ -1493,7 +1510,9 @@
                             @endcan
 
                             @can('admin')
-                                <x-alert-menu />
+                                @if ($snipeSettings->show_alerts_in_menu == '1')
+                                    <livewire:alert-menu/>
+                                @endif
                             @endcan
 
 
@@ -1768,22 +1787,6 @@
                                         <li id="bulk-audit-sidenav-option" {!! (request()->is('hardware/bulkaudit') ? ' class="active" aria-current="page"' : '') !!}>
                                             <a href="{{ route('assets.bulkaudit') }}">
                                                 {{ trans('general.bulkaudit') }}
-                                            </a>
-                                        </li>
-                                    @endcan
-
-                                    @can('admin')
-                                        <li id="bulk-labels-sidenav-option" {!! (request()->is('hardware/bulklabels') ? ' class="active" aria-current="page"' : '') !!}>
-                                            <a href="{{ url('hardware/bulklabels') }}">
-                                                {{ trans('general.bulk_labels') }}
-                                            </a>
-                                        </li>
-                                    @endcan
-
-                                    @can('admin')
-                                        <li id="import-history-sidenav-option" {!! (request()->is('hardware/history') ? ' class="active" aria-current="page"' : '') !!}>
-                                            <a href="{{ url('hardware/history') }}">
-                                                {{ trans('general.import-history') }}
                                             </a>
                                         </li>
                                     @endcan
@@ -2448,7 +2451,7 @@
 
             };
 
-            $('#create-form, #checkout_form').each(function () {
+            $('#create-form, #checkout_form, #userForm').each(function () {
                 $(this).validate(snipeValidatorOptions);
             });
 

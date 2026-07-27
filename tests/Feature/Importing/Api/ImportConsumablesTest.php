@@ -346,4 +346,61 @@ class ImportConsumablesTest extends ImportDataTestCase implements TestsPermissio
         $this->assertNull($newConsumable->manufacturer_id);
         $this->assertNull($newConsumable->notes);
     }
+
+    #[Test]
+    public function consumable_import_checks_out_to_user_when_username_matches(): void
+    {
+        $actor = User::factory()->superuser()->create();
+        $target = User::factory()->create(['username' => 'consumabletarget']);
+
+        $csv = "Item Name,Category,Quantity,Company,Checkout Type,Username\n"
+            .'CSV-Checked-Consumable,Toner,10,CSVCo,user,'.$target->username."\n";
+        $filename = 'consumable-checkout-'.uniqid().'.csv';
+        file_put_contents(config('app.private_uploads').'/imports/'.$filename, $csv);
+
+        try {
+            $import = Import::factory()->consumable()->create(['file_path' => $filename]);
+
+            $this->actingAsForApi($actor);
+            $this->importFileResponse(['import' => $import->id])->assertOk();
+
+            $consumable = Consumable::query()->where('name', 'CSV-Checked-Consumable')->sole();
+            $this->assertEquals(10, $consumable->qty);
+
+            $this->assertDatabaseHas('consumables_users', [
+                'consumable_id' => $consumable->id,
+                'assigned_to' => $target->id,
+            ]);
+        } finally {
+            @unlink(config('app.private_uploads').'/imports/'.$filename);
+        }
+    }
+
+    #[Test]
+    public function consumable_import_ignores_location_checkout_target(): void
+    {
+        // consumables_users only supports user targets - a location
+        // target in the CSV should be silently skipped rather than
+        // producing an invalid pivot row.
+        $actor = User::factory()->superuser()->create();
+
+        $csv = "Item Name,Category,Quantity,Company,Checkout Type,Checkout Location\n"
+            ."CSV-Loc-Consumable,Toner,4,CSVCo,location,HQ\n";
+        $filename = 'consumable-loc-'.uniqid().'.csv';
+        file_put_contents(config('app.private_uploads').'/imports/'.$filename, $csv);
+
+        try {
+            $import = Import::factory()->consumable()->create(['file_path' => $filename]);
+
+            $this->actingAsForApi($actor);
+            $this->importFileResponse(['import' => $import->id])->assertOk();
+
+            $consumable = Consumable::query()->where('name', 'CSV-Loc-Consumable')->sole();
+            $this->assertDatabaseMissing('consumables_users', [
+                'consumable_id' => $consumable->id,
+            ]);
+        } finally {
+            @unlink(config('app.private_uploads').'/imports/'.$filename);
+        }
+    }
 }

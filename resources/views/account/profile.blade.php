@@ -24,10 +24,10 @@
                   input_div_class="col-md-6"
               >
                   <x-slot:input>
-                      @if (!config('app.lock_passwords'))
+                      @if (! config('app.lock_passwords'))
                           <x-input.locale-select name="locale" :selected="old('locale', $user->locale)"/>
                       @else
-                          <x-form.help name="locale">{{ trans('general.feature_disabled') }}</x-form.help>
+                          <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
                       @endif
                   </x-slot:input>
               </x-form.row>
@@ -183,9 +183,7 @@
                             @else
                                 <x-form.help name="two_factor_optin">{{ trans('admin/settings/general.two_factor_enabled_edit_not_allowed') }}</x-form.help>
                             @endcan
-                            @if (config('app.lock_passwords'))
-                                <x-form.help name="two_factor_optin_lock">{{ trans('general.feature_disabled') }}</x-form.help>
-                            @endif
+                            <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
                         </div>
                     @endif
           </fieldset>

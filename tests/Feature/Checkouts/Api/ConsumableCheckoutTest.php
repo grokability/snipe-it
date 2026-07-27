@@ -226,4 +226,44 @@ class ConsumableCheckoutTest extends TestCase
             ->assertOk()
             ->assertStatusMessageIs('success');
     }
+
+    /**
+     * Security regression pin: the checkout endpoint used to read
+     * numRemaining() outside any transaction/lock. Two racing requests
+     * for a qty=1 consumable both saw "1 available", both attached
+     * pivot rows, and the register landed at -1. The fix wraps the
+     * pivot writes in a DB::transaction that begins with a
+     * lockForUpdate re-fetch + re-check of numRemaining. This test
+     * simulates the "someone else already grabbed the last one"
+     * moment by pre-attaching pivot rows to drain the consumable to
+     * zero before the checkout request runs, and asserts the endpoint
+     * refuses instead of over-allocating.
+     */
+    public function test_checkout_refuses_when_inventory_is_already_exhausted(): void
+    {
+        $target = User::factory()->create();
+        $consumable = Consumable::factory()->create(['qty' => 1]);
+
+        // Drain the consumable via a direct pivot insert. Same state a
+        // concurrent request would have left mid-transaction.
+        $consumable->users()->attach($consumable->id, [
+            'consumable_id' => $consumable->id,
+            'assigned_to' => $target->id,
+            'created_by' => User::factory()->superuser()->create()->id,
+        ]);
+
+        $this->assertSame(0, $consumable->fresh()->numRemaining());
+
+        $this->actingAsForApi(User::factory()->superuser()->create())
+            ->postJson(route('api.consumables.checkout', $consumable), [
+                'assigned_to' => $target->id,
+                'checkout_qty' => 1,
+            ])
+            ->assertOk()
+            ->assertStatusMessageIs('error');
+
+        // The pre-drained row is the only pivot; no second row got added.
+        $this->assertSame(1, $consumable->users()->count(), 'A second pivot row would mean the register went negative');
+        $this->assertSame(0, $consumable->fresh()->numRemaining());
+    }
 }

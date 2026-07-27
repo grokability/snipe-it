@@ -2,9 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Models\Asset;
 use App\Models\Company;
 use App\Models\Component;
 use App\Models\Location;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -43,5 +45,22 @@ class ComponentSeeder extends Seeder
             'company_id' => $companyIds->random(),
             'location_id' => $locationIds->random(),
         ]);
+
+        // Check out a couple of each component to random assets so the
+        // view page doesn't render an empty checkout list. Components
+        // check out to assets (not users). Skipped gracefully if
+        // AssetSeeder hasn't run yet.
+        $admin = User::where('permissions->superuser', '1')->first();
+        $checkoutTargets = Asset::inRandomOrder()->limit(6)->get();
+        if ($admin && $checkoutTargets->isNotEmpty()) {
+            foreach (Component::all() as $component) {
+                foreach ($checkoutTargets->random(min(rand(2, 3), $checkoutTargets->count())) as $asset) {
+                    $component->assets()->attach($asset->id, [
+                        'created_by' => $admin->id,
+                        'assigned_qty' => rand(1, 2),
+                    ]);
+                }
+            }
+        }
     }
 }

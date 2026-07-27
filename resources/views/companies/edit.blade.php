@@ -28,12 +28,14 @@
                 name="name"
             />
 
-            @include('partials.forms.edit.company-select', [
-                'translated_name' => trans('admin/companies/table.parent'),
-                'fieldname' => 'parent_id',
-                'only_top_level' => true,
-                'exclude_id' => $item->id ?? null,
-            ])
+            <x-input.company-select
+                :label="trans('admin/companies/table.parent')"
+                name="parent_id"
+                :selected="old('parent_id', $item->parent_id)"
+                :onlyTopLevel="true"
+                :excludeId="$item->id ?? null"
+                hideNewButton
+            />
 
             <x-form.row
                 :label="trans('admin/suppliers/table.phone')"

@@ -29,7 +29,7 @@ Route::group(
         Route::get('bulkaudit', [AssetsController::class, 'quickScan'])
             ->name('assets.bulkaudit')
             ->breadcrumbs(fn (Trail $trail) => $trail->parent('hardware.index')
-                ->push(trans('general.bulkaudit'), route('asset.import-history'))
+                ->push(trans('general.bulkaudit'), route('assets.bulkaudit'))
             );
 
         Route::get('quickscancheckin', [AssetsController::class, 'quickScanCheckin'])
@@ -71,15 +71,12 @@ Route::group(
             [AssetCheckinController::class, 'forceCheckin']
         )->name('asset.checkin.force');
 
-        Route::get('history', [AssetsController::class, 'getImportHistory'])
-            ->name('asset.import-history')
-            ->breadcrumbs(fn (Trail $trail) => $trail->parent('hardware.index')
-                ->push(trans('general.import-history'), route('asset.import-history'))
-            );
-
-        Route::post('history',
-            [AssetsController::class, 'postImportHistory']
-        )->name('asset.process-import-history');
+        // Legacy import-history endpoint. The dedicated `/hardware/history`
+        // controller + form was folded into the main Livewire importer
+        // (import type "assetHistory"). Keep the route name so any external
+        // bookmark or deep-link still lands somewhere sane.
+        Route::get('history', fn () => redirect()->route('imports.index'))
+            ->name('asset.import-history');
 
         Route::get('bytag/{any?}',
             [AssetsController::class, 'getAssetByTag']

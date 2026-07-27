@@ -2,6 +2,7 @@
 
 return [
     'activated_help_text' => 'This user can login',
+    'activated_password_required_help' => 'If you activate this user, you will need to provide a password so they can log in.',
     'activated_disabled_help_text' => 'You cannot edit activation status for your own account.',
     'assets_user' => 'Assets assigned to :name',
     'bulk_update_warn' => 'You are about to edit the properties of :user_count users. Please note that you cannot change your own user attributes using this form, and must make edits to your own user individually.',
@@ -74,4 +75,24 @@ return [
     'impersonating_banner_title' => 'Impersonating:',
     'impersonating_banner_text' => 'You are currently logged in as :name. Anything you do will be recorded as if :name did it. Your real account is :impersonator.',
     'impersonating_stop_link' => 'Switch back to :name',
+    'transfer' => [
+        'title' => 'Transfer Items',
+        'button' => 'Transfer Items',
+        'button_tooltip' => 'Check in and re-check out this user\'s items to another user in one step.',
+        'heading' => 'Transfer items from :name',
+        'intro' => 'Pick a destination user and confirm which items to transfer. Each selected item is checked in from the source user and immediately checked out to the destination. Items requiring acceptance will re-fire the acceptance flow for the destination user.',
+        'target_user' => 'Transfer to',
+        'assets' => 'Assets',
+        'accessories' => 'Accessories',
+        'licenses' => 'Licenses',
+        'non_reassignable' => 'Non-reassignable',
+        'note' => 'Reason for transfer',
+        'note_help' => 'A short reason for this transfer, recorded on both the checkin and checkout audit-log entries. Required so future readers can see why the items moved.',
+        'submit' => 'Transfer selected items',
+        'nothing_to_transfer' => 'This user has no assets, accessories, or licenses checked out to transfer.',
+        'nothing_selected' => 'Select at least one item to transfer.',
+        'target_same_as_source' => 'The destination user must be different from the source user.',
+        'success' => 'Transferred :assets asset(s), :accessories accessory checkout(s), and :licenses license seat(s) to :target.',
+        'some_skipped' => ':count item(s) were skipped, likely because they no longer belong to the source user, violate company scoping, or are non-reassignable.',
+    ],
 ];

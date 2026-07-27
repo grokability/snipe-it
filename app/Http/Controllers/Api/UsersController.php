@@ -747,9 +747,13 @@ class UsersController extends Controller
                 $assets = $assets->InModelList($model_ids);
             }
 
-            $assets = $assets->get();
+            $total = $assets->count();
+            $offset = ($request->input('offset') > $total) ? $total : app('api_offset_value');
+            $limit = app('api_limit_value');
 
-            return (new AssetsTransformer)->transformAssets($assets, $assets->count(), $request);
+            $assets = $assets->skip($offset)->take($limit)->get();
+
+            return (new AssetsTransformer)->transformAssets($assets, $total, $request);
         }
 
         return response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/users/message.user_not_found', compact('id'))));
@@ -812,15 +816,22 @@ class UsersController extends Controller
      *
      * @param  $userId
      */
-    public function accessories($id): array
+    public function accessories(Request $request, $id): array
     {
         $this->authorize('view', User::class);
         $user = User::findOrFail($id);
         $this->authorize('view', $user);
         $this->authorize('view', Accessory::class);
-        $accessories = $user->accessories;
 
-        return (new AccessoriesTransformer)->transformAccessories($accessories, $accessories->count());
+        $accessories = $user->accessories();
+
+        $total = $accessories->count();
+        $offset = ($request->input('offset') > $total) ? $total : app('api_offset_value');
+        $limit = app('api_limit_value');
+
+        $accessories = $accessories->skip($offset)->take($limit)->get();
+
+        return (new AccessoriesTransformer)->transformAccessories($accessories, $total);
     }
 
     /**
@@ -832,65 +843,24 @@ class UsersController extends Controller
      *
      * @param  $userId
      */
-    public function licenses($id): JsonResponse|array
+    public function licenses(Request $request, $id): JsonResponse|array
     {
         $this->authorize('view', User::class);
         $this->authorize('view', License::class);
 
         if ($user = User::where('id', $id)->withTrashed()->first()) {
-            $licenses = $user->licenses()->get();
+            $licenses = $user->licenses();
 
-            return (new LicensesTransformer)->transformLicenses($licenses, $licenses->count());
+            $total = $licenses->count();
+            $offset = ($request->input('offset') > $total) ? $total : app('api_offset_value');
+            $limit = app('api_limit_value');
+
+            $licenses = $licenses->skip($offset)->take($limit)->get();
+
+            return (new LicensesTransformer)->transformLicenses($licenses, $total);
         }
 
         return response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/users/message.user_not_found', compact('id'))));
-
-    }
-
-    /**
-     * Reset the user's two-factor status
-     *
-     * @author [A. Gianotto] [<snipe@snipe.net>]
-     *
-     * @since [v3.0]
-     *
-     * @param  $userId
-     */
-    public function postTwoFactorReset(Request $request): JsonResponse
-    {
-        $this->authorize('update', User::class);
-
-        if ($request->filled('id')) {
-            try {
-                $user = User::find($request->input('id'));
-                $this->authorize('update', $user);
-
-                if (auth()->user()->can('canEditAuthFields', $user) && auth()->user()->can('editableOnDemo')) {
-
-                    $user->two_factor_secret = null;
-                    $user->two_factor_enrolled = 0;
-                    $user->saveQuietly();
-
-                    // Log the reset
-                    $logaction = new Actionlog;
-                    $logaction->target_type = User::class;
-                    $logaction->target_id = $user->id;
-                    $logaction->item_type = User::class;
-                    $logaction->item_id = $user->id;
-                    $logaction->created_at = date('Y-m-d H:i:s');
-                    $logaction->created_by = auth()->id();
-                    $logaction->logaction('2FA reset');
-
-                    return response()->json(['message' => trans('admin/settings/general.two_factor_reset_success')], 200);
-                }
-
-                return response()->json(['message' => trans('general.unauthorized')], 500);
-            } catch (\Exception $e) {
-                return response()->json(['message' => trans('admin/settings/general.two_factor_reset_error')], 500);
-            }
-        }
-
-        return response()->json(['message' => 'No ID provided'], 500);
 
     }
 
@@ -915,14 +885,20 @@ class UsersController extends Controller
      *
      * @author [Godfrey Martinez] [<gmartinez@grokability.com>]
      */
-    public function eulas(User $user, ActionlogsTransformer $transformer)
+    public function eulas(Request $request, User $user, ActionlogsTransformer $transformer)
     {
         $this->authorize('view', $user);
 
-        $eulas = $user->eulas;
+        $eulas = $user->eulas();
+
+        $total = $eulas->count();
+        $offset = ($request->input('offset') > $total) ? $total : app('api_offset_value');
+        $limit = app('api_limit_value');
+
+        $eulas = $eulas->skip($offset)->take($limit)->get();
 
         return response()->json(
-            $transformer->transformActionlogs($eulas, $eulas->count())
+            $transformer->transformActionlogs($eulas, $total)
         );
     }
 

@@ -10,7 +10,8 @@
         "watch-poll": "mix watch -- --watch-options-poll=1000",
         "hot": "mix watch --hot",
         "prod": "npm run production",
-        "production": "mix --production"
+        "production": "mix --production",
+        "screenshotter": "node .screenshotter/src/screenshotter.mjs"
     },
     "engines": {
         "node": ">=0.12"

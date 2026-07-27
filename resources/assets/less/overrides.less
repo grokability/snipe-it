@@ -981,6 +981,53 @@ label.form-control--disabled {
   cursor: not-allowed;
 }
 
+/** Bootstrap's normalize.less sets `html input[disabled] { cursor: default }`
+    at load-order line 139, and its own `.form-control[disabled] { cursor: not-allowed }`
+    rule (line 2705) has higher specificity so it should win — but on some browser +
+    input-group combinations the resolved cursor still ends up as `text` because the
+    input-group parent's implicit text-cursor bleeds through. Explicit element-scoped
+    override to lock in the "no-entry" cursor on any disabled form control. **/
+input.form-control[disabled],
+select.form-control[disabled],
+textarea.form-control[disabled] {
+  cursor: not-allowed;
+}
+
+/** Anti-autofill masking for the readonly-plus-onfocus-strip trick used on
+    sensitive form fields (user create/edit username, password, email, etc.).
+    The field ships with `readonly` so password managers won't prefill or
+    overwrite it, then strips readonly on focus so the operator can type.
+    Bootstrap's `.form-control[readonly]` styles that field with a gray
+    disabled-looking background, which confuses the operator into thinking
+    the field is uneditable. Override to make it visually indistinguishable
+    from a regular editable input.
+    Deliberately does NOT match `[disabled]` — actually-disabled fields
+    (demo mode locks, permission gates) must keep their grayed appearance
+    and not-allowed cursor. **/
+input[readonly],
+textarea[readonly],
+.form-control[readonly] {
+  cursor: text !important;
+  background-color: var(--table-stripe-bg) !important;
+  color: var(--color-fg) !important;
+}
+
+/** Inline "this field is locked because the app is in demo mode" callout.
+    Rendered by the <x-demo-lock> anonymous component in resources/views/blade/demo-lock.blade.php.
+    Kept as a small inline-block box so it hugs its text width regardless
+    of the column it lands in (input rows use col-md-7, activated row
+    uses col-md-9, so a block-level notice would stretch inconsistently). **/
+.demo-lock-notice {
+  display: inline-block;
+  background-color: #fcf8e3;
+  border: 1px solid #faebcc;
+  color: #8a6d3b;
+  padding: 6px 10px;
+  margin-top: 6px;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
 
 /** --------------------------------------- **/
 /** Start checkbox styles to replace iCheck **/
@@ -1460,6 +1507,56 @@ Radio toggle styles for permission settings and check/uncheck all
 .tooltip-spin-hover:hover i,
 .tooltip-spin-hover:focus i {
   animation: fa-spin 2s infinite linear;
+}
+
+// Bootstrap 3 tops out at .modal-lg (900px). The wizard-style modals
+// (e.g. the CSV importer) need more horizontal room for their mapping
+// grid + preview table, so add a .modal-xl above modal-lg. Follows the
+// same @media breakpoint BS3 uses for .modal-lg (>= 992px) and caps at
+// 1400px so it doesn't stretch obnoxiously on ultra-wide monitors.
+@media (min-width: 992px) {
+  .modal-xl {
+    width: 90%;
+    max-width: 1400px;
+  }
+}
+
+// Long wizard content (dozens of mapping rows) can push the modal past
+// the viewport. Bootstrap 3 doesn't scroll the modal-body by default, so
+// the footer buttons (Back / Next / Preview / Process) end up below the
+// fold with no way to reach them. Cap the modal-body height and let it
+// scroll internally instead. Scoped to .modal-xl so smaller confirm-
+// action modals aren't affected. 200px leaves room for header (~60),
+// footer (~60), and the modal's own top/bottom margins. overflow-x is
+// hidden so a stray col-* with negative row margins doesn't produce a
+// horizontal scrollbar on the type-selection and mapping steps; the
+// preview step's wide sample table has its own .table-responsive
+// wrapper for horizontal scrolling.
+.modal-xl .modal-body {
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+// Bootstrap 3's .form-horizontal .form-group carries -15px left/right
+// margins that cancel a modal-body's default 15px padding, leaving all
+// form content pinned flush to the modal edges. Zero it out inside the
+// wizard modal so labels + inputs stay inset from the modal chrome. The
+// inner .col-* children retain their own 15px padding, so the standard
+// horizontal-form gutter still lands correctly.
+.modal-xl .modal-body.form-horizontal > .form-group,
+.modal-xl .modal-body.form-horizontal > .row > .form-group {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+// bs-wizard-stepnum ships hardcoded #595959 in bootstrap-less, which is
+// near-invisible against the dark-theme background. Override to the
+// theme's own body text color so "Choose type" / "Map fields" / "Preview"
+// stay readable in dark mode.
+[data-theme="dark"] .bs-wizard > .bs-wizard-step .bs-wizard-stepnum,
+[data-theme="dark"] .bs-wizard > .bs-wizard-step .bs-wizard-info {
+  color: #d0d0d0;
 }
 
 // Respect the user's OS-level "reduce motion" preference. The Font Awesome

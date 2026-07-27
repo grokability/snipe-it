@@ -3,7 +3,9 @@
 namespace Tests\Feature\Users\Ui;
 
 use App\Models\Accessory;
+use App\Models\Asset;
 use App\Models\Company;
+use App\Models\Component;
 use App\Models\Consumable;
 use App\Models\License;
 use App\Models\LicenseSeat;
@@ -138,5 +140,135 @@ class PrintUserInventoryTest extends TestCase
             ->get(route('users.print', $subject))
             ->assertOk()
             ->assertSee('Unique Consumable DEF456');
+    }
+
+    public function test_user_without_assets_view_cannot_see_assigned_assets_in_print()
+    {
+        $subject = User::factory()->create();
+        Asset::factory()->assignedToUser($subject)->create([
+            'name' => 'Unique Asset LEAK111',
+            'asset_tag' => 'LEAKTAG-111',
+        ]);
+
+        $actor = User::factory()->viewUsers()->create();
+
+        $this->actingAs($actor)
+            ->get(route('users.print', $subject))
+            ->assertOk()
+            ->assertDontSee('Unique Asset LEAK111')
+            ->assertDontSee('LEAKTAG-111');
+    }
+
+    public function test_user_with_assets_view_can_see_assigned_assets_in_print()
+    {
+        $subject = User::factory()->create();
+        Asset::factory()->assignedToUser($subject)->create([
+            'name' => 'Unique Asset LEAK111',
+            'asset_tag' => 'LEAKTAG-111',
+        ]);
+
+        $actor = User::factory()->viewUsers()->viewAssets()->create();
+
+        $this->actingAs($actor)
+            ->get(route('users.print', $subject))
+            ->assertOk()
+            ->assertSee('LEAKTAG-111');
+    }
+
+    public function test_user_without_components_view_cannot_see_asset_components_in_print()
+    {
+        $this->settings->set(['show_assigned_assets' => 1]);
+
+        $subject = User::factory()->create();
+        $asset = Asset::factory()->assignedToUser($subject)->create();
+        $component = Component::factory()->create(['name' => 'Unique Component COMP222']);
+        $asset->components()->attach($component->id, [
+            'assigned_qty' => 1,
+            'created_by' => $subject->id,
+            'created_at' => now(),
+        ]);
+
+        $actor = User::factory()->viewUsers()->viewAssets()->create();
+
+        $this->actingAs($actor)
+            ->get(route('users.print', $subject))
+            ->assertOk()
+            ->assertDontSee('Unique Component COMP222');
+    }
+
+    public function test_user_with_components_view_can_see_asset_components_in_print()
+    {
+        $this->settings->set(['show_assigned_assets' => 1]);
+
+        $subject = User::factory()->create();
+        $asset = Asset::factory()->assignedToUser($subject)->create();
+        $component = Component::factory()->create(['name' => 'Unique Component COMP222']);
+        $asset->components()->attach($component->id, [
+            'assigned_qty' => 1,
+            'created_by' => $subject->id,
+            'created_at' => now(),
+        ]);
+
+        $actor = User::factory()->viewUsers()->viewAssets()->viewComponents()->create();
+
+        $this->actingAs($actor)
+            ->get(route('users.print', $subject))
+            ->assertOk()
+            ->assertSee('Unique Component COMP222');
+    }
+
+    public function test_bulk_print_without_assets_view_cannot_see_assigned_assets()
+    {
+        $subject = User::factory()->create();
+        Asset::factory()->assignedToUser($subject)->create([
+            'name' => 'Unique Asset BULK333',
+            'asset_tag' => 'BULKTAG-333',
+        ]);
+
+        $actor = User::factory()->viewUsers()->create();
+
+        $this->actingAs($actor)
+            ->post(route('users/bulkedit'), [
+                'ids' => [$subject->id],
+                'bulk_actions' => 'print',
+            ])
+            ->assertOk()
+            ->assertDontSee('BULKTAG-333');
+    }
+
+    public function test_bulk_print_with_assets_view_can_see_assigned_assets()
+    {
+        $subject = User::factory()->create();
+        Asset::factory()->assignedToUser($subject)->create([
+            'name' => 'Unique Asset BULK333',
+            'asset_tag' => 'BULKTAG-333',
+        ]);
+
+        $actor = User::factory()->viewUsers()->viewAssets()->create();
+
+        $this->actingAs($actor)
+            ->post(route('users/bulkedit'), [
+                'ids' => [$subject->id],
+                'bulk_actions' => 'print',
+            ])
+            ->assertOk()
+            ->assertSee('BULKTAG-333');
+    }
+
+    public function test_bulk_print_without_licenses_view_cannot_see_assigned_licenses()
+    {
+        $subject = User::factory()->create();
+        $license = License::factory()->create(['name' => 'Unique License BULK444']);
+        LicenseSeat::factory()->for($license)->assignedToUser($subject)->create();
+
+        $actor = User::factory()->viewUsers()->create();
+
+        $this->actingAs($actor)
+            ->post(route('users/bulkedit'), [
+                'ids' => [$subject->id],
+                'bulk_actions' => 'print',
+            ])
+            ->assertOk()
+            ->assertDontSee('Unique License BULK444');
     }
 }

@@ -34,7 +34,7 @@ class Location extends SnipeModel
     protected $table = 'locations';
 
     protected $rules = [
-        'name' => 'required|max:255|unique_undeleted',
+        'name' => 'required|max:255|unique_undeleted_in_scope:parent_id,company_id',
         'address' => 'max:191|nullable',
         'address2' => 'max:191|nullable',
         'city' => 'max:191|nullable',
@@ -43,7 +43,7 @@ class Location extends SnipeModel
         'zip' => 'max:10|nullable',
         'manager_id' => 'exists:users,id|nullable',
         'parent_id' => 'nullable|exists:locations,id|non_circular:locations,id',
-        'company_id' => 'integer|nullable|exists:companies,id',
+        'company_id' => 'integer|nullable|exists:companies,id|fmcs_company',
     ];
 
     protected $casts = [
@@ -115,6 +115,7 @@ class Location extends SnipeModel
     protected $searchableRelations = [
         'parent' => ['name'],
         'company' => ['name'],
+        'manager' => ['first_name', 'last_name', 'display_name'],
         'adminuser' => ['first_name', 'last_name', 'display_name'],
     ];
 
@@ -372,6 +373,14 @@ class Location extends SnipeModel
      * The map's keys are parent_id values, with `0` used for "no parent / top-
      * level". Using 0 (not null) avoids PHP 8.4's deprecation of null array
      * offsets when callers build the map from `$location->parent_id`.
+     *
+     * `$prefix` is the accumulated breadcrumb path of the current node's
+     * ancestors. Empty at the top-level call, then each recursion passes down
+     * the full parent chain so every entry's `use_text` shows the whole path
+     * (e.g. `DC1 › Rack 1 › Rack 1a`) rather than just an indent-depth marker.
+     * The `›` separator matches the parent-chain breadcrumb rendered in the
+     * location info-panel at resources/views/blade/info-panel/index.blade.php
+     * so the select2 dropdown and the info-panel display are visually unified.
      */
     public static function indenter($locations_with_children, int $parent_id = 0, $prefix = '')
     {
@@ -382,12 +391,15 @@ class Location extends SnipeModel
         }
 
         foreach ($locations_with_children[$parent_id] as $location) {
-            $location->use_text = $prefix.' '.$location->name;
+            $breadcrumb = $prefix === ''
+                ? $location->name
+                : $prefix.' › '.$location->name;
+
+            $location->use_text = $breadcrumb;
             $location->use_image = ($location->image) ? Storage::disk('public')->url('locations/'.$location->image) : null;
             $results[] = $location;
-            // now append the children. (if we have any)
             if (array_key_exists($location->id, $locations_with_children)) {
-                $results = array_merge($results, self::indenter($locations_with_children, $location->id, $prefix.'--'));
+                $results = array_merge($results, self::indenter($locations_with_children, $location->id, $breadcrumb));
             }
         }
 

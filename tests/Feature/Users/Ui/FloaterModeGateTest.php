@@ -72,8 +72,17 @@ class FloaterModeGateTest extends TestCase
         $this->assertEmpty($target->fresh()->companies->pluck('id')->all(), 'Superuser is trusted to grant floater status');
     }
 
-    public function test_guard_does_not_apply_when_floater_mode_is_off()
+    public function test_strict_mode_now_blocks_non_superuser_from_clearing_company_ids()
     {
+        // Prior to #19192 this test documented that the #19200 floater
+        // gate skipped strict mode entirely (canGrantFloaterStatus()
+        // returns true when floaters are off, so no check fired). The
+        // reporter's #19192 case demonstrated that same permissive
+        // behavior lets a non-superuser end up with an empty pivot in
+        // strict FMCS mode, making the target instantly invisible to
+        // its creator's scope. The gate now also fires in strict mode
+        // for non-superusers, so a non-superuser cannot clear a user's
+        // company memberships to empty either.
         $this->settings->enableMultipleFullCompanySupport();
         $this->settings->disableFloaterMode();
 
@@ -86,7 +95,7 @@ class FloaterModeGateTest extends TestCase
                 'username' => $actor->username,
                 'company_ids' => [],
             ])
-            ->assertSessionDoesntHaveErrors('company_ids');
+            ->assertSessionHasErrors('company_ids');
     }
 
     public function test_non_superuser_cannot_bulk_clear_companies_in_floater_mode()
@@ -107,6 +116,56 @@ class FloaterModeGateTest extends TestCase
 
         $this->assertContains($company->id, $victim->fresh()->companies->pluck('id')->all(), 'Bulk clear should be refused');
         $this->assertNotEmpty($victim->fresh()->companies);
+    }
+
+    public function test_non_superuser_cannot_bulk_clear_companies_in_strict_fmcs_mode()
+    {
+        // #19192 companion to the floater-mode test above: strict FMCS
+        // (floaters OFF) also blocks a non-superuser from bulk-clearing
+        // pivot memberships, because doing so would make every targeted
+        // user instantly invisible to the acting admin's own scope.
+        // Pre-fix, BulkUsersController's only gate was canGrantFloaterStatus,
+        // which returns true in strict mode and let the clear proceed.
+        $this->settings->enableMultipleFullCompanySupport();
+        $this->settings->disableFloaterMode();
+
+        $company = Company::factory()->create();
+        $actor = $company->users()->save(User::factory()->editUsers()->create());
+        $victim = $company->users()->save(User::factory()->create());
+
+        $this->actingAs($actor)
+            ->post(route('users/bulkeditsave'), [
+                'ids' => [$victim->id => '1'],
+                'null_company_ids' => '1',
+            ])
+            ->assertRedirect()
+            ->assertSessionHas('error');
+
+        $this->assertContains($company->id, $victim->fresh()->companies->pluck('id')->all(), 'Bulk clear in strict mode should be refused');
+        $this->assertNotEmpty($victim->fresh()->companies);
+    }
+
+    public function test_strict_fmcs_bulk_clear_gate_does_not_fire_for_superuser()
+    {
+        // Superusers see everything (their scope reaches null-pivot
+        // rows), so leaving pivots empty is a deliberate action for
+        // them, not the visibility trap that motivates #19192. The
+        // gate must not fire — whether the pivot ends up actually
+        // cleared is a separate concern owned by the bulk-clear
+        // controller flow, tested elsewhere.
+        $this->settings->enableMultipleFullCompanySupport();
+        $this->settings->disableFloaterMode();
+
+        $company = Company::factory()->create();
+        $actor = User::factory()->superuser()->create();
+        $victim = $company->users()->save(User::factory()->create());
+
+        $this->actingAs($actor)
+            ->post(route('users/bulkeditsave'), [
+                'ids' => [$victim->id => '1'],
+                'null_company_ids' => '1',
+            ])
+            ->assertSessionMissing('error');
     }
 
     public function test_non_superuser_cannot_create_a_new_user_with_no_companies_in_floater_mode()

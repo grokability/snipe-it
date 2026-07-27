@@ -55,4 +55,55 @@ class LocationsForSelectListTest extends TestCase
             ->getJson(route('api.locations.selectlist'))
             ->assertOk();
     }
+
+    public function test_search_result_shows_parent_chain_in_breadcrumb(): void
+    {
+        // Two data centers each with their own rack. Location::name is
+        // `unique_undeleted` today so two children literally named
+        // "Rack 1" cannot coexist, but the disambiguation the breadcrumb
+        // provides is still valuable whenever the child names share a
+        // prefix or the tree is deep.
+        $dc1 = Location::factory()->create(['name' => 'DC1']);
+        $dc2 = Location::factory()->create(['name' => 'DC2']);
+        Location::factory()->create(['name' => 'RackA', 'parent_id' => $dc1->id]);
+        Location::factory()->create(['name' => 'RackB', 'parent_id' => $dc2->id]);
+
+        $response = $this->actingAsForApi(User::factory()->createUsers()->create())
+            ->getJson(route('api.locations.selectlist', ['search' => 'Rack']))
+            ->assertOk();
+
+        $texts = collect($response->json('results'))->pluck('text');
+        $this->assertTrue($texts->contains('DC1 › RackA'));
+        $this->assertTrue($texts->contains('DC2 › RackB'));
+    }
+
+    public function test_search_result_walks_multiple_ancestor_levels(): void
+    {
+        // Deeper tree: HQ > DC1 > Rack 1. The chain should show every
+        // ancestor level.
+        $hq = Location::factory()->create(['name' => 'HQ']);
+        $dc1 = Location::factory()->create(['name' => 'DC1', 'parent_id' => $hq->id]);
+        Location::factory()->create(['name' => 'Rack 1', 'parent_id' => $dc1->id]);
+
+        $response = $this->actingAsForApi(User::factory()->createUsers()->create())
+            ->getJson(route('api.locations.selectlist', ['search' => 'Rack 1']))
+            ->assertOk();
+
+        $texts = collect($response->json('results'))->pluck('text');
+        $this->assertTrue($texts->contains('HQ › DC1 › Rack 1'));
+    }
+
+    public function test_search_result_for_top_level_location_has_no_prefix(): void
+    {
+        // A match at the top of the tree has no ancestors, so its text
+        // should be just its own name with no leading breadcrumb.
+        Location::factory()->create(['name' => 'Standalone Site']);
+
+        $response = $this->actingAsForApi(User::factory()->createUsers()->create())
+            ->getJson(route('api.locations.selectlist', ['search' => 'Standalone']))
+            ->assertOk();
+
+        $texts = collect($response->json('results'))->pluck('text');
+        $this->assertTrue($texts->contains('Standalone Site'));
+    }
 }

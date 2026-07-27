@@ -106,7 +106,9 @@
                 </x-tabs>
         </x-container>
     @else
-        <p class="text-warning"><i class="fas fa-lock" aria-hidden="true"></i> {{ trans('general.feature_disabled') }}</p>
+        <x-container>
+            <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
+        </x-container>
     @endif
 
 @stop

@@ -34,6 +34,11 @@
                 <div class="box box-default">
                     <div class="box-body">
 
+                        <div class="row">
+                            <div class="col-md-12">
+                                <x-demo-callout />
+                            </div>
+                        </div>
 
                         <!--  Department -->
                         @include ('partials.forms.edit.department-select', ['translated_name' => trans('general.department'), 'fieldname' => 'department_id'])
@@ -78,7 +83,11 @@
                         @endif
 
                         <!-- Manager -->
-                    @include ('partials.forms.edit.user-select', ['translated_name' => trans('admin/users/table.manager'), 'fieldname' => 'manager_id'])
+                    <x-input.user-select
+                        :label="trans('admin/users/table.manager')"
+                        name="manager_id"
+                        :selected="old('manager_id')"
+                    />
 
                         <div class="form-group">
                             <div class=" col-md-9 col-md-offset-3">

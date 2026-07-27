@@ -1233,12 +1233,22 @@ class ReportsController extends Controller
                 trans('admin/maintenances/form.title'),
                 trans('admin/maintenances/form.start_date'),
                 trans('admin/maintenances/form.completion_date'),
+                trans('admin/maintenances/form.completed_at'),
+                trans('admin/maintenances/form.completed_by'),
                 trans('admin/maintenances/form.asset_maintenance_time'),
                 trans('admin/maintenances/form.cost'),
+                trans('admin/maintenances/form.is_warranty'),
+                trans('admin/maintenances/form.notes'),
             ];
             fputcsv($handle, $header);
 
-            Maintenance::with('asset', 'supplier')
+            // No completed-filter here — exports every maintenance, active
+            // or completed. Eager-load the four relations the row loop
+            // dereferences so a 10K-row export doesn't fan out into 40K+
+            // queries. maintenanceType replaces the pre-#19039
+            // `improvement_type` accessor that no longer exists on the
+            // model (would silently write empty cells otherwise).
+            Maintenance::with('asset', 'supplier', 'maintenanceType', 'completedByUser')
                 ->orderBy('created_at', 'DESC')
                 ->chunk(500, function ($maintenances) use ($handle, $formatter) {
                     foreach ($maintenances as $maintenance) {
@@ -1247,15 +1257,19 @@ class ReportsController extends Controller
                             : (int) $maintenance->asset_maintenance_time;
 
                         $row = [
-                            $maintenance->asset->asset_tag,
-                            $maintenance->asset->name,
-                            $maintenance->supplier->name,
-                            $maintenance->improvement_type,
+                            $maintenance->asset?->asset_tag,
+                            $maintenance->asset?->name,
+                            $maintenance->supplier?->name,
+                            $maintenance->maintenanceType?->name,
                             $maintenance->name,
                             $maintenance->start_date,
-                            $maintenance->completion_date,
+                            $maintenance->expected_completion_date,
+                            $maintenance->completed_at,
+                            $maintenance->completedByUser?->display_name,
                             $improvementTime,
                             trans('general.currency').Helper::formatCurrencyOutput($maintenance->cost),
+                            $maintenance->is_warranty ? trans('general.yes') : trans('general.no'),
+                            $maintenance->notes,
                         ];
 
                         if (config('app.escape_formulas') === false) {

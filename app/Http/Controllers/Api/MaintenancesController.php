@@ -124,6 +124,10 @@ class MaintenancesController extends Controller
             'asset_maintenance_time',
             'cost',
             'start_date',
+            'expected_completion_date',
+            // Legacy alias: API v1 callers passed sort=completion_date
+            // against the pre-rename column. Kept in the allow-list and
+            // mapped below so those callers keep sorting the same rows.
             'completion_date',
             'completed_at',
             'notes',
@@ -176,6 +180,11 @@ class MaintenancesController extends Controller
                 break;
             case 'completed_at':
                 $maintenances = $maintenances->orderByCompletedAt($order);
+                break;
+            case 'completion_date':
+                // Legacy alias for the renamed expected_completion_date
+                // column; keep API v1 sort= callers working.
+                $maintenances = $maintenances->orderBy('expected_completion_date', $order);
                 break;
             default:
                 $maintenances = $maintenances->orderBy($sort, $order);

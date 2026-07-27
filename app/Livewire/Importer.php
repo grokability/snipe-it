@@ -2,9 +2,22 @@
 
 namespace App\Livewire;
 
+use App\Models\Accessory;
+use App\Models\Asset;
+use App\Models\AssetModel;
+use App\Models\Category;
+// Snipe-IT's Component model name clashes with Livewire\Component - alias it.
+use App\Models\Component as ComponentModel;
+use App\Models\Consumable;
 use App\Models\CustomField;
 use App\Models\Import;
+use App\Models\License;
+use App\Models\Location;
+use App\Models\Manufacturer;
+use App\Models\Supplier;
+use App\Models\User;
 use Illuminate\Support\Facades\Storage;
+use League\Csv\Reader;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -41,6 +54,40 @@ class Importer extends Component
     public $import_errors; //
 
     public $activeFileId;
+
+    // Count of data rows in the active file's CSV (excluding the header
+    // row). Populated in selectFile() and surfaced in the mapping modal so
+    // the user knows how much data they're about to process.
+    public $activeFileRowCount = 0;
+
+    // Wizard cursor. 1 = pick type + options, 2 = map columns, 3 = preview
+    // + Process. Reset to 1 whenever a new file is selected so revisiting
+    // the modal always starts at the beginning.
+    public $wizardStep = 1;
+
+    // First N data rows (post-header) from the active CSV, rendered on
+    // step 3 so the user can eyeball how their mapping lands before the
+    // real import commits. Bounded by PREVIEW_ROW_LIMIT.
+    public $previewRows = [];
+
+    // Set to true once the user clicks Process in step 3 - flips the
+    // preview area over to a processing progress bar so the user has
+    // real feedback during the slice loop.
+    public $processing = false;
+
+    // Whether the current processing run requested a backup (from the
+    // step-1 checkbox). When true, the processing panel renders a
+    // dedicated backup progress bar above the import bar so the two
+    // phases (backup, then per-slice import) are visually distinct.
+    public $backupRequested = false;
+
+    // Flips true after slice 0 completes - by which point the sync
+    // backup has finished on the server side, per
+    // Api\ImportController::process(). Used to switch the backup bar
+    // from active-warning to success-green.
+    public $backupComplete = false;
+
+    public const PREVIEW_ROW_LIMIT = 10;
 
     public $headerRow = [];
 
@@ -85,7 +132,52 @@ class Importer extends Component
 
     public $categories_fields;
 
+    public $assethistory_fields;
+
     public $aliases_fields;
+
+    // Bridge from importer target-field keys to (Model class, model
+    // attribute) so the required-field list can be derived from each
+    // model's own `$rules` array instead of duplicated here. When a
+    // maintainer adds a `required` rule to Asset::$rules['name'], the
+    // wizard's step-2 gate picks it up automatically.
+    //
+    // assetHistory sits outside this convention because it doesn't create
+    // records: its "required" columns are enforced by the AssetHistory-
+    // Importer's own row-processing (asset_tag / full_name / checkout_date
+    // are needed to look up the target and stamp the actionlog). Those
+    // stay hardcoded in requiredForType() below.
+    // The importer target-field key on the LEFT of each translation
+    // pair must match a key that actually appears in the corresponding
+    // {type}_fields array below (that's what the mapping dropdowns use
+    // as option values). The RIGHT side is the model attribute the rule
+    // check reads from Model::$rules. Assets / accessories / consumables
+    // / components / licenses use "item_name" for their name column;
+    // asset models / locations / suppliers / manufacturers / categories
+    // use "name" directly.
+    public $required_field_model_map = [
+        'asset' => [Asset::class, ['item_name' => 'name']],
+        'assetModel' => [AssetModel::class, ['name' => 'name']],
+        'accessory' => [Accessory::class, ['item_name' => 'name', 'category' => 'category_id']],
+        'consumable' => [Consumable::class, ['item_name' => 'name', 'category' => 'category_id']],
+        'component' => [ComponentModel::class, ['item_name' => 'name', 'category' => 'category_id']],
+        'license' => [License::class, ['item_name' => 'name', 'seats' => 'seats']],
+        'user' => [User::class, ['first_name' => 'first_name', 'username' => 'username']],
+        'location' => [Location::class, ['name' => 'name']],
+        'supplier' => [Supplier::class, ['name' => 'name']],
+        'manufacturer' => [Manufacturer::class, ['name' => 'name']],
+        'category' => [Category::class, ['name' => 'name']],
+    ];
+
+    public $match_username = false;
+
+    public $match_email = false;
+
+    public $match_firstnamelastname = false;
+
+    public $match_flastname = false;
+
+    public $match_firstname = false;
 
     protected $rules = [
         'files.*.file_path' => 'required|string',
@@ -150,6 +242,9 @@ class Importer extends Component
             case 'category':
                 $results = $this->categories_fields;
                 break;
+            case 'assetHistory':
+                $results = $this->assethistory_fields;
+                break;
             default:
                 $results = [];
         }
@@ -171,6 +266,13 @@ class Importer extends Component
 
         // go through each header, find a matching field to try and map it to.
         foreach ($this->headerRow as $i => $header) {
+            // Normalize once at the top so both exact-match and alias
+            // branches see a trimmed header, and so an under_score CSV
+            // column ("asset_tag") can still match a spaced target
+            // label ("Asset Tag"). Comparison also swaps underscores
+            // for spaces both directions.
+            $header = trim((string) $header);
+            $normalizedHeader = str_replace('_', ' ', $header);
             // do we have something mapped already?
             if (array_key_exists($i, $this->field_map)) {
                 // yes, we do. Is it valid for this type of import?
@@ -184,9 +286,18 @@ class Importer extends Component
                     $this->field_map[$i] = null; // fingers crossed! But it's not likely, tbh.
                 } // TODO - strictly speaking, this isn't necessary here I don't think.
             }
-            // first, check for exact matches
+            // first, check for exact matches - both against the raw header
+            // and against the underscore-normalized form, and also against
+            // the target-field KEY (so "asset_tag" as a CSV column matches
+            // the asset_tag target even though its label is "Asset Tag").
             foreach ($this->columnOptions[$type] as $v => $text) {
-                if (strcasecmp($text, $header) === 0) { // case-INSENSITIVe on purpose!
+                $textStr = trim((string) $text);
+                if (
+                    strcasecmp($textStr, $header) === 0
+                    || strcasecmp($textStr, $normalizedHeader) === 0
+                    || strcasecmp($v, $header) === 0
+                    || strcasecmp(str_replace('_', ' ', (string) $v), $normalizedHeader) === 0
+                ) {
                     $this->field_map[$i] = $v;
 
                     continue 2; // don't bother with the alias check, go to the next header
@@ -195,11 +306,8 @@ class Importer extends Component
             // if you got here, we didn't find a match. Try the $aliases_fields
             foreach ($this->aliases_fields as $key => $alias_values) {
                 foreach ($alias_values as $alias_value) {
-
-                    // Trim off any trailing spaces
                     $key = trim($key);
-                    $header = trim($header);
-                    if (strcasecmp($alias_value, $header) === 0) { // aLsO CaSe-INSENSitiVE!
+                    if (strcasecmp($alias_value, $header) === 0 || strcasecmp($alias_value, $normalizedHeader) === 0) {
                         // Make *absolutely* sure that this key actually _exists_ in this import type -
                         // you can trigger this by importing accessories with a 'Warranty' column (which don't exist
                         // in "Accessories"!)
@@ -223,6 +331,7 @@ class Importer extends Component
         $this->importTypes = [
             'accessory' => trans('general.accessories'),
             'asset' => trans('general.assets'),
+            'assetHistory' => trans('general.assets').' - '.trans('general.import-history'),
             'assetModel' => trans('general.asset_models'),
             'component' => trans('general.components'),
             'consumable' => trans('general.consumables'),
@@ -478,6 +587,14 @@ class Importer extends Component
             'depreciation' => trans('general.depreciation'),
         ];
 
+        $this->assethistory_fields = [
+            'asset_tag' => trans('admin/hardware/table.asset_tag'),
+            'full_name' => trans('general.name'),
+            'email' => trans('general.email'),
+            'checkout_date' => trans('admin/hardware/table.checkout_date'),
+            'checkin_date' => trans('admin/hardware/form.checkin_date'),
+        ];
+
         /**
          * These are the "real fieldnames" with a list of possible aliases,
          * like misspellings, slight mis-phrasings, user-specific language, etc. that
@@ -665,6 +782,22 @@ class Importer extends Component
                 'checkout type',
                 'checkout class',
             ],
+            'checkout_date' => [
+                'checkout date',
+                'checked out',
+                'checked out date',
+            ],
+            'checkin_date' => [
+                'checkin date',
+                'check-in date',
+                'checked in',
+                'checked in date',
+            ],
+            'asset_tag' => [
+                'asset tag',
+                'assettag',
+                'tag',
+            ],
         ];
 
         $this->columnOptions[''] = $this->getColumns(''); // blank mode? I don't know what this is supposed to mean
@@ -701,12 +834,269 @@ class Importer extends Component
         $this->file_id = $id;
         $this->import_errors = null;
         $this->statusText = null;
+        $this->activeFileRowCount = $this->countActiveFileRows();
+        $this->wizardStep = 1;
+        $this->previewRows = [];
+        $this->processing = false;
+        $this->progress = -1;
+        $this->progress_message = '';
+        $this->progress_bar_class = 'progress-bar-warning';
 
+        $this->dispatch('open-import-modal');
+    }
+
+    /**
+     * Flip step 3 from preview mode to processing mode. Called from the
+     * modal's Process-button JS handler right before it starts firing
+     * slice requests. progress / progress_message / progress_bar_class
+     * get updated by that same JS between slices to drive the bar.
+     */
+    public function startProcessing(bool $withBackup = false): void
+    {
+        // Demo mode: the actual per-slice POSTs would 422 out of
+        // Api\ImportController::process() anyway, but bail here so we
+        // don't even flip the UI into processing mode.
+        if (config('app.lock_passwords')) {
+            $this->message = trans('general.feature_disabled');
+            $this->message_type = 'danger';
+
+            return;
+        }
+
+        $this->processing = true;
+        $this->progress = 0;
+        $this->progress_bar_class = 'progress-bar-warning';
+        $this->progress_message = '';
+        $this->backupRequested = $withBackup;
+        $this->backupComplete = false;
+        // The dedicated processing block renders its own spinner + label,
+        // so clear the alert-style status text the JS handler set before
+        // us - otherwise both render simultaneously.
+        $this->statusText = null;
+        $this->statusType = null;
+    }
+
+    /**
+     * Called from JS after slice 0's request returns. The sync backup
+     * runs at the very top of Api\ImportController::process() before
+     * any rows are touched, so slice 0's completion is the earliest
+     * moment we can be sure the backup finished.
+     */
+    public function markBackupComplete(): void
+    {
+        $this->backupComplete = true;
+    }
+
+    /**
+     * Called from the modal's Process-button JS handler if any slice
+     * fails. Drops back to preview mode so the user can back out or
+     * retry.
+     */
+    public function stopProcessing(): void
+    {
+        $this->processing = false;
+    }
+
+    /**
+     * Advance the wizard one step. Guards: can't leave step 1 without a
+     * type selected, can't leave step 2 without a mapping (any non-null
+     * field_map entries), and step 3 is the last step (Process is a
+     * separate JS handler). Populates preview rows when transitioning
+     * into step 3 so the modal's preview table has content ready.
+     */
+    public function nextStep(): void
+    {
+        if ($this->wizardStep === 1) {
+            if (empty($this->typeOfImport)) {
+                $this->statusType = 'error';
+                $this->statusText = trans('admin/hardware/message.import.type_required');
+
+                return;
+            }
+            // updatingTypeOfImport() is the standard auto-map trigger,
+            // but it only fires when the caller CHANGES the type dropdown.
+            // On a fresh file selection where the stored import_type gets
+            // assigned programmatically inside selectFile(), that hook
+            // never runs and the user lands in step 2 with an all-null
+            // field_map. Re-run the auto-map on 1->2 so the mapping step
+            // always starts with our best-guess bindings.
+            $this->updatingTypeOfImport($this->typeOfImport);
+            $this->wizardStep = 2;
+            $this->clearMessage();
+            $this->statusText = null;
+            $this->statusType = null;
+
+            return;
+        }
+
+        if ($this->wizardStep === 2) {
+            $missing = $this->missingRequiredMappings();
+            if (! empty($missing)) {
+                $labels = array_map(
+                    fn ($key) => $this->columnOptions[$this->typeOfImport][$key] ?? $key,
+                    $missing,
+                );
+                $this->statusType = 'error';
+                $this->statusText = trans('admin/hardware/message.import.required_fields_missing', [
+                    'fields' => implode(', ', $labels),
+                ]);
+
+                return;
+            }
+
+            $this->clearMessage();
+            $this->statusText = null;
+            $this->statusType = null;
+            $this->previewRows = $this->loadPreviewRows();
+            $this->wizardStep = 3;
+        }
+    }
+
+    /**
+     * Return the required target-field keys that the current field_map
+     * doesn't cover. Called before advancing from mapping to preview so
+     * users can't get to Process on a mapping that's guaranteed to have
+     * every row skipped.
+     */
+    public function missingRequiredMappings(): array
+    {
+        $required = $this->requiredForType($this->typeOfImport);
+        $mapped = array_filter((array) $this->field_map);
+
+        return array_values(array_diff($required, $mapped));
+    }
+
+    /**
+     * Compute the list of required importer target-field keys for a given
+     * import type. Reads the underlying model's `$rules` array so a rule
+     * change (adding / removing `required`) doesn't need a matching edit
+     * here. assetHistory has no model to introspect so its requirement
+     * list is inlined.
+     */
+    public function requiredForType(?string $type): array
+    {
+        if ($type === 'assetHistory') {
+            return ['asset_tag', 'full_name', 'checkout_date'];
+        }
+
+        if (! $type || ! isset($this->required_field_model_map[$type])) {
+            return [];
+        }
+
+        [$modelClass, $translation] = $this->required_field_model_map[$type];
+        $rules = (new $modelClass)->getRules() ?? [];
+
+        $required = [];
+        foreach ($translation as $importerKey => $modelAttr) {
+            $rule = $rules[$modelAttr] ?? '';
+            $ruleString = is_array($rule) ? implode('|', $rule) : (string) $rule;
+            if (str_contains($ruleString, 'required')) {
+                $required[] = $importerKey;
+            }
+        }
+
+        // Asset imports let users map custom fields on top of the built-in
+        // ones. A custom field marked required in ANY fieldset should be
+        // flagged as required at the wizard level - we can't know per-row
+        // which fieldset each asset will land in, so we treat the union
+        // across all fieldsets as the safe requirement set. Users see the
+        // strictest possible bar and can back out if their CSV doesn't
+        // cover it.
+        if ($type === 'asset') {
+            $requiredCustomFields = CustomField::whereHas(
+                'fieldset',
+                fn ($q) => $q->where('custom_field_custom_fieldset.required', 1),
+            )->get()->map->db_column_name()->all();
+
+            $required = array_values(array_unique(array_merge($required, $requiredCustomFields)));
+        }
+
+        return $required;
+    }
+
+    public function previousStep(): void
+    {
+        if ($this->wizardStep > 1) {
+            $this->wizardStep--;
+            $this->clearMessage();
+            $this->statusText = null;
+            $this->statusType = null;
+        }
+    }
+
+    /**
+     * Read the first PREVIEW_ROW_LIMIT data rows out of the active file's
+     * CSV. Returns an array of arrays, each keyed by the same header
+     * strings the mapping table uses. Silent-fallback on read errors so
+     * the modal can still transition to the preview step (which will show
+     * an empty table + the user can back out to step 2).
+     */
+    private function loadPreviewRows(): array
+    {
+        if (! $this->activeFile) {
+            return [];
+        }
+
+        $path = config('app.private_uploads').'/imports/'.$this->activeFile->file_path;
+        if (! is_file($path)) {
+            return [];
+        }
+
+        try {
+            $reader = Reader::createFromPath($path);
+            $reader->setHeaderOffset(0);
+
+            $rows = [];
+            foreach ($reader->getRecords() as $row) {
+                $rows[] = $row;
+                if (count($rows) >= self::PREVIEW_ROW_LIMIT) {
+                    break;
+                }
+            }
+
+            return $rows;
+        } catch (\Throwable $e) {
+            return [];
+        }
+    }
+
+    /**
+     * Count the number of data rows (excluding the header row) in the
+     * currently active file's CSV. Returns 0 if the file is missing or the
+     * CSV can't be read - the modal will render "0 rows" and the caller
+     * can still choose to cancel out.
+     */
+    private function countActiveFileRows(): int
+    {
+        if (! $this->activeFile) {
+            return 0;
+        }
+
+        $path = config('app.private_uploads').'/imports/'.$this->activeFile->file_path;
+        if (! is_file($path)) {
+            return 0;
+        }
+
+        try {
+            $reader = Reader::createFromPath($path);
+            $reader->setHeaderOffset(0);
+
+            return iterator_count($reader->getRecords());
+        } catch (\Throwable $e) {
+            return 0;
+        }
     }
 
     public function destroy($id)
     {
         $this->authorize('import');
+
+        if (config('app.lock_passwords')) {
+            $this->message = trans('general.feature_disabled');
+            $this->message_type = 'danger';
+
+            return;
+        }
 
         $import = Import::find($id);
 
@@ -754,16 +1144,86 @@ class Importer extends Component
         $this->message_type = null;
     }
 
+    /**
+     * IDs of imports that were freshly uploaded in the current session
+     * and haven't been dismissed yet. Rendered with a subtle green row
+     * tint in the file list so users can spot the row their upload just
+     * added, especially after refresh-invalidation shuffles the paginator.
+     */
+    public $newlyUploadedIds = [];
+
+    /**
+     * Called from the fileupload widget's done() callback. Records the
+     * freshly-uploaded IDs so the file table row gets a green highlight
+     * on the next render, and busts the memoized files() computed so the
+     * paginator picks up the new rows. Per-file progress bars are managed
+     * entirely client-side now (the old shared $progress state can't
+     * represent multiple concurrent uploads cleanly).
+     */
+    public function uploadSucceeded(array $ids = []): void
+    {
+        foreach ($ids as $id) {
+            $intId = (int) $id;
+            if ($intId > 0 && ! in_array($intId, $this->newlyUploadedIds, true)) {
+                $this->newlyUploadedIds[] = $intId;
+            }
+        }
+
+        unset($this->files);
+
+        // Fire-and-forget signal to the JS side to schedule the
+        // clear-highlights timeout. Doing the delay client-side keeps
+        // Livewire from having to babysit a wall-clock timer.
+        $this->dispatch('new-uploads-highlighted');
+    }
+
+    /**
+     * Called from JS after the star-spin timeout expires. Empties the
+     * list so subsequent renders drop the fa-spin star from the file
+     * rows.
+     */
+    public function clearNewlyUploadedIds(): void
+    {
+        $this->newlyUploadedIds = [];
+    }
+
+    /**
+     * Companion to uploadSucceeded() for the fail() callback. Currently
+     * a no-op on the server (the JS shows the red bar and error text per
+     * file); kept as a stub so the JS callback has a landing spot if we
+     * want to add server-side tracking later.
+     */
+    public function uploadFailed(): void
+    {
+        //
+    }
+
     #[Computed]
     public function files()
     {
-        return Import::orderBy('id', 'desc')->paginate($this->perPage);
+        // Non-superusers only see their own imports. The delete path
+        // already enforced this (see destroy() + canDeleteFile()), but
+        // the file listing, activeFile computed property, and selectFile
+        // action all read Import records without an owner filter -
+        // letting a user with import permission enumerate every other
+        // user's uploaded CSV and preview its header + first-row values
+        // through the Livewire UI. Matches the scoping the API uses at
+        // Api\ImportController::index.
+        return Import::query()
+            ->when(! auth()->user()->isSuperUser(), fn ($q) => $q->where('created_by', auth()->id()))
+            ->orderBy('id', 'desc')
+            ->paginate($this->perPage);
     }
 
     #[Computed]
     public function activeFile()
     {
-        return Import::find($this->activeFileId);
+        // Same owner-scope as files() above. Returning null for records
+        // the caller doesn't own means selectFile()'s "file not found"
+        // branch fires and no header/preview state gets populated.
+        return Import::query()
+            ->when(! auth()->user()->isSuperUser(), fn ($q) => $q->where('created_by', auth()->id()))
+            ->find($this->activeFileId);
     }
 
     /**
@@ -819,6 +1279,13 @@ class Importer extends Component
     public function bulkDestroy()
     {
         $this->authorize('import');
+
+        if (config('app.lock_passwords')) {
+            $this->message = trans('general.feature_disabled');
+            $this->message_type = 'danger';
+
+            return;
+        }
 
         if (empty($this->selectedIds)) {
             return;

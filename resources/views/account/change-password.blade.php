@@ -27,11 +27,7 @@
                             required
                             @disabled(config('app.lock_passwords'))
                         />
-                        @if (config('app.lock_passwords') === true)
-                            <p class="text-warning">
-                                <x-icon type="locked" /> {{ trans('general.feature_disabled') }}
-                            </p>
-                        @endif
+                        <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
                     </x-slot:input>
                 </x-form.row>
 
@@ -50,11 +46,7 @@
                             required
                             @disabled(config('app.lock_passwords'))
                         />
-                        @if (config('app.lock_passwords') === true)
-                            <p class="text-warning">
-                                <x-icon type="locked" /> {{ trans('general.feature_disabled') }}
-                            </p>
-                        @endif
+                        <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
                     </x-slot:input>
                 </x-form.row>
 
@@ -72,11 +64,7 @@
                             aria-label="password_confirmation"
                             @disabled(config('app.lock_passwords'))
                         />
-                        @if (config('app.lock_passwords') === true)
-                            <p class="text-warning">
-                                <x-icon type="locked" /> {{ trans('general.feature_disabled') }}
-                            </p>
-                        @endif
+                        <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
                     </x-slot:input>
                 </x-form.row>
 

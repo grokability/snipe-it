@@ -4,6 +4,7 @@ namespace App\Models\Labels;
 
 use App\Models\Asset;
 use App\Models\User;
+use App\Helpers\Helper;
 
 class FieldOption
 {
@@ -47,7 +48,13 @@ class FieldOption
         if ($dataPath[0] === 'purchase_date') {
             return $asset->purchase_date ? $asset->purchase_date->format('Y-m-d') : null;
         }
+        if ($dataPath[0] === 'warranty_months') {
 
+            return ($asset->warranty_months > 0) ? e($asset->warranty_months . ' ' . trans('admin/hardware/form.months')) : null;
+        }
+        if ($dataPath[0] === 'warranty_expires') {
+            return ($asset->warranty_months > 0) ? $asset->warranty_expires->toDateString() : null;
+        }
         return $dataPath->reduce(
             function ($myValue, $path) {
                 try {

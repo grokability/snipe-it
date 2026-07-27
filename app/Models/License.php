@@ -59,7 +59,7 @@ class License extends Depreciable
         'license_name' => 'string|nullable|max:100',
         'notes' => 'string|nullable',
         'category_id' => 'required|exists:categories,id',
-        'company_id' => 'integer|nullable|exists:companies,id',
+        'company_id' => 'integer|nullable|exists:companies,id|fmcs_company',
         'purchase_cost' => 'numeric|nullable|gte:0|max:99999999999999999.99',
         'purchase_date' => 'date_format:Y-m-d|nullable|max:10|required_with:depreciation_id',
         'expiration_date' => 'date_format:Y-m-d|nullable|max:10',

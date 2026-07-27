@@ -38,6 +38,32 @@ class ShowLocationTest extends TestCase
             ->assertOk();
     }
 
+    public function test_print_all_assigned_renders_accessory_name_for_location_checkouts()
+    {
+        // Regression guard for #19093: Location::assignedAccessories()
+        // is a morphMany onto accessories_checkout, so the collection
+        // items are AccessoryCheckout instances, not Accessory. The
+        // print template used to read $checkout->name (which doesn't
+        // exist on AccessoryCheckout) and quietly produced blank rows.
+        // Reach through ->accessory to render the real attributes.
+        $location = Location::factory()->create();
+        $accessory = \App\Models\Accessory::factory()->create([
+            'name' => 'DistinctBluetoothMouse-19093',
+            'model_number' => 'MDL-19093',
+        ]);
+        \App\Models\AccessoryCheckout::factory()->create([
+            'accessory_id' => $accessory->id,
+            'assigned_to' => $location->id,
+            'assigned_type' => Location::class,
+        ]);
+
+        $this->actingAs(User::factory()->superuser()->create())
+            ->get(route('locations.print_all_assigned', $location))
+            ->assertOk()
+            ->assertSee('DistinctBluetoothMouse-19093')
+            ->assertSee('MDL-19093');
+    }
+
     public function test_show_page_includes_parent_location_breadcrumb_hierarchy()
     {
         $grandparent = Location::factory()->create(['name' => 'Grandparent Breadcrumb Location']);

@@ -38,7 +38,7 @@ final class Company extends SnipeModel
 
     // Declare the rules for the model validation
     protected $rules = [
-        'name' => 'required|max:255|unique_undeleted',
+        'name' => 'required|max:255|unique_undeleted_in_scope:parent_id',
         'fax' => 'min:7|max:35|nullable',
         'phone' => 'min:7|max:35|nullable',
         'email' => 'email|max:150|nullable',
@@ -98,6 +98,7 @@ final class Company extends SnipeModel
      * @var array
      */
     protected $searchableRelations = [
+        'parent' => ['name'],
         'adminuser' => ['first_name', 'last_name', 'display_name'],
     ];
 
@@ -228,8 +229,10 @@ final class Company extends SnipeModel
      * level". Using 0 (not null) avoids PHP 8.4's deprecation of null array
      * offsets when callers build the map from `$company->parent_id`.
      *
-     * Mirrors Location::indenter so the SelectlistTransformer renders the same
-     * "-- Child Co" indentation it already does for locations.
+     * `$prefix` is the accumulated breadcrumb path of the current node's
+     * ancestors. Mirrors Location::indenter so both dropdowns share the same
+     * `Parent › Child` visual style, unified with the parent-chain
+     * breadcrumb rendered by the location info-panel.
      */
     public static function indenter(array $companies_by_parent, int $parent_id = 0, string $prefix = ''): array
     {
@@ -240,7 +243,11 @@ final class Company extends SnipeModel
         }
 
         foreach ($companies_by_parent[$parent_id] as $company) {
-            $company->use_text = trim($prefix.' '.$company->name);
+            $breadcrumb = $prefix === ''
+                ? $company->name
+                : $prefix.' › '.$company->name;
+
+            $company->use_text = $breadcrumb;
             $company->use_image = ($company->image)
                 ? Storage::disk('public')->url('companies/'.$company->image)
                 : null;
@@ -249,7 +256,7 @@ final class Company extends SnipeModel
             if (array_key_exists($company->id, $companies_by_parent)) {
                 $results = array_merge(
                     $results,
-                    self::indenter($companies_by_parent, $company->id, $prefix.'--'),
+                    self::indenter($companies_by_parent, $company->id, $breadcrumb),
                 );
             }
         }

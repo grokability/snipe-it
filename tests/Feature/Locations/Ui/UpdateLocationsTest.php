@@ -28,6 +28,27 @@ class UpdateLocationsTest extends TestCase
             ->assertOk();
     }
 
+    public function test_edit_page_ships_manager_select_and_submit_controls()
+    {
+        // Regression guard for the migration off @include('partials.forms
+        // .edit.user-select') to <x-input.user-select>. The manager
+        // picker must still emit the assigned_user_select select id (the
+        // "+ New user" quick-create modal targets it via data-select), and
+        // the bottom cancel/save controls come from <x-box.footer /> which
+        // <x-box> renders when its parent <x-form> exposes a route.
+        $manager = User::factory()->create();
+        $location = Location::factory()->create(['manager_id' => $manager->id]);
+
+        $response = $this->actingAs(User::factory()->superuser()->create())
+            ->get(route('locations.edit', $location))
+            ->assertOk();
+
+        $response->assertSee('id="assigned_user_select"', false);
+        $response->assertSee('name="manager_id"', false);
+        $response->assertSee('value="'.$manager->id.'"', false);
+        $response->assertSee('id="submit_button"', false);
+    }
+
     public function test_user_can_edit_locations()
     {
         $location = Location::factory()->create(['name' => 'Test Location']);

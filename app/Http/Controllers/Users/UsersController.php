@@ -15,6 +15,7 @@ use App\Models\Actionlog;
 use App\Models\Asset;
 use App\Models\CheckoutAcceptance;
 use App\Models\Company;
+use App\Models\Component;
 use App\Models\Consumable;
 use App\Models\Group;
 use App\Models\License;
@@ -115,6 +116,14 @@ class UsersController extends Controller
         $user->display_name = $request->input('display_name');
         if ($request->filled('password')) {
             $user->password = bcrypt($request->input('password'));
+        } else {
+            // SaveUserRequest only skips password validation when the
+            // user is being created deactivated. If we got here with no
+            // password, the user cannot log in anyway, so store the
+            // noPassword placeholder raw. Hash::check at login always
+            // fails against a plain string, so no authentication path
+            // can ever match this value.
+            $user->password = $user->noPassword();
         }
         $user->first_name = $request->input('first_name');
         $user->last_name = $request->input('last_name');
@@ -706,16 +715,36 @@ class UsersController extends Controller
         $this->authorize('view', User::class);
 
         $actor = auth()->user();
+        $canViewAssets = $actor->can('view', Asset::class);
         $canViewLicenses = $actor->can('view', License::class);
         $canViewAccessories = $actor->can('view', Accessory::class);
         $canViewConsumables = $actor->can('view', Consumable::class);
+        $canViewComponents = $actor->can('view', Component::class);
 
-        $user = User::withInventoryRelations($id, $canViewLicenses, $canViewAccessories, $canViewConsumables)->first();
+        $user = User::withInventoryRelations(
+            $id,
+            $canViewAssets,
+            $canViewLicenses,
+            $canViewAccessories,
+            $canViewConsumables,
+            $canViewComponents,
+        )->first();
 
-        $indirectItemsCount = $user?->assets?->flatMap->assignedAssets->count()
-            + $user?->assets?->flatMap->components->count()
-            + ($canViewLicenses ? $user?->assets?->flatMap->licenses->count() : 0)
-            + ($canViewAccessories ? $user?->assets?->flatMap->assignedAccessories->count() : 0);
+        $indirectItemsCount = 0;
+        if ($canViewAssets && $user?->assets) {
+            foreach ($user->assets as $asset) {
+                $indirectItemsCount += $asset->assignedAssets->count();
+                if ($canViewComponents) {
+                    $indirectItemsCount += $asset->components->count();
+                }
+                if ($canViewLicenses) {
+                    $indirectItemsCount += $asset->licenses->count();
+                }
+                if ($canViewAccessories) {
+                    $indirectItemsCount += $asset->assignedAccessories->count();
+                }
+            }
+        }
 
         if ($user) {
             $this->authorize('view', $user);

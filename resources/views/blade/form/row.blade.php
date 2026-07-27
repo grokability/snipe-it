@@ -13,7 +13,6 @@
     'label' => null,
     'label_class' => 'col-md-3',
     'input_div_class' => 'col-md-7',
-    'errors_class' => $errors->has('support_url') ? ' has-error' : '',
     'input_icon' => null,
     'input_group_addon' => null,
     'maxlength' => null,
@@ -28,6 +27,15 @@
     'default_now' => true,
     'side_by_side' => false,
 ])
+
+@php
+    // Bootstrap 3 error styling: .form-group.has-error turns the label
+    // red and adds a red border to the input. Computed here instead of
+    // as a @props default because $name isn't in scope during Blade's
+    // first extractPropNames() pass. Sibling components x-form.checkbox-row
+    // and x-form.radio-row do the same thing.
+    $errors_class = $errors->has($name) ? ' has-error' : '';
+@endphp
 
 <div {{ $attributes->merge(['class' => 'form-group'. $errors_class]) }}>
 
@@ -119,6 +127,17 @@
             @endisset
         </div>
 
+    {{-- Optional col-md-1 sibling of the input column for a small
+         action button (e.g. the "new" button next to a user select,
+         or the wand generator next to the password field). Callers
+         pass <x-slot:after_input>...</x-slot:after_input>. Matches
+         the manager-picker layout in x-input.user-select. --}}
+    @isset($after_input)
+        <div class="col-md-1 col-sm-1 text-left">
+            {{ $after_input }}
+        </div>
+    @endisset
+
     @if ($info_tooltip_text)
         <!-- Info Tooltip -->
         <div class="col-md-1 text-left" style="padding-left:0; margin-top: 5px;">
@@ -129,17 +148,24 @@
     @endif
 
 
-    {{-- Error + help live in a single col-md-8 col-md-offset-3 wrapper so
-         they always span the wide-column area regardless of how narrow the
-         input above is. --}}
-    <div class="col-md-8 col-md-offset-3">
+    {{-- Error + help wrapper. Width tracks $input_div_class so the help
+         line sits directly under the input, not overhanging its right
+         edge. Offset stays col-md-offset-3 to align under the input
+         column (which sits after the col-md-3 label). Callers that
+         want a wider help area can override input_div_class. --}}
+    <div class="{{ $input_div_class }} col-md-offset-3">
         <x-form.error :name="$name" />
 
         @if ($help_text)
             <x-form.help :name="$name" :icon="$help_icon">{{ $help_text }}</x-form.help>
         @elseif ($help_html)
             {{-- Raw HTML help — the caller has opted in, we render unescaped
-                 straight to the <p>. See the help_html prop docs above. --}}
+                 straight to the <p>. See the help_html prop docs above. Note:
+                 to pass a trans() string with HTML in it, use the static-
+                 attribute form  help_html="{!! trans('...') !!}"  — the
+                 dynamic-binding form  :help_html="trans('...')"  runs the
+                 value through BladeCompiler::sanitizeComponentAttribute()
+                 and turns your <a> tags into &lt;a&gt; entities. --}}
             <p class="help-block" id="{{ $name }}-help">
                 @if ($help_icon)
                     <x-icon :type="$help_icon" />

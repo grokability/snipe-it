@@ -160,24 +160,41 @@ abstract class Importer
      *
      * @since  5.0
      */
-    public function import()
+    public function import(?int $offset = null, ?int $limit = null)
     {
         $headerRow = $this->csv->fetchOne();
         $this->csv->setHeaderOffset(0); // explicitly sets the CSV document header record
 
         $this->populateCustomFields($headerRow);
 
-        DB::transaction(function () use ($headerRow) {
+        DB::transaction(function () use ($headerRow, $offset, $limit) {
             $importedItemsCount = 0;
+            $processedInSlice = 0;
             Model::unguard();
 
+            // Sliced imports: when the caller passes offset+limit we only
+            // process rows [offset, offset+limit). Preserves the original
+            // "iterate everything" behavior when neither is provided so
+            // CLI callers (ObjectImportCommand) and any external caller
+            // hitting the API without offset/limit still work unchanged.
             foreach ($this->csv->getRecords($headerRow) as $row) {
+                if ($offset !== null && $importedItemsCount < $offset) {
+                    $importedItemsCount++;
+
+                    continue;
+                }
+
+                if ($limit !== null && $processedInSlice >= $limit) {
+                    break;
+                }
+
                 // Lowercase header values to ensure we're comparing values properly.
                 $row = array_change_key_case($row, CASE_LOWER);
 
                 $this->handle($row);
 
                 $importedItemsCount++;
+                $processedInSlice++;
 
                 if ($this->progressCallback) {
                     call_user_func($this->progressCallback, $importedItemsCount);

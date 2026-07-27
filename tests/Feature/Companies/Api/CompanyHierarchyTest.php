@@ -360,11 +360,13 @@ class CompanyHierarchyTest extends TestCase
 
         $byId = collect($response['results'])->keyBy('id');
 
-        // Parents render with no indent prefix, children render with the "-- " prefix.
+        // Parents render as their own name, children render with the
+        // full breadcrumb path so hierarchy context is always visible.
+        // Unified with Location::indenter and the info-panel breadcrumb.
         $this->assertEquals('AlphaParent', $byId[$alphaParent->id]['text']);
-        $this->assertEquals('-- AlphaChild', $byId[$alphaChild->id]['text']);
+        $this->assertEquals('AlphaParent › AlphaChild', $byId[$alphaChild->id]['text']);
         $this->assertEquals('ZuluParent', $byId[$zuluParent->id]['text']);
-        $this->assertEquals('-- ZuluChild', $byId[$zuluChild->id]['text']);
+        $this->assertEquals('ZuluParent › ZuluChild', $byId[$zuluChild->id]['text']);
 
         // Children appear directly after their own parent, not lumped at the end.
         $positions = collect($response['results'])->pluck('id')->flip();

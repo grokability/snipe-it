@@ -6,11 +6,6 @@
     @parent
 @stop
 
-@section('header_right')
-    <a href="{{ route('settings.index') }}" class="btn btn-primary"> {{ trans('general.back') }}</a>
-@stop
-
-
 {{-- Page content --}}
 @section('content')
 

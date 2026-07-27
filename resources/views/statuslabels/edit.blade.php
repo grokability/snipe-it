@@ -1,74 +1,87 @@
-@extends('layouts/edit-form', [
-    'createText' => trans('admin/statuslabels/table.create') ,
-    'updateText' => trans('admin/statuslabels/table.update'),
-    'helpTitle' => trans('admin/statuslabels/table.about'),
-    'helpText' => trans('admin/statuslabels/table.info'),
-    'formAction' => (isset($item->id)) ? route('statuslabels.update', ['statuslabel' => $item->id]) : route('statuslabels.store'),
-])
+@extends('layouts/default')
+
+{{-- Page title --}}
+@section('title')
+    @if ($item->id)
+        {{ trans('admin/statuslabels/table.update') }}
+    @else
+        {{ trans('admin/statuslabels/table.create') }}
+    @endif
+    @parent
+@stop
 
 {{-- Page content --}}
 @section('content')
-<style>
-    .input-group-addon {
-        width: 30px;
-    }
-</style>
+    <style>
+        .input-group-addon {
+            width: 30px;
+        }
+    </style>
 
-@parent
+    <x-container class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 col-sm-12 col-sm-offset-0">
+
+        <x-form :$item route="{{ ($item->id) ? route('statuslabels.update', ['statuslabel' => $item->id]) : route('statuslabels.store') }}">
+
+            <x-box top_submit>
+                @if ($item->id)
+                    <x-slot:header>{{ $item->name }}</x-slot:header>
+                @endif
+
+                <x-form.row
+                    :label="trans('general.name')"
+                    :$item
+                    name="name"
+                />
+
+                <x-form.row
+                    :label="trans('admin/statuslabels/table.status_type')"
+                    name="statuslabel_types"
+                    input_div_class="col-md-7 required"
+                >
+                    <x-slot:input>
+                        <x-input.select
+                            name="statuslabel_types"
+                            :options="$statuslabel_types"
+                            :selected="$item->getStatuslabelType()"
+                            style="width: 100%; min-width:400px"
+                            aria-label="statuslabel_types"
+                        />
+                    </x-slot:input>
+                </x-form.row>
+
+                <x-form.row
+                    :label="trans('admin/statuslabels/table.color')"
+                    :$item
+                    name="color"
+                    type="colorpicker"
+                    default="#f4f4f4"
+                />
+
+                <x-form.row
+                    :label="trans('general.notes')"
+                    :$item
+                    name="notes"
+                    type="textarea"
+                    :rows="5"
+                />
+
+                <x-form.checkbox-row
+                    name="show_in_nav"
+                    :label="trans('admin/statuslabels/table.show_in_nav')"
+                    :item="$item"
+                />
+
+                <x-form.checkbox-row
+                    name="default_label"
+                    :label="trans('admin/statuslabels/table.default_label')"
+                    :item="$item"
+                    :help_text="trans('admin/statuslabels/table.default_label_help')"
+                />
+
+            </x-box>
+
+        </x-form>
+
+    </x-container>
+
 @stop
-
-@section('inputFields')
-
-@include ('partials.forms.edit.name', ['translated_name' => trans('general.name')])
-
-<!-- Label type -->
-<div class="form-group{{ $errors->has('statuslabel_types') ? ' has-error' : '' }}">
-    <label for="statuslabel_types" class="col-md-3 control-label">
-        {{ trans('admin/statuslabels/table.status_type') }}
-    </label>
-    <div class="col-md-7 required">
-        <x-input.select
-            name="statuslabel_types"
-            :options="$statuslabel_types"
-            :selected="$item->getStatuslabelType()"
-            style="width: 100%; min-width:400px"
-            aria-label="statuslabel_types"
-        />
-        <x-form.error name="statuslabel_types" />
-    </div>
-</div>
-
-<!-- Chart color -->
-<div class="form-group{{ $errors->has('color') ? ' has-error' : '' }}">
-    <label for="color" class="col-md-3 control-label">{{ trans('admin/statuslabels/table.color') }}</label>
-    <div class="col-md-9">
-        <x-input.colorpicker :item="$item" id="color" :value="old('color', ($item->color ?? '#f4f4f4'))" name="color" id="color" />
-        <x-form.error name="color" />
-    </div>
-</div>
-
-@include ('partials.forms.edit.notes')
-
-<!-- Show in Nav -->
-<div class="form-group{{ $errors->has('notes') ? ' has-error' : '' }}">
-    <div class="col-md-9 col-md-offset-3">
-        <label class="form-control">
-            <input type="checkbox" value="1" name="show_in_nav" id="show_in_nav" {{ old('show_in_nav', $item->show_in_nav) == '1' ? ' checked="checked"' : '' }}> {{ trans('admin/statuslabels/table.show_in_nav') }}
-        </label>
-    </div>
-</div>
-
-<!-- Set as Default -->
-<div class="form-group{{ $errors->has('default_label') ? ' has-error' : '' }}">
-
-    <div class="col-md-9 col-md-offset-3">
-        <label class="form-control">
-            <input type="checkbox" value="1" name="default_label" id="default_label" {{ old('default_label', $item->default_label) == '1' ? ' checked="checked"' : '' }}>
-             {{ trans('admin/statuslabels/table.default_label') }}
-        </label>
-        <p class="help-block"> {{ trans('admin/statuslabels/table.default_label_help') }}</p>
-    </div>
-</div>
-
-@stop
-

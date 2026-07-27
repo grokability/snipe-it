@@ -275,4 +275,40 @@ class AccessoryCheckoutTest extends TestCase implements TestsPermissionsRequirem
             ->assertOk()
             ->assertStatusMessageIs('success');
     }
+
+    /**
+     * Security regression pin: sibling to the consumable race test.
+     * AccessoryCheckoutRequest validates number_remaining_after_checkout
+     * with an unlocked numRemaining() read. Two racing checkouts for a
+     * qty=1 accessory both used to pass validation and both attach pivot
+     * rows. Fix wraps the writes in DB::transaction with a lockForUpdate
+     * re-check. This test pre-drains the pivot to simulate the "someone
+     * else grabbed it" moment and asserts we refuse.
+     */
+    public function test_checkout_refuses_when_inventory_is_already_exhausted(): void
+    {
+        $target = User::factory()->create();
+        $accessory = Accessory::factory()->create(['qty' => 1]);
+        $actor = User::factory()->superuser()->create();
+
+        \App\Models\AccessoryCheckout::create([
+            'accessory_id' => $accessory->id,
+            'assigned_to' => $target->id,
+            'assigned_type' => User::class,
+            'created_by' => $actor->id,
+        ]);
+
+        $this->assertSame(0, $accessory->fresh()->numRemaining());
+
+        $this->actingAsForApi($actor)
+            ->postJson(route('api.accessories.checkout', $accessory), [
+                'assigned_user' => $target->id,
+                'checkout_to_type' => 'user',
+                'checkout_qty' => 1,
+            ])
+            ->assertStatusMessageIs('error');
+
+        $this->assertSame(1, $accessory->checkouts()->count(), 'A second pivot row would mean the register went negative');
+        $this->assertSame(0, $accessory->fresh()->numRemaining());
+    }
 }

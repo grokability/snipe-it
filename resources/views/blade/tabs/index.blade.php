@@ -19,6 +19,16 @@
         {{ $tabpanes }}
     </div>
 
+    {{-- Optional footer slot for a submit/cancel row that should sit
+         INSIDE .nav-tabs-custom so it stays visually attached to the
+         tab card (Bootstrap 3 / AdminLTE 2 renders a shared border and
+         background around the whole card). Callers pass:
+             <x-slot:footer><x-redirect_submit_options .../></x-slot:footer>
+         Omit the slot for read-only detail tabs that don't need one. --}}
+    @isset($footer)
+        {{ $footer }}
+    @endisset
+
 
 </div>
 <!-- end tab container -->

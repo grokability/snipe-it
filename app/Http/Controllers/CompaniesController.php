@@ -13,8 +13,6 @@ use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 
 /**
  * This controller handles all actions related to Companies for
@@ -155,14 +153,11 @@ final class CompaniesController extends Controller
                 ->with('error', trans('admin/companies/message.assoc_users'));
         }
 
-        if ($company->image) {
-            try {
-                Storage::disk('public')->delete('companies'.'/'.$company->image);
-            } catch (\Exception $e) {
-                Log::debug($e);
-            }
-        }
-
+        // Note: the image file is deliberately preserved across this
+        // soft-delete. Snipe-IT's `snipeit:purge` command permanently
+        // removes it later when the row is force-deleted. Keeping the
+        // file here means a restored soft-deleted row still has its
+        // image.
         $company->delete();
 
         return redirect()->route('companies.index')

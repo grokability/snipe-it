@@ -32,7 +32,13 @@
 
             <x-form.static :label="trans('admin/components/general.remaining')">{{ $consumable->numRemaining() }}</x-form.static>
 
-            @include ('partials.forms.edit.user-select', ['translated_name' => trans('general.select_user'), 'fieldname' => 'assigned_to', 'required' => 'true', 'company_id' => $consumable->company_id])
+            <x-input.user-select
+                :label="trans('general.select_user')"
+                name="assigned_to"
+                :selected="old('assigned_to')"
+                :companyId="$consumable->company_id"
+                required
+            />
 
             @if ($consumable->requireAcceptance() || (string) $snipeSettings->require_accept_signature === '1' || $consumable->getEula() || ($snipeSettings->webhook_endpoint != ''))
                 <div class="form-group notification-callout">

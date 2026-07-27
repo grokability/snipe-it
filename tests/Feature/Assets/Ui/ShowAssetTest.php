@@ -42,6 +42,26 @@ class ShowAssetTest extends TestCase
             ->assertOk();
     }
 
+    public function test_maintenance_tab_ships_complete_button_infrastructure()
+    {
+        // Regression guard for #issue: the mark-complete button previously
+        // rendered only on the maintenances index page because the custom
+        // maintenancesActionsFormatter override lived in that page's inline
+        // <script>. It now lives in partials/bootstrap-table.blade.php and
+        // the confirmation modal in x-modals.maintenance-complete, so any
+        // page rendering the maintenances table (including the asset view)
+        // must ship both.
+        $asset = Asset::factory()->create();
+
+        $response = $this->actingAs(User::factory()->viewAssets()->create())
+            ->get(route('hardware.show', $asset))
+            ->assertOk();
+
+        $response->assertSee('id="completeMaintenanceModal"', false);
+        $response->assertSee('maintenancesActionsFormatter', false);
+        $response->assertSee('complete-maintenance', false);
+    }
+
     public function test_page_for_asset_with_missing_model_still_renders()
     {
         $asset = Asset::factory()->create();

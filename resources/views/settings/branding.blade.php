@@ -6,11 +6,6 @@
     @parent
 @stop
 
-@section('header_right')
-    <a href="{{ route('settings.index') }}" class="btn btn-primary"> {{ trans('general.back') }}</a>
-@stop
-
-
 {{-- Page content --}}
 @section('content')
 
@@ -57,20 +52,19 @@
 
 
                             <!-- Site name -->
-                            <div class="form-group{{ $errors->has('site_name') ? ' error' : '' }}">
-                                <label for="site_name" class="col-md-3 control-label">{{ trans('admin/settings/general.site_name') }}</label>
-                                <div class="col-md-8 required">
-                                    @if (config('app.lock_passwords')===true)
-                                        <input maxlength="191" class="form-control" disabled="disabled" placeholder="Snipe-IT Asset Management" name="site_name" type="text" value="{{ old('site_name', $setting->site_name) }}" id="site_name">
-                                        <p class="text-warning">
-                                            <x-icon type="locked" />
-                                            {{ trans('general.feature_disabled') }}</p>
-                                    @else
-                                        <input maxlength="191" class="form-control" placeholder="Snipe-IT Asset Management" required="required" name="site_name" type="text" value="{{ old('site_name', $setting->site_name) }}" id="site_name">
-                                    @endif
-                                    <x-form.error name="site_name" />
-                                </div>
-                            </div>
+                            <x-form.row name="site_name" :label="trans('admin/settings/general.site_name')">
+                                <x-slot:input>
+                                    <x-input.text
+                                        name="site_name"
+                                        :value="old('site_name', $setting->site_name)"
+                                        :required="! config('app.lock_passwords')"
+                                        :maxlength="191"
+                                        placeholder="Snipe-IT Asset Management"
+                                        :disabled="config('app.lock_passwords')"
+                                    />
+                                    <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
+                                </x-slot:input>
+                            </x-form.row>
 
                         <fieldset name="color-preferences">
                             <x-form.legend help_text="{!! trans('admin/settings/general.color_settings_help') !!}">
@@ -290,33 +284,18 @@
                                 {{ trans('admin/settings/general.custom_css') }}
                             </x-form.legend>
                             <!-- Custom css -->
-                            <div class="form-group {{ $errors->has('custom_css') ? 'error' : '' }}">
-
-                                <label for="custom_css" class="col-md-3 control-label">{{ trans('admin/settings/general.custom_css') }}</label>
-
-                                <div class="col-md-9">
-                                    @if (config('app.lock_passwords')===true)
-                                        <x-input.textarea
-                                            name="custom_css"
-                                            :value="old('custom_css', $setting->custom_css)"
-                                            placeholder="{{ trans('admin/settings/general.custom_css_placeholder') }}"
-                                            aria-label="custom_css"
-                                            disabled
-                                        />
-                                        <x-form.error name="custom_css" />
-                                        <p class="text-warning"><i class="fas fa-lock"></i> {{ trans('general.feature_disabled') }}</p>
-                                    @else
-                                        <x-input.textarea
-                                            name="custom_css"
-                                            :value="old('custom_css', $setting->custom_css)"
-                                            placeholder="{{ trans('admin/settings/general.custom_css_placeholder') }}"
-                                            aria-label="custom_css"
-                                        />
-                                        <x-form.error name="custom_css" />
-                                    @endif
-                                    <p class="help-block">{!! trans('admin/settings/general.custom_css_help') !!}</p>
-                                </div>
-                            </div>
+                            <x-form.row name="custom_css" :label="trans('admin/settings/general.custom_css')" :help_html="trans('admin/settings/general.custom_css_help')">
+                                <x-slot:input>
+                                    <x-input.textarea
+                                        name="custom_css"
+                                        :value="old('custom_css', $setting->custom_css)"
+                                        placeholder="{{ trans('admin/settings/general.custom_css_placeholder') }}"
+                                        aria-label="custom_css"
+                                        :disabled="config('app.lock_passwords')"
+                                    />
+                                    <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
+                                </x-slot:input>
+                            </x-form.row>
 
                         </fieldset>
 
@@ -329,101 +308,52 @@
                                 </x-form.legend>
 
                                 <!-- Support Footer -->
-                                <div class="form-group {{ $errors->has('support_footer') ? 'error' : '' }}">
-
-                                    <label for="support_footer" class="col-md-3 control-label">{{ trans('admin/settings/general.support_footer') }}</label>
-
-                                    <div class="col-md-8">
-                                        @if (config('app.lock_passwords')===true)
-                                            <x-input.select
-                                                name="support_footer"
-                                                id="support_footer"
-                                                :options="['on' => trans('admin/settings/general.enabled'), 'off' => trans('admin/settings/general.two_factor_disabled'), 'admin' => trans('admin/settings/general.super_admin_only')]"
-                                                :selected="old('support_footer', $setting->support_footer)"
-                                                disabled
-                                                class="form-control disabled"
-                                                style="width: 150px"
-                                            />
-                                            <p class="text-warning"><i class="fas fa-lock"></i> {{ trans('general.feature_disabled') }}</p>
-                                        @else
-                                            <x-input.select
-                                                name="support_footer"
-                                                id="support_footer"
-                                                :options="['on' => trans('admin/settings/general.enabled'), 'off' => trans('admin/settings/general.two_factor_disabled'), 'admin' => trans('admin/settings/general.super_admin_only')]"
-                                                :selected="old('support_footer', $setting->support_footer)"
-                                                class="form-control"
-                                                style="width: 150px"
-                                            />
-                                        @endif
-
-
-                                        <x-form.error name="support_footer" />
-                                    </div>
-                                </div>
+                                <x-form.row name="support_footer" :label="trans('admin/settings/general.support_footer')">
+                                    <x-slot:input>
+                                        <x-input.select
+                                            name="support_footer"
+                                            id="support_footer"
+                                            :options="['on' => trans('admin/settings/general.enabled'), 'off' => trans('admin/settings/general.two_factor_disabled'), 'admin' => trans('admin/settings/general.super_admin_only')]"
+                                            :selected="old('support_footer', $setting->support_footer)"
+                                            class="form-control"
+                                            style="width: 150px"
+                                            :disabled="config('app.lock_passwords')"
+                                        />
+                                        <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
+                                    </x-slot:input>
+                                </x-form.row>
 
 
                                 <!-- Version Footer -->
-                                <div class="form-group {{ $errors->has('version_footer') ? 'error' : '' }}">
-
-                                    <label for="version_footer" class="col-md-3 control-label">{{ trans('admin/settings/general.version_footer') }}</label>
-
-                                    <div class="col-md-9">
-                                        @if (config('app.lock_passwords')===true)
-                                            <x-input.select
-                                                name="version_footer"
-                                                id="version_footer"
-                                                :options="['on' => trans('admin/settings/general.enabled'), 'off' => trans('admin/settings/general.two_factor_disabled'), 'admin' => trans('admin/settings/general.super_admin_only')]"
-                                                :selected="old('version_footer', $setting->version_footer)"
-                                                disabled
-                                                class="form-control disabled"
-                                                style="width: 150px"
-                                            />
-                                            <p class="text-warning"><i class="fas fa-lock"></i> {{ trans('general.feature_disabled') }}</p>
-                                        @else
-                                            <x-input.select
-                                                name="version_footer"
-                                                id="version_footer"
-                                                :options="['on' => trans('admin/settings/general.enabled'), 'off' => trans('admin/settings/general.two_factor_disabled'), 'admin' => trans('admin/settings/general.super_admin_only')]"
-                                                :selected="old('version_footer', $setting->version_footer)"
-                                                class="form-control"
-                                                style="width: 150px"
-                                            />
-                                        @endif
-
-                                        <p class="help-block">{{ trans('admin/settings/general.version_footer_help') }}</p>
-                                        <x-form.error name="version_footer" />
-                                    </div>
-                                </div>
+                                <x-form.row name="version_footer" :label="trans('admin/settings/general.version_footer')" :help_text="trans('admin/settings/general.version_footer_help')">
+                                    <x-slot:input>
+                                        <x-input.select
+                                            name="version_footer"
+                                            id="version_footer"
+                                            :options="['on' => trans('admin/settings/general.enabled'), 'off' => trans('admin/settings/general.two_factor_disabled'), 'admin' => trans('admin/settings/general.super_admin_only')]"
+                                            :selected="old('version_footer', $setting->version_footer)"
+                                            class="form-control"
+                                            style="width: 150px"
+                                            :disabled="config('app.lock_passwords')"
+                                        />
+                                        <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
+                                    </x-slot:input>
+                                </x-form.row>
 
                                 <!-- Additional footer -->
-                                <div class="form-group {{ $errors->has('footer_text') ? 'error' : '' }}">
-
-                                    <label for="footer_text" class="col-md-3 control-label">{{ trans('admin/settings/general.footer_text') }}</label>
-
-                                    <div class="col-md-9">
-                                        @if (config('app.lock_passwords')===true)
-                                            <x-input.textarea
-                                                name="footer_text"
-                                                :value="old('footer_text', $setting->footer_text)"
-                                                rows="4"
-                                                aria-labelledby="footer_text"
-                                                placeholder="{{ trans('admin/settings/general.footer_text_placeholder') }}"
-                                                disabled
-                                            />
-                                            <p class="text-warning"><i class="fas fa-lock"></i> {{ trans('general.feature_disabled') }}</p>
-                                        @else
-                                            <x-input.textarea
-                                                name="footer_text"
-                                                :value="old('footer_text', $setting->footer_text)"
-                                                rows="4"
-                                                placeholder="{{ trans('admin/settings/general.footer_text_placeholder') }}"
-                                            />
-                                        @endif
-                                        <p class="help-block">{!! trans('admin/settings/general.footer_text_help') !!}</p>
-                                        <x-form.error name="footer_text" />
-
-                                    </div>
-                                </div>
+                                <x-form.row name="footer_text" :label="trans('admin/settings/general.footer_text')" help_html="{!! trans('admin/settings/general.footer_text_help') !!}">
+                                    <x-slot:input>
+                                        <x-input.textarea
+                                            name="footer_text"
+                                            :value="old('footer_text', $setting->footer_text)"
+                                            rows="4"
+                                            aria-labelledby="footer_text"
+                                            placeholder="{{ trans('admin/settings/general.footer_text_placeholder') }}"
+                                            :disabled="config('app.lock_passwords')"
+                                        />
+                                        <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
+                                    </x-slot:input>
+                                </x-form.row>
                             </fieldset>
 
 

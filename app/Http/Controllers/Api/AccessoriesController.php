@@ -326,9 +326,25 @@ class AccessoriesController extends Controller
 
         $accessory->checkout_qty = $request->input('checkout_qty', 1);
         $payload = null;
+        $overAllocated = false;
 
-        // Keep checkout rows and checkout log/event atomic to avoid ghost assignments.
-        DB::transaction(function () use ($accessory, $request, $target, &$payload): void {
+        // Concurrency guard. AccessoryCheckoutRequest validated
+        // number_remaining_after_checkout >= 0 with an unlocked read of
+        // numRemaining(), so two simultaneous checkout requests could both
+        // pass validation, both attach rows, and land the register at -1.
+        // Re-fetch the parent row under lockForUpdate INSIDE the
+        // transaction, re-check availability against the locked snapshot,
+        // and only then write. Mirrors the License checkout locking
+        // pattern.
+        DB::transaction(function () use ($accessory, $request, $target, &$payload, &$overAllocated): void {
+            $locked = Accessory::whereKey($accessory->id)->lockForUpdate()->first();
+
+            if (! $locked || $locked->numRemaining() < $accessory->checkout_qty) {
+                $overAllocated = true;
+
+                return;
+            }
+
             for ($i = 0; $i < $accessory->checkout_qty; $i++) {
 
                 $accessory_checkout = new AccessoryCheckout([
@@ -362,6 +378,10 @@ class AccessoriesController extends Controller
                 $accessory->checkout_qty,
             ));
         });
+
+        if ($overAllocated) {
+            return response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/accessories/message.checkout.unavailable')));
+        }
 
         return response()->json(Helper::formatStandardApiResponse('success', $payload, trans('admin/accessories/message.checkout.success')));
 

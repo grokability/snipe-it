@@ -322,9 +322,16 @@ class UpdateUserTest extends TestCase
         $scoped_user_in_companyB = User::factory()->forCompany($companyB->id)->create();
         $scoped_user_in_no_company = User::factory()->withoutCompany()->create();
 
+        // Each PATCH carries company_ids so the strict-FMCS gate added
+        // for #19192 doesn't hijack the authorization assertion — the
+        // test's intent is to verify company-scoped authorization, not
+        // to exercise the empty-pivot gate.
+        $bodyA = ['company_ids' => [$companyA->id]];
+        $bodyB = ['company_ids' => [$companyB->id]];
+
         // Admin for Company A should allow updating user from Company A
         $this->actingAsForApi($adminA)
-            ->patchJson(route('api.users.update', $scoped_user_in_companyA))
+            ->patchJson(route('api.users.update', $scoped_user_in_companyA), $bodyA)
             ->assertOk()
             ->assertStatus(200)
             ->assertStatusMessageIs('success')
@@ -332,7 +339,7 @@ class UpdateUserTest extends TestCase
 
         // Admin for Company A should get denied updating user from Company B
         $this->actingAsForApi($adminA)
-            ->patchJson(route('api.users.update', $scoped_user_in_companyB))
+            ->patchJson(route('api.users.update', $scoped_user_in_companyB), $bodyB)
             ->assertOk()
             ->assertStatus(200)
             ->assertStatusMessageIs('error')
@@ -340,7 +347,7 @@ class UpdateUserTest extends TestCase
 
         // Admin for Company A should get denied updating user without a company
         $this->actingAsForApi($adminA)
-            ->patchJson(route('api.users.update', $scoped_user_in_no_company))
+            ->patchJson(route('api.users.update', $scoped_user_in_no_company), $bodyA)
             ->assertOk()
             ->assertStatus(200)
             ->assertStatusMessageIs('error')
@@ -348,7 +355,7 @@ class UpdateUserTest extends TestCase
 
         // Admin for Company B should allow updating user from Company B
         $this->actingAsForApi($adminB)
-            ->patchJson(route('api.users.update', $scoped_user_in_companyB))
+            ->patchJson(route('api.users.update', $scoped_user_in_companyB), $bodyB)
             ->assertOk()
             ->assertStatus(200)
             ->assertStatusMessageIs('success')
@@ -356,7 +363,7 @@ class UpdateUserTest extends TestCase
 
         // Admin for Company B should get denied updating user from Company A
         $this->actingAsForApi($adminB)
-            ->patchJson(route('api.users.update', $scoped_user_in_companyA))
+            ->patchJson(route('api.users.update', $scoped_user_in_companyA), $bodyA)
             ->assertOk()
             ->assertStatus(200)
             ->assertStatusMessageIs('error')
@@ -364,13 +371,17 @@ class UpdateUserTest extends TestCase
 
         // Admin for Company B should get denied updating user without a company
         $this->actingAsForApi($adminB)
-            ->patchJson(route('api.users.update', $scoped_user_in_no_company))
+            ->patchJson(route('api.users.update', $scoped_user_in_no_company), $bodyB)
             ->assertOk()
             ->assertStatus(200)
             ->assertStatusMessageIs('error')
             ->json();
 
-        // Admin without a company should allow updating user without a company
+        // Admin without a company should allow updating user without
+        // a company. Under strict FMCS mode uncompanied users operate
+        // in the null pseudo-company namespace (Company scoping shows
+        // them null-company rows); the #19192 gate steps aside for
+        // them so this normal workflow keeps working.
         $this->actingAsForApi($adminNoCompany)
             ->patchJson(route('api.users.update', $scoped_user_in_no_company))
             ->assertOk()

@@ -40,4 +40,26 @@ class IndexLocationsTest extends TestCase
             ])
             ->assertJson(fn (AssertableJson $json) => $json->has('rows', 3)->etc());
     }
+
+    public function test_search_matches_manager_name()
+    {
+        // Locations table shows manager as a column; before adding manager
+        // to Location's $searchableRelations the search silently returned
+        // nothing when typing a manager's name.
+        $actor = User::factory()->superuser()->create();
+
+        $manager = User::factory()->create(['first_name' => 'Anastasia', 'last_name' => 'Krupin']);
+        $matchingLocation = Location::factory()->create(['manager_id' => $manager->id]);
+        $otherLocation = Location::factory()->create();
+
+        $ids = collect($this->actingAsForApi($actor)
+            ->getJson(route('api.locations.index', ['search' => 'Anastasia']))
+            ->assertOk()
+            ->json('rows'))
+            ->pluck('id')
+            ->all();
+
+        $this->assertContains($matchingLocation->id, $ids);
+        $this->assertNotContains($otherLocation->id, $ids);
+    }
 }

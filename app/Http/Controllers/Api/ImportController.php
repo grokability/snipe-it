@@ -203,6 +203,13 @@ class ImportController extends Controller
     {
         $this->authorize('import');
 
+        // Demo mode: same "feature disabled" gate as store(). Uploading
+        // was blocked there but processing an existing (seeded or leftover)
+        // Import row would still mutate the demo DB - close the loophole.
+        if (config('app.lock_passwords')) {
+            return response()->json(Helper::formatStandardApiResponse('error', null, trans('general.feature_disabled')), 422);
+        }
+
         // Run a backup immediately before processing
         if ($request->input('run-backup')) {
             Log::debug('Backup manually requested via importer');
@@ -227,6 +234,10 @@ class ImportController extends Controller
         $redirectTo = 'hardware.index';
         switch ($request->input('import-type')) {
             case 'asset':
+                $model_perms = 'App\Models\Asset';
+                $redirectTo = 'hardware.index';
+                break;
+            case 'assetHistory':
                 $model_perms = 'App\Models\Asset';
                 $redirectTo = 'hardware.index';
                 break;
@@ -293,6 +304,10 @@ class ImportController extends Controller
     public function destroy($import_id): JsonResponse
     {
         $this->authorize('import');
+
+        if (config('app.lock_passwords')) {
+            return response()->json(Helper::formatStandardApiResponse('error', null, trans('general.feature_disabled')), 422);
+        }
 
         if ($import = Import::find($import_id)) {
 

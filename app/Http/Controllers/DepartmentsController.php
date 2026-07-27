@@ -8,7 +8,6 @@ use App\Models\Department;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class DepartmentsController extends Controller
@@ -115,13 +114,11 @@ class DepartmentsController extends Controller
             return redirect()->to(route('departments.index'))->with('error', trans('admin/departments/message.assoc_users'));
         }
 
-        if ($department->image) {
-            try {
-                Storage::disk('public')->delete('departments'.'/'.$department->image);
-            } catch (\Exception $e) {
-                Log::debug($e);
-            }
-        }
+        // Note: the image file is deliberately preserved across this
+        // soft-delete. Snipe-IT's `snipeit:purge` command permanently
+        // removes it later when the row is force-deleted. Keeping the
+        // file here means a restored soft-deleted row still has its
+        // image.
         $department->delete();
 
         return redirect()->back()->with('success', trans('admin/departments/message.delete.success'));

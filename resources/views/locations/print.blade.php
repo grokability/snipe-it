@@ -312,14 +312,22 @@
                 $counter = 1;
             @endphp
 
-            @foreach ($assignedAccessories as $accessory)
+            {{-- $assignedAccessories is a collection of AccessoryCheckout
+                 rows (Location::assignedAccessories() is a morphMany onto
+                 accessories_checkout, keyed by assigned_type / assigned_to).
+                 Fix for #19093: reach through ->accessory to render the
+                 underlying Accessory attributes. Prior code addressed
+                 $checkout->name / ->category / etc. directly and produced
+                 blank cells because AccessoryCheckout has none of those
+                 attributes. --}}
+            @foreach ($assignedAccessories as $checkout)
                 <tr>
                     <td>{{ $counter }}</td>
-                    <td>{{ $accessory->name }}</td>
-                    <td>{{ ($accessory->category) ? $accessory->category->name : '' }}</td>
-                    <td>{{ ($accessory->manufacturer) ? $accessory->manufacturer->name : '' }}</td>
-                    <td>{{ $accessory->model_number }}</td>
-                    <td>{{ ($accessory->location) ? $accessory->location->name : '' }}</td>
+                    <td>{{ $checkout->accessory?->name }}</td>
+                    <td>{{ $checkout->accessory?->category?->name }}</td>
+                    <td>{{ $checkout->accessory?->manufacturer?->name }}</td>
+                    <td>{{ $checkout->accessory?->model_number }}</td>
+                    <td>{{ $checkout->accessory?->location?->name }}</td>
                 </tr>
                 @php
                     $counter++

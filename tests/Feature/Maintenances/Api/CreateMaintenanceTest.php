@@ -62,7 +62,7 @@ class CreateMaintenanceTest extends TestCase
             'name' => 'Test Maintenance',
             'is_warranty' => 1,
             'start_date' => '2021-01-01 00:00:00',
-            'completion_date' => '2021-01-10 00:00:00',
+            'expected_completion_date' => '2021-01-10 00:00:00',
             'notes' => 'A note',
             'url' => 'https://snipeitapp.com',
             'image' => $maintenance->image,
@@ -146,5 +146,59 @@ class CreateMaintenanceTest extends TestCase
             ])
             ->assertOk()
             ->assertJsonPath('status', 'error');
+    }
+
+    public function test_legacy_completion_date_fieldname_still_works_on_create()
+    {
+        // API v1 back-compat: the DB column was renamed from
+        // completion_date to expected_completion_date, but old API
+        // consumers still POST the legacy fieldname. The model's
+        // setCompletionDateAttribute mutator (kept fillable) routes it
+        // to the new column.
+        $actor = User::factory()->superuser()->create();
+        $asset = Asset::factory()->create();
+        $type = MaintenanceType::factory()->create();
+
+        $this->actingAsForApi($actor)
+            ->postJson(route('api.maintenances.store'), [
+                'name' => 'Legacy Field Test',
+                'asset_id' => $asset->id,
+                'maintenance_type_id' => $type->id,
+                'start_date' => '2021-01-01 00:00:00',
+                'completion_date' => '2021-01-15 00:00:00',
+                'is_warranty' => 0,
+            ])
+            ->assertOk()
+            ->assertJsonPath('status', 'success');
+
+        $this->assertDatabaseHas('maintenances', [
+            'name' => 'Legacy Field Test',
+            'expected_completion_date' => '2021-01-15 00:00:00',
+        ]);
+    }
+
+    public function test_new_expected_completion_date_fieldname_works_on_create()
+    {
+        // Companion assertion: the new-name write path is honored too.
+        $actor = User::factory()->superuser()->create();
+        $asset = Asset::factory()->create();
+        $type = MaintenanceType::factory()->create();
+
+        $this->actingAsForApi($actor)
+            ->postJson(route('api.maintenances.store'), [
+                'name' => 'New Field Test',
+                'asset_id' => $asset->id,
+                'maintenance_type_id' => $type->id,
+                'start_date' => '2021-01-01 00:00:00',
+                'expected_completion_date' => '2021-01-20 00:00:00',
+                'is_warranty' => 0,
+            ])
+            ->assertOk()
+            ->assertJsonPath('status', 'success');
+
+        $this->assertDatabaseHas('maintenances', [
+            'name' => 'New Field Test',
+            'expected_completion_date' => '2021-01-20 00:00:00',
+        ]);
     }
 }

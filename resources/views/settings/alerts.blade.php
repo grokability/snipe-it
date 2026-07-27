@@ -6,11 +6,6 @@
     @parent
 @stop
 
-@section('header_right')
-    <a href="{{ route('settings.index') }}" class="btn btn-primary"> {{ trans('general.back') }}</a>
-@stop
-
-
 {{-- Page content --}}
 @section('content')
 
@@ -22,199 +17,209 @@
 
 
     <form method="POST" action="{{ route('settings.alerts.save') }}" autocomplete="off" class="form-horizontal" role="form" id="create-form">
+        {{ csrf_field() }}
 
-    <!-- CSRF Token -->
-   {{ csrf_field() }}
-
-    <div class="row">
-        <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
+        <div class="row">
+            <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
 
 
-            <div class="panel box box-default">
-                <div class="box-header with-border">
-                    <h2 class="box-title">
-                        <x-icon type="bell"/> {{ trans('admin/settings/general.alerts') }}
-                    </h2>
-                </div>
-                <div class="box-body">
+                <div class="panel box box-default">
+                    <div class="box-header with-border">
+                        <h2 class="box-title">
+                            <x-icon type="bell"/> {{ trans('admin/settings/general.alerts') }}
+                        </h2>
+                    </div>
 
-                    <div class="col-md-12">
+                    <div class="box-body">
 
+                        <div class="col-md-12">
 
-                        <fieldset name="remote-login">
-                            <x-form.legend>
-                                {{ trans('admin/settings/general.legends.general') }}
-                            </x-form.legend>
+                            <fieldset name="alerts-general">
+                                <x-form.legend>
+                                    {{ trans('admin/settings/general.legends.general') }}
+                                </x-form.legend>
 
-                            <!-- Menu Alerts Enabled -->
-                            <x-form.checkbox-row
-                                name="show_alerts_in_menu"
-                                :label="trans('admin/settings/general.show_alerts_in_menu')"
-                                :item="$setting"
-                            />
+                                <!-- Menu Alerts Enabled -->
+                                <x-form.checkbox-row
+                                    name="show_alerts_in_menu"
+                                    :label="trans('admin/settings/general.show_alerts_in_menu')"
+                                    :item="$setting"
+                                />
 
-                            <!-- Alerts Enabled -->
-                            <x-form.checkbox-row
-                                name="alerts_enabled"
-                                :label="trans('admin/settings/general.alerts_enabled')"
-                                :item="$setting"
-                            />
+                                <!-- Alerts Enabled -->
+                                <x-form.checkbox-row
+                                    name="alerts_enabled"
+                                    :label="trans('admin/settings/general.alerts_enabled')"
+                                    :item="$setting"
+                                />
+                            </fieldset>
 
-                        </fieldset>
+                            <fieldset name="alert-addresses">
+                                <x-form.legend>
+                                    {{ trans('admin/settings/general.legends.email') }}
+                                </x-form.legend>
 
-                        <fieldset name="alert-addresses">
-                            <x-form.legend>
-                                {{ trans('admin/settings/general.legends.email') }}
-                            </x-form.legend>
+                                <!-- Alert Email -->
+                                <x-form.row
+                                    name="alert_email"
+                                    :item="$setting"
+                                    :label="trans('admin/settings/general.alert_email')"
+                                    :help_text="trans('admin/settings/general.alert_email_help')"
+                                    placeholder="admin@yourcompany.com,it@yourcompany.com"
+                                    input_icon="email"
+                                    input_group_addon="right"
+                                />
 
-                            <!-- Alert Email -->
-                            <div class="form-group {{ $errors->has('alert_email') ? 'error' : '' }}">
+                                <!-- Admin CC Email -->
+                                <x-form.row
+                                    name="admin_cc_email"
+                                    type="email"
+                                    :item="$setting"
+                                    :label="trans('admin/settings/general.admin_cc_email')"
+                                    :help_text="trans('admin/settings/general.admin_cc_email_help')"
+                                    placeholder="admin@yourcompany.com"
+                                    input_icon="email"
+                                    input_group_addon="right"
+                                />
 
-                                <label for="alert_email" class="col-md-3 control-label">{{ trans('admin/settings/general.alert_email') }}</label>
+                                <x-form.radio-row
+                                    name="admin_cc_always"
+                                    :item="$setting"
+                                    :options="[
+                                        '1' => trans('admin/settings/general.admin_cc_always'),
+                                        '0' => trans('admin/settings/general.admin_cc_when_acceptance_required'),
+                                    ]"
+                                />
+                            </fieldset>
 
-                                <div class="col-md-8 input-group">
-                                    <input type="text" name="alert_email" value="{{ old('alert_email', $setting->alert_email) }}" class="form-control" placeholder="admin@yourcompany.com,it@yourcompany.com" maxlength="191">
-                                    <span class="input-group-addon">
-                                        <x-icon type="email" />
-                                    </span>
-                                </div>
-                                <div class="col-md-8 col-md-offset-3">
-                                    <p class="help-block">{{ trans('admin/settings/general.alert_email_help') }}</p>
-                                    <x-form.error name="alert_email" /><br>
-                                </div>
-                            </div>
+                            <fieldset name="alert-intervals">
+                                <x-form.legend>
+                                    {{ trans('admin/settings/general.legends.intervals') }}
+                                </x-form.legend>
 
+                                <!-- Inventory alert threshold -->
+                                <x-form.row
+                                    name="alert_threshold"
+                                    :label="trans('admin/settings/general.alert_inv_threshold')"
+                                >
+                                    <x-slot:input>
+                                        <x-input.text
+                                            type="number"
+                                            name="alert_threshold"
+                                            :value="old('alert_threshold', $setting->alert_threshold)"
+                                            placeholder="5"
+                                            maxlength="3"
+                                            style="width: 100px;"
+                                        />
+                                    </x-slot:input>
+                                </x-form.row>
 
-                            <!-- Admin CC Email -->
-                            <div class="form-group {{ $errors->has('admin_cc_email') ? 'error' : '' }}">
+                                <!-- Inventory alert interval -->
+                                <x-form.row
+                                    name="alert_interval"
+                                    :label="trans('admin/settings/general.alert_interval')"
+                                    input_div_class="col-xs-10 col-sm-6 col-md-4 col-lg-3 col-xl-3"
+                                >
+                                    <x-slot:input>
+                                        <div class="input-group">
+                                            <x-input.text
+                                                type="number"
+                                                name="alert_interval"
+                                                :value="old('alert_interval', $setting->alert_interval)"
+                                                placeholder="30"
+                                                maxlength="3"
+                                            />
+                                            <span class="input-group-addon">{{ trans('general.days') }}</span>
+                                        </div>
+                                    </x-slot:input>
+                                </x-form.row>
 
-                               <label for="admin_cc_email" class="col-md-3 control-label">{{ trans('admin/settings/general.admin_cc_email') }}</label>
-                                <div class="col-md-8 input-group">
-                                    <input type="email" name="admin_cc_email" value="{{ old('admin_cc_email', $setting->admin_cc_email) }}" class="form-control" placeholder="admin@yourcompany.com" maxlength="191">
-                                    <span class="input-group-addon">
-                                        <x-icon type="email" />
-                                    </span>
-                                </div>
-                                <div class="col-md-8 col-md-offset-3">
-                                    <p class="help-block">{{ trans('admin/settings/general.admin_cc_email_help') }}</p>
-                                    <x-form.error name="admin_cc_email" /><br>
-                                </div>
-                            </div>
-                            <x-form.radio-row
-                                name="admin_cc_always"
-                                :item="$setting"
-                                :options="[
-                                    '1' => trans('admin/settings/general.admin_cc_always'),
-                                    '0' => trans('admin/settings/general.admin_cc_when_acceptance_required'),
-                                ]"
-                            />
-                        </fieldset>
+                                <!-- Due for checkin days -->
+                                <x-form.row
+                                    name="due_checkin_days"
+                                    :label="trans('admin/settings/general.due_checkin_days')"
+                                    :help_text="trans('admin/settings/general.due_checkin_days_help')"
+                                    input_div_class="col-xs-10 col-sm-6 col-md-4 col-lg-3 col-xl-3"
+                                >
+                                    <x-slot:input>
+                                        <div class="input-group">
+                                            <x-input.text
+                                                type="number"
+                                                name="due_checkin_days"
+                                                :value="old('due_checkin_days', $setting->due_checkin_days)"
+                                                placeholder="14"
+                                                maxlength="3"
+                                            />
+                                            <span class="input-group-addon">{{ trans('general.days') }}</span>
+                                        </div>
+                                    </x-slot:input>
+                                </x-form.row>
 
-                        <fieldset name="remote-login">
+                                <!-- Alert warning threshold -->
+                                <x-form.row
+                                    name="audit_warning_days"
+                                    :label="trans('admin/settings/general.audit_warning_days')"
+                                    :help_text="trans('admin/settings/general.audit_warning_days_help')"
+                                    input_div_class="col-xs-10 col-sm-6 col-md-4 col-lg-3 col-xl-3"
+                                >
+                                    <x-slot:input>
+                                        <div class="input-group">
+                                            <x-input.text
+                                                type="number"
+                                                name="audit_warning_days"
+                                                :value="old('audit_warning_days', $setting->audit_warning_days)"
+                                                placeholder="14"
+                                                maxlength="3"
+                                                min="0"
+                                            />
+                                            <span class="input-group-addon">{{ trans('general.days') }}</span>
+                                        </div>
+                                    </x-slot:input>
+                                </x-form.row>
 
-                            <x-form.legend>
-                                {{ trans('admin/settings/general.legends.intervals') }}
-                            </x-form.legend>
+                                <!-- Audit interval -->
+                                <x-form.row
+                                    name="audit_interval"
+                                    :label="trans('admin/settings/general.audit_interval')"
+                                    :help_text="trans('admin/settings/general.audit_interval_help')"
+                                    input_div_class="col-xs-10 col-sm-6 col-md-6 col-lg-3 col-xl-3"
+                                >
+                                    <x-slot:input>
+                                        <div class="input-group">
+                                            <x-input.text
+                                                type="number"
+                                                name="audit_interval"
+                                                :value="old('audit_interval', $setting->audit_interval)"
+                                                placeholder="12"
+                                                maxlength="3"
+                                            />
+                                            <span class="input-group-addon">{{ trans('general.months') }}</span>
+                                        </div>
+                                    </x-slot:input>
+                                </x-form.row>
 
-                            <!-- Inventory alert threshold -->
-                            <div class="form-group {{ $errors->has('alert_threshold') ? 'error' : '' }}">
-
-                                <label for="alert_threshold" class="col-md-3 control-label">{{ trans('admin/settings/general.alert_inv_threshold') }}</label>
-
-                                <div class="col-md-8">
-                                    <input class="form-control" placeholder="5" maxlength="3" style="width: 100px;" name="alert_threshold" type="number" value="{{ old('alert_threshold', $setting->alert_threshold) }}" id="alert_threshold">
-                                    <x-form.error name="alert_threshold" />
-                                </div>
-                            </div>
-
-
-                            <!-- Inventory alert interval -->
-                            <div class="form-group {{ $errors->has('alert_interval') ? 'error' : '' }}">
-
-                                <label for="alert_interval" class="col-md-3 control-label">{{ trans('admin/settings/general.alert_interval') }}</label>
-                                <div class="input-group col-xs-10 col-sm-6 col-md-4 col-lg-3 col-xl-3">
-                                    <input class="form-control" placeholder="30" maxlength="3" name="alert_interval" type="number" value="{{ old('alert_interval', $setting->alert_interval) }}" id="alert_interval">
-                                    <span class="input-group-addon">{{ trans('general.days') }}</span>
-                                    <x-form.error name="alert_interval" />
-                                </div>
-                            </div>
-
-
-                            <!-- Due for checkin days -->
-                            <div class="form-group {{ $errors->has('due_checkin_days') ? 'error' : '' }}">
-
-                                <label for="due_checkin_days" class="col-md-3 control-label">{{ trans('admin/settings/general.due_checkin_days') }}</label>
-                                <div class="input-group col-xs-10 col-sm-6 col-md-4 col-lg-3 col-xl-3">
-                                    <input class="form-control" placeholder="14" maxlength="3" name="due_checkin_days" type="number" id="due_checkin_days" value="{{ old('due_checkin_days', $setting->due_checkin_days) }}">
-                                    <span class="input-group-addon">{{ trans('general.days') }}</span>
-                                </div>
-                                <div class="col-md-8 col-md-offset-3">
-                                    <x-form.error name="due_checkin_days" />
-                                    <p class="help-block">{{ trans('admin/settings/general.due_checkin_days_help') }}</p>
-                                </div>
-                            </div>
-
-                            <!-- Alert warning threshold -->
-                            <div class="form-group {{ $errors->has('audit_warning_days') ? 'error' : '' }}">
-
-                                <label for="audit_warning_days" class="col-md-3 control-label">{{ trans('admin/settings/general.audit_warning_days') }}</label>
-                                <div class="input-group col-xs-10 col-sm-6 col-md-4 col-lg-3 col-xl-3">
-                                    <input class="form-control" placeholder="14" maxlength="3" min="0" name="audit_warning_days" type="number" id="audit_warning_days" value="{{ old('audit_warning_days', $setting->audit_warning_days) }}">
-                                    <span class="input-group-addon">{{ trans('general.days') }}</span>
-                                </div>
-                                <div class="col-md-8 col-md-offset-3">
-                                    <x-form.error name="audit_warning_days" />
-                                    <p class="help-block">{{ trans('admin/settings/general.audit_warning_days_help') }}</p>
-                                </div>
-                            </div>
-
-                            <!-- Audit interval -->
-                            <div class="form-group {{ $errors->has('audit_interval') ? 'error' : '' }}">
-
-                                <label for="audit_interval" class="col-md-3 control-label">{{ trans('admin/settings/general.audit_interval') }}</label>
-
-                                <div class="input-group col-xs-10 col-sm-6 col-md-6 col-lg-3 col-xl-3">
-                                    <input class="form-control" placeholder="12" maxlength="3" name="audit_interval" type="number" id="audit_interval" value="{{ old('audit_interval', $setting->audit_interval) }}">
-                                    <span class="input-group-addon">{{ trans('general.months') }}</span>
-                                </div>
-                                <div class="col-md-8 col-md-offset-3">
-                                    <x-form.error name="audit_interval" />
-                                    <p class="help-block">
-                                        {{ trans('admin/settings/general.audit_interval_help') }}
-                                    </p>
-                                </div>
-                            </div>
-
-                            <!-- Alerts Enabled -->
-                            <div class="form-group {{ $errors->has('update_existing_dates') ? 'error' : '' }}">
-                                <div class="col-md-9 col-md-offset-3">
-                                    <label class="form-control">
-                                        <input type="checkbox" name="update_existing_dates" value="1" @checked(old('update_existing_dates'))>
-                                        {{  trans('admin/settings/general.update_existing_dates') }}
-                                    </label>
-                                </div>
-                            </div>
-
-                        </fieldset>
+                                <!-- Update existing dates -->
+                                <x-form.checkbox-row
+                                    name="update_existing_dates"
+                                    :label="trans('admin/settings/general.update_existing_dates')"
+                                />
+                            </fieldset>
 
                         </div>
 
-
-                </div> <!--/.box-body-->
-                <div class="box-footer">
-                    <div class="text-left col-md-6">
-                        <a class="btn btn-link text-left" href="{{ route('settings.index') }}">{{ trans('button.cancel') }}</a>
+                    </div> <!--/.box-body-->
+                    <div class="box-footer">
+                        <div class="text-left col-md-6">
+                            <a class="btn btn-link text-left" href="{{ route('settings.index') }}">{{ trans('button.cancel') }}</a>
+                        </div>
+                        <div class="text-right col-md-6">
+                            <button type="submit" class="btn btn-primary"><x-icon type="checkmark" /> {{ trans('general.save') }}</button>
+                        </div>
                     </div>
-                    <div class="text-right col-md-6">
-                        <button type="submit" class="btn btn-primary"><x-icon type="checkmark" /> {{ trans('general.save') }}</button>
-                    </div>
-
-                </div>
-            </div> <!-- /box -->
-        </div> <!-- /.col-md-8-->
-    </div> <!-- /.row-->
+                </div> <!-- /box -->
+            </div> <!-- /.col-md-8-->
+        </div>
 
     </form>
 
 @stop
-

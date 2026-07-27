@@ -99,8 +99,13 @@ class DeleteAssetTest extends TestCase
         Event::assertDispatched(CheckoutableCheckedIn::class);
     }
 
-    public function test_image_is_deleted_when_asset_deleted()
+    public function test_image_is_preserved_when_asset_soft_deleted()
     {
+        // Soft-deleting an asset preserves its image on disk so a
+        // restored asset still has one. The image is only removed for
+        // good by `snipeit:purge` when the row is force-deleted.
+        // Coverage for that permanent-removal path lives in
+        // `tests/Feature/Console/Commands/PurgeTest.php`.
         Storage::fake('public');
 
         $asset = Asset::factory()->create(['image' => 'image.jpg']);
@@ -112,6 +117,6 @@ class DeleteAssetTest extends TestCase
         $this->actingAs(User::factory()->deleteAssets()->create())
             ->delete(route('hardware.destroy', $asset));
 
-        Storage::disk('public')->assertMissing('assets/image.jpg');
+        Storage::disk('public')->assertExists('assets/image.jpg');
     }
 }

@@ -105,6 +105,7 @@
     </h3>
     <p></p>{{ trans('admin/users/general.all_assigned_list_generation')}} {{ Helper::getFormattedDateObject(now(), 'datetime', false) }}
 
+    @can('view', \App\Models\Asset::class)
     @if ($show_user->assets->count() > 0)
         @php
             $counter = 1;
@@ -175,6 +176,7 @@
             </tbody>
         </table>
     @endif
+    @endcan
 
     @can('view', \App\Models\License::class)
         @if ($show_user->directlicenses->count() > 0)
@@ -432,6 +434,7 @@
                     @endphp
                 @endforeach
                 @endcan
+                @can('view', \App\Models\Component::class)
                 @foreach ($asset->components as $component)
                     @if($component)
                         <tr>
@@ -446,6 +449,7 @@
                         $indirectAssignmentsCounter ++
                     @endphp
                 @endforeach
+                @endcan
                 @can('view', \App\Models\Accessory::class)
                 @foreach ($asset->assignedAccessories as $indirectAccessory)
                     @if($indirectAccessory)

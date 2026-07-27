@@ -209,7 +209,7 @@
           <div class="admin box box-default">
             <div class="box-body text-center">
               <h5>
-                <a href="{{ route('settings.ldap.index') }}" class="settings_button">
+                  <a href="{{ route('settings.ldap.wizard') }}" class="settings_button">
                   <x-icon type="ldap" class="fa-4x"/>
                   <br><br>
                   <span class="name">{{ trans('admin/settings/general.ldap') }}</span>

@@ -6,11 +6,6 @@
     @parent
 @stop
 
-@section('header_right')
-    <a href="{{ route('settings.index') }}" class="btn btn-default"> {{ trans('general.back') }}</a>
-@stop
-
-
 {{-- Page content --}}
 @section('content')
 
@@ -109,12 +104,7 @@
                                         {{ trans('admin/settings/general.ldap_enabled') }}
                                         </label>
 
-                                        @if (config('app.lock_passwords')===true)
-                                            <p class="text-warning">
-                                                <x-icon type="locked" />
-                                                {{ trans('general.feature_disabled') }}
-                                            </p>
-                                        @endif
+                                        <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
                                     </div>
                                 </div>
 
@@ -131,12 +121,7 @@
                                         </label>
                                         <x-form.error name="is_ad" />
 
-                                        @if (config('app.lock_passwords')===true)
-                                            <p class="text-warning">
-                                                <x-icon type="locked" />
-                                                {{ trans('general.feature_disabled') }}
-                                            </p>
-                                        @endif
+                                        <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
                                     </div>
                                 </div>
 
@@ -154,12 +139,7 @@
                                         <p class="help-block">{{ trans('admin/settings/general.ldap_pw_sync_help') }}</p>
                                         <x-form.error name="ldap_pw_sync" />
 
-                                        @if (config('app.lock_passwords')===true)
-                                            <p class="text-warning">
-                                                <x-icon type="locked" />
-                                                {{ trans('general.feature_disabled') }}
-                                            </p>
-                                        @endif
+                                        <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
 
                                     </div>
                                 </div>
@@ -174,12 +154,7 @@
                                         <p class="help-block">{{ trans('admin/settings/general.ad_domain_help') }}</p>
                                         <x-form.error name="ad_domain" />
 
-                                        @if (config('app.lock_passwords')===true)
-                                            <p class="text-warning">
-                                                <x-icon type="locked" />
-                                                {{ trans('general.feature_disabled') }}
-                                            </p>
-                                        @endif
+                                        <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
                                     </div>
                                 </div><!-- AD Domain -->
 
@@ -198,12 +173,7 @@
                                         />
                                         <x-form.error name="ldap_client_tls_key" />
 
-                                        @if (config('app.lock_passwords')===true)
-                                            <p class="text-warning">
-                                                <x-icon type="locked" />
-                                                {{ trans('general.feature_disabled') }}
-                                            </p>
-                                        @endif
+                                        <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
                                     </div>
                                 </div><!-- LDAP Client-Side TLS key -->
 
@@ -221,12 +191,7 @@
                                         <p class="help-block">{{ trans('admin/settings/general.ldap_client_tls_cert_help') }}</p>
                                         <x-form.error name="ldap_client_tls_cert" />
 
-                                        @if (config('app.lock_passwords')===true)
-                                            <p class="text-warning">
-                                                <x-icon type="locked" />
-                                                {{ trans('general.feature_disabled') }}
-                                            </p>
-                                        @endif
+                                        <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
                                     </div>
                                 </div><!-- LDAP Client-Side TLS certificate -->
 
@@ -241,12 +206,7 @@
 
                                         <p class="help-block">{{ trans('admin/settings/general.ldap_server_help') }}</p>
 
-                                        @if (config('app.lock_passwords')===true)
-                                            <p class="text-warning">
-                                                <x-icon type="locked" />
-                                                {{ trans('general.feature_disabled') }}
-                                            </p>
-                                        @endif
+                                        <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
                                     </div>
                                 </div><!-- LDAP Server -->
 
@@ -262,12 +222,7 @@
                                         </label>
                                         <x-form.error name="ldap_tls" />
 
-                                        @if (config('app.lock_passwords')===true)
-                                            <p class="text-warning">
-                                                <x-icon type="locked" />
-                                                {{ trans('general.feature_disabled') }}
-                                            </p>
-                                        @endif
+                                        <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
                                     </div>
                                 </div>
 
@@ -286,12 +241,7 @@
                                         <p class="help-block">
                                             {{ trans('admin/settings/general.ldap_server_cert_help') }}
                                         </p>
-                                        @if (config('app.lock_passwords')===true)
-                                            <p class="text-warning">
-                                                <x-icon type="locked" />
-                                                {{ trans('general.feature_disabled') }}
-                                            </p>
-                                        @endif
+                                        <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
                                     </div>
                                 </div>
 
@@ -304,12 +254,7 @@
                                         <input class="form-control" autocomplete="off" placeholder="{{ trans('general.example') .'binduser@example.com' }}" name="ldap_uname" type="text" id="ldap_uname" value="{{ old('ldap_uname', $setting->ldap_uname) }}">
                                         <x-form.error name="ldap_uname" />
 
-                                        @if (config('app.lock_passwords')===true)
-                                            <p class="text-warning">
-                                                <x-icon type="locked" />
-                                                {{ trans('general.feature_disabled') }}
-                                            </p>
-                                        @endif
+                                        <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
                                     </div>
                                 </div>
 
@@ -322,12 +267,7 @@
                                         <input class="form-control" type="password" name="ldap_pword" id="ldap_pword" value="" autocomplete="off" onfocus="this.removeAttribute('readonly');" readonly>
                                         <x-form.error name="ldap_pword" />
 
-                                        @if (config('app.lock_passwords')===true)
-                                            <p class="text-warning">
-                                                <x-icon type="locked" />
-                                                {{ trans('general.feature_disabled') }}
-                                            </p>
-                                        @endif
+                                        <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
                                     </div>
                                 </div>
 
@@ -337,15 +277,10 @@
                                     <label for="ldap_basedn" class="col-md-3 control-label">{{ trans('admin/settings/general.ldap_basedn') }}</label>
 
                                     <div class="col-md-8">
-                                        <input class="form-control" placeholder="{{ trans('general.example') .'cn=users/authorized,dc=example,dc=com' }}" name="ldap_basedn" type="text" id="ldap_basedn" value="{{ old('ldap_basedn', $setting->ldap_basedn) }}">
+                                        <input class="form-control" placeholder="{{ trans('general.example') .'ou=users,dc=example,dc=com' }}" name="ldap_basedn" type="text" id="ldap_basedn" value="{{ old('ldap_basedn', $setting->ldap_basedn) }}">
                                         <x-form.error name="ldap_basedn" />
 
-                                        @if (config('app.lock_passwords')===true)
-                                            <p class="text-warning">
-                                                <x-icon type="locked" />
-                                                {{ trans('general.feature_disabled') }}
-                                            </p>
-                                        @endif
+                                        <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
                                     </div>
                                 </div>
 
@@ -358,12 +293,7 @@
                                         <input type="text" name="ldap_filter" id="ldap_filter" value="{{  old('ldap_filter', $setting->ldap_filter) }}" class="form-control" placeholder="{{  trans('general.example') .'&(cn=*)' }}">
                                         <x-form.error name="ldap_filter" />
 
-                                        @if (config('app.lock_passwords')===true)
-                                            <p class="text-warning">
-                                                <x-icon type="locked" />
-                                                {{ trans('general.feature_disabled') }}
-                                            </p>
-                                        @endif
+                                        <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
                                     </div>
                                 </div>
 
@@ -377,12 +307,7 @@
                                     <input type="text" name="ldap_auth_filter_query" id="ldap_auth_filter_query" value="{{  old('ldap_auth_filter_query', $setting->ldap_auth_filter_query) }}" class="form-control" placeholder="{{ trans('general.example') .'uid='  }}">
                                     <x-form.error name="ldap_auth_filter_query" />
 
-                                    @if (config('app.lock_passwords')===true)
-                                        <p class="text-warning">
-                                            <x-icon type="locked" />
-                                            {{ trans('general.feature_disabled') }}
-                                        </p>
-                                    @endif
+                                    <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
                                 </div>
                             </div>
 
@@ -495,12 +420,7 @@
                                     <input class="form-control" placeholder="{{ trans('general.example') .'employeenumber/employeeid' }}" name="ldap_emp_num" type="text" id="ldap_emp_num" value="{{ old('ldap_emp_num', $setting->ldap_emp_num) }}">
                                     <x-form.error name="ldap_emp_num" />
 
-                                    @if (config('app.lock_passwords')===true)
-                                        <p class="text-warning">
-                                            <x-icon type="locked" />
-                                            {{ trans('general.feature_disabled') }}
-                                        </p>
-                                    @endif
+                                    <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
                                 </div>
                             </div>
                             <!-- LDAP department -->
@@ -513,12 +433,7 @@
 
                                     <x-form.error name="ldap_dept" />
 
-                                    @if (config('app.lock_passwords')===true)
-                                        <p class="text-warning">
-                                            <x-icon type="locked" />
-                                            {{ trans('general.feature_disabled') }}
-                                        </p>
-                                    @endif
+                                    <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
                                 </div>
                             </div>
                             <!-- LDAP Manager -->
@@ -530,12 +445,7 @@
                                     <input class="form-control" placeholder=" {{ trans('general.example') .'manager' }}" name="ldap_manager" type="text" value="{{ old('ldap_manager', $setting->ldap_manager) }}">
                                     <x-form.error name="ldap_manager" />
 
-                                    @if (config('app.lock_passwords')===true)
-                                        <p class="text-warning">
-                                            <x-icon type="locked" />
-                                            {{ trans('general.feature_disabled') }}
-                                        </p>
-                                    @endif
+                                    <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
                                 </div>
                             </div>
 
@@ -548,12 +458,7 @@
                                     <input class="form-control" placeholder="{{ trans('general.example') .'mail' }}" name="ldap_email" type="text" id="ldap_email" value="{{ old('ldap_email', $setting->ldap_email) }}">
                                     <x-form.error name="ldap_email" />
 
-                                    @if (config('app.lock_passwords')===true)
-                                        <p class="text-warning">
-                                            <x-icon type="locked" />
-                                            {{ trans('general.feature_disabled') }}
-                                        </p>
-                                    @endif
+                                    <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
                                 </div>
                             </div>
 
@@ -566,12 +471,7 @@
                                     <input class="form-control" placeholder="{{ trans('general.example') .'telephonenumber' }}" name="ldap_phone" type="text" id="ldap_phone" value="{{ old('ldap_phone', $setting->ldap_phone_field) }}">
                                     <x-form.error name="ldap_phone" />
 
-                                    @if (config('app.lock_passwords')===true)
-                                        <p class="text-warning">
-                                            <x-icon type="locked" />
-                                            {{ trans('general.feature_disabled') }}
-                                        </p>
-                                    @endif
+                                    <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
                                 </div>
                             </div>
 
@@ -595,12 +495,7 @@
                                     <input class="form-control" placeholder="{{ trans('general.example') .'title' }}" name="ldap_jobtitle" type="text" id="ldap_jobtitle" value="{{ old('ldap_jobtitle', $setting->ldap_jobtitle) }}">
                                     <x-form.error name="ldap_jobtitle" />
 
-                                    @if (config('app.lock_passwords')===true)
-                                        <p class="text-warning">
-                                            <x-icon type="locked" />
-                                            {{ trans('general.feature_disabled') }}
-                                        </p>
-                                    @endif
+                                    <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
                                 </div>
                             </div>
 
@@ -658,12 +553,7 @@
                                     <input class="form-control" placeholder="{{ trans('general.example') .'co' }}" name="ldap_country" type="text" id="ldap_country" value="{{ old('ldap_country', $setting->ldap_country) }}">
                                     <x-form.error name="ldap_country" />
 
-                                    @if (config('app.lock_passwords')===true)
-                                        <p class="text-warning">
-                                            <x-icon type="locked" />
-                                            {{ trans('general.feature_disabled') }}
-                                        </p>
-                                    @endif
+                                    <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
                                 </div>
                             </div>
 
@@ -677,12 +567,7 @@
                                     <p class="help-block">{!! trans('admin/settings/general.ldap_location_help') !!}</p>
                                     <x-form.error name="ldap_location" />
 
-                                    @if (config('app.lock_passwords')===true)
-                                        <p class="text-warning">
-                                            <x-icon type="locked" />
-                                            {{ trans('general.feature_disabled') }}
-                                        </p>
-                                    @endif
+                                    <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
                                 </div>
                             </div>
 
@@ -697,12 +582,7 @@
 
                                     <x-form.error name="ldap_active_flag" />
 
-                                    @if (config('app.lock_passwords')===true)
-                                        <p class="text-warning">
-                                            <x-icon type="locked" />
-                                            {{ trans('general.feature_disabled') }}
-                                        </p>
-                                    @endif
+                                    <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
                                 </div>
                             </div>
 
@@ -724,12 +604,7 @@
                                         {!! trans('admin/settings/general.ldap_invert_active_flag_help') !!}
                                     </p>
 
-                                    @if (config('app.lock_passwords')===true)
-                                        <p class="text-warning">
-                                            <x-icon type="locked" />
-                                            {!! trans('general.feature_disabled') !!}
-                                        </p>
-                                    @endif
+                                    <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
                                 </div>
 
                             </div>
@@ -784,12 +659,7 @@
                                         <div id="ldapad_test_results" class="hidden well well-sm" role="status" aria-live="polite" aria-atomic="true"></div>
                                     </div>
                                     <div class="col-md-8 col-md-offset-3">
-                                        @if (config('app.lock_passwords')===true)
-                                            <p class="text-warning">
-                                                <x-icon type="locked" />
-                                                {{ trans('general.feature_disabled') }}
-                                            </p>
-                                        @endif
+                                        <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
                                     </div>
                                 </div>
 
@@ -813,12 +683,7 @@
                                         <p class="help-block">{{ trans('admin/settings/general.custom_forgot_pass_url_help') }}</p>
                                         <x-form.error name="custom_forgot_pass_url" />
 
-                                        @if (config('app.lock_passwords')===true)
-                                            <p class="text-warning">
-                                                <x-icon type="locked" />
-                                                {{ trans('general.feature_disabled') }}
-                                            </p>
-                                        @endif
+                                        <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
                                     </div>
                                 </div><!-- LDAP Server -->
 

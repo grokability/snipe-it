@@ -457,4 +457,62 @@ class ImportAccessoriesTest extends ImportDataTestCase implements TestsPermissio
         $this->assertEquals($row['category'], $newAccessory->manufacturer->name);
         $this->assertEquals($row['purchaseCost'], $newAccessory->location->name);
     }
+
+    #[Test]
+    public function accessory_import_checks_out_to_user_when_username_matches(): void
+    {
+        $actor = User::factory()->superuser()->create();
+        $target = User::factory()->create(['username' => 'accessorytarget']);
+
+        // Hand-crafted CSV: needs the checkout columns
+        // (checkout_class + username) alongside the standard accessory
+        // columns, which the AccessoriesImportFileBuilder doesn't include.
+        $csv = "Item Name,Category,Quantity,Company,Checkout Type,Username\n"
+            .'CSV-Checked-Accessory,Cables,5,CSVCo,user,'.$target->username."\n";
+        $filename = 'accessory-checkout-'.uniqid().'.csv';
+        file_put_contents(config('app.private_uploads').'/imports/'.$filename, $csv);
+
+        try {
+            $import = Import::factory()->accessory()->create(['file_path' => $filename]);
+
+            $this->actingAsForApi($actor);
+            $this->importFileResponse(['import' => $import->id])->assertOk();
+
+            $accessory = Accessory::query()->where('name', 'CSV-Checked-Accessory')->sole();
+            $this->assertEquals(5, $accessory->qty);
+
+            $this->assertDatabaseHas('accessories_checkout', [
+                'accessory_id' => $accessory->id,
+                'assigned_to' => $target->id,
+                'assigned_type' => User::class,
+            ]);
+        } finally {
+            @unlink(config('app.private_uploads').'/imports/'.$filename);
+        }
+    }
+
+    #[Test]
+    public function accessory_import_without_checkout_columns_does_not_create_checkout(): void
+    {
+        $actor = User::factory()->superuser()->create();
+
+        $csv = "Item Name,Category,Quantity,Company\n"
+            ."CSV-Uncheckedout-Accessory,Cables,3,CSVCo\n";
+        $filename = 'accessory-nocheckout-'.uniqid().'.csv';
+        file_put_contents(config('app.private_uploads').'/imports/'.$filename, $csv);
+
+        try {
+            $import = Import::factory()->accessory()->create(['file_path' => $filename]);
+
+            $this->actingAsForApi($actor);
+            $this->importFileResponse(['import' => $import->id])->assertOk();
+
+            $accessory = Accessory::query()->where('name', 'CSV-Uncheckedout-Accessory')->sole();
+            $this->assertDatabaseMissing('accessories_checkout', [
+                'accessory_id' => $accessory->id,
+            ]);
+        } finally {
+            @unlink(config('app.private_uploads').'/imports/'.$filename);
+        }
+    }
 }

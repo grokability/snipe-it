@@ -112,6 +112,59 @@ class ValidationServiceProvider extends ServiceProvider
         });
 
         /**
+         * Unique-if-undeleted, scoped to one or more sibling columns on the same row.
+         *
+         * Where `unique_undeleted` enforces global uniqueness on a column,
+         * `unique_undeleted_in_scope` enforces uniqueness only within a bucket
+         * defined by the values of one or more OTHER columns on the same row.
+         * Used for tree-structured tables where a child name only needs to be
+         * unique among its siblings, and (under FMCS) among its siblings in
+         * the same company.
+         *
+         * NULL is treated as its own bucket per standard SQL semantics: two
+         * top-level locations (parent_id IS NULL) named "HQ" collide with
+         * each other, but "HQ" at the top level does not collide with "HQ"
+         * that has a parent.
+         *
+         * $parameters[0] is the TABLE NAME being queried
+         * $parameters[1] is the ID of the row being edited (0 for creates)
+         * $parameters[2..N] are the sibling COLUMN NAMES that make up the scope
+         *
+         * The UniqueUndeletedTrait's prepareUniqueUndeletedInScopeRule method
+         * prepends the table + id for you, so on the model you just declare:
+         *   'name' => 'unique_undeleted_in_scope:parent_id,company_id'
+         */
+        Validator::extend('unique_undeleted_in_scope', function ($attribute, $value, $parameters, $validator) {
+            if (count($parameters) < 2) {
+                return true;
+            }
+
+            $table = $parameters[0];
+            $ignoreId = (int) $parameters[1];
+            $scopeColumns = array_slice($parameters, 2);
+            $data = $validator->getData();
+
+            $query = DB::table($table)
+                ->whereNull('deleted_at')
+                ->where($attribute, '=', $value);
+
+            if ($ignoreId > 0) {
+                $query->where('id', '!=', $ignoreId);
+            }
+
+            foreach ($scopeColumns as $column) {
+                $scopeValue = $data[$column] ?? null;
+                if ($scopeValue === null || $scopeValue === '') {
+                    $query->whereNull($column);
+                } else {
+                    $query->where($column, '=', $scopeValue);
+                }
+            }
+
+            return $query->count() < 1;
+        });
+
+        /**
          * Unique if undeleted for two columns
          *
          * Same as unique_undeleted but taking the combination of two columns as unique constrain.
@@ -450,6 +503,60 @@ class ValidationServiceProvider extends ServiceProvider
                 ],
                 $message
             );
+        });
+
+        // Enforces "Company must be picked" when FMCS is on AND
+        // null_company_is_floater is disabled (strict mode). Without this
+        // rule a companied non-superuser can save a form with an unset
+        // company dropdown, land a row with company_id=NULL, and then
+        // have that row instantly filtered out of their own view by the
+        // strict-mode scope. See #19192. Passes when:
+        //  - FMCS is off (nothing to enforce)
+        //  - null_company_is_floater is on (nulls are legal floaters)
+        //  - value is present (form was filled in)
+        //  - no auth context (CLI, seeders, or importers bypass, matching
+        //    the SaveUserRequest cannot_make_floater gate posture)
+        //  - acting user is a superuser (they see everything, so a null
+        //    is an explicit choice, not an accident)
+        //  - acting user has NO company memberships. In strict mode
+        //    such users legitimately operate in the null "pseudo-company"
+        //    namespace, where Company::scopeCompanyablesDirectly scopes
+        //    them to whereNull($company_id) and null IS a valid company
+        //    id for them. Forcing them to pick a non-null company would
+        //    both lock them out of their normal workflow and produce a
+        //    row they wouldn't be able to see afterward.
+        // extendImplicit (not extend) because Laravel skips "explicit"
+        // rules when the field is null or absent. Since the whole point
+        // of fmcs_company is to fire ON blank submissions, it must run
+        // implicitly. Same reason built-in rules like `required`,
+        // `filled`, `present`, `accepted` are all registered implicit.
+        Validator::extendImplicit('fmcs_company', function ($attribute, $value, $parameters, $validator) {
+            $settings = Setting::getSettings();
+            if (! $settings->full_multiple_companies_support) {
+                return true;
+            }
+            if ((bool) $settings->null_company_is_floater) {
+                return true;
+            }
+            if (! empty($value)) {
+                return true;
+            }
+            if (! auth()->check()) {
+                return true;
+            }
+            $actor = auth()->user();
+            if ($actor->isSuperUser()) {
+                return true;
+            }
+            if (! $actor->companies()->exists()) {
+                return true;
+            }
+
+            return false;
+        });
+
+        Validator::replacer('fmcs_company', function ($message) {
+            return str_replace(':attribute', trans('general.company'), $message);
         });
 
         // Validates that the company of the validated object matches the company of the location in case of scoped locations

@@ -15,7 +15,9 @@ use ArieTimmerman\Laravel\SCIMServer\Exceptions\SCIMException;
 use ArieTimmerman\Laravel\SCIMServer\Parser\Parser;
 use ArieTimmerman\Laravel\SCIMServer\Parser\Path;
 use ArieTimmerman\Laravel\SCIMServer\SCIM\Schema;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Tmilos\ScimFilterParser\Error\FilterException;
 
 function a($name = null): Attribute
 {
@@ -59,9 +61,36 @@ class SnipeRootComplex extends Complex
                 throw new SCIMException('Invalid key: '.$key.' for complex object '.$this->getFullKey());
             }
 
-            $path = Parser::parse($key);
+            // Malformed keys like `[type eq "work"]` (a value-path filter
+            // with no leading attribute name) make the Tmilos parser throw
+            // FilterException before we can inspect the parsed shape.
+            // Same class of misconfigured-client problem as the null-guard
+            // below, one layer further back. Turn it into a 400 so the
+            // caller sees "your key is malformed" instead of a 500 that
+            // looks like our fault.
+            try {
+                $path = Parser::parse($key);
+            } catch (FilterException $e) {
+                throw new SCIMException('SnipeRootComplex::add: Malformed SCIM key: '.$key.' ('.$e->getMessage().')', 400);
+            }
 
             if ($path->isNotEmpty()) {
+                // Path::isNotEmpty() returns true when EITHER the
+                // attribute-path OR the value-path is populated. A body
+                // key that's only a value-path filter expression (e.g.
+                // `emails[type eq "work"]`) makes it past this check
+                // but has getAttributePath() === null, which the
+                // library's shiftAttributePathAttributes() will null-
+                // deref on. Route-level replace/add here only
+                // dispatches by simple attribute name — a filter-key at
+                // this layer is a misconfigured SCIM client that we
+                // can't honor, and this will return a 400 so the user knows
+                // the misconfiguration is on their end, versus the previous 500,
+                // which made it look like it was on our end.
+                if ($path->getAttributePath() === null) {
+                    throw new SCIMException('SnipeRootComplex::add: Cannot route SCIM key with no attribute path: '.$key, 400);
+                }
+
                 $attributeNames = $path->getAttributePathAttributes();
                 $schema = $path->getAttributePath()?->path?->schema;
                 $path = $path->shiftAttributePathAttributes();
@@ -111,7 +140,11 @@ class SnipeRootComplex extends Complex
             $key = trim($key);
 
             if (strpos($key, ':') !== false) {
-                $parsed = Parser::parse($key);
+                try {
+                    $parsed = Parser::parse($key);
+                } catch (FilterException $e) {
+                    throw new SCIMException('SnipeRootComplex::replace: Malformed SCIM key: '.$key.' ('.$e->getMessage().')', 400);
+                }
                 $schemaUrn = $parsed->getAttributePath()?->path?->schema;
                 $attrName = $parsed->getAttributePathAttributes()[0] ?? null;
                 if ($schemaUrn !== null && $attrName !== null) {
@@ -121,8 +154,26 @@ class SnipeRootComplex extends Complex
                     $subNode = $this->getSubNode($key);
                 }
             } else {
-                $path = Parser::parse($key);
+                // See the matching try/catch in add(). Malformed keys
+                // starting with `[` throw FilterException from the parser
+                // itself, before any of our null-guards fire.
+                try {
+                    $path = Parser::parse($key);
+                } catch (FilterException $e) {
+                    throw new SCIMException('SnipeRootComplex::replace: Malformed SCIM key: '.$key.' ('.$e->getMessage().')', 400);
+                }
                 if ($path->isNotEmpty()) {
+                    // See the matching guard in add() — isNotEmpty() lets
+                    // a value-path-only key through (e.g. emails[type eq
+                    // "work"]) but shiftAttributePathAttributes() null-
+                    // derefs on getAttributePath() when it's not present.
+                    // Trace: null-deref on Path.php:79 seen in the
+                    // wild for misconfigured SCIM clients sending
+                    // filter-key bodies to PUT /Users/{id}.
+                    if ($path->getAttributePath() === null) {
+                        throw new SCIMException('SnipeRootComplex::replace: Cannot route SCIM key with no attribute path: '.$key, 400);
+                    }
+
                     $attributeNames = $path->getAttributePathAttributes();
                     $path = $path->shiftAttributePathAttributes();
                     $subNode = $this->getSubNode($attributeNames[0] ?? $path->getAttributePath()?->path?->schema);
@@ -153,6 +204,34 @@ class SnipeRootComplex extends Complex
                 }
             }
         }
+    }
+
+    // #19347: Complex::applyComparison ignores the schema URN on the
+    // filter path and always falls back to the FIRST schema node (core).
+    // A filter like:
+    //   ?filter=urn:...enterprise:2.0:User:employeeNumber eq "1234567"
+    // parses with schema=<enterprise URN> and attributeNames=['employeeNumber'],
+    // but the library calls getSubNode('employeeNumber') on root, misses,
+    // then dispatches to getSchemaNode() (always core) which reports
+    // "Unknown path" since employeeNumber lives on the enterprise schema.
+    // Same shape of bug as the URN-blind add()/replace() routing above.
+    // If the path carries a schema URN and we have a schema node for it,
+    // dispatch the whole path there so its own applyComparison finds the
+    // attribute; otherwise defer to the library.
+    public function applyComparison(Builder &$query, Path $path, $parentAttribute = null)
+    {
+        $schemaUrn = $path->getAttributePath()?->path?->schema;
+
+        if ($schemaUrn !== null) {
+            $schemaNode = $this->getSubNode($schemaUrn);
+            if ($schemaNode instanceof AttributeSchema) {
+                $schemaNode->applyComparison($query, $path, $parentAttribute);
+
+                return;
+            }
+        }
+
+        parent::applyComparison($query, $path, $parentAttribute);
     }
 }
 
@@ -377,14 +456,22 @@ class SnipeSCIMConfig
                     {
                         protected function doRead(&$object, $attributes = [])
                         {
-                            if (!$object->email) {
+                            if (! $object->email) {
                                 return null;
                             }
-                            return [
+
+                            // RFC 7643 §4.1.2: multi-valued attributes MUST be
+                            // JSON arrays even when they hold a single element.
+                            // Return an array-of-objects so `emails` serializes
+                            // as `[{...}]`. Previously returned a bare
+                            // associative array and Rollbar surfaced downstream
+                            // clients constructing malformed filter keys against
+                            // the scalar shape.
+                            return [[
                                 'value' => $object->email,
-                                'type' => 'work', // TODO - is this how we always have done it?
+                                'type' => 'work',
                                 'primary' => true,
-                            ];
+                            ]];
                         }
 
                         public function doWrite($operation, $subop, $value, Model &$object, ?Path $path = null, $removeIfNotSet = false)
@@ -504,9 +591,9 @@ class SnipeSCIMConfig
                                 $address['primary'] = true;
                             }
                             if ($address) {
-                                return [(object) $address]; //cast-to-object forces "squiggly-brackets" in JSON
+                                return [(object) $address]; // cast-to-object forces "squiggly-brackets" in JSON
                             } else {
-                                return null; //this should remove the addresses block entirely
+                                return null; // this should remove the addresses block entirely
                             }
                         }
 

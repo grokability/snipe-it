@@ -359,6 +359,31 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Allow test buttons to target private / loopback IPs
+    |--------------------------------------------------------------------------
+    |
+    | Various admin screens (LDAP wizard, Google OAuth, webhook config, etc.)
+    | expose "Test" buttons that fire a real network request to a user-
+    | supplied host. Without a guard these are SSRF / port-scanning vectors:
+    | a superadmin (compromised account, insider, or SaaS tenant) could
+    | probe internal-only services, cloud metadata endpoints (169.254.169.254),
+    | loopback, etc. and read the distinguishing error responses to
+    | enumerate them.
+    |
+    | Default: false. The test helpers resolve the hostname and reject any
+    | URL that lands on a private / loopback / link-local / reserved range.
+    |
+    | Set to true ONLY when the Snipe-IT installation is legitimately
+    | pointed at services on the same private network (self-hosted on-prem
+    | alongside internal AD/Slack/webhooks is the typical case). Never
+    | enable on hosted / multi-tenant deployments.
+    |
+    */
+
+    'test_allow_private_ips' => env('TEST_ALLOW_PRIVATE_IPS', false),
+
+    /*
+    |--------------------------------------------------------------------------
     | Superuser Impersonation
     |--------------------------------------------------------------------------
     |

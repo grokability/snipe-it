@@ -320,6 +320,8 @@
                                 <option value="name">{{trans('admin/hardware/form.name')}}</option>
                                 <option value="serial">{{trans('admin/hardware/table.serial')}}</option>
                                 <option value="asset_eol_date">{{trans('admin/hardware/form.eol_date')}}</option>
+                                <option value="warranty_months">{{trans('admin/hardware/form.warranty_months')}}</option>
+                                <option value="warranty_expires">{{trans('admin/hardware/form.warranty_expires')}}</option>
                                 <option value="order_number">{{trans('admin/hardware/form.order')}}</option>
                                 <option value="purchase_date">{{trans('admin/hardware/table.purchase_date')}}</option>
                                 <option value="assignedTo">{{trans('admin/hardware/table.assigned_to')}}</option>

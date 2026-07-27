@@ -93,10 +93,33 @@
 
                 <x-form.row
                     :label="trans('admin/maintenances/form.completion_date')"
-                    name="completion_date"
+                    name="expected_completion_date"
                     type="datetimepicker"
                     :item="$item"
                     input_div_class="col-md-4"
+                />
+
+                {{-- Editable actual-completion date. Available on create as
+                     well as edit so users can backfill historical
+                     maintenances that were already done before being
+                     recorded. Setting this from null → date is equivalent
+                     to clicking Mark Complete (fires MaintenanceComplete,
+                     stamps completed_by, computes asset_maintenance_time).
+                     Clearing it un-completes the row.
+
+                     default_now MUST stay false — the field must never
+                     prefill with today. Editing a maintenance to change
+                     something unrelated should not accidentally stamp it
+                     complete just because the datetimepicker helpfully
+                     defaulted the empty value to now. --}}
+                <x-form.row
+                    :label="trans('admin/maintenances/form.completed_at')"
+                    name="completed_at"
+                    type="datetimepicker"
+                    :item="$item"
+                    input_div_class="col-md-4"
+                    :help_text="trans('admin/maintenances/form.completed_at_help')"
+                    :default_now="false"
                 />
 
                 <x-input.supplier-select

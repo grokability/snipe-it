@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Accessory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 
 class BulkAccessoriesController extends Controller
 {
@@ -49,14 +47,11 @@ class BulkAccessoriesController extends Controller
                 continue;
             }
 
-            if ($accessory->image) {
-                try {
-                    Storage::disk('public')->delete('accessories/'.$accessory->image);
-                } catch (\Exception $e) {
-                    Log::debug($e);
-                }
-            }
-
+            // Note: the image file is deliberately preserved across this
+            // soft-delete. Snipe-IT's `snipeit:purge` command permanently
+            // removes it later when the row is force-deleted. Keeping
+            // the file here means a restored soft-deleted row still has
+            // its image.
             $accessory->delete();
             $success_count++;
         }

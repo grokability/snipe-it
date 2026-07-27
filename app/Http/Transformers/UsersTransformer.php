@@ -21,6 +21,35 @@ class UsersTransformer
 
     public function transformUser(User $user)
     {
+        // Info-disclosure guard, matches the pattern on
+        // transformUserCompact. This full transformer gets called by
+        // nested endpoints (ConsumablesTransformer::transformCheckedoutConsumables,
+        // ActionlogsTransformer, LocationsTransformer manager block) where the
+        // wrapping endpoint only checked the wrapping resource's `.view`
+        // permission. Without this guard, a caller with consumables.view
+        // but not users.view reads the full user record (email, phone,
+        // address, permissions, employee_num, department, etc.) via
+        // GET /api/v1/consumables/{id}/users.
+        //
+        // Self-view exception: /api/v1/users/me returns $request->user()
+        // through this transformer with no controller-level authorize()
+        // check, and every authenticated user (regardless of users.view)
+        // needs to fetch their own profile. Bypass the gate when the
+        // caller is viewing themselves.
+        //
+        // Denied fallback includes display_name because a caller with
+        // view permission on the wrapping thing (an accessory, a license
+        // seat, an asset) legitimately needs to see WHO has it. What
+        // gets stripped is PII (email, phone, address, department,
+        // companies, permissions, employee_num, jobtitle, etc.).
+        if (auth()->id() !== $user->id && Gate::denies('view', $user)) {
+            return [
+                'id' => (int) $user->id,
+                'type' => 'user',
+                'name' => e($user->display_name),
+            ];
+        }
+
         $role = null;
         if ($user->isSuperUser()) {
             $role = 'superadmin';
@@ -141,6 +170,29 @@ class UsersTransformer
      */
     public function transformUserCompact(User $user): array
     {
+        // Info-disclosure guard. This method is embedded in the nested
+        // assignee payload of accessory / license / component / asset
+        // checkout listings, where the wrapping endpoint only checked the
+        // wrapping resource's `.view` permission. Without this check, a
+        // caller with (for example) accessories.view but not users.view
+        // reads the full identity block via
+        // GET /api/v1/accessories/{id}/checkedout.
+        //
+        // Denied fallback keeps id / type / name (display_name) because
+        // view permission on the wrapping thing implies you can see WHO
+        // it's checked out to. What gets stripped is PII (first_name,
+        // last_name, username, email-adjacent, companies, etc.).
+        //
+        // Gate check runs against the target instance, not the class, so
+        // FMCS company-scoping applies too - a caller with users.view can
+        // still be denied identity of a user in a company they can't see.
+        if (Gate::denies('view', $user)) {
+            return [
+                'id' => (int) $user->id,
+                'type' => 'user',
+                'name' => e($user->display_name),
+            ];
+        }
 
         $array = [
             'id' => (int) $user->id,

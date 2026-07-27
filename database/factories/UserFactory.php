@@ -590,6 +590,132 @@ class UserFactory extends Factory
         });
     }
 
+    /**
+     * Named non-admin users with full control over ONE checkoutable resource
+     * type. Useful for demo installs and docs screenshots that need to show
+     * what a resource-scoped operator actually sees (nav items greyed out,
+     * settings hidden, etc). No superuser flag, no admin flag.
+     *
+     * Passwords are the factory default. Usernames are the demo identifier.
+     */
+    public function assetManager()
+    {
+        return $this->state([
+            'first_name' => 'Asset',
+            'last_name' => 'Manager',
+            'username' => 'assetmgr',
+            'email' => 'assetmgr@demo.snipeitapp.com',
+            'permissions' => json_encode([
+                'assets.view' => '1',
+                'assets.create' => '1',
+                'assets.edit' => '1',
+                'assets.delete' => '1',
+                'assets.checkout' => '1',
+                'assets.checkin' => '1',
+                'assets.audit' => '1',
+                'assets.view.requestable' => '1',
+                'assets.view.encrypted_custom_fields' => '1',
+                'assets.files' => '1',
+                'models.view' => '1',
+                'models.files' => '1',
+            ]),
+        ]);
+    }
+
+    public function licenseManager()
+    {
+        return $this->state([
+            'first_name' => 'License',
+            'last_name' => 'Manager',
+            'username' => 'licensemgr',
+            'email' => 'licensemgr@demo.snipeitapp.com',
+            'permissions' => json_encode([
+                'licenses.view' => '1',
+                'licenses.create' => '1',
+                'licenses.edit' => '1',
+                'licenses.delete' => '1',
+                'licenses.checkout' => '1',
+                'licenses.checkin' => '1',
+                'licenses.keys' => '1',
+                'licenses.files' => '1',
+            ]),
+        ]);
+    }
+
+    public function accessoryManager()
+    {
+        return $this->state([
+            'first_name' => 'Accessory',
+            'last_name' => 'Manager',
+            'username' => 'accessorymgr',
+            'email' => 'accessorymgr@demo.snipeitapp.com',
+            'permissions' => json_encode([
+                'accessories.view' => '1',
+                'accessories.create' => '1',
+                'accessories.edit' => '1',
+                'accessories.delete' => '1',
+                'accessories.checkout' => '1',
+                'accessories.checkin' => '1',
+                'accessories.files' => '1',
+            ]),
+        ]);
+    }
+
+    public function consumableManager()
+    {
+        return $this->state([
+            'first_name' => 'Consumable',
+            'last_name' => 'Manager',
+            'username' => 'consumablemgr',
+            'email' => 'consumablemgr@demo.snipeitapp.com',
+            'permissions' => json_encode([
+                'consumables.view' => '1',
+                'consumables.create' => '1',
+                'consumables.edit' => '1',
+                'consumables.delete' => '1',
+                'consumables.checkout' => '1',
+                'consumables.checkin' => '1',
+                'consumables.files' => '1',
+            ]),
+        ]);
+    }
+
+    public function componentManager()
+    {
+        return $this->state([
+            'first_name' => 'Component',
+            'last_name' => 'Manager',
+            'username' => 'componentmgr',
+            'email' => 'componentmgr@demo.snipeitapp.com',
+            'permissions' => json_encode([
+                'components.view' => '1',
+                'components.create' => '1',
+                'components.edit' => '1',
+                'components.delete' => '1',
+                'components.checkout' => '1',
+                'components.checkin' => '1',
+                'components.files' => '1',
+            ]),
+        ]);
+    }
+
+    public function userManager()
+    {
+        return $this->state([
+            'first_name' => 'User',
+            'last_name' => 'Manager',
+            'username' => 'usermgr',
+            'email' => 'usermgr@demo.snipeitapp.com',
+            'permissions' => json_encode([
+                'users.view' => '1',
+                'users.create' => '1',
+                'users.edit' => '1',
+                'users.delete' => '1',
+                'users.files' => '1',
+            ]),
+        ]);
+    }
+
     public function deleted(): self
     {
         return $this->state(['deleted_at' => $this->faker->dateTime()]);

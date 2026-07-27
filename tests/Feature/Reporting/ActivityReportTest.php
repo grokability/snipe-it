@@ -188,4 +188,38 @@ class ActivityReportTest extends TestCase
             ->assertJson(fn (AssertableJson $json) => $json->has('rows', 7)->etc());
 
     }
+
+    public function test_search_matches_action_log_location_name()
+    {
+        // Activity Report eager-loads and shows the location on each
+        // action_log row (e.g. checkouts to a location). Before adding
+        // location to Actionlog's $searchableRelations, typing that
+        // location's name into the report search silently returned
+        // nothing.
+        $actor = User::factory()->superuser()->create();
+
+        $location = \App\Models\Location::factory()->create(['name' => 'Kraków Office']);
+        $matchingLog = Actionlog::factory()->create([
+            'action_type' => 'checkout',
+            'item_type' => Asset::class,
+            'item_id' => Asset::factory()->create()->id,
+            'location_id' => $location->id,
+        ]);
+        $otherLog = Actionlog::factory()->create([
+            'action_type' => 'checkout',
+            'item_type' => Asset::class,
+            'item_id' => Asset::factory()->create()->id,
+            'location_id' => null,
+        ]);
+
+        $ids = collect($this->actingAsForApi($actor)
+            ->getJson(route('api.activity.index', ['search' => 'Kraków']))
+            ->assertOk()
+            ->json('rows'))
+            ->pluck('id')
+            ->all();
+
+        $this->assertContains($matchingLog->id, $ids);
+        $this->assertNotContains($otherLog->id, $ids);
+    }
 }

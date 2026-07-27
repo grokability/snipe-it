@@ -265,14 +265,24 @@ class ProfileController extends Controller
     {
         $filename = basename((string) $filename);
 
-        $logentry = Actionlog::where('filename', $filename)->with('user', 'target')->first();
+        $logentry = Actionlog::where('filename', $filename)
+            ->where('action_type', 'accepted')
+            ->with('target')
+            ->first();
 
         if (! $logentry) {
             return redirect()->back()->with('error', trans('general.record_not_found'));
         }
 
-        $this->authorize('view', $logentry->target);
-        $this->authorize('view', $logentry->user);
+        // #19344: end users need to be able to download their own accepted
+        // EULA without holding users.view. Anyone else falls back to the
+        // regular view-user permission check.
+        $isOwnAcceptance = $logentry->target_type === User::class
+            && (int) $logentry->target_id === (int) auth()->id();
+
+        if (! $isOwnAcceptance) {
+            $this->authorize('view', $logentry->target);
+        }
 
         if (config('filesystems.default') == 's3_private') {
             return redirect()->away(Storage::disk('s3_private')->temporaryUrl('private_uploads/eula-pdfs/'.$filename, now()->addMinutes(5)));

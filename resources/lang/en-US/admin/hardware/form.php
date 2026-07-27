@@ -50,6 +50,7 @@ return [
     'tag' => 'Asset Tag',
     'update' => 'Asset Update',
     'warranty' => 'Warranty',
+    'warranty_months' => 'Warranty Months',
     'warranty_expires' => 'Warranty Expires',
     'years' => 'years',
     'asset_location' => 'Update Asset Location',

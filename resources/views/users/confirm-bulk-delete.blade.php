@@ -17,13 +17,9 @@
                     </x-callout>
                 </div>
 
-                @if (config('app.lock_passwords'))
-                    <div class="col-md-12">
-                        <x-callout type="warning" live="assertive">
-                            {{ trans('general.feature_disabled') }}
-                        </x-callout>
-                    </div>
-                @endif
+                <div class="col-md-12">
+                    <x-demo-callout />
+                </div>
 
                 <div class="col-md-12">
                     <div class="table-responsive">

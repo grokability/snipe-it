@@ -9,7 +9,7 @@
 
 <select
     name="{{ $name }}"
-    {{ $attributes->merge(['class' => 'select2']) }}
+    {{ $attributes->merge(['class' => 'select2', 'style' => 'width: 100%']) }}
     aria-label="{{ $name }}"
     data-placeholder="{{ trans('localizations.select_country') }}"
     data-allow-clear="true"

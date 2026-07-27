@@ -29,15 +29,11 @@
                             </div>
                         </div>
 
-                        @if (config('app.lock_passwords'))
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <x-callout type="info" role="status">
-                                        {{ trans('general.feature_disabled') }}
-                                    </x-callout>
-                                </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <x-demo-callout />
                             </div>
-                        @endif
+                        </div>
 
                         <div class="col-md-12">
                             <div class="table-responsive">

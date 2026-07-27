@@ -9,10 +9,10 @@
         <div class="row">
             <div class="col-md-8">
 
-                 @if (!config('app.lock_passwords'))
+                @if (! config('app.lock_passwords'))
                     <livewire:personal-access-tokens />
-                 @else
-                     <p class="help-block">{{ trans('general.feature_disabled') }}</p>
+                @else
+                    <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
                 @endif
             </div>
             <div class="col-md-4">

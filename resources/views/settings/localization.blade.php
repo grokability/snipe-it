@@ -6,11 +6,6 @@
     @parent
 @stop
 
-@section('header_right')
-    <a href="{{ route('settings.index') }}" class="btn btn-primary"> {{ trans('general.back') }}</a>
-@stop
-
-
 {{-- Page content --}}
 @section('content')
 
@@ -22,153 +17,142 @@
 
 
     <form method="POST" action="{{ route('settings.localization.save') }}" accept-charset="UTF-8" autocomplete="off" class="form-horizontal" role="form">
-    <!-- CSRF Token -->
-    {{csrf_field()}}
+        {{ csrf_field() }}
 
-    <div class="row">
-        <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
-
-
-            <div class="panel box box-default">
-                <div class="box-header with-border">
-                    <h2 class="box-title">
-                        <x-icon type="globe-us" /> {{ trans('admin/settings/general.localization') }}
-                    </h2>
-                </div>
-                <div class="box-body">
+        <div class="row">
+            <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
 
 
-                    <div class="col-md-12">
-
-                        <!-- Language -->
-                        <div class="form-group {{ $errors->has('locale') ? 'error' : '' }}">
-
-                           <label for="site_name" class="col-md-3 control-label">{{ trans('admin/settings/general.default_language') }}</label>
-
-                            <div class="col-md-5 col-xs-12">
-                                <x-input.locale-select name="locale" :selected="old('locale', $setting->locale)" />
-
-                                <x-form.error name="locale" />
-                            </div>
-                        </div>
-
-                        <!-- name display format -->
-                        <div class="form-group {{ $errors->has('name_display_format') ? 'error' : '' }}">
-
-                            <label for="name_display_format" class="col-md-3 control-label">{{ trans('general.name_display_format') }}</label>
-
-                            <div class="col-md-5 col-xs-12">
-                                <x-input.select
-                                    name="name_display_format"
-                                    :options="['first_last' => trans('general.firstname_lastname_display'), 'last_first' => trans('general.lastname_firstname_display')]"
-                                    :selected="old('name_display_format', $setting->name_display_format)"
-                                    style="width: 100%"
-                                />
-                                <x-form.error name="name_display_format" />
-                            </div>
-                        </div>
-
-
-
-                        <!-- Date format -->
-                        <div class="form-group {{ $errors->has('time_display_format') ? 'error' : '' }}">
-
-                            <label for="time_display_format" class="col-md-3 control-label">{{ trans('general.time_and_date_display') }}</label>
-
-                            <div class="col-md-5 col-xs-12">
-                                <x-input.date-display-format name="date_display_format" :selected="old('date_display_format', $setting->date_display_format)" style="min-width:100%" />
-                            </div>
-                            <div class="col-md-3 col-xs-12">
-                                <x-input.time-display-format name="time_display_format" :selected="old('time_display_format', $setting->time_display_format)" style="min-width:150px" />
-                            </div>
-                            
-                            <div class="col-md-9 col-md-offset-3"><x-form.error name="time_display_format" /></div>
-
-                        </div>
-
-                        <!-- Week Start format -->
-                        <div class="form-group {{ $errors->has('week_start') ? 'error' : '' }}">
-
-                            <label for="week_start" class="col-md-3 control-label">{{ trans('datepicker.week_start') }}</label>
-
-                            <div class="col-md-5 col-xs-12">
-                                <select name="week_start" class="select2" style="width: 100%;" aria-label="week_start" data-placeholder="{{ trans('datepicker.select_day') }}">
-                                    <option value="0" @selected(old('week_start', $setting->week_start) == 0)>
-                                        {{ trans('datepicker.days.sunday') }}
-                                    </option>
-                                    <option value="1" @selected(old('week_start', $setting->week_start) == 1)>
-                                        {{ trans('datepicker.days.monday') }}
-                                    </option>
-                                    <option value="2" @selected(old('week_start', $setting->week_start) == 2)>
-                                        {{ trans('datepicker.days.tuesday') }}
-                                    </option>
-                                    <option value="3" @selected(old('week_start', $setting->week_start) == 3)>
-                                        {{ trans('datepicker.days.wednesday') }}
-                                    </option>
-                                    <option value="4" @selected(old('week_start', $setting->week_start) == 4)>
-                                        {{ trans('datepicker.days.thursday') }}
-                                    </option>
-                                    <option value="5" @selected(old('week_start', $setting->week_start) == 5)>
-                                        {{ trans('datepicker.days.friday') }}
-                                    </option>
-                                    <option value="6" @selected(old('week_start', $setting->week_start) == 6)>
-                                        {{ trans('datepicker.days.saturday') }}
-                                    </option>
-
-                                </select>
-
-                            </div>
-
-                            <div class="col-md-9 col-md-offset-3"><x-form.error name="week_start" /></div>
-
-                        </div>
-
-                        <!-- Currency -->
-                        <div class="form-group {{ $errors->has('default_currency') ? 'error' : '' }}">
-
-                                <label for="default_currency" class="col-md-3 control-label">{{ trans('admin/settings/general.default_currency') }}</label>
-
-                            <div class="col-md-9 col-xs-12">
-                                <input
-                                    class="form-control select2-container"
-                                    placeholder="USD"
-                                    maxlength="3"
-                                    style="width: 60px; display: inline-block; "
-                                    name="default_currency"
-                                    type="text"
-                                    value="{{ old('default_currency', $setting->default_currency) }}"
-                                    id="default_currency"
-                                >
-
-                                <x-input.select
-                                    name="digit_separator"
-                                    :options="['1,234.56' => '1,234.56', '1.234,56'=> '1.234,56']"
-                                    :selected="old('digit_separator', $setting->digit_separator)"
-                                    style="min-width:120px"
-                                />
-
-                                <x-form.error name="default_currency" />
-                            </div>
-                        </div>
-
-
+                <div class="panel box box-default">
+                    <div class="box-header with-border">
+                        <h2 class="box-title">
+                            <x-icon type="globe-us" /> {{ trans('admin/settings/general.localization') }}
+                        </h2>
                     </div>
 
-                </div> <!--/.box-body-->
-                <div class="box-footer">
-                    <div class="text-left col-md-6">
-                        <a class="btn btn-link text-left" href="{{ route('settings.index') }}">{{ trans('button.cancel') }}</a>
-                    </div>
-                    <div class="text-right col-md-6">
-                        <button type="submit" class="btn btn-primary"><x-icon type="checkmark" /> {{ trans('general.save') }}</button>
-                    </div>
+                    <div class="box-body">
 
-                </div>
-            </div> <!-- /box -->
-        </div> <!-- /.col-md-8-->
-    </div> <!-- /.row-->
+                        <div class="col-md-12">
+
+                            <!-- Language -->
+                            <x-form.row
+                                name="locale"
+                                :label="trans('admin/settings/general.default_language')"
+                            >
+                                <x-slot:input>
+                                    <x-input.locale-select name="locale" :selected="old('locale', $setting->locale)" />
+                                </x-slot:input>
+                            </x-form.row>
+
+                            <!-- Name display format -->
+                            <x-form.row
+                                name="name_display_format"
+                                :label="trans('general.name_display_format')"
+                            >
+                                <x-slot:input>
+                                    <x-input.select
+                                        name="name_display_format"
+                                        :options="[
+                                            'first_last' => trans('general.firstname_lastname_display'),
+                                            'last_first' => trans('general.lastname_firstname_display'),
+                                        ]"
+                                        :selected="old('name_display_format', $setting->name_display_format)"
+                                        style="width: 100%"
+                                    />
+                                </x-slot:input>
+                            </x-form.row>
+
+                            <!-- Date + time display format -->
+                            <x-form.row
+                                name="date_display_format"
+                                :label="trans('general.time_and_date_display')"
+                            >
+                                <x-slot:input>
+                                    <div class="row">
+                                        <div class="col-md-7">
+                                            <x-input.date-display-format
+                                                name="date_display_format"
+                                                :selected="old('date_display_format', $setting->date_display_format)"
+                                                style="min-width:100%"
+                                                aria-label="date_display_format"
+                                            />
+                                        </div>
+                                        <div class="col-md-5">
+                                            <x-input.time-display-format
+                                                name="time_display_format"
+                                                :selected="old('time_display_format', $setting->time_display_format)"
+                                                style="min-width:100%"
+                                                aria-label="time_display_format"
+                                            />
+                                        </div>
+                                    </div>
+                                    <x-form.error name="time_display_format" />
+                                </x-slot:input>
+                            </x-form.row>
+
+                            <!-- Week start -->
+                            <x-form.row
+                                name="week_start"
+                                :label="trans('datepicker.week_start')"
+                            >
+                                <x-slot:input>
+                                    <x-input.select
+                                        name="week_start"
+                                        :options="[
+                                            '0' => trans('datepicker.days.sunday'),
+                                            '1' => trans('datepicker.days.monday'),
+                                            '2' => trans('datepicker.days.tuesday'),
+                                            '3' => trans('datepicker.days.wednesday'),
+                                            '4' => trans('datepicker.days.thursday'),
+                                            '5' => trans('datepicker.days.friday'),
+                                            '6' => trans('datepicker.days.saturday'),
+                                        ]"
+                                        :selected="old('week_start', $setting->week_start)"
+                                        style="width: 100%"
+                                        aria-label="week_start"
+                                    />
+                                </x-slot:input>
+                            </x-form.row>
+
+                            <!-- Currency + digit separator -->
+                            <x-form.row
+                                name="default_currency"
+                                :label="trans('admin/settings/general.default_currency')"
+                                input_div_class="col-md-9"
+                            >
+                                <x-slot:input>
+                                    <x-input.text
+                                        name="default_currency"
+                                        :value="old('default_currency', $setting->default_currency)"
+                                        placeholder="USD"
+                                        maxlength="3"
+                                        style="width: 60px; display: inline-block; vertical-align: middle;"
+                                    />
+
+                                    <x-input.select
+                                        name="digit_separator"
+                                        :options="['1,234.56' => '1,234.56', '1.234,56' => '1.234,56']"
+                                        :selected="old('digit_separator', $setting->digit_separator)"
+                                        style="min-width:120px"
+                                    />
+                                </x-slot:input>
+                            </x-form.row>
+
+                        </div>
+
+                    </div> <!--/.box-body-->
+                    <div class="box-footer">
+                        <div class="text-left col-md-6">
+                            <a class="btn btn-link text-left" href="{{ route('settings.index') }}">{{ trans('button.cancel') }}</a>
+                        </div>
+                        <div class="text-right col-md-6">
+                            <button type="submit" class="btn btn-primary"><x-icon type="checkmark" /> {{ trans('general.save') }}</button>
+                        </div>
+                    </div>
+                </div> <!-- /box -->
+            </div> <!-- /.col-md-8-->
+        </div>
 
     </form>
 
 @stop
-

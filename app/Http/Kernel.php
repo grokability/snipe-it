@@ -83,6 +83,7 @@ class Kernel extends HttpKernel
 
         'api' => [
             'auth:api',
+            CheckUserIsActivated::class,
             EnforceApiTwoFactorEnrollment::class,
             EnforceApiUserAgent::class,
             CheckLocale::class,

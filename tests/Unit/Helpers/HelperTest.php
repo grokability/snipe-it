@@ -208,4 +208,90 @@ class HelperTest extends TestCase
             $this->assertEquals($data['route'], $redirect->getTargetUrl(), $scenario.'failed.');
         }
     }
+
+    public function test_get_redirect_option_preserves_query_filters_when_returning_to_index()
+    {
+        // #15214: a user editing an asset from `hardware?status_type=Deployed`
+        // should land back on that filtered view, not the plain
+        // hardware.index that drops the side-nav filter context.
+        Session::put('redirect_option', 'index');
+        Session::put('url.intended', route('hardware.index').'?status_type=Deployed');
+
+        $redirect = Helper::getRedirectOption((object) [], null, 'Assets');
+
+        $this->assertInstanceOf(RedirectResponse::class, $redirect);
+        $this->assertEquals(
+            route('hardware.index').'?status_type=Deployed',
+            $redirect->getTargetUrl(),
+        );
+    }
+
+    public function test_get_redirect_option_preserves_multiple_query_filters()
+    {
+        // Query string with more than one filter round-trips cleanly.
+        Session::put('redirect_option', 'index');
+        Session::put('url.intended', route('hardware.index').'?status_type=RTD&category_id=3');
+
+        $redirect = Helper::getRedirectOption((object) [], null, 'Assets');
+
+        $this->assertEquals(
+            route('hardware.index').'?status_type=RTD&category_id=3',
+            $redirect->getTargetUrl(),
+        );
+    }
+
+    public function test_get_redirect_option_falls_back_to_plain_index_when_no_referrer_query()
+    {
+        // When there's no filter to preserve, behavior matches the
+        // pre-#15214 code path.
+        Session::put('redirect_option', 'index');
+        Session::put('url.intended', route('hardware.index'));
+
+        $redirect = Helper::getRedirectOption((object) [], null, 'Assets');
+
+        $this->assertEquals(route('hardware.index'), $redirect->getTargetUrl());
+    }
+
+    public function test_get_redirect_option_ignores_referrer_pointing_at_a_different_path()
+    {
+        // If the referrer was the show page or the create form (not the
+        // index they'd be redirected to), don't smuggle it into the
+        // index redirect. Only same-path referrers are preserved.
+        Session::put('redirect_option', 'index');
+        Session::put('url.intended', route('hardware.show', 42));
+
+        $redirect = Helper::getRedirectOption((object) [], null, 'Assets');
+
+        $this->assertEquals(route('hardware.index'), $redirect->getTargetUrl());
+    }
+
+    public function test_get_redirect_option_ignores_offsite_referrer_when_returning_to_index()
+    {
+        // Off-site protection was already in place for the 'back'
+        // option (via the parse_url host check). Verify it also applies
+        // on the 'index' path so an attacker-controlled url.intended
+        // (see SamlController RelayState) can't smuggle an external URL
+        // into an index redirect.
+        Session::put('redirect_option', 'index');
+        Session::put('url.intended', 'https://evil.example.com/hardware?status_type=Deployed');
+
+        $redirect = Helper::getRedirectOption((object) [], null, 'Assets');
+
+        $this->assertEquals(route('hardware.index'), $redirect->getTargetUrl());
+    }
+
+    public function test_get_redirect_option_preserves_filters_for_other_entity_types_too()
+    {
+        // The #15214 fix lives in Helper::getRedirectOption so it covers
+        // every entity that routes through the redirect helper, not just
+        // Assets. Users/Licenses/etc. don't have side-nav filters today
+        // but might grow them, and generic ?category_id=... links are
+        // already common.
+        Session::put('redirect_option', 'index');
+        Session::put('url.intended', route('users.index').'?company_id=5');
+
+        $redirect = Helper::getRedirectOption((object) [], null, 'Users');
+
+        $this->assertEquals(route('users.index').'?company_id=5', $redirect->getTargetUrl());
+    }
 }

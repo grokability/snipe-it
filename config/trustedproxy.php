@@ -48,15 +48,20 @@ return [
     // 'proxies' => '*',
 
     /*
-     * Which headers to use to detect proxy related data (For, Host, Proto, Port)
+     * Trusted forwarded-header list intentionally not configured here.
      *
-     * Options include:
+     * The runtime defaults trust X-Forwarded-For, X-Forwarded-Host,
+     * X-Forwarded-Port, X-Forwarded-Proto, and the AWS ELB set. This is
+     * the right answer for essentially every reverse-proxy deployment,
+     * so there is nothing to change under normal circumstances.
      *
-     * - Illuminate\Http\Request::HEADER_X_FORWARDED_ALL (use all x-forwarded-* headers to establish trust)
-     * - Illuminate\Http\Request::HEADER_FORWARDED (use the FORWARDED header to establish trust)
+     * Older versions of this file shipped a commented-out example
+     * referencing Illuminate\Http\Request::HEADER_X_FORWARDED_ALL. That
+     * constant was removed from Symfony (see symfony/symfony#38928) and
+     * uncommenting the example produced a fatal "Undefined constant"
+     * error. It has been removed to avoid the foot-gun. See #6852.
      *
      * @link https://symfony.com/doc/current/deployment/proxies.html
      */
-    //    'headers' => Illuminate\Http\Request::HEADER_X_FORWARDED_ALL, //this is mostly handled already
 
 ];

@@ -13,6 +13,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ConsumableCheckoutController extends Controller
 {
@@ -107,17 +108,42 @@ class ConsumableCheckoutController extends Controller
 
         // Update the consumable data
         $consumable->assigned_to = e($request->input('assigned_to'));
-
-        for ($i = 0; $i < $quantity; $i++) {
-            $consumable->users()->attach($consumable->id, [
-                'consumable_id' => $consumable->id,
-                'created_by' => $admin_user->id,
-                'assigned_to' => e($request->input('assigned_to')),
-                'note' => $request->input('note'),
-            ]);
-        }
-
         $consumable->checkout_qty = $quantity;
+
+        // Concurrency guard. The unlocked numRemaining() check above is
+        // advisory only — two simultaneous checkout requests could both
+        // read "1 remaining", both pass the check, both attach a pivot
+        // row, and land the register at -1. Re-fetch the parent row under
+        // lockForUpdate INSIDE a transaction, re-check availability
+        // against the locked snapshot, and only then write. Mirrors the
+        // License checkout locking pattern.
+        $overAllocated = false;
+
+        DB::transaction(function () use ($consumable, $request, $admin_user, $quantity, &$overAllocated): void {
+            $locked = Consumable::whereKey($consumable->id)->lockForUpdate()->first();
+
+            if (! $locked || $locked->numRemaining() < $quantity) {
+                $overAllocated = true;
+
+                return;
+            }
+
+            for ($i = 0; $i < $quantity; $i++) {
+                $consumable->users()->attach($consumable->id, [
+                    'consumable_id' => $consumable->id,
+                    'created_by' => $admin_user->id,
+                    'assigned_to' => e($request->input('assigned_to')),
+                    'note' => $request->input('note'),
+                ]);
+            }
+        });
+
+        if ($overAllocated) {
+            return redirect()->route('consumables.index')->with('error', trans('admin/consumables/message.checkout.unavailable', [
+                'requested' => $quantity,
+                'remaining' => $consumable->fresh()->numRemaining(),
+            ]));
+        }
 
         event(new CheckoutableCheckedOut(
             $consumable,

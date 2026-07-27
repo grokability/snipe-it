@@ -6,11 +6,6 @@
     @parent
 @stop
 
-@section('header_right')
-    <a href="{{ route('settings.index') }}" class="btn btn-default"> {{ trans('general.back') }}</a>
-@stop
-
-
 {{-- Page content --}}
 @section('content')
 
@@ -50,9 +45,7 @@
                                 </label>
 
                                 <x-form.error name="saml_integration" />
-                                @if (config('app.lock_passwords') === true)
-                                    <p class="text-warning"><i class="fas fa-lock"></i> {{ trans('general.feature_disabled') }}</p>
-                                @endif
+                                <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
                             </div>
 
 
@@ -67,9 +60,7 @@
                                 <!-- SAML SP Details -->
                                 <!-- SAML SP Entity ID -->
                                 <input class="form-control" readonly name="saml_sp_entitiyid" type="text" value="{{ config('app.url') }}" id="saml_sp_entitiyid">
-                                    @if (config('app.lock_passwords') === true)
-                                        <p class="text-warning"><i class="fas fa-lock"></i> {{ trans('general.feature_disabled') }}</p>
-                                    @endif
+                                    <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
                                 </div>
                             </div>
 
@@ -81,9 +72,7 @@
 
                                 <div class="col-md-8">
                                     <input class="form-control" readonly name="saml_sp_acs_url" type="text" value="{{ route('saml.acs') }}" id="saml_sp_acs_url">
-                                    @if (config('app.lock_passwords') === true)
-                                        <p class="text-warning"><i class="fas fa-lock"></i> {{ trans('general.feature_disabled') }}</p>
-                                    @endif
+                                    <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
                                 </div>
                             </div>
 
@@ -94,9 +83,7 @@
                                 </label>
                                 <div class="col-md-8">
                                     <input class="form-control" readonly name="saml_sp_sls_url" type="text" value="{{ route('saml.sls') }}" id="saml_sp_sls_url">
-                                    @if (config('app.lock_passwords') === true)
-                                        <p class="text-warning"><i class="fas fa-lock"></i> {{ trans('general.feature_disabled') }}</p>
-                                    @endif
+                                    <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
                                 </div>
                             </div>
 
@@ -115,9 +102,7 @@
                                                 readonly
                                             />
 
-                                        @if (config('app.lock_passwords') === true)
-                                            <p class="text-warning"><i class="fas fa-lock"></i> {{ trans('general.feature_disabled') }}</p>
-                                        @endif
+                                        <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
 
                                     </div>
                                     @endif
@@ -135,9 +120,7 @@
                                         <a href="{{ route('saml.metadata') }}" target="_blank" class="btn btn-theme" style="margin-right: 5px;">{{ trans('admin/settings/general.saml_download') }}</a>
                                     </p>
 
-                                    @if (config('app.lock_passwords') === true)
-                                        <p class="text-warning"><i class="fas fa-lock"></i> {{ trans('general.feature_disabled') }}</p>
-                                    @endif
+                                    <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
 
                                 </div>
                                 @endif
@@ -169,9 +152,7 @@
 
                                 <p class="help-block">{{ trans('admin/settings/general.saml_idp_metadata_help') }}</p>
 
-                                @if (config('app.lock_passwords') === true)
-                                    <p class="text-warning"><i class="fas fa-lock"></i> {{ trans('general.feature_disabled') }}</p>
-                                @endif
+                                <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
                             </div>
                         </div>
 
@@ -185,9 +166,7 @@
                                 <p class="help-block">{{ trans('admin/settings/general.saml_attr_mapping_username_help') }}</p>
                                 <x-form.error name="saml_attr_mapping_username" />
 
-                                @if (config('app.lock_passwords') === true)
-                                    <p class="text-warning"><i class="fas fa-lock"></i> {{ trans('general.feature_disabled') }}</p>
-                                @endif
+                                <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
 
                             </div>
                         </div>
@@ -205,9 +184,7 @@
                                 <p class="help-block">{{ trans('admin/settings/general.saml_forcelogin_help') }}</p>
                                 <x-form.error name="saml_forcelogin" />
 
-                                @if (config('app.lock_passwords') === true)
-                                    <p class="text-warning"><i class="fas fa-lock"></i> {{ trans('general.feature_disabled') }}</p>
-                                @endif
+                                <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
 
                             </div>
                         </div>
@@ -225,9 +202,7 @@
                                 <p class="help-block">{{ trans('admin/settings/general.saml_slo_help') }}</p>
                                 <x-form.error name="saml_slo" />
 
-                                @if (config('app.lock_passwords') === true)
-                                    <p class="text-warning"><i class="fas fa-lock"></i> {{ trans('general.feature_disabled') }}</p>
-                                @endif
+                                <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
 
                             </div>
                         </div>
@@ -246,9 +221,7 @@
                             <p class="help-block">{{ trans('admin/settings/general.saml_custom_settings_help') }}</p>
                             <x-form.error name="saml_custom_settings" />
 
-                            @if (config('app.lock_passwords') === true)
-                                <p class="text-warning"><i class="fas fa-lock"></i> {{ trans('general.feature_disabled') }}</p>
-                            @endif
+                            <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
 
                         </div>
                     </div>

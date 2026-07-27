@@ -26,7 +26,7 @@
     "ext-mbstring": "*",
     "ext-pdo": "*",
     "alek13/slack": "^2.0",
-    "arietimmerman/laravel-scim-server": "dev-scimv2_with_logging",
+    "arietimmerman/laravel-scim-server": "dev-main",
     "bacon/bacon-qr-code": "^2.0",
     "doctrine/cache": "^1.10",
     "doctrine/dbal": "^3.1",

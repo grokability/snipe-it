@@ -22,7 +22,12 @@
 
                 <x-box>
 
-                    @include ('partials.forms.edit.user-select', ['translated_name' => trans('general.select_user'), 'fieldname' => 'user_id', 'required' => 'true'])
+                    <x-input.user-select
+                        :label="trans('general.select_user')"
+                        name="user_id"
+                        :selected="old('user_id')"
+                        required
+                    />
 
                     <x-form.row
                         :label="trans('admin/hardware/form.checkout_date')"

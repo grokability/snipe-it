@@ -45,13 +45,19 @@ class UpdateAssetTest extends TestCase
     public function test_all_asset_attributes_are_stored()
     {
         $asset = Asset::factory()->create();
-        $user = User::factory()->editAssets()->create();
+        // Needs checkoutAssets too because this test also asserts assigned_user
+        // sticks. The PATCH-based assignment path is now gated on the
+        // checkout permission (was previously bypassable via edit-only)
+        // and requires a deployable status (was previously bypassable too).
+        $user = User::factory()->editAssets()->checkoutAssets()->create();
         $userAssigned = User::factory()->create();
         $company = Company::factory()->create();
         $location = Location::factory()->create();
         $model = AssetModel::factory()->create();
         $rtdLocation = Location::factory()->create();
-        $status = Statuslabel::factory()->create();
+        // Was Statuslabel::factory()->create() which defaults to deployable=0,
+        // so a checkout via PATCH would now (correctly) be refused.
+        $status = Statuslabel::factory()->rtd()->create();
         $supplier = Supplier::factory()->create();
 
         $response = $this->actingAsForApi($user)
@@ -406,7 +412,10 @@ class UpdateAssetTest extends TestCase
     public function test_checkout_to_user_on_asset_update()
     {
         $asset = Asset::factory()->create();
-        $user = User::factory()->editAssets()->create();
+        // Needs both edit + checkout: assigning via PATCH triggers the
+        // checkout workflow, which is now gated on the checkout permission
+        // (see security fix in Api\AssetsController::applyAssetUpdate).
+        $user = User::factory()->editAssets()->checkoutAssets()->create();
         $assigned_user = User::factory()->create();
 
         $response = $this->actingAsForApi($user)
@@ -561,7 +570,7 @@ class UpdateAssetTest extends TestCase
     public function test_checkout_to_location_on_asset_update()
     {
         $asset = Asset::factory()->create();
-        $user = User::factory()->editAssets()->create();
+        $user = User::factory()->editAssets()->checkoutAssets()->create();
         $assigned_location = Location::factory()->create();
 
         $this->actingAsForApi($user)
@@ -600,7 +609,7 @@ class UpdateAssetTest extends TestCase
     public function test_checkout_asset_on_asset_update()
     {
         $asset = Asset::factory()->create();
-        $user = User::factory()->editAssets()->create();
+        $user = User::factory()->editAssets()->checkoutAssets()->create();
         $assigned_asset = Asset::factory()->create();
 
         $this->actingAsForApi($user)
@@ -723,5 +732,101 @@ class UpdateAssetTest extends TestCase
         $this->assertArrayHasKey('next_audit_date', $logMeta);
         $this->assertEquals('Old Name', $logMeta['name']['old']);
         $this->assertEquals('New Name', $logMeta['name']['new']);
+    }
+
+    /**
+     * Security regression pin: the PATCH endpoint accepted assigned_user /
+     * assigned_asset / assigned_location and drove them straight into
+     * $asset->checkOut(), which fires CheckoutableCheckedOut and bumps
+     * checkout_counter — so a caller with only assets.edit (explicit deny
+     * on assets.checkout) could still check assets out and steal custody.
+     * Api\AssetsController::applyAssetUpdate() now requires the checkout
+     * permission whenever the update payload asks for a checkout.
+     */
+    public function test_update_denies_checkout_when_actor_lacks_checkout_permission()
+    {
+        $asset = Asset::factory()->create(['name' => 'Original Name']);
+        // Edit only. No checkout permission.
+        $editOnly = User::factory()->editAssets()->create();
+        $target = User::factory()->create();
+
+        $this->actingAsForApi($editOnly)
+            ->patchJson(route('api.assets.update', $asset->id), [
+                'name' => 'Name That Should Roll Back',
+                'assigned_user' => $target->id,
+            ])
+            ->assertOk()
+            ->assertStatusMessageIs('error')
+            ->assertMessagesAre(trans('general.unauthorized'));
+
+        $asset->refresh();
+
+        $this->assertNull($asset->assigned_to, 'edit-only actor must not be able to change custody');
+        $this->assertNull($asset->assigned_type);
+        $this->assertEquals('Original Name', $asset->name, 'name update should have rolled back with the failed checkout');
+        $this->assertDatabaseMissing('action_logs', [
+            'action_type' => 'checkout',
+            'target_type' => User::class,
+            'target_id' => $target->id,
+            'item_type' => Asset::class,
+            'item_id' => $asset->id,
+        ]);
+    }
+
+    /**
+     * Security regression pin: reassigning an already-assigned asset via
+     * PATCH used to bypass the "must be currently checked in" workflow
+     * check, recording two consecutive checkout events with no intervening
+     * checkin. availableForCheckout() rejects any currently-assigned asset,
+     * so the second PATCH must fail.
+     */
+    public function test_update_denies_reassignment_of_already_checked_out_asset()
+    {
+        $originalHolder = User::factory()->create();
+        $newHolder = User::factory()->create();
+        $asset = Asset::factory()->create();
+        $actor = User::factory()->editAssets()->checkoutAssets()->create();
+
+        // First checkout: succeeds (asset is available).
+        $this->actingAsForApi($actor)
+            ->patchJson(route('api.assets.update', $asset->id), [
+                'assigned_user' => $originalHolder->id,
+            ])
+            ->assertOk()
+            ->assertStatusMessageIs('success');
+
+        // Second checkout without a checkin: should be refused.
+        $this->actingAsForApi($actor)
+            ->patchJson(route('api.assets.update', $asset->id), [
+                'assigned_user' => $newHolder->id,
+            ])
+            ->assertOk()
+            ->assertStatusMessageIs('error')
+            ->assertMessagesAre(trans('admin/hardware/message.checkout.not_available'));
+
+        $this->assertEquals($originalHolder->id, $asset->fresh()->assigned_to, 'custody must not have moved');
+    }
+
+    /**
+     * Security regression pin: assigning via PATCH used to skip the
+     * status_label->deployable check that the dedicated checkout endpoint
+     * enforces. A Pending / non-deployable asset must not be checkoutable.
+     */
+    public function test_update_denies_checkout_when_asset_status_is_not_deployable()
+    {
+        $pendingStatus = Statuslabel::factory()->pending()->create();
+        $asset = Asset::factory()->create(['status_id' => $pendingStatus->id]);
+        $actor = User::factory()->editAssets()->checkoutAssets()->create();
+        $target = User::factory()->create();
+
+        $this->actingAsForApi($actor)
+            ->patchJson(route('api.assets.update', $asset->id), [
+                'assigned_user' => $target->id,
+            ])
+            ->assertOk()
+            ->assertStatusMessageIs('error')
+            ->assertMessagesAre(trans('admin/hardware/message.checkout.not_available'));
+
+        $this->assertNull($asset->fresh()->assigned_to);
     }
 }

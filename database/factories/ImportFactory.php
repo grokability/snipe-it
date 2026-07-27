@@ -237,4 +237,17 @@ class ImportFactory extends Factory
             return $attributes;
         });
     }
+
+    public function assetHistory()
+    {
+        return $this->state(function (array $attributes) {
+            $fileBuilder = Importing\AssetHistoryImportFileBuilder::new();
+            $attributes['name'] = "{$attributes['name']} Asset History";
+            $attributes['import_type'] = 'assetHistory';
+            $attributes['header_row'] = $fileBuilder->toCsv()[0];
+            $attributes['first_row'] = $fileBuilder->firstRow();
+
+            return $attributes;
+        });
+    }
 }

@@ -54,6 +54,18 @@ class UserSeeder extends Seeder
             $user->syncLegacyCompanyIdMirror();
         }
 
+        // Non-admin resource managers, one per checkoutable resource type.
+        // These have full control over their section but no superuser flag,
+        // so they show the "what does a scoped operator actually see" view
+        // that is useful for docs screenshots. One company each.
+        foreach (['assetManager', 'licenseManager', 'accessoryManager', 'consumableManager', 'componentManager', 'userManager'] as $state) {
+            $user = User::factory()->{$state}()->withoutCompany()->create([
+                'department_id' => $departmentIds->random(),
+            ]);
+            $user->companies()->sync([$companyIds->random()]);
+            $user->syncLegacyCompanyIdMirror();
+        }
+
         // Superusers, one company each.
         User::factory()->count(3)->superuser()
             ->withoutCompany()

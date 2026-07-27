@@ -89,6 +89,47 @@ class DepartmentsIndexTest extends TestCase
             ->assertResponseContainsInRows($departmentB);
     }
 
+    public function test_search_matches_location_name()
+    {
+        // Departments table shows location as a column; before adding
+        // location to Department's $searchableRelations the search
+        // silently returned nothing when typing a location's name.
+        $actor = User::factory()->superuser()->create();
+
+        $location = Location::factory()->create(['name' => 'Bratislava HQ']);
+        $matchingDepartment = Department::factory()->create(['location_id' => $location->id]);
+        $otherDepartment = Department::factory()->create();
+
+        $ids = collect($this->actingAsForApi($actor)
+            ->getJson(route('api.departments.index', ['search' => 'Bratislava']))
+            ->assertOk()
+            ->json('rows'))
+            ->pluck('id')
+            ->all();
+
+        $this->assertContains($matchingDepartment->id, $ids);
+        $this->assertNotContains($otherDepartment->id, $ids);
+    }
+
+    public function test_search_matches_manager_name()
+    {
+        $actor = User::factory()->superuser()->create();
+
+        $manager = User::factory()->create(['first_name' => 'Ekaterina', 'last_name' => 'Volkova']);
+        $matchingDepartment = Department::factory()->create(['manager_id' => $manager->id]);
+        $otherDepartment = Department::factory()->create();
+
+        $ids = collect($this->actingAsForApi($actor)
+            ->getJson(route('api.departments.index', ['search' => 'Ekaterina']))
+            ->assertOk()
+            ->json('rows'))
+            ->pluck('id')
+            ->all();
+
+        $this->assertContains($matchingDepartment->id, $ids);
+        $this->assertNotContains($otherDepartment->id, $ids);
+    }
+
     public function test_department_index_filters_all_supported_exact_fields()
     {
         $user = User::factory()->superuser()->create();

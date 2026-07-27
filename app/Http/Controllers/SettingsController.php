@@ -577,19 +577,21 @@ class SettingsController extends Controller
         $setting->label2_2d_target = $request->input('label2_2d_target');
         $setting->label2_fields = $request->input('label2_fields');
         $setting->label2_empty_row_count = $request->input('label2_empty_row_count');
-        $setting->labels_per_page = $request->input('labels_per_page');
-        $setting->labels_width = $request->input('labels_width');
-        $setting->labels_height = $request->input('labels_height');
-        $setting->labels_pmargin_left = $request->input('labels_pmargin_left');
-        $setting->labels_pmargin_right = $request->input('labels_pmargin_right');
-        $setting->labels_pmargin_top = $request->input('labels_pmargin_top');
-        $setting->labels_pmargin_bottom = $request->input('labels_pmargin_bottom');
-        $setting->labels_display_bgutter = $request->input('labels_display_bgutter');
-        $setting->labels_display_sgutter = $request->input('labels_display_sgutter');
-        $setting->labels_fontsize = $request->input('labels_fontsize');
-        $setting->labels_pagewidth = $request->input('labels_pagewidth');
-        $setting->labels_pageheight = $request->input('labels_pageheight');
-        $setting->labels_display_company_name = $request->input('labels_display_company_name', '0');
+        if (!$request->boolean('label2_enable')) {
+            $setting->labels_per_page = $request->input('labels_per_page');
+            $setting->labels_width = $request->input('labels_width');
+            $setting->labels_height = $request->input('labels_height');
+            $setting->labels_pmargin_left = $request->input('labels_pmargin_left');
+            $setting->labels_pmargin_right = $request->input('labels_pmargin_right');
+            $setting->labels_pmargin_top = $request->input('labels_pmargin_top');
+            $setting->labels_pmargin_bottom = $request->input('labels_pmargin_bottom');
+            $setting->labels_display_bgutter = $request->input('labels_display_bgutter');
+            $setting->labels_display_sgutter = $request->input('labels_display_sgutter');
+            $setting->labels_fontsize = $request->input('labels_fontsize');
+            $setting->labels_pagewidth = $request->input('labels_pagewidth');
+            $setting->labels_pageheight = $request->input('labels_pageheight');
+            $setting->labels_display_company_name = $request->input('labels_display_company_name', '0');
+        }
 
         // Barcodes
         $setting->qr_code = $request->input('qr_code', '0');

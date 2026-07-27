@@ -110,4 +110,70 @@ class IndexAccessoryCheckoutsTest extends TestCase implements TestsFullMultipleC
             ->assertOk()
             ->assertJsonPath('total', 0);
     }
+
+    /**
+     * Security regression pin. Before the fix in UsersTransformer::transformUserCompact,
+     * a caller with accessories.view but not users.view could read the
+     * assignee's login handle (username), org relationships (companies),
+     * and avatar hash through this endpoint. Denied fallback keeps id +
+     * type + name (display_name) because someone with accessories.view
+     * legitimately needs to know WHO has the accessory. Note: display_name
+     * often equals "first_name last_name", so those values still surface
+     * via `name` in the fallback. What the fallback actually protects
+     * against is enumeration of usernames, company relationships, and
+     * avatar hashes that could be used to correlate identity elsewhere.
+     */
+    public function test_does_not_leak_assignee_pii_when_caller_lacks_users_view(): void
+    {
+        $assignee = User::factory()->create([
+            'first_name' => 'Hidden',
+            'last_name' => 'Assignee',
+            'username' => 'hidden-assignee',
+        ]);
+        $accessory = Accessory::factory()->checkedOutToUsers([$assignee])->create();
+
+        // viewAccessories only. No viewUsers.
+        $actor = User::factory()->viewAccessories()->create();
+
+        $response = $this->actingAsForApi($actor)
+            ->getJson(route('api.accessories.checkedout', $accessory))
+            ->assertOk()
+            ->assertJsonPath('rows.0.assigned_to.id', $assignee->id)
+            ->assertJsonPath('rows.0.assigned_to.type', 'user')
+            // Display name IS present in the denied fallback - basic identity is fine.
+            ->assertJsonPath('rows.0.assigned_to.name', $assignee->display_name);
+
+        $assigned = $response->json('rows.0.assigned_to');
+        // The keys that actually get stripped by the denied fallback.
+        $this->assertArrayNotHasKey('username', $assigned, 'Login handle must not leak to a caller without users.view');
+        $this->assertArrayNotHasKey('companies', $assigned, 'Company relationships must not leak');
+        $this->assertArrayNotHasKey('image', $assigned, 'Avatar URL must not leak');
+        $this->assertArrayNotHasKey('created_by', $assigned);
+        $this->assertArrayNotHasKey('created_at', $assigned);
+    }
+
+    /**
+     * Same fix, positive-path sanity: a caller who DOES have users.view
+     * (in addition to accessories.view) still gets the full identity
+     * block. Guards against my info-disclosure guard accidentally
+     * stripping identity from authorized callers too.
+     */
+    public function test_returns_full_assignee_identity_when_caller_has_users_view(): void
+    {
+        $assignee = User::factory()->create([
+            'first_name' => 'Visible',
+            'last_name' => 'Assignee',
+            'username' => 'visible-assignee',
+        ]);
+        $accessory = Accessory::factory()->checkedOutToUsers([$assignee])->create();
+
+        $actor = User::factory()->viewAccessories()->viewUsers()->create();
+
+        $this->actingAsForApi($actor)
+            ->getJson(route('api.accessories.checkedout', $accessory))
+            ->assertOk()
+            ->assertJsonPath('rows.0.assigned_to.id', $assignee->id)
+            ->assertJsonPath('rows.0.assigned_to.first_name', 'Visible')
+            ->assertJsonPath('rows.0.assigned_to.username', 'visible-assignee');
+    }
 }
