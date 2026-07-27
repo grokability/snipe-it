@@ -65,7 +65,9 @@ class ConsumableObserver
     public function deleting(Consumable $consumable)
     {
 
-        $consumable->users()->detach();
+        // users() is now filtered to assigned_type = User, so detach() would
+        // leave asset rows orphaned. Delete every assignment regardless of type.
+        $consumable->consumableAssignments()->delete();
         $uploads = $consumable->uploads;
 
         foreach ($uploads as $file) {

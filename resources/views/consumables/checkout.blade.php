@@ -32,13 +32,15 @@
 
             <x-form.static :label="trans('admin/components/general.remaining')">{{ $consumable->numRemaining() }}</x-form.static>
 
+            @include ('partials.forms.checkout-selector', ['user_select' => 'true', 'asset_select' => 'true'])
             <x-input.user-select
-                :label="trans('general.select_user')"
-                name="assigned_to"
-                :selected="old('assigned_to')"
+                :label="trans('general.user')"
+                name="assigned_user"
+                :selected="old('assigned_user')"
                 :companyId="$consumable->company_id"
-                required
+                :style="(session('checkout_to_type') ?: 'user') == 'user' ? null : 'display: none;'"
             />
+            @include ('partials.forms.edit.asset-select', ['translated_name' => trans('general.asset'), 'asset_selector_div_id' => 'assigned_asset', 'company_id' => $consumable->company_id, 'fieldname' => 'assigned_asset', 'unselect' => 'true', 'style' => session('checkout_to_type') == 'asset' ? '' : 'display: none;'])
 
             @if ($consumable->requireAcceptance() || (string) $snipeSettings->require_accept_signature === '1' || $consumable->getEula() || ($snipeSettings->webhook_endpoint != ''))
                 <div class="form-group notification-callout">

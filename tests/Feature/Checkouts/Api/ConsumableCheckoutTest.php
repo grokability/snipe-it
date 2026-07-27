@@ -4,6 +4,7 @@ namespace Tests\Feature\Checkouts\Api;
 
 use App\Mail\CheckoutConsumableMail;
 use App\Models\Actionlog;
+use App\Models\Asset;
 use App\Models\Company;
 use App\Models\Consumable;
 use App\Models\User;
@@ -245,10 +246,14 @@ class ConsumableCheckoutTest extends TestCase
         $consumable = Consumable::factory()->create(['qty' => 1]);
 
         // Drain the consumable via a direct pivot insert. Same state a
-        // concurrent request would have left mid-transaction.
+        // concurrent request would have left mid-transaction. assigned_type is
+        // set explicitly so the row is a real user checkout visible to the
+        // type-filtered users() relation, rather than relying on the column
+        // default.
         $consumable->users()->attach($consumable->id, [
             'consumable_id' => $consumable->id,
             'assigned_to' => $target->id,
+            'assigned_type' => User::class,
             'created_by' => User::factory()->superuser()->create()->id,
         ]);
 
@@ -263,7 +268,111 @@ class ConsumableCheckoutTest extends TestCase
             ->assertStatusMessageIs('error');
 
         // The pre-drained row is the only pivot; no second row got added.
-        $this->assertSame(1, $consumable->users()->count(), 'A second pivot row would mean the register went negative');
+        // Count via consumableAssignments (type-agnostic) so this catches an
+        // over-allocation regardless of whether the extra row is a user or
+        // asset checkout.
+        $this->assertSame(1, $consumable->consumableAssignments()->count(), 'A second pivot row would mean the register went negative');
         $this->assertSame(0, $consumable->fresh()->numRemaining());
+    }
+
+    public function test_user_checkout_records_user_assigned_type()
+    {
+        $consumable = Consumable::factory()->create();
+        $user = User::factory()->create();
+        $actor = User::factory()->checkoutConsumables()->create();
+
+        $this->actingAsForApi($actor)
+            ->postJson(route('api.consumables.checkout', $consumable), [
+                'assigned_to' => $user->id,
+            ])
+            ->assertOk()
+            ->assertStatusMessageIs('success');
+
+        // The pivot row must record the polymorphic type, not just the id.
+        $this->assertDatabaseHas('consumables_users', [
+            'consumable_id' => $consumable->id,
+            'assigned_to' => $user->id,
+            'assigned_type' => User::class,
+        ]);
+    }
+
+    public function test_consumable_can_be_checked_out_to_an_asset()
+    {
+        $consumable = Consumable::factory()->create(['qty' => 5]);
+        $asset = Asset::factory()->create();
+        $actor = User::factory()->checkoutConsumables()->create();
+
+        $this->actingAsForApi($actor)
+            ->postJson(route('api.consumables.checkout', $consumable), [
+                'checkout_to_type' => 'asset',
+                'assigned_asset' => $asset->id,
+            ])
+            ->assertOk()
+            ->assertStatusMessageIs('success');
+
+        $this->assertDatabaseHas('consumables_users', [
+            'consumable_id' => $consumable->id,
+            'assigned_to' => $asset->id,
+            'assigned_type' => Asset::class,
+            'created_by' => $actor->id,
+        ]);
+
+        $this->assertDatabaseHas('action_logs', [
+            'item_type' => Consumable::class,
+            'item_id' => $consumable->id,
+            'target_type' => Asset::class,
+            'target_id' => $asset->id,
+            'action_type' => 'checkout',
+        ]);
+
+        // The asset row must count against availability (numCheckedOut now
+        // counts all assignments, not just users()).
+        $this->assertSame(4, $consumable->fresh()->numRemaining());
+    }
+
+    public function test_checking_out_consumable_to_nonexistent_asset_fails()
+    {
+        $consumable = Consumable::factory()->create();
+
+        $this->actingAsForApi(User::factory()->checkoutConsumables()->create())
+            ->postJson(route('api.consumables.checkout', $consumable), [
+                'checkout_to_type' => 'asset',
+                'assigned_asset' => 999999,
+            ])
+            ->assertOk()
+            ->assertStatusMessageIs('error');
+
+        $this->assertDatabaseMissing('consumables_users', [
+            'consumable_id' => $consumable->id,
+            'assigned_type' => Asset::class,
+        ]);
+    }
+
+    public function test_superuser_cannot_checkout_consumable_to_an_asset_in_another_company_when_full_company_support_is_enabled()
+    {
+        $this->settings->enableMultipleFullCompanySupport();
+
+        [$companyA, $companyB] = Company::factory()->count(2)->create();
+
+        $superuser = User::factory()->superuser()->withoutCompany()->create();
+        $consumableInCompanyA = Consumable::factory()->for($companyA)->create(['qty' => 1]);
+        $assetInCompanyB = Asset::factory()->for($companyB)->create();
+
+        $this->actingAsForApi($superuser)
+            ->postJson(route('api.consumables.checkout', $consumableInCompanyA), [
+                'checkout_to_type' => 'asset',
+                'assigned_asset' => $assetInCompanyB->id,
+            ])
+            ->assertOk()
+            ->assertStatusMessageIs('error')
+            ->assertMessagesAre(trans('general.error_user_company'));
+
+        $this->assertDatabaseMissing('consumables_users', [
+            'consumable_id' => $consumableInCompanyA->id,
+            'assigned_to' => $assetInCompanyB->id,
+            'assigned_type' => Asset::class,
+        ]);
+
+        $this->assertEquals(1, $consumableInCompanyA->fresh()->numRemaining());
     }
 }

@@ -106,6 +106,7 @@ class ConsumableFactory extends Factory
                 'consumable_id' => $consumable->id,
                 'created_by' => $user->id,
                 'assigned_to' => $user->id,
+                'assigned_type' => User::class,
                 'note' => '',
             ]);
         });
@@ -133,6 +134,7 @@ class ConsumableFactory extends Factory
                 'created_at' => Carbon::now(),
                 'created_by' => User::factory()->create()->id,
                 'assigned_to' => $user->id ?? User::factory()->create()->id,
+                'assigned_type' => User::class,
             ]);
         });
     }

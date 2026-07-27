@@ -236,13 +236,13 @@ class ConsumablePresenter extends Presenter
                 'formatter' => 'imageFormatter',
             ],
             [
-                'field' => 'user',
+                'field' => 'assigned_to',
                 'scope' => 'col',
                 'searchable' => false,
                 'sortable' => false,
-                'title' => trans('general.name'),
+                'title' => trans('general.checked_out_to'),
                 'visible' => true,
-                'formatter' => 'usersLinkObjFormatter',
+                'formatter' => 'polymorphicItemFormatter',
             ],
             [
                 'field' => 'created_at',

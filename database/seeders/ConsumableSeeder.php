@@ -31,6 +31,7 @@ class ConsumableSeeder extends Seeder
             foreach ($checkoutTargets->random(min(rand(2, 4), $checkoutTargets->count())) as $user) {
                 $consumable->users()->attach($user->id, [
                     'created_by' => $admin->id,
+                    'assigned_type' => User::class,
                 ]);
             }
         }

@@ -9,8 +9,11 @@ use App\Http\Requests\FilterRequest;
 use App\Http\Requests\ImageUploadRequest;
 use App\Http\Requests\StoreConsumableRequest;
 use App\Http\Transformers\ActionlogsTransformer;
+use App\Http\Transformers\AssetsTransformer;
 use App\Http\Transformers\ConsumablesTransformer;
 use App\Http\Transformers\SelectlistTransformer;
+use App\Http\Transformers\UsersTransformer;
+use App\Models\Asset;
 use App\Models\Company;
 use App\Models\Consumable;
 use App\Models\Setting;
@@ -33,7 +36,7 @@ class ConsumablesController extends Controller
         $this->authorize('index', Consumable::class);
 
         $consumables = Consumable::with('company', 'location', 'category', 'supplier', 'manufacturer')
-            ->withCount('users as consumables_users_count');
+            ->withCount('consumableAssignments as consumables_users_count');
 
         // This array is what determines which fields should be allowed to be sorted on ON the table itself.
         // These must match a column on the consumables table directly.
@@ -248,7 +251,7 @@ class ConsumablesController extends Controller
             $query->orderBy($query->getModel()->getTable().'.created_at', 'DESC');
         },
             'consumableAssignments.adminuser' => function ($query) {},
-            'consumableAssignments.user' => function ($query) {},
+            'consumableAssignments.assignedTo' => function ($query) {},
         ])->find($consumableId);
 
         if (! Company::isCurrentUserHasAccess($consumable)) {
@@ -258,12 +261,14 @@ class ConsumablesController extends Controller
         $rows = [];
 
         foreach ($consumable->consumableAssignments as $consumable_assignment) {
+            // The target is polymorphic (user or asset). Resolve via assignedTo
+            // rather than the user() relation, which would mis-resolve an asset
+            // row whose id collides with a user id.
+            $target = $consumable_assignment->assignedTo;
+
             $rows[] = [
-                'avatar' => ($consumable_assignment->user) ? e($consumable_assignment->user->present()->gravatar) : '',
-                'user' => ($consumable_assignment->user) ? [
-                    'id' => (int) $consumable_assignment->user->id,
-                    'name' => e($consumable_assignment->user->display_name),
-                ] : null,
+                'avatar' => ($target instanceof User) ? e($target->present()->gravatar) : '',
+                'assigned_to' => $this->transformAssignedTo($target),
                 'created_at' => Helper::getFormattedDateObject($consumable_assignment->created_at, 'datetime'),
                 'note' => ($consumable_assignment->note) ? e($consumable_assignment->note) : null,
                 'created_by' => ($consumable_assignment->adminuser) ? [
@@ -273,10 +278,27 @@ class ConsumablesController extends Controller
             ];
         }
 
-        $consumableCount = $consumable->users->count();
+        $consumableCount = $consumable->consumableAssignments->count();
         $data = ['total' => $consumableCount, 'rows' => $rows];
 
         return $data;
+    }
+
+    /**
+     * Build the compact polymorphic payload for a checkout target (user or
+     * asset), consumed by the assigned tab's polymorphicItemFormatter.
+     */
+    private function transformAssignedTo($target): ?array
+    {
+        if ($target instanceof User) {
+            return (new UsersTransformer)->transformUserCompact($target);
+        }
+
+        if ($target instanceof Asset) {
+            return (new AssetsTransformer)->transformAssetCompact($target);
+        }
+
+        return null;
     }
 
     /**
@@ -314,27 +336,44 @@ class ConsumablesController extends Controller
             return response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/consumables/message.checkout.unavailable', ['requested' => $consumable->checkout_qty, 'remaining' => $consumable->numRemaining()])));
         }
 
-        // Resolve the raw target first, then enforce FMCS explicitly.
-        // Scoped lookup can hide cross-company users and make failures ambiguous.
-        $user = User::withoutGlobalScopes()->find($request->input('assigned_to'));
+        // Resolve the checkout target: user (default) or asset.
+        $checkoutToType = $request->input('checkout_to_type', 'user');
 
-        // withoutGlobalScopes bypasses SoftDeletes so we can tell "no such
-        // user" from "user in another company" for FMCS messaging. Trashed
-        // users must not be treated as valid checkout targets.
-        if ($user && ! empty($user->deleted_at)) {
-            $user = null;
-        }
+        if ($checkoutToType === 'asset') {
+            $target = Asset::find($request->input('assigned_asset'));
 
-        if (! $user) {
-            return response()->json(Helper::formatStandardApiResponse('error', null, 'No user found'));
-        }
+            if (! $target) {
+                return response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/hardware/message.does_not_exist')));
+            }
 
-        if ((Setting::getSettings()->full_multiple_companies_support == '1') && (! $user->companies()->where('companies.id', $consumable->company_id)->exists())) {
-            return response()->json(Helper::formatStandardApiResponse('error', null, trans('general.error_user_company')));
+            if (! $consumable->canCheckoutTo($target)) {
+                return response()->json(Helper::formatStandardApiResponse('error', null, trans('general.error_user_company')));
+            }
+        } else {
+            // Resolve the raw target first, then enforce FMCS explicitly.
+            // Scoped lookup can hide cross-company users and make failures ambiguous.
+            $user = User::withoutGlobalScopes()->find($request->input('assigned_to'));
+
+            // withoutGlobalScopes bypasses SoftDeletes so we can tell "no such
+            // user" from "user in another company" for FMCS messaging. Trashed
+            // users must not be treated as valid checkout targets.
+            if ($user && ! empty($user->deleted_at)) {
+                $user = null;
+            }
+
+            if (! $user) {
+                return response()->json(Helper::formatStandardApiResponse('error', null, 'No user found'));
+            }
+
+            if ((Setting::getSettings()->full_multiple_companies_support == '1') && (! $user->companies()->where('companies.id', $consumable->company_id)->exists())) {
+                return response()->json(Helper::formatStandardApiResponse('error', null, trans('general.error_user_company')));
+            }
+
+            $target = $user;
         }
 
         // Update the consumable data
-        $consumable->assigned_to = $request->input('assigned_to');
+        $consumable->assigned_to = $target->id;
 
         // Concurrency guard. The unlocked numRemaining() check above is
         // advisory only — two simultaneous checkout requests can both read
@@ -347,7 +386,7 @@ class ConsumablesController extends Controller
         // LicenseSeat rows).
         $errorResponse = null;
 
-        DB::transaction(function () use ($consumable, $request, $user, &$errorResponse): void {
+        DB::transaction(function () use ($consumable, $request, $target, &$errorResponse): void {
             $locked = Consumable::whereKey($consumable->id)->lockForUpdate()->first();
 
             if (! $locked || $locked->numRemaining() < $consumable->checkout_qty) {
@@ -360,6 +399,11 @@ class ConsumablesController extends Controller
             }
 
             for ($i = 0; $i < $consumable->checkout_qty; $i++) {
+                // The target may be a user or an asset. We write the pivot row
+                // directly via attach() (a raw insert) rather than through the
+                // ConsumableAssignment model so we bypass its currently
+                // user-only 'exists:users' validation. assigned_type records
+                // which target class this row belongs to.
                 $consumable->users()->attach($consumable->id,
                     [
                         'consumable_id' => $consumable->id,
@@ -368,7 +412,8 @@ class ConsumablesController extends Controller
                         // (web ConsumableCheckoutController, web + API
                         // ComponentCheckoutController) all key off auth()->id().
                         'created_by' => auth()->id(),
-                        'assigned_to' => $request->input('assigned_to'),
+                        'assigned_to' => $target->id,
+                        'assigned_type' => $target::class,
                         'note' => $request->input('note'),
                     ]
                 );
@@ -376,7 +421,7 @@ class ConsumablesController extends Controller
 
             event(new CheckoutableCheckedOut(
                 $consumable,
-                $user,
+                $target,
                 auth()->user(),
                 $request->input('note'),
                 [],

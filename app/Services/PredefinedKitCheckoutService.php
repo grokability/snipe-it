@@ -175,6 +175,7 @@ class PredefinedKitCheckoutService
                         'consumable_id' => $consumable->id,
                         'user_id' => $admin->id,
                         'assigned_to' => $user->id,
+                        'assigned_type' => User::class,
                     ]);
                     event(new CheckoutableCheckedOut($consumable, $user, $admin, $note));
                 }

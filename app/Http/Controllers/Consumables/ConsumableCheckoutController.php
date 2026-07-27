@@ -6,6 +6,7 @@ use App\Actions\Acceptances\CreateCheckoutAcceptanceAction;
 use App\Events\CheckoutableCheckedOut;
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
+use App\Models\Asset;
 use App\Models\CheckoutAcceptance;
 use App\Models\Consumable;
 use App\Models\User;
@@ -78,6 +79,12 @@ class ConsumableCheckoutController extends Controller
 
         $this->authorize('checkout', $consumable);
 
+        $request->validate([
+            'checkout_to_type' => ['nullable', 'in:user,asset'],
+            'assigned_user' => ['required_unless:checkout_to_type,asset'],
+            'assigned_asset' => ['required_if:checkout_to_type,asset'],
+        ]);
+
         // If the quantity is not present in the request or is not a positive integer, set it to 1
         $quantity = $request->input('checkout_qty');
         if (! isset($quantity) || ! ctype_digit((string) $quantity) || $quantity <= 0) {
@@ -90,24 +97,30 @@ class ConsumableCheckoutController extends Controller
         }
 
         $admin_user = auth()->user();
-        $assigned_to = e($request->input('assigned_to'));
 
-        // Check if the user exists
-        if (is_null($user = User::find($assigned_to))) {
-            // Redirect to the consumable management page with error
+        // Resolve the checkout target: user (default) or asset.
+        $checkoutToType = $request->input('checkout_to_type', 'user');
+
+        if ($checkoutToType === 'asset') {
+            if (is_null($target = Asset::find($request->input('assigned_asset')))) {
+                return redirect()->route('consumables.checkout.show', $consumable)->with('error', trans('admin/consumables/message.checkout.asset_does_not_exist'))->withInput();
+            }
+        } elseif (is_null($target = User::find($request->input('assigned_user')))) {
             return redirect()->route('consumables.checkout.show', $consumable)->with('error', trans('admin/consumables/message.checkout.user_does_not_exist'))->withInput();
         }
 
-        if (! $consumable->canCheckoutTo($user)) {
+        if (! $consumable->canCheckoutTo($target)) {
+            $targetType = $target instanceof User ? trans('general.user') : trans('general.asset');
+
             return redirect()->back()->with('error', trans('general.error_checkout_company_mismatch', [
                 'item' => trans('general.consumable').' "'.$consumable->name.'"',
                 'item_company' => $consumable->company?->name ?? trans('general.unassigned'),
-                'target' => trans('general.user').' "'.$user->username.'"',
+                'target' => $targetType.' "'.($target->name ?? $target->username ?? $target->id).'"',
             ]));
         }
 
         // Update the consumable data
-        $consumable->assigned_to = e($request->input('assigned_to'));
+        $consumable->assigned_to = $target->id;
         $consumable->checkout_qty = $quantity;
 
         // Concurrency guard. The unlocked numRemaining() check above is
@@ -119,7 +132,7 @@ class ConsumableCheckoutController extends Controller
         // License checkout locking pattern.
         $overAllocated = false;
 
-        DB::transaction(function () use ($consumable, $request, $admin_user, $quantity, &$overAllocated): void {
+        DB::transaction(function () use ($consumable, $request, $admin_user, $quantity, $target, &$overAllocated): void {
             $locked = Consumable::whereKey($consumable->id)->lockForUpdate()->first();
 
             if (! $locked || $locked->numRemaining() < $quantity) {
@@ -129,10 +142,16 @@ class ConsumableCheckoutController extends Controller
             }
 
             for ($i = 0; $i < $quantity; $i++) {
+                // The target may be a user or an asset. We write the pivot row
+                // directly via attach() (a raw insert) rather than through the
+                // ConsumableAssignment model so we bypass its currently
+                // user-only 'exists:users' validation. assigned_type records
+                // which target class this row belongs to.
                 $consumable->users()->attach($consumable->id, [
                     'consumable_id' => $consumable->id,
                     'created_by' => $admin_user->id,
-                    'assigned_to' => e($request->input('assigned_to')),
+                    'assigned_to' => $target->id,
+                    'assigned_type' => $target::class,
                     'note' => $request->input('note'),
                 ]);
             }
@@ -147,7 +166,7 @@ class ConsumableCheckoutController extends Controller
 
         event(new CheckoutableCheckedOut(
             $consumable,
-            $user,
+            $target,
             auth()->user(),
             $request->input('note'),
             [],
@@ -155,8 +174,13 @@ class ConsumableCheckoutController extends Controller
             $request->boolean('sign_in_place'),
         ));
 
-        $request->request->add(['checkout_to_type' => 'user']);
-        $request->request->add(['assigned_user' => $user->id]);
+        if ($target instanceof User) {
+            $request->request->add(['checkout_to_type' => 'user']);
+            $request->request->add(['assigned_user' => $target->id]);
+        } else {
+            $request->request->add(['checkout_to_type' => 'asset']);
+            $request->request->add(['assigned_asset' => $target->id]);
+        }
 
         session()->put([
             'redirect_option' => $request->input('redirect_option'),
@@ -166,17 +190,17 @@ class ConsumableCheckoutController extends Controller
 
         // When sign_in_place is requested, redirect to the acceptance/signature page
         // so the user can sign in person. The signature is attributed to the target user.
-        if ($request->boolean('sign_in_place')) {
+        if ($request->boolean('sign_in_place') && $target instanceof User) {
             $acceptance = CheckoutAcceptance::where('checkoutable_type', Consumable::class)
                 ->where('checkoutable_id', $consumable->id)
-                ->where('assigned_to_id', $user->id)
+                ->where('assigned_to_id', $target->id)
                 ->pending()
                 ->latest()
                 ->first();
 
             // If requireAcceptance() is false the listener won't have created one; create it now.
             if (! $acceptance) {
-                $acceptance = CreateCheckoutAcceptanceAction::run($consumable, $user, $quantity);
+                $acceptance = CreateCheckoutAcceptanceAction::run($consumable, $target, $quantity);
             }
 
             session([

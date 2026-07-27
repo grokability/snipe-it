@@ -102,6 +102,7 @@ class ConsumableImporter extends ItemImporter
             'consumable_id' => $consumable->id,
             'created_by' => $this->created_by,
             'assigned_to' => $target->id,
+            'assigned_type' => User::class,
             'note' => 'Checkout from CSV Importer',
         ]);
 

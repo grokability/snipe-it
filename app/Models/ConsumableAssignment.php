@@ -22,6 +22,11 @@ class ConsumableAssignment extends Model
         return $this->belongsTo(Consumable::class);
     }
 
+    public function assignedTo()
+    {
+        return $this->morphTo('assigned', 'assigned_type', 'assigned_to')->withTrashed();
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'assigned_to');
