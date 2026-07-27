@@ -189,6 +189,15 @@ Route::group(
             [BulkAssetsController::class, 'storeCheckin']
         )->name('hardware.bulkcheckin.store');
 
+        Route::get('bulklabels', [BulkAssetsController::class, 'showLabels'])
+            ->name('hardware.bulk_labels.show')
+            ->breadcrumbs(fn (Trail $trail) => $trail->parent('hardware.index')
+                ->push(trans('general.bulk_labels'), route('hardware.index'))
+        );
+
+        Route::post('bulklabels',
+            [BulkAssetsController::class, 'printLabels']
+        )->name('hardware.bulk_labels.print');
     });
 
 Route::resource('hardware',

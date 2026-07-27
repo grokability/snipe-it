@@ -1773,6 +1773,14 @@
                                     @endcan
 
                                     @can('admin')
+                                        <li id="bulk-labels-sidenav-option" {!! (request()->is('hardware/bulklabels') ? ' class="active" aria-current="page"' : '') !!}>
+                                            <a href="{{ url('hardware/bulklabels') }}">
+                                                {{ trans('general.bulk_labels') }}
+                                            </a>
+                                        </li>
+                                    @endcan
+
+                                    @can('admin')
                                         <li id="import-history-sidenav-option" {!! (request()->is('hardware/history') ? ' class="active" aria-current="page"' : '') !!}>
                                             <a href="{{ url('hardware/history') }}">
                                                 {{ trans('general.import-history') }}

@@ -925,6 +925,35 @@ class BulkAssetsController extends Controller
             ->withErrors($errors);
     }
 
+    /**
+     * Show Bulk Label Generator Page
+     */
+    public function showLabels(): View
+    {
+        $this->authorize('view', Asset::class);
+        return view('hardware/bulk-labels', [
+        ]);
+    }
+
+    /**
+     * Process Bulk Label Generator request
+     */
+    public function printLabels(Request $request): View|RedirectResponse
+    {
+        $this->authorize('view', Asset::class);
+        $assets = collect($request->input('selected_assets'))->map(function($id) {
+            return Asset::find($id);
+        });
+        
+        $offset = $request->input('labels_offset');
+        return (new Label)
+            ->with('assets', $assets)
+            ->with('settings', Setting::getSettings())
+            ->with('offset', $offset)
+            ->with('bulkedit', true)
+            ->with('count', 0);
+    }
+
     public function restore(Request $request): RedirectResponse
     {
         // Restore is a delete-level action across the codebase. The bulk
