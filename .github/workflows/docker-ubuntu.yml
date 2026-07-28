@@ -83,6 +83,8 @@ jobs:
           # For pull requests, we run the Docker build (to ensure no PR changes break the build),
           # but we ONLY do an image push to DockerHub if it's NOT a PR
           push: ${{ github.event_name != 'pull_request' }}
+          provenance: mode=max
+          sbom: true
           # Use tags / labels provided by 'docker/metadata-action' above
           tags: ${{ steps.meta_build.outputs.tags }}
           labels: ${{ steps.meta_build.outputs.labels }}
