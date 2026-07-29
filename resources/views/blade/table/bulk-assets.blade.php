@@ -51,6 +51,22 @@
                 @endif
             </select>
 
+            <label for="table-label-offset" class="js-label-offset-toggle" style="margin-left: 8px; margin-right: 6px;">
+                {{trans('general.labels_offset')}}
+            </label>
+            <input
+                id="table-label-offset"
+                type="number"
+                name="offset"
+                class="form-control js-label-offset js-label-offset-toggle"
+                value="0"
+                min="0"
+                step="1"
+                style="width: 120px;"
+                aria-label="label offset"
+                title="{{ trans('general.labels_offset_info') }}"
+            >
+
             <button class="btn btn-theme" id="{{ Illuminate\Support\Str::camel($name) }}Button" disabled>{{ trans('button.go') }}</button>
             </label>
             </div>

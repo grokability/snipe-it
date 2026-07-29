@@ -42,6 +42,23 @@
         @endif
     </select>
 
+    <label for="asset-label-offset" class="js-label-offset-toggle" style="margin-left: 8px; margin-right: 6px;">
+        {{trans('general.labels_offset')}}
+    </label>
+    <input
+        id="asset-label-offset"
+        type="number"
+        name="offset"
+        class="form-control js-label-offset js-label-offset-toggle"
+        value="0"
+        min="0"
+        step="1"
+        style="width: 120px;"
+        aria-label="label offset"
+        title="{{ trans('general.labels_offset_info') }}"
+    >
+
+
     <button class="btn btn-theme" id="{{ (isset($id_button)) ? $id_button : 'bulkAssetEditButton' }}" disabled>{{ trans('button.go') }}</button>
     </form>
 </div>

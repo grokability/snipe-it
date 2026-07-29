@@ -200,10 +200,12 @@ class BulkAssetsController extends Controller
             switch ($request->input('bulk_actions')) {
                 case 'labels':
                     $this->authorize('view', Asset::class);
+                    $offset = max(0, (int) $request->input('offset', 0));
 
                     return (new Label)
                         ->with('assets', $assets)
                         ->with('settings', Setting::getSettings())
+                        ->with('offset', $offset)
                         ->with('bulkedit', true)
                         ->with('count', 0);
 
@@ -939,6 +941,35 @@ class BulkAssetsController extends Controller
         return redirect()->route('hardware.bulkcheckin.show')->withInput()
             ->with('error', trans_choice('admin/hardware/message.multi-checkin.error', count($asset_ids)))
             ->withErrors($errors);
+    }
+
+    /**
+     * Show Bulk Label Generator Page
+     */
+    public function showLabels(): View
+    {
+        $this->authorize('view', Asset::class);
+        return view('hardware/bulk-labels', [
+        ]);
+    }
+
+    /**
+     * Process Bulk Label Generator request
+     */
+    public function printLabels(Request $request): View|RedirectResponse
+    {
+        $this->authorize('view', Asset::class);
+        $assets = collect($request->input('selected_assets'))->map(function($id) {
+            return Asset::find($id);
+        });
+        
+        $offset = $request->input('labels_offset');
+        return (new Label)
+            ->with('assets', $assets)
+            ->with('settings', Setting::getSettings())
+            ->with('offset', $offset)
+            ->with('bulkedit', true)
+            ->with('count', 0);
     }
 
     public function restore(Request $request): RedirectResponse
