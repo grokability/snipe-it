@@ -140,7 +140,40 @@ abstract class Importer
         }
         // By default the importer passes a url to the file.
         // However, for testing we also support passing a string directly
+        $contents = null;
         if (is_file($file)) {
+            $contents = file_get_contents($file);
+        } else {
+            $contents = $file;
+        }
+
+        if ($contents !== false && ! mb_check_encoding($contents, 'UTF-8')) {
+            $encoding = null;
+            if (class_exists('\Onnov\DetectEncoding\EncodingDetector')) {
+                $detector = new \Onnov\DetectEncoding\EncodingDetector;
+                $encoding = $detector->getEncoding($contents);
+            }
+            if (! $encoding || strcasecmp($encoding, 'UTF-8') === 0 || ! mb_check_encoding($contents, 'UTF-8')) {
+                $detected = mb_detect_encoding($contents, ['UTF-8', 'GBK', 'GB2312', 'GB18030', 'BIG5', 'SJIS', 'EUC-JP', 'EUC-KR', 'Windows-1252', 'ISO-8859-1'], true);
+                if ($detected) {
+                    $encoding = $detected;
+                }
+            }
+            if ($encoding && strcasecmp($encoding, 'UTF-8') !== 0) {
+                if (function_exists('iconv')) {
+                    $converted = @iconv(strtoupper($encoding), 'UTF-8//IGNORE', $contents);
+                    if ($converted !== false) {
+                        $contents = $converted;
+                    }
+                } elseif (function_exists('mb_convert_encoding')) {
+                    $contents = mb_convert_encoding($contents, 'UTF-8', $encoding);
+                }
+            }
+        }
+
+        if ($contents !== null) {
+            $this->csv = Reader::createFromString($contents);
+        } elseif (is_file($file)) {
             $this->csv = Reader::createFromPath($file);
         } else {
             $this->csv = Reader::createFromString($file);
@@ -265,7 +298,12 @@ abstract class Importer
 
         // $this->log("Custom Key: ${key}");
         if (array_key_exists($key, $array)) {
-            $val = Encoding::toUTF8(trim($array[$key]));
+            $trimmed = trim($array[$key]);
+            if (mb_check_encoding($trimmed, 'UTF-8')) {
+                $val = $trimmed;
+            } else {
+                $val = Encoding::toUTF8($trimmed);
+            }
         }
 
         // $this->log("${key}: ${val}");

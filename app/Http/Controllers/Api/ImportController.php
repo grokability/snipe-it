@@ -88,15 +88,28 @@ class ImportController extends Controller
                 if (! ini_get('auto_detect_line_endings')) {
                     ini_set('auto_detect_line_endings', '1');
                 }
-                if (function_exists('iconv')) {
+                if (function_exists('iconv') || function_exists('mb_convert_encoding')) {
                     $file_contents = $file->getContent(); // TODO - this *does* load the whole file in RAM, but we need that to be able to 'iconv' it?
                     $encoding = $detector->getEncoding($file_contents);
                     \Log::debug("Discovered encoding: $encoding in uploaded CSV");
+
+                    if (! mb_check_encoding($file_contents, 'UTF-8')) {
+                        $detected = mb_detect_encoding($file_contents, ['UTF-8', 'GBK', 'GB2312', 'GB18030', 'BIG5', 'SJIS', 'EUC-JP', 'EUC-KR', 'Windows-1252', 'ISO-8859-1'], true);
+                        if ($detected && strcasecmp($detected, 'UTF-8') !== 0) {
+                            $encoding = $detected;
+                            \Log::debug("Fallback detected encoding: $encoding in uploaded CSV");
+                        }
+                    }
+
                     $reader = null;
-                    if (strcasecmp($encoding, 'UTF-8') != 0) {
+                    if ($encoding && strcasecmp($encoding, 'UTF-8') != 0) {
                         $transliterated = false;
                         try {
-                            $transliterated = iconv(strtoupper($encoding), 'UTF-8', $file_contents);
+                            if (function_exists('iconv')) {
+                                $transliterated = @iconv(strtoupper($encoding), 'UTF-8//IGNORE', $file_contents);
+                            } elseif (function_exists('mb_convert_encoding')) {
+                                $transliterated = mb_convert_encoding($file_contents, 'UTF-8', $encoding);
+                            }
                         } catch (\Exception $e) {
                             $transliterated = false; // blank out the partially-decoded string
 
