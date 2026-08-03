@@ -35,6 +35,8 @@ Snipe-IT is actively developed and we [release quite frequently](https://github.
 
 For instructions on installing and configuring Snipe-IT on your server, check out the [installation manual](https://snipe-it.readme.io/docs). (Please see the [requirements documentation](https://snipe-it.readme.io/docs/requirements) for full requirements.)
 
+If you would rather not run a server yourself, the Snipe-IT team offer [official hosted Snipe-IT](https://snipeitapp.com/), and a number of third parties offer managed Snipe-IT too, among them [Zenith](https://zenith.hosting/host/snipe-it).
+
 If you're having trouble with the installation, please check the [Common Issues](https://snipe-it.readme.io/docs/common-issues) and [Getting Help](https://snipe-it.readme.io/docs/getting-help) documentation, and search this repository's open *and* closed issues for help.
 
 -----
