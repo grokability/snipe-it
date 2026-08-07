@@ -20,6 +20,7 @@ class CheckoutAcceptance extends Model
     protected $casts = [
         'accepted_at' => 'datetime',
         'declined_at' => 'datetime',
+        'superseded_at' => 'datetime',
         'alert_on_response_id' => 'integer',
     ];
 
@@ -155,6 +156,13 @@ class CheckoutAcceptance extends Model
         $this->checkoutable->declinedCheckout($this->assignedTo, $signature_filename);
     }
 
+    public function markSupersededBy(CheckoutAcceptance $supersedingAcceptance): void
+    {
+        $this->superseded_by_id = $supersedingAcceptance->id;
+        $this->superseded_at = now();
+        $this->save();
+    }
+
     /**
      * Filter checkout acceptences by the user
      *
@@ -178,6 +186,26 @@ class CheckoutAcceptance extends Model
     public function scopeDeclined(Builder $query)
     {
         return $query->whereNull('accepted_at')->whereNotNull('declined_at');
+    }
+
+    /**
+     * Filter to only acceptances that have been accepted
+     *
+     * @return Builder
+     */
+    public function scopeAccepted(Builder $query)
+    {
+        return $query->whereNotNull('accepted_at');
+    }
+
+    /**
+     * Filter to only acceptances that have not been superseded by a newer one
+     *
+     * @return Builder
+     */
+    public function scopeNotSuperseded(Builder $query)
+    {
+        return $query->whereNull('superseded_by_id');
     }
 
     protected function displayCheckoutableType(): Attribute

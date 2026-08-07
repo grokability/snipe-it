@@ -366,6 +366,7 @@ return [
     'password' => 'Password',
     'accepted' => 'accepted',
     'declined' => 'declined',
+    'reacceptance_requested' => 'requested re-acceptance',
     'declined_date' => 'Date Declined',
     'declined_note' => 'Declined Notes',
     'unassigned' => 'Unassigned',

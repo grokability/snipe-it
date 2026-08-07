@@ -109,6 +109,10 @@ class ActionlogPresenter extends Presenter
             return 'fas fa-clipboard-check';
         }
 
+        if ($this->action_type == 'reacceptance requested') {
+            return 'fa-solid fa-arrows-rotate';
+        }
+
         return 'fa-solid fa-rotate-right';
 
     }

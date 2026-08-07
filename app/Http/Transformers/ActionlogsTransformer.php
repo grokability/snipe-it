@@ -395,6 +395,7 @@ class ActionlogsTransformer
         if (! in_array($actionlog->action_type, [
             ActionType::Checkout->value,
             ActionType::Accepted->value,
+            ActionType::ReacceptanceRequested->value,
             ActionType::Declined->value,
             ActionType::CheckinFrom->value,
             ActionType::AddSeats->value,

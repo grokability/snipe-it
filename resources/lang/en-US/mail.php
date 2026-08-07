@@ -75,6 +75,8 @@ return [
     'inventory_report' => 'Inventory Report',
     'item' => 'Item',
     'item_checked_reminder' => 'This is a reminder that you currently have :count items checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.',
+    'reacceptance_required' => 'Action required: Please re-accept your item|Action required: Please re-accept your items',
+    'reacceptance_body' => 'An item previously checked out to you now requires your acceptance again. Please click the link below to confirm your decision.|Items previously checked out to you now require your acceptance again. You currently have :count items that need re-acceptance. Please click the link below to confirm your decision.',
     'license_expiring_alert' => 'There is :count license expiring or terminating in the next :threshold days.|There are :count licenses expiring or terminating in the next :threshold days.',
     'link_to_update_password' => 'Please click on the following link to update your :web password:',
     'login' => 'Login',

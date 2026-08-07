@@ -18,6 +18,7 @@ enum ActionType: string
     case RequestCanceled = 'request canceled';
     case Accepted = 'accepted';
     case Declined = 'declined';
+    case ReacceptanceRequested = 'reacceptance requested';
     case Audit = 'audit';
     case NoteAdded = 'note added';
 

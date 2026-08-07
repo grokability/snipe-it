@@ -2,9 +2,12 @@
 
 namespace Tests\Feature\Reporting;
 
+use App\Models\Accessory;
+use App\Models\AccessoryCheckout;
 use App\Models\Actionlog;
 use App\Models\Asset;
 use App\Models\AssetModel;
+use App\Models\CheckoutAcceptance;
 use App\Models\Company;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
@@ -130,6 +133,47 @@ class ActivityReportTest extends TestCase
             ]))
             ->assertOk()
             ->assertJson(fn (AssertableJson $json) => $json->has('rows', 0)->etc());
+    }
+
+    public function test_reacceptance_requested_activity_row_carries_the_quantity()
+    {
+        // ActionlogsTransformer::getQuantity() must whitelist the "reacceptance
+        // requested" action type so the carried-forward quantity is exposed in the
+        // activity report (mirroring the "accepted" action type).
+        // An accessory (qty > 1) is used deliberately — an asset/license seat has a
+        // null qty that falls back to 1.
+        $user = User::factory()->create();
+
+        $accessory = Accessory::factory()->create();
+        AccessoryCheckout::factory()->create([
+            'accessory_id' => $accessory->id,
+            'assigned_to' => $user->id,
+            'assigned_type' => User::class,
+        ]);
+
+        CheckoutAcceptance::factory()
+            ->accepted()
+            ->for($accessory, 'checkoutable')
+            ->for($user, 'assignedTo')
+            ->create(['qty' => 3]);
+
+        $this->artisan('snipeit:send-reacceptance-requests', [
+            '--no-interaction' => true,
+            '--force' => true,
+            '--no-send' => true,
+        ])->assertExitCode(0);
+
+        $this->actingAsForApi(User::factory()->viewAccessories()->create())
+            ->getJson(route('api.activity.index', [
+                'item_type' => 'accessory',
+                'item_id' => $accessory->id,
+                'action_type' => 'reacceptance requested',
+            ]))
+            ->assertOk()
+            ->assertJson(fn (AssertableJson $json) => $json
+                ->has('rows', 1)
+                ->where('rows.0.quantity', 3)
+                ->etc());
     }
 
     public function test_records_are_scoped_to_company_when_multiple_company_support_enabled()
