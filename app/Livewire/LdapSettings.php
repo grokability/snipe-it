@@ -113,6 +113,14 @@ class LdapSettings extends Component
 
     public string $ldap_client_tls_cert = '';
 
+    // SASL EXTERNAL bind uses the client TLS cert (loaded via
+    // LDAP_OPT_X_TLS_CERTFILE / _KEYFILE in Ldap::connectToLdap()) as the
+    // authentication identity instead of a bind DN + password. Depends on
+    // ldap_client_tls_cert + ldap_client_tls_key being populated. Enables
+    // directories like Google Workspace LDAP that authenticate via mTLS
+    // certificate. See GH #19518.
+    public bool $ldap_use_sasl_external_bind = false;
+
     // Step 2: Bind credentials
     public string $ldap_uname = '';
 
@@ -272,6 +280,7 @@ class LdapSettings extends Component
         $this->ldap_server_cert_ignore = (bool) $setting->ldap_server_cert_ignore;
         $this->ldap_client_tls_key = (string) $setting->ldap_client_tls_key;
         $this->ldap_client_tls_cert = (string) $setting->ldap_client_tls_cert;
+        $this->ldap_use_sasl_external_bind = (bool) $setting->ldap_use_sasl_external_bind;
 
         $this->ldap_uname = (string) $setting->ldap_uname;
         // ldap_pword stays ''. See property docstring.
@@ -426,6 +435,7 @@ class LdapSettings extends Component
         $setting->ldap_server_cert_ignore = $this->ldap_server_cert_ignore ? '1' : '0';
         $setting->ldap_client_tls_key = $this->ldap_client_tls_key;
         $setting->ldap_client_tls_cert = $this->ldap_client_tls_cert;
+        $setting->ldap_use_sasl_external_bind = $this->ldap_use_sasl_external_bind ? '1' : '0';
 
         $this->persistAndAdvance($setting);
     }
@@ -454,6 +464,15 @@ class LdapSettings extends Component
      */
     protected function step1SyntaxRules(): array
     {
+        // Snapshot the form values into locals so the SASL EXTERNAL
+        // cross-field rule below sees the CURRENT submission (not the
+        // persisted values). Otherwise a user who filled in cert + key
+        // and toggled SASL EXTERNAL in the same page load would trip
+        // the "cert not configured" guard even though they're one save
+        // away from having it configured.
+        $tlsCert = trim($this->ldap_client_tls_cert);
+        $tlsKey = trim($this->ldap_client_tls_key);
+
         return [
             'ldap_server' => 'required|starts_with:ldap://,ldaps://',
             'ldap_client_tls_key' => [
@@ -491,6 +510,25 @@ class LdapSettings extends Component
                     }
                 },
             ],
+            'ldap_use_sasl_external_bind' => [
+                'nullable',
+                'boolean',
+                /** @SuppressWarnings(PHPMD.UnusedFormalParameter) */
+                function ($attribute, $value, $fail) use ($tlsCert, $tlsKey) {
+                    if (! $value) {
+                        return;
+                    }
+                    // SASL EXTERNAL requires the client cert + key. The
+                    // required_with rules above already gate the pair
+                    // together. Here we ensure both are populated (not
+                    // just consistent with each other) before enabling
+                    // the toggle. Empty pair + SASL toggle on would
+                    // fail at bind time with an opaque server error.
+                    if ($tlsCert === '' || $tlsKey === '') {
+                        $fail(trans('admin/settings/general.ldap_wizard.sasl_external_requires_cert'));
+                    }
+                },
+            ],
         ];
     }
 
@@ -500,6 +538,7 @@ class LdapSettings extends Component
             'ldap_server' => trans('admin/settings/general.ldap_server'),
             'ldap_client_tls_key' => trans('admin/settings/general.ldap_client_tls_key'),
             'ldap_client_tls_cert' => trans('admin/settings/general.ldap_client_tls_cert'),
+            'ldap_use_sasl_external_bind' => trans('admin/settings/general.ldap_use_sasl_external_bind'),
         ];
     }
 
@@ -623,6 +662,7 @@ class LdapSettings extends Component
         }
 
         $setting = Setting::getSettings();
+        $setting->ldap_use_sasl_external_bind = $this->ldap_use_sasl_external_bind ? '1' : '0';
         $setting->ldap_uname = $this->ldap_uname;
         // Only overwrite the persisted encrypted password when the user
         // provided a new value. Blank pword = keep-what's-in-DB.
@@ -642,7 +682,11 @@ class LdapSettings extends Component
 
     protected function canAdvanceStep2(): bool
     {
-        if (trim($this->ldap_uname) === '') {
+        // SASL EXTERNAL mode authenticates via the client cert configured
+        // on step 1, so ldap_uname / ldap_pword are optional (and would
+        // be ignored on bind if present). Skip the empty-uname gate when
+        // SASL EXTERNAL is on.
+        if (! $this->ldap_use_sasl_external_bind && trim($this->ldap_uname) === '') {
             return false;
         }
         if (trim($this->ldap_basedn) === '') {
@@ -674,9 +718,20 @@ class LdapSettings extends Component
         $normalizeDn = fn ($dn) => strtolower(preg_replace('/\s*,\s*/', ',', trim((string) $dn)));
         $bindDn = $normalizeDn($this->ldap_uname);
 
+        // SASL EXTERNAL bind uses the client TLS cert for auth, so
+        // ldap_uname / ldap_pword are optional (and unused) when it's
+        // on. The flag lives on step 1 (next to the cert/key it
+        // depends on). This branch just reads its persisted state to
+        // decide requiredness here.
+        $sasl = $this->ldap_use_sasl_external_bind;
+        $unameRule = $sasl ? ['nullable', 'max:191'] : 'required|max:191';
+        $pwordRule = $sasl
+            ? 'nullable'
+            : \Illuminate\Validation\Rule::when(! $canReusePersisted, 'required');
+
         return [
-            'ldap_uname' => 'required|max:191',
-            'ldap_pword' => \Illuminate\Validation\Rule::when(! $canReusePersisted, 'required'),
+            'ldap_uname' => $unameRule,
+            'ldap_pword' => $pwordRule,
             'ldap_basedn' => [
                 'required',
                 // Guard against the common misconfiguration where the base
@@ -732,29 +787,42 @@ class LdapSettings extends Component
             return;
         }
 
-        // Bind, always with credentials (uname required in step2SyntaxRules).
-        // Password resolution: form value if provided, otherwise fall back
-        // to the persisted encrypted password when the username matches.
+        // Bind. SASL EXTERNAL uses the client cert loaded by
+        // openLdapConnectionForTest() (via LDAP_OPT_X_TLS_CERTFILE /
+        // _KEYFILE) as the auth identity, so no username / password
+        // gets passed. Simple bind path resolves the password from the
+        // form value first, otherwise falls back to the persisted
+        // encrypted password when the username matches.
         $settings = Setting::getSettings();
         $server = (string) $settings->ldap_server;
-        $uname = trim($this->ldap_uname);
-        $pword = $this->ldap_pword;
-        if ($pword === '' && $uname === trim((string) $settings->ldap_uname) && $settings->ldap_pword) {
-            try {
-                $pword = Crypt::decrypt($settings->ldap_pword);
-            } catch (\Exception $e) {
-                @ldap_unbind($conn);
-                $this->recordTestResult(
-                    'error',
-                    trans('admin/settings/general.ldap_wizard.bind.pword_decrypt_failed'),
-                    'ldap bind test',
-                );
 
-                return;
+        if ($this->ldap_use_sasl_external_bind) {
+            // Success message uses $uname for the "Bound as ..."
+            // interpolation. Under SASL EXTERNAL there is no bind
+            // username, the client cert is the identity, so surface
+            // that instead of leaving $uname undefined.
+            $uname = trans('admin/settings/general.ldap_wizard.bind.sasl_external_identity');
+            $bindOk = @ldap_sasl_bind($conn, null, null, 'EXTERNAL');
+        } else {
+            $uname = trim($this->ldap_uname);
+            $pword = $this->ldap_pword;
+            if ($pword === '' && $uname === trim((string) $settings->ldap_uname) && $settings->ldap_pword) {
+                try {
+                    $pword = Crypt::decrypt($settings->ldap_pword);
+                } catch (\Exception $e) {
+                    @ldap_unbind($conn);
+                    $this->recordTestResult(
+                        'error',
+                        trans('admin/settings/general.ldap_wizard.bind.pword_decrypt_failed'),
+                        'ldap bind test',
+                    );
+
+                    return;
+                }
             }
-        }
 
-        $bindOk = @ldap_bind($conn, $uname, $pword);
+            $bindOk = @ldap_bind($conn, $uname, $pword);
+        }
         if (! $bindOk) {
             $errno = ldap_errno($conn);
             $ldapError = Ldap::bindError($conn);
@@ -1542,17 +1610,28 @@ class LdapSettings extends Component
             'ldap_username_field',
             'ldap_fname_field',
             'custom_forgot_pass_url',
-            'test_sample_username'
+            'test_sample_username',
         ], true)) {
             $this->resetValidation($property);
         }
 
-        if (!in_array($property, [
+        // Toggling is_ad ON hides the SASL EXTERNAL checkbox in the
+        // Blade view but doesn't otherwise clear its state, so a user
+        // who had SASL on and then flipped to AD mode would be left
+        // with a hidden-but-active flag that silently gates uname /
+        // pword requiredness on step 2 and picks the SASL bind branch
+        // in Ldap::bindAdminToLdap(). Force it off here so the toggle
+        // is always false when it isn't visible.
+        if ($property === 'is_ad' && $this->is_ad && $this->ldap_use_sasl_external_bind) {
+            $this->ldap_use_sasl_external_bind = false;
+        }
+
+        if (! in_array($property, [
             'currentStep',
             'highestStepReached',
             'dirty',
             'testStatus',
-            'testMessage'
+            'testMessage',
         ], true)) {
             $this->dirty = true;
         }

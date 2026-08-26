@@ -94,6 +94,60 @@ class LdapTest extends TestCase
         $this->assertNull(Ldap::bindAdminToLdap('dummy'));
     }
 
+    public function test_sasl_external_bind_when_setting_is_on()
+    {
+        // GH #19518: SASL EXTERNAL bind (auth via client TLS cert)
+        // must route through ldap_sasl_bind, not ldap_bind. Username
+        // and password on the setting must be ignored.
+        $this->settings->enableLdap();
+        $this->settings->set(['ldap_use_sasl_external_bind' => 1]);
+
+        $this->getFunctionMock('App\\Models', 'ldap_sasl_bind')
+            ->expects($this->once())
+            ->with('dummy', null, null, 'EXTERNAL')
+            ->willReturn(true);
+        $this->getFunctionMock('App\\Models', 'ldap_bind')
+            ->expects($this->never());
+
+        $this->assertNull(Ldap::bindAdminToLdap('dummy'));
+    }
+
+    public function test_sasl_external_bind_failure_surfaces_error()
+    {
+        $this->settings->enableLdap();
+        $this->settings->set(['ldap_use_sasl_external_bind' => 1]);
+
+        $this->getFunctionMock('App\\Models', 'ldap_sasl_bind')
+            ->expects($this->once())
+            ->willReturn(false);
+        $this->getFunctionMock('App\\Models', 'ldap_error')
+            ->expects($this->once())
+            ->willReturn('cert rejected');
+        // bindError also queries LDAP_OPT_DIAGNOSTIC_MESSAGE (see #19519).
+        $this->getFunctionMock('App\\Models', 'ldap_get_option')
+            ->expects($this->once())
+            ->willReturn(true);
+        $this->expectExceptionMessage('Could not bind to LDAP via SASL EXTERNAL');
+
+        $this->assertNull(Ldap::bindAdminToLdap('dummy'));
+    }
+
+    public function test_simple_bind_still_used_when_sasl_external_is_off()
+    {
+        // Regression guard: existing installs (SASL EXTERNAL off, which
+        // is the default) must keep the pre-#19518 simple-bind path.
+        $this->settings->enableLdap();
+        $this->settings->set(['ldap_use_sasl_external_bind' => 0]);
+
+        $this->getFunctionMock('App\\Models', 'ldap_bind')
+            ->expects($this->once())
+            ->willReturn(true);
+        $this->getFunctionMock('App\\Models', 'ldap_sasl_bind')
+            ->expects($this->never());
+
+        $this->assertNull(Ldap::bindAdminToLdap('dummy'));
+    }
+
     public function test_find_and_bind()
     {
         $this->settings->enableLdap();

@@ -271,17 +271,30 @@ class Ldap extends Model
      */
     public static function bindAdminToLdap($connection)
     {
-        $ldap_username = Setting::getSettings()->ldap_uname;
+        $settings = Setting::getSettings();
 
-        if ($ldap_username) {
+        // SASL EXTERNAL bind uses the client TLS cert (already loaded via
+        // LDAP_OPT_X_TLS_CERTFILE / _KEYFILE in connectToLdap()) as the
+        // authentication identity, so username / password are not sent.
+        // Off by default. Opting in requires client cert + key to be
+        // configured on step 1 of the LDAP wizard. Enables directories
+        // like Google Workspace LDAP that authenticate via mTLS
+        // certificate rather than a bind DN + password. See GH #19518.
+        $ldap_username = $settings->ldap_uname;
+
+        if ($settings->ldap_use_sasl_external_bind) {
+            if (! @ldap_sasl_bind($connection, null, null, 'EXTERNAL')) {
+                throw new Exception('Could not bind to LDAP via SASL EXTERNAL: '.self::bindError($connection));
+            }
+        } elseif ($ldap_username) {
             // Lets return some nicer messages for users who donked their app key, and disable LDAP
             try {
-                $ldap_pass = Crypt::decrypt(Setting::getSettings()->ldap_pword);
+                $ldap_pass = Crypt::decrypt($settings->ldap_pword);
             } catch (Exception $e) {
                 throw new Exception('Your app key has changed! Could not decrypt LDAP password using your current app key, so LDAP authentication has been disabled. Login with a local account, update the LDAP password and re-enable it in Admin > Settings.');
             }
 
-            if (! $ldapbind = @ldap_bind($connection, $ldap_username, $ldap_pass)) {
+            if (! @ldap_bind($connection, $ldap_username, $ldap_pass)) {
                 throw new Exception('Could not bind to LDAP: '.self::bindError($connection));
             }
             // TODO - this just "falls off the end" but the function states that it should return true or false
@@ -291,7 +304,7 @@ class Ldap extends Model
             // at the next refactor, this should be appropriately modified to be more consistent.
         } else {
             // LDAP should also work with anonymous bind (no dn, no password available)
-            if (! $ldapbind = @ldap_bind($connection)) {
+            if (! @ldap_bind($connection)) {
                 throw new Exception('Could not bind to LDAP: '.self::bindError($connection));
             }
         }
