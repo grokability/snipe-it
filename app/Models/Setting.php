@@ -426,7 +426,6 @@ class Setting extends Model
                 'ad_append_domain',
                 'ldap_client_tls_key',
                 'ldap_client_tls_cert',
-                'ldap_use_sasl_external_bind',
                 'ldap_default_group',
                 'ldap_dept',
                 'ldap_phone_field',

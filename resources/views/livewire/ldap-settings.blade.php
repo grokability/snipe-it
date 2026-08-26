@@ -462,26 +462,6 @@
                         </x-slot:input>
                     </x-form.row>
 
-                    {{-- SASL EXTERNAL bind toggle. Lives next to the cert /
-                         key fields it depends on. Its state makes the Bind
-                         DN/UPN + Bind Password fields on step 2 optional.
-                         Hidden when is_ad is on: Active Directory servers
-                         support cert-based auth only under a specific AD
-                         Certificate Services / cert-mapping deployment that
-                         almost nobody runs, and cluttering the AD-common
-                         path with an option nobody uses would confuse more
-                         than it helps. --}}
-                    @if (! $is_ad)
-                        <x-form.checkbox-row
-                            name="ldap_use_sasl_external_bind"
-                            wire:model.live="ldap_use_sasl_external_bind"
-                            :label="trans('admin/settings/general.ldap_use_sasl_external_bind')"
-                            :checked="$ldap_use_sasl_external_bind"
-                            help_text="{!! trans('admin/settings/general.ldap_use_sasl_external_bind_help') !!}"
-                            :disabled="$isReadOnly"
-                        />
-                    @endif
-
                 @elseif ($currentStep === 2)
                     {{-- Merged Authenticate + Scope step. Bind credentials
                          appear next to the base DN so users composing a
@@ -489,12 +469,23 @@
                          alongside. That was the friction that pushed us
                          to combine what used to be two separate steps. --}}
 
+                    {{-- Only renders when a client cert AND key are
+                         populated on step 1, which is the only case
+                         where leaving the bind fields blank does
+                         something meaningful. --}}
+                    @if ($ldap_client_tls_cert !== '' && $ldap_client_tls_key !== '')
+                        <x-alert type="info" icon="tip">
+                            {{ trans('admin/settings/general.ldap_wizard.sasl_external_step2_hint') }}
+                        </x-alert>
+                    @endif
+
                     <!-- Base Bind DN, placed first so users compose their
                          admin DN with the base DN already visible. -->
                     <x-form.row
                         name="ldap_basedn"
                         :label="trans('admin/settings/general.ldap_basedn')"
                         help_text="{!! trans('admin/settings/general.ldap_wizard.ldap_basedn_help') !!}"
+                        help_class="col-md-7 col-md-offset-3"
                     >
                         <x-slot:input>
                             <x-input.text
@@ -513,6 +504,7 @@
                         name="ldap_uname"
                         :label="trans('admin/settings/general.ldap_uname')"
                         help_html="{!! trans('admin/settings/general.ldap_wizard.ldap_uname_help') !!}"
+                        help_class="col-md-7 col-md-offset-3"
                     >
                         <x-slot:input>
                             {{-- Placeholder swaps based on the step-1 AD flag:
@@ -524,8 +516,8 @@
                                 wire:model.live.debounce.500ms="ldap_uname"
                                 placeholder="{{ trans('general.example').($is_ad ? 'admin@example.com' : 'cn=admin,dc=example,dc=com') }}"
                                 :ignore-autofill="true"
-                                :required="! $ldap_use_sasl_external_bind"
-                                :readonly="$isReadOnly || $ldap_use_sasl_external_bind"
+                                :required="! ($ldap_client_tls_cert !== '' && $ldap_client_tls_key !== '')"
+                                :readonly="$isReadOnly"
                             />
                         </x-slot:input>
                     </x-form.row>
@@ -535,14 +527,15 @@
                         name="ldap_pword"
                         :label="trans('admin/settings/general.ldap_pword')"
                         help_text="{!! trans('admin/settings/general.ldap_wizard.ldap_pword_help') !!}"
+                        help_class="col-md-7 col-md-offset-3"
                     >
                         <x-slot:input>
                             <x-input.password
                                 name="ldap_pword"
                                 wire:model.live.debounce.500ms="ldap_pword"
-                                :required="! $ldap_use_sasl_external_bind"
+                                :required="! ($ldap_client_tls_cert !== '' && $ldap_client_tls_key !== '')"
                                 :ignore-autofill="true"
-                                :readonly="$isReadOnly || $ldap_use_sasl_external_bind"
+                                :readonly="$isReadOnly"
                             />
                         </x-slot:input>
                     </x-form.row>
@@ -552,6 +545,7 @@
                         name="ldap_filter"
                         :label="trans('admin/settings/general.ldap_filter')"
                         help_text="{!! trans('admin/settings/general.ldap_wizard.ldap_filter_help') !!}"
+                        help_class="col-md-7 col-md-offset-3"
                     >
                         <x-slot:input>
                             <x-input.text
@@ -569,6 +563,7 @@
                         name="ldap_auth_filter_query"
                         :label="trans('admin/settings/general.ldap_auth_filter_query')"
                         help_text="{!! trans('admin/settings/general.ldap_wizard.ldap_auth_filter_query_help') !!}"
+                        help_class="col-md-7 col-md-offset-3"
                     >
                         <x-slot:input>
                             <x-input.text
@@ -819,7 +814,6 @@
                                         'ldap_server_cert_ignore' => trans('admin/settings/general.ldap_server_cert_ignore'),
                                         'is_ad' => trans('admin/settings/general.is_ad'),
                                         'ad_domain' => trans('admin/settings/general.ad_domain'),
-                                        'ldap_use_sasl_external_bind' => trans('admin/settings/general.ldap_use_sasl_external_bind'),
                                     ],
                                 ],
                                 2 => [
