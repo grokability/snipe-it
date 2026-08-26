@@ -34,15 +34,7 @@ use Illuminate\Support\Facades\Log;
  */
 class FulfillCheckoutRequestListener
 {
-    public function subscribe($events): void
-    {
-        $events->listen(
-            CheckoutableCheckedOut::class,
-            self::class.'@onCheckedOut',
-        );
-    }
-
-    public function onCheckedOut(CheckoutableCheckedOut $event): void
+    public function handle(CheckoutableCheckedOut $event): void
     {
         if (! $event->checkedOutTo instanceof User) {
             return;
