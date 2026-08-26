@@ -3,6 +3,7 @@
 namespace Tests\Feature\Notifications\Webhooks;
 
 use App\Events\CheckoutableCheckedIn;
+use App\Mail\CheckinAccessoryMail;
 use App\Models\Accessory;
 use App\Models\Asset;
 use App\Models\AssetModel;
@@ -16,10 +17,10 @@ use App\Notifications\CheckinAccessoryNotification;
 use App\Notifications\CheckinAssetNotification;
 use App\Notifications\CheckinComponentNotification;
 use App\Notifications\CheckinLicenseSeatNotification;
-use App\Notifications\CheckoutAssetNotification;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Messages\SlackMessage;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use NotificationChannels\GoogleChat\GoogleChatMessage;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -63,6 +64,20 @@ class IntegrationNotificationsUponCheckinTest extends TestCase
         );
 
         $this->assertSlackNotificationSent(CheckinAccessoryNotification::class);
+    }
+
+    public function test_checkin_sends_each_notification_once(): void
+    {
+        Mail::fake();
+        $this->settings->enableSlackWebhook()->disableAdminCC()->disableAdminCCAlways();
+
+        $accessory = Accessory::factory()->create();
+        $accessory->category->update(['checkin_email' => true]);
+
+        $this->fireCheckInEvent($accessory, User::factory()->create());
+
+        Mail::assertSent(CheckinAccessoryMail::class, 1);
+        Notification::assertSentOnDemandTimes(CheckinAccessoryNotification::class, 1);
     }
 
     public function test_accessory_checkin_does_not_send_slack_notification_when_setting_disabled()
@@ -253,7 +268,7 @@ class IntegrationNotificationsUponCheckinTest extends TestCase
     {
         return [
             'Asset' => [
-                fn($webhookSource) => new CheckinAssetNotification(
+                fn ($webhookSource) => new CheckinAssetNotification(
                     Asset::factory()->create(),
                     User::factory()->create(),
                     User::factory()->superuser()->create(),
@@ -263,7 +278,7 @@ class IntegrationNotificationsUponCheckinTest extends TestCase
             ],
 
             'Accessory' => [
-                fn($webhookSource) => new CheckinAccessoryNotification(
+                fn ($webhookSource) => new CheckinAccessoryNotification(
                     Accessory::factory()->create(),
                     User::factory()->create(),
                     User::factory()->superuser()->create(),
@@ -273,7 +288,7 @@ class IntegrationNotificationsUponCheckinTest extends TestCase
             ],
 
             'Component' => [
-                fn($webhookSource) => new CheckinComponentNotification(
+                fn ($webhookSource) => new CheckinComponentNotification(
                     Component::factory()->create(),
                     User::factory()->create(),
                     User::factory()->superuser()->create(),
@@ -283,7 +298,7 @@ class IntegrationNotificationsUponCheckinTest extends TestCase
             ],
 
             'License seat' => [
-                fn($webhookSource) => new CheckinLicenseSeatNotification(
+                fn ($webhookSource) => new CheckinLicenseSeatNotification(
                     LicenseSeat::factory()->create(),
                     User::factory()->create(),
                     User::factory()->superuser()->create(),
