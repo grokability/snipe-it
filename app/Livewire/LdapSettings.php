@@ -118,7 +118,7 @@ class LdapSettings extends Component
     // authentication identity instead of a bind DN + password. Depends on
     // ldap_client_tls_cert + ldap_client_tls_key being populated. Enables
     // directories like Google Workspace LDAP that authenticate via mTLS
-    // certificate. See GH #19518.
+    // certificate.
     public bool $ldap_use_sasl_external_bind = false;
 
     // Step 2: Bind credentials
@@ -523,7 +523,7 @@ class LdapSettings extends Component
                     // together. Here we ensure both are populated (not
                     // just consistent with each other) before enabling
                     // the toggle. Empty pair + SASL toggle on would
-                    // fail at bind time with an opaque server error.
+                    // fail at bind time with a mostly-useless server error.
                     if ($tlsCert === '' || $tlsKey === '') {
                         $fail(trans('admin/settings/general.ldap_wizard.sasl_external_requires_cert'));
                     }
