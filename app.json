@@ -86,6 +86,23 @@
         "description": "Method that should be used for attaching inline images.",
         "value": "base64"
       },
+      "MICROSOFT_GRAPH_CLIENT_ID": {
+        "description": "Entra Client ID found on the Overview page of the App Registration in Entra.",
+        "required": false
+      },
+      "MICROSOFT_GRAPH_CLIENT_SECRET": {
+        "description": "Entra Client secret created on the Certificates & secrets page of the App Registration in Entra.",
+        "required": false
+      },
+      "MICROSOFT_GRAPH_TENANT_ID": {
+        "description": "Entra Tenant ID found on the Tenant Dashboard in Entra.",
+        "required": false
+      },
+      "MICROSOFT_GRAPH_SAVE_TO_SENT_ITEMS": {
+        "description": "Whether or not to save sent items to the mailbox's Sent folder.",
+        "required": false,
+        "value": "false"
+      },
       "SESSION_LIFETIME": {
         "description": "Specify the time in minutes that the session should remain valid.",
         "value": "12000"

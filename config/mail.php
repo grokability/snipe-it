@@ -221,6 +221,69 @@ return [
                 'postmark',
             ],
         ],
+        'microsoft-graph' => [
+            /*
+            |--------------------------------------------------------------------------
+            | Microsoft Graph Mailer
+            |--------------------------------------------------------------------------
+            |
+            | Uses modern app authentication for Microsoft 365 tenants instead of the
+            | less secure SMTP authenticaion.
+            | 
+            | Instructions can be found here:
+            | https://learn.microsoft.com/en-us/graph/auth-register-app-v2
+            | 
+            | It's also recommended that you configure RBAC to limit this application's
+            | scope to approved mailboxes.
+            | https://learn.microsoft.com/en-us/exchange/permissions-exo/application-rbac
+            |
+            */
+
+            'transport' => 'microsoft-graph',
+            /*
+            |--------------------------------------------------------------------------
+            | Entra Client ID
+            |--------------------------------------------------------------------------
+            |
+            | This can be found on the Overview page for the Entra App Registration
+            | you created for Snipe_IT.
+            |
+            */
+            'client_id' => env('MICROSOFT_GRAPH_CLIENT_ID'),
+            /*
+            |--------------------------------------------------------------------------
+            | Entra Client Secret
+            |--------------------------------------------------------------------------
+            |
+            | You will need to create a client secret for the Entra App Registration.
+            | The instructions are found at the URL above under 'Add credentials' 
+            | option 2.
+            |
+            */
+            'client_secret' => env('MICROSOFT_GRAPH_CLIENT_SECRET'),
+            /*
+            |--------------------------------------------------------------------------
+            | Entra Tenant ID
+            |--------------------------------------------------------------------------
+            |
+            | This can be found on the Tenant Dashboard in Entra.
+            |
+            */
+            'tenant_id' => env('MICROSOFT_GRAPH_TENANT_ID'),
+            /*
+            |--------------------------------------------------------------------------
+            | Save to Sent Items
+            |--------------------------------------------------------------------------
+            |
+            | This controls whether or not mail sent using this driver is saved in the 
+            | mailbox's Sent folder. Defaults to false.
+            |
+            */
+            'save_to_sent_items' => env(
+                'MICROSOFT_GRAPH_SAVE_TO_SENT_ITEMS',
+                false
+            ),
+        ],
     ],
 
     /*
