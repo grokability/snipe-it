@@ -165,18 +165,27 @@ class LdapTroubleshooter extends Command
             }
             $output[] = 'ldapsearch';
             $output[] = '-H '.$settings->ldap_server;
-            $output[] = '-x';
             $output[] = '-b '.escapeshellarg($settings->ldap_basedn);
-            $output[] = '-D '.escapeshellarg($settings->ldap_uname);
 
-            try {
-                $w = Crypt::decrypt($settings->ldap_pword);
-            } catch (Exception $e) {
-                $this->warn('Could not decrypt password. This usually means an LDAP password was not set or the APP_KEY was changed since the LDAP pasword was last saved.  Aborting.');
-                exit(0);
+            if (Ldap::shouldUseSaslExternal($settings)) {
+                // SASL EXTERNAL identifies the client TLS
+                // cert loaded above (LDAPTLS_CERT / LDAPTLS_KEY) instead
+                // of a bind DN + password. See the ldapsearch man page's -Y flag.
+                $output[] = '-Y EXTERNAL';
+            } else {
+                $output[] = '-x';
+                $output[] = '-D '.escapeshellarg($settings->ldap_uname);
+
+                try {
+                    $w = Crypt::decrypt($settings->ldap_pword);
+                } catch (Exception $e) {
+                    $this->warn('Could not decrypt password. This usually means an LDAP password was not set or the APP_KEY was changed since the LDAP pasword was last saved.  Aborting.');
+                    exit(0);
+                }
+
+                $output[] = '-w '.escapeshellarg($w);
             }
 
-            $output[] = '-w '.escapeshellarg($w);
             $output[] = escapeshellarg(parenthesized_filter($settings->ldap_filter));
             if ($settings->ldap_tls) {
                 $this->line('# adding STARTTLS option');
@@ -386,6 +395,14 @@ class LdapTroubleshooter extends Command
 
         $this->line('STAGE 4: Test Administrative Bind for LDAP Sync');
         foreach ($ldap_urls as $ldap_url) {
+            if (Ldap::shouldUseSaslExternal($settings)) {
+                // SASL EXTERNAL uses the client TLS cert already loaded
+                // in connect_to_ldap() as the auth identity. No username
+                // or password gets sent. See GH #19518.
+                $this->test_sasl_external_bind($ldap_url[0], $ldap_url[1], $ldap_url[2]);
+
+                continue;
+            }
             try {
                 $w = Crypt::decrypt($settings->ldap_pword);
             } catch (Exception $e) {
@@ -407,14 +424,24 @@ class LdapTroubleshooter extends Command
         $this->debugout('LDAP constants are: '.print_r($ldap_constants, true));
 
         foreach ($ldap_urls as $ldap_url) {
-            try {
-                $w = Crypt::decrypt($settings->ldap_pword);
-            } catch (Exception $e) {
-                $this->warn('Could not decrypt password. This usually means an LDAP password was not set or the APP_KEY was changed since the LDAP pasword was last saved.  Aborting.');
-                exit(0);
+            if (Ldap::shouldUseSaslExternal($settings)) {
+                // Password decrypt + username don't apply under SASL
+                // EXTERNAL - both are null'd in the bind call. The
+                // informational read after the bind uses the same $settings
+                // path either way, so the branch is only around the bind.
+                $w = '';
+                $uname = null;
+            } else {
+                try {
+                    $w = Crypt::decrypt($settings->ldap_pword);
+                } catch (Exception $e) {
+                    $this->warn('Could not decrypt password. This usually means an LDAP password was not set or the APP_KEY was changed since the LDAP pasword was last saved.  Aborting.');
+                    exit(0);
+                }
+                $uname = $settings->ldap_uname;
             }
 
-            if ($this->test_informational_bind($ldap_url[0], $ldap_url[1], $ldap_url[2], $settings->ldap_uname, $w, $settings)) {
+            if ($this->test_informational_bind($ldap_url[0], $ldap_url[1], $ldap_url[2], $uname, $w, $settings)) {
                 $this->info('Success getting informational bind!');
             } else {
                 $this->error('Unable to get information from bind.');
@@ -526,18 +553,51 @@ class LdapTroubleshooter extends Command
         });
     }
 
+    public function test_sasl_external_bind($ldap_url, $check_cert, $start_tls)
+    {
+        return $this->timed_boolean_execute(function () use ($ldap_url, $check_cert, $start_tls) {
+            try {
+                $lconn = $this->connect_to_ldap($ldap_url, $check_cert, $start_tls);
+                $bind_results = ldap_sasl_bind($lconn, null, null, 'EXTERNAL');
+                ldap_close($lconn);
+                if (! $bind_results) {
+                    $this->error("WARNING: Failed to bind to $ldap_url via SASL EXTERNAL");
+
+                    return false;
+                }
+                $this->info("SUCCESS - Able to bind to $ldap_url via SASL EXTERNAL");
+
+                return (bool) $lconn;
+            } catch (Exception $e) {
+                $this->error('WARNING: Exception caught during SASL EXTERNAL bind - '.$e->getMessage());
+
+                return false;
+            }
+        });
+    }
+
     public function test_informational_bind($ldap_url, $check_cert, $start_tls, $username, $password, $settings)
     {
         return $this->timed_boolean_execute(function () use ($ldap_url, $check_cert, $start_tls, $username, $password, $settings) {
             try { // TODO - copypasta'ed from test_authed_bind
                 $conn = $this->connect_to_ldap($ldap_url, $check_cert, $start_tls);
-                $bind_results = ldap_bind($conn, $username, $password);
+                // Null $username signals the SASL EXTERNAL branch. The
+                // Stage 5 caller sets it that way when the auto-detect
+                // in Ldap::shouldUseSaslExternal() matches. Post-bind logic
+                // is identical either way.
+                if ($username === null) {
+                    $bind_results = ldap_sasl_bind($conn, null, null, 'EXTERNAL');
+                    $identityLabel = 'the SASL EXTERNAL client certificate';
+                } else {
+                    $bind_results = ldap_bind($conn, $username, $password);
+                    $identityLabel = $username;
+                }
                 if (! $bind_results) {
-                    $this->error("WARNING: Failed to bind to $ldap_url as $username");
+                    $this->error("WARNING: Failed to bind to $ldap_url as $identityLabel");
 
                     return false;
                 }
-                $this->info("SUCCESS - Able to bind to $ldap_url as $username");
+                $this->info("SUCCESS - Able to bind to $ldap_url as $identityLabel");
                 $cleaned_results = [];
                 try {
                     // This _may_ only work for Active Directory?

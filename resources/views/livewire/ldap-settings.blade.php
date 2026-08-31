@@ -429,6 +429,7 @@
                     <x-form.row
                         name="ldap_client_tls_key"
                         :label="trans('admin/settings/general.ldap_client_tls_key')"
+                        help_class="col-md-7 col-md-offset-3"
                     >
                         <x-slot:input>
                             <x-input.textarea
@@ -447,6 +448,7 @@
                         name="ldap_client_tls_cert"
                         :label="trans('admin/settings/general.ldap_client_tls_cert')"
                         help_text="{!! trans('admin/settings/general.ldap_client_tls_cert_help') !!}"
+                        help_class="col-md-7 col-md-offset-3"
                     >
                         <x-slot:input>
                             <x-input.textarea
@@ -467,12 +469,23 @@
                          alongside. That was the friction that pushed us
                          to combine what used to be two separate steps. --}}
 
+                    {{-- Only renders when a client cert AND key are
+                         populated on step 1, which is the only case
+                         where leaving the bind fields blank does
+                         something meaningful. --}}
+                    @if ($ldap_client_tls_cert !== '' && $ldap_client_tls_key !== '')
+                        <x-alert type="info" icon="tip">
+                            {{ trans('admin/settings/general.ldap_wizard.sasl_external_step2_hint') }}
+                        </x-alert>
+                    @endif
+
                     <!-- Base Bind DN, placed first so users compose their
                          admin DN with the base DN already visible. -->
                     <x-form.row
                         name="ldap_basedn"
                         :label="trans('admin/settings/general.ldap_basedn')"
                         help_text="{!! trans('admin/settings/general.ldap_wizard.ldap_basedn_help') !!}"
+                        help_class="col-md-7 col-md-offset-3"
                     >
                         <x-slot:input>
                             <x-input.text
@@ -491,16 +504,19 @@
                         name="ldap_uname"
                         :label="trans('admin/settings/general.ldap_uname')"
                         help_html="{!! trans('admin/settings/general.ldap_wizard.ldap_uname_help') !!}"
+                        help_class="col-md-7 col-md-offset-3"
                     >
                         <x-slot:input>
                             {{-- Placeholder swaps based on the step-1 AD flag:
-                                 UPN form for AD, full DN form otherwise. --}}
+                                 UPN form for AD, full DN form otherwise. Not
+                                 required when SASL EXTERNAL is on because
+                                 the bind identity comes from the client cert. --}}
                             <x-input.text
                                 name="ldap_uname"
                                 wire:model.live.debounce.500ms="ldap_uname"
                                 placeholder="{{ trans('general.example').($is_ad ? 'admin@example.com' : 'cn=admin,dc=example,dc=com') }}"
                                 :ignore-autofill="true"
-                                :required="true"
+                                :required="! ($ldap_client_tls_cert !== '' && $ldap_client_tls_key !== '')"
                                 :readonly="$isReadOnly"
                             />
                         </x-slot:input>
@@ -511,12 +527,13 @@
                         name="ldap_pword"
                         :label="trans('admin/settings/general.ldap_pword')"
                         help_text="{!! trans('admin/settings/general.ldap_wizard.ldap_pword_help') !!}"
+                        help_class="col-md-7 col-md-offset-3"
                     >
                         <x-slot:input>
                             <x-input.password
                                 name="ldap_pword"
                                 wire:model.live.debounce.500ms="ldap_pword"
-                                :required="true"
+                                :required="! ($ldap_client_tls_cert !== '' && $ldap_client_tls_key !== '')"
                                 :ignore-autofill="true"
                                 :readonly="$isReadOnly"
                             />
@@ -528,6 +545,7 @@
                         name="ldap_filter"
                         :label="trans('admin/settings/general.ldap_filter')"
                         help_text="{!! trans('admin/settings/general.ldap_wizard.ldap_filter_help') !!}"
+                        help_class="col-md-7 col-md-offset-3"
                     >
                         <x-slot:input>
                             <x-input.text
@@ -545,6 +563,7 @@
                         name="ldap_auth_filter_query"
                         :label="trans('admin/settings/general.ldap_auth_filter_query')"
                         help_text="{!! trans('admin/settings/general.ldap_wizard.ldap_auth_filter_query_help') !!}"
+                        help_class="col-md-7 col-md-offset-3"
                     >
                         <x-slot:input>
                             <x-input.text

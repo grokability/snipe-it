@@ -7377,7 +7377,7 @@ parameters:
 		-
 			message: '#^Method App\\Models\\Ldap\:\:bindAdminToLdap\(\) should return bool but return statement is missing\.$#'
 			identifier: return.missing
-			count: 2
+			count: 3
 			path: app/Models/Ldap.php
 
 		-

@@ -258,40 +258,61 @@ class Ldap extends Model
     }
 
     /**
+     * Returns true when the given config source (Setting model, live
+     * Livewire component state, whatever) matches the auto-detect
+     * condition that routes bindAdminToLdap through SASL EXTERNAL:
+     * client cert + key are populated AND both bind DN and bind
+     * password are blank.
+     *
+     * Runtime, LDAP troubleshooter, and LDAP Livewire wizard all
+     * evaluate the same.
+     */
+    public static function shouldUseSaslExternal(object $config): bool
+    {
+        return !empty($config->ldap_client_tls_cert)
+            && !empty($config->ldap_client_tls_key)
+            && empty($config->ldap_uname)
+            && empty($config->ldap_pword);
+    }
+
+    /**
      * Binds/authenticates an admin to LDAP for LDAP searching/syncing.
-     * Here we also return a better error if the app key is donked.
+     * Modifies state on the passed-in $connection. Throws on any bind
+     * failure with a decoded message (including a friendlier "app key
+     * changed" message for the encrypted-password decrypt path).
+     * Callers wrap in try/catch and rely on the exception, not a
+     * return value.
+     *
+     * @throws Exception on any bind failure
+     * @since  [v3.0]
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
      *
-     * @since  [v3.0]
-     *
-     * @param  bool|false  $user
-     * @return bool true    if the username and/or password provided are valid
-     *              false   if the username and/or password provided are invalid
      */
-    public static function bindAdminToLdap($connection)
+    public static function bindAdminToLdap($connection): void
     {
-        $ldap_username = Setting::getSettings()->ldap_uname;
+        $settings = Setting::getSettings();
 
-        if ($ldap_username) {
+        $ldap_username = $settings->ldap_uname;
+
+        if (self::shouldUseSaslExternal($settings)) {
+            if (! @ldap_sasl_bind($connection, null, null, 'EXTERNAL')) {
+                throw new Exception('Could not bind to LDAP via SASL EXTERNAL: '.self::bindError($connection));
+            }
+        } elseif ($ldap_username) {
             // Lets return some nicer messages for users who donked their app key, and disable LDAP
             try {
-                $ldap_pass = Crypt::decrypt(Setting::getSettings()->ldap_pword);
+                $ldap_pass = Crypt::decrypt($settings->ldap_pword);
             } catch (Exception $e) {
                 throw new Exception('Your app key has changed! Could not decrypt LDAP password using your current app key, so LDAP authentication has been disabled. Login with a local account, update the LDAP password and re-enable it in Admin > Settings.');
             }
 
-            if (! $ldapbind = @ldap_bind($connection, $ldap_username, $ldap_pass)) {
+            if (! @ldap_bind($connection, $ldap_username, $ldap_pass)) {
                 throw new Exception('Could not bind to LDAP: '.self::bindError($connection));
             }
-            // TODO - this just "falls off the end" but the function states that it should return true or false
-            // unfortunately, one of the use cases for this function is wrong and *needs* for that failure mode to fire
-            // so I don't want to fix this right now.
-            // this method MODIFIES STATE on the passed-in $connection and just returns true or false (or, in this case, undefined)
-            // at the next refactor, this should be appropriately modified to be more consistent.
         } else {
             // LDAP should also work with anonymous bind (no dn, no password available)
-            if (! $ldapbind = @ldap_bind($connection)) {
+            if (! @ldap_bind($connection)) {
                 throw new Exception('Could not bind to LDAP: '.self::bindError($connection));
             }
         }

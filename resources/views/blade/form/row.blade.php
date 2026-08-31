@@ -13,6 +13,7 @@
     'label' => null,
     'label_class' => 'col-md-3',
     'input_div_class' => 'col-md-7',
+    'help_class' => 'col-md-9 col-md-offset-3',
     'input_icon' => null,
     'input_group_addon' => null,
     'maxlength' => null,
@@ -156,11 +157,15 @@
          the input instead of underneath it. --}}
     <div class="clearfix"></div>
 
-    {{-- Error + help wrapper. Fixed at col-md-9 col-md-offset-3 so the
+    {{-- Error + help wrapper. Default col-md-9 col-md-offset-3 so the
          help text always has room to breathe on its own row, regardless
          of how narrow the input column is. Offset aligns under the
-         input column (which sits after the col-md-3 label). --}}
-    <div class="col-md-9 col-md-offset-3">
+         input column (which sits after the col-md-3 label). Callers
+         with a visually-narrower input (a textarea whose width is pinned
+         by its rows attribute, for example) can pass help_class to
+         match the input width so long help doesn't extend past the
+         visible input box. --}}
+    <div class="{{ $help_class }}">
         <x-form.error :name="$name" />
 
         @if ($help_text)
