@@ -36,6 +36,7 @@ use Illuminate\Validation\Rule;
 use League\Csv\EscapeFormula;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use ZipArchive;
+use App\Models\Labels\CustomUserLabel;
 
 /**
  * This controller handles all actions related to Settings for
@@ -595,9 +596,17 @@ class SettingsController extends Controller
     public function getLabels(): View
     {
         $is_gd_installed = extension_loaded('gd');
+        $setting = Setting::getSettings();
+
+        if (str_starts_with($setting->label2_template, 'custom:')) {
+            $customLabelId = (int)str_replace('custom:', '', $setting->label2_template);
+
+            $setting->label2_template_name = CustomUserLabel::find($customLabelId)?->name
+                ?? $setting->label2_template;
+        }
 
         return view('settings.labels')
-            ->with('setting', Setting::getSettings())
+            ->with('setting', $setting)
             ->with('is_gd_installed', $is_gd_installed)
             ->with('customFields', CustomField::where('field_encrypted', '=', 0)->get());
     }
@@ -678,6 +687,17 @@ class SettingsController extends Controller
         }
 
         if ($setting->save()) {
+            $selectedTemplate = $setting->label2_template;
+
+            CustomUserLabel::where('is_default', true)->update(['is_default' => false]);
+
+            if (str_starts_with($selectedTemplate, 'custom:')) {
+                $customLabelId = (int)str_replace('custom:', '', $selectedTemplate);
+
+                CustomUserLabel::whereKey($customLabelId)->update([
+                    'is_default' => true,
+                ]);
+            }
 
             return redirect()->route('settings.labels.index')
                 ->with('success', trans('admin/settings/message.update.success'));

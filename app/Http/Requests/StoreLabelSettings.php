@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Labels\CustomUserLabel;
 use App\Models\Labels\Label;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -27,7 +28,15 @@ class StoreLabelSettings extends FormRequest
     {
         $names = Label::find()?->map(function ($label) {
             return $label->getName();
-        })->values()->toArray();
+        })->values()->toArray() ?? [];
+
+        $customNames = CustomUserLabel::query()
+            ->pluck('id')
+            ->map(fn ($id) => 'custom:'.$id)
+            ->values()
+            ->toArray();
+
+        $names = array_merge($names, $customNames);
 
         if (empty($this->input('label2_template'))) {
             $this->merge([

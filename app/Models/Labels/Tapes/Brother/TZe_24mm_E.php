@@ -16,11 +16,53 @@ class TZe_24mm_E extends TZe_24mm
 
     private const LABEL_SIZE = 2.00;
 
+    private const LABEL_MARGIN = -0.75;
+
     private const FIELD_SIZE = 2.80;
 
     private const FIELD_MARGIN = 0.15;
 
     private const BARCODE1D_SIZE = -2.25;
+
+    public function getBarcodeMargin(): float
+    {
+        return self::BARCODE_MARGIN;
+    }
+
+    public function getTagSize(): float
+    {
+        return self::TAG_SIZE;
+    }
+
+    public function getTitleSize(): float
+    {
+        return self::TITLE_SIZE;
+    }
+
+    public function getTitleMargin(): float
+    {
+        return self::TITLE_MARGIN;
+    }
+
+    public function getLabelSize(): float
+    {
+        return self::LABEL_SIZE;
+    }
+
+    public function getLabelMargin(): float
+    {
+        return self::LABEL_MARGIN;
+    }
+
+    public function getFieldSize(): float
+    {
+        return self::FIELD_SIZE;
+    }
+
+    public function getFieldMargin(): float
+    {
+        return self::FIELD_MARGIN;
+    }
 
     public function getUnit()
     {
@@ -65,6 +107,39 @@ class TZe_24mm_E extends TZe_24mm
     public function getSupportTitle()
     {
         return true;
+    }
+
+    protected function getContentEditorConfig(): array
+    {
+        return [
+            'barcode_margin' => $this->getBarcodeMargin(),
+            'barcode1D_placement' => 'text_column',
+            'barcode_size' => 2,
+            'barcode2D_h_align' => 'L',
+            'barcode2D_v_align' => 'T',
+
+            'tag_font_size' => $this->getTagSize(),
+
+            'title_font_size' => $this->getTitleSize(),
+            'title_margin' => .5,
+            'title_font' => 'freesans',
+
+            'field_label_font_size' => 2,
+            'field_label_margin' => $this->getLabelMargin(),
+            'field_label_font' => 'freesans',
+
+            'field_value_font_size' => 1.8,
+            'field_value_margin' => -1.85,
+            'field_value_font' => 'freemono',
+
+            'tag_offset_y' => 2.5,
+            'tag_alignment' => 'L',
+            'tag_position_mode' => 'under_barcode',
+            'tag_font' => 'freesans',
+            'logo_h_align' => 'R',
+            'text_render_mode' => 'block',
+            'text_area_offset_y' => 2.0,
+        ];
     }
 
     public function write($pdf, $record)

@@ -16,9 +16,51 @@ class L7163_A extends L7163
 
     private const LABEL_SIZE = 3.35;
 
+    private const LABEL_MARGIN = -0.30;
+
     private const FIELD_SIZE = 4.80;
 
     private const FIELD_MARGIN = 0.20;
+
+    public function getBarcodeMargin()
+    {
+        return self::BARCODE_MARGIN;
+    }
+
+    public function getTagSize()
+    {
+        return self::TAG_SIZE;
+    }
+
+    public function getTitleSize()
+    {
+        return self::TITLE_SIZE;
+    }
+
+    public function getTitleMargin()
+    {
+        return self::TITLE_MARGIN;
+    }
+
+    public function getLabelSize()
+    {
+        return self::LABEL_SIZE;
+    }
+
+    public function getLabelMargin()
+    {
+        return self::LABEL_MARGIN;
+    }
+
+    public function getFieldSize()
+    {
+        return self::FIELD_SIZE;
+    }
+
+    public function getFieldMargin()
+    {
+        return self::FIELD_MARGIN;
+    }
 
     public function getUnit()
     {
@@ -73,6 +115,39 @@ class L7163_A extends L7163
     public function getSupportTitle()
     {
         return true;
+    }
+
+    public function get2DBarcodeSize()
+    {
+        return 31;
+    }
+
+    protected function getContentEditorConfig(): array
+    {
+        return [
+            'barcode_margin' => $this->getBarcodeMargin(),
+            'barcode_2d_size' => $this->get2DBarcodeSize(),
+            'tag_font_size' => $this->getTagSize(),
+            'tag_offset_x' => 6,
+            'title_font_size' => $this->getTitleSize(),
+            'title_margin' => $this->getTitleMargin(),
+            'field_label_font_size' => $this->getLabelSize(),
+            'field_label_margin' => $this->getLabelMargin(),
+            'field_value_font_size' => $this->getFieldSize(),
+            'field_value_margin' => $this->getFieldMargin(),
+        ];
+    }
+
+    protected function getSupportsEditorConfig(): array
+    {
+        return [
+            'asset_tag' => $this->getSupportAssetTag(),
+            'barcode_1d' => $this->getSupport1DBarcode(),
+            'barcode_2d' => $this->getSupport2DBarcode(),
+            'fields' => $this->getSupportFields(),
+            'logo' => $this->getSupportLogo(),
+            'title' => $this->getSupportTitle(),
+        ];
     }
 
     public function write($pdf, $record)

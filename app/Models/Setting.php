@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Helpers\Helper;
 use App\Rules\CssColor;
+use App\Models\Labels\CustomUserLabel;
+use App\Models\Labels\Label;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -485,5 +487,26 @@ class Setting extends Model
     public static function get_client_side_key_path()
     {
         return self::get_fresh_file_path('ldap_client_tls_key', 'ldap_client_tls.key');
+    }
+
+    public function getLabel2TemplateDisplayAttribute(): string
+    {
+        $value = $this->label2_template;
+
+        if (! $value) {
+            return 'DefaultLabel';
+        }
+
+        if (str_starts_with($value, 'custom:')) {
+            $id = (int) str_replace('custom:', '', $value);
+
+            return CustomUserLabel::find($id)->name ?? $value;
+        }
+
+        try {
+            return Label::find($value)?->getName() ?? $value;
+        } catch (\Throwable $e) {
+            return $value;
+        }
     }
 }

@@ -168,6 +168,25 @@ class _38310012 extends RectangleSheet
         return true;
     }
 
+    protected function getContentEditorConfig(): array
+    {
+        return [
+            'barcode_2d_size' => $this->getLabelHeight() - (2 * self::CONTENT_MARGIN),
+            'barcode_margin' => self::QR_GUTTER,
+
+            'title_font_size' => 2.6,
+            'title_margin' => self::TITLE_MARGIN,
+
+            'field_label_font_size' => 2.0,
+            'field_label_margin' => 0,
+            'field_label_font' => 'freesans',
+
+            'field_value_font_size' => 2.0,
+            'field_value_margin' => self::FIELD_MARGIN,
+            'field_value_font' => 'freesans',
+        ];
+    }
+
     public function write($pdf, $record)
     {
         // The QR code is a square occupying (nearly) the full label height,
