@@ -34,6 +34,7 @@ use App\Notifications\CheckoutConsumableNotification;
 use App\Notifications\CheckoutLicenseSeatNotification;
 use Exception;
 use GuzzleHttp\Exception\ClientException;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notification as BaseNotification;
 use Illuminate\Support\Facades\Context;
@@ -172,6 +173,10 @@ class CheckoutableListener
     {
         Log::debug('onCheckedIn in the Checkoutable listener fired');
 
+        if ($event->checkedOutTo instanceof User && $event->checkoutable) {
+            $this->retirePendingAcceptances($event->checkoutable, $event->checkedOutTo);
+        }
+
         if ($this->shouldNotSendAnyNotifications($event->checkoutable)) {
             return;
         }
@@ -187,18 +192,6 @@ class CheckoutableListener
             /**
              * Send the appropriate notification
              */
-            if ($event->checkedOutTo && $event->checkoutable) {
-                $acceptances = CheckoutAcceptance::where('checkoutable_id', $event->checkoutable->id)
-                    ->where('assigned_to_id', $event->checkedOutTo->id)
-                    ->get();
-
-                foreach ($acceptances as $acceptance) {
-                    if ($acceptance->isPending()) {
-                        $acceptance->delete();
-                    }
-                }
-            }
-
             $mailable = $this->getCheckinMailType($event);
             $notifiable = $this->getNotifiableUser($event);
 
@@ -268,6 +261,63 @@ class CheckoutableListener
                 return redirect()->back()->with('warning', ucfirst(Setting::getSettings()->webhook_selected).trans('admin/settings/message.webhook.webhook_fail'));
             }
         }
+    }
+
+    /**
+     * Clear the holder's outstanding acceptance requests for checked-in item.
+     *
+     * Assets and license seats are 1:1 with their acceptance rows. Accessories
+     * are not: accessories_checkout holds one row per unit while an acceptance
+     * row covers a whole checkout action and carries its qty, so checking one
+     * unit in retires one unit rather than a row that may be worth three.
+     *
+     * Only ever called for a User holder. Acceptances are created for users
+     * alone, so assigned_to_id holds a user id — matching a Location or Asset
+     * id against it would clear a different holder's rows by collision.
+     */
+    private function retirePendingAcceptances(Model $checkoutable, User $checkedOutTo): void
+    {
+        $acceptances = CheckoutAcceptance::pending()
+            ->where('checkoutable_type', $checkoutable->getMorphClass())
+            ->where('checkoutable_id', $checkoutable->getKey())
+            ->where('assigned_to_id', $checkedOutTo->id)
+            ->orderBy('id')
+            ->get();
+
+        if ($checkoutable instanceof Accessory) {
+            $this->retireOneUnitOfPendingQty($acceptances);
+
+            return;
+        }
+
+        $acceptances->each(fn (CheckoutAcceptance $acceptance) => $acceptance->delete());
+    }
+
+    /**
+     * Retire one unit from the oldest pending row, deleting it at zero.
+     *
+     * Accessory units are fungible — no serial, no tag — so there is no fact
+     * about which unit came back; a checkin is defined to retire an unaccepted
+     * one, and to do nothing when none are left.
+     *
+     * @param  Collection<int, CheckoutAcceptance>  $acceptances
+     */
+    private function retireOneUnitOfPendingQty($acceptances): void
+    {
+        $acceptance = $acceptances->first();
+
+        if (! $acceptance) {
+            return;
+        }
+
+        // Null qty means one unit, as in AcceptanceController and LogListener.
+        if (($acceptance->qty ?? 1) <= 1) {
+            $acceptance->delete();
+
+            return;
+        }
+
+        $acceptance->decrement('qty');
     }
 
     /**

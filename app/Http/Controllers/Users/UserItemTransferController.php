@@ -10,7 +10,6 @@ use App\Models\Accessory;
 use App\Models\AccessoryCheckout;
 use App\Models\Asset;
 use App\Models\CheckoutAcceptance;
-use App\Models\License;
 use App\Models\LicenseSeat;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
@@ -224,13 +223,9 @@ class UserItemTransferController extends Controller
     {
         $source = $checkout->assignedTo;
 
-        CheckoutAcceptance::pending()
-            ->where('checkoutable_type', Accessory::class)
-            ->where('checkoutable_id', $accessory->id)
-            ->where('assigned_to_id', $checkout->assigned_to)
-            ->get()
-            ->each(fn ($a) => $a->delete());
-
+        // You might think you need to clean up acceptances here but that
+        // is going to be handled in the CheckoutableListener that
+        // is run when the event below is fired.
         $checkout->delete();
 
         event(new CheckoutableCheckedIn($accessory, $source, auth()->user(), $note, date('Y-m-d H:i:s')));
@@ -253,8 +248,8 @@ class UserItemTransferController extends Controller
     private function transferLicenseSeat(LicenseSeat $seat, User $source, User $target, ?string $note): void
     {
         CheckoutAcceptance::pending()
-            ->where('checkoutable_type', License::class)
-            ->where('checkoutable_id', $seat->license_id)
+            ->where('checkoutable_type', LicenseSeat::class)
+            ->where('checkoutable_id', $seat->id)
             ->where('assigned_to_id', $source->id)
             ->get()
             ->each(fn ($a) => $a->delete());

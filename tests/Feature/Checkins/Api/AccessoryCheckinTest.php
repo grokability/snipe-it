@@ -134,11 +134,17 @@ class AccessoryCheckinTest extends TestCase implements TestsFullMultipleCompanie
         );
     }
 
-    public function test_checkin_clears_pending_acceptance()
+    public function test_checkin_clears_pending_acceptance_when_notifications_are_fully_disabled()
     {
+        $this->settings->disableAdminCC()->disableAdminCCAlways()->disableSlackWebhook();
+
         $user = User::factory()->create();
         $accessory = Accessory::factory()->checkedOutToUser($user)->create();
-        $accessory->category->update(['require_acceptance' => true, 'checkin_email' => true]);
+
+        $accessory->category->update([
+            'require_acceptance' => true,
+            'checkin_email' => false,
+        ]);
 
         $checkout = $accessory->checkouts()
             ->where('assigned_type', User::class)
