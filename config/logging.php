@@ -125,6 +125,19 @@ $config = [
             'days' => 30,
         ],
 
+        // Sync-adapter operational log. Every per-record failure,
+        // unmatched-user warning, and sync-run abort from the adapter
+        // pipeline lands here instead of the default laravel.log so
+        // admins can tail a focused stream when troubleshooting a
+        // Fleet / Kandji / Intune / etc. sync without wading through
+        // unrelated warnings. Same daily-rotation shape as `admin`.
+        'sync-adapters' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/sync-adapters.log'),
+            'level' => env('LOG_LEVEL', 'info'),
+            'days' => 30,
+        ],
+
         'rollbar' => [
             'driver' => 'monolog',
             'handler' => MonologHandler::class,
