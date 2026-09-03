@@ -195,6 +195,41 @@
                                     @endforeach
                                 @endif
 
+                                {{-- Sync-adapter-populated network / OS
+                                     inventory. Only renders per-field
+                                     when a value exists so assets that
+                                     never got synced (or that skipped
+                                     these mappings) don't show empty
+                                     rows. --}}
+                                @if ($asset->externalSource)
+                                    @if ($asset->externalSource->primary_mac)
+                                        <x-data-row :label="trans('admin/settings/general.sync_adapter_field_mac')" copy_what="external_mac">
+                                            {{ $asset->externalSource->primary_mac }}
+                                        </x-data-row>
+                                    @endif
+                                    @if ($asset->externalSource->primary_ip)
+                                        <x-data-row :label="trans('admin/settings/general.sync_adapter_field_ip')" copy_what="external_ip">
+                                            {{ $asset->externalSource->primary_ip }}
+                                        </x-data-row>
+                                    @endif
+                                    @if ($asset->externalSource->os)
+                                        <x-data-row :label="trans('admin/settings/general.sync_adapter_field_os')" copy_what="external_os">
+                                            {{ $asset->externalSource->os }}
+                                        </x-data-row>
+                                    @endif
+                                    @if ($asset->externalSource->os_version)
+                                        <x-data-row :label="trans('admin/settings/general.sync_adapter_field_os_version')" copy_what="external_os_version">
+                                            {{ $asset->externalSource->os_version }}
+                                        </x-data-row>
+                                    @endif
+                                    @if ($asset->externalSource->last_seen)
+                                        <x-data-row :label="trans('admin/settings/general.sync_adapter_field_last_seen')" copy_what="external_last_seen">
+                                            {{ $asset->externalSource->last_seen->diffForHumans() }}
+                                            <span class="text-muted">({{ Helper::getFormattedDateObject($asset->externalSource->last_seen, 'datetime', false) }})</span>
+                                        </x-data-row>
+                                    @endif
+                                @endif
+
 
 
                                 {{-- journal() chains off assetlog() which orders created_at DESC,
