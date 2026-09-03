@@ -1243,7 +1243,7 @@ thead th.css-history > .th-inner::before {
 }
 .form-group.has-error label,
 .form-group.has-error .help-block {
-  color: #a94442;
+  color: var(--text-danger);
 }
 .select2-container--default .select2-selection--multiple {
   border-radius: 0px;
@@ -3728,6 +3728,48 @@ dl.table-display {
   background-color: var(--main-theme-hover) !important;
   color: var(--nav-primary-text-color) !important;
   border-color: var(--main-theme-hover) !important;
+}
+/*
+ * Vertical side-tabs inside a box, used by the Settings → Sync Adapters
+ * page. Negative margin cancels .box-body's 10px padding on the sides
+ * we want flush against the box edges. Active-tab left border uses the
+ * same accent color and font-weight bump that .nav-tabs-custom uses
+ * for horizontal tabs, so the two visually match.
+ */
+.sync-adapters-tabs {
+  margin: -10px 0 -10px -10px;
+  display: flex;
+}
+.sync-adapters-tabs .adapter-tab-list {
+  flex: 0 0 200px;
+  padding: 10px 0;
+  border-right: var(--table-border-row);
+}
+/* AdminLTE ships a hardcoded #f4f4f4 border-bottom between vertical
+   nav-stacked items via `.box .nav-stacked > li`, which reads as white
+   against the dark box background. Override with the theme-aware
+   variable to match the box's internal borders in both modes. */
+.sync-adapters-tabs .adapter-tab-list .nav-stacked > li {
+  border-bottom-color: var(--table-border-row-color);
+}
+.sync-adapters-tabs .adapter-tab-list .nav-pills > li > a {
+  color: var(--color-fg);
+  padding: 8px 16px;
+  border-left: 3px solid transparent;
+  border-radius: 0;
+  background-color: transparent;
+}
+.sync-adapters-tabs .adapter-tab-list .nav-pills > li.active > a,
+.sync-adapters-tabs .adapter-tab-list .nav-pills > li.active > a:hover,
+.sync-adapters-tabs .adapter-tab-list .nav-pills > li.active > a:focus {
+  color: var(--color-fg);
+  background-color: transparent;
+  border-left-color: var(--main-theme-color);
+  font-weight: bold;
+}
+.sync-adapters-tabs .adapter-tab-content {
+  flex: 1;
+  padding: 15px 20px;
 }
 
 
