@@ -329,6 +329,30 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'authorize:superuser
     Route::post('slack', [SettingsController::class, 'postSlack'])
         ->name('settings.slack.save');
 
+    Route::get('adapters', [SettingsController::class, 'getAdapters'])
+        ->name('settings.adapters.index')
+        ->breadcrumbs(fn (Trail $trail) => $trail->parent('settings.index')
+            ->push(trans('admin/settings/general.sync_adapters_title'), route('settings.adapters.index')));
+
+    Route::post('adapters', [SettingsController::class, 'postCreateAdapterInstance'])
+        ->name('settings.adapters.create');
+
+    Route::post('adapters/{instance}', [SettingsController::class, 'postAdapterConfig'])
+        ->name('settings.adapters.save')
+        ->missing(fn () => abort(404));
+
+    Route::post('adapters/{instance}/sync', [SettingsController::class, 'postAdapterSync'])
+        ->name('settings.adapters.sync')
+        ->missing(fn () => abort(404));
+
+    Route::post('adapters/{instance}/refresh-groups', [SettingsController::class, 'postAdapterRefreshGroups'])
+        ->name('settings.adapters.refresh_groups')
+        ->missing(fn () => abort(404));
+
+    Route::delete('adapters/{instance}', [SettingsController::class, 'deleteAdapterInstance'])
+        ->name('settings.adapters.destroy')
+        ->missing(fn () => abort(404));
+
     Route::get('asset_tags', [SettingsController::class, 'getAssetTags'])
         ->name('settings.asset_tags.index')
         ->breadcrumbs(fn (Trail $trail) => $trail->parent('settings.index')
