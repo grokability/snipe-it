@@ -235,6 +235,21 @@
         </div>
       </div>
 
+        <div class="col-md-4 col-lg-3 col-sm-6 col-xl-1">
+            <div class="admin box box-default">
+                <div class="box-body text-center">
+                    <h5>
+                        <a href="{{ route('settings.adapters.index') }}" class="settings_button">
+                            <i class="fa-solid fa-network-wired fa-4x" aria-hidden="true"></i>
+                            <br><br>
+                            <span class="name">{{ trans('admin/settings/general.sync_adapters_title') }} <span class="label label-warning">beta</span></span>
+                        </a>
+                    </h5>
+                    <p class="index-block">{{ trans('admin/settings/general.sync_adapters_help') }}</p>
+                </div>
+            </div>
+        </div>
+
       <div class="col-md-4 col-lg-3 col-sm-6 col-xl-1">
         <div class="admin box box-default">
           <div class="box-body text-center">
