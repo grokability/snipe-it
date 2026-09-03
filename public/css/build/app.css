@@ -3741,8 +3741,8 @@ dl.table-display {
   display: flex;
 }
 .sync-adapters-tabs .adapter-tab-list {
-  flex: 0 0 200px;
-  padding: 10px 0;
+  flex: 0 0 300px;
+  padding: 0;
   border-right: var(--table-border-row);
 }
 /* AdminLTE ships a hardcoded #f4f4f4 border-bottom between vertical
@@ -3754,7 +3754,8 @@ dl.table-display {
 }
 .sync-adapters-tabs .adapter-tab-list .nav-pills > li > a {
   color: var(--color-fg);
-  padding: 8px 16px;
+  padding: 10px 16px;
+  padding-left: 10px;
   border-left: 3px solid transparent;
   border-radius: 0;
   background-color: transparent;
