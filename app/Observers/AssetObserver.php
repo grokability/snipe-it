@@ -328,5 +328,12 @@ class AssetObserver
         if ((! is_null($asset->asset_eol_date)) && (! is_null($asset->purchase_date)) && (is_null($asset->model?->eol) || ($asset->model?->eol == 0))) {
             $asset->eol_explicit = true;
         }
+        if ($asset->isDirty(['purchase_date', 'warranty_months'])) {
+            $asset->warranty_expires =
+                $asset->purchase_date && $asset->warranty_months
+                    ? Carbon::parse($asset->purchase_date)
+                    ->addMonths((int)$asset->warranty_months)
+                    : null;
+        }
     }
 }

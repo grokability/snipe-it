@@ -198,6 +198,7 @@ return [
     'exclude_archived' => 'Exclude Archived Assets',
     'exclude_deleted' => 'Exclude Deleted Assets',
     'example' => 'Example: ',
+    'Expiring_Items_Report' => "Expiring Items Report",
     'files' => 'Files',
     'file_name' => 'File Name',
     'file_type' => 'File Type',

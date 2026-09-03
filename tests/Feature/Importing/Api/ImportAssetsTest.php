@@ -395,7 +395,7 @@ class ImportAssetsTest extends ImportDataTestCase implements TestsPermissionsReq
             'category', 'manufacturer_id', 'name', 'tag', 'model_id',
             'model_number', 'purchase_date', 'purchase_cost', 'warranty_months', 'supplier_id',
             'location_id', 'company_id', 'serial', 'assigned_to', 'status_id', 'rtd_location_id',
-            'last_checkout', 'updated_at', 'checkout_counter', 'assigned_type',
+            'last_checkout', 'updated_at', 'checkout_counter', 'assigned_type', 'warranty_expires',
         ];
 
         $this->assertEquals($row['assigneeFullName'], "{$assignee->first_name} {$assignee->last_name}");
@@ -416,6 +416,8 @@ class ImportAssetsTest extends ImportDataTestCase implements TestsPermissionsReq
         $this->assertEquals($row['location'], $updatedAsset->defaultLoc->name);
         $this->assertEquals($row['companyName'], $updatedAsset->company->name);
         $this->assertEquals($row['location'], $updatedAsset->location->name);
+        $this->assertEquals($updatedAsset->purchase_date->copy()->addMonths((int)$updatedAsset->warranty_months)->toDateString(), $updatedAsset->warranty_expires->toDateString()
+        );
         $this->assertEquals(1, $updatedAsset->checkout_counter);
         $this->assertEquals(User::class, $updatedAsset->assigned_type);
 

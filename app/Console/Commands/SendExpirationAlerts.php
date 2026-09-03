@@ -52,7 +52,7 @@ class SendExpirationAlerts extends Command
                 ->filter(fn ($item) => ! empty($item))
                 ->all();
             // Expiring Assets
-            $assets = Asset::getExpiringWarrantyOrEol($alert_interval);
+            $assets = Asset::getExpiringWarrantyOrEol($alert_interval)->get();
 
             $assets->load(['assignedTo', 'supplier']);
 

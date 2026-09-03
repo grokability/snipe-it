@@ -806,6 +806,11 @@
                                             {{ trans('general.depreciation_report') }}
                                         </a>
                                     </li>
+                                    <li {!! (request()->is('reports/expiring-items') ? ' class="active" aria-current="page"' : '') !!}>
+                                        <a href="{{ url('reports/expiring-items') }}">
+                                            {{ trans('general.Expiring_Items_Report') }}
+                                        </a>
+                                    </li>
                                     <li {!! (request()->is('reports/licenses') ? ' class="active" aria-current="page"' : '') !!}>
                                         <a href="{{ url('reports/licenses') }}">
                                             {{ trans('general.license_report') }}
