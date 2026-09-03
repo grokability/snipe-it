@@ -614,6 +614,7 @@ class SettingsController extends Controller
         if (is_null($setting = Setting::getSettings())) {
             return redirect()->to('admin')->with('error', trans('admin/settings/message.update.error'));
         }
+        $wasLabel2Enabled = $setting->label2_enable;
         $setting->label2_enable = $request->input('label2_enable');
         $setting->label2_template = $request->input('label2_template');
         $setting->label2_title = $request->input('label2_title');
@@ -624,7 +625,7 @@ class SettingsController extends Controller
         $setting->label2_2d_target = $request->input('label2_2d_target');
         $setting->label2_fields = $request->input('label2_fields');
         $setting->label2_empty_row_count = $request->input('label2_empty_row_count');
-        if (! $request->boolean('label2_enable')) {
+        if (!$wasLabel2Enabled && !$request->boolean('label2_enable')) {
             $setting->labels_per_page = $request->input('labels_per_page');
             $setting->labels_width = $request->input('labels_width');
             $setting->labels_height = $request->input('labels_height');
