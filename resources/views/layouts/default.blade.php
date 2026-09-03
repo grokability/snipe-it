@@ -1112,11 +1112,13 @@
 
             // Reference: https://jqueryvalidation.org/validate/
             //
-            // Two form-ids get the same validator: `create-form` is the default
-            // id emitted by the form blade component, and `checkout_form` is
-            // the anti-double-submit id used by the six checkout flows. Both
-            // need the same error styling + select2 error placement, so we
-            // init in a loop instead of duplicating the options block.
+            // A handful of form-ids get the same validator: `create-form` is
+            // the default id emitted by the form blade component, `checkout_form`
+            // is the anti-double-submit id used by the six checkout flows, and
+            // the sync-adapter tabs each render their own form as
+            // `adapter-form-<slug>`. Everyone needs the same error styling +
+            // select2 error placement, so we init in a loop instead of
+            // duplicating the options block.
             var snipeValidatorOptions = {
                 ignore: 'input[type=hidden]',
                 errorClass: 'alert-msg',
@@ -1164,7 +1166,7 @@
 
             };
 
-            $('#create-form, #checkout_form, #userForm, #adjustQuantityForm').each(function () {
+            $('#create-form, #checkout_form, #userForm, #adjustQuantityForm, form[id^="adapter-form-"]').each(function () {
                 $(this).validate(snipeValidatorOptions);
             });
 
