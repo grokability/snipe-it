@@ -1,0 +1,299 @@
+{{-- Shared form frame for a sync-adapter settings tab. The
+     adapter_credentials partial drops its schema-driven credential
+     inputs into the default slot. The URL row, active/heartbeat
+     toggles, and mapping fieldset stay here because they're identical
+     across every adapter regardless of credential shape.
+
+     Called from resources/views/settings/adapters/adapter_credentials.blade.php
+     which passes the hydrated adapter through the `adapter` prop
+     and puts the credential inputs in the default slot. --}}
+@props(['adapter'])
+
+@php
+    $slug = $adapter->name();
+    $urlField = $slug.'_url';
+    $activeField = $slug.'_active';
+    $locked = config('app.lock_passwords') === true;
+@endphp
+<x-form
+    :id="'adapter-form-' . $slug"
+    :route="route('settings.adapters.save', $slug)"
+    data-sync-url="{{ route('settings.adapters.sync', $slug) }}"
+    data-enabled="{{ $adapter->isEnabled() ? '1' : '0' }}"
+>
+    <x-demo-callout/>
+
+    {{-- Rename field. Slug is immutable because SyncAdapterConfig
+         keys off it; label is free to change so admins can rename
+         after creation (e.g. "Fleet" -> "Production Fleet" once
+         they add a second staging instance). --}}
+    <x-form.row
+        :label="trans('admin/settings/general.sync_adapter_add_label_label')"
+        name="label"
+        input_div_class="col-md-8"
+        :help_text="trans('admin/settings/general.sync_adapter_add_label_help')"
+        required
+    >
+        <x-slot:input>
+            <x-input.text
+                name="label"
+                :value="old('label', $adapter->label())"
+                :disabled="$locked"
+                required
+            />
+        </x-slot:input>
+    </x-form.row>
+
+    <x-form.checkbox-row
+        :name="$activeField"
+        :checked="$adapter->isActive()"
+        :label="trans('admin/settings/general.sync_adapter_active_label')"
+        :help_text="trans('admin/settings/general.sync_adapter_active_help')"
+        :disabled="$locked"
+    />
+
+    <x-form.checkbox-row
+        :name="$slug . '_log_heartbeats'"
+        :checked="$adapter->logsHeartbeats()"
+        :label="trans('admin/settings/general.sync_adapter_log_heartbeats_label')"
+        :help_text="trans('admin/settings/general.sync_adapter_log_heartbeats_help')"
+        :disabled="$locked"
+    />
+
+    <x-form.row
+        :label="trans('admin/settings/general.sync_adapter_base_url')"
+        :name="$urlField"
+        input_div_class="col-md-8"
+        :help_text="trans('admin/settings/general.sync_adapter_base_url_help', ['type' => $adapter::typeLabel()])"
+        required
+    >
+        <x-slot:input>
+            <x-input.text
+                type="url"
+                :name="$urlField"
+                :value="old($urlField, $adapter->getUrl())"
+                :disabled="$locked"
+                :placeholder="$adapter->baseUrlPlaceholder()"
+                input_icon="link"
+                input_group_addon="right"
+                required
+            />
+        </x-slot:input>
+    </x-form.row>
+
+    {{ $slot }}
+
+    {{-- Default category for AssetModels auto-created from this
+         adapter. Vendors don't send Snipe-IT's category concept but
+         every AssetModel needs one. --}}
+    <x-input.category-select
+        :name="$slug . '_default_category_id'"
+        :label="trans('admin/settings/general.sync_adapter_default_category')"
+        :selected="$adapter->defaultCategoryId()"
+        categoryType="asset"
+        :help_text="trans('admin/settings/general.sync_adapter_default_category_help')"
+        required
+    />
+
+    {{-- Default status label for auto-created assets. Required so
+         admins have to consciously pick a workflow bucket for
+         discovered devices instead of Snipe-IT defaulting to
+         something surprising. --}}
+    <x-form.row
+        :label="trans('admin/settings/general.sync_adapter_default_status')"
+        :name="$slug . '_default_status_id'"
+        input_div_class="col-md-7"
+        :help_text="trans('admin/settings/general.sync_adapter_default_status_help')"
+        required
+    >
+        <x-slot:input>
+            <x-input.select
+                :name="$slug . '_default_status_id'"
+                :id="$slug . '_default_status_id'"
+                :options="\App\Models\Statuslabel::orderBy('name')->pluck('name', 'id')->all()"
+                :selected="$adapter->defaultStatusId()"
+                :includeEmpty="true"
+                style="width: 100%"
+                :disabled="$locked"
+                required
+            />
+        </x-slot:input>
+        <x-slot:after_input>
+            @can('create', \App\Models\Statuslabel::class)
+                <a
+                    href="{{ route('modal.show', ['type' => 'statuslabel']) }}"
+                    data-toggle="modal"
+                    data-target="#createModal"
+                    data-select="{{ $slug . '_default_status_id' }}"
+                    class="btn btn-sm btn-theme"
+                >{{ trans('button.new') }}</a>
+            @endcan
+        </x-slot:after_input>
+    </x-form.row>
+
+    {{-- Asset tag pattern. Optional. Grouped with the mapping-related
+         options below rather than the required identity fields above
+         so the required section stays contiguous. --}}
+    <x-form.row
+        :label="trans('admin/settings/general.sync_adapter_asset_tag_pattern')"
+        :name="$slug . '_asset_tag_pattern'"
+        input_div_class="col-md-8"
+        help_html="{!! trans('admin/settings/general.sync_adapter_asset_tag_pattern_help') !!}"
+    >
+        <x-slot:input>
+            <x-input.text
+                :name="$slug . '_asset_tag_pattern'"
+                :value="old($slug . '_asset_tag_pattern', $adapter->assetTagPattern())"
+                :disabled="$locked"
+                placeholder="{{ $adapter->name() }}-{serial}"
+            />
+        </x-slot:input>
+    </x-form.row>
+
+    {{-- User assignment via sync. Strategy 'none' disables the
+         lookup entirely. When set, the vendor's user email or
+         username on each record is matched against Snipe-IT users
+         and the asset checks out to the matched user. --}}
+    <x-form.row
+        :label="trans('admin/settings/general.sync_adapter_user_match_strategy')"
+        :name="$slug . '_user_match_strategy'"
+        input_div_class="col-md-8"
+        help_html="{!! trans('admin/settings/general.sync_adapter_user_match_strategy_help') !!}"
+    >
+        <x-slot:input>
+            {{-- Select2 for visual consistency with the other pickers on
+                 this page, but the option pool is a fixed 3-value enum
+                 so the built-in search box is hidden via
+                 data-minimum-results-for-search. --}}
+            <select
+                name="{{ $slug }}_user_match_strategy"
+                class="select2 form-control"
+                style="width: 100%"
+                data-minimum-results-for-search="Infinity"
+                @disabled($locked)
+            >
+                @foreach ([
+                    'none' => trans('admin/settings/general.sync_adapter_user_match_none'),
+                    'email' => trans('admin/settings/general.sync_adapter_user_match_email'),
+                    'username' => trans('admin/settings/general.sync_adapter_user_match_username'),
+                ] as $value => $label)
+                    <option value="{{ $value }}" @selected($adapter->userMatchStrategy() === $value)>{{ $label }}</option>
+                @endforeach
+            </select>
+        </x-slot:input>
+    </x-form.row>
+
+    {{-- Suppress the checkout notification email on sync-driven
+         assignments. Default is suppress so admins don't inbox-spam
+         users every time a scheduled sync re-confirms the same
+         assignment. --}}
+    <x-form.checkbox-row
+        :name="$slug . '_suppress_notifications'"
+        :checked="$adapter->suppressesNotifications()"
+        :label="trans('admin/settings/general.sync_adapter_suppress_notifications_label')"
+        :disabled="$locked"
+    />
+
+    {{-- Opt-in: check the asset in when the vendor reports no
+         assigned user. Default off because a single missed sync
+         cycle (device offline, empty field on a fresh enrollment)
+         would flap the assignment. --}}
+    <x-form.checkbox-row
+        :name="$slug . '_checkin_on_null_user'"
+        :checked="$adapter->checksInOnNullUser()"
+        :label="trans('admin/settings/general.sync_adapter_checkin_on_null_user_label')"
+        :help_text="trans('admin/settings/general.sync_adapter_checkin_on_null_user_help')"
+        :disabled="$locked"
+    />
+
+    @if ($adapter->supportsGroupScoping() && $adapter->isEnabled())
+        @php
+            $cachedGroups = $adapter->cachedGroups();
+            $groupMappings = $adapter->groupMappings();
+        @endphp
+        <fieldset>
+            <x-form.legend icon="tip" help_text="{{ trans('admin/settings/general.sync_adapter_group_mapping_intro', ['label' => $adapter->vendorGroupLabel()]) }}">
+                {{ trans('admin/settings/general.sync_adapter_group_mapping_title', ['label' => $adapter->vendorGroupLabel()]) }}
+            </x-form.legend>
+
+            @if (empty($cachedGroups))
+                <div class="form-group">
+                    <div class="col-md-8 col-md-offset-3">
+                        <p class="help-block">
+                            {{ trans('admin/settings/general.sync_adapter_group_mapping_empty', ['label' => strtolower($adapter->vendorGroupLabel())]) }}
+                        </p>
+                    </div>
+                </div>
+            @else
+                @foreach ($cachedGroups as $group)
+                    <x-input.company-select
+                        :name="$slug . '_group_mapping[' . $group['id'] . ']'"
+                        :label="$group['label']"
+                        :selected="$groupMappings[$group['id']] ?? null"
+                        hideNewButton
+                    />
+                @endforeach
+            @endif
+        </fieldset>
+    @endif
+
+    {{-- Per-field target mapping.  --}}
+    <fieldset>
+        <x-form.legend icon="tip" help_text="{{ trans('admin/settings/general.sync_adapter_mapping_section_intro') }}">
+            {{ trans('admin/settings/general.sync_adapter_mapping_section_title', ['type' => $adapter::typeLabel()]) }}
+        </x-form.legend>
+
+
+        @foreach (\App\SyncAdapters\Support\MappingTargets::FIELDS as $mappingField)
+            <x-form.row
+                :label="trans('admin/settings/general.sync_adapter_field_' . $mappingField)"
+                :name="$slug . '_mapping_' . $mappingField"
+                input_div_class="col-md-8"
+            >
+                <x-slot:input>
+                    <x-input.select
+                        :name="$slug . '_mapping[' . $mappingField . ']'"
+                        :options="\App\SyncAdapters\Support\MappingTargets::options($mappingField)"
+                        :selected="$adapter->mappingFor($mappingField)"
+                        style="width: 100%"
+                        :disabled="$locked"
+                    />
+                </x-slot:input>
+            </x-form.row>
+        @endforeach
+
+        @php
+            $extraFields = $adapter->extraFields();
+        @endphp
+
+        @if (! empty($extraFields))
+            <x-form.legend icon="tip" help_text="{{ trans('admin/settings/general.sync_adapter_extra_fields_section_intro') }}">
+                {{ trans('admin/settings/general.sync_adapter_extra_fields_section_title', ['type' => $adapter::typeLabel()]) }}
+            </x-form.legend>
+
+            @foreach ($extraFields as $extraKey => $extraEntry)
+                @php
+                    // Entry can be a plain label string or an array
+                    // with label + type. Normalize to both.
+                    $extraLabel = is_array($extraEntry) ? $extraEntry['label'] : $extraEntry;
+                    $extraType = (is_array($extraEntry) && isset($extraEntry['type'])) ? $extraEntry['type'] : 'text';
+                @endphp
+                <x-form.row
+                    :label="$extraLabel"
+                    :name="$slug . '_mapping_' . $extraKey"
+                    input_div_class="col-md-8"
+                >
+                    <x-slot:input>
+                        <x-input.select
+                            :name="$slug . '_mapping[' . $extraKey . ']'"
+                            :options="\App\SyncAdapters\Support\MappingTargets::optionsForExtra($extraType)"
+                            :selected="$adapter->mappingFor($extraKey)"
+                            style="width: 100%"
+                            :disabled="$locked"
+                        />
+                    </x-slot:input>
+                </x-form.row>
+            @endforeach
+        @endif
+    </fieldset>
+</x-form>
