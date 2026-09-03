@@ -35,6 +35,7 @@ return new class extends Migration
             'unifi' => 'UniFi',
             'meraki_sm' => 'Meraki Systems Manager',
             'mosyle' => 'Mosyle',
+            'ninjaone' => 'NinjaOne',
             'osctrl' => 'osctrl',
             'workspace_one' => 'Omnissa Workspace ONE',
             'zentral' => 'Zentral',
