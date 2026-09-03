@@ -65,7 +65,9 @@ class RouteServiceProvider extends ServiceProvider
     protected function mapApiRoutes()
     {
         Route::group([
-            'middleware' => 'auth:api',
+            // oidc before api: Passport clears the Authorization header on
+            // failure, so it must run after the OIDC guard. See Http/Kernel.
+            'middleware' => 'auth:oidc,api',
             //            'namespace' => $this->namespace, // this might also be a problem? I don't really know :/
             'prefix' => 'api',
         ], function ($router) {

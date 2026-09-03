@@ -48,6 +48,13 @@ return [
             'provider' => 'users',
             'hash' => false,
         ],
+
+        // Federated OIDC bearer guard (see config/oidc.php). Layered with
+        // Passport via `auth:oidc,api`; inert until OIDC is configured.
+        'oidc' => [
+            'driver' => 'oidc',
+            'provider' => 'users',
+        ],
     ],
 
     /*
