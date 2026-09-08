@@ -72,7 +72,7 @@ class NinjaOneComposedNotesPushTest extends TestCase
     public function test_composed_notes_no_op_when_target_field_blank()
     {
         // No push_notes_target set. Even with a template, we don't
-        // guess a field name; skip silently. asset_tag push still
+        // guess a field name and skip silently. asset_tag push still
         // fires because it has its own dedicated slot.
         $instance = SyncAdapterInstance::where('slug', 'ninjaone')->firstOrFail();
         SyncAdapterConfig::put($instance->id, 'url', 'https://example.com/ninja');
