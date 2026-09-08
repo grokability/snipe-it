@@ -642,7 +642,7 @@
                         <div class="input-group">
                             <x-input.text
                                 name="test_sample_username"
-                                wire:model.live.debounce.500ms="test_sample_username"
+                                wire:model.live="test_sample_username"
                                 :placeholder="trans('admin/settings/general.ldap_wizard.mapping.sample_username_placeholder')"
                                 :ignore-autofill="true"
                             />
