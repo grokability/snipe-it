@@ -1484,6 +1484,11 @@ class LdapSettings extends Component
             return;
         }
 
+        // Clear AD  here so the component state matches what the user sees.
+        if ($property === 'is_ad' && !$this->is_ad && $this->ad_domain !== '') {
+            $this->ad_domain = '';
+        }
+
         // Every string-typed prop that participates in the LDAP
         // handshake or a downstream test surface, grouped by wizard
         // step. Shared between the trim-on-assignment and the
