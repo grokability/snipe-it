@@ -13,7 +13,7 @@ use Tests\TestCase;
 
 /**
  * Covers the "Sync Now" button flow (POST /admin/adapters/fleet/sync)
- * and the snipeit:sync-inventory artisan command targeted at Fleet.
+ * and the snipeit:pull-inventory artisan command targeted at Fleet.
  * Both share the same adapter plumbing, but each entry point is tested
  * independently so a regression in either path is caught.
  */
@@ -79,14 +79,14 @@ class FleetSyncNowTest extends TestCase
 
     public function test_artisan_command_fails_when_fleet_is_not_configured()
     {
-        $exit = Artisan::call('snipeit:sync-inventory', ['adapter' => 'fleet']);
+        $exit = Artisan::call('snipeit:pull-inventory', ['adapter' => 'fleet']);
 
         $this->assertSame(1, $exit);
     }
 
     public function test_artisan_command_fails_with_unknown_instance()
     {
-        $exit = Artisan::call('snipeit:sync-inventory', ['adapter' => 'nope']);
+        $exit = Artisan::call('snipeit:pull-inventory', ['adapter' => 'nope']);
 
         $this->assertSame(1, $exit);
         $this->assertStringContainsString('Unknown adapter instance', Artisan::output());
@@ -104,7 +104,7 @@ class FleetSyncNowTest extends TestCase
             ]),
         ]);
 
-        $exit = Artisan::call('snipeit:sync-inventory', ['adapter' => $fleet->slug]);
+        $exit = Artisan::call('snipeit:pull-inventory', ['adapter' => $fleet->slug]);
 
         $this->assertSame(0, $exit);
         $this->assertDatabaseCount('asset_external_sources', 1);

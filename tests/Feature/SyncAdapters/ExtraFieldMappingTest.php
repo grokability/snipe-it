@@ -118,23 +118,40 @@ class ExtraFieldMappingTest extends TestCase
         ]);
     }
 
-    public function test_extra_field_options_only_include_skip_and_custom_targets()
+    public function test_extra_field_options_include_skip_native_and_custom_targets_for_text_type()
     {
         CustomField::factory()->create(['element' => 'text', 'name' => 'Team Assignment']);
 
-        $options = MappingTargets::optionsForExtra();
+        $options = MappingTargets::optionsForExtra('text');
 
-        // First option is always skip.
         $this->assertArrayHasKey('skip', $options);
 
-        // Every non-skip option is a custom:{id} target. Extras never
-        // route to native or external targets by design.
+        // Text-type extras can route to native asset_tag / notes so
+        // admins whose vendor stores per-device metadata in labels /
+        // blueprints / teams can land it in a native column instead
+        // of forcing a custom field. Everything else must be
+        // custom:{id}.
+        $this->assertArrayHasKey('native:asset_tag', $options);
+        $this->assertArrayHasKey('native:notes', $options);
         foreach ($options as $target => $label) {
-            if ($target === 'skip') {
+            if (in_array($target, ['skip', 'native:asset_tag', 'native:notes'], true)) {
                 continue;
             }
             $this->assertStringStartsWith('custom:', $target);
         }
+    }
+
+    public function test_boolean_extra_field_options_stay_custom_only()
+    {
+        CustomField::factory()->create(['element' => 'checkbox', 'name' => 'Flagged']);
+
+        $options = MappingTargets::optionsForExtra('boolean');
+
+        // Boolean-typed extras stay custom-fields-only because no
+        // native asset column carries a boolean semantic.
+        $this->assertArrayHasKey('skip', $options);
+        $this->assertArrayNotHasKey('native:asset_tag', $options);
+        $this->assertArrayNotHasKey('native:notes', $options);
     }
 
     public function test_asset_tag_native_target_overwrites_the_asset_tag_column()
