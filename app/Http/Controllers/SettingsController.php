@@ -910,8 +910,8 @@ class SettingsController extends Controller
         if ($requestedSlug !== null) {
             $selectedSlug = $requestedSlug;
         } else {
-            $firstEnabled = collect($adapters)->first(fn ($a) => $a->isEnabled());
-            $selectedSlug = $firstEnabled?->name() ?? ($adapters[0]->name() ?? null);
+            $default = collect($adapters)->first(fn ($a) => $a->isEnabled()) ?? ($adapters[0] ?? null);
+            $selectedSlug = $default?->name();
         }
         $selected = collect($adapters)->first(fn ($a) => $a->name() === $selectedSlug);
 

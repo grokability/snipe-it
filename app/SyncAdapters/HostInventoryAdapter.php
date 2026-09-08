@@ -56,6 +56,14 @@ interface HostInventoryAdapter
     public function isActive(): bool;
 
     /**
+     * Three-state readiness for the settings-page tab indicator:
+     * 'active' (will sync), 'partial' (turned on but missing config),
+     * 'inactive' (toggle off). Drives the green/yellow/red dot and
+     * the sort order on the shared adapters page.
+     */
+    public function readinessStatus(): string;
+
+    /**
      * Whether this instance is a shipped built-in (undeletable). The
      * blade uses this to hide the delete control.
      */

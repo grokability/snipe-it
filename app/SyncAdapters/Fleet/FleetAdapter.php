@@ -81,8 +81,17 @@ class FleetAdapter extends ConfigurableAdapter
     protected function afterSaveConfig(): void
     {
         $url = $this->url();
-        $token = $this->credential('token');
-        if ($url === null || $url === '' || $token === null || $token === '') {
+        if ($url === '') {
+            return;
+        }
+
+        try {
+            $token = $this->credential('token');
+        } catch (\Throwable) {
+            return;
+        }
+
+        if ($token === '') {
             return;
         }
 

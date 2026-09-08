@@ -451,6 +451,12 @@ parameters:
 			path: app/Console/Commands/PurgeEulaPDFs.php
 
 		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/PushInventory.php
+
+		-
 			message: '#^Offset int does not exist on array\<string, string\>\.$#'
 			identifier: offsetAccess.notFound
 			count: 1
@@ -3260,6 +3266,12 @@ parameters:
 
 		-
 			message: '#^Access to an undefined property App\\Models\\SnipeModel\:\:\$default_avatar\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/SettingsController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Controllers/SettingsController.php
@@ -9737,6 +9749,30 @@ parameters:
 			identifier: nullsafe.neverNull
 			count: 1
 			path: app/SyncAdapters/Support/MappingTargets.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>email" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/SyncAdapters/Support/NotesComposer.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>model_number" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/SyncAdapters/Support/NotesComposer.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 7
+			path: app/SyncAdapters/Support/NotesComposer.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>username" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/SyncAdapters/Support/NotesComposer.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\Actionlog\:\:\$created_by\.$#'

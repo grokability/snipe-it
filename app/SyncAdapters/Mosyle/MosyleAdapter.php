@@ -183,9 +183,6 @@ class MosyleAdapter extends ConfigurableAdapter implements PushableAdapter
         if ($serial === null || $serial === '') {
             $serial = $externalSource->external_id;
         }
-        if ($serial === '' || $serial === null) {
-            return;
-        }
 
         $pushedFields = [];
         $client = null;
