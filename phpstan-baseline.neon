@@ -3697,6 +3697,12 @@ parameters:
 			path: app/Http/Transformers/AssetsTransformer.php
 
 		-
+			message: '#^Access to an undefined property App\\Models\\Asset\:\:\$externalSource\.$#'
+			identifier: property.notFound
+			count: 5
+			path: app/Http/Transformers/AssetsTransformer.php
+
+		-
 			message: '#^Access to an undefined property App\\Models\\Setting\:\:\$alt_barcode\.$#'
 			identifier: property.notFound
 			count: 1
@@ -9719,6 +9725,24 @@ parameters:
 			identifier: class.notFound
 			count: 1
 			path: app/Services/Saml.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between non\-empty\-string and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/SyncAdapters/MerakiSystemsManager/MerakiClient.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/SyncAdapters/Support/MappingTargets.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Actionlog\:\:\$created_by\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/SyncAdapters/SyncHostFromAdapter.php
 
 		-
 			message: '#^Expression on left side of \?\? is not nullable\.$#'
