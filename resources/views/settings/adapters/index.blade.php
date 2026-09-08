@@ -49,12 +49,29 @@
                                     data-adapter-name="{{ $adapter->name() }}"
                                     data-adapter-destroy-url="{{ route('settings.adapters.destroy', $adapter->name()) }}"
                                     data-adapter-built-in="{{ $adapter->isBuiltIn() ? '1' : '0' }}"
-                                >{{ $adapter->label() }}</a>
+                                >
+                                    @php
+                                        $readiness = $adapter->readinessStatus();
+                                        $readinessColor = match ($readiness) {
+                                            'active' => 'var(--text-success)',
+                                            'partial' => 'var(--text-warning)',
+                                            'inactive' => 'var(--text-danger)',
+                                        };
+                                    @endphp
+                                    <x-icon
+                                        type="circle-solid"
+                                        class="fa-fw"
+                                        style="color: {{ $readinessColor }};"
+                                        :title="trans('admin/settings/general.sync_adapter_readiness_'.$readiness)"
+                                        aria-hidden="true"
+                                    />
+                                    <span class="sr-only">{{ trans('admin/settings/general.sync_adapter_readiness_'.$readiness) }}</span>
+                                    {{ $adapter->label() }}
+                                </a>
                             </li>
                         @endforeach
 
-                        {{-- Add-adapter tab. Not a real tab-pane;
-                             clicking it opens the modal instead. --}}
+                        {{-- Add-adapter tab. Not a real tab-pane. Clicking it opens the modal instead. --}}
                         <li role="presentation">
                             <a
                                 href="#"
