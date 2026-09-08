@@ -867,6 +867,488 @@ class SettingsController extends Controller
     }
 
     /**
+     * Shared settings page for every host-inventory sync adapter
+     * instance.
+     */
+    public function getAdapters(Request $request): View|RedirectResponse
+    {
+        $adapterTypes = \App\SyncAdapters\AdapterRegistry::typeLabels();
+
+        // The filter is for UX when per-company adapters exist. Gate on whether the
+        // install has any companies at all. 'Shared' means "no company_id" (built-ins and adapters available to all).
+        $companies = \App\Models\Company::orderBy('name')->pluck('name', 'id')->all();
+        $hasCompanies = count($companies) > 0;
+        $selectedCompany = $hasCompanies ? $request->query('company') : null;
+
+        $instanceQuery = \App\Models\SyncAdapterInstance::query()->orderBy('label');
+        if ($selectedCompany === 'shared') {
+            $instanceQuery->whereNull('company_id');
+        } elseif ($selectedCompany !== null && $selectedCompany !== '') {
+            // Company-scoped view includes the shared built-ins too, since
+            // those are available to every company. Otherwise picking a
+            // specific company would hide Fleet, Kandji, and friends.
+            $instanceQuery->where(function ($q) use ($selectedCompany) {
+                $q->where('company_id', (int) $selectedCompany)
+                    ->orWhereNull('company_id');
+            });
+        }
+
+        // Sort: enabled (green dot) first, then partial (yellow),
+        // then inactive (red). Within each bucket, preserve the
+        // database ORDER BY label.
+        $readinessRank = ['active' => 0, 'partial' => 1, 'inactive' => 2];
+        $adapters = $instanceQuery->get()
+            ->map(fn ($i) => \App\SyncAdapters\AdapterRegistry::hydrate($i))
+            ->filter()
+            ->sortBy(fn ($a) => $readinessRank[$a->readinessStatus()] ?? 99)
+            ->values()
+            ->all();
+
+        // Default selection: an explicit ?adapter=slug wins if present.
+        // Otherwise prefer the first enabled adapter
+        $requestedSlug = $request->query('adapter');
+        if ($requestedSlug !== null) {
+            $selectedSlug = $requestedSlug;
+        } else {
+            $firstEnabled = collect($adapters)->first(fn ($a) => $a->isEnabled());
+            $selectedSlug = $firstEnabled?->name() ?? ($adapters[0]->name() ?? null);
+        }
+        $selected = collect($adapters)->first(fn ($a) => $a->name() === $selectedSlug);
+
+        // Explicit ?adapter=slug pointing at a non-existent instance
+        // (deleted, typo, stale bookmark). Redirect to the default
+        // view with an error
+        if ($requestedSlug !== null && $selected === null) {
+            return redirect()->route('settings.adapters.index')
+                ->with('error', trans('admin/settings/general.sync_adapter_not_found', ['slug' => $requestedSlug]));
+        }
+
+        return view('settings.adapters.index', compact(
+            'adapters', 'adapterTypes', 'selected', 'companies', 'hasCompanies', 'selectedCompany',
+        ));
+    }
+
+    /**
+     * Create a new adapter instance.
+     */
+    public function postCreateAdapterInstance(Request $request): RedirectResponse
+    {
+        if (config('app.lock_passwords')) {
+            return redirect()->back()->with('error', trans('general.feature_disabled'));
+        }
+
+        $validated = $request->validate([
+            'adapter_type' => 'required|string|in:'.implode(',', \App\SyncAdapters\AdapterRegistry::typeNames()),
+            'label' => 'required|string|max:191|unique:sync_adapter_instances,label',
+            'company_id' => 'nullable|integer|exists:companies,id',
+        ]);
+
+        // Start inactive. Active + no URL/token means "Active" ticked
+        // on the settings page while Sync Now stays disabled because
+        // isEnabled() also requires at least minimal config.
+        $instance = new \App\Models\SyncAdapterInstance;
+        $instance->fill([
+            'adapter_type' => $validated['adapter_type'],
+            'label' => $validated['label'],
+            'company_id' => $validated['company_id'] ?? null,
+            'active' => false,
+        ]);
+
+        $instance->created_by = auth()->id();
+        $instance->save();
+
+        return redirect()->route('settings.adapters.index', ['adapter' => $instance->slug])
+            ->with('success', trans('admin/settings/general.sync_adapter_instance_created'));
+    }
+
+    /**
+     * Save handler for an instance's own config form. Instance-bound
+     * route param resolves the target instance. the shipped adapter
+     * class knows how to persist its own fields.
+     */
+    public function postAdapterConfig(Request $request, \App\Models\SyncAdapterInstance $instance): RedirectResponse
+    {
+        if (config('app.lock_passwords')) {
+            return redirect()->back()->with('error', trans('general.feature_disabled'));
+        }
+
+        $adapter = $instance->adapter();
+        if ($adapter === null) {
+            abort(404);
+        }
+
+        // Adapter declares its own validation (ExternalUrl on the URL
+        // field blocks loopback / RFC-1918 / metadata targets so the
+        // sync path can't be abused as an SSRF or port-scan primitive).
+        // Label uniqueness is enforced independently so a rename can't
+        // collide with an existing instance's label. `sometimes` because
+        // the field is optional at the wire level: not sending label
+        // leaves the current label in place (below).
+        $request->validate(
+            $adapter->validationRules() + [
+                'label' => [
+                    'sometimes',
+                    'required',
+                    'string',
+                    'max:191',
+                    \Illuminate\Validation\Rule::unique('sync_adapter_instances', 'label')->ignore($instance->id),
+                ],
+            ]
+        );
+
+        // "active" checkbox lives on the shared partial with a slug-
+        // prefixed name so tab-panes don't collide on ids. Unchecked
+        // comes through as absent from the request, so default to false.
+        $instance->active = $request->boolean($instance->slug.'_active');
+        $instance->label = $request->input('label', $instance->label);
+        $instance->save();
+
+        $adapter->saveConfig($request);
+
+        return redirect()->route('settings.adapters.index', ['adapter' => $instance->slug])
+            ->with('success', trans('admin/settings/message.update.success'));
+    }
+
+    /**
+     * Manually trigger a sync from the "Sync Now" button.
+     * Realistically, this will likely time out in a real production instance,
+     * so this is used mostly for testing now and will likely be removed later
+     */
+    public function postAdapterSync(\App\Models\SyncAdapterInstance $instance): RedirectResponse
+    {
+        $adapter = $instance->adapter();
+        if ($adapter === null) {
+            abort(404);
+        }
+
+        if (! $adapter->isEnabled()) {
+            return redirect()->route('settings.adapters.index', ['adapter' => $instance->slug])
+                ->with('error', trans('admin/settings/general.sync_adapter_not_configured'));
+        }
+
+        // Drop PHP's execution-time cap. Web-server proxy timeouts still apply tho
+        set_time_limit(0);
+
+        $seen = 0;
+        $errors = 0;
+
+        try {
+            foreach ($adapter->pull() as $record) {
+                try {
+                    \App\SyncAdapters\SyncHostFromAdapter::run($record);
+                    $seen++;
+                } catch (\Throwable $e) {
+                    $errors++;
+                    \Log::channel('sync-adapters')->warning(sprintf(
+                        '%s sync: failed to upsert host %s: %s',
+                        $instance->slug,
+                        $record->sourceId,
+                        $e->getMessage(),
+                    ));
+                }
+            }
+        } catch (\Throwable $e) {
+            // Log the full exception server-side so admins can dig into
+            // response bodies, stack traces, etc. via the dedicated
+            // sync-adapters channel. The flash message only exposes a
+            // short sanitized summary because Guzzle / Laravel HTTP
+            // client stuff the entire response body into the exception
+            // message on 4xx/5xx, and internal error pages regularly
+            // contain sensitive info we don't want to bounce into the
+            // admin's browser.
+            \Log::channel('sync-adapters')->warning(sprintf('%s sync aborted: %s', $instance->slug, $e->getMessage()), [
+                'exception' => $e,
+            ]);
+
+            $failMessage = trans('admin/settings/general.sync_adapter_sync_failed', [
+                'summary' => self::sanitizeSyncErrorSummary($e),
+            ]);
+            $instance->last_synced_at = now();
+            $instance->last_sync_result = $failMessage;
+            $instance->save();
+
+            return redirect()->route('settings.adapters.index', ['adapter' => $instance->slug])
+                ->with('error', $failMessage);
+        }
+
+        $result = trans('admin/settings/general.sync_adapter_sync_complete', [
+            'count' => $seen,
+            'errors' => $errors,
+        ]);
+        $instance->last_synced_at = now();
+        $instance->last_sync_result = $result;
+        $instance->save();
+
+        return redirect()->route('settings.adapters.index', ['adapter' => $instance->slug])
+            ->with('success', $result);
+    }
+
+    /**
+     * Push Snipe-IT-authoritative fields to the vendor for every asset
+     * already linked to this adapter instance. Only meaningful for
+     * adapters that implement PushableAdapter. Iterates the instance's
+     * asset_external_sources rows so we only touch assets the vendor
+     * actually knows about. A fresh Snipe-IT asset that's never been
+     * synced from this instance gets no push (we'd have no vendor id
+     * to write against). Errors on individual assets are logged and
+     * counted, so a single bad asset doesn't abort the whole run.
+     */
+    public function postAdapterPush(\App\Models\SyncAdapterInstance $instance): RedirectResponse
+    {
+        $adapter = $instance->adapter();
+        if ($adapter === null) {
+            abort(404);
+        }
+
+        if (! $adapter instanceof \App\SyncAdapters\PushableAdapter) {
+            return redirect()->route('settings.adapters.index', ['adapter' => $instance->slug])
+                ->with('error', trans('admin/settings/general.sync_adapter_push_not_supported'));
+        }
+
+        if (! $adapter->isEnabled()) {
+            return redirect()->route('settings.adapters.index', ['adapter' => $instance->slug])
+                ->with('error', trans('admin/settings/general.sync_adapter_not_configured'));
+        }
+
+        set_time_limit(0);
+
+        $pushed = 0;
+        $errors = 0;
+
+        try {
+            \App\Models\AssetExternalSource::query()
+                ->where('source', $instance->slug)
+                ->with('asset')
+                ->chunkById(200, function ($rows) use ($adapter, &$pushed, &$errors) {
+                    foreach ($rows as $row) {
+                        $asset = $row->asset;
+                        if ($asset === null) {
+                            continue;
+                        }
+
+                        try {
+                            $adapter->push($asset);
+                            $pushed++;
+                        } catch (\Throwable $e) {
+                            $errors++;
+                            // Log the sanitized summary (short) plus,
+                            // for HTTP client exceptions, the raw
+                            // response body truncated to 2KB so vendor
+                            // errors like "missing required field
+                            // 'query'" or "gitops mode requires spec"
+                            // surface in the log even when the vendor's
+                            // JSON shape isn't one the summary
+                            // extractor recognizes.
+                            $context = [];
+                            if ($e instanceof \Illuminate\Http\Client\RequestException) {
+                                $body = (string) $e->response->body();
+                                $context['response_body'] = mb_strlen($body) > 2048
+                                    ? mb_substr($body, 0, 2048).'…'
+                                    : $body;
+                            }
+                            \Log::channel('sync-adapters')->warning(sprintf(
+                                '%s push: asset %d failed: %s',
+                                $row->source,
+                                $asset->id,
+                                self::sanitizeSyncErrorSummary($e),
+                            ), $context);
+                        }
+                    }
+                });
+        } catch (\Throwable $e) {
+            \Log::channel('sync-adapters')->warning(
+                sprintf('%s push aborted: %s', $instance->slug, $e->getMessage()),
+                ['exception' => $e],
+            );
+
+            return redirect()->route('settings.adapters.index', ['adapter' => $instance->slug])
+                ->with('error', trans('admin/settings/general.sync_adapter_push_failed', [
+                    'summary' => self::sanitizeSyncErrorSummary($e),
+                ]));
+        }
+
+        //   all succeeded         -> success (green)
+        //   partial (some failed) -> warning (orange, admin should check log)
+        //   all failed            -> error (red)
+        // Message stays the same either way so admins see the count breakdown.
+        $flashType = match (true) {
+            $pushed > 0 && $errors === 0 => 'success',
+            $pushed === 0 && $errors > 0 => 'error',
+            default => 'warning',
+        };
+
+        return redirect()->route('settings.adapters.index', ['adapter' => $instance->slug])
+            ->with($flashType, trans('admin/settings/general.sync_adapter_push_complete', [
+                'count' => $pushed,
+                'errors' => $errors,
+            ]));
+    }
+
+    /**
+     * Short, safe summary of a sync failure for the admin flash. For
+     * HTTP-client exceptions, walk the common vendor error-body shapes
+     * (Fleet / DRF / Graph / Jamf / etc.) and surface the first
+     * human-readable message string we find, prefixed with the HTTP
+     * status. Falls back to just "HTTP {code}" when the response body
+     * doesn't parse or doesn't carry a recognizable message field.
+     * Full detail is still in the sync-adapters log via the caller.
+     */
+    private static function sanitizeSyncErrorSummary(\Throwable $e): string
+    {
+        if ($e instanceof \Illuminate\Http\Client\RequestException) {
+            $status = $e->response->status();
+            $vendorMessage = self::extractVendorErrorMessage($e->response);
+
+            return $vendorMessage !== null
+                ? sprintf('HTTP %d: %s', $status, $vendorMessage)
+                : 'HTTP '.$status;
+        }
+
+        if ($e instanceof \Illuminate\Http\Client\ConnectionException) {
+            return trans('admin/settings/general.sync_adapter_sync_failed_network');
+        }
+
+        return class_basename($e);
+    }
+
+    /**
+     * Extract the first human-readable message from a vendor error
+     * response body. Handles the common shapes:
+     * - {"message": "..."}           Fleet, WS1, JumpCloud, Mosyle
+     * - {"detail": "..."}            DRF-based (Zentral, some others)
+     * - {"error": "..."}             plain string
+     * - {"error": {"message": "..."}}  Microsoft Graph
+     * - {"errorMessage": "..."}      NinjaOne
+     * - {"errors": [{"description|reason|message|detail": "..."}]}  Jamf, Fleet nested
+     * - {"errors": ["..."]}          Meraki
+     * Response bodies get truncated so a vendor returning a novel
+     * doesn't blow up the flash bar.
+     */
+    private static function extractVendorErrorMessage(\Illuminate\Http\Client\Response $response): ?string
+    {
+        $body = $response->json();
+        if (! is_array($body)) {
+            return null;
+        }
+
+        $candidate = $body['message']
+            ?? $body['detail']
+            ?? $body['errorMessage']
+            ?? null;
+
+        if (! is_string($candidate) && isset($body['error'])) {
+            $candidate = is_string($body['error'])
+                ? $body['error']
+                : ($body['error']['message'] ?? null);
+        }
+
+        if (! is_string($candidate) && isset($body['errors']) && is_array($body['errors'])) {
+            $first = $body['errors'][0] ?? null;
+            if (is_string($first)) {
+                $candidate = $first;
+            } elseif (is_array($first)) {
+                $candidate = $first['description']
+                    ?? $first['reason']
+                    ?? $first['message']
+                    ?? $first['detail']
+                    ?? null;
+            }
+        }
+
+        if (! is_string($candidate) || trim($candidate) === '') {
+            return null;
+        }
+
+        $candidate = trim($candidate);
+
+        return mb_strlen($candidate) > 200
+            ? mb_substr($candidate, 0, 200).'…'
+            : $candidate;
+    }
+
+    /**
+     * Refresh the cached list of vendor groups for an adapter
+     * instance. Calls the adapter's fetchGroups() and persists the
+     * result to sync_adapter_settings so the settings page can render
+     * the mapping table without hitting the vendor on every page load.
+     *
+     * Only meaningful for adapters that opt into supportsGroupScoping().
+     * (Some vendors gate groups by subscripton tier like Fleet.)
+     * Failures land in the sync-adapters log channel and flash a
+     * sanitized error to the admin (same as sync errors).
+     */
+    public function postAdapterRefreshGroups(\App\Models\SyncAdapterInstance $instance): RedirectResponse
+    {
+        if (config('app.lock_passwords')) {
+            return redirect()->back()->with('error', trans('general.feature_disabled'));
+        }
+
+        $adapter = $instance->adapter();
+        if ($adapter === null || ! $adapter instanceof \App\SyncAdapters\Support\ConfigurableAdapter) {
+            abort(404);
+        }
+
+        if (! $adapter->supportsGroupScoping()) {
+            abort(404);
+        }
+
+        if (! $adapter->isEnabled()) {
+            return redirect()->route('settings.adapters.index', ['adapter' => $instance->slug])
+                ->with('error', trans('admin/settings/general.sync_adapter_not_configured'));
+        }
+
+        try {
+            $groups = $adapter->fetchGroups();
+        } catch (\Throwable $e) {
+            \Log::channel('sync-adapters')->warning(
+                sprintf('%s refresh-groups aborted: %s', $instance->slug, $e->getMessage()),
+                ['exception' => $e],
+            );
+
+            return redirect()->route('settings.adapters.index', ['adapter' => $instance->slug])
+                ->with('error', trans('admin/settings/general.sync_adapter_refresh_groups_failed', [
+                    'summary' => self::sanitizeSyncErrorSummary($e),
+                ]));
+        }
+
+        \App\Models\SyncAdapterConfig::put($instance->id, 'cached_groups', json_encode($groups));
+
+        return redirect()->route('settings.adapters.index', ['adapter' => $instance->slug])
+            ->with('success', trans('admin/settings/general.sync_adapter_refresh_groups_ok', [
+                'count' => count($groups),
+                'label' => $adapter->vendorGroupLabel(),
+            ]));
+    }
+
+    /**
+     * Delete an adapter instance. Config rows go away with it. Existing
+     * asset_external_sources rows for this instance's slug are left in
+     * place (orphaned) so previously-synced assets keep their history.
+     * Built-in instances (the shipped well-known adapters) cannot be
+     * deleted. Users who don't want to use one leave it deactivated.
+     */
+    public function deleteAdapterInstance(\App\Models\SyncAdapterInstance $instance): RedirectResponse
+    {
+        if (config('app.lock_passwords')) {
+            return redirect()->back()->with('error', trans('general.feature_disabled'));
+        }
+
+        if ($instance->built_in) {
+            return redirect()->route('settings.adapters.index', ['adapter' => $instance->slug])
+                ->with('error', trans('admin/settings/general.sync_adapter_builtin_undeletable'));
+        }
+
+        \App\Models\SyncAdapterConfig::query()
+            ->where('sync_adapter_instance_id', $instance->id)
+            ->delete();
+
+        $instance->delete();
+
+        return redirect()->route('settings.adapters.index')
+            ->with('success', trans('admin/settings/general.sync_adapter_instance_deleted'));
+    }
+
+    /**
      * Show the listing of backups.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
