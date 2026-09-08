@@ -45,17 +45,17 @@ class DemoModeLocksFormTest extends TestCase
         $this->assertMatchesRegularExpression('/name="addigy_active"[^>]*disabled/', $html);
 
         // Save button lives in the footer, disabled by the index page
-        // directly. Sync Now lives per-pane in the sync-adapter-panel
+        // directly. Pull Now lives per-pane in the sync-adapter-panel
         // component and the panel disables it when locked, so every
-        // pane's sync button carries the disabled attribute.
+        // pane's pull button carries the disabled attribute.
         $this->assertMatchesRegularExpression('/id="adapter-save-button"[^>]*disabled/', $html);
-        $this->assertStringContainsString(trans('admin/settings/general.sync_adapter_sync_now'), $html);
+        $this->assertStringContainsString(trans('admin/settings/general.sync_adapter_pull_now'), $html);
 
         // Walk every <button>...</button> in the rendered HTML: any
-        // that contains the sync-now label must also carry a disabled
+        // that contains the pull-now label must also carry a disabled
         // attribute. Catches a regression that would leave the button
         // clickable in demo mode.
-        $label = trans('admin/settings/general.sync_adapter_sync_now');
+        $label = trans('admin/settings/general.sync_adapter_pull_now');
         preg_match_all('/<button\b(?<attrs>[^>]*)>(?<body>.*?)<\/button>/s', $html, $buttons, PREG_SET_ORDER);
         $syncButtonsSeen = 0;
         foreach ($buttons as $match) {
@@ -63,7 +63,7 @@ class DemoModeLocksFormTest extends TestCase
                 continue;
             }
             $syncButtonsSeen++;
-            $this->assertStringContainsString('disabled', $match['attrs'], 'Sync-now button rendered without disabled attribute in demo mode.');
+            $this->assertStringContainsString('disabled', $match['attrs'], 'Pull-now button rendered without disabled attribute in demo mode.');
         }
         $this->assertGreaterThan(0, $syncButtonsSeen);
     }
