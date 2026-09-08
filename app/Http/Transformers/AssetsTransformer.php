@@ -124,6 +124,16 @@ class AssetsTransformer
             'requests_counter' => (int) $asset->requests_counter,
             'user_can_checkout' => (bool) $asset->availableForCheckout(),
             'book_value' => Helper::formatCurrencyOutput($asset->getDepreciatedValue()),
+
+            // Sync-adapter side-table data. Flat keys (rather than a
+            // nested object) so bs-table can bind columns to them
+            // directly without a subfield formatter. Null when the
+            // asset has never been synced.
+            'primary_mac' => $asset->externalSource?->primary_mac,
+            'primary_ip' => $asset->externalSource?->primary_ip,
+            'external_os' => $asset->externalSource?->os,
+            'external_os_version' => $asset->externalSource?->os_version,
+            'last_seen' => Helper::getFormattedDateObject($asset->externalSource?->last_seen, 'datetime'),
         ];
 
         if (($asset->model) && ($asset->model->fieldset) && ($asset->model->fieldset->fields->count() > 0)) {
@@ -307,10 +317,10 @@ class AssetsTransformer
             'expected_checkin' => Helper::getFormattedDateObject($asset->expected_checkin, 'datetime'),
             'location' => ($asset->location) ? e($asset->location->name) : null,
             'status' => ($asset->status) ? $asset->present()->statusMeta : null,
-            // Category is nested through model; emit the standard
+            // Category is nested through model. Emit the standard
             // {id, name, tag_color} object so the requestable-tab
             // categoriesLinkObjFormatter can render the tag_color
-            // icon + link. Company is direct on Asset; emit the
+            // icon + link. Company is direct on Asset. Emit the
             // matching {id, name} shape.
             'category' => (($asset->model) && ($asset->model->category)) ? [
                 'id' => (int) $asset->model->category->id,
