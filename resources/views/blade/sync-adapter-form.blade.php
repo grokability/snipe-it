@@ -174,8 +174,9 @@
             >
                 @foreach ([
                     'none' => trans('admin/settings/general.sync_adapter_user_match_none'),
-                    'email' => trans('admin/settings/general.sync_adapter_user_match_email'),
+                    'username_then_email' => trans('admin/settings/general.sync_adapter_user_match_username_then_email'),
                     'username' => trans('admin/settings/general.sync_adapter_user_match_username'),
+                    'email' => trans('admin/settings/general.sync_adapter_user_match_email'),
                 ] as $value => $label)
                     <option value="{{ $value }}" @selected($adapter->userMatchStrategy() === $value)>{{ $label }}</option>
                 @endforeach
@@ -205,6 +206,22 @@
         :help_text="trans('admin/settings/general.sync_adapter_checkin_on_null_user_help')"
         :disabled="$locked"
     />
+
+    {{-- Push dry-run only shows for adapters that actually support
+         push. Turning it on makes push() log the payload instead of
+         sending, so admins can verify their config end-to-end against
+         a real Snipe-IT dataset without any real vendor side effect.
+         The composed-notes template + target field live further down
+         in their own fieldset under the vendor-specific mapping. --}}
+    @if ($adapter instanceof \App\SyncAdapters\PushableAdapter && $adapter->canPush())
+        <x-form.checkbox-row
+            :name="$slug . '_push_dry_run'"
+            :checked="$adapter->isPushDryRun()"
+            :label="trans('admin/settings/general.sync_adapter_push_dry_run_label')"
+            :help_text="trans('admin/settings/general.sync_adapter_push_dry_run_help')"
+            :disabled="$locked"
+        />
+    @endif
 
     @if ($adapter->supportsGroupScoping() && $adapter->isEnabled())
         @php
@@ -238,6 +255,18 @@
     @endif
 
     {{-- Per-field target mapping.  --}}
+    @php
+        // Show push controls only when the adapter implements
+        // PushableAdapter AND canPush() (instance-level runtime check
+        // — Fleet Free returns false because manual labels are Premium).
+        $supportsPush = $adapter instanceof \App\SyncAdapters\PushableAdapter && $adapter->canPush();
+        $directionOptions = [
+            'pull' => trans('admin/settings/general.sync_adapter_direction_pull'),
+            'push' => trans('admin/settings/general.sync_adapter_direction_push'),
+            'both' => trans('admin/settings/general.sync_adapter_direction_both'),
+            'skip' => trans('admin/settings/general.sync_adapter_direction_skip'),
+        ];
+    @endphp
     <fieldset>
         <x-form.legend icon="tip" help_text="{{ trans('admin/settings/general.sync_adapter_mapping_section_intro') }}">
             {{ trans('admin/settings/general.sync_adapter_mapping_section_title', ['type' => $adapter::typeLabel()]) }}
@@ -251,13 +280,41 @@
                 input_div_class="col-md-8"
             >
                 <x-slot:input>
-                    <x-input.select
-                        :name="$slug . '_mapping[' . $mappingField . ']'"
-                        :options="\App\SyncAdapters\Support\MappingTargets::options($mappingField)"
-                        :selected="$adapter->mappingFor($mappingField)"
-                        style="width: 100%"
-                        :disabled="$locked"
-                    />
+                    @if ($supportsPush)
+                        {{-- Push-capable adapters get a two-column input:
+                             target picker on the left, direction picker
+                             on the right. Pull-only adapters render just
+                             the target picker at full width. --}}
+                        <div class="row">
+                            <div class="col-md-8">
+                                <x-input.select
+                                    :name="$slug . '_mapping[' . $mappingField . ']'"
+                                    :options="\App\SyncAdapters\Support\MappingTargets::options($mappingField)"
+                                    :selected="$adapter->mappingFor($mappingField)"
+                                    style="width: 100%"
+                                    :disabled="$locked"
+                                />
+                            </div>
+                            <div class="col-md-4">
+                                <x-input.select
+                                    :name="$slug . '_direction[' . $mappingField . ']'"
+                                    :options="$directionOptions"
+                                    :selected="$adapter->directionFor($mappingField)"
+                                    style="width: 100%"
+                                    data-minimum-results-for-search="Infinity"
+                                    :disabled="$locked"
+                                />
+                            </div>
+                        </div>
+                    @else
+                        <x-input.select
+                            :name="$slug . '_mapping[' . $mappingField . ']'"
+                            :options="\App\SyncAdapters\Support\MappingTargets::options($mappingField)"
+                            :selected="$adapter->mappingFor($mappingField)"
+                            style="width: 100%"
+                            :disabled="$locked"
+                        />
+                    @endif
                 </x-slot:input>
             </x-form.row>
         @endforeach
@@ -296,4 +353,55 @@
             @endforeach
         @endif
     </fieldset>
+
+    {{-- Composed notes fieldset. Renders a multi-field notes blob
+         from Snipe-IT (asset_tag + status + assigned user + custom
+         fields, etc.) into a single vendor field. Blank template
+         means "don't push notes." Target defaults to the adapter's
+         suggested field (Kandji notes, Jamf general.notes, Intune
+         notes, etc.) via notesFieldTarget(). Admins override to a
+         Custom Attribute / Custom Field name when the vendor exposes
+         multiple candidates. Positioned after the standard + extras
+         mapping so admins finish configuring the per-field targets
+         before deciding what goes into the composed notes blob. --}}
+    @if ($adapter instanceof \App\SyncAdapters\PushableAdapter && $adapter->canPush())
+        <fieldset>
+            <x-form.legend icon="tip" help_text="{{ trans('admin/settings/general.sync_adapter_push_notes_section_intro') }}">
+                {{ trans('admin/settings/general.sync_adapter_push_notes_section_title') }}
+            </x-form.legend>
+
+            <x-form.row
+                :label="trans('admin/settings/general.sync_adapter_push_notes_target_label')"
+                :name="$slug . '_push_notes_target'"
+                input_div_class="col-md-8"
+                :help_text="trans('admin/settings/general.sync_adapter_push_notes_target_help')"
+            >
+                <x-slot:input>
+                    <x-input.text
+                        :name="$slug . '_push_notes_target'"
+                        :value="old($slug . '_push_notes_target', $adapter->pushNotesTargetOverride() ?? '')"
+                        :placeholder="$adapter->notesFieldTarget() ?? trans('admin/settings/general.sync_adapter_push_notes_target_placeholder_none')"
+                        :disabled="$locked"
+                    />
+                </x-slot:input>
+            </x-form.row>
+
+            <x-form.row
+                :label="trans('admin/settings/general.sync_adapter_push_notes_template_label')"
+                :name="$slug . '_push_notes_template'"
+                input_div_class="col-md-8"
+                help_html="{!! trans('admin/settings/general.sync_adapter_push_notes_template_help') !!}"
+            >
+                <x-slot:input>
+                    <textarea
+                        name="{{ $slug }}_push_notes_template"
+                        class="form-control"
+                        rows="6"
+                        @disabled($locked)
+                        style="font-family: monospace; white-space: pre;"
+                    >{{ old($slug . '_push_notes_template', $adapter->pushNotesTemplate()) }}</textarea>
+                </x-slot:input>
+            </x-form.row>
+        </fieldset>
+    @endif
 </x-form>
