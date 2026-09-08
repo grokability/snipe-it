@@ -345,6 +345,10 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'authorize:superuser
         ->name('settings.adapters.sync')
         ->missing(fn () => abort(404));
 
+    Route::post('adapters/{instance}/push', [SettingsController::class, 'postAdapterPush'])
+        ->name('settings.adapters.push')
+        ->missing(fn () => abort(404));
+
     Route::post('adapters/{instance}/refresh-groups', [SettingsController::class, 'postAdapterRefreshGroups'])
         ->name('settings.adapters.refresh_groups')
         ->missing(fn () => abort(404));
