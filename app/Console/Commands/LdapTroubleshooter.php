@@ -160,8 +160,17 @@ class LdapTroubleshooter extends Command
             }
             if ($settings->ldap_client_tls_cert && $settings->ldap_client_tls_key) {
                 $this->line('# Adding LDAP Client Certificate and Key');
-                $output[] = 'LDAPTLS_CERT=storage/ldap_client_tls.cert';
-                $output[] = 'LDAPTLS_KEY=storage/ldap_client_tls.key';
+                // Use absolute paths. The prior relative form only worked
+                // when the user copy-pasted the command and ran it from
+                // the app root. Anywhere else (a different terminal, a
+                // sysadmin ticket log, a wrapper script) the client-cert
+                // lookup silently fails and Google Workspace / other
+                // mTLS-fronted LDAP servers respond with an opaque
+                // handshake error. escapeshellarg wraps in single quotes
+                // so install paths containing spaces still parse
+                // correctly when pasted.
+                $output[] = 'LDAPTLS_CERT=' . escapeshellarg(Setting::get_client_side_cert_path());
+                $output[] = 'LDAPTLS_KEY=' . escapeshellarg(Setting::get_client_side_key_path());
             }
             $output[] = 'ldapsearch';
             $output[] = '-H '.$settings->ldap_server;
@@ -485,9 +494,11 @@ class LdapTroubleshooter extends Command
         ldap_set_option($lconn, LDAP_OPT_PROTOCOL_VERSION, 3); // should we 'test' different protocol versions here? Does anyone even use anything other than LDAPv3?
         // no - it's formally deprecated: https://tools.ietf.org/html/rfc3494
         if ($this->settings->ldap_client_tls_cert && $this->settings->ldap_client_tls_key) {
-            // client-side TLS certificate support for LDAP (Google Secure LDAP)
-            putenv('LDAPTLS_CERT=storage/ldap_client_tls.cert');
-            putenv('LDAPTLS_KEY=storage/ldap_client_tls.key');
+            // client-side TLS certificate support for LDAP (Google Secure LDAP).
+            // Absolute paths so the test still works when the command runs
+            // outside the app root (crontab, systemd unit, wrapper script).
+            putenv('LDAPTLS_CERT=' . Setting::get_client_side_cert_path());
+            putenv('LDAPTLS_KEY=' . Setting::get_client_side_key_path());
         }
         if ($start_tls) {
             if (! ldap_start_tls($lconn)) {
