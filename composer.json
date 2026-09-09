@@ -35,6 +35,7 @@
     "enshrined/svg-sanitize": "^0.22.0",
     "erusev/parsedown": "^1.7",
     "fakerphp/faker": "^1.24",
+    "firebase/php-jwt": "^6.4|^7.0",
     "guzzlehttp/guzzle": "^7.0.1",
     "innoge/laravel-msgraph-mail": "^2.0",
     "intervention/image": "^2.5",
