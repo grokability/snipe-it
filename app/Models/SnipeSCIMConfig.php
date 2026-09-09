@@ -241,6 +241,32 @@ class SnipeRootComplex extends Complex
 // filter path still handles explicit removals correctly.
 class SnipeMutableCollection extends MutableCollection
 {
+    // Read the membership as ids instead of models. The parent's
+    // Collection::doRead() touches $object->members, hydrating a full User
+    // model plus its Pivot for every member of the group — and
+    // objectToSCIMArray() runs three times over a single PATCH. On a large
+    // group that is enough to exhaust the PHP memory limit before the
+    // request can respond.
+    //
+    // The output has to stay identical to what the parent builds from the
+    // value / $ref / display sub-attributes below, `display => null`
+    // included: `display` maps to users.name, which is neither a column nor
+    // an accessor on User, so it has always read as null.
+    // PatchGroupMembersTest::test_patch_response_still_lists_every_member
+    // pins that.
+    //
+    // pluck() keeps the soft-delete scope the parent's join carries; the
+    // $ref prefix is built once to avoid a route() call per member.
+    protected function doRead(&$object, $attributes = [])
+    {
+        $ref_prefix = route('scim.resources', ['resourceType' => 'Users']).'/';
+
+        return $object->{$this->attribute}()
+            ->pluck('users.id')
+            ->map(fn ($id) => ['value' => $id, '$ref' => $ref_prefix.$id, 'display' => null])
+            ->all();
+    }
+
     public function replace($value, Model &$object, ?Path $path = null)
     {
         $this->add($value, $object);
