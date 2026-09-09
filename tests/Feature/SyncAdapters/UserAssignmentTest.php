@@ -75,7 +75,7 @@ class UserAssignmentTest extends TestCase
 
     public function test_none_strategy_leaves_asset_unassigned_even_when_user_field_populated()
     {
-        $fleet = $this->configuredFleet();
+        $this->configuredFleet();
         // Default strategy is 'none' when nothing is stored.
         User::factory()->create(['email' => 'alice@example.test']);
 

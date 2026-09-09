@@ -52,7 +52,7 @@ class GroupCompanyMappingTest extends TestCase
     public function test_unmapped_group_falls_back_to_instance_company()
     {
         $customerA = Company::factory()->create();
-        $fleet = $this->configuredFleet($customerA->id);
+        $this->configuredFleet($customerA->id);
 
         SyncHostFromAdapter::run(new HostInventoryRecord(
             sourceKey: 'fleet',

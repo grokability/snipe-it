@@ -193,6 +193,9 @@ abstract class ConfigurableAdapter implements HostInventoryAdapter
         return $rules;
     }
 
+    /**
+     * @SuppressWarnings("PHPMD.ElseExpression")
+     */
     public function saveConfig(Request $request): void
     {
         $slug = $this->instance->slug;

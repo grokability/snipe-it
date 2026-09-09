@@ -91,7 +91,7 @@ class AssetTagPatternTest extends TestCase
 
     public function test_no_pattern_falls_back_to_synthetic_source_id_tag()
     {
-        $fleet = $this->configuredFleet();
+        $this->configuredFleet();
         // No asset_tag_pattern stored.
 
         SyncHostFromAdapter::run(new HostInventoryRecord(
@@ -168,7 +168,7 @@ class AssetTagPatternTest extends TestCase
 
     public function test_default_category_falls_back_to_discovered_hardware_when_unset()
     {
-        $fleet = $this->configuredFleet();
+        $this->configuredFleet();
         // No default_category_id stored.
 
         SyncHostFromAdapter::run(new HostInventoryRecord(

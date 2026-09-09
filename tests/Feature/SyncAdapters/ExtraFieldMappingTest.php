@@ -133,7 +133,7 @@ class ExtraFieldMappingTest extends TestCase
         // custom:{id}.
         $this->assertArrayHasKey('native:asset_tag', $options);
         $this->assertArrayHasKey('native:notes', $options);
-        foreach ($options as $target => $label) {
+        foreach (array_keys($options) as $target) {
             if (in_array($target, ['skip', 'native:asset_tag', 'native:notes'], true)) {
                 continue;
             }
@@ -186,7 +186,7 @@ class ExtraFieldMappingTest extends TestCase
 
     public function test_asset_tag_defaults_to_native_and_writes_vendor_tag()
     {
-        $fleet = $this->configuredFleetInstance();
+        $this->configuredFleetInstance();
 
         // No explicit mapping stored: default target for asset_tag is
         // native:asset_tag so the vendor's tag flows into Snipe-IT's
@@ -250,7 +250,12 @@ class ExtraFieldMappingTest extends TestCase
 
     public function test_settings_page_renders_extra_field_dropdowns_for_adapter_that_declares_them()
     {
-        $customField = CustomField::factory()->create(['element' => 'text', 'name' => 'Team Assignment']);
+        // Side-effect factory create. The custom field is a fixture that
+        // has to exist on the DB for the settings page to render it as an
+        // extras-mapping target. The returned instance isn't referenced
+        // by name; the assertion just checks the field's name string
+        // shows up in the rendered HTML.
+        CustomField::factory()->create(['element' => 'text', 'name' => 'Team Assignment']);
 
         $html = $this->actingAs(\App\Models\User::factory()->superuser()->create())
             ->get(route('settings.adapters.index', ['adapter' => 'fleet']))

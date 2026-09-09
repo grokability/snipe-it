@@ -33,6 +33,9 @@ use RuntimeException;
  */
 class SyncHostFromAdapter
 {
+    /**
+     * @SuppressWarnings("PHPMD.ElseExpression")
+     */
     public static function run(HostInventoryRecord $record): Asset
     {
         return DB::transaction(function () use ($record) {

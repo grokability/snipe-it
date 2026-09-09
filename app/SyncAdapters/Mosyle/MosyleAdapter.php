@@ -154,6 +154,8 @@ class MosyleAdapter extends ConfigurableAdapter implements PushableAdapter
      * pull and is more stable across re-enrollment).
      *
      * @param  array<int, string>  $changedFields
+     *
+     * @SuppressWarnings("PHPMD.ElseExpression")
      */
     public function push(Asset $asset, array $changedFields = []): void
     {
