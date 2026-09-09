@@ -232,4 +232,62 @@ abstract class Sheet extends Label
     {
         $this->indexOffset = $offset;
     }
+
+    public function toEditorConfig(): array
+    {
+        return array_merge(parent::toEditorConfig(), [
+            'page' => $this->getPageEditorConfig(),
+            'label' => $this->getLabelEditorConfig(),
+            'label_printable_area' => $this->getLabelPrintableAreaEditorConfig(),
+            'sheet' => $this->getSheetEditorConfig(),
+        ]);
+    }
+
+    protected function getPageEditorConfig(): array
+    {
+        return [
+            'width' => $this->getPageWidth(),
+            'height' => $this->getPageHeight(),
+            'margin_top' => $this->getPageMarginTop(),
+            'margin_right' => $this->getPageMarginRight(),
+            'margin_bottom' => $this->getPageMarginBottom(),
+            'margin_left' => $this->getPageMarginLeft(),
+        ];
+    }
+
+    protected function getLabelEditorConfig(): array
+    {
+        return [
+            'width' => $this->getLabelWidth(),
+            'height' => $this->getLabelHeight(),
+            'border' => $this->getLabelBorder(),
+            'padding_top' => $this->getLabelMarginTop(),
+            'padding_right' => $this->getLabelMarginRight(),
+            'padding_bottom' => $this->getLabelMarginBottom(),
+            'padding_left' => $this->getLabelMarginLeft(),
+        ];
+    }
+
+    protected function getLabelPrintableAreaEditorConfig(): array
+    {
+        $pa = $this->getLabelPrintableArea();
+
+        return [
+            'x1' => $pa->x1,
+            'y1' => $pa->y1,
+            'x2' => $pa->x2,
+            'y2' => $pa->y2,
+            'width' => $pa->w,
+            'height' => $pa->h,
+        ];
+    }
+
+    protected function getSheetEditorConfig(): array
+    {
+        return [
+            'labels_per_page' => $this->getLabelsPerPage(),
+            'index_offset' => $this->getLabelIndexOffset(),
+            'label_orientation' => $this->getLabelOrientation(),
+        ];
+    }
 }

@@ -20,6 +20,45 @@ class TZe_24mm_A extends TZe_24mm
 
     private const FIELD_MARGIN = 0.15;
 
+    public function getBarcodeMargin(): float
+    {
+        return self::BARCODE_MARGIN;
+    }
+
+    public function getTagSize(): float
+    {
+        return self::TAG_SIZE;
+    }
+
+    public function getTitleSize(): float
+    {
+        return self::TITLE_SIZE;
+    }
+
+    public function getTitleMargin(): float
+    {
+        return self::TITLE_MARGIN;
+    }
+
+    public function getLabelSize(): float
+    {
+        return self::LABEL_SIZE;
+    }
+
+    public function getLabelMargin(): float
+    {
+        return self::LABEL_MARGIN;
+    }
+
+    public function getFieldSize(): float
+    {
+        return self::FIELD_SIZE;
+    }
+
+    public function getFieldMargin(): float
+    {
+        return self::FIELD_MARGIN;
+    }
     public function getUnit()
     {
         return 'mm';
@@ -58,6 +97,32 @@ class TZe_24mm_A extends TZe_24mm
     public function getSupportTitle()
     {
         return true;
+    }
+
+    public function getTextRenderMode(): string
+    {
+        return 'vertical_stack';
+    }
+
+    protected function getContentEditorConfig(): array
+    {
+        return [
+            'barcode_margin' => $this->getBarcodeMargin(),
+            'barcode_2d_size' => 15,
+
+            'tag_font_size' => $this->getTagSize(),
+            'tag_offset_x' => 2,
+
+            'title_font_size' => $this->getTitleSize(),
+            'title_margin' => $this->getTitleMargin(),
+
+            'field_label_font_size' => $this->getLabelSize(),
+            'field_label_margin' => $this->getLabelMargin(),
+
+            'field_value_font_size' => $this->getFieldSize(),
+            'field_value_margin' => $this->getFieldMargin(),
+            'text_render_mode' => $this->getTextRenderMode(),
+        ];
     }
 
     public function write($pdf, $record)

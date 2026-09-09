@@ -334,7 +334,7 @@ $(function () {
     });
 
     // confirm delete modal
-    $el.on('click', '.delete-asset', function (evnt) {
+    $el.on('click', '.delete-asset, .delete-custom-label', function (evnt) {
         var $context = $(this);
         var $dataConfirmModal = $('#dataConfirmModal');
         // Anchors keep the URL in href; buttons keep it in data-href

@@ -6,6 +6,8 @@ class _5520_A extends _5520
 {
     private const BARCODE_MARGIN = 0.075;
 
+    private const TAG_SIZE = 0.125;
+
     private const TITLE_SIZE = 0.140;
 
     private const TITLE_MARGIN = 0.040;
@@ -17,6 +19,49 @@ class _5520_A extends _5520
     private const FIELD_SIZE = 0.150;
 
     private const FIELD_MARGIN = 0.012;
+    protected string $titleFont = 'freesans';
+    protected string $fieldLabelFont = 'freesans';
+    protected string $fieldValueFont = 'freemono';
+
+    public function getBarcodeMargin()
+    {
+        return self::BARCODE_MARGIN;
+    }
+
+    public function getTagSize()
+    {
+        return self::TAG_SIZE;
+    }
+
+    public function getTitleSize()
+    {
+        return self::TITLE_SIZE;
+    }
+
+    public function getTitleMargin()
+    {
+        return self::TITLE_MARGIN;
+    }
+
+    public function getLabelSize()
+    {
+        return self::LABEL_SIZE;
+    }
+
+    public function getLabelMargin()
+    {
+        return self::LABEL_MARGIN;
+    }
+
+    public function getFieldSize()
+    {
+        return self::FIELD_SIZE;
+    }
+
+    public function getFieldMargin()
+    {
+        return self::FIELD_MARGIN;
+    }
 
     public function getUnit()
     {
@@ -73,6 +118,52 @@ class _5520_A extends _5520
         return true;
     }
 
+    public function getTitleFont(): string
+    {
+        return $this->titleFont;
+    }
+
+    public function getFieldLabelFont(): string
+    {
+        return $this->fieldLabelFont;
+    }
+
+    public function getFieldValueFont(): string
+    {
+        return $this->fieldValueFont;
+    }
+
+    protected function getSupportsEditorConfig(): array
+    {
+        return [
+            'asset_tag' => $this->getSupportAssetTag(),
+            'barcode_1d' => $this->getSupport1DBarcode(),
+            'barcode_2d' => $this->getSupport2DBarcode(),
+            'fields' => $this->getSupportFields(),
+            'logo' => $this->getSupportLogo(),
+            'title' => $this->getSupportTitle(),
+        ];
+    }
+
+    protected function getContentEditorConfig(): array
+    {
+        return [
+            'barcode_margin' => $this->getBarcodeMargin(),
+            'barcode_2d_size' => $this->getLabelPrintableArea()->h - (self::TITLE_SIZE + self::TITLE_MARGIN),
+            'tag_font_size' => $this->getTagSize(),
+            'title_font_size' => $this->getTitleSize(),
+            'title_margin' => $this->getTitleMargin(),
+            'field_label_font_size' => $this->getLabelSize(),
+            'field_label_margin' => $this->getLabelMargin(),
+            'field_value_font_size' => $this->getFieldSize(),
+            'field_value_margin' => $this->getFieldMargin(),
+            'title_font' => $this->getTitleFont(),
+            'field_label_font' => $this->getFieldLabelFont(),
+            'field_value_font' => $this->getFieldValueFont(),
+            'title_position' => 'top',
+            'title_offset_x' => 0.590551,
+        ];
+    }
     public function write($pdf, $record)
     {
         $pa = $this->getLabelPrintableArea();

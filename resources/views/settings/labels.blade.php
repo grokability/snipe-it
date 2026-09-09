@@ -50,6 +50,7 @@
                         </div>
 
                         @if ($setting->label2_enable)
+
                             @include('partials.labels-new-engine')
                         @else
                             <input name="label2_template" type="hidden" value="{{ old('label2_template', $setting->label2_template) }}" />
@@ -73,10 +74,15 @@
                 </div>
             </div> <!-- /box -->
         </div> <!-- /.col-md-8-->
-    </div> <!-- /.row-->
 
+        </div> <!-- /.row-->
     </form>
-
+    <livewire:labels.new-label-setup/>
+    <livewire:labels.import-label/>
+    <form id="delete-custom-label-form" method="POST" style="display:none;">
+        @csrf
+        @method('DELETE')
+    </form>
 @stop
 
 @push('js')
@@ -129,6 +135,126 @@
             });
             });
         }
+
+        $(function () {
+            let isPreselecting = false;
+
+            $('#label2TemplateTable').on('check.bs.table', function (e, row) {
+                if (isPreselecting) {
+                    return;
+                }
+
+                const value = row.source === 'custom'
+                    ? 'custom:' + row.custom_label_id
+                    : row.name;
+
+                $('input[name="label2_template"]:checked').val(value);
+
+                $('#label2_preview_template').text(row.name || value);
+
+                document.getElementById('settingsForm')
+                    ?.dispatchEvent(new Event('change'));
+            });
+
+            $('#label2TemplateTable').on('load-success.bs.table', function () {
+                // On initial load, the saved setting is the source of truth.
+                const selected = @json($setting->label2_template);
+
+                isPreselecting = true;
+
+                $('#label2TemplateTable')
+                    .bootstrapTable('getData')
+                    .forEach((row, index) => {
+                        const value = row.source === 'custom'
+                            ? 'custom:' + row.custom_label_id
+                            : row.name;
+
+                        if (value === selected) {
+                            $('#label2TemplateTable')
+                                .bootstrapTable('check', index);
+
+                            // check.bs.table is suppressed while preselecting,
+                            // so explicitly set the canonical form value here.
+                            $('input[name="label2_template"]:checked')
+                                .val(value);
+
+                            $('#label2_preview_template')
+                                .text(row.name || value);
+                        }
+                    });
+
+                isPreselecting = false;
+
+                document.getElementById('settingsForm')
+                    ?.dispatchEvent(new Event('change'));
+            });
+        });
+
+
+        const deleteLabelUrlTemplate = "{{ route('settings.labels.destroy', ['label' => 'label_id']) }}";
+        const editLabelUrlTemplate = "{{ route('settings.labels.edit', ['label' => 'label_id']) }}";
+
+        $(document).on('click', '.copy-label-json', async function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const $btn = $(this);
+            const originalHtml = $btn.html();
+
+            try {
+                const json = decodeURIComponent($btn.data('json'));
+
+                await navigator.clipboard.writeText(json);
+
+                $btn
+                    .removeClass('btn-primary')
+                    .addClass('btn-success')
+                    .html('<i class="fa fa-check"></i>');
+
+                setTimeout(() => {
+                    $btn
+                        .removeClass('btn-success')
+                        .addClass('btn-primary')
+                        .html(originalHtml);
+                }, 1500);
+            } catch (e) {
+                console.error(e);
+
+                $btn
+                    .removeClass('btn-primary')
+                    .addClass('btn-danger')
+                    .html('<i class="fa fa-times"></i>');
+
+                setTimeout(() => {
+                    $btn
+                        .removeClass('btn-danger')
+                        .addClass('btn-primary')
+                        .html(originalHtml);
+                }, 1500);
+            }
+        });
+        $(document).on('click', '.export-label-json', function () {
+
+            const json = decodeURIComponent($(this).data('json'));
+            const name = decodeURIComponent($(this).data('name'));
+
+            const blob = new Blob([json], {
+                type: 'application/json;charset=utf-8'
+            });
+
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            const safeName = name.replace(/[^\w\-]+/g, '_');
+
+            a.href = url;
+            a.download = `${safeName}.json`;
+
+            document.body.appendChild(a);
+            a.click();
+
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        });
 
     </script>
     {{-- Can't use @script here because we're not in a livewire component so let's manually load --}}

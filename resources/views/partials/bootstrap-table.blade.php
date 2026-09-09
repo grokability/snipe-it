@@ -1897,6 +1897,32 @@
         },
     });
     @endcan
+        window.labelButtons = () => ({
+        btnAdd: {
+            icon: 'fa fa-plus',
+            text: 'Create New Label',
+            title: 'Create New Label',
+            event() {
+                $('#new-label-modal').modal('show');
+            },
+            attributes: {
+                class: 'btn-info',
+                title: 'Create New Label'
+            }
+        },
+        btnImport: {
+            icon: 'fa-solid fa-file-import',
+            text: 'Import Label',
+            title: 'Import Label',
+            event() {
+                $('#import-label-modal').modal('show');
+            },
+            attributes: {
+                class: 'btn-info',
+                title: 'Import Label'
+            }
+        }
+    });
 
     @can('create', \App\Models\Statuslabel::class)
     // Status label table buttons
@@ -2611,7 +2637,7 @@
             }
 
             if ((row.available_actions) && (row.available_actions.delete === true)) {
-
+                actions += '<a href="{{ config('app.url') }}/' + dest + '/' + row.id + '/edit" class="actions btn btn-sm btn-warning hidden-print" data-tooltip="true" title="{{ trans('general.update') }}"><x-icon type="edit" class="fa-fw" /><span class="sr-only">{{ trans('general.update') }}</span></a>&nbsp;';
                 // use the asset tag if no name is provided
 
                 if (row.name) {
@@ -4024,6 +4050,76 @@
 
     function linkNumberToUserAssignedMaintenancesFormatter(value, row) {
         return linkToUserSectionBasedOnCount(value, row.id, 'maintenances');
+    }
+
+    function labelActionsFormatter(value, row) {
+        if (!row.name) return '';
+
+        const createUrl = '{{ route('settings.labels.create') }}';
+        // Clone Button
+        let cloneHref;
+
+        if (row.source === 'custom') {
+            cloneHref = createUrl + '?custom_label_id=' + row.custom_label_id;
+        } else {
+            cloneHref = createUrl + '?label=' + encodeURIComponent(row.name);
+        }
+
+        let actions = '<a href="' + cloneHref + '" '
+            + 'class="actions btn btn-sm btn-primary hidden-print" '
+            + 'data-tooltip="true" '
+            + 'title="{{ trans('general.clone') }}">'
+            + '<i class="fa-regular fa-clone"></i>'
+            + '<span class="sr-only">{{ trans('general.clone') }}</span>'
+            + '</a>&nbsp;';
+        // Only allow delete, share or edit for custom labels
+        if (row.source === 'custom') {
+            // Update Button
+            var editUrl = editLabelUrlTemplate.replace('label_id', row.custom_label_id);
+
+            actions += '<a href="' + editUrl + '" '
+                + 'class="actions btn btn-sm btn-warning hidden-print" '
+                + 'data-tooltip="true" '
+                + 'title="{{ trans('general.update') }}">'
+                + '<x-icon type="edit" class="fa-fw" />'
+                + '<span class="sr-only">{{ trans('general.update') }}</span>'
+                + '</a>&nbsp;';
+            // Share button
+            var encodedJson = encodeURIComponent(JSON.stringify(row.config_snapshot || {}, null, 2));
+
+            actions += '<button type="button" '
+                + 'class="btn btn-primary btn-sm export-label-json hidden-print" '
+                + 'data-json="' + encodedJson + '" '
+                + 'data-name="' + encodeURIComponent(row.name || "label") + '" '
+                + 'title="Export Label" '
+                + 'data-tooltip="true">'
+                + '<i class="fa-solid fa-file-export"></i>'
+                + '<span class="sr-only">Export Label</span>'
+                + '</button>&nbsp;';
+
+            // Delete button
+            var safeName = $('<div>').text(row.name || 'this label').html().replace(/"/g, '&quot;');
+            var deleteUrl = deleteLabelUrlTemplate.replace('label_id', row.custom_label_id);
+
+            actions += '<a href="' + deleteUrl + '" '
+                + 'class="actions btn btn-danger btn-sm delete-custom-label hidden-print" '
+                + 'data-tooltip="true" '
+                + 'data-icon="fa-trash" '
+                + 'data-content="{{ trans('general.sure_to_delete') }}: ' + safeName + '?" '
+                + 'data-title="{{ trans('general.delete') }}">'
+                + '<x-icon type="delete" class="fa-fw" />'
+                + '<span class="sr-only">{{ trans('general.delete') }}</span>'
+                + '</a>&nbsp;';
+        }
+
+
+        return actions;
+    }
+
+    function labelNameFormatter(value) {
+        if (!value) return '';
+        value = String(value).replace(/\//g, '\\').replace(/^(Sheets|Tapes)\\/, '');
+        return $('<div/>').text(value).html();
     }
 
     function labelPerPageFormatter(value, row, index, field) {

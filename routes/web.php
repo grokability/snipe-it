@@ -40,7 +40,6 @@ use App\Http\Controllers\SuppliersController;
 use App\Http\Controllers\UploadedFilesController;
 use App\Http\Controllers\ViewAssetsController;
 use App\Livewire\Importer;
-use App\Mail\CheckoutComponentMail;
 use App\Models\MaintenanceType;
 use App\Models\ReportTemplate;
 use Illuminate\Support\Facades\Route;
@@ -137,11 +136,6 @@ Route::group(['middleware' => 'auth'], function () {
         [LabelsController::class, 'show']
     )->where('labelName', '.*')->name('labels.show');
 
-    Route::get('/test-email', function () {
-        $mailable = new CheckoutComponentMail;
-
-        return $mailable->render(); // dumps HTML
-    });
     /*
     * Manufacturers
     */
@@ -341,9 +335,22 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'authorize:superuser
         ->name('settings.labels.index')
         ->breadcrumbs(fn (Trail $trail) => $trail->parent('settings.index')
             ->push(trans('admin/settings/general.labels_title'), route('settings.labels.index')));
+    Route::get('labels/customizer-preview/{labelName}', [LabelsController::class, 'customLabelPreview']
+    )->where('labelName', '.*')->name('labels.customizer-preview');
 
     Route::post('labels', [SettingsController::class, 'postLabels'])
         ->name('settings.labels.save');
+
+    Route::get('/settings/labels/create', [LabelsController::class, 'create'])
+        ->name('settings.labels.create');
+    Route::get('/settings/labels/{label}/edit', [LabelsController::class, 'edit'])
+        ->name('settings.labels.edit');
+    Route::post('/settings/labels', [LabelsController::class, 'store'])
+        ->name('settings.labels.store');
+    Route::put('/settings/labels/{label}', [LabelsController::class, 'update'])
+        ->name('settings.labels.update');
+    Route::delete('settings/labels/{label}', [LabelsController::class, 'destroy'])
+        ->name('settings.labels.destroy');
 
     Route::get('ldap', [SettingsController::class, 'getLdapSettings'])
         ->name('settings.ldap.index')

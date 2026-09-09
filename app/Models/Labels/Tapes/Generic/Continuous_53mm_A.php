@@ -18,7 +18,7 @@ class Continuous_53mm_A extends Continuous_53mm
 
     public function getSupport1DBarcode()
     {
-        return true;
+        return false;
     }
 
     public function getSupport2DBarcode()
@@ -39,6 +39,64 @@ class Continuous_53mm_A extends Continuous_53mm
     public function getSupportTitle()
     {
         return true;
+    }
+
+    public function getBarcodeMargin(): float
+    {
+        return $this->barcodeMargin;
+    }
+
+    public function getTitleSize(): float
+    {
+        return $this->titleSize;
+    }
+
+    public function getTitleMargin(): float
+    {
+        return $this->titleMargin;
+    }
+
+    public function getLabelSize(): float
+    {
+        return $this->labelSize;
+    }
+
+    public function getLabelMargin(): float
+    {
+        return $this->labelMargin;
+    }
+
+    public function getFieldSize(): float
+    {
+        return $this->fieldSize;
+    }
+
+    public function getFieldMargin(): float
+    {
+        return $this->fieldMargin;
+    }
+
+    protected function getContentEditorConfig(): array
+    {
+        return [
+            'barcode_2d_size' => 32.0,
+            'barcode2D_v_align' => 'T',
+            'barcode2D_placement' => 'stacked',
+
+            'barcode_margin' => $this->barcodeMargin,
+
+            'title_font_size' => $this->titleSize,
+            'title_margin' => $this->titleMargin,
+            'title_offset_x' => 8,
+
+            'field_label_font_size' => $this->labelSize,
+            'field_label_margin' => $this->labelMargin,
+
+            'field_value_font_size' => $this->fieldSize,
+            'field_value_margin' => $this->fieldMargin,
+
+            'text_render_mode' => 'vertical_stack',
+        ];
     }
 
     public function preparePDF(TCPDF $pdf): void

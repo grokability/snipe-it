@@ -46,6 +46,63 @@ class Tape_53mm_A extends Tape_53mm
         return true;
     }
 
+    public function getBarcodeMargin(): float
+    {
+        return $this->barcodeMargin;
+    }
+
+    public function getTitleSize(): float
+    {
+        return $this->titleSize;
+    }
+
+    public function getTitleMargin(): float
+    {
+        return $this->titleMargin;
+    }
+
+    public function getLabelSize(): float
+    {
+        return $this->labelSize;
+    }
+
+    public function getLabelMargin(): float
+    {
+        return $this->labelMargin;
+    }
+
+    public function getFieldSize(): float
+    {
+        return $this->fieldSize;
+    }
+
+    public function getFieldMargin(): float
+    {
+        return $this->fieldMargin;
+    }
+
+    protected function getContentEditorConfig(): array
+    {
+        return [
+            'barcode_2d_size' => 27.0,
+            'barcode2D_v_align' => 'T',
+            'barcode2D_placement' => 'stacked',
+
+            'barcode_margin' => $this->getBarcodeMargin(),
+
+            'title_font_size' => $this->getTitleSize(),
+            'title_margin' => $this->getTitleMargin(),
+            'title_offset_x' => '7',
+
+            'field_label_font_size' => $this->getLabelSize(),
+            'field_label_margin' => $this->getLabelMargin(),
+
+            'field_value_font_size' => $this->getFieldSize(),
+            'field_value_margin' => $this->getFieldMargin(),
+
+            'text_render_mode' => 'vertical_stack',
+        ];
+    }
     public function preparePDF(TCPDF $pdf): void
     {
         $pdf->SetAutoPageBreak(false);
