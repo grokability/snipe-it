@@ -274,6 +274,25 @@ class LdapWizardTest extends TestCase
             ->assertHasErrors(['ad_domain']);
     }
 
+    public function test_step1_unchecking_is_ad_clears_ad_domain(): void
+    {
+        // Blade renders the ad_domain input inside @if ($is_ad), so once
+        // the user unchecks the AD toggle the field disappears from the
+        // page. The bound Livewire prop still carries the previously-
+        // typed value though, and would write back to the persisted
+        // Setting on save. Clear on toggle so component state matches
+        // what the user sees.
+        $this->actAsSuperuser();
+        $this->ensureSetting();
+
+        Livewire::test(LdapSettings::class)
+            ->set('is_ad', true)
+            ->set('ad_domain', 'example.com')
+            ->assertSet('ad_domain', 'example.com')
+            ->set('is_ad', false)
+            ->assertSet('ad_domain', '');
+    }
+
     public function test_step1_tls_pair_xor_key_without_cert_blocks_advance(): void
     {
         $this->actAsSuperuser();
