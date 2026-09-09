@@ -332,7 +332,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'authorize:superuser
     Route::get('adapters', [SettingsController::class, 'getAdapters'])
         ->name('settings.adapters.index')
         ->breadcrumbs(fn (Trail $trail) => $trail->parent('settings.index')
-            ->push(trans('admin/settings/general.sync_adapters_title'), route('settings.adapters.index')));
+            ->push(trans('admin/settings/sync_adapters.title'), route('settings.adapters.index')));
 
     Route::post('adapters', [SettingsController::class, 'postCreateAdapterInstance'])
         ->name('settings.adapters.create');
@@ -351,6 +351,10 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'authorize:superuser
 
     Route::post('adapters/{instance}/refresh-groups', [SettingsController::class, 'postAdapterRefreshGroups'])
         ->name('settings.adapters.refresh_groups')
+        ->missing(fn () => abort(404));
+
+    Route::post('adapters/{instance}/refresh-custom-fields', [SettingsController::class, 'postAdapterRefreshCustomFields'])
+        ->name('settings.adapters.refresh_custom_fields')
         ->missing(fn () => abort(404));
 
     Route::delete('adapters/{instance}', [SettingsController::class, 'deleteAdapterInstance'])
