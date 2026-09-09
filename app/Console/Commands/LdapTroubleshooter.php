@@ -169,11 +169,11 @@ class LdapTroubleshooter extends Command
                 // handshake error. escapeshellarg wraps in single quotes
                 // so install paths containing spaces still parse
                 // correctly when pasted.
-                $output[] = 'LDAPTLS_CERT=' . escapeshellarg(Setting::get_client_side_cert_path());
-                $output[] = 'LDAPTLS_KEY=' . escapeshellarg(Setting::get_client_side_key_path());
+                $output[] = 'LDAPTLS_CERT='.escapeshellarg(Setting::get_client_side_cert_path());
+                $output[] = 'LDAPTLS_KEY='.escapeshellarg(Setting::get_client_side_key_path());
             }
             $output[] = 'ldapsearch';
-            $output[] = '-H '.$settings->ldap_server;
+            $output[] = '-H '.escapeshellarg($settings->ldap_server);
             $output[] = '-b '.escapeshellarg($settings->ldap_basedn);
 
             if (Ldap::shouldUseSaslExternal($settings)) {
@@ -195,12 +195,23 @@ class LdapTroubleshooter extends Command
                 $output[] = '-w '.escapeshellarg($w);
             }
 
-            $output[] = escapeshellarg(parenthesized_filter($settings->ldap_filter));
-            if ($settings->ldap_tls) {
+            // -Z (STARTTLS) is only valid on a plaintext ldap:// URL.
+            // ldaps:// negotiates TLS at connect time, so issuing
+            // STARTTLS on that connection returns "Operations error"
+            // or "already TLS" and ldapsearch bails. This bit tripped
+            // up Google Workspace secure-LDAP admins whose ldap_server
+            // is ldaps://ldap.google.com:636 with ldap_tls also true.
+            if ($settings->ldap_tls && str_starts_with(strtolower((string) $settings->ldap_server), 'ldap://')) {
                 $this->line('# adding STARTTLS option');
                 $output[] = '-Z';
             }
             $output[] = '-v';
+            // Positional filter goes last, after every flag. GNU getopt
+            // reorders args so the filter-before-flags shape would
+            // still work on OpenLDAP's ldapsearch, but POSIX-strict
+            // builds (some macOS Homebrew variants) require flags
+            // before the positional argument.
+            $output[] = escapeshellarg(parenthesized_filter($settings->ldap_filter));
             $this->line("\n");
             $this->line(implode(" \\\n", $output));
             exit(0);
@@ -497,8 +508,8 @@ class LdapTroubleshooter extends Command
             // client-side TLS certificate support for LDAP (Google Secure LDAP).
             // Absolute paths so the test still works when the command runs
             // outside the app root (crontab, systemd unit, wrapper script).
-            putenv('LDAPTLS_CERT=' . Setting::get_client_side_cert_path());
-            putenv('LDAPTLS_KEY=' . Setting::get_client_side_key_path());
+            putenv('LDAPTLS_CERT='.Setting::get_client_side_cert_path());
+            putenv('LDAPTLS_KEY='.Setting::get_client_side_key_path());
         }
         if ($start_tls) {
             if (! ldap_start_tls($lconn)) {
