@@ -3,7 +3,6 @@
 namespace App\SyncAdapters\Mosyle;
 
 use App\Models\Asset;
-use App\Models\AssetExternalSource;
 use App\SyncAdapters\HostInventoryRecord;
 use App\SyncAdapters\PushableAdapter;
 use App\SyncAdapters\Support\ConfigurableAdapter;
@@ -159,20 +158,7 @@ class MosyleAdapter extends ConfigurableAdapter implements PushableAdapter
      */
     public function push(Asset $asset, array $changedFields = []): void
     {
-        $pushFields = $this->pushDirectedFields();
-        if ($pushFields === []) {
-            return;
-        }
-
-        if ($changedFields !== [] && array_intersect($changedFields, $pushFields) === []) {
-            return;
-        }
-
-        $externalSource = AssetExternalSource::query()
-            ->where('asset_id', $asset->id)
-            ->where('source', $this->name())
-            ->first();
-
+        $externalSource = $this->pushPrologue($asset, $changedFields);
         if ($externalSource === null) {
             return;
         }
@@ -189,7 +175,7 @@ class MosyleAdapter extends ConfigurableAdapter implements PushableAdapter
         $pushedFields = [];
         $client = null;
 
-        foreach ($pushFields as $field) {
+        foreach ($this->pushDirectedFields() as $field) {
             if ($field !== 'asset_tag') {
                 continue;
             }
@@ -219,21 +205,19 @@ class MosyleAdapter extends ConfigurableAdapter implements PushableAdapter
         // Composed notes push. Independent from the asset_tag push
         // because Mosyle's write API dispatches per-op, so notes get
         // a second POST to /devices with the notes operation.
-        $template = $this->pushNotesTemplate();
-        if ($template !== '') {
-            $composed = \App\SyncAdapters\Support\NotesComposer::compose($asset, $template);
-            if ($composed !== '') {
-                if ($this->isPushDryRun()) {
-                    Log::channel('sync-adapters')->info(sprintf(
-                        '%s push [dry-run]: would set Mosyle device serial=%s notes=%s',
-                        $this->name(),
-                        $serial,
-                        $composed,
-                    ));
-                } else {
-                    $client ??= new MosyleClient(baseUrl: $this->url(), token: $this->credential('token'));
-                    $client->updateDeviceNotesBySerial($serial, $composed);
-                }
+        $composed = $this->composeNotesForPush($asset);
+        if ($composed !== '') {
+            if ($this->isPushDryRun()) {
+                Log::channel('sync-adapters')->info(sprintf(
+                    '%s push [dry-run]: would set Mosyle device serial=%s notes=%s',
+                    $this->name(),
+                    $serial,
+                    $composed,
+                ));
+                $pushedFields[] = 'notes';
+            } else {
+                $client ??= new MosyleClient(baseUrl: $this->url(), token: $this->credential('token'));
+                $client->updateDeviceNotesBySerial($serial, $composed);
                 $pushedFields[] = 'notes';
             }
         }

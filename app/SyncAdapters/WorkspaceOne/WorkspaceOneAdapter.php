@@ -3,7 +3,6 @@
 namespace App\SyncAdapters\WorkspaceOne;
 
 use App\Models\Asset;
-use App\Models\AssetExternalSource;
 use App\SyncAdapters\HostInventoryRecord;
 use App\SyncAdapters\PushableAdapter;
 use App\SyncAdapters\Support\ConfigurableAdapter;
@@ -187,27 +186,13 @@ class WorkspaceOneAdapter extends ConfigurableAdapter implements PushableAdapter
      */
     public function push(Asset $asset, array $changedFields = []): void
     {
-        // Don't early-exit on empty pushFields. Composed notes may
-        // still be configured without any per-field direction=push.
-        // Only skip when we have push fields AND the caller told us
-        // none of them are in the changed set.
-        $pushFields = $this->pushDirectedFields();
-        if ($pushFields !== [] && $changedFields !== []
-            && array_intersect($changedFields, $pushFields) === []) {
-            return;
-        }
-
-        $externalSource = AssetExternalSource::query()
-            ->where('asset_id', $asset->id)
-            ->where('source', $this->name())
-            ->first();
-
+        $externalSource = $this->pushPrologue($asset, $changedFields);
         if ($externalSource === null) {
             return;
         }
 
         $payload = [];
-        foreach ($pushFields as $field) {
+        foreach ($this->pushDirectedFields() as $field) {
             $mapped = self::sourceFieldToWs1Field($field);
             if ($mapped === null) {
                 continue;
@@ -228,11 +213,8 @@ class WorkspaceOneAdapter extends ConfigurableAdapter implements PushableAdapter
         // are configured. Admin sets the Custom Attribute name via
         // the composed-notes fieldset override. Nothing default
         // because WS1 has no built-in notes concept for us to guess.
-        $notesTemplate = $this->pushNotesTemplate();
+        $composed = $this->composeNotesForPush($asset);
         $notesTarget = $this->effectiveNotesTarget();
-        $composed = ($notesTemplate !== '' && $notesTarget !== null)
-            ? \App\SyncAdapters\Support\NotesComposer::compose($asset, $notesTemplate)
-            : '';
 
         if ($payload === [] && $composed === '') {
             return;

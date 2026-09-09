@@ -3,7 +3,6 @@
 namespace App\SyncAdapters\NinjaOne;
 
 use App\Models\Asset;
-use App\Models\AssetExternalSource;
 use App\SyncAdapters\HostInventoryRecord;
 use App\SyncAdapters\PushableAdapter;
 use App\SyncAdapters\Support\ConfigurableAdapter;
@@ -176,20 +175,7 @@ class NinjaOneAdapter extends ConfigurableAdapter implements PushableAdapter
      */
     public function push(Asset $asset, array $changedFields = []): void
     {
-        $pushFields = $this->pushDirectedFields();
-        if ($pushFields === []) {
-            return;
-        }
-
-        if ($changedFields !== [] && array_intersect($changedFields, $pushFields) === []) {
-            return;
-        }
-
-        $externalSource = AssetExternalSource::query()
-            ->where('asset_id', $asset->id)
-            ->where('source', $this->name())
-            ->first();
-
+        $externalSource = $this->pushPrologue($asset, $changedFields);
         if ($externalSource === null) {
             return;
         }
@@ -206,7 +192,7 @@ class NinjaOneAdapter extends ConfigurableAdapter implements PushableAdapter
         }
 
         $payload = [];
-        foreach ($pushFields as $field) {
+        foreach ($this->pushDirectedFields() as $field) {
             if ($field !== 'asset_tag') {
                 continue;
             }
@@ -224,13 +210,9 @@ class NinjaOneAdapter extends ConfigurableAdapter implements PushableAdapter
         // sets the notes-target field via the composed-notes fieldset
         // override. Nothing default because Ninja has no built-in
         // notes concept for us to guess.
-        $template = $this->pushNotesTemplate();
-        $notesTarget = $this->effectiveNotesTarget();
-        if ($template !== '' && $notesTarget !== null) {
-            $composed = \App\SyncAdapters\Support\NotesComposer::compose($asset, $template);
-            if ($composed !== '') {
-                $payload[$notesTarget] = $composed;
-            }
+        $composed = $this->composeNotesForPush($asset);
+        if ($composed !== '') {
+            $payload[$this->effectiveNotesTarget()] = $composed;
         }
 
         if ($payload === []) {

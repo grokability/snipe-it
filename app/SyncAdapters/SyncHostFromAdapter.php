@@ -33,142 +33,19 @@ use RuntimeException;
  */
 class SyncHostFromAdapter
 {
-    /**
-     * @SuppressWarnings("PHPMD.ElseExpression")
-     */
     public static function run(HostInventoryRecord $record): Asset
     {
         return DB::transaction(function () use ($record) {
             $instance = SyncAdapterInstance::query()->where('slug', $record->sourceKey)->first();
             $mapping = self::loadMapping($instance);
 
-            $existingSource = DB::table('asset_external_sources')
-                ->where('source', $record->sourceKey)
-                ->where('external_id', $record->sourceId)
-                ->first();
+            [$asset, $isNew] = self::provisionAsset($record, $instance);
 
-            $asset = $existingSource ? Asset::find($existingSource->asset_id) : null;
-            $isNew = $asset === null;
-
-            if ($isNew) {
-                $asset = self::createShellAsset($record, $instance);
-
-                // Identity row created empty of inventory columns. the
-                // mapping loop below fills them and the write goes out
-                // through upsertExternalSource().
-                DB::table('asset_external_sources')->insert([
-                    'asset_id' => $asset->id,
-                    'company_id' => $instance?->company_id,
-                    'source' => $record->sourceKey,
-                    'external_id' => $record->sourceId,
-                    // NULL for CLI / scheduled runs, admin id for
-                    // interactive Sync Now clicks.
-                    'created_by' => auth()->id(),
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
-            } else {
-                // Update-sync path: if the vendor moved this device
-                // to a different group and the new group maps to a
-                // different Snipe-IT company, reassign. Same
-                // "vendor is authoritative" model as native:asset_tag
-                // for tags. Admins who want to preserve manual
-                // company assignments turn off group scoping for
-                // this adapter or delete the specific mapping.
-                $resolvedCompanyId = self::resolveCompanyId($record, $instance);
-                if ($resolvedCompanyId !== null && $resolvedCompanyId !== (int) $asset->company_id) {
-                    $asset->company_id = $resolvedCompanyId;
-                }
-            }
-
-            // Apply per-field mappings. Routes each normalized field to
-            // native asset columns, external-source columns, custom
-            // fields, or skips it, based on per-instance config. Fields
-            // directed 'push' or 'skip' on this instance are excluded
-            // from the pull path so the vendor's value can't overwrite
-            // a Snipe-IT-authoritative field (asset_tag pushed to the
-            // vendor shouldn't get pulled back from what the vendor
-            // reports). 'both' direction still pulls (naive last-write-
-            // wins) so both sides converge on whichever side ran most
-            // recently.
-            $adapterForDirection = $instance?->adapter();
             $externalUpdates = [];
-            foreach (MappingTargets::FIELDS as $field) {
-                $target = $mapping[$field] ?? MappingTargets::defaultTarget($field);
-                if ($target === 'skip') {
-                    continue;
-                }
-                if ($adapterForDirection instanceof ConfigurableAdapter
-                    && ! in_array($adapterForDirection->directionFor($field), ['pull', 'both'], true)) {
-                    continue;
-                }
+            self::applyStandardFieldMappings($asset, $externalUpdates, $record, $instance, $mapping);
+            self::applyExtraFieldMappings($asset, $record, $instance, $mapping);
 
-                $value = self::recordValueFor($record, $field);
-                self::writeToTarget($asset, $externalUpdates, $target, $value, $instance);
-            }
-
-            // Apply extra-field mappings. Extras are vendor-specific
-            // keys the adapter emits into HostInventoryRecord::$extra.
-            // Valid targets for extras are custom fields OR a small
-            // set of native asset columns (asset_tag, notes) for
-            // admins who store per-device metadata in the vendor's
-            // labels / blueprint / team field. Values get stringified
-            // so array or object payloads (Fleet's labels list, etc.)
-            // land as readable text regardless of the underlying
-            // native / custom write path.
-            if ($instance !== null) {
-                $adapter = $instance->adapter();
-                if ($adapter instanceof ConfigurableAdapter) {
-                    $extraFields = $adapter->extraFields();
-                    foreach (array_keys($extraFields) as $extraKey) {
-                        $target = $mapping[$extraKey] ?? 'skip';
-                        if ($target === 'skip') {
-                            continue;
-                        }
-                        $isCustom = str_starts_with($target, 'custom:');
-                        $isNative = str_starts_with($target, 'native:');
-                        if (! $isCustom && ! $isNative) {
-                            continue;
-                        }
-
-                        $raw = $record->extra[$extraKey] ?? null;
-                        $type = self::extraFieldType($extraFields, $extraKey);
-
-                        // Booleans render '0' when raw is false. other
-                        // types treat blank strings as null. Guard on
-                        // raw-is-null so we don't blank existing data
-                        // for partially populated payloads.
-                        if ($raw === null && $type !== 'boolean') {
-                            continue;
-                        }
-
-                        $value = self::stringifyExtra($raw, $type);
-                        if ($value === null) {
-                            continue;
-                        }
-
-                        if ($isCustom) {
-                            self::writeCustom($asset, (int) substr($target, 7), $value);
-                        } else {
-                            self::writeNative($asset, substr($target, 7), $value, $instance);
-                        }
-                    }
-                }
-            }
-
-            // Snapshot the current external-source inventory columns
-            // before the write so we can diff and log any real changes
-            // to non-heartbeat fields (MAC / IP / OS / os_version) via
-            // a manual Actionlog. AssetObserver only sees native-column
-            // diffs via getDirty(), so external-source column changes
-            // would otherwise go untracked in the asset history.
             $previousExternal = $isNew ? [] : self::loadExternalSourceInventory($asset->id);
-
-            // Push native and custom-field writes. Laravel skips the
-            // UPDATE when $asset->isDirty() is false, so a sync that
-            // only changed external-source columns is a no-op on the
-            // asset row: no AssetObserver::updating fires (we handle
-            // external-source logging separately below).
             $wasDirty = $asset->isDirty();
             $asset->saveOrFail();
 
@@ -186,41 +63,218 @@ class SyncHostFromAdapter
             // silently after logging a warning.
             self::assignUserIfMatched($asset, $record, $instance);
 
-            // Diff external-source column changes and decide whether
-            // to log + touch. Meaningful diff (MAC / IP / OS /
-            // os_version) always logs. last_seen-only diff logs only
-            // when the admin opted into heartbeat logging.
             if (! $isNew) {
-                $externalDiff = self::diffExternal($previousExternal, $externalUpdates);
-                $meaningfulExternalChange = count(array_diff(array_keys($externalDiff), ['last_seen'])) > 0;
-                $heartbeatOnly = $externalDiff !== [] && ! $meaningfulExternalChange;
-
-                $logsHeartbeats = false;
-                if ($instance !== null) {
-                    $adapter = $instance->adapter();
-                    if ($adapter instanceof ConfigurableAdapter) {
-                        $logsHeartbeats = $adapter->logsHeartbeats();
-                    }
-                }
-
-                if ($meaningfulExternalChange || ($heartbeatOnly && $logsHeartbeats)) {
-                    self::writeExternalSourceActionlog($asset, $externalDiff);
-                    // Bump updated_at so "recently updated" sorts
-                    // reflect the sync activity. Use saveQuietly so
-                    // AssetObserver::updating doesn't fire and log a
-                    // redundant `update` Actionlog on top of the
-                    // external-source row we just wrote. Skipped when
-                    // the asset was already dirty (native columns
-                    // changed) because the save above handles it.
-                    if (! $wasDirty) {
-                        $asset->updated_at = now();
-                        $asset->saveQuietly();
-                    }
-                }
+                self::logExternalSourceChanges($asset, $previousExternal, $externalUpdates, $wasDirty, $instance);
             }
 
             return $asset->refresh();
         });
+    }
+
+    /**
+     * Resolve the asset for this sync record. Either finds it by the
+     * existing (source, external_id) tuple in asset_external_sources
+     * or creates a fresh shell asset + identity row for first-sync
+     * cases. Also handles the update-sync group-reassignment case
+     * where a device moved to a different vendor group that maps to
+     * a different Snipe-IT company.
+     *
+     * @return array{0: Asset, 1: bool} Tuple of the resolved asset and an "isNew" flag.
+     */
+    private static function provisionAsset(HostInventoryRecord $record, ?SyncAdapterInstance $instance): array
+    {
+        $existingSource = DB::table('asset_external_sources')
+            ->where('source', $record->sourceKey)
+            ->where('external_id', $record->sourceId)
+            ->first();
+
+        $asset = $existingSource ? Asset::find($existingSource->asset_id) : null;
+
+        if ($asset !== null) {
+            // Update-sync path: if the vendor moved this device to a
+            // different group and the new group maps to a different
+            // Snipe-IT company, reassign. Same "vendor is
+            // authoritative" model as native:asset_tag for tags.
+            // Admins who want to preserve manual company assignments
+            // turn off group scoping for this adapter or delete the
+            // specific mapping.
+            $resolvedCompanyId = self::resolveCompanyId($record, $instance);
+            if ($resolvedCompanyId !== null && $resolvedCompanyId !== (int) $asset->company_id) {
+                $asset->company_id = $resolvedCompanyId;
+            }
+
+            return [$asset, false];
+        }
+
+        $asset = self::createShellAsset($record, $instance);
+
+        // Identity row created empty of inventory columns. the
+        // mapping loop below fills them and the write goes out
+        // through upsertExternalSource().
+        DB::table('asset_external_sources')->insert([
+            'asset_id' => $asset->id,
+            'company_id' => $instance?->company_id,
+            'source' => $record->sourceKey,
+            'external_id' => $record->sourceId,
+            // NULL for CLI / scheduled runs, admin id for
+            // interactive Sync Now clicks.
+            'created_by' => auth()->id(),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        return [$asset, true];
+    }
+
+    /**
+     * Apply per-field mappings. Routes each normalized field to native
+     * asset columns, external-source columns, custom fields, or skips
+     * it, based on per-instance config. Fields directed 'push' or
+     * 'skip' on this instance are excluded from the pull path so the
+     * vendor's value can't overwrite a Snipe-IT-authoritative field
+     * (asset_tag pushed to the vendor shouldn't get pulled back from
+     * what the vendor reports). 'both' direction still pulls (naive
+     * last-write-wins) so both sides converge on whichever side ran
+     * most recently.
+     *
+     * @param  array<string, mixed>  $externalUpdates
+     * @param  array<string, string>  $mapping
+     */
+    private static function applyStandardFieldMappings(
+        Asset $asset,
+        array &$externalUpdates,
+        HostInventoryRecord $record,
+        ?SyncAdapterInstance $instance,
+        array $mapping,
+    ): void {
+        $adapterForDirection = $instance?->adapter();
+
+        foreach (MappingTargets::FIELDS as $field) {
+            $target = $mapping[$field] ?? MappingTargets::defaultTarget($field);
+            if ($target === 'skip') {
+                continue;
+            }
+            if ($adapterForDirection instanceof ConfigurableAdapter
+                && ! in_array($adapterForDirection->directionFor($field), ['pull', 'both'], true)) {
+                continue;
+            }
+
+            $value = self::recordValueFor($record, $field);
+            self::writeToTarget($asset, $externalUpdates, $target, $value, $instance);
+        }
+    }
+
+    /**
+     * Apply extra-field mappings. Extras are vendor-specific keys the
+     * adapter emits into HostInventoryRecord::$extra. Valid targets
+     * for extras are custom fields OR a small set of native asset
+     * columns (asset_tag, notes) for admins who store per-device
+     * metadata in the vendor's labels / blueprint / team field.
+     * Values get stringified so array or object payloads (Fleet's
+     * labels list, etc.) land as readable text regardless of the
+     * underlying native / custom write path.
+     *
+     * Sibling of applyStandardFieldMappings but doesn't take
+     * $externalUpdates because extras only route to native columns
+     * or custom fields, never to the asset_external_sources side
+     * table. writeToTarget (which is what feeds $externalUpdates) is
+     * not on the code path here.
+     *
+     * @param  array<string, string>  $mapping
+     */
+    private static function applyExtraFieldMappings(
+        Asset $asset,
+        HostInventoryRecord $record,
+        ?SyncAdapterInstance $instance,
+        array $mapping,
+    ): void {
+        if ($instance === null) {
+            return;
+        }
+        $adapter = $instance->adapter();
+        if (! $adapter instanceof ConfigurableAdapter) {
+            return;
+        }
+
+        $extraFields = $adapter->extraFields();
+        foreach (array_keys($extraFields) as $extraKey) {
+            $target = $mapping[$extraKey] ?? 'skip';
+            if ($target === 'skip') {
+                continue;
+            }
+            $isCustom = str_starts_with($target, 'custom:');
+            $isNative = str_starts_with($target, 'native:');
+            if (! $isCustom && ! $isNative) {
+                continue;
+            }
+
+            $raw = $record->extra[$extraKey] ?? null;
+            $type = self::extraFieldType($extraFields, $extraKey);
+
+            // Booleans render '0' when raw is false. other types
+            // treat blank strings as null. Guard on raw-is-null so
+            // we don't blank existing data for partially populated
+            // payloads.
+            if ($raw === null && $type !== 'boolean') {
+                continue;
+            }
+
+            $value = self::stringifyExtra($raw, $type);
+            if ($value === null) {
+                continue;
+            }
+
+            if ($isCustom) {
+                self::writeCustom($asset, (int) substr($target, 7), $value);
+
+                continue;
+            }
+            self::writeNative($asset, substr($target, 7), $value, $instance);
+        }
+    }
+
+    /**
+     * Diff external-source column writes against a pre-sync snapshot
+     * and log meaningful changes as an Actionlog. Skips heartbeat-only
+     * diffs unless the adapter has heartbeat logging turned on.
+     *
+     * @param  array<string, mixed>  $previousExternal
+     * @param  array<string, mixed>  $externalUpdates
+     */
+    private static function logExternalSourceChanges(
+        Asset $asset,
+        array $previousExternal,
+        array $externalUpdates,
+        bool $wasDirty,
+        ?SyncAdapterInstance $instance,
+    ): void {
+        $externalDiff = self::diffExternal($previousExternal, $externalUpdates);
+        $meaningfulExternalChange = count(array_diff(array_keys($externalDiff), ['last_seen'])) > 0;
+        $heartbeatOnly = $externalDiff !== [] && ! $meaningfulExternalChange;
+
+        $logsHeartbeats = false;
+        if ($instance !== null) {
+            $adapter = $instance->adapter();
+            if ($adapter instanceof ConfigurableAdapter) {
+                $logsHeartbeats = $adapter->logsHeartbeats();
+            }
+        }
+
+        if (! $meaningfulExternalChange && ! ($heartbeatOnly && $logsHeartbeats)) {
+            return;
+        }
+
+        self::writeExternalSourceActionlog($asset, $externalDiff);
+        // Bump updated_at so "recently updated" sorts reflect the
+        // sync activity. Use saveQuietly so AssetObserver::updating
+        // doesn't fire and log a redundant `update` Actionlog on top
+        // of the external-source row we just wrote. Skipped when the
+        // asset was already dirty (native columns changed) because
+        // the save above handles it.
+        if (! $wasDirty) {
+            $asset->updated_at = now();
+            $asset->saveQuietly();
+        }
     }
 
     /**
@@ -732,29 +786,7 @@ class SyncHostFromAdapter
             return;
         }
 
-        // Build the ordered list of (field, value) attempts. Cascade
-        // strategy tries username first (guaranteed unique in
-        // Snipe-IT) then email as fallback. Explicit single-field
-        // strategies produce one attempt.
-        $attempts = match ($strategy) {
-            'email' => [['email', $record->assignedUserEmail]],
-            'username' => [['username', $record->assignedUserName]],
-            'username_then_email' => [
-                ['username', $record->assignedUserName],
-                ['email', $record->assignedUserEmail],
-            ],
-            default => [],
-        };
-
-        // Filter out attempts where the vendor gave us nothing to
-        // match on so we can distinguish "vendor reported no user at
-        // all" from "vendor gave us a user we couldn't find". The
-        // first case may trigger the opt-in checkin-on-null path.
-        // The second gets a warning log.
-        $attempts = array_values(array_filter(
-            $attempts,
-            fn (array $a) => is_string($a[1]) && $a[1] !== '',
-        ));
+        $attempts = self::buildUserMatchAttempts($record, $strategy);
 
         if ($attempts === []) {
             if ($adapter->checksInOnNullUser()
@@ -766,65 +798,122 @@ class SyncHostFromAdapter
             return;
         }
 
-        $user = null;
-        $matchedVia = null;
-        foreach ($attempts as [$field, $value]) {
-            $candidate = User::query()->where($field, $value)->first();
-            if ($candidate !== null) {
-                $user = $candidate;
-                $matchedVia = sprintf('%s=%s', $field, $value);
-                break;
-            }
-        }
-
+        $user = self::resolveUserFromAttempts($attempts, $instance, $strategy, $record->sourceId);
         if ($user === null) {
-            $tried = implode(', ', array_map(
-                fn (array $a) => sprintf('%s=%s', $a[0], $a[1]),
-                $attempts,
-            ));
-            Log::channel('sync-adapters')->warning(sprintf(
-                '%s sync: no Snipe-IT user matched (strategy=%s, tried [%s]) for host %s',
-                $instance->slug,
-                $strategy,
-                $tried,
-                $record->sourceId,
-            ));
-
             return;
         }
 
-        Log::channel('sync-adapters')->info(sprintf(
-            '%s sync: matched user via %s for host %s',
+        self::applyUserAssignment($asset, $user, $adapter, $instance);
+    }
+
+    /**
+     * Build the ordered list of (field, value) attempts for the user-
+     * match strategy. Cascade strategy tries username first (guaranteed
+     * unique in Snipe-IT) then email as fallback. Explicit single-field
+     * strategies produce one attempt. Attempts where the vendor gave us
+     * nothing to match on are filtered out so callers can distinguish
+     * "vendor reported no user at all" (opt-in checkin-on-null) from
+     * "vendor gave us a user we couldn't find" (warning log).
+     *
+     * @return array<int, array{0: string, 1: string}>
+     */
+    private static function buildUserMatchAttempts(HostInventoryRecord $record, string $strategy): array
+    {
+        $attempts = match ($strategy) {
+            'email' => [['email', $record->assignedUserEmail]],
+            'username' => [['username', $record->assignedUserName]],
+            'username_then_email' => [
+                ['username', $record->assignedUserName],
+                ['email', $record->assignedUserEmail],
+            ],
+            default => [],
+        };
+
+        return array_values(array_filter(
+            $attempts,
+            fn (array $a) => is_string($a[1]) && $a[1] !== '',
+        ));
+    }
+
+    /**
+     * Walk the ordered attempts and return the first matching user.
+     * Emits an info log on success and a warning on complete miss so
+     * admins can see the strategy played out per-host. Returns null
+     * when no attempt matched.
+     *
+     * @param  array<int, array{0: string, 1: string}>  $attempts
+     */
+    private static function resolveUserFromAttempts(
+        array $attempts,
+        SyncAdapterInstance $instance,
+        string $strategy,
+        string $sourceId,
+    ): ?User {
+        foreach ($attempts as [$field, $value]) {
+            $candidate = User::query()->where($field, $value)->first();
+            if ($candidate !== null) {
+                Log::channel('sync-adapters')->info(sprintf(
+                    '%s sync: matched user via %s=%s for host %s',
+                    $instance->slug,
+                    $field,
+                    $value,
+                    $sourceId,
+                ));
+
+                return $candidate;
+            }
+        }
+
+        $tried = implode(', ', array_map(
+            fn (array $a) => sprintf('%s=%s', $a[0], $a[1]),
+            $attempts,
+        ));
+        Log::channel('sync-adapters')->warning(sprintf(
+            '%s sync: no Snipe-IT user matched (strategy=%s, tried [%s]) for host %s',
             $instance->slug,
-            $matchedVia,
-            $record->sourceId,
+            $strategy,
+            $tried,
+            $sourceId,
         ));
 
-        // Already assigned to the resolved user: no-op.
+        return null;
+    }
+
+    /**
+     * Commit the assignment. Suppress mode is always silent (direct
+     * assignment). Otherwise fall through to Asset::checkOut() which
+     * fires the CheckoutableCheckedOut event and its notification
+     * listener. The event constructor requires a non-null admin User.
+     * auth() is null for CLI-triggered sync runs, so silently fall
+     * back to direct assignment when there's no auth context to
+     * attach the event to. Skips when the asset is already assigned
+     * to the resolved user.
+     */
+    private static function applyUserAssignment(
+        Asset $asset,
+        User $user,
+        ConfigurableAdapter $adapter,
+        SyncAdapterInstance $instance,
+    ): void {
         if ((int) $asset->assigned_to === (int) $user->id
             && $asset->assigned_type === User::class) {
             return;
         }
 
-        // Suppress mode: always silent (direct assignment). Otherwise
-        // fall through to Asset::checkOut() which fires the
-        // CheckoutableCheckedOut event and its notification listener.
-        // The event constructor requires a non-null admin User. auth()
-        // is null for CLI-triggered sync runs, so silently fall back
-        // to direct assignment when there's no auth context to attach
-        // the event to.
         $admin = auth()->user();
         if ($adapter->suppressesNotifications() || $admin === null) {
             self::silentAssignToUser($asset, $user);
-        } else {
-            $asset->checkOut(
-                target: $user,
-                admin: $admin,
-                checkout_at: now()->toDateTimeString(),
-                note: 'Assigned via sync from '.$instance->slug,
-                name: $asset->name,
-            );
+
+            return;
         }
+
+        $asset->checkOut(
+            target: $user,
+            admin: $admin,
+            checkout_at: now()->toDateTimeString(),
+            note: 'Assigned via sync from '.$instance->slug,
+            name: $asset->name,
+        );
     }
 
     /**

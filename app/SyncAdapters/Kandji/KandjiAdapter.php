@@ -3,7 +3,6 @@
 namespace App\SyncAdapters\Kandji;
 
 use App\Models\Asset;
-use App\Models\AssetExternalSource;
 use App\SyncAdapters\HostInventoryRecord;
 use App\SyncAdapters\PushableAdapter;
 use App\SyncAdapters\Support\ConfigurableAdapter;
@@ -166,30 +165,13 @@ class KandjiAdapter extends ConfigurableAdapter implements PushableAdapter
      */
     public function push(Asset $asset, array $changedFields = []): void
     {
-        $pushFields = $this->pushDirectedFields();
-        if ($pushFields === []) {
-            return;
-        }
-
-        // Optional early-exit: if the caller told us which source
-        // fields changed and none of them are push-directed, skip
-        // the API call entirely. Empty $changedFields = "push all
-        // push-directed fields regardless".
-        if ($changedFields !== [] && array_intersect($changedFields, $pushFields) === []) {
-            return;
-        }
-
-        $externalSource = AssetExternalSource::query()
-            ->where('asset_id', $asset->id)
-            ->where('source', $this->name())
-            ->first();
-
+        $externalSource = $this->pushPrologue($asset, $changedFields);
         if ($externalSource === null) {
             return;
         }
 
         $payload = [];
-        foreach ($pushFields as $field) {
+        foreach ($this->pushDirectedFields() as $field) {
             $mapped = self::sourceFieldToKandjiField($field);
             if ($mapped === null) {
                 continue;
@@ -207,13 +189,9 @@ class KandjiAdapter extends ConfigurableAdapter implements PushableAdapter
         // override or adapter default) merge into the same payload
         // so admins can push both an asset_tag AND a composed notes
         // blob in a single API call.
-        $template = $this->pushNotesTemplate();
-        $notesTarget = $this->effectiveNotesTarget();
-        if ($template !== '' && $notesTarget !== null) {
-            $composed = \App\SyncAdapters\Support\NotesComposer::compose($asset, $template);
-            if ($composed !== '') {
-                $payload[$notesTarget] = $composed;
-            }
+        $composed = $this->composeNotesForPush($asset);
+        if ($composed !== '') {
+            $payload[$this->effectiveNotesTarget()] = $composed;
         }
 
         if ($payload === []) {

@@ -193,19 +193,43 @@ abstract class ConfigurableAdapter implements HostInventoryAdapter
         return $rules;
     }
 
-    /**
-     * @SuppressWarnings("PHPMD.ElseExpression")
-     */
     public function saveConfig(Request $request): void
     {
         $slug = $this->instance->slug;
 
-        SyncAdapterConfig::put($this->instance->id, 'url', $request->input($slug.'_url'));
+        $this->persistUrl($request, $slug);
+        $this->persistCredentialsFromSchema($request, $slug);
+        $this->persistOperationalSettings($request, $slug);
 
-        // Blank input preserves the existing value so admins can update
-        // the URL without re-entering every credential every time.
-        // Secrets get encrypted at rest. plain-text fields (like OAuth
-        // tenant / client IDs) get stored as-is.
+        if ($this->supportsGroupScoping()) {
+            $this->persistGroupMappings($request, $slug);
+        }
+
+        $validFields = $this->validMappingFields();
+        $this->persistFieldMappings($request, $slug, $validFields);
+        $this->persistFieldDirections($request, $slug, $validFields);
+
+        $this->afterSaveConfig();
+    }
+
+    /**
+     * URL is always overwritten from the form. Blank means "no URL
+     * configured yet" which the isEnabled() gate then treats as
+     * "instance not usable."
+     */
+    private function persistUrl(Request $request, string $slug): void
+    {
+        SyncAdapterConfig::put($this->instance->id, 'url', $request->input($slug.'_url'));
+    }
+
+    /**
+     * Blank input preserves the existing value so admins can update the
+     * URL without re-entering every credential every time. Secrets get
+     * encrypted at rest. Plain-text fields (like OAuth tenant / client
+     * IDs) get stored as-is.
+     */
+    private function persistCredentialsFromSchema(Request $request, string $slug): void
+    {
         foreach ($this->credentialSchema() as $field) {
             $fieldName = $slug.'_'.$field['key'];
             if (! $request->filled($fieldName)) {
@@ -218,7 +242,15 @@ abstract class ConfigurableAdapter implements HostInventoryAdapter
             }
             SyncAdapterConfig::put($this->instance->id, $field['key'], $value);
         }
+    }
 
+    /**
+     * Non-credential operational toggles + defaults + push settings.
+     * Grouped here so saveConfig() reads as a list of intent rather
+     * than a wall of SyncAdapterConfig::put() calls.
+     */
+    private function persistOperationalSettings(Request $request, string $slug): void
+    {
         SyncAdapterConfig::put(
             $this->instance->id,
             'log_heartbeats',
@@ -311,46 +343,72 @@ abstract class ConfigurableAdapter implements HostInventoryAdapter
             'push_notes_target',
             (string) $request->input($slug.'_push_notes_target', ''),
         );
+    }
 
-        // Per-vendor-group Snipe-IT company mappings. Form emits one
-        // input per group (name = {slug}_group_mapping[{vendor_group_id}]).
-        // Blank / "unassigned" values clear that group's mapping so
-        // it falls back to the instance company_id at sync time.
-        if ($this->supportsGroupScoping()) {
-            foreach ((array) $request->input($slug.'_group_mapping', []) as $vendorGroupId => $companyId) {
-                $key = 'group_mapping.'.$vendorGroupId;
-                if ($companyId === null || $companyId === '') {
-                    SyncAdapterConfig::forget($this->instance->id, $key);
-                } else {
-                    SyncAdapterConfig::put($this->instance->id, $key, (string) (int) $companyId);
-                }
+    /**
+     * Per-vendor-group Snipe-IT company mappings. Form emits one input
+     * per group (name = {slug}_group_mapping[{vendor_group_id}]).
+     * Blank / "unassigned" values clear that group's mapping so it
+     * falls back to the instance company_id at sync time.
+     */
+    private function persistGroupMappings(Request $request, string $slug): void
+    {
+        foreach ((array) $request->input($slug.'_group_mapping', []) as $vendorGroupId => $companyId) {
+            $key = 'group_mapping.'.$vendorGroupId;
+
+            if ($companyId === null || $companyId === '') {
+                SyncAdapterConfig::forget($this->instance->id, $key);
+
+                continue;
             }
-        }
 
-        // Standard fields have shipped defaults from MappingTargets.
-        // Extras default to skip. Both share the same mapping.{key}
-        // storage prefix because the two key namespaces don't collide
-        // (standard = hostname/serial/etc, extras = adapter-prefixed).
-        $validFields = array_merge(
+            SyncAdapterConfig::put($this->instance->id, $key, (string) (int) $companyId);
+        }
+    }
+
+    /**
+     * Standard fields have shipped defaults from MappingTargets. Extras
+     * default to skip. Both share the same mapping.{key} storage prefix
+     * because the two key namespaces don't collide (standard =
+     * hostname/serial/etc, extras = adapter-prefixed).
+     *
+     * @return array<int, string>
+     */
+    private function validMappingFields(): array
+    {
+        return array_merge(
             MappingTargets::FIELDS,
             array_keys($this->extraFields()),
         );
+    }
 
+    /**
+     * @param  array<int, string>  $validFields
+     */
+    private function persistFieldMappings(Request $request, string $slug, array $validFields): void
+    {
         foreach ((array) $request->input($slug.'_mapping', []) as $field => $target) {
             if (! in_array($field, $validFields, true)) {
                 continue;
             }
             SyncAdapterConfig::put($this->instance->id, 'mapping.'.$field, (string) $target);
         }
+    }
 
-        // Per-field direction (pull / push / skip). Orthogonal to the
-        // target column stored above so admins can flip direction
-        // without re-picking the target. Only meaningful for adapters
-        // that implement PushableAdapter. For pull-only adapters the
-        // form doesn't render the direction column and this loop is
-        // a no-op. Value 'pull' is the default and doesn't need
-        // storing, but writing it explicitly keeps the round-trip
-        // behavior predictable for admins reading raw config.
+    /**
+     * Per-field direction (pull / push / skip). Orthogonal to the
+     * target column stored above so admins can flip direction without
+     * re-picking the target. Only meaningful for adapters that
+     * implement PushableAdapter. For pull-only adapters the form
+     * doesn't render the direction column and this loop is a no-op.
+     * Value 'pull' is the default and doesn't need storing, but writing
+     * it explicitly keeps the round-trip behavior predictable for
+     * admins reading raw config.
+     *
+     * @param  array<int, string>  $validFields
+     */
+    private function persistFieldDirections(Request $request, string $slug, array $validFields): void
+    {
         foreach ((array) $request->input($slug.'_direction', []) as $field => $direction) {
             if (! in_array($field, $validFields, true)) {
                 continue;
@@ -360,8 +418,6 @@ abstract class ConfigurableAdapter implements HostInventoryAdapter
             }
             SyncAdapterConfig::put($this->instance->id, 'direction.'.$field, (string) $direction);
         }
-
-        $this->afterSaveConfig();
     }
 
     /**
@@ -469,6 +525,63 @@ abstract class ConfigurableAdapter implements HostInventoryAdapter
         }
 
         return $out;
+    }
+
+    /**
+     * Shared prologue for every PushableAdapter::push() implementation.
+     * Runs the three identical guards each adapter's push() started with
+     * and returns the AssetExternalSource row when the push should
+     * proceed, or null when any guard rejects it. Callers early-return
+     * on null.
+     *
+     * The three guards, in order:
+     *  1. pushDirectedFields is empty AND no composed-notes template is
+     *     configured — nothing to send, skip.
+     *  2. Caller-provided $changedFields is non-empty but doesn't
+     *     intersect pushDirectedFields — the caller told us which
+     *     fields changed and none of them are push-directed on this
+     *     instance, so skip the vendor call.
+     *  3. asset_external_sources row missing — the asset was never
+     *     synced from this instance, so we have no vendor device id to
+     *     write against.
+     *
+     * @param  array<int, string>  $changedFields
+     */
+    public function pushPrologue(\App\Models\Asset $asset, array $changedFields): ?\App\Models\AssetExternalSource
+    {
+        $pushFields = $this->pushDirectedFields();
+        $notesConfigured = $this->pushNotesTemplate() !== '' && $this->effectiveNotesTarget() !== null;
+
+        if ($pushFields === [] && ! $notesConfigured) {
+            return null;
+        }
+
+        if ($pushFields !== [] && $changedFields !== []
+            && array_intersect($changedFields, $pushFields) === []) {
+            return null;
+        }
+
+        return \App\Models\AssetExternalSource::query()
+            ->where('asset_id', $asset->id)
+            ->where('source', $this->name())
+            ->first();
+    }
+
+    /**
+     * Render the composed-notes template against the given asset via
+     * NotesComposer, or return an empty string when the template or
+     * target isn't configured. Adapters call this and check for '' to
+     * decide whether to include composed notes in their push payload.
+     */
+    public function composeNotesForPush(\App\Models\Asset $asset): string
+    {
+        $template = $this->pushNotesTemplate();
+        $target = $this->effectiveNotesTarget();
+        if ($template === '' || $target === null) {
+            return '';
+        }
+
+        return \App\SyncAdapters\Support\NotesComposer::compose($asset, $template);
     }
 
     /**

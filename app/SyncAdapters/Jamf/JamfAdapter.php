@@ -3,7 +3,6 @@
 namespace App\SyncAdapters\Jamf;
 
 use App\Models\Asset;
-use App\Models\AssetExternalSource;
 use App\SyncAdapters\HostInventoryRecord;
 use App\SyncAdapters\PushableAdapter;
 use App\SyncAdapters\Support\ConfigurableAdapter;
@@ -159,27 +158,14 @@ class JamfAdapter extends ConfigurableAdapter implements PushableAdapter
      */
     public function push(Asset $asset, array $changedFields = []): void
     {
-        $pushFields = $this->pushDirectedFields();
-        if ($pushFields === []) {
-            return;
-        }
-
-        if ($changedFields !== [] && array_intersect($changedFields, $pushFields) === []) {
-            return;
-        }
-
-        $externalSource = AssetExternalSource::query()
-            ->where('asset_id', $asset->id)
-            ->where('source', $this->name())
-            ->first();
-
+        $externalSource = $this->pushPrologue($asset, $changedFields);
         if ($externalSource === null) {
             return;
         }
 
         $payload = [];
         $touched = [];
-        foreach ($pushFields as $field) {
+        foreach ($this->pushDirectedFields() as $field) {
             $path = self::sourceFieldToJamfPath($field);
             if ($path === null) {
                 continue;
@@ -194,14 +180,11 @@ class JamfAdapter extends ConfigurableAdapter implements PushableAdapter
             $touched[] = $path;
         }
 
-        $template = $this->pushNotesTemplate();
-        $notesTarget = $this->effectiveNotesTarget();
-        if ($template !== '' && $notesTarget !== null) {
-            $composed = \App\SyncAdapters\Support\NotesComposer::compose($asset, $template);
-            if ($composed !== '') {
-                Arr::set($payload, $notesTarget, $composed);
-                $touched[] = $notesTarget;
-            }
+        $composed = $this->composeNotesForPush($asset);
+        if ($composed !== '') {
+            $notesTarget = $this->effectiveNotesTarget();
+            Arr::set($payload, $notesTarget, $composed);
+            $touched[] = $notesTarget;
         }
 
         if ($payload === []) {
