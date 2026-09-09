@@ -36,7 +36,7 @@ class JamfAdapter extends ConfigurableAdapter implements PushableAdapter
                 'key' => 'token',
                 'label' => 'API Token',
                 'secret' => true,
-                'help' => trans('admin/settings/general.sync_adapter_jamf_token_help'),
+                'help' => trans('admin/settings/sync_adapters.jamf_token_help'),
             ],
         ];
     }
@@ -44,9 +44,9 @@ class JamfAdapter extends ConfigurableAdapter implements PushableAdapter
     public function extraFields(): array
     {
         return [
-            'jamf_udid' => 'Jamf UDID',
-            'jamf_last_enrolled' => 'Jamf Last Enrolled',
-            'jamf_model_identifier' => 'Jamf Model Identifier',
+            'jamf_udid' => ['label_key' => 'admin/settings/sync_adapters.extra_udid'],
+            'jamf_last_enrolled' => ['label_key' => 'admin/settings/sync_adapters.extra_last_enrolled'],
+            'jamf_model_identifier' => ['label_key' => 'admin/settings/sync_adapters.extra_model_identifier'],
         ];
     }
 

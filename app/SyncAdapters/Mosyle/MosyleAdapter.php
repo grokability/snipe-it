@@ -37,7 +37,7 @@ class MosyleAdapter extends ConfigurableAdapter implements PushableAdapter
                 'key' => 'token',
                 'label' => 'Access Token',
                 'secret' => true,
-                'help' => trans('admin/settings/general.sync_adapter_mosyle_token_help'),
+                'help' => trans('admin/settings/sync_adapters.mosyle_token_help'),
             ],
         ];
     }
@@ -45,8 +45,8 @@ class MosyleAdapter extends ConfigurableAdapter implements PushableAdapter
     public function extraFields(): array
     {
         return [
-            'mosyle_user_id' => 'Mosyle User ID',
-            'mosyle_supervised' => ['label' => 'Mosyle Supervised', 'type' => 'boolean'],
+            'mosyle_user_id' => ['label_key' => 'admin/settings/sync_adapters.extra_user_id'],
+            'mosyle_supervised' => ['label_key' => 'admin/settings/sync_adapters.extra_supervised', 'type' => 'boolean'],
         ];
     }
 

@@ -33,7 +33,7 @@ class FleetAdapter extends ConfigurableAdapter
                 'key' => 'token',
                 'label' => 'API Token',
                 'secret' => true,
-                'help' => trans('admin/settings/general.sync_adapter_fleet_token_help'),
+                'help' => trans('admin/settings/sync_adapters.fleet_token_help'),
             ],
         ];
     }
@@ -41,10 +41,11 @@ class FleetAdapter extends ConfigurableAdapter
     public function extraFields(): array
     {
         return [
-            'fleet_team' => 'Fleet Team',
-            'fleet_labels' => 'Fleet Labels',
-            'fleet_uuid' => 'Fleet UUID',
-            'fleet_status' => 'Fleet Status',
+            'fleet_team' => ['label_key' => 'admin/settings/sync_adapters.extra_team'],
+            'fleet_labels' => ['label_key' => 'admin/settings/sync_adapters.extra_labels'],
+            'fleet_uuid' => ['label_key' => 'admin/settings/sync_adapters.extra_uuid'],
+            'fleet_status' => ['label_key' => 'admin/settings/sync_adapters.extra_status'],
+            'fleet_model_marketing_name' => ['label_key' => 'admin/settings/sync_adapters.extra_model_marketing_name'],
         ];
     }
 
@@ -177,6 +178,7 @@ class FleetAdapter extends ConfigurableAdapter
                 'fleet_labels' => Arr::get($host, 'labels'),
                 'fleet_uuid' => Arr::get($host, 'uuid'),
                 'fleet_status' => Arr::get($host, 'status'),
+                'fleet_model_marketing_name' => Arr::get($host, 'hardware_marketing_name'),
             ],
         );
     }

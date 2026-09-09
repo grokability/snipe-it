@@ -52,18 +52,18 @@ class WorkspaceOneAdapter extends ConfigurableAdapter implements PushableAdapter
             [
                 'key' => 'tenant_code',
                 'label' => 'Tenant Code',
-                'help' => trans('admin/settings/general.sync_adapter_workspace_one_tenant_code_help'),
+                'help' => trans('admin/settings/sync_adapters.workspace_one_tenant_code_help'),
             ],
             [
                 'key' => 'client_id',
                 'label' => 'Client ID',
-                'help' => trans('admin/settings/general.sync_adapter_workspace_one_client_id_help'),
+                'help' => trans('admin/settings/sync_adapters.workspace_one_client_id_help'),
             ],
             [
                 'key' => 'client_secret',
                 'label' => 'Client Secret',
                 'secret' => true,
-                'help' => trans('admin/settings/general.sync_adapter_workspace_one_client_secret_help'),
+                'help' => trans('admin/settings/sync_adapters.workspace_one_client_secret_help'),
             ],
         ];
     }

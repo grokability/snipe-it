@@ -26,7 +26,7 @@ class ZentralAdapter extends ConfigurableAdapter
                 'key' => 'token',
                 'label' => 'API Token',
                 'secret' => true,
-                'help' => trans('admin/settings/general.sync_adapter_zentral_token_help'),
+                'help' => trans('admin/settings/sync_adapters.zentral_token_help'),
             ],
         ];
     }

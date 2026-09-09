@@ -429,9 +429,10 @@ class SyncHostFromAdapter
      * Extract the type of an extra field from an adapter's
      * extraFields() declaration. Entries can be either plain strings
      * (defaults to text) or arrays with an explicit `type` value
-     * ('text', 'boolean').
+     * ('text', 'boolean'). label_key vs label doesn't matter here;
+     * this helper only reads the type slot.
      *
-     * @param  array<string, string|array{label: string, type?: string}>  $extraFields
+     * @param  array<string, string|array{label?: string, label_key?: string, type?: string, admin_defined?: bool}>  $extraFields
      */
     private static function extraFieldType(array $extraFields, string $key): string
     {

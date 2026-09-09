@@ -431,7 +431,7 @@ class AssetPresenter extends Presenter
             'searchable' => true,
             'sortable' => true,
             'switchable' => true,
-            'title' => trans('admin/settings/general.sync_adapter_field_mac'),
+            'title' => trans('admin/settings/sync_adapters.field_mac'),
             'visible' => false,
         ];
         $layout[] = [
@@ -440,7 +440,7 @@ class AssetPresenter extends Presenter
             'searchable' => true,
             'sortable' => true,
             'switchable' => true,
-            'title' => trans('admin/settings/general.sync_adapter_field_ip'),
+            'title' => trans('admin/settings/sync_adapters.field_ip'),
             'visible' => false,
         ];
         $layout[] = [
@@ -449,7 +449,7 @@ class AssetPresenter extends Presenter
             'searchable' => true,
             'sortable' => true,
             'switchable' => true,
-            'title' => trans('admin/settings/general.sync_adapter_field_os'),
+            'title' => trans('admin/settings/sync_adapters.field_os'),
             'visible' => false,
         ];
         $layout[] = [
@@ -458,7 +458,7 @@ class AssetPresenter extends Presenter
             'searchable' => true,
             'sortable' => true,
             'switchable' => true,
-            'title' => trans('admin/settings/general.sync_adapter_field_os_version'),
+            'title' => trans('admin/settings/sync_adapters.field_os_version'),
             'visible' => false,
         ];
         $layout[] = [
@@ -467,7 +467,7 @@ class AssetPresenter extends Presenter
             'searchable' => false,
             'sortable' => true,
             'switchable' => true,
-            'title' => trans('admin/settings/general.sync_adapter_field_last_seen'),
+            'title' => trans('admin/settings/sync_adapters.field_last_seen'),
             'visible' => false,
             'formatter' => 'dateDisplayFormatter',
         ];

@@ -49,13 +49,13 @@ class DemoModeLocksFormTest extends TestCase
         // component and the panel disables it when locked, so every
         // pane's pull button carries the disabled attribute.
         $this->assertMatchesRegularExpression('/id="adapter-save-button"[^>]*disabled/', $html);
-        $this->assertStringContainsString(trans('admin/settings/general.sync_adapter_pull_now'), $html);
+        $this->assertStringContainsString(trans('admin/settings/sync_adapters.pull_now'), $html);
 
         // Walk every <button>...</button> in the rendered HTML: any
         // that contains the pull-now label must also carry a disabled
         // attribute. Catches a regression that would leave the button
         // clickable in demo mode.
-        $label = trans('admin/settings/general.sync_adapter_pull_now');
+        $label = trans('admin/settings/sync_adapters.pull_now');
         preg_match_all('/<button\b(?<attrs>[^>]*)>(?<body>.*?)<\/button>/s', $html, $buttons, PREG_SET_ORDER);
         $syncButtonsSeen = 0;
         foreach ($buttons as $match) {

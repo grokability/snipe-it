@@ -920,7 +920,7 @@ class SettingsController extends Controller
         // view with an error
         if ($requestedSlug !== null && $selected === null) {
             return redirect()->route('settings.adapters.index')
-                ->with('error', trans('admin/settings/general.sync_adapter_not_found', ['slug' => $requestedSlug]));
+                ->with('error', trans('admin/settings/sync_adapters.not_found', ['slug' => $requestedSlug]));
         }
 
         return view('settings.adapters.index', compact(
@@ -958,7 +958,7 @@ class SettingsController extends Controller
         $instance->save();
 
         return redirect()->route('settings.adapters.index', ['adapter' => $instance->slug])
-            ->with('success', trans('admin/settings/general.sync_adapter_instance_created'));
+            ->with('success', trans('admin/settings/sync_adapters.instance_created'));
     }
 
     /**
@@ -1023,7 +1023,7 @@ class SettingsController extends Controller
 
         if (! $adapter->isEnabled()) {
             return redirect()->route('settings.adapters.index', ['adapter' => $instance->slug])
-                ->with('error', trans('admin/settings/general.sync_adapter_not_configured'));
+                ->with('error', trans('admin/settings/sync_adapters.not_configured'));
         }
 
         // Drop PHP's execution-time cap. Web-server proxy timeouts still apply tho
@@ -1060,7 +1060,7 @@ class SettingsController extends Controller
                 'exception' => $e,
             ]);
 
-            $failMessage = trans('admin/settings/general.sync_adapter_sync_failed', [
+            $failMessage = trans('admin/settings/sync_adapters.sync_failed', [
                 'summary' => self::sanitizeSyncErrorSummary($e),
             ]);
             $instance->last_synced_at = now();
@@ -1071,7 +1071,7 @@ class SettingsController extends Controller
                 ->with('error', $failMessage);
         }
 
-        $result = trans('admin/settings/general.sync_adapter_sync_complete', [
+        $result = trans('admin/settings/sync_adapters.sync_complete', [
             'count' => $seen,
             'errors' => $errors,
         ]);
@@ -1102,12 +1102,12 @@ class SettingsController extends Controller
 
         if (! $adapter instanceof \App\SyncAdapters\PushableAdapter) {
             return redirect()->route('settings.adapters.index', ['adapter' => $instance->slug])
-                ->with('error', trans('admin/settings/general.sync_adapter_push_not_supported'));
+                ->with('error', trans('admin/settings/sync_adapters.push_not_supported'));
         }
 
         if (! $adapter->isEnabled()) {
             return redirect()->route('settings.adapters.index', ['adapter' => $instance->slug])
-                ->with('error', trans('admin/settings/general.sync_adapter_not_configured'));
+                ->with('error', trans('admin/settings/sync_adapters.not_configured'));
         }
 
         set_time_limit(0);
@@ -1162,7 +1162,7 @@ class SettingsController extends Controller
             );
 
             return redirect()->route('settings.adapters.index', ['adapter' => $instance->slug])
-                ->with('error', trans('admin/settings/general.sync_adapter_push_failed', [
+                ->with('error', trans('admin/settings/sync_adapters.push_failed', [
                     'summary' => self::sanitizeSyncErrorSummary($e),
                 ]));
         }
@@ -1178,7 +1178,7 @@ class SettingsController extends Controller
         };
 
         return redirect()->route('settings.adapters.index', ['adapter' => $instance->slug])
-            ->with($flashType, trans('admin/settings/general.sync_adapter_push_complete', [
+            ->with($flashType, trans('admin/settings/sync_adapters.push_complete', [
                 'count' => $pushed,
                 'errors' => $errors,
             ]));
@@ -1205,7 +1205,7 @@ class SettingsController extends Controller
         }
 
         if ($e instanceof \Illuminate\Http\Client\ConnectionException) {
-            return trans('admin/settings/general.sync_adapter_sync_failed_network');
+            return trans('admin/settings/sync_adapters.sync_failed_network');
         }
 
         return class_basename($e);
@@ -1294,7 +1294,7 @@ class SettingsController extends Controller
 
         if (! $adapter->isEnabled()) {
             return redirect()->route('settings.adapters.index', ['adapter' => $instance->slug])
-                ->with('error', trans('admin/settings/general.sync_adapter_not_configured'));
+                ->with('error', trans('admin/settings/sync_adapters.not_configured'));
         }
 
         try {
@@ -1306,7 +1306,7 @@ class SettingsController extends Controller
             );
 
             return redirect()->route('settings.adapters.index', ['adapter' => $instance->slug])
-                ->with('error', trans('admin/settings/general.sync_adapter_refresh_groups_failed', [
+                ->with('error', trans('admin/settings/sync_adapters.refresh_groups_failed', [
                     'summary' => self::sanitizeSyncErrorSummary($e),
                 ]));
         }
@@ -1314,9 +1314,59 @@ class SettingsController extends Controller
         \App\Models\SyncAdapterConfig::put($instance->id, 'cached_groups', json_encode($groups));
 
         return redirect()->route('settings.adapters.index', ['adapter' => $instance->slug])
-            ->with('success', trans('admin/settings/general.sync_adapter_refresh_groups_ok', [
+            ->with('success', trans('admin/settings/sync_adapters.refresh_groups_ok', [
                 'count' => count($groups),
                 'label' => $adapter->vendorGroupLabel(),
+            ]));
+    }
+
+    /**
+     * Refresh the cached list of vendor-defined custom fields for an
+     * adapter that opts into supportsVendorCustomFields(). Parallel
+     * to postAdapterRefreshGroups: hits the vendor's custom-fields
+     * listing endpoint, stores the normalized list under
+     * sync_adapter_settings.vendor_custom_fields, and redirects back
+     * to the adapter settings page with a count.
+     */
+    public function postAdapterRefreshCustomFields(\App\Models\SyncAdapterInstance $instance): RedirectResponse
+    {
+        if (config('app.lock_passwords')) {
+            return redirect()->back()->with('error', trans('general.feature_disabled'));
+        }
+
+        $adapter = $instance->adapter();
+        if ($adapter === null || ! $adapter instanceof \App\SyncAdapters\Support\ConfigurableAdapter) {
+            abort(404);
+        }
+
+        if (! $adapter->supportsVendorCustomFields()) {
+            abort(404);
+        }
+
+        if (! $adapter->isEnabled()) {
+            return redirect()->route('settings.adapters.index', ['adapter' => $instance->slug])
+                ->with('error', trans('admin/settings/sync_adapters.not_configured'));
+        }
+
+        try {
+            $fields = $adapter->fetchVendorCustomFields();
+        } catch (\Throwable $e) {
+            \Log::channel('sync-adapters')->warning(
+                sprintf('%s refresh-custom-fields aborted: %s', $instance->slug, $e->getMessage()),
+                ['exception' => $e],
+            );
+
+            return redirect()->route('settings.adapters.index', ['adapter' => $instance->slug])
+                ->with('error', trans('admin/settings/sync_adapters.refresh_custom_fields_failed', [
+                    'summary' => self::sanitizeSyncErrorSummary($e),
+                ]));
+        }
+
+        \App\Models\SyncAdapterConfig::put($instance->id, 'vendor_custom_fields', json_encode($fields));
+
+        return redirect()->route('settings.adapters.index', ['adapter' => $instance->slug])
+            ->with('success', trans('admin/settings/sync_adapters.refresh_custom_fields_ok', [
+                'count' => count($fields),
             ]));
     }
 
@@ -1335,7 +1385,7 @@ class SettingsController extends Controller
 
         if ($instance->built_in) {
             return redirect()->route('settings.adapters.index', ['adapter' => $instance->slug])
-                ->with('error', trans('admin/settings/general.sync_adapter_builtin_undeletable'));
+                ->with('error', trans('admin/settings/sync_adapters.builtin_undeletable'));
         }
 
         \App\Models\SyncAdapterConfig::query()
@@ -1345,7 +1395,7 @@ class SettingsController extends Controller
         $instance->delete();
 
         return redirect()->route('settings.adapters.index')
-            ->with('success', trans('admin/settings/general.sync_adapter_instance_deleted'));
+            ->with('success', trans('admin/settings/sync_adapters.instance_deleted'));
     }
 
     /**

@@ -49,19 +49,19 @@ class NinjaOneAdapter extends ConfigurableAdapter implements PushableAdapter
             [
                 'key' => 'client_id',
                 'label' => 'Client ID',
-                'help' => trans('admin/settings/general.sync_adapter_ninjaone_client_id_help'),
+                'help' => trans('admin/settings/sync_adapters.ninjaone_client_id_help'),
             ],
             [
                 'key' => 'client_secret',
                 'label' => 'Client Secret',
                 'secret' => true,
-                'help' => trans('admin/settings/general.sync_adapter_ninjaone_client_secret_help'),
+                'help' => trans('admin/settings/sync_adapters.ninjaone_client_secret_help'),
             ],
             [
                 'key' => 'asset_tag_custom_field',
                 'label' => 'Asset Tag Custom Field Name',
                 'required' => false,
-                'help' => trans('admin/settings/general.sync_adapter_ninjaone_asset_tag_field_help'),
+                'help' => trans('admin/settings/sync_adapters.ninjaone_asset_tag_field_help'),
             ],
         ];
     }

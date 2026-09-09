@@ -126,15 +126,16 @@ class ExtraFieldMappingTest extends TestCase
 
         $this->assertArrayHasKey('skip', $options);
 
-        // Text-type extras can route to native asset_tag / notes so
-        // admins whose vendor stores per-device metadata in labels /
-        // blueprints / teams can land it in a native column instead
-        // of forcing a custom field. Everything else must be
-        // custom:{id}.
+        // Text-type extras can route to native asset_tag / model /
+        // notes so admins whose vendor stores per-device metadata in
+        // labels / blueprints / teams / marketing names can land it
+        // in a native column instead of forcing a custom field.
+        // Everything else must be custom:{id}.
         $this->assertArrayHasKey('native:asset_tag', $options);
+        $this->assertArrayHasKey('native:model', $options);
         $this->assertArrayHasKey('native:notes', $options);
         foreach (array_keys($options) as $target) {
-            if (in_array($target, ['skip', 'native:asset_tag', 'native:notes'], true)) {
+            if (in_array($target, ['skip', 'native:asset_tag', 'native:model', 'native:notes'], true)) {
                 continue;
             }
             $this->assertStringStartsWith('custom:', $target);
@@ -151,6 +152,7 @@ class ExtraFieldMappingTest extends TestCase
         // native asset column carries a boolean semantic.
         $this->assertArrayHasKey('skip', $options);
         $this->assertArrayNotHasKey('native:asset_tag', $options);
+        $this->assertArrayNotHasKey('native:model', $options);
         $this->assertArrayNotHasKey('native:notes', $options);
     }
 

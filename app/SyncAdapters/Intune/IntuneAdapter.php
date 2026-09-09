@@ -48,18 +48,18 @@ class IntuneAdapter extends ConfigurableAdapter implements PushableAdapter
             [
                 'key' => 'tenant_id',
                 'label' => 'Tenant ID',
-                'help' => trans('admin/settings/general.sync_adapter_intune_tenant_id_help'),
+                'help' => trans('admin/settings/sync_adapters.intune_tenant_id_help'),
             ],
             [
                 'key' => 'client_id',
                 'label' => 'Client ID',
-                'help' => trans('admin/settings/general.sync_adapter_intune_client_id_help'),
+                'help' => trans('admin/settings/sync_adapters.intune_client_id_help'),
             ],
             [
                 'key' => 'client_secret',
                 'label' => 'Client Secret',
                 'secret' => true,
-                'help' => trans('admin/settings/general.sync_adapter_intune_client_secret_help'),
+                'help' => trans('admin/settings/sync_adapters.intune_client_secret_help'),
             ],
         ];
     }

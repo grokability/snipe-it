@@ -42,12 +42,12 @@ class UnifiAdapter extends ConfigurableAdapter
                 'key' => 'api_key',
                 'label' => 'API Key',
                 'secret' => true,
-                'help' => trans('admin/settings/general.sync_adapter_unifi_api_key_help'),
+                'help' => trans('admin/settings/sync_adapters.unifi_api_key_help'),
             ],
             [
                 'key' => 'site_id',
                 'label' => 'Site ID',
-                'help' => trans('admin/settings/general.sync_adapter_unifi_site_id_help'),
+                'help' => trans('admin/settings/sync_adapters.unifi_site_id_help'),
             ],
         ];
     }
@@ -55,10 +55,10 @@ class UnifiAdapter extends ConfigurableAdapter
     public function extraFields(): array
     {
         return [
-            'unifi_model_key' => 'UniFi Model Code',
-            'unifi_state' => 'UniFi Device State',
-            'unifi_uplink_mac' => 'UniFi Uplink MAC',
-            'unifi_adopted' => ['label' => 'UniFi Adopted', 'type' => 'boolean'],
+            'unifi_model_key' => ['label_key' => 'admin/settings/sync_adapters.extra_model_code'],
+            'unifi_state' => ['label_key' => 'admin/settings/sync_adapters.extra_device_state'],
+            'unifi_uplink_mac' => ['label_key' => 'admin/settings/sync_adapters.extra_uplink_mac'],
+            'unifi_adopted' => ['label_key' => 'admin/settings/sync_adapters.extra_adopted', 'type' => 'boolean'],
         ];
     }
 

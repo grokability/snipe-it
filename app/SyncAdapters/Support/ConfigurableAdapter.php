@@ -73,16 +73,23 @@ abstract class ConfigurableAdapter implements HostInventoryAdapter
      * Adapter-specific extra fields the vendor emits, keyed by the
      * extra-array key from HostInventoryRecord. Values are either a
      * plain string label (defaults to text type) or an array shaped
-     * ['label' => 'Human Label', 'type' => 'text' | 'boolean'].
+     * ['label' => 'Human Label', 'type' => 'text' | 'boolean',
+     * 'admin_defined' => bool] OR ['label_key' => 'lang.key.path',
+     * 'type' => 'text' | 'boolean', 'admin_defined' => bool]. The
+     * label_key variant is resolved at render time via trans() with
+     * ':vendor' bound to the adapter's typeLabel so translators
+     * localize each shape once for every adapter that emits it.
      *
      * Type filters the target pool via MappingTargets::optionsForExtra:
-     * 'text' offers text/textarea/markdown-textarea custom fields,
-     * 'boolean' offers checkbox fields. Extras never route to native
-     * or external targets by design.
+     * 'text' offers text/textarea/markdown-textarea custom fields
+     * plus native asset_tag/model/notes. 'boolean' offers checkbox
+     * fields only. admin_defined (used by adapters that expose
+     * tenant-labeled vendor custom fields) further narrows to
+     * custom-only.
      *
      * Adapters that don't emit extras leave this empty.
      *
-     * @return array<string, string|array{label: string, type?: string}>
+     * @return array<string, string|array{label?: string, label_key?: string, type?: string, admin_defined?: bool}>
      */
     public function extraFields(): array
     {
@@ -536,14 +543,14 @@ abstract class ConfigurableAdapter implements HostInventoryAdapter
      *
      * The three guards, in order:
      *  1. pushDirectedFields is empty AND no composed-notes template is
-     *     configured — nothing to send, skip.
+     *     configured (nothing to send, skip).
      *  2. Caller-provided $changedFields is non-empty but doesn't
-     *     intersect pushDirectedFields — the caller told us which
+     *     intersect pushDirectedFields (the caller told us which
      *     fields changed and none of them are push-directed on this
-     *     instance, so skip the vendor call.
-     *  3. asset_external_sources row missing — the asset was never
-     *     synced from this instance, so we have no vendor device id to
-     *     write against.
+     *     instance, so skip the vendor call).
+     *  3. asset_external_sources row missing (the asset was never
+     *     synced from this instance, so we have no vendor device id
+     *     to write against).
      *
      * @param  array<int, string>  $changedFields
      */
@@ -799,6 +806,52 @@ abstract class ConfigurableAdapter implements HostInventoryAdapter
     public function cachedGroups(): array
     {
         $stored = SyncAdapterConfig::get($this->instance->id, 'cached_groups');
+        if ($stored === null || $stored === '') {
+            return [];
+        }
+        $decoded = json_decode($stored, true);
+
+        return is_array($decoded) ? $decoded : [];
+    }
+
+    /**
+     * Whether the adapter supports fetching a list of vendor-defined
+     * custom fields at settings-refresh time. Vendors like Kaseya VSA
+     * 10 expose per-tenant custom fields whose names admins can only
+     * discover at the tenant level, so extraFields() alone cannot
+     * declare them statically. Adapters that opt in override this and
+     * implement fetchVendorCustomFields() plus enrichment in pull().
+     */
+    public function supportsVendorCustomFields(): bool
+    {
+        return false;
+    }
+
+    /**
+     * Fetch the current list of custom-field definitions from the
+     * vendor. Default is empty. Adapters that opt into
+     * supportsVendorCustomFields() must override this to hit the
+     * vendor's custom-fields listing endpoint.
+     *
+     * @return array<int, array{id: string, name: string, type: string}>
+     */
+    public function fetchVendorCustomFields(): array
+    {
+        return [];
+    }
+
+    /**
+     * Return the cached vendor custom fields from the last refresh.
+     * Same storage pattern as cachedGroups(): a JSON blob under the
+     * `vendor_custom_fields` config key, refreshed when the admin
+     * clicks the button. extraFields() reads this back to merge
+     * vendor-specific fields into the mapping UI.
+     *
+     * @return array<int, array{id: string, name: string, type: string}>
+     */
+    public function cachedVendorCustomFields(): array
+    {
+        $stored = SyncAdapterConfig::get($this->instance->id, 'vendor_custom_fields');
         if ($stored === null || $stored === '') {
             return [];
         }

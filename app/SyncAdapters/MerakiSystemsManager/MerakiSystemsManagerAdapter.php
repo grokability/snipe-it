@@ -36,12 +36,12 @@ class MerakiSystemsManagerAdapter extends ConfigurableAdapter
                 'key' => 'api_key',
                 'label' => 'API Key',
                 'secret' => true,
-                'help' => trans('admin/settings/general.sync_adapter_meraki_sm_api_key_help'),
+                'help' => trans('admin/settings/sync_adapters.meraki_sm_api_key_help'),
             ],
             [
                 'key' => 'organization_id',
                 'label' => 'Organization ID',
-                'help' => trans('admin/settings/general.sync_adapter_meraki_sm_organization_id_help'),
+                'help' => trans('admin/settings/sync_adapters.meraki_sm_organization_id_help'),
             ],
         ];
     }

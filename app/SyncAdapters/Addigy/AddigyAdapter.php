@@ -30,13 +30,13 @@ class AddigyAdapter extends ConfigurableAdapter
             [
                 'key' => 'key_id',
                 'label' => 'Client ID',
-                'help' => trans('admin/settings/general.sync_adapter_addigy_key_id_help'),
+                'help' => trans('admin/settings/sync_adapters.addigy_key_id_help'),
             ],
             [
                 'key' => 'key_secret',
                 'label' => 'Client Secret',
                 'secret' => true,
-                'help' => trans('admin/settings/general.sync_adapter_addigy_key_secret_help'),
+                'help' => trans('admin/settings/sync_adapters.addigy_key_secret_help'),
             ],
         ];
     }
@@ -44,9 +44,9 @@ class AddigyAdapter extends ConfigurableAdapter
     public function extraFields(): array
     {
         return [
-            'addigy_policy_id' => 'Addigy Policy ID',
-            'addigy_supervised' => ['label' => 'Addigy Supervised', 'type' => 'boolean'],
-            'addigy_agent_version' => 'Addigy Agent Version',
+            'addigy_policy_id' => ['label_key' => 'admin/settings/sync_adapters.extra_policy_id'],
+            'addigy_supervised' => ['label_key' => 'admin/settings/sync_adapters.extra_supervised', 'type' => 'boolean'],
+            'addigy_agent_version' => ['label_key' => 'admin/settings/sync_adapters.extra_agent_version'],
         ];
     }
 

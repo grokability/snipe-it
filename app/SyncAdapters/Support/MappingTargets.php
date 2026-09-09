@@ -65,15 +65,15 @@ class MappingTargets
      */
     public static function options(string $field): array
     {
-        $options = ['skip' => trans('admin/settings/general.sync_adapter_target_skip')];
+        $options = ['skip' => trans('admin/settings/sync_adapters.target_skip')];
 
         $default = self::defaultTarget($field);
         if ($default !== 'skip') {
-            $options[$default] = self::labelFor($default).' '.trans('admin/settings/general.sync_adapter_target_default_suffix');
+            $options[$default] = self::labelFor($default).' '.trans('admin/settings/sync_adapters.target_default_suffix');
         }
 
         foreach (self::compatibleCustomFields($field) as $customField) {
-            $options['custom:'.$customField->id] = trans('admin/settings/general.sync_adapter_target_custom_prefix').': '.$customField->name;
+            $options['custom:'.$customField->id] = trans('admin/settings/sync_adapters.target_custom_prefix').': '.$customField->name;
         }
 
         return $options;
@@ -86,15 +86,15 @@ class MappingTargets
     public static function labelFor(string $target): string
     {
         if ($target === 'skip') {
-            return trans('admin/settings/general.sync_adapter_target_skip');
+            return trans('admin/settings/sync_adapters.target_skip');
         }
 
         [$type, $id] = array_pad(explode(':', $target, 2), 2, '');
 
         return match ($type) {
-            'native' => trans('admin/settings/general.sync_adapter_target_native_'.$id),
-            'external' => trans('admin/settings/general.sync_adapter_target_external_'.$id),
-            'custom' => trans('admin/settings/general.sync_adapter_target_custom_prefix').': '
+            'native' => trans('admin/settings/sync_adapters.target_native_'.$id),
+            'external' => trans('admin/settings/sync_adapters.target_external_'.$id),
+            'custom' => trans('admin/settings/sync_adapters.target_custom_prefix').': '
                 .(CustomField::find((int) $id)?->name ?? '?'),
             default => $target,
         };
@@ -106,25 +106,43 @@ class MappingTargets
      * the custom-field target pool: 'text' offers text/textarea/
      * markdown-textarea fields, 'boolean' offers checkbox fields.
      *
+     * `$adminDefined` narrows the target pool to skip + custom-only
+     * for tenant-defined vendor extras (Kaseya VSA 10 custom fields,
+     * ServiceNow variables, etc). Those hold arbitrary admin-labeled
+     * key/value data and never make sense as a Snipe-IT native
+     * column, so we don't show the native branch at all. Adapter-
+     * declared extras (fleet_labels, kandji_blueprint_id) still get
+     * native:asset_tag / native:notes as options because a real
+     * admin use-case exists for routing labels/blueprints to those
+     * slots.
+     *
      * @return array<string, string>
      */
-    public static function optionsForExtra(string $type = 'text'): array
+    public static function optionsForExtra(string $type = 'text', bool $adminDefined = false): array
     {
-        $options = ['skip' => trans('admin/settings/general.sync_adapter_target_skip')];
+        $options = ['skip' => trans('admin/settings/sync_adapters.target_skip')];
 
-        // Text-type extras can also route into native asset columns
-        // that hold arbitrary strings. Admins whose vendor stores
-        // per-device metadata in a labels / blueprint / team field
-        // may want that landing in asset_tag or notes rather than a
-        // custom field. asset_tag is uniqueness-constrained so the
-        // sync path relies on the vendor value being unique per host
-        // when this target is picked. Not appropriate for list-typed
-        // extras like fleet_labels which stringify to comma-joined
-        // sets. Boolean-typed extras stay custom-fields-only because
-        // no native asset column carries a boolean semantic.
-        if ($type !== 'boolean') {
-            foreach (['asset_tag', 'notes'] as $nativeColumn) {
-                $options['native:'.$nativeColumn] = trans('admin/settings/general.sync_adapter_target_native_'.$nativeColumn);
+        // Adapter-declared text-type extras can also route into native
+        // asset columns that hold arbitrary strings. Admins whose
+        // vendor stores per-device metadata in a labels / blueprint /
+        // team field may want that landing in asset_tag or notes
+        // rather than a custom field. asset_tag is uniqueness-
+        // constrained so the sync path relies on the vendor value
+        // being unique per host when this target is picked. native:
+        // model is here so admins can route a vendor's friendlier
+        // "marketing name" field (Fleet's hardware_marketing_name,
+        // ABM's deviceModel) to the standard AssetModel column when
+        // the vendor's default `hardwareModel` value would be the
+        // less-friendly SMBIOS identifier or SKU. Not appropriate
+        // for list-typed extras like fleet_labels which stringify to
+        // comma-joined sets. Boolean-typed extras stay custom-only
+        // because no native asset column carries a boolean semantic.
+        // Admin-defined extras stay custom-only for the same reason
+        // (arbitrary tenant-labeled data doesn't belong in native
+        // slots).
+        if ($type !== 'boolean' && ! $adminDefined) {
+            foreach (['asset_tag', 'model', 'notes'] as $nativeColumn) {
+                $options['native:'.$nativeColumn] = trans('admin/settings/sync_adapters.target_native_'.$nativeColumn);
             }
         }
 
@@ -134,7 +152,7 @@ class MappingTargets
         };
 
         foreach ($customFields as $customField) {
-            $options['custom:'.$customField->id] = trans('admin/settings/general.sync_adapter_target_custom_prefix').': '.$customField->name;
+            $options['custom:'.$customField->id] = trans('admin/settings/sync_adapters.target_custom_prefix').': '.$customField->name;
         }
 
         return $options;

@@ -7,7 +7,6 @@ use App\SyncAdapters\SyncHostFromAdapter;
 use Illuminate\Console\Command;
 use Throwable;
 
-
 class PullInventory extends Command
 {
     protected $signature = 'snipeit:pull-inventory {adapter? : The adapter instance slug. Omit to pull every enabled instance.}';
@@ -52,7 +51,7 @@ class PullInventory extends Command
 
         foreach ($instances as $instance) {
             $adapter = $instance->adapter();
-            if ($adapter === null || !$adapter->isEnabled()) {
+            if ($adapter === null || ! $adapter->isEnabled()) {
                 $this->line(sprintf('Skipping %s (not active or not configured).', $instance->slug));
 
                 continue;
@@ -90,7 +89,7 @@ class PullInventory extends Command
             return self::FAILURE;
         }
 
-        if (!$adapter->isEnabled()) {
+        if (! $adapter->isEnabled()) {
             $this->error(sprintf(
                 'Adapter "%s" is not active or is missing configuration. Set it up under Settings -> Sync Adapters.',
                 $slug,
@@ -135,7 +134,7 @@ class PullInventory extends Command
 
         // Same lang key as the UI so both paths render the same phrasing
         // on the settings page.
-        $result = trans('admin/settings/general.sync_adapter_sync_complete', [
+        $result = trans('admin/settings/sync_adapters.sync_complete', [
             'count' => $seen,
             'errors' => $errors,
         ]);

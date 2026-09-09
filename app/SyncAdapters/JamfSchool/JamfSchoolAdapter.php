@@ -32,13 +32,13 @@ class JamfSchoolAdapter extends ConfigurableAdapter
             [
                 'key' => 'network_id',
                 'label' => 'Network ID',
-                'help' => trans('admin/settings/general.sync_adapter_jamf_school_network_id_help'),
+                'help' => trans('admin/settings/sync_adapters.jamf_school_network_id_help'),
             ],
             [
                 'key' => 'api_key',
                 'label' => 'API Key',
                 'secret' => true,
-                'help' => trans('admin/settings/general.sync_adapter_jamf_school_api_key_help'),
+                'help' => trans('admin/settings/sync_adapters.jamf_school_api_key_help'),
             ],
         ];
     }
@@ -46,9 +46,9 @@ class JamfSchoolAdapter extends ConfigurableAdapter
     public function extraFields(): array
     {
         return [
-            'jamf_school_model_identifier' => 'Jamf School Model Identifier',
-            'jamf_school_supervised' => ['label' => 'Jamf School Supervised', 'type' => 'boolean'],
-            'jamf_school_location_id' => 'Jamf School Location ID',
+            'jamf_school_model_identifier' => ['label_key' => 'admin/settings/sync_adapters.extra_model_identifier'],
+            'jamf_school_supervised' => ['label_key' => 'admin/settings/sync_adapters.extra_supervised', 'type' => 'boolean'],
+            'jamf_school_location_id' => ['label_key' => 'admin/settings/sync_adapters.extra_location_id'],
         ];
     }
 

@@ -145,6 +145,33 @@ class FleetAdapterTest extends TestCase
         $this->assertNotNull($record->lastSeen);
     }
 
+    public function test_marketing_name_surfaces_as_a_mappable_extra()
+    {
+        // Fleet exposes hardware_marketing_name alongside hardware_model.
+        // Adapter emits it as the fleet_marketing_name extra so admins
+        // can route it to native:model via the mapping UI when they
+        // want the friendly Apple name on their AssetModel records
+        // instead of the SMBIOS string.
+        $adapter = $this->configuredFleetAdapter();
+
+        Http::fake([
+            '*/api/latest/fleet/hosts*' => Http::sequence()
+                ->push($this->fleetHostsResponse([
+                    $this->fleetHost(id: 1, hostname: 'apple-1', hardware_model: 'MacBookPro18,3')
+                        + ['hardware_marketing_name' => 'MacBook Pro (14-inch, M1 Pro/Max, 2021)'],
+                ])),
+        ]);
+
+        $record = iterator_to_array($adapter->pull())[0];
+        // Default hardwareModel stays the always-populated SMBIOS
+        // string. Marketing name flows through the extras.
+        $this->assertSame('MacBookPro18,3', $record->hardwareModel);
+        $this->assertSame(
+            'MacBook Pro (14-inch, M1 Pro/Max, 2021)',
+            $record->extra['fleet_model_marketing_name'],
+        );
+    }
+
     public function test_synced_assets_inherit_the_instance_company_id()
     {
         $company = \App\Models\Company::factory()->create();

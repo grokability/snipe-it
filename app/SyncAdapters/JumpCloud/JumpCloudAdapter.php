@@ -32,7 +32,7 @@ class JumpCloudAdapter extends ConfigurableAdapter
                 'key' => 'token',
                 'label' => 'API Key',
                 'secret' => true,
-                'help' => trans('admin/settings/general.sync_adapter_jumpcloud_token_help'),
+                'help' => trans('admin/settings/sync_adapters.jumpcloud_token_help'),
             ],
         ];
     }
@@ -40,10 +40,10 @@ class JumpCloudAdapter extends ConfigurableAdapter
     public function extraFields(): array
     {
         return [
-            'jumpcloud_arch' => 'JumpCloud Architecture',
-            'jumpcloud_os_family' => 'JumpCloud OS Family',
-            'jumpcloud_agent_version' => 'JumpCloud Agent Version',
-            'jumpcloud_active' => ['label' => 'JumpCloud Active', 'type' => 'boolean'],
+            'jumpcloud_arch' => ['label_key' => 'admin/settings/sync_adapters.extra_architecture'],
+            'jumpcloud_os_family' => ['label_key' => 'admin/settings/sync_adapters.extra_os_family'],
+            'jumpcloud_agent_version' => ['label_key' => 'admin/settings/sync_adapters.extra_agent_version'],
+            'jumpcloud_active' => ['label_key' => 'admin/settings/sync_adapters.extra_active', 'type' => 'boolean'],
         ];
     }
 

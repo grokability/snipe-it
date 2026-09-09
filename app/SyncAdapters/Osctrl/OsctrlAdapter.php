@@ -30,12 +30,12 @@ class OsctrlAdapter extends ConfigurableAdapter
                 'key' => 'token',
                 'label' => 'API Token',
                 'secret' => true,
-                'help' => trans('admin/settings/general.sync_adapter_osctrl_token_help'),
+                'help' => trans('admin/settings/sync_adapters.osctrl_token_help'),
             ],
             [
                 'key' => 'environment',
                 'label' => 'Environment',
-                'help' => trans('admin/settings/general.sync_adapter_osctrl_environment_help'),
+                'help' => trans('admin/settings/sync_adapters.osctrl_environment_help'),
             ],
         ];
     }
@@ -43,9 +43,9 @@ class OsctrlAdapter extends ConfigurableAdapter
     public function extraFields(): array
     {
         return [
-            'osctrl_environment' => 'osctrl Environment',
-            'osctrl_osquery_version' => 'osquery Version',
-            'osctrl_cpu_type' => 'CPU Type',
+            'osctrl_environment' => ['label_key' => 'admin/settings/sync_adapters.extra_environment'],
+            'osctrl_osquery_version' => ['label_key' => 'admin/settings/sync_adapters.extra_osquery_version'],
+            'osctrl_cpu_type' => ['label_key' => 'admin/settings/sync_adapters.extra_cpu_type'],
         ];
     }
 

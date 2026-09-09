@@ -35,7 +35,7 @@ class KandjiAdapter extends ConfigurableAdapter implements PushableAdapter
                 'key' => 'token',
                 'label' => 'API Token',
                 'secret' => true,
-                'help' => trans('admin/settings/general.sync_adapter_kandji_token_help'),
+                'help' => trans('admin/settings/sync_adapters.kandji_token_help'),
             ],
         ];
     }
@@ -43,9 +43,9 @@ class KandjiAdapter extends ConfigurableAdapter implements PushableAdapter
     public function extraFields(): array
     {
         return [
-            'kandji_blueprint_id' => 'Kandji Blueprint ID',
-            'kandji_mdm_enabled' => ['label' => 'Kandji MDM Enabled', 'type' => 'boolean'],
-            'kandji_is_missing' => ['label' => 'Kandji Marked Missing', 'type' => 'boolean'],
+            'kandji_blueprint_id' => ['label_key' => 'admin/settings/sync_adapters.extra_blueprint_id'],
+            'kandji_mdm_enabled' => ['label_key' => 'admin/settings/sync_adapters.extra_mdm_enabled', 'type' => 'boolean'],
+            'kandji_is_missing' => ['label_key' => 'admin/settings/sync_adapters.extra_marked_missing', 'type' => 'boolean'],
         ];
     }
 
