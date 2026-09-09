@@ -469,14 +469,19 @@
                          alongside. That was the friction that pushed us
                          to combine what used to be two separate steps. --}}
 
-                    {{-- Only renders when a client cert AND key are
-                         populated on step 1, which is the only case
-                         where leaving the bind fields blank does
-                         something meaningful. --}}
+                    {{-- Only renders when a client cert AND key are populated on step 1.
+                        When runtime lacks SASL support (via ldap_sasl_bind) the hint would actively
+                        mislead admins into leaving bind fields blank for an auth path that can't execute. --}}
                     @if ($ldap_client_tls_cert !== '' && $ldap_client_tls_key !== '')
-                        <x-alert type="info" icon="tip">
-                            {{ trans('admin/settings/general.ldap_wizard.sasl_external_step2_hint') }}
-                        </x-alert>
+                        @if (\App\Models\Ldap::saslExternalAvailable())
+                            <x-alert type="info" icon="tip">
+                                {{ trans('admin/settings/general.ldap_wizard.sasl_external_step2_hint') }}
+                            </x-alert>
+                        @else
+                            <x-alert type="warning" icon="warning">
+                                {!! trans('admin/settings/general.ldap_wizard.sasl_external_unavailable_hint') !!}
+                            </x-alert>
+                        @endif
                     @endif
 
                     <!-- Base Bind DN, placed first so users compose their

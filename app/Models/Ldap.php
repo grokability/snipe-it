@@ -262,18 +262,49 @@ class Ldap extends Model
      * Livewire component state, whatever) matches the auto-detect
      * condition that routes bindAdminToLdap through SASL EXTERNAL:
      * client cert + key are populated AND both bind DN and bind
-     * password are blank.
+     * password are blank AND the current PHP build has SASL support.
      *
      * Runtime, LDAP troubleshooter, and LDAP Livewire wizard all
      * evaluate the same.
      */
     public static function shouldUseSaslExternal(object $config): bool
     {
-        return !empty($config->ldap_client_tls_cert)
+        return self::saslExternalAvailable()
+            && !empty($config->ldap_client_tls_cert)
             && !empty($config->ldap_client_tls_key)
             && empty($config->ldap_uname)
             && empty($config->ldap_pword);
     }
+
+    /**
+     * True when the current PHP build was compiled with SASL support and
+     * ldap_sasl_bind() is callable. Wizard uses this to warn admins whose
+     * config would otherwise trigger SASL EXTERNAL but whose runtime
+     * cannot execute the bind.
+     *
+     * The optional test override is a seam for phpunit. The LdapTest
+     * suite mocks ldap_sasl_bind() at the namespace level to exercise
+     * the SASL branch on a CI PHP that was built without SASL, and
+     * function_exists() sits behind a language construct that php-mock
+     * can't reliably intercept. Test setUp calls setSaslExternalOverride(true)
+     * to force the check, tearDown resets to null.
+     */
+    public static function saslExternalAvailable(): bool
+    {
+        return self::$saslExternalOverride ?? function_exists('ldap_sasl_bind');
+    }
+
+    /**
+     * Test seam. Real callers never touch this. LdapTest uses it to
+     * force saslExternalAvailable() true/false regardless of what the
+     * CI PHP build actually supports. Pass null to reset.
+     */
+    public static function setSaslExternalOverride(?bool $available): void
+    {
+        self::$saslExternalOverride = $available;
+    }
+
+    private static ?bool $saslExternalOverride = null;
 
     /**
      * Binds/authenticates an admin to LDAP for LDAP searching/syncing.
@@ -284,10 +315,10 @@ class Ldap extends Model
      * return value.
      *
      * @throws Exception on any bind failure
+     *
      * @since  [v3.0]
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     *
      */
     public static function bindAdminToLdap($connection): void
     {
