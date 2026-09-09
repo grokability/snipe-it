@@ -24,14 +24,14 @@
     <x-demo-callout/>
 
     {{-- Rename field. Slug is immutable because SyncAdapterConfig
-         keys off it; label is free to change so admins can rename
+         keys off it, but label is free to change so admins can rename
          after creation (e.g. "Fleet" -> "Production Fleet" once
          they add a second staging instance). --}}
     <x-form.row
-        :label="trans('admin/settings/general.sync_adapter_add_label_label')"
+        :label="trans('admin/settings/sync_adapters.add_label_label')"
         name="label"
         input_div_class="col-md-8"
-        :help_text="trans('admin/settings/general.sync_adapter_add_label_help')"
+        :help_text="trans('admin/settings/sync_adapters.add_label_help')"
         required
     >
         <x-slot:input>
@@ -47,24 +47,24 @@
     <x-form.checkbox-row
         :name="$activeField"
         :checked="$adapter->isActive()"
-        :label="trans('admin/settings/general.sync_adapter_active_label')"
-        :help_text="trans('admin/settings/general.sync_adapter_active_help')"
+        :label="trans('admin/settings/sync_adapters.active_label')"
+        :help_text="trans('admin/settings/sync_adapters.active_help')"
         :disabled="$locked"
     />
 
     <x-form.checkbox-row
         :name="$slug . '_log_heartbeats'"
         :checked="$adapter->logsHeartbeats()"
-        :label="trans('admin/settings/general.sync_adapter_log_heartbeats_label')"
-        :help_text="trans('admin/settings/general.sync_adapter_log_heartbeats_help')"
+        :label="trans('admin/settings/sync_adapters.log_heartbeats_label')"
+        :help_text="trans('admin/settings/sync_adapters.log_heartbeats_help')"
         :disabled="$locked"
     />
 
     <x-form.row
-        :label="trans('admin/settings/general.sync_adapter_base_url')"
+        :label="trans('admin/settings/sync_adapters.base_url')"
         :name="$urlField"
         input_div_class="col-md-8"
-        :help_text="trans('admin/settings/general.sync_adapter_base_url_help', ['type' => $adapter::typeLabel()])"
+        :help_text="trans('admin/settings/sync_adapters.base_url_help', ['type' => $adapter::typeLabel()])"
         required
     >
         <x-slot:input>
@@ -88,10 +88,10 @@
          every AssetModel needs one. --}}
     <x-input.category-select
         :name="$slug . '_default_category_id'"
-        :label="trans('admin/settings/general.sync_adapter_default_category')"
+        :label="trans('admin/settings/sync_adapters.default_category')"
         :selected="$adapter->defaultCategoryId()"
         categoryType="asset"
-        :help_text="trans('admin/settings/general.sync_adapter_default_category_help')"
+        :help_text="trans('admin/settings/sync_adapters.default_category_help')"
         required
     />
 
@@ -100,10 +100,10 @@
          discovered devices instead of Snipe-IT defaulting to
          something surprising. --}}
     <x-form.row
-        :label="trans('admin/settings/general.sync_adapter_default_status')"
+        :label="trans('admin/settings/sync_adapters.default_status')"
         :name="$slug . '_default_status_id'"
         input_div_class="col-md-7"
-        :help_text="trans('admin/settings/general.sync_adapter_default_status_help')"
+        :help_text="trans('admin/settings/sync_adapters.default_status_help')"
         required
     >
         <x-slot:input>
@@ -135,10 +135,10 @@
          options below rather than the required identity fields above
          so the required section stays contiguous. --}}
     <x-form.row
-        :label="trans('admin/settings/general.sync_adapter_asset_tag_pattern')"
+        :label="trans('admin/settings/sync_adapters.asset_tag_pattern')"
         :name="$slug . '_asset_tag_pattern'"
         input_div_class="col-md-8"
-        help_html="{!! trans('admin/settings/general.sync_adapter_asset_tag_pattern_help') !!}"
+        help_html="{!! trans('admin/settings/sync_adapters.asset_tag_pattern_help') !!}"
     >
         <x-slot:input>
             <x-input.text
@@ -155,10 +155,10 @@
          username on each record is matched against Snipe-IT users
          and the asset checks out to the matched user. --}}
     <x-form.row
-        :label="trans('admin/settings/general.sync_adapter_user_match_strategy')"
+        :label="trans('admin/settings/sync_adapters.user_match_strategy')"
         :name="$slug . '_user_match_strategy'"
         input_div_class="col-md-8"
-        help_html="{!! trans('admin/settings/general.sync_adapter_user_match_strategy_help') !!}"
+        help_html="{!! trans('admin/settings/sync_adapters.user_match_strategy_help') !!}"
     >
         <x-slot:input>
             {{-- Select2 for visual consistency with the other pickers on
@@ -173,10 +173,10 @@
                 @disabled($locked)
             >
                 @foreach ([
-                    'none' => trans('admin/settings/general.sync_adapter_user_match_none'),
-                    'username_then_email' => trans('admin/settings/general.sync_adapter_user_match_username_then_email'),
-                    'username' => trans('admin/settings/general.sync_adapter_user_match_username'),
-                    'email' => trans('admin/settings/general.sync_adapter_user_match_email'),
+                    'none' => trans('admin/settings/sync_adapters.user_match_none'),
+                    'username_then_email' => trans('admin/settings/sync_adapters.user_match_username_then_email'),
+                    'username' => trans('admin/settings/sync_adapters.user_match_username'),
+                    'email' => trans('admin/settings/sync_adapters.user_match_email'),
                 ] as $value => $label)
                     <option value="{{ $value }}" @selected($adapter->userMatchStrategy() === $value)>{{ $label }}</option>
                 @endforeach
@@ -191,7 +191,7 @@
     <x-form.checkbox-row
         :name="$slug . '_suppress_notifications'"
         :checked="$adapter->suppressesNotifications()"
-        :label="trans('admin/settings/general.sync_adapter_suppress_notifications_label')"
+        :label="trans('admin/settings/sync_adapters.suppress_notifications_label')"
         :disabled="$locked"
     />
 
@@ -202,8 +202,8 @@
     <x-form.checkbox-row
         :name="$slug . '_checkin_on_null_user'"
         :checked="$adapter->checksInOnNullUser()"
-        :label="trans('admin/settings/general.sync_adapter_checkin_on_null_user_label')"
-        :help_text="trans('admin/settings/general.sync_adapter_checkin_on_null_user_help')"
+        :label="trans('admin/settings/sync_adapters.checkin_on_null_user_label')"
+        :help_text="trans('admin/settings/sync_adapters.checkin_on_null_user_help')"
         :disabled="$locked"
     />
 
@@ -217,8 +217,8 @@
         <x-form.checkbox-row
             :name="$slug . '_push_dry_run'"
             :checked="$adapter->isPushDryRun()"
-            :label="trans('admin/settings/general.sync_adapter_push_dry_run_label')"
-            :help_text="trans('admin/settings/general.sync_adapter_push_dry_run_help')"
+            :label="trans('admin/settings/sync_adapters.push_dry_run_label')"
+            :help_text="trans('admin/settings/sync_adapters.push_dry_run_help')"
             :disabled="$locked"
         />
     @endif
@@ -229,15 +229,15 @@
             $groupMappings = $adapter->groupMappings();
         @endphp
         <fieldset>
-            <x-form.legend icon="tip" help_text="{{ trans('admin/settings/general.sync_adapter_group_mapping_intro', ['label' => $adapter->vendorGroupLabel()]) }}">
-                {{ trans('admin/settings/general.sync_adapter_group_mapping_title', ['label' => $adapter->vendorGroupLabel()]) }}
+            <x-form.legend icon="tip" help_text="{{ trans('admin/settings/sync_adapters.group_mapping_intro', ['label' => $adapter->vendorGroupLabel()]) }}">
+                {{ trans('admin/settings/sync_adapters.group_mapping_title', ['label' => $adapter->vendorGroupLabel()]) }}
             </x-form.legend>
 
             @if (empty($cachedGroups))
                 <div class="form-group">
                     <div class="col-md-8 col-md-offset-3">
                         <p class="help-block">
-                            {{ trans('admin/settings/general.sync_adapter_group_mapping_empty', ['label' => strtolower($adapter->vendorGroupLabel())]) }}
+                            {{ trans('admin/settings/sync_adapters.group_mapping_empty', ['label' => strtolower($adapter->vendorGroupLabel())]) }}
                         </p>
                     </div>
                 </div>
@@ -258,24 +258,24 @@
     @php
         // Show push controls only when the adapter implements
         // PushableAdapter AND canPush() (instance-level runtime check
-        // — Fleet Free returns false because manual labels are Premium).
+        // (Fleet Free returns false because manual labels are Premium).
         $supportsPush = $adapter instanceof \App\SyncAdapters\PushableAdapter && $adapter->canPush();
         $directionOptions = [
-            'pull' => trans('admin/settings/general.sync_adapter_direction_pull'),
-            'push' => trans('admin/settings/general.sync_adapter_direction_push'),
-            'both' => trans('admin/settings/general.sync_adapter_direction_both'),
-            'skip' => trans('admin/settings/general.sync_adapter_direction_skip'),
+            'pull' => trans('admin/settings/sync_adapters.direction_pull'),
+            'push' => trans('admin/settings/sync_adapters.direction_push'),
+            'both' => trans('admin/settings/sync_adapters.direction_both'),
+            'skip' => trans('admin/settings/sync_adapters.direction_skip'),
         ];
     @endphp
     <fieldset>
-        <x-form.legend icon="tip" help_text="{{ trans('admin/settings/general.sync_adapter_mapping_section_intro') }}">
-            {{ trans('admin/settings/general.sync_adapter_mapping_section_title', ['type' => $adapter::typeLabel()]) }}
+        <x-form.legend icon="tip" help_text="{{ trans('admin/settings/sync_adapters.mapping_section_intro') }}">
+            {{ trans('admin/settings/sync_adapters.mapping_section_title', ['type' => $adapter::typeLabel()]) }}
         </x-form.legend>
 
 
         @foreach (\App\SyncAdapters\Support\MappingTargets::FIELDS as $mappingField)
             <x-form.row
-                :label="trans('admin/settings/general.sync_adapter_field_' . $mappingField)"
+                :label="trans('admin/settings/sync_adapters.field_' . $mappingField)"
                 :name="$slug . '_mapping_' . $mappingField"
                 input_div_class="col-md-8"
             >
@@ -324,16 +324,29 @@
         @endphp
 
         @if (! empty($extraFields))
-            <x-form.legend icon="tip" help_text="{{ trans('admin/settings/general.sync_adapter_extra_fields_section_intro') }}">
-                {{ trans('admin/settings/general.sync_adapter_extra_fields_section_title', ['type' => $adapter::typeLabel()]) }}
+            <x-form.legend icon="tip" help_text="{{ trans('admin/settings/sync_adapters.extra_fields_section_intro') }}">
+                {{ trans('admin/settings/sync_adapters.extra_fields_section_title', ['type' => $adapter::typeLabel()]) }}
             </x-form.legend>
 
             @foreach ($extraFields as $extraKey => $extraEntry)
                 @php
-                    // Entry can be a plain label string or an array
-                    // with label + type. Normalize to both.
-                    $extraLabel = is_array($extraEntry) ? $extraEntry['label'] : $extraEntry;
+                    // Entry shapes accepted:
+                    //   'literal label string'
+                    //   ['label' => 'literal string', 'type' => 'text|boolean', 'admin_defined' => true|false]
+                    //   ['label_key' => 'admin/settings/sync_adapters.extra_foo', 'type' => ..., 'admin_defined' => ...]
+                    // label_key entries auto-resolve through trans()
+                    // with ':vendor' bound to the adapter's typeLabel
+                    // so per-vendor labels ("Fleet Team", "Jamf UDID")
+                    // share one translation string.
+                    if (is_array($extraEntry) && isset($extraEntry['label_key'])) {
+                        $extraLabel = trans($extraEntry['label_key'], ['vendor' => $adapter::typeLabel()]);
+                    } elseif (is_array($extraEntry)) {
+                        $extraLabel = $extraEntry['label'] ?? $extraKey;
+                    } else {
+                        $extraLabel = $extraEntry;
+                    }
                     $extraType = (is_array($extraEntry) && isset($extraEntry['type'])) ? $extraEntry['type'] : 'text';
+                    $extraAdminDefined = is_array($extraEntry) && ! empty($extraEntry['admin_defined']);
                 @endphp
                 <x-form.row
                     :label="$extraLabel"
@@ -343,7 +356,7 @@
                     <x-slot:input>
                         <x-input.select
                             :name="$slug . '_mapping[' . $extraKey . ']'"
-                            :options="\App\SyncAdapters\Support\MappingTargets::optionsForExtra($extraType)"
+                            :options="\App\SyncAdapters\Support\MappingTargets::optionsForExtra($extraType, $extraAdminDefined)"
                             :selected="$adapter->mappingFor($extraKey)"
                             style="width: 100%"
                             :disabled="$locked"
@@ -366,31 +379,31 @@
          before deciding what goes into the composed notes blob. --}}
     @if ($adapter instanceof \App\SyncAdapters\PushableAdapter && $adapter->canPush())
         <fieldset>
-            <x-form.legend icon="tip" help_text="{{ trans('admin/settings/general.sync_adapter_push_notes_section_intro') }}">
-                {{ trans('admin/settings/general.sync_adapter_push_notes_section_title') }}
+            <x-form.legend icon="tip" help_text="{{ trans('admin/settings/sync_adapters.push_notes_section_intro') }}">
+                {{ trans('admin/settings/sync_adapters.push_notes_section_title') }}
             </x-form.legend>
 
             <x-form.row
-                :label="trans('admin/settings/general.sync_adapter_push_notes_target_label')"
+                :label="trans('admin/settings/sync_adapters.push_notes_target_label')"
                 :name="$slug . '_push_notes_target'"
                 input_div_class="col-md-8"
-                :help_text="trans('admin/settings/general.sync_adapter_push_notes_target_help')"
+                :help_text="trans('admin/settings/sync_adapters.push_notes_target_help')"
             >
                 <x-slot:input>
                     <x-input.text
                         :name="$slug . '_push_notes_target'"
                         :value="old($slug . '_push_notes_target', $adapter->pushNotesTargetOverride() ?? '')"
-                        :placeholder="$adapter->notesFieldTarget() ?? trans('admin/settings/general.sync_adapter_push_notes_target_placeholder_none')"
+                        :placeholder="$adapter->notesFieldTarget() ?? trans('admin/settings/sync_adapters.push_notes_target_placeholder_none')"
                         :disabled="$locked"
                     />
                 </x-slot:input>
             </x-form.row>
 
             <x-form.row
-                :label="trans('admin/settings/general.sync_adapter_push_notes_template_label')"
+                :label="trans('admin/settings/sync_adapters.push_notes_template_label')"
                 :name="$slug . '_push_notes_template'"
                 input_div_class="col-md-8"
-                help_html="{!! trans('admin/settings/general.sync_adapter_push_notes_template_help') !!}"
+                help_html="{!! trans('admin/settings/sync_adapters.push_notes_template_help') !!}"
             >
                 <x-slot:input>
                     <textarea

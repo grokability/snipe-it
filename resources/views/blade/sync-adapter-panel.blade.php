@@ -13,11 +13,11 @@
 @endphp
 
 <div class="sync-adapter-panel form-horizontal">
-    <x-form.static :label="trans('admin/settings/general.sync_adapter_last_synced_label')">
+    <x-form.static :label="trans('admin/settings/sync_adapters.last_synced_label')">
         @if ($adapter->lastSyncedAt())
             {{ $adapter->lastSyncedAt()->diffForHumans() }}. {{ $adapter->lastSyncResult() }}
         @else
-            {{ trans('admin/settings/general.sync_adapter_never_synced') }}
+            {{ trans('admin/settings/sync_adapters.never_synced') }}
         @endif
     </x-form.static>
 
@@ -39,7 +39,7 @@
                     @disabled(! $canSync)
                 >
                     <i class="fa-solid fa-cloud-arrow-down" aria-hidden="true"></i>
-                    {{ trans('admin/settings/general.sync_adapter_pull_now') }}
+                    {{ trans('admin/settings/sync_adapters.pull_now') }}
                 </button>
             </form>
 
@@ -60,7 +60,7 @@
                         @disabled(! $canSync)
                     >
                         <i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i>
-                        {{ trans('admin/settings/general.sync_adapter_push_now') }}
+                        {{ trans('admin/settings/sync_adapters.push_now') }}
                     </button>
                 </form>
             @endif
@@ -72,12 +72,12 @@
                      admins don't see a push-inventory hint they can't act
                      on. --}}
                 @if ($adapter instanceof \App\SyncAdapters\PushableAdapter && $adapter->canPush())
-                    {!! trans('admin/settings/general.sync_adapter_large_fleet_note', [
+                    {!! trans('admin/settings/sync_adapters.large_fleet_note', [
                         'pull_command' => '<code>php artisan snipeit:pull-inventory '.e($slug).'</code>',
                         'push_command' => '<code>php artisan snipeit:push-inventory '.e($slug).'</code>',
                     ]) !!}
                 @else
-                    {!! trans('admin/settings/general.sync_adapter_large_fleet_note_pull_only', [
+                    {!! trans('admin/settings/sync_adapters.large_fleet_note_pull_only', [
                         'pull_command' => '<code>php artisan snipeit:pull-inventory '.e($slug).'</code>',
                     ]) !!}
                 @endif
