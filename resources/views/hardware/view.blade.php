@@ -203,27 +203,27 @@
                                      rows. --}}
                                 @if ($asset->externalSource)
                                     @if ($asset->externalSource->primary_mac)
-                                        <x-data-row :label="trans('admin/settings/general.sync_adapter_field_mac')" copy_what="external_mac">
+                                        <x-data-row :label="trans('admin/settings/sync_adapters.field_mac')" copy_what="external_mac">
                                             {{ $asset->externalSource->primary_mac }}
                                         </x-data-row>
                                     @endif
                                     @if ($asset->externalSource->primary_ip)
-                                        <x-data-row :label="trans('admin/settings/general.sync_adapter_field_ip')" copy_what="external_ip">
+                                        <x-data-row :label="trans('admin/settings/sync_adapters.field_ip')" copy_what="external_ip">
                                             {{ $asset->externalSource->primary_ip }}
                                         </x-data-row>
                                     @endif
                                     @if ($asset->externalSource->os)
-                                        <x-data-row :label="trans('admin/settings/general.sync_adapter_field_os')" copy_what="external_os">
+                                        <x-data-row :label="trans('admin/settings/sync_adapters.field_os')" copy_what="external_os">
                                             {{ $asset->externalSource->os }}
                                         </x-data-row>
                                     @endif
                                     @if ($asset->externalSource->os_version)
-                                        <x-data-row :label="trans('admin/settings/general.sync_adapter_field_os_version')" copy_what="external_os_version">
+                                        <x-data-row :label="trans('admin/settings/sync_adapters.field_os_version')" copy_what="external_os_version">
                                             {{ $asset->externalSource->os_version }}
                                         </x-data-row>
                                     @endif
                                     @if ($asset->externalSource->last_seen)
-                                        <x-data-row :label="trans('admin/settings/general.sync_adapter_field_last_seen')" copy_what="external_last_seen">
+                                        <x-data-row :label="trans('admin/settings/sync_adapters.field_last_seen')" copy_what="external_last_seen">
                                             {{ $asset->externalSource->last_seen->diffForHumans() }}
                                             <span class="text-muted">({{ Helper::getFormattedDateObject($asset->externalSource->last_seen, 'datetime', false) }})</span>
                                         </x-data-row>

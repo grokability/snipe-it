@@ -33,7 +33,28 @@
             @disabled($locked || ! $adapter->isEnabled())
         >
             <x-icon type="sync" />
-            {{ trans('admin/settings/general.sync_adapter_refresh_groups', ['label' => $adapter->vendorGroupLabel()]) }}
+            {{ trans('admin/settings/sync_adapters.refresh_groups', ['label' => $adapter->vendorGroupLabel()]) }}
+        </button>
+    </form>
+@endif
+
+@if ($adapter->supportsVendorCustomFields() && $adapter->isEnabled())
+    {{-- Parallel to the refresh-groups action: pulls the vendor's
+         current custom-field list so extraFields() can offer each as
+         a mappable target. Same outside-the-config-form rationale. --}}
+    <form
+        method="POST"
+        action="{{ route('settings.adapters.refresh_custom_fields', $adapter->name()) }}"
+        style="margin-bottom: 15px; text-align: right;"
+    >
+        @csrf
+        <button
+            type="submit"
+            class="btn btn-default btn-sm"
+            @disabled($locked || ! $adapter->isEnabled())
+        >
+            <x-icon type="sync" />
+            {{ trans('admin/settings/sync_adapters.refresh_custom_fields') }}
         </button>
     </form>
 @endif

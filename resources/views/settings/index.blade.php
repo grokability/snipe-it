@@ -242,10 +242,10 @@
                         <a href="{{ route('settings.adapters.index') }}" class="settings_button">
                             <i class="fa-solid fa-network-wired fa-4x" aria-hidden="true"></i>
                             <br><br>
-                            <span class="name">{{ trans('admin/settings/general.sync_adapters_title') }} <span class="label label-warning">beta</span></span>
+                            <span class="name">{{ trans('admin/settings/sync_adapters.title') }} <span class="label label-warning">beta</span></span>
                         </a>
                     </h5>
-                    <p class="index-block">{{ trans('admin/settings/general.sync_adapters_help') }}</p>
+                    <p class="index-block">{{ trans('admin/settings/sync_adapters.help') }}</p>
                 </div>
             </div>
         </div>

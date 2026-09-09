@@ -1,7 +1,7 @@
 @extends('layouts/default')
 
 @section('title')
-    {{ trans('admin/settings/general.sync_adapters_title') }}
+    {{ trans('admin/settings/sync_adapters.title') }}
     @parent
 @stop
 
@@ -12,7 +12,7 @@
         <x-box>
             <x-slot:header>
                 <i class="fa-solid fa-network-wired" aria-hidden="true"></i>
-                {{ trans('admin/settings/general.sync_adapters_title') }}
+                {{ trans('admin/settings/sync_adapters.title') }}
             </x-slot:header>
 
             {{-- Company filter. Reloads the page with ?company=blah so only
@@ -26,10 +26,10 @@
                         class="select2"
                         style="width: 220px"
                         onchange="this.form.submit()"
-                        aria-label="{{ trans('admin/settings/general.sync_adapter_company_filter_label') }}"
+                        aria-label="{{ trans('admin/settings/sync_adapters.company_filter_label') }}"
                     >
-                        <option value="">{{ trans('admin/settings/general.sync_adapter_company_filter_all') }}</option>
-                        <option value="shared" @selected($selectedCompany === 'shared')>{{ trans('admin/settings/general.sync_adapter_company_filter_shared') }}</option>
+                        <option value="">{{ trans('admin/settings/sync_adapters.company_filter_all') }}</option>
+                        <option value="shared" @selected($selectedCompany === 'shared')>{{ trans('admin/settings/sync_adapters.company_filter_shared') }}</option>
                         @foreach ($companies as $companyId => $companyName)
                             <option value="{{ $companyId }}" @selected((string) $selectedCompany === (string) $companyId)>{{ $companyName }}</option>
                         @endforeach
@@ -62,10 +62,10 @@
                                         type="circle-solid"
                                         class="fa-fw"
                                         style="color: {{ $readinessColor }};"
-                                        :title="trans('admin/settings/general.sync_adapter_readiness_'.$readiness)"
+                                        :title="trans('admin/settings/sync_adapters.readiness_'.$readiness)"
                                         aria-hidden="true"
                                     />
-                                    <span class="sr-only">{{ trans('admin/settings/general.sync_adapter_readiness_'.$readiness) }}</span>
+                                    <span class="sr-only">{{ trans('admin/settings/sync_adapters.readiness_'.$readiness) }}</span>
                                     {{ $adapter->label() }}
                                 </a>
                             </li>
@@ -79,7 +79,7 @@
                                 data-target="#add-adapter-modal"
                             >
                                 <x-icon type="create"/>
-                                {{ trans('admin/settings/general.sync_adapter_add_button') }}
+                                {{ trans('admin/settings/sync_adapters.add_button') }}
                             </a>
                         </li>
                     </ul>
@@ -110,15 +110,15 @@
                                 data-toggle="modal"
                                 data-target="#dataConfirmModal"
                                 data-href="{{ $selected ? route('settings.adapters.destroy', $selected->name()) : '' }}"
-                                data-title="{{ trans('admin/settings/general.sync_adapter_delete_button') }}"
-                                data-content="{{ trans('admin/settings/general.sync_adapter_delete_confirm') }}"
+                                data-title="{{ trans('admin/settings/sync_adapters.delete_button') }}"
+                                data-content="{{ trans('admin/settings/sync_adapters.delete_confirm') }}"
                                 data-icon="fa fa-trash"
                                 style="{{ $selected && ! $selected->isBuiltIn() ? '' : 'display: none;' }}"
                                 onclick="return false;"
                                 @disabled(config('app.lock_passwords') === true)
                             >
                                 <x-icon type="delete"/>
-                                {{ trans('admin/settings/general.sync_adapter_delete_button') }}
+                                {{ trans('admin/settings/sync_adapters.delete_button') }}
                             </button>
                         </div>
                         <div class="text-right col-md-6">
@@ -141,11 +141,11 @@
          etc.) or Generic REST once/if that adapter lands. --}}
     <x-modals
         id="add-adapter-modal"
-        :title="trans('admin/settings/general.sync_adapter_add_modal_title')"
+        :title="trans('admin/settings/sync_adapters.add_modal_title')"
         :action="route('settings.adapters.create')"
     >
         <x-form.row
-            :label="trans('admin/settings/general.sync_adapter_add_type_label')"
+            :label="trans('admin/settings/sync_adapters.add_type_label')"
             name="adapter_type"
             input_div_class="col-md-8"
         >
@@ -155,10 +155,10 @@
         </x-form.row>
 
         <x-form.row
-            :label="trans('admin/settings/general.sync_adapter_add_label_label')"
+            :label="trans('admin/settings/sync_adapters.add_label_label')"
             name="label"
             input_div_class="col-md-8"
-            :help_text="trans('admin/settings/general.sync_adapter_add_label_help')"
+            :help_text="trans('admin/settings/sync_adapters.add_label_help')"
         >
             <x-slot:input>
                 <x-input.text name="label" required/>
@@ -172,7 +172,7 @@
         <x-input.company-select
             name="company_id"
             id="modal_adapter_company_id_select"
-            :label="trans('admin/settings/general.sync_adapter_add_company_label')"
+            :label="trans('admin/settings/sync_adapters.add_company_label')"
             :selected="is_numeric($selectedCompany) ? (int) $selectedCompany : null"
             hideNewButton
         />
