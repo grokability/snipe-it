@@ -163,6 +163,23 @@ class ReportsController extends Controller
         return view('reports/depreciation')->with('depreciations', $depreciations);
     }
 
+    public function getExpiringItemsReport(): View
+    {
+        $this->authorize('reports.view');
+        $settings = Setting::getSettings();
+        $alert_interval = $settings->alert_interval;
+        $assets_count = Asset::getExpiringWarrantyOrEol($alert_interval)->count();
+
+        $licenses_count = License::query()
+            ->expiringLicenses($alert_interval)
+            ->with(['manufacturer', 'category'])
+            ->orderBy('expiration_date', 'ASC')
+            ->orderBy('termination_date', 'ASC')
+            ->count();
+
+        return view('reports.expiring_items', compact('assets_count', 'licenses_count'));
+    }
+
     /**
      * Exports the depreciations to CSV
      *

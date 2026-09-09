@@ -6,12 +6,13 @@ use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\FilterRequest;
 use App\Http\Transformers\ActionlogsTransformer;
+use App\Http\Transformers\ExpiringItemsTransformer;
 use App\Models\Accessory;
 use App\Models\Actionlog;
 use App\Models\Asset;
+use App\Models\License;
 use App\Models\Component;
 use App\Models\Consumable;
-use App\Models\License;
 use App\Models\LicenseSeat;
 use App\Models\Maintenance;
 use App\Models\User;
@@ -171,6 +172,98 @@ class ReportsController extends Controller
 
         return response()->json((new ActionlogsTransformer)->transformActionlogs($actionlogs, $total), 200, ['Content-Type' => 'application/json;charset=utf8'], JSON_UNESCAPED_UNICODE);
 
+    }
+
+    public function expiringAssetsReport(Request $request)
+    {
+        $this->authorize('reports.view');
+        $days = (int)$request->input('days', 30);
+        $search = $request->input('search');
+        $sort = $request->input('sort', 'asset_eol_date');
+        $order = $request->input('order', 'asc');
+        $offset = (int)$request->input('offset', 0);
+        $limit = (int)$request->input('limit', 50);
+
+        $query = Asset::getExpiringWarrantyOrEol($days);
+
+        if ($search) {
+            $query->where(function ($query) use ($search) {
+                $query
+                    ->where('asset_tag', 'LIKE', "%{$search}%")
+                    ->orWhereHas('model', function ($query) use ($search) {
+                        $query
+                            ->where('name', 'LIKE', "%{$search}%")
+                            ->orWhere('model_number', 'LIKE', "%{$search}%");
+                    });
+            });
+        }
+
+        $sortMap = [
+            'id' => 'assets.id',
+            'asset_tag' => 'assets.asset_tag',
+            'purchase_date' => 'assets.purchase_date',
+            'eol_date' => 'assets.asset_eol_date',
+            'warranty_expires' => 'assets.warranty_expires',
+        ];
+
+        $query->orderBy(
+            $sortMap[$sort] ?? 'assets.asset_eol_date',
+            $order === 'desc' ? 'desc' : 'asc'
+        );
+
+        $total = $query->count();
+
+        $assets = $query
+            ->offset($offset)
+            ->limit($limit)
+            ->get();
+
+        return response()->json(
+            (new ExpiringItemsTransformer)->transformAssets($assets, $total)
+        );
+    }
+
+    public function expiringLicensesReport(Request $request)
+    {
+        $this->authorize('reports.view');
+
+        $days = (int)$request->input('days', 30);
+        $includeExpired = $request->boolean('include_expired', false);
+        $offset = (int)$request->input('offset', 0);
+        $limit = (int)$request->input('limit', 50);
+        $search = $request->input('search');
+        $sort = $request->input('sort', 'expiration');
+        $order = $request->input('order', 'asc');
+
+        $query = License::query()->expiringLicenses($days, $includeExpired);
+
+        if ($search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('licenses.name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('licenses.serial', 'LIKE', '%' . $search . '%');
+            });
+        }
+        $total = $query->count();
+
+        $sortMap = [
+            'id' => 'licenses.id',
+            'name' => 'licenses.name',
+            'purchase_date' => 'licenses.purchase_date',
+            'expiration' => 'licenses.expiration_date',
+            'termination_date' => 'licenses.termination_date',
+        ];
+        $sortColumn = $sortMap[$sort] ?? 'licenses.expiration_date';
+        $order = in_array(strtolower($order), ['asc', 'desc']) ? $order : 'desc';
+
+        $licenses = $query
+            ->orderBy($sortColumn, $order)
+            ->offset($offset)
+            ->limit($limit)
+            ->get();
+
+        return response()->json(
+            (new ExpiringItemsTransformer)->transformLicenses($licenses, $total)
+        );
     }
 
     /**
