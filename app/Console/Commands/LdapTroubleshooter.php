@@ -609,17 +609,17 @@ class LdapTroubleshooter extends Command
                 // is identical either way.
                 if ($username === null) {
                     $bind_results = ldap_sasl_bind($conn, null, null, 'EXTERNAL');
-                    $identityLabel = 'the SASL EXTERNAL client certificate';
+                    $identityLabel = ' using the SASL EXTERNAL client certificate';
                 } else {
                     $bind_results = ldap_bind($conn, $username, $password);
-                    $identityLabel = $username;
+                    $identityLabel = " as $username";
                 }
                 if (! $bind_results) {
-                    $this->error("WARNING: Failed to bind to $ldap_url as $identityLabel");
+                    $this->error("WARNING: Failed to bind to $ldap_url$identityLabel");
 
                     return false;
                 }
-                $this->info("SUCCESS - Able to bind to $ldap_url as $identityLabel");
+                $this->info("SUCCESS - Able to bind to $ldap_url$identityLabel");
                 $cleaned_results = [];
                 try {
                     // This _may_ only work for Active Directory?
