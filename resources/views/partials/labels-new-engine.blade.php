@@ -61,11 +61,6 @@
             <p class="help-block">
                 {!! trans('admin/settings/general.label2_title_help_phold') !!}.<br />
                 {!! trans('admin/settings/general.help_asterisk_bold') !!}.<br />
-                {!!
-                    trans('admin/settings/general.help_blank_to_use', [
-                        'setting_name' => trans('admin/settings/general.barcodes').' &gt; '.trans('admin/settings/general.qr_text'),
-                    ])
-                !!}
             </p>
         </div>
     </div>
