@@ -742,6 +742,8 @@ class LdapSettings extends Component
      * search returned at least one entry (zero entries is functionally
      * broken for sync). Any failure surfaces a specific message
      * pointing at the actual problem (bind vs search).
+     *
+     * @SuppressWarnings("PHPMD.ElseExpression")
      */
     protected function runStep2NetworkTest(): void
     {
@@ -1485,7 +1487,7 @@ class LdapSettings extends Component
         }
 
         // Clear AD  here so the component state matches what the user sees.
-        if ($property === 'is_ad' && !$this->is_ad && $this->ad_domain !== '') {
+        if ($property === 'is_ad' && ! $this->is_ad && $this->ad_domain !== '') {
             $this->ad_domain = '';
         }
 
