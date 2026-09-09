@@ -4,12 +4,14 @@ namespace App\SyncAdapters;
 
 use App\Models\SyncAdapterInstance;
 use App\SyncAdapters\Addigy\AddigyAdapter;
+use App\SyncAdapters\AppleBusinessManager\AppleBusinessManagerAdapter;
 use App\SyncAdapters\Fleet\FleetAdapter;
 use App\SyncAdapters\Intune\IntuneAdapter;
 use App\SyncAdapters\Jamf\JamfAdapter;
 use App\SyncAdapters\JamfSchool\JamfSchoolAdapter;
 use App\SyncAdapters\JumpCloud\JumpCloudAdapter;
 use App\SyncAdapters\Kandji\KandjiAdapter;
+use App\SyncAdapters\KaseyaVsa10\KaseyaVsa10Adapter;
 use App\SyncAdapters\MerakiSystemsManager\MerakiSystemsManagerAdapter;
 use App\SyncAdapters\Mosyle\MosyleAdapter;
 use App\SyncAdapters\NinjaOne\NinjaOneAdapter;
@@ -36,10 +38,12 @@ class AdapterRegistry
     private const TYPES = [
         'fleet' => FleetAdapter::class,
         'addigy' => AddigyAdapter::class,
+        'apple_business_manager' => AppleBusinessManagerAdapter::class,
         'intune' => IntuneAdapter::class,
         'jamf' => JamfAdapter::class,
         'jamf_school' => JamfSchoolAdapter::class,
         'kandji' => KandjiAdapter::class,
+        'kaseya_vsa10' => KaseyaVsa10Adapter::class,
         'meraki_sm' => MerakiSystemsManagerAdapter::class,
         'mosyle' => MosyleAdapter::class,
         'ninjaone' => NinjaOneAdapter::class,
