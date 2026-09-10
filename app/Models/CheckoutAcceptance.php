@@ -34,20 +34,13 @@ class CheckoutAcceptance extends Model
 
         $recipients = [];
 
-        if (!empty($settings->alert_email)) {
-            $recipients = array_merge(
-                $recipients,
-                array_map('trim', explode(',', $settings->alert_email))
-            );
-        }
-
         if (!empty($settings->admin_cc_email)) {
             $recipients = array_merge(
                 $recipients,
                 array_map('trim', explode(',', $settings->admin_cc_email))
             );
         }
-     
+
         return array_values(array_unique(array_filter($recipients)));
     }
 
