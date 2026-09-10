@@ -61,7 +61,9 @@ class AcceptanceItemDeclinedNotification extends Notification implements ShouldQ
 
     public function shouldSend($notifiable, $channel)
     {
-        return Setting::getSettings()->alerts_enabled && !empty(Setting::getSettings()->alert_email);
+        $settings = Setting::getSettings();
+
+        return $settings->alerts_enabled && (!empty($settings->alert_email) || !empty($settings->admin_cc_email));
     }
 
     /**

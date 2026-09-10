@@ -67,7 +67,7 @@ class AcceptanceItemAcceptedNotification extends Notification implements ShouldQ
     {
         $settings = Setting::getSettings();
 
-        return $settings->alerts_enabled && (!empty($settings->alert_email) || !empty($settings->cc_email));
+        return $settings->alerts_enabled && (!empty($settings->alert_email) || !empty($settings->admin_cc_email));
     }
 
     /**
