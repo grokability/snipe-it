@@ -87,7 +87,7 @@ class AccessoryAcceptanceTest extends TestCase
     {
         Notification::fake();
 
-        $this->settings->enableAlertEmail();
+        $this->settings->enableAdminCC();
 
         $acceptance = CheckoutAcceptance::factory()
             ->pending()
@@ -120,7 +120,7 @@ class AccessoryAcceptanceTest extends TestCase
     {
         Notification::fake();
 
-        $this->settings->enableAlertEmail();
+        $this->settings->enableAdminCC();
 
         $acceptance = CheckoutAcceptance::factory()
             ->pending()

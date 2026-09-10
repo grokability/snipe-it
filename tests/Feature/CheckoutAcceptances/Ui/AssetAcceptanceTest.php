@@ -212,7 +212,7 @@ class AssetAcceptanceTest extends TestCase
     {
         Event::fake([CheckoutAccepted::class]);
         Notification::fake();
-        $this->settings->enableAlertEmail();
+        $this->settings->enableAdminCC();
 
         $customField = CustomField::factory()->create([
             'name' => 'Cost Center',
@@ -260,7 +260,7 @@ class AssetAcceptanceTest extends TestCase
         // <img> tag survives markdown parsing.
         Event::fake([CheckoutAccepted::class]);
         Notification::fake();
-
+        $this->settings->enableAdminCC();
         $checkoutAcceptance = CheckoutAcceptance::factory()->pending()->create();
 
         $lfrPayload = '![x](/etc/hostname)';

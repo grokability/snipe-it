@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use TCPDF;
-
 class CheckoutAcceptance extends Model
 {
     use HasFactory, Notifiable, SoftDeletes;
@@ -30,12 +29,11 @@ class CheckoutAcceptance extends Model
      */
     public function routeNotificationForMail()
     {
-        // At this point the endpoint is the same for everything.
-        //  In the future this may want to be adapted for individual notifications.
-        $recipients_string = explode(',', Setting::getSettings()->alert_email);
-        $recipients = array_map('trim', $recipients_string);
+        $settings = Setting::getSettings();
 
-        return array_filter($recipients);
+        $recipients = array_map('trim', explode(',', $settings->admin_cc_email ?? ''));
+
+        return array_values(array_unique(array_filter($recipients)));
     }
 
     public function getCheckoutableItemTypeAttribute(): string
