@@ -2,11 +2,10 @@
 
 namespace App\SyncAdapters\AppleBusinessManager;
 
-use App\Models\SyncAdapterConfig;
+use App\Models\AssetModel;
 use App\SyncAdapters\HostInventoryRecord;
 use App\SyncAdapters\Support\ConfigurableAdapter;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 
 /**
@@ -54,6 +53,11 @@ class AppleBusinessManagerAdapter extends ConfigurableAdapter
             [
                 'key' => 'mode',
                 'label' => 'Portal',
+                'type' => 'select',
+                'options' => [
+                    'business' => 'Apple Business Manager',
+                    'school' => 'Apple School Manager',
+                ],
                 'help' => trans('admin/settings/sync_adapters.abm_mode_help'),
             ],
             [
@@ -69,14 +73,33 @@ class AppleBusinessManagerAdapter extends ConfigurableAdapter
             [
                 'key' => 'private_key',
                 'label' => 'Private Key (PEM)',
+                'type' => 'textarea',
                 'secret' => true,
                 'help' => trans('admin/settings/sync_adapters.abm_private_key_help'),
+                'placeholder' => "-----BEGIN PRIVATE KEY-----\n1234567890\n-----END PRIVATE KEY-----",
             ],
             [
                 'key' => 'product_family_filter',
                 'label' => 'Product Families',
+                'type' => 'multiselect',
+                'options' => [
+                    'Mac' => 'Mac',
+                    'iPhone' => 'iPhone',
+                    'iPad' => 'iPad',
+                    'AppleTV' => 'Apple TV',
+                    'Watch' => 'Apple Watch',
+                    'Vision' => 'Apple Vision',
+                ],
+                'default' => ['Mac', 'iPhone', 'iPad', 'AppleTV', 'Watch', 'Vision'],
                 'required' => false,
                 'help' => trans('admin/settings/sync_adapters.abm_product_family_filter_help'),
+            ],
+            [
+                'key' => 'pull_model_images',
+                'label' => 'Pull model images from appledb.dev',
+                'type' => 'checkbox',
+                'required' => false,
+                'help' => trans('admin/settings/sync_adapters.abm_pull_model_images_help'),
             ],
         ];
     }
@@ -103,25 +126,6 @@ class AppleBusinessManagerAdapter extends ConfigurableAdapter
             'abm_applecare_is_canceled' => ['label_key' => 'admin/settings/sync_adapters.extra_applecare_is_canceled', 'type' => 'boolean'],
             'abm_applecare_is_renewable' => ['label_key' => 'admin/settings/sync_adapters.extra_applecare_is_renewable', 'type' => 'boolean'],
         ];
-    }
-
-    /**
-     * Overrides the base saveConfig to give the product-family filter
-     * clear-on-blank semantics. Base persistCredentialsFromSchema()
-     * intentionally preserves blank values so admins can update the
-     * URL without re-entering every secret, but the filter is a
-     * different kind of setting: blanking it must switch back to
-     * "sync every family," not preserve the previous list.
-     */
-    public function saveConfig(Request $request): void
-    {
-        parent::saveConfig($request);
-
-        SyncAdapterConfig::put(
-            $this->instance->id,
-            'product_family_filter',
-            (string) $request->input($this->instance->slug.'_product_family_filter', ''),
-        );
     }
 
     public function pull(): iterable
@@ -158,6 +162,13 @@ class AppleBusinessManagerAdapter extends ConfigurableAdapter
         // Empty means "all families".
         $allowedFamilies = $this->allowedProductFamilies();
 
+        // Model-image enrichment fetches from appledb.dev, so it's
+        // opt-in and off by default. Per-pull cache keyed by
+        // hardwareModel avoids re-fetching the same image when a
+        // tenant has many devices of the same model.
+        $pullImages = $this->shouldPullModelImages();
+        $imagesHandled = [];
+
         foreach ($client->devices() as $device) {
             $family = strtolower((string) ($device['attributes']['productFamily'] ?? ''));
             if ($allowedFamilies !== [] && ! in_array($family, $allowedFamilies, true)) {
@@ -167,17 +178,120 @@ class AppleBusinessManagerAdapter extends ConfigurableAdapter
             if ($enrichWithAppleCare) {
                 $record = $this->enrichRecordWithAppleCare($record, $client);
             }
+            if ($pullImages) {
+                $imagesHandled = $this->ensureModelImage($record, $imagesHandled);
+            }
             yield $record;
         }
     }
 
     /**
-     * Parse the admin-configured product-family filter (comma-
-     * separated list) into a lower-cased array. Empty / unset
-     * returns an empty array, which pull() reads as "allow every
-     * family." Unknown family names still flow through, since the vendor
-     * naming may evolve, and we'd rather let admins opt into a new
-     * family without waiting for a Snipe-IT release than block them.
+     * When the "Pull model images" toggle is on, populate the
+     * AssetModel image for the record's hardwareModel from
+     * appledb.dev. Idempotent and safe to call for every record:
+     *
+     *   - If no productType is on the record, skip (nothing to key
+     *     appledb.dev on).
+     *   - If the model exists AND it already carries an image, skip
+     *     (respect admin curation).
+     *   - If the model exists AND its category has an image, skip
+     *     (category fallback already covers the display case).
+     *   - Otherwise fetch the image, write it to storage, and set
+     *     model.image. The framework's later resolveModelIdByName
+     *     find the model we (or a prior sync) created.
+     *
+     * Cache is keyed by hardwareModel so the same model in a 500-
+     * device pull triggers one fetch, not 500.
+     *
+     * @param  array<string, bool>  $imagesHandled  modelName => true. Any key present means "already tried this model in this pull, skip".
+     * @return array<string, bool> Updated cache with this record's modelName marked.
+     */
+    private function ensureModelImage(HostInventoryRecord $record, array $imagesHandled): array
+    {
+        // Whichever field the admin routed to native:model becomes
+        // the AssetModel's name after sync. Mirror that pick here so
+        // our image lookup targets the same model row the framework
+        // will create or update.
+        $modelName = $this->mappingFor('abm_model_marketing_name') === 'native:model'
+            ? ($record->extra['abm_model_marketing_name'] ?? $record->hardwareModel)
+            : $record->hardwareModel;
+
+        if ($modelName === null || $modelName === '') {
+            return $imagesHandled;
+        }
+
+        if (array_key_exists($modelName, $imagesHandled)) {
+            return $imagesHandled;
+        }
+        $imagesHandled[$modelName] = true;
+
+        $productType = $record->extra['abm_product_type'] ?? null;
+        if (! is_string($productType) || $productType === '') {
+            return $imagesHandled;
+        }
+
+        $existing = AssetModel::query()
+            ->where('name', $modelName)
+            ->with('category')
+            ->first();
+
+        if ($existing !== null && $this->existingModelAlreadyHasImageCoverage($existing)) {
+            return $imagesHandled;
+        }
+
+        $color = $record->extra['abm_color'] ?? null;
+        $filename = AppleDBImageFetcher::fetch($productType, is_string($color) ? $color : null);
+        if ($filename === null) {
+            return $imagesHandled;
+        }
+
+        if ($existing !== null) {
+            $existing->image = $filename;
+            $existing->save();
+        }
+        // If the model doesn't exist yet, the framework's
+        // resolveModelIdByName will create it on demand. We can't
+        // pre-create here without duplicating category-resolution
+        // logic, so we let the framework build the shell. A follow-
+        // up sync re-runs this method and finds the model, then
+        // backfills the image on the second pass.
+
+        return $imagesHandled;
+    }
+
+    /**
+     * Returns true when the existing model or its category already
+     * provides an image, so we don't overwrite curated content.
+     */
+    private function existingModelAlreadyHasImageCoverage(AssetModel $model): bool
+    {
+        if (! empty($model->image)) {
+            return true;
+        }
+        $category = $model->category;
+
+        return $category !== null && ! empty($category->image);
+    }
+
+    /**
+     * Read the "Pull model images" checkbox. Persists as '1' or '0'
+     * via the base class's schema handler, so a plain string compare
+     * is enough here.
+     */
+    private function shouldPullModelImages(): bool
+    {
+        try {
+            return $this->credential('pull_model_images') === '1';
+        } catch (\Throwable) {
+            return false;
+        }
+    }
+
+    /**
+     * Parse the admin-configured product-family multiselect into a
+     * lower-cased array. Empty / unset returns an empty array, which
+     * pull() reads as "allow every family." Persisted as JSON by
+     * the base class's multiselect handler.
      *
      * @return array<int, string>
      */
@@ -193,9 +307,12 @@ class AppleBusinessManagerAdapter extends ConfigurableAdapter
             return [];
         }
 
-        $parts = preg_split('/[,\s]+/', strtolower($raw)) ?: [];
+        $decoded = json_decode($raw, true);
+        if (! is_array($decoded)) {
+            return [];
+        }
 
-        return array_values(array_filter(array_map('trim', $parts), fn ($p) => $p !== ''));
+        return array_values(array_map('strtolower', array_filter($decoded, 'is_string')));
     }
 
     /**

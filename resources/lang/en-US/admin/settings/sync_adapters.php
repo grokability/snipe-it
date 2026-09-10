@@ -170,11 +170,12 @@ return [
     'ninjaone_asset_tag_field_help' => 'Optional. NinjaOne has no built-in asset_tag column, so push writes to a per-device Custom Field instead. Create the field under Administration -> Devices -> Custom Fields in your Ninja dashboard, then paste its exact name here. Leave blank if you are not pushing asset_tag to Ninja.',
     'kaseya_vsa10_token_id_help' => 'Generate an API token pair under Settings -> Extensions -> API Tokens in your VSA 10 admin console. Grant the token read access to the Devices resource. Copy the Token ID (the first half of the pair) here.',
     'kaseya_vsa10_token_secret_help' => 'Paired with the Token ID above. VSA 10 shows the secret once at token creation time.',
-    'abm_mode_help' => 'Enter "business" if your org uses Apple Business Manager, or "school" if your org uses Apple School Manager. Defaults to business when blank.',
+    'abm_mode_help' => 'The Apple portal your organization uses. Determines the API host and OAuth scope the adapter connects to.',
     'abm_client_id_help' => 'Create an API key under Settings -> API in your Apple Business Manager or Apple School Manager console. Copy the Client ID from the key detail page.',
     'abm_key_id_help' => 'Paired with the Client ID. Shown on the same key detail page in the ABM/ASM console.',
-    'abm_private_key_help' => 'Paste the contents of the .pem private-key file you downloaded when you created the API key. Include the -----BEGIN PRIVATE KEY----- and -----END PRIVATE KEY----- lines. Apple only lets you download the key once.',
-    'abm_product_family_filter_help' => 'Comma-separated list of product families to sync (Mac, iPhone, iPad, AppleTV, Watch, Vision). Leave blank to sync everything. Match is case-insensitive.',
+    'abm_private_key_help' => 'Paste the contents of the .pem private-key file you downloaded when you created the API key. Apple only lets you download the key once.',
+    'abm_product_family_filter_help' => 'Only sync devices in the selected product families.',
+    'abm_pull_model_images_help' => 'Fetch product images from appledb.dev when auto-populating asset models from ABM devices. Existing model images and category images are never overwritten.',
 
     // Extras / mapping section wrappers
     'extra_fields_section_title' => ':type-specific fields',

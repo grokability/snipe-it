@@ -103,7 +103,7 @@ class IntuneAdapter extends ConfigurableAdapter implements PushableAdapter
 
     /**
      * Convert a Graph managedDevice payload into the normalized record
-     * shape. Graph's stable id is `id` (a GUID); we key
+     * shape. Graph's stable id is `id` (a GUID), and we key
      * asset_external_sources on it. Ethernet MAC is preferred over
      * WiFi because it's more likely to be a hardware-inventory MAC
      * that survives OS reinstall.

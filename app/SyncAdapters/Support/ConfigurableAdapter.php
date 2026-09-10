@@ -58,14 +58,26 @@ abstract class ConfigurableAdapter implements HostInventoryAdapter
      * Field entry keys:
      *   - key      (required) storage key AND form-field-name suffix
      *   - label    (required) display label rendered next to the input
+     *   - type     (optional, default 'text') one of 'text', 'password',
+     *              'textarea', 'checkbox', 'select'. 'password' also
+     *              implied when secret => true.
+     *   - options  (optional) for type='select', a map of
+     *              value => display-label pairs.
      *   - secret   (optional, default false) render as password with
      *              show/hide toggle AND encrypt the value at rest
      *   - required (optional, default true) treat as required for the
      *              isEnabled() gate. UI hint is up to the label copy
      *   - help     (optional, default null) inline help text under the
      *              field, passed straight to `<x-form.row help_text=...>`
+     *   - placeholder (optional) placeholder text shown inside an
+     *              empty text / textarea input. Ignored for other
+     *              types.
+     *   - default  (optional) initial-render fallback used when
+     *              nothing is stored yet. For type='multiselect' pass
+     *              an array of option keys to pre-select on first
+     *              render.
      *
-     * @return array<int, array{key: string, label: string, secret?: bool, required?: bool, help?: string|null}>
+     * @return array<int, array{key: string, label: string, type?: string, options?: array<string, string>, secret?: bool, required?: bool, help?: string|null, placeholder?: string|null, default?: array<int, string>|string|null}>
      */
     abstract public function credentialSchema(): array;
 
@@ -239,6 +251,38 @@ abstract class ConfigurableAdapter implements HostInventoryAdapter
     {
         foreach ($this->credentialSchema() as $field) {
             $fieldName = $slug.'_'.$field['key'];
+            $type = $field['type'] ?? 'text';
+
+            // Checkbox fields always overwrite: an unchecked box is
+            // a real value ("off") and needs to overwrite a
+            // previously-saved "on". Text and password fields
+            // preserve blank input so admins can update the URL
+            // without re-entering every secret.
+            if ($type === 'checkbox') {
+                SyncAdapterConfig::put(
+                    $this->instance->id,
+                    $field['key'],
+                    $request->boolean($fieldName) ? '1' : '0',
+                );
+
+                continue;
+            }
+
+            // Multiselect also always overwrites. Empty selection
+            // is a real value (means "sync all"). Store as JSON so
+            // values with commas / special chars round-trip cleanly.
+            if ($type === 'multiselect') {
+                $values = (array) $request->input($fieldName, []);
+                $values = array_values(array_filter($values, fn ($v) => $v !== null && $v !== ''));
+                SyncAdapterConfig::put(
+                    $this->instance->id,
+                    $field['key'],
+                    json_encode($values),
+                );
+
+                continue;
+            }
+
             if (! $request->filled($fieldName)) {
                 continue;
             }

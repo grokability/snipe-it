@@ -63,40 +63,88 @@
     @foreach ($adapter->credentialSchema() as $field)
         @php
             $fieldName = $slug.'_'.$field['key'];
+            $fieldType = $field['type'] ?? 'text';
             $isSecret = $field['secret'] ?? false;
             $isRequired = $field['required'] ?? true;
             $storedValue = $adapter->credentialForDisplay($field['key']);
         @endphp
-        <x-form.row
-            :label="$field['label']"
-            :name="$fieldName"
-            input_div_class="col-md-8"
-            :help_text="$field['help'] ?? null"
-            :required="$isRequired"
-        >
-            <x-slot:input>
-                @if ($locked)
-                    <x-input.text
-                        :name="$fieldName"
-                        value="XXXXXXXXXXXXXXXXXXXXXXX"
-                        disabled
-                    />
-                @elseif ($isSecret)
-                    <x-input.password
-                        :name="$fieldName"
-                        :value="old($fieldName, $storedValue)"
-                        :required="$isRequired"
-                        ignoreAutofill
-                    />
-                @else
-                    <x-input.text
-                        :name="$fieldName"
-                        :value="old($fieldName, $storedValue)"
-                        :required="$isRequired"
-                    />
-                @endif
-            </x-slot:input>
-        </x-form.row>
+        @if ($fieldType === 'checkbox')
+            <x-form.checkbox-row
+                :name="$fieldName"
+                :checked="old($fieldName, $storedValue === '1')"
+                :label="$field['label']"
+                :help_text="$field['help'] ?? null"
+                :disabled="$locked"
+            />
+        @else
+            <x-form.row
+                :label="$field['label']"
+                :name="$fieldName"
+                input_div_class="col-md-8"
+                :help_text="$field['help'] ?? null"
+                :required="$isRequired"
+            >
+                <x-slot:input>
+                    @if ($locked)
+                        <x-input.text
+                            :name="$fieldName"
+                            value="XXXXXXXXXXXXXXXXXXXXXXX"
+                            disabled
+                        />
+                    @elseif ($fieldType === 'select')
+                        <x-input.select
+                            :name="$fieldName"
+                            :options="$field['options'] ?? []"
+                            :selected="old($fieldName, $storedValue)"
+                            :required="$isRequired"
+                        />
+                    @elseif ($fieldType === 'multiselect')
+                        @php
+                            $selectedValues = old(
+                                $fieldName,
+                                is_string($storedValue) && $storedValue !== '' ? (json_decode($storedValue, true) ?: []) : []
+                            );
+                            // First-render fallback: when nothing is
+                            // stored yet, adapters can declare a
+                            // `default` array to seed the selection so
+                            // admins see the intended baseline instead
+                            // of an empty widget.
+                            if (empty($selectedValues) && ! empty($field['default']) && is_array($field['default'])) {
+                                $selectedValues = $field['default'];
+                            }
+                        @endphp
+                        <x-input.select
+                            :name="$fieldName . '[]'"
+                            :options="$field['options'] ?? []"
+                            :selected="$selectedValues"
+                            multiple
+                            style="width: 100%"
+                        />
+                    @elseif ($fieldType === 'textarea')
+                        <x-input.textarea
+                            :name="$fieldName"
+                            :value="old($fieldName, $storedValue)"
+                            :required="$isRequired"
+                            :placeholder="$field['placeholder'] ?? null"
+                            rows="8"
+                        />
+                    @elseif ($isSecret)
+                        <x-input.password
+                            :name="$fieldName"
+                            :value="old($fieldName, $storedValue)"
+                            :required="$isRequired"
+                            ignoreAutofill
+                        />
+                    @else
+                        <x-input.text
+                            :name="$fieldName"
+                            :value="old($fieldName, $storedValue)"
+                            :required="$isRequired"
+                        />
+                    @endif
+                </x-slot:input>
+            </x-form.row>
+        @endif
     @endforeach
 </x-sync-adapter-form>
 

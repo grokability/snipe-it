@@ -229,7 +229,7 @@ class WorkspaceOneAdapter extends ConfigurableAdapter implements PushableAdapter
 
     /**
      * Push top-level device fields (AssetNumber, etc.) via PUT
-     * /devices/{uuid}. Null $client means dry-run; log the payload
+     * /devices/{uuid}. Null $client means dry-run: log the payload
      * and skip the HTTP call.
      *
      * @param  array<string, mixed>  $payload

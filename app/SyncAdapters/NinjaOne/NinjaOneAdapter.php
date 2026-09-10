@@ -227,7 +227,7 @@ class NinjaOneAdapter extends ConfigurableAdapter implements PushableAdapter
      * multiple field name / value pairs in one request, so asset_tag
      * and the composed-notes target get merged when both are
      * configured. Admin sets the notes-target field via the composed-
-     * notes fieldset override; nothing is defaulted because Ninja
+     * notes fieldset override. Nothing is defaulted because Ninja
      * has no built-in notes concept for us to guess.
      *
      * @return array<string, mixed>

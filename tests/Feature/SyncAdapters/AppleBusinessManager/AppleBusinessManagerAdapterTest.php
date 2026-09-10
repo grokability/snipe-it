@@ -167,7 +167,7 @@ class AppleBusinessManagerAdapterTest extends TestCase
 
     public function test_product_family_filter_limits_pulled_devices()
     {
-        $adapter = $this->configuredAdapter(productFamilies: 'Mac, iPad');
+        $adapter = $this->configuredAdapter(productFamilies: ['Mac', 'iPad']);
 
         Http::fake([
             'account.apple.com/*' => Http::response(['access_token' => 'stub-bearer']),
@@ -190,7 +190,10 @@ class AppleBusinessManagerAdapterTest extends TestCase
 
     public function test_product_family_filter_is_case_insensitive()
     {
-        $adapter = $this->configuredAdapter(productFamilies: 'MAC');
+        // Lower-case entry filters against ABM's "Mac" family. If
+        // stored casing ever drifts from the canonical form, matching
+        // still works.
+        $adapter = $this->configuredAdapter(productFamilies: ['mac']);
 
         Http::fake([
             'account.apple.com/*' => Http::response(['access_token' => 'stub-bearer']),
@@ -210,7 +213,7 @@ class AppleBusinessManagerAdapterTest extends TestCase
 
     public function test_blank_product_family_filter_passes_every_device_through()
     {
-        $adapter = $this->configuredAdapter(productFamilies: '');
+        $adapter = $this->configuredAdapter(productFamilies: []);
 
         Http::fake([
             'account.apple.com/*' => Http::response(['access_token' => 'stub-bearer']),
@@ -228,23 +231,21 @@ class AppleBusinessManagerAdapterTest extends TestCase
         $this->assertCount(3, $records);
     }
 
-    public function test_saveconfig_clears_family_filter_on_blank_submit()
+    public function test_saveconfig_clears_family_filter_when_nothing_selected()
     {
-        $adapter = $this->configuredAdapter(productFamilies: 'Mac,iPhone');
+        $this->configuredAdapter(productFamilies: ['Mac', 'iPhone']);
+        $instance = SyncAdapterInstance::where('slug', 'apple_business_manager')->firstOrFail();
 
-        // Simulate an admin re-saving the form with an empty filter
-        // to switch back to "sync every family."
-        $request = \Illuminate\Http\Request::create('/', 'POST', [
+        // Simulate re-saving the form with no families selected.
+        // The multiselect handler in the base class overwrites the
+        // stored JSON with an empty array.
+        $adapter = new AppleBusinessManagerAdapter($instance->fresh());
+        $adapter->saveConfig(\Illuminate\Http\Request::create('/', 'POST', [
             'apple_business_manager_url' => '',
-            'apple_business_manager_product_family_filter' => '',
-        ]);
-        $adapter->saveConfig($request);
+        ]));
 
-        $stored = SyncAdapterConfig::get(
-            SyncAdapterInstance::where('slug', 'apple_business_manager')->firstOrFail()->id,
-            'product_family_filter',
-        );
-        $this->assertSame('', $stored);
+        $stored = SyncAdapterConfig::get($instance->id, 'product_family_filter');
+        $this->assertSame('[]', $stored);
     }
 
     public function test_survives_mdm_server_map_failure_and_still_yields_records()
@@ -268,7 +269,10 @@ class AppleBusinessManagerAdapterTest extends TestCase
         $this->assertNull($records[0]->extra['abm_mdm_server']);
     }
 
-    private function configuredAdapter(string $mode = 'business', ?string $productFamilies = null): AppleBusinessManagerAdapter
+    /**
+     * @param  array<int, string>|null  $productFamilies  null = leave the stored filter alone; [] = force to empty
+     */
+    private function configuredAdapter(string $mode = 'business', ?array $productFamilies = null): AppleBusinessManagerAdapter
     {
         $instance = SyncAdapterInstance::where('slug', 'apple_business_manager')->firstOrFail();
         SyncAdapterConfig::put($instance->id, 'mode', $mode);
@@ -276,7 +280,7 @@ class AppleBusinessManagerAdapterTest extends TestCase
         SyncAdapterConfig::put($instance->id, 'key_id', 'stub-key-id');
         SyncAdapterConfig::put($instance->id, 'private_key', Crypt::encrypt($this->privateKeyPem));
         if ($productFamilies !== null) {
-            SyncAdapterConfig::put($instance->id, 'product_family_filter', $productFamilies);
+            SyncAdapterConfig::put($instance->id, 'product_family_filter', json_encode($productFamilies));
         }
 
         return new AppleBusinessManagerAdapter($instance->fresh());
