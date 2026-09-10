@@ -3,11 +3,9 @@
 namespace App\SyncAdapters\Intune;
 
 use App\Models\Asset;
-use App\Models\AssetExternalSource;
 use App\SyncAdapters\HostInventoryRecord;
 use App\SyncAdapters\PushableAdapter;
 use App\SyncAdapters\Support\ConfigurableAdapter;
-use App\SyncAdapters\Support\NotesComposer;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
@@ -180,27 +178,17 @@ class IntuneAdapter extends ConfigurableAdapter implements PushableAdapter
      */
     public function push(Asset $asset, array $changedFields = []): void
     {
-        $template = $this->pushNotesTemplate();
-        $target = $this->effectiveNotesTarget();
-        if ($template === '' || $target === null) {
-            return;
-        }
-
-        $externalSource = AssetExternalSource::query()
-            ->where('asset_id', $asset->id)
-            ->where('source', $this->name())
-            ->first();
-
+        $externalSource = $this->pushPrologue($asset, $changedFields);
         if ($externalSource === null) {
             return;
         }
 
-        $composed = NotesComposer::compose($asset, $template);
+        $composed = $this->composeNotesForPush($asset);
         if ($composed === '') {
             return;
         }
 
-        $payload = [$target => $composed];
+        $payload = [$this->effectiveNotesTarget() => $composed];
 
         if ($this->isPushDryRun()) {
             Log::channel('sync-adapters')->info(sprintf(
@@ -227,7 +215,7 @@ class IntuneAdapter extends ConfigurableAdapter implements PushableAdapter
             '%s push: updated Intune managed device %s (%s)',
             $this->name(),
             $externalSource->external_id,
-            $target,
+            $this->effectiveNotesTarget(),
         ));
     }
 }

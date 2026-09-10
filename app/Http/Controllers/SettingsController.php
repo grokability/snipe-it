@@ -1231,30 +1231,7 @@ class SettingsController extends Controller
             return null;
         }
 
-        $candidate = $body['message']
-            ?? $body['detail']
-            ?? $body['errorMessage']
-            ?? null;
-
-        if (! is_string($candidate) && isset($body['error'])) {
-            $candidate = is_string($body['error'])
-                ? $body['error']
-                : ($body['error']['message'] ?? null);
-        }
-
-        if (! is_string($candidate) && isset($body['errors']) && is_array($body['errors'])) {
-            $first = $body['errors'][0] ?? null;
-            if (is_string($first)) {
-                $candidate = $first;
-            } elseif (is_array($first)) {
-                $candidate = $first['description']
-                    ?? $first['reason']
-                    ?? $first['message']
-                    ?? $first['detail']
-                    ?? null;
-            }
-        }
-
+        $candidate = self::pluckErrorCandidate($body);
         if (! is_string($candidate) || trim($candidate) === '') {
             return null;
         }
@@ -1264,6 +1241,82 @@ class SettingsController extends Controller
         return mb_strlen($candidate) > 200
             ? mb_substr($candidate, 0, 200).'…'
             : $candidate;
+    }
+
+    /**
+     * Walk the shapes we know about in order (top-level scalar keys,
+     * nested error object, errors array of strings, errors array of
+     * objects). Returns the first string it lands on or null if none
+     * of the paths yield anything.
+     *
+     * @param  array<string, mixed>  $body
+     */
+    private static function pluckErrorCandidate(array $body): ?string
+    {
+        $candidate = $body['message']
+            ?? $body['detail']
+            ?? $body['errorMessage']
+            ?? null;
+        if (is_string($candidate)) {
+            return $candidate;
+        }
+
+        $candidate = self::pluckErrorFromErrorKey($body);
+        if (is_string($candidate)) {
+            return $candidate;
+        }
+
+        return self::pluckErrorFromErrorsArray($body);
+    }
+
+    /**
+     * Extract from a top-level `error` key. Handles both the string
+     * shape ({"error": "..."}) and the Microsoft Graph nested-object
+     * shape ({"error": {"message": "..."}}).
+     *
+     * @param  array<string, mixed>  $body
+     */
+    private static function pluckErrorFromErrorKey(array $body): ?string
+    {
+        if (! isset($body['error'])) {
+            return null;
+        }
+        if (is_string($body['error'])) {
+            return $body['error'];
+        }
+        if (is_array($body['error']) && isset($body['error']['message']) && is_string($body['error']['message'])) {
+            return $body['error']['message'];
+        }
+
+        return null;
+    }
+
+    /**
+     * Extract from an `errors` array. First entry wins. Handles the
+     * Meraki string-array shape and the Jamf / Fleet object-array
+     * shape whose entries carry description / reason / message /
+     * detail keys.
+     *
+     * @param  array<string, mixed>  $body
+     */
+    private static function pluckErrorFromErrorsArray(array $body): ?string
+    {
+        if (! isset($body['errors']) || ! is_array($body['errors'])) {
+            return null;
+        }
+        $first = $body['errors'][0] ?? null;
+        if (is_string($first)) {
+            return $first;
+        }
+        if (! is_array($first)) {
+            return null;
+        }
+
+        return $first['description']
+            ?? $first['reason']
+            ?? $first['message']
+            ?? $first['detail']
+            ?? null;
     }
 
     /**

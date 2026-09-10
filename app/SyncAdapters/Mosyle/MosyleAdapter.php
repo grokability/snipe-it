@@ -153,8 +153,6 @@ class MosyleAdapter extends ConfigurableAdapter implements PushableAdapter
      * pull and is more stable across re-enrollment).
      *
      * @param  array<int, string>  $changedFields
-     *
-     * @SuppressWarnings("PHPMD.ElseExpression")
      */
     public function push(Asset $asset, array $changedFields = []): void
     {
@@ -163,77 +161,99 @@ class MosyleAdapter extends ConfigurableAdapter implements PushableAdapter
             return;
         }
 
-        // Mosyle keys writes by serial number, not the UDID we
-        // stored as external_id. Fall back to the external_id if
-        // the asset has no serial (Mosyle Business uses serial ==
-        // external_id for some device types).
         $serial = $asset->serial;
         if ($serial === null || $serial === '') {
+            // Mosyle keys writes by serial number, not the UDID we
+            // stored as external_id. Fall back to external_id when
+            // the asset has no serial (Mosyle Business uses
+            // serial == external_id for some device types).
             $serial = $externalSource->external_id;
         }
 
-        $pushedFields = [];
         $client = null;
+        $pushedFields = array_merge(
+            $this->pushAssetTagField($asset, $serial, $client),
+            $this->pushComposedNotesField($asset, $serial, $client),
+        );
 
-        foreach ($this->pushDirectedFields() as $field) {
-            if ($field !== 'asset_tag') {
-                continue;
-            }
-
-            $value = $this->assetValueForSourceField($asset, $field);
-            if ($value === null || $value === '') {
-                continue;
-            }
-
-            if ($this->isPushDryRun()) {
-                Log::channel('sync-adapters')->info(sprintf(
-                    '%s push [dry-run]: would set Mosyle device serial=%s asset_tag=%s',
-                    $this->name(),
-                    $serial,
-                    $value,
-                ));
-                $pushedFields[] = $field;
-
-                continue;
-            }
-
-            $client ??= new MosyleClient(baseUrl: $this->url(), token: $this->credential('token'));
-            $client->updateDeviceAssetTagBySerial($serial, (string) $value);
-            $pushedFields[] = $field;
-        }
-
-        // Composed notes push. Independent from the asset_tag push
-        // because Mosyle's write API dispatches per-op, so notes get
-        // a second POST to /devices with the notes operation.
-        $composed = $this->composeNotesForPush($asset);
-        if ($composed !== '') {
-            if ($this->isPushDryRun()) {
-                Log::channel('sync-adapters')->info(sprintf(
-                    '%s push [dry-run]: would set Mosyle device serial=%s notes=%s',
-                    $this->name(),
-                    $serial,
-                    $composed,
-                ));
-                $pushedFields[] = 'notes';
-            } else {
-                $client ??= new MosyleClient(baseUrl: $this->url(), token: $this->credential('token'));
-                $client->updateDeviceNotesBySerial($serial, $composed);
-                $pushedFields[] = 'notes';
-            }
-        }
-
-        if ($pushedFields === []) {
+        if ($pushedFields === [] || $this->isPushDryRun()) {
             return;
         }
 
-        if (! $this->isPushDryRun()) {
+        Log::channel('sync-adapters')->info(sprintf(
+            '%s push: updated Mosyle device serial=%s fields [%s]',
+            $this->name(),
+            $serial,
+            implode(', ', $pushedFields),
+        ));
+    }
+
+    /**
+     * Push the asset_tag field to Mosyle if it's in pushDirectedFields
+     * and has a non-empty value. Handles both dry-run and real calls.
+     * $client is passed by reference so the shared HTTP client gets
+     * lazy-instantiated once across both push helpers.
+     *
+     * @return array<int, string> Names of the fields actually pushed.
+     */
+    private function pushAssetTagField(Asset $asset, string $serial, ?MosyleClient &$client): array
+    {
+        if (! in_array('asset_tag', $this->pushDirectedFields(), true)) {
+            return [];
+        }
+
+        $value = $this->assetValueForSourceField($asset, 'asset_tag');
+        if ($value === null || $value === '') {
+            return [];
+        }
+
+        if ($this->isPushDryRun()) {
             Log::channel('sync-adapters')->info(sprintf(
-                '%s push: updated Mosyle device serial=%s fields [%s]',
+                '%s push [dry-run]: would set Mosyle device serial=%s asset_tag=%s',
                 $this->name(),
                 $serial,
-                implode(', ', $pushedFields),
+                $value,
             ));
+
+            return ['asset_tag'];
         }
+
+        $client ??= new MosyleClient(baseUrl: $this->url(), token: $this->credential('token'));
+        $client->updateDeviceAssetTagBySerial($serial, (string) $value);
+
+        return ['asset_tag'];
+    }
+
+    /**
+     * Push composed notes to Mosyle if a template + target are
+     * configured. Independent from the asset_tag push because
+     * Mosyle's write API dispatches per-op, so notes get a second
+     * POST to /devices with the notes operation.
+     *
+     * @return array<int, string> Names of the fields actually pushed.
+     */
+    private function pushComposedNotesField(Asset $asset, string $serial, ?MosyleClient &$client): array
+    {
+        $composed = $this->composeNotesForPush($asset);
+        if ($composed === '') {
+            return [];
+        }
+
+        if ($this->isPushDryRun()) {
+            Log::channel('sync-adapters')->info(sprintf(
+                '%s push [dry-run]: would set Mosyle device serial=%s notes=%s',
+                $this->name(),
+                $serial,
+                $composed,
+            ));
+
+            return ['notes'];
+        }
+
+        $client ??= new MosyleClient(baseUrl: $this->url(), token: $this->credential('token'));
+        $client->updateDeviceNotesBySerial($serial, $composed);
+
+        return ['notes'];
     }
 
     private function assetValueForSourceField(Asset $asset, string $field): mixed

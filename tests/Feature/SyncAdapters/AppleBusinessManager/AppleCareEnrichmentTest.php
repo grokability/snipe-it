@@ -32,6 +32,7 @@ class AppleCareEnrichmentTest extends TestCase
             'private_key_type' => OPENSSL_KEYTYPE_EC,
             'curve_name' => 'prime256v1',
         ]);
+        $pem = '';
         openssl_pkey_export($key, $pem);
         $this->privateKeyPem = $pem;
     }

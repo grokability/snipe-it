@@ -132,7 +132,7 @@ $config = [
         // Fleet / Kandji / Intune / etc. sync without wading through
         // unrelated warnings. Same daily-rotation shape as `admin`.
         'sync-adapters' => [
-            'driver' => 'daily',
+            'driver' => 'single',
             'path' => storage_path('logs/sync-adapters.log'),
             'level' => env('LOG_LEVEL', 'info'),
             'days' => 30,

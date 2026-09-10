@@ -191,85 +191,120 @@ class WorkspaceOneAdapter extends ConfigurableAdapter implements PushableAdapter
             return;
         }
 
+        $payload = $this->buildDevicePayload($asset);
+        $composed = $this->composeNotesForPush($asset);
+
+        if ($payload === [] && $composed === '') {
+            return;
+        }
+
+        $client = $this->isPushDryRun() ? null : $this->buildClient();
+        $this->pushDeviceFields($externalSource->external_id, $payload, $client);
+        $this->pushCustomAttribute($externalSource->external_id, $composed, $client);
+    }
+
+    /**
+     * Assemble the device-update payload from pushDirectedFields.
+     * Fields the vendor doesn't accept map to null and get skipped.
+     *
+     * @return array<string, mixed>
+     */
+    private function buildDevicePayload(Asset $asset): array
+    {
         $payload = [];
         foreach ($this->pushDirectedFields() as $field) {
             $mapped = self::sourceFieldToWs1Field($field);
             if ($mapped === null) {
                 continue;
             }
-
             $value = $this->assetValueForSourceField($asset, $field);
             if ($value === null) {
                 continue;
             }
-
             $payload[$mapped] = $value;
         }
 
-        // Composed notes go to a WS1 Custom Attribute via a separate
-        // endpoint from the top-level device fields (AssetNumber uses
-        // PUT /devices/{uuid}, Custom Attributes use POST
-        // /devices/{uuid}/customattributes). Two API calls when both
-        // are configured. Admin sets the Custom Attribute name via
-        // the composed-notes fieldset override. Nothing default
-        // because WS1 has no built-in notes concept for us to guess.
-        $composed = $this->composeNotesForPush($asset);
+        return $payload;
+    }
+
+    /**
+     * Push top-level device fields (AssetNumber, etc.) via PUT
+     * /devices/{uuid}. Null $client means dry-run; log the payload
+     * and skip the HTTP call.
+     *
+     * @param  array<string, mixed>  $payload
+     */
+    private function pushDeviceFields(string $uuid, array $payload, ?WorkspaceOneClient $client): void
+    {
+        if ($payload === []) {
+            return;
+        }
+
+        if ($client === null) {
+            Log::channel('sync-adapters')->info(sprintf(
+                '%s push [dry-run]: would PUT Workspace ONE device %s with %s',
+                $this->name(),
+                $uuid,
+                json_encode($payload, JSON_UNESCAPED_SLASHES),
+            ));
+
+            return;
+        }
+
+        $client->updateDevice($uuid, $payload);
+        Log::channel('sync-adapters')->info(sprintf(
+            '%s push: updated Workspace ONE device %s with fields [%s]',
+            $this->name(),
+            $uuid,
+            implode(', ', array_keys($payload)),
+        ));
+    }
+
+    /**
+     * Push composed notes to a WS1 Custom Attribute via POST
+     * /devices/{uuid}/customattributes. Separate endpoint from the
+     * top-level device fields, so this fires independently.
+     */
+    private function pushCustomAttribute(string $uuid, string $composed, ?WorkspaceOneClient $client): void
+    {
+        if ($composed === '') {
+            return;
+        }
+
         $notesTarget = $this->effectiveNotesTarget();
 
-        if ($payload === [] && $composed === '') {
-            return;
-        }
-
-        if ($this->isPushDryRun()) {
-            if ($payload !== []) {
-                Log::channel('sync-adapters')->info(sprintf(
-                    '%s push [dry-run]: would PUT Workspace ONE device %s with %s',
-                    $this->name(),
-                    $externalSource->external_id,
-                    json_encode($payload, JSON_UNESCAPED_SLASHES),
-                ));
-            }
-            if ($composed !== '') {
-                Log::channel('sync-adapters')->info(sprintf(
-                    '%s push [dry-run]: would set Workspace ONE Custom Attribute %s=%s on device %s',
-                    $this->name(),
-                    $notesTarget,
-                    $composed,
-                    $externalSource->external_id,
-                ));
-            }
+        if ($client === null) {
+            Log::channel('sync-adapters')->info(sprintf(
+                '%s push [dry-run]: would set Workspace ONE Custom Attribute %s=%s on device %s',
+                $this->name(),
+                $notesTarget,
+                $composed,
+                $uuid,
+            ));
 
             return;
         }
 
+        $client->updateDeviceCustomAttribute($uuid, $notesTarget, $composed);
+        Log::channel('sync-adapters')->info(sprintf(
+            '%s push: set Workspace ONE Custom Attribute "%s" on device %s',
+            $this->name(),
+            $notesTarget,
+            $uuid,
+        ));
+    }
+
+    private function buildClient(): WorkspaceOneClient
+    {
         $apiBaseUrl = $this->url();
-        $client = new WorkspaceOneClient(
+
+        return new WorkspaceOneClient(
             apiBaseUrl: $apiBaseUrl,
             authBaseUrl: $this->deriveAuthBaseUrl($apiBaseUrl),
             tenantCode: $this->credential('tenant_code'),
             clientId: $this->credential('client_id'),
             clientSecret: $this->credential('client_secret'),
         );
-
-        if ($payload !== []) {
-            $client->updateDevice($externalSource->external_id, $payload);
-            Log::channel('sync-adapters')->info(sprintf(
-                '%s push: updated Workspace ONE device %s with fields [%s]',
-                $this->name(),
-                $externalSource->external_id,
-                implode(', ', array_keys($payload)),
-            ));
-        }
-
-        if ($composed !== '') {
-            $client->updateDeviceCustomAttribute($externalSource->external_id, $notesTarget, $composed);
-            Log::channel('sync-adapters')->info(sprintf(
-                '%s push: set Workspace ONE Custom Attribute "%s" on device %s',
-                $this->name(),
-                $notesTarget,
-                $externalSource->external_id,
-            ));
-        }
     }
 
     /**

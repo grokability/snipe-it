@@ -191,30 +191,7 @@ class NinjaOneAdapter extends ConfigurableAdapter implements PushableAdapter
             return;
         }
 
-        $payload = [];
-        foreach ($this->pushDirectedFields() as $field) {
-            if ($field !== 'asset_tag') {
-                continue;
-            }
-            $value = $this->assetValueForSourceField($asset, $field);
-            if ($value === null || $value === '') {
-                continue;
-            }
-            $payload[$customFieldName] = $value;
-        }
-
-        // Composed notes go into a separate admin-named Custom Field
-        // via the same /custom-fields PATCH endpoint. Ninja accepts
-        // multiple field name / value pairs in one request, so we
-        // merge asset_tag + notes when both are configured. Admin
-        // sets the notes-target field via the composed-notes fieldset
-        // override. Nothing default because Ninja has no built-in
-        // notes concept for us to guess.
-        $composed = $this->composeNotesForPush($asset);
-        if ($composed !== '') {
-            $payload[$this->effectiveNotesTarget()] = $composed;
-        }
-
+        $payload = $this->buildCustomFieldPayload($asset, $customFieldName);
         if ($payload === []) {
             return;
         }
@@ -243,6 +220,35 @@ class NinjaOneAdapter extends ConfigurableAdapter implements PushableAdapter
             $externalSource->external_id,
             $customFieldName,
         ));
+    }
+
+    /**
+     * Assemble the /custom-fields PATCH payload. Ninja accepts
+     * multiple field name / value pairs in one request, so asset_tag
+     * and the composed-notes target get merged when both are
+     * configured. Admin sets the notes-target field via the composed-
+     * notes fieldset override; nothing is defaulted because Ninja
+     * has no built-in notes concept for us to guess.
+     *
+     * @return array<string, mixed>
+     */
+    private function buildCustomFieldPayload(Asset $asset, string $assetTagFieldName): array
+    {
+        $payload = [];
+
+        $value = in_array('asset_tag', $this->pushDirectedFields(), true)
+            ? $this->assetValueForSourceField($asset, 'asset_tag')
+            : null;
+        if ($value !== null && $value !== '') {
+            $payload[$assetTagFieldName] = $value;
+        }
+
+        $composed = $this->composeNotesForPush($asset);
+        if ($composed !== '') {
+            $payload[$this->effectiveNotesTarget()] = $composed;
+        }
+
+        return $payload;
     }
 
     private function assetValueForSourceField(Asset $asset, string $field): mixed

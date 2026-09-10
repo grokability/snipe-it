@@ -199,36 +199,38 @@ class SyncHostFromAdapter
         $extraFields = $adapter->extraFields();
         foreach (array_keys($extraFields) as $extraKey) {
             $target = $mapping[$extraKey] ?? 'skip';
-            if ($target === 'skip') {
-                continue;
-            }
-            $isCustom = str_starts_with($target, 'custom:');
-            $isNative = str_starts_with($target, 'native:');
-            if (! $isCustom && ! $isNative) {
-                continue;
-            }
+            $value = self::stringifyExtra(
+                $record->extra[$extraKey] ?? null,
+                self::extraFieldType($extraFields, $extraKey),
+            );
+            self::writeExtraValueToTarget($asset, $target, $value, $instance);
+        }
+    }
 
-            $raw = $record->extra[$extraKey] ?? null;
-            $type = self::extraFieldType($extraFields, $extraKey);
+    /**
+     * Route one extra value to its configured target. Extras only
+     * write to native:{column} or custom:{id} slots. Skip and any
+     * other target shape are no-ops. Null values (missing from the
+     * vendor payload or unstringifiable) pass through silently so
+     * partially-populated payloads never blank existing data.
+     */
+    private static function writeExtraValueToTarget(
+        Asset $asset,
+        string $target,
+        ?string $value,
+        SyncAdapterInstance $instance,
+    ): void {
+        if ($target === 'skip' || $value === null) {
+            return;
+        }
 
-            // Booleans render '0' when raw is false. other types
-            // treat blank strings as null. Guard on raw-is-null so
-            // we don't blank existing data for partially populated
-            // payloads.
-            if ($raw === null && $type !== 'boolean') {
-                continue;
-            }
+        if (str_starts_with($target, 'custom:')) {
+            self::writeCustom($asset, (int) substr($target, 7), $value);
 
-            $value = self::stringifyExtra($raw, $type);
-            if ($value === null) {
-                continue;
-            }
+            return;
+        }
 
-            if ($isCustom) {
-                self::writeCustom($asset, (int) substr($target, 7), $value);
-
-                continue;
-            }
+        if (str_starts_with($target, 'native:')) {
             self::writeNative($asset, substr($target, 7), $value, $instance);
         }
     }
