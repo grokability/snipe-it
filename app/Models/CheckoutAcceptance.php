@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use TCPDF;
-use Illuminate\Support\Facades\Log;
 class CheckoutAcceptance extends Model
 {
     use HasFactory, Notifiable, SoftDeletes;
@@ -32,14 +31,7 @@ class CheckoutAcceptance extends Model
     {
         $settings = Setting::getSettings();
 
-        $recipients = [];
-
-        if (!empty($settings->admin_cc_email)) {
-            $recipients = array_merge(
-                $recipients,
-                array_map('trim', explode(',', $settings->admin_cc_email))
-            );
-        }
+        $recipients = array_map('trim', explode(',', $settings->admin_cc_email ?? ''));
 
         return array_values(array_unique(array_filter($recipients)));
     }
