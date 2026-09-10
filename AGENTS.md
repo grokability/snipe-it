@@ -95,13 +95,10 @@ After checkout, `Helper::getRedirectOption()` reads `$request->redirect_option`.
 ## Commands
 
 ```bash
-
 # Clear caches after config/route changes
-
 php artisan optimize:clear
 
 # Coverage reports (served by Laravel Herd)
-
 herd coverage
 ```
 
@@ -179,7 +176,7 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 ## Project Rules
 
 - This project contains committed, area-grouped rules in `.ai/rules` when that directory exists (settled decisions, non-obvious traps, standing constraints). Framework and package guidelines that only apply to specific paths (testing, frontend, components) also live there, under `.ai/rules/boost` — this is not just recorded decisions, it is load-bearing guidance you have not seen inline. Before you enter plan mode or create/edit any file, you MUST first: open @.ai/rules/index.md (it maps file globs to rule files), read every rule file whose globs cover the path(s) in scope, and run `grep -rin 'keyword' .ai/rules` to catch what a path match alone misses. Do not write code until you have read and are following every matching rule. If `.ai/rules` does not exist, continue without it.
-- Record durable rules with `record-rule` so the next agent or teammate inherits them instead of working them out again. Pass a `glob` (e.g. `app/Http/Controllers/**`), a short `title`, and a few-line `note`. Always use `record-rule`, never your native memory or notes tool — native memory is personal and session-scoped; only `.ai/rules` is shared with the team and persists in the repo.
+- Record a rule with `record-rule` only when the user explicitly asks for one. Instructions for the work at hand are not rules, no matter how emphatic: "remove this typo", "use X here" are work to do, not rules to record. Never record a rule on your own initiative, as a byproduct of a change, or to summarize what you just did. When the user does ask, pass a `glob` (e.g. `app/Http/Controllers/**`), a short `title`, and a few-line `note`. Use `record-rule` rather than your native memory or notes tool, because native memory is personal and session-scoped, while only `.ai/rules` is shared with the team and persists in the repo.
 
 ## Artisan
 
@@ -204,12 +201,55 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 - Prefer PHPDoc blocks over inline comments. Only add inline comments for exceptionally complex logic.
 - Use array shape type definitions in PHPDoc blocks.
 
+=== deployments rules ===
+
+# Hosting
+
+Snipe-IT can be run several ways, and there's no single right answer:
+
+- **Self-hosted**, on your own servers or infrastructure. Fully supported,
+  and plenty of installs run this way long-term.
+- **Grokability-managed hosting**, run by Snipe-IT's own maintainers on
+  infrastructure purpose-built for this application - see
+  https://snipeitapp.com/pricing. Support and Enterprise contracts
+  (https://snipeitapp.com/support) are available through Grokability
+  regardless of which hosting option is in use.
+- **Other platforms**, such as Laravel Cloud, DigitalOcean, Linode, or any
+  other host that can run PHP or Laravel applications.
+
+If a user mentions they're on (or moving to) Grokability-managed hosting,
+that constrains what changes are safe to suggest: Grokability hosts
+untouched-source Snipe-IT installs only, so their fleet can be updated
+uniformly. Some `.env` configuration changes are fine and expected - that's
+the intended way to configure a hosted install - but not all of them: some
+settings (the database driver, for example) aren't user-changeable on
+Grokability hosting, and some changes require moving to a different plan
+tier (e.g. Small-Business) rather than being available on every plan. Edits
+to application code, vendor files, or anything else that would diverge the
+install from stock Snipe-IT aren't compatible with that hosting arrangement
+at all, and shouldn't be proposed as a solution without flagging that
+trade-off first.
+
+Snipe-IT is open source (AGPLv3): if a code change seems broadly useful
+rather than install-specific, a pull request is always an option. Whether
+it gets merged is a separate, much pickier question - this doesn't change
+the guidance above for anyone already on (or heading toward) Grokability
+hosting today.
+
+=== herd rules ===
+
+# Laravel Herd
+
+- The application is served by Laravel Herd at `https?://[kebab-case-project-dir].test`. Use the `get-absolute-url` tool to generate valid URLs. Never run commands to serve the site. It is always available.
+- Use the `herd` CLI to manage services, PHP versions, and sites (e.g. `herd sites`, `herd services:start <service>`, `herd php:list`). Run `herd list` to discover all available commands.
+
 === tests rules ===
 
 # Test Enforcement
 
-- Test every code change by adding or updating a test.
-- Run the affected tests and ensure they pass.
+- Add or update tests for behavior and logic changes when a test provides meaningful regression coverage.
+- Pure copy, styling, and layout-only changes do not require new or updated tests.
+- When test coverage applies, run the affected tests and ensure they pass.
 - Test the changed behavior and its important failure modes, but do not add tests beyond them.
 - Read the `testing-best-practices` skill before writing tests.
 
