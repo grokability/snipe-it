@@ -7,14 +7,14 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (DB::table('sync_adapter_instances')->where('slug', 'apple_business_manager')->exists()) {
+        if (DB::table('sync_adapter_instances')->where('slug', 'abm')->exists()) {
             return;
         }
 
         $now = now();
         DB::table('sync_adapter_instances')->insert([
-            'slug' => 'apple_business_manager',
-            'adapter_type' => 'apple_business_manager',
+            'slug' => 'abm',
+            'adapter_type' => 'abm',
             'label' => 'Apple Business Manager',
             'active' => false,
             'built_in' => true,
@@ -26,7 +26,7 @@ return new class extends Migration
     public function down(): void
     {
         DB::table('sync_adapter_instances')
-            ->where('slug', 'apple_business_manager')
+            ->where('slug', 'abm')
             ->where('built_in', true)
             ->delete();
     }
