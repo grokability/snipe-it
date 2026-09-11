@@ -231,6 +231,30 @@ class AppleBusinessManagerAdapterTest extends TestCase
         $this->assertCount(3, $records);
     }
 
+    public function test_validation_rules_accept_array_value_for_multiselect_product_family_filter()
+    {
+        $this->configuredAdapter();
+        $instance = SyncAdapterInstance::where('slug', 'apple_business_manager')->firstOrFail();
+        $adapter = new AppleBusinessManagerAdapter($instance->fresh());
+
+        // The form posts the multiselect as `name[]`, so it arrives
+        // as an array. Regression: base validationRules() used to
+        // declare every credential field as 'string', which rejected
+        // the array with "must be a string" on submit.
+        $validator = \Illuminate\Support\Facades\Validator::make([
+            'apple_business_manager_url' => 'https://api-business.apple.com/',
+            'apple_business_manager_mode' => 'business',
+            'apple_business_manager_client_id' => 'stub-client-id',
+            'apple_business_manager_key_id' => 'stub-key-id',
+            'apple_business_manager_private_key' => $this->privateKeyPem,
+            'apple_business_manager_product_family_filter' => ['Mac', 'iPhone'],
+            'apple_business_manager_default_category_id' => \App\Models\Category::factory()->assetLaptopCategory()->create()->id,
+            'apple_business_manager_default_status_id' => Statuslabel::first()->id,
+        ], $adapter->validationRules());
+
+        $this->assertFalse($validator->fails(), 'validationRules() must accept an array for multiselect fields: '.$validator->errors()->first());
+    }
+
     public function test_saveconfig_clears_family_filter_when_nothing_selected()
     {
         $this->configuredAdapter(productFamilies: ['Mac', 'iPhone']);

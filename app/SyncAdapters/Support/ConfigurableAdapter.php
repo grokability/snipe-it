@@ -202,8 +202,20 @@ abstract class ConfigurableAdapter implements HostInventoryAdapter
             // error worth surfacing). Adapters declaring a truly
             // optional credential set `required => false`.
             $required = $field['required'] ?? true;
+            $fieldName = $slug.'_'.$field['key'];
+            $type = $field['type'] ?? 'text';
 
-            $rules[$slug.'_'.$field['key']] = [
+            // Multiselect fields post as `name[]`, so they arrive as
+            // an array (or absent when nothing is selected). Validate
+            // as an array with string members, not as a string.
+            if ($type === 'multiselect') {
+                $rules[$fieldName] = [$required ? 'required' : 'nullable', 'array'];
+                $rules[$fieldName.'.*'] = ['string'];
+
+                continue;
+            }
+
+            $rules[$fieldName] = [
                 $required ? 'required' : 'nullable',
                 'string',
             ];
