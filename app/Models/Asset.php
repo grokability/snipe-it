@@ -254,6 +254,7 @@ class Asset extends Depreciable
         'category' => ['name'],
         'manufacturer' => ['name'],
         'assigned_to' => ['name'],
+        'externalSource' => ['primary_mac', 'primary_ip', 'os', 'os_version'],
     ];
 
     /**
@@ -1203,6 +1204,18 @@ class Asset extends Depreciable
     public function licenseseats()
     {
         return $this->hasMany(LicenseSeat::class, 'asset_id');
+    }
+
+    /**
+     * Sync-adapter side row: identity (source + external_id) plus
+     * last-known network / OS inventory (primary MAC / IP / OS /
+     * OS version / last seen). Nullable relation: only assets that
+     * have been synced from an adapter have a row. Detail view +
+     * assets table render these fields when the relation is present.
+     */
+    public function externalSource()
+    {
+        return $this->hasOne(AssetExternalSource::class);
     }
 
     /**
@@ -2185,6 +2198,32 @@ class Asset extends Depreciable
     public function scopeOrderCompany($query, $order)
     {
         return $query->leftJoin('companies as company_sort', 'assets.company_id', '=', 'company_sort.id')->orderBy('company_sort.name', $order);
+    }
+
+    /**
+     * Sort by a sync-adapter external-source column (primary_mac,
+     * primary_ip, os, os_version, last_seen). LeftJoin so unsynced
+     * assets sort as nulls rather than dropping out. Join is on the
+     * unique asset_id index in asset_external_sources, so cost is
+     * an index lookup per row.
+     *
+     * Column argument is whitelisted by the caller (AssetsController's
+     * sort switch) so it's never user-controlled at this layer, but
+     * we still validate against the known column set as defense-in-
+     * depth against a caller regression.
+     */
+    public function scopeOrderExternalSource($query, string $order, string $column)
+    {
+        if (! in_array($column, ['primary_mac', 'primary_ip', 'os', 'os_version', 'last_seen'], true)) {
+            return $query;
+        }
+
+        return $query->leftJoin(
+            'asset_external_sources as ext_src_sort',
+            'assets.id',
+            '=',
+            'ext_src_sort.asset_id',
+        )->orderBy('ext_src_sort.'.$column, $order);
     }
 
     /**

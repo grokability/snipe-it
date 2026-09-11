@@ -74909,15 +74909,17 @@ $(function () {
   */
 
   $('select.select2:not(".select2-hidden-accessible")').each(function (i, obj) {
-    {
-      $(obj).select2();
+    var $obj = $(obj);
+    var options = {};
+    // Opt-out for fields where the built-in search box adds no value. Pass
+    // data-minimum-results-for-search="Infinity" (or a numeric
+    // threshold) on the <select> to hide it.
+    var minResults = $obj.data('minimum-results-for-search');
+    if (minResults !== undefined) {
+      options.minimumResultsForSearch = minResults === 'Infinity' ? Infinity : minResults;
     }
+    $obj.select2(options);
   });
-
-  // $('.datepicker').datepicker();
-  // var datepicker = $.fn.datepicker.noConflict(); // return $.fn.datepicker to previously assigned value
-  // $.fn.bootstrapDP = datepicker;
-  // $('.datepicker').datepicker();
 
   // Crazy select2 rich dropdowns with images!
   $('.js-data-ajax').each(function (i, item) {

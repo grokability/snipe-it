@@ -451,6 +451,12 @@ parameters:
 			path: app/Console/Commands/PurgeEulaPDFs.php
 
 		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/PushInventory.php
+
+		-
 			message: '#^Offset int does not exist on array\<string, string\>\.$#'
 			identifier: offsetAccess.notFound
 			count: 1
@@ -3265,6 +3271,12 @@ parameters:
 			path: app/Http/Controllers/SettingsController.php
 
 		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/SettingsController.php
+
+		-
 			message: '#^Loose comparison using \=\= between false and ''1'' will always evaluate to false\.$#'
 			identifier: equal.alwaysFalse
 			count: 1
@@ -3694,6 +3706,12 @@ parameters:
 			message: '#^Access to an undefined property App\\Models\\AccessoryCheckout\:\:\$display_name\.$#'
 			identifier: property.notFound
 			count: 1
+			path: app/Http/Transformers/AssetsTransformer.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Asset\:\:\$externalSource\.$#'
+			identifier: property.notFound
+			count: 5
 			path: app/Http/Transformers/AssetsTransformer.php
 
 		-
@@ -9719,6 +9737,48 @@ parameters:
 			identifier: class.notFound
 			count: 1
 			path: app/Services/Saml.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between non\-empty\-string and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/SyncAdapters/MerakiSystemsManager/MerakiClient.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/SyncAdapters/Support/MappingTargets.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>email" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/SyncAdapters/Support/NotesComposer.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>model_number" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/SyncAdapters/Support/NotesComposer.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 7
+			path: app/SyncAdapters/Support/NotesComposer.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>username" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/SyncAdapters/Support/NotesComposer.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Actionlog\:\:\$created_by\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/SyncAdapters/SyncHostFromAdapter.php
 
 		-
 			message: '#^Expression on left side of \?\? is not nullable\.$#'
