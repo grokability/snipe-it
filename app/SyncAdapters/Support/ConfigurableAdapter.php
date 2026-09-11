@@ -752,6 +752,8 @@ abstract class ConfigurableAdapter implements HostInventoryAdapter
      * framework calls this from SyncHostFromAdapter when creating a
      * new AssetModel row, so a null return is equivalent to today's
      * one-category-per-instance behavior.
+     *
+     * @SuppressWarnings("PHPMD.UnusedFormalParameter")
      */
     public function categoryIdForRecord(\App\SyncAdapters\HostInventoryRecord $record): ?int
     {
