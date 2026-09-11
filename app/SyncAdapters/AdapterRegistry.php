@@ -38,7 +38,7 @@ class AdapterRegistry
     private const TYPES = [
         'fleet' => FleetAdapter::class,
         'addigy' => AddigyAdapter::class,
-        'apple_business_manager' => AppleBusinessManagerAdapter::class,
+        'abm' => AppleBusinessManagerAdapter::class,
         'intune' => IntuneAdapter::class,
         'jamf' => JamfAdapter::class,
         'jamf_school' => JamfSchoolAdapter::class,

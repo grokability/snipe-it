@@ -42,7 +42,7 @@ class AppleCareEnrichmentTest extends TestCase
         $customField = CustomField::factory()->create(['element' => 'text', 'name' => 'Warranty End']);
         $adapter = $this->configuredAdapter();
 
-        $instance = SyncAdapterInstance::where('slug', 'apple_business_manager')->firstOrFail();
+        $instance = SyncAdapterInstance::where('slug', 'abm')->firstOrFail();
         SyncAdapterConfig::put($instance->id, 'mapping.abm_applecare_end_date', 'custom:'.$customField->id);
 
         Http::fake([
@@ -107,7 +107,7 @@ class AppleCareEnrichmentTest extends TestCase
         $customField = CustomField::factory()->create(['element' => 'text', 'name' => 'Warranty']);
         $adapter = $this->configuredAdapter();
 
-        $instance = SyncAdapterInstance::where('slug', 'apple_business_manager')->firstOrFail();
+        $instance = SyncAdapterInstance::where('slug', 'abm')->firstOrFail();
         SyncAdapterConfig::put($instance->id, 'mapping.abm_applecare_agreement_number', 'custom:'.$customField->id);
 
         Http::fake([
@@ -145,7 +145,7 @@ class AppleCareEnrichmentTest extends TestCase
         $customField = CustomField::factory()->create(['element' => 'text', 'name' => 'Warranty']);
         $adapter = $this->configuredAdapter();
 
-        $instance = SyncAdapterInstance::where('slug', 'apple_business_manager')->firstOrFail();
+        $instance = SyncAdapterInstance::where('slug', 'abm')->firstOrFail();
         SyncAdapterConfig::put($instance->id, 'mapping.abm_applecare_agreement_number', 'custom:'.$customField->id);
 
         Http::fake([
@@ -181,7 +181,7 @@ class AppleCareEnrichmentTest extends TestCase
         $customField = CustomField::factory()->create(['element' => 'text', 'name' => 'Warranty']);
         $adapter = $this->configuredAdapter();
 
-        $instance = SyncAdapterInstance::where('slug', 'apple_business_manager')->firstOrFail();
+        $instance = SyncAdapterInstance::where('slug', 'abm')->firstOrFail();
         SyncAdapterConfig::put($instance->id, 'mapping.abm_applecare_agreement_number', 'custom:'.$customField->id);
 
         Http::fake([
@@ -217,7 +217,7 @@ class AppleCareEnrichmentTest extends TestCase
         $customField = CustomField::factory()->create(['element' => 'text', 'name' => 'Warranty']);
         $adapter = $this->configuredAdapter();
 
-        $instance = SyncAdapterInstance::where('slug', 'apple_business_manager')->firstOrFail();
+        $instance = SyncAdapterInstance::where('slug', 'abm')->firstOrFail();
         SyncAdapterConfig::put($instance->id, 'mapping.abm_applecare_end_date', 'custom:'.$customField->id);
 
         Http::fake([
@@ -241,7 +241,7 @@ class AppleCareEnrichmentTest extends TestCase
         $customField = CustomField::factory()->create(['element' => 'text', 'name' => 'Warranty']);
         $adapter = $this->configuredAdapter();
 
-        $instance = SyncAdapterInstance::where('slug', 'apple_business_manager')->firstOrFail();
+        $instance = SyncAdapterInstance::where('slug', 'abm')->firstOrFail();
         SyncAdapterConfig::put($instance->id, 'mapping.abm_applecare_end_date', 'custom:'.$customField->id);
 
         Http::fake([
@@ -259,7 +259,7 @@ class AppleCareEnrichmentTest extends TestCase
 
     private function configuredAdapter(): AppleBusinessManagerAdapter
     {
-        $instance = SyncAdapterInstance::where('slug', 'apple_business_manager')->firstOrFail();
+        $instance = SyncAdapterInstance::where('slug', 'abm')->firstOrFail();
         SyncAdapterConfig::put($instance->id, 'mode', 'business');
         SyncAdapterConfig::put($instance->id, 'client_id', 'stub-client-id');
         SyncAdapterConfig::put($instance->id, 'key_id', 'stub-key-id');

@@ -79,8 +79,14 @@ class ModelImageEnrichmentTest extends TestCase
         $this->assertSame('admin-uploaded.png', $model->image);
     }
 
-    public function test_pull_does_not_touch_model_when_category_already_has_image()
+    public function test_pull_still_backfills_model_image_when_category_has_its_own_image()
     {
+        // The category-image shortcut used to block per-model images
+        // entirely when the category carried a fallback icon, which
+        // meant admins with curated category icons never got Apple's
+        // marketing shots on individual models. Now the category
+        // image only serves as a fallback in AssetModel::getImageUrl;
+        // per-model images still populate on top.
         $adapter = $this->configuredAdapter(pullImages: true);
         $category = Category::factory()->assetLaptopCategory()->create(['image' => 'category-image.png']);
         $model = AssetModel::factory()->create([
@@ -96,7 +102,7 @@ class ModelImageEnrichmentTest extends TestCase
         }
 
         $model->refresh();
-        $this->assertNull($model->image);
+        $this->assertNotNull($model->image);
     }
 
     public function test_pull_skips_appledb_calls_entirely_when_toggle_is_off()
@@ -110,6 +116,49 @@ class ModelImageEnrichmentTest extends TestCase
         }
 
         Http::assertNotSent(fn ($request) => str_contains($request->url(), 'appledb.dev'));
+    }
+
+    public function test_first_sync_stages_image_to_disk_even_when_model_row_does_not_exist_yet()
+    {
+        // Timing gap: ensureModelImage runs inside pull(), before
+        // SyncHostFromAdapter has created the AssetModel row. First
+        // sync must still hit appledb.dev and cache the PNG so the
+        // second sync only needs to assign existing->image (no
+        // re-download) once the framework creates the row.
+        $adapter = $this->configuredAdapter(pullImages: true);
+        $this->assertSame(0, AssetModel::query()->count());
+
+        // Wildcard on the device endpoint sidesteps rawurlencode
+        // turning the comma in "MacBookPro18,3" into "%2C" (which
+        // the literal Http::fake pattern would miss). Http::fake
+        // doesn't preventStrayRequests, so a missed pattern silently
+        // falls through to the real internet, defeating hermeticity.
+        Http::fake([
+            'account.apple.com/*' => Http::response(['access_token' => 'stub-bearer']),
+            'api-business.apple.com/v1/mdmServers' => Http::response(['data' => []]),
+            'api-business.apple.com/v1/orgDevices*' => Http::response([
+                'data' => [$this->deviceWithMarketingName()],
+            ]),
+            'api.appledb.dev/device/*' => Http::response([
+                'imageKey' => 'macbook-pro-14-m4',
+                'colors' => [['key' => 'silver']],
+            ]),
+            'img.appledb.dev/*' => Http::response(str_repeat("\x89PNG\r\n\x1a\n", 4)),
+        ]);
+
+        // Consume records without running SyncHostFromAdapter so no
+        // AssetModel gets created. Simulates "framework hasn't built
+        // the row yet" at the point ensureModelImage runs.
+        iterator_to_array($adapter->pull());
+
+        // File landed on disk keyed off (productType, colorKey).
+        // AppleDBImageFetcher::filenameFor uses sha1(productType|colorKey)[0:16].
+        $expectedFilename = 'abm-'.substr(hash('sha1', 'MacBookPro18,3|silver'), 0, 16).'.png';
+        Storage::disk('public')->assertExists('models/'.$expectedFilename);
+
+        // No model was created (pull() alone doesn't build rows), so
+        // nothing to assert on the AssetModel side.
+        $this->assertSame(0, AssetModel::query()->count());
     }
 
     public function test_pull_survives_appledb_outage()
@@ -220,7 +269,7 @@ class ModelImageEnrichmentTest extends TestCase
 
     private function configuredAdapter(bool $pullImages): AppleBusinessManagerAdapter
     {
-        $instance = SyncAdapterInstance::where('slug', 'apple_business_manager')->firstOrFail();
+        $instance = SyncAdapterInstance::where('slug', 'abm')->firstOrFail();
         SyncAdapterConfig::put($instance->id, 'mode', 'business');
         SyncAdapterConfig::put($instance->id, 'client_id', 'stub-client-id');
         SyncAdapterConfig::put($instance->id, 'key_id', 'stub-key-id');

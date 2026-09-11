@@ -60,26 +60,28 @@
         :disabled="$locked"
     />
 
-    <x-form.row
-        :label="trans('admin/settings/sync_adapters.base_url')"
-        :name="$urlField"
-        input_div_class="col-md-8"
-        :help_text="trans('admin/settings/sync_adapters.base_url_help', ['type' => $adapter::typeLabel()])"
-        required
-    >
-        <x-slot:input>
-            <x-input.text
-                type="url"
-                :name="$urlField"
-                :value="old($urlField, $adapter->getUrl())"
-                :disabled="$locked"
-                :placeholder="$adapter->baseUrlPlaceholder()"
-                input_icon="link"
-                input_group_addon="right"
-                required
-            />
-        </x-slot:input>
-    </x-form.row>
+    @if ($adapter->usesConfigurableUrl())
+        <x-form.row
+            :label="trans('admin/settings/sync_adapters.base_url')"
+            :name="$urlField"
+            input_div_class="col-md-8"
+            :help_text="trans('admin/settings/sync_adapters.base_url_help', ['type' => $adapter::typeLabel()])"
+            required
+        >
+            <x-slot:input>
+                <x-input.text
+                    type="url"
+                    :name="$urlField"
+                    :value="old($urlField, $adapter->getUrl())"
+                    :disabled="$locked"
+                    :placeholder="$adapter->baseUrlPlaceholder()"
+                    input_icon="link"
+                    input_group_addon="right"
+                    required
+                />
+            </x-slot:input>
+        </x-form.row>
+    @endif
 
     {{ $slot }}
 

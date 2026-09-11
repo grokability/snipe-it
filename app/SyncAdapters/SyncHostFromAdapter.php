@@ -160,7 +160,7 @@ class SyncHostFromAdapter
             }
 
             $value = self::recordValueFor($record, $field);
-            self::writeToTarget($asset, $externalUpdates, $target, $value, $instance);
+            self::writeToTarget($asset, $externalUpdates, $target, $value, $instance, $record);
         }
     }
 
@@ -203,7 +203,7 @@ class SyncHostFromAdapter
                 $record->extra[$extraKey] ?? null,
                 self::extraFieldType($extraFields, $extraKey),
             );
-            self::writeExtraValueToTarget($asset, $target, $value, $instance);
+            self::writeExtraValueToTarget($asset, $target, $value, $instance, $record);
         }
     }
 
@@ -219,6 +219,7 @@ class SyncHostFromAdapter
         string $target,
         ?string $value,
         SyncAdapterInstance $instance,
+        ?HostInventoryRecord $record = null,
     ): void {
         if ($target === 'skip' || $value === null) {
             return;
@@ -231,7 +232,7 @@ class SyncHostFromAdapter
         }
 
         if (str_starts_with($target, 'native:')) {
-            self::writeNative($asset, substr($target, 7), $value, $instance);
+            self::writeNative($asset, substr($target, 7), $value, $instance, $record);
         }
     }
 
@@ -611,7 +612,7 @@ class SyncHostFromAdapter
      *
      * @param  array<string, mixed>  $externalUpdates  passed by reference
      */
-    private static function writeToTarget(Asset $asset, array &$externalUpdates, string $target, mixed $value, ?SyncAdapterInstance $instance = null): void
+    private static function writeToTarget(Asset $asset, array &$externalUpdates, string $target, mixed $value, ?SyncAdapterInstance $instance = null, ?HostInventoryRecord $record = null): void
     {
         if ($value === null && $target !== 'native:model') {
             // Nothing to write. Skip so we don't blank existing data on
@@ -623,7 +624,7 @@ class SyncHostFromAdapter
 
         switch ($type) {
             case 'native':
-                self::writeNative($asset, $id, $value, $instance);
+                self::writeNative($asset, $id, $value, $instance, $record);
                 break;
             case 'external':
                 // Normalized field names get translated to actual
@@ -644,7 +645,7 @@ class SyncHostFromAdapter
         }
     }
 
-    private static function writeNative(Asset $asset, string $column, mixed $value, ?SyncAdapterInstance $instance = null): void
+    private static function writeNative(Asset $asset, string $column, mixed $value, ?SyncAdapterInstance $instance = null, ?HostInventoryRecord $record = null): void
     {
         switch ($column) {
             case 'name':
@@ -672,11 +673,12 @@ class SyncHostFromAdapter
                 }
                 break;
             case 'model':
-                // Model comes as a string name. Resolve or auto-create
-                // using the instance's configured default category
-                // (or fall back to "Discovered Hardware" when unset).
+                // Model comes as a string name. Resolve or auto-create,
+                // routing to a per-record category when the adapter
+                // provides one (e.g. ABM productFamily) and falling
+                // back to the instance-wide default_category_id.
                 if ($value !== null && $value !== '') {
-                    $asset->model_id = self::resolveModelIdByName((string) $value, $instance);
+                    $asset->model_id = self::resolveModelIdByName((string) $value, $instance, $record);
                 }
                 break;
         }
@@ -725,33 +727,53 @@ class SyncHostFromAdapter
             return null;
         }
 
-        return self::resolveModelIdByName($record->hardwareModel, $instance);
+        return self::resolveModelIdByName($record->hardwareModel, $instance, $record);
     }
 
-    private static function resolveModelIdByName(string $modelName, ?SyncAdapterInstance $instance = null): int
+    private static function resolveModelIdByName(string $modelName, ?SyncAdapterInstance $instance = null, ?HostInventoryRecord $record = null): int
     {
         $model = AssetModel::where('name', $modelName)->first();
         if ($model !== null) {
+            // Re-sync the category ONLY when the adapter has a
+            // per-record opinion (e.g. ABM's productFamily +
+            // deviceModel routing). Falling through to
+            // default_category_id doesn't touch the existing
+            // category, because admins often curate model categories
+            // by hand and the instance-wide default would clobber
+            // that work every sync.
+            $perRecordId = self::perRecordCategoryId($instance, $record);
+            if ($perRecordId !== null && $model->category_id !== $perRecordId) {
+                $model->category_id = $perRecordId;
+                $model->save();
+            }
+
             return $model->id;
         }
 
         $model = new AssetModel;
         $model->name = $modelName;
-        $model->category_id = self::categoryIdFor($instance);
+        $model->category_id = self::categoryIdFor($instance, $record);
         $model->save();
 
         return $model->id;
     }
 
     /**
-     * Category id auto-created models get hung off. Uses the
-     * adapter's configured default_category_id when set (and the
-     * category still exists), else falls back to a get-or-create
-     * "Discovered Hardware" category so we always produce a valid
-     * category_id (AssetModel requires one).
+     * Category id auto-created models get hung off. Precedence:
+     *   1. Adapter's per-record override (e.g. ABM productFamily
+     *      routing to family-specific categories) via
+     *      categoryIdForRecord($record).
+     *   2. Adapter's instance-wide default_category_id.
+     *   3. Get-or-create "Discovered Hardware" fallback so we always
+     *      produce a valid category_id (AssetModel requires one).
      */
-    private static function categoryIdFor(?SyncAdapterInstance $instance): int
+    private static function categoryIdFor(?SyncAdapterInstance $instance, ?HostInventoryRecord $record = null): int
     {
+        $perRecordId = self::perRecordCategoryId($instance, $record);
+        if ($perRecordId !== null) {
+            return $perRecordId;
+        }
+
         if ($instance !== null) {
             $adapter = $instance->adapter();
             if ($adapter instanceof ConfigurableAdapter) {
@@ -765,6 +787,31 @@ class SyncHostFromAdapter
         return Category::firstOrCreate(
             ['name' => 'Discovered Hardware', 'category_type' => 'asset'],
         )->id;
+    }
+
+    /**
+     * Adapter-declared per-record category id, validated to still
+     * exist. Returns null when the adapter has no per-record opinion
+     * OR the id it returned no longer resolves (e.g. an admin
+     * deleted the target category after configuring the override).
+     * Null return means "no explicit re-sync intent" and callers
+     * should fall through to their own defaults.
+     */
+    private static function perRecordCategoryId(?SyncAdapterInstance $instance, ?HostInventoryRecord $record): ?int
+    {
+        if ($instance === null || $record === null) {
+            return null;
+        }
+        $adapter = $instance->adapter();
+        if (! $adapter instanceof ConfigurableAdapter) {
+            return null;
+        }
+        $id = $adapter->categoryIdForRecord($record);
+        if ($id === null || ! Category::whereKey($id)->exists()) {
+            return null;
+        }
+
+        return $id;
     }
 
     /**

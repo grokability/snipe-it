@@ -65,7 +65,7 @@ class AppleBusinessManagerAdapterTest extends TestCase
         $this->assertCount(1, $records);
 
         $record = $records[0];
-        $this->assertSame('apple_business_manager', $record->sourceKey);
+        $this->assertSame('abm', $record->sourceKey);
         $this->assertSame('abm-guid-1', $record->sourceId);
         $this->assertSame('C02XL1234567', $record->hardwareSerial);
         // Default hardwareModel is partNumber (always populated per
@@ -234,7 +234,7 @@ class AppleBusinessManagerAdapterTest extends TestCase
     public function test_validation_rules_accept_array_value_for_multiselect_product_family_filter()
     {
         $this->configuredAdapter();
-        $instance = SyncAdapterInstance::where('slug', 'apple_business_manager')->firstOrFail();
+        $instance = SyncAdapterInstance::where('slug', 'abm')->firstOrFail();
         $adapter = new AppleBusinessManagerAdapter($instance->fresh());
 
         // The form posts the multiselect as `name[]`, so it arrives
@@ -242,14 +242,14 @@ class AppleBusinessManagerAdapterTest extends TestCase
         // declare every credential field as 'string', which rejected
         // the array with "must be a string" on submit.
         $validator = \Illuminate\Support\Facades\Validator::make([
-            'apple_business_manager_url' => 'https://api-business.apple.com/',
-            'apple_business_manager_mode' => 'business',
-            'apple_business_manager_client_id' => 'stub-client-id',
-            'apple_business_manager_key_id' => 'stub-key-id',
-            'apple_business_manager_private_key' => $this->privateKeyPem,
-            'apple_business_manager_product_family_filter' => ['Mac', 'iPhone'],
-            'apple_business_manager_default_category_id' => \App\Models\Category::factory()->assetLaptopCategory()->create()->id,
-            'apple_business_manager_default_status_id' => Statuslabel::first()->id,
+            'abm_url' => 'https://api-business.apple.com/',
+            'abm_mode' => 'business',
+            'abm_client_id' => 'stub-client-id',
+            'abm_key_id' => 'stub-key-id',
+            'abm_private_key' => $this->privateKeyPem,
+            'abm_product_family_filter' => ['Mac', 'iPhone'],
+            'abm_default_category_id' => \App\Models\Category::factory()->assetLaptopCategory()->create()->id,
+            'abm_default_status_id' => Statuslabel::first()->id,
         ], $adapter->validationRules());
 
         $this->assertFalse($validator->fails(), 'validationRules() must accept an array for multiselect fields: '.$validator->errors()->first());
@@ -258,14 +258,14 @@ class AppleBusinessManagerAdapterTest extends TestCase
     public function test_saveconfig_clears_family_filter_when_nothing_selected()
     {
         $this->configuredAdapter(productFamilies: ['Mac', 'iPhone']);
-        $instance = SyncAdapterInstance::where('slug', 'apple_business_manager')->firstOrFail();
+        $instance = SyncAdapterInstance::where('slug', 'abm')->firstOrFail();
 
         // Simulate re-saving the form with no families selected.
         // The multiselect handler in the base class overwrites the
         // stored JSON with an empty array.
         $adapter = new AppleBusinessManagerAdapter($instance->fresh());
         $adapter->saveConfig(\Illuminate\Http\Request::create('/', 'POST', [
-            'apple_business_manager_url' => '',
+            'abm_url' => '',
         ]));
 
         $stored = SyncAdapterConfig::get($instance->id, 'product_family_filter');
@@ -298,7 +298,7 @@ class AppleBusinessManagerAdapterTest extends TestCase
      */
     private function configuredAdapter(string $mode = 'business', ?array $productFamilies = null): AppleBusinessManagerAdapter
     {
-        $instance = SyncAdapterInstance::where('slug', 'apple_business_manager')->firstOrFail();
+        $instance = SyncAdapterInstance::where('slug', 'abm')->firstOrFail();
         SyncAdapterConfig::put($instance->id, 'mode', $mode);
         SyncAdapterConfig::put($instance->id, 'client_id', 'stub-client-id');
         SyncAdapterConfig::put($instance->id, 'key_id', 'stub-key-id');

@@ -134,7 +134,7 @@ abstract class ConfigurableAdapter implements HostInventoryAdapter
             return false;
         }
 
-        if (empty(SyncAdapterConfig::get($this->instance->id, 'url'))) {
+        if ($this->usesConfigurableUrl() && empty(SyncAdapterConfig::get($this->instance->id, 'url'))) {
             return false;
         }
 
@@ -144,6 +144,19 @@ abstract class ConfigurableAdapter implements HostInventoryAdapter
             }
         }
 
+        return true;
+    }
+
+    /**
+     * Whether the admin needs to configure a base URL for this
+     * adapter. Defaults to true because most vendors expose a
+     * tenant-specific host. Adapters whose host is fixed (Apple ABM
+     * derives the host from the Portal enum, so there's nothing for
+     * the admin to type) override to false, and the shared form,
+     * validation, and isEnabled() gate all skip the URL field.
+     */
+    public function usesConfigurableUrl(): bool
+    {
         return true;
     }
 
@@ -185,12 +198,15 @@ abstract class ConfigurableAdapter implements HostInventoryAdapter
         $slug = $this->instance->slug;
 
         $rules = [
-            $slug.'_url' => ['required', new ExternalUrl],
             $slug.'_asset_tag_pattern' => ['nullable', 'string', 'max:191'],
             $slug.'_default_category_id' => ['required', 'integer', 'exists:categories,id'],
             $slug.'_default_status_id' => ['required', 'integer', 'exists:status_labels,id'],
             $slug.'_user_match_strategy' => ['nullable', 'string', 'in:none,email,username,username_then_email'],
         ];
+
+        if ($this->usesConfigurableUrl()) {
+            $rules[$slug.'_url'] = ['required', new ExternalUrl];
+        }
 
         foreach ($this->credentialSchema() as $field) {
             // Auth fields default to required so admins can't save a
@@ -215,6 +231,14 @@ abstract class ConfigurableAdapter implements HostInventoryAdapter
                 continue;
             }
 
+            // Category selectors post the chosen category id (or an
+            // empty string to fall back to default_category_id).
+            if ($type === 'category') {
+                $rules[$fieldName] = [$required ? 'required' : 'nullable', 'integer', 'exists:categories,id'];
+
+                continue;
+            }
+
             $rules[$fieldName] = [
                 $required ? 'required' : 'nullable',
                 'string',
@@ -228,7 +252,9 @@ abstract class ConfigurableAdapter implements HostInventoryAdapter
     {
         $slug = $this->instance->slug;
 
-        $this->persistUrl($request, $slug);
+        if ($this->usesConfigurableUrl()) {
+            $this->persistUrl($request, $slug);
+        }
         $this->persistCredentialsFromSchema($request, $slug);
         $this->persistOperationalSettings($request, $slug);
 
@@ -290,6 +316,20 @@ abstract class ConfigurableAdapter implements HostInventoryAdapter
                     $this->instance->id,
                     $field['key'],
                     json_encode($values),
+                );
+
+                continue;
+            }
+
+            // Category selector: empty means "fall back to the
+            // instance-wide default_category_id". Store as-is so a
+            // deliberate clear overwrites a previous pick.
+            if ($type === 'category') {
+                $value = $request->input($fieldName, '');
+                SyncAdapterConfig::put(
+                    $this->instance->id,
+                    $field['key'],
+                    $value === null ? '' : (string) $value,
                 );
 
                 continue;
@@ -700,6 +740,22 @@ abstract class ConfigurableAdapter implements HostInventoryAdapter
         $stored = SyncAdapterConfig::get($this->instance->id, 'default_category_id');
 
         return $stored === null || $stored === '' ? null : (int) $stored;
+    }
+
+    /**
+     * Per-record category override. Adapters that can classify a
+     * record's device type (Apple's productFamily, Intune's
+     * deviceCategory, etc.) override this to route each record to a
+     * more specific category than the instance-wide default.
+     *
+     * Return null to fall through to defaultCategoryId(). The
+     * framework calls this from SyncHostFromAdapter when creating a
+     * new AssetModel row, so a null return is equivalent to today's
+     * one-category-per-instance behavior.
+     */
+    public function categoryIdForRecord(\App\SyncAdapters\HostInventoryRecord $record): ?int
+    {
+        return null;
     }
 
     /**

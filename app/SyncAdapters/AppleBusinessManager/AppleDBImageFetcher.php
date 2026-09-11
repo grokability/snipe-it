@@ -68,11 +68,21 @@ class AppleDBImageFetcher
         $imageKey = $device['imageKey'] ?? null;
         $colors = $device['colors'] ?? [];
         if (! is_string($imageKey) || $imageKey === '' || ! is_array($colors) || $colors === []) {
+            Log::channel('sync-adapters')->info(sprintf(
+                'appledb.dev entry for productType %s is missing imageKey or colors; skipping image',
+                $productType,
+            ));
+
             return null;
         }
 
         $colorKey = self::pickColorKey($colors, $colorHint);
         if ($colorKey === null) {
+            Log::channel('sync-adapters')->info(sprintf(
+                'appledb.dev entry for productType %s has no usable colorKey; skipping image',
+                $productType,
+            ));
+
             return null;
         }
 
@@ -99,6 +109,12 @@ class AppleDBImageFetcher
         }
 
         if (! $response->successful()) {
+            Log::channel('sync-adapters')->info(sprintf(
+                'appledb.dev has no catalog entry for productType %s (status %d); skipping image',
+                $productType,
+                $response->status(),
+            ));
+
             return null;
         }
 
@@ -161,11 +177,24 @@ class AppleDBImageFetcher
         }
 
         if (! $response->successful()) {
+            Log::channel('sync-adapters')->info(sprintf(
+                'appledb.dev image CDN returned %d for %s (%s); skipping image',
+                $response->status(),
+                $productType,
+                $colorKey,
+            ));
+
             return null;
         }
 
         $bytes = $response->body();
         if ($bytes === '') {
+            Log::channel('sync-adapters')->info(sprintf(
+                'appledb.dev image CDN returned empty body for %s (%s); skipping image',
+                $productType,
+                $colorKey,
+            ));
+
             return null;
         }
 
@@ -179,6 +208,13 @@ class AppleDBImageFetcher
 
             return null;
         }
+
+        Log::channel('sync-adapters')->info(sprintf(
+            'appledb.dev image saved for productType %s (color=%s, file=%s)',
+            $productType,
+            $colorKey,
+            $filename,
+        ));
 
         return $filename;
     }

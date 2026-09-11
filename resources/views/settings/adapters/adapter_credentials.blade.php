@@ -76,6 +76,19 @@
                 :help_text="$field['help'] ?? null"
                 :disabled="$locked"
             />
+        @elseif ($fieldType === 'category')
+            {{-- Per-record category selector. Empty means "fall back
+                 to the instance-wide default_category_id". Uses the
+                 same AJAX-backed select2 component as the shell's
+                 default category picker. --}}
+            <x-input.category-select
+                :name="$fieldName"
+                :label="$field['label']"
+                :selected="old($fieldName, $storedValue !== '' ? (int) $storedValue : null)"
+                :categoryType="$field['categoryType'] ?? 'asset'"
+                :help_text="$field['help'] ?? null"
+                hideNewButton
+            />
         @else
             <x-form.row
                 :label="$field['label']"
@@ -97,6 +110,7 @@
                             :options="$field['options'] ?? []"
                             :selected="old($fieldName, $storedValue)"
                             :required="$isRequired"
+                            style="width: 100%"
                         />
                     @elseif ($fieldType === 'multiselect')
                         @php

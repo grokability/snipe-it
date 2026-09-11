@@ -34,22 +34,62 @@ use Illuminate\Support\Arr;
  */
 class AppleBusinessManagerAdapter extends ConfigurableAdapter
 {
+    /**
+     * Apple's fixed productFamily enum -> friendly display name.
+     * Drives the product-family filter's option list.
+     *
+     * @var array<string, string>
+     */
+    private const PRODUCT_FAMILIES = [
+        'Mac' => 'Mac',
+        'iPhone' => 'iPhone',
+        'iPad' => 'iPad',
+        'AppleTV' => 'Apple TV',
+        'Watch' => 'Apple Watch',
+        'Vision' => 'Apple Vision',
+    ];
+
+    /**
+     * Per-category-selector config keys -> friendly display name.
+     * Distinct from PRODUCT_FAMILIES because Mac's productFamily
+     * collapses laptops and desktops into one bucket, but admins
+     * usually want to route them to different Snipe-IT categories
+     * ("Laptops" vs "Desktops"), so the "Mac" family gets split
+     * into two selectors driven by deviceModel prefix.
+     * categoryConfigKeyForFamily() encodes the mapping in the other
+     * direction.
+     *
+     * @var array<string, string>
+     */
+    private const CATEGORY_SELECTORS = [
+        'category_id_mac_laptop' => 'Mac Laptop',
+        'category_id_mac_desktop' => 'Mac Desktop',
+        'category_id_iphone' => 'iPhone',
+        'category_id_ipad' => 'iPad',
+        'category_id_appletv' => 'Apple TV',
+        'category_id_watch' => 'Apple Watch',
+        'category_id_vision' => 'Apple Vision',
+    ];
+
     public static function typeLabel(): string
     {
         return 'Apple Business Manager';
     }
 
-    public function baseUrlPlaceholder(): ?string
+    /**
+     * ABM/ASM base URLs are host-fixed per mode (business or school),
+     * so the admin never types a URL. Mode selection in the
+     * credential schema controls host + scope inside
+     * AppleBusinessManagerClient::apiBaseUrl.
+     */
+    public function usesConfigurableUrl(): bool
     {
-        // ABM/ASM base URLs are host-fixed per mode (business or
-        // school), so we don't expose a URL field. The mode selection
-        // in the credential schema controls host + scope.
-        return null;
+        return false;
     }
 
     public function credentialSchema(): array
     {
-        return [
+        $schema = [
             [
                 'key' => 'mode',
                 'label' => 'Portal',
@@ -82,15 +122,8 @@ class AppleBusinessManagerAdapter extends ConfigurableAdapter
                 'key' => 'product_family_filter',
                 'label' => 'Product Families',
                 'type' => 'multiselect',
-                'options' => [
-                    'Mac' => 'Mac',
-                    'iPhone' => 'iPhone',
-                    'iPad' => 'iPad',
-                    'AppleTV' => 'Apple TV',
-                    'Watch' => 'Apple Watch',
-                    'Vision' => 'Apple Vision',
-                ],
-                'default' => ['Mac', 'iPhone', 'iPad', 'AppleTV', 'Watch', 'Vision'],
+                'options' => self::PRODUCT_FAMILIES,
+                'default' => array_keys(self::PRODUCT_FAMILIES),
                 'required' => false,
                 'help' => trans('admin/settings/sync_adapters.abm_product_family_filter_help'),
             ],
@@ -102,6 +135,26 @@ class AppleBusinessManagerAdapter extends ConfigurableAdapter
                 'help' => trans('admin/settings/sync_adapters.abm_pull_model_images_help'),
             ],
         ];
+
+        // Per-family category overrides. Apple's productFamily is a
+        // fixed enum, so admins can route iPads to "Tablets", Watches
+        // to "Wearables", etc. Mac is split into laptop + desktop
+        // because Apple lumps them together and admins usually want
+        // them in separate Snipe-IT categories. Empty selection falls
+        // back to default_category_id. Label + help share one
+        // :family-templated translation each so localizers translate
+        // the strings once rather than seven times.
+        foreach (self::CATEGORY_SELECTORS as $key => $displayName) {
+            $schema[] = [
+                'key' => $key,
+                'label' => trans('admin/settings/sync_adapters.abm_category_family_label', ['family' => $displayName]),
+                'type' => 'category',
+                'required' => false,
+                'help' => trans('admin/settings/sync_adapters.abm_category_family_help', ['family' => $displayName]),
+            ];
+        }
+
+        return $schema;
     }
 
     public function extraFields(): array
@@ -126,6 +179,78 @@ class AppleBusinessManagerAdapter extends ConfigurableAdapter
             'abm_applecare_is_canceled' => ['label_key' => 'admin/settings/sync_adapters.extra_applecare_is_canceled', 'type' => 'boolean'],
             'abm_applecare_is_renewable' => ['label_key' => 'admin/settings/sync_adapters.extra_applecare_is_renewable', 'type' => 'boolean'],
         ];
+    }
+
+    /**
+     * Route each record to a per-productFamily category when the
+     * admin configured one. Apple's productFamily is a fixed
+     * six-value enum (Mac, iPhone, iPad, AppleTV, Watch, Vision), so
+     * the mapping is exhaustive by design. Any family the admin
+     * hasn't overridden falls through to defaultCategoryId() via
+     * the framework's null-return convention.
+     */
+    public function categoryIdForRecord(HostInventoryRecord $record): ?int
+    {
+        $configKey = self::categoryConfigKeyForRecord($record);
+        if ($configKey === null) {
+            return null;
+        }
+
+        try {
+            $stored = $this->credential($configKey);
+        } catch (\Throwable) {
+            return null;
+        }
+
+        return $stored === '' ? null : (int) $stored;
+    }
+
+    /**
+     * Which per-family credential key applies to this record. Mac is
+     * split into laptop / desktop based on the marketing name prefix:
+     * "MacBook*" is a laptop, anything starting with iMac, Mac mini,
+     * Mac Studio, or Mac Pro is a desktop. Marketing name is used
+     * because productType lost its form-factor tag on Apple Silicon
+     * (M-series desktops all report bare "Mac14,x"/"Mac15,x" with no
+     * iMac/Macmini/MacPro prefix).
+     *
+     * Returns null when the family is unrecognized OR for Macs with
+     * an unparseable marketing name, so the framework falls back to
+     * defaultCategoryId() rather than saving under an arbitrary
+     * bucket.
+     */
+    private static function categoryConfigKeyForRecord(HostInventoryRecord $record): ?string
+    {
+        $family = $record->extra['abm_product_family'] ?? null;
+        if (! is_string($family)) {
+            return null;
+        }
+
+        if ($family === 'Mac') {
+            $deviceModel = $record->extra['abm_model_marketing_name'] ?? '';
+            if (! is_string($deviceModel) || $deviceModel === '') {
+                return null;
+            }
+            if (str_starts_with($deviceModel, 'MacBook')) {
+                return 'category_id_mac_laptop';
+            }
+            foreach (['iMac', 'Mac mini', 'Mac Studio', 'Mac Pro'] as $desktopPrefix) {
+                if (str_starts_with($deviceModel, $desktopPrefix)) {
+                    return 'category_id_mac_desktop';
+                }
+            }
+
+            return null;
+        }
+
+        return match ($family) {
+            'iPhone' => 'category_id_iphone',
+            'iPad' => 'category_id_ipad',
+            'AppleTV' => 'category_id_appletv',
+            'Watch' => 'category_id_watch',
+            'Vision' => 'category_id_vision',
+            default => null,
+        };
     }
 
     public function pull(): iterable
@@ -193,9 +318,10 @@ class AppleBusinessManagerAdapter extends ConfigurableAdapter
      *   - If no productType is on the record, skip (nothing to key
      *     appledb.dev on).
      *   - If the model exists AND it already carries an image, skip
-     *     (respect admin curation).
-     *   - If the model exists AND its category has an image, skip
-     *     (category fallback already covers the display case).
+     *     (respect admin curation). The category's image is a display
+     *     fallback in AssetModel::getImageUrl, not a signal to skip:
+     *     per-model images still populate over a category icon so
+     *     admins get Apple's marketing shots per SKU.
      *   - Otherwise fetch the image, write it to storage, and set
      *     model.image. The framework's later resolveModelIdByName
      *     find the model we (or a prior sync) created.
@@ -217,6 +343,12 @@ class AppleBusinessManagerAdapter extends ConfigurableAdapter
             : $record->hardwareModel;
 
         if ($modelName === null || $modelName === '') {
+            \Log::channel('sync-adapters')->info(sprintf(
+                '%s image skip for device %s: no model name resolvable (hardwareModel and abm_model_marketing_name both blank)',
+                $this->name(),
+                $record->sourceId,
+            ));
+
             return $imagesHandled;
         }
 
@@ -227,50 +359,74 @@ class AppleBusinessManagerAdapter extends ConfigurableAdapter
 
         $productType = $record->extra['abm_product_type'] ?? null;
         if (! is_string($productType) || $productType === '') {
+            \Log::channel('sync-adapters')->info(sprintf(
+                '%s image skip for model "%s": ABM did not return a productType, nothing to look up on appledb.dev',
+                $this->name(),
+                $modelName,
+            ));
+
             return $imagesHandled;
         }
 
         $existing = AssetModel::query()
             ->where('name', $modelName)
-            ->with('category')
             ->first();
 
-        if ($existing !== null && $this->existingModelAlreadyHasImageCoverage($existing)) {
+        if ($existing !== null && ! empty($existing->image)) {
+            \Log::channel('sync-adapters')->info(sprintf(
+                '%s image skip for model "%s": model already has an image (%s)',
+                $this->name(),
+                $modelName,
+                $existing->image,
+            ));
+
             return $imagesHandled;
         }
 
         $color = $record->extra['abm_color'] ?? null;
         $filename = AppleDBImageFetcher::fetch($productType, is_string($color) ? $color : null);
         if ($filename === null) {
+            \Log::channel('sync-adapters')->info(sprintf(
+                '%s image skip for model "%s" (productType=%s): appledb.dev returned no usable image',
+                $this->name(),
+                $modelName,
+                $productType,
+            ));
+
             return $imagesHandled;
         }
 
-        if ($existing !== null) {
-            $existing->image = $filename;
-            $existing->save();
+        if ($existing === null) {
+            // First-pass timing: the framework hasn't created the
+            // AssetModel row yet (SyncHostFromAdapter builds it after
+            // pull() yields), so there's nothing to update. The image
+            // is already downloaded and cached under public/uploads/
+            // models/ by the fetcher, so the next sync will find the
+            // model row and only need to set model.image (no
+            // re-download).
+            \Log::channel('sync-adapters')->info(sprintf(
+                '%s image staged for model "%s" (productType=%s, file=%s): AssetModel row not yet created, image will be assigned on the next sync',
+                $this->name(),
+                $modelName,
+                $productType,
+                $filename,
+            ));
+
+            return $imagesHandled;
         }
-        // If the model doesn't exist yet, the framework's
-        // resolveModelIdByName will create it on demand. We can't
-        // pre-create here without duplicating category-resolution
-        // logic, so we let the framework build the shell. A follow-
-        // up sync re-runs this method and finds the model, then
-        // backfills the image on the second pass.
+
+        $existing->image = $filename;
+        $existing->save();
+
+        \Log::channel('sync-adapters')->info(sprintf(
+            '%s image assigned to model "%s" (productType=%s, file=%s)',
+            $this->name(),
+            $modelName,
+            $productType,
+            $filename,
+        ));
 
         return $imagesHandled;
-    }
-
-    /**
-     * Returns true when the existing model or its category already
-     * provides an image, so we don't overwrite curated content.
-     */
-    private function existingModelAlreadyHasImageCoverage(AssetModel $model): bool
-    {
-        if (! empty($model->image)) {
-            return true;
-        }
-        $category = $model->category;
-
-        return $category !== null && ! empty($category->image);
     }
 
     /**
