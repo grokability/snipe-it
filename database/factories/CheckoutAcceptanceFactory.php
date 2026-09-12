@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\Accessory;
 use App\Models\Asset;
 use App\Models\CheckoutAcceptance;
+use App\Models\LicenseSeat;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -64,6 +65,14 @@ class CheckoutAcceptanceFactory extends Factory
         ]);
     }
 
+    public function forLicenseSeat()
+    {
+        return $this->state([
+            'checkoutable_type' => LicenseSeat::class,
+            'checkoutable_id' => LicenseSeat::factory(),
+        ]);
+    }
+
     public function pending()
     {
         return $this->state([
@@ -77,6 +86,14 @@ class CheckoutAcceptanceFactory extends Factory
         return $this->state([
             'accepted_at' => now()->subDay(),
             'declined_at' => null,
+        ]);
+    }
+
+    public function declined()
+    {
+        return $this->state([
+            'accepted_at' => null,
+            'declined_at' => now()->subDay(),
         ]);
     }
 

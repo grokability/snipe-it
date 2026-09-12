@@ -207,6 +207,13 @@ class CategoryFactory extends Factory
         ]);
     }
 
+    public function requiresAcceptance()
+    {
+        return $this->state([
+            'require_acceptance' => true,
+        ]);
+    }
+
     public function doesNotRequireAcceptance()
     {
         return $this->state([

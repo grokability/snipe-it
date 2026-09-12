@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Actionlog;
+use App\Models\CheckoutAcceptance;
 use App\Models\Consumable;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -58,6 +59,12 @@ class ConsumableObserver
     {
 
         $consumable->users()->detach();
+
+        CheckoutAcceptance::pending()
+            ->where('checkoutable_type', Consumable::class)
+            ->where('checkoutable_id', $consumable->id)
+            ->delete();
+
         $uploads = $consumable->uploads;
 
         foreach ($uploads as $file) {
