@@ -80,6 +80,14 @@ class CheckoutAcceptanceFactory extends Factory
         ]);
     }
 
+    public function declined()
+    {
+        return $this->state([
+            'accepted_at' => null,
+            'declined_at' => now()->subDay(),
+        ]);
+    }
+
     public function withoutAlerting()
     {
         return $this->state(function () {
