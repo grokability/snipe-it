@@ -1,46 +1,45 @@
+<!-- New Settings -->
 <fieldset name="select-template">
     <x-form.legend>
         {{ trans('admin/settings/general.select_template') }}
     </x-form.legend>
 
+    <!-- Template -->
     <div class="form-group{{ $errors->has('label2_template') ? ' has-error' : '' }}">
+
         <div class="col-md-12">
-            <table
-                data-columns="{{ \App\Presenters\LabelPresenter::dataTableLayout() }}"
-                data-cookie="true"
-                data-cookie-id-table="label2TemplateTable"
-                data-id-table="label2TemplateTable"
-                data-select-item-name="label2_template"
-                data-id-field="name"
-                data-side-pagination="server"
-                data-sort-name="name"
-                data-sort-order="asc"
-                data-url="{{ route('api.labels.index') }}"
-                id="label2TemplateTable"
-                class="table table-striped snipe-table"
-            ></table>
-            <script>
-                document.addEventListener('DOMContentLoaded', () => {
-                    const chosenLabel = "{{ old('label2_template', $chosenLabel ?? '') }}";
-                    $('#label2TemplateTable').on('load-success.bs.table', () => {
-                        if (chosenLabel) {
-                            $('input[name="label2_template"][value="' + chosenLabel + '"]').prop('checked', true);
-                        }
+            <x-container>
+                <x-box name="label-templates">
+                    <x-table.labels/>
+                </x-box>
+            </x-container>
+        </div>
+    </div>
+</fieldset>
 
-                        const form = document.getElementById('settingsForm');
-                        form?.dispatchEvent(new Event('change'));
+<fieldset name="label-preview">
+    <x-form.legend>
+        {{ trans('admin/settings/general.label2_label_preview') }}: <code
+                id="label2_preview_template">{{ $setting->label2_template_name }}</code>
+    </x-form.legend>
+    <div class="col-md-12" style="margin-bottom: 10px;">
+        @include('partials.label2-preview')
+    </div>
+</fieldset>
 
-                        // Attach event listeners for template selection changes
-                        document.querySelectorAll('input[name="label2_template"]').forEach(radio => {
-                            radio.addEventListener('change', function() {
-                                if (this.checked) {
-                                    document.getElementById('label2_preview_template').textContent = this.value;
-                                }
-                            });
-                        });
-                    });
-                });
-            </script>
+<fieldset name="field-definitions">
+    <x-form.legend help_text="{!! trans('admin/settings/general.label2_fields_help') !!}">
+        {{ trans('admin/settings/general.label_fields') }}
+    </x-form.legend>
+    <div class="form-group {{ $errors->has('label2_fields') ? ' has-error' : '' }}">
+        <div class="col-md-12">
+            @include('partials.label2-field-definitions', [
+                'name' => 'label2_fields',
+                'value' => old('label2_fields', $setting->label2_fields),
+                'customFields' => $customFields,
+                'template' => $setting->label2_template,
+            ])
+            <x-form.error name="label2_fields"/>
         </div>
     </div>
 </fieldset>
@@ -208,31 +207,7 @@
     </div>
 </fieldset>
 
-<fieldset name="field-definitions">
-    <x-form.legend help_text="{!! trans('admin/settings/general.label2_fields_help') !!}">
-        {{ trans('admin/settings/general.label_fields') }}
-    </x-form.legend>
-    <div class="form-group {{ $errors->has('label2_fields') ? ' has-error' : '' }}">
-        <div class="col-md-12">
-            @include('partials.label2-field-definitions', [
-                'name' => 'label2_fields',
-                'value' => old('label2_fields', $setting->label2_fields),
-                'customFields' => $customFields,
-                'template' => $setting->label2_template,
-            ])
-            <x-form.error name="label2_fields" />
-        </div>
-    </div>
-</fieldset>
 
-<fieldset name="label-preview">
-    <x-form.legend>
-        {{ trans('admin/settings/general.label2_label_preview') }}: <code id="label2_preview_template">{{ $setting->label2_template }}</code>
-    </x-form.legend>
-    <div class="col-md-12" style="margin-bottom: 10px;">
-        @include('partials.label2-preview')
-    </div>
-</fieldset>
 
 
 @include('partials.bootstrap-table')

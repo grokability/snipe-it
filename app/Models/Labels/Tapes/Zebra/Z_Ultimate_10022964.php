@@ -84,6 +84,37 @@ class Z_Ultimate_10022964 extends Z_Ultimate
         );
     }
 
+    protected function getContentEditorConfig(): array
+    {
+        $pa = $this->getPrintableArea();
+
+        return [
+            'barcode_2d_size' => max(
+                0,
+                $pa->h - static::TAG_SIZE - static::TAG_MARGIN
+            ),
+
+            'barcode_margin' => static::BARCODE_MARGIN,
+
+            'tag_font_size' => static::TAG_SIZE,
+            'tag_margin' => static::TAG_MARGIN,
+            'tag_offset_x' => 10,
+
+            'title_font_size' => static::TITLE_SIZE,
+            'title_margin' => static::TITLE_MARGIN,
+
+            'field_label_font_size' => static::LABEL_SIZE,
+            'field_label_margin' => static::LABEL_MARGIN,
+
+            'field_value_font_size' => static::FIELD_SIZE,
+            'field_value_margin' => static::FIELD_MARGIN,
+
+            'logo_max_width' => static::LOGO_MAX_WIDTH,
+            'logo_margin' => static::LOGO_MARGIN,
+
+            'text_render_mode' => 'vertical_stack'
+        ];
+    }
     public function write($pdf, $record)
     {
         $pa = $this->getPrintableArea();

@@ -8,9 +8,46 @@ class _5267_A extends _5267
 
     private const BARCODE_MARGIN = 0.000;
 
+    private const TAG_SIZE = 0.125;
+
     private const TITLE_SIZE = 0.140;
 
     private const FIELD_SIZE = 0.150;
+
+    private const FIELD_MARGIN = 0.012;
+    protected string $titleFont = 'freesans';
+    protected string $fieldLabelFont = 'freesans';
+    protected string $fieldValueFont = 'freemono';
+
+    public function getBarcodeSize()
+    {
+        return self::BARCODE_SIZE;
+    }
+
+    public function getBarcodeMargin()
+    {
+        return self::BARCODE_MARGIN;
+    }
+
+    public function getTagSize()
+    {
+        return self::TAG_SIZE;
+    }
+
+    public function getTitleSize()
+    {
+        return self::TITLE_SIZE;
+    }
+
+    public function getFieldSize()
+    {
+        return self::FIELD_SIZE;
+    }
+
+    public function getFieldMargin()
+    {
+        return self::FIELD_MARGIN;
+    }
 
     public function getUnit()
     {
@@ -65,6 +102,63 @@ class _5267_A extends _5267
     public function getSupportTitle()
     {
         return true;
+    }
+
+    public function get2DBarcodeSize()
+    {
+        $pa = $this->getLabelPrintableArea();
+
+        $barcode2dSize = $pa->h;
+
+        if ($this->getSupportTitle()) {
+            $barcode2dSize -= $this->getTitleSize();
+        }
+
+        return $barcode2dSize;
+    }
+
+    public function getTitleFont(): string
+    {
+        return $this->titleFont;
+    }
+
+    public function getFieldLabelFont(): string
+    {
+        return $this->fieldLabelFont;
+    }
+
+    public function getFieldValueFont(): string
+    {
+        return $this->fieldValueFont;
+    }
+
+    protected function getContentEditorConfig(): array
+    {
+        return [
+            'barcode_size' => $this->getBarcodeSize(),
+            'barcode_margin' => $this->getBarcodeMargin(),
+            '2dbarcode_size' => $this->get2DBarcodeSize(),
+            'tag_font_size' => $this->getTagSize(),
+            'title_font_size' => $this->getTitleSize(),
+            'field_label_font_size' => 0.001,
+            'field_value_font_size' => .3,
+            'field_label_margin' => .25,
+        ];
+    }
+
+    protected function getSupportsEditorConfig(): array
+    {
+        return [
+            'asset_tag' => $this->getSupportAssetTag(),
+            'barcode_1d' => $this->getSupport1DBarcode(),
+            'barcode_2d' => $this->getSupport2DBarcode(),
+            'fields' => $this->getSupportFields(),
+            'logo' => $this->getSupportLogo(),
+            'title' => $this->getSupportTitle(),
+            'title_font' => $this->getTitleFont(),
+            'field_label_font' => $this->getFieldLabelFont(),
+            'field_value_font' => $this->getFieldValueFont(),
+        ];
     }
 
     public function write($pdf, $record)
