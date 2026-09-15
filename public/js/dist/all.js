@@ -74909,15 +74909,17 @@ $(function () {
   */
 
   $('select.select2:not(".select2-hidden-accessible")').each(function (i, obj) {
-    {
-      $(obj).select2();
+    var $obj = $(obj);
+    var options = {};
+    // Opt-out for fields where the built-in search box adds no value. Pass
+    // data-minimum-results-for-search="Infinity" (or a numeric
+    // threshold) on the <select> to hide it.
+    var minResults = $obj.data('minimum-results-for-search');
+    if (minResults !== undefined) {
+      options.minimumResultsForSearch = minResults === 'Infinity' ? Infinity : minResults;
     }
+    $obj.select2(options);
   });
-
-  // $('.datepicker').datepicker();
-  // var datepicker = $.fn.datepicker.noConflict(); // return $.fn.datepicker to previously assigned value
-  // $.fn.bootstrapDP = datepicker;
-  // $('.datepicker').datepicker();
 
   // Crazy select2 rich dropdowns with images!
   $('.js-data-ajax').each(function (i, item) {
@@ -75248,6 +75250,171 @@ $(function () {
         $(this).bootstrapTable('resetView');
       }
     });
+  });
+
+  /*
+   * Conditional field visibility for schema-driven forms.
+   *
+   * Any element carrying data-visible-when-field and data-visible-when-value
+   * (comma-separated for multi-value) is shown when the source field's
+   * current value matches, hidden otherwise. Powers the auth-method
+   * show/hide on the sync-adapter credentials pages so the Basic Auth
+   * inputs don't render when the admin picked Bearer, etc. Fully
+   * data-attribute driven, no per-partial JS required.
+   */
+  function applyAdapterConditionalVisibility() {
+    document.querySelectorAll('[data-visible-when-field]').forEach(function (target) {
+      var sourceName = target.getAttribute('data-visible-when-field');
+      var acceptedValues = String(target.getAttribute('data-visible-when-value') || '').split(',');
+      var source = document.querySelector('[name="' + sourceName + '"]');
+      if (!source) return;
+      target.style.display = acceptedValues.indexOf(source.value) !== -1 ? '' : 'none';
+    });
+  }
+
+  // Bind change listeners against the unique set of source-field names
+  // referenced by any conditional target on the page. jQuery here
+  // because select2 forwards change events through jQuery, so plain
+  // addEventListener would miss the auth-method dropdown's own picks.
+  var __adapterConditionalSources = {};
+  document.querySelectorAll('[data-visible-when-field]').forEach(function (target) {
+    __adapterConditionalSources[target.getAttribute('data-visible-when-field')] = true;
+  });
+  Object.keys(__adapterConditionalSources).forEach(function (name) {
+    $('[name="' + name + '"]').on('change', applyAdapterConditionalVisibility);
+  });
+  applyAdapterConditionalVisibility();
+  // Re-apply after a tab becomes visible. select2 sizing and hidden-
+  // tab state can leave the initial pass stale on tabs the admin
+  // hadn't clicked yet.
+  $('body').on('shown.bs.tab', 'a[data-toggle="tab"]', applyAdapterConditionalVisibility);
+
+  /*
+   * Live-update the "Base URL:" prefix addon on any pull_path /
+   * push_path input for custom sync adapters as the admin types into the
+   * Base URL input.
+   * Each addon carries data-adapter-slug so multiple adapter tabs
+   * update independently, and data-placeholder holds the "Base URL:"
+   * fallback text the server rendered when the URL was blank on
+   * first load (so localizers only touch a lang file, not this JS).
+   */
+  document.querySelectorAll('.js-adapter-url-prefix').forEach(function (addon) {
+    var slug = addon.getAttribute('data-adapter-slug');
+    if (!slug) return;
+    var input = document.querySelector('input[name="' + slug + '_url"]');
+    if (!input) return;
+    var placeholder = addon.getAttribute('data-placeholder') || '';
+    input.addEventListener('input', function () {
+      addon.textContent = input.value || placeholder;
+    });
+  });
+
+  /*
+   * Pull Now / Push Now submit spinner + double-click guard.
+   *
+   * Any <form class="js-sync-action-form"> gets a submit handler
+   * that swaps the cloud icon on its <button.js-sync-action-button>
+   * for a spinner and disables every sync-action button on the
+   * page. Admins with slower fleets don't panic-click while the
+   * request is in flight, and they can't fire Push while Pull is
+   * running on the same instance.
+   */
+  document.querySelectorAll('form.js-sync-action-form').forEach(function (form) {
+    form.addEventListener('submit', function () {
+      var btn = form.querySelector('button.js-sync-action-button');
+      if (!btn || btn.disabled) return;
+      var icon = btn.querySelector('.js-sync-action-icon');
+      if (icon) {
+        icon.className = 'fa-solid fa-spinner fa-spin js-sync-action-icon';
+      }
+      btn.disabled = true;
+      document.querySelectorAll('button.js-sync-action-button').forEach(function (other) {
+        other.disabled = true;
+      });
+    });
+  });
+
+  /*
+   * Generic dirty-form guard.
+   *
+   * Any <form data-dirty-guard id="my-form"> is watched for changes.
+   * Any element (usually a button) elsewhere on the page carrying
+   * data-dirty-guarded-by="my-form" gets disabled while the form is
+   * dirty and re-enabled when the values revert to the initial
+   * snapshot. Useful anywhere the page has an "act on saved state"
+   * control that would silently run against the OLD state if
+   * clicked with pending edits (sync-adapter Pull/Push Now, an
+   * "Impersonate" button next to permission edits, etc).
+   *
+   * Attributes:
+   *   - data-dirty-guard              (form) opt-in marker
+   *   - data-dirty-guard-warning      (form, optional) tooltip text
+   *                                   set on guarded buttons when
+   *                                   they are disabled by this
+   *                                   guard. Defaults to a generic
+   *                                   "Save your changes first"
+   *                                   English fallback so a caller
+   *                                   that forgets to localize still
+   *                                   gets a usable hint.
+   *   - data-dirty-guarded-by="{id}"  (button/element) declares
+   *                                   which form it's guarded by,
+   *                                   matched against the form's id.
+   *
+   * The guard only touches buttons that were enabled server-side.
+   * A data-dirty-guard-disabled marker on the button records OUR
+   * override so a revert re-enables only what we disabled, leaving
+   * server-side `disabled` attributes intact.
+   */
+  document.querySelectorAll('form[data-dirty-guard]').forEach(function (form) {
+    var formId = form.id;
+    if (!formId) return;
+    var warning = form.getAttribute('data-dirty-guard-warning') || 'Save your changes first.';
+    function findGuardedElements() {
+      return document.querySelectorAll('[data-dirty-guarded-by="' + formId + '"]');
+    }
+    function serialize() {
+      // FormData enumerates named inputs as they currently sit,
+      // so this catches select changes, textarea edits, and any
+      // input-event that fires. Sort by key for stability across
+      // browsers that iterate FormData in insertion order vs
+      // document order.
+      var entries = [];
+      new FormData(form).forEach(function (v, k) {
+        entries.push(k + '\0' + v);
+      });
+      entries.sort();
+      return entries.join('\n');
+    }
+    // Defer the initial snapshot to next tick so any init-time
+    // form mutations (select2 syncing hidden values, custom
+    // widgets, dynamic show/hide picking initial visibility) have
+    // settled before we lock in the baseline.
+    var initialState = null;
+    setTimeout(function () {
+      initialState = serialize();
+    }, 0);
+    var currentlyDirty = false;
+    function reevaluate() {
+      if (initialState === null) return;
+      var nowDirty = serialize() !== initialState;
+      if (nowDirty === currentlyDirty) return;
+      currentlyDirty = nowDirty;
+      findGuardedElements().forEach(function (el) {
+        if (nowDirty) {
+          if (!el.disabled) {
+            el.disabled = true;
+            el.setAttribute('data-dirty-guard-disabled', '1');
+            el.setAttribute('title', warning);
+          }
+        } else if (el.getAttribute('data-dirty-guard-disabled') === '1') {
+          el.disabled = false;
+          el.removeAttribute('data-dirty-guard-disabled');
+          el.removeAttribute('title');
+        }
+      });
+    }
+    form.addEventListener('input', reevaluate);
+    form.addEventListener('change', reevaluate);
   });
 
   // Same story for viewport resizes: bootstrap-table caches column

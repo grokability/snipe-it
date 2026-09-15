@@ -40,6 +40,14 @@ class CustomFieldSeeder extends Seeder
         CustomField::factory()->count(1)->testDate()->create();
         CustomField::factory()->count(1)->testDatetime()->create();
         CustomField::factory()->count(1)->xss()->create();
+        // Fields the Custom HTTP adapter (and other sync adapters)
+        // typically populate. Pre-created so a fresh demo tenant can
+        // wire an adapter's mapping table to real fieldset entries
+        // without hand-creating them first.
+        CustomField::factory()->count(1)->ipAddress()->create();
+        CustomField::factory()->count(1)->operatingSystem()->create();
+        CustomField::factory()->count(1)->osVersion()->create();
+        CustomField::factory()->count(1)->lastCheckIn()->create();
 
         DB::table('custom_field_custom_fieldset')->insert([
             [
@@ -150,6 +158,60 @@ class CustomFieldSeeder extends Seeder
 
             [
                 'custom_field_id' => '11',
+                'custom_fieldset_id' => '2',
+                'order' => 0,
+                'required' => 0,
+            ],
+
+            // ipAddress, operatingSystem, osVersion, lastCheckIn get
+            // attached to both fieldsets so admins wiring up any sync
+            // adapter can route those pulled values into the same
+            // fields whether the device is a laptop / desktop or a
+            // phone / tablet. xss (id 12) is intentionally left off.
+            [
+                'custom_field_id' => '13',
+                'custom_fieldset_id' => '1',
+                'order' => 0,
+                'required' => 0,
+            ],
+            [
+                'custom_field_id' => '13',
+                'custom_fieldset_id' => '2',
+                'order' => 0,
+                'required' => 0,
+            ],
+            [
+                'custom_field_id' => '14',
+                'custom_fieldset_id' => '1',
+                'order' => 0,
+                'required' => 0,
+            ],
+            [
+                'custom_field_id' => '14',
+                'custom_fieldset_id' => '2',
+                'order' => 0,
+                'required' => 0,
+            ],
+            [
+                'custom_field_id' => '15',
+                'custom_fieldset_id' => '1',
+                'order' => 0,
+                'required' => 0,
+            ],
+            [
+                'custom_field_id' => '15',
+                'custom_fieldset_id' => '2',
+                'order' => 0,
+                'required' => 0,
+            ],
+            [
+                'custom_field_id' => '16',
+                'custom_fieldset_id' => '1',
+                'order' => 0,
+                'required' => 0,
+            ],
+            [
+                'custom_field_id' => '16',
                 'custom_fieldset_id' => '2',
                 'order' => 0,
                 'required' => 0,

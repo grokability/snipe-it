@@ -111,16 +111,18 @@ $config = [
             'path' => storage_path('logs/scim.log'),
         ],
 
-        // Settings-admin audit trail. Wizard-style config screens (LDAP
-        // wizard test runs, etc.) write here instead of `action_logs`
-        // so operational messages that reference server URLs, base DNs,
-        // and other bind-shape info stay in files only the server
-        // operator can read. Separate file so log rotation stays sane
-        // and grepping doesn't have to filter out the noisier default
-        // laravel.log.
+        // Settings-admin audit trail
         'admin' => [
             'driver' => 'daily',
             'path' => storage_path('logs/admin.log'),
+            'level' => env('LOG_LEVEL', 'info'),
+            'days' => 30,
+        ],
+
+        // Sync-adapter log
+        'sync-adapters' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/sync-adapters.log'),
             'level' => env('LOG_LEVEL', 'info'),
             'days' => 30,
         ],

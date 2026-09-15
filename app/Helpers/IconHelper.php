@@ -47,6 +47,8 @@ class IconHelper
                 return 'fa-solid fa-store';
             case 'restore':
                 return 'fa-solid fa-trash-arrow-up';
+            case 'sync':
+                return 'fa-solid fa-rotate';
             case 'external-link':
                 return 'fa fa-external-link';
             case 'link':

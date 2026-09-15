@@ -9,7 +9,6 @@
   <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Exceptions/Handler.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Exceptions/Handler.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Http/Controllers/Accessories/AccessoryCheckinController.php"/>
-  <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Http/Controllers/Api/AccessoriesController.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Http/Controllers/Api/AssetsController.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Http/Controllers/Api/LabelsController.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Http/Controllers/Api/LicenseSeatsController.php"/>
@@ -66,23 +65,12 @@
   <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Notifications/CheckinAssetNotification.php"/>
   <violation rule="PHPMD\Rule\UnusedPrivateField" file="app/Notifications/CheckinComponentNotification.php"/>
   <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Notifications/CheckinComponentNotification.php"/>
-  <violation rule="PHPMD\Rule\UnusedPrivateField" file="app/Notifications/CheckinLicenseSeatNotification.php"/>
   <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Notifications/CheckinLicenseSeatNotification.php"/>
   <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Notifications/CheckoutAccessoryNotification.php"/>
-  <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Notifications/CheckoutAssetNotification.php"/>
-  <violation rule="PHPMD\Rule\UnusedPrivateField" file="app/Notifications/CheckoutComponentNotification.php"/>
   <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Notifications/CheckoutComponentNotification.php"/>
-  <violation rule="PHPMD\Rule\UnusedPrivateField" file="app/Notifications/CheckoutConsumableNotification.php"/>
   <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Notifications/CheckoutConsumableNotification.php"/>
-  <violation rule="PHPMD\Rule\UnusedPrivateField" file="app/Notifications/CheckoutLicenseSeatNotification.php"/>
   <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Notifications/CheckoutLicenseSeatNotification.php"/>
-  <violation rule="PHPMD\Rule\UnusedPrivateField" file="app/Notifications/ExpectedCheckinAdminNotification.php"/>
   <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Notifications/ExpectedCheckinNotification.php"/>
-  <violation rule="PHPMD\Rule\UnusedPrivateField" file="app/Notifications/ExpiringAssetsNotification.php"/>
-  <violation rule="PHPMD\Rule\UnusedPrivateField" file="app/Notifications/ExpiringLicenseNotification.php"/>
-  <violation rule="PHPMD\Rule\UnusedPrivateField" file="app/Notifications/InventoryAlert.php"/>
-  <violation rule="PHPMD\Rule\UnusedPrivateField" file="app/Notifications/RequestAssetCancelation.php"/>
-  <violation rule="PHPMD\Rule\UnusedPrivateField" file="app/Notifications/RequestAssetNotification.php"/>
   <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Notifications/SendUpcomingAuditNotification.php"/>
   <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Observers/AccessoryObserver.php"/>
   <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Observers/AssetModelObserver.php"/>
@@ -103,7 +91,9 @@
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Providers/RouteServiceProvider.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Providers/ValidationServiceProvider.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Rules/AssetCannotBeCheckedOutToNondeployableStatus.php"/>
+  <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Rules/AssetTagPatternRule.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Rules/CssColor.php"/>
+  <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Rules/CustomHttpExtrasJsonRule.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Rules/ExternalUrl.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Rules/UniqueUndeleted.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Rules/UserCannotSwitchCompaniesIfItemsAssigned.php"/>

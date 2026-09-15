@@ -63,6 +63,6 @@ class UserLicensesAuthorizationTest extends TestCase
             ->getJson(route('api.users.licenselist', $target))
             ->assertOk()
             ->assertJsonPath('total', 1)
-            ->assertJsonPath('rows.0.name', $license->name);
+            ->assertJsonPath('rows.0.name', e($license->name));
     }
 }

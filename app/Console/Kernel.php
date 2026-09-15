@@ -25,6 +25,14 @@ class Kernel extends ConsoleKernel
         $schedule->command('backup:clean')->daily();
         $schedule->command('auth:clear-resets')->everyFifteenMinutes();
         $schedule->command('saml:clear_expired_nonces')->weekly();
+        $schedule->command('snipeit:pull-inventory')
+            ->hourly()
+            ->withoutOverlapping();
+
+        // Push runs on the half-hour so it doesn't collide with the pull run
+        $schedule->command('snipeit:push-inventory')
+            ->hourlyAt(30)
+            ->withoutOverlapping();
     }
 
     /**

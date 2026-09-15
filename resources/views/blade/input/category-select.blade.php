@@ -14,6 +14,7 @@
     'hideNewButton' => false,
     'categoryType' => 'asset',
     'id' => null,
+    'help_text' => null,
 ])
 
 @php
@@ -59,5 +60,10 @@
         </div>
     @endunless
 
-    <div class="col-md-8 col-md-offset-3"><x-form.error :name="$name" /></div>
+    <div class="col-md-7 col-md-offset-3">
+        <x-form.error :name="$name" />
+        @if ($help_text)
+            <x-form.help :name="$selectId">{!! $help_text !!}</x-form.help>
+        @endif
+    </div>
 </div>

@@ -418,6 +418,60 @@ class AssetPresenter extends Presenter
             ];
         }
 
+        // Sync-adapter side-table columns. Hidden by default, exposable
+        // via the column picker for admins syncing from an MDM / RMM.
+        // Sort routed through Asset::scopeOrderExternalSource (leftJoin
+        // on asset_external_sources) and search routed through the
+        // externalSource relation in $searchableRelations. last_seen
+        // sortable but not searchable (datetime substring match is
+        // nonsensical for the top search bar).
+        $layout[] = [
+            'field' => 'primary_mac',
+            'scope' => 'col',
+            'searchable' => true,
+            'sortable' => true,
+            'switchable' => true,
+            'title' => trans('admin/settings/sync_adapters.field_mac'),
+            'visible' => false,
+        ];
+        $layout[] = [
+            'field' => 'primary_ip',
+            'scope' => 'col',
+            'searchable' => true,
+            'sortable' => true,
+            'switchable' => true,
+            'title' => trans('admin/settings/sync_adapters.field_ip'),
+            'visible' => false,
+        ];
+        $layout[] = [
+            'field' => 'external_os',
+            'scope' => 'col',
+            'searchable' => true,
+            'sortable' => true,
+            'switchable' => true,
+            'title' => trans('admin/settings/sync_adapters.field_os'),
+            'visible' => false,
+        ];
+        $layout[] = [
+            'field' => 'external_os_version',
+            'scope' => 'col',
+            'searchable' => true,
+            'sortable' => true,
+            'switchable' => true,
+            'title' => trans('admin/settings/sync_adapters.field_os_version'),
+            'visible' => false,
+        ];
+        $layout[] = [
+            'field' => 'last_seen',
+            'scope' => 'col',
+            'searchable' => false,
+            'sortable' => true,
+            'switchable' => true,
+            'title' => trans('admin/settings/sync_adapters.field_last_seen'),
+            'visible' => false,
+            'formatter' => 'dateDisplayFormatter',
+        ];
+
         $layout[] = [
             'field' => 'checkincheckout',
             'scope' => 'col',

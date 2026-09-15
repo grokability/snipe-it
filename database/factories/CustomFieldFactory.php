@@ -84,6 +84,48 @@ class CustomFieldFactory extends Factory
         });
     }
 
+    public function ipAddress()
+    {
+        return $this->state(function () {
+            return [
+                'name' => 'IP Address',
+                'help_text' => 'The last-known IP address for this device.',
+            ];
+        });
+    }
+
+    public function operatingSystem()
+    {
+        return $this->state(function () {
+            return [
+                'name' => 'Operating System',
+                'help_text' => 'The operating system this device is running.',
+            ];
+        });
+    }
+
+    public function osVersion()
+    {
+        return $this->state(function () {
+            return [
+                'name' => 'OS Version',
+                'help_text' => 'The OS version this device is running.',
+            ];
+        });
+    }
+
+    public function lastCheckIn()
+    {
+        return $this->state(function () {
+            return [
+                'name' => 'Last Check-in',
+                'help_text' => 'The last time this device was seen by an inventory sync adapter.',
+                'element' => 'datetime_picker',
+                'format' => 'DATETIME',
+            ];
+        });
+    }
+
     public function testEncrypted()
     {
         return $this->state(function () {

@@ -137,6 +137,13 @@ class AssetsController extends Controller
             'assigned_to',
             'created_by',
 
+            // Sync-adapter side-table columns (asset_external_sources).
+            'primary_mac',
+            'primary_ip',
+            'external_os',
+            'external_os_version',
+            'last_seen',
+
         ];
 
         $all_custom_fields = CustomField::all(); // used as a 'cache' of custom fields throughout this page load
@@ -168,7 +175,8 @@ class AssetsController extends Controller
                 'model.manufacturer',
                 'model.fieldset',
                 'model.depreciation',
-                'supplier'
+    'supplier',
+    'externalSource',
             ); // it might be tempting to add 'assetlog' here, but don't. It blows up update-heavy users.
 
         if ($filter_non_deprecable_assets) {
@@ -434,6 +442,22 @@ class AssetsController extends Controller
                 break;
             case 'eol':
                 $assets->orderBy('assets.asset_eol_date', $order);
+                break;
+            // Sync-adapter side-table sorts.
+            case 'primary_mac':
+                $assets->OrderExternalSource($order, 'primary_mac');
+                break;
+            case 'primary_ip':
+                $assets->OrderExternalSource($order, 'primary_ip');
+                break;
+            case 'external_os':
+                $assets->OrderExternalSource($order, 'os');
+                break;
+            case 'external_os_version':
+                $assets->OrderExternalSource($order, 'os_version');
+                break;
+            case 'last_seen':
+                $assets->OrderExternalSource($order, 'last_seen');
                 break;
             default:
                 $numeric_sort = false;
@@ -1654,7 +1678,7 @@ class AssetsController extends Controller
             $asset = $assets->get($id);
 
             // Per-row FMCS/authorization gate. The class-level authorize()
-            // above is only a coarse "you have assets.audit" check; this
+            // above is only a coarse "you have assets.audit" check. This
             // catches FMCS mismatches and any policy tightening that lands
             // later, surfacing them as row errors rather than a whole 403.
             if (! Gate::allows('audit', $asset)) {
@@ -1751,7 +1775,7 @@ class AssetsController extends Controller
 
                 if ($field->field_encrypted == '1') {
                     // Only writers with the encrypted-view permission can
-                    // set encrypted fields; other callers get the payload
+                    // set encrypted fields. Other callers get the payload
                     // echo but no persisted change.
                     if (Gate::allows('assets.view.encrypted_custom_fields')) {
                         $asset->{$field->db_column} = Crypt::encrypt($stored);
