@@ -639,45 +639,48 @@ class SettingsController extends Controller
             $setting->labels_pagewidth = $request->input('labels_pagewidth');
             $setting->labels_pageheight = $request->input('labels_pageheight');
             $setting->labels_display_company_name = $request->input('labels_display_company_name', '0');
+            // Barcodes
+            $setting->qr_code = $request->input('qr_code', '0');
+            // 1D-Barcode
+            $setting->alt_barcode_enabled = $request->input('alt_barcode_enabled', '0');
+            // QR-Code
+            $setting->qr_text = $request->input('qr_text');
+
+            if ($request->filled('labels_display_name')) {
+                $setting->labels_display_name = 1;
+            } else {
+                $setting->labels_display_name = 0;
+            }
+
+            if ($request->filled('labels_display_serial')) {
+                $setting->labels_display_serial = 1;
+            } else {
+                $setting->labels_display_serial = 0;
+            }
+
+            if ($request->filled('labels_display_tag')) {
+                $setting->labels_display_tag = 1;
+            } else {
+                $setting->labels_display_tag = 0;
+            }
+
+            if ($request->filled('labels_display_tag')) {
+                $setting->labels_display_tag = 1;
+            } else {
+                $setting->labels_display_tag = 0;
+            }
+
+            if ($request->filled('labels_display_model')) {
+                $setting->labels_display_model = 1;
+            } else {
+                $setting->labels_display_model = 0;
+            }
         }
 
-        // Barcodes
-        $setting->qr_code = $request->input('qr_code', '0');
-        // 1D-Barcode
-        $setting->alt_barcode_enabled = $request->input('alt_barcode_enabled', '0');
-        // QR-Code
-        $setting->qr_text = $request->input('qr_text');
-
-        if ($request->filled('labels_display_name')) {
-            $setting->labels_display_name = 1;
-        } else {
-            $setting->labels_display_name = 0;
+        if (!$wasLabel2Enabled && $request->boolean('label2_enable')) {
+            $setting->label2_title = $setting->qr_text;
         }
-
-        if ($request->filled('labels_display_serial')) {
-            $setting->labels_display_serial = 1;
-        } else {
-            $setting->labels_display_serial = 0;
-        }
-
-        if ($request->filled('labels_display_tag')) {
-            $setting->labels_display_tag = 1;
-        } else {
-            $setting->labels_display_tag = 0;
-        }
-
-        if ($request->filled('labels_display_tag')) {
-            $setting->labels_display_tag = 1;
-        } else {
-            $setting->labels_display_tag = 0;
-        }
-
-        if ($request->filled('labels_display_model')) {
-            $setting->labels_display_model = 1;
-        } else {
-            $setting->labels_display_model = 0;
-        }
-
+        
         if ($setting->save()) {
 
             return redirect()->route('settings.labels.index')
