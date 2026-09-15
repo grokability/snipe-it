@@ -33,7 +33,7 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $subscribe = [
-        LogListener::class,
+        // LogListener::class,
         // Runs AFTER LogListener so the checkout Actionlog row it
         // just wrote is available for the checkout_actionlog_id
         // back-link on the CheckoutRequest.
