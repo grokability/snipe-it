@@ -52,14 +52,19 @@
 
               @elseif ($field->element=='checkbox')
                   <!-- Checkbox -->
-                  @foreach ($field->formatFieldValuesAsArray() as $key => $value)
-                      <div>
-                          <label class="form-control">
-                              <input type="checkbox" value="{{ $value }}" name="{{ $field->db_column_name() }}[]" {{  isset($item) ? (in_array($value, array_map('trim', explode(',', $item->{$field->db_column_name()}))) ? ' checked="checked"' : '') : (old($field->db_column_name()) != '' ? ' checked="checked"' : (in_array($key, array_map('trim', explode(',', $field->defaultValue($model->id)))) ? ' checked="checked"' : '')) }}>
-                              {{ $value }}
-                          </label>
-                      </div>
-                  @endforeach
+                  @php
+                      $checkboxDefault = isset($item)
+                          ? array_map('trim', explode(',', $item->{$field->db_column_name()}))
+                          : array_map('trim', explode(',', $field->defaultValue($model->id)));
+                  @endphp
+                  <x-input.select
+                      :name="$field->db_column_name().'[]'"
+                      :options="$field->formatFieldValuesAsArray()"
+                      :selected="old($field->db_column_name(), $checkboxDefault)"
+                      :required="$field->pivot->required == '1'"
+                      multiple
+                      class="format form-control"
+                  />
 
               @elseif ($field->element=='radio')
                   <!-- Radio -->
@@ -205,6 +210,3 @@
     </fieldset>
     </div>
 @endif
-
-
-

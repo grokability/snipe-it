@@ -6,11 +6,13 @@
     'includeEmpty' => false,
     'forLivewire' => false,
     'required' => false,
+    'multiple' => false,
 ])
 
 <select
     {{ $attributes->class(['select2', 'livewire-select2' => $forLivewire]) }}
     @required($required)
+    @if($multiple) multiple @endif
     @if($forLivewire) data-livewire-component="{{ $this->getId() }}" @endif
 >
     @if($includeEmpty)
@@ -18,8 +20,9 @@
     @endif
     {{-- map the simple key => value pairs when nothing is passed in via the slot --}}
     @if($slot->isEmpty())
+        @php $selectedValues = (array) $selected; @endphp
         @foreach($options as $key => $value)
-            <option value="{{ $key }}" @selected($selected == $key)>{{ $value }}</option>
+            <option value="{{ $key }}" @selected($multiple ? in_array($key, $selectedValues) : $selected == $key)>{{ $value }}</option>
         @endforeach
     @else
         {{ $slot }}

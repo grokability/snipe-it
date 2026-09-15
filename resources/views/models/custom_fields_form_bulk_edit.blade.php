@@ -61,20 +61,16 @@
               @php
                   $fieldName = $field->db_column_name();
                   $oldValues = old($fieldName);
-                  $currentValues = isset($item) ? array_map('trim', explode(',', $item->{$fieldName})) : '';
-
                   $selectedValues = is_array($oldValues) ? $oldValues : [];
               @endphp
 
-              @foreach ($field->formatFieldValuesAsArray() as $key => $value)
-                  <label class="form-control">
-                      <input type="checkbox"
-                             name="{{ $fieldName }}[]"
-                             value="{{ $key }}"
-                              {{ in_array($key, $selectedValues) ? 'checked' : '' }}>
-                      {{ $value }}
-                  </label>
-              @endforeach
+              <x-input.select
+                  :name="$fieldName.'[]'"
+                  :options="$field->formatFieldValuesAsArray()"
+                  :selected="$selectedValues"
+                  multiple
+                  class="format form-control"
+              />
             @elseif ($field->element=='radio')
                   @php
                       $fieldName = $field->db_column_name();
