@@ -94,6 +94,122 @@ class LdapTest extends TestCase
         $this->assertNull(Ldap::bindAdminToLdap('dummy'));
     }
 
+    /**
+     * Simulate a PHP build that has SASL support compiled in. Herd's
+     * default macOS PHP and some Docker images don't, and the fix for
+     * the "no SASL, hard crash" case gates shouldUseSaslExternal() on
+     * function_exists('ldap_sasl_bind'). The mock has to intercept that
+     * check so the SASL branch fires regardless of the CI PHP build.
+     */
+    private function mockSaslExternalAvailable(): void
+    {
+        // The Ldap model gates shouldUseSaslExternal() on
+        // function_exists('ldap_sasl_bind'), which php-mock can't
+        // reliably intercept in this namespace. Use the class's test
+        // seam instead to force availability on regardless of what
+        // the CI PHP build actually supports.
+        Ldap::setSaslExternalOverride(true);
+    }
+
+    protected function tearDown(): void
+    {
+        Ldap::setSaslExternalOverride(null);
+        parent::tearDown();
+    }
+
+    public function test_sasl_external_bind_when_cert_and_key_present_without_credentials()
+    {
+        // GH #19518: SASL EXTERNAL bind (auth via client TLS cert)
+        // must route through ldap_sasl_bind, not ldap_bind. Auto-detect
+        // fires when cert + key are populated AND both bind DN and
+        // bind password are blank.
+        $this->settings->enableLdap();
+        $this->settings->set([
+            'ldap_client_tls_cert' => 'CERT PEM',
+            'ldap_client_tls_key' => 'KEY PEM',
+            'ldap_uname' => '',
+            'ldap_pword' => '',
+        ]);
+
+        $this->mockSaslExternalAvailable();
+        $this->getFunctionMock('App\\Models', 'ldap_sasl_bind')
+            ->expects($this->once())
+            ->with('dummy', null, null, 'EXTERNAL')
+            ->willReturn(true);
+        $this->getFunctionMock('App\\Models', 'ldap_bind')
+            ->expects($this->never());
+
+        $this->assertNull(Ldap::bindAdminToLdap('dummy'));
+    }
+
+    public function test_sasl_external_bind_failure_surfaces_error()
+    {
+        $this->settings->enableLdap();
+        $this->settings->set([
+            'ldap_client_tls_cert' => 'CERT PEM',
+            'ldap_client_tls_key' => 'KEY PEM',
+            'ldap_uname' => '',
+            'ldap_pword' => '',
+        ]);
+
+        $this->mockSaslExternalAvailable();
+        $this->getFunctionMock('App\\Models', 'ldap_sasl_bind')
+            ->expects($this->once())
+            ->willReturn(false);
+        $this->getFunctionMock('App\\Models', 'ldap_error')
+            ->expects($this->once())
+            ->willReturn('cert rejected');
+        // bindError also queries LDAP_OPT_DIAGNOSTIC_MESSAGE (see #19519).
+        $this->getFunctionMock('App\\Models', 'ldap_get_option')
+            ->expects($this->once())
+            ->willReturn(true);
+        $this->expectExceptionMessage('Could not bind to LDAP via SASL EXTERNAL');
+
+        $this->assertNull(Ldap::bindAdminToLdap('dummy'));
+    }
+
+    public function test_sasl_external_falls_back_to_simple_bind_when_php_lacks_sasl_support()
+    {
+        // Guard against a PHP build compiled without SASL support (Herd's
+        // default, some Docker images). shouldUseSaslExternal() has to
+        // return false when ldap_sasl_bind is unavailable so the runtime
+        // doesn't hit a "Call to undefined function ldap_sasl_bind()"
+        // fatal. The wizard's warning banner covers the discoverability
+        // side. This test covers the runtime-guard side.
+        $this->settings->enableLdap();
+        $this->settings->set([
+            'ldap_client_tls_cert' => 'CERT PEM',
+            'ldap_client_tls_key' => 'KEY PEM',
+            'ldap_uname' => '',
+            'ldap_pword' => '',
+        ]);
+
+        Ldap::setSaslExternalOverride(false);
+
+        $this->getFunctionMock('App\\Models', 'ldap_sasl_bind')
+            ->expects($this->never());
+
+        $this->assertFalse(Ldap::shouldUseSaslExternal(Setting::getSettings()));
+        $this->assertFalse(Ldap::saslExternalAvailable());
+    }
+
+    public function test_simple_bind_still_used_when_credentials_are_present()
+    {
+        // Regression guard: cert + key populated but the user has ALSO
+        // filled in bind DN / password picks the simple-bind path, not
+        // SASL EXTERNAL. Also the default configuration case for every
+        // pre-#19518 install.
+        $this->settings->enableLdap();
+
+        $this->getFunctionMock('App\\Models', 'ldap_bind')
+            ->expects($this->once())
+            ->willReturn(true);
+        $this->getFunctionMock('App\\Models', 'ldap_sasl_bind')
+            ->expects($this->never());
+
+        $this->assertNull(Ldap::bindAdminToLdap('dummy'));
+    }
+
     public function test_find_and_bind()
     {
         $this->settings->enableLdap();

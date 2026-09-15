@@ -10,6 +10,7 @@
     'label' => null,
     'label_class' => 'col-md-3',
     'input_div_class' => 'col-md-7',
+    'help_class' => 'col-md-9 col-md-offset-3',
     'input_icon' => null,
     'input_group_addon' => null,
     'maxlength' => null,
@@ -135,7 +136,13 @@
         <div class="clearfix"></div>
     @endif
 
-    <div @class(['col-md-9 col-md-offset-3' => ! $stacked])>
+    {{-- Error + help wrapper. Default col-md-9 col-md-offset-3 aligns
+         under the input column (which sits after the col-md-3 label)
+         with room to breathe on its own row. Callers with a visually-
+         narrower input (a textarea whose width is pinned by its rows
+         attribute, for example) can pass help_class to match the input
+         width so long help doesn't extend past the visible input box. --}}
+    <div @class([$help_class => ! $stacked])>
         <x-form.error :name="$name" />
 
         @if ($help_text)
