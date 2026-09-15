@@ -6,7 +6,6 @@ use App\Helpers\StorageHelper;
 use App\Providers\AppServiceProvider;
 use App\Providers\BladeServiceProvider;
 use App\Providers\BreadcrumbsServiceProvider;
-use App\Providers\EventServiceProvider;
 use App\Providers\LivewireServiceProvider;
 use App\Providers\RouteServiceProvider;
 use App\Providers\SamlServiceProvider;
@@ -486,7 +485,6 @@ return [
         */
         AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
-        EventServiceProvider::class,
         RouteServiceProvider::class,
         SettingsServiceProvider::class,
         App\Providers\ValidationServiceProvider::class,
