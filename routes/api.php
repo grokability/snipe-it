@@ -1446,7 +1446,7 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
                 Api\ReportsController::class,
                 'index',
             ]
-        )->name('api.activity.index');
+            )->name('api.activity.index');
 
         Route::get('activity/chart',
             [
@@ -1454,7 +1454,19 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
                 'activityChart',
             ]
         )->name('api.reports.activity.chart');
-    }); // end reports api routes
+    });
+
+    Route::get('expiring-assets',
+        [
+            Api\ReportsController::class,
+            'expiringAssetsReport',
+        ])->name('api.expiring-assets');
+
+    Route::get('expiring-licenses',
+        [
+            Api\ReportsController::class,
+            'expiringLicensesReport',
+        ])->name('api.expiring-licenses');// end reports api routes
 
     /**
      * Version API routes

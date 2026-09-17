@@ -977,25 +977,28 @@ class License extends Depreciable
      */
     public function scopeExpiringLicenses($query, $days = 60, $includeExpired = false)
     {
-        return $query// The termination date is null or within range
-            ->where(function ($query) use ($days) {
-                $query->whereNull('termination_date')
-                    ->orWhereBetween('termination_date', [Carbon::now(), Carbon::now()->addDays($days)]);
-            })
-            ->where(function ($query) use ($days, $includeExpired) {
+        $now = now()->startOfDay();
+        $end = now()->copy()->addDays($days)->endOfDay();
+
+        return $query // The termination date is null or within range
+        ->where(function ($query) use ($now, $end) {
+            $query->whereNull('termination_date')
+                ->orWhereBetween('termination_date', [$now, $end]);
+        })
+            ->where(function ($query) use ($now, $end, $includeExpired) {
                 $query->whereNotNull('expiration_date')
                     // Handle expiring licenses without termination dates
-                    ->where(function ($query) use ($days, $includeExpired) {
+                    ->where(function ($query) use ($now, $end, $includeExpired) {
                         $query->whereNull('termination_date')
-                            ->whereBetween('expiration_date', [Carbon::now(), Carbon::now()->addDays($days)])
-                            // include expired licenses if requested
-                            ->when($includeExpired, function ($query) {
-                                $query->orwhereDate('expiration_date', '<=', Carbon::now());
+                            ->whereBetween('expiration_date', [$now, $end])
+                            //include expired licenses if requested
+                            ->when($includeExpired, function ($query) use ($now, $end) {
+                                $query->orwhereDate('expiration_date', '<=', $now);
                             });
                     })
                     // Handle expiring licenses with termination dates in the future
-                    ->orWhere(function ($query) use ($days) {
-                        $query->whereBetween('termination_date', [Carbon::now(), Carbon::now()->addDays($days)]);
+                    ->orWhere(function ($query) use ($now, $end) {
+                        $query->whereBetween('termination_date', [$now, $end]);
                     });
             });
     }
