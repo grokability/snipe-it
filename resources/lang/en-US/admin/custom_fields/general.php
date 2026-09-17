@@ -35,6 +35,8 @@ return [
     'req' => 'Req.',
     'used_by_models' => 'Used By Models',
     'order' => 'Order',
+    'group' => 'Group',
+    'group_help' => 'Optional. Fields sharing the same group name are displayed together under that heading. Leave blank to display this field ungrouped.',
     'create_fieldset' => 'New Fieldset',
     'update_fieldset' => 'Update Fieldset',
     'fieldset_does_not_exist' => 'Fieldset :id does not exist',

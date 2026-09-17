@@ -188,10 +188,15 @@
 
 
                                 @if (($asset->model) && ($asset->model->fieldset))
-                                    @foreach($asset->model->fieldset->fields as $field)
-                                        <x-data-row :label="$field->name">
-                                            <x-info-element.customfield :item="$asset" :field="$field"/>
-                                        </x-data-row>
+                                    @foreach($asset->model->fieldset->groupedFields() as $group => $fields)
+                                        @if ($group)
+                                            <dt class="custom-field-group-heading">{{ $group }}</dt>
+                                        @endif
+                                        @foreach($fields as $field)
+                                            <x-data-row :label="$field->name">
+                                                <x-info-element.customfield :item="$asset" :field="$field"/>
+                                            </x-data-row>
+                                        @endforeach
                                     @endforeach
                                 @endif
 

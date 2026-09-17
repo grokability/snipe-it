@@ -41,6 +41,7 @@
                         <th scope="col" class="col-md-2">{{ trans('admin/custom_fields/general.field_element') }}</th>
                         <th scope="col" class="col-md-1">{{ trans('admin/custom_fields/general.encrypted') }}</th>
                         <th scope="col" class="col-md-1">{{ trans('admin/custom_fields/general.required') }}</th>
+                        <th scope="col" class="col-md-2">{{ trans('admin/custom_fields/general.group') }}</th>
                         <th scope="col" class="col-md-1"><span class="sr-only">{{ trans('button.remove') }}</span></th>
                     </tr>
                     </thead>
@@ -81,6 +82,17 @@
                             </td>
                             <td>
                                 @can('update', $custom_fieldset)
+                                    <form method="post" action="{{ route('fields.group', [$custom_fieldset->id, $field->id]) }}" class="form-inline">
+                                        @csrf
+                                        <input type="text" class="form-control input-sm" name="group" maxlength="255" value="{{ $field->pivot->group }}" aria-label="{{ trans('admin/custom_fields/general.group') }}" placeholder="{{ trans('admin/custom_fields/general.group') }}">
+                                        <button type="submit" class="btn btn-link" data-tooltip="true" title="{{ trans('general.save') }}" aria-label="{{ trans('general.save') }}"><i class="fa fa-save" aria-hidden="true"></i></button>
+                                    </form>
+                                @else
+                                    {{ $field->pivot->group }}
+                                @endcan
+                            </td>
+                            <td>
+                                @can('update', $custom_fieldset)
                                     <form method="post" action="{{ route('fields.disassociate', [$field, $custom_fieldset->id]) }}">
                                         @csrf
                                         <button type="submit" class="btn btn-sm btn-danger" data-tooltip="true" title="{{ trans('general.remove_customfield_association') }}"><i class="fa fa-minus icon-white" aria-hidden="true"></i></button>
@@ -94,7 +106,7 @@
                     @can('update', $custom_fieldset)
                         <tfoot>
                         <tr>
-                            <td colspan="8">
+                            <td colspan="9">
                                 <form method="POST" action="{{ route('fieldsets.associate', $custom_fieldset->id) }}" accept-charset="UTF-8" class="form-inline" id="ordering">
                                     @csrf
 
@@ -120,6 +132,11 @@
                                             <input type="checkbox" name="required" value="on" @checked(old('required'))>
                                             <span style="padding-left: 10px;">{{ trans('admin/custom_fields/general.required') }}</span>
                                         </label>
+                                    </div>
+
+                                    <div class="form-group" style="padding-left: 10px;">
+                                        <label for="group" class="sr-only">{{ trans('admin/custom_fields/general.group') }}</label>
+                                        <input type="text" class="form-control" maxlength="255" name="group" value="{{ old('group') }}" placeholder="{{ trans('admin/custom_fields/general.group') }}" data-tooltip="true" title="{{ trans('admin/custom_fields/general.group_help') }}">
                                     </div>
 
                                     <span style="padding-left: 10px;">

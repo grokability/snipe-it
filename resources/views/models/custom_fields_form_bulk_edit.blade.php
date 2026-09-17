@@ -21,18 +21,25 @@
 
 @foreach($models as $model)
 @if (($model) && ($model->fieldset))
-    @foreach($model->fieldset->fields AS $field)
+    @foreach($model->fieldset->groupedFields() as $group => $groupFields)
+        @php $groupHeadingPrinted = false; @endphp
+    @foreach($groupFields AS $field)
         @php
         //prevents some duplicate queries - open to a better way of skipping dupes in output
-        //its ugly, but if we'd rather deal with duplicate queries we can get rid of this. 
+        //its ugly, but if we'd rather deal with duplicate queries we can get rid of this.
             if (in_array($field->db_column_name(), $fields)) {
                 $duplicate = true;
-                continue; 
+                continue;
             } else {
                 $duplicate = false;
             }
-            $fields[] = $field->db_column_name(); 
+            $fields[] = $field->db_column_name();
         @endphp
+
+        @if ($group && !$groupHeadingPrinted)
+            <x-form.legend>{{ $group }}</x-form.legend>
+            @php $groupHeadingPrinted = true; @endphp
+        @endif
 
     <div class="form-group{{ $errors->has($field->db_column_name()) ? ' has-error' : '' }}">
       <label for="{{ $field->db_column_name() }}" class="col-md-3 control-label">{{ $field->name }} </label>
@@ -210,6 +217,7 @@
             </label>
         </div>
     </div>
+    @endforeach
     @endforeach
 @endif
  @endforeach
