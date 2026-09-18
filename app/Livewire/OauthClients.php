@@ -134,7 +134,7 @@ class OauthClients extends Component
 
         $this->validate([
             'name' => 'required|string|max:255',
-            'redirect' => 'required|url|max:255',
+            'redirect' => 'required|string|max:255',
         ]);
 
         app(ClientRepository::class)->create(
