@@ -520,6 +520,20 @@ class ValidationServiceProvider extends ServiceProvider
             return true;
         });
 
+        Validator::extend('multi_listboxes', function ($attribute, $value, $parameters, $validator) {
+            $field = CustomField::where('db_column', $attribute)->first();
+            $options = $field->formatFieldValuesAsArray();
+
+            if (is_array($value)) {
+                $invalid = array_diff($value, $options);
+                if (count($invalid) > 0) {
+                    return false;
+                }
+            }
+
+            return true;
+        });
+
         // Validates that a radio button option exists
         Validator::extend('radio_buttons', function ($attribute, $value) {
             $field = CustomField::where('db_column', $attribute)->first();

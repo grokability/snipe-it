@@ -185,6 +185,18 @@ class CustomFieldFactory extends Factory
         });
     }
 
+    public function testMultiListbox()
+    {
+        return $this->state(function () {
+            return [
+                'name' => 'Test Multi Listbox',
+                'help_text' => 'This is a sample multi listbox.',
+                'field_values' => "One\r\nTwo\r\nThree",
+                'element' => 'multi-listbox',
+            ];
+        });
+    }
+
     public function testRadio()
     {
         return $this->state(function () {

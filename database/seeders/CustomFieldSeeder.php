@@ -35,6 +35,7 @@ class CustomFieldSeeder extends Seeder
         CustomField::factory()->count(1)->macAddress()->create();
         CustomField::factory()->count(1)->testEncrypted()->create();
         CustomField::factory()->count(1)->testCheckbox()->create();
+        CustomField::factory()->count(1)->testMultiListbox()->create();
         CustomField::factory()->count(1)->testRadio()->create();
         CustomField::factory()->count(1)->testMarkdownTextarea()->create();
         CustomField::factory()->count(1)->testDate()->create();

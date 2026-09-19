@@ -785,7 +785,7 @@ class AssetsController extends Controller
                         continue;
                     }
                 }
-                if ($field->element == 'checkbox') {
+                if (in_array($field->element, ['checkbox', 'multi-listbox'], true)) {
                     if (is_array($field_val)) {
                         $field_val = implode(',', $field_val);
                     }
@@ -1050,7 +1050,7 @@ class AssetsController extends Controller
 
                 $field_val = $request->input($field->db_column, null);
 
-                if ($field->element === 'checkbox' && is_array($field_val)) {
+                if (in_array($field->element, ['checkbox', 'multi-listbox'], true) && is_array($field_val)) {
                     $field_val = implode(',', $field_val);
                 }
 
