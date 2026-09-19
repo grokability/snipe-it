@@ -60,7 +60,30 @@ class CustomFieldset extends SnipeModel
      */
     public function fields()
     {
-        return $this->belongsToMany(CustomField::class)->withPivot(['required', 'order'])->orderBy('pivot_order');
+        return $this->belongsToMany(CustomField::class)->withPivot(['required', 'order', 'group'])->orderBy('pivot_order');
+    }
+
+    /**
+     * Groups this fieldset's fields for display, keyed by the pivot 'group'
+     * label ('' for ungrouped fields, since Collection::groupBy() can't use a
+     * real null array key). Named groups keep their first-appearance order
+     * from pivot_order; ungrouped fields are always moved to the front,
+     * regardless of where they fall in pivot_order, so they never render
+     * directly beneath — and read as part of — a preceding group's heading.
+     *
+     * @since open
+     *
+     * @return \Illuminate\Support\Collection<string, \Illuminate\Support\Collection<int, CustomField>>
+     */
+    public function groupedFields()
+    {
+        $grouped = $this->fields->groupBy(fn (CustomField $field) => $field->pivot->group ?: '');
+
+        if ($grouped->has('')) {
+            $grouped->prepend($grouped->pull(''), '');
+        }
+
+        return $grouped;
     }
 
     /**

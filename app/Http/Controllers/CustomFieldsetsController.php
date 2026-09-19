@@ -210,7 +210,11 @@ class CustomFieldsetsController extends Controller
                 }
             }
 
-            $results = $set->fields()->attach($request->input('field_id'), ['required' => ($request->input('required') == 'on'), 'order' => (int) $request->input('order', 1)]);
+            $results = $set->fields()->attach($request->input('field_id'), [
+                'required' => ($request->input('required') == 'on'),
+                'order' => (int) $request->input('order', 1),
+                'group' => $request->input('group') ?: null,
+            ]);
 
             return redirect()->route('fieldsets.show', [$id])->with('success', trans('admin/custom_fields/message.field.create.assoc_success'));
         }
@@ -254,5 +258,22 @@ class CustomFieldsetsController extends Controller
 
         return redirect()->route('fieldsets.show', ['fieldset' => $fieldset_id])
             ->with('success', trans('Field successfully set to optional'));
+    }
+
+    /**
+     * Set (or clear) the display group for a field within a fieldset.
+     *
+     * @since open
+     */
+    public function updateGroup(Request $request, $fieldset_id, $field_id): RedirectResponse
+    {
+        $this->authorize('update', CustomField::class);
+        $field = CustomField::findOrFail($field_id);
+        $fieldset = CustomFieldset::findOrFail($fieldset_id);
+        $fields[$field->id] = ['group' => $request->input('group') ?: null];
+        $fieldset->fields()->syncWithoutDetaching($fields);
+
+        return redirect()->route('fieldsets.show', ['fieldset' => $fieldset_id])
+            ->with('success', trans('admin/custom_fields/message.field.group.update_success'));
     }
 }
