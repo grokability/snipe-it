@@ -48,6 +48,7 @@ class CustomFieldsTransformer
             'field_values_array' => ($field->field_values) ? explode("\r\n", e($field->field_values)) : null,
             'type' => e($field->element),
             'required' => (($field->pivot) && ($field->pivot->required == '1')) ? true : false,
+            'group' => ($field->pivot && $field->pivot->group) ? e($field->pivot->group) : null,
             'display_in_user_view' => ($field->display_in_user_view == '1') ? true : false,
             'auto_add_to_fieldsets' => ($field->auto_add_to_fieldsets == '1') ? true : false,
             'show_in_listview' => ($field->show_in_listview == '1') ? true : false,

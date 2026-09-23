@@ -18,6 +18,10 @@ return [
             'success' => 'Field updated successfully.',
         ],
 
+        'group' => [
+            'update_success' => 'Field group updated successfully.',
+        ],
+
         'delete' => [
             'confirm' => 'Are you sure you wish to delete this field?',
             'error' => 'There was an issue deleting the field. Please try again.',

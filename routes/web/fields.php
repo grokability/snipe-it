@@ -24,6 +24,12 @@ Route::group(['prefix' => 'fields', 'middleware' => ['auth']], function () {
         ->name('fields.optional');
 
     Route::post(
+        'group/{fieldset_id}/{field_id}',
+        [CustomFieldsetsController::class, 'updateGroup']
+    )->where(['fieldset_id' => '[0-9]+', 'field_id' => '[0-9]+'])
+        ->name('fields.group');
+
+    Route::post(
         '{field_id}/fieldset/{fieldset_id}/disassociate',
         [CustomFieldsController::class, 'deleteFieldFromFieldset']
     )->where(['field_id' => '[0-9]+', 'fieldset_id' => '[0-9]+'])

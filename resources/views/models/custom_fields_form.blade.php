@@ -8,7 +8,11 @@
             {{ trans('admin/custom_fields/general.custom_fields') }}
         </x-form.legend>
 
-  @foreach($model->fieldset->fields as $field)
+  @foreach($model->fieldset->groupedFields() as $group => $fields)
+    @if ($group)
+        <x-form.legend>{{ $group }}</x-form.legend>
+    @endif
+    @foreach($fields as $field)
     @if (!isset($show_custom_fields_type) || ($field->displayFieldInCurrentForm($show_custom_fields_type)))
 
 
@@ -201,6 +205,7 @@
 
     </div>
             @endif
+    @endforeach
   @endforeach
     </fieldset>
     </div>
