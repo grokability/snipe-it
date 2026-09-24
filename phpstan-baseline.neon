@@ -2707,6 +2707,12 @@ parameters:
 			path: app/Http/Controllers/DepreciationsController.php
 
 		-
+			message: '#^Access to an undefined property App\\Models\\Depreciation\:\:\$depreciation_method\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/DepreciationsController.php
+
+		-
 			message: '#^PHPDoc tag @param references unknown parameter\: \$depreciationId$#'
 			identifier: parameter.notFound
 			count: 3
@@ -7143,13 +7149,13 @@ parameters:
 		-
 			message: '#^Access to an undefined property App\\Models\\Depreciable\:\:\$purchase_cost\.$#'
 			identifier: property.notFound
-			count: 8
+			count: 11
 			path: app/Models/Depreciable.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\Depreciable\:\:\$purchase_date\.$#'
 			identifier: property.notFound
-			count: 4
+			count: 5
 			path: app/Models/Depreciable.php
 
 		-
