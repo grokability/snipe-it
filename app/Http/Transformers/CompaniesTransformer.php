@@ -48,6 +48,7 @@ class CompaniesTransformer
                 ] : null,
                 'tag_color' => ($company->tag_color != '') ? e($company->tag_color) : null,
                 'notes' => Helper::parseEscapedMarkedownInline($company->notes),
+                'webhook_selected' => $company->webhook_selected,
                 'created_at' => Helper::getFormattedDateObject($company->created_at, 'datetime'),
                 'updated_at' => Helper::getFormattedDateObject($company->updated_at, 'datetime'),
             ];

@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Helpers\Helper;
 use App\Models\Setting;
+use App\Models\Company;
 use App\Rules\ExternalUrl;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Http;
@@ -14,7 +15,7 @@ use Illuminate\Support\Str;
 use Livewire\Component;
 use Osama\LaravelTeamsNotification\TeamsNotification;
 
-class SlackSettingsForm extends Component
+class IntegrationSettingsForm extends Component
 {
     public $webhook_endpoint;
 
@@ -38,9 +39,10 @@ class SlackSettingsForm extends Component
 
     public array $webhook_text;
 
-    public Setting $setting;
+    public ?Company $company = null;
 
     public $save_button;
+    public array $savedWebhook = [];
 
     public $webhook_endpoint_rules;
 
@@ -79,8 +81,12 @@ class SlackSettingsForm extends Component
         }
     }
 
-    public function mount()
+    public function mount(?Company $company = null)
     {
+        if ($company?->exists) {
+            $this->company = $company;
+        }
+
         $this->webhook_text = [
             'slack' => [
                 'name' => trans('admin/settings/general.slack'),
@@ -108,23 +114,15 @@ class SlackSettingsForm extends Component
             ],
         ];
 
-        $this->setting = Setting::getSettings();
-        $this->save_button = trans('general.save');
-        if (!$this->webhook_selected) {
-            $this->webhook_selected = 'slack';
-        }
-
-
-        $this->webhook_options = $this->setting->webhook_selected ? $this->setting->webhook_selected : 'slack';
-
-
+        $this->loadWebhookSettings();
         $this->updatedWebhookSelected();
-        $this->webhook_endpoint = $this->setting->webhook_endpoint;
-        $this->webhook_channel = $this->setting->webhook_channel;
-        $this->webhook_botname = $this->setting->webhook_botname;
+
+        $this->save_button = trans('general.save');
+
+
         $this->teams_webhook_deprecated = !Str::contains($this->webhook_endpoint, 'workflows'); // consider moving this to webhook_link updated? (updatedWebhookLink?)
 
-        if ($this->setting->webhook_endpoint != null && $this->setting->webhook_channel != null) {
+        if ($this->webhook_endpoint != null && $this->webhook_channel != null) {
             $this->isDisabled = '';
         }
         if ($this->webhook_selected === 'microsoft' && $this->teams_webhook_deprecated) { //since this is URL-aware, maybe also move this?
@@ -134,7 +132,7 @@ class SlackSettingsForm extends Component
 
     public function updated($field)
     {
-        //anything changes; then clear the succcess message (and error message)
+        //anything changes; then clear the success message (and error message)
         $this->success = null;
         $this->error = null;
         $this->validateOnly($field);
@@ -146,20 +144,41 @@ class SlackSettingsForm extends Component
         $this->webhook_name = $this->webhook_text[$this->webhook_selected]['name'];
         $this->webhook_icon = $this->webhook_text[$this->webhook_selected]['icon'];
         $this->webhook_placeholder = $this->webhook_text[$this->webhook_selected]['placeholder'];
-        $this->webhook_endpoint = null; // TODO - do we really want to blank this?
         $this->webhook_link = $this->webhook_text[$this->webhook_selected]['link'];
+
+        if ($this->webhook_selected === $this->savedWebhook['selected']) {
+            $this->webhook_endpoint = $this->savedWebhook['endpoint'];
+            $this->webhook_channel = $this->savedWebhook['channel'];
+            $this->webhook_botname = $this->savedWebhook['botname'];
+        } else {
+            $this->webhook_endpoint = null;
+            $this->webhook_channel = null;
+            $this->webhook_botname = null;
+
+            if (in_array($this->webhook_selected, ['microsoft', 'google'])) {
+                $this->webhook_channel = '#NA';
+            }
+        }
         if ($this->webhook_selected != 'slack') { // TODO: hrm. Wouldn't we want to test all of them? Or at least some of them? Maybe not "generic webhook"?
             $this->isDisabled = '';
             $this->save_button = trans('general.save');
         }
-        if ($this->webhook_selected == 'microsoft' || $this->webhook_selected == 'google') {
-            $this->webhook_channel = '#NA';
-        }
     }
 
-    public function updatedwebhookEndpoint()
+    public function updatedWebhookEndpoint()
     {
-        $this->teams_webhook_deprecated = !Str::contains($this->webhook_endpoint, 'workflows');
+        if ($this->webhook_selected !== 'microsoft') {
+            $this->teams_webhook_deprecated = false;
+            $this->warning = null;
+            return;
+        }
+
+        $this->teams_webhook_deprecated = filled($this->webhook_endpoint)
+            && !Str::contains($this->webhook_endpoint, 'workflows');
+
+        $this->warning = $this->teams_webhook_deprecated
+            ? trans('admin/settings/message.webhook.ms_teams_deprecation')
+            : null;
     }
 
     public function render()
@@ -169,7 +188,7 @@ class SlackSettingsForm extends Component
             $this->save_button = trans('admin/settings/general.webhook_presave');
         }
 
-        return view('livewire.slack-settings-form');
+        return view('livewire.integration-settings-form');
 
     }
 
@@ -182,11 +201,14 @@ class SlackSettingsForm extends Component
             $this->webhook_endpoint = '';
             $this->webhook_channel = '';
             $this->webhook_botname = '';
-            $this->setting->webhook_endpoint = '';
-            $this->setting->webhook_channel = '';
-            $this->setting->webhook_botname = '';
 
-            $this->setting->save();
+            $source = $this->webhookSource();
+
+            $source->webhook_endpoint = '';
+            $source->webhook_channel = '';
+            $source->webhook_botname = '';
+
+            $source->save();
 
             $this->success = trans('admin/settings/message.update.success');
         }
@@ -198,13 +220,20 @@ class SlackSettingsForm extends Component
             $this->error = trans('general.feature_disabled');
         } else {
             $this->validate();
+            $source = $this->webhookSource();
 
-            $this->setting->webhook_selected = $this->webhook_selected;
-            $this->setting->webhook_endpoint = $this->webhook_endpoint;
-            $this->setting->webhook_channel = $this->webhook_channel;
-            $this->setting->webhook_botname = $this->webhook_botname;
+            $source->webhook_selected = $this->webhook_selected;
+            $source->webhook_endpoint = $this->webhook_endpoint;
+            $source->webhook_channel = $this->webhook_channel;
+            $source->webhook_botname = $this->webhook_botname;
+            $source->save();
 
-            $this->setting->save();
+            $this->savedWebhook = [
+                'selected' => $this->webhook_selected,
+                'endpoint' => $this->webhook_endpoint,
+                'channel' => $this->webhook_channel,
+                'botname' => $this->webhook_botname,
+            ];
 
             $this->success = trans('admin/settings/message.update.success');
         }
@@ -267,7 +296,7 @@ class SlackSettingsForm extends Component
                         ])->withOptions(['allow_redirects' => false])
                             ->post($this->webhook_endpoint, $payload)/*->throw()*/
                         ;
-                        $status_code = $response->getStatusCode();
+                        $status_code = $response->status();
                     }
 
                     if ($status_code >= 300 && $status_code < 400) {
@@ -315,5 +344,28 @@ class SlackSettingsForm extends Component
         if (!$executed) {
             $this->addError('connection', trans('admin/settings/general.rate_limited'));
         }
+    }
+
+    protected function webhookSource(): Company|Setting
+    {
+        return $this->company?->exists ? $this->company : Setting::getSettings();
+    }
+
+    protected function loadWebhookSettings(): void
+    {
+        $source = $this->webhookSource();
+     
+        $this->webhook_selected = $source->webhook_selected ?: 'slack';
+        $this->webhook_endpoint = $source->webhook_endpoint;
+        $this->webhook_channel = $source->webhook_channel;
+        $this->webhook_botname = $source->webhook_botname;
+
+        $this->savedWebhook = [
+            'selected' => $this->webhook_selected,
+            'endpoint' => $this->webhook_endpoint,
+            'channel' => $this->webhook_channel,
+            'botname' => $this->webhook_botname,
+        ];
+
     }
 }

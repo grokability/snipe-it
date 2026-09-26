@@ -116,6 +116,10 @@ final class Company extends SnipeModel
         'email',
         'tag_color',
         'notes',
+        'webhook_selected',
+        'webhook_endpoint',
+        'webhook_channel',
+        'webhook_botname',
     ];
 
     /**

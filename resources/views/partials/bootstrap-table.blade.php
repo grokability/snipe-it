@@ -3716,6 +3716,30 @@
         }
     }
 
+    function companyWebhookActionsFormatter(value, row) {
+        return '<a href="{{ config('app.url') }}/companies/' + row.id + '/edit" ' +
+            'class="btn btn-sm btn-warning" ' +
+            'title="Edit">' +
+            '<i class="fas fa-pencil" aria-hidden="true"></i>' +
+            '<span class="sr-only">{{ trans('general.edit') }}</span>' +
+            '</a>';
+    }
+    function companyWebhookIntegrationFormatter(value) {
+        switch (value) {
+            case 'slack':
+                return '<i class="fa-brands fa-slack fa-lg" title="Slack"></i>';
+
+            case 'google':
+                return '<i class="fa-brands fa-google fa-lg" title="Google Chat"></i>';
+
+            case 'microsoft':
+                return '<i class="fa-brands fa-microsoft fa-lg" title="Microsoft Teams"></i>';
+
+            default:
+                return '<i class="fa-solid fa-webhook fa-lg" title="Webhook"></i>';
+        }
+    }
+
     // Renders a single company tag. `isInherited` is decided by the caller —
     // it's true only when (a) we're on the companies show page (viewing context
     // is set), (b) the row didn't get included via direct membership, and (c)

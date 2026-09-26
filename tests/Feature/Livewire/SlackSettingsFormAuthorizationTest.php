@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Livewire;
 
-use App\Livewire\SlackSettingsForm;
+use App\Livewire\IntegrationSettingsForm;
 use App\Models\User;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -23,7 +23,7 @@ class SlackSettingsFormAuthorizationTest extends TestCase
 
         $initialObLevel = ob_get_level();
 
-        Livewire::test(SlackSettingsForm::class)
+        Livewire::test(IntegrationSettingsForm::class)
             ->assertStatus(200);
 
         // The slack-settings-form view opens @section('content') at line 13
@@ -41,7 +41,7 @@ class SlackSettingsFormAuthorizationTest extends TestCase
     {
         $this->actingAs(User::factory()->create());
 
-        Livewire::test(SlackSettingsForm::class)
+        Livewire::test(IntegrationSettingsForm::class)
             ->assertStatus(403);
     }
 }

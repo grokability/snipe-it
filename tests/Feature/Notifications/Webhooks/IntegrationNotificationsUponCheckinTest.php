@@ -10,6 +10,7 @@ use App\Models\Category;
 use App\Models\Component;
 use App\Models\LicenseSeat;
 use App\Models\Location;
+use App\Models\Setting;
 use App\Models\User;
 use App\Notifications\CheckinAccessoryNotification;
 use App\Notifications\CheckinAssetNotification;
@@ -26,7 +27,7 @@ use PHPUnit\Framework\Attributes\Group;
 use Tests\TestCase;
 
 #[Group('notifications')]
-class SlackNotificationsUponCheckinTest extends TestCase
+class IntegrationNotificationsUponCheckinTest extends TestCase
 {
     protected function setUp(): void
     {
@@ -212,7 +213,7 @@ class SlackNotificationsUponCheckinTest extends TestCase
     {
         $this->settings->enableSlackWebhook();
 
-        $notification = $createNotification();
+        $notification = $createNotification(Setting::getSettings());
 
         $this->assertInstanceOf(
             SlackMessage::class,
@@ -225,7 +226,7 @@ class SlackNotificationsUponCheckinTest extends TestCase
     {
         $this->settings->enableGoogleChatWebhook();
 
-        $notification = $createNotification();
+        $notification = $createNotification(Setting::getSettings());
 
         $this->assertInstanceOf(
             GoogleChatMessage::class,
@@ -238,7 +239,7 @@ class SlackNotificationsUponCheckinTest extends TestCase
     {
         $this->settings->enableMicrosoftTeamsWebhook();
 
-        $notification = $createNotification();
+        $notification = $createNotification(Setting::getSettings());
 
         $message = $notification->toMicrosoftTeams();
 
@@ -252,42 +253,42 @@ class SlackNotificationsUponCheckinTest extends TestCase
     {
         return [
             'Asset' => [
-                fn() => new CheckinAssetNotification(
+                fn($webhookSource) => new CheckinAssetNotification(
                     Asset::factory()->create(),
                     User::factory()->create(),
                     User::factory()->superuser()->create(),
                     null,
-                    '',
+                    $webhookSource,
                 ),
             ],
 
             'Accessory' => [
-                fn() => new CheckinAccessoryNotification(
+                fn($webhookSource) => new CheckinAccessoryNotification(
                     Accessory::factory()->create(),
                     User::factory()->create(),
                     User::factory()->superuser()->create(),
                     null,
-                    '',
+                    $webhookSource,
                 ),
             ],
 
             'Component' => [
-                fn() => new CheckinComponentNotification(
+                fn($webhookSource) => new CheckinComponentNotification(
                     Component::factory()->create(),
                     User::factory()->create(),
                     User::factory()->superuser()->create(),
                     null,
-                    '',
+                    $webhookSource,
                 ),
             ],
 
             'License seat' => [
-                fn() => new CheckinLicenseSeatNotification(
+                fn($webhookSource) => new CheckinLicenseSeatNotification(
                     LicenseSeat::factory()->create(),
                     User::factory()->create(),
                     User::factory()->superuser()->create(),
                     null,
-                    '',
+                    $webhookSource,
                 ),
             ],
         ];

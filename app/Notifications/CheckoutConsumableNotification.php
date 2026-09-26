@@ -5,6 +5,7 @@ namespace App\Notifications;
 use App\Models\Consumable;
 use App\Models\Setting;
 use App\Models\User;
+use App\Models\Company;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Channels\SlackWebhookChannel;
@@ -34,7 +35,8 @@ class CheckoutConsumableNotification extends Notification implements ShouldQueue
         public $target,
         public User $admin,
         public $acceptance,
-        public $note
+        public                 $note,
+        public Company|Setting $webhookSource,
     )
     {
         $this->qty = $item->checkout_qty;
@@ -48,17 +50,17 @@ class CheckoutConsumableNotification extends Notification implements ShouldQueue
     public function via()
     {
         $notifyBy = [];
-        if (Setting::getSettings()->webhook_selected == 'google' && Setting::getSettings()->webhook_endpoint) {
+        if ($this->webhookSource->webhook_selected == 'google' && $this->webhookSource->webhook_endpoint) {
 
             $notifyBy[] = GoogleChatChannel::class;
         }
 
-        if (Setting::getSettings()->webhook_selected == 'microsoft' && Setting::getSettings()->webhook_endpoint) {
+        if ($this->webhookSource->webhook_selected == 'microsoft' && $this->webhookSource->webhook_endpoint) {
 
             $notifyBy[] = MicrosoftTeamsChannel::class;
         }
 
-        if (Setting::getSettings()->webhook_selected == 'slack' || Setting::getSettings()->webhook_selected == 'general') {
+        if ($this->webhookSource->webhook_selected == 'slack' || $this->webhookSource->webhook_selected == 'general') {
             $notifyBy[] = SlackWebhookChannel::class;
         }
 
@@ -71,8 +73,8 @@ class CheckoutConsumableNotification extends Notification implements ShouldQueue
         $admin = $this->admin;
         $item = $this->item;
         $note = $this->note;
-        $botname = (Setting::getSettings()->webhook_botname) ? Setting::getSettings()->webhook_botname : 'Snipe-Bot';
-        $channel = (Setting::getSettings()->webhook_channel) ? Setting::getSettings()->webhook_channel : '';
+        $botname = ($this->webhookSource->webhook_botname) ? $this->webhookSource->webhook_botname : 'Snipe-Bot';
+        $channel = ($this->webhookSource->webhook_channel) ? $this->webhookSource->webhook_channel : '';
 
         $fields = [
             trans('general.to') => '<'.$target->present()->viewUrl().'|'.$target->display_name.'>',
@@ -105,9 +107,9 @@ class CheckoutConsumableNotification extends Notification implements ShouldQueue
         $item = $this->item;
         $note = $this->note;
 
-        if (! Str::contains(Setting::getSettings()->webhook_endpoint, 'workflows')) {
+        if (!Str::contains($this->webhookSource->webhook_endpoint, 'workflows')) {
             return MicrosoftTeamsMessage::create()
-                ->to(Setting::getSettings()->webhook_endpoint)
+                ->to($this->webhookSource->webhook_endpoint)
                 ->type('success')
                 ->addStartGroupToSection('activityTitle')
                 ->title(trans('mail.Consumable_checkout_notification'))
@@ -138,7 +140,7 @@ class CheckoutConsumableNotification extends Notification implements ShouldQueue
         $note = $this->note;
 
         return GoogleChatMessage::create()
-            ->to(Setting::getSettings()->webhook_endpoint)
+            ->to($this->webhookSource->webhook_endpoint)
             ->card(
                 Card::create()
                     ->header(

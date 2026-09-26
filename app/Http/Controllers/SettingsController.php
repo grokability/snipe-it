@@ -525,11 +525,11 @@ class SettingsController extends Controller
      *
      * @since [v1.0]
      */
-    public function getSlack(): View
+    public function getIntegrations(): View
     {
         $setting = Setting::getSettings();
 
-        return view('settings.slack', compact('setting'));
+        return view('settings.integrations', compact('setting'));
     }
 
     /**

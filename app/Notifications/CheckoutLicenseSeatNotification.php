@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Models\Company;
 use App\Models\License;
 use App\Models\LicenseSeat;
 use App\Models\Setting;
@@ -32,10 +33,12 @@ class CheckoutLicenseSeatNotification extends Notification implements ShouldQueu
 
     public $target;
 
+
+
     /**
      * Create a new notification instance.
      */
-    public function __construct(LicenseSeat $licenseSeat, $checkedOutTo, User $checkedOutBy, $acceptance, $note)
+    public function __construct(LicenseSeat $licenseSeat, $checkedOutTo, User $checkedOutBy, $acceptance, $note, public Company|Setting $webhookSource)
     {
         $this->item = $licenseSeat->license;
         $this->admin = $checkedOutBy;
@@ -53,16 +56,16 @@ class CheckoutLicenseSeatNotification extends Notification implements ShouldQueu
     {
         $notifyBy = [];
 
-        if (Setting::getSettings()->webhook_selected == 'google') {
+        if ($this->webhookSource->webhook_selected == 'google') {
 
             $notifyBy[] = GoogleChatChannel::class;
         }
-        if (Setting::getSettings()->webhook_selected == 'microsoft') {
+        if ($this->webhookSource->webhook_selected == 'microsoft') {
 
             $notifyBy[] = MicrosoftTeamsChannel::class;
         }
 
-        if (Setting::getSettings()->webhook_selected == 'slack' || Setting::getSettings()->webhook_selected == 'general') {
+        if ($this->webhookSource->webhook_selected == 'slack' || $this->webhookSource->webhook_selected == 'general') {
             $notifyBy[] = SlackWebhookChannel::class;
         }
 
@@ -75,8 +78,8 @@ class CheckoutLicenseSeatNotification extends Notification implements ShouldQueu
         $admin = $this->admin;
         $item = $this->item;
         $note = $this->note;
-        $botname = (Setting::getSettings()->webhook_botname) ? Setting::getSettings()->webhook_botname : 'Snipe-Bot';
-        $channel = (Setting::getSettings()->webhook_channel) ? Setting::getSettings()->webhook_channel : '';
+        $botname = ($this->webhookSource->webhook_botname) ? $this->webhookSource->webhook_botname : 'Snipe-Bot';
+        $channel = ($this->webhookSource->webhook_channel) ? $this->webhookSource->webhook_channel : '';
 
         $fields = [
             trans('general.to') => '<'.$target->present()->viewUrl().'|'.$target->display_name.'>',
@@ -110,9 +113,9 @@ class CheckoutLicenseSeatNotification extends Notification implements ShouldQueu
         $item = $this->item;
         $note = $this->note;
 
-        if (! Str::contains(Setting::getSettings()->webhook_endpoint, 'workflows')) {
+        if (!Str::contains($this->webhookSource->webhook_endpoint, 'workflows')) {
             return MicrosoftTeamsMessage::create()
-                ->to(Setting::getSettings()->webhook_endpoint)
+                ->to($this->webhookSource->webhook_endpoint)
                 ->type('success')
                 ->addStartGroupToSection('activityTitle')
                 ->title(trans('mail.License_Checkout_Notification'))
@@ -143,7 +146,7 @@ class CheckoutLicenseSeatNotification extends Notification implements ShouldQueu
         $note = $this->note;
 
         return GoogleChatMessage::create()
-            ->to(Setting::getSettings()->webhook_endpoint)
+            ->to($this->webhookSource->webhook_endpoint)
             ->card(
                 Card::create()
                     ->header(

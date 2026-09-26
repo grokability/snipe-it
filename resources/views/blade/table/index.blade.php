@@ -11,6 +11,9 @@
     'sort_order' => 'asc',
     'sort_field' => 'name',
     'aria_labelledby' => null,
+    'show_export' => true,
+    'show_columns' => true,
+    'no_matches' => null,
 ])
 
 @aware(['name'])
@@ -53,6 +56,8 @@
     data-search="{{ $show_search }}"
     data-footer-style="footerStyle"
     data-show-footer="true"
+    data-show-export="{{ $show_export ? 'true' : 'false' }}"
+    data-show-columns="{{ $show_columns ? 'true' : 'false' }}"
 
     @if ($presenter)
         data-columns="{{ $presenter }}"
@@ -66,7 +71,9 @@
         data-side-pagination="server"
         data-url="{!!  $api_url !!}"
     @endif
-
+    @if ($no_matches)
+        data-empty-message="{{ $no_matches }}"
+    @endif
     data-export-options='{
         "fileName": "{{ $export_filename }}",
         "ignoreColumn": ["actions","available_actions", "image","change","checkbox","checkincheckout","icon"]

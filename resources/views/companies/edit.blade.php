@@ -75,6 +75,15 @@
 
             <x-input.image-upload :item="$item" :imagePath="app('companies_upload_path')" />
 
+            @can('superuser')
+                <fieldset name="integration-settings">
+                    <x-form.legend help_text="{{trans('general.integration_settings_help')}}">
+                        {{ trans('general.integration_settings') }}
+                    </x-form.legend>
+                    <livewire:integration-settings-form :company="$item"/>
+                </fieldset>
+            @endcan
+
             <fieldset name="color-preferences">
                 <x-form.legend help_text="{{ trans('general.tag_color_help') }}">
                     {{ trans('general.tag_color') }}

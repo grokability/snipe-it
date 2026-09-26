@@ -321,13 +321,10 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'authorize:superuser
     Route::post('notifications', [SettingsController::class, 'postAlerts'])
         ->name('settings.alerts.save');
 
-    Route::get('slack', [SettingsController::class, 'getSlack'])
-        ->name('settings.slack.index')
+    Route::get('integrations', [SettingsController::class, 'getIntegrations'])
+        ->name('settings.integrations.index')
         ->breadcrumbs(fn (Trail $trail) => $trail->parent('settings.index')
-            ->push(trans('admin/settings/general.webhook_title'), route('settings.slack.index')));
-
-    Route::post('slack', [SettingsController::class, 'postSlack'])
-        ->name('settings.slack.save');
+            ->push(trans('admin/settings/general.webhook_title'), route('settings.integrations.index')));
 
     Route::get('adapters', [SettingsController::class, 'getAdapters'])
         ->name('settings.adapters.index')

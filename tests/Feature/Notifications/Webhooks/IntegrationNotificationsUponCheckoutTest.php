@@ -11,6 +11,7 @@ use App\Models\Component;
 use App\Models\Consumable;
 use App\Models\LicenseSeat;
 use App\Models\Location;
+use App\Models\Setting;
 use App\Models\User;
 use App\Notifications\CheckoutAccessoryNotification;
 use App\Notifications\CheckoutAssetNotification;
@@ -29,7 +30,7 @@ use NotificationChannels\GoogleChat\GoogleChatMessage;
 
 
 #[Group('notifications')]
-class SlackNotificationsUponCheckoutTest extends TestCase
+class IntegrationNotificationsUponCheckoutTest extends TestCase
 {
     protected function setUp(): void
     {
@@ -250,7 +251,7 @@ class SlackNotificationsUponCheckoutTest extends TestCase
     {
         $this->settings->enableSlackWebhook();
 
-        $notification = $createNotification();
+        $notification = $createNotification(Setting::getSettings());
 
         $this->assertInstanceOf(
             SlackMessage::class,
@@ -262,7 +263,7 @@ class SlackNotificationsUponCheckoutTest extends TestCase
     public function test_checkout_google_chat_notifications_can_be_built($createNotification)
     {
         $this->settings->enableGoogleChatWebhook();
-        $notification = $createNotification();
+        $notification = $createNotification(Setting::getSettings());
 
         $this->assertInstanceOf(
             GoogleChatMessage::class,
@@ -274,7 +275,7 @@ class SlackNotificationsUponCheckoutTest extends TestCase
     public function test_checkout_microsoft_teams_workflow_notifications_can_be_built($createNotification)
     {
         $this->settings->enableMicrosoftTeamsWebhook();
-        $notification = $createNotification();
+        $notification = $createNotification(Setting::getSettings());
 
         $message = $notification->toMicrosoftTeams();
 
@@ -288,52 +289,57 @@ class SlackNotificationsUponCheckoutTest extends TestCase
     {
         return [
             'Accessory' => [
-                fn() => new CheckoutAccessoryNotification(
+                fn($webhookSource) => new CheckoutAccessoryNotification(
                     Accessory::factory()->create(),
                     User::factory()->create(),
                     User::factory()->superuser()->create(),
                     null,
                     'Test note',
+                    $webhookSource,
                 ),
             ],
 
             'Asset' => [
-                fn() => new CheckoutAssetNotification(
+                fn($webhookSource) => new CheckoutAssetNotification(
                     Asset::factory()->create(),
                     User::factory()->create(),
                     User::factory()->superuser()->create(),
                     null,
                     'Test note',
+                    $webhookSource,
                 ),
             ],
 
             'Component' => [
-                fn() => new CheckoutComponentNotification(
+                fn($webhookSource) => new CheckoutComponentNotification(
                     Component::factory()->create(),
                     User::factory()->create(),
                     User::factory()->superuser()->create(),
                     null,
                     'Test note',
+                    $webhookSource,
                 ),
             ],
 
             'Consumable' => [
-                fn() => new CheckoutConsumableNotification(
+                fn($webhookSource) => new CheckoutConsumableNotification(
                     Consumable::factory()->create(),
                     User::factory()->create(),
                     User::factory()->superuser()->create(),
                     null,
                     'Test note',
+                    $webhookSource,
                 ),
             ],
 
             'License seat' => [
-                fn() => new CheckoutLicenseSeatNotification(
+                fn($webhookSource) => new CheckoutLicenseSeatNotification(
                     LicenseSeat::factory()->create(),
                     User::factory()->create(),
                     User::factory()->superuser()->create(),
                     null,
                     'Test note',
+                    $webhookSource,
                 ),
             ],
         ];

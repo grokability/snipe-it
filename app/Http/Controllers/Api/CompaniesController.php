@@ -96,7 +96,10 @@ class CompaniesController extends Controller
                 $companies->where('parent_id', '=', (int) $parentId);
             }
         }
-
+        if ($request->boolean('has_webhook')) {
+            $companies->whereNotNull('webhook_endpoint')
+                ->where('webhook_endpoint', '!=', '');
+        }
         // Make sure the offset and limit are actually integers and do not exceed system limits
         $total = $companies->count();
         $offset = ($request->input('offset') > $total) ? $total : app('api_offset_value');

@@ -162,7 +162,7 @@
           <div class="admin box box-default">
             <div class="box-body text-center">
               <h5>
-                <a href="{{ route('settings.slack.index') }}" class="settings_button">
+                <a href="{{ route('settings.integrations.index') }}" class="settings_button">
                   <x-icon type="hashtag" class="fa-4x"/>
                   <br><br>
                   <span class="name">{{ trans('admin/settings/general.integrations') }}</span>
