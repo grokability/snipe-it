@@ -23,7 +23,9 @@ use App\Observers\LocationObserver;
 use App\Observers\MaintenanceObserver;
 use App\Observers\SettingObserver;
 use App\Observers\UserObserver;
+use App\Support\Jalali\Jalali;
 use App\View\Composers\ImpersonationBannerComposer;
+use Illuminate\Support\Facades\Blade;
 use App\View\Composers\SidebarComposer;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Routing\UrlGenerator;
@@ -77,6 +79,11 @@ class AppServiceProvider extends ServiceProvider
         }
 
         Paginator::useBootstrap();
+
+        // Jalali (Persian) date presentation — single conversion point (Phase 1 §18)
+        Blade::directive('jalali', function ($expression) {
+            return "<?php echo \App\Support\Jalali\Jalali::format({$expression}); ?>";
+        });
 
         View::composer('layouts.default', SidebarComposer::class);
         View::composer('partials.impersonation-banner', ImpersonationBannerComposer::class);

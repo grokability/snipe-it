@@ -33,6 +33,7 @@
                     <x-tabs.accessory-tab count="{{ $user->accessories()->count() }}"/>
                     <x-tabs.consumable-tab count="{{ $user->consumables()->count() }}"/>
                     <x-tabs.maintenance-tab count="{{ $user->assignedMaintenances()->count() }}"/>
+                    <x-tabs.documents-tab count="{{ \App\Models\Document::forUser($user->id)->count() }}"/>
                     <x-tabs.files-tab :item="$user" count="{{ $user->uploads()->count() }}"/>
                     <x-tabs.eula-tab count="{{ $user->eulas()->count() }}"/>
                     <x-tabs.location-tab count="{{ $user->managedLocations()->count() }}"/>
@@ -516,6 +517,11 @@
                             :route="route('api.maintenances.index', ['checked_out_to_id' => $user->id, 'checked_out_to_type' => \App\Models\User::class])"
                             export_filename="export-maintenances-{{ str_slug($user->username) }}-{{ date('Y-m-d') }}"
                         />
+                    </x-tabs.pane>
+
+                    {{-- Documents tab (Phase 1 document engine) --}}
+                    <x-tabs.pane name="documents" :table_header="trans('documents.general.documents')">
+                        @include('documents/partials/user-documents', ['user' => $user])
                     </x-tabs.pane>
 
                     <x-tabs.pane name="managed-users" :count="$user->managesUsers()->count()">

@@ -155,6 +155,42 @@
                                         </x-form.help>
                                     </x-slot:input>
                                 </x-form.row>
+
+                                <!-- Documents (Phase 1 document engine) -->
+                                <x-form.checkbox-row
+                                    name="require_checkout_document"
+                                    :label="trans('admin/settings/general.require_checkout_document')"
+                                    :item="$setting"
+                                    :help_text="trans('admin/settings/general.require_checkout_document_help')"
+                                />
+
+                                <x-form.row
+                                    name="document_prefix_checkout"
+                                    :label="trans('admin/settings/general.document_prefixes')"
+                                >
+                                    <x-slot:input>
+                                        <div style="display: flex; gap: 6px;">
+                                            <x-input.text
+                                                name="document_prefix_checkout"
+                                                :value="old('document_prefix_checkout', $setting->document_prefix_checkout)"
+                                                placeholder="CO-"
+                                                style="width: 90px;"
+                                            />
+                                            <x-input.text
+                                                name="document_prefix_handover"
+                                                :value="old('document_prefix_handover', $setting->document_prefix_handover)"
+                                                placeholder="HO-"
+                                                style="width: 90px;"
+                                            />
+                                            <x-input.text
+                                                name="document_prefix_return"
+                                                :value="old('document_prefix_return', $setting->document_prefix_return)"
+                                                placeholder="RT-"
+                                                style="width: 90px;"
+                                            />
+                                        </div>
+                                    </x-slot:input>
+                                </x-form.row>
                             </fieldset>
 
                             <fieldset>

@@ -12,6 +12,13 @@
     {{-- Row: Report Links --}}
     <div class="row" style="padding-bottom: 10px;">
 
+        @can('view', \App\Models\Document::class)
+            <div class="col-md-3 col-sm-6"><a href="{{ route('documents.index') }}" class="btn btn-theme btn-block" style="margin-bottom: 10px;">{{ trans('documents.general.documents') }}</a></div>
+        @endcan
+        @can('view', \App\Models\DocumentTemplate::class)
+            <div class="col-md-3 col-sm-6"><a href="{{ route('documents.templates.index') }}" class="btn btn-theme btn-block" style="margin-bottom: 10px;">{{ trans('documents.general.templates') }}</a></div>
+        @endcan
+
         <div class="col-md-3 col-sm-6">
             <a href="{{ route('reports.activity') }}" class="btn btn-theme btn-block" style="margin-bottom: 10px; white-space: normal; text-align: left; padding-left: 15px;">
                 <x-icon type="history" class="fa-fw"/> {{ trans('general.activity_report') }}

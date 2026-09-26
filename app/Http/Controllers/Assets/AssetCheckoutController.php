@@ -169,6 +169,30 @@ class AssetCheckoutController extends Controller
 
             if ($checkedOut) {
 
+                // Phase 1 documents: generate a checkout document for user
+                // targets. The checkout is already committed — a document
+                // failure is surfaced, never fatal (spec §4).
+                if ($target instanceof User) {
+                    $checkoutLogId = \App\Models\Actionlog::where('item_type', Asset::class)
+                        ->where('item_id', $asset->id)
+                        ->where('target_id', $target->id)
+                        ->where('action_type', 'checkout')
+                        ->latest('id')
+                        ->value('id');
+
+                    try {
+                        $checkoutDocument = app(\App\Services\Documents\CheckoutDocumentHook::class)
+                            ->afterCheckout($asset, $target, $admin, $checkoutLogId);
+
+                        if ($checkoutDocument) {
+                            session()->flash('success', trans('admin/hardware/message.checkout.success')
+                                .' '.trans('documents.general.checkout_document_generated', ['number' => $checkoutDocument->number]));
+                        }
+                    } catch (\RuntimeException $e) {
+                        session()->flash('warning', trans('admin/hardware/message.checkout.success').' '.$e->getMessage());
+                    }
+                }
+
                 // When sign_in_place is requested and the target is a user, redirect to the
                 // acceptance/signature page so the user can sign in person. The signature is
                 // attributed to the target user, not the admin.

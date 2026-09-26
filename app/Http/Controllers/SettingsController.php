@@ -150,6 +150,13 @@ class SettingsController extends Controller
         $setting->require_checkinout_notes = $request->input('require_checkinout_notes', 0);
         $setting->manager_view_enabled = $request->input('manager_view_enabled', 0);
 
+        // Documents (Phase 1 document engine)
+        $setting->require_checkout_document = $request->input('require_checkout_document', 0);
+        $setting->document_prefix_checkout = $request->input('document_prefix_checkout') ?: 'CO-';
+        $setting->document_prefix_handover = $request->input('document_prefix_handover') ?: 'HO-';
+        $setting->document_prefix_return = $request->input('document_prefix_return') ?: 'RT-';
+        $setting->document_default_language = $request->input('document_default_language') ?: 'en';
+
         if ($request->input('per_page') != '') {
             $setting->per_page = $request->input('per_page');
         } else {

@@ -497,4 +497,56 @@ return [
 
     ],
 
+    'Documents' => [
+        [
+            'permission' => 'documents.view',
+            'display' => true,
+        ],
+        [
+            'permission' => 'documents.create',
+            'display' => true,
+        ],
+        [
+            'permission' => 'documents.edit',
+            'display' => true,
+        ],
+        [
+            'permission' => 'documents.delete',
+            'display' => true,
+        ],
+        [
+            'permission' => 'documents.sign',
+            'display' => true,
+        ],
+        [
+            'permission' => 'documents.cancel',
+            'display' => true,
+        ],
+        [
+            'permission' => 'documents.download',
+            'display' => true,
+        ],
+
+    ],
+
+    'Document Templates' => [
+        [
+            'permission' => 'document_templates.view',
+            'display' => true,
+        ],
+        [
+            'permission' => 'document_templates.create',
+            'display' => true,
+        ],
+        [
+            'permission' => 'document_templates.edit',
+            'display' => true,
+        ],
+        [
+            'permission' => 'document_templates.delete',
+            'display' => true,
+        ],
+
+    ],
+
 ];

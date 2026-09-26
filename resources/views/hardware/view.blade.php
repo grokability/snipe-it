@@ -59,6 +59,7 @@
                     <x-tabs.asset-tab count="{{ $asset->assignedAssets()->AssetsForShow()->count() }}"/>
                     <x-tabs.accessory-tab count="{{ $asset->assignedAccessories()->count() }}"/>
                     <x-tabs.maintenance-tab count="{{ $asset->maintenances->count() }}"/>
+                    <x-tabs.documents-tab count="{{ \App\Models\Document::forAsset($asset->id)->count() }}"/>
 
                     <x-tabs.nav-item
                         name="audits"
@@ -393,6 +394,12 @@
                         />
                     </x-tabs.pane>
                     <!-- end maintenances tab pane -->
+
+                    <!-- start documents tab pane (Phase 1 document engine) -->
+                    <x-tabs.pane name="documents" :table_header="trans('documents.general.documents')">
+                        @include('documents/partials/asset-documents', ['asset' => $asset])
+                    </x-tabs.pane>
+                    <!-- end documents tab pane -->
 
                     <!-- start audits tab pane -->
                     <x-tabs.pane name="audits">

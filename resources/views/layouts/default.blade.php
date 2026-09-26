@@ -759,8 +759,8 @@
                             </li>
                         @endcan
 
-                        @can('reports.view')
-                            <li class="treeview{{ (request()->is('reports*') ? ' active' : '') }}">
+                        @if (Gate::allows('reports.view') || Gate::allows('view', \App\Models\Document::class) || Gate::allows('view', \App\Models\DocumentTemplate::class))
+                            <li class="treeview{{ (request()->is('reports*', 'documents*', 'document-templates*') ? ' active' : '') }}">
 
                                 <a href="#" class="dropdown-toggle">
                                     <x-icon type="reports" class="fa-fw" />
@@ -769,6 +769,13 @@
                                 </a>
 
                                 <ul class="treeview-menu">
+                                    @can('view', \App\Models\Document::class)
+                                        <li @class(['active' => request()->is('documents*')])><a href="{{ route('documents.index') }}">{{ trans('documents.general.documents') }}</a></li>
+                                    @endcan
+                                    @can('view', \App\Models\DocumentTemplate::class)
+                                        <li @class(['active' => request()->is('document-templates*')])><a href="{{ route('documents.templates.index') }}">{{ trans('documents.general.templates') }}</a></li>
+                                    @endcan
+                                    @can('reports.view')
                                     <li {!! (request()->is('reports') ? ' class="active" aria-current="page"' : '') !!}>
                                         <a href="{{ route('reports.index') }}">
                                             {{ trans('general.list_all') }}
@@ -823,9 +830,10 @@
                                             {{ trans('general.accessory_report') }}
                                         </a>
                                     </li>
+                                    @endcan
                                 </ul>
                             </li>
-                        @endcan
+                        @endif
 
                         @can('viewRequestable', \App\Models\Asset::class)
                             <li{!! (request()->is('account/requestable-assets') ? ' class="active" aria-current="page"' : '') !!}>

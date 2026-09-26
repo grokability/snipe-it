@@ -29,6 +29,9 @@ class CustomAssetReportRequest extends Request
     public function rules()
     {
         return [
+            'output_format' => 'nullable|in:csv,document_pdf',
+            'document_template_version_id' => 'required_if:output_format,document_pdf|nullable|integer|exists:document_template_versions,id',
+            'document_assigned_to_id' => 'required_if:output_format,document_pdf|nullable|integer|exists:users,id',
             'assignment_status' => 'nullable|in:all,assigned,unassigned',
             'purchase_start' => 'date|date_format:Y-m-d|nullable',
             'purchase_end' => 'date|date_format:Y-m-d|nullable',

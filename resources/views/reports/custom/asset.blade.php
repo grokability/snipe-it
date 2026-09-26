@@ -44,6 +44,28 @@
         >
         {{csrf_field()}}
 
+        @can('create', \App\Models\Document::class)
+            <div class="box box-default">
+                <div class="box-header with-border"><h2 class="box-title">{{ trans('documents.general.print_documents') }}</h2></div>
+                <div class="box-body">
+                    <p>{{ trans('documents.general.report_print_help') }}</p>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label" for="output_format">{{ trans('documents.general.output_format') }}</label>
+                        <div class="col-md-7">
+                            <select name="output_format" id="output_format" class="form-control">
+                                <option value="csv" @selected(old('output_format', $template->options['output_format'] ?? 'csv') === 'csv')>{{ trans('documents.general.csv_report') }}</option>
+                                <option value="document_pdf" @selected(old('output_format', $template->options['output_format'] ?? '') === 'document_pdf')>{{ trans('documents.general.document_pdf') }}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group"><div class="col-md-7 col-md-offset-3">
+                        <x-documents.template-select :required="false" :selected="$template->options['document_template_version_id'] ?? null" />
+                    </div></div>
+                    <x-input.user-select :label="trans('documents.general.assignee')" name="document_assigned_to_id" id="document_assigned_to_id" wrapper-id="document_employee" :hide-new-button="true" :selected="old('document_assigned_to_id', $template->options['document_assigned_to_id'] ?? null)" />
+                </div>
+            </div>
+        @endcan
+
     <!-- Horizontal Form -->
         <div class="box box-default">
             <div class="box-header with-border">
@@ -60,6 +82,17 @@
         <div class="box-body">
 
             <div class="col-md-3" id="included_fields_wrapper">
+
+                @can('view', \App\Models\Document::class)
+                    <p>{{ trans('documents.general.report_document_fields') }}</p>
+                    @foreach (\App\Services\Documents\DocumentPrintService::REPORT_FIELDS as $documentField => $documentLabel)
+                        <label class="form-control">
+                            <input type="checkbox" name="{{ $documentField }}" value="1" @checked(old($documentField, $template->options[$documentField] ?? false))>
+                            {{ trans('documents.general.'.$documentLabel) }}
+                        </label>
+                    @endforeach
+                    <hr>
+                @endcan
 
                 <label class="form-control">
                     <input type="checkbox" data-toggle="check-all" data-check-scope="#included_fields_wrapper" checked="checked">

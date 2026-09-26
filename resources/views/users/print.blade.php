@@ -106,6 +106,10 @@
     <p></p>{{ trans('admin/users/general.all_assigned_list_generation')}} {{ Helper::getFormattedDateObject(now(), 'datetime', false) }}
 
     @can('view', \App\Models\Asset::class)
+        <x-documents.print-options :user="$show_user" :asset-ids="$show_user->assets->modelKeys()" />
+    @endcan
+
+    @can('view', \App\Models\Asset::class)
     @if ($show_user->assets->count() > 0)
         @php
             $counter = 1;

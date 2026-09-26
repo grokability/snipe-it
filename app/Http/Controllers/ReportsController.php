@@ -21,11 +21,14 @@ use App\Models\Component;
 use App\Models\Consumable;
 use App\Models\CustomField;
 use App\Models\Depreciation;
+use App\Models\Document;
 use App\Models\License;
 use App\Models\LicenseSeat;
 use App\Models\Maintenance;
 use App\Models\ReportTemplate;
 use App\Models\Setting;
+use App\Models\User;
+use App\Services\Documents\DocumentPrintService;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -499,15 +502,35 @@ class ReportsController extends Controller
      * @see ReportsController::getCustomReport() method that generates form view
      * @since [v1.0]
      */
-    public function postCustom(CustomAssetReportRequest $request): StreamedResponse
+    public function postCustom(CustomAssetReportRequest $request): StreamedResponse|RedirectResponse
     {
         ini_set('max_execution_time', env('REPORT_TIME_LIMIT', 12000)); // 12000 seconds = 200 minutes
         $this->authorize('reports.view');
 
         $this->disableDebugbar();
 
+        if ($request->input('output_format') === 'document_pdf') {
+            $this->authorize('create', Document::class);
+            $printing = app(DocumentPrintService::class);
+            $user = User::findOrFail($request->integer('document_assigned_to_id'));
+            $printing->authorizeUser($user);
+            $assets = $this->customAssetQuery($request)
+                ->where('assets.assigned_type', User::class)
+                ->where('assets.assigned_to', $user->id)
+                ->whereNull('assets.deleted_at')
+                ->limit(101)->get();
+            $document = $printing->generate($request->integer('document_template_version_id'), $user, $assets);
+
+            return redirect()->route('documents.pdf', ['document' => $document, 'inline' => 1]);
+        }
+
+        $documentFields = array_filter(DocumentPrintService::REPORT_FIELDS, fn ($key) => $request->boolean($key), ARRAY_FILTER_USE_KEY);
+        if ($documentFields) {
+            $this->authorize('view', Document::class);
+        }
+
         $customfields = CustomField::has('fieldset')->get();
-        $response = new StreamedResponse(function () use ($customfields, $request) {
+        $response = new StreamedResponse(function () use ($customfields, $request, $documentFields) {
             Log::debug('Starting streamed response');
             Log::debug('CSV escaping is set to: '.config('app.escape_formulas'));
 
@@ -728,6 +751,9 @@ class ReportsController extends Controller
 
             $executionTime = microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'];
             Log::debug('Starting headers: '.$executionTime);
+            foreach ($documentFields as $label) {
+                $header[] = trans('documents.general.'.$label);
+            }
             fputcsv($handle, $header);
             $executionTime = microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'];
             Log::debug('Added headers: '.$executionTime);
@@ -737,160 +763,22 @@ class ReportsController extends Controller
                 // do we scope here or??
             }
 
-            $assets = Asset::select('assets.*')->with(
-                'location', 'status', 'company', 'defaultLoc', 'assignedTo',
-                'model.category', 'model.manufacturer', 'model.fieldset.fields', 'supplier');
+            $assets = $this->customAssetQuery($request);
 
-            if ($request->filled('by_location_id')) {
-                $assets->whereIn('assets.location_id', $request->input('by_location_id'));
-            }
+            $assets->orderBy('assets.id', 'ASC')->chunk(500, function ($assets) use ($handle, $customfields, $request, $documentFields) {
 
-            if ($request->filled('by_rtd_location_id')) {
-                $assets->whereIn('assets.rtd_location_id', $request->input('by_rtd_location_id'));
-            }
-
-            if ($request->filled('by_supplier_id')) {
-                $assets->whereIn('assets.supplier_id', $request->input('by_supplier_id'));
-            }
-
-            if ($request->filled('by_company_id')) {
-                $assets->whereIn('assets.company_id', $request->input('by_company_id'));
-            }
-
-            if ($request->filled('by_model_id')) {
-                $assets->whereIn('assets.model_id', $request->input('by_model_id'));
-            }
-
-            if ($request->filled('by_category_id')) {
-                $assets->InCategory($request->input('by_category_id'));
-            }
-
-            if ($request->filled('by_dept_id')) {
-                $assets->CheckedOutToTargetInDepartment($request->input('by_dept_id'));
-            }
-
-            if ($request->filled('by_manufacturer_id')) {
-                $assets->ByManufacturer($request->input('by_manufacturer_id'));
-            }
-
-            if ($request->filled('by_order_number')) {
-                $assets->where('assets.order_number', $request->input('by_order_number'));
-            }
-
-            if ($request->filled('by_status_id')) {
-                $assets->whereIn('assets.status_id', $request->input('by_status_id'));
-            }
-
-            if (($request->filled('purchase_start')) && ($request->filled('purchase_end'))) {
-                $assets->whereBetween('assets.purchase_date', [$request->input('purchase_start'), $request->input('purchase_end')]);
-            }
-
-            if ($request->filled('purchase_cost_start')) {
-                if ($request->filled('purchase_cost_end')) {
-                    $assets->whereBetween('assets.purchase_cost', [$request->input('purchase_cost_start'), $request->input('purchase_cost_end')]);
-                } else {
-                    // >= for consistency with the whereBetween branch above,
-                    // which is inclusive on both sides. Previously '>', so a
-                    // user filtering "cost >= 0" got nothing at exactly 0, and
-                    // "cost >= 100" quietly hid assets bought for 100.
-                    $assets->where('assets.purchase_cost', '>=', $request->input('purchase_cost_start'));
+                $documentsByAsset = [];
+                if ($documentFields) {
+                    $documents = Document::whereHas('items', fn ($items) => $items->whereIn('item_id', $assets->modelKeys()))
+                        ->with(['templateVersion', 'items'])->orderBy('id')->get();
+                    foreach ($documents as $document) {
+                        if (Gate::allows('view', $document)) {
+                            foreach ($document->items as $item) {
+                                $documentsByAsset[$item->item_id][] = $document;
+                            }
+                        }
+                    }
                 }
-            }
-
-            if (($request->filled('created_start')) && ($request->filled('created_end'))) {
-                $created_start = Carbon::parse($request->input('created_start'))->startOfDay();
-                $created_end = Carbon::parse($request->input('created_end'))->endOfDay();
-
-                $assets->whereBetween('assets.created_at', [$created_start, $created_end]);
-            }
-
-            if (($request->filled('checkout_date_start')) && ($request->filled('checkout_date_end'))) {
-                $checkout_start = Carbon::parse($request->input('checkout_date_start'))->startOfDay();
-                $checkout_end = Carbon::parse($request->input('checkout_date_end', now()))->endOfDay();
-
-                // Inline closure rather than a pre-built Eloquent Builder so
-                // the subquery's `select('item_id')` clause is preserved. When
-                // passed an Eloquent Builder as the second whereIn argument,
-                // Laravel doesn't always propagate the SELECT to the subquery
-                // and falls back to `select id`, which is wrong here (we want
-                // action_logs.item_id, not action_logs.id) and additionally
-                // combines with the InCategory scope's models/categories joins
-                // to produce an ambiguous outer `id` in the generated SQL.
-                $assets->whereIn('assets.id', function ($q) use ($checkout_start, $checkout_end) {
-                    $q->select('item_id')
-                        ->from('action_logs')
-                        ->where('action_type', '=', 'checkout')
-                        ->where('item_type', '=', Asset::class)
-                        ->whereBetween('action_date', [$checkout_start, $checkout_end])
-                        ->whereNull('deleted_at');
-                });
-            }
-
-            if (($request->filled('checkin_date_start'))) {
-                $checkin_start = Carbon::parse($request->input('checkin_date_start'))->startOfDay();
-                // use today's date is `checkin_date_end` is not provided
-                $checkin_end = Carbon::parse($request->input('checkin_date_end', now()))->endOfDay();
-
-                $assets->whereBetween('assets.last_checkin', [$checkin_start, $checkin_end]);
-            }
-            // last checkin is exporting, but currently is a date and not a datetime in the custom report ONLY.
-
-            if (($request->filled('expected_checkin_start')) && ($request->filled('expected_checkin_end'))) {
-                $assets->whereBetween('assets.expected_checkin', [$request->input('expected_checkin_start'), $request->input('expected_checkin_end')]);
-            }
-
-            if (($request->filled('asset_eol_date_start')) && ($request->filled('asset_eol_date_end'))) {
-                $assets->whereBetween('assets.asset_eol_date', [$request->input('asset_eol_date_start'), $request->input('asset_eol_date_end')]);
-            }
-
-            if (($request->filled('last_audit_start')) && ($request->filled('last_audit_end'))) {
-                $last_audit_start = Carbon::parse($request->input('last_audit_start'))->startOfDay();
-                $last_audit_end = Carbon::parse($request->input('last_audit_end'))->endOfDay();
-
-                $assets->whereBetween('assets.last_audit_date', [$last_audit_start, $last_audit_end]);
-            }
-
-            if (($request->filled('next_audit_start')) && ($request->filled('next_audit_end'))) {
-                $assets->whereBetween('assets.next_audit_date', [$request->input('next_audit_start'), $request->input('next_audit_end')]);
-            }
-
-            if (($request->filled('last_updated_start')) && ($request->filled('last_updated_end'))) {
-                // updated_at is a timestamp, not a DATE, so a raw string
-                // whereBetween is silently exclusive on the end side (the picker
-                // returns Y-m-d which MySQL widens to Y-m-d 00:00:00, dropping
-                // everything on the end day after midnight). Match the created_at
-                // handling above and normalize to start/end of day.
-                $last_updated_start = Carbon::parse($request->input('last_updated_start'))->startOfDay();
-                $last_updated_end = Carbon::parse($request->input('last_updated_end'))->endOfDay();
-
-                $assets->whereBetween('assets.updated_at', [$last_updated_start, $last_updated_end]);
-            }
-
-            if (($request->filled('last_updated_before'))) {
-                $last_updated_window = Carbon::parse(today()->subDays($request->input('last_updated_before')));
-                $assets->where('assets.updated_at', '<', $last_updated_window);
-            }
-
-            if ($request->filled('exclude_archived')) {
-                $assets->notArchived();
-            }
-
-            if ($request->input('deleted_assets') == 'include_deleted') {
-                $assets->withTrashed();
-            }
-            if ($request->input('deleted_assets') == 'only_deleted') {
-                $assets->onlyTrashed();
-            }
-
-            if ($request->input('assignment_status') === 'assigned') {
-                $assets->whereNotNull('assets.assigned_to');
-            }
-
-            if ($request->input('assignment_status') === 'unassigned') {
-                $assets->whereNull('assets.assigned_to');
-            }
-
-            $assets->orderBy('assets.id', 'ASC')->chunk(500, function ($assets) use ($handle, $customfields, $request) {
 
                 $executionTime = microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'];
                 Log::debug('Walking results: '.$executionTime);
@@ -1185,6 +1073,17 @@ class ReportsController extends Controller
                         }
                     }
 
+                    foreach ($documentFields as $field => $label) {
+                        $row[] = collect($documentsByAsset[$asset->id] ?? [])->map(function (Document $document) use ($field) {
+                            return match ($field) {
+                                'document_template' => $document->templateVersion?->snapshotField('name', ''),
+                                'document_template_version' => $document->templateVersion?->version,
+                                'document_signed_at' => $document->signed_at?->format('Y-m-d H:i:s'),
+                                default => $document->{DocumentPrintService::REPORT_FIELDS[$field]},
+                            };
+                        })->implode('; ');
+                    }
+
                     // CSV_ESCAPE_FORMULAS is set to false in the .env
                     if (config('app.escape_formulas') === false) {
                         fputcsv($handle, $row);
@@ -1209,6 +1108,164 @@ class ReportsController extends Controller
         ]);
 
         return $response;
+    }
+
+    private function customAssetQuery(CustomAssetReportRequest $request): \Illuminate\Database\Eloquent\Builder
+    {
+        $assets = Asset::select('assets.*')->with(
+            'location', 'status', 'company', 'defaultLoc', 'assignedTo',
+            'model.category', 'model.manufacturer', 'model.fieldset.fields', 'supplier');
+
+        if ($request->filled('by_location_id')) {
+            $assets->whereIn('assets.location_id', $request->input('by_location_id'));
+        }
+
+        if ($request->filled('by_rtd_location_id')) {
+            $assets->whereIn('assets.rtd_location_id', $request->input('by_rtd_location_id'));
+        }
+
+        if ($request->filled('by_supplier_id')) {
+            $assets->whereIn('assets.supplier_id', $request->input('by_supplier_id'));
+        }
+
+        if ($request->filled('by_company_id')) {
+            $assets->whereIn('assets.company_id', $request->input('by_company_id'));
+        }
+
+        if ($request->filled('by_model_id')) {
+            $assets->whereIn('assets.model_id', $request->input('by_model_id'));
+        }
+
+        if ($request->filled('by_category_id')) {
+            $assets->InCategory($request->input('by_category_id'));
+        }
+
+        if ($request->filled('by_dept_id')) {
+            $assets->CheckedOutToTargetInDepartment($request->input('by_dept_id'));
+        }
+
+        if ($request->filled('by_manufacturer_id')) {
+            $assets->ByManufacturer($request->input('by_manufacturer_id'));
+        }
+
+        if ($request->filled('by_order_number')) {
+            $assets->where('assets.order_number', $request->input('by_order_number'));
+        }
+
+        if ($request->filled('by_status_id')) {
+            $assets->whereIn('assets.status_id', $request->input('by_status_id'));
+        }
+
+        if (($request->filled('purchase_start')) && ($request->filled('purchase_end'))) {
+            $assets->whereBetween('assets.purchase_date', [$request->input('purchase_start'), $request->input('purchase_end')]);
+        }
+
+        if ($request->filled('purchase_cost_start')) {
+            if ($request->filled('purchase_cost_end')) {
+                $assets->whereBetween('assets.purchase_cost', [$request->input('purchase_cost_start'), $request->input('purchase_cost_end')]);
+            } else {
+                // >= for consistency with the whereBetween branch above,
+                // which is inclusive on both sides. Previously '>', so a
+                // user filtering "cost >= 0" got nothing at exactly 0, and
+                // "cost >= 100" quietly hid assets bought for 100.
+                $assets->where('assets.purchase_cost', '>=', $request->input('purchase_cost_start'));
+            }
+        }
+
+        if (($request->filled('created_start')) && ($request->filled('created_end'))) {
+            $created_start = Carbon::parse($request->input('created_start'))->startOfDay();
+            $created_end = Carbon::parse($request->input('created_end'))->endOfDay();
+
+            $assets->whereBetween('assets.created_at', [$created_start, $created_end]);
+        }
+
+        if (($request->filled('checkout_date_start')) && ($request->filled('checkout_date_end'))) {
+            $checkout_start = Carbon::parse($request->input('checkout_date_start'))->startOfDay();
+            $checkout_end = Carbon::parse($request->input('checkout_date_end', now()))->endOfDay();
+
+            // Inline closure rather than a pre-built Eloquent Builder so
+            // the subquery's `select('item_id')` clause is preserved. When
+            // passed an Eloquent Builder as the second whereIn argument,
+            // Laravel doesn't always propagate the SELECT to the subquery
+            // and falls back to `select id`, which is wrong here (we want
+            // action_logs.item_id, not action_logs.id) and additionally
+            // combines with the InCategory scope's models/categories joins
+            // to produce an ambiguous outer `id` in the generated SQL.
+            $assets->whereIn('assets.id', function ($q) use ($checkout_start, $checkout_end) {
+                $q->select('item_id')
+                    ->from('action_logs')
+                    ->where('action_type', '=', 'checkout')
+                    ->where('item_type', '=', Asset::class)
+                    ->whereBetween('action_date', [$checkout_start, $checkout_end])
+                    ->whereNull('deleted_at');
+            });
+        }
+
+        if (($request->filled('checkin_date_start'))) {
+            $checkin_start = Carbon::parse($request->input('checkin_date_start'))->startOfDay();
+            // use today's date is `checkin_date_end` is not provided
+            $checkin_end = Carbon::parse($request->input('checkin_date_end', now()))->endOfDay();
+
+            $assets->whereBetween('assets.last_checkin', [$checkin_start, $checkin_end]);
+        }
+        // last checkin is exporting, but currently is a date and not a datetime in the custom report ONLY.
+
+        if (($request->filled('expected_checkin_start')) && ($request->filled('expected_checkin_end'))) {
+            $assets->whereBetween('assets.expected_checkin', [$request->input('expected_checkin_start'), $request->input('expected_checkin_end')]);
+        }
+
+        if (($request->filled('asset_eol_date_start')) && ($request->filled('asset_eol_date_end'))) {
+            $assets->whereBetween('assets.asset_eol_date', [$request->input('asset_eol_date_start'), $request->input('asset_eol_date_end')]);
+        }
+
+        if (($request->filled('last_audit_start')) && ($request->filled('last_audit_end'))) {
+            $last_audit_start = Carbon::parse($request->input('last_audit_start'))->startOfDay();
+            $last_audit_end = Carbon::parse($request->input('last_audit_end'))->endOfDay();
+
+            $assets->whereBetween('assets.last_audit_date', [$last_audit_start, $last_audit_end]);
+        }
+
+        if (($request->filled('next_audit_start')) && ($request->filled('next_audit_end'))) {
+            $assets->whereBetween('assets.next_audit_date', [$request->input('next_audit_start'), $request->input('next_audit_end')]);
+        }
+
+        if (($request->filled('last_updated_start')) && ($request->filled('last_updated_end'))) {
+            // updated_at is a timestamp, not a DATE, so a raw string
+            // whereBetween is silently exclusive on the end side (the picker
+            // returns Y-m-d which MySQL widens to Y-m-d 00:00:00, dropping
+            // everything on the end day after midnight). Match the created_at
+            // handling above and normalize to start/end of day.
+            $last_updated_start = Carbon::parse($request->input('last_updated_start'))->startOfDay();
+            $last_updated_end = Carbon::parse($request->input('last_updated_end'))->endOfDay();
+
+            $assets->whereBetween('assets.updated_at', [$last_updated_start, $last_updated_end]);
+        }
+
+        if (($request->filled('last_updated_before'))) {
+            $last_updated_window = Carbon::parse(today()->subDays($request->input('last_updated_before')));
+            $assets->where('assets.updated_at', '<', $last_updated_window);
+        }
+
+        if ($request->filled('exclude_archived')) {
+            $assets->notArchived();
+        }
+
+        if ($request->input('deleted_assets') == 'include_deleted') {
+            $assets->withTrashed();
+        }
+        if ($request->input('deleted_assets') == 'only_deleted') {
+            $assets->onlyTrashed();
+        }
+
+        if ($request->input('assignment_status') === 'assigned') {
+            $assets->whereNotNull('assets.assigned_to');
+        }
+
+        if ($request->input('assignment_status') === 'unassigned') {
+            $assets->whereNull('assets.assigned_to');
+        }
+
+        return $assets;
     }
 
     /**

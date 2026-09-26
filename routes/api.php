@@ -1458,4 +1458,33 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
     )->name('api.files.destroy')
         ->where(['object_type' => 'accessories|assets|components|consumables|hardware|licenses|locations|maintenances|models|suppliers|users|companies|departments']);
 
+    // Documents (custom Phase 1 document engine)
+    Route::get('documents',
+        [
+            Api\DocumentsController::class,
+            'index',
+        ]
+    )->name('api.documents.index');
+
+    Route::post('documents',
+        [
+            Api\DocumentsController::class,
+            'store',
+        ]
+    )->name('api.documents.store');
+
+    Route::get('documents/{document}',
+        [
+            Api\DocumentsController::class,
+            'show',
+        ]
+    )->name('api.documents.show');
+
+    Route::get('hardware/{asset}/documents',
+        [
+            Api\DocumentsController::class,
+            'assetDocuments',
+        ]
+    )->name('api.asset.documents');
+
 }); // end API routes

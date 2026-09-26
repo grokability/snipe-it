@@ -38,6 +38,10 @@
     </style>
 
 
+    @if ($acceptance->checkoutable instanceof \App\Models\Asset && $acceptance->assignedTo)
+        <x-documents.print-options :user="$acceptance->assignedTo" :asset-ids="[$acceptance->checkoutable_id]" :acceptance="$acceptance" />
+    @endif
+
     <form class="form-horizontal" method="post" action="" autocomplete="off">
         <!-- CSRF Token -->
         <input type="hidden" name="_token" value="{{ csrf_token() }}" />

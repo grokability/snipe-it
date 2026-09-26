@@ -40,4 +40,10 @@ enum ActionType: string
     // File Uploads
     case Uploaded = 'uploaded';
     case UploadDeleted = 'upload deleted';
+
+    // Documents
+    case DocumentGenerated = 'document generated';
+    case DocumentSigned = 'document signed';
+    case DocumentCancelled = 'document cancelled';
+    case DocumentDownloaded = 'document downloaded';
 }
