@@ -53,7 +53,7 @@ class CustomField extends Model
     ];
 
     public const ELEMENT_KEYS = [
-        'text', 'listbox', 'textarea', 'markdown-textarea',
+        'text', 'listbox', 'multi-listbox', 'textarea', 'markdown-textarea',
         'checkbox', 'radio', 'date_picker', 'datetime_picker',
     ];
 
@@ -74,7 +74,7 @@ class CustomField extends Model
      */
     protected $rules = [
         'name' => 'required|unique:custom_fields',
-        'element' => 'required|in:text,listbox,textarea,markdown-textarea,checkbox,radio,date_picker,datetime_picker',
+        'element' => 'required|in:text,listbox,multi-listbox,textarea,markdown-textarea,checkbox,radio,date_picker,datetime_picker',
         'field_encrypted' => 'nullable|boolean',
         'auto_add_to_fieldsets' => 'boolean',
         'show_in_listview' => 'boolean',
@@ -210,7 +210,7 @@ class CustomField extends Model
         if (in_array($formatLabel, ['DATE', 'DATETIME'], true)) {
             return false;
         }
-        if (in_array($element, ['checkbox', 'radio'], true)) {
+        if (in_array($element, ['multi-listbox', 'checkbox', 'radio'], true)) {
             return false;
         }
 
@@ -222,7 +222,7 @@ class CustomField extends Model
      */
     public static function elementRequiresFieldValues(?string $element): bool
     {
-        return in_array($element, ['listbox', 'checkbox', 'radio'], true);
+        return in_array($element, ['listbox', 'multi-listbox', 'checkbox', 'radio'], true);
     }
 
     /**
@@ -649,7 +649,7 @@ class CustomField extends Model
         $result = [];
         $arr = preg_split('/\\r\\n|\\r|\\n/', $this->field_values ?? '');
 
-        if (($this->element != 'checkbox') && ($this->element != 'radio')) {
+        if (($this->element != 'checkbox') && ($this->element != 'radio') && ($this->element != 'multi-listbox')) {
             $result[''] = 'Select '.strtolower($this->format);
         }
 

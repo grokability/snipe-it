@@ -71,6 +71,18 @@
                         </label>
                     @endforelse
                     @break
+                @case('multi-listbox')
+                    <select
+                        wire:key="preview-multi-listbox"
+                        class="select2 form-control js-preview-select2"
+                        style="width: 100%;"
+                        multiple
+                    >
+                        @foreach ($valuesArray as $value)
+                            <option>{{ $value }}</option>
+                        @endforeach
+                    </select>
+                    @break
 
                 @case('radio')
                     @forelse ($valuesArray as $value)

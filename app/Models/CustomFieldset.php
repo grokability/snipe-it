@@ -199,13 +199,18 @@ class CustomFieldset extends SnipeModel
                 }
             }
 
-            // add not_array to rules for all fields but checkboxes
-            if ($field->element != 'checkbox') {
+            // add not_array to rules for all fields but checkboxes and ,
+            // which both submit their value as an array
+            if (! in_array($field->element, ['checkbox', 'multi-listbox'], true)) {
                 $rules[$field->db_column_name()][] = 'not_array';
             }
 
             if ($field->element == 'checkbox') {
                 $rules[$field->db_column_name()][] = 'checkboxes';
+            }
+
+            if ($field->element == 'multi-listbox') {
+                $rules[$field->db_column_name()][] = 'multi_listboxes';
             }
 
             if ($field->element == 'radio') {

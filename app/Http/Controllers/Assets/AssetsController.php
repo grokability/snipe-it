@@ -544,7 +544,7 @@ class AssetsController extends Controller
         $model = AssetModel::find($request->input('model_id'));
         if (($model) && ($model->fieldset)) {
             foreach ($model->fieldset->fields as $field) {
-                if ($field->element == 'checkbox' && ! $request->has($field->db_column)) {
+                if (in_array($field->element, ['checkbox', 'multi-listbox'], true) && ! $request->has($field->db_column)) {
                     $asset->{$field->db_column} = null;
                 }
                 if ($request->has($field->db_column)) {
