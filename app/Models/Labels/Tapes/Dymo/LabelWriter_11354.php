@@ -22,6 +22,8 @@ class LabelWriter_11354 extends LabelWriter
 
     private const LABEL_SIZE = 2.8;
 
+    private const LABEL_MARGIN = 0.6;
+
     public function getUnit()
     {
         return 'mm';
@@ -65,6 +67,83 @@ class LabelWriter_11354 extends LabelWriter
     public function getSupportTitle()
     {
         return true;
+    }
+
+    public function getBarcodeSize(): float
+    {
+        return self::BARCODE1D_HEIGHT;
+    }
+
+    public function getBarcodeMargin(): float
+    {
+        return self::BARCODE_MARGIN;
+    }
+
+    public function getTagSize(): float
+    {
+        return self::TAG_SIZE;
+    }
+
+    public function getTitleSize(): float
+    {
+        return self::TITLE_SIZE;
+    }
+
+    public function getTitleMargin(): float
+    {
+        return self::TITLE_MARGIN;
+    }
+
+    public function getLabelSize(): float
+    {
+        return self::LABEL_SIZE;
+    }
+
+    public function getLabelMargin(): float
+    {
+        return self::LABEL_MARGIN;
+    }
+
+    public function getFieldSize(): float
+    {
+        return self::FIELD_SIZE;
+    }
+
+    public function getFieldMargin(): float
+    {
+        return self::FIELD_MARGIN;
+    }
+
+    protected function getContentEditorConfig(): array
+    {
+        return [
+            'barcode_size' => $this->getBarcodeSize(),
+            'barcode_margin' => $this->getBarcodeMargin(),
+            'barcode1D_v_align' => 'T',
+
+            'barcode_2d_size' => 19.0,
+            'barcode2D_h_align' => 'L',
+            'barcode2D_v_align' => 'T',
+
+            'tag_font_size' => $this->getTagSize(),
+            'tag_alignment' => 'C',
+            'tag_position_mode' => 'under_barcode',
+            'tag_font' => 'freesans',
+
+            'title_font_size' => 3.8,
+            'title_margin' => $this->getTitleMargin(),
+            'title_font' => 'freesans',
+
+            'field_label_font_size' => $this->getLabelSize(),
+            'field_label_margin' => $this->getLabelMargin(),
+            'field_label_font' => 'freesans',
+
+            'field_value_font_size' => $this->getFieldSize(),
+            'field_value_margin' => $this->getFieldMargin(),
+            'field_value_font' => 'freemono',
+
+            'text_render_mode' => 'block',
+        ];
     }
 
     public function write($pdf, $record)
