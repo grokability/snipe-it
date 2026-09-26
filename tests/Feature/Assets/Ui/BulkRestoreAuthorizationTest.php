@@ -81,7 +81,7 @@ class BulkRestoreAuthorizationTest extends TestCase
 
         $this->actingAs($user)
             ->post(route('hardware/bulkrestore'), [
-                'ids' => [$realAsset->id, 99999999],
+                'ids' => [$realAsset->id, 99_999_999],
             ])
             ->assertRedirect(route('hardware.index'));
 

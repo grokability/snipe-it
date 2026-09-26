@@ -36,7 +36,7 @@ class AccessoryFactory extends Factory
             ),
             'created_by' => User::factory()->superuser(),
             'category_id' => Category::factory()->forAccessories(),
-            'model_number' => $this->faker->numberBetween(1000000, 50000000),
+            'model_number' => $this->faker->numberBetween(1_000_000, 50_000_000),
             'location_id' => Location::factory(),
             'default_purchase_cost' => $this->faker->randomFloat(2, 5, 250),
             'legacy_purchase_date' => $this->faker->dateTimeBetween('-1 years', 'now', date_default_timezone_get())->format('Y-m-d'),

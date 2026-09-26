@@ -24,7 +24,7 @@ class AuditAssetTest extends TestCase
     public function test_that_a_non_existent_asset_id_returns_error()
     {
         $this->actingAsForApi(User::factory()->auditAssets()->create())
-            ->postJson(route('api.asset.audit', 123456789))
+            ->postJson(route('api.asset.audit', 123_456_789))
             ->assertStatusMessageIs('error');
     }
 

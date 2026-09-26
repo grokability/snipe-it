@@ -12,7 +12,7 @@ class AssetNotesTest extends TestCase
     public function test_that_a_non_existent_asset_id_returns_error()
     {
         $this->actingAsForApi(User::factory()->editAssets()->create())
-            ->postJson(route('api.notes.store', ['asset' => 123456789]))
+            ->postJson(route('api.notes.store', ['asset' => 123_456_789]))
             ->assertStatusMessageIs('error');
     }
 

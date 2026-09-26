@@ -51,7 +51,7 @@ jobs:
           path: "/tmp/phpstan"
           key: "result-cache-v1-${{ matrix.php-version }}-${{ github.run_id }}"
           restore-keys: |
-            result-cache-v1-${{ matrix.php-version }}-  
+            result-cache-v1-${{ matrix.php-version }}-
 
       # PHPStan analyses types / dead code / undefined properties, PHPMD covers
       # the classes PHPStan doesn't (unused parameters, unused locals). Both
@@ -60,6 +60,9 @@ jobs:
 
       - name: PHPStan
         run: composer analyse:phpstan
+
+      - name: StructArmed
+        run: composer analyse:structarmed
 
       - name: PHPMD
         run: composer analyse:phpmd

@@ -81,7 +81,7 @@ class SendPasswordResetAuthorizationTest extends TestCase
 
         $this->actingAs($admin)
             ->from(route('users.index'))
-            ->post(route('users.password', 999999999))
+            ->post(route('users.password', 999_999_999))
             ->assertRedirect();
 
         Notification::assertNothingSent();

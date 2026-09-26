@@ -81,6 +81,7 @@
     "ext-exif": "*"
   },
   "require-dev": {
+    "boundwize/structarmed": "^0.18",
     "brianium/paratest": "^7.8",
     "fruitcake/laravel-debugbar": "^4.0",
     "larastan/larastan": "^3.0",
@@ -140,12 +141,14 @@
     "coverage:herd:html": "herd coverage vendor/bin/phpunit --coverage-html tests/coverage/html",
     "analyse": [
       "@analyse:phpstan",
-      "@analyse:phpmd"
+      "@analyse:phpmd",
+      "@analyse:structarmed"
     ],
     "analyse:phpstan": "phpstan analyse --memory-limit=2G",
     "analyse:phpstan:baseline": "phpstan analyse --memory-limit=2G --generate-baseline=phpstan-baseline.neon",
     "analyse:phpmd": "phpmd app text phpmd-ruleset.xml --baseline-file phpmd.baseline.xml",
-    "analyse:phpmd:baseline": "phpmd app xml phpmd-ruleset.xml --generate-baseline"
+    "analyse:phpmd:baseline": "phpmd app xml phpmd-ruleset.xml --generate-baseline",
+    "analyse:structarmed": "structarmed analyse"
   },
   "config": {
     "preferred-install": "dist",

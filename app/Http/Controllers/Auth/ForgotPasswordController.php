@@ -84,7 +84,7 @@ class ForgotPasswordController extends Controller
         }
 
         // Prevent timing attack to enumerate users.
-        usleep(500000 + random_int(0, 1500000));
+        usleep(500000 + random_int(0, 1_500_000));
 
         if ($response === \Password::RESET_LINK_SENT) {
             Log::info('Password reset attempt: User '.$request->input('username').' WAS found, password reset sent');

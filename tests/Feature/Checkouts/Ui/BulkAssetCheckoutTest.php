@@ -88,7 +88,7 @@ class BulkAssetCheckoutTest extends TestCase
             ->post(route('hardware.bulkcheckout.store'), [
                 'selected_assets' => [
                     Asset::factory()->requiresAcceptance()->create()->id,
-                    9999999,
+                    9_999_999,
                 ],
                 'checkout_to_type' => 'user',
                 'assigned_user' => User::factory()->create(['email' => 'someone@example.com'])->id,

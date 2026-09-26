@@ -31,7 +31,7 @@ class ConsumableFactory extends Factory
             'category_id' => Category::factory(),
             'company_id' => Company::factory(),
             'created_by' => User::factory()->superuser(),
-            'item_no' => $this->faker->numberBetween(1000000, 50000000),
+            'item_no' => $this->faker->numberBetween(1_000_000, 50_000_000),
             'min_amt' => $this->faker->numberBetween($min = 1, $max = 2),
             'name' => $this->faker->words(3, true),
             'default_purchase_cost' => $this->faker->randomFloat(2, 1, 50),

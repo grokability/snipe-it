@@ -173,7 +173,7 @@ class BulkAuditSelectedAssetsSubmissionTest extends TestCase
         $this->actingAs(User::factory()->auditAssets()->create())
             ->post(route('hardware.bulk-audit.store'), [
                 'selected_assets' => $assets->pluck('id')->toArray(),
-                'location_id' => 9999999, // does not exist
+                'location_id' => 9_999_999, // does not exist
             ])
             ->assertRedirect(route('hardware.bulk-audit.show'))
             ->assertSessionHas('error');

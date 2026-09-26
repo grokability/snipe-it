@@ -30,7 +30,7 @@ class CleanOldCheckoutRequestsTest extends TestCase
 
     public function test_clean_old_checkout_requests_command_for_missing_asset()
     {
-        $requestForMissingAsset = CheckoutRequest::factory()->forAsset()->create(['requestable_id' => 99999999]);
+        $requestForMissingAsset = CheckoutRequest::factory()->forAsset()->create(['requestable_id' => 99_999_999]);
 
         $this->artisan('snipeit:clean-old-checkout-requests')->assertExitCode(0);
 
@@ -51,7 +51,7 @@ class CleanOldCheckoutRequestsTest extends TestCase
 
     public function test_clean_old_checkout_requests_command_for_missing_model()
     {
-        $requestForMissingModel = CheckoutRequest::factory()->forAssetModel()->create(['requestable_id' => 99999999]);
+        $requestForMissingModel = CheckoutRequest::factory()->forAssetModel()->create(['requestable_id' => 99_999_999]);
 
         $this->artisan('snipeit:clean-old-checkout-requests')->assertExitCode(0);
 
@@ -72,7 +72,7 @@ class CleanOldCheckoutRequestsTest extends TestCase
 
     public function test_clean_old_checkout_requests_command_for_missing_user()
     {
-        $requestForMissingUser = CheckoutRequest::factory()->forAsset()->create(['user_id' => 99999999]);
+        $requestForMissingUser = CheckoutRequest::factory()->forAsset()->create(['user_id' => 99_999_999]);
 
         $this->artisan('snipeit:clean-old-checkout-requests')->assertExitCode(0);
 

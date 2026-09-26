@@ -18,7 +18,7 @@ class UpdateAssetTest extends TestCase
     public function test_that_a_non_existent_asset_id_returns_error()
     {
         $this->actingAsForApi(User::factory()->editAssets()->createAssets()->create())
-            ->patchJson(route('api.assets.update', 123456789))
+            ->patchJson(route('api.assets.update', 123_456_789))
             ->assertStatusMessageIs('error');
     }
 

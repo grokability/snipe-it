@@ -37,7 +37,7 @@ class ComponentFactory extends Factory
             'created_by' => User::factory()->superuser(),
             'location_id' => Location::factory(),
             'min_amt' => $this->faker->numberBetween($min = 1, $max = 2),
-            'model_number' => $this->faker->numberBetween(1000000, 50000000),
+            'model_number' => $this->faker->numberBetween(1_000_000, 50_000_000),
             'name' => $this->faker->text(20),
             'default_purchase_cost' => $this->faker->randomFloat(2),
             'legacy_purchase_date' => $this->faker->dateTime()->format('Y-m-d'),

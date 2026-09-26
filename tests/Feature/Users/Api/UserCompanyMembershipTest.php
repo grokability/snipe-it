@@ -159,7 +159,7 @@ class UserCompanyMembershipTest extends TestCase
 
         $this->actingAsForApi($actor)
             ->patchJson(route('api.users.update', $user), [
-                'company_id' => 99999999,
+                'company_id' => 99_999_999,
             ])
             ->assertStatus(200)
             ->assertStatusMessageIs('error');
@@ -180,7 +180,7 @@ class UserCompanyMembershipTest extends TestCase
                 'first_name' => $user->first_name,
                 'last_name' => $user->last_name,
                 'username' => $user->username,
-                'company_id' => 99999999,
+                'company_id' => 99_999_999,
             ])
             ->assertStatus(200)
             ->assertStatusMessageIs('error');
@@ -199,7 +199,7 @@ class UserCompanyMembershipTest extends TestCase
 
         $this->actingAsForApi($actor)
             ->patchJson(route('api.users.update', $user), [
-                'company_ids' => [99999999, 88888888],
+                'company_ids' => [99_999_999, 88_888_888],
             ])
             ->assertStatus(200)
             ->assertStatusMessageIs('error');
@@ -272,7 +272,7 @@ class UserCompanyMembershipTest extends TestCase
                 'username' => 'testuser_invalid_companies',
                 'password' => 'secret123456',
                 'password_confirmation' => 'secret123456',
-                'company_ids' => [99999999],
+                'company_ids' => [99_999_999],
             ])
             ->assertStatus(200)
             ->assertStatusMessageIs('error');
