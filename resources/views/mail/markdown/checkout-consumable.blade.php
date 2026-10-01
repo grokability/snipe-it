@@ -23,6 +23,9 @@
 @if (isset($item->model_no))
 | **{{ trans('general.model_no') }}** | {{ $item->model_no }} |
 @endif
+@if ($target->location)
+| **{{ trans('general.location') }}** | {{ $target->location->name }} |
+@endif
 @if ($note)
 | **{{ trans('mail.additional_notes') }}** | {{ $note }} |
 @endif

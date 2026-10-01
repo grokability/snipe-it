@@ -17,6 +17,9 @@
 @if (isset($item->model_no))
 | **{{ trans('general.model_no') }}** | {{ $item->model_no }} |
 @endif
+@if ($item->location)
+| **{{ trans('general.location') }}** | {{ $item->location->name }} |
+@endif
 @if ($admin)
 | **{{ trans('general.administrator') }}** | {{ $admin->display_name }} |
 @endif

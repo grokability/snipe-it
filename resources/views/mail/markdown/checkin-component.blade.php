@@ -10,6 +10,9 @@
 @if (isset($item->manufacturer))
 | **{{ trans('general.manufacturer') }}** | {{ $item->manufacturer->name }} |
 @endif
+@if ($item->location)
+| **{{ trans('general.location') }}** | {{ $item->location->name }} |
+@endif
 @if ($admin)
 | **{{ trans('general.administrator') }}** | {{ $admin->display_name }} |
 @endif

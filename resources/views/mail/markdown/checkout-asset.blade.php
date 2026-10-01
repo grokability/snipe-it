@@ -33,6 +33,9 @@
 @if (isset($item->serial))
 | **{{ trans('mail.serial') }}** | {{ $item->serial }} |
 @endif
+@if ($location)
+| **{{ trans('general.location') }}** | {{ $location }} |
+@endif
 @if (isset($last_checkout))
 | **{{ trans('mail.checkout_date') }}** | {{ $last_checkout }} |
 @endif

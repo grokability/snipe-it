@@ -16,6 +16,9 @@
 @if (isset($item->manufacturer))
 | **{{ trans('general.manufacturer') }}** | {{ $item->manufacturer->name }} |
 @endif
+@if ($target->location)
+| **{{ trans('general.location') }}** | {{ $target->location->name }} |
+@endif
 @if ($note)
 | **{{ trans('mail.additional_notes') }}** | {{ $note }} |
 @endif

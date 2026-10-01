@@ -5,8 +5,10 @@ namespace Tests\Unit\Mail;
 use App\Mail\CheckoutAssetMail;
 use App\Models\Asset;
 use App\Models\CheckoutAcceptance;
+use App\Models\Location;
 use App\Models\User;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class CheckoutAssetMailTest extends TestCase
@@ -55,7 +57,8 @@ class CheckoutAssetMailTest extends TestCase
     }
 
     #[DataProvider('data')]
-    public function test_subject_line_and_opening($data)
+    #[Test]
+    public function subject_line_and_opening($data)
     {
         [
             'asset' => $asset,
@@ -74,5 +77,63 @@ class CheckoutAssetMailTest extends TestCase
             $firstTimeSending,
         ))->assertHasSubject($expectedSubject)
             ->assertSeeInText($expectedOpening);
+    }
+
+    public static function checkoutTargetsWithLocation()
+    {
+        yield 'User' => [
+            function () {
+                return [
+                    'target' => User::factory()
+                        ->forLocation(['name' => 'Tatooine'])
+                        ->create(),
+                    'expected_location_name' => 'Tatooine',
+                ];
+            },
+        ];
+
+        yield 'Asset' => [
+            function () {
+                return [
+                    'target' => Asset::factory()
+                        ->forLocation(['name' => 'Hoth'])
+                        ->create(),
+                    'expected_location_name' => 'Hoth',
+                ];
+            },
+        ];
+
+        yield 'Location' => [
+            function () {
+                return [
+                    'target' => Location::factory()->create(['name' => 'Echo Base']),
+                    'expected_location_name' => 'Echo Base',
+                ];
+            },
+        ];
+    }
+
+    #[DataProvider('checkoutTargetsWithLocation')]
+    #[Test]
+    public function shows_location_of_checkout_target($data)
+    {
+        ['target' => $target, 'expected_location_name' => $expectedLocationName] = $data();
+
+        $r2d2 = Asset::factory()->create();
+
+        $mail = new CheckoutAssetMail($r2d2, $target, User::factory()->create(), null, null);
+
+        $mail->assertSeeInOrderInText([trans('general.location'), $expectedLocationName]);
+    }
+
+    #[Test]
+    public function does_not_show_location_when_user_has_no_location()
+    {
+        $han = User::factory()->create(['location_id' => null]);
+        $r2d2 = Asset::factory()->create();
+
+        $mail = new CheckoutAssetMail($r2d2, $han, User::factory()->create(), null, null);
+
+        $mail->assertDontSeeInText(trans('general.location'));
     }
 }
