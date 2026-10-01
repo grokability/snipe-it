@@ -7,7 +7,6 @@ use App\SyncAdapters\AppleBusinessManager\AppleBusinessManagerAdapter;
 use Illuminate\Support\Facades\Validator;
 use Tests\TestCase;
 
-
 class PrivateKeyValidationTest extends TestCase
 {
     private AppleBusinessManagerAdapter $adapter;
@@ -79,6 +78,7 @@ class PrivateKeyValidationTest extends TestCase
         $key = openssl_pkey_new([
             'private_key_type' => OPENSSL_KEYTYPE_EC,
             'curve_name' => $curve,
+            'private_key_bits' => 2048,
         ]);
         $pem = '';
         openssl_pkey_export($key, $pem);
