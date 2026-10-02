@@ -8,6 +8,13 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
 {
+    public function resolveConsoleSchedule()
+    {
+        return tap(new \App\Console\Scheduling\ShelllessSchedule($this->scheduleTimezone()), function ($schedule) {
+            $this->schedule($schedule->useCache($this->scheduleCache()));
+        });
+    }
+
     /**
      * Define the application's command schedule.
      *
@@ -25,7 +32,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('backup:clean')->daily();
         $schedule->command('auth:clear-resets')->everyFifteenMinutes();
         $schedule->command('saml:clear_expired_nonces')->weekly();
-        
+
         $schedule->command('snipeit:pull-inventory')
             ->daily()
             ->withoutOverlapping();

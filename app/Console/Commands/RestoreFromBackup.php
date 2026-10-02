@@ -483,15 +483,30 @@ class RestoreFromBackup extends Command
             return $this->error("DB client binary '$preferred' not found in DB_DUMP_PATH ('$binaryPath'). Please edit DB_DUMP_PATH in your .env to point to a directory that contains the mysql/mariadb client binary.");
         }
 
-        $proc_results = proc_open(escapeshellarg($client_binary).' -h '.
-            escapeshellarg($connectionConfig['host']).
-            ' --batch '.
-            ' --binary-mode '.
-            ' -u '.escapeshellarg($connectionConfig['username']).' '.
-            (empty($connectionConfig['unix_socket'])
-                ? ' -P '.escapeshellarg($connectionConfig['port'])
-                : ' -S '.escapeshellarg($connectionConfig['unix_socket'])).' '.
-            escapeshellarg($connectionConfig['database']), // yanked -p since we pass via ENV
+        $client_command = [
+            $client_binary,
+            '-h',
+            (string) $connectionConfig['host'],
+            '--batch',
+            '--binary-mode',
+            '-u',
+            (string) $connectionConfig['username'],
+        ];
+
+        if (empty($connectionConfig['unix_socket'])) {
+            $client_command[] = '-P';
+            $client_command[] = (string) $connectionConfig['port'];
+        } else {
+            $client_command[] = '-S';
+            $client_command[] = (string) $connectionConfig['unix_socket'];
+        }
+
+        // Passing argv directly avoids requiring /bin/sh and keeps each
+        // connection value a single argument. The password stays in the
+        // environment rather than appearing in the process list.
+        $client_command[] = (string) $connectionConfig['database'];
+
+        $proc_results = proc_open($client_command, // yanked -p since we pass via ENV
             [0 => ['pipe', 'r'], 1 => ['pipe', 'w'], 2 => ['pipe', 'w']],
             $pipes,
             null,
@@ -558,7 +573,9 @@ class RestoreFromBackup extends Command
 
         $close_results = proc_close($proc_results);
         if ($close_results != 0) {
-            return $this->error('There may have been a problem with the database import: Error number '.$close_results);
+            $this->error('There may have been a problem with the database import: Error number '.$close_results);
+
+            return $close_results;
         }
 
         // Prune the upload directories before extracting the backup's
