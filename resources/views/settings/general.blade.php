@@ -9,7 +9,7 @@
 {{-- Page content --}}
 @section('content')
 
-    <form method="POST" autocomplete="off" class="form-horizontal" role="form" id="create-form">
+    <form method="POST" autocomplete="off" class="form-horizontal" role="form" id="create-form" xmlns="http://www.w3.org/1999/html">
         <!-- CSRF Token -->
         {{ csrf_field() }}
 
@@ -359,25 +359,22 @@
                                     </x-slot:input>
                                 </x-form.row>
 
-                                <!-- Depreciation method -->
-                                <x-form.row
-                                    name="depreciation_method"
-                                    :label="trans('admin/depreciations/general.depreciation_method')"
-                                >
-                                    <x-slot:input>
-                                        <x-input.select
-                                            name="depreciation_method"
-                                            id="depreciation_method"
-                                            :options="[
-                                                'default' => trans('admin/depreciations/general.linear_depreciation'),
-                                                'half_1' => trans('admin/depreciations/general.half_1'),
-                                                'half_2' => trans('admin/depreciations/general.half_2'),
-                                            ]"
-                                            :selected="old('depreciation_method', $setting->depreciation_method)"
-                                            style="width: 80%"
-                                        />
-                                    </x-slot:input>
-                                </x-form.row>
+                        <!-- Depreciation method -->
+                               <div class="form-group {{ $errors->has('depreciation_method') ? 'error' : '' }}">
+
+                                   <label for="depreciation_method" class="col-md-3 control-label">{{ trans('admin/depreciations/general.depreciation_method') }}</label>
+
+                                   <div class="col-md-8">
+                                       <x-input.select
+                                           name="depreciation_method"
+                                           id="depreciation_method"
+                                           :options="['default' => trans('admin/depreciations/general.linear_depreciation'), 'diminish' => trans('admin/depreciations/general.diminishing_depreciation'), 'half_1' => trans('admin/depreciations/general.half_1'), 'half_2' => trans('admin/depreciations/general.half_2')]"
+                                           :selected="old('depreciation_method', $setting->depreciation_method)"
+                                           style="width: 80%"
+                                       />
+                                   </div>
+                               </div>
+                               <!-- /.form-group -->
 
                                 <!-- unique serial -->
                                 <x-form.checkbox-row
