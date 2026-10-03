@@ -88,6 +88,9 @@ class CustomFieldSetDefaultValuesForModel extends Component
             if ($field->element === 'checkbox') {
                 $this->selectedValues[$field->db_column] = [];
             }
+            if ($field->element === 'multi-listbox') {
+                $this->selectedValues[$field->db_column] = [];
+            }
         });
     }
 
@@ -103,6 +106,11 @@ class CustomFieldSetDefaultValuesForModel extends Component
             // if the element is a checkbox and the value was just sent to null, make it
             // an array since Livewire can't bind to non-array values for checkboxes.
             if ($field->element === 'checkbox' && is_null($this->selectedValues[$field->db_column])) {
+                $this->selectedValues[$field->db_column] = [];
+            }
+            // if the element is a multi-listbox and the value was just sent to null, make it
+            // an array since Livewire can't bind to non-array values for multi-listbox's.
+            if ($field->element === 'multi-listbox' && is_null($this->selectedValues[$field->db_column])) {
                 $this->selectedValues[$field->db_column] = [];
             }
         });
@@ -124,6 +132,12 @@ class CustomFieldSetDefaultValuesForModel extends Component
         // a comma-separated string but if we're loading the page
         // with old input then it was already parsed into an array.
         if ($field->element === 'checkbox' && is_string($defaultValue)) {
+            $defaultValue = explode(', ', $defaultValue);
+        }
+        // on first load the default value for multi-listbox's will be
+        // a comma-separated string but if we're loading the page
+        // with old input then it was already parsed into an array.
+        if ($field->element === 'multi-listbox' && is_string($defaultValue)) {
             $defaultValue = explode(', ', $defaultValue);
         }
 
