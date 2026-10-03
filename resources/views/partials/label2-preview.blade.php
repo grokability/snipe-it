@@ -57,21 +57,23 @@
                 },
 
                 updateURL: function() {
+                    const settings = Object.assign({}, ...$(this._form)
+                        .serializeArray()
+                        .filter((value) => value.name.includes('label2_'))
+                        .map((value) => ({[value.name]: value.value}))
+                    );
 
-                    let params = {
-                        settings: Object.assign({}, ...$(this._form)
-                            .serializeArray()
-                            .filter((value, index, all) => value.name.includes('label2_'))
-                            .map((value, index, all) => ({[value.name]: value.value}))
-                            )
-                    };
-
-                    let template = params.settings.label2_template;
+                    const template =
+                        $('input[name="label2_template"]:checked').val()
+                        || settings.label2_template;
+                    
                     if (!template) return;
+
+                    settings.label2_template = template;
 
                     this.previewURL = '{{ route("labels.show", ["labelName" => ":label"]) }}'
                         .replace(':label', template.replaceAll('\\', '/'))
-                        .concat('?', $.param(params), '#toolbar=0');
+                        .concat('?', $.param({settings: settings}), '#toolbar=0');
                 },
 
                 _previewURL: '',

@@ -18,7 +18,7 @@ class Continuous_Landscape_0_59in_A extends Continuous_Landscape_0_59in
 
     public function getSupport1DBarcode()
     {
-        return true;
+        return false;
     }
 
     public function getSupport2DBarcode()
@@ -41,7 +41,62 @@ class Continuous_Landscape_0_59in_A extends Continuous_Landscape_0_59in
         return false;
     }
 
-    public function preparePDF(TCPDF $pdf): void
+    public function getBarcodeMargin(): float
+    {
+        return $this->barcodeMargin;
+    }
+
+    public function getLabelSize(): float
+    {
+        return $this->labelSize;
+    }
+
+    public function getLabelMargin(): float
+    {
+        return $this->labelMargin;
+    }
+
+    public function getFieldSize(): float
+    {
+        return $this->fieldSize;
+    }
+
+    public function getFieldMargin(): float
+    {
+        return $this->fieldMargin;
+    }
+
+    public function getWidth(): float
+    {
+        return 2.0;
+    }
+
+    public function getHeight(): float
+    {
+        return .59;
+    }
+
+    protected function getContentEditorConfig(): array
+    {
+        return [
+            'barcode_2d_size' => 12.0,
+            'barcode2D_h_align' => 'L',
+            'barcode2D_v_align' => 'T',
+
+            'barcode_margin' => $this->getBarcodeMargin(),
+
+            'field_label_font_size' => $this->getLabelSize(),
+            'field_label_margin' => $this->getLabelMargin(),
+
+            'field_value_font_size' => $this->getFieldSize(),
+            'field_value_margin' => $this->getFieldMargin(),
+
+            'text_render_mode' => 'vertical_stack',
+        ];
+    }
+
+
+    public function preparePDF(TCPDF $pdf) : void
     {
         $pdf->SetAutoPageBreak(false);
     }

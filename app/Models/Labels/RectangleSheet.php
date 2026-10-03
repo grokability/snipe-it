@@ -53,4 +53,69 @@ abstract class RectangleSheet extends Sheet
 
         return [$x, $y];
     }
+
+    public function toEditorConfig(): array
+    {
+        return array_merge(parent::toEditorConfig(), [
+            'grid' => $this->getGridEditorConfig(),
+        ]);
+    }
+
+    protected function getGridEditorConfig(): array
+    {
+        return [
+            'columns' => $this->getColumns(),
+            'rows' => $this->getRows(),
+            'column_spacing' => $this->getLabelColumnSpacing(),
+            'row_spacing' => $this->getLabelRowSpacing(),
+        ];
+    }
+
+    public function getEditorConfigSections(): array
+    {
+        return [
+            'unit' => 'mm',
+            'page' => $this->getPageEditorConfig(),
+            'grid' => $this->getGridEditorConfig(),
+            'printable_area' => $this->getPrintableAreaEditorConfig(),
+            'label' => $this->getLabelEditorConfig(),
+            'content' => $this->getContentEditorConfig(),
+            'supports' => $this->getSupportsEditorConfig(),
+        ];
+    }
+
+    public static function supportedPageSizes(): array
+    {
+        return [
+            'letter' => [
+                'name' => 'Letter (215.9mm x 279.4mm)',
+                'width' => 215.9,
+                'height' => 279.4,
+                'unit' => 'mm',
+            ],
+            'a4' => [
+                'name' => 'A4 (210mm x 297mm)',
+                'width' => 210.0,
+                'height' => 297.0,
+                'unit' => 'mm',
+            ],
+        ];
+    }
+
+    public static function calculateGridCount(float $usableSize, float $labelSize, float $spacing): int
+    {
+        $denominator = $labelSize + $spacing;
+
+        if ($denominator <= 0.0) {
+            return 1;
+        }
+
+        $count = (int)floor(($usableSize + $spacing) / $denominator);
+
+        return max(1, $count);
+    }
+    public static function supportedPageSize(string $key): ?array
+    {
+        return static::supportedPageSizes()[$key] ?? null;
+    }
 }

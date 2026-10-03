@@ -3,6 +3,9 @@
 namespace App\View;
 
 use App\Helpers\StorageHelper;
+use App\Models\Labels\CustomLabels\PreviewSheetLabel;
+use App\Models\Labels\CustomLabels\PreviewTapeLabel;
+use App\Models\Labels\CustomUserLabel;
 use App\Models\Labels\Field;
 use App\Models\Labels\Label as LabelModel;
 use App\Models\Labels\Sheet;
@@ -44,7 +47,33 @@ class Label implements View
         $settings = $this->data->get('settings');
         $assets = $this->data->get('assets');
         $offset = $this->data->get('offset');
+        $template = $this->data->get('template');
 
+        if ($template === null) {
+            $templateSetting = $settings->label2_template ?? 'DefaultLabel';
+
+            if (str_starts_with((string) $templateSetting, 'custom:')) {
+                $customLabel = CustomUserLabel::find((int) str_replace('custom:', '', $templateSetting));
+
+                if ($customLabel) {
+                    $baseLabel = CustomUserLabel::makeBaseLabel(
+                        data_get($customLabel->config_snapshot, 'template', $customLabel->base_label)
+                    );
+
+                    $template = data_get($customLabel->config_snapshot, 'type') === 'tape'
+                        ? new PreviewTapeLabel
+                        : new PreviewSheetLabel;
+
+                    if ($baseLabel) {
+                        $template->seedFromTemplate($baseLabel);
+                    }
+
+                    $template->applyEditorConfig($customLabel->config_snapshot ?? []);
+                }
+            } else {
+                $template = LabelModel::find($templateSetting);
+            }
+        }
         // If disabled, pass to legacy view
         if ((! $settings->label2_enable)) {
             return view('hardware/labels')
@@ -54,7 +83,9 @@ class Label implements View
                 ->with('count', $this->data->get('count'));
         }
 
-        $template = LabelModel::find($settings->label2_template);
+        if ($template === null) {
+            $template = LabelModel::find($settings->label2_template);
+        }
 
         if ($template === null) {
             return redirect()->route('settings.labels.index')->with('error', trans('admin/settings/message.labels.null_template'));
@@ -62,10 +93,14 @@ class Label implements View
 
         $template->validate();
 
+        $labelGap = method_exists($template, 'getLabelGap')
+            ? (float)$template->getLabelGap()
+            : 0.0;
+
         $pdf = new TCPDF(
             $template->getOrientation(),
             $template->getUnit(),
-            [0 => $template->getWidth(), 1 => $template->getHeight(), 'Rotate' => $template->getRotation()]
+            [0 => $template->getWidth() + $labelGap, 1 => $template->getHeight(), 'Rotate' => $template->getRotation()]
         );
 
         // Required for CJK languages, otherwise the embedded font can get too massive

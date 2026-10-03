@@ -65,6 +65,42 @@ class LabelWriter_30330 extends LabelWriter
         return true;
     }
 
+    protected function getContentEditorConfig(): array
+    {
+        return [
+            'barcode_size' => self::TAG_SIZE,
+
+            'barcode1D_v_align' => 'B',
+            'barcode1D_placement' => 'text_column',
+
+            'barcode_2d_size' => 11.0,
+            'barcode2D_h_align' => 'L',
+            'barcode2D_v_align' => 'T',
+
+            'barcode_margin' => self::BARCODE_MARGIN,
+
+            'tag_font_size' => self::TAG_SIZE,
+            'tag_alignment' => 'C',
+            'tag_position_mode' => 'under_barcode',
+            'tag_font' => 'freesans',
+
+            'title_font_size' => self::TITLE_SIZE,
+            'title_margin' => self::TITLE_MARGIN,
+            'title_font' => 'freesans',
+
+            'field_label_font_size' => 3,
+            'field_label_margin' => self::FIELD_MARGIN,
+            'field_label_font' => 'freesans',
+
+            'field_value_font_size' => 3,
+            'field_value_margin' => self::FIELD_MARGIN,
+            'field_value_font' => 'freemono',
+
+            'text_render_mode' => 'block',
+        ];
+    }
+
+
     public function write($pdf, $record)
     {
         $pa = $this->getPrintableArea();

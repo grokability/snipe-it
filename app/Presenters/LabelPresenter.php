@@ -28,6 +28,7 @@ class LabelPresenter extends Presenter
                 'switchable' => true,
                 'title' => trans('general.name'),
                 'visible' => true,
+                'formatter' => 'labelNameFormatter',
             ], [
                 'field' => 'size',
                 'scope' => 'col',
@@ -99,6 +100,12 @@ class LabelPresenter extends Presenter
                 'title' => trans('admin/labels/table.support_title'),
                 'visible' => true,
                 'formatter' => 'trueFalseFormatter',
+            ], [
+                'field' => 'actions',
+                'title' => trans('table.actions'),
+                'searchable' => false,
+                'sortable' => false,
+                'formatter' => 'labelActionsFormatter',
             ],
         ];
 

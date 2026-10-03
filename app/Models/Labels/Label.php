@@ -729,4 +729,93 @@ abstract class Label
                 }
             );
     }
+
+    public function toEditorConfig(): array
+    {
+        return [
+            'name' => $this->getName(),
+            'unit' => $this->getUnit(),
+            'printable_area' => $this->getPrintableAreaEditorConfig(),
+            'supports' => $this->getSupportsEditorConfig(),
+            'content' => $this->getContentEditorConfig(),
+            'meta' => $this->getMetaEditorConfig(),
+        ];
+    }
+
+    protected function getDimensionsEditorConfig(): array
+    {
+        return [
+            'width' => $this->getWidth(),
+            'height' => $this->getHeight(),
+            'margin_top' => $this->getMarginTop(),
+            'margin_right' => $this->getMarginRight(),
+            'margin_bottom' => $this->getMarginBottom(),
+            'margin_left' => $this->getMarginLeft(),
+        ];
+    }
+
+    protected function getPrintableAreaEditorConfig(): array
+    {
+        $pa = $this->getPrintableArea();
+
+        return [
+            'x1' => $pa->x1,
+            'y1' => $pa->y1,
+            'x2' => $pa->x2,
+            'y2' => $pa->y2,
+            'width' => $pa->w,
+            'height' => $pa->h,
+        ];
+    }
+
+    protected function getSupportsEditorConfig(): array
+    {
+        return [
+            'asset_tag' => $this->getSupportAssetTag(),
+            'barcode_1d' => $this->getSupport1DBarcode(),
+            'barcode_2d' => $this->getSupport2DBarcode(),
+            'fields' => $this->getSupportFields(),
+            'logo' => $this->getSupportLogo(),
+            'title' => $this->getSupportTitle(),
+        ];
+    }
+
+    protected function getContentEditorConfig(): array
+    {
+        return [
+            'barcode_size' => $this->getBarcodeSize(),
+            'barcode_margin' => $this->getBarcodeMargin(),
+            'barcode_2d_size' => $this->get2DBarcodeSize(),
+            'tag_alignment' => $this->getTagAlignment(),
+            'logo_max_width' => $this->getLogoMaxWidth(),
+            'logo_margin' => $this->getLogoMargin(),
+            'tag_font_size' => $this->getTagSize(),
+            'title_font_size' => $this->getTitleSize(),
+            'title_margin' => $this->getTitleMargin(),
+            'field_label_font_size' => $this->getLabelSize(),
+            'field_label_margin' => $this->getLabelMargin(),
+            'field_value_font_size' => $this->getFieldSize(),
+            'field_value_margin' => $this->getFieldMargin(),
+        ];
+    }
+
+    protected function getMetaEditorConfig(): array
+    {
+        return [
+            'orientation' => $this->getOrientation(),
+            'rotation' => $this->getRotation(),
+        ];
+    }
+
+    public function getEditorConfigSections(): array
+    {
+        return [
+            'unit' => $this->getUnit(),
+            'dimensions' => $this->getDimensionsEditorConfig(),
+            'printable_area' => $this->getPrintableAreaEditorConfig(),
+            'content' => $this->getContentEditorConfig(),
+            'supports' => $this->getSupportsEditorConfig(),
+            'meta' => $this->getMetaEditorConfig(),
+        ];
+    }
 }
