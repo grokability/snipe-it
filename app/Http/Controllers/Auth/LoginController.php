@@ -222,6 +222,7 @@ class LoginController extends Controller
             Ldap::applyLdapAttributesToUser($user, $ldap_attr);
 
             $user->saveQuietly();
+            Ldap::applyLdapCompanyToUser($user, $ldap_attr);
         } // End if(!user)
 
         return $user;

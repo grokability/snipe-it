@@ -779,6 +779,8 @@ class SettingsController extends Controller
             $setting->ldap_zip = $request->input('ldap_zip');
             $setting->ldap_country = $request->input('ldap_country');
             $setting->ldap_location = $request->input('ldap_location');
+            $setting->ldap_company = $request->input('ldap_company');
+            $setting->ldap_website = $request->input('ldap_website');
             $setting->ldap_dept = $request->input('ldap_dept');
             $setting->ldap_client_tls_cert = $request->input('ldap_client_tls_cert');
             $setting->ldap_client_tls_key = $request->input('ldap_client_tls_key');
