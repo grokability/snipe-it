@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Models\Company;
 use App\Models\Department;
 use App\Models\Group;
 use App\Models\Ldap;
@@ -48,6 +49,8 @@ class LdapCreateUserFromLdapTest extends TestCase
             'c' => ['US'],
             'department' => ['Widgets'],
             'physicaldeliveryofficename' => ['HQ'],
+            'company' => ['Acme'],
+            'wwwhomepage' => ['https://example.com'],
         ], $overrides);
     }
 
@@ -71,6 +74,8 @@ class LdapCreateUserFromLdapTest extends TestCase
             'ldap_country' => 'c',
             'ldap_dept' => 'department',
             'ldap_location' => 'physicaldeliveryofficename',
+            'ldap_company' => 'company',
+            'ldap_website' => 'wwwhomepage',
         ]);
     }
 
@@ -95,6 +100,7 @@ class LdapCreateUserFromLdapTest extends TestCase
         $this->assertSame('IL', $user->state);
         $this->assertSame('62704', $user->zip);
         $this->assertSame('US', $user->country);
+        $this->assertSame('https://example.com', $user->website);
         $this->assertSame(1, (int) $user->activated);
         $this->assertSame(1, (int) $user->ldap_import);
     }
@@ -137,6 +143,144 @@ class LdapCreateUserFromLdapTest extends TestCase
         $user = Ldap::createUserFromLdap($this->ldapAttributes(), 'pw');
 
         $this->assertSame($existing->id, $user->location_id);
+    }
+
+    public function test_prefixes_bare_host_website_with_https(): void
+    {
+        $this->configureLdapMappings();
+
+        $user = Ldap::createUserFromLdap($this->ldapAttributes(['wwwhomepage' => ['example.com']]), 'pw');
+
+        $this->assertSame('https://example.com', $user->website);
+    }
+
+    public function test_drops_invalid_website_instead_of_failing_user_save(): void
+    {
+        $this->configureLdapMappings();
+
+        $user = Ldap::createUserFromLdap($this->ldapAttributes(['wwwhomepage' => ['not a url']]), 'pw');
+
+        $this->assertInstanceOf(User::class, $user);
+        $this->assertNull($user->website);
+    }
+
+    public function test_assigns_company_from_ldap_value(): void
+    {
+        $this->configureLdapMappings();
+
+        $user = Ldap::createUserFromLdap($this->ldapAttributes(), 'pw');
+
+        $this->assertSame(['Acme'], $user->companies()->pluck('name')->all());
+    }
+
+    public function test_reuses_existing_company_by_name(): void
+    {
+        $this->configureLdapMappings();
+        $existing = Company::factory()->create(['name' => 'Acme']);
+
+        $user = Ldap::createUserFromLdap($this->ldapAttributes(), 'pw');
+
+        $this->assertSame([$existing->id], $user->companies()->pluck('companies.id')->all());
+        $this->assertSame(1, Company::where('name', 'Acme')->count());
+    }
+
+    public function test_ldap_company_is_added_alongside_existing_memberships(): void
+    {
+        $this->configureLdapMappings();
+        $user = User::factory()->withoutCompany()->create();
+        $manual = Company::factory()->create(['name' => 'Manual Co']);
+        $user->companies()->sync([$manual->id]);
+
+        Ldap::applyLdapCompanyToUser($user, ['company' => 'Acme']);
+
+        $this->assertEqualsCanonicalizing(['Manual Co', 'Acme'], $user->companies()->pluck('name')->all());
+    }
+
+    public function test_matches_existing_company_case_insensitively(): void
+    {
+        $this->configureLdapMappings();
+        $existing = Company::factory()->create(['name' => 'Acme']);
+        $user = User::factory()->withoutCompany()->create();
+
+        Ldap::applyLdapCompanyToUser($user, ['company' => ' ACME ']);
+
+        $this->assertSame([$existing->id], $user->companies()->pluck('companies.id')->all());
+        $this->assertSame(1, Company::whereRaw('LOWER(name) = ?', ['acme'])->count());
+    }
+
+    public function test_does_not_duplicate_membership_when_already_in_ldap_company(): void
+    {
+        $this->configureLdapMappings();
+        $existing = Company::factory()->create(['name' => 'Acme']);
+        $user = User::factory()->withoutCompany()->create();
+        $user->companies()->sync([$existing->id]);
+
+        Ldap::applyLdapCompanyToUser($user, ['company' => 'Acme']);
+
+        $this->assertSame([$existing->id], $user->companies()->pluck('companies.id')->all());
+    }
+
+    public function test_ldap_company_change_replaces_only_previous_ldap_company(): void
+    {
+        $this->configureLdapMappings();
+        $user = User::factory()->withoutCompany()->create();
+        $manual = Company::factory()->create(['name' => 'Manual Co']);
+        $user->companies()->sync([$manual->id]);
+
+        Ldap::applyLdapCompanyToUser($user, ['company' => 'Acme']);
+        Ldap::applyLdapCompanyToUser($user, ['company' => 'Globex']);
+
+        $globex = Company::where('name', 'Globex')->first();
+        $this->assertEqualsCanonicalizing(['Manual Co', 'Globex'], $user->companies()->pluck('name')->all());
+        $this->assertSame($globex->id, (int) $user->fresh()->ldap_company_id);
+    }
+
+    public function test_records_ldap_company_id_when_user_already_in_that_company(): void
+    {
+        $this->configureLdapMappings();
+        $existing = Company::factory()->create(['name' => 'Acme']);
+        $user = User::factory()->withoutCompany()->create();
+        $user->companies()->sync([$existing->id]);
+
+        Ldap::applyLdapCompanyToUser($user, ['company' => 'Acme']);
+
+        $this->assertSame($existing->id, (int) $user->fresh()->ldap_company_id);
+    }
+
+    public function test_keeps_ldap_company_when_value_cleared_in_ldap(): void
+    {
+        $this->configureLdapMappings();
+        $user = User::factory()->withoutCompany()->create();
+
+        Ldap::applyLdapCompanyToUser($user, ['company' => 'Acme']);
+        Ldap::applyLdapCompanyToUser($user, ['company' => '']);
+
+        $acme = Company::where('name', 'Acme')->first();
+        $this->assertSame(['Acme'], $user->companies()->pluck('name')->all());
+        $this->assertSame($acme->id, (int) $user->fresh()->ldap_company_id);
+    }
+
+    public function test_keeps_existing_companies_when_ldap_company_value_missing(): void
+    {
+        $this->configureLdapMappings();
+        $user = User::factory()->withoutCompany()->create();
+        $company = Company::factory()->create();
+        $user->companies()->sync([$company->id]);
+
+        Ldap::applyLdapCompanyToUser($user, ['company' => '']);
+
+        $this->assertSame([$company->id], $user->companies()->pluck('companies.id')->all());
+    }
+
+    public function test_skips_company_when_ldap_company_mapping_blank(): void
+    {
+        $this->configureLdapMappings();
+        $this->settings->set(['ldap_company' => '']);
+
+        $user = Ldap::createUserFromLdap($this->ldapAttributes(), 'pw');
+
+        $this->assertSame(0, $user->companies()->count());
+        $this->assertDatabaseMissing('companies', ['name' => 'Acme']);
     }
 
     public function test_skips_field_when_setting_mapping_is_blank(): void

@@ -165,6 +165,10 @@ class LdapSettings extends Component
 
     public string $ldap_location = '';
 
+    public string $ldap_company = '';
+
+    public string $ldap_website = '';
+
     public string $ldap_active_flag = '';
 
     public bool $ldap_invert_active_flag = false;
@@ -297,6 +301,8 @@ class LdapSettings extends Component
         $this->ldap_zip = (string) $setting->ldap_zip;
         $this->ldap_country = (string) $setting->ldap_country;
         $this->ldap_location = (string) $setting->ldap_location;
+        $this->ldap_company = (string) $setting->ldap_company;
+        $this->ldap_website = (string) $setting->ldap_website;
         $this->ldap_active_flag = (string) $setting->ldap_active_flag;
         $this->ldap_invert_active_flag = (bool) $setting->ldap_invert_active_flag;
 
@@ -911,6 +917,8 @@ class LdapSettings extends Component
         $setting->ldap_zip = trim($this->ldap_zip) ?: null;
         $setting->ldap_country = trim($this->ldap_country) ?: null;
         $setting->ldap_location = trim($this->ldap_location) ?: null;
+        $setting->ldap_company = trim($this->ldap_company) ?: null;
+        $setting->ldap_website = trim($this->ldap_website) ?: null;
         $setting->ldap_active_flag = trim($this->ldap_active_flag) ?: null;
         $setting->ldap_invert_active_flag = $this->ldap_invert_active_flag ? '1' : '0';
 
@@ -1158,7 +1166,8 @@ class LdapSettings extends Component
      *   - AD: samaccountname, streetaddress, department, co (full
      *     country name), useraccountcontrol
      *   - inetOrgPerson / posixAccount: uid, street, departmentNumber,
-     *     c (ISO country code), no standard active-flag attribute
+     *     c (ISO country code), o, labeledURI, no standard active-flag
+     *     attribute
      * The rest (givenname, sn, mail, telephonenumber, mobile, title,
      * manager, l, st, postalcode) are shared across both.
      *
@@ -1174,6 +1183,8 @@ class LdapSettings extends Component
         $address = $this->is_ad ? 'streetaddress' : 'street';
         $country = $this->is_ad ? 'co' : 'c';
         $activeFlag = $this->is_ad ? 'useraccountcontrol' : '';
+        $company = $this->is_ad ? 'company' : 'o';
+        $website = $this->is_ad ? 'wwwhomepage' : 'labeleduri';
 
         return [
             ['ldap_username_field', 'ldap_username_field', $usernameField, true, null],
@@ -1193,6 +1204,8 @@ class LdapSettings extends Component
             ['ldap_zip', 'ldap_zip', 'postalcode', false, null],
             ['ldap_country', 'ldap_country', $country, false, null],
             ['ldap_location', 'ldap_location', 'physicaldeliveryofficename', false, 'ldap_location_help'],
+            ['ldap_company', 'ldap_company', $company, false, 'ldap_company_help'],
+            ['ldap_website', 'ldap_website', $website, false, null],
             ['ldap_active_flag', 'ldap_active_flag', $activeFlag, false, 'ldap_activated_flag_help'],
         ];
     }
@@ -1567,6 +1580,8 @@ class LdapSettings extends Component
             'ldap_zip',
             'ldap_country',
             'ldap_location',
+            'ldap_company',
+            'ldap_website',
             'ldap_active_flag',
             // Step 4: Sync + Defaults
             'custom_forgot_pass_url',
