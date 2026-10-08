@@ -91,10 +91,11 @@
                     @endforeach
                     </tbody>
 
-                    @can('update', $custom_fieldset)
+                    @canany(['update', 'clone'], $custom_fieldset)
                         <tfoot>
                         <tr>
-                            <td colspan="8">
+                            <td colspan="3">
+                                @can('update', $custom_fieldset)
                                 <form method="POST" action="{{ route('fieldsets.associate', $custom_fieldset->id) }}" accept-charset="UTF-8" class="form-inline" id="ordering">
                                     @csrf
 
@@ -127,11 +128,18 @@
                                     </span>
 
                                 </form>
+                                @endcan
 
                             </td>
+                            <td colspan="4" class="text-right">
+                                @can('clone', $custom_fieldset)
+                                    <livewire:clone-fieldset :id="$custom_fieldset->id" />
+                                @endcan
+                            </td>
+
                         </tr>
                         </tfoot>
-                    @endcan
+                    @endcanany
                 </table>
 
                 @endif
