@@ -50,7 +50,7 @@ class ExpiringAlertsNotificationTest extends TestCase
         ]);
         // We have to set this here because of the configure() method in the Asset factory :(
         $notExpiringAsset->asset_eol_date = null;
-        $expiringEOLAsset->save();
+        $notExpiringAsset->save();
 
         $this->artisan('snipeit:expiring-alerts')->assertExitCode(0);
 

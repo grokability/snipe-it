@@ -2,7 +2,7 @@
     'route' => route('api.licenses.index'),
     'name' => 'default',
     'export_name' => null,
-    'presenter' => \App\Presenters\LicensePresenter::dataTableLayout(),
+    'presenter' => null,
     'fixed_right_number' => 2,
     'fixed_number' => 1,
     'show_search' => true,
@@ -22,7 +22,7 @@
 
 
     <x-table
-        :$presenter
+            :presenter=" $presenter ?? \App\Presenters\LicensePresenter::dataTableLayout()"
         :$fixed_right_number
         :$fixed_number
         :$show_search
