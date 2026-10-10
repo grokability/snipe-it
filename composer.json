@@ -32,7 +32,7 @@
     "doctrine/dbal": "^3.1",
     "doctrine/instantiator": "^1.3",
     "eduardokum/laravel-mail-auto-embed": "^2.0",
-    "enshrined/svg-sanitize": "^0.22.0",
+    "enshrined/svg-sanitize": "^1.0",
     "erusev/parsedown": "^1.7",
     "fakerphp/faker": "^1.24",
     "firebase/php-jwt": "^6.4|^7.0",
