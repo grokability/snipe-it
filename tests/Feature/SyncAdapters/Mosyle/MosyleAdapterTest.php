@@ -279,6 +279,82 @@ class MosyleAdapterTest extends TestCase
         $this->assertNotNull($record->lastSeen);
     }
 
+    public function test_last_seen_parses_unix_epoch_timestamps(): void
+    {
+        // Issue #19790 follow-up: Mosyle Manager v2 returns date_info
+        // as a Unix epoch seconds integer on some tenants (observed
+        // 1791483579 = 2026-10-06). Carbon::parse() alone chokes on
+        // bare numeric values. The adapter must detect epoch-shape
+        // numbers and route them through createFromTimestamp.
+        $adapter = $this->configuredMosyleAdapter();
+
+        Http::fake([
+            '*/login' => Http::response(null, 200, ['Authorization' => 'Bearer fake-jwt']),
+            '*/listdevices' => Http::sequence()
+                ->push($this->devicesResponse([
+                    $this->mosyleDevice(udid: 'epoch-1', date_info: '1791483579'),
+                ]))
+                ->push($this->devicesResponse([]))
+                ->push($this->devicesResponse([]))
+                ->push($this->devicesResponse([]))
+                ->push($this->devicesResponse([])),
+        ]);
+
+        $records = iterator_to_array($adapter->pull());
+        $this->assertCount(1, $records);
+        $this->assertNotNull($records[0]->lastSeen);
+        $this->assertSame(1791483579, $records[0]->lastSeen->getTimestamp());
+    }
+
+    public function test_last_seen_parses_iso_8601_timestamps(): void
+    {
+        // Mosyle sends ISO 8601 on other fields / tenants. Both
+        // shapes have to work in the same adapter.
+        $adapter = $this->configuredMosyleAdapter();
+
+        Http::fake([
+            '*/login' => Http::response(null, 200, ['Authorization' => 'Bearer fake-jwt']),
+            '*/listdevices' => Http::sequence()
+                ->push($this->devicesResponse([
+                    $this->mosyleDevice(udid: 'iso-1', date_info: '2026-01-15T10:00:00.000Z'),
+                ]))
+                ->push($this->devicesResponse([]))
+                ->push($this->devicesResponse([]))
+                ->push($this->devicesResponse([]))
+                ->push($this->devicesResponse([])),
+        ]);
+
+        $records = iterator_to_array($adapter->pull());
+        $this->assertNotNull($records[0]->lastSeen);
+        $this->assertSame('2026-01-15', $records[0]->lastSeen->toDateString());
+    }
+
+    public function test_unparseable_timestamp_nulls_out_and_sync_continues(): void
+    {
+        // Pre-fix, a single device with a malformed date_info aborted
+        // the entire sync run (user report on #19790). Post-fix, the
+        // bad value is logged and nulled out for that one record.
+        $adapter = $this->configuredMosyleAdapter();
+
+        Http::fake([
+            '*/login' => Http::response(null, 200, ['Authorization' => 'Bearer fake-jwt']),
+            '*/listdevices' => Http::sequence()
+                ->push($this->devicesResponse([
+                    $this->mosyleDevice(udid: 'bad-ts', date_info: 'not-a-timestamp-at-all'),
+                    $this->mosyleDevice(udid: 'good-ts', date_info: '1791483579'),
+                ]))
+                ->push($this->devicesResponse([]))
+                ->push($this->devicesResponse([]))
+                ->push($this->devicesResponse([]))
+                ->push($this->devicesResponse([])),
+        ]);
+
+        $records = iterator_to_array($adapter->pull());
+        $this->assertCount(2, $records, 'Sync must not abort when a single device has a bad timestamp.');
+        $this->assertNull($records[0]->lastSeen);
+        $this->assertNotNull($records[1]->lastSeen);
+    }
+
     public function test_login_missing_authorization_header_throws(): void
     {
         $adapter = $this->configuredMosyleAdapter();
