@@ -165,6 +165,9 @@ return [
     'mosyle_access_token_help' => 'Generate under Account -> API in your Mosyle Manager admin console. Needs read access to Devices (and write access if you plan to push asset tags back to Mosyle).',
     'mosyle_email_help' => 'Email address of the Mosyle admin account used to log in. Pairs with the access token and password to obtain a 24-hour JWT.',
     'mosyle_password_help' => 'Password for the Mosyle admin account above. We recommend creating a dedicated service account with the narrowest permissions needed for sync, rather than reusing a human admin\'s login.',
+    'mosyle_business_access_token_help' => 'Generate under Organization -> API Integration in your Mosyle Business admin console. Needs read access to Devices (and write access if you plan to push asset tags or notes back to Mosyle).',
+    'mosyle_business_email_help' => 'Email address of the Mosyle Business admin account used to log in. Pairs with the access token and password to obtain a 24-hour JWT.',
+    'mosyle_business_password_help' => 'Password for the Mosyle Business admin account above. We recommend creating a dedicated service account with the narrowest permissions needed for sync, rather than reusing a human admin\'s login. The password is stored encrypted at rest but is reversible by design (we need to send it to Mosyle on each login).',
     // Mosyle Manager v2 extra fields. One label per Manager v2 device
     // attribute surfaced for custom-field mapping. Dual-SIM cellular
     // (imeiOne/Two, PhoneNumberOne/Two, etc.) is intentionally omitted.

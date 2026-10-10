@@ -17,19 +17,39 @@ use Tests\TestCase;
  */
 class NewBuiltInAdaptersRenderTest extends TestCase
 {
-    public function test_mosyle_renders_with_its_schema_label()
+    public function test_mosyle_manager_renders_with_its_schema_label()
     {
         $html = $this->actingAs(User::factory()->superuser()->create())
             ->get(route('settings.adapters.index'))
             ->assertOk()
             ->getContent();
 
-        $this->assertStringContainsString('Mosyle', $html);
+        $this->assertStringContainsString('Mosyle Manager', $html);
         // Schema field names from MosyleAdapter::settingsSchema() post-#19790.
         // Mosyle Manager v2 requires accessToken + email + password on login.
         $this->assertMatchesRegularExpression('/name="mosyle_access_token"/', $html);
         $this->assertMatchesRegularExpression('/name="mosyle_email"/', $html);
         $this->assertMatchesRegularExpression('/name="mosyle_password"/', $html);
+    }
+
+    public function test_mosyle_business_renders_with_its_schema_label()
+    {
+        // Mosyle Business is a separate adapter from Mosyle Manager
+        // because the Business v1 API has a different auth model,
+        // different endpoint shape, and a different OS enum. The
+        // catalog auto-discovers it via SyncAdapter::allTypes()'s
+        // glob scan of app/SyncAdapters/*/Adapter.php, so this test
+        // guards against a slug-collision regression that would hide
+        // either adapter from the picker.
+        $html = $this->actingAs(User::factory()->superuser()->create())
+            ->get(route('settings.adapters.index'))
+            ->assertOk()
+            ->getContent();
+
+        $this->assertStringContainsString('Mosyle Business', $html);
+        $this->assertMatchesRegularExpression('/name="mosyle_business_access_token"/', $html);
+        $this->assertMatchesRegularExpression('/name="mosyle_business_email"/', $html);
+        $this->assertMatchesRegularExpression('/name="mosyle_business_password"/', $html);
     }
 
     public function test_meraki_systems_manager_renders_with_both_schema_fields()
