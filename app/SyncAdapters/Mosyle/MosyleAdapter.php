@@ -202,13 +202,38 @@ class MosyleAdapter extends SyncAdapter implements PushableAdapter
         );
     }
 
+    /**
+     * Mosyle Manager v2 mixes timestamp formats across fields and
+     * across tenants. Observed shapes:
+     *   - ISO 8601 string: "2026-01-15T10:00:00.000Z"
+     *   - Unix epoch seconds as integer or string: 1791483579
+     *   - null or empty string on devices that have never beaten in
+     *
+     * Numeric values in the plausible Unix-time range (1e9 to 1e11,
+     * roughly 2001 to 5138) are treated as epoch seconds. Anything
+     * else goes through Carbon::parse(). Unparseable values log and
+     * return null rather than throwing, so one device with a bad
+     * date_info doesn't abort an entire sync run.
+     */
     private function parseTimestamp(mixed $value): ?Carbon
     {
         if ($value === null || $value === '') {
             return null;
         }
 
-        return Carbon::parse($value);
+        try {
+            if (is_numeric($value) && $value >= 1_000_000_000 && $value <= 100_000_000_000) {
+                return Carbon::createFromTimestampUTC((int) $value);
+            }
+
+            return Carbon::parse($value);
+        } catch (\Throwable $e) {
+            Log::channel('sync-adapters')->warning(
+                $this->name().': skipped unparseable Mosyle timestamp ('.var_export($value, true).'): '.$e->getMessage()
+            );
+
+            return null;
+        }
     }
 
     /**
@@ -278,23 +303,18 @@ class MosyleAdapter extends SyncAdapter implements PushableAdapter
         }
 
         if ($this->isPushDryRun()) {
-            Log::channel('sync-adapters')->info(sprintf(
-                '%s push [dry-run]: would set Mosyle device serial=%s asset_tag=%s',
-                $this->name(),
-                $serial,
-                $value,
-            ));
+            Log::channel('sync-adapters')->info(
+                $this->name().' push [dry-run]: would set Mosyle device serial='.$serial.' asset_tag='.$value
+            );
 
             return true;
         }
 
         $this->makeClient()->updateDeviceAssetTagBySerial($serial, (string) $value);
 
-        Log::channel('sync-adapters')->info(sprintf(
-            '%s push: updated Mosyle device serial=%s fields [asset_tag]',
-            $this->name(),
-            $serial,
-        ));
+        Log::channel('sync-adapters')->info(
+            $this->name().' push: updated Mosyle device serial='.$serial.' fields [asset_tag]'
+        );
 
         return true;
     }
