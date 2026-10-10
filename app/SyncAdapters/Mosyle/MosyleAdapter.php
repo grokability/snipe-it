@@ -303,23 +303,18 @@ class MosyleAdapter extends SyncAdapter implements PushableAdapter
         }
 
         if ($this->isPushDryRun()) {
-            Log::channel('sync-adapters')->info(sprintf(
-                '%s push [dry-run]: would set Mosyle device serial=%s asset_tag=%s',
-                $this->name(),
-                $serial,
-                $value,
-            ));
+            Log::channel('sync-adapters')->info(
+                $this->name().' push [dry-run]: would set Mosyle device serial='.$serial.' asset_tag='.$value
+            );
 
             return true;
         }
 
         $this->makeClient()->updateDeviceAssetTagBySerial($serial, (string) $value);
 
-        Log::channel('sync-adapters')->info(sprintf(
-            '%s push: updated Mosyle device serial=%s fields [asset_tag]',
-            $this->name(),
-            $serial,
-        ));
+        Log::channel('sync-adapters')->info(
+            $this->name().' push: updated Mosyle device serial='.$serial.' fields [asset_tag]'
+        );
 
         return true;
     }
