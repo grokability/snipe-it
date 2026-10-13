@@ -1,5 +1,5 @@
 @component('mail::message')
-# {{ trans('mail.hello') }} {{ $target->assignedto->display_name }},
+# {{ trans('mail.hello') }} {{ $target->display_name }},
 
 {{ trans('mail.the_following_item') }}
 
