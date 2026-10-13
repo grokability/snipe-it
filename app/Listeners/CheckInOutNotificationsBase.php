@@ -205,7 +205,7 @@ abstract class CheckInOutNotificationsBase
      * @param  Event  $event
      * @return mixed
      */
-    protected function getCheckoutAcceptance($event)
+    protected function getCheckoutAcceptance(CheckoutableCheckedOut $event): ?CheckoutAcceptance
     {
         // Resolve the acceptance target: the user who actually needs
         // to accept. When the checkoutable was handed to a User
@@ -233,7 +233,7 @@ abstract class CheckInOutNotificationsBase
             $alertOnResponseId = $category?->alert_on_response ? auth()->id() : null;
             $event->checkoutAcceptance = CreateCheckoutAcceptanceAction::run(
                 $event->checkoutable,
-                $event->checkedOutTo,
+                $acceptanceTarget,
                 $event->checkoutable->checkout_qty ?? 1,
                 $alertOnResponseId
             );
