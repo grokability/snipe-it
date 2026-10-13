@@ -17,15 +17,15 @@ class EventServiceProvider extends ServiceProvider
      *
      * @var array
      */
-    protected $listen = [
-        'Illuminate\Auth\Events\Login' => [
-            LogSuccessfulLogin::class,
-        ],
-
-        'Illuminate\Auth\Events\Failed' => [
-            LogFailedLogin::class,
-        ],
-    ];
+    // protected $listen = [
+    //     'Illuminate\Auth\Events\Login' => [
+    //         LogSuccessfulLogin::class,
+    //     ],
+    //
+    //     'Illuminate\Auth\Events\Failed' => [
+    //         LogFailedLogin::class,
+    //     ],
+    // ];
 
     /**
      * The subscriber classes to register.
@@ -37,8 +37,8 @@ class EventServiceProvider extends ServiceProvider
         // Runs AFTER LogListener so the checkout Actionlog row it
         // just wrote is available for the checkout_actionlog_id
         // back-link on the CheckoutRequest.
-        FulfillCheckoutRequestListener::class,
+        // FulfillCheckoutRequestListener::class,
         CheckoutableListener::class,
-        CheckoutablesCheckedOutInBulkListener::class,
+        // CheckoutablesCheckedOutInBulkListener::class,
     ];
 }
