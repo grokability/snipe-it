@@ -179,7 +179,7 @@ class CheckoutableListener
         $shouldSendEmailToUser = $this->checkoutableCategoryShouldSendEmail($event->checkoutable);
         $shouldSendEmailToAlertAddress = $this->shouldSendEmailToAlertAddress();
         $shouldSendWebhookNotification = $this->shouldSendWebhookNotification($event->checkoutable);
-        if (! $shouldSendEmailToUser && ! $shouldSendEmailToAlertAddress && ! $shouldSendWebhookNotification) {
+         if (! $shouldSendEmailToUser && ! $shouldSendEmailToAlertAddress && ! $shouldSendWebhookNotification) {
             return;
         }
 
@@ -529,7 +529,7 @@ class CheckoutableListener
 
     private function shouldSendWebhookNotification(): bool
     {
-        return (bool) $this->webhookSource($checkoutable)->webhook_endpoint;
+        return (bool)$this->webhookSource($checkoutable)->webhook_endpoint;
     }
 
     private function checkoutableCategoryShouldSendEmail(Model $checkoutable): bool
