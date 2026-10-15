@@ -18,6 +18,7 @@ use App\Rules\UrlEncrypted;
 use Gate;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Watson\Validating\ValidatingTrait;
 
@@ -58,10 +59,8 @@ class CustomFieldset extends SnipeModel
      * @author [Brady Wetherington] [<uberbrady@gmail.com>]
      *
      * @since  [v3.0]
-     *
-     * @return Relation
      */
-    public function fields()
+    public function fields(): BelongsToMany
     {
         return $this->belongsToMany(CustomField::class)->withPivot(['required', 'order'])->orderBy('pivot_order');
     }

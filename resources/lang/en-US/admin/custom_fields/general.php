@@ -40,6 +40,7 @@ return [
     'fieldset_does_not_exist' => 'Fieldset :id does not exist',
     'fieldset_updated' => 'Fieldset updated',
     'create_fieldset_title' => 'Create a new fieldset',
+    'clone_fieldset' => 'Clone Fieldset',
     'create_field' => 'New Custom Field',
     'create_field_title' => 'Create a new custom field',
     'value_encrypted' => 'The value of this field is encrypted in the database. Only users with permission to view encrypted custom fields will be able to view the decrypted value',

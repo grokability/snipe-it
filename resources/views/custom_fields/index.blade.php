@@ -66,6 +66,10 @@
 
                 <nobr>
 
+                @can('clone', $fieldset)
+                  <livewire:clone-fieldset :id="$fieldset->id" :icon-only="true" :key="'clone-fieldset-'.$fieldset->id" />
+                @endcan
+
                 @can('update', $fieldset)
 
 

@@ -48,6 +48,10 @@ return [
             'in_use' => 'Fieldset is still in use.',
         ],
 
+        'clone' => [
+            'success' => 'Fieldset cloned successfully.',
+        ],
+
     ],
 
     'fieldset_default_value' => [
