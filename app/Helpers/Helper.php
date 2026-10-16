@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use App\Models\Accessory;
+use App\Models\Asset;
 use App\Models\AssetModel;
 use App\Models\Component;
 use App\Models\Consumable;
@@ -1019,17 +1020,19 @@ class Helper
         foreach ($asset_models as $asset_model) {
             $total_owned = $asset_model->assets_count;
             $avail = $asset_model->available_assets_count;
+
             $percent = $avail > 0
                 ? number_format((($avail / $total_owned) * 100), 0)
                 : 100;
 
-            $items_array[$all_count]['id'] = $asset_model->id;
-            $items_array[$all_count]['name'] = $asset_model->name;
-            $items_array[$all_count]['type'] = 'models';
-            $items_array[$all_count]['percent'] = $percent;
-            $items_array[$all_count]['remaining'] = $avail;
-            $items_array[$all_count]['min_amt'] = $asset_model->min_amt;
-            $all_count++;
+                $items_array[$all_count]['id'] = $asset_model->id;
+                $items_array[$all_count]['name'] = $asset_model->name;
+                $items_array[$all_count]['type'] = 'models';
+                $items_array[$all_count]['percent'] = $percent;
+                $items_array[$all_count]['remaining'] = $avail;
+                $items_array[$all_count]['min_amt'] = $asset_model->min_amt;
+                $all_count++;
+
         }
 
         foreach ($licenses as $license) {
