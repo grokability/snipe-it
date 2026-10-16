@@ -126,6 +126,17 @@
                                             @endforeach
                                         </select>
 
+                                @elseif($field->element == "multi-listbox")
+                                    <select class="form-control" name="default_values[{{ $field->id }}][]" multiple wire:model="selectedValues.{{ $field->db_column }}">
+                                        @foreach($field->formatFieldValuesAsArray() as $field_value => $field_label)
+                                            <option
+                                                value="{{ $field_value }}"
+                                                wire:key="multi-listbox-{{ $field_value }}"
+                                            >
+                                                {{ $field_label }}
+                                            </option>
+                                        @endforeach
+                                    </select>
 
                                 @elseif($field->element == "radio")
 

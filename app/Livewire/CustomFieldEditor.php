@@ -193,6 +193,7 @@ class CustomFieldEditor extends Component
         return [
             'text' => trans('admin/custom_fields/general.types.text'),
             'listbox' => trans('admin/custom_fields/general.types.listbox'),
+            'multi-listbox' => trans('admin/custom_fields/general.types.multi-listbox'),
             'textarea' => trans('admin/custom_fields/general.types.textarea'),
             'markdown-textarea' => trans('admin/custom_fields/general.types.markdown-textarea'),
             'checkbox' => trans('admin/custom_fields/general.types.checkbox'),
@@ -218,7 +219,7 @@ class CustomFieldEditor extends Component
         }
 
         // Clear field_encrypted if element becomes checkbox/radio.
-        if ($property === 'element' && in_array($value, ['checkbox', 'radio'])) {
+        if ($property === 'element' && in_array($value, ['multi-listbox', 'checkbox', 'radio'])) {
             $this->field_encrypted = false;
         }
     }
@@ -266,7 +267,7 @@ class CustomFieldEditor extends Component
 
         $rules = [
             'name' => $nameRule,
-            'element' => 'required|in:text,listbox,textarea,markdown-textarea,checkbox,radio,date_picker,datetime_picker',
+            'element' => 'required|in:text,listbox,multi-listbox,textarea,markdown-textarea,checkbox,radio,date_picker,datetime_picker',
             'format' => 'nullable|string|max:191',
             'custom_format' => 'valid_regex',
         ];
@@ -299,7 +300,7 @@ class CustomFieldEditor extends Component
         }
 
         // checkbox/radio always use ANY format.
-        if (in_array($this->element, ['checkbox', 'radio'])) {
+        if (in_array($this->element, ['multi-listbox', 'checkbox', 'radio'])) {
             $effectiveFormat = 'ANY';
         }
 
