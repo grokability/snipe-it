@@ -43,6 +43,7 @@ class CustomFieldsTransformer
             'name' => e($field->name),
             'db_column_name' => e($field->db_column_name()),
             'format' => e($field->format),
+            'link_template' => ($field->link_template) ? e($field->link_template) : null,
             'field_values' => ($field->field_values) ? e($field->field_values) : null,
             'field_encrypted' => ($field->field_encrypted == '1') ? true : false,
             'field_values_array' => ($field->field_values) ? explode("\r\n", e($field->field_values)) : null,

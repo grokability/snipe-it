@@ -160,6 +160,7 @@ class AssetsTransformer
                         'value' => ($field->element == 'markdown-textarea' && Gate::allows('assets.view.encrypted_custom_fields')) ? Helper::renderMarkdown($value) : e($value),
                         'field_format' => $field->format,
                         'element' => $field->element,
+                        'link' => (Gate::allows('assets.view.encrypted_custom_fields') && ($link = $field->linkForValue($decrypted))) ? e($link) : null,
                     ];
 
                 } else {
@@ -174,6 +175,7 @@ class AssetsTransformer
                         'value' => ($field->element == 'markdown-textarea') ? Helper::renderMarkdown($value) : e($value),
                         'field_format' => $field->format,
                         'element' => $field->element,
+                        'link' => ($link = $field->linkForValue($value)) ? e($link) : null,
                     ];
                 }
 
