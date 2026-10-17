@@ -569,6 +569,27 @@ class LdapWizardTest extends TestCase
             ->assertHasErrors(['ldap_username_field']);
     }
 
+    public function test_step3_persists_company_and_website_mappings(): void
+    {
+        $this->actAsSuperuser();
+        $this->ensureSetting();
+
+        Livewire::test(LdapSettings::class)
+            ->set('highestStepReached', 3)
+            ->set('currentStep', 3)
+            ->set('ldap_username_field', 'samaccountname')
+            ->set('ldap_fname_field', 'givenname')
+            ->set('ldap_company', 'company')
+            ->set('ldap_website', 'wwwhomepage')
+            ->call('saveAndAdvance')
+            ->assertHasNoErrors()
+            ->assertSet('currentStep', 4);
+
+        $setting = Setting::getSettings()->fresh();
+        $this->assertSame('company', $setting->ldap_company);
+        $this->assertSame('wwwhomepage', $setting->ldap_website);
+    }
+
     public function test_step3_persists_blank_optional_mappings_as_null_not_empty_string(): void
     {
 
@@ -599,6 +620,8 @@ class LdapWizardTest extends TestCase
             ->set('ldap_zip', '')
             ->set('ldap_country', '')
             ->set('ldap_location', '')
+            ->set('ldap_company', '')
+            ->set('ldap_website', '')
             ->set('ldap_active_flag', '')
             ->call('saveAndAdvance');
 
@@ -621,6 +644,8 @@ class LdapWizardTest extends TestCase
             'ldap_zip',
             'ldap_country',
             'ldap_location',
+            'ldap_company',
+            'ldap_website',
             'ldap_active_flag',
         ];
         foreach ($optionalMappings as $field) {
