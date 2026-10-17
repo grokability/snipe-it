@@ -95,7 +95,7 @@ abstract class _3490 extends RectangleSheet
 
     public function getRows()
     {
-        return 10;
+        return 8;
     }
 
     public function getLabelColumnSpacing()
