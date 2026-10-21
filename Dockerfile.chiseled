@@ -1,0 +1,63 @@
+# syntax=docker/dockerfile:1@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+
+# Candidate only. Recover hash-locked inputs from official sources during the
+# build; no caller-supplied snapshot directory is required.
+FROM --platform=$BUILDPLATFORM docker.io/library/golang@sha256:0f063af2d465d8dcae54cce04278ada488b96f77b42449c8d071e47d016cc65a AS entrypoint
+ARG TARGETOS
+ARG TARGETARCH
+WORKDIR /src
+COPY docker/distroless-entrypoint/ ./
+RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -trimpath -ldflags='-s -w' -o /snipeit-init ./cmd/init \
+    && CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -trimpath -ldflags='-s -w' -o /snipeit-supervisor ./cmd/supervisor
+
+FROM docker.io/library/composer:2.10.3@sha256:af98f42dfff7c68ba8d53c2164fd9fde1087b7d449514baa38c418b1f6bc4bac AS composer-tool
+
+# Retained Chisel and build-only PHP inputs are AMD64 for either runtime target.
+FROM --platform=linux/amd64 docker.io/library/ubuntu:24.04@sha256:534baea6a22c03a63003dbc8dbe78fe34bc0d7e595d9a9dc9834884ff530eb55 AS tools
+ARG TARGETARCH
+ENV CHISEL_TARGET_ARCH=${TARGETARCH}
+ENV DEBIAN_FRONTEND=noninteractive
+# Stage dependencies serialize compilation, root cutting and application assembly.
+COPY --from=entrypoint /snipeit-init /snipeit-supervisor /project-binaries/
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates curl git python3 \
+    && rm -rf /var/lib/apt/lists /var/cache/apt
+COPY docker/chiseled/ /chisel-inputs/
+COPY composer.lock /application-composer.lock
+COPY docker/distroless-entrypoint/go.mod /application-go.mod
+RUN python3 /chisel-inputs/install-build-php.py
+
+FROM tools AS inputs
+RUN python3 /chisel-inputs/fetch_inputs.py
+
+FROM inputs AS chisel
+RUN --network=none python3 /chisel-inputs/build-cut.py
+
+FROM chisel AS application
+COPY . /var/www/html
+COPY docker/docker.env /var/www/html/.env
+COPY --from=composer-tool /usr/bin/composer /usr/bin/composer
+COPY docker/distroless-entrypoint/patch-dumper.py /patch-dumper.py
+RUN python3 /chisel-inputs/prepare-app.py
+WORKDIR /var/www/html
+USER 10000:50
+ENV COMPOSER_CACHE_DIR=/tmp/composer-cache COMPOSER_HOME=/tmp/composer-home
+RUN php /usr/bin/composer install --no-dev --no-interaction --working-dir=/var/www/html
+USER root
+RUN python3 /patch-dumper.py /var/www/html/vendor/spatie/db-dumper/src/Databases/MySql.php
+
+FROM tools AS assemble
+COPY --from=chisel /rootfs/ /rootfs/
+COPY --from=application --chown=10000:50 /var/www/html/ /rootfs/var/www/html/
+COPY --from=tools /project-binaries/snipeit-init /rootfs/snipeit-init
+COPY --from=tools /project-binaries/snipeit-supervisor /rootfs/snipeit-supervisor
+COPY docker/000-default.conf docker/001-default-ssl.conf /project-config/
+RUN python3 /chisel-inputs/assemble.py
+
+FROM scratch AS candidate
+COPY --from=assemble /rootfs/ /
+ENV APACHE_RUN_USER=docker APACHE_RUN_GROUP=staff APACHE_RUN_DIR=/run/apache2 APACHE_LOCK_DIR=/run/lock/apache2 APACHE_PID_FILE=/run/apache2/apache2.pid APACHE_LOG_DIR=/var/log/apache2 PHP_INI_SCAN_DIR=:/run/snipeit/php OPENSSL_CONF=/etc/ssl/openssl.cnf SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
+WORKDIR /var/www/html
+USER 10000:50
+VOLUME ["/var/lib/snipeit"]
+EXPOSE 8080 8443
+ENTRYPOINT ["/snipeit-supervisor"]

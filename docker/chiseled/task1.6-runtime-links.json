@@ -1,0 +1,7 @@
+{
+  "format": 1,
+  "generated_links": {
+    "/etc/localtime": "/usr/share/zoneinfo/Etc/UTC"
+  },
+  "rationale": "The immutable Distroless baseline has no /etc/localtime and its PHP probe reports UTC. Locked Ubuntu tzdata supplies /usr/share/zoneinfo/localtime -> /etc/localtime. This project-owned UTC link preserves the observed default and closes that authenticated package link without copying or changing package files. Approved D-5/D-9 runtime configuration."
+}

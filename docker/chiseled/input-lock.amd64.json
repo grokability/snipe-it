@@ -1,0 +1,1915 @@
+{
+  "architecture": "amd64",
+  "bootstrap": "docker.io/library/ubuntu@sha256:534baea6a22c03a63003dbc8dbe78fe34bc0d7e595d9a9dc9834884ff530eb55",
+  "bootstrap_validation": "Externally validated digest supplied by user; exact digest executed successfully in this session.",
+  "created_at": "2026-10-08T02:21:39.916676+00:00",
+  "finalized_at": "2026-10-08T02:26:32.921138+00:00",
+  "format": 1,
+  "identities": {
+    "builder": "docker.io/library/ubuntu@sha256:534baea6a22c03a63003dbc8dbe78fe34bc0d7e595d9a9dc9834884ff530eb55",
+    "chisel": {
+      "binary_sha256": "a257b23bc9e1e7b4330f7011bf858519530d78aa5ea6158347ff1a44da2ae7fe",
+      "version": "v1.4.2"
+    },
+    "composer": {
+      "builder": "docker.io/library/composer@sha256:af98f42dfff7c68ba8d53c2164fd9fde1087b7d449514baa38c418b1f6bc4bac",
+      "lock_sha256": "ee0261f00d06213a0e98d0a81ef111e7bfb48b1a17e5aa8e3a2aa2228704934f",
+      "version": "2.10.3"
+    },
+    "custom_sdfs": {
+      "archive_sha256": "62b219bc36411f1bdcccd8cf21e027cd5e09f68da6af4b710fd9656f0a592b6b",
+      "status": "Task 1.3 reviewed package graph; production cut verification candidate"
+    },
+    "frontend": "docker.io/docker/dockerfile:1@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e",
+    "go": {
+      "builder": "docker.io/library/golang@sha256:0f063af2d465d8dcae54cce04278ada488b96f77b42449c8d071e47d016cc65a",
+      "go_mod_sha256": "bc1e252fc1b66ef4b9edb5080167e4928f94fe8970b74846b1a43c44ce405f13",
+      "version": "1.26"
+    },
+    "official_sdfs": {
+      "archive_sha256": "c1defc9d999a63a6b4221968fc0737938c7a0fd7075525a3274005158747626e",
+      "commit": "8e43bc3ea4cd0b10c0f5b9f275409155b4d4cf8a",
+      "tree": "d3309ce7659145435c6c505e4838b11795818470"
+    },
+    "package_selection": {
+      "allowlist_sha256": "75d4c0d28516f3e289ad837b3f7e54ab246d29553b7eeaf1443642411f362e63",
+      "origin": "POC discovery list; production SDF review required by Task 1.3"
+    },
+    "platform": "linux/amd64",
+    "source": {
+      "commit": "e4ffc35311b9bc3232636628bc0208aaf0567fe1",
+      "tree": "d2da0d6be4d2d92f6f805465573c37bdb7668605"
+    }
+  },
+  "inputs": {
+    "chisel": {
+      "sha256": "a257b23bc9e1e7b4330f7011bf858519530d78aa5ea6158347ff1a44da2ae7fe",
+      "size": 8859832
+    },
+    "composer_lock": {
+      "sha256": "ee0261f00d06213a0e98d0a81ef111e7bfb48b1a17e5aa8e3a2aa2228704934f",
+      "size": 664778
+    },
+    "custom_sdfs": {
+      "sha256": "62b219bc36411f1bdcccd8cf21e027cd5e09f68da6af4b710fd9656f0a592b6b",
+      "size": 71680
+    },
+    "go_mod": {
+      "sha256": "bc1e252fc1b66ef4b9edb5080167e4928f94fe8970b74846b1a43c44ce405f13",
+      "size": 46
+    },
+    "official_sdfs": {
+      "sha256": "c1defc9d999a63a6b4221968fc0737938c7a0fd7075525a3274005158747626e",
+      "size": 1955840
+    },
+    "package_allowlist": {
+      "sha256": "75d4c0d28516f3e289ad837b3f7e54ab246d29553b7eeaf1443642411f362e63",
+      "size": 1349
+    }
+  },
+  "packages": [
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "289d4b306cc0ab3db559e7b111cc3a1f1dec03b63a71bc5eb8096c190e1b8e1f",
+        "size": 90226
+      },
+      "component": "main",
+      "filename": "pool/main/a/apache2/apache2_2.4.58-1ubuntu8.17_amd64.deb",
+      "name": "apache2",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "apache2",
+      "source_version": "2.4.58-1ubuntu8.17",
+      "suite": "noble-security",
+      "version": "2.4.58-1ubuntu8.17"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "7c31f0e45695c1d0335d4bf654c644fc0977006bbefa22e1b2e0ef04d2e18744",
+        "size": 1337880
+      },
+      "component": "main",
+      "filename": "pool/main/a/apache2/apache2-bin_2.4.58-1ubuntu8.17_amd64.deb",
+      "name": "apache2-bin",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "apache2",
+      "source_version": "2.4.58-1ubuntu8.17",
+      "suite": "noble-security",
+      "version": "2.4.58-1ubuntu8.17"
+    },
+    {
+      "architecture": "all",
+      "archive": {
+        "sha256": "aad82c20829ddbef9e868180b53a82470676966df1232f6eca1aa8526edada69",
+        "size": 163308
+      },
+      "component": "main",
+      "filename": "pool/main/a/apache2/apache2-data_2.4.58-1ubuntu8.17_all.deb",
+      "name": "apache2-data",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "apache2",
+      "source_version": "2.4.58-1ubuntu8.17",
+      "suite": "noble-security",
+      "version": "2.4.58-1ubuntu8.17"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "87e8c41e62f61625fb78a982d0bc0a70f40ef8375bc313b154914d1b3759c823",
+        "size": 73220
+      },
+      "component": "main",
+      "filename": "pool/main/b/base-files/base-files_13ubuntu10.5_amd64.deb",
+      "name": "base-files",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "base-files",
+      "source_version": "13ubuntu10.5",
+      "suite": "noble-updates",
+      "version": "13ubuntu10.5"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "8514590aa2d82aa32d6beb32525f1e4577949f625eee1990b4b7b71b5ef26679",
+        "size": 51060
+      },
+      "component": "main",
+      "filename": "pool/main/b/base-passwd/base-passwd_3.6.3build1_amd64.deb",
+      "name": "base-passwd",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "base-passwd",
+      "source_version": "3.6.3build1",
+      "suite": "noble",
+      "version": "3.6.3build1"
+    },
+    {
+      "architecture": "all",
+      "archive": {
+        "sha256": "8a0a754aaafed72cc8efb8c1731808133284a84fbfc76a4fcc73fce9e01b4187",
+        "size": 138884
+      },
+      "component": "main",
+      "filename": "pool/main/c/ca-certificates/ca-certificates_20260816ubuntu0.24.04.1_all.deb",
+      "name": "ca-certificates",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "ca-certificates",
+      "source_version": "20260816ubuntu0.24.04.1",
+      "suite": "noble-security",
+      "version": "20260816ubuntu0.24.04.1"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "9df0579cd298a1f2b7a40efd519c849745aecd193a09733cf4d1032284a62bbf",
+        "size": 37298
+      },
+      "component": "main",
+      "filename": "pool/main/f/fontconfig/fontconfig-config_2.15.0-1.1ubuntu2_amd64.deb",
+      "name": "fontconfig-config",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "fontconfig",
+      "source_version": "2.15.0-1.1ubuntu2",
+      "suite": "noble",
+      "version": "2.15.0-1.1ubuntu2"
+    },
+    {
+      "architecture": "all",
+      "archive": {
+        "sha256": "40049660c194f3b8a2541fc7369efebb10e9f94bdac836a2f38fafedd10fa73a",
+        "size": 835172
+      },
+      "component": "main",
+      "filename": "pool/main/f/fonts-dejavu/fonts-dejavu-core_2.37-8_all.deb",
+      "name": "fonts-dejavu-core",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "fonts-dejavu",
+      "source_version": "2.37-8",
+      "suite": "noble",
+      "version": "2.37-8"
+    },
+    {
+      "architecture": "all",
+      "archive": {
+        "sha256": "8a599d6553307db7ecb795d2f0e5a301e03234afc75c7358b0ba43466454c89a",
+        "size": 502232
+      },
+      "component": "main",
+      "filename": "pool/main/f/fonts-dejavu/fonts-dejavu-mono_2.37-8_all.deb",
+      "name": "fonts-dejavu-mono",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "fonts-dejavu",
+      "source_version": "2.37-8",
+      "suite": "noble",
+      "version": "2.37-8"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "b95c172411a7fdae70307cf33a9f5320ba5e056b556454543dd5b679d5ce1c4f",
+        "size": 51014
+      },
+      "component": "main",
+      "filename": "pool/main/g/gcc-14/gcc-14-base_14.2.0-4ubuntu2~24.04.1_amd64.deb",
+      "name": "gcc-14-base",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "gcc-14",
+      "source_version": "14.2.0-4ubuntu2~24.04.1",
+      "suite": "noble-security",
+      "version": "14.2.0-4ubuntu2~24.04.1"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "8ee7dffb3ac1640d031f8c3d3e7bb2d48672dfe7bdfcffbae13e72b419a8e3ef",
+        "size": 1862590
+      },
+      "component": "main",
+      "filename": "pool/main/p/php8.3/libapache2-mod-php8.3_8.3.6-0ubuntu0.24.04.13_amd64.deb",
+      "name": "libapache2-mod-php8.3",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "php8.3",
+      "source_version": "8.3.6-0ubuntu0.24.04.13",
+      "suite": "noble-security",
+      "version": "8.3.6-0ubuntu0.24.04.13"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "3c719ecc010f5ad3aadb19dc192fc24eb4e0f2293ace527e9a8532810df14a92",
+        "size": 107650
+      },
+      "component": "main",
+      "filename": "pool/main/a/apr/libapr1t64_1.7.2-3.1ubuntu0.1_amd64.deb",
+      "name": "libapr1t64",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "apr",
+      "source_version": "1.7.2-3.1ubuntu0.1",
+      "suite": "noble-security",
+      "version": "1.7.2-3.1ubuntu0.1"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "f39c3cd8a87076d3bd586c192a25ed98c9c5b5ce80d37f92ce66021722995aba",
+        "size": 92674
+      },
+      "component": "main",
+      "filename": "pool/main/a/apr-util/libaprutil1t64_1.6.3-1.1ubuntu7.1_amd64.deb",
+      "name": "libaprutil1t64",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "apr-util",
+      "source_version": "1.6.3-1.1ubuntu7.1",
+      "suite": "noble-security",
+      "version": "1.6.3-1.1ubuntu7.1"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "e2c50cb5c50ca598585397f4d4ce43e6f0b5e3ddc212c23b30bdb34ca4a61f66",
+        "size": 20824
+      },
+      "component": "main",
+      "filename": "pool/main/a/argon2/libargon2-1_0~20190702+dfsg-4build1_amd64.deb",
+      "name": "libargon2-1",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "argon2",
+      "source_version": "0~20190702+dfsg-4build1",
+      "suite": "noble",
+      "version": "0~20190702+dfsg-4build1"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "74492419b8fda803774b8c9acef6afc5d2f9ff31782635aae212906adae7b277",
+        "size": 330730
+      },
+      "component": "main",
+      "filename": "pool/main/b/brotli/libbrotli1_1.1.0-2build2_amd64.deb",
+      "name": "libbrotli1",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "brotli",
+      "source_version": "1.1.0-2build2",
+      "suite": "noble",
+      "version": "1.1.0-2build2"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "f3857b0863ac5cfd4263e9bf6cfb1d4be88d5321e4070d5bc2b62b0949e6c86f",
+        "size": 41238
+      },
+      "component": "main",
+      "filename": "pool/main/libb/libbsd/libbsd0_0.12.1-1build1.1_amd64.deb",
+      "name": "libbsd0",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "libbsd",
+      "source_version": "0.12.1-1build1.1",
+      "suite": "noble-updates",
+      "version": "0.12.1-1build1.1"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "36ee08b00b1ee5018b2fce02881b7d2d73c9b4e32990bde3388400d86c48126a",
+        "size": 34562
+      },
+      "component": "main",
+      "filename": "pool/main/b/bzip2/libbz2-1.0_1.0.8-5.1ubuntu0.1_amd64.deb",
+      "name": "libbz2-1.0",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "bzip2",
+      "source_version": "1.0.8-5.1ubuntu0.1",
+      "suite": "noble-security",
+      "version": "1.0.8-5.1ubuntu0.1"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "ff5557d99b51f761c4b7c92368b9cc45565eda17df9bf9eb4b134d09825008be",
+        "size": 3264314
+      },
+      "component": "main",
+      "filename": "pool/main/g/glibc/libc6_2.39-0ubuntu8.9_amd64.deb",
+      "name": "libc6",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "glibc",
+      "source_version": "2.39-0ubuntu8.9",
+      "suite": "noble-security",
+      "version": "2.39-0ubuntu8.9"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "7ab24d3057dabf86db8f771ad6e43f073ed86b6b950d6e8ba22cb9fe6707bbc9",
+        "size": 22982
+      },
+      "component": "main",
+      "filename": "pool/main/e/e2fsprogs/libcom-err2_1.47.0-2.4~exp1ubuntu4.1_amd64.deb",
+      "name": "libcom-err2",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "e2fsprogs",
+      "source_version": "1.47.0-2.4~exp1ubuntu4.1",
+      "suite": "noble-updates",
+      "version": "1.47.0-2.4~exp1ubuntu4.1"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "9474785cd6f398512bf8c305c3901dbb111569dccb6f5832002373c0a8ac5832",
+        "size": 82302
+      },
+      "component": "main",
+      "filename": "pool/main/libx/libxcrypt/libcrypt1_4.4.36-4build1_amd64.deb",
+      "name": "libcrypt1",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "libxcrypt",
+      "source_version": "1:4.4.36-4build1",
+      "suite": "noble",
+      "version": "1:4.4.36-4build1"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "8196381b41f0078083a2a52b43f7e7ca9b0b79e5325451bf3948e4af7693cd8d",
+        "size": 344412
+      },
+      "component": "main",
+      "filename": "pool/main/c/curl/libcurl4t64_8.5.0-2ubuntu10.16_amd64.deb",
+      "name": "libcurl4t64",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "curl",
+      "source_version": "8.5.0-2ubuntu10.16",
+      "suite": "noble-security",
+      "version": "8.5.0-2ubuntu10.16"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "a78a25c8fad8fdd0b7bc6b297da5d5685579be1e57732aa47870830e4a13161e",
+        "size": 734100
+      },
+      "component": "main",
+      "filename": "pool/main/d/db5.3/libdb5.3t64_5.3.28+dfsg2-7_amd64.deb",
+      "name": "libdb5.3t64",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "db5.3",
+      "source_version": "5.3.28+dfsg2-7",
+      "suite": "noble",
+      "version": "5.3.28+dfsg2-7"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "8e7dfa9e63a9b5058071b84da48bb2e30dea07de169e80fbc759fe0e68639269",
+        "size": 43914
+      },
+      "component": "main",
+      "filename": "pool/main/libd/libdeflate/libdeflate0_1.19-1build1.1_amd64.deb",
+      "name": "libdeflate0",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "libdeflate",
+      "source_version": "1.19-1build1.1",
+      "suite": "noble-updates",
+      "version": "1.19-1build1.1"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "3afbc8ddf835049dd4d88275b9d13680e4c4cdd59e191cbd63424152cc08e00e",
+        "size": 97586
+      },
+      "component": "main",
+      "filename": "pool/main/libe/libedit/libedit2_3.1-20230828-1build1_amd64.deb",
+      "name": "libedit2",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "libedit",
+      "source_version": "3.1-20230828-1build1",
+      "suite": "noble",
+      "version": "3.1-20230828-1build1"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "494b8e672f722130c6bca6a7bc4cc31a43ca891a31d60d868bfdd699a3c20b13",
+        "size": 98940
+      },
+      "component": "main",
+      "filename": "pool/main/e/expat/libexpat1_2.6.1-2ubuntu0.6_amd64.deb",
+      "name": "libexpat1",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "expat",
+      "source_version": "2.6.1-2ubuntu0.6",
+      "suite": "noble-security",
+      "version": "2.6.1-2ubuntu0.6"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "637e6a7744de08cd331a41f4efd0d24e6ea9064843dea9d1c6ca87bdb5f038a2",
+        "size": 24718
+      },
+      "component": "main",
+      "filename": "pool/main/libf/libffi/libffi8_3.4.6-1build1_amd64.deb",
+      "name": "libffi8",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "libffi",
+      "source_version": "3.4.6-1build1",
+      "suite": "noble",
+      "version": "3.4.6-1build1"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "a2bc05cfef021fdb84285036f98eda5ebec3c4b7a378f5aa2bdba5c4d3d8d586",
+        "size": 138572
+      },
+      "component": "main",
+      "filename": "pool/main/f/fontconfig/libfontconfig1_2.15.0-1.1ubuntu2_amd64.deb",
+      "name": "libfontconfig1",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "fontconfig",
+      "source_version": "2.15.0-1.1ubuntu2",
+      "suite": "noble",
+      "version": "2.15.0-1.1ubuntu2"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "8c6d3bac5a6197fa2f48b2d56f04f3ffecaa7082eeab91b0939f97a40adc88a6",
+        "size": 402610
+      },
+      "component": "main",
+      "filename": "pool/main/f/freetype/libfreetype6_2.13.2+dfsg-1ubuntu0.2_amd64.deb",
+      "name": "libfreetype6",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "freetype",
+      "source_version": "2.13.2+dfsg-1ubuntu0.2",
+      "suite": "noble-security",
+      "version": "2.13.2+dfsg-1ubuntu0.2"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "aa7fadbe33b78bcf99885318040601c550c208929565b179891d9a3cc2aa68cd",
+        "size": 78392
+      },
+      "component": "main",
+      "filename": "pool/main/g/gcc-14/libgcc-s1_14.2.0-4ubuntu2~24.04.1_amd64.deb",
+      "name": "libgcc-s1",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "gcc-14",
+      "source_version": "14.2.0-4ubuntu2~24.04.1",
+      "suite": "noble-security",
+      "version": "14.2.0-4ubuntu2~24.04.1"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "957b9eeaa83cf6f2d5d5d76dbb8aa31d3297e6781d8a02fa08dcc897ae650a0b",
+        "size": 536494
+      },
+      "component": "main",
+      "filename": "pool/main/libg/libgcrypt20/libgcrypt20_1.10.3-2ubuntu0.2_amd64.deb",
+      "name": "libgcrypt20",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "libgcrypt20",
+      "source_version": "1.10.3-2ubuntu0.2",
+      "suite": "noble-security",
+      "version": "1.10.3-2ubuntu0.2"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "dbef5ad99eec399fd6afeb6d0cc92d81a8b3295a7ac80ac71311ea09c49704ae",
+        "size": 127506
+      },
+      "component": "main",
+      "filename": "pool/main/libg/libgd2/libgd3_2.3.3-9ubuntu5_amd64.deb",
+      "name": "libgd3",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "libgd2",
+      "source_version": "2.3.3-9ubuntu5",
+      "suite": "noble",
+      "version": "2.3.3-9ubuntu5"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "18d6d74a5c038b458d95ba0c0909e0f086cd50bb9a0fee32697902724fc5645e",
+        "size": 34440
+      },
+      "component": "main",
+      "filename": "pool/main/g/gdbm/libgdbm6t64_1.23-5.1build1_amd64.deb",
+      "name": "libgdbm6t64",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "gdbm",
+      "source_version": "1.23-5.1build1",
+      "suite": "noble",
+      "version": "1.23-5.1build1"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "285f8a505dfa8e1b33f357a9d8d3477ad35bf18c0b34771a6df4c25923f3ae0d",
+        "size": 253460
+      },
+      "component": "main",
+      "filename": "pool/main/g/gmp/libgmp10_6.3.0+dfsg-2ubuntu6.1_amd64.deb",
+      "name": "libgmp10",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "gmp",
+      "source_version": "2:6.3.0+dfsg-2ubuntu6.1",
+      "suite": "noble-updates",
+      "version": "2:6.3.0+dfsg-2ubuntu6.1"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "b8944756260c5ea6b7fac019745f931f905aa7a4df0763676b1b25c911b692e2",
+        "size": 1002902
+      },
+      "component": "main",
+      "filename": "pool/main/g/gnutls28/libgnutls30t64_3.8.3-1.1ubuntu3.6_amd64.deb",
+      "name": "libgnutls30t64",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "gnutls28",
+      "source_version": "3.8.3-1.1ubuntu3.6",
+      "suite": "noble-security",
+      "version": "3.8.3-1.1ubuntu3.6"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "93654ee8180a73a0363f25c51dc673d67cbabcbecd164187b8a2deb54d007aef",
+        "size": 70092
+      },
+      "component": "main",
+      "filename": "pool/main/libg/libgpg-error/libgpg-error0_1.47-3build2.1_amd64.deb",
+      "name": "libgpg-error0",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "libgpg-error",
+      "source_version": "1.47-3build2.1",
+      "suite": "noble-updates",
+      "version": "1.47-3build2.1"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "0d4a0187bcdbbe3e6a10bfa574100087d12052d0d0ef28614fd6210021c587b2",
+        "size": 142830
+      },
+      "component": "main",
+      "filename": "pool/main/k/krb5/libgssapi-krb5-2_1.20.1-6ubuntu2.10_amd64.deb",
+      "name": "libgssapi-krb5-2",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "krb5",
+      "source_version": "1.20.1-6ubuntu2.10",
+      "suite": "noble-updates",
+      "version": "1.20.1-6ubuntu2.10"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "33336eff50c1fef24036bb93a982ea8fce20d28d1bda31c157ac45b4f0fe8737",
+        "size": 15524
+      },
+      "component": "main",
+      "filename": "pool/main/libm/libmemcached/libhashkit2t64_1.1.4-1.1build3_amd64.deb",
+      "name": "libhashkit2t64",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "libmemcached",
+      "source_version": "1.1.4-1.1build3",
+      "suite": "noble",
+      "version": "1.1.4-1.1build3"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "1680862f44d1f15cb2a507596c268c0de30f636cd682e912859e241d7c033467",
+        "size": 277292
+      },
+      "component": "main",
+      "filename": "pool/main/libh/libheif/libheif1_1.17.6-1ubuntu4.9_amd64.deb",
+      "name": "libheif1",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "libheif",
+      "source_version": "1.17.6-1ubuntu4.9",
+      "suite": "noble-security",
+      "version": "1.17.6-1ubuntu4.9"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "a9b5f7e9d49ba9060e1c933567046fbc6feab6096799cbf550b7214dc9b0f49b",
+        "size": 198548
+      },
+      "component": "main",
+      "filename": "pool/main/n/nettle/libhogweed6t64_3.9.1-2.2build1.1_amd64.deb",
+      "name": "libhogweed6t64",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "nettle",
+      "source_version": "3.9.1-2.2build1.1",
+      "suite": "noble-updates",
+      "version": "3.9.1-2.2build1.1"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "c9a70989678660eed9a1e904c74fa043da8bec8e2036856fc16e31ced79b04f8",
+        "size": 10860078
+      },
+      "component": "main",
+      "filename": "pool/main/i/icu/libicu74_74.2-1ubuntu3.1_amd64.deb",
+      "name": "libicu74",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "icu",
+      "source_version": "74.2-1ubuntu3.1",
+      "suite": "noble-updates",
+      "version": "74.2-1ubuntu3.1"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "46bfd10df095a23b65f58115de47a547c9a2d14627749bd0423ae78c14be77d3",
+        "size": 66242
+      },
+      "component": "main",
+      "filename": "pool/main/libi/libidn2/libidn2-0_2.3.7-2build1.1_amd64.deb",
+      "name": "libidn2-0",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "libidn2",
+      "source_version": "2.3.7-2build1.1",
+      "suite": "noble-updates",
+      "version": "2.3.7-2build1.1"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "0cf79113f5d193ce9af2be2ff4b2c3b30dd4e55a0b6c47f7d28f6c849ff3aa60",
+        "size": 32830
+      },
+      "component": "main",
+      "filename": "pool/main/j/jansson/libjansson4_2.14-2build2_amd64.deb",
+      "name": "libjansson4",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "jansson",
+      "source_version": "2.14-2build2",
+      "suite": "noble",
+      "version": "2.14-2build2"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "074a760a86213a1286ad60f56394c90885cf45af070626a88c480d90b78c175a",
+        "size": 29668
+      },
+      "component": "main",
+      "filename": "pool/main/j/jbigkit/libjbig0_2.1-6.1ubuntu2_amd64.deb",
+      "name": "libjbig0",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "jbigkit",
+      "source_version": "2.1-6.1ubuntu2",
+      "suite": "noble",
+      "version": "2.1-6.1ubuntu2"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "f68b5b23bc8a1688fb787d2aed7e2cdf895a73022f6a5025e183162dac4500b2",
+        "size": 149982
+      },
+      "component": "main",
+      "filename": "pool/main/libj/libjpeg-turbo/libjpeg-turbo8_2.1.5-2ubuntu2_amd64.deb",
+      "name": "libjpeg-turbo8",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "libjpeg-turbo",
+      "source_version": "2.1.5-2ubuntu2",
+      "suite": "noble",
+      "version": "2.1.5-2ubuntu2"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "273f7cc95a68d927d7f71c3e78b7717a16a8d86e646a206bae7bf797150ae9db",
+        "size": 81944
+      },
+      "component": "main",
+      "filename": "pool/main/k/krb5/libk5crypto3_1.20.1-6ubuntu2.10_amd64.deb",
+      "name": "libk5crypto3",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "krb5",
+      "source_version": "1.20.1-6ubuntu2.10",
+      "suite": "noble-updates",
+      "version": "1.20.1-6ubuntu2.10"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "0679f198b0128179e46cdf956fb2022c23c758664c00bc8efa0382d509683a8a",
+        "size": 9490
+      },
+      "component": "main",
+      "filename": "pool/main/k/keyutils/libkeyutils1_1.6.3-3build1_amd64.deb",
+      "name": "libkeyutils1",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "keyutils",
+      "source_version": "1.6.3-3build1",
+      "suite": "noble",
+      "version": "1.6.3-3build1"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "60b48c5a3233f1d8caba30d6573edc8e131911ab6d63adcd664f7cbe62708362",
+        "size": 347568
+      },
+      "component": "main",
+      "filename": "pool/main/k/krb5/libkrb5-3_1.20.1-6ubuntu2.10_amd64.deb",
+      "name": "libkrb5-3",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "krb5",
+      "source_version": "1.20.1-6ubuntu2.10",
+      "suite": "noble-updates",
+      "version": "1.20.1-6ubuntu2.10"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "9224ede3246a82a845ea97652ecfae57f88e8d8f520d8a186f9157167574fb34",
+        "size": 34942
+      },
+      "component": "main",
+      "filename": "pool/main/k/krb5/libkrb5support0_1.20.1-6ubuntu2.10_amd64.deb",
+      "name": "libkrb5support0",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "krb5",
+      "source_version": "1.20.1-6ubuntu2.10",
+      "suite": "noble-updates",
+      "version": "1.20.1-6ubuntu2.10"
+    },
+    {
+      "architecture": "all",
+      "archive": {
+        "sha256": "d509c254b8fea34f1e8186f6fccef1a499798931c471108c63529bcca9e40516",
+        "size": 32942
+      },
+      "component": "main",
+      "filename": "pool/main/o/openldap/libldap-common_2.6.10+dfsg-0ubuntu0.24.04.1_all.deb",
+      "name": "libldap-common",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "openldap",
+      "source_version": "2.6.10+dfsg-0ubuntu0.24.04.1",
+      "suite": "noble-updates",
+      "version": "2.6.10+dfsg-0ubuntu0.24.04.1"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "7f3f8e565401256f21d5aa562c9f92dbb63537b73aaea6283e4db5264f1598f4",
+        "size": 197620
+      },
+      "component": "main",
+      "filename": "pool/main/o/openldap/libldap2_2.6.10+dfsg-0ubuntu0.24.04.1_amd64.deb",
+      "name": "libldap2",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "openldap",
+      "source_version": "2.6.10+dfsg-0ubuntu0.24.04.1",
+      "suite": "noble-updates",
+      "version": "2.6.10+dfsg-0ubuntu0.24.04.1"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "f1b9dbfa28c56564f6b544f3757f5f3f4d549ce9962f39e897812c23b0a5d0e7",
+        "size": 179378
+      },
+      "component": "main",
+      "filename": "pool/main/l/lerc/liblerc4_4.0.0+ds-4ubuntu2_amd64.deb",
+      "name": "liblerc4",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "lerc",
+      "source_version": "4.0.0+ds-4ubuntu2",
+      "suite": "noble",
+      "version": "4.0.0+ds-4ubuntu2"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "6a520259e5b06e86191a25af6d448387cdd2b3d291a0aa956ce272e84d071260",
+        "size": 166226
+      },
+      "component": "main",
+      "filename": "pool/main/l/lua5.4/liblua5.4-0_5.4.6-3build2_amd64.deb",
+      "name": "liblua5.4-0",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "lua5.4",
+      "source_version": "5.4.6-3build2",
+      "suite": "noble",
+      "version": "5.4.6-3build2"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "319331270d5cc52d5ebffe51c941d7b01b432bc402c2924b557209a64d4ecbad",
+        "size": 63062
+      },
+      "component": "main",
+      "filename": "pool/main/l/lz4/liblz4-1_1.9.4-1build1.1_amd64.deb",
+      "name": "liblz4-1",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "lz4",
+      "source_version": "1.9.4-1build1.1",
+      "suite": "noble-updates",
+      "version": "1.9.4-1build1.1"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "5bcf5da2339331e21d3f42a831e82c61c54c6b2f29804010e8d59abd0ae52167",
+        "size": 127704
+      },
+      "component": "main",
+      "filename": "pool/main/x/xz-utils/liblzma5_5.6.1+really5.4.5-1ubuntu0.4_amd64.deb",
+      "name": "liblzma5",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "xz-utils",
+      "source_version": "5.6.1+really5.4.5-1ubuntu0.4",
+      "suite": "noble-security",
+      "version": "5.6.1+really5.4.5-1ubuntu0.4"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "1608427381a08eefd7e5b1c4cf5b4f360cbb7296f489989c2453ec26989a9fa5",
+        "size": 196354
+      },
+      "component": "universe",
+      "filename": "pool/universe/m/mariadb/libmariadb3_10.11.14-0ubuntu0.24.04.1_amd64.deb",
+      "name": "libmariadb3",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "mariadb",
+      "source_version": "1:10.11.14-0ubuntu0.24.04.1",
+      "suite": "noble-updates",
+      "version": "1:10.11.14-0ubuntu0.24.04.1"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "e5ba01d3c41f256aaf57ec59aa0554857162e3e7f97cdfbff1ed2c0e8d720ee7",
+        "size": 26976
+      },
+      "component": "main",
+      "filename": "pool/main/libm/libmd/libmd0_1.1.0-2build1.1_amd64.deb",
+      "name": "libmd0",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "libmd",
+      "source_version": "1.1.0-2build1.1",
+      "suite": "noble-updates",
+      "version": "1.1.0-2build1.1"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "5f0a3c3ba254d9a71614c064bd6294774fd96210c8fdd38b93cbbc5a8c20c3ec",
+        "size": 80542
+      },
+      "component": "main",
+      "filename": "pool/main/libm/libmemcached/libmemcached11t64_1.1.4-1.1build3_amd64.deb",
+      "name": "libmemcached11t64",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "libmemcached",
+      "source_version": "1.1.4-1.1build3",
+      "suite": "noble",
+      "version": "1.1.4-1.1build3"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "59e8527dfd14473393960bfb7c69566f1ad9d576423421dcb8b8dcdbb3e7fca1",
+        "size": 111902
+      },
+      "component": "main",
+      "filename": "pool/main/n/ncurses/libncurses6_6.4+20240113-1ubuntu2.2_amd64.deb",
+      "name": "libncurses6",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "ncurses",
+      "source_version": "6.4+20240113-1ubuntu2.2",
+      "suite": "noble-security",
+      "version": "6.4+20240113-1ubuntu2.2"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "6d97fbc1972633083f08f51ccab433606c97bbceb897c631c66495117ca3406f",
+        "size": 181636
+      },
+      "component": "main",
+      "filename": "pool/main/n/nettle/libnettle8t64_3.9.1-2.2build1.1_amd64.deb",
+      "name": "libnettle8t64",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "nettle",
+      "source_version": "3.9.1-2.2build1.1",
+      "suite": "noble-updates",
+      "version": "3.9.1-2.2build1.1"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "73adcbb9df32cd7c9d46b1c7598bbbbcf249be705d62d966694cfc9976a15dfe",
+        "size": 74590
+      },
+      "component": "main",
+      "filename": "pool/main/n/nghttp2/libnghttp2-14_1.59.0-1ubuntu0.4_amd64.deb",
+      "name": "libnghttp2-14",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "nghttp2",
+      "source_version": "1.59.0-1ubuntu0.4",
+      "suite": "noble-security",
+      "version": "1.59.0-1ubuntu0.4"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "605f42287d2bcb6c84f5a02377c7cd777090c5e857259a4030a571989f19dde2",
+        "size": 172336
+      },
+      "component": "main",
+      "filename": "pool/main/libo/libonig/libonig5_6.9.9-1build1_amd64.deb",
+      "name": "libonig5",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "libonig",
+      "source_version": "6.9.9-1build1",
+      "suite": "noble",
+      "version": "6.9.9-1build1"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "e7c58aeac19d89f5f1492dfaa52b8623bcd56edc40983f5243ad56d94f477bf2",
+        "size": 297270
+      },
+      "component": "main",
+      "filename": "pool/main/p/p11-kit/libp11-kit0_0.25.3-4ubuntu2.2_amd64.deb",
+      "name": "libp11-kit0",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "p11-kit",
+      "source_version": "0.25.3-4ubuntu2.2",
+      "suite": "noble-security",
+      "version": "0.25.3-4ubuntu2.2"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "110a797a57673d3ee497a141cf988199258058c57525799c63194d81822529a0",
+        "size": 226662
+      },
+      "component": "main",
+      "filename": "pool/main/p/pcre2/libpcre2-8-0_10.42-4ubuntu2.1_amd64.deb",
+      "name": "libpcre2-8-0",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "pcre2",
+      "source_version": "10.42-4ubuntu2.1",
+      "suite": "noble-updates",
+      "version": "10.42-4ubuntu2.1"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "863d6abb089b2820ceba98e6b18f06eaacc55f9b05827001e7b4021a9a7b246c",
+        "size": 188998
+      },
+      "component": "main",
+      "filename": "pool/main/libp/libpng1.6/libpng16-16t64_1.6.43-5ubuntu0.7_amd64.deb",
+      "name": "libpng16-16t64",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "libpng1.6",
+      "source_version": "1.6.43-5ubuntu0.7",
+      "suite": "noble-security",
+      "version": "1.6.43-5ubuntu0.7"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "a6c85d1303ae90b6a3209d73c4f047f82c27cdc963c48adfd95dd7abca64f039",
+        "size": 57072
+      },
+      "component": "main",
+      "filename": "pool/main/libp/libpsl/libpsl5t64_0.21.2-1.1build1_amd64.deb",
+      "name": "libpsl5t64",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "libpsl",
+      "source_version": "0.21.2-1.1build1",
+      "suite": "noble",
+      "version": "0.21.2-1.1build1"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "967a39dbc14236d1580ede01d80fd78444668572e716734e1ac66c175052594e",
+        "size": 56342
+      },
+      "component": "main",
+      "filename": "pool/main/r/rtmpdump/librtmp1_2.4+20151223.gitfa8646d.1-2build7_amd64.deb",
+      "name": "librtmp1",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "rtmpdump",
+      "source_version": "2.4+20151223.gitfa8646d.1-2build7",
+      "suite": "noble",
+      "version": "2.4+20151223.gitfa8646d.1-2build7"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "eda097f98dcb3a08b9ce157d6191d140e4885c1cba47b683c94b8ca45e88f458",
+        "size": 53194
+      },
+      "component": "main",
+      "filename": "pool/main/c/cyrus-sasl2/libsasl2-2_2.1.28+dfsg1-5ubuntu3.1_amd64.deb",
+      "name": "libsasl2-2",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "cyrus-sasl2",
+      "source_version": "2.1.28+dfsg1-5ubuntu3.1",
+      "suite": "noble-updates",
+      "version": "2.1.28+dfsg1-5ubuntu3.1"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "1f13548b1774cd9c70c50b8c3267204a101334a4d2f979338896ba5a4c6f81b8",
+        "size": 20354
+      },
+      "component": "main",
+      "filename": "pool/main/c/cyrus-sasl2/libsasl2-modules-db_2.1.28+dfsg1-5ubuntu3.1_amd64.deb",
+      "name": "libsasl2-modules-db",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "cyrus-sasl2",
+      "source_version": "2.1.28+dfsg1-5ubuntu3.1",
+      "suite": "noble-updates",
+      "version": "2.1.28+dfsg1-5ubuntu3.1"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "4e1763494e5b9d34192313aa88e38201fc67b3f13ea96ca268d26401a3002791",
+        "size": 15786
+      },
+      "component": "main",
+      "filename": "pool/main/libw/libwebp/libsharpyuv0_1.3.2-0.4build3_amd64.deb",
+      "name": "libsharpyuv0",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "libwebp",
+      "source_version": "1.3.2-0.4build3",
+      "suite": "noble",
+      "version": "1.3.2-0.4build3"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "74d6f8fbd65f7f71b6f4f4223bef5fb57c1c14cd4e9ce788ead2b88e8c3ee236",
+        "size": 161290
+      },
+      "component": "main",
+      "filename": "pool/main/libs/libsodium/libsodium23_1.0.18-1ubuntu0.24.04.1_amd64.deb",
+      "name": "libsodium23",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "libsodium",
+      "source_version": "1.0.18-1ubuntu0.24.04.1",
+      "suite": "noble-security",
+      "version": "1.0.18-1ubuntu0.24.04.1"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "2448ce5f99e49721d12f8b227f2472dd08ed7a78184dd819fd03a42693024a16",
+        "size": 191284
+      },
+      "component": "main",
+      "filename": "pool/main/libs/libssh/libssh-4_0.10.6-2ubuntu0.5_amd64.deb",
+      "name": "libssh-4",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "libssh",
+      "source_version": "0.10.6-2ubuntu0.5",
+      "suite": "noble-security",
+      "version": "0.10.6-2ubuntu0.5"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "219f43b1cd836a4da550938db5fda93160d269d39a4edcf1f1ce698a470db797",
+        "size": 1945300
+      },
+      "component": "main",
+      "filename": "pool/main/o/openssl/libssl3t64_3.0.13-0ubuntu3.16_amd64.deb",
+      "name": "libssl3t64",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "openssl",
+      "source_version": "3.0.13-0ubuntu3.16",
+      "suite": "noble-security",
+      "version": "3.0.13-0ubuntu3.16"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "a51f8de7829211db961a31f02158058ad1a95f92ac6d0a5dff6350e2821c54c0",
+        "size": 792064
+      },
+      "component": "main",
+      "filename": "pool/main/g/gcc-14/libstdc++6_14.2.0-4ubuntu2~24.04.1_amd64.deb",
+      "name": "libstdc++6",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "gcc-14",
+      "source_version": "14.2.0-4ubuntu2~24.04.1",
+      "suite": "noble-security",
+      "version": "14.2.0-4ubuntu2~24.04.1"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "f82c9ad142f952ea523bda5bfca7bb0802af3a50b8c0f0dd9ec18cdfa104bde7",
+        "size": 44468
+      },
+      "component": "main",
+      "filename": "pool/main/libt/libtasn1-6/libtasn1-6_4.19.0-3ubuntu0.24.04.2_amd64.deb",
+      "name": "libtasn1-6",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "libtasn1-6",
+      "source_version": "4.19.0-3ubuntu0.24.04.2",
+      "suite": "noble-security",
+      "version": "4.19.0-3ubuntu0.24.04.2"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "564cdf59dda5e1a826c51b5868ee2785fffa26ee5a7bad95bc5e8c8224c931b8",
+        "size": 199612
+      },
+      "component": "main",
+      "filename": "pool/main/t/tiff/libtiff6_4.5.1+git230720-4ubuntu2.5_amd64.deb",
+      "name": "libtiff6",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "tiff",
+      "source_version": "4.5.1+git230720-4ubuntu2.5",
+      "suite": "noble-security",
+      "version": "4.5.1+git230720-4ubuntu2.5"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "b67a6df2bdab61d273eabebd208bb6a3fb12618a390a067e1ee305a409ff03d9",
+        "size": 108086
+      },
+      "component": "main",
+      "filename": "pool/main/n/ncurses/libtinfo6_6.4+20240113-1ubuntu2.2_amd64.deb",
+      "name": "libtinfo6",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "ncurses",
+      "source_version": "6.4+20240113-1ubuntu2.2",
+      "suite": "noble-security",
+      "version": "6.4+20240113-1ubuntu2.2"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "203d7657b5f54633fba1a9c9b784d556ef83c9f6787b3185ba55a88e07b865a3",
+        "size": 535554
+      },
+      "component": "main",
+      "filename": "pool/main/libu/libunistring/libunistring5_1.1-2build1.1_amd64.deb",
+      "name": "libunistring5",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "libunistring",
+      "source_version": "1.1-2build1.1",
+      "suite": "noble-updates",
+      "version": "1.1-2build1.1"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "7e2992d3a79fc05514dc5966558ee9c66a7214a47edf2a36017b9e2777528665",
+        "size": 36596
+      },
+      "component": "main",
+      "filename": "pool/main/u/util-linux/libuuid1_2.39.3-9ubuntu6.6_amd64.deb",
+      "name": "libuuid1",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "util-linux",
+      "source_version": "2.39.3-9ubuntu6.6",
+      "suite": "noble-security",
+      "version": "2.39.3-9ubuntu6.6"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "c86f6439f0bbc531f7199794654231f3b29327d6585958511b958795d51c2484",
+        "size": 230220
+      },
+      "component": "main",
+      "filename": "pool/main/libw/libwebp/libwebp7_1.3.2-0.4build3_amd64.deb",
+      "name": "libwebp7",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "libwebp",
+      "source_version": "1.3.2-0.4build3",
+      "suite": "noble",
+      "version": "1.3.2-0.4build3"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "9102f73477081a9a57994c80587ca9760341f644ed51bdfa46f2248083d418b3",
+        "size": 653072
+      },
+      "component": "main",
+      "filename": "pool/main/libx/libx11/libx11-6_1.8.7-1ubuntu0.1_amd64.deb",
+      "name": "libx11-6",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "libx11",
+      "source_version": "2:1.8.7-1ubuntu0.1",
+      "suite": "noble-security",
+      "version": "2:1.8.7-1ubuntu0.1"
+    },
+    {
+      "architecture": "all",
+      "archive": {
+        "sha256": "5cb70f7a8e7178e0bae4fd49eee49feaed623d2d821caf6ea5862b66f9e9630b",
+        "size": 115970
+      },
+      "component": "main",
+      "filename": "pool/main/libx/libx11/libx11-data_1.8.7-1ubuntu0.1_all.deb",
+      "name": "libx11-data",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "libx11",
+      "source_version": "2:1.8.7-1ubuntu0.1",
+      "suite": "noble-security",
+      "version": "2:1.8.7-1ubuntu0.1"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "e40d29f1d1a62393bacaedebe0da3d9006084152a9f7e5e029293f08ce1c5c80",
+        "size": 7160
+      },
+      "component": "main",
+      "filename": "pool/main/libx/libxau/libxau6_1.0.9-1build6_amd64.deb",
+      "name": "libxau6",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "libxau",
+      "source_version": "1:1.0.9-1build6",
+      "suite": "noble",
+      "version": "1:1.0.9-1build6"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "e1c6611d11ad7398326f1bf028afc34c3b14c51d917a3426b966ed4b9687fa58",
+        "size": 47730
+      },
+      "component": "main",
+      "filename": "pool/main/libx/libxcb/libxcb1_1.15-1ubuntu2_amd64.deb",
+      "name": "libxcb1",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "libxcb",
+      "source_version": "1.15-1ubuntu2",
+      "suite": "noble",
+      "version": "1.15-1ubuntu2"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "bcd336fce11ce2a45f34d0f95e6980af22529f22147e8f98c156e5cee8ee42bb",
+        "size": 10254
+      },
+      "component": "main",
+      "filename": "pool/main/libx/libxdmcp/libxdmcp6_1.1.3-0ubuntu6_amd64.deb",
+      "name": "libxdmcp6",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "libxdmcp",
+      "source_version": "1:1.1.3-0ubuntu6",
+      "suite": "noble",
+      "version": "1:1.1.3-0ubuntu6"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "c5a065f85c1e6f605741e365e40cad71c3ceb0e85e2791400bd35b8896e12ad1",
+        "size": 763592
+      },
+      "component": "main",
+      "filename": "pool/main/libx/libxml2/libxml2_2.9.14+dfsg-1.3ubuntu3.10_amd64.deb",
+      "name": "libxml2",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "libxml2",
+      "source_version": "2.9.14+dfsg-1.3ubuntu3.10",
+      "suite": "noble-security",
+      "version": "2.9.14+dfsg-1.3ubuntu3.10"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "e14b1581dc675ded6519132f5fccb31b39d534117399d3153082e353b6fe2704",
+        "size": 36684
+      },
+      "component": "main",
+      "filename": "pool/main/libx/libxpm/libxpm4_3.5.17-1ubuntu0.24.04.2_amd64.deb",
+      "name": "libxpm4",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "libxpm",
+      "source_version": "1:3.5.17-1ubuntu0.24.04.2",
+      "suite": "noble-security",
+      "version": "1:3.5.17-1ubuntu0.24.04.2"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "e716daf96ea2526cab92e5cc4708739d5f2f4b89fb76782dfda7f49283eeeb40",
+        "size": 167806
+      },
+      "component": "main",
+      "filename": "pool/main/libx/libxslt/libxslt1.1_1.1.39-0exp1ubuntu0.24.04.3_amd64.deb",
+      "name": "libxslt1.1",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "libxslt",
+      "source_version": "1.1.39-0exp1ubuntu0.24.04.3",
+      "suite": "noble-security",
+      "version": "1.1.39-0exp1ubuntu0.24.04.3"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "d7484efd8d9968ecab9e488fde59980fc633e0eb2bbf7f1ea8e33bf71c9ff1fb",
+        "size": 53596
+      },
+      "component": "universe",
+      "filename": "pool/universe/libz/libzip/libzip4t64_1.7.3-1.1ubuntu2_amd64.deb",
+      "name": "libzip4t64",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "libzip",
+      "source_version": "1.7.3-1.1ubuntu2",
+      "suite": "noble",
+      "version": "1.7.3-1.1ubuntu2"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "dfcf25061e07aad7efd3f4f880ba5ad4d4d09ebe7fc8cc77ab6b8a161d6d4727",
+        "size": 299472
+      },
+      "component": "main",
+      "filename": "pool/main/libz/libzstd/libzstd1_1.5.5+dfsg2-2build1.1_amd64.deb",
+      "name": "libzstd1",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "libzstd",
+      "source_version": "1.5.5+dfsg2-2build1.1",
+      "suite": "noble-updates",
+      "version": "1.5.5+dfsg2-2build1.1"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "b44ef0f31ffe0be1295ee7085c6e4177bbac408278d42f19116bd0caac4a0e27",
+        "size": 2502348
+      },
+      "component": "universe",
+      "filename": "pool/universe/m/mariadb/mariadb-client_10.11.14-0ubuntu0.24.04.1_amd64.deb",
+      "name": "mariadb-client",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "mariadb",
+      "source_version": "1:10.11.14-0ubuntu0.24.04.1",
+      "suite": "noble-updates",
+      "version": "1:10.11.14-0ubuntu0.24.04.1"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "b52694e010f55841f97b6bbf34bf88f7d1a2b47e59fae3e601da0f1f99ae4afb",
+        "size": 1039390
+      },
+      "component": "universe",
+      "filename": "pool/universe/m/mariadb/mariadb-client-core_10.11.14-0ubuntu0.24.04.1_amd64.deb",
+      "name": "mariadb-client-core",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "mariadb",
+      "source_version": "1:10.11.14-0ubuntu0.24.04.1",
+      "suite": "noble-updates",
+      "version": "1:10.11.14-0ubuntu0.24.04.1"
+    },
+    {
+      "architecture": "all",
+      "archive": {
+        "sha256": "5b4257abd9bd0fb24b7b4a28646fe78af25099beeb5b5fbbd011b6b935d03aae",
+        "size": 28550
+      },
+      "component": "universe",
+      "filename": "pool/universe/m/mariadb/mariadb-common_10.11.14-0ubuntu0.24.04.1_all.deb",
+      "name": "mariadb-common",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "mariadb",
+      "source_version": "1:10.11.14-0ubuntu0.24.04.1",
+      "suite": "noble-updates",
+      "version": "1:10.11.14-0ubuntu0.24.04.1"
+    },
+    {
+      "architecture": "all",
+      "archive": {
+        "sha256": "31bfb7eec55ab6d34a50ba995150e1498d4cb897714085d8025e330d3b529747",
+        "size": 27474
+      },
+      "component": "main",
+      "filename": "pool/main/m/media-types/media-types_10.1.0_all.deb",
+      "name": "media-types",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "media-types",
+      "source_version": "10.1.0",
+      "suite": "noble",
+      "version": "10.1.0"
+    },
+    {
+      "architecture": "all",
+      "archive": {
+        "sha256": "2a9ed286f4a78849bb0231b11a9ababf8c8694667caf986cd2563a6b67f939bc",
+        "size": 6746
+      },
+      "component": "main",
+      "filename": "pool/main/m/mysql-defaults/mysql-common_5.8+1.1.0build1_all.deb",
+      "name": "mysql-common",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "mysql-defaults",
+      "source_version": "1.1.0build1",
+      "suite": "noble",
+      "version": "5.8+1.1.0build1"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "675b84971ffd4467707008c25ef7520f90ea7c23ef27b7a76b0dccf1d7c4dc3f",
+        "size": 1003702
+      },
+      "component": "main",
+      "filename": "pool/main/o/openssl/openssl_3.0.13-0ubuntu3.16_amd64.deb",
+      "name": "openssl",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "openssl",
+      "source_version": "3.0.13-0ubuntu3.16",
+      "suite": "noble-security",
+      "version": "3.0.13-0ubuntu3.16"
+    },
+    {
+      "architecture": "all",
+      "archive": {
+        "sha256": "39b15c407700e81ddd62580736feba31b187ffff56f6835dac5fa8f847c42529",
+        "size": 13910
+      },
+      "component": "main",
+      "filename": "pool/main/p/php-defaults/php-common_93ubuntu2_all.deb",
+      "name": "php-common",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "php-defaults",
+      "source_version": "93ubuntu2",
+      "suite": "noble",
+      "version": "2:93ubuntu2"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "698f569c6692ece0089eaea6ab8697441b65f5d0821f63028e1a475ce5e7a65b",
+        "size": 16616
+      },
+      "component": "universe",
+      "filename": "pool/universe/p/php8.3/php8.3-bcmath_8.3.6-0ubuntu0.24.04.13_amd64.deb",
+      "name": "php8.3-bcmath",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "php8.3",
+      "source_version": "8.3.6-0ubuntu0.24.04.13",
+      "suite": "noble-security",
+      "version": "8.3.6-0ubuntu0.24.04.13"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "6868966e46f777624f8cdfd3c38dfb2a7b6c2654bcacda57dc2049ecc9ca566b",
+        "size": 1931822
+      },
+      "component": "main",
+      "filename": "pool/main/p/php8.3/php8.3-cli_8.3.6-0ubuntu0.24.04.13_amd64.deb",
+      "name": "php8.3-cli",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "php8.3",
+      "source_version": "8.3.6-0ubuntu0.24.04.13",
+      "suite": "noble-security",
+      "version": "8.3.6-0ubuntu0.24.04.13"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "801cae4e842e1b9e9d60a542bf18ba831bf504b2f3070404892bf3f8fb943ea4",
+        "size": 747814
+      },
+      "component": "main",
+      "filename": "pool/main/p/php8.3/php8.3-common_8.3.6-0ubuntu0.24.04.13_amd64.deb",
+      "name": "php8.3-common",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "php8.3",
+      "source_version": "8.3.6-0ubuntu0.24.04.13",
+      "suite": "noble-security",
+      "version": "8.3.6-0ubuntu0.24.04.13"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "a5a9daaf2cbddb9488bf401a7020fd338d5d1c12327a774855d15e589348134b",
+        "size": 40328
+      },
+      "component": "main",
+      "filename": "pool/main/p/php8.3/php8.3-curl_8.3.6-0ubuntu0.24.04.13_amd64.deb",
+      "name": "php8.3-curl",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "php8.3",
+      "source_version": "8.3.6-0ubuntu0.24.04.13",
+      "suite": "noble-security",
+      "version": "8.3.6-0ubuntu0.24.04.13"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "34efd714cf9b2504176b46c0874317103522a52aee7ad0faae3f8cfafb54985b",
+        "size": 31146
+      },
+      "component": "main",
+      "filename": "pool/main/p/php8.3/php8.3-gd_8.3.6-0ubuntu0.24.04.13_amd64.deb",
+      "name": "php8.3-gd",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "php8.3",
+      "source_version": "8.3.6-0ubuntu0.24.04.13",
+      "suite": "noble-security",
+      "version": "8.3.6-0ubuntu0.24.04.13"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "de0b950a0d2cf15fcf61f82a7a586909688cf3e9686c56a634351b1219820200",
+        "size": 37910
+      },
+      "component": "universe",
+      "filename": "pool/universe/p/php-igbinary/php8.3-igbinary_3.2.13-1ubuntu3_amd64.deb",
+      "name": "php8.3-igbinary",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "php-igbinary",
+      "source_version": "3.2.13-1ubuntu3",
+      "suite": "noble",
+      "version": "3.2.13-1ubuntu3"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "2b16fafeb97d4d5a5bb4c12bdd77729e77e06d0f54a083f76f522d24e9efb3f1",
+        "size": 33470
+      },
+      "component": "main",
+      "filename": "pool/main/p/php8.3/php8.3-ldap_8.3.6-0ubuntu0.24.04.13_amd64.deb",
+      "name": "php8.3-ldap",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "php8.3",
+      "source_version": "8.3.6-0ubuntu0.24.04.13",
+      "suite": "noble-security",
+      "version": "8.3.6-0ubuntu0.24.04.13"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "e47acff4ca31d3eaaa9fe6203c8faee001b2eb90bf81e24e055b6416a060e2ac",
+        "size": 510922
+      },
+      "component": "main",
+      "filename": "pool/main/p/php8.3/php8.3-mbstring_8.3.6-0ubuntu0.24.04.13_amd64.deb",
+      "name": "php8.3-mbstring",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "php8.3",
+      "source_version": "8.3.6-0ubuntu0.24.04.13",
+      "suite": "noble-security",
+      "version": "8.3.6-0ubuntu0.24.04.13"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "5e2bdddab2491e32105313515dc5fc2a18479e743320a5c88d9433dda5f4dba5",
+        "size": 44986
+      },
+      "component": "universe",
+      "filename": "pool/universe/p/php-memcached/php8.3-memcached_3.2.0+2.2.0-4ubuntu3_amd64.deb",
+      "name": "php8.3-memcached",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "php-memcached",
+      "source_version": "3.2.0+2.2.0-4ubuntu3",
+      "suite": "noble",
+      "version": "3.2.0+2.2.0-4ubuntu3"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "877fc797d422a4b456396ba415bb17b944ef31e6a17ab4b116e32984289203b2",
+        "size": 29848
+      },
+      "component": "universe",
+      "filename": "pool/universe/p/php-msgpack/php8.3-msgpack_2.2.0~rc2-3ubuntu1_amd64.deb",
+      "name": "php8.3-msgpack",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "php-msgpack",
+      "source_version": "1:2.2.0~rc2-3ubuntu1",
+      "suite": "noble",
+      "version": "1:2.2.0~rc2-3ubuntu1"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "6e53d3593cb3f551f8859048658c9109f9ce175990ec531cda5563b304ae3d61",
+        "size": 127278
+      },
+      "component": "main",
+      "filename": "pool/main/p/php8.3/php8.3-mysql_8.3.6-0ubuntu0.24.04.13_amd64.deb",
+      "name": "php8.3-mysql",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "php8.3",
+      "source_version": "8.3.6-0ubuntu0.24.04.13",
+      "suite": "noble-security",
+      "version": "8.3.6-0ubuntu0.24.04.13"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "bb320f77b1439e33e8867990d7fa666579685f0f1583502f39b45636f855a47c",
+        "size": 372318
+      },
+      "component": "main",
+      "filename": "pool/main/p/php8.3/php8.3-opcache_8.3.6-0ubuntu0.24.04.13_amd64.deb",
+      "name": "php8.3-opcache",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "php8.3",
+      "source_version": "8.3.6-0ubuntu0.24.04.13",
+      "suite": "noble-security",
+      "version": "8.3.6-0ubuntu0.24.04.13"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "36235c8f940ec58cfd6955f86ce14d9e5eaa779c315f1567b9ffdb00bca1424e",
+        "size": 167668
+      },
+      "component": "universe",
+      "filename": "pool/universe/p/php-redis/php8.3-redis_5.3.7+4.3.0-3ubuntu1_amd64.deb",
+      "name": "php8.3-redis",
+      "repository": "http://archive.ubuntu.com/ubuntu/",
+      "source": "php-redis",
+      "source_version": "5.3.7+4.3.0-3ubuntu1",
+      "suite": "noble",
+      "version": "5.3.7+4.3.0-3ubuntu1"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "ed4635e7ca1db6f62826fd915ea2d9ae19252c6b60bca812297d277b780b2fa1",
+        "size": 127020
+      },
+      "component": "main",
+      "filename": "pool/main/p/php8.3/php8.3-xml_8.3.6-0ubuntu0.24.04.13_amd64.deb",
+      "name": "php8.3-xml",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "php8.3",
+      "source_version": "8.3.6-0ubuntu0.24.04.13",
+      "suite": "noble-security",
+      "version": "8.3.6-0ubuntu0.24.04.13"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "445f24aeb9ecc14f318b31f46c672f0ee2eee40dcc5a01d194a9622843a1c685",
+        "size": 29500
+      },
+      "component": "universe",
+      "filename": "pool/universe/p/php8.3/php8.3-zip_8.3.6-0ubuntu0.24.04.13_amd64.deb",
+      "name": "php8.3-zip",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "php8.3",
+      "source_version": "8.3.6-0ubuntu0.24.04.13",
+      "suite": "noble-security",
+      "version": "8.3.6-0ubuntu0.24.04.13"
+    },
+    {
+      "architecture": "all",
+      "archive": {
+        "sha256": "2f6794a7f31753fc947d9ac02ff03ea46510f34864f9d132a93d7b105e3c4447",
+        "size": 282136
+      },
+      "component": "main",
+      "filename": "pool/main/t/tzdata/tzdata_2026e-0ubuntu0.24.04.1_all.deb",
+      "name": "tzdata",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "tzdata",
+      "source_version": "2026e-0ubuntu0.24.04.1",
+      "suite": "noble-security",
+      "version": "2026e-0ubuntu0.24.04.1"
+    },
+    {
+      "architecture": "amd64",
+      "archive": {
+        "sha256": "84b9cf5752b29c9f92c27cd4c4ba9bbcc70b5ccf9b1b515421a28ae23212e273",
+        "size": 62988
+      },
+      "component": "main",
+      "filename": "pool/main/z/zlib/zlib1g_1.3.dfsg-3.1ubuntu2.2_amd64.deb",
+      "name": "zlib1g",
+      "repository": "http://security.ubuntu.com/ubuntu/",
+      "source": "zlib",
+      "source_version": "1:1.3.dfsg-3.1ubuntu2.2",
+      "suite": "noble-security",
+      "version": "1:1.3.dfsg-3.1ubuntu2.2"
+    }
+  ],
+  "repositories": [
+    {
+      "codename": "noble",
+      "freshness": {
+        "date": "Thu, 25 Apr 2024 15:10:33 UTC",
+        "live_deadline": null,
+        "policy": "frozen-release",
+        "valid_until": null
+      },
+      "indexes": [
+        {
+          "component": "main",
+          "gzip": {
+            "sha256": "e0d7e4cbb09d2aa7f9e104a1488817417bc9d85f3e5d9a21156a52ec641ae531",
+            "size": 1808488
+          },
+          "gzip_path": "main/binary-amd64/Packages.gz",
+          "packages": {
+            "sha256": "8f6f71ae839c8cba390a7643fcbbdacddb0bc7d12c1583a2dd80a1f8443a30e5",
+            "size": 7165069
+          },
+          "path": "main/binary-amd64/Packages"
+        },
+        {
+          "component": "universe",
+          "gzip": {
+            "sha256": "ce57756edcce0a5f7993ceb89057e1510148e04e3b85a066d780e4bc00485c8a",
+            "size": 19315644
+          },
+          "gzip_path": "universe/binary-amd64/Packages.gz",
+          "packages": {
+            "sha256": "687ffc969e7700137677b9cfe2f614ee2d638052a91a7c9bf31f3f6a3040a99a",
+            "size": 73379142
+          },
+          "path": "universe/binary-amd64/Packages"
+        }
+      ],
+      "inrelease": {
+        "sha256": "cdb2f31d809f589719a53c6ad15f255b27569c4059542ada282aaa21b8e164b0",
+        "size": 255850
+      },
+      "origin": "Ubuntu",
+      "signer": "F6ECB3762474EDA9D21B7022871920D1991BC93C",
+      "suite": "noble",
+      "url": "http://archive.ubuntu.com/ubuntu/"
+    },
+    {
+      "codename": "noble",
+      "freshness": {
+        "date": "Wed, 21 Oct 2026 18:27:28 UTC",
+        "live_deadline": "2026-10-23T18:27:28+00:00",
+        "policy": "48-hour-publication-window",
+        "valid_until": null
+      },
+      "indexes": [
+        {
+          "component": "main",
+          "gzip": {
+            "sha256": "d0b3ceb426fbc89c92796d437abcfd15e241be8a5d94673fdb014355747db4b7",
+            "size": 1411309
+          },
+          "gzip_path": "main/binary-amd64/Packages.gz",
+          "packages": {
+            "sha256": "8159809327f001cd59d7655c23479311eb2e12c95f33fa5625931cf97dd4b76d",
+            "size": 6239577
+          },
+          "path": "main/binary-amd64/Packages"
+        },
+        {
+          "component": "universe",
+          "gzip": {
+            "sha256": "ee3b77cfc0946c19d8c7c6232c2290035c5bd717fde20288e191bd74fa33d9db",
+            "size": 1549382
+          },
+          "gzip_path": "universe/binary-amd64/Packages.gz",
+          "packages": {
+            "sha256": "ea513faa34525c68c9a2a75242acb5818fe3c43c60a81ace8e11a150915fe21f",
+            "size": 7674629
+          },
+          "path": "universe/binary-amd64/Packages"
+        }
+      ],
+      "inrelease": {
+        "sha256": "45d084735a64c70d1eb524156d290f5e52fcaa42214fdbe66c7ab05dade9f3fa",
+        "size": 126127
+      },
+      "origin": "Ubuntu",
+      "signer": "F6ECB3762474EDA9D21B7022871920D1991BC93C",
+      "suite": "noble-security",
+      "url": "http://security.ubuntu.com/ubuntu/"
+    },
+    {
+      "codename": "noble",
+      "freshness": {
+        "date": "Wed, 07 Oct 2026 18:04:00 UTC",
+        "live_deadline": "2026-10-09T18:04:00+00:00",
+        "policy": "48-hour-publication-window",
+        "valid_until": null
+      },
+      "indexes": [
+        {
+          "component": "main",
+          "gzip": {
+            "sha256": "3976d76c5b1025fa0ed644145edb5339aa8f1484e5bd0472b33e2947400b2020",
+            "size": 1700960
+          },
+          "gzip_path": "main/binary-amd64/Packages.gz",
+          "packages": {
+            "sha256": "8398fc11d51333e8d67a8f0f004821c4acb6185b70cba842ffa3bdcd07b17972",
+            "size": 7432038
+          },
+          "path": "main/binary-amd64/Packages"
+        },
+        {
+          "component": "universe",
+          "gzip": {
+            "sha256": "bf9825c2ad608410bc6e46ec6ade693f6085d5b263118d2df415e46cd6fa3dc0",
+            "size": 2165271
+          },
+          "gzip_path": "universe/binary-amd64/Packages.gz",
+          "packages": {
+            "sha256": "63847e1f466cda053b7afc9dc286616c79b637baec83c4f4789353b4d8a62f1a",
+            "size": 10612034
+          },
+          "path": "universe/binary-amd64/Packages"
+        }
+      ],
+      "inrelease": {
+        "sha256": "0711096e05b2c7f5217ae4474af592385644e0931f49d716b07b56a0ad4a9fab",
+        "size": 126125
+      },
+      "origin": "Ubuntu",
+      "signer": "F6ECB3762474EDA9D21B7022871920D1991BC93C",
+      "suite": "noble-updates",
+      "url": "http://archive.ubuntu.com/ubuntu/"
+    }
+  ],
+  "signer": "F6ECB3762474EDA9D21B7022871920D1991BC93C",
+  "trust_anchor": {
+    "sha256": "80a36b0a6de2f69f49d2df75ef473ccde121e9e190b9ea01d20a4f63778d5c31",
+    "size": 3607
+  },
+  "ubuntu": "24.04",
+  "verifier": {
+    "binary_sha256": "f14d026b9eae172c432e015bce227483293b4966f2f3fdcfa582f71d3dbb2ae8",
+    "name": "gpgv",
+    "version": "gpgv (GnuPG) 2.4.4"
+  }
+}

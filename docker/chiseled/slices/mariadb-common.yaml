@@ -1,0 +1,10 @@
+# Reviewed Task 1.3; provenance and dependency rationale: package-review.json
+package: mariadb-common
+slices:
+  config:
+    essential:
+      - mysql-common_config
+    contents:
+      /etc/mysql/mariadb.cnf: null
+      /etc/mysql/my.cnf:
+        symlink: /etc/mysql/mariadb.cnf

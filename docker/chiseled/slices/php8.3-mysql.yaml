@@ -1,0 +1,36 @@
+# Reviewed Task 1.3; provenance and dependency rationale: package-review.json
+package: php8.3-mysql
+slices:
+  module:
+    essential:
+      - php8.3-common_module-libs
+    contents:
+      /usr/lib/php/20230831/mysqlnd.so: null
+      /usr/lib/php/20230831/mysqli.so: null
+      /usr/lib/php/20230831/pdo_mysql.so: null
+  cli-config:
+    contents:
+      /etc/php/8.3/mods-available/mysqlnd.ini:
+        copy: /usr/share/php8.3-mysql/mysql/mysqlnd.ini
+      /etc/php/8.3/mods-available/mysqli.ini:
+        copy: /usr/share/php8.3-mysql/mysql/mysqli.ini
+      /etc/php/8.3/mods-available/pdo_mysql.ini:
+        copy: /usr/share/php8.3-mysql/mysql/pdo_mysql.ini
+      /etc/php/8.3/cli/conf.d/10-mysqlnd.ini:
+        symlink: /etc/php/8.3/mods-available/mysqlnd.ini
+      /etc/php/8.3/cli/conf.d/20-mysqli.ini:
+        symlink: /etc/php/8.3/mods-available/mysqli.ini
+      /etc/php/8.3/cli/conf.d/20-pdo_mysql.ini:
+        symlink: /etc/php/8.3/mods-available/pdo_mysql.ini
+    essential:
+      - php8.3-mysql_module
+  apache-config:
+    contents:
+      /etc/php/8.3/apache2/conf.d/10-mysqlnd.ini:
+        symlink: /etc/php/8.3/mods-available/mysqlnd.ini
+      /etc/php/8.3/apache2/conf.d/20-mysqli.ini:
+        symlink: /etc/php/8.3/mods-available/mysqli.ini
+      /etc/php/8.3/apache2/conf.d/20-pdo_mysql.ini:
+        symlink: /etc/php/8.3/mods-available/pdo_mysql.ini
+    essential:
+      - php8.3-mysql_cli-config

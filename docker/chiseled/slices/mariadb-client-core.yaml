@@ -1,0 +1,15 @@
+# Reviewed Task 1.3; provenance and dependency rationale: package-review.json
+package: mariadb-client-core
+slices:
+  client:
+    essential:
+      - libedit2_libs
+      - libgcc-s1_libs
+      - libmariadb3_client-libs
+      - libncurses6_runtime
+      - libssl3t64_libs
+      - libstdc++6_libs
+      - libtinfo6_libs
+      - zlib1g_libs
+    contents:
+      /usr/bin/mariadb: null

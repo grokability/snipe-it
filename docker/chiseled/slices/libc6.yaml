@@ -1,0 +1,76 @@
+# Reviewed Task 1.3; provenance and dependency rationale: package-review.json
+package: libc6
+essential:
+  - libc6_copyright
+slices:
+  config:
+    contents:
+      /etc/ld.so.conf.d/*-linux-*.conf: null
+  libs:
+    essential:
+      - base-files_lib
+    contents:
+      /usr/lib*/ld*.so.*: null
+      /usr/lib/*-linux-*/ld*.so.*: null
+      /usr/lib/*-linux-*/libBrokenLocale.so.*: null
+      /usr/lib/*-linux-*/libanl.so.*: null
+      /usr/lib/*-linux-*/libc.so.*: null
+      /usr/lib/*-linux-*/libc_malloc_debug.so.*: null
+      /usr/lib/*-linux-*/libdl.so.*: null
+      /usr/lib/*-linux-*/libm.so.*: null
+      /usr/lib/*-linux-*/libmemusage.so: null
+      /usr/lib/*-linux-*/libmvec.so.*:
+        arch:
+          - amd64
+          - arm64
+      /usr/lib/*-linux-*/libnsl.so.1: null
+      /usr/lib/*-linux-*/libnss_compat.so.*: null
+      /usr/lib/*-linux-*/libnss_dns.so.*: null
+      /usr/lib/*-linux-*/libnss_files.so.*: null
+      /usr/lib/*-linux-*/libnss_hesiod.so.*: null
+      /usr/lib/*-linux-*/libpcprofile.so: null
+      /usr/lib/*-linux-*/libpthread.so.*: null
+      /usr/lib/*-linux-*/libresolv.so.*: null
+      /usr/lib/*-linux-*/librt.so.*: null
+      /usr/lib/*-linux-*/libthread_db.so.*: null
+      /usr/lib/*-linux-*/libutil.so.*: null
+  gconv:
+    essential:
+      - libc6_gconv-core
+      - libc6_iconv-config
+    contents:
+      /usr/lib/*-linux-*/gconv/**: null
+  iconv-config:
+    contents:
+      /usr/lib/*-linux-*/gconv/gconv-modules: null
+      /usr/lib/*-linux-*/gconv/gconv-modules.cache: null
+      /usr/lib/*-linux-*/gconv/gconv-modules.d/gconv-modules-extra.conf: null
+  gconv-core:
+    essential:
+      - libc6_libs
+    contents:
+      /usr/lib/*-linux-*/gconv/ANSI_X3.110.so: null
+      /usr/lib/*-linux-*/gconv/CP1252.so: null
+      /usr/lib/*-linux-*/gconv/ISO8859-1.so: null
+      /usr/lib/*-linux-*/gconv/ISO8859-15.so: null
+      /usr/lib/*-linux-*/gconv/UNICODE.so: null
+      /usr/lib/*-linux-*/gconv/UTF-*.so: null
+  copyright:
+    contents:
+      /usr/share/doc/libc6/copyright: null
+  import-charsets:
+    essential:
+      - libc6_gconv-core
+      - libc6_iconv-config
+    contents:
+      /usr/lib/*-linux-*/gconv/BIG5.so: null
+      /usr/lib/*-linux-*/gconv/CP1251.so: null
+      /usr/lib/*-linux-*/gconv/EUC-CN.so: null
+      /usr/lib/*-linux-*/gconv/EUC-JP.so: null
+      /usr/lib/*-linux-*/gconv/EUC-KR.so: null
+      /usr/lib/*-linux-*/gconv/GB18030.so: null
+      /usr/lib/*-linux-*/gconv/GBK.so: null
+      /usr/lib/*-linux-*/gconv/SJIS.so: null
+      /usr/lib/*-linux-*/gconv/libGB.so: null
+      /usr/lib/*-linux-*/gconv/libJIS.so: null
+      /usr/lib/*-linux-*/gconv/libKSC.so: null

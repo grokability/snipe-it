@@ -1,0 +1,13 @@
+{
+  "repository": "https://github.com/canonical/chisel-releases.git",
+  "commit": "8e43bc3ea4cd0b10c0f5b9f275409155b4d4cf8a",
+  "tree": "d3309ce7659145435c6c505e4838b11795818470",
+  "release": "ubuntu-24.04",
+  "overrides": [
+    "base-passwd",
+    "libc6",
+    "libtiff6",
+    "php8.3-cli",
+    "php8.3-common"
+  ]
+}

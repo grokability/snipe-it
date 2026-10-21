@@ -1,0 +1,29 @@
+# Reviewed snipe-it-chiseled-opcache; provenance and dependency rationale: package-review.json
+package: php8.3-opcache
+slices:
+  module:
+    essential:
+      - php8.3-common_module-libs
+      - libc6_libs
+      - libgcc-s1_libs
+    contents:
+      /usr/lib/php/20230831/opcache.so: null
+  cli-config:
+    contents:
+      /etc/php/8.3/mods-available/opcache.ini:
+        copy: /usr/share/php8.3-opcache/opcache/opcache.ini
+      /etc/php/8.3/cli/conf.d/10-opcache.ini:
+        symlink: /etc/php/8.3/mods-available/opcache.ini
+    essential:
+      - php8.3-opcache_module
+  apache-config:
+    contents:
+      /etc/php/8.3/apache2/conf.d/10-opcache.ini:
+        symlink: /etc/php/8.3/mods-available/opcache.ini
+    essential:
+      - php8.3-opcache_cli-config
+  # Not selected. Keeps the reference from the php8.3-cli_standard slice valid,
+  # because this custom SDF replaces the official php8.3-opcache.yaml.
+  cli-module:
+    essential:
+      - php8.3-opcache_cli-config

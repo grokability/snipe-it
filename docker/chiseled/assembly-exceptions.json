@@ -1,0 +1,34 @@
+{
+  "format": 1,
+  "package_copy_fallback": false,
+  "project_files": {
+    "/etc/nsswitch.conf": "docker/chiseled/nsswitch.conf",
+    "/etc/apache2/sites-enabled/000-default.conf": "docker/000-default.conf with approved 8080 port adaptation",
+    "/etc/apache2/sites-available/001-default-ssl.conf": "docker/001-default-ssl.conf with approved 8443 port adaptation",
+    "/snipeit-init": "unchanged project Go source at verified checkpoint",
+    "/snipeit-supervisor": "unchanged project Go source at verified checkpoint",
+    "/var/www/html/**": "verified source checkpoint application and Composer inputs"
+  },
+  "generated_directories": [
+    "/run/apache2", "/run/lock/apache2", "/run/snipeit",
+    "/var/log/apache2", "/var/lib/php/sessions", "/var/cache/fontconfig",
+    "/var/lib/snipeit/data/private_uploads", "/var/lib/snipeit/data/uploads",
+    "/var/lib/snipeit/dumps", "/var/lib/snipeit/keys", "/var/lib/snipeit/ssl", "/tmp"
+  ],
+  "generated_links": {
+    "/var/log/apache2/error.log": "/dev/stderr",
+    "/var/log/apache2/access.log": "/dev/stdout"
+  },
+  "package_mutations": {
+    "base-passwd_data": "append project docker UID10000:GID50 to package-created passwd; pinned master group includes staff GID50",
+    "apache2_runtime-config": "8080 and runtime TLS/limit includes; builtin encrypted-key dialog, with noninteractive failure checked in Task 1.7",
+    "php8.3-cli_modules": "package production php.ini with environment variables_order EGPCS and opcache.enable_cli=1 (fails the cut if the packaged ;opcache.enable_cli=0 line is absent)",
+    "libapache2-mod-php8.3_apache-base-config": "package production php.ini with environment variables_order EGPCS"
+  },
+  "runtime_generated_config": {
+    "/run/snipeit/**": "existing static init creates only approved SSL/limits/PHP override and lifecycle state",
+    "/etc/hosts": "container platform",
+    "/etc/resolv.conf": "container platform",
+    "/etc/hostname": "container platform"
+  }
+}
