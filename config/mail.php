@@ -8,6 +8,24 @@
  | be modified directly.
  */
 
+/*
+ | docker/docker.env is copied to .env in the container images and refers to
+ | values such as ${MAIL_ENV_USERNAME} that only exist when docker-compose supplies
+ | them. phpdotenv keeps a ${NAME} reference it cannot resolve as literal text,
+ | which would otherwise be sent as an SMTP username/password, or be read as "false"
+ | for MAIL_TLS_VERIFY_PEER (turning certificate verification off). Treat such an
+ | unresolved reference as unset.
+ */
+$envOrDefault = static function (string $key, $default = null) {
+    $value = env($key, $default);
+
+    if (is_string($value) && preg_match('/^\$\{[A-Za-z0-9_.]+\}$/', $value) === 1) {
+        return $default;
+    }
+
+    return $value;
+};
+
 return [
 
     /*
@@ -106,7 +124,7 @@ return [
             |
             */
 
-            'username' => env('MAIL_USERNAME'),
+            'username' => $envOrDefault('MAIL_USERNAME'),
 
             /*
             |--------------------------------------------------------------------------
@@ -119,7 +137,7 @@ return [
             |
             */
 
-            'password' => env('MAIL_PASSWORD'),
+            'password' => $envOrDefault('MAIL_PASSWORD'),
 
             /*
             |--------------------------------------------------------------------------
@@ -159,7 +177,22 @@ return [
             |
             */
 
-            'verify_peer' => env('MAIL_TLS_VERIFY_PEER', 1),
+            'verify_peer' => $envOrDefault('MAIL_TLS_VERIFY_PEER', 1),
+
+            /*
+            |--------------------------------------------------------------------------
+            | SMTP EHLO hostname
+            |--------------------------------------------------------------------------
+            |
+            | The name this server announces in its EHLO/HELO greeting. When it is not
+            | set, Symfony Mailer announces "[127.0.0.1]" (or the address of the local
+            | socket), which some relays, such as Google Workspace's SMTP relay, reject
+            | with a "421 4.7.0 Try again later" at EHLO time. Set MAIL_EHLO_DOMAIN to
+            | the fully qualified name of this server to avoid that.
+            |
+            */
+
+            'local_domain' => $envOrDefault('MAIL_EHLO_DOMAIN') ?: null,
 
         ],
 
