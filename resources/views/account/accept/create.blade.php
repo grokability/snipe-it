@@ -189,12 +189,28 @@
             signaturePad.clear();
         });
 
+        // The canvas is sized in device pixels (CSS width x devicePixelRatio), so a wide window or a high-DPI screen
+        // can exceed the 2000px limit AcceptanceController enforces and be rejected as "No signature detected".
+        // Scale such a signature down to fit before it is submitted.
+        function signatureDataUrl() {
+            var maxSide = 2000,
+                scale = Math.min(1, maxSide / Math.max(canvas.width, canvas.height));
+            if (scale === 1) {
+                return signaturePad.toDataURL();
+            }
+            var scaled = document.createElement('canvas');
+            scaled.width = Math.max(1, Math.floor(canvas.width * scale));
+            scaled.height = Math.max(1, Math.floor(canvas.height * scale));
+            scaled.getContext('2d').drawImage(canvas, 0, 0, scaled.width, scaled.height);
+            return scaled.toDataURL('image/png');
+        }
+
         $('#submit-button').on("click", function (event) {
             if (signaturePad.isEmpty()) {
                 alert("Please provide signature first.");
                 return false;
             } else {
-                $('#signature_output').val(signaturePad.toDataURL());
+                $('#signature_output').val(signatureDataUrl());
             }
         });
         @endif
