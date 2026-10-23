@@ -58,7 +58,7 @@ class ItemImportRequest extends FormRequest
 
             return $this->errors;
         }
-        file_put_contents($filename, $readStream);
+        $copied = file_put_contents($filename, $readStream);
         if (is_resource($readStream)) {
             fclose($readStream);
         }
@@ -67,6 +67,14 @@ class ItemImportRequest extends FormRequest
                 @unlink($filename);
             }
         });
+
+        // A failed or short copy would import a truncated file without any sign of a problem, so
+        // compare what was written with the size of the stored object.
+        if ($copied === false || $copied !== Storage::size($storedPath)) {
+            $this->errorCallback($import, 'file', [trans('admin/hardware/message.import.file_missing_on_disk')]);
+
+            return $this->errors;
+        }
 
         $import->import_type = $this->input('import-type');
         $class = ucfirst($import->import_type);

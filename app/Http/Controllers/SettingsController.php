@@ -21,6 +21,7 @@ use App\Models\Setting;
 use App\Models\User;
 use App\Notifications\MailTest;
 use App\Rules\CssColor;
+use App\Services\RemoteUploadsStager;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -907,6 +908,8 @@ class SettingsController extends Controller
         $backupName = config('backup.backup.name', 'backups');
         $disk = Storage::disk('backup');
         $files_raw = [];
+        $remote_in_use = $this->remoteUploadsInUse();
+        $backup_disk_is_local = config('filesystems.disks.backup.driver') === 'local';
 
         foreach ($disk->files($backupName) as $file) {
             // Skip dotfiles like .gitignore and .DS_STORE
@@ -919,13 +922,53 @@ class SettingsController extends Controller
                 'filesize' => Setting::fileSizeConvert($disk->size($file)),
                 'modified_value' => $file_timestamp,
                 'modified_display' => date($settings->date_display_format.' '.$settings->time_display_format, $file_timestamp),
+                // Only a local backup can be opened cheaply; a remote one is never downloaded just to be labelled.
+                'remote_files' => ($remote_in_use && $backup_disk_is_local) ? $this->remoteFilesLabel($disk->path($file)) : 'unknown',
             ];
         }
 
         // Reverse the array so it lists oldest first
         $files = array_reverse($files_raw);
 
-        return view('settings/backups', compact('files'));
+        return view('settings/backups', compact('files', 'remote_in_use'));
+    }
+
+    /**
+     * True when the public or the private upload disk is not a local one.
+     */
+    private function remoteUploadsInUse(): bool
+    {
+        return config('filesystems.disks.public.driver') !== 'local'
+            || config('filesystems.disks.'.config('filesystems.default').'.driver') !== 'local';
+    }
+
+    /**
+     * Reads the remote-files manifest out of a backup archive: included, excluded, or unknown (an archive
+     * without a manifest, or one that cannot be read).
+     */
+    private function remoteFilesLabel(string $path): string
+    {
+        $zip = new ZipArchive;
+        if ($zip->open($path) !== true) {
+            return 'unknown';
+        }
+
+        try {
+            for ($i = 0; $i < $zip->numFiles; $i++) {
+                $name = (string) $zip->getNameIndex($i);
+                if (basename($name) !== RemoteUploadsStager::MANIFEST) {
+                    continue;
+                }
+                $manifest = json_decode((string) $zip->getFromIndex($i), true);
+                $state = is_array($manifest) ? ($manifest['remote_files'] ?? null) : null;
+
+                return in_array($state, ['included', 'excluded'], true) ? $state : 'unknown';
+            }
+        } finally {
+            $zip->close();
+        }
+
+        return 'unknown';
     }
 
     /**
@@ -935,14 +978,22 @@ class SettingsController extends Controller
      *
      * @since [v1.8]
      */
-    public function postBackups(): RedirectResponse
+    public function postBackups(Request $request): RedirectResponse
     {
         if (! config('app.lock_passwords')) {
-            Artisan::call('snipeit:backup', ['--filename' => 'manual-backup-'.date('Y-m-d-H-i-s')]);
+            // No choice made means the configured default (BACKUP_INCLUDE_REMOTE_FILES, normally off).
+            $withRemote = $request->has('include_remote_files')
+                ? $request->input('include_remote_files') === '1'
+                : (bool) config('backup.include_remote_files');
+
+            $exit = Artisan::call('snipeit:backup', [
+                '--filename' => 'manual-backup-'.date('Y-m-d-H-i-s'),
+                $withRemote ? '--with-remote-files' : '--without-remote-files' => true,
+            ]);
             $output = Artisan::output();
 
             // Backup completed
-            if (! preg_match('/failed/', $output)) {
+            if ($exit === 0 && ! preg_match('/failed/', $output)) {
                 return redirect()->route('settings.backups.index')
                     ->with('success', trans('admin/settings/message.backup.generated'));
             }
@@ -1068,7 +1119,18 @@ class SettingsController extends Controller
 
                     $upload_filename = 'uploaded-'.date('U').'-'.Str::slug(pathinfo($request->file('file')->getClientOriginalName(), PATHINFO_FILENAME)).'.zip';
 
-                    Storage::putFileAs('app/backups', $request->file('file'), $upload_filename);
+                    // Store on the same disk and under the same name the list, download, delete and
+                    // restore actions read from, so an uploaded backup shows up whatever those are set to.
+                    try {
+                        $stored = Storage::disk('backup')->putFileAs(config('backup.backup.name', 'backups'), $request->file('file'), $upload_filename);
+                    } catch (\Throwable $e) {
+                        Log::error('Backup upload failed: '.$e->getMessage());
+                        $stored = false;
+                    }
+
+                    if ($stored === false) {
+                        return redirect()->route('settings.backups.index')->with('error', trans('admin/settings/message.backup.upload_failed'));
+                    }
 
                     return redirect()->route('settings.backups.index')->with('success', 'File uploaded');
                 }
@@ -1193,6 +1255,7 @@ class SettingsController extends Controller
             $preBackupExit = Artisan::call('snipeit:backup', [
                 '--filename' => $requestedBackupFilename,
                 '--force' => true,
+                '--with-remote-files' => true,
             ]);
 
             if ($preBackupExit !== 0 || ! $backupDisk->exists($preRestoreDiskPath)) {
@@ -1323,7 +1386,7 @@ class SettingsController extends Controller
 
                     Log::warning('User ID '.auth()->id().' initiated a PURGE!');
                     // Run a backup immediately before processing
-                    Artisan::call('backup:run');
+                    Artisan::call('snipeit:backup', ['--with-remote-files' => true]);
                     Artisan::call('snipeit:purge', ['--force' => 'true', '--no-interaction' => true]);
                     $output = Artisan::output();
 

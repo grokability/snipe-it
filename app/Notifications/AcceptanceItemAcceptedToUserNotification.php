@@ -6,8 +6,11 @@ use App\Enums\FileStorage;
 use App\Models\Setting;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Mail\Attachment;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Storage;
+use RuntimeException;
 use Symfony\Component\Mime\Email;
 
 class AcceptanceItemAcceptedToUserNotification extends Notification implements ShouldQueue
@@ -83,7 +86,16 @@ class AcceptanceItemAcceptedToUserNotification extends Notification implements S
      */
     public function toMail()
     {
-        $pdf_path = storage_path(FileStorage::EulaPdfs->privateStorageKey().$this->file);
+        // Read the PDF from the configured private disk when the mail is built, so the same code works for
+        // local storage and for S3 (or any other disk), whatever the disk is called. A missing PDF fails
+        // the notification rather than sending a mail with an empty or stale attachment.
+        $disk = config('filesystems.default');
+        $pdf_key = FileStorage::EulaPdfs->privateStorageKey().$this->file;
+
+        if (! Storage::disk($disk)->exists($pdf_key)) {
+            throw new RuntimeException('Acceptance PDF "'.$pdf_key.'" was not found on the "'.$disk.'" disk; the acceptance copy was not sent.');
+        }
+
         $message = (new MailMessage)->markdown('notifications.markdown.asset-acceptance',
             [
                 'item_tag' => $this->item_tag,
@@ -99,7 +111,7 @@ class AcceptanceItemAcceptedToUserNotification extends Notification implements S
                 'custom_fields' => $this->custom_fields,
                 'intro_text' => trans_choice('mail.acceptance_asset_accepted_to_user', $this->qty, ['qty' => $this->qty, 'site_name' => Setting::getSettings()->site_name]),
             ])
-            ->attach($pdf_path)
+            ->attach(Attachment::fromStorageDisk($disk, $pdf_key)->as($this->file)->withMime('application/pdf'))
             ->subject('✅ '.trans_choice('mail.acceptance_asset_accepted_to_user', $this->qty, ['qty' => $this->qty, 'site_name' => Setting::getSettings()->site_name]))
             ->withSymfonyMessage(function (Email $message) {
                 $message->getHeaders()->addTextHeader(

@@ -9,6 +9,18 @@
 @section('header_right')
     <form method="POST" action="{{ route('settings.backups.create') }}" style="display: inline">
         @csrf
+        @if ($remote_in_use)
+            <span style="margin-right: 10px;">
+                <label class="radio-inline">
+                    <input type="radio" name="include_remote_files" value="0" {{ config('backup.include_remote_files') ? '' : 'checked' }}>
+                    {{ trans('admin/settings/general.backups_remote_without') }}
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" name="include_remote_files" value="1" {{ config('backup.include_remote_files') ? 'checked' : '' }}>
+                    {{ trans('admin/settings/general.backups_remote_with') }}
+                </label>
+            </span>
+        @endif
         <button class="btn btn-primary" @disabled(config('app.lock_passwords'))>
             {{ trans('admin/settings/general.generate_backup') }}
         </button>
@@ -76,6 +88,9 @@
               <th scope="col" data-sortable="true" data-field="modified_display" data-sort-name="modified_value">{{ trans('admin/settings/table.created') }}</th>
               <th scope="col" data-field="modified_value" data-visible="false"></th>
               <th scope="col" data-sortable="true">{{ trans('admin/settings/table.size') }}</th>
+              @if ($remote_in_use)
+                  <th scope="col">{{ trans('admin/settings/general.backups_remote_label') }}</th>
+              @endif
               <th scope="col">{{ trans('table.actions') }}</th>
               </tr>
             </thead>
@@ -90,6 +105,9 @@
               <td>{{ $file['modified_display'] }} </td>
               <td>{{ $file['modified_value'] }} </td>
               <td>{{ $file['filesize'] }}</td>
+              @if ($remote_in_use)
+                  <td>{{ trans('admin/settings/general.backups_remote_'.($file['remote_files'] === 'included' ? 'label_included' : ($file['remote_files'] === 'excluded' ? 'label_excluded' : 'label_unknown'))) }}</td>
+              @endif
               <td>
 
                   @can('superadmin')
@@ -213,6 +231,12 @@
       <p>
         {{ trans('admin/settings/general.backups_large') }} 
       </p>
+
+      @if ($remote_in_use)
+          <p>{{ trans('admin/settings/general.backups_remote_not_included') }}</p>
+          <p>{{ trans('admin/settings/general.backups_remote_limits') }}</p>
+          <p class="text-danger">{{ trans('admin/settings/general.backups_remote_quiesce') }}</p>
+      @endif
       
     </div>
   </div>

@@ -32,7 +32,19 @@ if (env('BACKUP_ENV') == 'true') {
     $included_dirs[] = base_path('.env');
 }
 
+// Where backups are written and what they are called. The monitor below watches this same place.
+$backup_name = 'backups';
+$backup_disks = ['backup'];
+
 return [
+
+    /*
+     * Whether backups also contain the files that are stored on S3 (public and private disks).
+     * Off by default: those files live in the bucket, which has its own durability and versioning,
+     * and copying them can be large and slow. The --with-remote-files / --without-remote-files
+     * options of snipeit:backup override this per run.
+     */
+    'include_remote_files' => filter_var(env('BACKUP_INCLUDE_REMOTE_FILES', false), FILTER_VALIDATE_BOOLEAN),
 
     'backup' => [
 
@@ -40,7 +52,7 @@ return [
          * The name of this application. You can use this name to monitor
          * the backups.
          */
-        'name' => 'backups',
+        'name' => $backup_name,
 
         'source' => [
 
@@ -108,9 +120,7 @@ return [
             /*
              * The disk names on which the backups will be stored.
              */
-            'disks' => [
-                'backup',
-            ],
+            'disks' => $backup_disks,
         ],
 
         /*
@@ -194,8 +204,8 @@ return [
      */
     'monitor_backups' => [
         [
-            'name' => config('app.name'),
-            'disks' => [env('PRIVATE_FILESYSTEM_DISK', 'local')],
+            'name' => $backup_name,
+            'disks' => $backup_disks,
             'health_checks' => [
                 MaximumAgeInDays::class => 1,
                 MaximumStorageInMegabytes::class => 5000,

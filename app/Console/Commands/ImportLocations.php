@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Enums\FileStorage;
+use App\Helpers\StorageHelper;
 use App\Models\Location;
 use Illuminate\Console\Command;
 use League\Csv\Reader;
@@ -44,9 +45,32 @@ class ImportLocations extends Command
             ini_set('auto_detect_line_endings', '1');
         }
 
-        $filename = $this->argument('filename');
-        $csv = Reader::createFromPath(storage_path(FileStorage::Imports->privateStorageKey()).$filename, 'r');
-        $this->info('Attempting to process: '.storage_path(FileStorage::Imports->privateStorageKey()).$filename);
+        $filename = basename((string) $this->argument('filename'));
+        $disk = config('filesystems.default');
+        $key = FileStorage::Imports->privateStorageKey().$filename;
+
+        // Read through the configured private disk: a local disk gives the real path, any other disk
+        // (S3) is copied to a temporary file first.
+        $path = StorageHelper::readablePath($key, $disk);
+        if ($path === null) {
+            $this->error('Could not find the import file "'.$key.'" on the "'.$disk.'" disk.');
+
+            return self::FAILURE;
+        }
+
+        try {
+            return $this->importFrom($path, $key);
+        } finally {
+            if (config("filesystems.disks.$disk.driver") !== 'local' && is_file($path)) {
+                @unlink($path);
+            }
+        }
+    }
+
+    private function importFrom(string $path, string $key): int
+    {
+        $csv = Reader::createFromPath($path, 'r');
+        $this->info('Attempting to process: '.$key);
         $csv->setHeaderOffset(0); // because we don't want to insert the header
         $results = $csv->getRecords();
 
@@ -95,7 +119,7 @@ class ImportLocations extends Command
             } else {
                 $this->error('Location name is required and is missing from at least one row in this dataset. Check your CSV for extra trailing rows and try again.');
 
-                return false;
+                return self::FAILURE;
             }
             if (array_key_exists('Currency', $row)) {
                 $location->currency = trim($row['Currency']);
@@ -147,5 +171,7 @@ class ImportLocations extends Command
                 $this->error('- Non-parent Location '.$location->name.' could not be created: '.$location->getErrors());
             }
         }
+
+        return self::SUCCESS;
     }
 }

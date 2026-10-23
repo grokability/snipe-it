@@ -1,5 +1,15 @@
 <?php
 
+/*
+ * The backup disk can use its own S3 settings (BACKUP_AWS_*). Anything that is not set falls back to the
+ * matching PRIVATE_AWS_* value. Credentials are never mixed: when BACKUP_AWS_ACCESS_KEY_ID is set, the
+ * secret and the session token come only from BACKUP_AWS_*, so a backup key is never paired with the
+ * private disk's secret. With nothing set at all the values stay null and the AWS SDK uses its default
+ * credential chain (for example a web identity role).
+ */
+$backupAwsEnv = static fn (string $name) => env('BACKUP_AWS_'.$name, env('PRIVATE_AWS_'.$name));
+$backupHasOwnKey = env('BACKUP_AWS_ACCESS_KEY_ID') !== null;
+
 $config = [
 
     /*
@@ -106,10 +116,14 @@ $config = [
 
         'backup' => [
             'driver' => env('BACKUP_FILESYSTEM_DRIVER', 'local'),
-            'key' => env('PRIVATE_AWS_ACCESS_KEY_ID'),
-            'secret' => env('PRIVATE_AWS_SECRET_ACCESS_KEY'),
-            'region' => env('PRIVATE_AWS_DEFAULT_REGION'),
-            'bucket' => env('PRIVATE_AWS_BUCKET'),
+            'key' => $backupHasOwnKey ? env('BACKUP_AWS_ACCESS_KEY_ID') : env('PRIVATE_AWS_ACCESS_KEY_ID'),
+            'secret' => $backupHasOwnKey ? env('BACKUP_AWS_SECRET_ACCESS_KEY') : env('PRIVATE_AWS_SECRET_ACCESS_KEY'),
+            'token' => $backupHasOwnKey ? env('BACKUP_AWS_SESSION_TOKEN') : env('PRIVATE_AWS_SESSION_TOKEN'),
+            'region' => $backupAwsEnv('DEFAULT_REGION'),
+            'bucket' => $backupAwsEnv('BUCKET'),
+            'url' => $backupAwsEnv('URL'),
+            'endpoint' => $backupAwsEnv('ENDPOINT'),
+            'use_path_style_endpoint' => $backupAwsEnv('PATH_STYLE'),
             // Root defaults differ by driver so the same disk config
             // does the right thing on both. On local, backups live
             // under storage_path("app")/backups (matches the pre-S3

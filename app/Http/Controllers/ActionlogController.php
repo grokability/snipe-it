@@ -55,17 +55,22 @@ class ActionlogController extends Controller
         $this->authorize('view', $actionlog->target);
         $this->authorize('view', $actionlog->user);
 
-        if (config('filesystems.default') == 's3_private') {
-            return redirect()->away(Storage::disk('s3_private')->temporaryUrl(FileStorage::EulaPdfs->privateStorageKey().$filename, now()->addMinutes(5)));
+        // Decide by the driver of the configured private disk, not by the name it was given.
+        $disk = config('filesystems.default');
+        $key = FileStorage::EulaPdfs->privateStorageKey().$filename;
+
+        if (config("filesystems.disks.$disk.driver") === 's3') {
+            return redirect()->away(Storage::disk($disk)->temporaryUrl($key, now()->addMinutes(5)));
         }
 
-        if (Storage::exists(FileStorage::EulaPdfs->privateStorageKey().$filename)) {
+        if (Storage::disk($disk)->exists($key)) {
+            $path = Storage::disk($disk)->path($key);
 
             if (request()->input('inline') == 'true') {
-                return response()->file(config('app.private_uploads').'/eula-pdfs/'.$filename);
+                return response()->file($path);
             }
 
-            return response()->download(config('app.private_uploads').'/eula-pdfs/'.$filename);
+            return response()->download($path);
         }
 
         return redirect()->back()->with('error', trans('general.file_does_not_exist'));

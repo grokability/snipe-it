@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Helpers\Helper;
+use App\Helpers\StorageHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Transformers\DatatablesTransformer;
 use App\Http\Transformers\LoginAttemptsTransformer;
@@ -10,6 +11,7 @@ use App\Models\Ldap;
 use App\Models\Setting;
 use App\Notifications\MailTest;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -17,6 +19,7 @@ use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class SettingsController extends Controller
 {
@@ -242,8 +245,10 @@ class SettingsController extends Controller
     public function listBackups(): array
     {
         $settings = Setting::getSettings();
-        $path = 'app/backups';
-        $backup_files = Storage::files($path);
+        // Same disk and name the web backup page uses (and the one the backups are written to).
+        $disk = Storage::disk('backup');
+        $path = config('backup.backup.name', 'backups');
+        $backup_files = $disk->files($path);
         $files_raw = [];
         $count = 0;
 
@@ -253,11 +258,11 @@ class SettingsController extends Controller
 
                 // Skip dotfiles like .gitignore and .DS_STORE
                 if ((substr(basename($backup_files[$f]), 0, 1) != '.')) {
-                    $file_timestamp = Storage::lastModified($backup_files[$f]);
+                    $file_timestamp = $disk->lastModified($backup_files[$f]);
 
                     $files_raw[] = [
                         'filename' => basename($backup_files[$f]),
-                        'filesize' => Setting::fileSizeConvert(Storage::size($backup_files[$f])),
+                        'filesize' => Setting::fileSizeConvert($disk->size($backup_files[$f])),
                         'modified_value' => $file_timestamp,
                         'modified_display' => date($settings->date_display_format.' '.$settings->time_display_format, $file_timestamp),
                         'backup_url' => config('app.url').'/settings/backups/download/'.basename($backup_files[$f]),
@@ -276,13 +281,13 @@ class SettingsController extends Controller
     }
 
     /**
-     * Downloads a backup file.
-     * We use response()->download() here instead of Storage::download() because Storage::download()
-     * exhausts memory on larger files.
+     * Downloads a backup file from the backup disk. StorageHelper::downloader() uses
+     * response()->download() on a local disk (Storage::download() exhausts memory on larger files)
+     * and a short-lived presigned URL on S3.
      *
      * @author [A. Gianotto]
      */
-    public function downloadBackup($file): JsonResponse|BinaryFileResponse
+    public function downloadBackup($file): JsonResponse|BinaryFileResponse|RedirectResponse|StreamedResponse
     {
         $file = $this->sanitizeBackupFilename($file);
 
@@ -290,12 +295,10 @@ class SettingsController extends Controller
             return response()->json(Helper::formatStandardApiResponse('error', null, trans('general.file_not_found')), 404);
         }
 
-        $path = storage_path('app/backups');
+        $key = config('backup.backup.name', 'backups').'/'.$file;
 
-        if (Storage::exists('app/backups/'.$file)) {
-            $headers = ['ContentType' => 'application/zip'];
-
-            return response()->download($path.'/'.$file, $file, $headers);
+        if (Storage::disk('backup')->exists($key)) {
+            return StorageHelper::downloader($key, 'backup');
         } else {
             return response()->json(Helper::formatStandardApiResponse('error', null, trans('general.file_not_found')), 404);
         }
@@ -309,28 +312,30 @@ class SettingsController extends Controller
      *
      * @since [v6.3.1]
      */
-    public function downloadLatestBackup(): JsonResponse|BinaryFileResponse
+    public function downloadLatestBackup(): JsonResponse|BinaryFileResponse|RedirectResponse|StreamedResponse
     {
+        $disk = Storage::disk('backup');
 
         $fileData = collect();
-        foreach (Storage::files('app/backups') as $file) {
+        foreach ($disk->files(config('backup.backup.name', 'backups')) as $file) {
             if (pathinfo($file, PATHINFO_EXTENSION) == 'zip') {
                 $fileData->push([
                     'file' => $file,
-                    'date' => Storage::lastModified($file),
+                    'date' => $disk->lastModified($file),
                 ]);
             }
         }
 
-        $newest = $fileData->sortByDesc('date')->first();
-        if (Storage::exists($newest['file'])) {
-            $headers = ['ContentType' => 'application/zip'];
+        // Newest first; when the times are equal the file name decides, so the answer is always the same.
+        $newest = $fileData->sort(function (array $a, array $b) {
+            return [$b['date'], $b['file']] <=> [$a['date'], $a['file']];
+        })->first();
 
-            return response()->download(storage_path($newest['file']), basename($newest['file']), $headers);
-        } else {
-            return response()->json(Helper::formatStandardApiResponse('error', null, trans('general.file_not_found')), 404);
+        if ($newest !== null && $disk->exists($newest['file'])) {
+            return StorageHelper::downloader($newest['file'], 'backup');
         }
 
+        return response()->json(Helper::formatStandardApiResponse('error', null, trans('general.file_not_found')), 404);
     }
 
     private function sanitizeBackupFilename(mixed $filename): ?string

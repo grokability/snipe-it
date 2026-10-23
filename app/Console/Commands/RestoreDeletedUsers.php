@@ -58,7 +58,7 @@ class RestoreDeletedUsers extends Command
         $users = User::whereBetween('deleted_at', [$start_date, $end_date])->withTrashed()->get();
         $this->info('There are '.$users->count().' users deleted between '.$start_date.' and '.$end_date);
         $this->warn('Making a backup!');
-        Artisan::call('backup:run');
+        Artisan::call('snipeit:backup', ['--with-remote-files' => true]);
 
         foreach ($users as $user) {
             $user_count++;

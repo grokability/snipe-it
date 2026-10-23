@@ -54,7 +54,7 @@ class RegenerateAssetTags extends Command
             $bar = $this->output->createProgressBar(count($total_assets));
 
             try {
-                Artisan::call('backup:run');
+                Artisan::call('snipeit:backup', ['--with-remote-files' => true]);
             } catch (\Exception $e) {
                 $output['error'][] = $e;
             }

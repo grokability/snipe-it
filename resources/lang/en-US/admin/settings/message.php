@@ -14,6 +14,7 @@ return [
         'restore_warning' => 'Yes, restore it. I acknowledge that this will overwrite any existing data currently in the database. This will also log out all of your existing users (including you).',
         'restore_confirm' => 'Are you sure you wish to restore your database from :filename?',
         'delete_disabled_help' => 'Deleting backups is disabled. Contact your administrator if you wish to enable deleting backups.',
+        'upload_failed' => 'The backup file could not be saved to the backup storage. Check the storage settings and the application log.',
     ],
     'restore' => [
         'success' => 'Your system backup has been restored. Please log in again.',
