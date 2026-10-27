@@ -1017,7 +1017,7 @@ EOL
         # Install for CentOS/Alma/Redhat 10
         set_fqdn
         set_dbpass
-        tzone=$(timedatectl | grep "Time zone" | awk 'BEGIN { FS"("}; {print $3}');
+        tzone=$(timedatectl show -p Timezone --value);
 
         echo "* Adding EPEL-release repository."
         log "dnf -y install wget epel-release" & pid=$!
@@ -1070,6 +1070,15 @@ EOL
     echo "Your OS was not detected correctly."
     exit 1
 esac
+
+if [[ -z "$tzone" ]]; then
+    echo
+    echo "WARNING: Timezone not detected. Defaulting to UTC. Change it in .env later."
+    echo
+    echo "Press Enter to continue..."
+    read t
+    tzone=UTC
+fi
 
 setupmail=default
 until [[ $setupmail == "yes" ]] || [[ $setupmail == "no" ]]; do
