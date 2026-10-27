@@ -74,6 +74,8 @@ class AssetModelsController extends Controller
             'models.name',
             'models.model_number',
             'models.min_amt',
+            'models.default_purchase_cost',
+            'models.default_currency',
             'models.eol',
             'models.created_by',
             'models.requestable',
@@ -365,6 +367,8 @@ class AssetModelsController extends Controller
             'models.model_number',
             'models.manufacturer_id',
             'models.category_id',
+            'models.default_purchase_cost',
+            'models.default_currency',
         ])->with('manufacturer', 'category');
 
         $settings = Setting::getSettings();
@@ -395,7 +399,20 @@ class AssetModelsController extends Controller
             $assetmodel->use_image = ($settings->modellistCheckedValue('image') && ($assetmodel->image)) ? Storage::disk('public')->url(FileStorage::Models->publicPath().e($assetmodel->image)) : null;
         }
 
-        return (new SelectlistTransformer)->transformSelectlist($assetmodels);
+        $results = (new SelectlistTransformer)->transformSelectlist($assetmodels);
+
+        $models = $assetmodels->getCollection()->keyBy('id');
+
+        foreach ($results['results'] as &$result) {
+            $model = $models->get($result['id']);
+
+            $result['default_purchase_cost'] = $model?->default_purchase_cost;
+            $result['default_currency'] = $model?->default_currency;
+        }
+
+        unset($result);
+
+        return $results;
     }
 
     public function history(Request $request, AssetModel $model): JsonResponse|array

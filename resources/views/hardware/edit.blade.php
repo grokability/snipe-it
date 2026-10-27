@@ -315,7 +315,7 @@
                      render as a blank addon. --}}
                 <x-input.purchase-cost
                     :item="$item"
-                    :currencyType="$item->id && $item->location && $item->location->currency !== '' ? $item->location->currency : null"
+                    :currencyType="$item->model?->default_currency ?: ($item->id && $item->location && $item->location->currency !== '' ? $item->location->currency : null)"
                 />
 
             </div> <!-- end order details -->
@@ -459,7 +459,21 @@
     $(function () {
         //grab custom fields for this model whenever model changes.
         $('#model_select_id').on("change", fetchCustomFields);
+        //loads default purchase cost on asset model selection
+        @if (! $item->id)
+        $('#model_select_id').on('select2:select', function (event) {
+            const model = event.params.data;
 
+            $('#purchase_cost').val(model.default_purchase_cost ?? '');
+            $('#purchase_cost_currency').text(model.default_currency || @json($snipeSettings->default_currency));
+        });
+        @if (isset($selected_model))
+        @if (! session()->hasOldInput('purchase_cost'))
+        $('#purchase_cost').val(@json($selected_model->default_purchase_cost));
+        @endif
+        $('#purchase_cost_currency').text(@json($selected_model->default_currency ?: $snipeSettings->default_currency));
+        @endif
+        @endif
         //initialize assigned user/loc/asset based on statuslabel's statustype
         user_add($(".status_id option:selected").val());
 

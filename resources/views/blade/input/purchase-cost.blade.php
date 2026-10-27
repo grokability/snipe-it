@@ -30,7 +30,7 @@
                 pattern="[\d.,]+"
                 data-msg-pattern="{{ trans('general.purchase_cost_invalid') }}"
             />
-            <span class="input-group-addon">
+            <span class="input-group-addon" id="{{ $name }}_currency">
                 {{ $currencyType ?? $snipeSettings->default_currency }}
             </span>
         </div>

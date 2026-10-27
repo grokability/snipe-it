@@ -342,6 +342,7 @@ return [
     'previous_page' => 'Previous Page',
     'processing' => 'Processing',
     'profile' => 'View Profile',
+    'default_purchase_cost' => 'Default Purchase Cost',
     'purchase_cost' => 'Purchase Cost',
     'purchase_cost_format_help' => 'This should be entered in your system-configured number format, e.g. :format',
     'purchase_cost_invalid' => 'Please enter a valid number (digits, dots, and commas only)',

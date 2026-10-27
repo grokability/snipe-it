@@ -33,6 +33,14 @@ class StoreAssetModelRequest extends ImageUploadRequest
                 ]);
             }
         }
+        $cost = $this->input('default_purchase_cost');
+
+        if (is_string($cost)) {
+            $this->merge([
+                'default_purchase_cost' => str_replace(',', '', $cost),
+            ]);
+        }
+
 
     }
 

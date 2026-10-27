@@ -84,6 +84,8 @@ class AssetModelsController extends Controller
         $model->name = $request->input('name');
         $model->model_number = $request->input('model_number');
         $model->min_amt = $request->input('min_amt');
+        $model->default_purchase_cost = $request->input('default_purchase_cost');
+        $model->default_currency = $request->input('default_currency');
         $model->manufacturer_id = $request->input('manufacturer_id');
         $model->category_id = $request->input('category_id');
         $model->notes = $request->input('notes');
@@ -153,11 +155,15 @@ class AssetModelsController extends Controller
         $this->authorize('update', AssetModel::class);
 
         $model = $request->handleImages($model);
+
+        /** @var AssetModel $model */
         $model->depreciation_id = $request->input('depreciation_id');
         $model->eol = $request->input('eol');
         $model->name = $request->input('name');
         $model->model_number = $request->input('model_number');
         $model->min_amt = $request->input('min_amt');
+        $model->default_purchase_cost = $request->input('default_purchase_cost');
+        $model->default_currency = $request->input('default_currency');
         $model->manufacturer_id = $request->input('manufacturer_id');
         $model->category_id = $request->input('category_id');
         $model->notes = $request->input('notes');
