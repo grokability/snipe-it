@@ -34,8 +34,8 @@
                                     @forelse ($items as $asset)
                                         <tr>
                                             <td>
-                                                @if ($asset->image_url ?? null)
-                                                    <img src="{{ $asset->image_url }}" style="max-height: {{ $snipeSettings->thumbnail_max_h }}px; width: auto;" alt="">
+                                                @if ($asset->getImageUrl() ?? null)
+                                                    <img src="{{ $asset->getImageUrl() }}" style="max-height: {{ $snipeSettings->thumbnail_max_h }}px; width: auto;" alt="">
                                                 @endif
                                             </td>
                                             <td>
