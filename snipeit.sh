@@ -609,7 +609,11 @@ case $distro in
         # Install for Ubuntu 23.04 and above
         set_fqdn
         set_dbpass
-        tzone=$(cat /etc/timezone)
+        if [ "${version//./}" -ge "2604" ]; then
+            tzone=$(timedatectl show -p Timezone --value)
+        else
+            tzone=$(cat /etc/timezone)
+        fi
 
         echo -n "* Updating installed packages."
         log "apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y upgrade" & pid=$!
