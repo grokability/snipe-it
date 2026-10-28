@@ -15,10 +15,10 @@ class UserMerged
      *
      * @return void
      */
-    public function __construct(User $from_user, User $to_user, ?User $admin)
-    {
-        $this->merged_from = $from_user;
-        $this->merged_to = $to_user;
-        $this->admin = $admin;
+    public function __construct(
+        public User $merged_from,
+        public User $merged_to,
+        public ?User $admin = null,
+    ) {
     }
 }
