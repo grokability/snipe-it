@@ -15,8 +15,8 @@ class CheckoutDeclined
      *
      * @return void
      */
-    public function __construct(CheckoutAcceptance $acceptance)
-    {
-        $this->acceptance = $acceptance;
+    public function __construct(
+        public CheckoutAcceptance $acceptance
+    ) {
     }
 }
