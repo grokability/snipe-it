@@ -130,7 +130,7 @@ $config = [
         'ldap' => [
             'driver' => 'single',
             'path' => env('LDAP_LOG_PATH', storage_path('logs/ldap.log')),
-            'level' => env('LOG_LEVEL', 'debug'),
+            'level' => 'debug',
         ],
 
         'rollbar' => [
