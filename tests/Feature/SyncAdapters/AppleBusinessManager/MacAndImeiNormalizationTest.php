@@ -60,7 +60,8 @@ class MacAndImeiNormalizationTest extends TestCase
         $this->assertSame('01:23:45:67:89:AB', $record->primaryMac);
         $this->assertSame('01:23:45:67:89:AB', $record->extra['abm_wifi_mac']);
         $this->assertSame('AA:BB:CC:DD:EE:FF', $record->extra['abm_bluetooth_mac']);
-        $this->assertSame('11:22:33:44:55:66', $record->extra['abm_ethernet_mac']);
+        $this->assertSame('11:22:33:44:55:66', $record->extra['abm_ethernet_mac_1']);
+        $this->assertNull($record->extra['abm_ethernet_mac_2']);
     }
 
     public function test_already_colon_separated_mac_round_trips_unchanged()
@@ -193,6 +194,65 @@ class MacAndImeiNormalizationTest extends TestCase
 
         $this->assertSame('353912345678901', $record->extra['abm_imei_1']);
         $this->assertNull($record->extra['abm_imei_2']);
+    }
+
+    public function test_dual_nic_mac_populates_both_ethernet_mac_slots()
+    {
+        // Regression for #19877. Mac Pro, iMac Pro, and other dual-
+        // Ethernet Macs return ethernetMacAddress as a two-element
+        // array. Before the fix normalizeMacAddress saw the array,
+        // failed its is_string gate, and the extra silently dropped
+        // to null.
+        $adapter = $this->configuredAdapter();
+
+        Http::fake([
+            'account.apple.com/*' => Http::response(['access_token' => 'stub-bearer']),
+            'api-business.apple.com/v1/orgDevices*' => Http::response([
+                'data' => [[
+                    'id' => 'abm-dual-nic-mac',
+                    'attributes' => [
+                        'serialNumber' => 'SN-MAC-PRO',
+                        'partNumber' => 'Z175LL/A',
+                        'productFamily' => 'Mac',
+                        'ethernetMacAddress' => ['008A76F01E74', '008A76E815A2'],
+                    ],
+                ]],
+            ]),
+        ]);
+
+        $record = iterator_to_array($adapter->pull())[0];
+
+        $this->assertSame('00:8A:76:F0:1E:74', $record->extra['abm_ethernet_mac_1']);
+        $this->assertSame('00:8A:76:E8:15:A2', $record->extra['abm_ethernet_mac_2']);
+    }
+
+    public function test_single_ethernet_mac_scalar_populates_only_slot_one()
+    {
+        // iMacs and MacBook Pros with a single NIC (or an Apple USB-C
+        // Ethernet adapter) still return a scalar. That path keeps
+        // working after the fix via the extractMacAtIndex scalar
+        // branch.
+        $adapter = $this->configuredAdapter();
+
+        Http::fake([
+            'account.apple.com/*' => Http::response(['access_token' => 'stub-bearer']),
+            'api-business.apple.com/v1/orgDevices*' => Http::response([
+                'data' => [[
+                    'id' => 'abm-single-nic-mac',
+                    'attributes' => [
+                        'serialNumber' => 'SN-IMAC',
+                        'partNumber' => 'MKFH3LL/A',
+                        'productFamily' => 'Mac',
+                        'ethernetMacAddress' => '008A76F01E74',
+                    ],
+                ]],
+            ]),
+        ]);
+
+        $record = iterator_to_array($adapter->pull())[0];
+
+        $this->assertSame('00:8A:76:F0:1E:74', $record->extra['abm_ethernet_mac_1']);
+        $this->assertNull($record->extra['abm_ethernet_mac_2']);
     }
 
     public function test_non_cellular_device_leaves_both_imei_slots_null()

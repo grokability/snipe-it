@@ -141,7 +141,8 @@ class ActivationLockEnrichmentTest extends TestCase
         $this->assertSame('256GB', $record->extra['abm_device_capacity']);
         $this->assertSame('AA:BB:CC:00:11:22', $record->extra['abm_wifi_mac']);
         $this->assertSame('AA:BB:CC:00:11:23', $record->extra['abm_bluetooth_mac']);
-        $this->assertNull($record->extra['abm_ethernet_mac']);
+        $this->assertNull($record->extra['abm_ethernet_mac_1']);
+        $this->assertNull($record->extra['abm_ethernet_mac_2']);
         $this->assertSame('351234567890123', $record->extra['abm_imei_1']);
         $this->assertNull($record->extra['abm_imei_2']);
         $this->assertSame('35123456789012', $record->extra['abm_meid']);

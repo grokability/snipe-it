@@ -244,7 +244,12 @@ class AppleBusinessManagerAdapter extends SyncAdapter
             'abm_device_capacity' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_device_capacity'],
             'abm_wifi_mac' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_wifi_mac'],
             'abm_bluetooth_mac' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_bluetooth_mac'],
-            'abm_ethernet_mac' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_ethernet_mac'],
+            // Desktop Macs with two Ethernet NICs (Mac Pro, iMac Pro)
+            // return ethernetMacAddress as a two-element array. Split
+            // positionally so admins can map each physical port to its
+            // own Snipe-IT custom field. #19877.
+            'abm_ethernet_mac_1' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_ethernet_mac_1'],
+            'abm_ethernet_mac_2' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_ethernet_mac_2'],
             // Apple returns IMEIs as an array (dual-SIM iPhones carry
             // two, older devices one). Positional split so admins can
             // map each to its own custom field. #19754.
@@ -782,7 +787,10 @@ class AppleBusinessManagerAdapter extends SyncAdapter
             return $wifi;
         }
 
-        $ethernet = self::normalizeMacAddress(Arr::get($attrs, 'ethernetMacAddress'));
+        // ethernetMacAddress can be a two-element array on Macs with two
+        // physical ports. Prefer the first slot so the primaryMac field
+        // on a non-wifi Mac still populates something sensible.
+        $ethernet = self::extractMacAtIndex(Arr::get($attrs, 'ethernetMacAddress'), 0);
         if ($ethernet !== null) {
             return $ethernet;
         }
@@ -829,16 +837,28 @@ class AppleBusinessManagerAdapter extends SyncAdapter
         $extra['abm_mdm_storage_total'] = Arr::get($attrs, 'storageTotalCapacity');
         $extra['abm_mdm_storage_free'] = Arr::get($attrs, 'storageFreeCapacity');
 
-        $macMap = [
+        // Wi-Fi and Bluetooth are single-radio on every current Apple
+        // SKU so they stay scalar. Ethernet can be a two-element array
+        // on dual-NIC Macs, so split positionally like IMEI.
+        $singleMacMap = [
             'wifiMacAddress' => 'abm_wifi_mac',
             'bluetoothMacAddress' => 'abm_bluetooth_mac',
-            'ethernetMacAddress' => 'abm_ethernet_mac',
         ];
-        foreach ($macMap as $mdmKey => $extraKey) {
+        foreach ($singleMacMap as $mdmKey => $extraKey) {
             $val = self::normalizeMacAddress(Arr::get($attrs, $mdmKey));
             if ($val !== null) {
                 $extra[$extraKey] = $val;
             }
+        }
+
+        $mdmEthernet = Arr::get($attrs, 'ethernetMacAddress');
+        $ethernet1 = self::extractMacAtIndex($mdmEthernet, 0);
+        if ($ethernet1 !== null) {
+            $extra['abm_ethernet_mac_1'] = $ethernet1;
+        }
+        $ethernet2 = self::extractMacAtIndex($mdmEthernet, 1);
+        if ($ethernet2 !== null) {
+            $extra['abm_ethernet_mac_2'] = $ethernet2;
         }
 
         // IMEI is an array in both orgDevices and MDM-detail shapes.
@@ -895,6 +915,27 @@ class AppleBusinessManagerAdapter extends SyncAdapter
      * Returns null when the slot is absent, when the value isn't a
      * non-empty string, or when a scalar is requested for slot 1.
      */
+    /**
+     * Pick a single MAC out of Apple's `ethernetMacAddress` field,
+     * which is a two-element array on Macs with two physical NICs and
+     * a bare string on everything else. Shape semantics mirror
+     * extractImeiAtIndex: scalar fills slot 0 only, array indexes
+     * positionally, anything else returns null. The returned value
+     * passes through normalizeMacAddress so the colon-separated upper-
+     * case shape custom-field validators expect round-trips cleanly.
+     */
+    private static function extractMacAtIndex(mixed $value, int $index): ?string
+    {
+        if (is_string($value)) {
+            return $index === 0 ? self::normalizeMacAddress($value) : null;
+        }
+        if (! is_array($value)) {
+            return null;
+        }
+
+        return self::normalizeMacAddress($value[$index] ?? null);
+    }
+
     private static function extractImeiAtIndex(mixed $value, int $index): ?string
     {
         if (is_string($value)) {
@@ -1076,10 +1117,14 @@ class AppleBusinessManagerAdapter extends SyncAdapter
                 'abm_device_capacity' => Arr::get($attrs, 'deviceCapacity'),
                 'abm_wifi_mac' => self::normalizeMacAddress(Arr::get($attrs, 'wifiMacAddress')),
                 'abm_bluetooth_mac' => self::normalizeMacAddress(Arr::get($attrs, 'bluetoothMacAddress')),
-                'abm_ethernet_mac' => self::normalizeMacAddress(Arr::get($attrs, 'ethernetMacAddress')),
+                // ethernetMacAddress is a two-element array on dual-NIC
+                // Macs. Positional split so admins can map each port to
+                // its own custom field. See #19877.
+                'abm_ethernet_mac_1' => self::extractMacAtIndex(Arr::get($attrs, 'ethernetMacAddress'), 0),
+                'abm_ethernet_mac_2' => self::extractMacAtIndex(Arr::get($attrs, 'ethernetMacAddress'), 1),
                 // Cellular-only identifiers. Populated for iPhones and
                 // cellular iPads, null on Macs / non-cellular devices.
-                // IMEI is an array in Apple's shape; _1/_2 split by
+                // IMEI is an array in Apple's shape, _1/_2 split by
                 // index so admins can map each to its own custom field.
                 'abm_imei_1' => self::extractImeiAtIndex(Arr::get($attrs, 'imei'), 0),
                 'abm_imei_2' => self::extractImeiAtIndex(Arr::get($attrs, 'imei'), 1),
