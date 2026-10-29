@@ -1090,7 +1090,7 @@ class AuditFileStorage extends Command
             return;
         }
 
-        fputcsv($handle, ['direction', 'table', 'id', 'type', 'file'], escape: '\\');
+        fputcsv($handle, ['direction', 'table', 'id', 'type', 'file'], escape: '\\', eol: "\r\n");
         foreach ($rows as $row) {
             fputcsv($handle, [
                 $row['direction'] ?? 'missing',
@@ -1098,11 +1098,11 @@ class AuditFileStorage extends Command
                 $row['id'],
                 $row['type'],
                 $row['file'],
-            ], escape: '\\');
+            ], escape: '\\', eol: "\r\n");
         }
         fclose($handle);
 
-        note('Wrote ' . number_format(count($rows)) . " row(s) to $csvPath.");
+        note('Wrote '.number_format(count($rows))." row(s) to $csvPath.");
     }
 
     /**

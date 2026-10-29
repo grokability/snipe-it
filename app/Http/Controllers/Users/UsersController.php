@@ -618,7 +618,7 @@ class UsersController extends Controller
                 trans('admin/licenses/table.deleted_at'),
             ];
 
-            fputcsv($handle, $headers, escape: '\\');
+            fputcsv($handle, $headers, escape: '\\', eol: "\r\n");
 
             $users = User::with(
                 'assets',
@@ -700,11 +700,11 @@ class UsersController extends Controller
 
                         // CSV_ESCAPE_FORMULAS is set to false in the .env
                         if (config('app.escape_formulas') === false) {
-                            fputcsv($handle, $values, escape: '\\');
+                            fputcsv($handle, $values, escape: '\\', eol: "\r\n");
 
                             // CSV_ESCAPE_FORMULAS is set to true or is not set in the .env
                         } else {
-                            fputcsv($handle, $formatter->escapeRecord($values), escape: '\\');
+                            fputcsv($handle, $formatter->escapeRecord($values), escape: '\\', eol: "\r\n");
                         }
                     }
                 });

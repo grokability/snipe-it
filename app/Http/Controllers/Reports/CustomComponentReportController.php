@@ -62,7 +62,7 @@ class CustomComponentReportController extends Controller
             $headerRow = $this->generateHeaders($request, $mappings);
 
             Log::debug('Adding headers: '.$this->getExecutionTime());
-            fputcsv($handle, $headerRow, escape: '\\');
+            fputcsv($handle, $headerRow, escape: '\\', eol: "\r\n");
             Log::debug('Added headers: '.$this->getExecutionTime());
 
             $this->buildQuery($request)->orderBy('components.id', 'ASC')->chunk(500, function ($components) use ($handle, $request, $mappings) {
@@ -88,11 +88,11 @@ class CustomComponentReportController extends Controller
 
                         // CSV_ESCAPE_FORMULAS is set to false in the .env
                         if (config('app.escape_formulas') === false) {
-                            fputcsv($handle, $row, escape: '\\');
+                            fputcsv($handle, $row, escape: '\\', eol: "\r\n");
 
                             // CSV_ESCAPE_FORMULAS is set to true or is not set in the .env
                         } else {
-                            fputcsv($handle, $formatter->escapeRecord($row), escape: '\\');
+                            fputcsv($handle, $formatter->escapeRecord($row), escape: '\\', eol: "\r\n");
                         }
 
                         Log::debug('-- Record '.$count.' Component ID:'.$component->id.' in '.$this->getExecutionTime());
