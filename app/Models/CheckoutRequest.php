@@ -227,6 +227,31 @@ class CheckoutRequest extends Model
     }
 
     /**
+     * Flip the row to canceled without firing the full model-event
+     * cascade (archive-time cleanup paths on Accessory / Component /
+     * Consumable rely on this so a parent-entity update does not
+     * trigger a storm of per-request notification observers), but
+     * still explicitly re-sync the calendar_events index so the
+     * reservation drops off the calendar on cancel. The persistent-
+     * calendar-event bug reported against the archive and user-
+     * initiated cancel paths traced back to a saveQuietly() /
+     * query-builder update() combination that bypassed the
+     * HasCalendarEvents observer entirely.
+     */
+    public function cancelAndSync(): bool
+    {
+        $this->canceled_at = now();
+        $this->state = CheckoutRequestState::Canceled;
+        $saved = $this->saveQuietly();
+
+        if ($saved) {
+            $this->forceSyncCalendarEvents();
+        }
+
+        return $saved;
+    }
+
+    /**
      * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo

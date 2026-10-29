@@ -6,7 +6,6 @@ use App\Models\Asset;
 use App\Models\SyncAdapterConfig;
 use App\SyncAdapters\HostInventoryRecord;
 use App\SyncAdapters\PushableSyncAdapter;
-use App\SyncAdapters\SyncAdapter;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
@@ -403,77 +402,68 @@ class CustomHttpAdapter extends PushableSyncAdapter
      * After the base saveConfig persists field_paths + directions,
      * make sure every custom:/native: destination has a self-routing
      * mapping.<key> = <key> config so the framework's extras loop
-     * writes each extracted value to its target at sync time. Cheap
-     * to re-persist on every save because the values are stable.
+     * writes each extracted value to its target at sync time, and
+     * clean up any destinations the admin removed from the field_paths
+     * widget on this save.
+     *
+     * Deletion is "present in field_paths before, absent
+     * after" rather than the mapping-picker omission the earlier
+     * revision keyed on. CustomHttp does not render the mapping-picker
+     * widget (rendersExtrasPicker() = false), so no `<slug>_mapping`
+     * key is ever POSTed, and the omission check matched every
+     * pre-existing extra on every save, dropping legitimate mappings
+     * on round-trip. (We pulled supportsAdminDefinedExtras() from this
+     * adapter since the "Vendor Response Paths" widget should handle that
+     * mapping. It was clunky and confusing with both before.)
      */
     public function saveConfig(\Illuminate\Http\Request $request): void
     {
         $slug = $this->instance->slug;
 
         // Snapshot the stored field_paths BEFORE parent::saveConfig
-        // overwrites the credential. We need it to tell a pre-existing
-        // extras entry (whose row might have been deleted via the
-        // mapping-picker on this save) from a brand-new one added via
-        // the field_paths widget's pending-row flow (which has no
-        // matching _mapping key either). Without the snapshot, every
-        // new row would look identical to a deletion.
+        // overwrites the credential, so we can diff it against the
+        // post-save state and detect widget-side deletions.
         $existingPathsBefore = $this->fieldPathMap();
-
-        // The parent's persistFieldMappings forgets any mapping key
-        // the POST omitted - that's how the mapping-picker's delete
-        // button signals removal.
-        $postedMappings = (array) $request->input($slug.'_mapping', []);
 
         parent::saveConfig($request);
 
+        $pathsAfter = $this->fieldPathMap();
         $postedDirections = (array) $request->input($slug.'_direction', []);
-        $prunedFromFieldPaths = [];
 
-        foreach (array_keys($this->fieldPathMap()) as $destination) {
+        // Deletions: destinations the admin removed via the field_paths
+        // widget's × button are absent from `pathsAfter`. parent::
+        // persistCredentialsFromSchema already wrote the pruned
+        // field_paths credential, so we just need to drop the orphan
+        // direction + self-routing mapping entries.
+        foreach (array_keys($existingPathsBefore) as $destination) {
             if (! str_starts_with($destination, 'custom:') && ! str_starts_with($destination, 'native:')) {
                 continue;
             }
-
-            // Deletion test: the entry existed before this save AND
-            // the admin's mapping-picker POST omits it. Brand-new
-            // entries (added via the field_paths pending-row flow on
-            // this same save) pass through unchanged - they have no
-            // _mapping key yet, but weren't previously stored either.
-            $existedBefore = array_key_exists($destination, $existingPathsBefore);
-            $omittedFromMappings = ! array_key_exists($destination, $postedMappings);
-            if ($existedBefore && $omittedFromMappings) {
+            if (!array_key_exists($destination, $pathsAfter)) {
                 SyncAdapterConfig::forget($this->instance->id, 'direction.'.$destination);
-                $prunedFromFieldPaths[] = $destination;
+                SyncAdapterConfig::forget($this->instance->id, 'mapping.' . $destination);
+            }
+        }
 
+        // Current entries: write the self-routing mapping and persist
+        // the per-row direction. parent::persistFieldMappings forgets
+        // every extras `mapping.<key>` on each save (its own cleanup
+        // keys on the mapping-picker POST, which this adapter does not
+        // emit), so we re-write them here for the destinations the
+        // admin kept.
+        foreach (array_keys($pathsAfter) as $destination) {
+            if (!str_starts_with($destination, 'custom:') && !str_starts_with($destination, 'native:')) {
                 continue;
             }
 
             SyncAdapterConfig::put($this->instance->id, 'mapping.'.$destination, $destination);
 
-            // Parent's persistFieldDirections dropped these because
-            // validMappingFields didn't yet include the destination
-            // key on a first save (extraFields() only picks them up
-            // once mapping.<key> is stored). Persist here so per-row
-            // direction from the widget survives the first save.
             if (isset($postedDirections[$destination])) {
                 $direction = (string) $postedDirections[$destination];
                 if (in_array($direction, ['pull', 'push', 'both', 'skip'], true)) {
                     SyncAdapterConfig::put($this->instance->id, 'direction.'.$destination, $direction);
                 }
             }
-        }
-
-        // Rewrite the field_paths credential with the pruned entries
-        // removed so the deleted extras don't regenerate on next
-        // render. parent::saveConfig already persisted the raw
-        // credential, so we re-decode / filter / re-encode here.
-        if ($prunedFromFieldPaths !== []) {
-            $raw = (string) $this->safeCredential('field_paths');
-            $decoded = $raw === '' ? [] : (array) (json_decode($raw, true) ?? []);
-            foreach ($prunedFromFieldPaths as $key) {
-                unset($decoded[$key]);
-            }
-            SyncAdapterConfig::put($this->instance->id, 'field_paths', json_encode($decoded, JSON_UNESCAPED_SLASHES));
         }
     }
 

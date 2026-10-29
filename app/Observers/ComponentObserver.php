@@ -2,7 +2,6 @@
 
 namespace App\Observers;
 
-use App\Enums\CheckoutRequestState;
 use App\Models\Actionlog;
 use App\Models\CheckoutRequest;
 use App\Models\Component;
@@ -56,11 +55,7 @@ class ComponentObserver
 
         // Archive-time request cleanup.
         if ($component->wasChanged('archived') && $component->archived) {
-            $component->openRequests()->get()->each(function (CheckoutRequest $request): void {
-                $request->canceled_at = now();
-                $request->state = CheckoutRequestState::Canceled;
-                $request->saveQuietly();
-            });
+            $component->openRequests()->get()->each(fn (CheckoutRequest $request) => $request->cancelAndSync());
         }
     }
 
@@ -87,11 +82,7 @@ class ComponentObserver
      */
     public function deleting(Component $component)
     {
-        $component->openRequests()->get()->each(function (CheckoutRequest $request): void {
-            $request->canceled_at = now();
-            $request->state = CheckoutRequestState::Canceled;
-            $request->saveQuietly();
-        });
+        $component->openRequests()->get()->each(fn (CheckoutRequest $request) => $request->cancelAndSync());
 
         $logAction = new Actionlog;
         $logAction->item_type = Component::class;

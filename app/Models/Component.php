@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Enums\CheckoutRequestState;
 use App\Enums\FileStorage;
 use App\Models\Builders\ComponentQueryBuilder;
 use App\Models\Contracts\Importable;
@@ -188,11 +187,7 @@ class Component extends SnipeModel implements Importable
                 return;
             }
 
-            $component->openRequests()->get()->each(function (CheckoutRequest $request): void {
-                $request->canceled_at = now();
-                $request->state = CheckoutRequestState::Canceled;
-                $request->saveQuietly();
-            });
+            $component->openRequests()->get()->each(fn (CheckoutRequest $request) => $request->cancelAndSync());
         });
 
         // On hard-delete, wipe the image file and Files-tab attachments.

@@ -271,6 +271,92 @@ class CustomHttpAdapterTest extends TestCase
         $this->assertNull(SyncAdapterConfig::get($instance->id, 'direction.hostname'));
     }
 
+    public function test_saveconfig_preserves_existing_custom_field_mappings_on_round_trip()
+    {
+        // Regression for #19983: saving a CustomHttp adapter with its
+        // existing custom:X mappings re-posted (no changes made) must
+        // keep them. The previous deletion-detection logic keyed on
+        // the `<slug>_mapping` POST, which CustomHttp does not emit
+        // (rendersExtrasPicker = false), so every pre-existing extra
+        // looked "deleted" on every save and the mapping / direction /
+        // field_paths rows were wiped.
+        $adapter = $this->configuredAdapter([
+            'field_paths' => json_encode([
+                'custom:5' => 'tags.asset_tag',
+                'custom:6' => 'location.room',
+            ]),
+            'mapping.custom:5' => 'custom:5',
+            'mapping.custom:6' => 'custom:6',
+            'direction.custom:5' => 'pull',
+            'direction.custom:6' => 'pull',
+        ]);
+        $slug = $adapter->name();
+        $instance = SyncAdapterInstance::where('slug', $slug)->firstOrFail();
+
+        $adapter->saveConfig(\Illuminate\Http\Request::create('/', 'POST', [
+            $slug.'_url' => 'https://vendor.example/api',
+            $slug.'_source_id_path' => 'id',
+            $slug.'_field_paths' => [
+                'custom:5' => 'tags.asset_tag',
+                'custom:6' => 'location.room',
+            ],
+            $slug.'_direction' => [
+                'custom:5' => 'pull',
+                'custom:6' => 'pull',
+            ],
+        ]));
+
+        $stored = json_decode(SyncAdapterConfig::get($instance->id, 'field_paths'), true);
+        $this->assertSame(
+            ['custom:5' => 'tags.asset_tag', 'custom:6' => 'location.room'],
+            $stored,
+            'Custom field paths should round-trip untouched when the admin re-saves without changes.',
+        );
+        $this->assertSame('custom:5', SyncAdapterConfig::get($instance->id, 'mapping.custom:5'));
+        $this->assertSame('custom:6', SyncAdapterConfig::get($instance->id, 'mapping.custom:6'));
+        $this->assertSame('pull', SyncAdapterConfig::get($instance->id, 'direction.custom:5'));
+        $this->assertSame('pull', SyncAdapterConfig::get($instance->id, 'direction.custom:6'));
+    }
+
+    public function test_saveconfig_removes_mapping_direction_when_field_paths_row_is_deleted()
+    {
+        // Deletion signal: a destination present in the stored
+        // field_paths map but absent from the POST means the admin
+        // removed the row via the field_paths widget's × button.
+        // Clean up the orphan mapping + direction entries so a stale
+        // self-routing config doesn't survive the deletion.
+        $adapter = $this->configuredAdapter([
+            'field_paths' => json_encode([
+                'custom:5' => 'tags.asset_tag',
+                'custom:6' => 'location.room',
+            ]),
+            'mapping.custom:5' => 'custom:5',
+            'mapping.custom:6' => 'custom:6',
+            'direction.custom:5' => 'pull',
+            'direction.custom:6' => 'pull',
+        ]);
+        $slug = $adapter->name();
+        $instance = SyncAdapterInstance::where('slug', $slug)->firstOrFail();
+
+        // Admin removed custom:6 via the widget. POST only re-sends custom:5.
+        $adapter->saveConfig(\Illuminate\Http\Request::create('/', 'POST', [
+            $slug.'_url' => 'https://vendor.example/api',
+            $slug.'_source_id_path' => 'id',
+            $slug.'_field_paths' => [
+                'custom:5' => 'tags.asset_tag',
+            ],
+            $slug.'_direction' => [
+                'custom:5' => 'pull',
+            ],
+        ]));
+
+        $stored = json_decode(SyncAdapterConfig::get($instance->id, 'field_paths'), true);
+        $this->assertSame(['custom:5' => 'tags.asset_tag'], $stored);
+        $this->assertSame('custom:5', SyncAdapterConfig::get($instance->id, 'mapping.custom:5'));
+        $this->assertNull(SyncAdapterConfig::get($instance->id, 'mapping.custom:6'));
+        $this->assertNull(SyncAdapterConfig::get($instance->id, 'direction.custom:6'));
+    }
+
     public function test_pull_warns_when_configured_path_returns_null_on_every_record()
     {
         // A dot-path that returns null on every record is almost

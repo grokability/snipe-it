@@ -307,6 +307,19 @@ return [
     'jamf_platform_client_secret_help' => 'Paired with the Client ID above. Jamf shows the secret once at integration creation time.',
     'jamf_platform_environment_id_help' => 'UUID of the Platform environment the integration is scoped to. Copy from Jamf Account under Environments, or from the URL of your environment console. Sent as the X-Environment-Id header on every request.',
     'landscape_token_help' => 'Landscape does not have a UI for API tokens. Obtain one by POSTing your credentials to <code>/api/v2/login</code> on your Landscape instance and copying the <code>token</code> field from the JSON response. Pass an <code>expiry_minutes</code> value on that call to control how long the token stays valid (defaults to 24h). The account behind the token needs read access to computers.',
+    'levelio_api_key_help' => 'Generate an API key under Settings -> API Keys in your Level.io dashboard. The key goes on the Authorization header verbatim (no Bearer prefix). The account behind the key needs read access to Devices and Groups, plus write access to Devices if you want push to populate the device notes from a Snipe-IT composed-notes template.',
+    'levelio_base_url_help' => 'Level.io\'s API URL is <code>https://api.level.io</code> for all tenants. Leave as the default unless you are testing against a staging environment Level has pointed you at.',
+    'levelio_extra_online' => 'Level.io Online',
+    'levelio_extra_role' => 'Level.io Role',
+    'levelio_extra_tags' => 'Level.io Tags',
+    'levelio_extra_security_score' => 'Level.io Security Score',
+    'levelio_extra_security_risk' => 'Level.io Security Risk',
+    'levelio_extra_cpu_model' => 'Level.io CPU Model',
+    'levelio_extra_cpu_cores' => 'Level.io CPU Cores',
+    'levelio_extra_total_memory_gb' => 'Level.io Memory (GB)',
+    'levelio_extra_disk_total_gb' => 'Level.io Disk Capacity (GB)',
+    'levelio_extra_disk_free_gb' => 'Level.io Disk Free (GB)',
+    'levelio_extra_notes' => 'Level.io Notes',
     'sophos_client_id_help' => 'Create a credential in Sophos Central under Global Settings -> API Credentials Management, with the Service Principal Read-Only role. Copy the Client ID from the credential page. Only tenant-level credentials are supported.',
     'sophos_client_secret_help' => 'Paired with the Client ID above. Sophos Central shows the secret once, when the credential is created. Credentials expire eventually and can\'t be renewed, so create a new one when that happens.',
     'sophos_endpoint_types_help' => 'Only sync these Sophos endpoint types. Sophos lists every Linux device as a server, laptops included.',
@@ -507,6 +520,7 @@ return [
     'vendor_group_jamf_platform_blueprint' => 'Jamf Platform Blueprint',
     'vendor_group_kaseya_organization' => 'Kaseya Organization',
     'vendor_group_google_workspace_org_unit' => 'Google Organizational Unit',
+    'vendor_group_levelio_group' => 'Level.io Group',
 
     // Kaseya-specific label prefix for tenant-defined custom fields
     // captured by the "Refresh custom fields" button. Rendered in the
