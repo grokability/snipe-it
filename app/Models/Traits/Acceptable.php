@@ -2,6 +2,7 @@
 
 namespace App\Models\Traits;
 
+use App\Models\CheckoutAcceptance;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
 
@@ -12,6 +13,16 @@ use Illuminate\Support\Facades\Log;
  */
 trait Acceptable
 {
+    public static function bootAcceptable(): void
+    {
+        static::deleting(function (self $item): void {
+            CheckoutAcceptance::pending()
+                ->where('checkoutable_type', $item->getMorphClass())
+                ->where('checkoutable_id', $item->getKey())
+                ->delete();
+        });
+    }
+
     /**
      * Run after the checkout acceptance was accepted by the user
      *

@@ -13,9 +13,8 @@ use App\Models\User;
 use Tests\TestCase;
 
 /**
- * AccessoryObserver::created writes an initial Order + OrderItem for
- * every new accessory (mirrors AssetObserver's per-asset behavior).
- * The paired `create` action_log entry links back to that OrderItem via
+ * HasOrders writes an initial Order + OrderItem for a stocked accessory.
+ * Loggable writes the paired `create` action_log entry, linked to that OrderItem via
  * order_item_id so history-tab renders can walk to the acquisition
  * context in one hop.
  */
@@ -82,7 +81,7 @@ class AccessoryObserverOrderTest extends TestCase
 
         Accessory::factory()->count(3)->create();
 
-        // Each create fires the observer, which writes 1 Order + 1
+        // Each stocked create fires HasOrders, which writes 1 Order + 1
         // OrderItem. No dedupe on accessory create (order_number is
         // null so blank-order semantic applies).
         $this->assertSame($ordersBefore + 3, Order::count());
