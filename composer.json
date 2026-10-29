@@ -131,6 +131,9 @@
       "@php artisan package:discover --ansi",
       "@php artisan vendor:publish --force --tag=livewire:assets --ansi"
     ],
+    "post-update-cmd": [
+      "@php artisan boost:update --ansi"
+    ],
     "post-create-project-cmd": [
       "php artisan key:generate"
     ],
