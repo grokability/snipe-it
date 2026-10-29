@@ -663,17 +663,17 @@ class Ldap extends Model
             if (isset($controls[LDAP_CONTROL_PAGEDRESULTS]['value']['cookie'])) {
                 // You need to pass the cookie from the last call to the next one
                 $cookie = $controls[LDAP_CONTROL_PAGEDRESULTS]['value']['cookie'];
-                Log::channel('ldap')->debug('okay, at least one more page to go!!!');
+                Log::channel('ldap')->debug('PAGED RESULTS: At least one more page to go');
             } else {
-                Log::channel('ldap')->debug("okay, we're out of pages - no cookie (or empty cookie) was passed");
+                // Empty cookie means last page
+                Log::channel('ldap')->debug('PAGED RESULTS: Out of pages - no cookie (or empty cookie) was passed');
                 $cookie = '';
             }
-            // Empty cookie means last page
 
             // Get results from page
             $results = ldap_get_entries($ldapconn, $search_results);
             if (! $results) {
-                return redirect()->route('users.index')->with('error', trans('admin/users/message.error.ldap_could_not_get_entries').ldap_error($ldapconn)); // TODO this is never called in any routed context - only from the Artisan command. So this redirect will never work.
+                throw new Exception(trans('admin/users/message.error.ldap_could_not_get_entries') . ldap_error($ldapconn));
             }
 
             // Add results to result set
