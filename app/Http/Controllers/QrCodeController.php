@@ -28,6 +28,11 @@ class QrCodeController extends Controller
 
     public function show($object_type, $id): Response|BinaryFileResponse|string|bool
     {
+        // Opt this route out of Laravel's session "previous URL"
+        // tracking so it can't erroneously end up as the "previous url"
+        // on some servers.
+        request()->headers->set('X-Requested-With', 'XMLHttpRequest');
+
         $settings = Setting::getSettings();
 
         if ($settings->label2_2d_type === 'none') {
