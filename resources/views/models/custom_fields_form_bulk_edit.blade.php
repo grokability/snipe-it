@@ -161,7 +161,7 @@
                                        class="form-control{{ strtoupper($field->format) === 'MAC' ? ' mac-address-input' : '' }}"
                                        name="{{ $field->db_column_name() }}"
                                        @if (strtoupper($field->format) === 'MAC') inputmode="text" autocomplete="off" @endif
-                                       placeholder="{{ strtoupper($field->format) === 'MAC' ? 'AA:BB:CC:DD:EE:FF' : 'Enter '.strtolower($field->format).' text' }}">
+                                       placeholder="{{ strtoupper($field->format) === 'MAC' ? 'AA:BB:CC:DD:EE:FF' : trans('admin/custom_fields/general.enter_format_text', ['format' => strtolower($field->format)]) }}">
                         @endif
                             @else
                                 <input type="text" value="{{ strtoupper(trans('admin/custom_fields/general.encrypted')) }}" class="form-control disabled" disabled>

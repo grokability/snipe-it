@@ -21,6 +21,7 @@ return [
     'field_element_short' => 'Element',
     'field_format' => 'Format',
     'field_format_help' => 'Determines the validation rules that are applied. Some form elements may not be available to all formats.',
+    'enter_format_text' => 'Enter :format text',
     'field_element_help' => 'Determines the UI element displayed in the form.',
     'format_any_with_date_picker_help' => 'Pairing a date/datetime picker with the ANY/NONE format is useful when the field needs to be encrypted (encrypted fields must be stored as text). Otherwise the DATE or DATETIME format is recommended for better sorting and validation.',
     'encrypt_disabled_for_date_format' => 'DATE and DATETIME formats cannot be encrypted because they are stored in native date columns, which only accept valid date values.',
