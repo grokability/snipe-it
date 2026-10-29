@@ -171,6 +171,10 @@ class DashboardController extends Controller
             $query->whereIn('category_type', $viewableTypeKeys);
         }
 
+        if ($request->filled('search')) {
+            $query->TextSearch($request->input('search'));
+        }
+
         $this->applyBoundedSort($query, $request, array_merge(['name', 'category_type'], $countSortColumns), 'name');
 
         // category_type value → withCount alias. English pluralization
@@ -250,6 +254,10 @@ class DashboardController extends Controller
             $countSortColumns[] = 'users_count';
         }
 
+        if ($request->filled('search')) {
+            $query->TextSearch($request->input('search'));
+        }
+
         $this->applyBoundedSort($query, $request, array_merge(['name'], $countSortColumns), 'name');
 
         return response()->json($this->paginateRows($query, $request, function ($company) {
@@ -312,6 +320,10 @@ class DashboardController extends Controller
         if (Gate::allows('view', User::class)) {
             $query->withCount('users as users_count');
             $countSortColumns[] = 'users_count';
+        }
+
+        if ($request->filled('search')) {
+            $query->TextSearch($request->input('search'));
         }
 
         $this->applyBoundedSort($query, $request, array_merge(['name'], $countSortColumns), 'name');

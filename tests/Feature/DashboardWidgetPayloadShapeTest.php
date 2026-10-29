@@ -146,4 +146,53 @@ class DashboardWidgetPayloadShapeTest extends TestCase
         $this->assertTrue($locationRow['available_actions']['view']);
         $this->assertTrue($companyRow['available_actions']['view']);
     }
+
+    public function test_dashboard_categories_endpoint_filters_rows_by_search_param()
+    {
+        // Issue #19979: the bs-table filter field on the dashboard widget sends `search` to the server. Pre-fix the controller ignored it and returned every row, which the UI rendered as a stale/no-match state.
+        Category::factory()->create(['name' => 'MATCH_ME_FILTER', 'category_type' => 'asset']);
+        Category::factory()->create(['name' => 'OTHER_CATEGORY', 'category_type' => 'asset']);
+
+        Passport::actingAs(User::factory()->superuser()->create());
+
+        $rows = $this->getJson(route('api.dashboard.categories', ['search' => 'MATCH_ME_FILTER']))
+            ->assertOk()
+            ->json('rows');
+
+        $names = collect($rows)->pluck('name')->all();
+        $this->assertContains('MATCH_ME_FILTER', $names);
+        $this->assertNotContains('OTHER_CATEGORY', $names);
+    }
+
+    public function test_dashboard_companies_endpoint_filters_rows_by_search_param()
+    {
+        Company::factory()->create(['name' => 'MATCH_ME_FILTER']);
+        Company::factory()->create(['name' => 'OTHER_COMPANY']);
+
+        Passport::actingAs(User::factory()->superuser()->create());
+
+        $rows = $this->getJson(route('api.dashboard.companies', ['search' => 'MATCH_ME_FILTER']))
+            ->assertOk()
+            ->json('rows');
+
+        $names = collect($rows)->pluck('name')->all();
+        $this->assertContains('MATCH_ME_FILTER', $names);
+        $this->assertNotContains('OTHER_COMPANY', $names);
+    }
+
+    public function test_dashboard_locations_endpoint_filters_rows_by_search_param()
+    {
+        Location::factory()->create(['name' => 'MATCH_ME_FILTER']);
+        Location::factory()->create(['name' => 'OTHER_LOCATION']);
+
+        Passport::actingAs(User::factory()->superuser()->create());
+
+        $rows = $this->getJson(route('api.dashboard.locations', ['search' => 'MATCH_ME_FILTER']))
+            ->assertOk()
+            ->json('rows');
+
+        $names = collect($rows)->pluck('name')->all();
+        $this->assertContains('MATCH_ME_FILTER', $names);
+        $this->assertNotContains('OTHER_LOCATION', $names);
+    }
 }

@@ -36,8 +36,11 @@
   <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Livewire/Importer.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Livewire/LdapSettings.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Models/Accessory.php"/>
+  <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Models/AccessoryCheckout.php"/>
+  <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Models/Actionlog.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Models/Asset.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Models/CheckoutAcceptance.php"/>
+  <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Models/CheckoutRequest.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Models/CompanyableChildScope.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Models/CompanyableScope.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Models/Component.php"/>
@@ -60,6 +63,7 @@
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Models/Traits/Searchable.php"/>
   <violation rule="PHPMD\Rule\UnusedPrivateMethod" file="app/Models/User.php" method="revokeAssociatedPassportTokens"/>
   <violation rule="PHPMD\Rule\UnusedPrivateMethod" file="app/Models/User.php" method="purgeAssociatedPassportTokens"/>
+  <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Models/User.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Notifications/AcceptanceItemAcceptedNotification.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Notifications/AcceptanceItemDeclinedNotification.php"/>
   <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Notifications/CheckinAssetNotification.php"/>

@@ -23,6 +23,7 @@ use Illuminate\Support\Str;
  * checkouts, checkins, and updates).
  *
  * @version v1.0
+ *
  * @mixin IdeHelperActionlog
  */
 class Actionlog extends SnipeModel
@@ -463,7 +464,7 @@ class Actionlog extends SnipeModel
      * the same three assignee morph types (User, Asset, Location)
      * and LIKE across each type's identifier columns.
      */
-    public function advancedTextSearch(Builder $query, array $terms)
+    public function advancedTextSearch(Builder $outer, Builder $nested, array $terms): void
     {
         // log_meta is a JSON diff blob that admins legitimately search
         // across (who changed status to Lost, when the seat count moved),
@@ -473,7 +474,7 @@ class Actionlog extends SnipeModel
         // a timing oracle on the masked serial. Scope the LIKE to
         // item_type != License to keep the admin workflows while shutting
         // the oracle. GHSA-68gh-qwvc-qccg.
-        $query->orWhere(function (Builder $metaQuery) use ($terms): void {
+        $nested->orWhere(function (Builder $metaQuery) use ($terms): void {
             $metaQuery->where('action_logs.item_type', '!=', License::class)
                 ->where(function (Builder $likeQuery) use ($terms): void {
                     foreach ($terms as $term) {
@@ -482,7 +483,7 @@ class Actionlog extends SnipeModel
                 });
         });
 
-        return $query->orWhereHasMorph(
+        $nested->orWhereHasMorph(
             'target',
             [User::class, Asset::class, Location::class],
             function (Builder $targetQuery, string $targetType) use ($terms) {

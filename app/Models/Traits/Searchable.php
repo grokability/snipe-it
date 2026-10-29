@@ -65,27 +65,45 @@ trait Searchable
             return $this->applySearchFilters($query, $filters, $filterOperator);
         }
 
-        /**
-         * Search the attributes of this model
-         */
-        $query = $this->searchAttributes($query, $terms);
+        if (empty($terms)) {
+            return $query;
+        }
 
-        /**
-         * Search through the custom fields of the model
-         */
-        $query = $this->searchCustomFields($query, $terms);
+        // Wrap the search methods in a nested where so the OR clauses
+        // they add stay confined inside one AND group with any
+        // surrounding scope (FMCS CompanyableScope, per-controller
+        // WHERE filters, etc). Without this nesting a multi-term
+        // search produces SQL shaped like
+        //   WHERE scope AND col LIKE '%a%' OR col LIKE '%b%'
+        // which binds AND tighter than OR, letting the second term
+        // match rows outside the scope.
+        //
+        // advancedTextSearch overrides receive two builders: $outer
+        // for leftJoin calls (Eloquent nested-where closures cannot
+        // carry joins) and $nested for the orWhere clauses that
+        // reference the joined columns. The $nested parameter keeps
+        // the join-column where clauses inside the scope AND group.
+        return $query->where(function (Builder $nested) use ($query, $terms) {
+            /**
+             * Search the attributes of this model
+             */
+            $nested = $this->searchAttributes($nested, $terms);
 
-        /**
-         * Search through the relations of the model
-         */
-        $query = $this->searchRelations($query, $terms);
+            /**
+             * Search through the custom fields of the model
+             */
+            $nested = $this->searchCustomFields($nested, $terms);
 
-        /**
-         * Search for additional attributes defined by the model
-         */
-        $query = $this->advancedTextSearch($query, $terms);
+            /**
+             * Search through the relations of the model
+             */
+            $nested = $this->searchRelations($nested, $terms);
 
-        return $query;
+            /**
+             * Search for additional attributes defined by the model
+             */
+            $this->advancedTextSearch($query, $nested, $terms);
+        });
     }
 
     /**
@@ -1066,13 +1084,20 @@ trait Searchable
      * attributes or relations. No-op in this trait. Override in the
      * implementing model to add relation-aware search terms.
      *
+     * $outer is the top-level query builder, used for leftJoin calls
+     * (Eloquent nested-where closures cannot carry joins). $nested is
+     * the where-clause builder confined inside scopeTextSearch's
+     * nested group, used for orWhere calls that reference the joined
+     * columns. Keeping the orWhere clauses on $nested closes the
+     * multi-term oracle described on scopeTextSearch.
+     *
      * @param  array<int, string>  $terms
      *
      * @SuppressWarnings("PHPMD.UnusedFormalParameter")
      */
-    public function advancedTextSearch(Builder $query, array $terms): Builder
+    public function advancedTextSearch(Builder $outer, Builder $nested, array $terms): void
     {
-        return $query;
+        // No-op in the base trait.
     }
 
     /**

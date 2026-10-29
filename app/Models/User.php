@@ -1785,10 +1785,10 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
      *
      * @param  array<int, string>  $terms  The search terms
      */
-    public function advancedTextSearch(Builder $query, array $terms)
+    public function advancedTextSearch(Builder $outer, Builder $nested, array $terms): void
     {
         foreach ($terms as $term) {
-            $query->orWhereMultipleColumns(
+            $nested->orWhereMultipleColumns(
                 [
                     'users.first_name',
                     'users.last_name',
@@ -1800,8 +1800,6 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
                 ], $term
             );
         }
-
-        return $query;
     }
 
     /**

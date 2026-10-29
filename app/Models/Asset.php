@@ -961,7 +961,6 @@ class Asset extends Depreciable implements Importable
      * @author [A. Gianotto] [<snipe@snipe.net>]
      *
      * @since  [v4.0]
-     *
      */
     public function assetLoc($iterations = 1, $first_asset = null): ?Location
     {
@@ -1599,15 +1598,20 @@ class Asset extends Depreciable implements Importable
      * on the Searchable trait to also search assigned user, location,
      * and asset-to-asset checkouts.
      *
+     * $outer carries the leftJoins (joins cannot live inside Eloquent
+     * nested-where closures). $nested carries the orWhere clauses
+     * that reference the joined columns, confining them inside the
+     * trait's scope AND group so a multi-term search cannot escape
+     * the surrounding FMCS CompanyableScope.
+     *
      * @param  array<int, string>  $terms  The search terms
      */
-    public function advancedTextSearch(Builder $query, array $terms)
+    public function advancedTextSearch(Builder $outer, Builder $nested, array $terms): void
     {
-
         /**
          * Assigned user
          */
-        $query = $query->leftJoin(
+        $outer->leftJoin(
             'users as assets_users', function ($leftJoin) {
                 $leftJoin->on('assets_users.id', '=', 'assets.assigned_to')
                     ->where('assets.assigned_type', '=', User::class);
@@ -1615,8 +1619,7 @@ class Asset extends Depreciable implements Importable
         );
 
         foreach ($terms as $term) {
-
-            $query = $query
+            $nested
                 ->orWhere('assets_users.first_name', 'LIKE', '%'.$term.'%')
                 ->orWhere('assets_users.last_name', 'LIKE', '%'.$term.'%')
                 ->orWhere('assets_users.display_name', 'LIKE', '%'.$term.'%')
@@ -1640,7 +1643,7 @@ class Asset extends Depreciable implements Importable
         /**
          * Assigned location
          */
-        $query = $query->leftJoin(
+        $outer->leftJoin(
             'locations as assets_locations', function ($leftJoin) {
                 $leftJoin->on('assets_locations.id', '=', 'assets.assigned_to')
                     ->where('assets.assigned_type', '=', Location::class);
@@ -1648,14 +1651,13 @@ class Asset extends Depreciable implements Importable
         );
 
         foreach ($terms as $term) {
-
-            $query = $query->orWhere('assets_locations.name', 'LIKE', '%'.$term.'%');
+            $nested->orWhere('assets_locations.name', 'LIKE', '%'.$term.'%');
         }
 
         /**
          * Assigned assets
          */
-        $query = $query->leftJoin(
+        $outer->leftJoin(
             'assets as assigned_assets', function ($leftJoin) {
                 $leftJoin->on('assigned_assets.id', '=', 'assets.assigned_to')
                     ->where('assets.assigned_type', '=', self::class);
@@ -1663,11 +1665,8 @@ class Asset extends Depreciable implements Importable
         );
 
         foreach ($terms as $term) {
-            $query = $query->orWhere('assigned_assets.name', 'LIKE', '%'.$term.'%');
-
+            $nested->orWhere('assigned_assets.name', 'LIKE', '%'.$term.'%');
         }
-
-        return $query;
     }
 
     public function calendarEventCompanyId(): ?int

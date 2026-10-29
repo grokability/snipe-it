@@ -348,6 +348,16 @@ class Purge extends Command
 
             foreach ($filenames as $filename) {
                 try {
+                    // User avatar values can be absolute OAuth URLs
+                    // (Google / Microsoft / Gravatar) that do not point at
+                    // anything on this disk. basename below would reduce
+                    // such a URL to its tail segment and attempt to delete
+                    // avatars/{tail} which could collide with a legitimate
+                    // other-user avatar.
+                    if ($modelClass === User::class
+                        && preg_match('#^https?://#i', (string) $filename) === 1) {
+                        continue;
+                    }
                     $key = $case->publicPath().basename($filename);
                     if (Storage::disk('public')->exists($key)) {
                         Storage::disk('public')->delete($key);

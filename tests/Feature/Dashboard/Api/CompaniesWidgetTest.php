@@ -85,8 +85,12 @@ class CompaniesWidgetTest extends TestCase
             ->assertOk();
     }
 
-    public function test_search_and_filter_params_are_ignored()
+    public function test_search_param_filters_rows_but_other_params_are_ignored()
     {
+        // Issue #19979: `search` was ignored, which broke the dashboard
+        // filter field. Everything else still is ignored (the index
+        // controller handles per-column filters, the dashboard widget
+        // only wires the free-text search field).
         Company::factory()->count(3)->create();
 
         Passport::actingAs(User::factory()->viewAccessories()->create());
@@ -94,8 +98,13 @@ class CompaniesWidgetTest extends TestCase
         $unfilteredTotal = $this->getJson(route('api.dashboard.companies'))
             ->assertOk()
             ->json('total');
-        $probeTotal = $this->getJson(route('api.dashboard.companies', [
-            'search' => 'never-matches',
+
+        $searchHonoredTotal = $this->getJson(route('api.dashboard.companies', ['search' => 'never-matches-anything']))
+            ->assertOk()
+            ->json('total');
+        $this->assertSame(0, $searchHonoredTotal, 'search param must filter the widget');
+
+        $extraParamsIgnoredTotal = $this->getJson(route('api.dashboard.companies', [
             'filter' => 'never-matches',
             'name' => 'never-matches',
             'email' => 'never-matches',
@@ -104,7 +113,6 @@ class CompaniesWidgetTest extends TestCase
         ]))
             ->assertOk()
             ->json('total');
-
-        $this->assertSame($unfilteredTotal, $probeTotal);
+        $this->assertSame($unfilteredTotal, $extraParamsIgnoredTotal, 'non-search filter params are not wired on the widget');
     }
 }

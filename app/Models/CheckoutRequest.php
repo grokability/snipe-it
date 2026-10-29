@@ -16,6 +16,7 @@ use Illuminate\Support\Collection;
 
 /**
  * @property \App\Enums\CheckoutRequestState $state
+ *
  * @mixin IdeHelperCheckoutRequest
  */
 class CheckoutRequest extends Model
@@ -342,13 +343,11 @@ class CheckoutRequest extends Model
      *     other type has a direct category relation.
      *   - AssetModel has no company relation (asset models are
      *     shared across companies), so its branch skips company.
-     *
-     * @return Builder
      */
-    public function advancedTextSearch(Builder $query, array $terms)
+    public function advancedTextSearch(Builder $outer, Builder $nested, array $terms): void
     {
         if (empty($terms)) {
-            return $query;
+            return;
         }
 
         $morphTypes = [
@@ -360,7 +359,7 @@ class CheckoutRequest extends Model
             License::class,
         ];
 
-        return $query->orWhereHasMorph('requestable', $morphTypes, function (Builder $q, string $type) use ($terms): void {
+        $nested->orWhereHasMorph('requestable', $morphTypes, function (Builder $q, string $type) use ($terms): void {
             $q->where(function (Builder $inner) use ($type, $terms): void {
                 foreach ($terms as $term) {
                     $like = '%'.$term.'%';
