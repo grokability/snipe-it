@@ -81,6 +81,8 @@ class LdapSync extends Command
             return 1;
         }
 
+        Log::channel('ldap')->info('LDAP sync started by ' . $this->describeInitiator() . '.');
+
         try {
             // Tag every action_log written during this run (direct writes
             // and the observer-driven writes User saves trigger) as `ldap`
@@ -92,8 +94,40 @@ class LdapSync extends Command
         }
     }
 
-    private function runSync()
+    /**
+     * Human-readable description of who kicked off this sync, for the
+     * ldap-channel startup line.
+     */
+    private function describeInitiator(): string
     {
+        if (auth()->check()) {
+            $user = auth()->user();
+            $via = request()->is('api/*') ? 'API' : 'GUI';
+
+            return 'user ' . $user->username . ' (ID ' . $user->id . ') via ' . $via;
+        }
+
+        $script = $_SERVER['argv'][1] ?? '';
+        if (in_array($script, ['schedule:run', 'schedule:work', 'schedule:test'], true)) {
+            return 'the Laravel scheduler or user-initiated CLI';
+        }
+
+        $osUser = function_exists('posix_geteuid')
+            ? (posix_getpwuid(posix_geteuid())['name'] ?? null)
+            : null;
+        $osUser = $osUser ?: (get_current_user() ?: 'unknown');
+
+        return 'CLI as OS user ' . $osUser;
+    }
+
+    /**
+     * Returns an int exit code so the Artisan runner surfaces the
+     * right status to a cron / systemd caller.
+     */
+    private function runSync(): int
+    {
+        $startedAt = microtime(true);
+
         ini_set('max_execution_time', config('app.ldap_time_limit')); // 600 seconds = 10 minutes
         ini_set('memory_limit', config('app.ldap_memory_limit'));
 
@@ -115,9 +149,9 @@ class LdapSync extends Command
                 $json_summary = ['error' => true, 'error_message' => $e->getMessage(), 'summary' => []];
                 $this->info(json_encode($json_summary));
             }
-            Log::info($e);
+            Log::channel('ldap')->info($e);
 
-            return [];
+            return self::FAILURE;
         }
 
         $summary = [];
@@ -133,7 +167,7 @@ class LdapSync extends Command
                 foreach ($this->option('location_id') as $location_id) {
                     $location_ou = Location::where('id', '=', $location_id)->value('ldap_ou');
                     $search_base = $location_ou;
-                    Log::debug('Importing users from specified location OU: \"'.$search_base.'\".');
+                    Log::channel('ldap')->debug('Importing users from specified location OU: \"' . $search_base . '\".');
                 }
             }
 
@@ -143,7 +177,7 @@ class LdapSync extends Command
              */
             if ($this->option('base_dn') != '') {
                 $search_base = $this->option('base_dn');
-                Log::debug('Importing users from specified base DN: \"'.$search_base.'\".');
+                Log::channel('ldap')->debug('Importing users from specified base DN: \"' . $search_base . '\".');
             }
 
             /**
@@ -175,31 +209,31 @@ class LdapSync extends Command
                 $json_summary = ['error' => true, 'error_message' => $e->getMessage(), 'summary' => []];
                 $this->info(json_encode($json_summary));
             }
-            Log::info($e);
+            Log::channel('ldap')->info($e);
 
-            return [];
+            return self::FAILURE;
         }
 
         /* Determine which location to assign users to by default. */
         $default_location = null;
         if ($this->option('location') != '') {
             if ($default_location = Location::where('name', '=', $this->option('location'))->first()) {
-                Log::debug('Location name '.$this->option('location').' passed');
-                Log::debug('Importing to '.$default_location->name.' ('.$default_location->id.')');
+                Log::channel('ldap')->debug('Location name ' . $this->option('location') . ' passed');
+                Log::channel('ldap')->debug('Importing to ' . $default_location->name . ' (' . $default_location->id . ')');
             }
 
         } elseif ($this->option('location_id')) {
             // TODO - figure out how or why this is an array?
             foreach ($this->option('location_id') as $location_id) {
                 if ($default_location = Location::where('id', '=', $location_id)->first()) {
-                    Log::debug('Location ID '.$location_id.' passed');
-                    Log::debug('Importing to '.$default_location->name.' ('.$default_location->id.')');
+                    Log::channel('ldap')->debug('Location ID ' . $location_id . ' passed');
+                    Log::channel('ldap')->debug('Importing to ' . $default_location->name . ' (' . $default_location->id . ')');
                 }
 
             }
         }
         if (! isset($default_location)) {
-            Log::debug('That location is invalid or a location was not provided, so no location will be assigned by default.');
+            Log::channel('ldap')->debug('That location is invalid or a location was not provided, so no location will be assigned by default.');
         }
 
         /* Process locations with explicitly defined OUs, if doing a full import. */
@@ -215,7 +249,7 @@ class LdapSync extends Command
             array_multisort($ldap_ou_lengths, SORT_ASC, $ldap_ou_locations);
 
             if (count($ldap_ou_locations) > 0) {
-                Log::debug('Some locations have special OUs set. Locations will be automatically set for users in those OUs.');
+                Log::channel('ldap')->debug('Some locations have special OUs set. Locations will be automatically set for users in those OUs.');
             }
 
             // Inject location information fields
@@ -233,9 +267,9 @@ class LdapSync extends Command
                         $json_summary = ['error' => true, 'error_message' => trans('admin/users/message.error.ldap_could_not_search').' Location: '.$ldap_loc['name'].' (ID: '.$ldap_loc['id'].') cannot connect to "'.$ldap_loc['ldap_ou'].'" - '.$e->getMessage(), 'summary' => []];
                         $this->info(json_encode($json_summary));
                     }
-                    Log::info($e);
+                    Log::channel('ldap')->info($e);
 
-                    return [];
+                    return self::FAILURE;
                 }
                 $usernames = [];
                 for ($i = 0; $i < $location_users['count']; $i++) {
@@ -322,7 +356,7 @@ class LdapSync extends Command
                         try {
                             $ldap_manager = Ldap::findLdapUsers($item['manager'], -1, $this->option('filter'));
                         } catch (\Exception $e) {
-                            Log::warning('Manager lookup caused an exception: '.$e->getMessage().'. Falling back to direct username lookup');
+                            Log::channel('ldap')->warning('Manager lookup caused an exception: ' . $e->getMessage() . '. Falling back to direct username lookup');
                             // Hail-mary for Okta manager 'shortnames' - will only work if
                             // Okta configuration is using full email-address-style usernames
                             $ldap_manager = [
@@ -348,7 +382,7 @@ class LdapSync extends Command
                                 }
                             } catch (\Exception $e) {
                                 $add_manager_to_cache = false;
-                                \Log::warning('Handling ldap manager '.$item['manager'].' caused an exception: '.$e->getMessage().'. Continuing synchronization.');
+                                \Log::channel('ldap')->warning('Handling ldap manager ' . $item['manager'] . ' caused an exception: ' . $e->getMessage() . '. Continuing synchronization.');
                             }
                         }
                         if ($add_manager_to_cache) {
@@ -527,9 +561,16 @@ class LdapSync extends Command
         } elseif ($this->option('json_summary')) {
             $json_summary = ['error' => false, 'error_message' => '', 'summary' => $summary]; // hardcoding the error to false and the error_message to blank seems a bit weird
             $this->info(json_encode($json_summary));
-        } else {
-            return $summary;
         }
+
+        $elapsed = number_format(microtime(true) - $startedAt, 3);
+        $successCount = count(array_filter($summary, fn($row) => ($row['status'] ?? '') === 'success'));
+        Log::channel('ldap')->info(
+            'LDAP sync completed in ' . $elapsed . 's. '
+            . count($summary) . ' users processed (' . $successCount . ' success).',
+        );
+
+        return self::SUCCESS;
     }
 
     /**

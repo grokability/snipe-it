@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
 
-
 class LdapSyncMutexTest extends TestCase
 {
     protected function setUp(): void
@@ -72,5 +71,17 @@ class LdapSyncMutexTest extends TestCase
             ->get(route('ldap/user'))
             ->assertOk()
             ->assertViewHas('ldapSyncRunning', false);
+    }
+    
+    public function test_bind_failure_returns_failure_exit_code(): void
+    {
+        $this->settings->set([
+            'ldap_enabled' => '1',
+            'ldap_server' => '',
+        ]);
+
+        $exitCode = Artisan::call('snipeit:ldap-sync');
+
+        $this->assertSame(1, $exitCode, 'A bind-side failure must bubble up as exit code 1 rather than coerce to 0.');
     }
 }

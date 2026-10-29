@@ -26,6 +26,7 @@
     <env name="QUEUE_CONNECTION" value="sync"/>
     <env name="SESSION_DRIVER" value="array"/>
     <env name="SYNC_ADAPTERS_LOG_PATH" value="/dev/null"/>
+    <env name="LDAP_LOG_PATH" value="/dev/null"/>
     <ini name="display_errors" value="true"/>
   </php>
   <source>

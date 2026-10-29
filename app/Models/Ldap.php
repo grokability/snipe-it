@@ -149,7 +149,7 @@ class Ldap extends Model
             if (! $userDn) {
                 throw new Exception('No user DN found');
             }
-            \Log::debug("FOUND DN IS: $userDn");
+            \Log::channel('ldap')->debug("FOUND DN IS: $userDn");
             // The temptation now is to do ldap_unbind on the $admin_conn, but that gets handled in the 'finally' below.
             // I don't know if that means a separate 'connection' is maintained to the LDAP server or not, and would
             // definitely prefer to not do that if we can avoid it. But I don't know enough about the LDAP protocol to
@@ -164,7 +164,7 @@ class Ldap extends Model
 
             return array_change_key_case($user);
         } catch (Exception $e) {
-            \Log::debug('Exception on fast find-and-bind: '.$e->getMessage());
+            \Log::channel('ldap')->debug('Exception on fast find-and-bind: '.$e->getMessage());
             if ($slow_failure) {
                 sleep($slow_failure);
             }
@@ -218,22 +218,22 @@ class Ldap extends Model
         $filter = Setting::getSettings()->ldap_filter; // FIXME - this *does* respect the ldap filter, but I believe that AdLdap2 did *not*.
         $filterQuery = "({$filter}({$filterQuery}))";
 
-        Log::debug('Filter query: '.$filterQuery);
+        Log::channel('ldap')->debug('Filter query: '.$filterQuery);
 
         // only try this if we have an Admin username set; otherwise use the 'legacy' method
         if (($settings->ldap_uname) && ($baseDn)) {
             // in the fallowing call, we pick a slow-failure of 0 because we might need to fall through to 'legacy'
             $fast_bind = self::findAndBindMultiOU($baseDn, $filterQuery, $password, 0);
             if ($fast_bind) {
-                \Log::debug('Fast bind worked');
+                \Log::channel('ldap')->debug('Fast bind worked');
 
                 return $fast_bind;
             }
-            \Log::debug('Fast bind failed; falling through to legacy bind');
+            \Log::channel('ldap')->debug('Fast bind failed; falling through to legacy bind');
         }
 
         if (! $ldapbind = @ldap_bind($connection, $userDn, $password)) {
-            Log::debug("Status of binding user: $userDn to directory: (directly!) ".($ldapbind ? 'success' : 'FAILURE'));
+            Log::channel('ldap')->debug("Status of binding user: $userDn to directory: (directly!) ".($ldapbind ? 'success' : 'FAILURE'));
             // replicate the old bad-decryption-key detection behavior here
             try {
                 Crypt::decrypt(Setting::getSettings()->ldap_pword);
@@ -273,8 +273,8 @@ class Ldap extends Model
     public static function shouldUseSaslExternal(object $config): bool
     {
         return self::saslExternalAvailable()
-            && !empty($config->ldap_client_tls_cert)
-            && !empty($config->ldap_client_tls_key)
+            && ! empty($config->ldap_client_tls_cert)
+            && ! empty($config->ldap_client_tls_key)
             && empty($config->ldap_uname)
             && empty($config->ldap_pword);
     }
@@ -586,7 +586,7 @@ class Ldap extends Model
         $user->notes = 'Imported on first login from LDAP';
 
         if (! $user->save()) {
-            Log::debug('Could not create user.'.$user->getErrors());
+            Log::channel('ldap')->debug('Could not create user.'.$user->getErrors());
             throw new Exception('Could not create user: '.$user->getErrors());
         }
 
@@ -649,7 +649,7 @@ class Ldap extends Model
             $ldap_controls = [['oid' => LDAP_CONTROL_PAGEDRESULTS, 'iscritical' => false, 'value' => ['size' => $count == -1 || $count > $page_size ? $page_size : $count, 'cookie' => $cookie]]];
             // }
             $search_results = ldap_search($ldapconn, $base_dn, $filter, $attributes, 0, /* $page_size */ -1, -1, LDAP_DEREF_NEVER, $ldap_controls); // TODO - I hate the @, and I hate that we get a full page even if we ask for 10 records. Can we use an ldap_control?
-            Log::debug('LDAP search executed successfully.');
+            Log::channel('ldap')->debug('LDAP search executed successfully.');
             if (! $search_results) {
                 return redirect()->route('users.index')->with('error', trans('admin/users/message.error.ldap_could_not_search').ldap_error($ldapconn)); // TODO this is never called in any routed context - only from the Artisan command. So this redirect will never work.
             }
@@ -663,9 +663,9 @@ class Ldap extends Model
             if (isset($controls[LDAP_CONTROL_PAGEDRESULTS]['value']['cookie'])) {
                 // You need to pass the cookie from the last call to the next one
                 $cookie = $controls[LDAP_CONTROL_PAGEDRESULTS]['value']['cookie'];
-                Log::debug('okay, at least one more page to go!!!');
+                Log::channel('ldap')->debug('okay, at least one more page to go!!!');
             } else {
-                Log::debug("okay, we're out of pages - no cookie (or empty cookie) was passed");
+                Log::channel('ldap')->debug("okay, we're out of pages - no cookie (or empty cookie) was passed");
                 $cookie = '';
             }
             // Empty cookie means last page
@@ -679,7 +679,7 @@ class Ldap extends Model
             // Add results to result set
             $global_count += $results['count'];
             $result_set = array_merge($result_set, $results);
-            Log::debug("Total count is: $global_count");
+            Log::channel('ldap')->debug("Total count is: $global_count");
 
         } while ($cookie !== null && $cookie != '' && ($count == -1 || $global_count < $count)); // some servers don't even have pagination, and some will give you more results than you asked for, so just see if you have enough.
 
