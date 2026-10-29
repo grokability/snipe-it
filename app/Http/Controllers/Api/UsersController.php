@@ -1101,7 +1101,7 @@ class UsersController extends Controller
 
             if ($user->restore()) {
                 // The `restore` action_log entry is written by
-                // UserObserver::restoring, no manual write here.
+                // Loggable during restore, no manual write here.
                 return response()->json(Helper::formatStandardApiResponse('success', null, trans('admin/users/message.success.restored')), 200);
             }
 

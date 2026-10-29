@@ -45,6 +45,28 @@ class IntegrationNotificationsUponCheckinTest extends TestCase
         ];
     }
 
+    public function test_asset_checkin_has_no_delivery_channels_without_a_configured_endpoint(): void
+    {
+        $user = User::factory()->make();
+
+        foreach ([null, 'google', 'microsoft'] as $webhook) {
+            $source = new Setting([
+                'webhook_selected' => $webhook,
+                'webhook_endpoint' => null,
+            ]);
+
+            $notification = new CheckinAssetNotification(
+                Asset::factory()->make(),
+                $user,
+                $user,
+                null,
+                $source,
+            );
+
+            $this->assertSame([], $notification->via());
+        }
+    }
+
     public static function licenseCheckInTargets(): array
     {
         return [

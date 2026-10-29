@@ -2,6 +2,7 @@
 
 namespace App\Models\Traits;
 
+use App\Enums\ActionType;
 use App\Exceptions\MissingLogTarget;
 use App\Models\Actionlog;
 use App\Models\Asset;
@@ -10,6 +11,8 @@ use App\Models\Contracts\CompanyableChild;
 use App\Models\License;
 use App\Models\LicenseSeat;
 use App\Models\Location;
+use App\Models\Maintenance;
+use App\Models\OrderItem;
 use App\Models\Setting;
 use App\Models\User;
 use App\Notifications\AuditNotification;
@@ -28,6 +31,236 @@ trait Loggable
 {
     // an attribute for setting whether or not the item was imported
     public ?bool $imported = false;
+
+    protected ?ActionType $action_type = null;
+
+    /**
+     * Lifecycle log written by the latest save, if any.
+     */
+    protected ?Actionlog $currentActionLog = null;
+
+    protected ?OrderItem $order_item = null;
+
+    public function setOrderItem(?OrderItem $order_item): self
+    {
+        $this->order_item = $order_item;
+        return $this;
+    }
+
+    public static function bootLoggable(): void
+    {
+        self::updating(function (self $item) {
+            \Log::error('UPDATING!');
+            if (!$item->action_type) {
+                \Log::error('UPDATING! Because action_type was blank');
+                $item->action_type = ActionType::Update;
+            } else {
+                \Log::error('NOT updating because action_type is: ' . $item->action_type->name);
+            }
+        });
+
+        self::creating(function (self $item) {
+            \Log::error('Creating.....');
+            $item->action_type = ActionType::Create;
+        });
+
+        self::deleting(function (self $item) {
+            \Log::error('deleting....');
+            $item->action_type = ActionType::Delete;
+        });
+
+        self::restoring(function (self $item) {
+            \Log::error('Restoring....');
+            $item->action_type = ActionType::Restore;
+        });
+
+        // self::restored(function ($item) {
+        //     \Log::error("RESTORED!!");
+        //     $item->real_log("restored");
+        // });
+
+        self::deleted(function (self $item) {
+            \Log::error('DELETED!');
+            $item->log_lifecycle_events();
+        });
+
+        self::saved(function (self $item) {
+            $item->log_lifecycle_events();
+        });
+    }
+
+    public function log_lifecycle_events(): void
+    {
+        $this->currentActionLog = null;
+
+        // This is where the magic happens!
+        \Log::error("Here's the item: " . print_r($this->toArray(), true));
+        try {
+            \Log::error('ActionType: ' . ($this->action_type ? $this->action_type->name : 'NULL'));
+        } catch (\Exception $e) {
+            \Log::error('Exception: ' . $e->getMessage());
+        }
+
+        if (!$this->action_type) {
+            \Log::error('No action type, aborting save.');
+
+            return;
+        }
+
+        if ($this->action_type === ActionType::Update && $this instanceof Asset
+            && $this->isDirty(['assigned_to', 'last_checkout', 'checkout_counter', 'checkin_counter', 'requests_counter', 'deleted_at'])) {
+            $this->action_type = null;
+
+            return;
+        }
+
+        $changed = $this->get_changes();
+
+        if (empty($changed) && $this->action_type == ActionType::Update) {
+            // empty changeset, and this is an 'update' - don't log it
+            \Log::error("Not saving an action log because there's no changes, and no 'interesting' action type");
+            $this->action_type = null;
+
+            return;
+        }
+
+        $logAction = new Actionlog;
+        $logAction->item_type = $this::class;
+        $logAction->item_id = $this->id;
+        $logAction->action_date = date('Y-m-d H:i:s');
+        $logAction->created_at = now();
+        $logAction->created_by = auth()->id();
+        if ($this instanceof User && $this->action_type !== ActionType::Create) {
+            // Users are a weird exception where they target themselves on changes (but not on Create)
+            $logAction->target()->associate($this);
+        }
+        if ($this instanceof Maintenance) {
+            //a Maintenance action has a *real* target of whatever is being maintained (->item)
+            $logAction->target()->associate($this->item);
+            if (in_array($this->action_type, [ActionType::Create, ActionType::Delete], true)) {
+                // Another oddity - actionlog 'note' apparently propagates the maintenance note on Create/Delete?
+                $logAction->note = $this->notes;
+            }
+        }
+        // Fallback to the model's own created_by so seeder / artisan
+        // paths (no authenticated user) still attribute the create log
+        // to a real user. On web requests auth()->id() is always set,
+        // so the fallback never engages there.
+        if ($this->action_type === ActionType::Create) {
+            $logAction->created_by = auth()->id() ?? $this->created_by;
+        }
+        if ($this->imported) {
+            $logAction->setActionSource('importer');
+        }
+        $logAction->log_meta = json_encode($changed);
+
+        if ($this->order_item) {
+            $logAction->order_item_id = $this->order_item->id;
+            $logAction->quantity = $this->order_item->qty;
+            $this->order_item = null;
+        } elseif ($this->action_type === ActionType::Create
+            && array_key_exists('qty', $this->getAttributes())) {
+            $logAction->quantity = (int) $this->getAttributes()['qty'];
+        }
+
+        $logAction->logaction($this->action_type);
+        $this->currentActionLog = $logAction;
+        // That inherently did a save, yeah?
+        $this->action_type = null;
+        \Log::error('Finished logging now, resetting action_type to null');
+    }
+
+    /**
+     * @return list<string>
+     */
+    protected function maskedLogFields(): array
+    {
+        return [];
+    }
+
+    /**
+     * @return list<string>|null
+     */
+    protected function allowedLogFields(): ?array
+    {
+        return null;
+    }
+
+    public function get_changes(?array $limit_keys = null)
+    {
+        $limited_key_hash = null;
+        if (!is_null($limit_keys)) {
+            $limited_key_hash = array_flip($limit_keys);
+        }
+
+        $masked_fields_hash = array_flip($this->maskedLogFields());
+        $allowed_fields = $this->allowedLogFields();
+        $allowed_fields_hash = null;
+        if ($allowed_fields !== null) {
+            $allowed_fields_hash = array_flip($allowed_fields);
+        }
+
+        $changed = [];
+
+        $originalValues = $this->getRawOriginal();
+        foreach ($originalValues as $key => $oldValue) {
+            if ($allowed_fields_hash && !array_key_exists($key, $allowed_fields_hash)) {
+                // "disallowed" field at the _model_ level; do not log it
+                continue;
+            }
+
+            if ($limited_key_hash && !array_key_exists($key, $limited_key_hash)) {
+                // key limited at the *call site* - for checkin, checkout
+                // - things where you want to limit the changeable fields
+                continue;
+            }
+
+            $newValue = $this->getAttributes()[$key];
+
+            //special-case handling for 'permissions' key of Users
+            if ($key === 'permissions' and $this instanceof User) {
+                // Compare decoded to avoid spurious diffs from key reordering or type coercion.
+                $oldDecoded = json_decode($oldValue ?? '{}', true) ?: [];
+                $newDecoded = json_decode($newValue ?? '{}', true) ?: [];
+                if ($oldDecoded == $newDecoded) {
+                    continue;
+                }
+                // Only log the permission keys that actually changed.
+                $diffOld = [];
+                $diffNew = [];
+                foreach (array_unique(array_merge(array_keys($oldDecoded), array_keys($newDecoded))) as $permKey) {
+                    $oldPerm = $oldDecoded[$permKey] ?? null;
+                    $newPerm = $newDecoded[$permKey] ?? null;
+                    // null and "0" are both "inherit" — treat them as equivalent
+                    $normalizedOld = ($oldPerm === null || $oldPerm === '0' || $oldPerm === 0) ? null : $oldPerm;
+                    $normalizedNew = ($newPerm === null || $newPerm === '0' || $newPerm === 0) ? null : $newPerm;
+                    if ($normalizedOld !== $normalizedNew) {
+                        $diffOld[$permKey] = $oldPerm;
+                        $diffNew[$permKey] = $newPerm;
+                    }
+                }
+                if (!empty($diffOld) || !empty($diffNew)) {
+                    $changed['permissions']['old'] = json_encode($diffOld);
+                    $changed['permissions']['new'] = json_encode($diffNew);
+                }
+
+                continue;
+            }
+
+            if (array_key_exists($key, $this->getAttributes()) && $oldValue != $this->getAttributes()[$key]) {
+                if (array_key_exists($key, $masked_fields_hash)) {
+                    // Do not store the hashed password (or any other 'masked' field) in changes
+                    $changed[$key]['old'] = '*************';
+                    $changed[$key]['new'] = '*************';
+                } else {
+                    $changed[$key]['old'] = $oldValue;
+                    $changed[$key]['new'] = $newValue;
+                }
+            }
+            // NOTE - if the attribute exists in $originalValues, but *not* in ->getAttributes(), it isn't added to $changed
+        }
+        return $changed;
+    }
 
     /**
      * @return MorphMany
@@ -173,7 +406,8 @@ trait Loggable
         }
 
         if (static::class == Asset::class) {
-            if ($asset = Asset::find($log->item_id)) {
+            $asset = Asset::find($log->item_id);
+            if ($asset) {
 
                 // add the custom fields that were changed
                 if ($asset->model->fieldset) {
@@ -293,7 +527,8 @@ trait Loggable
             $log->item_id = $this->id;
 
             if (static::class == Asset::class) {
-                if ($asset = Asset::find($log->item_id)) {
+                $asset = Asset::find($log->item_id);
+                if ($asset) {
                     $asset->increment('checkin_counter', 1);
 
                     // add the custom fields that were changed
@@ -502,38 +737,6 @@ trait Loggable
     /**
      * @author Daniel Meltzer <dmeltzer.devel@gmail.com>
      *
-     * @since  [v3.5]
-     *
-     * @return Actionlog
-     */
-    public function logCreate($note = null)
-    {
-        $created_by = -1;
-        if (auth()->user()) {
-            $created_by = auth()->id();
-        }
-        $log = new Actionlog;
-        if (static::class == LicenseSeat::class) {
-            $log->item_type = License::class;
-            $log->item_id = $this->license_id;
-        } else {
-            $log->item_type = static::class;
-            $log->item_id = $this->id;
-        }
-        $log->location_id = null;
-        $log->action_date = date('Y-m-d H:i:s');
-        $log->note = $note;
-        $log->created_by = $created_by;
-        $log->company_id = $this->resolveLoggableCompanyId();
-        $log->logaction('create');
-        $log->save();
-
-        return $log;
-    }
-
-    /**
-     * @author Daniel Meltzer <dmeltzer.devel@gmail.com>
-     *
      * @since  [v3.4]
      *
      * @return Actionlog
@@ -552,7 +755,7 @@ trait Loggable
         $log->note = $note;
         $log->target_id = null;
         $log->company_id = $this->resolveLoggableCompanyId();
-        $log->created_at = date('Y-m-d H:i:s');
+        $log->created_at = now();
         $log->action_date = date('Y-m-d H:i:s');
         $log->filename = $filename;
         $log->logaction('uploaded');
