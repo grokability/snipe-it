@@ -5,6 +5,7 @@ namespace App\Models;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 /***********************************************
@@ -420,6 +421,8 @@ class Ldap extends Model
             'country' => $source->ldap_country,
             'department' => $source->ldap_dept,
             'location' => $source->ldap_location,
+            'company' => $source->ldap_company,
+            'website' => $source->ldap_website,
             'manager' => $source->ldap_manager,
             // LdapSync-only: activated is consumed by the active-
             // directory sync logic in the console command, which reads
@@ -462,6 +465,8 @@ class Ldap extends Model
             'country' => trans('general.country'),
             'department' => trans('general.department'),
             'location' => trans('general.location'),
+            'company' => trans('general.company'),
+            'website' => trans('general.website'),
             'manager' => trans('admin/users/table.manager'),
             'activated' => trans('admin/users/table.activated'),
         ];
@@ -543,6 +548,9 @@ class Ldap extends Model
         if ($map['country'] != '') {
             $user->country = $ldapAttr['country'];
         }
+        if ($map['website'] != '') {
+            $user->website = self::normalizeLdapWebsite($ldapAttr['website']);
+        }
         if ($map['department'] != '' && $ldapAttr['department'] !== '') {
             $department = Department::firstOrCreate(['name' => $ldapAttr['department']]);
             $user->department_id = $department->id;
@@ -551,6 +559,94 @@ class Ldap extends Model
             $location = Location::firstOrCreate(['name' => $ldapAttr['location']]);
             $user->location_id = $location->id;
         }
+    }
+
+    /**
+     * Normalize an LDAP website value so it passes the User `url` rule.
+     *
+     * Bare hosts get an https:// prefix. Anything that isn't a valid
+     * http(s) URL returns null, so a bad attribute can't fail the user save.
+     *
+     * @param  string|null  $website  Raw LDAP value
+     */
+    public static function normalizeLdapWebsite(?string $website): ?string
+    {
+        $website = trim((string) $website);
+        if ($website === '') {
+            return null;
+        }
+
+        if (! preg_match('#^[a-z][a-z0-9+.-]*://#i', $website)) {
+            $website = 'https://'.$website;
+        }
+
+        if (! preg_match('#^https?://#i', $website) || filter_var($website, FILTER_VALIDATE_URL) === false) {
+            return null;
+        }
+
+        return $website;
+    }
+
+    /**
+     * Add the user to the company named by the mapped LDAP attribute.
+     *
+     * Must run after the user is saved, since memberships live on the
+     * company_user pivot. users.ldap_company_id tracks the membership LDAP
+     * added, so a changed value replaces only that one and manually
+     * assigned companies are kept. A blank mapping or value changes nothing.
+     *
+     * @param  User  $user  Saved user
+     * @param  array<string, string>  $ldapAttr  Output of parseAndMapLdapAttributes()
+     */
+    public static function applyLdapCompanyToUser(User $user, array $ldapAttr): void
+    {
+        $companyName = trim((string) ($ldapAttr['company'] ?? ''));
+        if (! $user->exists || self::attributeMap()['company'] == '' || $companyName === '') {
+            return;
+        }
+
+        $company = self::findOrCreateCompanyByName($companyName);
+        $previousLdapCompanyId = $user->ldap_company_id ? (int) $user->ldap_company_id : null;
+
+        $currentIds = array_map('intval', $user->companies()->pluck('companies.id')->all());
+        $newIds = $currentIds;
+        if ($previousLdapCompanyId !== null && $previousLdapCompanyId !== $company->id) {
+            $newIds = array_values(array_diff($newIds, [$previousLdapCompanyId]));
+        }
+        if (! in_array($company->id, $newIds, true)) {
+            $newIds[] = $company->id;
+        }
+
+        if ($newIds !== $currentIds) {
+            $user->syncCompaniesWithLogging($newIds);
+        }
+
+        if ($previousLdapCompanyId !== $company->id) {
+            // Query builder, so this bookkeeping column doesn't add a second change-log entry.
+            DB::table('users')->where('id', $user->id)->update(['ldap_company_id' => $company->id]);
+            $user->ldap_company_id = $company->id;
+            $user->syncOriginalAttribute('ldap_company_id');
+        }
+    }
+
+    /**
+     * Find a company by name, ignoring case and surrounding whitespace on
+     * every database, or create it.
+     *
+     * A top-level company wins over a same-named subsidiary. FMCS scoping
+     * is bypassed so an existing company is never duplicated.
+     *
+     * @param  string  $companyName  Company name from LDAP
+     */
+    protected static function findOrCreateCompanyByName(string $companyName): Company
+    {
+        $company = Company::withoutGlobalScope(CompanyableScope::class)
+            ->whereRaw('LOWER(TRIM(name)) = ?', [mb_strtolower($companyName)])
+            ->orderByRaw('CASE WHEN parent_id IS NULL THEN 0 ELSE 1 END')
+            ->orderBy('id')
+            ->first();
+
+        return $company ?? Company::create(['name' => $companyName]);
     }
 
     /**
@@ -589,6 +685,8 @@ class Ldap extends Model
             Log::debug('Could not create user.'.$user->getErrors());
             throw new Exception('Could not create user: '.$user->getErrors());
         }
+
+        self::applyLdapCompanyToUser($user, $item);
 
         // Attach the configured Default Permissions Group to newly-
         // created LDAP users so first-login users land with the same

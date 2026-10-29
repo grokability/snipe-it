@@ -571,6 +571,33 @@
                                 </div>
                             </div>
 
+                            <!-- LDAP Company -->
+                            <div class="form-group {{ $errors->has('ldap_company') ? 'error' : '' }}">
+
+                                <label for="ldap_company" class="col-md-3 control-label">{{ trans('admin/settings/general.ldap_company') }}</label>
+
+                                <div class="col-md-8">
+                                    <input class="form-control" placeholder="{{ trans('general.example') .'company' }}" name="ldap_company" type="text" id="ldap_company" value="{{ old('ldap_company', $setting->ldap_company) }}">
+                                    <p class="help-block">{{ trans('admin/settings/general.ldap_company_help') }}</p>
+                                    <x-form.error name="ldap_company" />
+
+                                    <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
+                                </div>
+                            </div>
+
+                            <!-- LDAP Website -->
+                            <div class="form-group {{ $errors->has('ldap_website') ? 'error' : '' }}">
+
+                                <label for="ldap_website" class="col-md-3 control-label">{{ trans('admin/settings/general.ldap_website') }}</label>
+
+                                <div class="col-md-8">
+                                    <input class="form-control" placeholder="{{ trans('general.example') .'wwwhomepage' }}" name="ldap_website" type="text" id="ldap_website" value="{{ old('ldap_website', $setting->ldap_website) }}">
+                                    <x-form.error name="ldap_website" />
+
+                                    <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
+                                </div>
+                            </div>
+
                             <!-- LDAP active flag -->
                             <div class="form-group {{ $errors->has('ldap_active_flag') ? 'error' : '' }}">
 
