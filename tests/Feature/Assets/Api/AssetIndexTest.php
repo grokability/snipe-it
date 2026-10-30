@@ -191,6 +191,24 @@ class AssetIndexTest extends TestCase
             ->assertJson(fn (AssertableJson $json) => $json->has('rows', 3)->etc());
     }
 
+    public function test_custom_field_with_link_template_includes_link()
+    {
+        $field = CustomField::factory()->create([
+            'name' => 'AnyDesk ID',
+            'link_template' => 'anydesk:{VALUE}',
+        ]);
+
+        $asset = Asset::factory()->hasMultipleCustomFields([$field])->create();
+        $asset->{$field->db_column_name()} = '123456789';
+        $asset->save();
+
+        $this->actingAsForApi(User::factory()->superuser()->create())
+            ->getJson(route('api.assets.index'))
+            ->assertOk()
+            ->assertJsonPath('rows.0.custom_fields.AnyDesk ID.value', '123456789')
+            ->assertJsonPath('rows.0.custom_fields.AnyDesk ID.link', 'anydesk:123456789');
+    }
+
     public function test_gracefully_handles_malformed_filter()
     {
         $this->actingAsForApi(User::factory()->viewAssets()->create())

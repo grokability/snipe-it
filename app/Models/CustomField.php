@@ -84,6 +84,7 @@ class CustomField extends Model
         'show_in_requestable_list' => 'boolean',
         'show_in_email' => 'boolean',
         'format' => 'nullable|string',
+        'link_template' => 'nullable|string|max:191',
     ];
 
     protected $casts = [
@@ -102,6 +103,7 @@ class CustomField extends Model
         'field_values',
         'field_encrypted',
         'help_text',
+        'link_template',
         'show_in_email',
         'is_unique',
         'display_in_user_view',
@@ -221,6 +223,69 @@ class CustomField extends Model
     }
 
     /**
+     * Whether a link template can apply to the given element/format combo.
+     * Only single-value, plain-text displays make sense as a link; dates,
+     * booleans, multi-select checkboxes and multi-line text are rendered
+     * in their own ways.
+     */
+    public static function supportsLinkTemplate(?string $element, ?string $formatLabel): bool
+    {
+        return in_array($element, ['text', 'listbox', 'radio'], true)
+            && ! in_array($formatLabel, ['DATE', 'DATETIME', 'BOOLEAN'], true);
+    }
+
+    /**
+     * Whether a link template is safe to use as an href: it must start with
+     * a URI scheme, contain the {VALUE} placeholder, and not use a scheme
+     * that runs or inlines content in the browser. The scheme character
+     * class rejects whitespace and control characters (which browsers
+     * strip), so "java\tscript:" can't slip through.
+     */
+    public static function isValidLinkTemplate(string $template): bool
+    {
+        if (! preg_match('/^([a-z][a-z0-9+.\-]*):/i', $template, $matches)) {
+            return false;
+        }
+
+        if (in_array(strtolower($matches[1]), ['javascript', 'data', 'vbscript'], true)) {
+            return false;
+        }
+
+        return str_contains($template, '{VALUE}');
+    }
+
+    /**
+     * Fills a link template with a value. The value is URL-encoded so it
+     * can't break out of the template (e.g. into another path of the
+     * handler's URL); "@" is kept because remote-access IDs and aliases
+     * commonly contain it. Whitespace is stripped, since IDs are often
+     * copied with grouping spaces (e.g. "123 456 789") that URL handlers
+     * don't accept.
+     */
+    public static function buildLink(string $template, string $value): string
+    {
+        $encoded = str_replace('%40', '@', rawurlencode(preg_replace('/\s+/u', '', $value)));
+
+        return str_replace('{VALUE}', $encoded, $template);
+    }
+
+    /**
+     * Builds the link for a stored value from this field's link template,
+     * or returns null when there is nothing to link.
+     */
+    public function linkForValue(?string $value): ?string
+    {
+        if (blank($this->link_template) || blank($value)
+            || ! self::supportsLinkTemplate($this->element, $this->format)
+            || ! self::isValidLinkTemplate($this->link_template)
+        ) {
+            return null;
+        }
+
+        return self::buildLink($this->link_template, $value);
+    }
+
+    /**
      * Whether an element needs a field_values list (options to pick from).
      */
     public static function elementRequiresFieldValues(?string $element): bool
@@ -280,6 +345,22 @@ class CustomField extends Model
                     $fail(trans('admin/custom_fields/general.validation.field_values_required', [
                         'element' => $element,
                     ]));
+                }
+            }];
+        }
+
+        if (! blank($this->link_template)) {
+            $rules['link_template'] = ['string', 'max:191', function ($attribute, $value, $fail) use ($element, $format) {
+                if (! self::supportsLinkTemplate($element, $format)) {
+                    $fail(trans('admin/custom_fields/general.validation.link_template_not_supported', [
+                        'element' => $element,
+                        'format' => $format ?: 'ANY',
+                    ]));
+
+                    return;
+                }
+                if (! self::isValidLinkTemplate((string) $value)) {
+                    $fail(trans('admin/custom_fields/general.validation.link_template_invalid'));
                 }
             }];
         }

@@ -36,6 +36,8 @@ class CustomFieldEditor extends Component
 
     public string $help_text = '';
 
+    public string $link_template = '';
+
     public bool $is_unique = false;
 
     public bool $show_in_email = false;
@@ -81,6 +83,7 @@ class CustomFieldEditor extends Component
             $this->field_encrypted = (bool) $field->field_encrypted;
             $this->field_values = $field->field_values ?? '';
             $this->help_text = $field->help_text ?? '';
+            $this->link_template = $field->link_template ?? '';
             $this->is_unique = (bool) $field->is_unique;
             $this->show_in_email = (bool) $field->show_in_email;
             $this->display_in_user_view = (bool) $field->display_in_user_view;
@@ -170,6 +173,13 @@ class CustomFieldEditor extends Component
     public function showCustomRegex(): bool
     {
         return $this->format === 'CUSTOM REGEX';
+    }
+
+    // Whether the link template input should be shown.
+    #[Computed]
+    public function showLinkTemplate(): bool
+    {
+        return CustomField::supportsLinkTemplate($this->element, $this->format);
     }
 
     // Whether to show the help note explaining encrypt use with date_picker/datetime_picker.
@@ -303,12 +313,19 @@ class CustomFieldEditor extends Component
             $effectiveFormat = 'ANY';
         }
 
+        // The input is hidden for element/format combos that can't be
+        // linked, so don't persist a stale template typed before switching.
+        $linkTemplate = ($this->showLinkTemplate && trim($this->link_template) !== '')
+            ? trim($this->link_template)
+            : null;
+
         if ($this->isEdit) {
             $field = CustomField::findOrFail($this->fieldId);
             $field->name = trim($this->name);
             $field->element = $this->element;
             $field->field_values = $this->field_values;
             $field->help_text = $this->help_text;
+            $field->link_template = $linkTemplate;
             $field->show_in_listview = $this->show_in_listview;
             $field->auto_add_to_fieldsets = $this->auto_add_to_fieldsets;
             $field->display_checkin = $this->display_checkin;
@@ -332,6 +349,7 @@ class CustomFieldEditor extends Component
                 'name' => trim($this->name),
                 'element' => $this->element,
                 'help_text' => $this->help_text,
+                'link_template' => $linkTemplate,
                 'field_values' => $this->field_values,
                 'field_encrypted' => $this->field_encrypted ? 1 : 0,
                 'show_in_email' => $showInEmail ? 1 : 0,
