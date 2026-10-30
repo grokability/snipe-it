@@ -75,6 +75,21 @@
                       {{ $value }}
                   </label>
               @endforeach
+            @elseif ($field->element=='multi-listbox')
+                    <!-- Multi-Listbox -->
+            @php
+                $fieldName = $field->db_column_name();
+                $oldValues = old($fieldName);
+                $selectedValues = is_array($oldValues) ? $oldValues : [];
+            @endphp
+
+            <x-input.select
+                :name="$fieldName.'[]'"
+                :options="$field->formatFieldValuesAsArray()"
+                :selected="$selectedValues"
+                multiple
+                class="format form-control"
+            />
             @elseif ($field->element=='radio')
                   @php
                       $fieldName = $field->db_column_name();

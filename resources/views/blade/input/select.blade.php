@@ -6,11 +6,13 @@
     'includeEmpty' => false,
     'forLivewire' => false,
     'required' => false,
+    'multiple' => false,
 ])
 
 <select
     {{ $attributes->class(['select2', 'livewire-select2' => $forLivewire]) }}
     @required($required)
+    @if($multiple) multiple @endif
     @if($forLivewire) data-livewire-component="{{ $this->getId() }}" @endif
 >
     @if($includeEmpty)

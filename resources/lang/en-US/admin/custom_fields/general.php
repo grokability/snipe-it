@@ -84,6 +84,7 @@ return [
     'types' => [
         'text' => 'Text Box',
         'listbox' => 'List Box',
+        'multi-listbox' => 'Multi-Select List Box',
         'textarea' => 'Textarea (multi-line)',
         'markdown-textarea' => 'Markdown Textarea',
         'checkbox' => 'Checkbox',
