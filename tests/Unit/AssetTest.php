@@ -318,6 +318,21 @@ class AssetTest extends TestCase
 
     }
 
+    public function test_warranty_expires_stays_in_the_last_month_for_a_purchase_late_in_the_month()
+    {
+        $asset = Asset::factory()->create([
+            'warranty_months' => 1,
+            'purchase_date' => '2026-08-31',
+        ]);
+        $this->assertEquals('2026-09-30', $asset->warranty_expires->format('Y-m-d'));
+
+        $asset = Asset::factory()->create([
+            'warranty_months' => 1,
+            'purchase_date' => '2026-01-31',
+        ]);
+        $this->assertEquals('2026-02-28', $asset->warranty_expires->format('Y-m-d'));
+    }
+
     public function test_eol_progress_percent_returns_expected_value(): void
     {
         Carbon::setTestNow(Carbon::create(2026, 1, 1, 0, 0, 0));

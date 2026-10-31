@@ -429,7 +429,7 @@ class Asset extends Depreciable implements Importable
     protected function warrantyExpires(): Attribute
     {
         return Attribute::make(
-            get: fn (mixed $value, array $attributes) => (! empty($attributes['warranty_months']) && ! empty($attributes['purchase_date'])) ? Carbon::parse($attributes['purchase_date'])->addMonths((int) $attributes['warranty_months']) : null,
+            get: fn (mixed $value, array $attributes) => (! empty($attributes['warranty_months']) && ! empty($attributes['purchase_date'])) ? Carbon::parse($attributes['purchase_date'])->addMonthsNoOverflow((int) $attributes['warranty_months']) : null,
         );
     }
 
@@ -1230,7 +1230,7 @@ class Asset extends Depreciable implements Importable
             ->get();
 
         $expired_warranties = $assets_with_warranties->filter(function ($asset) use ($now, $end) {
-            $expiration_window = Carbon::parse($asset->purchase_date)->addMonths((int) $asset->warranty_months);
+            $expiration_window = Carbon::parse($asset->purchase_date)->addMonthsNoOverflow((int) $asset->warranty_months);
 
             return $expiration_window->betweenIncluded($now, $end);
         });
