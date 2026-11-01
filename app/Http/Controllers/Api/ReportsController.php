@@ -65,16 +65,19 @@ class ReportsController extends Controller
 
         if ((! Gate::allows('activity.view')) && (($targetClasses && $request->filled('target_id')) || ($itemClasses && $request->filled('item_id')))) {
 
+            // Authorize EVERY resolved type submitted.
             if ($targetClasses && $request->filled('target_id')) {
-                $primaryTargetClass = $targetClasses[0];
-                $target = $primaryTargetClass::withTrashed()->find(request()->input('target_id'));
-                $this->authorize('view', $target ?? $primaryTargetClass);
+                foreach ($targetClasses as $targetClass) {
+                    $target = $targetClass::withTrashed()->find(request()->input('target_id'));
+                    $this->authorize('view', $target ?? $targetClass);
+                }
             }
 
             if ($itemClasses && $request->filled('item_id')) {
-                $primaryItemClass = $itemClasses[0];
-                $item = $primaryItemClass::withTrashed()->find(request()->input('item_id'));
-                $this->authorize('view', $item ?? $primaryItemClass);
+                foreach ($itemClasses as $itemClass) {
+                    $item = $itemClass::withTrashed()->find(request()->input('item_id'));
+                    $this->authorize('view', $item ?? $itemClass);
+                }
             }
 
         } else {
