@@ -23,29 +23,7 @@
 @section('content')
     <x-container>
         <x-box>
-                {{-- Standalone filter row above the table (not wired via
-                     bs-table's data-toolbar) so the filters don't share
-                     a row with the search / columns / export / refresh
-                     controls on narrow viewports. nowrap keeps the
-                     filters on one line. No overflow property, because
-                     overflow on either axis creates a clipping region
-                     that eats the datepicker popup when it opens below
-                     the input. --}}
-                {{-- All four multi-selects use the shared .js-select2-
-                     checkboxes init in snipeit.js: compact "N selected"
-                     collapsed state, checkbox rendering in the open
-                     dropdown, badge strip below with X-remove, and
-                     Select All / Clear buttons. Static mode (no data-
-                     endpoint) reads from the pre-rendered <option>
-                     tags. The user picker is AJAX against the users
-                     selectlist. --}}
-                {{-- Combined badge strip for all four filters. Each
-                     widget's own .js-select2-checkboxes-badges div
-                     is redirected into this shared container by
-                     snipeit.js (via data-badges-container). The CSS
-                     below makes those per-widget wrappers display:
-                     contents so all badges visually render in a
-                     single flex-wrap row below the toolbar. --}}
+
                 <style>
                     #activityReportFilterBadges {
                         display: flex;
@@ -113,12 +91,6 @@
                         </select>
                     </div>
 
-                    {{-- AJAX user picker on the same .js-select2-
-                         checkboxes init. Searches against the users
-                         selectlist endpoint (FMCS-scoped by
-                         Company::scopeCompanyables). The initial-load
-                         JS reads created_by from the URL and hydrates
-                         chips for each matching user. --}}
                     <div style="flex: 0 0 auto; width: 340px;">
                         <select
                             id="activityReportCreatedByFilter"
@@ -153,7 +125,8 @@
                         data-cookie-id-table="activityReport"
                         data-id-table="activityReport"
                         data-side-pagination="server"
-                        data-advanced-search="false"
+                    data-advanced-search="true"
+                    data-advanced-search-deeplink="true"
                         data-sort-order="desc"
                         data-sort-name="created_at"
                         id="activityReport"
@@ -172,26 +145,30 @@
 @section('moar_scripts')
 @include ('partials.bootstrap-table', ['exportFile' => 'activity-export', 'search' => true])
 
+{{-- Wire the advanced search AND abive-table filters --}}
+<x-table.advanced-search
+    tableId="activityReport"
+    :model="\App\Models\Actionlog::class"
+/>
+
 <script nonce="{{ csrf_token() }}">
-    // Activity report toolbar. Six filters all round-trip through the
-    // browser URL so the view is shareable, bookmarkable, and
-    // back/forward restores the prior filter state.
+    // Activity report toolbar. The six always-visible filter widgets
+    // and the Advanced Search modal both read / write the same
+    // bs-table filterColumnsPartial state, which bootstrap-table.blade
+    // round-trips to the URL as ?filter[field]=value and sends to the
+    // backend as ?filter={json-stringified}. One source of truth means
+    // a deeplink populates both halves of the UI, saving a search
+    // round-trips cleanly, and the modal and toolbar never fight.
     //
-    //   item_type       select2 of allowlisted types + icon chips
-    //   target_type     same list, filters on the target column
-    //   action_type     select2 of ActionType enum values
-    //   created_by      ajax user picker (FMCS-scoped by snipeit.js)
-    //   created_at_from datepicker, start-of-day inclusive on server
-    //   created_at_to   datepicker, end-of-day inclusive on server
+    //   item          select2 of ActivityItemType short names
+    //   target        same list, filters on action_logs.target_type
+    //   action_type   select2 of ActionType enum values
+    //   created_by    ajax user picker (FMCS-scoped by snipeit.js)
+    //   created_at    date-range, joined as `YYYY-MM-DD..YYYY-MM-DD`
     //
-    // Wrapped in $(function(){}) so snipeit.js has already auto-inited
-    // the .js-data-ajax user picker and the datepickers by the time we
-    // bind our change handlers. Change handlers are delegated off the
-    // toolbar container (not bound directly) so handler attachment
-    // does not depend on each select being present / wrapped at bind
-    // time.
+    // Field names match the Actionlog::filterableFields() keys so the
+    // modal's widget-swap finds the same carriers.
     $(function () {
-        var baseUrl = @json($canManageReports ? route('api.activity.index') : route('api.dashboard.activity'));
         var userLookupUrl = @json(route('api.users.selectlist'));
 
         var $itemFilter = $('#activityReportItemTypeFilter');
@@ -201,55 +178,149 @@
         var $createdAtFrom = $('#activityReportCreatedAtFrom');
         var $createdAtTo = $('#activityReportCreatedAtTo');
 
-        // Flag flipped on while popstate / initial-load hydration is
-        // writing values back into the dropdowns + datepickers from the
-        // URL. The change / dp.change handlers skip URL re-push and
-        // table refetch while this is on, since hydration already
-        // batches those at the end.
+        // Multi-select widget → bs-table filter field name mapping.
+        // Values round-trip as comma-separated strings in filter[field]
+        // (both the modal widget-swap and the backend's matchCsvValues
+        // expect that shape).
+        var multiFilters = {
+            item: $itemFilter,
+            target: $targetFilter,
+            action_type: $actionTypeFilter,
+            created_by: $createdByFilter,
+        };
+
+        // Date-range toolbar widget → filter field name. Composed as
+        // `YYYY-MM-DD..YYYY-MM-DD` in filter[field], either end optional.
+        var dateRangeFilters = {
+            created_at: {from: $createdAtFrom, to: $createdAtTo},
+        };
+
+        // Flag flipped on while we're populating the toolbar widgets
+        // from bs-table state. Change handlers short-circuit so the
+        // write path never fires during a read.
         var isHydrating = false;
 
-        // Build the current filter params. Multi-selects return arrays
-        // from .val() (jQuery converts to [], [a], [a,b], etc.) and
-        // $.param serializes those as ?item_type[]=a&item_type[]=b.
-        // Empty arrays and empty strings are omitted so we never emit
-        // a bare ?item_type= with no value.
-        function currentFilterParams() {
-            var params = {};
-            var multiFilters = {
-                item_type: $itemFilter.val(),
-                target_type: $targetFilter.val(),
-                action_type: $actionTypeFilter.val(),
-                created_by: $createdByFilter.val(),
-            };
-            Object.keys(multiFilters).forEach(function (key) {
-                var val = multiFilters[key];
-                if (Array.isArray(val) && val.length > 0) {
-                    params[key] = val;
+        function bsTable() {
+            return $('#activityReport').data('bootstrap.table');
+        }
+
+        function toCsv(val) {
+            if (val == null || (Array.isArray(val) && val.length === 0)) {
+                return '';
+            }
+            return Array.isArray(val) ? val.join(',') : String(val);
+        }
+
+        function fromCsv(val) {
+            if (!val) {
+                return [];
+            }
+            return String(val).split(',').map(function (s) {
+                return s.trim();
+            }).filter(function (s) {
+                return s !== '';
+            });
+        }
+
+        function toRange(from, to) {
+            var start = (from || '').trim();
+            var end = (to || '').trim();
+            if (!start && !end) {
+                return '';
+            }
+            return start + '..' + end;
+        }
+
+        function fromRange(val) {
+            if (!val) {
+                return ['', ''];
+            }
+            var parts = String(val).split('..');
+            return [parts[0] || '', parts[1] || ''];
+        }
+
+        // Push toolbar widget state → bs-table filterColumnsPartial.
+        // Merges with whatever other filters the modal has set so a
+        // toolbar change never wipes an unrelated modal filter.
+        function pushToolbarToBsTable() {
+            var instance = bsTable();
+            if (!instance) {
+                return;
+            }
+            var fp = Object.assign({}, instance.filterColumnsPartial || {});
+
+            Object.keys(multiFilters).forEach(function (field) {
+                var val = toCsv(multiFilters[field].val());
+                if (val !== '') {
+                    fp[field] = val;
+                }
+                else {
+                    delete fp[field];
                 }
             });
-            if ($createdAtFrom.val()) params.created_at_from = $createdAtFrom.val();
-            if ($createdAtTo.val()) params.created_at_to = $createdAtTo.val();
-            return params;
-        }
 
-        // Refetch the bs-table body with the current filter params.
-        // The URL is updated by bs-table's addrbar extension via the
-        // patched updateHistoryState below. Pushing our own history
-        // state here would be clobbered on the next onLoadSuccess
-        // (addrbar re-pushes with its own known keys only).
-        function refreshActivityReport() {
-            var qs = $.param(currentFilterParams());
-            $('#activityReport').bootstrapTable('refresh', {
-                url: baseUrl + (qs ? '?' + qs : ''),
-                silent: true,
+            Object.keys(dateRangeFilters).forEach(function (field) {
+                var pair = dateRangeFilters[field];
+                var val = toRange(pair.from.val(), pair.to.val());
+                if (val !== '') {
+                    fp[field] = val;
+                }
+                else {
+                    delete fp[field];
+                }
             });
+
+            instance.filterColumnsPartial = fp;
+            if (typeof instance.refresh === 'function') {
+                instance.options.pageNumber = 1;
+                instance.refresh();
+            }
+            if (typeof instance.renderAdvancedSearchTags === 'function') {
+                instance.renderAdvancedSearchTags();
+            }
+            if (typeof instance.updateAdvancedSearchButtonState === 'function') {
+                instance.updateAdvancedSearchButtonState();
+            }
         }
 
-        // Set a (multi) select's value from hydration. Accepts either
-        // a scalar or an array. Triggers plain 'change' so select2
-        // (which binds its UI sync on plain 'change', not on namespaced
-        // events) re-renders chips. The isHydrating flag keeps the
-        // change handler from re-pushing URL state in a loop.
+        // Pull bs-table filterColumnsPartial → toolbar widget state.
+        // Called on initial load (deeplink hydration) and whenever the
+        // modal reports an advanced-search apply so the two surfaces
+        // stay visually in sync.
+        function pullBsTableToToolbar() {
+            var instance = bsTable();
+            if (!instance) {
+                return;
+            }
+            var fp = instance.filterColumnsPartial || {};
+            isHydrating = true;
+
+            Object.keys(multiFilters).forEach(function (field) {
+                var $widget = multiFilters[field];
+                var vals = fromCsv(fp[field]);
+                if (field === 'created_by') {
+                    // Ajax picker only knows about options it has
+                    // already loaded, so each id needs its label
+                    // refetched. Empty first so a shrinking selection
+                    // doesn't carry stale chips.
+                    $widget.empty().trigger('change');
+                    hydrateCreatedByFromUrl(vals);
+                }
+                else {
+                    setSelect($widget, vals);
+                }
+            });
+
+            Object.keys(dateRangeFilters).forEach(function (field) {
+                var pair = dateRangeFilters[field];
+                var range = fromRange(fp[field]);
+                setDate(pair.from, range[0]);
+                setDate(pair.to, range[1]);
+            });
+
+            isHydrating = false;
+        }
+
         function setSelect($select, value) {
             var normalized = value == null ? [] : (Array.isArray(value) ? value : [value]);
             var current = $select.val() || [];
@@ -262,10 +333,6 @@
             $select.val(normalized).trigger('change');
         }
 
-        // Set a datepicker's value without opening the picker. Blade's
-        // datepicker component wraps the input in a div[data-provide=
-        // datetimepicker] bound by snipeit.js, so we set the underlying
-        // input value and let the picker read it on next open.
         function setDate($dateInput, value) {
             if ($dateInput.val() === (value || '')) {
                 return;
@@ -273,12 +340,6 @@
             $dateInput.val(value || '');
         }
 
-        // Hydrate the created_by multi-picker from an array of ids in
-        // the URL. The ajax picker starts empty, so each id needs its
-        // user record fetched to populate the chip label. One request
-        // per id against the users selectlist with search=id. Chips
-        // appended as they come back, which is fine because select2
-        // re-renders on each append.
         function hydrateCreatedByFromUrl(userIds) {
             if (!userIds || userIds.length === 0) {
                 return;
@@ -307,115 +368,38 @@
             });
         }
 
-        // select2 init for all four selects is handled by snipeit.js's
-        // .js-select2-checkboxes auto-init path. That gives us the
-        // compact "N selected" collapsed state, dropdown-stays-open on
-        // tick, badge strip with X-remove, and the Select All / Clear
-        // buttons for free.
-
-        // Event delegation off the toolbar container so handler
-        // attachment is independent of whether each select / datepicker
-        // has been wrapped by select2 / eonasdan yet. 'change' fires on
-        // every select interaction and on direct typing in a datepicker
-        // input. 'dp.change' is eonasdan's own event, fired on the
-        // .input-group.date wrapper for calendar picks.
-        var filterHandler = function () {
+        // Toolbar change handlers push state to bs-table. 'change'
+        // covers select2 picks and typed datepicker input, 'dp.change'
+        // covers calendar-based datepicker picks.
+        $('#activityReportToolbar').on('change', 'select, input', function () {
             if (isHydrating) {
                 return;
             }
-            refreshActivityReport();
-        };
-        $('#activityReportToolbar')
-            .on('change', 'select, input', filterHandler)
-            .on('dp.change', '.input-group.date', filterHandler);
-
-        // Patch bs-table's addrbar URL management to preserve our
-        // custom filter params. addrbar owns the query string and
-        // re-pushes it on every onLoadSuccess with only its own known
-        // keys (page/size/sort/order/search), which would otherwise
-        // clobber any custom params we push ourselves. Same pattern
-        // the advanced-search deeplinking uses in bootstrap-table.blade.
-        // Runs after bs-table init because the partial's $(function(){})
-        // registers before ours.
-        var preservedKeys = ['item_type', 'target_type', 'action_type', 'created_by', 'created_at_from', 'created_at_to'];
-        var tableInstance = $('#activityReport').data('bootstrap.table');
-        if (tableInstance && typeof tableInstance.updateHistoryState === 'function') {
-            var origUpdateHistoryState = tableInstance.updateHistoryState;
-            tableInstance.updateHistoryState = function () {
-                var params = this.searchParams;
-                if (params) {
-                    // Strip both scalar (key) and array (key[]) forms
-                    // so a cleared filter actually leaves the URL.
-                    preservedKeys.forEach(function (k) {
-                        params.delete(k);
-                        params.delete(k + '[]');
-                    });
-                    var filterParams = currentFilterParams();
-                    Object.keys(filterParams).forEach(function (k) {
-                        var v = filterParams[k];
-                        if (Array.isArray(v)) {
-                            v.forEach(function (item) { params.append(k + '[]', item); });
-                        } else {
-                            params.set(k, v);
-                        }
-                    });
-                }
-                return origUpdateHistoryState.apply(this, arguments);
-            };
-        }
-
-        // URL multi-value keys use the ?key[]=a&key[]=b convention
-        // (what jQuery $.param emits for arrays and what Laravel
-        // reads as an array). URLSearchParams.getAll('key[]') returns
-        // the full list. Falls back to a single scalar lookup for
-        // callers that encoded as ?key=val.
-        function readMultiParam(urlParams, key) {
-            var arr = urlParams.getAll(key + '[]');
-            if (arr.length > 0) {
-                return arr;
+            pushToolbarToBsTable();
+        }).on('dp.change', '.input-group.date', function () {
+            if (isHydrating) {
+                return;
             }
-            var single = urlParams.get(key);
-            return single ? [single] : [];
-        }
-
-        function hasAnyFilterParam(urlParams) {
-            var keys = ['item_type', 'target_type', 'action_type', 'created_by'];
-            for (var i = 0; i < keys.length; i++) {
-                if (urlParams.has(keys[i]) || urlParams.has(keys[i] + '[]')) {
-                    return true;
-                }
-            }
-            return urlParams.has('created_at_from') || urlParams.has('created_at_to');
-        }
-
-        window.addEventListener('popstate', function () {
-            var p = new URLSearchParams(window.location.search);
-            isHydrating = true;
-            setSelect($itemFilter, readMultiParam(p, 'item_type'));
-            setSelect($targetFilter, readMultiParam(p, 'target_type'));
-            setSelect($actionTypeFilter, readMultiParam(p, 'action_type'));
-            setDate($createdAtFrom, p.get('created_at_from'));
-            setDate($createdAtTo, p.get('created_at_to'));
-            // created_by needs its labels refetched since the ajax picker
-            // only knows about options it has already loaded.
-            $createdByFilter.empty();
-            hydrateCreatedByFromUrl(readMultiParam(p, 'created_by'));
-            isHydrating = false;
-            refreshActivityReport();
+            pushToolbarToBsTable();
         });
 
-        var initialParams = new URLSearchParams(window.location.search);
-        if (hasAnyFilterParam(initialParams)) {
-            isHydrating = true;
-            setSelect($itemFilter, readMultiParam(initialParams, 'item_type'));
-            setSelect($targetFilter, readMultiParam(initialParams, 'target_type'));
-            setSelect($actionTypeFilter, readMultiParam(initialParams, 'action_type'));
-            setDate($createdAtFrom, initialParams.get('created_at_from'));
-            setDate($createdAtTo, initialParams.get('created_at_to'));
-            hydrateCreatedByFromUrl(readMultiParam(initialParams, 'created_by'));
-            isHydrating = false;
-            refreshActivityReport();
-        }
+        // The modal's apply fires column-advanced-search. Mirror the
+        // new state back into the toolbar so both surfaces always
+        // reflect the same filterColumnsPartial. load-success is NOT
+        // listened to because our own pushToolbarToBsTable triggers
+        // it and would re-enter.
+        $('#activityReport').on('column-advanced-search.bs.table', function () {
+            if (isHydrating) {
+                return;
+            }
+            pullBsTableToToolbar();
+        });
+
+        // Initial sync. bootstrap-table.blade's Read path (line ~1404)
+        // has already seeded filterColumnsPartial from any ?filter[...]
+        // URL params before our $(function(){}) fires, so this hydrates
+        // the toolbar off that pre-populated state.
+        pullBsTableToToolbar();
     });
 </script>
 @stop
