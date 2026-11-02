@@ -1211,6 +1211,27 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
     ); // end settings API
 
     /**
+     * Saved searches API routes. Private-only CRUD for v1. Each
+     * authenticated user manages their own named filter-presets per
+     * listing table.
+     */
+    Route::get('saved-searches',
+        [Api\SavedSearchesController::class, 'index']
+    )->name('api.saved-searches.index');
+
+    Route::post('saved-searches',
+        [Api\SavedSearchesController::class, 'store']
+    )->name('api.saved-searches.store');
+
+    Route::put('saved-searches/{savedSearch}',
+        [Api\SavedSearchesController::class, 'update']
+    )->name('api.saved-searches.update');
+
+    Route::delete('saved-searches/{savedSearch}',
+        [Api\SavedSearchesController::class, 'destroy']
+    )->name('api.saved-searches.destroy');
+
+    /**
      * Status labels API routes
      */
     Route::group(['prefix' => 'statuslabels'], function () {
