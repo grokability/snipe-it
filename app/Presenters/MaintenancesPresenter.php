@@ -68,7 +68,7 @@ class MaintenancesPresenter extends Presenter
             ], [
                 'field' => 'asset_name',
                 'scope' => 'col',
-                'searchable' => true,
+                'searchable' => false,
                 'sortable' => true,
                 'title' => trans('admin/maintenances/table.asset_name'),
                 'formatter' => 'assetNameLinkFormatter',
@@ -82,7 +82,7 @@ class MaintenancesPresenter extends Presenter
             ], [
                 'field' => 'serial',
                 'scope' => 'col',
-                'searchable' => true,
+                'searchable' => false,
                 'sortable' => true,
                 'title' => trans('admin/hardware/table.serial'),
                 'formatter' => 'assetSerialLinkFormatter',
@@ -293,7 +293,7 @@ class MaintenancesPresenter extends Presenter
             [
                 'field' => 'asset_name',
                 'scope' => 'col',
-                'searchable' => true,
+                'searchable' => false,
                 'sortable' => true,
                 'title' => trans('admin/maintenances/table.asset_name'),
             ],
@@ -319,7 +319,7 @@ class MaintenancesPresenter extends Presenter
             [
                 'field' => 'serial',
                 'scope' => 'col',
-                'searchable' => true,
+                'searchable' => false,
                 'sortable' => true,
                 'title' => trans('admin/hardware/table.serial'),
             ], [
