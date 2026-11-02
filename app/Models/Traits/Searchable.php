@@ -54,6 +54,27 @@ trait Searchable
      */
     public function scopeTextSearch($query, $search)
     {
+        // Array-form input (?filter[field]=value, which Laravel parses
+        // to ['field' => 'value']) is already structured. Routing it
+        // through implode-and-reparse would discard the keys. Promote
+        // to structured filters directly when any key is a string.
+        // Numeric-only arrays fall through to the legacy implode path
+        // so stray ->TextSearch(['a','b']) callers keep their
+        // free-text behavior.
+        if (is_array($search) && count(array_filter(array_keys($search), 'is_string')) > 0) {
+            $filters = array_filter(
+                $search,
+                fn ($v, $k) => is_string($k) && is_scalar($v) && trim((string) $v) !== '',
+                ARRAY_FILTER_USE_BOTH
+            );
+
+            if (empty($filters)) {
+                return $query;
+            }
+
+            return $this->applySearchFilters($query, $filters, $this->resolveStructuredFilterOperator());
+        }
+
         $preparedSearch = $this->prepareSearchInput(is_array($search) ? implode(' ', $search) : (string) $search);
         $terms = $preparedSearch['terms'];
         $filters = $preparedSearch['filters'];
