@@ -280,10 +280,7 @@ class IndexAccessoryTest extends TestCase implements TestsFullMultipleCompaniesS
     public function test_advanced_search_category_single_name_still_matches_via_like_path(): void
     {
         // Guard that the new whereIn branch does not swallow single-
-        // value name lookups. A hand-typed "Peripherals" value in the
-        // category filter should still fall through to the relation-
-        // LIKE path, same as pre-prototype behavior, because the value
-        // is not an integer CSV.
+        // value name lookups. 
         $user = User::factory()->superuser()->create();
 
         $target = Category::factory()->forAccessories()->create(['name' => 'Peripherals']);
