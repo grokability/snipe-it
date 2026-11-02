@@ -125,7 +125,7 @@ class UserPresenter extends Presenter
             [
                 'field' => 'vip',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,
                 'title' => trans('admin/users/general.vip_label'),
@@ -135,7 +135,7 @@ class UserPresenter extends Presenter
             [
                 'field' => 'remote',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,
                 'title' => trans('admin/users/general.remote'),
@@ -366,7 +366,7 @@ class UserPresenter extends Presenter
             [
                 'field' => 'groups',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => false,
                 'switchable' => true,
                 'title' => trans('general.groups'),
@@ -376,7 +376,7 @@ class UserPresenter extends Presenter
             [
                 'field' => 'ldap_import',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,
                 'title' => trans('admin/settings/general.ldap_enabled'),
@@ -386,7 +386,7 @@ class UserPresenter extends Presenter
             [
                 'field' => 'two_factor_enrolled',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,
                 'title' => trans('admin/users/general.two_factor_enrolled'),
@@ -396,7 +396,7 @@ class UserPresenter extends Presenter
             [
                 'field' => 'two_factor_optin',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,
                 'title' => trans('admin/users/general.two_factor_active'),
@@ -406,7 +406,7 @@ class UserPresenter extends Presenter
             [
                 'field' => 'activated',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,
                 'title' => trans('general.login_enabled'),
@@ -416,7 +416,7 @@ class UserPresenter extends Presenter
             [
                 'field' => 'autoassign_licenses',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,
                 'title' => trans('general.autoassign_licenses'),
@@ -426,7 +426,7 @@ class UserPresenter extends Presenter
             [
                 'field' => 'created_by',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'title' => trans('general.created_by'),
                 'visible' => false,
@@ -474,12 +474,32 @@ class UserPresenter extends Presenter
             [
                 'field' => 'last_login',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,
                 'title' => trans('general.last_login'),
                 'visible' => false,
                 'formatter' => 'dateDisplayFormatter',
+            ],
+            [
+                'field' => 'activated_at',
+                'scope' => 'col',
+                'searchable' => true,
+                'sortable' => true,
+                'switchable' => true,
+                'title' => trans('general.activated_at'),
+                'visible' => false,
+                'formatter' => 'dateDisplayFormatter',
+            ],
+            [
+                'field' => 'show_in_list',
+                'scope' => 'col',
+                'searchable' => true,
+                'sortable' => true,
+                'switchable' => true,
+                'title' => trans('general.show_in_list'),
+                'visible' => false,
+                'formatter' => 'trueFalseFormatter',
             ],
             [
                 'field' => 'actions',

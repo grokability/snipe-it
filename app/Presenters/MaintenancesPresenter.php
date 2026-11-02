@@ -165,7 +165,7 @@ class MaintenancesPresenter extends Presenter
             ], [
                 'field' => 'completed_at',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,
                 'title' => trans('admin/maintenances/form.completed_at'),
@@ -174,7 +174,7 @@ class MaintenancesPresenter extends Presenter
             ], [
                 'field' => 'completed_by',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => false,
                 'switchable' => true,
                 'title' => trans('admin/maintenances/form.completed_by'),
@@ -225,7 +225,7 @@ class MaintenancesPresenter extends Presenter
             ], [
                 'field' => 'created_by',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'title' => trans('general.created_by'),
                 'visible' => false,
