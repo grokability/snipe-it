@@ -1341,7 +1341,12 @@ $(function () {
             excludeId: link.data('exclude-id'),
             excludeIds: link.data('exclude-ids'),
             assignedTo: link.data('assigned-to'),
-            onlyTopLevel: link.data('only-top-level')
+            onlyTopLevel: link.data('only-top-level'),
+            // Opt-in sentinel row ("No value" / id='null') prepended
+            // to the first-page response so advanced-filter dropdowns
+            // can offer a filter for FK-is-null. SelectlistTransformer
+            // reads this param and routes it through.
+            includeNull: link.data('include-null')
           };
         },
         cache: true
@@ -1560,7 +1565,7 @@ $(function () {
       if ($dropdown.find('.js-select2-checkboxes-actions').length) {
         return;
       }
-      var $actions = $('<div class="js-select2-checkboxes-actions">' + '<button type="button" class="btn btn-xs btn-default js-select2-checkboxes-selectall"></button> ' + '<button type="button" class="btn btn-xs btn-default js-select2-checkboxes-clear"></button>' + '</div>');
+      var $actions = $('<div class="js-select2-checkboxes-actions">' + '<button type="button" class="btn btn-xs btn-theme js-select2-checkboxes-selectall"></button> ' + '<button type="button" class="btn btn-xs btn-theme js-select2-checkboxes-clear"></button>' + '</div>');
       $actions.find('.js-select2-checkboxes-selectall').text(link.data('select-all-label') || 'Select all');
       $actions.find('.js-select2-checkboxes-clear').text(link.data('clear-all-label') || 'Clear');
       $dropdown.prepend($actions);
