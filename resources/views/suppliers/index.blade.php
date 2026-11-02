@@ -23,6 +23,7 @@
                 buttons="supplierButtons"
                 fixed_right_number="1"
                 fixed_number="1"
+                show_advanced_search="true"
                 api_url="{{ route('api.suppliers.index') }}"
                 :presenter="\App\Presenters\SupplierPresenter::dataTableLayout()"
                 export_filename="export-suppliers-{{ date('Y-m-d') }}"
@@ -35,4 +36,9 @@
 
 @section('moar_scripts')
 @include ('partials.bootstrap-table', ['exportFile' => 'suppliers-export', 'search' => true])
+
+<x-table.advanced-search
+    tableId="supplierListingTable"
+    :model="\App\Models\Supplier::class"
+/>
 @stop

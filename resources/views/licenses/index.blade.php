@@ -32,4 +32,8 @@
 @section('moar_scripts')
 @include ('partials.bootstrap-table')
 
+<x-table.advanced-search
+    tableId="licensesListingTable"
+    :model="\App\Models\License::class"
+/>
 @stop
