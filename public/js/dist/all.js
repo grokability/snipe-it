@@ -1342,10 +1342,8 @@ $(function () {
             excludeIds: link.data('exclude-ids'),
             assignedTo: link.data('assigned-to'),
             onlyTopLevel: link.data('only-top-level'),
-            // Opt-in sentinel row ("No value" / id='null') prepended
-            // to the first-page response so advanced-filter dropdowns
-            // can offer a filter for FK-is-null. SelectlistTransformer
-            // reads this param and routes it through.
+            // Opt-in "no value"/id="null" row - mostly for advanced
+            // search filters for now
             includeNull: link.data('include-null')
           };
         },
