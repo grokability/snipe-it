@@ -300,6 +300,155 @@ trait Searchable
      */
     private function applySingleSearchFilter(Builder $query, string $filterKey, string $filterValue, string $boolean = 'and'): Builder
     {
+        // Per-model extension point. Models with filterable columns
+        // that aren't on their own table (e.g. accessories' derived
+        // "last purchase date" via the Orders relation) override
+        // applyCustomFilter to intercept the matching filter keys
+        // early and route them to a custom query shape. Returning
+        // null means "didn't handle, fall through to the standard
+        // paths below".
+        $customResult = $this->applyCustomFilter($query, $filterKey, $filterValue, $boolean);
+        if ($customResult !== null) {
+            return $customResult;
+        }
+
+        // Multi-select scrollbox path. When the modal widget-swap
+        // submits a CSV of integer ids for a key declared on the
+        // model's filterableRelationIds map, route to whereIn against
+        // the mapped FK column. Runs BEFORE parseFilterValue so the
+        // negation / exact / null prefixes don't try to treat the CSV
+        // string as a single value. Falls through to the existing
+        // text-filter paths when either the key isn't declared or the
+        // value isn't an integer-only CSV, so the single-value LIKE
+        // behavior admins type by hand still works.
+        $multiIdMatch = $this->matchFilterableRelationIds($filterKey, $filterValue);
+        if ($multiIdMatch !== null) {
+            [$fkColumn, $ids, $includeNull] = $multiIdMatch;
+            $qualified = $this->getTable().'.'.$fkColumn;
+            $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
+            // Wrap in a nested group so the OR between the ids-whereIn
+            // and the IS NULL does not leak out and OR against the
+            // outer query's AND context.
+            $query->{$outerBoolean}(function ($nested) use ($qualified, $ids, $includeNull) {
+                if (! empty($ids)) {
+                    $nested->whereIn($qualified, $ids);
+                }
+                if ($includeNull) {
+                    if (! empty($ids)) {
+                        $nested->orWhereNull($qualified);
+                    } else {
+                        $nested->whereNull($qualified);
+                    }
+                }
+            });
+
+            return $query;
+        }
+
+        // Date-range filter. When the modal widget-swap submits a value
+        // shaped `YYYY-MM-DD..YYYY-MM-DD` (either end may be empty for
+        // an open range) for a key declared on the model's
+        // filterableDateRanges whitelist, route to whereBetween / >= / <=
+        // against the mapped column. Runs after multi-id and before the
+        // text-filter path for the same reason: the prefix parser would
+        // otherwise mangle the `..` shape.
+        $dateRangeMatch = $this->matchFilterableDateRange($filterKey, $filterValue);
+        if ($dateRangeMatch !== null) {
+            [$dateColumn, $start, $end] = $dateRangeMatch;
+            $qualified = $this->getTable().'.'.$dateColumn;
+            if ($start !== null && $end !== null) {
+                $method = $boolean === 'or' ? 'orWhereBetween' : 'whereBetween';
+                $query->{$method}($qualified, [$start.' 00:00:00', $end.' 23:59:59']);
+            } elseif ($start !== null) {
+                $method = $boolean === 'or' ? 'orWhere' : 'where';
+                $query->{$method}($qualified, '>=', $start.' 00:00:00');
+            } elseif ($end !== null) {
+                $method = $boolean === 'or' ? 'orWhere' : 'where';
+                $query->{$method}($qualified, '<=', $end.' 23:59:59');
+            }
+
+            return $query;
+        }
+
+        // Boolean filter. When the modal widget-swap submits
+        // "1"/"0"/"true"/"false"/"yes"/"no" for a key declared on the
+        // model's filterableBooleans whitelist, route to a tight
+        // equality check against the mapped column. The whitelist
+        // gate prevents hand-typed "1" against a non-boolean column
+        // from being mistaken for a boolean filter and triggering the
+        // same shortcut.
+        $booleanMatch = $this->matchFilterableBoolean($filterKey, $filterValue);
+        if ($booleanMatch !== null) {
+            [$booleanColumn, $booleanValue] = $booleanMatch;
+            $method = $boolean === 'or' ? 'orWhere' : 'where';
+            $query->{$method}($this->getTable().'.'.$booleanColumn, '=', $booleanValue ? 1 : 0);
+
+            return $query;
+        }
+
+        // Numeric range filter. When the modal widget-swap submits a
+        // value shaped `gt:X`, `lt:Y`, or `gt:X,lt:Y` for a key
+        // declared on the model's filterableNumerics whitelist, route
+        // to a tight > / < comparison against the mapped column. Runs
+        // after boolean (which could otherwise swallow `gt:1`) and
+        // before the text-filter path (which would LIKE the whole
+        // string).
+        $numericMatch = $this->matchFilterableNumericBounds($filterKey, $filterValue);
+        if ($numericMatch !== null) {
+            [$numericColumn, $gt, $lt] = $numericMatch;
+            $qualified = $this->getTable().'.'.$numericColumn;
+            $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
+            $query->{$outerBoolean}(function ($nested) use ($qualified, $gt, $lt) {
+                if ($gt !== null) {
+                    $nested->where($qualified, '>', $gt);
+                }
+                if ($lt !== null) {
+                    $nested->where($qualified, '<', $lt);
+                }
+            });
+
+            return $query;
+        }
+
+        // Enum filter. When the modal enum widget submits a CSV of
+        // option values for a key declared on the model's
+        // filterableEnums whitelist, route to a tight whereIn
+        // against the mapped column. Runs after the structured
+        // paths above so a key that resolves to a numeric or boolean
+        // shape never falls through to a bare whereIn with the
+        // user's raw tokens.
+        $enumMatch = $this->matchFilterableEnum($filterKey, $filterValue);
+        if ($enumMatch !== null) {
+            [$enumColumn, $enumValues] = $enumMatch;
+            $whereInMethod = $boolean === 'or' ? 'orWhereIn' : 'whereIn';
+            $query->{$whereInMethod}($this->getTable().'.'.$enumColumn, $enumValues);
+
+            return $query;
+        }
+
+        // Set filter. Same frontend widget shape as enum (multi-
+        // select from fixed option list), but the stored column
+        // holds a comma-joined set of tokens like
+        // "RAM, Monitor, Keyboard" (Snipe-IT writes custom-field
+        // checkbox values via `implode(', ', $values)`). Match per
+        // value with CONCAT-wrap + positional LIKE so a search for
+        // "RAM" doesn't false-match "DRAM, Monitor". Portable across
+        // SQL engines (unlike FIND_IN_SET which is MySQL-only).
+        $setMatch = $this->matchFilterableSet($filterKey, $filterValue);
+        if ($setMatch !== null) {
+            [$setColumn, $setValues] = $setMatch;
+            $qualified = $this->getTable().'.'.$setColumn;
+            $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
+            $query->{$outerBoolean}(function ($nested) use ($qualified, $setValues) {
+                foreach ($setValues as $i => $value) {
+                    $method = $i === 0 ? 'whereRaw' : 'orWhereRaw';
+                    $nested->{$method}("CONCAT(', ', {$qualified}, ',') LIKE ?", ['%, '.$value.',%']);
+                }
+            });
+
+            return $query;
+        }
+
         $parsed = $this->parseFilterValue($filterValue);
         $value = $parsed['value'];
         $negate = $parsed['negate'];
@@ -1118,6 +1267,474 @@ trait Searchable
     private function getSearchableRelations()
     {
         return $this->searchableRelations ?? [];
+    }
+
+    /**
+     * Map of advanced-search filter keys to the foreign-key column on
+     * this model's table. When the modal submits a CSV of integer ids
+     * for a key in this map (via the checkboxes-scrollbox widget), the
+     * filter routes to whereIn against the mapped column rather than
+     * falling through to the relation-LIKE path. Models declaring this
+     * get native multi-select advanced-search for their belongsTo-
+     * backed columns. Default empty keeps every other model's existing
+     * single-value LIKE behavior unchanged.
+     *
+     * @return array<string, string>
+     */
+    private function getFilterableRelationIds(): array
+    {
+        $fromSchema = $this->filterableFieldsOfType('fk');
+        if ($fromSchema !== null) {
+            $map = [];
+            foreach ($fromSchema as $entry) {
+                if (isset($entry['field'], $entry['column'])) {
+                    $map[$entry['field']] = $entry['column'];
+                }
+            }
+
+            return $map;
+        }
+
+        return $this->filterableRelationIds ?? [];
+    }
+
+    /**
+     * Returns filterableFields() entries of the given type when the
+     * model defines filterableFields(), or null when it doesn't. The
+     * null return (vs empty array) lets callers distinguish "this
+     * model uses the schema and declares nothing of this type" from
+     * "this model doesn't use the schema at all, fall back to the
+     * property-based declaration". Memoized per model class so a
+     * single list-build touches filterableFields() once.
+     *
+     * @return array<int, array<string, mixed>>|null
+     */
+    private function filterableFieldsOfType(string $type): ?array
+    {
+        static $cache = [];
+        $cls = static::class;
+        if (! array_key_exists($cls, $cache)) {
+            $cache[$cls] = method_exists($cls, 'filterableFields')
+                ? $cls::filterableFields()
+                : null;
+        }
+        if ($cache[$cls] === null) {
+            return null;
+        }
+
+        return array_values(array_filter(
+            $cache[$cls],
+            fn ($entry) => ($entry['type'] ?? null) === $type
+        ));
+    }
+
+    /**
+     * If the filter key is declared on getFilterableRelationIds AND
+     * the raw value looks like a CSV of positive integers (optionally
+     * mixed with the literal "null" sentinel), return a tuple of
+     * [fk_column, ids_array, include_null] so
+     * applySingleSearchFilter can route to whereIn with an optional
+     * orWhereNull. The "null" sentinel lets the dropdown filter rows
+     * where the FK is unset, mixable with real ids in one filter.
+     * Returns null in any other case so the caller falls back to the
+     * existing text-filter paths unchanged. The int-only CSV gate
+     * keeps hand-typed single-value LIKE queries (like a category
+     * name "mouse") from being mistaken for an id lookup.
+     *
+     * @return array{0: string, 1: array<int, int>, 2: bool}|null
+     */
+    private function matchFilterableRelationIds(string $filterKey, string $rawValue): ?array
+    {
+        $map = $this->getFilterableRelationIds();
+        if (! array_key_exists($filterKey, $map)) {
+            return null;
+        }
+
+        $parsed = $this->parseIdsAndNullSentinel($rawValue);
+        if ($parsed === null) {
+            return null;
+        }
+
+        [$ids, $includeNull] = $parsed;
+
+        return [$map[$filterKey], $ids, $includeNull];
+    }
+
+    /**
+     * Parse a CSV of positive integers (optionally mixed with the
+     * literal "null" sentinel) into [ids_array, include_null]. Used
+     * by matchFilterableRelationIds (whitelist-gated path) AND by
+     * model-level applyCustomFilter overrides that route custom FK
+     * keys through pivot semi-joins or relation-chain whereIns.
+     *
+     * Returns null if the shape doesn't match (empty, trailing
+     * commas, non-numeric parts other than "null", non-positive
+     * integers) OR if the parse resolves to no ids and no null
+     * sentinel. The int-only CSV gate keeps hand-typed single-value
+     * LIKE queries ("mouse") from being mistaken for an id lookup.
+     *
+     * @return array{0: array<int, int>, 1: bool}|null
+     */
+    protected function parseIdsAndNullSentinel(string $rawValue): ?array
+    {
+        $trimmed = trim($rawValue);
+        if ($trimmed === '') {
+            return null;
+        }
+
+        $ids = [];
+        $includeNull = false;
+        foreach (array_map('trim', explode(',', $trimmed)) as $part) {
+            if ($part === '') {
+                return null;
+            }
+            if (strcasecmp($part, 'null') === 0) {
+                $includeNull = true;
+
+                continue;
+            }
+            if (! ctype_digit($part) || (int) $part <= 0) {
+                return null;
+            }
+            $ids[] = (int) $part;
+        }
+
+        if (empty($ids) && ! $includeNull) {
+            return null;
+        }
+
+        return [array_values(array_unique($ids)), $includeNull];
+    }
+
+    /**
+     * Model-level override hook for advanced-search filter keys that
+     * can't be expressed via the standard filterableRelationIds /
+     * filterableDateRanges / filterableBooleans maps because the
+     * underlying column isn't on this model's own table. Override on
+     * the model and return a Builder for keys you handle. Return null
+     * to defer to the standard paths. Default is null for every
+     * model. See Accessory::applyCustomFilter for the first user
+     * (purchase_date comes from the Orders relation, not an
+     * accessories column).
+     */
+    protected function applyCustomFilter(Builder $query, string $filterKey, string $filterValue, string $boolean = 'and'): ?Builder
+    {
+        return null;
+    }
+
+    /**
+     * Whitelist of advanced-search filter keys that resolve to a date
+     * column on this model's table. The frontend date-range widget
+     * posts values shaped `YYYY-MM-DD..YYYY-MM-DD`. matchFilterableDateRange
+     * uses this whitelist to decide which keys are safe to route to
+     * whereBetween instead of the LIKE path.
+     *
+     * @return array<int, string>
+     */
+    private function getFilterableDateRanges(): array
+    {
+        $fromSchema = $this->filterableFieldsOfType('date-range');
+        if ($fromSchema !== null) {
+            return array_values(array_filter(array_map(
+                fn ($entry) => $entry['field'] ?? null,
+                $fromSchema
+            )));
+        }
+
+        return $this->filterableDateRanges ?? [];
+    }
+
+    /**
+     * If the filter key is declared on getFilterableDateRanges AND the
+     * raw value matches the `YYYY-MM-DD..YYYY-MM-DD` shape (either end
+     * may be empty for an open range), return a tuple of
+     * [column_name, start_date_or_null, end_date_or_null] so
+     * applySingleSearchFilter can route to whereBetween / >= / <=.
+     * Returns null for any other shape so the caller falls back to the
+     * existing text-filter paths unchanged. The whitelist gate keeps
+     * hand-typed `..`-containing LIKE queries on non-date columns from
+     * being mistaken for a range.
+     *
+     * @return array{0: string, 1: ?string, 2: ?string}|null
+     */
+    private function matchFilterableDateRange(string $filterKey, string $rawValue): ?array
+    {
+        $whitelist = $this->getFilterableDateRanges();
+        if (! in_array($filterKey, $whitelist, true)) {
+            return null;
+        }
+
+        if (! preg_match('/^(\d{4}-\d{2}-\d{2})?\.\.(\d{4}-\d{2}-\d{2})?$/', trim($rawValue), $m)) {
+            return null;
+        }
+
+        $start = $m[1] !== '' ? $m[1] : null;
+        $end = $m[2] !== '' ? $m[2] : null;
+
+        if ($start === null && $end === null) {
+            return null;
+        }
+
+        return [$filterKey, $start, $end];
+    }
+
+    /**
+     * Whitelist of advanced-search filter keys that resolve to a
+     * boolean column on this model's table. Prevents a hand-typed
+     * "1" or "0" against a non-boolean searchable column from
+     * accidentally triggering the equality shortcut. The frontend
+     * boolean widget emits "1" when checked and clears to empty when
+     * unchecked. matchFilterableBoolean uses this whitelist to decide
+     * which keys are safe to route to a WHERE col = value instead of
+     * the LIKE path.
+     *
+     * @return array<int, string>
+     */
+    private function getFilterableBooleans(): array
+    {
+        $fromSchema = $this->filterableFieldsOfType('boolean');
+        if ($fromSchema !== null) {
+            return array_values(array_filter(array_map(
+                fn ($entry) => $entry['field'] ?? null,
+                $fromSchema
+            )));
+        }
+
+        return $this->filterableBooleans ?? [];
+    }
+
+    /**
+     * Whitelist of advanced-search filter keys that resolve to a
+     * fixed-enum (listbox / radio / options list) column on this
+     * model's table. The frontend enum widget posts values as a CSV
+     * of the stored option values. matchFilterableEnum reads this
+     * whitelist to decide which keys route to a whereIn against the
+     * mapped column instead of the LIKE path. Status-label-type
+     * filters that need id-set resolution via a sibling table stay
+     * in applyCustomFilter and never reach this path.
+     *
+     * @return array<int, string>
+     */
+    private function getFilterableEnums(): array
+    {
+        $fromSchema = $this->filterableFieldsOfType('enum');
+        if ($fromSchema !== null) {
+            return array_values(array_filter(array_map(
+                fn ($entry) => $entry['field'] ?? null,
+                $fromSchema
+            )));
+        }
+
+        return $this->filterableEnums ?? [];
+    }
+
+    /**
+     * If the filter key is declared on getFilterableEnums AND the
+     * raw value is a CSV of non-empty tokens, return a tuple of
+     * [column_name, values_array] so applySingleSearchFilter can
+     * route to a whereIn. Returns null in any other case so the
+     * caller falls back to the text-filter path unchanged.
+     *
+     * @return array{0: string, 1: array<int, string>}|null
+     */
+    private function matchFilterableEnum(string $filterKey, string $rawValue): ?array
+    {
+        if (! in_array($filterKey, $this->getFilterableEnums(), true)) {
+            return null;
+        }
+
+        return $this->matchCsvValues($filterKey, $rawValue);
+    }
+
+    /**
+     * Whitelist of advanced-search filter keys whose column stores
+     * a comma-joined SET of tokens rather than a single value.
+     * Snipe-IT writes custom-field checkbox-element values as
+     * `implode(', ', $values)` so a stored string looks like
+     * "RAM, Monitor, Keyboard". The frontend widget is identical to
+     * enum (multi-select from a fixed option list), but the backend
+     * routes to a per-value FIND_IN_SET check instead of whereIn
+     * because the stored string holds multiple tokens.
+     *
+     * @return array<int, string>
+     */
+    private function getFilterableSets(): array
+    {
+        $fromSchema = $this->filterableFieldsOfType('set');
+        if ($fromSchema !== null) {
+            return array_values(array_filter(array_map(
+                fn ($entry) => $entry['field'] ?? null,
+                $fromSchema
+            )));
+        }
+
+        return $this->filterableSets ?? [];
+    }
+
+    /**
+     * If the filter key is declared on getFilterableSets AND the raw
+     * value is a CSV of non-empty tokens, return [column_name,
+     * values_array] so applySingleSearchFilter can route to the
+     * FIND_IN_SET match path. Returns null otherwise.
+     *
+     * @return array{0: string, 1: array<int, string>}|null
+     */
+    private function matchFilterableSet(string $filterKey, string $rawValue): ?array
+    {
+        if (! in_array($filterKey, $this->getFilterableSets(), true)) {
+            return null;
+        }
+
+        return $this->matchCsvValues($filterKey, $rawValue);
+    }
+
+    /**
+     * Shared CSV-tokenizer for enum / set matchers. Trims each piece
+     * and drops empties. Returns [filterKey, values] or null when
+     * the shape doesn't resolve.
+     *
+     * @return array{0: string, 1: array<int, string>}|null
+     */
+    private function matchCsvValues(string $filterKey, string $rawValue): ?array
+    {
+        $trimmed = trim($rawValue);
+        if ($trimmed === '') {
+            return null;
+        }
+
+        $values = array_values(array_filter(array_map('trim', explode(',', $trimmed)), fn ($v) => $v !== ''));
+        if (empty($values)) {
+            return null;
+        }
+
+        return [$filterKey, $values];
+    }
+
+    /**
+     * Whitelist of advanced-search filter keys that resolve to a
+     * numeric column on this model's table. The frontend numeric
+     * widget posts values shaped `gt:X`, `lt:Y`, or `gt:X,lt:Y`
+     * (strict comparison semantics on both ends).
+     * matchFilterableNumericBounds reads this whitelist to decide
+     * which keys are safe to route to a > / < pair instead of the
+     * LIKE path.
+     *
+     * @return array<int, string>
+     */
+    private function getFilterableNumerics(): array
+    {
+        $fromSchema = $this->filterableFieldsOfType('numeric');
+        if ($fromSchema !== null) {
+            return array_values(array_filter(array_map(
+                fn ($entry) => $entry['field'] ?? null,
+                $fromSchema
+            )));
+        }
+
+        return $this->filterableNumerics ?? [];
+    }
+
+    /**
+     * Parse a `gt:X`, `lt:Y`, or `gt:X,lt:Y` filter value into
+     * [gt_value_or_null, lt_value_or_null]. Returns null if either
+     * half is malformed or neither bound is set. Keeps numbers as
+     * strings so the caller can bind them directly to a
+     * parameterized query without a float-cast round-trip. Comma
+     * separates the two optional halves. Each half MUST carry its
+     * own gt: or lt: prefix so the shape is self-describing and
+     * symmetric (`gt:X,lt:Y` reads the same as `lt:Y,gt:X`).
+     *
+     * Used by matchFilterableNumericBounds (whitelist-gated path)
+     * AND by model-level applyCustomFilter overrides that route
+     * custom numeric keys through correlated subqueries.
+     *
+     * @return array{0: ?string, 1: ?string}|null
+     */
+    protected function parseGtLtBounds(string $rawValue): ?array
+    {
+        $gt = null;
+        $lt = null;
+        foreach (explode(',', trim($rawValue)) as $part) {
+            $part = trim($part);
+            if ($part === '') {
+                continue;
+            }
+            if (preg_match('/^gt:(-?\d+(\.\d+)?)$/', $part, $m)) {
+                $gt = $m[1];
+            } elseif (preg_match('/^lt:(-?\d+(\.\d+)?)$/', $part, $m)) {
+                $lt = $m[1];
+            } else {
+                return null;
+            }
+        }
+        if ($gt === null && $lt === null) {
+            return null;
+        }
+
+        return [$gt, $lt];
+    }
+
+    /**
+     * If the filter key is declared on getFilterableNumerics AND the
+     * raw value matches a `gt:` / `lt:` prefix shape (either side
+     * may be absent for an open-ended bound), return a tuple of
+     * [column_name, gt_value_or_null, lt_value_or_null] so
+     * applySingleSearchFilter can route to a > / < pair. Returns
+     * null for any other shape so the caller falls back to the
+     * text-filter path unchanged. The whitelist gate keeps
+     * hand-typed `gt:`-prefixed queries on non-numeric columns from
+     * being mistaken for a range.
+     *
+     * @return array{0: string, 1: ?string, 2: ?string}|null
+     */
+    private function matchFilterableNumericBounds(string $filterKey, string $rawValue): ?array
+    {
+        if (! in_array($filterKey, $this->getFilterableNumerics(), true)) {
+            return null;
+        }
+
+        $bounds = $this->parseGtLtBounds($rawValue);
+        if ($bounds === null) {
+            return null;
+        }
+
+        [$gt, $lt] = $bounds;
+
+        return [$filterKey, $gt, $lt];
+    }
+
+    /**
+     * If the filter key is declared on getFilterableBooleans AND the
+     * raw value is a recognizable boolean token, return a tuple of
+     * [column_name, bool] so applySingleSearchFilter can route to a
+     * tight equality check. Accepts "1"/"0", "true"/"false", and
+     * "yes"/"no" (case-insensitive) so URL deeplinks and API clients
+     * can send the shape in whichever form, while the checkbox UI
+     * only ever writes "1" or empty.
+     *
+     * @return array{0: string, 1: bool}|null
+     */
+    private function matchFilterableBoolean(string $filterKey, string $rawValue): ?array
+    {
+        if (! in_array($filterKey, $this->getFilterableBooleans(), true)) {
+            return null;
+        }
+
+        $normalized = strtolower(trim($rawValue));
+        if ($normalized === '') {
+            return null;
+        }
+
+        $trueTokens = ['1', 'true', 'yes'];
+        $falseTokens = ['0', 'false', 'no'];
+        if (in_array($normalized, $trueTokens, true)) {
+            return [$filterKey, true];
+        }
+        if (in_array($normalized, $falseTokens, true)) {
+            return [$filterKey, false];
+        }
+
+        return null;
     }
 
     /**
