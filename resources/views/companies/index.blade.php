@@ -22,6 +22,7 @@
                         buttons="companyButtons"
                         fixed_right_number="1"
                         fixed_number="1"
+                        show_advanced_search="true"
                         api_url="{{ route('api.companies.index') }}"
                         :presenter="\App\Presenters\CompanyPresenter::dataTableLayout()"
                         export_filename="export-companies-{{ date('Y-m-d') }}"
@@ -33,4 +34,9 @@
 
 @section('moar_scripts')
   @include ('partials.bootstrap-table')
+
+<x-table.advanced-search
+    tableId="companyListingTable"
+    :model="\App\Models\Company::class"
+/>
 @stop

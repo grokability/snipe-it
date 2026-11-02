@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Traits\Searchable;
 use App\Presenters\MaintenanceTypePresenter;
 use App\Presenters\Presentable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,6 +17,7 @@ class MaintenanceType extends SnipeModel
 {
     use HasFactory;
     use Presentable;
+    use Searchable;
     use SoftDeletes;
     use ValidatingTrait;
 
@@ -30,6 +32,40 @@ class MaintenanceType extends SnipeModel
     protected $injectUniqueIdentifier = true;
 
     protected $fillable = ['name', 'tag_color'];
+
+    protected $searchableAttributes = ['name', 'tag_color'];
+
+    protected $searchableRelations = [
+        'adminuser' => ['first_name', 'last_name', 'display_name'],
+    ];
+
+    /**
+     * Advanced-search filterable fields.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public static function filterableFields(): array
+    {
+        return [
+            [
+                'field' => 'created_by',
+                'type' => 'fk',
+                'column' => 'created_by',
+                'endpoint' => 'users',
+                'label' => trans('general.created_by'),
+            ],
+            [
+                'field' => 'created_at',
+                'type' => 'date-range',
+                'label' => trans('general.created_at'),
+            ],
+            [
+                'field' => 'updated_at',
+                'type' => 'date-range',
+                'label' => trans('general.updated_at'),
+            ],
+        ];
+    }
 
     public function isDeletable(): bool
     {

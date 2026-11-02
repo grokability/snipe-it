@@ -78,6 +78,35 @@ class Supplier extends SnipeModel implements Importable
     protected $searchableRelations = [];
 
     /**
+     * Advanced-search filterable fields. Suppliers have no company_id or
+     * other model-level FKs beyond created_by.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public static function filterableFields(): array
+    {
+        return [
+            [
+                'field' => 'created_by',
+                'type' => 'fk',
+                'column' => 'created_by',
+                'endpoint' => 'users',
+                'label' => trans('general.created_by'),
+            ],
+            [
+                'field' => 'created_at',
+                'type' => 'date-range',
+                'label' => trans('general.created_at'),
+            ],
+            [
+                'field' => 'updated_at',
+                'type' => 'date-range',
+                'label' => trans('general.updated_at'),
+            ],
+        ];
+    }
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var list<string>

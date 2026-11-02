@@ -141,6 +141,41 @@ final class Company extends SnipeModel
     ];
 
     /**
+     * Advanced-search filterable fields.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public static function filterableFields(): array
+    {
+        return [
+            [
+                'field' => 'parent',
+                'type' => 'fk',
+                'column' => 'parent_id',
+                'endpoint' => 'companies',
+                'label' => trans('admin/companies/table.parent'),
+            ],
+            [
+                'field' => 'created_by',
+                'type' => 'fk',
+                'column' => 'created_by',
+                'endpoint' => 'users',
+                'label' => trans('general.created_by'),
+            ],
+            [
+                'field' => 'created_at',
+                'type' => 'date-range',
+                'label' => trans('general.created_at'),
+            ],
+            [
+                'field' => 'updated_at',
+                'type' => 'date-range',
+                'label' => trans('general.updated_at'),
+            ],
+        ];
+    }
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var list<string>

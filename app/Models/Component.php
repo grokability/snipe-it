@@ -158,7 +158,7 @@ class Component extends SnipeModel implements Importable
         'category' => ['name'],
         'company' => ['name'],
         'location' => ['name'],
-        // Search by the parent's "typical supplier" template — see the
+        // Search by the parent's "typical supplier" template. See the
         // Accessory model for the rationale.
         'defaultSupplier' => ['name'],
         'manufacturer' => ['name'],
@@ -168,6 +168,211 @@ class Component extends SnipeModel implements Importable
         // the Orders table so historical order references still match.
         'orders' => ['order_number'],
     ];
+
+    /**
+     * Advanced-search filterable fields. Same as
+     * Accessory::filterableFields, EXCEPT:
+     * remaining uses SUM(components_assets.assigned_qty) rather than
+     * COUNT(pivot) because each checkout row carries a quantity, so
+     * the "checked out" number is a sum of assigned_qty.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public static function filterableFields(): array
+    {
+        return [
+            [
+                'field' => 'company',
+                'type' => 'fk',
+                'column' => 'company_id',
+                'endpoint' => 'companies',
+                'label' => trans('admin/companies/table.title'),
+            ],
+            [
+                'field' => 'category',
+                'type' => 'fk',
+                'column' => 'category_id',
+                'endpoint' => 'categories/component',
+                'label' => trans('general.category'),
+            ],
+            [
+                'field' => 'manufacturer',
+                'type' => 'fk',
+                'column' => 'manufacturer_id',
+                'endpoint' => 'manufacturers',
+                'label' => trans('general.manufacturer'),
+            ],
+            [
+                'field' => 'supplier',
+                'type' => 'fk',
+                'column' => 'default_supplier_id',
+                'endpoint' => 'suppliers',
+                'label' => trans('general.supplier'),
+            ],
+            [
+                'field' => 'location',
+                'type' => 'fk',
+                'column' => 'location_id',
+                'endpoint' => 'locations',
+                'label' => trans('general.location'),
+            ],
+            [
+                'field' => 'created_by',
+                'type' => 'fk',
+                'column' => 'created_by',
+                'endpoint' => 'users',
+                'label' => trans('general.created_by'),
+            ],
+            [
+                'field' => 'requestable',
+                'type' => 'boolean',
+                'label' => trans('admin/hardware/general.requestable'),
+            ],
+            [
+                'field' => 'qty',
+                'type' => 'numeric',
+                'label' => trans('admin/accessories/general.total'),
+            ],
+            [
+                'field' => 'min_amt',
+                'type' => 'numeric',
+                'label' => trans('general.min_amt'),
+            ],
+            [
+                'field' => 'remaining',
+                'type' => 'numeric',
+                'label' => trans('admin/accessories/general.remaining'),
+            ],
+            [
+                'field' => 'purchase_cost',
+                'type' => 'numeric',
+                'label' => trans('general.last_unit_cost'),
+            ],
+            [
+                'field' => 'purchase_date',
+                'type' => 'date-range',
+                'label' => trans('general.last_purchase_date'),
+            ],
+            [
+                'field' => 'created_at',
+                'type' => 'date-range',
+                'label' => trans('general.created_at'),
+            ],
+            [
+                'field' => 'updated_at',
+                'type' => 'date-range',
+                'label' => trans('general.updated_at'),
+            ],
+        ];
+    }
+
+    /**
+     * Override hook from Searchable Trait. purchase_date / purchase_cost
+     * route through correlated subqueries on OrderItem (via the
+     * HasOrders polymorphic pivot). remaining uses
+     * SUM(components_assets.assigned_qty) to match the
+     * numCheckedOut uses on this model. Default list queries never
+     * pay the subquery cost. Only runs when a matching filter key
+     * is on the request.
+     */
+    protected function applyCustomFilter(\Illuminate\Database\Eloquent\Builder $query, string $filterKey, string $filterValue, string $boolean = 'and'): ?\Illuminate\Database\Eloquent\Builder
+    {
+        if ($filterKey === 'purchase_date') {
+            if (!preg_match('/^(\d{4}-\d{2}-\d{2})?\.\.(\d{4}-\d{2}-\d{2})?$/', trim($filterValue), $m)) {
+                return null;
+            }
+            $start = $m[1] !== '' ? $m[1] : null;
+            $end = $m[2] !== '' ? $m[2] : null;
+            if ($start === null && $end === null) {
+                return null;
+            }
+
+            $lastDateSub = \App\Models\OrderItem::query()
+                ->join('orders', 'orders.id', '=', 'order_items.order_id')
+                ->whereColumn('order_items.item_id', 'components.id')
+                ->where('order_items.item_type', static::class)
+                ->orderByDesc('order_items.id')
+                ->limit(1)
+                ->select('orders.purchase_date');
+
+            $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
+            $query->{$outerBoolean}(function ($nested) use ($lastDateSub, $start, $end) {
+                if ($start !== null && $end !== null) {
+                    $nested->whereBetween($lastDateSub, [$start, $end]);
+                } elseif ($start !== null) {
+                    $nested->where($lastDateSub, '>=', $start);
+                } elseif ($end !== null) {
+                    $nested->where($lastDateSub, '<=', $end);
+                }
+            });
+
+            return $query;
+        }
+
+        if ($filterKey === 'remaining') {
+            $bounds = $this->parseGtLtBounds($filterValue);
+            if ($bounds === null) {
+                return null;
+            }
+            [$gt, $lt] = $bounds;
+
+            // Component checkout is SUM(assigned_qty), not COUNT, so
+            // each pivot row can represent multiple units checked out
+            // to one asset. COALESCE to 0 for components with no
+            // pivot rows (SUM returns NULL).
+            $checkoutSumSub = \Illuminate\Support\Facades\DB::table('components_assets')
+                ->whereColumn('components_assets.component_id', 'components.id')
+                ->selectRaw('COALESCE(SUM(components_assets.assigned_qty), 0)');
+
+            $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
+            $query->{$outerBoolean}(function ($nested) use ($checkoutSumSub, $gt, $lt) {
+                [$sumSql, $sumBindings] = [$checkoutSumSub->toSql(), $checkoutSumSub->getBindings()];
+                if ($gt !== null) {
+                    $nested->whereRaw(
+                        "(components.qty - ({$sumSql})) > ?",
+                        array_merge($sumBindings, [$gt])
+                    );
+                }
+                if ($lt !== null) {
+                    $nested->whereRaw(
+                        "(components.qty - ({$sumSql})) < ?",
+                        array_merge($sumBindings, [$lt])
+                    );
+                }
+            });
+
+            return $query;
+        }
+
+        if ($filterKey === 'purchase_cost') {
+            $bounds = $this->parseGtLtBounds($filterValue);
+            if ($bounds === null) {
+                return null;
+            }
+            [$gt, $lt] = $bounds;
+
+            $lastCostSub = \App\Models\OrderItem::query()
+                ->whereColumn('order_items.item_id', 'components.id')
+                ->where('order_items.item_type', static::class)
+                ->orderByDesc('order_items.id')
+                ->limit(1)
+                ->select('order_items.price');
+
+            $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
+            $query->{$outerBoolean}(function ($nested) use ($lastCostSub, $gt, $lt) {
+                if ($gt !== null) {
+                    $nested->where($lastCostSub, '>', $gt);
+                }
+                if ($lt !== null) {
+                    $nested->where($lastCostSub, '<', $lt);
+                }
+            });
+
+            return $query;
+        }
+
+        return null;
+    }
 
     public static function booted()
     {

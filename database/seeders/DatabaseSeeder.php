@@ -120,6 +120,9 @@ class DatabaseSeeder extends Seeder
         $this->reportMemory('after ImportSeeder');
         DB::table('requested_assets')->truncate();
 
+        // advanced-search saved presets
+        DB::table('saved_searches')->truncate();
+
         $this->reportMemory('DatabaseSeeder end');
     }
 }

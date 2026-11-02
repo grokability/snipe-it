@@ -6,6 +6,7 @@ use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\FilterRequest;
 use App\Http\Transformers\MaintenanceTypesTransformer;
+use App\Http\Transformers\SelectlistTransformer;
 use App\Models\MaintenanceType;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -24,8 +25,8 @@ class MaintenanceTypesController extends Controller
             $types->onlyTrashed();
         }
 
-        if ($request->filled('search')) {
-            $types->where('name', 'LIKE', '%'.$request->input('search').'%');
+        if ($request->filled('filter') || $request->filled('search')) {
+            $types->TextSearch($request->input('filter') ? $request->input('filter') : $request->input('search'));
         }
 
         if ($request->filled('name')) {
@@ -104,5 +105,29 @@ class MaintenanceTypesController extends Controller
         $maintenanceType->delete();
 
         return response()->json(Helper::formatStandardApiResponse('success', null, trans('admin/maintenance_types/message.delete.success')));
+    }
+
+    /**
+     * select2-shaped list of maintenance types for the advanced-search
+     * modal's maintenance_type_details picker.
+     */
+    public function selectlist(Request $request): array
+    {
+        $this->authorize('view.selectlists');
+
+        $types = MaintenanceType::select(['id', 'name', 'tag_color']);
+
+        if ($request->filled('search')) {
+            $types = $types->where('name', 'LIKE', '%'.$request->input('search').'%');
+        }
+
+        $types = $types->orderBy('name', 'ASC')->paginate(50);
+
+        foreach ($types as $type) {
+            $type->use_text = $type->name;
+            $type->use_image = null;
+        }
+
+        return (new SelectlistTransformer)->transformSelectlist($types);
     }
 }

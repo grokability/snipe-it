@@ -215,6 +215,48 @@ class ActivityReportTest extends TestCase
             ->assertOk();
     }
 
+    public function test_activity_report_rejects_mixed_types_when_caller_lacks_view_on_every_type(): void
+    {
+        // Regression pin for GHSA-rwxw-wvx8-cx83. Before the fix the
+        // per-record fallback authorized only $itemClasses[0], but the
+        // query filtered whereIn across every submitted type. A caller
+        // holding assets.view (but not users.view or activity.view)
+        // could read action logs for user records by prepending `asset`
+        // in item_type[]: the authz check saw only Asset, the query
+        // returned User rows. Fix walks every resolved class, so a
+        // mixed asset+user submission from an assets-only user fails
+        // on the User type.
+        $victim = User::factory()->create();
+        $victim->update(['first_name' => 'Test Update']);
+        $attacker = User::factory()->viewAssets()->create();
+
+        $this->actingAsForApi($attacker)
+            ->getJson(route('api.activity.index', [
+                'item_type' => ['asset', 'user'],
+                'item_id' => $victim->id,
+            ]))
+            ->assertForbidden();
+    }
+
+    public function test_activity_report_rejects_mixed_target_types_when_caller_lacks_view_on_every_type(): void
+    {
+        // Companion to the item_type bypass test. Same root cause
+        // against the target_type path: $targetClasses[0] was the
+        // only class authorized but the query filtered whereIn on
+        // target_type across every submitted class. Fix walks every
+        // target_type too.
+        $victim = User::factory()->create();
+        $victim->update(['first_name' => 'Test Update']);
+        $attacker = User::factory()->viewAssets()->create();
+
+        $this->actingAsForApi($attacker)
+            ->getJson(route('api.activity.index', [
+                'target_type' => ['asset', 'user'],
+                'target_id' => $victim->id,
+            ]))
+            ->assertForbidden();
+    }
+
     public function test_activity_report_rejects_types_not_in_form_request_allowlist()
     {
         // FilterRequest already rejects arbitrary class names, but

@@ -70,6 +70,50 @@ class Depreciation extends SnipeModel
         'adminuser' => ['first_name', 'last_name', 'display_name'],
     ];
 
+    /**
+     * Advanced-search filterable fields. depreciation_type (amount or
+     * percent) is only populated for diminishing-balance depreciations,
+     * so rows left on straight-line will not match either option.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public static function filterableFields(): array
+    {
+        return [
+            [
+                'field' => 'depreciation_type',
+                'type' => 'enum',
+                'options' => [
+                    ['value' => 'amount', 'label' => trans('general.depreciation_options.amount')],
+                    ['value' => 'percent', 'label' => trans('general.depreciation_options.percent')],
+                ],
+                'label' => trans('general.depreciation_type'),
+            ],
+            [
+                'field' => 'months',
+                'type' => 'numeric',
+                'label' => trans('admin/depreciations/general.number_of_months'),
+            ],
+            [
+                'field' => 'created_by',
+                'type' => 'fk',
+                'column' => 'created_by',
+                'endpoint' => 'users',
+                'label' => trans('general.created_by'),
+            ],
+            [
+                'field' => 'created_at',
+                'type' => 'date-range',
+                'label' => trans('general.created_at'),
+            ],
+            [
+                'field' => 'updated_at',
+                'type' => 'date-range',
+                'label' => trans('general.updated_at'),
+            ],
+        ];
+    }
+
     public function isDeletable()
     {
         return Gate::allows('delete', $this)

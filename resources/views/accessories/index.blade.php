@@ -23,7 +23,11 @@
                 name="accessories"
                 :route="route('api.accessories.index', ['status' => e(request('status'))])"
                 fixed_right_number="3"
-                :presenter="\App\Presenters\AccessoryPresenter::dataTableLayout(request('status') === 'Deleted')"
+                :presenter="\App\Presenters\AccessoryPresenter::dataTableLayout(match (request('status')) {
+                    'Deleted' => ['archived'],
+                    'Archived' => ['deleted_at'],
+                    default => ['archived', 'deleted_at'],
+                })"
             />
         </x-box>
         <x-shiftclick/>
@@ -39,5 +43,10 @@
 
 
 @section('moar_scripts')
-@include ('partials.bootstrap-table')
+    @include ('partials.bootstrap-table')
+
+    <x-table.advanced-search
+        tableId="accessoriesListingTable"
+        :model="\App\Models\Accessory::class"
+    />
 @stop

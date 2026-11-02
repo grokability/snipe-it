@@ -252,4 +252,52 @@ class IndexAccessoryTest extends TestCase implements TestsFullMultipleCompaniesS
             ->assertResponseContainsInRows($targetAccessory)
             ->assertResponseDoesNotContainInRows($otherAccessory);
     }
+
+    public function test_advanced_search_category_csv_of_ids_matches_by_where_in(): void
+    {
+        // Multi-select scrollbox path: the modal widget submits an array
+        // of category ids as the filter value
+        $user = User::factory()->superuser()->create();
+
+        $cat1 = Category::factory()->forAccessories()->create(['name' => 'Peripherals']);
+        $cat2 = Category::factory()->forAccessories()->create(['name' => 'Cables']);
+        $cat3 = Category::factory()->forAccessories()->create(['name' => 'Software']);
+
+        $inCat1 = Accessory::factory()->create(['category_id' => $cat1->id, 'name' => 'Mouse']);
+        $inCat2 = Accessory::factory()->create(['category_id' => $cat2->id, 'name' => 'HDMI']);
+        $inCat3 = Accessory::factory()->create(['category_id' => $cat3->id, 'name' => 'License XYZ']);
+
+        $this->actingAsForApi($user)
+            ->getJson(route('api.accessories.index', [
+                'filter' => json_encode(['category' => $cat1->id . ',' . $cat2->id]),
+            ]))
+            ->assertOk()
+            ->assertResponseContainsInRows($inCat1)
+            ->assertResponseContainsInRows($inCat2)
+            ->assertResponseDoesNotContainInRows($inCat3);
+    }
+
+    public function test_advanced_search_category_single_name_still_matches_via_like_path(): void
+    {
+        // Guard that the new whereIn branch does not swallow single-
+        // value name lookups.
+        $user = User::factory()->superuser()->create();
+
+        $target = Category::factory()->forAccessories()->create(['name' => 'Peripherals']);
+        $other = Category::factory()->forAccessories()->create(['name' => 'Cables']);
+
+        // Pin names so a Faker collision (AccessoryFactory draws from
+        // a 4-value pool) does not false-fail the "other not in rows"
+        // check when both accessories randomly land on the same name.
+        $targetAccessory = Accessory::factory()->create(['category_id' => $target->id, 'name' => 'In-Peripherals Pick']);
+        $otherAccessory = Accessory::factory()->create(['category_id' => $other->id, 'name' => 'In-Cables Pick']);
+
+        $this->actingAsForApi($user)
+            ->getJson(route('api.accessories.index', [
+                'filter' => json_encode(['category' => 'Peripherals']),
+            ]))
+            ->assertOk()
+            ->assertResponseContainsInRows($targetAccessory)
+            ->assertResponseDoesNotContainInRows($otherAccessory);
+    }
 }

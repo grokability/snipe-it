@@ -30,7 +30,7 @@
 @section('content')
     <x-container>
         <x-box name="users" sr_only_title>
-            <x-table.users :route="route('api.users.index',
+            <x-table.users name="users" :route="route('api.users.index',
                 [
                     'status' => is_scalar(request('status')) ? request('status') : null,
                     'deleted'=> (request('status')=='deleted') ? 'true' : 'false',
@@ -52,5 +52,10 @@
 @section('moar_scripts')
 
     @include ('partials.bootstrap-table')
+
+    <x-table.advanced-search
+        tableId="usersListingTable"
+        :model="\App\Models\User::class"
+    />
 
 @stop

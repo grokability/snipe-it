@@ -147,6 +147,152 @@ class License extends Depreciable implements Importable
         'adminuser' => ['first_name', 'last_name', 'display_name'],
     ];
 
+    /**
+     * Advanced-search filterable fields.
+     *
+     * Direct columns on licenses carry purchase_cost / purchase_date
+     * (unlike Accessory where they moved to the Orders table), so no
+     * applyCustomFilter branches for those. free_seats_count is a
+     * derived withCount on freeSeats() so it routes through
+     * applyCustomFilter.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public static function filterableFields(): array
+    {
+        return [
+            [
+                'field' => 'company',
+                'type' => 'fk',
+                'column' => 'company_id',
+                'endpoint' => 'companies',
+                'label' => trans('admin/companies/table.title'),
+            ],
+            [
+                'field' => 'category',
+                'type' => 'fk',
+                'column' => 'category_id',
+                'endpoint' => 'categories/license',
+                'label' => trans('general.category'),
+            ],
+            [
+                'field' => 'manufacturer',
+                'type' => 'fk',
+                'column' => 'manufacturer_id',
+                'endpoint' => 'manufacturers',
+                'label' => trans('general.manufacturer'),
+            ],
+            [
+                'field' => 'supplier',
+                'type' => 'fk',
+                'column' => 'supplier_id',
+                'endpoint' => 'suppliers',
+                'label' => trans('general.supplier'),
+            ],
+            [
+                'field' => 'created_by',
+                'type' => 'fk',
+                'column' => 'created_by',
+                'endpoint' => 'users',
+                'label' => trans('general.created_by'),
+            ],
+            [
+                'field' => 'reassignable',
+                'type' => 'boolean',
+                'label' => trans('admin/licenses/form.reassignable'),
+            ],
+            [
+                'field' => 'maintained',
+                'type' => 'boolean',
+                'label' => trans('admin/licenses/form.maintained'),
+            ],
+            [
+                'field' => 'seats',
+                'type' => 'numeric',
+                'label' => trans('admin/licenses/form.seats'),
+            ],
+            [
+                'field' => 'min_amt',
+                'type' => 'numeric',
+                'label' => trans('general.min_amt'),
+            ],
+            [
+                'field' => 'free_seats_count',
+                'type' => 'numeric',
+                'label' => trans('admin/licenses/general.remaining_seats'),
+            ],
+            [
+                'field' => 'purchase_cost',
+                'type' => 'numeric',
+                'label' => trans('general.purchase_cost'),
+            ],
+            [
+                'field' => 'purchase_date',
+                'type' => 'date-range',
+                'label' => trans('general.purchase_date'),
+            ],
+            [
+                'field' => 'expiration_date',
+                'type' => 'date-range',
+                'label' => trans('admin/licenses/form.expiration'),
+            ],
+            [
+                'field' => 'termination_date',
+                'type' => 'date-range',
+                'label' => trans('admin/licenses/form.termination_date'),
+            ],
+            [
+                'field' => 'created_at',
+                'type' => 'date-range',
+                'label' => trans('general.created_at'),
+            ],
+            [
+                'field' => 'updated_at',
+                'type' => 'date-range',
+                'label' => trans('general.updated_at'),
+            ],
+        ];
+    }
+
+    /**
+     * Override hook from Searchable. Routes free_seats_count filter
+     * through a correlated subquery on license_seats that mirrors
+     * the freeSeats() relation (seats with no assigned_to and no
+     * asset_id, not soft-deleted). Default list queries never pay
+     * the subquery cost.
+     */
+    protected function applyCustomFilter(\Illuminate\Database\Eloquent\Builder $query, string $filterKey, string $filterValue, string $boolean = 'and'): ?\Illuminate\Database\Eloquent\Builder
+    {
+        if ($filterKey !== 'free_seats_count') {
+            return null;
+        }
+
+        $bounds = $this->parseGtLtBounds($filterValue);
+        if ($bounds === null) {
+            return null;
+        }
+        [$gt, $lt] = $bounds;
+
+        $freeSeatCountSub = \Illuminate\Support\Facades\DB::table('license_seats')
+            ->whereColumn('license_seats.license_id', 'licenses.id')
+            ->whereNull('license_seats.assigned_to')
+            ->whereNull('license_seats.asset_id')
+            ->whereNull('license_seats.deleted_at')
+            ->selectRaw('COUNT(*)');
+
+        $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
+        $query->{$outerBoolean}(function ($nested) use ($freeSeatCountSub, $gt, $lt) {
+            if ($gt !== null) {
+                $nested->where($freeSeatCountSub, '>', $gt);
+            }
+            if ($lt !== null) {
+                $nested->where($freeSeatCountSub, '<', $lt);
+            }
+        });
+
+        return $query;
+    }
+
     protected $appends = ['free_seat_count'];
 
     /**

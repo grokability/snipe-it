@@ -196,7 +196,7 @@ class AssetModelPresenter extends Presenter
             [
                 'field' => 'eol',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,
                 'title' => trans('admin/hardware/form.eol_rate'),
@@ -215,7 +215,7 @@ class AssetModelPresenter extends Presenter
             [
                 'field' => 'requestable',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'visible' => false,
                 'title' => trans('admin/hardware/general.requestable'),
@@ -224,7 +224,7 @@ class AssetModelPresenter extends Presenter
             [
                 'field' => 'require_serial',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'visible' => false,
                 'title' => trans('admin/hardware/general.require_serial'),

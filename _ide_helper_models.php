@@ -2981,6 +2981,48 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * Named filter-preset for a listing page's advanced-search. Each
+ * record stores a URL query string (filter[.
+ *
+ * ..] + filter_operator)
+ * captured from the advanced-search modal. Loading a saved search
+ * means navigating back to the originating listing route with the
+ * stored query string re-attached. Private to the creator for v1
+ * (no sharing/default yet).
+ *
+ * table_name holds the bs-table idTable (e.g. 'accessoriesListingTable')
+ * so a single table's saved-searches dropdown only lists its own.
+ *
+ * @property int $id
+ * @property int $created_by
+ * @property string $table_name
+ * @property string|null $model
+ * @property string $name
+ * @property string $query_string
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\User|null $creator
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SavedSearch forTable(string $tableName)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SavedSearch newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SavedSearch newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SavedSearch ownedByCurrent()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SavedSearch query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SavedSearch whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SavedSearch whereCreatedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SavedSearch whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SavedSearch whereModel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SavedSearch whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SavedSearch whereQueryString($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SavedSearch whereTableName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SavedSearch whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperSavedSearch {}
+}
+
+namespace App\Models{
+/**
  * Settings model.
  *
  * @property int $id
