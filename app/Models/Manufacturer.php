@@ -77,6 +77,11 @@ class Manufacturer extends SnipeModel implements Importable
      */
     protected $searchableAttributes = [
         'name',
+        'url',
+        'support_url',
+        'support_email',
+        'support_phone',
+        'warranty_lookup_url',
         'created_at',
         'notes',
     ];
