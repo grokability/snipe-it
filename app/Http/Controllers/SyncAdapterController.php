@@ -3,15 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\Actionlog;
+use App\Rules\ExternalUrl;
+use App\SyncAdapters\PushableSyncAdapter;
 use App\SyncAdapters\SyncErrorFormatter;
 use App\Traits\LocksLongRunningOperation;
-use App\SyncAdapters\PushableSyncAdapter;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Monolog\Handler\TestHandler;
 use Symfony\Component\HttpFoundation\Response;
@@ -255,7 +257,7 @@ class SyncAdapterController extends Controller
         // Per-instance mutex: a pull or push already in progress for THIS
         // adapter blocks a second trigger. Different adapters stay
         // independent (Fleet pulling doesn't block a Jamf pull, etc).
-        if (!$this->acquireOperationLock($instance->lockKey())) {
+        if (! $this->acquireOperationLock($instance->lockKey())) {
             return redirect()->route('settings.adapters.index', ['adapter' => $instance->slug])
                 ->with('error', $this->operationAlreadyRunningMessage('admin/settings/sync_adapters.sync_adapter_run'));
         }
@@ -274,7 +276,7 @@ class SyncAdapterController extends Controller
 
             $dryRun = $adapter->isPullDryRun();
             if ($dryRun) {
-                Log::channel('sync-adapters')->info($instance->slug . ' sync [dry-run]: no assets will be created or updated');
+                Log::channel('sync-adapters')->info($instance->slug.' sync [dry-run]: no assets will be created or updated');
             }
 
             // captureSyncRunLog's token return goes unused on the caller
@@ -289,16 +291,16 @@ class SyncAdapterController extends Controller
             $limitInput = $request->input('limit');
             $limit = ($limitInput !== null && $limitInput !== '' && (int) $limitInput > 0) ? (int) $limitInput : null;
             if ($limit !== null) {
-                Log::channel('sync-adapters')->info($instance->slug . ' sync: limit set to ' . $limit . ', will stop after that many records');
+                Log::channel('sync-adapters')->info($instance->slug.' sync: limit set to '.$limit.', will stop after that many records');
             }
 
             $abortedRedirect = null;
             $this->captureSyncRunLog($instance->slug, 'pull', function () use ($adapter, $instance, $dryRun, $limit, &$seen, &$skipped, &$errors, &$abortedRedirect) {
                 try {
-                    Actionlog::withActionSource('sync:' . $instance->slug, function () use ($adapter, $instance, $dryRun, $limit, &$seen, &$skipped, &$errors) {
+                    Actionlog::withActionSource('sync:'.$instance->slug, function () use ($adapter, $instance, $dryRun, $limit, &$seen, &$skipped, &$errors) {
                         foreach ($adapter->pull() as $record) {
                             if ($limit !== null && ($seen + $skipped + $errors) >= $limit) {
-                                Log::channel('sync-adapters')->info($instance->slug . ' sync: limit ' . $limit . ' reached, stopping early');
+                                Log::channel('sync-adapters')->info($instance->slug.' sync: limit '.$limit.' reached, stopping early');
                                 break;
                             }
                             try {
@@ -327,13 +329,13 @@ class SyncAdapterController extends Controller
                                 }
                             } catch (\Throwable $e) {
                                 $errors++;
-                                Log::channel('sync-adapters')->warning($instance->slug . ' sync: failed to upsert host ' . $record->sourceId . ': ' . $e->getMessage());
+                                Log::channel('sync-adapters')->warning($instance->slug.' sync: failed to upsert host '.$record->sourceId.': '.$e->getMessage());
                             }
                         }
                     });
                 } catch (\Throwable $e) {
                     Log::channel('sync-adapters')->warning(
-                        $instance->slug . ' sync aborted: ' . SyncErrorFormatter::summary($e),
+                        $instance->slug.' sync aborted: '.SyncErrorFormatter::summary($e),
                         SyncErrorFormatter::logContext($e),
                     );
 
@@ -421,7 +423,7 @@ class SyncAdapterController extends Controller
         // nothing. The flash message alone is one-shot and vanishes on
         // reload or on the next action - admins need something they
         // can go back and read.
-        if (!$adapter instanceof \App\SyncAdapters\PushableSyncAdapter) {
+        if (! $adapter instanceof \App\SyncAdapters\PushableSyncAdapter) {
             $message = trans('admin/settings/sync_adapters.push_not_supported');
             $this->captureSyncRunLog($instance->slug, 'push', function () use ($instance, $message) {
                 Log::channel('sync-adapters')->warning($instance->slug.' push aborted before run: push_not_supported - '.$message);
@@ -459,7 +461,7 @@ class SyncAdapterController extends Controller
         // Shared with the pull side via $instance->lockKey() so Pull Now
         // and Push Now on the same adapter are mutually exclusive.
         // Different adapters stay independent.
-        if (!$this->acquireOperationLock($instance->lockKey())) {
+        if (! $this->acquireOperationLock($instance->lockKey())) {
             return redirect()->route('settings.adapters.index', ['adapter' => $instance->slug])
                 ->with('error', $this->operationAlreadyRunningMessage('admin/settings/sync_adapters.sync_adapter_run'));
         }
@@ -476,7 +478,7 @@ class SyncAdapterController extends Controller
             $limitInput = $request->input('limit');
             $limit = ($limitInput !== null && $limitInput !== '' && (int) $limitInput > 0) ? (int) $limitInput : null;
             if ($limit !== null) {
-                Log::channel('sync-adapters')->info($instance->slug . ' push: limit set to ' . $limit . ', will stop after that many assets');
+                Log::channel('sync-adapters')->info($instance->slug.' push: limit set to '.$limit.', will stop after that many assets');
             }
 
             $abortedRedirect = null;
@@ -491,7 +493,7 @@ class SyncAdapterController extends Controller
                                     // Returning false from chunkById's
                                     // callback stops Eloquent paging after
                                     // this chunk.
-                                    Log::channel('sync-adapters')->info($instance->slug . ' push: limit ' . $limit . ' reached, stopping early');
+                                    Log::channel('sync-adapters')->info($instance->slug.' push: limit '.$limit.' reached, stopping early');
 
                                     return false;
                                 }
@@ -598,6 +600,25 @@ class SyncAdapterController extends Controller
 
         if (! $adapter->supportsSiteScoping()) {
             abort(404);
+        }
+
+        // Any URL override arriving on this request has to clear the
+        // same ExternalUrl check the save path applies, otherwise an
+        // admin (or stolen admin session) could pass arbitrary
+        // host / port / scheme through to the vendor client and turn
+        // this endpoint into a request-forwarding primitive against
+        // loopback, RFC-1918, and cloud-metadata targets that the
+        // save path explicitly blocks. nullable so the request can
+        // still omit the override and fall back to stored config.
+        $validator = Validator::make($request->all(), [
+            'url' => ['nullable', 'string', new ExternalUrl('app.sync_adapter_allow_internal_targets')],
+            'api_key' => ['nullable', 'string'],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'error' => $validator->errors()->first(),
+            ], 422);
         }
 
         try {
@@ -772,7 +793,7 @@ class SyncAdapterController extends Controller
     public function postPreviewPushPayload(\App\Models\SyncAdapterInstance $instance): JsonResponse
     {
         $adapter = $instance->adapter();
-        if (!$adapter instanceof \App\SyncAdapters\PushableSyncAdapter) {
+        if (! $adapter instanceof \App\SyncAdapters\PushableSyncAdapter) {
             return response()->json(['error' => trans('admin/settings/sync_adapters.push_not_supported')], 400);
         }
         if (! $adapter->isEnabled()) {
@@ -835,7 +856,7 @@ class SyncAdapterController extends Controller
     public function postTest1Push(\App\Models\SyncAdapterInstance $instance): JsonResponse
     {
         $adapter = $instance->adapter();
-        if (!$adapter instanceof \App\SyncAdapters\PushableSyncAdapter) {
+        if (! $adapter instanceof \App\SyncAdapters\PushableSyncAdapter) {
             return response()->json(['error' => trans('admin/settings/sync_adapters.push_not_supported')], 400);
         }
         if (! $adapter->isEnabled()) {
